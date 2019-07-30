@@ -2,127 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AAC17ACB3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 17:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D82C7ACDB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 17:53:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730607AbfG3Ps5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 11:48:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50654 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725974AbfG3Ps5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:48:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7F5EEB024;
-        Tue, 30 Jul 2019 15:48:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 039991E435C; Tue, 30 Jul 2019 17:48:55 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 17:48:54 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        id S1732684AbfG3Pwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 11:52:45 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39993 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727392AbfG3Pwo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jul 2019 11:52:44 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w10so30286152pgj.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2019 08:52:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DxnrGcc7AvHyymca2iRUY2VmSq5SsDzU7A81wj1Q1kA=;
+        b=t8YLoxAiwt9jLs0ltmXYLe3szj3BRw96GfuO3Lx/RnRQ2Lz5lRMwbvQ2VV00AMt+Y+
+         +b5TktFWW0nxyXxUNu24uk/+b/3ZiiWNGYiVSmjYyhe5tVHDjRX4Y3ReyQlTmPnZvr58
+         Mtq+0muwjKy/QlbNwoxnzugtsxt6iulWLPv8vtEPnlEzgOfUHvNGS97UUntOy/XiHjAo
+         fTsKZC/4VkWCoIe0oSTpq7ar3Lr1J4xGcO6GaEn7hjzeXVkWY1rAO/1sPx2Jg7byTpHh
+         /0/N/9TKyXfV11rGD6zLSJIoXXKMWZHMuMjvr0hfkVGP3Jl5E/VbFEtJJdm9FjqChcht
+         kKbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DxnrGcc7AvHyymca2iRUY2VmSq5SsDzU7A81wj1Q1kA=;
+        b=rwPOgr0YIVbr1h4ZpWyzCOfgpYjXuw9KAqz9dDOXnbm6IOmo1oaC5M5x2hmd9yX5L4
+         t0Z+ARU1CeMvagVLT2780qHAbtyDZP4nPzjuXW5qN5ovwiZP6TeglKpPLXCZ0NXBV2jb
+         7W0uBZ8ibxjwVNokVsWHHqUcgJkNFiHLiFFet5jcytlPp0tv/w7eENwWbg2nUK9gTlJN
+         iTBo9qdGj9jegT1kqw22p/Qaz0ffIZwOruo4Q71rIywy9y1SxeqxM3oiqRDTEIy8wwrG
+         ahhMJb92Z26+5FdIFArHGWKPEYVssRckkzC5tPyNKTTfVw1MfTFjFry673hp8QlIX0+q
+         6bsw==
+X-Gm-Message-State: APjAAAU5eQTvUNmL7Mkc6BjH9C3Xl3UoBESafEQqHu2uMaWPxZBe9OfN
+        DukptPHjjnQCj+JbftSenHM=
+X-Google-Smtp-Source: APXvYqzjccGSoIbwh+qDMtePKn3NyCOzg8XVKEr0dLFzjciRcbnNV0p4LA9QlqryZRQ5bhT0e+rYvA==
+X-Received: by 2002:a63:b919:: with SMTP id z25mr108579853pge.201.1564501962876;
+        Tue, 30 Jul 2019 08:52:42 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.gmail.com with ESMTPSA id q1sm76758814pfg.84.2019.07.30.08.52.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 08:52:42 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm/filemap: don't initiate writeback if mapping has
- no dirty pages
-Message-ID: <20190730154854.GG28829@quack2.suse.cz>
-References: <156378816804.1087.8607636317907921438.stgit@buzz>
- <20190722175230.d357d52c3e86dc87efbd4243@linux-foundation.org>
- <bdc6c53d-a7bb-dcc4-20ba-6c7fa5c57dbd@yandex-team.ru>
- <20190730141457.GE28829@quack2.suse.cz>
- <51ba7304-06bd-a50d-cb14-6dc41b92fab5@yandex-team.ru>
+Subject: [PATCH v11 2/4] fs: __vfs_getxattr nesting paradigm
+Date:   Tue, 30 Jul 2019 08:52:23 -0700
+Message-Id: <20190730155227.41468-3-salyzyn@android.com>
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+In-Reply-To: <20190730155227.41468-1-salyzyn@android.com>
+References: <20190730155227.41468-1-salyzyn@android.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <51ba7304-06bd-a50d-cb14-6dc41b92fab5@yandex-team.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 30-07-19 17:57:18, Konstantin Khlebnikov wrote:
-> On 30.07.2019 17:14, Jan Kara wrote:
-> > On Tue 23-07-19 11:16:51, Konstantin Khlebnikov wrote:
-> > > On 23.07.2019 3:52, Andrew Morton wrote:
-> > > > 
-> > > > (cc linux-fsdevel and Jan)
-> > 
-> > Thanks for CC Andrew.
-> > 
-> > > > On Mon, 22 Jul 2019 12:36:08 +0300 Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
-> > > > 
-> > > > > Functions like filemap_write_and_wait_range() should do nothing if inode
-> > > > > has no dirty pages or pages currently under writeback. But they anyway
-> > > > > construct struct writeback_control and this does some atomic operations
-> > > > > if CONFIG_CGROUP_WRITEBACK=y - on fast path it locks inode->i_lock and
-> > > > > updates state of writeback ownership, on slow path might be more work.
-> > > > > Current this path is safely avoided only when inode mapping has no pages.
-> > > > > 
-> > > > > For example generic_file_read_iter() calls filemap_write_and_wait_range()
-> > > > > at each O_DIRECT read - pretty hot path.
-> > 
-> > Yes, but in common case mapping_needs_writeback() is false for files you do
-> > direct IO to (exactly the case with no pages in the mapping). So you
-> > shouldn't see the overhead at all. So which case you really care about?
-> > 
-> > > > > This patch skips starting new writeback if mapping has no dirty tags set.
-> > > > > If writeback is already in progress filemap_write_and_wait_range() will
-> > > > > wait for it.
-> > > > > 
-> > > > > ...
-> > > > > 
-> > > > > --- a/mm/filemap.c
-> > > > > +++ b/mm/filemap.c
-> > > > > @@ -408,7 +408,8 @@ int __filemap_fdatawrite_range(struct address_space *mapping, loff_t start,
-> > > > >    		.range_end = end,
-> > > > >    	};
-> > > > > -	if (!mapping_cap_writeback_dirty(mapping))
-> > > > > +	if (!mapping_cap_writeback_dirty(mapping) ||
-> > > > > +	    !mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
-> > > > >    		return 0;
-> > > > >    	wbc_attach_fdatawrite_inode(&wbc, mapping->host);
-> > > > 
-> > > > How does this play with tagged_writepages?  We assume that no tagging
-> > > > has been performed by any __filemap_fdatawrite_range() caller?
-> > > > 
-> > > 
-> > > Checking also PAGECACHE_TAG_TOWRITE is cheap but seems redundant.
-> > > 
-> > > To-write tags are supposed to be a subset of dirty tags:
-> > > to-write is set only when dirty is set and cleared after starting writeback.
-> > > 
-> > > Special case set_page_writeback_keepwrite() which does not clear to-write
-> > > should be for dirty page thus dirty tag is not going to be cleared either.
-> > > Ext4 calls it after redirty_page_for_writepage()
-> > > XFS even without clear_page_dirty_for_io()
-> > > 
-> > > Anyway to-write tag without dirty tag or at clear page is confusing.
-> > 
-> > Yeah, TOWRITE tag is intended to be internal to writepages logic so your
-> > patch is fine in that regard. Overall the patch looks good to me so I'm
-> > just wondering a bit about the motivation...
-> 
-> In our case file mixes cached pages and O_DIRECT read. Kind of database
-> were index header is memory mapped while the rest data read via O_DIRECT.
-> I suppose for sharing index between multiple instances.
+Add a per-thread PF_NO_SECURITY flag that ensures that nested calls
+that result in vfs_getxattr do not fall under security framework
+scrutiny.  Use cases include selinux when acquiring the xattr data
+to evaluate security, and internal trusted xattr data soleley managed
+by the filesystem drivers.
 
-OK, that has always been a bit problematic but you're not the first one to
-have such design ;). So feel free to add:
+This handles the case of a union filesystem driver that is being
+requested by the security layer to report back the data that is the
+target label or context embedded into wrapped filesystem's xattr.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+For the use case where access is to be blocked by the security layer.
 
-to your patch.
+The path then could be security(dentry) -> __vfs_getxattr(dentry) ->
+handler->get(dentry) -> __vfs_getxattr(lower_dentry) ->
+lower_handler->get(lower_dentry) which would report back through the
+chain data and success as expected, but the logging security layer at
+the top would have the data to determine the access permissions and
+report back the target context that was blocked.
 
-> On this path we also hit this bug:
-> https://lore.kernel.org/lkml/156355839560.2063.5265687291430814589.stgit@buzz/
-> so that's why I've started looking into this code.
+Without the nesting check, the path on a union filesystem would be
+the errant security(dentry) -> __vfs_getxattr(dentry) ->
+handler->get(dentry) -> vfs_getxattr(lower_dentry) -> *nested*
+security(lower_dentry, log off) -> lower_handler->get(lower_dentry)
+which would report back through the chain no data, and -EACCES.
 
-I see. OK.
+For selinux for both cases, this would translate to a correctly
+determined blocked access. In the first corrected case a correct avc
+log would be reported, in the second legacy case an incorrect avc log
+would be reported against an uninitialized u:object_r:unlabeled:s0
+context making the logs cosmetically useless for audit2allow.
 
-								Honza
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com
+---
+v11 - squish out v10 introduced patch 2 and 3 in the series,
+      then use per-thread flag instead for nesting.
+---
+ fs/xattr.c            | 10 +++++++++-
+ include/linux/sched.h |  1 +
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 90dd78f0eb27..46ebd5014e01 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -302,13 +302,19 @@ __vfs_getxattr(struct dentry *dentry, struct inode *inode, const char *name,
+ 	       void *value, size_t size)
+ {
+ 	const struct xattr_handler *handler;
++	ssize_t ret;
++	unsigned int flags;
+ 
+ 	handler = xattr_resolve_name(inode, &name);
+ 	if (IS_ERR(handler))
+ 		return PTR_ERR(handler);
+ 	if (!handler->get)
+ 		return -EOPNOTSUPP;
+-	return handler->get(handler, dentry, inode, name, value, size);
++	flags = current->flags;
++	current->flags |= PF_NO_SECURITY;
++	ret = handler->get(handler, dentry, inode, name, value, size);
++	current_restore_flags(flags, PF_NO_SECURITY);
++	return ret;
+ }
+ EXPORT_SYMBOL(__vfs_getxattr);
+ 
+@@ -318,6 +324,8 @@ vfs_getxattr(struct dentry *dentry, const char *name, void *value, size_t size)
+ 	struct inode *inode = dentry->d_inode;
+ 	int error;
+ 
++	if (unlikely(current->flags & PF_NO_SECURITY))
++		goto nolsm;
+ 	error = xattr_permission(inode, name, MAY_READ);
+ 	if (error)
+ 		return error;
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 8dc1811487f5..5cda3ff89d4e 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1468,6 +1468,7 @@ extern struct pid *cad_pid;
+ #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
+ #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
+ #define PF_MEMALLOC_NOCMA	0x10000000	/* All allocation request will have _GFP_MOVABLE cleared */
++#define PF_NO_SECURITY		0x20000000	/* nested security context */
+ #define PF_FREEZER_SKIP		0x40000000	/* Freezer should not count it as freezable */
+ #define PF_SUSPEND_TASK		0x80000000      /* This thread called freeze_processes() and should not be frozen */
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.22.0.770.g0f2c4a37fd-goog
+
