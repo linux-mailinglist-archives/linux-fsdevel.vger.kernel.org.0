@@ -2,174 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D82C7ACDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 17:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5E3D7AD04
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 17:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732684AbfG3Pwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 11:52:45 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39993 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727392AbfG3Pwo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:52:44 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10so30286152pgj.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2019 08:52:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DxnrGcc7AvHyymca2iRUY2VmSq5SsDzU7A81wj1Q1kA=;
-        b=t8YLoxAiwt9jLs0ltmXYLe3szj3BRw96GfuO3Lx/RnRQ2Lz5lRMwbvQ2VV00AMt+Y+
-         +b5TktFWW0nxyXxUNu24uk/+b/3ZiiWNGYiVSmjYyhe5tVHDjRX4Y3ReyQlTmPnZvr58
-         Mtq+0muwjKy/QlbNwoxnzugtsxt6iulWLPv8vtEPnlEzgOfUHvNGS97UUntOy/XiHjAo
-         fTsKZC/4VkWCoIe0oSTpq7ar3Lr1J4xGcO6GaEn7hjzeXVkWY1rAO/1sPx2Jg7byTpHh
-         /0/N/9TKyXfV11rGD6zLSJIoXXKMWZHMuMjvr0hfkVGP3Jl5E/VbFEtJJdm9FjqChcht
-         kKbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DxnrGcc7AvHyymca2iRUY2VmSq5SsDzU7A81wj1Q1kA=;
-        b=rwPOgr0YIVbr1h4ZpWyzCOfgpYjXuw9KAqz9dDOXnbm6IOmo1oaC5M5x2hmd9yX5L4
-         t0Z+ARU1CeMvagVLT2780qHAbtyDZP4nPzjuXW5qN5ovwiZP6TeglKpPLXCZ0NXBV2jb
-         7W0uBZ8ibxjwVNokVsWHHqUcgJkNFiHLiFFet5jcytlPp0tv/w7eENwWbg2nUK9gTlJN
-         iTBo9qdGj9jegT1kqw22p/Qaz0ffIZwOruo4Q71rIywy9y1SxeqxM3oiqRDTEIy8wwrG
-         ahhMJb92Z26+5FdIFArHGWKPEYVssRckkzC5tPyNKTTfVw1MfTFjFry673hp8QlIX0+q
-         6bsw==
-X-Gm-Message-State: APjAAAU5eQTvUNmL7Mkc6BjH9C3Xl3UoBESafEQqHu2uMaWPxZBe9OfN
-        DukptPHjjnQCj+JbftSenHM=
-X-Google-Smtp-Source: APXvYqzjccGSoIbwh+qDMtePKn3NyCOzg8XVKEr0dLFzjciRcbnNV0p4LA9QlqryZRQ5bhT0e+rYvA==
-X-Received: by 2002:a63:b919:: with SMTP id z25mr108579853pge.201.1564501962876;
-        Tue, 30 Jul 2019 08:52:42 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.gmail.com with ESMTPSA id q1sm76758814pfg.84.2019.07.30.08.52.41
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 08:52:42 -0700 (PDT)
-From:   Mark Salyzyn <salyzyn@android.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org,
+        id S1727797AbfG3P5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 11:57:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40090 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726363AbfG3P5U (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jul 2019 11:57:20 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AD19A300CB0C;
+        Tue, 30 Jul 2019 15:57:17 +0000 (UTC)
+Received: from redhat.com (ovpn-112-36.rdu2.redhat.com [10.10.112.36])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A63655D6A7;
+        Tue, 30 Jul 2019 15:57:05 +0000 (UTC)
+Date:   Tue, 30 Jul 2019 11:57:02 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Christoph Hellwig <hch@infradead.org>, john.hubbard@gmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v11 2/4] fs: __vfs_getxattr nesting paradigm
-Date:   Tue, 30 Jul 2019 08:52:23 -0700
-Message-Id: <20190730155227.41468-3-salyzyn@android.com>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-In-Reply-To: <20190730155227.41468-1-salyzyn@android.com>
-References: <20190730155227.41468-1-salyzyn@android.com>
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net,
+        virtualization@lists.linux-foundation.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: Re: [PATCH 03/12] block: bio_release_pages: use flags arg instead of
+ bool
+Message-ID: <20190730155702.GB10366@redhat.com>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
+ <20190724042518.14363-4-jhubbard@nvidia.com>
+ <20190724053053.GA18330@infradead.org>
+ <20190729205721.GB3760@redhat.com>
+ <20190730102557.GA1700@lst.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190730102557.GA1700@lst.de>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 30 Jul 2019 15:57:19 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a per-thread PF_NO_SECURITY flag that ensures that nested calls
-that result in vfs_getxattr do not fall under security framework
-scrutiny.  Use cases include selinux when acquiring the xattr data
-to evaluate security, and internal trusted xattr data soleley managed
-by the filesystem drivers.
+On Tue, Jul 30, 2019 at 12:25:57PM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 29, 2019 at 04:57:21PM -0400, Jerome Glisse wrote:
+> > > All pages releases by bio_release_pages should come from
+> > > get_get_user_pages, so I don't really see the point here.
+> > 
+> > No they do not all comes from GUP for see various callers
+> > of bio_check_pages_dirty() for instance iomap_dio_zero()
+> > 
+> > I have carefully tracked down all this and i did not do
+> > anyconvertion just for the fun of it :)
+> 
+> Well, the point is _should_ not necessarily do.  iomap_dio_zero adds the
+> ZERO_PAGE, which we by definition don't need to refcount.  So we can
+> mark this bio BIO_NO_PAGE_REF safely after removing the get_page there.
+> 
+> Note that the equivalent in the old direct I/O code, dio_refill_pages,
+> will be a little more complicated as it can match user pages and the
+> ZERO_PAGE in a single bio, so a per-bio flag won't handle it easily.
+> Maybe we just need to use a separate bio there as well.
+> 
+> In general with series like this we should not encode the status quo an
+> pile new hacks upon the old one, but thing where we should be and fix
+> up the old warts while having to wade through all that code.
 
-This handles the case of a union filesystem driver that is being
-requested by the security layer to report back the data that is the
-target label or context embedded into wrapped filesystem's xattr.
+Other user can also add page that are not coming from GUP but need to
+have a reference see __blkdev_direct_IO() saddly bio get fill from many
+different places and not always with GUP. So we can not say that all
+pages here are coming from bio. I had a different version of the patchset
+i think that was adding a new release dirty function for GUP versus non
+GUP bio. I posted it a while ago, i will try to dig it up once i am
+back.
 
-For the use case where access is to be blocked by the security layer.
-
-The path then could be security(dentry) -> __vfs_getxattr(dentry) ->
-handler->get(dentry) -> __vfs_getxattr(lower_dentry) ->
-lower_handler->get(lower_dentry) which would report back through the
-chain data and success as expected, but the logging security layer at
-the top would have the data to determine the access permissions and
-report back the target context that was blocked.
-
-Without the nesting check, the path on a union filesystem would be
-the errant security(dentry) -> __vfs_getxattr(dentry) ->
-handler->get(dentry) -> vfs_getxattr(lower_dentry) -> *nested*
-security(lower_dentry, log off) -> lower_handler->get(lower_dentry)
-which would report back through the chain no data, and -EACCES.
-
-For selinux for both cases, this would translate to a correctly
-determined blocked access. In the first corrected case a correct avc
-log would be reported, in the second legacy case an incorrect avc log
-would be reported against an uninitialized u:object_r:unlabeled:s0
-context making the logs cosmetically useless for audit2allow.
-
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: linux-unionfs@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-team@android.com
----
-v11 - squish out v10 introduced patch 2 and 3 in the series,
-      then use per-thread flag instead for nesting.
----
- fs/xattr.c            | 10 +++++++++-
- include/linux/sched.h |  1 +
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 90dd78f0eb27..46ebd5014e01 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -302,13 +302,19 @@ __vfs_getxattr(struct dentry *dentry, struct inode *inode, const char *name,
- 	       void *value, size_t size)
- {
- 	const struct xattr_handler *handler;
-+	ssize_t ret;
-+	unsigned int flags;
- 
- 	handler = xattr_resolve_name(inode, &name);
- 	if (IS_ERR(handler))
- 		return PTR_ERR(handler);
- 	if (!handler->get)
- 		return -EOPNOTSUPP;
--	return handler->get(handler, dentry, inode, name, value, size);
-+	flags = current->flags;
-+	current->flags |= PF_NO_SECURITY;
-+	ret = handler->get(handler, dentry, inode, name, value, size);
-+	current_restore_flags(flags, PF_NO_SECURITY);
-+	return ret;
- }
- EXPORT_SYMBOL(__vfs_getxattr);
- 
-@@ -318,6 +324,8 @@ vfs_getxattr(struct dentry *dentry, const char *name, void *value, size_t size)
- 	struct inode *inode = dentry->d_inode;
- 	int error;
- 
-+	if (unlikely(current->flags & PF_NO_SECURITY))
-+		goto nolsm;
- 	error = xattr_permission(inode, name, MAY_READ);
- 	if (error)
- 		return error;
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 8dc1811487f5..5cda3ff89d4e 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1468,6 +1468,7 @@ extern struct pid *cad_pid;
- #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
- #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
- #define PF_MEMALLOC_NOCMA	0x10000000	/* All allocation request will have _GFP_MOVABLE cleared */
-+#define PF_NO_SECURITY		0x20000000	/* nested security context */
- #define PF_FREEZER_SKIP		0x40000000	/* Freezer should not count it as freezable */
- #define PF_SUSPEND_TASK		0x80000000      /* This thread called freeze_processes() and should not be frozen */
- 
--- 
-2.22.0.770.g0f2c4a37fd-goog
-
+Cheers,
+Jérôme
