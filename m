@@ -2,105 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06B4B7B588
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 00:15:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 671F07B5C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 00:38:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbfG3WPn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 18:15:43 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36300 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfG3WPn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 18:15:43 -0400
-Received: by mail-io1-f66.google.com with SMTP id o9so28232060iom.3;
-        Tue, 30 Jul 2019 15:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eJWTXDTsE+z8vuI+3+Qq5diLIDrFR4TuvgdInaKarkA=;
-        b=cceTkrjEHo1IVeZWBhk/wi74szSDUuElNWxyWZ9zgPfMQsj0xiNXErA4Ip3Qub2NBU
-         aK4zcsxJNL6yGDgvSNU4l3Dz8p2FASqASrIQngRH42ly+ZJJqCt6XF2xW52MHu7UyE6p
-         /qljE1Oj+8Hjta/HXbKN3wqKEcRZfGei88rf8iNgT7t2YFZjuQyrUk1M/3r9a/Ne5DgG
-         xm3Y9plTVZiAtnbOymCCpefjPufDwpHrSG2ANlrYGA3l6sHpmVoWZ0O7E5S5eeNqDQAr
-         O/dUdT8JMSKBvLqkbnYTYSxSfwZlgaTSpI2fbAgOXvGYwBcduzOGfRVbK1ZlIX6bCno2
-         JFIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eJWTXDTsE+z8vuI+3+Qq5diLIDrFR4TuvgdInaKarkA=;
-        b=R8yjoOs8+WuRdavEjorSjOVS50XRtTOPirW7SB4J6yvXDsJAjbwsiCgfJ4EgMlKFts
-         hsQEgN6VR0m76MQBwK9wqv6N6B2kno+MYAZFpDqsbc3/AneZe8IbNNi0oLGoas/S4Sfz
-         NzvBi1Yi6q/OrAMc51yX4npDQLMVhDNUdPWLbyZXu4AkdMggHQg5Rnv3PwPxHiEBPtdh
-         z2DLshXQH6Nd5raENdboPeydze6cluIXf1rTGoOx79kWkmFjoffMOXCSH0Dc0bdqw5Pt
-         N4hRp1iSikAXxpwnKEWKb8PfJjQp2jH+a/x6yRkMeOz86IuRudg0T7lLRAnqYjomkPbB
-         JQHQ==
-X-Gm-Message-State: APjAAAX952354ZsIFlV2Fj0pkyk9rgQDRZ5D/LzpXpLv2JIdMxH/C3/J
-        51/yLMhZgtslnarlRQw132vpS6KApOxQdq9p0Qs=
-X-Google-Smtp-Source: APXvYqzacbhzX6CmRaif1jdwGFgTYO3dYaLxT/41iTKcLbynfkFATjOsa1NpAW9so1aVjlBxmgqjRRu36ogOi52OC3g=
-X-Received: by 2002:a02:662f:: with SMTP id k47mr121858178jac.4.1564524941279;
- Tue, 30 Jul 2019 15:15:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190730113708.14660-1-pagupta@redhat.com> <2030283543.5419072.1564486701158.JavaMail.zimbra@redhat.com>
- <20190730190737.GA14873@redhat.com> <CAPcyv4i10K3QdSwa3EF9t8pS-QrB9YcBEMy49N1PnYQzCkBJCw@mail.gmail.com>
- <20190730220102.GA15604@redhat.com>
-In-Reply-To: <20190730220102.GA15604@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 30 Jul 2019 15:15:30 -0700
-Message-ID: <CAA9_cmd8to1108H+osSuyyRriX50-g1YV3YebJ=PNsKbW0NPFw@mail.gmail.com>
-Subject: Re: dm: fix dax_dev NULL dereference
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        id S1729288AbfG3WiM convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 18:38:12 -0400
+Received: from mgw-02.mpynet.fi ([82.197.21.91]:56930 "EHLO mgw-02.mpynet.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726847AbfG3WiM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jul 2019 18:38:12 -0400
+X-Greylist: delayed 485 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Jul 2019 18:38:10 EDT
+Received: from pps.filterd (mgw-02.mpynet.fi [127.0.0.1])
+        by mgw-02.mpynet.fi (8.16.0.27/8.16.0.27) with SMTP id x6UMSZio119596;
+        Wed, 31 Jul 2019 01:28:35 +0300
+Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
+        by mgw-02.mpynet.fi with ESMTP id 2u0a9uvs4r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 31 Jul 2019 01:28:34 +0300
+Received: from tuxera-exch.ad.tuxera.com (10.20.48.11) by
+ tuxera-exch.ad.tuxera.com (10.20.48.11) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 31 Jul 2019 01:28:34 +0300
+Received: from tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789]) by
+ tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789%12]) with mapi id
+ 15.00.1395.000; Wed, 31 Jul 2019 01:28:34 +0300
+From:   Anton Altaparmakov <anton@tuxera.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+CC:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alasdair Kergon <agk@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "y2038 Mailman List" <y2038@lists.linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        stoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Joel Becker <jlbec@evilplan.org>,
+        Richard Weinberger <richard@nod.at>, Tejun Heo <tj@kernel.org>,
+        "yuchao0@huawei.com" <yuchao0@huawei.com>,
+        "Linux F2FS DEV, Mailing List" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "linux-ntfs-dev@lists.sourceforge.net" 
+        <linux-ntfs-dev@lists.sourceforge.net>,
+        linux-mtd <linux-mtd@lists.infradead.org>
+Subject: Re: [PATCH 03/20] timestamp_truncate: Replace users of
+ timespec64_trunc
+Thread-Topic: [PATCH 03/20] timestamp_truncate: Replace users of
+ timespec64_trunc
+Thread-Index: AQHVRrCO7mUMDQahbUu7RSH43rBZCqbjOCQAgABUboA=
+Date:   Tue, 30 Jul 2019 22:28:33 +0000
+Message-ID: <5340224D-5625-48A6-909E-70B24D2084BC@tuxera.com>
+References: <20190730014924.2193-1-deepa.kernel@gmail.com>
+ <20190730014924.2193-4-deepa.kernel@gmail.com>
+ <87d0hsapwr.fsf@mail.parknet.co.jp>
+ <CABeXuvqgaxDSR8N_D1Tdw06g_5PGinZS--6nx-bPtAWP4v+mwg@mail.gmail.com>
+In-Reply-To: <CABeXuvqgaxDSR8N_D1Tdw06g_5PGinZS--6nx-bPtAWP4v+mwg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [86.151.122.143]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <92684FF0F17B42478243313B03823A34@tuxera.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-30_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=800
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907300224
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 3:01 PM Mike Snitzer <snitzer@redhat.com> wrote:
->
-> On Tue, Jul 30 2019 at  5:38pm -0400,
-> Dan Williams <dan.j.williams@intel.com> wrote:
->
-> > On Tue, Jul 30, 2019 at 12:07 PM Mike Snitzer <snitzer@redhat.com> wrote:
-> > >
-> > > I staged the fix (which I tweaked) here:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-5.3&id=95b9ebb78c4c733f8912a195fbd0bc19960e726e
-> >
-> > Thanks for picking this up Mike, but I'd prefer to just teach
-> > dax_synchronous() to return false if the passed in dax_dev is NULL.
-> > Thoughts?
->
-> I considered that too but I moved away from it because I'm so used to
-> the various block interfaces requiring the caller pass a non-NULL
-> pointer (e.g. request_queue):
->
-> $ grep -ri return drivers/md/dm-table.c | grep \&\&
-> drivers/md/dm-table.c:        return dev->dax_dev && dax_synchronous(dev->dax_dev);
-> drivers/md/dm-table.c:        return q && blk_queue_zoned_model(q) == *zoned_model;
-> drivers/md/dm-table.c:        return q && blk_queue_zone_sectors(q) == *zone_sectors;
-> drivers/md/dm-table.c:        return q && (q->queue_flags & flush);
-> drivers/md/dm-table.c:        return q && blk_queue_nonrot(q);
-> drivers/md/dm-table.c:        return q && !blk_queue_add_random(q);
-> drivers/md/dm-table.c:        return q && !q->limits.max_write_same_sectors;
-> drivers/md/dm-table.c:        return q && !q->limits.max_write_zeroes_sectors;
-> drivers/md/dm-table.c:        return q && !blk_queue_discard(q);
-> drivers/md/dm-table.c:        return q && !blk_queue_secure_erase(q);
-> drivers/md/dm-table.c:        return q && bdi_cap_stable_pages_required(q->backing_dev_info);
->
-> I'm fine with however you'd like to skin this cat though.
->
-> Just let me know and I'll keep/drop this patch accordingly.
+Hi Deepa,
 
-Ok, since you've already got it queued, and there are no other
-required "if (!dax_dev)" fixups go ahead with what you have.
+> On 30 Jul 2019, at 18:26, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> 
+> On Tue, Jul 30, 2019 at 1:27 AM OGAWA Hirofumi
+> <hirofumi@mail.parknet.co.jp> wrote:
+>> 
+>> Deepa Dinamani <deepa.kernel@gmail.com> writes:
+>> 
+>>> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+>>> index 1e08bd54c5fb..53bb7c6bf993 100644
+>>> --- a/fs/fat/misc.c
+>>> +++ b/fs/fat/misc.c
+>>> @@ -307,8 +307,9 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
+>>>              inode->i_atime = (struct timespec64){ seconds, 0 };
+>>>      }
+>>>      if (flags & S_CTIME) {
+>>> -             if (sbi->options.isvfat)
+>>> -                     inode->i_ctime = timespec64_trunc(*now, 10000000);
+>>> +             if (sbi->options.isvfat) {
+>>> +                     inode->i_ctime = timestamp_truncate(*now, inode);
+>>> +             }
+>>>              else
+>>>                      inode->i_ctime = fat_timespec64_trunc_2secs(*now);
+>>>      }
+>> 
+>> Looks like broken. It changed to sb->s_time_gran from 10000000, and
+>> changed coding style.
+> 
+> This is using a new api: timestamp_truncate(). granularity is gotten
+> by inode->sb->s_time_gran. See Patch [2/20]:
+> https://lkml.org/lkml/2019/7/29/1853
+> 
+> So this is not broken if fat is filling in the right granularity in the sb.
 
-    Acked-by: Dan Williams <dan.j.williams@intel.com>
+It is broken for FAT because FAT has different granularities for different timestamps so it cannot put the correct value in the sb as that only allows one granularity.  Your patch is totally broken for fat as it would be immediately obvious if you spent a few minutes looking at the code...
 
-I just reserve the right to go push it down a level if the kernel ever
-grows more dax_synchronous() users that do that safety check.
+Best regards,
+
+	Anton
+
+> 
+> -Deepa
+
+
+-- 
+Anton Altaparmakov <anton at tuxera.com> (replace at with @)
+Lead in File System Development, Tuxera Inc., http://www.tuxera.com/
+Linux NTFS maintainer
+
