@@ -2,111 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A6AB7A00B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 06:31:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A8F7A096
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 07:51:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbfG3Ebr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 00:31:47 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45131 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726250AbfG3Ebr (ORCPT
+        id S1726125AbfG3Fve (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 01:51:34 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:35851 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfG3Fve (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 00:31:47 -0400
-Received: by mail-pl1-f196.google.com with SMTP id y8so28374257plr.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2019 21:31:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Jff1v1+xBPkVNib6smzi9or+Z5ivIfKl1/5fyTJeUXM=;
-        b=iUwi2yxDTTmnyE3W9f7x2PRFahy0EfU0FRkjor6FL8ZBn1HAc2NNHhXNQiP7DxiNXu
-         zexrCt1ieoP6GiruyGPiscfXflKZOURfcgJM0pwFS/XDldhQqEZTrJtDVEhimzEVxy8M
-         woNn/63idoITGhRZHnK2nEAbwDzdkrb5pqT2U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Jff1v1+xBPkVNib6smzi9or+Z5ivIfKl1/5fyTJeUXM=;
-        b=eFCkN3Xfbqsqx5DhOclTPd7M5Jbp/m4TpDP3a5aYbVEyHcFNqwfYr/BGX5XfUMWQhV
-         zGfk29nZIY8Kur6RywKF536pR93PSpCJMc7Rhw65GQDR867czvNYscR/mE3WB1icj4+e
-         qWhASaEswH9jPubR00kWKUuce+pwwlGbIMxVHJNRShl6p3thNg4NfI+gYekoxveymS+o
-         9glwwF49aMyBTjEP9Z4QbjqJtcmrY7920aipTvMxj+enjVED26e6fWOryoOpu6lmPCNG
-         JMufEuiQj8GdMVpXcq2DgnGOVJ3T86TQ9WHW2cqMhnSuiPjkRHDOc8XsS0BVvNhafcif
-         dbJw==
-X-Gm-Message-State: APjAAAW0JbuahvDhyCzxhuzudWRaAIGZwPqSDQMKhg106IoU9vZIqmEH
-        MWOriPQrTgH+B4sOp8VtseQScA==
-X-Google-Smtp-Source: APXvYqzLt+3JbxlxdApPdi1+DZco+EZiCDg4gvrywPkbPKK4SrOK6PKWeBkEZPzVR2ez5PRxBD9nvA==
-X-Received: by 2002:a17:902:f082:: with SMTP id go2mr118837503plb.25.1564461106724;
-        Mon, 29 Jul 2019 21:31:46 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id v12sm54532952pjk.13.2019.07.29.21.31.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 21:31:45 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 21:31:44 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, arnd@arndb.de,
-        y2038@lists.linaro.org, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com
-Subject: Re: [PATCH 19/20] pstore: fs superblock limits
-Message-ID: <201907292129.AC796230@keescook>
-References: <20190730014924.2193-1-deepa.kernel@gmail.com>
- <20190730014924.2193-20-deepa.kernel@gmail.com>
+        Tue, 30 Jul 2019 01:51:34 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 18BD71BF20B;
+        Tue, 30 Jul 2019 05:51:25 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v5 00/14] Provide generic top-down mmap layout functions
+Date:   Tue, 30 Jul 2019 01:50:59 -0400
+Message-Id: <20190730055113.23635-1-alex@ghiti.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730014924.2193-20-deepa.kernel@gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 06:49:23PM -0700, Deepa Dinamani wrote:
-> Also update the gran since pstore has microsecond granularity.
+This series introduces generic functions to make top-down mmap layout
+easily accessible to architectures, in particular riscv which was
+the initial goal of this series.
+The generic implementation was taken from arm64 and used successively
+by arm, mips and finally riscv.
 
-So, I'm fine with this, but technically the granularity depends on the
-backend storage... many have no actual time keeping, though. My point is,
-pstore's timestamps are really mostly a lie, but the most common backend
-(ramoops) is seconds-granularity.
+Note that in addition the series fixes 2 issues:
+- stack randomization was taken into account even if not necessary.
+- [1] fixed an issue with mmap base which did not take into account
+  randomization but did not report it to arm and mips, so by moving
+  arm64 into a generic library, this problem is now fixed for both
+  architectures.
 
-So, I'm fine with this, but it's a lie but it's a lie that doesn't
-matter, so ...
+This work is an effort to factorize architecture functions to avoid
+code duplication and oversights as in [1].
 
-Acked-by: Kees Cook <keescook@chromium.org>
+[1]: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1429066.html
 
-I'm open to suggestions to improve it...
+Changes in v5:
+  - Fix [PATCH 11/14]
+  - Rebase on top of v5.3rc2 and commit
+    "riscv: kbuild: add virtual memory system selection"
+  - [PATCH 14/14] now takes into account the various virtual memory systems
 
--Kees
+Changes in v4:
+  - Make ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT select ARCH_HAS_ELF_RANDOMIZE
+    by default as suggested by Kees,
+  - ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT depends on MMU and defines the
+    functions needed by ARCH_HAS_ELF_RANDOMIZE => architectures that use
+    the generic mmap topdown functions cannot have ARCH_HAS_ELF_RANDOMIZE
+    selected without MMU, but I think it's ok since randomization without
+    MMU does not add much security anyway.
+  - There is no common API to determine if a process is 32b, so I came up with
+    !IS_ENABLED(CONFIG_64BIT) || is_compat_task() in [PATCH v4 12/14].
+  - Mention in the change log that x86 already takes care of not offseting mmap
+    base address if the task does not want randomization.
+  - Re-introduce a comment that should not have been removed.
+  - Add Reviewed/Acked-By from Paul, Christoph and Kees, thank you for that.
+  - I tried to minimize the changes from the commits in v3 in order to make
+    easier the review of the v4, the commits changed or added are:
+    - [PATCH v4 5/14]
+    - [PATCH v4 8/14]
+    - [PATCH v4 11/14]
+    - [PATCH v4 12/14]
+    - [PATCH v4 13/14]
 
-> 
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Cc: anton@enomsg.org
-> Cc: ccross@android.com
-> Cc: keescook@chromium.org
-> Cc: tony.luck@intel.com
-> ---
->  fs/pstore/inode.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-> index 89a80b568a17..ee752f9fda57 100644
-> --- a/fs/pstore/inode.c
-> +++ b/fs/pstore/inode.c
-> @@ -388,7 +388,9 @@ static int pstore_fill_super(struct super_block *sb, void *data, int silent)
->  	sb->s_blocksize_bits	= PAGE_SHIFT;
->  	sb->s_magic		= PSTOREFS_MAGIC;
->  	sb->s_op		= &pstore_ops;
-> -	sb->s_time_gran		= 1;
-> +	sb->s_time_gran         = NSEC_PER_USEC;
-> +	sb->s_time_min		= S64_MIN;
-> +	sb->s_time_max		= S64_MAX;
->  
->  	parse_options(data);
->  
-> -- 
-> 2.17.1
-> 
+Changes in v3:
+  - Split into small patches to ease review as suggested by Christoph
+    Hellwig and Kees Cook
+  - Move help text of new config as a comment, as suggested by Christoph
+  - Make new config depend on MMU, as suggested by Christoph
+
+Changes in v2 as suggested by Christoph Hellwig:
+  - Preparatory patch that moves randomize_stack_top
+  - Fix duplicate config in riscv
+  - Align #if defined on next line => this gives rise to a checkpatch
+    warning. I found this pattern all around the tree, in the same proportion
+    as the previous pattern which was less pretty:
+    git grep -C 1 -n -P "^#if defined.+\|\|.*\\\\$"
+
+Alexandre Ghiti (14):
+  mm, fs: Move randomize_stack_top from fs to mm
+  arm64: Make use of is_compat_task instead of hardcoding this test
+  arm64: Consider stack randomization for mmap base only when necessary
+  arm64, mm: Move generic mmap layout functions to mm
+  arm64, mm: Make randomization selected by generic topdown mmap layout
+  arm: Properly account for stack randomization and stack guard gap
+  arm: Use STACK_TOP when computing mmap base address
+  arm: Use generic mmap top-down layout and brk randomization
+  mips: Properly account for stack randomization and stack guard gap
+  mips: Use STACK_TOP when computing mmap base address
+  mips: Adjust brk randomization offset to fit generic version
+  mips: Replace arch specific way to determine 32bit task with generic
+    version
+  mips: Use generic mmap top-down layout and brk randomization
+  riscv: Make mmap allocation top-down by default
+
+ arch/Kconfig                       |  11 +++
+ arch/arm/Kconfig                   |   2 +-
+ arch/arm/include/asm/processor.h   |   2 -
+ arch/arm/kernel/process.c          |   5 --
+ arch/arm/mm/mmap.c                 |  52 --------------
+ arch/arm64/Kconfig                 |   2 +-
+ arch/arm64/include/asm/processor.h |   2 -
+ arch/arm64/kernel/process.c        |   8 ---
+ arch/arm64/mm/mmap.c               |  72 -------------------
+ arch/mips/Kconfig                  |   2 +-
+ arch/mips/include/asm/processor.h  |   5 --
+ arch/mips/mm/mmap.c                |  84 ----------------------
+ arch/riscv/Kconfig                 |  13 ++++
+ fs/binfmt_elf.c                    |  20 ------
+ include/linux/mm.h                 |   2 +
+ kernel/sysctl.c                    |   6 +-
+ mm/util.c                          | 107 ++++++++++++++++++++++++++++-
+ 17 files changed, 139 insertions(+), 256 deletions(-)
 
 -- 
-Kees Cook
+2.20.1
+
