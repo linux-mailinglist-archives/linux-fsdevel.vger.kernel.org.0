@@ -2,79 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93F067B3FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 22:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0378F7B428
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 22:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbfG3UDw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 16:03:52 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:47489 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfG3UDw (ORCPT
+        id S1728060AbfG3UPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 16:15:21 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:35167 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727970AbfG3UPF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 16:03:52 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MFK8N-1i8DfT26g5-00FkfH; Tue, 30 Jul 2019 22:03:50 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 29/29] compat_ioctl: remove unused convert_in_user macro
-Date:   Tue, 30 Jul 2019 22:01:34 +0200
-Message-Id: <20190730200145.1081541-10-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190730200145.1081541-1-arnd@arndb.de>
-References: <20190730192552.4014288-1-arnd@arndb.de>
- <20190730200145.1081541-1-arnd@arndb.de>
+        Tue, 30 Jul 2019 16:15:05 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j19so29204331otq.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2019 13:15:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5RzApq6XFoztBnIqNk8vSnTrtbUfODyGJJfunMohfoM=;
+        b=Zwx0RQpMg/Mqj/9z5S89A3ZEJVMpYC9h+xxOXAaZcuU5PCAM8m9Gqaz//RnKDBGDqW
+         9liyDLB1BwWzU+ZNcxIkUlAhEM4dwaxEWMetA5zngGXxvLUm9KzmX8yqMCHjIc+8qA1I
+         4Kz3jT1Z/FAcCfiuMTNuiLT9z2kiwc9S0x8YZz6OVlR8h69bqZIY4y5U2CziwyfAHt6S
+         8CcPZTmDK53Mwk0qwS3iX6X/MjsfAEfTAQNYo9qJOCNeLP9BFCn9fMgZ4bp/B5yi3zOB
+         uh6pK4X9QLjcA5W2PzdnflMG8qYA3C40MW87vpeyNAEv23qLtzsWi1Ofnp3dkIf+XH59
+         Buzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5RzApq6XFoztBnIqNk8vSnTrtbUfODyGJJfunMohfoM=;
+        b=LVeFGkpq7jPDM1Y7zKBmWo6ay3QdDddGXTy6aijtdx8abWT21Fmhbvo0NRZIgfqTxk
+         nl//DPtWg/w/xXYaNVWRW3s2/f3sb/uDftnYfvl2NkSkpXxg1B3mcNXgWxB8DvFdptzD
+         M2eP/XBYu/MKCTllpMes6ChlXHWvhFoAwSWHqRKYSpJ34R/1KoxBWHOdrqyPcsiB6cVN
+         6gL/ZzMVeChq7f8HrdrGqTr6NdaRs9EfcpBGvW3qOWUb8wrhbA/RYF559Ro5AZeoiZyJ
+         pTyQmu4Va6pzwMM1kNsO2ioXRab6B6hIc4q3zTmBQbo5eYdKEKZyNpAN/4soI1921OKS
+         vKKg==
+X-Gm-Message-State: APjAAAVNDMJHG/qYW+cPbD8BjwqkEIh0vLE1gpaLoYCY5HmnN3TBQFMW
+        KjPswJgj9ZiBHklnU92ylHJKtTSoXjRQRbkK1ENTbA==
+X-Google-Smtp-Source: APXvYqw9ObVuL9+XuGR4o0J2QBLrDkVcN3aYitNJvsGPbv5ZPcYvxRI6eCPCNx+pUD4yOvd0Fq+ICTQ9s+BKXhNpUpI=
+X-Received: by 2002:a9d:7248:: with SMTP id a8mr23671169otk.363.1564517704838;
+ Tue, 30 Jul 2019 13:15:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:UPHnmaxQO2Y5UPjFxToRbWqVgMBmWu69lOVcBLM59CbYK+TCCtk
- iXAL+WGyqVxND7dGZvj3prqCvzu+zKPkck1Y19QGgPFfYZKw/1a19odfItMh+3Xs7fk20ih
- KmzNO5tvoX1a2eonX0BqH09rjq6NlGlMujBwXAL6X862s+Rf1an9ITfEdxlm4gfufZMGn+w
- 8Qs8oUnx83kAYmE6uccPg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8BsgjV30L1s=:7g7Z6TZ7orqgEjViPiUUIW
- pQ+vmo7sdb3mi3EDA8aGDQkEkx1UheLDituizs76GJw+v/VWNY9Lg8/pL/ca+AsxcHYCKDLJ5
- 7oK6vWEPjf7aqoEpbKKKfHR7uJeJ4pGHMIcN1f7h2veYqD2aZPC3V8N+DnOZiQjgZp8JYecTK
- MCUXDF3GzFJblnKEWQfr0ckbWQh2LyK4gvl01WmmWfMp4e3YueaT6bWWvzeeiDgDV7alEmv6G
- lTeI1OMwweQetjIry0nKLkVOLT0lcrWjnp2g+hrThGrQkBtPrgQF1A7VRMhlWeyKDgyY129na
- LemT5BUDGA+fp1Q084pdR5yDHpqPFqHZH+fqAsJ4RW3NvaqiX9VY8gs4rKPpJ16p+v4UN9jRd
- vhESgtItrUDm1+1F/Rp7hB6NR1KmaZJ3/k8U4VXfqofaGL1+QDS9987yYOoRK9Rnm3ODdU5b6
- FJHOLPALtXHpWhnEsiVu6c/BXRuSMNK21tU6oI7mE7cH3zZe+58oHQs2O53w7z77kayiYH/Eo
- fonUwuIO8hjF56fze0YkgUEV4GPW4bG0+uIySxFSbqS6t2YnQJKVX7zItCTv7NzcmgR0imOJy
- M1J5T3p/bcywTehZizolm1PwPSo8rKuUiKIogMbJMEskSt9/H3kRtTYGNVkuayI4NS28MeQXh
- vVui0n2TB6SDM2zUTVQdbbxEhOoW8QlKGLXR6LvFZnyUZQavfcUeLwpJ2IQ7Qb8W4oD5N6JOG
- +b9uwCsZ8qG8eJ6IQAUi2y4lYGkHUw/05idSiA==
+References: <20190730192552.4014288-1-arnd@arndb.de> <20190730195819.901457-1-arnd@arndb.de>
+In-Reply-To: <20190730195819.901457-1-arnd@arndb.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 30 Jul 2019 13:14:52 -0700
+Message-ID: <CAPcyv4i_nHzV155RcgnAQ189aq2Lfd2g8pA1D5NbZqo9E_u+Dw@mail.gmail.com>
+Subject: Re: [PATCH v5 13/29] compat_ioctl: move more drivers to compat_ptr_ioctl
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-iio@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        sparclinux@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>, qat-linux@intel.com,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        linux-input@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        David Sterba <dsterba@suse.com>,
+        platform-driver-x86@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux Wireless List <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tee-dev@lists.linaro.org,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The last users are all gone, so let's remove the macro as well.
+On Tue, Jul 30, 2019 at 12:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The .ioctl and .compat_ioctl file operations have the same prototype so
+> they can both point to the same function, which works great almost all
+> the time when all the commands are compatible.
+>
+> One exception is the s390 architecture, where a compat pointer is only
+> 31 bit wide, and converting it into a 64-bit pointer requires calling
+> compat_ptr(). Most drivers here will never run in s390, but since we now
+> have a generic helper for it, it's easy enough to use it consistently.
+>
+> I double-checked all these drivers to ensure that all ioctl arguments
+> are used as pointers or are ignored, but are not interpreted as integer
+> values.
+>
+> Acked-by: Jason Gunthorpe <jgg@mellanox.com>
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: David Sterba <dsterba@suse.com>
+> Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/nvdimm/bus.c                        | 4 ++--
+[..]
+> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+> index 798c5c4aea9c..6ca142d833ab 100644
+> --- a/drivers/nvdimm/bus.c
+> +++ b/drivers/nvdimm/bus.c
+> @@ -1229,7 +1229,7 @@ static const struct file_operations nvdimm_bus_fops = {
+>         .owner = THIS_MODULE,
+>         .open = nd_open,
+>         .unlocked_ioctl = bus_ioctl,
+> -       .compat_ioctl = bus_ioctl,
+> +       .compat_ioctl = compat_ptr_ioctl,
+>         .llseek = noop_llseek,
+>  };
+>
+> @@ -1237,7 +1237,7 @@ static const struct file_operations nvdimm_fops = {
+>         .owner = THIS_MODULE,
+>         .open = nd_open,
+>         .unlocked_ioctl = dimm_ioctl,
+> -       .compat_ioctl = dimm_ioctl,
+> +       .compat_ioctl = compat_ptr_ioctl,
+>         .llseek = noop_llseek,
+>  };
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/compat_ioctl.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 1ed32cca2176..1e740f4406d3 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -52,13 +52,6 @@
- 
- #include <linux/sort.h>
- 
--#define convert_in_user(srcptr, dstptr)			\
--({							\
--	typeof(*srcptr) val;				\
--							\
--	get_user(val, srcptr) || put_user(val, dstptr);	\
--})
--
- static int do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	int err;
--- 
-2.20.0
-
+Acked-by: Dan Williams <dan.j.williams@intel.com>
