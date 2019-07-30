@@ -2,69 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CFD07B52C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 23:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44CF47B569
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 00:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387400AbfG3Vnb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 17:43:31 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55774 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfG3Vnb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 17:43:31 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3BC1314E89C44;
-        Tue, 30 Jul 2019 14:43:30 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 14:43:29 -0700 (PDT)
-Message-Id: <20190730.144329.2267958732987589628.davem@davemloft.net>
-To:     arnd@arndb.de
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        mst@redhat.com, jarkko.sakkinen@linux.intel.com, jgg@mellanox.com,
-        jkosina@suse.cz, stefanha@redhat.com,
-        linux-integrity@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, linux-usb@vger.kernel.org,
-        linux-input@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        ceph-devel@vger.kernel.org
-Subject: Re: [PATCH v5 12/29] compat_ioctl: move drivers to compat_ptr_ioctl
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190730195227.742215-1-arnd@arndb.de>
-References: <20190730192552.4014288-1-arnd@arndb.de>
-        <20190730195227.742215-1-arnd@arndb.de>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 30 Jul 2019 14:43:31 -0700 (PDT)
+        id S2387915AbfG3WBG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 18:01:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387630AbfG3WBG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jul 2019 18:01:06 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E44D4E8AC;
+        Tue, 30 Jul 2019 22:01:06 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 667E719724;
+        Tue, 30 Jul 2019 22:01:03 +0000 (UTC)
+Date:   Tue, 30 Jul 2019 18:01:02 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Pankaj Gupta <pagupta@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alasdair Kergon <agk@redhat.com>, jencce.kernel@gmail.com
+Subject: Re: dm: fix dax_dev NULL dereference
+Message-ID: <20190730220102.GA15604@redhat.com>
+References: <20190730113708.14660-1-pagupta@redhat.com>
+ <2030283543.5419072.1564486701158.JavaMail.zimbra@redhat.com>
+ <20190730190737.GA14873@redhat.com>
+ <CAPcyv4i10K3QdSwa3EF9t8pS-QrB9YcBEMy49N1PnYQzCkBJCw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4i10K3QdSwa3EF9t8pS-QrB9YcBEMy49N1PnYQzCkBJCw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 30 Jul 2019 22:01:06 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 30 Jul 2019 21:50:28 +0200
+On Tue, Jul 30 2019 at  5:38pm -0400,
+Dan Williams <dan.j.williams@intel.com> wrote:
 
-> Each of these drivers has a copy of the same trivial helper function to
-> convert the pointer argument and then call the native ioctl handler.
+> On Tue, Jul 30, 2019 at 12:07 PM Mike Snitzer <snitzer@redhat.com> wrote:
+> >
+> > I staged the fix (which I tweaked) here:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-5.3&id=95b9ebb78c4c733f8912a195fbd0bc19960e726e
 > 
-> We now have a generic implementation of that, so use it.
-> 
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-> Reviewed-by: Jiri Kosina <jkosina@suse.cz>
-> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Thanks for picking this up Mike, but I'd prefer to just teach
+> dax_synchronous() to return false if the passed in dax_dev is NULL.
+> Thoughts?
 
-I assume this has to go via your series, thus:
+I considered that too but I moved away from it because I'm so used to
+the various block interfaces requiring the caller pass a non-NULL
+pointer (e.g. request_queue):
 
-Acked-by: David S. Miller <davem@davemloft.net>
+$ grep -ri return drivers/md/dm-table.c | grep \&\&
+drivers/md/dm-table.c:        return dev->dax_dev && dax_synchronous(dev->dax_dev);
+drivers/md/dm-table.c:        return q && blk_queue_zoned_model(q) == *zoned_model;
+drivers/md/dm-table.c:        return q && blk_queue_zone_sectors(q) == *zone_sectors;
+drivers/md/dm-table.c:        return q && (q->queue_flags & flush);
+drivers/md/dm-table.c:        return q && blk_queue_nonrot(q);
+drivers/md/dm-table.c:        return q && !blk_queue_add_random(q);
+drivers/md/dm-table.c:        return q && !q->limits.max_write_same_sectors;
+drivers/md/dm-table.c:        return q && !q->limits.max_write_zeroes_sectors;
+drivers/md/dm-table.c:        return q && !blk_queue_discard(q);
+drivers/md/dm-table.c:        return q && !blk_queue_secure_erase(q);
+drivers/md/dm-table.c:        return q && bdi_cap_stable_pages_required(q->backing_dev_info);
+
+I'm fine with however you'd like to skin this cat though.
+
+Just let me know and I'll keep/drop this patch accordingly.
+
+Thanks,
+Mike
