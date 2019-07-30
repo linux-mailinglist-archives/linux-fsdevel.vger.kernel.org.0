@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F363279E53
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 03:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8115879E31
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 03:50:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730821AbfG3BuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jul 2019 21:50:24 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42671 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730780AbfG3BuY (ORCPT
+        id S1730834AbfG3Bu0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jul 2019 21:50:26 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43564 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730829AbfG3BuZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 21:50:24 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so28931294pff.9;
-        Mon, 29 Jul 2019 18:50:24 -0700 (PDT)
+        Mon, 29 Jul 2019 21:50:25 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i189so28949573pfg.10;
+        Mon, 29 Jul 2019 18:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RW8wa5CmvNow6jsuxhZgtbxifDJuKVtv4F+8WUaIVIU=;
-        b=YwmjPnB19KAj+BjmIJ50cdgeFM5UHFfUDO0cpXF0s+JcgHsVn1lYYhQ/4LCBEuEQ81
-         4BZt/eGZWaz2Yfk+Dq8a8mJWVY5q3Xfq5+S0qlPEKml8x72HTXAYahrfG2/Tocc5fT5r
-         85xAHR4qucnnndtFeLW244mj+SpwP590cPXHRy+WJkiO+ffBRDC6SvcdzwcE3wgV5wJ3
-         NbCapeZbQOcVTVmfTlZ1xeF5mXVPFYeo1f3frjsMEjiSFOb+t1IOymYCw/o/1s8n3s4A
-         Sb0g7mrj/CnrmyOB8+sDfwEwrqG5ovtGVpkqjJjnYicE4aGDMpfeUEu3YNMqeZFv6kjM
-         6mLQ==
+        bh=o10DUO5dEIQstB6p+42EOsG96pidROgmozIpVkiPhZk=;
+        b=AtD608eCTmGCbG2RQYuTeyjUti0VNtTfCfQ+vCcFRD8QDQZmw7/F8T6mE670/qTYNj
+         31zi69dyn7ge70xQeKw5o2EYGqK9oaYEXotVW/WEbgtBnHEZXH8kIPbiBpr89RyMNPq9
+         SdPoQsFtGTW2KfC03miJEC+JIE1MQLdiIwoIGflkA2v/8dcje9cA0WjIXE+VSRts3NRv
+         jMHzFkskc3vie/+KbhBuP8CqduvHG/iugP3Xvs7lS4ktvWS4xB4seh19oxG5yr/n7DKD
+         lToykY13dw15f6j9iL43VkEwNrUx1pVtcONfcnOJ5TKV2BE2L73KmeI2WZmauqY4eF7B
+         +csw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RW8wa5CmvNow6jsuxhZgtbxifDJuKVtv4F+8WUaIVIU=;
-        b=HDZfO5b6sUjdMD1RLdfNpx4neJEbx2WFJ+IJ9XC6yXLeWS84VxYulOEWC7NzodBfgF
-         K2l5SmOGjs+js0uyWwOVAcchl6/NzoFT9n0qwb11RJR9WN7Miw2xSAEXL8JrOrDaeqVI
-         9arVmfuME47kyDuHJ5j1D244bjjQQ5KIACtLmAIXC7YMvInKQh4YSdTzMkqCGjcRMwIF
-         d/hvBJO17k0n4akcnk+qUQBVDM+YS/u6woG/Jn4OgalUPzu18eTK7Pl9fKFQb7N49VpR
-         yNTY6tXwHFE//B72RgvkOzdjV27yUYbsdjamTBBwtx0BjaPqchp3clcWRvWz5AdqEjU1
-         8MIg==
-X-Gm-Message-State: APjAAAWlDwXodu6BJ+U2b4fHAZKp530oYiNoA4lxrynjUz5BLQQgfnXJ
-        TfgdejmhH6B3+BGgimXkMBg=
-X-Google-Smtp-Source: APXvYqz29EMBCshdmdETjuOL+Tr9F3tUgVJAtBZcxutuiiC/3ISyMH46dd/NGOfeMhYKjxoEaaHKkA==
-X-Received: by 2002:a62:174a:: with SMTP id 71mr40680263pfx.140.1564451423830;
-        Mon, 29 Jul 2019 18:50:23 -0700 (PDT)
+        bh=o10DUO5dEIQstB6p+42EOsG96pidROgmozIpVkiPhZk=;
+        b=ZJZ/m0fFI+PvvAeLWo3j3pXhaG1UYc/nmVSEI84JA7o2Riu6Yy4iWwSIsGvp5gxV0G
+         I05unEULeJyZUNZzzwS6G2mkyAyynY99lWPKUCpW3rLHwN528McUHftA2OQJigskZ5vN
+         Bk8LMpl5CPxicwaLy8tM5tYe6tWtqxcTfUUFOYW5pvKHGAgRRg1tAMfJA33aD4ZdZ0L+
+         Fwf5vt66LYa+3Mhvmr4k6QuNsZZ4PofTABUL3+vEoNjFP0QjameKqH7yNtZ6debKGViD
+         aHAh+/sH6xSfiE7zqj5oUN8DiEf5KORbSu+pynjVkIk7AJWW62R5F1b77YNOR5igmxFS
+         IQJQ==
+X-Gm-Message-State: APjAAAXditTDlpyXkrtLQXLrH7F15QAZrYF5fFXtxP8IbMCBexBRmId5
+        o6KjKCKjHMBHnOlW6YeFA0o=
+X-Google-Smtp-Source: APXvYqwNoGUy/BYWsCRcIxS2wctsm4ggNIqk3MCZ3a8pDhKO9QuJPxZuEulwOvT7X2WWllFjpJxxVg==
+X-Received: by 2002:aa7:96a4:: with SMTP id g4mr40955745pfk.193.1564451424669;
+        Mon, 29 Jul 2019 18:50:24 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
         by smtp.gmail.com with ESMTPSA id r6sm138807156pjb.22.2019.07.29.18.50.23
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 18:50:23 -0700 (PDT)
+        Mon, 29 Jul 2019 18:50:24 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de,
         y2038@lists.linaro.org
-Subject: [PATCH 04/20] mount: Add mount warning for impending timestamp expiry
-Date:   Mon, 29 Jul 2019 18:49:08 -0700
-Message-Id: <20190730014924.2193-5-deepa.kernel@gmail.com>
+Subject: [PATCH 05/20] utimes: Clamp the timestamps before update
+Date:   Mon, 29 Jul 2019 18:49:09 -0700
+Message-Id: <20190730014924.2193-6-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190730014924.2193-1-deepa.kernel@gmail.com>
 References: <20190730014924.2193-1-deepa.kernel@gmail.com>
@@ -59,39 +59,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The warning reuses the uptime max of 30 years used by the
-setitimeofday().
+POSIX is ambiguous on the behavior of timestamps for
+futimens, utimensat and utimes. Whether to return an
+error or silently clamp a timestamp beyond the range
+supported by the underlying filesystems is not clear.
 
-Note that the warning is only added for new filesystem mounts
-through the mount syscall. Automounts do not have the same warning.
+POSIX.1 section for futimens, utimensat and utimes says:
+(http://pubs.opengroup.org/onlinepubs/9699919799/functions/futimens.html)
+
+The file's relevant timestamp shall be set to the greatest
+value supported by the file system that is not greater
+than the specified time.
+
+If the tv_nsec field of a timespec structure has the special
+value UTIME_NOW, the file's relevant timestamp shall be set
+to the greatest value supported by the file system that is
+not greater than the current time.
+
+[EINVAL]
+    A new file timestamp would be a value whose tv_sec
+    component is not a value supported by the file system.
+
+The patch chooses to clamp the timestamps according to the
+filesystem timestamp ranges and does not return an error.
+This is in line with the behavior of utime syscall also
+since the POSIX page(http://pubs.opengroup.org/onlinepubs/009695399/functions/utime.html)
+for utime does not mention returning an error or clamping like above.
+
+Same for utimes http://pubs.opengroup.org/onlinepubs/009695399/functions/utimes.html
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 ---
- fs/namespace.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/utimes.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index b26778bdc236..5314fac8035e 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2739,6 +2739,17 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
- 	error = do_add_mount(real_mount(mnt), mountpoint, mnt_flags);
- 	if (error < 0)
- 		mntput(mnt);
-+
-+	if (!error && sb->s_time_max &&
-+	    (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
-+		char *buf = (char *)__get_free_page(GFP_KERNEL);
-+		char *mntpath = buf ? d_path(mountpoint, buf, PAGE_SIZE) : ERR_PTR(-ENOMEM);
-+
-+		pr_warn("Mounted %s file system at %s supports timestamps until 0x%llx\n",
-+			fc->fs_type->name, mntpath, (unsigned long long)sb->s_time_max);
-+		free_page((unsigned long)buf);
-+	}
-+
- 	return error;
- }
+diff --git a/fs/utimes.c b/fs/utimes.c
+index 350c9c16ace1..4c1a2ce90bbc 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -21,6 +21,7 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
+ 	int error;
+ 	struct iattr newattrs;
+ 	struct inode *inode = path->dentry->d_inode;
++	struct super_block *sb = inode->i_sb;
+ 	struct inode *delegated_inode = NULL;
  
+ 	error = mnt_want_write(path->mnt);
+@@ -36,16 +37,24 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
+ 		if (times[0].tv_nsec == UTIME_OMIT)
+ 			newattrs.ia_valid &= ~ATTR_ATIME;
+ 		else if (times[0].tv_nsec != UTIME_NOW) {
+-			newattrs.ia_atime.tv_sec = times[0].tv_sec;
+-			newattrs.ia_atime.tv_nsec = times[0].tv_nsec;
++			newattrs.ia_atime.tv_sec =
++				clamp(times[0].tv_sec, sb->s_time_min, sb->s_time_max);
++			if (times[0].tv_sec == sb->s_time_max || times[0].tv_sec == sb->s_time_min)
++				newattrs.ia_atime.tv_nsec = 0;
++			else
++				newattrs.ia_atime.tv_nsec = times[0].tv_nsec;
+ 			newattrs.ia_valid |= ATTR_ATIME_SET;
+ 		}
+ 
+ 		if (times[1].tv_nsec == UTIME_OMIT)
+ 			newattrs.ia_valid &= ~ATTR_MTIME;
+ 		else if (times[1].tv_nsec != UTIME_NOW) {
+-			newattrs.ia_mtime.tv_sec = times[1].tv_sec;
+-			newattrs.ia_mtime.tv_nsec = times[1].tv_nsec;
++			newattrs.ia_mtime.tv_sec =
++				clamp(times[1].tv_sec, sb->s_time_min, sb->s_time_max);
++			if (times[1].tv_sec >= sb->s_time_max || times[1].tv_sec == sb->s_time_min)
++				newattrs.ia_mtime.tv_nsec = 0;
++			else
++				newattrs.ia_mtime.tv_nsec = times[1].tv_nsec;
+ 			newattrs.ia_valid |= ATTR_MTIME_SET;
+ 		}
+ 		/*
 -- 
 2.17.1
 
