@@ -2,56 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D72D79E3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 03:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92CB379E43
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 03:51:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730955AbfG3Buv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1730947AbfG3Buv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 29 Jul 2019 21:50:51 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42249 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730911AbfG3Buk (ORCPT
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36624 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730918AbfG3Bul (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 21:50:40 -0400
-Received: by mail-pl1-f194.google.com with SMTP id ay6so28254432plb.9;
-        Mon, 29 Jul 2019 18:50:40 -0700 (PDT)
+        Mon, 29 Jul 2019 21:50:41 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k8so28231701plt.3;
+        Mon, 29 Jul 2019 18:50:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2ZSThE50NNeqhGeatQJKVePoQLkvHh5lNhLyxKc+P10=;
-        b=G/sRwmaWmQYl7mNyCUU4QUj5B6N3VaV1fxKTTDTNh1nNyTteIy7banRQTi7zWMIiq6
-         aasftDWeoTUZF9zqIVJSbqB8TfCk50NmbinX/dIRBEQ9pLaNYRqynThGYnGsMpjPhNqD
-         82pYQVfZcgVHrAg2l20u7bYK92+prDKCuFC4BsoVC0o/mqfy6iVphKr6eTuhT7tbkQyv
-         8Q3ZBH7oPtXLJKuMiaaqnWuJN70WcH+epSsSBPpqwQRTczQWwsJbRobUJTI9QQ9JwMKY
-         Cvjvh9inU3A4WoiwHMTNOtpie6kfHxH6GXMcnn4g03zohvAjTH3Cem3zkS11Ombsifci
-         2low==
+        bh=B53kfNAL5bPehU6SpckbeuA1BwDTxczPn/Y5JPnbD6I=;
+        b=eltNGhHdxejXM79qXFqifZMz3c9fD/tHWJqdYrJnjpWpRXTApoIF6g3lgi8ELjYpkm
+         WuD26NHfwxy2wLBeTgJHcAw5qX6l1WaxdGOZupq1cjJ6QHBlqGIyuz20MTzaO5M3PTin
+         G8jAkZ36iwHdVjHvXowRGWPGjBqjXCALDnj1IDslzPEUwXWSyiLjgFI8xgGOBtglRzBM
+         VndPR4HjWJMnQZKKn5dX3CPnddEaxI0TNj8m4dANAY5db6oTtrPvlAAltRadS9wZ7jwN
+         kdwxg9HM3PF39JUUhGkmI5Ul8vcYxCfuVZCOXbAJOH4tAVZZArwflc5KsohHLjSuLpVp
+         5Crg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2ZSThE50NNeqhGeatQJKVePoQLkvHh5lNhLyxKc+P10=;
-        b=Am6C+RMkQ85RXlN1vW4aatjQoG59vPnf3BBwDXQkNoxwV7pQ/znGRL5L1MphipDQZ8
-         hcu/kAvvqrunUgocSZD5H3hgRNTa5bK2+uVL9pA3E3pFIsyXAfHH9MM0v99LhU4JahqH
-         G7pdiRQixJ66ihfGwvZ9cSUDIJk3Caw05fZPDVEBNehqGBl3lY5o/olGx359DoU7Gx1u
-         CI7ophk0N/tvyIKnlXKqvCOu3dKmEZms9oOujwPR7vF+wL4P0BSzk3qDykbhbB9E0Y0H
-         GCiD6myKa/4wEYb5egscO34tsB8/9lP2dUjyOPQy9mRYY489CFinEbOq4WtggPoI9LAt
-         OoNQ==
-X-Gm-Message-State: APjAAAW+kmDz+7chPZCNes7LaYQbSxssVc1uRuyatAVNmykUxzLzWx2r
-        l4kgYQe5QsEBiQmDptlgX+M=
-X-Google-Smtp-Source: APXvYqzPSFQCjcYcdyjouStI1bcFGux0Ndao/REHUqNGuDSyZqW0Iz/8Z4xiR8hnOnkPDpeu+z6v4g==
-X-Received: by 2002:a17:902:ba96:: with SMTP id k22mr115650959pls.44.1564451440013;
+        bh=B53kfNAL5bPehU6SpckbeuA1BwDTxczPn/Y5JPnbD6I=;
+        b=ejau2OOcjCEtEYmnpVsBnndw2KLoeXbQY7GoRV8JX07d7yPdIL9u9RFNlgbIf6m2hJ
+         UOz26O3321H24MlJl/N6RLMXhMEUVrzV5Oa+nEQZfDmXZnhk9xQ3tW1RdU37X2LyEQv2
+         iaypv32jcsZUyrkY7R04Sq9fVjLCATsKcxYr7mIJE8Bb3fHGBVLibk4ZEppmCIN7Po6U
+         QlpT9Iubd0+7+xY7oaR3R0rIC4sbNywgSQSCHdQWaU6SzprjqU7kjy5xtiQkwdeYeGJs
+         Css7RHLDPD8NTwldnq1wUUdsAKtR6NpxDDlARX1MDla78fM2z0RuZxsJkVQekvYOrejl
+         APfA==
+X-Gm-Message-State: APjAAAVgT56f0Ai0PguXo9gmQ1+OjZTVSB8bL95HVsRehFf0SiagkFP9
+        j9Q9OUaA9MfrlJyTKMngIDo=
+X-Google-Smtp-Source: APXvYqzBrmFYzI1gA3MEAy0sqbGPWC4ZXkGLgmkSkfkzYyNBaIrlOjsnhxJve8s7Brg31n/F6xooVw==
+X-Received: by 2002:a17:902:2d01:: with SMTP id o1mr115526266plb.105.1564451440882;
         Mon, 29 Jul 2019 18:50:40 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id r6sm138807156pjb.22.2019.07.29.18.50.39
+        by smtp.gmail.com with ESMTPSA id r6sm138807156pjb.22.2019.07.29.18.50.40
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 18:50:39 -0700 (PDT)
+        Mon, 29 Jul 2019 18:50:40 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de,
-        y2038@lists.linaro.org, anton@enomsg.org, ccross@android.com,
-        keescook@chromium.org, tony.luck@intel.com
-Subject: [PATCH 19/20] pstore: fs superblock limits
-Date:   Mon, 29 Jul 2019 18:49:23 -0700
-Message-Id: <20190730014924.2193-20-deepa.kernel@gmail.com>
+        y2038@lists.linaro.org
+Subject: [PATCH 20/20] isofs: Initialize filesystem timestamp ranges
+Date:   Mon, 29 Jul 2019 18:49:24 -0700
+Message-Id: <20190730014924.2193-21-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190730014924.2193-1-deepa.kernel@gmail.com>
 References: <20190730014924.2193-1-deepa.kernel@gmail.com>
@@ -60,31 +59,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Also update the gran since pstore has microsecond granularity.
+Fill in the appropriate limits to avoid inconsistencies
+in the vfs cached inode times when timestamps are
+outside the permitted range.
+
+Reference: http://www.ecma-international.org/publications/standards/Ecma-119.htm
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: anton@enomsg.org
-Cc: ccross@android.com
-Cc: keescook@chromium.org
-Cc: tony.luck@intel.com
 ---
- fs/pstore/inode.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/isofs/inode.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-index 89a80b568a17..ee752f9fda57 100644
---- a/fs/pstore/inode.c
-+++ b/fs/pstore/inode.c
-@@ -388,7 +388,9 @@ static int pstore_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_blocksize_bits	= PAGE_SHIFT;
- 	sb->s_magic		= PSTOREFS_MAGIC;
- 	sb->s_op		= &pstore_ops;
--	sb->s_time_gran		= 1;
-+	sb->s_time_gran         = NSEC_PER_USEC;
-+	sb->s_time_min		= S64_MIN;
-+	sb->s_time_max		= S64_MAX;
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index 9e30d8703735..62c0462dc89f 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -30,6 +30,9 @@
+ #include "isofs.h"
+ #include "zisofs.h"
  
- 	parse_options(data);
++/* max tz offset is 13 hours */
++#define MAX_TZ_OFFSET (52*15*60)
++
+ #define BEQUIET
+ 
+ static int isofs_hashi(const struct dentry *parent, struct qstr *qstr);
+@@ -801,6 +804,10 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
+ 	 */
+ 	s->s_maxbytes = 0x80000000000LL;
+ 
++	/* ECMA-119 timestamp from 1900/1/1 with tz offset */
++	s->s_time_min = mktime64(1900, 1, 1, 0, 0, 0) - MAX_TZ_OFFSET;
++	s->s_time_max = mktime64(U8_MAX+1900, 12, 31, 23, 59, 59) + MAX_TZ_OFFSET;
++
+ 	/* Set this for reference. Its not currently used except on write
+ 	   which we don't have .. */
  
 -- 
 2.17.1
