@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F01D7A7AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 14:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFB4D7A7AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 14:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbfG3MHt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 08:07:49 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56550 "EHLO
+        id S1729214AbfG3MHw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 08:07:52 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56554 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbfG3MHs (ORCPT
+        with ESMTP id S1727206AbfG3MHu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:07:48 -0400
+        Tue, 30 Jul 2019 08:07:50 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hsQuL-0006QB-El; Tue, 30 Jul 2019 14:07:09 +0200
-Message-Id: <20190730112452.871257694@linutronix.de>
+        id 1hsQuL-0006QF-SX; Tue, 30 Jul 2019 14:07:09 +0200
+Message-Id: <20190730120321.193069837@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 30 Jul 2019 13:24:52 +0200
+Date:   Tue, 30 Jul 2019 13:24:53 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -32,40 +32,50 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Jan Kara <jack@suse.com>
-Subject: [patch 0/4] fs: Substitute bit-spinlocks for PREEMPT_RT and debugging
+Subject: [patch 1/4] locking/lockdep: Add Kconfig option for bit spinlocks
+References: <20190730112452.871257694@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Bit spinlocks are problematic if PREEMPT_RT is enabled. They disable
-preemption, which is undesired for latency reasons and breaks when regular
-spinlocks are taken within the bit_spinlock locked region because regular
-spinlocks are converted to 'sleeping spinlocks' on RT.
+Some usage sites of bit spinlocks have a substitution with regular
+spinlocks which depends on CONFIG_PREEMPT_RT. But this substitution can
+also be used to expose these locks to the regular lock debugging
+infrastructure, e.g. lockdep.
 
-Bit spinlocks are also not covered by lock debugging, e.g. lockdep. With
-the spinlock substitution in place, they can be exposed via a new config
-switch: CONFIG_DEBUG_BIT_SPINLOCKS.
+As this increases the size of affected data structures significantly this
+is guarded by a separate Kconfig switch.
 
-This series handles only buffer head and jbd2, but does not touch the
-hlist_bl bit-spinlock usage.
+Note, that only the bit spinlocks which have a substitution implemented
+will be covered by this. All other bit spinlocks evade lock debugging as
+before.
 
-For most usage sites of hlist_bl the protected sections are either really
-small and do not contain any RT incompatible code or can be trivially fixed
-up. In those cases converting the list_bl locking to spinlocks looks like
-overkill, but it still might make sense to provide it for debugging.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ lib/Kconfig.debug |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-The only exception for this is the code in drivers/md/dm-snap.c which has
-interesting nested locking in place (via kmemcache, cgroups, block ...)
-which completely escapes lockdep.
-
-I pondered making the hlist_bl locking conditional on a per source
-file define, but that does not work due to include hell.
-
-Thoughts?
-
-Thanks,
-
-	tglx
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1201,6 +1201,16 @@ config DEBUG_RWSEMS
+ 	  This debugging feature allows mismatched rw semaphore locks
+ 	  and unlocks to be detected and reported.
+ 
++config DEBUG_BIT_SPINLOCKS
++	bool "Bit spinlock debugging"
++	depends on DEBUG_SPINLOCK
++	help
++	  This debugging feature substitutes bit spinlocks in some use
++	  cases, e.g. buffer head, zram, with with regular spinlocks so
++	  these locks are exposed to lock debugging features.
++
++	  Not all bit spinlocks are covered by this.
++
+ config DEBUG_LOCK_ALLOC
+ 	bool "Lock debugging: detect incorrect freeing of live locks"
+ 	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
 
 
