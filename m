@@ -2,136 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0378F7B428
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 22:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD8467B4AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 22:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbfG3UPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 16:15:21 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35167 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727970AbfG3UPF (ORCPT
+        id S1728573AbfG3U5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 16:57:09 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39966 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727903AbfG3U5J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 16:15:05 -0400
-Received: by mail-ot1-f67.google.com with SMTP id j19so29204331otq.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2019 13:15:05 -0700 (PDT)
+        Tue, 30 Jul 2019 16:57:09 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so30683265pgj.7;
+        Tue, 30 Jul 2019 13:57:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5RzApq6XFoztBnIqNk8vSnTrtbUfODyGJJfunMohfoM=;
-        b=Zwx0RQpMg/Mqj/9z5S89A3ZEJVMpYC9h+xxOXAaZcuU5PCAM8m9Gqaz//RnKDBGDqW
-         9liyDLB1BwWzU+ZNcxIkUlAhEM4dwaxEWMetA5zngGXxvLUm9KzmX8yqMCHjIc+8qA1I
-         4Kz3jT1Z/FAcCfiuMTNuiLT9z2kiwc9S0x8YZz6OVlR8h69bqZIY4y5U2CziwyfAHt6S
-         8CcPZTmDK53Mwk0qwS3iX6X/MjsfAEfTAQNYo9qJOCNeLP9BFCn9fMgZ4bp/B5yi3zOB
-         uh6pK4X9QLjcA5W2PzdnflMG8qYA3C40MW87vpeyNAEv23qLtzsWi1Ofnp3dkIf+XH59
-         Buzg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uqJmpXDtzLBWNlelQWuVA7iDRDyZ/qRljFOmlSAAnn0=;
+        b=NqDbh2O85KBLGJwB95wfPrIlnecdhR2uQrPFwjpUkrDdeCEBoZOXuXAUHe9xcOwYdE
+         7eTcvJNfUnCdUWexszZcf+DvLJ1OdISQx9CQRlfNBJFR5U3aSpeH6jy6URKtMpx1OLef
+         QBBW/iq2fVyiwN5P9A3tVS9c80X+Pm16kPgexkp66bPV/A+6Kgkew/ofKlAUO9uUcrBI
+         efgD3JxOO564hLodKPUr4nYTImYgmOwz7byaI7fdBHyYEDVv9DOLlYMm/yNrkjJ65wAs
+         OFPF8ZW5FFPq4B1VlhQdTxfzAuDPHjJnAdP2T2CYXiO2DNiigyO64i83I8LN5jSVO5Ug
+         lc+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5RzApq6XFoztBnIqNk8vSnTrtbUfODyGJJfunMohfoM=;
-        b=LVeFGkpq7jPDM1Y7zKBmWo6ay3QdDddGXTy6aijtdx8abWT21Fmhbvo0NRZIgfqTxk
-         nl//DPtWg/w/xXYaNVWRW3s2/f3sb/uDftnYfvl2NkSkpXxg1B3mcNXgWxB8DvFdptzD
-         M2eP/XBYu/MKCTllpMes6ChlXHWvhFoAwSWHqRKYSpJ34R/1KoxBWHOdrqyPcsiB6cVN
-         6gL/ZzMVeChq7f8HrdrGqTr6NdaRs9EfcpBGvW3qOWUb8wrhbA/RYF559Ro5AZeoiZyJ
-         pTyQmu4Va6pzwMM1kNsO2ioXRab6B6hIc4q3zTmBQbo5eYdKEKZyNpAN/4soI1921OKS
-         vKKg==
-X-Gm-Message-State: APjAAAVNDMJHG/qYW+cPbD8BjwqkEIh0vLE1gpaLoYCY5HmnN3TBQFMW
-        KjPswJgj9ZiBHklnU92ylHJKtTSoXjRQRbkK1ENTbA==
-X-Google-Smtp-Source: APXvYqw9ObVuL9+XuGR4o0J2QBLrDkVcN3aYitNJvsGPbv5ZPcYvxRI6eCPCNx+pUD4yOvd0Fq+ICTQ9s+BKXhNpUpI=
-X-Received: by 2002:a9d:7248:: with SMTP id a8mr23671169otk.363.1564517704838;
- Tue, 30 Jul 2019 13:15:04 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uqJmpXDtzLBWNlelQWuVA7iDRDyZ/qRljFOmlSAAnn0=;
+        b=r6aedpXNi0/n2/PNRCHKTu9I6mnd/Y15hc4FLjK/fMC2Z4Zl7Dt66V2Upgz1PDBQZx
+         T7eLpVfHBaZQiv304FPJluupE/PEytKO9+rKL+tAIbyA3GFiBVEYaXFhMtoCp4SANMyl
+         muPCmE59tTe4VZ+RlTH7J6mJf/tmsAOYp2Ahj1yUlLlEpGZR+QHBHC5yGn549so9hbTs
+         +TXQ6LtIvQm6ciRbu4whAcCcbc4x5Bsw8nDQ5bZ/g9umw/qKF1jnZmnhXpfOaXS2p4xu
+         1ajhG4o6gGF5IdLU+bpIGRgBcO5aqXX++VwNohU11NgVW7fVNpO09Xmk35KfDjgM/9cy
+         d3qg==
+X-Gm-Message-State: APjAAAV6wENbnVEVEv0Xh730YGoN7oWRfSmlB4kjeX1Yam1WbEzLBZRR
+        OX+8ryBiZd5EPbxmsCZFznM=
+X-Google-Smtp-Source: APXvYqwcRbMlDK99ar4exlWQ05oz6IdyB0wpqZP985LoMg3ICsxtQKsx77BzPQMx87QOkdoFN7DPKQ==
+X-Received: by 2002:a63:1:: with SMTP id 1mr45751834pga.162.1564520228384;
+        Tue, 30 Jul 2019 13:57:08 -0700 (PDT)
+Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
+        by smtp.gmail.com with ESMTPSA id 137sm80565678pfz.112.2019.07.30.13.57.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 13:57:07 -0700 (PDT)
+From:   john.hubbard@gmail.com
+X-Google-Original-From: jhubbard@nvidia.com
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v4 0/3] mm/gup: add make_dirty arg to put_user_pages_dirty_lock()
+Date:   Tue, 30 Jul 2019 13:57:02 -0700
+Message-Id: <20190730205705.9018-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190730192552.4014288-1-arnd@arndb.de> <20190730195819.901457-1-arnd@arndb.de>
-In-Reply-To: <20190730195819.901457-1-arnd@arndb.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 30 Jul 2019 13:14:52 -0700
-Message-ID: <CAPcyv4i_nHzV155RcgnAQ189aq2Lfd2g8pA1D5NbZqo9E_u+Dw@mail.gmail.com>
-Subject: Re: [PATCH v5 13/29] compat_ioctl: move more drivers to compat_ptr_ioctl
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-iio@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        sparclinux@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>, qat-linux@intel.com,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        linux-input@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        David Sterba <dsterba@suse.com>,
-        platform-driver-x86@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux Wireless List <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 12:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> The .ioctl and .compat_ioctl file operations have the same prototype so
-> they can both point to the same function, which works great almost all
-> the time when all the commands are compatible.
->
-> One exception is the s390 architecture, where a compat pointer is only
-> 31 bit wide, and converting it into a 64-bit pointer requires calling
-> compat_ptr(). Most drivers here will never run in s390, but since we now
-> have a generic helper for it, it's easy enough to use it consistently.
->
-> I double-checked all these drivers to ensure that all ioctl arguments
-> are used as pointers or are ignored, but are not interpreted as integer
-> values.
->
-> Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: David Sterba <dsterba@suse.com>
-> Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
-> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/nvdimm/bus.c                        | 4 ++--
-[..]
-> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-> index 798c5c4aea9c..6ca142d833ab 100644
-> --- a/drivers/nvdimm/bus.c
-> +++ b/drivers/nvdimm/bus.c
-> @@ -1229,7 +1229,7 @@ static const struct file_operations nvdimm_bus_fops = {
->         .owner = THIS_MODULE,
->         .open = nd_open,
->         .unlocked_ioctl = bus_ioctl,
-> -       .compat_ioctl = bus_ioctl,
-> +       .compat_ioctl = compat_ptr_ioctl,
->         .llseek = noop_llseek,
->  };
->
-> @@ -1237,7 +1237,7 @@ static const struct file_operations nvdimm_fops = {
->         .owner = THIS_MODULE,
->         .open = nd_open,
->         .unlocked_ioctl = dimm_ioctl,
-> -       .compat_ioctl = dimm_ioctl,
-> +       .compat_ioctl = compat_ptr_ioctl,
->         .llseek = noop_llseek,
->  };
+From: John Hubbard <jhubbard@nvidia.com>
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+Changes since v3:
+
+* Fixed an unused variable warning in siw_mem.c
+
+Changes since v2:
+
+* Critical bug fix: remove a stray "break;" from the new routine.
+
+Changes since v1:
+
+* Instead of providing __put_user_pages(), add an argument to
+  put_user_pages_dirty_lock(), and delete put_user_pages_dirty().
+  This is based on the following points:
+
+    1. Lots of call sites become simpler if a bool is passed
+    into put_user_page*(), instead of making the call site
+    choose which put_user_page*() variant to call.
+
+    2. Christoph Hellwig's observation that set_page_dirty_lock()
+    is usually correct, and set_page_dirty() is usually a
+    bug, or at least questionable, within a put_user_page*()
+    calling chain.
+
+* Added the Infiniband driver back to the patch series, because it is
+  a caller of put_user_pages_dirty_lock().
+
+Unchanged parts from the v1 cover letter (except for the diffstat):
+
+Notes about the remaining patches to come:
+
+There are about 50+ patches in my tree [2], and I'll be sending out the
+remaining ones in a few more groups:
+
+    * The block/bio related changes (Jerome mostly wrote those, but I've
+      had to move stuff around extensively, and add a little code)
+
+    * mm/ changes
+
+    * other subsystem patches
+
+    * an RFC that shows the current state of the tracking patch set. That
+      can only be applied after all call sites are converted, but it's
+      good to get an early look at it.
+
+This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+("mm: introduce put_user_page*(), placeholder versions").
+
+John Hubbard (3):
+  mm/gup: add make_dirty arg to put_user_pages_dirty_lock()
+  drivers/gpu/drm/via: convert put_page() to put_user_page*()
+  net/xdp: convert put_page() to put_user_page*()
+
+ drivers/gpu/drm/via/via_dmablit.c          |  10 +-
+ drivers/infiniband/core/umem.c             |   5 +-
+ drivers/infiniband/hw/hfi1/user_pages.c    |   5 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c |   5 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c   |   5 +-
+ drivers/infiniband/sw/siw/siw_mem.c        |  10 +-
+ include/linux/mm.h                         |   5 +-
+ mm/gup.c                                   | 115 +++++++++------------
+ net/xdp/xdp_umem.c                         |   9 +-
+ 9 files changed, 61 insertions(+), 108 deletions(-)
+
+-- 
+2.22.0
+
