@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E337A0F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 08:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A824A7A0F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 08:03:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbfG3GCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 02:02:23 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:38151 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfG3GCX (ORCPT
+        id S1726232AbfG3GD2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 02:03:28 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:46003 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfG3GD1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 02:02:23 -0400
+        Tue, 30 Jul 2019 02:03:27 -0400
 X-Originating-IP: 79.86.19.127
 Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
         (Authenticated sender: alex@ghiti.fr)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 925B41BF20E;
-        Tue, 30 Jul 2019 06:02:17 +0000 (UTC)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 0BBC320006;
+        Tue, 30 Jul 2019 06:03:21 +0000 (UTC)
 From:   Alexandre Ghiti <alex@ghiti.fr>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Luis Chamberlain <mcgrof@kernel.org>,
@@ -35,9 +35,9 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v5 10/14] mips: Use STACK_TOP when computing mmap base address
-Date:   Tue, 30 Jul 2019 01:51:09 -0400
-Message-Id: <20190730055113.23635-11-alex@ghiti.fr>
+Subject: [PATCH v5 11/14] mips: Adjust brk randomization offset to fit generic version
+Date:   Tue, 30 Jul 2019 01:51:10 -0400
+Message-Id: <20190730055113.23635-12-alex@ghiti.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190730055113.23635-1-alex@ghiti.fr>
 References: <20190730055113.23635-1-alex@ghiti.fr>
@@ -48,39 +48,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-mmap base address must be computed wrt stack top address, using TASK_SIZE
-is wrong since STACK_TOP and TASK_SIZE are not equivalent.
+This commit simply bumps up to 32MB and 1GB the random offset
+of brk, compared to 8MB and 256MB, for 32bit and 64bit respectively.
 
+Suggested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Acked-by: Kees Cook <keescook@chromium.org>
 Acked-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- arch/mips/mm/mmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/mm/mmap.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
-index f5c778113384..a7e84b2e71d7 100644
+index a7e84b2e71d7..ff6ab87e9c56 100644
 --- a/arch/mips/mm/mmap.c
 +++ b/arch/mips/mm/mmap.c
-@@ -22,7 +22,7 @@ EXPORT_SYMBOL(shm_align_mask);
+@@ -16,6 +16,7 @@
+ #include <linux/random.h>
+ #include <linux/sched/signal.h>
+ #include <linux/sched/mm.h>
++#include <linux/sizes.h>
  
- /* gap between mmap and stack */
- #define MIN_GAP		(128*1024*1024UL)
--#define MAX_GAP		((TASK_SIZE)/6*5)
-+#define MAX_GAP		((STACK_TOP)/6*5)
- #define STACK_RND_MASK	(0x7ff >> (PAGE_SHIFT - 12))
+ unsigned long shm_align_mask = PAGE_SIZE - 1;	/* Sane caches */
+ EXPORT_SYMBOL(shm_align_mask);
+@@ -189,11 +190,11 @@ static inline unsigned long brk_rnd(void)
+ 	unsigned long rnd = get_random_long();
  
- static int mmap_is_legacy(struct rlimit *rlim_stack)
-@@ -54,7 +54,7 @@ static unsigned long mmap_base(unsigned long rnd, struct rlimit *rlim_stack)
- 	else if (gap > MAX_GAP)
- 		gap = MAX_GAP;
+ 	rnd = rnd << PAGE_SHIFT;
+-	/* 8MB for 32bit, 256MB for 64bit */
++	/* 32MB for 32bit, 1GB for 64bit */
+ 	if (TASK_IS_32BIT_ADDR)
+-		rnd = rnd & 0x7ffffful;
++		rnd = rnd & (SZ_32M - 1);
+ 	else
+-		rnd = rnd & 0xffffffful;
++		rnd = rnd & (SZ_1G - 1);
  
--	return PAGE_ALIGN(TASK_SIZE - gap - rnd);
-+	return PAGE_ALIGN(STACK_TOP - gap - rnd);
+ 	return rnd;
  }
- 
- #define COLOUR_ALIGN(addr, pgoff)				\
 -- 
 2.20.1
 
