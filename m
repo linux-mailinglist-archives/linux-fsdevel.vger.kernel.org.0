@@ -2,292 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DDF179E1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 03:49:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BBD679E2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 03:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730744AbfG3Btr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jul 2019 21:49:47 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43482 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730720AbfG3Btq (ORCPT
+        id S1730794AbfG3BuE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jul 2019 21:50:04 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36533 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730780AbfG3Bt7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 21:49:46 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r22so1564301pgk.10;
-        Mon, 29 Jul 2019 18:49:45 -0700 (PDT)
+        Mon, 29 Jul 2019 21:49:59 -0400
+Received: by mail-pg1-f196.google.com with SMTP id l21so29163037pgm.3;
+        Mon, 29 Jul 2019 18:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=inYutnH31FgDtfYuWWOFZ2I7YPGQBonCBQAoTuJNcqQ=;
-        b=u8Kamqa8djI35d/rQjguXHjF/370ksTiQHvT1LK1dRly1tChoKAieuB5vqE5HXzO1p
-         7A9E5BvvBfJy7IW30E2jik91mUj7sRCqooPUjEWFXlVOltQFUY3KhoE/v9BZ7D2HsLwr
-         7G5QVohyAwrrFCK2bESvweN3ZlXNLdqvVaZQFBaHZlrj2N5Mp9jLYxf6OOvn34gG9bi6
-         0Vl/aIMZWSbbf8lyYp+b37NGiw5+PXD0N2oL2BkG5amyCtEe3JPzh6tz4MZPoVu4T2le
-         lPbySQtYKgSeJxjjnX+M7FYmI0qKAVHfiel42DYNwZVSJ97ijOK2AKRDPJPd+B0yb8OH
-         G4bw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=xC2OMhdvxaLcA9We7nJNC9uJnugsrezxvB9jzWvgvfs=;
+        b=ZJ/pOTcX70i3pJxOfMJ0R187ZTJcXEXsQOkZLMvoUDkHfEzOQD0CbPWvV6rIQSQso/
+         J/4DvvhcXqcFuvNZ0QIE3LCvefC42aYyCRlJOylUU7na5VdgFiDnUZjn0QekEuHMUYzB
+         FvIR7w48Y3O3lfURiBHAcS20jIE8rH1eE03AuDGI6g63Zhuky1g0wWAs4EpjHU42BKUd
+         gNFCefrxVGaQ6oBI0uGmP1vD/mcPIS3rSCRNVGnJxtwyV7WB1++jAmiwHWxQx1567OdQ
+         NaWwVs1Zbr9Jdzjr3gasypWX2zMNphChaearxJf7PNHKGut45z0UsUGtAWOJ1B8/YJP/
+         L+HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=inYutnH31FgDtfYuWWOFZ2I7YPGQBonCBQAoTuJNcqQ=;
-        b=pauq5GN4XLIRgLz5Q4KWQZ5gpQvszUlrKwcgfM5meTvL0uVvlUKLzH1DbZXgjekl1t
-         gU6ANoFNzRGrzA2a93JatRy3hPZxoAatCVpFk5HZ4EsSCP1TRvBXzmzeO3V3nenHDq8d
-         tHIOnvXhpUBF92/XwbHnX8wurg47f9uvvgmZQHT3V6Mkd/XNt/09MRxERQucPNscSrzF
-         gP5mHVLPQT/9uBJsoHbGT3/Rb0n5Yo07GNzTumRBZvh86G6w63aUxw0e80hV+z25b8uv
-         JviDq2YzvEX4ZgANeO0LXm0l+msRdcA1dL8AdtHhBldStTXGQvG3i60tKr57v3Rsldu+
-         GQvQ==
-X-Gm-Message-State: APjAAAWpDptZWfj77yRDCVK5pWoFV3qfbb40wBf90Fs4Pt/l5e+hqk9W
-        egvpfaHrQNFdhh+mpcZX+KE=
-X-Google-Smtp-Source: APXvYqwvVXXv7AaDXGLnZYVyM1yVLtOSmgJe3iUIeXs3gryHPyfVxVrXXPhvkNq7utK5BPGGbVNkwQ==
-X-Received: by 2002:a62:7994:: with SMTP id u142mr40048632pfc.39.1564451385329;
-        Mon, 29 Jul 2019 18:49:45 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=xC2OMhdvxaLcA9We7nJNC9uJnugsrezxvB9jzWvgvfs=;
+        b=nOrnNGEFQwlukfnC1zkbf8cWEFDNnpj0eaYtxGujicdZmeTIN/02bX5L+bX0e43wuG
+         tkqR6DjN2QlXCLJHtHPZSv76eoHx+/gmjKN4EPvHBxKp9sXwNiPQku4OfLU8rFNhkOiJ
+         qp0E97FAgiOnn9FBHGO9xORZF7CJcQmwfudhwuyYt4YD5ZAzZ/0LaJ7b7/ldb0V6DBfW
+         Z7GyD0qm6KVS71lFT1xNvSBYIDeVRKjvVc6N5wE2u6FBq0uG2iJsY+2SXqtFDOFTSrFN
+         9S0Cn7oIIdLTAdAfq4XOuYuuxjI1OnGzL4JqjGnl6CKfPcIO9u+OERFo/Iy383Sc7LZm
+         L+iw==
+X-Gm-Message-State: APjAAAVkEyneJcgbh3OfbMrznkiI0rtYLnnmjJ26IKa6sM1mrQ/V5xYa
+        VhWsXYHVk9SlMaA9wYCffH4=
+X-Google-Smtp-Source: APXvYqwjN90VyCjAvq+0tZfhUxx2OyOgUKS5+4BbB5flOCXXyElRWY0uJnx0fdtJok+5LyYc/20JQg==
+X-Received: by 2002:a63:f13:: with SMTP id e19mr106525919pgl.132.1564451399146;
+        Mon, 29 Jul 2019 18:49:59 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id r6sm138807156pjb.22.2019.07.29.18.49.41
+        by smtp.gmail.com with ESMTPSA id r6sm138807156pjb.22.2019.07.29.18.49.58
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 18:49:44 -0700 (PDT)
+        Mon, 29 Jul 2019 18:49:58 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de,
-        y2038@lists.linaro.org, adilger.kernel@dilger.ca,
-        adrian.hunter@intel.com, aivazian.tigran@gmail.com, al@alarsen.net,
-        anna.schumaker@netapp.com, anton@enomsg.org, anton@tuxera.com,
-        asmadeus@codewreck.org, ccross@android.com,
-        ceph-devel@vger.kernel.org, coda@cs.cmu.edu,
-        codalist@coda.cs.cmu.edu, darrick.wong@oracle.com,
-        dedekind1@gmail.com, devel@lists.orangefs.org, dsterba@suse.com,
-        dushistov@mail.ru, dwmw2@infradead.org, ericvh@gmail.com,
-        gregkh@linuxfoundation.org, hch@infradead.org, hch@lst.de,
-        hirofumi@mail.parknet.co.jp, hubcap@omnibond.com,
-        idryomov@gmail.com, jack@suse.com, jaegeuk@kernel.org,
-        jaharkes@cs.cmu.edu, jfs-discussion@lists.sourceforge.net,
-        jlbec@evilplan.org, keescook@chromium.org,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-karma-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        lucho@ionkov.net, luisbg@kernel.org, martin@omnibond.com,
-        me@bobcopeland.com, mikulas@artax.karlin.mff.cuni.cz,
-        nico@fluxnic.net, phillip@squashfs.org.uk,
-        reiserfs-devel@vger.kernel.org, richard@nod.at, sage@redhat.com,
-        salah.triki@gmail.com, sfrench@samba.org, shaggy@kernel.org,
-        tj@kernel.org, tony.luck@intel.com,
-        trond.myklebust@hammerspace.com, tytso@mit.edu,
-        v9fs-developer@lists.sourceforge.net, yuchao0@huawei.com,
-        zyan@redhat.com
-Subject: [PATCH 00/20] vfs: Add support for timestamp limits
-Date:   Mon, 29 Jul 2019 18:49:04 -0700
-Message-Id: <20190730014924.2193-1-deepa.kernel@gmail.com>
+        y2038@lists.linaro.org
+Subject: [PATCH 02/20] vfs: Add timestamp_truncate() api
+Date:   Mon, 29 Jul 2019 18:49:06 -0700
+Message-Id: <20190730014924.2193-3-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190730014924.2193-1-deepa.kernel@gmail.com>
+References: <20190730014924.2193-1-deepa.kernel@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The series is an update and a more complete version of the
-previously posted series at
-https://lore.kernel.org/linux-fsdevel/20180122020426.2988-1-deepa.kernel@gmail.com/
+timespec_trunc() function is used to truncate a
+filesystem timestamp to the right granularity.
+But, the function does not clamp tv_sec part of the
+timestamps according to the filesystem timestamp limits.
 
-Thanks to Arnd Bergmann for doing a few preliminary reviews.
-They helped me fix a few issues I had overlooked.
+The replacement api: timestamp_truncate() also alters the
+signature of the function to accommodate filesystem
+timestamp clamping according to flesystem limits.
 
-The limits (sometimes granularity also) for the filesystems updated here are according to the
-following table:
+Note that the tv_nsec part is set to 0 if tv_sec is not within
+the range supported for the filesystem.
 
-File system   Time type                      Start year Expiration year Granularity
-cramfs        fixed                          0          0
-romfs         fixed                          0          0
-pstore        ascii seconds (27 digit ascii) S64_MIN    S64_MAX         NSEC_PER_USEC
-coda          INT64                          S64_MIN    S64_MAX         1
-omfs          64-bit milliseconds            0          U64_MAX/ 1000   NSEC_PER_MSEC
-befs          unsigned 48-bit seconds        0          0xffffffffffff  alloc_super
-bfs           unsigned 32-bit seconds        0          U32_MAX         alloc_super
-efs           unsigned 32-bit seconds        0          U32_MAX         alloc_super
-ext2          signed 32-bit seconds          S32_MIN    S32_MAX         alloc_super
-ext3          signed 32-bit seconds          S32_MIN    S32_MAX         alloc_super
-ext4 (old)    signed 32-bit seconds          S32_MIN    S32_MAX         alloc_super
-ext4 (extra)  34-bit seconds, 30-bit ns      S32_MIN    0x37fffffff	1
-freevxfs      u32 secs/usecs                 0          U32_MAX         alloc_super
-jffs2         unsigned 32-bit seconds        0          U32_MAX         alloc_super
-jfs           unsigned 32-bit seconds/ns     0          U32_MAX         1
-minix         unsigned 32-bit seconds        0          U32_MAX         alloc_super
-orangefs      u64 seconds                    0          U64_MAX         alloc_super
-qnx4          unsigned 32-bit seconds        0          U32_MAX         alloc_super
-qnx6          unsigned 32-bit seconds        0          U32_MAX         alloc_super
-reiserfs      unsigned 32-bit seconds        0          U32_MAX         alloc_super
-squashfs      unsigned 32-bit seconds        0          U32_MAX         alloc_super
-ufs1          signed 32-bit seconds          S32_MIN    S32_MAX         NSEC_PER_SEC
-ufs2          signed 64-bit seconds/u32 ns   S64_MIN    S64_MAX         1
-xfs           signed 32-bit seconds/ns       S32_MIN    S32_MAX         1
-ceph          unsigned 32-bit second/ns      0          U32_MAX         1000
-sysv          unsigned 32-bit seconds        0          U32_MAX         alloc_super
-affs          u32 day, min, ticks            1978       u32_max days    NSEC_PER_SEC
-nfsv2         unsigned 32-bit seconds/ns     0          U32_MAX         1
-nfsv3         unsigned 32-bit seconds/ns     0          U32_MAX         1000
-nfsv4         u64 seconds/u32 ns             S64_MIN    S64_MAX         1000
-isofs         u8 year since 1900 (fixable)   1900       2155            alloc_super
-hpfs          unsigned 32-bit seconds        1970       2106            alloc_super
-fat           7-bit years, 2s resolution     1980       2107
-cifs (smb)    7-bit years                    1980       2107
-cifs (modern) 64-bit 100ns since 1601        1601       30828
-adfs          40-bit cs since 1900           1900       2248
-9p (9P2000)   unsigned 32-bit seconds        1970       2106
-9p (9P2000.L) signed 64-bit seconds, ns      1970       S64_MAX
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+---
+ fs/inode.c         | 33 ++++++++++++++++++++++++++++++++-
+ include/linux/fs.h |  2 ++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-Granularity column filled in by the alloc_super() in the above table indicates that
-the granularity is NSEC_PER_SEC.
-Note that anything not mentioned above still has the default limits
-S64_MIN..S64_MAX.
-
-The patches in the series are as structured below:
-1. Add vfs support to maintain the limits per filesystem.
-2. Add a new timestamp_truncate() api for clamping timestamps
-   according to the filesystem limits.
-3. Add a warning for mount syscall to indicate the impending
-   expiry of timestamps.
-4. Modify utimes to clamp the timestamps.
-5. Fill in limits for filesystems.
-
-An updated version of the test for checking file system timestamp limits has been posted
-at https://www.spinics.net/lists/fstests/msg12262.html
-
-Changes from previous version:
-* No change in mount behavior because of expiry of timestamps.
-* Included limits for more filesystems.
-
-Deepa Dinamani (20):
-  vfs: Add file timestamp range support
-  vfs: Add timestamp_truncate() api
-  timestamp_truncate: Replace users of timespec64_trunc
-  mount: Add mount warning for impending timestamp expiry
-  utimes: Clamp the timestamps before update
-  fs: Fill in max and min timestamps in superblock
-  9p: Fill min and max timestamps in sb
-  adfs: Fill in max and min timestamps in sb
-  ext4: Initialize timestamps limits
-  fs: nfs: Initialize filesystem timestamp ranges
-  fs: cifs: Initialize filesystem timestamp ranges
-  fs: fat: Initialize filesystem timestamp ranges
-  fs: affs: Initialize filesystem timestamp ranges
-  fs: sysv: Initialize filesystem timestamp ranges
-  fs: ceph: Initialize filesystem timestamp ranges
-  fs: orangefs: Initialize filesystem timestamp ranges
-  fs: hpfs: Initialize filesystem timestamp ranges
-  fs: omfs: Initialize filesystem timestamp ranges
-  pstore: fs superblock limits
-  isofs: Initialize filesystem timestamp ranges
-
- fs/9p/vfs_super.c        |  6 +++++-
- fs/adfs/adfs.h           | 13 +++++++++++++
- fs/adfs/inode.c          |  8 ++------
- fs/adfs/super.c          |  2 ++
- fs/affs/amigaffs.c       |  2 +-
- fs/affs/amigaffs.h       |  3 +++
- fs/affs/inode.c          |  4 ++--
- fs/affs/super.c          |  4 ++++
- fs/attr.c                | 21 ++++++++++++---------
- fs/befs/linuxvfs.c       |  2 ++
- fs/bfs/inode.c           |  2 ++
- fs/ceph/super.c          |  2 ++
- fs/cifs/cifsfs.c         | 22 ++++++++++++++++++++++
- fs/cifs/netmisc.c        | 14 +++++++-------
- fs/coda/inode.c          |  3 +++
- fs/configfs/inode.c      | 12 ++++++------
- fs/cramfs/inode.c        |  2 ++
- fs/efs/super.c           |  2 ++
- fs/ext2/super.c          |  2 ++
- fs/ext4/ext4.h           |  4 ++++
- fs/ext4/super.c          | 17 +++++++++++++++--
- fs/f2fs/file.c           | 21 ++++++++++++---------
- fs/fat/inode.c           | 12 ++++++++++++
- fs/fat/misc.c            |  5 +++--
- fs/freevxfs/vxfs_super.c |  2 ++
- fs/hpfs/hpfs_fn.h        |  6 ++----
- fs/hpfs/super.c          |  2 ++
- fs/inode.c               | 33 ++++++++++++++++++++++++++++++++-
- fs/isofs/inode.c         |  7 +++++++
- fs/jffs2/fs.c            |  3 +++
- fs/jfs/super.c           |  2 ++
- fs/kernfs/inode.c        |  6 +++---
- fs/minix/inode.c         |  2 ++
- fs/namespace.c           | 11 +++++++++++
- fs/nfs/super.c           | 20 +++++++++++++++++++-
- fs/ntfs/inode.c          | 21 ++++++++++++---------
- fs/omfs/inode.c          |  4 ++++
- fs/orangefs/super.c      |  2 ++
- fs/pstore/inode.c        |  4 +++-
- fs/qnx4/inode.c          |  2 ++
- fs/qnx6/inode.c          |  2 ++
- fs/reiserfs/super.c      |  3 +++
- fs/romfs/super.c         |  2 ++
- fs/squashfs/super.c      |  2 ++
- fs/super.c               |  2 ++
- fs/sysv/super.c          |  5 ++++-
- fs/ubifs/file.c          | 21 ++++++++++++---------
- fs/ufs/super.c           |  7 +++++++
- fs/utimes.c              | 17 +++++++++++++----
- fs/xfs/xfs_super.c       |  2 ++
- include/linux/fs.h       |  5 +++++
- include/linux/time64.h   |  2 ++
- 52 files changed, 304 insertions(+), 78 deletions(-)
-
+diff --git a/fs/inode.c b/fs/inode.c
+index 5f5431ec3d62..0fb1f0fb296a 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2166,6 +2166,37 @@ struct timespec64 timespec64_trunc(struct timespec64 t, unsigned gran)
+ }
+ EXPORT_SYMBOL(timespec64_trunc);
+ 
++/**
++ * timestamp_truncate - Truncate timespec to a granularity
++ * @t: Timespec
++ * @inode: inode being updated
++ *
++ * Truncate a timespec to the granularity supported by the fs
++ * containing the inode. Always rounds down. gran must
++ * not be 0 nor greater than a second (NSEC_PER_SEC, or 10^9 ns).
++ */
++struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode)
++{
++	struct super_block *sb = inode->i_sb;
++	unsigned int gran = sb->s_time_gran;
++
++	t.tv_sec = clamp(t.tv_sec, sb->s_time_min, sb->s_time_max);
++	if (unlikely(t.tv_sec == sb->s_time_max || t.tv_sec == sb->s_time_min))
++		t.tv_nsec = 0;
++
++	/* Avoid division in the common cases 1 ns and 1 s. */
++	if (gran == 1)
++		; /* nothing */
++	else if (gran == NSEC_PER_SEC)
++		t.tv_nsec = 0;
++	else if (gran > 1 && gran < NSEC_PER_SEC)
++		t.tv_nsec -= t.tv_nsec % gran;
++	else
++		WARN(1, "invalid file time granularity: %u", gran);
++	return t;
++}
++EXPORT_SYMBOL(timestamp_truncate);
++
+ /**
+  * current_time - Return FS time
+  * @inode: inode.
+@@ -2187,6 +2218,6 @@ struct timespec64 current_time(struct inode *inode)
+ 		return now;
+ 	}
+ 
+-	return timespec64_trunc(now, inode->i_sb->s_time_gran);
++	return timestamp_truncate(now, inode);
+ }
+ EXPORT_SYMBOL(current_time);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e9d04e4e5628..fdfe51d096fa 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -726,6 +726,8 @@ struct inode {
+ 	void			*i_private; /* fs or device private pointer */
+ } __randomize_layout;
+ 
++struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode);
++
+ static inline unsigned int i_blocksize(const struct inode *node)
+ {
+ 	return (1 << node->i_blkbits);
 -- 
 2.17.1
 
-Cc: adilger.kernel@dilger.ca
-Cc: adrian.hunter@intel.com
-Cc: aivazian.tigran@gmail.com
-Cc: al@alarsen.net
-Cc: anna.schumaker@netapp.com
-Cc: anton@enomsg.org
-Cc: anton@tuxera.com
-Cc: asmadeus@codewreck.org
-Cc: ccross@android.com
-Cc: ceph-devel@vger.kernel.org
-Cc: coda@cs.cmu.edu
-Cc: codalist@coda.cs.cmu.edu
-Cc: darrick.wong@oracle.com
-Cc: dedekind1@gmail.com
-Cc: devel@lists.orangefs.org
-Cc: dsterba@suse.com
-Cc: dushistov@mail.ru
-Cc: dwmw2@infradead.org
-Cc: ericvh@gmail.com
-Cc: gregkh@linuxfoundation.org
-Cc: hch@infradead.org
-Cc: hch@lst.de
-Cc: hirofumi@mail.parknet.co.jp
-Cc: hubcap@omnibond.com
-Cc: idryomov@gmail.com
-Cc: jack@suse.com
-Cc: jaegeuk@kernel.org
-Cc: jaharkes@cs.cmu.edu
-Cc: jfs-discussion@lists.sourceforge.net
-Cc: jlbec@evilplan.org
-Cc: keescook@chromium.org
-Cc: linux-cifs@vger.kernel.org
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-karma-devel@lists.sourceforge.net
-Cc: linux-mtd@lists.infradead.org
-Cc: linux-nfs@vger.kernel.org
-Cc: linux-ntfs-dev@lists.sourceforge.net
-Cc: linux-xfs@vger.kernel.org
-Cc: lucho@ionkov.net
-Cc: luisbg@kernel.org
-Cc: martin@omnibond.com
-Cc: me@bobcopeland.com
-Cc: mikulas@artax.karlin.mff.cuni.cz
-Cc: nico@fluxnic.net
-Cc: phillip@squashfs.org.uk
-Cc: reiserfs-devel@vger.kernel.org
-Cc: richard@nod.at
-Cc: sage@redhat.com
-Cc: salah.triki@gmail.com
-Cc: sfrench@samba.org
-Cc: shaggy@kernel.org
-Cc: tj@kernel.org
-Cc: tony.luck@intel.com
-Cc: trond.myklebust@hammerspace.com
-Cc: tytso@mit.edu
-Cc: v9fs-developer@lists.sourceforge.net
-Cc: yuchao0@huawei.com
-Cc: zyan@redhat.com
