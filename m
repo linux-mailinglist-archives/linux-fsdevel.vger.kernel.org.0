@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB4D7A7AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 14:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CF417A7AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 14:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbfG3MHw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 08:07:52 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56554 "EHLO
+        id S1729398AbfG3MHx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 08:07:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56555 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbfG3MHu (ORCPT
+        with ESMTP id S1729088AbfG3MHx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:07:50 -0400
+        Tue, 30 Jul 2019 08:07:53 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hsQuL-0006QF-SX; Tue, 30 Jul 2019 14:07:09 +0200
-Message-Id: <20190730120321.193069837@linutronix.de>
+        id 1hsQuM-0006QI-An; Tue, 30 Jul 2019 14:07:10 +0200
+Message-Id: <20190730120321.285095769@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 30 Jul 2019 13:24:53 +0200
+Date:   Tue, 30 Jul 2019 13:24:54 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -32,7 +32,8 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Jan Kara <jack@suse.com>
-Subject: [patch 1/4] locking/lockdep: Add Kconfig option for bit spinlocks
+Subject: [patch 2/4] fs/buffer: Move BH_Uptodate_Lock locking into wrapper
+ functions
 References: <20190730112452.871257694@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -41,41 +42,171 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some usage sites of bit spinlocks have a substitution with regular
-spinlocks which depends on CONFIG_PREEMPT_RT. But this substitution can
-also be used to expose these locks to the regular lock debugging
-infrastructure, e.g. lockdep.
+Bit spinlocks are problematic if PREEMPT_RT is enabled, because they
+disable preemption, which is undesired for latency reasons and breaks when
+regular spinlocks are taken within the bit_spinlock locked region because
+regular spinlocks are converted to 'sleeping spinlocks' on RT. So RT
+replaces the bit spinlocks with regular spinlocks to avoid this problem.
 
-As this increases the size of affected data structures significantly this
-is guarded by a separate Kconfig switch.
+To avoid ifdeffery at the source level, wrap all BH_Uptodate_Lock bitlock
+operations with inline functions, so the spinlock substitution can be done
+at one place.
 
-Note, that only the bit spinlocks which have a substitution implemented
-will be covered by this. All other bit spinlocks evade lock debugging as
-before.
+Using regular spinlocks can also be enabled for lock debugging purposes so
+the lock operations become visible to lockdep.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
 ---
- lib/Kconfig.debug |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/buffer.c                 |   20 ++++++--------------
+ fs/ext4/page-io.c           |    6 ++----
+ fs/ntfs/aops.c              |   10 +++-------
+ include/linux/buffer_head.h |   16 ++++++++++++++++
+ 4 files changed, 27 insertions(+), 25 deletions(-)
 
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1201,6 +1201,16 @@ config DEBUG_RWSEMS
- 	  This debugging feature allows mismatched rw semaphore locks
- 	  and unlocks to be detected and reported.
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -275,8 +275,7 @@ static void end_buffer_async_read(struct
+ 	 * decide that the page is now completely done.
+ 	 */
+ 	first = page_buffers(page);
+-	local_irq_save(flags);
+-	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
++	flags = bh_uptodate_lock_irqsave(first);
+ 	clear_buffer_async_read(bh);
+ 	unlock_buffer(bh);
+ 	tmp = bh;
+@@ -289,8 +288,7 @@ static void end_buffer_async_read(struct
+ 		}
+ 		tmp = tmp->b_this_page;
+ 	} while (tmp != bh);
+-	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+-	local_irq_restore(flags);
++	bh_uptodate_unlock_irqrestore(first, flags);
  
-+config DEBUG_BIT_SPINLOCKS
-+	bool "Bit spinlock debugging"
-+	depends on DEBUG_SPINLOCK
-+	help
-+	  This debugging feature substitutes bit spinlocks in some use
-+	  cases, e.g. buffer head, zram, with with regular spinlocks so
-+	  these locks are exposed to lock debugging features.
+ 	/*
+ 	 * If none of the buffers had errors and they are all
+@@ -302,9 +300,7 @@ static void end_buffer_async_read(struct
+ 	return;
+ 
+ still_busy:
+-	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+-	local_irq_restore(flags);
+-	return;
++	bh_uptodate_unlock_irqrestore(first, flags);
+ }
+ 
+ /*
+@@ -331,8 +327,7 @@ void end_buffer_async_write(struct buffe
+ 	}
+ 
+ 	first = page_buffers(page);
+-	local_irq_save(flags);
+-	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
++	flags = bh_uptodate_lock_irqsave(first);
+ 
+ 	clear_buffer_async_write(bh);
+ 	unlock_buffer(bh);
+@@ -344,15 +339,12 @@ void end_buffer_async_write(struct buffe
+ 		}
+ 		tmp = tmp->b_this_page;
+ 	}
+-	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+-	local_irq_restore(flags);
++	bh_uptodate_unlock_irqrestore(first, flags);
+ 	end_page_writeback(page);
+ 	return;
+ 
+ still_busy:
+-	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+-	local_irq_restore(flags);
+-	return;
++	bh_uptodate_unlock_irqrestore(first, flags);
+ }
+ EXPORT_SYMBOL(end_buffer_async_write);
+ 
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -90,8 +90,7 @@ static void ext4_finish_bio(struct bio *
+ 		 * We check all buffers in the page under BH_Uptodate_Lock
+ 		 * to avoid races with other end io clearing async_write flags
+ 		 */
+-		local_irq_save(flags);
+-		bit_spin_lock(BH_Uptodate_Lock, &head->b_state);
++		flags = bh_uptodate_lock_irqsave(head);
+ 		do {
+ 			if (bh_offset(bh) < bio_start ||
+ 			    bh_offset(bh) + bh->b_size > bio_end) {
+@@ -103,8 +102,7 @@ static void ext4_finish_bio(struct bio *
+ 			if (bio->bi_status)
+ 				buffer_io_error(bh);
+ 		} while ((bh = bh->b_this_page) != head);
+-		bit_spin_unlock(BH_Uptodate_Lock, &head->b_state);
+-		local_irq_restore(flags);
++		bh_uptodate_unlock_irqrestore(head, flags);
+ 		if (!under_io) {
+ 			fscrypt_free_bounce_page(bounce_page);
+ 			end_page_writeback(page);
+--- a/fs/ntfs/aops.c
++++ b/fs/ntfs/aops.c
+@@ -92,8 +92,7 @@ static void ntfs_end_buffer_async_read(s
+ 				"0x%llx.", (unsigned long long)bh->b_blocknr);
+ 	}
+ 	first = page_buffers(page);
+-	local_irq_save(flags);
+-	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
++	flags = bh_uptodate_lock_irqsave(first);
+ 	clear_buffer_async_read(bh);
+ 	unlock_buffer(bh);
+ 	tmp = bh;
+@@ -108,8 +107,7 @@ static void ntfs_end_buffer_async_read(s
+ 		}
+ 		tmp = tmp->b_this_page;
+ 	} while (tmp != bh);
+-	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+-	local_irq_restore(flags);
++	bh_uptodate_unlock_irqrestore(first, flags);
+ 	/*
+ 	 * If none of the buffers had errors then we can set the page uptodate,
+ 	 * but we first have to perform the post read mst fixups, if the
+@@ -142,9 +140,7 @@ static void ntfs_end_buffer_async_read(s
+ 	unlock_page(page);
+ 	return;
+ still_busy:
+-	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+-	local_irq_restore(flags);
+-	return;
++	bh_uptodate_unlock_irqrestore(first, flags);
+ }
+ 
+ /**
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -78,6 +78,22 @@ struct buffer_head {
+ 	atomic_t b_count;		/* users using this buffer_head */
+ };
+ 
++static inline unsigned long bh_uptodate_lock_irqsave(struct buffer_head *bh)
++{
++	unsigned long flags;
 +
-+	  Not all bit spinlocks are covered by this.
++	local_irq_save(flags);
++	bit_spin_lock(BH_Uptodate_Lock, &bh->b_state);
++	return flags;
++}
 +
- config DEBUG_LOCK_ALLOC
- 	bool "Lock debugging: detect incorrect freeing of live locks"
- 	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
++static inline void
++bh_uptodate_unlock_irqrestore(struct buffer_head *bh, unsigned long flags)
++{
++	bit_spin_unlock(BH_Uptodate_Lock, &bh->b_state);
++	local_irq_restore(flags);
++}
++
+ /*
+  * macro tricks to expand the set_buffer_foo(), clear_buffer_foo()
+  * and buffer_foo() functions.
 
 
