@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A84937A1D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 09:15:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84DA57A24C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 09:30:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729949AbfG3HPc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 03:15:32 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41554 "EHLO huawei.com"
+        id S1730199AbfG3Hac (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 03:30:32 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51772 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730018AbfG3HPO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 03:15:14 -0400
+        id S1726432AbfG3Hac (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jul 2019 03:30:32 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F1F7D597885B68D112B6;
-        Tue, 30 Jul 2019 15:15:11 +0800 (CST)
+        by Forcepoint Email with ESMTP id BC66B84379F6C465A5BD;
+        Tue, 30 Jul 2019 15:14:51 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 30 Jul
- 2019 15:15:06 +0800
+ 2019 15:14:43 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -37,9 +37,9 @@ CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
         Li Guifu <bluce.liguifu@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v5 24/24] erofs: add document
-Date:   Tue, 30 Jul 2019 15:14:13 +0800
-Message-ID: <20190730071413.11871-25-gaoxiang25@huawei.com>
+Subject: [PATCH v5 09/24] erofs: support tracepoint
+Date:   Tue, 30 Jul 2019 15:13:58 +0800
+Message-ID: <20190730071413.11871-10-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190730071413.11871-1-gaoxiang25@huawei.com>
 References: <20190730071413.11871-1-gaoxiang25@huawei.com>
@@ -52,242 +52,262 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This documents key features, usage, and
-on-disk design of erofs.
+Add basic tracepoints for ->readpage{,s}, ->lookup,
+->destroy_inode, fill_inode and map_blocks.
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- Documentation/filesystems/erofs.txt | 221 ++++++++++++++++++++++++++++
- 1 file changed, 221 insertions(+)
- create mode 100644 Documentation/filesystems/erofs.txt
+ include/trace/events/erofs.h | 241 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 241 insertions(+)
+ create mode 100644 include/trace/events/erofs.h
 
-diff --git a/Documentation/filesystems/erofs.txt b/Documentation/filesystems/erofs.txt
+diff --git a/include/trace/events/erofs.h b/include/trace/events/erofs.h
 new file mode 100644
-index 000000000000..db2d22d61d11
+index 000000000000..0c5847c54b60
 --- /dev/null
-+++ b/Documentation/filesystems/erofs.txt
-@@ -0,0 +1,221 @@
-+Overview
-+========
++++ b/include/trace/events/erofs.h
+@@ -0,0 +1,241 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM erofs
 +
-+EROFS file-system stands for Enhanced Read-Only File System. Different
-+from other read-only file systems, it aims to be designed for flexibility,
-+scalability, but be kept simple and high performance.
++#if !defined(_TRACE_EROFS_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_EROFS_H
 +
-+It is designed as a better filesystem solution for the following scenarios:
-+ - read-only storage media or
++#include <linux/tracepoint.h>
 +
-+ - part of a fully trusted read-only solution, which means it needs to be
-+   immutable and bit-for-bit identical to the official golden image for
-+   their releases due to security and other considerations and
++#define show_dev(dev)		MAJOR(dev), MINOR(dev)
++#define show_dev_nid(entry)	show_dev(entry->dev), entry->nid
 +
-+ - hope to save some extra storage space with guaranteed end-to-end performance
-+   by using reduced metadata and transparent file compression, especially
-+   for those embedded devices with limited memory (ex, smartphone);
++#define show_file_type(type)						\
++	__print_symbolic(type,						\
++		{ 0,		"FILE" },				\
++		{ 1,		"DIR" })
 +
-+Here is the main features of EROFS:
-+ - Little endian on-disk design;
++#define show_map_flags(flags) __print_flags(flags, "|",	\
++	{ EROFS_GET_BLOCKS_RAW,	"RAW" })
 +
-+ - Currently 4KB block size (nobh) and therefore maximum 16TB address space;
++#define show_mflags(flags) __print_flags(flags, "",	\
++	{ EROFS_MAP_MAPPED,	"M" },			\
++	{ EROFS_MAP_META,	"I" })
 +
-+ - Metadata & data could be mixed by design;
++TRACE_EVENT(erofs_lookup,
 +
-+ - 2 inode versions for different requirements:
-+                          v1            v2
-+   Inode metadata size:   32 bytes      64 bytes
-+   Max file size:         4 GB          16 EB (also limited by max. vol size)
-+   Max uids/gids:         65536         4294967296
-+   File creation time:    no            yes (64 + 32-bit timestamp)
-+   Max hardlinks:         65536         4294967296
-+   Metadata reserved:     4 bytes       14 bytes
++	TP_PROTO(struct inode *dir, struct dentry *dentry, unsigned int flags),
 +
-+ - Support extended attributes (xattrs) as an option;
++	TP_ARGS(dir, dentry, flags),
 +
-+ - Support xattr inline and tail-end data inline for all files;
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,	nid	)
++		__field(const char *,	name	)
++		__field(unsigned int,	flags	)
++	),
 +
-+ - Support POSIX.1e ACLs by using xattrs;
++	TP_fast_assign(
++		__entry->dev	= dir->i_sb->s_dev;
++		__entry->nid	= EROFS_V(dir)->nid;
++		__entry->name	= dentry->d_name.name;
++		__entry->flags	= flags;
++	),
 +
-+ - Support statx();
++	TP_printk("dev = (%d,%d), pnid = %llu, name:%s, flags:%x",
++		show_dev_nid(__entry),
++		__entry->name,
++		__entry->flags)
++);
 +
-+ - Support transparent file compression as an option:
-+   LZ4 algorithm with 4 KB fixed-output compression for high performance;
++TRACE_EVENT(erofs_fill_inode,
++	TP_PROTO(struct inode *inode, int isdir),
++	TP_ARGS(inode, isdir),
 +
-+The following git tree provides the file system user-space tools under
-+development (ex, formatting tool mkfs.erofs):
-+>> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,	nid	)
++		__field(erofs_blk_t,	blkaddr )
++		__field(unsigned int,	ofs	)
++		__field(int,		isdir	)
++	),
 +
-+Bugs and patches are welcome, please kindly help us and send to the following
-+linux-erofs mailing list:
-+>> linux-erofs mailing list   <linux-erofs@lists.ozlabs.org>
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->nid		= EROFS_V(inode)->nid;
++		__entry->blkaddr	= erofs_blknr(iloc(EROFS_I_SB(inode), __entry->nid));
++		__entry->ofs		= erofs_blkoff(iloc(EROFS_I_SB(inode), __entry->nid));
++		__entry->isdir		= isdir;
++	),
 +
-+Note that EROFS is still working in progress as a Linux staging driver,
-+Cc the staging mailing list as well is highly recommended:
-+>> Linux Driver Project Developer List <devel@driverdev.osuosl.org>
++	TP_printk("dev = (%d,%d), nid = %llu, blkaddr %u ofs %u, isdir %d",
++		  show_dev_nid(__entry),
++		  __entry->blkaddr, __entry->ofs,
++		  __entry->isdir)
++);
 +
-+Mount options
-+=============
++TRACE_EVENT(erofs_readpage,
 +
-+fault_injection=%d     Enable fault injection in all supported types with
-+                       specified injection rate. Supported injection type:
-+                       Type_Name                Type_Value
-+                       FAULT_KMALLOC            0x000000001
-+                       FAULT_READ_IO            0x000000002
-+(no)user_xattr         Setup Extended User Attributes. Note: xattr is enabled
-+                       by default if CONFIG_EROFS_FS_XATTR is selected.
-+(no)acl                Setup POSIX Access Control List. Note: acl is enabled
-+                       by default if CONFIG_EROFS_FS_POSIX_ACL is selected.
-+cache_strategy=%s      Select a strategy for cached decompression from now on:
-+                         disabled: In-place I/O decompression only;
-+                        readahead: Cache the last incomplete compressed physical
-+                                   cluster for further reading. It still does
-+                                   in-place I/O decompression for the rest
-+                                   compressed physical clusters;
-+                       readaround: Cache the both ends of incomplete compressed
-+                                   physical clusters for further reading.
-+                                   It still does in-place I/O decompression
-+                                   for the rest compressed physical clusters.
++	TP_PROTO(struct page *page, bool raw),
 +
-+On-disk details
-+===============
++	TP_ARGS(page, raw),
 +
-+Summary
-+-------
-+Different from other read-only file systems, an EROFS volume is designed
-+to be as simple as possible:
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,    nid     )
++		__field(int,		dir	)
++		__field(pgoff_t,	index	)
++		__field(int,		uptodate)
++		__field(bool,		raw	)
++	),
 +
-+                                |-> aligned with the block size
-+   ____________________________________________________________
-+  | |SB| | ... | Metadata | ... | Data | Metadata | ... | Data |
-+  |_|__|_|_____|__________|_____|______|__________|_____|______|
-+  0 +1K
++	TP_fast_assign(
++		__entry->dev	= page->mapping->host->i_sb->s_dev;
++		__entry->nid	= EROFS_V(page->mapping->host)->nid;
++		__entry->dir	= S_ISDIR(page->mapping->host->i_mode);
++		__entry->index	= page->index;
++		__entry->uptodate = PageUptodate(page);
++		__entry->raw = raw;
++	),
 +
-+All data areas should be aligned with the block size, but metadata areas
-+may not. All metadatas can be now observed in two different spaces (views):
-+ 1. Inode metadata space
-+    Each valid inode should be aligned with an inode slot, which is a fixed
-+    value (32 bytes) and designed to be kept in line with v1 inode size.
++	TP_printk("dev = (%d,%d), nid = %llu, %s, index = %lu, uptodate = %d "
++		"raw = %d",
++		show_dev_nid(__entry),
++		show_file_type(__entry->dir),
++		(unsigned long)__entry->index,
++		__entry->uptodate,
++		__entry->raw)
++);
 +
-+    Each inode can be directly found with the following formula:
-+         inode offset = meta_blkaddr * block_size + 32 * nid
++TRACE_EVENT(erofs_readpages,
 +
-+                                |-> aligned with 8B
-+                                           |-> followed closely
-+    + meta_blkaddr blocks                                      |-> another slot
-+     _____________________________________________________________________
-+    |  ...   | inode |  xattrs  | extents  | data inline | ... | inode ...
-+    |________|_______|(optional)|(optional)|__(optional)_|_____|__________
-+             |-> aligned with the inode slot size
-+                  .                   .
-+                .                         .
-+              .                              .
-+            .                                    .
-+          .                                         .
-+        .                                              .
-+      .____________________________________________________|-> aligned with 4B
-+      | xattr_ibody_header | shared xattrs | inline xattrs |
-+      |____________________|_______________|_______________|
-+      |->    12 bytes    <-|->x * 4 bytes<-|               .
-+                          .                .                 .
-+                    .                      .                   .
-+               .                           .                     .
-+           ._______________________________.______________________.
-+           | id | id | id | id |  ... | id | ent | ... | ent| ... |
-+           |____|____|____|____|______|____|_____|_____|____|_____|
-+                                           |-> aligned with 4B
-+                                                       |-> aligned with 4B
++	TP_PROTO(struct inode *inode, struct page *page, unsigned int nrpage,
++		bool raw),
 +
-+    Inode could be 32 or 64 bytes, which can be distinguished from a common
-+    field which all inode versions have -- i_advise:
++	TP_ARGS(inode, page, nrpage, raw),
 +
-+        __________________               __________________
-+       |     i_advise     |             |     i_advise     |
-+       |__________________|             |__________________|
-+       |        ...       |             |        ...       |
-+       |                  |             |                  |
-+       |__________________| 32 bytes    |                  |
-+                                        |                  |
-+                                        |__________________| 64 bytes
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,	nid	)
++		__field(pgoff_t,	start	)
++		__field(unsigned int,	nrpage	)
++		__field(bool,		raw	)
++	),
 +
-+    Xattrs, extents, data inline are followed by the corresponding inode with
-+    proper alignes, and they could be optional for different data mappings,
-+    _currently_ there are totally 3 valid data mappings supported:
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->nid	= EROFS_V(inode)->nid;
++		__entry->start	= page->index;
++		__entry->nrpage	= nrpage;
++		__entry->raw	= raw;
++	),
 +
-+     1) flat file data without data inline (no extent);
-+     2) fixed-output size data compression (must have extents);
-+     3) flat file data with tail-end data inline (no extent);
++	TP_printk("dev = (%d,%d), nid = %llu, start = %lu nrpage = %u raw = %d",
++		show_dev_nid(__entry),
++		(unsigned long)__entry->start,
++		__entry->nrpage,
++		__entry->raw)
++);
 +
-+    The size of the optional xattrs is indicated by i_xattr_count in inode
-+    header. Large xattrs or xattrs shared by many different files can be
-+    stored in shared xattrs metadata rather than inlined right after inode.
++DECLARE_EVENT_CLASS(erofs__map_blocks_enter,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned int flags),
 +
-+ 2. Shared xattrs metadata space
-+    Shared xattrs space is similar to the above inode space, started with
-+    a specific block indicated by xattr_blkaddr, organized one by one with
-+    proper align.
++	TP_ARGS(inode, map, flags),
 +
-+    Each share xattr can also be directly found by the following formula:
-+         xattr offset = xattr_blkaddr * block_size + 4 * xattr_id
++	TP_STRUCT__entry(
++		__field(	dev_t,		dev		)
++		__field(	erofs_nid_t,	nid		)
++		__field(	erofs_off_t,	la		)
++		__field(	u64,		llen		)
++		__field(	unsigned int,	flags		)
++	),
 +
-+                           |-> aligned by  4 bytes
-+    + xattr_blkaddr blocks                     |-> aligned with 4 bytes
-+     _________________________________________________________________________
-+    |  ...   | xattr_entry |  xattr data | ... |  xattr_entry | xattr data  ...
-+    |________|_____________|_____________|_____|______________|_______________
++	TP_fast_assign(
++		__entry->dev    = inode->i_sb->s_dev;
++		__entry->nid    = EROFS_V(inode)->nid;
++		__entry->la	= map->m_la;
++		__entry->llen	= map->m_llen;
++		__entry->flags	= flags;
++	),
 +
-+Directories
-+-----------
-+All directories are now organized in a compact on-disk format. Note that
-+each directory block is divided into index and name areas in order to support
-+random file lookup, and all directory entries are _strictly_ recorded in
-+alphabetical order in order to support improved prefix binary search
-+algorithm (could refer to the related source code).
++	TP_printk("dev = (%d,%d), nid = %llu, la %llu llen %llu flags %s",
++		  show_dev_nid(__entry),
++		  __entry->la, __entry->llen,
++		  __entry->flags ? show_map_flags(__entry->flags) : "NULL")
++);
 +
-+                 ___________________________
-+                /                           |
-+               /              ______________|________________
-+              /              /              | nameoff1       | nameoffN-1
-+ ____________.______________._______________v________________v__________
-+| dirent | dirent | ... | dirent | filename | filename | ... | filename |
-+|___.0___|____1___|_____|___N-1__|____0_____|____1_____|_____|___N-1____|
-+     \                           ^
-+      \                          |                           * could have
-+       \                         |                             trailing '\0'
-+        \________________________| nameoff0
++DEFINE_EVENT(erofs__map_blocks_enter, erofs_map_blocks_flatmode_enter,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned flags),
 +
-+                             Directory block
++	TP_ARGS(inode, map, flags)
++);
 +
-+Note that apart from the offset of the first filename, nameoff0 also indicates
-+the total number of directory entries in this block since it is no need to
-+introduce another on-disk field at all.
++DECLARE_EVENT_CLASS(erofs__map_blocks_exit,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned int flags, int ret),
 +
-+Compression
-+-----------
-+Currently, EROFS supports 4KB fixed-output clustersize transparent file
-+compression, as illustrated below:
++	TP_ARGS(inode, map, flags, ret),
 +
-+         |---- Variant-Length Extent ----|-------- VLE --------|----- VLE -----
-+         clusterofs                      clusterofs            clusterofs
-+         |                               |                     |   logical data
-+_________v_______________________________v_____________________v_______________
-+... |    .        |             |        .    |             |  .          | ...
-+____|____.________|_____________|________.____|_____________|__.__________|____
-+    |-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|
-+         size          size          size          size          size
-+          .                             .                .                   .
-+           .                       .               .                  .
-+            .                  .              .                .
-+      _______._____________._____________._____________._____________________
-+         ... |             |             |             | ... physical data
-+      _______|_____________|_____________|_____________|_____________________
-+             |-> cluster <-|-> cluster <-|-> cluster <-|
-+                  size          size          size
++	TP_STRUCT__entry(
++		__field(	dev_t,		dev		)
++		__field(	erofs_nid_t,	nid		)
++		__field(        unsigned int,   flags           )
++		__field(	erofs_off_t,	la		)
++		__field(	erofs_off_t,	pa		)
++		__field(	u64,		llen		)
++		__field(	u64,		plen		)
++		__field(        unsigned int,	mflags		)
++		__field(	int,		ret		)
++	),
 +
-+Currently each on-disk physical cluster can contain 4KB (un)compressed data
-+at most. For each logical cluster, there is a corresponding on-disk index to
-+describe its cluster type, physical cluster address, etc.
++	TP_fast_assign(
++		__entry->dev    = inode->i_sb->s_dev;
++		__entry->nid    = EROFS_V(inode)->nid;
++		__entry->flags	= flags;
++		__entry->la	= map->m_la;
++		__entry->pa	= map->m_pa;
++		__entry->llen	= map->m_llen;
++		__entry->plen	= map->m_plen;
++		__entry->mflags	= map->m_flags;
++		__entry->ret	= ret;
++	),
 +
-+See "struct z_erofs_vle_decompressed_index" in erofs_fs.h for more details.
++	TP_printk("dev = (%d,%d), nid = %llu, flags %s "
++		  "la %llu pa %llu llen %llu plen %llu mflags %s ret %d",
++		  show_dev_nid(__entry),
++		  __entry->flags ? show_map_flags(__entry->flags) : "NULL",
++		  __entry->la, __entry->pa, __entry->llen, __entry->plen,
++		  show_mflags(__entry->mflags), __entry->ret)
++);
 +
++DEFINE_EVENT(erofs__map_blocks_exit, erofs_map_blocks_flatmode_exit,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned flags, int ret),
++
++	TP_ARGS(inode, map, flags, ret)
++);
++
++TRACE_EVENT(erofs_destroy_inode,
++	TP_PROTO(struct inode *inode),
++
++	TP_ARGS(inode),
++
++	TP_STRUCT__entry(
++		__field(	dev_t,		dev		)
++		__field(	erofs_nid_t,	nid		)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->nid	= EROFS_V(inode)->nid;
++	),
++
++	TP_printk("dev = (%d,%d), nid = %llu", show_dev_nid(__entry))
++);
++
++#endif /* _TRACE_EROFS_H */
++
++ /* This part must be outside protection */
++#include <trace/define_trace.h>
 -- 
 2.17.1
 
