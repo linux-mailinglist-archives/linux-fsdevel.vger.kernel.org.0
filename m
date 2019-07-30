@@ -2,312 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84DA57A24C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 09:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D827A25F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 09:36:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730199AbfG3Hac (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 03:30:32 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51772 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726432AbfG3Hac (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 03:30:32 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BC66B84379F6C465A5BD;
-        Tue, 30 Jul 2019 15:14:51 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 30 Jul
- 2019 15:14:43 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>,
-        "David Sterba" <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, "Jan Kara" <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v5 09/24] erofs: support tracepoint
-Date:   Tue, 30 Jul 2019 15:13:58 +0800
-Message-ID: <20190730071413.11871-10-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190730071413.11871-1-gaoxiang25@huawei.com>
-References: <20190730071413.11871-1-gaoxiang25@huawei.com>
+        id S1730092AbfG3HgZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 03:36:25 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43342 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfG3HgZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jul 2019 03:36:25 -0400
+Received: by mail-qt1-f196.google.com with SMTP id w17so17757351qto.10;
+        Tue, 30 Jul 2019 00:36:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KfrVJyXLBlSE9J2lD7NyucDQMOlxGjPdY+ssj9/d310=;
+        b=ekg/TIdh/5CdjTpsKc8y61wYzehVJwT+LlG8dPrqCiCjB3VyDdJzW0PjSoD8TE0GSS
+         TvocylAHjmGHvNpJ/TQxJudjfsAyPjsz3Gue57NEXpKP325F9eq6cf02WD5uQKRqF4s5
+         6Vz99UKj+7/6RbZGAGVMANWyufR8ahxfROVYAi4IP1G7/AGSyPuZpTa3nbUby4Jhxmd2
+         ku7zkfb8QnZuQEXR+hGCiL+XPKJ4uUpyG4UPVXCKOAowGP++agQ0cmKnbn0b4+bv1Jhe
+         uteqf6aSKsYiTF5+klK/e1oO8vH61TZJg9TxiMxnsxBVAJHNkfCCdV3ZtDpgTO1BJ6Ge
+         D/Pw==
+X-Gm-Message-State: APjAAAWReeNUa2eXbv+a+f6lXNafhqiHOPMW5Cd6mtdQ6boGSvJNTX90
+        hDEcQU6K/MS8bYiAe8v5EW9GOUhO8YL0s/lBa/k=
+X-Google-Smtp-Source: APXvYqxMF2mFh+jvacCLXH4Q8wX+v35Rhqc4s/okUitEq0NfFz96icl/A98K5zPxFiZM3Zjr3+btQsm5HWzBXkh4esI=
+X-Received: by 2002:aed:3e7c:: with SMTP id m57mr80607136qtf.204.1564472184297;
+ Tue, 30 Jul 2019 00:36:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-20-deepa.kernel@gmail.com>
+ <201907292129.AC796230@keescook>
+In-Reply-To: <201907292129.AC796230@keescook>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 30 Jul 2019 09:36:08 +0200
+Message-ID: <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
+Subject: Re: [PATCH 19/20] pstore: fs superblock limits
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add basic tracepoints for ->readpage{,s}, ->lookup,
-->destroy_inode, fill_inode and map_blocks.
+On Tue, Jul 30, 2019 at 6:31 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Mon, Jul 29, 2019 at 06:49:23PM -0700, Deepa Dinamani wrote:
+> > Also update the gran since pstore has microsecond granularity.
+>
+> So, I'm fine with this, but technically the granularity depends on the
+> backend storage... many have no actual time keeping, though. My point is,
+> pstore's timestamps are really mostly a lie, but the most common backend
+> (ramoops) is seconds-granularity.
+>
+> So, I'm fine with this, but it's a lie but it's a lie that doesn't
+> matter, so ...
+>
+> Acked-by: Kees Cook <keescook@chromium.org>
+>
+> I'm open to suggestions to improve it...
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- include/trace/events/erofs.h | 241 +++++++++++++++++++++++++++++++++++
- 1 file changed, 241 insertions(+)
- create mode 100644 include/trace/events/erofs.h
+If we don't care about using sub-second granularity, then setting it
+to one second unconditionally here will make it always use that and
+report it correctly.
 
-diff --git a/include/trace/events/erofs.h b/include/trace/events/erofs.h
-new file mode 100644
-index 000000000000..0c5847c54b60
---- /dev/null
-+++ b/include/trace/events/erofs.h
-@@ -0,0 +1,241 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM erofs
-+
-+#if !defined(_TRACE_EROFS_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_EROFS_H
-+
-+#include <linux/tracepoint.h>
-+
-+#define show_dev(dev)		MAJOR(dev), MINOR(dev)
-+#define show_dev_nid(entry)	show_dev(entry->dev), entry->nid
-+
-+#define show_file_type(type)						\
-+	__print_symbolic(type,						\
-+		{ 0,		"FILE" },				\
-+		{ 1,		"DIR" })
-+
-+#define show_map_flags(flags) __print_flags(flags, "|",	\
-+	{ EROFS_GET_BLOCKS_RAW,	"RAW" })
-+
-+#define show_mflags(flags) __print_flags(flags, "",	\
-+	{ EROFS_MAP_MAPPED,	"M" },			\
-+	{ EROFS_MAP_META,	"I" })
-+
-+TRACE_EVENT(erofs_lookup,
-+
-+	TP_PROTO(struct inode *dir, struct dentry *dentry, unsigned int flags),
-+
-+	TP_ARGS(dir, dentry, flags),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		dev	)
-+		__field(erofs_nid_t,	nid	)
-+		__field(const char *,	name	)
-+		__field(unsigned int,	flags	)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= dir->i_sb->s_dev;
-+		__entry->nid	= EROFS_V(dir)->nid;
-+		__entry->name	= dentry->d_name.name;
-+		__entry->flags	= flags;
-+	),
-+
-+	TP_printk("dev = (%d,%d), pnid = %llu, name:%s, flags:%x",
-+		show_dev_nid(__entry),
-+		__entry->name,
-+		__entry->flags)
-+);
-+
-+TRACE_EVENT(erofs_fill_inode,
-+	TP_PROTO(struct inode *inode, int isdir),
-+	TP_ARGS(inode, isdir),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		dev	)
-+		__field(erofs_nid_t,	nid	)
-+		__field(erofs_blk_t,	blkaddr )
-+		__field(unsigned int,	ofs	)
-+		__field(int,		isdir	)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev		= inode->i_sb->s_dev;
-+		__entry->nid		= EROFS_V(inode)->nid;
-+		__entry->blkaddr	= erofs_blknr(iloc(EROFS_I_SB(inode), __entry->nid));
-+		__entry->ofs		= erofs_blkoff(iloc(EROFS_I_SB(inode), __entry->nid));
-+		__entry->isdir		= isdir;
-+	),
-+
-+	TP_printk("dev = (%d,%d), nid = %llu, blkaddr %u ofs %u, isdir %d",
-+		  show_dev_nid(__entry),
-+		  __entry->blkaddr, __entry->ofs,
-+		  __entry->isdir)
-+);
-+
-+TRACE_EVENT(erofs_readpage,
-+
-+	TP_PROTO(struct page *page, bool raw),
-+
-+	TP_ARGS(page, raw),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		dev	)
-+		__field(erofs_nid_t,    nid     )
-+		__field(int,		dir	)
-+		__field(pgoff_t,	index	)
-+		__field(int,		uptodate)
-+		__field(bool,		raw	)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= page->mapping->host->i_sb->s_dev;
-+		__entry->nid	= EROFS_V(page->mapping->host)->nid;
-+		__entry->dir	= S_ISDIR(page->mapping->host->i_mode);
-+		__entry->index	= page->index;
-+		__entry->uptodate = PageUptodate(page);
-+		__entry->raw = raw;
-+	),
-+
-+	TP_printk("dev = (%d,%d), nid = %llu, %s, index = %lu, uptodate = %d "
-+		"raw = %d",
-+		show_dev_nid(__entry),
-+		show_file_type(__entry->dir),
-+		(unsigned long)__entry->index,
-+		__entry->uptodate,
-+		__entry->raw)
-+);
-+
-+TRACE_EVENT(erofs_readpages,
-+
-+	TP_PROTO(struct inode *inode, struct page *page, unsigned int nrpage,
-+		bool raw),
-+
-+	TP_ARGS(inode, page, nrpage, raw),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		dev	)
-+		__field(erofs_nid_t,	nid	)
-+		__field(pgoff_t,	start	)
-+		__field(unsigned int,	nrpage	)
-+		__field(bool,		raw	)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= inode->i_sb->s_dev;
-+		__entry->nid	= EROFS_V(inode)->nid;
-+		__entry->start	= page->index;
-+		__entry->nrpage	= nrpage;
-+		__entry->raw	= raw;
-+	),
-+
-+	TP_printk("dev = (%d,%d), nid = %llu, start = %lu nrpage = %u raw = %d",
-+		show_dev_nid(__entry),
-+		(unsigned long)__entry->start,
-+		__entry->nrpage,
-+		__entry->raw)
-+);
-+
-+DECLARE_EVENT_CLASS(erofs__map_blocks_enter,
-+	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
-+		 unsigned int flags),
-+
-+	TP_ARGS(inode, map, flags),
-+
-+	TP_STRUCT__entry(
-+		__field(	dev_t,		dev		)
-+		__field(	erofs_nid_t,	nid		)
-+		__field(	erofs_off_t,	la		)
-+		__field(	u64,		llen		)
-+		__field(	unsigned int,	flags		)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev    = inode->i_sb->s_dev;
-+		__entry->nid    = EROFS_V(inode)->nid;
-+		__entry->la	= map->m_la;
-+		__entry->llen	= map->m_llen;
-+		__entry->flags	= flags;
-+	),
-+
-+	TP_printk("dev = (%d,%d), nid = %llu, la %llu llen %llu flags %s",
-+		  show_dev_nid(__entry),
-+		  __entry->la, __entry->llen,
-+		  __entry->flags ? show_map_flags(__entry->flags) : "NULL")
-+);
-+
-+DEFINE_EVENT(erofs__map_blocks_enter, erofs_map_blocks_flatmode_enter,
-+	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
-+		 unsigned flags),
-+
-+	TP_ARGS(inode, map, flags)
-+);
-+
-+DECLARE_EVENT_CLASS(erofs__map_blocks_exit,
-+	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
-+		 unsigned int flags, int ret),
-+
-+	TP_ARGS(inode, map, flags, ret),
-+
-+	TP_STRUCT__entry(
-+		__field(	dev_t,		dev		)
-+		__field(	erofs_nid_t,	nid		)
-+		__field(        unsigned int,   flags           )
-+		__field(	erofs_off_t,	la		)
-+		__field(	erofs_off_t,	pa		)
-+		__field(	u64,		llen		)
-+		__field(	u64,		plen		)
-+		__field(        unsigned int,	mflags		)
-+		__field(	int,		ret		)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev    = inode->i_sb->s_dev;
-+		__entry->nid    = EROFS_V(inode)->nid;
-+		__entry->flags	= flags;
-+		__entry->la	= map->m_la;
-+		__entry->pa	= map->m_pa;
-+		__entry->llen	= map->m_llen;
-+		__entry->plen	= map->m_plen;
-+		__entry->mflags	= map->m_flags;
-+		__entry->ret	= ret;
-+	),
-+
-+	TP_printk("dev = (%d,%d), nid = %llu, flags %s "
-+		  "la %llu pa %llu llen %llu plen %llu mflags %s ret %d",
-+		  show_dev_nid(__entry),
-+		  __entry->flags ? show_map_flags(__entry->flags) : "NULL",
-+		  __entry->la, __entry->pa, __entry->llen, __entry->plen,
-+		  show_mflags(__entry->mflags), __entry->ret)
-+);
-+
-+DEFINE_EVENT(erofs__map_blocks_exit, erofs_map_blocks_flatmode_exit,
-+	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
-+		 unsigned flags, int ret),
-+
-+	TP_ARGS(inode, map, flags, ret)
-+);
-+
-+TRACE_EVENT(erofs_destroy_inode,
-+	TP_PROTO(struct inode *inode),
-+
-+	TP_ARGS(inode),
-+
-+	TP_STRUCT__entry(
-+		__field(	dev_t,		dev		)
-+		__field(	erofs_nid_t,	nid		)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= inode->i_sb->s_dev;
-+		__entry->nid	= EROFS_V(inode)->nid;
-+	),
-+
-+	TP_printk("dev = (%d,%d), nid = %llu", show_dev_nid(__entry))
-+);
-+
-+#endif /* _TRACE_EROFS_H */
-+
-+ /* This part must be outside protection */
-+#include <trace/define_trace.h>
--- 
-2.17.1
-
+       Arnd
