@@ -2,165 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD697B344
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 21:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 805457B34A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 21:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbfG3T1x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 15:27:53 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:46957 "EHLO
+        id S2387766AbfG3T22 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 15:28:28 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:33433 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbfG3T1w (ORCPT
+        with ESMTP id S1727169AbfG3T22 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 15:27:52 -0400
+        Tue, 30 Jul 2019 15:28:28 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MBDSg-1i5DlA14H8-00CikT; Tue, 30 Jul 2019 21:27:50 +0200
+ 1MfpjF-1iYSFh2Mgb-00gKk2; Tue, 30 Jul 2019 21:28:20 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 06/29] compat_sys_ioctl(): make parallel to do_vfs_ioctl()
-Date:   Tue, 30 Jul 2019 21:25:17 +0200
-Message-Id: <20190730192552.4014288-7-arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>, "Yan, Zheng" <zyan@redhat.com>,
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        ceph-devel@vger.kernel.org
+Subject: [PATCH v5 07/29] ceph: fix compat_ioctl for ceph_dir_operations
+Date:   Tue, 30 Jul 2019 21:25:18 +0200
+Message-Id: <20190730192552.4014288-8-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190730192552.4014288-1-arnd@arndb.de>
 References: <20190730192552.4014288-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:eUvt0YwKFhdJg3lXz9kxlv3RXRQRot6byum/SOVWh3BqhBoj/Qc
- n5CZqcDwwKhTWYc1HfnuIFiUr8gnv1TUw0T6/y2KQFQ0GqYgwzhsbaxfkolBUIt5CO4qih8
- DnkkS1PeIfjzlniRUYryGnDLX9dVaYM4JbWRnRxBfrMN5rLpNmyQyDj9NMY8v1uv4YE2PEz
- bl+IkX+jtbo0u4NM30/jQ==
+X-Provags-ID: V03:K1:OFNJPOAxGGQ88UZpH506xX65QSClANbkeR8AXnNFg+lHh90Gp1y
+ Km41PW8pur9V06yneCdcMZ9hh6d7J9oJdH/kEeWqHVzsG8RfrRQSupk+d4DtS4KyFBYLPBk
+ rLbLRcJlpLJWSeIcWqGypgZFvJWpty+odggTjE26mYnYSO+ZtQlFYfaJz+zO9Ttf4G3JFIk
+ GArX7xpL2XyXJhbP6c1FA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:s3Bn1Da8AC4=:aD9jeEvFDKbXMao1EcVNht
- gWfXtfcsfsUvkOV5fH9VL7WfvhDLEP01Rc+Ux+8H7G/7meXuGe1fqJ03l1mlMTEVOcXMgpbn/
- DaUnN6Ls/LDtZy4Z2fLoFIaletrZJmrD6HkIB14fj7In5Vzh0AqIjuoq7RWDGxzneVNsB2rTh
- kFPmzEB4H5xp7gQZ/8/J920fBHy4u7ZKqx25bU9XLd+yHdgwqstrC3nQGB6hRUyIPON4SvsZs
- 8+kN+LuxBLwMem0zDvl0EcDrGzZIFKFlyOMXhodI5TwTOo1CTm7hsYNo8/XLMfPBxISjB+P/H
- v3jN0UMcHHQuunipcIAEMutgnKu7wJN1EIVSHjFxRXRDfQmAZCL72eq8MZalKTK8f37orV9b5
- ovkR3BUD96LMEycqJH/Bx1clGRN5cC7yv/vk+2zu0nquHaeZn4xJ0RZkmz7oGfY9lclgfxAro
- orDtEED/WLtX0HVNU3WJrAB72rUxEG4005j82nE1rzgte0N53qDXh90/qpaXg+Rru+9xYctWq
- zor2KmkXeWprzwK91UazLo1KD4WV0c/xtD6GR/31ke6YZzQqkt6tat9diCMt1Ok1DGGZpcrl0
- OdMpUw20AxETEjLetKzW7zVhLec9qTMBopqts22IJbIQ3kYDq44WezJUBgKnoOzQ2y965t3Ef
- RHnJuqtqmp8cU1lINUG28j5Lf6yoGGoRWeoGxudAVPbe3bGxEUgCZqwLFKNJRw0pn2QQy6sHy
- EotLIhNf3QjY2oXPpHq3Tmai2wkbZZX02lMI+A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7ixz1WNaE9E=:uKu7zALGZzh9Pb/581lnUp
+ nEk/LWN5HTdg5wgAzCfGiVw/W98p50xEGd/MYkeFR/+jqdAlXWazfuGBWuoHj/4eQJfnvWJ5r
+ 4mVE7cUYfbuFFpZ+Vp+MldVtItnygDJl4pYCuOWCGYep5VqwG1vaLk4kGIj91MRla4R3f//mN
+ Ao3WW5mslyMD18Z+FIV50rXswB9VoGR4WQw7RTJUHetuBsHa07aPDlSRcY/uP2lOEkmZ2p2kN
+ YFsUfeib4Gt9qLDT4OI0fyD7SvU9ZELhn5Q+RJk1rv4DxktrrUern2aMCavVNcat0Izyxz5jq
+ GMZzq2Gc9G3qdZ5NGD9I2nQA1qYLsPlr1ZOybe2mG6r69qiwGnCV/aEFfehF147d8NBcZkIb3
+ aQn1oI+qSDtExttzQKmjqV8Cr9PvYZTBV5+kXOQa5HjTdQj+ECe82bjd/+/D4fByztqZlwqjJ
+ yQWn6RZ4myWQG6fv/KYq0Ws3eHzP/9STmpTiTh4zQzz+GWGVHzFcIqvkP5VA5rr75q95jzPn7
+ 394M+z/wTyOYXLfcXkUOAxu/+lXElKeFl6hsPOtRAxIMidDR1Z/OJV5ACHotfEjWCHTQns1H4
+ qhefIVICQQS3pBpDC9mbTC83KPjxxgwOMdmWfzc0d5sS2vlzQRcDh+o9GP6ad992ZzONHzn+f
+ 9bot1snjzctzXYFC/KfkjepJfrF4h+GLon35W3nYgIqFb8ZzPKescF3M7t1zHlnqoJ2JrpJIz
+ Mx8EeqifWwxcXLRP7OQCYd9H/5ANh8rYYo1wNg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+The ceph_ioctl function is used both for files and directories, but only
+the files support doing that in 32-bit compat mode.
 
-Handle ioctls that might be handled without reaching ->ioctl() in
-native case on the top level there.  The counterpart of vfs_ioctl()
-(i.e. calling ->unlock_ioctl(), etc.) left as-is; eventually
-that would turn simply into the call of ->compat_ioctl(), but
-that'll take more work.  Once that is done, we can move the
-remains of compat_sys_ioctl() into fs/ioctl.c and finally bury
-fs/compat_ioctl.c.
+For consistency, add the same compat handler to the dir operations
+as well, and use a handler that applies the appropriate compat_ptr()
+conversion.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/compat_ioctl.c | 63 +++++++++++++++++++++--------------------------
- 1 file changed, 28 insertions(+), 35 deletions(-)
+ fs/ceph/dir.c   |  1 +
+ fs/ceph/file.c  |  2 +-
+ fs/ceph/super.h | 10 ++++++++++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 0a748324f96f..399287b277dd 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -487,19 +487,7 @@ static unsigned int ioctl_pointer[] = {
- /* compatible ioctls first */
- /* Little t */
- COMPATIBLE_IOCTL(TIOCOUTQ)
--/* Little f */
--COMPATIBLE_IOCTL(FIOCLEX)
--COMPATIBLE_IOCTL(FIONCLEX)
--COMPATIBLE_IOCTL(FIOASYNC)
--COMPATIBLE_IOCTL(FIONBIO)
--COMPATIBLE_IOCTL(FIONREAD)  /* This is also TIOCINQ */
--COMPATIBLE_IOCTL(FS_IOC_FIEMAP)
--/* 0x00 */
--COMPATIBLE_IOCTL(FIBMAP)
--COMPATIBLE_IOCTL(FIGETBSZ)
- /* 'X' - originally XFS but some now in the VFS */
--COMPATIBLE_IOCTL(FIFREEZE)
--COMPATIBLE_IOCTL(FITHAW)
- COMPATIBLE_IOCTL(FITRIM)
- #ifdef CONFIG_BLOCK
- /* Big S */
-@@ -974,19 +962,39 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
- 	if (error)
- 		goto out_fput;
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 4ca0b8ff9a72..401c17d36b71 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1808,6 +1808,7 @@ const struct file_operations ceph_dir_fops = {
+ 	.open = ceph_open,
+ 	.release = ceph_release,
+ 	.unlocked_ioctl = ceph_ioctl,
++	.compat_ioctl = ceph_compat_ioctl,
+ 	.fsync = ceph_fsync,
+ 	.lock = ceph_lock,
+ 	.flock = ceph_flock,
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 685a03cc4b77..99712b6b1ad5 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2138,7 +2138,7 @@ const struct file_operations ceph_file_fops = {
+ 	.splice_read = generic_file_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.unlocked_ioctl = ceph_ioctl,
+-	.compat_ioctl	= ceph_ioctl,
++	.compat_ioctl = ceph_compat_ioctl,
+ 	.fallocate	= ceph_fallocate,
+ 	.copy_file_range = ceph_copy_file_range,
+ };
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index d2352fd95dbc..0aebccd48fa0 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -6,6 +6,7 @@
  
--	/*
--	 * To allow the compat_ioctl handlers to be self contained
--	 * we need to check the common ioctls here first.
--	 * Just handle them with the standard handlers below.
--	 */
- 	switch (cmd) {
-+	/* these are never seen by ->ioctl(), no argument or int argument */
- 	case FIOCLEX:
- 	case FIONCLEX:
-+	case FIFREEZE:
-+	case FITHAW:
-+	case FICLONE:
-+		goto do_ioctl;
-+	/* these are never seen by ->ioctl(), pointer argument */
- 	case FIONBIO:
- 	case FIOASYNC:
- 	case FIOQSIZE:
--		break;
--
-+	case FS_IOC_FIEMAP:
-+	case FIGETBSZ:
-+	case FICLONERANGE:
-+	case FIDEDUPERANGE:
-+		goto found_handler;
-+	/*
-+	 * The next group is the stuff handled inside file_ioctl().
-+	 * For regular files these never reach ->ioctl(); for
-+	 * devices, sockets, etc. they do and one (FIONREAD) is
-+	 * even accepted in some cases.  In all those cases
-+	 * argument has the same type, so we can handle these
-+	 * here, shunting them towards do_vfs_ioctl().
-+	 * ->compat_ioctl() will never see any of those.
-+	 */
-+	/* pointer argument, never actually handled by ->ioctl() */
-+	case FIBMAP:
-+		goto found_handler;
-+	/* handled by some ->ioctl(); always a pointer to int */
-+	case FIONREAD:
-+		goto found_handler;
-+	/* these two get messy on amd64 due to alignment differences */
- #if defined(CONFIG_X86_64)
- 	case FS_IOC_RESVSP_32:
- 	case FS_IOC_RESVSP64_32:
-@@ -995,23 +1003,8 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
- #else
- 	case FS_IOC_RESVSP:
- 	case FS_IOC_RESVSP64:
--		error = ioctl_preallocate(f.file, compat_ptr(arg));
--		goto out_fput;
--#endif
--
--	case FICLONE:
--		goto do_ioctl;
--	case FICLONERANGE:
--	case FIDEDUPERANGE:
--	case FS_IOC_FIEMAP:
--	case FIGETBSZ:
- 		goto found_handler;
--
--	case FIBMAP:
--	case FIONREAD:
--		if (S_ISREG(file_inode(f.file)->i_mode))
--			break;
--		/*FALL THROUGH*/
+ #include <asm/unaligned.h>
+ #include <linux/backing-dev.h>
++#include <linux/compat.h>
+ #include <linux/completion.h>
+ #include <linux/exportfs.h>
+ #include <linux/fs.h>
+@@ -1108,6 +1109,15 @@ extern void ceph_readdir_cache_release(struct ceph_readdir_cache_control *ctl);
+ 
+ /* ioctl.c */
+ extern long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
++static inline long
++ceph_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++#ifdef CONFIG_COMPAT
++	return ceph_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
++#else
++	return -ENOTTY;
 +#endif
++}
  
- 	default:
- 		if (f.file->f_op->compat_ioctl) {
+ /* export.c */
+ extern const struct export_operations ceph_export_ops;
 -- 
 2.20.0
 
