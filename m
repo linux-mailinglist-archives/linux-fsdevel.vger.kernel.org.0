@@ -2,161 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333E57B3E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 22:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E29DC7B3E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 22:01:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbfG3UBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 16:01:30 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:44405 "EHLO
+        id S1727401AbfG3UBu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 16:01:50 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:53131 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726859AbfG3UB3 (ORCPT
+        with ESMTP id S1726698AbfG3UBu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 16:01:29 -0400
+        Tue, 30 Jul 2019 16:01:50 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MzR0i-1iEV4S49z6-00vL3y; Tue, 30 Jul 2019 22:01:21 +0200
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MYNW8-1hokhs3crS-00VLjo; Tue, 30 Jul 2019 22:01:46 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH v5 19/29] compat_ioctl: move hci_sock handlers into driver
-Date:   Tue, 30 Jul 2019 21:55:35 +0200
-Message-Id: <20190730195819.901457-7-arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v5 20/29] compat_ioctl: remove HCIUART handling
+Date:   Tue, 30 Jul 2019 22:01:25 +0200
+Message-Id: <20190730200145.1081541-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190730195819.901457-1-arnd@arndb.de>
+In-Reply-To: <20190730192552.4014288-1-arnd@arndb.de>
 References: <20190730192552.4014288-1-arnd@arndb.de>
- <20190730195819.901457-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:MRkTCynjx8ZKieEaweTLO5hE+mPqZVxegMLXPvi77ZFI1txQjJ9
- mTrIRI4m4fTqEgGSmmFN3Usqtf2R5hhD0UTDT/QRPC8IcYkJNc9RCybcAKzU9ok26pVCy5x
- ntkofHM1zI0tSnU5pRTvXGNm9jz6ODVkgpTv3FlyEqRYcF0gPPf0Zg4bNFKh5M/3p95jW3c
- NJpqqqWo8sTvCujeLhHJQ==
+X-Provags-ID: V03:K1:noHB01zjETkbsqArpq8t35RXjwvYROuKxnK7CTrTSdVMP/m6xIA
+ Bg6Y8fOZDoSMksrI/4s5Y65kcjgyeCRuqHwupI/dW8LyVCXDqegBf8PvswAgWNsRC87YYii
+ QNWYIwgnUzezFv6mLd9ZS3tWXosJS2wgX3+8rGrTAdfvm4ShmeLdDO4X85++sXTeEAv5AEt
+ vFnaf8hLe7XHH4XDb3k1w==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:imcKfvdmqYo=:DzN1SJA2kycqmDkWZRU/Nc
- NsiVwWKpUTSbb/mjgweqnGJqA8PbLpXcIVI0DnYKLcstHKQqUM9bO1645MdEsaq35cznVPvnq
- X9McomuGyhOeQ4PuSbktBrAlw0vSZNecfiZbb3tG7c3h22XpzdplbFOuxv3KhygMonfVWHRom
- q/lMAAoIWhR0QRDN3FJ7HuxgNRTr7sSsYzWLch8LnunYDT7RAzT8SXZWWJJLACkpr027DVyBm
- huvqteZ6Pd8c2x4Aggmq/hFTmsM3Zq9uPsl9lo935UhlkRild7uIT9VuPcWYPtlV2L+eoAnCS
- Pnlb4AdR2HlsodyDTCQeCcjUgzEHDub1fnFtoonfOdpw5bf22CbPFFcrFmFO6jrDrYeNuxmva
- ix3kaBzwtWdlwkm57P4mrdU6RkeO/B74i4gO1svQDK7My2+U8l3oD1c/ow7kpQyLk77k0i8PK
- raIm0SZOwvPAT/xC4YctG+JWo6dvw1nCt4x+GcshvZNS0bvVb+U671bBLfumJqbGql+jqSWvQ
- /7zT8QpcC5SMTxfJAGBChF6BIceVc3gKJCROeL+dXVKfyE9cBEhQZzVlSdphRCpuoFKPt8eLv
- Td5m7QCdZ+W8eXpu6wquobqfUhHJ12/2yxsqKSKfFpO3/Ag/TBXOKTuHKnVHNpVkmEiFU+2Mc
- lCLkOH5UiTCy359HjqQDgB2hX4PkesHavNc/hE3CnlZzRMAiUOuQi3br5MXWsqjDFmO5MYGw7
- 47iC//C6Eal1Nx6VmsgdHZTfqrEtec8LChFJ6w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:80bHOsZlkj8=:vWtIK+qyk1I0xKHajkNfGR
+ Fgy6NWqO1IxhILt0eRVd999Fa5T0+ny7p1/janZSqpGwxW3hniU1yvf7fgtnAAvK9EqcZB2el
+ Z7vQM3ZH0eAN20ebceBIA2c/2EeDiGPCpYTL+RN1QGaHFAG+wPp2rgc+wrgLrfYPiRLE45IQR
+ L61ICWAqJ/jziTWMrQKbJFCoxX8nVbi+5p6U0FdzzCH+hJD5GuQX+YF3Xikn4WwhENzvUmq3c
+ IP+wJjCpYA2T7sLRrb/ikY1QhucNg1Dy3j+EP91LQfWg2hP0EKk5Wrk4Tuyr9iU4OKY/FmKHN
+ N8AiBxBXLTlt2mah3erwmIl/Ghir8Uh8Oxn6hPpI+77ReGswB6b9SEkMMMwnL9rUtT21WF4q2
+ ry1raKZ0iMdJSluRevlacVy0vUCdQ07J6GT1u6bMtjcXagtdM55JNgrhJsYXP5ZHPUITZo4EO
+ oEoAukOK2OUbsVMLEFktYYZpfWbhFGjTFhWicL0orAKo8J7yZRL6CPbGv29qt7eK6Y6su+7bc
+ 5G8Ee5+PqxUP7L/8Q8ZkgHA6uEDqiJvenOJAsZhQFpwx5r1TqmGynk0qqj+ehIjc366lWO3go
+ idf+U+I3HzZs013zdSPMqHFBm8uB+1V4oCDzffXnIz96b2MLZe6SJGp+X1rcktRVzSisOBT++
+ MaiUcCCVfJxRvsTqZdPMVpvXzH+Z03Vv9A0E8TLYsTYkclVK8jNV6t2y5V1AP5a0cGkyxwzvp
+ /ua8DfFpBeazw/Y7E6fsbRp1Ukyr19i5YpcuEQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All these ioctl commands are compatible, so we can handle
-them with a trivial wrapper in hci_sock.c and remove
-the listing in fs/compat_ioctl.c.
-
-A few of the commands pass integer arguments instead of
-pointers, so for correctness skip the compat_ptr() conversion
-here.
+As of commit f0193d3ea73b ("change semantics of ldisc ->compat_ioctl()"),
+all hciuart ioctl commands are handled correctly in the driver, and we
+never need to go through the table here.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/compat_ioctl.c        | 24 ------------------------
- net/bluetooth/hci_sock.c | 21 ++++++++++++++++++++-
- 2 files changed, 20 insertions(+), 25 deletions(-)
+ fs/compat_ioctl.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
 diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 8dbef92b10fd..9302157d1471 100644
+index 9302157d1471..758b8b934b70 100644
 --- a/fs/compat_ioctl.c
 +++ b/fs/compat_ioctl.c
-@@ -40,9 +40,6 @@
- 
- #include "internal.h"
- 
--#include <net/bluetooth/bluetooth.h>
--#include <net/bluetooth/hci_sock.h>
--
- #ifdef CONFIG_BLOCK
- #include <linux/cdrom.h>
- #include <linux/fd.h>
-@@ -646,27 +643,6 @@ COMPATIBLE_IOCTL(RNDADDENTROPY)
- COMPATIBLE_IOCTL(RNDZAPENTCNT)
- COMPATIBLE_IOCTL(RNDCLEARPOOL)
- /* Bluetooth */
--COMPATIBLE_IOCTL(HCIDEVUP)
--COMPATIBLE_IOCTL(HCIDEVDOWN)
--COMPATIBLE_IOCTL(HCIDEVRESET)
--COMPATIBLE_IOCTL(HCIDEVRESTAT)
--COMPATIBLE_IOCTL(HCIGETDEVLIST)
--COMPATIBLE_IOCTL(HCIGETDEVINFO)
--COMPATIBLE_IOCTL(HCIGETCONNLIST)
--COMPATIBLE_IOCTL(HCIGETCONNINFO)
--COMPATIBLE_IOCTL(HCIGETAUTHINFO)
--COMPATIBLE_IOCTL(HCISETRAW)
--COMPATIBLE_IOCTL(HCISETSCAN)
--COMPATIBLE_IOCTL(HCISETAUTH)
--COMPATIBLE_IOCTL(HCISETENCRYPT)
--COMPATIBLE_IOCTL(HCISETPTYPE)
--COMPATIBLE_IOCTL(HCISETLINKPOL)
--COMPATIBLE_IOCTL(HCISETLINKMODE)
--COMPATIBLE_IOCTL(HCISETACLMTU)
--COMPATIBLE_IOCTL(HCISETSCOMTU)
--COMPATIBLE_IOCTL(HCIBLOCKADDR)
--COMPATIBLE_IOCTL(HCIUNBLOCKADDR)
--COMPATIBLE_IOCTL(HCIINQUIRY)
- COMPATIBLE_IOCTL(HCIUARTSETPROTO)
- COMPATIBLE_IOCTL(HCIUARTGETPROTO)
- COMPATIBLE_IOCTL(HCIUARTGETDEVICE)
-diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
-index d32077b28433..5d0ed28c0d3a 100644
---- a/net/bluetooth/hci_sock.c
-+++ b/net/bluetooth/hci_sock.c
-@@ -23,7 +23,7 @@
- */
- 
- /* Bluetooth HCI sockets. */
--
-+#include <linux/compat.h>
- #include <linux/export.h>
- #include <linux/utsname.h>
- #include <linux/sched.h>
-@@ -1054,6 +1054,22 @@ static int hci_sock_ioctl(struct socket *sock, unsigned int cmd,
- 	return err;
+@@ -353,13 +353,6 @@ static int ppp_scompress(struct file *file, unsigned int cmd,
+ 	return do_ioctl(file, PPPIOCSCOMPRESS, (unsigned long) odata);
  }
  
-+#ifdef CONFIG_COMPAT
-+static int hci_sock_compat_ioctl(struct socket *sock, unsigned int cmd,
-+				 unsigned long arg)
-+{
-+	switch (cmd) {
-+	case HCIDEVUP:
-+	case HCIDEVDOWN:
-+	case HCIDEVRESET:
-+	case HCIDEVRESTAT:
-+		return hci_sock_ioctl(sock, cmd, arg);
-+	}
-+
-+	return hci_sock_ioctl(sock, cmd, (unsigned long)compat_ptr(arg));
-+}
-+#endif
-+
- static int hci_sock_bind(struct socket *sock, struct sockaddr *addr,
- 			 int addr_len)
- {
-@@ -1974,6 +1990,9 @@ static const struct proto_ops hci_sock_ops = {
- 	.sendmsg	= hci_sock_sendmsg,
- 	.recvmsg	= hci_sock_recvmsg,
- 	.ioctl		= hci_sock_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl	= hci_sock_compat_ioctl,
-+#endif
- 	.poll		= datagram_poll,
- 	.listen		= sock_no_listen,
- 	.shutdown	= sock_no_shutdown,
+-/* Bluetooth ioctls */
+-#define HCIUARTSETPROTO		_IOW('U', 200, int)
+-#define HCIUARTGETPROTO		_IOR('U', 201, int)
+-#define HCIUARTGETDEVICE	_IOR('U', 202, int)
+-#define HCIUARTSETFLAGS		_IOW('U', 203, int)
+-#define HCIUARTGETFLAGS		_IOR('U', 204, int)
+-
+ /*
+  * simple reversible transform to make our table more evenly
+  * distributed after sorting.
+@@ -642,12 +635,6 @@ COMPATIBLE_IOCTL(RNDGETPOOL)
+ COMPATIBLE_IOCTL(RNDADDENTROPY)
+ COMPATIBLE_IOCTL(RNDZAPENTCNT)
+ COMPATIBLE_IOCTL(RNDCLEARPOOL)
+-/* Bluetooth */
+-COMPATIBLE_IOCTL(HCIUARTSETPROTO)
+-COMPATIBLE_IOCTL(HCIUARTGETPROTO)
+-COMPATIBLE_IOCTL(HCIUARTGETDEVICE)
+-COMPATIBLE_IOCTL(HCIUARTSETFLAGS)
+-COMPATIBLE_IOCTL(HCIUARTGETFLAGS)
+ /* Misc. */
+ COMPATIBLE_IOCTL(PCIIOC_CONTROLLER)
+ COMPATIBLE_IOCTL(PCIIOC_MMAP_IS_IO)
 -- 
 2.20.0
 
