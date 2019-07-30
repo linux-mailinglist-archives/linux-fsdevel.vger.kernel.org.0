@@ -2,77 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93CCB7A5F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 12:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A407A71C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 13:37:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732569AbfG3K0F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 06:26:05 -0400
-Received: from verein.lst.de ([213.95.11.211]:49987 "EHLO verein.lst.de"
+        id S1730637AbfG3LhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 07:37:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60590 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbfG3K0D (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 06:26:03 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 4C21468B02; Tue, 30 Jul 2019 12:25:57 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 12:25:57 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, john.hubbard@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, samba-technical@lists.samba.org,
-        v9fs-developer@lists.sourceforge.net,
-        virtualization@lists.linux-foundation.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: Re: [PATCH 03/12] block: bio_release_pages: use flags arg instead
- of bool
-Message-ID: <20190730102557.GA1700@lst.de>
-References: <20190724042518.14363-1-jhubbard@nvidia.com> <20190724042518.14363-4-jhubbard@nvidia.com> <20190724053053.GA18330@infradead.org> <20190729205721.GB3760@redhat.com>
+        id S1730616AbfG3LhV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jul 2019 07:37:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 646513082B1F;
+        Tue, 30 Jul 2019 11:37:21 +0000 (UTC)
+Received: from dhcp201-121.englab.pnq.redhat.com (ovpn-116-177.sin2.redhat.com [10.67.116.177])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7DCED60856;
+        Tue, 30 Jul 2019 11:37:12 +0000 (UTC)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     snitzer@redhat.com, dan.j.williams@intel.com
+Cc:     dm-devel@redhat.com, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        agk@redhat.com, pagupta@redhat.com
+Subject: [PATCH] dm: fix dax_dev NULL dereference
+Date:   Tue, 30 Jul 2019 17:07:08 +0530
+Message-Id: <20190730113708.14660-1-pagupta@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729205721.GB3760@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 30 Jul 2019 11:37:21 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 04:57:21PM -0400, Jerome Glisse wrote:
-> > All pages releases by bio_release_pages should come from
-> > get_get_user_pages, so I don't really see the point here.
-> 
-> No they do not all comes from GUP for see various callers
-> of bio_check_pages_dirty() for instance iomap_dio_zero()
-> 
-> I have carefully tracked down all this and i did not do
-> anyconvertion just for the fun of it :)
 
-Well, the point is _should_ not necessarily do.  iomap_dio_zero adds the
-ZERO_PAGE, which we by definition don't need to refcount.  So we can
-mark this bio BIO_NO_PAGE_REF safely after removing the get_page there.
+  'Murphy Zhou' reports[1] hitting the panic when running xfstests 
+  generic/108 on pmem ramdisk. In his words:
 
-Note that the equivalent in the old direct I/O code, dio_refill_pages,
-will be a little more complicated as it can match user pages and the
-ZERO_PAGE in a single bio, so a per-bio flag won't handle it easily.
-Maybe we just need to use a separate bio there as well.
+   This test is simulating partial disk error when calling fsync():
+   create a lvm vg which consists of 2 disks:
+   one scsi_debug disk; one other disk I specified, pmem ramdisk in this case.
+   create lv in this vg and write to it, make sure writing across 2 disks;
+   offline scsi_debug disk;
+   write again to allocated area;
+   expect fsync: IO error.
+   If one of the disks is pmem ramdisk, it reproduces every time on my setup,
+   on v5.3-rc2+.
+   The mount -o dax option is not required to reproduce this panic.
+   ...
 
-In general with series like this we should not encode the status quo an
-pile new hacks upon the old one, but thing where we should be and fix
-up the old warts while having to wade through all that code.
+  Fix this by returning false from 'device_synchronous' function when dax_dev
+  is NULL.
+
+ [ 1984.878208] BUG: kernel NULL pointer dereference, address: 00000000000002d0
+ [ 1984.882546] #PF: supervisor read access in kernel mode
+ [ 1984.885664] #PF: error_code(0x0000) - not-present page
+ [ 1984.888626] PGD 0 P4D 0
+ [ 1984.890140] Oops: 0000 [#1] SMP PTI
+ ...
+ ...
+ [ 1984.943682] Call Trace:
+ [ 1984.945007]  device_synchronous+0xe/0x20 [dm_mod]
+ [ 1984.947328]  stripe_iterate_devices+0x48/0x60 [dm_mod]
+ [ 1984.949947]  ? dm_set_device_limits+0x130/0x130 [dm_mod]
+ [ 1984.952516]  dm_table_supports_dax+0x39/0x90 [dm_mod]
+ [ 1984.954989]  dm_table_set_restrictions+0x248/0x5d0 [dm_mod]
+ [ 1984.957685]  dm_setup_md_queue+0x66/0x110 [dm_mod]
+ [ 1984.960280]  table_load+0x1e3/0x390 [dm_mod]
+ [ 1984.962491]  ? retrieve_status+0x1c0/0x1c0 [dm_mod]
+ [ 1984.964910]  ctl_ioctl+0x1d3/0x550 [dm_mod]
+ [ 1984.967006]  ? path_lookupat+0xf4/0x200
+ [ 1984.968890]  dm_ctl_ioctl+0xa/0x10 [dm_mod]
+ [ 1984.970920]  do_vfs_ioctl+0xa9/0x630
+ [ 1984.972701]  ksys_ioctl+0x60/0x90
+ [ 1984.974335]  __x64_sys_ioctl+0x16/0x20
+ [ 1984.976221]  do_syscall_64+0x5b/0x1d0
+ [ 1984.978091]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+ [1] https://lore.kernel.org/linux-fsdevel/2011806368.5335560.1564469373050.JavaMail.zimbra@redhat.com/T/#mac662eb50b9d7bd282b23e6e8625a3f7a4687506
+
+Fixes: 2e9ee0955d3c ("dm: enable synchronous dax")
+Reported-by: jencce.kernel@gmail.com
+Tested-by: jencce.kernel@gmail.com
+Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+---
+ drivers/md/dm-table.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index caaee8032afe..b065845c1bdd 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -894,6 +894,9 @@ int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
+ static int device_synchronous(struct dm_target *ti, struct dm_dev *dev,
+ 				       sector_t start, sector_t len, void *data)
+ {
++	if (!dev->dax_dev)
++		return false;
++
+ 	return dax_synchronous(dev->dax_dev);
+ }
+ 
+-- 
+2.20.1
+
