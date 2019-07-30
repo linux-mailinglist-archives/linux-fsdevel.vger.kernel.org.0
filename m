@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E63A379E36
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 03:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B4BB79E58
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 03:51:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730882AbfG3Bud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jul 2019 21:50:33 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34282 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730844AbfG3Bub (ORCPT
+        id S1731053AbfG3Bvd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jul 2019 21:51:33 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40766 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730876AbfG3Bud (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 21:50:31 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n9so22944806pgc.1;
-        Mon, 29 Jul 2019 18:50:31 -0700 (PDT)
+        Mon, 29 Jul 2019 21:50:33 -0400
+Received: by mail-pf1-f195.google.com with SMTP id p184so28938959pfp.7;
+        Mon, 29 Jul 2019 18:50:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZeqJE/MeTBzAZVLgzu+nTLWbc1OyHy2shL2/lZCsj/E=;
-        b=djXDCvKRCKQsZILkMke8YNvphRWUO1wNt9BAw2+CBnHgcyKzB2yFR6k6Jv35GAcuzL
-         RxYURBvb2zV0WlSfCjgyLKb1rJDT5okkB3kgMyfyDpxTotIqoHoxkKK2HxyPHVJ6lo5B
-         lylJZT43F5e5Gb70J/ZTV3A27aX/xtR+Oa4dDnOKoh2jLXHYvbaO0QwIQsLSqu5f+4K6
-         Koy36WBtfApZ3uNXCUqeBmOuUOsAxfQiVFZyF7o/VBsdaTKcvBChhHnEcPtjfPwnMJzg
-         e0UHTVnp3ezEdMsSQRC5pMzcE1VEHXvOg0QTXo3MfwD7jjo94qhmeV0cUYCyWS6bHcLD
-         Chwg==
+        bh=WtwY5yricjUUFTVKUgDZ3nK7nqec7Ph6cbHYobxR4wQ=;
+        b=O+z9w0naZ1YWNbDGDlg1VRQ6JPexZ8LTW3EeZvsX12cMfb9dSMi5/ZvikfdTNDFUrk
+         Lhv/9aDYSLhRX/QsQRuLHVKEtQtWCNRrgHuwoiJeFzr0tmym9NqZn+nrq+9liKBSgxD/
+         viIcUMbTAYZfGPSatlDzSSleH+zpWsrMyD9npMEcZM+JnGS8q+/LspDOgULZdn1d2TPf
+         97hlQz/IxufgVX/r+T6BgIepRwL2N4M8UYGpSIv60FUlRYJYGT3w1x3cmGYrekDUQpfx
+         Fa7sUZy3nb23nysxxG3BbWMHTvPd/orMAkW3WxJnWqaZBodP7H7+e89dl4lSUsZu+CQW
+         Sq5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZeqJE/MeTBzAZVLgzu+nTLWbc1OyHy2shL2/lZCsj/E=;
-        b=BIxWUgmYsw/t8wn04v0LJlzm1PEGYKrxFlQlMyXe7mQqzAoGEbE0XCUP5xwvyHtuic
-         GCGrRbpFRd5ilsAen6pcHHX1RC0OlU8drzn8LN/ykkmbvNLjfhmZkHgd2WyLwKqtNaAh
-         +jx+BXKENlKRF9aUnP/Zv5gQd4ZuQJTJeEeLLjU57hXwlVgopepGNRJ+lLnn9XKDGfyR
-         GqVAHX40UP38Ll9lg9nioXLxjx+qpdMSCh5CqryX6mK2SnM/fhLUIas+CRCSxht5umqx
-         CAerzQmo/N+Ptwt4uHVTzZUL+i+1BjcJBbzSgRDuA3rjwg/lvxFVvewgJz58W6qC6dzJ
-         8Haw==
-X-Gm-Message-State: APjAAAUUICZojTQo9EpYEfJ15MlkBOrHVOWXmLdkvlJeB1Aq0D6vtNun
-        COj//ATKIu3AIc01bpq0FEU=
-X-Google-Smtp-Source: APXvYqwVHu5Iqz3b+zxf1ms9RX+F7inyknOw3X8ckD8V2vhhe1paXQwvZmmShsmA+JtzpJbt3hgH+w==
-X-Received: by 2002:a62:750c:: with SMTP id q12mr40608921pfc.59.1564451431014;
-        Mon, 29 Jul 2019 18:50:31 -0700 (PDT)
+        bh=WtwY5yricjUUFTVKUgDZ3nK7nqec7Ph6cbHYobxR4wQ=;
+        b=D+1thWMUk3Tg686+qmnlomqkPD9wlHd3Ihx8V7h2Zm5FASzC4ScZ71GxwOEP4xBqB/
+         g1n6I8KHKU55dsuesZs3YbXPgoNOeqv/GrEIiwaTcCgnjRvltnWQ2NWAubcu4wZsYFxR
+         FbPhABp+l+DefUNgY88Q89sL+y3PPL9U8DdHi+qslG2AADIrrxtzgO3MvE23XAsttIn5
+         0EY0HFlKaLeMROcDtKa3j4XXvKZe9FVvpeXCFyDrWzKjwQzKuyU2kJpla0iVDqF3bJ7k
+         4/ikS9ANwVstKqr+9+ECQ5j03wMCmbqp1bXoIaXphs+RwxgoPr4iK42vp4sQizValVvG
+         rZWw==
+X-Gm-Message-State: APjAAAUH1Olf2g1jsLPD0KIHarUcGgJUUGigglH79SLl+7nUJjSGM8xT
+        yHq47wyJWjmpcqNJaLcsOGY=
+X-Google-Smtp-Source: APXvYqzxr2P3AtG+QgBq4Lx2+D3QSoPEWcus9Yjxal69gp9m+wMIuOUPCR9aRnyvXjKQZLijNdQ3ww==
+X-Received: by 2002:a65:6547:: with SMTP id a7mr85739982pgw.65.1564451432094;
+        Mon, 29 Jul 2019 18:50:32 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id r6sm138807156pjb.22.2019.07.29.18.50.29
+        by smtp.gmail.com with ESMTPSA id r6sm138807156pjb.22.2019.07.29.18.50.31
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 18:50:30 -0700 (PDT)
+        Mon, 29 Jul 2019 18:50:31 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de,
-        y2038@lists.linaro.org, trond.myklebust@hammerspace.com,
-        anna.schumaker@netapp.com, linux-nfs@vger.kernel.org
-Subject: [PATCH 10/20] fs: nfs: Initialize filesystem timestamp ranges
-Date:   Mon, 29 Jul 2019 18:49:14 -0700
-Message-Id: <20190730014924.2193-11-deepa.kernel@gmail.com>
+        y2038@lists.linaro.org, sfrench@samba.org,
+        linux-cifs@vger.kernel.org
+Subject: [PATCH 11/20] fs: cifs: Initialize filesystem timestamp ranges
+Date:   Mon, 29 Jul 2019 18:49:15 -0700
+Message-Id: <20190730014924.2193-12-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190730014924.2193-1-deepa.kernel@gmail.com>
 References: <20190730014924.2193-1-deepa.kernel@gmail.com>
@@ -64,88 +64,106 @@ Fill in the appropriate limits to avoid inconsistencies
 in the vfs cached inode times when timestamps are
 outside the permitted range.
 
-The time formats for various verious is detailed in the
-RFCs as below:
+Also fixed cnvrtDosUnixTm calculations to avoid int overflow
+while computing maximum date.
 
-https://tools.ietf.org/html/rfc7862(time metadata)
-https://tools.ietf.org/html/rfc7530:
+References:
 
-nfstime4
+http://cifs.com/
 
-   struct nfstime4 {
-           int64_t         seconds;
-           uint32_t        nseconds;
-   };
-
-https://tools.ietf.org/html/rfc1094
-
-          struct timeval {
-              unsigned int seconds;
-              unsigned int useconds;
-          };
-
-https://tools.ietf.org/html/rfc1813
-
-struct nfstime3 {
-         uint32   seconds;
-         uint32   nseconds;
-      };
-
-Use the limits as per the RFC.
+https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-cifs/d416ff7c-c536-406e-a951-4f04b2fd1d2b
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: trond.myklebust@hammerspace.com
-Cc: anna.schumaker@netapp.com
-Cc: linux-nfs@vger.kernel.org
+Cc: sfrench@samba.org
+Cc: linux-cifs@vger.kernel.org
 ---
- fs/nfs/super.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ fs/cifs/cifsfs.c  | 22 ++++++++++++++++++++++
+ fs/cifs/netmisc.c | 14 +++++++-------
+ 2 files changed, 29 insertions(+), 7 deletions(-)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index f88ddac2dcdf..54eb5a47f180 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2360,6 +2360,15 @@ void nfs_fill_super(struct super_block *sb, struct nfs_mount_info *mount_info)
- 		sb->s_flags |= SB_POSIXACL;
- 		sb->s_time_gran = 1;
- 		sb->s_export_op = &nfs_export_ops;
-+	} else
-+		sb->s_time_gran = 1000;
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 81a16b4e1b48..94a52a63b9ea 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -56,6 +56,15 @@
+ #include "dfs_cache.h"
+ #endif
+ 
++/*
++ * DOS dates from 1980/1/1 through 2107/12/31
++ * Protocol specifications indicate the range should be to 119, which
++ * limits maximum year to 2099. But this range has not been checked.
++ */
++#define SMB_DATE_MAX (127<<9 | 12<<5 | 31)
++#define SMB_DATE_MIN (0<<9 | 1<<5 | 1)
++#define SMB_TIME_MAX (23<<11 | 59<<5 | 29)
 +
-+	if (server->nfs_client->rpc_ops->version != 4) {
-+		sb->s_time_min = 0;
-+		sb->s_time_max = U32_MAX;
+ int cifsFYI = 0;
+ bool traceSMB;
+ bool enable_oplocks = true;
+@@ -142,6 +151,7 @@ cifs_read_super(struct super_block *sb)
+ 	struct inode *inode;
+ 	struct cifs_sb_info *cifs_sb;
+ 	struct cifs_tcon *tcon;
++	struct timespec64 ts;
+ 	int rc = 0;
+ 
+ 	cifs_sb = CIFS_SB(sb);
+@@ -161,6 +171,18 @@ cifs_read_super(struct super_block *sb)
+ 	/* BB FIXME fix time_gran to be larger for LANMAN sessions */
+ 	sb->s_time_gran = 100;
+ 
++	if (tcon->unix_ext) {
++		ts = cifs_NTtimeToUnix(0);
++		sb->s_time_min = ts.tv_sec;
++		ts = cifs_NTtimeToUnix(cpu_to_le64(S64_MAX));
++		sb->s_time_max = ts.tv_sec;
 +	} else {
-+		sb->s_time_min = S64_MIN;
-+		sb->s_time_max = S64_MAX;
- 	}
- 
-  	nfs_initialise_sb(sb);
-@@ -2380,7 +2389,6 @@ static void nfs_clone_super(struct super_block *sb,
- 	sb->s_maxbytes = old_sb->s_maxbytes;
- 	sb->s_xattr = old_sb->s_xattr;
- 	sb->s_op = old_sb->s_op;
--	sb->s_time_gran = 1;
- 	sb->s_export_op = old_sb->s_export_op;
- 
- 	if (server->nfs_client->rpc_ops->version != 2) {
-@@ -2388,6 +2396,16 @@ static void nfs_clone_super(struct super_block *sb,
- 		 * so ourselves when necessary.
- 		 */
- 		sb->s_flags |= SB_POSIXACL;
-+		sb->s_time_gran = 1;
-+	} else
-+		sb->s_time_gran = 1000;
++		ts = cnvrtDosUnixTm(cpu_to_le16(SMB_DATE_MIN), 0, 0);
++		sb->s_time_min = ts.tv_sec;
++		ts = cnvrtDosUnixTm(cpu_to_le16(SMB_DATE_MAX), cpu_to_le16(SMB_TIME_MAX), 0);
++		sb->s_time_max = ts.tv_sec;
++	}
 +
-+	if (server->nfs_client->rpc_ops->version != 4) {
-+		sb->s_time_min = 0;
-+		sb->s_time_max = U32_MAX;
-+	} else {
-+		sb->s_time_min = S64_MIN;
-+		sb->s_time_max = S64_MAX;
+ 	sb->s_magic = CIFS_MAGIC_NUMBER;
+ 	sb->s_op = &cifs_super_ops;
+ 	sb->s_xattr = cifs_xattr_handlers;
+diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
+index ed92958e842d..49c17ee18254 100644
+--- a/fs/cifs/netmisc.c
++++ b/fs/cifs/netmisc.c
+@@ -949,8 +949,8 @@ static const int total_days_of_prev_months[] = {
+ struct timespec64 cnvrtDosUnixTm(__le16 le_date, __le16 le_time, int offset)
+ {
+ 	struct timespec64 ts;
+-	time64_t sec;
+-	int min, days, month, year;
++	time64_t sec, days;
++	int min, day, month, year;
+ 	u16 date = le16_to_cpu(le_date);
+ 	u16 time = le16_to_cpu(le_time);
+ 	SMB_TIME *st = (SMB_TIME *)&time;
+@@ -966,15 +966,15 @@ struct timespec64 cnvrtDosUnixTm(__le16 le_date, __le16 le_time, int offset)
+ 	sec += 60 * 60 * st->Hours;
+ 	if (st->Hours > 24)
+ 		cifs_dbg(VFS, "illegal hours %d\n", st->Hours);
+-	days = sd->Day;
++	day = sd->Day;
+ 	month = sd->Month;
+-	if (days < 1 || days > 31 || month < 1 || month > 12) {
+-		cifs_dbg(VFS, "illegal date, month %d day: %d\n", month, days);
+-		days = clamp(days, 1, 31);
++	if (day < 1 || day > 31 || month < 1 || month > 12) {
++		cifs_dbg(VFS, "illegal date, month %d day: %d\n", month, day);
++		day = clamp(day, 1, 31);
+ 		month = clamp(month, 1, 12);
  	}
- 
-  	nfs_initialise_sb(sb);
+ 	month -= 1;
+-	days += total_days_of_prev_months[month];
++	days = day + total_days_of_prev_months[month];
+ 	days += 3652; /* account for difference in days between 1980 and 1970 */
+ 	year = sd->Year;
+ 	days += year * 365;
 -- 
 2.17.1
 
