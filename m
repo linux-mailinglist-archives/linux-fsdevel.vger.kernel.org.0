@@ -2,105 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83BB37AFCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 19:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 473B07B044
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 19:40:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfG3R0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 13:26:35 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:33087 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbfG3R0f (ORCPT
+        id S1731318AbfG3Rjx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 13:39:53 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35180 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731313AbfG3Rjx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 13:26:35 -0400
-Received: by mail-io1-f68.google.com with SMTP id z3so11099224iog.0;
-        Tue, 30 Jul 2019 10:26:34 -0700 (PDT)
+        Tue, 30 Jul 2019 13:39:53 -0400
+Received: by mail-io1-f67.google.com with SMTP id m24so130086599ioo.2;
+        Tue, 30 Jul 2019 10:39:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tsLPrLOcclqm31GATo5KG4DgL5WcwoSIYZV9oMmibkM=;
-        b=LUamGemkbRqnOVHbq7CXnlGi/lEYqOEEySiKtSrwXqEp6shA4gxXuseHjOaOiH3aa7
-         q4CF5Eum/dqTa4wC00EDfSR4wSTPClq6Y3O6fnjnuTa8UISAGRv24/2prGpJP4yj+/5K
-         pp6QgCoaOkGX8YfVQJvI0ldkf7g5Qtz5YPjBIm1MafS1QJbnmne2KPhWiFiOFjpLhpua
-         9zkTIHWrBNLvn7Si20xo61CMzJCVm2tyy8IPzybo7iqfWECXz7HiHXR7qDV7Zs/ri977
-         AjNYEbpGf5FVBSgWnRjBEI6oRswJ4WN7oBSH2Oh+cBt5ZquUgXtZtN3ILEA184MLtXtW
-         bQ/A==
+        bh=uwRGpPyO4rj41OhPrKgAKlV9LI4f1AOpgovGm7Ses18=;
+        b=rksr4DjuGP0oernMgWLZxy30LGhFuhay1j1vOnOeicZjBWcqFJ+Nx6MfuUboj9QxPu
+         +s3KqxCVZ6YCOwjMF6XAnU9scY8hJk64AiBY3aRG7qoKqJ43hiim+myQHFw1xdWZkquA
+         j1S872SkhWEOxZ3WTO7SNFLVuh/RjTE+Dsg0DhnZMk0BtQ4l3EshZBGWijHr2OGFB4lv
+         XodPLoOau1Z4SFA3GBfBRUiM4EGWadAnYO/oQaSDTIwMJHiGxAYIFQiwUyjXot/4VEm1
+         JmGcG67m/98CXLV7fQSflRRr6EVkcNirxk4Ndfr17ug481gcd4md+nZyTaBTNiZXLGvg
+         Zfgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tsLPrLOcclqm31GATo5KG4DgL5WcwoSIYZV9oMmibkM=;
-        b=NG2H9GcQ68UYhIqA3DHz1MQLHBYaQ6WlL5Ny3/8lQ+dUWqFqL+0L6+rDa36qxFvQWo
-         qMlymEW3nT8NX9di+UldcC6QvPOwEoBDK8G71ADLWoOhkQLLVLOJ0MzNvcgU+im+3N9l
-         0BD0DOaj7nSX8SKV5YisV6gKrqQzYYU00M93mWK33/quxMoauh+PjgBn9HTVH4lTo48Z
-         Ut5k9KXyRWhmkxbRKPwQuIlZ6I4FdJpAg1A8AHgAFMgu3nf4fo9dUgNCg8f3ZorlsVrK
-         laySDgwqOElPQ8R4gIQL8jTinjNKE4LwOu8VL/rhqOLHGs/VwpUNogcvtGwYrYKg2H16
-         Nwqw==
-X-Gm-Message-State: APjAAAXXMf4nUgxDA8dmzb1URvoerk/7LBTv3dn0IeKspqQXe4i/dWfu
-        5Cno/1ccIv/b3fNd+TbqTWxsv/rX8e9g11HV/j8=
-X-Google-Smtp-Source: APXvYqy+9zDOTHm2OHuBLA2soclNQ3YwB8p18dgCUYzErzvrXdSDbEEW8GCwNV3FQCvXOrwwAN9MF+uqzNXPUM4I49E=
-X-Received: by 2002:a5e:8210:: with SMTP id l16mr81558885iom.240.1564507594217;
- Tue, 30 Jul 2019 10:26:34 -0700 (PDT)
+        bh=uwRGpPyO4rj41OhPrKgAKlV9LI4f1AOpgovGm7Ses18=;
+        b=ZSxplPujgNu9gGh6f2A92+izWesCU4TaSMoIFwidmMBoP7QcrS/q57hKfJyIDAQ1y1
+         Mzu/9bpv7LhhKoIp6uv3SgGOWOnxtO34X2XbaU1cMs3iAOUCr7ACO/97r/mxPyF7Yf2x
+         Jp1fdbXWSh8mDnn2DiH8OOsMgKc7V4KWIWj2wcQ8RzfWHBBYvk4r4/lAyoZ5iN1uJYsW
+         8/kN4y0SetOYojqw1w0LrsDZjsx+jLIN3vz1oRUfe2xJqv056XLi1DNgTS2161kY6/eJ
+         TC3jKpKWY37nCtMtjeYahz0xpMg4X9vs1N/9z6eYYyEOieRbcSsV9XG6S2nONoJUvvy0
+         hn4Q==
+X-Gm-Message-State: APjAAAWjsdgzgIKuWih9855DYOSPlaQyudcNNI7hefdx9GCL4iAmeE3r
+        vijNCZwtPyTAmkF8HOYXvkxhKutN2g92hCE3GsM=
+X-Google-Smtp-Source: APXvYqzQMO3eczgpJRVOn78BhEOjZ3P9FqbQh5qXdx89yHk8g5EM3UU/ffKu0D3Gu1LNA9EcmgC8ssuM8FznO9tZjCo=
+X-Received: by 2002:a6b:ed09:: with SMTP id n9mr36647545iog.153.1564508392466;
+ Tue, 30 Jul 2019 10:39:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-4-deepa.kernel@gmail.com>
- <87d0hsapwr.fsf@mail.parknet.co.jp>
-In-Reply-To: <87d0hsapwr.fsf@mail.parknet.co.jp>
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-13-deepa.kernel@gmail.com>
+ <878ssfc1id.fsf@mail.parknet.co.jp>
+In-Reply-To: <878ssfc1id.fsf@mail.parknet.co.jp>
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Tue, 30 Jul 2019 10:26:22 -0700
-Message-ID: <CABeXuvqgaxDSR8N_D1Tdw06g_5PGinZS--6nx-bPtAWP4v+mwg@mail.gmail.com>
-Subject: Re: [PATCH 03/20] timestamp_truncate: Replace users of timespec64_trunc
+Date:   Tue, 30 Jul 2019 10:39:41 -0700
+Message-ID: <CABeXuvoZCqGLaiOrf+qrg8pYNYnrY5qzDnwGpnuV+jh3jNvhjw@mail.gmail.com>
+Subject: Re: [PATCH 12/20] fs: fat: Initialize filesystem timestamp ranges
 To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, anton@tuxera.com,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        stoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Joel Becker <jlbec@evilplan.org>,
-        Richard Weinberger <richard@nod.at>, Tejun Heo <tj@kernel.org>,
-        yuchao0@huawei.com,
-        "Linux F2FS DEV, Mailing List" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        linux-ntfs-dev@lists.sourceforge.net,
-        linux-mtd <linux-mtd@lists.infradead.org>
+        y2038 Mailman List <y2038@lists.linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 1:27 AM OGAWA Hirofumi
+On Tue, Jul 30, 2019 at 2:31 AM OGAWA Hirofumi
 <hirofumi@mail.parknet.co.jp> wrote:
 >
 > Deepa Dinamani <deepa.kernel@gmail.com> writes:
 >
-> > diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-> > index 1e08bd54c5fb..53bb7c6bf993 100644
-> > --- a/fs/fat/misc.c
-> > +++ b/fs/fat/misc.c
-> > @@ -307,8 +307,9 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
-> >               inode->i_atime = (struct timespec64){ seconds, 0 };
-> >       }
-> >       if (flags & S_CTIME) {
-> > -             if (sbi->options.isvfat)
-> > -                     inode->i_ctime = timespec64_trunc(*now, 10000000);
-> > +             if (sbi->options.isvfat) {
-> > +                     inode->i_ctime = timestamp_truncate(*now, inode);
-> > +             }
-> >               else
-> >                       inode->i_ctime = fat_timespec64_trunc_2secs(*now);
-> >       }
+> > +/* DOS dates from 1980/1/1 through 2107/12/31 */
+> > +#define FAT_DATE_MIN (0<<9 | 1<<5 | 1)
+> > +#define FAT_DATE_MAX (127<<9 | 12<<5 | 31)
+> > +#define FAT_TIME_MAX (23<<11 | 59<<5 | 29)
+> > +
+> >  /*
+> >   * A deserialized copy of the on-disk structure laid out in struct
+> >   * fat_boot_sector.
+> > @@ -1605,6 +1610,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+> >       int debug;
+> >       long error;
+> >       char buf[50];
+> > +     struct timespec64 ts;
+> >
+> >       /*
+> >        * GFP_KERNEL is ok here, because while we do hold the
+> > @@ -1698,6 +1704,12 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+> >       sbi->free_clus_valid = 0;
+> >       sbi->prev_free = FAT_START_ENT;
+> >       sb->s_maxbytes = 0xffffffff;
+> > +     fat_time_fat2unix(sbi, &ts, 0, cpu_to_le16(FAT_DATE_MIN), 0);
+> > +     sb->s_time_min = ts.tv_sec;
+> > +
+> > +     fat_time_fat2unix(sbi, &ts, cpu_to_le16(FAT_TIME_MAX),
+> > +                       cpu_to_le16(FAT_DATE_MAX), 0);
+> > +     sb->s_time_max = ts.tv_sec;
 >
-> Looks like broken. It changed to sb->s_time_gran from 10000000, and
-> changed coding style.
+> At least, it is wrong to call fat_time_fat2unix() before setup parameters
+> in sbi.
 
-This is using a new api: timestamp_truncate(). granularity is gotten
-by inode->sb->s_time_gran. See Patch [2/20]:
-https://lkml.org/lkml/2019/7/29/1853
+All the parameters that fat_time_fat2unix() cares in sbi is accessed through
 
-So this is not broken if fat is filling in the right granularity in the sb.
+static inline int fat_tz_offset(struct msdos_sb_info *sbi)
+{
+    return (sbi->options.tz_set ?
+           -sbi->options.time_offset :
+           sys_tz.tz_minuteswest) * SECS_PER_MIN;
+}
+
+Both the sbi fields sbi->options.tz_set and sbi->options.time_offset
+are set by the call to parse_options(). And, parse_options() is called
+before the calls to fat_time_fat2unix().:
+
+int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+           void (*setup)(struct super_block *))
+{
+     <snip>
+
+    error = parse_options(sb, data, isvfat, silent, &debug, &sbi->options);
+    if (error)
+        goto out_fail;
+
+   <snip>
+
+    sbi->prev_free = FAT_START_ENT;
+    sb->s_maxbytes = 0xffffffff;
+    fat_time_fat2unix(sbi, &ts, 0, cpu_to_le16(FAT_DATE_MIN), 0);
+    sb->s_time_min = ts.tv_sec;
+
+    fat_time_fat2unix(sbi, &ts, cpu_to_le16(FAT_TIME_MAX),
+              cpu_to_le16(FAT_DATE_MAX), 0);
+    sb->s_time_max = ts.tv_sec;
+
+   <snip>
+}
+
+I do not see what the problem is.
 
 -Deepa
