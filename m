@@ -2,48 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A50C7B33F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 21:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D661E7B354
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 21:29:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729004AbfG3T1D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jul 2019 15:27:03 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:57603 "EHLO
+        id S2388077AbfG3T33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jul 2019 15:29:29 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:42193 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfG3T1C (ORCPT
+        with ESMTP id S1727169AbfG3T32 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jul 2019 15:27:02 -0400
+        Tue, 30 Jul 2019 15:29:28 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M7sUE-1hxTSY19zm-0055Nl; Tue, 30 Jul 2019 21:27:00 +0200
+ 1MPp0l-1hgDjO0Qap-00MtFU; Tue, 30 Jul 2019 21:27:29 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 03/29] compat: itanic doesn't have one
-Date:   Tue, 30 Jul 2019 21:25:14 +0200
-Message-Id: <20190730192552.4014288-4-arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH v5 04/29] do_vfs_ioctl(): use saner types
+Date:   Tue, 30 Jul 2019 21:25:15 +0200
+Message-Id: <20190730192552.4014288-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190730192552.4014288-1-arnd@arndb.de>
 References: <20190730192552.4014288-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:qaoDHaHD+s46a0f7CuoKPmcS/DsWUB6tQTO63pYVO2pFc9Lk6pw
- YYnbzo9CPSTw7aED9zn5+RGRDdKkvNH2orYMNySDgu/+DtdQjwcJQxeSP9EIvX70gX0J5ZF
- uozFzYSxFxxYjowy+PKfj0Pj5XGsGCQ5wL5CxzAgWE8td96LCcXbHxnnhOJ7lSw04j/nRrA
- 36njQCm2lNfGowV6E1FPw==
+X-Provags-ID: V03:K1:MCta0RGgf01015SH24OTPHqteqHOO6itXkDD7QX+UrLmioMGiDF
+ HsY/l7URD7XE5tpeJJYg93oLECrl1DqOEPQ+klC6eTXg/1hLA/wq8MaxniK0LSh7oxOIaTD
+ KLAYGoosvsfjWtewjouxLTs0W2fsnHaZ+6FwPwEHi5NScFngc/pwhe152slTd2DREgnGoCc
+ mRvqNg42XWJZ6ePXxDz1w==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tzkiCjmVjfk=:G3U5T79b/H8a1iqfECjoBH
- Lg3LcXWK1AnnKdYz91XsCpRxsLqTRxnuW/6SJ6fwMwnoHOUtMSIGw6GTOXOoh3xuc5I+/kwQI
- byHHD0PxKHsrtapC0duDNG6h3YcPDd3ujMHXldgPuoB1ZRd8zwKLPXGVCaLTwtY0l2HrqK6Ho
- zQbFqPGETH0wocKzXDRu6wRzSXFM+6e+Uy8mYqRzkq/zXPLskJc58quAJrfKDRcFCfkt8Xcze
- qy5F71aAeiIPazyfHfkpxbiR+kMAtpzQ0WVL1txk/XG/FYiePmHXmj9Btwcp6XmXZM5D6Lm9d
- gNdGyk9b/xuKC5itprkzLPsrb1rfW5bBN72YKue9o80kVSUhvacC972cD60xYflJYyebx6VoB
- nnChjWRNvM8n0n56J7O4MYDIedPUXhGutyN+GXvF976Py8Kszrn+sYrEOgkW90sC81ZU/EDbV
- 9/XTjvzPyi1YEkBpvn3I5zuJPo3FGJR+ug7D3huOuA6Hs3+lTIXBTd2CNt+lqDxlp0p3KCikn
- wBNwItf77CpuvMhRaBD44jBMASj7OydGizef2aZrYLp46sCNEjVQJL42ASyyGqURpBOJ/pE+y
- YAwMfubyRg9cyOa7rq2dSmeWVBfkEDctvFAPEKR3ii4A3yzX8TmIH4G9PlWXt+8oVxsI8wjEW
- /ELLu1CA+Cjd0ZPUnNluE2gH2pSCme+bCtFSV1DV+k0iBcHW+5Pr12FeUWBv0pNT9D5+uu8CC
- 5LF9MZyvAfucOm404aJmI5gb9YIG61VFImJCWg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QT1LidRZpKY=:0YxiP35xtkAKrc4fvbEh/7
+ MAQc01UIw8htdvjMtA2MEU8YpOsAx3GPjSmtPNLy93XMBV7ZkU47/YZZKh2HNjWs7q521fC31
+ NgDK8+GZDcNW4keJ7RvsAZph+KeZrpKQFyy5XsJ9G/2hvPJSfj3GZvrVkyskXRY4r5JklIjmo
+ FpW23co6D3mfLBQQNAvXdUI4FBYo9Q/rm2Ikl3VY0ihJ8LhEwUatKTeV7g4rTKgtUo+QzPnq0
+ LpUt+qLuzp+3MNKhkZp5yEHR3u7796trclWyCfE8gZIHlQtqJE2M6jpwSivf1UjwClmXX97uO
+ 1L+oJWsGsxmK2N3uIOGLg9dFiwv+dKMPaULFmovLRsubcet9GmewSKRcmJRcW7O3XLYqULtjS
+ Ymyy9CM+ugBPQ4hdfdbYSJpWipJCx30p6sfXUObAAEFvwZKvOJa3urleeFHRFlT20N2VMA1Z/
+ rTiEqN8uuEt1bMxKhk3+PKox55LtfxrJwldZq3wd5luCXibDX6vDPMpTRaWXtCY/P+MXkujxZ
+ VfWtRsgPeSETQi7cFKud9hx8PnsML/xforbYOvWFtLuYh3YPPxnUfbvFWKdYgT+sGVpPIwoMd
+ /ITZl67R8uh1WGZpDOYub2Kc9lYA+NTWagd1uORKVEFU2QQdhLa2wqLGOLTfx8UCx0brzj+jG
+ ynyfr59FTYlW0vHOlRLU94oIo6fAKlfe/Z51Qzo4RnopydnpzagD1aQ54D+96hEiKRHo8+lJ5
+ S9ZDdrzCan1rDPRCQAqiQSxoe3DC3LZ1E3qxeA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -51,36 +55,85 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-... and hadn't for a long time.
+casting to pointer to int, only to pass that to function that
+takes pointer to void and uses it as pointer to structure is
+really asking for trouble.
+
+"Some pointer, I'm not sure what to" is spelled "void *",
+not "int *"; use that.
+
+And declare the functions we are passing that pointer to
+as taking the pointer to what they really want to access.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/compat_ioctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ioctl.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index b19edbc57146..3d08817be7b8 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -468,7 +468,7 @@ static int rtc_ioctl(struct file *file,
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index fef3a6bf7c78..3f28b39f32f3 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -174,10 +174,9 @@ static int fiemap_check_ranges(struct super_block *sb,
+ 	return 0;
  }
  
- /* on ia32 l_start is on a 32-bit boundary */
--#if defined(CONFIG_IA64) || defined(CONFIG_X86_64)
-+#if defined(CONFIG_X86_64)
- struct space_resv_32 {
- 	__s16		l_type;
- 	__s16		l_whence;
-@@ -1022,7 +1022,7 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
- 	case FIOQSIZE:
+-static int ioctl_fiemap(struct file *filp, unsigned long arg)
++static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
+ {
+ 	struct fiemap fiemap;
+-	struct fiemap __user *ufiemap = (struct fiemap __user *) arg;
+ 	struct fiemap_extent_info fieinfo = { 0, };
+ 	struct inode *inode = file_inode(filp);
+ 	struct super_block *sb = inode->i_sb;
+@@ -244,7 +243,8 @@ static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
+ 	return ret;
+ }
+ 
+-static long ioctl_file_clone_range(struct file *file, void __user *argp)
++static long ioctl_file_clone_range(struct file *file,
++				   struct file_clone_range __user *argp)
+ {
+ 	struct file_clone_range args;
+ 
+@@ -584,9 +584,9 @@ static int ioctl_fsthaw(struct file *filp)
+ 	return thaw_super(sb);
+ }
+ 
+-static int ioctl_file_dedupe_range(struct file *file, void __user *arg)
++static int ioctl_file_dedupe_range(struct file *file,
++				   struct file_dedupe_range __user *argp)
+ {
+-	struct file_dedupe_range __user *argp = arg;
+ 	struct file_dedupe_range *same = NULL;
+ 	int ret;
+ 	unsigned long size;
+@@ -635,7 +635,7 @@ int do_vfs_ioctl(struct file *filp, unsigned int fd, unsigned int cmd,
+ 	     unsigned long arg)
+ {
+ 	int error = 0;
+-	int __user *argp = (int __user *)arg;
++	void __user *argp = (void __user *)arg;
+ 	struct inode *inode = file_inode(filp);
+ 
+ 	switch (cmd) {
+@@ -674,13 +674,13 @@ int do_vfs_ioctl(struct file *filp, unsigned int fd, unsigned int cmd,
  		break;
  
--#if defined(CONFIG_IA64) || defined(CONFIG_X86_64)
-+#if defined(CONFIG_X86_64)
- 	case FS_IOC_RESVSP_32:
- 	case FS_IOC_RESVSP64_32:
- 		error = compat_ioctl_preallocate(f.file, compat_ptr(arg));
+ 	case FS_IOC_FIEMAP:
+-		return ioctl_fiemap(filp, arg);
++		return ioctl_fiemap(filp, argp);
+ 
+ 	case FIGETBSZ:
+ 		/* anon_bdev filesystems may not have a block size */
+ 		if (!inode->i_sb->s_blocksize)
+ 			return -EINVAL;
+-		return put_user(inode->i_sb->s_blocksize, argp);
++		return put_user(inode->i_sb->s_blocksize, (int __user *)argp);
+ 
+ 	case FICLONE:
+ 		return ioctl_file_clone(filp, arg, 0, 0, 0);
 -- 
 2.20.0
 
