@@ -2,108 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F07A97C457
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 16:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A457C47D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 16:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbfGaOGr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 10:06:47 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42242 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbfGaOGq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 10:06:46 -0400
-Received: by mail-io1-f65.google.com with SMTP id e20so3579945iob.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2019 07:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=fZNwrkMVKiuAg2/EbekwczHzfWS9d7cPF07lILiSr04=;
-        b=cm81+0ttyogzbawDNgloBP2d+3Ip1gbgDJvVFj/sKn9t+r2Vk1GFxwDPjDujxMP5Yl
-         8D7ZG1PPbYCm2JTT9vPtkZWC8lWOBjQ3nPDeDQ5Oz2vMVTT1RU+bN8cDTddH7MYxu7W3
-         RSrMb6/7HNe4GGgBQG5PK+VEgYJ5A01o7MsRY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=fZNwrkMVKiuAg2/EbekwczHzfWS9d7cPF07lILiSr04=;
-        b=h3JL3agNgADAyaCuSIm9snTdSV+e9G7pzPcdmekA5zSRkbKKIismkPmiDaGVtQxJRn
-         oa6F09YOIcyyEpBxuRX4Sw6pzEkTHXAhNUxNPgn9tCeNH0xs5XFvS2K5JIaVz/EOHzpw
-         G8rWiQMFgV/rC6WHuSSx4ygrUZC0bGn/FZeyF9/PivWPN0UmhYH3QOl5mNSbKOG1hO77
-         xOgxQwLLnFBdcbpNFtBSMe34sAzaKkqnMBDxIDLZReuExhBYo/Ihz5FQCWtHTiyxJP7Z
-         v/bKH/PrVSeeRzNT/T1gOBQzx3cm3Gx/YtaKkUGAzuOheuelpXkL6obn4vY7EmQFM2Tn
-         I73Q==
-X-Gm-Message-State: APjAAAUZhDfSvkQUnbCIZF8YRj/N1cXret2509i4XdXolX7vyMXDnCLL
-        FT2nWhGsy41Wm0fXu7yS4Q8KNALJ5Ew=
-X-Google-Smtp-Source: APXvYqyKwTlHuovQ0FZC7YuS6LfPdubC/e5rhbCUEhGTHGwA6ez3AfRilCCRoa1fa+SPff50Myrvfg==
-X-Received: by 2002:a6b:da1a:: with SMTP id x26mr87307549iob.285.1564582005619;
-        Wed, 31 Jul 2019 07:06:45 -0700 (PDT)
-Received: from [10.10.6.48] ([50.73.98.161])
-        by smtp.googlemail.com with ESMTPSA id v3sm12305025ioh.58.2019.07.31.07.06.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 07:06:44 -0700 (PDT)
-Subject: Re: [PATCH] udf: prevent allocation beyond UDF partition
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jan Kara <jack@suse.com>, Steve Magnani <steve@digidescorp.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-References: <1564341552-129750-1-git-send-email-steve@digidescorp.com>
- <20190731095901.GC15806@quack2.suse.cz>
-From:   Steve Magnani <steve.magnani@digidescorp.com>
-Message-ID: <0449d177-28f3-2da8-b893-940e9e0511ed@digidescorp.com>
-Date:   Wed, 31 Jul 2019 09:06:44 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1729152AbfGaONB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 10:13:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38982 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726125AbfGaONB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 31 Jul 2019 10:13:01 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DA78630833B0;
+        Wed, 31 Jul 2019 14:13:00 +0000 (UTC)
+Received: from pegasus.maiolino.com (unknown [10.40.205.152])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B64860852;
+        Wed, 31 Jul 2019 14:12:58 +0000 (UTC)
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     hch@lst.de, adilger@dilger.ca, jaegeuk@kernel.org,
+        darrick.wong@oracle.com, miklos@szeredi.hu, rpeterso@redhat.com,
+        linux-xfs@vger.kernel.org
+Subject: [PATCH 0/9 V4] New ->fiemap infrastructure and ->bmap removal
+Date:   Wed, 31 Jul 2019 16:12:36 +0200
+Message-Id: <20190731141245.7230-1-cmaiolino@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190731095901.GC15806@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 31 Jul 2019 14:13:01 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/31/19 4:59 AM, Jan Kara wrote:
-> On Sun 28-07-19 14:19:12, Steve Magnani wrote:
->> The UDF bitmap allocation code assumes that a recorded
->> Unallocated Space Bitmap is compliant with ECMA-167 4/13,
->> which requires that pad bytes between the end of the bitmap
->> and the end of a logical block are all zero.
->>
->> When a recorded bitmap does not comply with this requirement,
->> for example one padded with FF to the block boundary instead
->> of 00, the allocator may "allocate" blocks that are outside
->> the UDF partition extent. This can result in UDF volume descriptors
->> being overwritten by file data or by partition-level descriptors,
->> and in extreme cases, even in scribbling on a subsequent disk partition.
->>
->> Add a check that the block selected by the allocator actually
->> resides within the UDF partition extent.
->>
->> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
-> Thanks for the patch! Added to my tree. I've just slightly modified the
-> patch to also output error message about filesystem corruption.
->
-> 								Honza
+Hi.
+
+This is the 4th version of the complete series with the goal to deprecate and
+eventually remove ->bmap() interface, in lieu of FIEMAP.
+
+Besides the rebase of the patchset against latest Linus's tree, the only changes
+in this patchset regarding to the previous version, are concentrated in patches
+4/9 and 8/9.
+
+In patch 4  (fibmap: Use bmap instead of ->bmap method in ioctl_fibmap), the
+difference compared with previous version, is a change in ioclt_fibmap() return
+value, I spotted while testing this new version with filesystems using data
+inlined in inodes. It now returns 0 in case of error instead an error value,
+otherwise it would be an user interface change.
 
 
-Thanks Jan. Ror the record, it appears that Windows chkdsk has a bug in its
-analysis of a space bitmaps. If the last block of a UDF partition falls
-in the middle of a bitmap byte, chkdsk reports spurious errors if the bits
-in that byte that _don't_ correspond to UDF partition blocks are zero.
+In patch 8 (Use FIEMAP for FIBMAP calls), there are minor changes regarding V3.
+It just contains a coding style fix pointed by Andreas in the previous version,
+but now, it also include changes to all filesystems which supports both FIEMAP
+and FIBMAP, and need some sort of special handling (like inlined data, reflinked
+inodes, etc).
 
-To maximize interoperability it would appear that it's best to format such
-that UDF partition sizes are always a multiple of 8 blocks.
+Again, Patch 9 is xfs-specific removal of ->bmap() interface, without any
+changes compared to the previous version.
 
-Note to non-UDF wonks reading this, a UDF partition is a sub-extent of a
-disk partition. So achieving the multiple-of-8-blocks involves a change to
-mkudffs code.
 
-------------------------------------------------------------------------
-  Steven J. Magnani               "I claim this network for MARS!
-  www.digidescorp.com              Earthling, return my space modulator!"
 
-  #include <standard.disclaimer>
+I do apologize for taking so long to rework this patchset, I've got busy with
+other stuff.
+
+Comments are appreciated, specially regarding if the error values returned by
+ioctl_fibmap() make sense.
+
+
+Cheers
+
+Carlos Maiolino (9):
+  fs: Enable bmap() function to properly return errors
+  cachefiles: drop direct usage of ->bmap method.
+  ecryptfs: drop direct calls to ->bmap
+  fibmap: Use bmap instead of ->bmap method in ioctl_fibmap
+  fs: Move start and length fiemap fields into fiemap_extent_info
+  iomap: Remove length and start fields from iomap_fiemap
+  fiemap: Use a callback to fill fiemap extents
+  Use FIEMAP for FIBMAP calls
+  xfs: Get rid of ->bmap
+
+ drivers/md/md-bitmap.c |  16 ++++--
+ fs/bad_inode.c         |   3 +-
+ fs/btrfs/inode.c       |   5 +-
+ fs/cachefiles/rdwr.c   |  27 ++++-----
+ fs/ecryptfs/mmap.c     |  16 ++----
+ fs/ext2/ext2.h         |   3 +-
+ fs/ext2/inode.c        |   6 +-
+ fs/ext4/ext4.h         |   3 +-
+ fs/ext4/extents.c      |  15 +++--
+ fs/f2fs/data.c         |  15 ++++-
+ fs/f2fs/f2fs.h         |   3 +-
+ fs/gfs2/inode.c        |   9 ++-
+ fs/hpfs/file.c         |   4 +-
+ fs/inode.c             | 105 +++++++++++++++++++++++++++++----
+ fs/ioctl.c             | 128 ++++++++++++++++++++++++++---------------
+ fs/iomap.c             |  40 ++-----------
+ fs/jbd2/journal.c      |  22 ++++---
+ fs/nilfs2/inode.c      |   5 +-
+ fs/nilfs2/nilfs.h      |   3 +-
+ fs/ocfs2/extent_map.c  |  13 ++++-
+ fs/ocfs2/extent_map.h  |   3 +-
+ fs/overlayfs/inode.c   |   5 +-
+ fs/xfs/xfs_aops.c      |  24 --------
+ fs/xfs/xfs_iops.c      |  19 +++---
+ fs/xfs/xfs_trace.h     |   1 -
+ include/linux/fs.h     |  33 +++++++----
+ include/linux/iomap.h  |   2 +-
+ mm/page_io.c           |  11 ++--
+ 28 files changed, 320 insertions(+), 219 deletions(-)
+
+-- 
+2.20.1
 
