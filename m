@@ -2,161 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A91C07CF46
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 23:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BAD77D06F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 00:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfGaVDP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 17:03:15 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43070 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726096AbfGaVDP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 17:03:15 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6VF8aRM052343;
-        Wed, 31 Jul 2019 15:14:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=jPTHj5nlpLsKluMqdbevCd+OddfGtT5PcS8BjhKitxA=;
- b=Q7pb1MenHgobHEYolnpA41Hm695nIn5z23xKGClgnYsueqa+3czNiM10IfkXiMORkqGk
- xIpVtctk+nR7MBou0HV+tM5Ao876lq+KRR54zpeOZJiQrCt1DJU5ngh9syDTI58oz/bp
- Q+KEB7wm6oq94FiBJNONRPzRFL7oVMywoh61OJJgGQA3/y+slFLDpGgXPmYV2eEwjCjM
- sjOitpGMNdh26D7OmrPbzeBmZIR/NCzaZpZ2p3JErVaOT4q9rB/tE8T9eZ6hK61PLuXs
- 9JymdwLmHuCB/WFwONSLZqEvTEBGnjX7VIig3SX5tsK6VCFhbOVlZupfLXSK/gEU1r9x Pw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2u0ejpnwrf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 15:14:57 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6VFD17Y008814;
-        Wed, 31 Jul 2019 15:14:57 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2u2jp56vdu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 15:14:57 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6VFErpV021960;
-        Wed, 31 Jul 2019 15:14:53 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 31 Jul 2019 08:14:53 -0700
-Date:   Wed, 31 Jul 2019 08:14:52 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, arnd@arndb.de,
-        y2038@lists.linaro.org
-Subject: Re: [PATCH 05/20] utimes: Clamp the timestamps before update
-Message-ID: <20190731151452.GA7077@magnolia>
-References: <20190730014924.2193-1-deepa.kernel@gmail.com>
- <20190730014924.2193-6-deepa.kernel@gmail.com>
+        id S1730967AbfGaWFn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 18:05:43 -0400
+Received: from fieldses.org ([173.255.197.46]:43134 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729021AbfGaWFn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 31 Jul 2019 18:05:43 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 663E4ABE; Wed, 31 Jul 2019 18:05:42 -0400 (EDT)
+Date:   Wed, 31 Jul 2019 18:05:42 -0400
+To:     Trond Myklebust <trondmy@gmail.com>
+Cc:     "J. Bruce Fields" <bfields@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@redhat.com>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 00/16] Cache open file descriptors in knfsd
+Message-ID: <20190731220542.GA20006@fieldses.org>
+References: <20190630135240.7490-1-trond.myklebust@hammerspace.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190730014924.2193-6-deepa.kernel@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1907310156
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1907310156
+In-Reply-To: <20190630135240.7490-1-trond.myklebust@hammerspace.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 06:49:09PM -0700, Deepa Dinamani wrote:
-> POSIX is ambiguous on the behavior of timestamps for
-> futimens, utimensat and utimes. Whether to return an
-> error or silently clamp a timestamp beyond the range
-> supported by the underlying filesystems is not clear.
-> 
-> POSIX.1 section for futimens, utimensat and utimes says:
-> (http://pubs.opengroup.org/onlinepubs/9699919799/functions/futimens.html)
-> 
-> The file's relevant timestamp shall be set to the greatest
-> value supported by the file system that is not greater
-> than the specified time.
-> 
-> If the tv_nsec field of a timespec structure has the special
-> value UTIME_NOW, the file's relevant timestamp shall be set
-> to the greatest value supported by the file system that is
-> not greater than the current time.
-> 
-> [EINVAL]
->     A new file timestamp would be a value whose tv_sec
->     component is not a value supported by the file system.
-> 
-> The patch chooses to clamp the timestamps according to the
-> filesystem timestamp ranges and does not return an error.
-> This is in line with the behavior of utime syscall also
-> since the POSIX page(http://pubs.opengroup.org/onlinepubs/009695399/functions/utime.html)
-> for utime does not mention returning an error or clamping like above.
-> 
-> Same for utimes http://pubs.opengroup.org/onlinepubs/009695399/functions/utimes.html
-> 
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> ---
->  fs/utimes.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/utimes.c b/fs/utimes.c
-> index 350c9c16ace1..4c1a2ce90bbc 100644
-> --- a/fs/utimes.c
-> +++ b/fs/utimes.c
-> @@ -21,6 +21,7 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
->  	int error;
->  	struct iattr newattrs;
->  	struct inode *inode = path->dentry->d_inode;
-> +	struct super_block *sb = inode->i_sb;
->  	struct inode *delegated_inode = NULL;
->  
->  	error = mnt_want_write(path->mnt);
-> @@ -36,16 +37,24 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
->  		if (times[0].tv_nsec == UTIME_OMIT)
->  			newattrs.ia_valid &= ~ATTR_ATIME;
->  		else if (times[0].tv_nsec != UTIME_NOW) {
-> -			newattrs.ia_atime.tv_sec = times[0].tv_sec;
-> -			newattrs.ia_atime.tv_nsec = times[0].tv_nsec;
-> +			newattrs.ia_atime.tv_sec =
-> +				clamp(times[0].tv_sec, sb->s_time_min, sb->s_time_max);
-> +			if (times[0].tv_sec == sb->s_time_max || times[0].tv_sec == sb->s_time_min)
-> +				newattrs.ia_atime.tv_nsec = 0;
-> +			else
-> +				newattrs.ia_atime.tv_nsec = times[0].tv_nsec;
->  			newattrs.ia_valid |= ATTR_ATIME_SET;
->  		}
->  
->  		if (times[1].tv_nsec == UTIME_OMIT)
->  			newattrs.ia_valid &= ~ATTR_MTIME;
->  		else if (times[1].tv_nsec != UTIME_NOW) {
-> -			newattrs.ia_mtime.tv_sec = times[1].tv_sec;
-> -			newattrs.ia_mtime.tv_nsec = times[1].tv_nsec;
-> +			newattrs.ia_mtime.tv_sec =
-> +				clamp(times[1].tv_sec, sb->s_time_min, sb->s_time_max);
-> +			if (times[1].tv_sec >= sb->s_time_max || times[1].tv_sec == sb->s_time_min)
+Sorry for the delay responding....
 
-Line length.
+On Sun, Jun 30, 2019 at 09:52:24AM -0400, Trond Myklebust wrote:
+> When a NFSv3 READ or WRITE request comes in, the first thing knfsd has
+> to do is open a new file descriptor.
 
-Also, didn't you just introduce a function to clamp tv_sec and fix
-granularity?  Why not just use it here?  I think this is the third time
-I've seen this open-coded logic.
+I assume it shouldn't make a significant difference for NFSv4?
 
---D
+> While this is often a relatively
+> inexpensive thing to do for most local filesystems, it is usually less
+> so for FUSE, clustered or networked filesystems that are being exported
+> by knfsd.
+> 
+> This set of patches attempts to reduce some of that cost by caching
+> open file descriptors so that they may be reused by other incoming
+> READ/WRITE requests for the same file.
+> One danger when doing this, is that knfsd may end up caching file
+> descriptors for files that have been unlinked. In order to deal with
+> this issue, we use fsnotify to monitor the files, and have hooks to
+> evict those descriptors from the file cache if the i_nlink value
+> goes to 0.
 
-> +				newattrs.ia_mtime.tv_nsec = 0;
-> +			else
-> +				newattrs.ia_mtime.tv_nsec = times[1].tv_nsec;
->  			newattrs.ia_valid |= ATTR_MTIME_SET;
->  		}
->  		/*
+That was one of the objections to previous attempts at a file cache so
+it's good to have a simple solution.
+
+This attempt seems pretty well thought-out.  I'll tentatively target
+this for 5.4 pending some more review and testing.
+
+--b.
+
+> 
+> Jeff Layton (12):
+>   sunrpc: add a new cache_detail operation for when a cache is flushed
+>   locks: create a new notifier chain for lease attempts
+>   nfsd: add a new struct file caching facility to nfsd
+>   nfsd: hook up nfsd_write to the new nfsd_file cache
+>   nfsd: hook up nfsd_read to the nfsd_file cache
+>   nfsd: hook nfsd_commit up to the nfsd_file cache
+>   nfsd: convert nfs4_file->fi_fds array to use nfsd_files
+>   nfsd: convert fi_deleg_file and ls_file fields to nfsd_file
+>   nfsd: hook up nfs4_preprocess_stateid_op to the nfsd_file cache
+>   nfsd: have nfsd_test_lock use the nfsd_file cache
+>   nfsd: rip out the raparms cache
+>   nfsd: close cached files prior to a REMOVE or RENAME that would
+>     replace target
+> 
+> Trond Myklebust (4):
+>   notify: export symbols for use by the knfsd file cache
+>   vfs: Export flush_delayed_fput for use by knfsd.
+>   nfsd: Fix up some unused variable warnings
+>   nfsd: Fix the documentation for svcxdr_tmpalloc()
+> 
+>  fs/file_table.c                  |   1 +
+>  fs/locks.c                       |  62 +++
+>  fs/nfsd/Kconfig                  |   1 +
+>  fs/nfsd/Makefile                 |   3 +-
+>  fs/nfsd/blocklayout.c            |   3 +-
+>  fs/nfsd/export.c                 |  13 +
+>  fs/nfsd/filecache.c              | 885 +++++++++++++++++++++++++++++++
+>  fs/nfsd/filecache.h              |  60 +++
+>  fs/nfsd/nfs4layouts.c            |  12 +-
+>  fs/nfsd/nfs4proc.c               |  83 +--
+>  fs/nfsd/nfs4state.c              | 183 ++++---
+>  fs/nfsd/nfs4xdr.c                |  31 +-
+>  fs/nfsd/nfssvc.c                 |  16 +-
+>  fs/nfsd/state.h                  |  10 +-
+>  fs/nfsd/trace.h                  | 140 +++++
+>  fs/nfsd/vfs.c                    | 295 ++++-------
+>  fs/nfsd/vfs.h                    |   9 +-
+>  fs/nfsd/xdr4.h                   |  19 +-
+>  fs/notify/fsnotify.h             |   2 -
+>  fs/notify/group.c                |   2 +
+>  fs/notify/mark.c                 |   6 +
+>  include/linux/fs.h               |   5 +
+>  include/linux/fsnotify_backend.h |   2 +
+>  include/linux/sunrpc/cache.h     |   1 +
+>  net/sunrpc/cache.c               |   3 +
+>  25 files changed, 1465 insertions(+), 382 deletions(-)
+>  create mode 100644 fs/nfsd/filecache.c
+>  create mode 100644 fs/nfsd/filecache.h
+> 
 > -- 
-> 2.17.1
-> 
+> 2.21.0
