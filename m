@@ -2,138 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 421BE7CC8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 21:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF7657CD03
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 21:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730811AbfGaTLH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 15:11:07 -0400
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:62535 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbfGaTLH (ORCPT
+        id S1729627AbfGaTlX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 15:41:23 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33039 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfGaTlX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 15:11:07 -0400
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id C4A35D0006F;
-        Wed, 31 Jul 2019 21:11:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1564600272;
-        bh=SfyOReVnNROKfZwttu5Z/yffmm1NmOYb+Llaggymyc8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=K+A6FnWZ2vYNRnksB4DVngotvdOUnevIk1RgwU8g3acfbqfGiL+9aaVddGfaKtmBd
-         uyGl5LKbVpIhgAmJATK1quDSGs/yrgbPD3vZypBh4eV1IOprFYM3TcN6fCpGP9iwB+
-         buoLb8CFqVJFSQ9t3CGsOa6QfT35DGjx3zKHlWnjzdizlRyxmuvGdEzBXKzNTImfS4
-         cbUnlvyRDylsexMyiSnZRHK49fG+hix0qdkrLm+QnPmLjw5OT9wfojYgHZ51zZDP9x
-         YnTpRJDKUpZCNREaLFcyHUZZF4CznTLXSlXhyqbiErIEHjFrPFCNMVTaaGnCDp/VpT
-         qQQB+ogiJJWUQ==
-Subject: Re: [PATCH bpf-next v10 06/10] bpf,landlock: Add a new map type:
- inode
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-References: <20190721213116.23476-1-mic@digikod.net>
- <20190721213116.23476-7-mic@digikod.net>
- <20190727014048.3czy3n2hi6hfdy3m@ast-mbp.dhcp.thefacebook.com>
- <a870c2c9-d2f7-e0fa-c8cc-35dbf8b5b87d@ssi.gouv.fr>
- <CAADnVQLqkfVijWoOM29PxCL_yK6K0fr8B89r4c5EKgddevJhGQ@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <59e8fab9-34df-0ebe-ca6b-8b34bf582b75@ssi.gouv.fr>
-Date:   Wed, 31 Jul 2019 21:11:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Wed, 31 Jul 2019 15:41:23 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hsuSw-0005XI-1F; Wed, 31 Jul 2019 21:40:50 +0200
+Date:   Wed, 31 Jul 2019 21:40:42 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jan Kara <jack@suse.cz>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Theodore Tso <tytso@mit.edu>, Julia Cartwright <julia@ni.com>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [patch 4/4] fs: jbd/jbd2: Substitute BH locks for RT and lock
+ debugging
+In-Reply-To: <20190731154859.GI15806@quack2.suse.cz>
+Message-ID: <alpine.DEB.2.21.1907312137500.1788@nanos.tec.linutronix.de>
+References: <20190730112452.871257694@linutronix.de> <20190730120321.489374435@linutronix.de> <20190731154859.GI15806@quack2.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAADnVQLqkfVijWoOM29PxCL_yK6K0fr8B89r4c5EKgddevJhGQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, 31 Jul 2019, Jan Kara wrote:
+> On Tue 30-07-19 13:24:56, Thomas Gleixner wrote:
+> > Bit spinlocks are problematic if PREEMPT_RT is enabled. They disable
+> > preemption, which is undesired for latency reasons and breaks when regular
+> > spinlocks are taken within the bit_spinlock locked region because regular
+> > spinlocks are converted to 'sleeping spinlocks' on RT.
+> > 
+> > Substitute the BH_State and BH_JournalHead bit spinlocks with regular
+> > spinlock for PREEMPT_RT enabled kernels.
+> 
+> Is there a real need for substitution for BH_JournalHead bit spinlock?  The
+> critical sections are pretty tiny, all located within fs/jbd2/journal.c.
+> Maybe only the one around __journal_remove_journal_head() would need a bit
+> of refactoring so that journal_free_journal_head() doesn't get called
+> under the bit-spinlock.
 
+Makes sense.
 
-On 31/07/2019 20:58, Alexei Starovoitov wrote:
-> On Wed, Jul 31, 2019 at 11:46 AM Micka=C3=ABl Sala=C3=BCn
-> <mickael.salaun@ssi.gouv.fr> wrote:
->>>> +    for (i =3D 0; i < htab->n_buckets; i++) {
->>>> +            head =3D select_bucket(htab, i);
->>>> +            hlist_nulls_for_each_entry_safe(l, n, head, hash_node) {
->>>> +                    landlock_inode_remove_map(*((struct inode **)l->k=
-ey), map);
->>>> +            }
->>>> +    }
->>>> +    htab_map_free(map);
->>>> +}
->>>
->>> user space can delete the map.
->>> that will trigger inode_htab_map_free() which will call
->>> landlock_inode_remove_map().
->>> which will simply itereate the list and delete from the list.
->>
->> landlock_inode_remove_map() removes the reference to the map (being
->> freed) from the inode (with an RCU lock).
->
-> I'm going to ignore everything else for now and focus only on this bit,
-> since it's fundamental issue to address before this discussion can
-> go any further.
-> rcu_lock is not a spin_lock. I'm pretty sure you know this.
-> But you're arguing that it's somehow protecting from the race
-> I mentioned above?
->
+> BH_State lock is definitely worth it. In fact, if you placed the spinlock
+> inside struct journal_head (which is the structure whose members are in
+> fact protected by it), I'd be even fine with just using the spinlock always
+> instead of the bit spinlock. journal_head is pretty big anyway (and there's
+> even 4-byte hole in it for 64-bit archs) and these structures are pretty
+> rare (only for actively changed metadata buffers).
 
-I was just clarifying your comment to avoid misunderstanding about what
-is being removed.
+Just need to figure out what to do with the ASSERT_JH(state_is_locked) case for
+UP. Perhaps just return true for UP && !DEBUG_SPINLOCK?
 
-As said in the full response, there is currently a race but, if I add a
-bpf_map_inc() call when the map is referenced by inode->security, then I
-don't see how a race could occur because such added map could only be
-freed in a security_inode_free() (as long as it retains a reference to
-this inode).
+Thanks,
 
-
---
-Micka=C3=ABl Sala=C3=BCn
-ANSSI/SDE/ST/LAM
-
-Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
-es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
-=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
-nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
-=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
-tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
-acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
-eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
-t de d=C3=A9truire le message. The personal data collected and processed du=
-ring this exchange aims solely at completing a business relationship and is=
- limited to the necessary duration of that relationship. If you wish to use=
- your rights of consultation, rectification and deletion of your data, plea=
-se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
-n error, we thank you for informing the sender and destroying the message.
+	tglx
