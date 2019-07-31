@@ -2,180 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 086877B9DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 08:44:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B2B7BB9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 10:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387552AbfGaGoS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 02:44:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:21874 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387431AbfGaGoS (ORCPT
+        id S1727403AbfGaIZk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 04:25:40 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59498 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfGaIZi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 02:44:18 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6V6gR9k143318
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2019 02:44:17 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u35fw9bxd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2019 02:44:16 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 31 Jul 2019 07:44:14 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Jul 2019 07:44:07 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6V6i6kP42270910
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 06:44:06 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 389A64C04E;
-        Wed, 31 Jul 2019 06:44:06 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E4614C04A;
-        Wed, 31 Jul 2019 06:44:04 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.168])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 31 Jul 2019 06:44:04 +0000 (GMT)
-Date:   Wed, 31 Jul 2019 09:44:02 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, joaodias@google.com, joelaf@google.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>, minchan@kernel.org,
-        namhyung@google.com, Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        tkjos@google.com, Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>, wvw@google.com
-Subject: Re: [PATCH v3 2/2] doc: Update documentation for page_idle virtual
- address indexing
-References: <20190726152319.134152-1-joel@joelfernandes.org>
- <20190726152319.134152-2-joel@joelfernandes.org>
+        Wed, 31 Jul 2019 04:25:38 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6V8O2rn081021;
+        Wed, 31 Jul 2019 08:25:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2018-07-02; bh=VzY9DtvcuYA0baJP6t/Benjg0AjHRQ2iCGpw97K47d4=;
+ b=rVzjxOKLZYfncMJWM6YjSqp66vZz7Im9L9AWAq0M/1J1TSTOCQjdkPZzvqksQg3BDtbc
+ nJsPa1E/SBHFmxcYmm+DS/oSaFMoyfQkqq1klkdzSBL5QD1IVniDBMrK86fNeeXZo+I1
+ MitK1+U2rUnN19Eov28HOCs3UZlSsOhNkOqlY3KuHdLOTWWbkka9MGyly9Vq5PU9dtYQ
+ p26QpaXYxH5xVxroX5K584wyuVmBcUCjaRQNIgaiNxa98T+sflxQUcwIuMYOjE1cUvLQ
+ ZmWqK0OmFnRW9b+xFwvmN2euQ+jfySlnKzjDA5SjCE4REh0uQD83bVEuxTvwL4/w3UYt zw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2u0ejpkkuc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 08:25:23 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6V8Mu9M055712;
+        Wed, 31 Jul 2019 08:25:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2u2exbbmha-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 08:25:22 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6V8PJ4X004270;
+        Wed, 31 Jul 2019 08:25:19 GMT
+Received: from localhost.localdomain (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 31 Jul 2019 01:25:19 -0700
+From:   William Kucharski <william.kucharski@oracle.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Bob Kasten <robert.a.kasten@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Chad Mynhier <chad.mynhier@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Johannes Weiner <jweiner@fb.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v3 0/2] mm,thp: Add filemap_huge_fault() for THP
+Date:   Wed, 31 Jul 2019 02:25:11 -0600
+Message-Id: <20190731082513.16957-1-william.kucharski@oracle.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726152319.134152-2-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19073106-0016-0000-0000-00000297D60A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19073106-0017-0000-0000-000032F5E768
-Message-Id: <20190731064400.GD21422@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907310070
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=820
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907310090
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=874 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907310090
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 11:23:19AM -0400, Joel Fernandes (Google) wrote:
-> This patch updates the documentation with the new page_idle tracking
-> feature which uses virtual address indexing.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+This set of patches is the first step towards a mechanism for automatically
+mapping read-only text areas of appropriate size and alignment to THPs
+whenever possible.
 
-One nit below, otherwise
+For now, the central routine, filemap_huge_fault(), amd various support
+routines are only included if the experimental kernel configuration option
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+	RO_EXEC_FILEMAP_HUGE_FAULT_THP
 
-> ---
->  .../admin-guide/mm/idle_page_tracking.rst     | 43 ++++++++++++++++---
->  1 file changed, 36 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/mm/idle_page_tracking.rst b/Documentation/admin-guide/mm/idle_page_tracking.rst
-> index df9394fb39c2..1eeac78c94a7 100644
-> --- a/Documentation/admin-guide/mm/idle_page_tracking.rst
-> +++ b/Documentation/admin-guide/mm/idle_page_tracking.rst
-> @@ -19,10 +19,14 @@ It is enabled by CONFIG_IDLE_PAGE_TRACKING=y.
->  
->  User API
->  ========
-> +There are 2 ways to access the idle page tracking API. One uses physical
-> +address indexing, another uses a simpler virtual address indexing scheme.
->  
-> -The idle page tracking API is located at ``/sys/kernel/mm/page_idle``.
-> -Currently, it consists of the only read-write file,
-> -``/sys/kernel/mm/page_idle/bitmap``.
-> +Physical address indexing
-> +-------------------------
-> +The idle page tracking API for physical address indexing using page frame
-> +numbers (PFN) is located at ``/sys/kernel/mm/page_idle``.  Currently, it
-> +consists of the only read-write file, ``/sys/kernel/mm/page_idle/bitmap``.
->  
->  The file implements a bitmap where each bit corresponds to a memory page. The
->  bitmap is represented by an array of 8-byte integers, and the page at PFN #i is
-> @@ -74,6 +78,31 @@ See :ref:`Documentation/admin-guide/mm/pagemap.rst <pagemap>` for more
->  information about ``/proc/pid/pagemap``, ``/proc/kpageflags``, and
->  ``/proc/kpagecgroup``.
->  
-> +Virtual address indexing
-> +------------------------
-> +The idle page tracking API for virtual address indexing using virtual page
-> +frame numbers (VFN) is located at ``/proc/<pid>/page_idle``. It is a bitmap
-> +that follows the same semantics as ``/sys/kernel/mm/page_idle/bitmap``
-> +except that it uses virtual instead of physical frame numbers.
+is enabled.
 
-Can you please make it more explicit that VFNs are in the <pid>'s address
-space?
+This is because filemap_huge_fault() is dependent upon the
+address_space_operations vector readpage() pointing to a routine that will
+read and fill an entire large page at a time without poulluting the page
+cache with PAGESIZE entries for the large page being mapped or performing
+readahead that would pollute the page cache entries for succeeding large
+pages. Unfortunately, there is no good way to determine how many bytes
+were read by readpage(). At present, if filemap_huge_fault() were to call
+a conventional readpage() routine, it would only fill the first PAGESIZE
+bytes of the large page, which is definitely NOT the desired behavior.
 
-> +
-> +This idle page tracking API does not need deal with PFN so it does not require
-> +prior lookups of ``pagemap`` in order to find if page is idle or not. This is
-> +an advantage on some systems where looking up PFN is considered a security
-> +issue.  Also in some cases, this interface could be slightly more reliable to
-> +use than physical address indexing, since in physical address indexing, address
-> +space changes can occur between reading the ``pagemap`` and reading the
-> +``bitmap``, while in virtual address indexing, the process's ``mmap_sem`` is
-> +held for the duration of the access.
-> +
-> +To estimate the amount of pages that are not used by a workload one should:
-> +
-> + 1. Mark all the workload's pages as idle by setting corresponding bits in
-> +    ``/proc/<pid>/page_idle``.
-> +
-> + 2. Wait until the workload accesses its working set.
-> +
-> + 3. Read ``/proc/<pid>/page_idle`` and count the number of bits set.
-> +
->  .. _impl_details:
->  
->  Implementation Details
-> @@ -99,10 +128,10 @@ When a dirty page is written to swap or disk as a result of memory reclaim or
->  exceeding the dirty memory limit, it is not marked referenced.
->  
->  The idle memory tracking feature adds a new page flag, the Idle flag. This flag
-> -is set manually, by writing to ``/sys/kernel/mm/page_idle/bitmap`` (see the
-> -:ref:`User API <user_api>`
-> -section), and cleared automatically whenever a page is referenced as defined
-> -above.
-> +is set manually, by writing to ``/sys/kernel/mm/page_idle/bitmap`` for physical
-> +addressing or by writing to ``/proc/<pid>/page_idle`` for virtual
-> +addressing (see the :ref:`User API <user_api>` section), and cleared
-> +automatically whenever a page is referenced as defined above.
->  
->  When a page is marked idle, the Accessed bit must be cleared in all PTEs it is
->  mapped to, otherwise we will not be able to detect accesses to the page coming
-> -- 
-> 2.22.0.709.g102302147b-goog
-> 
+However, by making the code available now it is hoped that filesystem
+maintainers who have pledged to provide such a mechanism will do so more
+rapidly.
+
+The first part of the patch adds an order field to __page_cache_alloc(),
+allowing callers to directly request page cache pages of various sizes.
+This code was provided by Matthew Wilcox.
+
+The second part of the patch implements the filemap_huge_fault() mechanism
+as described above.
+
+Changes since v2:
+1. FGP changes were pulled out to enable submission as an independent
+   patch
+2. Inadvertent tab spacing and comment changes were reverted
+
+Changes since v1:
+1. Fix improperly generated patch for v1 PATCH 1/2
+
+Matthew Wilcox (1):
+  mm: Allow the page cache to allocate large pages
+
+William Kucharski (1):
+  Add filemap_huge_fault() to attempt to satisfy page faults on
+    memory-mapped read-only text pages using THP when possible.
+
+ fs/afs/dir.c            |   2 +-
+ fs/btrfs/compression.c  |   2 +-
+ fs/cachefiles/rdwr.c    |   4 +-
+ fs/ceph/addr.c          |   2 +-
+ fs/ceph/file.c          |   2 +-
+ include/linux/huge_mm.h |  16 +-
+ include/linux/mm.h      |   6 +
+ include/linux/pagemap.h |  10 +-
+ mm/Kconfig              |  15 ++
+ mm/filemap.c            | 320 ++++++++++++++++++++++++++++++++++++++--
+ mm/huge_memory.c        |   3 +
+ mm/mmap.c               |  36 ++++-
+ mm/readahead.c          |   2 +-
+ mm/rmap.c               |   8 +
+ net/ceph/pagelist.c     |   4 +-
+ net/ceph/pagevec.c      |   2 +-
+ 16 files changed, 401 insertions(+), 33 deletions(-)
 
 -- 
-Sincerely yours,
-Mike.
+2.21.0
 
