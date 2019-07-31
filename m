@@ -2,156 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD4F77C48F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 16:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C87E7C549
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 16:46:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbfGaONX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 10:13:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43326 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728480AbfGaONW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 10:13:22 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7085C30ADC79;
-        Wed, 31 Jul 2019 14:13:22 +0000 (UTC)
-Received: from pegasus.maiolino.com (unknown [10.40.205.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A4DF360852;
-        Wed, 31 Jul 2019 14:13:20 +0000 (UTC)
-From:   Carlos Maiolino <cmaiolino@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     hch@lst.de, adilger@dilger.ca, jaegeuk@kernel.org,
-        darrick.wong@oracle.com, miklos@szeredi.hu, rpeterso@redhat.com,
-        linux-xfs@vger.kernel.org
-Subject: [PATCH 9/9] xfs: Get rid of ->bmap
-Date:   Wed, 31 Jul 2019 16:12:45 +0200
-Message-Id: <20190731141245.7230-10-cmaiolino@redhat.com>
-In-Reply-To: <20190731141245.7230-1-cmaiolino@redhat.com>
-References: <20190731141245.7230-1-cmaiolino@redhat.com>
+        id S2387596AbfGaOqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 10:46:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59602 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728482AbfGaOqo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 31 Jul 2019 10:46:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1DA3AB607;
+        Wed, 31 Jul 2019 14:46:42 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 32C8F1E3F4D; Wed, 31 Jul 2019 16:46:39 +0200 (CEST)
+Date:   Wed, 31 Jul 2019 16:46:39 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Theodore Tso <tytso@mit.edu>, Julia Cartwright <julia@ni.com>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [patch 2/4] fs/buffer: Move BH_Uptodate_Lock locking into
+ wrapper functions
+Message-ID: <20190731144639.GG15806@quack2.suse.cz>
+References: <20190730112452.871257694@linutronix.de>
+ <20190730120321.285095769@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 31 Jul 2019 14:13:22 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730120321.285095769@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We don't need ->bmap anymore, only usage for it was FIBMAP, which is now
-gone.
+On Tue 30-07-19 13:24:54, Thomas Gleixner wrote:
+> Bit spinlocks are problematic if PREEMPT_RT is enabled, because they
+> disable preemption, which is undesired for latency reasons and breaks when
+> regular spinlocks are taken within the bit_spinlock locked region because
+> regular spinlocks are converted to 'sleeping spinlocks' on RT. So RT
+> replaces the bit spinlocks with regular spinlocks to avoid this problem.
+> 
+> To avoid ifdeffery at the source level, wrap all BH_Uptodate_Lock bitlock
+> operations with inline functions, so the spinlock substitution can be done
+> at one place.
+> 
+> Using regular spinlocks can also be enabled for lock debugging purposes so
+> the lock operations become visible to lockdep.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
 
-Also kill iomap_bmap() and iomap_bmap_actor once it has no users anymore.
+Looks good to me. You can add:
 
-Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
----
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Changelog:
+BTW, it should be possible to get rid of BH_Uptodate_Lock altogether using
+bio chaining (which was non-existent when this bh code was written) to make
+sure IO completion function gets called only once all bios used to fill in
+/ write out the page are done. It would be also more efficient. But I guess
+that's an interesting cleanup project for some other time...
 
-V2:
-	- Kill iomap_bmap() and iomap_bmap_actor()
+								Honza
 
- fs/iomap.c         | 34 ----------------------------------
- fs/xfs/xfs_aops.c  | 24 ------------------------
- fs/xfs/xfs_trace.h |  1 -
- 3 files changed, 59 deletions(-)
-
-diff --git a/fs/iomap.c b/fs/iomap.c
-index 2b182abd18e8..12e6a575feb4 100644
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -2153,37 +2153,3 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
- }
- EXPORT_SYMBOL_GPL(iomap_swapfile_activate);
- #endif /* CONFIG_SWAP */
--
--static loff_t
--iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
--		void *data, struct iomap *iomap)
--{
--	sector_t *bno = data, addr;
--
--	if (iomap->type == IOMAP_MAPPED) {
--		addr = (pos - iomap->offset + iomap->addr) >> inode->i_blkbits;
--		if (addr > INT_MAX)
--			WARN(1, "would truncate bmap result\n");
--		else
--			*bno = addr;
--	}
--	return 0;
--}
--
--/* legacy ->bmap interface.  0 is the error return (!) */
--sector_t
--iomap_bmap(struct address_space *mapping, sector_t bno,
--		const struct iomap_ops *ops)
--{
--	struct inode *inode = mapping->host;
--	loff_t pos = bno << inode->i_blkbits;
--	unsigned blocksize = i_blocksize(inode);
--
--	if (filemap_write_and_wait(mapping))
--		return 0;
--
--	bno = 0;
--	iomap_apply(inode, pos, blocksize, 0, ops, &bno, iomap_bmap_actor);
--	return bno;
--}
--EXPORT_SYMBOL_GPL(iomap_bmap);
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 3619e9e8d359..76ee495eba1a 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -1006,29 +1006,6 @@ xfs_vm_releasepage(
- 	return iomap_releasepage(page, gfp_mask);
- }
- 
--STATIC sector_t
--xfs_vm_bmap(
--	struct address_space	*mapping,
--	sector_t		block)
--{
--	struct xfs_inode	*ip = XFS_I(mapping->host);
--
--	trace_xfs_vm_bmap(ip);
--
--	/*
--	 * The swap code (ab-)uses ->bmap to get a block mapping and then
--	 * bypasses the file system for actual I/O.  We really can't allow
--	 * that on reflinks inodes, so we have to skip out here.  And yes,
--	 * 0 is the magic code for a bmap error.
--	 *
--	 * Since we don't pass back blockdev info, we can't return bmap
--	 * information for rt files either.
--	 */
--	if (xfs_is_cow_inode(ip) || XFS_IS_REALTIME_INODE(ip))
--		return 0;
--	return iomap_bmap(mapping, block, &xfs_iomap_ops);
--}
--
- STATIC int
- xfs_vm_readpage(
- 	struct file		*unused,
-@@ -1067,7 +1044,6 @@ const struct address_space_operations xfs_address_space_operations = {
- 	.set_page_dirty		= iomap_set_page_dirty,
- 	.releasepage		= xfs_vm_releasepage,
- 	.invalidatepage		= xfs_vm_invalidatepage,
--	.bmap			= xfs_vm_bmap,
- 	.direct_IO		= noop_direct_IO,
- 	.migratepage		= iomap_migrate_page,
- 	.is_partially_uptodate  = iomap_is_partially_uptodate,
-diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index 47fb07d86efd..3a45a3971dce 100644
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -621,7 +621,6 @@ DEFINE_INODE_EVENT(xfs_readdir);
- #ifdef CONFIG_XFS_POSIX_ACL
- DEFINE_INODE_EVENT(xfs_get_acl);
- #endif
--DEFINE_INODE_EVENT(xfs_vm_bmap);
- DEFINE_INODE_EVENT(xfs_file_ioctl);
- DEFINE_INODE_EVENT(xfs_file_compat_ioctl);
- DEFINE_INODE_EVENT(xfs_ioctl_setattr);
+> ---
+>  fs/buffer.c                 |   20 ++++++--------------
+>  fs/ext4/page-io.c           |    6 ++----
+>  fs/ntfs/aops.c              |   10 +++-------
+>  include/linux/buffer_head.h |   16 ++++++++++++++++
+>  4 files changed, 27 insertions(+), 25 deletions(-)
+> 
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -275,8 +275,7 @@ static void end_buffer_async_read(struct
+>  	 * decide that the page is now completely done.
+>  	 */
+>  	first = page_buffers(page);
+> -	local_irq_save(flags);
+> -	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
+> +	flags = bh_uptodate_lock_irqsave(first);
+>  	clear_buffer_async_read(bh);
+>  	unlock_buffer(bh);
+>  	tmp = bh;
+> @@ -289,8 +288,7 @@ static void end_buffer_async_read(struct
+>  		}
+>  		tmp = tmp->b_this_page;
+>  	} while (tmp != bh);
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> +	bh_uptodate_unlock_irqrestore(first, flags);
+>  
+>  	/*
+>  	 * If none of the buffers had errors and they are all
+> @@ -302,9 +300,7 @@ static void end_buffer_async_read(struct
+>  	return;
+>  
+>  still_busy:
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> -	return;
+> +	bh_uptodate_unlock_irqrestore(first, flags);
+>  }
+>  
+>  /*
+> @@ -331,8 +327,7 @@ void end_buffer_async_write(struct buffe
+>  	}
+>  
+>  	first = page_buffers(page);
+> -	local_irq_save(flags);
+> -	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
+> +	flags = bh_uptodate_lock_irqsave(first);
+>  
+>  	clear_buffer_async_write(bh);
+>  	unlock_buffer(bh);
+> @@ -344,15 +339,12 @@ void end_buffer_async_write(struct buffe
+>  		}
+>  		tmp = tmp->b_this_page;
+>  	}
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> +	bh_uptodate_unlock_irqrestore(first, flags);
+>  	end_page_writeback(page);
+>  	return;
+>  
+>  still_busy:
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> -	return;
+> +	bh_uptodate_unlock_irqrestore(first, flags);
+>  }
+>  EXPORT_SYMBOL(end_buffer_async_write);
+>  
+> --- a/fs/ext4/page-io.c
+> +++ b/fs/ext4/page-io.c
+> @@ -90,8 +90,7 @@ static void ext4_finish_bio(struct bio *
+>  		 * We check all buffers in the page under BH_Uptodate_Lock
+>  		 * to avoid races with other end io clearing async_write flags
+>  		 */
+> -		local_irq_save(flags);
+> -		bit_spin_lock(BH_Uptodate_Lock, &head->b_state);
+> +		flags = bh_uptodate_lock_irqsave(head);
+>  		do {
+>  			if (bh_offset(bh) < bio_start ||
+>  			    bh_offset(bh) + bh->b_size > bio_end) {
+> @@ -103,8 +102,7 @@ static void ext4_finish_bio(struct bio *
+>  			if (bio->bi_status)
+>  				buffer_io_error(bh);
+>  		} while ((bh = bh->b_this_page) != head);
+> -		bit_spin_unlock(BH_Uptodate_Lock, &head->b_state);
+> -		local_irq_restore(flags);
+> +		bh_uptodate_unlock_irqrestore(head, flags);
+>  		if (!under_io) {
+>  			fscrypt_free_bounce_page(bounce_page);
+>  			end_page_writeback(page);
+> --- a/fs/ntfs/aops.c
+> +++ b/fs/ntfs/aops.c
+> @@ -92,8 +92,7 @@ static void ntfs_end_buffer_async_read(s
+>  				"0x%llx.", (unsigned long long)bh->b_blocknr);
+>  	}
+>  	first = page_buffers(page);
+> -	local_irq_save(flags);
+> -	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
+> +	flags = bh_uptodate_lock_irqsave(first);
+>  	clear_buffer_async_read(bh);
+>  	unlock_buffer(bh);
+>  	tmp = bh;
+> @@ -108,8 +107,7 @@ static void ntfs_end_buffer_async_read(s
+>  		}
+>  		tmp = tmp->b_this_page;
+>  	} while (tmp != bh);
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> +	bh_uptodate_unlock_irqrestore(first, flags);
+>  	/*
+>  	 * If none of the buffers had errors then we can set the page uptodate,
+>  	 * but we first have to perform the post read mst fixups, if the
+> @@ -142,9 +140,7 @@ static void ntfs_end_buffer_async_read(s
+>  	unlock_page(page);
+>  	return;
+>  still_busy:
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> -	return;
+> +	bh_uptodate_unlock_irqrestore(first, flags);
+>  }
+>  
+>  /**
+> --- a/include/linux/buffer_head.h
+> +++ b/include/linux/buffer_head.h
+> @@ -78,6 +78,22 @@ struct buffer_head {
+>  	atomic_t b_count;		/* users using this buffer_head */
+>  };
+>  
+> +static inline unsigned long bh_uptodate_lock_irqsave(struct buffer_head *bh)
+> +{
+> +	unsigned long flags;
+> +
+> +	local_irq_save(flags);
+> +	bit_spin_lock(BH_Uptodate_Lock, &bh->b_state);
+> +	return flags;
+> +}
+> +
+> +static inline void
+> +bh_uptodate_unlock_irqrestore(struct buffer_head *bh, unsigned long flags)
+> +{
+> +	bit_spin_unlock(BH_Uptodate_Lock, &bh->b_state);
+> +	local_irq_restore(flags);
+> +}
+> +
+>  /*
+>   * macro tricks to expand the set_buffer_foo(), clear_buffer_foo()
+>   * and buffer_foo() functions.
+> 
+> 
+> 
 -- 
-2.20.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
