@@ -2,608 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B95A7BB9E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 10:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9E1C7BBC7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 10:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfGaIZl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 04:25:41 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:59402 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbfGaIZi (ORCPT
+        id S1727206AbfGaIgE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 04:36:04 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:65132 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725866AbfGaIgE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 04:25:38 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6V8NuDV080720;
-        Wed, 31 Jul 2019 08:25:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=+3r1yiP70zWmJq5VevhL++/wKR0nwjYG0RDz/6WAF4A=;
- b=S6nuWsKXGh84XDvM/VtvIUljFuG9jmrrZAgcwa4yKSL900Lnw9X2eE9xI76nBM7jOaTi
- HfW23rKOKn4RHIBh8rYU9U88KRoOcVWEYNVyLdpMNz/KwMou1JUtPt6GDPUtwEz75bPd
- +YQFQN5znrTF62EfZCcoqRTKPuu4/1b+9Iz+GZtMZUI5u3XMH+pJN9LY8Ob34oJJ8ZUf
- dU/iMmvMW+DGmCK8E0REwYv5BM552kPS8mR9dyLKHN4QkKH0ak8nuU5EpjNpVkn2U326
- iNEx5HW3GwOYJzVL63wVVL2n1ujec1M7NEL+zVr79dty7ziqsMYgg0bVN11yUsmnZ5Pw 4g== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2u0ejpkkuf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 08:25:23 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6V8MsdV013418;
-        Wed, 31 Jul 2019 08:25:22 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2u349cnm25-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 08:25:22 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6V8PLSx007180;
-        Wed, 31 Jul 2019 08:25:21 GMT
-Received: from localhost.localdomain (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 31 Jul 2019 01:25:20 -0700
-From:   William Kucharski <william.kucharski@oracle.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
+        Wed, 31 Jul 2019 04:36:04 -0400
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6V8Z3LC029862;
+        Wed, 31 Jul 2019 01:35:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=rEBx1rFqatpPnIi7wFu4JyKUXdoKY69V5OVz1LDCa7U=;
+ b=O9P7JnXU1Yje1KTdyg7+Eu++6zYl84ZsZS1WcCJWL6xcDTsvUUZ/hUkLNs4NjiKLh3UN
+ qaReqYIAYcx/ac9tOu101SlSNu19w1ff5RRhh2gUKZKjK/cpC5giFF7IqFX7Y2K8s6Mn
+ cfYiUR4LWkTWR9kG7QSKA69wvCFTIm8I3Dk= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2u2p9hkk4u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 31 Jul 2019 01:35:49 -0700
+Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 31 Jul 2019 01:35:47 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Wed, 31 Jul 2019 01:35:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WB60CEhEK2D8/ru8ig/WW0suIcutxT56ekdHQVHyAM0+P2WwuhZXxV1BUvCkKKYfqTQsV3+jx5SvKQm+x9igl6wBmm/OKPQCLpMpR8jEW5IFnTU/xNdQ1NBp3dPceGP7v7KFx+KTSIxwjlvUooosD+9fosTXYTx+hZ0iV6qW8+UEpHw/lZqIUjV7urokAEIgh1iAtSZRd0NzJhvfIGbFRpQ5tqhLNGxyY+yvF3hIIPyhNlPaMV0FFO4jocY/4ULwXEg6ZQKCf3+CH8SETIMvyaDS4jDhnXhoMuQOIRPk+cNsmYELrbHZIY0pT53TN7pBIqVJqD61+NezUNVAeZnPHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rEBx1rFqatpPnIi7wFu4JyKUXdoKY69V5OVz1LDCa7U=;
+ b=Tn/7MxPXCo9c0WN9rI+jPVa9uGOTxpNx7RS83eP5pp3Vm4yMZCgcftZQynxHVAuEDVHj9P/+niQNUbffU5t6AzrUFzMuunXKRvqYSclAs1DJJy+ALCJyULK73kEfAOOfQ90kbyXTj+l5PAo3/W1ai58v4mVeIf14i0HFmomAoSnHXDVmR0UrcpgwJwx8H50ShVXPvnT2V62fkoMZ5vQo/+3kGdiMEbf8kD7/CFg8G4f/n2o2q18WI8hxnDh4HvXtTrhOh7+4m5zeoxLnMlOxSihyP+mWWsriBVn4zgpEiKO61/lLKP5pbL+Lq5+ZvT64cls7DdXFA9fup5ikord5PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
+ header.d=fb.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rEBx1rFqatpPnIi7wFu4JyKUXdoKY69V5OVz1LDCa7U=;
+ b=EA+stxHQXI/La1VYj1N1Z4P6/QPq9TlxtMW7r7+vwk9VV62fHqt1VaMrtLDTpD88YrXwonRBE+8vo8Na1cmsAWz4tEELaQ8iMqGVXZgsmXH2FIiMajsqVJ2zWd8Dd6REacIyOOC3rsBcepvyT9WBZvo+zJ9mQdm8eQFCMmoVoOY=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1312.namprd15.prod.outlook.com (10.175.4.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2094.17; Wed, 31 Jul 2019 08:35:47 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::d4fc:70c0:79a5:f41b]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::d4fc:70c0:79a5:f41b%2]) with mapi id 15.20.2115.005; Wed, 31 Jul 2019
+ 08:35:47 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     William Kucharski <william.kucharski@oracle.com>
+CC:     lkml <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Bob Kasten <robert.a.kasten@intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        William Kucharski <william.kucharski@oracle.com>,
+        "Mike Kravetz" <mike.kravetz@oracle.com>,
         Chad Mynhier <chad.mynhier@oracle.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Johannes Weiner <jweiner@fb.com>,
         Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v3 2/2] mm,thp: Add experimental config option RO_EXEC_FILEMAP_HUGE_FAULT_THP
-Date:   Wed, 31 Jul 2019 02:25:13 -0600
-Message-Id: <20190731082513.16957-3-william.kucharski@oracle.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190731082513.16957-1-william.kucharski@oracle.com>
+Subject: Re: [PATCH v3 0/2] mm,thp: Add filemap_huge_fault() for THP
+Thread-Topic: [PATCH v3 0/2] mm,thp: Add filemap_huge_fault() for THP
+Thread-Index: AQHVR3mCOKwnV56WUUyluRdig0XL86bkZvIA
+Date:   Wed, 31 Jul 2019 08:35:46 +0000
+Message-ID: <C9405E2A-4A0B-4EFD-B432-C54D2C9CFC2B@fb.com>
 References: <20190731082513.16957-1-william.kucharski@oracle.com>
+In-Reply-To: <20190731082513.16957-1-william.kucharski@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:180::1:6d8b]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 63204fcb-963d-4141-b478-08d7159215bb
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1312;
+x-ms-traffictypediagnostic: MWHPR15MB1312:
+x-microsoft-antispam-prvs: <MWHPR15MB13122F142A54089CC65B24AEB3DF0@MWHPR15MB1312.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 011579F31F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(39860400002)(376002)(366004)(396003)(199004)(189003)(305945005)(57306001)(50226002)(54906003)(8936002)(446003)(102836004)(2616005)(486006)(186003)(71190400001)(66556008)(64756008)(476003)(5660300002)(478600001)(6506007)(81156014)(66476007)(229853002)(6486002)(76176011)(68736007)(46003)(76116006)(36756003)(53546011)(66446008)(6916009)(4326008)(11346002)(66946007)(6116002)(14454004)(33656002)(256004)(81166006)(53936002)(6246003)(25786009)(8676002)(71200400001)(99286004)(6512007)(7416002)(316002)(6436002)(2906002)(7736002)(86362001)(142933001)(14583001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1312;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: lZAkvh2sNC1fzKIaVom/N0TJGn2sn7KEJwVOMM2SS3IozJgmhQ9XR83aIGn7IpM6sL78d8BkO+IF5mISw/XPLJB6Mlm7TKSI2d/evRF2pi8S6tQRkW1rFiy93zs/o0r4Ecx1rRKriurH6Uhsg54C0kaeHZI4/D0NGVP7KV+52ZHuY5XWpiqEKYwoUV6GZdX7/at87BFAWqCKY3IMqDbObAoqli0+Xqs9d6cRHRJ7b1YLHYjIpI+pnrbLD1oTbulDW63tmCMdQpj/AyFUUQDp7B4851KVyi94YDKSIZZSjqtkXRkhBNYufC2BUFizuzSEVFDgKCjn75dpvNEN0izwqannkxojKbeSZU2XmkYVwQbNDRzRme/wKumDl8i1LeeNRr4v8GxtwOaWhLcsxzEYs1PWoS1NA1PmzR3ajQtiL5M=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2E2A26E3179D714EACC580A7A1618AB3@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1907310090
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1907310090
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63204fcb-963d-4141-b478-08d7159215bb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 08:35:46.7934
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1312
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907310092
+X-FB-Internal: deliver
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add filemap_huge_fault() to attempt to satisfy page
-faults on memory-mapped read-only text pages using THP when possible.
 
-Signed-off-by: William Kucharski <william.kucharski@oracle.com>
----
- include/linux/huge_mm.h |  16 ++-
- include/linux/mm.h      |   6 +
- mm/Kconfig              |  15 ++
- mm/filemap.c            | 300 +++++++++++++++++++++++++++++++++++++++-
- mm/huge_memory.c        |   3 +
- mm/mmap.c               |  36 ++++-
- mm/rmap.c               |   8 ++
- 7 files changed, 374 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 45ede62aa85b..b1e5fd3179fd 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -79,13 +79,15 @@ extern struct kobj_attribute shmem_enabled_attr;
- #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--#define HPAGE_PMD_SHIFT PMD_SHIFT
--#define HPAGE_PMD_SIZE	((1UL) << HPAGE_PMD_SHIFT)
--#define HPAGE_PMD_MASK	(~(HPAGE_PMD_SIZE - 1))
--
--#define HPAGE_PUD_SHIFT PUD_SHIFT
--#define HPAGE_PUD_SIZE	((1UL) << HPAGE_PUD_SHIFT)
--#define HPAGE_PUD_MASK	(~(HPAGE_PUD_SIZE - 1))
-+#define HPAGE_PMD_SHIFT		PMD_SHIFT
-+#define HPAGE_PMD_SIZE		((1UL) << HPAGE_PMD_SHIFT)
-+#define HPAGE_PMD_OFFSET	(HPAGE_PMD_SIZE - 1)
-+#define HPAGE_PMD_MASK		(~(HPAGE_PMD_OFFSET))
-+
-+#define HPAGE_PUD_SHIFT		PUD_SHIFT
-+#define HPAGE_PUD_SIZE		((1UL) << HPAGE_PUD_SHIFT)
-+#define HPAGE_PUD_OFFSET	(HPAGE_PUD_SIZE - 1)
-+#define HPAGE_PUD_MASK		(~(HPAGE_PUD_OFFSET))
- 
- extern bool is_vma_temporary_stack(struct vm_area_struct *vma);
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0334ca97c584..ba24b515468a 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2433,6 +2433,12 @@ extern void truncate_inode_pages_final(struct address_space *);
- 
- /* generic vm_area_ops exported for stackable file systems */
- extern vm_fault_t filemap_fault(struct vm_fault *vmf);
-+
-+#ifdef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
-+extern vm_fault_t filemap_huge_fault(struct vm_fault *vmf,
-+			enum page_entry_size pe_size);
-+#endif
-+
- extern void filemap_map_pages(struct vm_fault *vmf,
- 		pgoff_t start_pgoff, pgoff_t end_pgoff);
- extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 56cec636a1fc..2debaded0e4d 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -736,4 +736,19 @@ config ARCH_HAS_PTE_SPECIAL
- config ARCH_HAS_HUGEPD
- 	bool
- 
-+config RO_EXEC_FILEMAP_HUGE_FAULT_THP
-+	bool "read-only exec filemap_huge_fault THP support (EXPERIMENTAL)"
-+	depends on TRANSPARENT_HUGE_PAGECACHE && SHMEM
-+
-+	help
-+	    Introduce filemap_huge_fault() to automatically map executable
-+	    read-only pages of mapped files of suitable size and alignment
-+	    using THP if possible.
-+
-+	    This is marked experimental because it is a new feature and is
-+	    dependent upon filesystmes implementing readpages() in a way
-+	    that will recognize large THP pages and read file content to
-+	    them without polluting the pagecache with PAGESIZE pages due
-+	    to readahead.
-+
- endmenu
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 38b46fc00855..db1d8df20367 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -199,6 +199,8 @@ static void unaccount_page_cache_page(struct address_space *mapping,
- 	nr = hpage_nr_pages(page);
- 
- 	__mod_node_page_state(page_pgdat(page), NR_FILE_PAGES, -nr);
-+
-+#ifndef	CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
- 	if (PageSwapBacked(page)) {
- 		__mod_node_page_state(page_pgdat(page), NR_SHMEM, -nr);
- 		if (PageTransHuge(page))
-@@ -206,6 +208,13 @@ static void unaccount_page_cache_page(struct address_space *mapping,
- 	} else {
- 		VM_BUG_ON_PAGE(PageTransHuge(page), page);
- 	}
-+#else
-+	if (PageSwapBacked(page))
-+		__mod_node_page_state(page_pgdat(page), NR_SHMEM, -nr);
-+
-+	if (PageTransHuge(page))
-+		__dec_node_page_state(page, NR_SHMEM_THPS);
-+#endif
- 
- 	/*
- 	 * At this point page must be either written or cleaned by
-@@ -1663,7 +1672,8 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
- no_page:
- 	if (!page && (fgp_flags & FGP_CREAT)) {
- 		int err;
--		if ((fgp_flags & FGP_WRITE) && mapping_cap_account_dirty(mapping))
-+		if ((fgp_flags & FGP_WRITE) &&
-+			mapping_cap_account_dirty(mapping))
- 			gfp_mask |= __GFP_WRITE;
- 		if (fgp_flags & FGP_NOFS)
- 			gfp_mask &= ~__GFP_FS;
-@@ -2643,6 +2653,291 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- }
- EXPORT_SYMBOL(filemap_fault);
- 
-+#ifdef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
-+/*
-+ * Check for an entry in the page cache which would conflict with the address
-+ * range we wish to map using a THP or is otherwise unusable to map a large
-+ * cached page.
-+ *
-+ * The routine will return true if a usable page is found in the page cache
-+ * (and *pagep will be set to the address of the cached page), or if no
-+ * cached page is found (and *pagep will be set to NULL).
-+ */
-+static bool
-+filemap_huge_check_pagecache_usable(struct xa_state *xas,
-+	struct page **pagep, pgoff_t hindex, pgoff_t hindex_max)
-+{
-+	struct page *page;
-+
-+	while (1) {
-+		page = xas_find(xas, hindex_max);
-+
-+		if (xas_retry(xas, page)) {
-+			xas_set(xas, hindex);
-+			continue;
-+		}
-+
-+		/*
-+		 * A found entry is unusable if:
-+		 *	+ the entry is an Xarray value, not a pointer
-+		 *	+ the entry is an internal Xarray node
-+		 *	+ the entry is not a Transparent Huge Page
-+		 *	+ the entry is not a compound page
-+		 *	+ the entry is not the head of a compound page
-+		 *	+ the enbry is a page page with an order other than
-+		 *	  HPAGE_PMD_ORDER
-+		 *	+ the page's index is not what we expect it to be
-+		 *	+ the page is not up-to-date
-+		 *	+ the page is unlocked
-+		 */
-+		if ((page) && (xa_is_value(page) || xa_is_internal(page) ||
-+			(!PageCompound(page)) || (PageHuge(page)) ||
-+			(!PageTransCompound(page)) ||
-+			page != compound_head(page) ||
-+			compound_order(page) != HPAGE_PMD_ORDER ||
-+			page->index != hindex || (!PageUptodate(page)) ||
-+			(!PageLocked(page))))
-+			return false;
-+
-+		break;
-+	}
-+
-+	xas_set(xas, hindex);
-+	*pagep = page;
-+	return true;
-+}
-+
-+/**
-+ * filemap_huge_fault - read in file data for page fault handling to THP
-+ * @vmf:	struct vm_fault containing details of the fault
-+ * @pe_size:	large page size to map, currently this must be PE_SIZE_PMD
-+ *
-+ * filemap_huge_fault() is invoked via the vma operations vector for a
-+ * mapped memory region to read in file data to a transparent huge page during
-+ * a page fault.
-+ *
-+ * If for any reason we can't allocate a THP, map it or add it to the page
-+ * cache, VM_FAULT_FALLBACK will be returned which will cause the fault
-+ * handler to try mapping the page using a PAGESIZE page, usually via
-+ * filemap_fault() if so speicifed in the vma operations vector.
-+ *
-+ * Returns either VM_FAULT_FALLBACK or the result of calling allcc_set_pte()
-+ * to map the new THP.
-+ *
-+ * NOTE: This routine depends upon the file system's readpage routine as
-+ *       specified in the address space operations vector to recognize when it
-+ *	 is being passed a large page and to read the approprate amount of data
-+ *	 in full and without polluting the page cache for the large page itself
-+ *	 with PAGESIZE pages to perform a buffered read or to pollute what
-+ *	 would be the page cache space for any succeeding pages with PAGESIZE
-+ *	 pages due to readahead.
-+ *
-+ *	 It is VITAL that this routine not be enabled without such filesystem
-+ *	 support. As there is no way to determine how many bytes were read by
-+ *	 the readpage() operation, if only a PAGESIZE page is read, this routine
-+ *	 will map the THP containing only the first PAGESIZE bytes of file data
-+ *	 to satisfy the fault, which is never the result desired.
-+ */
-+vm_fault_t filemap_huge_fault(struct vm_fault *vmf,
-+		enum page_entry_size pe_size)
-+{
-+	struct file *filp = vmf->vma->vm_file;
-+	struct address_space *mapping = filp->f_mapping;
-+	struct vm_area_struct *vma = vmf->vma;
-+
-+	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
-+	pgoff_t hindex = round_down(vmf->pgoff, HPAGE_PMD_NR);
-+	pgoff_t hindex_max = hindex + HPAGE_PMD_NR;
-+
-+	struct page *cached_page, *hugepage;
-+	struct page *new_page = NULL;
-+
-+	vm_fault_t ret = VM_FAULT_FALLBACK;
-+	int error;
-+
-+	XA_STATE_ORDER(xas, &mapping->i_pages, hindex, HPAGE_PMD_ORDER);
-+
-+	/*
-+	 * Return VM_FAULT_FALLBACK if:
-+	 *
-+	 *	+ pe_size != PE_SIZE_PMD
-+	 *	+ FAULT_FLAG_WRITE is set in vmf->flags
-+	 *	+ vma isn't aligned to allow a PMD mapping
-+	 *	+ PMD would extend beyond the end of the vma
-+	 */
-+	if (pe_size != PE_SIZE_PMD || (vmf->flags & FAULT_FLAG_WRITE) ||
-+		(haddr < vma->vm_start ||
-+		(haddr + HPAGE_PMD_SIZE > vma->vm_end)))
-+		return ret;
-+
-+	xas_lock_irq(&xas);
-+
-+retry_xas_locked:
-+	if (!filemap_huge_check_pagecache_usable(&xas, &cached_page, hindex,
-+		hindex_max)) {
-+		/* found a conflicting entry in the page cache, so fallback */
-+		goto unlock;
-+	} else if (cached_page) {
-+		/* found a valid cached page, so map it */
-+		hugepage = cached_page;
-+		goto map_huge;
-+	}
-+
-+	xas_unlock_irq(&xas);
-+
-+	/* allocate huge THP page in VMA */
-+	new_page = __page_cache_alloc(vmf->gfp_mask | __GFP_COMP |
-+		__GFP_NOWARN | __GFP_NORETRY, HPAGE_PMD_ORDER);
-+
-+	if (unlikely(!new_page))
-+		return ret;
-+
-+	if (unlikely(!(PageCompound(new_page)))) {
-+		put_page(new_page);
-+		return ret;
-+	}
-+
-+	prep_transhuge_page(new_page);
-+	new_page->index = hindex;
-+	new_page->mapping = mapping;
-+
-+	__SetPageLocked(new_page);
-+
-+	/*
-+	 * The readpage() operation below is expected to fill the large
-+	 * page with data without polluting the page cache with
-+	 * PAGESIZE entries due to a buffered read and/or readahead().
-+	 *
-+	 * A filesystem's vm_operations_struct huge_fault field should
-+	 * never point to this routine without such a capability, and
-+	 * without it a call to this routine would eventually just
-+	 * fall through to the normal fault op anyway.
-+	 */
-+	error = mapping->a_ops->readpage(vmf->vma->vm_file, new_page);
-+
-+	if (unlikely(error)) {
-+		put_page(new_page);
-+		return ret;
-+	}
-+
-+	/* XXX - use wait_on_page_locked_killable() instead? */
-+	wait_on_page_locked(new_page);
-+
-+	if (!PageUptodate(new_page)) {
-+		/* EIO */
-+		new_page->mapping = NULL;
-+		put_page(new_page);
-+		return ret;
-+	}
-+
-+	do {
-+		xas_lock_irq(&xas);
-+		xas_set(&xas, hindex);
-+		xas_create_range(&xas);
-+
-+		if (!(xas_error(&xas)))
-+			break;
-+
-+		if (!xas_nomem(&xas, GFP_KERNEL)) {
-+			if (new_page) {
-+				new_page->mapping = NULL;
-+				put_page(new_page);
-+			}
-+
-+			goto unlock;
-+		}
-+
-+		xas_unlock_irq(&xas);
-+	} while (1);
-+
-+	/*
-+	 * Double check that an entry did not sneak into the page cache while
-+	 * creating Xarray entries for the new page.
-+	 */
-+	if (!filemap_huge_check_pagecache_usable(&xas, &cached_page, hindex,
-+		hindex_max)) {
-+		/*
-+		 * An unusable entry was found, so delete the newly allocated
-+		 * page and fallback.
-+		 */
-+		new_page->mapping = NULL;
-+		put_page(new_page);
-+		goto unlock;
-+	} else if (cached_page) {
-+		/*
-+		 * A valid large page was found in the page cache, so free the
-+		 * newly allocated page and map the cached page instead.
-+		 */
-+		new_page->mapping = NULL;
-+		put_page(new_page);
-+		new_page = NULL;
-+		hugepage = cached_page;
-+		goto map_huge;
-+	}
-+
-+	__SetPageLocked(new_page);
-+
-+	/* did it get truncated? */
-+	if (unlikely(new_page->mapping != mapping)) {
-+		unlock_page(new_page);
-+		put_page(new_page);
-+		goto retry_xas_locked;
-+	}
-+
-+	hugepage = new_page;
-+
-+map_huge:
-+	/* map hugepage at the PMD level */
-+	ret = alloc_set_pte(vmf, NULL, hugepage);
-+
-+	VM_BUG_ON_PAGE((!(pmd_trans_huge(*vmf->pmd))), hugepage);
-+
-+	if (likely(!(ret & VM_FAULT_ERROR))) {
-+		/*
-+		 * The alloc_set_pte() succeeded without error, so
-+		 * add the page to the page cache if it is new, and
-+		 * increment page statistics accordingly.
-+		 */
-+		if (new_page) {
-+			unsigned long nr;
-+
-+			xas_set(&xas, hindex);
-+
-+			for (nr = 0; nr < HPAGE_PMD_NR; nr++) {
-+#ifndef	COMPOUND_PAGES_HEAD_ONLY
-+				xas_store(&xas, new_page + nr);
-+#else
-+				xas_store(&xas, new_page);
-+#endif
-+				xas_next(&xas);
-+			}
-+
-+			count_vm_event(THP_FILE_ALLOC);
-+			__inc_node_page_state(new_page, NR_SHMEM_THPS);
-+			__mod_node_page_state(page_pgdat(new_page),
-+				NR_FILE_PAGES, HPAGE_PMD_NR);
-+			__mod_node_page_state(page_pgdat(new_page),
-+				NR_SHMEM, HPAGE_PMD_NR);
-+		}
-+
-+		vmf->address = haddr;
-+		vmf->page = hugepage;
-+
-+		page_ref_add(hugepage, HPAGE_PMD_NR);
-+		count_vm_event(THP_FILE_MAPPED);
-+	} else if (new_page) {
-+		/* there was an error mapping the new page, so release it */
-+		new_page->mapping = NULL;
-+		put_page(new_page);
-+	}
-+
-+unlock:
-+	xas_unlock_irq(&xas);
-+	return ret;
-+}
-+EXPORT_SYMBOL(filemap_huge_fault);
-+#endif
-+
- void filemap_map_pages(struct vm_fault *vmf,
- 		pgoff_t start_pgoff, pgoff_t end_pgoff)
- {
-@@ -2925,7 +3220,8 @@ struct page *read_cache_page(struct address_space *mapping,
- EXPORT_SYMBOL(read_cache_page);
- 
- /**
-- * read_cache_page_gfp - read into page cache, using specified page allocation flags.
-+ * read_cache_page_gfp - read into page cache, using specified page allocation
-+ *			 flags.
-  * @mapping:	the page's address_space
-  * @index:	the page index
-  * @gfp:	the page allocator flags to use if allocating
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1334ede667a8..26d74466d1f7 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -543,8 +543,11 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
- 
- 	if (addr)
- 		goto out;
-+
-+#ifndef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
- 	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
- 		goto out;
-+#endif
- 
- 	addr = __thp_get_unmapped_area(filp, len, off, flags, PMD_SIZE);
- 	if (addr)
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 7e8c3e8ae75f..96ff80d2a8fb 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1391,6 +1391,10 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 	struct mm_struct *mm = current->mm;
- 	int pkey = 0;
- 
-+#ifdef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
-+	unsigned long vm_maywrite = VM_MAYWRITE;
-+#endif
-+
- 	*populate = 0;
- 
- 	if (!len)
-@@ -1429,7 +1433,33 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 	/* Obtain the address to map to. we verify (or select) it and ensure
- 	 * that it represents a valid section of the address space.
- 	 */
--	addr = get_unmapped_area(file, addr, len, pgoff, flags);
-+
-+#ifdef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
-+	/*
-+	 * If THP is enabled, it's a read-only executable that is
-+	 * MAP_PRIVATE mapped, the length is larger than a PMD page
-+	 * and either it's not a MAP_FIXED mapping or the passed address is
-+	 * properly aligned for a PMD page, attempt to get an appropriate
-+	 * address at which to map a PMD-sized THP page, otherwise call the
-+	 * normal routine.
-+	 */
-+	if ((prot & PROT_READ) && (prot & PROT_EXEC) &&
-+		(!(prot & PROT_WRITE)) && (flags & MAP_PRIVATE) &&
-+		(!(flags & MAP_FIXED)) && len >= HPAGE_PMD_SIZE &&
-+		(!(addr & HPAGE_PMD_OFFSET))) {
-+		addr = thp_get_unmapped_area(file, addr, len, pgoff, flags);
-+
-+		if (addr && (!(addr & HPAGE_PMD_OFFSET)))
-+			vm_maywrite = 0;
-+		else
-+			addr = get_unmapped_area(file, addr, len, pgoff, flags);
-+	} else {
-+#endif
-+		addr = get_unmapped_area(file, addr, len, pgoff, flags);
-+#ifdef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
-+	}
-+#endif
-+
- 	if (offset_in_page(addr))
- 		return addr;
- 
-@@ -1451,7 +1481,11 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 	 * of the memory object, so we don't do any here.
- 	 */
- 	vm_flags |= calc_vm_prot_bits(prot, pkey) | calc_vm_flag_bits(flags) |
-+#ifdef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
-+			mm->def_flags | VM_MAYREAD | vm_maywrite | VM_MAYEXEC;
-+#else
- 			mm->def_flags | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
-+#endif
- 
- 	if (flags & MAP_LOCKED)
- 		if (!can_do_mlock())
-diff --git a/mm/rmap.c b/mm/rmap.c
-index e5dfe2ae6b0d..503612d3b52b 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1192,7 +1192,11 @@ void page_add_file_rmap(struct page *page, bool compound)
- 		}
- 		if (!atomic_inc_and_test(compound_mapcount_ptr(page)))
- 			goto out;
-+
-+#ifndef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
- 		VM_BUG_ON_PAGE(!PageSwapBacked(page), page);
-+#endif
-+
- 		__inc_node_page_state(page, NR_SHMEM_PMDMAPPED);
- 	} else {
- 		if (PageTransCompound(page) && page_mapping(page)) {
-@@ -1232,7 +1236,11 @@ static void page_remove_file_rmap(struct page *page, bool compound)
- 		}
- 		if (!atomic_add_negative(-1, compound_mapcount_ptr(page)))
- 			goto out;
-+
-+#ifndef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
- 		VM_BUG_ON_PAGE(!PageSwapBacked(page), page);
-+#endif
-+
- 		__dec_node_page_state(page, NR_SHMEM_PMDMAPPED);
- 	} else {
- 		if (!atomic_add_negative(-1, &page->_mapcount))
--- 
-2.21.0
+> On Jul 31, 2019, at 1:25 AM, William Kucharski <william.kucharski@oracle.=
+com> wrote:
+>=20
+> This set of patches is the first step towards a mechanism for automatical=
+ly
+> mapping read-only text areas of appropriate size and alignment to THPs
+> whenever possible.
+>=20
+> For now, the central routine, filemap_huge_fault(), amd various support
+> routines are only included if the experimental kernel configuration optio=
+n
+>=20
+> 	RO_EXEC_FILEMAP_HUGE_FAULT_THP
+>=20
+> is enabled.
+>=20
+> This is because filemap_huge_fault() is dependent upon the
+> address_space_operations vector readpage() pointing to a routine that wil=
+l
+> read and fill an entire large page at a time without poulluting the page
+> cache with PAGESIZE entries for the large page being mapped or performing
+> readahead that would pollute the page cache entries for succeeding large
+> pages. Unfortunately, there is no good way to determine how many bytes
+> were read by readpage(). At present, if filemap_huge_fault() were to call
+> a conventional readpage() routine, it would only fill the first PAGESIZE
+> bytes of the large page, which is definitely NOT the desired behavior.
+>=20
+> However, by making the code available now it is hoped that filesystem
+> maintainers who have pledged to provide such a mechanism will do so more
+> rapidly.
 
+Could you please explain how to test/try this? Would it automatically map
+all executables to THPs?=20
+
+Thanks,
+Song=
