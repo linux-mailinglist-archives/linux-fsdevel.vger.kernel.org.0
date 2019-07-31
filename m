@@ -2,211 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FCA37C29F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 15:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E54F7C321
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2019 15:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729136AbfGaNCF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 09:02:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54820 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726559AbfGaNCF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 09:02:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B0D6EAEF3;
-        Wed, 31 Jul 2019 13:02:02 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 2E7961E434C; Wed, 31 Jul 2019 15:01:48 +0200 (CEST)
-Date:   Wed, 31 Jul 2019 15:01:48 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v5 12/24] erofs: introduce tagged pointer
-Message-ID: <20190731130148.GE15806@quack2.suse.cz>
-References: <20190730071413.11871-1-gaoxiang25@huawei.com>
- <20190730071413.11871-13-gaoxiang25@huawei.com>
+        id S1729385AbfGaNRl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 09:17:41 -0400
+Received: from mga02.intel.com ([134.134.136.20]:63732 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729371AbfGaNRl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 31 Jul 2019 09:17:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2019 06:17:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,330,1559545200"; 
+   d="scan'208";a="191241302"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 31 Jul 2019 06:17:36 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        mm-commits@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, mhocko@suse.cz,
+        linux-mm@kvack.org, Mark Brown <broonie@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: mmotm 2019-07-04-15-01 uploaded (gpu/drm/i915/oa/)
+In-Reply-To: <CAK7LNATF+D5TgTZijG3EPBVON5NmN+JcwmCBvnvkMFyR+3wF2A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190704220152.1bF4q6uyw%akpm@linux-foundation.org> <80bf2204-558a-6d3f-c493-bf17b891fc8a@infradead.org> <CAK7LNAQc1xYoet1o8HJVGKuonUV40MZGpK7eHLyUmqet50djLw@mail.gmail.com> <CAK7LNASLfyreDPvNuL1svvHPC0woKnXO_bsNku4DMK6UNn4oHw@mail.gmail.com> <5e5353e2-bfab-5360-26b2-bf8c72ac7e70@infradead.org> <CAK7LNATF+D5TgTZijG3EPBVON5NmN+JcwmCBvnvkMFyR+3wF2A@mail.gmail.com>
+Date:   Wed, 31 Jul 2019 16:21:58 +0300
+Message-ID: <87v9vimj9l.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730071413.11871-13-gaoxiang25@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 30-07-19 15:14:01, Gao Xiang wrote:
-> Currently kernel has scattered tagged pointer usages
-> hacked by hand in plain code, without a unique and
-> portable functionset to highlight the tagged pointer
-> itself and wrap these hacked code in order to clean up
-> all over meaningless magic masks.
-> 
-> This patch introduces simple generic methods to fold
-> tags into a pointer integer. Currently it supports
-> the last n bits of the pointer for tags, which can be
-> selected by users.
-> 
-> In addition, it will also be used for the upcoming EROFS
-> filesystem, which heavily uses tagged pointer pproach
->  to reduce extra memory allocation.
-> 
-> Link: https://en.wikipedia.org/wiki/Tagged_pointer
-> 
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+On Fri, 05 Jul 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> On Fri, Jul 5, 2019 at 12:23 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> On 7/4/19 8:09 PM, Masahiro Yamada wrote:
+>> > On Fri, Jul 5, 2019 at 12:05 PM Masahiro Yamada
+>> > <yamada.masahiro@socionext.com> wrote:
+>> >>
+>> >> On Fri, Jul 5, 2019 at 10:09 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>> >>>
+>> >>> On 7/4/19 3:01 PM, akpm@linux-foundation.org wrote:
+>> >>>> The mm-of-the-moment snapshot 2019-07-04-15-01 has been uploaded to
+>> >>>>
+>> >>>>    http://www.ozlabs.org/~akpm/mmotm/
+>> >>>>
+>> >>>> mmotm-readme.txt says
+>> >>>>
+>> >>>> README for mm-of-the-moment:
+>> >>>>
+>> >>>> http://www.ozlabs.org/~akpm/mmotm/
+>> >>>
+>> >>> I get a lot of these but don't see/know what causes them:
+>> >>>
+>> >>> ../scripts/Makefile.build:42: ../drivers/gpu/drm/i915/oa/Makefile: No such file or directory
+>> >>> make[6]: *** No rule to make target '../drivers/gpu/drm/i915/oa/Makefile'.  Stop.
+>> >>> ../scripts/Makefile.build:498: recipe for target 'drivers/gpu/drm/i915/oa' failed
+>> >>> make[5]: *** [drivers/gpu/drm/i915/oa] Error 2
+>> >>> ../scripts/Makefile.build:498: recipe for target 'drivers/gpu/drm/i915' failed
+>> >>>
+>> >>
+>> >> I checked next-20190704 tag.
+>> >>
+>> >> I see the empty file
+>> >> drivers/gpu/drm/i915/oa/Makefile
+>> >>
+>> >> Did someone delete it?
+>> >>
+>> >
+>> >
+>> > I think "obj-y += oa/"
+>> > in drivers/gpu/drm/i915/Makefile
+>> > is redundant.
+>>
+>> Thanks.  It seems to be working after deleting that line.
+>
+>
+> Could you check whether or not
+> drivers/gpu/drm/i915/oa/Makefile exists in your source tree?
+>
+> Your build log says it was missing.
+>
+> But, commit 5ed7a0cf3394 ("drm/i915: Move OA files to separate folder")
+> added it.  (It is just an empty file)
+>
+> I am just wondering why.
 
-I'm not sure the generic approach you take is really needed here... You can
-rely on getting at most two unused bits in the pointer anyway (and on mk68
-architecture I've heard even that is not true but I guess you don't care).
-So why not just define a single pointer type representing pointer with as
-many tags as you can get? Also what I find bad about your tagptr approach
-is that the way you've implemented it you loose the information about the
-original pointer type. So overall I'm not sure the benefits outweight the
-downsides but I guess that's a matter of taste and ultimately your call as
-a maintainer of this code.
+I've sent patches adding some content, and they'll make their way
+upstream eventually. I am not sure why the empty file was added
+originally. Perhaps as a placeholder, seemed benign enough.
 
-								Honza
+BR,
+Jani.
 
-> ---
->  fs/erofs/tagptr.h | 110 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 fs/erofs/tagptr.h
-> 
-> diff --git a/fs/erofs/tagptr.h b/fs/erofs/tagptr.h
-> new file mode 100644
-> index 000000000000..a72897c86744
-> --- /dev/null
-> +++ b/fs/erofs/tagptr.h
-> @@ -0,0 +1,110 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * A tagged pointer implementation
-> + *
-> + * Copyright (C) 2018 Gao Xiang <gaoxiang25@huawei.com>
-> + */
-> +#ifndef __EROFS_FS_TAGPTR_H
-> +#define __EROFS_FS_TAGPTR_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/build_bug.h>
-> +
-> +/*
-> + * the name of tagged pointer types are tagptr{1, 2, 3...}_t
-> + * avoid directly using the internal structs __tagptr{1, 2, 3...}
-> + */
-> +#define __MAKE_TAGPTR(n) \
-> +typedef struct __tagptr##n {	\
-> +	uintptr_t v;	\
-> +} tagptr##n##_t;
-> +
-> +__MAKE_TAGPTR(1)
-> +__MAKE_TAGPTR(2)
-> +__MAKE_TAGPTR(3)
-> +__MAKE_TAGPTR(4)
-> +
-> +#undef __MAKE_TAGPTR
-> +
-> +extern void __compiletime_error("bad tagptr tags")
-> +	__bad_tagptr_tags(void);
-> +
-> +extern void __compiletime_error("bad tagptr type")
-> +	__bad_tagptr_type(void);
-> +
-> +/* fix the broken usage of "#define tagptr2_t tagptr3_t" by users */
-> +#define __tagptr_mask_1(ptr, n)	\
-> +	__builtin_types_compatible_p(typeof(ptr), struct __tagptr##n) ? \
-> +		(1UL << (n)) - 1 :
-> +
-> +#define __tagptr_mask(ptr)	(\
-> +	__tagptr_mask_1(ptr, 1) ( \
-> +	__tagptr_mask_1(ptr, 2) ( \
-> +	__tagptr_mask_1(ptr, 3) ( \
-> +	__tagptr_mask_1(ptr, 4) ( \
-> +	__bad_tagptr_type(), 0)))))
-> +
-> +/* generate a tagged pointer from a raw value */
-> +#define tagptr_init(type, val) \
-> +	((typeof(type)){ .v = (uintptr_t)(val) })
-> +
-> +/*
-> + * directly cast a tagged pointer to the native pointer type, which
-> + * could be used for backward compatibility of existing code.
-> + */
-> +#define tagptr_cast_ptr(tptr) ((void *)(tptr).v)
-> +
-> +/* encode tagged pointers */
-> +#define tagptr_fold(type, ptr, _tags) ({ \
-> +	const typeof(_tags) tags = (_tags); \
-> +	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(type))) \
-> +		__bad_tagptr_tags(); \
-> +tagptr_init(type, (uintptr_t)(ptr) | tags); })
-> +
-> +/* decode tagged pointers */
-> +#define tagptr_unfold_ptr(tptr) \
-> +	((void *)((tptr).v & ~__tagptr_mask(tptr)))
-> +
-> +#define tagptr_unfold_tags(tptr) \
-> +	((tptr).v & __tagptr_mask(tptr))
-> +
-> +/* operations for the tagger pointer */
-> +#define tagptr_eq(_tptr1, _tptr2) ({ \
-> +	typeof(_tptr1) tptr1 = (_tptr1); \
-> +	typeof(_tptr2) tptr2 = (_tptr2); \
-> +	(void)(&tptr1 == &tptr2); \
-> +(tptr1).v == (tptr2).v; })
-> +
-> +/* lock-free CAS operation */
-> +#define tagptr_cmpxchg(_ptptr, _o, _n) ({ \
-> +	typeof(_ptptr) ptptr = (_ptptr); \
-> +	typeof(_o) o = (_o); \
-> +	typeof(_n) n = (_n); \
-> +	(void)(&o == &n); \
-> +	(void)(&o == ptptr); \
-> +tagptr_init(o, cmpxchg(&ptptr->v, o.v, n.v)); })
-> +
-> +/* wrap WRITE_ONCE if atomic update is needed */
-> +#define tagptr_replace_tags(_ptptr, tags) ({ \
-> +	typeof(_ptptr) ptptr = (_ptptr); \
-> +	*ptptr = tagptr_fold(*ptptr, tagptr_unfold_ptr(*ptptr), tags); \
-> +*ptptr; })
-> +
-> +#define tagptr_set_tags(_ptptr, _tags) ({ \
-> +	typeof(_ptptr) ptptr = (_ptptr); \
-> +	const typeof(_tags) tags = (_tags); \
-> +	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(*ptptr))) \
-> +		__bad_tagptr_tags(); \
-> +	ptptr->v |= tags; \
-> +*ptptr; })
-> +
-> +#define tagptr_clear_tags(_ptptr, _tags) ({ \
-> +	typeof(_ptptr) ptptr = (_ptptr); \
-> +	const typeof(_tags) tags = (_tags); \
-> +	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(*ptptr))) \
-> +		__bad_tagptr_tags(); \
-> +	ptptr->v &= ~tags; \
-> +*ptptr; })
-> +
-> +#endif	/* __EROFS_FS_TAGPTR_H */
-> +
-> -- 
-> 2.17.1
-> 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jani Nikula, Intel Open Source Graphics Center
