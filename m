@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC517D326
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 04:18:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1330D7D318
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 04:18:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729536AbfHACSN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 22:18:13 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:33333 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729211AbfHACSM (ORCPT
+        id S1728770AbfHACSC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 22:18:02 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:34930 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728388AbfHACSB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 22:18:12 -0400
+        Wed, 31 Jul 2019 22:18:01 -0400
 Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A2FD143EBEB;
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B2322361C35;
         Thu,  1 Aug 2019 12:17:58 +1000 (AEST)
 Received: from discord.disaster.area ([192.168.253.110])
         by dread.disaster.area with esmtp (Exim 4.92)
         (envelope-from <david@fromorbit.com>)
-        id 1ht0eA-0003aj-Up; Thu, 01 Aug 2019 12:16:50 +1000
+        id 1ht0eA-0003am-W6; Thu, 01 Aug 2019 12:16:51 +1000
 Received: from dave by discord.disaster.area with local (Exim 4.92)
         (envelope-from <david@fromorbit.com>)
-        id 1ht0fG-0001ku-Su; Thu, 01 Aug 2019 12:17:58 +1000
+        id 1ht0fG-0001kx-Tx; Thu, 01 Aug 2019 12:17:58 +1000
 From:   Dave Chinner <david@fromorbit.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 08/24] mm: kswapd backoff for shrinkers
-Date:   Thu,  1 Aug 2019 12:17:36 +1000
-Message-Id: <20190801021752.4986-9-david@fromorbit.com>
+Subject: [PATCH 09/24] xfs: don't allow log IO to be throttled
+Date:   Thu,  1 Aug 2019 12:17:37 +1000
+Message-Id: <20190801021752.4986-10-david@fromorbit.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190801021752.4986-1-david@fromorbit.com>
 References: <20190801021752.4986-1-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
         a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=FmdZ9Uzk2mMA:10 a=20KFwNOVAAAA:8
-        a=NNMOctoXzqbiiAOzY8AA:9
+        a=5HahVxdoFHTWBnBQlCYA:9 a=DiKeHqHhRZ4A:10
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -45,77 +45,53 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Dave Chinner <dchinner@redhat.com>
 
-When kswapd reaches the end of the page LRU and starts hitting dirty
-pages, the logic in shrink_node() allows it to back off and wait for
-IO to complete, thereby preventing kswapd from scanning excessively
-and driving the system into swap thrashing and OOM conditions.
+Running metadata intensive workloads, I've been seeing the AIL
+pushing getting stuck on pinned buffers and triggering log forces.
+The log force is taking a long time to run because the log IO is
+getting throttled by wbt_wait() - the block layer writeback
+throttle. It's being throttled because there is a huge amount of
+metadata writeback going on which is filling the request queue.
 
-When we have inode cache heavy workloads on XFS, we have exactly the
-same problem with reclaim inodes. The non-blocking kswapd reclaim
-will keep putting pressure onto the inode cache which is unable to
-make progress. When the system gets to the point where there is no
-pages in the LRU to free, there is no swap left and there are no
-clean inodes that can be freed, it will OOM. This has a specific
-signature in OOM:
+IOWs, we have a priority inversion problem here.
 
-[  110.841987] Mem-Info:
-[  110.842816] active_anon:241 inactive_anon:82 isolated_anon:1
-                active_file:168 inactive_file:143 isolated_file:0
-                unevictable:2621523 dirty:1 writeback:8 unstable:0
-                slab_reclaimable:564445 slab_unreclaimable:420046
-                mapped:1042 shmem:11 pagetables:6509 bounce:0
-                free:77626 free_pcp:2 free_cma:0
+Mark the log IO bios with REQ_IDLE so they don't get throttled
+by the block layer writeback throttle. When we are forcing the CIL,
+we are likely to need to to tens of log IOs, and they are issued as
+fast as they can be build and IO completed. Hence REQ_IDLE is
+appropriate - it's an indication that more IO will follow shortly.
 
-In this case, we have about 500-600 pages left in teh LRUs, but we
-have ~565000 reclaimable slab pages still available for reclaim.
-Unfortunately, they are mostly dirty inodes, and so we really need
-to be able to throttle kswapd when shrinker progress is limited due
-to reaching the dirty end of the LRU...
-
-So, add a flag into the reclaim_state so if the shrinker decides it
-needs kswapd to back off and wait for a while (for whatever reason)
-it can do so.
+And because we also set REQ_SYNC, the writeback throttle will no
+treat log IO the same way it treats direct IO writes - it will not
+throttle them at all. Hence we solve the priority inversion problem
+caused by the writeback throttle being unable to distinguish between
+high priority log IO and background metadata writeback.
 
 Signed-off-by: Dave Chinner <dchinner@redhat.com>
 ---
- include/linux/swap.h |  1 +
- mm/vmscan.c          | 10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_log.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 1a3502a9bc1f..416680b1bf0c 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -133,6 +133,7 @@ struct reclaim_state {
- 	unsigned long	reclaimed_pages;	/* pages freed by shrinkers */
- 	unsigned long	scanned_objects;	/* quantity of work done */ 
- 	unsigned long	deferred_objects;	/* work that wasn't done */
-+	bool		need_backoff;		/* tell kswapd to slow down */
- };
+diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+index 00e9f5c388d3..7bdea629e749 100644
+--- a/fs/xfs/xfs_log.c
++++ b/fs/xfs/xfs_log.c
+@@ -1723,7 +1723,15 @@ xlog_write_iclog(
+ 	iclog->ic_bio.bi_iter.bi_sector = log->l_logBBstart + bno;
+ 	iclog->ic_bio.bi_end_io = xlog_bio_end_io;
+ 	iclog->ic_bio.bi_private = iclog;
+-	iclog->ic_bio.bi_opf = REQ_OP_WRITE | REQ_META | REQ_SYNC | REQ_FUA;
++
++	/*
++	 * We use REQ_SYNC | REQ_IDLE here to tell the block layer the are more
++	 * IOs coming immediately after this one. This prevents the block layer
++	 * writeback throttle from throttling log writes behind background
++	 * metadata writeback and causing priority inversions.
++	 */
++	iclog->ic_bio.bi_opf = REQ_OP_WRITE | REQ_META | REQ_SYNC |
++				REQ_IDLE | REQ_FUA;
+ 	if (need_flush)
+ 		iclog->ic_bio.bi_opf |= REQ_PREFLUSH;
  
- #ifdef __KERNEL__
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 4dc8e333f2c6..029dba76ee5a 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2844,8 +2844,16 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 			 * implies that pages are cycling through the LRU
- 			 * faster than they are written so also forcibly stall.
- 			 */
--			if (sc->nr.immediate)
-+			if (sc->nr.immediate) {
- 				congestion_wait(BLK_RW_ASYNC, HZ/10);
-+			} else if (reclaim_state && reclaim_state->need_backoff) {
-+				/*
-+				 * Ditto, but it's a slab cache that is cycling
-+				 * through the LRU faster than they are written
-+				 */
-+				congestion_wait(BLK_RW_ASYNC, HZ/10);
-+				reclaim_state->need_backoff = false;
-+			}
- 		}
- 
- 		/*
 -- 
 2.22.0
 
