@@ -2,154 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 797057D5F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 09:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB00E7D614
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 09:11:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730434AbfHAHBs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 03:01:48 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10207 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730306AbfHAHBs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 03:01:48 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d428e5c0000>; Thu, 01 Aug 2019 00:01:48 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 01 Aug 2019 00:01:47 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 01 Aug 2019 00:01:47 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 1 Aug
- 2019 07:01:46 +0000
-Subject: Re: [PATCH v4 1/3] mm/gup: add make_dirty arg to
- put_user_pages_dirty_lock()
-To:     Christoph Hellwig <hch@lst.de>, <john.hubbard@gmail.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190730205705.9018-1-jhubbard@nvidia.com>
- <20190730205705.9018-2-jhubbard@nvidia.com> <20190801060755.GA14893@lst.de>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <36713a8a-ac94-8af7-bedf-a3da6c6132a7@nvidia.com>
-Date:   Thu, 1 Aug 2019 00:01:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728922AbfHAHLW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 03:11:22 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47434 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725790AbfHAHLW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Aug 2019 03:11:22 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id F3DE384F77E482D42356;
+        Thu,  1 Aug 2019 15:11:19 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 1 Aug 2019
+ 15:11:18 +0800
+Subject: Re: [BUG] lseek on /proc/meminfo is broken in 4.19.59
+To:     Sergei Turchanov <turchanov@farpost.com>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <3bd775ab-9e31-c6b3-374e-7a9982a9a8cd@farpost.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <5c4c0648-2a96-4132-9d22-91c22e7c7d4d@huawei.com>
+Date:   Thu, 1 Aug 2019 15:11:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20190801060755.GA14893@lst.de>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
+In-Reply-To: <3bd775ab-9e31-c6b3-374e-7a9982a9a8cd@farpost.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564642908; bh=my/85jeGWSZJHtRlBuXzE4k0EyRLwJrmf2kurssg82c=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=BE/FS0MgD5AYk51ouyHNs4X8FqW/AlJFw51Q8R1TRI2GD6IOdn/1tc0f8d17PnQuR
-         0Z29vU6LNM4vLOhRI1ICsnxx9CJbaK67B4+P50dZEZC3TKrxh+CbRgPy1II2gJN1Ox
-         sgjPcluxAyQuF8zD1tmNbaF3orKKsCLf8LGjBkZ2Dd6uk8L1cJZx0sa6gjml9A/pvl
-         l8lHfekfgfuMtiHYmcIuX2d5w4E0873CGNZaTN60cvh/hpRl524bvtSwNb0l1RblrJ
-         aYJKWtVExKSnCUM8qF6X0x0Cyxcn7j9MhMPGq1/IrqL8k30zP0Fu0rWtpPEmGYGs7S
-         JL5/+DN+tFZeQ==
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/31/19 11:07 PM, Christoph Hellwig wrote:
-> On Tue, Jul 30, 2019 at 01:57:03PM -0700, john.hubbard@gmail.com wrote:
->> @@ -40,10 +40,7 @@
->>  static void __qib_release_user_pages(struct page **p, size_t num_pages,
->>  				     int dirty)
->>  {
->> -	if (dirty)
->> -		put_user_pages_dirty_lock(p, num_pages);
->> -	else
->> -		put_user_pages(p, num_pages);
->> +	put_user_pages_dirty_lock(p, num_pages, dirty);
->>  }
+Hi,
+
+I just took a glance, maybe due to
+commit 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and interface")
+
+I simply reverted it just now and it seems fine... but I haven't digged into this commit.
+
+Maybe you could Cc NeilBrown <neilb@suse.com> for some more advice and
+I have no idea whether it's an expected behavior or not...
+
+Thanks,
+Gao Xiang
+
+On 2019/8/1 14:16, Sergei Turchanov wrote:
+> Hello!
 > 
-> __qib_release_user_pages should be removed now as a direct call to
-> put_user_pages_dirty_lock is a lot more clear.
-
-OK.
-
+> (I sent this e-mail two weeks ago with no feedback. Does anyone care? Wrong mailing list? Anything....?)
 > 
->> index 0b0237d41613..62e6ffa9ad78 100644
->> --- a/drivers/infiniband/hw/usnic/usnic_uiom.c
->> +++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
->> @@ -75,10 +75,7 @@ static void usnic_uiom_put_pages(struct list_head *chunk_list, int dirty)
->>  		for_each_sg(chunk->page_list, sg, chunk->nents, i) {
->>  			page = sg_page(sg);
->>  			pa = sg_phys(sg);
->> -			if (dirty)
->> -				put_user_pages_dirty_lock(&page, 1);
->> -			else
->> -				put_user_page(page);
->> +			put_user_pages_dirty_lock(&page, 1, dirty);
->>  			usnic_dbg("pa: %pa\n", &pa);
+> Seeking (to an offset within file size) in /proc/meminfo is broken in 4.19.59. It does seek to a desired position, but reading from that position returns the remainder of file and then a whole copy of file. This doesn't happen with /proc/vmstat or /proc/self/maps for example.
 > 
-> There is a pre-existing bug here, as this needs to use the sg_page
-> iterator.  Probably worth throwing in a fix into your series while you
-> are at it.
-
-The amount of scatterlist code I've written is approximately zero lines,
-+/- a few lines. :)  I thought for_each_sg() *was* the sg_page iterator...
-
-I'll be glad to post a fix, but I'm not yet actually spotting the bug! heh
-
+> Seeking did work correctly in kernel 4.14.47. So it seems something broke in the way.
 > 
->> @@ -63,15 +63,7 @@ struct siw_mem *siw_mem_id2obj(struct siw_device *sdev, int stag_index)
->>  static void siw_free_plist(struct siw_page_chunk *chunk, int num_pages,
->>  			   bool dirty)
->>  {
->> -	struct page **p = chunk->plist;
->> -
->> -	while (num_pages--) {
->> -		if (!PageDirty(*p) && dirty)
->> -			put_user_pages_dirty_lock(p, 1);
->> -		else
->> -			put_user_page(*p);
->> -		p++;
->> -	}
->> +	put_user_pages_dirty_lock(chunk->plist, num_pages, dirty);
+> Background: this kind of access pattern (seeking to /proc/meminfo) is used by libvirt-lxc fuse driver for virtualized view of /proc/meminfo. So that /proc/meminfo is broken in guests when running kernel 4.19.x.
 > 
-> siw_free_plist should just go away now.
-
-OK, yes.
-
+> $ ./test /proc/meminfo 0        # Works as expected
 > 
-> Otherwise this looks good to me.
+> MemTotal:       394907728 kB
+> MemFree:        173738328 kB
+> ...
+> DirectMap2M:    13062144 kB
+> DirectMap1G:    390070272 kB
 > 
-
-Great, I'll make the above changes and post an updated series with your
-Reviewed-by, and Bjorn's ACK for patch #3.
-
-Next: I've just finished sweeping through a bunch of patches and applying this
-where applicable, so now that this API seems acceptable, I'll post another
-chunk of put_user_page*() conversions.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+> -----------------------------------------------------------------------
+> 
+> $ ./test 1024                   # returns a copy of file after the remainder
+> 
+> Will seek to 1024
+> 
+> 
+> Data read at offset 1024
+> gePages:         0 kB
+> ShmemHugePages:        0 kB
+> ShmemPmdMapped:        0 kB
+> HugePages_Total:       0
+> HugePages_Free:        0
+> HugePages_Rsvd:        0
+> HugePages_Surp:        0
+> Hugepagesize:       2048 kB
+> Hugetlb:               0 kB
+> DirectMap4k:      245204 kB
+> DirectMap2M:    13062144 kB
+> DirectMap1G:    390070272 kB
+> MemTotal:       394907728 kB
+> MemFree:        173738328 kB
+> MemAvailable:   379989680 kB
+> Buffers:          355812 kB
+> Cached:         207216224 kB
+> ...
+> DirectMap2M:    13062144 kB
+> DirectMap1G:    390070272 kB
+> 
+> As you see, after "DirectMap1G:" line, a whole copy of /proc/meminfo returned by "read".
+> 
+> Test program:
+> 
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <unistd.h>
+> #include <fcntl.h>
+> #include <stdio.h>
+> #include <stdlib.h>
+> 
+> #define SIZE 1024
+> char buf[SIZE + 1];
+> 
+> int main(int argc, char *argv[]) {
+>     int     fd;
+>     ssize_t rd;
+>     off_t   ofs = 0;
+> 
+>     if (argc < 2) {
+>         printf("Usage: test <file> [<offset>]\n");
+>         exit(1);
+>     }
+> 
+>     if (-1 == (fd = open(argv[1], O_RDONLY))) {
+>         perror("open failed");
+>         exit(1);
+>     }
+> 
+>     if (argc > 2) {
+>         ofs = atol(argv[2]);
+>     }
+>     printf("Will seek to %ld\n", ofs);
+> 
+>     if (-1 == (lseek(fd, ofs, SEEK_SET))) {
+>         perror("lseek failed");
+>         exit(1);
+>     }
+> 
+>     for (;; ofs += rd) {
+>         printf("\n\nData read at offset %ld\n", ofs);
+>         if (-1 == (rd = read(fd, buf, SIZE))) {
+>             perror("read failed");
+>             exit(1);
+>         }
+>         buf[rd] = '\0';
+>         printf(buf);
+>         if (rd < SIZE) {
+>             break;
+>         }
+>     }
+> 
+>     return 0;
+> }
+> 
+> 
+> 
