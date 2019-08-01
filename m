@@ -2,89 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B82F7E6B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 01:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 261317E6F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 02:00:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732904AbfHAXqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 19:46:34 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:32988 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388590AbfHAXpW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 19:45:22 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1htKl2-0002MZ-Tp; Thu, 01 Aug 2019 17:45:21 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1htKl2-00025g-Ol; Thu, 01 Aug 2019 17:45:16 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu,  1 Aug 2019 17:45:13 -0600
-Message-Id: <20190801234514.7941-15-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190801234514.7941-1-logang@deltatee.com>
-References: <20190801234514.7941-1-logang@deltatee.com>
+        id S1732460AbfHBAAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 20:00:02 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:56173 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731376AbfHBAAC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Aug 2019 20:00:02 -0400
+Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 7201F363416;
+        Fri,  2 Aug 2019 09:59:56 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1htKy9-0003Va-4v; Fri, 02 Aug 2019 09:58:49 +1000
+Date:   Fri, 2 Aug 2019 09:58:49 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Chris Mason <clm@fb.com>
+Cc:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 09/24] xfs: don't allow log IO to be throttled
+Message-ID: <20190801235849.GO7777@dread.disaster.area>
+References: <20190801021752.4986-1-david@fromorbit.com>
+ <20190801021752.4986-10-david@fromorbit.com>
+ <F1E7CC65-D2CB-4078-9AA3-9D172ECDE17B@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, Chaitanya.Kulkarni@wdc.com, maxg@mellanox.com, sbates@raithlin.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH v7 14/14] nvmet-passthru: support block accounting
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <F1E7CC65-D2CB-4078-9AA3-9D172ECDE17B@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=j1scD-lSN6Y4ri9hJcUA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Support block disk accounting by setting the RQF_IO_STAT flag
-and gendisk in the request.
+On Thu, Aug 01, 2019 at 01:39:34PM +0000, Chris Mason wrote:
+> On 31 Jul 2019, at 22:17, Dave Chinner wrote:
+> 
+> > From: Dave Chinner <dchinner@redhat.com>
+> >
+> > Running metadata intensive workloads, I've been seeing the AIL
+> > pushing getting stuck on pinned buffers and triggering log forces.
+> > The log force is taking a long time to run because the log IO is
+> > getting throttled by wbt_wait() - the block layer writeback
+> > throttle. It's being throttled because there is a huge amount of
+> > metadata writeback going on which is filling the request queue.
+> >
+> > IOWs, we have a priority inversion problem here.
+> >
+> > Mark the log IO bios with REQ_IDLE so they don't get throttled
+> > by the block layer writeback throttle. When we are forcing the CIL,
+> > we are likely to need to to tens of log IOs, and they are issued as
+> > fast as they can be build and IO completed. Hence REQ_IDLE is
+> > appropriate - it's an indication that more IO will follow shortly.
+> >
+> > And because we also set REQ_SYNC, the writeback throttle will no
+> > treat log IO the same way it treats direct IO writes - it will not
+> > throttle them at all. Hence we solve the priority inversion problem
+> > caused by the writeback throttle being unable to distinguish between
+> > high priority log IO and background metadata writeback.
+> >
+>   [ cc Jens ]
+> 
+> We spent a lot of time getting rid of these inversions in io.latency 
+> (and the new io.cost), where REQ_META just blows through the throttling 
+> and goes into back charging instead.
 
-After this change, IO counts will be reflected correctly in
-/proc/diskstats for drives being used by passthru.
+Which simply reinforces the fact that that request type based
+throttling is a fundamentally broken architecture.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/nvme/target/io-cmd-passthru.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> It feels awkward to have one set of prio inversion workarounds for io.* 
+> and another for wbt.  Jens, should we make an explicit one that doesn't 
+> rely on magic side effects, or just decide that metadata is meta enough 
+> to break all the rules?
 
-diff --git a/drivers/nvme/target/io-cmd-passthru.c b/drivers/nvme/target/io-cmd-passthru.c
-index 06a919283cc5..cb193b434545 100644
---- a/drivers/nvme/target/io-cmd-passthru.c
-+++ b/drivers/nvme/target/io-cmd-passthru.c
-@@ -441,6 +441,9 @@ static struct request *nvmet_passthru_blk_make_request(struct nvmet_req *req,
- 	if (unlikely(IS_ERR(rq)))
- 		return rq;
- 
-+	if (blk_queue_io_stat(q) && cmd->common.opcode != nvme_cmd_flush)
-+		rq->rq_flags |= RQF_IO_STAT;
-+
- 	if (req->sg_cnt) {
- 		ret = nvmet_passthru_map_sg(req, rq);
- 		if (unlikely(ret)) {
-@@ -505,7 +508,7 @@ static void nvmet_passthru_execute_cmd(struct nvmet_req *req)
- 
- 	rq->end_io_data = req;
- 	if (req->sq->qid != 0) {
--		blk_execute_rq_nowait(rq->q, NULL, rq, 0,
-+		blk_execute_rq_nowait(rq->q, ns->disk, rq, 0,
- 				      nvmet_passthru_req_done);
- 	} else {
- 		req->p.rq = rq;
+The problem isn't REQ_META blows throw the throttling, the problem
+is that different REQ_META IOs have different priority.
+
+IOWs, the problem here is that we are trying to infer priority from
+the request type rather than an actual priority assigned by the
+submitter. There is no way direct IO has higher priority in a
+filesystem than log IO tagged with REQ_META as direct IO can require
+log IO to make progress. Priority is a policy determined by the
+submitter, not the mechanism doing the throttling.
+
+Can we please move this all over to priorites based on
+bio->b_ioprio? And then document how the range of priorities are
+managed, such as:
+
+(99 = highest prio to 0 = lowest)
+
+swap out
+swap in				>90
+User hard RT max		89
+User hard RT min		80
+filesystem max			79
+ionice max			60
+background data writeback	40
+ionice min			20
+filesystem min			10
+idle				0
+
+So that we can appropriately prioritise different types of kernel
+internal IO w.r.t user controlled IO priorities? This way we can
+still tag the bios with the type of data they contain, but we
+no longer use that to determine whether to throttle that IO or not -
+throttling/scheduling should be done entirely on a priority basis.
+
+Cheers,
+
+Dave.
 -- 
-2.20.1
-
+Dave Chinner
+david@fromorbit.com
