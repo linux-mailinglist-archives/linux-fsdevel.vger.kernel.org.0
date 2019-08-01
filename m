@@ -2,139 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA7547D4E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 07:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 932BD7D53C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 08:08:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbfHAFba (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 01:31:30 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39061 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726514AbfHAFba (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 01:31:30 -0400
-Received: from callcc.thunk.org (96-72-102-169-static.hfc.comcastbusiness.net [96.72.102.169] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x715V9Rn013938
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 1 Aug 2019 01:31:10 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id EEE8D4202F5; Thu,  1 Aug 2019 01:31:08 -0400 (EDT)
-Date:   Thu, 1 Aug 2019 01:31:08 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        Paul Crowley <paulcrowley@google.com>,
-        Satya Tangirala <satyat@google.com>
-Subject: Re: [f2fs-dev] [PATCH v7 07/16] fscrypt: add
- FS_IOC_REMOVE_ENCRYPTION_KEY ioctl
-Message-ID: <20190801053108.GD2769@mit.edu>
-References: <20190726224141.14044-1-ebiggers@kernel.org>
- <20190726224141.14044-8-ebiggers@kernel.org>
- <20190728192417.GG6088@mit.edu>
- <20190729195827.GF169027@gmail.com>
- <20190731183802.GA687@sol.localdomain>
- <20190731233843.GA2769@mit.edu>
- <20190801011140.GB687@sol.localdomain>
+        id S1728740AbfHAGIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 02:08:02 -0400
+Received: from verein.lst.de ([213.95.11.211]:40460 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbfHAGIC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Aug 2019 02:08:02 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 9C9C468B05; Thu,  1 Aug 2019 08:07:55 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 08:07:55 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     john.hubbard@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v4 1/3] mm/gup: add make_dirty arg to
+ put_user_pages_dirty_lock()
+Message-ID: <20190801060755.GA14893@lst.de>
+References: <20190730205705.9018-1-jhubbard@nvidia.com> <20190730205705.9018-2-jhubbard@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190801011140.GB687@sol.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190730205705.9018-2-jhubbard@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 06:11:40PM -0700, Eric Biggers wrote:
-> 
-> Well, it's either
-> 
-> 1a. Remove the user's handle.
-> 	OR 
-> 1b. Remove all users' handles.  (FSCRYPT_REMOVE_KEY_FLAG_ALL_USERS)
-> 
-> Then
-> 
-> 2. If no handles remain, try to evict all inodes that use the key.
-> 
-> By "purge all keys" do you mean step (2)?  Note that it doesn't require root by
-> itself; root is only required to remove other users' handles (1b).
+On Tue, Jul 30, 2019 at 01:57:03PM -0700, john.hubbard@gmail.com wrote:
+> @@ -40,10 +40,7 @@
+>  static void __qib_release_user_pages(struct page **p, size_t num_pages,
+>  				     int dirty)
+>  {
+> -	if (dirty)
+> -		put_user_pages_dirty_lock(p, num_pages);
+> -	else
+> -		put_user_pages(p, num_pages);
+> +	put_user_pages_dirty_lock(p, num_pages, dirty);
+>  }
 
-No, I was talking about 1b.  I'd argue that 1a and 1b should be
-different ioctl.  1b requires root, and 1a doesn't.
+__qib_release_user_pages should be removed now as a direct call to
+put_user_pages_dirty_lock is a lot more clear.
 
-And 1a should just mean, "I don't need to use the encrypted files any
-more".  In the PAM passphrase case, when you are just logging out, 1a
-is what's needed, and success is just fine.  pam_session won't *care*
-whether or not there are other users keeping the key in use.
+> index 0b0237d41613..62e6ffa9ad78 100644
+> --- a/drivers/infiniband/hw/usnic/usnic_uiom.c
+> +++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
+> @@ -75,10 +75,7 @@ static void usnic_uiom_put_pages(struct list_head *chunk_list, int dirty)
+>  		for_each_sg(chunk->page_list, sg, chunk->nents, i) {
+>  			page = sg_page(sg);
+>  			pa = sg_phys(sg);
+> -			if (dirty)
+> -				put_user_pages_dirty_lock(&page, 1);
+> -			else
+> -				put_user_page(page);
+> +			put_user_pages_dirty_lock(&page, 1, dirty);
+>  			usnic_dbg("pa: %pa\n", &pa);
 
-The problem with "fscrypt lock" is that the non-privileged user sort
-of wants to do REMOVE_FLAG_KEY_FLAG_FOR_ALL_USERS, but they doesn't
-have the privileges to do it, and they are hoping that removing their
-own key removes it the key from the system.  That to me seems to be
-the fundamental disconnect.  The "fscrypt unlock" and "fscrypt lock"
-commands comes from the v1 key management, and requires root.  It's
-the translation to unprivileged mode where "fscrypt lock" seems to
-have problems.
+There is a pre-existing bug here, as this needs to use the sg_page
+iterator.  Probably worth throwing in a fix into your series while you
+are at it.
 
-> > What about having "fscrypt lock" call FS_IOC_GET_ENCRYPTION_KEY_STATUS
-> > and print a warning message saying, "we can't lock it because N other
-> > users who have registered a key".  I'd argue fscrypt should do this
-> > regardless of whether or not FS_IOC_REMOVE_ENCRYPTION_KEY returns
-> > EUSERS or not.
-> 
-> Shouldn't "fscrypt lock" still remove the user's handle, as opposed to refuse to
-> do anything, though?  So it would still need to callh
-> FS_IOC_REMOVE_ENCRYPTION_KEY, and could get the status from it rather than also
-> needing to call FS_IOC_GET_ENCRYPTION_KEY_STATUS.
-> 
-> Though, FS_IOC_GET_ENCRYPTION_KEY_STATUS would be needed if we wanted to show
-> the specific count of other users.
- 
-So my perspective is that the ioctl's should have very clean
-semantics, and errors should be consistent with how the Unix system
-calls and error reporting.
+> @@ -63,15 +63,7 @@ struct siw_mem *siw_mem_id2obj(struct siw_device *sdev, int stag_index)
+>  static void siw_free_plist(struct siw_page_chunk *chunk, int num_pages,
+>  			   bool dirty)
+>  {
+> -	struct page **p = chunk->plist;
+> -
+> -	while (num_pages--) {
+> -		if (!PageDirty(*p) && dirty)
+> -			put_user_pages_dirty_lock(p, 1);
+> -		else
+> -			put_user_page(*p);
+> -		p++;
+> -	}
+> +	put_user_pages_dirty_lock(chunk->plist, num_pages, dirty);
 
-If we need to make "fscrypt lock" and "fscrypt unlock" have semantics
-that are more consistent with previous user interface choices, then
-fscrypt can use FS_IOC_GET_ENCRYPTION_KEY_STATUS to print the warning
-before it calls FS_IOC_REMOVE_ENCRYPTION_KEY --- with "fscrypt purge_keys"
-calling something like FS_IOC_REMOVE_ALL_USER_ENCRYPTION_KEYS.
+siw_free_plist should just go away now.
 
-> > It seems to me that the EBUSY and EUSERS errors should be status bits
-> > which gets returned to the user in a bitfield --- and if the key has
-> > been removed, or the user's claim on the key's existence has been
-> > removed, the ioctl returns success.
-> > 
-> > That way we don't have to deal with the semantic disconnect where some
-> > errors don't actually change system state, and other errors that *do*
-> > change system state (as in, the key gets removed, or the user's claim
-> > on the key gets removed), but still returns than error.
-> > 
-> 
-> Do you mean use a positive return value, or do you mean add an output field to
-> the struct passed to the ioctl?
-
-I meant adding an output field.  I see EBUSY and EUSERS as status bits
-which *some* use cases might find useful.  Other use cases, such as in
-the pam_keys session logout code, we won't care at *all* about those
-status reporting (or error codes).  So if EBUSY and EUSERS are
-returned as errors, then it adds to complexity of those programs
-whichd don't care.  (And even for those that do, it's still a bit more
-complex since they has to distinguish between EBUSY, EUSERS, or other
-errors --- in fact, *all* programs which use
-FS_IOC_REMOVE_ENCRYPTION_KEY will *have* to check for EBUSY and
-ESUSERS whether they care or not.)
-
-> Either way note that it doesn't really need to be a bitfield, since you can't
-> have both statuses at the same time.  I.e. if there are still other users, we
-> couldn't have even gotten to checking for in-use files.
-
-That's actually an implementation detail, though, right?  In theory,
-we could check to see if there are any in-use files, independently of
-whether there are any users or not.
-
-					- Ted
+Otherwise this looks good to me.
