@@ -2,147 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C96E7D2B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 03:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF4B7D294
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 03:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbfHABRD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 21:17:03 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33579 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729636AbfHABQ4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 21:16:56 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hszhM-0002IO-FR; Thu, 01 Aug 2019 03:16:04 +0200
-Message-Id: <20190801010944.549462805@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Thu, 01 Aug 2019 03:01:33 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
-        linux-ext4@vger.kernel.org, "Theodore Tso" <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Joel Becker <jlbec@evilplan.org>
-Subject: [patch V2 7/7] fs/jbd2: Free journal head outside of locked region
-References: <20190801010126.245731659@linutronix.de>
+        id S1728582AbfHABLW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 21:11:22 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34548 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725942AbfHABLW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 31 Jul 2019 21:11:22 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6295B2C0F960B1BEB31C;
+        Thu,  1 Aug 2019 09:11:19 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 1 Aug 2019
+ 09:11:14 +0800
+Subject: Re: [PATCH v4 3/3] f2fs: Support case-insensitive file name lookups
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Daniel Rosenberg <drosen@google.com>
+CC:     Jaegeuk Kim <jaegeuk@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        <kernel-team@android.com>
+References: <20190723230529.251659-1-drosen@google.com>
+ <20190723230529.251659-4-drosen@google.com>
+ <20190731175748.GA48637@archlinux-threadripper>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <5d6c5da8-ad1e-26e2-0a3d-84949cd4e9aa@huawei.com>
+Date:   Thu, 1 Aug 2019 09:11:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190731175748.GA48637@archlinux-threadripper>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On PREEMPT_RT bit-spinlocks have the same semantics as on PREEMPT_RT=n,
-i.e. they disable preemption. That means functions which are not safe to be
-called in preempt disabled context on RT trigger a might_sleep() assert.
+Hi Nathan,
 
-The journal head bit spinlock is mostly held for short code sequences with
-trivial RT safe functionality, except for one place:
+Thanks for the report! :)
 
-jbd2_journal_put_journal_head() invokes __journal_remove_journal_head()
-with the journal head bit spinlock held. __journal_remove_journal_head()
-invokes kmem_cache_free() which must not be called with preemption disabled
-on RT.
+On 2019/8/1 1:57, Nathan Chancellor wrote:
+> Hi all,
+> 
+> <snip>
+> 
+>> diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
+>> index cc82f142f811f..99e79934f5088 100644
+>> --- a/fs/f2fs/hash.c
+>> +++ b/fs/f2fs/hash.c
+>> @@ -14,6 +14,7 @@
+>>  #include <linux/f2fs_fs.h>
+>>  #include <linux/cryptohash.h>
+>>  #include <linux/pagemap.h>
+>> +#include <linux/unicode.h>
+>>  
+>>  #include "f2fs.h"
+>>  
+>> @@ -67,7 +68,7 @@ static void str2hashbuf(const unsigned char *msg, size_t len,
+>>  		*buf++ = pad;
+>>  }
+>>  
+>> -f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
+>> +static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
+>>  				struct fscrypt_name *fname)
+>>  {
+>>  	__u32 hash;
+>> @@ -103,3 +104,35 @@ f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
+>>  	f2fs_hash = cpu_to_le32(hash & ~F2FS_HASH_COL_BIT);
+>>  	return f2fs_hash;
+>>  }
+>> +
+>> +f2fs_hash_t f2fs_dentry_hash(const struct inode *dir,
+>> +		const struct qstr *name_info, struct fscrypt_name *fname)
+>> +{
+>> +#ifdef CONFIG_UNICODE
+>> +	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
+>> +	const struct unicode_map *um = sbi->s_encoding;
+>> +	int r, dlen;
+>> +	unsigned char *buff;
+>> +	struct qstr *folded;
+>> +
+>> +	if (name_info->len && IS_CASEFOLDED(dir)) {
+>> +		buff = f2fs_kzalloc(sbi, sizeof(char) * PATH_MAX, GFP_KERNEL);
+>> +		if (!buff)
+>> +			return -ENOMEM;
+>> +
+>> +		dlen = utf8_casefold(um, name_info, buff, PATH_MAX);
+>> +		if (dlen < 0) {
+>> +			kvfree(buff);
+>> +			goto opaque_seq;
+>> +		}
+>> +		folded->name = buff;
+>> +		folded->len = dlen;
+>> +		r = __f2fs_dentry_hash(folded, fname);
+>> +
+>> +		kvfree(buff);
+>> +		return r;
+>> +	}
+>> +opaque_seq:
+>> +#endif
+>> +	return __f2fs_dentry_hash(name_info, fname);
+>> +}
+> 
+> Clang now warns:
+> 
+> fs/f2fs/hash.c:128:3: warning: variable 'folded' is uninitialized when used here [-Wuninitialized]
+>                 folded->name = buff;
+>                 ^~~~~~
+> fs/f2fs/hash.c:116:21: note: initialize the variable 'folded' to silence this warning
+>         struct qstr *folded;
+>                            ^
+>                             = NULL
+> 1 warning generated.
+> 
+> I assume that it wants to be initialized with f2fs_kzalloc as well but
+> I am not familiar with this code and what it expects to do.
+> 
+> Please look into this when you get a chance!
 
-Jan suggested to rework the removal function so the actual free happens
-outside the bit-spinlocked region.
+That should be a bug, it needs to define a struct qstr type variable rather than
+a pointer there.
 
-Split it into two parts:
+Jaegeuk, could you fix this in you branch?
 
-  - Do the sanity checks and the buffer head detach under the lock
+Thanks,
 
-  - Do the actual free after dropping the lock
-
-There is error case handling in the free part which needs to dereference
-the b_size field of the now detached buffer head. Due to paranoia (caused
-by ignorance) the size is retrieved in the detach function and handed into
-the free function. Might be over-engineered, but better safe than sorry.
-
-This makes the journal head bit-spinlock usage RT compliant and also avoids
-nested locking which is not covered by lockdep.
-
-Suggested-by: Jan Kara <jack@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-ext4@vger.kernel.org
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.com>
----
-V2: New patch
----
- fs/jbd2/journal.c |   28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
-
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -2521,9 +2521,10 @@ struct journal_head *jbd2_journal_grab_j
- 	return jh;
- }
- 
--static void __journal_remove_journal_head(struct buffer_head *bh)
-+static size_t __journal_remove_journal_head(struct buffer_head *bh)
- {
- 	struct journal_head *jh = bh2jh(bh);
-+	size_t b_size = READ_ONCE(bh->b_size);
- 
- 	J_ASSERT_JH(jh, jh->b_jcount >= 0);
- 	J_ASSERT_JH(jh, jh->b_transaction == NULL);
-@@ -2533,17 +2534,25 @@ static void __journal_remove_journal_hea
- 	J_ASSERT_BH(bh, buffer_jbd(bh));
- 	J_ASSERT_BH(bh, jh2bh(jh) == bh);
- 	BUFFER_TRACE(bh, "remove journal_head");
-+
-+	/* Unlink before dropping the lock */
-+	bh->b_private = NULL;
-+	jh->b_bh = NULL;	/* debug, really */
-+	clear_buffer_jbd(bh);
-+
-+	return b_size;
-+}
-+
-+static void journal_release_journal_head(struct journal_head *jh, size_t b_size)
-+{
- 	if (jh->b_frozen_data) {
- 		printk(KERN_WARNING "%s: freeing b_frozen_data\n", __func__);
--		jbd2_free(jh->b_frozen_data, bh->b_size);
-+		jbd2_free(jh->b_frozen_data, b_size);
- 	}
- 	if (jh->b_committed_data) {
- 		printk(KERN_WARNING "%s: freeing b_committed_data\n", __func__);
--		jbd2_free(jh->b_committed_data, bh->b_size);
-+		jbd2_free(jh->b_committed_data, b_size);
- 	}
--	bh->b_private = NULL;
--	jh->b_bh = NULL;	/* debug, really */
--	clear_buffer_jbd(bh);
- 	journal_free_journal_head(jh);
- }
- 
-@@ -2559,11 +2568,14 @@ void jbd2_journal_put_journal_head(struc
- 	J_ASSERT_JH(jh, jh->b_jcount > 0);
- 	--jh->b_jcount;
- 	if (!jh->b_jcount) {
--		__journal_remove_journal_head(bh);
-+		size_t b_size = __journal_remove_journal_head(bh);
-+
- 		jbd_unlock_bh_journal_head(bh);
-+		journal_release_journal_head(jh, b_size);
- 		__brelse(bh);
--	} else
-+	} else {
- 		jbd_unlock_bh_journal_head(bh);
-+	}
- }
- 
- /*
-
-
+> Nathan
+> .
+> 
