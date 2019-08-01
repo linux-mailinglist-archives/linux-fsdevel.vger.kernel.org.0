@@ -2,86 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22DE07EF38
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 10:27:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5387EF66
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 10:35:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389340AbfHBI14 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 04:27:56 -0400
-Received: from verein.lst.de ([213.95.11.211]:50830 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726164AbfHBI14 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:27:56 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6415A68C65; Fri,  2 Aug 2019 10:27:53 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 10:27:53 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 1/2] iomap: Support large pages
-Message-ID: <20190802082753.GA10664@lst.de>
-References: <20190731171734.21601-1-willy@infradead.org> <20190731171734.21601-2-willy@infradead.org> <20190731230315.GJ7777@dread.disaster.area> <20190801035955.GI4700@bombadil.infradead.org> <20190801162147.GB25871@lst.de> <20190801174500.GL4700@bombadil.infradead.org>
+        id S2404273AbfHBIfM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 04:35:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42738 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729739AbfHBIfM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:35:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B5825AD35;
+        Fri,  2 Aug 2019 08:35:10 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EF9621E3F4D; Thu,  1 Aug 2019 19:57:03 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 19:57:03 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
+        Theodore Tso <tytso@mit.edu>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V2 6/7] fs/jbd2: Make state lock a spinlock
+Message-ID: <20190801175703.GH25064@quack2.suse.cz>
+References: <20190801010126.245731659@linutronix.de>
+ <20190801010944.457499601@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190801174500.GL4700@bombadil.infradead.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190801010944.457499601@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 10:45:00AM -0700, Matthew Wilcox wrote:
-> On Thu, Aug 01, 2019 at 06:21:47PM +0200, Christoph Hellwig wrote:
-> > On Wed, Jul 31, 2019 at 08:59:55PM -0700, Matthew Wilcox wrote:
-> > > -       nbits = BITS_TO_LONGS(page_size(page) / SECTOR_SIZE);
-> > > -       iop = kmalloc(struct_size(iop, uptodate, nbits),
-> > > -                       GFP_NOFS | __GFP_NOFAIL);
-> > > -       atomic_set(&iop->read_count, 0);
-> > > -       atomic_set(&iop->write_count, 0);
-> > > -       bitmap_zero(iop->uptodate, nbits);
-> > > +       n = BITS_TO_LONGS(page_size(page) >> inode->i_blkbits);
-> > > +       iop = kmalloc(struct_size(iop, uptodate, n),
-> > > +                       GFP_NOFS | __GFP_NOFAIL | __GFP_ZERO);
-> > 
-> > I am really worried about potential very large GFP_NOFS | __GFP_NOFAIL
-> > allocations here.
+On Thu 01-08-19 03:01:32, Thomas Gleixner wrote:
+> Bit-spinlocks are problematic on PREEMPT_RT if functions which might sleep
+> on RT, e.g. spin_lock(), alloc/free(), are invoked inside the lock held
+> region because bit spinlocks disable preemption even on RT.
 > 
-> I don't think it gets _very_ large here.  Assuming a 4kB block size
-> filesystem, that's 512 bits (64 bytes, plus 16 bytes for the two counters)
-> for a 2MB page.  For machines with an 8MB PMD page, it's 272 bytes.
-> Not a very nice fraction of a page size, so probably rounded up to a 512
-> byte allocation, but well under the one page that the MM is supposed to
-> guarantee being able to allocate.
-
-And if we use GB pages?
-
-Or 512-byte blocks or at least 1k blocks, which we need to handle even
-if they are not preferred by any means.  The real issue here is not just
-the VMs capability to allocate these by some means, but that we do
-__GFP_NOFAIL allocations in nofs context.
-
-> > And thinking about this a bit more while walking
-> > at the beach I wonder if a better option is to just allocate one
-> > iomap per tail page if needed rather than blowing the head page one
-> > up.  We'd still always use the read_count and write_count in the
-> > head page, but the bitmaps in the tail pages, which should be pretty
-> > easily doable.
+> A first attempt was to replace state lock with a spinlock placed in struct
+> buffer_head and make the locking conditional on PREEMPT_RT and
+> DEBUG_BIT_SPINLOCKS.
 > 
-> We wouldn't need to allocate an iomap per tail page, even.  We could
-> just use one bit of tail-page->private per block.  That'd work except
-> for 512-byte block size on machines with a 64kB page.  I doubt many
-> people expect that combination to work well.
-
-We'd still need to deal with the T10 PI tuples for a case like that,
-though.
-
+> Jan pointed out that there is a 4 byte hole in struct journal_head where a
+> regular spinlock fits in and he would not object to convert the state lock
+> to a spinlock unconditionally.
 > 
-> One of my longer-term ambitions is to do away with tail pages under
-> certain situations; eg partition the memory between allocatable-as-4kB
-> pages and allocatable-as-2MB pages.  We'd need a different solution for
-> that, but it's a bit of a pipe dream right now anyway.
+> Aside of solving the RT problem, this also gains lockdep coverage for the
+> journal head state lock (bit-spinlocks are not covered by lockdep as it's
+> hard to fit a lockdep map into a single bit).
+> 
+> The trivial change would have been to convert the jbd_*lock_bh_state()
+> inlines, but that comes with the downside that these functions take a
+> buffer head pointer which needs to be converted to a journal head pointer
+> which adds another level of indirection.
+> 
+> As almost all functions which use this lock have a journal head pointer
+> readily available, it makes more sense to remove the lock helper inlines
+> and write out spin_*lock() at all call sites.
+> 
+> Fixup all locking comments as well.
+> 
+> Suggested-by: Jan Kara <jack@suse.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Mark Fasheh <mark@fasheh.com>
+> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
+> Cc: Joel Becker <jlbec@evilplan.org>
+> Cc: Jan Kara <jack@suse.com>
+> Cc: linux-ext4@vger.kernel.org
 
-Yes, lets focus on that.  Maybe at some point we'll also get extent
-based VM instead of pages ;-)
+Just a heads up that I didn't miss this patch. Just it has some bugs and I
+figured that rather than explaining to you subtleties of jh lifetime it is
+easier to fix up the problems myself since you're probably not keen on
+becoming jbd2 developer ;)... which was more complex than I thought so I'm
+not completely done yet. Hopefuly tomorrow.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
