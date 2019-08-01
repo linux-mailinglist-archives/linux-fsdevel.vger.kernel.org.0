@@ -2,102 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 932BD7D53C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 08:08:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF23C7D55E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 08:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbfHAGIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 02:08:02 -0400
-Received: from verein.lst.de ([213.95.11.211]:40460 "EHLO verein.lst.de"
+        id S1729023AbfHAGRE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 1 Aug 2019 02:17:04 -0400
+Received: from mx1.mail.vl.ru ([80.92.161.250]:55790 "EHLO mx1.mail.vl.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbfHAGIC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 02:08:02 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 9C9C468B05; Thu,  1 Aug 2019 08:07:55 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 08:07:55 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     john.hubbard@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v4 1/3] mm/gup: add make_dirty arg to
- put_user_pages_dirty_lock()
-Message-ID: <20190801060755.GA14893@lst.de>
-References: <20190730205705.9018-1-jhubbard@nvidia.com> <20190730205705.9018-2-jhubbard@nvidia.com>
+        id S1728372AbfHAGRE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Aug 2019 02:17:04 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mx1.mail.vl.ru (Postfix) with ESMTP id D4EEC1860D6E;
+        Thu,  1 Aug 2019 06:16:59 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at mail.vl.ru
+Received: from mx1.mail.vl.ru ([127.0.0.1])
+        by localhost (smtp1.srv.loc [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id aH4rQ_CGdhjD; Thu,  1 Aug 2019 16:16:58 +1000 (+10)
+Received: from [10.125.1.12] (unknown [109.126.62.18])
+        (Authenticated sender: turchanov@vl.ru)
+        by mx1.mail.vl.ru (Postfix) with ESMTPSA id A4324184BFDD;
+        Thu,  1 Aug 2019 16:16:58 +1000 (+10)
+From:   Sergei Turchanov <turchanov@farpost.com>
+Subject: [BUG] lseek on /proc/meminfo is broken in 4.19.59
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Organization: FarPost
+Message-ID: <3bd775ab-9e31-c6b3-374e-7a9982a9a8cd@farpost.com>
+Date:   Thu, 1 Aug 2019 16:16:58 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730205705.9018-2-jhubbard@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 01:57:03PM -0700, john.hubbard@gmail.com wrote:
-> @@ -40,10 +40,7 @@
->  static void __qib_release_user_pages(struct page **p, size_t num_pages,
->  				     int dirty)
->  {
-> -	if (dirty)
-> -		put_user_pages_dirty_lock(p, num_pages);
-> -	else
-> -		put_user_pages(p, num_pages);
-> +	put_user_pages_dirty_lock(p, num_pages, dirty);
->  }
+Hello!
 
-__qib_release_user_pages should be removed now as a direct call to
-put_user_pages_dirty_lock is a lot more clear.
+(I sent this e-mail two weeks ago with no feedback. Does anyone care? 
+Wrong mailing list? Anything....?)
 
-> index 0b0237d41613..62e6ffa9ad78 100644
-> --- a/drivers/infiniband/hw/usnic/usnic_uiom.c
-> +++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
-> @@ -75,10 +75,7 @@ static void usnic_uiom_put_pages(struct list_head *chunk_list, int dirty)
->  		for_each_sg(chunk->page_list, sg, chunk->nents, i) {
->  			page = sg_page(sg);
->  			pa = sg_phys(sg);
-> -			if (dirty)
-> -				put_user_pages_dirty_lock(&page, 1);
-> -			else
-> -				put_user_page(page);
-> +			put_user_pages_dirty_lock(&page, 1, dirty);
->  			usnic_dbg("pa: %pa\n", &pa);
+Seeking (to an offset within file size) in /proc/meminfo is broken in 
+4.19.59. It does seek to a desired position, but reading from that 
+position returns the remainder of file and then a whole copy of file. 
+This doesn't happen with /proc/vmstat or /proc/self/maps for example.
 
-There is a pre-existing bug here, as this needs to use the sg_page
-iterator.  Probably worth throwing in a fix into your series while you
-are at it.
+Seeking did work correctly in kernel 4.14.47. So it seems something 
+broke in the way.
 
-> @@ -63,15 +63,7 @@ struct siw_mem *siw_mem_id2obj(struct siw_device *sdev, int stag_index)
->  static void siw_free_plist(struct siw_page_chunk *chunk, int num_pages,
->  			   bool dirty)
->  {
-> -	struct page **p = chunk->plist;
-> -
-> -	while (num_pages--) {
-> -		if (!PageDirty(*p) && dirty)
-> -			put_user_pages_dirty_lock(p, 1);
-> -		else
-> -			put_user_page(*p);
-> -		p++;
-> -	}
-> +	put_user_pages_dirty_lock(chunk->plist, num_pages, dirty);
+Background: this kind of access pattern (seeking to /proc/meminfo) is 
+used by libvirt-lxc fuse driver for virtualized view of /proc/meminfo. 
+So that /proc/meminfo is broken in guests when running kernel 4.19.x.
 
-siw_free_plist should just go away now.
+$ ./test /proc/meminfo 0        # Works as expected
 
-Otherwise this looks good to me.
+MemTotal:       394907728 kB
+MemFree:        173738328 kB
+...
+DirectMap2M:    13062144 kB
+DirectMap1G:    390070272 kB
+
+-----------------------------------------------------------------------
+
+$ ./test 1024                   # returns a copy of file after the remainder
+
+Will seek to 1024
+
+
+Data read at offset 1024
+gePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      245204 kB
+DirectMap2M:    13062144 kB
+DirectMap1G:    390070272 kB
+MemTotal:       394907728 kB
+MemFree:        173738328 kB
+MemAvailable:   379989680 kB
+Buffers:          355812 kB
+Cached:         207216224 kB
+...
+DirectMap2M:    13062144 kB
+DirectMap1G:    390070272 kB
+
+As you see, after "DirectMap1G:" line, a whole copy of /proc/meminfo 
+returned by "read".
+
+Test program:
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 1024
+char buf[SIZE + 1];
+
+int main(int argc, char *argv[]) {
+     int     fd;
+     ssize_t rd;
+     off_t   ofs = 0;
+
+     if (argc < 2) {
+         printf("Usage: test <file> [<offset>]\n");
+         exit(1);
+     }
+
+     if (-1 == (fd = open(argv[1], O_RDONLY))) {
+         perror("open failed");
+         exit(1);
+     }
+
+     if (argc > 2) {
+         ofs = atol(argv[2]);
+     }
+     printf("Will seek to %ld\n", ofs);
+
+     if (-1 == (lseek(fd, ofs, SEEK_SET))) {
+         perror("lseek failed");
+         exit(1);
+     }
+
+     for (;; ofs += rd) {
+         printf("\n\nData read at offset %ld\n", ofs);
+         if (-1 == (rd = read(fd, buf, SIZE))) {
+             perror("read failed");
+             exit(1);
+         }
+         buf[rd] = '\0';
+         printf(buf);
+         if (rd < SIZE) {
+             break;
+         }
+     }
+
+     return 0;
+}
+
+
+
