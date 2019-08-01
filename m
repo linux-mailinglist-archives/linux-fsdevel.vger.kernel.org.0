@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5678C7D332
+	by mail.lfdr.de (Postfix) with ESMTP id C55C67D333
 	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 04:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbfHACSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1729621AbfHACSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 31 Jul 2019 22:18:21 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:35658 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729391AbfHACSM (ORCPT
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:33331 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729026AbfHACSK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 22:18:12 -0400
+        Wed, 31 Jul 2019 22:18:10 -0400
 Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B0A413617D2;
-        Thu,  1 Aug 2019 12:17:57 +1000 (AEST)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 5634843ECAA;
+        Thu,  1 Aug 2019 12:17:58 +1000 (AEST)
 Received: from discord.disaster.area ([192.168.253.110])
         by dread.disaster.area with esmtp (Exim 4.92)
         (envelope-from <david@fromorbit.com>)
-        id 1ht0eA-0003aW-RG; Thu, 01 Aug 2019 12:16:50 +1000
+        id 1ht0eA-0003aY-Se; Thu, 01 Aug 2019 12:16:50 +1000
 Received: from dave by discord.disaster.area with local (Exim 4.92)
         (envelope-from <david@fromorbit.com>)
-        id 1ht0fG-0001km-PT; Thu, 01 Aug 2019 12:17:58 +1000
+        id 1ht0fG-0001ko-QX; Thu, 01 Aug 2019 12:17:58 +1000
 From:   Dave Chinner <david@fromorbit.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 05/24] shrinker: clean up variable types and tracepoints
-Date:   Thu,  1 Aug 2019 12:17:33 +1000
-Message-Id: <20190801021752.4986-6-david@fromorbit.com>
+Subject: [PATCH 06/24] mm: reclaim_state records pages reclaimed, not slabs
+Date:   Thu,  1 Aug 2019 12:17:34 +1000
+Message-Id: <20190801021752.4986-7-david@fromorbit.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190801021752.4986-1-david@fromorbit.com>
 References: <20190801021752.4986-1-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
         a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=FmdZ9Uzk2mMA:10 a=20KFwNOVAAAA:8
-        a=dfQxWFgAP5TgkvwPFjsA:9
+        a=pP-XxJAliQGaY3BKeNcA:9
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -45,194 +45,103 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Dave Chinner <dchinner@redhat.com>
 
-The tracepoint information in the shrinker code don't make a lot of
-sense anymore and contain redundant information as a result of the
-changes in the patchset. Refine the information passed to the
-tracepoints so they expose the operation of the shrinkers more
-precisely and clean up the remaining code and varibles in the
-shrinker code so it all makes sense.
+Name change only, no logic changes.
 
 Signed-off-by: Dave Chinner <dchinner@redhat.com>
 ---
- include/trace/events/vmscan.h | 69 ++++++++++++++++-------------------
- mm/vmscan.c                   | 24 +++++-------
- 2 files changed, 41 insertions(+), 52 deletions(-)
+ fs/inode.c           | 2 +-
+ include/linux/swap.h | 5 +++--
+ mm/slab.c            | 2 +-
+ mm/slob.c            | 2 +-
+ mm/slub.c            | 2 +-
+ mm/vmscan.c          | 4 ++--
+ 6 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
-index a5ab2973e8dc..110637d9efa5 100644
---- a/include/trace/events/vmscan.h
-+++ b/include/trace/events/vmscan.h
-@@ -184,84 +184,77 @@ DEFINE_EVENT(mm_vmscan_direct_reclaim_end_template, mm_vmscan_memcg_softlimit_re
+diff --git a/fs/inode.c b/fs/inode.c
+index 0f1e3b563c47..8c70f0643218 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -762,7 +762,7 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
+ 			else
+ 				__count_vm_events(PGINODESTEAL, reap);
+ 			if (current->reclaim_state)
+-				current->reclaim_state->reclaimed_slab += reap;
++				current->reclaim_state->reclaimed_pages += reap;
+ 		}
+ 		iput(inode);
+ 		spin_lock(lru_lock);
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index de2c67a33b7e..978e6cd5c05a 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -126,10 +126,11 @@ union swap_header {
  
- TRACE_EVENT(mm_shrink_slab_start,
- 	TP_PROTO(struct shrinker *shr, struct shrink_control *sc,
--		long nr_objects_to_shrink, unsigned long cache_items,
--		unsigned long long delta, unsigned long total_scan,
--		int priority),
-+		int64_t deferred_count, int64_t freeable_objects,
-+		int64_t scan_count, int priority),
+ /*
+  * current->reclaim_state points to one of these when a task is running
+- * memory reclaim
++ * memory reclaim. It is typically used by shrinkers to return reclaim
++ * information back to the main vmscan loop.
+  */
+ struct reclaim_state {
+-	unsigned long reclaimed_slab;
++	unsigned long	reclaimed_pages;	/* pages freed by shrinkers */
+ };
  
--	TP_ARGS(shr, sc, nr_objects_to_shrink, cache_items, delta, total_scan,
-+	TP_ARGS(shr, sc, deferred_count, freeable_objects, scan_count,
- 		priority),
+ #ifdef __KERNEL__
+diff --git a/mm/slab.c b/mm/slab.c
+index 9df370558e5d..abc97e340f6d 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -1396,7 +1396,7 @@ static void kmem_freepages(struct kmem_cache *cachep, struct page *page)
+ 	page->mapping = NULL;
  
- 	TP_STRUCT__entry(
- 		__field(struct shrinker *, shr)
- 		__field(void *, shrink)
- 		__field(int, nid)
--		__field(long, nr_objects_to_shrink)
--		__field(gfp_t, gfp_flags)
--		__field(unsigned long, cache_items)
--		__field(unsigned long long, delta)
--		__field(unsigned long, total_scan)
-+		__field(int64_t, deferred_count)
-+		__field(int64_t, freeable_objects)
-+		__field(int64_t, scan_count)
- 		__field(int, priority)
-+		__field(gfp_t, gfp_flags)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->shr = shr;
- 		__entry->shrink = shr->scan_objects;
- 		__entry->nid = sc->nid;
--		__entry->nr_objects_to_shrink = nr_objects_to_shrink;
--		__entry->gfp_flags = sc->gfp_mask;
--		__entry->cache_items = cache_items;
--		__entry->delta = delta;
--		__entry->total_scan = total_scan;
-+		__entry->deferred_count = deferred_count;
-+		__entry->freeable_objects = freeable_objects;
-+		__entry->scan_count = scan_count;
- 		__entry->priority = priority;
-+		__entry->gfp_flags = sc->gfp_mask;
- 	),
- 
--	TP_printk("%pS %p: nid: %d objects to shrink %ld gfp_flags %s cache items %ld delta %lld total_scan %ld priority %d",
-+	TP_printk("%pS %p: nid: %d scan count %lld freeable items %lld deferred count %lld priority %d gfp_flags %s",
- 		__entry->shrink,
- 		__entry->shr,
- 		__entry->nid,
--		__entry->nr_objects_to_shrink,
--		show_gfp_flags(__entry->gfp_flags),
--		__entry->cache_items,
--		__entry->delta,
--		__entry->total_scan,
--		__entry->priority)
-+		__entry->scan_count,
-+		__entry->freeable_objects,
-+		__entry->deferred_count,
-+		__entry->priority,
-+		show_gfp_flags(__entry->gfp_flags))
- );
- 
- TRACE_EVENT(mm_shrink_slab_end,
--	TP_PROTO(struct shrinker *shr, int nid, int shrinker_retval,
--		long unused_scan_cnt, long new_scan_cnt, long total_scan),
-+	TP_PROTO(struct shrinker *shr, int nid, int64_t freed_objects,
-+		int64_t scanned_objects, int64_t deferred_scan),
- 
--	TP_ARGS(shr, nid, shrinker_retval, unused_scan_cnt, new_scan_cnt,
--		total_scan),
-+	TP_ARGS(shr, nid, freed_objects, scanned_objects,
-+		deferred_scan),
- 
- 	TP_STRUCT__entry(
- 		__field(struct shrinker *, shr)
- 		__field(int, nid)
- 		__field(void *, shrink)
--		__field(long, unused_scan)
--		__field(long, new_scan)
--		__field(int, retval)
--		__field(long, total_scan)
-+		__field(long long, freed_objects)
-+		__field(long long, scanned_objects)
-+		__field(long long, deferred_scan)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->shr = shr;
- 		__entry->nid = nid;
- 		__entry->shrink = shr->scan_objects;
--		__entry->unused_scan = unused_scan_cnt;
--		__entry->new_scan = new_scan_cnt;
--		__entry->retval = shrinker_retval;
--		__entry->total_scan = total_scan;
-+		__entry->freed_objects = freed_objects;
-+		__entry->scanned_objects = scanned_objects;
-+		__entry->deferred_scan = deferred_scan;
- 	),
- 
--	TP_printk("%pS %p: nid: %d unused scan count %ld new scan count %ld total_scan %ld last shrinker return val %d",
-+	TP_printk("%pS %p: nid: %d freed objects %lld scanned objects %lld, deferred scan %lld",
- 		__entry->shrink,
- 		__entry->shr,
- 		__entry->nid,
--		__entry->unused_scan,
--		__entry->new_scan,
--		__entry->total_scan,
--		__entry->retval)
-+		__entry->freed_objects,
-+		__entry->scanned_objects,
-+		__entry->deferred_scan)
- );
- 
- TRACE_EVENT(mm_vmscan_lru_isolate,
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index c583b4efb9bf..d5ce26b4d49d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -505,7 +505,6 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 	int64_t scanned_objects = 0;
- 	int64_t next_deferred = 0;
- 	int64_t deferred_count = 0;
--	long new_nr;
- 	int nid = shrinkctl->nid;
- 	long batch_size = shrinker->batch ? shrinker->batch
- 					  : SHRINK_BATCH;
-@@ -564,8 +563,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 		scan_count = freeable_objects * 2;
- 
- 	trace_mm_shrink_slab_start(shrinker, shrinkctl, deferred_count,
--				   freeable_objects, scan_count,
--				   scan_count, priority);
-+				   freeable_objects, scan_count, priority);
- 
- 	/*
- 	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
-@@ -609,23 +607,21 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 	}
- 
- done:
-+	/*
-+	 * Calculate the remaining work that we need to defer to kswapd, and
-+	 * store it in a manner that handles concurrent updates. If we exhausted
-+	 * the scan, there is no need to do an update.
-+	 */
- 	if (deferred_count)
- 		next_deferred = deferred_count - scanned_objects;
- 	else if (scan_count > 0)
- 		next_deferred = scan_count;
--	/*
--	 * move the unused scan count back into the shrinker in a
--	 * manner that handles concurrent updates. If we exhausted the
--	 * scan, there is no need to do an update.
--	 */
-+
- 	if (next_deferred > 0)
--		new_nr = atomic_long_add_return(next_deferred,
--						&shrinker->nr_deferred[nid]);
--	else
--		new_nr = atomic_long_read(&shrinker->nr_deferred[nid]);
-+		atomic_long_add(next_deferred, &shrinker->nr_deferred[nid]);
- 
--	trace_mm_shrink_slab_end(shrinker, nid, freed, deferred_count, new_nr,
--					scan_count);
-+	trace_mm_shrink_slab_end(shrinker, nid, freed, scanned_objects,
-+				 next_deferred);
- 	return freed;
+ 	if (current->reclaim_state)
+-		current->reclaim_state->reclaimed_slab += 1 << order;
++		current->reclaim_state->reclaimed_pages += 1 << order;
+ 	uncharge_slab_page(page, order, cachep);
+ 	__free_pages(page, order);
+ }
+diff --git a/mm/slob.c b/mm/slob.c
+index 7f421d0ca9ab..c46ce297805e 100644
+--- a/mm/slob.c
++++ b/mm/slob.c
+@@ -208,7 +208,7 @@ static void *slob_new_pages(gfp_t gfp, int order, int node)
+ static void slob_free_pages(void *b, int order)
+ {
+ 	if (current->reclaim_state)
+-		current->reclaim_state->reclaimed_slab += 1 << order;
++		current->reclaim_state->reclaimed_pages += 1 << order;
+ 	free_pages((unsigned long)b, order);
  }
  
+diff --git a/mm/slub.c b/mm/slub.c
+index e6c030e47364..a3e4bc62383b 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1743,7 +1743,7 @@ static void __free_slab(struct kmem_cache *s, struct page *page)
+ 
+ 	page->mapping = NULL;
+ 	if (current->reclaim_state)
+-		current->reclaim_state->reclaimed_slab += pages;
++		current->reclaim_state->reclaimed_pages += pages;
+ 	uncharge_slab_page(page, order, s);
+ 	__free_pages(page, order);
+ }
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index d5ce26b4d49d..231ddcfcd046 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2765,8 +2765,8 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 		} while ((memcg = mem_cgroup_iter(root, memcg, &reclaim)));
+ 
+ 		if (reclaim_state) {
+-			sc->nr_reclaimed += reclaim_state->reclaimed_slab;
+-			reclaim_state->reclaimed_slab = 0;
++			sc->nr_reclaimed += reclaim_state->reclaimed_pages;
++			reclaim_state->reclaimed_pages = 0;
+ 		}
+ 
+ 		/* Record the subtree's reclaim efficiency */
 -- 
 2.22.0
 
