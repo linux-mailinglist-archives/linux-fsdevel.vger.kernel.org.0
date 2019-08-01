@@ -2,71 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D73377DD50
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 16:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C1E7DD36
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 16:02:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731653AbfHAOFE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 10:05:04 -0400
-Received: from mail135-7.atl141.mandrillapp.com ([198.2.135.7]:2377 "EHLO
-        mail135-7.atl141.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726626AbfHAOFE (ORCPT
+        id S1731414AbfHAOCs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 10:02:48 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55827 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730502AbfHAOCs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:05:04 -0400
-X-Greylist: delayed 900 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 10:05:03 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=AWunD0Mulf9LulwYiK8CA/275BoKsDBiDIBZMPtwNug=;
- b=I456wzre3VTJs6bhUQ9Ts2GRjPxKK/TFQPhvPP9TsU5godaVALSjbRv9pxTAQaelL9Vp44Jz2bA5
-   I3QPCG5vtmVZImF7o4sBK9XjV+iQfeaIaLtTNzAg++g7rW8MJiZRpg2p3iDqoyacyVcOh7NV+nAY
-   Oex01Ybf8SoO2SzHgaU=
-Received: from pmta03.mandrill.prod.atl01.rsglab.com (127.0.0.1) by mail135-7.atl141.mandrillapp.com id h8boou1sau8d for <linux-fsdevel@vger.kernel.org>; Thu, 1 Aug 2019 13:50:02 +0000 (envelope-from <bounce-md_31050260.5d42ee0a.v1-6e9fbb03ae774e8598289c7d3fe81712@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1564667402; h=From : 
- Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
- MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
- Subject : Date : X-Mandrill-User : List-Unsubscribe; 
- bh=AWunD0Mulf9LulwYiK8CA/275BoKsDBiDIBZMPtwNug=; 
- b=Ie57el/5bWyh4emLQtzCP28JWUHqPeYyBlVJwR0YsqvG/3zSW2/SGh1pSuEYSqi+CZfsIP
- 2GB9752T2LqpwpqmpXvbsUHN8e7rX8axXQIswQWDXXb9Hvn9iubW6rAIYR5VXpnPC3eDGnUp
- weIKdFSYl5A74YLTmjiLFrpULbh2o=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: Re: [PATCH, RESEND3] fuse: require /dev/fuse reads to have enough buffer capacity (take 2)
-Received: from [87.98.221.171] by mandrillapp.com id 6e9fbb03ae774e8598289c7d3fe81712; Thu, 01 Aug 2019 13:50:02 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>, <gluster-devel@gluster.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sander Eikelenboom <linux@eikelenboom.it>,
-        Han-Wen Nienhuys <hanwen@google.com>,
-        Jakob Unterwurzacher <jakobunt@gmail.com>
-Message-Id: <20190801134955.GA18544@deco.navytux.spb.ru>
-References: <20190724094556.GA19383@deco.navytux.spb.ru> <CAJfpegscn7B+TrD5hckXkpHEb_62m6O9-kFOOehWyC89CPFunw@mail.gmail.com>
-In-Reply-To: <CAJfpegscn7B+TrD5hckXkpHEb_62m6O9-kFOOehWyC89CPFunw@mail.gmail.com>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.6e9fbb03ae774e8598289c7d3fe81712
-X-Mandrill-User: md_31050260
-Date:   Thu, 01 Aug 2019 13:50:02 +0000
+        Thu, 1 Aug 2019 10:02:48 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a15so64777777wmj.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Aug 2019 07:02:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bPITu1xJUcsyVUAunfEJ+7STRoUC8YhgbJi6vG+X1/s=;
+        b=PklWQ4zE8k8obHwlCM1Y9FY+JS0ABl+ay189CCMZVXZ8DCsy0LD8t1sVgDsNxlLEWj
+         8zNdYAXqLFkwKdxPbezv5a/xt2NbV0FNWq9tnz7CP/W2BwDQaKW26UwumO7Sl94BhTOD
+         7VNwwqcQgvqlSClkXQfCY+4nmCeWXBPyd5YRJYSrhFlFwwpav1NB6nTUdyLmYprtIcfU
+         kh+RRCbuWTeeb6O9lqs+bipOPPZ/amlOJVuPgDZs19o+LMvmwjVM7CfI1A5EHUjkF489
+         vDu9jhkf4IM8cGbc7IELj0FNsycIbUXtTb9bhUF1Uyng5DLv3FvK+ftbvz5LuMa/qnAW
+         6c5Q==
+X-Gm-Message-State: APjAAAXBqGkNHavAyRShjUc9KSK2nznIZnL8TkIbUwP1yVVT7JTPQBqw
+        mtshKyyRhzG6TAxkaYhe8wWQpedOqKs=
+X-Google-Smtp-Source: APXvYqx/FgRtIl2NkzGCN3MQeLmf/HhINWWXFafkm+lfRM01MDOpX+XVKqJWk+aKHTQG3EQIAM19og==
+X-Received: by 2002:a05:600c:2182:: with SMTP id e2mr51998743wme.104.1564668166166;
+        Thu, 01 Aug 2019 07:02:46 -0700 (PDT)
+Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id z7sm69909162wrh.67.2019.08.01.07.02.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 01 Aug 2019 07:02:45 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/4] selinux: fix race when removing selinuxfs entries
+Date:   Thu,  1 Aug 2019 16:02:39 +0200
+Message-Id: <20190801140243.24080-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 12:35:03PM +0200, Miklos Szeredi wrote:
-> On Wed, Jul 24, 2019 at 11:46 AM Kirill Smelkov <kirr@nexedi.com> wrote:
-> >
-> > Miklos,
-> >
-> > I was sending this patch for ~1.5 month without any feedback from you[1,2,3].
-> > The patch was tested by Sander Eikelenboom (original GlusterFS problem
-> > reporter)[4], and you said that it will be ok to retry for next
-> > cycle[5]. I was hoping for this patch to be picked up for 5.3 and queued
-> > to Linus's tree, but in despite several resends from me (the same patch;
-> > just reminders) nothing is happening. v5.3-rc1 came out on last Sunday,
-> > which, in my understanding, denotes the close of 5.3 merge window. What
-> > is going on? Could you please pick up the patch and handle it?
-> 
-> Applied.
+After hours and hours of getting familiar with dcache and debugging,
+I think I finally found a solution that works and hopefully stands a
+chance of being committed.
 
-Thanks...
+The series still doesn't address the lack of atomicity of the policy
+reload transition, but this is part of a wider problem and can be
+resolved later. Let's fix at least the userspace-triggered lockup
+first.
+
+Changes since v1:
+ - switch to hopefully proper and actually working solution instead
+   of the horrible mess I produced last time...
+v1: https://lore.kernel.org/selinux/20181002111830.26342-1-omosnace@redhat.com/T/
+
+Ondrej Mosnacek (4):
+  d_walk: optionally lock also parent inode
+  d_walk: add leave callback
+  dcache: introduce d_genocide_safe()
+  selinux: use d_genocide_safe() in selinuxfs
+
+ fs/dcache.c                  | 87 +++++++++++++++++++++++++++++++-----
+ include/linux/dcache.h       |  1 +
+ security/selinux/selinuxfs.c |  2 +-
+ 3 files changed, 77 insertions(+), 13 deletions(-)
+
+-- 
+2.21.0
+
