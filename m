@@ -2,95 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC83E7E5DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 00:42:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2C2F7E5EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 00:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389870AbfHAWmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 18:42:06 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45592 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728719AbfHAWmF (ORCPT
+        id S2389996AbfHAWn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 18:43:58 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36027 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389970AbfHAWn6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:42:05 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m23so70885384lje.12;
-        Thu, 01 Aug 2019 15:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zPpilKaOTYv54wofyHkUAny9IhEVO2TjoF1NDfPLYk0=;
-        b=Npgpo0bdPcFZIGjdsXC/vYnwEsKfPPSfMELVuVTdQl7HeY/ZR476KkeZ8ahZ2ktIM8
-         Ui92g4x3wutC3tenXz/G7fi8+7WV37/D+hEX3tphd403LFbfZdAJvG27U2bBFvSyN9xm
-         EKX8XjsjMgkracuCgRW7wMQ2Vk3475voIx+OVGoGtQoCARcQyrOyQJssYFXPNS77etU+
-         3jXgSqaFdyKftJdPDigfXjtHRZyzfrQvJrs2CBOgMLAgsQRSiuORGANs8xu0mQvqWZ8H
-         sMLu2vMHoxsFNNSHuCSwlHEPLx2gDPnuZEQ40rLHil2fqqP9DM7/Q9wnhNBmCjaaM8mt
-         bP1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zPpilKaOTYv54wofyHkUAny9IhEVO2TjoF1NDfPLYk0=;
-        b=UepKap9A4N0chi3w2o95X7P7+N4rwmGD49TexTji4sZDleVNs+EhVItVj5UE08MoXu
-         6VZwKkVgkEp3TkW5wbKcxeKraxWqv5tOZk7jfIKZYC2aWmltUj83QMSp5WTRsKxMrx+9
-         OKyha3PQEPUseUSrvQ3Q7OYrn+EaubG07tGKeg6Jn0TBZjCAny4Ysx9ZwUV/BF/B17CE
-         3Rl03LIW/4552QEnRuh/DZRSUj/fkyWrzC5ECdPwEYwxRxe55hTuOOaYUmBoIEHEcyBN
-         iah52ssdjftQw1taTnpYNjPBEmn/eXOW6W3n9lgeJ+fKxYZ93OzDElnP9UPMxTSHy4WR
-         9KwQ==
-X-Gm-Message-State: APjAAAVgXewCEPmkR6M7N5AopuCzbf+VMTz47XS/X4B/SlsHJ+8qhnFL
-        Q2N4LY3MRnYcc39phuoguMmgk+SKFR27S4PMWZ0=
-X-Google-Smtp-Source: APXvYqz82X0PIUyuArp5WFv8gOIid4HhOloID2Z2ADtMivkkZA3/z71oIuBOAgX4A+sMBJe652cfGr8/p0vbCLvROi8=
-X-Received: by 2002:a2e:b048:: with SMTP id d8mr28071195ljl.118.1564699323493;
- Thu, 01 Aug 2019 15:42:03 -0700 (PDT)
+        Thu, 1 Aug 2019 18:43:58 -0400
+Received: from callcc.thunk.org (96-72-84-49-static.hfc.comcastbusiness.net [96.72.84.49] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x71MhiQQ009996
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 1 Aug 2019 18:43:46 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id C0B7E4202F5; Thu,  1 Aug 2019 18:43:44 -0400 (EDT)
+Date:   Thu, 1 Aug 2019 18:43:44 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 09/20] ext4: Initialize timestamps limits
+Message-ID: <20190801224344.GC17372@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org
+References: <20190730014924.2193-1-deepa.kernel@gmail.com>
+ <20190730014924.2193-10-deepa.kernel@gmail.com>
+ <20190731152609.GB7077@magnolia>
+ <CABeXuvpiom9eQi0y7PAwAypUP1ezKKRfbh-Yqr8+Sbio=QtUJQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAB3wodfF=Gc3FbKedU4JBWi8hZLxcBPUtVPipsCVnaHdFXGk8Q@mail.gmail.com>
- <20190801222613.iugdsswxbn2pawgd@qor.donarmstrong.com>
-In-Reply-To: <20190801222613.iugdsswxbn2pawgd@qor.donarmstrong.com>
-From:   Phillip Lougher <phillip.lougher@gmail.com>
-Date:   Thu, 1 Aug 2019 23:41:51 +0100
-Message-ID: <CAB3wodcKj4uqm7sSiwpZmPpWv4-AgYHOMtM71Cq2SnMBjC=vdw@mail.gmail.com>
-Subject: Re: Bug#921146: Program mksquashfs from squashfs-tools 1:4.3-11 does
- not make use all CPU cores
-To:     Don Armstrong <don@debian.org>
-Cc:     owner@bugs.debian.org, listmaster@lists.debian.org,
-        linux-embedded <linux-embedded@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABeXuvpiom9eQi0y7PAwAypUP1ezKKRfbh-Yqr8+Sbio=QtUJQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 11:26 PM Don Armstrong <don@debian.org> wrote:
->
-> On Thu, 01 Aug 2019, Phillip Lougher wrote:
-> > That patch is a laughable piece of rubbish.  I believe both you
-> > people (the Debian maintainer and author) are in total denial
-> > about your incompetence in this matter.  This is obviously just my
-> > opinion I've formed over the last couple of months, in case you want to
-> > claim that it is libellous.
->
-> This isn't an appropriate tone for Debian mailing lists or the our bug
-> tracking system.
->
-> It's fine to disagree on technical matters, but it's not appropriate to
-> claim that people are incompetent or that they are making rubbish.
->
+On Thu, Aug 01, 2019 at 12:18:28PM -0700, Deepa Dinamani wrote:
+> > Say you have a filesystem with s_inode_size > 128 where not all of the
+> > ondisk inodes have been upgraded to i_extra_isize > 0 and therefore
+> > don't support nanoseconds or times beyond 2038.  I think this happens on
+> > ext3 filesystems that reserved extra space for inode attrs that are
+> > subsequently converted to ext4?
+> 
+> I'm confused about ext3 being converted to ext4. If the converted
+> inodes have extra space, then ext4_iget() will start using the extra
+> space when it modifies the on disk inode, won't it?i
 
-I am only defending myself from the slurs and false information being
-spread by your maintainer.
+It is possible that you can have an ext3 file system with (for
+example) 256 byte inodes, and all of the extra space was used for
+extended attributes, then ext4 won't have the extra space available.
+This is going toh be on an inode-by-inode basis, and if an extended
+attribute is motdified or deleted, the space would become available,t
+and then inode would start getting a higher resolution timestamp.
 
-I would not be doing this otherwise.
+I really don't think it's worth worrying about that, though.  It's
+highly unlikely ext3 file systems will be still be in service by the
+time it's needed in 2038.  And if so, it's highly unlikely they would
+be converted to ext4.
 
-Cheers
-
-Phillip
-
-> Please stop.
->
-> --
-> Don Armstrong                      https://www.donarmstrong.com
->
-> To punish me for my contempt of authority, Fate has made me an
-> authority myself
->  -- Albert Einstein
+						- Ted
