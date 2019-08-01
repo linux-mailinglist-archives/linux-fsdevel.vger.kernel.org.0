@@ -2,106 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7391E7E150
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 19:45:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9DFC7E15E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 19:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731809AbfHARpB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 13:45:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57808 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbfHARpB (ORCPT
+        id S2387788AbfHARt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 13:49:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53746 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727899AbfHARt3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 13:45:01 -0400
+        Thu, 1 Aug 2019 13:49:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tMgjBYsrubSb9pgotqA8mXtCx85t7Qpa3qg3Loua/zQ=; b=jt4hKtVOP0JruDnFEiVIbs+R4
-        5Jr/p4/PDSk4xZQOJOmNoL5pmHs9yrvrN7admwjQqoOTEkO9GxfqdWGhid7xBBqLvmHVwONWt5LTF
-        T+KWHP8aKH6aPKQ+DjlcDihPn6agAZQfktblmSjb4cvENxHNRIaDvqj2JRbADO6WhLOM34thWRQAJ
-        xxl8y/8U3IaAvdOjWAtlQ+FC7khQvj1UjaN8MY08Xzb3YojKgOEb3gfPVGROyM3tPOPbA0XDNy7Lt
-        qXSoPKF4ih9PVP4zcqLaYDCgD7NnbrSn9D5gNfpeRUDk89WlYQzgrrdeNF5/tSERP892V3Lyo7Hsp
-        Me8zIzZew==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1htF8O-0004C9-4L; Thu, 01 Aug 2019 17:45:00 +0000
-Date:   Thu, 1 Aug 2019 10:45:00 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/2] iomap: Support large pages
-Message-ID: <20190801174500.GL4700@bombadil.infradead.org>
-References: <20190731171734.21601-1-willy@infradead.org>
- <20190731171734.21601-2-willy@infradead.org>
- <20190731230315.GJ7777@dread.disaster.area>
- <20190801035955.GI4700@bombadil.infradead.org>
- <20190801162147.GB25871@lst.de>
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=/wQ1T27awT3hqgJbloxgvOfdBCqajpO4xm94w+4G9Do=; b=w0gH11WScMc6U6c0/193f4lVGY
+        pJ5Va3+tj/TSEWluBZbB3EsZdE+5fi40Hd7sR4n8NRx+T69RBSZmHZ/UoJHMHoQqhP0bN7L7xwpnd
+        PnyuEOEWkSHWMDK4bwLVQOrsAZuYdJkbpUohRpAB/vTiDgEeNENBjcpfppf159WsUPFbRzRBYdiS2
+        B4yBu2ZX/XwmYyMam1kq+dPc+qgHtzng5hOraEFbZeQWxzCZ5ytD4CBej0CrS8EFW10k3lit3r5ul
+        1VLKt68FO3Nz279TNa/NMYzQtnkvCu2SBByGuhcqnupvhyqUPFTBrEug8bQuR/lE/4Arfluds3QCk
+        VKAOrv0w==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1htFCR-0000Yn-NH; Thu, 01 Aug 2019 17:49:11 +0000
+Subject: Re: [PATCH bpf-next v10 10/10] landlock: Add user and kernel
+ documentation for Landlock
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+References: <20190721213116.23476-1-mic@digikod.net>
+ <20190721213116.23476-11-mic@digikod.net>
+ <88e90c22-1b78-c2f2-8823-fa776265361c@infradead.org>
+ <2ced8fc8-79a6-b0fb-70fe-6716fae92aa7@ssi.gouv.fr>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <08c94f99-68e0-4866-3eba-28fa71347fca@infradead.org>
+Date:   Thu, 1 Aug 2019 10:49:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801162147.GB25871@lst.de>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <2ced8fc8-79a6-b0fb-70fe-6716fae92aa7@ssi.gouv.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 06:21:47PM +0200, Christoph Hellwig wrote:
-> On Wed, Jul 31, 2019 at 08:59:55PM -0700, Matthew Wilcox wrote:
-> > -       nbits = BITS_TO_LONGS(page_size(page) / SECTOR_SIZE);
-> > -       iop = kmalloc(struct_size(iop, uptodate, nbits),
-> > -                       GFP_NOFS | __GFP_NOFAIL);
-> > -       atomic_set(&iop->read_count, 0);
-> > -       atomic_set(&iop->write_count, 0);
-> > -       bitmap_zero(iop->uptodate, nbits);
-> > +       n = BITS_TO_LONGS(page_size(page) >> inode->i_blkbits);
-> > +       iop = kmalloc(struct_size(iop, uptodate, n),
-> > +                       GFP_NOFS | __GFP_NOFAIL | __GFP_ZERO);
+On 8/1/19 10:03 AM, Mickaël Salaün wrote:
+>>> +Ptrace restrictions
+>>> +-------------------
+>>> +
+>>> +A landlocked process has less privileges than a non-landlocked process and must
+>>> +then be subject to additional restrictions when manipulating another process.
+>>> +To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
+>>> +process, a landlocked process must have a subset of the target process programs.
+>>             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> Maybe that last statement is correct, but it seems to me that it is missing something.
+> What about this:
 > 
-> I am really worried about potential very large GFP_NOFS | __GFP_NOFAIL
-> allocations here.
+> To be allowed to trace a process (using :manpage:`ptrace(2)`), a
+> landlocked tracer process must only be constrained by a subset (possibly
+> empty) of the Landlock programs which are also applied to the tracee.
+> This ensure that the tracer has less or the same constraints than the
 
-I don't think it gets _very_ large here.  Assuming a 4kB block size
-filesystem, that's 512 bits (64 bytes, plus 16 bytes for the two counters)
-for a 2MB page.  For machines with an 8MB PMD page, it's 272 bytes.
-Not a very nice fraction of a page size, so probably rounded up to a 512
-byte allocation, but well under the one page that the MM is supposed to
-guarantee being able to allocate.
+       ensures
 
-> And thinking about this a bit more while walking
-> at the beach I wonder if a better option is to just allocate one
-> iomap per tail page if needed rather than blowing the head page one
-> up.  We'd still always use the read_count and write_count in the
-> head page, but the bitmaps in the tail pages, which should be pretty
-> easily doable.
+> tracee, hence protecting against privilege escalation.
 
-We wouldn't need to allocate an iomap per tail page, even.  We could
-just use one bit of tail-page->private per block.  That'd work except
-for 512-byte block size on machines with a 64kB page.  I doubt many
-people expect that combination to work well.
+Yes, better.  Thanks.
 
-One of my longer-term ambitions is to do away with tail pages under
-certain situations; eg partition the memory between allocatable-as-4kB
-pages and allocatable-as-2MB pages.  We'd need a different solution for
-that, but it's a bit of a pipe dream right now anyway.
 
-> Note that we'll also need to do another optimization first that I
-> skipped in the initial iomap writeback path work:  We only really need
-> an iomap if the blocksize is smaller than the page and there actually
-> is an extent boundary inside that page.  If a (small or huge) page is
-> backed by a single extent we can skip the whole iomap thing.  That is at
-> least for now, because I have a series adding optional t10 protection
-> information tuples (8 bytes per 512 bytes of data) to the end of
-> the iomap, which would grow it quite a bit for the PI case, and would
-> make also allocating the updatodate bit dynamically uglies (but not
-> impossible).
-> 
-> Note that we'll also need to remove the line that limits the iomap
-> allocation size in iomap_begin to 1024 times the page size to a better
-> chance at contiguous allocations for huge page faults and generally
-> avoid pointless roundtrips to the allocator.  It might or might be
-> time to revisit that limit in general, not just for huge pages.
-
-I think that's beyond my current understanding of the iomap code ;-)
+-- 
+~Randy
