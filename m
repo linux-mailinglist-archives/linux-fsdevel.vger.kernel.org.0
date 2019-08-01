@@ -2,155 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A79B7E128
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 19:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0ABD7E142
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 19:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730405AbfHARfl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 13:35:41 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35308 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729890AbfHARfl (ORCPT
+        id S1732157AbfHARmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 13:42:19 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44239 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731573AbfHARmT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 13:35:41 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s1so28290182pgr.2;
-        Thu, 01 Aug 2019 10:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=cmtOeJgUg1mSCwNm5Vv4F5lxhgDIyj0LXvGIj3jOCDo=;
-        b=cBSjLTF2IQo34tFeZp7/IqR8VhIt+1dXBxPWecfXJqSnP2DwW+enMoLtI62r3LrTM6
-         RJNIpu4wOEW3iwm9pRZ7TgHxAwqQ0tqOd00fV4NvMa/BXCjtoziu3jtaKZDjmc9OaDet
-         Vt0Q8Au7e+5Dcv0Z8pPhTXv8Ks/KNeyDx+RLGbcww7Z8dChPiYAGpmO+0OKB7W1lxQX8
-         dqP4QOxJQUEuYiQYED5LNY/5PHyo1ZMPZao90anVisdMkFVLGN3ufVjSOn0LzERAQRGs
-         2nbCICF+U6ugts750bn90UPiDhdaz0Qyotg5/se/FHHxvjlDncBrKFcNRadMbwlnm1JD
-         S1PQ==
+        Thu, 1 Aug 2019 13:42:19 -0400
+Received: by mail-pf1-f196.google.com with SMTP id t16so34451668pfe.11;
+        Thu, 01 Aug 2019 10:42:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=cmtOeJgUg1mSCwNm5Vv4F5lxhgDIyj0LXvGIj3jOCDo=;
-        b=G2A2SrhFagTPgJm2P8oU5v89LBGKZ/cmMCzGo53cHR+cTSs7lvmZL3nTJmgqdcanIv
-         YzGE9PUFA3mrsu68o/2sLnPilUt1Ekv2V3eX7HSF+gnZB9ibdhcc0TI2YpWHpkoNLxoB
-         tCUyR7J2NWuQZmxH6cN2KZ0I87D7CAuyHR2rqCE7MAcwxbRet1n6N14Or+SpCL+ducWh
-         QU6jU2U8jr1TdQ2IJolDFqh+hHw16wy4JDWO4WrsXQHQ1GrkQDrlpHHx04NGKaWhOVZz
-         OJcvyjszWsS2zXiDHkil5m739n4KO6S2Exg8CU8uPYZV8o7GY9Dukdf4rZAZtURz2Xw4
-         H96A==
-X-Gm-Message-State: APjAAAXfzZKJfjqVTS4ehC0eKOFIghzKIwNllI1Em+D+A7IjP6WvKJ7U
-        XgmFFPcLObya7W9wtHfYH6k=
-X-Google-Smtp-Source: APXvYqzI3/bdzyfwxz0PsvQhshGMsCzZlPOo9cdI9g9+T6qhAyPP0PsvTtGvkAuBeX3ygym6rsavSw==
-X-Received: by 2002:a62:1ac9:: with SMTP id a192mr14756335pfa.260.1564680939408;
-        Thu, 01 Aug 2019 10:35:39 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::3:f96b])
-        by smtp.gmail.com with ESMTPSA id t7sm4692959pjq.15.2019.08.01.10.35.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 10:35:38 -0700 (PDT)
-Date:   Thu, 1 Aug 2019 10:35:36 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>
-Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        LKML <linux-kernel@vger.kernel.org>,
+        bh=c2hESp5P0VdXb1KGHmHBHOL26umzSRk5VuA6OOFxtVM=;
+        b=fUiMNYiNxQbaJUKktacnDTuosoG403NWOfF1HoQSSVDbV0vtoPNVsxlMGoS8c+Ka1x
+         FyJqtwGWRA6wAHk4Pux8DTGUsiZk/YwnZNFqPdPKWd/IbLDLog5rA6RyQ2cMw6mdqoMe
+         Jkd2dJ/KQz3ZAylI1np91LamwLuI2qAHck1QaWVpPvL0slIoSGXEgc3ta/61GpkU2oem
+         eEXgctyQnlhJThZ4qWaihUQqPR5uGdiOUtu1wnjcz1tThKZzGNPgIngtimOLylL8yI4a
+         4Fk2QKc3xr7IvlJdIqifNbMLOQLrQpP1rzu54TUJtkhEiZ4Gwu3L5es+bqO+vAGAanyW
+         HDLQ==
+X-Gm-Message-State: APjAAAUxA+sxzCdOhwJLUxGAJHWMJOIJj+vQWg86NXsbwB7+Ael/522i
+        M7W4kciQyukLBdJofRoAHfM=
+X-Google-Smtp-Source: APXvYqwvXu3G8nVpXIkNxWN9ELmjM1cWN+Tl1xKF06uVZBAUb2aBahH/zXWAt3NRyzyefm9aQ216BA==
+X-Received: by 2002:a62:e901:: with SMTP id j1mr55881964pfh.189.1564681338080;
+        Thu, 01 Aug 2019 10:42:18 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id j6sm63680898pfa.141.2019.08.01.10.42.16
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 01 Aug 2019 10:42:16 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 07BF440280; Thu,  1 Aug 2019 17:42:15 +0000 (UTC)
+Date:   Thu, 1 Aug 2019 17:42:15 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Scott Branden <scott.branden@broadcom.com>,
+        David Brown <david.brown@linaro.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v10 06/10] bpf,landlock: Add a new map type:
- inode
-Message-ID: <20190801173534.etfls5ltixp5hfrh@ast-mbp.dhcp.thefacebook.com>
-References: <20190721213116.23476-1-mic@digikod.net>
- <20190721213116.23476-7-mic@digikod.net>
- <20190727014048.3czy3n2hi6hfdy3m@ast-mbp.dhcp.thefacebook.com>
- <a870c2c9-d2f7-e0fa-c8cc-35dbf8b5b87d@ssi.gouv.fr>
- <CAADnVQLqkfVijWoOM29PxCL_yK6K0fr8B89r4c5EKgddevJhGQ@mail.gmail.com>
- <59e8fab9-34df-0ebe-ca6b-8b34bf582b75@ssi.gouv.fr>
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/3] firmware: add offset to request_firmware_into_buf
+Message-ID: <20190801174215.GB16384@42.do-not-panic.com>
+References: <20190523025113.4605-1-scott.branden@broadcom.com>
+ <20190523025113.4605-3-scott.branden@broadcom.com>
+ <20190523055233.GB22946@kroah.com>
+ <15c47e4d-e70d-26bb-9747-0ad0aa81597b@broadcom.com>
+ <20190523165424.GA21048@kroah.com>
+ <44282070-ddaf-3afb-9bdc-4751e3f197ac@broadcom.com>
+ <20190524052258.GB28229@kroah.com>
+ <2f67db0a-27c3-d13c-bbe0-0af5edd4f0da@broadcom.com>
+ <20190801061801.GA4338@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <59e8fab9-34df-0ebe-ca6b-8b34bf582b75@ssi.gouv.fr>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20190801061801.GA4338@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 09:11:10PM +0200, Mickaël Salaün wrote:
-> 
-> 
-> On 31/07/2019 20:58, Alexei Starovoitov wrote:
-> > On Wed, Jul 31, 2019 at 11:46 AM Mickaël Salaün
-> > <mickael.salaun@ssi.gouv.fr> wrote:
-> >>>> +    for (i = 0; i < htab->n_buckets; i++) {
-> >>>> +            head = select_bucket(htab, i);
-> >>>> +            hlist_nulls_for_each_entry_safe(l, n, head, hash_node) {
-> >>>> +                    landlock_inode_remove_map(*((struct inode **)l->key), map);
-> >>>> +            }
-> >>>> +    }
-> >>>> +    htab_map_free(map);
-> >>>> +}
-> >>>
-> >>> user space can delete the map.
-> >>> that will trigger inode_htab_map_free() which will call
-> >>> landlock_inode_remove_map().
-> >>> which will simply itereate the list and delete from the list.
-> >>
-> >> landlock_inode_remove_map() removes the reference to the map (being
-> >> freed) from the inode (with an RCU lock).
-> >
-> > I'm going to ignore everything else for now and focus only on this bit,
-> > since it's fundamental issue to address before this discussion can
-> > go any further.
-> > rcu_lock is not a spin_lock. I'm pretty sure you know this.
-> > But you're arguing that it's somehow protecting from the race
-> > I mentioned above?
-> >
-> 
-> I was just clarifying your comment to avoid misunderstanding about what
-> is being removed.
-> 
-> As said in the full response, there is currently a race but, if I add a
-> bpf_map_inc() call when the map is referenced by inode->security, then I
-> don't see how a race could occur because such added map could only be
-> freed in a security_inode_free() (as long as it retains a reference to
-> this inode).
+On Thu, Aug 01, 2019 at 08:18:01AM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Jul 31, 2019 at 05:18:32PM -0700, Scott Branden wrote:
+> > Hi Greg,
+> > 
+> > I am now back from leave to continue this patch.� Comment below.
+> > 
+> > On 2019-05-23 10:22 p.m., Greg Kroah-Hartman wrote:
+> > > On Thu, May 23, 2019 at 10:01:38PM -0700, Scott Branden wrote:
+> > > > On 2019-05-23 9:54 a.m., Greg Kroah-Hartman wrote:
+> > > > > On Thu, May 23, 2019 at 09:36:02AM -0700, Scott Branden wrote:
+> > > > > > Hi Greg,
+> > > > > > 
+> > > > > > On 2019-05-22 10:52 p.m., Greg Kroah-Hartman wrote:
+> > > > > > > On Wed, May 22, 2019 at 07:51:12PM -0700, Scott Branden wrote:
+> > > > > > > > Add offset to request_firmware_into_buf to allow for portions
+> > > > > > > > of firmware file to be read into a buffer.  Necessary where firmware
+> > > > > > > > needs to be loaded in portions from file in memory constrained systems.
+> > > > > > > > 
+> > > > > > > > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+> > > > > > > > ---
+> > > > > > > >     drivers/base/firmware_loader/firmware.h |  5 +++
+> > > > > > > >     drivers/base/firmware_loader/main.c     | 49 +++++++++++++++++--------
+> > > > > > > >     include/linux/firmware.h                |  8 +++-
+> > > > > > > >     3 files changed, 45 insertions(+), 17 deletions(-)
+> > > > > > > No new firmware test for this new option?  How do we know it even works?
+> > > > > > I was unaware there are existing firmware tests.� Please let me know where
+> > > > > > these tests exists and I can add a test for this new option.
+> > > > > tools/testing/selftests/firmware/
+> > > > Unfortunately, there doesn't seem to be a test for the existing
+> > > > request_firmware_into_buf api.
+> > > Are you sure?  The test is for userspace functionality, there isn't
+> > > kernel unit tests here.  You need to verify that you didn't break
+> > > existing functionality as well as verify that your new functionality
+> > > works.
+> > 
+> > I managed to figure out how to build and run
+> > tools/testing/selftest/firmware/fw_run_tests.sh
+> > 
+> > and my changes don't break existing functionality.
 
-then it will be a cycle and a map will never be deleted?
-closing map_fd should delete a map. It cannot be alive if it's not
-pinned in bpffs, there are no FDs that are holding it, and no progs using it.
-So the map deletion will iterate over inodes that belong to this map.
-In parallel security_inode_free() will be called that will iterate
-over its link list that contains elements from different maps.
-So the same link list is modified by two cpus.
-Where is a lock that protects from concurrent links list manipulations?
+I'm soon going to release something that is going to let you do this 
+faster and easier, let me know if you had troubles in trying to figure
+out how to not regress the kernel using this.
 
-> Les données à caractère personnel recueillies et traitées dans le cadre de cet échange, le sont à seule fin d’exécution d’une relation professionnelle et s’opèrent dans cette seule finalité et pour la durée nécessaire à cette relation. Si vous souhaitez faire usage de vos droits de consultation, de rectification et de suppression de vos données, veuillez contacter contact.rgpd@sgdsn.gouv.fr. Si vous avez reçu ce message par erreur, nous vous remercions d’en informer l’expéditeur et de détruire le message. The personal data collected and processed during this exchange aims solely at completing a business relationship and is limited to the necessary duration of that relationship. If you wish to use your rights of consultation, rectification and deletion of your data, please contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message in error, we thank you for informing the sender and destroying the message.
+> > But, I find no use of request_firmware_into_buf in lib/test_firmware.c
+> > (triggered by fw_run_tests.sh).
+> > 
+> > Is there another test for request_firmware_into_buf?
+> 
+> I have no idea, sorry.
 
-Please get rid of this. It's absolutely not appropriate on public mailing list.
-Next time I'd have to ignore emails that contain such disclaimers.
+The folks who implemented request_firmware_into_buf() didn't add a
+respective test, because, well, this API went upstream IMO without much
+ACKs / review, and even no damn users. Now we have a user so we're stuck
+with it.
 
+So new testing calls for it would be appreciated. If you have questions
+I am happy to help.
+
+  Luis
