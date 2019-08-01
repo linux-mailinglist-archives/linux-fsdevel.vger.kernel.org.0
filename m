@@ -2,106 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE8227D20A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 01:39:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A7037D235
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 02:18:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730894AbfGaXjF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 19:39:05 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39708 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726231AbfGaXjF (ORCPT
+        id S1729149AbfHAASh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 20:18:37 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42804 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbfHAASh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 19:39:05 -0400
-Received: from callcc.thunk.org (96-72-102-169-static.hfc.comcastbusiness.net [96.72.102.169] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x6VNchZY000330
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 31 Jul 2019 19:38:44 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 3EE374202F5; Wed, 31 Jul 2019 19:38:43 -0400 (EDT)
-Date:   Wed, 31 Jul 2019 19:38:43 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        Paul Crowley <paulcrowley@google.com>,
-        Satya Tangirala <satyat@google.com>
-Subject: Re: [PATCH v7 07/16] fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl
-Message-ID: <20190731233843.GA2769@mit.edu>
-References: <20190726224141.14044-1-ebiggers@kernel.org>
- <20190726224141.14044-8-ebiggers@kernel.org>
- <20190728192417.GG6088@mit.edu>
- <20190729195827.GF169027@gmail.com>
- <20190731183802.GA687@sol.localdomain>
+        Wed, 31 Jul 2019 20:18:37 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q10so32760697pff.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2019 17:18:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=HguRxYDESCL5JmD3/mYii286Ot+gL1zw7cuRbKsoMmY=;
+        b=fpE60V0Oz7+mBNKiTOcj4EUkxAetGX/wmNJhgK4ernSenYAJPgh+Ij9N3u2nOr/yav
+         NH48nKJBwoWl3+blv163A+p196VP5Hu+cUjnQF57+psVoBGxe2ppL9fUSyRc3iqFZTqo
+         2TdQNowkt631FKm0f0i4Lz2ILGPWArk8W4iCE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=HguRxYDESCL5JmD3/mYii286Ot+gL1zw7cuRbKsoMmY=;
+        b=MLckNYhxD9NWIXN+PvZIc4/XceVHyHPPfOdPy2FgRThUd8XbrIQKFoDkwNZsAMMrkL
+         duyTZIVelbME9k8V9AWehzzzS0W5TVY9I8Wq4cnUi0W6LpgobXWnUcH1tWSvKuRgl/Jx
+         T/Ixo2NNSUSi3N4rgPK+7SVYZ6Gspu92DX3ZQ01jSROxYHpdWSum1iFS/1pqtJC3pkjc
+         BIbb+qfOpuLxY2aa15+nt3jpMCznzdiX6EIBaN2YRV4fx7tP4Q5P9F/OJf2shBQ9jx/o
+         fQJbHbnAF9hixsZpQcE5e/+Tzy8FQCMA8x6PvILcIdsyeORRX98ejvka29IFEd+sivDZ
+         hD+Q==
+X-Gm-Message-State: APjAAAXjqFv2ztgIsw20GLzvrD7rymVbHfgtYDXYwmq4s68ZvNOKR4hN
+        VvlVtMrwvqNhM+eq6mNj8e+3rvkRrJjxjlJ7
+X-Google-Smtp-Source: APXvYqxNJ8MduqZ6+7rAkIRQV7GUlEBbBgSe1TDlqW2OygUA1oI+kELge96nIbD9kxuGgjuJeTil1w==
+X-Received: by 2002:a63:784c:: with SMTP id t73mr119574658pgc.268.1564618716666;
+        Wed, 31 Jul 2019 17:18:36 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id u23sm72272436pfn.140.2019.07.31.17.18.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 17:18:36 -0700 (PDT)
+Subject: Re: [PATCH 2/3] firmware: add offset to request_firmware_into_buf
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>
+References: <20190523025113.4605-1-scott.branden@broadcom.com>
+ <20190523025113.4605-3-scott.branden@broadcom.com>
+ <20190523055233.GB22946@kroah.com>
+ <15c47e4d-e70d-26bb-9747-0ad0aa81597b@broadcom.com>
+ <20190523165424.GA21048@kroah.com>
+ <44282070-ddaf-3afb-9bdc-4751e3f197ac@broadcom.com>
+ <20190524052258.GB28229@kroah.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <2f67db0a-27c3-d13c-bbe0-0af5edd4f0da@broadcom.com>
+Date:   Wed, 31 Jul 2019 17:18:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731183802.GA687@sol.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190524052258.GB28229@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 11:38:02AM -0700, Eric Biggers wrote:
-> 
-> This is perhaps different from what users expect from unlink().  It's well known
-> that unlink() just deletes the filename, not the file itself if it's still open
-> or has other links.  And unlink() by itself isn't meant for use cases where the
-> file absolutely must be securely erased.  But FS_IOC_REMOVE_ENCRYPTION_KEY
-> really is meant primarily for that sort of thing.
+Hi Greg,
 
-Seems to me that part of the confusion is FS_IOC_REMOVE_ENCRYPTION_KEY
-does two things.  One is "remove the user's handle on the key".  The
-other is "purge all keys" (which requires root).  So it does two
-different things with one ioctl.
+I am now back from leave to continue this patch.  Comment below.
 
-> To give a concrete example: my patch for the userspace tool
-> https://github.com/google/fscrypt adds a command 'fscrypt lock' which locks an
-> encrypted directory.  If, say, someone runs 'fscrypt unlock' as uid 0 and then
-> 'fscrypt lock' as uid 1000, then FS_IOC_REMOVE_ENCRYPTION_KEY can't actually
-> remove the key.  I need to make the tool show a proper error message in this
-> case.  To do so, it would help to get a unique error code (e.g. EUSERS) from
-> FS_IOC_REMOVE_ENCRYPTION_KEY, rather than get the ambiguous error code ENOKEY
-> and have to call FS_IOC_GET_ENCRYPTION_KEY_STATUS to get the real status.
+On 2019-05-23 10:22 p.m., Greg Kroah-Hartman wrote:
+> On Thu, May 23, 2019 at 10:01:38PM -0700, Scott Branden wrote:
+>> On 2019-05-23 9:54 a.m., Greg Kroah-Hartman wrote:
+>>> On Thu, May 23, 2019 at 09:36:02AM -0700, Scott Branden wrote:
+>>>> Hi Greg,
+>>>>
+>>>> On 2019-05-22 10:52 p.m., Greg Kroah-Hartman wrote:
+>>>>> On Wed, May 22, 2019 at 07:51:12PM -0700, Scott Branden wrote:
+>>>>>> Add offset to request_firmware_into_buf to allow for portions
+>>>>>> of firmware file to be read into a buffer.  Necessary where firmware
+>>>>>> needs to be loaded in portions from file in memory constrained systems.
+>>>>>>
+>>>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+>>>>>> ---
+>>>>>>     drivers/base/firmware_loader/firmware.h |  5 +++
+>>>>>>     drivers/base/firmware_loader/main.c     | 49 +++++++++++++++++--------
+>>>>>>     include/linux/firmware.h                |  8 +++-
+>>>>>>     3 files changed, 45 insertions(+), 17 deletions(-)
+>>>>> No new firmware test for this new option?  How do we know it even works?
+>>>> I was unaware there are existing firmware tests.  Please let me know where
+>>>> these tests exists and I can add a test for this new option.
+>>> tools/testing/selftests/firmware/
+>> Unfortunately, there doesn't seem to be a test for the existing
+>> request_firmware_into_buf api.
+> Are you sure?  The test is for userspace functionality, there isn't
+> kernel unit tests here.  You need to verify that you didn't break
+> existing functionality as well as verify that your new functionality
+> works.
 
-What about having "fscrypt lock" call FS_IOC_GET_ENCRYPTION_KEY_STATUS
-and print a warning message saying, "we can't lock it because N other
-users who have registered a key".  I'd argue fscrypt should do this
-regardless of whether or not FS_IOC_REMOVE_ENCRYPTION_KEY returns
-EUSERS or not.
+I managed to figure out how to build and run 
+tools/testing/selftest/firmware/fw_run_tests.sh
 
-> Also, we already have the EBUSY case.  This means that the ioctl removed the
-> master key secret itself; however, some files were still in-use, so the key
-> remains in the "incompletely removed" state.  If we were actually going for
-> unlink() semantics, then for consistency this case really ought to return 0 and
-> unlink the key object, and people who care about in-use files would need to use
-> FS_IOC_GET_ENCRYPTION_KEY_STATUS.  But most people *will* care about this, and
-> may even want to retry the ioctl later, which isn't something youh can do with
-> pure unlink() semantics.
+and my changes don't break existing functionality.
 
-It seems to me that the EBUSY and EUSERS errors should be status bits
-which gets returned to the user in a bitfield --- and if the key has
-been removed, or the user's claim on the key's existence has been
-removed, the ioctl returns success.
+But, I find no use of request_firmware_into_buf in lib/test_firmware.c 
+(triggered by fw_run_tests.sh).
 
-That way we don't have to deal with the semantic disconnect where some
-errors don't actually change system state, and other errors that *do*
-change system state (as in, the key gets removed, or the user's claim
-on the key gets removed), but still returns than error.
+Is there another test for request_firmware_into_buf?
 
-We could also add a flag which indicates where if there are files that
-are still busy, or there are other users keeping a key in use, the
-ioctl fails hard and returns an error.  At least that way we keep
-consistency where an error means, "nothing has changed".
-
-	    	     	   	  	   - Ted
-
-P.S.  BTW, one of the comments which I didn't make was the
-documentation didn't adequately explain which error codes means,
-"success but with a caveat", and which errors means, "we failed and
-didn't do anything".  But since I was arguing for changing the
-behavior, I decided not to complain about the documentation.
-
+>>>> We have tested this with a new driver in development which requires the
+>>>> firmware file to be read in portions into memory.  I can add my tested-by
+>>>> and others to the commit message if desired.
+>>> I can't take new apis without an in-kernel user, you all know this...
+>> OK, It will have to wait then as I was hoping to get this in before my
+>> leave.
+> Throwing new code over the wall and running away is a sure way to ensure
+> that your code will be ignored :)
+>
+> thanks,
+>
+> greg k-h
