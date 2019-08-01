@@ -2,47 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36C647DD40
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 16:02:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5E1C7DD66
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 16:07:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731508AbfHAOCw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 10:02:52 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34290 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731492AbfHAOCw (ORCPT
+        id S1731654AbfHAOHJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 10:07:09 -0400
+Received: from mail.onyx.syn-alias.com ([206.152.134.66]:51567 "EHLO
+        smtp.centurylink.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731504AbfHAOHJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:02:52 -0400
-Received: by mail-wm1-f65.google.com with SMTP id w9so3748805wmd.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Aug 2019 07:02:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Q9l8o0YUUYULIRBa/EVzGkj6Ut5sD4tK2q63xppuwv8=;
-        b=E8D19L5qaLnKLicc8jbGo1W4BUDvfW4nfN1kfgMNlmy/UyC6i080Y3z4KkRk4wVcVo
-         OqyEQbVkC+tntpuvTVAaLq1xv4dwTWXQ7ctoNbHB6n5Sp4oz1Z32PamBJ/v6uiGudeCP
-         8DYgByf8+Ntj9oXcH//PwoUTyjfMDnh8GP/Z7yX53gnMZsktwYsT33y7y7Jl5UuLTxn1
-         f80htVmF9ZKW3CrjvIMKQeAD2X9EQCmqVXkk9ymyJXElgbT+rUdF93juxcRIjc1K1elY
-         kP6dwyuCD+tRPHn3SPeZH8OUlWvJfOdN6TEy90IXVH09Wa4dyBPLydsop7Yp32N1Leuj
-         J2VA==
-X-Gm-Message-State: APjAAAXoKBTPzTDyWXHxvZp+FYpUTiOXslMh42TbdAS2pNHRl/dICuvG
-        RwtmL0tljTSFF74QuRF9LEHPMw==
-X-Google-Smtp-Source: APXvYqzXEb+285MZOoJB+6F3vWCSdWbbUe7nEOtmuU/D3ChtMO2hzcI+kZ/rCC+3PLbqLbag6JyNaQ==
-X-Received: by 2002:a1c:f018:: with SMTP id a24mr113136377wmb.66.1564668169963;
-        Thu, 01 Aug 2019 07:02:49 -0700 (PDT)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id z7sm69909162wrh.67.2019.08.01.07.02.49
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 07:02:49 -0700 (PDT)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 4/4] selinux: use d_genocide_safe() in selinuxfs
-Date:   Thu,  1 Aug 2019 16:02:43 +0200
-Message-Id: <20190801140243.24080-5-omosnace@redhat.com>
+        Thu, 1 Aug 2019 10:07:09 -0400
+X_CMAE_Category: , ,
+X-CNFS-Analysis: v=2.3 cv=GbRpYjfL c=1 sm=1 tr=0 a=F7Cg5NNmPe0R/klA+vUXwA==:117 a=F7Cg5NNmPe0R/klA+vUXwA==:17 a=KGjhK52YXX0A:10 a=FmdZ9Uzk2mMA:10 a=5hZkEVmpKn8A:10 a=eQrCS-SpgXYA:10 a=6I5d2MoRAAAA:8 a=X0MrpzQjXdrw5BecmA0A:9 a=IjZwj45LgO3ly-622nXo:22 a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
+X-CM-Score: 0
+X-Scanned-by: Cloudmark Authority Engine
+Feedback-ID: dfw:ctl:res:onyx
+X-Authed-Username: YWxhbnNvbWVyc0BjZW50dXJ5bGluay5uZXQ=
+Authentication-Results:  smtp04.onyx.dfw.sync.lan smtp.user=alansomers@centurylink.net; auth=pass (LOGIN)
+Received: from [63.224.81.28] ([63.224.81.28:45548] helo=threonine.lauralan.noip.me)
+        by smtp.centurylink.net (envelope-from <asomers@freebsd.org>)
+        (ecelerity 3.6.25.56547 r(Core:3.6.25.0)) with ESMTPSA (cipher=DHE-RSA-AES128-GCM-SHA256) 
+        id 77/35-26632-A02F24D5; Thu, 01 Aug 2019 10:07:07 -0400
+From:   asomers@FreeBSD.org
+To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        Nikolaus@rath.org
+Cc:     Alan Somers <asomers@FreeBSD.org>
+Subject: [PATCH] fuse: Add changelog entries for protocols 7.1-7.8
+Date:   Thu,  1 Aug 2019 08:06:36 -0600
+Message-Id: <20190801140636.34841-1-asomers@FreeBSD.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190801140243.24080-1-omosnace@redhat.com>
-References: <20190801140243.24080-1-omosnace@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -50,49 +38,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Letting the following set of commands run long enough on a machine with
-at least 3 CPU threads causes soft lockups in the kernel:
+From: Alan Somers <asomers@FreeBSD.org>
 
-    (cd /sys/fs/selinux/; while true; do find >/dev/null 2>&1; done) &
-    (cd /sys/fs/selinux/; while true; do find >/dev/null 2>&1; done) &
-    (cd /sys/fs/selinux/; while true; do find >/dev/null 2>&1; done) &
+Retroactively add changelog entry for FUSE protocols 7.1 through 7.8.
 
-    while true; do load_policy; echo -n .; sleep 0.1; done
-
-The problem is that sel_remove_entries() removes the old selinuxfs
-entries using d_genocide() + shrink_dcache_parent(), which is not safe
-to do on live trees that are still exposed to userspace.
-
-Specifically, it races with dcache_readdir(), which expects that while a
-dentry's inode is locked, its (positive) children cannot get unlisted,
-because both unlink() and rmdir() lock the parent inode first.
-
-Therefore, use the newly introduced d_genocide_safe() instead of
-d_genocide(), which fixes this issue.
-
-Bug tracker links:
- * SELinux GitHub: https://github.com/SELinuxProject/selinux-kernel/issues/42
- * Red Hat Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1510603
-
-Fixes: ad52184b705c ("selinuxfs: don't open-code d_genocide()")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Alan Somers <asomers@FreeBSD.org>
 ---
- security/selinux/selinuxfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/uapi/linux/fuse.h | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index e6c7643c3fc0..58d1949e5faf 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -1317,7 +1317,7 @@ static const struct file_operations sel_commit_bools_ops = {
- 
- static void sel_remove_entries(struct dentry *de)
- {
--	d_genocide(de);
-+	d_genocide_safe(de);
- 	shrink_dcache_parent(de);
- }
- 
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 19fb55e3c73e..93784c4509a1 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -38,6 +38,44 @@
+  *
+  * Protocol changelog:
+  *
++ * 7.1:
++ *  - add FUSE_SETATTR, FUSE_SYMLINK, FUSE_MKNOD, FUSE_MKDIR, FUSE_UNLINK,
++ *    FUSE_RMDIR, FUSE_RENAME, and FUSE_LINK messages
++ *  - add FUSE_OPEN, FUSE_READ, FUSE_WRITE, FUSE_RELEASE, FUSE_FSYNC, and
++ *    FUSE_FLUSH messages
++ *  - add FUSE_SETXATTR, FUSE_GETXATTR, FUSE_LISTXATTR, and FUSE_REMOVEXATTR
++ *    messages
++ *  - add padding to messages to accomodate 32-bit servers on 64-bit kernels
++ *  - add FUSE_OPENDIR, FUSE_READDIR, and FUSE_RELEASEDIR messages
++ *
++ * 7.2:
++ *  - add FOPEN_DIRECT_IO and FOPEN_KEEP_CACHE flags
++ *  - add FUSE_FSYNCDIR message
++ *
++ * 7.3:
++ *  - add FUSE_ACCESS message
++ *  - add FUSE_CREATE message
++ *  - add filehandle to fuse_setattr_in
++ *
++ * 7.4:
++ *  - add frsize to fuse_kstatfs
++ *  - clean up request size limit checking
++ *
++ * 7.5:
++ *  - add flags and max_write to fuse_init_out
++ *
++ * 7.6:
++ *  - add max_readahead to fuse_init_in and fuse_init_out
++ *
++ * 7.7:
++ *  - add FUSE_INTERRUPT message
++ *  - add POSIX file lock support
++ *
++ * 7.8:
++ *  - add lock_owner and flags fields to fuse_release_in
++ *  - add FUSE_BMAP message
++ *  - add FUSE_DESTROY message
++ *
+  * 7.9:
+  *  - new fuse_getattr_in input argument of GETATTR
+  *  - add lk_flags in fuse_lk_in
 -- 
 2.21.0
 
