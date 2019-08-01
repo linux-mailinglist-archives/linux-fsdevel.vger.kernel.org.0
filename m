@@ -2,100 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5E1C7DD66
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 16:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A067DDA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 16:19:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbfHAOHJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 10:07:09 -0400
-Received: from mail.onyx.syn-alias.com ([206.152.134.66]:51567 "EHLO
-        smtp.centurylink.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731504AbfHAOHJ (ORCPT
+        id S1731921AbfHAOTI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 10:19:08 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42296 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731715AbfHAOTI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:07:09 -0400
-X_CMAE_Category: , ,
-X-CNFS-Analysis: v=2.3 cv=GbRpYjfL c=1 sm=1 tr=0 a=F7Cg5NNmPe0R/klA+vUXwA==:117 a=F7Cg5NNmPe0R/klA+vUXwA==:17 a=KGjhK52YXX0A:10 a=FmdZ9Uzk2mMA:10 a=5hZkEVmpKn8A:10 a=eQrCS-SpgXYA:10 a=6I5d2MoRAAAA:8 a=X0MrpzQjXdrw5BecmA0A:9 a=IjZwj45LgO3ly-622nXo:22 a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
-X-CM-Score: 0
-X-Scanned-by: Cloudmark Authority Engine
-Feedback-ID: dfw:ctl:res:onyx
-X-Authed-Username: YWxhbnNvbWVyc0BjZW50dXJ5bGluay5uZXQ=
-Authentication-Results:  smtp04.onyx.dfw.sync.lan smtp.user=alansomers@centurylink.net; auth=pass (LOGIN)
-Received: from [63.224.81.28] ([63.224.81.28:45548] helo=threonine.lauralan.noip.me)
-        by smtp.centurylink.net (envelope-from <asomers@freebsd.org>)
-        (ecelerity 3.6.25.56547 r(Core:3.6.25.0)) with ESMTPSA (cipher=DHE-RSA-AES128-GCM-SHA256) 
-        id 77/35-26632-A02F24D5; Thu, 01 Aug 2019 10:07:07 -0400
-From:   asomers@FreeBSD.org
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        Nikolaus@rath.org
-Cc:     Alan Somers <asomers@FreeBSD.org>
-Subject: [PATCH] fuse: Add changelog entries for protocols 7.1-7.8
-Date:   Thu,  1 Aug 2019 08:06:36 -0600
-Message-Id: <20190801140636.34841-1-asomers@FreeBSD.org>
-X-Mailer: git-send-email 2.21.0
+        Thu, 1 Aug 2019 10:19:08 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h18so70385730qtm.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Aug 2019 07:19:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hMA7vlwUroWdb0REjDf2neAobLqIjEsoQepgHkXMGQc=;
+        b=M+yZ5LoJGbhm7g0i1sIHAJmyeoJlxlLUxNMBipkE5Gk2KmuVJyj40RCbT2OMJyeUYM
+         zJHmHpLP79mwX+1GU1gaWmI+ZgMsrzh906sNv8d/eg/a5Xw25HKRKuFNgKcyKLM02Ww0
+         rufqIlPpawx9cNcQ6Ahy2tSEtMjGQsDi0/1f8f63o7vcW+ionqvcAAZen0904J/Ypmil
+         ZGhx4rO03KDS05ILM46VGBWJuCbsSKMR9WjJEMoOyUFc9cwx/Lc3OXwHZWF/4cg/Lo1f
+         MMC8Huc/zfOSWQ3eMe0y7mSe9oVAGDhdbvvwgs3CG/GKyE01CIy0PPbv9CbdNkVNHI2q
+         Ytxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hMA7vlwUroWdb0REjDf2neAobLqIjEsoQepgHkXMGQc=;
+        b=PrjJqy1FwkOucHlzfsRRGgjilWxuOmEc++bldtptEYv+ecTLBp7fmXUY1DlK5F9Ri4
+         21CNLdLzH9amgPTy3qX/O2sJmGqAaLJFsvUvc+T14p4rEJfW/me1/7qKPj7DcBTwf2gB
+         x8L1SC6+lK3hs7/rRmVDXeNKUOxinLfk7zI1zsw3D7h0wl/Il6uL8eP89Rn9dTH+R2Tt
+         mSgzFYf8Dn4RTgTkty6x9UrIMlt1EIWA6osiwX7HJKRcjHUmXX+cC75l0emCvnWUEBgI
+         r+ZEUFDjznXT81L1FLN1thAoNWB+heyr0KHMHp2cpYJqpI0AIN5rG3mTpkOnnYdcl9gz
+         DEzQ==
+X-Gm-Message-State: APjAAAXP/wsbF6qfwpssMmWneSOloxABcVo136pxYvhSPTF44vTOZoLB
+        paH1vCIdiJiog4kCdoCs68d4aA==
+X-Google-Smtp-Source: APXvYqwTQf1KGpY8PZ+10TO7pJmffd0/JJ0SGE6m65X5GOGwylr1cSmZUzuB803q9/jTvKSKgNYkxg==
+X-Received: by 2002:a0c:aed0:: with SMTP id n16mr93783119qvd.101.1564669147681;
+        Thu, 01 Aug 2019 07:19:07 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id s127sm30805414qkd.107.2019.08.01.07.19.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Aug 2019 07:19:07 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1htBv8-00084t-Lf; Thu, 01 Aug 2019 11:19:06 -0300
+Date:   Thu, 1 Aug 2019 11:19:06 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v4 1/3] mm/gup: add make_dirty arg to
+ put_user_pages_dirty_lock()
+Message-ID: <20190801141906.GC23899@ziepe.ca>
+References: <20190730205705.9018-1-jhubbard@nvidia.com>
+ <20190730205705.9018-2-jhubbard@nvidia.com>
+ <20190801060755.GA14893@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801060755.GA14893@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Alan Somers <asomers@FreeBSD.org>
+On Thu, Aug 01, 2019 at 08:07:55AM +0200, Christoph Hellwig wrote:
+> On Tue, Jul 30, 2019 at 01:57:03PM -0700, john.hubbard@gmail.com wrote:
+> > @@ -40,10 +40,7 @@
+> >  static void __qib_release_user_pages(struct page **p, size_t num_pages,
+> >  				     int dirty)
+> >  {
+> > -	if (dirty)
+> > -		put_user_pages_dirty_lock(p, num_pages);
+> > -	else
+> > -		put_user_pages(p, num_pages);
+> > +	put_user_pages_dirty_lock(p, num_pages, dirty);
+> >  }
+> 
+> __qib_release_user_pages should be removed now as a direct call to
+> put_user_pages_dirty_lock is a lot more clear.
+> 
+> > index 0b0237d41613..62e6ffa9ad78 100644
+> > +++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
+> > @@ -75,10 +75,7 @@ static void usnic_uiom_put_pages(struct list_head *chunk_list, int dirty)
+> >  		for_each_sg(chunk->page_list, sg, chunk->nents, i) {
+> >  			page = sg_page(sg);
+> >  			pa = sg_phys(sg);
+> > -			if (dirty)
+> > -				put_user_pages_dirty_lock(&page, 1);
+> > -			else
+> > -				put_user_page(page);
+> > +			put_user_pages_dirty_lock(&page, 1, dirty);
+> >  			usnic_dbg("pa: %pa\n", &pa);
+> 
+> There is a pre-existing bug here, as this needs to use the sg_page
+> iterator.  Probably worth throwing in a fix into your series while you
+> are at it.
 
-Retroactively add changelog entry for FUSE protocols 7.1 through 7.8.
+Sadly usnic does not use the core rdma umem abstraction but open codes
+an old version of it.
 
-Signed-off-by: Alan Somers <asomers@FreeBSD.org>
----
- include/uapi/linux/fuse.h | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+In this version each sge in the sgl is exactly one page. See
+usnic_uiom_get_pages - so I think this loop is not a bug?
 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 19fb55e3c73e..93784c4509a1 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -38,6 +38,44 @@
-  *
-  * Protocol changelog:
-  *
-+ * 7.1:
-+ *  - add FUSE_SETATTR, FUSE_SYMLINK, FUSE_MKNOD, FUSE_MKDIR, FUSE_UNLINK,
-+ *    FUSE_RMDIR, FUSE_RENAME, and FUSE_LINK messages
-+ *  - add FUSE_OPEN, FUSE_READ, FUSE_WRITE, FUSE_RELEASE, FUSE_FSYNC, and
-+ *    FUSE_FLUSH messages
-+ *  - add FUSE_SETXATTR, FUSE_GETXATTR, FUSE_LISTXATTR, and FUSE_REMOVEXATTR
-+ *    messages
-+ *  - add padding to messages to accomodate 32-bit servers on 64-bit kernels
-+ *  - add FUSE_OPENDIR, FUSE_READDIR, and FUSE_RELEASEDIR messages
-+ *
-+ * 7.2:
-+ *  - add FOPEN_DIRECT_IO and FOPEN_KEEP_CACHE flags
-+ *  - add FUSE_FSYNCDIR message
-+ *
-+ * 7.3:
-+ *  - add FUSE_ACCESS message
-+ *  - add FUSE_CREATE message
-+ *  - add filehandle to fuse_setattr_in
-+ *
-+ * 7.4:
-+ *  - add frsize to fuse_kstatfs
-+ *  - clean up request size limit checking
-+ *
-+ * 7.5:
-+ *  - add flags and max_write to fuse_init_out
-+ *
-+ * 7.6:
-+ *  - add max_readahead to fuse_init_in and fuse_init_out
-+ *
-+ * 7.7:
-+ *  - add FUSE_INTERRUPT message
-+ *  - add POSIX file lock support
-+ *
-+ * 7.8:
-+ *  - add lock_owner and flags fields to fuse_release_in
-+ *  - add FUSE_BMAP message
-+ *  - add FUSE_DESTROY message
-+ *
-  * 7.9:
-  *  - new fuse_getattr_in input argument of GETATTR
-  *  - add lk_flags in fuse_lk_in
--- 
-2.21.0
-
+Jason
