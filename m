@@ -2,113 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7A57E258
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 20:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DFA17E244
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 20:36:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732481AbfHASis (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 14:38:48 -0400
-Received: from mta03.svc.cra.dublin.eircom.net ([159.134.118.145]:40053 "HELO
-        mta03.svc.cra.dublin.eircom.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1730117AbfHASis (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 14:38:48 -0400
-X-Greylist: delayed 397 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 14:38:47 EDT
-Received: (qmail 2371 messnum 4722469 invoked from network[213.94.190.14/avas02.vendorsvc.cra.dublin.eircom.net]); 1 Aug 2019 18:32:06 -0000
-Received: from avas02.vendorsvc.cra.dublin.eircom.net (HELO avas02) (213.94.190.14)
-  by mta03.svc.cra.dublin.eircom.net (qp 2371) with SMTP; 1 Aug 2019 18:32:06 -0000
-Received: from vzmbx13.eircom.net ([86.43.60.93])
-        by Cloudmark Gateway with SMTP
-        id tFrxho2PCOQFYtFrxhxbAW; Thu, 01 Aug 2019 19:32:05 +0100
-X-Spam-Flag: NO
-X-CNFS-Analysis: v=2.2 cv=QNUYfkDL c=1 sm=1 tr=0
- a=z8CVTJROrBJ6HBjy10cYzA==:117 a=FKkrIqjQGGEA:10 a=QjiRxDvh7SEA:10
- a=IkcTkHD0fZMA:10 a=OJFfeB1LYYsA:10 a=KJtSWEEZ1vwA:10 a=ZZnuYtJkoWoA:10
- a=v_fGJjhChhQT5EziiewA:9 a=QEXdDO2ut3YA:10
-Date:   Thu, 1 Aug 2019 19:32:05 +0100 (IST)
-From:   "Investment, Firm" <catherinesurant@eircom.net>
-Reply-To: mikezapnos@cfl.rr.com
-To:     tpginvestmentfirm@suddenlink.net
-Message-ID: <1649279302.446890.1564684325480.JavaMail.zimbra@eircom.net>
-Subject: Investment Plan.
+        id S1732267AbfHASgA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 14:36:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46094 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726716AbfHASf7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Aug 2019 14:35:59 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A69AF20838;
+        Thu,  1 Aug 2019 18:35:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564684558;
+        bh=gB6PyZEe+LT2zwLazfeSEmIf0CwJ4IcRfXQcgvcxbFw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MquIZTsU8wzEJgSrwgxzGWtZqkxFhVTCYq6QrJJLnPM6KwsW0T8C3WWZsTraCMjjQ
+         5g6AGpL+daDUfYaJEdx3AyvV59heDDgN8B3v4YETC/cgGivPPIhc6lmBEiW4x2dbKX
+         GKk+FYf1mTe1wIMJ7aSr+X86F0F7fkDkHxHh6t4s=
+Date:   Thu, 1 Aug 2019 11:35:56 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
+        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
+        Paul Crowley <paulcrowley@google.com>,
+        Satya Tangirala <satyat@google.com>
+Subject: Re: [PATCH v7 07/16] fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl
+Message-ID: <20190801183554.GA223822@gmail.com>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
+        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
+        Paul Crowley <paulcrowley@google.com>,
+        Satya Tangirala <satyat@google.com>
+References: <20190726224141.14044-1-ebiggers@kernel.org>
+ <20190726224141.14044-8-ebiggers@kernel.org>
+ <20190728192417.GG6088@mit.edu>
+ <20190729195827.GF169027@gmail.com>
+ <20190731183802.GA687@sol.localdomain>
+ <20190731233843.GA2769@mit.edu>
+ <20190801011140.GB687@sol.localdomain>
+ <20190801053108.GD2769@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [89.238.191.213]
-X-Mailer: Zimbra 8.6.0_GA_1242 (ZimbraWebClient - GC75 (Win)/8.6.0_GA_1242)
-Thread-Topic: Investment Plan.
-Thread-Index: 5hWm961b9llRVMEBLOgeuC9VXkInTg==
-X-CMAE-Envelope: MS4wfDfqPGEIzR8PGAyqxHFeXkUup8b0k3cUM6+p//hB3kH8rdioLcQXSVCaQvhVg88BTQXRNaciQfWgCtIiUA7IguPhs6la4k1BDpY6I93NnpFylqZPh3fM
- X9SrH8+N5LuzYU0ZlMRMYk6PGCJYCS2J3b/o7Mce37EiuNNtk/mOVfG9wQWpouV0fcHseY2Z3HGN+GCTev3ztzIPPaGM0miTjWjsZFu2K9eOjNigUBBkYl4x
- FJkHBjlfHZGabSTdccl6jM7yKx9ngGTuo1TESyf5MM99Qi2RIkWlONAEj15B9pSWhLUmoyWn4pXH2mV4tPnOJYl9lGJpf7aGM6RdqsVQXoST5wIAwaWORc39
- aUBzZn7U4Y5aMVAJWe1xuhGlp49mVQPWMrXOIB52lNIYeSiChhewPJLstdOCh7F6s9ioJuPOZf8iarArQjKG0Ipw5UsHP2swQ60pgBxy3tkd/cT71EmoPjjx
- X40Jm1TqdLOZg0a3TyyQmOTbeFLjKqPTRT1Bpyk3o6jCLSppNfyTaoyCPHRwYLOYX/zpe5BQOyU8a67/kharNc/bmTCmRB3QuweZsLJ4Wh5d0sNOIs1v3UBr
- JFA58W9p/x00kn6ZIw6F2+fXF9o1dVwljOHf46IySvgLapRm+HxwYKKNSsyIC5GpQ1kccNN6fKJO3AN0p4nM7a3Df4t3v5Yzm2GocWrmF5LZqyEumcfXojya
- vXGj5c4Kq0kFEb/QBQXRuIaa/Z+wCb7cvFplCOlzop4zyj8wZbwq3vzFJWxB7vFs9wRN5pCTG3Hs9POF2w1G3qB2DSxPzLGnrlB3t+KGcrIvtAMjvY9B+MhK
- OPrkhrLpPqoSOjYWromCkPZiiaHe8wAvIG0a269HASfhyZ1K3z/5jeTaVDB1jSMY1CVx+ns3NQ09kp5H4Up3OgFnA7ibdrb6aki/ajBetmNzhQfEoE/E17qB
- xU5Day7OI++Y8wl9zvs1z75E21vpYsAvNqQ9ekB1kNXAxcih2fzU3kfVUeXXkxVqeQ5kbCOFjnZ4h7y1ilfd/O1qzigxVckJ9RPj4U7uC3igA+41oIRs4U9a
- vGeHzbfYgI0wppGnEOEpKEpcJ2wc4Tg1fe27tU7o8VGEchPT5Dy9HXgSxuhivuagE9kkx2nGXuGijpdmvMmccs8CJyBiQ5URDlhS2ntXw5xUSLTl1k514wQY
- 7rTiONQcbLkwJU2Hy8xV4JzDB6VxJ/s/UT5bKpzLvYo2hSKdN7dR+UvN/S8+GvOi6btY9PAYoIKH1pdj7GaacdIox1Xm867A/C5pUr+7pMcvuqEgDs0IT6v4
- XgFCEgX5vVa0rN7ZU8P/f3ZxCQTumXw+KXHh4lxKFP6BpEwGlDnTkMXnOTnjngL3cVjOxt1wFiFUlmgYgJ6bDnp1f8gEdK9Jy3BUW7aLTUJ2nKQfEWtAmm0V
- H8MWhzbliSf0f2Vz4bi4HKuy8/Oo5wNkde57HLBZd25hUCynWOpppCkHuYLYiErZ6xzIHu9k4xhTzRMKOAl+FuMM7dJ/3w2cvHOFWkhV4gcnrTliEI2Tgy1F
- Cd2nHZyczZ6a/dSJYZl0LMLZGmg5BJK5MtGl25jNCIxM/K9dxRi1YOsTDIf/iJbJB9JIkf7IRlShlkyU9uZA8obY5StSeE2J1uII1CuB2qw0uWElT7TvcZ5z
- 6nPZNq/ar+es5P3li+yGMKXpDtq+cSKc6sclwsrKZVe5EGbPqHAAs/HicOIW1ApVGHe8gR9ncG7u/hrveY+dMXAMPJQe6Dj3GcwJTdILjO/jKC/IkRk4GeLa
- q6VpRyEeDZe16gZFr//Wyl2ZQH80M9myrWchc6a/OLaCYH8YIwtt8NQxCuEPbsTbWQKHZZYRytnSuUdOJ8WGUBXeNyQTrkednQd7LsPS5XX0Ki/igI6G529V
- QwO1Oveef5nayl3vXABZymmOrC+rY8wzFb59vW81eH4F3crCFNKA0SIBnTX98MEdMxiPnjs9pcE56N4g4UQP7Gw+g9klpuHNafiFYACX+ie/Q3pEplzU7GWp
- PB5BaFUvLuE0ah9Cc1LuyHNt1PnihaipEGa1glDdsZF3XpzMVbEfdq1OVXf19ias0eQMwXwvMsYJSKVeBySa4Jf8Bs6tR4pTjz5RjWAUEpAd21iprmLog71P
- AkZjJt4xYabE0V7JavJ7ISFbOZGlXBQhPQ70g1oYsnOEcYUci1n7u5S3Oi2r6iLZM/KLtkfTw4MP9ePimF6rCqIDq9G3e2/Snh0/j8KIOPkCUM+uguTU/NiY
- SgVuTW8gNCmdP1+v9LRvWmHuhhLK9lAPYL6jcQB9K6yxREOgWtKR0S/I8CiSus9C2mkhF51bLXfJvBA7ozorNiaeugmj8EjCpyVAghuFPVLDwTGob0X2Fv/e
- /aIiqTmtueYYdwHaLYSSbkUaz/B2CBjP9NtepVrF12AUR7aog2/fF7lUfr441A4UU5y0XAncwT8gPbswRQ0BwSrFoEz36rzKltJH5sRxGOsMZ0kSZlev8KqW
- Ochv8CH8EviMttvGyHVQPDYd3+Y10RL5z+XezPQt3x0owE+L8qdSRj3XTfnLlu/lYlpa/ENiEGhXPtDsJTnQyLYJoSPZ3hltyBDnKgZ3szlME385VLvdA9NR
- TPx7/xYIbyGnLaSkv8pPlJiIGMWiS8FCIKNLh9GPYcjsVT9iDDLGZVOyDm86rVOrN/fJJN9wHjdavk1TQ9zqtoOYamVGSkg3OL0N3PGBkAYQHvA+rizasPeP
- PF7sB/dbez4M0XS0sEdnCwh54RtRVFA78du0NBX+F9pFx869m3en/ifWdaSeAZzK1YhTfAuo2OJl3c/lG7U3khT7+JFDjSm7VCj74DAe1I2KNCnG97G4BA/K
- 4PfAtmAsS2A/lp1wFZHoM3jhMwaSGjxoJYZkRMHCAgYyEcXlZPTfLPfVcqrYe254vYgsf8juytNKLfcjC3VFkpRdhNK8MUekfenMPZynMCCSuKkaV646vXgY
- IS7LaKV0P7J5I9ZHT2emDti7/h0DKbayVo9plJN1OdbrmVkNwRaWGEQcGfrV+UI7mzXTkWMiOFt6QuEPyJftIKeev3V9JqWegj9mm1Vg3Qmbdiy0bsmTpthM
- yP3kK2UgARoQtuRPbby7Vilu1dShNrU2XgySYd4pKzeSHox1XvYyGMRinP8FcaA5szCpCN/guCHD672jGeqz/DVcJsZM84jX2y1PgwY73aoiCmE7B69PC+kA
- 8wNsk3qQp2Pu2nr6j17psVWXKeqT9PDe9too9Sz/6yA9Ul0Wf5IFZptDvOPfg6CvXUS+IrbtU/88419OW/leT4sm0DoNb+monWHNvL1nmqh28YYGhHkfiC1M
- Mk/UtOcfsEV/1E6S59K/yS0EmOOQbDmKKFTv4VummgVaUzOFXFkxzTsttG9O0mUcrbhtm4Em7UqeKrSN73yE7ydGTlc/rZ/gT0+34rAwea8b6XDo+SxnMRu0
- 3u2h7/ZOFTDmQ5dvVqvJq3IOv2gBfCL+dWuOQLkytCbQHFQtT4lHBA9VwG/OkqhtMIE3CvmK9f9lI63NsG4ar30dFK+V57YYi4cpD2GxpZpMvZoY2/t0kab0
- cXpKxK7Ua8jWNvQQdb2QLF0Ni+zmEWpd4DGwgbxi2KlNSz00lZTvDn9N7Pu80DjaLjLWCQd7VL++nvEXZT5vhv3Y+9S8qIyXhanX6YXBVn1cfucy2y6LZDRD
- ShR0E/IKuG7qSgEN05veZuZshVMJAUV/wO0QunXnRFtMIPEG7zxurPTPZdKzDHw6ZPwAXdf5hHt3oRCxH3wpolY72CI37IhcA4oxQlJ1Vf2vtUDwnpoVsiFn
- icH90cZQb5WqQn6PqQdW/hv5BKrsZp51GkAODZ3XDI0JC/VlFAXgGQM2BhqvZJ70fGvqT/+Uy0MLEuCjHFil27KFDtExK+5O9Wr9H3pGTBSeBCU9TCkxifZo
- 9tf1OGyBEyv+QUklKlQZikL/qOa4vpQ+omHrMKsTsfJzez1+PomRH+rrIIVSc5jqeGp8RsGWqAWncMeQdc5DyWtA/Z+KSXt1I/QNerz3d6DAMVJnIh80deU+
- 6++TQjuAu01StOWgybdCudFhLR6POPIiHs4ZzQmLOYi05qN50FGRSpoAMIMbacaAoZgl5K6PjdszZurnD5hJZ+tJKoQo5R7Y6+rU6EGGouWWDWCqdBr2y9Vz
- 03NohOX3SIGtfWJ7W40lWe2tXWcUFovZCkxjvQStnsxAmAi06e1PNYkHh+qQg5gsrf6gjYauDehfTVEzWpgqMkWFv2kGTwEgovz8pwNOT9ZulU6YOyFY1wm5
- iIgBy6gY/Jrh4KVp0N3kG/M/fSRxWVaJoOqh5aiC3UnX1zlbiBZUfS17yQilxp27k7F2d5q20p6aXj40/CujONQQnx2pac75bIulPujdvuJeCbd4SNYliWrt
- mpD55FKb/CCuaZnBFXt87KPYAkAcAZOxqPs23hMnzi8nlGFk9KFP+GTUnZNvLv5o6XUrD6lDSMEy9C5iOoU/Sr9HduB1JOrXOGMiC+iGXJkuCNwwOFc/9cax
- 0XhC3Z3pUKcIUSiTtoZMrcnATiPPNMvIvMlfnrqBzJsfp/WQcq9BjfjRPTSUGvyrIc3DDoP0oKitu5Z5VZk57vyKnxAhD2+PyycxHNNv8p4rResWVtsRiCig
- ZvyKNIomIWaBazmdxx7thE2400+8uMaki3B0epntxY5XnKsnGZP3aY76j4ZtreOOkwkD/GRSKRrsWmbrkNubDQCEZHpK5756RFdbUEXYf1URDlalNXUQWle8
- pCaTFpOAnD+V5BjxAQd8Ah4bVo2tmUWW+2Ly+LOdlB3plg+3avDRgF+owVFn5HQhfySEFOIns85X0iGdEUi/nxXWGqaA6jG7/HS239CUKA3UcB0qYPTn6JEy
- BIf5egk02bRbFFbkmung0ByZ7T5pvPGuRlGG9khD1pe0JIEcxxBIejRE/zTgJ8zeut2n5/8wHkKq4/1/enPTZlP3kXBVCYIAAMoXXovGGzjbcTg1vwlwOAlf
- FPRxlRhVSA02dkIDVmpLwyt2ovGcPoR1MsYT2OPrjAGcmRrEzkEs3z3lOcGNQKB5yPtloejML1PmkCPwvfLYQLelaWO1oaIsVkBprSn9wZBpgiX449+z1sxV
- 4hp/iYwQBVnjZv7zd/MiW2JRQF2hACG8V+IDmpnyvlZEcBDWkzxJmYQfRYFJFe3jkJRhHZDQrbFXrLzRxBTGhCaHUDMwSmKknD9W38l7MqP3sCY5nxC988pJ
- HD+kBqcgPmB8ZYJ23pZr7TNn8mgYwRIHnOpgmo0mnkLw9tgxVtEFH4m9yLna7ypgQ40SHzo9maeC2Xbe2ado/EYLCQ29xS/yfJXfbCpVljetLW5I30NjVueM
- 5FeivhTOnMqaoFG8GoZ1hri12BMezBtrbuHkEuqMERF5mWeKTXJKhlNWDNOcrF6UyTsV1Sq/R3exOjBuc1L+XiIswZr/xtF3LG95H0ddd2ZvoqXHyXr9PUch
- Jsvv00WRe2nVLNi+b7+yjQgqyslxruWcst86KIr1DNK89rTxLcnB5PubwC/a+8Zfl0qmssPY7aJb5GECDiKi0kjXGcYQUwmRP9LDyZvgp8NlIG8BZK/nVjA4
- +Gudkpzlo1y08yanc+9jjvSegIdKwUk+WlpyQ/Q/lw0hI9rOTQSsjPZLpP6xJw+gtw8tcgrAcsH1eShd3lp6VKtFJZ4S+XUWKnTkuW5cJcaurSLux6KxEXCV
- 0WmEvf0sKiYN2VUtXvkFhoqTtisvg7AXN+0/O4DqzZXpbiVCPZpwyLBnBHIBF46WoYsLHqKh1tTnbQYJm47ZVa12Ba9dae7BShdi4b8G8eEaeA5mbplRAD4x
- 7kNVgVfPGLWbKP7xrSbfv72XdFQU8esmh+kymaJb7gfKSVvereiQxUhC+PgcCMad96sQiVJ7G5AHhAZ34HJR+uyweMC9HzTdotGX2WOC/uRPuvNDbw+oZUca
- 9NKYuBrp/jvDZUrsfsGbk6vzK1l6Lq/jMC1mgEiglj+kI/l1DhYkb0n2KVYERzNvv1BiV9OmgShGNhGdsr6V8Oe42AQGI47ivX66iUV/LScWU5yS2HY6G5Zw
- X16FFlMIChwbFVoB2MePbQVUvOzPn37ik/sybPe/oWovEFS8jIFlgdjk+IheNxw5l+bxcyPXuPac1X6TfRNhj5xmd6zaZqjer8Rqsvz4PcqI+YAhRQ1uinvT
- H11qswrsRglmyj6pHhwPQdir4insW54Wx4QethfvtLp5K0h9CdeTA1eIhU489iCQDme7nfRsoS7a41VmVbnfHrkzAi4MTshE/LRzbk/1Aqrz+5xBB4bTWHKU
- ts/5wLjwzQUqgoTxoY7HYjxJe6WeJLTsaP9cxL07Wm2p9YCRm4QbmrK9Eh9Bvjg8z71KeeEeg34olgf1zmKh0JM9EN6Xhq2LdXWDKjl0QCNDCXDq/AiAAjSi
- z4utsesYTbY79uwYUR1KrrBDkPbx0ZAwQEh+O05982HKMnSzWwQMWJcyhCOPBrn9Qly0ph0+TzdmU+HRB/X9bbUigj0ZTMYBZEiNBIiF6NCSeUVWVwmenmhA
- SwNT/sS4GPHanS+0bgClD4kK5jGpvzliHVle9fDfE0DmtKgVsLDUIG2VdsjlQS4xuJW9LiEJ9c6pqo4wbGXy7TIkiOoGv48zbiHRw2ElBQvt+pn5M6RWZ1Sq
- 7hZZDT6pd3W5BpMsQ0rVQ3XkfK7QjQLU+k2f1JXst7sMtcnPPPmlyjnuMK+FseALmpTpFrdH+jdq5rM80w+V+wRg8LVL6MpfaU2qhhqo42vfJdS+naS2n65o
- AfDp1akrQNNQSMazRD8EmLwGj9zZcSvxe2oQjaamCK3jzqgDr+fjMpuKbkjU9j+ZiTKKrEt3JAEzui3QnH3Ls4BHiWlj7wq1J5C+r4/4qTferZ5Fu6alYgi7
- xLJnERrgjnmlu5QhV9CYvg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801053108.GD2769@mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Aug 01, 2019 at 01:31:08AM -0400, Theodore Y. Ts'o wrote:
+> On Wed, Jul 31, 2019 at 06:11:40PM -0700, Eric Biggers wrote:
+> > 
+> > Well, it's either
+> > 
+> > 1a. Remove the user's handle.
+> > 	OR 
+> > 1b. Remove all users' handles.  (FSCRYPT_REMOVE_KEY_FLAG_ALL_USERS)
+> > 
+> > Then
+> > 
+> > 2. If no handles remain, try to evict all inodes that use the key.
+> > 
+> > By "purge all keys" do you mean step (2)?  Note that it doesn't require root by
+> > itself; root is only required to remove other users' handles (1b).
+> 
+> No, I was talking about 1b.  I'd argue that 1a and 1b should be
+> different ioctl.  1b requires root, and 1a doesn't.
+> 
+> And 1a should just mean, "I don't need to use the encrypted files any
+> more".  In the PAM passphrase case, when you are just logging out, 1a
+> is what's needed, and success is just fine.  pam_session won't *care*
+> whether or not there are other users keeping the key in use.
 
-I have an investment proposals that will be of good interest to you.
+But in both cases, we still need to do the same things if the last user is
+removed: remove the master key secret, try to evict the inodes, and (if all
+inodes could be evicted) unlink the key object from the filesystem-level
+keyring.  So the ioctls would be nearly the same; it's just the
+"remove key user(s)" step that would be different.
 
-If you have any viable business idea in your region/country/projects/opportunities/know anyone who has a viable projects that need funding, do get in touch with me, for further proceedings and funding.
+So in my view, these are variants of the same action, which is why it's a flag.
+Likewise, there aren't separate ioctls for v1 and v2 policy keys, since
+adding/removing those are variants on the same actions, and it allows the ioctls
+to be extended to v3 in the future if it ever becomes necessary.
 
-If not, please pardon my intrusion.
+Now, I don't have *that* much of an issue with making it an separate ioctl
+FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS.  We can make them call the same function
+internally, with a bool argument to distinguish the two ioctls.  It just seems
+like an unnecessary complication.
 
-Regards,
-Mike Zappi
-Business Consultant
+> 
+> The problem with "fscrypt lock" is that the non-privileged user sort
+> of wants to do REMOVE_FLAG_KEY_FLAG_FOR_ALL_USERS, but they doesn't
+> have the privileges to do it, and they are hoping that removing their
+> own key removes it the key from the system.  That to me seems to be
+> the fundamental disconnect.  The "fscrypt unlock" and "fscrypt lock"
+> commands comes from the v1 key management, and requires root.  It's
+> the translation to unprivileged mode where "fscrypt lock" seems to
+> have problems.
+
+"fscrypt lock" actually doesn't exist yet; it's a missing feature.  My patch to
+the fscrypt tool adds it.  So we get to decide on the semantics.  We don't want
+to require root, though; so for v2 policy keys, the real semantics have to be
+that "fscrypt lock" registers the key for the user, and "fscrypt unlock"
+unregisters it for the user.
+
+One could argue that because of this they should be named "fscrypt register_key"
+and "fscrypt unregister_key".  However, in the vast majority of cases these will
+be run as a single user, with a key that is not shared with any other user.
+
+[In fact, I recently changed the fscrypt tool to automatically set mode 0700 on
+new encrypted directories, since most people found it surprising that their
+unlocked encrypted files weren't private to them by default.  So if someone
+wants to share their encrypted directory with another user, they now also need
+to explicitly chmod it, unless the root user is involved.]
+
+So presenting the commands as locking/unlocking a directory is a useful
+simplication that makes them much easier to use, IMO.  People shouldn't need to
+understand multi-user key registration in order to unlock/lock their personal
+encrypted directories.
+
+And if "fscrypt lock" does nevertheless hit the case where other users remain, I
+think it would be most user-friendly to print a warning like this:
+
+	Directory not fully locked; other users have added the key.
+ 	Run 'sudo fscrypt lock --all-users DIR' if you want to force-lock the directory.
+
+We *could* make the --all-users option a separate subcommand like
+"fscrypt force_lock", but again to me it seems like a variant of the same thing.
+
+> > > It seems to me that the EBUSY and EUSERS errors should be status bits
+> > > which gets returned to the user in a bitfield --- and if the key has
+> > > been removed, or the user's claim on the key's existence has been
+> > > removed, the ioctl returns success.
+> > > 
+> > > That way we don't have to deal with the semantic disconnect where some
+> > > errors don't actually change system state, and other errors that *do*
+> > > change system state (as in, the key gets removed, or the user's claim
+> > > on the key gets removed), but still returns than error.
+> > > 
+> > 
+> > Do you mean use a positive return value, or do you mean add an output field to
+> > the struct passed to the ioctl?
+> 
+> I meant adding an output field.  I see EBUSY and EUSERS as status bits
+> which *some* use cases might find useful.  Other use cases, such as in
+> the pam_keys session logout code, we won't care at *all* about those
+> status reporting (or error codes).  So if EBUSY and EUSERS are
+> returned as errors, then it adds to complexity of those programs
+> whichd don't care.  (And even for those that do, it's still a bit more
+> complex since they has to distinguish between EBUSY, EUSERS, or other
+> errors --- in fact, *all* programs which use
+> FS_IOC_REMOVE_ENCRYPTION_KEY will *have* to check for EBUSY and
+> ESUSERS whether they care or not.)
+> 
+
+I see it a little differently: I'd prefer for the API to be "secure by default",
+i.e. it tries hard to really remove the key, and it returns an error if it
+couldn't really be removed (but still did as much as possible).  And if the
+caller is fine with some case(s) where the key wasn't truly removed, then they
+can just explicitly handle those case(s).
+
+You're suggesting the opposite: the ioctl will return 0 if the key was
+unregistered for current user only, or if some files are still in use; and if
+someone cares whether the key was *really* removed, then they'd need to check
+the additional status bits.
+
+That's easier to misuse in the more important ways, in my view.  Now, it's not a
+huge deal, as the API provides the same information either way, and regardless
+of which one we choose, I'll make sure it's used correctly in fscrypt, Android,
+Chrome OS, etc...
+
+> > Either way note that it doesn't really need to be a bitfield, since you can't
+> > have both statuses at the same time.  I.e. if there are still other users, we
+> > couldn't have even gotten to checking for in-use files.
+> 
+> That's actually an implementation detail, though, right?  In theory,
+> we could check to see if there are any in-use files, independently of
+> whether there are any users or not.
+> 
+
+Yes, but wouldn't people assume that if the bitfield is provided, that all the
+bits are actually filled in?  Remember that to determine the "in-use files" bit
+we have to actually go through the inode list and try to evict all the inodes.
+That's not really something we should be doing before the last user is removed.
+
+- Eric
