@@ -2,560 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A6B57D336
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 04:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 654E17D43F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 06:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729637AbfHACSX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Jul 2019 22:18:23 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:32913 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728829AbfHACSS (ORCPT
+        id S1728217AbfHAD74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Jul 2019 23:59:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49244 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727600AbfHAD7z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Jul 2019 22:18:18 -0400
-Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A1EE143EBD3;
-        Thu,  1 Aug 2019 12:17:58 +1000 (AEST)
-Received: from discord.disaster.area ([192.168.253.110])
-        by dread.disaster.area with esmtp (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1ht0eB-0003bW-KC; Thu, 01 Aug 2019 12:16:51 +1000
-Received: from dave by discord.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1ht0fH-0001li-ID; Thu, 01 Aug 2019 12:17:59 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 24/24] xfs: remove unusued old inode reclaim code
-Date:   Thu,  1 Aug 2019 12:17:52 +1000
-Message-Id: <20190801021752.4986-25-david@fromorbit.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190801021752.4986-1-david@fromorbit.com>
-References: <20190801021752.4986-1-david@fromorbit.com>
+        Wed, 31 Jul 2019 23:59:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=I8/9yqTIylyYT3ifD0KNSCMCuP/VEpy95OXwAJhhUzE=; b=fiHGVvDtNjwrMZ1w5x3i7cGa2
+        rfi3qs+wzc+FhoeW6GraEzaAvZiCGq5fhWGer81vIGrUlBL/gLv928TfNDZA8hecNG2z3vzoIpAYy
+        A4A7+f6nQ57kFGnjjWdc6hwg9GSLhGIq7C5SlT/iMMZmk1lOxmjWTAC5AlVd+oVB2XbGeRAhJ/Xoz
+        jfhDH1ttVWoFSto6gcH9BSoGWrr1w4v8qjDHgJMEYIHWgBNCysTOFU7Y+FV5UHBYjQ4WqjtQpA5TK
+        coKmH8NbBZxPevwyL0FKEEVV5XLEe/0r0Z5a72RyrmEAfR4FltCnFWI6pzQpmHQwpreFHfLwCaQ8T
+        nCQ3avbNg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1ht2Fv-00057I-3K; Thu, 01 Aug 2019 03:59:55 +0000
+Date:   Wed, 31 Jul 2019 20:59:55 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] iomap: Support large pages
+Message-ID: <20190801035955.GI4700@bombadil.infradead.org>
+References: <20190731171734.21601-1-willy@infradead.org>
+ <20190731171734.21601-2-willy@infradead.org>
+ <20190731230315.GJ7777@dread.disaster.area>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
-        a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=FmdZ9Uzk2mMA:10 a=20KFwNOVAAAA:8
-        a=NLq-Pxan09OTZ9pW5F8A:9 a=MM6_kbBQj0QFA03F:21 a=Qvj9VV6_zPZ6olsH:21
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731230315.GJ7777@dread.disaster.area>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+On Thu, Aug 01, 2019 at 09:03:15AM +1000, Dave Chinner wrote:
+> > -	if (iop || i_blocksize(inode) == PAGE_SIZE)
+> > +	if (iop || i_blocksize(inode) == page_size(page))
+> >  		return iop;
+> >  
+> > -	iop = kmalloc(sizeof(*iop), GFP_NOFS | __GFP_NOFAIL);
+> > +	nbits = BITS_TO_LONGS(page_size(page) / SECTOR_SIZE);
+> 
+> nbits = BITS_TO_LONGS(page_size(page) / i_blocksize(inode));
 
-We don't use the custom AG radix tree walker, the reclaim radix tree
-tag, the reclaimable inode counters, etc, so remove the all now.
+Ah, yes, that's better.  When it's statically allocated, you have to assume
+512-byte blocks, but when it's dynamically allocated, you can use the
+actual inode blocksize.
 
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
- fs/xfs/xfs_icache.c | 410 +-------------------------------------------
- fs/xfs/xfs_icache.h |   7 +-
- fs/xfs/xfs_mount.h  |   2 -
- fs/xfs/xfs_super.c  |   1 -
- 4 files changed, 3 insertions(+), 417 deletions(-)
+> > +	iop = kmalloc(struct_size(iop, uptodate, nbits),
+> > +			GFP_NOFS | __GFP_NOFAIL);
+> >  	atomic_set(&iop->read_count, 0);
+> >  	atomic_set(&iop->write_count, 0);
+> > -	bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
+> > +	bitmap_zero(iop->uptodate, nbits);
 
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 891fe3795c8f..ad04de119ac1 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -139,81 +139,6 @@ xfs_inode_free(
- 	__xfs_inode_free(ip);
- }
- 
--static void
--xfs_perag_set_reclaim_tag(
--	struct xfs_perag	*pag)
--{
--	struct xfs_mount	*mp = pag->pag_mount;
--
--	lockdep_assert_held(&pag->pag_ici_lock);
--	if (pag->pag_ici_reclaimable++)
--		return;
--
--	/* propagate the reclaim tag up into the perag radix tree */
--	spin_lock(&mp->m_perag_lock);
--	radix_tree_tag_set(&mp->m_perag_tree, pag->pag_agno,
--			   XFS_ICI_RECLAIM_TAG);
--	spin_unlock(&mp->m_perag_lock);
--
--	trace_xfs_perag_set_reclaim(mp, pag->pag_agno, -1, _RET_IP_);
--}
--
--static void
--xfs_perag_clear_reclaim_tag(
--	struct xfs_perag	*pag)
--{
--	struct xfs_mount	*mp = pag->pag_mount;
--
--	lockdep_assert_held(&pag->pag_ici_lock);
--	if (--pag->pag_ici_reclaimable)
--		return;
--
--	/* clear the reclaim tag from the perag radix tree */
--	spin_lock(&mp->m_perag_lock);
--	radix_tree_tag_clear(&mp->m_perag_tree, pag->pag_agno,
--			     XFS_ICI_RECLAIM_TAG);
--	spin_unlock(&mp->m_perag_lock);
--	trace_xfs_perag_clear_reclaim(mp, pag->pag_agno, -1, _RET_IP_);
--}
--
--
--/*
-- * We set the inode flag atomically with the radix tree tag.
-- * Once we get tag lookups on the radix tree, this inode flag
-- * can go away.
-- */
--void
--xfs_inode_set_reclaim_tag(
--	struct xfs_inode	*ip)
--{
--	struct xfs_mount	*mp = ip->i_mount;
--	struct xfs_perag	*pag;
--
--	pag = xfs_perag_get(mp, XFS_INO_TO_AGNO(mp, ip->i_ino));
--	spin_lock(&pag->pag_ici_lock);
--	spin_lock(&ip->i_flags_lock);
--
--	radix_tree_tag_set(&pag->pag_ici_root, XFS_INO_TO_AGINO(mp, ip->i_ino),
--			   XFS_ICI_RECLAIM_TAG);
--	xfs_perag_set_reclaim_tag(pag);
--	__xfs_iflags_set(ip, XFS_IRECLAIMABLE);
--
--	spin_unlock(&ip->i_flags_lock);
--	spin_unlock(&pag->pag_ici_lock);
--	xfs_perag_put(pag);
--}
--
--STATIC void
--xfs_inode_clear_reclaim_tag(
--	struct xfs_perag	*pag,
--	xfs_ino_t		ino)
--{
--	radix_tree_tag_clear(&pag->pag_ici_root,
--			     XFS_INO_TO_AGINO(pag->pag_mount, ino),
--			     XFS_ICI_RECLAIM_TAG);
--	xfs_perag_clear_reclaim_tag(pag);
--}
--
- static void
- xfs_inew_wait(
- 	struct xfs_inode	*ip)
-@@ -397,17 +322,15 @@ xfs_iget_cache_hit(
- 			goto out_error;
- 		}
- 
--		spin_lock(&pag->pag_ici_lock);
--		spin_lock(&ip->i_flags_lock);
- 
- 		/*
- 		 * Clear the per-lifetime state in the inode as we are now
- 		 * effectively a new inode and need to return to the initial
- 		 * state before reuse occurs.
- 		 */
-+		spin_lock(&ip->i_flags_lock);
- 		ip->i_flags &= ~XFS_IRECLAIM_RESET_FLAGS;
- 		ip->i_flags |= XFS_INEW;
--		xfs_inode_clear_reclaim_tag(pag, ip->i_ino);
- 		inode->i_state = I_NEW;
- 		ip->i_sick = 0;
- 		ip->i_checked = 0;
-@@ -416,7 +339,6 @@ xfs_iget_cache_hit(
- 		init_rwsem(&inode->i_rwsem);
- 
- 		spin_unlock(&ip->i_flags_lock);
--		spin_unlock(&pag->pag_ici_lock);
- 	} else {
- 		/* If the VFS inode is being torn down, pause and try again. */
- 		if (!igrab(inode)) {
-@@ -967,336 +889,6 @@ xfs_inode_ag_iterator_tag(
- 	return last_error;
- }
- 
--/*
-- * Grab the inode for reclaim.
-- *
-- * Return false if we aren't going to reclaim it, true if it is a reclaim
-- * candidate.
-- *
-- * If the inode is clean or unreclaimable, return NULLCOMMITLSN to tell the
-- * caller it does not require flushing. Otherwise return the log item lsn of the
-- * inode so the caller can determine it's inode flush target.  If we get the
-- * clean/dirty state wrong then it will be sorted in xfs_reclaim_inode() once we
-- * have locks held.
-- */
--STATIC bool
--xfs_reclaim_inode_grab(
--	struct xfs_inode	*ip,
--	int			flags,
--	xfs_lsn_t		*lsn)
--{
--	ASSERT(rcu_read_lock_held());
--	*lsn = 0;
--
--	/* quick check for stale RCU freed inode */
--	if (!ip->i_ino)
--		return false;
--
--	/*
--	 * Do unlocked checks to see if the inode already is being flushed or in
--	 * reclaim to avoid lock traffic. If the inode is not clean, return the
--	 * it's position in the AIL for the caller to push to.
--	 */
--	if (!xfs_inode_clean(ip)) {
--		*lsn = ip->i_itemp->ili_item.li_lsn;
--		return false;
--	}
--
--	if (__xfs_iflags_test(ip, XFS_IFLOCK | XFS_IRECLAIM))
--		return false;
--
--	/*
--	 * The radix tree lock here protects a thread in xfs_iget from racing
--	 * with us starting reclaim on the inode.  Once we have the
--	 * XFS_IRECLAIM flag set it will not touch us.
--	 *
--	 * Due to RCU lookup, we may find inodes that have been freed and only
--	 * have XFS_IRECLAIM set.  Indeed, we may see reallocated inodes that
--	 * aren't candidates for reclaim at all, so we must check the
--	 * XFS_IRECLAIMABLE is set first before proceeding to reclaim.
--	 */
--	spin_lock(&ip->i_flags_lock);
--	if (!__xfs_iflags_test(ip, XFS_IRECLAIMABLE) ||
--	    __xfs_iflags_test(ip, XFS_IRECLAIM)) {
--		/* not a reclaim candidate. */
--		spin_unlock(&ip->i_flags_lock);
--		return false;
--	}
--	__xfs_iflags_set(ip, XFS_IRECLAIM);
--	spin_unlock(&ip->i_flags_lock);
--	return true;
--}
--
--/*
-- * Inodes in different states need to be treated differently. The following
-- * table lists the inode states and the reclaim actions necessary:
-- *
-- *	inode state	     iflush ret		required action
-- *      ---------------      ----------         ---------------
-- *	bad			-		reclaim
-- *	shutdown		EIO		unpin and reclaim
-- *	clean, unpinned		0		reclaim
-- *	stale, unpinned		0		reclaim
-- *	clean, pinned(*)	0		requeue
-- *	stale, pinned		EAGAIN		requeue
-- *	dirty, async		-		requeue
-- *	dirty, sync		0		reclaim
-- *
-- * (*) dgc: I don't think the clean, pinned state is possible but it gets
-- * handled anyway given the order of checks implemented.
-- *
-- * Also, because we get the flush lock first, we know that any inode that has
-- * been flushed delwri has had the flush completed by the time we check that
-- * the inode is clean.
-- *
-- * Note that because the inode is flushed delayed write by AIL pushing, the
-- * flush lock may already be held here and waiting on it can result in very
-- * long latencies.  Hence for sync reclaims, where we wait on the flush lock,
-- * the caller should push the AIL first before trying to reclaim inodes to
-- * minimise the amount of time spent waiting.  For background relaim, we only
-- * bother to reclaim clean inodes anyway.
-- *
-- * Hence the order of actions after gaining the locks should be:
-- *	bad		=> reclaim
-- *	shutdown	=> unpin and reclaim
-- *	pinned, async	=> requeue
-- *	pinned, sync	=> unpin
-- *	stale		=> reclaim
-- *	clean		=> reclaim
-- *	dirty, async	=> requeue
-- *	dirty, sync	=> flush, wait and reclaim
-- *
-- * Returns true if the inode was reclaimed, false otherwise.
-- */
--STATIC bool
--xfs_reclaim_inode(
--	struct xfs_inode	*ip,
--	struct xfs_perag	*pag,
--	xfs_lsn_t		*lsn)
--{
--	xfs_ino_t		ino;
--
--	*lsn = 0;
--
--	/*
--	 * Don't try to flush the inode if another inode in this cluster has
--	 * already flushed it after we did the initial checks in
--	 * xfs_reclaim_inode_grab().
--	 */
--	if (!xfs_ilock_nowait(ip, XFS_ILOCK_EXCL))
--		goto out;
--	if (!xfs_iflock_nowait(ip))
--		goto out_unlock;
--
--	/* If we are in shutdown, we don't care about blocking. */
--	if (XFS_FORCED_SHUTDOWN(ip->i_mount)) {
--		xfs_iunpin_wait(ip);
--		/* xfs_iflush_abort() drops the flush lock */
--		xfs_iflush_abort(ip, false);
--		goto reclaim;
--	}
--
--	/*
--	 * If it is pinned, we only want to flush this if there's nothing else
--	 * to be flushed as it requires a log force. Hence we essentially set
--	 * the LSN to flush the entire AIL which will end up triggering a log
--	 * force to unpin this inode, but that will only happen if there are not
--	 * other inodes in the scan that only need writeback.
--	 */
--	if (xfs_ipincount(ip)) {
--		*lsn = ip->i_itemp->ili_last_lsn;
--		goto out_ifunlock;
--	}
--
--	/*
--	 * Dirty inode we didn't catch, skip it.
--	 */
--	if (!xfs_inode_clean(ip) && !xfs_iflags_test(ip, XFS_ISTALE)) {
--		*lsn = ip->i_itemp->ili_item.li_lsn;
--		goto out_ifunlock;
--	}
--
--	/*
--	 * It's clean, we have it locked, we can now drop the flush lock
--	 * and reclaim it.
--	 */
--	xfs_ifunlock(ip);
--
--reclaim:
--	ASSERT(!xfs_isiflocked(ip));
--	ASSERT(xfs_inode_clean(ip) || xfs_iflags_test(ip, XFS_ISTALE));
--	ASSERT(ip->i_ino != 0);
--
--	/*
--	 * Because we use RCU freeing we need to ensure the inode always appears
--	 * to be reclaimed with an invalid inode number when in the free state.
--	 * We do this as early as possible under the ILOCK so that
--	 * xfs_iflush_cluster() and xfs_ifree_cluster() can be guaranteed to
--	 * detect races with us here. By doing this, we guarantee that once
--	 * xfs_iflush_cluster() or xfs_ifree_cluster() has locked XFS_ILOCK that
--	 * it will see either a valid inode that will serialise correctly, or it
--	 * will see an invalid inode that it can skip.
--	 */
--	spin_lock(&ip->i_flags_lock);
--	ino = ip->i_ino; /* for radix_tree_delete */
--	ip->i_flags = XFS_IRECLAIM;
--	ip->i_ino = 0;
--
--	/* XXX: temporary until lru based reclaim */
--	list_lru_del(&pag->pag_mount->m_inode_lru, &VFS_I(ip)->i_lru);
--	spin_unlock(&ip->i_flags_lock);
--
--	xfs_iunlock(ip, XFS_ILOCK_EXCL);
--
--	XFS_STATS_INC(ip->i_mount, xs_ig_reclaims);
--	/*
--	 * Remove the inode from the per-AG radix tree.
--	 *
--	 * Because radix_tree_delete won't complain even if the item was never
--	 * added to the tree assert that it's been there before to catch
--	 * problems with the inode life time early on.
--	 */
--	spin_lock(&pag->pag_ici_lock);
--	if (!radix_tree_delete(&pag->pag_ici_root,
--				XFS_INO_TO_AGINO(ip->i_mount, ino)))
--		ASSERT(0);
--	xfs_perag_clear_reclaim_tag(pag);
--	spin_unlock(&pag->pag_ici_lock);
--
--	/*
--	 * Here we do an (almost) spurious inode lock in order to coordinate
--	 * with inode cache radix tree lookups.  This is because the lookup
--	 * can reference the inodes in the cache without taking references.
--	 *
--	 * We make that OK here by ensuring that we wait until the inode is
--	 * unlocked after the lookup before we go ahead and free it.
--	 */
--	xfs_ilock(ip, XFS_ILOCK_EXCL);
--	xfs_qm_dqdetach(ip);
--	xfs_iunlock(ip, XFS_ILOCK_EXCL);
--
--	__xfs_inode_free(ip);
--	return true;
--
--out_ifunlock:
--	xfs_ifunlock(ip);
--out_unlock:
--	xfs_iunlock(ip, XFS_ILOCK_EXCL);
--out:
--	xfs_iflags_clear(ip, XFS_IRECLAIM);
--	return false;
--}
--
--/*
-- * Walk the AGs and reclaim the inodes in them. Even if the filesystem is
-- * corrupted, we still want to try to reclaim all the inodes. If we don't,
-- * then a shut down during filesystem unmount reclaim walk leak all the
-- * unreclaimed inodes.
-- *
-- * Return the number of inodes freed.
-- */
--int
--xfs_reclaim_inodes_ag(
--	struct xfs_mount	*mp,
--	int			flags,
--	int			nr_to_scan)
--{
--	struct xfs_perag	*pag;
--	xfs_agnumber_t		ag;
--	xfs_lsn_t		lsn, lowest_lsn = NULLCOMMITLSN;
--	long			freed = 0;
--
--	ag = 0;
--	while ((pag = xfs_perag_get_tag(mp, ag, XFS_ICI_RECLAIM_TAG))) {
--		unsigned long	first_index = 0;
--		int		done = 0;
--		int		nr_found = 0;
--
--		ag = pag->pag_agno + 1;
--		first_index = pag->pag_ici_reclaim_cursor;
--
--		do {
--			struct xfs_inode *batch[XFS_LOOKUP_BATCH];
--			int	i;
--
--			rcu_read_lock();
--			nr_found = radix_tree_gang_lookup_tag(
--					&pag->pag_ici_root,
--					(void **)batch, first_index,
--					XFS_LOOKUP_BATCH,
--					XFS_ICI_RECLAIM_TAG);
--			if (!nr_found) {
--				done = 1;
--				rcu_read_unlock();
--				break;
--			}
--
--			/*
--			 * Grab the inodes before we drop the lock. if we found
--			 * nothing, nr == 0 and the loop will be skipped.
--			 */
--			for (i = 0; i < nr_found; i++) {
--				struct xfs_inode *ip = batch[i];
--
--				if (done ||
--				    !xfs_reclaim_inode_grab(ip, flags, &lsn))
--					batch[i] = NULL;
--
--				if (lsn && XFS_LSN_CMP(lsn, lowest_lsn) < 0)
--					lowest_lsn = lsn;
--
--				/*
--				 * Update the index for the next lookup. Catch
--				 * overflows into the next AG range which can
--				 * occur if we have inodes in the last block of
--				 * the AG and we are currently pointing to the
--				 * last inode.
--				 *
--				 * Because we may see inodes that are from the
--				 * wrong AG due to RCU freeing and
--				 * reallocation, only update the index if it
--				 * lies in this AG. It was a race that lead us
--				 * to see this inode, so another lookup from
--				 * the same index will not find it again.
--				 */
--				if (XFS_INO_TO_AGNO(mp, ip->i_ino) !=
--								pag->pag_agno)
--					continue;
--				first_index = XFS_INO_TO_AGINO(mp, ip->i_ino + 1);
--				if (first_index < XFS_INO_TO_AGINO(mp, ip->i_ino))
--					done = 1;
--			}
--
--			/* unlock now we've grabbed the inodes. */
--			rcu_read_unlock();
--
--			for (i = 0; i < nr_found; i++) {
--				if (!batch[i])
--					continue;
--				if (xfs_reclaim_inode(batch[i], pag, &lsn))
--					freed++;
--				if (lsn && XFS_LSN_CMP(lsn, lowest_lsn) < 0)
--					lowest_lsn = lsn;
--			}
--
--			nr_to_scan -= XFS_LOOKUP_BATCH;
--			cond_resched();
--
--		} while (nr_found && !done && nr_to_scan > 0);
--
--		if (!done)
--			pag->pag_ici_reclaim_cursor = first_index;
--		else
--			pag->pag_ici_reclaim_cursor = 0;
--		xfs_perag_put(pag);
--	}
--
--	if ((flags & SYNC_WAIT) && lowest_lsn != NULLCOMMITLSN)
--		xfs_ail_push_sync(mp->m_ail, lowest_lsn);
--
--	return freed;
--}
--
- enum lru_status
- xfs_inode_reclaim_isolate(
- 	struct list_head	*item,
-diff --git a/fs/xfs/xfs_icache.h b/fs/xfs/xfs_icache.h
-index dadc69a30f33..0b4d06691275 100644
---- a/fs/xfs/xfs_icache.h
-+++ b/fs/xfs/xfs_icache.h
-@@ -25,9 +25,8 @@ struct xfs_eofblocks {
-  */
- #define XFS_ICI_NO_TAG		(-1)	/* special flag for an untagged lookup
- 					   in xfs_inode_ag_iterator */
--#define XFS_ICI_RECLAIM_TAG	0	/* inode is to be reclaimed */
--#define XFS_ICI_EOFBLOCKS_TAG	1	/* inode has blocks beyond EOF */
--#define XFS_ICI_COWBLOCKS_TAG	2	/* inode can have cow blocks to gc */
-+#define XFS_ICI_EOFBLOCKS_TAG	0	/* inode has blocks beyond EOF */
-+#define XFS_ICI_COWBLOCKS_TAG	1	/* inode can have cow blocks to gc */
- 
- /*
-  * Flags for xfs_iget()
-@@ -60,8 +59,6 @@ enum lru_status xfs_inode_reclaim_isolate(struct list_head *item,
- void xfs_dispose_inodes(struct list_head *freeable);
- void xfs_reclaim_inodes(struct xfs_mount *mp);
- 
--void xfs_inode_set_reclaim_tag(struct xfs_inode *ip);
--
- void xfs_inode_set_eofblocks_tag(struct xfs_inode *ip);
- void xfs_inode_clear_eofblocks_tag(struct xfs_inode *ip);
- int xfs_icache_free_eofblocks(struct xfs_mount *, struct xfs_eofblocks *);
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index 4a4ecbc22246..ef63357da7af 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -383,8 +383,6 @@ typedef struct xfs_perag {
- 
- 	spinlock_t	pag_ici_lock;	/* incore inode cache lock */
- 	struct radix_tree_root pag_ici_root;	/* incore inode cache root */
--	int		pag_ici_reclaimable;	/* reclaimable inodes */
--	unsigned long	pag_ici_reclaim_cursor;	/* reclaim restart point */
- 
- 	/* buffer cache index */
- 	spinlock_t	pag_buf_lock;	/* lock for pag_buf_hash */
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index e3e898a2896c..0559fb686e9d 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -955,7 +955,6 @@ xfs_fs_destroy_inode(
- 	__xfs_iflags_set(ip, XFS_IRECLAIMABLE);
- 	list_lru_add(&mp->m_inode_lru, &VFS_I(ip)->i_lru);
- 	spin_unlock(&ip->i_flags_lock);
--	xfs_inode_set_reclaim_tag(ip);
- }
- 
- static void
--- 
-2.22.0
+Also, I confused myself by using nbits.  And, really, why do all this
+initialisation by hand?
 
+@@ -23,17 +23,14 @@ static struct iomap_page *
+ iomap_page_create(struct inode *inode, struct page *page)
+ {
+        struct iomap_page *iop = to_iomap_page(page);
+-       unsigned int nbits;
++       unsigned int n;
+ 
+        if (iop || i_blocksize(inode) == page_size(page))
+                return iop;
+ 
+-       nbits = BITS_TO_LONGS(page_size(page) / SECTOR_SIZE);
+-       iop = kmalloc(struct_size(iop, uptodate, nbits),
+-                       GFP_NOFS | __GFP_NOFAIL);
+-       atomic_set(&iop->read_count, 0);
+-       atomic_set(&iop->write_count, 0);
+-       bitmap_zero(iop->uptodate, nbits);
++       n = BITS_TO_LONGS(page_size(page) >> inode->i_blkbits);
++       iop = kmalloc(struct_size(iop, uptodate, n),
++                       GFP_NOFS | __GFP_NOFAIL | __GFP_ZERO);
+ 
+        /*
+         * migrate_page_move_mapping() assumes that pages with private data have
+
+> > -	unsigned poff = offset_in_page(*pos);
+> > -	unsigned plen = min_t(loff_t, PAGE_SIZE - poff, length);
+> > +	unsigned poff = *pos & (page_size(page) - 1);
+> > +	unsigned plen = min_t(loff_t, page_size(page) - poff, length);
+> >  	unsigned first = poff >> block_bits;
+> >  	unsigned last = (poff + plen - 1) >> block_bits;
+> 
+> This all kinda looks familar. In my block size > page size patch
+> set, I was trying to wrap these sorts of things in helpers as they
+> ge repeated over and over again. e.g:
+> 
+> /*
+>  * Return the block size we should use for page cache based operations.
+>  * This will return the inode block size for block size < PAGE_SIZE,
+>  * otherwise it will return PAGE_SIZE.
+>  */
+> static inline unsigned
+> iomap_chunk_size(struct inode *inode)
+> {
+> 	return min_t(unsigned, PAGE_SIZE, i_blocksize(inode));
+> }
+> 
+> "chunk" being the name that Christoph suggested as the size of the
+> region we need to operate over in this function.
+> 
+> IOws, if we have a normal page, it's as per the above, but if
+> we have block size > PAGE_SIZE, it's the block size we need to work
+> from, and if it's a huge page, is the huge page size we need to
+> use....
+> 
+> So starting by wrapping a bunch of these common length/size/offset
+> calculations will make this code much easier to understand, follow,
+> maintain as we explode the number of combinations of page and block
+> size it supports in the near future...
+> 
+> FYI, the blocksize > pagesize patchset was first posted here:
+> 
+> https://lore.kernel.org/linux-fsdevel/20181107063127.3902-1-david@fromorbit.com/
+> 
+> [ Bad memories, this patchset is what lead us to discover how 
+> horribly broken copy_file_range and friends were. ]
+
+Thanks.  I'll take a look at that and come back with a refreshed patch
+tomorrow that wraps a bunch of these things.
+
+> > -		unsigned end = offset_in_page(isize - 1) >> block_bits;
+> > +		unsigned end = (isize - 1) & (page_size(page) - 1) >>
+> > +				block_bits;
+> 
+> iomap_offset_in_page()....
+
+It has applications outside iomap, so I've been thinking about
+offset_in_this_page(page, thing).  I don't like it, but page_offset()
+is taken and offset_in_page() doesn't take a page parameter.
+
+> > @@ -194,11 +199,12 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
+> >  		return;
+> >  
+> >  	BUG_ON(page->index);
+> > -	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> > +	BUG_ON(size > page_size(page) - ((unsigned long)iomap->inline_data &
+> > +						(page_size(page) - 1)));
+> 
+> Inline data should never use a huge page - it's a total waste of
+> 2MB of memory because inline data is intended for very small data
+> files that fit inside an inode. If anyone ever needs inline data
+> larger than PAGE_SIZE then we can worry about how to support that
+> at that time. Right now it should just refuse to use a huge page...
+
+I kind of agree, but ...
+
+This isn't just about supporting huge pages.  It's about supporting
+large pages too (and by large pages, I mean arbitrary-order pages,
+rather than ones which match a particular CPU's PMD/PGD hierarchy).
+We might well decide that we want to switch to always at least trying
+to allocate 16kB pages in the page cache, and so we might end up here
+with a page larger than the base page size.
+
+And yes, we could say it's the responsibility of that person to do this
+work, but it's done now.
+
+> > -		int nr_vecs = (length + PAGE_SIZE - 1) >> PAGE_SHIFT;
+> > +		int nr_vecs = (length + page_size(page) - 1) >> page_shift(page);
+> 
+> iomap_nr_pages(page)?
+
+Do you mean iomap_nr_pages(page, length)?
+
+Actually, I'm not sure this is right.  It assumes the pages all have the same
+length, so if we do a call to readpages() which has a 2MB page followed by
+a raft of 4kB pages, it'll allocate a BIO with 2 vectors, when it should
+really allocate many more.  I think I'll change this one back to operating
+on PAGE_SIZE and if we fill in fewer vecs than we allocated, that's fine.
+
+> > @@ -355,9 +361,14 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
+> >  {
+> >  	struct iomap_readpage_ctx *ctx = data;
+> >  	loff_t done, ret;
+> > +	size_t pg_left = 0;
+> > +
+> > +	if (ctx->cur_page)
+> > +		pg_left = page_size(ctx->cur_page) -
+> > +					(pos & (page_size(ctx->cur_page) - 1));
+> 
+> What's this unreadable magic do?
+
+Calculates the number of bytes left in this page.
+
+> > @@ -1047,11 +1069,11 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+> >  		goto out_unlock;
+> >  	}
+> >  
+> > -	/* page is wholly or partially inside EOF */
+> > -	if (((page->index + 1) << PAGE_SHIFT) > size)
+> > -		length = offset_in_page(size);
+> > +	/* page is wholly or partially beyond EOF */
+> > +	if (((page->index + compound_nr(page)) << PAGE_SHIFT) > size)
+> > +		length = size & (page_size(page) - 1);
+> >  	else
+> > -		length = PAGE_SIZE;
+> > +		length = page_size(page);
+> 
+> Yeah, that needs some help :)
+> 
+> Basically, I'd love to have all the things that end up being
+> variable because of block size or page size or a combination of both
+> moved into helpers. That way we end up the the code that does the
+> work being clean and easy to maintain, and all the nastiness
+> inherent to variable size objects is isolated to the helper
+> functions...
+
+I'm on board with the overall plan; just the details to quibble over.
