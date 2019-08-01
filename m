@@ -2,104 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9DFC7E15E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 19:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 898FD7E1B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 19:57:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387788AbfHARt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 13:49:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53746 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727899AbfHARt3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 13:49:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/wQ1T27awT3hqgJbloxgvOfdBCqajpO4xm94w+4G9Do=; b=w0gH11WScMc6U6c0/193f4lVGY
-        pJ5Va3+tj/TSEWluBZbB3EsZdE+5fi40Hd7sR4n8NRx+T69RBSZmHZ/UoJHMHoQqhP0bN7L7xwpnd
-        PnyuEOEWkSHWMDK4bwLVQOrsAZuYdJkbpUohRpAB/vTiDgEeNENBjcpfppf159WsUPFbRzRBYdiS2
-        B4yBu2ZX/XwmYyMam1kq+dPc+qgHtzng5hOraEFbZeQWxzCZ5ytD4CBej0CrS8EFW10k3lit3r5ul
-        1VLKt68FO3Nz279TNa/NMYzQtnkvCu2SBByGuhcqnupvhyqUPFTBrEug8bQuR/lE/4Arfluds3QCk
-        VKAOrv0w==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1htFCR-0000Yn-NH; Thu, 01 Aug 2019 17:49:11 +0000
-Subject: Re: [PATCH bpf-next v10 10/10] landlock: Add user and kernel
- documentation for Landlock
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-References: <20190721213116.23476-1-mic@digikod.net>
- <20190721213116.23476-11-mic@digikod.net>
- <88e90c22-1b78-c2f2-8823-fa776265361c@infradead.org>
- <2ced8fc8-79a6-b0fb-70fe-6716fae92aa7@ssi.gouv.fr>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <08c94f99-68e0-4866-3eba-28fa71347fca@infradead.org>
-Date:   Thu, 1 Aug 2019 10:49:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2388056AbfHAR5X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 13:57:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47102 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731930AbfHAR5X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Aug 2019 13:57:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AB808AF3E;
+        Thu,  1 Aug 2019 17:57:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EF9621E3F4D; Thu,  1 Aug 2019 19:57:03 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 19:57:03 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
+        Theodore Tso <tytso@mit.edu>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V2 6/7] fs/jbd2: Make state lock a spinlock
+Message-ID: <20190801175703.GH25064@quack2.suse.cz>
+References: <20190801010126.245731659@linutronix.de>
+ <20190801010944.457499601@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <2ced8fc8-79a6-b0fb-70fe-6716fae92aa7@ssi.gouv.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801010944.457499601@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/1/19 10:03 AM, Mickaël Salaün wrote:
->>> +Ptrace restrictions
->>> +-------------------
->>> +
->>> +A landlocked process has less privileges than a non-landlocked process and must
->>> +then be subject to additional restrictions when manipulating another process.
->>> +To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
->>> +process, a landlocked process must have a subset of the target process programs.
->>             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> Maybe that last statement is correct, but it seems to me that it is missing something.
-> What about this:
+On Thu 01-08-19 03:01:32, Thomas Gleixner wrote:
+> Bit-spinlocks are problematic on PREEMPT_RT if functions which might sleep
+> on RT, e.g. spin_lock(), alloc/free(), are invoked inside the lock held
+> region because bit spinlocks disable preemption even on RT.
 > 
-> To be allowed to trace a process (using :manpage:`ptrace(2)`), a
-> landlocked tracer process must only be constrained by a subset (possibly
-> empty) of the Landlock programs which are also applied to the tracee.
-> This ensure that the tracer has less or the same constraints than the
+> A first attempt was to replace state lock with a spinlock placed in struct
+> buffer_head and make the locking conditional on PREEMPT_RT and
+> DEBUG_BIT_SPINLOCKS.
+> 
+> Jan pointed out that there is a 4 byte hole in struct journal_head where a
+> regular spinlock fits in and he would not object to convert the state lock
+> to a spinlock unconditionally.
+> 
+> Aside of solving the RT problem, this also gains lockdep coverage for the
+> journal head state lock (bit-spinlocks are not covered by lockdep as it's
+> hard to fit a lockdep map into a single bit).
+> 
+> The trivial change would have been to convert the jbd_*lock_bh_state()
+> inlines, but that comes with the downside that these functions take a
+> buffer head pointer which needs to be converted to a journal head pointer
+> which adds another level of indirection.
+> 
+> As almost all functions which use this lock have a journal head pointer
+> readily available, it makes more sense to remove the lock helper inlines
+> and write out spin_*lock() at all call sites.
+> 
+> Fixup all locking comments as well.
+> 
+> Suggested-by: Jan Kara <jack@suse.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Mark Fasheh <mark@fasheh.com>
+> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
+> Cc: Joel Becker <jlbec@evilplan.org>
+> Cc: Jan Kara <jack@suse.com>
+> Cc: linux-ext4@vger.kernel.org
 
-       ensures
+Just a heads up that I didn't miss this patch. Just it has some bugs and I
+figured that rather than explaining to you subtleties of jh lifetime it is
+easier to fix up the problems myself since you're probably not keen on
+becoming jbd2 developer ;)... which was more complex than I thought so I'm
+not completely done yet. Hopefuly tomorrow.
 
-> tracee, hence protecting against privilege escalation.
-
-Yes, better.  Thanks.
-
-
+								Honza
 -- 
-~Randy
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
