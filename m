@@ -2,103 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB1917D563
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 08:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 797057D5F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 09:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729824AbfHAGSF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 02:18:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728884AbfHAGSE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 02:18:04 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EDBC206A3;
-        Thu,  1 Aug 2019 06:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564640283;
-        bh=P7+ACBH9J5mTnDheikQW7WOAS+HoMLWPjzJygxs6sMA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gpc+lB55+mtiUztM8rfj9Me584E3lPqEIfzL0dMJfaRla1hs1CZsZz7iQFjdiJzfU
-         wv3d8zKZ0NSuxjK/IRpQBTGnJ0OeSpcIxKFpWFtpY99JupeJ93Ba0skNlYsMOJewoz
-         yc5sOggjdNqt405T59V7d9QAnkynqcHVMmi05D0s=
-Date:   Thu, 1 Aug 2019 08:18:01 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/3] firmware: add offset to request_firmware_into_buf
-Message-ID: <20190801061801.GA4338@kroah.com>
-References: <20190523025113.4605-1-scott.branden@broadcom.com>
- <20190523025113.4605-3-scott.branden@broadcom.com>
- <20190523055233.GB22946@kroah.com>
- <15c47e4d-e70d-26bb-9747-0ad0aa81597b@broadcom.com>
- <20190523165424.GA21048@kroah.com>
- <44282070-ddaf-3afb-9bdc-4751e3f197ac@broadcom.com>
- <20190524052258.GB28229@kroah.com>
- <2f67db0a-27c3-d13c-bbe0-0af5edd4f0da@broadcom.com>
+        id S1730434AbfHAHBs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 03:01:48 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10207 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730306AbfHAHBs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Aug 2019 03:01:48 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d428e5c0000>; Thu, 01 Aug 2019 00:01:48 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 01 Aug 2019 00:01:47 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 01 Aug 2019 00:01:47 -0700
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 1 Aug
+ 2019 07:01:46 +0000
+Subject: Re: [PATCH v4 1/3] mm/gup: add make_dirty arg to
+ put_user_pages_dirty_lock()
+To:     Christoph Hellwig <hch@lst.de>, <john.hubbard@gmail.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190730205705.9018-1-jhubbard@nvidia.com>
+ <20190730205705.9018-2-jhubbard@nvidia.com> <20190801060755.GA14893@lst.de>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <36713a8a-ac94-8af7-bedf-a3da6c6132a7@nvidia.com>
+Date:   Thu, 1 Aug 2019 00:01:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2f67db0a-27c3-d13c-bbe0-0af5edd4f0da@broadcom.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190801060755.GA14893@lst.de>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564642908; bh=my/85jeGWSZJHtRlBuXzE4k0EyRLwJrmf2kurssg82c=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=BE/FS0MgD5AYk51ouyHNs4X8FqW/AlJFw51Q8R1TRI2GD6IOdn/1tc0f8d17PnQuR
+         0Z29vU6LNM4vLOhRI1ICsnxx9CJbaK67B4+P50dZEZC3TKrxh+CbRgPy1II2gJN1Ox
+         sgjPcluxAyQuF8zD1tmNbaF3orKKsCLf8LGjBkZ2Dd6uk8L1cJZx0sa6gjml9A/pvl
+         l8lHfekfgfuMtiHYmcIuX2d5w4E0873CGNZaTN60cvh/hpRl524bvtSwNb0l1RblrJ
+         aYJKWtVExKSnCUM8qF6X0x0Cyxcn7j9MhMPGq1/IrqL8k30zP0Fu0rWtpPEmGYGs7S
+         JL5/+DN+tFZeQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 05:18:32PM -0700, Scott Branden wrote:
-> Hi Greg,
+On 7/31/19 11:07 PM, Christoph Hellwig wrote:
+> On Tue, Jul 30, 2019 at 01:57:03PM -0700, john.hubbard@gmail.com wrote:
+>> @@ -40,10 +40,7 @@
+>>  static void __qib_release_user_pages(struct page **p, size_t num_pages,
+>>  				     int dirty)
+>>  {
+>> -	if (dirty)
+>> -		put_user_pages_dirty_lock(p, num_pages);
+>> -	else
+>> -		put_user_pages(p, num_pages);
+>> +	put_user_pages_dirty_lock(p, num_pages, dirty);
+>>  }
 > 
-> I am now back from leave to continue this patch.  Comment below.
-> 
-> On 2019-05-23 10:22 p.m., Greg Kroah-Hartman wrote:
-> > On Thu, May 23, 2019 at 10:01:38PM -0700, Scott Branden wrote:
-> > > On 2019-05-23 9:54 a.m., Greg Kroah-Hartman wrote:
-> > > > On Thu, May 23, 2019 at 09:36:02AM -0700, Scott Branden wrote:
-> > > > > Hi Greg,
-> > > > > 
-> > > > > On 2019-05-22 10:52 p.m., Greg Kroah-Hartman wrote:
-> > > > > > On Wed, May 22, 2019 at 07:51:12PM -0700, Scott Branden wrote:
-> > > > > > > Add offset to request_firmware_into_buf to allow for portions
-> > > > > > > of firmware file to be read into a buffer.  Necessary where firmware
-> > > > > > > needs to be loaded in portions from file in memory constrained systems.
-> > > > > > > 
-> > > > > > > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-> > > > > > > ---
-> > > > > > >     drivers/base/firmware_loader/firmware.h |  5 +++
-> > > > > > >     drivers/base/firmware_loader/main.c     | 49 +++++++++++++++++--------
-> > > > > > >     include/linux/firmware.h                |  8 +++-
-> > > > > > >     3 files changed, 45 insertions(+), 17 deletions(-)
-> > > > > > No new firmware test for this new option?  How do we know it even works?
-> > > > > I was unaware there are existing firmware tests.  Please let me know where
-> > > > > these tests exists and I can add a test for this new option.
-> > > > tools/testing/selftests/firmware/
-> > > Unfortunately, there doesn't seem to be a test for the existing
-> > > request_firmware_into_buf api.
-> > Are you sure?  The test is for userspace functionality, there isn't
-> > kernel unit tests here.  You need to verify that you didn't break
-> > existing functionality as well as verify that your new functionality
-> > works.
-> 
-> I managed to figure out how to build and run
-> tools/testing/selftest/firmware/fw_run_tests.sh
-> 
-> and my changes don't break existing functionality.
-> 
-> But, I find no use of request_firmware_into_buf in lib/test_firmware.c
-> (triggered by fw_run_tests.sh).
-> 
-> Is there another test for request_firmware_into_buf?
+> __qib_release_user_pages should be removed now as a direct call to
+> put_user_pages_dirty_lock is a lot more clear.
 
-I have no idea, sorry.
+OK.
 
-greg k-h
+> 
+>> index 0b0237d41613..62e6ffa9ad78 100644
+>> --- a/drivers/infiniband/hw/usnic/usnic_uiom.c
+>> +++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
+>> @@ -75,10 +75,7 @@ static void usnic_uiom_put_pages(struct list_head *chunk_list, int dirty)
+>>  		for_each_sg(chunk->page_list, sg, chunk->nents, i) {
+>>  			page = sg_page(sg);
+>>  			pa = sg_phys(sg);
+>> -			if (dirty)
+>> -				put_user_pages_dirty_lock(&page, 1);
+>> -			else
+>> -				put_user_page(page);
+>> +			put_user_pages_dirty_lock(&page, 1, dirty);
+>>  			usnic_dbg("pa: %pa\n", &pa);
+> 
+> There is a pre-existing bug here, as this needs to use the sg_page
+> iterator.  Probably worth throwing in a fix into your series while you
+> are at it.
+
+The amount of scatterlist code I've written is approximately zero lines,
++/- a few lines. :)  I thought for_each_sg() *was* the sg_page iterator...
+
+I'll be glad to post a fix, but I'm not yet actually spotting the bug! heh
+
+> 
+>> @@ -63,15 +63,7 @@ struct siw_mem *siw_mem_id2obj(struct siw_device *sdev, int stag_index)
+>>  static void siw_free_plist(struct siw_page_chunk *chunk, int num_pages,
+>>  			   bool dirty)
+>>  {
+>> -	struct page **p = chunk->plist;
+>> -
+>> -	while (num_pages--) {
+>> -		if (!PageDirty(*p) && dirty)
+>> -			put_user_pages_dirty_lock(p, 1);
+>> -		else
+>> -			put_user_page(*p);
+>> -		p++;
+>> -	}
+>> +	put_user_pages_dirty_lock(chunk->plist, num_pages, dirty);
+> 
+> siw_free_plist should just go away now.
+
+OK, yes.
+
+> 
+> Otherwise this looks good to me.
+> 
+
+Great, I'll make the above changes and post an updated series with your
+Reviewed-by, and Bjorn's ACK for patch #3.
+
+Next: I've just finished sweeping through a bunch of patches and applying this
+where applicable, so now that this API seems acceptable, I'll post another
+chunk of put_user_page*() conversions.
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
