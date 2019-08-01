@@ -2,136 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11BD87DBDA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 14:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C5267DCA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2019 15:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731472AbfHAMsK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 08:48:10 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43722 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731341AbfHAMsK (ORCPT
+        id S1726403AbfHANjt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 09:39:49 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:33058 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725804AbfHANjs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:48:10 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c19so50146808lfm.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Aug 2019 05:48:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rl9gxlsQAmtdUucdCjHcN4IJXqqRSXnZiys3c1iAChM=;
-        b=BCqrZFER2qt2tRS4BERTa8OYTuAczZw6Vu3z7uTZGQYFaSHcfqcuV5SQV52phXuR2o
-         pc7vXSMcsbSyYQZoWwSHx+qcs5+KqXD1ix4QMDk1fiOe2f+Ey++TFVh4YlYS57d7nY/R
-         +PJ/gd2ZVxTYilPY2dcgN2+QJY+52AFbAoy3305qeyBUImzo0UJUG1ndwMGZnl91xgKz
-         NZSc6hvZbcgaGjMl71JYcOKdsjCyGbbYqmWeQxBn+au/dhacM3cMsu+jw8f7pJ2BZvPK
-         ixzTT/jc3086+42k3lk1OU5aCakMaxf9AgMmj6t3GYjy8+6qb4n0kmkj+3oN88PiNKlA
-         pQPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rl9gxlsQAmtdUucdCjHcN4IJXqqRSXnZiys3c1iAChM=;
-        b=tONSD/9AxFnWxGPOYaZJOg2hHRZP3DU5IQepm2CZQyv3jusCIESBl+wjvUA4ud0fnc
-         pvU11x9QO0yjZWKxzB+X7SPtVKxhwDPy3xpSfnh1W6epGuPoMn4T48mLRZjZmOgo4fn0
-         I5KPiMl+3WuzzaWKmxVLuk9ej6qE1VsvGkC0sGLnkTd1s2MMtBdJhs+0T1K+b/SI3C9L
-         z4YWzKc2dxXZ5pfliT0IV8ek37WR0Iiv4PTpXG+CFaoEI2a/dcbixbkgSUklGvSDqcxt
-         vUuaL0IN9hMP/XQuUT1dtgSk6eSb5r2whJaxPnjB1gzGXWCJWZTYTNwyg3ra9GgPrI5U
-         aj1w==
-X-Gm-Message-State: APjAAAVVrOwBCHUuXai4d9clATtWDv89S14GmOqzqGNB/VIBZ2yZ0XiR
-        sa871VU0MJy+nk245IDq2Dfd8S+HJTQU3MPFsQ==
-X-Google-Smtp-Source: APXvYqxgr8PQjSzAdp7+U+PsgA9phbRv670CHsf3naEv6EhZF5kRfW6dfEe+5cBDHIT5XJU7QNpkLNvRclzntJy1hqs=
-X-Received: by 2002:ac2:5559:: with SMTP id l25mr59946611lfk.175.1564663688296;
- Thu, 01 Aug 2019 05:48:08 -0700 (PDT)
+        Thu, 1 Aug 2019 09:39:48 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71Dc2Zd029380;
+        Thu, 1 Aug 2019 06:39:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=daTicNml4+qNGGZTCJm9uI+41O81uJc/GgzwyZfREk4=;
+ b=SiQKz7LyPRQkTpSG+3jWs4z0k32IFbSFdXI6yuyUrJFQn9OoJuFrZmR4f92v+i2v6hzZ
+ AkB4NLgJZYNsNyJmPi6Jl1dnl9zBZ3qvwo8FjakNJFexGrxBNALYJcL4q9mZLzcPYjqx
+ LclGL3lJiDlcGGD0Jg0hQkzNz6x3/6rZ4HQ= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2u3n9xjgkj-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 01 Aug 2019 06:39:43 -0700
+Received: from ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) by
+ ash-exhub201.TheFacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 1 Aug 2019 06:39:35 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Thu, 1 Aug 2019 06:39:35 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YPA+fWxxpT2YaKHqQH9miFAqTNA/8BkU2yBoSqjCwoLtlroNDPCdfCkXi3/U9ioeBaTy9DzqsBaA+2UYlRIbKQmUjTYlkqFSD8jYuDfhrkcRF6fI1uSKp5672kuuL11l7iNlIsGwOGCsiSZIlUSWEh5qZy7og4CgDKdHE6aWPUqUq6nSPP39LDJ/ocnenqOP/t91+lfMqRTeF2a/5jcOHmgiyp0+Q/HFv/Ani0b58bxa2k5gPjjh1/4iVgYR+Gc+qfHn9EkigxltWzrh5vQMhgWUUSR8+3WvCiK/S9CLz04tj9LFF0QgRh8PS7Rk7DqywcZ0Yj7L9lw+VW06cs/q5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=daTicNml4+qNGGZTCJm9uI+41O81uJc/GgzwyZfREk4=;
+ b=L7Q414dJ1mL7rkfwFmBoSFx0VedMaTmKCvUsFCoiwxiaLfsgPG1I6hTPMMJmn/htd2Znd98CP7JsBgMjp4Svx8ceA26NxJj6Q2yY6UbdcPQ3yEdLwIs/5txaQokv8B8gcKzAhAiv3xQSnzQ17VSvBKCglpSrudtFj6Ee1UuRfwFidVcP6slPHudQihj6j6Mhg29Fy38TcftpunmporSaSZOvtUC1ctc6KxZ1mnogyFdHI82dvPo6e5ooaL4wHNiPwA2ZjNOE+BsBjQhhnfhhZaGDpMVa6BzdkjqaOFysLRfrC/nJ5VVyGRCOXEjm1bItMX/AfpjzgIhLglTc6XMQjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
+ header.d=fb.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=daTicNml4+qNGGZTCJm9uI+41O81uJc/GgzwyZfREk4=;
+ b=BOZy/LL80Krx4XZTE6qvqxeYv+lP18mPOhli3PUXIcD+Tw8+AFlz7iQfSASKegI6j7v0ITeO0++QLF3TOQeIqqUbgGIUMQ2EJZ2YlIHi0QY9zwClsUtG1bFq9aL2M5u6Z6kV3iBEVP3DoTZuDUs2BMKBNHIQ4W5OLeMNAx5264M=
+Received: from BN6PR15MB1282.namprd15.prod.outlook.com (10.172.208.142) by
+ BN6PR15MB1444.namprd15.prod.outlook.com (10.172.151.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.15; Thu, 1 Aug 2019 13:39:34 +0000
+Received: from BN6PR15MB1282.namprd15.prod.outlook.com
+ ([fe80::c47a:8d15:afbc:debd]) by BN6PR15MB1282.namprd15.prod.outlook.com
+ ([fe80::c47a:8d15:afbc:debd%10]) with mapi id 15.20.2136.010; Thu, 1 Aug 2019
+ 13:39:34 +0000
+From:   Chris Mason <clm@fb.com>
+To:     Dave Chinner <david@fromorbit.com>
+CC:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 09/24] xfs: don't allow log IO to be throttled
+Thread-Topic: [PATCH 09/24] xfs: don't allow log IO to be throttled
+Thread-Index: AQHVSA9fnWuPStnf6EeOPJMMPtRTUqbmTPoA
+Date:   Thu, 1 Aug 2019 13:39:34 +0000
+Message-ID: <F1E7CC65-D2CB-4078-9AA3-9D172ECDE17B@fb.com>
+References: <20190801021752.4986-1-david@fromorbit.com>
+ <20190801021752.4986-10-david@fromorbit.com>
+In-Reply-To: <20190801021752.4986-10-david@fromorbit.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: MailMate (1.12.5r5635)
+x-clientproxiedby: BN6PR03CA0055.namprd03.prod.outlook.com
+ (2603:10b6:404:4c::17) To BN6PR15MB1282.namprd15.prod.outlook.com
+ (2603:10b6:404:ed::14)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c091:480::bfbd]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 54982839-4942-4c64-fc02-08d71685b05e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN6PR15MB1444;
+x-ms-traffictypediagnostic: BN6PR15MB1444:
+x-microsoft-antispam-prvs: <BN6PR15MB1444A23509E44B67AB37CEA8D3DE0@BN6PR15MB1444.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 01165471DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(39860400002)(136003)(376002)(199004)(189003)(71200400001)(476003)(14454004)(53546011)(14444005)(36756003)(46003)(486006)(6436002)(76176011)(7736002)(6916009)(8676002)(186003)(478600001)(11346002)(8936002)(52116002)(229853002)(50226002)(81166006)(386003)(68736007)(6506007)(2906002)(102836004)(316002)(81156014)(2616005)(6486002)(446003)(33656002)(54906003)(5660300002)(305945005)(66946007)(6512007)(256004)(6116002)(64756008)(66476007)(66556008)(53936002)(6246003)(71190400001)(86362001)(99286004)(66446008)(25786009)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR15MB1444;H:BN6PR15MB1282.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: jCPNsrsYj2CPdrlAHs0/1GprP43MiqLSQapmRtNZddNVOaSkj4QWt2JH1IlQzpNLvixoMhBf1HU5o+VP9eefatWphr6ZmctKgJKjQVe+5cL9shBt1XjeijE9Te6GLfxpiqcGNXluTOzWrjyHEjE7UnSEKlD0SkoI0k9I7L3cRF6fiuqVgDNKekRTn8VawI+O0Mc2iTpHXIAUETBNGRkXIaMUGVBTsAWZziRHSVR5rYK77cKhiZg9VfGccPEg5o2n5xcwVrVnWTkmFhFlW/FU1ppupmfMGKhWc5a7+4keADsNTLmobaFPlNYozfGP27nfrTOJwH0bvWgcciApEBk5GB7S4v2STnTygQQRrMGP6tjvvLqGI3B60+vf1Pb1wg7AhdFSTf98gDYDiAi55M2IpEGAaOEAqJr0Q+TzqafQMyQ=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190731153443.4984-1-acgoide@tycho.nsa.gov> <1c62c931-9441-4264-c119-d038b2d0c9b9@schaufler-ca.com>
- <CAHC9VhS6cfMw5ZUkOSov6hexh9QpnpKwipP7L7ZYGCVLCHGfFQ@mail.gmail.com> <66fbc35c-6cc8-bd08-9bf9-aa731dc3ff09@tycho.nsa.gov>
-In-Reply-To: <66fbc35c-6cc8-bd08-9bf9-aa731dc3ff09@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 1 Aug 2019 08:47:56 -0400
-Message-ID: <CAHC9VhQg_UCDZpm=hWTn5YFAYQJt1K_fRxxq+LzORekJ8p9zNg@mail.gmail.com>
-Subject: Re: [PATCH] fanotify, inotify, dnotify, security: add security hook
- for fs notifications
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
-        amir73il@gmail.com, James Morris <jmorris@namei.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54982839-4942-4c64-fc02-08d71685b05e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2019 13:39:34.4309
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: clm@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR15MB1444
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=745 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908010145
+X-FB-Internal: deliver
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 7:31 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 7/31/19 8:27 PM, Paul Moore wrote:
-> > On Wed, Jul 31, 2019 at 1:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> On 7/31/2019 8:34 AM, Aaron Goidel wrote:
+On 31 Jul 2019, at 22:17, Dave Chinner wrote:
 
-...
-
-> >>> +static int selinux_path_notify(const struct path *path, u64 mask,
-> >>> +                                             unsigned int obj_type)
-> >>> +{
-> >>> +     int ret;
-> >>> +     u32 perm;
-> >>> +
-> >>> +     struct common_audit_data ad;
-> >>> +
-> >>> +     ad.type = LSM_AUDIT_DATA_PATH;
-> >>> +     ad.u.path = *path;
-> >>> +
-> >>> +     /*
-> >>> +      * Set permission needed based on the type of mark being set.
-> >>> +      * Performs an additional check for sb watches.
-> >>> +      */
-> >>> +     switch (obj_type) {
-> >>> +     case FSNOTIFY_OBJ_TYPE_VFSMOUNT:
-> >>> +             perm = FILE__WATCH_MOUNT;
-> >>> +             break;
-> >>> +     case FSNOTIFY_OBJ_TYPE_SB:
-> >>> +             perm = FILE__WATCH_SB;
-> >>> +             ret = superblock_has_perm(current_cred(), path->dentry->d_sb,
-> >>> +                                             FILESYSTEM__WATCH, &ad);
-> >>> +             if (ret)
-> >>> +                     return ret;
-> >>> +             break;
-> >>> +     case FSNOTIFY_OBJ_TYPE_INODE:
-> >>> +             perm = FILE__WATCH;
-> >>> +             break;
-> >>> +     default:
-> >>> +             return -EINVAL;
-> >>> +     }
-> >>> +
-> >>> +     // check if the mask is requesting ability to set a blocking watch
-> >
-> > ... in the future please don't use "// XXX", use "/* XXX */" instead :)
-> >
-> > Don't respin the patch just for this, but if you have to do it for
-> > some other reason please fix the C++ style comments.  Thanks.
+> From: Dave Chinner <dchinner@redhat.com>
 >
-> This was discussed during the earlier RFC series but ultimately someone
-> pointed to:
-> https://lkml.org/lkml/2016/7/8/625
-> where Linus blessed the use of C++/C99 style comments.  And checkpatch
-> accepts them these days.
+> Running metadata intensive workloads, I've been seeing the AIL
+> pushing getting stuck on pinned buffers and triggering log forces.
+> The log force is taking a long time to run because the log IO is
+> getting throttled by wbt_wait() - the block layer writeback
+> throttle. It's being throttled because there is a huge amount of
+> metadata writeback going on which is filling the request queue.
+>
+> IOWs, we have a priority inversion problem here.
+>
+> Mark the log IO bios with REQ_IDLE so they don't get throttled
+> by the block layer writeback throttle. When we are forcing the CIL,
+> we are likely to need to to tens of log IOs, and they are issued as
+> fast as they can be build and IO completed. Hence REQ_IDLE is
+> appropriate - it's an indication that more IO will follow shortly.
+>
+> And because we also set REQ_SYNC, the writeback throttle will no
+> treat log IO the same way it treats direct IO writes - it will not
+> throttle them at all. Hence we solve the priority inversion problem
+> caused by the writeback throttle being unable to distinguish between
+> high priority log IO and background metadata writeback.
+>
+  [ cc Jens ]
 
-Yep, I'm aware of both, it is simply a personal preference of mine.
-I'm not going to reject patches with C++ style comments, but I would
-ask people to stick to the good ol' fashioned comments for patches
-they submit.
+We spent a lot of time getting rid of these inversions in io.latency=20
+(and the new io.cost), where REQ_META just blows through the throttling=20
+and goes into back charging instead.
 
-> Obviously if you truly don't want them in the SELinux code, that's your
-> call.  But note that all files now have at least one such comment as a
-> result of the mass SPDX license headers that were added throughout the
-> tree using that style.
+It feels awkward to have one set of prio inversion workarounds for io.*=20
+and another for wbt.  Jens, should we make an explicit one that doesn't=20
+rely on magic side effects, or just decide that metadata is meta enough=20
+to break all the rules?
 
-FYI, the sky is blue.
-
-It isn't just the license headers either, Al dropped one into hooks.c
-:).  Just like I don't plan to reject patches due only to the comment
-style, you don't see me pushing patches to change the C++ comments.
-
--- 
-paul moore
-www.paul-moore.com
+-chris
