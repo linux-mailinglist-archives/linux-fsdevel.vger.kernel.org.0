@@ -2,75 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 317467EE8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 10:15:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22DE07EF38
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 10:27:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390763AbfHBIPF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 04:15:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53478 "EHLO mail.kernel.org"
+        id S2389340AbfHBI14 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 04:27:56 -0400
+Received: from verein.lst.de ([213.95.11.211]:50830 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbfHBIPF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:15:05 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBCE121783;
-        Fri,  2 Aug 2019 08:15:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564733704;
-        bh=O6smRj8j54FKizQ72R3Ag1CbAtjUF++b4VrIhbnQhW0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u5+fPn2elpCOjkuEfImz+eltu+dqjofwpAjh1i6H6fn1kA7aWbHvlzARBhy9Lnf63
-         cngZa5z1jhUKakU4OlccG6MnqFafeG1EmUIVDMTPqOfLw7k8m/WehoGxvYT77pp5Ct
-         EW/joGquCN2fYVTrc8QckVXDd0lGYlK5WMV1hsC0=
-Date:   Fri, 2 Aug 2019 10:15:01 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Andreas Steinmetz <ast@domdv.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] Fix cuse ENOMEM ioctl breakage in 4.20.0
-Message-ID: <20190802081501.GK26174@kroah.com>
-References: <1546163027.3036.2.camel@domdv.de>
- <CAJfpegvBvY2hLUc010hgi3JwWPyvT1CK1X2GD3qUe-dBDtoBbA@mail.gmail.com>
- <388f911ccba16dee350bb2534b67d601b44f3a92.camel@domdv.de>
- <CAJfpegtQ11yRhg3+h+dCJ_juc6KGKBLLwB_Vco8+KDACpBmY5w@mail.gmail.com>
+        id S1726164AbfHBI14 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:27:56 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 6415A68C65; Fri,  2 Aug 2019 10:27:53 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 10:27:53 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] iomap: Support large pages
+Message-ID: <20190802082753.GA10664@lst.de>
+References: <20190731171734.21601-1-willy@infradead.org> <20190731171734.21601-2-willy@infradead.org> <20190731230315.GJ7777@dread.disaster.area> <20190801035955.GI4700@bombadil.infradead.org> <20190801162147.GB25871@lst.de> <20190801174500.GL4700@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegtQ11yRhg3+h+dCJ_juc6KGKBLLwB_Vco8+KDACpBmY5w@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190801174500.GL4700@bombadil.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 28, 2019 at 03:12:28PM +0200, Miklos Szeredi wrote:
-> On Sat, May 18, 2019 at 3:58 PM Andreas Steinmetz <ast@domdv.de> wrote:
+On Thu, Aug 01, 2019 at 10:45:00AM -0700, Matthew Wilcox wrote:
+> On Thu, Aug 01, 2019 at 06:21:47PM +0200, Christoph Hellwig wrote:
+> > On Wed, Jul 31, 2019 at 08:59:55PM -0700, Matthew Wilcox wrote:
+> > > -       nbits = BITS_TO_LONGS(page_size(page) / SECTOR_SIZE);
+> > > -       iop = kmalloc(struct_size(iop, uptodate, nbits),
+> > > -                       GFP_NOFS | __GFP_NOFAIL);
+> > > -       atomic_set(&iop->read_count, 0);
+> > > -       atomic_set(&iop->write_count, 0);
+> > > -       bitmap_zero(iop->uptodate, nbits);
+> > > +       n = BITS_TO_LONGS(page_size(page) >> inode->i_blkbits);
+> > > +       iop = kmalloc(struct_size(iop, uptodate, n),
+> > > +                       GFP_NOFS | __GFP_NOFAIL | __GFP_ZERO);
+> > 
+> > I am really worried about potential very large GFP_NOFS | __GFP_NOFAIL
+> > allocations here.
 > 
-> > > On Sun, Dec 30, 2018 at 10:52 AM Andreas Steinmetz <ast@domdv.de> wrote:
-> > > > This must have happened somewhen after 4.17.2 and I did find it in
-> > > > 4.20.0:
-> > > >
-> > > > cuse_process_init_reply() doesn't initialize fc->max_pages and thus all
-> > > > cuse bases ioctls fail with ENOMEM.
-> > > >
-> > > > Patch which fixes this is attached.
-> > >
-> > > Thanks.  Pushed a slightly different patch:
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git/commit/?h=for-next&id=666a40e87038221d45d47aa160b26410fd67c1d2
-> > >
-> 
-> > It got broken again, ENONEM.
-> > I do presume that commit 5da784cce4308ae10a79e3c8c41b13fb9568e4e0 is the
-> > culprit. Could you please fix this and, please, could somebody do a cuse
-> > regression test after changes to fuse?
-> 
-> Hi,
-> 
-> Can you please tell us which kernel is broken?
+> I don't think it gets _very_ large here.  Assuming a 4kB block size
+> filesystem, that's 512 bits (64 bytes, plus 16 bytes for the two counters)
+> for a 2MB page.  For machines with an 8MB PMD page, it's 272 bytes.
+> Not a very nice fraction of a page size, so probably rounded up to a 512
+> byte allocation, but well under the one page that the MM is supposed to
+> guarantee being able to allocate.
 
-Did this ever get resolved?
+And if we use GB pages?
 
-totally confused,
+Or 512-byte blocks or at least 1k blocks, which we need to handle even
+if they are not preferred by any means.  The real issue here is not just
+the VMs capability to allocate these by some means, but that we do
+__GFP_NOFAIL allocations in nofs context.
 
-greg k-h
+> > And thinking about this a bit more while walking
+> > at the beach I wonder if a better option is to just allocate one
+> > iomap per tail page if needed rather than blowing the head page one
+> > up.  We'd still always use the read_count and write_count in the
+> > head page, but the bitmaps in the tail pages, which should be pretty
+> > easily doable.
+> 
+> We wouldn't need to allocate an iomap per tail page, even.  We could
+> just use one bit of tail-page->private per block.  That'd work except
+> for 512-byte block size on machines with a 64kB page.  I doubt many
+> people expect that combination to work well.
+
+We'd still need to deal with the T10 PI tuples for a case like that,
+though.
+
+> 
+> One of my longer-term ambitions is to do away with tail pages under
+> certain situations; eg partition the memory between allocatable-as-4kB
+> pages and allocatable-as-2MB pages.  We'd need a different solution for
+> that, but it's a bit of a pipe dream right now anyway.
+
+Yes, lets focus on that.  Maybe at some point we'll also get extent
+based VM instead of pages ;-)
