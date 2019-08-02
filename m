@@ -2,126 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F807800E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 21:26:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21406800F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 21:30:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405007AbfHBT0l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 15:26:41 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17220 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404439AbfHBT0l (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 15:26:41 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d448e710000>; Fri, 02 Aug 2019 12:26:41 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 02 Aug 2019 12:26:39 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 02 Aug 2019 12:26:39 -0700
-Received: from [10.2.171.217] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
- 2019 19:26:39 +0000
-Subject: Re: [PATCH 20/34] xen: convert put_page() to put_user_page*()
-To:     "Weiny, Ira" <ira.weiny@intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        "john.hubbard@gmail.com" <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "devel@lists.orangefs.org" <devel@lists.orangefs.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-References: <20190802022005.5117-1-jhubbard@nvidia.com>
- <20190802022005.5117-21-jhubbard@nvidia.com>
- <4471e9dc-a315-42c1-0c3c-55ba4eeeb106@suse.com>
- <d5140833-e9ee-beb5-ff0a-2d13a4fe819f@nvidia.com>
- <d4931311-db01-e8c3-0f8c-d64685dc2143@suse.com>
- <2807E5FD2F6FDA4886F6618EAC48510E79E66216@CRSMSX101.amr.corp.intel.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <746b2412-f48a-9722-2763-253a1b9c899d@nvidia.com>
-Date:   Fri, 2 Aug 2019 12:25:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2392097AbfHBT37 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 15:29:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34940 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391971AbfHBT37 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 15:29:59 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 089EF3CA12;
+        Fri,  2 Aug 2019 19:29:59 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A4D4F19C68;
+        Fri,  2 Aug 2019 19:29:56 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 2C27C22377E; Fri,  2 Aug 2019 15:29:56 -0400 (EDT)
+Date:   Fri, 2 Aug 2019 15:29:56 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     dan.j.williams@intel.com, linux-nvdimm@lists.01.org
+Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com
+Subject: [PATCH] dax: dax_layout_busy_page() should not unmap cow pages
+Message-ID: <20190802192956.GA3032@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <2807E5FD2F6FDA4886F6618EAC48510E79E66216@CRSMSX101.amr.corp.intel.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564774001; bh=rRhheBqnK3+cjDjuz6CHnpsz5YflbO5z8PXp1A2YK5w=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=byi/JLB7CNtV06561y8XoJ3SAPfLWvMAReG7pbHQL4vyYMWIeKNh0N7pvRnXFQG1L
-         qdrcKeqyYLdfyHlBvNt3iltX04f4l9yslTmpDdtWvq1t3b7bkuO+rrbkZHys+WsmhV
-         6Aa9W+8qQAz5X83c7tyDcDc6Mg36wKOuzq27pabbfn+69ez0SBMHEuaNtlKh20Fcaj
-         gTip6LdymKj+uFDjnVTxb7sYVNWRS9rebCu5gBiFOf/CT8TUXKtD/8+Sk9b10OKO7l
-         1Y0kk6maXEh1JdSy6qqRDc1JYyIdeVQu9Kdnt4cKXn6PzYq3IXSks/FI+pwJb3dRVj
-         9ZhtT6T5hfRNQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 02 Aug 2019 19:29:59 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/2/19 9:09 AM, Weiny, Ira wrote:
->>
->> On 02.08.19 07:48, John Hubbard wrote:
->>> On 8/1/19 9:36 PM, Juergen Gross wrote:
->>>> On 02.08.19 04:19, john.hubbard@gmail.com wrote:
->>>>> From: John Hubbard <jhubbard@nvidia.com>
->>> ...
->>> If that's not the case (both here, and in 3 or 4 other patches in this
->>> series, then as you said, I should add NULL checks to put_user_pages()
->>> and put_user_pages_dirty_lock().
->>
->> In this case it is not correct, but can easily be handled. The NULL case can
->> occur only in an error case with the pages array filled partially or not at all.
->>
->> I'd prefer something like the attached patch here.
-> 
-> I'm not an expert in this code and have not looked at it carefully but that patch does seem to be the better fix than forcing NULL checks on everyone.
-> 
+As of now dax_layout_busy_page() calls unmap_mapping_range() with last
+argument as 1, which says even unmap cow pages. I am wondering who needs
+to get rid of cow pages as well.
 
-OK, I'll use Juergen's approach, and also check for that pattern in the
-other patches.
+I noticed one interesting side affect of this. I mount xfs with -o dax and
+mmaped a file with MAP_PRIVATE and wrote some data to a page which created
+cow page. Then I called fallocate() on that file to zero a page of file.
+fallocate() called dax_layout_busy_page() which unmapped cow pages as well
+and then I tried to read back the data I wrote and what I get is old
+data from persistent memory. I lost the data I had written. This
+read basically resulted in new fault and read back the data from
+persistent memory.
 
+This sounds wrong. Are there any users which need to unmap cow pages
+as well? If not, I am proposing changing it to not unmap cow pages.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+I noticed this while while writing virtio_fs code where when I tried
+to reclaim a memory range and that corrupted the executable and I
+was running from virtio-fs and program got segment violation.
+
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+---
+ fs/dax.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: rhvgoyal-linux/fs/dax.c
+===================================================================
+--- rhvgoyal-linux.orig/fs/dax.c	2019-08-01 17:03:10.574675652 -0400
++++ rhvgoyal-linux/fs/dax.c	2019-08-02 14:32:28.809639116 -0400
+@@ -600,7 +600,7 @@ struct page *dax_layout_busy_page(struct
+ 	 * guaranteed to either see new references or prevent new
+ 	 * references from being established.
+ 	 */
+-	unmap_mapping_range(mapping, 0, 0, 1);
++	unmap_mapping_range(mapping, 0, 0, 0);
+ 
+ 	xas_lock_irq(&xas);
+ 	xas_for_each(&xas, entry, ULONG_MAX) {
