@@ -2,112 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83D2880090
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 21:01:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B0F9800C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 21:16:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387787AbfHBTBK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 15:01:10 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45735 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbfHBTBK (ORCPT
+        id S2392111AbfHBTPu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 15:15:50 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:16559 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391984AbfHBTPu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 15:01:10 -0400
-Received: by mail-qt1-f195.google.com with SMTP id x22so1590065qtp.12;
-        Fri, 02 Aug 2019 12:01:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=HwHE8/q9xzAY4G3Znjg3gltYqWjAP9OihVXjGw/qZCs=;
-        b=KyzX80aqVpqwmIE4Tlf/5KxAtU0syDphLDcd8EvXc/7QyOko1SfGukW/JAOMXEusRL
-         41485eRBnUXDKigcnkaOIL++Y+vVVEabJjCpTuy/+3AhdabbubQZrv6Ou+oZrTunBP2F
-         bAwadcUXE1a76fwE0MXnl57Dx/9ZMNzY9VNYcv+3Np1iIDSQZcUASaFefCsQ0AdJdN0K
-         PL1JoC48zZyhrdKgbiKAeWjUtnbJ9yc+AS7hrJquhw0hBC0O9wiKQYsBn5vB505jNhP3
-         I23zhg9oHWLPlO3g5kcC3xLkNnCBt+UKWNsLztwuCCoMSk+VG9yLlJ/f9nskDBzr36St
-         JCsA==
-X-Gm-Message-State: APjAAAWphOhrXRA+MRY3oih7y7EYiH+L3kUPEk0z4uKu/sRN/4fei0Rb
-        ZLUfQlNE9+gzqjAMYlbTDvg/x4m6OnD9t5pp2xE=
-X-Google-Smtp-Source: APXvYqxdH3F1KFPszuUkeqoRxQ5r3LJXOoFIyUXh4hFNFtLNtJlWlOJ73mPzmJf5XnVk+WnFpqrI54lRQ7IZEsv9sN0=
-X-Received: by 2002:a0c:ba2c:: with SMTP id w44mr97441239qvf.62.1564772468886;
- Fri, 02 Aug 2019 12:01:08 -0700 (PDT)
+        Fri, 2 Aug 2019 15:15:50 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d448be40000>; Fri, 02 Aug 2019 12:15:49 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 02 Aug 2019 12:15:47 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 02 Aug 2019 12:15:47 -0700
+Received: from [10.2.171.217] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
+ 2019 19:15:46 +0000
+Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
+To:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
+CC:     Michal Hocko <mhocko@kernel.org>, <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-nfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
+        <x86@kernel.org>, <xen-devel@lists.xenproject.org>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+ <20190802091244.GD6461@dhcp22.suse.cz>
+ <20190802124146.GL25064@quack2.suse.cz>
+ <20190802142443.GB5597@bombadil.infradead.org>
+ <20190802145227.GQ25064@quack2.suse.cz>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <076e7826-67a5-4829-aae2-2b90f302cebd@nvidia.com>
+Date:   Fri, 2 Aug 2019 12:14:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-10-deepa.kernel@gmail.com>
- <20190731152609.GB7077@magnolia> <CABeXuvpiom9eQi0y7PAwAypUP1ezKKRfbh-Yqr8+Sbio=QtUJQ@mail.gmail.com>
- <20190801224344.GC17372@mit.edu> <CAK8P3a3nqmWBXBiFL1kGmJ7yQ_=5S4Kok0YVB3VMFVBuYjFGOQ@mail.gmail.com>
- <20190802154341.GB4308@mit.edu>
-In-Reply-To: <20190802154341.GB4308@mit.edu>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 2 Aug 2019 21:00:52 +0200
-Message-ID: <CAK8P3a1Z+nuvBA92K2ORpdjQ+i7KrjOXCFud7fFg4n73Fqx_8Q@mail.gmail.com>
-Subject: Re: [PATCH 09/20] ext4: Initialize timestamps limits
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190802145227.GQ25064@quack2.suse.cz>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564773349; bh=Ykr8zuBl8qD6qRk+6CuJmCvWs6y/6SnwmHdkeYBJDDI=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=dIZIhWEtL/6DtZGzemgJsDJsVLyADAMaN//lJ1grJLFkCmFOkzTj/rs0FvLfEl2Hi
+         oGzaotnI6n/OU/9zhZLMfdrrUHRJGxX7AYLyG2WZvgX4Lg54c2pU4PjbkWrNUgOXfI
+         uv8TTyv/DF3hYu24iq7PnVxsiQftZ7SHYqoH7NBkU536G72MURkyt2TZuU0HsMwqx1
+         3Glf+aCLRqZtZbMei0ZGioStTFz2Vyclh08xm02uGWhgBmLM1you/SeWFTun4O+4QV
+         968ZBWSTwuYIseJKnsPYve06ID75kz8N2rJE61L933vzLxD+Ru7sU6sLx/7LpcpGPg
+         O3OFkZJZEBCjA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 5:43 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> On Fri, Aug 02, 2019 at 12:39:41PM +0200, Arnd Bergmann wrote:
-> > Is it correct to assume that this kind of file would have to be
-> > created using the ext3.ko file system implementation that was
-> > removed in linux-4.3, but not usiing ext2.ko or ext4.ko (which
-> > would always set the extended timestamps even in "-t ext2" or
-> > "-t ext3" mode)?
->
-> Correct.  Some of the enterprise distro's were using ext4 to support
-> "mount -t ext3" even before 4.3.  There's a CONFIG option to enable
-> using ext4 for ext2 or ext3 if they aren't enabled.
->
-> > If we check for s_min_extra_isize instead of s_inode_size
-> > to determine s_time_gran/s_time_max, we would warn
-> > at mount time as well as and consistently truncate all
-> > timestamps to full 32-bit seconds, regardless of whether
-> > there is actually space or not.
-> >
-> > Alternatively, we could warn if s_min_extra_isize is
-> > too small, but use i_inode_size to determine
-> > s_time_gran/s_time_max anyway.
->
-> Even with ext4, s_min_extra_isize doesn't guarantee that will be able
-> to expand the inode.  This can fail if (a) we aren't able to expand
-> existing the transaction handle because there isn't enough space in
-> the journal, or (b) there is already an external xattr block which is
-> also full, so there is no space to evacuate an extended attribute out
-> of the inode's extra space.
+On 8/2/19 7:52 AM, Jan Kara wrote:
+> On Fri 02-08-19 07:24:43, Matthew Wilcox wrote:
+>> On Fri, Aug 02, 2019 at 02:41:46PM +0200, Jan Kara wrote:
+>>> On Fri 02-08-19 11:12:44, Michal Hocko wrote:
+>>>> On Thu 01-08-19 19:19:31, john.hubbard@gmail.com wrote:
+>>>> [...]
+>>>>> 2) Convert all of the call sites for get_user_pages*(), to
+>>>>> invoke put_user_page*(), instead of put_page(). This involves dozens of
+>>>>> call sites, and will take some time.
+>>>>
+>>>> How do we make sure this is the case and it will remain the case in the
+>>>> future? There must be some automagic to enforce/check that. It is simply
+>>>> not manageable to do it every now and then because then 3) will simply
+>>>> be never safe.
+>>>>
+>>>> Have you considered coccinele or some other scripted way to do the
+>>>> transition? I have no idea how to deal with future changes that would
+>>>> break the balance though.
 
-I must have misunderstood what the field says. I expected that
-with s_min_extra_isize set beyond the nanosecond fields, there
-would be a guarantee that all inodes have at least as many
-extra bytes already allocated. What circumstances would lead to
-an i_extra_isize smaller than s_min_extra_isize?
+Hi Michal,
 
-> We could be more aggressive by trying to expand make room in the inode
-> in ext4_iget (when we're reading in the inode, assuming the file
-> system isn't mounted read/only), instead of in the middle of
-> mark_inode_dirty().  That will eliminate failure mode (a) --- which is
-> statistically rare --- but it won't eliminate failure mode (b).
->
-> Ultimately, the question is which is worse: having a timestamp be
-> wrong, or randomly dropping an xattr from the inode to make room for
-> the extended timestamp.  We've come down on it being less harmful to
-> have the timestamp be wrong.
->
-> But again, this is a pretty rare case.  I'm not convinced it's worth
-> stressing about, since it's going to require multiple things to go
-> wrong before a timestamp will be bad.
+Yes, I've thought about it, and coccinelle falls a bit short (it's not smart
+enough to know which put_page()'s to convert). However, there is a debug
+option planned: a yet-to-be-posted commit [1] uses struct page extensions
+(obviously protected by CONFIG_DEBUG_GET_USER_PAGES_REFERENCES) to add
+a redundant counter. That allows:
 
-Agreed, I'm not overly worried about this happening frequently,
-I'd just feel better if we could reliably warn about the few instances
-that might theoretically be affected.
+void __put_page(struct page *page)
+{
+	...
+	/* Someone called put_page() instead of put_user_page() */
+	WARN_ON_ONCE(atomic_read(&page_ext->pin_count) > 0);
 
-        Arnd
+>>>
+>>> Yeah, that's why I've been suggesting at LSF/MM that we may need to create
+>>> a gup wrapper - say vaddr_pin_pages() - and track which sites dropping
+>>> references got converted by using this wrapper instead of gup. The
+>>> counterpart would then be more logically named as unpin_page() or whatever
+>>> instead of put_user_page().  Sure this is not completely foolproof (you can
+>>> create new callsite using vaddr_pin_pages() and then just drop refs using
+>>> put_page()) but I suppose it would be a high enough barrier for missed
+>>> conversions... Thoughts?
+
+The debug option above is still a bit simplistic in its implementation (and maybe
+not taking full advantage of the data it has), but I think it's preferable,
+because it monitors the "core" and WARNs.
+
+Instead of the wrapper, I'm thinking: documentation and the passage of time,
+plus the debug option (perhaps enhanced--probably once I post it someone will
+notice opportunities), yes?
+
+>>
+>> I think the API we really need is get_user_bvec() / put_user_bvec(),
+>> and I know Christoph has been putting some work into that.  That avoids
+>> doing refcount operations on hundreds of pages if the page in question is
+>> a huge page.  Once people are switched over to that, they won't be tempted
+>> to manually call put_page() on the individual constituent pages of a bvec.
+> 
+> Well, get_user_bvec() is certainly a good API for one class of users but
+> just looking at the above series, you'll see there are *many* places that
+> just don't work with bvecs at all and you need something for those.
+> 
+
+Yes, there are quite a few places that don't involve _bvec, as we can see
+right here. So we need something. Andrew asked for a debug option some time
+ago, and several people (Dave Hansen, Dan Williams, Jerome) had the idea
+of vmap-ing gup pages separately, so you can definitely tell where each
+page came from. I'm hoping not to have to go to that level of complexity
+though.
+
+
+[1] "mm/gup: debug tracking of get_user_pages() references" :
+https://github.com/johnhubbard/linux/commit/21ff7d6161ec2a14d3f9d17c98abb00cc969d4d6
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
