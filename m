@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 435ED7FAAF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 15:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EA77FA11
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 15:32:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393831AbfHBNWn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 09:22:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33040 "EHLO mail.kernel.org"
+        id S2404343AbfHBNbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 09:31:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732715AbfHBNWm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:22:42 -0400
+        id S1729004AbfHBNYP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:24:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A0DE20880;
-        Fri,  2 Aug 2019 13:22:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A96F20880;
+        Fri,  2 Aug 2019 13:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752160;
-        bh=rfK09QbE/ghQch875tQmpSh/nWp6HgepiByj61gmb+E=;
+        s=default; t=1564752254;
+        bh=bvJg+05Kuo7DtE3pMkbqu3NpZb+vflvfWgsyop1hkEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dgXKGyYgvaZy5j6GzDh/+HlQk3QLReSBn6Rz1K0eji9/f2027R4+xP+qb3kKhbvKZ
-         gljhaISxFAZ4R40mzrSf2iXNWdWK3gRW4FCBOD/75vcnGP7MAo0c4m6qUPgW3jd2U/
-         VmGm3lL0anZFWz+szynM8FSWtsaFRTwZQheGK/pc=
+        b=oesCtRKHl7gZnKwpGpBKjMnmucMxKe1IOmsmvJQ1Zbb/SyXUx5BgQsjz3To+B5QDA
+         doGvM0bSpm6xLZz8cqJI0JSYi/lZj3GLOzi9K2MIPl3tFvFg/LDvwXvpPu+O9JF1Sx
+         UpgOIbnCzyXkkmtYs0p7XYcSFJtN3r+Iza4FXl+Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jann Horn <jannh@google.com>,
@@ -33,12 +33,12 @@ Cc:     Jann Horn <jannh@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Will Deacon <will@kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 68/76] sched/fair: Don't free p->numa_faults with concurrent readers
-Date:   Fri,  2 Aug 2019 09:19:42 -0400
-Message-Id: <20190802131951.11600-68-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 38/42] sched/fair: Don't free p->numa_faults with concurrent readers
+Date:   Fri,  2 Aug 2019 09:22:58 -0400
+Message-Id: <20190802132302.13537-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190802131951.11600-1-sashal@kernel.org>
-References: <20190802131951.11600-1-sashal@kernel.org>
+In-Reply-To: <20190802132302.13537-1-sashal@kernel.org>
+References: <20190802132302.13537-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -87,10 +87,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  4 files changed, 24 insertions(+), 8 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 89a500bb897a6..39902cc9eb6f4 100644
+index 433b1257694ab..561ea64829ece 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1828,7 +1828,7 @@ static int __do_execve_file(int fd, struct filename *filename,
+@@ -1826,7 +1826,7 @@ static int __do_execve_file(int fd, struct filename *filename,
  	membarrier_execve(current);
  	rseq_execve(current);
  	acct_update_integrals(current);
@@ -122,10 +122,10 @@ index e7dd04a84ba89..3988762efe15c 100644
  }
  static inline bool should_numa_migrate_memory(struct task_struct *p,
 diff --git a/kernel/fork.c b/kernel/fork.c
-index fe83343da24ba..d3f006ed2f9d5 100644
+index 69874db3fba83..e76ce81c9c757 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -727,7 +727,7 @@ void __put_task_struct(struct task_struct *tsk)
+@@ -679,7 +679,7 @@ void __put_task_struct(struct task_struct *tsk)
  	WARN_ON(tsk == current);
  
  	cgroup_free(tsk);
@@ -135,10 +135,10 @@ index fe83343da24ba..d3f006ed2f9d5 100644
  	exit_creds(tsk);
  	delayacct_tsk_free(tsk);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index f35930f5e528a..8adf7b303d04d 100644
+index 4a433608ba74a..34b998678b97d 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -2336,13 +2336,23 @@ no_join:
+@@ -2345,13 +2345,23 @@ static void task_numa_group(struct task_struct *p, int cpupid, int flags,
  	return;
  }
  
@@ -164,7 +164,7 @@ index f35930f5e528a..8adf7b303d04d 100644
  	if (grp) {
  		spin_lock_irqsave(&grp->lock, flags);
  		for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++)
-@@ -2355,8 +2365,14 @@ void task_numa_free(struct task_struct *p)
+@@ -2364,8 +2374,14 @@ void task_numa_free(struct task_struct *p)
  		put_numa_group(grp);
  	}
  
