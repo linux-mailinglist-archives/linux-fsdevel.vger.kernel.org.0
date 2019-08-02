@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD2257F786
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 14:55:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 221247F77C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 14:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392771AbfHBMzt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 08:55:49 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47922 "EHLO huawei.com"
+        id S2389978AbfHBMzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 08:55:25 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48040 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404663AbfHBMyj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:54:39 -0400
+        id S2404801AbfHBMyl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:54:41 -0400
 Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id BA042C9631EA1034E85B;
+        by Forcepoint Email with ESMTP id CBEF7DEA75231DA92A06;
         Fri,  2 Aug 2019 20:54:37 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 2 Aug 2019
- 20:54:30 +0800
+ 20:54:31 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -37,9 +37,9 @@ CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
         Li Guifu <bluce.liguifu@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v6 17/24] erofs: introduce per-CPU buffers implementation
-Date:   Fri, 2 Aug 2019 20:53:40 +0800
-Message-ID: <20190802125347.166018-18-gaoxiang25@huawei.com>
+Subject: [PATCH v6 18/24] erofs: introduce pagevec for decompression subsystem
+Date:   Fri, 2 Aug 2019 20:53:41 +0800
+Message-ID: <20190802125347.166018-19-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190802125347.166018-1-gaoxiang25@huawei.com>
 References: <20190802125347.166018-1-gaoxiang25@huawei.com>
@@ -52,107 +52,191 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch introduces per-CPU buffers in order for
-the upcoming generic decompression framework to use.
+For each physical cluster, there is a straight-forward
+way of allocating a fixed or variable-sized array to
+record the corresponding file pages for its decompression
+if we decide to decompress these pages asynchronously
+(eg. read-ahead case), however it will take variable-sized
+on-heap memory compared with traditional uncompressed
+filesystems.
 
-Note that I tried to use in-kernel per-CPU buffer or
-per-CPU page approaches to clean up further, however
-noticeable performanace regression (about 2% for
-sequential read) was observed.
-
-Let's leave it as-is for now.
+This patch introduces a pagevec solution to reuse some
+allocated file page in the time-sharing approach to store
+parts of the array itself in order to minimize the extra
+memory overhead, thus only a small-sized constant array
+used for booting the whole array itself up will be needed.
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- fs/erofs/Kconfig    | 14 ++++++++++++++
- fs/erofs/internal.h | 21 +++++++++++++++++++++
- fs/erofs/utils.c    | 12 ++++++++++++
- 3 files changed, 47 insertions(+)
+ fs/erofs/zpvec.h | 159 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 159 insertions(+)
+ create mode 100644 fs/erofs/zpvec.h
 
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index a475fbebb831..5f8787c0cf89 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -81,3 +81,17 @@ config EROFS_FS_ZIP
- 
- 	  If you don't want to enable compression feature, say N.
- 
-+config EROFS_FS_CLUSTER_PAGE_LIMIT
-+	int "EROFS Cluster Pages Hard Limit"
-+	depends on EROFS_FS_ZIP
-+	range 1 256
-+	default "1"
-+	help
-+	  Indicates maximum # of pages of a compressed
-+	  physical cluster.
+diff --git a/fs/erofs/zpvec.h b/fs/erofs/zpvec.h
+new file mode 100644
+index 000000000000..bb7689e67836
+--- /dev/null
++++ b/fs/erofs/zpvec.h
+@@ -0,0 +1,159 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * linux/fs/erofs/zpvec.h
++ *
++ * Copyright (C) 2018 HUAWEI, Inc.
++ *             http://www.huawei.com/
++ * Created by Gao Xiang <gaoxiang25@huawei.com>
++ */
++#ifndef __EROFS_FS_ZPVEC_H
++#define __EROFS_FS_ZPVEC_H
 +
-+	  For example, if files in a image were compressed
-+	  into 8k-unit, hard limit should not be configured
-+	  less than 2. Otherwise, the image will be refused
-+	  to mount on this kernel.
++#include "tagptr.h"
 +
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 6f0384c3f07a..19694886dda9 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -223,6 +223,12 @@ static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
- 	return v;
- }
- #endif	/* !CONFIG_SMP */
++/* page type in pagevec for decompress subsystem */
++enum z_erofs_page_type {
++	/* including Z_EROFS_VLE_PAGE_TAIL_EXCLUSIVE */
++	Z_EROFS_PAGE_TYPE_EXCLUSIVE,
 +
-+/* hard limit of pages per compressed cluster */
-+#define Z_EROFS_CLUSTER_MAX_PAGES       (CONFIG_EROFS_FS_CLUSTER_PAGE_LIMIT)
-+#define EROFS_PCPUBUF_NR_PAGES          Z_EROFS_CLUSTER_MAX_PAGES
-+#else
-+#define EROFS_PCPUBUF_NR_PAGES          0
- #endif	/* !CONFIG_EROFS_FS_ZIP */
- 
- /* we strictly follow PAGE_SIZE and no buffer head yet */
-@@ -483,6 +489,21 @@ int erofs_namei(struct inode *dir, struct qstr *name,
- extern const struct file_operations erofs_dir_fops;
- 
- /* utils.c */
-+#if (EROFS_PCPUBUF_NR_PAGES > 0)
-+void *erofs_get_pcpubuf(unsigned int pagenr);
-+#define erofs_put_pcpubuf(buf) do { \
-+	(void)&(buf);	\
-+	preempt_enable();	\
-+} while (0)
-+#else
-+static inline void *erofs_get_pcpubuf(unsigned int pagenr)
++	Z_EROFS_VLE_PAGE_TYPE_TAIL_SHARED,
++
++	Z_EROFS_VLE_PAGE_TYPE_HEAD,
++	Z_EROFS_VLE_PAGE_TYPE_MAX
++};
++
++extern void __compiletime_error("Z_EROFS_PAGE_TYPE_EXCLUSIVE != 0")
++	__bad_page_type_exclusive(void);
++
++/* pagevec tagged pointer */
++typedef tagptr2_t	erofs_vtptr_t;
++
++/* pagevec collector */
++struct z_erofs_pagevec_ctor {
++	struct page *curr, *next;
++	erofs_vtptr_t *pages;
++
++	unsigned int nr, index;
++};
++
++static inline void z_erofs_pagevec_ctor_exit(struct z_erofs_pagevec_ctor *ctor,
++					     bool atomic)
 +{
-+	return ERR_PTR(-ENOTSUPP);
++	if (!ctor->curr)
++		return;
++
++	if (atomic)
++		kunmap_atomic(ctor->pages);
++	else
++		kunmap(ctor->curr);
 +}
 +
-+#define erofs_put_pcpubuf(buf) do {} while (0)
-+#endif
-+
- #ifdef CONFIG_EROFS_FS_ZIP
- int erofs_workgroup_put(struct erofs_workgroup *grp);
- struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
-diff --git a/fs/erofs/utils.c b/fs/erofs/utils.c
-index 628178261056..f3eed9af24d6 100644
---- a/fs/erofs/utils.c
-+++ b/fs/erofs/utils.c
-@@ -9,6 +9,18 @@
- #include "internal.h"
- #include <linux/pagevec.h>
- 
-+#if (EROFS_PCPUBUF_NR_PAGES > 0)
-+static struct {
-+	u8 data[PAGE_SIZE * EROFS_PCPUBUF_NR_PAGES];
-+} ____cacheline_aligned_in_smp erofs_pcpubuf[NR_CPUS];
-+
-+void *erofs_get_pcpubuf(unsigned int pagenr)
++static inline struct page *
++z_erofs_pagevec_ctor_next_page(struct z_erofs_pagevec_ctor *ctor,
++			       unsigned int nr)
 +{
-+	preempt_disable();
-+	return &erofs_pcpubuf[smp_processor_id()].data[pagenr * PAGE_SIZE];
++	unsigned int index;
++
++	/* keep away from occupied pages */
++	if (ctor->next)
++		return ctor->next;
++
++	for (index = 0; index < nr; ++index) {
++		const erofs_vtptr_t t = ctor->pages[index];
++		const unsigned int tags = tagptr_unfold_tags(t);
++
++		if (tags == Z_EROFS_PAGE_TYPE_EXCLUSIVE)
++			return tagptr_unfold_ptr(t);
++	}
++	DBG_BUGON(nr >= ctor->nr);
++	return NULL;
++}
++
++static inline void
++z_erofs_pagevec_ctor_pagedown(struct z_erofs_pagevec_ctor *ctor,
++			      bool atomic)
++{
++	struct page *next = z_erofs_pagevec_ctor_next_page(ctor, ctor->nr);
++
++	z_erofs_pagevec_ctor_exit(ctor, atomic);
++
++	ctor->curr = next;
++	ctor->next = NULL;
++	ctor->pages = atomic ?
++		kmap_atomic(ctor->curr) : kmap(ctor->curr);
++
++	ctor->nr = PAGE_SIZE / sizeof(struct page *);
++	ctor->index = 0;
++}
++
++static inline void z_erofs_pagevec_ctor_init(struct z_erofs_pagevec_ctor *ctor,
++					     unsigned int nr,
++					     erofs_vtptr_t *pages,
++					     unsigned int i)
++{
++	ctor->nr = nr;
++	ctor->curr = ctor->next = NULL;
++	ctor->pages = pages;
++
++	if (i >= nr) {
++		i -= nr;
++		z_erofs_pagevec_ctor_pagedown(ctor, false);
++		while (i > ctor->nr) {
++			i -= ctor->nr;
++			z_erofs_pagevec_ctor_pagedown(ctor, false);
++		}
++	}
++	ctor->next = z_erofs_pagevec_ctor_next_page(ctor, i);
++	ctor->index = i;
++}
++
++static inline bool z_erofs_pagevec_enqueue(struct z_erofs_pagevec_ctor *ctor,
++					   struct page *page,
++					   enum z_erofs_page_type type,
++					   bool *occupied)
++{
++	*occupied = false;
++	if (unlikely(!ctor->next && type))
++		if (ctor->index + 1 == ctor->nr)
++			return false;
++
++	if (unlikely(ctor->index >= ctor->nr))
++		z_erofs_pagevec_ctor_pagedown(ctor, false);
++
++	/* exclusive page type must be 0 */
++	if (Z_EROFS_PAGE_TYPE_EXCLUSIVE != (uintptr_t)NULL)
++		__bad_page_type_exclusive();
++
++	/* should remind that collector->next never equal to 1, 2 */
++	if (type == (uintptr_t)ctor->next) {
++		ctor->next = page;
++		*occupied = true;
++	}
++	ctor->pages[ctor->index++] = tagptr_fold(erofs_vtptr_t, page, type);
++	return true;
++}
++
++static inline struct page *
++z_erofs_pagevec_dequeue(struct z_erofs_pagevec_ctor *ctor,
++			enum z_erofs_page_type *type)
++{
++	erofs_vtptr_t t;
++
++	if (unlikely(ctor->index >= ctor->nr)) {
++		DBG_BUGON(!ctor->next);
++		z_erofs_pagevec_ctor_pagedown(ctor, true);
++	}
++
++	t = ctor->pages[ctor->index];
++
++	*type = tagptr_unfold_tags(t);
++
++	/* should remind that collector->next never equal to 1, 2 */
++	if (*type == (uintptr_t)ctor->next)
++		ctor->next = tagptr_unfold_ptr(t);
++
++	ctor->pages[ctor->index++] = tagptr_fold(erofs_vtptr_t, NULL, 0);
++	return tagptr_unfold_ptr(t);
 +}
 +#endif
 +
- #ifdef CONFIG_EROFS_FS_ZIP
- /* global shrink count (for all mounted EROFS instances) */
- static atomic_long_t erofs_global_shrink_cnt;
 -- 
 2.17.1
 
