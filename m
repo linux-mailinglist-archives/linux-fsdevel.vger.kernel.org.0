@@ -2,116 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE7C7ED3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 09:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F8857EDA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 09:38:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389387AbfHBHPg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 03:15:36 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38299 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387657AbfHBHPg (ORCPT
+        id S1729469AbfHBHiP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 03:38:15 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38634 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726601AbfHBHiP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 03:15:36 -0400
-Received: by mail-qt1-f193.google.com with SMTP id n11so72906749qtl.5;
-        Fri, 02 Aug 2019 00:15:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SMXU/Q1UCc6A820QQy1c6BMDY+exoOtiPs0ry5ZLZE4=;
-        b=on9SHantLjGeDOpHD4VHvthdEKHbuIrBX6lLTPBgyH/PLmJum1bFjqg/j7SFs+pUzg
-         8Tul/0miNnOFbiOVvmukqokQAshzyUrtuGKchu6sLnCo/gsfmXZFuJDM0jv6iyKYSWMZ
-         rIuFUQNyZoOtmODJ2RyHM62BwUv8iiaoDJI3OSvLpSs8uUAYCQ2mRQnXKwq7fGu0iO3m
-         moPLyawWr+JZVZb07CEIYdqfitVrlCOe3wH4ORSTqTjQ3csxfJWHyHz6ruAke2003HoM
-         5fwFUgHCCh3c3PVlrGeG3nQRWxj09Hf+Ks1a0gOfD5FOvoNIw0qiJDRHTJpptiwwxjTZ
-         pQTw==
-X-Gm-Message-State: APjAAAXvyzKFcQmkxkgS5t8JzyUWvRfhlrx58JdmyTDSRC32uqsJEhi8
-        BMyozK90RmA9p194shK95yaL8wkCRLmVNShwKcc=
-X-Google-Smtp-Source: APXvYqzqfMW/bMSnK54LXWjk3hHMGCjxM9SuNy+53tZzW6vs/h8P/P3Hx1sP4LmK97Xx1YKvE5PpQWED7TwWBc6OtRY=
-X-Received: by 2002:ac8:f99:: with SMTP id b25mr86332658qtk.142.1564730135063;
- Fri, 02 Aug 2019 00:15:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-20-deepa.kernel@gmail.com>
- <201907292129.AC796230@keescook> <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
- <CABeXuvrmNkUOH5ZU59Kg4Ge1cFE9nqp9NhTPJjus5KkCrYeC6w@mail.gmail.com>
-In-Reply-To: <CABeXuvrmNkUOH5ZU59Kg4Ge1cFE9nqp9NhTPJjus5KkCrYeC6w@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 2 Aug 2019 09:15:18 +0200
-Message-ID: <CAK8P3a3DyWcvOpMsc__CZDmG50MXRisbBt+mTtwWCGKaNgg_Gg@mail.gmail.com>
-Subject: Re: [PATCH 19/20] pstore: fs superblock limits
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Fri, 2 Aug 2019 03:38:15 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1htS8S-0005sF-R0; Fri, 02 Aug 2019 09:37:56 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Petr Mladek <pmladek@suse.com>, Jeff Dike <jdike@addtoit.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@google.com>,
+        David Rientjes <rientjes@google.com>,
+        kunit-dev@googlegroups.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, wfg@linux.intel.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Richard Weinberger <richard@nod.at>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Timothy Bird <Tim.Bird@sony.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list\:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        "open list\:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v9 04/18] kunit: test: add kunit_stream a std::stream like logger
+References: <20190716175021.9CA412173C@mail.kernel.org>
+        <CAFd5g453vXeSUCZenCk_CzJ-8a1ym9RaPo0NVF=FujF9ac-5Ag@mail.gmail.com>
+        <20190718175024.C3EC421019@mail.kernel.org>
+        <CAFd5g46a7C1+R6ZcE_SkqaYqgrH5Rx3M=X7orFyaMgFLDbeYYA@mail.gmail.com>
+        <20190719000834.GA3228@google.com>
+        <20190722200347.261D3218C9@mail.kernel.org>
+        <CAFd5g45hdCxEavSxirr0un_uLzo5Z-J4gHRA06qjzcQrTzmjVg@mail.gmail.com>
+        <20190722235411.06C1320840@mail.kernel.org>
+        <20190724073125.xyzfywctrcvg6fmh@pathway.suse.cz>
+        <CAFd5g47v3Mr4GEGOjqyYy9Jwwm+ow7ypbu9j88rxEN06QCzdxQ@mail.gmail.com>
+        <20190726083148.d4gf57w2nt5k7t6n@pathway.suse.cz>
+        <CAFd5g46iAhDZ5C_chi7oYLVOkwcoj6+0nw+kPWuXhqWwWKd9jA@mail.gmail.com>
+Date:   Fri, 02 Aug 2019 09:37:53 +0200
+In-Reply-To: <CAFd5g46iAhDZ5C_chi7oYLVOkwcoj6+0nw+kPWuXhqWwWKd9jA@mail.gmail.com>
+        (Brendan Higgins's message of "Thu, 1 Aug 2019 11:55:20 -0700")
+Message-ID: <871ry4yq3y.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 4:26 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+On 2019-08-01, Brendan Higgins <brendanhiggins@google.com> wrote:
+> On Fri, Jul 26, 2019 at 1:31 AM Petr Mladek <pmladek@suse.com> wrote:
+>> On Thu 2019-07-25 13:21:12, Brendan Higgins wrote:
+>>> On Wed, Jul 24, 2019 at 12:31 AM Petr Mladek <pmladek@suse.com> wrote:
+>>>> On Mon 2019-07-22 16:54:10, Stephen Boyd wrote:
+>>>>> Quoting Brendan Higgins (2019-07-22 15:30:49)
+>>>>>> On Mon, Jul 22, 2019 at 1:03 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>>>>>>> What's the calling context of the assertions and expectations? I
+>>>>>>> still don't like the fact that string stream needs to allocate
+>>>>>>> buffers and throw them into a list somewhere because the calling
+>>>>>>> context matters there.
+>>>>>>
+>>>>>> The calling context is the same as before, which is anywhere.
+>>>>>
+>>>>> Ok. That's concerning then.
+>>>>>
+>>>>>>> I'd prefer we just wrote directly to the console/log via printk
+>>>>>>> instead. That way things are simple because we use the existing
+>>>>>>> buffering path of printk, but maybe there's some benefit to the
+>>>>>>> string stream that I don't see? Right now it looks like it
+>>>>>>> builds a string and then dumps it to printk so I'm sort of lost
+>>>>>>> what the benefit is over just writing directly with printk.
+>>>>>>
+>>>>>> It's just buffering it so the whole string gets printed
+>>>>>> uninterrupted.  If we were to print out piecemeal to printk,
+>>>>>> couldn't we have another call to printk come in causing it to
+>>>>>> garble the KUnit message we are in the middle of printing?
+>>>>>
+>>>>> Yes, printing piecemeal by calling printk many times could lead to
+>>>>> interleaving of messages if something else comes in such as an
+>>>>> interrupt printing something. Printk has some support to hold
+>>>>> "records" but I'm not sure how that would work here because
+>>>>> KERN_CONT talks about only being used early on in boot code. I
+>>>>> haven't looked at printk in detail though so maybe I'm all wrong
+>>>>> and KERN_CONT just works?
+>>>>
+>>>> KERN_CONT does not guarantee that the message will get printed
+>>>> together. The pieces get interleaved with messages printed in
+>>>> parallel.
+>>>>
+>>>> Note that KERN_CONT was originally really meant to be used only
+>>>> during boot. It was later used more widely and ended in the best
+>>>> effort category.
+>>>>
+>>>> There were several attempts to make it more reliable. But it was
+>>>> always either too complicated or error prone or both.
+>>>>
+>>>> You need to use your own buffering if you rely want perfect output.
+>>>> The question is if it is really worth the complexity. Also note
+>>>> that any buffering reduces the chance that the messages will reach
+>>>> the console.
+>>>
+>>> Seems like that settles it then. Thanks!
+>>>
+>>>> BTW: There is a work in progress on a lockless printk ring buffer.
+>>>> It will make printk() more secure regarding deadlocks. But it might
+>>>> make transparent handling of continuous lines even more tricky.
+>>>>
+>>>> I guess that local buffering, before calling printk(), will be
+>>>> even more important then. Well, it might really force us to create
+>>>> an API for it.
+>>>
+>>> Cool! Can you CC me on that discussion?
+>>
+>> Adding John Oggness into CC.
+>>
+>> John, please CC Brendan Higgins on the patchsets eventually switching
+>> printk() into the lockless buffer. The test framework is going to
+>> do its own buffering to keep the related messages together.
+>>
+>> The lockless ringbuffer might make handling of related (partial)
+>> lines worse or better. It might justify KUnit's extra buffering
+>> or it might allow to get rid of it.
 >
-> On Tue, Jul 30, 2019 at 12:36 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Tue, Jul 30, 2019 at 6:31 AM Kees Cook <keescook@chromium.org> wrote:
-> > >
-> > > On Mon, Jul 29, 2019 at 06:49:23PM -0700, Deepa Dinamani wrote:
-> > > > Also update the gran since pstore has microsecond granularity.
-> > >
-> > > So, I'm fine with this, but technically the granularity depends on the
-> > > backend storage... many have no actual time keeping, though. My point is,
-> > > pstore's timestamps are really mostly a lie, but the most common backend
-> > > (ramoops) is seconds-granularity.
-> > >
-> > > So, I'm fine with this, but it's a lie but it's a lie that doesn't
-> > > matter, so ...
-> > >
-> > > Acked-by: Kees Cook <keescook@chromium.org>
-> > >
-> > > I'm open to suggestions to improve it...
-> >
-> > If we don't care about using sub-second granularity, then setting it
-> > to one second unconditionally here will make it always use that and
-> > report it correctly.
+> Thanks for CC'ing me on the printk ringbuffer thread. It looks like it
+> actually probably won't affect my needs for KUnit logging. The biggest
+> reason I need some sort of buffering system is to be able to compose
+> messages piece meal into a single message that will be printed out to
+> the user as a single message with no messages from other printk
+> callers printed out in the middle of mine.
+
+printk has this same requirement for its CONT messages. You can read
+about how I propose to implement that here[0], using a separate prb
+ringbuffer for buffered storage until all the pieces are available.
+
+It is not my goal that multiple subsystems start making use of the prb
+ringbuffer. However, its features can be attractive if you don't want to
+worry about multiple writers/readers or context (including NMI). Before
+writing "yet another ringbuffer" [1] it might be worth the effort to at
+least see if one of the existing implementations can work (or be
+extended to work) for you.
+
+John Ogness
+
+[0] https://lkml.kernel.org/r/87imt2bl0k.fsf@linutronix.de
+[1] https://lwn.net/Articles/789603/
+
+> The prb does look interesting; however, it appears that to get the
+> semantics that I need, I would have to put my entire message in a
+> single data block and would consequently need to know the size of my
+> message a priori, which is problematic. Consequently, it seems as
+> though I will probably need to compose my entire message using my own
+> buffering system.
 >
-> Should this printf in ramoops_write_kmsg_hdr() also be fixed then?
+>>>> Note that stroring the messages into the printk log is basically
+>>>> safe in any context. It uses temporary per-CPU buffers for
+>>>> recursive messages and in NMI. The only problem is panic() when
+>>>> some CPU gets stuck with the lock taken. This will get solved by
+>>>> the lockless ringbuffer. Also the temporary buffers will not be
+>>>> necessary any longer.
+>>>
+>>> Sure, I think Stephen's concern is all the supporting code that is
+>>> involved. Not printk specifically. It just means a lot more of KUnit
+>>> has to be IRQ safe.
+>>
+>> I see.
+>>
+>> BTW: I wonder if KUnit could reuse the existing seq_buf
+>> implementation for buffering messages.
+>>
+>> I am sorry if it has already been proposed and rejected for some
+>> reason. I might have missed it. Feel free to just point me to
+>> same older mail.
 >
->         RAMOOPS_KERNMSG_HDR "%lld.%06lu-%c\n",
->         (time64_t)record->time.tv_sec,
->         record->time.tv_nsec / 1000,
->         record->compressed ? 'C' : 'D');
->     persistent_ram_write(prz, hdr, len);
+> Yeah, we discussed it briefly here:
 >
-> ramoops_read_kmsg_hdr() doesn't read this as microseconds. Seems like
-> a mismatch from above.
-
-Good catch. This seems to go back to commit 3f8f80f0cfeb ("pstore/ram:
-Read and write to the 'compressed' flag of pstore"), which introduced the
-nanosecond read. The write function however has always used
-microseconds, and that was kept when the implementation changed
-from timeval to timespec in commit 1e817fb62cd1 ("time: create
-__getnstimeofday for WARNless calls").
-
-> If we want to agree that we just want seconds granularity for pstore,
-> we could replace the tv_nsec part to be all 0's if anybody else is
-> depending on this format.
-> I could drop this patch from the series and post that patch seperately.
-
-We should definitely fix it to not produce a bogus nanosecond value.
-Whether using full seconds or microsecond resolution is better here,
-I don't know. It seems that pstore records generally get created
-with a nanosecond nanosecond accurate timestamp from
-ktime_get_real_fast_ns() and then truncated to the resolution of the
-backend, rather than the normal jiffies-accurate inode timestamps that
-we have for regular file systems.
-
-This might mean that we do want the highest possible resolution
-and not further truncate here, in case that information ends
-up being useful afterwards.
-
-         Arnd
+> https://lkml.org/lkml/2019/5/17/497
+>
+> Looks like I forgot to include my reasoning in the commit text, sorry
+> about that.
+>
+>>>> Much bigger problems are with consoles. There are many of them. It
+>>>> means a lot of code and more locks involved, including scheduler
+>>>> locks. Note that console lock is a semaphore.
+>>>
+>>> That shouldn't affect us though, right? As long as we continue to
+>>> use the printk interface?
+>>
+>> I guess that it should not affect KUnit.
+>>
+>> The only problem might be if the testing framework calls printk()
+>> inside scheduler or console code. And only when the tested code
+>> uses the same locks that will be used by the called printk().
+>
+> Yeah, well printk will not be our only problem in those instances.
+>
+>> To be honest I do not fully understand KUnit design. I am not
+>> completely sure how the tested code is isolated from the running
+>> system. Namely, I do not know if the tested code shares
+>> the same locks with the system running the test.
+>
+> No worries, I don't expect printk to be the hang up in those cases. It
+> sounds like KUnit has a long way to evolve before printk is going to
+> be a limitation.
+>
+> Thanks!
