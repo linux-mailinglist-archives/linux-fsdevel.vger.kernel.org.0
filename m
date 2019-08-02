@@ -2,95 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD5387EF66
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 10:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3BF27EFE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 11:09:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404273AbfHBIfM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 04:35:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42738 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729739AbfHBIfM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:35:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B5825AD35;
-        Fri,  2 Aug 2019 08:35:10 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id EF9621E3F4D; Thu,  1 Aug 2019 19:57:03 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 19:57:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
+        id S1732558AbfHBJJB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 05:09:01 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:39083 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbfHBJJB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:09:01 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1htTXb-0008Bx-4U; Fri, 02 Aug 2019 11:07:59 +0200
+Date:   Fri, 2 Aug 2019 11:07:53 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Christoph Hellwig <hch@infradead.org>
+cc:     LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
         Sebastian Siewior <bigeasy@linutronix.de>,
         Anna-Maria Gleixner <anna-maria@linutronix.de>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
-        Theodore Tso <tytso@mit.edu>, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Joel Becker <jlbec@evilplan.org>, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2 6/7] fs/jbd2: Make state lock a spinlock
-Message-ID: <20190801175703.GH25064@quack2.suse.cz>
-References: <20190801010126.245731659@linutronix.de>
- <20190801010944.457499601@linutronix.de>
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [patch V2 0/7] fs: Substitute bit-spinlocks for PREEMPT_RT and
+ debugging
+In-Reply-To: <20190802075612.GA20962@infradead.org>
+Message-ID: <alpine.DEB.2.21.1908021107090.2285@nanos.tec.linutronix.de>
+References: <20190801010126.245731659@linutronix.de> <20190802075612.GA20962@infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801010944.457499601@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/mixed; boundary="8323329-738874475-1564736879=:2285"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 01-08-19 03:01:32, Thomas Gleixner wrote:
-> Bit-spinlocks are problematic on PREEMPT_RT if functions which might sleep
-> on RT, e.g. spin_lock(), alloc/free(), are invoked inside the lock held
-> region because bit spinlocks disable preemption even on RT.
-> 
-> A first attempt was to replace state lock with a spinlock placed in struct
-> buffer_head and make the locking conditional on PREEMPT_RT and
-> DEBUG_BIT_SPINLOCKS.
-> 
-> Jan pointed out that there is a 4 byte hole in struct journal_head where a
-> regular spinlock fits in and he would not object to convert the state lock
-> to a spinlock unconditionally.
-> 
-> Aside of solving the RT problem, this also gains lockdep coverage for the
-> journal head state lock (bit-spinlocks are not covered by lockdep as it's
-> hard to fit a lockdep map into a single bit).
-> 
-> The trivial change would have been to convert the jbd_*lock_bh_state()
-> inlines, but that comes with the downside that these functions take a
-> buffer head pointer which needs to be converted to a journal head pointer
-> which adds another level of indirection.
-> 
-> As almost all functions which use this lock have a journal head pointer
-> readily available, it makes more sense to remove the lock helper inlines
-> and write out spin_*lock() at all call sites.
-> 
-> Fixup all locking comments as well.
-> 
-> Suggested-by: Jan Kara <jack@suse.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: "Theodore Ts'o" <tytso@mit.edu>
-> Cc: Mark Fasheh <mark@fasheh.com>
-> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
-> Cc: Joel Becker <jlbec@evilplan.org>
-> Cc: Jan Kara <jack@suse.com>
-> Cc: linux-ext4@vger.kernel.org
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Just a heads up that I didn't miss this patch. Just it has some bugs and I
-figured that rather than explaining to you subtleties of jh lifetime it is
-easier to fix up the problems myself since you're probably not keen on
-becoming jbd2 developer ;)... which was more complex than I thought so I'm
-not completely done yet. Hopefuly tomorrow.
+--8323329-738874475-1564736879=:2285
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Christoph,
+
+On Fri, 2 Aug 2019, Christoph Hellwig wrote:
+
+> did you look into killing bіt spinlocks as a public API instead?
+
+Last time I did, there was resistance :)
+
+But I'm happy to try again.
+
+> The main users seems to be buffer heads, which are so bloated that
+> an extra spinlock doesn't really matter anyway.
+>
+> The list_bl and rhashtable uses kinda make sense to be, but they are
+> pretty nicely abstracted away anyway.  The remaining users look
+> pretty questionable to start with.
+
+What about the page lock?
+
+  mm/slub.c:      bit_spin_lock(PG_locked, &page->flags);
+
+Thanks,
+
+	tglx
+--8323329-738874475-1564736879=:2285--
