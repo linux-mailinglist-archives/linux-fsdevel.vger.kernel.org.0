@@ -2,111 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DB238020A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 22:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CACD28024B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 23:40:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730876AbfHBUvq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 16:51:46 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35642 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728704AbfHBUvq (ORCPT
+        id S1732165AbfHBVjz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 17:39:55 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39529 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726052AbfHBVjz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 16:51:46 -0400
-Received: by mail-pl1-f195.google.com with SMTP id w24so34072751plp.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Aug 2019 13:51:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yhQyk8IoMkg6VHquCP646/YjI159eG2Qm/tmGkUGWc0=;
-        b=eLknO8W268WA1BOZZOqsQaGOcE36fB6+Qco2TDByp03Y3syvQo5t3u8iNqWR50TWV2
-         yKGN5VSl9gVYeJjvcjT00vdkjamt7KhrcEXeRhqBeCQUXAahxdTLxkNBs5/6PY3irFs/
-         zsn2L/wm2rw7vPlGH+o8OMsEmWjT5prgg4wmdWTVJQSf5dnDA/0CXymykK6QiUi2J1OL
-         BAuom5MZxhRmfl6daNIf5Pan7pvVyfdQi1GRzF6u93xJ8Di2qcmlFMLxmjBwnw4HqD5x
-         8d8l39h5NuQnMXSHmGOMa7V2jkyLig9ufONEn5Gsy0Or8kKrI1y4OvMIRUKmqo6KSTKj
-         o3Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yhQyk8IoMkg6VHquCP646/YjI159eG2Qm/tmGkUGWc0=;
-        b=WS/F5XgElOUmF9SyMus70o9CGe9OcDJiD5bxFTX9GwpD2dvNA9dC5MPpaYCKDM+bfQ
-         0I7vckdNVVMCLE4fuCArTQKTOYdVTWW8UmrbgT6FX23iwQuYhVpRKZHOeFcLNeOJFtd2
-         UlVH4T4TOvVwbt+vsUqoxhhWtDqsQmmApIMaCPHlo0lBKjspZo3LW4MnhKkYFMNarBdj
-         Ci8SJZCPqMxGXr+P1tD4UMVHIgBuaqhXQ8PL6DKaiIas3fGBZCCAoA1f1bRdgwaahCEb
-         jb8Fe+Fu9nt5yxAB/KZANc5YbMwjo4ZT1OIQd7fWTGI6nvq19zeR9wFidHkMgrkIQ/KL
-         M6ag==
-X-Gm-Message-State: APjAAAXjDjcAIwSVUJn22bRQLtNO3QutgENMk8DcoSJaNmHtM5ZHA9UU
-        JwqmU46kSATXcz1YlCl8RAhkNR/Wxdk=
-X-Google-Smtp-Source: APXvYqxnhhUgag8ACgmGz+kw/tadhC/nQqXCHeHfBG4vinB3NzD3w42LsuY+BlG0KvA6j1CIk0ZBBA==
-X-Received: by 2002:a17:902:543:: with SMTP id 61mr132651767plf.20.1564779105704;
-        Fri, 02 Aug 2019 13:51:45 -0700 (PDT)
-Received: from [172.31.98.58] (rrcs-76-79-101-187.west.biz.rr.com. [76.79.101.187])
-        by smtp.gmail.com with ESMTPSA id v13sm87924292pfn.109.2019.08.02.13.51.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Aug 2019 13:51:44 -0700 (PDT)
-Subject: Re: [PATCH 3/8] block: blk-crypto for Inline Encryption
-To:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Parshuram Raju Thombare <pthombar@cadence.com>,
-        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20190710225609.192252-1-satyat@google.com>
- <20190710225609.192252-4-satyat@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c5bffc1e-ce6a-0060-cf55-e3dc446d7049@kernel.dk>
-Date:   Fri, 2 Aug 2019 13:51:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 2 Aug 2019 17:39:55 -0400
+Received: from callcc.thunk.org (96-72-84-49-static.hfc.comcastbusiness.net [96.72.84.49] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x72LdipO023483
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 2 Aug 2019 17:39:45 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 33EB64202F5; Fri,  2 Aug 2019 17:39:44 -0400 (EDT)
+Date:   Fri, 2 Aug 2019 17:39:44 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH 09/20] ext4: Initialize timestamps limits
+Message-ID: <20190802213944.GE4308@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>
+References: <20190730014924.2193-1-deepa.kernel@gmail.com>
+ <20190730014924.2193-10-deepa.kernel@gmail.com>
+ <20190731152609.GB7077@magnolia>
+ <CABeXuvpiom9eQi0y7PAwAypUP1ezKKRfbh-Yqr8+Sbio=QtUJQ@mail.gmail.com>
+ <20190801224344.GC17372@mit.edu>
+ <CAK8P3a3nqmWBXBiFL1kGmJ7yQ_=5S4Kok0YVB3VMFVBuYjFGOQ@mail.gmail.com>
+ <20190802154341.GB4308@mit.edu>
+ <CAK8P3a1Z+nuvBA92K2ORpdjQ+i7KrjOXCFud7fFg4n73Fqx_8Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190710225609.192252-4-satyat@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1Z+nuvBA92K2ORpdjQ+i7KrjOXCFud7fFg4n73Fqx_8Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/10/19 4:56 PM, Satya Tangirala wrote:
-> We introduce blk-crypto, which manages programming keyslots for struct
-> bios. With blk-crypto, filesystems only need to call bio_crypt_set_ctx with
-> the encryption key, algorithm and data_unit_num; they don't have to worry
-> about getting a keyslot for each encryption context, as blk-crypto handles
-> that. Blk-crypto also makes it possible for layered devices like device
-> mapper to make use of inline encryption hardware.
+On Fri, Aug 02, 2019 at 09:00:52PM +0200, Arnd Bergmann wrote:
 > 
-> Blk-crypto delegates crypto operations to inline encryption hardware when
-> available, and also contains a software fallback to the kernel crypto API.
-> For more details, refer to Documentation/block/blk-crypto.txt.
-> 
-> Known issues:
-> 1) We're allocating crypto_skcipher in blk_crypto_keyslot_program, which
-> uses GFP_KERNEL to allocate memory, but this function is on the write
-> path for IO - we need to add support for specifying a different flags
-> to the crypto API.
+> I must have misunderstood what the field says. I expected that
+> with s_min_extra_isize set beyond the nanosecond fields, there
+> would be a guarantee that all inodes have at least as many
+> extra bytes already allocated. What circumstances would lead to
+> an i_extra_isize smaller than s_min_extra_isize?
 
-That's a must-fix before merging, btw.
+When allocating new inodes, i_extra_isize is set to
+s_want_extra_isize.  When modifying existing inodes, if i_extra_isize
+is less than s_min_extra_isize, then we will attempt to move out
+extended attribute(s) to the external xattr block.  So the
+s_min_extra_isize field is not a guarantee, but rather an aspirationa
+goal.  The idea is that at some point when we want to enable a new
+feature, which needs more extra inode space, we can adjust
+s_min_extra_size and s_want_extra_size, and the file system will
+migrate things to meet these constraints.
 
-> @@ -1018,7 +1019,9 @@ blk_qc_t generic_make_request(struct bio *bio)
->   			/* Create a fresh bio_list for all subordinate requests */
->   			bio_list_on_stack[1] = bio_list_on_stack[0];
->   			bio_list_init(&bio_list_on_stack[0]);
-> -			ret = q->make_request_fn(q, bio);
-> +
-> +			if (!blk_crypto_submit_bio(&bio))
-> +				ret = q->make_request_fn(q, bio);
->   
->   			blk_queue_exit(q);
+The plan was to teach e2fsck how to fix all of the inodes to meet theh
+s_min_extra_size value, but that never got implemented, and we even
+then, e2fsck would have to deal with the case where tit couldn't move
+the extended attribute(s) in the inode out, because there was no place
+to put them.
 
-Why isn't this just stacking the ->make_request_fn() instead? Then we
-could get this out of the hot path.
+In practice, this hasn't been that much of a limitation because we
+haven't been adding that many extra inode fields.  Keep in mind that
+Red Hat for example, has explicitly said they will *never* support
+adding new features to an existing file system.  Their only supported
+method is back up the file system, reformat it with the new file
+system features, and then restore the file system.
 
--- 
-Jens Axboe
+Of course, if the backup/restore includes backing up the extended
+attributes, and then restoring them, the xattr restore could fail,
+unless the user also increased the inode size (e.g., from 256 bytes to
+512 bytes).
 
+Getting this right in the general case is *hard*.  Fortunately, the
+corner cases really don't happen that often in practice, at least not
+for pure Linux workloads.  Windows which can have arbitrarily large
+security id's and ACL's might make this harder, of course --- although
+ext4's EA in inode feature would make this better, modulo needing to
+write more complex file system code to handle moving xattrs around.
+
+Since the extended timestamps were one of the first extra inode fields
+to be added, I strongly suggest that we not try to borrow trouble.
+Solving the general case problem is *hard*.
+
+					- Ted
