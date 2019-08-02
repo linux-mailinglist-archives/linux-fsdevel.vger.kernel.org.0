@@ -2,100 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E75557FCD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 16:52:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 376E17FCDE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 16:54:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389945AbfHBOwm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 10:52:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57754 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389271AbfHBOwm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 10:52:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 80E69AF3F;
-        Fri,  2 Aug 2019 14:52:38 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 09FD71E433B; Fri,  2 Aug 2019 16:52:27 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 16:52:27 +0200
-From:   Jan Kara <jack@suse.cz>
+        id S2390164AbfHBOy1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 10:54:27 -0400
+Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:52100 "EHLO
+        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726505AbfHBOy1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 10:54:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1564757666;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=z+KAYvssR654xT1PJmIJ3CS5+fx3UQzQRMe7cbSlSqs=;
+        b=GkFK9XVPajmUrXiNorqYyeXjnb5kxq4Cb7xBG5EVT9qDBnmqPCxH/Q4RMGLw6oDT
+        woH5I+acrCTkrFsP9K97B+S3gYciANlTIcTOKxu6QVxVDhvsvig0tH2wb9qGN7pVOWQ
+        v11bHmqsvgx+cmakvLlTN7O9cMKuaG6z3jCKUZYw=
+Date:   Fri, 2 Aug 2019 14:54:26 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
 To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-        john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
-        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
-        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
-Message-ID: <20190802145227.GQ25064@quack2.suse.cz>
-References: <20190802022005.5117-1-jhubbard@nvidia.com>
- <20190802091244.GD6461@dhcp22.suse.cz>
- <20190802124146.GL25064@quack2.suse.cz>
- <20190802142443.GB5597@bombadil.infradead.org>
+cc:     linux-fsdevel@vger.kernel.org, hch@lst.de,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC 0/2] iomap & xfs support for large pages
+In-Reply-To: <20190731171734.21601-1-willy@infradead.org>
+Message-ID: <0100016c52d32b18-8593625f-bf32-4005-be04-79af900ac112-000000@email.amazonses.com>
+References: <20190731171734.21601-1-willy@infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802142443.GB5597@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.08.02-54.240.9.114
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 02-08-19 07:24:43, Matthew Wilcox wrote:
-> On Fri, Aug 02, 2019 at 02:41:46PM +0200, Jan Kara wrote:
-> > On Fri 02-08-19 11:12:44, Michal Hocko wrote:
-> > > On Thu 01-08-19 19:19:31, john.hubbard@gmail.com wrote:
-> > > [...]
-> > > > 2) Convert all of the call sites for get_user_pages*(), to
-> > > > invoke put_user_page*(), instead of put_page(). This involves dozens of
-> > > > call sites, and will take some time.
-> > > 
-> > > How do we make sure this is the case and it will remain the case in the
-> > > future? There must be some automagic to enforce/check that. It is simply
-> > > not manageable to do it every now and then because then 3) will simply
-> > > be never safe.
-> > > 
-> > > Have you considered coccinele or some other scripted way to do the
-> > > transition? I have no idea how to deal with future changes that would
-> > > break the balance though.
-> > 
-> > Yeah, that's why I've been suggesting at LSF/MM that we may need to create
-> > a gup wrapper - say vaddr_pin_pages() - and track which sites dropping
-> > references got converted by using this wrapper instead of gup. The
-> > counterpart would then be more logically named as unpin_page() or whatever
-> > instead of put_user_page().  Sure this is not completely foolproof (you can
-> > create new callsite using vaddr_pin_pages() and then just drop refs using
-> > put_page()) but I suppose it would be a high enough barrier for missed
-> > conversions... Thoughts?
-> 
-> I think the API we really need is get_user_bvec() / put_user_bvec(),
-> and I know Christoph has been putting some work into that.  That avoids
-> doing refcount operations on hundreds of pages if the page in question is
-> a huge page.  Once people are switched over to that, they won't be tempted
-> to manually call put_page() on the individual constituent pages of a bvec.
+On Wed, 31 Jul 2019, Matthew Wilcox wrote:
 
-Well, get_user_bvec() is certainly a good API for one class of users but
-just looking at the above series, you'll see there are *many* places that
-just don't work with bvecs at all and you need something for those.
+> Christoph sent me a patch a few months ago called "XFS THP wip".
+> I've redone it based on current linus tree, plus the page_size() /
+> compound_nr() / page_shift() patches currently found in -mm.  I fixed
+> the logic bugs that I noticed in his patch and may have introduced some
+> of my own.  I have only compile tested this code.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Some references here to patches from a long time ago. Maybe there are
+useful tidbits here ...
+
+Variable page cache just for ramfs:
+https://lkml.org/lkml/2007/4/19/261
+
+Large blocksize support for XFS, ReiserFS and ext2
+https://www.mail-archive.com/linux-fsdevel@vger.kernel.org/msg08730.html
+
