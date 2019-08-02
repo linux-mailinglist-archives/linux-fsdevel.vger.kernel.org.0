@@ -2,103 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F1047EA6C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 04:40:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75FFF7EAB4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 05:35:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbfHBCjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 22:39:04 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11756 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfHBCjE (ORCPT
+        id S1728885AbfHBDfq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 23:35:46 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:35826 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfHBDfq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 22:39:04 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d43a24e0000>; Thu, 01 Aug 2019 19:39:10 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 01 Aug 2019 19:39:01 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 01 Aug 2019 19:39:01 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
- 2019 02:39:00 +0000
-Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
-To:     <john.hubbard@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-nfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
-        <x86@kernel.org>, <xen-devel@lists.xenproject.org>
-References: <20190802021653.4882-1-jhubbard@nvidia.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <ec87b662-0fc2-0951-1337-a91b4888201b@nvidia.com>
-Date:   Thu, 1 Aug 2019 19:39:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 1 Aug 2019 23:35:46 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1htOM4-0001j9-Ou; Fri, 02 Aug 2019 03:35:45 +0000
+Date:   Fri, 2 Aug 2019 04:35:44 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [RFC] configfs_unregister_group() API
+Message-ID: <20190802033544.GA5426@ZenIV.linux.org.uk>
+References: <20190730211355.GU1131@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20190802021653.4882-1-jhubbard@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564713550; bh=uB7qKWJf2vIk7MCI51NrKGKnU0tjP3n9YQM4FSsQ99A=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=aftmkmmNomCdfG4/nsU7QFjmse0kzSiVn7k6qdyITGQKtpIb7fXB3ira93x2ikjhP
-         hh9fWh6OxSH7I4ITUxx9rk4nMXoUcCl6xE7j7d8OaKs0QzK3tWjGXYe1PPsA5+CMkF
-         sKiN+5/hdBTh4TsmJWAPetkvcksKG1W7KX4K24lGpfHw6t/QQ4fbKf5zlriq/zHiCI
-         WN7lLvY4tFrWOLTfdOFRIa/sFBuq00RVcHrLnsHi/Dnbw2dVeWXrugMTAYnP04jnRA
-         tXP1GLNpYcsDC/T0sb/csl6pvYXC87xnKjlVca8dQdSp/cuFTGUobSHcHyKfqM9q/X
-         eCw5n+JFkzHyg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730211355.GU1131@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/1/19 7:16 PM, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
+On Tue, Jul 30, 2019 at 10:13:55PM +0100, Al Viro wrote:
+> 	AFAICS, it (and configfs_unregister_default_group())
+> will break if called with group non-empty (i.e. when rmdir(2)
+> would've failed with -ENOTEMPTY); configfs_detach_prep()
+> is called, but return value is completely ignored.
 > 
-> Hi,
+> 	Similar breakage happens in configfs_unregister_subsystem(),
+> but there it looks like the drivers are responsible for not calling
+> it that way.  It yells if configfs_detach_prep() fails and AFAICS
+> all callers do guarantee it never happens.
 > 
-> These are best characterized as miscellaneous conversions: many (not all)
-> call sites that don't involve biovec or iov_iter, nor mm/. It also leaves
-> out a few call sites that require some more work. These are mostly pretty
-> simple ones.
+> 	configfs_unregister_group() is quiet; from my reading of
+> the callers, only pci-endpoint might end up calling it for group
+> that is not guaranteed to be empty.  I'm not familiar with
+> pci-endpoint guts, so I might very well be missing something there.
 > 
-> It's probably best to send all of these via Andrew's -mm tree, assuming
-> that there are no significant merge conflicts with ongoing work in other
-> trees (which I doubt, given that these are small changes).
+> Questions to configfs API maintainers (that'd be Christoph, these
+> days, AFAIK)
 > 
+> 1) should such a call be considered a driver bug?
+> 2) should configfs_unregister_group() at least warn when that happens?
+> 
+> and, to pci-endpoint maintainer
+> 
+> 3) what, if anything, prevents such calls in pci-endpoint?  Because
+> as it is, configfs will break badly when that happens...
 
-In case anyone is wondering, this truncated series is due to a script failure:
-git-send-email chokes when it hits email addresses whose names have a
-comma in them, as happened here with patch 0003.  
+	More specifically, consider something like pci_epf_test_init()
+calling pci_epf_register_driver().  Which, in turn, calls
+pci_ep_cfs_add_epf_group() and hits
+        group = configfs_register_default_group(functions_group, name,
+                                                &pci_epf_group_type);
+in there.  OK, so we get a directory tree created, with
 
-Please disregard this set and reply to the other thread.
+static const struct config_item_type pci_epf_group_type = {
+        .ct_group_ops   = &pci_epf_group_ops,
+        .ct_owner       = THIS_MODULE,
+};
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+for type.  Since pci_epf_group_ops is
+static struct configfs_group_operations pci_epf_group_ops = {
+        .make_group     = &pci_epf_make,
+        .drop_item      = &pci_epf_drop,
+};
+
+and has ->make_group(), userland can do mkdir() in there.  Now,
+doing so pins ->ct_owner, preventing module_exit() until we
+rmdir() the sucker.  And configfs_default_group_unregister()
+*IS* triggered by module_exit(), but it's the wrong module.
+THIS_MODULE here refers to pci-ep-cfs, not pci-epf-test, so
+it doesn't do a damn thing to prevent rmmod pci-epf-test,
+calling
+static void __exit pci_epf_test_exit(void)
+{
+        pci_epf_unregister_driver(&test_driver);
+}
+which leads to pci_ep_cfs_remove_epc_group(), with
+	configfs_unregister_default_group(group);
+in it.  What's to prevent that call on non-empty group?
+
+	AFAICS, pci_ep_cfs_add_epc_group()/pci_ep_cfs_remove_epc_group()
+might grow a similar problem, but these have no current users.
+
+	Folks, should that be treated as bug in driver (as in
+"don't you ever call configfs_unregister_{default_,}group() on
+a non-empty group") or should that be dealt with in configfs?
