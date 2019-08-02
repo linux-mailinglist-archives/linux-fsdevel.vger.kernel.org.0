@@ -2,296 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 477F47F76A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 14:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4D6B7F934
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 15:27:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392699AbfHBMyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 08:54:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3716 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389609AbfHBMyt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:54:49 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id CD4FA2E72510C5C3A703;
-        Fri,  2 Aug 2019 20:54:47 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 2 Aug 2019
- 20:54:40 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v6 24/24] erofs: add document
-Date:   Fri, 2 Aug 2019 20:53:47 +0800
-Message-ID: <20190802125347.166018-25-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190802125347.166018-1-gaoxiang25@huawei.com>
-References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+        id S2394411AbfHBNZo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 09:25:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36356 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390633AbfHBNZl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:25:41 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F69521850;
+        Fri,  2 Aug 2019 13:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564752340;
+        bh=vpGSN6KQoe46GsjtCVhzUdKWpRsW7UHuBg/3j1ERZYg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PmoxJagO3Vt+fUV7OiBf4075cy3Mde/tpAQIBvXcNyAnWUtzk92YzagWJBGhxDXmv
+         bd3clZ7TqG5YpvbPM+Cpzflt2xNoaeR+ZBM0Xpjslwty6aU/rn37f/s6Mcw8qRHLwj
+         ffUpWdV4XjmzieTT9bYxYwuWWtWtZAPZor05nkWs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 28/30] sched/fair: Don't free p->numa_faults with concurrent readers
+Date:   Fri,  2 Aug 2019 09:24:20 -0400
+Message-Id: <20190802132422.13963-28-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190802132422.13963-1-sashal@kernel.org>
+References: <20190802132422.13963-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This documents key features, usage, and
-on-disk design of erofs.
+From: Jann Horn <jannh@google.com>
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+[ Upstream commit 16d51a590a8ce3befb1308e0e7ab77f3b661af33 ]
+
+When going through execve(), zero out the NUMA fault statistics instead of
+freeing them.
+
+During execve, the task is reachable through procfs and the scheduler. A
+concurrent /proc/*/sched reader can read data from a freed ->numa_faults
+allocation (confirmed by KASAN) and write it back to userspace.
+I believe that it would also be possible for a use-after-free read to occur
+through a race between a NUMA fault and execve(): task_numa_fault() can
+lead to task_numa_compare(), which invokes task_weight() on the currently
+running task of a different CPU.
+
+Another way to fix this would be to make ->numa_faults RCU-managed or add
+extra locking, but it seems easier to wipe the NUMA fault statistics on
+execve.
+
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will@kernel.org>
+Fixes: 82727018b0d3 ("sched/numa: Call task_numa_free() from do_execve()")
+Link: https://lkml.kernel.org/r/20190716152047.14424-1-jannh@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/filesystems/erofs.txt | 225 ++++++++++++++++++++++++++++
- 1 file changed, 225 insertions(+)
- create mode 100644 Documentation/filesystems/erofs.txt
+ fs/exec.c                            |  2 +-
+ include/linux/sched/numa_balancing.h |  4 ++--
+ kernel/fork.c                        |  2 +-
+ kernel/sched/fair.c                  | 24 ++++++++++++++++++++----
+ 4 files changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/filesystems/erofs.txt b/Documentation/filesystems/erofs.txt
-new file mode 100644
-index 000000000000..457e601e0467
---- /dev/null
-+++ b/Documentation/filesystems/erofs.txt
-@@ -0,0 +1,225 @@
-+Overview
-+========
+diff --git a/fs/exec.c b/fs/exec.c
+index 0936b5a8199ac..4623fc3ac86b8 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1808,7 +1808,7 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	current->in_execve = 0;
+ 	membarrier_execve(current);
+ 	acct_update_integrals(current);
+-	task_numa_free(current);
++	task_numa_free(current, false);
+ 	free_bprm(bprm);
+ 	kfree(pathbuf);
+ 	putname(filename);
+diff --git a/include/linux/sched/numa_balancing.h b/include/linux/sched/numa_balancing.h
+index e7dd04a84ba89..3988762efe15c 100644
+--- a/include/linux/sched/numa_balancing.h
++++ b/include/linux/sched/numa_balancing.h
+@@ -19,7 +19,7 @@
+ extern void task_numa_fault(int last_node, int node, int pages, int flags);
+ extern pid_t task_numa_group_id(struct task_struct *p);
+ extern void set_numabalancing_state(bool enabled);
+-extern void task_numa_free(struct task_struct *p);
++extern void task_numa_free(struct task_struct *p, bool final);
+ extern bool should_numa_migrate_memory(struct task_struct *p, struct page *page,
+ 					int src_nid, int dst_cpu);
+ #else
+@@ -34,7 +34,7 @@ static inline pid_t task_numa_group_id(struct task_struct *p)
+ static inline void set_numabalancing_state(bool enabled)
+ {
+ }
+-static inline void task_numa_free(struct task_struct *p)
++static inline void task_numa_free(struct task_struct *p, bool final)
+ {
+ }
+ static inline bool should_numa_migrate_memory(struct task_struct *p,
+diff --git a/kernel/fork.c b/kernel/fork.c
+index a5bb8fad54756..919e7cd5cd232 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -415,7 +415,7 @@ void __put_task_struct(struct task_struct *tsk)
+ 	WARN_ON(tsk == current);
+ 
+ 	cgroup_free(tsk);
+-	task_numa_free(tsk);
++	task_numa_free(tsk, true);
+ 	security_task_free(tsk);
+ 	exit_creds(tsk);
+ 	delayacct_tsk_free(tsk);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index af7de1f9906c1..0a4e882d43088 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2358,13 +2358,23 @@ static void task_numa_group(struct task_struct *p, int cpupid, int flags,
+ 	return;
+ }
+ 
+-void task_numa_free(struct task_struct *p)
++/*
++ * Get rid of NUMA staticstics associated with a task (either current or dead).
++ * If @final is set, the task is dead and has reached refcount zero, so we can
++ * safely free all relevant data structures. Otherwise, there might be
++ * concurrent reads from places like load balancing and procfs, and we should
++ * reset the data back to default state without freeing ->numa_faults.
++ */
++void task_numa_free(struct task_struct *p, bool final)
+ {
+ 	struct numa_group *grp = p->numa_group;
+-	void *numa_faults = p->numa_faults;
++	unsigned long *numa_faults = p->numa_faults;
+ 	unsigned long flags;
+ 	int i;
+ 
++	if (!numa_faults)
++		return;
 +
-+EROFS file-system stands for Enhanced Read-Only File System. Different
-+from other read-only file systems, it aims to be designed for flexibility,
-+scalability, but be kept simple and high performance.
-+
-+It is designed as a better filesystem solution for the following scenarios:
-+ - read-only storage media or
-+
-+ - part of a fully trusted read-only solution, which means it needs to be
-+   immutable and bit-for-bit identical to the official golden image for
-+   their releases due to security and other considerations and
-+
-+ - hope to save some extra storage space with guaranteed end-to-end performance
-+   by using reduced metadata and transparent file compression, especially
-+   for those embedded devices with limited memory (ex, smartphone);
-+
-+Here is the main features of EROFS:
-+ - Little endian on-disk design;
-+
-+ - Currently 4KB block size (nobh) and therefore maximum 16TB address space;
-+
-+ - Metadata & data could be mixed by design;
-+
-+ - 2 inode versions for different requirements:
-+                          v1            v2
-+   Inode metadata size:   32 bytes      64 bytes
-+   Max file size:         4 GB          16 EB (also limited by max. vol size)
-+   Max uids/gids:         65536         4294967296
-+   File creation time:    no            yes (64 + 32-bit timestamp)
-+   Max hardlinks:         65536         4294967296
-+   Metadata reserved:     4 bytes       14 bytes
-+
-+ - Support extended attributes (xattrs) as an option;
-+
-+ - Support xattr inline and tail-end data inline for all files;
-+
-+ - Support POSIX.1e ACLs by using xattrs;
-+
-+ - Support statx();
-+
-+ - Support transparent file compression as an option:
-+   LZ4 algorithm with 4 KB fixed-output compression for high performance;
-+
-+The following git tree provides the file system user-space tools under
-+development (ex, formatting tool mkfs.erofs):
-+>> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
-+
-+Bugs and patches are welcome, please kindly help us and send to the following
-+linux-erofs mailing list:
-+>> linux-erofs mailing list   <linux-erofs@lists.ozlabs.org>
-+
-+Note that EROFS is still working in progress as a Linux staging driver,
-+Cc the staging mailing list as well is highly recommended:
-+>> Linux Driver Project Developer List <devel@driverdev.osuosl.org>
-+
-+Mount options
-+=============
-+
-+fault_injection=%d     Enable fault injection in all supported types with
-+                       specified injection rate. Supported injection type:
-+                       Type_Name                Type_Value
-+                       FAULT_KMALLOC            0x000000001
-+                       FAULT_READ_IO            0x000000002
-+(no)user_xattr         Setup Extended User Attributes. Note: xattr is enabled
-+                       by default if CONFIG_EROFS_FS_XATTR is selected.
-+(no)acl                Setup POSIX Access Control List. Note: acl is enabled
-+                       by default if CONFIG_EROFS_FS_POSIX_ACL is selected.
-+cache_strategy=%s      Select a strategy for cached decompression from now on:
-+                         disabled: In-place I/O decompression only;
-+                        readahead: Cache the last incomplete compressed physical
-+                                   cluster for further reading. It still does
-+                                   in-place I/O decompression for the rest
-+                                   compressed physical clusters;
-+                       readaround: Cache the both ends of incomplete compressed
-+                                   physical clusters for further reading.
-+                                   It still does in-place I/O decompression
-+                                   for the rest compressed physical clusters.
-+
-+Module parameters
-+=================
-+use_vmap=[0|1]         Use vmap() instead of vm_map_ram() (default 0).
-+
-+On-disk details
-+===============
-+
-+Summary
-+-------
-+Different from other read-only file systems, an EROFS volume is designed
-+to be as simple as possible:
-+
-+                                |-> aligned with the block size
-+   ____________________________________________________________
-+  | |SB| | ... | Metadata | ... | Data | Metadata | ... | Data |
-+  |_|__|_|_____|__________|_____|______|__________|_____|______|
-+  0 +1K
-+
-+All data areas should be aligned with the block size, but metadata areas
-+may not. All metadatas can be now observed in two different spaces (views):
-+ 1. Inode metadata space
-+    Each valid inode should be aligned with an inode slot, which is a fixed
-+    value (32 bytes) and designed to be kept in line with v1 inode size.
-+
-+    Each inode can be directly found with the following formula:
-+         inode offset = meta_blkaddr * block_size + 32 * nid
-+
-+                                |-> aligned with 8B
-+                                           |-> followed closely
-+    + meta_blkaddr blocks                                      |-> another slot
-+     _____________________________________________________________________
-+    |  ...   | inode |  xattrs  | extents  | data inline | ... | inode ...
-+    |________|_______|(optional)|(optional)|__(optional)_|_____|__________
-+             |-> aligned with the inode slot size
-+                  .                   .
-+                .                         .
-+              .                              .
-+            .                                    .
-+          .                                         .
-+        .                                              .
-+      .____________________________________________________|-> aligned with 4B
-+      | xattr_ibody_header | shared xattrs | inline xattrs |
-+      |____________________|_______________|_______________|
-+      |->    12 bytes    <-|->x * 4 bytes<-|               .
-+                          .                .                 .
-+                    .                      .                   .
-+               .                           .                     .
-+           ._______________________________.______________________.
-+           | id | id | id | id |  ... | id | ent | ... | ent| ... |
-+           |____|____|____|____|______|____|_____|_____|____|_____|
-+                                           |-> aligned with 4B
-+                                                       |-> aligned with 4B
-+
-+    Inode could be 32 or 64 bytes, which can be distinguished from a common
-+    field which all inode versions have -- i_advise:
-+
-+        __________________               __________________
-+       |     i_advise     |             |     i_advise     |
-+       |__________________|             |__________________|
-+       |        ...       |             |        ...       |
-+       |                  |             |                  |
-+       |__________________| 32 bytes    |                  |
-+                                        |                  |
-+                                        |__________________| 64 bytes
-+
-+    Xattrs, extents, data inline are followed by the corresponding inode with
-+    proper alignes, and they could be optional for different data mappings,
-+    _currently_ there are totally 3 valid data mappings supported:
-+
-+     1) flat file data without data inline (no extent);
-+     2) fixed-output size data compression (must have extents);
-+     3) flat file data with tail-end data inline (no extent);
-+
-+    The size of the optional xattrs is indicated by i_xattr_count in inode
-+    header. Large xattrs or xattrs shared by many different files can be
-+    stored in shared xattrs metadata rather than inlined right after inode.
-+
-+ 2. Shared xattrs metadata space
-+    Shared xattrs space is similar to the above inode space, started with
-+    a specific block indicated by xattr_blkaddr, organized one by one with
-+    proper align.
-+
-+    Each share xattr can also be directly found by the following formula:
-+         xattr offset = xattr_blkaddr * block_size + 4 * xattr_id
-+
-+                           |-> aligned by  4 bytes
-+    + xattr_blkaddr blocks                     |-> aligned with 4 bytes
-+     _________________________________________________________________________
-+    |  ...   | xattr_entry |  xattr data | ... |  xattr_entry | xattr data  ...
-+    |________|_____________|_____________|_____|______________|_______________
-+
-+Directories
-+-----------
-+All directories are now organized in a compact on-disk format. Note that
-+each directory block is divided into index and name areas in order to support
-+random file lookup, and all directory entries are _strictly_ recorded in
-+alphabetical order in order to support improved prefix binary search
-+algorithm (could refer to the related source code).
-+
-+                 ___________________________
-+                /                           |
-+               /              ______________|________________
-+              /              /              | nameoff1       | nameoffN-1
-+ ____________.______________._______________v________________v__________
-+| dirent | dirent | ... | dirent | filename | filename | ... | filename |
-+|___.0___|____1___|_____|___N-1__|____0_____|____1_____|_____|___N-1____|
-+     \                           ^
-+      \                          |                           * could have
-+       \                         |                             trailing '\0'
-+        \________________________| nameoff0
-+
-+                             Directory block
-+
-+Note that apart from the offset of the first filename, nameoff0 also indicates
-+the total number of directory entries in this block since it is no need to
-+introduce another on-disk field at all.
-+
-+Compression
-+-----------
-+Currently, EROFS supports 4KB fixed-output clustersize transparent file
-+compression, as illustrated below:
-+
-+         |---- Variant-Length Extent ----|-------- VLE --------|----- VLE -----
-+         clusterofs                      clusterofs            clusterofs
-+         |                               |                     |   logical data
-+_________v_______________________________v_____________________v_______________
-+... |    .        |             |        .    |             |  .          | ...
-+____|____.________|_____________|________.____|_____________|__.__________|____
-+    |-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|
-+         size          size          size          size          size
-+          .                             .                .                   .
-+           .                       .               .                  .
-+            .                  .              .                .
-+      _______._____________._____________._____________._____________________
-+         ... |             |             |             | ... physical data
-+      _______|_____________|_____________|_____________|_____________________
-+             |-> cluster <-|-> cluster <-|-> cluster <-|
-+                  size          size          size
-+
-+Currently each on-disk physical cluster can contain 4KB (un)compressed data
-+at most. For each logical cluster, there is a corresponding on-disk index to
-+describe its cluster type, physical cluster address, etc.
-+
-+See "struct z_erofs_vle_decompressed_index" in erofs_fs.h for more details.
-+
+ 	if (grp) {
+ 		spin_lock_irqsave(&grp->lock, flags);
+ 		for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++)
+@@ -2377,8 +2387,14 @@ void task_numa_free(struct task_struct *p)
+ 		put_numa_group(grp);
+ 	}
+ 
+-	p->numa_faults = NULL;
+-	kfree(numa_faults);
++	if (final) {
++		p->numa_faults = NULL;
++		kfree(numa_faults);
++	} else {
++		p->total_numa_faults = 0;
++		for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++)
++			numa_faults[i] = 0;
++	}
+ }
+ 
+ /*
 -- 
-2.17.1
+2.20.1
 
