@@ -2,106 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E64277EA0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 04:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F1047EA6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 04:40:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389865AbfHBC0g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Aug 2019 22:26:36 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41706 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389848AbfHBC0d (ORCPT
+        id S1728674AbfHBCjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 22:39:04 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11756 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfHBCjE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 22:26:33 -0400
-Received: by mail-io1-f67.google.com with SMTP id j5so144768998ioj.8;
-        Thu, 01 Aug 2019 19:26:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3jE/qOtP1fz3hEG4RtDQhO7tMIcvYMp5O+T6euuQUcE=;
-        b=bW3cGh8WxyTsYRSlys+blG/7dyjyHuuJdV0CGpicWGTcMv1lMBIUJFzGI3ZxbivNp/
-         kGBVZFEOzphL7mdDABnFlkKMzahiyYkxYpKQYI9TdiLAx9gOxHLYNQsP8vjk8m3NKS7r
-         PnvuUvC/m5mN01hHSwFHhu6kCCMzO8spTMPZlZuiPhBfRrbAtLvPoKeOjg8+dp6pCvZC
-         kbwJNMfkmxjNlajmzjhwXXyC+UQ56we+n1ud+C3meYTiVxedTqFrbLUujt2PwCJWsNu9
-         23D4FZieUPeho65AsuIyVBIJ6fCqQW/GCsH3rBryYAf8UCUu2zZwPvbHAmGlRSvpNLh+
-         zhUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3jE/qOtP1fz3hEG4RtDQhO7tMIcvYMp5O+T6euuQUcE=;
-        b=a5b3LJ53Ln3DcFdd6ERxCp0LXIaZdLFoM49y7zcqlQ67oED413BqxKi8tYRTpFx1CO
-         WFxCenPdDbmTOtC7Pq61ZQDST8I+CUxJIyfHcmKxj5QaRR1i67hQVWG0NQkCc7SZu39i
-         cF+1UK6JCRzAW5vsEfQQiJHTqhG3zHkEHRB3GCudYF51yiQU3UU6XWQaKTNR8SKq28mr
-         hWhvO9rL/NNK3jdmaDMmrK221XTOyrctcwBZtBOojML1tFnH8oUR0FAJAOkg9jhaKPV8
-         j44oEeTuB1FmyGTjyy2GSXgLWjGK5jRUBml8aCpoGCQeu4TQdHqIrADRyLcGB2lNzy1Y
-         t7UA==
-X-Gm-Message-State: APjAAAUmx8oc6uezaRVsJib4k+rC9BzuQlBnR4qv03cGx60fbXHvweK4
-        lPzzPg2YPMF9cd4HecuKzBWxnaEgrXrtIzm33Sc=
-X-Google-Smtp-Source: APXvYqypHgvjA7X7cmae9+y5zSYvl+e77KaCUfJ6RL6RNUikeasXpNPo9yD4B0mY1IZK6pdZKcqCKLatRUR2EIk2sxw=
-X-Received: by 2002:a6b:ed09:: with SMTP id n9mr9894028iog.153.1564712792776;
- Thu, 01 Aug 2019 19:26:32 -0700 (PDT)
+        Thu, 1 Aug 2019 22:39:04 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d43a24e0000>; Thu, 01 Aug 2019 19:39:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 01 Aug 2019 19:39:01 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 01 Aug 2019 19:39:01 -0700
+Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
+ 2019 02:39:00 +0000
+Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
+To:     <john.hubbard@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-nfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
+        <x86@kernel.org>, <xen-devel@lists.xenproject.org>
+References: <20190802021653.4882-1-jhubbard@nvidia.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <ec87b662-0fc2-0951-1337-a91b4888201b@nvidia.com>
+Date:   Thu, 1 Aug 2019 19:39:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-20-deepa.kernel@gmail.com>
- <201907292129.AC796230@keescook> <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
-In-Reply-To: <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Thu, 1 Aug 2019 19:26:21 -0700
-Message-ID: <CABeXuvrmNkUOH5ZU59Kg4Ge1cFE9nqp9NhTPJjus5KkCrYeC6w@mail.gmail.com>
-Subject: Re: [PATCH 19/20] pstore: fs superblock limits
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190802021653.4882-1-jhubbard@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564713550; bh=uB7qKWJf2vIk7MCI51NrKGKnU0tjP3n9YQM4FSsQ99A=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=aftmkmmNomCdfG4/nsU7QFjmse0kzSiVn7k6qdyITGQKtpIb7fXB3ira93x2ikjhP
+         hh9fWh6OxSH7I4ITUxx9rk4nMXoUcCl6xE7j7d8OaKs0QzK3tWjGXYe1PPsA5+CMkF
+         sKiN+5/hdBTh4TsmJWAPetkvcksKG1W7KX4K24lGpfHw6t/QQ4fbKf5zlriq/zHiCI
+         WN7lLvY4tFrWOLTfdOFRIa/sFBuq00RVcHrLnsHi/Dnbw2dVeWXrugMTAYnP04jnRA
+         tXP1GLNpYcsDC/T0sb/csl6pvYXC87xnKjlVca8dQdSp/cuFTGUobSHcHyKfqM9q/X
+         eCw5n+JFkzHyg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 12:36 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Jul 30, 2019 at 6:31 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Mon, Jul 29, 2019 at 06:49:23PM -0700, Deepa Dinamani wrote:
-> > > Also update the gran since pstore has microsecond granularity.
-> >
-> > So, I'm fine with this, but technically the granularity depends on the
-> > backend storage... many have no actual time keeping, though. My point is,
-> > pstore's timestamps are really mostly a lie, but the most common backend
-> > (ramoops) is seconds-granularity.
-> >
-> > So, I'm fine with this, but it's a lie but it's a lie that doesn't
-> > matter, so ...
-> >
-> > Acked-by: Kees Cook <keescook@chromium.org>
-> >
-> > I'm open to suggestions to improve it...
->
-> If we don't care about using sub-second granularity, then setting it
-> to one second unconditionally here will make it always use that and
-> report it correctly.
+On 8/1/19 7:16 PM, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> Hi,
+> 
+> These are best characterized as miscellaneous conversions: many (not all)
+> call sites that don't involve biovec or iov_iter, nor mm/. It also leaves
+> out a few call sites that require some more work. These are mostly pretty
+> simple ones.
+> 
+> It's probably best to send all of these via Andrew's -mm tree, assuming
+> that there are no significant merge conflicts with ongoing work in other
+> trees (which I doubt, given that these are small changes).
+> 
 
-Should this printf in ramoops_write_kmsg_hdr() also be fixed then?
+In case anyone is wondering, this truncated series is due to a script failure:
+git-send-email chokes when it hits email addresses whose names have a
+comma in them, as happened here with patch 0003.  
 
-        RAMOOPS_KERNMSG_HDR "%lld.%06lu-%c\n",
-        (time64_t)record->time.tv_sec,
-        record->time.tv_nsec / 1000,
-        record->compressed ? 'C' : 'D');
-    persistent_ram_write(prz, hdr, len);
+Please disregard this set and reply to the other thread.
 
-ramoops_read_kmsg_hdr() doesn't read this as microseconds. Seems like
-a mismatch from above.
-
-If we want to agree that we just want seconds granularity for pstore,
-we could replace the tv_nsec part to be all 0's if anybody else is
-depending on this format.
-I could drop this patch from the series and post that patch seperately.
-
-Thanks,
--Deepa
+thanks,
+-- 
+John Hubbard
+NVIDIA
