@@ -2,112 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC5B7F541
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 12:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9087F713
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 14:42:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbfHBKj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 06:39:59 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39911 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfHBKj7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:39:59 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l9so73300248qtu.6;
-        Fri, 02 Aug 2019 03:39:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=rlJwQwKozaN0IUoAzhdQgNUAloq8MbsoeODQ5XHIhJY=;
-        b=smTgesqlEhm59X+NJGhyYz6n7wKcJv9UxN3KLCmauIYr1XwW+sqMBDZ2bmSMqJjT1F
-         IlyXl/6NV/KePa4flHdcX8Pl+CrZG70wG9TX9biGHtiDjB5Tf1Rxx7hT7X1g6Gqfp2Br
-         PdGYnL7108bhvqBS9Hc4E0Q/TvdETZ2JlSQDtKiS3SPKwt33L8+ZdxAu4yLcew9Xnxfw
-         Fi6cFyaEegGKajE8TOyAdbZGFPy3RMMbfEwTQGmL/+lwQqdgZDoQogsMxcshMG4Ptg1W
-         WnC1zs2DJ73zKG3flHxQFJZ59x4S7jMo2KEgVGSaZgAfoqbEEKfQmDsIXtUcbgFeUFDD
-         R6Qw==
-X-Gm-Message-State: APjAAAWgGek8WZ9jaMdupvLvPOw+COtDHwvKjvR5o56fok8gR3GgUmHf
-        pVo03OQhdmk5fwfcaey5WgivnkBblwcPdUUVD/KLZTC4WdE=
-X-Google-Smtp-Source: APXvYqxjI2APY3XKV/roWB/IOZhK6Qh9LDCyhPcXTsJGr54ySUA2d5+lcfIDZDxkRrdXwBZu1D17z1dmyaU77yOWmQs=
-X-Received: by 2002:ac8:f99:: with SMTP id b25mr86917918qtk.142.1564742398001;
- Fri, 02 Aug 2019 03:39:58 -0700 (PDT)
+        id S2388056AbfHBMlv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 08:41:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35710 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728404AbfHBMlv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:41:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 20E6FAF94;
+        Fri,  2 Aug 2019 12:41:48 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id F40A51E3F4D; Fri,  2 Aug 2019 14:41:46 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 14:41:46 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
+        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
+Message-ID: <20190802124146.GL25064@quack2.suse.cz>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+ <20190802091244.GD6461@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-10-deepa.kernel@gmail.com>
- <20190731152609.GB7077@magnolia> <CABeXuvpiom9eQi0y7PAwAypUP1ezKKRfbh-Yqr8+Sbio=QtUJQ@mail.gmail.com>
- <20190801224344.GC17372@mit.edu>
-In-Reply-To: <20190801224344.GC17372@mit.edu>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 2 Aug 2019 12:39:41 +0200
-Message-ID: <CAK8P3a3nqmWBXBiFL1kGmJ7yQ_=5S4Kok0YVB3VMFVBuYjFGOQ@mail.gmail.com>
-Subject: Re: [PATCH 09/20] ext4: Initialize timestamps limits
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802091244.GD6461@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 12:43 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> On Thu, Aug 01, 2019 at 12:18:28PM -0700, Deepa Dinamani wrote:
-> > > Say you have a filesystem with s_inode_size > 128 where not all of the
-> > > ondisk inodes have been upgraded to i_extra_isize > 0 and therefore
-> > > don't support nanoseconds or times beyond 2038.  I think this happens on
-> > > ext3 filesystems that reserved extra space for inode attrs that are
-> > > subsequently converted to ext4?
-> >
-> > I'm confused about ext3 being converted to ext4. If the converted
-> > inodes have extra space, then ext4_iget() will start using the extra
-> > space when it modifies the on disk inode, won't it?i
->
-> It is possible that you can have an ext3 file system with (for
-> example) 256 byte inodes, and all of the extra space was used for
-> extended attributes, then ext4 won't have the extra space available.
-> This is going toh be on an inode-by-inode basis, and if an extended
-> attribute is motdified or deleted, the space would become available,t
-> and then inode would start getting a higher resolution timestamp.
+On Fri 02-08-19 11:12:44, Michal Hocko wrote:
+> On Thu 01-08-19 19:19:31, john.hubbard@gmail.com wrote:
+> [...]
+> > 2) Convert all of the call sites for get_user_pages*(), to
+> > invoke put_user_page*(), instead of put_page(). This involves dozens of
+> > call sites, and will take some time.
+> 
+> How do we make sure this is the case and it will remain the case in the
+> future? There must be some automagic to enforce/check that. It is simply
+> not manageable to do it every now and then because then 3) will simply
+> be never safe.
+> 
+> Have you considered coccinele or some other scripted way to do the
+> transition? I have no idea how to deal with future changes that would
+> break the balance though.
 
-Is it correct to assume that this kind of file would have to be
-created using the ext3.ko file system implementation that was
-removed in linux-4.3, but not using ext2.ko or ext4.ko (which
-would always set the extended timestamps even in "-t ext2" or
-"-t ext3" mode)?
+Yeah, that's why I've been suggesting at LSF/MM that we may need to create
+a gup wrapper - say vaddr_pin_pages() - and track which sites dropping
+references got converted by using this wrapper instead of gup. The
+counterpart would then be more logically named as unpin_page() or whatever
+instead of put_user_page().  Sure this is not completely foolproof (you can
+create new callsite using vaddr_pin_pages() and then just drop refs using
+put_page()) but I suppose it would be a high enough barrier for missed
+conversions... Thoughts?
 
-I tried to reproduce this on a modern kernel and with and
-moderately old debugfs (1.42.13) but failed.
+								Honza
 
-> I really don't think it's worth worrying about that, though.  It's
-> highly unlikely ext3 file systems will be still be in service by the
-> time it's needed in 2038.  And if so, it's highly unlikely they would
-> be converted to ext4.
-
-As the difference is easily visible even before y2038 by using
-utimensat(old_inode, future_date) on a file, we should at least
-decide what the sanest behavior is that we can easily implement,
-and then document what is expected to happen here.
-
-If we check for s_min_extra_isize instead of s_inode_size
-to determine s_time_gran/s_time_max, we would warn
-at mount time as well as and consistently truncate all
-timestamps to full 32-bit seconds, regardless of whether
-there is actually space or not.
-
-Alternatively, we could warn if s_min_extra_isize is
-too small, but use i_inode_size to determine
-s_time_gran/s_time_max anyway.
-
-From looking at e2fsprogs git history, I see that
-s_min_extra_isize has always been set by mkfs since
-2008, but I'm not sure if there would have been a
-case in which it remains set but the ext3.ko would
-ignore it and use that space anyway.
-
-       Arnd
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
