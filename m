@@ -2,84 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ACD07F045
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 11:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7283A7F047
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 11:19:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387950AbfHBJTf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 2 Aug 2019 05:19:35 -0400
-Received: from mga09.intel.com ([134.134.136.24]:11805 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387890AbfHBJTf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:19:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2019 02:19:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,337,1559545200"; 
-   d="scan'208";a="178105348"
-Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.252.3.11])
-  by orsmga006.jf.intel.com with ESMTP; 02 Aug 2019 02:19:23 -0700
-Content-Type: text/plain; charset="utf-8"
+        id S2387876AbfHBJTn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 05:19:43 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35612 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387890AbfHBJTn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:19:43 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y4so76425337wrm.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Aug 2019 02:19:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=AWW90I58JbC0qNw1B9zfM6Ib/6ksVuYisUHthaEluzs=;
+        b=FHcbBWi++zmwQzJ21HrOaEIyvCrjWlJdxt1Fj1FGFHU0a6AXin1+6YB3O77DlPNM/J
+         pL5uFFzxgtnxtgmCAgw6KZVuwk/iG3+TaCqWRB7ntiS0bTOn6c/6T0WjTySzPfTnyCqt
+         UD6JxvNG6WGMhcf3r4ZyoU5N1oxYXuJ+PxSXQwxe0YywGAukU3Jk3soQcY88Q1nStnQj
+         4qM82rguOeJmWreQoHER5kguN7kmcEkuYoqKmgFrbmqMHFcjGtcRCC5DfFUI2gQYyoE/
+         WNajEADCcyolG24KZ6naojBchzy7NAoRuBiwdv938IUNBCaO5KHvUqLIoxyCmZnSqpXT
+         FS5A==
+X-Gm-Message-State: APjAAAUdhywQerWYOmrLzfieXzJUPkL+ZUZPoPjn3/1eOe1tgk34NkQ3
+        H3DnZpWajJfQe4O3ZhB5youkdg==
+X-Google-Smtp-Source: APXvYqwI+Edf+8WSAIuVXNdwAMHEunwYHZHkK1/ROixc64nej4MDkh74BNSr6DgHzuNsmKROuMiZFg==
+X-Received: by 2002:a5d:4b8b:: with SMTP id b11mr65487799wrt.294.1564737581568;
+        Fri, 02 Aug 2019 02:19:41 -0700 (PDT)
+Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
+        by smtp.gmail.com with ESMTPSA id a67sm85805669wmh.40.2019.08.02.02.19.40
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 02 Aug 2019 02:19:41 -0700 (PDT)
+Date:   Fri, 2 Aug 2019 11:19:39 +0200
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
+        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 4/9] fibmap: Use bmap instead of ->bmap method in
+ ioctl_fibmap
+Message-ID: <20190802091937.kwutqtwt64q5hzkz@pegasus.maiolino.io>
+Mail-Followup-To: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
+        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
+        linux-xfs@vger.kernel.org
+References: <20190731141245.7230-1-cmaiolino@redhat.com>
+ <20190731141245.7230-5-cmaiolino@redhat.com>
+ <20190731231217.GV1561054@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Andrew Morton <akpm@linux-foundation.org>, john.hubbard@gmail.com
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <20190802022005.5117-7-jhubbard@nvidia.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?utf-8?b?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
-        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
-        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>
-References: <20190802022005.5117-1-jhubbard@nvidia.com>
- <20190802022005.5117-7-jhubbard@nvidia.com>
-Message-ID: <156473756254.19842.12384378926183716632@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 06/34] drm/i915: convert put_page() to put_user_page*()
-Date:   Fri, 02 Aug 2019 12:19:22 +0300
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731231217.GV1561054@magnolia>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting john.hubbard@gmail.com (2019-08-02 05:19:37)
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> For pages that were retained via get_user_pages*(), release those pages
-> via the new put_user_page*() routines, instead of via put_page() or
-> release_pages().
-> 
-> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-> ("mm: introduce put_user_page*(), placeholder versions").
-> 
-> Note that this effectively changes the code's behavior in
-> i915_gem_userptr_put_pages(): it now calls set_page_dirty_lock(),
-> instead of set_page_dirty(). This is probably more accurate.
+Hi Darrick.
 
-We've already fixed this in drm-tip where the current code uses
-set_page_dirty_lock().
+> > +		return error;
+> > +
+> > +	block = ur_block;
+> > +	error = bmap(inode, &block);
+> > +
+> > +	if (error)
+> > +		ur_block = 0;
+> > +	else
+> > +		ur_block = block;
+> 
+> What happens if ur_block > INT_MAX?  Shouldn't we return zero (i.e.
+> error) instead of truncating the value?  Maybe the code does this
+> somewhere else?  Here seemed like the obvious place for an overflow
+> check as we go from sector_t to int.
+> 
 
-This would conflict with our tree. Rodrigo is handling
-drm-intel-next for 5.4, so you guys want to coordinate how
-to merge.
+The behavior should still be the same. It will get truncated, unfortunately. I
+don't think we can actually change this behavior and return zero instead of
+truncating it.
 
-Regards, Joonas
+> --D
+> 
+> > +
+> > +	error = put_user(ur_block, p);
+> > +
+> > +	return error;
+> >  }
+> >  
+> >  /**
+> > -- 
+> > 2.20.1
+> > 
+
+-- 
+Carlos
