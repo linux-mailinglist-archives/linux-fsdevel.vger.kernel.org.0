@@ -2,222 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C3A7E78F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 03:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98D507E7E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 04:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731260AbfHBBkI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 1 Aug 2019 21:40:08 -0400
-Received: from mx1.mail.vl.ru ([80.92.161.250]:50990 "EHLO mx1.mail.vl.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731233AbfHBBkI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Aug 2019 21:40:08 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mx1.mail.vl.ru (Postfix) with ESMTP id 84B721860D71;
-        Fri,  2 Aug 2019 01:40:04 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at mail.vl.ru
-Received: from mx1.mail.vl.ru ([127.0.0.1])
-        by localhost (smtp1.srv.loc [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jI4WmwLbDOxx; Fri,  2 Aug 2019 11:40:03 +1000 (+10)
-Received: from [10.125.1.12] (unknown [109.126.62.18])
-        (Authenticated sender: turchanov@vl.ru)
-        by mx1.mail.vl.ru (Postfix) with ESMTPSA id 016AB184BFDD;
-        Fri,  2 Aug 2019 11:40:02 +1000 (+10)
-Subject: Re: [BUG] lseek on /proc/meminfo is broken in 4.19.59 maybe due to
- commit 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and
- interface")
-To:     NeilBrown <neilb@suse.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <3bd775ab-9e31-c6b3-374e-7a9982a9a8cd@farpost.com>
- <5c4c0648-2a96-4132-9d22-91c22e7c7d4d@huawei.com>
- <eab812ef-ba79-11d6-0a4e-232872f0fcc4@farpost.com>
- <877e7xl029.fsf@notabene.neil.brown.name>
-From:   Sergei Turchanov <turchanov@farpost.com>
-Organization: FarPost
-Message-ID: <2d54ca59-9c22-0b75-3087-3718b30b8d11@farpost.com>
-Date:   Fri, 2 Aug 2019 11:40:02 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2389011AbfHBCRA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Aug 2019 22:17:00 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37847 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728255AbfHBCQ7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Aug 2019 22:16:59 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d1so2414548pgp.4;
+        Thu, 01 Aug 2019 19:16:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3GzlMAdD/Fj4tpT1z/PK8Fr3raamoGX6ZwkHP2yb6K8=;
+        b=pAxzsc9vmHAK9ZK89AacBmqXQvuHXeShpu27WlEkAV6xBcEz/H1GAWLFbWBo+u7caH
+         KIqDnTL+IS2r069Sqit6niTwIVD3yHwM2oL4UXxooa0ZG6T9kc1SZGdEzbmbTAJoZkzv
+         Zbj81BMMiMsLujqrLP+vNRoPoAfxuyhBIJfz/EZgUl0FsiQZK3MgWkswQuDuhoaZBO9G
+         KrSO58P9Rr9KxqN5N1BphpFtggyeHWY4ZqA08b5SYu2LL+896Hx8WIi0vBM/z3/TtXKP
+         sQF/9gkVaL/sxZPp1Zgqo9a2gtCNNW4Q0F26WcstDN/wMJyWuPSmF5s5FUO43iGXa+xl
+         t4bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3GzlMAdD/Fj4tpT1z/PK8Fr3raamoGX6ZwkHP2yb6K8=;
+        b=pxUI9uQSiPkrdaYjjCg63ri9x81eIH4tA4uNKQeuSqnlbqNn68GBhlo1oliYAZkNd+
+         f/ff4lrJJ5FSq+dMmai39K50JTR6skZNK1/SYJ6xIrqIpgkFnWhXD5JpEcImySXufeEc
+         5lpHw1QNCji0YtLFogyj9Q0GQwgqHEzmaCLzfQ916IcJeLVOXBHgnucF9EVAt2P87WgL
+         IFSg8UxticbZBM5vxmmfLzemLMpqv52ujuBqI+d1A9G1kG0XP6vAnBxZ5HOVasgRB9yz
+         +PY/9Fn4sTf2CDLEHuzFlDv+TctiwF4Ed2SZXRoCLsimOeNz1TMScSe8+f5sIAOswLTV
+         Mrbw==
+X-Gm-Message-State: APjAAAU77NZ/WZfIFO8YjVlx1yPL3pTLoRIOlIhqJbQom5/1tFn6nADk
+        sGNLf+j83301UXEmh6cqCSM=
+X-Google-Smtp-Source: APXvYqzWsTlsiBNw6waYjgVc0NeqKYlyVqx46uMvNCwkUysDnG1IH1bMSSj1oKU/Y8CdBrk8llU2wQ==
+X-Received: by 2002:a63:dd16:: with SMTP id t22mr90672497pgg.140.1564712218248;
+        Thu, 01 Aug 2019 19:16:58 -0700 (PDT)
+Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
+        by smtp.gmail.com with ESMTPSA id p187sm118200292pfg.89.2019.08.01.19.16.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 01 Aug 2019 19:16:57 -0700 (PDT)
+From:   john.hubbard@gmail.com
+X-Google-Original-From: jhubbard@nvidia.com
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
+        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 00/34] put_user_pages(): miscellaneous call sites
+Date:   Thu,  1 Aug 2019 19:16:19 -0700
+Message-Id: <20190802021653.4882-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <877e7xl029.fsf@notabene.neil.brown.name>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: ru-RU
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello!
+From: John Hubbard <jhubbard@nvidia.com>
 
-Yes, your patch fixed this bug.
-Thank you very much!
+Hi,
 
-With best regards,
-Sergei.
+These are best characterized as miscellaneous conversions: many (not all)
+call sites that don't involve biovec or iov_iter, nor mm/. It also leaves
+out a few call sites that require some more work. These are mostly pretty
+simple ones.
 
-On 01.08.2019 19:14, NeilBrown wrote:
-> On Thu, Aug 01 2019, Sergei Turchanov wrote:
->
->> Hello!
->>
->> [
->>    As suggested in previous discussion this behavior may be caused by your
->>    commit 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and interface")
->> ]
-> Yes.... I think I can see what happened.
->   removing:
-> -               if (!m->count) {
-> -                       m->from = 0;
-> -                       m->index++;
-> -               }
->
-> from seq_read meant that ->index didn't get updated in a case that it
-> needs to be.
->
-> Please confirm that the following patch fixes the problem.
-> I think it is correct, but I need to look it over more carefully in the
-> morning, and see if I can explain why it is correct.
->
-> Thanks for the report.
-> NeilBrown
->
-> diff --git a/fs/seq_file.c b/fs/seq_file.c
-> index 04f09689cd6d..1600034a929b 100644
-> --- a/fs/seq_file.c
-> +++ b/fs/seq_file.c
-> @@ -119,6 +119,7 @@ static int traverse(struct seq_file *m, loff_t offset)
->   		}
->   		if (seq_has_overflowed(m))
->   			goto Eoverflow;
-> +		p = m->op->next(m, p, &m->index);
->   		if (pos + m->count > offset) {
->   			m->from = offset - pos;
->   			m->count -= m->from;
-> @@ -126,7 +127,6 @@ static int traverse(struct seq_file *m, loff_t offset)
->   		}
->   		pos += m->count;
->   		m->count = 0;
-> -		p = m->op->next(m, p, &m->index);
->   		if (pos == offset)
->   			break;
->   	}
->
->
->> Original bug report:
->>
->> Seeking (to an offset within file size) in /proc/meminfo is broken in 4.19.59. It does seek to a desired position, but reading from that position returns the remainder of file and then a whole copy of file. This doesn't happen with /proc/vmstat or /proc/self/maps for example.
->>
->> Seeking did work correctly in kernel 4.14.47. So it seems something broke in the way.
->>
->> Background: this kind of access pattern (seeking to /proc/meminfo) is used by libvirt-lxc fuse driver for virtualized view of /proc/meminfo. So that /proc/meminfo is broken in guests when running kernel 4.19.x.
->>
->>   > On 01.08.2019 17:11, Gao Xiang wrote:
->>> Hi,
->>>
->>> I just took a glance, maybe due to
->>> commit 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and interface")
->>>
->>> I simply reverted it just now and it seems fine... but I haven't digged into this commit.
->>>
->>> Maybe you could Cc NeilBrown <neilb@suse.com> for some more advice and
->>> I have no idea whether it's an expected behavior or not...
->>>
->>> Thanks,
->>> Gao Xiang
->>>
->>> On 2019/8/1 14:16, Sergei Turchanov wrote:
->>
->> $ ./test /proc/meminfo 0        # Works as expected
->>
->> MemTotal:       394907728 kB
->> MemFree:        173738328 kB
->> ...
->> DirectMap2M:    13062144 kB
->> DirectMap1G:    390070272 kB
->>
->> -----------------------------------------------------------------------
->>
->> $ ./test /proc/meminfo 1024     # returns a copy of file after the remainder
->>
->> Will seek to 1024
->>
->>
->> Data read at offset 1024
->> gePages:         0 kB
->> ShmemHugePages:        0 kB
->> ShmemPmdMapped:        0 kB
->> HugePages_Total:       0
->> HugePages_Free:        0
->> HugePages_Rsvd:        0
->> HugePages_Surp:        0
->> Hugepagesize:       2048 kB
->> Hugetlb:               0 kB
->> DirectMap4k:      245204 kB
->> DirectMap2M:    13062144 kB
->> DirectMap1G:    390070272 kB
->> MemTotal:       394907728 kB
->> MemFree:        173738328 kB
->> MemAvailable:   379989680 kB
->> Buffers:          355812 kB
->> Cached:         207216224 kB
->> ...
->> DirectMap2M:    13062144 kB
->> DirectMap1G:    390070272 kB
->>
->> As you see, after "DirectMap1G:" line, a whole copy of /proc/meminfo returned by "read".
->>
->> Test program:
->>
->> #include <sys/types.h>
->> #include <sys/stat.h>
->> #include <unistd.h>
->> #include <fcntl.h>
->> #include <stdio.h>
->> #include <stdlib.h>
->>
->> #define SIZE 1024
->> char buf[SIZE + 1];
->>
->> int main(int argc, char *argv[]) {
->>       int     fd;
->>       ssize_t rd;
->>       off_t   ofs = 0;
->>
->>       if (argc < 2) {
->>           printf("Usage: test <file> [<offset>]\n");
->>           exit(1);
->>       }
->>
->>       if (-1 == (fd = open(argv[1], O_RDONLY))) {
->>           perror("open failed");
->>           exit(1);
->>       }
->>
->>       if (argc > 2) {
->>           ofs = atol(argv[2]);
->>       }
->>       printf("Will seek to %ld\n", ofs);
->>
->>       if (-1 == (lseek(fd, ofs, SEEK_SET))) {
->>           perror("lseek failed");
->>           exit(1);
->>       }
->>
->>       for (;; ofs += rd) {
->>           printf("\n\nData read at offset %ld\n", ofs);
->>           if (-1 == (rd = read(fd, buf, SIZE))) {
->>               perror("read failed");
->>               exit(1);
->>           }
->>           buf[rd] = '\0';
->>           printf(buf);
->>           if (rd < SIZE) {
->>               break;
->>           }
->>       }
->>
->>       return 0;
->> }
+It's probably best to send all of these via Andrew's -mm tree, assuming
+that there are no significant merge conflicts with ongoing work in other
+trees (which I doubt, given that these are small changes).
 
+These patches apply to the latest linux.git. Patch #1 is also already in
+Andrew's tree, but given the broad non-linux-mm Cc list, I thought it
+would be more convenient to just include that patch here, so that people
+can use linux.git as the base--even though these are probably destined
+for linux-mm.
+
+This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+("mm: introduce put_user_page*(), placeholder versions"). That commit
+has an extensive description of the problem and the planned steps to
+solve it, but the highlites are:
+
+1) Provide put_user_page*() routines, intended to be used
+for releasing pages that were pinned via get_user_pages*().
+
+2) Convert all of the call sites for get_user_pages*(), to
+invoke put_user_page*(), instead of put_page(). This involves dozens of
+call sites, and will take some time.
+
+3) After (2) is complete, use get_user_pages*() and put_user_page*() to
+implement tracking of these pages. This tracking will be separate from
+the existing struct page refcounting.
+
+4) Use the tracking and identification of these pages, to implement
+special handling (especially in writeback paths) when the pages are
+backed by a filesystem.
+
+And a few references, also from that commit:
+
+[1] https://lwn.net/Articles/774411/ : "DMA and get_user_pages()"
+[2] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
+
+
+Ira Weiny (1):
+  fs/binfmt_elf: convert put_page() to put_user_page*()
+
+John Hubbard (33):
+  mm/gup: add make_dirty arg to put_user_pages_dirty_lock()
+  net/rds: convert put_page() to put_user_page*()
+  net/ceph: convert put_page() to put_user_page*()
+  x86/kvm: convert put_page() to put_user_page*()
+  drm/etnaviv: convert release_pages() to put_user_pages()
+  drm/i915: convert put_page() to put_user_page*()
+  drm/radeon: convert put_page() to put_user_page*()
+  media/ivtv: convert put_page() to put_user_page*()
+  media/v4l2-core/mm: convert put_page() to put_user_page*()
+  genwqe: convert put_page() to put_user_page*()
+  scif: convert put_page() to put_user_page*()
+  vmci: convert put_page() to put_user_page*()
+  rapidio: convert put_page() to put_user_page*()
+  oradax: convert put_page() to put_user_page*()
+  staging/vc04_services: convert put_page() to put_user_page*()
+  drivers/tee: convert put_page() to put_user_page*()
+  vfio: convert put_page() to put_user_page*()
+  fbdev/pvr2fb: convert put_page() to put_user_page*()
+  fsl_hypervisor: convert put_page() to put_user_page*()
+  xen: convert put_page() to put_user_page*()
+  fs/exec.c: convert put_page() to put_user_page*()
+  orangefs: convert put_page() to put_user_page*()
+  uprobes: convert put_page() to put_user_page*()
+  futex: convert put_page() to put_user_page*()
+  mm/frame_vector.c: convert put_page() to put_user_page*()
+  mm/gup_benchmark.c: convert put_page() to put_user_page*()
+  mm/memory.c: convert put_page() to put_user_page*()
+  mm/madvise.c: convert put_page() to put_user_page*()
+  mm/process_vm_access.c: convert put_page() to put_user_page*()
+  crypt: convert put_page() to put_user_page*()
+  nfs: convert put_page() to put_user_page*()
+  goldfish_pipe: convert put_page() to put_user_page*()
+  kernel/events/core.c: convert put_page() to put_user_page*()
+
+ arch/x86/kvm/svm.c                            |   4 +-
+ crypto/af_alg.c                               |   7 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c         |   4 +-
+ drivers/gpu/drm/i915/gem/i915_gem_userptr.c   |   9 +-
+ drivers/gpu/drm/radeon/radeon_ttm.c           |   2 +-
+ drivers/infiniband/core/umem.c                |   5 +-
+ drivers/infiniband/hw/hfi1/user_pages.c       |   5 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c    |   5 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c      |   5 +-
+ drivers/infiniband/sw/siw/siw_mem.c           |  10 +-
+ drivers/media/pci/ivtv/ivtv-udma.c            |  14 +--
+ drivers/media/pci/ivtv/ivtv-yuv.c             |  10 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c     |   3 +-
+ drivers/misc/genwqe/card_utils.c              |  17 +--
+ drivers/misc/mic/scif/scif_rma.c              |  17 ++-
+ drivers/misc/vmw_vmci/vmci_context.c          |   2 +-
+ drivers/misc/vmw_vmci/vmci_queue_pair.c       |  11 +-
+ drivers/platform/goldfish/goldfish_pipe.c     |   9 +-
+ drivers/rapidio/devices/rio_mport_cdev.c      |   9 +-
+ drivers/sbus/char/oradax.c                    |   2 +-
+ .../interface/vchiq_arm/vchiq_2835_arm.c      |  10 +-
+ drivers/tee/tee_shm.c                         |  10 +-
+ drivers/vfio/vfio_iommu_type1.c               |   8 +-
+ drivers/video/fbdev/pvr2fb.c                  |   3 +-
+ drivers/virt/fsl_hypervisor.c                 |   7 +-
+ drivers/xen/gntdev.c                          |   5 +-
+ drivers/xen/privcmd.c                         |   7 +-
+ fs/binfmt_elf.c                               |   2 +-
+ fs/binfmt_elf_fdpic.c                         |   2 +-
+ fs/exec.c                                     |   2 +-
+ fs/nfs/direct.c                               |   4 +-
+ fs/orangefs/orangefs-bufmap.c                 |   7 +-
+ include/linux/mm.h                            |   5 +-
+ kernel/events/core.c                          |   2 +-
+ kernel/events/uprobes.c                       |   6 +-
+ kernel/futex.c                                |  10 +-
+ mm/frame_vector.c                             |   4 +-
+ mm/gup.c                                      | 115 ++++++++----------
+ mm/gup_benchmark.c                            |   2 +-
+ mm/madvise.c                                  |   2 +-
+ mm/memory.c                                   |   2 +-
+ mm/process_vm_access.c                        |  18 +--
+ net/ceph/pagevec.c                            |   8 +-
+ net/rds/info.c                                |   5 +-
+ net/rds/message.c                             |   2 +-
+ net/rds/rdma.c                                |  15 ++-
+ virt/kvm/kvm_main.c                           |   4 +-
+ 47 files changed, 151 insertions(+), 266 deletions(-)
+
+-- 
+2.22.0
 
