@@ -2,113 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92D137F503
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 12:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CC5B7F541
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 12:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389480AbfHBK2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 06:28:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56750 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730941AbfHBK2a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:28:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 55B5CAE03;
-        Fri,  2 Aug 2019 10:28:28 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 460861E3F4D; Fri,  2 Aug 2019 12:28:27 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 12:28:27 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Roald Strauss <mr_lou@dewfall.dk>,
-        "Steven J. Magnani" <steve.magnani@digidescorp.com>,
-        Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: UDF filesystem image with Write-Once UDF Access Type
-Message-ID: <20190802102827.GI25064@quack2.suse.cz>
-References: <20190712100224.s2chparxszlbnill@pali>
- <20190801073530.GA25064@quack2.suse.cz>
- <20190801083800.GC25064@quack2.suse.cz>
- <20190801085755.amohgsxdcmzf2nzc@pali>
+        id S1729376AbfHBKj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 06:39:59 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39911 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbfHBKj7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 06:39:59 -0400
+Received: by mail-qt1-f195.google.com with SMTP id l9so73300248qtu.6;
+        Fri, 02 Aug 2019 03:39:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=rlJwQwKozaN0IUoAzhdQgNUAloq8MbsoeODQ5XHIhJY=;
+        b=smTgesqlEhm59X+NJGhyYz6n7wKcJv9UxN3KLCmauIYr1XwW+sqMBDZ2bmSMqJjT1F
+         IlyXl/6NV/KePa4flHdcX8Pl+CrZG70wG9TX9biGHtiDjB5Tf1Rxx7hT7X1g6Gqfp2Br
+         PdGYnL7108bhvqBS9Hc4E0Q/TvdETZ2JlSQDtKiS3SPKwt33L8+ZdxAu4yLcew9Xnxfw
+         Fi6cFyaEegGKajE8TOyAdbZGFPy3RMMbfEwTQGmL/+lwQqdgZDoQogsMxcshMG4Ptg1W
+         WnC1zs2DJ73zKG3flHxQFJZ59x4S7jMo2KEgVGSaZgAfoqbEEKfQmDsIXtUcbgFeUFDD
+         R6Qw==
+X-Gm-Message-State: APjAAAWgGek8WZ9jaMdupvLvPOw+COtDHwvKjvR5o56fok8gR3GgUmHf
+        pVo03OQhdmk5fwfcaey5WgivnkBblwcPdUUVD/KLZTC4WdE=
+X-Google-Smtp-Source: APXvYqxjI2APY3XKV/roWB/IOZhK6Qh9LDCyhPcXTsJGr54ySUA2d5+lcfIDZDxkRrdXwBZu1D17z1dmyaU77yOWmQs=
+X-Received: by 2002:ac8:f99:: with SMTP id b25mr86917918qtk.142.1564742398001;
+ Fri, 02 Aug 2019 03:39:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190801085755.amohgsxdcmzf2nzc@pali>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-10-deepa.kernel@gmail.com>
+ <20190731152609.GB7077@magnolia> <CABeXuvpiom9eQi0y7PAwAypUP1ezKKRfbh-Yqr8+Sbio=QtUJQ@mail.gmail.com>
+ <20190801224344.GC17372@mit.edu>
+In-Reply-To: <20190801224344.GC17372@mit.edu>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 2 Aug 2019 12:39:41 +0200
+Message-ID: <CAK8P3a3nqmWBXBiFL1kGmJ7yQ_=5S4Kok0YVB3VMFVBuYjFGOQ@mail.gmail.com>
+Subject: Re: [PATCH 09/20] ext4: Initialize timestamps limits
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 01-08-19 10:57:55, Pali Rohár wrote:
-> On Thursday 01 August 2019 10:38:00 Jan Kara wrote:
-> > Hum, looks like a problem with mkudffs. Relevant debug messages look like:
-> > 
-> > UDF-fs: fs/udf/super.c:671:udf_check_vsd: Starting at sector 16 (2048 byte sectors)
-> > UDF-fs: fs/udf/super.c:824:udf_load_pvoldesc: recording time 2019/08/01 09:47 (1078)
-> > UDF-fs: fs/udf/super.c:836:udf_load_pvoldesc: volIdent[] = 'LinuxUDF'
-> > UDF-fs: fs/udf/super.c:844:udf_load_pvoldesc: volSetIdent[] = '1564645645200563LinuxUDF'
-> > UDF-fs: fs/udf/super.c:1462:udf_load_logicalvol: Partition (0:0) type 1 on volume 1
-> > UDF-fs: fs/udf/super.c:1462:udf_load_logicalvol: Partition (1:0) type 2 on volume 1
-> > UDF-fs: fs/udf/super.c:1471:udf_load_logicalvol: FileSet found in LogicalVolDesc at block=0, partition=1
-> > UDF-fs: fs/udf/super.c:1218:udf_load_partdesc: Searching map: (0 == 0)
-> > UDF-fs: fs/udf/super.c:1060:udf_fill_partdesc_info: Partition (0 type 1511) starts at physical 288, block length 524000
-> > UDF-fs: fs/udf/super.c:1060:udf_fill_partdesc_info: Partition (1 type 2012) starts at physical 288, block length 524000
-> > UDF-fs: fs/udf/misc.c:223:udf_read_tagged: location mismatch block 524287, tag 0 != 523999
-> > UDF-fs: error (device ubdb): udf_read_inode: (ino 524287) failed !bh
-> > 
-> > So the fact that location tag was 0 in block 524287 (which should contain
-> > VAT inode) suggests there's something fishy with how / where mkudffs
-> > creates the VAT inode. Can you have a look?
-> > 
-> > BTW, mkudffs messages look like:
-> > filename=/tmp/image
-> > label=LinuxUDF
-> > uuid=1564645645200563
-> > blocksize=2048
-> > blocks=524288
-> > udfrev=2.01
-> > vatblock=319
-> > start=0, blocks=16, type=RESERVED 
-> > start=16, blocks=4, type=VRS 
-> > start=20, blocks=76, type=USPACE 
-> > start=96, blocks=16, type=MVDS 
-> > start=112, blocks=16, type=USPACE 
-> > start=128, blocks=1, type=LVID 
-> > start=129, blocks=95, type=USPACE 
-> > start=224, blocks=16, type=RVDS 
-> > start=240, blocks=16, type=USPACE 
-> > start=256, blocks=1, type=ANCHOR 
-> > start=257, blocks=31, type=USPACE 
-> > start=288, blocks=524000, type=PSPACE 
-> > 
-> > which suggests that VAT was indeed allocated somewhere in the beginning of
-> > the partition.
-> 
-> For write-once media you are not able to modify size of UDF partition.
-> So if you are creating image for CD-R disc, you need to specify size of
-> UDF filesystem to match size of CD-R disc. VAT is always burned to the
-> last block of current track on CD-R.
-> 
-> Therefore if you had pre-allocated big image file for CD-R and then you
-> run mkudffs for cdr on it, you lost information what is the last used
-> block on that cdr image. Normally for optical drivers kernel use mmc
-> commands to retrieve last block of current session and based on it find
-> VAT. But image files loaded via /dev/loop are not optical drivers and
-> therefore do not have ability "hardware" ability to ask where is the
-> last used block. IIRC in this case kernel just fallback to the last
-> block of block device for VAT, which in this case is not correct.
-> 
-> What should help is to truncate image file to "correct" size after
-> running mkudffs with --media-type=cdr. Maybe mkudffs itself should do it
-> when was asked to create UDF filesystem for CD-R on existing image file.
+On Fri, Aug 2, 2019 at 12:43 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> On Thu, Aug 01, 2019 at 12:18:28PM -0700, Deepa Dinamani wrote:
+> > > Say you have a filesystem with s_inode_size > 128 where not all of the
+> > > ondisk inodes have been upgraded to i_extra_isize > 0 and therefore
+> > > don't support nanoseconds or times beyond 2038.  I think this happens on
+> > > ext3 filesystems that reserved extra space for inode attrs that are
+> > > subsequently converted to ext4?
+> >
+> > I'm confused about ext3 being converted to ext4. If the converted
+> > inodes have extra space, then ext4_iget() will start using the extra
+> > space when it modifies the on disk inode, won't it?i
+>
+> It is possible that you can have an ext3 file system with (for
+> example) 256 byte inodes, and all of the extra space was used for
+> extended attributes, then ext4 won't have the extra space available.
+> This is going toh be on an inode-by-inode basis, and if an extended
+> attribute is motdified or deleted, the space would become available,t
+> and then inode would start getting a higher resolution timestamp.
 
-Ah, right. Thanks for explanation. I somehow assumed that mkudffs will be
-considering the last block of the "device file" the last block that it has
-to record but you're right that on second though that doesn't really make
-sense.
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Is it correct to assume that this kind of file would have to be
+created using the ext3.ko file system implementation that was
+removed in linux-4.3, but not using ext2.ko or ext4.ko (which
+would always set the extended timestamps even in "-t ext2" or
+"-t ext3" mode)?
+
+I tried to reproduce this on a modern kernel and with and
+moderately old debugfs (1.42.13) but failed.
+
+> I really don't think it's worth worrying about that, though.  It's
+> highly unlikely ext3 file systems will be still be in service by the
+> time it's needed in 2038.  And if so, it's highly unlikely they would
+> be converted to ext4.
+
+As the difference is easily visible even before y2038 by using
+utimensat(old_inode, future_date) on a file, we should at least
+decide what the sanest behavior is that we can easily implement,
+and then document what is expected to happen here.
+
+If we check for s_min_extra_isize instead of s_inode_size
+to determine s_time_gran/s_time_max, we would warn
+at mount time as well as and consistently truncate all
+timestamps to full 32-bit seconds, regardless of whether
+there is actually space or not.
+
+Alternatively, we could warn if s_min_extra_isize is
+too small, but use i_inode_size to determine
+s_time_gran/s_time_max anyway.
+
+From looking at e2fsprogs git history, I see that
+s_min_extra_isize has always been set by mkfs since
+2008, but I'm not sure if there would have been a
+case in which it remains set but the ext3.ko would
+ignore it and use that space anyway.
+
+       Arnd
