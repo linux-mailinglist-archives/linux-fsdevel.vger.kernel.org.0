@@ -2,180 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD8937FD45
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 17:16:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE34B7FD7A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 17:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392083AbfHBPPm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 11:15:42 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55692 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732689AbfHBPPl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 11:15:41 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x72F97kL039609;
-        Fri, 2 Aug 2019 15:15:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=BUGUEjFdD3uD7gCNGE7vm9X5m+SBwO7IbYbXo4eLGnw=;
- b=UysPyl55m6IfPiLryv1O79ErGCz8Zd/i2HZaAOeK7HBD4t4trxOG9sMiXwC+MhwH4k6A
- QtiWa1tGKA8E/g1ez7fBjK9KTsP4ciXnjptAmxS3kIr5l9NyBMZxrlzOjyEhtUdOVWad
- LJ/0DZe9OVsVZtjDsVFCrrUitL9gxav09INKWeLVWvrsiXBh76ZPOPnq6xo21GSkhGVK
- EoXYAFJUzPoJ7yYfrR3J5e2eCDp9bOP8KvLQMNfzdLLGrtfEEKxaSXYZzzyR9hnW6zR+
- L8RRVRMU2T+7MEufxhpPNK96C7alFi1nz5naPGD3RnPjzVRrTXmXiNeSoxsSfdBYVefe AA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2u0ejq2tr3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Aug 2019 15:15:22 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x72F7Vnv188409;
-        Fri, 2 Aug 2019 15:15:22 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2u3mbvq3hd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Aug 2019 15:15:21 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x72FFKHJ010223;
-        Fri, 2 Aug 2019 15:15:21 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 02 Aug 2019 08:15:20 -0700
-Date:   Fri, 2 Aug 2019 08:15:19 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
-        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 5/9] fs: Move start and length fiemap fields into
- fiemap_extent_info
-Message-ID: <20190802151519.GH7138@magnolia>
-References: <20190731141245.7230-1-cmaiolino@redhat.com>
- <20190731141245.7230-6-cmaiolino@redhat.com>
- <20190731232837.GZ1561054@magnolia>
- <20190802095115.bjz6ejbouif3wkbt@pegasus.maiolino.io>
+        id S1732696AbfHBP1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 11:27:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50332 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732033AbfHBP1M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 11:27:12 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 26D163082137;
+        Fri,  2 Aug 2019 15:27:12 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 98BF05D9D3;
+        Fri,  2 Aug 2019 15:27:11 +0000 (UTC)
+Date:   Fri, 2 Aug 2019 11:27:09 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 01/24] mm: directed shrinker work deferral
+Message-ID: <20190802152709.GA60893@bfoster>
+References: <20190801021752.4986-1-david@fromorbit.com>
+ <20190801021752.4986-2-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190802095115.bjz6ejbouif3wkbt@pegasus.maiolino.io>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9337 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908020156
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9337 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908020156
+In-Reply-To: <20190801021752.4986-2-david@fromorbit.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 02 Aug 2019 15:27:12 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 11:51:16AM +0200, Carlos Maiolino wrote:
-> > >  
-> > >  STATIC int
-> > >  xfs_vn_fiemap(
-> > > -	struct inode		*inode,
-> > > -	struct fiemap_extent_info *fieinfo,
-> > > -	u64			start,
-> > > -	u64			length)
-> > > +	struct inode		  *inode,
-> > > +	struct fiemap_extent_info *fieinfo)
-> > >  {
-> > > -	int			error;
-> > > +	u64	start = fieinfo->fi_start;
-> > > +	u64	length = fieinfo->fi_len;
-> > > +	int	error;
-> > 
-> > Would be nice if the variable name indentation was consistent here, but
-> > otherwise the xfs part looks ok.
+On Thu, Aug 01, 2019 at 12:17:29PM +1000, Dave Chinner wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 > 
-> These fields are removed on the next patch, updating it is really required?
+> Introduce a mechanism for ->count_objects() to indicate to the
+> shrinker infrastructure that the reclaim context will not allow
+> scanning work to be done and so the work it decides is necessary
+> needs to be deferred.
+> 
+> This simplifies the code by separating out the accounting of
+> deferred work from the actual doing of the work, and allows better
+> decisions to be made by the shrinekr control logic on what action it
+> can take.
+> 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> ---
+>  include/linux/shrinker.h | 7 +++++++
+>  mm/vmscan.c              | 8 ++++++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> index 9443cafd1969..af78c475fc32 100644
+> --- a/include/linux/shrinker.h
+> +++ b/include/linux/shrinker.h
+> @@ -31,6 +31,13 @@ struct shrink_control {
+>  
+>  	/* current memcg being shrunk (for memcg aware shrinkers) */
+>  	struct mem_cgroup *memcg;
+> +
+> +	/*
+> +	 * set by ->count_objects if reclaim context prevents reclaim from
+> +	 * occurring. This allows the shrinker to immediately defer all the
+> +	 * work and not even attempt to scan the cache.
+> +	 */
+> +	bool will_defer;
 
-Yes, please.
+Functionality wise this seems fairly straightforward. FWIW, I find the
+'will_defer' name a little confusing because it implies to me that the
+shrinker is telling the caller about something it would do if called as
+opposed to explicitly telling the caller to defer. I'd just call it
+'defer' I guess, but that's just my .02. ;P
 
-> > 
-> > >  
-> > >  	xfs_ilock(XFS_I(inode), XFS_IOLOCK_SHARED);
-> > >  	if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR) {
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index d5e7c744aea6..7b744b7de24e 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -1705,11 +1705,14 @@ extern bool may_open_dev(const struct path *path);
-> > >   * VFS FS_IOC_FIEMAP helper definitions.
-> > >   */
-> > >  struct fiemap_extent_info {
-> > > -	unsigned int fi_flags;		/* Flags as passed from user */
-> > > -	unsigned int fi_extents_mapped;	/* Number of mapped extents */
-> > > -	unsigned int fi_extents_max;	/* Size of fiemap_extent array */
-> > > -	struct fiemap_extent __user *fi_extents_start; /* Start of
-> > > -							fiemap_extent array */
-> > > +	unsigned int	fi_flags;		/* Flags as passed from user */
-> > > +	u64		fi_start;
-> > > +	u64		fi_len;
-> > 
-> > Comments for these two new fields?
-> 
-> Sure, how about this:
-> 
->        u64           fi_start;            /* Logical offset at which
->                                              start mapping */
->        u64           fi_len;              /* Logical length of mapping
->                                              the caller cares about */
-> 
-> 
-> btw, Above indentation won't match final result
+>  };
+>  
+>  #define SHRINK_STOP (~0UL)
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 44df66a98f2a..ae3035fe94bc 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -541,6 +541,13 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+>  	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
+>  				   freeable, delta, total_scan, priority);
+>  
+> +	/*
+> +	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
+> +	 * defer the work to a context that can scan the cache.
+> +	 */
+> +	if (shrinkctl->will_defer)
+> +		goto done;
+> +
 
-Looks good to me.
+Who's responsible for clearing the flag? Perhaps we should do so here
+once it's acted upon since we don't call into the shrinker again?
 
---D
+Note that I see this structure is reinitialized on every iteration in
+the caller, but there already is the SHRINK_EMPTY case where we call
+back into do_shrink_slab(). Granted the deferred state likely hasn't
+changed, but the fact that we'd call back into the count callback to set
+it again implies the logic could be a bit more explicit, particularly if
+this will eventually be used for more dynamic shrinker state that might
+change call to call (i.e., object dirty state, etc.).
 
-> 
-> Christoph, may I keep your reviewed tag by updating the comments as above?
-> Otherwise I'll just remove your tag
-> 
-> > 
-> > --D
-> > 
-> > > +	unsigned int	fi_extents_mapped;	/* Number of mapped extents */
-> > > +	unsigned int	fi_extents_max;		/* Size of fiemap_extent array */
-> > > +	struct		fiemap_extent __user *fi_extents_start;	/* Start of
-> > > +								   fiemap_extent
-> > > +								   array */
-> > >  };
-> > >  int fiemap_fill_next_extent(struct fiemap_extent_info *info, u64 logical,
-> > >  			    u64 phys, u64 len, u32 flags);
-> > > @@ -1841,8 +1844,7 @@ struct inode_operations {
-> > >  	int (*setattr) (struct dentry *, struct iattr *);
-> > >  	int (*getattr) (const struct path *, struct kstat *, u32, unsigned int);
-> > >  	ssize_t (*listxattr) (struct dentry *, char *, size_t);
-> > > -	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start,
-> > > -		      u64 len);
-> > > +	int (*fiemap)(struct inode *, struct fiemap_extent_info *);
-> > >  	int (*update_time)(struct inode *, struct timespec64 *, int);
-> > >  	int (*atomic_open)(struct inode *, struct dentry *,
-> > >  			   struct file *, unsigned open_flag,
-> > > @@ -3199,11 +3201,10 @@ extern int vfs_readlink(struct dentry *, char __user *, int);
-> > >  
-> > >  extern int __generic_block_fiemap(struct inode *inode,
-> > >  				  struct fiemap_extent_info *fieinfo,
-> > > -				  loff_t start, loff_t len,
-> > >  				  get_block_t *get_block);
-> > >  extern int generic_block_fiemap(struct inode *inode,
-> > > -				struct fiemap_extent_info *fieinfo, u64 start,
-> > > -				u64 len, get_block_t *get_block);
-> > > +				struct fiemap_extent_info *fieinfo,
-> > > +				get_block_t *get_block);
-> > >  
-> > >  extern struct file_system_type *get_filesystem(struct file_system_type *fs);
-> > >  extern void put_filesystem(struct file_system_type *fs);
-> > > -- 
-> > > 2.20.1
-> > > 
-> 
+BTW, do we need to care about the ->nr_cached_objects() call from the
+generic superblock shrinker (super_cache_scan())?
+
+Brian
+
+>  	/*
+>  	 * Normally, we should not scan less than batch_size objects in one
+>  	 * pass to avoid too frequent shrinker calls, but if the slab has less
+> @@ -575,6 +582,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+>  		cond_resched();
+>  	}
+>  
+> +done:
+>  	if (next_deferred >= scanned)
+>  		next_deferred -= scanned;
+>  	else
 > -- 
-> Carlos
+> 2.22.0
+> 
