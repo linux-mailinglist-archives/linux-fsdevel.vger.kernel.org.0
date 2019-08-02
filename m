@@ -2,77 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21406800F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 21:30:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A1D180103
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 21:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392097AbfHBT37 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 15:29:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34940 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391971AbfHBT37 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 15:29:59 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 089EF3CA12;
-        Fri,  2 Aug 2019 19:29:59 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A4D4F19C68;
-        Fri,  2 Aug 2019 19:29:56 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 2C27C22377E; Fri,  2 Aug 2019 15:29:56 -0400 (EDT)
-Date:   Fri, 2 Aug 2019 15:29:56 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     dan.j.williams@intel.com, linux-nvdimm@lists.01.org
-Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com
-Subject: [PATCH] dax: dax_layout_busy_page() should not unmap cow pages
-Message-ID: <20190802192956.GA3032@redhat.com>
+        id S2405751AbfHBTew (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 15:34:52 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17795 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391971AbfHBTew (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 15:34:52 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d44905c0000>; Fri, 02 Aug 2019 12:34:52 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 02 Aug 2019 12:34:51 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 02 Aug 2019 12:34:51 -0700
+Received: from [10.2.171.217] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
+ 2019 19:34:50 +0000
+Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
+To:     Peter Zijlstra <peterz@infradead.org>, <john.hubbard@gmail.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-nfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
+        <x86@kernel.org>, <xen-devel@lists.xenproject.org>
+References: <20190802021653.4882-1-jhubbard@nvidia.com>
+ <20190802080554.GD2332@hirez.programming.kicks-ass.net>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <8968c928-5712-03a9-68df-051f5b58fdbc@nvidia.com>
+Date:   Fri, 2 Aug 2019 12:33:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 02 Aug 2019 19:29:59 +0000 (UTC)
+In-Reply-To: <20190802080554.GD2332@hirez.programming.kicks-ass.net>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564774492; bh=+4YFr8hVqt3rnBZzpE/CDXaE3u2NtyGgeA2+CHyqUUg=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=pA8QugcwnL1HNNctuTXTMAa7CrBYZtv2cc2QzVDHg2S/Xz0x5cf9O8eGtP0C46aN6
+         a197cn16D9E9xYsYwbovYwvjP0hTnTIrSK10+fiYfbToCUN0I9g4iXpjbE6kGTwrAp
+         ncKdQLJTA/SOQtWLtiZt5vxeEAtfkDytTOFqyC79V99rQnUwNH1zBFEyzb+BV4yCcg
+         0Lb+HCJur/Jv3WTiflqOcCteevFh1AJi/C8c1Ka1hIgLd+uE9NAbY1wcjbuQJmv03/
+         F2ke8dbjLXpL5/tEd8euZ6kSYJfMWxVRqMIbW34EAHrZytttzmbzNNCLzf8Qy6VEOi
+         6Ny99XF1JiDWQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As of now dax_layout_busy_page() calls unmap_mapping_range() with last
-argument as 1, which says even unmap cow pages. I am wondering who needs
-to get rid of cow pages as well.
+On 8/2/19 1:05 AM, Peter Zijlstra wrote:
+> On Thu, Aug 01, 2019 at 07:16:19PM -0700, john.hubbard@gmail.com wrote:
+> 
+>> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+>> ("mm: introduce put_user_page*(), placeholder versions"). That commit
+>> has an extensive description of the problem and the planned steps to
+>> solve it, but the highlites are:
+> 
+> That is one horridly mangled Changelog there :-/ It looks like it's
+> partially duplicated.
 
-I noticed one interesting side affect of this. I mount xfs with -o dax and
-mmaped a file with MAP_PRIVATE and wrote some data to a page which created
-cow page. Then I called fallocate() on that file to zero a page of file.
-fallocate() called dax_layout_busy_page() which unmapped cow pages as well
-and then I tried to read back the data I wrote and what I get is old
-data from persistent memory. I lost the data I had written. This
-read basically resulted in new fault and read back the data from
-persistent memory.
+Yeah. It took so long to merge that I think I was no longer able to
+actually see the commit description, after N readings. sigh
 
-This sounds wrong. Are there any users which need to unmap cow pages
-as well? If not, I am proposing changing it to not unmap cow pages.
+> 
+> Anyway; no objections to any of that, but I just wanted to mention that
+> there are other problems with long term pinning that haven't been
+> mentioned, notably they inhibit compaction.
+> 
+> A long time ago I proposed an interface to mark pages as pinned, such
+> that we could run compaction before we actually did the pinning.
+> 
 
-I noticed this while while writing virtio_fs code where when I tried
-to reclaim a memory range and that corrupted the executable and I
-was running from virtio-fs and program got segment violation.
+This is all heading toward marking pages as pinned, so we should finally
+get there.  I'll post the RFC for tracking pinned pages shortly.
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/dax.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: rhvgoyal-linux/fs/dax.c
-===================================================================
---- rhvgoyal-linux.orig/fs/dax.c	2019-08-01 17:03:10.574675652 -0400
-+++ rhvgoyal-linux/fs/dax.c	2019-08-02 14:32:28.809639116 -0400
-@@ -600,7 +600,7 @@ struct page *dax_layout_busy_page(struct
- 	 * guaranteed to either see new references or prevent new
- 	 * references from being established.
- 	 */
--	unmap_mapping_range(mapping, 0, 0, 1);
-+	unmap_mapping_range(mapping, 0, 0, 0);
- 
- 	xas_lock_irq(&xas);
- 	xas_for_each(&xas, entry, ULONG_MAX) {
+thanks,
+-- 
+John Hubbard
+NVIDIA
