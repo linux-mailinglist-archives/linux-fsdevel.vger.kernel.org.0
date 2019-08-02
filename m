@@ -2,80 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B54047EE80
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 10:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 317467EE8F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 10:15:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403912AbfHBIMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 04:12:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39132 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403902AbfHBIMX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:12:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KjfLNU0SyqIyVrAxHzlRCdRO4H2dKobiLNT7ypOiSiU=; b=J4P9XXFF6r79xI9pt/gvdN9oA
-        X2BwcCJGTOUfq1Js4lh22cDe6AkfCTnwQVmhlxluksQvNyI5oF9lpPy5MckRL2x9WShvEg2EGleyc
-        pilujzQ40oIUsYl7Cd0HiAVfsD2LNRfimYy7A2AWWnE5cNuUYlfJoUISYSIQ7WGGauYbZ4KKLUOsw
-        ZShxaJJyNljB1jTZLdCyTON4yE+V7sW94y0xtokoq4FUgM56q+Q4z5tYxT/ID2b1bjIQqDGRYUTtY
-        rPEW3iODyLo8ESy8fFTBdNddfZI4K6k8qCDYVZSYYKnH3NAVbnCkynp0MrsiOL0OBLFFbBEf9Awve
-        V3qlCc83g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1htSfl-0004Xd-Uu; Fri, 02 Aug 2019 08:12:22 +0000
-Date:   Fri, 2 Aug 2019 01:12:21 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Chris Mason <clm@fb.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 09/24] xfs: don't allow log IO to be throttled
-Message-ID: <20190802081221.GA15849@infradead.org>
-References: <20190801021752.4986-1-david@fromorbit.com>
- <20190801021752.4986-10-david@fromorbit.com>
- <F1E7CC65-D2CB-4078-9AA3-9D172ECDE17B@fb.com>
- <20190801235849.GO7777@dread.disaster.area>
+        id S2390763AbfHBIPF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 04:15:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53478 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726937AbfHBIPF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:15:05 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBCE121783;
+        Fri,  2 Aug 2019 08:15:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564733704;
+        bh=O6smRj8j54FKizQ72R3Ag1CbAtjUF++b4VrIhbnQhW0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=u5+fPn2elpCOjkuEfImz+eltu+dqjofwpAjh1i6H6fn1kA7aWbHvlzARBhy9Lnf63
+         cngZa5z1jhUKakU4OlccG6MnqFafeG1EmUIVDMTPqOfLw7k8m/WehoGxvYT77pp5Ct
+         EW/joGquCN2fYVTrc8QckVXDd0lGYlK5WMV1hsC0=
+Date:   Fri, 2 Aug 2019 10:15:01 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Andreas Steinmetz <ast@domdv.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] Fix cuse ENOMEM ioctl breakage in 4.20.0
+Message-ID: <20190802081501.GK26174@kroah.com>
+References: <1546163027.3036.2.camel@domdv.de>
+ <CAJfpegvBvY2hLUc010hgi3JwWPyvT1CK1X2GD3qUe-dBDtoBbA@mail.gmail.com>
+ <388f911ccba16dee350bb2534b67d601b44f3a92.camel@domdv.de>
+ <CAJfpegtQ11yRhg3+h+dCJ_juc6KGKBLLwB_Vco8+KDACpBmY5w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190801235849.GO7777@dread.disaster.area>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAJfpegtQ11yRhg3+h+dCJ_juc6KGKBLLwB_Vco8+KDACpBmY5w@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 09:58:49AM +1000, Dave Chinner wrote:
-> Which simply reinforces the fact that that request type based
-> throttling is a fundamentally broken architecture.
+On Tue, May 28, 2019 at 03:12:28PM +0200, Miklos Szeredi wrote:
+> On Sat, May 18, 2019 at 3:58 PM Andreas Steinmetz <ast@domdv.de> wrote:
 > 
-> > It feels awkward to have one set of prio inversion workarounds for io.* 
-> > and another for wbt.  Jens, should we make an explicit one that doesn't 
-> > rely on magic side effects, or just decide that metadata is meta enough 
-> > to break all the rules?
+> > > On Sun, Dec 30, 2018 at 10:52 AM Andreas Steinmetz <ast@domdv.de> wrote:
+> > > > This must have happened somewhen after 4.17.2 and I did find it in
+> > > > 4.20.0:
+> > > >
+> > > > cuse_process_init_reply() doesn't initialize fc->max_pages and thus all
+> > > > cuse bases ioctls fail with ENOMEM.
+> > > >
+> > > > Patch which fixes this is attached.
+> > >
+> > > Thanks.  Pushed a slightly different patch:
+> > >
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git/commit/?h=for-next&id=666a40e87038221d45d47aa160b26410fd67c1d2
+> > >
 > 
-> The problem isn't REQ_META blows throw the throttling, the problem
-> is that different REQ_META IOs have different priority.
+> > It got broken again, ENONEM.
+> > I do presume that commit 5da784cce4308ae10a79e3c8c41b13fb9568e4e0 is the
+> > culprit. Could you please fix this and, please, could somebody do a cuse
+> > regression test after changes to fuse?
 > 
-> IOWs, the problem here is that we are trying to infer priority from
-> the request type rather than an actual priority assigned by the
-> submitter. There is no way direct IO has higher priority in a
-> filesystem than log IO tagged with REQ_META as direct IO can require
-> log IO to make progress. Priority is a policy determined by the
-> submitter, not the mechanism doing the throttling.
+> Hi,
 > 
-> Can we please move this all over to priorites based on
-> bio->b_ioprio? And then document how the range of priorities are
-> managed, such as:
+> Can you please tell us which kernel is broken?
 
-Yes, we need to fix the magic deducted throttling behavior, especiall
-the odd REQ_IDLE that in its various incarnations has been a massive
-source of toruble and confusion.  Not sure tons of priorities are
-really helping, given that even hardware with priority level support
-usually just supports about two priorit levels.
+Did this ever get resolved?
+
+totally confused,
+
+greg k-h
