@@ -2,80 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3BF27EFE4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 11:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8651A7F01C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 11:13:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732558AbfHBJJB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 05:09:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39083 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbfHBJJB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:09:01 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1htTXb-0008Bx-4U; Fri, 02 Aug 2019 11:07:59 +0200
-Date:   Fri, 2 Aug 2019 11:07:53 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Christoph Hellwig <hch@infradead.org>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Joel Becker <jlbec@evilplan.org>
-Subject: Re: [patch V2 0/7] fs: Substitute bit-spinlocks for PREEMPT_RT and
- debugging
-In-Reply-To: <20190802075612.GA20962@infradead.org>
-Message-ID: <alpine.DEB.2.21.1908021107090.2285@nanos.tec.linutronix.de>
-References: <20190801010126.245731659@linutronix.de> <20190802075612.GA20962@infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1732740AbfHBJMu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 05:12:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54294 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727127AbfHBJMu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:12:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4990DAFE2;
+        Fri,  2 Aug 2019 09:12:47 +0000 (UTC)
+Date:   Fri, 2 Aug 2019 11:12:44 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     john.hubbard@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
+        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
+Message-ID: <20190802091244.GD6461@dhcp22.suse.cz>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-738874475-1564736879=:2285"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802022005.5117-1-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu 01-08-19 19:19:31, john.hubbard@gmail.com wrote:
+[...]
+> 2) Convert all of the call sites for get_user_pages*(), to
+> invoke put_user_page*(), instead of put_page(). This involves dozens of
+> call sites, and will take some time.
 
---8323329-738874475-1564736879=:2285
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+How do we make sure this is the case and it will remain the case in the
+future? There must be some automagic to enforce/check that. It is simply
+not manageable to do it every now and then because then 3) will simply
+be never safe.
 
-Christoph,
-
-On Fri, 2 Aug 2019, Christoph Hellwig wrote:
-
-> did you look into killing bіt spinlocks as a public API instead?
-
-Last time I did, there was resistance :)
-
-But I'm happy to try again.
-
-> The main users seems to be buffer heads, which are so bloated that
-> an extra spinlock doesn't really matter anyway.
->
-> The list_bl and rhashtable uses kinda make sense to be, but they are
-> pretty nicely abstracted away anyway.  The remaining users look
-> pretty questionable to start with.
-
-What about the page lock?
-
-  mm/slub.c:      bit_spin_lock(PG_locked, &page->flags);
-
-Thanks,
-
-	tglx
---8323329-738874475-1564736879=:2285--
+Have you considered coccinele or some other scripted way to do the
+transition? I have no idea how to deal with future changes that would
+break the balance though.
+-- 
+Michal Hocko
+SUSE Labs
