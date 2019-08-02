@@ -2,105 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E29AD7EB27
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 06:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E437EB87
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2019 06:37:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731304AbfHBERe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 00:17:34 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33739 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729806AbfHBERe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 00:17:34 -0400
-Received: by mail-lj1-f194.google.com with SMTP id h10so57651ljg.0;
-        Thu, 01 Aug 2019 21:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HOvSoEEyfCl7/x5I1JZTYO9Hs0zY3XihBGSCCeM/KWA=;
-        b=Sn9OgyEwtd1KlJ8Cn2Kvaoug5ShLB8vNk7XVRkJA9i7Fyr9IdwAA3L1Zgk7/ywlP+P
-         /rMF0vY57u1zxXtZJjXA+z6bWM1mSK8a7xIi9Q7N+IYQ+vOdtPdpGTeFsBJHh5zGCYvr
-         utAcfjKq6zN5+vdh3XFS1iPmVa1ZVQXcMs0Aw+x2UWOHbWTDeAUAkgn6cVQ4FEfso2gL
-         hoaZK0uKlKBoWEyTZBGJAzmjN7QMDUAfVZeUS/kdvD44dqGWFQ0WCNS7/4lxzcY+vpau
-         Zp/Hn9xx+/ZlwuVPTj9+J942EdJ5AJX4aQ9s9XMUL7nRntbIWP7UE2r5QfEB0x0Ji+kQ
-         ycyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HOvSoEEyfCl7/x5I1JZTYO9Hs0zY3XihBGSCCeM/KWA=;
-        b=M1h3DwSNAxa+1EQoomN0stdEkGaMdtXDb/ffz5y77MDMM7rNHpRDv4H/k8luNdpqSm
-         tV09FOJ6HnJvk4/t0aR4ZwGLhIiq/39EmEQUdUeuL5y4nE70mQEnReDUNhPpgHqFlBxK
-         ZqUlWLtqeHlx5IWDfx+htwb8PF1uUhXMHAIo+eb3UVdoElXrGk63R0+SRmDR55G+YM3i
-         ppz9LzlQF3g8jYlId8FedwhqhoSSX0MdPxMe7MnTw5Hz3D+yplc0qMCSUh9Noav/RpeZ
-         pGj/Zz//eufxlS4X/0Oa4Dd7H8IFmtum7T8KhxU9wSOQuG9uBam2ofiCMr3Lnx7G1fVQ
-         ULZA==
-X-Gm-Message-State: APjAAAWbAcKmGOupDgF7oKzEwfTH7TQWpRT6tqBVF0CgWIjXI3omV4vc
-        dg81IKq6/jJhWr7oIgriWK71RNI4L3cP8c6Fl3I=
-X-Google-Smtp-Source: APXvYqwetgzlQupya9GxhfsPelN+cDfVRLEA0BaIXILs9Yttryy1k0k6TbsVhwkN0EBk8YrwRgtXzPzrXMi7t4lbM3w=
-X-Received: by 2002:a2e:b60f:: with SMTP id r15mr69665450ljn.172.1564719451610;
- Thu, 01 Aug 2019 21:17:31 -0700 (PDT)
+        id S1731704AbfHBEg5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 00:36:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45098 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728157AbfHBEg4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 00:36:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 56E85AD2B;
+        Fri,  2 Aug 2019 04:36:53 +0000 (UTC)
+Subject: Re: [PATCH 20/34] xen: convert put_page() to put_user_page*()
+To:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>
+Cc:     devel@driverdev.osuosl.org, Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, x86@kernel.org,
+        linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, devel@lists.orangefs.org,
+        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        rds-devel@oss.oracle.com,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-xfs@vger.kernel.org,
+        netdev@vger.kernel.org, sparclinux@vger.kernel.org,
+        Jason Gunthorpe <jgg@ziepe.ca>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+ <20190802022005.5117-21-jhubbard@nvidia.com>
+From:   Juergen Gross <jgross@suse.com>
+Message-ID: <4471e9dc-a315-42c1-0c3c-55ba4eeeb106@suse.com>
+Date:   Fri, 2 Aug 2019 06:36:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <54a35258-081a-71cc-ef1b-9fffcf5e7f9f@nchc.org.tw>
- <CAB3wodfF=Gc3FbKedU4JBWi8hZLxcBPUtVPipsCVnaHdFXGk8Q@mail.gmail.com> <CAKjSHr0vTK6En1_n6GwArV0N6=kM=Czbx2SYat9vK71HuyzMAA@mail.gmail.com>
-In-Reply-To: <CAKjSHr0vTK6En1_n6GwArV0N6=kM=Czbx2SYat9vK71HuyzMAA@mail.gmail.com>
-From:   Phillip Lougher <phillip.lougher@gmail.com>
-Date:   Fri, 2 Aug 2019 05:17:20 +0100
-Message-ID: <CAB3wodfgHXN7LPojxS+PV6sDieTi2iQG-YUFU6HAmh=ObY45BA@mail.gmail.com>
-Subject: Re: Bug#921146: Program mksquashfs from squashfs-tools 1:4.3-11 does
- not make use all CPU cores
-To:     =?UTF-8?B?TMOhc3psw7MgQsO2c3rDtnJtw6lueWkgKEdDUyk=?= 
-        <gcs@debian.org>
-Cc:     921146@bugs.debian.org, Chris Lamb <lamby@debian.org>,
-        hartmans@debian.org, debian-ctte@lists.debian.org,
-        Alexander Couzens <lynxis@fe80.eu>,
-        linux-fsdevel@vger.kernel.org,
-        linux-embedded <linux-embedded@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190802022005.5117-21-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 11:41 PM L=C3=A1szl=C3=B3 B=C3=B6sz=C3=B6rm=C3=A9nyi=
- (GCS) <gcs@debian.org> wrote:
+On 02.08.19 04:19, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> For pages that were retained via get_user_pages*(), release those pages
+> via the new put_user_page*() routines, instead of via put_page() or
+> release_pages().
+> 
+> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+> ("mm: introduce put_user_page*(), placeholder versions").
+> 
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: xen-devel@lists.xenproject.org
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>   drivers/xen/gntdev.c  | 5 +----
+>   drivers/xen/privcmd.c | 7 +------
+>   2 files changed, 2 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+> index 4c339c7e66e5..2586b3df2bb6 100644
+> --- a/drivers/xen/gntdev.c
+> +++ b/drivers/xen/gntdev.c
+> @@ -864,10 +864,7 @@ static int gntdev_get_page(struct gntdev_copy_batch *batch, void __user *virt,
+>   
+>   static void gntdev_put_pages(struct gntdev_copy_batch *batch)
+>   {
+> -	unsigned int i;
+> -
+> -	for (i = 0; i < batch->nr_pages; i++)
+> -		put_page(batch->pages[i]);
+> +	put_user_pages(batch->pages, batch->nr_pages);
+>   	batch->nr_pages = 0;
+>   }
+>   
+> diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+> index 2f5ce7230a43..29e461dbee2d 100644
+> --- a/drivers/xen/privcmd.c
+> +++ b/drivers/xen/privcmd.c
+> @@ -611,15 +611,10 @@ static int lock_pages(
+>   
+>   static void unlock_pages(struct page *pages[], unsigned int nr_pages)
+>   {
+> -	unsigned int i;
+> -
+>   	if (!pages)
+>   		return;
+>   
+> -	for (i = 0; i < nr_pages; i++) {
+> -		if (pages[i])
+> -			put_page(pages[i]);
+> -	}
+> +	put_user_pages(pages, nr_pages);
 
->  Let me add Chris Lamb then the previous Debian Project Leader (also
-> British just like you [as I know] and you may sit down and talk about
-> this in person) who asked for the reproducibility patch / build in the
-> first place.
->
+You are not handling the case where pages[i] is NULL here. Or am I
+missing a pending patch to put_user_pages() here?
 
-If Chris Lamb or anyone else wants a face-to-face meeting I'm more
-than happy to do so.
 
-I coincidentally have a week's holiday (vacation) next week, and I'm
-happy to spend a day of it travelling and meeting to discuss the
-situation.
-
-I do want to de-escalate this situation if possible.
-
-Phillip
-
-> > What else do I have to do to make you stop bad-mouthing Squashfs?  Sue?
->  If you feel yourself better with that, be my guest. I don't know who
-> is the lawyer of Debian, but I'm sure s/he can show you that it's only
-> you who dance this storm.
->
-> Regards,
-> Laszlo/GCS
-> [1] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D919207#5
-> [2] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D919207#83
-> [3] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D919207#88
-> [4] https://sourceforge.net/p/squashfs/code/ci/e38956b92f738518c297343996=
-29e7cdb33072d3/log/?path=3D
-> [5] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D921146#75
-> [6] https://github.com/AgentD/squashfs-tools-ng
-> [7] https://lwn.net/Articles/651775/
-> [8] https://github.com/plougher/squashfs-tools/commit/f95864afe8833fe3ad7=
-82d714b41378e860977b1
-> [9] https://github.com/plougher/squashfs-tools/commit/ba215d73e153a6f2370=
-88b4ecb88c702bb4d4183
+Juergen
