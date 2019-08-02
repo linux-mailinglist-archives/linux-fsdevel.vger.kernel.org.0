@@ -2,65 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18DD38027C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2019 00:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6B00802C7
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2019 00:32:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437158AbfHBWB0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Aug 2019 18:01:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38158 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437144AbfHBWBU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Aug 2019 18:01:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8EEE2B61A;
-        Fri,  2 Aug 2019 22:01:19 +0000 (UTC)
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-btrfs@vger.kernel.org, hch@lst.de, darrick.wong@oracle.com,
-        ruansy.fnst@cn.fujitsu.com, Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 13/13] btrfs: update inode size during bio completion
-Date:   Fri,  2 Aug 2019 17:00:48 -0500
-Message-Id: <20190802220048.16142-14-rgoldwyn@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190802220048.16142-1-rgoldwyn@suse.de>
-References: <20190802220048.16142-1-rgoldwyn@suse.de>
+        id S2392393AbfHBWcj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Aug 2019 18:32:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44032 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729919AbfHBWci (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Aug 2019 18:32:38 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58F57206A3;
+        Fri,  2 Aug 2019 22:32:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564785158;
+        bh=z6ytUlp+CIECyVYgzsmKAgNAlD3y+8CHq71PuCQ0D+c=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=cpjIBy8JqGDmfo2YvJ1zHX2H3F5SzV7XyBEUvKOoDGfZiHGtVeJHlsiNF8f/o/lw/
+         1IriX/50tm1jxxFU6BHxnU7AmYr31cK1qfEIW7FiUI67JvLd42gEz50jymZEZTSESa
+         2e28o/zwwAXm5Iq/SkAmipJbFc8z+f7/iU9PnXtA=
+Message-ID: <2f0d5993e9731808b73b0018f5fc4b3335fc6373.camel@kernel.org>
+Subject: Re: [PATCH 03/34] net/ceph: convert put_page() to put_user_page*()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
+        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>,
+        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>
+Date:   Fri, 02 Aug 2019 18:32:33 -0400
+In-Reply-To: <20190802022005.5117-4-jhubbard@nvidia.com>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+         <20190802022005.5117-4-jhubbard@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Thu, 2019-08-01 at 19:19 -0700, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> For pages that were retained via get_user_pages*(), release those pages
+> via the new put_user_page*() routines, instead of via put_page() or
+> release_pages().
+> 
+> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+> ("mm: introduce put_user_page*(), placeholder versions").
+> 
+> Cc: Ilya Dryomov <idryomov@gmail.com>
+> Cc: Sage Weil <sage@redhat.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: ceph-devel@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  net/ceph/pagevec.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/net/ceph/pagevec.c b/net/ceph/pagevec.c
+> index 64305e7056a1..c88fff2ab9bd 100644
+> --- a/net/ceph/pagevec.c
+> +++ b/net/ceph/pagevec.c
+> @@ -12,13 +12,7 @@
+>  
+>  void ceph_put_page_vector(struct page **pages, int num_pages, bool dirty)
+>  {
+> -	int i;
+> -
+> -	for (i = 0; i < num_pages; i++) {
+> -		if (dirty)
+> -			set_page_dirty_lock(pages[i]);
+> -		put_page(pages[i]);
+> -	}
+> +	put_user_pages_dirty_lock(pages, num_pages, dirty);
+>  	kvfree(pages);
+>  }
+>  EXPORT_SYMBOL(ceph_put_page_vector);
 
-Update the inode size for dio writes during bio completion.
-This ties the success of the underlying block layer
-whether to increase the size of the inode. Especially for
-in aio cases.
+This patch looks sane enough. Assuming that the earlier patches are OK:
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
----
- fs/btrfs/inode.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 87fbe73ca2e4..f87a9dd154a9 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8191,9 +8191,13 @@ static void btrfs_endio_direct_write(struct bio *bio)
- {
- 	struct btrfs_dio_private *dip = bio->bi_private;
- 	struct bio *dio_bio = dip->dio_bio;
-+	struct inode *inode = dip->inode;
- 
--	btrfs_update_ordered_extent(dip->inode, dip->logical_offset,
-+	btrfs_update_ordered_extent(inode, dip->logical_offset,
- 				     dip->bytes, !bio->bi_status);
-+	if (!bio->bi_status &&
-+	    i_size_read(inode) < dip->logical_offset + dip->bytes)
-+		i_size_write(inode, dip->logical_offset + dip->bytes);
- 
- 	kfree(dip);
- 
--- 
-2.16.4
+Acked-by: Jeff Layton <jlayton@kernel.org>
 
