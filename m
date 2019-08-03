@@ -2,144 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EFEA80836
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2019 22:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7324F80847
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2019 22:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbfHCUDI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Aug 2019 16:03:08 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10527 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbfHCUDI (ORCPT
+        id S1729051AbfHCUZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Aug 2019 16:25:00 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43849 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728508AbfHCUZA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Aug 2019 16:03:08 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d45e87a0000>; Sat, 03 Aug 2019 13:03:06 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sat, 03 Aug 2019 13:03:06 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sat, 03 Aug 2019 13:03:06 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 3 Aug
- 2019 20:03:05 +0000
-Subject: Re: [PATCH 06/34] drm/i915: convert put_page() to put_user_page*()
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <john.hubbard@gmail.com>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-nfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
-        <x86@kernel.org>, <xen-devel@lists.xenproject.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>
-References: <20190802022005.5117-1-jhubbard@nvidia.com>
- <20190802022005.5117-7-jhubbard@nvidia.com>
- <156473756254.19842.12384378926183716632@jlahtine-desk.ger.corp.intel.com>
- <7d9a9c57-4322-270b-b636-7214019f87e9@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <22c309f6-a7ca-2624-79c3-b16a1487f488@nvidia.com>
-Date:   Sat, 3 Aug 2019 13:03:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Sat, 3 Aug 2019 16:25:00 -0400
+Received: by mail-qt1-f195.google.com with SMTP id w17so33089786qto.10;
+        Sat, 03 Aug 2019 13:24:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=VdhoUOanDkL0mYCbX93qeFusFFgrb24fTk0uYfQw5IU=;
+        b=ocz2P00v4jUeDm9hvTmRm1ADYwLtcdzMfkfdsd+24mZ/VUwsw8FF2bizHR2BC7h6SB
+         z1ju+6qkTNJyFN1V8U1Huba8sNQJRCf3EJYxyA9ORgg6ttnn42SoGzUrd4fLcuikZ+tj
+         mTKLxjYR37xNB6qC0kwNt/Qv9Mpp8ux5ypZOoIA7r/j2pI7GUHm5yoIKUIk0Un/uyDym
+         9cZwtj6Tqa2jyMap+QMQzNvBRrgNK9/9o7cYyYqpHXSl3GhKWLbWgFkk9RQeObmPWGvk
+         2ve36w++07g/xDjozWHpsRPuKR9I0OgMpc4rzcelLA3PAf5EbYSsQHlm/aASU9y49UIr
+         9Gig==
+X-Gm-Message-State: APjAAAX7f2JQ5sHsHjOzU/avOI79WcNKHhnMzDVhOy5r/6W2YqtjRZGz
+        lojpl+ISj8AAjKZo8mWSFt5WtvOYir1JR3rAuRkNF95qhCg=
+X-Google-Smtp-Source: APXvYqzwNuiHEwBJsvHa2lzvXYFpQ48mrGOK361GHHlRlTbyMsgK6QppANcDBKzAtvNs7boJfFUs6EnRPA5GnzLaTvg=
+X-Received: by 2002:aed:33a4:: with SMTP id v33mr98525406qtd.18.1564863898922;
+ Sat, 03 Aug 2019 13:24:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7d9a9c57-4322-270b-b636-7214019f87e9@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564862587; bh=ilU/8cKxAxLoWjJW9QtQ++HPyf9Kp7C47ReaMR8aBDk=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=I2YSIJHtEvh6s6ys5+qZOy9oK09e18lfnMQt77fXZCyrgzqntxCUGfZ7oWikmHJt5
-         4V1+y4MySAejsYy1JLbf4x7KQ0hiidb6jg5xsakkPPG/MxjywoS180jIN6uhV11y/O
-         011sP6dgxSCe7CPHZfVmc5h9v3h4EFz6CzWGnO3zjeLQA+xNf7n8Aq4VIo5dqejc1s
-         ogxZqWO3QmjUKVwNVzjjVrVg9ptoPI8+f8bAuuTtyZ6ixyHn7fxeF7f3r5zkr6u4id
-         LKe10E8R/74E4Fa+DG9GwiVmNsBu++raNIZCy4+8RyCJBTlO14Pl8lc8yCIpDgUHCO
-         oxDfeJ3aA6pnw==
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-10-deepa.kernel@gmail.com>
+ <20190731152609.GB7077@magnolia> <CABeXuvpiom9eQi0y7PAwAypUP1ezKKRfbh-Yqr8+Sbio=QtUJQ@mail.gmail.com>
+ <20190801224344.GC17372@mit.edu> <CAK8P3a3nqmWBXBiFL1kGmJ7yQ_=5S4Kok0YVB3VMFVBuYjFGOQ@mail.gmail.com>
+ <20190802154341.GB4308@mit.edu> <CAK8P3a1Z+nuvBA92K2ORpdjQ+i7KrjOXCFud7fFg4n73Fqx_8Q@mail.gmail.com>
+ <20190802213944.GE4308@mit.edu> <CAK8P3a2z+ZpyONnC+KE1eDbtQ7m2m3xifDhfWe6JTCPPRB0S=g@mail.gmail.com>
+ <20190803160257.GG4308@mit.edu>
+In-Reply-To: <20190803160257.GG4308@mit.edu>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 3 Aug 2019 22:24:41 +0200
+Message-ID: <CAK8P3a0aTsz4f6FgXf7NSAG+aVpd1rhZvFU_E4v8AY_stvhJtQ@mail.gmail.com>
+Subject: Re: [PATCH 09/20] ext4: Initialize timestamps limits
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/2/19 11:48 AM, John Hubbard wrote:
-> On 8/2/19 2:19 AM, Joonas Lahtinen wrote:
->> Quoting john.hubbard@gmail.com (2019-08-02 05:19:37)
->>> From: John Hubbard <jhubbard@nvidia.com>
-...
-> In order to deal with the merge problem, I'll drop this patch from my ser=
-ies,
-> and I'd recommend that the drm-intel-next take the following approach:
+On Sat, Aug 3, 2019 at 6:03 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> On Sat, Aug 03, 2019 at 11:30:22AM +0200, Arnd Bergmann wrote:
+> >
+> > I see in the ext4 code that we always try to expand i_extra_size
+> > to s_want_extra_isize in ext4_mark_inode_dirty(), and that
+> > s_want_extra_isize is always at least  s_min_extra_isize, so
+> > we constantly try to expand the inode to fit.
+>
+> Yes, we *try*.  But we may not succeed.  There may actually be a
+> problem here if the cause is due to there simply is no space in the
+> external xattr block, so we might try and try every time we try to
+> modify that inode, and it would be a performance mess.  If it's due to
+> there being no room in the current transaction, then it's highly
+> likely it will succeed the next time.
+>
+> > Did older versions of ext4 or ext3 ignore s_min_extra_isize
+> > when creating inodes despite
+> > EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE,
+> > or is there another possibility I'm missing?
+>
+> s_min_extra_isize could get changed in order to make room for some new
+> file system feature --- such as extended timestamps.
 
-Actually, I just pulled the latest linux.git, and there are a few changes:
+Ok, that explains it. I assumed s_min_extra_isize was meant to
+not be modifiable, and did not find a way to change it using the
+kernel or tune2fs, but now I can see that debugfs can set it.
 
->=20
-> 1) For now, s/put_page/put_user_page/ in i915_gem_userptr_put_pages(),
-> and fix up the set_page_dirty() --> set_page_dirty_lock() issue, like thi=
-s
-> (based against linux.git):
->=20
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c b/drivers/gpu/dr=
-m/i915/gem/i915_gem_userptr.c
-> index 528b61678334..94721cc0093b 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-> @@ -664,10 +664,10 @@ i915_gem_userptr_put_pages(struct drm_i915_gem_obje=
-ct *obj,
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for_each_sgt_page(page, sgt_it=
-er, pages) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (obj->mm.dirty)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_page_dirty=
-(page);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_page_dirty=
-_lock(page);
+> If you want to pretend that file systems never get upgraded, then life
+> is much simpler.  The general approach is that for less-sophisticated
+> customers (e.g., most people running enterprise distros) file system
+> upgrades are not a thing.  But for sophisticated users, we do try to
+> make thing work for people who are aware of the risks / caveats /
+> rough edges.  Google won't have been able to upgrade thousands and
+> thousands of servers in data centers all over the world if we limited
+> ourselves to Red Hat's support restrictions.  Backup / reformat /
+> restore really isn't a practical rollout strategy for many exabytes of
+> file systems.
+>
+> It sounds like your safety checks / warnings are mostly targeted at
+> low-information customers, no?
 
-I see you've already applied this fix to your tree, in linux.git already.
+Yes, that seems like a reasonable compromise: just warn based
+on s_min_extra_isize, and assume that anyone who used debugfs
+to set s_min_extra_isize to a higher value from an ext3 file system
+during the migration to ext4 was aware of the risks already.
 
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 mark_page_accessed(page);
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 put_page(page);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 put_user_page(page);
+That leaves the question of what we should set the s_time_gran
+and s_time_max to on a superblock with s_min_extra_isize<16
+and s_want_extra_isize>=16.
 
-But this conversion still needs doing. So I'll repost a patch that only doe=
-s=20
-this (plus the other call sites).=20
+If we base it on s_min_extra_isize, we never try to set a timestamp
+later than 2038 and so will never fail, but anyone with a grandfathered
+s_min_extra_isize from ext3 won't be able to set extended
+timestamps on any files any more. Based on s_want_extra_isize
+we would keep the current behavior, but could add a custom
+warning in the ext4 code about the small s_min_extra_isize
+indicating a theoretical problem.
 
-That can go in via either your tree, or Andrew's -mm tree, without generati=
-ng
-any conflicts.
-
-thanks,
---=20
-John Hubbard
-NVIDIA
+       Arnd
