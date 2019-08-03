@@ -2,66 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C58D80829
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2019 21:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFEA80836
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2019 22:03:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbfHCT7j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Aug 2019 15:59:39 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48085 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728961AbfHCT7j (ORCPT
+        id S1728993AbfHCUDI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Aug 2019 16:03:08 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10527 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727585AbfHCUDI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Aug 2019 15:59:39 -0400
-Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Sat, 3 Aug 2019 12:59:31 -0700
-Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 8FFB1B27B5;
-        Sat,  3 Aug 2019 15:59:30 -0400 (EDT)
-From:   Ajay Kaher <akaher@vmware.com>
-To:     <aarcange@redhat.com>, <jannh@google.com>, <oleg@redhat.com>,
-        <peterx@redhat.com>, <rppt@linux.ibm.com>, <jgg@mellanox.com>,
-        <mhocko@suse.com>
-CC:     <jglisse@redhat.com>, <akpm@linux-foundation.org>,
-        <mike.kravetz@oracle.com>, <viro@zeniv.linux.org.uk>,
-        <riandrews@android.com>, <arve@android.com>,
-        <yishaih@mellanox.com>, <dledford@redhat.com>,
-        <sean.hefty@intel.com>, <hal.rosenstock@gmail.com>,
-        <matanb@mellanox.com>, <leonro@mellanox.com>,
-        <gregkh@linuxfoundation.org>, <torvalds@linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <devel@driverdev.osuosl.org>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        <akaher@vmware.com>, <srinidhir@vmware.com>, <bvikas@vmware.com>,
-        <srivatsab@vmware.com>, <srivatsa@csail.mit.edu>,
-        <amakhalov@vmware.com>, <vsirnapalli@vmware.com>
-Subject: [PATCH v6 0/3] [v4.9.y] coredump: fix race condition between mmget_not_zero()/get_task_mm() and core dumping
-Date:   Sun, 4 Aug 2019 09:29:28 +0530
-Message-ID: <1564891168-30016-4-git-send-email-akaher@vmware.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564891168-30016-1-git-send-email-akaher@vmware.com>
-References: <1564891168-30016-1-git-send-email-akaher@vmware.com>
+        Sat, 3 Aug 2019 16:03:08 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d45e87a0000>; Sat, 03 Aug 2019 13:03:06 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Sat, 03 Aug 2019 13:03:06 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Sat, 03 Aug 2019 13:03:06 -0700
+Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 3 Aug
+ 2019 20:03:05 +0000
+Subject: Re: [PATCH 06/34] drm/i915: convert put_page() to put_user_page*()
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <john.hubbard@gmail.com>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-nfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
+        <x86@kernel.org>, <xen-devel@lists.xenproject.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+ <20190802022005.5117-7-jhubbard@nvidia.com>
+ <156473756254.19842.12384378926183716632@jlahtine-desk.ger.corp.intel.com>
+ <7d9a9c57-4322-270b-b636-7214019f87e9@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <22c309f6-a7ca-2624-79c3-b16a1487f488@nvidia.com>
+Date:   Sat, 3 Aug 2019 13:03:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: akaher@vmware.com does not
- designate permitted sender hosts)
+In-Reply-To: <7d9a9c57-4322-270b-b636-7214019f87e9@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564862587; bh=ilU/8cKxAxLoWjJW9QtQ++HPyf9Kp7C47ReaMR8aBDk=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=I2YSIJHtEvh6s6ys5+qZOy9oK09e18lfnMQt77fXZCyrgzqntxCUGfZ7oWikmHJt5
+         4V1+y4MySAejsYy1JLbf4x7KQ0hiidb6jg5xsakkPPG/MxjywoS180jIN6uhV11y/O
+         011sP6dgxSCe7CPHZfVmc5h9v3h4EFz6CzWGnO3zjeLQA+xNf7n8Aq4VIo5dqejc1s
+         ogxZqWO3QmjUKVwNVzjjVrVg9ptoPI8+f8bAuuTtyZ6ixyHn7fxeF7f3r5zkr6u4id
+         LKe10E8R/74E4Fa+DG9GwiVmNsBu++raNIZCy4+8RyCJBTlO14Pl8lc8yCIpDgUHCO
+         oxDfeJ3aA6pnw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-coredump: fix race condition between mmget_not_zero()/get_task_mm()
-and core dumping
+On 8/2/19 11:48 AM, John Hubbard wrote:
+> On 8/2/19 2:19 AM, Joonas Lahtinen wrote:
+>> Quoting john.hubbard@gmail.com (2019-08-02 05:19:37)
+>>> From: John Hubbard <jhubbard@nvidia.com>
+...
+> In order to deal with the merge problem, I'll drop this patch from my ser=
+ies,
+> and I'd recommend that the drm-intel-next take the following approach:
 
-[PATCH v5 1/3]:
-Backporting of commit 04f5866e41fb70690e28397487d8bd8eea7d712a upstream.
+Actually, I just pulled the latest linux.git, and there are a few changes:
 
-[PATCH v5 2/3]:
-Extension of commit 04f5866e41fb to fix the race condition between
-get_task_mm() and core dumping for IB->mlx4 and IB->mlx5 drivers.
+>=20
+> 1) For now, s/put_page/put_user_page/ in i915_gem_userptr_put_pages(),
+> and fix up the set_page_dirty() --> set_page_dirty_lock() issue, like thi=
+s
+> (based against linux.git):
+>=20
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c b/drivers/gpu/dr=
+m/i915/gem/i915_gem_userptr.c
+> index 528b61678334..94721cc0093b 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
+> @@ -664,10 +664,10 @@ i915_gem_userptr_put_pages(struct drm_i915_gem_obje=
+ct *obj,
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for_each_sgt_page(page, sgt_it=
+er, pages) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 if (obj->mm.dirty)
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_page_dirty=
+(page);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_page_dirty=
+_lock(page);
 
-[PATCH v5 3/3]
-Backporting of commit 59ea6d06cfa9247b586a695c21f94afa7183af74 upstream.
+I see you've already applied this fix to your tree, in linux.git already.
 
-[diff from v5]:
-- Recreated [PATCH v6 1/3], to solve patch apply error.
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 mark_page_accessed(page);
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 put_page(page);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 put_user_page(page);
+
+But this conversion still needs doing. So I'll repost a patch that only doe=
+s=20
+this (plus the other call sites).=20
+
+That can go in via either your tree, or Andrew's -mm tree, without generati=
+ng
+any conflicts.
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
