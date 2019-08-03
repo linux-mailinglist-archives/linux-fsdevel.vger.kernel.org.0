@@ -2,90 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E683804E1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2019 09:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A3080518
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2019 09:43:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfHCHGy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Aug 2019 03:06:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727206AbfHCHGx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Aug 2019 03:06:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 756402173E;
-        Sat,  3 Aug 2019 07:06:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564816011;
-        bh=fAm+JJVlEEdZsZEnQU6VmG7AlISaD9fVfUjXl/e9MGA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EvBQbY6tUIAsZP4MFxGmLRqZJjlnz59fmNMbvE0jfno1B+JXE+PNryIyzSAnXbr8N
-         +lgw4Y3y5zL8NJKrLYjFHjBcr6/6qlTB3yc6rbylv5fVS7aSSqYd41B1eBmWwcN4jJ
-         e48QvmU3i/Btia6YyxF5rYYxbA6/qQXbJH8nGzR0=
-Date:   Sat, 3 Aug 2019 09:06:40 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     john.hubbard@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fbdev@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        kvm@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, ceph-devel@vger.kernel.org,
-        devel@driverdev.osuosl.org, rds-devel@oss.oracle.com,
-        linux-rdma@vger.kernel.org, x86@kernel.org,
-        amd-gfx@lists.freedesktop.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, xen-devel@lists.xenproject.org,
-        devel@lists.orangefs.org, linux-media@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        intel-gfx@lists.freedesktop.org, linux-block@vger.kernel.org,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-xfs@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Frank Haverkamp <haver@linux.vnet.ibm.com>
-Subject: Re: [PATCH 10/34] genwqe: convert put_page() to put_user_page*()
-Message-ID: <20190803070640.GB2508@kroah.com>
-References: <20190802022005.5117-1-jhubbard@nvidia.com>
- <20190802022005.5117-11-jhubbard@nvidia.com>
+        id S2387417AbfHCHnB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Aug 2019 03:43:01 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:56604 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387402AbfHCHnB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 3 Aug 2019 03:43:01 -0400
+Received: by mail-io1-f70.google.com with SMTP id u25so85244781iol.23
+        for <linux-fsdevel@vger.kernel.org>; Sat, 03 Aug 2019 00:43:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=yMorIrW4ay3tdK2qTcsDnVE/Pjijxze3b99wXe/WPcY=;
+        b=hsRVGJygSK42j5QltmFiMtMeO7G9kMk9Vc++gvD2NomtKMd4Fd4gtnBZINxyq29ckd
+         NGXA/+niTiTgEqqNhodMN/qL0T8nkrKG5DCNactbFqrn2etOSYAgqP5rOHZPy3l8lUPO
+         cL+qOtJMF69B04NXMpzPD/zIw2SH4sQkPNbcrlmvaLGUY0uzmJiFGM7A8sTwgwX/eaVQ
+         5eVlx8h7oEDwoFqFiyLnopGF5Tt0yfulRKv0vDeXnhhMDhlHQabYfdbv3UwCvT8tTfyf
+         tOoTcQRg25PfdYteL0xxtYVT1V7YQU4jmVemsCR64ZLOaqLriw0Qj0BxCfrVxnrOa82C
+         6dqg==
+X-Gm-Message-State: APjAAAX4yOdl3L30etb0i91UKSQ2VWDQsr44du9oVtDS13wzcjBO+zwv
+        l3i8harnig80RAZdsJ7QaHSyej8tB3FCOXP+ZmDCPRcSDD8m
+X-Google-Smtp-Source: APXvYqyODxVlDnjmRqYXt2tj0Z1xEFiKx4T/bWkQb1PzdLwDQuMC91pWxkePCa7Pu2aTkOoYz58Kc11H06whknBe3wOWUzTFH6uy
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802022005.5117-11-jhubbard@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Received: by 2002:a6b:b804:: with SMTP id i4mr5520996iof.119.1564818180769;
+ Sat, 03 Aug 2019 00:43:00 -0700 (PDT)
+Date:   Sat, 03 Aug 2019 00:43:00 -0700
+In-Reply-To: <000000000000a2db16058f2514fa@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cd8e92058f319f8c@google.com>
+Subject: Re: KASAN: use-after-free Read in blkdev_direct_IO
+From:   syzbot <syzbot+0a0e5f37746013dc7476@syzkaller.appspotmail.com>
+To:     arvid.brodin@alten.se, davem@davemloft.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 07:19:41PM -0700, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> For pages that were retained via get_user_pages*(), release those pages
-> via the new put_user_page*() routines, instead of via put_page() or
-> release_pages().
-> 
-> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-> ("mm: introduce put_user_page*(), placeholder versions").
-> 
-> This changes the release code slightly, because each page slot in the
-> page_list[] array is no longer checked for NULL. However, that check
-> was wrong anyway, because the get_user_pages() pattern of usage here
-> never allowed for NULL entries within a range of pinned pages.
-> 
-> Cc: Frank Haverkamp <haver@linux.vnet.ibm.com>
-> Cc: "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  drivers/misc/genwqe/card_utils.c | 17 +++--------------
->  1 file changed, 3 insertions(+), 14 deletions(-)
+syzbot has bisected this bug to:
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+commit b9a1e627405d68d475a3c1f35e685ccfb5bbe668
+Author: Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Thu Jul 4 00:21:13 2019 +0000
+
+     hsr: implement dellink to clean up resources
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1589f3e8600000
+start commit:   1e78030e Merge tag 'mmc-v5.3-rc1' of git://git.kernel.org/..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=1789f3e8600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1389f3e8600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4c7b914a2680c9c6
+dashboard link: https://syzkaller.appspot.com/bug?extid=0a0e5f37746013dc7476
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fa7830600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f31c8a600000
+
+Reported-by: syzbot+0a0e5f37746013dc7476@syzkaller.appspotmail.com
+Fixes: b9a1e627405d ("hsr: implement dellink to clean up resources")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
