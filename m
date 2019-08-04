@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38FF380E6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 00:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBA7480E4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 00:53:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbfHDWxx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Aug 2019 18:53:53 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42541 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbfHDWtr (ORCPT
+        id S1727566AbfHDWtv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Aug 2019 18:49:51 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33013 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727532AbfHDWtt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Aug 2019 18:49:47 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so38581858pff.9;
-        Sun, 04 Aug 2019 15:49:46 -0700 (PDT)
+        Sun, 4 Aug 2019 18:49:49 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n190so3535788pgn.0;
+        Sun, 04 Aug 2019 15:49:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1X33MY8P1PVcaLkCZcp6PkXiHV9wvPThIXgNE9TFbj4=;
-        b=L35X2QFh0M4JIQvOmPagjixwdLqggClkiY/ITRED3vd5cYmML5rpnhsQYVeJG55L7X
-         lfpM/Rw8+9+KW1xLlbUjjd2pEukAuHL9FPW2brNIFLNAAe+xFNLiBhvXwHgfebwSPh6b
-         PQimMsMZnxgRdBC8pyrRMZ9Xs902qjGDWwSRlQpLzHZkXMK6vYaJ7jNHAlwygvXZxKWD
-         HRNszvS/yLW3PMoeuHrejzjB7JHf9PJVVvjCC1Gi8OYeSyaj8QqsLJjtyVPXxwKbhU1l
-         56SfAsWTx6H5Myy0JvyaDz6KAPklX1grAzJq4JD5PKOSOMwKa+X4MP3JYOJahIqu806a
-         4oGw==
+        bh=Zk7mJfsjIPJK9Qgsn0u5osZJajJrXebF0c1tZrgdgoI=;
+        b=WszdJ6eSiS6l8Z9/5N/vbNe3jNFvMTjmOIbyGI43X/lqn/ujHi2UxXu88CH1bmo3Pr
+         auVxGpa3TkNwR224TaYOB1ePcD+ho6gM00/37bER1kKjl0rL2SnnzYvGvu3vN/SXHfk+
+         wtblnQHWP5rqAtZxjvFWL+wwPm4ICxkBWE6EXcMAD+BIssgCDDepKV59lPfeJfOzGgFr
+         KW9V0+2vgt3eaIWXLk7U/hy0iBaj5GHPE+ZLhIwPVMA8/7B6uNEiy5Dm26EoCBxtBU9T
+         tUYfOzYB8/UlHywiUxmEUaaGe/mgWuOGErPZVtfj1mQo23l9R0hEud7H5SM/CqJoFOsO
+         zJVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1X33MY8P1PVcaLkCZcp6PkXiHV9wvPThIXgNE9TFbj4=;
-        b=oCPGFPSDS4T7TX3IEnMmJTOghSrlU2eHc69u5U1uO2wXrueTSkjXppMxtYOCb/ZOgm
-         Dcr3zX0+GN0oQPZXwCxktjZiKDYQ9OOvBh9YQdBhZuiKkBTilqfyc5w4NGmFuw+D81KN
-         jy9UM3ntP0gTs0m6tAkbnSWKUoWUDrt7hJOmuzo9t4sF1VDdIsBObVr++ywRlCtW1cz8
-         ml4vTUxYOCGDZaFaq3h01SrqbWWffpcapz9MZBTa8yMVLA0duWckmCBr+lQFtDE9xtAX
-         xux1aLH7woS3mBssCCa5fBMaTG380DVr44KNWlSohxIh0BpQ3Ko+rR4qkueH09r5slJd
-         HD1Q==
-X-Gm-Message-State: APjAAAVaIERQtzKGdWBEwK98gdO6JUtRA+7nApUHLOUfPhrQmeH2G4MF
-        aDzvaU5ykQRO9zoQNU77Eek=
-X-Google-Smtp-Source: APXvYqzQPIYoNRubdZIOtSxTDDzyPgcMaQ5zki3KNapO18w6JwMFrcpCjaVO/4MzoXfe6L31Al4dig==
-X-Received: by 2002:a65:6859:: with SMTP id q25mr22221333pgt.181.1564958986332;
-        Sun, 04 Aug 2019 15:49:46 -0700 (PDT)
+        bh=Zk7mJfsjIPJK9Qgsn0u5osZJajJrXebF0c1tZrgdgoI=;
+        b=LMNAW5Tv6iUPZo4tf/OxnJKRi5+oaR86bcS5QyjdfmOWGGnBeSxYduBU5wVxnJCglj
+         N2FQM4gOOcDajLDt29wUsB+l3Klakf6qDRRIM5G20IARMK4Iq3YkXXqoWkXO/L10yTf6
+         632DQ0ceufSys1PlQvNPI625Y6lCxb5cIOAJ8I50a2p+AF6/0KyvTDcRU4dRm4GWj0y9
+         y9AkcgTY5lru+UfIHWI0sBlJlsoNuPQAcBMdrH6T0mccw4cz9Q+SCWR5OLtA9nIuQWtz
+         0lURxc7KkkSH/ecEHvwqjJVPkhdysPMJp3LqjvErf4CakWTVPqrT69BLLwkHEk+4gqAc
+         pKiw==
+X-Gm-Message-State: APjAAAVsVN0s8h8cp0B5NR3HwdhOnA0BSDx3n/TsKaHVGgv5upg/ZSqx
+        fnbvN1DgNBlD0pOn69GOGns=
+X-Google-Smtp-Source: APXvYqzXOrOAw0v6KK/XGb3+LYPhc4s7KW/tJCUCwczRKyA5tVzLB0NIrofddWwwfme3ueTIgYzfbg==
+X-Received: by 2002:a63:3407:: with SMTP id b7mr22111094pga.143.1564958987901;
+        Sun, 04 Aug 2019 15:49:47 -0700 (PDT)
 Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id r6sm35946836pjb.22.2019.08.04.15.49.44
+        by smtp.gmail.com with ESMTPSA id r6sm35946836pjb.22.2019.08.04.15.49.46
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 04 Aug 2019 15:49:45 -0700 (PDT)
+        Sun, 04 Aug 2019 15:49:47 -0700 (PDT)
 From:   john.hubbard@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -68,10 +68,14 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         netdev@vger.kernel.org, rds-devel@oss.oracle.com,
         sparclinux@vger.kernel.org, x86@kernel.org,
         xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: [PATCH v2 17/34] vfio: convert put_page() to put_user_page*()
-Date:   Sun,  4 Aug 2019 15:48:58 -0700
-Message-Id: <20190804224915.28669-18-jhubbard@nvidia.com>
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH v2 18/34] fbdev/pvr2fb: convert put_page() to put_user_page*()
+Date:   Sun,  4 Aug 2019 15:48:59 -0700
+Message-Id: <20190804224915.28669-19-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190804224915.28669-1-jhubbard@nvidia.com>
 References: <20190804224915.28669-1-jhubbard@nvidia.com>
@@ -92,49 +96,32 @@ release_pages().
 This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
 ("mm: introduce put_user_page*(), placeholder versions").
 
-Note that this effectively changes the code's behavior in
-qp_release_pages(): it now ultimately calls set_page_dirty_lock(),
-instead of set_page_dirty(). This is probably more accurate.
-
-As Christoph Hellwig put it, "set_page_dirty() is only safe if we are
-dealing with a file backed page where we have reference on the inode it
-hangs off." [1]
-
-[1] https://lore.kernel.org/r/20190723153640.GB720@lst.de
-
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Bhumika Goyal <bhumirks@gmail.com>
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-fbdev@vger.kernel.org
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/video/fbdev/pvr2fb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 054391f30fa8..5a5461a14299 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -320,9 +320,9 @@ static int put_pfn(unsigned long pfn, int prot)
- {
- 	if (!is_invalid_reserved_pfn(pfn)) {
- 		struct page *page = pfn_to_page(pfn);
--		if (prot & IOMMU_WRITE)
--			SetPageDirty(page);
--		put_page(page);
-+		bool dirty = prot & IOMMU_WRITE;
-+
-+		put_user_pages_dirty_lock(&page, 1, dirty);
- 		return 1;
- 	}
- 	return 0;
-@@ -356,7 +356,7 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- 		 */
- 		if (ret > 0 && vma_is_fsdax(vmas[0])) {
- 			ret = -EOPNOTSUPP;
--			put_page(page[0]);
-+			put_user_page(page[0]);
- 		}
- 	}
- 	up_read(&mm->mmap_sem);
+diff --git a/drivers/video/fbdev/pvr2fb.c b/drivers/video/fbdev/pvr2fb.c
+index 7ff4b6b84282..0e4f9aa6444d 100644
+--- a/drivers/video/fbdev/pvr2fb.c
++++ b/drivers/video/fbdev/pvr2fb.c
+@@ -700,8 +700,7 @@ static ssize_t pvr2fb_write(struct fb_info *info, const char *buf,
+ 	ret = count;
+ 
+ out_unmap:
+-	for (i = 0; i < nr_pages; i++)
+-		put_page(pages[i]);
++	put_user_pages(pages, nr_pages);
+ 
+ 	kfree(pages);
+ 
 -- 
 2.22.0
 
