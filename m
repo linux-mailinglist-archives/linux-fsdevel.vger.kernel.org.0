@@ -2,163 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A8EB823A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 19:05:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D52282425
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 19:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbfHERFV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 13:05:21 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44518 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729941AbfHERFU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 13:05:20 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t14so36687687plr.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 10:05:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EpW+/zsfaWUWqnp/CzJ8iSD2ZsdUd34jJeLFlQmjMJk=;
-        b=hgyWzkgSkWIkAiyvGZ+G+xjb4IZCoTupPLFm8KMlB2b4hKbMxa1b+uIr1iRdua+wqE
-         QC4A3wju5EZMPMzUeRrpvG6gxy5MEYfQ82W1fGN8SHtXC5yuCxMcBGlIpCV6ZH3OP4zQ
-         UMkuRWp/Da9107v0m9+9yab3KvcgH65HHQUcA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EpW+/zsfaWUWqnp/CzJ8iSD2ZsdUd34jJeLFlQmjMJk=;
-        b=ngXZKkV/NPQsfqKJG+qvTbcmC552wX1hl3n1qAurLW3VBh9bYJivwGOOclfIPIEC+d
-         DhMz+JbHYcJjQxwzLpSTOWv2WzD8HDEI/TNW29xmJWpZzJb0BI4+NTxefnB16QZaJawi
-         gsPkdLAWGbHlVJfb6EdMNW/HOCxabF6mwn7RJyfHmuzgpki6EVWu6laE2WhHgQbggdc3
-         ixXb7JlhDMYB7a3nvjBhv3zkXHp91ch5XKNP3yLCHdAPbEPvxAvad3XTAogLuKwYci45
-         JxdulApQ4ZKjxhSltHjxc63CAeqnHfoMf1FqWMRD0PqAOy1TttJD74JPcrdmCwNMPHMH
-         nMXQ==
-X-Gm-Message-State: APjAAAUQbwkiTccqTDkOTpS6h8rG0O2v30Jfe6Kf/pEuq1x14c+DGe/7
-        DNnvPM+Vj/MxgPqhp/I+J1M=
-X-Google-Smtp-Source: APXvYqza5nQrNDdoUqGT6kyvYnC1EmmsZrzblP42jhwdV0CyAlqgihwZyUT70kUG+iUloT382Cjx7g==
-X-Received: by 2002:a17:902:9a95:: with SMTP id w21mr61715428plp.126.1565024719760;
-        Mon, 05 Aug 2019 10:05:19 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id p23sm89832934pfn.10.2019.08.05.10.05.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 10:05:19 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, joelaf@google.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>, minchan@kernel.org,
-        namhyung@google.com, paulmck@linux.ibm.com,
-        Robin Murphy <robin.murphy@arm.com>,
-        Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
-Subject: [PATCH v4 5/5] doc: Update documentation for page_idle virtual address indexing
-Date:   Mon,  5 Aug 2019 13:04:51 -0400
-Message-Id: <20190805170451.26009-5-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-In-Reply-To: <20190805170451.26009-1-joel@joelfernandes.org>
-References: <20190805170451.26009-1-joel@joelfernandes.org>
+        id S1727460AbfHERm3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 13:42:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43284 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726559AbfHERm3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Aug 2019 13:42:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 24AF2300676E;
+        Mon,  5 Aug 2019 17:42:29 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 929BE5C1D4;
+        Mon,  5 Aug 2019 17:42:28 +0000 (UTC)
+Date:   Mon, 5 Aug 2019 13:42:26 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 01/24] mm: directed shrinker work deferral
+Message-ID: <20190805174226.GB14760@bfoster>
+References: <20190801021752.4986-1-david@fromorbit.com>
+ <20190801021752.4986-2-david@fromorbit.com>
+ <20190802152709.GA60893@bfoster>
+ <20190804014930.GR7777@dread.disaster.area>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190804014930.GR7777@dread.disaster.area>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 05 Aug 2019 17:42:29 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch updates the documentation with the new page_idle tracking
-feature which uses virtual address indexing.
+On Sun, Aug 04, 2019 at 11:49:30AM +1000, Dave Chinner wrote:
+> On Fri, Aug 02, 2019 at 11:27:09AM -0400, Brian Foster wrote:
+> > On Thu, Aug 01, 2019 at 12:17:29PM +1000, Dave Chinner wrote:
+> > > From: Dave Chinner <dchinner@redhat.com>
+> > > 
+> > > Introduce a mechanism for ->count_objects() to indicate to the
+> > > shrinker infrastructure that the reclaim context will not allow
+> > > scanning work to be done and so the work it decides is necessary
+> > > needs to be deferred.
+> > > 
+> > > This simplifies the code by separating out the accounting of
+> > > deferred work from the actual doing of the work, and allows better
+> > > decisions to be made by the shrinekr control logic on what action it
+> > > can take.
+> > > 
+> > > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > > ---
+> > >  include/linux/shrinker.h | 7 +++++++
+> > >  mm/vmscan.c              | 8 ++++++++
+> > >  2 files changed, 15 insertions(+)
+> > > 
+> > > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> > > index 9443cafd1969..af78c475fc32 100644
+> > > --- a/include/linux/shrinker.h
+> > > +++ b/include/linux/shrinker.h
+> > > @@ -31,6 +31,13 @@ struct shrink_control {
+> > >  
+> > >  	/* current memcg being shrunk (for memcg aware shrinkers) */
+> > >  	struct mem_cgroup *memcg;
+> > > +
+> > > +	/*
+> > > +	 * set by ->count_objects if reclaim context prevents reclaim from
+> > > +	 * occurring. This allows the shrinker to immediately defer all the
+> > > +	 * work and not even attempt to scan the cache.
+> > > +	 */
+> > > +	bool will_defer;
+> > 
+> > Functionality wise this seems fairly straightforward. FWIW, I find the
+> > 'will_defer' name a little confusing because it implies to me that the
+> > shrinker is telling the caller about something it would do if called as
+> > opposed to explicitly telling the caller to defer. I'd just call it
+> > 'defer' I guess, but that's just my .02. ;P
+> 
+> Ok, I'll change it to something like "defer_work" or "defer_scan"
+> here.
+> 
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
-Reviewed-by: Sandeep Patil <sspatil@google.com>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- .../admin-guide/mm/idle_page_tracking.rst     | 43 ++++++++++++++++---
- 1 file changed, 36 insertions(+), 7 deletions(-)
+Either sounds better to me, thanks.
 
-diff --git a/Documentation/admin-guide/mm/idle_page_tracking.rst b/Documentation/admin-guide/mm/idle_page_tracking.rst
-index df9394fb39c2..9eef32000f5e 100644
---- a/Documentation/admin-guide/mm/idle_page_tracking.rst
-+++ b/Documentation/admin-guide/mm/idle_page_tracking.rst
-@@ -19,10 +19,14 @@ It is enabled by CONFIG_IDLE_PAGE_TRACKING=y.
- 
- User API
- ========
-+There are 2 ways to access the idle page tracking API. One uses physical
-+address indexing, another uses a simpler virtual address indexing scheme.
- 
--The idle page tracking API is located at ``/sys/kernel/mm/page_idle``.
--Currently, it consists of the only read-write file,
--``/sys/kernel/mm/page_idle/bitmap``.
-+Physical address indexing
-+-------------------------
-+The idle page tracking API for physical address indexing using page frame
-+numbers (PFN) is located at ``/sys/kernel/mm/page_idle``.  Currently, it
-+consists of the only read-write file, ``/sys/kernel/mm/page_idle/bitmap``.
- 
- The file implements a bitmap where each bit corresponds to a memory page. The
- bitmap is represented by an array of 8-byte integers, and the page at PFN #i is
-@@ -74,6 +78,31 @@ See :ref:`Documentation/admin-guide/mm/pagemap.rst <pagemap>` for more
- information about ``/proc/pid/pagemap``, ``/proc/kpageflags``, and
- ``/proc/kpagecgroup``.
- 
-+Virtual address indexing
-+------------------------
-+The idle page tracking API for virtual address indexing using virtual frame
-+numbers (VFN) for a process ``<pid>`` is located at ``/proc/<pid>/page_idle``.
-+It is a bitmap that follows the same semantics as
-+``/sys/kernel/mm/page_idle/bitmap`` except that it uses virtual instead of
-+physical frame numbers.
-+
-+This idle page tracking API does not deal with PFN so it does not require prior
-+lookups of ``pagemap``. This is an advantage on some systems where looking up
-+PFN is considered a security issue.  Also in some cases, this interface could
-+be slightly more reliable to use than physical address indexing, since in
-+physical address indexing, address space changes can occur between reading the
-+``pagemap`` and reading the ``bitmap``, while in virtual address indexing, the
-+process's ``mmap_sem`` is held for the duration of the access.
-+
-+To estimate the amount of pages that are not used by a workload one should:
-+
-+ 1. Mark all the workload's pages as idle by setting corresponding bits in
-+    ``/proc/<pid>/page_idle``.
-+
-+ 2. Wait until the workload accesses its working set.
-+
-+ 3. Read ``/proc/<pid>/page_idle`` and count the number of bits set.
-+
- .. _impl_details:
- 
- Implementation Details
-@@ -99,10 +128,10 @@ When a dirty page is written to swap or disk as a result of memory reclaim or
- exceeding the dirty memory limit, it is not marked referenced.
- 
- The idle memory tracking feature adds a new page flag, the Idle flag. This flag
--is set manually, by writing to ``/sys/kernel/mm/page_idle/bitmap`` (see the
--:ref:`User API <user_api>`
--section), and cleared automatically whenever a page is referenced as defined
--above.
-+is set manually, by writing to ``/sys/kernel/mm/page_idle/bitmap`` for physical
-+addressing or by writing to ``/proc/<pid>/page_idle`` for virtual
-+addressing (see the :ref:`User API <user_api>` section), and cleared
-+automatically whenever a page is referenced as defined above.
- 
- When a page is marked idle, the Accessed bit must be cleared in all PTEs it is
- mapped to, otherwise we will not be able to detect accesses to the page coming
--- 
-2.22.0.770.g0f2c4a37fd-goog
+> > >  };
+> > >  
+> > >  #define SHRINK_STOP (~0UL)
+> > > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > > index 44df66a98f2a..ae3035fe94bc 100644
+> > > --- a/mm/vmscan.c
+> > > +++ b/mm/vmscan.c
+> > > @@ -541,6 +541,13 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+> > >  	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
+> > >  				   freeable, delta, total_scan, priority);
+> > >  
+> > > +	/*
+> > > +	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
+> > > +	 * defer the work to a context that can scan the cache.
+> > > +	 */
+> > > +	if (shrinkctl->will_defer)
+> > > +		goto done;
+> > > +
+> > 
+> > Who's responsible for clearing the flag? Perhaps we should do so here
+> > once it's acted upon since we don't call into the shrinker again?
+> 
+> Each shrinker invocation has it's own shrink_control context - they
+> are not shared between shrinkers - the higher level is responsible
+> for setting up the control state of each individual shrinker
+> invocation...
+> 
 
+Yes, but more specifically, it appears to me that each level is
+responsible for setting up control state managed by that level. E.g.,
+shrink_slab_memcg() initializes the unchanging state per iteration and
+do_shrink_slab() (re)sets the scan state prior to ->scan_objects().
+
+> > Note that I see this structure is reinitialized on every iteration in
+> > the caller, but there already is the SHRINK_EMPTY case where we call
+> > back into do_shrink_slab().
+> 
+> .... because there is external state tracking in memcgs that
+> determine what shrinkers get run. See shrink_slab_memcg().
+> 
+> i.e. The SHRINK_EMPTY return value is a special hack for memcg
+> shrinkers so it can track whether there are freeable objects in the
+> cache externally to try to avoid calling into shrinkers where no
+> work can be done.  Think about having hundreds of shrinkers and
+> hundreds of memcgs...
+> 
+> Anyway, the tracking of the freeable bit is racy, so the
+> SHRINK_EMPTY hack where it clears the bit and calls back into the
+> shrinker is handling the case where objects were freed between the
+> shrinker running and shrink_slab_memcg() clearing the freeable bit
+> from the slab. Hence it has to call back into the shrinker again -
+> if it gets anything other than SHRINK_EMPTY returned, then it will
+> set the bit again.
+> 
+
+Yeah, I grokked most of that from the code. The current implementation
+looks fine to me, but I could easily see how changes in the higher level
+do_shrink_slab() caller(s) or lower level shrinker callbacks could
+quietly break this in the future. IOW, once this code hits the tree any
+shrinker across the kernel is free to try and defer slab reclaim work
+for any reason.
+
+> In reality, SHRINK_EMPTY and deferring work are mutually exclusive.
+> Work only gets deferred when there's work that can be done and in
+> that case SHRINK_EMPTY will not be returned - a value of "0 freed
+> objects" will be returned when we defer work. So if the first call
+> returns SHRINK_EMPTY, the "defer" state has not been touched and
+> so doesn't require resetting to zero here.
+> 
+
+Yep. The high level semantics make sense, but note that that the generic
+superblock shrinker can now set ->will_defer true and return
+SHRINK_EMPTY so that last bit about defer state not being touched is not
+technically true.
+
+> > Granted the deferred state likely hasn't
+> > changed, but the fact that we'd call back into the count callback to set
+> > it again implies the logic could be a bit more explicit, particularly if
+> > this will eventually be used for more dynamic shrinker state that might
+> > change call to call (i.e., object dirty state, etc.).
+> > 
+> > BTW, do we need to care about the ->nr_cached_objects() call from the
+> > generic superblock shrinker (super_cache_scan())?
+> 
+> No, and we never had to because it is inside the superblock shrinker
+> and the superblock shrinker does the GFP_NOFS context checks.
+> 
+
+Ok. Though tbh this topic has me wondering whether a shrink_control
+boolean is the right approach here. Do you envision ->will_defer being
+used for anything other than allocation context restrictions? If not,
+perhaps we should do something like optionally set alloc flags required
+for direct scanning in the struct shrinker itself and let the core
+shrinker code decide when to defer to kswapd based on the shrink_control
+flags and the current shrinker. That way an arbitrary shrinker can't
+muck around with core behavior in unintended ways. Hm?
+
+Brian
+
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
