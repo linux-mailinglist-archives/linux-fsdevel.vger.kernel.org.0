@@ -2,227 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F7A82448
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 19:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 684E38248E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 20:03:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbfHERx3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 13:53:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42546 "EHLO mx1.redhat.com"
+        id S1728851AbfHESDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 14:03:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39366 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726559AbfHERx3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 13:53:29 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1728518AbfHESDD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Aug 2019 14:03:03 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 841A14E8AC;
-        Mon,  5 Aug 2019 17:53:28 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 79A5930224AC;
+        Mon,  5 Aug 2019 18:03:03 +0000 (UTC)
 Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 05BE85D704;
-        Mon,  5 Aug 2019 17:53:27 +0000 (UTC)
-Date:   Mon, 5 Aug 2019 13:53:26 -0400
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EF9065C1D4;
+        Mon,  5 Aug 2019 18:03:02 +0000 (UTC)
+Date:   Mon, 5 Aug 2019 14:03:01 -0400
 From:   Brian Foster <bfoster@redhat.com>
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 14/24] xfs: tail updates only need to occur when LSN
- changes
-Message-ID: <20190805175325.GD14760@bfoster>
+Subject: Re: [PATCH 15/24] xfs: eagerly free shadow buffers to reduce CIL
+ footprint
+Message-ID: <20190805180300.GE14760@bfoster>
 References: <20190801021752.4986-1-david@fromorbit.com>
- <20190801021752.4986-15-david@fromorbit.com>
+ <20190801021752.4986-16-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190801021752.4986-15-david@fromorbit.com>
+In-Reply-To: <20190801021752.4986-16-david@fromorbit.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 05 Aug 2019 17:53:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 05 Aug 2019 18:03:03 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 12:17:42PM +1000, Dave Chinner wrote:
+On Thu, Aug 01, 2019 at 12:17:43PM +1000, Dave Chinner wrote:
 > From: Dave Chinner <dchinner@redhat.com>
 > 
-> We currently wake anything waiting on the log tail to move whenever
-> the log item at the tail of the log is removed. Historically this
-> was fine behaviour because there were very few items at any given
-> LSN. But with delayed logging, there may be thousands of items at
-> any given LSN, and we can't move the tail until they are all gone.
+> The CIL can pin a lot of memory and effectively defines the lower
+> free memory boundary of operation for XFS. The way we hang onto
+> log item shadow buffers "just in case" effectively doubles the
+> memory footprint of the CIL for dubious reasons.
 > 
-> Hence if we are removing them in near tail-first order, we might be
-> waking up processes waiting on the tail LSN to change (e.g. log
-> space waiters) repeatedly without them being able to make progress.
-> This also occurs with the new sync push waiters, and can result in
-> thousands of spurious wakeups every second when under heavy direct
-> reclaim pressure.
+> That is, we hang onto the old shadow buffer in case the next time
+> we log the item it will fit into the shadow buffer and we won't have
+> to allocate a new one. However, we only ever tend to grow dirty
+> objects in the CIL through relogging, so once we've allocated a
+> larger buffer the old buffer we set as a shadow buffer will never
+> get reused as the amount we log never decreases until the item is
+> clean. And then for buffer items we free the log item and the shadow
+> buffers, anyway. Inode items will hold onto their shadow buffer
+> until they are reclaimed - this could double the inode's memory
+> footprint for it's lifetime...
 > 
-> To fix this, check that the tail LSN has actually changed on the
-> AIL before triggering wakeups. This will reduce the number of
-> spurious wakeups when doing bulk AIL removal and make this code much
-> more efficient.
-> 
-> XXX: occasionally get a temporary hang in xfs_ail_push_sync() with
-> this change - log force from log worker gets things moving again.
-> Only happens under extreme memory pressure - possibly push racing
-> with a tail update on an empty log. Needs further investigation.
+> Hence we should just free the old log item buffer when we replace it
+> with a new shadow buffer rather than storing it for later use. It's
+> not useful, get rid of it as early as possible.
 > 
 > Signed-off-by: Dave Chinner <dchinner@redhat.com>
 > ---
+>  fs/xfs/xfs_log_cil.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
+> index fa5602d0fd7f..1863a9bdf4a9 100644
+> --- a/fs/xfs/xfs_log_cil.c
+> +++ b/fs/xfs/xfs_log_cil.c
+> @@ -238,9 +238,7 @@ xfs_cil_prepare_item(
+>  	/*
+>  	 * If there is no old LV, this is the first time we've seen the item in
+>  	 * this CIL context and so we need to pin it. If we are replacing the
+> -	 * old_lv, then remove the space it accounts for and make it the shadow
+> -	 * buffer for later freeing. In both cases we are now switching to the
+> -	 * shadow buffer, so update the the pointer to it appropriately.
+> +	 * old_lv, then remove the space it accounts for and free it.
+>  	 */
 
-Ok, this addresses the wakeup granularity issue mentioned in the
-previous patch. Note that I was kind of wondering why we wouldn't base
-this on the l_tail_lsn update in xlog_assign_tail_lsn_locked() as
-opposed to the current approach.
+The comment above xlog_cil_alloc_shadow_bufs() needs a similar update
+around how we handle the old buffer when the shadow buffer is used.
 
-For example, xlog_assign_tail_lsn_locked() could simply check the
-current min item against the current l_tail_lsn before it does the
-assignment and use that to trigger tail change events. If we wanted to
-also filter out the other wakeups (as this patch does) then we could
-just pass a bool pointer or something that returns whether the tail
-actually changed.
+>  	if (!old_lv) {
+>  		if (lv->lv_item->li_ops->iop_pin)
+> @@ -251,7 +249,8 @@ xfs_cil_prepare_item(
+>  
+>  		*diff_len -= old_lv->lv_bytes;
+>  		*diff_iovecs -= old_lv->lv_niovecs;
+> -		lv->lv_item->li_lv_shadow = old_lv;
+> +		kmem_free(old_lv);
+> +		lv->lv_item->li_lv_shadow = NULL;
+>  	}
+
+So IIUC this is the case where we allocated a shadow buffer, the item
+was already pinned (so old_lv is still around) but we ended up using the
+shadow buffer for this relog. Instead of keeping the old buffer around
+as a new shadow, we toss it. That makes sense, but if the objective is
+to not leave dangling shadow buffers around as such, what about the case
+where we allocated a shadow buffer but didn't end up using it because
+old_lv was reusable? It looks like we still keep the shadow buffer
+around in that scenario with a similar lifetime as the swapout scenario
+this patch removes. Hm?
 
 Brian
 
->  fs/xfs/xfs_inode_item.c | 18 +++++++++++++-----
->  fs/xfs/xfs_trans_ail.c  | 37 ++++++++++++++++++++++++++++---------
->  fs/xfs/xfs_trans_priv.h |  4 ++--
->  3 files changed, 43 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_inode_item.c b/fs/xfs/xfs_inode_item.c
-> index 7b942a63e992..16a7d6f752c9 100644
-> --- a/fs/xfs/xfs_inode_item.c
-> +++ b/fs/xfs/xfs_inode_item.c
-> @@ -731,19 +731,27 @@ xfs_iflush_done(
->  	 * holding the lock before removing the inode from the AIL.
->  	 */
->  	if (need_ail) {
-> -		bool			mlip_changed = false;
-> +		xfs_lsn_t	tail_lsn = 0;
 >  
->  		/* this is an opencoded batch version of xfs_trans_ail_delete */
->  		spin_lock(&ailp->ail_lock);
->  		list_for_each_entry(blip, &tmp, li_bio_list) {
->  			if (INODE_ITEM(blip)->ili_logged &&
-> -			    blip->li_lsn == INODE_ITEM(blip)->ili_flush_lsn)
-> -				mlip_changed |= xfs_ail_delete_one(ailp, blip);
-> -			else {
-> +			    blip->li_lsn == INODE_ITEM(blip)->ili_flush_lsn) {
-> +				/*
-> +				 * xfs_ail_delete_finish() only cares about the
-> +				 * lsn of the first tail item removed, any others
-> +				 * will be at the same or higher lsn so we just
-> +				 * ignore them.
-> +				 */
-> +				xfs_lsn_t lsn = xfs_ail_delete_one(ailp, blip);
-> +				if (!tail_lsn && lsn)
-> +					tail_lsn = lsn;
-> +			} else {
->  				xfs_clear_li_failed(blip);
->  			}
->  		}
-> -		xfs_ail_delete_finish(ailp, mlip_changed);
-> +		xfs_ail_delete_finish(ailp, tail_lsn);
->  	}
->  
->  	/*
-> diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
-> index 9e3102179221..00d66175f41a 100644
-> --- a/fs/xfs/xfs_trans_ail.c
-> +++ b/fs/xfs/xfs_trans_ail.c
-> @@ -108,17 +108,25 @@ xfs_ail_next(
->   * We need the AIL lock in order to get a coherent read of the lsn of the last
->   * item in the AIL.
->   */
-> +static xfs_lsn_t
-> +__xfs_ail_min_lsn(
-> +	struct xfs_ail		*ailp)
-> +{
-> +	struct xfs_log_item	*lip = xfs_ail_min(ailp);
-> +
-> +	if (lip)
-> +		return lip->li_lsn;
-> +	return 0;
-> +}
-> +
->  xfs_lsn_t
->  xfs_ail_min_lsn(
->  	struct xfs_ail		*ailp)
->  {
-> -	xfs_lsn_t		lsn = 0;
-> -	struct xfs_log_item	*lip;
-> +	xfs_lsn_t		lsn;
->  
->  	spin_lock(&ailp->ail_lock);
-> -	lip = xfs_ail_min(ailp);
-> -	if (lip)
-> -		lsn = lip->li_lsn;
-> +	lsn = __xfs_ail_min_lsn(ailp);
->  	spin_unlock(&ailp->ail_lock);
->  
->  	return lsn;
-> @@ -779,12 +787,20 @@ xfs_trans_ail_update_bulk(
->  	}
->  }
->  
-> -bool
-> +/*
-> + * Delete one log item from the AIL.
-> + *
-> + * If this item was at the tail of the AIL, return the LSN of the log item so
-> + * that we can use it to check if the LSN of the tail of the log has moved
-> + * when finishing up the AIL delete process in xfs_ail_delete_finish().
-> + */
-> +xfs_lsn_t
->  xfs_ail_delete_one(
->  	struct xfs_ail		*ailp,
->  	struct xfs_log_item	*lip)
->  {
->  	struct xfs_log_item	*mlip = xfs_ail_min(ailp);
-> +	xfs_lsn_t		lsn = lip->li_lsn;
->  
->  	trace_xfs_ail_delete(lip, mlip->li_lsn, lip->li_lsn);
->  	xfs_ail_delete(ailp, lip);
-> @@ -792,17 +808,20 @@ xfs_ail_delete_one(
->  	clear_bit(XFS_LI_IN_AIL, &lip->li_flags);
->  	lip->li_lsn = 0;
->  
-> -	return mlip == lip;
-> +	if (mlip == lip)
-> +		return lsn;
-> +	return 0;
->  }
->  
->  void
->  xfs_ail_delete_finish(
->  	struct xfs_ail		*ailp,
-> -	bool			do_tail_update) __releases(ailp->ail_lock)
-> +	xfs_lsn_t		old_lsn) __releases(ailp->ail_lock)
->  {
->  	struct xfs_mount	*mp = ailp->ail_mount;
->  
-> -	if (!do_tail_update) {
-> +	/* if the tail lsn hasn't changed, don't do updates or wakeups. */
-> +	if (!old_lsn || old_lsn == __xfs_ail_min_lsn(ailp)) {
->  		spin_unlock(&ailp->ail_lock);
->  		return;
->  	}
-
-> diff --git a/fs/xfs/xfs_trans_priv.h b/fs/xfs/xfs_trans_priv.h
-> index 5ab70b9b896f..db589bb7468d 100644
-> --- a/fs/xfs/xfs_trans_priv.h
-> +++ b/fs/xfs/xfs_trans_priv.h
-> @@ -92,8 +92,8 @@ xfs_trans_ail_update(
->  	xfs_trans_ail_update_bulk(ailp, NULL, &lip, 1, lsn);
->  }
->  
-> -bool xfs_ail_delete_one(struct xfs_ail *ailp, struct xfs_log_item *lip);
-> -void xfs_ail_delete_finish(struct xfs_ail *ailp, bool do_tail_update)
-> +xfs_lsn_t xfs_ail_delete_one(struct xfs_ail *ailp, struct xfs_log_item *lip);
-> +void xfs_ail_delete_finish(struct xfs_ail *ailp, xfs_lsn_t old_lsn)
->  			__releases(ailp->ail_lock);
->  void xfs_trans_ail_delete(struct xfs_ail *ailp, struct xfs_log_item *lip,
->  		int shutdown_type);
+>  	/* attach new log vector to log item */
 > -- 
 > 2.22.0
 > 
