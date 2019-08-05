@@ -2,294 +2,727 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26BC781942
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 14:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF33981957
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 14:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbfHEM1e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 08:27:34 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44904 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbfHEM1d (ORCPT
+        id S1727349AbfHEMbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 08:31:39 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44162 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728144AbfHEMbi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 08:27:33 -0400
-Received: by mail-oi1-f194.google.com with SMTP id e189so61725259oib.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 05:27:33 -0700 (PDT)
+        Mon, 5 Aug 2019 08:31:38 -0400
+Received: by mail-ot1-f65.google.com with SMTP id b7so34878660otl.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 05:31:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KVCEhbTn/48JXYgq2Q8G3IwBgkUowoGCyifyVUUVu/k=;
-        b=WlFwsiRz37heRZaVBztW1Tl6soJlQsF4m+4ll8QCm5iR5de1dlj5MrDBye7ZyAlmr1
-         MBrREhzH61GnCxqiEi7YYaXOldDDlI46R9JaR/7+9A6tRcgeIZoLpms+nwYO5Fd3hoAP
-         SKbh1KUKMuFHJ/q+mRBq8ykB2SiDelmS5l3uTaMUN/6dsKDQSqMJPQNnTMSJ5X3wddbk
-         i+qjR16jzVl7WAXq0n8OuZ/8LetNFLeTlVYZv39ksN7KCMCK3ZPxnUWJJmee75+5UpPj
-         mupJOcYKfTa9zs/yga+8pJJOyCgEOcH3Xy2C7g9dZSmB76Ae8YjDrfSj3Z1RTai5aaXq
-         0fYg==
-X-Gm-Message-State: APjAAAVSelE4miTquFjzR8SSQdXpvyPdyiSHHq5JnWmxzETL+O+ZHLwx
-        enYKdWfd3EhfKq6PLx6qAq+W1v3O31YWDpygl9GnHg==
-X-Google-Smtp-Source: APXvYqwFMtzO9uo4q0Wf+7fEJAonIpdFGoXUYPhdGfhe2BMn308FCVJ6/AiRf1m/OP/8hU8N0O/gg0P0VvvTtKCA2y0=
-X-Received: by 2002:aca:b58b:: with SMTP id e133mr10708475oif.147.1565008052686;
- Mon, 05 Aug 2019 05:27:32 -0700 (PDT)
+        bh=C01SuDLA8MT5K37RjL+fHITDq869Oxj7C8ufFockRXE=;
+        b=pEmCBjTT8eh9CiIVOKy6O8bsxa4G2Y++EW3nRY3iwVO9JNLTwo1Fl2P0VWS8wExL0n
+         yvI+jG+bTdRXObfabcEzeP0O3wPgBrOq1bfGjWlfoZZw9W2P9xg/MkVa/nzdQfBRy1ut
+         Ta5EYrPAaY6/V0uTOssqly2eyKz6oUtTFuzeuks9ZUbENPu5m9LShm9aBteNyFK8Jh3k
+         p1WAmoh0U7+G5wPUMDwn3i4thhTfXZO7TP2cJgNbqEVWGeVnsf13lgxweYX4GU3NbYcK
+         YtGnXWRfC7+npMGMvbfGuVSXvMqyB558OfiRdluhAN+7nSu6zhohTMb3bowLvYlsrIrV
+         FLFw==
+X-Gm-Message-State: APjAAAWdjupqzAGSPzYoREv/gH3P3oTfYkeX+kyfgIA6szhxX4aP7YZU
+        6DicH6MFzd4JpW9kXABILzGNeZwpIDhPvbtuRsG15A==
+X-Google-Smtp-Source: APXvYqzt+wtMmOil3lr4n6YAHRdhZVs24DFztPrC93qhEyTx0VpSkIWDB4VyHqNmFwxJgMusuDxiQwzDCaFRctYKnY4=
+X-Received: by 2002:a05:6830:11d7:: with SMTP id v23mr9078199otq.58.1565008296134;
+ Mon, 05 Aug 2019 05:31:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190701215439.19162-1-hch@lst.de> <20190701215439.19162-16-hch@lst.de>
-In-Reply-To: <20190701215439.19162-16-hch@lst.de>
+References: <156444945993.2682261.3926017251626679029.stgit@magnolia> <156444947277.2682261.14371480217831737439.stgit@magnolia>
+In-Reply-To: <156444947277.2682261.14371480217831737439.stgit@magnolia>
 From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Mon, 5 Aug 2019 14:27:21 +0200
-Message-ID: <CAHc6FU4wtDwLv_TU6xydtO2h8P8jE1ddPjVqs8=NDFFDNEpiLA@mail.gmail.com>
-Subject: Re: [PATCH 15/15] gfs2: use iomap for buffered I/O in ordered and
- writeback mode
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
+Date:   Mon, 5 Aug 2019 14:31:24 +0200
+Message-ID: <CAHc6FU5QpFPRtt0U0+v+zEjL9YcuesLaoGeU0qrn_NhpyHbynw@mail.gmail.com>
+Subject: Re: [PATCH 2/6] iomap: copy the xfs writeback code to iomap.c
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph,
-
-thanks again for this patch and the rest of the patch queue. There's
-one minor bug here (see below). With that and the gfs2_walk_metadata
-fix I've just posted to cluster-devel, this is now all working nicely.
-
-On Mon, 1 Jul 2019 at 23:56, Christoph Hellwig <hch@lst.de> wrote:
-> Switch to using the iomap readpage and writepage helpers for all I/O in
-> the ordered and writeback modes, and thus eliminate using buffer_heads
-> for I/O in these cases.  The journaled data mode is left untouched.
+On Tue, 30 Jul 2019 at 03:18, Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> From: Christoph Hellwig <hch@lst.de>
+>
+> Takes the xfs writeback code and copies it to iomap.c.  A new structure
+> with three methods is added as the abstraction from the generic
+> writeback code to the file system.  These methods are used to map
+> blocks, submit an ioend, and cancel a page that encountered an error
+> before it was added to an ioend.
+>
+> Note that we temporarily lose the writepage tracing, but that will
+> be added back soon.
 >
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> [darrick: create the new iomap code, we'll delete the xfs code separately]
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 > ---
->  fs/gfs2/aops.c | 59 +++++++++++++++++++++++---------------------------
->  fs/gfs2/bmap.c | 47 ++++++++++++++++++++++++++++++----------
->  fs/gfs2/bmap.h |  1 +
->  3 files changed, 63 insertions(+), 44 deletions(-)
+>  fs/iomap/buffered-io.c |  548 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/iomap.h  |   43 ++++
+>  2 files changed, 590 insertions(+), 1 deletion(-)
 >
-> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-> index 15a234fb8f88..9cdd61a44379 100644
-> --- a/fs/gfs2/aops.c
-> +++ b/fs/gfs2/aops.c
-> @@ -91,22 +91,13 @@ static int gfs2_writepage(struct page *page, struct writeback_control *wbc)
->         struct inode *inode = page->mapping->host;
->         struct gfs2_inode *ip = GFS2_I(inode);
->         struct gfs2_sbd *sdp = GFS2_SB(inode);
-> -       loff_t i_size = i_size_read(inode);
-> -       pgoff_t end_index = i_size >> PAGE_SHIFT;
-> -       unsigned offset;
-> +       struct iomap_writepage_ctx wpc = { };
 >
->         if (gfs2_assert_withdraw(sdp, gfs2_glock_is_held_excl(ip->i_gl)))
->                 goto out;
->         if (current->journal_info)
->                 goto redirty;
-> -       /* Is the page fully outside i_size? (truncate in progress) */
-> -       offset = i_size & (PAGE_SIZE-1);
-> -       if (page->index > end_index || (page->index == end_index && !offset)) {
-> -               page->mapping->a_ops->invalidatepage(page, 0, PAGE_SIZE);
-> -               goto out;
-> -       }
-> -
-> -       return nobh_writepage(page, gfs2_get_block_noalloc, wbc);
-> +       return iomap_writepage(page, wbc, &wpc, &gfs2_writeback_ops);
->
->  redirty:
->         redirty_page_for_writepage(wbc, page);
-> @@ -210,7 +201,8 @@ static int gfs2_writepages(struct address_space *mapping,
->                            struct writeback_control *wbc)
->  {
->         struct gfs2_sbd *sdp = gfs2_mapping2sbd(mapping);
-> -       int ret = mpage_writepages(mapping, wbc, gfs2_get_block_noalloc);
-> +       struct iomap_writepage_ctx wpc = { };
-> +       int ret;
->
->         /*
->          * Even if we didn't write any pages here, we might still be holding
-> @@ -218,9 +210,9 @@ static int gfs2_writepages(struct address_space *mapping,
->          * want balance_dirty_pages() to loop indefinitely trying to write out
->          * pages held in the ail that it can't find.
->          */
-> +       ret = iomap_writepages(mapping, wbc, &wpc, &gfs2_writeback_ops);
->         if (ret == 0)
->                 set_bit(SDF_FORCE_AIL_FLUSH, &sdp->sd_flags);
-> -
->         return ret;
->  }
->
-> @@ -469,7 +461,6 @@ static int stuffed_readpage(struct gfs2_inode *ip, struct page *page)
->         return 0;
->  }
->
-> -
->  /**
->   * __gfs2_readpage - readpage
->   * @file: The file to read a page for
-> @@ -479,16 +470,15 @@ static int stuffed_readpage(struct gfs2_inode *ip, struct page *page)
->   * reading code as in that case we already hold the glock. Also it's
->   * called by gfs2_readpage() once the required lock has been granted.
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e25901ae3ff4..ff1f7d2b4d7a 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1,7 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (C) 2010 Red Hat, Inc.
+> - * Copyright (c) 2016-2018 Christoph Hellwig.
+> + * Copyright (c) 2016-2019 Christoph Hellwig.
 >   */
-> -
->  static int __gfs2_readpage(void *file, struct page *page)
->  {
-> -       struct gfs2_inode *ip = GFS2_I(page->mapping->host);
-> -       struct gfs2_sbd *sdp = GFS2_SB(page->mapping->host);
-> -
-> +       struct inode *inode = page->mapping->host;
-> +       struct gfs2_inode *ip = GFS2_I(inode);
-> +       struct gfs2_sbd *sdp = GFS2_SB(inode);
->         int error;
+>  #include <linux/module.h>
+>  #include <linux/compiler.h>
+> @@ -12,6 +12,7 @@
+>  #include <linux/buffer_head.h>
+>  #include <linux/dax.h>
+>  #include <linux/writeback.h>
+> +#include <linux/list_sort.h>
+>  #include <linux/swap.h>
+>  #include <linux/bio.h>
+>  #include <linux/sched/signal.h>
+> @@ -19,6 +20,8 @@
 >
-> -       if (i_blocksize(page->mapping->host) == PAGE_SIZE &&
-> -           !page_has_buffers(page)) {
-> +       if (!gfs2_is_jdata(ip) ||
-> +           (i_blocksize(inode) == PAGE_SIZE && !page_has_buffers(page))) {
->                 error = iomap_readpage(page, &gfs2_iomap_ops);
->         } else if (gfs2_is_stuffed(ip)) {
->                 error = stuffed_readpage(ip, page);
-> @@ -609,8 +599,12 @@ static int gfs2_readpages(struct file *file, struct address_space *mapping,
->         ret = gfs2_glock_nq(&gh);
->         if (unlikely(ret))
->                 goto out_uninit;
-> -       if (!gfs2_is_stuffed(ip))
-> +       if (gfs2_is_stuffed(ip))
-> +               ;
-> +       else if (gfs2_is_jdata(ip))
->                 ret = mpage_readpages(mapping, pages, nr_pages, gfs2_block_map);
-> +       else
-> +               ret = iomap_readpages(mapping, pages, nr_pages, &gfs2_iomap_ops);
->         gfs2_glock_dq(&gh);
->  out_uninit:
->         gfs2_holder_uninit(&gh);
-> @@ -827,17 +821,18 @@ int gfs2_releasepage(struct page *page, gfp_t gfp_mask)
->  }
+>  #include "../internal.h"
 >
->  static const struct address_space_operations gfs2_aops = {
-> -       .writepage = gfs2_writepage,
-> -       .writepages = gfs2_writepages,
-> -       .readpage = gfs2_readpage,
-> -       .readpages = gfs2_readpages,
-> -       .bmap = gfs2_bmap,
-> -       .invalidatepage = gfs2_invalidatepage,
-> -       .releasepage = gfs2_releasepage,
-> -       .direct_IO = noop_direct_IO,
-> -       .migratepage = buffer_migrate_page,
-> -       .is_partially_uptodate = block_is_partially_uptodate,
-> -       .error_remove_page = generic_error_remove_page,
-> +       .writepage              = gfs2_writepage,
-> +       .writepages             = gfs2_writepages,
-> +       .readpage               = gfs2_readpage,
-> +       .readpages              = gfs2_readpages,
-> +       .set_page_dirty         = iomap_set_page_dirty,
-> +       .releasepage            = iomap_releasepage,
-> +       .invalidatepage         = iomap_invalidatepage,
-> +       .bmap                   = gfs2_bmap,
-> +       .direct_IO              = noop_direct_IO,
-> +       .migratepage            = iomap_migrate_page,
-> +       .is_partially_uptodate  = iomap_is_partially_uptodate,
-> +       .error_remove_page      = generic_error_remove_page,
->  };
->
->  static const struct address_space_operations gfs2_jdata_aops = {
-> diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-> index b7bd811872cb..b8d795d277c9 100644
-> --- a/fs/gfs2/bmap.c
-> +++ b/fs/gfs2/bmap.c
-> @@ -56,7 +56,6 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, struct buffer_head *dibh,
->                                u64 block, struct page *page)
->  {
->         struct inode *inode = &ip->i_inode;
-> -       struct buffer_head *bh;
->         int release = 0;
->
->         if (!page || page->index) {
-> @@ -80,20 +79,20 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, struct buffer_head *dibh,
->                 SetPageUptodate(page);
->         }
->
-> -       if (!page_has_buffers(page))
-> -               create_empty_buffers(page, BIT(inode->i_blkbits),
-> -                                    BIT(BH_Uptodate));
-> +       if (gfs2_is_jdata(ip)) {
-> +               struct buffer_head *bh;
->
-> -       bh = page_buffers(page);
-> +               if (!page_has_buffers(page))
-> +                       create_empty_buffers(page, BIT(inode->i_blkbits),
-> +                                            BIT(BH_Uptodate));
->
-> -       if (!buffer_mapped(bh))
-> -               map_bh(bh, inode->i_sb, block);
-> +               bh = page_buffers(page);
-> +               if (!buffer_mapped(bh))
-> +                       map_bh(bh, inode->i_sb, block);
->
-> -       set_buffer_uptodate(bh);
-> -       if (gfs2_is_jdata(ip))
-> +               set_buffer_uptodate(bh);
->                 gfs2_trans_add_data(ip->i_gl, bh);
-> -       else {
-> -               mark_buffer_dirty(bh);
-
-We need to turn mark_buffer_dirty(bh) into set_page_dirty(page) here
-instead of just removing it.
-
-> +       } else {
->                 gfs2_ordered_add_inode(ip);
->         }
->
-> @@ -1127,7 +1126,8 @@ static int gfs2_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
->         struct metapath mp = { .mp_aheight = 1, };
->         int ret;
->
-> -       iomap->flags |= IOMAP_F_BUFFER_HEAD;
-> +       if (gfs2_is_jdata(ip))
-> +               iomap->flags |= IOMAP_F_BUFFER_HEAD;
->
->         trace_gfs2_iomap_start(ip, pos, length, flags);
->         if ((flags & IOMAP_WRITE) && !(flags & IOMAP_DIRECT)) {
-> @@ -2431,3 +2431,26 @@ int __gfs2_punch_hole(struct file *file, loff_t offset, loff_t length)
->                 gfs2_trans_end(sdp);
->         return error;
->  }
+> +static struct bio_set iomap_ioend_bioset;
 > +
-> +static int gfs2_map_blocks(struct iomap_writepage_ctx *wpc, struct inode *inode,
-> +               loff_t offset)
+>  static struct iomap_page *
+>  iomap_page_create(struct inode *inode, struct page *page)
+>  {
+> @@ -1071,3 +1074,546 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+>         return block_page_mkwrite_return(ret);
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
+> +
+> +static void
+> +iomap_finish_page_writeback(struct inode *inode, struct bio_vec *bvec,
+> +               int error)
 > +{
-> +       struct metapath mp = { .mp_aheight = 1, };
-> +       int ret;
+> +       struct iomap_page *iop = to_iomap_page(bvec->bv_page);
 > +
-> +       if (WARN_ON_ONCE(gfs2_is_stuffed(GFS2_I(inode))))
-> +               return -EIO;
+> +       if (error) {
+> +               SetPageError(bvec->bv_page);
+> +               mapping_set_error(inode->i_mapping, -EIO);
+> +       }
 > +
-> +       if (offset >= wpc->iomap.offset &&
-> +           offset < wpc->iomap.offset + wpc->iomap.length)
-> +               return 0;
+> +       WARN_ON_ONCE(i_blocksize(inode) < PAGE_SIZE && !iop);
+> +       WARN_ON_ONCE(iop && atomic_read(&iop->write_count) <= 0);
 > +
-> +       memset(&wpc->iomap, 0, sizeof(wpc->iomap));
-> +       ret = gfs2_iomap_get(inode, offset, INT_MAX, 0, &wpc->iomap, &mp);
-> +       release_metapath(&mp);
-> +       return ret;
+> +       if (!iop || atomic_dec_and_test(&iop->write_count))
+> +               end_page_writeback(bvec->bv_page);
 > +}
 > +
-> +const struct iomap_writeback_ops gfs2_writeback_ops = {
-> +       .map_blocks             = gfs2_map_blocks,
+> +/*
+> + * We're now finished for good with this ioend structure.  Update the page
+> + * state, release holds on bios, and finally free up memory.  Do not use the
+> + * ioend after this.
+> + */
+> +static void
+> +iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+> +{
+> +       struct inode *inode = ioend->io_inode;
+> +       struct bio *bio = &ioend->io_inline_bio;
+> +       struct bio *last = ioend->io_bio, *next;
+> +       u64 start = bio->bi_iter.bi_sector;
+> +       bool quiet = bio_flagged(bio, BIO_QUIET);
+> +
+> +       for (bio = &ioend->io_inline_bio; bio; bio = next) {
+> +               struct bio_vec  *bvec;
+> +               struct bvec_iter_all iter_all;
+> +
+> +               /*
+> +                * For the last bio, bi_private points to the ioend, so we
+> +                * need to explicitly end the iteration here.
+> +                */
+> +               if (bio == last)
+> +                       next = NULL;
+> +               else
+> +                       next = bio->bi_private;
+> +
+> +               /* walk each page on bio, ending page IO on them */
+> +               bio_for_each_segment_all(bvec, bio, iter_all)
+> +                       iomap_finish_page_writeback(inode, bvec, error);
+> +               bio_put(bio);
+> +       }
+> +
+> +       if (unlikely(error && !quiet)) {
+> +               printk_ratelimited(KERN_ERR
+> +                       "%s: writeback error on sector %llu",
+> +                       inode->i_sb->s_id, start);
+> +       }
+> +}
+> +
+> +void
+> +iomap_finish_ioends(struct iomap_ioend *ioend, int error)
+> +{
+> +       struct list_head tmp;
+> +
+> +       list_replace_init(&ioend->io_list, &tmp);
+> +       iomap_finish_ioend(ioend, error);
+> +       while ((ioend = list_pop_entry(&tmp, struct iomap_ioend, io_list)))
+> +               iomap_finish_ioend(ioend, error);
+> +}
+> +EXPORT_SYMBOL_GPL(iomap_finish_ioends);
+> +
+> +/*
+> + * We can merge two adjacent ioends if they have the same set of work to do.
+> + */
+> +static bool
+> +iomap_ioend_can_merge(struct iomap_ioend *ioend, struct iomap_ioend *next)
+> +{
+> +       if (ioend->io_bio->bi_status != next->io_bio->bi_status)
+> +               return false;
+> +       if ((ioend->io_flags & IOMAP_F_SHARED) ^
+> +           (next->io_flags & IOMAP_F_SHARED))
+> +               return false;
+> +       if ((ioend->io_type == IOMAP_UNWRITTEN) ^
+> +           (next->io_type == IOMAP_UNWRITTEN))
+> +               return false;
+> +       if (ioend->io_offset + ioend->io_size != next->io_offset)
+> +               return false;
+> +       return true;
+> +}
+> +
+> +void
+> +iomap_ioend_try_merge(struct iomap_ioend *ioend, struct list_head *more_ioends,
+> +               void (*merge_private)(struct iomap_ioend *ioend,
+> +                               struct iomap_ioend *next))
+> +{
+> +       struct iomap_ioend *next;
+> +
+> +       INIT_LIST_HEAD(&ioend->io_list);
+> +
+> +       while ((next = list_first_entry_or_null(more_ioends, struct iomap_ioend,
+> +                       io_list))) {
+> +               if (!iomap_ioend_can_merge(ioend, next))
+> +                       break;
+> +               list_move_tail(&next->io_list, &ioend->io_list);
+> +               ioend->io_size += next->io_size;
+> +               if (next->io_private && merge_private)
+> +                       merge_private(ioend, next);
+> +       }
+> +}
+> +EXPORT_SYMBOL_GPL(iomap_ioend_try_merge);
+> +
+> +static int
+> +iomap_ioend_compare(void *priv, struct list_head *a, struct list_head *b)
+> +{
+> +       struct iomap_ioend *ia, *ib;
+> +
+> +       ia = container_of(a, struct iomap_ioend, io_list);
+> +       ib = container_of(b, struct iomap_ioend, io_list);
+> +       if (ia->io_offset < ib->io_offset)
+> +               return -1;
+> +       else if (ia->io_offset > ib->io_offset)
+> +               return 1;
+> +       return 0;
+> +}
+> +
+> +void
+> +iomap_sort_ioends(struct list_head *ioend_list)
+> +{
+> +       list_sort(NULL, ioend_list, iomap_ioend_compare);
+> +}
+> +EXPORT_SYMBOL_GPL(iomap_sort_ioends);
+> +
+> +static void iomap_writepage_end_bio(struct bio *bio)
+> +{
+> +       struct iomap_ioend *ioend = bio->bi_private;
+> +
+> +       iomap_finish_ioend(ioend, blk_status_to_errno(bio->bi_status));
+> +}
+> +
+> +/*
+> + * Submit the bio for an ioend. We are passed an ioend with a bio attached to
+> + * it, and we submit that bio. The ioend may be used for multiple bio
+> + * submissions, so we only want to allocate an append transaction for the ioend
+> + * once. In the case of multiple bio submission, each bio will take an IO
+> + * reference to the ioend to ensure that the ioend completion is only done once
+> + * all bios have been submitted and the ioend is really done.
+> + *
+> + * If @error is non-zero, it means that we have a situation where some part of
+> + * the submission process has failed after we have marked paged for writeback
+> + * and unlocked them. In this situation, we need to fail the bio and ioend
+> + * rather than submit it to IO. This typically only happens on a filesystem
+> + * shutdown.
+> + */
+> +static int
+> +iomap_submit_ioend(struct iomap_writepage_ctx *wpc, struct iomap_ioend *ioend,
+> +               int error)
+> +{
+> +       ioend->io_bio->bi_private = ioend;
+> +       ioend->io_bio->bi_end_io = iomap_writepage_end_bio;
+> +
+> +       /*
+> +        * File systems can perform actions at submit time and/or override
+> +        * the end_io handler here for complex operations like copy on write
+> +        * extent manipulation or unwritten extent conversions.
+> +        */
+> +       if (wpc->ops->submit_ioend)
+> +               error = wpc->ops->submit_ioend(ioend, error);
+> +       if (error) {
+> +               /*
+> +                * If we are failing the IO now, just mark the ioend with an
+> +                * error and finish it.  This will run IO completion immediately
+> +                * as there is only one reference to the ioend at this point in
+> +                * time.
+> +                */
+> +               ioend->io_bio->bi_status = errno_to_blk_status(error);
+> +               bio_endio(ioend->io_bio);
+> +               return error;
+> +       }
+> +
+> +       submit_bio(ioend->io_bio);
+> +       return 0;
+> +}
+> +
+> +static struct iomap_ioend *
+> +iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
+> +               loff_t offset, sector_t sector, struct writeback_control *wbc)
+> +{
+> +       struct iomap_ioend *ioend;
+> +       struct bio *bio;
+> +
+> +       bio = bio_alloc_bioset(GFP_NOFS, BIO_MAX_PAGES, &iomap_ioend_bioset);
+> +       bio_set_dev(bio, wpc->iomap.bdev);
+> +       bio->bi_iter.bi_sector = sector;
+> +       bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
+> +       bio->bi_write_hint = inode->i_write_hint;
+> +       wbc_init_bio(wbc, bio);
+> +
+> +       ioend = container_of(bio, struct iomap_ioend, io_inline_bio);
+> +       INIT_LIST_HEAD(&ioend->io_list);
+> +       ioend->io_type = wpc->iomap.type;
+> +       ioend->io_flags = wpc->iomap.flags;
+> +       ioend->io_inode = inode;
+> +       ioend->io_size = 0;
+> +       ioend->io_offset = offset;
+> +       ioend->io_private = NULL;
+> +       ioend->io_bio = bio;
+> +       return ioend;
+> +}
+> +
+> +/*
+> + * Allocate a new bio, and chain the old bio to the new one.
+> + *
+> + * Note that we have to do perform the chaining in this unintuitive order
+> + * so that the bi_private linkage is set up in the right direction for the
+> + * traversal in iomap_finish_ioend().
+> + */
+> +static struct bio *
+> +iomap_chain_bio(struct bio *prev)
+> +{
+> +       struct bio *new;
+> +
+> +       new = bio_alloc(GFP_NOFS, BIO_MAX_PAGES);
+> +       bio_copy_dev(new, prev);/* also copies over blkcg information */
+> +       new->bi_iter.bi_sector = bio_end_sector(prev);
+> +       new->bi_opf = prev->bi_opf;
+> +       new->bi_write_hint = prev->bi_write_hint;
+> +
+> +       bio_chain(prev, new);
+> +       bio_get(prev);          /* for iomap_finish_ioend */
+> +       submit_bio(prev);
+> +       return new;
+> +}
+> +
+> +/*
+> + * Test to see if we have an existing ioend structure that we could append to
+> + * first, otherwise finish off the current ioend and start another.
+> + */
+> +static void
+> +iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
+> +               struct iomap_page *iop, struct iomap_writepage_ctx *wpc,
+> +               struct writeback_control *wbc, struct list_head *iolist)
+> +{
+> +       sector_t sector = iomap_sector(&wpc->iomap, offset);
+> +       unsigned len = i_blocksize(inode);
+> +       unsigned poff = offset & (PAGE_SIZE - 1);
+> +       bool merged, same_page = false;
+> +
+> +       if (!wpc->ioend ||
+> +           (wpc->iomap.flags & IOMAP_F_SHARED) !=
+> +           (wpc->ioend->io_flags & IOMAP_F_SHARED) ||
+> +           wpc->iomap.type != wpc->ioend->io_type ||
+> +           sector != bio_end_sector(wpc->ioend->io_bio) ||
+> +           offset != wpc->ioend->io_offset + wpc->ioend->io_size) {
+> +               if (wpc->ioend)
+> +                       list_add(&wpc->ioend->io_list, iolist);
+> +               wpc->ioend = iomap_alloc_ioend(inode, wpc, offset, sector, wbc);
+> +       }
+> +
+> +       merged = __bio_try_merge_page(wpc->ioend->io_bio, page, len, poff,
+> +                       &same_page);
+> +
+> +       if (iop && !same_page)
+> +               atomic_inc(&iop->write_count);
+> +       if (!merged) {
+> +               if (bio_full(wpc->ioend->io_bio, len)) {
+> +                       wpc->ioend->io_bio =
+> +                               iomap_chain_bio(wpc->ioend->io_bio);
+> +               }
+> +               bio_add_page(wpc->ioend->io_bio, page, len, poff);
+> +       }
+> +
+> +       wpc->ioend->io_size += len;
+> +       wbc_account_cgroup_owner(wbc, page, len);
+> +}
+> +
+> +/*
+> + * We implement an immediate ioend submission policy here to avoid needing to
+> + * chain multiple ioends and hence nest mempool allocations which can violate
+> + * forward progress guarantees we need to provide. The current ioend we are
+> + * adding blocks to is cached on the writepage context, and if the new block
+> + * does not append to the cached ioend it will create a new ioend and cache that
+> + * instead.
+> + *
+> + * If a new ioend is created and cached, the old ioend is returned and queued
+> + * locally for submission once the entire page is processed or an error has been
+> + * detected.  While ioends are submitted immediately after they are completed,
+> + * batching optimisations are provided by higher level block plugging.
+> + *
+> + * At the end of a writeback pass, there will be a cached ioend remaining on the
+> + * writepage context that the caller will need to submit.
+> + */
+> +static int
+> +iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> +               struct writeback_control *wbc, struct inode *inode,
+> +               struct page *page, u64 end_offset)
+> +{
+> +       struct iomap_page *iop = to_iomap_page(page);
+> +       struct iomap_ioend *ioend, *next;
+> +       unsigned len = i_blocksize(inode);
+> +       u64 file_offset; /* file offset of page */
+> +       int error = 0, count = 0, i;
+> +       LIST_HEAD(submit_list);
+> +
+> +       WARN_ON_ONCE(i_blocksize(inode) < PAGE_SIZE && !iop);
+> +       WARN_ON_ONCE(iop && atomic_read(&iop->write_count) != 0);
+
+How about this instead?
+
+       if (iop)
+               WARN_ON_ONCE(atomic_read(&iop->write_count) != 0);
+       else
+               WARN_ON_ONCE(i_blocksize(inode) < PAGE_SIZE);
+
+> +
+> +       /*
+> +        * Walk through the page to find areas to write back. If we run off the
+> +        * end of the current map or find the current map invalid, grab a new
+> +        * one.
+> +        */
+> +       for (i = 0, file_offset = page_offset(page);
+> +            i < (PAGE_SIZE >> inode->i_blkbits) && file_offset < end_offset;
+> +            i++, file_offset += len) {
+> +               if (iop && !test_bit(i, iop->uptodate))
+> +                       continue;
+> +
+> +               error = wpc->ops->map_blocks(wpc, inode, file_offset);
+> +               if (error)
+> +                       break;
+> +               if (wpc->iomap.type == IOMAP_HOLE)
+> +                       continue;
+> +               iomap_add_to_ioend(inode, file_offset, page, iop, wpc, wbc,
+> +                                &submit_list);
+> +               count++;
+> +       }
+> +
+> +       WARN_ON_ONCE(!wpc->ioend && !list_empty(&submit_list));
+> +       WARN_ON_ONCE(!PageLocked(page));
+> +       WARN_ON_ONCE(PageWriteback(page));
+> +
+> +       /*
+> +        * On error, we have to fail the ioend here because we may have set
+> +        * pages under writeback, we have to make sure we run IO completion to
+> +        * mark the error state of the IO appropriately, so we can't cancel the
+> +        * ioend directly here.  That means we have to mark this page as under
+> +        * writeback if we included any blocks from it in the ioend chain so
+> +        * that completion treats it correctly.
+> +        *
+> +        * If we didn't include the page in the ioend, the on error we can
+> +        * simply discard and unlock it as there are no other users of the page
+> +        * now.  The caller will still need to trigger submission of outstanding
+> +        * ioends on the writepage context so they are treated correctly on
+> +        * error.
+> +        */
+> +       if (unlikely(error)) {
+> +               if (!count) {
+> +                       if (wpc->ops->discard_page)
+> +                               wpc->ops->discard_page(page);
+> +                       ClearPageUptodate(page);
+> +                       unlock_page(page);
+> +                       goto done;
+> +               }
+> +
+> +               /*
+> +                * If the page was not fully cleaned, we need to ensure that the
+> +                * higher layers come back to it correctly.  That means we need
+> +                * to keep the page dirty, and for WB_SYNC_ALL writeback we need
+> +                * to ensure the PAGECACHE_TAG_TOWRITE index mark is not removed
+> +                * so another attempt to write this page in this writeback sweep
+> +                * will be made.
+> +                */
+> +               set_page_writeback_keepwrite(page);
+> +       } else {
+> +               clear_page_dirty_for_io(page);
+> +               set_page_writeback(page);
+> +       }
+> +
+> +       unlock_page(page);
+> +
+> +       /*
+> +        * Preserve the original error if there was one, otherwise catch
+> +        * submission errors here and propagate into subsequent ioend
+> +        * submissions.
+> +        */
+> +       list_for_each_entry_safe(ioend, next, &submit_list, io_list) {
+> +               int error2;
+> +
+> +               list_del_init(&ioend->io_list);
+> +               error2 = iomap_submit_ioend(wpc, ioend, error);
+> +               if (error2 && !error)
+> +                       error = error2;
+> +       }
+> +
+> +       /*
+> +        * We can end up here with no error and nothing to write only if we race
+> +        * with a partial page truncate on a sub-page block sized filesystem.
+> +        */
+> +       if (!count)
+> +               end_page_writeback(page);
+> +done:
+> +       mapping_set_error(page->mapping, error);
+> +       return error;
+> +}
+> +
+> +/*
+> + * Write out a dirty page.
+> + *
+> + * For delalloc space on the page we need to allocate space and flush it.
+> + * For unwritten space on the page we need to start the conversion to
+> + * regular allocated space.
+> + */
+> +static int
+> +iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
+> +{
+> +       struct iomap_writepage_ctx *wpc = data;
+> +       struct inode *inode = page->mapping->host;
+> +       pgoff_t end_index;
+> +       u64 end_offset;
+> +       loff_t offset;
+> +
+> +       /*
+> +        * Refuse to write the page out if we are called from reclaim context.
+> +        *
+> +        * This avoids stack overflows when called from deeply used stacks in
+> +        * random callers for direct reclaim or memcg reclaim.  We explicitly
+> +        * allow reclaim from kswapd as the stack usage there is relatively low.
+> +        *
+> +        * This should never happen except in the case of a VM regression so
+> +        * warn about it.
+> +        */
+> +       if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
+> +                       PF_MEMALLOC))
+> +               goto redirty;
+> +
+> +       /*
+> +        * Given that we do not allow direct reclaim to call us, we should
+> +        * never be called while in a filesystem transaction.
+> +        */
+> +       if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
+> +               goto redirty;
+> +
+> +       /*
+> +        * Is this page beyond the end of the file?
+> +        *
+> +        * The page index is less than the end_index, adjust the end_offset
+> +        * to the highest offset that this page should represent.
+> +        * -----------------------------------------------------
+> +        * |                    file mapping           | <EOF> |
+> +        * -----------------------------------------------------
+> +        * | Page ... | Page N-2 | Page N-1 |  Page N  |       |
+> +        * ^--------------------------------^----------|--------
+> +        * |     desired writeback range    |      see else    |
+> +        * ---------------------------------^------------------|
+> +        */
+> +       offset = i_size_read(inode);
+> +       end_index = offset >> PAGE_SHIFT;
+> +       if (page->index < end_index)
+> +               end_offset = (loff_t)(page->index + 1) << PAGE_SHIFT;
+> +       else {
+> +               /*
+> +                * Check whether the page to write out is beyond or straddles
+> +                * i_size or not.
+> +                * -------------------------------------------------------
+> +                * |            file mapping                    | <EOF>  |
+> +                * -------------------------------------------------------
+> +                * | Page ... | Page N-2 | Page N-1 |  Page N   | Beyond |
+> +                * ^--------------------------------^-----------|---------
+> +                * |                                |      Straddles     |
+> +                * ---------------------------------^-----------|--------|
+> +                */
+> +               unsigned offset_into_page = offset & (PAGE_SIZE - 1);
+> +
+> +               /*
+> +                * Skip the page if it is fully outside i_size, e.g. due to a
+> +                * truncate operation that is in progress. We must redirty the
+> +                * page so that reclaim stops reclaiming it. Otherwise
+> +                * iomap_vm_releasepage() is called on it and gets confused.
+> +                *
+> +                * Note that the end_index is unsigned long, it would overflow
+> +                * if the given offset is greater than 16TB on 32-bit system
+> +                * and if we do check the page is fully outside i_size or not
+> +                * via "if (page->index >= end_index + 1)" as "end_index + 1"
+> +                * will be evaluated to 0.  Hence this page will be redirtied
+> +                * and be written out repeatedly which would result in an
+> +                * infinite loop, the user program that perform this operation
+> +                * will hang.  Instead, we can verify this situation by checking
+> +                * if the page to write is totally beyond the i_size or if it's
+> +                * offset is just equal to the EOF.
+> +                */
+> +               if (page->index > end_index ||
+> +                   (page->index == end_index && offset_into_page == 0))
+> +                       goto redirty;
+> +
+> +               /*
+> +                * The page straddles i_size.  It must be zeroed out on each
+> +                * and every writepage invocation because it may be mmapped.
+> +                * "A file is mapped in multiples of the page size.  For a file
+> +                * that is not a multiple of the page size, the remaining
+> +                * memory is zeroed when mapped, and writes to that region are
+> +                * not written out to the file."
+> +                */
+> +               zero_user_segment(page, offset_into_page, PAGE_SIZE);
+> +
+> +               /* Adjust the end_offset to the end of file */
+> +               end_offset = offset;
+> +       }
+> +
+> +       return iomap_writepage_map(wpc, wbc, inode, page, end_offset);
+> +
+> +redirty:
+> +       redirty_page_for_writepage(wbc, page);
+> +       unlock_page(page);
+> +       return 0;
+> +}
+> +
+> +int
+> +iomap_writepage(struct page *page, struct writeback_control *wbc,
+> +               struct iomap_writepage_ctx *wpc,
+> +               const struct iomap_writeback_ops *ops)
+> +{
+> +       int ret;
+> +
+> +       wpc->ops = ops;
+> +       ret = iomap_do_writepage(page, wbc, wpc);
+> +       if (!wpc->ioend)
+> +               return ret;
+> +       return iomap_submit_ioend(wpc, wpc->ioend, ret);
+> +}
+> +EXPORT_SYMBOL_GPL(iomap_writepage);
+> +
+> +int
+> +iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+> +               struct iomap_writepage_ctx *wpc,
+> +               const struct iomap_writeback_ops *ops)
+> +{
+> +       int                     ret;
+> +
+> +       wpc->ops = ops;
+> +       ret = write_cache_pages(mapping, wbc, iomap_do_writepage, wpc);
+> +       if (!wpc->ioend)
+> +               return ret;
+> +       return iomap_submit_ioend(wpc, wpc->ioend, ret);
+> +}
+> +EXPORT_SYMBOL_GPL(iomap_writepages);
+> +
+> +static int __init iomap_init(void)
+> +{
+> +       return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+> +                          offsetof(struct iomap_ioend, io_inline_bio),
+> +                          BIOSET_NEED_BVECS);
+> +}
+> +fs_initcall(iomap_init);
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index bc499ceae392..834d3923e2f2 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -4,6 +4,7 @@
+>
+>  #include <linux/atomic.h>
+>  #include <linux/bitmap.h>
+> +#include <linux/blk_types.h>
+>  #include <linux/mm.h>
+>  #include <linux/types.h>
+>  #include <linux/mm_types.h>
+> @@ -12,6 +13,7 @@
+>  struct address_space;
+>  struct fiemap_extent_info;
+>  struct inode;
+> +struct iomap_writepage_ctx;
+>  struct iov_iter;
+>  struct kiocb;
+>  struct page;
+> @@ -183,6 +185,47 @@ loff_t iomap_seek_data(struct inode *inode, loff_t offset,
+>  sector_t iomap_bmap(struct address_space *mapping, sector_t bno,
+>                 const struct iomap_ops *ops);
+>
+> +/*
+> + * Structure for writeback I/O completions.
+> + */
+> +struct iomap_ioend {
+> +       struct list_head        io_list;        /* next ioend in chain */
+> +       u16                     io_type;
+> +       u16                     io_flags;       /* IOMAP_F_* */
+> +       struct inode            *io_inode;      /* file being written to */
+> +       size_t                  io_size;        /* size of the extent */
+> +       loff_t                  io_offset;      /* offset in the file */
+> +       void                    *io_private;    /* file system private data */
+> +       struct bio              *io_bio;        /* bio being built */
+> +       struct bio              io_inline_bio;  /* MUST BE LAST! */
 > +};
-> diff --git a/fs/gfs2/bmap.h b/fs/gfs2/bmap.h
-> index b88fd45ab79f..aed4632d47d3 100644
-> --- a/fs/gfs2/bmap.h
-> +++ b/fs/gfs2/bmap.h
-> @@ -44,6 +44,7 @@ static inline void gfs2_write_calc_reserv(const struct gfs2_inode *ip,
->  }
->
->  extern const struct iomap_ops gfs2_iomap_ops;
-> +extern const struct iomap_writeback_ops gfs2_writeback_ops;
->
->  extern int gfs2_unstuff_dinode(struct gfs2_inode *ip, struct page *page);
->  extern int gfs2_block_map(struct inode *inode, sector_t lblock,
-> --
-> 2.20.1
+> +
+> +struct iomap_writeback_ops {
+> +       int (*map_blocks)(struct iomap_writepage_ctx *wpc, struct inode *inode,
+> +                               loff_t offset);
+> +       int (*submit_ioend)(struct iomap_ioend *ioend, int status);
+> +       void (*discard_page)(struct page *page);
+> +};
+> +
+> +struct iomap_writepage_ctx {
+> +       struct iomap            iomap;
+> +       struct iomap_ioend      *ioend;
+> +       const struct iomap_writeback_ops *ops;
+> +};
+> +
+> +void iomap_finish_ioends(struct iomap_ioend *ioend, int error);
+> +void iomap_ioend_try_merge(struct iomap_ioend *ioend,
+> +               struct list_head *more_ioends,
+> +               void (*merge_private)(struct iomap_ioend *ioend,
+> +                               struct iomap_ioend *next));
+> +void iomap_sort_ioends(struct list_head *ioend_list);
+> +int iomap_writepage(struct page *page, struct writeback_control *wbc,
+> +               struct iomap_writepage_ctx *wpc,
+> +               const struct iomap_writeback_ops *ops);
+> +int iomap_writepages(struct address_space *mapping,
+> +               struct writeback_control *wbc, struct iomap_writepage_ctx *wpc,
+> +               const struct iomap_writeback_ops *ops);
+> +
+>  /*
+>   * Flags for direct I/O ->end_io:
+>   */
 >
 
-Thanks,
 Andreas
