@@ -2,122 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 608748196B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 14:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11DEF81977
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 14:38:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbfHEMiJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 08:38:09 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:55029 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728689AbfHEMiI (ORCPT
+        id S1728759AbfHEMic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 08:38:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37318 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728851AbfHEMib (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 08:38:08 -0400
-Received: by mail-io1-f72.google.com with SMTP id n8so91949455ioo.21
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 05:38:08 -0700 (PDT)
+        Mon, 5 Aug 2019 08:38:31 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n9so59182766wrr.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 05:38:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=HZdhLj0O75Ng7akN6Onv+fy8trbuFE7Ss5Yu/JZAlv0=;
-        b=REP67FB8HjuxOVMnDyFrZA0fuJLK/sqk3/hq5R4yMUssjE4gwQ14ZhkHeFD2fXghSy
-         6yvTBke+htBySQoYEfFU+21ANhaQynfGddRAMKcspCHrYgmI+8m3aWyeU5j3KdHZzXvv
-         p/xAeh7kCMZUW/N2cvx6y5/JQU+vQTQS44a+cbiiQ6SGK29DJgvHBO31/vg1aKh3tpYT
-         +tuP+asKTGzMIrGoAsQr91rN1q8SJLto/oLLhQGR/JY69uBNzZNekPNYkEHO6RlnnSao
-         xsmlRpTUwHa5W+i6YGDe39FOO/uT9lSw0w3P3XRMzQjS0AnFep3/mPQXCErDJrC9ALwy
-         6IuQ==
-X-Gm-Message-State: APjAAAXmXav9zWZIXq927dVIetnYlk7CMFIcGpcQsitPJBC5CHuKyfjV
-        /N16FxsVqBDhv1D281dEhzKEbiAwTdG3duEiECwGvMNfUJlp
-X-Google-Smtp-Source: APXvYqzNIZ9GgKoZyed1achZuQFZvckuFTbMR0m9Lz3oRMBM862gchE7M6TvUiRxLz7tAQAO5QW6TlBuOBI0rIh1xdgG1G34lESE
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Euk3PPhLaN/dNz2R6+4z4EWc6EesDH1oJDwbhts25JU=;
+        b=kGFzxx+TYeb+VgV7kuYWnssOgPA1VZv333mqm2O/uXCEd3l0axclf30fk+pRRI7+ao
+         bGw6Ji+21pWEelaz7LTV/HQDJtCEWkJfAIB1wpnYVYvnYCbKNYYKug2Q/rG6QAnl0qg6
+         p4KcFSqgqZQG38KdoKF8jscajHrAMjTuK0zGepybCFwb7UA1vVWRNtODX6CNFdxItbXS
+         HeEOgHpwoQfsPix42ihnkXSWN+tQE93CjJTVFwobceYOi+67HwvZOtZcEUkVsdSL1KFf
+         KlEMHIeVHLam3oKCkV9qcn0MJAStVLj5CBbRSYuZa0WK0pnDMiXrYxgj3QyXpMdB+F58
+         nQHw==
+X-Gm-Message-State: APjAAAVUqYoee9RdN+CUfFjyC3aqK3kFyYxPzEkIxYozegb47dF9T1sT
+        gcq8CoUI7gcJqUSeqCLZ9xI8dQ==
+X-Google-Smtp-Source: APXvYqyrs22qPJvfRiRAAgzaQu8PUe63LOPAe0IJJ15pHzufnAQOl809kzQ3zd1/RROr5IOi5M63WA==
+X-Received: by 2002:adf:e343:: with SMTP id n3mr124343439wrj.103.1565008709760;
+        Mon, 05 Aug 2019 05:38:29 -0700 (PDT)
+Received: from orion.maiolino.org (11.72.broadband12.iol.cz. [90.179.72.11])
+        by smtp.gmail.com with ESMTPSA id j9sm94610939wrn.81.2019.08.05.05.38.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 05 Aug 2019 05:38:28 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 14:38:26 +0200
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Damien.LeMoal@wdc.com,
+        Christoph Hellwig <hch@lst.de>, agruenba@redhat.com
+Subject: Re: [PATCH 1/5] xfs: use a struct iomap in xfs_writepage_ctx
+Message-ID: <20190805123826.6bv7jhcnw5ecnol7@orion.maiolino.org>
+Mail-Followup-To: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        hch@infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Damien.LeMoal@wdc.com,
+        Christoph Hellwig <hch@lst.de>, agruenba@redhat.com
+References: <156444951713.2682520.8109813555788585092.stgit@magnolia>
+ <156444952349.2682520.6180005494290997205.stgit@magnolia>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f910:: with SMTP id j16mr18568149iog.256.1565008687873;
- Mon, 05 Aug 2019 05:38:07 -0700 (PDT)
-Date:   Mon, 05 Aug 2019 05:38:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e94632058f5dfabc@google.com>
-Subject: WARNING in __blkdev_put (2)
-From:   syzbot <syzbot+34a8ffb71f7fb32ecca2@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156444952349.2682520.6180005494290997205.stgit@magnolia>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, Jul 29, 2019 at 06:18:43PM -0700, Darrick J. Wong wrote:
+> From: Christoph Hellwig <hch@lst.de>
+> 
+> In preparation for moving the XFS writeback code to fs/iomap.c, switch
+> it to use struct iomap instead of the XFS-specific struct xfs_bmbt_irec.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> ---
+>  fs/xfs/libxfs/xfs_bmap.c |   14 ++++++--
+>  fs/xfs/libxfs/xfs_bmap.h |    3 +-
+>  fs/xfs/xfs_aops.c        |   82 +++++++++++++++++++++-------------------------
+>  fs/xfs/xfs_aops.h        |    2 +
+>  4 files changed, 50 insertions(+), 51 deletions(-)
+> 
+> 
+> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+> index baf0b72c0a37..2a0d9427a9e2 100644
+> --- a/fs/xfs/libxfs/xfs_bmap.c
+> +++ b/fs/xfs/libxfs/xfs_bmap.c
+> @@ -34,6 +34,7 @@
+>  #include "xfs_ag_resv.h"
+>  #include "xfs_refcount.h"
+>  #include "xfs_icache.h"
+> +#include "xfs_iomap.h"
+>  
+>  
+>  kmem_zone_t		*xfs_bmap_free_item_zone;
+> @@ -4452,16 +4453,21 @@ int
+>  xfs_bmapi_convert_delalloc(
+>  	struct xfs_inode	*ip,
+>  	int			whichfork,
+> -	xfs_fileoff_t		offset_fsb,
+> -	struct xfs_bmbt_irec	*imap,
+> +	xfs_off_t		offset,
+> +	struct iomap		*iomap,
+>  	unsigned int		*seq)
+>  {
+>  	struct xfs_ifork	*ifp = XFS_IFORK_PTR(ip, whichfork);
+>  	struct xfs_mount	*mp = ip->i_mount;
+> +	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
+>  	struct xfs_bmalloca	bma = { NULL };
+> +	u16			flags = 0;
+>  	struct xfs_trans	*tp;
+>  	int			error;
+>  
+> +	if (whichfork == XFS_COW_FORK)
+> +		flags |= IOMAP_F_SHARED;
+> +
+>  	/*
+>  	 * Space for the extent and indirect blocks was reserved when the
+>  	 * delalloc extent was created so there's no need to do so here.
+> @@ -4491,7 +4497,7 @@ xfs_bmapi_convert_delalloc(
+>  	 * the extent.  Just return the real extent at this offset.
+>  	 */
+>  	if (!isnullstartblock(bma.got.br_startblock)) {
+> -		*imap = bma.got;
+> +		xfs_bmbt_to_iomap(ip, iomap, &bma.got, flags);
+>  		*seq = READ_ONCE(ifp->if_seq);
+>  		goto out_trans_cancel;
+>  	}
+> @@ -4524,7 +4530,7 @@ xfs_bmapi_convert_delalloc(
+>  	XFS_STATS_INC(mp, xs_xstrat_quick);
+>  
+>  	ASSERT(!isnullstartblock(bma.got.br_startblock));
+> -	*imap = bma.got;
+> +	xfs_bmbt_to_iomap(ip, iomap, &bma.got, flags);
+>  	*seq = READ_ONCE(ifp->if_seq);
+>  
+>  	if (whichfork == XFS_COW_FORK) {
+> diff --git a/fs/xfs/libxfs/xfs_bmap.h b/fs/xfs/libxfs/xfs_bmap.h
+> index 8f597f9abdbe..3c3470f11648 100644
+> --- a/fs/xfs/libxfs/xfs_bmap.h
+> +++ b/fs/xfs/libxfs/xfs_bmap.h
+> @@ -220,8 +220,7 @@ int	xfs_bmapi_reserve_delalloc(struct xfs_inode *ip, int whichfork,
+>  		struct xfs_bmbt_irec *got, struct xfs_iext_cursor *cur,
+>  		int eof);
+>  int	xfs_bmapi_convert_delalloc(struct xfs_inode *ip, int whichfork,
+> -		xfs_fileoff_t offset_fsb, struct xfs_bmbt_irec *imap,
+> -		unsigned int *seq);
+> +		xfs_off_t offset, struct iomap *iomap, unsigned int *seq);
+>  int	xfs_bmap_add_extent_unwritten_real(struct xfs_trans *tp,
+>  		struct xfs_inode *ip, int whichfork,
+>  		struct xfs_iext_cursor *icur, struct xfs_btree_cur **curp,
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 4e4a4d7df5ac..8a1cd562a358 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -22,7 +22,7 @@
+>   * structure owned by writepages passed to individual writepage calls
+>   */
+>  struct xfs_writepage_ctx {
+> -	struct xfs_bmbt_irec    imap;
+> +	struct iomap		iomap;
+>  	int			fork;
+>  	unsigned int		data_seq;
+>  	unsigned int		cow_seq;
+> @@ -279,7 +279,7 @@ xfs_end_ioend(
+>  	 */
+>  	if (ioend->io_fork == XFS_COW_FORK)
+>  		error = xfs_reflink_end_cow(ip, offset, size);
+> -	else if (ioend->io_state == XFS_EXT_UNWRITTEN)
+> +	else if (ioend->io_type == IOMAP_UNWRITTEN)
+>  		error = xfs_iomap_write_unwritten(ip, offset, size, false);
+>  	else
+>  		ASSERT(!xfs_ioend_is_append(ioend) || ioend->io_append_trans);
+> @@ -303,8 +303,8 @@ xfs_ioend_can_merge(
+>  		return false;
+>  	if ((ioend->io_fork == XFS_COW_FORK) ^ (next->io_fork == XFS_COW_FORK))
+>  		return false;
+> -	if ((ioend->io_state == XFS_EXT_UNWRITTEN) ^
+> -	    (next->io_state == XFS_EXT_UNWRITTEN))
+> +	if ((ioend->io_type == IOMAP_UNWRITTEN) ^
+> +	    (next->io_type == IOMAP_UNWRITTEN))
+>  		return false;
+>  	if (ioend->io_offset + ioend->io_size != next->io_offset)
+>  		return false;
+> @@ -409,7 +409,7 @@ xfs_end_bio(
+>  	unsigned long		flags;
+>  
+>  	if (ioend->io_fork == XFS_COW_FORK ||
+> -	    ioend->io_state == XFS_EXT_UNWRITTEN ||
+> +	    ioend->io_type == IOMAP_UNWRITTEN ||
+>  	    ioend->io_append_trans != NULL) {
+>  		spin_lock_irqsave(&ip->i_ioend_lock, flags);
+>  		if (list_empty(&ip->i_ioend_list))
+> @@ -429,10 +429,10 @@ static bool
+>  xfs_imap_valid(
+>  	struct xfs_writepage_ctx	*wpc,
+>  	struct xfs_inode		*ip,
+> -	xfs_fileoff_t			offset_fsb)
+> +	loff_t				offset)
+>  {
+> -	if (offset_fsb < wpc->imap.br_startoff ||
+> -	    offset_fsb >= wpc->imap.br_startoff + wpc->imap.br_blockcount)
+> +	if (offset < wpc->iomap.offset ||
+> +	    offset >= wpc->iomap.offset + wpc->iomap.length)
+>  		return false;
+>  	/*
+>  	 * If this is a COW mapping, it is sufficient to check that the mapping
+> @@ -459,7 +459,7 @@ xfs_imap_valid(
+>  
+>  /*
+>   * Pass in a dellalloc extent and convert it to real extents, return the real
+> - * extent that maps offset_fsb in wpc->imap.
+> + * extent that maps offset_fsb in wpc->iomap.
+>   *
+>   * The current page is held locked so nothing could have removed the block
+>   * backing offset_fsb, although it could have moved from the COW to the data
+> @@ -469,23 +469,23 @@ static int
+>  xfs_convert_blocks(
+>  	struct xfs_writepage_ctx *wpc,
+>  	struct xfs_inode	*ip,
+> -	xfs_fileoff_t		offset_fsb)
+> +	loff_t			offset)
+>  {
+>  	int			error;
+>  
+>  	/*
+> -	 * Attempt to allocate whatever delalloc extent currently backs
+> -	 * offset_fsb and put the result into wpc->imap.  Allocate in a loop
+> -	 * because it may take several attempts to allocate real blocks for a
+> -	 * contiguous delalloc extent if free space is sufficiently fragmented.
+> +	 * Attempt to allocate whatever delalloc extent currently backs offset
+> +	 * and put the result into wpc->imap.  Allocate in a loop because it may
+				     ^^^^
+			And put the result into wpc->iomap?
 
-syzbot found the following crash on:
-
-HEAD commit:    dcb8cfbd Merge tag 'for-linus-5.3a-rc3-tag' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1478050c600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4c7b914a2680c9c6
-dashboard link: https://syzkaller.appspot.com/bug?extid=34a8ffb71f7fb32ecca2
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17190230600000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+34a8ffb71f7fb32ecca2@syzkaller.appspotmail.com
-
-8021q: adding VLAN 0 to HW filter on device batadv0
-WARNING: CPU: 1 PID: 10201 at fs/block_dev.c:1899 __blkdev_put+0x6ba/0x810  
-fs/block_dev.c:1899
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 10201 Comm: syz-executor.0 Not tainted 5.3.0-rc2+ #114
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2dc/0x755 kernel/panic.c:219
-  __warn.cold+0x20/0x4c kernel/panic.c:576
-  report_bug+0x263/0x2b0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1026
-RIP: 0010:__blkdev_put+0x6ba/0x810 fs/block_dev.c:1899
-Code: 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 84 24 fd ff ff 48 8b bd  
-50 ff ff ff e8 90 75 e6 ff e9 13 fd ff ff e8 56 5e ac ff <0f> 0b e9 dc fa  
-ff ff 48 89 cf e8 57 75 e6 ff e9 6a fa ff ff 48 8b
-RSP: 0018:ffff888094a87c90 EFLAGS: 00010293
-RAX: ffff888091ccc2c0 RBX: ffff8880a3182740 RCX: ffffffff81c63be4
-RDX: 0000000000000000 RSI: ffffffff81c6410a RDI: 0000000000000005
-RBP: ffff888094a87d88 R08: ffff888091ccc2c0 R09: ffffed10146304ec
-R10: ffff888094a87c80 R11: ffff8880a318275f R12: 0000000000000002
-R13: dffffc0000000000 R14: ffff8880a3182758 R15: ffff8880a3182758
-  blkdev_put+0x98/0x560 fs/block_dev.c:1969
-  blkdev_close+0x8b/0xb0 fs/block_dev.c:1976
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x5a9/0x6a0 arch/x86/entry/common.c:299
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4134f0
-Code: 01 f0 ff ff 0f 83 30 1b 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f  
-44 00 00 83 3d 9d 2d 66 00 00 75 14 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 04 1b 00 00 c3 48 83 ec 08 e8 0a fc ff ff
-RSP: 002b:00007fffd29519c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00000000004134f0
-RDX: 0000000000000000 RSI: 0000000000004c01 RDI: 0000000000000003
-RBP: 00000000007104e0 R08: 0000000000000000 R09: 000000000000000a
-R10: 0000000000000075 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fffd2951a00 R14: 0000000000000003 R15: 00007fffd2951a10
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+> +	 * take several attempts to allocate real blocks for a contiguous
+> +	 * delalloc extent if free space is sufficiently fragmented.
+>  	 */
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Other than the comment nitpick above, patch looks good and you can add:
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+
+-- 
+Carlos
