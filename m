@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6153281044
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 04:26:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE66881049
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 04:32:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfHEC0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Aug 2019 22:26:30 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45828 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfHEC0a (ORCPT
+        id S1726847AbfHECcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Aug 2019 22:32:09 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40102 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfHECcJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Aug 2019 22:26:30 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r1so38784853pfq.12;
-        Sun, 04 Aug 2019 19:26:29 -0700 (PDT)
+        Sun, 4 Aug 2019 22:32:09 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w10so38876167pgj.7;
+        Sun, 04 Aug 2019 19:32:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=lcnoyc82zBJmK7HyZZ9/xYHIo+nvY1F0Vc3WAAWFXf4=;
-        b=bjxN1i855euNnjUnIRlcEX0LvYqx3HxLcGznZolbzXrZ9h2uenhVqHuurr9ZBo0Mdn
-         BEsRrms5VOqtu/pZu/TaKYkRFrpT11Va6g+49pLA5OWY+SZ0hMDbYRKwmWmxzMDhbb8f
-         GTQVuKdH4sre765l2YwqLwgEj5U5TCxJ11dgPQgtD9/F7nITzsxx1q+K6fPt8AJTwZ51
-         SXQT/3NcHGnARj71eCFz2j1ZKbUjtfQuqmAtbXa6juripZelfrT7KMWdgAkVhlhszJJH
-         Qh8QWc4/xPlfmZB6bDU1IsGkYlb7ALstwyWPJLnNFIgVmfoptlw3rJFEc3KpcOW6cCi6
-         uYRw==
+        bh=UZHhZu7UO1jH1fQJkZzMyLRgsNTiTLatRpcoqCnRJ18=;
+        b=CKraWwqkZg3c2qd7Q6WpNuUpw+dh0cgfSan9Gc4M6oztcD2jYks4Hb4bo13E6rJErQ
+         DuEnbjTFVBizjVe4SAifSMkHIVfWrYlU2SpY1yqvnSK9ALH06GWdibnMn+oDJEwWttwM
+         8XEzY1NThUu/6KjyO2+/vNzjE1iJ93hyj7kKNrgI+4bFKwBxpqxmIcLvBXB2s/AREGLZ
+         2yLtMRwvlAputd3raT0mu/uXk6A2qPMy/pwibQjdm/jNFkKe52tcH02yIHG/cbtBomqb
+         /JwAbGqvZ/xlURNEF75r57r9uENgKlgqGcwtmrtgsfQt3aWi0bzleotTEDpQekp9eKkx
+         mTAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=lcnoyc82zBJmK7HyZZ9/xYHIo+nvY1F0Vc3WAAWFXf4=;
-        b=S0rVlATrvU8RMWzbpL7Xv04NbyuyMvm6YmbevRTA0AHYfiAPPVYty2Sden3le34y7d
-         jYJG4/OJ4yCC5Lyosd4gzMRfjWTJB8HwTOaKUnYiHTEGAzA9BbLMEQ845gS8VUFr2fAI
-         C+9b1GU7qsml9wbCjo7kvv1//0NyNDSzpSlnVuzAY7UKQsrytCRHeYJj3PeabTC0fmi+
-         XtqMGoumeWWtDpqmOKNLjJnYqJc+DKNl934vExR2J5U2IOt8/wDHnbvMH5InsR3mH4+U
-         v2AZFVTaNZlatV40yj65HQ+M2EGsXfoDAPWqMpyLZkAWxEj3WcbgzdtJYLLE+MsG8b+B
-         lqtQ==
-X-Gm-Message-State: APjAAAV3r9DyLFs//17PCzX+TCb6Q4cBWWSE24NzQ2UU4HVupa5FVHyt
-        k3YKUca63gEDa0p8IuBoRJI=
-X-Google-Smtp-Source: APXvYqz56Uy3OWp9yKpnmoBerTa/QncOG/6somzUXYkyfxRhF/JGW0ZcxzT4FIvpzsPEHyTa4Zvc7A==
-X-Received: by 2002:a63:2004:: with SMTP id g4mr128483482pgg.97.1564971989557;
-        Sun, 04 Aug 2019 19:26:29 -0700 (PDT)
+        bh=UZHhZu7UO1jH1fQJkZzMyLRgsNTiTLatRpcoqCnRJ18=;
+        b=LLNCMKyKrN2i72BUd7ccYD4rfZl3QQtzkBhoyLarwqoCvI4JADVKDwxBV+yMpv6tm1
+         14I+TvbuGWptJo0Ga/af2Sa3lM09yVEcGxErDgvGuw0RJTjfr3ThKeELN86jppMFgeEH
+         qUBUqTk5qMSWfF0/htvZkCAXK5mM01SbJPjUxgii6Ol0lnOXVfDzAS756yffkwQDuAEn
+         YZ2G49YrIBur6Dy3J5Fe8R1QrvNdsVzPYrWezGCUBTG9fuz19b7KLuC/gP0BvbxENaIU
+         IGWsYv3hf7ttZ5XiOgNjKMIfJTyimik4KdiFmQE3ZcmNP0wfL+9GBXAwGCJtEFYPHkfm
+         bCig==
+X-Gm-Message-State: APjAAAXEKryko+Cr2zQmtaNjCfXGCsOlGn0DnthhvkjZJymG/D8INRRS
+        rYimTDzotLgFWCxnxylR0RM=
+X-Google-Smtp-Source: APXvYqyLrqI7gGqCgmIwbmF9a0CEz3uJYMrD1LI9rhekWLAO8LK0W3mWt00RvgrLzC1hsNBPyLQDdg==
+X-Received: by 2002:aa7:86cc:: with SMTP id h12mr63989613pfo.2.1564972328962;
+        Sun, 04 Aug 2019 19:32:08 -0700 (PDT)
 Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id s6sm122624067pfs.122.2019.08.04.19.26.28
+        by smtp.gmail.com with ESMTPSA id y128sm102095363pgy.41.2019.08.04.19.32.07
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 04 Aug 2019 19:26:29 -0700 (PDT)
+        Sun, 04 Aug 2019 19:32:08 -0700 (PDT)
 From:   john.hubbard@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -54,12 +54,11 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         Jerome Glisse <jglisse@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH] security/tomoyo: convert put_page() to put_user_page*()
-Date:   Sun,  4 Aug 2019 19:26:26 -0700
-Message-Id: <20190805022626.13291-1-jhubbard@nvidia.com>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Subject: [PATCH] fs/io_uring.c: convert put_page() to put_user_page*()
+Date:   Sun,  4 Aug 2019 19:32:06 -0700
+Message-Id: <20190805023206.8831-1-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 X-NVConfidentiality: public
@@ -78,27 +77,41 @@ release_pages().
 This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
 ("mm: introduce put_user_page*(), placeholder versions").
 
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: linux-security-module@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-block@vger.kernel.org
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- security/tomoyo/domain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/io_uring.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index 8526a0a74023..6887beecfb6e 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -931,7 +931,7 @@ bool tomoyo_dump_page(struct linux_binprm *bprm, unsigned long pos,
- 	}
- 	/* Same with put_arg_page(page) in fs/exec.c */
- #ifdef CONFIG_MMU
--	put_page(page);
-+	put_user_page(page);
- #endif
- 	return true;
- }
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d542f1cf4428..8a1de5ab9c6d 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2815,7 +2815,7 @@ static int io_sqe_buffer_unregister(struct io_ring_ctx *ctx)
+ 		struct io_mapped_ubuf *imu = &ctx->user_bufs[i];
+ 
+ 		for (j = 0; j < imu->nr_bvecs; j++)
+-			put_page(imu->bvec[j].bv_page);
++			put_user_page(imu->bvec[j].bv_page);
+ 
+ 		if (ctx->account_mem)
+ 			io_unaccount_mem(ctx->user, imu->nr_bvecs);
+@@ -2959,10 +2959,8 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
+ 			 * if we did partial map, or found file backed vmas,
+ 			 * release any pages we did get
+ 			 */
+-			if (pret > 0) {
+-				for (j = 0; j < pret; j++)
+-					put_page(pages[j]);
+-			}
++			if (pret > 0)
++				put_user_pages(pages, pret);
+ 			if (ctx->account_mem)
+ 				io_unaccount_mem(ctx->user, nr_pages);
+ 			kvfree(imu->bvec);
 -- 
 2.22.0
 
