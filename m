@@ -2,201 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDFD482736
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 23:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 212BC8273A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 23:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729170AbfHEV4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 17:56:10 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:54516 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728483AbfHEV4K (ORCPT
+        id S1728870AbfHEV7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 17:59:05 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:37459 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728483AbfHEV7F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 17:56:10 -0400
-Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 77DD5361759;
-        Tue,  6 Aug 2019 07:56:06 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hukwU-0004gg-NE; Tue, 06 Aug 2019 07:54:58 +1000
-Date:   Tue, 6 Aug 2019 07:54:58 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Goldwyn Rodrigues <RGoldwyn@suse.com>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 10/13] iomap: use a function pointer for dio submits
-Message-ID: <20190805215458.GH7689@dread.disaster.area>
-References: <20190802220048.16142-1-rgoldwyn@suse.de>
- <20190802220048.16142-11-rgoldwyn@suse.de>
- <20190804234321.GC7689@dread.disaster.area>
- <1565021323.13240.14.camel@suse.com>
+        Mon, 5 Aug 2019 17:59:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1565042343; x=1596578343;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=DlfdwKoMonY8DToULTaBam+5H0MfNA/E6pDGNlddRKU=;
+  b=PAhIf8H6VYErpr9IWuFXXwxQfavBq1Y5g33iDiFRIYQRzCs+0rCGKRTH
+   je47PObmJPlgWurWweuKfMMumsayFURXw0IfMS0gul9okTgkdTPvBT8gN
+   2TTM0HOJn3AxdcpyCXkQkP+DL6EWm8IGDgk9CFsUUzBu03w6zNmyk53dv
+   Jbi7bOgD5LLjWdY80PM3cqeirjVpjPVjxVjhdJ+WLs95FBFfgGS7z5Xyx
+   pFG5gWrhmnVE2ACUjPKK29q1CPnpoce12OTPQgPpkVSHI3B0szdviwIPF
+   3NhCCsaaAtTSKnMVFyQ/U0qAYIyoKQhFZpBhG3neack7d7DeKFXEMeyIT
+   w==;
+IronPort-SDR: rQRfR+G1Cjh+d2hLC9j4Mky/IFly0M1WYjGjFvts48ni4/zW2MzSdIhgHAUlhThDffwudJ2M8t
+ tI/S8rKM6IBuW28njSlIY1jbfVL6CsrNRX3zJeklpPshMP3oz4JI4rLVW6JadIGHDYbJ+k1Dz9
+ siY8zbSOsFBcpyeTULmARfFB0stgaNNseLLsAwbDelOJ/4POuD9x1ZbhS9tb4oEMf5i5W0WQ2g
+ gGp20ZQ+3UqO7dW5UlO8mWRGTGuqp+iYTVjJq+R0bZ7Ky6sKAPzSuMGcEPL33HKpD/GqVqDmL+
+ jPk=
+X-IronPort-AV: E=Sophos;i="5.64,350,1559491200"; 
+   d="scan'208";a="116036484"
+Received: from mail-sn1nam04lp2050.outbound.protection.outlook.com (HELO NAM04-SN1-obe.outbound.protection.outlook.com) ([104.47.44.50])
+  by ob1.hgst.iphmx.com with ESMTP; 06 Aug 2019 05:59:03 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j0BLt7vHyq4/ZVU6Qshd2gqV4S5hEO1CU3ZSDS6wl7OQRwrOmW+jCWr3s69tssGePjl+agkiN6/IH6YmDYwcoKRu+86szggbFBf++ZPYoxmOD0s8XadRX8GJYAAUzjauH0W5OblnuKCnUVDbR2iYSij4vlPr0e48dFfRcq6HSneemRBz92N9o8QOKG4LQtdaVXk/RaMgW0fnL7Qlw5B1EmjMbVxhV9tAIrLe3nO9YBBSUrT9MK9xUR5LtV8E+E1GfT0Ub+vgd0E6ci6uM7DJNZX4uRj2xGOAKcMJCzPvKptPnL262lb6lChn+ftA2HUNY5QXPlG5+44xfDRq/ZVWrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DlfdwKoMonY8DToULTaBam+5H0MfNA/E6pDGNlddRKU=;
+ b=CCIEfZMjmmHDVsomf3EUJ/Z1rPQSR10jOmcmeMR44DAhJ6zfbyOR6ik6xYtD1q7qzthzwgQYd1NntG88fPVBYxDaEgVJULXKkAxQFOD8jA07+TpXBca++43jC1y97aqmYC0StnFzPv9szr4AAC8YG/wsgKo2HtOCWojdLsebrzB1A5TIQ5F6U6QaWuD3JdSYU+5QrZInfReYXni0pBZdZHnkJW1qat9kxhvCn5j7noyILMbFz2TyGSs4r8hePzdct3NQ3B+HbL0QCyKRjVA0NL1mg4uN+9ILl1WAL250ruittzEC2nu+vpcFDz2Icv0NbNsTlKbn136EYs25diY+pQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=wdc.com;dmarc=pass action=none header.from=wdc.com;dkim=pass
+ header.d=wdc.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DlfdwKoMonY8DToULTaBam+5H0MfNA/E6pDGNlddRKU=;
+ b=mdBC/JVrd+bYP5hgMoamIqtdqdRTox78UlUXmn0lMkEM9+dEsWeI7aC5EweOTlulDCnA2a2DqLduNxvSue6sKSqohVHK4S9fRABWnoYvmI9OKoq9FUvNwq748WBlnARMP9ZJxcTsIlJKhPcX/GSLHGaeF9WzVYqcDG0JBEhwmag=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
+ BYAPR04MB5254.namprd04.prod.outlook.com (20.178.48.219) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.20; Mon, 5 Aug 2019 21:59:00 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::65a9:db0a:646d:eb1e]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::65a9:db0a:646d:eb1e%6]) with mapi id 15.20.2136.018; Mon, 5 Aug 2019
+ 21:59:00 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>
+Subject: Re: Block device direct read EIO handling broken?
+Thread-Topic: Block device direct read EIO handling broken?
+Thread-Index: AQHVS7nFgL74Ixb2GU6mfuU8L6+VdQ==
+Date:   Mon, 5 Aug 2019 21:59:00 +0000
+Message-ID: <BYAPR04MB581644536C6EAEA36E3B4912E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <20190805181524.GE7129@magnolia>
+ <66bd785d-7598-5cc2-5e98-447fd128c153@kernel.dk>
+ <36973a52-e876-fc09-7a63-2fc16b855f8d@kernel.dk>
+ <BYAPR04MB5816246256B1333C048EB0A1E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
+ <474c560f-5de0-6082-67ac-f7c640d9b346@kernel.dk>
+ <BYAPR04MB5816C3B24310C1E18F9E024CE7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
+ <f3f98663-8f92-c933-c7c0-8db6635e6112@kernel.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [129.253.182.57]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fc74661b-6b66-4ff4-e28b-08d719f01f95
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5254;
+x-ms-traffictypediagnostic: BYAPR04MB5254:
+x-microsoft-antispam-prvs: <BYAPR04MB52540B00DBC2ECFD55B72297E7DA0@BYAPR04MB5254.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 01208B1E18
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(396003)(366004)(136003)(39860400002)(376002)(199004)(189003)(51444003)(478600001)(3846002)(9686003)(6116002)(4326008)(66946007)(66476007)(66446008)(66556008)(68736007)(6436002)(81166006)(64756008)(26005)(81156014)(6246003)(76116006)(71190400001)(55016002)(186003)(53936002)(7736002)(486006)(8676002)(74316002)(71200400001)(33656002)(52536014)(476003)(102836004)(76176011)(5660300002)(229853002)(7696005)(446003)(53546011)(6506007)(316002)(110136005)(66066001)(86362001)(2906002)(14454004)(256004)(8936002)(305945005)(25786009)(54906003)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5254;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 2mj1MXHhKWLV5+SfCHOm12GoyGTWXmJ4Q52PRl9EmlQ45JB7srQ1hfzEfmhy22+G1fLaG7TFr6aRRz+VZoTEthSJn+BIjNsVbM0UnZDLQl3YePLB64ljTQKc8GQ5drtwepY95uDItU8jY7EAGP11nxnK6SCVpx+Dq/s7voPtgQNutqw2AnHCUHcSVPycP6NWQdVUAePPXdDYsWt3QQlt5hYufNsy/v8wmlisNyQTmPhG4VpPFxA2RhfDBnp1lDncO5kyMTWgZG3TbN6BjdhjQfJX2WNlYjfXpEFRiXx9L98XKf7P2HSnzpjOGweRtWtvI/a3SBO2d1tmJ9J5gMaQ18EfQJGkU51r+WiZEPBLvcQBShOLR2wHMrSOB2NursgYmvojknFVeawKyXxzJFjTxWE90nf4yi9BGQnwiJF6bUU=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565021323.13240.14.camel@suse.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
-        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
-        a=iox4zFpeAAAA:8 a=7-415B0cAAAA:8 a=KOOFzyzWw9rIk0OJFBUA:9
-        a=CjuIK1q_8ugA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=biEYGPWJfzWAr4FL6Ov7:22
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc74661b-6b66-4ff4-e28b-08d719f01f95
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2019 21:59:00.7717
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5254
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 04:08:43PM +0000, Goldwyn Rodrigues wrote:
-> On Mon, 2019-08-05 at 09:43 +1000, Dave Chinner wrote:
-> > On Fri, Aug 02, 2019 at 05:00:45PM -0500, Goldwyn Rodrigues wrote:
-> > > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > 
-> > > This helps filesystems to perform tasks on the bio while
-> > > submitting for I/O. Since btrfs requires the position
-> > > we are working on, pass pos to iomap_dio_submit_bio()
-> > > 
-> > > The correct place for submit_io() is not page_ops. Would it
-> > > better to rename the structure to something like iomap_io_ops
-> > > or put it directly under struct iomap?
-> > > 
-> > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > ---
-> > >  fs/iomap/direct-io.c  | 16 +++++++++++-----
-> > >  include/linux/iomap.h |  1 +
-> > >  2 files changed, 12 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > > index 5279029c7a3c..a802e66bf11f 100644
-> > > --- a/fs/iomap/direct-io.c
-> > > +++ b/fs/iomap/direct-io.c
-> > > @@ -59,7 +59,7 @@ int iomap_dio_iopoll(struct kiocb *kiocb, bool
-> > > spin)
-> > >  EXPORT_SYMBOL_GPL(iomap_dio_iopoll);
-> > >  
-> > >  static void iomap_dio_submit_bio(struct iomap_dio *dio, struct
-> > > iomap *iomap,
-> > > -		struct bio *bio)
-> > > +		struct bio *bio, loff_t pos)
-> > >  {
-> > >  	atomic_inc(&dio->ref);
-> > >  
-> > > @@ -67,7 +67,13 @@ static void iomap_dio_submit_bio(struct
-> > > iomap_dio *dio, struct iomap *iomap,
-> > >  		bio_set_polled(bio, dio->iocb);
-> > >  
-> > >  	dio->submit.last_queue = bdev_get_queue(iomap->bdev);
-> > > -	dio->submit.cookie = submit_bio(bio);
-> > > +	if (iomap->page_ops && iomap->page_ops->submit_io) {
-> > > +		iomap->page_ops->submit_io(bio, file_inode(dio-
-> > > >iocb->ki_filp),
-> > > +				pos);
-> > > +		dio->submit.cookie = BLK_QC_T_NONE;
-> > > +	} else {
-> > > +		dio->submit.cookie = submit_bio(bio);
-> > > +	}
-> > 
-> > I don't really like this at all. Apart from the fact it doesn't work
-> > with block device polling (RWF_HIPRI), the iomap architecture is
-> 
-> That can be added, no? Should be relayed when we clone the bio.
-
-No idea how that all is supposed to work when you split a single bio
-into multiple bios. I'm pretty sure the iomap code is broken for
-that case, too -  Jens was silent on how to fix other than to say
-"it wasn't important so we didn't care to make sure it worked". So
-it's not clear to me exactly how block polling is supposed to work
-when a an IO needs to be split into multiple submissions...
-
-> > supposed to resolve the file offset -> block device + LBA mapping
-> > completely up front and so all that remains to be done is build and
-> > submit the bio(s) to the block device.
-> > 
-> > What I see here is a hack to work around the fact that btrfs has
-> > implemented both file data transformations and device mapping layer
-> > functionality as a filesystem layer between file data bio building
-> > and device bio submission. And as the btrfs file data mapping
-> > (->iomap_begin) is completely unaware that there is further block
-> > mapping to be done before block device bio submission, any generic
-> > code that btrfs uses requires special IO submission hooks rather
-> > than just calling submit_bio().
-> > 
-> > I'm not 100% sure what the solution here is, but the one thing we
-> > must resist is turning the iomap code into a mess of custom hooks
-> > that only one filesystem uses. We've been taught this lesson time
-> > and time again - the iomap infrastructure exists because stuff like
-> > bufferheads and the old direct IO code ended up so full of special
-> > case code that it ossified and became unmodifiable and
-> > unmaintainable.
-> > 
-> > We do not want to go down that path again. 
-> > 
-> > IMO, the iomap IO model needs to be restructured to support post-IO
-> > and pre-IO data verification/calculation/transformation operations
-> > so all the work that needs to be done at the inode/offset context
-> > level can be done in the iomap path before bio submission/after
-> > bio completion. This will allow infrastructure like fscrypt, data
-> > compression, data checksums, etc to be suported generically, not
-> > just by individual filesystems that provide a ->submit_io hook.
-> > 
-> > As for the btrfs needing to slice and dice bios for multiple
-> > devices?  That should be done via a block device ->make_request
-> > function, not a custom hook in the iomap code.
-> 
-> btrfs differentiates the way how metadata and data is
-> handled/replicated/stored. We would still need an entry point in the
-> iomap code to handle the I/O submission.
-
-This is a data IO path. How metadata is stored/replicated is
-irrelevant to this code path...
-
-> > That's why I don't like this hook - I think hiding data operations
-> > and/or custom bio manipulations in opaque filesystem callouts is
-> > completely the wrong approach to be taking. We need to do these
-> > things in a generic manner so that all filesystems (and block
-> > devices!) that use the iomap infrastructure can take advantage of
-> > them, not just one of them.
-> > 
-> > Quite frankly, I don't care if it takes more time and work up front,
-> > I'm tired of expedient hacks to merge code quickly repeatedly biting
-> > us on the arse and wasting far more time sorting out than we would
-> > have spent getting it right in the first place.
-> 
-> Sure. I am open to ideas. What are you proposing?
-
-That you think about how to normalise the btrfs IO path to fit into
-the standard iomap/blockdev model, rather than adding special hacks
-to iomap to allow an opaque, custom, IO model to be shoe-horned into
-the generic code.
-
-For example, post-read validation requires end-io processing,
-whether it be encryption, decompression, CRC/T10 validation, etc. The
-iomap end-io completion has all the information needed to run these
-things, whether it be a callout to the filesystem for custom
-processing checking, or a generic "decrypt into supplied data page"
-sort of thing. These all need to be done in the same place, so we
-should have common support for this. And I suspect the iomap should
-also state in a flag that something like this is necessary (e.g.
-IOMAP_FL_ENCRYPTED indicates post-IO decryption needs to be run).
-
-Similarly, on the IO submit side we have need for a pre-IO
-processing hook. That can be used to encrypt, compress, calculate
-data CRCs, do pre-IO COW processing (XFS requires a hook for this),
-etc.
-
-These hooks are needed for for both buffered and direct IO, and they
-are needed for more filesystems than just btrfs. fscrypt will need
-them, XFS needs them, etc. So rather than hide data CRCs,
-compression, and encryption deep inside the btrfs code, pull it up
-into common layers that are called by the generic code. THis will
-leave with just the things like mirroring, raid, IO retries, etc
-below the iomap code, and that's all stuff that can be done behind a
-->make_request function that is passed a bio...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+On 2019/08/06 6:28, Jens Axboe wrote:=0A=
+> On 8/5/19 2:27 PM, Damien Le Moal wrote:=0A=
+>> On 2019/08/06 6:26, Jens Axboe wrote:=0A=
+>>>> In any case, looking again at this code, it looks like there is a=0A=
+>>>> problem with dio->size being incremented early, even for fragments=0A=
+>>>> that get BLK_QC_T_EAGAIN, because dio->size is being used in=0A=
+>>>> blkdev_bio_end_io(). So an incorrect size can be reported to user=0A=
+>>>> space in that case on completion (e.g. large asynchronous no-wait dio=
+=0A=
+>>>> that cannot be issued in one go).=0A=
+>>>>=0A=
+>>>> So maybe something like this ? (completely untested)=0A=
+>>>=0A=
+>>> I think that looks pretty good, I like not double accounting with=0A=
+>>> this_size and dio->size, and we retain the old style ordering for the=
+=0A=
+>>> ret value.=0A=
+>>=0A=
+>> Do you want a proper patch with real testing backup ? I can send that=0A=
+>> later today.=0A=
+> =0A=
+> Yeah that'd be great, I like your approach better.=0A=
+> =0A=
+=0A=
+Looking again, I think this is not it yet: dio->size is being referenced af=
+ter=0A=
+submit_bio(), so blkdev_bio_end_io() may see the old value if the bio compl=
+etes=0A=
+before dio->size increment. So the use-after-free is still there. And since=
+=0A=
+blkdev_bio_end_io() processes completion to user space only when dio->ref=
+=0A=
+becomes 0, adding an atomic_inc/dec(&dio->ref) over the loop would not help=
+ and=0A=
+does not cover the single BIO case. Any idea how to address this one ?=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
