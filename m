@@ -2,134 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1519781702
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 12:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9515781738
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 12:38:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbfHEK1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 06:27:35 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33680 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727830AbfHEK1e (ORCPT
+        id S1728389AbfHEKim (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 06:38:42 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40858 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727739AbfHEKim (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 06:27:34 -0400
-Received: by mail-wm1-f65.google.com with SMTP id h19so6348472wme.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 03:27:33 -0700 (PDT)
+        Mon, 5 Aug 2019 06:38:42 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r1so83839953wrl.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 03:38:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :in-reply-to:user-agent;
-        bh=DgcovKuK5WhPn6hVzFZNbyXAianIZnw5XWtwj+mlfWk=;
-        b=gss8EeR5X12LfVi2+J9AAWMozTzQdPLVsdW5p/aclrhoDSVTsMsXOPQ0M4lGz5E+nv
-         mlbVOfy9+3M77JhoAEODqIF7TFy9kmgQRTq7NTAafXv2VtTuyzmjCViP4gzbcREhjUZD
-         nVzlIKuNG2rM5W1/kJZ/okUNxYTZs2v1twOGjbtZvOVgq/wrQCYwN9EvblIcHtaC7zma
-         cJ+kPHlzxuE/w5KRRkge6ohdJGfz1ap4rpeigx4NemYUu7l72e3lUCqKmXnL5AGmaLXW
-         eL/n7zRpyk5lUtCOFsozR9HEFXZOPjCrKXR0XkJkTiKZLDq2+DcfYCZO088/D5F6iTya
-         aHKQ==
-X-Gm-Message-State: APjAAAUwsvm3LPZ04HSKXKey/zT4ATfyBe8a/KWqTrd2yLENyWG1EWi+
-        3TXp514L//BCDm2pSYGNs7bVzQ==
-X-Google-Smtp-Source: APXvYqzfF6AQaF4c4hasKzPBhxJz92+5NrrN/wf7wERzHvxkWGAMbXPySxFIwOZ5TpnC1TmHgNzNzg==
-X-Received: by 2002:a7b:cb94:: with SMTP id m20mr17390752wmi.144.1565000852931;
-        Mon, 05 Aug 2019 03:27:32 -0700 (PDT)
+        bh=nhcF4njZsguYPpGmNsYlX9l9INuM7smE0cJnjujhiVA=;
+        b=lodqxxBAjM3+C4v1mG9kHvBt+4rObZj/P4IJe/X3pqCdD5t8lYY87yTX2ecGySvw3k
+         Y2/Z475i4/uUX3csOghk24j0v4LmMq/SSFhPBVxnz8XehU6Sc3z5XB5k29BnNtGbars4
+         QfrjZ3nXW3MrVZeOwx+oa13b99qlDCWFuG6kucDx9/bOtWXIVvW+Y8Zg8+mF/ijG0NwP
+         QqVUxhv40aks4O6YcZjrVHmtjPdR3bpTVRnVsI4+R0o2BeX0oGvSa6c+6FBtybdV0Zyj
+         GlsbxZPGTBGCjH7fPnv3fgYg4qmDPdgrcEYDNnl8z3AoJD3V6ncTMn1qyNxp9MbkW2Dp
+         j9gQ==
+X-Gm-Message-State: APjAAAWUitXeL8kzQ9CJn/HcuO30OfpiUOx3CfebGcoVGBTGi5XPjpY6
+        6B6uvHo5f9YPbEI17LocOZpqew==
+X-Google-Smtp-Source: APXvYqxnEIZ1vShqa8+K4LqEeKVgpDypeX98+GrcQMz1yUeybxTg/8GQX2KFj3X58jPFHojp/SaS/Q==
+X-Received: by 2002:a5d:540e:: with SMTP id g14mr5027782wrv.346.1565001520116;
+        Mon, 05 Aug 2019 03:38:40 -0700 (PDT)
 Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
-        by smtp.gmail.com with ESMTPSA id n14sm160342770wra.75.2019.08.05.03.27.31
+        by smtp.gmail.com with ESMTPSA id m7sm70580746wrx.65.2019.08.05.03.38.39
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 03:27:32 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 12:27:30 +0200
+        Mon, 05 Aug 2019 03:38:39 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 12:38:37 +0200
 From:   Carlos Maiolino <cmaiolino@redhat.com>
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
         jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
         linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 4/9] fibmap: Use bmap instead of ->bmap method in
- ioctl_fibmap
-Message-ID: <20190805102729.ooda6sg65j65ojd4@pegasus.maiolino.io>
+Subject: Re: [PATCH 8/9] Use FIEMAP for FIBMAP calls
+Message-ID: <20190805103835.mcketlhcxyrtko5c@pegasus.maiolino.io>
 Mail-Followup-To: "Darrick J. Wong" <darrick.wong@oracle.com>,
         linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
         jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
         linux-xfs@vger.kernel.org
 References: <20190731141245.7230-1-cmaiolino@redhat.com>
- <20190731141245.7230-5-cmaiolino@redhat.com>
- <20190731231217.GV1561054@magnolia>
- <20190802091937.kwutqtwt64q5hzkz@pegasus.maiolino.io>
- <20190802151400.GG7138@magnolia>
+ <20190731141245.7230-9-cmaiolino@redhat.com>
+ <20190731232254.GW1561054@magnolia>
+ <20190802134816.usmauocewduggrjt@pegasus.maiolino.io>
+ <20190802152902.GI7138@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190802151400.GG7138@magnolia>
+In-Reply-To: <20190802152902.GI7138@magnolia>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 08:14:00AM -0700, Darrick J. Wong wrote:
-> On Fri, Aug 02, 2019 at 11:19:39AM +0200, Carlos Maiolino wrote:
-> > Hi Darrick.
-> > 
-> > > > +		return error;
-> > > > +
-> > > > +	block = ur_block;
-> > > > +	error = bmap(inode, &block);
-> > > > +
-> > > > +	if (error)
-> > > > +		ur_block = 0;
-> > > > +	else
-> > > > +		ur_block = block;
 > > > 
-> > > What happens if ur_block > INT_MAX?  Shouldn't we return zero (i.e.
-> > > error) instead of truncating the value?  Maybe the code does this
-> > > somewhere else?  Here seemed like the obvious place for an overflow
-> > > check as we go from sector_t to int.
-> > > 
+> > > Why doesn't this function just call fiemap_fill_kernel_extent to fill
+> > > out the onstack @extent structure?  We've now implemented "fill out out
+> > > a struct fiemap_extent" twice.
 > > 
-> > The behavior should still be the same. It will get truncated, unfortunately. I
-> > don't think we can actually change this behavior and return zero instead of
-> > truncating it.
+> > fiemap_fill_{user, kernel}_extent() have different purposes, and the big
+> > difference is one handles a userspace pointer memory and the other don't. IIRC
+> > the original proposal was some sort of sharing a single function, but then
+> > Christoph suggested a new design, using different functions as callbacks.
 > 
-> But that's even worse, because the programs that rely on FIBMAP will now
-> receive *incorrect* results that may point at a different file and
-> definitely do not point at the correct file block.
+> It's harder for me to tell when I don't have a branch containing the
+> final product to look at,
 
-How is this worse? This is exactly what happens today, on the original FIBMAP
-implementation.
+Good, I though I was the only one having issues with it :)
 
-Maybe I am not seeing something or having a different thinking you have, but
-this is the behavior we have now, without my patches. And we can't really change
-it; the user view of this implementation.
-That's why I didn't try to change the result, so the truncation still happens.
-> 
-> Note also that the iomap (and therefore xfs) implementation WARNs on
-> integer overflow and returns 0 (error) to prevent an incorrect access.
+You can see the work here:
 
-It does not really prevent anything. It just issue a warning saying the result
-will be truncated, in an attempt to notify the FIBMAP interface user that he/she
-can't trust the result, but it does not prevent a truncated result to be
-returned. And IIRC, iomap is the only interface now that cares about issuing a
-warning.
+https://github.com/cmaiolino/linux/commits/FIEMAP_V5
 
-I think the *best* we could do here, is to make the new bmap() to issue the same
-kind of WARN() iomap does, but we can't really change the end result.
+^ This already includes changes addressing your concerns as we discussed int
+this thread btw.
 
+> but I'd have thought that _fill_kernel fills
+> out an in-kernel fiemap extent; and then _fill_user would declare one on
+> the stack, call _fill_kernel to set the fields, and then copy_to_user?
 
-> 
-> --D
-> 
-> > > --D
-> > > 
-> > > > +
-> > > > +	error = put_user(ur_block, p);
-> > > > +
-> > > > +	return error;
-> > > >  }
-> > > >  
-> > > >  /**
-> > > > -- 
-> > > > 2.20.1
-> > > > 
-> > 
-> > -- 
-> > Carlos
+None of those functions will declare a fiemap_extent, the fiemap extent will be
+declared before (in ioctl_fiemap() or bmap_fiemap()) calling either function and
+then passed to the proper callback via fieinfo.fi_cb_data. This will be a user
+or a kernel memory address, and the callbacks will handle the memory accordingly.
+
+Cheers
 
 -- 
 Carlos
