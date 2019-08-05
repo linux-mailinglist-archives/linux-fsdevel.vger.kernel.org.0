@@ -2,76 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E88D8167C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 12:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1519781702
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 12:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbfHEKIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 06:08:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60660 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727259AbfHEKIw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 06:08:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D916FB616;
-        Mon,  5 Aug 2019 10:08:50 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Date:   Mon, 05 Aug 2019 20:08:41 +1000
-Cc:     Sergei Turchanov <turchanov@farpost.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: seq_file: fix problem when seeking mid-record.
-In-Reply-To: <4862a29d-7e4f-5bc5-dcde-ec9ebafa1ff2@web.de>
-References: <87mugojl0f.fsf@notabene.neil.brown.name> <4862a29d-7e4f-5bc5-dcde-ec9ebafa1ff2@web.de>
-Message-ID: <87k1brkjpy.fsf@notabene.neil.brown.name>
+        id S1728043AbfHEK1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 06:27:35 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33680 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbfHEK1e (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Aug 2019 06:27:34 -0400
+Received: by mail-wm1-f65.google.com with SMTP id h19so6348472wme.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 03:27:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=DgcovKuK5WhPn6hVzFZNbyXAianIZnw5XWtwj+mlfWk=;
+        b=gss8EeR5X12LfVi2+J9AAWMozTzQdPLVsdW5p/aclrhoDSVTsMsXOPQ0M4lGz5E+nv
+         mlbVOfy9+3M77JhoAEODqIF7TFy9kmgQRTq7NTAafXv2VtTuyzmjCViP4gzbcREhjUZD
+         nVzlIKuNG2rM5W1/kJZ/okUNxYTZs2v1twOGjbtZvOVgq/wrQCYwN9EvblIcHtaC7zma
+         cJ+kPHlzxuE/w5KRRkge6ohdJGfz1ap4rpeigx4NemYUu7l72e3lUCqKmXnL5AGmaLXW
+         eL/n7zRpyk5lUtCOFsozR9HEFXZOPjCrKXR0XkJkTiKZLDq2+DcfYCZO088/D5F6iTya
+         aHKQ==
+X-Gm-Message-State: APjAAAUwsvm3LPZ04HSKXKey/zT4ATfyBe8a/KWqTrd2yLENyWG1EWi+
+        3TXp514L//BCDm2pSYGNs7bVzQ==
+X-Google-Smtp-Source: APXvYqzfF6AQaF4c4hasKzPBhxJz92+5NrrN/wf7wERzHvxkWGAMbXPySxFIwOZ5TpnC1TmHgNzNzg==
+X-Received: by 2002:a7b:cb94:: with SMTP id m20mr17390752wmi.144.1565000852931;
+        Mon, 05 Aug 2019 03:27:32 -0700 (PDT)
+Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
+        by smtp.gmail.com with ESMTPSA id n14sm160342770wra.75.2019.08.05.03.27.31
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 05 Aug 2019 03:27:32 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 12:27:30 +0200
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
+        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 4/9] fibmap: Use bmap instead of ->bmap method in
+ ioctl_fibmap
+Message-ID: <20190805102729.ooda6sg65j65ojd4@pegasus.maiolino.io>
+Mail-Followup-To: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
+        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
+        linux-xfs@vger.kernel.org
+References: <20190731141245.7230-1-cmaiolino@redhat.com>
+ <20190731141245.7230-5-cmaiolino@redhat.com>
+ <20190731231217.GV1561054@magnolia>
+ <20190802091937.kwutqtwt64q5hzkz@pegasus.maiolino.io>
+ <20190802151400.GG7138@magnolia>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802151400.GG7138@magnolia>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Fri, Aug 02, 2019 at 08:14:00AM -0700, Darrick J. Wong wrote:
+> On Fri, Aug 02, 2019 at 11:19:39AM +0200, Carlos Maiolino wrote:
+> > Hi Darrick.
+> > 
+> > > > +		return error;
+> > > > +
+> > > > +	block = ur_block;
+> > > > +	error = bmap(inode, &block);
+> > > > +
+> > > > +	if (error)
+> > > > +		ur_block = 0;
+> > > > +	else
+> > > > +		ur_block = block;
+> > > 
+> > > What happens if ur_block > INT_MAX?  Shouldn't we return zero (i.e.
+> > > error) instead of truncating the value?  Maybe the code does this
+> > > somewhere else?  Here seemed like the obvious place for an overflow
+> > > check as we go from sector_t to int.
+> > > 
+> > 
+> > The behavior should still be the same. It will get truncated, unfortunately. I
+> > don't think we can actually change this behavior and return zero instead of
+> > truncating it.
+> 
+> But that's even worse, because the programs that rely on FIBMAP will now
+> receive *incorrect* results that may point at a different file and
+> definitely do not point at the correct file block.
 
-On Mon, Aug 05 2019, Markus Elfring wrote:
+How is this worse? This is exactly what happens today, on the original FIBMAP
+implementation.
 
->> Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code
->> 	and interface")
->
-> Please do not split this tag across multiple lines in the final commit description.
+Maybe I am not seeing something or having a different thinking you have, but
+this is the behavior we have now, without my patches. And we can't really change
+it; the user view of this implementation.
+That's why I didn't try to change the result, so the truncation still happens.
+> 
+> Note also that the iomap (and therefore xfs) implementation WARNs on
+> integer overflow and returns 0 (error) to prevent an incorrect access.
 
-I tend to agree...
-I had previously seen
-     "Possible unwrapped commit description (prefer a maximum 75 chars per line)\n"
-warnings from checkpatch, but one closer look that doesn't apply to
-Fixes: lines (among other special cases).
+It does not really prevent anything. It just issue a warning saying the result
+will be truncated, in an attempt to notify the FIBMAP interface user that he/she
+can't trust the result, but it does not prevent a truncated result to be
+returned. And IIRC, iomap is the only interface now that cares about issuing a
+warning.
 
-Maybe Andrew will fix it up for me when it applies .... (please!)
+I think the *best* we could do here, is to make the new bmap() to issue the same
+kind of WARN() iomap does, but we can't really change the end result.
 
-Thanks,
-NeilBrown
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> --D
+> 
+> > > --D
+> > > 
+> > > > +
+> > > > +	error = put_user(ur_block, p);
+> > > > +
+> > > > +	return error;
+> > > >  }
+> > > >  
+> > > >  /**
+> > > > -- 
+> > > > 2.20.1
+> > > > 
+> > 
+> > -- 
+> > Carlos
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl1IACkACgkQOeye3VZi
-gbnoBw/+MWg2FKi+/XtUwIZGJ/Tj0U+YInK6cGf0qPoZLteDdWng3VCtF2J+XphI
-rX1TVSY9ihM6uIoJAT7SeILnS2m7IOfCgfxkM/8avqv0Opy6ar9TWlKKXCGFx+yL
-BHXgmrH1Z4LkyQrovPhCwi/++AHkuCSy3Wzb+9OahRSGxTCjCoSQXCksPXWlDShU
-IL+/bmGbVHvaFic6AiWeElMfHZrg4WXeaxXM9Rp+mWFbZhaWI7TIEyD9odd2tdxk
-mVMZkY5v74cDBkywx/K9yYfZ3qBwH5PS6gGodcmZisrSoyEzzR0PTGA2+AUyEiqV
-cWiGfYVzwfNHeRvoDGbikNOyiApRABuBXpqr5bmiRq9F98WJSpESStOtHMziQv6/
-pOD1TMvdEQFVL3CLiPdO5VDcA4XUJWYXnN+EGVDwTgw0AA8JytsAw2yRfzcFnIVw
-q5ZuFtlK7AoGOflHNSGd1lC9wfUE2frqYSCjgJIpY6oLMsqQkB1kQZIGr+xT/vgU
-XPkAyjh2+3wHeOG7w/7IEvKx4hzw+1BJRCUnMip7gakbkn3eijscm3DmDiUQT8f8
-vUaLC3y5jh9DWQDDgL4jVG5eV/WM27Gin63X+jYPCI3ctJS4hrxvNM7opfqwPqit
-ibOlp5B5GMhGHOpP5fXsiiiVaRFTjVk/9dW1sQ0tH2tUGUu/4j4=
-=ilJF
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Carlos
