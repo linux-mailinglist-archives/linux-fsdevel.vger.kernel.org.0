@@ -2,274 +2,339 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33EE581BD0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 15:17:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B85E881B16
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 15:11:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729317AbfHENFa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 09:05:30 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:29895 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729308AbfHENF3 (ORCPT
+        id S1730438AbfHENK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 09:10:57 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45689 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730413AbfHENK4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:05:29 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190805130527epoutp0152d6572f8ad785a33ac372852ec081be~4CJnDugTR1533215332epoutp019
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Aug 2019 13:05:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190805130527epoutp0152d6572f8ad785a33ac372852ec081be~4CJnDugTR1533215332epoutp019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1565010327;
-        bh=FP8ux3OTkd8fvlaQBEXL6CEm156hOz8+Jh5icRMsf2w=;
-        h=From:To:Subject:Date:References:From;
-        b=Y2CBe7wx7zFATsaDqua9S3ytj3SsP/DTKMdF6XrpY8R369Ygc3mlfgBXhr0Uyp61I
-         3b0brzSLX/M6fDIScU8cwz8q7uGfS9/zUXSziqAT1KSOj2AwyceEFwGF4cQ6/W+G/Q
-         qf3kfpOKepke2rNIJVntlUWv0QZAIDambNqPvyUc=
-Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190805130526epcas1p13714bd330f18070470fd72da935125e3~4CJmfFlAc0752407524epcas1p1v;
-        Mon,  5 Aug 2019 13:05:26 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp5.localdomain (Postfix) with ESMTP id 462J0P2j3GzMqYkc; Mon,  5 Aug
-        2019 13:05:25 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        25.35.04075.599284D5; Mon,  5 Aug 2019 22:05:25 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190805130524epcas1p27a4845fccaf66da2eb0b391bfe4da75f~4CJk_2iBo2928429284epcas1p2p;
-        Mon,  5 Aug 2019 13:05:24 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190805130524epsmtrp191fef8ddceb5d0a126efa4e56f69aa57~4CJk_KbVS1992919929epsmtrp1N;
-        Mon,  5 Aug 2019 13:05:24 +0000 (GMT)
-X-AuditID: b6c32a36-b49ff70000000feb-d5-5d482995ff7c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5B.F5.03706.499284D5; Mon,  5 Aug 2019 22:05:24 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.100.192]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190805130524epsmtip1bad200ba0aa478eb9d18115bdd9e2181~4CJkz3cfV2632326323epsmtip1y;
-        Mon,  5 Aug 2019 13:05:24 +0000 (GMT)
-From:   Jungseung Lee <js07.lee@samsung.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and
-        infrastructure)), linux-kernel@vger.kernel.org (open list),
-        js07.lee@gmail.com, js07.lee@samsung.com
-Subject: [PATCH] fs/binfmt_elf.c: remove unnecessary white space.
-Date:   Sun, 14 Jul 2019 08:53:44 +0900
-Message-Id: <20190713235344.24683-1-js07.lee@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7bCmvu5UTY9Yg5ftghZz1q9hs/g75x2T
-        xaObv1kt9uw9yWJxedccNovzf4+zOrB57Jx1l93jxIzfLB59W1YxenzeJOex6clbpgDWqByb
-        jNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKALlBTKEnNK
-        gUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFhgYFesWJucWleel6yfm5VoYGBkamQJUJORl3
-        jixgKXitXfGo/z5LA+N5pS5GTg4JAROJC2+XMYHYQgI7GCW23xbrYuQCsj8xSuxb1cIM4Xxj
-        lHizbQsjTMfrAx+hEnsZJRreT2SEcD4zSvz+8YANpIpNQEvixu9NrCAJEYFGJonvm7aCLREW
-        cJTY9nYpC4jNIqAqseveITCbV8BS4t31N1Ar5CVWbzgAtkJC4COrxP6d75kgEi4S71p3skLY
-        whKvjm9hh7ClJF72t0HZxRI7V05kh2huYZR4tHwJVMJY4t3btUBTOTiYBTQl1u/ShwgrSuz8
-        PRdsMbMAn8S7rz2sICUSArwSHW1CECVKEm8etLBA2BISFx73Qp3gIXF10iJmSODFSrxqfMA4
-        gVFmFsKCBYyMqxjFUguKc9NTiw0LjJCjZhMjOC1pme1gXHTO5xCjAAejEg+vgqx7rBBrYllx
-        Ze4hRgkOZiUR3kJmoBBvSmJlVWpRfnxRaU5q8SFGU2DoTWSWEk3OB6bMvJJ4Q1MjY2NjCxMz
-        czNTYyVx3oU/LGKFBNITS1KzU1MLUotg+pg4OKUaGDmjGuYV7nStObD87kKHm2u1ih03v3lm
-        7it1+qSb+n1esdrX8R/u1zmvtNhf9c1IqeLqSaaA6C+imknbWW5tiC6btZU5f+ZKtaSEez2b
-        hbOm7TpYfPf7JifHNTfavKZfWx178/KjnL1pdZdd31yP1jpbc4Jx8Zodh9zubdfznRqs+WHN
-        nVlCT4qVWIozEg21mIuKEwFDNReFYQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNJMWRmVeSWpSXmKPExsWy7bCSnO4UTY9Yg3MftC3mrF/DZvF3zjsm
-        i0c3f7Na7Nl7ksXi8q45bBbn/x5ndWDz2DnrLrvHiRm/WTz6tqxi9Pi8Sc5j05O3TAGsUVw2
-        Kak5mWWpRfp2CVwZd44sYCl4rV3xqP8+SwPjeaUuRk4OCQETidcHPjJ3MXJxCAnsZpSY+ecI
-        M0RCQuLRzi8sXYwcQLawxOHDxRA1Hxklfv05xAJSwyagJXHj9yZWkISIQCuTRPPmo0wgCWEB
-        R4ltb5eCFbEIqErsugfRwCtgKfHu+htGiAXyEqs3HGCewMi9gJFhFaNkakFxbnpusWGBYV5q
-        uV5xYm5xaV66XnJ+7iZGcJBoae5gvLwk/hCjAAejEg/vCSn3WCHWxLLiytxDjBIczEoivIXM
-        QCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8T/OORQoJpCeWpGanphakFsFkmTg4pRoYZ3Ev13Lb
-        2fFhqnac23K2LQbrfims+Wy7cZrCo5jvdgcE/2r4pza6s7C3l8ScymePfveU8R/LqcInv3Yt
-        P7zZ7H+GKLevZKP4wWPzBSaxM3WuV9pz7bxf+EvPadnXvWJMri9qYtyuJ3b7m790cb5s37Jv
-        poW2ykr/lSTKtBJ37Nqoa/acP7NZiaU4I9FQi7moOBEAtHRDiQ4CAAA=
-X-CMS-MailID: 20190805130524epcas1p27a4845fccaf66da2eb0b391bfe4da75f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190805130524epcas1p27a4845fccaf66da2eb0b391bfe4da75f
-References: <CGME20190805130524epcas1p27a4845fccaf66da2eb0b391bfe4da75f@epcas1p2.samsung.com>
+        Mon, 5 Aug 2019 09:10:56 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r1so39620159pfq.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 06:10:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iKjp1sxUDmAX2wgfYH2j9XCohNundn8m7dMqKgSLwMI=;
+        b=saBskzTkvd5+FOutbmH6Dqo7LDxB6j1lLBCs9c9SMjidr9mCGA3JZWUpgJ24D1jEWP
+         BYegX6h+4En4gHMNnjD2hkiM6LzR+gIgnvCH+Qv7kghjhnQ196JBcG8u6X82QA91+dxZ
+         AT0bQGPEEfkSIGpd4JlN2XA3pwAzzkgJGuH/g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iKjp1sxUDmAX2wgfYH2j9XCohNundn8m7dMqKgSLwMI=;
+        b=p32bpH4IJwtwjyNjNWflcWkWdxDuSA2HhmnmW23DZP32feOZT29mvfnYWpGXTl8ySR
+         YTnC6g9LqykAu8IYTZ/t9zWbZYxT06Zcf3jxf1sZsbi++2XVrEgHclU3dvnwWSy+FhiJ
+         OPXU5NMiE2gjM2XQiPfKBIcFKq6rmVMeUzcI3aKQ+BEr+2Iw3HmPQMPVBsfZDFcBdzmm
+         olSIQ7OEAWz9IvtZxusZcj9nVE/ky+jMNtO9Pxg5Zy1rtmFrmVNEqRqu0e/nxTgs8Nsw
+         TXgq9pqozHei2Bg0UGihl64FHPYaVbyB8mlr96g9UZh2tKFrKJAjc3CEh7aLAKtitxCX
+         yzGw==
+X-Gm-Message-State: APjAAAWVaW2DnxePpCLnb4dipcCf2Q4qNK5dv0olZJ1PdXpCEvSob/kH
+        hqTYXP2bVn+Dw3dQOrjMpYc=
+X-Google-Smtp-Source: APXvYqz6u3cCDYJg+E3Gaw42gMUYLq5q2x4d2s7eKbbvOoyG04W78eoEyJ1/Ww27pKnvOKH8Zeg+QQ==
+X-Received: by 2002:a63:3006:: with SMTP id w6mr14611039pgw.440.1565010654596;
+        Mon, 05 Aug 2019 06:10:54 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id d129sm89649753pfc.168.2019.08.05.06.10.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 05 Aug 2019 06:10:53 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 09:10:52 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, joaodias@google.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, namhyung@google.com,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        tkjos@google.com, Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, wvw@google.com
+Subject: Re: [PATCH v3 1/2] mm/page_idle: Add per-pid idle page tracking
+ using virtual indexing
+Message-ID: <20190805131052.GA208558@google.com>
+References: <20190726152319.134152-1-joel@joelfernandes.org>
+ <20190731085335.GD155569@google.com>
+ <20190731171937.GA75376@google.com>
+ <20190805075547.GA196934@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190805075547.GA196934@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- - spaces before tabs,
- - spaces at the end of lines,
- - multiple blank lines,
- - redundant blank lines,
- fix it.
+On Mon, Aug 05, 2019 at 04:55:47PM +0900, Minchan Kim wrote:
+> Hi Joel,
 
-Signed-off-by: Jungseung Lee <js07.lee@samsung.com>
----
- fs/binfmt_elf.c | 31 ++++++++++++-------------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+Hi Minchan,
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index cec3b4146440..5ba1944e3ce1 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -235,7 +235,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	} while (0)
- 
- #ifdef ARCH_DLINFO
--	/* 
-+	/*
- 	 * ARCH_DLINFO must come first so PPC can do its special alignment of
- 	 * AUXV.
- 	 * update AT_VECTOR_SIZE_ARCH if the number of NEW_AUX_ENT() in
-@@ -294,7 +294,6 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	sp = (elf_addr_t __user *)bprm->p;
- #endif
- 
--
- 	/*
- 	 * Grow the stack manually; some architectures have a limit on how
- 	 * far ahead a user-space access may be in order to grow the stack.
-@@ -344,7 +343,6 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- }
- 
- #ifndef elf_map
--
- static unsigned long elf_map(struct file *filep, unsigned long addr,
- 		const struct elf_phdr *eppnt, int prot, int type,
- 		unsigned long total_size)
-@@ -383,7 +381,6 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
- 
- 	return(map_addr);
- }
--
- #endif /* !elf_map */
- 
- static unsigned long total_mapping_size(const struct elf_phdr *cmds, int nr)
-@@ -456,7 +453,6 @@ static struct elf_phdr *load_elf_phdrs(const struct elfhdr *elf_ex,
- }
- 
- #ifndef CONFIG_ARCH_BINFMT_ELF_STATE
--
- /**
-  * struct arch_elf_state - arch-specific ELF loading state
-  *
-@@ -522,7 +518,6 @@ static inline int arch_check_elf(struct elfhdr *ehdr, bool has_interp,
- 	/* Dummy implementation, always proceed */
- 	return 0;
- }
--
- #endif /* !CONFIG_ARCH_BINFMT_ELF_STATE */
- 
- static inline int make_prot(u32 p_flags)
-@@ -542,7 +537,6 @@ static inline int make_prot(u32 p_flags)
-    so we keep this separate.  Technically the library read function
-    is only provided so that we can read a.out libraries that have
-    an ELF header */
--
- static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
- 		struct file *interpreter, unsigned long *interp_map_addr,
- 		unsigned long no_base, struct elf_phdr *interp_elf_phdata)
-@@ -669,7 +663,6 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
-  * These are the functions used to load ELF style executables and shared
-  * libraries.  There is no binary dependent code anywhere else.
-  */
--
- static int load_elf_binary(struct linux_binprm *bprm)
- {
- 	struct file *interpreter = NULL; /* to shut gcc up */
-@@ -697,7 +690,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		retval = -ENOMEM;
- 		goto out_ret;
- 	}
--	
-+
- 	/* Get the exec-header */
- 	loc->elf_ex = *((struct elfhdr *)bprm->buf);
- 
-@@ -866,7 +859,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 				 executable_stack);
- 	if (retval < 0)
- 		goto out_free_dentry;
--	
-+
- 	elf_bss = 0;
- 	elf_brk = 0;
- 
-@@ -888,7 +881,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 
- 		if (unlikely (elf_brk > elf_bss)) {
- 			unsigned long nbyte;
--	            
-+
- 			/* There was a PT_LOAD segment with p_memsz > p_filesz
- 			   before this one. Map anonymous pages, if needed,
- 			   and clear the area.  */
-@@ -1462,7 +1455,7 @@ static void fill_elf_note_phdr(struct elf_phdr *phdr, int sz, loff_t offset)
- 	phdr->p_align = 0;
- }
- 
--static void fill_note(struct memelfnote *note, const char *name, int type, 
-+static void fill_note(struct memelfnote *note, const char *name, int type,
- 		unsigned int sz, void *data)
- {
- 	note->name = name;
-@@ -1514,7 +1507,7 @@ static int fill_psinfo(struct elf_prpsinfo *psinfo, struct task_struct *p,
- {
- 	const struct cred *cred;
- 	unsigned int i, len;
--	
-+
- 	/* first copy the parameters from user space */
- 	memset(psinfo, 0, sizeof(struct elf_prpsinfo));
- 
-@@ -1548,7 +1541,7 @@ static int fill_psinfo(struct elf_prpsinfo *psinfo, struct task_struct *p,
- 	SET_GID(psinfo->pr_gid, from_kgid_munged(cred->user_ns, cred->gid));
- 	rcu_read_unlock();
- 	strncpy(psinfo->pr_fname, p->comm, sizeof(psinfo->pr_fname));
--	
-+
- 	return 0;
- }
- 
-@@ -1945,8 +1938,8 @@ static int elf_dump_thread_status(long signr, struct elf_thread_status *t)
- 	t->num_notes = 0;
- 
- 	fill_prstatus(&t->prstatus, p, signr);
--	elf_core_copy_task_regs(p, &t->prstatus.pr_reg);	
--	
-+	elf_core_copy_task_regs(p, &t->prstatus.pr_reg);
-+
- 	fill_note(&t->notes[0], "CORE", NT_PRSTATUS, sizeof(t->prstatus),
- 		  &(t->prstatus));
- 	t->num_notes++;
-@@ -1967,7 +1960,7 @@ static int elf_dump_thread_status(long signr, struct elf_thread_status *t)
- 		t->num_notes++;
- 		sz += notesize(&t->notes[2]);
- 	}
--#endif	
-+#endif
- 	return sz;
- }
- 
-@@ -2205,7 +2198,7 @@ static int elf_core_dump(struct coredump_params *cprm)
- 
- 	/*
- 	 * We no longer stop all VM operations.
--	 * 
-+	 *
- 	 * This is because those proceses that could possibly change map_count
- 	 * or the mmap / vma pages are now blocked in do_exit on current
- 	 * finishing this core dump.
-@@ -2214,7 +2207,7 @@ static int elf_core_dump(struct coredump_params *cprm)
- 	 * the map_count or the pages allocated. So no possibility of crashing
- 	 * exists while dumping the mm->vm_next areas to the core file.
- 	 */
--  
-+
- 	/* alloc memory for large data structures: too large to be on stack */
- 	elf = kmalloc(sizeof(*elf), GFP_KERNEL);
- 	if (!elf)
--- 
-2.17.1
+> On Wed, Jul 31, 2019 at 01:19:37PM -0400, Joel Fernandes wrote:
+> > > > -static struct page *page_idle_get_page(unsigned long pfn)
+> > > > +static struct page *page_idle_get_page(struct page *page_in)
+> > > 
+> > > Looks weird function name after you changed the argument.
+> > > Maybe "bool check_valid_page(struct page *page)"?
+> > 
+> > 
+> > I don't think so, this function does a get_page_unless_zero() on the page as well.
+> > 
+> > > >  {
+> > > >  	struct page *page;
+> > > >  	pg_data_t *pgdat;
+> > > >  
+> > > > -	if (!pfn_valid(pfn))
+> > > > -		return NULL;
+> > > > -
+> > > > -	page = pfn_to_page(pfn);
+> > > > +	page = page_in;
+> > > >  	if (!page || !PageLRU(page) ||
+> > > >  	    !get_page_unless_zero(page))
+> > > >  		return NULL;
+> > > > @@ -51,6 +49,18 @@ static struct page *page_idle_get_page(unsigned long pfn)
+> > > >  	return page;
+> > > >  }
+> > > >  
+> > > > +/*
+> > > > + * This function tries to get a user memory page by pfn as described above.
+> > > > + */
+> > > > +static struct page *page_idle_get_page_pfn(unsigned long pfn)
+> > > 
+> > > So we could use page_idle_get_page name here.
+> > 
+> > 
+> > Based on above comment, I prefer to keep same name. Do you agree?
+> 
+> Yes, I agree. Just please add a comment about refcount in the description
+> on page_idle_get_page.
+
+Ok.
+
+
+> > > > +	return page_idle_get_page(pfn_to_page(pfn));
+> > > > +}
+> > > > +
+> > > >  static bool page_idle_clear_pte_refs_one(struct page *page,
+> > > >  					struct vm_area_struct *vma,
+> > > >  					unsigned long addr, void *arg)
+> > > > @@ -118,6 +128,47 @@ static void page_idle_clear_pte_refs(struct page *page)
+> > > >  		unlock_page(page);
+> > > >  }
+> > > >  
+> > > > +/* Helper to get the start and end frame given a pos and count */
+> > > > +static int page_idle_get_frames(loff_t pos, size_t count, struct mm_struct *mm,
+> > > > +				unsigned long *start, unsigned long *end)
+> > > > +{
+> > > > +	unsigned long max_frame;
+> > > > +
+> > > > +	/* If an mm is not given, assume we want physical frames */
+> > > > +	max_frame = mm ? (mm->task_size >> PAGE_SHIFT) : max_pfn;
+> > > > +
+> > > > +	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	*start = pos * BITS_PER_BYTE;
+> > > > +	if (*start >= max_frame)
+> > > > +		return -ENXIO;
+> > > > +
+> > > > +	*end = *start + count * BITS_PER_BYTE;
+> > > > +	if (*end > max_frame)
+> > > > +		*end = max_frame;
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static bool page_really_idle(struct page *page)
+> > > 
+> > > Just minor:
+> > > Instead of creating new API, could we combine page_is_idle with
+> > > introducing furthere argument pte_check?
+> > 
+> > 
+> > I cannot see in the code where pte_check will be false when this is called? I
+> > could rename the function to page_idle_check_ptes() if that's Ok with you.
+> 
+> What I don't like is _*really*_ part of the funcion name.
+> 
+> I see several page_is_idle calls in huge_memory.c, migration.c, swap.c.
+> They could just check only page flag so they could use "false" with pte_check.
+
+I will rename it to page_idle_check_ptes(). If you want pte_check argument,
+that can be a later patch if/when there are other users for it in other
+files. Hope that's reasonable.
+
+
+> > > > +ssize_t page_idle_proc_generic(struct file *file, char __user *ubuff,
+> > > > +			       size_t count, loff_t *pos,
+> > > > +			       struct task_struct *tsk, int write)
+> > > > +{
+> > > > +	int ret;
+> > > > +	char *buffer;
+> > > > +	u64 *out;
+> > > > +	unsigned long start_addr, end_addr, start_frame, end_frame;
+> > > > +	struct mm_struct *mm = file->private_data;
+> > > > +	struct mm_walk walk = { .pmd_entry = pte_page_idle_proc_range, };
+> > > > +	struct page_node *cur;
+> > > > +	struct page_idle_proc_priv priv;
+> > > > +	bool walk_error = false;
+> > > > +	LIST_HEAD(idle_page_list);
+> > > > +
+> > > > +	if (!mm || !mmget_not_zero(mm))
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	if (count > PAGE_SIZE)
+> > > > +		count = PAGE_SIZE;
+> > > > +
+> > > > +	buffer = kzalloc(PAGE_SIZE, GFP_KERNEL);
+> > > > +	if (!buffer) {
+> > > > +		ret = -ENOMEM;
+> > > > +		goto out_mmput;
+> > > > +	}
+> > > > +	out = (u64 *)buffer;
+> > > > +
+> > > > +	if (write && copy_from_user(buffer, ubuff, count)) {
+> > > > +		ret = -EFAULT;
+> > > > +		goto out;
+> > > > +	}
+> > > > +
+> > > > +	ret = page_idle_get_frames(*pos, count, mm, &start_frame, &end_frame);
+> > > > +	if (ret)
+> > > > +		goto out;
+> > > > +
+> > > > +	start_addr = (start_frame << PAGE_SHIFT);
+> > > > +	end_addr = (end_frame << PAGE_SHIFT);
+> > > > +	priv.buffer = buffer;
+> > > > +	priv.start_addr = start_addr;
+> > > > +	priv.write = write;
+> > > > +
+> > > > +	priv.idle_page_list = &idle_page_list;
+> > > > +	priv.cur_page_node = 0;
+> > > > +	priv.page_nodes = kzalloc(sizeof(struct page_node) *
+> > > > +				  (end_frame - start_frame), GFP_KERNEL);
+> > > > +	if (!priv.page_nodes) {
+> > > > +		ret = -ENOMEM;
+> > > > +		goto out;
+> > > > +	}
+> > > > +
+> > > > +	walk.private = &priv;
+> > > > +	walk.mm = mm;
+> > > > +
+> > > > +	down_read(&mm->mmap_sem);
+> > > > +
+> > > > +	/*
+> > > > +	 * idle_page_list is needed because walk_page_vma() holds ptlock which
+> > > > +	 * deadlocks with page_idle_clear_pte_refs(). So we have to collect all
+> > > > +	 * pages first, and then call page_idle_clear_pte_refs().
+> > > > +	 */
+> > > 
+> > > Thanks for the comment, I was curious why you want to have
+> > > idle_page_list and the reason is here.
+> > > 
+> > > How about making this /proc/<pid>/page_idle per-process granuariy,
+> > > unlike system level /sys/xxx/page_idle? What I meant is not to check
+> > > rmap to see any reference from random process but just check only
+> > > access from the target process. It would be more proper as /proc/
+> > > <pid>/ interface and good for per-process tracking as well as
+> > > fast.
+> > 
+> > 
+> > I prefer not to do this for the following reasons:
+> > (1) It makes a feature lost, now accesses to shared pages will not be
+> > accounted properly. 
+> 
+> Do you really want to check global attribute by per-process interface?
+
+Pages are inherrently not per-process, they are global. A page does not
+necessarily belong to a process. An anonymous page can be shared. We are
+operating on pages in the end of the day.
+
+I think you are confusing the per-process file interface with the core
+mechanism. The core mechanism always operations on physical PAGES.
+
+
+> That would be doable with existing idle page tracking feature and that's
+> the one of reasons page idle tracking was born(e.g. even, page cache
+> for non-mapped) unlike clear_refs.
+
+I think you are misunderstanding the patch, the patch does not want to change
+the core mechanism. That is a bit out of scope for the patch. Page
+idle-tracking at the core of it looks at PTE of all processes. We are just
+using the VFN (virtual frame) interface to skip the need for separate pagemap
+look up -- that's it.
+
+
+> Once we create a new interface by per-process, just checking the process
+> -granuariy access check sounds more reasonable to me.
+
+It sounds reasonable but there is no reason to not do the full and proper
+page tracking for now, including shared pages. Otherwise it makes it
+inconsistent with the existing mechanism and can confuse the user about what
+to expect (especially for shared pages).
+
+
+> With that, we could catch only idle pages of the target process even though
+> the page was touched by several other processes.
+> If the user want to know global level access point, they could use
+> exisint interface(If there is a concern(e.g., security) to use existing
+> idle page tracking, let's discuss it as other topic how we could make
+> existing feature more useful).
+> 
+> IOW, my point is that we already have global access check(1. from ptes
+> among several processes, 2. from page flag for non-mapped pages) feature
+> from from existing idle page tracking interface and now we are about to create
+> new interface for per-process wise so I wanted to create a particular
+> feature which cannot be covered by existing iterface.
+
+Yes, it sounds like you want to create a different feature. Then that can be
+a follow-up different patch, and that is out of scope for this patch.
+
+
+> > (2) It makes it inconsistent with other idle page tracking mechanism. I
+> 
+> That's the my comment to create different idle page tracking we couldn't
+> do with existing interface.
+
+Yes, sure. But that can be a different patch and we can weigh the benefits of
+it at that time. I don't want to introduce a new page tracking mechanism, I
+am just trying to reuse the existing one.
+
+
+> > prefer if post per-process. At the heart of it, the tracking is always at the
+> 
+> What does it mean "post per-process"?
+
+Sorry it was a typo, I meant "the core mechanism should not be a per-process
+one, but a global one". We are just changing the interface in this patch, we
+are not changing the existing core mechanism. That gives us all the benefits
+of the existing code such as non-interference with page reclaim code, without
+introducing any new bugs. By the way I did fix a bug in the existing original
+code as well!
+
+
+> > physical page level -- I feel that is how it should be. Other drawback, is
+> > also we have to document this subtlety.
+> 
+> Sorry, Could you elaborate it a bit?
+
+I meant, with a new mechanism as the one you are proposing, we have to
+document that now shared pages will not be tracked properly. That is a
+'subtle difference' and will have to be documented appropriated in the
+'internals' section of the idle page tracking document.
+
+thanks,
+
+ - Joel
 
