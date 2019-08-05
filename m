@@ -2,232 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3184826CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 23:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 848D1826D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 23:27:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730651AbfHEV0A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 17:26:00 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37340 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729383AbfHEV0A (ORCPT
+        id S1730055AbfHEV15 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 17:27:57 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:42279 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728885AbfHEV15 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 17:26:00 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 19so40268531pfa.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 14:25:59 -0700 (PDT)
+        Mon, 5 Aug 2019 17:27:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1565040485; x=1596576485;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=eMNh1gT9MWn/zDJlqYC5eANfsBjruhwjvIbuOBC/UHo=;
+  b=DoPEv6m6GaDTADlQWe9lIulo7OoFTJARKFkBN3qP6/tR3iyo7as65ki0
+   itdC4S16OJ7I+Y7fQVUskcifNrZb62GPJQg1ED+bv3S6nxHl16nuwoHCZ
+   0sPzdyXcYXMlk5A0dz0KLV6Y/iu9ZgOpSLAxPOfNGqxOs1xqTENVwkj6A
+   GvBo29Bl6phNryUBteLGH86tuubWiSiOt2QPInzrLCgNXZXD+a2SKLdzS
+   lnJ4SzmJUDVjdbPEsrPsMw11PPjIsxWbFM/4BOSBm+QVwlzd0yE+ItZc+
+   J4jdkciUxFWa9XxsNoD/pF9b0W8mIQR1/MJKC0aUbXhGTXF77jHdD91uC
+   w==;
+IronPort-SDR: TaD8JvcGdfv132Ak9JGK7wYr92IbBMMUSJyEkWx47T2vZ760WP3SXnssy2Z/q+mBt6gppWAJUh
+ RC8S1kmbfy2JrfKYXJoCGwc5FoBoEMs5kB4W7PbvKCPgWKKAfkhnZyQCXPR3+NgFritjVkQfvh
+ gfOTdU4/jWf0/xEXrEo4cuNxRa+ndyDXdVercRBldvGni9nZDMvMH3mMfgGrrDn0lQUNCoXpNO
+ y75Y7jYStW3XNSu5UycUekFJ3HHrOUfwWEJXjUiq39rK40vIj/RRPDTCKAquv4/+QPTyr5EQUl
+ swM=
+X-IronPort-AV: E=Sophos;i="5.64,350,1559491200"; 
+   d="scan'208";a="215330936"
+Received: from mail-dm3nam03lp2053.outbound.protection.outlook.com (HELO NAM03-DM3-obe.outbound.protection.outlook.com) ([104.47.41.53])
+  by ob1.hgst.iphmx.com with ESMTP; 06 Aug 2019 05:28:03 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kXyqqGEPXjWPSHgyJMT+F/6FZIUcXnVXo1tp+LUSRW5fI+b3ew1Cew7kpkJSkAKnzuKpC6sThA62JocnGPjctkjMNq7OA4bQIWOsUbTK5+fm4vrV0GW0Fu4qa46A0fBuInN1a5ZQQR6PObWjahjq0YcbCUd84aA9AG0aqsFKKnCbB3t7Sh+FFOmQe4+nxqCH+p+3Hnv2WXnqOJLy66hQ8VzgiC1JtqgFoF+wkp8Z4MoK0ITdxppsDDENr4Y3THLpiDBbbqkja7fYgi0WRRY0IBm4dnsRFro+z7HrCf1QFd/1COSMYWxOupQVl/sD3jZ4VNlANkqmFyt717T4eX7DiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eMNh1gT9MWn/zDJlqYC5eANfsBjruhwjvIbuOBC/UHo=;
+ b=LCEWvv4SbI14qPQOTb8BQ7FI/vyqdvd4SdSbmTilRvIEHxGcb/+Br3xzxtbU4n0DAiCbES0i6KOVm0WwnlRGYsETVYmOS+m6zI1XN7YfD84QyxecGAsQ+x2NU1oshdvg1CzqzljDE+dfCkxXKgNVgBupRPel1mTN6Hg4ueDky5pqJKkEm44VjTeENW9sqdn7G03OJ65qNoFSK1r/ouedZBghj17IjntbGvq14Hgwr5/ICzFVeykr18TSNoIHVTuF/0LXOaJq3MIjwrHWMt22VLxWtXvErm4N48jL/4hUfo/kyTtHCsSUU6hGOFzbqBgjfsQo+ljj1LJ9IClXcgC8QA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=wdc.com;dmarc=pass action=none header.from=wdc.com;dkim=pass
+ header.d=wdc.com;arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HZv6SHgnfFGUnvHs26MJkyyTTISMQA26+kNi4JJ104w=;
-        b=Ia01FOEsE2/aSHOGAV4EJ7i89jSmVVIHvWS+tpVRcW+43Xh5PMMlpMHf+RKUFsvQMZ
-         oR/cERKYx+YYPii8i6KJFGlvCv4Q9V814q2UtZzUN/t3+NoFBRP3AGmpcasmOMXEBKbz
-         U/P+N8oo5vXHmc8QeeF/yoIaVaCRmhcvw2MuFDeFnXJGlCIw1L0NAoI61u8LQJycOU1o
-         yjpesUgKPbg6CbaJDOSn6AlJM1KUW/XIgBHy8GByCsitqkjmONKYdg3lL3VTjnCdpqoZ
-         A3dl+bnkyjAPJ6H6a3Gtfoek5sUjp7v92h+aho0iCTf4hjek9kp48p+3a+aEnx/KeEUL
-         Qd9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HZv6SHgnfFGUnvHs26MJkyyTTISMQA26+kNi4JJ104w=;
-        b=X/7XWcHmvZM5EH1kRXyjwVSOg3oI5/OKiVKkK44Y+sPnCjsanTmt9zH3HayZz78Lc2
-         mky2ZDJzNinVZmCrU1aiRBzGK8MPQ+EDLla00opG3UYCZsbFnU/aB6POkDnCaI/2GDG1
-         MowIuKyLD600G83UWdxNZJxWXoURDtEYt955Cix7ORK8rYoMqLGrpbPEmKgDZ9PIleMb
-         dGK4lZROVYnYco2RVjJZJNG6SD6Bl9XGXFCdbPIEatxGBAt/FAmHealgZnWIRGhbgLyI
-         dNNn6+exmlvEQ/IOj3SD5kN2xeWyK7kQUDXK7oI60QYaMJrQvnuIgn8ebmH/S9qSiJDo
-         MKiQ==
-X-Gm-Message-State: APjAAAX4rochh0PPE/I66wmviw7LBY3cm07VKLMDYZ/c2sc9O/CxqT9/
-        5B6CKHzuESQ+P1x/3pK0vZYEFw==
-X-Google-Smtp-Source: APXvYqxo6op5PN/0M+mvuAE3ue6x9gJswC6FwyYnXbmNNh7F0zvD/i2hms12zIwUJevuSQYagUSl/Q==
-X-Received: by 2002:a62:be0c:: with SMTP id l12mr58715pff.224.1565040359116;
-        Mon, 05 Aug 2019 14:25:59 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:83a1:3cf5:36ed:899e:8d54? ([2605:e000:100e:83a1:3cf5:36ed:899e:8d54])
-        by smtp.gmail.com with ESMTPSA id 65sm90141160pgf.30.2019.08.05.14.25.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2019 14:25:57 -0700 (PDT)
-Subject: Re: Block device direct read EIO handling broken?
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eMNh1gT9MWn/zDJlqYC5eANfsBjruhwjvIbuOBC/UHo=;
+ b=V4f2ekug2MAEKXDl8CpMQXlUKZFY0MXRZUpGX2IdejMj1Ce7x4ExeLkKGPp62bNQJEYSOdsMsvNvoGiTPmV8PKjXbvwOTvIDdTIGp9bKxLOB+LkUlu8YTgK/tqT+XlJ6omGZKXvQU+7EFpQ7gVuEsjZFqTIzXJPFtgxofTAbJjc=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
+ BYAPR04MB4309.namprd04.prod.outlook.com (20.176.251.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.15; Mon, 5 Aug 2019 21:27:55 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::65a9:db0a:646d:eb1e]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::65a9:db0a:646d:eb1e%6]) with mapi id 15.20.2136.018; Mon, 5 Aug 2019
+ 21:27:55 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Jens Axboe <axboe@kernel.dk>,
         "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
         xfs <linux-xfs@vger.kernel.org>
+Subject: Re: Block device direct read EIO handling broken?
+Thread-Topic: Block device direct read EIO handling broken?
+Thread-Index: AQHVS7nFgL74Ixb2GU6mfuU8L6+VdQ==
+Date:   Mon, 5 Aug 2019 21:27:54 +0000
+Message-ID: <BYAPR04MB5816C3B24310C1E18F9E024CE7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
 References: <20190805181524.GE7129@magnolia>
  <66bd785d-7598-5cc2-5e98-447fd128c153@kernel.dk>
  <36973a52-e876-fc09-7a63-2fc16b855f8d@kernel.dk>
  <BYAPR04MB5816246256B1333C048EB0A1E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <474c560f-5de0-6082-67ac-f7c640d9b346@kernel.dk>
-Date:   Mon, 5 Aug 2019 14:25:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <BYAPR04MB5816246256B1333C048EB0A1E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+ <474c560f-5de0-6082-67ac-f7c640d9b346@kernel.dk>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [129.253.182.57]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bc5e54b9-6756-4f1b-cbdb-08d719ebc76c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB4309;
+x-ms-traffictypediagnostic: BYAPR04MB4309:
+x-microsoft-antispam-prvs: <BYAPR04MB430911A99209AD84411B932FE7DA0@BYAPR04MB4309.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 01208B1E18
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(346002)(376002)(396003)(39860400002)(136003)(51444003)(199004)(189003)(8936002)(71190400001)(76116006)(53546011)(14454004)(6436002)(102836004)(33656002)(7736002)(86362001)(76176011)(6506007)(6246003)(53936002)(66446008)(305945005)(6116002)(4744005)(26005)(316002)(7696005)(66946007)(4326008)(256004)(2906002)(71200400001)(99286004)(66476007)(55016002)(66556008)(8676002)(68736007)(486006)(229853002)(110136005)(5660300002)(52536014)(66066001)(54906003)(81156014)(476003)(64756008)(81166006)(3846002)(9686003)(74316002)(186003)(446003)(25786009)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4309;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: VN7NTpfLrad4+eBAp+6NPivB3ShwlDO2X+uGu8RmSzgJTP0sW7hanE1govhm2QdWaLX4TQZBAxqf3xe0466mQpdO4uWELydENhUIpcUB52BtjOl2vW1oiZevPiG3tswk7C1PHaiNawoNX2K4lfFJPhRg7mvc01RCmwBUDU4fEVK4HQX0wp7aVfk6Tb86CojVpgglqK9T6iCiR3vay5B3hFDuIbliRT1Kov/TlBkDzAzxhimn8vVjraE767XXzwJqGron9Q/Y2qhbn6KcbAIiZxml826v8jr1gpA2FISczRa1gdbSdeBMtuwsdSU3kGdZJm4dYrCbrf21pxv3wxEd7NN/TxFZvch9eie2W1dpdn+tiQG6nJNOexeRE9scOtwOXSBoJllzw3frZWYDQep1sLcWrkq2nA23Iae05BKdL9Q=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc5e54b9-6756-4f1b-cbdb-08d719ebc76c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2019 21:27:54.8020
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4309
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/5/19 2:08 PM, Damien Le Moal wrote:
-> On 2019/08/06 5:31, Jens Axboe wrote:
->> On 8/5/19 11:31 AM, Jens Axboe wrote:
->>> On 8/5/19 11:15 AM, Darrick J. Wong wrote:
->>>> Hi Damien,
->>>>
->>>> I noticed a regression in xfs/747 (an unreleased xfstest for the
->>>> xfs_scrub media scanning feature) on 5.3-rc3.  I'll condense that down
->>>> to a simpler reproducer:
->>>>
->>>> # dmsetup table
->>>> error-test: 0 209 linear 8:48 0
->>>> error-test: 209 1 error
->>>> error-test: 210 6446894 linear 8:48 210
->>>>
->>>> Basically we have a ~3G /dev/sdd and we set up device mapper to fail IO
->>>> for sector 209 and to pass the io to the scsi device everywhere else.
->>>>
->>>> On 5.3-rc3, performing a directio pread of this range with a < 1M buffer
->>>> (in other words, a request for fewer than MAX_BIO_PAGES bytes) yields
->>>> EIO like you'd expect:
->>>>
->>>> # strace -e pread64 xfs_io -d -c 'pread -b 1024k 0k 1120k' /dev/mapper/error-test
->>>> pread64(3, 0x7f880e1c7000, 1048576, 0)  = -1 EIO (Input/output error)
->>>> pread: Input/output error
->>>> +++ exited with 0 +++
->>>>
->>>> But doing it with a larger buffer succeeds(!):
->>>>
->>>> # strace -e pread64 xfs_io -d -c 'pread -b 2048k 0k 1120k' /dev/mapper/error-test
->>>> pread64(3, "XFSB\0\0\20\0\0\0\0\0\0\fL\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 1146880, 0) = 1146880
->>>> read 1146880/1146880 bytes at offset 0
->>>> 1 MiB, 1 ops; 0.0009 sec (1.124 GiB/sec and 1052.6316 ops/sec)
->>>> +++ exited with 0 +++
->>>>
->>>> (Note that the part of the buffer corresponding to the dm-error area is
->>>> uninitialized)
->>>>
->>>> On 5.3-rc2, both commands would fail with EIO like you'd expect.  The
->>>> only change between rc2 and rc3 is commit 0eb6ddfb865c ("block: Fix
->>>> __blkdev_direct_IO() for bio fragments").
->>>>
->>>> AFAICT we end up in __blkdev_direct_IO with a 1120K buffer, which gets
->>>> split into two bios: one for the first BIO_MAX_PAGES worth of data (1MB)
->>>> and a second one for the 96k after that.
->>>>
->>>> I think the problem is that every time we submit a bio, we increase ret
->>>> by the size of that bio, but at the time we do that we have no idea if
->>>> the bio is going to succeed or not.  At the end of the function we do:
->>>>
->>>> 	if (!ret)
->>>> 		ret = blk_status_to_errno(dio->bio.bi_status);
->>>>
->>>> Which means that we only pick up the IO error if we haven't already set
->>>> ret.  I suppose that was useful for being able to return a short read,
->>>> but now that we always increment ret by the size of the bio, we act like
->>>> the whole buffer was read.  I tried a -rc2 kernel and found that 40% of
->>>> the time I'd get an EIO and the rest of the time I got a short read.
->>>>
->>>> Not sure where to go from here, but something's not right...
->>>
->>> I'll take a look.
->>
->> How about this? The old code did:
->>
->> 	if (!ret)
->> 		ret = blk_status_to_errno(dio->bio.bi_status);
->> 	if (likely(!ret))
->> 		ret = dio->size;
->>
->> where 'ret' was just tracking the error. With 'ret' now being the
->> positive IO size, we should overwrite it if ret is >= 0, not just if
->> it's zero.
->>
->> Also kill a use-after-free.
->>
->> diff --git a/fs/block_dev.c b/fs/block_dev.c
->> index a6f7c892cb4a..67c8e87c9481 100644
->> --- a/fs/block_dev.c
->> +++ b/fs/block_dev.c
->> @@ -386,6 +386,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   
->>   	ret = 0;
->>   	for (;;) {
->> +		ssize_t this_size;
->>   		int err;
->>   
->>   		bio_set_dev(bio, bdev);
->> @@ -433,13 +434,14 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   				polled = true;
->>   			}
->>   
->> +			this_size = bio->bi_iter.bi_size;
->>   			qc = submit_bio(bio);
->>   			if (qc == BLK_QC_T_EAGAIN) {
->>   				if (!ret)
->>   					ret = -EAGAIN;
->>   				goto error;
->>   			}
->> -			ret = dio->size;
->> +			ret += this_size;
->>   
->>   			if (polled)
->>   				WRITE_ONCE(iocb->ki_cookie, qc);
->> @@ -460,13 +462,14 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   			atomic_inc(&dio->ref);
->>   		}
->>   
->> +		this_size = bio->bi_iter.bi_size;
->>   		qc = submit_bio(bio);
->>   		if (qc == BLK_QC_T_EAGAIN) {
->>   			if (!ret)
->>   				ret = -EAGAIN;
->>   			goto error;
->>   		}
->> -		ret = dio->size;
->> +		ret += this_size;
->>   
->>   		bio = bio_alloc(gfp, nr_pages);
->>   		if (!bio) {
->> @@ -494,7 +497,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   	__set_current_state(TASK_RUNNING);
->>   
->>   out:
->> -	if (!ret)
->> +	if (ret >= 0)
->>   		ret = blk_status_to_errno(dio->bio.bi_status);
->>   
->>   	bio_put(&dio->bio);
->>
-> 
-> Jens,
-> 
-> I would set "this_size" when dio->size is being incremented though, to avoid
-> repeating it.
-> 
-> 		if (nowait)
-> 			bio->bi_opf |= (REQ_NOWAIT | REQ_NOWAIT_INLINE);
-> 
-> +		this_size = bio->bi_iter.bi_size;
-> -		dio->size += bio->bi_iter.bi_size;
-> +		dio->size += this_size;
-> 		pos += bio->bi_iter.bi_size;
-> 
-> In any case, looking again at this code, it looks like there is a
-> problem with dio->size being incremented early, even for fragments
-> that get BLK_QC_T_EAGAIN, because dio->size is being used in
-> blkdev_bio_end_io(). So an incorrect size can be reported to user
-> space in that case on completion (e.g. large asynchronous no-wait dio
-> that cannot be issued in one go).
-> 
-> So maybe something like this ? (completely untested)
-
-I think that looks pretty good, I like not double accounting with
-this_size and dio->size, and we retain the old style ordering for the
-ret value.
-
--- 
-Jens Axboe
-
+On 2019/08/06 6:26, Jens Axboe wrote:=0A=
+>> In any case, looking again at this code, it looks like there is a=0A=
+>> problem with dio->size being incremented early, even for fragments=0A=
+>> that get BLK_QC_T_EAGAIN, because dio->size is being used in=0A=
+>> blkdev_bio_end_io(). So an incorrect size can be reported to user=0A=
+>> space in that case on completion (e.g. large asynchronous no-wait dio=0A=
+>> that cannot be issued in one go).=0A=
+>>=0A=
+>> So maybe something like this ? (completely untested)=0A=
+> =0A=
+> I think that looks pretty good, I like not double accounting with=0A=
+> this_size and dio->size, and we retain the old style ordering for the=0A=
+> ret value.=0A=
+=0A=
+Do you want a proper patch with real testing backup ? I can send that later=
+ today.=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
