@@ -2,150 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B39D780F7D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 01:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 149A180F98
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 02:23:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfHDX4O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Aug 2019 19:56:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbfHDX4N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Aug 2019 19:56:13 -0400
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C65BF2182B
-        for <linux-fsdevel@vger.kernel.org>; Sun,  4 Aug 2019 23:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564962973;
-        bh=hacK3bFBwtrAv/U9OhwzLwLEIvnI+bjiQ7pJZVwvUsc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HE6lxrmjjgnSG6WMJBYy7hwTcselKZPNXoRvcHYGTFNp3d++lIEJWhIZhGyVTS0ij
-         H5FuIRXvlb9WQVf0AEMhzx6VdSK1wG/sCITYb3PR/VuWOOcW49nSAPUIywi/xC3Yyi
-         uwJfifblUxcnxoOJG8iVwLXlt2VK74AOKZDUbEtI=
-Received: by mail-wr1-f49.google.com with SMTP id y4so82575670wrm.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Aug 2019 16:56:12 -0700 (PDT)
-X-Gm-Message-State: APjAAAXPqVrsurBuDn5HGEFNZIObO9MHK8mhU5rITfsceCttbSiLJblY
-        GhnShQK0RwAGZr/Dl9vPJcoA4Qlb80VIOlo3osU+eA==
-X-Google-Smtp-Source: APXvYqxn3tZqaoihIH7prfCxvRtZSNWX//uET+sc6tDLm69XbTAHCOuntBreYunR4c+HxPSsMOCqCHJjQE50/g3L7Sc=
-X-Received: by 2002:adf:dd0f:: with SMTP id a15mr3574634wrm.265.1564962969300;
- Sun, 04 Aug 2019 16:56:09 -0700 (PDT)
+        id S1726849AbfHEAXe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Aug 2019 20:23:34 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:59430 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726687AbfHEAXe (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 4 Aug 2019 20:23:34 -0400
+Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id CA7A943C668;
+        Mon,  5 Aug 2019 10:23:30 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1huQWU-0004yD-Oe; Mon, 05 Aug 2019 10:06:46 +1000
+Date:   Mon, 5 Aug 2019 10:06:46 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        hch@lst.de, darrick.wong@oracle.com, ruansy.fnst@cn.fujitsu.com,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 01/13] iomap: Use a IOMAP_COW/srcmap for a
+ read-modify-write I/O
+Message-ID: <20190805000646.GE7689@dread.disaster.area>
+References: <20190802220048.16142-1-rgoldwyn@suse.de>
+ <20190802220048.16142-2-rgoldwyn@suse.de>
 MIME-Version: 1.0
-References: <20181212081712.32347-1-mic@digikod.net> <20181212081712.32347-2-mic@digikod.net>
- <20181212144306.GA19945@quack2.suse.cz>
-In-Reply-To: <20181212144306.GA19945@quack2.suse.cz>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 4 Aug 2019 16:55:58 -0700
-X-Gmail-Original-Message-ID: <CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com>
-Message-ID: <CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
-To:     Jan Kara <jack@suse.cz>, Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802220048.16142-2-rgoldwyn@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
+        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=iox4zFpeAAAA:8 a=7-415B0cAAAA:8 a=SFhizr9xAZVoVlNa-MkA:9
+        a=7pQHo9rnygU7WqxJ:21 a=V4KWhuw05m0eOdV2:21 a=CjuIK1q_8ugA:10
+        a=WzC6qhA0u3u7Ye7llzcV:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 6:43 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 12-12-18 09:17:08, Micka=C3=ABl Sala=C3=BCn wrote:
-> > When the O_MAYEXEC flag is passed, sys_open() may be subject to
-> > additional restrictions depending on a security policy implemented by a=
-n
-> > LSM through the inode_permission hook.
-> >
-> > The underlying idea is to be able to restrict scripts interpretation
-> > according to a policy defined by the system administrator.  For this to
-> > be possible, script interpreters must use the O_MAYEXEC flag
-> > appropriately.  To be fully effective, these interpreters also need to
-> > handle the other ways to execute code (for which the kernel can't help)=
-:
-> > command line parameters (e.g., option -e for Perl), module loading
-> > (e.g., option -m for Python), stdin, file sourcing, environment
-> > variables, configuration files...  According to the threat model, it ma=
-y
-> > be acceptable to allow some script interpreters (e.g. Bash) to interpre=
-t
-> > commands from stdin, may it be a TTY or a pipe, because it may not be
-> > enough to (directly) perform syscalls.
-> >
-> > A simple security policy implementation is available in a following
-> > patch for Yama.
-> >
-> > This is an updated subset of the patch initially written by Vincent
-> > Strubel for CLIP OS:
-> > https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb33=
-0d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> > This patch has been used for more than 10 years with customized script
-> > interpreters.  Some examples can be found here:
-> > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=3DO_=
-MAYEXEC
-> >
-> > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> > Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-> > Reviewed-by: Philippe Tr=C3=A9buchet <philippe.trebuchet@ssi.gouv.fr>
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Micka=C3=ABl Sala=C3=BCn <mickael.salaun@ssi.gouv.fr>
->
-> ...
->
-> > diff --git a/fs/open.c b/fs/open.c
-> > index 0285ce7dbd51..75479b79a58f 100644
-> > --- a/fs/open.c
-> > +++ b/fs/open.c
-> > @@ -974,6 +974,10 @@ static inline int build_open_flags(int flags, umod=
-e_t mode, struct open_flags *o
-> >       if (flags & O_APPEND)
-> >               acc_mode |=3D MAY_APPEND;
-> >
-> > +     /* Check execution permissions on open. */
-> > +     if (flags & O_MAYEXEC)
-> > +             acc_mode |=3D MAY_OPENEXEC;
-> > +
-> >       op->acc_mode =3D acc_mode;
-> >
-> >       op->intent =3D flags & O_PATH ? 0 : LOOKUP_OPEN;
->
-> I don't feel experienced enough in security to tell whether we want this
-> functionality or not. But if we do this, shouldn't we also set FMODE_EXEC
-> on the resulting struct file? That way also security_file_open() can be
-> used to arbitrate such executable opens and in particular
-> fanotify permission event FAN_OPEN_EXEC will get properly generated which=
- I
-> guess is desirable (support for it is sitting in my tree waiting for the
-> merge window) - adding some audit people involved in FAN_OPEN_EXEC to
-> CC. Just an idea...
->
+On Fri, Aug 02, 2019 at 05:00:36PM -0500, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> 
+> Introduces a new type IOMAP_COW, which means the data at offset
+> must be read from a srcmap and copied before performing the
+> write on the offset.
+> 
+> The srcmap is used to identify where the read is to be performed
+> from. This is passed to iomap->begin() of the respective
+> filesystem, which is supposed to put in the details for
+> reading before performing the copy for CoW.
+> 
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> ---
+>  fs/dax.c               |  8 +++++---
+>  fs/ext2/inode.c        |  2 +-
+>  fs/ext4/inode.c        |  2 +-
+>  fs/gfs2/bmap.c         |  3 ++-
+>  fs/iomap/apply.c       |  5 +++--
+>  fs/iomap/buffered-io.c | 14 +++++++-------
+>  fs/iomap/direct-io.c   |  2 +-
+>  fs/iomap/fiemap.c      |  4 ++--
+>  fs/iomap/seek.c        |  4 ++--
+>  fs/iomap/swapfile.c    |  3 ++-
+>  fs/xfs/xfs_iomap.c     |  9 ++++++---
+>  include/linux/iomap.h  |  6 ++++--
+>  12 files changed, 36 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index a237141d8787..b21d9a9cde2b 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -1090,7 +1090,7 @@ EXPORT_SYMBOL_GPL(__dax_zero_page_range);
+>  
+>  static loff_t
+>  dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> -		struct iomap *iomap)
+> +		struct iomap *iomap, struct iomap *srcmap)
+>  {
+>  	struct block_device *bdev = iomap->bdev;
+>  	struct dax_device *dax_dev = iomap->dax_dev;
+> @@ -1248,6 +1248,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+>  	unsigned long vaddr = vmf->address;
+>  	loff_t pos = (loff_t)vmf->pgoff << PAGE_SHIFT;
+>  	struct iomap iomap = { 0 };
+> +	struct iomap srcmap = { 0 };
 
-I would really like to land this patch.  I'm fiddling with making
-bpffs handle permissions intelligently, and the lack of a way to say
-"hey, I want to open this bpf program so that I can run it" is
-annoying.
+I'm not found of defining multiple iomaps everywhere and passing
+them explicitly to every function that might need them.  Perhaps
+something like:
 
---Andy
+	DEFINE_IOMAP(iomap);
+
+#define IOMAP_BASE_MAP		0
+#define IOMAP_SOURCE_MAP	1
+#define IOMAP_MAX_MAPS		2
+
+#define DEFINE_IOMAP(name)	\
+	(struct iomap #name[IOMAP_MAX_MAPS] = {{0}})
+
+#define IOMAP_B(name)		((name)[IOMAP_BASE_MAP])
+#define IOMAP_S(name)		((name)[IOMAP_SOURCE_MAP])
+
+And now we only have to pass a single iomap parameter to each
+function as "struct iomap **iomap". This makes the code somewhat
+simpler, and we only ever need to use IOMAP_S(iomap) when
+IOMAP_B(iomap)->type == IOMAP_COW.
+
+The other advantage of this is that if we even need new
+functionality that requires 2 (or more) iomaps, we don't have to
+change APIs again....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
