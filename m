@@ -2,129 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2658827C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 00:54:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25D91827D0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 01:10:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbfHEWyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 18:54:38 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:17712 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728483AbfHEWyi (ORCPT
+        id S1730717AbfHEXK6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 19:10:58 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:34154 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727928AbfHEXK6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 18:54:38 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d48b3b50000>; Mon, 05 Aug 2019 15:54:45 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 05 Aug 2019 15:54:36 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 05 Aug 2019 15:54:36 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 5 Aug
- 2019 22:54:35 +0000
-Subject: Re: [PATCH 00/12] block/bio, fs: convert put_page() to
- put_user_page*()
-To:     Christoph Hellwig <hch@infradead.org>, <john.hubbard@gmail.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <ceph-devel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
-        <linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <samba-technical@lists.samba.org>,
-        <v9fs-developer@lists.sourceforge.net>,
-        <virtualization@lists.linux-foundation.org>
-References: <20190724042518.14363-1-jhubbard@nvidia.com>
- <20190724061750.GA19397@infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <c35aa2bf-c830-9e57-78ca-9ce6fb6cb53b@nvidia.com>
-Date:   Mon, 5 Aug 2019 15:54:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 5 Aug 2019 19:10:58 -0400
+Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 68C7E43B2AC;
+        Tue,  6 Aug 2019 09:10:52 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hum6r-0005DC-3s; Tue, 06 Aug 2019 09:09:45 +1000
+Date:   Tue, 6 Aug 2019 09:09:45 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Chris Mason <clm@fb.com>
+Cc:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 09/24] xfs: don't allow log IO to be throttled
+Message-ID: <20190805230945.GX7777@dread.disaster.area>
+References: <20190801021752.4986-1-david@fromorbit.com>
+ <20190801021752.4986-10-david@fromorbit.com>
+ <F1E7CC65-D2CB-4078-9AA3-9D172ECDE17B@fb.com>
+ <20190801235849.GO7777@dread.disaster.area>
+ <7093F5C3-53D2-4C49-9C0D-64B20C565D18@fb.com>
+ <20190802232814.GP7777@dread.disaster.area>
+ <C823BAA1-18D5-4C25-9506-59A740817E8C@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <20190724061750.GA19397@infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565045686; bh=su7Un7Lsr0IB37YVHfSyk5WWru26t8lLPZpTgkOrxAY=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=MABsVuv2G9BzGpy+DkzIhxi90zmgNTMYOagd/ashPLcDOi2sWU6YznkbyPDv/xcq/
-         O5RFeXAwmCAh/JO0LO+ze2NEhPe2n+psweVYXa8pjERXCCCfGYTxQ9SDkc4s4KNR59
-         NLyb52q+/1fN+RE5h7a69JZCsNpaL7gcHJobrCC7E9UqWrmG9ACN7VwIX7DKaTA/Rb
-         eRaFep1AoazjTxyXxT6Tx1JQhDVjP38m4xzwGlHYvs4ZQCYA68yceeG7xda5nxeUcP
-         Q7wlfmFbcUA/T+jBVHNbqmQyCuHaQMhgKiqtQK78vKYLrwPUcmbghr4B0X7IdrZjfb
-         e4QZrUIdtNMcg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <C823BAA1-18D5-4C25-9506-59A740817E8C@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
+        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=7-415B0cAAAA:8 a=7yUhBBlLHTuIPOx24mIA:9 a=GhxPB0XkBjz6INEC:21
+        a=iFLSscLS6nnWKZIu:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/23/19 11:17 PM, Christoph Hellwig wrote:
-> On Tue, Jul 23, 2019 at 09:25:06PM -0700, john.hubbard@gmail.com wrote:
->> * Store, in the iov_iter, a "came from gup (get_user_pages)" parameter.
->>   Then, use the new iov_iter_get_pages_use_gup() to retrieve it when
->>   it is time to release the pages. That allows choosing between put_page=
-()
->>   and put_user_page*().
->>
->> * Pass in one more piece of information to bio_release_pages: a "from_gu=
-p"
->>   parameter. Similar use as above.
->>
->> * Change the block layer, and several file systems, to use
->>   put_user_page*().
->=20
-> I think we can do this in a simple and better way.  We have 5 ITER_*
-> types.  Of those ITER_DISCARD as the name suggests never uses pages, so
-> we can skip handling it.  ITER_PIPE is rejected =D1=96n the direct I/O pa=
-th,
-> which leaves us with three.
->=20
+On Mon, Aug 05, 2019 at 06:32:51PM +0000, Chris Mason wrote:
+> On 2 Aug 2019, at 19:28, Dave Chinner wrote:
+> 
+> > On Fri, Aug 02, 2019 at 02:11:53PM +0000, Chris Mason wrote:
+> >> On 1 Aug 2019, at 19:58, Dave Chinner wrote:
+> >> I can't really see bio->b_ioprio working without the rest of the IO
+> >> controller logic creating a sensible system,
+> >
+> > That's exactly the problem we need to solve. The current situation
+> > is ... untenable. Regardless of whether the io.latency controller
+> > works well, the fact is that the wbt subsystem is active on -all-
+> > configurations and the way it "prioritises" is completely broken.
+> 
+> Completely broken is probably a little strong.   Before wbt, it was 
+> impossible to do buffered IO without periodically saturating the drive 
+> in unexpected ways.  We've got a lot of data showing it helping, and 
+> it's pretty easy to setup a new A/B experiment to demonstrate it's 
+> usefulness in current kernels.  But that doesn't mean it's perfect.
 
-Hi Christoph,
+I'm not arguing that wbt is useless, I'm just saying that it's
+design w.r.t. IO prioritisation is fundamentally broken. Using
+request types to try to infer priority just doesn't work, as I've
+been trying to explain.
 
-Are you working on anything like this? Or on the put_user_bvec() idea?
-Please let me know, otherwise I'll go in and implement something here.
+> >> framework to define weights etc.  My question is if it's worth trying
+> >> inside of the wbt code, or if we should just let the metadata go
+> >> through.
+> >
+> > As I said, that doesn't  solve the problem. We /want/ critical
+> > journal IO to have higher priority that background metadata
+> > writeback. Just ignoring REQ_META doesn't help us there - it just
+> > moves the priority inversion to blocking on request queue tags.
+> 
+> Does XFS background metadata IO ever get waited on by critical journal 
+> threads?
 
+No. Background writeback (which, with this series, is the only way
+metadata gets written in XFS) is almost entirely non-blocking until
+IO submission occurs. It will force the log if pinned items are
+prevents the log tail from moving (hence blocking on log IO) but
+largely it doesn't block on anything except IO submission.
 
-thanks,
---=20
-John Hubbard
-NVIDIA
+The only thing that blocks on journal IO is CIL flushing and,
+subsequently, anything that is waiting on a journal flush to
+complete. CIL flushing happens in it's own workqueue, so it doesn't
+block anything directly. The only operations that wait for log IO
+require items to be stable in the journal (e.g. fsync()).
 
-> Out of those ITER_BVEC needs a user page reference, so we want to call
-> put_user_page* on it.  ITER_BVEC always already has page reference,
-> which means in the block direct I/O path path we alread don't take
-> a page reference.  We should extent that handling to all other calls
-> of iov_iter_get_pages / iov_iter_get_pages_alloc.  I think we should
-> just reject ITER_KVEC for direct I/O as well as we have no users and
-> it is rather pointless.  Alternatively if we see a use for it the
-> callers should always have a life page reference anyway (or might
-> be on kmalloc memory), so we really should not take a reference either.
->=20
-> In other words:  the only time we should ever have to put a page in
-> this patch is when they are user pages.  We'll need to clean up
-> various bits of code for that, but that can be done gradually before
-> even getting to the actual put_user_pages conversion.
->=20
+Starting a transactional change may block on metadata writeback. If
+there isn't space in the log for the new transaction, it will kick
+and wait for background metadata writeback to make progress and push
+the tail of the log forwards.  And this may wait on journal IO if
+pinned items need to be flushed to the log before writeback can
+occur.
+
+This is the way we prevent transactions requiring journal IO to
+blocking on metadata writeback to make progress - we don't allow a
+transaction to start until it is guaranteed that it can complete
+without requiring journal IO to flush other metadata to the journal.
+That way there is always space available in the log for all pending
+journal IO to complete with a dependency no metadata writeback
+making progress.
+
+This "block on metadata writeback at transaction start" design means
+data writeback can block on metadata writeback because we do
+allocation transactions in the IO path. Which means data IO can
+block behind metadata IO, which can block behind log IO, and that
+largely defines the IO heirarchy in XFS.
+
+Hence the IO priority order is very clear in XFS - it was designed
+this way because you can't support things like guaranteed rate IO
+storage applications (one of the prime use cases XFS was originally
+designed for) without having a clear model for avoiding priority
+inversions between data, metadata and the journal.
+
+I'm not guessing about any of this - I know how all this is supposed
+to work because I spent years at SGI working with people far smarter
+than me supporting real-time IO applications working along with
+real-time IO schedulers in a real time kernel (i.e.  Irix). I don't
+make this stuff up for fun or to argue, I say stuff because I know
+how it's supposed to work.
+
+And, FWIW, Irix also had a block layer writeback throttling
+mechanism to prevent bulk data writeback from thrashing disks and
+starving higher priority IO. It was also fully IO priority aware -
+this stuff isn't rocket science, and Linux is not the first OS to
+ever implement this sort of functionality. Linux was not my first
+rodeo....
+
+> My understanding is that all of the filesystems do this from 
+> time to time.  Without a way to bump the priority of throttled 
+> background metadata IO, I can't see how to avoid prio inversions without 
+> running background metadata at the same prio as all of the critical 
+> journal IO.
+
+Perhaps you just haven't thought about it enough. :)
+
+> > Core infrastructure needs to work without cgroups being configured
+> > to confine everything in userspace to "safe" bounds, and right now
+> > just running things in the root cgroup doesn't appear to work very
+> > well at all.
+> 
+> I'm not disagreeing with this part, my real point is there isn't a 
+> single answer.  It's possible for swap to be critical to the running of 
+> the box in some workloads, and totally unimportant in others.
+
+Sure, but that only indicates that we need to be able to adjust the
+priority of IO within certain bounds.
+
+The problem is right now is that the default behaviour is pretty
+nasty and core functionality is non-functional. It doesn't matter if
+swap priority is adjustable or not, users should not have to tune
+the kernel to use an esoteric cgroup configuration in order for the
+kernel to function correctly out of the box.
+
+I'm not sure when we lost sight of the fact we need to make the
+default configurations work correctly first, and only then do we
+worry about how tunable somethign is when the default behaviour has
+been proven to be insufficient. Hiding bad behaviour behind custom
+cgroup configuration does nobody any favours.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
