@@ -2,120 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C25D82508
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 20:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DFF58256C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 21:16:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730055AbfHESt6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 14:49:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35250 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727830AbfHESt6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 14:49:58 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ED067300CB70;
-        Mon,  5 Aug 2019 18:49:57 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D0D1E5EE1D;
-        Mon,  5 Aug 2019 18:49:51 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 5FE9022377E; Mon,  5 Aug 2019 14:49:51 -0400 (EDT)
-Date:   Mon, 5 Aug 2019 14:49:51 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Boaz Harrosh <boaz@plexistor.com>
+        id S1730155AbfHETQv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 15:16:51 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40896 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727802AbfHETQv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Aug 2019 15:16:51 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v19so74091866wmj.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 12:16:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=i8MUAFs9xWo3DeulQdVmEqj8r8vwJULZDf6MNUFq2ww=;
+        b=UrVz3TL4y2Wd+2usgnHy3ExsuaOYfeNXBdmadp57B6j14Ve7GM/RifZdIa0BVHr1mR
+         7EkSWqmNTRYWs8nNOfXbwW3zYaSffpmhx5FrOADWtrlzKsbxRmJQ56JPTmj4odOuuhcf
+         GtyYiWudoTtgCmBg9n/4fgOB2kFttMVVvMsGFsI26QLy91SItBSIbfzaDnAQv3BwLj6U
+         gWkJ8YpDvcU1ASeinejR8VSX6IjC07krSj47vZQWeEbbAqR2hO9cQfZwOzMLsqQo7ClK
+         y/i3avrc0nF4z4Hp82ZrkJ56foE4TgFoWLOynsKwpfZFZ4E1XiAqKSR08yPeMsCWU6dU
+         LM5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=i8MUAFs9xWo3DeulQdVmEqj8r8vwJULZDf6MNUFq2ww=;
+        b=ZpCmnX2R2ePoeE4/XXpC8nlFsYKZSYS/0AzuPHAv2BRDl4PTE5oWHUoij3yDjIapJm
+         W6veqjpne6Xfrko2LbRdKFdDWTHqKfg+tHMu4vlIb5rRc82ojdzrdY8wmNrdJ2cT1aBK
+         CKTq6PH4LoNmPwlh6AQ13wQ1jE+y2h8KSwjexdXGO0qe9VOCG/LPXtjSpW48z/dOhkgo
+         vjqym0v156PkyW4eASMp381eeBtGkF+kZ9rVuUmUVcYAaLccr7PPK+jbSi4ss/VMLfvy
+         fzMLFCWD2d5Z/S1LDvdrqFSwdn0m0y37C4oJjFzr3FJcr7LCYmk5TTDpPKnw7MOODz7F
+         Idzw==
+X-Gm-Message-State: APjAAAXhpS/D9al9u42E0a1IgqW4w5M6PYcv7L7lH339zqVY7HymY6cU
+        R3XDiCc3v3JB+QYfCM7XJH8=
+X-Google-Smtp-Source: APXvYqyg2z6e5NAOZET2e8ipXtjRjnPZ9wpiF9eF9YkoNugyrx+Do8m6yVMVw8QMotm5Qi7zqcbHQg==
+X-Received: by 2002:a7b:c4d0:: with SMTP id g16mr20340165wmk.88.1565032609390;
+        Mon, 05 Aug 2019 12:16:49 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.211.18])
+        by smtp.googlemail.com with ESMTPSA id b186sm66079447wmb.3.2019.08.05.12.16.47
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2019 12:16:48 -0700 (PDT)
+Subject: Re: [PATCH] dax: dax_layout_busy_page() should not unmap cow pages
+To:     Vivek Goyal <vgoyal@redhat.com>, Boaz Harrosh <boaz@plexistor.com>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-nvdimm <linux-nvdimm@lists.01.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         virtio-fs@redhat.com
-Subject: Re: [PATCH] dax: dax_layout_busy_page() should not unmap cow pages
-Message-ID: <20190805184951.GC13994@redhat.com>
 References: <20190802192956.GA3032@redhat.com>
  <CAPcyv4jxknEGq9FzGpsMJ6E7jC51d1W9KbNg4HX6Cj6vqt7dqg@mail.gmail.com>
  <9678e812-08c1-fab7-f358-eaf123af14e5@plexistor.com>
+ <20190805184951.GC13994@redhat.com>
+From:   Boaz Harrosh <boaz@plexistor.com>
+Message-ID: <9c0ec951-01e7-7ae0-2d69-1b26f3450d65@plexistor.com>
+Date:   Mon, 5 Aug 2019 22:16:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9678e812-08c1-fab7-f358-eaf123af14e5@plexistor.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 05 Aug 2019 18:49:58 +0000 (UTC)
+In-Reply-To: <20190805184951.GC13994@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 02:53:06PM +0300, Boaz Harrosh wrote:
-> On 02/08/2019 22:37, Dan Williams wrote:
-> > On Fri, Aug 2, 2019 at 12:30 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >>
-> >> As of now dax_layout_busy_page() calls unmap_mapping_range() with last
-> >> argument as 1, which says even unmap cow pages. I am wondering who needs
-> >> to get rid of cow pages as well.
-> >>
-> >> I noticed one interesting side affect of this. I mount xfs with -o dax and
-> >> mmaped a file with MAP_PRIVATE and wrote some data to a page which created
-> >> cow page. Then I called fallocate() on that file to zero a page of file.
-> >> fallocate() called dax_layout_busy_page() which unmapped cow pages as well
-> >> and then I tried to read back the data I wrote and what I get is old
-> >> data from persistent memory. I lost the data I had written. This
-> >> read basically resulted in new fault and read back the data from
-> >> persistent memory.
-> >>
-> >> This sounds wrong. Are there any users which need to unmap cow pages
-> >> as well? If not, I am proposing changing it to not unmap cow pages.
-> >>
-> >> I noticed this while while writing virtio_fs code where when I tried
-> >> to reclaim a memory range and that corrupted the executable and I
-> >> was running from virtio-fs and program got segment violation.
-> >>
-> >> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> >> ---
-> >>  fs/dax.c |    2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> Index: rhvgoyal-linux/fs/dax.c
-> >> ===================================================================
-> >> --- rhvgoyal-linux.orig/fs/dax.c        2019-08-01 17:03:10.574675652 -0400
-> >> +++ rhvgoyal-linux/fs/dax.c     2019-08-02 14:32:28.809639116 -0400
-> >> @@ -600,7 +600,7 @@ struct page *dax_layout_busy_page(struct
-> >>          * guaranteed to either see new references or prevent new
-> >>          * references from being established.
-> >>          */
-> >> -       unmap_mapping_range(mapping, 0, 0, 1);
-> >> +       unmap_mapping_range(mapping, 0, 0, 0);
-> > 
-> > Good find, yes, this looks correct to me and should also go to -stable.
-> > 
+On 05/08/2019 21:49, Vivek Goyal wrote:
+> On Mon, Aug 05, 2019 at 02:53:06PM +0300, Boaz Harrosh wrote:
+<>
+>> So as I understand the man page:
+>> fallocate(FL_PUNCH_HOLE); means user is asking to get rid also of COW pages.
+>> On the other way fallocate(FL_ZERO_RANGE) only the pmem portion is zeroed and COW (private pages) stays
 > 
-> Please pay attention that unmap_mapping_range(mapping, ..., 1) is for the truncate case and friends
+> I tested fallocate(FL_PUNCH_HOLE) on xfs (non-dax) and it does not seem to
+> get rid of COW pages and my test case still can read the data it wrote
+> in private pages.
 > 
-> So as I understand the man page:
-> fallocate(FL_PUNCH_HOLE); means user is asking to get rid also of COW pages.
-> On the other way fallocate(FL_ZERO_RANGE) only the pmem portion is zeroed and COW (private pages) stays
 
-I tested fallocate(FL_PUNCH_HOLE) on xfs (non-dax) and it does not seem to
-get rid of COW pages and my test case still can read the data it wrote
-in private pages.
+It seems you are right and I am wrong. This is what the Kernel code has to say about it:
+
+	/*
+	 * Unlike in truncate_pagecache, unmap_mapping_range is called only
+	 * once (before truncating pagecache), and without "even_cows" flag:
+	 * hole-punching should not remove private COWed pages from the hole.
+	 */
+
+For me this is confusing but that is what it is. So remove private COWed pages
+is only done when we do an setattr(ATTR_SIZE).
+
+>>
+>> Just saying I have not followed the above code path
+>> (We should have an xfstest for this?)
+> 
+> I don't know either. It indeed is interesting to figure out what's the
+> expected behavior with fallocate() and truncate() for COW pages and cover
+> that using xfstest (if not already done).
+> 
+
+I could not find any test for the COW positive FL_PUNCH_HOLE (I have that bug)
+could be nice to make one, and let FSs like mine fail.
+Any way very nice catch.
 
 > 
-> Just saying I have not followed the above code path
-> (We should have an xfstest for this?)
-
-I don't know either. It indeed is interesting to figure out what's the
-expected behavior with fallocate() and truncate() for COW pages and cover
-that using xfstest (if not already done).
-
-Irrespective of that, for dax, it seems particularly bad because
-we call unmap_mapping_range() for the whole file. So even if we are
-punching hole on a single page and expected cow page to go away associated
-with that page, currently it will get rid of all COW pages in whole
-file.
-
-So to me it makes sense to not get rid of COW pages and possibly
-introduce option of performing dax_layout_busy_page() on a range
-of pages (as opposed to whole file) and caller can specify whether
-to zap cow pages or not in the specified range.
+> Thanks
+> Vivek
+> 
 
 Thanks
-Vivek
+Boaz
