@@ -2,98 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9515781738
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 12:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED36981874
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 13:53:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbfHEKim (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 06:38:42 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40858 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727739AbfHEKim (ORCPT
+        id S1728590AbfHELxO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 07:53:14 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50527 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727357AbfHELxO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 06:38:42 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r1so83839953wrl.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 03:38:40 -0700 (PDT)
+        Mon, 5 Aug 2019 07:53:14 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v15so74454595wml.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 04:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MSEFUn+zJ9lWrXGkPUtwAP7Ktu03TxUAHzcVzGIcTF0=;
+        b=N05j3MmRLF3evphEMwVzucDNXsLRSnsdv/awwci4zbq7QIwOPLXt3iLd8b84PDqisL
+         vGx6wOrcjxl/hiLos9rciSZUlE8VtI22BMPNNFJHtPJNjEGc0URlZehBtAiYWUeczkEb
+         5SVBzEDDBjhKEqUks05aXyq8xGo2ZCFxaI3GxwnQ5CutZb5qgSeReOK3nf709SYWTrZT
+         QTiW3O8ziZO/IwRbQH/BCboe8UXAklCCpxtkMrOO7aVFgjGOTzwvw9zDmrNEm1maPkDb
+         cQYRE+dy9ZBBN0Vi/du972H1Gd17LWkrP7lifgiAiRJhgtr4Ycoko68GbHEvJIXMjVVg
+         dDCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=nhcF4njZsguYPpGmNsYlX9l9INuM7smE0cJnjujhiVA=;
-        b=lodqxxBAjM3+C4v1mG9kHvBt+4rObZj/P4IJe/X3pqCdD5t8lYY87yTX2ecGySvw3k
-         Y2/Z475i4/uUX3csOghk24j0v4LmMq/SSFhPBVxnz8XehU6Sc3z5XB5k29BnNtGbars4
-         QfrjZ3nXW3MrVZeOwx+oa13b99qlDCWFuG6kucDx9/bOtWXIVvW+Y8Zg8+mF/ijG0NwP
-         QqVUxhv40aks4O6YcZjrVHmtjPdR3bpTVRnVsI4+R0o2BeX0oGvSa6c+6FBtybdV0Zyj
-         GlsbxZPGTBGCjH7fPnv3fgYg4qmDPdgrcEYDNnl8z3AoJD3V6ncTMn1qyNxp9MbkW2Dp
-         j9gQ==
-X-Gm-Message-State: APjAAAWUitXeL8kzQ9CJn/HcuO30OfpiUOx3CfebGcoVGBTGi5XPjpY6
-        6B6uvHo5f9YPbEI17LocOZpqew==
-X-Google-Smtp-Source: APXvYqxnEIZ1vShqa8+K4LqEeKVgpDypeX98+GrcQMz1yUeybxTg/8GQX2KFj3X58jPFHojp/SaS/Q==
-X-Received: by 2002:a5d:540e:: with SMTP id g14mr5027782wrv.346.1565001520116;
-        Mon, 05 Aug 2019 03:38:40 -0700 (PDT)
-Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
-        by smtp.gmail.com with ESMTPSA id m7sm70580746wrx.65.2019.08.05.03.38.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 03:38:39 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 12:38:37 +0200
-From:   Carlos Maiolino <cmaiolino@redhat.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
-        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 8/9] Use FIEMAP for FIBMAP calls
-Message-ID: <20190805103835.mcketlhcxyrtko5c@pegasus.maiolino.io>
-Mail-Followup-To: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
-        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
-        linux-xfs@vger.kernel.org
-References: <20190731141245.7230-1-cmaiolino@redhat.com>
- <20190731141245.7230-9-cmaiolino@redhat.com>
- <20190731232254.GW1561054@magnolia>
- <20190802134816.usmauocewduggrjt@pegasus.maiolino.io>
- <20190802152902.GI7138@magnolia>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MSEFUn+zJ9lWrXGkPUtwAP7Ktu03TxUAHzcVzGIcTF0=;
+        b=Em15xBghvG3CsfkFEWEKhHS0qSHf9qKTZ0KYRgk5duc6nCXCp6wA4cqZTBRvJX6YIi
+         mPyyuuu9uEexHMN7BR1Zb+ud9TtfaAVu/xNqrRGuOD0Km6/uPQAaS2dahm7YzuZpeFhW
+         FZVeq3oNlf7iNhMCkG2hETLmIgvjpEnA4x4wWjHEWUj5dY6TTVkillKSCU4uP0LE4VYy
+         kglqK+Ldw48j6MztXYAMWiUQsrodRusvUAR85+UN95YVRgSKpvI7kiyxZv7WwXuW+Uzv
+         SmCWHP189Xi7oM+Js6UP/mPPc/SSav3b8eKTIf9AIaGzl6mPRMCL4SXbA43Da5sFtxiE
+         ywYg==
+X-Gm-Message-State: APjAAAXmv+CoiJwVZnAEPgZu1LPFvcpQxqr7wyTKjBLpo7d4iAMFRgjj
+        646l0JjoWmhneUPGoWyOUiU=
+X-Google-Smtp-Source: APXvYqyvzCWiLH3t21ivmky+8PUjC3EOje361Mf4BrdFecAEPyzS4GIztLve62J5vTzwG6RhWUUwbQ==
+X-Received: by 2002:a7b:cbcb:: with SMTP id n11mr18031002wmi.146.1565005992115;
+        Mon, 05 Aug 2019 04:53:12 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.211.18])
+        by smtp.googlemail.com with ESMTPSA id x24sm79925372wmh.5.2019.08.05.04.53.10
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2019 04:53:11 -0700 (PDT)
+Subject: Re: [PATCH] dax: dax_layout_busy_page() should not unmap cow pages
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs@redhat.com
+References: <20190802192956.GA3032@redhat.com>
+ <CAPcyv4jxknEGq9FzGpsMJ6E7jC51d1W9KbNg4HX6Cj6vqt7dqg@mail.gmail.com>
+From:   Boaz Harrosh <boaz@plexistor.com>
+Message-ID: <9678e812-08c1-fab7-f358-eaf123af14e5@plexistor.com>
+Date:   Mon, 5 Aug 2019 14:53:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802152902.GI7138@magnolia>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAPcyv4jxknEGq9FzGpsMJ6E7jC51d1W9KbNg4HX6Cj6vqt7dqg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > > 
-> > > Why doesn't this function just call fiemap_fill_kernel_extent to fill
-> > > out the onstack @extent structure?  We've now implemented "fill out out
-> > > a struct fiemap_extent" twice.
-> > 
-> > fiemap_fill_{user, kernel}_extent() have different purposes, and the big
-> > difference is one handles a userspace pointer memory and the other don't. IIRC
-> > the original proposal was some sort of sharing a single function, but then
-> > Christoph suggested a new design, using different functions as callbacks.
+On 02/08/2019 22:37, Dan Williams wrote:
+> On Fri, Aug 2, 2019 at 12:30 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>>
+>> As of now dax_layout_busy_page() calls unmap_mapping_range() with last
+>> argument as 1, which says even unmap cow pages. I am wondering who needs
+>> to get rid of cow pages as well.
+>>
+>> I noticed one interesting side affect of this. I mount xfs with -o dax and
+>> mmaped a file with MAP_PRIVATE and wrote some data to a page which created
+>> cow page. Then I called fallocate() on that file to zero a page of file.
+>> fallocate() called dax_layout_busy_page() which unmapped cow pages as well
+>> and then I tried to read back the data I wrote and what I get is old
+>> data from persistent memory. I lost the data I had written. This
+>> read basically resulted in new fault and read back the data from
+>> persistent memory.
+>>
+>> This sounds wrong. Are there any users which need to unmap cow pages
+>> as well? If not, I am proposing changing it to not unmap cow pages.
+>>
+>> I noticed this while while writing virtio_fs code where when I tried
+>> to reclaim a memory range and that corrupted the executable and I
+>> was running from virtio-fs and program got segment violation.
+>>
+>> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+>> ---
+>>  fs/dax.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> Index: rhvgoyal-linux/fs/dax.c
+>> ===================================================================
+>> --- rhvgoyal-linux.orig/fs/dax.c        2019-08-01 17:03:10.574675652 -0400
+>> +++ rhvgoyal-linux/fs/dax.c     2019-08-02 14:32:28.809639116 -0400
+>> @@ -600,7 +600,7 @@ struct page *dax_layout_busy_page(struct
+>>          * guaranteed to either see new references or prevent new
+>>          * references from being established.
+>>          */
+>> -       unmap_mapping_range(mapping, 0, 0, 1);
+>> +       unmap_mapping_range(mapping, 0, 0, 0);
 > 
-> It's harder for me to tell when I don't have a branch containing the
-> final product to look at,
+> Good find, yes, this looks correct to me and should also go to -stable.
+> 
 
-Good, I though I was the only one having issues with it :)
+Please pay attention that unmap_mapping_range(mapping, ..., 1) is for the truncate case and friends
 
-You can see the work here:
+So as I understand the man page:
+fallocate(FL_PUNCH_HOLE); means user is asking to get rid also of COW pages.
+On the other way fallocate(FL_ZERO_RANGE) only the pmem portion is zeroed and COW (private pages) stays
 
-https://github.com/cmaiolino/linux/commits/FIEMAP_V5
-
-^ This already includes changes addressing your concerns as we discussed int
-this thread btw.
-
-> but I'd have thought that _fill_kernel fills
-> out an in-kernel fiemap extent; and then _fill_user would declare one on
-> the stack, call _fill_kernel to set the fields, and then copy_to_user?
-
-None of those functions will declare a fiemap_extent, the fiemap extent will be
-declared before (in ioctl_fiemap() or bmap_fiemap()) calling either function and
-then passed to the proper callback via fieinfo.fi_cb_data. This will be a user
-or a kernel memory address, and the callbacks will handle the memory accordingly.
+Just saying I have not followed the above code path
+(We should have an xfstest for this?)
 
 Cheers
-
--- 
-Carlos
+Boaz
