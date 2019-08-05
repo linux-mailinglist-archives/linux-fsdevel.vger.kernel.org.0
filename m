@@ -2,197 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D52282425
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 19:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6058882442
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 19:51:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbfHERm3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 13:42:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43284 "EHLO mx1.redhat.com"
+        id S1727830AbfHERv5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 13:51:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40468 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726559AbfHERm3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 13:42:29 -0400
+        id S1726559AbfHERv4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Aug 2019 13:51:56 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 24AF2300676E;
-        Mon,  5 Aug 2019 17:42:29 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0ABA2300177B;
+        Mon,  5 Aug 2019 17:51:56 +0000 (UTC)
 Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 929BE5C1D4;
-        Mon,  5 Aug 2019 17:42:28 +0000 (UTC)
-Date:   Mon, 5 Aug 2019 13:42:26 -0400
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C46B5C1D6;
+        Mon,  5 Aug 2019 17:51:55 +0000 (UTC)
+Date:   Mon, 5 Aug 2019 13:51:53 -0400
 From:   Brian Foster <bfoster@redhat.com>
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/24] mm: directed shrinker work deferral
-Message-ID: <20190805174226.GB14760@bfoster>
+Subject: Re: [PATCH 13/24] xfs: synchronous AIL pushing
+Message-ID: <20190805175153.GC14760@bfoster>
 References: <20190801021752.4986-1-david@fromorbit.com>
- <20190801021752.4986-2-david@fromorbit.com>
- <20190802152709.GA60893@bfoster>
- <20190804014930.GR7777@dread.disaster.area>
+ <20190801021752.4986-14-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190804014930.GR7777@dread.disaster.area>
+In-Reply-To: <20190801021752.4986-14-david@fromorbit.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 05 Aug 2019 17:42:29 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 05 Aug 2019 17:51:56 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 04, 2019 at 11:49:30AM +1000, Dave Chinner wrote:
-> On Fri, Aug 02, 2019 at 11:27:09AM -0400, Brian Foster wrote:
-> > On Thu, Aug 01, 2019 at 12:17:29PM +1000, Dave Chinner wrote:
-> > > From: Dave Chinner <dchinner@redhat.com>
-> > > 
-> > > Introduce a mechanism for ->count_objects() to indicate to the
-> > > shrinker infrastructure that the reclaim context will not allow
-> > > scanning work to be done and so the work it decides is necessary
-> > > needs to be deferred.
-> > > 
-> > > This simplifies the code by separating out the accounting of
-> > > deferred work from the actual doing of the work, and allows better
-> > > decisions to be made by the shrinekr control logic on what action it
-> > > can take.
-> > > 
-> > > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > > ---
-> > >  include/linux/shrinker.h | 7 +++++++
-> > >  mm/vmscan.c              | 8 ++++++++
-> > >  2 files changed, 15 insertions(+)
-> > > 
-> > > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> > > index 9443cafd1969..af78c475fc32 100644
-> > > --- a/include/linux/shrinker.h
-> > > +++ b/include/linux/shrinker.h
-> > > @@ -31,6 +31,13 @@ struct shrink_control {
-> > >  
-> > >  	/* current memcg being shrunk (for memcg aware shrinkers) */
-> > >  	struct mem_cgroup *memcg;
-> > > +
-> > > +	/*
-> > > +	 * set by ->count_objects if reclaim context prevents reclaim from
-> > > +	 * occurring. This allows the shrinker to immediately defer all the
-> > > +	 * work and not even attempt to scan the cache.
-> > > +	 */
-> > > +	bool will_defer;
-> > 
-> > Functionality wise this seems fairly straightforward. FWIW, I find the
-> > 'will_defer' name a little confusing because it implies to me that the
-> > shrinker is telling the caller about something it would do if called as
-> > opposed to explicitly telling the caller to defer. I'd just call it
-> > 'defer' I guess, but that's just my .02. ;P
+On Thu, Aug 01, 2019 at 12:17:41PM +1000, Dave Chinner wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 > 
-> Ok, I'll change it to something like "defer_work" or "defer_scan"
-> here.
+> Provide an interface to push the AIL to a target LSN and wait for
+> the tail of the log to move past that LSN. This is used to wait for
+> all items older than a specific LSN to either be cleaned (written
+> back) or relogged to a higher LSN in the AIL. The primary use for
+> this is to allow IO free inode reclaim throttling.
 > 
+> Factor the common AIL deletion code that does all the wakeups into a
+> helper so we only have one copy of this somewhat tricky code to
+> interface with all the wakeups necessary when the LSN of the log
+> tail changes.
+> 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> ---
+>  fs/xfs/xfs_inode_item.c | 12 +------
+>  fs/xfs/xfs_trans_ail.c  | 69 +++++++++++++++++++++++++++++++++--------
+>  fs/xfs/xfs_trans_priv.h |  6 +++-
+>  3 files changed, 62 insertions(+), 25 deletions(-)
+> 
+...
+> diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+> index 6ccfd75d3c24..9e3102179221 100644
+> --- a/fs/xfs/xfs_trans_ail.c
+> +++ b/fs/xfs/xfs_trans_ail.c
+> @@ -654,6 +654,37 @@ xfs_ail_push_all(
+>  		xfs_ail_push(ailp, threshold_lsn);
+>  }
+>  
+> +/*
+> + * Push the AIL to a specific lsn and wait for it to complete.
+> + */
+> +void
+> +xfs_ail_push_sync(
+> +	struct xfs_ail		*ailp,
+> +	xfs_lsn_t		threshold_lsn)
+> +{
+> +	struct xfs_log_item	*lip;
+> +	DEFINE_WAIT(wait);
+> +
+> +	spin_lock(&ailp->ail_lock);
+> +	while ((lip = xfs_ail_min(ailp)) != NULL) {
+> +		prepare_to_wait(&ailp->ail_push, &wait, TASK_UNINTERRUPTIBLE);
+> +		if (XFS_FORCED_SHUTDOWN(ailp->ail_mount) ||
+> +		    XFS_LSN_CMP(threshold_lsn, lip->li_lsn) <= 0)
+> +			break;
+> +		/* XXX: cmpxchg? */
+> +		while (XFS_LSN_CMP(threshold_lsn, ailp->ail_target) > 0)
+> +			xfs_trans_ail_copy_lsn(ailp, &ailp->ail_target, &threshold_lsn);
 
-Either sounds better to me, thanks.
+Why the need to repeatedly copy the ail_target like this? If the push
+target only ever moves forward, we should only need to do this once at
+the start of the function. In fact I'm kind of wondering why we can't
+just call xfs_ail_push(). If we check the tail item after grabbing the
+spin lock, we should be able to avoid any races with the waker, no?
 
-> > >  };
-> > >  
-> > >  #define SHRINK_STOP (~0UL)
-> > > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > > index 44df66a98f2a..ae3035fe94bc 100644
-> > > --- a/mm/vmscan.c
-> > > +++ b/mm/vmscan.c
-> > > @@ -541,6 +541,13 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-> > >  	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
-> > >  				   freeable, delta, total_scan, priority);
-> > >  
-> > > +	/*
-> > > +	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
-> > > +	 * defer the work to a context that can scan the cache.
-> > > +	 */
-> > > +	if (shrinkctl->will_defer)
-> > > +		goto done;
-> > > +
-> > 
-> > Who's responsible for clearing the flag? Perhaps we should do so here
-> > once it's acted upon since we don't call into the shrinker again?
-> 
-> Each shrinker invocation has it's own shrink_control context - they
-> are not shared between shrinkers - the higher level is responsible
-> for setting up the control state of each individual shrinker
-> invocation...
-> 
+> +		wake_up_process(ailp->ail_task);
+> +		spin_unlock(&ailp->ail_lock);
+> +		schedule();
+> +		spin_lock(&ailp->ail_lock);
+> +	}
+> +	spin_unlock(&ailp->ail_lock);
+> +
+> +	finish_wait(&ailp->ail_push, &wait);
+> +}
+> +
+> +
+>  /*
+>   * Push out all items in the AIL immediately and wait until the AIL is empty.
+>   */
+> @@ -764,6 +795,28 @@ xfs_ail_delete_one(
+>  	return mlip == lip;
+>  }
+>  
+> +void
+> +xfs_ail_delete_finish(
+> +	struct xfs_ail		*ailp,
+> +	bool			do_tail_update) __releases(ailp->ail_lock)
+> +{
+> +	struct xfs_mount	*mp = ailp->ail_mount;
+> +
+> +	if (!do_tail_update) {
+> +		spin_unlock(&ailp->ail_lock);
+> +		return;
+> +	}
+> +
 
-Yes, but more specifically, it appears to me that each level is
-responsible for setting up control state managed by that level. E.g.,
-shrink_slab_memcg() initializes the unchanging state per iteration and
-do_shrink_slab() (re)sets the scan state prior to ->scan_objects().
+Hmm.. so while what we really care about here are tail updates, this
+logic is currently driven by removing the min ail log item. That seems
+like a lot of potential churn if we're waking the pusher on every object
+written back covered by a single log record / checkpoint. Perhaps we
+should implement a bit more coarse wakeup logic such as only when the
+tail lsn actually changes, for example?
 
-> > Note that I see this structure is reinitialized on every iteration in
-> > the caller, but there already is the SHRINK_EMPTY case where we call
-> > back into do_shrink_slab().
-> 
-> .... because there is external state tracking in memcgs that
-> determine what shrinkers get run. See shrink_slab_memcg().
-> 
-> i.e. The SHRINK_EMPTY return value is a special hack for memcg
-> shrinkers so it can track whether there are freeable objects in the
-> cache externally to try to avoid calling into shrinkers where no
-> work can be done.  Think about having hundreds of shrinkers and
-> hundreds of memcgs...
-> 
-> Anyway, the tracking of the freeable bit is racy, so the
-> SHRINK_EMPTY hack where it clears the bit and calls back into the
-> shrinker is handling the case where objects were freed between the
-> shrinker running and shrink_slab_memcg() clearing the freeable bit
-> from the slab. Hence it has to call back into the shrinker again -
-> if it gets anything other than SHRINK_EMPTY returned, then it will
-> set the bit again.
-> 
+FWIW, it also doesn't look like you've handled the case of relogged
+items moving the tail forward anywhere that I can see, so we might be
+missing some wakeups here. See xfs_trans_ail_update_bulk() for
+additional AIL manipulation.
 
-Yeah, I grokked most of that from the code. The current implementation
-looks fine to me, but I could easily see how changes in the higher level
-do_shrink_slab() caller(s) or lower level shrinker callbacks could
-quietly break this in the future. IOW, once this code hits the tree any
-shrinker across the kernel is free to try and defer slab reclaim work
-for any reason.
+> +	if (!XFS_FORCED_SHUTDOWN(mp))
+> +		xlog_assign_tail_lsn_locked(mp);
+> +
+> +	wake_up_all(&ailp->ail_push);
+> +	if (list_empty(&ailp->ail_head))
+> +		wake_up_all(&ailp->ail_empty);
+> +	spin_unlock(&ailp->ail_lock);
+> +	xfs_log_space_wake(mp);
+> +}
+> +
+>  /**
+>   * Remove a log items from the AIL
+>   *
+> @@ -789,10 +842,9 @@ void
+>  xfs_trans_ail_delete(
+>  	struct xfs_ail		*ailp,
+>  	struct xfs_log_item	*lip,
+> -	int			shutdown_type) __releases(ailp->ail_lock)
+> +	int			shutdown_type)
+>  {
+>  	struct xfs_mount	*mp = ailp->ail_mount;
+> -	bool			mlip_changed;
+>  
+>  	if (!test_bit(XFS_LI_IN_AIL, &lip->li_flags)) {
+>  		spin_unlock(&ailp->ail_lock);
+> @@ -805,17 +857,7 @@ xfs_trans_ail_delete(
+>  		return;
+>  	}
+>  
+> -	mlip_changed = xfs_ail_delete_one(ailp, lip);
+> -	if (mlip_changed) {
+> -		if (!XFS_FORCED_SHUTDOWN(mp))
+> -			xlog_assign_tail_lsn_locked(mp);
+> -		if (list_empty(&ailp->ail_head))
+> -			wake_up_all(&ailp->ail_empty);
+> -	}
+> -
+> -	spin_unlock(&ailp->ail_lock);
+> -	if (mlip_changed)
+> -		xfs_log_space_wake(ailp->ail_mount);
+> +	xfs_ail_delete_finish(ailp, xfs_ail_delete_one(ailp, lip));
 
-> In reality, SHRINK_EMPTY and deferring work are mutually exclusive.
-> Work only gets deferred when there's work that can be done and in
-> that case SHRINK_EMPTY will not be returned - a value of "0 freed
-> objects" will be returned when we defer work. So if the first call
-> returns SHRINK_EMPTY, the "defer" state has not been touched and
-> so doesn't require resetting to zero here.
-> 
-
-Yep. The high level semantics make sense, but note that that the generic
-superblock shrinker can now set ->will_defer true and return
-SHRINK_EMPTY so that last bit about defer state not being touched is not
-technically true.
-
-> > Granted the deferred state likely hasn't
-> > changed, but the fact that we'd call back into the count callback to set
-> > it again implies the logic could be a bit more explicit, particularly if
-> > this will eventually be used for more dynamic shrinker state that might
-> > change call to call (i.e., object dirty state, etc.).
-> > 
-> > BTW, do we need to care about the ->nr_cached_objects() call from the
-> > generic superblock shrinker (super_cache_scan())?
-> 
-> No, and we never had to because it is inside the superblock shrinker
-> and the superblock shrinker does the GFP_NOFS context checks.
-> 
-
-Ok. Though tbh this topic has me wondering whether a shrink_control
-boolean is the right approach here. Do you envision ->will_defer being
-used for anything other than allocation context restrictions? If not,
-perhaps we should do something like optionally set alloc flags required
-for direct scanning in the struct shrinker itself and let the core
-shrinker code decide when to defer to kswapd based on the shrink_control
-flags and the current shrinker. That way an arbitrary shrinker can't
-muck around with core behavior in unintended ways. Hm?
+Nit, but I'm not a fan of the function call buried in a function call
+parameter pattern. I tend to read over it at a glance so to me it's not
+worth the line of code it saves.
 
 Brian
 
-> Cheers,
-> 
-> Dave.
+>  }
+>  
+>  int
+> @@ -834,6 +876,7 @@ xfs_trans_ail_init(
+>  	spin_lock_init(&ailp->ail_lock);
+>  	INIT_LIST_HEAD(&ailp->ail_buf_list);
+>  	init_waitqueue_head(&ailp->ail_empty);
+> +	init_waitqueue_head(&ailp->ail_push);
+>  
+>  	ailp->ail_task = kthread_run(xfsaild, ailp, "xfsaild/%s",
+>  			ailp->ail_mount->m_fsname);
+> diff --git a/fs/xfs/xfs_trans_priv.h b/fs/xfs/xfs_trans_priv.h
+> index 2e073c1c4614..5ab70b9b896f 100644
+> --- a/fs/xfs/xfs_trans_priv.h
+> +++ b/fs/xfs/xfs_trans_priv.h
+> @@ -61,6 +61,7 @@ struct xfs_ail {
+>  	int			ail_log_flush;
+>  	struct list_head	ail_buf_list;
+>  	wait_queue_head_t	ail_empty;
+> +	wait_queue_head_t	ail_push;
+>  };
+>  
+>  /*
+> @@ -92,8 +93,10 @@ xfs_trans_ail_update(
+>  }
+>  
+>  bool xfs_ail_delete_one(struct xfs_ail *ailp, struct xfs_log_item *lip);
+> +void xfs_ail_delete_finish(struct xfs_ail *ailp, bool do_tail_update)
+> +			__releases(ailp->ail_lock);
+>  void xfs_trans_ail_delete(struct xfs_ail *ailp, struct xfs_log_item *lip,
+> -		int shutdown_type) __releases(ailp->ail_lock);
+> +		int shutdown_type);
+>  
+>  static inline void
+>  xfs_trans_ail_remove(
+> @@ -111,6 +114,7 @@ xfs_trans_ail_remove(
+>  }
+>  
+>  void			xfs_ail_push(struct xfs_ail *, xfs_lsn_t);
+> +void			xfs_ail_push_sync(struct xfs_ail *, xfs_lsn_t);
+>  void			xfs_ail_push_all(struct xfs_ail *);
+>  void			xfs_ail_push_all_sync(struct xfs_ail *);
+>  struct xfs_log_item	*xfs_ail_min(struct xfs_ail  *ailp);
 > -- 
-> Dave Chinner
-> david@fromorbit.com
+> 2.22.0
+> 
