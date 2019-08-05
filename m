@@ -2,178 +2,279 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A99A821A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 18:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40EBC821C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2019 18:28:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbfHEQZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 12:25:33 -0400
-Received: from m9a0002g.houston.softwaregrp.com ([15.124.64.67]:44418 "EHLO
-        m9a0002g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727928AbfHEQZd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 12:25:33 -0400
-Received: FROM m9a0002g.houston.softwaregrp.com (15.121.0.191) BY m9a0002g.houston.softwaregrp.com WITH ESMTP;
- Mon,  5 Aug 2019 16:25:25 +0000
-Received: from M9W0068.microfocus.com (2002:f79:bf::f79:bf) by
- M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Mon, 5 Aug 2019 16:08:45 +0000
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (15.124.72.13) by
- M9W0068.microfocus.com (15.121.0.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Mon, 5 Aug 2019 16:08:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Zj2R/kP8/8QRMztHAUbun/hiVjUmJui2Vqc48eKtlifUcK9aNgEKpaZNH3V/n68UljLYJbt8SNR9Zit/cTGLyFNgNdHvTYoVzcM/wXivKQKbAZmpaBQNyrWMgXOgvwOJGmOZPu3L/gtQ7SNa2XBwjiJkf4vcGhIEtqatcP9elqnCe/sXDyY5MBtm5jkY/2hYLK6GD8FvuJSI30cCGHvEKDrqFGWFTaXPtnCUd0bRmwP6I2tv6QUGeLXWAx6RQ7g/YKhqcQC3BOAgLfrLubOxlOHwE5RUV4uqk4xZGLSd1fWE0S7r4pOuUpOejFYH1HUrGMfaMMp2GvqIOjvQ8ThzUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hBjGwaatOiV37J0Y7Cbz/jWWfVnb0UB/JbzuErv1B5o=;
- b=FSLcHk8lxhsZ3OdkMPbKkjWMUCKCB4xE3QUc5BMUk3wSPdESv+irGbqmgLfEkeMOau3NOhD+Gi6ax/qdNDVj6YCEmN+jz5sMOSrL0JR8OocDkYQPCa1tcMhuYVz8Zpjm19q/nurQNuctdbpbqsc0bOztuam3+ZKH3HOSF8rVvEztmTrFDspv9exCSxpIqEuk4tdno9Lw6GScX9FO03g6MV11+7YBTQJb6pzscLnjuKLBgPcecaaWqSdokz+QNXwP6ZlGO74uHhQmhtHmmZjRdkalKWaZ7hTtIlQp/PaZ9dqc8d1tSlIG85EfbMyxyEskrarGWRaKFVcusOpOl6HqXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=suse.com;dmarc=pass action=none header.from=suse.com;dkim=pass
- header.d=suse.com;arc=none
-Received: from CY4PR1801MB2071.namprd18.prod.outlook.com (10.171.254.163) by
- CY4PR1801MB1992.namprd18.prod.outlook.com (10.171.255.145) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.16; Mon, 5 Aug 2019 16:08:44 +0000
-Received: from CY4PR1801MB2071.namprd18.prod.outlook.com
- ([fe80::257a:b502:eda4:e0d5]) by CY4PR1801MB2071.namprd18.prod.outlook.com
- ([fe80::257a:b502:eda4:e0d5%6]) with mapi id 15.20.2136.018; Mon, 5 Aug 2019
- 16:08:44 +0000
-From:   Goldwyn Rodrigues <RGoldwyn@suse.com>
-To:     "david@fromorbit.com" <david@fromorbit.com>
-CC:     "hch@lst.de" <hch@lst.de>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 10/13] iomap: use a function pointer for dio submits
-Thread-Topic: [PATCH 10/13] iomap: use a function pointer for dio submits
-Thread-Index: AQHVSX3ToXfGcf37hUGaWWpa6tpJG6brqj3ngAES4oA=
-Date:   Mon, 5 Aug 2019 16:08:43 +0000
-Message-ID: <1565021323.13240.14.camel@suse.com>
-References: <20190802220048.16142-1-rgoldwyn@suse.de>
-         <20190802220048.16142-11-rgoldwyn@suse.de>
-         <20190804234321.GC7689@dread.disaster.area>
-In-Reply-To: <20190804234321.GC7689@dread.disaster.area>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=RGoldwyn@suse.com; 
-x-originating-ip: [75.66.23.247]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d6b7d978-f13d-4e6e-a885-08d719bf308c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR1801MB1992;
-x-ms-traffictypediagnostic: CY4PR1801MB1992:
-x-microsoft-antispam-prvs: <CY4PR1801MB199284014830CCD12566B586B7DA0@CY4PR1801MB1992.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-x-forefront-prvs: 01208B1E18
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(396003)(346002)(376002)(39860400002)(199004)(189003)(6506007)(71190400001)(91956017)(4326008)(229853002)(2906002)(6512007)(76176011)(6486002)(54906003)(305945005)(6436002)(76116006)(80792005)(53936002)(66946007)(66446008)(64756008)(66556008)(66476007)(5640700003)(7736002)(316002)(5660300002)(3846002)(66066001)(26005)(186003)(486006)(102836004)(11346002)(2616005)(476003)(71200400001)(103116003)(256004)(14444005)(446003)(2501003)(6116002)(86362001)(68736007)(36756003)(81166006)(6916009)(81156014)(478600001)(2351001)(1730700003)(14454004)(6246003)(8936002)(25786009)(8676002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR1801MB1992;H:CY4PR1801MB2071.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: suse.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 9sV9B5U7pruWyWO4OyfuqmwT42X4Xt5UWtIC+S5TdAypUccH8BDbAEFtkrnHxcsixtqC2gThivv8z/S2y+pQbpoTdh3E+Zy38qz4FUzGdpiPC8mWnjQRDF+v9NJ4+RU+PWKTrvSCfg06GyLEttpwXlAGmcjwcq0u9uhLwb3tvhnmqK/3ehWv5l7HMoKXLi1QZoS+qNIh+CZU067odrZ/5jJ1ZZw5SyBjwGwi4Z+rZqJRcsnJjiwVn2NUTer+I2HPgrtM4Sw6diicxLL5BRArZrcG3SXTZmXKAy7Pbhrz+Vt6zWuUzr/twZBhgrd8tk+QTYcdP1ehU+JeFa6KBnpD0lV+hGSdV7pzdw4f5VkbXMrTg3Vcm/gkilEhqCf8gCAqbyEul9/ML2B+hRd2N3HLAvejb8RXVIJbm2tzfbm5nCo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <30D0959B2E9E294A98698ED487730175@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1729836AbfHEQ2c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 12:28:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728867AbfHEQ2b (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Aug 2019 12:28:31 -0400
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEDFE2086D;
+        Mon,  5 Aug 2019 16:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565022510;
+        bh=LqkJPwRbIJWtTHNU/mQ+ZTHl9Y6z46DQPE4wViYyWpY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Jj9v+7sB6Z88nnGXHknp8hg9fJROfiKAgjPeVw69CrAucIln0d0DJMQ8AjcBHurFS
+         oCanS3XIpi2kEGEJEjduU5NrseXQo6VwAuIhAXTzwT8wZWfPSNjJI9iVlRkd9NLINP
+         BRUZpvXPd5Wr5zolve8SVg4hxAZQQpQa18Gx5x+g=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-api@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH v8 00/20] fscrypt: key management improvements
+Date:   Mon,  5 Aug 2019 09:25:01 -0700
+Message-Id: <20190805162521.90882-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6b7d978-f13d-4e6e-a885-08d719bf308c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2019 16:08:43.9177
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RGoldwyn@suse.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1801MB1992
-X-OriginatorOrg: suse.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTA4LTA1IGF0IDA5OjQzICsxMDAwLCBEYXZlIENoaW5uZXIgd3JvdGU6DQo+
-IE9uIEZyaSwgQXVnIDAyLCAyMDE5IGF0IDA1OjAwOjQ1UE0gLTA1MDAsIEdvbGR3eW4gUm9kcmln
-dWVzIHdyb3RlOg0KPiA+IEZyb206IEdvbGR3eW4gUm9kcmlndWVzIDxyZ29sZHd5bkBzdXNlLmNv
-bT4NCj4gPiANCj4gPiBUaGlzIGhlbHBzIGZpbGVzeXN0ZW1zIHRvIHBlcmZvcm0gdGFza3Mgb24g
-dGhlIGJpbyB3aGlsZQ0KPiA+IHN1Ym1pdHRpbmcgZm9yIEkvTy4gU2luY2UgYnRyZnMgcmVxdWly
-ZXMgdGhlIHBvc2l0aW9uDQo+ID4gd2UgYXJlIHdvcmtpbmcgb24sIHBhc3MgcG9zIHRvIGlvbWFw
-X2Rpb19zdWJtaXRfYmlvKCkNCj4gPiANCj4gPiBUaGUgY29ycmVjdCBwbGFjZSBmb3Igc3VibWl0
-X2lvKCkgaXMgbm90IHBhZ2Vfb3BzLiBXb3VsZCBpdA0KPiA+IGJldHRlciB0byByZW5hbWUgdGhl
-IHN0cnVjdHVyZSB0byBzb21ldGhpbmcgbGlrZSBpb21hcF9pb19vcHMNCj4gPiBvciBwdXQgaXQg
-ZGlyZWN0bHkgdW5kZXIgc3RydWN0IGlvbWFwPw0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEdv
-bGR3eW4gUm9kcmlndWVzIDxyZ29sZHd5bkBzdXNlLmNvbT4NCj4gPiAtLS0NCj4gPiAgZnMvaW9t
-YXAvZGlyZWN0LWlvLmMgIHwgMTYgKysrKysrKysrKystLS0tLQ0KPiA+ICBpbmNsdWRlL2xpbnV4
-L2lvbWFwLmggfCAgMSArDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwg
-NSBkZWxldGlvbnMoLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZnMvaW9tYXAvZGlyZWN0LWlv
-LmMgYi9mcy9pb21hcC9kaXJlY3QtaW8uYw0KPiA+IGluZGV4IDUyNzkwMjljN2EzYy4uYTgwMmU2
-NmJmMTFmIDEwMDY0NA0KPiA+IC0tLSBhL2ZzL2lvbWFwL2RpcmVjdC1pby5jDQo+ID4gKysrIGIv
-ZnMvaW9tYXAvZGlyZWN0LWlvLmMNCj4gPiBAQCAtNTksNyArNTksNyBAQCBpbnQgaW9tYXBfZGlv
-X2lvcG9sbChzdHJ1Y3Qga2lvY2IgKmtpb2NiLCBib29sDQo+ID4gc3BpbikNCj4gPiAgRVhQT1JU
-X1NZTUJPTF9HUEwoaW9tYXBfZGlvX2lvcG9sbCk7DQo+ID4gIA0KPiA+ICBzdGF0aWMgdm9pZCBp
-b21hcF9kaW9fc3VibWl0X2JpbyhzdHJ1Y3QgaW9tYXBfZGlvICpkaW8sIHN0cnVjdA0KPiA+IGlv
-bWFwICppb21hcCwNCj4gPiAtCQlzdHJ1Y3QgYmlvICpiaW8pDQo+ID4gKwkJc3RydWN0IGJpbyAq
-YmlvLCBsb2ZmX3QgcG9zKQ0KPiA+ICB7DQo+ID4gIAlhdG9taWNfaW5jKCZkaW8tPnJlZik7DQo+
-ID4gIA0KPiA+IEBAIC02Nyw3ICs2NywxMyBAQCBzdGF0aWMgdm9pZCBpb21hcF9kaW9fc3VibWl0
-X2JpbyhzdHJ1Y3QNCj4gPiBpb21hcF9kaW8gKmRpbywgc3RydWN0IGlvbWFwICppb21hcCwNCj4g
-PiAgCQliaW9fc2V0X3BvbGxlZChiaW8sIGRpby0+aW9jYik7DQo+ID4gIA0KPiA+ICAJZGlvLT5z
-dWJtaXQubGFzdF9xdWV1ZSA9IGJkZXZfZ2V0X3F1ZXVlKGlvbWFwLT5iZGV2KTsNCj4gPiAtCWRp
-by0+c3VibWl0LmNvb2tpZSA9IHN1Ym1pdF9iaW8oYmlvKTsNCj4gPiArCWlmIChpb21hcC0+cGFn
-ZV9vcHMgJiYgaW9tYXAtPnBhZ2Vfb3BzLT5zdWJtaXRfaW8pIHsNCj4gPiArCQlpb21hcC0+cGFn
-ZV9vcHMtPnN1Ym1pdF9pbyhiaW8sIGZpbGVfaW5vZGUoZGlvLQ0KPiA+ID5pb2NiLT5raV9maWxw
-KSwNCj4gPiArCQkJCXBvcyk7DQo+ID4gKwkJZGlvLT5zdWJtaXQuY29va2llID0gQkxLX1FDX1Rf
-Tk9ORTsNCj4gPiArCX0gZWxzZSB7DQo+ID4gKwkJZGlvLT5zdWJtaXQuY29va2llID0gc3VibWl0
-X2JpbyhiaW8pOw0KPiA+ICsJfQ0KPiANCj4gSSBkb24ndCByZWFsbHkgbGlrZSB0aGlzIGF0IGFs
-bC4gQXBhcnQgZnJvbSB0aGUgZmFjdCBpdCBkb2Vzbid0IHdvcmsNCj4gd2l0aCBibG9jayBkZXZp
-Y2UgcG9sbGluZyAoUldGX0hJUFJJKSwgdGhlIGlvbWFwIGFyY2hpdGVjdHVyZSBpcw0KDQpUaGF0
-IGNhbiBiZSBhZGRlZCwgbm8/IFNob3VsZCBiZSByZWxheWVkIHdoZW4gd2UgY2xvbmUgdGhlIGJp
-by4NCg0KPiBzdXBwb3NlZCB0byByZXNvbHZlIHRoZSBmaWxlIG9mZnNldCAtPiBibG9jayBkZXZp
-Y2UgKyBMQkEgbWFwcGluZw0KPiBjb21wbGV0ZWx5IHVwIGZyb250IGFuZCBzbyBhbGwgdGhhdCBy
-ZW1haW5zIHRvIGJlIGRvbmUgaXMgYnVpbGQgYW5kDQo+IHN1Ym1pdCB0aGUgYmlvKHMpIHRvIHRo
-ZSBibG9jayBkZXZpY2UuDQo+IA0KPiBXaGF0IEkgc2VlIGhlcmUgaXMgYSBoYWNrIHRvIHdvcmsg
-YXJvdW5kIHRoZSBmYWN0IHRoYXQgYnRyZnMgaGFzDQo+IGltcGxlbWVudGVkIGJvdGggZmlsZSBk
-YXRhIHRyYW5zZm9ybWF0aW9ucyBhbmQgZGV2aWNlIG1hcHBpbmcgbGF5ZXINCj4gZnVuY3Rpb25h
-bGl0eSBhcyBhIGZpbGVzeXN0ZW0gbGF5ZXIgYmV0d2VlbiBmaWxlIGRhdGEgYmlvIGJ1aWxkaW5n
-DQo+IGFuZCBkZXZpY2UgYmlvIHN1Ym1pc3Npb24uIEFuZCBhcyB0aGUgYnRyZnMgZmlsZSBkYXRh
-IG1hcHBpbmcNCj4gKC0+aW9tYXBfYmVnaW4pIGlzIGNvbXBsZXRlbHkgdW5hd2FyZSB0aGF0IHRo
-ZXJlIGlzIGZ1cnRoZXIgYmxvY2sNCj4gbWFwcGluZyB0byBiZSBkb25lIGJlZm9yZSBibG9jayBk
-ZXZpY2UgYmlvIHN1Ym1pc3Npb24sIGFueSBnZW5lcmljDQo+IGNvZGUgdGhhdCBidHJmcyB1c2Vz
-IHJlcXVpcmVzIHNwZWNpYWwgSU8gc3VibWlzc2lvbiBob29rcyByYXRoZXINCj4gdGhhbiBqdXN0
-IGNhbGxpbmcgc3VibWl0X2JpbygpLg0KPiANCj4gSSdtIG5vdCAxMDAlIHN1cmUgd2hhdCB0aGUg
-c29sdXRpb24gaGVyZSBpcywgYnV0IHRoZSBvbmUgdGhpbmcgd2UNCj4gbXVzdCByZXNpc3QgaXMg
-dHVybmluZyB0aGUgaW9tYXAgY29kZSBpbnRvIGEgbWVzcyBvZiBjdXN0b20gaG9va3MNCj4gdGhh
-dCBvbmx5IG9uZSBmaWxlc3lzdGVtIHVzZXMuIFdlJ3ZlIGJlZW4gdGF1Z2h0IHRoaXMgbGVzc29u
-IHRpbWUNCj4gYW5kIHRpbWUgYWdhaW4gLSB0aGUgaW9tYXAgaW5mcmFzdHJ1Y3R1cmUgZXhpc3Rz
-IGJlY2F1c2Ugc3R1ZmYgbGlrZQ0KPiBidWZmZXJoZWFkcyBhbmQgdGhlIG9sZCBkaXJlY3QgSU8g
-Y29kZSBlbmRlZCB1cCBzbyBmdWxsIG9mIHNwZWNpYWwNCj4gY2FzZSBjb2RlIHRoYXQgaXQgb3Nz
-aWZpZWQgYW5kIGJlY2FtZSB1bm1vZGlmaWFibGUgYW5kDQo+IHVubWFpbnRhaW5hYmxlLg0KPiAN
-Cj4gV2UgZG8gbm90IHdhbnQgdG8gZ28gZG93biB0aGF0IHBhdGggYWdhaW4uIA0KPiANCj4gSU1P
-LCB0aGUgaW9tYXAgSU8gbW9kZWwgbmVlZHMgdG8gYmUgcmVzdHJ1Y3R1cmVkIHRvIHN1cHBvcnQg
-cG9zdC1JTw0KPiBhbmQgcHJlLUlPIGRhdGEgdmVyaWZpY2F0aW9uL2NhbGN1bGF0aW9uL3RyYW5z
-Zm9ybWF0aW9uIG9wZXJhdGlvbnMNCj4gc28gYWxsIHRoZSB3b3JrIHRoYXQgbmVlZHMgdG8gYmUg
-ZG9uZSBhdCB0aGUgaW5vZGUvb2Zmc2V0IGNvbnRleHQNCj4gbGV2ZWwgY2FuIGJlIGRvbmUgaW4g
-dGhlIGlvbWFwIHBhdGggYmVmb3JlIGJpbyBzdWJtaXNzaW9uL2FmdGVyDQo+IGJpbyBjb21wbGV0
-aW9uLiBUaGlzIHdpbGwgYWxsb3cgaW5mcmFzdHJ1Y3R1cmUgbGlrZSBmc2NyeXB0LCBkYXRhDQo+
-IGNvbXByZXNzaW9uLCBkYXRhIGNoZWNrc3VtcywgZXRjIHRvIGJlIHN1cG9ydGVkIGdlbmVyaWNh
-bGx5LCBub3QNCj4ganVzdCBieSBpbmRpdmlkdWFsIGZpbGVzeXN0ZW1zIHRoYXQgcHJvdmlkZSBh
-IC0+c3VibWl0X2lvIGhvb2suDQo+IA0KPiBBcyBmb3IgdGhlIGJ0cmZzIG5lZWRpbmcgdG8gc2xp
-Y2UgYW5kIGRpY2UgYmlvcyBmb3IgbXVsdGlwbGUNCj4gZGV2aWNlcz8gIFRoYXQgc2hvdWxkIGJl
-IGRvbmUgdmlhIGEgYmxvY2sgZGV2aWNlIC0+bWFrZV9yZXF1ZXN0DQo+IGZ1bmN0aW9uLCBub3Qg
-YSBjdXN0b20gaG9vayBpbiB0aGUgaW9tYXAgY29kZS4NCg0KYnRyZnMgZGlmZmVyZW50aWF0ZXMg
-dGhlIHdheSBob3cgbWV0YWRhdGEgYW5kIGRhdGEgaXMNCmhhbmRsZWQvcmVwbGljYXRlZC9zdG9y
-ZWQuIFdlIHdvdWxkIHN0aWxsIG5lZWQgYW4gZW50cnkgcG9pbnQgaW4gdGhlDQppb21hcCBjb2Rl
-IHRvIGhhbmRsZSB0aGUgSS9PIHN1Ym1pc3Npb24uDQoNCj4gDQo+IFRoYXQncyB3aHkgSSBkb24n
-dCBsaWtlIHRoaXMgaG9vayAtIEkgdGhpbmsgaGlkaW5nIGRhdGEgb3BlcmF0aW9ucw0KPiBhbmQv
-b3IgY3VzdG9tIGJpbyBtYW5pcHVsYXRpb25zIGluIG9wYXF1ZSBmaWxlc3lzdGVtIGNhbGxvdXRz
-IGlzDQo+IGNvbXBsZXRlbHkgdGhlIHdyb25nIGFwcHJvYWNoIHRvIGJlIHRha2luZy4gV2UgbmVl
-ZCB0byBkbyB0aGVzZQ0KPiB0aGluZ3MgaW4gYSBnZW5lcmljIG1hbm5lciBzbyB0aGF0IGFsbCBm
-aWxlc3lzdGVtcyAoYW5kIGJsb2NrDQo+IGRldmljZXMhKSB0aGF0IHVzZSB0aGUgaW9tYXAgaW5m
-cmFzdHJ1Y3R1cmUgY2FuIHRha2UgYWR2YW50YWdlIG9mDQo+IHRoZW0sIG5vdCBqdXN0IG9uZSBv
-ZiB0aGVtLg0KPiANCj4gUXVpdGUgZnJhbmtseSwgSSBkb24ndCBjYXJlIGlmIGl0IHRha2VzIG1v
-cmUgdGltZSBhbmQgd29yayB1cCBmcm9udCwNCj4gSSdtIHRpcmVkIG9mIGV4cGVkaWVudCBoYWNr
-cyB0byBtZXJnZSBjb2RlIHF1aWNrbHkgcmVwZWF0ZWRseSBiaXRpbmcNCj4gdXMgb24gdGhlIGFy
-c2UgYW5kIHdhc3RpbmcgZmFyIG1vcmUgdGltZSBzb3J0aW5nIG91dCB0aGFuIHdlIHdvdWxkDQo+
-IGhhdmUgc3BlbnQgZ2V0dGluZyBpdCByaWdodCBpbiB0aGUgZmlyc3QgcGxhY2UuDQoNClN1cmUu
-IEkgYW0gb3BlbiB0byBpZGVhcy4gV2hhdCBhcmUgeW91IHByb3Bvc2luZz8NCg0KLS0gDQpHb2xk
-d3lu
+Hello,
+
+[Note: I'd like to apply this for v5.4.  Additional review is greatly
+ appreciated, especially of the API before it's set in stone.  Thanks!]
+
+This patchset makes major improvements to how keys are added, removed,
+and derived in fscrypt, aka ext4/f2fs/ubifs encryption.  It does this by
+adding new ioctls that add and remove encryption keys directly to/from
+the filesystem, and by adding a new encryption policy version ("v2")
+where the user-provided keys are only used as input to HKDF-SHA512 and
+are identified by their cryptographic hash.
+
+All new APIs and all cryptosystem changes are documented in
+Documentation/filesystems/fscrypt.rst.  Userspace can use the new key
+management ioctls with existing encrypted directories, but migrating to
+v2 encryption policies is needed for the full benefits.
+
+These changes solve four interrelated problems:
+
+(1) Providing fscrypt keys via process-subscribed keyrings is abusing
+    encryption as an OS-level access control mechanism, causing many
+    bugs where processes don't get access to the keys they need -- e.g.,
+    when a 'sudo' command or a system service needs to access encrypted
+    files.  It's also inconsistent with the filesystem/VFS "view" of
+    encrypted files which is global, so sometimes things randomly happen
+    to work anyway due to caching.  Regardless, currently almost all
+    fscrypt users actually do need global keys, so they're having to use
+    workarounds that heavily abuse the session or user keyrings, e.g.
+    Android and Chromium OS both use a systemwide "session keyring" and
+    the 'fscrypt' tool links all user keyrings into root's user keyring.
+
+(2) Currently there's no way to securely and efficiently remove a
+    fscrypt key such that not only is the original key wiped, but also
+    all files and directories protected by that key are "locked" and
+    their per-file keys wiped.  Many users want this and are using
+    'echo 2 > /proc/sys/vm/drop_caches' as a workaround, but this is
+    root-only, and also is overkill so can be a performance disaster.
+
+(3) The key derivation function (KDF) that fscrypt uses to derive
+    per-file keys is nonstandard, inflexible, and has some weaknesses
+    such as being reversible and not evenly distributing the entropy
+    from the user-provided keys.
+
+(4) fscrypt doesn't check that the correct key was supplied.  This can
+    be a security vulnerability, since it allows malicious local users
+    to associate the wrong key with files to which they have read-only
+    access, causing other users' processes to read/write the wrong data.
+
+Ultimately, the solutions to these problems all tie into each other.  By
+adding a filesystem-level encryption keyring with ioctls to add/remove
+keys to/from it, the keys are made usable filesystem-wide (solves
+problem #1).  It also becomes easy to track the inodes that were
+"unlocked" with each key, so they can be evicted when the key is removed
+(solves problem #2).  Moreover, the filesystem-level keyring is a
+natural place to store an HMAC transform keyed by each key, thus making
+it easy and efficient to switch the KDF to HKDF (solves problem #3).
+
+Finally, to check that the correct key was supplied, I use HKDF to
+derive a cryptographically secure key_identifier for each key (solves
+problem #4).  This in combination with key quotas and other careful
+precautions also makes it safe to allow non-root users to add and remove
+keys to/from the filesystem-level keyring.  Thus, all problems are
+solved without having to restrict the fscrypt API to root only.
+
+The patchset is organized as follows:
+
+- Patches 1-8 create a dedicated UAPI header for fscrypt and do various
+  refactoring and cleanups in preparation for the later patches.
+
+- Patches 9-11 add new ioctls FS_IOC_ADD_ENCRYPTION_KEY,
+  FS_IOC_REMOVE_ENCRYPTION_KEY, and FS_IOC_GET_ENCRYPTION_KEY_STATUS.
+  Adding a key logically "unlocks" all files on the filesystem that are
+  protected by that key; removing a key "locks" them again.
+
+- Patches 12-16 add support for v2 encryption policies.
+
+- Patches 17-19 wire up the new ioctls to ext4, f2fs, and ubifs.
+
+- Patch 20 updates the fscrypt documentation for all the changes.
+
+This patchset applies to v5.3-rc3 with the pending fscrypt cleanup
+patches applied (https://patchwork.kernel.org/patch/11057589/ and
+https://patchwork.kernel.org/cover/11057583/).
+You can also get it from git at:
+
+	Repository:   https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+	Branch:       fscrypt-key-mgmt-improvements-v8
+
+I've written xfstests for the new APIs.  They test the APIs themselves
+as well as verify the correctness of the ciphertext stored on-disk for
+v2 encryption policies.  The tests can be found at:
+
+	Repository:   https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git
+	Branch:       fscrypt-key-mgmt-improvements
+
+The xfstests depend on new xfs_io commands which can be found at:
+
+	Repository:   https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfsprogs-dev.git
+	Branch:       fscrypt-key-mgmt-improvements
+
+This patchset also passes all the existing encryption tests in xfstests,
+including the ciphertext verification tests which verify that there are
+no regressions in the crypto for any existing encryption settings.
+
+I've also made proof-of-concept changes to the 'fscrypt' userspace
+program (https://github.com/google/fscrypt) to make it support v2
+encryption policies.  You can find these changes in git at:
+
+	Repository:   https://github.com/ebiggers/fscrypt.git
+	Branch:       fscrypt-key-mgmt-improvements
+
+To make the 'fscrypt' userspace program experimentally use v2 encryption
+policies on new encrypted directories, add the following to
+/etc/fscrypt.conf within the "options" section:
+
+	"policy_version": "2"
+
+Finally, it's also planned for Android and Chromium OS to switch to the
+new ioctls and eventually to v2 encryption policies.  Work-in-progress,
+proof-of-concept changes by Satya Tangirala for AOSP can be found at
+https://android-review.googlesource.com/q/topic:fscrypt-key-mgmt-improvements
+
+Changes v7 => v8:
+    - Replace -EUSERS and -EBUSY statuses for
+      FS_IOC_REMOVE_ENCRYPTION_KEY with informational status flags.
+    - Replace FSCRYPT_REMOVE_KEY_FLAG_ALL_USERS with a separate ioctl,
+      FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS.
+    - Improve the documentation.
+    - Improve some comments.
+    - Rename keysetup_legacy.c => keysetup_v1.c, and split the keyinfo.c
+      refactoring into multiple patches to make it easier to review.
+    - Avoid checks like 'if (v1 policy) { ... } else { ... }' even when
+      the policy version was already validated.  Instead handle v1, v2,
+      and default case explicitly.
+    - In warning messages that refer to keys in the fs-level keyring,
+      say "descriptor" or "identifier" instead of "description".
+    - Restore a fscrypt_warn() that was accidentally lost when rebasing.
+    - Rebase onto v5.3-rc3.
+    - Other small cleanups.
+
+Changes v6 => v7:
+    - Rebase onto v5.3-rc1 and the pending fscrypt cleanups.
+    - Work around false positive compile-time buffer overflow check in
+      copy_from_user() in fscrypt_ioctl_set_policy() when building an
+      i386 kernel in a specific config with an old gcc version.
+    - A few very minor cleanups.
+
+Changes v5 => v6:
+    - Change HKDF to use the specification-defined default salt rather
+      than a custom fixed salt, and prepend the string "fscrypt" to
+      'info' instead.  This is arguably needed to match how RFC 5869 and
+      SP 800-56C are worded.  Both ways are secure in this context, so
+      prefer the "boring" way that clearly matches the standards.
+    - Rebase onto v5.2-rc1.
+    - A few small cleanups.
+
+Changes v4 => v5:
+    - Simplify shrink_dcache_inode(), as suggested by Al Viro;
+      also move it into fs/crypto/.
+    - Fix a build error on some architectures by calling
+      copy_from_user() rather than get_user() with a __u64 pointer.
+
+Changes v3 => v4:
+    - Introduce fscrypt_sb_free() to avoid an extra #ifdef.
+    - Fix UBIFS's ->drop_inode().
+    - Add 'version' to union fscrypt_policy and union fscrypt_context.
+
+Changes v2 => v3:
+    - Use ->drop_inode() to trigger the inode eviction during/after
+      FS_IOC_REMOVE_ENCRYPTION_KEY, as suggested by Dave Chinner.
+    - A few small cleanups.
+
+v1 of this patchset was sent in October 2017 with title "fscrypt:
+filesystem-level keyring and v2 policy support".  This revived version
+follows the same basic design but incorporates numerous improvements,
+such as splitting keyinfo.c into multiple files for much better
+understandability, and introducing "per-mode" encryption keys to
+implement the semantics of the DIRECT_KEY encryption policy flag.
+
+Eric Biggers (20):
+  fs, fscrypt: move uapi definitions to new header <linux/fscrypt.h>
+  fscrypt: use FSCRYPT_ prefix for uapi constants
+  fscrypt: use FSCRYPT_* definitions, not FS_*
+  fscrypt: add ->ci_inode to fscrypt_info
+  fscrypt: rename fscrypt_master_key to fscrypt_direct_key
+  fscrypt: refactor key setup code in preparation for v2 policies
+  fscrypt: move v1 policy key setup to keysetup_v1.c
+  fscrypt: rename keyinfo.c to keysetup.c
+  fscrypt: add FS_IOC_ADD_ENCRYPTION_KEY ioctl
+  fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl
+  fscrypt: add FS_IOC_GET_ENCRYPTION_KEY_STATUS ioctl
+  fscrypt: add an HKDF-SHA512 implementation
+  fscrypt: v2 encryption policy support
+  fscrypt: allow unprivileged users to add/remove keys for v2 policies
+  fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS ioctl
+  fscrypt: require that key be added when setting a v2 encryption policy
+  ext4: wire up new fscrypt ioctls
+  f2fs: wire up new fscrypt ioctls
+  ubifs: wire up new fscrypt ioctls
+  fscrypt: document the new ioctls and policy version
+
+ Documentation/filesystems/fscrypt.rst | 755 ++++++++++++++++----
+ MAINTAINERS                           |   1 +
+ fs/crypto/Kconfig                     |   2 +
+ fs/crypto/Makefile                    |  10 +-
+ fs/crypto/crypto.c                    |  12 +-
+ fs/crypto/fname.c                     |   5 +-
+ fs/crypto/fscrypt_private.h           | 389 +++++++++-
+ fs/crypto/hkdf.c                      | 181 +++++
+ fs/crypto/keyinfo.c                   | 627 ----------------
+ fs/crypto/keyring.c                   | 981 ++++++++++++++++++++++++++
+ fs/crypto/keysetup.c                  | 591 ++++++++++++++++
+ fs/crypto/keysetup_v1.c               | 340 +++++++++
+ fs/crypto/policy.c                    | 434 +++++++++---
+ fs/ext4/ioctl.c                       |  30 +
+ fs/ext4/super.c                       |   3 +
+ fs/f2fs/file.c                        |  58 ++
+ fs/f2fs/super.c                       |   2 +
+ fs/super.c                            |   2 +
+ fs/ubifs/ioctl.c                      |  20 +
+ fs/ubifs/super.c                      |  11 +
+ include/linux/fs.h                    |   1 +
+ include/linux/fscrypt.h               |  55 +-
+ include/uapi/linux/fs.h               |  54 +-
+ include/uapi/linux/fscrypt.h          | 181 +++++
+ 24 files changed, 3787 insertions(+), 958 deletions(-)
+ create mode 100644 fs/crypto/hkdf.c
+ delete mode 100644 fs/crypto/keyinfo.c
+ create mode 100644 fs/crypto/keyring.c
+ create mode 100644 fs/crypto/keysetup.c
+ create mode 100644 fs/crypto/keysetup_v1.c
+ create mode 100644 include/uapi/linux/fscrypt.h
+
+-- 
+2.22.0
+
