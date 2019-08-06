@@ -2,63 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD92A83BDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 23:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D29C083BBF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 23:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729697AbfHFViR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 17:38:17 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:33465 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728872AbfHFViQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 17:38:16 -0400
-Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0DF2C3611A0;
-        Wed,  7 Aug 2019 07:38:15 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hv78m-0005E4-4F; Wed, 07 Aug 2019 07:37:08 +1000
-Date:   Wed, 7 Aug 2019 07:37:08 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC] [PATCH 00/24] mm, xfs: non-blocking inode reclaim
-Message-ID: <20190806213708.GK7777@dread.disaster.area>
-References: <20190801021752.4986-1-david@fromorbit.com>
- <20190806055744.GC25736@infradead.org>
+        id S1729489AbfHFVhr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 17:37:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55510 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728651AbfHFVhr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 17:37:47 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC3B821873;
+        Tue,  6 Aug 2019 21:37:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565127465;
+        bh=koxFKq4sAv+61LG5RY7c5B+SMwVE5w0wUPMeZ80kNQE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=b3YK2F6hKtLPTxK0XT7ltUSVD/+4ABrtvuBJH3UMRZ/Mv1c/YqLH8IgDDsLiFjzsm
+         VH+u52SMiDOMJlDxpmZlqxqMNa2hn5ljTEDMZvBPRBafDv7NqtmQdNvcBOJoqf8Eni
+         zMJmxjf1NtunyMVjBiJzaGgcqHCwG9eF9ru+i2NE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Paul Wise <pabs3@bonedaddy.net>, Jakub Wilk <jwilk@jwilk.net>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 16/17] coredump: split pipe command whitespace before expanding template
+Date:   Tue,  6 Aug 2019 17:37:13 -0400
+Message-Id: <20190806213715.20487-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190806213715.20487-1-sashal@kernel.org>
+References: <20190806213715.20487-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806055744.GC25736@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
-        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
-        a=7-415B0cAAAA:8 a=6Ra6EZb4IHi7eq9aHn8A:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 10:57:44PM -0700, Christoph Hellwig wrote:
-> Hi Dave,
-> 
-> do you have a git tree available to look over the whole series?
+From: Paul Wise <pabs3@bonedaddy.net>
 
-Not yet, I'll get one up for the next version of the patchset and I
-have done some page cache vs inode cache balance testing. That,
-FWIW, is not looking good - the vanilla 5.3-rc3 kernel is unable to
-maintain a balanced page cache/inode cache working set under steady
-state tarball-extraction workloads. Memory reclaim looks to be have
-been completely borked from a system balance perspective since I
-last looked at it maybe a year ago....
+[ Upstream commit 315c69261dd3fa12dbc830d4fa00d1fad98d3b03 ]
 
-Cheers,
+Save the offsets of the start of each argument to avoid having to update
+pointers to each argument after every corename krealloc and to avoid
+having to duplicate the memory for the dump command.
 
-Dave.
+Executable names containing spaces were previously being expanded from
+%e or %E and then split in the middle of the filename.  This is
+incorrect behaviour since an argument list can represent arguments with
+spaces.
+
+The splitting could lead to extra arguments being passed to the core
+dump handler that it might have interpreted as options or ignored
+completely.
+
+Core dump handlers that are not aware of this Linux kernel issue will be
+using %e or %E without considering that it may be split and so they will
+be vulnerable to processes with spaces in their names breaking their
+argument list.  If their internals are otherwise well written, such as
+if they are written in shell but quote arguments, they will work better
+after this change than before.  If they are not well written, then there
+is a slight chance of breakage depending on the details of the code but
+they will already be fairly broken by the split filenames.
+
+Core dump handlers that are aware of this Linux kernel issue will be
+placing %e or %E as the last item in their core_pattern and then
+aggregating all of the remaining arguments into one, separated by
+spaces.  Alternatively they will be obtaining the filename via other
+methods.  Both of these will be compatible with the new arrangement.
+
+A side effect from this change is that unknown template types (for
+example %z) result in an empty argument to the dump handler instead of
+the argument being dropped.  This is a desired change as:
+
+It is easier for dump handlers to process empty arguments than dropped
+ones, especially if they are written in shell or don't pass each
+template item with a preceding command-line option in order to
+differentiate between individual template types.  Most core_patterns in
+the wild do not use options so they can confuse different template types
+(especially numeric ones) if an earlier one gets dropped in old kernels.
+If the kernel introduces a new template type and a core_pattern uses it,
+the core dump handler might not expect that the argument can be dropped
+in old kernels.
+
+For example, this can result in security issues when %d is dropped in
+old kernels.  This happened with the corekeeper package in Debian and
+resulted in the interface between corekeeper and Linux having to be
+rewritten to use command-line options to differentiate between template
+types.
+
+The core_pattern for most core dump handlers is written by the handler
+author who would generally not insert unknown template types so this
+change should be compatible with all the core dump handlers that exist.
+
+Link: http://lkml.kernel.org/r/20190528051142.24939-1-pabs3@bonedaddy.net
+Fixes: 74aadce98605 ("core_pattern: allow passing of arguments to user mode helper when core_pattern is a pipe")
+Signed-off-by: Paul Wise <pabs3@bonedaddy.net>
+Reported-by: Jakub Wilk <jwilk@jwilk.net> [https://bugs.debian.org/924398]
+Reported-by: Paul Wise <pabs3@bonedaddy.net> [https://lore.kernel.org/linux-fsdevel/c8b7ecb8508895bf4adb62a748e2ea2c71854597.camel@bonedaddy.net/]
+Suggested-by: Jakub Wilk <jwilk@jwilk.net>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/coredump.c | 44 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 39 insertions(+), 5 deletions(-)
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 4407e27beca95..98a45a727eb8b 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -6,6 +6,7 @@
+ #include <linux/stat.h>
+ #include <linux/fcntl.h>
+ #include <linux/swap.h>
++#include <linux/ctype.h>
+ #include <linux/string.h>
+ #include <linux/init.h>
+ #include <linux/pagemap.h>
+@@ -184,11 +185,13 @@ static int cn_print_exe_file(struct core_name *cn)
+  * name into corename, which must have space for at least
+  * CORENAME_MAX_SIZE bytes plus one byte for the zero terminator.
+  */
+-static int format_corename(struct core_name *cn, struct coredump_params *cprm)
++static int format_corename(struct core_name *cn, struct coredump_params *cprm,
++			   size_t **argv, int *argc)
+ {
+ 	const struct cred *cred = current_cred();
+ 	const char *pat_ptr = core_pattern;
+ 	int ispipe = (*pat_ptr == '|');
++	bool was_space = false;
+ 	int pid_in_pattern = 0;
+ 	int err = 0;
+ 
+@@ -198,12 +201,35 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm)
+ 		return -ENOMEM;
+ 	cn->corename[0] = '\0';
+ 
+-	if (ispipe)
++	if (ispipe) {
++		int argvs = sizeof(core_pattern) / 2;
++		(*argv) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
++		if (!(*argv))
++			return -ENOMEM;
++		(*argv)[(*argc)++] = 0;
+ 		++pat_ptr;
++	}
+ 
+ 	/* Repeat as long as we have more pattern to process and more output
+ 	   space */
+ 	while (*pat_ptr) {
++		/*
++		 * Split on spaces before doing template expansion so that
++		 * %e and %E don't get split if they have spaces in them
++		 */
++		if (ispipe) {
++			if (isspace(*pat_ptr)) {
++				was_space = true;
++				pat_ptr++;
++				continue;
++			} else if (was_space) {
++				was_space = false;
++				err = cn_printf(cn, "%c", '\0');
++				if (err)
++					return err;
++				(*argv)[(*argc)++] = cn->used;
++			}
++		}
+ 		if (*pat_ptr != '%') {
+ 			err = cn_printf(cn, "%c", *pat_ptr++);
+ 		} else {
+@@ -543,6 +569,8 @@ void do_coredump(const siginfo_t *siginfo)
+ 	struct cred *cred;
+ 	int retval = 0;
+ 	int ispipe;
++	size_t *argv = NULL;
++	int argc = 0;
+ 	struct files_struct *displaced;
+ 	/* require nonrelative corefile path and be extra careful */
+ 	bool need_suid_safe = false;
+@@ -589,9 +617,10 @@ void do_coredump(const siginfo_t *siginfo)
+ 
+ 	old_cred = override_creds(cred);
+ 
+-	ispipe = format_corename(&cn, &cprm);
++	ispipe = format_corename(&cn, &cprm, &argv, &argc);
+ 
+ 	if (ispipe) {
++		int argi;
+ 		int dump_count;
+ 		char **helper_argv;
+ 		struct subprocess_info *sub_info;
+@@ -634,12 +663,16 @@ void do_coredump(const siginfo_t *siginfo)
+ 			goto fail_dropcount;
+ 		}
+ 
+-		helper_argv = argv_split(GFP_KERNEL, cn.corename, NULL);
++		helper_argv = kmalloc_array(argc + 1, sizeof(*helper_argv),
++					    GFP_KERNEL);
+ 		if (!helper_argv) {
+ 			printk(KERN_WARNING "%s failed to allocate memory\n",
+ 			       __func__);
+ 			goto fail_dropcount;
+ 		}
++		for (argi = 0; argi < argc; argi++)
++			helper_argv[argi] = cn.corename + argv[argi];
++		helper_argv[argi] = NULL;
+ 
+ 		retval = -ENOMEM;
+ 		sub_info = call_usermodehelper_setup(helper_argv[0],
+@@ -649,7 +682,7 @@ void do_coredump(const siginfo_t *siginfo)
+ 			retval = call_usermodehelper_exec(sub_info,
+ 							  UMH_WAIT_EXEC);
+ 
+-		argv_free(helper_argv);
++		kfree(helper_argv);
+ 		if (retval) {
+ 			printk(KERN_INFO "Core dump to |%s pipe failed\n",
+ 			       cn.corename);
+@@ -768,6 +801,7 @@ void do_coredump(const siginfo_t *siginfo)
+ 	if (ispipe)
+ 		atomic_dec(&core_dump_count);
+ fail_unlock:
++	kfree(argv);
+ 	kfree(cn.corename);
+ 	coredump_finish(mm, core_dumped);
+ 	revert_creds(old_cred);
 -- 
-Dave Chinner
-david@fromorbit.com
+2.20.1
+
