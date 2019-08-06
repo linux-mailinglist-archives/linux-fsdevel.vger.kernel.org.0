@@ -2,146 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4366483734
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 18:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C98A783796
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 19:03:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387906AbfHFQmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 12:42:22 -0400
-Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:38011 "EHLO
-        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387860AbfHFQmV (ORCPT
+        id S2387955AbfHFRDQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 13:03:16 -0400
+Received: from sonic301-22.consmr.mail.ir2.yahoo.com ([77.238.176.99]:34461
+        "EHLO sonic301-22.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732996AbfHFRDQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:42:21 -0400
-Received: from smtp8.infomaniak.ch (smtp8.infomaniak.ch [83.166.132.38])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x76GesNS032199
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 6 Aug 2019 18:40:54 +0200
-Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
-        (authenticated bits=0)
-        by smtp8.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x76GemgJ022929
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Tue, 6 Aug 2019 18:40:48 +0200
-Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-To:     Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-References: <20181212081712.32347-1-mic@digikod.net>
- <20181212081712.32347-2-mic@digikod.net>
- <20181212144306.GA19945@quack2.suse.cz>
- <CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Openpgp: preference=signencrypt
-Message-ID: <0a16e842-d636-60ac-427a-3500224f4f8d@digikod.net>
-Date:   Tue, 6 Aug 2019 18:40:48 +0200
-User-Agent: 
+        Tue, 6 Aug 2019 13:03:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1565110994; bh=OGfEqfx+PU4InM0VSbOYRNhJFzEA/rXojevv3mMEsbI=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=E24UfZNd5y/93bIO8AIK1WRL5l3AvfcVQd++GnimXLA4gR252vHsJi8k20+oURzT9w3wS92yBC/DDjRFRS8YCdg0tAJAta6BEqaj25S18QcJzGxgwFJ8x/zEn6TGVWcErkq66KW4SS109tfLATR+tTPZzzAjN47ErRJyhPQjt8WrCTp1u2ILIXcPYMhf46fJksOYnJ9Mwpz62UYBK27V2PJRIqsU+Xyi50JGMntJ95v6ct6VF0xAUyT9e6k5KsABHuOsvTCdR78uqQLZVY3b7qL/awMnptKyM0TIaZBRKJMtwO4uhyAK2z7G1WcS2pu1y+gRANlCTFItOYh4bkgeBg==
+X-YMail-OSG: sl1gkSwVM1mlHDEiCdaH5dj7rsgViEgTQ3a6APzIjZvHoF1PNh8AdYZocdONKXb
+ DehHMC3hV8mbP2YRe6_SnmdQQtkOXiuatzZxsjswEf.dHL9RDFe52j3Ea.QU29gtRweDu7id2oKj
+ hXXXElssWDQgY.XnofRaJm.RSJ2sFha5tiCVB8Nn_WrrGaZdX_Jqp2U8IxRQwBYaoxrXWp5J5tcE
+ xYrjyrhQD0exM2ILMUpC4YQUPCeJYkdmTHhUC5vrgeT9Vzufc2V3.5GQCz84d7tugwqfGLUB3sxs
+ s95K0Rn81hYEjC0wfFNwDC4H_VX_HUp4UJqFcwiaGkIAg8HRdaAUB.k6rF46KxvOlobREg3nGUsY
+ mBRyWi0gPKRhJdk946XQ4TbieDTjNwUUmORU7PKqkefgBoBEJWSgD2VySrTya1ZAVZoJr6EE8pXT
+ gBUQ87pm4doEnbtWwfM9XLJhaouK2jKB6fhWp7NxDiYOIQNer8_my3FtsUbtxS584m462LYqEJ6f
+ 4KrKgQPr534DA.p5fhxf6QbVPIppQMsZ5WPigBeajM9KmLbcmaMSQue2XaxHN4jwym_L6Owdman3
+ NRlXrxqOOxfQl5ENsEe7AcvIOjXWQ1LD0BEkmB61nUwa2zh5jDnbCn1HM4LIssrWO72z_OjydP3K
+ vC1ARwrEbZUllkReaxbmnk7PEQY2bd1r2Ya0NcSQ9Fem5pfrNGVQy5QfdCOcPbbWdHt4GiDKQyn0
+ X3grpvJkl9QTKL4oP.G6D1suJaS2OLkFs8rKEKP4Xell0qSBC10f55SY1bQPzzLr7Mr6cTnsTxr3
+ VkIz3d8TnFi8bVFDOtazRIsYNigMp3ohRsTf9FwSDRK7SblzKBF8bCoFbjDwbBPrEQLHwjeFFjee
+ 0ljSMjbIwfO_7RJq1oHK3NFTYo5_2n23HDeLukA2E2xkYQOOgtz_s4kSq0kqbtTZX9vkSFHRbV94
+ uKQCtyV_ZEjLuyU.MCs2FhejKDQxoIJGUFYbFNMU9mXVX.iP_AJjv.1n.9s8H5dgk2HaeXlBmbQ0
+ MuzYGTPsK6NIkofKI6bIxSVF1BfLyKjVBOlO1cQJ2TBGcLcyFrao6jAMC4iMOa9oTR5JlxZGh5yx
+ k870EeUkAb1Hh3smqInaGEMA6u.FQErg037R3OTAJt15QCoKSFboc2d1EKe4Ywnxqk3Pq1CS8EZf
+ hC7Thr59WMZjgZUzlmngacmH5IgHTpqRD_BGXn50aYE_bLCy8DRrm_fIMDqDQMR43gG4YiYf01Vc
+ k68WnBIHCfPMWRieLByE9LBAWCw--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ir2.yahoo.com with HTTP; Tue, 6 Aug 2019 17:03:14 +0000
+Received: by smtp406.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID af769fc35dd430e77b6ac1739d1acdf0;
+          Tue, 06 Aug 2019 17:03:11 +0000 (UTC)
+Date:   Wed, 7 Aug 2019 01:02:58 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>, devel@driverdev.osuosl.org,
+        linux-erofs@lists.ozlabs.org, Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miao Xie <miaoxie@huawei.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Machek <pavel@denx.de>, linux-fsdevel@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH RFC] erofs: move erofs out of staging
+Message-ID: <20190806170252.GB29093@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190806094925.228906-1-gaoxiang25@huawei.com>
+ <20190807013423.02fd6990@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807013423.02fd6990@canb.auug.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Stephen,
 
-On 05/08/2019 01:55, Andy Lutomirski wrote:
-> On Wed, Dec 12, 2018 at 6:43 AM Jan Kara <jack@suse.cz> wrote:
->>
->> On Wed 12-12-18 09:17:08, Mickaël Salaün wrote:
->>> When the O_MAYEXEC flag is passed, sys_open() may be subject to
->>> additional restrictions depending on a security policy implemented by an
->>> LSM through the inode_permission hook.
->>>
->>> The underlying idea is to be able to restrict scripts interpretation
->>> according to a policy defined by the system administrator.  For this to
->>> be possible, script interpreters must use the O_MAYEXEC flag
->>> appropriately.  To be fully effective, these interpreters also need to
->>> handle the other ways to execute code (for which the kernel can't help):
->>> command line parameters (e.g., option -e for Perl), module loading
->>> (e.g., option -m for Python), stdin, file sourcing, environment
->>> variables, configuration files...  According to the threat model, it may
->>> be acceptable to allow some script interpreters (e.g. Bash) to interpret
->>> commands from stdin, may it be a TTY or a pipe, because it may not be
->>> enough to (directly) perform syscalls.
->>>
->>> A simple security policy implementation is available in a following
->>> patch for Yama.
->>>
->>> This is an updated subset of the patch initially written by Vincent
->>> Strubel for CLIP OS:
->>> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
->>> This patch has been used for more than 10 years with customized script
->>> interpreters.  Some examples can be found here:
->>> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
->>>
->>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->>> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
->>> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
->>> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
->>> Cc: Al Viro <viro@zeniv.linux.org.uk>
->>> Cc: Kees Cook <keescook@chromium.org>
->>> Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
->>
->> ...
->>
->>> diff --git a/fs/open.c b/fs/open.c
->>> index 0285ce7dbd51..75479b79a58f 100644
->>> --- a/fs/open.c
->>> +++ b/fs/open.c
->>> @@ -974,6 +974,10 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
->>>       if (flags & O_APPEND)
->>>               acc_mode |= MAY_APPEND;
->>>
->>> +     /* Check execution permissions on open. */
->>> +     if (flags & O_MAYEXEC)
->>> +             acc_mode |= MAY_OPENEXEC;
->>> +
->>>       op->acc_mode = acc_mode;
->>>
->>>       op->intent = flags & O_PATH ? 0 : LOOKUP_OPEN;
->>
->> I don't feel experienced enough in security to tell whether we want this
->> functionality or not. But if we do this, shouldn't we also set FMODE_EXEC
->> on the resulting struct file? That way also security_file_open() can be
->> used to arbitrate such executable opens and in particular
->> fanotify permission event FAN_OPEN_EXEC will get properly generated which I
->> guess is desirable (support for it is sitting in my tree waiting for the
->> merge window) - adding some audit people involved in FAN_OPEN_EXEC to
->> CC. Just an idea...
->>
+On Wed, Aug 07, 2019 at 01:34:23AM +1000, Stephen Rothwell wrote:
+> Hi Gao,
 > 
-> I would really like to land this patch.  I'm fiddling with making
-> bpffs handle permissions intelligently, and the lack of a way to say
-> "hey, I want to open this bpf program so that I can run it" is
-> annoying.
+> One small suggestion: just remove the file names from the comments at
+> the top of the files rather than change them to reflect that they have
+> moved.  We can usually tell the name of a file by its name :-)
 
-Are you OK with this series? What about Aleksa's work on openat2(), and
-Sean's work on SGX/noexec? Is it time to send a new patch series (with a
-dedicated LSM instead of Yama)?
+Thanks for your reply :)
+
+For this part, EROFS initially followed what ext4, f2fs, even fsverity do,
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/namei.c
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/f2fs/namei.c
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/tree/fs/verity/verify.c?h=fsverity
+
+I think I can remove these filenames as you suggested in the next version.
+I thought these are some common practice and there is no obvious right or
+wrong of this kind of stuffs.
+
+Thanks,
+Gao Xiang
+
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
