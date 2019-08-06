@@ -2,225 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D958832BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 15:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C4AA8332D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 15:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbfHFNek (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 09:34:40 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45827 "EHLO
+        id S1732907AbfHFNnk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 09:43:40 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:32868 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfHFNek (ORCPT
+        with ESMTP id S1732835AbfHFNnY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:34:40 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r1so41519575pfq.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2019 06:34:39 -0700 (PDT)
+        Tue, 6 Aug 2019 09:43:24 -0400
+Received: by mail-pf1-f195.google.com with SMTP id g2so41545113pfq.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2019 06:43:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GA14cAOgymb2WrZw9Vx3vMMFeO+xqgxHoN2nsx9JbXc=;
-        b=X1frDArgKqG5gMspvRs8WLKbrRrTjizXAmgYgoRhOB7ngmA3O/oymElj8H9imxXy43
-         1SwdsDSJxhjTa/vkhkSUVXQH+dwb3+RRGAuhC1j0roiKne244jOb/4lVD4WEFktc9igV
-         33CXwSpzcZXouUSvoa5D6EResQjU5Kwj2aO20oxpvdnfLtTCud5U+DdB7Tx0P2hRRgUB
-         xx+i5YP1D9UGP9YM/ce39+I5BLow2rxxWFkKQJIiFjIucWodWcBHO2VVvt9fQP6DZLYJ
-         ncNEAxa4QvTLw9K6GXExByrVTAVF+g3LtwzsNs+RzlYxJ0VSVt99Og3iIy94TNBw/GvH
-         ebaw==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IvbA0Qi9ZdVQqNSbxozysL3Fqa9OBFyiiqy53wDpULw=;
+        b=UuDLXvSXeYwo63iVf+Lu0ahwvUcYOzu27p9dcgydbmlpy6nzua+tt9PNukjSS6Be4q
+         vRcxA4E5INCnPKwSUPg3krigp8ll/UXfu4lFBciOfQ91x+tJtxsbDAGtnGkpWU6B/HJH
+         mkzPwEGTE+qSwX2QK3R1MvFtovwBfdLF5sBXA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GA14cAOgymb2WrZw9Vx3vMMFeO+xqgxHoN2nsx9JbXc=;
-        b=Y6YP0D2SqNpARO9h7I724KN2JiMlB+Cvz8zMtkBBFxSkgS4ypF6pRpRFiVme+SqBqi
-         ISeMVhf5DUJuIpfUk2KD2G7c7ooz3Rd2G0JtWDs7l2TRH1V0GqxXr7tNjtfnuI75Z6MU
-         L7Gr9TT2m3LtuiDX6HQOU/Jg6ppww9xMo3VU4afSjcPcyNAqBzqLqnu9pBqCFxIVlNGs
-         Y5JqvPpqGYLVrLn8Iy8p+qDB/OrUMCzS0x09C2dteV4sUxjaoKb/JHadluujd5EJHOtj
-         ZDOFMakJ9nIdp4sJMBKEAd07epvDIlqfGzsLnk12ciXGZcBCCDaWWzFzvKOpDDK2U352
-         kzMQ==
-X-Gm-Message-State: APjAAAUtEUzI8tmMWs9P9SrxFklpNxXY1158xjNI6RoSCtxL+Qsld6y6
-        Zj8Av/SZrWM+91Wsd9ojqlOwvQ==
-X-Google-Smtp-Source: APXvYqwPLtrUix2AS6JbSmkt+mMQvgCF1rivIFyHEnvHV2L5mjfMo5lLLrcB9cv6a5BYTmES6Q/rQQ==
-X-Received: by 2002:a17:90a:7787:: with SMTP id v7mr3279038pjk.143.1565098479161;
-        Tue, 06 Aug 2019 06:34:39 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:83a1:5cfb:b4eb:1062:5bea? ([2605:e000:100e:83a1:5cfb:b4eb:1062:5bea])
-        by smtp.gmail.com with ESMTPSA id g2sm143733333pfq.88.2019.08.06.06.34.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2019 06:34:38 -0700 (PDT)
-Subject: Re: Block device direct read EIO handling broken?
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-References: <20190805181524.GE7129@magnolia>
- <66bd785d-7598-5cc2-5e98-447fd128c153@kernel.dk>
- <36973a52-e876-fc09-7a63-2fc16b855f8d@kernel.dk>
- <BYAPR04MB5816246256B1333C048EB0A1E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <474c560f-5de0-6082-67ac-f7c640d9b346@kernel.dk>
- <BYAPR04MB5816C3B24310C1E18F9E024CE7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <f3f98663-8f92-c933-c7c0-8db6635e6112@kernel.dk>
- <BYAPR04MB581644536C6EAEA36E3B4912E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <BYAPR04MB5816C7D04915AF7B656F900BE7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <BYAPR04MB5816D1AB6B586FAD664F8D79E7D50@BYAPR04MB5816.namprd04.prod.outlook.com>
- <43435418-9d70-ec33-1f2d-c95fb986979c@kernel.dk>
- <BYAPR04MB5816811245DDC55429D6D146E7D50@BYAPR04MB5816.namprd04.prod.outlook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e8d0653b-fdc5-e04c-641e-24b5cf859f3f@kernel.dk>
-Date:   Tue, 6 Aug 2019 06:34:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IvbA0Qi9ZdVQqNSbxozysL3Fqa9OBFyiiqy53wDpULw=;
+        b=KWPm+AvtlVOb5U5ZDwR8GuPQ7mGB6AQQxz1RE1mr052grnkMih5CrIGBYR7aMeA9i1
+         NG4V5fJuElRKdgc0Srq6u9qB/XZUvh/uPLoCyLTNW6votiyjLysUM5b0gxMTA1pMv6pO
+         /i51mClHW0k467pkhGuICT98j07w0PniO1oGJD/VDECM0FeahNTkCFXz1IjE92fAQ0w1
+         OOLDb5hDpIJ+VC9JvFDFz2jhfEt+RqUL38LaMN8RpozQz+pUpzLsXjPJ67GqbzJZN9IK
+         k2xQPY/Qie1CSU8hppRrm5qvfYbL4BNTvfAL5+CcofRZUgj+ebD4ORhmBkfxPcUkuQDS
+         zlQA==
+X-Gm-Message-State: APjAAAUwsBsiTCrvcFzlGIyxpLkFdBKil1nvnB+9BdKx63V9mie0UXN8
+        qrif+UnGTTVkjT3Ho0nj36gmvQ==
+X-Google-Smtp-Source: APXvYqw8mKqZ/XeNBFb/10DncPVZsFq6EPDftOF3wo4TDqzt8e9GiUU74z85gx7FrtAqaFlq2j2rPw==
+X-Received: by 2002:a62:6454:: with SMTP id y81mr3622264pfb.13.1565099003926;
+        Tue, 06 Aug 2019 06:43:23 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id b37sm44764722pjc.15.2019.08.06.06.43.22
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 06:43:23 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 09:43:21 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
+Message-ID: <20190806134321.GA15167@google.com>
+References: <20190805170451.26009-1-joel@joelfernandes.org>
+ <20190805170451.26009-3-joel@joelfernandes.org>
+ <20190806084203.GJ11812@dhcp22.suse.cz>
+ <20190806103627.GA218260@google.com>
+ <20190806104755.GR11812@dhcp22.suse.cz>
+ <20190806111446.GA117316@google.com>
+ <20190806115703.GY11812@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <BYAPR04MB5816811245DDC55429D6D146E7D50@BYAPR04MB5816.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806115703.GY11812@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/6/19 12:05 AM, Damien Le Moal wrote:
-> On 2019/08/06 13:09, Jens Axboe wrote:
->> On 8/5/19 5:05 PM, Damien Le Moal wrote:
->>> On 2019/08/06 7:05, Damien Le Moal wrote:
->>>> On 2019/08/06 6:59, Damien Le Moal wrote:
->>>>> On 2019/08/06 6:28, Jens Axboe wrote:
->>>>>> On 8/5/19 2:27 PM, Damien Le Moal wrote:
->>>>>>> On 2019/08/06 6:26, Jens Axboe wrote:
->>>>>>>>> In any case, looking again at this code, it looks like there is a
->>>>>>>>> problem with dio->size being incremented early, even for fragments
->>>>>>>>> that get BLK_QC_T_EAGAIN, because dio->size is being used in
->>>>>>>>> blkdev_bio_end_io(). So an incorrect size can be reported to user
->>>>>>>>> space in that case on completion (e.g. large asynchronous no-wait dio
->>>>>>>>> that cannot be issued in one go).
->>>>>>>>>
->>>>>>>>> So maybe something like this ? (completely untested)
->>>>>>>>
->>>>>>>> I think that looks pretty good, I like not double accounting with
->>>>>>>> this_size and dio->size, and we retain the old style ordering for the
->>>>>>>> ret value.
->>>>>>>
->>>>>>> Do you want a proper patch with real testing backup ? I can send that
->>>>>>> later today.
->>>>>>
->>>>>> Yeah that'd be great, I like your approach better.
->>>>>>
->>>>>
->>>>> Looking again, I think this is not it yet: dio->size is being referenced after
->>>>> submit_bio(), so blkdev_bio_end_io() may see the old value if the bio completes
->>>>> before dio->size increment. So the use-after-free is still there. And since
->>>>> blkdev_bio_end_io() processes completion to user space only when dio->ref
->>>>> becomes 0, adding an atomic_inc/dec(&dio->ref) over the loop would not help and
->>>>> does not cover the single BIO case. Any idea how to address this one ?
->>>>>
->>>>
->>>> May be add a bio_get/put() over the 2 places that do submit_bio() would work,
->>>> for all cases (single/multi BIO, sync & async). E.g.:
->>>>
->>>> +                       bio_get(bio);
->>>>                           qc = submit_bio(bio);
->>>>                           if (qc == BLK_QC_T_EAGAIN) {
->>>>                                   if (!dio->size)
->>>>                                           ret = -EAGAIN;
->>>> +                               bio_put(bio);
->>>>                                   goto error;
->>>>                           }
->>>>                           dio->size += bio_size;
->>>> +                       bio_put(bio);
->>>>
->>>> Thoughts ?
->>>>
->>>
->>> That does not work since the reference to dio->size in
->>> blkdev_bio_end_io() depends on atomic_dec_and_test(&dio->ref) which
->>> counts the BIO fragments for the dio (+1 for async multi-bio case). So
->>> completion of the last bio can still reference the old value of
->>> dio->size.
->>>
->>> Adding a bio_get/put() on dio->bio ensures that dio stays around, but
->>> does not prevent the use of the wrong dio->size. Adding an additional
->>> atomic_inc/dec(&dio->ref) would prevent that, but we would need to
->>> handle dio completion at the end of __blkdev_direct_IO() if all BIO
->>> fragments already completed at that point. That is a lot more plumbing
->>> needed, relying completely on dio->ref for all cases, thus removing
->>> the dio->multi_bio management.
->>>
->>> Something like this:
->>
->> Don't like this, as it adds unnecessary atomics for the sync case.
->> What's wrong with just adjusting dio->size if we get BLK_QC_T_EAGAIN?
->> It's safe to do so, since we're doing the final put later. We just can't
->> do it for the normal case of submit_bio() succeeding. Kill the new 'ret'
->> usage and return to what we had as well, it's more readable too imho.
->>
->> Totally untested...
->>
->> diff --git a/fs/block_dev.c b/fs/block_dev.c
->> index a6f7c892cb4a..131e2e0582a6 100644
->> --- a/fs/block_dev.c
->> +++ b/fs/block_dev.c
->> @@ -349,7 +349,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   	loff_t pos = iocb->ki_pos;
->>   	blk_qc_t qc = BLK_QC_T_NONE;
->>   	gfp_t gfp;
->> -	ssize_t ret;
->> +	int ret;
->>   
->>   	if ((pos | iov_iter_alignment(iter)) &
->>   	    (bdev_logical_block_size(bdev) - 1))
->> @@ -386,8 +386,6 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   
->>   	ret = 0;
->>   	for (;;) {
->> -		int err;
->> -
->>   		bio_set_dev(bio, bdev);
->>   		bio->bi_iter.bi_sector = pos >> 9;
->>   		bio->bi_write_hint = iocb->ki_hint;
->> @@ -395,10 +393,8 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   		bio->bi_end_io = blkdev_bio_end_io;
->>   		bio->bi_ioprio = iocb->ki_ioprio;
->>   
->> -		err = bio_iov_iter_get_pages(bio, iter);
->> -		if (unlikely(err)) {
->> -			if (!ret)
->> -				ret = err;
->> +		ret = bio_iov_iter_get_pages(bio, iter);
->> +		if (unlikely(ret)) {
->>   			bio->bi_status = BLK_STS_IOERR;
->>   			bio_endio(bio);
->>   			break;
->> @@ -421,7 +417,6 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   		if (nowait)
->>   			bio->bi_opf |= (REQ_NOWAIT | REQ_NOWAIT_INLINE);
->>   
->> -		dio->size += bio->bi_iter.bi_size;
->>   		pos += bio->bi_iter.bi_size;
->>   
->>   		nr_pages = iov_iter_npages(iter, BIO_MAX_PAGES);
->> @@ -433,13 +428,13 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   				polled = true;
->>   			}
->>   
->> +			dio->size += bio->bi_iter.bi_size;
->>   			qc = submit_bio(bio);
->>   			if (qc == BLK_QC_T_EAGAIN) {
->> -				if (!ret)
->> -					ret = -EAGAIN;
->> +				dio->size -= bio->bi_iter.bi_size;
+On Tue, Aug 06, 2019 at 01:57:03PM +0200, Michal Hocko wrote:
+> On Tue 06-08-19 07:14:46, Joel Fernandes wrote:
+> > On Tue, Aug 06, 2019 at 12:47:55PM +0200, Michal Hocko wrote:
+> > > On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
+> > > > On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
+> > > > > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
+> > > > > > This bit will be used by idle page tracking code to correctly identify
+> > > > > > if a page that was swapped out was idle before it got swapped out.
+> > > > > > Without this PTE bit, we lose information about if a page is idle or not
+> > > > > > since the page frame gets unmapped.
+> > > > > 
+> > > > > And why do we need that? Why cannot we simply assume all swapped out
+> > > > > pages to be idle? They were certainly idle enough to be reclaimed,
+> > > > > right? Or what does idle actualy mean here?
+> > > > 
+> > > > Yes, but other than swapping, in Android a page can be forced to be swapped
+> > > > out as well using the new hints that Minchan is adding?
+> > > 
+> > > Yes and that is effectivelly making them idle, no?
+> > 
+> > That depends on how you think of it.
 > 
-> ref after free of bio here. Easy to fix though. Also, with this, the
-> bio_endio() call within submit_bio() for the EAGAIN failure will see a
-> dio->size too large, including this failed bio. So this does not work.
+> I would much prefer to have it documented so that I do not have to guess ;)
 
-There's no ref after free here - if BLK_QC_T_EAGAIN is being returned,
-the bio has not been freed. There's no calling bio_endio() for that
-case.
+Sure :)
 
-For dio->size, it doesn't matter. If we get the error here, bio_endio()
-was never called. And if the submission is successful, we use dio->size
-for the success case.
+> > If you are thinking of a monitoring
+> > process like a heap profiler, then from the heap profiler's (that only cares
+> > about the process it is monitoring) perspective it will look extremely odd if
+> > pages that are recently accessed by the process appear to be idle which would
+> > falsely look like those processes are leaking memory. The reality being,
+> > Android forced those pages into swap because of other reasons. I would like
+> > for the swapping mechanism, whether forced swapping or memory reclaim, not to
+> > interfere with the idle detection.
+> 
+> Hmm, but how are you going to handle situation when the page is unmapped
+> and refaulted again (e.g. a normal reclaim of a pagecache)? You are
+> losing that information same was as in the swapout case, no? Or am I
+> missing something?
 
--- 
-Jens Axboe
+Yes you are right, it would have the same issue, thanks for bringing it up.
+Should we rename this bit to PTE_IDLE and do the same thing that we are doing
+for swap?
+
+i.e. if (page_idle(page)) and page is a file page, then we write state
+into the PTE of the page. Later on refault, the PTE bit would automatically
+get cleared (just like it does on swap-in). But before refault, the idle
+tracking code sees the page as still marked idle. Do you see any issue with that?
+
+
+> > This is just an effort to make the idle tracking a little bit better. We
+> > would like to not lose the 'accessed' information of the pages.
+> > 
+> > Initially, I had proposed what you are suggesting as well however the above
+> > reasons made me to do it like this. Also Minchan and Konstantin suggested
+> > this, so there are more people interested in the swap idle bit. Minchan, can
+> > you provide more thoughts here? (He is on 2-week vacation from today so
+> > hopefully replies before he vanishes ;-)).
+> 
+> We can move on with the rest of the series in the mean time but I would
+> like to see a proper justification for the swap entries and why they
+> should be handled special.
+
+Ok, I will improve the changelog.
+
+
+> > Also assuming all swap pages as idle has other "semantic" issues. It is quite
+> > odd if a swapped page is automatically marked as idle without userspace
+> > telling it to. Consider the following set of events: 1. Userspace marks only
+> > a certain memory region as idle. 2. Userspace reads back the bits
+> > corresponding to a bigger region. Part of this bigger region is swapped.
+> > Userspace expects all of the pages it did not mark, to have idle bit set to
+> > '0' because it never marked them as idle. However if it is now surprised by
+> > what it read back (not all '0' read back). Since a page is swapped, it will
+> > be now marked "automatically" as idle as per your proposal, even if userspace
+> > never marked it explicity before. This would be quite confusing/ambiguous.
+> 
+> OK, I see. I guess the primary question I have is how do you distinguish
+> Idle page which got unmapped and faulted in again from swapped out page
+> and refaulted - including the time the pte is not present.
+
+Ok, lets discuss more.
+
+thanks Michal!
+
+ - Joel
 
