@@ -2,248 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A2B182A29
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 06:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9C1782A83
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 06:49:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbfHFEJo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 00:09:44 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41671 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfHFEJo (ORCPT
+        id S1726072AbfHFEts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 00:49:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:24720 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725798AbfHFEts (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 00:09:44 -0400
-Received: by mail-pl1-f195.google.com with SMTP id m9so37156292pls.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2019 21:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SOsBb/aQAYxLU2ilbUJcZu773GlOsl8Ye7L37NrMJJ8=;
-        b=LXTwZpw+JU5BIyBBiPDOasLfQ+uzjEpAA+0G/hUZEEJvX00/8eWi8M2oOggMX/Kcz0
-         Gu31HPq/EyNxV5qos57oOVxqX4OHv3i2vHCBvbuurOwIWTr1yI4+Ze3G6zYkfRS+3nmF
-         rvlRMW+Kr08wXl4aPfV4YhpqmI/fiJy5bRJvpA5FqR7cNjNdsP+6Ac7kBeovqw/r0RxJ
-         6SqzJIlM5CHX3uEshW3OjnUpWiwlLLPEcx9Mh69riBdSOGPCrohvtGdgD97aaTHz7yjH
-         vQrUJS4lR1IoLdoJ+lDvQQmI8c+Nwam6E95xicyPHpQsHCyroSn+6/3u3t7pqsXg9wGt
-         NWBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SOsBb/aQAYxLU2ilbUJcZu773GlOsl8Ye7L37NrMJJ8=;
-        b=aS8jK2ZzmGcU94dm/8z3l+FmBN9oquPJg4PmcurscvC0aD71i8XfbF1PQ+J9PSPoQi
-         Dp1owgHniCrUaLfXYy0uP8DNymaoZijSXdWg7fgkrs5cRXPhf/wNhIZ8NLWsrAyqDCtg
-         JsGxCafjqx3Ikeospt1h4DJhDxxGOZ8DFkaoz+b1pFFsbXSgU/G9XwumZaOiClJ3oP+g
-         1Y5i2tmgGgPtpWLxM258wZh/QBDqG7qtwps5lK7hcHaNgia/i49HgNKSNOXf/YX1bHgF
-         Axsdl2XfoJzpjxLvvXK66WIzantO0u91hmhuu4QM4WC7dJVwASbDDW5rXtSKlm5U9lI9
-         jtCw==
-X-Gm-Message-State: APjAAAWx8UJd6EiAg3OApZ5JEVgs3WTmxwQd4wvNQFCOazydNd6o5dLl
-        8AF17IvgxHoHYwQYJMHEP+Vh5A==
-X-Google-Smtp-Source: APXvYqxn0mYAq5WQzBtF4Fe4fvvlJ7QwLnusuZLhrWZ0ziim6zmGFXP08ZXuVobBfKWAkN9x8mvalQ==
-X-Received: by 2002:a17:902:24c:: with SMTP id 70mr1139679plc.2.1565064583191;
-        Mon, 05 Aug 2019 21:09:43 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:83a1:939:cd30:5103:86da? ([2605:e000:100e:83a1:939:cd30:5103:86da])
-        by smtp.gmail.com with ESMTPSA id g2sm104450602pfb.95.2019.08.05.21.09.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2019 21:09:41 -0700 (PDT)
-Subject: Re: Block device direct read EIO handling broken?
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-References: <20190805181524.GE7129@magnolia>
- <66bd785d-7598-5cc2-5e98-447fd128c153@kernel.dk>
- <36973a52-e876-fc09-7a63-2fc16b855f8d@kernel.dk>
- <BYAPR04MB5816246256B1333C048EB0A1E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <474c560f-5de0-6082-67ac-f7c640d9b346@kernel.dk>
- <BYAPR04MB5816C3B24310C1E18F9E024CE7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <f3f98663-8f92-c933-c7c0-8db6635e6112@kernel.dk>
- <BYAPR04MB581644536C6EAEA36E3B4912E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <BYAPR04MB5816C7D04915AF7B656F900BE7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <BYAPR04MB5816D1AB6B586FAD664F8D79E7D50@BYAPR04MB5816.namprd04.prod.outlook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <43435418-9d70-ec33-1f2d-c95fb986979c@kernel.dk>
-Date:   Mon, 5 Aug 2019 21:09:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 6 Aug 2019 00:49:48 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x764kZLU010191
+        for <linux-fsdevel@vger.kernel.org>; Tue, 6 Aug 2019 00:49:47 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u709rw01v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2019 00:49:46 -0400
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Tue, 6 Aug 2019 05:49:46 +0100
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 6 Aug 2019 05:49:41 +0100
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x764nenF26083584
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 6 Aug 2019 04:49:40 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 23D757805E;
+        Tue,  6 Aug 2019 04:49:40 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A33E7805F;
+        Tue,  6 Aug 2019 04:49:35 +0000 (GMT)
+Received: from morokweng.localdomain.com (unknown [9.85.207.254])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue,  6 Aug 2019 04:49:34 +0000 (GMT)
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     x86@kernel.org
+Cc:     iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Lianbo Jiang <lijiang@redhat.com>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH v4 0/6] Remove x86-specific code from generic headers
+Date:   Tue,  6 Aug 2019 01:49:13 -0300
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <BYAPR04MB5816D1AB6B586FAD664F8D79E7D50@BYAPR04MB5816.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19080604-0004-0000-0000-00001532BE8E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011558; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01242738; UDB=6.00655521; IPR=6.01024202;
+ MB=3.00028060; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-06 04:49:46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19080604-0005-0000-0000-00008CC4ACEA
+Message-Id: <20190806044919.10622-1-bauerman@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-06_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908060056
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/5/19 5:05 PM, Damien Le Moal wrote:
-> On 2019/08/06 7:05, Damien Le Moal wrote:
->> On 2019/08/06 6:59, Damien Le Moal wrote:
->>> On 2019/08/06 6:28, Jens Axboe wrote:
->>>> On 8/5/19 2:27 PM, Damien Le Moal wrote:
->>>>> On 2019/08/06 6:26, Jens Axboe wrote:
->>>>>>> In any case, looking again at this code, it looks like there is a
->>>>>>> problem with dio->size being incremented early, even for fragments
->>>>>>> that get BLK_QC_T_EAGAIN, because dio->size is being used in
->>>>>>> blkdev_bio_end_io(). So an incorrect size can be reported to user
->>>>>>> space in that case on completion (e.g. large asynchronous no-wait dio
->>>>>>> that cannot be issued in one go).
->>>>>>>
->>>>>>> So maybe something like this ? (completely untested)
->>>>>>
->>>>>> I think that looks pretty good, I like not double accounting with
->>>>>> this_size and dio->size, and we retain the old style ordering for the
->>>>>> ret value.
->>>>>
->>>>> Do you want a proper patch with real testing backup ? I can send that
->>>>> later today.
->>>>
->>>> Yeah that'd be great, I like your approach better.
->>>>
->>>
->>> Looking again, I think this is not it yet: dio->size is being referenced after
->>> submit_bio(), so blkdev_bio_end_io() may see the old value if the bio completes
->>> before dio->size increment. So the use-after-free is still there. And since
->>> blkdev_bio_end_io() processes completion to user space only when dio->ref
->>> becomes 0, adding an atomic_inc/dec(&dio->ref) over the loop would not help and
->>> does not cover the single BIO case. Any idea how to address this one ?
->>>
->>
->> May be add a bio_get/put() over the 2 places that do submit_bio() would work,
->> for all cases (single/multi BIO, sync & async). E.g.:
->>
->> +                       bio_get(bio);
->>                          qc = submit_bio(bio);
->>                          if (qc == BLK_QC_T_EAGAIN) {
->>                                  if (!dio->size)
->>                                          ret = -EAGAIN;
->> +                               bio_put(bio);
->>                                  goto error;
->>                          }
->>                          dio->size += bio_size;
->> +                       bio_put(bio);
->>
->> Thoughts ?
->>
-> 
-> That does not work since the reference to dio->size in
-> blkdev_bio_end_io() depends on atomic_dec_and_test(&dio->ref) which
-> counts the BIO fragments for the dio (+1 for async multi-bio case). So
-> completion of the last bio can still reference the old value of
-> dio->size.
-> 
-> Adding a bio_get/put() on dio->bio ensures that dio stays around, but
-> does not prevent the use of the wrong dio->size. Adding an additional
-> atomic_inc/dec(&dio->ref) would prevent that, but we would need to
-> handle dio completion at the end of __blkdev_direct_IO() if all BIO
-> fragments already completed at that point. That is a lot more plumbing
-> needed, relying completely on dio->ref for all cases, thus removing
-> the dio->multi_bio management.
-> 
-> Something like this:
+Hello,
 
-Don't like this, as it adds unnecessary atomics for the sync case.
-What's wrong with just adjusting dio->size if we get BLK_QC_T_EAGAIN?
-It's safe to do so, since we're doing the final put later. We just can't
-do it for the normal case of submit_bio() succeeding. Kill the new 'ret'
-usage and return to what we had as well, it's more readable too imho.
+This version has only a small change in the last patch as requested by
+Christoph and Halil, and collects Reviewed-by's.
 
-Totally untested...
+These patches are applied on top of v5.3-rc2.
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index a6f7c892cb4a..131e2e0582a6 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -349,7 +349,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 	loff_t pos = iocb->ki_pos;
- 	blk_qc_t qc = BLK_QC_T_NONE;
- 	gfp_t gfp;
--	ssize_t ret;
-+	int ret;
- 
- 	if ((pos | iov_iter_alignment(iter)) &
- 	    (bdev_logical_block_size(bdev) - 1))
-@@ -386,8 +386,6 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 
- 	ret = 0;
- 	for (;;) {
--		int err;
--
- 		bio_set_dev(bio, bdev);
- 		bio->bi_iter.bi_sector = pos >> 9;
- 		bio->bi_write_hint = iocb->ki_hint;
-@@ -395,10 +393,8 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 		bio->bi_end_io = blkdev_bio_end_io;
- 		bio->bi_ioprio = iocb->ki_ioprio;
- 
--		err = bio_iov_iter_get_pages(bio, iter);
--		if (unlikely(err)) {
--			if (!ret)
--				ret = err;
-+		ret = bio_iov_iter_get_pages(bio, iter);
-+		if (unlikely(ret)) {
- 			bio->bi_status = BLK_STS_IOERR;
- 			bio_endio(bio);
- 			break;
-@@ -421,7 +417,6 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 		if (nowait)
- 			bio->bi_opf |= (REQ_NOWAIT | REQ_NOWAIT_INLINE);
- 
--		dio->size += bio->bi_iter.bi_size;
- 		pos += bio->bi_iter.bi_size;
- 
- 		nr_pages = iov_iter_npages(iter, BIO_MAX_PAGES);
-@@ -433,13 +428,13 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 				polled = true;
- 			}
- 
-+			dio->size += bio->bi_iter.bi_size;
- 			qc = submit_bio(bio);
- 			if (qc == BLK_QC_T_EAGAIN) {
--				if (!ret)
--					ret = -EAGAIN;
-+				dio->size -= bio->bi_iter.bi_size;
-+				ret = -EAGAIN;
- 				goto error;
- 			}
--			ret = dio->size;
- 
- 			if (polled)
- 				WRITE_ONCE(iocb->ki_cookie, qc);
-@@ -460,18 +455,17 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 			atomic_inc(&dio->ref);
- 		}
- 
-+		dio->size += bio->bi_iter.bi_size;
- 		qc = submit_bio(bio);
- 		if (qc == BLK_QC_T_EAGAIN) {
--			if (!ret)
--				ret = -EAGAIN;
-+			dio->size -= bio->bi_iter.bi_size;
-+			ret = -EAGAIN;
- 			goto error;
- 		}
--		ret = dio->size;
- 
- 		bio = bio_alloc(gfp, nr_pages);
- 		if (!bio) {
--			if (!ret)
--				ret = -EAGAIN;
-+			ret = -EAGAIN;
- 			goto error;
- 		}
- 	}
-@@ -496,6 +490,8 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- out:
- 	if (!ret)
- 		ret = blk_status_to_errno(dio->bio.bi_status);
-+	if (likely(!ret))
-+		ret = dio->size;
- 
- 	bio_put(&dio->bio);
- 	return ret;
+I don't have a way to test SME, SEV, nor s390's PEF so the patches have only
+been build tested.
 
--- 
-Jens Axboe
+Changelog
+
+Since v3:
+
+- Patch "s390/mm: Remove sev_active() function"
+  - Preserve comment from sev_active() in force_dma_unencrypted().
+    Suggested by Christoph Hellwig.
+
+Since v2:
+
+- Patch "x86,s390: Move ARCH_HAS_MEM_ENCRYPT definition to arch/Kconfig"
+  - Added "select ARCH_HAS_MEM_ENCRYPT" to config S390. Suggested by Janani.
+
+- Patch "DMA mapping: Move SME handling to x86-specific files"
+  - Split up into 3 new patches. Suggested by Christoph Hellwig.
+
+- Patch "swiotlb: Remove call to sme_active()"
+  - New patch.
+
+- Patch "dma-mapping: Remove dma_check_mask()"
+  - New patch.
+
+- Patch "x86,s390/mm: Move sme_active() and sme_me_mask to x86-specific header"
+  - New patch.
+  - Removed export of sme_active symbol. Suggested by Christoph Hellwig.
+
+- Patch "fs/core/vmcore: Move sev_active() reference to x86 arch code"
+  - Removed export of sev_active symbol. Suggested by Christoph Hellwig.
+
+- Patch "s390/mm: Remove sev_active() function"
+  - New patch.
+
+Since v1:
+
+- Patch "x86,s390: Move ARCH_HAS_MEM_ENCRYPT definition to arch/Kconfig"
+  - Remove definition of ARCH_HAS_MEM_ENCRYPT from s390/Kconfig as well.
+  - Reworded patch title and message a little bit.
+
+- Patch "DMA mapping: Move SME handling to x86-specific files"
+  - Adapt s390's <asm/mem_encrypt.h> as well.
+  - Remove dma_check_mask() from kernel/dma/mapping.c. Suggested by
+    Christoph Hellwig.
+
+Thiago Jung Bauermann (6):
+  x86,s390: Move ARCH_HAS_MEM_ENCRYPT definition to arch/Kconfig
+  swiotlb: Remove call to sme_active()
+  dma-mapping: Remove dma_check_mask()
+  x86,s390/mm: Move sme_active() and sme_me_mask to x86-specific header
+  fs/core/vmcore: Move sev_active() reference to x86 arch code
+  s390/mm: Remove sev_active() function
+
+ arch/Kconfig                        |  3 +++
+ arch/s390/Kconfig                   |  4 +---
+ arch/s390/include/asm/mem_encrypt.h |  5 +----
+ arch/s390/mm/init.c                 |  7 +------
+ arch/x86/Kconfig                    |  4 +---
+ arch/x86/include/asm/mem_encrypt.h  | 10 ++++++++++
+ arch/x86/kernel/crash_dump_64.c     |  5 +++++
+ arch/x86/mm/mem_encrypt.c           |  2 --
+ fs/proc/vmcore.c                    |  8 ++++----
+ include/linux/crash_dump.h          | 14 ++++++++++++++
+ include/linux/mem_encrypt.h         | 15 +--------------
+ kernel/dma/mapping.c                |  8 --------
+ kernel/dma/swiotlb.c                |  3 +--
+ 13 files changed, 42 insertions(+), 46 deletions(-)
 
