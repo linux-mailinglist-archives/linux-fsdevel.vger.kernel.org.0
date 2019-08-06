@@ -2,50 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5B382FF8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 12:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BDBE82FFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 12:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfHFKrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 06:47:19 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33974 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730868AbfHFKrS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:47:18 -0400
-Received: by mail-pl1-f194.google.com with SMTP id i2so37737925plt.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2019 03:47:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=781gQFojuZXlLR9f0Rnz2BsSQ1xNulNQY/lDauCDdSA=;
-        b=e1W5PQo6UI3vE5fsYo9GNTQns85aj/gUpDhLx9+3D64tPpFl02X83oJkMy9XzTBNmf
-         x7k9LQX1mYX3Ou3y4IWdZK6NAO3h5S7a8ijztUPEK9VYoOKSdCKcExDxxqYFFPD7vS3L
-         s8MA9DjsMd/kXQN1m2atBXnvStSWMRuGddxJk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=781gQFojuZXlLR9f0Rnz2BsSQ1xNulNQY/lDauCDdSA=;
-        b=UOkiR12BtduCC5wsWbbF4oTl/Cd6Dgf5Xxur/FTmuB1CH7cYpQ8fX33MG9dRA4AQ3Y
-         HYHp+2tOZWSgrd9j76mzs4UP5FeJ8nUil+8syIh0y3rWQApxhN+tHEZMrDGMcI0+643g
-         8KnRoUvpp+OpmowmTlvKYHtNNwRWo/m0XfJz3GdqgTvUKbWfi6VsWEO/duSxFe1zCL3L
-         XDYTeIlJidC8aEh5Ot7aV8djg/voADwZNZar5+9shvcUqncuP4Mm8j+dy2Gmy/uqrvtj
-         ZE9dat5tAVbdNi/i1AoFZMjlSt++njZ89GjddnLgChgXKIHaqpIKOa3BjE0rXfPCzwxf
-         itVA==
-X-Gm-Message-State: APjAAAVzSysvCsGwQbSvIORU2dTqJKnMvQvGGMlBFYvDo86jRNaJ4BcA
-        Ll59CXKf9HpsShGTCWHELPoAtw==
-X-Google-Smtp-Source: APXvYqyckGHtBm2UKAu71b4v/ySxM/JXAjxm9Txb7Dg6O/cihgtEDSFSoalvYdEzzWgdgOHwA+AgNw==
-X-Received: by 2002:a17:902:654f:: with SMTP id d15mr2365106pln.253.1565088438061;
-        Tue, 06 Aug 2019 03:47:18 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id a21sm95934459pfi.27.2019.08.06.03.47.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 03:47:17 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 06:47:15 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
+        id S1732638AbfHFKr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 06:47:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42398 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728845AbfHFKr7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 06:47:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 73D9CAFCC;
+        Tue,  6 Aug 2019 10:47:57 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 12:47:55 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Borislav Petkov <bp@alien8.de>,
@@ -60,73 +33,55 @@ Cc:     linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
         namhyung@google.com, paulmck@linux.ibm.com,
-        Robin Murphy <robin.murphy@arm.com>,
         Roman Gushchin <guro@fb.com>,
         Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
         Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
         Vladimir Davydov <vdavydov.dev@gmail.com>,
         Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 1/5] mm/page_idle: Add per-pid idle page tracking
- using virtual indexing
-Message-ID: <20190806104715.GC218260@google.com>
+Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
+Message-ID: <20190806104755.GR11812@dhcp22.suse.cz>
 References: <20190805170451.26009-1-joel@joelfernandes.org>
- <20190806085605.GL11812@dhcp22.suse.cz>
+ <20190805170451.26009-3-joel@joelfernandes.org>
+ <20190806084203.GJ11812@dhcp22.suse.cz>
+ <20190806103627.GA218260@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190806085605.GL11812@dhcp22.suse.cz>
+In-Reply-To: <20190806103627.GA218260@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 10:56:05AM +0200, Michal Hocko wrote:
-> On Mon 05-08-19 13:04:47, Joel Fernandes (Google) wrote:
-> > The page_idle tracking feature currently requires looking up the pagemap
-> > for a process followed by interacting with /sys/kernel/mm/page_idle.
-> > Looking up PFN from pagemap in Android devices is not supported by
-> > unprivileged process and requires SYS_ADMIN and gives 0 for the PFN.
+On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
+> On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
+> > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
+> > > This bit will be used by idle page tracking code to correctly identify
+> > > if a page that was swapped out was idle before it got swapped out.
+> > > Without this PTE bit, we lose information about if a page is idle or not
+> > > since the page frame gets unmapped.
 > > 
-> > This patch adds support to directly interact with page_idle tracking at
-> > the PID level by introducing a /proc/<pid>/page_idle file.  It follows
-> > the exact same semantics as the global /sys/kernel/mm/page_idle, but now
-> > looking up PFN through pagemap is not needed since the interface uses
-> > virtual frame numbers, and at the same time also does not require
-> > SYS_ADMIN.
-> > 
-> > In Android, we are using this for the heap profiler (heapprofd) which
-> > profiles and pin points code paths which allocates and leaves memory
-> > idle for long periods of time. This method solves the security issue
-> > with userspace learning the PFN, and while at it is also shown to yield
-> > better results than the pagemap lookup, the theory being that the window
-> > where the address space can change is reduced by eliminating the
-> > intermediate pagemap look up stage. In virtual address indexing, the
-> > process's mmap_sem is held for the duration of the access.
+> > And why do we need that? Why cannot we simply assume all swapped out
+> > pages to be idle? They were certainly idle enough to be reclaimed,
+> > right? Or what does idle actualy mean here?
 > 
-> As already mentioned in one of the previous versions. The interface
-> seems sane and the usecase as well. So I do not really have high level
-> objections.
+> Yes, but other than swapping, in Android a page can be forced to be swapped
+> out as well using the new hints that Minchan is adding?
 
-That is great to know.
+Yes and that is effectivelly making them idle, no?
 
-> From a quick look at the patch I would just object to pulling swap idle
-> tracking into this patch because it makes the review harder and it is
-> essentially a dead code until a later patch. I am also not sure whether
-> that is really necessary and it really begs for an explicit
-> justification.
-
-Ok I will split it out, and also expand on the need for it a bit more.
-
+> Also, even if they were idle enough to be swapped, there is a chance that they
+> were marked as idle and *accessed* before the swapping. Due to swapping, the
+> "page was accessed since we last marked it as idle" information is lost. I am
+> able to verify this.
 > 
-> I will try to go through the patch more carefully later as time allows.
+> Idle in this context means the same thing as in page idle tracking terms, the
+> page was not accessed by userspace since we last marked it as idle (using
+> /proc/<pid>/page_idle).
 
-Thanks a lot.
+Please describe a usecase and why that information might be useful.
 
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> -- 
-> Michal Hocko
-> SUSE Labs
-
- - Joel
-
+-- 
+Michal Hocko
+SUSE Labs
