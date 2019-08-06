@@ -2,119 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F504828AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 02:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C8D82923
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 03:20:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731167AbfHFAZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 20:25:05 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39628 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731081AbfHFAZE (ORCPT
+        id S1730097AbfHFBUd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 21:20:33 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45434 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728851AbfHFBUd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 20:25:04 -0400
-Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B1D1D43F8BC;
-        Tue,  6 Aug 2019 10:25:00 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hunGb-0005bA-93; Tue, 06 Aug 2019 10:23:53 +1000
-Date:   Tue, 6 Aug 2019 10:23:53 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Subject: Re: Block device direct read EIO handling broken?
-Message-ID: <20190806002353.GC7777@dread.disaster.area>
-References: <20190805181524.GE7129@magnolia>
- <66bd785d-7598-5cc2-5e98-447fd128c153@kernel.dk>
- <36973a52-e876-fc09-7a63-2fc16b855f8d@kernel.dk>
- <BYAPR04MB5816246256B1333C048EB0A1E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <474c560f-5de0-6082-67ac-f7c640d9b346@kernel.dk>
- <BYAPR04MB5816C3B24310C1E18F9E024CE7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <f3f98663-8f92-c933-c7c0-8db6635e6112@kernel.dk>
- <BYAPR04MB581644536C6EAEA36E3B4912E7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <BYAPR04MB5816C7D04915AF7B656F900BE7DA0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <BYAPR04MB5816D1AB6B586FAD664F8D79E7D50@BYAPR04MB5816.namprd04.prod.outlook.com>
+        Mon, 5 Aug 2019 21:20:33 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r1so40527348pfq.12;
+        Mon, 05 Aug 2019 18:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mtYMlQz5eR4+kIe+tAhZIY/OAiGfRw2YuZyhkg6PTbo=;
+        b=I4hS4PEoJyvL+rw1aye+bkuNyFTmZHeIiI7RFxBXJ0CuNP49MtEx6c4dDp0dM/tsx/
+         htvzfDxZ5r+0xq/giBKycsgk0ooQTnliw8jAdM/W7Q3ZOPIXKO2qQyyIEZllNw9fCaCK
+         AFdoMHbbELxkIctqol+apII3pU0v0VXRJ+BZTJNcArgxrMpmPImidiNKJGa2PwyGiGNv
+         o8knT7XYXIG+Goz56jLAprXlNR6Ro/Kzov23naZj39nZRkay4wQSSRKGepoZcGaR4LWM
+         AS12+SoRSLzpL24lbVcgQ/5ahDrIgIt89rGuB5PPO3/lXQeKGmqNafdrVjeefbqsXOSG
+         JgRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mtYMlQz5eR4+kIe+tAhZIY/OAiGfRw2YuZyhkg6PTbo=;
+        b=BRp0WiGNesg3UtanXmlWzRTp0wUgepVuHJD5ipbkYbAuGeU+B3WI2VEl+GIBxLCZsa
+         ArAXwkRZFLLIVz7ssszBnxKglfIEpTZrXBgPSH7vMkr4bOmRLmt0K2C/tBwNfZGhXdWm
+         qr2hJNEAfQJ+jk8ktNwvet3JQOmZK7dmj5CP7ODzUTbHWsCGL/tn4z74NH+NRlcWZF7t
+         SoUuwqTLR8/xAmrlHksL3VytZFTKtZpyztpUNqHUavTKTQsKuuC/XevxP3zMts1foK09
+         v1BBbZR27gUcEz1sIkmOOUt0ZVXUovXkpg/4ap5rdWsP82g4V6cemU4uEdWEsK8cETCJ
+         j8IQ==
+X-Gm-Message-State: APjAAAWmpkRS6UE8gdCPvT4TcblrdS+ChN4AOhV2IFmqeCT+MHHkRZm2
+        BEu6eJdj01Ffo+rRTjoTmQQ=
+X-Google-Smtp-Source: APXvYqyk8tVOqj3JMVpCjtlfaOGnmhUXY3kE6uE0j7jKcIcNic1rF0xLGvreX1yB+YVxBYd2ICFGvQ==
+X-Received: by 2002:a62:63c7:: with SMTP id x190mr842306pfb.181.1565054432856;
+        Mon, 05 Aug 2019 18:20:32 -0700 (PDT)
+Received: from localhost ([175.223.3.169])
+        by smtp.gmail.com with ESMTPSA id b3sm101609286pfp.65.2019.08.05.18.20.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 05 Aug 2019 18:20:31 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 10:20:27 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCHv2 2/3] i915: convert to new mount API
+Message-ID: <20190806012027.GA6149@jagdpanzerIV>
+References: <20190805160307.5418-1-sergey.senozhatsky@gmail.com>
+ <20190805160307.5418-3-sergey.senozhatsky@gmail.com>
+ <20190805181255.GH1131@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BYAPR04MB5816D1AB6B586FAD664F8D79E7D50@BYAPR04MB5816.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
-        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
-        a=7-415B0cAAAA:8 a=_vcUoB3Bm8cU6SNf8L0A:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20190805181255.GH1131@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 12:05:51AM +0000, Damien Le Moal wrote:
-> On 2019/08/06 7:05, Damien Le Moal wrote:
-> > On 2019/08/06 6:59, Damien Le Moal wrote:
-> >> On 2019/08/06 6:28, Jens Axboe wrote:
-> >>> On 8/5/19 2:27 PM, Damien Le Moal wrote:
-> >>>> On 2019/08/06 6:26, Jens Axboe wrote:
-> >>>>>> In any case, looking again at this code, it looks like there is a
-> >>>>>> problem with dio->size being incremented early, even for fragments
-> >>>>>> that get BLK_QC_T_EAGAIN, because dio->size is being used in
-> >>>>>> blkdev_bio_end_io(). So an incorrect size can be reported to user
-> >>>>>> space in that case on completion (e.g. large asynchronous no-wait dio
-> >>>>>> that cannot be issued in one go).
-> >>>>>>
-> >>>>>> So maybe something like this ? (completely untested)
-> >>>>>
-> >>>>> I think that looks pretty good, I like not double accounting with
-> >>>>> this_size and dio->size, and we retain the old style ordering for the
-> >>>>> ret value.
-> >>>>
-> >>>> Do you want a proper patch with real testing backup ? I can send that
-> >>>> later today.
-> >>>
-> >>> Yeah that'd be great, I like your approach better.
-> >>>
-> >>
-> >> Looking again, I think this is not it yet: dio->size is being referenced after
-> >> submit_bio(), so blkdev_bio_end_io() may see the old value if the bio completes
-> >> before dio->size increment. So the use-after-free is still there. And since
-> >> blkdev_bio_end_io() processes completion to user space only when dio->ref
-> >> becomes 0, adding an atomic_inc/dec(&dio->ref) over the loop would not help and
-> >> does not cover the single BIO case. Any idea how to address this one ?
-> >>
-> > 
-> > May be add a bio_get/put() over the 2 places that do submit_bio() would work,
-> > for all cases (single/multi BIO, sync & async). E.g.:
-> > 
-> > +                       bio_get(bio);
-> >                         qc = submit_bio(bio);
-> >                         if (qc == BLK_QC_T_EAGAIN) {
-> >                                 if (!dio->size)
-> >                                         ret = -EAGAIN;
-> > +                               bio_put(bio);
-> >                                 goto error;
-> >                         }
-> >                         dio->size += bio_size;
-> > +                       bio_put(bio);
-> > 
-> > Thoughts ?
-> > 
+On (08/05/19 19:12), Al Viro wrote:
+[..]
+> On Tue, Aug 06, 2019 at 01:03:06AM +0900, Sergey Senozhatsky wrote:
+> > tmpfs does not set ->remount_fs() anymore and its users need
+> > to be converted to new mount API.
 > 
-> That does not work since the reference to dio->size in blkdev_bio_end_io()
-> depends on atomic_dec_and_test(&dio->ref) which counts the BIO fragments for the
-> dio (+1 for async multi-bio case). So completion of the last bio can still
-> reference the old value of dio->size.
+> Could you explain why the devil do you bother with remount at all?
 
-Didn't we fix this same use-after-free in iomap_dio_rw() in commit
-4ea899ead278 ("iomap: fix a use after free in iomap_dio_rw")?
+I would redirect this question to i915 developers. As far as I know
+i915 performance suffers with huge pages enabled.
 
-Cheers,
+> Why not pass the right options when mounting the damn thing?
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+vfs_kern_mount()? It still requires struct file_system_type, which
+we need to get and put.
+
+	-ss
