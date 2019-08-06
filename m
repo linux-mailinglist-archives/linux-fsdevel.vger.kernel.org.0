@@ -2,104 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 378418312D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 14:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B61328314F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 14:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfHFMHa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 08:07:30 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38589 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbfHFMH3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 08:07:29 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s15so54867863wmj.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2019 05:07:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=Ada15BeFOUWX2EQ0DfRuw+y8XK/lBggnHBApatYPxzU=;
-        b=CijFh/RdNCYViaoruRKCE5pVdQTcr4Andjcdz8+XwunV9eVQocSa8OUMqwKakKGFD7
-         tCnAD8FjDId6u+jDjB+jQFmqWPTiQsDiZgggPsMDdDIon3qwhybj0X01FomB9k7RQ/gn
-         b77H3zcGJV6ZbfMRC2nrDssPb8Elm7jMvOErZZkvp29GcqAuwquLzY95gRhjyT+x+3VF
-         ltuVVd0niEHQloALvlwI5uLu4icaqGMm3imdcZb9taFR/gJWT0Y8leALP5NyUIvOCI06
-         H4Qug6svlSIIh29BN3rPcS26ah2Mq9a/mjR5UdwVjg9Gv1grcnL5qSZaXrQVQDgCjqOx
-         veeQ==
-X-Gm-Message-State: APjAAAWxGnbs+DhrW1XYDeLL2o6IgyDvsDgK/1xTuenWz2zBzOqlqhTJ
-        s6KkCAiurquDCvgiACL/rpkdwQ==
-X-Google-Smtp-Source: APXvYqyWcQACerC6HMZZz1xnG3rbsfHRIUgj/7NcbJmo3UsBozeEVY2sQdv11WeHaAXTO/LoWeTIjA==
-X-Received: by 2002:a05:600c:2199:: with SMTP id e25mr4433962wme.72.1565093247510;
-        Tue, 06 Aug 2019 05:07:27 -0700 (PDT)
-Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
-        by smtp.gmail.com with ESMTPSA id j16sm42653334wrp.62.2019.08.06.05.07.26
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 05:07:26 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 14:07:24 +0200
-From:   Carlos Maiolino <cmaiolino@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, adilger@dilger.ca,
-        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 4/9] fibmap: Use bmap instead of ->bmap method in
- ioctl_fibmap
-Message-ID: <20190806120723.eb72ykmukgjejiku@pegasus.maiolino.io>
-Mail-Followup-To: Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, adilger@dilger.ca,
-        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
-        linux-xfs@vger.kernel.org
-References: <20190731141245.7230-1-cmaiolino@redhat.com>
- <20190731141245.7230-5-cmaiolino@redhat.com>
- <20190731231217.GV1561054@magnolia>
- <20190802091937.kwutqtwt64q5hzkz@pegasus.maiolino.io>
- <20190802151400.GG7138@magnolia>
- <20190805102729.ooda6sg65j65ojd4@pegasus.maiolino.io>
- <20190805151258.GD7129@magnolia>
- <20190806053840.GH13409@lst.de>
+        id S1728560AbfHFM16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 08:27:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46591 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726711AbfHFM15 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 08:27:57 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E0F730B9BE0;
+        Tue,  6 Aug 2019 12:27:57 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7CA8861140;
+        Tue,  6 Aug 2019 12:27:56 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 08:27:54 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 01/24] mm: directed shrinker work deferral
+Message-ID: <20190806122754.GA2979@bfoster>
+References: <20190801021752.4986-1-david@fromorbit.com>
+ <20190801021752.4986-2-david@fromorbit.com>
+ <20190802152709.GA60893@bfoster>
+ <20190804014930.GR7777@dread.disaster.area>
+ <20190805174226.GB14760@bfoster>
+ <20190805234318.GB7777@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190806053840.GH13409@lst.de>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190805234318.GB7777@dread.disaster.area>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 06 Aug 2019 12:27:57 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 07:38:40AM +0200, Christoph Hellwig wrote:
-> On Mon, Aug 05, 2019 at 08:12:58AM -0700, Darrick J. Wong wrote:
-> > > returned. And IIRC, iomap is the only interface now that cares about issuing a
-> > > warning.
-> > >
-> > > I think the *best* we could do here, is to make the new bmap() to issue the same
-> > > kind of WARN() iomap does, but we can't really change the end result.
+On Tue, Aug 06, 2019 at 09:43:18AM +1000, Dave Chinner wrote:
+> On Mon, Aug 05, 2019 at 01:42:26PM -0400, Brian Foster wrote:
+> > On Sun, Aug 04, 2019 at 11:49:30AM +1000, Dave Chinner wrote:
+> > > On Fri, Aug 02, 2019 at 11:27:09AM -0400, Brian Foster wrote:
+> > > > On Thu, Aug 01, 2019 at 12:17:29PM +1000, Dave Chinner wrote:
+> > > > >  };
+> > > > >  
+> > > > >  #define SHRINK_STOP (~0UL)
+> > > > > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > > > > index 44df66a98f2a..ae3035fe94bc 100644
+> > > > > --- a/mm/vmscan.c
+> > > > > +++ b/mm/vmscan.c
+> > > > > @@ -541,6 +541,13 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+> > > > >  	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
+> > > > >  				   freeable, delta, total_scan, priority);
+> > > > >  
+> > > > > +	/*
+> > > > > +	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
+> > > > > +	 * defer the work to a context that can scan the cache.
+> > > > > +	 */
+> > > > > +	if (shrinkctl->will_defer)
+> > > > > +		goto done;
+> > > > > +
+> > > > 
+> > > > Who's responsible for clearing the flag? Perhaps we should do so here
+> > > > once it's acted upon since we don't call into the shrinker again?
+> > > 
+> > > Each shrinker invocation has it's own shrink_control context - they
+> > > are not shared between shrinkers - the higher level is responsible
+> > > for setting up the control state of each individual shrinker
+> > > invocation...
+> > > 
 > > 
-> > I'd rather we break legacy code than corrupt filesystems.
+> > Yes, but more specifically, it appears to me that each level is
+> > responsible for setting up control state managed by that level. E.g.,
+> > shrink_slab_memcg() initializes the unchanging state per iteration and
+> > do_shrink_slab() (re)sets the scan state prior to ->scan_objects().
+> 
+> do_shrink_slab() is responsible for iterating the scan in
+> shrinker->batch sizes, that's all it's doing there. We have to do
+> some accounting work from scan to scan. However, if ->will_defer is
+> set, we skip that entire loop, so it's largely irrelevant IMO.
 > 
 
-Yes, I have the same feeling, but this patchset does not have the goal to fix
-the broken api.
+The point is very simply that there are scenarios where ->will_defer
+might be true or might be false on do_shrink_slab() entry and I'm just
+noting it as a potential landmine. It's not a bug in the current code
+from what I can tell. I can't imagine why we wouldn't just reset the
+flag prior to the ->count_objects() call, but alas I'm not a maintainer
+of this code so I'll leave it to other reviewers/maintainers at this
+point..
 
-> This particular patch should keep existing behavior as is, as the intent
-> is to not change functionality.  Throwing in another patch to have saner
-> error behavior now that we have a saner in-kernel interface that cleary
-> documents what it is breaking and why on the other hand sounds like a
-> very good idea.
+> > > > Granted the deferred state likely hasn't
+> > > > changed, but the fact that we'd call back into the count callback to set
+> > > > it again implies the logic could be a bit more explicit, particularly if
+> > > > this will eventually be used for more dynamic shrinker state that might
+> > > > change call to call (i.e., object dirty state, etc.).
+> > > > 
+> > > > BTW, do we need to care about the ->nr_cached_objects() call from the
+> > > > generic superblock shrinker (super_cache_scan())?
+> > > 
+> > > No, and we never had to because it is inside the superblock shrinker
+> > > and the superblock shrinker does the GFP_NOFS context checks.
+> > > 
+> > 
+> > Ok. Though tbh this topic has me wondering whether a shrink_control
+> > boolean is the right approach here. Do you envision ->will_defer being
+> > used for anything other than allocation context restrictions? If not,
+> 
+> Not at this point. If there are other control flags needed, we can
+> ad them in future - I don't like the idea of having a single control
+> flag mean different things in different contexts.
+> 
 
-I totally agree here, and to be honest, I think such change should be in a
-different patchset rather than a new patch in this series. I can do it for sure,
-but this discussion IMHO should be done not only here in linux-fsdevel, but also
-in linux-api, which well, I don't think cc'ing this whole patchset there will do
-any good other than keep the change discussion more complicated than it should
-be. I'd rather finish the design and implementation of this patchset, and I'll
-follow-up it, once it's all set, with a new patch to change the truncation
-behavior, it will make the discussion way easier than mixing up subjects. What
-you guys think?
+I don't think we're talking about the same thing here..
 
-Cheers
+> > perhaps we should do something like optionally set alloc flags required
+> > for direct scanning in the struct shrinker itself and let the core
+> > shrinker code decide when to defer to kswapd based on the shrink_control
+> > flags and the current shrinker. That way an arbitrary shrinker can't
+> > muck around with core behavior in unintended ways. Hm?
+> 
+> Arbitrary shrinkers can't "muck about" with the core behaviour any
+> more than they already could with this code. If you want to screw up
+> the core reclaim by always returning SHRINK_STOP to ->scan_objects
+> instead of doing work, then there is nothing stopping you from doing
+> that right now. Formalising there work deferral into a flag in the
+> shrink_control doesn't really change that at all, adn as such I
+> don't see any need for over-complicating the mechanism here....
+> 
 
+If you add a generic "defer work" knob to the shrinker mechanism, but
+only process it as an "allocation context" check, I expect it could be
+easily misused. For example, some shrinkers may decide to set the the
+flag dynamically based on in-core state. This will work when called from
+some contexts but not from others (unrelated to allocation context),
+which is confusing. Therefore, what I'm saying is that if the only
+current use case is to defer work from shrinkers that currently skip
+work due to allocation context restraints, this might be better codified
+with something like the appended (untested) example patch. This may or
+may not be a preferable interface to the flag, but it's certainly not an
+overcomplication...
 
--- 
-Carlos
+Brian
+
+--- 8< ---
+
+diff --git a/fs/super.c b/fs/super.c
+index 113c58f19425..4e05ed9d6154 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -69,13 +69,6 @@ static unsigned long super_cache_scan(struct shrinker *shrink,
+ 
+ 	sb = container_of(shrink, struct super_block, s_shrink);
+ 
+-	/*
+-	 * Deadlock avoidance.  We may hold various FS locks, and we don't want
+-	 * to recurse into the FS that called us in clear_inode() and friends..
+-	 */
+-	if (!(sc->gfp_mask & __GFP_FS))
+-		return SHRINK_STOP;
+-
+ 	if (!trylock_super(sb))
+ 		return SHRINK_STOP;
+ 
+@@ -264,6 +257,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
+ 	s->s_shrink.count_objects = super_cache_count;
+ 	s->s_shrink.batch = 1024;
+ 	s->s_shrink.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE;
++	s->s_shrink.direct_mask = __GFP_FS;
+ 	if (prealloc_shrinker(&s->s_shrink))
+ 		goto fail;
+ 	if (list_lru_init_memcg(&s->s_dentry_lru, &s->s_shrink))
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 9443cafd1969..e94e4edf7f1e 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -75,6 +75,8 @@ struct shrinker {
+ #endif
+ 	/* objs pending delete, per node */
+ 	atomic_long_t *nr_deferred;
++
++	gfp_t	direct_mask;
+ };
+ #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
+ 
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 44df66a98f2a..fb339399e26a 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -541,6 +541,15 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
+ 				   freeable, delta, total_scan, priority);
+ 
++	/*
++	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
++	 * defer the work to a context that can scan the cache.
++	 */
++	if (shrinker->direct_mask &&
++	    ((shrinkctl->gfp_mask & shrinker->direct_mask) !=
++	     shrinker->direct_mask))
++		goto done;
++
+ 	/*
+ 	 * Normally, we should not scan less than batch_size objects in one
+ 	 * pass to avoid too frequent shrinker calls, but if the slab has less
+@@ -575,6 +584,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 		cond_resched();
+ 	}
+ 
++done:
+ 	if (next_deferred >= scanned)
+ 		next_deferred -= scanned;
+ 	else
