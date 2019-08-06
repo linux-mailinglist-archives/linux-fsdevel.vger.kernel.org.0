@@ -2,124 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE948310A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 13:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E20B8311D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 14:02:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729168AbfHFL5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 07:57:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33706 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726243AbfHFL5I (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 07:57:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CF36EAD95;
-        Tue,  6 Aug 2019 11:57:05 +0000 (UTC)
-Date:   Tue, 6 Aug 2019 13:57:03 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
-        namhyung@google.com, paulmck@linux.ibm.com,
-        Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
-Message-ID: <20190806115703.GY11812@dhcp22.suse.cz>
-References: <20190805170451.26009-1-joel@joelfernandes.org>
- <20190805170451.26009-3-joel@joelfernandes.org>
- <20190806084203.GJ11812@dhcp22.suse.cz>
- <20190806103627.GA218260@google.com>
- <20190806104755.GR11812@dhcp22.suse.cz>
- <20190806111446.GA117316@google.com>
+        id S1726713AbfHFMCw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 08:02:52 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53750 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfHFMCv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 08:02:51 -0400
+Received: by mail-wm1-f66.google.com with SMTP id x15so77933840wmj.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2019 05:02:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=wHQFNmeVP6Mz9p/qPLSMEtgNuo5A4SnlHGlMfLY7pAY=;
+        b=JMYiw+RRjiYCqPeuOJB43TzaLISqOxtcOyaezoEQlIvmb5SzquCQIGJgvul62fLEV/
+         jEu23oziI4vQFmMtoYlM1dOtlL5PaDCDxDx3C3Df+vm+O6z+6d8TIEtn+MMYIHr5Rhb+
+         wYj0+6zVUWaL48FCKDvRliX6fjMV3Hr+48oVWtyxXDjn50e1EvseW6PWPNsoNRb85d+w
+         /Wpv+elqcsTtlvLeFl3MOl7p39TwI0UpghFS+oRkJB7hhWwQuOFCZsukNFrNnHgSflAv
+         Fqrp5Qyl1yJE2M/bY83HCEq3NifvvCRCJvy+J/KChPcvDLpJ9Af44B+VRWuNLtp4wE3U
+         ML6w==
+X-Gm-Message-State: APjAAAVQ1D7H/Ygv+XgQG/WtBbZ6y9J4rhzGEygveKNlFFSOcRhX/YHi
+        3lMbJRRUJf/4Kuy/9R5G2n8t3w==
+X-Google-Smtp-Source: APXvYqyNYp59Nf2CiXgRplQObJg8sXWpHRPOAHNT0H1wFEwIFz7Gl+qNvF9vIn8JtumWH589n7a/Rg==
+X-Received: by 2002:a1c:ca06:: with SMTP id a6mr4570200wmg.48.1565092969970;
+        Tue, 06 Aug 2019 05:02:49 -0700 (PDT)
+Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
+        by smtp.gmail.com with ESMTPSA id n9sm135142887wrp.54.2019.08.06.05.02.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 05:02:48 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 14:02:47 +0200
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
+        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 4/9] fibmap: Use bmap instead of ->bmap method in
+ ioctl_fibmap
+Message-ID: <20190806120245.3qestwolyjtaky5u@pegasus.maiolino.io>
+Mail-Followup-To: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
+        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
+        linux-xfs@vger.kernel.org
+References: <20190731141245.7230-1-cmaiolino@redhat.com>
+ <20190731141245.7230-5-cmaiolino@redhat.com>
+ <20190731231217.GV1561054@magnolia>
+ <20190802091937.kwutqtwt64q5hzkz@pegasus.maiolino.io>
+ <20190802151400.GG7138@magnolia>
+ <20190805102729.ooda6sg65j65ojd4@pegasus.maiolino.io>
+ <20190805151258.GD7129@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190806111446.GA117316@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190805151258.GD7129@magnolia>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 06-08-19 07:14:46, Joel Fernandes wrote:
-> On Tue, Aug 06, 2019 at 12:47:55PM +0200, Michal Hocko wrote:
-> > On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
-> > > On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
-> > > > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
-> > > > > This bit will be used by idle page tracking code to correctly identify
-> > > > > if a page that was swapped out was idle before it got swapped out.
-> > > > > Without this PTE bit, we lose information about if a page is idle or not
-> > > > > since the page frame gets unmapped.
-> > > > 
-> > > > And why do we need that? Why cannot we simply assume all swapped out
-> > > > pages to be idle? They were certainly idle enough to be reclaimed,
-> > > > right? Or what does idle actualy mean here?
-> > > 
-> > > Yes, but other than swapping, in Android a page can be forced to be swapped
-> > > out as well using the new hints that Minchan is adding?
-> > 
-> > Yes and that is effectivelly making them idle, no?
+I'll keep my reply to your email short here, because hch's follow-up email
+summarizes what I wanted to say, so I'll reply to his email directly.
+
+> : 	return bno;
+> : }
 > 
-> That depends on how you think of it.
-
-I would much prefer to have it documented so that I do not have to guess ;)
-
-> If you are thinking of a monitoring
-> process like a heap profiler, then from the heap profiler's (that only cares
-> about the process it is monitoring) perspective it will look extremely odd if
-> pages that are recently accessed by the process appear to be idle which would
-> falsely look like those processes are leaking memory. The reality being,
-> Android forced those pages into swap because of other reasons. I would like
-> for the swapping mechanism, whether forced swapping or memory reclaim, not to
-> interfere with the idle detection.
-
-Hmm, but how are you going to handle situation when the page is unmapped
-and refaulted again (e.g. a normal reclaim of a pagecache)? You are
-losing that information same was as in the swapout case, no? Or am I
-missing something?
-
-> This is just an effort to make the idle tracking a little bit better. We
-> would like to not lose the 'accessed' information of the pages.
+> > returned. And IIRC, iomap is the only interface now that cares about issuing a
+> > warning.
+> >
+> > I think the *best* we could do here, is to make the new bmap() to issue the same
+> > kind of WARN() iomap does, but we can't really change the end result.
 > 
-> Initially, I had proposed what you are suggesting as well however the above
-> reasons made me to do it like this. Also Minchan and Konstantin suggested
-> this, so there are more people interested in the swap idle bit. Minchan, can
-> you provide more thoughts here? (He is on 2-week vacation from today so
-> hopefully replies before he vanishes ;-)).
+> I'd rather we break legacy code than corrupt filesystems.
 
-We can move on with the rest of the series in the mean time but I would
-like to see a proper justification for the swap entries and why they
-should be handled special.
+By now, I wish to apologize Darrick, it was my fault to not pay enough attention
+to iomap's bmap implementation as you mentioned. Will keep the discussion topic
+on next e-mail.
 
-> Also assuming all swap pages as idle has other "semantic" issues. It is quite
-> odd if a swapped page is automatically marked as idle without userspace
-> telling it to. Consider the following set of events: 1. Userspace marks only
-> a certain memory region as idle. 2. Userspace reads back the bits
-> corresponding to a bigger region. Part of this bigger region is swapped.
-> Userspace expects all of the pages it did not mark, to have idle bit set to
-> '0' because it never marked them as idle. However if it is now surprised by
-> what it read back (not all '0' read back). Since a page is swapped, it will
-> be now marked "automatically" as idle as per your proposal, even if userspace
-> never marked it explicity before. This would be quite confusing/ambiguous.
 
-OK, I see. I guess the primary question I have is how do you distinguish
-Idle page which got unmapped and faulted in again from swapped out page
-and refaulted - including the time the pte is not present.
 -- 
-Michal Hocko
-SUSE Labs
+Carlos
