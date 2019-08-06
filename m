@@ -2,136 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC2682D26
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 09:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7780582DF1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 10:42:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729168AbfHFHua (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 03:50:30 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40920 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfHFHua (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:50:30 -0400
-Received: by mail-ot1-f65.google.com with SMTP id l15so33014656oth.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2019 00:50:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=kWFJ9VXWY9elnW+Cpayl7VN+eLgA38VWzMzPMfOSo/4=;
-        b=pOEUKjHZrG9frTrjhAHloZ07xJ3LROaCTkRB9MivU7GBayjsVbeU6wMMDGVhhLdu2P
-         ImdbTERwKFKukEw/kJrzyN4wlCnm1R6QN+XHy33VfJzQKySBEx/ibsMY+0xu2ZglMEaJ
-         3l/2WR7I8VtuWCjUEJWoPvM1Fmcz4cCWzCaFEafICEUOsKNXop7K8jAwLixrkq6QOJtJ
-         c2F3FxbUvarZfm/gKoC98fkt7c2PQpQHNqgri2uGvWagH7CrRLfVy9Zrkn/cCFpElw++
-         Ab9wA1mMgC2J08lGAS8gqUkXdhIgAvg/eWTfBX/s9anS7JZq2FeYqcuJq1M61EBREiPN
-         fXng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=kWFJ9VXWY9elnW+Cpayl7VN+eLgA38VWzMzPMfOSo/4=;
-        b=nx3YFT1w1pjxurhCKeVZgPmrac+RX/155kcyrLyAcLdeZ1tQDWtPnZ1obJ7QOewqV2
-         70m2mWImZ2TSm8Sv4q0hyak3TxjNdV+0rU34D5P//TPU0ua/zVs4WAxbH8TLw3SuB0lF
-         4UpQqMnfMnWeegXD5h21aaY2wpXQ/6G1Edz9zvpMWE9eKt7p6sEt1Ki2hqXKVCysjBKo
-         GiUgbelmfLoTBnKl75yJjMqji6tk28Jhdm35booLLd3g9ljM+L/riHBp59jdS7gaXtmF
-         clv9q3yMJyHBuaXmGejkHae8M1VrzEycNDNbEn2H45UgrYEvZLkR9bLuEpzxprF2VF9G
-         0Y2w==
-X-Gm-Message-State: APjAAAWL31ljwU1KGUP/1iVh6fpB1SsXBCeSnjbHnRfumBvJAFg3OCD0
-        ydOQdOk/kmnaI67yQRZmZ5Uq/A==
-X-Google-Smtp-Source: APXvYqy2hlvgRI1T/Tn9lMwpCjyMQ41DUBhpPKmBl6Yh+3BnU14/PszBmVh19Kd3ubPgWPa1wTIdiQ==
-X-Received: by 2002:a9d:5787:: with SMTP id q7mr2061375oth.75.1565077828501;
-        Tue, 06 Aug 2019 00:50:28 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id g6sm28504405otl.50.2019.08.06.00.50.26
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Aug 2019 00:50:27 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 00:50:10 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Al Viro <viro@zeniv.linux.org.uk>
-cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCHv2 2/3] i915: convert to new mount API
-In-Reply-To: <20190805182834.GI1131@ZenIV.linux.org.uk>
-Message-ID: <alpine.LSU.2.11.1908060007190.1941@eggly.anvils>
-References: <20190805160307.5418-1-sergey.senozhatsky@gmail.com> <20190805160307.5418-3-sergey.senozhatsky@gmail.com> <20190805181255.GH1131@ZenIV.linux.org.uk> <20190805182834.GI1131@ZenIV.linux.org.uk>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        id S1732160AbfHFImI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 04:42:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59462 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728918AbfHFImI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 04:42:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B55EBABC7;
+        Tue,  6 Aug 2019 08:42:05 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 10:42:03 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, joelaf@google.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
+Message-ID: <20190806084203.GJ11812@dhcp22.suse.cz>
+References: <20190805170451.26009-1-joel@joelfernandes.org>
+ <20190805170451.26009-3-joel@joelfernandes.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190805170451.26009-3-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 5 Aug 2019, Al Viro wrote:
-> On Mon, Aug 05, 2019 at 07:12:55PM +0100, Al Viro wrote:
-> > On Tue, Aug 06, 2019 at 01:03:06AM +0900, Sergey Senozhatsky wrote:
-> > > tmpfs does not set ->remount_fs() anymore and its users need
-> > > to be converted to new mount API.
-> > 
-> > Could you explain why the devil do you bother with remount at all?
-> > Why not pass the right options when mounting the damn thing?
-> 
-> ... and while we are at it, I really wonder what's going on with
-> that gemfs thing - among the other things, this is the only
-> user of shmem_file_setup_with_mnt().  Sure, you want your own
-> options, but that brings another question - is there any reason
-> for having the huge=... per-superblock rather than per-file?
+On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
+> This bit will be used by idle page tracking code to correctly identify
+> if a page that was swapped out was idle before it got swapped out.
+> Without this PTE bit, we lose information about if a page is idle or not
+> since the page frame gets unmapped.
 
-Yes: we want a default for how files of that superblock are to
-allocate their pages, without people having to fcntl or advise
-each of their files.
+And why do we need that? Why cannot we simply assume all swapped out
+pages to be idle? They were certainly idle enough to be reclaimed,
+right? Or what does idle actualy mean here?
 
-Setting aside the weirder options (within_size, advise) and emergency/
-testing override (shmem_huge), we want files on an ordinary default
-tmpfs (huge=never) to be allocated with small pages (so users with
-access to that filesystem will not consume, and will not waste time
-and space on consuming, the more valuable huge pages); but files on a
-huge=always tmpfs to be allocated with huge pages whenever possible.
+> In this patch we reuse PTE_DEVMAP bit since idle page tracking only
+> works on user pages in the LRU. Device pages should not consitute those
+> so it should be unused and safe to use.
+> 
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  arch/arm64/Kconfig                    |  1 +
+>  arch/arm64/include/asm/pgtable-prot.h |  1 +
+>  arch/arm64/include/asm/pgtable.h      | 15 +++++++++++++++
+>  3 files changed, 17 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 3adcec05b1f6..9d1412c693d7 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -128,6 +128,7 @@ config ARM64
+>  	select HAVE_ARCH_MMAP_RND_BITS
+>  	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+>  	select HAVE_ARCH_PREL32_RELOCATIONS
+> +	select HAVE_ARCH_PTE_SWP_PGIDLE
+>  	select HAVE_ARCH_SECCOMP_FILTER
+>  	select HAVE_ARCH_STACKLEAK
+>  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+> index 92d2e9f28f28..917b15c5d63a 100644
+> --- a/arch/arm64/include/asm/pgtable-prot.h
+> +++ b/arch/arm64/include/asm/pgtable-prot.h
+> @@ -18,6 +18,7 @@
+>  #define PTE_SPECIAL		(_AT(pteval_t, 1) << 56)
+>  #define PTE_DEVMAP		(_AT(pteval_t, 1) << 57)
+>  #define PTE_PROT_NONE		(_AT(pteval_t, 1) << 58) /* only when !PTE_VALID */
+> +#define PTE_SWP_PGIDLE		PTE_DEVMAP		 /* for idle page tracking during swapout */
+>  
+>  #ifndef __ASSEMBLY__
+>  
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 3f5461f7b560..558f5ebd81ba 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -212,6 +212,21 @@ static inline pte_t pte_mkdevmap(pte_t pte)
+>  	return set_pte_bit(pte, __pgprot(PTE_DEVMAP));
+>  }
+>  
+> +static inline int pte_swp_page_idle(pte_t pte)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline pte_t pte_swp_mkpage_idle(pte_t pte)
+> +{
+> +	return set_pte_bit(pte, __pgprot(PTE_SWP_PGIDLE));
+> +}
+> +
+> +static inline pte_t pte_swp_clear_page_idle(pte_t pte)
+> +{
+> +	return clear_pte_bit(pte, __pgprot(PTE_SWP_PGIDLE));
+> +}
+> +
+>  static inline void set_pte(pte_t *ptep, pte_t pte)
+>  {
+>  	WRITE_ONCE(*ptep, pte);
+> -- 
+> 2.22.0.770.g0f2c4a37fd-goog
 
-Or am I missing your point?  Yes, hugeness can certainly be decided
-differently per-file, or even per-extent of file.  That is already
-made possible through "judicious" use of madvise MADV_HUGEPAGE and
-MADV_NOHUGEPAGE on mmaps of the file, carried over from anon THP.
-
-Though personally I'm averse to managing "f"objects through
-"m"interfaces, which can get ridiculous (notably, MADV_HUGEPAGE works
-on the virtual address of a mapping, but the huge-or-not alignment of
-that mapping must have been decided previously).  In Google we do use
-fcntls F_HUGEPAGE and F_NOHUGEPAGE to override on a per-file basis -
-one day I'll get to upstreaming those.
-
-Hugh
-
-> 
-> After all, the readers of ->huge in mm/shmem.c are
-> mm/shmem.c:582:     (shmem_huge == SHMEM_HUGE_FORCE || sbinfo->huge) &&
-> 	is_huge_enabled(), sbinfo is an explicit argument
-> 
-> mm/shmem.c:1799:        switch (sbinfo->huge) {
-> 	shmem_getpage_gfp(), sbinfo comes from inode
-> 
-> mm/shmem.c:2113:                if (SHMEM_SB(sb)->huge == SHMEM_HUGE_NEVER)
-> 	shmem_get_unmapped_area(), sb comes from file
-> 
-> mm/shmem.c:3531:        if (sbinfo->huge)
-> mm/shmem.c:3532:                seq_printf(seq, ",huge=%s", shmem_format_huge(sbinfo->huge));
-> 	->show_options()
-> mm/shmem.c:3880:        switch (sbinfo->huge) {
-> 	shmem_huge_enabled(), sbinfo comes from an inode
-> 
-> And the only caller of is_huge_enabled() is shmem_getattr(), with sbinfo
-> picked from inode.
-> 
-> So is there any reason why the hugepage policy can't be per-file, with
-> the current being overridable default?
+-- 
+Michal Hocko
+SUSE Labs
