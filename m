@@ -2,137 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2359B83D6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 00:41:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 555FC83D73
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 00:42:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbfHFWlm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 18:41:42 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37769 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbfHFWlm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 18:41:42 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d1so9528701pgp.4;
-        Tue, 06 Aug 2019 15:41:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Krm6tVfFrmclyOThqXDjtWpVvkd2Mius4pmoB2cTG5M=;
-        b=FD7DVVu68EbUDQk0H3l1kzkl3ITOXhVuXLOcFMruqkxwq/TxmXssQIM1Yu+ftDR6gy
-         csHttpHp3+uA34h5y+p78MFxvY9Cq/C2/bapOpsaO3aeLiWXKjJfAfFtkLn55fNbtwi+
-         YS6bKGhQPWZJVqX67v5TV2B559E0qYeR1o5BsgjU6CclSD6nvUe3PAnIanPJm05xmgfV
-         Xl27q9XADbO6BvIDgTk43Li2BGN3uU7B0fUFiACFKfYiviBh4kxtjK6EHBqkORinzdKI
-         bYsCjqfd+LXWajkRPyCx61uuTOnP0nVKuFU08qRq7daglIoy6maqVKAVb45jqaV/TleR
-         JarQ==
-X-Gm-Message-State: APjAAAV8wlkMQu0/kRG4QyuFojTd/kQoNtiOXq4UTj8b03s5p74I8M9/
-        nE/tXVdDgJNKoY0dU6BjSjw=
-X-Google-Smtp-Source: APXvYqxY3KbWh/v+BHv/FmrtMkDg7pRj74CDhVv2Z7b/AsGHkSjC6aL7/tYVuKG7XPRnwuk81fbePA==
-X-Received: by 2002:a17:90b:94:: with SMTP id bb20mr5543489pjb.16.1565131300901;
-        Tue, 06 Aug 2019 15:41:40 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id 124sm91321581pfw.142.2019.08.06.15.41.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 15:41:39 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id B4B3D4025E; Tue,  6 Aug 2019 22:41:38 +0000 (UTC)
-Date:   Tue, 6 Aug 2019 22:41:38 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
-        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 4/9] fibmap: Use bmap instead of ->bmap method in
- ioctl_fibmap
-Message-ID: <20190806224138.GW30113@42.do-not-panic.com>
-References: <20190731141245.7230-1-cmaiolino@redhat.com>
- <20190731141245.7230-5-cmaiolino@redhat.com>
- <20190731231217.GV1561054@magnolia>
- <20190802091937.kwutqtwt64q5hzkz@pegasus.maiolino.io>
- <20190802151400.GG7138@magnolia>
- <20190805102729.ooda6sg65j65ojd4@pegasus.maiolino.io>
- <20190805151258.GD7129@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805151258.GD7129@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727082AbfHFWmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 18:42:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725974AbfHFWmf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 18:42:35 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59715216F4;
+        Tue,  6 Aug 2019 22:42:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565131354;
+        bh=EknRqymxoTJDoep6zXcHd2kEz6NOkgX5lpboEZyvK0A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cRh0QGv3KwTTqbv+C7Ks/mBaeOIGhCJHLj3nOSKzHlIKAhpFAmN1MWab7DWF8nx8I
+         WHnTV4WsnnbNtCgS8xeKytBXCWAIaXnnmy/UCklx3tamhutLFKYv1VtIrbLYJTnU7d
+         YG5Jq9zrIGWI62RQa/qPahOdYTKYpqWdHbsu9V0s=
+Date:   Tue, 6 Aug 2019 15:42:33 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Sergei Turchanov <turchanov@farpost.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] seq_file: fix problem when seeking mid-record.
+Message-Id: <20190806154233.5b16a91fd27c6cf129770566@linux-foundation.org>
+In-Reply-To: <87mugojl0f.fsf@notabene.neil.brown.name>
+References: <3bd775ab-9e31-c6b3-374e-7a9982a9a8cd@farpost.com>
+        <5c4c0648-2a96-4132-9d22-91c22e7c7d4d@huawei.com>
+        <eab812ef-ba79-11d6-0a4e-232872f0fcc4@farpost.com>
+        <877e7xl029.fsf@notabene.neil.brown.name>
+        <2d54ca59-9c22-0b75-3087-3718b30b8d11@farpost.com>
+        <87mugojl0f.fsf@notabene.neil.brown.name>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 08:12:58AM -0700, Darrick J. Wong wrote:
-> On Mon, Aug 05, 2019 at 12:27:30PM +0200, Carlos Maiolino wrote:
-> > On Fri, Aug 02, 2019 at 08:14:00AM -0700, Darrick J. Wong wrote:
-> > > On Fri, Aug 02, 2019 at 11:19:39AM +0200, Carlos Maiolino wrote:
-> > > > Hi Darrick.
-> > > > 
-> > > > > > +		return error;
-> > > > > > +
-> > > > > > +	block = ur_block;
-> > > > > > +	error = bmap(inode, &block);
-> > > > > > +
-> > > > > > +	if (error)
-> > > > > > +		ur_block = 0;
-> > > > > > +	else
-> > > > > > +		ur_block = block;
-> > > > > 
-> > > > > What happens if ur_block > INT_MAX?  Shouldn't we return zero (i.e.
-> > > > > error) instead of truncating the value?  Maybe the code does this
-> > > > > somewhere else?  Here seemed like the obvious place for an overflow
-> > > > > check as we go from sector_t to int.
-> > > > > 
-> > > > 
-> > > > The behavior should still be the same. It will get truncated, unfortunately. I
-> > > > don't think we can actually change this behavior and return zero instead of
-> > > > truncating it.
-> > > 
-> > > But that's even worse, because the programs that rely on FIBMAP will now
-> > > receive *incorrect* results that may point at a different file and
-> > > definitely do not point at the correct file block.
-> > 
-> > How is this worse? This is exactly what happens today, on the original FIBMAP
-> > implementation.
-> 
-> Ok, I wasn't being 110% careful with my words.  Delete "will now" from
-> the sentence above.
-> 
-> > Maybe I am not seeing something or having a different thinking you have, but
-> > this is the behavior we have now, without my patches. And we can't really change
-> > it; the user view of this implementation.
-> > That's why I didn't try to change the result, so the truncation still happens.
-> 
-> I understand that we're not generally supposed to change existing
-> userspace interfaces, but the fact remains that allowing truncated
-> responses causes *filesystem corruption*.
-> 
-> We know that the most well known FIBMAP callers are bootloaders, and we
-> know what they do with the information they get -- they use it to record
-> the block map of boot files.  So if the IPL/grub/whatever installer
-> queries the boot file and the boot file is at block 12345678901 (a
-> 34-bit number), this interface truncates that to 3755744309 (a 32-bit
-> number) and that's where the bootloader will think its boot files are.
-> The installation succeeds, the user reboots and *kaboom* the system no
-> longer boots because the contents of block 3755744309 is not a bootloader.
-> 
-> Worse yet, grub1 used FIBMAP data to record the location of the grub
-> environment file and installed itself between the MBR and the start of
-> partition 1.  If the environment file is at offset 1234578901, grub will
-> write status data to its environment file (which it thinks is at
-> 3755744309) and *KABOOM* we've just destroyed whatever was in that
-> block.
-> 
-> Far better for the bootloader installation script to hit an error and
-> force the admin to deal with the situation than for the system to become
-> unbootable.  That's *why* the (newer) iomap bmap implementation does not
-> return truncated mappings, even though the classic implementation does.
-> 
-> The classic code returning truncated results is a broken behavior.
+On Mon, 05 Aug 2019 14:26:08 +1000 NeilBrown <neilb@suse.com> wrote:
 
-How long as it been broken for? And if we do fix it, I'd just like for
-a nice commit lot describing potential risks of not applying it. *If*
-the issue exists as-is today, the above contains a lot of information
-for addressing potential issues, even if theoretical.
+> If you use lseek or similar (e.g. pread) to access
+> a location in a seq_file file that is within a record,
+> rather than at a record boundary, then the first read
+> will return the remainder of the record, and the second
+> read will return the whole of that same record (instead
+> of the next record).
+> Whnn seeking to a record boundary, the next record is
+> correctly returned.
 
-  Luis
+ouch.  I'm surprised it took this long to be noticed.
+
+Maybe we need a seqfile-basher in tools/testing/selftests/proc or
+somewhere.
+
