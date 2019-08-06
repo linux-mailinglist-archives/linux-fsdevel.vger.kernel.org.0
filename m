@@ -2,152 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B0883A69
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 22:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0967D83A85
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 22:43:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726431AbfHFUjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 16:39:20 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:2263 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbfHFUjT (ORCPT
+        id S1726707AbfHFUnm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 16:43:42 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37069 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726688AbfHFUnm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 16:39:19 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d49e5760000>; Tue, 06 Aug 2019 13:39:18 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 06 Aug 2019 13:39:17 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 06 Aug 2019 13:39:17 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 6 Aug
- 2019 20:39:16 +0000
-Subject: Re: [PATCH v2 01/34] mm/gup: add make_dirty arg to
- put_user_pages_dirty_lock()
-To:     Ira Weiny <ira.weiny@intel.com>, <john.hubbard@gmail.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-nfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
-        <x86@kernel.org>, <xen-devel@lists.xenproject.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20190804224915.28669-1-jhubbard@nvidia.com>
- <20190804224915.28669-2-jhubbard@nvidia.com>
- <20190806173945.GA4748@iweiny-DESK2.sc.intel.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <0e232d84-e6ea-159e-91d4-77e938377161@nvidia.com>
-Date:   Tue, 6 Aug 2019 13:39:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 6 Aug 2019 16:43:42 -0400
+Received: by mail-lf1-f67.google.com with SMTP id c9so62221600lfh.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2019 13:43:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VR5feK3MwIDa28M66pr8cZaax0HRBgUIy/YXtAlUVAg=;
+        b=Jcbiz/rlCveea1uGbs0To2AG2Fqr3qcVJByaj30biSJ6IGaZQU269n7UhHiJIq60zt
+         F6m/iDUTKUaAxcfbj3aNcS1UVKWh0iBATpSeFcB2HZZd4zuUH74H+0AsiAw/3vHblfhG
+         rGmoqX4hHVQvNh1Mo2WC3G6d946cIGSfRxOUfOJyomX+NAcaChMCm9wTSq80UpIDDyVy
+         Wsy0W1UJUtub0zWt+iqZy9h9oHmBFsihiepiuxbUw6MWvMUQg0sLWv0bFV1e+nhfBD57
+         VYDaUrEm2FkddHey3B0zSP911OVgsWvOlf8N8vWL7OUIPVuLGhouTH4qcL5ZHCc7EUMj
+         /u6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VR5feK3MwIDa28M66pr8cZaax0HRBgUIy/YXtAlUVAg=;
+        b=pNkReJFnXbxt+ADJTVv+k/N41u7TMra1NkU+PdwhJhbQ3CrktXyZtXsKqN3fXm4aZT
+         LJ3WmH9cTAlsr75o9oMmcPT1GrvBBaaX1FaWCRBhM+XWhz7Uabv3jjFgoNJ+lb5ybixq
+         BAmofm/fmmvePKzfiArngYmt46Mblb/ISj4SUXrjAuVcczgmCl+2n8ogEo0ullZx+7Mo
+         1PSXglIZ6GyDks2L68gqexoSc+Z5/5aSa+NOcku6321qaRU5LIwHM6qZjyodt6WWzvZP
+         7FTwVJ+46lONNPGR3G7sZa0LHwHlKDdJNDQ5j8vj0jVRZnqGPYQgFfVY20X9FjorfrIT
+         nIYw==
+X-Gm-Message-State: APjAAAWAi0oTJHp1hW/yzh8eY/fb0fizAFOtcCXrpY2LXRXOWAZoG3/h
+        dep5uhMQUSYqQhnM3/MJjYGGAdKgbDUPWiVgWWLPbA==
+X-Google-Smtp-Source: APXvYqzWZs8IRpgox1WFTKnJpGnBDG26DorCdtZJQD2tgXVD7zBJA6DxGWkpIBTAdKDEhuxqp2JLjofjJIxta57O938=
+X-Received: by 2002:a19:6f4b:: with SMTP id n11mr3649844lfk.163.1565124219457;
+ Tue, 06 Aug 2019 13:43:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190806173945.GA4748@iweiny-DESK2.sc.intel.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565123958; bh=kP7gTuC3ZdPRsl2ZM8hKtRsMZoJPCXuUqs/7ZYFYlas=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=De7r6lQUtbn+GTEsMqljgVKTlQIrCw8ZESuRqc7w4LEYPASOCDyQM6KfNGQouIjYR
-         fh0BckBJVbNT9AbXMQb66ZhMKSleBMpCp4Q67sEppT12m031guaO+mSQiN77Vubrty
-         dLwAVLGyjRDyH8bKz/ie59UuEUjWXDBsQB9IGYcfiHyqrDkJ8dhLAwUMAPjRDqyeiY
-         KJw8zEX2A8/HIUmoazoyVwItiLDzuGpYh0geDqgdodA5dwJzt0S2azlo+PhdmfDHXO
-         6GhmRkzx66GKpfVpxeAm8ztIGHTRgebRJf3i5iJHgoMtdv7J6YmmRpepQCyIfl7KA0
-         CyUb7h3ZsvM+w==
+References: <20190805162521.90882-1-ebiggers@kernel.org> <20190805162521.90882-13-ebiggers@kernel.org>
+In-Reply-To: <20190805162521.90882-13-ebiggers@kernel.org>
+From:   Paul Crowley <paulcrowley@google.com>
+Date:   Tue, 6 Aug 2019 13:43:27 -0700
+Message-ID: <CA+_SqcBkR_8Z9EUTpK-dEW4PN+9P5OgJnqYDHtOhG+P1LjotPA@mail.gmail.com>
+Subject: Re: [PATCH v8 12/20] fscrypt: add an HKDF-SHA512 implementation
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-api@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/6/19 10:39 AM, Ira Weiny wrote:
-> On Sun, Aug 04, 2019 at 03:48:42PM -0700, john.hubbard@gmail.com wrote:
->> From: John Hubbard <jhubbard@nvidia.com>
-...
->> -
->>  /**
->> - * put_user_pages_dirty() - release and dirty an array of gup-pinned pages
->> - * @pages:  array of pages to be marked dirty and released.
->> + * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
->> + * @pages:  array of pages to be maybe marked dirty, and definitely released.
-> 
-> Better would be.
-> 
-> @pages:  array of pages to be put
+On Mon, 5 Aug 2019 at 09:28, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add an implementation of HKDF (RFC 5869) to fscrypt, for the purpose of
+> deriving additional key material from the fscrypt master keys for v2
+> encryption policies.  HKDF is a key derivation function built on top of
+> HMAC.  We choose SHA-512 for the underlying unkeyed hash, and use an
+> "hmac(sha512)" transform allocated from the crypto API.
+>
+> We'll be using this to replace the AES-ECB based KDF currently used to
+> derive the per-file encryption keys.  While the AES-ECB based KDF is
+> believed to meet the original security requirements, it is nonstandard
+> and has problems that don't exist in modern KDFs such as HKDF:
+>
+> 1. It's reversible.  Given a derived key and nonce, an attacker can
+>    easily compute the master key.  This is okay if the master key and
+>    derived keys are equally hard to compromise, but now we'd like to be
+>    more robust against threats such as a derived key being compromised
+>    through a timing attack, or a derived key for an in-use file being
+>    compromised after the master key has already been removed.
+>
+> 2. It doesn't evenly distribute the entropy from the master key; each 16
+>    input bytes only affects the corresponding 16 output bytes.
+>
+> 3. It isn't easily extensible to deriving other values or keys, such as
+>    a public hash for securely identifying the key, or per-mode keys.
+>    Per-mode keys will be immediately useful for Adiantum encryption, for
+>    which fscrypt currently uses the master key directly, introducing
+>    unnecessary usage constraints.  Per-mode keys will also be useful for
+>    hardware inline encryption, which is currently being worked on.
+>
+> HKDF solves all the above problems.
+>
+> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-OK, I'll change to that wording.
+Looks good, feel free to add:
 
-> 
->>   * @npages: number of pages in the @pages array.
->> + * @make_dirty: whether to mark the pages dirty
->>   *
->>   * "gup-pinned page" refers to a page that has had one of the get_user_pages()
->>   * variants called on that page.
->>   *
->>   * For each page in the @pages array, make that page (or its head page, if a
->> - * compound page) dirty, if it was previously listed as clean. Then, release
->> - * the page using put_user_page().
->> + * compound page) dirty, if @make_dirty is true, and if the page was previously
->> + * listed as clean. In any case, releases all pages using put_user_page(),
->> + * possibly via put_user_pages(), for the non-dirty case.
-> 
-> I don't think users of this interface need this level of detail.  I think
-> something like.
-> 
->  * For each page in the @pages array, release the page.  If @make_dirty is
->  * true, mark the page dirty prior to release.
-
-Yes, it is too wordy, I'll change to that.
-
-> 
-...
->> -void put_user_pages_dirty_lock(struct page **pages, unsigned long npages)
->> -{
->> -	__put_user_pages_dirty(pages, npages, set_page_dirty_lock);
->> +	/*
->> +	 * TODO: this can be optimized for huge pages: if a series of pages is
->> +	 * physically contiguous and part of the same compound page, then a
->> +	 * single operation to the head page should suffice.
->> +	 */
-> 
-> I think this comment belongs to the for loop below...  or just something about
-> how to make this and put_user_pages() more efficient.  It is odd, that this is
-> the same comment as in put_user_pages()...
-
-Actually I think I'll just delete the comment entirely, it's just noise really.
-
-> 
-> The code is good.  So... Other than the comments.
-> 
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-
-
-Thanks for the review!
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+Reviewed-by: Paul Crowley <paulcrowley@google.com>
