@@ -2,128 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53A9083D47
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 00:19:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C39A383D4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 00:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfHFWTY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 18:19:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37640 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726419AbfHFWTY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 18:19:24 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB7B121874;
-        Tue,  6 Aug 2019 22:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565129963;
-        bh=uggloegaAwke9A4UP4qBuMyVFR/d5SRDz42VgcGIwio=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=meFIABtuhORcSvMNLD1Hv0nThWvFZI0Qr53BkMiWwh6sZaACsB8AxS19EWRhOD245
-         XPjeM7EQeanIE0mnWrDAF2RVaT5KRg5MyslBzowrxK7IAG3AckB1mYjDZTe7CHOPId
-         5LjvjYRK0qyrzcwOxuFdWnbt8prbQySEv0+MClOM=
-Date:   Tue, 6 Aug 2019 15:19:21 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, joelaf@google.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
-        namhyung@google.com, paulmck@linux.ibm.com,
-        Robin Murphy <robin.murphy@arm.com>,
-        Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will@kernel.org>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>
-Subject: Re: [PATCH v4 1/5] mm/page_idle: Add per-pid idle page tracking
- using virtual indexing
-Message-Id: <20190806151921.edec128271caccb5214fc1bd@linux-foundation.org>
-In-Reply-To: <20190805170451.26009-1-joel@joelfernandes.org>
-References: <20190805170451.26009-1-joel@joelfernandes.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726821AbfHFWXb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 18:23:31 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:45356 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726576AbfHFWXb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 18:23:31 -0400
+Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id C8B133611E5;
+        Wed,  7 Aug 2019 08:23:27 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hv7qW-0005QF-J6; Wed, 07 Aug 2019 08:22:20 +1000
+Date:   Wed, 7 Aug 2019 08:22:20 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 01/24] mm: directed shrinker work deferral
+Message-ID: <20190806222220.GL7777@dread.disaster.area>
+References: <20190801021752.4986-1-david@fromorbit.com>
+ <20190801021752.4986-2-david@fromorbit.com>
+ <20190802152709.GA60893@bfoster>
+ <20190804014930.GR7777@dread.disaster.area>
+ <20190805174226.GB14760@bfoster>
+ <20190805234318.GB7777@dread.disaster.area>
+ <20190806122754.GA2979@bfoster>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806122754.GA2979@bfoster>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
+        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=7-415B0cAAAA:8 a=Lk4mrrDYMWaqc0wFPJcA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(cc Brendan's other email address, hoping for review input ;))
+On Tue, Aug 06, 2019 at 08:27:54AM -0400, Brian Foster wrote:
+> If you add a generic "defer work" knob to the shrinker mechanism, but
+> only process it as an "allocation context" check, I expect it could be
+> easily misused. For example, some shrinkers may decide to set the the
+> flag dynamically based on in-core state.
 
-On Mon,  5 Aug 2019 13:04:47 -0400 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+Which is already the case. e.g. There are shrinkers that don't do
+anything because a try-lock fails.  I haven't attempted to change
+them, but they are a clear example of how even ->scan_object to
+->scan_object the shrinker context can change. 
 
-> The page_idle tracking feature currently requires looking up the pagemap
-> for a process followed by interacting with /sys/kernel/mm/page_idle.
-> Looking up PFN from pagemap in Android devices is not supported by
-> unprivileged process and requires SYS_ADMIN and gives 0 for the PFN.
-> 
-> This patch adds support to directly interact with page_idle tracking at
-> the PID level by introducing a /proc/<pid>/page_idle file.  It follows
-> the exact same semantics as the global /sys/kernel/mm/page_idle, but now
-> looking up PFN through pagemap is not needed since the interface uses
-> virtual frame numbers, and at the same time also does not require
-> SYS_ADMIN.
-> 
-> In Android, we are using this for the heap profiler (heapprofd) which
-> profiles and pin points code paths which allocates and leaves memory
-> idle for long periods of time. This method solves the security issue
-> with userspace learning the PFN, and while at it is also shown to yield
-> better results than the pagemap lookup, the theory being that the window
-> where the address space can change is reduced by eliminating the
-> intermediate pagemap look up stage. In virtual address indexing, the
-> process's mmap_sem is held for the duration of the access.
+> This will work when called from
+> some contexts but not from others (unrelated to allocation context),
+> which is confusing. Therefore, what I'm saying is that if the only
+> current use case is to defer work from shrinkers that currently skip
+> work due to allocation context restraints, this might be better codified
+> with something like the appended (untested) example patch. This may or
+> may not be a preferable interface to the flag, but it's certainly not an
+> overcomplication...
 
-Quite a lot of changes to the page_idle code.  Has this all been
-runtime tested on architectures where
-CONFIG_HAVE_ARCH_PTE_SWP_PGIDLE=n?  That could be x86 with a little
-Kconfig fiddle-for-testing-purposes.
+I don't think this is the right way to go.
 
-> 8 files changed, 376 insertions(+), 45 deletions(-)
+I want the filesystem shrinkers to become entirely non-blocking so
+that we can dynamically decide on an object-by-object basis whether
+we can reclaim the object in GFP_NOFS context.
 
-Quite a lot of new code unconditionally added to major architectures. 
-Are we confident that everyone will want this feature?
+That is, a clean XFS inode that requires no special cleanup can be
+reclaimed even in GFP_NOFS context. The problem we have is that
+dentry reclaim can drop the last reference to an inode, causing
+inactivation and hence modification. However, if it's only going to
+move to the inode LRU and not evict the inode, we can reclaim that
+dentry. Similarly for inodes - if evicting the inode is not going to
+block or modify the inode, we can reclaim the inode even under
+GFP_NOFS constraints. And the same for XFS indoes - it if's clean
+we can reclaim it, GFP_NOFS context or not.
 
->
-> ...
->
-> +static int proc_page_idle_open(struct inode *inode, struct file *file)
-> +{
-> +	struct mm_struct *mm;
-> +
-> +	mm = proc_mem_open(inode, PTRACE_MODE_READ);
-> +	if (IS_ERR(mm))
-> +		return PTR_ERR(mm);
-> +	file->private_data = mm;
-> +	return 0;
-> +}
-> +
-> +static int proc_page_idle_release(struct inode *inode, struct file *file)
-> +{
-> +	struct mm_struct *mm = file->private_data;
-> +
-> +	if (mm)
+IMO, that's the direction we need to be heading in, and in those
+cases the "deferred work" tends towards a count of objects we could
+not reclaim during the scan because they require blocking work to be
+done. i.e. deferred work is a boolean now because the GFP_NOFS
+decision is boolean, but it's lays the ground work for deferred work
+to be integrated at a much finer-grained level in the shrinker
+scanning routines in future...
 
-I suspect the test isn't needed?  proc_page_idle_release) won't be
-called if proc_page_idle_open() failed?
+Cheers,
 
-> +		mmdrop(mm);
-> +	return 0;
-> +}
->
-> ...
->
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
