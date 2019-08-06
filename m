@@ -2,50 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAE3B83345
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 15:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43787833A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 16:10:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbfHFNs5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 09:48:57 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37952 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfHFNs4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:48:56 -0400
-Received: by mail-pl1-f195.google.com with SMTP id az7so37878007plb.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2019 06:48:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UkgbsLvaM9M+9IVDtc/oOOdmfQ/azKwIM6sOgM9Uo6A=;
-        b=v5SqwqpAWWpP6genLek7yXSgtt0oPKJl2yiJUqIkB+Hk2eUQj7QLyIcD1XsDGstAc5
-         IJkt3gp1qpEOfjNBQpPOwAd5yNG05Ffu4XLeiSvOoI0x7cPpb94LS72yjIf2hnzn6YOx
-         2eAXCFGilolW4vTWkjq9c+4jJit9X65nKibSc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UkgbsLvaM9M+9IVDtc/oOOdmfQ/azKwIM6sOgM9Uo6A=;
-        b=tUcDhnNETAP1P2/aqwsK/K8HnHLnJd3XAVxqihqBv1OMPsqYOcMqJnNRP4BY+tpQ3o
-         AvTM17+dyXHG4c8Gray3hY38BZEVrFDoAhKaX+6zeVKvFU/pKh8LtF84Z+C9F8XtwctJ
-         nwCJ+pQ3lPEi8jVN6/Uarga3pv4te6nix17x12U8ia3PMLgur2kF8DJmpFxRCMgMU7mZ
-         RtZE6a4JL6wLUASMrqrUetFqfHNy8U0Bn57wgiho4B/YHMfIfBEi6k3VBgiGs2imiuNa
-         6rI7D5rrTd9xnO/EIHl9sS5800pqV0v4Kf0m4lynbumQYBD1qmLz7QT4BS6f5RPjqbPx
-         Hm/g==
-X-Gm-Message-State: APjAAAXNGM3bn5Rnw6PmlmUURf6dW8NcTSxm4DN6RiFE3UoitewEjF/R
-        TUd9yjEqwPHblEy56yo6I9KsFg==
-X-Google-Smtp-Source: APXvYqxgW81Bh2gp7NfuMEuRgXEMzo82PKr8YV24UjJAd/l8I+5fzMkYsTUGjI8mWOY9506/uxTouQ==
-X-Received: by 2002:a17:902:7c05:: with SMTP id x5mr3338168pll.321.1565099336115;
-        Tue, 06 Aug 2019 06:48:56 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id a3sm22037629pje.3.2019.08.06.06.48.54
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 06:48:55 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 09:48:53 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
+        id S1732493AbfHFOKF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 10:10:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52522 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728259AbfHFOKE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 10:10:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 01A6BAD43;
+        Tue,  6 Aug 2019 14:10:01 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 16:09:59 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Borislav Petkov <bp@alien8.de>,
@@ -60,69 +33,90 @@ Cc:     linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
         namhyung@google.com, paulmck@linux.ibm.com,
-        Robin Murphy <robin.murphy@arm.com>,
         Roman Gushchin <guro@fb.com>,
         Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
         Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
         Vladimir Davydov <vdavydov.dev@gmail.com>,
         Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 4/5] page_idle: Drain all LRU pagevec before idle
- tracking
-Message-ID: <20190806134853.GB15167@google.com>
+Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
+Message-ID: <20190806140959.GD11812@dhcp22.suse.cz>
 References: <20190805170451.26009-1-joel@joelfernandes.org>
- <20190805170451.26009-4-joel@joelfernandes.org>
- <20190806084357.GK11812@dhcp22.suse.cz>
- <20190806104554.GB218260@google.com>
- <20190806105149.GT11812@dhcp22.suse.cz>
- <20190806111921.GB117316@google.com>
- <20190806114402.GX11812@dhcp22.suse.cz>
+ <20190805170451.26009-3-joel@joelfernandes.org>
+ <20190806084203.GJ11812@dhcp22.suse.cz>
+ <20190806103627.GA218260@google.com>
+ <20190806104755.GR11812@dhcp22.suse.cz>
+ <20190806111446.GA117316@google.com>
+ <20190806115703.GY11812@dhcp22.suse.cz>
+ <20190806134321.GA15167@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190806114402.GX11812@dhcp22.suse.cz>
+In-Reply-To: <20190806134321.GA15167@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 01:44:02PM +0200, Michal Hocko wrote:
-[snip]
-> > > > This operation even if expensive is only done once during the access of the
-> > > > page_idle file. Did you have a better fix in mind?
+On Tue 06-08-19 09:43:21, Joel Fernandes wrote:
+> On Tue, Aug 06, 2019 at 01:57:03PM +0200, Michal Hocko wrote:
+> > On Tue 06-08-19 07:14:46, Joel Fernandes wrote:
+> > > On Tue, Aug 06, 2019 at 12:47:55PM +0200, Michal Hocko wrote:
+> > > > On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
+> > > > > On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
+> > > > > > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
+> > > > > > > This bit will be used by idle page tracking code to correctly identify
+> > > > > > > if a page that was swapped out was idle before it got swapped out.
+> > > > > > > Without this PTE bit, we lose information about if a page is idle or not
+> > > > > > > since the page frame gets unmapped.
+> > > > > > 
+> > > > > > And why do we need that? Why cannot we simply assume all swapped out
+> > > > > > pages to be idle? They were certainly idle enough to be reclaimed,
+> > > > > > right? Or what does idle actualy mean here?
+> > > > > 
+> > > > > Yes, but other than swapping, in Android a page can be forced to be swapped
+> > > > > out as well using the new hints that Minchan is adding?
+> > > > 
+> > > > Yes and that is effectivelly making them idle, no?
 > > > 
-> > > Can we set the idle bit also for non-lru pages as long as they are
-> > > reachable via pte?
+> > > That depends on how you think of it.
 > > 
-> > Not at the moment with the current page idle tracking code. PageLRU(page)
-> > flag is checked in page_idle_get_page().
+> > I would much prefer to have it documented so that I do not have to guess ;)
 > 
-> yes, I am aware of the current code. I strongly suspect that the PageLRU
-> check was there to not mark arbitrary page looked up by pfn with the
-> idle bit because that would be unexpected. But I might be easily wrong
-> here.
-
-Yes, quite possible.
-
-> > Even if we could set it for non-LRU, the idle bit (page flag) would not be
-> > cleared if page is not on LRU because page-reclaim code (page_referenced() I
-> > believe) would not clear it.
+> Sure :)
 > 
-> Yes, it is either reclaim when checking references as you say but also
-> mark_page_accessed. I believe the later might still have the page on the
-> pcp LRU add cache. Maybe I am missing something something but it seems
-> that there is nothing fundamentally requiring the user mapped page to be
-> on the LRU list when seting the idle bit.
+> > > If you are thinking of a monitoring
+> > > process like a heap profiler, then from the heap profiler's (that only cares
+> > > about the process it is monitoring) perspective it will look extremely odd if
+> > > pages that are recently accessed by the process appear to be idle which would
+> > > falsely look like those processes are leaking memory. The reality being,
+> > > Android forced those pages into swap because of other reasons. I would like
+> > > for the swapping mechanism, whether forced swapping or memory reclaim, not to
+> > > interfere with the idle detection.
+> > 
+> > Hmm, but how are you going to handle situation when the page is unmapped
+> > and refaulted again (e.g. a normal reclaim of a pagecache)? You are
+> > losing that information same was as in the swapout case, no? Or am I
+> > missing something?
 > 
-> That being said, your big hammer approach will work more reliable but if
-> you do not feel like changing the underlying PageLRU assumption then
-> document that draining should be removed longterm.
+> Yes you are right, it would have the same issue, thanks for bringing it up.
+> Should we rename this bit to PTE_IDLE and do the same thing that we are doing
+> for swap?
 
-Yes, at the moment I am in preference of keeping the underlying assumption
-same. I am Ok with adding of a comment on the drain call that it is to be
-removed longterm.
+What if we decide to tear the page table down as well? E.g. because we
+can reclaim file backed mappings and free some memory used for page
+tables. We do not do that right now but I can see that really large
+mappings might push us that direction. Sure this is mostly a theoretical
+concern but I am wondering whether promissing to keep the idle bit over
+unmapping is not too much.
 
-thanks,
-
- - Joel
-
+I am not sure how to deal with this myself, TBH. In any case the current
+semantic - via pfn - will lose the idle bit already so can we mimic it
+as well? We only have 1 bit for each address which makes it challenging.
+The easiest way would be to declare that the idle bit might disappear on
+activating or reclaiming the page. How well that suits different
+usecases is a different question. I would be interested in hearing from
+other people about this of course.
+-- 
+Michal Hocko
+SUSE Labs
