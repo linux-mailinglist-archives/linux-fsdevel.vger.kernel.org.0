@@ -2,92 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8C8D82923
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 03:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F4082940
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 03:33:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbfHFBUd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Aug 2019 21:20:33 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45434 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728851AbfHFBUd (ORCPT
+        id S1731350AbfHFBdp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Aug 2019 21:33:45 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:51505 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728870AbfHFBdp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Aug 2019 21:20:33 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r1so40527348pfq.12;
-        Mon, 05 Aug 2019 18:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mtYMlQz5eR4+kIe+tAhZIY/OAiGfRw2YuZyhkg6PTbo=;
-        b=I4hS4PEoJyvL+rw1aye+bkuNyFTmZHeIiI7RFxBXJ0CuNP49MtEx6c4dDp0dM/tsx/
-         htvzfDxZ5r+0xq/giBKycsgk0ooQTnliw8jAdM/W7Q3ZOPIXKO2qQyyIEZllNw9fCaCK
-         AFdoMHbbELxkIctqol+apII3pU0v0VXRJ+BZTJNcArgxrMpmPImidiNKJGa2PwyGiGNv
-         o8knT7XYXIG+Goz56jLAprXlNR6Ro/Kzov23naZj39nZRkay4wQSSRKGepoZcGaR4LWM
-         AS12+SoRSLzpL24lbVcgQ/5ahDrIgIt89rGuB5PPO3/lXQeKGmqNafdrVjeefbqsXOSG
-         JgRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mtYMlQz5eR4+kIe+tAhZIY/OAiGfRw2YuZyhkg6PTbo=;
-        b=BRp0WiGNesg3UtanXmlWzRTp0wUgepVuHJD5ipbkYbAuGeU+B3WI2VEl+GIBxLCZsa
-         ArAXwkRZFLLIVz7ssszBnxKglfIEpTZrXBgPSH7vMkr4bOmRLmt0K2C/tBwNfZGhXdWm
-         qr2hJNEAfQJ+jk8ktNwvet3JQOmZK7dmj5CP7ODzUTbHWsCGL/tn4z74NH+NRlcWZF7t
-         SoUuwqTLR8/xAmrlHksL3VytZFTKtZpyztpUNqHUavTKTQsKuuC/XevxP3zMts1foK09
-         v1BBbZR27gUcEz1sIkmOOUt0ZVXUovXkpg/4ap5rdWsP82g4V6cemU4uEdWEsK8cETCJ
-         j8IQ==
-X-Gm-Message-State: APjAAAWmpkRS6UE8gdCPvT4TcblrdS+ChN4AOhV2IFmqeCT+MHHkRZm2
-        BEu6eJdj01Ffo+rRTjoTmQQ=
-X-Google-Smtp-Source: APXvYqyk8tVOqj3JMVpCjtlfaOGnmhUXY3kE6uE0j7jKcIcNic1rF0xLGvreX1yB+YVxBYd2ICFGvQ==
-X-Received: by 2002:a62:63c7:: with SMTP id x190mr842306pfb.181.1565054432856;
-        Mon, 05 Aug 2019 18:20:32 -0700 (PDT)
-Received: from localhost ([175.223.3.169])
-        by smtp.gmail.com with ESMTPSA id b3sm101609286pfp.65.2019.08.05.18.20.30
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 18:20:31 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 10:20:27 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCHv2 2/3] i915: convert to new mount API
-Message-ID: <20190806012027.GA6149@jagdpanzerIV>
-References: <20190805160307.5418-1-sergey.senozhatsky@gmail.com>
- <20190805160307.5418-3-sergey.senozhatsky@gmail.com>
- <20190805181255.GH1131@ZenIV.linux.org.uk>
+        Mon, 5 Aug 2019 21:33:45 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R641e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TYmOEx4_1565055217;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TYmOEx4_1565055217)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 06 Aug 2019 09:33:40 +0800
+Subject: Re: [PATCH v2 0/4] per-cgroup numa suite
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Peter Zijlstra <peterz@infradead.org>, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mcgrof@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        Hillf Danton <hdanton@sina.com>
+References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
+ <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+ <65c1987f-bcce-2165-8c30-cf8cf3454591@linux.alibaba.com>
+Message-ID: <789b95a2-6a92-eb30-85c5-af8e5dcc8048@linux.alibaba.com>
+Date:   Tue, 6 Aug 2019 09:33:37 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805181255.GH1131@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <65c1987f-bcce-2165-8c30-cf8cf3454591@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On (08/05/19 19:12), Al Viro wrote:
-[..]
-> On Tue, Aug 06, 2019 at 01:03:06AM +0900, Sergey Senozhatsky wrote:
-> > tmpfs does not set ->remount_fs() anymore and its users need
-> > to be converted to new mount API.
+Hi, Folks
+
+Please feel free to comment if you got any concerns :-)
+
+Hi, Peter
+
+How do you think about this version?
+
+Please let us know if it's still not good enough to be accepted :-)
+
+Regards,
+Michael Wang
+
+On 2019/7/16 上午11:38, 王贇 wrote:
+> During our torturing on numa stuff, we found problems like:
 > 
-> Could you explain why the devil do you bother with remount at all?
-
-I would redirect this question to i915 developers. As far as I know
-i915 performance suffers with huge pages enabled.
-
-> Why not pass the right options when mounting the damn thing?
-
-vfs_kern_mount()? It still requires struct file_system_type, which
-we need to get and put.
-
-	-ss
+>   * missing per-cgroup information about the per-node execution status
+>   * missing per-cgroup information about the numa locality
+> 
+> That is when we have a cpu cgroup running with bunch of tasks, no good
+> way to tell how it's tasks are dealing with numa.
+> 
+> The first two patches are trying to complete the missing pieces, but
+> more problems appeared after monitoring these status:
+> 
+>   * tasks not always running on the preferred numa node
+>   * tasks from same cgroup running on different nodes
+> 
+> The task numa group handler will always check if tasks are sharing pages
+> and try to pack them into a single numa group, so they will have chance to
+> settle down on the same node, but this failed in some cases:
+> 
+>   * workloads share page caches rather than share mappings
+>   * workloads got too many wakeup across nodes
+> 
+> Since page caches are not traced by numa balancing, there are no way to
+> realize such kind of relationship, and when there are too many wakeup,
+> task will be drag from the preferred node and then migrate back by numa
+> balancing, repeatedly.
+> 
+> Here the third patch try to address the first issue, we could now give hint
+> to kernel about the relationship of tasks, and pack them into single numa
+> group.
+> 
+> And the forth patch introduced numa cling, which try to address the wakup
+> issue, now we try to make task stay on the preferred node on wakeup in fast
+> path, in order to address the unbalancing risk, we monitoring the numa
+> migration failure ratio, and pause numa cling when it reach the specified
+> degree.
+> 
+> Since v1:
+>   * move statistics from memory cgroup into cpu group
+>   * statistics now accounting in hierarchical way
+>   * locality now accounted into 8 regions equally
+>   * numa cling no longer override select_idle_sibling, instead we
+>     prevent numa swap migration with tasks cling to dst-node, also
+>     prevent wake affine to drag tasks away which already cling to
+>     prev-cpu
+>   * other refine on comments and names
+> 
+> Michael Wang (4):
+>   v2 numa: introduce per-cgroup numa balancing locality statistic
+>   v2 numa: append per-node execution time in cpu.numa_stat
+>   v2 numa: introduce numa group per task group
+>   v4 numa: introduce numa cling feature
+> 
+>  include/linux/sched.h        |   8 +-
+>  include/linux/sched/sysctl.h |   3 +
+>  kernel/sched/core.c          |  85 ++++++++
+>  kernel/sched/debug.c         |   7 +
+>  kernel/sched/fair.c          | 510 ++++++++++++++++++++++++++++++++++++++++++-
+>  kernel/sched/sched.h         |  41 ++++
+>  kernel/sysctl.c              |   9 +
+>  7 files changed, 651 insertions(+), 12 deletions(-)
+> 
