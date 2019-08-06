@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D29C083BBF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 23:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E85BF83BD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 23:39:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbfHFVhr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 17:37:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55510 "EHLO mail.kernel.org"
+        id S1729679AbfHFViQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 17:38:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728651AbfHFVhr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 17:37:47 -0400
+        id S1728558AbfHFViN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 17:38:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC3B821873;
-        Tue,  6 Aug 2019 21:37:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D506320C01;
+        Tue,  6 Aug 2019 21:38:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565127465;
-        bh=koxFKq4sAv+61LG5RY7c5B+SMwVE5w0wUPMeZ80kNQE=;
+        s=default; t=1565127492;
+        bh=XjzyOiIy4mUb178EFcZRr/KkuDcevmWEOjos0b5tJz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b3YK2F6hKtLPTxK0XT7ltUSVD/+4ABrtvuBJH3UMRZ/Mv1c/YqLH8IgDDsLiFjzsm
-         VH+u52SMiDOMJlDxpmZlqxqMNa2hn5ljTEDMZvBPRBafDv7NqtmQdNvcBOJoqf8Eni
-         zMJmxjf1NtunyMVjBiJzaGgcqHCwG9eF9ru+i2NE=
+        b=BnLryYLRznA3dwA5W0wGuDJcl8RHe3n+XauzrD6WXLasogX0SQDjIBumBmWLnKYM1
+         jHCePdXaHsKP0lwtF5s7RKwKU2Enm5034h0l2mgJMKkLsLpFqRzmQLrO9kAT5+pp8V
+         WJxmuLzCS8+pJLJSy1juGWSBvznGVqX5iT2GD/mI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Paul Wise <pabs3@bonedaddy.net>, Jakub Wilk <jwilk@jwilk.net>,
@@ -30,12 +30,12 @@ Cc:     Paul Wise <pabs3@bonedaddy.net>, Jakub Wilk <jwilk@jwilk.net>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 16/17] coredump: split pipe command whitespace before expanding template
-Date:   Tue,  6 Aug 2019 17:37:13 -0400
-Message-Id: <20190806213715.20487-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 13/14] coredump: split pipe command whitespace before expanding template
+Date:   Tue,  6 Aug 2019 17:37:47 -0400
+Message-Id: <20190806213749.20689-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190806213715.20487-1-sashal@kernel.org>
-References: <20190806213715.20487-1-sashal@kernel.org>
+In-Reply-To: <20190806213749.20689-1-sashal@kernel.org>
+References: <20190806213749.20689-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -116,7 +116,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 39 insertions(+), 5 deletions(-)
 
 diff --git a/fs/coredump.c b/fs/coredump.c
-index 4407e27beca95..98a45a727eb8b 100644
+index a8852293038a3..31f8f5eb43a03 100644
 --- a/fs/coredump.c
 +++ b/fs/coredump.c
 @@ -6,6 +6,7 @@
@@ -127,7 +127,7 @@ index 4407e27beca95..98a45a727eb8b 100644
  #include <linux/string.h>
  #include <linux/init.h>
  #include <linux/pagemap.h>
-@@ -184,11 +185,13 @@ static int cn_print_exe_file(struct core_name *cn)
+@@ -163,11 +164,13 @@ static int cn_print_exe_file(struct core_name *cn)
   * name into corename, which must have space for at least
   * CORENAME_MAX_SIZE bytes plus one byte for the zero terminator.
   */
@@ -142,7 +142,7 @@ index 4407e27beca95..98a45a727eb8b 100644
  	int pid_in_pattern = 0;
  	int err = 0;
  
-@@ -198,12 +201,35 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm)
+@@ -177,12 +180,35 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm)
  		return -ENOMEM;
  	cn->corename[0] = '\0';
  
@@ -179,7 +179,7 @@ index 4407e27beca95..98a45a727eb8b 100644
  		if (*pat_ptr != '%') {
  			err = cn_printf(cn, "%c", *pat_ptr++);
  		} else {
-@@ -543,6 +569,8 @@ void do_coredump(const siginfo_t *siginfo)
+@@ -519,6 +545,8 @@ void do_coredump(const siginfo_t *siginfo)
  	struct cred *cred;
  	int retval = 0;
  	int ispipe;
@@ -188,7 +188,7 @@ index 4407e27beca95..98a45a727eb8b 100644
  	struct files_struct *displaced;
  	/* require nonrelative corefile path and be extra careful */
  	bool need_suid_safe = false;
-@@ -589,9 +617,10 @@ void do_coredump(const siginfo_t *siginfo)
+@@ -565,9 +593,10 @@ void do_coredump(const siginfo_t *siginfo)
  
  	old_cred = override_creds(cred);
  
@@ -200,7 +200,7 @@ index 4407e27beca95..98a45a727eb8b 100644
  		int dump_count;
  		char **helper_argv;
  		struct subprocess_info *sub_info;
-@@ -634,12 +663,16 @@ void do_coredump(const siginfo_t *siginfo)
+@@ -610,12 +639,16 @@ void do_coredump(const siginfo_t *siginfo)
  			goto fail_dropcount;
  		}
  
@@ -218,7 +218,7 @@ index 4407e27beca95..98a45a727eb8b 100644
  
  		retval = -ENOMEM;
  		sub_info = call_usermodehelper_setup(helper_argv[0],
-@@ -649,7 +682,7 @@ void do_coredump(const siginfo_t *siginfo)
+@@ -625,7 +658,7 @@ void do_coredump(const siginfo_t *siginfo)
  			retval = call_usermodehelper_exec(sub_info,
  							  UMH_WAIT_EXEC);
  
@@ -227,7 +227,7 @@ index 4407e27beca95..98a45a727eb8b 100644
  		if (retval) {
  			printk(KERN_INFO "Core dump to |%s pipe failed\n",
  			       cn.corename);
-@@ -768,6 +801,7 @@ void do_coredump(const siginfo_t *siginfo)
+@@ -744,6 +777,7 @@ void do_coredump(const siginfo_t *siginfo)
  	if (ispipe)
  		atomic_dec(&core_dump_count);
  fail_unlock:
