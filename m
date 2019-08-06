@@ -2,46 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85DDB82B39
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 07:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3E4D82B45
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2019 07:51:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbfHFFqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 01:46:09 -0400
-Received: from verein.lst.de ([213.95.11.211]:53335 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725798AbfHFFqJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 01:46:09 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id BBDA868B02; Tue,  6 Aug 2019 07:46:04 +0200 (CEST)
-Date:   Tue, 6 Aug 2019 07:46:04 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
-        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 8/9] Use FIEMAP for FIBMAP calls
-Message-ID: <20190806054604.GK13409@lst.de>
-References: <20190731141245.7230-1-cmaiolino@redhat.com> <20190731141245.7230-9-cmaiolino@redhat.com> <20190731232254.GW1561054@magnolia> <20190802134816.usmauocewduggrjt@pegasus.maiolino.io> <20190802152902.GI7138@magnolia>
+        id S1731546AbfHFFvl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 01:51:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52906 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfHFFvl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 01:51:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=m+FFhH6JYl0+VCC7puYYO1iplwknB7XNzlWvEFcSM1M=; b=u3O8WGEJ5SkndaXpMMJfWkypL
+        4dnNwB9DdlDQnIXYmKW6f97UCH2dGrKxK7t5s/AtxtJO85oN20L9FOpTbJ+TQ0eREGbmRIdB0Y2v/
+        +EyD+GW9Yg2L8LyAScZkezBBFcUCRazZ378duIe7vAmVuOUd5+sBwLfcS/Ze53V/dHIfTnqs5nfuw
+        kGEsuKahLO44X6fGWKK3kXqBzfok3Js1ShzBYRTqDhSpG7jW2WXVISrXTJkLpArRvseUvzkvsisqw
+        ee9DVV25DCNDdBV05ziUDt2DVJI7X/1zV184FnB+H1QERyWnmI5fIiG9f/aiWzu9NjyGtFSZzxuxh
+        BhMD+3Lbw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1husNo-00083e-2r; Tue, 06 Aug 2019 05:51:40 +0000
+Date:   Mon, 5 Aug 2019 22:51:40 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 11/24] xfs:: account for memory freed from metadata
+ buffers
+Message-ID: <20190806055139.GA25736@infradead.org>
+References: <20190801021752.4986-1-david@fromorbit.com>
+ <20190801021752.4986-12-david@fromorbit.com>
+ <20190801081603.GA10600@infradead.org>
+ <20190801092133.GK7777@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190802152902.GI7138@magnolia>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190801092133.GK7777@dread.disaster.area>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 08:29:02AM -0700, Darrick J. Wong wrote:
-> It's harder for me to tell when I don't have a branch containing the
-> final product to look at, but I'd have thought that _fill_kernel fills
-> out an in-kernel fiemap extent; and then _fill_user would declare one on
-> the stack, call _fill_kernel to set the fields, and then copy_to_user?
+On Thu, Aug 01, 2019 at 07:21:33PM +1000, Dave Chinner wrote:
+> > static inline void shrinker_mark_pages_reclaimed(unsigned long nr_pages)
+> > {
+> > 	if (current->reclaim_state)
+> > 		current->reclaim_state->reclaimed_pages += nr_pages;
+> > }
+> > 
+> > plus good documentation on when to use it.
+> 
+> Sure, but that's something for patch 6, not this one :)
 
-That works fine for small, fixed-sized structures.  But for large
-variable sized structures it is very inefficient, as we need to do a
-possibly large kernel allocation and just copy it on.  Thus I told Carlos
-to follow the readdir model with the ->actor (used to be ->filldir)
-callback that can fill out the actual kernel or user data directly.
-Another example of this high-level model is our struct iov_iter used
-in the I/O path.
+Sounds good, I just skimmend through the XFS patches.  While we are at
+it:  there is a double : in the subject line.
