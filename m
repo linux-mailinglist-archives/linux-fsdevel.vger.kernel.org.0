@@ -2,80 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1DCC83D27
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 00:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A9083D47
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 00:19:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfHFWFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 18:05:40 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:8410 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfHFWFk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 18:05:40 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d49f9b40003>; Tue, 06 Aug 2019 15:05:40 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 06 Aug 2019 15:05:39 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 06 Aug 2019 15:05:39 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 6 Aug
- 2019 22:05:38 +0000
-Subject: Re: [PATCH 0/3] mm/: 3 more put_user_page() conversions
-To:     Andrew Morton <akpm@linux-foundation.org>, <john.hubbard@gmail.com>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20190805222019.28592-1-jhubbard@nvidia.com>
- <20190806145938.3c136b6c4eb4f758c1b1a0ae@linux-foundation.org>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <d606c822-df9e-965e-38b6-458f6c3dfe14@nvidia.com>
-Date:   Tue, 6 Aug 2019 15:05:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190806145938.3c136b6c4eb4f758c1b1a0ae@linux-foundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        id S1726964AbfHFWTY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 18:19:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726419AbfHFWTY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 18:19:24 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB7B121874;
+        Tue,  6 Aug 2019 22:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565129963;
+        bh=uggloegaAwke9A4UP4qBuMyVFR/d5SRDz42VgcGIwio=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=meFIABtuhORcSvMNLD1Hv0nThWvFZI0Qr53BkMiWwh6sZaACsB8AxS19EWRhOD245
+         XPjeM7EQeanIE0mnWrDAF2RVaT5KRg5MyslBzowrxK7IAG3AckB1mYjDZTe7CHOPId
+         5LjvjYRK0qyrzcwOxuFdWnbt8prbQySEv0+MClOM=
+Date:   Tue, 6 Aug 2019 15:19:21 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, joelaf@google.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Robin Murphy <robin.murphy@arm.com>,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Will Deacon <will@kernel.org>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>
+Subject: Re: [PATCH v4 1/5] mm/page_idle: Add per-pid idle page tracking
+ using virtual indexing
+Message-Id: <20190806151921.edec128271caccb5214fc1bd@linux-foundation.org>
+In-Reply-To: <20190805170451.26009-1-joel@joelfernandes.org>
+References: <20190805170451.26009-1-joel@joelfernandes.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565129140; bh=rN4rO17/aT7+L127LeaBuWusoBpU6GuMzRTNeTvQtyA=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=RyUHGmb+ONciHZR8TDcra6EGCiFc19hpKqbxJhOr5CXgF0u+AJ08BIc8YQ9TMG9TO
-         A9s2SNx+MQOxeMTHn3uY/yVZ5GdJ//1j13FexJcRa0b9agZTk3/VsNKAH6byhf+8uY
-         5C2+0NZac11xcQJNzTAlaXEQrJF+y+w2GMYO4mfiet5sOmrqRPueGIQPRDaGbCCyUm
-         T+fKwawV4VNNTsWpspkvC/lbu2zcbyLpZf2kqrj2Ity9iXJjT6Gv7fZLHNEGEUHcJR
-         HBk/OIw+SgIgy6VNZXjdZlETfaPAxScsnN9sFdRA5kaIWJpurj4C2Oq0zVysHK5aGX
-         iXaXX6n53Ozzg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/6/19 2:59 PM, Andrew Morton wrote:
-> On Mon,  5 Aug 2019 15:20:16 -0700 john.hubbard@gmail.com wrote:
-> 
->> Here are a few more mm/ files that I wasn't ready to send with the
->> larger 34-patch set.
-> 
-> Seems that a v3 of "put_user_pages(): miscellaneous call sites" is in
-> the works, so can we make that a 37 patch series?
-> 
+(cc Brendan's other email address, hoping for review input ;))
 
-Sure, I'll add them to that.
+On Mon,  5 Aug 2019 13:04:47 -0400 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+> The page_idle tracking feature currently requires looking up the pagemap
+> for a process followed by interacting with /sys/kernel/mm/page_idle.
+> Looking up PFN from pagemap in Android devices is not supported by
+> unprivileged process and requires SYS_ADMIN and gives 0 for the PFN.
+> 
+> This patch adds support to directly interact with page_idle tracking at
+> the PID level by introducing a /proc/<pid>/page_idle file.  It follows
+> the exact same semantics as the global /sys/kernel/mm/page_idle, but now
+> looking up PFN through pagemap is not needed since the interface uses
+> virtual frame numbers, and at the same time also does not require
+> SYS_ADMIN.
+> 
+> In Android, we are using this for the heap profiler (heapprofd) which
+> profiles and pin points code paths which allocates and leaves memory
+> idle for long periods of time. This method solves the security issue
+> with userspace learning the PFN, and while at it is also shown to yield
+> better results than the pagemap lookup, the theory being that the window
+> where the address space can change is reduced by eliminating the
+> intermediate pagemap look up stage. In virtual address indexing, the
+> process's mmap_sem is held for the duration of the access.
+
+Quite a lot of changes to the page_idle code.  Has this all been
+runtime tested on architectures where
+CONFIG_HAVE_ARCH_PTE_SWP_PGIDLE=n?  That could be x86 with a little
+Kconfig fiddle-for-testing-purposes.
+
+> 8 files changed, 376 insertions(+), 45 deletions(-)
+
+Quite a lot of new code unconditionally added to major architectures. 
+Are we confident that everyone will want this feature?
+
+>
+> ...
+>
+> +static int proc_page_idle_open(struct inode *inode, struct file *file)
+> +{
+> +	struct mm_struct *mm;
+> +
+> +	mm = proc_mem_open(inode, PTRACE_MODE_READ);
+> +	if (IS_ERR(mm))
+> +		return PTR_ERR(mm);
+> +	file->private_data = mm;
+> +	return 0;
+> +}
+> +
+> +static int proc_page_idle_release(struct inode *inode, struct file *file)
+> +{
+> +	struct mm_struct *mm = file->private_data;
+> +
+> +	if (mm)
+
+I suspect the test isn't needed?  proc_page_idle_release) won't be
+called if proc_page_idle_open() failed?
+
+> +		mmdrop(mm);
+> +	return 0;
+> +}
+>
+> ...
+>
