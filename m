@@ -2,210 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DB4384D53
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 15:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D18C84EF8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 16:42:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388364AbfHGNdL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Aug 2019 09:33:11 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38048 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388232AbfHGNdH (ORCPT
+        id S1729602AbfHGOmb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Aug 2019 10:42:31 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36126 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbfHGOmb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:33:07 -0400
-Received: by mail-ot1-f67.google.com with SMTP id d17so104372801oth.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Aug 2019 06:33:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ynVT6HH5zUX5p1zeewKVIpW/Y0kiupVXnDkrycnDKgY=;
-        b=QVPJtLhYg3OCnNqtJLM3jK0IBzwW1y/cY3OvHKNcgz4fgZXnKy6/vcL0R/2fxRpaEG
-         qYqLGmtZdFPtEyPLd8AV3zqczzasULKC0RncA7D0U3SahIteZsP8pi8lJru/4P6FHOC2
-         XE9DC9RjBvR41R8uaOjpfDtPvkdKGDloA/SHI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ynVT6HH5zUX5p1zeewKVIpW/Y0kiupVXnDkrycnDKgY=;
-        b=Ii6wVudN5IIF5YiBCZUlkLJnE3i+4PSiKGoR+vWOATUoek9QFi8DFLqwyHESv8UlAS
-         iUatrUlAlbiZDeHGULhAWlPEYIxJxm0xZPHiuSZARxyMOIqapFwLllkM0ojm6iTXr2Hx
-         DJYxfmuLqF78hS8iVqK/FHRwUDqpa1XWve7T2pGHdvX425V9AWbceJAYFw+XKsANtZe/
-         zFaBAmdce/HrdKUGDMLG1zfqd4/4tpMJ57nxPIT+hN+GqR5v2it6omeea/JR46ux+YOE
-         2FBgUKFBzZOZmZaeMQALTnEgPfvskvQKxkj0DBFhdb8Jm7ese5jGYy255sCp42Gf+wwo
-         XPng==
-X-Gm-Message-State: APjAAAW09StbLCrFZxgvhsQjEByZf8olmMAfuaFvdQSLLghIzUTjnYeQ
-        EL0fJ3/tQCxieuOeZbgs4ZwaIA==
-X-Google-Smtp-Source: APXvYqw3IGKI5jXQ/bmS7PW8tj0p5StbzXxMdUNfDkaYrrmWB4R4OGOyJPhgIWIhrpHiaE5G1zp52A==
-X-Received: by 2002:a02:b78a:: with SMTP id f10mr10313615jam.5.1565184786559;
-        Wed, 07 Aug 2019 06:33:06 -0700 (PDT)
-Received: from iscandar.digidescorp.com ([50.73.98.161])
-        by smtp.googlemail.com with ESMTPSA id n2sm94465534ioa.27.2019.08.07.06.33.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 07 Aug 2019 06:33:06 -0700 (PDT)
-From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
-X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
-To:     Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Steve Magnani <steve@digidescorp.com>
-Subject: [PATCH] udf: reduce leakage of blocks related to named streams
-Date:   Wed,  7 Aug 2019 08:32:58 -0500
-Message-Id: <20190807133258.12432-1-steve@digidescorp.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 7 Aug 2019 10:42:31 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x77EcRXY128789;
+        Wed, 7 Aug 2019 14:42:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=Ew2vSnJLVpgu6DdAm65LHh1hBST2dMBdNyXhpwmMp8c=;
+ b=anizsztAaeQeJN8jTbM9oZQDeM4/SvVB/xB0WJw5kACWGzaHSo4dyC0tvsO8sGheAvKv
+ oJe6kHN5ZrOG4ajrYntp7UwtZp2XFBkfcseGCTXfh7tImDISEqq7kfRxX5fygwX8YtGR
+ M4pfodDTi1Kmv6seXfuqOxkwe1Z1BPfzgiBYEieyGQ2DR/Qt+GRrM/cP8pvQ7SlJWaSt
+ bdnNHuGxN5IAtpFvciz71tX7HdK9A4iaGb0Emg/b+rV/M1JN1DLLEngNjO2l06r2FX51
+ PxobAzEu3F10TmF5pC/5MhpezfJEkHv65dDFiwC8K9s8gDbAwv2Svh2T43N4Q53zQzN3 8Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2u52wrcs76-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 07 Aug 2019 14:42:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x77Ec3Hk102276;
+        Wed, 7 Aug 2019 14:42:18 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2u75bwgg06-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 07 Aug 2019 14:42:18 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x77EgG4x031547;
+        Wed, 7 Aug 2019 14:42:17 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 07 Aug 2019 07:42:16 -0700
+Date:   Wed, 7 Aug 2019 07:42:16 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
+        jaegeuk@kernel.org, miklos@szeredi.hu, rpeterso@redhat.com,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 4/9] fibmap: Use bmap instead of ->bmap method in
+ ioctl_fibmap
+Message-ID: <20190807144215.GB7157@magnolia>
+References: <20190731141245.7230-1-cmaiolino@redhat.com>
+ <20190731141245.7230-5-cmaiolino@redhat.com>
+ <20190731231217.GV1561054@magnolia>
+ <20190802091937.kwutqtwt64q5hzkz@pegasus.maiolino.io>
+ <20190802151400.GG7138@magnolia>
+ <20190805102729.ooda6sg65j65ojd4@pegasus.maiolino.io>
+ <20190805151258.GD7129@magnolia>
+ <20190806224138.GW30113@42.do-not-panic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806224138.GW30113@42.do-not-panic.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9341 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908070157
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9341 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908070157
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Steve Magnani <steve@digidescorp.com>
+On Tue, Aug 06, 2019 at 10:41:38PM +0000, Luis Chamberlain wrote:
+> On Mon, Aug 05, 2019 at 08:12:58AM -0700, Darrick J. Wong wrote:
+> > On Mon, Aug 05, 2019 at 12:27:30PM +0200, Carlos Maiolino wrote:
+> > > On Fri, Aug 02, 2019 at 08:14:00AM -0700, Darrick J. Wong wrote:
+> > > > On Fri, Aug 02, 2019 at 11:19:39AM +0200, Carlos Maiolino wrote:
+> > > > > Hi Darrick.
+> > > > > 
+> > > > > > > +		return error;
+> > > > > > > +
+> > > > > > > +	block = ur_block;
+> > > > > > > +	error = bmap(inode, &block);
+> > > > > > > +
+> > > > > > > +	if (error)
+> > > > > > > +		ur_block = 0;
+> > > > > > > +	else
+> > > > > > > +		ur_block = block;
+> > > > > > 
+> > > > > > What happens if ur_block > INT_MAX?  Shouldn't we return zero (i.e.
+> > > > > > error) instead of truncating the value?  Maybe the code does this
+> > > > > > somewhere else?  Here seemed like the obvious place for an overflow
+> > > > > > check as we go from sector_t to int.
+> > > > > > 
+> > > > > 
+> > > > > The behavior should still be the same. It will get truncated, unfortunately. I
+> > > > > don't think we can actually change this behavior and return zero instead of
+> > > > > truncating it.
+> > > > 
+> > > > But that's even worse, because the programs that rely on FIBMAP will now
+> > > > receive *incorrect* results that may point at a different file and
+> > > > definitely do not point at the correct file block.
+> > > 
+> > > How is this worse? This is exactly what happens today, on the original FIBMAP
+> > > implementation.
+> > 
+> > Ok, I wasn't being 110% careful with my words.  Delete "will now" from
+> > the sentence above.
+> > 
+> > > Maybe I am not seeing something or having a different thinking you have, but
+> > > this is the behavior we have now, without my patches. And we can't really change
+> > > it; the user view of this implementation.
+> > > That's why I didn't try to change the result, so the truncation still happens.
+> > 
+> > I understand that we're not generally supposed to change existing
+> > userspace interfaces, but the fact remains that allowing truncated
+> > responses causes *filesystem corruption*.
+> > 
+> > We know that the most well known FIBMAP callers are bootloaders, and we
+> > know what they do with the information they get -- they use it to record
+> > the block map of boot files.  So if the IPL/grub/whatever installer
+> > queries the boot file and the boot file is at block 12345678901 (a
+> > 34-bit number), this interface truncates that to 3755744309 (a 32-bit
+> > number) and that's where the bootloader will think its boot files are.
+> > The installation succeeds, the user reboots and *kaboom* the system no
+> > longer boots because the contents of block 3755744309 is not a bootloader.
+> > 
+> > Worse yet, grub1 used FIBMAP data to record the location of the grub
+> > environment file and installed itself between the MBR and the start of
+> > partition 1.  If the environment file is at offset 1234578901, grub will
+> > write status data to its environment file (which it thinks is at
+> > 3755744309) and *KABOOM* we've just destroyed whatever was in that
+> > block.
+> > 
+> > Far better for the bootloader installation script to hit an error and
+> > force the admin to deal with the situation than for the system to become
+> > unbootable.  That's *why* the (newer) iomap bmap implementation does not
+> > return truncated mappings, even though the classic implementation does.
+> > 
+> > The classic code returning truncated results is a broken behavior.
+> 
+> How long as it been broken for?
 
-Windows is capable of creating UDF files having named streams.
-One example is the "Zone.Identifier" stream attached automatically
-to files downloaded from a network. See:
-  https://msdn.microsoft.com/en-us/library/dn392609.aspx
+Probably since the beginning (ext2).
 
-Modification of a file having one or more named streams in Linux causes
-the stream directory to become detached from the file, essentially leaking
-all blocks pertaining to the file's streams. Worse, an attempt to delete
-the file causes its directory entry (FID) to be deleted, but because the
-driver believes that a hard link to the file remains, the Extended File
-Entry (EFE) and all extents of the file itself remain allocated. Since
-there is no hard link, after the FID has been deleted all of these blocks
-are unreachable (leaked).
+> And if we do fix it, I'd just like for
+> a nice commit lot describing potential risks of not applying it. *If*
+> the issue exists as-is today, the above contains a lot of information
+> for addressing potential issues, even if theoretical.
 
-A complete solution to this problem involves walking the File Identifiers
-in the file's stream directory and freeing all extents allocated to each
-named stream (each of which involves a walk of arbitrary length). As the
-complete solution is quite complex, for now just settle for retaining the
-stream directory attachment during file modification, and being able to
-reclaim the blocks of the file, its Extended File Entry, and its Stream
-Directory EFE during file deletion.
+I think a lot of the filesystems avoid the problem either by not
+supporting > INT_MAX blocks in the first place or by detecting the
+truncation in the fs-specific ->bmap method, so that might be why we
+haven't been deluged by corruption reports.
 
-The UDF structures used by Windows to attach a simple Zone.Identifier
-named stream to a file are:
-* A stream directory EFE containing an "in ICB" Zone.Identifier FID,
-  which references
-* An EFE with "in ICB" stream data
+--D
 
-For this case, this partial solution reduces the number of blocks leaked
-during file deletion to just one (the EFE containing the stream data).
-
-Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
-
---- a/fs/udf/udf_i.h	2019-07-26 11:35:28.257563879 -0500
-+++ b/fs/udf/udf_i.h	2019-08-06 14:35:55.579654263 -0500
-@@ -42,12 +42,15 @@ struct udf_inode_info {
- 	unsigned		i_efe : 1;	/* extendedFileEntry */
- 	unsigned		i_use : 1;	/* unallocSpaceEntry */
- 	unsigned		i_strat4096 : 1;
--	unsigned		reserved : 26;
-+	unsigned		i_streamdir : 1;
-+	unsigned		reserved : 25;
- 	union {
- 		struct short_ad	*i_sad;
- 		struct long_ad		*i_lad;
- 		__u8		*i_data;
- 	} i_ext;
-+	struct kernel_lb_addr		i_locStreamdir;
-+	__u64			i_lenStreams;
- 	struct rw_semaphore	i_data_sem;
- 	struct udf_ext_cache cached_extent;
- 	/* Spinlock for protecting extent cache */
---- a/fs/udf/super.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/super.c	2019-08-06 15:04:30.851086957 -0500
-@@ -151,9 +151,13 @@ static struct inode *udf_alloc_inode(str
- 
- 	ei->i_unique = 0;
- 	ei->i_lenExtents = 0;
-+	ei->i_lenStreams = 0;
- 	ei->i_next_alloc_block = 0;
- 	ei->i_next_alloc_goal = 0;
- 	ei->i_strat4096 = 0;
-+	ei->i_streamdir = 0;
-+	ei->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-+	ei->i_locStreamdir.partitionReferenceNum = 0xFFFF;
- 	init_rwsem(&ei->i_data_sem);
- 	ei->cached_extent.lstart = -1;
- 	spin_lock_init(&ei->i_extent_cache_lock);
---- a/fs/udf/inode.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/inode.c	2019-08-06 15:04:30.851086957 -0500
-@@ -132,7 +132,7 @@ void udf_evict_inode(struct inode *inode
- 	struct udf_inode_info *iinfo = UDF_I(inode);
- 	int want_delete = 0;
- 
--	if (!inode->i_nlink && !is_bad_inode(inode)) {
-+	if ((inode->i_nlink == iinfo->i_streamdir) && !is_bad_inode(inode)) {
- 		want_delete = 1;
- 		udf_setsize(inode, 0);
- 		udf_update_inode(inode, IS_SYNC(inode));
-@@ -1485,6 +1485,10 @@ reread:
- 		iinfo->i_lenEAttr = le32_to_cpu(fe->lengthExtendedAttr);
- 		iinfo->i_lenAlloc = le32_to_cpu(fe->lengthAllocDescs);
- 		iinfo->i_checkpoint = le32_to_cpu(fe->checkpoint);
-+		iinfo->i_streamdir = 0;
-+		iinfo->i_lenStreams = 0;
-+		iinfo->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-+		iinfo->i_locStreamdir.partitionReferenceNum = 0xFFFF;
- 	} else {
- 		inode->i_blocks = le64_to_cpu(efe->logicalBlocksRecorded) <<
- 		    (inode->i_sb->s_blocksize_bits - 9);
-@@ -1498,6 +1502,16 @@ reread:
- 		iinfo->i_lenEAttr = le32_to_cpu(efe->lengthExtendedAttr);
- 		iinfo->i_lenAlloc = le32_to_cpu(efe->lengthAllocDescs);
- 		iinfo->i_checkpoint = le32_to_cpu(efe->checkpoint);
-+
-+		/* Named streams */
-+		iinfo->i_streamdir = (efe->streamDirectoryICB.extLength != 0);
-+		iinfo->i_locStreamdir =
-+			lelb_to_cpu(efe->streamDirectoryICB.extLocation);
-+		iinfo->i_lenStreams = le64_to_cpu(efe->objectSize);
-+		if (iinfo->i_lenStreams >= inode->i_size)
-+			iinfo->i_lenStreams -= inode->i_size;
-+		else
-+			iinfo->i_lenStreams = 0;
- 	}
- 	inode->i_generation = iinfo->i_unique;
- 
-@@ -1760,9 +1774,19 @@ static int udf_update_inode(struct inode
- 		       iinfo->i_ext.i_data,
- 		       inode->i_sb->s_blocksize -
- 					sizeof(struct extendedFileEntry));
--		efe->objectSize = cpu_to_le64(inode->i_size);
-+		efe->objectSize =
-+			cpu_to_le64(inode->i_size + iinfo->i_lenStreams);
- 		efe->logicalBlocksRecorded = cpu_to_le64(lb_recorded);
- 
-+		if (iinfo->i_streamdir) {
-+			struct long_ad *icb_lad = &efe->streamDirectoryICB;
-+
-+			icb_lad->extLocation =
-+				cpu_to_lelb(iinfo->i_locStreamdir);
-+			icb_lad->extLength =
-+				cpu_to_le32(inode->i_sb->s_blocksize);
-+		}
-+
- 		udf_adjust_time(iinfo, inode->i_atime);
- 		udf_adjust_time(iinfo, inode->i_mtime);
- 		udf_adjust_time(iinfo, inode->i_ctime);
---- a/fs/udf/ialloc.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/ialloc.c	2019-08-06 15:04:30.851086957 -0500
-@@ -31,6 +31,7 @@ void udf_free_inode(struct inode *inode)
- 	struct super_block *sb = inode->i_sb;
- 	struct udf_sb_info *sbi = UDF_SB(sb);
- 	struct logicalVolIntegrityDescImpUse *lvidiu = udf_sb_lvidiu(sb);
-+	struct udf_inode_info *iinfo = UDF_I(inode);
- 
- 	if (lvidiu) {
- 		mutex_lock(&sbi->s_alloc_mutex);
-@@ -42,7 +43,13 @@ void udf_free_inode(struct inode *inode)
- 		mutex_unlock(&sbi->s_alloc_mutex);
- 	}
- 
--	udf_free_blocks(sb, NULL, &UDF_I(inode)->i_location, 0, 1);
-+	udf_free_blocks(sb, NULL, &iinfo->i_location, 0, 1);
-+	if (iinfo->i_streamdir) {
-+		udf_free_blocks(sb, NULL, &iinfo->i_locStreamdir, 0, 1);
-+		udf_warn(inode->i_sb,
-+			 "Leaking unsupported stream blocks for inode %lu\n",
-+			 inode->i_ino);
-+	}
- }
- 
- struct inode *udf_new_inode(struct inode *dir, umode_t mode)
+>   Luis
