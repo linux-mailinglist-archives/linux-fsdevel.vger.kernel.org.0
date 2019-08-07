@@ -2,123 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BEAB84AA9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 13:30:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DB4384D53
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 15:33:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387433AbfHGLaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Aug 2019 07:30:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38200 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbfHGLaM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Aug 2019 07:30:12 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C30A28D5E1;
-        Wed,  7 Aug 2019 11:30:11 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4133C19C5B;
-        Wed,  7 Aug 2019 11:30:11 +0000 (UTC)
-Date:   Wed, 7 Aug 2019 07:30:09 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 18/24] xfs: reduce kswapd blocking on inode locking.
-Message-ID: <20190807113009.GC19707@bfoster>
-References: <20190801021752.4986-1-david@fromorbit.com>
- <20190801021752.4986-19-david@fromorbit.com>
- <20190806182213.GF2979@bfoster>
- <20190806213353.GJ7777@dread.disaster.area>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806213353.GJ7777@dread.disaster.area>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 07 Aug 2019 11:30:11 +0000 (UTC)
+        id S2388364AbfHGNdL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Aug 2019 09:33:11 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38048 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388232AbfHGNdH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Aug 2019 09:33:07 -0400
+Received: by mail-ot1-f67.google.com with SMTP id d17so104372801oth.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Aug 2019 06:33:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digidescorp.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ynVT6HH5zUX5p1zeewKVIpW/Y0kiupVXnDkrycnDKgY=;
+        b=QVPJtLhYg3OCnNqtJLM3jK0IBzwW1y/cY3OvHKNcgz4fgZXnKy6/vcL0R/2fxRpaEG
+         qYqLGmtZdFPtEyPLd8AV3zqczzasULKC0RncA7D0U3SahIteZsP8pi8lJru/4P6FHOC2
+         XE9DC9RjBvR41R8uaOjpfDtPvkdKGDloA/SHI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ynVT6HH5zUX5p1zeewKVIpW/Y0kiupVXnDkrycnDKgY=;
+        b=Ii6wVudN5IIF5YiBCZUlkLJnE3i+4PSiKGoR+vWOATUoek9QFi8DFLqwyHESv8UlAS
+         iUatrUlAlbiZDeHGULhAWlPEYIxJxm0xZPHiuSZARxyMOIqapFwLllkM0ojm6iTXr2Hx
+         DJYxfmuLqF78hS8iVqK/FHRwUDqpa1XWve7T2pGHdvX425V9AWbceJAYFw+XKsANtZe/
+         zFaBAmdce/HrdKUGDMLG1zfqd4/4tpMJ57nxPIT+hN+GqR5v2it6omeea/JR46ux+YOE
+         2FBgUKFBzZOZmZaeMQALTnEgPfvskvQKxkj0DBFhdb8Jm7ese5jGYy255sCp42Gf+wwo
+         XPng==
+X-Gm-Message-State: APjAAAW09StbLCrFZxgvhsQjEByZf8olmMAfuaFvdQSLLghIzUTjnYeQ
+        EL0fJ3/tQCxieuOeZbgs4ZwaIA==
+X-Google-Smtp-Source: APXvYqw3IGKI5jXQ/bmS7PW8tj0p5StbzXxMdUNfDkaYrrmWB4R4OGOyJPhgIWIhrpHiaE5G1zp52A==
+X-Received: by 2002:a02:b78a:: with SMTP id f10mr10313615jam.5.1565184786559;
+        Wed, 07 Aug 2019 06:33:06 -0700 (PDT)
+Received: from iscandar.digidescorp.com ([50.73.98.161])
+        by smtp.googlemail.com with ESMTPSA id n2sm94465534ioa.27.2019.08.07.06.33.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 07 Aug 2019 06:33:06 -0700 (PDT)
+From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
+X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
+To:     Jan Kara <jack@suse.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Steve Magnani <steve@digidescorp.com>
+Subject: [PATCH] udf: reduce leakage of blocks related to named streams
+Date:   Wed,  7 Aug 2019 08:32:58 -0500
+Message-Id: <20190807133258.12432-1-steve@digidescorp.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 07:33:53AM +1000, Dave Chinner wrote:
-> On Tue, Aug 06, 2019 at 02:22:13PM -0400, Brian Foster wrote:
-> > On Thu, Aug 01, 2019 at 12:17:46PM +1000, Dave Chinner wrote:
-> > > From: Dave Chinner <dchinner@redhat.com>
-> > > 
-> > > When doing async node reclaiming, we grab a batch of inodes that we
-> > > are likely able to reclaim and ignore those that are already
-> > > flushing. However, when we actually go to reclaim them, the first
-> > > thing we do is lock the inode. If we are racing with something
-> > > else reclaiming the inode or flushing it because it is dirty,
-> > > we block on the inode lock. Hence we can still block kswapd here.
-> > > 
-> > > Further, if we flush an inode, we also cluster all the other dirty
-> > > inodes in that cluster into the same IO, flush locking them all.
-> > > However, if the workload is operating on sequential inodes (e.g.
-> > > created by a tarball extraction) most of these inodes will be
-> > > sequntial in the cache and so in the same batch
-> > > we've already grabbed for reclaim scanning.
-> > > 
-> > > As a result, it is common for all the inodes in the batch to be
-> > > dirty and it is common for the first inode flushed to also flush all
-> > > the inodes in the reclaim batch. In which case, they are now all
-> > > going to be flush locked and we do not want to block on them.
-> > > 
-> > 
-> > Hmm... I think I'm missing something with this description. For dirty
-> > inodes that are flushed in a cluster via reclaim as described, aren't we
-> > already blocking on all of the flush locks by virtue of the synchronous
-> > I/O associated with the flush of the first dirty inode in that
-> > particular cluster?
-> 
-> Currently we end up issuing IO and waiting for it, so by the time we
-> get to the next inode in the cluster, it's already been cleaned and
-> unlocked.
-> 
+From: Steve Magnani <steve@digidescorp.com>
 
-Right..
+Windows is capable of creating UDF files having named streams.
+One example is the "Zone.Identifier" stream attached automatically
+to files downloaded from a network. See:
+  https://msdn.microsoft.com/en-us/library/dn392609.aspx
 
-> However, as we go to non-blocking scanning, if we hit one
-> flush-locked inode in a batch, it's entirely likely that the rest of
-> the inodes in the batch are also flush locked, and so we should
-> always try to skip over them in non-blocking reclaim.
-> 
+Modification of a file having one or more named streams in Linux causes
+the stream directory to become detached from the file, essentially leaking
+all blocks pertaining to the file's streams. Worse, an attempt to delete
+the file causes its directory entry (FID) to be deleted, but because the
+driver believes that a hard link to the file remains, the Extended File
+Entry (EFE) and all extents of the file itself remain allocated. Since
+there is no hard link, after the FID has been deleted all of these blocks
+are unreachable (leaked).
 
-This makes more sense. Note that the description is confusing because it
-assumes context that doesn't exist in the code as of yet (i.e., no
-mention of the nonblocking mode) and so isn't clear to the reader. If
-the purpose is preparation for a future change, please note that clearly
-in the commit log.
+A complete solution to this problem involves walking the File Identifiers
+in the file's stream directory and freeing all extents allocated to each
+named stream (each of which involves a walk of arbitrary length). As the
+complete solution is quite complex, for now just settle for retaining the
+stream directory attachment during file modification, and being able to
+reclaim the blocks of the file, its Extended File Entry, and its Stream
+Directory EFE during file deletion.
 
-Second (and not necessarily caused by this patch), the ireclaim flag
-semantics are kind of a mess. As you've already noted, we currently
-block on some locks even with SYNC_TRYLOCK, yet the cluster flushing
-code has no concept of these flags (so we always trylock, never wait on
-unpin, for some reason use the shared ilock vs. the exclusive ilock,
-etc.). Further, with this patch TRYLOCK|WAIT basically means that if we
-happen to get the lock, we flush and wait on I/O so we can free the
-inode(s), but if somebody else has flushed the inode (we don't get the
-flush lock) we decide not to wait on the I/O that might (or might not)
-already be in progress. I find that a bit inconsistent. It also makes me
-slightly concerned that we're (ab)using flag semantics for a bug fix
-(waiting on inodes we've just flushed from the same task), but it looks
-like this is all going to change quite a bit still so I'm not going to
-worry too much about this mostly existing mess until I grok the bigger
-picture changes... :P
+The UDF structures used by Windows to attach a simple Zone.Identifier
+named stream to a file are:
+* A stream directory EFE containing an "in ICB" Zone.Identifier FID,
+  which references
+* An EFE with "in ICB" stream data
 
-Brian
+For this case, this partial solution reduces the number of blocks leaked
+during file deletion to just one (the EFE containing the stream data).
 
-> This is really just a stepping stone in the logic to the way the
-> LRU isolation function works - it's entirely non-blocking and full
-> of lock order inversions, so everything has to run under try-lock
-> semantics. This is essentially starting that restructuring, based on
-> the observation that sequential inodes are flushed in batches...
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+
+--- a/fs/udf/udf_i.h	2019-07-26 11:35:28.257563879 -0500
++++ b/fs/udf/udf_i.h	2019-08-06 14:35:55.579654263 -0500
+@@ -42,12 +42,15 @@ struct udf_inode_info {
+ 	unsigned		i_efe : 1;	/* extendedFileEntry */
+ 	unsigned		i_use : 1;	/* unallocSpaceEntry */
+ 	unsigned		i_strat4096 : 1;
+-	unsigned		reserved : 26;
++	unsigned		i_streamdir : 1;
++	unsigned		reserved : 25;
+ 	union {
+ 		struct short_ad	*i_sad;
+ 		struct long_ad		*i_lad;
+ 		__u8		*i_data;
+ 	} i_ext;
++	struct kernel_lb_addr		i_locStreamdir;
++	__u64			i_lenStreams;
+ 	struct rw_semaphore	i_data_sem;
+ 	struct udf_ext_cache cached_extent;
+ 	/* Spinlock for protecting extent cache */
+--- a/fs/udf/super.c	2019-07-26 11:35:28.253563792 -0500
++++ b/fs/udf/super.c	2019-08-06 15:04:30.851086957 -0500
+@@ -151,9 +151,13 @@ static struct inode *udf_alloc_inode(str
+ 
+ 	ei->i_unique = 0;
+ 	ei->i_lenExtents = 0;
++	ei->i_lenStreams = 0;
+ 	ei->i_next_alloc_block = 0;
+ 	ei->i_next_alloc_goal = 0;
+ 	ei->i_strat4096 = 0;
++	ei->i_streamdir = 0;
++	ei->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
++	ei->i_locStreamdir.partitionReferenceNum = 0xFFFF;
+ 	init_rwsem(&ei->i_data_sem);
+ 	ei->cached_extent.lstart = -1;
+ 	spin_lock_init(&ei->i_extent_cache_lock);
+--- a/fs/udf/inode.c	2019-07-26 11:35:28.253563792 -0500
++++ b/fs/udf/inode.c	2019-08-06 15:04:30.851086957 -0500
+@@ -132,7 +132,7 @@ void udf_evict_inode(struct inode *inode
+ 	struct udf_inode_info *iinfo = UDF_I(inode);
+ 	int want_delete = 0;
+ 
+-	if (!inode->i_nlink && !is_bad_inode(inode)) {
++	if ((inode->i_nlink == iinfo->i_streamdir) && !is_bad_inode(inode)) {
+ 		want_delete = 1;
+ 		udf_setsize(inode, 0);
+ 		udf_update_inode(inode, IS_SYNC(inode));
+@@ -1485,6 +1485,10 @@ reread:
+ 		iinfo->i_lenEAttr = le32_to_cpu(fe->lengthExtendedAttr);
+ 		iinfo->i_lenAlloc = le32_to_cpu(fe->lengthAllocDescs);
+ 		iinfo->i_checkpoint = le32_to_cpu(fe->checkpoint);
++		iinfo->i_streamdir = 0;
++		iinfo->i_lenStreams = 0;
++		iinfo->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
++		iinfo->i_locStreamdir.partitionReferenceNum = 0xFFFF;
+ 	} else {
+ 		inode->i_blocks = le64_to_cpu(efe->logicalBlocksRecorded) <<
+ 		    (inode->i_sb->s_blocksize_bits - 9);
+@@ -1498,6 +1502,16 @@ reread:
+ 		iinfo->i_lenEAttr = le32_to_cpu(efe->lengthExtendedAttr);
+ 		iinfo->i_lenAlloc = le32_to_cpu(efe->lengthAllocDescs);
+ 		iinfo->i_checkpoint = le32_to_cpu(efe->checkpoint);
++
++		/* Named streams */
++		iinfo->i_streamdir = (efe->streamDirectoryICB.extLength != 0);
++		iinfo->i_locStreamdir =
++			lelb_to_cpu(efe->streamDirectoryICB.extLocation);
++		iinfo->i_lenStreams = le64_to_cpu(efe->objectSize);
++		if (iinfo->i_lenStreams >= inode->i_size)
++			iinfo->i_lenStreams -= inode->i_size;
++		else
++			iinfo->i_lenStreams = 0;
+ 	}
+ 	inode->i_generation = iinfo->i_unique;
+ 
+@@ -1760,9 +1774,19 @@ static int udf_update_inode(struct inode
+ 		       iinfo->i_ext.i_data,
+ 		       inode->i_sb->s_blocksize -
+ 					sizeof(struct extendedFileEntry));
+-		efe->objectSize = cpu_to_le64(inode->i_size);
++		efe->objectSize =
++			cpu_to_le64(inode->i_size + iinfo->i_lenStreams);
+ 		efe->logicalBlocksRecorded = cpu_to_le64(lb_recorded);
+ 
++		if (iinfo->i_streamdir) {
++			struct long_ad *icb_lad = &efe->streamDirectoryICB;
++
++			icb_lad->extLocation =
++				cpu_to_lelb(iinfo->i_locStreamdir);
++			icb_lad->extLength =
++				cpu_to_le32(inode->i_sb->s_blocksize);
++		}
++
+ 		udf_adjust_time(iinfo, inode->i_atime);
+ 		udf_adjust_time(iinfo, inode->i_mtime);
+ 		udf_adjust_time(iinfo, inode->i_ctime);
+--- a/fs/udf/ialloc.c	2019-07-26 11:35:28.253563792 -0500
++++ b/fs/udf/ialloc.c	2019-08-06 15:04:30.851086957 -0500
+@@ -31,6 +31,7 @@ void udf_free_inode(struct inode *inode)
+ 	struct super_block *sb = inode->i_sb;
+ 	struct udf_sb_info *sbi = UDF_SB(sb);
+ 	struct logicalVolIntegrityDescImpUse *lvidiu = udf_sb_lvidiu(sb);
++	struct udf_inode_info *iinfo = UDF_I(inode);
+ 
+ 	if (lvidiu) {
+ 		mutex_lock(&sbi->s_alloc_mutex);
+@@ -42,7 +43,13 @@ void udf_free_inode(struct inode *inode)
+ 		mutex_unlock(&sbi->s_alloc_mutex);
+ 	}
+ 
+-	udf_free_blocks(sb, NULL, &UDF_I(inode)->i_location, 0, 1);
++	udf_free_blocks(sb, NULL, &iinfo->i_location, 0, 1);
++	if (iinfo->i_streamdir) {
++		udf_free_blocks(sb, NULL, &iinfo->i_locStreamdir, 0, 1);
++		udf_warn(inode->i_sb,
++			 "Leaking unsupported stream blocks for inode %lu\n",
++			 inode->i_ino);
++	}
+ }
+ 
+ struct inode *udf_new_inode(struct inode *dir, umode_t mode)
