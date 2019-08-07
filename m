@@ -2,201 +2,361 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A91B852A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 20:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A112852B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 20:09:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389043AbfHGSEt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Aug 2019 14:04:49 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40239 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388615AbfHGSEt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Aug 2019 14:04:49 -0400
-Received: by mail-pl1-f195.google.com with SMTP id a93so41886359pla.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Aug 2019 11:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=c+psdm6pvDnX8dyBc4Cy/c4pQsOMzehzZXsXXjLyHjE=;
-        b=Hkqgbv8hZ+XxxwYQybA7A5S+54OG5Qr5zwrDp+yqEE3Yexv9ppnMZ8tB3Xtd0FvD2l
-         +0kfPrsTSZAcA605PElWGVDrO8JBQKPyMLsuD98CBsWEfcl3q/NKidhSdmkCcn+BseHx
-         wr6ZvSwAYnegb/4XK6eeMJ8ehFaZkBQ5PtDATgUdAk8oA+EYACiFIxjpvMai/FXhwy7e
-         LuIoCcVTNGkJj6RSF0cWrwjdYMb9YrT8NZEbGQC08gSChEQ3o4HzY9m9ljVOUAbSH0CM
-         Zo10RZVeJYzEqVYnT/sO9v7oTkeCcH8/2WIZttNR218xpAf/HF9EmxG/pSx6zSBdvBBE
-         jXmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=c+psdm6pvDnX8dyBc4Cy/c4pQsOMzehzZXsXXjLyHjE=;
-        b=cug+U7Qd2sznMTSAie/6CT50svb5iIUhEFdvi6M3HE+hOPiSqBGWoyGnqGkP7zrczx
-         QJa+91rVapNchB/2HDdkpxyirn19n7fDKqsKpWJanrv+SKz5EHu1tHHXAJL6PSAiK3Lt
-         udKjwtazqI8R0edCHwfynX7P9vFswlVxkJpKSpwekMaQWtR+2l6GPA/JsZ8b6lF/yL/i
-         L84q9D8Q449MyeDX+emEF1/qO//tq6lXPPyp0yM18G3Aj5MwFTsJBUVI2111hYGpRojg
-         UyTzmW6Ngei0v18qz++8j5t+qizqHZ7C/qcwQ9KiFQ12+plR/SFjg3eCQogvOigGLFjr
-         MVdA==
-X-Gm-Message-State: APjAAAUwrZNh5e+j0MEjRMLvHur5BgoBhXPHBydMnq8gs73isL390lVW
-        CGXAj3h0G7/QxIW5JGSm4dYxzg==
-X-Google-Smtp-Source: APXvYqyKNvJRuoqJHT7zp4s4yyKagF58xy20LUmJGMO5Xp74ekq0e0mWnaeliyJ9QargqnhdGrxVpA==
-X-Received: by 2002:a17:902:b497:: with SMTP id y23mr9442334plr.68.1565201088236;
-        Wed, 07 Aug 2019 11:04:48 -0700 (PDT)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id o14sm533198pjp.19.2019.08.07.11.04.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 11:04:47 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <B4818187-623B-4A0C-8958-81E820E8F1E1@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_4A322069-BD5B-4078-8B8E-F73516BB60D1";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH 09/20] ext4: Initialize timestamps limits
-Date:   Wed, 7 Aug 2019 12:04:44 -0600
-In-Reply-To: <CAK8P3a0aTsz4f6FgXf7NSAG+aVpd1rhZvFU_E4v8AY_stvhJtQ@mail.gmail.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-References: <20190730014924.2193-1-deepa.kernel@gmail.com>
- <20190730014924.2193-10-deepa.kernel@gmail.com>
- <20190731152609.GB7077@magnolia>
- <CABeXuvpiom9eQi0y7PAwAypUP1ezKKRfbh-Yqr8+Sbio=QtUJQ@mail.gmail.com>
- <20190801224344.GC17372@mit.edu>
- <CAK8P3a3nqmWBXBiFL1kGmJ7yQ_=5S4Kok0YVB3VMFVBuYjFGOQ@mail.gmail.com>
- <20190802154341.GB4308@mit.edu>
- <CAK8P3a1Z+nuvBA92K2ORpdjQ+i7KrjOXCFud7fFg4n73Fqx_8Q@mail.gmail.com>
- <20190802213944.GE4308@mit.edu>
- <CAK8P3a2z+ZpyONnC+KE1eDbtQ7m2m3xifDhfWe6JTCPPRB0S=g@mail.gmail.com>
- <20190803160257.GG4308@mit.edu>
- <CAK8P3a0aTsz4f6FgXf7NSAG+aVpd1rhZvFU_E4v8AY_stvhJtQ@mail.gmail.com>
-X-Mailer: Apple Mail (2.3273)
+        id S2389174AbfHGSJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Aug 2019 14:09:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46020 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388029AbfHGSJT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Aug 2019 14:09:19 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 42FE62F366C;
+        Wed,  7 Aug 2019 18:09:18 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A2BD010016E8;
+        Wed,  7 Aug 2019 18:09:17 +0000 (UTC)
+Date:   Wed, 7 Aug 2019 14:09:15 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 20/24] xfs: use AIL pushing for inode reclaim IO
+Message-ID: <20190807180915.GA20425@bfoster>
+References: <20190801021752.4986-1-david@fromorbit.com>
+ <20190801021752.4986-21-david@fromorbit.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801021752.4986-21-david@fromorbit.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 07 Aug 2019 18:09:18 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---Apple-Mail=_4A322069-BD5B-4078-8B8E-F73516BB60D1
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
-
-On Aug 3, 2019, at 2:24 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Thu, Aug 01, 2019 at 12:17:48PM +1000, Dave Chinner wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 > 
-> On Sat, Aug 3, 2019 at 6:03 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->> 
->> On Sat, Aug 03, 2019 at 11:30:22AM +0200, Arnd Bergmann wrote:
->>> 
->>> I see in the ext4 code that we always try to expand i_extra_size
->>> to s_want_extra_isize in ext4_mark_inode_dirty(), and that
->>> s_want_extra_isize is always at least  s_min_extra_isize, so
->>> we constantly try to expand the inode to fit.
->> 
->> Yes, we *try*.  But we may not succeed.  There may actually be a
->> problem here if the cause is due to there simply is no space in the
->> external xattr block, so we might try and try every time we try to
->> modify that inode, and it would be a performance mess.  If it's due to
->> there being no room in the current transaction, then it's highly
->> likely it will succeed the next time.
->> 
->>> Did older versions of ext4 or ext3 ignore s_min_extra_isize
->>> when creating inodes despite
->>> EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE,
->>> or is there another possibility I'm missing?
->> 
->> s_min_extra_isize could get changed in order to make room for some new
->> file system feature --- such as extended timestamps.
+> Inode reclaim currently issues it's own inode IO when it comes
+> across dirty inodes. This is used to throttle direct reclaim down to
+> the rate at which we can reclaim dirty inodes. Failure to throttle
+> in this manner results in the OOM killer being trivial to trigger
+> even when there is lots of free memory available.
 > 
-> Ok, that explains it. I assumed s_min_extra_isize was meant to
-> not be modifiable, and did not find a way to change it using the
-> kernel or tune2fs, but now I can see that debugfs can set it.
+> However, having direct reclaimers issue IO causes an amount of
+> IO thrashing to occur. We can have up to the number of AGs in the
+> filesystem concurrently issuing IO, plus the AIL pushing thread as
+> well. This means we can many competing sources of IO and they all
+> end up thrashing and competing for the request slots in the block
+> device.
 > 
->> If you want to pretend that file systems never get upgraded, then life
->> is much simpler.  The general approach is that for less-sophisticated
->> customers (e.g., most people running enterprise distros) file system
->> upgrades are not a thing.  But for sophisticated users, we do try to
->> make thing work for people who are aware of the risks / caveats /
->> rough edges.  Google won't have been able to upgrade thousands and
->> thousands of servers in data centers all over the world if we limited
->> ourselves to Red Hat's support restrictions.  Backup / reformat /
->> restore really isn't a practical rollout strategy for many exabytes of
->> file systems.
->> 
->> It sounds like your safety checks / warnings are mostly targeted at
->> low-information customers, no?
+> Similar to dirty page throttling and the BDI flusher thread, we can
+> use the AIL pushing thread the sole place we issue inode writeback
+> from and everything else waits for it to make progress. To do this,
+> reclaim will skip over dirty inodes, but in doing so will record the
+> lowest LSN of all the dirty inodes it skips. It will then push the
+> AIL to this LSN and wait for it to complete that work.
 > 
-> Yes, that seems like a reasonable compromise: just warn based
-> on s_min_extra_isize, and assume that anyone who used debugfs
-> to set s_min_extra_isize to a higher value from an ext3 file system
-> during the migration to ext4 was aware of the risks already.
+> In doing so, we block direct reclaim on the IO of at least one IO,
+> thereby providing some level of throttling for when we encounter
+> dirty inodes. However we gain the ability to scan and reclaim
+> clean inodes in a non-blocking fashion. This allows us to
+> remove all the per-ag reclaim locking that avoids excessive direct
+> reclaim, as repeated concurrent direct reclaim will hit the same
+> dirty inodes on block waiting on the same IO to complete.
 > 
-> That leaves the question of what we should set the s_time_gran
-> and s_time_max to on a superblock with s_min_extra_isize<16
-> and s_want_extra_isize>=16.
+
+The last part of the above sentence sounds borked..
+
+> Hence direct reclaim will be throttled directly by the rate at which
+> dirty inodes are cleaned by AIL pushing, rather than by delays
+> caused by competing IO submissions. This allows us to remove all the
+> locking that limits direct reclaim concurrency and greatly
+> simplifies the inode reclaim code now that it just skips dirty
+> inodes.
 > 
-> If we base it on s_min_extra_isize, we never try to set a timestamp
-> later than 2038 and so will never fail, but anyone with a grandfathered
-> s_min_extra_isize from ext3 won't be able to set extended
-> timestamps on any files any more. Based on s_want_extra_isize
-> we would keep the current behavior, but could add a custom
-> warning in the ext4 code about the small s_min_extra_isize
-> indicating a theoretical problem.
+> Note: this patch by itself isn't completely able to throttle direct
+> reclaim sufficiently to prevent OOM killer madness. We can't do that
+> until we change the way we index reclaimable inodes in the next
+> patch and can feed back state to the mm core sanely.  However, we
+> can't change the way we index reclaimable inodes until we have
+> IO-less non-blocking reclaim for both direct reclaim and kswapd
+> reclaim.  Catch-22...
+> 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> ---
+>  fs/xfs/xfs_icache.c    | 208 +++++++++++++++++------------------------
+>  fs/xfs/xfs_mount.c     |   4 -
+>  fs/xfs/xfs_mount.h     |   1 -
+>  fs/xfs/xfs_trans_ail.c |   4 +-
+>  4 files changed, 90 insertions(+), 127 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> index 0bd4420a7e16..4c4c5bc12147 100644
+> --- a/fs/xfs/xfs_icache.c
+> +++ b/fs/xfs/xfs_icache.c
+> @@ -22,6 +22,7 @@
+>  #include "xfs_dquot_item.h"
+>  #include "xfs_dquot.h"
+>  #include "xfs_reflink.h"
+> +#include "xfs_log.h"
+>  
+>  #include <linux/iversion.h>
+>  
+> @@ -967,28 +968,42 @@ xfs_inode_ag_iterator_tag(
+>  }
+>  
+>  /*
+> - * Grab the inode for reclaim exclusively.
+> - * Return 0 if we grabbed it, non-zero otherwise.
+> + * Grab the inode for reclaim.
+> + *
+> + * Return false if we aren't going to reclaim it, true if it is a reclaim
+> + * candidate.
+> + *
+> + * If the inode is clean or unreclaimable, return NULLCOMMITLSN to tell the
+> + * caller it does not require flushing. Otherwise return the log item lsn of the
+> + * inode so the caller can determine it's inode flush target.  If we get the
+> + * clean/dirty state wrong then it will be sorted in xfs_reclaim_inode() once we
+> + * have locks held.
+>   */
+> -STATIC int
+> +STATIC bool
+>  xfs_reclaim_inode_grab(
+>  	struct xfs_inode	*ip,
+> -	int			flags)
+> +	int			flags,
+> +	xfs_lsn_t		*lsn)
+>  {
+>  	ASSERT(rcu_read_lock_held());
+> +	*lsn = 0;
 
-I think it makes the most sense to always try to set timestamps on
-inodes that have enough space for them.  The chance of running into
-a filesystem with 256-byte inode size but *no* space in the inode to
-store an extended timestamp, but is *also* being modified by a new
-kernel after 2038 is vanishingly small.  This would require formatting
-the filesystem with non-default mke2fs for ext3, using the filesystem
-and storing enough xattrs on inodes that there isn't space for 12 bytes
-of extra isize, and using it for 30+ years without upgrading to use
-ext4 (which will also try to expand the inode to store the nsec
-timestamps) and then modifying the inode after 2038.
+The comment above says we return NULLCOMMITLSN. Given the rest of the
+code, I'm assuming we should just fix up the comment.
 
-Rather than printing a warning at mount time (which may be confusing
-to users for a problem they may never see), it makes sense to only
-print such a warning in the vanishingly small case that someone actually
-tries to modify the inode timestamp but it doesn't fit, rather than on
-the theoretical case that may never happen.
+>  
+>  	/* quick check for stale RCU freed inode */
+>  	if (!ip->i_ino)
+> -		return 1;
+> +		return false;
+>  
+>  	/*
+> -	 * If we are asked for non-blocking operation, do unlocked checks to
+> -	 * see if the inode already is being flushed or in reclaim to avoid
+> -	 * lock traffic.
+> +	 * Do unlocked checks to see if the inode already is being flushed or in
+> +	 * reclaim to avoid lock traffic. If the inode is not clean, return the
+> +	 * it's position in the AIL for the caller to push to.
+>  	 */
+> -	if ((flags & SYNC_TRYLOCK) &&
+> -	    __xfs_iflags_test(ip, XFS_IFLOCK | XFS_IRECLAIM))
+> -		return 1;
+> +	if (!xfs_inode_clean(ip)) {
+> +		*lsn = ip->i_itemp->ili_item.li_lsn;
+> +		return false;
+> +	}
+> +
+> +	if (__xfs_iflags_test(ip, XFS_IFLOCK | XFS_IRECLAIM))
+> +		return false;
+>  
+>  	/*
+>  	 * The radix tree lock here protects a thread in xfs_iget from racing
+...
+> @@ -1050,92 +1065,67 @@ xfs_reclaim_inode_grab(
+>   *	clean		=> reclaim
+>   *	dirty, async	=> requeue
+>   *	dirty, sync	=> flush, wait and reclaim
+> + *
+> + * Returns true if the inode was reclaimed, false otherwise.
+>   */
+> -STATIC int
+> +STATIC bool
+>  xfs_reclaim_inode(
+>  	struct xfs_inode	*ip,
+>  	struct xfs_perag	*pag,
+> -	int			sync_mode)
+> +	xfs_lsn_t		*lsn)
+>  {
+> -	struct xfs_buf		*bp = NULL;
+> -	xfs_ino_t		ino = ip->i_ino; /* for radix_tree_delete */
+> -	int			error;
+> +	xfs_ino_t		ino;
+> +
+> +	*lsn = 0;
+>  
+> -restart:
+> -	error = 0;
+>  	/*
+>  	 * Don't try to flush the inode if another inode in this cluster has
+>  	 * already flushed it after we did the initial checks in
+>  	 * xfs_reclaim_inode_grab().
+>  	 */
+> -	if (sync_mode & SYNC_TRYLOCK) {
+> -		if (!xfs_ilock_nowait(ip, XFS_ILOCK_EXCL))
+> -			goto out;
+> -		if (!xfs_iflock_nowait(ip))
+> -			goto out_unlock;
+> -	} else {
+> -		xfs_ilock(ip, XFS_ILOCK_EXCL);
+> -		if (!xfs_iflock_nowait(ip)) {
+> -			if (!(sync_mode & SYNC_WAIT))
+> -				goto out_unlock;
+> -			xfs_iflock(ip);
+> -		}
+> -	}
+> +	if (!xfs_ilock_nowait(ip, XFS_ILOCK_EXCL))
+> +		goto out;
+> +	if (!xfs_iflock_nowait(ip))
+> +		goto out_unlock;
+>  
 
+Do we even need the flush lock here any more if we're never going to
+flush from this context? The shutdown case just below notwithstanding
+(which I'm also wondering if we should just drop given we abort from
+xfs_iflush() on shutdown), the pin count is an atomic and the dirty
+state changes under ilock.
 
-Cheers, Andreas
+Maybe I'm missing something else, but the reason I ask is that the
+increased flush lock contention in codepaths that don't actually flush
+once it's acquired gives me a bit of concern that we could reduce
+effectiveness of the one task that actually does (xfsaild).
 
+> +	/* If we are in shutdown, we don't care about blocking. */
+>  	if (XFS_FORCED_SHUTDOWN(ip->i_mount)) {
+>  		xfs_iunpin_wait(ip);
+>  		/* xfs_iflush_abort() drops the flush lock */
+>  		xfs_iflush_abort(ip, false);
+>  		goto reclaim;
+>  	}
+> -	if (xfs_ipincount(ip)) {
+> -		if (!(sync_mode & SYNC_WAIT))
+> -			goto out_ifunlock;
+> -		xfs_iunpin_wait(ip);
+> -	}
+> -	if (xfs_iflags_test(ip, XFS_ISTALE) || xfs_inode_clean(ip)) {
+> -		xfs_ifunlock(ip);
+> -		goto reclaim;
+> -	}
+>  
+>  	/*
+> -	 * Never flush out dirty data during non-blocking reclaim, as it would
+> -	 * just contend with AIL pushing trying to do the same job.
+> +	 * If it is pinned, we only want to flush this if there's nothing else
+> +	 * to be flushed as it requires a log force. Hence we essentially set
+> +	 * the LSN to flush the entire AIL which will end up triggering a log
+> +	 * force to unpin this inode, but that will only happen if there are not
+> +	 * other inodes in the scan that only need writeback.
+>  	 */
+> -	if (!(sync_mode & SYNC_WAIT))
+> +	if (xfs_ipincount(ip)) {
+> +		*lsn = ip->i_itemp->ili_last_lsn;
 
+->ili_last_lsn comes from xfs_cil_ctx->sequence, which I don't think is
+actually a physical LSN suitable for AIL pushing. The lsn assigned to
+the item once it's physically logged and AIL inserted comes from
+ctx->start_lsn, which comes from the iclog header and so is a physical
+LSN.
 
+That said, this usage of ili_last_lsn seems to disappear by the end of
+the series...
 
+>  		goto out_ifunlock;
+> +	}
+>  
+...
+> @@ -1205,39 +1189,28 @@ xfs_reclaim_inode(
+>   * corrupted, we still want to try to reclaim all the inodes. If we don't,
+>   * then a shut down during filesystem unmount reclaim walk leak all the
+>   * unreclaimed inodes.
+> + *
+> + * Return the number of inodes freed.
+>   */
+>  STATIC int
+>  xfs_reclaim_inodes_ag(
+>  	struct xfs_mount	*mp,
+>  	int			flags,
+> -	int			*nr_to_scan)
+> +	int			nr_to_scan)
+>  {
+>  	struct xfs_perag	*pag;
+> -	int			error = 0;
+> -	int			last_error = 0;
+>  	xfs_agnumber_t		ag;
+> -	int			trylock = flags & SYNC_TRYLOCK;
+> -	int			skipped;
+> +	xfs_lsn_t		lsn, lowest_lsn = NULLCOMMITLSN;
+> +	long			freed = 0;
+>  
+> -restart:
+>  	ag = 0;
+> -	skipped = 0;
+>  	while ((pag = xfs_perag_get_tag(mp, ag, XFS_ICI_RECLAIM_TAG))) {
+>  		unsigned long	first_index = 0;
+>  		int		done = 0;
+>  		int		nr_found = 0;
+>  
+>  		ag = pag->pag_agno + 1;
+> -
+> -		if (trylock) {
+> -			if (!mutex_trylock(&pag->pag_ici_reclaim_lock)) {
+> -				skipped++;
+> -				xfs_perag_put(pag);
+> -				continue;
+> -			}
+> -			first_index = pag->pag_ici_reclaim_cursor;
+> -		} else
+> -			mutex_lock(&pag->pag_ici_reclaim_lock);
 
+I understand that the eliminated blocking drops a dependency on the
+perag reclaim exclusion as described by the commit log, but I'm not sure
+it's enough to justify removing it entirely. For one, the reclaim cursor
+management looks potentially racy. Also, doesn't this exclusion provide
+some balance for reclaim across AGs? E.g., if a bunch of reclaim threads
+come in at the same time, this allows them to walk across AGs instead of
+potentially stumbling over eachother in the batching/grabbing code.
 
---Apple-Mail=_4A322069-BD5B-4078-8B8E-F73516BB60D1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+I see again that most of this code seems to ultimately go away, replaced
+by an LRU mechanism so we no longer operate on a per-ag basis. I can see
+how this becomes irrelevant with that mechanism, but I think it might
+make more sense to drop this locking along with the broader mechanism in
+the last patch or two of the series rather than doing it here. If
+nothing else, that eliminates the need for the reviewer to consider this
+transient "old mechanism + new locking" state as opposed to reasoning
+about the old mechanism vs. new mechanism and why the old locking simply
+no longer applies.
 
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
+> +		first_index = pag->pag_ici_reclaim_cursor;
+>  
+>  		do {
+>  			struct xfs_inode *batch[XFS_LOOKUP_BATCH];
+...
+> diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+> index 00d66175f41a..5802139f786b 100644
+> --- a/fs/xfs/xfs_trans_ail.c
+> +++ b/fs/xfs/xfs_trans_ail.c
+> @@ -676,8 +676,10 @@ xfs_ail_push_sync(
+>  	spin_lock(&ailp->ail_lock);
+>  	while ((lip = xfs_ail_min(ailp)) != NULL) {
+>  		prepare_to_wait(&ailp->ail_push, &wait, TASK_UNINTERRUPTIBLE);
+> +	trace_printk("lip lsn 0x%llx thres 0x%llx targ 0x%llx",
+> +			lip->li_lsn, threshold_lsn, ailp->ail_target);
+>  		if (XFS_FORCED_SHUTDOWN(ailp->ail_mount) ||
+> -		    XFS_LSN_CMP(threshold_lsn, lip->li_lsn) <= 0)
+> +		    XFS_LSN_CMP(threshold_lsn, lip->li_lsn) < 0)
+>  			break;
 
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl1LEr0ACgkQcqXauRfM
-H+A+LQ/9Fq5j/fGRldiNeKqpnZ2jrnx4+eqCYfFqCoI02jN17/q+bWvHGtVbyBPP
-lVHE7xlJbiogbUUmNsfLLp5CngSCqjsYp7dV21YcPpsdd7k26PJMDMw8lkY41LGI
-AaDC948zRNF0Io+4ma8KXgLZWbFNEpPlCsKuMHbwAo7sQ/yuCauvJDengPA2IjLN
-H289WlD9j0H6hrMcJmazdGhdF21+hGSLvK3vZvCjGiDTWNTGydz8guXel/tFkYJs
-Flp7dD6dp7b2JnaiJTr5Hj9No2LfFgxBtNqGFuS8bA6waNlzfx8KzgeodeXWOPgo
-6Sg2uEc8pxaXlAXsldVykYvo640a/uQUiWPiabIIqSdSyj2g4K6wx0GbYr3j3GCP
-YheU5Khw1CtvAqDN+2CbQaon2WrLldJCqFo6KzQPmmlQnyLFQa6gT2kYrSXEzhIP
-eFYGQxV1TLoyyQ6b3ab9J8kZZHPteVWuK+EyqkIxONXnazRkz77QK3wzQUy+V6+T
-B403LR3x4JKOMYVKd41VAJMZHp8Uvf224oVxrxzovdJoRr3awWokvsBEr2+e+ihA
-/c3+2oSO/0acNGCLbzX3KC/PpWx9keHHx6CxJIgnF+7avtsrkAR54H48stVZ05en
-xr5H9dIZnce2CTM9Ylz3R7DerBaAuvEpl1sKpt8BE0OHyAzeffg=
-=Lnwv
------END PGP SIGNATURE-----
+Stale/mislocated changes?
 
---Apple-Mail=_4A322069-BD5B-4078-8B8E-F73516BB60D1--
+Brian
+
+>  		/* XXX: cmpxchg? */
+>  		while (XFS_LSN_CMP(threshold_lsn, ailp->ail_target) > 0)
+> -- 
+> 2.22.0
+> 
