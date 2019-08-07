@@ -2,49 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A6398549C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 22:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A0CB854D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 22:58:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389460AbfHGUpd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Aug 2019 16:45:33 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39180 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389341AbfHGUpd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Aug 2019 16:45:33 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b7so42576374pls.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Aug 2019 13:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nVq2Lrz4oly1cbME+ru7uC/EUuUzNyfifYdkSD+WXws=;
-        b=SKjwZ75o/bjl3P6himFnL+2MJNzMb2KlU9PecY9gL2OvoO+kAS5KzKleoxU5N6Eozn
-         KPw8Qn8ix5JOtTRWXYGTvhdvMcOzAtYMnblQFIQJIJh/bMOFzKoN5j4jAbdrYEbb6aWF
-         i4sTmbSnKu/H2O6vxlszhwMU0BMjebOmFC5TU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nVq2Lrz4oly1cbME+ru7uC/EUuUzNyfifYdkSD+WXws=;
-        b=RUZ6IWXWBFgCaDENJlRGAHIpHwuZcs4LVnvxYMHe+Govkm0Fh3El2QkvG9DsMAXCGT
-         ahnsasZFF+R+XAO8gdZDEjz72LoZSYrUpAdvDGv+kDjulmfir7q58khbA9VfMf8gT/Wn
-         790D4qmJ5U1FFRNaLr5NgHamn7hihNuzbsfYu0/Mmy6VjXll1SCzKaP9d7+EKNST+uIj
-         uzf+pQmIZurV4JEYrxkL0I2lA1VH+MGCqldPWl5w+s4q8y1nve93l8dsicgpRTsIwpII
-         5Em6mt8tcLuhVS2HDzt6X0nDS+iFTm8EUuPTyTGgSIboKaRbXJMeDM4ppayd59FONDoF
-         ib3A==
-X-Gm-Message-State: APjAAAXqcnzyx1ZVYR0g1KCTH+ty2PiEPgeDV1mE6dhLC+MGxAb22igY
-        lNz6KuQ7OLeISnJgZvBf4r8/tw==
-X-Google-Smtp-Source: APXvYqyVsQ2rxzfkbsU4s/td7a6F6w6wqVCgyV/YFH3HkbntL96f95eC7uJQ7+msGgxczb30VirUZA==
-X-Received: by 2002:a17:902:145:: with SMTP id 63mr10208710plb.55.1565210732270;
-        Wed, 07 Aug 2019 13:45:32 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id s22sm99446893pfh.107.2019.08.07.13.45.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 07 Aug 2019 13:45:31 -0700 (PDT)
-Date:   Wed, 7 Aug 2019 16:45:30 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
+        id S2389082AbfHGU6m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Aug 2019 16:58:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729714AbfHGU6m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Aug 2019 16:58:42 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8357A2173C;
+        Wed,  7 Aug 2019 20:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565211521;
+        bh=BHNLhewizLMLp7YbdvNCnIzAyhkg8YnrouHHCEfoVa4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=u8sRhP8bK815tFw7ifhBS4SB17zcgKZ47zrUXrczJIScpe3WeCh14v/46lx0CCeRW
+         0rylwHRSL91S/Vbfj1YBHXKkOsfP1dbUn9GG5ygIrbrkQElQQjhhVbQw/U11jkcUcy
+         /6UT11ZTtKTBTxqWUlh1WwFRaVjP4y6LQYMuaHYg=
+Date:   Wed, 7 Aug 2019 13:58:40 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
 Cc:     linux-kernel@vger.kernel.org,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Borislav Petkov <bp@alien8.de>,
@@ -68,43 +49,49 @@ Cc:     linux-kernel@vger.kernel.org,
         Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
 Subject: Re: [PATCH v5 1/6] mm/page_idle: Add per-pid idle page tracking
  using virtual index
-Message-ID: <20190807204530.GB90900@google.com>
+Message-Id: <20190807135840.92b852e980a9593fe91fbf59@linux-foundation.org>
+In-Reply-To: <20190807204530.GB90900@google.com>
 References: <20190807171559.182301-1-joel@joelfernandes.org>
- <20190807130402.49c9ea8bf144d2f83bfeb353@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807130402.49c9ea8bf144d2f83bfeb353@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        <20190807130402.49c9ea8bf144d2f83bfeb353@linux-foundation.org>
+        <20190807204530.GB90900@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 01:04:02PM -0700, Andrew Morton wrote:
-> On Wed,  7 Aug 2019 13:15:54 -0400 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+On Wed, 7 Aug 2019 16:45:30 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
+
+> On Wed, Aug 07, 2019 at 01:04:02PM -0700, Andrew Morton wrote:
+> > On Wed,  7 Aug 2019 13:15:54 -0400 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+> > 
+> > > In Android, we are using this for the heap profiler (heapprofd) which
+> > > profiles and pin points code paths which allocates and leaves memory
+> > > idle for long periods of time. This method solves the security issue
+> > > with userspace learning the PFN, and while at it is also shown to yield
+> > > better results than the pagemap lookup, the theory being that the window
+> > > where the address space can change is reduced by eliminating the
+> > > intermediate pagemap look up stage. In virtual address indexing, the
+> > > process's mmap_sem is held for the duration of the access.
+> > 
+> > So is heapprofd a developer-only thing?  Is heapprofd included in
+> > end-user android loads?  If not then, again, wouldn't it be better to
+> > make the feature Kconfigurable so that Android developers can enable it
+> > during development then disable it for production kernels?
 > 
-> > In Android, we are using this for the heap profiler (heapprofd) which
-> > profiles and pin points code paths which allocates and leaves memory
-> > idle for long periods of time. This method solves the security issue
-> > with userspace learning the PFN, and while at it is also shown to yield
-> > better results than the pagemap lookup, the theory being that the window
-> > where the address space can change is reduced by eliminating the
-> > intermediate pagemap look up stage. In virtual address indexing, the
-> > process's mmap_sem is held for the duration of the access.
+> Almost all of this code is already configurable with
+> CONFIG_IDLE_PAGE_TRACKING. If you disable it, then all of this code gets
+> disabled.
 > 
-> So is heapprofd a developer-only thing?  Is heapprofd included in
-> end-user android loads?  If not then, again, wouldn't it be better to
-> make the feature Kconfigurable so that Android developers can enable it
-> during development then disable it for production kernels?
+> Or are you referring to something else that needs to be made configurable?
 
-Almost all of this code is already configurable with
-CONFIG_IDLE_PAGE_TRACKING. If you disable it, then all of this code gets
-disabled.
+Yes - the 300+ lines of code which this patchset adds!
 
-Or are you referring to something else that needs to be made configurable?
+The impacted people will be those who use the existing
+idle-page-tracking feature but who will not use the new feature.  I
+guess we can assume this set is small...
 
-thanks,
-
- - Joel
 
