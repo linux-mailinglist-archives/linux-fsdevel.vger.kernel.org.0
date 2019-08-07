@@ -2,98 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD4CD841E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 03:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB52841E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 03:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbfHGBt7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 21:49:59 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13872 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727788AbfHGBt6 (ORCPT
+        id S1729579AbfHGBu1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 21:50:27 -0400
+Received: from smtp.bonedaddy.net ([45.33.94.42]:34376 "EHLO
+        smtp.bonedaddy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729543AbfHGBu1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 21:49:58 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4a2e4e0000>; Tue, 06 Aug 2019 18:50:06 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 06 Aug 2019 18:49:56 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 06 Aug 2019 18:49:56 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 7 Aug
- 2019 01:49:55 +0000
-Subject: Re: [PATCH v3 00/39] put_user_pages(): miscellaneous call sites
-To:     <john.hubbard@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-nfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
-        <x86@kernel.org>, <xen-devel@lists.xenproject.org>
-References: <20190807013340.9706-1-jhubbard@nvidia.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <912eb2bd-4102-05c1-5571-c261617ad30b@nvidia.com>
-Date:   Tue, 6 Aug 2019 18:49:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 6 Aug 2019 21:50:27 -0400
+X-Greylist: delayed 514 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Aug 2019 21:50:27 EDT
+Received: from chianamo (unknown [114.111.153.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: pabs3@bonedaddy.net)
+        by smtp.bonedaddy.net (Postfix) with ESMTPSA id 96BCB18039D;
+        Tue,  6 Aug 2019 21:42:04 -0400 (EDT)
+Message-ID: <c835c71b722c3df3d11e7b7f8fd65bbd7da0d482.camel@bonedaddy.net>
+Subject: Re: [PATCH AUTOSEL 5.2 57/59] coredump: split pipe command
+ whitespace before expanding template
+From:   Paul Wise <pabs3@bonedaddy.net>
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     Jakub Wilk <jwilk@jwilk.net>, Neil Horman <nhorman@tuxdriver.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+In-Reply-To: <20190806213319.19203-57-sashal@kernel.org>
+References: <20190806213319.19203-1-sashal@kernel.org>
+         <20190806213319.19203-57-sashal@kernel.org>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-9vrijft1q6Ih/4+n8s2l"
+Date:   Wed, 07 Aug 2019 09:41:46 +0800
 MIME-Version: 1.0
-In-Reply-To: <20190807013340.9706-1-jhubbard@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565142606; bh=Dn5BKjZ7JEBRqWgfa18GnM7OhUXy8yDZwMN3JIIxlGw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Ikr1Z0QmiSe2izYZJH1uqOSC6icnToC0RNMEpxuB23chpfLBCzP3w/AieqLXvDTl5
-         WiAJO8Q4P7LqaICg9w9tXQj3/iPr6N76Dc9IbqJMajQoyinrqFfwgCWwW9UnKbczaL
-         GaLoALYFsFwWv8Sy+VSzQYK1xKYCINe6tMld2WSk4jzjh2UDaUm/4PS/zoETIOvAHY
-         Cv7DiogcZErrjHQstqfLwjbbIS2N4ESoffKtD4ugOTExuz4uGt5TgMT8y01S0TheeO
-         6qVWyeW6YYVimOARtYB9SW21zJJlrmRpt7UH+8pXV98uEPUBYTW77sxtUkB504xqpb
-         D9OLrQ7tTourQ==
+User-Agent: Evolution 3.30.5-1.1 
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/6/19 6:32 PM, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> ...
-> 
-> John Hubbard (38):
->   mm/gup: add make_dirty arg to put_user_pages_dirty_lock()
-...
->  54 files changed, 191 insertions(+), 323 deletions(-)
-> 
-ahem, yes, apparently this is what happens if I add a few patches while editing
-the cover letter... :) 
 
-The subject line should read "00/41", and the list of files affected here is
-therefore under-reported in this cover letter. However, the patch series itself is 
-intact and ready for submission.
+--=-9vrijft1q6Ih/4+n8s2l
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+On Tue, 2019-08-06 at 17:33 -0400, Sasha Levin wrote:
+
+> From: Paul Wise <pabs3@bonedaddy.net>
+>=20
+> [ Upstream commit 315c69261dd3fa12dbc830d4fa00d1fad98d3b03 ]
+
+The patch changes the behaviour of the interface between the Linux
+kernel and userspace core dump handlers. The previous behaviour was
+unlikely to be depended on by any core dump handler but it is still a
+behaviour change, so I think it would be best to keep it out of the
+stable branches and would prefer to have folks encounter the change as
+Linux distros etc roll out 5.3 and later into their dev releases.
+
+We discussed this on #kernelnewbies a while ago and gregkh agreed that
+it should stew a while longer before reaching any stable releases.
+
+In addition if it gets backported to stable releases, my patch for
+core(5) from man-pages will have to get more complicated :)
+
+--=20
+bye,
+pabs
+
+https://bonedaddy.net/pabs3/
+
+--=-9vrijft1q6Ih/4+n8s2l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEYQsotVz8/kXqG1Y7MRa6Xp/6aaMFAl1KLFcACgkQMRa6Xp/6
+aaO9fRAAnNsoW6kI3MEIte62tmhVEx7PC/f2E1CHkOPaUJwlJFEIXkvQ9G35EXkT
+5+hb++RC2BuhgHomoKL7OS8aD6nOHh5lehUlk7zqGbZ4U9krgH7zRve5IBF7TIxT
+JFvwfwFggjsUm5QkvLBxTia4CP7ejbrku0KM5eqWcngFsx+gnzaJugC3pw+6Ilgz
+Od7MuelAOzpOP9wIJenfmLBmrChHE3udG7gt8adtnIcCZ9t0/smEW2BZQCoA6lnq
+Dnh+gzdPLFv07HJ0Y2awK9n6B3ccuxhUDzVPQpa29w/RfWyD9jOlDWr7qsYJcrAs
+/XqiklHiDSuSrsOmpvUPTUyrKGh+pNCuhwmh2HU9mVK0dbRB/VtGdK0hpUFS3w61
+MHvyvFBTHdwBw5LhrOh6Gk+nZgFxBuXJDLlafoAz5Q9o+AASgqc08uEWILVjOh6n
+B9faOn06bTHLEvnuDxbk3e/fwh6GlnaR3SdqLP7nGv4GIGIsaNtjNR1JrU7hSlsQ
+9QJwC0hDrBG66SKbjGkEnJYxTApppc+/WyhXz/gXw+BGemJR/XVsitEOJsW1CkDn
+nhGoz65cun8dCXVxz5LU99z0wsoQfQReyApWxle4vwOuKJF7bb3VHBxX8iR0KZmk
+NIgbiMHAPvfenSvoblgmFeIGf7kCmF+iwyV+/gLkshjM7v2rxjs=
+=qv//
+-----END PGP SIGNATURE-----
+
+--=-9vrijft1q6Ih/4+n8s2l--
+
