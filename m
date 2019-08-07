@@ -2,96 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DB52841E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 03:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D31E4841F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2019 03:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729579AbfHGBu1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Aug 2019 21:50:27 -0400
-Received: from smtp.bonedaddy.net ([45.33.94.42]:34376 "EHLO
-        smtp.bonedaddy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729543AbfHGBu1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Aug 2019 21:50:27 -0400
-X-Greylist: delayed 514 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Aug 2019 21:50:27 EDT
-Received: from chianamo (unknown [114.111.153.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728522AbfHGBvp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Aug 2019 21:51:45 -0400
+Received: from ozlabs.org ([203.11.71.1]:34389 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727710AbfHGBvp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Aug 2019 21:51:45 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: pabs3@bonedaddy.net)
-        by smtp.bonedaddy.net (Postfix) with ESMTPSA id 96BCB18039D;
-        Tue,  6 Aug 2019 21:42:04 -0400 (EDT)
-Message-ID: <c835c71b722c3df3d11e7b7f8fd65bbd7da0d482.camel@bonedaddy.net>
-Subject: Re: [PATCH AUTOSEL 5.2 57/59] coredump: split pipe command
- whitespace before expanding template
-From:   Paul Wise <pabs3@bonedaddy.net>
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     Jakub Wilk <jwilk@jwilk.net>, Neil Horman <nhorman@tuxdriver.com>,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 463Dy34Y5hz9sDB;
+        Wed,  7 Aug 2019 11:51:39 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565142702;
+        bh=VeIbhaZVUjebNvzkG6IBGnOOmwzkmjPxm/rSjwrHZoE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FAdBHtEiCRkCClZrOxjx+YjFKEl1GkEhZBHY4+noeXINNg9c4fSSuIWUHyFsbvT7P
+         2GSafOOi9fgWmJhVDT7GC/swkNz34D0kf4+MXvi1hWAmBVc9i8HVtDShBUNO95GKiq
+         p6fiqGtam/JgnziFJwNtN2WluqW48ERgyuvj21sgfYdRToBmTwQGEDqOqEWDMv9MEe
+         jZdqTkTHmps9kSeo4Jv5LgtnPhP5P6gmW/evpapYV4TdPBSmg3HNAWrnDSi+qmacM0
+         WCmpKDS5oWRNX/lpSR41iT7/bJgFgApDs/IlHyiDws6XHmmk+eHtM7R9czjotrwzJp
+         IG2ZxsH8954UQ==
+Date:   Wed, 7 Aug 2019 11:51:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>, devel@driverdev.osuosl.org,
+        linux-erofs@lists.ozlabs.org, Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miao Xie <miaoxie@huawei.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Machek <pavel@denx.de>, linux-fsdevel@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
-In-Reply-To: <20190806213319.19203-57-sashal@kernel.org>
-References: <20190806213319.19203-1-sashal@kernel.org>
-         <20190806213319.19203-57-sashal@kernel.org>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-9vrijft1q6Ih/4+n8s2l"
-Date:   Wed, 07 Aug 2019 09:41:46 +0800
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH RFC] erofs: move erofs out of staging
+Message-ID: <20190807115138.216fcb70@canb.auug.org.au>
+In-Reply-To: <20190806170252.GB29093@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190806094925.228906-1-gaoxiang25@huawei.com>
+        <20190807013423.02fd6990@canb.auug.org.au>
+        <20190806170252.GB29093@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
-User-Agent: Evolution 3.30.5-1.1 
+Content-Type: multipart/signed; boundary="Sig_/gC.BuFJhkfrfyrKHDgetbAs";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---=-9vrijft1q6Ih/4+n8s2l
-Content-Type: text/plain; charset="UTF-8"
+--Sig_/gC.BuFJhkfrfyrKHDgetbAs
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2019-08-06 at 17:33 -0400, Sasha Levin wrote:
+Hi Gao,
 
-> From: Paul Wise <pabs3@bonedaddy.net>
+On Wed, 7 Aug 2019 01:02:58 +0800 Gao Xiang <hsiangkao@aol.com> wrote:
+>
+> On Wed, Aug 07, 2019 at 01:34:23AM +1000, Stephen Rothwell wrote:
+> >=20
+> > One small suggestion: just remove the file names from the comments at
+> > the top of the files rather than change them to reflect that they have
+> > moved.  We can usually tell the name of a file by its name :-) =20
 >=20
-> [ Upstream commit 315c69261dd3fa12dbc830d4fa00d1fad98d3b03 ]
+> Thanks for your reply :)
+>=20
+> For this part, EROFS initially followed what ext4, f2fs, even fsverity do,
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/f=
+s/ext4/namei.c
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/f=
+s/f2fs/namei.c
+> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/tree/f=
+s/verity/verify.c?h=3Dfsverity
+>=20
+> I think I can remove these filenames as you suggested in the next version.
+> I thought these are some common practice and there is no obvious right or
+> wrong of this kind of stuffs.
 
-The patch changes the behaviour of the interface between the Linux
-kernel and userspace core dump handlers. The previous behaviour was
-unlikely to be depended on by any core dump handler but it is still a
-behaviour change, so I think it would be best to keep it out of the
-stable branches and would prefer to have folks encounter the change as
-Linux distros etc roll out 5.3 and later into their dev releases.
-
-We discussed this on #kernelnewbies a while ago and gregkh agreed that
-it should stew a while longer before reaching any stable releases.
-
-In addition if it gets backported to stable releases, my patch for
-core(5) from man-pages will have to get more complicated :)
+Fair enough.
 
 --=20
-bye,
-pabs
+Cheers,
+Stephen Rothwell
 
-https://bonedaddy.net/pabs3/
-
---=-9vrijft1q6Ih/4+n8s2l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+--Sig_/gC.BuFJhkfrfyrKHDgetbAs
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEYQsotVz8/kXqG1Y7MRa6Xp/6aaMFAl1KLFcACgkQMRa6Xp/6
-aaO9fRAAnNsoW6kI3MEIte62tmhVEx7PC/f2E1CHkOPaUJwlJFEIXkvQ9G35EXkT
-5+hb++RC2BuhgHomoKL7OS8aD6nOHh5lehUlk7zqGbZ4U9krgH7zRve5IBF7TIxT
-JFvwfwFggjsUm5QkvLBxTia4CP7ejbrku0KM5eqWcngFsx+gnzaJugC3pw+6Ilgz
-Od7MuelAOzpOP9wIJenfmLBmrChHE3udG7gt8adtnIcCZ9t0/smEW2BZQCoA6lnq
-Dnh+gzdPLFv07HJ0Y2awK9n6B3ccuxhUDzVPQpa29w/RfWyD9jOlDWr7qsYJcrAs
-/XqiklHiDSuSrsOmpvUPTUyrKGh+pNCuhwmh2HU9mVK0dbRB/VtGdK0hpUFS3w61
-MHvyvFBTHdwBw5LhrOh6Gk+nZgFxBuXJDLlafoAz5Q9o+AASgqc08uEWILVjOh6n
-B9faOn06bTHLEvnuDxbk3e/fwh6GlnaR3SdqLP7nGv4GIGIsaNtjNR1JrU7hSlsQ
-9QJwC0hDrBG66SKbjGkEnJYxTApppc+/WyhXz/gXw+BGemJR/XVsitEOJsW1CkDn
-nhGoz65cun8dCXVxz5LU99z0wsoQfQReyApWxle4vwOuKJF7bb3VHBxX8iR0KZmk
-NIgbiMHAPvfenSvoblgmFeIGf7kCmF+iwyV+/gLkshjM7v2rxjs=
-=qv//
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1KLqoACgkQAVBC80lX
+0Gxjdwf+K7Z5+Ja83AA54PTZcXIHB9g+PdWvrL3aangZfmAt86GXDFF91vO1NlYp
+QNmMTIr9j0lMhNdCseZUWB8ejrFfWSbrq654EtAo+1ydYSZXBmjGXQ5FQtWMhfpZ
+e+4IRlkrOybVtYgU9nRfI2CIfCh8Z9Ol53Jh1M2bxDJw94XrZJug1N1S2j4+0Mta
+jaV8MWN/niTb4SsWls1Uha3DwvvpVHqc9645UMwJ5yFqzvsk7tJ/ViQWHQNvjGFH
+XdUqEMv40XEYGt3HrC8wzMPfubVVpdke556Ou5aQuTgYbsNOU5bTblzNvpIG9jpX
+xRDrkTjcnjGG6jRyqHN4XMzVrdPtwQ==
+=iqs3
 -----END PGP SIGNATURE-----
 
---=-9vrijft1q6Ih/4+n8s2l--
-
+--Sig_/gC.BuFJhkfrfyrKHDgetbAs--
