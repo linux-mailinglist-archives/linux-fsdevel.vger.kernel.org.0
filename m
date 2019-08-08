@@ -2,136 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87FCF85803
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 04:10:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 305C085835
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 04:37:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbfHHCKw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Aug 2019 22:10:52 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53764 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbfHHCKv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Aug 2019 22:10:51 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7828n9a075780;
-        Thu, 8 Aug 2019 02:10:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=TXriKJvJy2myVnw3c051jaeKryW3drWG0pSPjwioE5Q=;
- b=ADL40WecBnB1Z3f42497pGyz1FyclGQ12j8lMNgbk8lS2dQH08wmqTtk61/uTFlpsPhw
- zxrefhxHc33igYwECLs1R2GLPBjHP1B5tFfW2WTj/hrt6GUgi4z/JYrDBn7MrifRAIKT
- mnsrLpoihyFchsX613OBx61Y5hgEZxSKCIRpdTOh/U9zhRNJmq41K9QgLqXt+9Ac2oLm
- AjczwomaVHvfu9qBvXhwDvzDJQVUOLeQ/RPa5oCtTqZR55hnXUwmsUk1rdWDSb/MCSpg
- px81wxj13WmfCMA5n+Wwlu2bZLks8SAk5tzLwlCMAbRQHdlShrUj/KGgx5RQB60/nqL+ eA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2u51pu7q65-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 08 Aug 2019 02:10:49 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7828OEE109698;
-        Thu, 8 Aug 2019 02:10:48 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2u7578h0y7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 08 Aug 2019 02:10:48 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x782Alj2012359;
-        Thu, 8 Aug 2019 02:10:47 GMT
-Received: from localhost (/10.159.246.211)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 07 Aug 2019 19:10:47 -0700
-Date:   Wed, 7 Aug 2019 19:10:46 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     viro@zeniv.linux.org.uk, xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] vfs: fix page locking deadlocks when deduping files
-Message-ID: <20190808021046.GD7157@magnolia>
-References: <20190807145114.GP7138@magnolia>
- <20190807223850.GQ7777@dread.disaster.area>
+        id S1728224AbfHHChI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Aug 2019 22:37:08 -0400
+Received: from mga02.intel.com ([134.134.136.20]:4305 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728025AbfHHChH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Aug 2019 22:37:07 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 19:36:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,358,1559545200"; 
+   d="scan'208";a="186207302"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga002.jf.intel.com with ESMTP; 07 Aug 2019 19:36:38 -0700
+Date:   Wed, 7 Aug 2019 19:36:37 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>, john.hubbard@gmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
+        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
+Message-ID: <20190808023637.GA1508@iweiny-DESK2.sc.intel.com>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+ <20190802091244.GD6461@dhcp22.suse.cz>
+ <20190802124146.GL25064@quack2.suse.cz>
+ <20190802142443.GB5597@bombadil.infradead.org>
+ <20190802145227.GQ25064@quack2.suse.cz>
+ <076e7826-67a5-4829-aae2-2b90f302cebd@nvidia.com>
+ <20190807083726.GA14658@quack2.suse.cz>
+ <20190807084649.GQ11812@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190807223850.GQ7777@dread.disaster.area>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908080020
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908080020
+In-Reply-To: <20190807084649.GQ11812@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 08:38:50AM +1000, Dave Chinner wrote:
-> On Wed, Aug 07, 2019 at 07:51:14AM -0700, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > +/*
-> > + * Lock two pages, ensuring that we lock in offset order if the pages are from
-> > + * the same file.
-> > + */
-> > +static void vfs_lock_two_pages(struct page *page1, struct page *page2)
-> > +{
-> > +	if (page1 == page2) {
-> > +		lock_page(page1);
-> > +		return;
-> > +	}
-> > +
-> > +	if (page1->mapping == page2->mapping && page1->index > page2->index)
-> > +		swap(page1, page2);
+On Wed, Aug 07, 2019 at 10:46:49AM +0200, Michal Hocko wrote:
+> On Wed 07-08-19 10:37:26, Jan Kara wrote:
+> > On Fri 02-08-19 12:14:09, John Hubbard wrote:
+> > > On 8/2/19 7:52 AM, Jan Kara wrote:
+> > > > On Fri 02-08-19 07:24:43, Matthew Wilcox wrote:
+> > > > > On Fri, Aug 02, 2019 at 02:41:46PM +0200, Jan Kara wrote:
+> > > > > > On Fri 02-08-19 11:12:44, Michal Hocko wrote:
+> > > > > > > On Thu 01-08-19 19:19:31, john.hubbard@gmail.com wrote:
+> > > > > > > [...]
+> > > > > > > > 2) Convert all of the call sites for get_user_pages*(), to
+> > > > > > > > invoke put_user_page*(), instead of put_page(). This involves dozens of
+> > > > > > > > call sites, and will take some time.
+> > > > > > > 
+> > > > > > > How do we make sure this is the case and it will remain the case in the
+> > > > > > > future? There must be some automagic to enforce/check that. It is simply
+> > > > > > > not manageable to do it every now and then because then 3) will simply
+> > > > > > > be never safe.
+> > > > > > > 
+> > > > > > > Have you considered coccinele or some other scripted way to do the
+> > > > > > > transition? I have no idea how to deal with future changes that would
+> > > > > > > break the balance though.
+> > > 
+> > > Hi Michal,
+> > > 
+> > > Yes, I've thought about it, and coccinelle falls a bit short (it's not smart
+> > > enough to know which put_page()'s to convert). However, there is a debug
+> > > option planned: a yet-to-be-posted commit [1] uses struct page extensions
+> > > (obviously protected by CONFIG_DEBUG_GET_USER_PAGES_REFERENCES) to add
+> > > a redundant counter. That allows:
+> > > 
+> > > void __put_page(struct page *page)
+> > > {
+> > > 	...
+> > > 	/* Someone called put_page() instead of put_user_page() */
+> > > 	WARN_ON_ONCE(atomic_read(&page_ext->pin_count) > 0);
+> > > 
+> > > > > > 
+> > > > > > Yeah, that's why I've been suggesting at LSF/MM that we may need to create
+> > > > > > a gup wrapper - say vaddr_pin_pages() - and track which sites dropping
+> > > > > > references got converted by using this wrapper instead of gup. The
+> > > > > > counterpart would then be more logically named as unpin_page() or whatever
+> > > > > > instead of put_user_page().  Sure this is not completely foolproof (you can
+> > > > > > create new callsite using vaddr_pin_pages() and then just drop refs using
+> > > > > > put_page()) but I suppose it would be a high enough barrier for missed
+> > > > > > conversions... Thoughts?
+> > > 
+> > > The debug option above is still a bit simplistic in its implementation
+> > > (and maybe not taking full advantage of the data it has), but I think
+> > > it's preferable, because it monitors the "core" and WARNs.
+> > > 
+> > > Instead of the wrapper, I'm thinking: documentation and the passage of
+> > > time, plus the debug option (perhaps enhanced--probably once I post it
+> > > someone will notice opportunities), yes?
+> > 
+> > So I think your debug option and my suggested renaming serve a bit
+> > different purposes (and thus both make sense). If you do the renaming, you
+> > can just grep to see unconverted sites. Also when someone merges new GUP
+> > user (unaware of the new rules) while you switch GUP to use pins instead of
+> > ordinary references, you'll get compilation error in case of renaming
+> > instead of hard to debug refcount leak without the renaming. And such
+> > conflict is almost bound to happen given the size of GUP patch set... Also
+> > the renaming serves against the "coding inertia" - i.e., GUP is around for
+> > ages so people just use it without checking any documentation or comments.
+> > After switching how GUP works, what used to be correct isn't anymore so
+> > renaming the function serves as a warning that something has really
+> > changed.
 > 
-> I would do this even if the pages are on different mappings. That
-> way we don't expose a landmine if some other code locks two pages
-> from the same mappings in a different order...
+> Fully agreed!
 
-Sure.
+Ok Prior to this I've been basing all my work for the RDMA/FS DAX stuff in
+Johns put_user_pages()...  (Including when I proposed failing truncate with a
+lease in June [1])
 
-> > +	lock_page(page1);
-> > +	lock_page(page2);
-> > +}
-> > +
-> >  /*
-> >   * Compare extents of two files to see if they are the same.
-> >   * Caller must have locked both inodes to prevent write races.
-> > @@ -1867,10 +1881,12 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
-> >  		dest_page = vfs_dedupe_get_page(dest, destoff);
-> >  		if (IS_ERR(dest_page)) {
-> >  			error = PTR_ERR(dest_page);
-> > -			unlock_page(src_page);
-> >  			put_page(src_page);
-> >  			goto out_error;
-> >  		}
-> > +
-> > +		vfs_lock_two_pages(src_page, dest_page);
-> > +
-> >  		src_addr = kmap_atomic(src_page);
-> >  		dest_addr = kmap_atomic(dest_page);
-> >  
-> > @@ -1882,7 +1898,8 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
-> >  
-> >  		kunmap_atomic(dest_addr);
-> >  		kunmap_atomic(src_addr);
-> > -		unlock_page(dest_page);
-> > +		if (dest_page != src_page)
-> > +			unlock_page(dest_page);
-> >  		unlock_page(src_page);
+However, based on the suggestions in that thread it became clear that a new
+interface was going to need to be added to pass in the "RDMA file" information
+to GUP to associate file pins with the correct processes...
+
+I have many drawings on my white board with "a whole lot of lines" on them to
+make sure that if a process opens a file, mmaps it, pins it with RDMA, _closes_
+it, and ummaps it; that the resulting file pin can still be traced back to the
+RDMA context and all the processes which may have access to it....  No matter
+where the original context may have come from.  I believe I have accomplished
+that.
+
+Before I go on, I would like to say that the "imbalance" of get_user_pages()
+and put_page() bothers me from a purist standpoint...  However, since this
+discussion cropped up I went ahead and ported my work to Linus' current master
+(5.3-rc3+) and in doing so I only had to steal a bit of Johns code...  Sorry
+John...  :-(
+
+I don't have the commit messages all cleaned up and I know there may be some
+discussion on these new interfaces but I wanted to throw this series out there
+because I think it may be what Jan and Michal are driving at (or at least in
+that direction.
+
+Right now only RDMA and DAX FS's are supported.  Other users of GUP will still
+fail on a DAX file and regular files will still be at risk.[2]
+
+I've pushed this work (based 5.3-rc3+ (33920f1ec5bf)) here[3]:
+
+https://github.com/weiny2/linux-kernel/tree/linus-rdmafsdax-b0-v3
+
+I think the most relevant patch to this conversation is:
+
+https://github.com/weiny2/linux-kernel/commit/5d377653ba5cf11c3b716f904b057bee6641aaf6
+
+I stole Jans suggestion for a name as the name I used while prototyping was
+pretty bad...  So Thanks Jan...  ;-)
+
+Also thanks to John for his contribution on some of this.  I'm still tweaking
+put_user_pages under the hood on the DAX path.
+
+Ira
+
+[1] https://lwn.net/Articles/790544/
+
+[2] I've been looking into how to support io_uring next but I've had some issue
+getting a test program to actually call GUP in that code path...  :-(
+
+[3] If it would be easier I can just throw an RFC on the list but right now the
+cover letter and some of the commit messages are full of the old stuff and
+various ideas I have had...
+
 > 
-> Would it make sense for symmetry to wrap these in
-> vfs_unlock_two_pages()?
-
-Sure.
-
---D
-
-> -Dave.
+> > Your refcount debug patches are good to catch bugs in the conversions done
+> > but that requires you to be able to excercise the code path in the first
+> > place which may require particular HW or so, and you also have to enable
+> > the debug option which means you already aim at verifying the GUP
+> > references are treated properly.
+> > 
+> > 								Honza
+> > 
+> > -- 
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
+> 
 > -- 
-> Dave Chinner
-> david@fromorbit.com
+> Michal Hocko
+> SUSE Labs
