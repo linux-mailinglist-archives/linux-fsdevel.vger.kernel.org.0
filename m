@@ -2,320 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895DC86125
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 13:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C1486205
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 14:39:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfHHLwg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 07:52:36 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4194 "EHLO huawei.com"
+        id S1729780AbfHHMjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 08:39:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58692 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726020AbfHHLwg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 07:52:36 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9D59DD45F53295A29038;
-        Thu,  8 Aug 2019 19:52:31 +0800 (CST)
-Received: from [127.0.0.1] (10.177.19.210) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Thu, 8 Aug 2019
- 19:52:22 +0800
-Subject: Re: [PATCH] epoll: optimize epmutex in ep_free and
- eventpoll_release_file
-To:     Cheng Jian <cj.chengjian@huawei.com>, <viro@zeniv.linux.org.uk>,
-        <houtao1@huawei.com>, <zhouxiong13@huawei.com>
-References: <20190727113542.162213-1-cj.chengjian@huawei.com>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Xie XiuQi <xiexiuqi@huawei.com>
-Message-ID: <a5cbb6af-d1a8-4a11-abd1-2be42f330a1b@huawei.com>
-Date:   Thu, 8 Aug 2019 19:52:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S1728025AbfHHMjO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Aug 2019 08:39:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 90CA2AD22;
+        Thu,  8 Aug 2019 12:39:13 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id B63EDDA7C5; Thu,  8 Aug 2019 14:39:44 +0200 (CEST)
+From:   David Sterba <dsterba@suse.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH RESEND] fs: use UB-safe check for signed addition overflow in remap_verify_area
+Date:   Thu,  8 Aug 2019 14:39:42 +0200
+Message-Id: <20190808123942.19592-1-dsterba@suse.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190727113542.162213-1-cj.chengjian@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.19.210]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-Zhou Xiong test it on 2 sockets 128 cores ARM64 box, and get the following numbers:
+The following warning pops up with enabled UBSAN in tests fstests/generic/303:
 
-seconds, smaller is better:
-concurrency	5.3-rc2		patched		diff (smaller is better)
-------------------------------------------------------------------------
-10		6.983		4.658		-33.30%
-20		14.479		6.8		-53.04%
-40		47.689		15.303		-67.91%
-80		103.336		22.402		-78.32%
+  [23127.529395] UBSAN: Undefined behaviour in fs/read_write.c:1725:7
+  [23127.529400] signed integer overflow:
+  [23127.529403] 4611686018427322368 + 9223372036854775807 cannot be represented in type 'long long int'
+  [23127.529412] CPU: 4 PID: 26180 Comm: xfs_io Not tainted 5.2.0-rc2-1.ge195904-vanilla+ #450
+  [23127.556999] Hardware name: empty empty/S3993, BIOS PAQEX0-3 02/24/2008
+  [23127.557001] Call Trace:
+  [23127.557060]  dump_stack+0x67/0x9b
+  [23127.557070]  ubsan_epilogue+0x9/0x40
+  [23127.573496]  handle_overflow+0xb3/0xc0
+  [23127.573514]  do_clone_file_range+0x28f/0x2a0
+  [23127.573547]  vfs_clone_file_range+0x35/0xb0
+  [23127.573564]  ioctl_file_clone+0x8d/0xc0
+  [23127.590144]  do_vfs_ioctl+0x300/0x700
+  [23127.590160]  ksys_ioctl+0x70/0x80
+  [23127.590203]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+  [23127.590210]  __x64_sys_ioctl+0x16/0x20
+  [23127.590215]  do_syscall_64+0x5c/0x1d0
+  [23127.590224]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  [23127.590231] RIP: 0033:0x7ff6d7250327
+  [23127.590241] RSP: 002b:00007ffe3a38f1d8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
+  [23127.590246] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007ff6d7250327
+  [23127.590249] RDX: 00007ffe3a38f220 RSI: 000000004020940d RDI: 0000000000000003
+  [23127.590252] RBP: 0000000000000000 R08: 00007ffe3a3c80a0 R09: 00007ffe3a3c8080
+  [23127.590255] R10: 000000000fa99fa0 R11: 0000000000000206 R12: 0000000000000000
+  [23127.590260] R13: 0000000000000000 R14: 3fffffffffff0000 R15: 00007ff6d750a20c
 
-There is a significant improvement in high concurrent and short connection scenario.
-Any comments is welcome.
+As loff_t is a signed type, we should use the safe overflow checks
+instead of relying on compiler implementation.
 
-The test program:
+The bogus values are intentional and the test is supposed to verify the
+boundary conditions.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <errno.h>
-#include <error.h>
-#include <sys/epoll.h>
+Signed-off-by: David Sterba <dsterba@suse.com>
+---
+ fs/read_write.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-#define TRUE 1
-#define FALSE 0
-
-int main(int argc, char * argv[])
-{
-    int sk = 0, ret = 0;
-    struct epoll_event ev, events[10];
-    int ep = epoll_create(10);
-
-    int time = 1000000;
-
-    while (time--) {
-        sk = socket(PF_INET, SOCK_STREAM, 0);
-        if (sk < 0)
-            perror("socket failed.\n");
-
-        ev.events = EPOLLIN;
-        ev.data.u64 = 43; // Some other number
-        if (epoll_ctl(ep, EPOLL_CTL_ADD, sk, &ev) < 0) {
-            error(-1, errno, "epoll_ctl");
-        }
-
-        close(sk);
-    }
-}
-
-
-
-On 2019/7/27 19:35, Cheng Jian wrote:
-> We are optimizing the Request-Per-Second of nginx http server,
-> and we found that acquiring epmutex in eventpoll_release_file()
-> will become a bottleneck under the one-request-per-connection
-> scenario.
-> 
-> Optimize the epmutex with a smaller granularity. Introduce
-> an ref-counter to eventpoll and free eventpoll by rcu, using rcu
-> and list_first_or_null_rcu() to iterate file->f_ep_links instead
-> of epmutex.
-> 
-> The following are some details of the scenario:
-> 
-> HTTP server (nginx):
-> 	* under ARM64 with 64 cores
-> 	* 64 worker processes, each worker is binded to a specific CPU
-> 	* keepalive_requests = 1 in nginx.conf: nginx will close the
-> 	  connection fd after a reply is send
-> HTTP client[benchmark] (wrk):
-> 	* under x86-64 with 48 cores
-> 	* 16 threads, 64 connections per-thread
-> 
-> Before the patch, the RPS measured by wrk is ~220K, after applying
-> the patch the RPS is ~240K. We also measure the overhead of
-> eventpoll_release_file() and its children by perf: 29% before and
-> 2% after.
-> 
-> Link : https://lkml.org/lkml/2017/10/28/81
-> 
-> Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
-> Signed-off-by: Hou Tao <houtao1@huawei.com>
-> ---
->  fs/eventpoll.c | 106 ++++++++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 92 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index d7f1f5011fac..dc81f1c4fbaa 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -38,6 +38,7 @@
->  #include <linux/compat.h>
->  #include <linux/rculist.h>
->  #include <net/busy_poll.h>
-> +#include <linux/refcount.h>
->  
->  /*
->   * LOCKING:
-> @@ -225,6 +226,11 @@ struct eventpoll {
->  	/* used to track busy poll napi_id */
->  	unsigned int napi_id;
->  #endif
-> +
-> +	/* used to ensure the validity of eventpoll when release file */
-> +	refcount_t ref;
-> +	/* used to free itself */
-> +	struct rcu_head rcu;
->  };
->  
->  /* Wait structure used by the poll hooks */
-> @@ -809,6 +815,32 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
->  	return 0;
->  }
->  
-> +static void ep_rcu_free(struct rcu_head *head)
-> +{
-> +	struct eventpoll *ep = container_of(head, struct eventpoll, rcu);
-> +
-> +	kfree(ep);
-> +}
-> +
-> +static void eventpoll_put_ep(struct eventpoll *ep)
-> +{
-> +	if (refcount_dec_and_test(&ep->ref)) {
-> +		mutex_destroy(&ep->mtx);
-> +		free_uid(ep->user);
-> +		wakeup_source_unregister(ep->ws);
-> +
-> +		call_rcu(&ep->rcu, ep_rcu_free);
-> +	}
-> +}
-> +
-> +static struct eventpoll *eventpoll_get_ep(struct eventpoll *ep)
-> +{
-> +	if (refcount_inc_not_zero(&ep->ref))
-> +		return ep;
-> +	else
-> +		return NULL;
-> +}
-> +
->  static void ep_free(struct eventpoll *ep)
->  {
->  	struct rb_node *rbp;
-> @@ -826,11 +858,11 @@ static void ep_free(struct eventpoll *ep)
->  	 * anymore. The only hit might come from eventpoll_release_file() but
->  	 * holding "epmutex" is sufficient here.
->  	 */
-> -	mutex_lock(&epmutex);
->  
->  	/*
->  	 * Walks through the whole tree by unregistering poll callbacks.
->  	 */
-> +	mutex_lock(&ep->mtx);
->  	for (rbp = rb_first_cached(&ep->rbr); rbp; rbp = rb_next(rbp)) {
->  		epi = rb_entry(rbp, struct epitem, rbn);
->  
-> @@ -846,7 +878,6 @@ static void ep_free(struct eventpoll *ep)
->  	 * We do not need to lock ep->mtx, either, we only do it to prevent
->  	 * a lockdep warning.
->  	 */
-> -	mutex_lock(&ep->mtx);
->  	while ((rbp = rb_first_cached(&ep->rbr)) != NULL) {
->  		epi = rb_entry(rbp, struct epitem, rbn);
->  		ep_remove(ep, epi);
-> @@ -854,11 +885,19 @@ static void ep_free(struct eventpoll *ep)
->  	}
->  	mutex_unlock(&ep->mtx);
->  
-> -	mutex_unlock(&epmutex);
-> -	mutex_destroy(&ep->mtx);
-> -	free_uid(ep->user);
-> -	wakeup_source_unregister(ep->ws);
-> -	kfree(ep);
-> +	/*
-> +	 * ep will not been added to visited_list, because ep_ctrl()
-> +	 * can not get its reference and can not reference it by the
-> +	 * corresponding epitem. The only possible operation is list_del_init,
-> +	 * so it's OK to use list_empty_careful() here.
-> +	 */
-> +	if (!list_empty_careful(&ep->visited_list_link)) {
-> +		mutex_lock(&epmutex);
-> +		list_del_init(&ep->visited_list_link);
-> +		mutex_unlock(&epmutex);
-> +	}
-> +
-> +	eventpoll_put_ep(ep);
->  }
->  
->  static int ep_eventpoll_release(struct inode *inode, struct file *file)
-> @@ -985,7 +1024,7 @@ static const struct file_operations eventpoll_fops = {
->  void eventpoll_release_file(struct file *file)
->  {
->  	struct eventpoll *ep;
-> -	struct epitem *epi, *next;
-> +	struct epitem *epi;
->  
->  	/*
->  	 * We don't want to get "file->f_lock" because it is not
-> @@ -1000,14 +1039,51 @@ void eventpoll_release_file(struct file *file)
->  	 *
->  	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
->  	 */
-> -	mutex_lock(&epmutex);
-> -	list_for_each_entry_safe(epi, next, &file->f_ep_links, fllink) {
-> -		ep = epi->ep;
-> +	rcu_read_lock();
-> +	while (true) {
-> +		epi = list_first_or_null_rcu(&file->f_ep_links,
-> +				struct epitem, fllink);
-> +		if (!epi)
-> +			break;
-> +
-> +		ep = eventpoll_get_ep(epi->ep);
-> +		/* Current epi had been removed by ep_free() */
-> +		if (!ep)
-> +			continue;
-> +		rcu_read_unlock();
-> +
->  		mutex_lock_nested(&ep->mtx, 0);
-> -		ep_remove(ep, epi);
-> +		/*
-> +		 * If rb_first_cached() returns NULL, it means that
-> +		 * the current epi had been removed by ep_free().
-> +		 * To prevent epi from double-freeing, check the
-> +		 * condition before invoking ep_remove().
-> +		 * If eventpoll_release_file() frees epi firstly,
-> +		 * the epi will not be freed again because the epi
-> +		 * must have been removed from ep->rbr when ep_free()
-> +		 * is invoked.
-> +		 */
-> +		if (rb_first_cached(&ep->rbr))
-> +			ep_remove(ep, epi);
->  		mutex_unlock(&ep->mtx);
-> +
-> +		eventpoll_put_ep(ep);
-> +
-> +		rcu_read_lock();
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	/*
-> +	 * The file can not been added to tfile_check_list again, because
-> +	 * (1) refcnt has been zero, ep_ctrl() can no longer get its reference
-> +	 * (2) related ep items have been removed, ep_loop_check_proc() can not
-> +	 *     get the file by ep->rbr.
-> +	 */
-> +	if (!list_empty_careful(&file->f_tfile_llink)) {
-> +		mutex_lock(&epmutex);
-> +		list_del_init(&file->f_tfile_llink);
-> +		mutex_unlock(&epmutex);
->  	}
-> -	mutex_unlock(&epmutex);
->  }
->  
->  static int ep_alloc(struct eventpoll **pep)
-> @@ -1030,6 +1106,8 @@ static int ep_alloc(struct eventpoll **pep)
->  	ep->rbr = RB_ROOT_CACHED;
->  	ep->ovflist = EP_UNACTIVE_PTR;
->  	ep->user = user;
-> +	INIT_LIST_HEAD(&ep->visited_list_link);
-> +	refcount_set(&ep->ref, 1);
->  
->  	*pep = ep;
->  
-> @@ -2018,7 +2096,7 @@ static int ep_loop_check(struct eventpoll *ep, struct file *file)
->  	list_for_each_entry_safe(ep_cur, ep_next, &visited_list,
->  							visited_list_link) {
->  		ep_cur->visited = 0;
-> -		list_del(&ep_cur->visited_list_link);
-> +		list_del_init(&ep_cur->visited_list_link);
->  	}
->  	return ret;
->  }
-> 
-
+diff --git a/fs/read_write.c b/fs/read_write.c
+index c543d965e288..a8bd974edf72 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -20,6 +20,7 @@
+ #include <linux/compat.h>
+ #include <linux/mount.h>
+ #include <linux/fs.h>
++#include <linux/overflow.h>
+ #include "internal.h"
+ 
+ #include <linux/uaccess.h>
+@@ -1718,11 +1719,12 @@ static int remap_verify_area(struct file *file, loff_t pos, loff_t len,
+ 			     bool write)
+ {
+ 	struct inode *inode = file_inode(file);
++	loff_t tmp;
+ 
+ 	if (unlikely(pos < 0 || len < 0))
+ 		return -EINVAL;
+ 
+-	 if (unlikely((loff_t) (pos + len) < 0))
++	if (unlikely(check_add_overflow(pos, len, &tmp)))
+ 		return -EINVAL;
+ 
+ 	if (unlikely(inode->i_flctx && mandatory_lock(inode))) {
 -- 
-Thanks,
-Xie XiuQi
+2.22.0
 
