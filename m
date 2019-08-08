@@ -2,152 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C11085A05
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 07:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC51F85A65
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 08:19:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730811AbfHHFtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 01:49:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728090AbfHHFtj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 01:49:39 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D142214C6;
-        Thu,  8 Aug 2019 05:49:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565243377;
-        bh=yK/HFvksaQrj8GwaFCyuT15Mjv+wfQ/4JtVWU/RSuqw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WckH3pdJxuB5qMJYz95SwgB+YRSOgVEYey5Fftk5MGP5Tgx4unBvapT7MHxc8WKzL
-         6IH+YPolHVzJT2xF7R+LIAICMmzHHVW2SZyO9qd5WNih8kg1JdG0hxv4s0s63X2T5h
-         8lGkyM8QHmMV2P7D2TvwFu1HpMhGc7FWGZjZUEoY=
-Date:   Wed, 7 Aug 2019 22:49:36 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Goldwyn Rodrigues <RGoldwyn@suse.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, miaoxie@huawei.com
-Subject: Re: [PATCH 10/13] iomap: use a function pointer for dio submits
-Message-ID: <20190808054936.GA5319@sol.localdomain>
-Mail-Followup-To: Gao Xiang <gaoxiang25@huawei.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Goldwyn Rodrigues <RGoldwyn@suse.com>, "hch@lst.de" <hch@lst.de>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, miaoxie@huawei.com
-References: <20190802220048.16142-1-rgoldwyn@suse.de>
- <20190802220048.16142-11-rgoldwyn@suse.de>
- <20190804234321.GC7689@dread.disaster.area>
- <1565021323.13240.14.camel@suse.com>
- <20190805215458.GH7689@dread.disaster.area>
- <20190808042640.GA28630@138>
+        id S1731084AbfHHGSK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 02:18:10 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:52705 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726475AbfHHGSK (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Aug 2019 02:18:10 -0400
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id F38AC100003;
+        Thu,  8 Aug 2019 06:18:00 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v6 00/14] Provide generic top-down mmap layout functions
+Date:   Thu,  8 Aug 2019 02:17:42 -0400
+Message-Id: <20190808061756.19712-1-alex@ghiti.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808042640.GA28630@138>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 12:26:42PM +0800, Gao Xiang wrote:
-> > 
-> > > > That's why I don't like this hook - I think hiding data operations
-> > > > and/or custom bio manipulations in opaque filesystem callouts is
-> > > > completely the wrong approach to be taking. We need to do these
-> > > > things in a generic manner so that all filesystems (and block
-> > > > devices!) that use the iomap infrastructure can take advantage of
-> > > > them, not just one of them.
-> > > > 
-> > > > Quite frankly, I don't care if it takes more time and work up front,
-> > > > I'm tired of expedient hacks to merge code quickly repeatedly biting
-> > > > us on the arse and wasting far more time sorting out than we would
-> > > > have spent getting it right in the first place.
-> > > 
-> > > Sure. I am open to ideas. What are you proposing?
-> > 
-> > That you think about how to normalise the btrfs IO path to fit into
-> > the standard iomap/blockdev model, rather than adding special hacks
-> > to iomap to allow an opaque, custom, IO model to be shoe-horned into
-> > the generic code.
-> > 
-> > For example, post-read validation requires end-io processing,
-> > whether it be encryption, decompression, CRC/T10 validation, etc. The
-> > iomap end-io completion has all the information needed to run these
-> > things, whether it be a callout to the filesystem for custom
-> > processing checking, or a generic "decrypt into supplied data page"
-> > sort of thing. These all need to be done in the same place, so we
-> > should have common support for this. And I suspect the iomap should
-> > also state in a flag that something like this is necessary (e.g.
-> > IOMAP_FL_ENCRYPTED indicates post-IO decryption needs to be run).
-> 
-> Add some word to this topic, I think introducing a generic full approach
-> to IOMAP for encryption, decompression, verification is hard to meet all
-> filesystems, and seems unnecessary, especially data compression is involved.
-> 
-> Since the data decompression will expand the data, therefore the logical
-> data size is not same as the physical data size:
-> 
-> 1) IO submission should be applied to all physical data, but data
->    decompression will be eventually applied to logical mapping.
->    As for EROFS, it submits all physical pages with page->private
->    points to management structure which maintain all logical pages
->    as well for further decompression. And time-sharing approach is
->    used to save the L2P mapping array in these allocated pages itself.
-> 
->    In addition, IOMAP also needs to consider fixed-sized output/input
->    difference which is filesystem specific and I have no idea whether
->    involveing too many code for each requirement is really good for IOMAP;
-> 
-> 2) The post-read processing order is another negotiable stuff.
->    Although there is no benefit to select verity->decrypt rather than
->    decrypt->verity; but when compression is involved, the different
->    orders could be selected by different filesystem users:
-> 
->     1. decrypt->verity->decompress
-> 
->     2. verity->decompress->decrypt
-> 
->     3. decompress->decrypt->verity
-> 
->    1. and 2. could cause less computation since it processes
->    compressed data, and the security is good enough since
->    the behavior of decompression algorithm is deterministic.
->    3 could cause more computation.
-> 
-> All I want to say is the post process is so complicated since we have
-> many selection if encryption, decompression, verification are all involved.
-> 
-> Maybe introduce a core subset to IOMAP is better for long-term
-> maintainment and better performance. And we should consider it
-> more carefully.
-> 
+This series introduces generic functions to make top-down mmap layout
+easily accessible to architectures, in particular riscv which was
+the initial goal of this series.
+The generic implementation was taken from arm64 and used successively
+by arm, mips and finally riscv.
 
-FWIW, the only order that actually makes sense is decrypt->decompress->verity.
+Note that in addition the series fixes 2 issues:
+- stack randomization was taken into account even if not necessary.
+- [1] fixed an issue with mmap base which did not take into account
+  randomization but did not report it to arm and mips, so by moving
+  arm64 into a generic library, this problem is now fixed for both
+  architectures.
 
-Decrypt before decompress, i.e. encrypt after compress, because only the
-plaintext can be compressible; the ciphertext isn't.
+This work is an effort to factorize architecture functions to avoid
+code duplication and oversights as in [1].
 
-Verity last, on the original data, because otherwise the file hash that
-fs-verity reports would be specific to that particular inode on-disk and
-therefore would be useless for authenticating the file's user-visible contents.
+[1]: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1429066.html
 
-[By "verity" I mean specifically fs-verity.  Integrity-only block checksums are
-a different case; those can be done at any point, but doing them on the
-compressed data would make sense as then there would be less to checksum.
+Changes in v6:
+  - Do not handle sv48 as it will be correctly implemented later: assume
+    64BIT <=> sv39.
+  - Add acked-by from Paul
 
-And yes, compression+encryption leaks information about the original data, so
-may not be advisable.  My point is just that if the two are nevertheless
-combined, it only makes sense to compress the plaintext.]
+Changes in v5:
+  - Fix [PATCH 11/14]
+  - Rebase on top of v5.3rc2 and commit
+    "riscv: kbuild: add virtual memory system selection"
+  - [PATCH 14/14] now takes into account the various virtual memory systems
 
-- Eric
+Changes in v4:
+  - Make ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT select ARCH_HAS_ELF_RANDOMIZE
+    by default as suggested by Kees,
+  - ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT depends on MMU and defines the
+    functions needed by ARCH_HAS_ELF_RANDOMIZE => architectures that use
+    the generic mmap topdown functions cannot have ARCH_HAS_ELF_RANDOMIZE
+    selected without MMU, but I think it's ok since randomization without
+    MMU does not add much security anyway.
+  - There is no common API to determine if a process is 32b, so I came up with
+    !IS_ENABLED(CONFIG_64BIT) || is_compat_task() in [PATCH v4 12/14].
+  - Mention in the change log that x86 already takes care of not offseting mmap
+    base address if the task does not want randomization.
+  - Re-introduce a comment that should not have been removed.
+  - Add Reviewed/Acked-By from Paul, Christoph and Kees, thank you for that.
+  - I tried to minimize the changes from the commits in v3 in order to make
+    easier the review of the v4, the commits changed or added are:
+    - [PATCH v4 5/14]
+    - [PATCH v4 8/14]
+    - [PATCH v4 11/14]
+    - [PATCH v4 12/14]
+    - [PATCH v4 13/14]
+
+Changes in v3:
+  - Split into small patches to ease review as suggested by Christoph
+    Hellwig and Kees Cook
+  - Move help text of new config as a comment, as suggested by Christoph
+  - Make new config depend on MMU, as suggested by Christoph
+
+Changes in v2 as suggested by Christoph Hellwig:
+  - Preparatory patch that moves randomize_stack_top
+  - Fix duplicate config in riscv
+  - Align #if defined on next line => this gives rise to a checkpatch
+    warning. I found this pattern all around the tree, in the same proportion
+    as the previous pattern which was less pretty:
+    git grep -C 1 -n -P "^#if defined.+\|\|.*\\\\$" 
+
+Alexandre Ghiti (14):
+  mm, fs: Move randomize_stack_top from fs to mm
+  arm64: Make use of is_compat_task instead of hardcoding this test
+  arm64: Consider stack randomization for mmap base only when necessary
+  arm64, mm: Move generic mmap layout functions to mm
+  arm64, mm: Make randomization selected by generic topdown mmap layout
+  arm: Properly account for stack randomization and stack guard gap
+  arm: Use STACK_TOP when computing mmap base address
+  arm: Use generic mmap top-down layout and brk randomization
+  mips: Properly account for stack randomization and stack guard gap
+  mips: Use STACK_TOP when computing mmap base address
+  mips: Adjust brk randomization offset to fit generic version
+  mips: Replace arch specific way to determine 32bit task with generic
+    version
+  mips: Use generic mmap top-down layout and brk randomization
+  riscv: Make mmap allocation top-down by default
+
+ arch/Kconfig                       |  11 +++
+ arch/arm/Kconfig                   |   2 +-
+ arch/arm/include/asm/processor.h   |   2 -
+ arch/arm/kernel/process.c          |   5 --
+ arch/arm/mm/mmap.c                 |  52 --------------
+ arch/arm64/Kconfig                 |   2 +-
+ arch/arm64/include/asm/processor.h |   2 -
+ arch/arm64/kernel/process.c        |   8 ---
+ arch/arm64/mm/mmap.c               |  72 -------------------
+ arch/mips/Kconfig                  |   2 +-
+ arch/mips/include/asm/processor.h  |   5 --
+ arch/mips/mm/mmap.c                |  84 ----------------------
+ arch/riscv/Kconfig                 |  12 ++++
+ fs/binfmt_elf.c                    |  20 ------
+ include/linux/mm.h                 |   2 +
+ kernel/sysctl.c                    |   6 +-
+ mm/util.c                          | 107 ++++++++++++++++++++++++++++-
+ 17 files changed, 138 insertions(+), 256 deletions(-)
+
+-- 
+2.20.1
+
