@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C260585E58
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 11:31:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79BF085E55
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 11:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732297AbfHHJbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1732302AbfHHJbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 8 Aug 2019 05:31:23 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:59627 "EHLO
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:59647 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732281AbfHHJbU (ORCPT
+        with ESMTP id S1732163AbfHHJbW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 05:31:20 -0400
+        Thu, 8 Aug 2019 05:31:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1565256680; x=1596792680;
+  t=1565256682; x=1596792682;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=L+q9uysGobuJDzywTc2ewr95QDB6LcwNJCL8Gp3Ba0w=;
-  b=JbJhBWfr8hd4pSyX0UYUrwGJIsiI48rYSVGLzI7vBN4xOmUGDkNFV+/4
-   LLMrl5r6eegs7fJRoNXFMF3/31EoXTYUC1jLgao8fDsT6kXkXoMpvyJ+X
-   vSIS7AlezcNLm0hO1NMXG81nq//WFN3E1xbk0v/xRXGr7tArtlELldasQ
-   1EQy1pAkLnLkWrfkHwiplneFoX8Eml7APbtZHsl0dOLYIPTLJksI6/gJw
-   5iQC4r155MWtztjAPCp/4AQuUJnqnI30O5u3+ALRLjJQVrh3CHXT18dK5
-   K3nTfvzX3D4TtLBsHuyG/ceU7eMs/jQ702dhnOvqbwH7VIaESjsmtwM7g
-   g==;
-IronPort-SDR: Ct/G8J/b1UilGsRUKvQx5HGONY58052lAZX8j5TE6LgCaVxT5+X137tLKykl7eixDKeQgqaSeo
- 8PwCA2eS3TocM768EOcCYY0PThY9PgiZ9aDvwPDrewoKN3hOcfSC+g70Ed2oCdri9CLvkZff2T
- llDd7gRPs7LJNlphkpiYwMzMakNVweIO61KWqFAikCkFDFAe5TYCJCCGuJ1hWSxVwGKEd3Axo/
- gC/Xg9qfkBkASwoIK8nQmIlxmJjwUUnkDxwkRfowM2JMh7h3LXtDJv4aQX+MdaOTuGP4UHvhRv
- xI8=
+  bh=tlSRYL+GTtWyMRutPWGcsp9feWnsZ7UbgYNziYdC/js=;
+  b=V5093T7PvKdI/jY8O8csXEx+Ijkg4H7z15H6YNLkeOiWfkcq8NHf+6W+
+   /qgqxjhtJE9jSbwP+hG5LbZPAVtEJokv7nJROgikoYi7y05INln1nnk/j
+   WR92wvbbB2LBwp7e3NxVxYf2NTcOUoV5QATtAfAp56YYtuD5MOWvm4Nrx
+   8efh+ril3DloJG8JD56f0des49P+Dz9V7MC3JiHN+wYbv6lX3Sq0uoAlZ
+   5EeBzSy80vcZPYQyg3bVqt6jzcfcae5yaLjLS0TfsX2blHhIp45EqyyB/
+   g4vvNYO/x3yM+ClomLLuIrPvBo8bvbSS1mzHGo7Ov5qPaFDGc/aRn4CRA
+   A==;
+IronPort-SDR: 6mWWnD9eVAsrS4/ERNWZMUZUflpUqsG+t42BHQU2HqfBKmzeJ3BWX/ZA7VImSMaMelt+7pV/2Y
+ xOd410orh+3jHhklQ5iQXLdzBh9rUeYy/2OqMyT4Kms8zqcEz8e0RZBpVhAOVC6ObYb0OhBkbp
+ ByZ5Nvp7Dz9MAOJDVx1yskC6oqRXF3Fu/QRM6AeflEmxSi+gZwXXRxOhTr+L/UqmQBfHAQbZ+O
+ U8MkdSF6o5ee4yZd75R1iauqgfc3E5C6vJs+vVz5L+LDesI6qHhDPeHCOtkFYqwth1f4Pb3iEQ
+ RqI=
 X-IronPort-AV: E=Sophos;i="5.64,360,1559491200"; 
-   d="scan'208";a="115363305"
+   d="scan'208";a="115363315"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Aug 2019 17:31:20 +0800
-IronPort-SDR: 3gt2ev8PzMoxWeXvtIQHDMHR9Ix+QSauqcSNfE1vdIEDyblWmPp5VZrVjX6aSc6OkOq+uWepdW
- U2AQU8QuwMDgTQPSkUSXcRK9QC628JwII1GuEYswjb8KNkcEV9fyZFTyIgWqHfGhrYpr9BKKLS
- zgtIBwmGJ2iB+vbJYCa5dpdtS6z3bvY4wScTJXL7vjJVkafHZi8vM2AbgWLfTRrbUmOiYFLGfQ
- nsMHpIXF0lOjKMWeQ4+ZrWAgJGtLnXzLN6A5aGLbLm+snVswuZWAMdv6b251P6RWJ736jOuFVD
- EwvmMKP936HNatizaKRMqwEz
+  by ob1.hgst.iphmx.com with ESMTP; 08 Aug 2019 17:31:22 +0800
+IronPort-SDR: L1Sf3DNe40Ghm4ZNVkhDBD4Qe4VqjwcPiOuYlJI+2yVGOYKGyZbgMvl4fjWZcTZFkpwusOsOWG
+ 6nQaLJaddj/6K8+V4KkFYIu9e3LE4NF+CJ+xOShk1uEp8/M1RI/eCcs2H0UDPyL7niW6MBruZh
+ mwNteL2TPryA9h4QBNMZT0mqYT+yws7ERcMZlKIF77FpALTzYeG72vzUbYJi276kv1etf/BjRp
+ ip9e0J3H55uDs9J9kb0JLbJfaqU0XEzLkwarLUviFCTCnaLilW83AmHp9wYmRk97wxDvKmICPI
+ dsCjlnsNnnW2tSdr0Q/pHTal
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 02:29:04 -0700
-IronPort-SDR: xX2J41Lsh3rGBMRJCkY9hyBDSAQ7sIAKt3MjxI+cdMlZiBcMxfE0A3N3eqYwaSD9IKEsrx5lI4
- Ju8sddG6vgS5MiYJbzsiq7HlxJhkQpB5RzgUj4s9cPbzOvSgCc6UHap1x4TmvvKNpnstd96AlB
- cd3Ig5ORFEO5+lpgmy1fr7d3otaO2kaZjwttz58XkC123qnsmHvtVn8+GewekL9cP3l4Xld2fr
- LJxlK3jw9ifrxVvXsz398NLIRvYjP1v2+CrxBq/v0t9monCSj5WH+W2qw26KHaLbbLraK74f+j
- gps=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 02:29:06 -0700
+IronPort-SDR: 562Ffc8W/J3sp2S09jR2zOKeoNrL+cJl6jQmACFX/1uKC2spM4dr7Bx21RimySJ4rq/XWhWbYS
+ 7x84e3fMmFz9eihV3fv2vCSkfHw94DZqYMXcT9x7WilEr/6fRc1juD+FcVwRrN1D7hPw87b6kf
+ fVik+GXuvePtDWYPxlo7abFfUww2oCB7x2gjmYrqNg/tjFFv4tgpZRQ+WWUDWyX1l2nZnQ64L8
+ vbTSiA9ZQz3HwwFNvy8phGwc++tjnrjkk2lDQuqdHibxzaSW4AiaY7tr/YnXrJnN/l34bheqSo
+ txc=
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 08 Aug 2019 02:31:19 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 08 Aug 2019 02:31:21 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -57,9 +57,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Hannes Reinecke <hare@suse.com>, linux-fsdevel@vger.kernel.org,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v3 04/27] btrfs: disallow RAID5/6 in HMZONED mode
-Date:   Thu,  8 Aug 2019 18:30:15 +0900
-Message-Id: <20190808093038.4163421-5-naohiro.aota@wdc.com>
+Subject: [PATCH v3 05/27] btrfs: disallow space_cache in HMZONED mode
+Date:   Thu,  8 Aug 2019 18:30:16 +0900
+Message-Id: <20190808093038.4163421-6-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808093038.4163421-1-naohiro.aota@wdc.com>
 References: <20190808093038.4163421-1-naohiro.aota@wdc.com>
@@ -70,43 +70,87 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Supporting the RAID5/6 profile in HMZONED mode is not trivial. For example,
-non-full stripe writes will cause overwriting parity blocks. When we do a
-non-full stripe write, it writes to the parity block with the data at that
-moment. Then, another write to the stripes will try to overwrite the parity
-block with new parity value. However, sequential zones do not allow such
-parity overwriting.
-
-Furthermore, using RAID5/6 on SMR drives, which usually have a huge
-capacity, incur large overhead of rebuild. Such overhead can lead to
-higher volume failure rate (e.g. additional drive failure during
-rebuild) because of the increased rebuild time.
-
-Thus, let's disable RAID5/6 profile in HMZONED mode for now.
+As updates to the space cache are in-place, the space cache cannot be
+located over sequential zones and there is no guarantees that the device
+will have enough conventional zones to store this cache. Resolve this
+problem by disabling completely the space cache.  This does not introduces
+any problems with sequential block groups: all the free space is located
+after the allocation pointer and no free space before the pointer. There is
+no need to have such cache.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/hmzoned.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/btrfs/hmzoned.c | 18 ++++++++++++++++++
+ fs/btrfs/hmzoned.h |  1 +
+ fs/btrfs/super.c   | 10 ++++++++--
+ 3 files changed, 27 insertions(+), 2 deletions(-)
 
 diff --git a/fs/btrfs/hmzoned.c b/fs/btrfs/hmzoned.c
-index 512674d8f488..641c83f6ea73 100644
+index 641c83f6ea73..99a03ab3b5de 100644
 --- a/fs/btrfs/hmzoned.c
 +++ b/fs/btrfs/hmzoned.c
-@@ -222,6 +222,13 @@ int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
- 		goto out;
- 	}
- 
-+	/* RAID56 is not allowed */
-+	if (btrfs_fs_incompat(fs_info, RAID56)) {
-+		btrfs_err(fs_info, "HMZONED mode does not support RAID56");
-+		ret = -EINVAL;
-+		goto out;
+@@ -234,3 +234,21 @@ int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
+ out:
+ 	return ret;
+ }
++
++int btrfs_check_mountopts_hmzoned(struct btrfs_fs_info *info)
++{
++	if (!btrfs_fs_incompat(info, HMZONED))
++		return 0;
++
++	/*
++	 * SPACE CACHE writing is not CoWed. Disable that to avoid
++	 * write errors in sequential zones.
++	 */
++	if (btrfs_test_opt(info, SPACE_CACHE)) {
++		btrfs_err(info,
++		  "cannot enable disk space caching with HMZONED mode");
++		return -EINVAL;
 +	}
 +
- 	btrfs_info(fs_info, "HMZONED mode enabled, zone size %llu B",
- 		   fs_info->zone_size);
- out:
++	return 0;
++}
+diff --git a/fs/btrfs/hmzoned.h b/fs/btrfs/hmzoned.h
+index 29cfdcabff2f..83579b2dc0a4 100644
+--- a/fs/btrfs/hmzoned.h
++++ b/fs/btrfs/hmzoned.h
+@@ -28,6 +28,7 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+ int btrfs_get_dev_zone_info(struct btrfs_device *device);
+ void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
+ int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info);
++int btrfs_check_mountopts_hmzoned(struct btrfs_fs_info *info);
+ 
+ static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
+ {
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index d7879a5a2536..496d8b74f9a2 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -440,8 +440,12 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+ 	cache_gen = btrfs_super_cache_generation(info->super_copy);
+ 	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
+ 		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
+-	else if (cache_gen)
+-		btrfs_set_opt(info->mount_opt, SPACE_CACHE);
++	else if (cache_gen) {
++		if (btrfs_fs_incompat(info, HMZONED))
++			WARN_ON(1);
++		else
++			btrfs_set_opt(info->mount_opt, SPACE_CACHE);
++	}
+ 
+ 	/*
+ 	 * Even the options are empty, we still need to do extra check
+@@ -877,6 +881,8 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+ 		ret = -EINVAL;
+ 
+ 	}
++	if (!ret)
++		ret = btrfs_check_mountopts_hmzoned(info);
+ 	if (!ret && btrfs_test_opt(info, SPACE_CACHE))
+ 		btrfs_info(info, "disk space caching is enabled");
+ 	if (!ret && btrfs_test_opt(info, FREE_SPACE_TREE))
 -- 
 2.22.0
 
