@@ -2,128 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1900686255
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 14:54:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CC23863B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 15:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732725AbfHHMyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 08:54:32 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3935 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732643AbfHHMyb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:54:31 -0400
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 09FD6F34FF96F504C555;
-        Thu,  8 Aug 2019 20:54:28 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 8 Aug 2019 20:54:27 +0800
-Received: from 138 (10.175.124.28) by dggeme762-chm.china.huawei.com
- (10.3.19.108) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 8
- Aug 2019 20:54:27 +0800
-Date:   Thu, 8 Aug 2019 21:11:39 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Dave Chinner <david@fromorbit.com>
-CC:     Eric Biggers <ebiggers@kernel.org>,
-        Goldwyn Rodrigues <RGoldwyn@suse.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, <miaoxie@huawei.com>
-Subject: Re: [PATCH 10/13] iomap: use a function pointer for dio submits
-Message-ID: <20190808131139.GH28630@138>
-References: <20190802220048.16142-1-rgoldwyn@suse.de>
- <20190802220048.16142-11-rgoldwyn@suse.de>
- <20190804234321.GC7689@dread.disaster.area>
- <1565021323.13240.14.camel@suse.com>
- <20190805215458.GH7689@dread.disaster.area>
- <20190808042640.GA28630@138>
- <20190808054936.GA5319@sol.localdomain>
- <20190808081647.GI7689@dread.disaster.area>
- <20190808091632.GF28630@138>
- <20190808112139.GG28630@138>
+        id S2389856AbfHHNxc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 09:53:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56358 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389823AbfHHNxc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Aug 2019 09:53:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9uoVWfQGn8VAfm+7rvKUTjXtdJhUP1hpvCdefWlpXow=; b=siDDZt+Z5Ntm7ezjx80S8yED5
+        55JIeXIEhsOzOdPwc5s9i1QeB+hnvaQ7Cw7Cpm+WBegcPqA+JnxWh9Z6gGUfl9fDFsuRvq9ZgcBMc
+        rvZARni+rrp4v1WEKAA2EtZmGm78YbjxVfz1aeSpHMz50R0GUTeRGfcbWLWp/mUV2/YWEcohHl1rT
+        cM8rpfRd6AJX/h8e/iP6cLgslRDRMNQmvbHa+f+7kKchkTbNsMV83j1qVuj8Ea9A8CZq9gxeePUEW
+        J1ztgsoM0RCRFmt/dw5vJL+9LEDHe+cMRbpGQTheQQ4HLRJ8Vxvsku5jI1y9exN4BZ+pujOiHAIJr
+        hPf+xUkHg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hvirC-0000OC-00; Thu, 08 Aug 2019 13:53:30 +0000
+Date:   Thu, 8 Aug 2019 06:53:29 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Mike Snitzer <msnitzer@redhat.com>, junxiao.bi@oracle.com,
+        dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
+        honglei.wang@oracle.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] direct-io: use GFP_NOIO to avoid deadlock
+Message-ID: <20190808135329.GG5482@bombadil.infradead.org>
+References: <alpine.LRH.2.02.1908080540240.15519@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190808112139.GG28630@138>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Originating-IP: [10.175.124.28]
-X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+In-Reply-To: <alpine.LRH.2.02.1908080540240.15519@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 07:21:39PM +0800, Gao Xiang wrote:
-> On Thu, Aug 08, 2019 at 05:29:47PM +0800, Gao Xiang wrote:
-> > On Thu, Aug 08, 2019 at 06:16:47PM +1000, Dave Chinner wrote:
-> > > On Wed, Aug 07, 2019 at 10:49:36PM -0700, Eric Biggers wrote:
-> > > > FWIW, the only order that actually makes sense is decrypt->decompress->verity.
-> > > 
-> > > *nod*
-> > > 
-> > > Especially once we get the inline encryption support for fscrypt so
-> > > the storage layer can offload the encrypt/decrypt to hardware via
-> > > the bio containing plaintext. That pretty much forces fscrypt to be
-> > > the lowest layer of the filesystem transformation stack.  This
-> > > hardware offload capability also places lots of limits on what you
-> > > can do with block-based verity layers below the filesystem. e.g.
-> > > using dm-verity when you don't know if there's hardware encryption
-> > > below or software encryption on top becomes problematic...
+On Thu, Aug 08, 2019 at 05:50:10AM -0400, Mikulas Patocka wrote:
+> A deadlock with this stacktrace was observed.
 > 
-> ...and I'm not talking of fs-verity, I personally think fs-verity
-> is great. I am only talking about a generic stuff.
-> 
-> In order to know which level becomes problematic, there even could
-> be another choice "decrypt->verity1->decompress->verity2" for such
-> requirement (assuming verity1/2 themselves are absolutely bug-free),
-> verity1 can be a strong merkle tree and verity2 is a weak form (just
-> like a simple Adler-32/crc32 in compressed block), thus we can locate
-> whether it's a decrypt or decompress bug.
-> 
-> Many compression algorithm containers already have such a weak
-> form such as gzip algorithm, so there is no need to add such
-> an extra step to postprocess.
-> 
-> and I have no idea which (decrypt->verity1->decompress->verity2 or
-> decrypt->decompress->verity) is faster since verity2 is rather simple.
-> However, if we use the only strong form in the end, there could be
-> a lot of extra IO and expensive multiple-level computations if files
-> are highly compressible.
-> 
-> On the other hand, such verity2 can be computed offline / avoided
-> by fuzzer tools for read-only scenerios (for example, after building
-> these images and do a full image verification with the given kernel)
-> in order to make sure its stability (In any case, I'm talking about
-> how to make those algorithms bug-free).
-> 
-> All I want to say is I think "decrypt->verity->decompress" is
-> reasonable as well.
+> The obvious problem here is that in the call chain 
+> xfs_vm_direct_IO->__blockdev_direct_IO->do_blockdev_direct_IO->kmem_cache_alloc 
+> we do a GFP_KERNEL allocation while we are in a filesystem driver and in a 
+> block device driver.
 
-... And another fundamental concern is that if we don't verify earlier
-(I mean on-disk data), then untrusted data will be transformed
-(decompressed and even decrypted if no inline encryption) with risk,
-and it seems _vulnerable_ if such decrypt / decompress algorithms have
-_security issues_ (such as Buffer Overflow). It seems that it's less
-security than do verity earlier.
+But that's not the problem.  The problem is the loop driver calls into the
+filesystem without calling memalloc_noio_save() / memalloc_noio_restore().
+There are dozens of places in XFS which use GFP_KERNEL allocations and
+all can trigger this same problem if called from the loop driver.
 
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> Gao Xiang
-> 
-> > 
-> > Add a word, I was just talking benefits between "decrypt->decompress->
-> > verity" and "decrypt->verity->decompress", I think both forms are
-> > compatible with inline en/decryption. I don't care which level
-> > "decrypt" is at... But maybe some user cares. Am I missing something?
-> > 
-> > Thanks,
-> > Gao Xiang
-> > 
+>   #14 [ffff88272f5af880] kmem_cache_alloc at ffffffff811f484b
+>   #15 [ffff88272f5af8d0] do_blockdev_direct_IO at ffffffff812535b3
+>   #16 [ffff88272f5afb00] __blockdev_direct_IO at ffffffff81255dc3
+>   #17 [ffff88272f5afb30] xfs_vm_direct_IO at ffffffffa01fe3fc [xfs]
+>   #18 [ffff88272f5afb90] generic_file_read_iter at ffffffff81198994
+>   #19 [ffff88272f5afc50] __dta_xfs_file_read_iter_2398 at ffffffffa020c970 [xfs]
+>   #20 [ffff88272f5afcc0] lo_rw_aio at ffffffffa0377042 [loop]
+>   #21 [ffff88272f5afd70] loop_queue_work at ffffffffa0377c3b [loop]
+>   #22 [ffff88272f5afe60] kthread_worker_fn at ffffffff810a8a0c
+>   #23 [ffff88272f5afec0] kthread at ffffffff810a8428
+>   #24 [ffff88272f5aff50] ret_from_fork at ffffffff81745242
