@@ -2,124 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FE6185ADF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 08:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60BE885B35
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 09:03:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731470AbfHHGd2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 02:33:28 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:51379 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725817AbfHHGd1 (ORCPT
+        id S1731030AbfHHHDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 03:03:31 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52377 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbfHHHDb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 02:33:27 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 6957F1BF207;
-        Thu,  8 Aug 2019 06:33:19 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
+        Thu, 8 Aug 2019 03:03:31 -0400
+Received: from p200300ddd71876597e7a91fffec98e25.dip0.t-ipconnect.de ([2003:dd:d718:7659:7e7a:91ff:fec9:8e25])
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hvcRp-0001ck-0m; Thu, 08 Aug 2019 09:02:53 +0200
+Date:   Thu, 8 Aug 2019 09:02:47 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Christoph Hellwig <hch@infradead.org>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
-Date:   Thu,  8 Aug 2019 02:17:56 -0400
-Message-Id: <20190808061756.19712-15-alex@ghiti.fr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190808061756.19712-1-alex@ghiti.fr>
-References: <20190808061756.19712-1-alex@ghiti.fr>
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [patch V2 0/7] fs: Substitute bit-spinlocks for PREEMPT_RT and
+ debugging
+In-Reply-To: <20190806061119.GA17492@infradead.org>
+Message-ID: <alpine.DEB.2.21.1908080858460.2882@nanos.tec.linutronix.de>
+References: <20190801010126.245731659@linutronix.de> <20190802075612.GA20962@infradead.org> <alpine.DEB.2.21.1908021107090.2285@nanos.tec.linutronix.de> <20190806061119.GA17492@infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order to avoid wasting user address space by using bottom-up mmap
-allocation scheme, prefer top-down scheme when possible.
+On Mon, 5 Aug 2019, Christoph Hellwig wrote:
+> On Fri, Aug 02, 2019 at 11:07:53AM +0200, Thomas Gleixner wrote:
+> > Last time I did, there was resistance :)
+> 
+> Do you have a pointer?  Note that in the buffer head case maybe
+> a hash lock based on the page address is even better, as we only
+> ever use the lock in the first buffer head of a page anyway..
 
-Before:
-root@qemuriscv64:~# cat /proc/self/maps
-00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
-00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
-00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
-00018000-00039000 rw-p 00000000 00:00 0          [heap]
-1555556000-155556d000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
-155556d000-155556e000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
-155556e000-155556f000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
-155556f000-1555570000 rw-p 00000000 00:00 0
-1555570000-1555572000 r-xp 00000000 00:00 0      [vdso]
-1555574000-1555576000 rw-p 00000000 00:00 0
-1555576000-1555674000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
-1555674000-1555678000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
-1555678000-155567a000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
-155567a000-15556a0000 rw-p 00000000 00:00 0
-3fffb90000-3fffbb1000 rw-p 00000000 00:00 0      [stack]
-
-After:
-root@qemuriscv64:~# cat /proc/self/maps
-00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
-00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
-00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
-2de81000-2dea2000 rw-p 00000000 00:00 0          [heap]
-3ff7eb6000-3ff7ed8000 rw-p 00000000 00:00 0
-3ff7ed8000-3ff7fd6000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
-3ff7fd6000-3ff7fda000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
-3ff7fda000-3ff7fdc000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
-3ff7fdc000-3ff7fe2000 rw-p 00000000 00:00 0
-3ff7fe4000-3ff7fe6000 r-xp 00000000 00:00 0      [vdso]
-3ff7fe6000-3ff7ffd000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
-3ff7ffd000-3ff7ffe000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
-3ff7ffe000-3ff7fff000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
-3ff7fff000-3ff8000000 rw-p 00000000 00:00 0
-3fff888000-3fff8a9000 rw-p 00000000 00:00 0      [stack]
-
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Acked-by: Paul Walmsley <paul.walmsley@sifive.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
----
- arch/riscv/Kconfig | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 59a4727ecd6c..87dc5370becb 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -54,6 +54,18 @@ config RISCV
- 	select EDAC_SUPPORT
- 	select ARCH_HAS_GIGANTIC_PAGE
- 	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
-+	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
-+	select HAVE_ARCH_MMAP_RND_BITS
-+
-+config ARCH_MMAP_RND_BITS_MIN
-+	default 18 if 64BIT
-+	default 8
-+
-+# max bits determined by the following formula:
-+#  VA_BITS - PAGE_SHIFT - 3
-+config ARCH_MMAP_RND_BITS_MAX
-+	default 24 if 64BIT # SV39 based
-+	default 17
+I need to search my archives, but I'm on a spotty and slow connection right
+now. Will do so when back home.
  
- config MMU
- 	def_bool y
--- 
-2.20.1
+> > What about the page lock?
+> > 
+> >   mm/slub.c:      bit_spin_lock(PG_locked, &page->flags);
+> 
+> One caller ouf of a gazillion that spins on the page lock instead of
+> sleepign on it like everyone else.  That should not have passed your
+> smell test to start with :)
+
+I surely stared at it, but that cannot sleep. It's in the middle of a
+preempt and interrupt disabled region and used on architectures which do
+not support CMPXCHG_DOUBLE and ALIGNED_STRUCT_PAGE ...
+
+Thanks,
+
+	tglx
+
+
 
