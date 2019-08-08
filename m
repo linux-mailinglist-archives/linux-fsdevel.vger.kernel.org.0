@@ -2,126 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3149A86575
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 17:17:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1456886645
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 17:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732749AbfHHPRM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 11:17:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35718 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730678AbfHHPRM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:17:12 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7005330A00DE;
-        Thu,  8 Aug 2019 15:17:11 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A280E5EE1D;
-        Thu,  8 Aug 2019 15:17:02 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id x78FH2gH019766;
-        Thu, 8 Aug 2019 11:17:02 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id x78FH1f4019762;
-        Thu, 8 Aug 2019 11:17:02 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Thu, 8 Aug 2019 11:17:01 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>
-cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Mike Snitzer <msnitzer@redhat.com>, junxiao.bi@oracle.com,
-        dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
-        honglei.wang@oracle.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: [PATCH] loop: set PF_MEMALLOC_NOIO for the worker thread
-In-Reply-To: <20190808135329.GG5482@bombadil.infradead.org>
-Message-ID: <alpine.LRH.2.02.1908081113540.18950@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1908080540240.15519@file01.intranet.prod.int.rdu2.redhat.com> <20190808135329.GG5482@bombadil.infradead.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S2390106AbfHHPyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 11:54:37 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43515 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728380AbfHHPyg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Aug 2019 11:54:36 -0400
+Received: by mail-ot1-f65.google.com with SMTP id j11so20112029otp.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2019 08:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=1sg8blSc4ktjYIlt+M6GsnZLOv8BJShN+hn4djS78FU=;
+        b=mIYi4WLdXWIumYUeDN6cnMSHjo105PssVlySrSrAVFJKfZh7TG7G1RZKLuO0anDBNn
+         Gpnfx6gn2opmmlvwQseCzMTgVv+uXDvkLCMriVnjJhLokn6wtZyLTMn2gOBWAr9LCuPf
+         G4kK+52fIKN7be4D1f3ZhgCD800bY35k9o3y+zvQd444Ef03+RM4DOdnt8SHstppzGiH
+         igaYPm42NustljaIDod+NbLxlQCR6takH+feS2j2eSO0d4pYYq7DYt5tQ6WSls8gUiD5
+         tMdLP7V8Dq+rN8oZTwJ0TW37Oc06Dcxd+8TDUXqz56XIavRmx6HCagDr9ou5ZZUJh1hz
+         e8Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=1sg8blSc4ktjYIlt+M6GsnZLOv8BJShN+hn4djS78FU=;
+        b=IjC56MQJe1VXei8xQOQDSQig86+XfnCEvSJtVC/5+slmFM0jorvC3uSHZqCIiqM2MO
+         7CnUKUIlHoY7z2CA1UDo4T7456c4rCYNb9/3juadtIhMmYJ1upquARiWokR7ApGxY9Hj
+         z+tRxkT7Blo2LNUyTUE/FpdcDgrfngA0x+EXago7HVFFCLJHvfGk1+ji73yYObdBNVXz
+         RxTm0tkEbSFeiimNONhUQRjcE63yCUI61DEYBwURmbxV3SCOzGvz7YlLBqy8tSnhY2Hr
+         w1Z5miXMs0fRBRgDttlZ7x+08Ny+jcUitXWvAoaru/jojqTPbCXRnm4Vsb7Zxtd297sj
+         GoJQ==
+X-Gm-Message-State: APjAAAVItpZq93aFjiusVn/FjOItEB6OLN2ZPlOeXNkOIH2vtxVJHL5P
+        JI+P3Tw488VF5xTO1pQcq1TdRQ==
+X-Google-Smtp-Source: APXvYqxx6/FJYqhLJnvLciidKkcc3FlpTPip8iGEIy8CrynVdPXCprALbLDJgDY0Mq5eplxkiyU7pQ==
+X-Received: by 2002:a9d:6150:: with SMTP id c16mr12962711otk.21.1565279675432;
+        Thu, 08 Aug 2019 08:54:35 -0700 (PDT)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id q11sm29370290oij.16.2019.08.08.08.54.33
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 08 Aug 2019 08:54:34 -0700 (PDT)
+Date:   Thu, 8 Aug 2019 08:54:16 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Al Viro <viro@zeniv.linux.org.uk>
+cc:     Christoph Hellwig <hch@lst.de>, Hugh Dickins <hughd@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        David Howells <dhowells@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCHv2 2/3] i915: convert to new mount API
+In-Reply-To: <20190808012314.GK1131@ZenIV.linux.org.uk>
+Message-ID: <alpine.LSU.2.11.1908080813380.12321@eggly.anvils>
+References: <20190805160307.5418-1-sergey.senozhatsky@gmail.com> <20190805160307.5418-3-sergey.senozhatsky@gmail.com> <20190805181255.GH1131@ZenIV.linux.org.uk> <20190805182834.GI1131@ZenIV.linux.org.uk> <alpine.LSU.2.11.1908060007190.1941@eggly.anvils>
+ <20190807063002.GG6627@lst.de> <20190808012314.GK1131@ZenIV.linux.org.uk>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 08 Aug 2019 15:17:11 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A deadlock with this stacktrace was observed.
+On Thu, 8 Aug 2019, Al Viro wrote:
+> On Wed, Aug 07, 2019 at 08:30:02AM +0200, Christoph Hellwig wrote:
+> > On Tue, Aug 06, 2019 at 12:50:10AM -0700, Hugh Dickins wrote:
+> > > Though personally I'm averse to managing "f"objects through
+> > > "m"interfaces, which can get ridiculous (notably, MADV_HUGEPAGE works
+> > > on the virtual address of a mapping, but the huge-or-not alignment of
+> > > that mapping must have been decided previously).  In Google we do use
+> > > fcntls F_HUGEPAGE and F_NOHUGEPAGE to override on a per-file basis -
+> > > one day I'll get to upstreaming those.
+> > 
+> > Such an interface seems very useful, although the two fcntls seem a bit
+> > odd.
+> > 
+> > But I think the point here is that the i915 has its own somewhat odd
+> > instance of tmpfs.  If we could pass the equivalent of the huge=*
+> > options to shmem_file_setup all that garbage (including the
+> > shmem_file_setup_with_mnt function) could go away.
+> 
+> ... or follow shmem_file_super() with whatever that fcntl maps to
+> internally.  I would really love to get rid of that i915 kludge.
 
-The loop thread does a GFP_KERNEL allocation, it calls into dm-bufio
-shrinker and the shrinker depends on I/O completion in the dm-bufio
-subsystem.
+As to the immediate problem of i915_gemfs using remount_fs on linux-next,
+IIUC, all that is necessary at the moment is the deletions patch below
+(but I'd prefer that to come from the i915 folks).  Since gemfs has no
+need to change the huge option from its default to its default.
 
-In order to fix the deadlock (and other similar ones), we set the flag
-PF_MEMALLOC_NOIO at loop thread entry.
+As to the future of when they get back to wanting huge pages in gemfs,
+yes, that can probably best be arranged by using the internals of an
+fcntl F_HUGEPAGE on those objects that would benefit from it.
 
-PID: 474    TASK: ffff8813e11f4600  CPU: 10  COMMAND: "kswapd0"
-   #0 [ffff8813dedfb938] __schedule at ffffffff8173f405
-   #1 [ffff8813dedfb990] schedule at ffffffff8173fa27
-   #2 [ffff8813dedfb9b0] schedule_timeout at ffffffff81742fec
-   #3 [ffff8813dedfba60] io_schedule_timeout at ffffffff8173f186
-   #4 [ffff8813dedfbaa0] bit_wait_io at ffffffff8174034f
-   #5 [ffff8813dedfbac0] __wait_on_bit at ffffffff8173fec8
-   #6 [ffff8813dedfbb10] out_of_line_wait_on_bit at ffffffff8173ff81
-   #7 [ffff8813dedfbb90] __make_buffer_clean at ffffffffa038736f [dm_bufio]
-   #8 [ffff8813dedfbbb0] __try_evict_buffer at ffffffffa0387bb8 [dm_bufio]
-   #9 [ffff8813dedfbbd0] dm_bufio_shrink_scan at ffffffffa0387cc3 [dm_bufio]
-  #10 [ffff8813dedfbc40] shrink_slab at ffffffff811a87ce
-  #11 [ffff8813dedfbd30] shrink_zone at ffffffff811ad778
-  #12 [ffff8813dedfbdc0] kswapd at ffffffff811ae92f
-  #13 [ffff8813dedfbec0] kthread at ffffffff810a8428
-  #14 [ffff8813dedfbf50] ret_from_fork at ffffffff81745242
+Though my intention there was that the "huge=never" default ought
+to continue to refuse to give huge pages, even when asked by fcntl.
+So a little hackery may still be required, to allow the i915_gemfs
+internal mount to get huge pages when a user mount would not.
 
-  PID: 14127  TASK: ffff881455749c00  CPU: 11  COMMAND: "loop1"
-   #0 [ffff88272f5af228] __schedule at ffffffff8173f405
-   #1 [ffff88272f5af280] schedule at ffffffff8173fa27
-   #2 [ffff88272f5af2a0] schedule_preempt_disabled at ffffffff8173fd5e
-   #3 [ffff88272f5af2b0] __mutex_lock_slowpath at ffffffff81741fb5
-   #4 [ffff88272f5af330] mutex_lock at ffffffff81742133
-   #5 [ffff88272f5af350] dm_bufio_shrink_count at ffffffffa03865f9 [dm_bufio]
-   #6 [ffff88272f5af380] shrink_slab at ffffffff811a86bd
-   #7 [ffff88272f5af470] shrink_zone at ffffffff811ad778
-   #8 [ffff88272f5af500] do_try_to_free_pages at ffffffff811adb34
-   #9 [ffff88272f5af590] try_to_free_pages at ffffffff811adef8
-  #10 [ffff88272f5af610] __alloc_pages_nodemask at ffffffff811a09c3
-  #11 [ffff88272f5af710] alloc_pages_current at ffffffff811e8b71
-  #12 [ffff88272f5af760] new_slab at ffffffff811f4523
-  #13 [ffff88272f5af7b0] __slab_alloc at ffffffff8173a1b5
-  #14 [ffff88272f5af880] kmem_cache_alloc at ffffffff811f484b
-  #15 [ffff88272f5af8d0] do_blockdev_direct_IO at ffffffff812535b3
-  #16 [ffff88272f5afb00] __blockdev_direct_IO at ffffffff81255dc3
-  #17 [ffff88272f5afb30] xfs_vm_direct_IO at ffffffffa01fe3fc [xfs]
-  #18 [ffff88272f5afb90] generic_file_read_iter at ffffffff81198994
-  #19 [ffff88272f5afc50] __dta_xfs_file_read_iter_2398 at ffffffffa020c970 [xfs]
-  #20 [ffff88272f5afcc0] lo_rw_aio at ffffffffa0377042 [loop]
-  #21 [ffff88272f5afd70] loop_queue_work at ffffffffa0377c3b [loop]
-  #22 [ffff88272f5afe60] kthread_worker_fn at ffffffff810a8a0c
-  #23 [ffff88272f5afec0] kthread at ffffffff810a8428
-  #24 [ffff88272f5aff50] ret_from_fork at ffffffff81745242
+As to whether shmem_file_setup_with_mnt() needs to live: I've given
+that no thought, but accept that shm_mnt is such a ragbag of different
+usages, that i915 is right to prefer their own separate gemfs mount.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org
+Hugh
 
----
- drivers/block/loop.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-2.6/drivers/block/loop.c
-===================================================================
---- linux-2.6.orig/drivers/block/loop.c	2019-08-08 17:02:50.000000000 +0200
-+++ linux-2.6/drivers/block/loop.c	2019-08-08 17:08:14.000000000 +0200
-@@ -885,7 +885,7 @@ static void loop_unprepare_queue(struct
+--- mmotm/drivers/gpu/drm/i915/gem/i915_gemfs.c	2019-07-21 19:40:16.573703780 -0700
++++ linux/drivers/gpu/drm/i915/gem/i915_gemfs.c	2019-08-08 07:19:23.967689058 -0700
+@@ -24,28 +24,6 @@ int i915_gemfs_init(struct drm_i915_priv
+ 	if (IS_ERR(gemfs))
+ 		return PTR_ERR(gemfs);
  
- static int loop_kthread_worker_fn(void *worker_ptr)
- {
--	current->flags |= PF_LESS_THROTTLE;
-+	current->flags |= PF_LESS_THROTTLE | PF_MEMALLOC_NOIO;
- 	return kthread_worker_fn(worker_ptr);
- }
+-	/*
+-	 * Enable huge-pages for objects that are at least HPAGE_PMD_SIZE, most
+-	 * likely 2M. Note that within_size may overallocate huge-pages, if say
+-	 * we allocate an object of size 2M + 4K, we may get 2M + 2M, but under
+-	 * memory pressure shmem should split any huge-pages which can be
+-	 * shrunk.
+-	 */
+-
+-	if (has_transparent_hugepage()) {
+-		struct super_block *sb = gemfs->mnt_sb;
+-		/* FIXME: Disabled until we get W/A for read BW issue. */
+-		char options[] = "huge=never";
+-		int flags = 0;
+-		int err;
+-
+-		err = sb->s_op->remount_fs(sb, &flags, options);
+-		if (err) {
+-			kern_unmount(gemfs);
+-			return err;
+-		}
+-	}
+-
+ 	i915->mm.gemfs = gemfs;
  
-
+ 	return 0;
