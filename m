@@ -2,125 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8806885B69
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 09:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D03985B8A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 09:28:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731167AbfHHHR3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 03:17:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41113 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725817AbfHHHR3 (ORCPT
+        id S1731178AbfHHH2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 03:28:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55956 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730887AbfHHH2O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 03:17:29 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c2so90574578wrm.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2019 00:17:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=sm6fYVDkcPTF7LJfQsGbQg6KjeK+khdgWJ1+4in8e6k=;
-        b=IErSXtqHmOwFglOaNA/jMa8qrbHbOLkR8gef3hGkBo29KZrxnHaQLeUsoeaFQwWJBR
-         VnjvdtEnZAdl3BoJpSEVm0vz5Oy+36jn5bSc+9enO6lJO6H7VHjrWlrwHeWUrJJA0LuA
-         MoLVAbRw21s0mYoLlKjevuxVwz7xVCLAHvFUTF1IUHIFwCwYM6q6srEsYz6/DF9E6Fce
-         lB/Kjm9IAmMmjDPxsPhWPsXZuumaDg3voGDiduWQ8A13Bw8aVj9p61ookmGr6XUKEiVZ
-         rkmR1ISREsD6x8wdeDKvd9q9MBXvHFeD1l53CDYa/yxbVeKNz/5hx5GvciZwTFGVD/eA
-         KXJA==
-X-Gm-Message-State: APjAAAVIPjw1J+FFyM/lr9PMYpB7h4Nf7VKUFmyDskBhmeuo5UPYeeTK
-        4UUeA1f14ICFFlgW1QxyAZXPEQ==
-X-Google-Smtp-Source: APXvYqwZvj/xw6NKXfIzDpGy4jLtjE9fwfHT6KvYlp0xYmEC64p2dIxSu9E7vCfoxWYn3ee/WcZD/w==
-X-Received: by 2002:adf:d081:: with SMTP id y1mr15854056wrh.34.1565248646999;
-        Thu, 08 Aug 2019 00:17:26 -0700 (PDT)
-Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
-        by smtp.gmail.com with ESMTPSA id j33sm216702369wre.42.2019.08.08.00.17.25
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 00:17:26 -0700 (PDT)
-Date:   Thu, 8 Aug 2019 09:17:24 +0200
-From:   Carlos Maiolino <cmaiolino@redhat.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        adilger@dilger.ca, jaegeuk@kernel.org, miklos@szeredi.hu,
-        rpeterso@redhat.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 4/9] fibmap: Use bmap instead of ->bmap method in
- ioctl_fibmap
-Message-ID: <20190808071723.532hytasnglsuukf@pegasus.maiolino.io>
-Mail-Followup-To: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        adilger@dilger.ca, jaegeuk@kernel.org, miklos@szeredi.hu,
-        rpeterso@redhat.com, linux-xfs@vger.kernel.org
-References: <20190731141245.7230-1-cmaiolino@redhat.com>
- <20190731141245.7230-5-cmaiolino@redhat.com>
- <20190731231217.GV1561054@magnolia>
- <20190802091937.kwutqtwt64q5hzkz@pegasus.maiolino.io>
- <20190802151400.GG7138@magnolia>
- <20190805102729.ooda6sg65j65ojd4@pegasus.maiolino.io>
- <20190805151258.GD7129@magnolia>
- <20190806053840.GH13409@lst.de>
- <20190806120723.eb72ykmukgjejiku@pegasus.maiolino.io>
- <20190806144800.GN7138@magnolia>
+        Thu, 8 Aug 2019 03:28:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DKEna/7+DBlpAfStQG61tcPutdE/j8S3q0Xub5Jf2r4=; b=un30FUNrFKnGvbWxL+njNsq6w
+        ++c+PapB3gmasvpSSJNS+t7qIC6VEKohHyFrdnrsPOdHe5wMvSmcn2TtO9b7amLOy/9tSxwIjRfef
+        E0JMnsizL9DjhElzg5QPiYm5PFzKiyYmRKkcblFvHgQN6mxrZgeWHQpX9tJYL4Grkefnfez8PXmmj
+        oR0MEo8Gj5RIYdKyL1/ygwECjZibsh8aAeEMKW48rh4xVD4QQ1oW4miqa4CvdVMdVGhN9k5y/dTa/
+        uIJJeOoPNxrK92pSWJrFJslttBNoz83TgGFs9cKRTlFA6g1tknT6SmjO9aYXzSLmSJzrV8ppXkVfn
+        5YtT/5Unw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hvcqF-00080i-Ug; Thu, 08 Aug 2019 07:28:07 +0000
+Date:   Thu, 8 Aug 2019 00:28:07 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [patch V2 0/7] fs: Substitute bit-spinlocks for PREEMPT_RT and
+ debugging
+Message-ID: <20190808072807.GA25259@infradead.org>
+References: <20190801010126.245731659@linutronix.de>
+ <20190802075612.GA20962@infradead.org>
+ <alpine.DEB.2.21.1908021107090.2285@nanos.tec.linutronix.de>
+ <20190806061119.GA17492@infradead.org>
+ <alpine.DEB.2.21.1908080858460.2882@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190806144800.GN7138@magnolia>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <alpine.DEB.2.21.1908080858460.2882@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 07:48:00AM -0700, Darrick J. Wong wrote:
-> On Tue, Aug 06, 2019 at 02:07:24PM +0200, Carlos Maiolino wrote:
-> > On Tue, Aug 06, 2019 at 07:38:40AM +0200, Christoph Hellwig wrote:
-> > > On Mon, Aug 05, 2019 at 08:12:58AM -0700, Darrick J. Wong wrote:
-> > > > > returned. And IIRC, iomap is the only interface now that cares about issuing a
-> > > > > warning.
-> > > > >
-> > > > > I think the *best* we could do here, is to make the new bmap() to issue the same
-> > > > > kind of WARN() iomap does, but we can't really change the end result.
-> > > > 
-> > > > I'd rather we break legacy code than corrupt filesystems.
-> > > 
+On Thu, Aug 08, 2019 at 09:02:47AM +0200, Thomas Gleixner wrote:
+> > >   mm/slub.c:      bit_spin_lock(PG_locked, &page->flags);
 > > 
-> > Yes, I have the same feeling, but this patchset does not have the goal to fix
-> > the broken api.
-> > 
-> > > This particular patch should keep existing behavior as is, as the intent
-> > > is to not change functionality.  Throwing in another patch to have saner
-> > > error behavior now that we have a saner in-kernel interface that cleary
-> > > documents what it is breaking and why on the other hand sounds like a
-> > > very good idea.
-> > 
-> > I totally agree here, and to be honest, I think such change should be in a
-> > different patchset rather than a new patch in this series. I can do it for sure,
-> > but this discussion IMHO should be done not only here in linux-fsdevel, but also
-> > in linux-api, which well, I don't think cc'ing this whole patchset there will do
-> > any good other than keep the change discussion more complicated than it should
-> > be. I'd rather finish the design and implementation of this patchset, and I'll
-> > follow-up it, once it's all set, with a new patch to change the truncation
-> > behavior, it will make the discussion way easier than mixing up subjects. What
-> > you guys think?
+> > One caller ouf of a gazillion that spins on the page lock instead of
+> > sleepign on it like everyone else.  That should not have passed your
+> > smell test to start with :)
 > 
-> I probably would've fixed the truncation behavior in the old code and
-> based the fiemap-fibmap conversion on that so that anyone who wants to
-> backport the behavior change to an old kernel has an easier time of it.
-> 
+> I surely stared at it, but that cannot sleep. It's in the middle of a
+> preempt and interrupt disabled region and used on architectures which do
+> not support CMPXCHG_DOUBLE and ALIGNED_STRUCT_PAGE ...
 
-Well, another problem in fixing it in the old code, is that bmap() can't
-properly return errors :P
-After this patchset, bmap() will be able to return errors, so we can easily fix
-it, once we won't need to 'guess' what a zero return mean from bmap()
-
-
-> But afterwards probably works just as well since I don't feel like tying
-> ourselves in more knots over an old interface. ;)
-> 
-> --D
-> 
-> > Cheers
-> > 
-> > 
-> > -- 
-> > Carlos
-
--- 
-Carlos
+I know.  But the problem here is that normally PG_locked is used together 
+with wait_on_page_bit_*, but this one instances uses the bit spinlock
+helpers.  This is the equivalent of calling spin_lock on a struct mutex
+rather than having a mutex_lock_spin helper for this case.  Does SLUB
+work on -rt at all?
