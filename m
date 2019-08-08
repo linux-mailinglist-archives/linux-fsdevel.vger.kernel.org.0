@@ -2,90 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFC1885C42
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 09:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C6585C8F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 10:13:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731781AbfHHH7x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 03:59:53 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40677 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731736AbfHHH7x (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 03:59:53 -0400
-Received: by mail-ot1-f67.google.com with SMTP id l15so57852422oth.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2019 00:59:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uHKc1nqV6r+sye72Gbcul5qu7ivZjMnQlJDhy7guy84=;
-        b=mrmN30NhEd/uZgu0zAl+0kceZr/J43smGXIg9vXI1Lok0HWnnwx982nSjFpxNLf6E0
-         g28drzGSgUQ6ICnQW+oNsJcXHLa8nVVHG5UF2zDnTxiHQ1JJscJwr6pfA6xEFiOXaw/+
-         p6dLbK8Q1v4D2ugdTGUqSBc7z6fwui2ipe7DP0pjdPv6TtnHZrW0T5YO6hFCK+HEBbfw
-         RACXK5X/XNxmjnSIQevrdnFcMwFDyNCtGt0QrYbPyJGlBbd1AV0LqQlSqRZHGlcnLzZ5
-         VxmaSbLR3RRS9kJciJoea849IRcoaU3xM/fe2S/3SyhLe4TLAflsHN9Ypk59+f+o6GqT
-         FdzQ==
-X-Gm-Message-State: APjAAAXginEm2D2f4TuIsYbtNMKrQ9rEE8q6k4QgTqs9+2jymusO+OYx
-        wYf0Uc3siGcQSzo5AeXiSHxrOEQVUqydz19eMXCnOOT0ob8=
-X-Google-Smtp-Source: APXvYqzo1ASOcZyBInSR+hD3Aad0gC0HonCxDXa/g6l1dqbWRagMtLJFx/QpUURx8i6UxazoEheDYa6IZ6Vh82C3ZI8=
-X-Received: by 2002:a9d:4c17:: with SMTP id l23mr10823891otf.367.1565251192452;
- Thu, 08 Aug 2019 00:59:52 -0700 (PDT)
+        id S1731956AbfHHINx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 04:13:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33204 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731781AbfHHINw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:13:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 68840AFFE;
+        Thu,  8 Aug 2019 08:13:49 +0000 (UTC)
+Date:   Thu, 8 Aug 2019 10:00:44 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Robin Murphy <robin.murphy@arm.com>,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 1/6] mm/page_idle: Add per-pid idle page tracking
+ using virtual index
+Message-ID: <20190808080044.GA18351@dhcp22.suse.cz>
+References: <20190807171559.182301-1-joel@joelfernandes.org>
+ <20190807130402.49c9ea8bf144d2f83bfeb353@linux-foundation.org>
+ <20190807204530.GB90900@google.com>
+ <20190807135840.92b852e980a9593fe91fbf59@linux-foundation.org>
+ <20190807213105.GA14622@google.com>
 MIME-Version: 1.0
-References: <20190801140243.24080-1-omosnace@redhat.com> <20190801160910.GW1131@ZenIV.linux.org.uk>
-In-Reply-To: <20190801160910.GW1131@ZenIV.linux.org.uk>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Thu, 8 Aug 2019 09:59:41 +0200
-Message-ID: <CAFqZXNs5igF_G8=EA+bD-JRorS6xeuCiXQr5vweaJFYNwEVKZA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] selinux: fix race when removing selinuxfs entries
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807213105.GA14622@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 6:09 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Thu, Aug 01, 2019 at 04:02:39PM +0200, Ondrej Mosnacek wrote:
-> > After hours and hours of getting familiar with dcache and debugging,
-> > I think I finally found a solution that works and hopefully stands a
-> > chance of being committed.
-> >
-> > The series still doesn't address the lack of atomicity of the policy
-> > reload transition, but this is part of a wider problem and can be
-> > resolved later. Let's fix at least the userspace-triggered lockup
-> > first.
->
-> I don't think this is the right approach.  Consider the related problem:
-> what happens if somebody has mounted something upon a selinuxfs file?
-> That is the hard part here, and AFAICS your variant doesn't help it
-> at all...
+On Wed 07-08-19 17:31:05, Joel Fernandes wrote:
+> On Wed, Aug 07, 2019 at 01:58:40PM -0700, Andrew Morton wrote:
+> > On Wed, 7 Aug 2019 16:45:30 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
+> > 
+> > > On Wed, Aug 07, 2019 at 01:04:02PM -0700, Andrew Morton wrote:
+> > > > On Wed,  7 Aug 2019 13:15:54 -0400 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+> > > > 
+> > > > > In Android, we are using this for the heap profiler (heapprofd) which
+> > > > > profiles and pin points code paths which allocates and leaves memory
+> > > > > idle for long periods of time. This method solves the security issue
+> > > > > with userspace learning the PFN, and while at it is also shown to yield
+> > > > > better results than the pagemap lookup, the theory being that the window
+> > > > > where the address space can change is reduced by eliminating the
+> > > > > intermediate pagemap look up stage. In virtual address indexing, the
+> > > > > process's mmap_sem is held for the duration of the access.
+> > > > 
+> > > > So is heapprofd a developer-only thing?  Is heapprofd included in
+> > > > end-user android loads?  If not then, again, wouldn't it be better to
+> > > > make the feature Kconfigurable so that Android developers can enable it
+> > > > during development then disable it for production kernels?
+> > > 
+> > > Almost all of this code is already configurable with
+> > > CONFIG_IDLE_PAGE_TRACKING. If you disable it, then all of this code gets
+> > > disabled.
+> > > 
+> > > Or are you referring to something else that needs to be made configurable?
+> > 
+> > Yes - the 300+ lines of code which this patchset adds!
+> > 
+> > The impacted people will be those who use the existing
+> > idle-page-tracking feature but who will not use the new feature.  I
+> > guess we can assume this set is small...
+> 
+> Yes, I think this set should be small. The code size increase of page_idle.o
+> is from ~1KB to ~2KB. Most of the extra space is consumed by
+> page_idle_proc_generic() function which this patch adds. I don't think adding
+> another CONFIG option to disable this while keeping existing
+> CONFIG_IDLE_PAGE_TRACKING enabled, is worthwhile but I am open to the
+> addition of such an option if anyone feels strongly about it. I believe that
+> once this patch is merged, most like this new interface being added is what
+> will be used more than the old interface (for some of the usecases) so it
+> makes sense to keep it alive with CONFIG_IDLE_PAGE_TRACKING.
 
-But that's another independent problem and it's not even fixed in
-debugfs, which for now I'm treating as the baseline as I don't know of
-any other filesystem that needs to remove its own directory trees in a
-similar way.
-
-I get that you don't want me to add a new function to the dcache API
-that isn't bulletproof (and what I wrote here is apparently still far
-from it), but you also previously said that I shouldn't open-code this
-stuff in selinuxfs.c... I don't think I have the wits to write a
-common function that handles all the possible issues, but I still want
-to fix at least this one scenario (dcache_readdir() vs.
-sel_remove_entries()).
-
-Is there some way I could do this without getting a NACK from you? For
-example, I thought of taking what is now debugfs_remove[_recursive]()
-out of debugfs into, say, fs/libfs.c (providing some optional callback
-to allow debugfs to do its __debugfs_file_removed() business) and use
-this function(s) from both debugfs and selinuxfs. This way we could
-later fix the leftover mount issue in one place and both filesystems
-would (hopefully) immediately benefit from it. Would that be a
-feasible way forward?
-
-Thanks,
+I would tend to agree with Joel here. The functionality falls into an
+existing IDLE_PAGE_TRACKING config option quite nicely. If there really
+are users who want to save some space and this is standing in the way
+then they can easily add a new config option with some justification so
+the savings are clear. Without that an additional config simply adds to
+the already existing configurability complexity and balkanization.
 -- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Software Engineer, Security Technologies
-Red Hat, Inc.
+Michal Hocko
+SUSE Labs
