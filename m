@@ -2,206 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B7E58673E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 18:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C87E08676F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 18:48:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390121AbfHHQjI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 12:39:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47922 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732760AbfHHQjH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:39:07 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9FAF83091DC4;
-        Thu,  8 Aug 2019 16:39:07 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 20B0860BE1;
-        Thu,  8 Aug 2019 16:39:07 +0000 (UTC)
-Date:   Thu, 8 Aug 2019 12:39:05 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 23/24] xfs: reclaim inodes from the LRU
-Message-ID: <20190808163905.GC24551@bfoster>
-References: <20190801021752.4986-1-david@fromorbit.com>
- <20190801021752.4986-24-david@fromorbit.com>
+        id S2404098AbfHHQsG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 12:48:06 -0400
+Received: from mail-ot1-f69.google.com ([209.85.210.69]:53834 "EHLO
+        mail-ot1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732775AbfHHQsG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Aug 2019 12:48:06 -0400
+Received: by mail-ot1-f69.google.com with SMTP id e42so1086317ote.20
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2019 09:48:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=aZTT0yWwCLvofMIk/vDC+UDU3g6pGvtYwgnyGAaloQg=;
+        b=ufs9UcTbJQGiOT5cCGZrZvqKeeqz37U6jq6mDFeupAdpeeEYN5wjbibTr7VDiMh6PT
+         UK82BCZYbbpNzCHWXjsBmpSd9Fnq/VRHafAny9ETiMsqosEWBjUOPjYqg1SOF1e80QZd
+         f067PCAQkbZAzMiIZ0NlvlhSLZ/pfyCUrS2ZT86n5SS3nPon8nxG/7UUP6oyYciKfdfU
+         nvhOUu8/r4FACUHqXgMEDSaxdOJPB/0+D90q/A0+fK9M4i9B96lpmoxu2wBi145pWQEs
+         tytj2NSbe7l0wJtQJL6RFm0Mb+uuDjWpc+SSu0f0UeyAbCZj/BswvdlDzU6GhI1YlKHb
+         lpTQ==
+X-Gm-Message-State: APjAAAWbZxpIGdnFmTwdIKKs2r6cGQxrr+wIZ/RIDeulJ7Do1HCVp1DU
+        1nt9AS3N86GZ/m22jjUNOG4P+wdB+DtvZBomMBTxfRt23NDF
+X-Google-Smtp-Source: APXvYqytw9HqCH1DBUw67wrUkqUU8fJEGDnt8vZR6W2gnl4+Ka54Jb73f78Rhe/UFgBE7w2DUO6m9ZbJFc8S+UCKUKlRtodfp82z
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801021752.4986-24-david@fromorbit.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 08 Aug 2019 16:39:07 +0000 (UTC)
+X-Received: by 2002:a02:b713:: with SMTP id g19mr10752238jam.77.1565282885836;
+ Thu, 08 Aug 2019 09:48:05 -0700 (PDT)
+Date:   Thu, 08 Aug 2019 09:48:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000062292b058f9dd282@google.com>
+Subject: KASAN: use-after-free Read in __blkdev_direct_IO
+From:   syzbot <syzbot+a1fc36a4d12501564d34@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 12:17:51PM +1000, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> Replace the AG radix tree walking reclaim code with a list_lru
-> walker, giving us both node-aware and memcg-aware inode reclaim
-> at the XFS level. This requires adding an inode isolation function to
-> determine if the inode can be reclaim, and a list walker to
-> dispose of the inodes that were isolated.
-> 
-> We want the isolation function to be non-blocking. If we can't
-> grab an inode then we either skip it or rotate it. If it's clean
-> then we skip it, if it's dirty then we rotate to give it time to be
+Hello,
 
-Do you mean we remove it if it's clean?
+syzbot found the following crash on:
 
-> cleaned before it is scanned again.
-> 
-> This congregates the dirty inodes at the tail of the LRU, which
-> means that if we start hitting a majority of dirty inodes either
-> there are lots of unlinked inodes in the reclaim list or we've
-> reclaimed all the clean inodes and we're looped back on the dirty
-> inodes. Either way, this is an indication we should tell kswapd to
-> back off.
-> 
-> The non-blocking isolation function introduces a complexity for the
-> filesystem shutdown case. When the filesystem is shut down, we want
-> to free the inode even if it is dirty, and this may require
-> blocking. We already hold the locks needed to do this blocking, so
-> what we do is that we leave inodes locked - both the ILOCK and the
-> flush lock - while they are sitting on the dispose list to be freed
-> after the LRU walk completes.  This allows us to process the
-> shutdown state outside the LRU walk where we can block safely.
-> 
-> Keep in mind we don't have to care about inode lock order or
-> blocking with inode locks held here because a) we are using
-> trylocks, and b) once marked with XFS_IRECLAIM they can't be found
-> via the LRU and inode cache lookups will abort and retry. Hence
-> nobody will try to lock them in any other context that might also be
-> holding other inode locks.
-> 
-> Also convert xfs_reclaim_inodes() to use a LRU walk to free all
-> the reclaimable inodes in the filesystem.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> ---
->  fs/xfs/xfs_icache.c | 199 ++++++++++++++++++++++++++++++++++++++------
->  fs/xfs/xfs_icache.h |  10 ++-
->  fs/xfs/xfs_inode.h  |   8 ++
->  fs/xfs/xfs_super.c  |  50 +++++++++--
->  4 files changed, 232 insertions(+), 35 deletions(-)
-> 
-...
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index b5c4c1b6fd19..e3e898a2896c 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-...
-> @@ -1810,23 +1811,58 @@ xfs_fs_mount(
->  }
->  
->  static long
-> -xfs_fs_nr_cached_objects(
-> +xfs_fs_free_cached_objects(
->  	struct super_block	*sb,
->  	struct shrink_control	*sc)
->  {
-> -	/* Paranoia: catch incorrect calls during mount setup or teardown */
-> -	if (WARN_ON_ONCE(!sb->s_fs_info))
-> -		return 0;
-> +	struct xfs_mount	*mp = XFS_M(sb);
-> +        struct xfs_ireclaim_args ra;
+HEAD commit:    629f8205 Merge tag 'for-linus-20190730' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e50eb4600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e397351d2615e10
+dashboard link: https://syzkaller.appspot.com/bug?extid=a1fc36a4d12501564d34
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
 
-^ whitespace damage
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> +	long freed;
->  
-> -	return list_lru_shrink_count(&XFS_M(sb)->m_inode_lru, sc);
-> +	INIT_LIST_HEAD(&ra.freeable);
-> +	ra.lowest_lsn = NULLCOMMITLSN;
-> +	ra.dirty_skipped = 0;
-> +
-> +	freed = list_lru_shrink_walk(&mp->m_inode_lru, sc,
-> +					xfs_inode_reclaim_isolate, &ra);
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a1fc36a4d12501564d34@syzkaller.appspotmail.com
 
-This is more related to the locking discussion on the earlier patch, but
-this looks like it has more similar serialization to the example patch I
-posted than the one without locking at all. IIUC, this walk has an
-internal lock per node lru that is held across the walk and passed into
-the callback. We never cycle it, so for any given node we only allow one
-reclaimer through here at a time.
+==================================================================
+BUG: KASAN: use-after-free in __blkdev_direct_IO+0xb3d/0x1310  
+fs/block_dev.c:468
+Read of size 4 at addr ffff888037bc2028 by task syz-executor.0/5655
 
-That seems to be Ok given we don't do much in the isolation handler, the
-lock isn't held across the dispose sequence and we're still batching in
-the shrinker core on top of that. We're still serialized over the lru
-fixups such that concurrent reclaimers aren't processing the same
-inodes, however.
+CPU: 0 PID: 5655 Comm: syz-executor.0 Not tainted 5.3.0-rc2+ #56
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
+  print_address_description+0x75/0x5b0 mm/kasan/report.c:351
+  __kasan_report+0x14b/0x1c0 mm/kasan/report.c:482
+  kasan_report+0x26/0x50 mm/kasan/common.c:612
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
+  __blkdev_direct_IO+0xb3d/0x1310 fs/block_dev.c:468
+  blkdev_direct_IO+0xbe/0xd0 fs/block_dev.c:518
+  generic_file_direct_write+0x22e/0x440 mm/filemap.c:3230
+  __generic_file_write_iter+0x2af/0x520 mm/filemap.c:3413
+  blkdev_write_iter+0x2f2/0x420 fs/block_dev.c:1993
+  ? 0xffffffff81000000
+  call_write_iter include/linux/fs.h:1870 [inline]
+  new_sync_write fs/read_write.c:483 [inline]
+  __vfs_write+0x617/0x7d0 fs/read_write.c:496
+  vfs_write+0x275/0x590 fs/read_write.c:558
+  ksys_write+0x16b/0x2a0 fs/read_write.c:611
+  __do_sys_write fs/read_write.c:623 [inline]
+  __se_sys_write fs/read_write.c:620 [inline]
+  __x64_sys_write+0x7b/0x90 fs/read_write.c:620
+  do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459829
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f56f3b24c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
+RDX: 0000000052698b21 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f56f3b256d4
+R13: 00000000004c5db7 R14: 00000000004e00e0 R15: 00000000ffffffff
 
-BTW I got a lockdep splat[1] for some reason on a straight mount/unmount
-cycle with this patch.
+Allocated by task 5655:
+  save_stack mm/kasan/common.c:69 [inline]
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc+0x11c/0x1b0 mm/kasan/common.c:487
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:495
+  slab_post_alloc_hook mm/slab.h:520 [inline]
+  slab_alloc mm/slab.c:3319 [inline]
+  kmem_cache_alloc+0x1f5/0x2e0 mm/slab.c:3483
+  mempool_alloc_slab+0x4d/0x70 mm/mempool.c:513
+  mempool_alloc+0x15f/0x6c0 mm/mempool.c:393
+  bio_alloc_bioset+0x210/0x670 block/bio.c:477
+  bio_alloc include/linux/bio.h:400 [inline]
+  __blkdev_direct_IO+0xa29/0x1310 fs/block_dev.c:470
+  blkdev_direct_IO+0xbe/0xd0 fs/block_dev.c:518
+  generic_file_direct_write+0x22e/0x440 mm/filemap.c:3230
+  __generic_file_write_iter+0x2af/0x520 mm/filemap.c:3413
+  blkdev_write_iter+0x2f2/0x420 fs/block_dev.c:1993
+  call_write_iter include/linux/fs.h:1870 [inline]
+  new_sync_write fs/read_write.c:483 [inline]
+  __vfs_write+0x617/0x7d0 fs/read_write.c:496
+  vfs_write+0x275/0x590 fs/read_write.c:558
+  ksys_write+0x16b/0x2a0 fs/read_write.c:611
+  __do_sys_write fs/read_write.c:623 [inline]
+  __se_sys_write fs/read_write.c:620 [inline]
+  __x64_sys_write+0x7b/0x90 fs/read_write.c:620
+  do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Brian
+Freed by task 9:
+  save_stack mm/kasan/common.c:69 [inline]
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_slab_free+0x12a/0x1e0 mm/kasan/common.c:449
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:457
+  __cache_free mm/slab.c:3425 [inline]
+  kmem_cache_free+0x81/0xf0 mm/slab.c:3693
+  mempool_free_slab+0x1d/0x30 mm/mempool.c:520
+  mempool_free+0xd5/0x350 mm/mempool.c:502
+  bio_put+0x35a/0x420 block/bio.c:253
+  blkdev_bio_end_io+0x336/0x430 fs/block_dev.c:333
+  bio_endio+0x4ff/0x570 block/bio.c:1830
+  req_bio_endio block/blk-core.c:239 [inline]
+  blk_update_request+0x385/0xf80 block/blk-core.c:1424
+  blk_mq_end_request+0x42/0x80 block/blk-mq.c:557
+  blk_flush_complete_seq+0x5e1/0xd10 block/blk-flush.c:196
+  flush_end_io+0x4d2/0x670 block/blk-flush.c:237
+  __blk_mq_end_request+0x38a/0x410 block/blk-mq.c:548
+  blk_mq_end_request+0x55/0x80 block/blk-mq.c:559
+  lo_complete_rq+0x13b/0x270 drivers/block/loop.c:485
+  blk_done_softirq+0x362/0x3e0 block/blk-softirq.c:37
+  __do_softirq+0x333/0x7c4 arch/x86/include/asm/paravirt.h:778
 
-[1] dmesg output:
+The buggy address belongs to the object at ffff888037bc2000
+  which belongs to the cache bio-0 of size 192
+The buggy address is located 40 bytes inside of
+  192-byte region [ffff888037bc2000, ffff888037bc20c0)
+The buggy address belongs to the page:
+page:ffffea0000def080 refcount:1 mapcount:0 mapping:ffff88821ac91540  
+index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea000167a2c8 ffffea0001e21ac8 ffff88821ac91540
+raw: 0000000000000000 ffff888037bc2000 0000000100000010 0000000000000000
+page dumped because: kasan: bad access detected
 
-[   39.011867] ============================================
-[   39.012643] WARNING: possible recursive locking detected
-[   39.013422] 5.3.0-rc2+ #205 Not tainted
-[   39.014623] --------------------------------------------
-[   39.015636] umount/871 is trying to acquire lock:
-[   39.016122] 00000000ea09de26 (&xfs_nondir_ilock_class){+.+.}, at: xfs_ilock+0xd2/0x280 [xfs]
-[   39.017072] 
-[   39.017072] but task is already holding lock:
-[   39.017832] 000000001a5b5707 (&xfs_nondir_ilock_class){+.+.}, at: xfs_ilock_nowait+0xcb/0x320 [xfs]
-[   39.018909] 
-[   39.018909] other info that might help us debug this:
-[   39.019570]  Possible unsafe locking scenario:
-[   39.019570] 
-[   39.020248]        CPU0
-[   39.020512]        ----
-[   39.020778]   lock(&xfs_nondir_ilock_class);
-[   39.021246]   lock(&xfs_nondir_ilock_class);
-[   39.021705] 
-[   39.021705]  *** DEADLOCK ***
-[   39.021705] 
-[   39.022338]  May be due to missing lock nesting notation
-[   39.022338] 
-[   39.023070] 3 locks held by umount/871:
-[   39.023481]  #0: 000000004d39d244 (&type->s_umount_key#61){+.+.}, at: deactivate_super+0x43/0x50
-[   39.024462]  #1: 0000000011270366 (&xfs_dir_ilock_class){++++}, at: xfs_ilock_nowait+0xcb/0x320 [xfs]
-[   39.025488]  #2: 000000001a5b5707 (&xfs_nondir_ilock_class){+.+.}, at: xfs_ilock_nowait+0xcb/0x320 [xfs]
-[   39.027163] 
-[   39.027163] stack backtrace:
-[   39.027681] CPU: 3 PID: 871 Comm: umount Not tainted 5.3.0-rc2+ #205
-[   39.028534] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-[   39.029152] Call Trace:
-[   39.029428]  dump_stack+0x67/0x90
-[   39.029889]  __lock_acquire.cold.67+0x121/0x1f9
-[   39.030519]  lock_acquire+0x90/0x170
-[   39.031170]  ? xfs_ilock+0xd2/0x280 [xfs]
-[   39.031603]  down_write_nested+0x4f/0xb0
-[   39.032064]  ? xfs_ilock+0xd2/0x280 [xfs]
-[   39.032684]  ? xfs_dispose_inodes+0x124/0x320 [xfs]
-[   39.033575]  xfs_ilock+0xd2/0x280 [xfs]
-[   39.034058]  xfs_dispose_inodes+0x124/0x320 [xfs]
-[   39.034656]  xfs_reclaim_inodes+0x149/0x190 [xfs]
-[   39.035381]  ? finish_wait+0x80/0x80
-[   39.035855]  xfs_unmountfs+0x81/0x190 [xfs]
-[   39.036443]  xfs_fs_put_super+0x35/0x90 [xfs]
-[   39.037016]  generic_shutdown_super+0x6c/0x100
-[   39.037554]  kill_block_super+0x21/0x50
-[   39.037986]  deactivate_locked_super+0x34/0x70
-[   39.038477]  cleanup_mnt+0xb8/0x140
-[   39.038879]  task_work_run+0x9e/0xd0
-[   39.039302]  exit_to_usermode_loop+0xb3/0xc0
-[   39.039774]  do_syscall_64+0x206/0x210
-[   39.040591]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   39.041771] RIP: 0033:0x7fcd4ec0536b
-[   39.042627] Code: 0b 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 90 f3 0f 1e fa 31 f6 e9 05 00 00 00 0f 1f 44 00 00 f3 0f 1e fa b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ed 0a 0c 00 f7 d8 64 89 01 48
-[   39.045336] RSP: 002b:00007ffdedf686c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-[   39.046119] RAX: 0000000000000000 RBX: 00007fcd4ed2f1e4 RCX: 00007fcd4ec0536b
-[   39.047506] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000055ad23f2ad90
-[   39.048295] RBP: 000055ad23f2ab80 R08: 0000000000000000 R09: 00007ffdedf67440
-[   39.049062] R10: 000055ad23f2adb0 R11: 0000000000000246 R12: 000055ad23f2ad90
-[   39.049869] R13: 0000000000000000 R14: 000055ad23f2ac78 R15: 0000000000000000
+Memory state around the buggy address:
+  ffff888037bc1f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff888037bc1f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff888037bc2000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                   ^
+  ffff888037bc2080: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff888037bc2100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
