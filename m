@@ -2,193 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35DCE86917
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 20:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 564D286945
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 21:03:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390254AbfHHSxc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 14:53:32 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45060 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390259AbfHHSxb (ORCPT
+        id S2390306AbfHHTDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 15:03:04 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40666 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390295AbfHHTDE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 14:53:31 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r1so44589793pfq.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2019 11:53:31 -0700 (PDT)
+        Thu, 8 Aug 2019 15:03:04 -0400
+Received: by mail-pf1-f195.google.com with SMTP id p184so44610221pfp.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2019 12:03:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=UjkiZZnAhTYwaR7qFGDphr+cssiWx2lyiCLKtwBT7Bg=;
-        b=pthVO2Hu7NZdrRbzO0b1mFJO3VKXejZC+RhfC8AlBZGdIOujcYZ5bfnmI2s3eGM7rX
-         XzLK6VR9GGwgjbgcmJYWfFm7SMyLwvxagFALxKYSDxknLDVkNnwAWhNqp6wW0+TTlrHT
-         Bu6heQQPNdhiU/vQxHUN7ZyMHJhLYZfy5rbIrUM3YzeVlMFllYCnxQIldX59BiSFdC0O
-         YKH+oEgOni0BmOucFyhTACPkc1qJ+/5gEOSwBQyY5/A0ZI6SaKiusfEe0S/ttDkN+/pd
-         hzDBy5PGSjYdl6ZUnKAWkwv+rwHsIRPowZePBLHKRwYSGI4XXFdfEamxlBxdqB9uONno
-         fIwg==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=YaDw968sYZinLHwfTVtmoWadaU+xxvDOnKy5RkNnHhY=;
+        b=HIQxeRJULmhNEAqcWiiIVZr0UAHZw/vMZ/YXLmvIkXIat0A1z75P9Q0d/P74XRw3do
+         R7+ctJwPKZUsckjeTNvykCKZsWrBGUXA5z5ZhyRNBYXd8H4O6Fr/Cfh1Tgcp0VtQSpzQ
+         sHkoTTEtlwzMapLsx/9XmEPsqlkUGcTTXFX0+zFyl6atF/lOxErRKyNsY876FIdy4kom
+         iHrVYxjJMl+rUFyMB+98d2/kmsgt03t7E0C/Gw5ePaTD8Sis0vFdJXbU/8NWpzUYzFd/
+         +GAdy2lZyujaVYVCBCBCH4QSjJMb3LYnJxKiTOIRpKMlA/KjrXwRHyDPiu3C/9kVghl3
+         PqlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=UjkiZZnAhTYwaR7qFGDphr+cssiWx2lyiCLKtwBT7Bg=;
-        b=a9bEIt5DQIzLh335wvol3sGwIuqeYpFIFB0B0b00V5vMcVSeVbyxBLU42yL7VpNCVE
-         D8un0xZDPby2lvY0jOE1FE1wN+3/roZ5nA1YAMpPVOpCFdm5nXHY9/SrC4GhlVL8Es9j
-         TBwl272mJOkbrVhO6wPbGMhV9Mido4OHyUm23AVcYJuFiYqU+UMdWUS1Zdclo81u/nCx
-         s63EuZacv5PWkliYMzufM/ROWB9rTnpj98xxZkxZPEhGPsI+O3Hie0qzF+8i6r43R0ql
-         9+6PeDttg1WQbe/IqaWk79THWILG7iimLy5dw641UHRlfwjef8uL8bjbS0avLpCgQ9te
-         YiIQ==
-X-Gm-Message-State: APjAAAUoF8yt0SiC9FTIkh7G42CBKK+lgJwb0DHNl03EFmxGrXV1CvYM
-        Wb3gjyVUFY30dqeV2PsiRSJpAw==
-X-Google-Smtp-Source: APXvYqxA5rHjlVXvhUZB6+G9XIqNAGu7WwzspweTX3988hwH7g7o/v2lChuzmSG0amELrtn8yp9RRA==
-X-Received: by 2002:a65:6546:: with SMTP id a6mr14523198pgw.220.1565290410962;
-        Thu, 08 Aug 2019 11:53:30 -0700 (PDT)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id a3sm108130096pfl.145.2019.08.08.11.53.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Aug 2019 11:53:30 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <69E22C32-5EDC-4507-9407-A1622BC31560@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_39697C0F-3B43-4F6C-B46F-487A1EAB1FEB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH 4/9] fibmap: Use bmap instead of ->bmap method in
- ioctl_fibmap
-Date:   Thu, 8 Aug 2019 12:53:25 -0600
-In-Reply-To: <20190808071257.ufbk5i35xpkf4byh@pegasus.maiolino.io>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>, rpeterso@redhat.com,
-        linux-xfs <linux-xfs@vger.kernel.org>
-To:     Carlos Maiolino <cmaiolino@redhat.com>
-References: <20190731141245.7230-1-cmaiolino@redhat.com>
- <20190731141245.7230-5-cmaiolino@redhat.com>
- <20190731231217.GV1561054@magnolia>
- <20190802091937.kwutqtwt64q5hzkz@pegasus.maiolino.io>
- <20190802151400.GG7138@magnolia>
- <20190805102729.ooda6sg65j65ojd4@pegasus.maiolino.io>
- <20190805151258.GD7129@magnolia> <20190806224138.GW30113@42.do-not-panic.com>
- <20190808071257.ufbk5i35xpkf4byh@pegasus.maiolino.io>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=YaDw968sYZinLHwfTVtmoWadaU+xxvDOnKy5RkNnHhY=;
+        b=k6fbYohiMHG2BFHnbAi84sNVewRPidppvV2tU0gDRU6g6tDelaWKWzl0EQzuyl5Sa+
+         Zc1bYA5RlKnsiJUJkZGmyXacTsgyKVwwuI67v3CF173dOuRdZC1MdylsxYvkSzM/LfmH
+         7NQE2uHS9J5wETGeMWelRtGBvRUpqtJQzHVNZGf7t4aIa2H5k66rZ5viDl7ZRZDZtork
+         G1p2pjLL+BiCThcMibWJw99ENiOZsHPMFLe74/EdpZ+j+7gzxLxOkn8eNdgwttyGkZex
+         reGVkCOdxNbAIPgZxU176qh5Y3JOvkF2i75M302Ug7UoCv43N16zlVWpGhzQ++UhwbZs
+         3HBQ==
+X-Gm-Message-State: APjAAAVHkiRYXoZPrDRUHt7RAnvpRhUD+nxUE3EzsoKRkGWyYLZJ3VMx
+        rpJDNRg55/8KlkeIi2Artjpalg==
+X-Google-Smtp-Source: APXvYqyauxFlil+jXyg34wXrmqepCBj1OqcfC1/2Gy4eTEI53he4OQNjlsbx5piBhi7v9zETXwpdnA==
+X-Received: by 2002:a17:90a:8b98:: with SMTP id z24mr5545969pjn.77.1565290983429;
+        Thu, 08 Aug 2019 12:03:03 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:e15f])
+        by smtp.gmail.com with ESMTPSA id t6sm22068113pgu.23.2019.08.08.12.03.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 08 Aug 2019 12:03:02 -0700 (PDT)
+Date:   Thu, 8 Aug 2019 15:03:00 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] block: annotate refault stalls from IO submission
+Message-ID: <20190808190300.GA9067@cmpxchg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+psi tracks the time tasks wait for refaulting pages to become
+uptodate, but it does not track the time spent submitting the IO. The
+submission part can be significant if backing storage is contended or
+when cgroup throttling (io.latency) is in effect - a lot of time is
+spent in submit_bio(). In that case, we underreport memory pressure.
 
---Apple-Mail=_39697C0F-3B43-4F6C-B46F-487A1EAB1FEB
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+Annotate submit_bio() to account submission time as memory stall when
+the bio is reading userspace workingset pages.
 
-On Aug 8, 2019, at 1:12 AM, Carlos Maiolino <cmaiolino@redhat.com> =
-wrote:
->=20
->>>=20
->>>> Maybe I am not seeing something or having a different thinking you =
-have, but
->>>> this is the behavior we have now, without my patches. And we can't =
-really change
->>>> it; the user view of this implementation.
->>>> That's why I didn't try to change the result, so the truncation =
-still happens.
->>>=20
->>> I understand that we're not generally supposed to change existing
->>> userspace interfaces, but the fact remains that allowing truncated
->>> responses causes *filesystem corruption*.
->>>=20
->>> We know that the most well known FIBMAP callers are bootloaders, and =
-we
->>> know what they do with the information they get -- they use it to =
-record
->>> the block map of boot files.  So if the IPL/grub/whatever installer
->>> queries the boot file and the boot file is at block 12345678901 (a
->>> 34-bit number), this interface truncates that to 3755744309 (a =
-32-bit
->>> number) and that's where the bootloader will think its boot files =
-are.
->>> The installation succeeds, the user reboots and *kaboom* the system =
-no
->>> longer boots because the contents of block 3755744309 is not a =
-bootloader.
->>>=20
->>> Worse yet, grub1 used FIBMAP data to record the location of the grub
->>> environment file and installed itself between the MBR and the start =
-of
->>> partition 1.  If the environment file is at offset 1234578901, grub =
-will
->>> write status data to its environment file (which it thinks is at
->>> 3755744309) and *KABOOM* we've just destroyed whatever was in that
->>> block.
->>>=20
->>> Far better for the bootloader installation script to hit an error =
-and
->>> force the admin to deal with the situation than for the system to =
-become
->>> unbootable.  That's *why* the (newer) iomap bmap implementation does =
-not
->>> return truncated mappings, even though the classic implementation =
-does.
->>>=20
->>> The classic code returning truncated results is a broken behavior.
->>=20
->> How long as it been broken for? And if we do fix it, I'd just like =
-for
->> a nice commit lot describing potential risks of not applying it. *If*
->> the issue exists as-is today, the above contains a lot of information
->> for addressing potential issues, even if theoretical.
->>=20
->=20
-> It's broken since forever. This has always been the FIBMAP behavior.
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ block/bio.c               |  3 +++
+ block/blk-core.c          | 23 ++++++++++++++++++++++-
+ include/linux/blk_types.h |  1 +
+ 3 files changed, 26 insertions(+), 1 deletion(-)
 
-It's been broken since forever, but only for filesystems larger than 4TB =
-or
-16TB (2^32 blocks), which are only becoming commonplace for root disks =
-recently.
-Also, doesn't LILO have a limit on the location of the kernel image, in =
-the
-first 1GB or similar?
+diff --git a/block/bio.c b/block/bio.c
+index 299a0e7651ec..4196865dd300 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -806,6 +806,9 @@ void __bio_add_page(struct bio *bio, struct page *page,
+ 
+ 	bio->bi_iter.bi_size += len;
+ 	bio->bi_vcnt++;
++
++	if (!bio_flagged(bio, BIO_WORKINGSET) && unlikely(PageWorkingset(page)))
++		bio_set_flag(bio, BIO_WORKINGSET);
+ }
+ EXPORT_SYMBOL_GPL(__bio_add_page);
+ 
+diff --git a/block/blk-core.c b/block/blk-core.c
+index d0cc6e14d2f0..1b1705b7dde7 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -36,6 +36,7 @@
+ #include <linux/blk-cgroup.h>
+ #include <linux/debugfs.h>
+ #include <linux/bpf.h>
++#include <linux/psi.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/block.h>
+@@ -1128,6 +1129,10 @@ EXPORT_SYMBOL_GPL(direct_make_request);
+  */
+ blk_qc_t submit_bio(struct bio *bio)
+ {
++	bool workingset_read = false;
++	unsigned long pflags;
++	blk_qc_t ret;
++
+ 	if (blkcg_punt_bio_submit(bio))
+ 		return BLK_QC_T_NONE;
+ 
+@@ -1146,6 +1151,8 @@ blk_qc_t submit_bio(struct bio *bio)
+ 		if (op_is_write(bio_op(bio))) {
+ 			count_vm_events(PGPGOUT, count);
+ 		} else {
++			if (bio_flagged(bio, BIO_WORKINGSET))
++				workingset_read = true;
+ 			task_io_account_read(bio->bi_iter.bi_size);
+ 			count_vm_events(PGPGIN, count);
+ 		}
+@@ -1160,7 +1167,21 @@ blk_qc_t submit_bio(struct bio *bio)
+ 		}
+ 	}
+ 
+-	return generic_make_request(bio);
++	/*
++	 * If we're reading data that is part of the userspace
++	 * workingset, count submission time as memory stall. When the
++	 * device is congested, or the submitting cgroup IO-throttled,
++	 * submission can be a significant part of overall IO time.
++	 */
++	if (workingset_read)
++		psi_memstall_enter(&pflags);
++
++	ret = generic_make_request(bio);
++
++	if (workingset_read)
++		psi_memstall_leave(&pflags);
++
++	return ret;
+ }
+ EXPORT_SYMBOL(submit_bio);
+ 
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 1b1fa1557e68..a9dadfc16a92 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -209,6 +209,7 @@ enum {
+ 	BIO_BOUNCED,		/* bio is a bounce bio */
+ 	BIO_USER_MAPPED,	/* contains user pages */
+ 	BIO_NULL_MAPPED,	/* contains invalid user pages */
++	BIO_WORKINGSET,		/* contains userspace workingset pages */
+ 	BIO_QUIET,		/* Make BIO Quiet */
+ 	BIO_CHAIN,		/* chained bio, ->bi_remaining in effect */
+ 	BIO_REFFED,		/* bio has elevated ->bi_cnt */
+-- 
+2.22.0
 
-So maybe this is not an issue that FIBMAP users ever hit in practise =
-anyway,
-but I agree that it doesn't make sense to return bad data (32-bit =
-wrapped block
-numbers) and 0 should be returned in such cases.
-
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_39697C0F-3B43-4F6C-B46F-487A1EAB1FEB
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl1Mb6YACgkQcqXauRfM
-H+DXIw/9E7jMcw2a2hvhRw3vkhG3/68LSALNdU8k0FLKxlB9tv+PyYEBi0ykBQhd
-kq6f5QB0onO6RXk5OG8ylftrIASFPl40JFXoOAgheHnVuH6TUlpmG0/S+Lr2AAxF
-jkg7jeGFurNF3NVTd0MiwFYbQbx5VzeKgDVB8Q1RWP4z5pcc1mT522LiYx4OXhhn
-EPZxa76LNvOi5mfZLRu8tvonFjoBUy5Ui0YulEJcY85E/v+euu2vdOCzmfbTujq+
-AG8XCAdwegg9OltIWzzBHNMvPT1mKdxeGT/5KomOy/R0I9Q5QBrYJe6rw32FS72L
-9PytFAk3l71c1sehdVqkCqpaJdwWR/8Fylk0kTz85LKMyaQ2SCav9zPaBrqCG8Xh
-p/XVxfFkolk6OLGmsH4ICGdBi3l2z1ZOWt8U+QTvUu50I3RLIUPdyD53YAkomEr5
-daHE7zx5yCNqx8zEz/V3Vp6CoPzaTMNbzCI8rKy3PwUG/qiPIcAJBa9HNqv8nVxY
-sXHdbawi+wCJz+MCibiXOQTXgCvZiuVhDeylr6ic6d64LP6dMUCrOhdAM0Qr1ylm
-O0kQVEp4IifaM7VaheZxukwHERl0a+jRqMuFstuHRTJp/PLw6s6mzQVgdDykCPZV
-fVGJ5xE55qwrQDJvUH8tnSLHx8MmgbeIhZV5qUjux3Uc5xT4FP0=
-=vAPg
------END PGP SIGNATURE-----
-
---Apple-Mail=_39697C0F-3B43-4F6C-B46F-487A1EAB1FEB--
