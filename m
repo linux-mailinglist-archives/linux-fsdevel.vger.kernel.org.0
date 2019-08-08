@@ -2,101 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C1486205
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 14:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1900686255
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 14:54:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729780AbfHHMjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 08:39:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58692 "EHLO mx1.suse.de"
+        id S1732725AbfHHMyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 08:54:32 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:3935 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728025AbfHHMjO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:39:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 90CA2AD22;
-        Thu,  8 Aug 2019 12:39:13 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id B63EDDA7C5; Thu,  8 Aug 2019 14:39:44 +0200 (CEST)
-From:   David Sterba <dsterba@suse.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH RESEND] fs: use UB-safe check for signed addition overflow in remap_verify_area
-Date:   Thu,  8 Aug 2019 14:39:42 +0200
-Message-Id: <20190808123942.19592-1-dsterba@suse.com>
-X-Mailer: git-send-email 2.22.0
+        id S1732643AbfHHMyb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Aug 2019 08:54:31 -0400
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 09FD6F34FF96F504C555;
+        Thu,  8 Aug 2019 20:54:28 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 8 Aug 2019 20:54:27 +0800
+Received: from 138 (10.175.124.28) by dggeme762-chm.china.huawei.com
+ (10.3.19.108) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 8
+ Aug 2019 20:54:27 +0800
+Date:   Thu, 8 Aug 2019 21:11:39 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Dave Chinner <david@fromorbit.com>
+CC:     Eric Biggers <ebiggers@kernel.org>,
+        Goldwyn Rodrigues <RGoldwyn@suse.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, <miaoxie@huawei.com>
+Subject: Re: [PATCH 10/13] iomap: use a function pointer for dio submits
+Message-ID: <20190808131139.GH28630@138>
+References: <20190802220048.16142-1-rgoldwyn@suse.de>
+ <20190802220048.16142-11-rgoldwyn@suse.de>
+ <20190804234321.GC7689@dread.disaster.area>
+ <1565021323.13240.14.camel@suse.com>
+ <20190805215458.GH7689@dread.disaster.area>
+ <20190808042640.GA28630@138>
+ <20190808054936.GA5319@sol.localdomain>
+ <20190808081647.GI7689@dread.disaster.area>
+ <20190808091632.GF28630@138>
+ <20190808112139.GG28630@138>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190808112139.GG28630@138>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Originating-IP: [10.175.124.28]
+X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following warning pops up with enabled UBSAN in tests fstests/generic/303:
+On Thu, Aug 08, 2019 at 07:21:39PM +0800, Gao Xiang wrote:
+> On Thu, Aug 08, 2019 at 05:29:47PM +0800, Gao Xiang wrote:
+> > On Thu, Aug 08, 2019 at 06:16:47PM +1000, Dave Chinner wrote:
+> > > On Wed, Aug 07, 2019 at 10:49:36PM -0700, Eric Biggers wrote:
+> > > > FWIW, the only order that actually makes sense is decrypt->decompress->verity.
+> > > 
+> > > *nod*
+> > > 
+> > > Especially once we get the inline encryption support for fscrypt so
+> > > the storage layer can offload the encrypt/decrypt to hardware via
+> > > the bio containing plaintext. That pretty much forces fscrypt to be
+> > > the lowest layer of the filesystem transformation stack.  This
+> > > hardware offload capability also places lots of limits on what you
+> > > can do with block-based verity layers below the filesystem. e.g.
+> > > using dm-verity when you don't know if there's hardware encryption
+> > > below or software encryption on top becomes problematic...
+> 
+> ...and I'm not talking of fs-verity, I personally think fs-verity
+> is great. I am only talking about a generic stuff.
+> 
+> In order to know which level becomes problematic, there even could
+> be another choice "decrypt->verity1->decompress->verity2" for such
+> requirement (assuming verity1/2 themselves are absolutely bug-free),
+> verity1 can be a strong merkle tree and verity2 is a weak form (just
+> like a simple Adler-32/crc32 in compressed block), thus we can locate
+> whether it's a decrypt or decompress bug.
+> 
+> Many compression algorithm containers already have such a weak
+> form such as gzip algorithm, so there is no need to add such
+> an extra step to postprocess.
+> 
+> and I have no idea which (decrypt->verity1->decompress->verity2 or
+> decrypt->decompress->verity) is faster since verity2 is rather simple.
+> However, if we use the only strong form in the end, there could be
+> a lot of extra IO and expensive multiple-level computations if files
+> are highly compressible.
+> 
+> On the other hand, such verity2 can be computed offline / avoided
+> by fuzzer tools for read-only scenerios (for example, after building
+> these images and do a full image verification with the given kernel)
+> in order to make sure its stability (In any case, I'm talking about
+> how to make those algorithms bug-free).
+> 
+> All I want to say is I think "decrypt->verity->decompress" is
+> reasonable as well.
 
-  [23127.529395] UBSAN: Undefined behaviour in fs/read_write.c:1725:7
-  [23127.529400] signed integer overflow:
-  [23127.529403] 4611686018427322368 + 9223372036854775807 cannot be represented in type 'long long int'
-  [23127.529412] CPU: 4 PID: 26180 Comm: xfs_io Not tainted 5.2.0-rc2-1.ge195904-vanilla+ #450
-  [23127.556999] Hardware name: empty empty/S3993, BIOS PAQEX0-3 02/24/2008
-  [23127.557001] Call Trace:
-  [23127.557060]  dump_stack+0x67/0x9b
-  [23127.557070]  ubsan_epilogue+0x9/0x40
-  [23127.573496]  handle_overflow+0xb3/0xc0
-  [23127.573514]  do_clone_file_range+0x28f/0x2a0
-  [23127.573547]  vfs_clone_file_range+0x35/0xb0
-  [23127.573564]  ioctl_file_clone+0x8d/0xc0
-  [23127.590144]  do_vfs_ioctl+0x300/0x700
-  [23127.590160]  ksys_ioctl+0x70/0x80
-  [23127.590203]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-  [23127.590210]  __x64_sys_ioctl+0x16/0x20
-  [23127.590215]  do_syscall_64+0x5c/0x1d0
-  [23127.590224]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  [23127.590231] RIP: 0033:0x7ff6d7250327
-  [23127.590241] RSP: 002b:00007ffe3a38f1d8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
-  [23127.590246] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007ff6d7250327
-  [23127.590249] RDX: 00007ffe3a38f220 RSI: 000000004020940d RDI: 0000000000000003
-  [23127.590252] RBP: 0000000000000000 R08: 00007ffe3a3c80a0 R09: 00007ffe3a3c8080
-  [23127.590255] R10: 000000000fa99fa0 R11: 0000000000000206 R12: 0000000000000000
-  [23127.590260] R13: 0000000000000000 R14: 3fffffffffff0000 R15: 00007ff6d750a20c
+... And another fundamental concern is that if we don't verify earlier
+(I mean on-disk data), then untrusted data will be transformed
+(decompressed and even decrypted if no inline encryption) with risk,
+and it seems _vulnerable_ if such decrypt / decompress algorithms have
+_security issues_ (such as Buffer Overflow). It seems that it's less
+security than do verity earlier.
 
-As loff_t is a signed type, we should use the safe overflow checks
-instead of relying on compiler implementation.
+Thanks,
+Gao Xiang
 
-The bogus values are intentional and the test is supposed to verify the
-boundary conditions.
-
-Signed-off-by: David Sterba <dsterba@suse.com>
----
- fs/read_write.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/read_write.c b/fs/read_write.c
-index c543d965e288..a8bd974edf72 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -20,6 +20,7 @@
- #include <linux/compat.h>
- #include <linux/mount.h>
- #include <linux/fs.h>
-+#include <linux/overflow.h>
- #include "internal.h"
- 
- #include <linux/uaccess.h>
-@@ -1718,11 +1719,12 @@ static int remap_verify_area(struct file *file, loff_t pos, loff_t len,
- 			     bool write)
- {
- 	struct inode *inode = file_inode(file);
-+	loff_t tmp;
- 
- 	if (unlikely(pos < 0 || len < 0))
- 		return -EINVAL;
- 
--	 if (unlikely((loff_t) (pos + len) < 0))
-+	if (unlikely(check_add_overflow(pos, len, &tmp)))
- 		return -EINVAL;
- 
- 	if (unlikely(inode->i_flctx && mandatory_lock(inode))) {
--- 
-2.22.0
-
+> 
+> Thanks,
+> Gao Xiang
+> 
+> > 
+> > Add a word, I was just talking benefits between "decrypt->decompress->
+> > verity" and "decrypt->verity->decompress", I think both forms are
+> > compatible with inline en/decryption. I don't care which level
+> > "decrypt" is at... But maybe some user cares. Am I missing something?
+> > 
+> > Thanks,
+> > Gao Xiang
+> > 
