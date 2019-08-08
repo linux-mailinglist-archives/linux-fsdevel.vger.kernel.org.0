@@ -2,73 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9277885A93
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 08:23:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D66485AC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 08:30:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731130AbfHHGV7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 02:21:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35042 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731005AbfHHGV6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 02:21:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4FE4DAF37;
-        Thu,  8 Aug 2019 06:21:57 +0000 (UTC)
-Date:   Thu, 8 Aug 2019 08:21:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Black <daniel@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH 1/3] mm/mlock.c: convert put_page() to put_user_page*()
-Message-ID: <20190808062155.GF11812@dhcp22.suse.cz>
-References: <20190805222019.28592-1-jhubbard@nvidia.com>
- <20190805222019.28592-2-jhubbard@nvidia.com>
- <20190807110147.GT11812@dhcp22.suse.cz>
- <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
+        id S1731071AbfHHGaJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 02:30:09 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:44545 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbfHHGaJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Aug 2019 02:30:09 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 42BAFE000B;
+        Thu,  8 Aug 2019 06:30:01 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v6 11/14] mips: Adjust brk randomization offset to fit generic version
+Date:   Thu,  8 Aug 2019 02:17:53 -0400
+Message-Id: <20190808061756.19712-12-alex@ghiti.fr>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190808061756.19712-1-alex@ghiti.fr>
+References: <20190808061756.19712-1-alex@ghiti.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 07-08-19 16:32:08, John Hubbard wrote:
-> On 8/7/19 4:01 AM, Michal Hocko wrote:
-> > On Mon 05-08-19 15:20:17, john.hubbard@gmail.com wrote:
-> >> From: John Hubbard <jhubbard@nvidia.com>
-> >>
-> >> For pages that were retained via get_user_pages*(), release those pages
-> >> via the new put_user_page*() routines, instead of via put_page() or
-> >> release_pages().
-> > 
-> > Hmm, this is an interesting code path. There seems to be a mix of pages
-> > in the game. We get one page via follow_page_mask but then other pages
-> > in the range are filled by __munlock_pagevec_fill and that does a direct
-> > pte walk. Is using put_user_page correct in this case? Could you explain
-> > why in the changelog?
-> > 
-> 
-> Actually, I think follow_page_mask() gets all the pages, right? And the
-> get_page() in __munlock_pagevec_fill() is there to allow a pagevec_release() 
-> later.
+This commit simply bumps up to 32MB and 1GB the random offset
+of brk, compared to 8MB and 256MB, for 32bit and 64bit respectively.
 
-Maybe I am misreading the code (looking at Linus tree) but munlock_vma_pages_range
-calls follow_page for the start address and then if not THP tries to
-fill up the pagevec with few more pages (up to end), do the shortcut
-via manual pte walk as an optimization and use generic get_page there.
+Suggested-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Acked-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ arch/mips/mm/mmap.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
+index a7e84b2e71d7..ff6ab87e9c56 100644
+--- a/arch/mips/mm/mmap.c
++++ b/arch/mips/mm/mmap.c
+@@ -16,6 +16,7 @@
+ #include <linux/random.h>
+ #include <linux/sched/signal.h>
+ #include <linux/sched/mm.h>
++#include <linux/sizes.h>
+ 
+ unsigned long shm_align_mask = PAGE_SIZE - 1;	/* Sane caches */
+ EXPORT_SYMBOL(shm_align_mask);
+@@ -189,11 +190,11 @@ static inline unsigned long brk_rnd(void)
+ 	unsigned long rnd = get_random_long();
+ 
+ 	rnd = rnd << PAGE_SHIFT;
+-	/* 8MB for 32bit, 256MB for 64bit */
++	/* 32MB for 32bit, 1GB for 64bit */
+ 	if (TASK_IS_32BIT_ADDR)
+-		rnd = rnd & 0x7ffffful;
++		rnd = rnd & (SZ_32M - 1);
+ 	else
+-		rnd = rnd & 0xffffffful;
++		rnd = rnd & (SZ_1G - 1);
+ 
+ 	return rnd;
+ }
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
