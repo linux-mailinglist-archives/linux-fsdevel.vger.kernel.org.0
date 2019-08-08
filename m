@@ -2,77 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE1685CA4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 10:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E557B85CC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2019 10:27:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731903AbfHHIR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Aug 2019 04:17:58 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:47740 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731281AbfHHIR5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:17:57 -0400
-Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2411843E618;
-        Thu,  8 Aug 2019 18:17:54 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hvdbL-0001Bg-NE; Thu, 08 Aug 2019 18:16:47 +1000
-Date:   Thu, 8 Aug 2019 18:16:47 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Gao Xiang <gaoxiang25@huawei.com>,
-        Goldwyn Rodrigues <RGoldwyn@suse.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, miaoxie@huawei.com
-Subject: Re: [PATCH 10/13] iomap: use a function pointer for dio submits
-Message-ID: <20190808081647.GI7689@dread.disaster.area>
-References: <20190802220048.16142-1-rgoldwyn@suse.de>
- <20190802220048.16142-11-rgoldwyn@suse.de>
- <20190804234321.GC7689@dread.disaster.area>
- <1565021323.13240.14.camel@suse.com>
- <20190805215458.GH7689@dread.disaster.area>
- <20190808042640.GA28630@138>
- <20190808054936.GA5319@sol.localdomain>
+        id S1732075AbfHHI1v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Aug 2019 04:27:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35390 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731844AbfHHI1u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:27:50 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 51032C06511D;
+        Thu,  8 Aug 2019 08:27:50 +0000 (UTC)
+Received: from pegasus.maiolino.com (ovpn-204-236.brq.redhat.com [10.40.204.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 522C75C220;
+        Thu,  8 Aug 2019 08:27:48 +0000 (UTC)
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     hch@lst.de, adilger@dilger.ca, jaegeuk@kernel.org,
+        darrick.wong@oracle.com, miklos@szeredi.hu, rpeterso@redhat.com,
+        linux-xfs@vger.kernel.org
+Subject: [PATCH 0/9 V5] New ->fiemap infrastructure and ->bmap removal
+Date:   Thu,  8 Aug 2019 10:27:35 +0200
+Message-Id: <20190808082744.31405-1-cmaiolino@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808054936.GA5319@sol.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
-        a=7-415B0cAAAA:8 a=TBOsBtRu_f-vuJ8yFLgA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 08 Aug 2019 08:27:50 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 10:49:36PM -0700, Eric Biggers wrote:
-> FWIW, the only order that actually makes sense is decrypt->decompress->verity.
+Hi.
 
-*nod*
+This is the 5th version of the complete series with the goal to deprecate and
+eventually remove ->bmap() interface, in lieu of FIEMAP.
 
-Especially once we get the inline encryption support for fscrypt so
-the storage layer can offload the encrypt/decrypt to hardware via
-the bio containing plaintext. That pretty much forces fscrypt to be
-the lowest layer of the filesystem transformation stack.  This
-hardware offload capability also places lots of limits on what you
-can do with block-based verity layers below the filesystem. e.g.
-using dm-verity when you don't know if there's hardware encryption
-below or software encryption on top becomes problematic...
+This V5, compared with V4 is properly rebased against 5.3, and addresses the
+issues raised in V4 discussion.
 
-So really, from a filesystem and iomap perspective, What Eric says
-is the right - it's the only order that makes sense...
+Details of what changed on each patch are in their specific changelogs.
 
-Cheers,
 
-Dave.
+
+Carlos Maiolino (9):
+  fs: Enable bmap() function to properly return errors
+  cachefiles: drop direct usage of ->bmap method.
+  ecryptfs: drop direct calls to ->bmap
+  fibmap: Use bmap instead of ->bmap method in ioctl_fibmap
+  fs: Move start and length fiemap fields into fiemap_extent_info
+  iomap: Remove length and start fields from iomap_fiemap
+  fiemap: Use a callback to fill fiemap extents
+  Use FIEMAP for FIBMAP calls
+  xfs: Get rid of ->bmap
+
+ drivers/md/md-bitmap.c |  16 ++++--
+ fs/bad_inode.c         |   3 +-
+ fs/btrfs/inode.c       |   5 +-
+ fs/cachefiles/rdwr.c   |  27 ++++-----
+ fs/ecryptfs/mmap.c     |  16 ++----
+ fs/ext2/ext2.h         |   3 +-
+ fs/ext2/inode.c        |   6 +-
+ fs/ext4/ext4.h         |   3 +-
+ fs/ext4/extents.c      |  15 +++--
+ fs/f2fs/data.c         |  31 +++++++---
+ fs/f2fs/f2fs.h         |   3 +-
+ fs/gfs2/inode.c        |   9 ++-
+ fs/hpfs/file.c         |   4 +-
+ fs/inode.c             | 105 +++++++++++++++++++++++++++++----
+ fs/ioctl.c             | 128 ++++++++++++++++++++++++++---------------
+ fs/iomap/fiemap.c      |   6 +-
+ fs/jbd2/journal.c      |  22 ++++---
+ fs/nilfs2/inode.c      |   5 +-
+ fs/nilfs2/nilfs.h      |   3 +-
+ fs/ocfs2/extent_map.c  |  13 ++++-
+ fs/ocfs2/extent_map.h  |   3 +-
+ fs/overlayfs/inode.c   |   5 +-
+ fs/xfs/xfs_aops.c      |  24 --------
+ fs/xfs/xfs_iops.c      |  20 ++++---
+ fs/xfs/xfs_trace.h     |   1 -
+ include/linux/fs.h     |  35 +++++++----
+ include/linux/iomap.h  |   2 +-
+ mm/page_io.c           |  11 ++--
+ 28 files changed, 334 insertions(+), 190 deletions(-)
+
 -- 
-Dave Chinner
-david@fromorbit.com
+2.20.1
+
