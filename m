@@ -2,155 +2,537 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CC0D88217
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 20:15:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFD6C88245
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 20:21:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437362AbfHISPB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 9 Aug 2019 14:15:01 -0400
-Received: from mga06.intel.com ([134.134.136.31]:6464 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbfHISPA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Aug 2019 14:15:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 11:15:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,366,1559545200"; 
-   d="scan'208";a="180209320"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga006.jf.intel.com with ESMTP; 09 Aug 2019 11:14:59 -0700
-Received: from fmsmsx161.amr.corp.intel.com (10.18.125.9) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 9 Aug 2019 11:14:59 -0700
-Received: from crsmsx152.amr.corp.intel.com (172.18.7.35) by
- FMSMSX161.amr.corp.intel.com (10.18.125.9) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 9 Aug 2019 11:14:58 -0700
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.115]) by
- CRSMSX152.amr.corp.intel.com ([169.254.5.138]) with mapi id 14.03.0439.000;
- Fri, 9 Aug 2019 12:14:56 -0600
-From:   "Weiny, Ira" <ira.weiny@intel.com>
-To:     Michal Hocko <mhocko@kernel.org>, Jan Kara <jack@suse.cz>
-CC:     John Hubbard <jhubbard@nvidia.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        Daniel Black <daniel@linux.ibm.com>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: RE: [PATCH 1/3] mm/mlock.c: convert put_page() to put_user_page*()
-Thread-Topic: [PATCH 1/3] mm/mlock.c: convert put_page() to put_user_page*()
-Thread-Index: AQHVS9wAqKeuPoXzZkyLXp0tqoyMNKbv6+CAgADRpQCAAHJ+gIAAUE4AgACJIACAAD05gIAAmqkAgAAC4oCAAF2ggIAAQV0A//+ec3A=
-Date:   Fri, 9 Aug 2019 18:14:56 +0000
-Message-ID: <2807E5FD2F6FDA4886F6618EAC48510E79E7F3E7@CRSMSX101.amr.corp.intel.com>
-References: <20190805222019.28592-2-jhubbard@nvidia.com>
- <20190807110147.GT11812@dhcp22.suse.cz>
- <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
- <20190808062155.GF11812@dhcp22.suse.cz>
- <875dca95-b037-d0c7-38bc-4b4c4deea2c7@suse.cz>
- <306128f9-8cc6-761b-9b05-578edf6cce56@nvidia.com>
- <d1ecb0d4-ea6a-637d-7029-687b950b783f@nvidia.com>
- <420a5039-a79c-3872-38ea-807cedca3b8a@suse.cz>
- <20190809082307.GL18351@dhcp22.suse.cz>
- <20190809135813.GF17568@quack2.suse.cz>
- <20190809175210.GR18351@dhcp22.suse.cz>
-In-Reply-To: <20190809175210.GR18351@dhcp22.suse.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMzllYmM1OGYtMTcyOS00MGM5LWJhMmMtNWU1NmE2YjQ4ZGJmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRnhqSFY1Z1NibnZacG1oTUhVT25EaDNENWcxZzJTbVlTaGlyQXF6Z2lSdXNEQmtDR1JLOXJVcFZYN1NqaHFtViJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S2406944AbfHISVp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Aug 2019 14:21:45 -0400
+Received: from UPDC19PA24.eemsg.mail.mil ([214.24.27.199]:49871 "EHLO
+        UPDC19PA24.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407409AbfHISVp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Aug 2019 14:21:45 -0400
+X-Greylist: delayed 430 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Aug 2019 14:21:39 EDT
+X-EEMSG-check-017: 3376545|UPDC19PA24_ESA_OUT06.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.64,366,1559520000"; 
+   d="scan'208";a="3376545"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UPDC19PA24.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 09 Aug 2019 18:14:23 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1565374464; x=1596910464;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=R9zx81r2PuRBibI972A4m0f/L356klxBhWIcPr5y5sM=;
+  b=CwLBtfsjmgrJ/S2z3iuXu9u2/jWLz/L8zc2Zn8YUU5Ra+DBS+UjwMNYu
+   sLFOLvYFxpchzg2aaMylRL4bbuXu7d9u4AuCBYeud+I+unNOHIHMYdA9E
+   jeKcqgia7ntMs/qji+eYTtkljl8KFDn6pFPH/cRTok37PwpCU46IF90xL
+   g3Znb6fPyySl8I2pWRxLQt6wCBWRCql4s9lfLb6LM/KhXMzOnq2rcUTLf
+   C5HNo+v0ltVHzJQXzTeg7MB/snWPhRlmuFarH7y1999jMNHknflbco07C
+   ck8Vqbh61IoqZ446CSjmqo5C/Haeu58yz+8PKXYHKqSzh2UEeo7qn8u0a
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.64,366,1559520000"; 
+   d="scan'208";a="26644347"
+IronPort-PHdr: =?us-ascii?q?9a23=3ARxSwxx2chJXeX0FQsmDT+DRfVm0co7zxezQtwd?=
+ =?us-ascii?q?8ZsesVLvrxwZ3uMQTl6Ol3ixeRBMOHsqgC0rOJ+Pm6ACQp2tWoiDg6aptCVh?=
+ =?us-ascii?q?sI2409vjcLJ4q7M3D9N+PgdCcgHc5PBxdP9nC/NlVJSo6lPwWB6nK94iQPFR?=
+ =?us-ascii?q?rhKAF7Ovr6GpLIj8Swyuu+54Dfbx9HiTagf79+Ngi6oRjTu8UZnIduNLs9wQ?=
+ =?us-ascii?q?bVr3VVfOhb2XlmLk+JkRbm4cew8p9j8yBOtP8k6sVNT6b0cbkmQLJBFDgpPH?=
+ =?us-ascii?q?w768PttRnYUAuA/WAcXXkMkhpJGAfK8hf3VYrsvyTgt+p93C6aPdDqTb0xRD?=
+ =?us-ascii?q?+v4btnRAPuhSwaLDMy7n3ZhdJsg6JauBKhpgJww4jIYIGOKfFyerrRcc4GSW?=
+ =?us-ascii?q?ZdW8pcUSJOApm4b4ASEeQPO+hWpJT5q1cXoxazAQygCeXywTFKm3D2x7U33e?=
+ =?us-ascii?q?Q/Hw/b0gIuHNUAv3vbotjuKKsfUvq4wLXSwDnfc/9b3yr25ojSchAmpPGBRa?=
+ =?us-ascii?q?59ftDLyUkoEQPOk1SeqYvkPzyIyOsNt3WQ4u16Wu2zhG4nrABxrSWxyco3lo?=
+ =?us-ascii?q?nIhp4aylDD9SljxoY1Pse3RFR0Yd6jDptdrieXPJZ1TMM6W2xkpSk3x7IctZ?=
+ =?us-ascii?q?O7YSQG0ooryhHBZ/CdboSF5A/oWvyLLjdinn1lfaqyhxO18Ue91OLxTtK00F?=
+ =?us-ascii?q?NWripdldnMq2wN2wTT6seZTvt9+V+s2SqV2ADJ6+FEPFs0mbDHK58h3rEwlp?=
+ =?us-ascii?q?0TvV7FHiDqg0X5kLWadkAl+uis8+jnY7PmqYGAN4Jslw3zPasjlta/DOglKA?=
+ =?us-ascii?q?QCQWeW9fqm2LH+5UH5Ra9FjvwykqnXqpDaIsEbq7ajDABJ3YYj7Be/ACq439?=
+ =?us-ascii?q?kDgXkGLE5KeBKAj4TzPVHOO+r3Ae2wg1Srjjdn3+rGMaH5ApXRMnjDl6/scq?=
+ =?us-ascii?q?pn5E5H1gUyzctS54lIBbEBOv3zR0HxtNjGAR8jKgC73/zoBM9h2YMZXGKFGr?=
+ =?us-ascii?q?WZP7/KsV+U+uIvJPGBZIsUuDb7Nvgk6OfijXwnll8He6mmw58XZWumHvRpPU?=
+ =?us-ascii?q?qZe2DggtQfHmcQuAoxUujqhEeFUT5JaHa4R7g86S0jCIK6EYfDQZiggL6E3C?=
+ =?us-ascii?q?e8BJ1WfGFGCkuXHHfubYqEXukDaCOILs9miDwEWqCrS5U92hG2qA/6171nI/?=
+ =?us-ascii?q?LO9S0dtJLjztp46uPSlRE27jF0AMGd3HuMT2FwhG8HWzg23KVnq0xn1liDyb?=
+ =?us-ascii?q?R4g+BfFdFL5fNGSBs1NZ3HwuxhFtDyQRzOcs2VR1enWt+mGy0+Tsotw98SZE?=
+ =?us-ascii?q?ZwA8itjhDE3yukHbAVk7iLBIcv/6LGwXf+OsZ9xGza1KU7k1YmRc5PP3W8hq?=
+ =?us-ascii?q?Fj7wjTG5LJk0KBmqaudKQc2jPN9WiawWqAp0FXTRB/UbvbUnAbfUbWs9v56V?=
+ =?us-ascii?q?3YT7O0CrQoLBFBycicJatOcNHpik9GRPj7MtTEf22xg3uwBQqPxr6UaIrqem?=
+ =?us-ascii?q?Md3DjSCUQdiAAc42qJNRUkBiegv2LfDCViFVfoY0zx7Ol+rG20Q1QqzwGFcU?=
+ =?us-ascii?q?JhzaC5+h0LivyGTfMcwLYEtD0mqzVuE1a3x8jWBMaYpwp9YKVcZssw4ExZ2m?=
+ =?us-ascii?q?Ldtgx9OIGgLq95i14AfAR4oVnu2w90Copei8gqqm0lzA5oJaKfylNBeCuS3Y?=
+ =?us-ascii?q?rsNb3PNmny4BevZrbO2l7EzdaW/rwC6OwipFX+uAGlD08i83Jg09lPzXSQ/I?=
+ =?us-ascii?q?nFDA0XUcG5bkFi7xFno5nCazQ5oobT0mdhd6Kzt2zswdUsUcIs0BGmN/hYMa?=
+ =?us-ascii?q?+JEEemGsYVAMmiJcQ2ilOpaVQCJ+kU+6kqaZD1P8Ca0bKmab4z1Amtin5Ktc?=
+ =?us-ascii?q?UkiROB?=
+X-IPAS-Result: =?us-ascii?q?A2DqCQC7tk1d/wHyM5BmHgEGBwaBZ4FpBSqBPgEyKpQRA?=
+ =?us-ascii?q?QEBAQEGgjSIa5EhCQEBAQEBAQEBARsZAQIBAYQ/gmMjOBMBBAEBAQQBAQMBC?=
+ =?us-ascii?q?QEBbIUzgjopAYMUCwFEAoFRglcMP4F3FKx4M4kCgUmBNIcLZoNzF3iBB4ERg?=
+ =?us-ascii?q?l1zg34SGIV/BJQ7lwoJgh+LXIhHDBuCMItDikWnXyGBWCsIAhgIIQ+DJ4ESg?=
+ =?us-ascii?q?TwXFY4pIwMwgQYBAYs3DRcHgiUBAQ?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 09 Aug 2019 18:14:22 +0000
+Received: from moss-callisto.infosec.tycho.ncsc.mil (moss-callisto [192.168.25.136])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x79IEKTN024373;
+        Fri, 9 Aug 2019 14:14:20 -0400
+From:   Aaron Goidel <acgoide@tycho.nsa.gov>
+To:     paul@paul-moore.com
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
+        amir73il@gmail.com, jmorris@namei.org, sds@tycho.nsa.gov,
+        linux-kernel@vger.kernel.org, Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH v2] fanotify, inotify, dnotify, security: add security hook for fs notifications
+Date:   Fri,  9 Aug 2019 14:14:01 -0400
+Message-Id: <20190809181401.7086-1-acgoide@tycho.nsa.gov>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Fri 09-08-19 15:58:13, Jan Kara wrote:
-> > On Fri 09-08-19 10:23:07, Michal Hocko wrote:
-> > > On Fri 09-08-19 10:12:48, Vlastimil Babka wrote:
-> > > > On 8/9/19 12:59 AM, John Hubbard wrote:
-> > > > >>> That's true. However, I'm not sure munlocking is where the
-> > > > >>> put_user_page() machinery is intended to be used anyway? These
-> > > > >>> are short-term pins for struct page manipulation, not e.g.
-> > > > >>> dirtying of page contents. Reading commit fc1d8e7cca2d I don't
-> > > > >>> think this case falls within the reasoning there. Perhaps not
-> > > > >>> all GUP users should be converted to the planned separate GUP
-> > > > >>> tracking, and instead we should have a GUP/follow_page_mask()
-> variant that keeps using get_page/put_page?
-> > > > >>>
-> > > > >>
-> > > > >> Interesting. So far, the approach has been to get all the gup
-> > > > >> callers to release via put_user_page(), but if we add in Jan's
-> > > > >> and Ira's vaddr_pin_pages() wrapper, then maybe we could leave
-> some sites unconverted.
-> > > > >>
-> > > > >> However, in order to do so, we would have to change things so
-> > > > >> that we have one set of APIs (gup) that do *not* increment a
-> > > > >> pin count, and another set
-> > > > >> (vaddr_pin_pages) that do.
-> > > > >>
-> > > > >> Is that where we want to go...?
-> > > > >>
-> > > >
-> > > > We already have a FOLL_LONGTERM flag, isn't that somehow related?
-> > > > And if it's not exactly the same thing, perhaps a new gup flag to
-> > > > distinguish which kind of pinning to use?
-> > >
-> > > Agreed. This is a shiny example how forcing all existing gup users
-> > > into the new scheme is subotimal at best. Not the mention the overal
-> > > fragility mention elsewhere. I dislike the conversion even more now.
-> > >
-> > > Sorry if this was already discussed already but why the new pinning
-> > > is not bound to FOLL_LONGTERM (ideally hidden by an interface so
-> > > that users do not have to care about the flag) only?
-> >
-> > The new tracking cannot be bound to FOLL_LONGTERM. Anything that gets
-> > page reference and then touches page data (e.g. direct IO) needs the
-> > new kind of tracking so that filesystem knows someone is messing with the
-> page data.
-> > So what John is trying to address is a different (although related)
-> > problem to someone pinning a page for a long time.
-> 
-> OK, I see. Thanks for the clarification.
+As of now, setting watches on filesystem objects has, at most, applied a
+check for read access to the inode, and in the case of fanotify, requires
+CAP_SYS_ADMIN. No specific security hook or permission check has been
+provided to control the setting of watches. Using any of inotify, dnotify,
+or fanotify, it is possible to observe, not only write-like operations, but
+even read access to a file. Modeling the watch as being merely a read from
+the file is insufficient for the needs of SELinux. This is due to the fact
+that read access should not necessarily imply access to information about
+when another process reads from a file. Furthermore, fanotify watches grant
+more power to an application in the form of permission events. While
+notification events are solely, unidirectional (i.e. they only pass
+information to the receiving application), permission events are blocking.
+Permission events make a request to the receiving application which will
+then reply with a decision as to whether or not that action may be
+completed. This causes the issue of the watching application having the
+ability to exercise control over the triggering process. Without drawing a
+distinction within the permission check, the ability to read would imply
+the greater ability to control an application. Additionally, mount and
+superblock watches apply to all files within the same mount or superblock.
+Read access to one file should not necessarily imply the ability to watch
+all files accessed within a given mount or superblock.
 
-Not to beat a dead horse but FOLL_LONGTERM also has implications now for CMA pages which may or may not (I'm not an expert on those pages) need special tracking. 
+In order to solve these issues, a new LSM hook is implemented and has been
+placed within the system calls for marking filesystem objects with inotify,
+fanotify, and dnotify watches. These calls to the hook are placed at the
+point at which the target path has been resolved and are provided with the
+path struct, the mask of requested notification events, and the type of
+object on which the mark is being set (inode, superblock, or mount). The
+mask and obj_type have already been translated into common FS_* values
+shared by the entirety of the fs notification infrastructure. The path
+struct is passed rather than just the inode so that the mount is available,
+particularly for mount watches. This also allows for use of the hook by
+pathname-based security modules. However, since the hook is intended for
+use even by inode based security modules, it is not placed under the
+CONFIG_SECURITY_PATH conditional. Otherwise, the inode-based security
+modules would need to enable all of the path hooks, even though they do not
+use any of them.
 
-> 
-> > In principle, I'm not strongly opposed to a new FOLL flag to determine
-> > whether a pin or an ordinary page reference will be acquired at least
-> > as an internal implementation detail inside mm/gup.c. But I would
-> > really like to discourage new GUP users taking just page reference as
-> > the most clueless users (drivers) usually need a pin in the sense John
-> > implements. So in terms of API I'd strongly prefer to deprecate GUP as
-> > an API, provide
-> > vaddr_pin_pages() for drivers to get their buffer pages pinned and
-> > then for those few users who really know what they are doing (and who
-> > are not interested in page contents) we can have APIs like
-> > follow_page() to get a page reference from a virtual address.
-> 
-> Yes, going with a dedicated API sounds much better to me. Whether a
-> dedicated FOLL flag is used internally is not that important. I am also for
-> making the underlying gup to be really internal to the core kernel.
+This only provides a hook at the point of setting a watch, and presumes
+that permission to set a particular watch implies the ability to receive
+all notification about that object which match the mask. This is all that
+is required for SELinux. If other security modules require additional hooks
+or infrastructure to control delivery of notification, these can be added
+by them. It does not make sense for us to propose hooks for which we have
+no implementation. The understanding that all notifications received by the
+requesting application are all strictly of a type for which the application
+has been granted permission shows that this implementation is sufficient in
+its coverage.
 
-+1
+Security modules wishing to provide complete control over fanotify must
+also implement a security_file_open hook that validates that the access
+requested by the watching application is authorized. Fanotify has the issue
+that it returns a file descriptor with the file mode specified during
+fanotify_init() to the watching process on event. This is already covered
+by the LSM security_file_open hook if the security module implements
+checking of the requested file mode there. Otherwise, a watching process
+can obtain escalated access to a file for which it has not been authorized.
 
-I think GUP is too confusing.  I've been working with the details for many months now and it continues to confuse me.  :-(
+The selinux_path_notify hook implementation works by adding five new file
+permissions: watch, watch_mount, watch_sb, watch_reads, and watch_with_perm
+(descriptions about which will follow), and one new filesystem permission:
+watch (which is applied to superblock checks). The hook then decides which
+subset of these permissions must be held by the requesting application
+based on the contents of the provided mask and the obj_type. The
+selinux_file_open hook already checks the requested file mode and therefore
+ensures that a watching process cannot escalate its access through
+fanotify.
 
-My patches should be posted soon (based on mmotm) and I'll have my flame suit on so we can debate the interface.
+The watch, watch_mount, and watch_sb permissions are the baseline
+permissions for setting a watch on an object and each are a requirement for
+any watch to be set on a file, mount, or superblock respectively. It should
+be noted that having either of the other two permissions (watch_reads and
+watch_with_perm) does not imply the watch, watch_mount, or watch_sb
+permission. Superblock watches further require the filesystem watch
+permission to the superblock. As there is no labeled object in view for
+mounts, there is no specific check for mount watches beyond watch_mount to
+the inode. Such a check could be added in the future, if a suitable labeled
+object existed representing the mount.
 
-Ira
+The watch_reads permission is required to receive notifications from
+read-exclusive events on filesystem objects. These events include accessing
+a file for the purpose of reading and closing a file which has been opened
+read-only. This distinction has been drawn in order to provide a direct
+indication in the policy for this otherwise not obvious capability. Read
+access to a file should not necessarily imply the ability to observe read
+events on a file.
+
+Finally, watch_with_perm only applies to fanotify masks since it is the
+only way to set a mask which allows for the blocking, permission event.
+This permission is needed for any watch which is of this type. Though
+fanotify requires CAP_SYS_ADMIN, this is insufficient as it gives implicit
+trust to root, which we do not do, and does not support least privilege.
+
+Signed-off-by: Aaron Goidel <acgoide@tycho.nsa.gov>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+v2:
+  - move initialization of obj_type up to remove duplicate work
+  - convert inotify and fanotify flags to common FS_* flags
+ fs/notify/dnotify/dnotify.c         | 15 +++++++--
+ fs/notify/fanotify/fanotify_user.c  | 19 ++++++++++--
+ fs/notify/inotify/inotify_user.c    | 14 +++++++--
+ include/linux/lsm_hooks.h           |  9 +++++-
+ include/linux/security.h            | 10 ++++--
+ security/security.c                 |  6 ++++
+ security/selinux/hooks.c            | 47 +++++++++++++++++++++++++++++
+ security/selinux/include/classmap.h |  5 +--
+ 8 files changed, 113 insertions(+), 12 deletions(-)
+
+diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+index 250369d6901d..87a7f61bc91c 100644
+--- a/fs/notify/dnotify/dnotify.c
++++ b/fs/notify/dnotify/dnotify.c
+@@ -22,6 +22,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/dnotify.h>
+ #include <linux/init.h>
++#include <linux/security.h>
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+ #include <linux/fdtable.h>
+@@ -288,6 +289,17 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
+ 		goto out_err;
+ 	}
+ 
++	/*
++	 * convert the userspace DN_* "arg" to the internal FS_*
++	 * defined in fsnotify
++	 */
++	mask = convert_arg(arg);
++
++	error = security_path_notify(&filp->f_path, mask,
++			FSNOTIFY_OBJ_TYPE_INODE);
++	if (error)
++		goto out_err;
++
+ 	/* expect most fcntl to add new rather than augment old */
+ 	dn = kmem_cache_alloc(dnotify_struct_cache, GFP_KERNEL);
+ 	if (!dn) {
+@@ -302,9 +314,6 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
+ 		goto out_err;
+ 	}
+ 
+-	/* convert the userspace DN_* "arg" to the internal FS_* defines in fsnotify */
+-	mask = convert_arg(arg);
+-
+ 	/* set up the new_fsn_mark and new_dn_mark */
+ 	new_fsn_mark = &new_dn_mark->fsn_mark;
+ 	fsnotify_init_mark(new_fsn_mark, dnotify_group);
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index a90bb19dcfa2..8b4e2ad6d208 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -528,7 +528,8 @@ static const struct file_operations fanotify_fops = {
+ };
+ 
+ static int fanotify_find_path(int dfd, const char __user *filename,
+-			      struct path *path, unsigned int flags)
++			      struct path *path, unsigned int flags, __u64 mask,
++			      unsigned int obj_type)
+ {
+ 	int ret;
+ 
+@@ -567,8 +568,15 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+ 
+ 	/* you can only watch an inode if you have read permissions on it */
+ 	ret = inode_permission(path->dentry->d_inode, MAY_READ);
++	if (ret) {
++		path_put(path);
++		goto out;
++	}
++
++	ret = security_path_notify(path, mask, obj_type);
+ 	if (ret)
+ 		path_put(path);
++
+ out:
+ 	return ret;
+ }
+@@ -931,6 +939,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	__kernel_fsid_t __fsid, *fsid = NULL;
+ 	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
+ 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
++	unsigned int obj_type;
+ 	int ret;
+ 
+ 	pr_debug("%s: fanotify_fd=%d flags=%x dfd=%d pathname=%p mask=%llx\n",
+@@ -945,8 +954,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 
+ 	switch (mark_type) {
+ 	case FAN_MARK_INODE:
++		obj_type = FSNOTIFY_OBJ_TYPE_INODE;
++		break;
+ 	case FAN_MARK_MOUNT:
++		obj_type = FSNOTIFY_OBJ_TYPE_VFSMOUNT;
++		break;
+ 	case FAN_MARK_FILESYSTEM:
++		obj_type = FSNOTIFY_OBJ_TYPE_SB;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -1014,7 +1028,8 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 		goto fput_and_out;
+ 	}
+ 
+-	ret = fanotify_find_path(dfd, pathname, &path, flags);
++	ret = fanotify_find_path(dfd, pathname, &path, flags,
++			(mask & ALL_FSNOTIFY_EVENTS), obj_type);
+ 	if (ret)
+ 		goto fput_and_out;
+ 
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 7b53598c8804..408e9917ed42 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -39,6 +39,7 @@
+ #include <linux/poll.h>
+ #include <linux/wait.h>
+ #include <linux/memcontrol.h>
++#include <linux/security.h>
+ 
+ #include "inotify.h"
+ #include "../fdinfo.h"
+@@ -342,7 +343,8 @@ static const struct file_operations inotify_fops = {
+ /*
+  * find_inode - resolve a user-given path to a specific inode
+  */
+-static int inotify_find_inode(const char __user *dirname, struct path *path, unsigned flags)
++static int inotify_find_inode(const char __user *dirname, struct path *path,
++						unsigned int flags, __u64 mask)
+ {
+ 	int error;
+ 
+@@ -351,8 +353,15 @@ static int inotify_find_inode(const char __user *dirname, struct path *path, uns
+ 		return error;
+ 	/* you can only watch an inode if you have read permissions on it */
+ 	error = inode_permission(path->dentry->d_inode, MAY_READ);
++	if (error) {
++		path_put(path);
++		return error;
++	}
++	error = security_path_notify(path, mask,
++				FSNOTIFY_OBJ_TYPE_INODE);
+ 	if (error)
+ 		path_put(path);
++
+ 	return error;
+ }
+ 
+@@ -744,7 +753,8 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+ 	if (mask & IN_ONLYDIR)
+ 		flags |= LOOKUP_DIRECTORY;
+ 
+-	ret = inotify_find_inode(pathname, &path, flags);
++	ret = inotify_find_inode(pathname, &path, flags,
++			(mask & IN_ALL_EVENTS));
+ 	if (ret)
+ 		goto fput_and_out;
+ 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 47f58cfb6a19..ead98af9c602 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -339,6 +339,9 @@
+  *	Check for permission to change root directory.
+  *	@path contains the path structure.
+  *	Return 0 if permission is granted.
++ * @path_notify:
++ *	Check permissions before setting a watch on events as defined by @mask,
++ *	on an object at @path, whose type is defined by @obj_type.
+  * @inode_readlink:
+  *	Check the permission to read the symbolic link.
+  *	@dentry contains the dentry structure for the file link.
+@@ -1535,7 +1538,9 @@ union security_list_options {
+ 	int (*path_chown)(const struct path *path, kuid_t uid, kgid_t gid);
+ 	int (*path_chroot)(const struct path *path);
+ #endif
+-
++	/* Needed for inode based security check */
++	int (*path_notify)(const struct path *path, u64 mask,
++				unsigned int obj_type);
+ 	int (*inode_alloc_security)(struct inode *inode);
+ 	void (*inode_free_security)(struct inode *inode);
+ 	int (*inode_init_security)(struct inode *inode, struct inode *dir,
+@@ -1860,6 +1865,8 @@ struct security_hook_heads {
+ 	struct hlist_head path_chown;
+ 	struct hlist_head path_chroot;
+ #endif
++	/* Needed for inode based modules as well */
++	struct hlist_head path_notify;
+ 	struct hlist_head inode_alloc_security;
+ 	struct hlist_head inode_free_security;
+ 	struct hlist_head inode_init_security;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 659071c2e57c..7d9c1da1f659 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -259,7 +259,8 @@ int security_dentry_create_files_as(struct dentry *dentry, int mode,
+ 					struct qstr *name,
+ 					const struct cred *old,
+ 					struct cred *new);
+-
++int security_path_notify(const struct path *path, u64 mask,
++					unsigned int obj_type);
+ int security_inode_alloc(struct inode *inode);
+ void security_inode_free(struct inode *inode);
+ int security_inode_init_security(struct inode *inode, struct inode *dir,
+@@ -387,7 +388,6 @@ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+ int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
+ void security_release_secctx(char *secdata, u32 seclen);
+-
+ void security_inode_invalidate_secctx(struct inode *inode);
+ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+ int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+@@ -621,6 +621,12 @@ static inline int security_move_mount(const struct path *from_path,
+ 	return 0;
+ }
+ 
++static inline int security_path_notify(const struct path *path, u64 mask,
++				unsigned int obj_type)
++{
++	return 0;
++}
++
+ static inline int security_inode_alloc(struct inode *inode)
+ {
+ 	return 0;
+diff --git a/security/security.c b/security/security.c
+index 613a5c00e602..30687e1366b7 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -871,6 +871,12 @@ int security_move_mount(const struct path *from_path, const struct path *to_path
+ 	return call_int_hook(move_mount, 0, from_path, to_path);
+ }
+ 
++int security_path_notify(const struct path *path, u64 mask,
++				unsigned int obj_type)
++{
++	return call_int_hook(path_notify, 0, path, mask, obj_type);
++}
++
+ int security_inode_alloc(struct inode *inode)
+ {
+ 	int rc = lsm_inode_alloc(inode);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f77b314d0575..a47376d1c924 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -92,6 +92,8 @@
+ #include <linux/kernfs.h>
+ #include <linux/stringhash.h>	/* for hashlen_string() */
+ #include <uapi/linux/mount.h>
++#include <linux/fsnotify.h>
++#include <linux/fanotify.h>
+ 
+ #include "avc.h"
+ #include "objsec.h"
+@@ -3261,6 +3263,50 @@ static int selinux_inode_removexattr(struct dentry *dentry, const char *name)
+ 	return -EACCES;
+ }
+ 
++static int selinux_path_notify(const struct path *path, u64 mask,
++						unsigned int obj_type)
++{
++	int ret;
++	u32 perm;
++
++	struct common_audit_data ad;
++
++	ad.type = LSM_AUDIT_DATA_PATH;
++	ad.u.path = *path;
++
++	/*
++	 * Set permission needed based on the type of mark being set.
++	 * Performs an additional check for sb watches.
++	 */
++	switch (obj_type) {
++	case FSNOTIFY_OBJ_TYPE_VFSMOUNT:
++		perm = FILE__WATCH_MOUNT;
++		break;
++	case FSNOTIFY_OBJ_TYPE_SB:
++		perm = FILE__WATCH_SB;
++		ret = superblock_has_perm(current_cred(), path->dentry->d_sb,
++						FILESYSTEM__WATCH, &ad);
++		if (ret)
++			return ret;
++		break;
++	case FSNOTIFY_OBJ_TYPE_INODE:
++		perm = FILE__WATCH;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	// check if the mask is requesting ability to set a blocking watch
++	if (mask & (ALL_FSNOTIFY_PERM_EVENTS))
++		perm |= FILE__WATCH_WITH_PERM; // if so, check that permission
++
++	// is the mask asking to watch file reads?
++	if (mask & (FS_ACCESS | FS_ACCESS_PERM | FS_CLOSE_NOWRITE))
++		perm |= FILE__WATCH_READS; // check that permission as well
++
++	return path_has_perm(current_cred(), path, perm);
++}
++
+ /*
+  * Copy the inode security context value to the user.
+  *
+@@ -6798,6 +6844,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_getsecid, selinux_inode_getsecid),
+ 	LSM_HOOK_INIT(inode_copy_up, selinux_inode_copy_up),
+ 	LSM_HOOK_INIT(inode_copy_up_xattr, selinux_inode_copy_up_xattr),
++	LSM_HOOK_INIT(path_notify, selinux_path_notify),
+ 
+ 	LSM_HOOK_INIT(kernfs_init_security, selinux_kernfs_init_security),
+ 
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 201f7e588a29..32e9b03be3dd 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -7,7 +7,8 @@
+ 
+ #define COMMON_FILE_PERMS COMMON_FILE_SOCK_PERMS, "unlink", "link", \
+     "rename", "execute", "quotaon", "mounton", "audit_access", \
+-    "open", "execmod"
++	"open", "execmod", "watch", "watch_mount", "watch_sb", \
++	"watch_with_perm", "watch_reads"
+ 
+ #define COMMON_SOCK_PERMS COMMON_FILE_SOCK_PERMS, "bind", "connect", \
+     "listen", "accept", "getopt", "setopt", "shutdown", "recvfrom",  \
+@@ -60,7 +61,7 @@ struct security_class_mapping secclass_map[] = {
+ 	{ "filesystem",
+ 	  { "mount", "remount", "unmount", "getattr",
+ 	    "relabelfrom", "relabelto", "associate", "quotamod",
+-	    "quotaget", NULL } },
++	    "quotaget", "watch", NULL } },
+ 	{ "file",
+ 	  { COMMON_FILE_PERMS,
+ 	    "execute_no_trans", "entrypoint", NULL } },
+-- 
+2.21.0
 
