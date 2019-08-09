@@ -2,117 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FB3C87508
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 11:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E2648766F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 11:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405765AbfHIJQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Aug 2019 05:16:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60362 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405641AbfHIJQR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Aug 2019 05:16:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EAA78B011;
-        Fri,  9 Aug 2019 09:16:14 +0000 (UTC)
-Date:   Fri, 9 Aug 2019 11:16:14 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Black <daniel@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH 1/3] mm/mlock.c: convert put_page() to put_user_page*()
-Message-ID: <20190809091614.GO18351@dhcp22.suse.cz>
-References: <20190805222019.28592-2-jhubbard@nvidia.com>
- <20190807110147.GT11812@dhcp22.suse.cz>
- <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
- <20190808062155.GF11812@dhcp22.suse.cz>
- <875dca95-b037-d0c7-38bc-4b4c4deea2c7@suse.cz>
- <306128f9-8cc6-761b-9b05-578edf6cce56@nvidia.com>
- <d1ecb0d4-ea6a-637d-7029-687b950b783f@nvidia.com>
- <420a5039-a79c-3872-38ea-807cedca3b8a@suse.cz>
- <20190809082307.GL18351@dhcp22.suse.cz>
- <a83e4449-fc8d-7771-1b78-2fa645fa0772@nvidia.com>
+        id S2406054AbfHIJoq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Aug 2019 05:44:46 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:34063 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730233AbfHIJop (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Aug 2019 05:44:45 -0400
+X-Originating-IP: 81.250.144.103
+Received: from [10.30.1.20] (lneuilly-657-1-5-103.w81-250.abo.wanadoo.fr [81.250.144.103])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 5865C6000D;
+        Fri,  9 Aug 2019 09:44:39 +0000 (UTC)
+Subject: Re: [PATCH v6 09/14] mips: Properly account for stack randomization
+ and stack guard gap
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Albert Ou <aou@eecs.berkeley.edu>,
+        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        James Hogan <jhogan@kernel.org>,
+        linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20190808061756.19712-1-alex@ghiti.fr>
+ <20190808061756.19712-10-alex@ghiti.fr>
+ <bd67507e-8a5b-34b5-1a33-5500bbb724b2@cogentembedded.com>
+From:   Alexandre Ghiti <alex@ghiti.fr>
+Message-ID: <91e31484-b268-2c90-1dd1-98cec349af6c@ghiti.fr>
+Date:   Fri, 9 Aug 2019 11:44:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a83e4449-fc8d-7771-1b78-2fa645fa0772@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <bd67507e-8a5b-34b5-1a33-5500bbb724b2@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: fr
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 09-08-19 02:05:15, John Hubbard wrote:
-> On 8/9/19 1:23 AM, Michal Hocko wrote:
-> > On Fri 09-08-19 10:12:48, Vlastimil Babka wrote:
-> > > On 8/9/19 12:59 AM, John Hubbard wrote:
-> > > > > > That's true. However, I'm not sure munlocking is where the
-> > > > > > put_user_page() machinery is intended to be used anyway? These are
-> > > > > > short-term pins for struct page manipulation, not e.g. dirtying of page
-> > > > > > contents. Reading commit fc1d8e7cca2d I don't think this case falls
-> > > > > > within the reasoning there. Perhaps not all GUP users should be
-> > > > > > converted to the planned separate GUP tracking, and instead we should
-> > > > > > have a GUP/follow_page_mask() variant that keeps using get_page/put_page?
-> > > > > 
-> > > > > Interesting. So far, the approach has been to get all the gup callers to
-> > > > > release via put_user_page(), but if we add in Jan's and Ira's vaddr_pin_pages()
-> > > > > wrapper, then maybe we could leave some sites unconverted.
-> > > > > 
-> > > > > However, in order to do so, we would have to change things so that we have
-> > > > > one set of APIs (gup) that do *not* increment a pin count, and another set
-> > > > > (vaddr_pin_pages) that do.
-> > > > > 
-> > > > > Is that where we want to go...?
-> > > > > 
-> > > 
-> > > We already have a FOLL_LONGTERM flag, isn't that somehow related? And if
-> > > it's not exactly the same thing, perhaps a new gup flag to distinguish
-> > > which kind of pinning to use?
-> > 
-> > Agreed. This is a shiny example how forcing all existing gup users into
-> > the new scheme is subotimal at best. Not the mention the overal
-> > fragility mention elsewhere. I dislike the conversion even more now.
-> > 
-> > Sorry if this was already discussed already but why the new pinning is
-> > not bound to FOLL_LONGTERM (ideally hidden by an interface so that users
-> > do not have to care about the flag) only?
-> > 
-> 
-> Oh, it's been discussed alright, but given how some of the discussions have gone,
-> I certainly am not surprised that there are still questions and criticisms!
-> Especially since I may have misunderstood some of the points, along the way.
-> It's been quite a merry go round. :)
+On 8/8/19 11:16 AM, Sergei Shtylyov wrote:
+> Hello!
+>
+> On 08.08.2019 9:17, Alexandre Ghiti wrote:
+>
+>> This commit takes care of stack randomization and stack guard gap when
+>> computing mmap base address and checks if the task asked for 
+>> randomization.
+>>
+>> This fixes the problem uncovered and not fixed for arm here:
+>> https://lkml.kernel.org/r/20170622200033.25714-1-riel@redhat.com
+>>
+>> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+>> Acked-by: Kees Cook <keescook@chromium.org>
+>> Acked-by: Paul Burton <paul.burton@mips.com>
+>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+>> ---
+>>   arch/mips/mm/mmap.c | 14 ++++++++++++--
+>>   1 file changed, 12 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
+>> index d79f2b432318..f5c778113384 100644
+>> --- a/arch/mips/mm/mmap.c
+>> +++ b/arch/mips/mm/mmap.c
+>> @@ -21,8 +21,9 @@ unsigned long shm_align_mask = PAGE_SIZE - 1;    /* 
+>> Sane caches */
+>>   EXPORT_SYMBOL(shm_align_mask);
+>>     /* gap between mmap and stack */
+>> -#define MIN_GAP (128*1024*1024UL)
+>> -#define MAX_GAP ((TASK_SIZE)/6*5)
+>> +#define MIN_GAP        (128*1024*1024UL)
+>> +#define MAX_GAP        ((TASK_SIZE)/6*5)
+>
+>    Could add spaces around *, while touching this anyway? And parens
+> around TASK_SIZE shouldn't be needed...
+>
 
-Yeah, I've tried to follow them but just gave up at some point.
+I did not fix checkpatch warnings here since this code gets removed 
+afterwards.
 
-> Anyway, what I'm hearing now is: for gup(FOLL_LONGTERM), apply the pinned tracking.
-> And therefore only do put_user_page() on pages that were pinned with
-> FOLL_LONGTERM. For short term pins, let the locking do what it will:
-> things can briefly block and all will be well.
-> 
-> Also, that may or may not come with a wrapper function, courtesy of Jan
-> and Ira.
-> 
-> Is that about right? It's late here, but I don't immediately recall any
-> problems with doing it that way...
 
-Yes that makes more sense to me. Whoever needs that tracking should
-opt-in for it. Otherwise you just risk problems like the one discussed
-in the mlock path (because we do a strange stuff in the name of
-performance) and a never ending whack a mole where new users do not
-follow the new API usage and that results in all sorts of weird issues.
+>> +#define STACK_RND_MASK    (0x7ff >> (PAGE_SHIFT - 12))
+>>     static int mmap_is_legacy(struct rlimit *rlim_stack)
+>>   {
+>> @@ -38,6 +39,15 @@ static int mmap_is_legacy(struct rlimit *rlim_stack)
+>>   static unsigned long mmap_base(unsigned long rnd, struct rlimit 
+>> *rlim_stack)
+>>   {
+>>       unsigned long gap = rlim_stack->rlim_cur;
+>> +    unsigned long pad = stack_guard_gap;
+>> +
+>> +    /* Account for stack randomization if necessary */
+>> +    if (current->flags & PF_RANDOMIZE)
+>> +        pad += (STACK_RND_MASK << PAGE_SHIFT);
+>
+>    Parens not needed here.
 
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+
+Belt and braces approach here as I'm never sure about priorities.
+
+Thanks for your time,
+
+Alex
+
+
+>
+>> +
+>> +    /* Values close to RLIM_INFINITY can overflow. */
+>> +    if (gap + pad > gap)
+>> +        gap += pad;
+>>         if (gap < MIN_GAP)
+>>           gap = MIN_GAP;
+>>
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
