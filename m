@@ -2,111 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 423AF87682
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 11:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E28387892
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 13:30:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406199AbfHIJp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Aug 2019 05:45:56 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35101 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406138AbfHIJp4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Aug 2019 05:45:56 -0400
-X-Originating-IP: 81.250.144.103
-Received: from [10.30.1.20] (lneuilly-657-1-5-103.w81-250.abo.wanadoo.fr [81.250.144.103])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 732B46000D;
-        Fri,  9 Aug 2019 09:45:51 +0000 (UTC)
-Subject: Re: [PATCH v6 11/14] mips: Adjust brk randomization offset to fit
- generic version
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        James Hogan <jhogan@kernel.org>,
-        linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20190808061756.19712-1-alex@ghiti.fr>
- <20190808061756.19712-12-alex@ghiti.fr>
- <68ec5cf6-6ba3-68ab-aa01-668b701c642f@cogentembedded.com>
-From:   Alexandre Ghiti <alex@ghiti.fr>
-Message-ID: <7b7e256d-5106-3022-9ded-0af4193b6b8b@ghiti.fr>
-Date:   Fri, 9 Aug 2019 11:45:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2405723AbfHILaF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Aug 2019 07:30:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33476 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2406588AbfHILaE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Aug 2019 07:30:04 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6A1313172D8C;
+        Fri,  9 Aug 2019 11:30:04 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A74677E51;
+        Fri,  9 Aug 2019 11:30:01 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id x79BU1n9032319;
+        Fri, 9 Aug 2019 07:30:01 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id x79BU0Ct032315;
+        Fri, 9 Aug 2019 07:30:01 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Fri, 9 Aug 2019 07:30:00 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Dave Chinner <david@fromorbit.com>
+cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Mike Snitzer <msnitzer@redhat.com>, junxiao.bi@oracle.com,
+        dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
+        honglei.wang@oracle.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] direct-io: use GFP_NOIO to avoid deadlock
+In-Reply-To: <20190809013403.GY7777@dread.disaster.area>
+Message-ID: <alpine.LRH.2.02.1908090725290.31061@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1908080540240.15519@file01.intranet.prod.int.rdu2.redhat.com> <20190809013403.GY7777@dread.disaster.area>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <68ec5cf6-6ba3-68ab-aa01-668b701c642f@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: fr
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 09 Aug 2019 11:30:04 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/8/19 11:19 AM, Sergei Shtylyov wrote:
-> Hello!
->
-> On 08.08.2019 9:17, Alexandre Ghiti wrote:
->
->> This commit simply bumps up to 32MB and 1GB the random offset
->> of brk, compared to 8MB and 256MB, for 32bit and 64bit respectively.
->>
->> Suggested-by: Kees Cook <keescook@chromium.org>
->> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
->> Acked-by: Paul Burton <paul.burton@mips.com>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
->> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
->> ---
->>   arch/mips/mm/mmap.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
->> index a7e84b2e71d7..ff6ab87e9c56 100644
->> --- a/arch/mips/mm/mmap.c
->> +++ b/arch/mips/mm/mmap.c
-> [...]
->> @@ -189,11 +190,11 @@ static inline unsigned long brk_rnd(void)
->>       unsigned long rnd = get_random_long();
->>         rnd = rnd << PAGE_SHIFT;
->> -    /* 8MB for 32bit, 256MB for 64bit */
->> +    /* 32MB for 32bit, 1GB for 64bit */
->>       if (TASK_IS_32BIT_ADDR)
->> -        rnd = rnd & 0x7ffffful;
->> +        rnd = rnd & (SZ_32M - 1);
->>       else
->> -        rnd = rnd & 0xffffffful;
->> +        rnd = rnd & (SZ_1G - 1);
->
->    Why not make these 'rnd &= SZ_* - 1', while at it anyways?
 
 
-You're right, I could have. Again, this code gets removed afterwards, so 
-I think it's ok
-to leave it as is.
+On Fri, 9 Aug 2019, Dave Chinner wrote:
 
-Anyway, thanks for your remarks Sergei !
+> And, FWIW, there's an argument to be made here that the underlying
+> bug is dm_bufio_shrink_scan() blocking kswapd by waiting on IO
+> completions while holding a mutex that other IO-level reclaim
+> contexts require to make progress.
+> 
+> Cheers,
+> 
+> Dave.
 
-Alex
+The IO-level reclaim contexts should use GFP_NOIO. If the dm-bufio 
+shrinker is called with GFP_NOIO, it cannot be blocked by kswapd, because:
+* it uses trylock to acquire the mutex
+* it doesn't attempt to free buffers that are dirty or under I/O (see 
+  __try_evict_buffer)
 
+I think that this logic is sufficient to prevent the deadlock.
 
->
-> [...]
->
-> MBR, Sergei
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Mikulas
