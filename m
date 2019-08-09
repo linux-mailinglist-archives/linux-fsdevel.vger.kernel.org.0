@@ -2,92 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A57EE883B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 22:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DDA18843E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 22:45:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726232AbfHIULq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Aug 2019 16:11:46 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:47026 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbfHIULq (ORCPT
+        id S1726762AbfHIUp1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Aug 2019 16:45:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52728 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfHIUp1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Aug 2019 16:11:46 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z1so99305924wru.13;
-        Fri, 09 Aug 2019 13:11:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=33J6hcH2HYc/2SD598sQ3T89Yhn76Qy1ADbBG1GDC0o=;
-        b=DnfnsGgcPMmRHKwXnNaf58qgyjzoIuiCLIfMUs66yGXQt8yAQXsUjwGlY/hw/sUMsf
-         gygQBRnWCF3QUO/l+3mSuyoDBSG0YdCDL3guXxi3aG4nybUoQz+dt/NPDLthm/dBAt8q
-         ARPR12Krx0rcGrElO0Z4WN5p0xT/oBn1dGfALlQiYuCpkFnc95SOUDtIrnYLey4Dqc9h
-         14DkLmcnQKFrwsiehpWYujU3Uv/LBSbBDutcQk/AsOwlXyHW8GmmoK8jK5QQ6BywfLec
-         hp4zA+4eZXX3GHutPNLO7q1SodMx4QAZQNg3mc8p073+mT0XiiVERMCHuHdBBEfKLXt0
-         lSrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=33J6hcH2HYc/2SD598sQ3T89Yhn76Qy1ADbBG1GDC0o=;
-        b=TWFi5DPEDZ8wIsjAIs0hAULo+uVs0aqM75NLybK5jynomniM7vgvMn5mnWyckAt4Vt
-         2gfSGcI6QfHycWINYVUVrauFoWfChrT1Jm9x0a5yqtpEzUYeNjpYlyryGABVGmNU5i6E
-         AtqwrFHmhIKJhC3oE3mzWcUj+qYjLgY2mtmFipxY/lsj0Ma8hMJZjGTKeNwhGjjUm8ty
-         Z/0zDkJ0OaoOoXdG57b1ze4WyNROjK5r4NfYnLU0fz6p1q/LwjoixOHzykPF1ccp5Fg/
-         /KUwc+kEOmzcMPDjpTf+C5uGcnT3L7IROif+ZaUTNV62HWhMYI/nYaNtqUmk9Q3Ar54d
-         22mA==
-X-Gm-Message-State: APjAAAXWZ0WlkHbwSUggDnfXlPMabu1ficMCpN+3pbZFg1e32TiPSK/X
-        ttZFoye2V+zTBjcuCYoWAlRXLXOwtRvyHZBi1/14rtgA+G0=
-X-Google-Smtp-Source: APXvYqz0exDywPgcVRqLNQZMypGQRjFJA/Zqg/3boLLQ4hSQlQ0sb7OyAOqZivtVWIt3mA2nHUaqta2NqrbHO7maF+o=
-X-Received: by 2002:adf:f54a:: with SMTP id j10mr7271950wrp.220.1565381504029;
- Fri, 09 Aug 2019 13:11:44 -0700 (PDT)
+        Fri, 9 Aug 2019 16:45:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=r3dsx6QVmSUscYTWrHVh0F7zwcjR91dpsterxBkUC8s=; b=TLJg1pKD9j6YHm/H37OhEVDOl
+        8da2sYlD4V5mVM84jMZdKOKy9/DTnFcQjQW0txNN/sjDRCo8WEoF9cWP2tFIGMAumjDEpKavemMRs
+        4s14f9uX8lSxORoFI9iIpY5fljFbZNmKKgUpZNQRurkaZtGWiuGjmwnbKC9c6mv1UqaDrz7BPhyw3
+        /AI+Ae+NXenu8vna83hq60qECoatL4uG0fG6u0J2CGrE/Nk7dvKys9fLrf+BbEwaa3bGahn4rhzTU
+        DPkfLQuLi4oSQV4zomrIgQPE8vhPr06zoiEVlT2IfCBMIvVHcjCfLhXoktwK4JN0cdeyh32lj4cMF
+        5m5xYhuaA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hwBlF-000213-GK; Fri, 09 Aug 2019 20:45:17 +0000
+Date:   Fri, 9 Aug 2019 13:45:17 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Goldwyn Rodrigues <RGoldwyn@suse.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, miaoxie@huawei.com
+Subject: Re: [PATCH 10/13] iomap: use a function pointer for dio submits
+Message-ID: <20190809204517.GR5482@bombadil.infradead.org>
+References: <20190802220048.16142-1-rgoldwyn@suse.de>
+ <20190802220048.16142-11-rgoldwyn@suse.de>
+ <20190804234321.GC7689@dread.disaster.area>
+ <1565021323.13240.14.camel@suse.com>
+ <20190805215458.GH7689@dread.disaster.area>
+ <20190808042640.GA28630@138>
+ <20190808054936.GA5319@sol.localdomain>
 MIME-Version: 1.0
-References: <20190808172226.18306-1-chris@chris-wilson.co.uk>
- <CAM0jSHP0BZJyJO3JeMqPDK=eYhS-Az6i6fGFz1tUQgaErA7mfA@mail.gmail.com> <156537674371.32306.7527004745489566049@skylake-alporthouse-com>
-In-Reply-To: <156537674371.32306.7527004745489566049@skylake-alporthouse-com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Fri, 9 Aug 2019 22:11:30 +0200
-Message-ID: <CA+icZUVy2P6jm-36jWErJA9q=SX3ORyKnoxhKGB5qz=xZkPrUw@mail.gmail.com>
-Subject: Re: [Intel-gfx] [PATCH] drm/i915: Stop reconfiguring our shmemfs mountpoint
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     Matthew Auld <matthew.william.auld@gmail.com>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Hugh Dickins <hughd@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Matthew Auld <matthew.auld@intel.com>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808054936.GA5319@sol.localdomain>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 8:52 PM Chris Wilson <chris@chris-wilson.co.uk> wrote:
->
-> Quoting Matthew Auld (2019-08-09 19:47:02)
-> > On Thu, 8 Aug 2019 at 18:23, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> > >
-> > > The filesystem reconfigure API is undergoing a transition, breaking our
-> > > current code. As we only set the default options, we can simply remove
-> > > the call to s_op->remount_fs(). In the future, when HW permits, we can
-> > > try re-enabling huge page support, albeit as suggested with new per-file
-> > > controls.
-> > >
-> > > Reported-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > > Suggested-by: Hugh Dickins <hughd@google.com>
-> > > Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-> > > Cc: Matthew Auld <matthew.auld@intel.com>
-> > > Cc: Hugh Dickins <hughd@google.com>
-> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > Reviewed-by: Matthew Auld <matthew.auld@intel.com>
->
-> Thanks, picked up with the s/within/within_size/ fix.
-> -Chris
+On Wed, Aug 07, 2019 at 10:49:36PM -0700, Eric Biggers wrote:
+> On Thu, Aug 08, 2019 at 12:26:42PM +0800, Gao Xiang wrote:
+> >     1. decrypt->verity->decompress
+> > 
+> >     2. verity->decompress->decrypt
+> > 
+> >     3. decompress->decrypt->verity
+> > 
+> >    1. and 2. could cause less computation since it processes
+> >    compressed data, and the security is good enough since
+> >    the behavior of decompression algorithm is deterministic.
+> >    3 could cause more computation.
+> > 
+> > All I want to say is the post process is so complicated since we have
+> > many selection if encryption, decompression, verification are all involved.
+> > 
+> > Maybe introduce a core subset to IOMAP is better for long-term
+> > maintainment and better performance. And we should consider it
+> > more carefully.
+> > 
+> 
+> FWIW, the only order that actually makes sense is decrypt->decompress->verity.
 
-For the records and followers:
+That used to be true, but a paper in 2004 suggested it's not true.
+Further work in this space in 2009 based on block ciphers:
+https://arxiv.org/pdf/1009.1759
 
-[1] https://cgit.freedesktop.org/drm-intel/commit/?h=for-linux-next&id=72e67f04637432f91e4cc5e8e4f7eb4e38461e8e
+It looks like it'd be computationally expensive to do, but feasible.
+
+> Decrypt before decompress, i.e. encrypt after compress, because only the
+> plaintext can be compressible; the ciphertext isn't.
