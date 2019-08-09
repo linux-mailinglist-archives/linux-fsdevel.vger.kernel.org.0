@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B89288666
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2019 00:59:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18EFF8866C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2019 00:59:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730227AbfHIW66 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Aug 2019 18:58:58 -0400
-Received: from mga01.intel.com ([192.55.52.88]:62302 "EHLO mga01.intel.com"
+        id S1730598AbfHIW7E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Aug 2019 18:59:04 -0400
+Received: from mga03.intel.com ([134.134.136.65]:58582 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730149AbfHIW65 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Aug 2019 18:58:57 -0400
+        id S1730531AbfHIW7D (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Aug 2019 18:59:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:58:56 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:59:02 -0700
 X-IronPort-AV: E=Sophos;i="5.64,367,1559545200"; 
-   d="scan'208";a="326762567"
+   d="scan'208";a="259172583"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:58:56 -0700
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:59:01 -0700
 From:   ira.weiny@intel.com
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
@@ -32,9 +32,9 @@ Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
         linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         linux-ext4@vger.kernel.org, linux-mm@kvack.org,
         Ira Weiny <ira.weiny@intel.com>
-Subject: [RFC PATCH v2 10/19] mm/gup: Pass a NULL vaddr_pin through GUP fast
-Date:   Fri,  9 Aug 2019 15:58:24 -0700
-Message-Id: <20190809225833.6657-11-ira.weiny@intel.com>
+Subject: [RFC PATCH v2 13/19] {mm,file}: Add file_pins objects
+Date:   Fri,  9 Aug 2019 15:58:27 -0700
+Message-Id: <20190809225833.6657-14-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190809225833.6657-1-ira.weiny@intel.com>
 References: <20190809225833.6657-1-ira.weiny@intel.com>
@@ -47,254 +47,169 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Internally GUP fast needs to know that fast users will not support file
-pins.  Pass NULL for vaddr_pin through the fast call stack so that the
-pin code can return an error if it encounters file backed memory within
-the address range.
+User page pins (aka GUP) needs to track file information of files being
+pinned by those calls.  Depending on the needs of the caller this
+information is stored in 1 of 2 ways.
+
+1) Some subsystems like RDMA associate GUP pins with file descriptors
+   which can be passed around to other process'.  In this case a file
+   being pined must be associated with an owning file object (which can
+   then be resolved back to any of the processes which have a file
+   descriptor 'pointing' to that file object).
+
+2) Other subsystems do not have an owning file and can therefore
+   associate the file pin directly to the mm of the process which
+   created them.
+
+This patch introduces the new file pin structures and ensures struct
+file and struct mm_struct are prepared to store them.
+
+In subsequent patches the required information will be passed into new
+pin page calls and procfs is enhanced to show this information to the user.
 
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- mm/gup.c | 65 ++++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 40 insertions(+), 25 deletions(-)
+ fs/file_table.c          |  4 ++++
+ include/linux/file.h     | 49 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h       |  2 ++
+ include/linux/mm_types.h |  2 ++
+ kernel/fork.c            |  3 +++
+ 5 files changed, 60 insertions(+)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 7a449500f0a6..504af3e9a942 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1813,7 +1813,8 @@ static inline struct page *try_get_compound_head(struct page *page, int refs)
+diff --git a/fs/file_table.c b/fs/file_table.c
+index b07b53f24ff5..38947b9a4769 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -46,6 +46,7 @@ static void file_free_rcu(struct rcu_head *head)
+ {
+ 	struct file *f = container_of(head, struct file, f_u.fu_rcuhead);
  
- #ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
- static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
--			 unsigned int flags, struct page **pages, int *nr)
-+			 unsigned int flags, struct page **pages, int *nr,
-+			 struct vaddr_pin *vaddr_pin)
- {
- 	struct dev_pagemap *pgmap = NULL;
- 	int nr_start = *nr, ret = 0;
-@@ -1894,7 +1895,8 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
-  * useful to have gup_huge_pmd even if we can't operate on ptes.
-  */
- static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
--			 unsigned int flags, struct page **pages, int *nr)
-+			 unsigned int flags, struct page **pages, int *nr,
-+			 struct vaddr_pin *vaddr_pin)
- {
- 	return 0;
++	WARN_ON(!list_empty(&f->file_pins));
+ 	put_cred(f->f_cred);
+ 	kmem_cache_free(filp_cachep, f);
  }
-@@ -1903,7 +1905,7 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
- #if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
- static int __gup_device_huge(unsigned long pfn, unsigned long addr,
- 		unsigned long end, struct page **pages, int *nr,
--		unsigned int flags)
-+		unsigned int flags, struct vaddr_pin *vaddr_pin)
- {
- 	int nr_start = *nr;
- 	struct dev_pagemap *pgmap = NULL;
-@@ -1938,13 +1940,14 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
+@@ -118,6 +119,9 @@ static struct file *__alloc_file(int flags, const struct cred *cred)
+ 	f->f_mode = OPEN_FMODE(flags);
+ 	/* f->f_version: 0 */
  
- static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 		unsigned long end, struct page **pages, int *nr,
--		unsigned int flags)
-+		unsigned int flags, struct vaddr_pin *vaddr_pin)
- {
- 	unsigned long fault_pfn;
- 	int nr_start = *nr;
- 
- 	fault_pfn = pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
--	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr, flags))
-+	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr, flags,
-+			       vaddr_pin))
- 		return 0;
- 
- 	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
-@@ -1957,13 +1960,14 @@ static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 
- static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
- 		unsigned long end, struct page **pages, int *nr,
--		unsigned int flags)
-+		unsigned int flags, struct vaddr_pin *vaddr_pin)
- {
- 	unsigned long fault_pfn;
- 	int nr_start = *nr;
- 
- 	fault_pfn = pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
--	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr, flags))
-+	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr, flags,
-+			       vaddr_pin))
- 		return 0;
- 
- 	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
-@@ -1975,7 +1979,7 @@ static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
- #else
- static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 		unsigned long end, struct page **pages, int *nr,
--		unsigned int flags)
-+		unsigned int flags, struct vaddr_pin *vaddr_pin)
- {
- 	BUILD_BUG();
- 	return 0;
-@@ -1983,7 +1987,7 @@ static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 
- static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
- 		unsigned long end, struct page **pages, int *nr,
--		unsigned int flags)
-+		unsigned int flags, struct vaddr_pin *vaddr_pin)
- {
- 	BUILD_BUG();
- 	return 0;
-@@ -2075,7 +2079,8 @@ static inline int gup_huge_pd(hugepd_t hugepd, unsigned long addr,
- #endif /* CONFIG_ARCH_HAS_HUGEPD */
- 
- static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
--		unsigned long end, unsigned int flags, struct page **pages, int *nr)
-+		unsigned long end, unsigned int flags, struct page **pages,
-+		int *nr, struct vaddr_pin *vaddr_pin)
- {
- 	struct page *head, *page;
- 	int refs;
-@@ -2087,7 +2092,7 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 		if (unlikely(flags & FOLL_LONGTERM))
- 			return 0;
- 		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr,
--					     flags);
-+					     flags, vaddr_pin);
- 	}
- 
- 	refs = 0;
-@@ -2117,7 +2122,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
++	INIT_LIST_HEAD(&f->file_pins);
++	spin_lock_init(&f->fp_lock);
++
+ 	return f;
  }
  
- static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
--		unsigned long end, unsigned int flags, struct page **pages, int *nr)
-+		unsigned long end, unsigned int flags, struct page **pages, int *nr,
-+		struct vaddr_pin *vaddr_pin)
- {
- 	struct page *head, *page;
- 	int refs;
-@@ -2129,7 +2135,7 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
- 		if (unlikely(flags & FOLL_LONGTERM))
- 			return 0;
- 		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr,
--					     flags);
-+					     flags, vaddr_pin);
- 	}
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 3fcddff56bc4..cd79adad5b23 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -9,6 +9,7 @@
+ #include <linux/compiler.h>
+ #include <linux/types.h>
+ #include <linux/posix_types.h>
++#include <linux/kref.h>
  
- 	refs = 0;
-@@ -2196,7 +2202,8 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
- }
+ struct file;
  
- static int gup_pmd_range(pud_t pud, unsigned long addr, unsigned long end,
--		unsigned int flags, struct page **pages, int *nr)
-+		unsigned int flags, struct page **pages, int *nr,
-+		struct vaddr_pin *vaddr_pin)
- {
- 	unsigned long next;
- 	pmd_t *pmdp;
-@@ -2220,7 +2227,7 @@ static int gup_pmd_range(pud_t pud, unsigned long addr, unsigned long end,
- 				return 0;
+@@ -91,4 +92,52 @@ extern void fd_install(unsigned int fd, struct file *file);
+ extern void flush_delayed_fput(void);
+ extern void __fput_sync(struct file *);
  
- 			if (!gup_huge_pmd(pmd, pmdp, addr, next, flags,
--				pages, nr))
-+				pages, nr, vaddr_pin))
- 				return 0;
++/**
++ * struct file_file_pin
++ *
++ * Associate a pin'ed file with another file owner.
++ *
++ * Subsystems such as RDMA have the ability to pin memory which is associated
++ * with a file descriptor which can be passed to other processes without
++ * necessarily having that memory accessed in the remote processes address
++ * space.
++ *
++ * @file file backing memory which was pined by a GUP caller
++ * @f_owner the file representing the GUP owner
++ * @list of all file pins this owner has
++ *       (struct file *)->file_pins
++ * @ref number of times this pin was taken (roughly the number of pages pinned
++ *      in the file)
++ */
++struct file_file_pin {
++	struct file *file;
++	struct file *f_owner;
++	struct list_head list;
++	struct kref ref;
++};
++
++/*
++ * struct mm_file_pin
++ *
++ * Some GUP callers do not have an "owning" file.  Those pins are accounted for
++ * in the mm of the process that called GUP.
++ *
++ * The tuple {file, inode} is used to track this as a unique file pin and to
++ * track when this pin has been removed.
++ *
++ * @file file backing memory which was pined by a GUP caller
++ * @mm back point to owning mm
++ * @inode backing the file
++ * @list of all file pins this owner has
++ *       (struct mm_struct *)->file_pins
++ * @ref number of times this pin was taken
++ */
++struct mm_file_pin {
++	struct file *file;
++	struct mm_struct *mm;
++	struct inode *inode;
++	struct list_head list;
++	struct kref ref;
++};
++
+ #endif /* __LINUX_FILE_H */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2e41ce547913..d2e08feb9737 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -963,6 +963,8 @@ struct file {
+ #endif /* #ifdef CONFIG_EPOLL */
+ 	struct address_space	*f_mapping;
+ 	errseq_t		f_wb_err;
++	struct list_head        file_pins;
++	spinlock_t              fp_lock;
+ } __randomize_layout
+   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
  
- 		} else if (unlikely(is_hugepd(__hugepd(pmd_val(pmd))))) {
-@@ -2231,7 +2238,8 @@ static int gup_pmd_range(pud_t pud, unsigned long addr, unsigned long end,
- 			if (!gup_huge_pd(__hugepd(pmd_val(pmd)), addr,
- 					 PMD_SHIFT, next, flags, pages, nr))
- 				return 0;
--		} else if (!gup_pte_range(pmd, addr, next, flags, pages, nr))
-+		} else if (!gup_pte_range(pmd, addr, next, flags, pages, nr,
-+					  vaddr_pin))
- 			return 0;
- 	} while (pmdp++, addr = next, addr != end);
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 6a7a1083b6fb..4f6ea4acddbd 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -516,6 +516,8 @@ struct mm_struct {
+ 		/* HMM needs to track a few things per mm */
+ 		struct hmm *hmm;
+ #endif
++		struct list_head file_pins;
++		spinlock_t fp_lock; /* lock file_pins */
+ 	} __randomize_layout;
  
-@@ -2239,7 +2247,8 @@ static int gup_pmd_range(pud_t pud, unsigned long addr, unsigned long end,
- }
+ 	/*
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 0e2f9a2c132c..093f2f2fce1a 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -675,6 +675,7 @@ void __mmdrop(struct mm_struct *mm)
+ 	BUG_ON(mm == &init_mm);
+ 	WARN_ON_ONCE(mm == current->mm);
+ 	WARN_ON_ONCE(mm == current->active_mm);
++	WARN_ON(!list_empty(&mm->file_pins));
+ 	mm_free_pgd(mm);
+ 	destroy_context(mm);
+ 	mmu_notifier_mm_destroy(mm);
+@@ -1013,6 +1014,8 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+ 	mm->pmd_huge_pte = NULL;
+ #endif
+ 	mm_init_uprobes_state(mm);
++	INIT_LIST_HEAD(&mm->file_pins);
++	spin_lock_init(&mm->fp_lock);
  
- static int gup_pud_range(p4d_t p4d, unsigned long addr, unsigned long end,
--			 unsigned int flags, struct page **pages, int *nr)
-+			 unsigned int flags, struct page **pages, int *nr,
-+			 struct vaddr_pin *vaddr_pin)
- {
- 	unsigned long next;
- 	pud_t *pudp;
-@@ -2253,13 +2262,14 @@ static int gup_pud_range(p4d_t p4d, unsigned long addr, unsigned long end,
- 			return 0;
- 		if (unlikely(pud_huge(pud))) {
- 			if (!gup_huge_pud(pud, pudp, addr, next, flags,
--					  pages, nr))
-+					  pages, nr, vaddr_pin))
- 				return 0;
- 		} else if (unlikely(is_hugepd(__hugepd(pud_val(pud))))) {
- 			if (!gup_huge_pd(__hugepd(pud_val(pud)), addr,
- 					 PUD_SHIFT, next, flags, pages, nr))
- 				return 0;
--		} else if (!gup_pmd_range(pud, addr, next, flags, pages, nr))
-+		} else if (!gup_pmd_range(pud, addr, next, flags, pages, nr,
-+					  vaddr_pin))
- 			return 0;
- 	} while (pudp++, addr = next, addr != end);
- 
-@@ -2267,7 +2277,8 @@ static int gup_pud_range(p4d_t p4d, unsigned long addr, unsigned long end,
- }
- 
- static int gup_p4d_range(pgd_t pgd, unsigned long addr, unsigned long end,
--			 unsigned int flags, struct page **pages, int *nr)
-+			 unsigned int flags, struct page **pages, int *nr,
-+			 struct vaddr_pin *vaddr_pin)
- {
- 	unsigned long next;
- 	p4d_t *p4dp;
-@@ -2284,7 +2295,8 @@ static int gup_p4d_range(pgd_t pgd, unsigned long addr, unsigned long end,
- 			if (!gup_huge_pd(__hugepd(p4d_val(p4d)), addr,
- 					 P4D_SHIFT, next, flags, pages, nr))
- 				return 0;
--		} else if (!gup_pud_range(p4d, addr, next, flags, pages, nr))
-+		} else if (!gup_pud_range(p4d, addr, next, flags, pages, nr,
-+					  vaddr_pin))
- 			return 0;
- 	} while (p4dp++, addr = next, addr != end);
- 
-@@ -2292,7 +2304,8 @@ static int gup_p4d_range(pgd_t pgd, unsigned long addr, unsigned long end,
- }
- 
- static void gup_pgd_range(unsigned long addr, unsigned long end,
--		unsigned int flags, struct page **pages, int *nr)
-+		unsigned int flags, struct page **pages, int *nr,
-+		struct vaddr_pin *vaddr_pin)
- {
- 	unsigned long next;
- 	pgd_t *pgdp;
-@@ -2312,7 +2325,8 @@ static void gup_pgd_range(unsigned long addr, unsigned long end,
- 			if (!gup_huge_pd(__hugepd(pgd_val(pgd)), addr,
- 					 PGDIR_SHIFT, next, flags, pages, nr))
- 				return;
--		} else if (!gup_p4d_range(pgd, addr, next, flags, pages, nr))
-+		} else if (!gup_p4d_range(pgd, addr, next, flags, pages, nr,
-+					  vaddr_pin))
- 			return;
- 	} while (pgdp++, addr = next, addr != end);
- }
-@@ -2374,7 +2388,8 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 	if (IS_ENABLED(CONFIG_HAVE_FAST_GUP) &&
- 	    gup_fast_permitted(start, end)) {
- 		local_irq_save(flags);
--		gup_pgd_range(start, end, write ? FOLL_WRITE : 0, pages, &nr);
-+		gup_pgd_range(start, end, write ? FOLL_WRITE : 0, pages, &nr,
-+			      NULL);
- 		local_irq_restore(flags);
- 	}
- 
-@@ -2445,7 +2460,7 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
- 	if (IS_ENABLED(CONFIG_HAVE_FAST_GUP) &&
- 	    gup_fast_permitted(start, end)) {
- 		local_irq_disable();
--		gup_pgd_range(addr, end, gup_flags, pages, &nr);
-+		gup_pgd_range(addr, end, gup_flags, pages, &nr, NULL);
- 		local_irq_enable();
- 		ret = nr;
- 	}
+ 	if (current->mm) {
+ 		mm->flags = current->mm->flags & MMF_INIT_MASK;
 -- 
 2.20.1
 
