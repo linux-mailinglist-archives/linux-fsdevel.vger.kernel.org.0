@@ -2,207 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EA8987ADE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 15:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A973187C3A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2019 15:58:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406678AbfHINMV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Aug 2019 09:12:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52150 "EHLO mx1.suse.de"
+        id S2406518AbfHIN6R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Aug 2019 09:58:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47208 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726157AbfHINMU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Aug 2019 09:12:20 -0400
+        id S1726037AbfHIN6R (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Aug 2019 09:58:17 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F2F91B023;
-        Fri,  9 Aug 2019 13:12:18 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id C3118ACC2;
+        Fri,  9 Aug 2019 13:58:14 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id F10761E46DD; Fri,  9 Aug 2019 15:05:27 +0200 (CEST)
-Date:   Fri, 9 Aug 2019 15:05:27 +0200
+        id E87631E46DD; Fri,  9 Aug 2019 15:58:13 +0200 (CEST)
+Date:   Fri, 9 Aug 2019 15:58:13 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     " Steven J. Magnani " <steve.magnani@digidescorp.com>
-Cc:     Jan Kara <jack@suse.com>, Steve Magnani <steve@digidescorp.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] udf: reduce leakage of blocks related to named streams
-Message-ID: <20190809130527.GD17568@quack2.suse.cz>
-References: <20190807133258.12432-1-steve@digidescorp.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jerome Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Black <daniel@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH 1/3] mm/mlock.c: convert put_page() to put_user_page*()
+Message-ID: <20190809135813.GF17568@quack2.suse.cz>
+References: <20190805222019.28592-1-jhubbard@nvidia.com>
+ <20190805222019.28592-2-jhubbard@nvidia.com>
+ <20190807110147.GT11812@dhcp22.suse.cz>
+ <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
+ <20190808062155.GF11812@dhcp22.suse.cz>
+ <875dca95-b037-d0c7-38bc-4b4c4deea2c7@suse.cz>
+ <306128f9-8cc6-761b-9b05-578edf6cce56@nvidia.com>
+ <d1ecb0d4-ea6a-637d-7029-687b950b783f@nvidia.com>
+ <420a5039-a79c-3872-38ea-807cedca3b8a@suse.cz>
+ <20190809082307.GL18351@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190807133258.12432-1-steve@digidescorp.com>
+In-Reply-To: <20190809082307.GL18351@dhcp22.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 07-08-19 08:32:58,  Steven J. Magnani  wrote:
-> From: Steve Magnani <steve@digidescorp.com>
+On Fri 09-08-19 10:23:07, Michal Hocko wrote:
+> On Fri 09-08-19 10:12:48, Vlastimil Babka wrote:
+> > On 8/9/19 12:59 AM, John Hubbard wrote:
+> > >>> That's true. However, I'm not sure munlocking is where the
+> > >>> put_user_page() machinery is intended to be used anyway? These are
+> > >>> short-term pins for struct page manipulation, not e.g. dirtying of page
+> > >>> contents. Reading commit fc1d8e7cca2d I don't think this case falls
+> > >>> within the reasoning there. Perhaps not all GUP users should be
+> > >>> converted to the planned separate GUP tracking, and instead we should
+> > >>> have a GUP/follow_page_mask() variant that keeps using get_page/put_page?
+> > >>>  
+> > >>
+> > >> Interesting. So far, the approach has been to get all the gup callers to
+> > >> release via put_user_page(), but if we add in Jan's and Ira's vaddr_pin_pages()
+> > >> wrapper, then maybe we could leave some sites unconverted.
+> > >>
+> > >> However, in order to do so, we would have to change things so that we have
+> > >> one set of APIs (gup) that do *not* increment a pin count, and another set
+> > >> (vaddr_pin_pages) that do. 
+> > >>
+> > >> Is that where we want to go...?
+> > >>
+> > 
+> > We already have a FOLL_LONGTERM flag, isn't that somehow related? And if
+> > it's not exactly the same thing, perhaps a new gup flag to distinguish
+> > which kind of pinning to use?
 > 
-> Windows is capable of creating UDF files having named streams.
-> One example is the "Zone.Identifier" stream attached automatically
-> to files downloaded from a network. See:
->   https://msdn.microsoft.com/en-us/library/dn392609.aspx
+> Agreed. This is a shiny example how forcing all existing gup users into
+> the new scheme is subotimal at best. Not the mention the overal
+> fragility mention elsewhere. I dislike the conversion even more now.
 > 
-> Modification of a file having one or more named streams in Linux causes
-> the stream directory to become detached from the file, essentially leaking
-> all blocks pertaining to the file's streams. Worse, an attempt to delete
-> the file causes its directory entry (FID) to be deleted, but because the
-> driver believes that a hard link to the file remains, the Extended File
-> Entry (EFE) and all extents of the file itself remain allocated. Since
-> there is no hard link, after the FID has been deleted all of these blocks
-> are unreachable (leaked).
-> 
-> A complete solution to this problem involves walking the File Identifiers
-> in the file's stream directory and freeing all extents allocated to each
-> named stream (each of which involves a walk of arbitrary length). As the
-> complete solution is quite complex, for now just settle for retaining the
-> stream directory attachment during file modification, and being able to
-> reclaim the blocks of the file, its Extended File Entry, and its Stream
-> Directory EFE during file deletion.
-> 
-> The UDF structures used by Windows to attach a simple Zone.Identifier
-> named stream to a file are:
-> * A stream directory EFE containing an "in ICB" Zone.Identifier FID,
->   which references
-> * An EFE with "in ICB" stream data
-> 
-> For this case, this partial solution reduces the number of blocks leaked
-> during file deletion to just one (the EFE containing the stream data).
-> 
-> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+> Sorry if this was already discussed already but why the new pinning is
+> not bound to FOLL_LONGTERM (ideally hidden by an interface so that users
+> do not have to care about the flag) only?
 
-Thanks for the patch! I was thinking about this and rather than this
-partial fix, I'd prefer to fail the last unlink of an inode with
-a named-stream directory with EOPNOTSUPP. Later we can properly handle this
-and walk the named-stream directory and remove all associated EFEs for the
-named streams. After all named-stream directories are restricted to not
-have any subdirectories, hardlinks, or anything similarly fancy so the walk
-should not be *that* hard to implement.
+The new tracking cannot be bound to FOLL_LONGTERM. Anything that gets page
+reference and then touches page data (e.g. direct IO) needs the new kind of
+tracking so that filesystem knows someone is messing with the page data.
+So what John is trying to address is a different (although related) problem
+to someone pinning a page for a long time.
+
+In principle, I'm not strongly opposed to a new FOLL flag to determine
+whether a pin or an ordinary page reference will be acquired at least as an
+internal implementation detail inside mm/gup.c. But I would really like to
+discourage new GUP users taking just page reference as the most clueless
+users (drivers) usually need a pin in the sense John implements. So in
+terms of API I'd strongly prefer to deprecate GUP as an API, provide
+vaddr_pin_pages() for drivers to get their buffer pages pinned and then for
+those few users who really know what they are doing (and who are not
+interested in page contents) we can have APIs like follow_page() to get a
+page reference from a virtual address.
 
 								Honza
-
-> 
-> --- a/fs/udf/udf_i.h	2019-07-26 11:35:28.257563879 -0500
-> +++ b/fs/udf/udf_i.h	2019-08-06 14:35:55.579654263 -0500
-> @@ -42,12 +42,15 @@ struct udf_inode_info {
->  	unsigned		i_efe : 1;	/* extendedFileEntry */
->  	unsigned		i_use : 1;	/* unallocSpaceEntry */
->  	unsigned		i_strat4096 : 1;
-> -	unsigned		reserved : 26;
-> +	unsigned		i_streamdir : 1;
-> +	unsigned		reserved : 25;
->  	union {
->  		struct short_ad	*i_sad;
->  		struct long_ad		*i_lad;
->  		__u8		*i_data;
->  	} i_ext;
-> +	struct kernel_lb_addr		i_locStreamdir;
-> +	__u64			i_lenStreams;
->  	struct rw_semaphore	i_data_sem;
->  	struct udf_ext_cache cached_extent;
->  	/* Spinlock for protecting extent cache */
-> --- a/fs/udf/super.c	2019-07-26 11:35:28.253563792 -0500
-> +++ b/fs/udf/super.c	2019-08-06 15:04:30.851086957 -0500
-> @@ -151,9 +151,13 @@ static struct inode *udf_alloc_inode(str
->  
->  	ei->i_unique = 0;
->  	ei->i_lenExtents = 0;
-> +	ei->i_lenStreams = 0;
->  	ei->i_next_alloc_block = 0;
->  	ei->i_next_alloc_goal = 0;
->  	ei->i_strat4096 = 0;
-> +	ei->i_streamdir = 0;
-> +	ei->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-> +	ei->i_locStreamdir.partitionReferenceNum = 0xFFFF;
->  	init_rwsem(&ei->i_data_sem);
->  	ei->cached_extent.lstart = -1;
->  	spin_lock_init(&ei->i_extent_cache_lock);
-> --- a/fs/udf/inode.c	2019-07-26 11:35:28.253563792 -0500
-> +++ b/fs/udf/inode.c	2019-08-06 15:04:30.851086957 -0500
-> @@ -132,7 +132,7 @@ void udf_evict_inode(struct inode *inode
->  	struct udf_inode_info *iinfo = UDF_I(inode);
->  	int want_delete = 0;
->  
-> -	if (!inode->i_nlink && !is_bad_inode(inode)) {
-> +	if ((inode->i_nlink == iinfo->i_streamdir) && !is_bad_inode(inode)) {
->  		want_delete = 1;
->  		udf_setsize(inode, 0);
->  		udf_update_inode(inode, IS_SYNC(inode));
-> @@ -1485,6 +1485,10 @@ reread:
->  		iinfo->i_lenEAttr = le32_to_cpu(fe->lengthExtendedAttr);
->  		iinfo->i_lenAlloc = le32_to_cpu(fe->lengthAllocDescs);
->  		iinfo->i_checkpoint = le32_to_cpu(fe->checkpoint);
-> +		iinfo->i_streamdir = 0;
-> +		iinfo->i_lenStreams = 0;
-> +		iinfo->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-> +		iinfo->i_locStreamdir.partitionReferenceNum = 0xFFFF;
->  	} else {
->  		inode->i_blocks = le64_to_cpu(efe->logicalBlocksRecorded) <<
->  		    (inode->i_sb->s_blocksize_bits - 9);
-> @@ -1498,6 +1502,16 @@ reread:
->  		iinfo->i_lenEAttr = le32_to_cpu(efe->lengthExtendedAttr);
->  		iinfo->i_lenAlloc = le32_to_cpu(efe->lengthAllocDescs);
->  		iinfo->i_checkpoint = le32_to_cpu(efe->checkpoint);
-> +
-> +		/* Named streams */
-> +		iinfo->i_streamdir = (efe->streamDirectoryICB.extLength != 0);
-> +		iinfo->i_locStreamdir =
-> +			lelb_to_cpu(efe->streamDirectoryICB.extLocation);
-> +		iinfo->i_lenStreams = le64_to_cpu(efe->objectSize);
-> +		if (iinfo->i_lenStreams >= inode->i_size)
-> +			iinfo->i_lenStreams -= inode->i_size;
-> +		else
-> +			iinfo->i_lenStreams = 0;
->  	}
->  	inode->i_generation = iinfo->i_unique;
->  
-> @@ -1760,9 +1774,19 @@ static int udf_update_inode(struct inode
->  		       iinfo->i_ext.i_data,
->  		       inode->i_sb->s_blocksize -
->  					sizeof(struct extendedFileEntry));
-> -		efe->objectSize = cpu_to_le64(inode->i_size);
-> +		efe->objectSize =
-> +			cpu_to_le64(inode->i_size + iinfo->i_lenStreams);
->  		efe->logicalBlocksRecorded = cpu_to_le64(lb_recorded);
->  
-> +		if (iinfo->i_streamdir) {
-> +			struct long_ad *icb_lad = &efe->streamDirectoryICB;
-> +
-> +			icb_lad->extLocation =
-> +				cpu_to_lelb(iinfo->i_locStreamdir);
-> +			icb_lad->extLength =
-> +				cpu_to_le32(inode->i_sb->s_blocksize);
-> +		}
-> +
->  		udf_adjust_time(iinfo, inode->i_atime);
->  		udf_adjust_time(iinfo, inode->i_mtime);
->  		udf_adjust_time(iinfo, inode->i_ctime);
-> --- a/fs/udf/ialloc.c	2019-07-26 11:35:28.253563792 -0500
-> +++ b/fs/udf/ialloc.c	2019-08-06 15:04:30.851086957 -0500
-> @@ -31,6 +31,7 @@ void udf_free_inode(struct inode *inode)
->  	struct super_block *sb = inode->i_sb;
->  	struct udf_sb_info *sbi = UDF_SB(sb);
->  	struct logicalVolIntegrityDescImpUse *lvidiu = udf_sb_lvidiu(sb);
-> +	struct udf_inode_info *iinfo = UDF_I(inode);
->  
->  	if (lvidiu) {
->  		mutex_lock(&sbi->s_alloc_mutex);
-> @@ -42,7 +43,13 @@ void udf_free_inode(struct inode *inode)
->  		mutex_unlock(&sbi->s_alloc_mutex);
->  	}
->  
-> -	udf_free_blocks(sb, NULL, &UDF_I(inode)->i_location, 0, 1);
-> +	udf_free_blocks(sb, NULL, &iinfo->i_location, 0, 1);
-> +	if (iinfo->i_streamdir) {
-> +		udf_free_blocks(sb, NULL, &iinfo->i_locStreamdir, 0, 1);
-> +		udf_warn(inode->i_sb,
-> +			 "Leaking unsupported stream blocks for inode %lu\n",
-> +			 inode->i_ino);
-> +	}
->  }
->  
->  struct inode *udf_new_inode(struct inode *dir, umode_t mode)
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
