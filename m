@@ -2,301 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2176188758
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2019 02:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35A988875B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2019 02:31:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbfHJAaD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Aug 2019 20:30:03 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11301 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfHJAaD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Aug 2019 20:30:03 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4e100b0000>; Fri, 09 Aug 2019 17:30:03 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 09 Aug 2019 17:30:01 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 09 Aug 2019 17:30:01 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 10 Aug
- 2019 00:30:00 +0000
-Subject: Re: [RFC PATCH v2 12/19] mm/gup: Prep put_user_pages() to take an
- vaddr_pin struct
-To:     <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
+        id S1726859AbfHJAbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Aug 2019 20:31:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47822 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725985AbfHJAbj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Aug 2019 20:31:39 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3D04214C6;
+        Sat, 10 Aug 2019 00:31:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565397098;
+        bh=qFzfWkejjVj5zd7pnm5n+WEqOrUoIpvgNrZ5SiJqeSU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yeyOK+fdRFTVLzbCT6QD1WLMqrkH+zDV7w/lIB+22iOXA4fmqCjzB2WgQR33GjwjT
+         V/VUhOEiBY43NOkGtOQ6TYl13Vzq5pLJ3lqBdAJNrokeTp7VhcICBqBuMe4QWQ1WzN
+         wMoyfXraI67f6wzUVXZpd9QPGHQvbmEQY8dEllhs=
+Date:   Fri, 9 Aug 2019 17:31:36 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Gao Xiang <gaoxiang25@huawei.com>,
         Dave Chinner <david@fromorbit.com>,
-        <linux-xfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-ext4@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-13-ira.weiny@intel.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <12b6a576-7a64-102c-f4d7-7a4ad34df710@nvidia.com>
-Date:   Fri, 9 Aug 2019 17:30:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Goldwyn Rodrigues <RGoldwyn@suse.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, miaoxie@huawei.com
+Subject: Re: [PATCH 10/13] iomap: use a function pointer for dio submits
+Message-ID: <20190810003135.GF100971@gmail.com>
+Mail-Followup-To: Gao Xiang <hsiangkao@aol.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Goldwyn Rodrigues <RGoldwyn@suse.com>, "hch@lst.de" <hch@lst.de>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "ruansy.fnst@cn.fujitsu.com" <ruansy.fnst@cn.fujitsu.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, miaoxie@huawei.com
+References: <20190802220048.16142-1-rgoldwyn@suse.de>
+ <20190802220048.16142-11-rgoldwyn@suse.de>
+ <20190804234321.GC7689@dread.disaster.area>
+ <1565021323.13240.14.camel@suse.com>
+ <20190805215458.GH7689@dread.disaster.area>
+ <20190808042640.GA28630@138>
+ <20190808054936.GA5319@sol.localdomain>
+ <20190809204517.GR5482@bombadil.infradead.org>
+ <20190809234554.GA25734@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
-In-Reply-To: <20190809225833.6657-13-ira.weiny@intel.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565397003; bh=b6l0EcXIqF+/G734s3cwMmTuz8hr26aRZITM0rTS7i0=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=YuSjKP4AhoHBLbcLLk3pP6lpPKp3lDROEPEvTqE9UI51WZMnw7gDxHjDxCNYgrKFG
-         eJSblzJ11XR+iPKHqtIBfdezKsvu3QyJNyAtWH8orgG5n3CXjFYzGPRkTarpeyNBWM
-         Ld3eQEAg5q/fhZpMxjwhjHlvzkvWoxrjGf8mteQe/9zOwX+/hKrNHzUUZDIkFyAvE4
-         TUmARG5/QH4nieV6kDH49Ow4NjXJWhjIX2dJU7VZ8T9crzyuhKuNKD4B0ovUrTCKYM
-         z6Jov3Bvzd7/f65uk7zLQUZ9QVk+5mVU49Voiwk1vsJL5LuA4oqdZMOTf5a8XkXl6c
-         7USB/u58j90KA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190809234554.GA25734@hsiangkao-HP-ZHAN-66-Pro-G1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/9/19 3:58 PM, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Sat, Aug 10, 2019 at 07:45:59AM +0800, Gao Xiang wrote:
+> Hi Willy,
 > 
-> Once callers start to use vaddr_pin the put_user_pages calls will need
-> to have access to this data coming in.  Prep put_user_pages() for this
-> data.
+> On Fri, Aug 09, 2019 at 01:45:17PM -0700, Matthew Wilcox wrote:
+> > On Wed, Aug 07, 2019 at 10:49:36PM -0700, Eric Biggers wrote:
+> > > On Thu, Aug 08, 2019 at 12:26:42PM +0800, Gao Xiang wrote:
+> > > >     1. decrypt->verity->decompress
+> > > > 
+> > > >     2. verity->decompress->decrypt
+> > > > 
+> > > >     3. decompress->decrypt->verity
+> > > > 
+> > > >    1. and 2. could cause less computation since it processes
+> > > >    compressed data, and the security is good enough since
+> > > >    the behavior of decompression algorithm is deterministic.
+> > > >    3 could cause more computation.
+> > > > 
+> > > > All I want to say is the post process is so complicated since we have
+> > > > many selection if encryption, decompression, verification are all involved.
+> > > > 
+> > > > Maybe introduce a core subset to IOMAP is better for long-term
+> > > > maintainment and better performance. And we should consider it
+> > > > more carefully.
+> > > > 
+> > > 
+> > > FWIW, the only order that actually makes sense is decrypt->decompress->verity.
+> > 
+> > That used to be true, but a paper in 2004 suggested it's not true.
+> > Further work in this space in 2009 based on block ciphers:
+> > https://arxiv.org/pdf/1009.1759
+> > 
+> > It looks like it'd be computationally expensive to do, but feasible.
 > 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
->  include/linux/mm.h |  20 +-------
->  mm/gup.c           | 122 ++++++++++++++++++++++++++++++++-------------
->  2 files changed, 88 insertions(+), 54 deletions(-)
+> Yes, maybe someone cares where encrypt is at due to their system design.
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index befe150d17be..9d37cafbef9a 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1064,25 +1064,7 @@ static inline void put_page(struct page *page)
->  		__put_page(page);
->  }
->  
-> -/**
-> - * put_user_page() - release a gup-pinned page
-> - * @page:            pointer to page to be released
-> - *
-> - * Pages that were pinned via get_user_pages*() must be released via
-> - * either put_user_page(), or one of the put_user_pages*() routines
-> - * below. This is so that eventually, pages that are pinned via
-> - * get_user_pages*() can be separately tracked and uniquely handled. In
-> - * particular, interactions with RDMA and filesystems need special
-> - * handling.
-> - *
-> - * put_user_page() and put_page() are not interchangeable, despite this early
-> - * implementation that makes them look the same. put_user_page() calls must
-> - * be perfectly matched up with get_user_page() calls.
-> - */
-> -static inline void put_user_page(struct page *page)
-> -{
-> -	put_page(page);
-> -}
-> +void put_user_page(struct page *page);
->  
->  void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
->  			       bool make_dirty);
-> diff --git a/mm/gup.c b/mm/gup.c
-> index a7a9d2f5278c..10cfd30ff668 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -24,30 +24,41 @@
->  
->  #include "internal.h"
->  
-> -/**
-> - * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
-> - * @pages:  array of pages to be maybe marked dirty, and definitely released.
-
-A couple comments from our circular review chain: some fellow with the same
-last name as you, recommended wording it like this:
-
-      @pages:  array of pages to be put
-
-> - * @npages: number of pages in the @pages array.
-> - * @make_dirty: whether to mark the pages dirty
-> - *
-> - * "gup-pinned page" refers to a page that has had one of the get_user_pages()
-> - * variants called on that page.
-> - *
-> - * For each page in the @pages array, make that page (or its head page, if a
-> - * compound page) dirty, if @make_dirty is true, and if the page was previously
-> - * listed as clean. In any case, releases all pages using put_user_page(),
-> - * possibly via put_user_pages(), for the non-dirty case.
-> - *
-> - * Please see the put_user_page() documentation for details.
-> - *
-> - * set_page_dirty_lock() is used internally. If instead, set_page_dirty() is
-> - * required, then the caller should a) verify that this is really correct,
-> - * because _lock() is usually required, and b) hand code it:
-> - * set_page_dirty_lock(), put_user_page().
-> - *
-> - */
-> -void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
-> -			       bool make_dirty)
-> +static void __put_user_page(struct vaddr_pin *vaddr_pin, struct page *page)
-> +{
-> +	page = compound_head(page);
-> +
-> +	/*
-> +	 * For devmap managed pages we need to catch refcount transition from
-> +	 * GUP_PIN_COUNTING_BIAS to 1, when refcount reach one it means the
-> +	 * page is free and we need to inform the device driver through
-> +	 * callback. See include/linux/memremap.h and HMM for details.
-> +	 */
-> +	if (put_devmap_managed_page(page))
-> +		return;
-> +
-> +	if (put_page_testzero(page))
-> +		__put_page(page);
-> +}
-> +
-> +static void __put_user_pages(struct vaddr_pin *vaddr_pin, struct page **pages,
-> +			     unsigned long npages)
-> +{
-> +	unsigned long index;
-> +
-> +	/*
-> +	 * TODO: this can be optimized for huge pages: if a series of pages is
-> +	 * physically contiguous and part of the same compound page, then a
-> +	 * single operation to the head page should suffice.
-> +	 */
-
-As discussed in the other review thread (""), let's just delete that comment,
-as long as you're moving things around.
-
-
-> +	for (index = 0; index < npages; index++)
-> +		__put_user_page(vaddr_pin, pages[index]);
-> +}
-> +
-> +static void __put_user_pages_dirty_lock(struct vaddr_pin *vaddr_pin,
-> +					struct page **pages,
-> +					unsigned long npages,
-> +					bool make_dirty)
-
-Elsewhere in this series, we pass vaddr_pin at the end of the arg list.
-Here we pass it at the beginning, and it caused a minor jar when reading it.
-Obviously just bike shedding at this point, though. Either way. :)
-
->  {
->  	unsigned long index;
->  
-> @@ -58,7 +69,7 @@ void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
->  	 */
->  
->  	if (!make_dirty) {
-> -		put_user_pages(pages, npages);
-> +		__put_user_pages(vaddr_pin, pages, npages);
->  		return;
->  	}
->  
-> @@ -86,9 +97,58 @@ void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
->  		 */
->  		if (!PageDirty(page))
->  			set_page_dirty_lock(page);
-> -		put_user_page(page);
-> +		__put_user_page(vaddr_pin, page);
->  	}
->  }
-> +
-> +/**
-> + * put_user_page() - release a gup-pinned page
-> + * @page:            pointer to page to be released
-> + *
-> + * Pages that were pinned via get_user_pages*() must be released via
-> + * either put_user_page(), or one of the put_user_pages*() routines
-> + * below. This is so that eventually, pages that are pinned via
-> + * get_user_pages*() can be separately tracked and uniquely handled. In
-> + * particular, interactions with RDMA and filesystems need special
-> + * handling.
-> + *
-> + * put_user_page() and put_page() are not interchangeable, despite this early
-> + * implementation that makes them look the same. put_user_page() calls must
-> + * be perfectly matched up with get_user_page() calls.
-> + */
-> +void put_user_page(struct page *page)
-> +{
-> +	__put_user_page(NULL, page);
-> +}
-> +EXPORT_SYMBOL(put_user_page);
-> +
-> +/**
-> + * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
-> + * @pages:  array of pages to be maybe marked dirty, and definitely released.
-
-Same here:
-
-      @pages:  array of pages to be put
-
-> + * @npages: number of pages in the @pages array.
-> + * @make_dirty: whether to mark the pages dirty
-> + *
-> + * "gup-pinned page" refers to a page that has had one of the get_user_pages()
-> + * variants called on that page.
-> + *
-> + * For each page in the @pages array, make that page (or its head page, if a
-> + * compound page) dirty, if @make_dirty is true, and if the page was previously
-> + * listed as clean. In any case, releases all pages using put_user_page(),
-> + * possibly via put_user_pages(), for the non-dirty case.
-> + *
-> + * Please see the put_user_page() documentation for details.
-> + *
-> + * set_page_dirty_lock() is used internally. If instead, set_page_dirty() is
-> + * required, then the caller should a) verify that this is really correct,
-> + * because _lock() is usually required, and b) hand code it:
-> + * set_page_dirty_lock(), put_user_page().
-> + *
-> + */
-> +void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
-> +			       bool make_dirty)
-> +{
-> +	__put_user_pages_dirty_lock(NULL, pages, npages, make_dirty);
-> +}
->  EXPORT_SYMBOL(put_user_pages_dirty_lock);
->  
->  /**
-> @@ -102,15 +162,7 @@ EXPORT_SYMBOL(put_user_pages_dirty_lock);
->   */
->  void put_user_pages(struct page **pages, unsigned long npages)
->  {
-> -	unsigned long index;
-> -
-> -	/*
-> -	 * TODO: this can be optimized for huge pages: if a series of pages is
-> -	 * physically contiguous and part of the same compound page, then a
-> -	 * single operation to the head page should suffice.
-> -	 */
-> -	for (index = 0; index < npages; index++)
-> -		put_user_page(pages[index]);
-> +	__put_user_pages(NULL, pages, npages);
->  }
->  EXPORT_SYMBOL(put_user_pages);
->  
+> and I thought over these days, I have to repeat my thought of verity
+> again :( the meaningful order ought to be "decrypt->verity->decompress"
+> rather than "decrypt->decompress->verity" if compression is involved.
+> 
+> since most (de)compress algorithms are complex enough (allocate memory and
+> do a lot of unsafe stuffes such as wildcopy) and even maybe unsafe by its
+> design, we cannot do verity in the end for security consideration thus
+> the whole system can be vulnerable by this order from malformed on-disk
+> data. In other words, we need to verify on compressed data.
+> 
+> Fsverity is fine for me since most decrypt algorithms is stable and reliable
+> and no compression by its design, but if some decrypt software algorithms is
+> complicated enough, I'd suggest "verity->decrypt" as well to some extent.
+> 
+> Considering transformation "A->B->C->D->....->verity", if any of "A->B->C
+> ->D->..." is attacked by the malformed on-disk data... It would crash or
+> even root the whole operating system.
+> 
+> All in all, we have to verify data earlier in order to get trusted data
+> for later complex transformation chains.
+> 
+> The performance benefit I described in my previous email, it seems no need
+> to say again... please take them into consideration and I think it's no
+> easy to get a unique generic post-read order for all real systems.
 > 
 
-This all looks pretty good, so regardless of the outcome of the minor
-points above,
-   
-    Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+While it would be nice to protect against filesystem bugs, it's not the point of
+fs-verity.  fs-verity is about authenticating the contents the *user* sees, so
+that e.g. a file can be distributed to many computers and it can be
+authenticated regardless of exactly what other filesystem features were used
+when it was stored on disk.  Different computers may use:
 
+- Different filesystems
+- Different compression algorithms (or no compression)
+- Different compression strengths, even with same algorithm
+- Different divisions of the file into compression units
+- Different encryption algorithms (or no encryption)
+- Different encryption keys, even with same algorithm
+- Different encryption nonces, even with same key
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+All those change the on-disk data; only the user-visible data stays the same.
+
+Bugs in filesystems may also be exploited regardless of fs-verity, as the
+attacker (able to manipulate on-disk image) can create a malicious file without
+fs-verity enabled, somewhere else on the filesystem.
+
+If you actually want to authenticate the full filesystem image, you need to use
+dm-verity, which is designed for that.
+
+- Eric
