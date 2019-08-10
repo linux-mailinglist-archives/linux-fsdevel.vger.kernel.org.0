@@ -2,84 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 937A7889E2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2019 10:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC31288A7D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2019 12:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725907AbfHJISm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 10 Aug 2019 04:18:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41208 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfHJISm (ORCPT
+        id S1725907AbfHJKF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 10 Aug 2019 06:05:28 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:40609 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfHJKF1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Aug 2019 04:18:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GMe3cJeR3x4cOsIIHg7bFNCkA/K5StIKgfeCxVBHL3I=; b=EijfoWzQchoSmnjIXxQUy7X3a
-        BdO3QDy1XsyViRMM4c2khWGMKE/iLJZLsdE2toRCuwOD14l+4wkdfv82GPPv/EX+WVAkJ2o7d43XC
-        ZCVDF95BVDhTh3UBqZMjoVTGRX0XXxobgArCuiFLtwTF4BUiMynE8g95tP3lQyGDwtOceVsIifpKk
-        vPMHAllgYPyg3grsQEBVtM7Rzox2zstTOhVdS6x43TvBWhz0fnq5YBIN96i0Rv18HVa0uOxVUxk7G
-        DGzeOmIfXXRQKRBWpJPBVv/vql8f3/6dquFBusP2aZ4I1IUmQv1AHiE/cCvNPYZDUnkDEirqBtk+I
-        UPXrS0oXQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hwMaA-0001Ok-V2; Sat, 10 Aug 2019 08:18:34 +0000
-Date:   Sat, 10 Aug 2019 01:18:34 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Joel Becker <jlbec@evilplan.org>
-Subject: Re: [patch V2 0/7] fs: Substitute bit-spinlocks for PREEMPT_RT and
- debugging
-Message-ID: <20190810081834.GB30426@infradead.org>
-References: <20190801010126.245731659@linutronix.de>
- <20190802075612.GA20962@infradead.org>
- <alpine.DEB.2.21.1908021107090.2285@nanos.tec.linutronix.de>
- <20190806061119.GA17492@infradead.org>
- <alpine.DEB.2.21.1908080858460.2882@nanos.tec.linutronix.de>
- <20190808072807.GA25259@infradead.org>
- <alpine.DEB.2.21.1908080953170.2882@nanos.tec.linutronix.de>
+        Sat, 10 Aug 2019 06:05:27 -0400
+Received: by mail-yb1-f195.google.com with SMTP id j6so6562222ybm.7;
+        Sat, 10 Aug 2019 03:05:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JP7W5WK+7O8UWLHKfnIKNGxUzPugVshGAQQJJ/lIEdQ=;
+        b=ARgPw8jBtEOfUUCP0QUMQnUZIb0RZvaQohBqNEQQNwUVaeBY+yr31H4L8tptZkpDP6
+         tSr4Ztc3i917jqFGaf12VmIQwsboSP4PutA8I7OVbQWEOQB2CBwajbtc0F1dsuUs11jF
+         FP542joD3/D0ce+JmIylQIoC07LR1nuccS3jvpgTWxmCK9nxjNgYASbvqQ4Y7BX5Rp8j
+         dLTxsZnBHc567gmAU4iUYvn0QqyF8e9KUygtUy5Iq1Xo/CiF7I/5bMKibrj7W7JXIn8w
+         dH7lrdXrkXHxHqaqNqPTU3vLgpRqQD6/TK/VLAcOtNs+es/onSyAEcEk29q0Qjc7mJ2K
+         fBlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JP7W5WK+7O8UWLHKfnIKNGxUzPugVshGAQQJJ/lIEdQ=;
+        b=tw7ZOQlIi4DwKM7a4b2ZzgpQeGwEfJOvFDJ4j/EF2x6YKce/MRBhP+pb277NG2rPIu
+         BMuQVhLWliN4Mdn9G5vddcOZp+39cE7FcxpAOufUIoPqpF5wPzvrAAed14C9YTFjM8aC
+         8bdBusgewWuhryyxV1G7XzB7ogCRCeAxiBZBxZYEOcb5hONl5xpyPECaB5ujkAiUZ2Qh
+         77aJ7XDaXsB53XMhkwiMJ7Y5H6BrbMZ/rwK61xcnqSypXAhYMuh58LhhhgeRmEWrytZ7
+         Rqnopcj39WXzzpRJrIWzuVyCYIv8UjKo6P/OvhpmNrlL1+yALVI5Ev3nCkM+7CmjMI4t
+         NEPA==
+X-Gm-Message-State: APjAAAW0rx3PI4BmMCs69jPKl3O9aPCOwcIj3+MT503+TaEc8PQBbRKb
+        PzwU2by+P+u3XIYSrHsPWTu+s5XOqDPrkGfyLOo=
+X-Google-Smtp-Source: APXvYqz1hzOKzpjqep9z6bTqZcppD82BCobutxjBB9Lp0e+pfqMfQOv5Qv6TGKag4Duv4RQprg+ZPH7rclwh6m3xYJQ=
+X-Received: by 2002:a25:9203:: with SMTP id b3mr10506054ybo.14.1565431526544;
+ Sat, 10 Aug 2019 03:05:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1908080953170.2882@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190731153443.4984-1-acgoide@tycho.nsa.gov> <CAHC9VhQUoDwBiLi+BiW=_Px18v3xMhhGYDD2mLdu9YZJDWw1yg@mail.gmail.com>
+ <CAOQ4uxigYZunXgq0BubRFNM51Kh_g3wrtyNH77PozUX+3sM=aQ@mail.gmail.com> <CAHC9VhRpTuL2Lj1VFwHW4YLpx0hJVSxMnXefooHqsxpEUg6-0A@mail.gmail.com>
+In-Reply-To: <CAHC9VhRpTuL2Lj1VFwHW4YLpx0hJVSxMnXefooHqsxpEUg6-0A@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 10 Aug 2019 13:05:15 +0300
+Message-ID: <CAOQ4uxiGNXbZ-DWeXTkNM4ySFbBbo1XOF1=3pjknsf+EjbNuOw@mail.gmail.com>
+Subject: Re: [PATCH] fanotify, inotify, dnotify, security: add security hook
+ for fs notifications
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Aaron Goidel <acgoide@tycho.nsa.gov>, selinux@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 09:54:03AM +0200, Thomas Gleixner wrote:
-> > I know.  But the problem here is that normally PG_locked is used together 
-> > with wait_on_page_bit_*, but this one instances uses the bit spinlock
-> > helpers.  This is the equivalent of calling spin_lock on a struct mutex
-> > rather than having a mutex_lock_spin helper for this case.
-> 
-> Yes, I know :(
+> > > Other than Casey's comments, and ACK, I'm not seeing much commentary
+> > > on this patch so FS and LSM folks consider this your last chance - if
+> > > I don't hear any objections by the end of this week I'll plan on
+> > > merging this into selinux/next next week.
+> >
+> > Please consider it is summer time so people may be on vacation like I was...
+>
+> This is one of the reasons why I was speaking to the mailing list and
+> not a particular individual :)
+>
 
-But this means we should exclude slub from the bit_spin_lock removal.
-It really should use it's own version of it anyhow insted of pretending
-that the page lock is a bit spinlock.
+Jan is fsnotify maintainer, so I think you should wait for an explicit ACK
+from Jan or just merge the hook definition and ask Jan to merge to
+fsnotify security hooks.
 
-> 
-> > Does SLUB work on -rt at all?
-> 
-> It's the only allocator we support with a few tweaks :)
-
-What do you do about this particular piece of code there?
+Thanks,
+Amir.
