@@ -2,77 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1C6388EAB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2019 00:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D0E988EEE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2019 02:50:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726223AbfHJWZG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 10 Aug 2019 18:25:06 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40736 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfHJWZG (ORCPT
+        id S1726084AbfHKAuQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 10 Aug 2019 20:50:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49124 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbfHKAuP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Aug 2019 18:25:06 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h8so11612537edv.7
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Aug 2019 15:25:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=KRtP4QuyzaZWmXH4GaNoyiAd8Ahqe08vgZLgai8zw98=;
-        b=pF1W0/kY1vYaYCO9Bh18LQPARJHzBzyarAYlOxer3c5nrRMgI9pNZ0FKnjPnd2ZeVM
-         9D+w6Oerk29Laj/1I4P1FhSGuf7hawrb9DSaZ9GceGTH5tCZ+Wr2A4C1DZXoJXek8Fwn
-         REgnrW7QEghGHKT1T9WrZ3/I44dn1jmhOCEHl2AU6EN6gWNTjFBuXPIV2v0BDGh0RBod
-         krSggHzf2ABlb8MF4ZMO5PkdS/BFkyUEjRwzsBY5yJafhpVCofcKzevBtq4OH3Rk31se
-         R5I4kdkyMD3FFEniRD/CWY28UAsn6yIp4xUj+KJPLwnDRN0GXZnsI0tPpxRTRxZeYKVu
-         KEPw==
-X-Gm-Message-State: APjAAAW3MP+mERDDTAeE+CBmLJCZTD+jdTTlqiJE4L6QqJY+J8z49U75
-        kWOcO7ozr2DnAQbkkoo918CrN/vYyxU=
-X-Google-Smtp-Source: APXvYqwwf5XSrxiotZmJAeD9YX8rgkzVCPMOyWJUS12babQ2aibgSQnt5KWUOlLDf+f8gaHZcst6pA==
-X-Received: by 2002:a50:94f5:: with SMTP id t50mr28937530eda.150.1565475904545;
-        Sat, 10 Aug 2019 15:25:04 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id s47sm23348433edd.40.2019.08.10.15.25.03
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Aug 2019 15:25:03 -0700 (PDT)
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sat, 10 Aug 2019 20:50:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=N9qHG5FobHFmT4rkQo3PFVZpSKU0NN5IiUhERipZ6h0=; b=ikfD3Oo2xpw64ZFgVtbEFnSvx
+        amgrD0dTm+fHAtzsqaZW13EoxyDYc1KI2BzNf0AfMtIvkWg8e/X9MyK33ZlFt+soyxRq10PV4VFN5
+        taT5y4WWl/2oz4eAxuc5XlKLdDJxZcbA+9Lh9Ns0foroNuI3XPBXS9v2GfcwUBwMsOh19aMY79+pL
+        AT3pBAev2oStp9iyZkVu0aQV+NGFy3wrzUyJ9/EdssipmHSWZLim6AL5RsNWjekIoqp/V6SGjUEvf
+        o0wta94KpY7mmVVDoTZSXSSFnPkO7w+D8LSJCP3zwVd85Syqp5w/PGcA4lT3lmu6OnZrCbHn98Mhk
+        Zl7ROOP5w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hwc3p-0005K5-3i; Sun, 11 Aug 2019 00:50:13 +0000
+Date:   Sat, 10 Aug 2019 17:50:13 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         David Howells <dhowells@redhat.com>,
         linux-fsdevel@vger.kernel.org
-From:   Hans de Goede <hdegoede@redhat.com>
-Subject: Merging virtualbox shared-folder VFS driver through drivers/staging?
-Message-ID: <f2a9c3c0-62da-0d70-4062-47d00ab530e0@redhat.com>
-Date:   Sun, 11 Aug 2019 00:25:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+Subject: Re: Merging virtualbox shared-folder VFS driver through
+ drivers/staging?
+Message-ID: <20190811005012.GA7491@bombadil.infradead.org>
+References: <f2a9c3c0-62da-0d70-4062-47d00ab530e0@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2a9c3c0-62da-0d70-4062-47d00ab530e0@redhat.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+On Sun, Aug 11, 2019 at 12:25:03AM +0200, Hans de Goede wrote:
+> But ATM, since posting v12 of the patch, it has again been quiet for
+> 2 months again. Since this driver is already being used as addon /
+> our of tree driver by various distros, I would really like to get it
+> into mainline, to make live easier for distros and to make sure that
+> they use the latest version.
 
-I've been trying to get the vboxsf fs code upstream for 1.5 years now,
-it seems (to me) that the main problem is that no-one has time to
-review it. You're reviewed it a couple of times and David Howells
-has reviewed it 2 times. Al reviews have lead to various improvments
-and have definitely been useful, so thank you for that.
-
-But ATM, since posting v12 of the patch, it has again been quiet for
-2 months again. Since this driver is already being used as addon /
-our of tree driver by various distros, I would really like to get it
-into mainline, to make live easier for distros and to make sure that
-they use the latest version.
-
-Since I do not see the lack of reviewing capacity problem get solved
-anytime soon, I was wondering if you are ok with putting the code
-in drivers/staging/vboxsf for now, until someone can review it and ack it
-for moving over to sf/vboxsf ?
-
-Regards,
-
-Hans
-
+fwiw, v12 never made it to the list.  0/1 did, but 1/1 didn't.
