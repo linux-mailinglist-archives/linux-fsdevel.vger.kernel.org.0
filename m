@@ -2,88 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3732891E7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2019 15:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F958921D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2019 17:07:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbfHKNti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Aug 2019 09:49:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726424AbfHKNti (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Aug 2019 09:49:38 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC2B02084D;
-        Sun, 11 Aug 2019 13:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565531377;
-        bh=AarOZVmkF9EBh/dxzQ25Lx0SrzGtpLfLDrGltdb/w7Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0NOgUTW3QoOAJxxkdsIhBMUxqrrxcBqjE5pccPEOzVZMRwU3xjepVCQsIxeGg1zex
-         ReP696CEE4Lo75IiDg6ZwMXSf3vCxY/c0G4u5KDtKYj77zFZkNqCa7cRXLKr/vregg
-         DyNpiIzqNAehxb7uKO4MPQRar32/qF7umvxYzKoY=
-Date:   Sun, 11 Aug 2019 15:49:34 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+        id S1726452AbfHKPHc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Aug 2019 11:07:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48780 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbfHKPHc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 11 Aug 2019 11:07:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=YTsKJqq2wUXkpfMIFp/5oZ3lJcMC4RqIqdLLYb/+7HY=; b=m4P923SNqw3Oj+btPzeF8xXxHW
+        8UW7HQ24RJL1nOO7dn3Vkb9vX1+cXtl9TR6eoazWE0xBCDl6AzWc/9uVAyfn5ZNwEIn/68GIrqSu5
+        heecoNWgMapddK0Hvq7FOQK+RtnHGgB5X+CXPLNV9lGTqqGIkSdhcns94cFfeUR3DofU/MyWSE16p
+        DkyBHe+++TnfTSARgdoreO5j6wKfZYdIFHclSdRx2tHKVOk9GGSy9M/jOnvqz50ploZex3nN8mxF/
+        vueXTqOYob9Ie2wKqJMuLyxBp3Hv9cRNXDv5uLe1ZySDMhClyXUwnzFfeD3ilfa7pcQ43lRDnOxVf
+        TgVVowKw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hwpRN-0004qN-Si; Sun, 11 Aug 2019 15:07:26 +0000
+Subject: Re: [PATCH v12 resend 0/1] fs: Add VirtualBox guest shared folder
+ (vboxsf)
+To:     Hans de Goede <hdegoede@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: Merging virtualbox shared-folder VFS driver through
- drivers/staging?
-Message-ID: <20190811134934.GA22129@kroah.com>
-References: <f2a9c3c0-62da-0d70-4062-47d00ab530e0@redhat.com>
- <20190811074005.GA4765@kroah.com>
- <20190811074348.GA13485@infradead.org>
- <20190811075042.GA6308@kroah.com>
- <56acdce2-b9b2-b078-b1cd-3f025e63a435@redhat.com>
+        David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org
+References: <20190811133852.5173-1-hdegoede@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <8277d9de-4709-df2d-f930-d324c5764871@infradead.org>
+Date:   Sun, 11 Aug 2019 08:07:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56acdce2-b9b2-b078-b1cd-3f025e63a435@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190811133852.5173-1-hdegoede@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 11, 2019 at 03:43:01PM +0200, Hans de Goede wrote:
-> Hi,
+On 8/11/19 6:38 AM, Hans de Goede wrote:
+> Hello Everyone,
 > 
-> On 8/11/19 9:50 AM, Greg Kroah-Hartman wrote:
-> > On Sun, Aug 11, 2019 at 12:43:48AM -0700, Christoph Hellwig wrote:
-> > > On Sun, Aug 11, 2019 at 09:40:05AM +0200, Greg Kroah-Hartman wrote:
-> > > > > Since I do not see the lack of reviewing capacity problem get solved
-> > > > > anytime soon, I was wondering if you are ok with putting the code
-> > > > > in drivers/staging/vboxsf for now, until someone can review it and ack it
-> > > > > for moving over to sf/vboxsf ?
-> > > > 
-> > > > I have no objection to that if the vfs developers do not mind.
-> > > 
-> > > We had really bad experiences with fs code in staging.  I think it is
-> > > a bad idea that should not be repeated.
-> > 
-> > Lustre was a mistake.  erofs is better in that there are active
-> > developers working to get it out of staging.  We would also need that
-> > here for this to be successful.
-> > 
-> > Hans, is it just review that is keeping this from being merged or is
-> > there "real work" that has to be done?
+> Here is a resend of the 12th version of my cleaned-up / refactored version
+> of the VirtualBox shared-folder VFS driver. It seems that for some reason
+> only the cover letter of my initial-posting of v12 has made it to the list.
 > 
-> AFAIK it is just the reveiw which is keeping this from being merged.
+> This version hopefully addresses all issues pointed out in David Howell's
+> review of v11 (thank you for the review David):
 > 
-> During the first few revision Al Viro made some very good suggestions
-> which have all been addressed, v10 was reviewed by David Howell, and the
-> main thing to fix for that was switching over to the new mountfd APIs,
-> v11 was also revieded by David and had some minor issues with the use
-> of the new mountfd APIs. Those were all addressed for v12. So currently
-> the TODO list for this fs code is empty.
+> Changes in v12:
+> -Move make_kuid / make_kgid calls to option parsing time and add
+>  uid_valid / gid_valid checks.
+> -In init_fs_context call current_uid_gid() to init uid and gid
+> -Validate dmode, fmode, dmask and fmask options during option parsing
+> -Use correct types for various mount option variables (kuid_t, kgid_t, umode_t)
+> -Some small coding-style tweaks
+> 
+> For changes in older versions see the change log in the patch.
+> 
+> This version has been used by several distributions (arch, Fedora) for a
+> while now, so hopefully we can get this upstream soonish, please review.
 
-Then in that case it doesn't sound like putting it in staging makes any
-sense.  It should just be merged to the "correct" place right away as
-nothing is left to be done on it.
+Hi,
+Still looks like patch 1/1 is not hitting the mailing list.
+How large is it?
 
-thanks,
-
-greg k-h
+-- 
+~Randy
