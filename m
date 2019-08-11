@@ -2,35 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E835089250
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2019 17:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3125C89259
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2019 17:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbfHKPb0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Aug 2019 11:31:26 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48908 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbfHKPb0 (ORCPT
+        id S1726463AbfHKPjm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Aug 2019 11:39:42 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45149 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbfHKPjm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Aug 2019 11:31:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7/zPyoWUCurkc3Nyt/LJNk5M6XMvydWckG0Hz38ltEk=; b=B9+kv3MnjlreHn/dUyrnvYJiY4
-        V87hbPXzUFP9jEiAKd4Une9upPJkVMC+i1SfCXZ7NOIVdwUUTYjN65TJEczMtKkH4x7wA2Canjp3I
-        KQ92bCpqCq8GGefz6Qzwbu03BF9EW7n6LX1fwQJMc3Il37p/5RWoIASTzQBDehJzRkAUhDudGVhup
-        FaC8e+kH09+SZTSrsgDkS0p8af9mypuUouLVkOAUGY6LGP5FWqNF0r/xcm/AoionQorsDnWKmi7Yi
-        14LoIn0BCLLb++gzBN6BqMHGLVsb1DkFOU4IBMTVF5r5dJz1kS8OPOpn75wyDJUMXu0ttiQ+qy4br
-        LjwxEFww==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hwpob-0004y0-Ju; Sun, 11 Aug 2019 15:31:25 +0000
+        Sun, 11 Aug 2019 11:39:42 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q12so12270915wrj.12
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2019 08:39:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A3PQqRJiKJ+tnzDhaTN167Xwq3h6LSZIGEa9z+lHBPs=;
+        b=Vkxugs0+PBqXI/pF8OURw4zoqj3m2Ig53Ng0wB8a9Psgg+n+BMOuuBFab2h863JVkG
+         lFXrMQa5ol5939HqBz5MswiAVS08y/e76ppItBrXmU8w4+qYH7yNhMCrA2ou0QfAmmMo
+         KNx41YZnsElsxj4YVjORYyDDA9lSgglDi+k5tSmYXASaCLBUjNSOmcahXpWIGRthqS56
+         1Yj4dEprLs+6AEJFiP/irDOgKgEywBQshKEqsP0OskFHIKJbOp+0kxiiNbyBDexihajV
+         9crvIUi60XIWyVy4AvgvILQOgt/2sUNlzTOhuviopaDFA/oj/I4Uj1s5w2X7Mufpz7/C
+         bi1A==
+X-Gm-Message-State: APjAAAUcDdcTxsF1WuBfbzCRicKPsPT4WflUOFRQEBGi0v83zhRYJ2O4
+        SnX7Ey7062wdu2QfjZQGheJiwxKv9Fk=
+X-Google-Smtp-Source: APXvYqxp68wfpHNnotIcm1khJd6ErknKHF0/ncp3UHa0I9CYdYCRXWsQ2Fia3D3Phpko+cKedh94Ag==
+X-Received: by 2002:adf:e390:: with SMTP id e16mr28142269wrm.153.1565537979428;
+        Sun, 11 Aug 2019 08:39:39 -0700 (PDT)
+Received: from dhcp-44-196.space.revspace.nl ([2a01:4f8:1c0c:6c86:46e0:a7ad:5246:f04d])
+        by smtp.gmail.com with ESMTPSA id 6sm1062556wmf.23.2019.08.11.08.39.37
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Aug 2019 08:39:38 -0700 (PDT)
 Subject: Re: [PATCH v12 resend 0/1] fs: Add VirtualBox guest shared folder
  (vboxsf)
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Hans de Goede <hdegoede@redhat.com>,
+To:     Randy Dunlap <rdunlap@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         David Howells <dhowells@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org
@@ -38,13 +45,14 @@ References: <20190811133852.5173-1-hdegoede@redhat.com>
  <8277d9de-4709-df2d-f930-d324c5764871@infradead.org>
  <68fecb6e-7afa-d39d-2f0f-5496aeff510a@redhat.com>
  <973451c9-1681-1c73-9190-75d8ef529916@infradead.org>
-Message-ID: <69c4d47d-2b33-72e9-9da0-7a251070cf6c@infradead.org>
-Date:   Sun, 11 Aug 2019 08:31:24 -0700
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <c2fa3402-a1c0-d757-2228-43d310c489e7@redhat.com>
+Date:   Sun, 11 Aug 2019 17:39:36 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
 In-Reply-To: <973451c9-1681-1c73-9190-75d8ef529916@infradead.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -52,7 +60,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/11/19 8:16 AM, Randy Dunlap wrote:
+Hi,
+
+On 8/11/19 5:16 PM, Randy Dunlap wrote:
 > On 8/11/19 8:09 AM, Hans de Goede wrote:
 >> Hi,
 >>
@@ -69,7 +79,7 @@ On 8/11/19 8:16 AM, Randy Dunlap wrote:
 >>>>
 >>>> Changes in v12:
 >>>> -Move make_kuid / make_kgid calls to option parsing time and add
->>>>   uid_valid / gid_valid checks.
+>>>>    uid_valid / gid_valid checks.
 >>>> -In init_fs_context call current_uid_gid() to init uid and gid
 >>>> -Validate dmode, fmode, dmask and fmask options during option parsing
 >>>> -Use correct types for various mount option variables (kuid_t, kgid_t, umode_t)
@@ -87,18 +97,16 @@ On 8/11/19 8:16 AM, Randy Dunlap wrote:
 >> Thank you for catching this:
 >>
 >> [hans@dhcp-44-196 linux]$ wc 0001-fs-Add-VirtualBox-guest-shared-folder-vboxsf-support.patch
->>   3754  14479 100991 0001-fs-Add-VirtualBox-guest-shared-folder-vboxsf-support.patch
+>>    3754  14479 100991 0001-fs-Add-VirtualBox-guest-shared-folder-vboxsf-support.patch
 > 
 > That size shouldn't be a problem AFAIK.
 > Maybe there is something else in the patch that vger doesn't like.
 > 
->   http://vger.kernel.org/majordomo-taboos.txt
-> 
+>    http://vger.kernel.org/majordomo-taboos.txt
 
-"Message size exceeding 100 000 characters causes blocking."
-from:  http://vger.kernel.org/majordomo-info.html
+I don't see anything there which is in the patch AFAICT :|
 
-I thought the limit was higher than that.
+Regards,
 
--- 
-~Randy
+Hans
+
