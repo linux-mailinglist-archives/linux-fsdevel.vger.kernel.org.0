@@ -2,107 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F52089F0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 15:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B37B89F9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 15:25:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbfHLNAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 09:00:42 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:38761 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728721AbfHLNAl (ORCPT
+        id S1728822AbfHLNZn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 09:25:43 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:40790 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728552AbfHLNZn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 09:00:41 -0400
-Received: by mail-qt1-f196.google.com with SMTP id x4so4614141qts.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 06:00:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=v27wNdJ2y4fYwnlNFEt6zNAiJxMsGAli8ivaPg3wc1M=;
-        b=LV/5e5bv9v8c9I7DK/4tP8vVkAv6ndU5JI38qUo1+2B1jfGlrpI06NbB/wUkGmGyeD
-         KY3vx+BUEfWjNcT2jjwpyELSCXp7i7rhZc2KX9VIhPMNn4kdIu0t67lAdfyU9nekK3/L
-         3MP+wXH4WlzFyTZrxx9Nd58XuCITcoHJXYChWbVPAs14UWUvJfZCxKp6aHXHdcIEep4x
-         r+prD4FcMDTQq1FtSuu4IHqp4tIQ7RstC8NDn1Eia7VGs9b5kzm5e4WhAMu4VOynEmb3
-         TrkDaFXVCw6fu3HohAu2/SmzPW7CoZVyBc26hhltk64h6IL73zahCzWzhawOMhGp4fqS
-         1wtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v27wNdJ2y4fYwnlNFEt6zNAiJxMsGAli8ivaPg3wc1M=;
-        b=IiG5Sylv3wRRwBDtAFYqGRMHCwjK2syH7cdZ4FFdjEYIm+DFCRITr1IcMCUF1D+EMY
-         egewj9TntN+hyosEBcz7agZoxbC+bhwlRgHj4p/6DqOj1yCPBAJJX9OoV1N8hmEeVtTY
-         1e2RnM3c1j544fQp7Mrv2DM2UaycLqzrVo1q3dbajSNPNnsugrZWW/Sug5Os/eBFS2NT
-         UWiBkI0ncf/ejImOm7yYvBQLSqTFJoubkbB58AtBsTzJ9Jv9W72W1FEImRdmGCDG7rK9
-         wKR93EDGxB12laJB4EZv/Ujn27yH+vIDm1OHirFtNP433Y15DEqjoN//m9Qpg2WUgEJy
-         zHKQ==
-X-Gm-Message-State: APjAAAXsd2DlBAy+2cqUw90EkM/uC7xCr7uQCN0L7vOeBl5aN4l6FrQz
-        kUsxqwlYF+7AOS2PT+MC6fi/kg==
-X-Google-Smtp-Source: APXvYqyQID2HK/cSNFy0j5AldC0D5f58clAE4+2HeEw+kkaB2zL8GXSnMyU9v7OrdqZd4L0OHplsYg==
-X-Received: by 2002:ac8:6c48:: with SMTP id z8mr18986870qtu.58.1565614840799;
-        Mon, 12 Aug 2019 06:00:40 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id m27sm52693265qtu.31.2019.08.12.06.00.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 06:00:40 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hx9wG-0007QV-0U; Mon, 12 Aug 2019 10:00:40 -0300
-Date:   Mon, 12 Aug 2019 10:00:40 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     ira.weiny@intel.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
- file object
-Message-ID: <20190812130039.GD24457@ziepe.ca>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-17-ira.weiny@intel.com>
+        Mon, 12 Aug 2019 09:25:43 -0400
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1hxAKR-00033l-Iv; Mon, 12 Aug 2019 14:25:39 +0100
+Message-ID: <53df9d81bfb4ee7ec64fabf1089f91d80dceb491.camel@codethink.co.uk>
+Subject: Re: [Y2038] [PATCH 04/20] mount: Add mount warning for impending
+ timestamp expiry
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 12 Aug 2019 14:25:38 +0100
+In-Reply-To: <CABeXuvruROn7j1DiCDbP6MLBt9SB4Pp3HoKqcQbUNPDJgGWLgw@mail.gmail.com>
+References: <20190730014924.2193-1-deepa.kernel@gmail.com>
+         <20190730014924.2193-5-deepa.kernel@gmail.com>
+         <c508fe0116b77ff0496ebb17a69f756c47be62b7.camel@codethink.co.uk>
+         <CABeXuvruROn7j1DiCDbP6MLBt9SB4Pp3HoKqcQbUNPDJgGWLgw@mail.gmail.com>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809225833.6657-17-ira.weiny@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 03:58:30PM -0700, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Sat, 2019-08-10 at 13:44 -0700, Deepa Dinamani wrote:
+> On Mon, Aug 5, 2019 at 7:14 AM Ben Hutchings
+> <ben.hutchings@codethink.co.uk> wrote:
+> > On Mon, 2019-07-29 at 18:49 -0700, Deepa Dinamani wrote:
+> > > The warning reuses the uptime max of 30 years used by the
+> > > setitimeofday().
+> > > 
+> > > Note that the warning is only added for new filesystem mounts
+> > > through the mount syscall. Automounts do not have the same warning.
+> > [...]
+> > 
+> > Another thing - perhaps this warning should be suppressed for read-only
+> > mounts?
 > 
-> In order for MRs to be tracked against the open verbs context the ufile
-> needs to have a pointer to hand to the GUP code.
-> 
-> No references need to be taken as this should be valid for the lifetime
-> of the context.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
->  drivers/infiniband/core/uverbs.h      | 1 +
->  drivers/infiniband/core/uverbs_main.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
-> index 1e5aeb39f774..e802ba8c67d6 100644
-> +++ b/drivers/infiniband/core/uverbs.h
-> @@ -163,6 +163,7 @@ struct ib_uverbs_file {
->  	struct page *disassociate_page;
->  
->  	struct xarray		idr;
-> +	struct file             *sys_file; /* backpointer to system file object */
->  };
+> Many filesystems support read only mounts only. We do fill in right
+> granularities and limits for these filesystems as well. In keeping
+> with the trend, I have added the warning accordingly. I don't think I
+> have a preference either way. But, not warning for the red only mounts
+> adds another if case. If you have a strong preference, I could add it
+> in.
 
-The 'struct file' has a lifetime strictly shorter than the
-ib_uverbs_file, which is kref'd on its own lifetime. Having a back
-pointer like this is confouding as it will be invalid for some of the
-lifetime of the struct.
+It seems to me that the warning is needed if there is a possibility of
+data loss (incorrect timestamps, potentially leading to incorrect
+decisions about which files are newer).  This can happen only when a
+filesystem is mounted read-write, or when a filesystem image is
+created.
 
-Jason
+I think that warning for read-only mounts would be an annoyance to
+users retrieving files from old filesystems.
+
+Ben.
+
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
+
