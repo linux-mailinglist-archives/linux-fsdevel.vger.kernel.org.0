@@ -2,215 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6A948AB6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 01:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECD4F8AB91
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 01:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbfHLXtv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 19:49:51 -0400
-Received: from mga05.intel.com ([192.55.52.43]:48708 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbfHLXtv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 19:49:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 16:49:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,379,1559545200"; 
-   d="scan'208";a="200305528"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga004.fm.intel.com with ESMTP; 12 Aug 2019 16:49:50 -0700
-Date:   Mon, 12 Aug 2019 16:49:50 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     john.hubbard@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-Message-ID: <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
-References: <20190812015044.26176-1-jhubbard@nvidia.com>
- <20190812015044.26176-3-jhubbard@nvidia.com>
+        id S1726878AbfHLX4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 19:56:43 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41035 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbfHLX4n (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Aug 2019 19:56:43 -0400
+Received: by mail-pg1-f196.google.com with SMTP id x15so39932594pgg.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 16:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gYpSAuCXXKxryh8QTeN+G2zHTLzdvz4q0W6bw5kxZF4=;
+        b=kj+TnowRhwNBHJOh8ghz79tlvll8x/4UGw5bdSUzfSM675Bmppn0T+5pwwMqUi1Pj8
+         SkfxC53wkTjuPEqLDzqpMT8o02usB1hT7ISXFNR37RoScwW9mBXE4G6OWWcEhGxQ4RjE
+         ZULQCeKPfhmyKaUvhvxsP1ztH072L3pIFOOb1mQPoepGl9JYtada5S4xJGf8kTW6G2ed
+         agtpkDcP4Se/8cfElAOE/jMH6pWLmTG0sCRAYFHxhMUFNN99If6/5pZXWUcydlo5gP79
+         cH+LRfP7b/BQG+d1ym6KyAQRfa3JaLfiK6f13kXjD96rm3bbdFV/J9GFHUpWjzV//M/H
+         yS1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gYpSAuCXXKxryh8QTeN+G2zHTLzdvz4q0W6bw5kxZF4=;
+        b=GtuAnJzRvzQPB9019WW0cz8cA3hoJk6RT7AhA1IPjmCVJe6J5Yiz9ycZY9sJrulzI8
+         xSAdxpl99Ix5kNg/gVFAYXG64UBI6wPJ7NBnZUZcqQwCCkuL9H9AVa+U2ecv2XRAL4zb
+         V90ZvfPTZjplNhqf/+q79PZCqa7Q8OhsqoC++hccyHfSg4i5n1/GR8VjLDSZShEB5jiW
+         59dCk/FUw+PbOe/XOdVPr9k+FMP+lUc+/a9XUhrASlBuGkPyRmJGFMZth6BlGb9xcsvh
+         u6KvZhR0g3RO6S8VW/S5Eu0jtTw1YpBKXzG2UDL9um4EvvrDJf3DZbiThU9TRBDg0C9M
+         s1UA==
+X-Gm-Message-State: APjAAAUh+DUPyZIQ90xSp4/47bjUqeHtDND7apdOHQSjRZ+qW5H/A6ZS
+        HbcD0gHM/4zdEXvLVjr8VhqsuWvjDO0Fktl/0vhRGQ==
+X-Google-Smtp-Source: APXvYqw7Md+FhMdhe7gt7ZbaYFjad4Qutk9q143YLYnyDZF1R0tUF3skBOerqPAJS3PaDxgm1xGa9mrupUlIDIlaGXw=
+X-Received: by 2002:a63:b919:: with SMTP id z25mr31882885pge.201.1565654201390;
+ Mon, 12 Aug 2019 16:56:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190812015044.26176-3-jhubbard@nvidia.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20190812182421.141150-1-brendanhiggins@google.com>
+ <20190812182421.141150-5-brendanhiggins@google.com> <20190812234644.E054D20679@mail.kernel.org>
+In-Reply-To: <20190812234644.E054D20679@mail.kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 12 Aug 2019 16:56:29 -0700
+Message-ID: <CAFd5g44huOiR9B0H1C2TtiPy63BDuwi_Qpb_exF3zmT3ttV8eg@mail.gmail.com>
+Subject: Re: [PATCH v12 04/18] kunit: test: add assertion printing library
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 11, 2019 at 06:50:44PM -0700, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> This is the "vaddr_pin_pages" corresponding variant to
-> get_user_pages_remote(), but with FOLL_PIN semantics: the implementation
-> sets FOLL_PIN. That, in turn, means that the pages must ultimately be
-> released by put_user_page*()--typically, via vaddr_unpin_pages*().
-> 
-> Note that the put_user_page*() requirement won't be truly
-> required until all of the call sites have been converted, and
-> the tracking of pages is actually activated.
-> 
-> Also introduce vaddr_unpin_pages(), in order to have a simpler
-> call for the error handling cases.
-> 
-> Use both of these new calls in the Infiniband drive, replacing
-> get_user_pages_remote() and put_user_pages().
-> 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  drivers/infiniband/core/umem_odp.c | 15 +++++----
->  include/linux/mm.h                 |  7 +++++
->  mm/gup.c                           | 50 ++++++++++++++++++++++++++++++
->  3 files changed, 66 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-> index 53085896d718..fdff034a8a30 100644
-> --- a/drivers/infiniband/core/umem_odp.c
-> +++ b/drivers/infiniband/core/umem_odp.c
-> @@ -534,7 +534,7 @@ static int ib_umem_odp_map_dma_single_page(
->  	}
->  
->  out:
-> -	put_user_page(page);
-> +	vaddr_unpin_pages(&page, 1, &umem_odp->umem.vaddr_pin);
->  
->  	if (remove_existing_mapping) {
->  		ib_umem_notifier_start_account(umem_odp);
-> @@ -635,9 +635,10 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
->  		 * complex (and doesn't gain us much performance in most use
->  		 * cases).
->  		 */
-> -		npages = get_user_pages_remote(owning_process, owning_mm,
-> +		npages = vaddr_pin_pages_remote(owning_process, owning_mm,
->  				user_virt, gup_num_pages,
-> -				flags, local_page_list, NULL, NULL);
-> +				flags, local_page_list, NULL, NULL,
-> +				&umem_odp->umem.vaddr_pin);
+On Mon, Aug 12, 2019 at 4:46 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Brendan Higgins (2019-08-12 11:24:07)
+> > Add `struct kunit_assert` and friends which provide a structured way to
+> > capture data from an expectation or an assertion (introduced later in
+> > the series) so that it may be printed out in the event of a failure.
+> >
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > ---
+>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>
+> Just some minor nits below
+>
+> > diff --git a/include/kunit/assert.h b/include/kunit/assert.h
+> > new file mode 100644
+> > index 0000000000000..55f1b88b0cb4d
+> > --- /dev/null
+> > +++ b/include/kunit/assert.h
+> > @@ -0,0 +1,183 @@
+> [...]
+> > +                           struct string_stream *stream);
+> > +
+> > +struct kunit_fail_assert {
+> > +       struct kunit_assert assert;
+> > +};
+> > +
+> > +void kunit_fail_assert_format(const struct kunit_assert *assert,
+> > +                             struct string_stream *stream);
+> > +
+> > +#define KUNIT_INIT_FAIL_ASSERT_STRUCT(test, type) {                           \
+> > +               .assert = KUNIT_INIT_ASSERT_STRUCT(test,                       \
+> > +                                                  type,                       \
+> > +                                                  kunit_fail_assert_format)   \
+>
+> This one got indented one too many times?
 
-Thinking about this part of the patch... is this pin really necessary?  This
-code is not doing a long term pin.  The page just needs a reference while we
-map it into the devices page tables.  Once that is done we should get notifiers
-if anything changes and we can adjust.  right?
+Not unless I have been using the wrong formatting for multiline
+macros. You can see this commit applied here:
+https://kunit.googlesource.com/linux/+/870964da2990920030990dd1ffb647ef408e52df/include/kunit/assert.h#59
 
-Ira
+I have test, type, and kunit_fail_assert_format all column aligned (it
+just doesn't render nicely in the patch format).
 
->  		up_read(&owning_mm->mmap_sem);
->  
->  		if (npages < 0) {
-> @@ -657,7 +658,8 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
->  					ret = -EFAULT;
->  					break;
->  				}
-> -				put_user_page(local_page_list[j]);
-> +				vaddr_unpin_pages(&local_page_list[j], 1,
-> +						  &umem_odp->umem.vaddr_pin);
->  				continue;
->  			}
->  
-> @@ -684,8 +686,9 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
->  			 * ib_umem_odp_map_dma_single_page().
->  			 */
->  			if (npages - (j + 1) > 0)
-> -				put_user_pages(&local_page_list[j+1],
-> -					       npages - (j + 1));
-> +				vaddr_unpin_pages(&local_page_list[j+1],
-> +						  npages - (j + 1),
-> +						  &umem_odp->umem.vaddr_pin);
->  			break;
->  		}
->  	}
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 61b616cd9243..2bd76ad8787e 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1606,6 +1606,13 @@ int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
->  long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
->  		     unsigned int gup_flags, struct page **pages,
->  		     struct vaddr_pin *vaddr_pin);
-> +long vaddr_pin_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
-> +			    unsigned long start, unsigned long nr_pages,
-> +			    unsigned int gup_flags, struct page **pages,
-> +			    struct vm_area_struct **vmas, int *locked,
-> +			    struct vaddr_pin *vaddr_pin);
-> +void vaddr_unpin_pages(struct page **pages, unsigned long nr_pages,
-> +		       struct vaddr_pin *vaddr_pin);
->  void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
->  				  struct vaddr_pin *vaddr_pin, bool make_dirty);
->  bool mapping_inode_has_layout(struct vaddr_pin *vaddr_pin, struct page *page);
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 85f09958fbdc..bb95adfaf9b6 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2518,6 +2518,38 @@ long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
->  }
->  EXPORT_SYMBOL(vaddr_pin_pages);
->  
-> +/**
-> + * vaddr_pin_pages pin pages by virtual address and return the pages to the
-> + * user.
-> + *
-> + * @tsk:	the task_struct to use for page fault accounting, or
-> + *		NULL if faults are not to be recorded.
-> + * @mm:		mm_struct of target mm
-> + * @addr:	start address
-> + * @nr_pages:	number of pages to pin
-> + * @gup_flags:	flags to use for the pin
-> + * @pages:	array of pages returned
-> + * @vaddr_pin:	initialized meta information this pin is to be associated
-> + * with.
-> + *
-> + * This is the "vaddr_pin_pages" corresponding variant to
-> + * get_user_pages_remote(), but with FOLL_PIN semantics: the implementation sets
-> + * FOLL_PIN. That, in turn, means that the pages must ultimately be released
-> + * by put_user_page().
-> + */
-> +long vaddr_pin_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
-> +			    unsigned long start, unsigned long nr_pages,
-> +			    unsigned int gup_flags, struct page **pages,
-> +			    struct vm_area_struct **vmas, int *locked,
-> +			    struct vaddr_pin *vaddr_pin)
-> +{
-> +	gup_flags |= FOLL_TOUCH | FOLL_REMOTE | FOLL_PIN;
-> +
-> +	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
-> +				       locked, gup_flags, vaddr_pin);
-> +}
-> +EXPORT_SYMBOL(vaddr_pin_pages_remote);
-> +
->  /**
->   * vaddr_unpin_pages_dirty_lock - counterpart to vaddr_pin_pages
->   *
-> @@ -2536,3 +2568,21 @@ void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
->  	__put_user_pages_dirty_lock(vaddr_pin, pages, nr_pages, make_dirty);
->  }
->  EXPORT_SYMBOL(vaddr_unpin_pages_dirty_lock);
-> +
-> +/**
-> + * vaddr_unpin_pages - simple, non-dirtying counterpart to vaddr_pin_pages
-> + *
-> + * @pages: array of pages returned
-> + * @nr_pages: number of pages in pages
-> + * @vaddr_pin: same information passed to vaddr_pin_pages
-> + *
-> + * Like vaddr_unpin_pages_dirty_lock, but for non-dirty pages. Useful in putting
-> + * back pages in an error case: they were never made dirty.
-> + */
-> +void vaddr_unpin_pages(struct page **pages, unsigned long nr_pages,
-> +		       struct vaddr_pin *vaddr_pin)
-> +{
-> +	__put_user_pages_dirty_lock(vaddr_pin, pages, nr_pages, false);
-> +}
-> +EXPORT_SYMBOL(vaddr_unpin_pages);
-> +
-> -- 
-> 2.22.0
-> 
+> > +}
+> > +
+> > +struct kunit_unary_assert {
+> > +       struct kunit_assert assert;
+> > +       const char *condition;
+> > +       bool expected_true;
+> > +};
+> > +
+> > +void kunit_unary_assert_format(const struct kunit_assert *assert,
+> > +                              struct string_stream *stream);
+> > +
+> [...]
+> > +#define KUNIT_INIT_BINARY_STR_ASSERT_STRUCT(test,                             \
+> > +                                           type,                              \
+> > +                                           op_str,                            \
+> > +                                           left_str,                          \
+> > +                                           left_val,                          \
+> > +                                           right_str,                         \
+> > +                                           right_val) {                       \
+> > +       .assert = KUNIT_INIT_ASSERT_STRUCT(test,                               \
+> > +                                          type,                               \
+> > +                                          kunit_binary_str_assert_format),    \
+> > +       .operation = op_str,                                                   \
+> > +       .left_text = left_str,                                                 \
+> > +       .left_value = left_val,                                                \
+> > +       .right_text = right_str,                                               \
+> > +       .right_value = right_val                                               \
+> > +}
+>
+> It would be nice to have kernel doc on these macros so we know how to
+> use them.
+
+Sounds good. Will fix.
