@@ -2,100 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C9D89E47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 14:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B43FE89E6A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 14:32:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbfHLM2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 08:28:16 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39259 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728366AbfHLM2Q (ORCPT
+        id S1726912AbfHLMcK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 08:32:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25960 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726822AbfHLMcJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 08:28:16 -0400
-Received: by mail-qk1-f195.google.com with SMTP id 125so3702922qkl.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 05:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F3NVoBe9n1v2ZfRa55FdnUViyntY9dM8fBRiLu0L+fw=;
-        b=hj/Fuo5ytWHe0SJ+13jcDdQMsbU/i1ZIACgIViMzJiw64MJCvg0Xb2wHJG7iO+F4CY
-         aU/8Q4e5EoRTDQDpyyngxGAd8VRdCivVvM9K4kJH8VkohD0SyifJp3mGzN0GcVbvBsA6
-         4Y51i7Ejn6Y8PGCOwhEemjauQp1RbvuAk+XvQ3vNiR6Z8yE71AQmuSIriJA5+G1/cPmw
-         b9Fve7MbxQYSmPLxPc8WFWQFK9ggMft0bP6KTFKqQIAdoHpT+phxWGWiOfnw0VACG5Ib
-         rBDe3YqIH8M46+Mj9gTd05nIVBhQ30Y1/5SkXNdMnFNsQXrdNcqB8yDxa3rqTHlr6dLq
-         iK8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F3NVoBe9n1v2ZfRa55FdnUViyntY9dM8fBRiLu0L+fw=;
-        b=HvzAsYFiYXgDDl0VweReeoKAV6ll2Otni1MNHgRChBfdsTmCNZ6umoy+RTltSM9kqI
-         KMW7n6zGsyLZsro9Md5/64BiXpVlx+TeVruubO5XaBRpIFQbvenfXlM2InY/OSEf2Ndg
-         boN0LqScU0BxpL2pnW1NIQZHGtjBp1jK3kVY9b2MOHVdjoCEDP+DJac8VJobNoNJc2m7
-         SeaMmJ5UwrknGh58bpGbk4Vf2kBACBcFlI93+GcjFmi6j08MNNwk8JwwufwqoKZo9Z8W
-         EqHbqPTJEXMQm3dVup7tcJQQ5EYBEv/V4n/0icrIqPVA7CXB/+l0ORo7OAVweh0NWjaA
-         H9pw==
-X-Gm-Message-State: APjAAAWwMh8Ro73F1Os2cc8+t0r0v7TgQCf5/eBJf/zeTXp1JJeF/Pb0
-        hEe6L/hYNugCtBDtX1bFvJtQXFojfV8=
-X-Google-Smtp-Source: APXvYqwODBrrpXeLg1uZt60+w4xuw/RA5y0XlK9HIDJS76yjPxmVou6ZmWwl4OVp2Tm+2EwyPKY3dw==
-X-Received: by 2002:a05:620a:12d2:: with SMTP id e18mr29712440qkl.176.1565612895187;
-        Mon, 12 Aug 2019 05:28:15 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id z2sm9588656qtq.7.2019.08.12.05.28.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 05:28:14 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hx9Qs-00079D-9F; Mon, 12 Aug 2019 09:28:14 -0300
-Date:   Mon, 12 Aug 2019 09:28:14 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     ira.weiny@intel.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 15/19] mm/gup: Introduce vaddr_pin_pages()
-Message-ID: <20190812122814.GC24457@ziepe.ca>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-16-ira.weiny@intel.com>
+        Mon, 12 Aug 2019 08:32:09 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7CCT03d020986
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 08:32:08 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ub62wcxpb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 08:32:08 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Mon, 12 Aug 2019 13:32:05 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 12 Aug 2019 13:32:03 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7CCVhXr14942510
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Aug 2019 12:31:44 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B57EC52050;
+        Mon, 12 Aug 2019 12:32:02 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.124.31.57])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 904205204F;
+        Mon, 12 Aug 2019 12:32:01 +0000 (GMT)
+Subject: Re: [PATCH 07/13] btrfs: basic direct read operation
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-fsdevel@vger.kernel.org
+Cc:     linux-btrfs@vger.kernel.org, hch@lst.de, darrick.wong@oracle.com,
+        ruansy.fnst@cn.fujitsu.com, Goldwyn Rodrigues <rgoldwyn@suse.com>
+References: <20190802220048.16142-1-rgoldwyn@suse.de>
+ <20190802220048.16142-8-rgoldwyn@suse.de>
+From:   RITESH HARJANI <riteshh@linux.ibm.com>
+Date:   Mon, 12 Aug 2019 18:02:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809225833.6657-16-ira.weiny@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190802220048.16142-8-rgoldwyn@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19081212-4275-0000-0000-00000358325E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19081212-4276-0000-0000-0000386A3EB6
+Message-Id: <20190812123201.904205204F@d06av21.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-12_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908120141
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 03:58:29PM -0700, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> The addition of FOLL_LONGTERM has taken on additional meaning for CMA
-> pages.
-> 
-> In addition subsystems such as RDMA require new information to be passed
-> to the GUP interface to track file owning information.  As such a simple
-> FOLL_LONGTERM flag is no longer sufficient for these users to pin pages.
-> 
-> Introduce a new GUP like call which takes the newly introduced vaddr_pin
-> information.  Failure to pass the vaddr_pin object back to a vaddr_put*
-> call will result in a failure if pins were created on files during the
-> pin operation.
 
-Is this a 'vaddr' in the traditional sense, ie does it work with
-something returned by valloc?
+On 8/3/19 3:30 AM, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+>
+> Add btrfs_dio_iomap_ops for iomap.begin() function. In order to
+> accomodate dio reads, add a new function btrfs_file_read_iter()
+> which would call btrfs_dio_iomap_read() for DIO reads and
+> fallback to generic_file_read_iter otherwise.
+>
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> ---
+>   fs/btrfs/ctree.h |  2 ++
+>   fs/btrfs/file.c  | 10 +++++++++-
+>   fs/btrfs/iomap.c | 20 ++++++++++++++++++++
+>   3 files changed, 31 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index 7a4ff524dc77..9eca2d576dd1 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -3247,7 +3247,9 @@ int btrfs_fdatawrite_range(struct inode *inode, loff_t start, loff_t end);
+>   loff_t btrfs_remap_file_range(struct file *file_in, loff_t pos_in,
+>   			      struct file *file_out, loff_t pos_out,
+>   			      loff_t len, unsigned int remap_flags);
+> +/* iomap.c */
+>   size_t btrfs_buffered_iomap_write(struct kiocb *iocb, struct iov_iter *from);
+> +ssize_t btrfs_dio_iomap_read(struct kiocb *iocb, struct iov_iter *to);
+>   
+>   /* tree-defrag.c */
+>   int btrfs_defrag_leaves(struct btrfs_trans_handle *trans,
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index f7087e28ac08..997eb152a35a 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -2839,9 +2839,17 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
+>   	return generic_file_open(inode, filp);
+>   }
+>   
+> +static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +	if (iocb->ki_flags & IOCB_DIRECT)
+> +		return btrfs_dio_iomap_read(iocb, to);
 
-Maybe another name would be better?
+No provision to fallback to bufferedIO read? Not sure from btrfs 
+perspective,
+but earlier generic_file_read_iter may fall through to bufferedIO read 
+say in case where directIO could not be completed (returned 0 or less 
+than the requested read bytes).
+Is it not required anymore in case of btrfs when we move to iomap 
+infrastructure, to still fall back to bufferedIO read?
+Correct me if I am missing anything here.
 
-I also wish GUP like functions took in a 'void __user *' instead of
-the unsigned long to make this clear :\
+> +
+> +	return generic_file_read_iter(iocb, to);
+> +}
+> +
+>   const struct file_operations btrfs_file_operations = {
+>   	.llseek		= btrfs_file_llseek,
+> -	.read_iter      = generic_file_read_iter,
+> +	.read_iter      = btrfs_file_read_iter,
+>   	.splice_read	= generic_file_splice_read,
+>   	.write_iter	= btrfs_file_write_iter,
+>   	.mmap		= btrfs_file_mmap,
+> diff --git a/fs/btrfs/iomap.c b/fs/btrfs/iomap.c
+> index 879038e2f1a0..36df606fc028 100644
+> --- a/fs/btrfs/iomap.c
+> +++ b/fs/btrfs/iomap.c
+> @@ -420,3 +420,23 @@ size_t btrfs_buffered_iomap_write(struct kiocb *iocb, struct iov_iter *from)
+>   	return written;
+>   }
+>   
+> +static int btrfs_dio_iomap_begin(struct inode *inode, loff_t pos,
+> +		loff_t length, unsigned flags, struct iomap *iomap,
+> +		struct iomap *srcmap)
+> +{
+> +	return get_iomap(inode, pos, length, iomap);
+> +}
+> +
+> +static const struct iomap_ops btrfs_dio_iomap_ops = {
+> +	.iomap_begin            = btrfs_dio_iomap_begin,
+> +};
+> +
+> +ssize_t btrfs_dio_iomap_read(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	ssize_t ret;
+> +	inode_lock_shared(inode);
+> +	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, NULL);
+> +	inode_unlock_shared(inode);
+> +	return ret;
+> +}
 
-Jason
