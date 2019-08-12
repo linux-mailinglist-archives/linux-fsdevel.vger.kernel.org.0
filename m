@@ -2,126 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2BC48A48E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 19:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E42C28A4B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 19:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbfHLRb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 13:31:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:6506 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727167AbfHLRb6 (ORCPT
+        id S1726674AbfHLReE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 13:34:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58528 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbfHLReE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 13:31:58 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7CHRHwP098825
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 13:31:57 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ub9m0r76t-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 13:31:57 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Mon, 12 Aug 2019 18:31:54 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 12 Aug 2019 18:31:52 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7CHVpKE38011286
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 12 Aug 2019 17:31:51 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9552D52051;
-        Mon, 12 Aug 2019 17:31:51 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.31.57])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id AF04F5204F;
-        Mon, 12 Aug 2019 17:31:50 +0000 (GMT)
-Subject: Re: [PATCH 0/5] ext4: direct IO via iomap infrastructure
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-ext4@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, jack@suse.cz, tytso@mit.edu
+        Mon, 12 Aug 2019 13:34:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=S7OxrYIMYsN/W+LCGLpx5eZGJ38yfnWGIGCyNhp6UUs=; b=siMt8ySyjx8VBRwG9UBLi9/9Q
+        eIb2vh9FVKtsyto60QRv/soDWmLheyImHtVNWCTCsOAjn+g3q4wksfWYxRSHEfZ6WIwGnts20pFFb
+        DleAN4say0ePpI4hO/xxlxbtaYjGav12UZcd4E7fnGV4db0tza9Om0sKNjOO1zpvig2fyWvQOT3k+
+        osaWOz1a5c/p946nTJXF1+1Pf1L0pmNuM3Oy/56p6Crxtk4xdzfHsf9Z/5YCRc3NNPsHqinMtHhMd
+        Sr+SV+CLdX3J9s2m4G1hvrr+3RhG32WogKbPYeECTD6lGCgrYTqNU9i/yEkGT8DJgu2WfQrtmEmJ8
+        TjV45CCeA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hxECp-0000x8-Jr; Mon, 12 Aug 2019 17:34:03 +0000
+Date:   Mon, 12 Aug 2019 10:34:03 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.cz, tytso@mit.edu, riteshh@linux.ibm.com
+Subject: Re: [PATCH 4/5] ext4: introduce direct IO write code path using
+ iomap infrastructure
+Message-ID: <20190812173403.GD24564@infradead.org>
 References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
-From:   RITESH HARJANI <riteshh@linux.ibm.com>
-Date:   Mon, 12 Aug 2019 23:01:50 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ <581c3a2da89991e7ce5862d93dcfb23e1dc8ddc8.1565609891.git.mbobrowski@mbobrowski.org>
 MIME-Version: 1.0
-In-Reply-To: <cover.1565609891.git.mbobrowski@mbobrowski.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19081217-0016-0000-0000-0000029DEA5A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081217-0017-0000-0000-000032FDFB1A
-Message-Id: <20190812173150.AF04F5204F@d06av21.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-12_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908120193
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <581c3a2da89991e7ce5862d93dcfb23e1dc8ddc8.1565609891.git.mbobrowski@mbobrowski.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Matthew,
+> +	if (error) {
+> +		if (offset + size > i_size_read(inode))
+> +			ext4_truncate_failed_write(inode);
+> +
+> +		/*
+> +		 * The inode may have been placed onto the orphan list
+> +		 * as a result of an extension. However, an error may
+> +		 * have been encountered prior to being able to
+> +		 * complete the write operation. Perform any necessary
+> +		 * clean up in this case.
+> +		 */
+> +		if (!list_empty(&EXT4_I(inode)->i_orphan)) {
+> +			handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
+> +			if (IS_ERR(handle)) {
+> +				if (inode->i_nlink)
+> +					ext4_orphan_del(NULL, inode);
+> +				return PTR_ERR(handle);
+> +			}
+> +
+> +			if (inode->i_nlink)
+> +				ext4_orphan_del(handle, inode);
+> +			ext4_journal_stop(handle);
+> +		}
+> +		return error;
 
-On 8/12/19 6:22 PM, Matthew Bobrowski wrote:
+I'd split this branch into a separate function just to keep the
+end_io handler tidy.
 
-> This patch series converts the ext4 direct IO code paths to make use of the
-> iomap infrastructure and removes the old buffer_head direct-io based
-> implementation. The result is that ext4 is converted to the newer framework
-> and that it may _possibly_ gain a performance boost for O_SYNC | O_DIRECT IO.
->
-> These changes have been tested using xfstests in both DAX and non-DAX modes
-> using various configurations i.e. 4k, dioread_nolock, dax.
+> +	if (ret == -EIOCBQUEUED && (unaligned_aio || extend))
+> +		inode_dio_wait(inode);
+> +
+> +	if (ret >= 0 && iov_iter_count(from)) {
+> +		overwrite ? inode_unlock_shared(inode) : inode_unlock(inode);
+> +		return ext4_buffered_write_iter(iocb, from);
+> +	}
+> +out:
+> +	overwrite ? inode_unlock_shared(inode) : inode_unlock(inode);
+> +	return ret;
 
-I had some minor review comments posted on Patch-4.
-But the rest of the patch series looks good to me.
-I will also do some basic testing of xfstests which I did for my patches 
-and will revert back.
+the ? : expression here is weird.
 
-One query, could you please help answering below for my understanding :-
+I'd write this as:
 
-I was under the assumption that we need to maintain 
-ext4_test_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN) or 
-atomic_read(&EXT4_I(inode)->i_unwritten))
-in case of non-AIO directIO or AIO directIO case as well (when we may 
-allocate unwritten extents),
-to protect with some kind of race with other parts of code(maybe 
-truncate/bufferedIO/fallocate not sure?) which may call for 
-ext4_can_extents_be_merged()
-to check if extents can be merged or not.
+	if (overwrite)
+		inode_unlock_shared(inode);
+	else
+		inode_unlock(inode);
 
-Is it not the case?
-Now that directIO code has no way of specifying that this inode has 
-unwritten extent, will it not race with any other path, where this info 
-was necessary (like
-in above func ext4_can_extents_be_merged())?
+	if (ret >= 0 && iov_iter_count(from))
+		return ext4_buffered_write_iter(iocb, from);
+	return ret;
+
+and handle the only place we jump to the current out label manually,
+as that always does an exclusive unlock anyway.
+
+> +		if (IS_DAX(inode)) {
+> +			ret = ext4_map_blocks(handle, inode, &map,
+> +					      EXT4_GET_BLOCKS_CREATE_ZERO);
+> +		} else {
+> +			/*
+> +			 * DAX and direct IO are the only two
+> +			 * operations currently supported with
+> +			 * IOMAP_WRITE.
+> +			 */
+> +			WARN_ON(!(flags & IOMAP_DIRECT));
+> +			if (round_down(offset, i_blocksize(inode)) >=
+> +			    i_size_read(inode)) {
+> +				ret = ext4_map_blocks(handle, inode, &map,
+> +						      EXT4_GET_BLOCKS_CREATE);
+> +			} else if (!ext4_test_inode_flag(inode,
+> +							 EXT4_INODE_EXTENTS)) {
+> +				/*
+> +				 * We cannot fill holes in indirect
+> +				 * tree based inodes as that could
+> +				 * expose stale data in the case of a
+> +				 * crash. Use magic error code to
+> +				 * fallback to buffered IO.
+> +				 */
+> +				ret = ext4_map_blocks(handle, inode, &map, 0);
+> +				if (ret == 0)
+> +					ret = -ENOTBLK;
+> +			} else {
+> +				ret = ext4_map_blocks(handle, inode, &map,
+> +						      EXT4_GET_BLOCKS_IO_CREATE_EXT);
+> +			}
+> +		}
+
+I think this could be simplified down to something like:
+
+		int flags = 0;
+
+		...
+
+		/*
+		 * DAX and direct IO are the only two operations currently
+		 * supported with IOMAP_WRITE.
+		 */
+		WARN_ON(!IS_DAX(inode) && !(flags & IOMAP_DIRECT));
+
+		if (IS_DAX(inode))
+			flags = EXT4_GET_BLOCKS_CREATE_ZERO;
+		else if (round_down(offset, i_blocksize(inode)) >=
+				i_size_read(inode)) {
+			flags = EXT4_GET_BLOCKS_CREATE;
+		else if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+			flags = EXT4_GET_BLOCKS_IO_CREATE_EXT;
+
+		/*
+		 * We cannot fill holes in indirect tree based inodes as that
+		 * could expose stale data in the case of a crash.  Use the
+		 * magic error code to fallback to buffered IO.
+		 */
+		if (!flags && !ret)
+			ret = -ENOTBLK;
 
 
-Thanks
-Ritesh
+> @@ -3601,6 +3631,8 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+>  			  ssize_t written, unsigned flags, struct iomap *iomap)
+>  {
+> +	if (flags & IOMAP_DIRECT && written == 0)
+> +		return -ENOTBLK;
 
->
-> Matthew Bobrowski (5):
->    ext4: introduce direct IO read code path using iomap infrastructure
->    ext4: move inode extension/truncate code out from ext4_iomap_end()
->    iomap: modify ->end_io() calling convention
->    ext4: introduce direct IO write code path using iomap infrastructure
->    ext4: clean up redundant buffer_head direct IO code
->
->   fs/ext4/ext4.h        |   3 -
->   fs/ext4/extents.c     |   8 +-
->   fs/ext4/file.c        | 329 +++++++++++++++++++++++++++-------
->   fs/ext4/inode.c       | 488 +++++---------------------------------------------
->   fs/iomap/direct-io.c  |   9 +-
->   fs/xfs/xfs_file.c     |  17 +-
->   include/linux/iomap.h |   4 +-
->   7 files changed, 322 insertions(+), 536 deletions(-)
->
-
+This probably wants a comment, too.  But do we actually ever end up
+here?
