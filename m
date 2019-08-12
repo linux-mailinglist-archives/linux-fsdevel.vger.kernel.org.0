@@ -2,118 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7438C8A2B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 17:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3646C8A309
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 18:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbfHLPxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 11:53:50 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37342 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbfHLPxu (ORCPT
+        id S1726885AbfHLQJs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 12:09:48 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40866 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbfHLQJs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 11:53:50 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z11so3072630wrt.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 08:53:48 -0700 (PDT)
+        Mon, 12 Aug 2019 12:09:48 -0400
+Received: by mail-ot1-f65.google.com with SMTP id c34so20791384otb.7;
+        Mon, 12 Aug 2019 09:09:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xcEZapTx9gb37JnflSbAgedavIW6EzyB7mIFw5JH/4I=;
+        b=RL/zKcoR3eseiuX8sGv2LyrWC/b4WTVuwxOEti92mbge9n/+BZjWUN09bSaUd5Yetp
+         QfeDIuKE0L/Qtb12fk/DKfF7rFMTqZhe+gqgdZIXL5tFIIfaPVftPBGAK4lo5N9ScW9I
+         /KOsv515ZKyKzjzzNqo5izPIdyhkSr1y3JwZEmR1MX7hoIlVb2mMNDdNeuKrHKZ685T0
+         gTkl9Lqr+rfY9q22jOqYUdw0SaUiGmNXHfG5uZ+0Vq4bOC1kWmMwzPYNQjQKOqxkgmj6
+         S5KwLEgtNPFjM0ToQJCl9J7jpNRIjq98QVy5B81zDLKQmdsYYxIxMHJkbFQtGT4LFmC0
+         OSuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4DKVopx7Nt9Ima+DLY8Fb9/9+/EpjgOuRGGadWubLw0=;
-        b=JsxJqYkWfwsUqfhDF0bwICvAl0WHLOTALidWOqOfFlJs7GVGsC+5rqyUUhxmW7vmqT
-         UpUQfQGSLoIIBOKrqeDIU+2ztYJ4YRZ1fg7zKbLXq6ruGPpLE/FEPYPu76pNxPH12W5I
-         JYkElmHvzZ2VnZYbfq+Juil31GFAnVAne6Ug8GMgR/BimTOycPIXXFXIOpsGbhZHMlLe
-         py/A8YG6z/PC7Ke01wMwtKWs/UR2uziv2CmbllrQcH9XmXZn1IX2vd4JlBG1unfsoZfy
-         4xS9Oo2LUbKWEtF9gX+Xr73Jj/lA9vy6i9rZvS5I8y2jcMgFDdpFSPFhp/FJgd8VIYtU
-         ZCeA==
-X-Gm-Message-State: APjAAAXXGYEMHrcGiS3QI0ScfJAueC4TMT60KLv02kO6KITRO/xvCzbU
-        P6N/MXplJhcktWJ4cfcwshX/ChY5Qt0=
-X-Google-Smtp-Source: APXvYqxX2wnjKllKQSi7tYQkhwitZBogn5QqAx+i9na2e6GRIBB1rylleDpjnJfq47trC92ow3lR6Q==
-X-Received: by 2002:a5d:6408:: with SMTP id z8mr40785618wru.246.1565625227583;
-        Mon, 12 Aug 2019 08:53:47 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id b3sm4409605wrv.43.2019.08.12.08.53.46
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Aug 2019 08:53:46 -0700 (PDT)
-Subject: Re: [PATCH v12 resend] fs: Add VirtualBox guest shared folder
- (vboxsf) support
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20190811163134.12708-1-hdegoede@redhat.com>
- <20190811163134.12708-2-hdegoede@redhat.com>
- <20190812114926.GB21901@infradead.org>
- <b95eaa46-098d-0954-34b4-a96c7ed7ffa2@redhat.com>
- <20190812141701.GA31267@infradead.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <1e9b72d8-c69e-03a9-8a38-bf2ea78d77e9@redhat.com>
-Date:   Mon, 12 Aug 2019 17:53:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xcEZapTx9gb37JnflSbAgedavIW6EzyB7mIFw5JH/4I=;
+        b=GMLWA4XwvjrbSesDssIVSjGoTMrqfYFovuWqhZvcykMx74ngZd3AN4dbxOSjlmLrgP
+         svT+eycdT9VnlgyzJSWrpzVIZyeUL1/lzJru7CCr78SmwYIFoqi1iIYXJogYHMpKUKLe
+         kF+DROi2EC8GK1ZmYuOUtucZ2PswnkxNrbB0I3c6icvL7jZnf+7yhdOv4eFFyALvWTYm
+         Wm8UnvRyMFQ6KBVsboqdIimCgVp4b6bu/nMmqlWvI8DerCk7FnD3Q8LPr5nMzS/Yppf1
+         H7z5YANm7bl7892R0oBBCF72HkXFMusdIONBjlKAMvnP/csHzMgBwz+U+mS7gliWObh4
+         2Ebw==
+X-Gm-Message-State: APjAAAXp24v2oglm9OWR6GdDm7hp3uVDIppiqbP7Ys8fKsP6gCmP3GLg
+        CK+NZQlW+M5HUplxAh0TGk8Ro9hLH7pd49Z5ovdG7u8O
+X-Google-Smtp-Source: APXvYqzqWtEXtUQlBMqRX1uDe/YrNtqz5xPnjIc7b2b3dlEkqoGwt44wKdLkzm254HXxruY2qKjts8H3vyqtwIAme+E=
+X-Received: by 2002:a02:c012:: with SMTP id y18mr27966443jai.85.1565626187318;
+ Mon, 12 Aug 2019 09:09:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190812141701.GA31267@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-5-deepa.kernel@gmail.com>
+ <c508fe0116b77ff0496ebb17a69f756c47be62b7.camel@codethink.co.uk>
+ <CABeXuvruROn7j1DiCDbP6MLBt9SB4Pp3HoKqcQbUNPDJgGWLgw@mail.gmail.com>
+ <53df9d81bfb4ee7ec64fabf1089f91d80dceb491.camel@codethink.co.uk> <CAK8P3a0CADLUeXvsBHNAC8ekLoo0o0uYz2arBqZ=1N+Xp8HNvA@mail.gmail.com>
+In-Reply-To: <CAK8P3a0CADLUeXvsBHNAC8ekLoo0o0uYz2arBqZ=1N+Xp8HNvA@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Mon, 12 Aug 2019 09:09:35 -0700
+Message-ID: <CABeXuvpAPp98G2gCczB3n=izv4aM7vacdbPONiELrw-1ZOrd=g@mail.gmail.com>
+Subject: Re: [Y2038] [PATCH 04/20] mount: Add mount warning for impending
+ timestamp expiry
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Mon, Aug 12, 2019 at 7:11 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Aug 12, 2019 at 3:25 PM Ben Hutchings
+> <ben.hutchings@codethink.co.uk> wrote:
+> > On Sat, 2019-08-10 at 13:44 -0700, Deepa Dinamani wrote:
+> > > On Mon, Aug 5, 2019 at 7:14 AM Ben Hutchings
+> > > <ben.hutchings@codethink.co.uk> wrote:
+> > > > On Mon, 2019-07-29 at 18:49 -0700, Deepa Dinamani wrote:
+> > > > > The warning reuses the uptime max of 30 years used by the
+> > > > > setitimeofday().
+> > > > >
+> > > > > Note that the warning is only added for new filesystem mounts
+> > > > > through the mount syscall. Automounts do not have the same warning.
+> > > > [...]
+> > > >
+> > > > Another thing - perhaps this warning should be suppressed for read-only
+> > > > mounts?
+> > >
+> > > Many filesystems support read only mounts only. We do fill in right
+> > > granularities and limits for these filesystems as well. In keeping
+> > > with the trend, I have added the warning accordingly. I don't think I
+> > > have a preference either way. But, not warning for the red only mounts
+> > > adds another if case. If you have a strong preference, I could add it
+> > > in.
+> >
+> > It seems to me that the warning is needed if there is a possibility of
+> > data loss (incorrect timestamps, potentially leading to incorrect
+> > decisions about which files are newer).  This can happen only when a
+> > filesystem is mounted read-write, or when a filesystem image is
+> > created.
+> >
+> > I think that warning for read-only mounts would be an annoyance to
+> > users retrieving files from old filesystems.
+>
+> I agree, the warning is not helpful for read-only mounts. An earlier
+> plan was to completely disallow writable mounts that might risk an
+> overflow (in some configurations at least). The warning replaces that
+> now, and I think it should also just warn for the cases that would
+> otherwise have been dangerous.
 
-On 12-08-19 16:17, Christoph Hellwig wrote:
+Ok, I will make the change to exclude new read only mounts. I will use
+__mnt_is_readonly() so that it also exculdes filesystems that are
+readonly also.
+The diff looks like below:
 
-<snip>
+-       if (!error && sb->s_time_max &&
++       if (!error && !__mnt_is_readonly(mnt) &&
+            (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
 
->> The problem is that the IPC to the host which we build upon only offers
->> regular read / write calls. So the most consistent (also cache coherent)
->> mapping which we can offer is to directly mapping read -> read and
->> wrtie->write without the pagecache. Ideally we would be able to just
->> say sorry cannot do mmap, but too much apps rely on mmap and the
->> out of tree driver has this mmap "emulation" which means not offering
->> it in the mainline version would be a serious regression.
->>
->> In essence this is the same situation as a bunch of network filesystems
->> are in and I've looked at several for inspiration. Looking again at
->> e.g. v9fs_file_write_iter it does similar regular read -> read mapping
->> with invalidation of the page-cache for mmap users.
-> 
-> v9 is probably not a good idea to copy in general.  While not the best
-> idea to copy directly either I'd rather look at nfs - that is another
-> protocol without a real distributed lock manager, but at least the
-> NFS close to open semantics are reasonably well defined and allow using
-> the pagecache.
+Note that we can get rid of checking for non zero sb->s_time_max now.
 
-Ok, I've been taking a quick peek at always using the page-cache for
-writes, like NFS is doing.
-
-One scenario here which I still have questions about is normal write
-syscalls on a file opened in append mode. Currently I'm relying on
-passing through the append flag to the host while opening the file.
-
-This is fine for address_space_operations.write_end which AFAICT will be used
-in case of implementing the write_iter callback through generic_perform_write,
-this is fine for write_end since in write_end I have access to file->private_data
-and thus to the IPC handle representing the open call with the append flag set,
-so I do not need to worry about the host having changed the file underneath
-us, since the host will make sure the write gets appended itself.
-
-But what about address_space_operations.writepage? I guess this will never
-get called as the result of a write call on a file with the append flag set,
-right ?  So I should have at least one handle around in the list of open
-handles for the inode, which does not have the append flag set, so which I
-can safely use to writeback dirty pages coming in through writepage(), right ?
-
-Hmm, looking at my current vboxsf writepage code I see that I already only allow
-using handles which were opened without the append flag, so I'm pretty sure
-that I got this right, still if you can confirm that I've got this right,
-that would be great.
-
-And mmap of a file with the append flag set is not supported, so we should
-be good there.
-
-Regards,
-
-Hans
+-Deepa
