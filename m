@@ -2,168 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E148A8A540
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 20:03:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B92828A55C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 20:08:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbfHLSDk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 14:03:40 -0400
-Received: from mga11.intel.com ([192.55.52.93]:50215 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726090AbfHLSDk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 14:03:40 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 10:36:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
-   d="scan'208";a="194012289"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Aug 2019 10:36:26 -0700
-Date:   Mon, 12 Aug 2019 10:36:26 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 01/19] fs/locks: Export F_LAYOUT lease to user
- space
-Message-ID: <20190812173626.GB19746@iweiny-DESK2.sc.intel.com>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-2-ira.weiny@intel.com>
- <20190809235231.GC7777@dread.disaster.area>
+        id S1726597AbfHLSIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 14:08:13 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:48853 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbfHLSIN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Aug 2019 14:08:13 -0400
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1hxELt-0001w2-Ar; Mon, 12 Aug 2019 18:43:25 +0100
+Message-ID: <7edb5c85c29a46cf5edb6fe5033b07884fd068ae.camel@codethink.co.uk>
+Subject: Re: [Y2038] [PATCH 04/20] mount: Add mount warning for impending
+ timestamp expiry
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Date:   Mon, 12 Aug 2019 18:43:24 +0100
+In-Reply-To: <CABeXuvoa4VUQp3QxsEfq6PBKNv4Q2icp++5_EP=1e_72KLk_9w@mail.gmail.com>
+References: <20190730014924.2193-1-deepa.kernel@gmail.com>
+         <20190730014924.2193-5-deepa.kernel@gmail.com>
+         <c508fe0116b77ff0496ebb17a69f756c47be62b7.camel@codethink.co.uk>
+         <CABeXuvruROn7j1DiCDbP6MLBt9SB4Pp3HoKqcQbUNPDJgGWLgw@mail.gmail.com>
+         <53df9d81bfb4ee7ec64fabf1089f91d80dceb491.camel@codethink.co.uk>
+         <CAK8P3a0CADLUeXvsBHNAC8ekLoo0o0uYz2arBqZ=1N+Xp8HNvA@mail.gmail.com>
+         <CABeXuvpAPp98G2gCczB3n=izv4aM7vacdbPONiELrw-1ZOrd=g@mail.gmail.com>
+         <CABeXuvoa4VUQp3QxsEfq6PBKNv4Q2icp++5_EP=1e_72KLk_9w@mail.gmail.com>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809235231.GC7777@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 10, 2019 at 09:52:31AM +1000, Dave Chinner wrote:
-> On Fri, Aug 09, 2019 at 03:58:15PM -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
+On Mon, 2019-08-12 at 09:15 -0700, Deepa Dinamani wrote:
+> On Mon, Aug 12, 2019 at 9:09 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> > On Mon, Aug 12, 2019 at 7:11 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Mon, Aug 12, 2019 at 3:25 PM Ben Hutchings
+> > > <ben.hutchings@codethink.co.uk> wrote:
+> > > > On Sat, 2019-08-10 at 13:44 -0700, Deepa Dinamani wrote:
+> > > > > On Mon, Aug 5, 2019 at 7:14 AM Ben Hutchings
+> > > > > <ben.hutchings@codethink.co.uk> wrote:
+> > > > > > On Mon, 2019-07-29 at 18:49 -0700, Deepa Dinamani wrote:
+> > > > > > > The warning reuses the uptime max of 30 years used by the
+> > > > > > > setitimeofday().
+> > > > > > > 
+> > > > > > > Note that the warning is only added for new filesystem mounts
+> > > > > > > through the mount syscall. Automounts do not have the same warning.
+> > > > > > [...]
+> > > > > > 
+> > > > > > Another thing - perhaps this warning should be suppressed for read-only
+> > > > > > mounts?
+> > > > > 
+> > > > > Many filesystems support read only mounts only. We do fill in right
+> > > > > granularities and limits for these filesystems as well. In keeping
+> > > > > with the trend, I have added the warning accordingly. I don't think I
+> > > > > have a preference either way. But, not warning for the red only mounts
+> > > > > adds another if case. If you have a strong preference, I could add it
+> > > > > in.
+> > > > 
+> > > > It seems to me that the warning is needed if there is a possibility of
+> > > > data loss (incorrect timestamps, potentially leading to incorrect
+> > > > decisions about which files are newer).  This can happen only when a
+> > > > filesystem is mounted read-write, or when a filesystem image is
+> > > > created.
+> > > > 
+> > > > I think that warning for read-only mounts would be an annoyance to
+> > > > users retrieving files from old filesystems.
+> > > 
+> > > I agree, the warning is not helpful for read-only mounts. An earlier
+> > > plan was to completely disallow writable mounts that might risk an
+> > > overflow (in some configurations at least). The warning replaces that
+> > > now, and I think it should also just warn for the cases that would
+> > > otherwise have been dangerous.
 > > 
-> > In order to support an opt-in policy for users to allow long term pins
-> > of FS DAX pages we need to export the LAYOUT lease to user space.
+> > Ok, I will make the change to exclude new read only mounts. I will use
+> > __mnt_is_readonly() so that it also exculdes filesystems that are
+> > readonly also.
+> > The diff looks like below:
 > > 
-> > This is the first of 2 new lease flags which must be used to allow a
-> > long term pin to be made on a file.
+> > -       if (!error && sb->s_time_max &&
+> > +       if (!error && !__mnt_is_readonly(mnt) &&
+> >             (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
 > > 
-> > After the complete series:
-> > 
-> > 0) Registrations to Device DAX char devs are not affected
-> > 
-> > 1) The user has to opt in to allowing page pins on a file with an exclusive
-> >    layout lease.  Both exclusive and layout lease flags are user visible now.
-> > 
-> > 2) page pins will fail if the lease is not active when the file back page is
-> >    encountered.
-> > 
-> > 3) Any truncate or hole punch operation on a pinned DAX page will fail.
-> > 
-> > 4) The user has the option of holding the lease or releasing it.  If they
-> >    release it no other pin calls will work on the file.
-> > 
-> > 5) Closing the file is ok.
-> > 
-> > 6) Unmapping the file is ok
-> > 
-> > 7) Pins against the files are tracked back to an owning file or an owning mm
-> >    depending on the internal subsystem needs.  With RDMA there is an owning
-> >    file which is related to the pined file.
-> > 
-> > 8) Only RDMA is currently supported
-> > 
-> > 9) Truncation of pages which are not actively pinned nor covered by a lease
-> >    will succeed.
+> > Note that we can get rid of checking for non zero sb->s_time_max now.
 > 
-> This has nothing to do with layout leases or what they provide
-> access arbitration over. Layout leases have _nothing_ to do with
-> page pinning or RDMA - they arbitrate behaviour the file offset ->
-> physical block device mapping within the filesystem and the
-> behaviour that will occur when a specific lease is held.
-> 
-> The commit descripting needs to describe what F_LAYOUT actually
-> protects, when they'll get broken, etc, not how RDMA is going to use
-> it.
+> One more thing, we will probably have to add a second warning for when
+> the filesystem is re-mounted rw after the initial readonly mount.
 
-Ok yes I've been lax in mixing the cover letter for the series and this first
-commit message.  My apologies.
+Indeed, there would need to be a check for remount-read-write.  I
+didn't check whether remount uses this same code path.
 
-> 
-> > @@ -2022,8 +2030,26 @@ static int do_fcntl_add_lease(unsigned int fd, struct file *filp, long arg)
-> >  	struct file_lock *fl;
-> >  	struct fasync_struct *new;
-> >  	int error;
-> > +	unsigned int flags = 0;
-> > +
-> > +	/*
-> > +	 * NOTE on F_LAYOUT lease
-> > +	 *
-> > +	 * LAYOUT lease types are taken on files which the user knows that
-> > +	 * they will be pinning in memory for some indeterminate amount of
-> > +	 * time.
-> 
-> Indeed, layout leases have nothing to do with pinning of memory.
+Ben.
 
-Yep, Fair enough.  I'll rework the comment.
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
 
-> That's something an application taht uses layout leases might do,
-> but it largely irrelevant to the functionality layout leases
-> provide. What needs to be done here is explain what the layout lease
-> API actually guarantees w.r.t. the physical file layout, not what
-> some application is going to do with a lease. e.g.
-> 
-> 	The layout lease F_RDLCK guarantees that the holder will be
-> 	notified that the physical file layout is about to be
-> 	changed, and that it needs to release any resources it has
-> 	over the range of this lease, drop the lease and then
-> 	request it again to wait for the kernel to finish whatever
-> 	it is doing on that range.
-> 
-> 	The layout lease F_RDLCK also allows the holder to modify
-> 	the physical layout of the file. If an operation from the
-> 	lease holder occurs that would modify the layout, that lease
-> 	holder does not get notification that a change will occur,
-> 	but it will block until all other F_RDLCK leases have been
-> 	released by their holders before going ahead.
-> 
-> 	If there is a F_WRLCK lease held on the file, then a F_RDLCK
-> 	holder will fail any operation that may modify the physical
-> 	layout of the file. F_WRLCK provides exclusive physical
-> 	modification access to the holder, guaranteeing nothing else
-> 	will change the layout of the file while it holds the lease.
-> 
-> 	The F_WRLCK holder can change the physical layout of the
-> 	file if it so desires, this will block while F_RDLCK holders
-> 	are notified and release their leases before the
-> 	modification will take place.
-> 
-> We need to define the semantics we expose to userspace first.....
-
-Agreed.  I believe I have implemented the semantics you describe above.  Do I
-have your permission to use your verbiage as part of reworking the comment and
-commit message?
-
-Thanks,
-Ira
-
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
