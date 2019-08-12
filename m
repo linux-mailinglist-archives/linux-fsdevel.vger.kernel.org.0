@@ -2,26 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F3008A893
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 22:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A6C18A8C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 23:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfHLUrA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 16:47:00 -0400
-Received: from mga02.intel.com ([134.134.136.20]:38434 "EHLO mga02.intel.com"
+        id S1727087AbfHLVAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 17:00:18 -0400
+Received: from mga09.intel.com ([134.134.136.24]:50541 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbfHLUrA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:47:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726974AbfHLVAR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Aug 2019 17:00:17 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 13:46:34 -0700
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 14:00:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
-   d="scan'208";a="177592713"
+   d="scan'208";a="178466009"
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Aug 2019 13:46:33 -0700
-Date:   Mon, 12 Aug 2019 13:46:33 -0700
+  by orsmga003.jf.intel.com with ESMTP; 12 Aug 2019 14:00:14 -0700
+Date:   Mon, 12 Aug 2019 14:00:14 -0700
 From:   Ira Weiny <ira.weiny@intel.com>
 To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -33,236 +32,189 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 12/19] mm/gup: Prep put_user_pages() to take an
- vaddr_pin struct
-Message-ID: <20190812204633.GB20634@iweiny-DESK2.sc.intel.com>
+Subject: Re: [RFC PATCH v2 15/19] mm/gup: Introduce vaddr_pin_pages()
+Message-ID: <20190812210013.GC20634@iweiny-DESK2.sc.intel.com>
 References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-13-ira.weiny@intel.com>
- <12b6a576-7a64-102c-f4d7-7a4ad34df710@nvidia.com>
+ <20190809225833.6657-16-ira.weiny@intel.com>
+ <6ed26a08-4371-9dc1-09eb-7b8a4689d93b@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <12b6a576-7a64-102c-f4d7-7a4ad34df710@nvidia.com>
+In-Reply-To: <6ed26a08-4371-9dc1-09eb-7b8a4689d93b@nvidia.com>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 05:30:00PM -0700, John Hubbard wrote:
+On Fri, Aug 09, 2019 at 05:09:54PM -0700, John Hubbard wrote:
 > On 8/9/19 3:58 PM, ira.weiny@intel.com wrote:
 > > From: Ira Weiny <ira.weiny@intel.com>
 > > 
-> > Once callers start to use vaddr_pin the put_user_pages calls will need
-> > to have access to this data coming in.  Prep put_user_pages() for this
-> > data.
+> > The addition of FOLL_LONGTERM has taken on additional meaning for CMA
+> > pages.
+> > 
+> > In addition subsystems such as RDMA require new information to be passed
+> > to the GUP interface to track file owning information.  As such a simple
+> > FOLL_LONGTERM flag is no longer sufficient for these users to pin pages.
+> > 
+> > Introduce a new GUP like call which takes the newly introduced vaddr_pin
+> > information.  Failure to pass the vaddr_pin object back to a vaddr_put*
+> > call will result in a failure if pins were created on files during the
+> > pin operation.
 > > 
 > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
-[snip]
-
+> > 
+> > ---
+> > Changes from list:
+> > 	Change to vaddr_put_pages_dirty_lock
+> > 	Change to vaddr_unpin_pages_dirty_lock
+> > 
+> >  include/linux/mm.h |  5 ++++
+> >  mm/gup.c           | 59 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 64 insertions(+)
+> > 
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 657c947bda49..90c5802866df 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -1603,6 +1603,11 @@ int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc);
+> >  int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
+> >  			struct task_struct *task, bool bypass_rlim);
+> >  
+> > +long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
+> > +		     unsigned int gup_flags, struct page **pages,
+> > +		     struct vaddr_pin *vaddr_pin);
+> > +void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
+> > +				  struct vaddr_pin *vaddr_pin, bool make_dirty);
+> 
+> Hi Ira,
+> 
+> OK, the API seems fine to me, anyway. :)
+> 
+> A bit more below...
+> 
+> >  bool mapping_inode_has_layout(struct vaddr_pin *vaddr_pin, struct page *page);
+> >  
+> >  /* Container for pinned pfns / pages */
 > > diff --git a/mm/gup.c b/mm/gup.c
-> > index a7a9d2f5278c..10cfd30ff668 100644
+> > index eeaa0ddd08a6..6d23f70d7847 100644
 > > --- a/mm/gup.c
 > > +++ b/mm/gup.c
-> > @@ -24,30 +24,41 @@
-> >  
-> >  #include "internal.h"
-> >  
-> > -/**
-> > - * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
-> > - * @pages:  array of pages to be maybe marked dirty, and definitely released.
-> 
-> A couple comments from our circular review chain: some fellow with the same
-> last name as you, recommended wording it like this:
-> 
->       @pages:  array of pages to be put
-
-Sure, see below...
-
-> 
-> > - * @npages: number of pages in the @pages array.
-> > - * @make_dirty: whether to mark the pages dirty
-> > - *
-> > - * "gup-pinned page" refers to a page that has had one of the get_user_pages()
-> > - * variants called on that page.
-> > - *
-> > - * For each page in the @pages array, make that page (or its head page, if a
-> > - * compound page) dirty, if @make_dirty is true, and if the page was previously
-> > - * listed as clean. In any case, releases all pages using put_user_page(),
-> > - * possibly via put_user_pages(), for the non-dirty case.
-> > - *
-> > - * Please see the put_user_page() documentation for details.
-> > - *
-> > - * set_page_dirty_lock() is used internally. If instead, set_page_dirty() is
-> > - * required, then the caller should a) verify that this is really correct,
-> > - * because _lock() is usually required, and b) hand code it:
-> > - * set_page_dirty_lock(), put_user_page().
-> > - *
-> > - */
-> > -void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
-> > -			       bool make_dirty)
-> > +static void __put_user_page(struct vaddr_pin *vaddr_pin, struct page *page)
-> > +{
-> > +	page = compound_head(page);
-> > +
-> > +	/*
-> > +	 * For devmap managed pages we need to catch refcount transition from
-> > +	 * GUP_PIN_COUNTING_BIAS to 1, when refcount reach one it means the
-> > +	 * page is free and we need to inform the device driver through
-> > +	 * callback. See include/linux/memremap.h and HMM for details.
-> > +	 */
-> > +	if (put_devmap_managed_page(page))
-> > +		return;
-> > +
-> > +	if (put_page_testzero(page))
-> > +		__put_page(page);
-> > +}
-> > +
-> > +static void __put_user_pages(struct vaddr_pin *vaddr_pin, struct page **pages,
-> > +			     unsigned long npages)
-> > +{
-> > +	unsigned long index;
-> > +
-> > +	/*
-> > +	 * TODO: this can be optimized for huge pages: if a series of pages is
-> > +	 * physically contiguous and part of the same compound page, then a
-> > +	 * single operation to the head page should suffice.
-> > +	 */
-> 
-> As discussed in the other review thread (""), let's just delete that comment,
-> as long as you're moving things around.
-
-Done.
-
-> 
-> 
-> > +	for (index = 0; index < npages; index++)
-> > +		__put_user_page(vaddr_pin, pages[index]);
-> > +}
-> > +
-> > +static void __put_user_pages_dirty_lock(struct vaddr_pin *vaddr_pin,
-> > +					struct page **pages,
-> > +					unsigned long npages,
-> > +					bool make_dirty)
-> 
-> Elsewhere in this series, we pass vaddr_pin at the end of the arg list.
-> Here we pass it at the beginning, and it caused a minor jar when reading it.
-> Obviously just bike shedding at this point, though. Either way. :)
-
-Yea I guess that is odd...  I changed it.  Not a big deal.
-
-> 
-> >  {
-> >  	unsigned long index;
-> >  
-> > @@ -58,7 +69,7 @@ void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
-> >  	 */
-> >  
-> >  	if (!make_dirty) {
-> > -		put_user_pages(pages, npages);
-> > +		__put_user_pages(vaddr_pin, pages, npages);
-> >  		return;
-> >  	}
-> >  
-> > @@ -86,9 +97,58 @@ void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
-> >  		 */
-> >  		if (!PageDirty(page))
-> >  			set_page_dirty_lock(page);
-> > -		put_user_page(page);
-> > +		__put_user_page(vaddr_pin, page);
-> >  	}
+> > @@ -2536,3 +2536,62 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
+> >  	return ret;
 > >  }
+> >  EXPORT_SYMBOL_GPL(get_user_pages_fast);
 > > +
 > > +/**
-> > + * put_user_page() - release a gup-pinned page
-> > + * @page:            pointer to page to be released
+> > + * vaddr_pin_pages pin pages by virtual address and return the pages to the
+> > + * user.
 > > + *
-> > + * Pages that were pinned via get_user_pages*() must be released via
-> > + * either put_user_page(), or one of the put_user_pages*() routines
-> > + * below. This is so that eventually, pages that are pinned via
-> > + * get_user_pages*() can be separately tracked and uniquely handled. In
-> > + * particular, interactions with RDMA and filesystems need special
-> > + * handling.
+> > + * @addr, start address
+> 
+> What's with the commas? I thought kernel-doc wants colons, like this, right?
+> 
+> @addr: start address
+
+:-/  I don't know.
+
+Fixed.
+
+> 
+> 
+> > + * @nr_pages, number of pages to pin
+> > + * @gup_flags, flags to use for the pin
+> > + * @pages, array of pages returned
+> > + * @vaddr_pin, initalized meta information this pin is to be associated
+> > + * with.
 > > + *
-> > + * put_user_page() and put_page() are not interchangeable, despite this early
-> > + * implementation that makes them look the same. put_user_page() calls must
-> > + * be perfectly matched up with get_user_page() calls.
+> > + * NOTE regarding vaddr_pin:
+> > + *
+> > + * Some callers can share pins via file descriptors to other processes.
+> > + * Callers such as this should use the f_owner field of vaddr_pin to indicate
+> > + * the file the fd points to.  All other callers should use the mm this pin is
+> > + * being made against.  Usually "current->mm".
+> > + *
+> > + * Expects mmap_sem to be read locked.
 > > + */
-> > +void put_user_page(struct page *page)
+> > +long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
+> > +		     unsigned int gup_flags, struct page **pages,
+> > +		     struct vaddr_pin *vaddr_pin)
 > > +{
-> > +	__put_user_page(NULL, page);
+> > +	long ret;
+> > +
+> > +	gup_flags |= FOLL_LONGTERM;
+> 
+> 
+> Is now the right time to introduce and use FOLL_PIN? If not, then I can always
+> add it on top of this later, as part of gup-tracking patches. But you did point
+> out that FOLL_LONGTERM is taking on additional meaning, and so maybe it's better
+> to split that meaning up right from the start.
+> 
+
+At one point I wanted to (and had in my tree) a new flag but I went away from
+it.  Prior to the discussion on mlock last week I did not think we needed it.
+But I'm ok to add it back in.
+
+I was not ignoring the idea for this RFC I just wanted to get this out there
+for people to see.  I see that you threw out a couple of patches which add this
+flag in.
+
+FWIW, I think it would be good to differentiate between an indefinite pinned
+page vs a referenced "gotten" page.
+
+What you and I have been working on is the former.  So it would be easy to
+change your refcounting patches to simply key off of FOLL_PIN.
+
+Would you like me to add in your FOLL_PIN patches to this series?
+
+> 
+> > +
+> > +	if (!vaddr_pin || (!vaddr_pin->mm && !vaddr_pin->f_owner))
+> > +		return -EINVAL;
+> > +
+> > +	ret = __gup_longterm_locked(current,
+> > +				    vaddr_pin->mm,
+> > +				    addr, nr_pages,
+> > +				    pages, NULL, gup_flags,
+> > +				    vaddr_pin);
+> > +	return ret;
 > > +}
-> > +EXPORT_SYMBOL(put_user_page);
+> > +EXPORT_SYMBOL(vaddr_pin_pages);
 > > +
 > > +/**
-> > + * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
-> > + * @pages:  array of pages to be maybe marked dirty, and definitely released.
-> 
-> Same here:
-> 
->       @pages:  array of pages to be put
-
-Actually here is the only place.  Above was removing the text to be put here...
-
-Done -- I'll made a lead in patch because this was just copied text.
-
-> 
-> > + * @npages: number of pages in the @pages array.
+> > + * vaddr_unpin_pages_dirty_lock - counterpart to vaddr_pin_pages
+> > + *
+> > + * @pages, array of pages returned
+> > + * @nr_pages, number of pages in pages
+> > + * @vaddr_pin, same information passed to vaddr_pin_pages
 > > + * @make_dirty: whether to mark the pages dirty
 > > + *
-> > + * "gup-pinned page" refers to a page that has had one of the get_user_pages()
-> > + * variants called on that page.
-> > + *
-> > + * For each page in the @pages array, make that page (or its head page, if a
-> > + * compound page) dirty, if @make_dirty is true, and if the page was previously
-> > + * listed as clean. In any case, releases all pages using put_user_page(),
-> > + * possibly via put_user_pages(), for the non-dirty case.
-> > + *
-> > + * Please see the put_user_page() documentation for details.
-> > + *
-> > + * set_page_dirty_lock() is used internally. If instead, set_page_dirty() is
-> > + * required, then the caller should a) verify that this is really correct,
-> > + * because _lock() is usually required, and b) hand code it:
-> > + * set_page_dirty_lock(), put_user_page().
-> > + *
+> > + * The semantics are similar to put_user_pages_dirty_lock but a vaddr_pin used
+> > + * in vaddr_pin_pages should be passed back into this call for propper
+> 
+> Typo:
+                                                                   proper
+Fixed.
+
+> 
+> > + * tracking.
 > > + */
-> > +void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
-> > +			       bool make_dirty)
+> > +void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
+> > +				  struct vaddr_pin *vaddr_pin, bool make_dirty)
 > > +{
-> > +	__put_user_pages_dirty_lock(NULL, pages, npages, make_dirty);
+> > +	__put_user_pages_dirty_lock(vaddr_pin, pages, nr_pages, make_dirty);
 > > +}
-> >  EXPORT_SYMBOL(put_user_pages_dirty_lock);
-> >  
-> >  /**
-> > @@ -102,15 +162,7 @@ EXPORT_SYMBOL(put_user_pages_dirty_lock);
-> >   */
-> >  void put_user_pages(struct page **pages, unsigned long npages)
-> >  {
-> > -	unsigned long index;
-> > -
-> > -	/*
-> > -	 * TODO: this can be optimized for huge pages: if a series of pages is
-> > -	 * physically contiguous and part of the same compound page, then a
-> > -	 * single operation to the head page should suffice.
-> > -	 */
-> > -	for (index = 0; index < npages; index++)
-> > -		put_user_page(pages[index]);
-> > +	__put_user_pages(NULL, pages, npages);
-> >  }
-> >  EXPORT_SYMBOL(put_user_pages);
-> >  
+> > +EXPORT_SYMBOL(vaddr_unpin_pages_dirty_lock);
 > > 
 > 
-> This all looks pretty good, so regardless of the outcome of the minor
-> points above,
->    
->     Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> OK, whew, I'm glad to see the updated _dirty_lock() API used here. :)
 
-Thanks,
+Yea this was pretty easy to change during the rebase.  Again I'm kind of
+floating these quickly at this point.  So sorry about the nits...
+
 Ira
 
-> 
 > 
 > thanks,
 > -- 
