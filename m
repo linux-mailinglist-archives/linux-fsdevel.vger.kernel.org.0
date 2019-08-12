@@ -2,61 +2,252 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A0F08A35B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 18:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E8918A390
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 18:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfHLQ3e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 12:29:34 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:47453 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfHLQ3e (ORCPT
+        id S1726506AbfHLQmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 12:42:49 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55658 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfHLQmt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 12:29:34 -0400
-Received: from marcel-macbook.fritz.box (p4FEFC580.dip0.t-ipconnect.de [79.239.197.128])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 2CE6CCECF4;
-        Mon, 12 Aug 2019 18:38:14 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH v5 18/29] compat_ioctl: move rfcomm handlers into driver
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190730195819.901457-6-arnd@arndb.de>
-Date:   Mon, 12 Aug 2019 18:29:32 +0200
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <C12653E2-D2EB-423E-82BF-35C05CD1984D@holtmann.org>
-References: <20190730192552.4014288-1-arnd@arndb.de>
- <20190730195819.901457-1-arnd@arndb.de>
- <20190730195819.901457-6-arnd@arndb.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-X-Mailer: Apple Mail (2.3445.104.11)
+        Mon, 12 Aug 2019 12:42:49 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f72so145667wmf.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 09:42:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/FKPizWGbGVEz/UndPoqN8/HIvU7KLf2kRrG7aN8su4=;
+        b=SJ5/NSuU5jYKbhI5Y1Mi7OcSVxKcng73BgI8hiwV+1n7et0QJ7YYCeyaxV8R7pjrgq
+         8UUz9Lq1NGGemGNE6CZceT22ochp/eIfFo1pENkK2C3Eu/Fzsu8YxezsWdDzbsWDOdr+
+         RzF43Unuo7/jJk+rjrAfNhtVQzUIbay/Td/ix3rRjGcv/KsMGZmWaRwwJfi4n74U1pco
+         fTs4CMtM9CyCTcGfJP9WK3O6oADKbjOUaBsEYjMz98btLxIkif/yMdnHgHObho1Wcjhu
+         dL5l0vRfzYbljfDNT2LJCb/Fv9l8ND3QydYOjIMEV5S6OUq3uSHUaTMK+F8Dgu/Nncje
+         3Sag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/FKPizWGbGVEz/UndPoqN8/HIvU7KLf2kRrG7aN8su4=;
+        b=ug/mw/c2av4jS1aaOZUnZ5wGq2n9xFd5Xgkm8OMQ0Wi+smG4y9lP4BMnGeG1Ch2FLs
+         Ko0U+VEG5YddqbPHqoBlAnOMIkEknaOpOuAAbLFHcpddnOpPxiaH7GhW1w04VDyXHxQh
+         uLfsHL4eTfTbgmb6lod6aJXaorYDu8Ewl0U3m2AmsiBh0jqkABbIgCg81spUKGNHFpTt
+         Iv5UcXGzyhY7rsm75fL55OXcK9BRtZVY+9FLtLQX/B05gldGnkxGaFQuW0a02JAWVBmU
+         tSVt0dMTV2OGkjYoF+zYUUOJpMetflanrnUkG4ZLDMm+pYllISWgFHd7QJU3h7Agy4rU
+         UsZQ==
+X-Gm-Message-State: APjAAAVSUlpz4DbxoHG/pct2GTERfl7gKljrh9qPjfbrdjEHmNg7xQ+b
+        H0AFFvCV1Ktx3jqtH/Se79xBSA==
+X-Google-Smtp-Source: APXvYqwKRrNH5qC69r+xsOFF+2TtVoxXns7c2KHnTfJnSGi/vQU+4ZCTXdaZM4ZqrfET8zeNighD5Q==
+X-Received: by 2002:a7b:c632:: with SMTP id p18mr223351wmk.114.1565628166876;
+        Mon, 12 Aug 2019 09:42:46 -0700 (PDT)
+Received: from Bfire.plexistor.com ([217.70.211.18])
+        by smtp.googlemail.com with ESMTPSA id w13sm46285233wre.44.2019.08.12.09.42.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 09:42:46 -0700 (PDT)
+From:   Boaz Harrosh <boaz@plexistor.com>
+X-Google-Original-From: Boaz Harrosh <boazh@netapp.com>
+To:     Boaz Harrosh <boaz@plexistor.com>,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     Boaz Harrosh <boazh@netapp.com>
+Subject: [PATCHSET 00/16] zuf: ZUFS Zero-copy User-mode FileSystem
+Date:   Mon, 12 Aug 2019 19:42:28 +0300
+Message-Id: <20190812164244.15580-1-boazh@netapp.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Arnd,
+I would please like to submit the Kernel code part of the ZUFS file system,
+for review.
 
-> All these ioctl commands are compatible, so we can handle
-> them with a trivial wrapper in rfcomm/sock.c and remove
-> the listing in fs/compat_ioctl.c.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> fs/compat_ioctl.c           |  6 ------
-> net/bluetooth/rfcomm/sock.c | 14 ++++++++++++--
-> 2 files changed, 12 insertions(+), 8 deletions(-)
+ZUFS is a full implementation of a VFS filesystem. But mainly it is a very
+new way to communicate with user-mode servers.
+With performance and scalability never seen before. (<4us latency)
+Why? the core communication with user-mode is completely lockless,
+per-cpu locality, NUMA aware.
 
-I think it is best if this series is applied as a whole. So whoever takes it
+The Kernel code presented here can be found at:
+	https://github.com/NetApp/zufs-zuf upstream
 
-Acked-by: Marcel Holtmann <marcel@holtmann.org>
+And the User-mode Server + example FSs here:
+	https://github.com/NetApp/zufs-zus
 
-Regards
+ZUFS - stands for Zero-copy User-mode FS
+The Intention of this project was performance and low-latency.
+* True zero copy end to end of both data and meta data.
+* Very *low latency*, very high CPU locality, lock-less parallelism.
+* Synchronous operations (for low latency)
+* Numa awareness
 
-Marcel
+Short description:
+  ZUFS is a from scratch implementation of a filesystem-in-user-space, which
+  tries to address the above goals. from the get go it is aimed for pmem
+  based FSs. But supports any other type of FSs.
+  The novelty of this project is that the interface is designed with a modern
+  multi-core NUMA machine in mind down to the ABI.
+  Also it utilizes the normal mount API of the Kernel.
+  Multiple block devices are supported per superblock, Kernel owns those
+  devices. FileSystem types are registered/exposed via the regular way
 
+The Kernel is released as a pure GPLv2 License. The user-mode core is
+BSD-3 so to be friendly with other OSs.
+
+Current status: There are a couple of trivial open-source filesystem
+implementations and a full blown proprietary implementation from Netapp.
+ 3 more ports to more serious open-source filesystems are on the way.
+A usermode CEPH client, a ZFS implementation, and port of the infamous PMFS
+to demonstrate the amazing pmem performance under zufs.
+(Will be released as Open source when they are ready)
+
+Together with the Kernel module submitted here the User-mode-Server and the
+zusFSs User-mode plugins, pass Netapp QA including xfstests + internal QA tests.
+And is released to costumers as Maxdata 1.5.
+So it is very stable and performant
+
+In the git repository above there is also a backport for rhel 7.6 and 7.7
+Including rpm packages for Kernel and Server components.
+(Also available evaluation licenses of Maxdata 1.5 for developers.
+ Please contact Amit Golander <Amit.Golander@netapp.com> if you need one)
+
+Performance:
+A simple fio direct 4k random write test with incrementing number
+of threads.
+
+[fuse]
+threads wr_iops	wr_bw	wr_lat
+1	33606	134424	26.53226
+2	57056	228224	30.38476
+4	88667	354668	40.12783
+7	116561	466245	53.98572
+8	129134	516539	55.6134
+
+[fuse-splice]
+threads	wr_iops	wr_bw	wr_lat
+1	39670	158682	21.8399
+2	51100	204400	34.63294
+4	75220	300882	47.42344
+7	97706	390825	63.04435
+8	98034	392137	73.24263
+
+[xfs-dax]
+threads	wr_iops	wr_bw		wr_lat   
+
+[Maxdata-1.5-zufs]
+threads	wr_iops	wr_bw		wr_lat
+1	1041802 260,450		3.623
+2	1983997 495,999		3.808
+4	3829456 957,364		3.959
+7	4501154 1,125,288	5.895330
+8	4400698 1,100,174	6.922174
+
+I have used an 8 way KVM-qemu with 2 NUMA nodes.
+(on an Intel(R) Xeon(R) CPU E3-1230 v6 @ 3.50GHz)
+
+Running fio with 4k random writes O_DIRECT | O_SYNC to a DRAM
+simulated pmem. (memmap=! at grub)
+Fuse-fs was a memcpy same 4k null-FS
+fio was run with more and more threads (see threads column)
+to test for scalability.
+
+We see a bit of a slowdown when pushing to 8 threads. This is
+mainly a scheduler and KVM issue. Big metal machines do better
+(more flat scalability) but also degrade a bit on full load
+I will try to post real metal scores later.
+
+The in Kernel xfs-dax is slower than a zufs-pmem because:
+1. It was not built specifically for pmem so there are latency
+   issues (async operations) and extra copies in places.
+2. In writes because of the Journal there are actually 3 IOPs
+   for every write. Where with pmem other means can keep things
+   crash-proof.
+3. Because in random write + DAX each block is written twice
+   It is first ZEROed then copied too.
+4. But mainly because we use a single pmem on one of the NUMAs
+   with zufs we put a pmem device on each NUMA node. And each core
+   writes locally. So the memory bandwith is doubled. (Perhaps there
+   is a way to use a dm configuration that makes this better but at
+   the base xfs is not NUMA aware)
+Is why I chose writes. With reads xfs-dax is much faster. In
+zufs reads are actually 10% slower because in reads we do regular
+memcpy-from-pmem which is exactly 10% slower than mov_nt operations
+
+[Changes since last RFC submission]
+
+Lots and lots of changes since then. More hardening stability
+and more fixtures.
+
+But mainly is the NEW-IO way.
+The old way of IO where we mmap application-pages into the Server is
+still there because there are modes where this is faster still.
+For example direct IO from network type of FSs. We are all about choice.
+(The zusFS is the one that decides which mode to use)
+But the results above are with the NEW-IO way. The new way is -
+we ask the Server what are the blocks to read/write (both pmem or bdev)
+and the IO or pmem_memcpy is done in Kernel.
+(We do not yet cache these results in Kernel but might in future
+ ((when caching will actually make things faster currently xarray does
+   not scale for us)))
+
+Please help with *reviews*, comments, questions. We believe this is a very
+important project that opens new ways for implementing Server-applications,
+including but not restricted to FS Server applications.
+
+Thank you
+Boaz
+
+~~~~~~~~~~~~~~~~~~
+Boaz Harrosh (16):
+      fs: Add the ZUF filesystem to the build + License
+      MAINTAINERS: Add the ZUFS maintainership
+      zuf: Preliminary Documentation
+      zuf: zuf-rootfs
+      zuf: zuf-core The ZTs
+      zuf: Multy Devices
+      zuf: mounting
+      zuf: Namei and directory operations
+      zuf: readdir operation
+      zuf: symlink
+      zuf: Write/Read implementation
+      zuf: mmap & sync
+      zuf: More file operations
+      zuf: ioctl implementation
+      zuf: xattr && acl implementation
+      zuf: Support for dynamic-debug of zusFSs
+
+ Documentation/filesystems/zufs.txt |  370 +++++++++++++++++++++++++++++
+ MAINTAINERS                        |    6 +
+ fs/Kconfig                         |    1 +
+ fs/Makefile                        |    1 +
+ fs/zuf/Kconfig                     |   24 ++
+ fs/zuf/Makefile                    |   23 ++
+ fs/zuf/_extern.h                   |  180 ++++++++++++++
+ fs/zuf/_pr.h                       |   63 +++++
+ fs/zuf/acl.c                       |  270 +++++++++++++++++++++
+ fs/zuf/directory.c                 |  167 +++++++++++++
+ fs/zuf/file.c                      |  840 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/inode.c                     |  693 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/ioctl.c                     |  313 +++++++++++++++++++++++++
+ fs/zuf/md.c                        |  752 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/md.h                        |  332 ++++++++++++++++++++++++++
+ fs/zuf/md_def.h                    |  145 ++++++++++++
+ fs/zuf/mmap.c                      |  300 ++++++++++++++++++++++++
+ fs/zuf/module.c                    |   28 +++
+ fs/zuf/namei.c                     |  435 ++++++++++++++++++++++++++++++++++
+ fs/zuf/relay.h                     |  104 +++++++++
+ fs/zuf/rw.c                        |  977 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/super.c                     |  925 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/symlink.c                   |   74 ++++++
+ fs/zuf/t1.c                        |  135 +++++++++++
+ fs/zuf/t2.c                        |  356 ++++++++++++++++++++++++++++
+ fs/zuf/t2.h                        |   68 ++++++
+ fs/zuf/xattr.c                     |  314 +++++++++++++++++++++++++
+ fs/zuf/zuf-core.c                  | 1716 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/zuf-root.c                  |  520 +++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/zuf.h                       |  437 ++++++++++++++++++++++++++++++++++
+ fs/zuf/zus_api.h                   | 1079 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 31 files changed, 11648 insertions(+)
