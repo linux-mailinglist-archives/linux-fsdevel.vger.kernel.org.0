@@ -2,57 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D668AACA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 00:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BA158AAD3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 00:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfHLWyJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 18:54:09 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:45238 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726681AbfHLWyJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 18:54:09 -0400
-Received: from callcc.thunk.org (guestnat-104-133-9-109.corp.google.com [104.133.9.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7CMrqLF021769
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Aug 2019 18:53:53 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id BD3374218EF; Mon, 12 Aug 2019 18:53:51 -0400 (EDT)
-Date:   Mon, 12 Aug 2019 18:53:51 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-api@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v8 08/20] fscrypt: rename keyinfo.c to keysetup.c
-Message-ID: <20190812225351.GG28705@mit.edu>
-References: <20190805162521.90882-1-ebiggers@kernel.org>
- <20190805162521.90882-9-ebiggers@kernel.org>
+        id S1727046AbfHLWzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 18:55:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57056 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726681AbfHLWzV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Aug 2019 18:55:21 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A67C206A2;
+        Mon, 12 Aug 2019 22:55:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565650520;
+        bh=bzSVxn1O+XeeWY+2gZI6RE/G7J9stvLsMgc7wXKMLBY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=2fFWNBju/NoA9EEEg6SgrC0ymxSRFlWH+/sXXpWVTbVoBuKIvJiA7w1IyG/Q5cfgN
+         gw3v0MRCJ48hdqHfIdIAFVkbP+9VeXqYGvbIjFkrUu6xwlZcEnR9KMfu3l/b+H0uED
+         iKs6Gza2xwnDfKRu3oYIOckfg2RYjnmKmEyi2wfI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805162521.90882-9-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190812182421.141150-4-brendanhiggins@google.com>
+References: <20190812182421.141150-1-brendanhiggins@google.com> <20190812182421.141150-4-brendanhiggins@google.com>
+Subject: Re: [PATCH v12 03/18] kunit: test: add string_stream a std::stream like string builder
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
+        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
+        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, shuah@kernel.org,
+        tytso@mit.edu, yamada.masahiro@socionext.com
+User-Agent: alot/0.8.1
+Date:   Mon, 12 Aug 2019 15:55:19 -0700
+Message-Id: <20190812225520.5A67C206A2@mail.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 09:25:09AM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Rename keyinfo.c to keysetup.c since this better describes what the file
-> does (sets up the key), and it matches the new file keysetup_v1.c.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+Quoting Brendan Higgins (2019-08-12 11:24:06)
+> +void string_stream_clear(struct string_stream *stream)
+> +{
+> +       struct string_stream_fragment *frag_container, *frag_container_sa=
+fe;
+> +
+> +       spin_lock(&stream->lock);
+> +       list_for_each_entry_safe(frag_container,
+> +                                frag_container_safe,
+> +                                &stream->fragments,
+> +                                node) {
+> +               list_del(&frag_container->node);
 
-Looks good, you can add:
+Shouldn't we free the allocation here? Otherwise, if some test is going
+to add, add, clear, add, it's going to leak until the test is over?
 
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-
+> +       }
+> +       stream->length =3D 0;
+> +       spin_unlock(&stream->lock);
+> +}
+> +
