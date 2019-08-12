@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2642B8A3B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 18:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 556A28A3B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 18:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbfHLQsh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 12:48:37 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44586 "EHLO
+        id S1726972AbfHLQsj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 12:48:39 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33927 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfHLQsd (ORCPT
+        with ESMTP id S1726789AbfHLQsj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 12:48:33 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p17so105156469wrf.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 09:48:30 -0700 (PDT)
+        Mon, 12 Aug 2019 12:48:39 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 31so105209073wrm.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 09:48:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=plexistor-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UczqfH4bYOE65pbXyRKO1bR+3Ju5QKOC02d244sFq8o=;
-        b=MkfhYJgzt2Pm+h1eHxzprM5+BFaC8O4SmO0JyPavHVfMGhXzQPFhhvHZCnDi9S9onH
-         72uOdwLNfR40tZzG1q/3YQGuVPDlIC478TUvrby0vDfzuqQ6892uYWkI4hpWBjYpsPY7
-         Cwno8SgjWS2zUGE/G0s7gMp71vKIZ2G1LWzgLD1lq9IGTRyt+zWecWtAw4xl9hesh3fe
-         2kZrTIkeaFbJA37h7Lzj+OIxTU6f0zq7sJJ0jTE7z+vSAh+XrnK8o2EPF9QgOyda3thF
-         zpMwrVVJqK/5Pnny7P1qWWECozt3z4HGc1ZXnMBXecLei8nYgRy2mSPa3BmWCNQVxD16
-         dIbw==
+        bh=BroGh2q7OE4CHVcDWVWYSOQmywIP14CNVLXimtG/kJU=;
+        b=hvqaNeieAwf4Im+ePYZDR8rpCSE1+nhg4RxrcKYQbg/UgoRdbHfvwBcmzIClN8q8ZC
+         0/xif6If4mWG7d8LUcSLbIUXEs1zoe1/0ts4hUZSVSxBVGDdeJ4C0X8Fe2kjDK9zvdFw
+         rN6ndyb7XdvuYOZsk3KvGQh818B7ojsuQ0ZEjnQKKrSh9x7YliWridc79D5LK6KDeFqa
+         NERyMDuxZlkTSYdLIe1dUFTo74+nqtUQkABlw5PiYgVjEjmNjdnz/jISHNt0belHbDUB
+         27WCXuDmO+Ut5TmD+LEW0HnrdTXCQJYr0D53Ebdn/vtO7TiUphpMPAj0hXQqZsXc/joj
+         Leog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UczqfH4bYOE65pbXyRKO1bR+3Ju5QKOC02d244sFq8o=;
-        b=DOpLK6yoQq07q1L3NQJcdXi6F5bQO/AVQFE99Yt4nBTvZ/olSEaIe5JPruqHM/xFUP
-         67KHxDri6Y/IrbUJ+UsrWHtWESQE2T9sYsjhNUJNXjjTGBKd2ADMcm4LsbbQQBzwSFHy
-         gMrot+nnpQN6mMYCZjFIaLyxFDa7UwM78I5RgpK9EglubmATP0uev5JEA2C5QKJOgD66
-         dR9esLq04S9UrPylfxBh5nwxnW+XaCHB/CF9Vs2Nhj8kzGqXLj0J8vjz54LpiQybutmj
-         zNpmikFwxwjiNvNc45tyKxm00R+QSC7ITV7K1Ixg6VYWTjVGpW9xbPc4YzFjN2Wfulxf
-         4RLA==
-X-Gm-Message-State: APjAAAVlO785cXs2dwLBZd0IsQw3NB7VqcPJK8mj/ddu5m14JDvAgYbJ
-        9SbtkmO4vNP3f9BXb0OgiNpM3Obeojw=
-X-Google-Smtp-Source: APXvYqz1C0tmNVBUysz55dsd3g1tQ/5s7Uoq/uKOLtDYZbiqVkGfrlvweNN35gQTlGlhDw74viE6fw==
-X-Received: by 2002:adf:a1de:: with SMTP id v30mr6580314wrv.138.1565628509249;
-        Mon, 12 Aug 2019 09:48:29 -0700 (PDT)
+        bh=BroGh2q7OE4CHVcDWVWYSOQmywIP14CNVLXimtG/kJU=;
+        b=JUofNJzzNQS+UWa29wL3aTjuGMQtREthgVX1XlboxqN1b4uVBf6wQIlaeJpBRPdKfx
+         kqXxbZFzGybP5S4y6jVEPV0tCgcs1UtrtuZ8+rAMy342mlEYSxiTi1SZv2TxytmqeApo
+         S3w6NuWlLBA+0C9q0KCXXPk8VYA92gpA3ce0N69xY/yWlrNQN1kEUs6kBYQ4N8sBi5oR
+         bel2m0pqq4S9gQJspQpVoyyVeLcJBQjVLrGSaJmoD5P9+Q0GJhbqgMw5XHroWqCQVpQi
+         4KIRR4O9sfNYwGPbaNsiUaex6ZoPv2mZeVxMjUKq7wyLFQUz4R8RPaEFqCzWXQ27Z05K
+         D3vA==
+X-Gm-Message-State: APjAAAX+UKqIEipcGVGTP6JIcrUszOi9wgE+PGSj15FouQ9H93C+BQRl
+        xNiXAE9ONZPIvK7K4pH7OHPrdBwPh2k=
+X-Google-Smtp-Source: APXvYqz+X4sbDyCKUPTlmLRN9mE223m+t8WNgbZgpOEaEOKzvEBlfEK9dErytU2F3DIxkskZwQ0Exg==
+X-Received: by 2002:adf:c803:: with SMTP id d3mr43342406wrh.130.1565628512076;
+        Mon, 12 Aug 2019 09:48:32 -0700 (PDT)
 Received: from Bfire.plexistor.com ([217.70.211.18])
-        by smtp.googlemail.com with ESMTPSA id c187sm121285wmd.39.2019.08.12.09.48.27
+        by smtp.googlemail.com with ESMTPSA id l62sm172640wml.13.2019.08.12.09.48.30
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 09:48:28 -0700 (PDT)
+        Mon, 12 Aug 2019 09:48:31 -0700 (PDT)
 From:   Boaz Harrosh <boaz@plexistor.com>
 X-Google-Original-From: Boaz Harrosh <boazh@netapp.com>
 To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -57,9 +57,9 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Sagi Manole <sagim@netapp.com>,
         Matthew Wilcox <willy@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 07/16] zuf: mounting
-Date:   Mon, 12 Aug 2019 19:47:57 +0300
-Message-Id: <20190812164806.15852-8-boazh@netapp.com>
+Subject: [PATCH 08/16] zuf: Namei and directory operations
+Date:   Mon, 12 Aug 2019 19:47:58 +0300
+Message-Id: <20190812164806.15852-9-boazh@netapp.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190812164806.15852-1-boazh@netapp.com>
 References: <20190812164806.15852-1-boazh@netapp.com>
@@ -70,99 +70,229 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In this patch we already establish a mounted filesystem.
+Introducing Creation/deletion of files
+Directory add/remove
+Other namei operations
 
-These are the steps for mounting a zufs Filesystem:
+This is all a very STD Kernel way of doing things.
+Each VFS operation is packed and dispatched to Server.
+After dispatch return, pushing results into Kernel
+structures
 
-* All devices (Single or DT) are opened and established in an md
-  object.
-
-* mount_bdev is called with the main (first) device, in turn
-  fill_supper is called.
-
-* fill_supper despatches a mount_operation(register_fs_info) to the
-  server with an sb_id of the newly created super_block.
-
-*  The Server at the zus mount routine. Will first thing do
-  a GRAB_PMEM(sb_id) ioctl call to establish a special filehandle
-  through which it will have full access to the all of its pmem space.
-  With that it will call the zusFS to continue to inspect the content
-  of devices and mount the FS.
-
-* On return from mount the zusFS returns the root inode info
-
-* fill_supper continues to create a root vfs-inode and returns
-  successfully.
-
-* We now have a mounted super_block, with corresponding super_block
-  objects in the Server.
-
-* Also in this patch global sb operations like statfs show-options
-  and remount. And the destruction of a super_block.
-
-* There is a special support for a "private-mounting" of devices.
-  private-mounting is usually used by the zusFS fschk/mkfs type
-  applications that want a full access and lockdown of its multy-devices.
-  But otherwise wants an exclusive access to these devices. The private
-  mount exposes all the same services to the Server application. But
-  there is no registered/mounted super_block in VFS.
-  This is a very powerful tool for zusFS development because the same
-  exact code that is used in a running FS is also used for the FS-utils.
-  Infact in zus the code feels exactly the same as a live mount.
-  (See the zus project for more info)
+NOTE: The use of a zufs_inode communication structure
+that is returned as a zufs_dpp_t (Dual port pointer)
+Both Kernel and Server can read/write to this object.
+If Kernel modifies this object it is always before
+the dispatch so server can persist the changes.
+It is also used by Server to return new info to be updated
+into the vfs_inode.
+In a pmem system this object can be directly pointing
+to storage.
 
 Signed-off-by: Boaz Harrosh <boazh@netapp.com>
 ---
- fs/zuf/Makefile   |   2 +-
- fs/zuf/_extern.h  |   7 +
- fs/zuf/inode.c    |  23 ++
- fs/zuf/super.c    | 777 +++++++++++++++++++++++++++++++++++++++++++++-
- fs/zuf/zuf-core.c |  95 ++++++
- fs/zuf/zuf.h      | 119 +++++++
- fs/zuf/zus_api.h  |  35 +++
- 7 files changed, 1055 insertions(+), 3 deletions(-)
- create mode 100644 fs/zuf/inode.c
+ fs/zuf/Makefile    |   2 +-
+ fs/zuf/_extern.h   |  44 ++++
+ fs/zuf/directory.c | 100 ++++++++
+ fs/zuf/file.c      |  41 ++++
+ fs/zuf/inode.c     | 563 ++++++++++++++++++++++++++++++++++++++++++++-
+ fs/zuf/namei.c     | 402 ++++++++++++++++++++++++++++++++
+ fs/zuf/super.c     |   2 +
+ fs/zuf/zuf-core.c  |  10 +
+ fs/zuf/zuf.h       |  63 +++++
+ fs/zuf/zus_api.h   |  94 ++++++++
+ 10 files changed, 1319 insertions(+), 2 deletions(-)
+ create mode 100644 fs/zuf/directory.c
+ create mode 100644 fs/zuf/file.c
+ create mode 100644 fs/zuf/namei.c
 
 diff --git a/fs/zuf/Makefile b/fs/zuf/Makefile
-index a247bd85d9aa..a5800cad73fd 100644
+index a5800cad73fd..2bfed45723e3 100644
 --- a/fs/zuf/Makefile
 +++ b/fs/zuf/Makefile
 @@ -17,5 +17,5 @@ zuf-y += md.o t1.o t2.o
  zuf-y += zuf-core.o zuf-root.o
  
  # Main FS
--zuf-y += super.o
-+zuf-y += super.o inode.o
+-zuf-y += super.o inode.o
++zuf-y += super.o inode.o directory.o namei.o file.o
  zuf-y += module.o
 diff --git a/fs/zuf/_extern.h b/fs/zuf/_extern.h
-index a5929d3d165c..ba6d11b509d5 100644
+index ba6d11b509d5..bf4531ccb80e 100644
 --- a/fs/zuf/_extern.h
 +++ b/fs/zuf/_extern.h
-@@ -57,6 +57,13 @@ struct dentry *zuf_mount(struct file_system_type *fs_type, int flags,
- struct super_block *zuf_sb_from_id(struct zuf_root_info *zri, __u64 sb_id,
- 				   struct zus_sb_info *zus_sbi);
+@@ -61,10 +61,54 @@ int zuf_private_mount(struct zuf_root_info *zri, struct register_fs_info *rfi,
+ 		      struct zufs_mount_info *zmi, struct super_block **sb_out);
+ int zuf_private_umount(struct zuf_root_info *zri, struct super_block *sb);
  
-+int zuf_private_mount(struct zuf_root_info *zri, struct register_fs_info *rfi,
-+		      struct zufs_mount_info *zmi, struct super_block **sb_out);
-+int zuf_private_umount(struct zuf_root_info *zri, struct super_block *sb);
++/* file.c */
++int zuf_isync(struct inode *inode, loff_t start, loff_t end, int datasync);
++ssize_t zuf_write_iter(struct kiocb *kiocb, struct iov_iter *ii);
++ssize_t zuf_read_iter(struct kiocb *kiocb, struct iov_iter *ii);
++long __zuf_fallocate(struct inode *inode, int mode, loff_t offset, loff_t len);
 +
-+/* inode.c */
-+struct inode *zuf_iget(struct super_block *sb, struct zus_inode_info *zus_ii,
-+		       zu_dpp_t _zi, bool *exist);
++/* namei.c */
++void zuf_zii_sync(struct inode *inode, bool sync_nlink);
++
+ /* inode.c */
++int zuf_evict_dispatch(struct super_block *sb, struct zus_inode_info *zus_ii,
++		       int operation, uint flags);
+ struct inode *zuf_iget(struct super_block *sb, struct zus_inode_info *zus_ii,
+ 		       zu_dpp_t _zi, bool *exist);
++void zuf_evict_inode(struct inode *inode);
++struct inode *zuf_new_inode(struct inode *dir, umode_t mode,
++			    const struct qstr *qstr, const char *symname,
++			    ulong rdev_or_isize, bool tmpfile);
++int zuf_write_inode(struct inode *inode, struct writeback_control *wbc);
++int zuf_update_time(struct inode *inode, struct timespec64 *time, int flags);
++int zuf_setattr(struct dentry *dentry, struct iattr *attr);
++int zuf_getattr(const struct path *path, struct kstat *stat,
++		 u32 request_mask, unsigned int flags);
++void zuf_set_inode_flags(struct inode *inode, struct zus_inode *zi);
++
++/* directory.c */
++int zuf_add_dentry(struct inode *dir, struct qstr *str, struct inode *inode);
++int zuf_remove_dentry(struct inode *dir, struct qstr *str, struct inode *inode);
++
  /* t1.c */
  int zuf_pmem_mmap(struct file *file, struct vm_area_struct *vma);
  
-diff --git a/fs/zuf/inode.c b/fs/zuf/inode.c
++/*
++ * Inode and files operations
++ */
++
++/* file.c */
++extern const struct inode_operations zuf_file_inode_operations;
++extern const struct file_operations zuf_file_operations;
++
++/* inode.c */
++extern const struct address_space_operations zuf_aops;
++
++/* namei.c */
++extern const struct inode_operations zuf_dir_inode_operations;
++extern const struct inode_operations zuf_special_inode_operations;
++
++/* dir.c */
++extern const struct file_operations zuf_dir_operations;
++
+ #endif	/*ndef __ZUF_EXTERN_H__*/
+diff --git a/fs/zuf/directory.c b/fs/zuf/directory.c
 new file mode 100644
-index 000000000000..a6115289dcda
+index 000000000000..5624e05f96e5
 --- /dev/null
-+++ b/fs/zuf/inode.c
-@@ -0,0 +1,23 @@
++++ b/fs/zuf/directory.c
+@@ -0,0 +1,100 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * BRIEF DESCRIPTION
 + *
-+ * Inode methods (allocate/free/read/write).
++ * File operations for directories.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
++
++#include <linux/fs.h>
++#include <linux/vmalloc.h>
++#include "zuf.h"
++
++static int zuf_readdir(struct file *file, struct dir_context *ctx)
++{
++	return -ENOTSUPP;
++}
++
++/*
++ *FIXME comment to full git diff
++ */
++
++static int _dentry_dispatch(struct inode *dir, struct inode *inode,
++			    struct qstr *str, int operation)
++{
++	struct zufs_ioc_dentry ioc_dentry = {
++		.hdr.operation = operation,
++		.hdr.in_len = sizeof(ioc_dentry),
++		.hdr.out_len = sizeof(ioc_dentry),
++		.zus_ii = inode ? ZUII(inode)->zus_ii : NULL,
++		.zus_dir_ii = ZUII(dir)->zus_ii,
++		.str.len = str->len,
++	};
++	int err;
++
++	memcpy(&ioc_dentry.str.name, str->name, str->len);
++
++	err = zufc_dispatch(ZUF_ROOT(SBI(dir->i_sb)), &ioc_dentry.hdr, NULL, 0);
++	if (unlikely(err)) {
++		zuf_dbg_err("[%ld] op=%d zufc_dispatch failed => %d\n",
++			    dir->i_ino, operation, err);
++		return err;
++	}
++
++	return 0;
++}
++
++/* return pointer to added de on success, err-code on failure */
++int zuf_add_dentry(struct inode *dir, struct qstr *str, struct inode *inode)
++{
++	struct zuf_inode_info *zii = ZUII(dir);
++	int err;
++
++	if (!str->len || !zii->zi)
++		return -EINVAL;
++
++	zus_inode_cmtime_now(dir, zii->zi);
++	err = _dentry_dispatch(dir, inode, str, ZUFS_OP_ADD_DENTRY);
++	if (unlikely(err)) {
++		zuf_dbg_err("[%ld] _dentry_dispatch failed => %d\n",
++			    dir->i_ino, err);
++		return err;
++	}
++	zuf_zii_sync(dir, false);
++
++	return 0;
++}
++
++int zuf_remove_dentry(struct inode *dir, struct qstr *str, struct inode *inode)
++{
++	struct zuf_inode_info *zii = ZUII(dir);
++	int err;
++
++	if (!str->len)
++		return -EINVAL;
++
++	zus_inode_cmtime_now(dir, zii->zi);
++	err = _dentry_dispatch(dir, inode, str, ZUFS_OP_REMOVE_DENTRY);
++	if (unlikely(err)) {
++		zuf_dbg_err("[%ld] _dentry_dispatch failed => %d\n",
++			    dir->i_ino, err);
++		return err;
++	}
++	zuf_zii_sync(dir, false);
++
++	return 0;
++}
++
++const struct file_operations zuf_dir_operations = {
++	.llseek		= generic_file_llseek,
++	.read		= generic_read_dir,
++	.iterate_shared	= zuf_readdir,
++	.fsync		= noop_fsync,
++};
+diff --git a/fs/zuf/file.c b/fs/zuf/file.c
+new file mode 100644
+index 000000000000..0581bb8bab2e
+--- /dev/null
++++ b/fs/zuf/file.c
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * BRIEF DESCRIPTION
++ *
++ * File operations for files.
 + *
 + * Copyright (c) 2018 NetApp Inc. All rights reserved.
 + *
@@ -175,1142 +305,1239 @@ index 000000000000..a6115289dcda
 +
 +#include "zuf.h"
 +
-+struct inode *zuf_iget(struct super_block *sb, struct zus_inode_info *zus_ii,
-+		       zu_dpp_t _zi, bool *exist)
++long __zuf_fallocate(struct inode *inode, int mode, loff_t offset, loff_t len)
 +{
-+	return ERR_PTR(-ENOTSUPP);
++	return -ENOTSUPP;
 +}
 +
-diff --git a/fs/zuf/super.c b/fs/zuf/super.c
-index 2248ee74e4c2..859d4e3884ec 100644
---- a/fs/zuf/super.c
-+++ b/fs/zuf/super.c
-@@ -18,12 +18,737 @@
++ssize_t zuf_read_iter(struct kiocb *kiocb, struct iov_iter *ii)
++{
++	return -ENOTSUPP;
++}
++
++ssize_t zuf_write_iter(struct kiocb *kiocb, struct iov_iter *ii)
++{
++	return -ENOTSUPP;
++}
++
++const struct file_operations zuf_file_operations = {
++	.open			= generic_file_open,
++};
++
++const struct inode_operations zuf_file_inode_operations = {
++	.setattr	= zuf_setattr,
++	.getattr	= zuf_getattr,
++	.update_time	= zuf_update_time,
++};
+diff --git a/fs/zuf/inode.c b/fs/zuf/inode.c
+index a6115289dcda..0e6d835b4db5 100644
+--- a/fs/zuf/inode.c
++++ b/fs/zuf/inode.c
+@@ -13,11 +13,572 @@
+  *	Sagi Manole <sagim@netapp.com>"
+  */
  
++#include <linux/fs.h>
++#include <linux/aio.h>
++#include <linux/highuid.h>
++#include <linux/module.h>
++#include <linux/mpage.h>
++#include <linux/backing-dev.h>
++#include <linux/types.h>
++#include <linux/ratelimit.h>
++#include <linux/posix_acl_xattr.h>
++#include <linux/security.h>
++#include <linux/delay.h>
++#include <linux/falloc.h>
++#include <linux/swap.h>
++#include <linux/uio.h>
  #include "zuf.h"
  
-+static struct super_operations zuf_sops;
- static struct kmem_cache *zuf_inode_cachep;
- 
-+enum {
-+	Opt_uid,
-+	Opt_gid,
-+	Opt_pedantic,
-+	Opt_ephemeral,
-+	Opt_dax,
-+	Opt_zpmdev,
-+	Opt_err
-+};
++/* Flags that should be inherited by new inodes from their parent. */
++#define ZUFS_FL_INHERITED (S_SYNC | S_NOATIME | S_DIRSYNC)
 +
-+static const match_table_t tokens = {
-+	{ Opt_pedantic,		"pedantic"		},
-+	{ Opt_pedantic,		"pedantic=%d"		},
-+	{ Opt_ephemeral,	"ephemeral"		},
-+	{ Opt_dax,		"dax"			},
-+	{ Opt_zpmdev,		ZUFS_PMDEV_OPT"=%s"	},
-+	{ Opt_err,		NULL			},
-+};
++/* Flags that are appropriate for regular files (all but dir-specific ones). */
++#define ZUFS_FL_REG_MASK (~S_DIRSYNC)
 +
-+static int _parse_options(struct zuf_sb_info *sbi, const char *data,
-+			  bool remount, struct zufs_parse_options *po)
++/* Flags that are appropriate for non-dir/non-regular files. */
++#define ZUFS_FL_OTHER_MASK (S_NOATIME)
++
++static bool _zi_valid(struct zus_inode *zi)
 +{
-+	char *orig_options, *options;
-+	char *p;
-+	substring_t args[MAX_OPT_ARGS];
-+	int err = 0;
-+	bool ephemeral = false;
-+	bool silent = test_opt(sbi, SILENT);
-+	size_t mount_options_len = 0;
++	if (!_zi_active(zi))
++		return false;
 +
-+	/* no options given */
-+	if (!data)
-+		return 0;
-+
-+	options = orig_options = kstrdup(data, GFP_KERNEL);
-+	if (!options) {
-+		zuf_err_cnd(silent, "kstrdup => -ENOMEM\n");
-+		return -ENOMEM;
++	switch (le16_to_cpu(zi->i_mode) & S_IFMT) {
++	case S_IFREG:
++	case S_IFDIR:
++	case S_IFLNK:
++	case S_IFBLK:
++	case S_IFCHR:
++	case S_IFIFO:
++	case S_IFSOCK:
++		return true;
++	default:
++		zuf_err("unknown file type ino=%lld mode=%d\n", zi->i_ino,
++			  zi->i_mode);
++		return false;
 +	}
-+
-+	while ((p = strsep(&options, ",")) != NULL) {
-+		int token;
-+
-+		if (!*p)
-+			continue;
-+
-+		/* Initialize args struct so we know whether arg was found */
-+		args[0].to = args[0].from = NULL;
-+		token = match_token(p, tokens, args);
-+		switch (token) {
-+		case Opt_pedantic:
-+			if (!args[0].from) {
-+				po->mount_flags |= ZUFS_M_PEDANTIC;
-+				set_opt(sbi, PEDANTIC);
-+				continue;
-+			}
-+			if (match_int(&args[0], &po->pedantic))
-+				goto bad_opt;
-+			break;
-+		case Opt_ephemeral:
-+			po->mount_flags |= ZUFS_M_EPHEMERAL;
-+			set_opt(sbi, EPHEMERAL);
-+			ephemeral = true;
-+			break;
-+		case Opt_dax:
-+			set_opt(sbi, DAX);
-+			break;
-+		case Opt_zpmdev:
-+			if (unlikely(!test_opt(sbi, PRIVATE)))
-+				goto bad_opt;
-+			sbi->pmount_dev = match_strdup(&args[0]);
-+			if (sbi->pmount_dev == NULL)
-+				goto no_mem;
-+			break;
-+		default: {
-+			if (mount_options_len != 0) {
-+				po->mount_options[mount_options_len] = ',';
-+				mount_options_len++;
-+			}
-+			strcat(po->mount_options, p);
-+			mount_options_len += strlen(p);
-+		}
-+		}
-+	}
-+
-+	if (remount && test_opt(sbi, EPHEMERAL) && (ephemeral == false))
-+		clear_opt(sbi, EPHEMERAL);
-+out:
-+	kfree(orig_options);
-+	return err;
-+
-+bad_opt:
-+	zuf_warn_cnd(silent, "Bad mount option: \"%s\"\n", p);
-+	err = -EINVAL;
-+	goto out;
-+no_mem:
-+	zuf_warn_cnd(silent, "Not enough memory to parse options");
-+	err = -ENOMEM;
-+	goto out;
 +}
 +
-+static int _print_tier_info(struct multi_devices *md, char **buff, int start,
-+			    int count, int *_space, char *str)
++static void _set_inode_from_zi(struct inode *inode, struct zus_inode *zi)
 +{
-+	int space = *_space;
-+	char *b = *buff;
-+	int printed;
-+	int i;
++	inode->i_mode = le16_to_cpu(zi->i_mode);
++	inode->i_uid = KUIDT_INIT(le32_to_cpu(zi->i_uid));
++	inode->i_gid = KGIDT_INIT(le32_to_cpu(zi->i_gid));
++	set_nlink(inode, le16_to_cpu(zi->i_nlink));
++	inode->i_size = le64_to_cpu(zi->i_size);
++	inode->i_blocks = le64_to_cpu(zi->i_blocks);
++	mt_to_timespec(&inode->i_atime, &zi->i_atime);
++	mt_to_timespec(&inode->i_ctime, &zi->i_ctime);
++	mt_to_timespec(&inode->i_mtime, &zi->i_mtime);
++	inode->i_generation = le64_to_cpu(zi->i_generation);
++	zuf_set_inode_flags(inode, zi);
 +
-+	printed = snprintf(b, space, str);
-+	if (unlikely(printed > space))
-+		return -ENOSPC;
++	inode->i_blocks = le64_to_cpu(zi->i_blocks);
++	inode->i_mapping->a_ops = &zuf_aops;
 +
-+	b += printed;
-+	space -= printed;
-+
-+	for (i = start; i < start + count; ++i) {
-+		printed = snprintf(b, space, "%s%s", i == start ? "" : ",",
-+				   _bdev_name(md_dev_info(md, i)->bdev));
-+
-+		if (unlikely(printed > space))
-+			return -ENOSPC;
-+
-+		b += printed;
-+		space -= printed;
++	switch (inode->i_mode & S_IFMT) {
++	case S_IFREG:
++		inode->i_op = &zuf_file_inode_operations;
++		inode->i_fop = &zuf_file_operations;
++		break;
++	case S_IFDIR:
++		inode->i_op = &zuf_dir_inode_operations;
++		inode->i_fop = &zuf_dir_operations;
++		break;
++	case S_IFBLK:
++	case S_IFCHR:
++	case S_IFIFO:
++	case S_IFSOCK:
++		inode->i_size = 0;
++		inode->i_op = &zuf_special_inode_operations;
++		init_special_inode(inode, inode->i_mode,
++				   le32_to_cpu(zi->i_rdev));
++		break;
++	default:
++		zuf_err("unknown file type ino=%lld mode=%d\n", zi->i_ino,
++			  zi->i_mode);
++		break;
 +	}
-+	*_space = space;
-+	*buff = b;
 +
++	inode->i_ino = le64_to_cpu(zi->i_ino);
++}
++
++/* Mask out flags that are inappropriate for the given type of inode. */
++static uint _calc_flags(umode_t mode, uint dir_flags, uint flags)
++{
++	uint zufs_flags = dir_flags & ZUFS_FL_INHERITED;
++
++	if (S_ISREG(mode))
++		zufs_flags &= ZUFS_FL_REG_MASK;
++	else if (!S_ISDIR(mode))
++		zufs_flags &= ZUFS_FL_OTHER_MASK;
++
++	return zufs_flags;
++}
++
++static int _set_zi_from_inode(struct inode *dir, struct zus_inode *zi,
++			      struct inode *inode)
++{
++	struct zus_inode *zidir = zus_zi(dir);
++
++	if (unlikely(!zidir))
++		return -EACCES;
++
++	zi->i_mode = cpu_to_le16(inode->i_mode);
++	zi->i_uid = cpu_to_le32(__kuid_val(inode->i_uid));
++	zi->i_gid = cpu_to_le32(__kgid_val(inode->i_gid));
++	/* NOTE: zus is boss of i_nlink (but let it know what we think) */
++	zi->i_nlink = cpu_to_le16(inode->i_nlink);
++	zi->i_size = cpu_to_le64(inode->i_size);
++	zi->i_blocks = cpu_to_le64(inode->i_blocks);
++	timespec_to_mt(&zi->i_atime, &inode->i_atime);
++	timespec_to_mt(&zi->i_mtime, &inode->i_mtime);
++	timespec_to_mt(&zi->i_ctime, &inode->i_ctime);
++	zi->i_generation = cpu_to_le32(inode->i_generation);
++
++	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
++		zi->i_rdev = cpu_to_le32(inode->i_rdev);
++
++	zi->i_flags = cpu_to_le16(_calc_flags(inode->i_mode,
++					      le16_to_cpu(zidir->i_flags),
++					      inode->i_flags));
 +	return 0;
 +}
 +
-+static void _print_mount_info(struct zuf_sb_info *sbi, char *mount_options)
++static bool _times_equal(struct timespec64 *t, __le64 *mt)
 +{
-+	struct multi_devices *md = sbi->md;
-+	char buff[992];
-+	int space = sizeof(buff);
-+	char *b = buff;
-+	int err;
++	__le64 time;
 +
-+	err = _print_tier_info(md, &b, 0, md->t1_count, &space, "t1=");
-+	if (unlikely(err))
-+		goto no_space;
++	timespec_to_mt(&time, t);
++	return time == *mt;
++}
 +
-+	if (md->t2_count == 0)
-+		goto print_options;
-+
-+	err = _print_tier_info(md, &b, md->t1_count, md->t2_count, &space,
-+			       " t2=");
-+	if (unlikely(err))
-+		goto no_space;
-+
-+print_options:
-+	if (mount_options) {
-+		int printed = snprintf(b, space, " -o %s", mount_options);
-+
-+		if (unlikely(printed > space))
-+			goto no_space;
++/* This function checks if VFS's inode and zus_inode are in sync */
++static void _warn_inode_dirty(struct inode *inode, struct zus_inode *zi)
++{
++#define __MISMACH_INT(inode, X, Y)	\
++	if (X != Y)			\
++		zuf_warn("[%ld] " #X"=0x%lx " #Y"=0x%lx""\n",	\
++			  inode->i_ino, (ulong)(X), (ulong)(Y))
++#define __MISMACH_TIME(inode, X, Y)	\
++	if (!_times_equal(X, Y)) {	\
++		struct timespec64 t;	\
++		mt_to_timespec(&t, (Y));\
++		zuf_warn("[%ld] " #X"=%lld:%ld " #Y"=%lld:%ld""\n",	\
++			  inode->i_ino, (X)->tv_sec, (X)->tv_nsec,	\
++			  t.tv_sec, t.tv_nsec);		\
 +	}
 +
-+print:
-+	zuf_info("mounted %s (0x%lx/0x%lx)\n", buff,
-+		 md_t1_blocks(sbi->md), md_t2_blocks(sbi->md));
-+	return;
-+
-+no_space:
-+	snprintf(buff + sizeof(buff) - 4, 4, "...");
-+	goto print;
-+}
-+
-+static void _sb_mwtime_now(struct super_block *sb, struct md_dev_table *zdt)
-+{
-+	struct timespec64 now = current_time(sb->s_root->d_inode);
-+
-+	timespec_to_mt(&zdt->s_mtime, &now);
-+	zdt->s_wtime = zdt->s_mtime;
-+	/* TOZO _persist_md(sb, &zdt->s_mtime, 2*sizeof(zdt->s_mtime)); */
-+}
-+
-+static void _clean_bdi(struct super_block *sb)
-+{
-+	if (sb->s_bdi != &noop_backing_dev_info) {
-+		bdi_put(sb->s_bdi);
-+		sb->s_bdi = &noop_backing_dev_info;
++	if (!_times_equal(&inode->i_ctime, &zi->i_ctime) ||
++	    !_times_equal(&inode->i_mtime, &zi->i_mtime) ||
++	    !_times_equal(&inode->i_atime, &zi->i_atime) ||
++	    inode->i_size != le64_to_cpu(zi->i_size) ||
++	    inode->i_mode != le16_to_cpu(zi->i_mode) ||
++	    __kuid_val(inode->i_uid) != le32_to_cpu(zi->i_uid) ||
++	    __kgid_val(inode->i_gid) != le32_to_cpu(zi->i_gid) ||
++	    inode->i_nlink != le16_to_cpu(zi->i_nlink) ||
++	    inode->i_ino != _zi_ino(zi) ||
++	    inode->i_blocks != le64_to_cpu(zi->i_blocks)) {
++		__MISMACH_TIME(inode, &inode->i_ctime, &zi->i_ctime);
++		__MISMACH_TIME(inode, &inode->i_mtime, &zi->i_mtime);
++		__MISMACH_TIME(inode, &inode->i_atime, &zi->i_atime);
++		__MISMACH_INT(inode, inode->i_size, le64_to_cpu(zi->i_size));
++		__MISMACH_INT(inode, inode->i_mode, le16_to_cpu(zi->i_mode));
++		__MISMACH_INT(inode, __kuid_val(inode->i_uid),
++			      le32_to_cpu(zi->i_uid));
++		__MISMACH_INT(inode, __kgid_val(inode->i_gid),
++			      le32_to_cpu(zi->i_gid));
++		__MISMACH_INT(inode, inode->i_nlink, le16_to_cpu(zi->i_nlink));
++		__MISMACH_INT(inode, inode->i_ino, _zi_ino(zi));
++		__MISMACH_INT(inode, inode->i_blocks,
++			      le64_to_cpu(zi->i_blocks));
 +	}
 +}
 +
-+static int _setup_bdi(struct super_block *sb, const char *device_name)
++static void _zii_connect(struct inode *inode, struct zus_inode *zi,
++			 struct zus_inode_info *zus_ii)
 +{
-+	const char *n = sb->s_type->name;
-+	int err;
++	struct zuf_inode_info *zii = ZUII(inode);
 +
-+	if (sb->s_bdi)
-+		_clean_bdi(sb);
-+
-+	err = super_setup_bdi_name(sb, "%s-%s", n, device_name);
-+	if (unlikely(err)) {
-+		zuf_err("Failed to super_setup_bdi\n");
-+		return err;
-+	}
-+
-+	sb->s_bdi->ra_pages = ZUFS_READAHEAD_PAGES;
-+	sb->s_bdi->capabilities = BDI_CAP_NO_ACCT_AND_WRITEBACK;
-+	return 0;
++	zii->zi = zi;
++	zii->zus_ii = zus_ii;
 +}
 +
-+static int _sb_add(struct zuf_root_info *zri, struct super_block *sb,
-+		   __u64 *sb_id)
-+{
-+	uint i;
-+	int err;
-+
-+	mutex_lock(&zri->sbl_lock);
-+
-+	if (zri->sbl.num == zri->sbl.max) {
-+		struct super_block **new_array;
-+
-+		new_array = krealloc(zri->sbl.array,
-+				  (zri->sbl.max + SBL_INC) * sizeof(*new_array),
-+				  GFP_KERNEL | __GFP_ZERO);
-+		if (unlikely(!new_array)) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+		zri->sbl.max += SBL_INC;
-+		zri->sbl.array = new_array;
-+	}
-+
-+	for (i = 0; i < zri->sbl.max; ++i)
-+		if (!zri->sbl.array[i])
-+			break;
-+
-+	if (unlikely(i == zri->sbl.max)) {
-+		zuf_err("!!!!! can't be! i=%d g_sbl.num=%d g_sbl.max=%d\n",
-+			i, zri->sbl.num, zri->sbl.max);
-+		err = -EFAULT;
-+		goto out;
-+	}
-+
-+	++zri->sbl.num;
-+	zri->sbl.array[i] = sb;
-+	*sb_id = i + 1;
-+	err = 0;
-+
-+	zuf_dbg_vfs("sb_id=%lld\n", *sb_id);
-+out:
-+	mutex_unlock(&zri->sbl_lock);
-+	return err;
-+}
-+
-+static void _sb_remove(struct zuf_root_info *zri, struct super_block *sb)
-+{
-+	uint i;
-+
-+	mutex_lock(&zri->sbl_lock);
-+
-+	for (i = 0; i < zri->sbl.max; ++i)
-+		if (zri->sbl.array[i] == sb)
-+			break;
-+	if (unlikely(i == zri->sbl.max)) {
-+		zuf_err("!!!!! can't be! i=%d g_sbl.num=%d g_sbl.max=%d\n",
-+			i, zri->sbl.num, zri->sbl.max);
-+		goto out;
-+	}
-+
-+	zri->sbl.array[i] = NULL;
-+	--zri->sbl.num;
-+out:
-+	mutex_unlock(&zri->sbl_lock);
-+}
-+
- struct super_block *zuf_sb_from_id(struct zuf_root_info *zri, __u64 sb_id,
- 				   struct zus_sb_info *zus_sbi)
+ struct inode *zuf_iget(struct super_block *sb, struct zus_inode_info *zus_ii,
+ 		       zu_dpp_t _zi, bool *exist)
  {
--	return NULL;
-+	struct super_block *sb;
+-	return ERR_PTR(-ENOTSUPP);
++	struct zus_inode *zi = zuf_dpp_t_addr(sb, _zi);
++	struct inode *inode;
 +
-+	--sb_id;
-+
-+	if (zri->sbl.max <= sb_id) {
-+		zuf_err("Invalid SB_ID 0x%llx\n", sb_id);
-+		return NULL;
++	*exist = false;
++	if (unlikely(!zi)) {
++		/* Don't trust ZUS pointers */
++		zuf_err("Bad zus_inode 0x%llx\n", _zi);
++		return ERR_PTR(-EIO);
++	}
++	if (unlikely(!zus_ii)) {
++		zuf_err("zus_ii NULL\n");
++		return ERR_PTR(-EIO);
 +	}
 +
-+	sb = zri->sbl.array[sb_id];
-+	if (!sb) {
-+		zuf_err("Stale SB_ID 0x%llx\n", sb_id);
-+		return NULL;
++	if (!_zi_valid(zi)) {
++		zuf_err("inactive node ino=%lld links=%d mode=%d\n", zi->i_ino,
++			  zi->i_nlink, zi->i_mode);
++		return ERR_PTR(-ESTALE);
 +	}
 +
-+	return sb;
++	zuf_dbg_zus("[%lld] size=0x%llx, blocks=0x%llx ct=0x%llx mt=0x%llx link=0x%x mode=0x%x xattr=0x%llx\n",
++		    zi->i_ino, zi->i_size, zi->i_blocks, zi->i_ctime,
++		    zi->i_mtime, zi->i_nlink, zi->i_mode, zi->i_xattr);
++
++	inode = iget_locked(sb, _zi_ino(zi));
++	if (unlikely(!inode))
++		return ERR_PTR(-ENOMEM);
++
++	if (!(inode->i_state & I_NEW)) {
++		*exist = true;
++		return inode;
++	}
++
++	_set_inode_from_zi(inode, zi);
++	_zii_connect(inode, zi, zus_ii);
++
++	unlock_new_inode(inode);
++	return inode;
 +}
 +
-+static void zuf_put_super(struct super_block *sb)
++int zuf_evict_dispatch(struct super_block *sb, struct zus_inode_info *zus_ii,
++		       int operation, uint flags)
 +{
-+	struct zuf_sb_info *sbi = SBI(sb);
-+
-+	/* FIXME: This is because of a Kernel BUG (in v4.20) which
-+	 * sometimes complains in _setup_bdi() on a recycle_mount that sysfs
-+	 * bdi already exists. Cleaning here solves it.
-+	 * Calling synchronize_rcu in zuf_kill_sb() after the call to
-+	 * kill_block_super() does NOT solve it.
-+	 */
-+	_clean_bdi(sb);
-+
-+	if (sbi->zus_sbi) {
-+		struct zufs_ioc_mount zim = {
-+			.zmi.zus_sbi = sbi->zus_sbi,
-+		};
-+
-+		zufc_dispatch_mount(ZUF_ROOT(sbi), NULL, ZUFS_M_UMOUNT, &zim);
-+		sbi->zus_sbi = NULL;
-+	}
-+
-+	/* NOTE!!! this is a HACK! we should not touch the s_umount
-+	 * lock but to make lockdep happy we do that since our devices
-+	 * are held exclusivly. Need to revisit every kernel version
-+	 * change.
-+	 */
-+	if (sbi->md) {
-+		up_write(&sb->s_umount);
-+		md_fini(sbi->md, false);
-+		down_write(&sb->s_umount);
-+	}
-+
-+	_sb_remove(ZUF_ROOT(sbi), sb);
-+	sb->s_fs_info = NULL;
-+	if (!test_opt(sbi, FAILED))
-+		zuf_info("unmounted /dev/%s\n", _bdev_name(sb->s_bdev));
-+	kfree(sbi);
-+}
-+
-+struct __fill_super_params {
-+	struct multi_devices *md;
-+	char *mount_options;
-+};
-+
-+int zuf_private_mount(struct zuf_root_info *zri, struct register_fs_info *rfi,
-+		      struct zufs_mount_info *zmi, struct super_block **sb_out)
-+{
-+	bool silent = zmi->po.mount_flags & ZUFS_M_SILENT;
-+	char path[PATH_UUID];
-+	const char *dev_path = NULL;
-+	struct zuf_sb_info *sbi;
-+	struct super_block *sb;
-+	char *mount_options;
-+	struct mdt_check mc = {
-+		.alloc_mask	= ZUFS_ALLOC_MASK,
-+		.major_ver	= rfi->FS_ver_major,
-+		.minor_ver	= rfi->FS_ver_minor,
-+		.magic		= rfi->FS_magic,
-+
-+		.silent = silent,
-+		.private_mnt = true,
++	struct zufs_ioc_evict_inode ioc_evict_inode = {
++		.hdr.in_len = sizeof(ioc_evict_inode),
++		.hdr.out_len = sizeof(ioc_evict_inode),
++		.hdr.operation = operation,
++		.zus_ii = zus_ii,
++		.flags = flags,
 +	};
 +	int err;
 +
-+	sb = kzalloc(sizeof(struct super_block), GFP_KERNEL);
-+	if (unlikely(!sb)) {
-+		zuf_err_cnd(silent, "Not enough memory to allocate sb\n");
-+		return -ENOMEM;
++	err = zufc_dispatch(ZUF_ROOT(SBI(sb)), &ioc_evict_inode.hdr, NULL, 0);
++	if (unlikely(err && err != -EINTR))
++		zuf_err("zufc_dispatch failed op=%s => %d\n",
++			 zuf_op_name(operation), err);
++	return err;
++}
++
++void zuf_evict_inode(struct inode *inode)
++{
++	struct super_block *sb = inode->i_sb;
++	struct zuf_inode_info *zii = ZUII(inode);
++
++	if (!inode->i_nlink) {
++		if (unlikely(!zii->zi)) {
++			zuf_dbg_err("[%ld] inode without zi mode=0x%x size=0x%llx\n",
++				    inode->i_ino, inode->i_mode, inode->i_size);
++			goto out;
++		}
++
++		if (unlikely(is_bad_inode(inode)))
++			zuf_dbg_err("[%ld] inode is bad mode=0x%x zi=%p\n",
++				    inode->i_ino, inode->i_mode, zii->zi);
++		else
++			_warn_inode_dirty(inode, zii->zi);
++
++		zuf_w_lock(zii);
++
++		zuf_evict_dispatch(sb, zii->zus_ii, ZUFS_OP_FREE_INODE, 0);
++
++		inode->i_mtime = inode->i_ctime = current_time(inode);
++		inode->i_size = 0;
++
++		zuf_w_unlock(zii);
++	} else {
++		zuf_dbg_vfs("[%ld] inode is going down?\n", inode->i_ino);
++
++		zuf_smw_lock(zii);
++
++		zuf_evict_dispatch(sb, zii->zus_ii, ZUFS_OP_EVICT_INODE, 0);
++
++		zuf_smw_unlock(zii);
 +	}
 +
-+	sbi = kzalloc(sizeof(struct zuf_sb_info), GFP_KERNEL);
-+	if (unlikely(!sbi)) {
-+		zuf_err_cnd(silent, "Not enough memory to allocate sbi\n");
-+		kfree(sb);
-+		return -ENOMEM;
++out:
++	zii->zus_ii = NULL;
++	zii->zi = NULL;
++
++	clear_inode(inode);
++}
++
++/* @rdev_or_isize is i_size in the case of a symlink
++ * and rdev in the case of special-files
++ */
++struct inode *zuf_new_inode(struct inode *dir, umode_t mode,
++			    const struct qstr *qstr, const char *symname,
++			    ulong rdev_or_isize, bool tmpfile)
++{
++	struct super_block *sb = dir->i_sb;
++	struct zuf_sb_info *sbi = SBI(sb);
++	struct zufs_ioc_new_inode ioc_new_inode = {
++		.hdr.in_len = sizeof(ioc_new_inode),
++		.hdr.out_len = sizeof(ioc_new_inode),
++		.hdr.operation = ZUFS_OP_NEW_INODE,
++		.dir_ii = ZUII(dir)->zus_ii,
++		.flags = tmpfile ? ZI_TMPFILE : 0,
++		.str.len = qstr->len,
++	};
++	struct inode *inode;
++	struct zus_inode *zi = NULL;
++	struct page *pages[2];
++	uint nump = 0;
++	int err;
++
++	memcpy(&ioc_new_inode.str.name, qstr->name, qstr->len);
++
++	inode = new_inode(sb);
++	if (!inode)
++		return ERR_PTR(-ENOMEM);
++
++	inode_init_owner(inode, dir, mode);
++	inode->i_blocks = inode->i_size = 0;
++	inode->i_ctime = inode->i_mtime = current_time(dir);
++	inode->i_atime = inode->i_ctime;
++
++	zuf_dbg_verbose("inode=%p name=%s\n", inode, qstr->name);
++
++	zuf_set_inode_flags(inode, &ioc_new_inode.zi);
++
++	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
++	    S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
++		init_special_inode(inode, mode, rdev_or_isize);
 +	}
 +
-+	sb->s_fs_info = sbi;
-+	sbi->sb = sb;
-+
-+	zmi->po.mount_flags |= ZUFS_M_PRIVATE;
-+	set_opt(sbi, PRIVATE);
-+
-+	mount_options = kstrndup(zmi->po.mount_options,
-+				 zmi->po.mount_options_len, GFP_KERNEL);
-+	if (unlikely(!mount_options)) {
-+		zuf_err_cnd(silent, "Not enough memory\n");
-+		err = -ENOMEM;
++	err = _set_zi_from_inode(dir, &ioc_new_inode.zi, inode);
++	if (unlikely(err))
 +		goto fail;
-+	}
 +
-+	memset(zmi->po.mount_options, 0, zmi->po.mount_options_len);
++	zus_inode_cmtime_now(dir, zus_zi(dir));
 +
-+	err = _parse_options(sbi, mount_options, 0, &zmi->po);
++	err = zufc_dispatch(ZUF_ROOT(sbi), &ioc_new_inode.hdr, pages, nump);
 +	if (unlikely(err)) {
-+		zuf_err_cnd(silent, "option parsing failed => %d\n", err);
++		zuf_dbg_err("zufc_dispatch failed => %d\n", err);
 +		goto fail;
 +	}
++	zi = zuf_dpp_t_addr(sb, ioc_new_inode._zi);
 +
-+	if (unlikely(!sbi->pmount_dev)) {
-+		zuf_err_cnd(silent, "private mount missing mountdev option\n");
-+		err = -EINVAL;
-+		goto fail;
-+	}
++	_zii_connect(inode, zi, ioc_new_inode.zus_ii);
 +
-+	zmi->po.mount_options_len = strlen(zmi->po.mount_options);
++	/* update inode fields from filesystem inode */
++	inode->i_ino = le64_to_cpu(zi->i_ino);
++	inode->i_size = le64_to_cpu(zi->i_size);
++	inode->i_generation = le64_to_cpu(zi->i_generation);
++	inode->i_blocks = le64_to_cpu(zi->i_blocks);
++	set_nlink(inode, le16_to_cpu(zi->i_nlink));
++	zuf_zii_sync(dir, false);
 +
-+	mc.holder = sbi;
-+	err = md_init(&sbi->md, sbi->pmount_dev, &mc, path, &dev_path);
++	zuf_dbg_zus("[%lld] size=0x%llx, blocks=0x%llx ct=0x%llx mt=0x%llx link=0x%x mode=0x%x xattr=0x%llx\n",
++		    zi->i_ino, zi->i_size, zi->i_blocks, zi->i_ctime,
++		    zi->i_mtime, zi->i_nlink, zi->i_mode, zi->i_xattr);
++
++	zuf_dbg_verbose("allocating inode %ld (zi=%p)\n", _zi_ino(zi), zi);
++
++	err = insert_inode_locked(inode);
 +	if (unlikely(err)) {
-+		zuf_err_cnd(silent, "md_init failed! => %d\n", err);
++		zuf_dbg_err("[%ld:%s] generation=%lld insert_inode_locked => %d\n",
++			    inode->i_ino, qstr->name, zi->i_generation, err);
 +		goto fail;
 +	}
 +
-+	zuf_dbg_verbose("private mount of %s\n", dev_path);
-+
-+	err = _sb_add(zri, sb, &zmi->sb_id);
-+	if (unlikely(err)) {
-+		zuf_err_cnd(silent, "_sb_add failed => %d\n", err);
-+		goto fail;
-+	}
-+
-+	*sb_out = sb;
-+	return 0;
++	return inode;
 +
 +fail:
-+	if (sbi->md)
-+		md_fini(sbi->md, true);
-+	kfree(mount_options);
-+	kfree(sbi->pmount_dev);
-+	kfree(sbi);
-+	kfree(sb);
++	clear_nlink(inode);
++	if (zi)
++		zi->i_nlink = 0;
++	make_bad_inode(inode);
++	iput(inode);
++	return ERR_PTR(err);
++}
++
++int zuf_write_inode(struct inode *inode, struct writeback_control *wbc)
++{
++	/* write_inode should never be called because we always keep our inodes
++	 * clean. So let us know if write_inode ever gets called.
++	 */
++
++	/* d_tmpfile() does a mark_inode_dirty so only complain on regular files
++	 * TODO: How? Every thing off for now
++	 * WARN_ON(inode->i_nlink);
++	 */
++
++	return 0;
++}
++
++/*
++ * Mostly supporting file_accessed() for now. Which is the only one we use.
++ *
++ * But also file_update_time is used by fifo code.
++ */
++int zuf_update_time(struct inode *inode, struct timespec64 *time, int flags)
++{
++	struct zus_inode *zi = zus_zi(inode);
++
++	if (flags & S_ATIME) {
++		inode->i_atime = *time;
++		timespec_to_mt(&zi->i_atime, &inode->i_atime);
++		/* FIXME: Set a flag that zi needs flushing
++		 * for now every read needs zi-flushing.
++		 */
++	}
++
++	/* File_update_time() is not used by zuf.
++	 * FIXME: One exception is O_TMPFILE the vfs calls file_update_time
++	 * internally bypassing FS. So just do and silent.
++	 * The zus O_TMPFILE create protocol knows it needs flushing
++	 */
++	if ((flags & S_CTIME) || (flags & S_MTIME)) {
++		if (flags & S_CTIME) {
++			inode->i_ctime = *time;
++			timespec_to_mt(&zi->i_ctime, &inode->i_ctime);
++		}
++		if (flags & S_MTIME) {
++			inode->i_mtime = *time;
++			timespec_to_mt(&zi->i_mtime, &inode->i_mtime);
++		}
++		zuf_dbg_vfs("called for S_CTIME | S_MTIME 0x%x\n", flags);
++	}
++
++	if (flags & ~(S_CTIME | S_MTIME | S_ATIME))
++		zuf_err("called for 0x%x\n", flags);
++
++	return 0;
++}
++
++int zuf_getattr(const struct path *path, struct kstat *stat, u32 request_mask,
++		unsigned int flags)
++{
++	struct dentry *dentry = path->dentry;
++	struct inode *inode = d_inode(dentry);
++
++	if (inode->i_flags & S_APPEND)
++		stat->attributes |= STATX_ATTR_APPEND;
++	if (inode->i_flags & S_IMMUTABLE)
++		stat->attributes |= STATX_ATTR_IMMUTABLE;
++
++	stat->attributes_mask |= (STATX_ATTR_APPEND |
++				  STATX_ATTR_IMMUTABLE);
++	generic_fillattr(inode, stat);
++	/* stat->blocks should be the number of 512B blocks */
++	stat->blocks = inode->i_blocks << (inode->i_sb->s_blocksize_bits - 9);
++
++	return 0;
++}
++
++int zuf_setattr(struct dentry *dentry, struct iattr *attr)
++{
++	struct inode *inode = dentry->d_inode;
++	struct zuf_inode_info *zii = ZUII(inode);
++	struct zus_inode *zi = zii->zi;
++	struct zufs_ioc_attr ioc_attr = {
++		.hdr.in_len = sizeof(ioc_attr),
++		.hdr.out_len = sizeof(ioc_attr),
++		.hdr.operation = ZUFS_OP_SETATTR,
++		.zus_ii = zii->zus_ii,
++	};
++	int err;
++
++	if (!zi)
++		return -EACCES;
++
++	/* Truncate is implemented via  fallocate(punch_hole) which means we
++	 * are not atomic with the other ATTRs. I think someone said that
++	 * some Kernel FSs don't even support truncate to come together with
++	 * other ATTRs
++	 */
++	if ((attr->ia_valid & ATTR_SIZE)) {
++		ZUF_CHECK_I_W_LOCK(inode);
++		zuf_smw_lock(zii);
++		err = __zuf_fallocate(inode, ZUFS_FL_TRUNCATE, attr->ia_size,
++				      ~0ULL);
++		zuf_smw_unlock(zii);
++		if (unlikely(err))
++			return err;
++		attr->ia_valid &= ~ATTR_SIZE;
++	}
++
++	err = setattr_prepare(dentry, attr);
++	if (unlikely(err))
++		return err;
++
++	if (attr->ia_valid & ATTR_MODE) {
++		zuf_dbg_vfs("[%ld] ATTR_MODE=0x%x\n",
++			     inode->i_ino, attr->ia_mode);
++		ioc_attr.zuf_attr |= STATX_MODE;
++		inode->i_mode = attr->ia_mode;
++		zi->i_mode = cpu_to_le16(inode->i_mode);
++		if (test_opt(SBI(inode->i_sb), POSIXACL)) {
++			err = posix_acl_chmod(inode, inode->i_mode);
++			if (unlikely(err))
++				return err;
++		}
++	}
++
++	if (attr->ia_valid & ATTR_UID) {
++		zuf_dbg_vfs("[%ld] ATTR_UID=0x%x\n",
++			     inode->i_ino, __kuid_val(attr->ia_uid));
++		ioc_attr.zuf_attr |= STATX_UID;
++		inode->i_uid = attr->ia_uid;
++		zi->i_uid = cpu_to_le32(__kuid_val(inode->i_uid));
++	}
++	if (attr->ia_valid & ATTR_GID) {
++		zuf_dbg_vfs("[%ld] ATTR_GID=0x%x\n",
++			     inode->i_ino, __kgid_val(attr->ia_gid));
++		ioc_attr.zuf_attr |= STATX_GID;
++		inode->i_gid = attr->ia_gid;
++		zi->i_gid = cpu_to_le32(__kgid_val(inode->i_gid));
++	}
++
++	if (attr->ia_valid & ATTR_ATIME) {
++		ioc_attr.zuf_attr |= STATX_ATIME;
++		inode->i_atime = attr->ia_atime;
++		timespec_to_mt(&zi->i_atime, &inode->i_atime);
++		zuf_dbg_vfs("[%ld] ATTR_ATIME=0x%llx\n",
++			     inode->i_ino, zi->i_atime);
++	}
++	if (attr->ia_valid & ATTR_CTIME) {
++		ioc_attr.zuf_attr |= STATX_CTIME;
++		inode->i_ctime = attr->ia_ctime;
++		timespec_to_mt(&zi->i_ctime, &inode->i_ctime);
++		zuf_dbg_vfs("[%ld] ATTR_CTIME=0x%llx\n",
++			     inode->i_ino, zi->i_ctime);
++	}
++	if (attr->ia_valid & ATTR_MTIME) {
++		ioc_attr.zuf_attr |= STATX_MTIME;
++		inode->i_mtime = attr->ia_mtime;
++		timespec_to_mt(&zi->i_mtime, &inode->i_mtime);
++		zuf_dbg_vfs("[%ld] ATTR_MTIME=0x%llx\n",
++			     inode->i_ino, zi->i_mtime);
++	}
++
++	err = zufc_dispatch(ZUF_ROOT(SBI(inode->i_sb)), &ioc_attr.hdr, NULL, 0);
++	if (unlikely(err))
++		zuf_dbg_err("[%ld] set_attr=0x%x failed => %d\n",
++			    inode->i_ino, ioc_attr.zuf_attr, err);
 +
 +	return err;
 +}
 +
-+int zuf_private_umount(struct zuf_root_info *zri, struct super_block *sb)
++void zuf_set_inode_flags(struct inode *inode, struct zus_inode *zi)
 +{
-+	struct zuf_sb_info *sbi = SBI(sb);
++	unsigned int flags = le16_to_cpu(zi->i_flags) & ~ZUFS_S_IMMUTABLE;
 +
-+	_sb_remove(zri, sb);
-+	md_fini(sbi->md, true);
-+	kfree(sbi->pmount_dev);
-+	kfree(sbi);
-+	kfree(sb);
++	inode->i_flags &=
++		~(S_SYNC | S_APPEND | S_IMMUTABLE | S_NOATIME | S_DIRSYNC);
++	inode->i_flags |= flags;
++	if (zi->i_flags & ZUFS_S_IMMUTABLE)
++		inode->i_flags |= S_IMMUTABLE | S_NOATIME;
++	if (!zi->i_xattr)
++		inode_has_no_xattr(inode);
+ }
+ 
++const struct address_space_operations zuf_aops = {
++};
+diff --git a/fs/zuf/namei.c b/fs/zuf/namei.c
+new file mode 100644
+index 000000000000..299134ca7c07
+--- /dev/null
++++ b/fs/zuf/namei.c
+@@ -0,0 +1,402 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Inode operations for directories.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
++#include <linux/fs.h>
++#include "zuf.h"
 +
-+	return 0;
++
++static struct inode *d_parent(struct dentry *dentry)
++{
++	return dentry->d_parent->d_inode;
 +}
 +
-+static int zuf_fill_super(struct super_block *sb, void *data, int silent)
++static void _set_nlink(struct inode *inode, struct zus_inode *zi)
 +{
-+	struct zuf_sb_info *sbi = NULL;
-+	struct __fill_super_params *fsp = data;
-+	struct zufs_ioc_mount zim = {};
-+	struct zufs_ioc_mount *ioc_mount;
-+	enum big_alloc_type bat;
-+	struct register_fs_info *rfi;
-+	struct inode *root_i;
-+	size_t zim_size, mount_options_len;
++	set_nlink(inode, le32_to_cpu(zi->i_nlink));
++}
++
++void zuf_zii_sync(struct inode *inode, bool sync_nlink)
++{
++	struct zus_inode *zi = zus_zi(inode);
++
++	if (inode->i_size != le64_to_cpu(zi->i_size) ||
++	    inode->i_blocks != le64_to_cpu(zi->i_blocks)) {
++		i_size_write(inode, le64_to_cpu(zi->i_size));
++		inode->i_blocks = le64_to_cpu(zi->i_blocks);
++	}
++
++	if (sync_nlink)
++		_set_nlink(inode, zi);
++}
++
++static void _instantiate_unlock(struct dentry *dentry, struct inode *inode)
++{
++	d_instantiate(dentry, inode);
++	unlock_new_inode(inode);
++}
++
++static struct dentry *zuf_lookup(struct inode *dir, struct dentry *dentry,
++				 uint flags)
++{
++	struct super_block *sb = dir->i_sb;
++	struct qstr *str = &dentry->d_name;
++	uint in_len = offsetof(struct zufs_ioc_lookup, _zi);
++	struct zufs_ioc_lookup ioc_lu = {
++		.hdr.in_len = in_len,
++		.hdr.out_start = in_len,
++		.hdr.out_len = sizeof(ioc_lu) - in_len,
++		.hdr.operation = ZUFS_OP_LOOKUP,
++		.dir_ii = ZUII(dir)->zus_ii,
++		.str.len = str->len,
++	};
++	struct inode *inode = NULL;
 +	bool exist;
 +	int err;
 +
-+	BUILD_BUG_ON(sizeof(struct md_dev_table) > MDT_SIZE);
-+	BUILD_BUG_ON(sizeof(struct zus_inode) != ZUFS_INODE_SIZE);
++	zuf_dbg_vfs("[%ld] dentry-name=%s\n", dir->i_ino, dentry->d_name.name);
 +
-+	mount_options_len = (fsp->mount_options ?
-+					strlen(fsp->mount_options) : 0) + 1;
-+	zim_size = sizeof(zim) + mount_options_len;
-+	ioc_mount = big_alloc(zim_size, sizeof(zim), &zim,
-+			      GFP_KERNEL | __GFP_ZERO, &bat);
-+	if (unlikely(!ioc_mount)) {
-+		zuf_err_cnd(silent, "big_alloc(%ld) => -ENOMEM\n", zim_size);
-+		return -ENOMEM;
-+	}
++	if (dentry->d_name.len > ZUFS_NAME_LEN)
++		return ERR_PTR(-ENAMETOOLONG);
 +
-+	ioc_mount->zmi.po.mount_options_len = mount_options_len;
++	memcpy(&ioc_lu.str.name, str->name, str->len);
 +
-+	err = _sb_add(zuf_fst(sb)->zri, sb, &ioc_mount->zmi.sb_id);
++	err = zufc_dispatch(ZUF_ROOT(SBI(sb)), &ioc_lu.hdr, NULL, 0);
 +	if (unlikely(err)) {
-+		zuf_err_cnd(silent, "_sb_add failed => %d\n", err);
-+		goto error;
-+	}
-+
-+	sbi = kzalloc(sizeof(struct zuf_sb_info), GFP_KERNEL);
-+	if (!sbi) {
-+		zuf_err_cnd(silent, "Not enough memory to allocate sbi\n");
-+		err = -ENOMEM;
-+		goto error;
-+	}
-+	sb->s_fs_info = sbi;
-+	sbi->sb = sb;
-+
-+	/* Initialize embedded objects */
-+	spin_lock_init(&sbi->s_mmap_dirty_lock);
-+	INIT_LIST_HEAD(&sbi->s_mmap_dirty);
-+	if (silent) {
-+		ioc_mount->zmi.po.mount_flags |= ZUFS_M_SILENT;
-+		set_opt(sbi, SILENT);
-+	}
-+
-+	sbi->md = fsp->md;
-+	err = md_set_sb(sbi->md, sb->s_bdev, sb, silent);
-+	if (unlikely(err))
-+		goto error;
-+
-+	err = _parse_options(sbi, fsp->mount_options, 0, &ioc_mount->zmi.po);
-+	if (err)
-+		goto error;
-+
-+	err = _setup_bdi(sb, _bdev_name(sb->s_bdev));
-+	if (err) {
-+		zuf_err_cnd(silent, "Failed to setup bdi => %d\n", err);
-+		goto error;
-+	}
-+
-+	/* Tell ZUS to mount an FS for us */
-+	err = zufc_dispatch_mount(ZUF_ROOT(sbi), zuf_fst(sb)->zus_zfi,
-+				  ZUFS_M_MOUNT, ioc_mount);
-+	if (unlikely(err)) {
-+		zuf_err_cnd(silent, "zufc_dispatch_mount failed => %d\n", err);
-+		goto error;
-+	}
-+	sbi->zus_sbi = ioc_mount->zmi.zus_sbi;
-+
-+	/* Init with default values */
-+	sb->s_blocksize_bits = ioc_mount->zmi.s_blocksize_bits;
-+	sb->s_blocksize = 1 << ioc_mount->zmi.s_blocksize_bits;
-+
-+	rfi = &zuf_fst(sb)->rfi;
-+
-+	sb->s_magic = rfi->FS_magic;
-+	sb->s_time_gran = rfi->s_time_gran;
-+	sb->s_maxbytes = rfi->s_maxbytes;
-+	sb->s_flags |= SB_NOSEC;
-+
-+	sbi->fs_caps = ioc_mount->zmi.fs_caps;
-+	if (sbi->fs_caps & ZUFS_FSC_ACL_ON)
-+		sb->s_flags |= SB_POSIXACL;
-+
-+	sb->s_op = &zuf_sops;
-+
-+	root_i = zuf_iget(sb, ioc_mount->zmi.zus_ii, ioc_mount->zmi._zi,
-+			  &exist);
-+	if (IS_ERR(root_i)) {
-+		err = PTR_ERR(root_i);
-+		zuf_err_cnd(silent, "zuf_iget failed => %d\n", err);
-+		goto error;
-+	}
-+	WARN_ON(exist);
-+
-+	sb->s_root = d_make_root(root_i);
-+	if (!sb->s_root) {
-+		zuf_err_cnd(silent, "d_make_root root inode failed\n");
-+		iput(root_i); /* undo zuf_iget */
-+		err = -ENOMEM;
-+		goto error;
-+	}
-+
-+	if (!zuf_rdonly(sb))
-+		_sb_mwtime_now(sb, md_zdt(sbi->md));
-+
-+	mt_to_timespec(&root_i->i_ctime, &zus_zi(root_i)->i_ctime);
-+	mt_to_timespec(&root_i->i_mtime, &zus_zi(root_i)->i_mtime);
-+
-+	_print_mount_info(sbi, fsp->mount_options);
-+	clear_opt(sbi, SILENT);
-+	big_free(ioc_mount, bat);
-+	return 0;
-+
-+error:
-+	zuf_warn("NOT mounting => %d\n", err);
-+	if (sbi) {
-+		set_opt(sbi, FAILED);
-+		zuf_put_super(sb);
-+	}
-+	big_free(ioc_mount, bat);
-+	return err;
-+}
-+
-+static void _zst_to_kst(const struct statfs64 *zst, struct kstatfs *kst)
-+{
-+	kst->f_type	= zst->f_type;
-+	kst->f_bsize	= zst->f_bsize;
-+	kst->f_blocks	= zst->f_blocks;
-+	kst->f_bfree	= zst->f_bfree;
-+	kst->f_bavail	= zst->f_bavail;
-+	kst->f_files	= zst->f_files;
-+	kst->f_ffree	= zst->f_ffree;
-+	kst->f_fsid	= zst->f_fsid;
-+	kst->f_namelen	= zst->f_namelen;
-+	kst->f_frsize	= zst->f_frsize;
-+	kst->f_flags	= zst->f_flags;
-+}
-+
-+static int zuf_statfs(struct dentry *d, struct kstatfs *buf)
-+{
-+	struct zuf_sb_info *sbi = SBI(d->d_sb);
-+	struct zufs_ioc_statfs ioc_statfs = {
-+		.hdr.in_len = offsetof(struct zufs_ioc_statfs, statfs_out),
-+		.hdr.out_len = sizeof(ioc_statfs),
-+		.hdr.operation = ZUFS_OP_STATFS,
-+		.zus_sbi = sbi->zus_sbi,
-+	};
-+	int err;
-+
-+	err = zufc_dispatch(ZUF_ROOT(sbi), &ioc_statfs.hdr, NULL, 0);
-+	if (unlikely(err && err != -EINTR)) {
-+		zuf_err("zufc_dispatch failed op=ZUFS_OP_STATFS => %d\n", err);
-+		return err;
-+	}
-+
-+	_zst_to_kst(&ioc_statfs.statfs_out, buf);
-+	return 0;
-+}
-+
-+struct __mount_options {
-+	struct zufs_ioc_mount_options imo;
-+	char buf[ZUFS_MO_MAX];
-+};
-+
-+static int zuf_show_options(struct seq_file *seq, struct dentry *root)
-+{
-+	struct zuf_sb_info *sbi = SBI(root->d_sb);
-+	struct __mount_options mo = {
-+		.imo.hdr.in_len = sizeof(mo.imo),
-+		.imo.hdr.out_start = offsetof(typeof(mo.imo), buf),
-+		.imo.hdr.out_len = 0,
-+		.imo.hdr.out_max = sizeof(mo.buf),
-+		.imo.hdr.operation = ZUFS_OP_SHOW_OPTIONS,
-+		.imo.zus_sbi = sbi->zus_sbi,
-+	};
-+	int err;
-+
-+	if (test_opt(sbi, EPHEMERAL))
-+		seq_puts(seq, ",ephemeral");
-+	if (test_opt(sbi, DAX))
-+		seq_puts(seq, ",dax");
-+
-+	err = zufc_dispatch(ZUF_ROOT(sbi), &mo.imo.hdr, NULL, 0);
-+	if (unlikely(err)) {
-+		zuf_err("zufs_dispatch failed op=ZUS_OP_SHOW_OPTIONS => %d\n",
-+			err);
-+		/* NOTE: if zusd crashed and we try to run 'umount', it will
-+		 * SEGFAULT because zufc_dispatch will return -EFAULT.
-+		 * Just return 0 as if the FS has no specific mount options.
-+		 */
-+		return 0;
-+	}
-+	seq_puts(seq, mo.buf);
-+
-+	return 0;
-+}
-+
-+static int zuf_show_devname(struct seq_file *seq, struct dentry *root)
-+{
-+	seq_printf(seq, "/dev/%s", _bdev_name(root->d_sb->s_bdev));
-+
-+	return 0;
-+}
-+
-+static int zuf_remount(struct super_block *sb, int *mntflags, char *data)
-+{
-+	struct zuf_sb_info *sbi = SBI(sb);
-+	struct zufs_ioc_mount zim = {};
-+	struct zufs_ioc_mount *ioc_mount;
-+	size_t remount_options_len, zim_size;
-+	enum big_alloc_type bat;
-+	ulong old_mount_opt = sbi->s_mount_opt;
-+	int err;
-+
-+	zuf_info("remount... -o %s\n", data);
-+
-+	remount_options_len = data ? (strlen(data) + 1) : 0;
-+	zim_size = sizeof(zim) + remount_options_len;
-+	ioc_mount = big_alloc(zim_size, sizeof(zim), &zim,
-+			      GFP_KERNEL | __GFP_ZERO, &bat);
-+	if (unlikely(!ioc_mount))
-+		return -ENOMEM;
-+
-+	ioc_mount->zmi.zus_sbi = sbi->zus_sbi,
-+	ioc_mount->zmi.remount_flags = zuf_rdonly(sb) ? ZUFS_REM_WAS_RO : 0;
-+	ioc_mount->zmi.po.mount_options_len = remount_options_len;
-+
-+	err = _parse_options(sbi, data, 1, &ioc_mount->zmi.po);
-+	if (unlikely(err))
-+		goto fail;
-+
-+	if (*mntflags & SB_RDONLY) {
-+		ioc_mount->zmi.remount_flags |= ZUFS_REM_WILL_RO;
-+
-+		if (!zuf_rdonly(sb))
-+			_sb_mwtime_now(sb, md_zdt(sbi->md));
-+	} else if (zuf_rdonly(sb)) {
-+		_sb_mwtime_now(sb, md_zdt(sbi->md));
-+	}
-+
-+	err = zufc_dispatch_mount(ZUF_ROOT(sbi), zuf_fst(sb)->zus_zfi,
-+				  ZUFS_M_REMOUNT, ioc_mount);
-+	if (unlikely(err))
-+		goto fail;
-+
-+	big_free(ioc_mount, bat);
-+	return 0;
-+
-+fail:
-+	sbi->s_mount_opt = old_mount_opt;
-+	big_free(ioc_mount, bat);
-+	zuf_dbg_err("remount failed restore option\n");
-+	return err;
-+}
-+
-+static int zuf_update_s_wtime(struct super_block *sb)
-+{
-+	if (!(zuf_rdonly(sb))) {
-+		struct timespec64 now = current_time(sb->s_root->d_inode);
-+
-+		timespec_to_mt(&md_zdt(SBI(sb)->md)->s_wtime, &now);
-+	}
-+	return 0;
-+}
-+
-+static struct inode *zuf_alloc_inode(struct super_block *sb)
-+{
-+	struct zuf_inode_info *zii;
-+
-+	zii = kmem_cache_alloc(zuf_inode_cachep, GFP_NOFS);
-+	if (!zii)
-+		return NULL;
-+
-+	zii->vfs_inode.i_version.counter = 1;
-+	return &zii->vfs_inode;
-+}
-+
-+static void zuf_destroy_inode(struct inode *inode)
-+{
-+	kmem_cache_free(zuf_inode_cachep, ZUII(inode));
- }
- 
- static void _init_once(void *foo)
-@@ -31,6 +756,7 @@ static void _init_once(void *foo)
- 	struct zuf_inode_info *zii = foo;
- 
- 	inode_init_once(&zii->vfs_inode);
-+	zii->zi = NULL;
- }
- 
- int __init zuf_init_inodecache(void)
-@@ -52,8 +778,55 @@ void zuf_destroy_inodecache(void)
- 	kmem_cache_destroy(zuf_inode_cachep);
- }
- 
-+static struct super_operations zuf_sops = {
-+	.alloc_inode	= zuf_alloc_inode,
-+	.destroy_inode	= zuf_destroy_inode,
-+	.put_super	= zuf_put_super,
-+	.freeze_fs	= zuf_update_s_wtime,
-+	.unfreeze_fs	= zuf_update_s_wtime,
-+	.statfs		= zuf_statfs,
-+	.remount_fs	= zuf_remount,
-+	.show_options	= zuf_show_options,
-+	.show_devname	= zuf_show_devname,
-+};
-+
- struct dentry *zuf_mount(struct file_system_type *fs_type, int flags,
- 			 const char *dev_name, void *data)
- {
--	return ERR_PTR(-ENOTSUPP);
-+	int silent = flags & SB_SILENT ? 1 : 0;
-+	struct __fill_super_params fsp = {
-+		.mount_options = data,
-+	};
-+	struct zuf_fs_type *fst = ZUF_FST(fs_type);
-+	struct register_fs_info *rfi = &fst->rfi;
-+	struct mdt_check mc = {
-+		.alloc_mask	= ZUFS_ALLOC_MASK,
-+		.major_ver	= rfi->FS_ver_major,
-+		.minor_ver	= rfi->FS_ver_minor,
-+		.magic		= rfi->FS_magic,
-+
-+		.holder = fs_type,
-+		.silent = silent,
-+	};
-+	struct dentry *ret = NULL;
-+	char path[PATH_UUID];
-+	const char *dev_path = NULL;
-+	int err;
-+
-+	zuf_dbg_vfs("dev_name=%s, data=%s\n", dev_name, (const char *)data);
-+
-+	err = md_init(&fsp.md, dev_name, &mc, path, &dev_path);
-+	if (unlikely(err)) {
-+		zuf_err_cnd(silent, "md_init failed! => %d\n", err);
++		zuf_dbg_err("zufc_dispatch failed => %d\n", err);
 +		goto out;
 +	}
 +
-+	zuf_dbg_vfs("mounting with dev_path=%s\n", dev_path);
-+	ret = mount_bdev(fs_type, flags, dev_path, &fsp, zuf_fill_super);
++	inode = zuf_iget(dir->i_sb, ioc_lu.zus_ii, ioc_lu._zi, &exist);
++	if (exist) {
++		zuf_dbg_err("race in lookup\n");
++		zuf_evict_dispatch(sb, ioc_lu.zus_ii, ZUFS_OP_EVICT_INODE,
++				   ZI_LOOKUP_RACE);
++	}
 +
 +out:
-+	if (unlikely(err) && fsp.md)
-+		md_fini(fsp.md, true);
++	return d_splice_alias(inode, dentry);
++}
 +
-+	return err ? ERR_PTR(err) : ret;
- }
++/*
++ * By the time this is called, we already have created
++ * the directory cache entry for the new file, but it
++ * is so far negative - it has no inode.
++ *
++ * If the create succeeds, we fill in the inode information
++ * with d_instantiate().
++ */
++static int zuf_create(struct inode *dir, struct dentry *dentry, umode_t mode,
++		      bool excl)
++{
++	struct inode *inode;
++
++	zuf_dbg_vfs("[%ld] dentry-name=%s mode=0x%x\n",
++		     dir->i_ino, dentry->d_name.name, mode);
++
++	inode = zuf_new_inode(dir, mode, &dentry->d_name, NULL, 0, false);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++
++	inode->i_op = &zuf_file_inode_operations;
++	inode->i_mapping->a_ops = &zuf_aops;
++	inode->i_fop = &zuf_file_operations;
++
++	_instantiate_unlock(dentry, inode);
++
++	return 0;
++}
++
++static int zuf_mknod(struct inode *dir, struct dentry *dentry, umode_t mode,
++		     dev_t rdev)
++{
++	struct inode *inode;
++
++	zuf_dbg_vfs("[%ld] mode=0x%x rdev=0x%x\n", dir->i_ino, mode, rdev);
++
++	inode = zuf_new_inode(dir, mode, &dentry->d_name, NULL, rdev, false);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++
++	inode->i_op = &zuf_special_inode_operations;
++
++	_instantiate_unlock(dentry, inode);
++
++	return 0;
++}
++
++static int zuf_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
++{
++	struct inode *inode;
++
++	inode = zuf_new_inode(dir, mode, &dentry->d_name, NULL, 0, true);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++
++	/* TODO: See about more ephemeral operations on this file, around
++	 * mmap and such.
++	 * Must see about that tmpfile mode that is later link_at
++	 * (probably the !O_EXCL flag)
++	 */
++	inode->i_op = &zuf_file_inode_operations;
++	inode->i_mapping->a_ops = &zuf_aops;
++	inode->i_fop = &zuf_file_operations;
++
++	set_nlink(inode, 1); /* user_mode knows nothing */
++	d_tmpfile(dentry, inode);
++	/* tmpfile operate on nlink=0. Since this is a tmp file we do not care
++	 * about cl_flushing. If later this file will be linked to a dir. the
++	 * add_dentry will flush the zi.
++	 */
++	zus_zi(inode)->i_nlink = inode->i_nlink;
++
++	unlock_new_inode(inode);
++	return 0;
++}
++
++static int zuf_link(struct dentry *dest_dentry, struct inode *dir,
++		    struct dentry *dentry)
++{
++	struct inode *inode = dest_dentry->d_inode;
++	int err;
++
++	zuf_dbg_vfs("[%ld] dentry-ino=%ld dentry-name=%s dentry-parent=%ld dest_d-ino=%ld dest_d-name=%s\n",
++		     dir->i_ino, inode->i_ino, dentry->d_name.name,
++		     d_parent(dentry)->i_ino,
++		     dest_dentry->d_inode->i_ino, dest_dentry->d_name.name);
++
++	if (inode->i_nlink >= ZUFS_LINK_MAX)
++		return -EMLINK;
++
++	ihold(inode);
++
++	zus_inode_cmtime_now(dir, zus_zi(dir));
++	zus_inode_ctime_now(inode, zus_zi(inode));
++
++	err = zuf_add_dentry(dir, &dentry->d_name, inode);
++	if (unlikely(err)) {
++		iput(inode);
++		return err;
++	}
++
++	_set_nlink(inode, zus_zi(inode));
++
++	d_instantiate(dentry, inode);
++
++	return 0;
++}
++
++static int zuf_unlink(struct inode *dir, struct dentry *dentry)
++{
++	struct inode *inode = dentry->d_inode;
++	int err;
++
++	zuf_dbg_vfs("[%ld] dentry-ino=%ld dentry-name=%s dentry-parent=%ld\n",
++		     dir->i_ino, inode->i_ino, dentry->d_name.name,
++		     d_parent(dentry)->i_ino);
++
++	inode->i_ctime = dir->i_ctime;
++	timespec_to_mt(&zus_zi(inode)->i_ctime, &inode->i_ctime);
++
++	err = zuf_remove_dentry(dir, &dentry->d_name, inode);
++	if (unlikely(err))
++		return err;
++
++	zuf_zii_sync(inode, true);
++	zuf_zii_sync(dir, true);
++
++	return 0;
++}
++
++static int zuf_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
++{
++	struct inode *inode;
++
++	zuf_dbg_vfs("[%ld] dentry-name=%s dentry-parent=%ld mode=0x%x\n",
++		     dir->i_ino, dentry->d_name.name, d_parent(dentry)->i_ino,
++		     mode);
++
++	if (dir->i_nlink >= ZUFS_LINK_MAX)
++		return -EMLINK;
++
++	inode = zuf_new_inode(dir, S_IFDIR | mode, &dentry->d_name, NULL, 0,
++			      false);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++
++	inode->i_op = &zuf_dir_inode_operations;
++	inode->i_fop = &zuf_dir_operations;
++	inode->i_mapping->a_ops = &zuf_aops;
++
++	zuf_zii_sync(dir, true);
++
++	_instantiate_unlock(dentry, inode);
++
++	return 0;
++}
++
++static bool _empty_dir(struct inode *dir)
++{
++	if (dir->i_nlink != 2) {
++		zuf_dbg_verbose("[%ld] directory has nlink(%d) != 2\n",
++				dir->i_ino, dir->i_nlink);
++		return false;
++	}
++	/* NOTE: Above is not the only -ENOTEMPTY the zus-fs will need to check
++	 * for the "only-files" no subdirs case. And return -ENOTEMPTY below
++	 */
++	return true;
++}
++
++static int zuf_rmdir(struct inode *dir, struct dentry *dentry)
++{
++	struct inode *inode = dentry->d_inode;
++	int err;
++
++	zuf_dbg_vfs("[%ld] dentry-ino=%ld dentry-name=%s dentry-parent=%ld\n",
++		     dir->i_ino, inode->i_ino, dentry->d_name.name,
++		     d_parent(dentry)->i_ino);
++
++	if (!inode)
++		return -ENOENT;
++
++	if (!_empty_dir(inode))
++		return -ENOTEMPTY;
++
++	zus_inode_cmtime_now(dir, zus_zi(dir));
++	inode->i_ctime = dir->i_ctime;
++	timespec_to_mt(&zus_zi(inode)->i_ctime, &inode->i_ctime);
++
++	err = zuf_remove_dentry(dir, &dentry->d_name, inode);
++	if (unlikely(err))
++		return err;
++
++	zuf_zii_sync(inode, true);
++	zuf_zii_sync(dir, true);
++
++	return 0;
++}
++
++/* Structure of a directory element; */
++struct zuf_dir_element {
++	__le64  ino;
++	char name[254];
++};
++
++static int zuf_rename(struct inode *old_dir, struct dentry *old_dentry,
++		      struct inode *new_dir, struct dentry *new_dentry,
++		      uint flags)
++{
++	struct inode *old_inode = d_inode(old_dentry);
++	struct inode *new_inode = d_inode(new_dentry);
++	struct zuf_sb_info *sbi = SBI(old_inode->i_sb);
++	struct zufs_ioc_rename ioc_rename = {
++		.hdr.in_len = sizeof(ioc_rename),
++		.hdr.out_len = sizeof(ioc_rename),
++		.hdr.operation = ZUFS_OP_RENAME,
++		.old_dir_ii = ZUII(old_dir)->zus_ii,
++		.new_dir_ii = ZUII(new_dir)->zus_ii,
++		.old_zus_ii = ZUII(old_inode)->zus_ii,
++		.new_zus_ii = new_inode ? ZUII(new_inode)->zus_ii : NULL,
++		.old_d_str.len = old_dentry->d_name.len,
++		.new_d_str.len = new_dentry->d_name.len,
++		.flags = flags,
++	};
++	struct timespec64 time = current_time(old_dir);
++	int err;
++
++	zuf_dbg_vfs(
++		"old_inode=%ld new_inode=%ld old_name=%s new_name=%s f=0x%x\n",
++		old_inode->i_ino, new_inode ? new_inode->i_ino : 0,
++		old_dentry->d_name.name, new_dentry->d_name.name, flags);
++
++	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE /*| RENAME_WHITEOUT*/))
++		return -EINVAL;
++
++	if (flags & RENAME_EXCHANGE) {
++		/* A subdir holds a ref on parent, see if we need to
++		 * exchange refs
++		 */
++		if (unlikely(!new_inode))
++			return -EINVAL;
++
++		if ((S_ISDIR(old_inode->i_mode) != S_ISDIR(new_inode->i_mode))
++		    && (old_dir != new_dir)) {
++			if (S_ISDIR(old_inode->i_mode)) {
++				if (ZUFS_LINK_MAX <= new_dir->i_nlink)
++					return -EMLINK;
++			} else {
++				if (ZUFS_LINK_MAX <= old_dir->i_nlink)
++					return -EMLINK;
++			}
++		}
++	} else if (S_ISDIR(old_inode->i_mode)) {
++		if (new_inode) {
++			if (!_empty_dir(new_inode))
++				return -ENOTEMPTY;
++		} else if (ZUFS_LINK_MAX <= new_dir->i_nlink) {
++			return -EMLINK;
++		}
++	}
++
++	memcpy(&ioc_rename.old_d_str.name, old_dentry->d_name.name,
++		old_dentry->d_name.len);
++	memcpy(&ioc_rename.new_d_str.name, new_dentry->d_name.name,
++		new_dentry->d_name.len);
++	timespec_to_mt(&ioc_rename.time, &time);
++
++	zus_inode_cmtime_now(old_dir, zus_zi(old_dir));
++	if (old_dir != new_dir)
++		zus_inode_cmtime_now(new_dir, zus_zi(new_dir));
++
++	if (new_inode)
++		zus_inode_ctime_now(new_inode, zus_zi(new_inode));
++	else
++		zus_inode_ctime_now(old_inode, zus_zi(old_inode));
++
++	err = zufc_dispatch(ZUF_ROOT(sbi), &ioc_rename.hdr, NULL, 0);
++
++	zuf_zii_sync(old_dir, true);
++	zuf_zii_sync(new_dir, true);
++
++	if (unlikely(err)) {
++		zuf_dbg_err("zufc_dispatch failed => %d\n", err);
++		return err;
++	}
++
++	if (new_inode)
++		_set_nlink(new_inode, zus_zi(new_inode));
++
++	return 0;
++}
++
++const struct inode_operations zuf_dir_inode_operations = {
++	.create		= zuf_create,
++	.lookup		= zuf_lookup,
++	.link		= zuf_link,
++	.unlink		= zuf_unlink,
++	.mkdir		= zuf_mkdir,
++	.rmdir		= zuf_rmdir,
++	.mknod		= zuf_mknod,
++	.tmpfile	= zuf_tmpfile,
++	.rename		= zuf_rename,
++	.setattr	= zuf_setattr,
++	.getattr	= zuf_getattr,
++	.update_time	= zuf_update_time,
++};
++
++const struct inode_operations zuf_special_inode_operations = {
++	.setattr	= zuf_setattr,
++	.getattr	= zuf_getattr,
++	.update_time	= zuf_update_time,
++};
+diff --git a/fs/zuf/super.c b/fs/zuf/super.c
+index 859d4e3884ec..49f2c62e22b7 100644
+--- a/fs/zuf/super.c
++++ b/fs/zuf/super.c
+@@ -781,6 +781,8 @@ void zuf_destroy_inodecache(void)
+ static struct super_operations zuf_sops = {
+ 	.alloc_inode	= zuf_alloc_inode,
+ 	.destroy_inode	= zuf_destroy_inode,
++	.write_inode	= zuf_write_inode,
++	.evict_inode	= zuf_evict_inode,
+ 	.put_super	= zuf_put_super,
+ 	.freeze_fs	= zuf_update_s_wtime,
+ 	.unfreeze_fs	= zuf_update_s_wtime,
 diff --git a/fs/zuf/zuf-core.c b/fs/zuf/zuf-core.c
-index 8b5329632f28..301cf5058231 100644
+index 301cf5058231..d2a2cd28b5e3 100644
 --- a/fs/zuf/zuf-core.c
 +++ b/fs/zuf/zuf-core.c
-@@ -63,6 +63,8 @@ const char *zuf_op_name(enum e_zufs_operation op)
- 	switch  (op) {
- 		CASE_ENUM_NAME(ZUFS_OP_NULL);
+@@ -65,6 +65,16 @@ const char *zuf_op_name(enum e_zufs_operation op)
  		CASE_ENUM_NAME(ZUFS_OP_BREAK);
-+		CASE_ENUM_NAME(ZUFS_OP_STATFS);
-+		CASE_ENUM_NAME(ZUFS_OP_SHOW_OPTIONS);
+ 		CASE_ENUM_NAME(ZUFS_OP_STATFS);
+ 		CASE_ENUM_NAME(ZUFS_OP_SHOW_OPTIONS);
++
++		CASE_ENUM_NAME(ZUFS_OP_NEW_INODE);
++		CASE_ENUM_NAME(ZUFS_OP_FREE_INODE);
++		CASE_ENUM_NAME(ZUFS_OP_EVICT_INODE);
++
++		CASE_ENUM_NAME(ZUFS_OP_LOOKUP);
++		CASE_ENUM_NAME(ZUFS_OP_ADD_DENTRY);
++		CASE_ENUM_NAME(ZUFS_OP_REMOVE_DENTRY);
++		CASE_ENUM_NAME(ZUFS_OP_RENAME);
++		CASE_ENUM_NAME(ZUFS_OP_SETATTR);
  	case ZUFS_OP_MAX_OPT:
  	default:
  		return "UNKNOWN";
-@@ -289,6 +291,95 @@ static void zufc_mounter_release(struct file *f)
- 	}
- }
- 
-+static int _zu_private_mounter_release(struct file *file)
-+{
-+	struct zuf_root_info *zri = ZRI(file->f_inode->i_sb);
-+	struct zuf_special_file *zsf = file->private_data;
-+	struct zuf_private_mount_info *zpmi;
-+	int err;
-+
-+	zpmi = container_of(zsf, struct zuf_private_mount_info, zsf);
-+
-+	err = zuf_private_umount(zri, zpmi->sb);
-+
-+	kfree(zpmi);
-+
-+	return err;
-+}
-+
-+static int _zu_private_mounter(struct file *file, void *parg)
-+{
-+	struct super_block *sb = file->f_inode->i_sb;
-+	struct zufs_ioc_mount_private *zip = NULL;
-+	struct zuf_private_mount_info *zpmi;
-+	struct zuf_root_info *zri = ZRI(sb);
-+	struct zufs_ioc_hdr hdr;
-+	__u32 is_umount;
-+	ulong cp_ret;
-+	int err = 0;
-+
-+	get_user(is_umount,
-+		 &((struct zufs_ioc_mount_private *)parg)->is_umount);
-+	if (is_umount)
-+		return _zu_private_mounter_release(file);
-+
-+	if (unlikely(file->private_data)) {
-+		zuf_err("One mount per runner please..\n");
-+		return -EINVAL;
-+	}
-+
-+	zpmi = kzalloc(sizeof(*zpmi), GFP_KERNEL);
-+	if (unlikely(!zpmi)) {
-+		zuf_err("alloc failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	zpmi->zsf.type = zlfs_e_private_mount;
-+	zpmi->zsf.file = file;
-+
-+	cp_ret = copy_from_user(&hdr, parg, sizeof(hdr));
-+	if (unlikely(cp_ret)) {
-+		zuf_err("copy_from_user(hdr) => %ld\n", cp_ret);
-+		err = -EFAULT;
-+		goto fail;
-+	}
-+
-+	zip = kmalloc(hdr.in_len, GFP_KERNEL);
-+	if (unlikely(!zip)) {
-+		zuf_err("alloc failed\n");
-+		err = -ENOMEM;
-+		goto fail;
-+	}
-+
-+	cp_ret = copy_from_user(zip, parg, hdr.in_len);
-+	if (unlikely(cp_ret)) {
-+		zuf_err("copy_from_user => %ld\n", cp_ret);
-+		err = -EFAULT;
-+		goto fail;
-+	}
-+
-+	err = zuf_private_mount(zri, &zip->rfi, &zip->zmi, &zpmi->sb);
-+	if (unlikely(err))
-+		goto fail;
-+
-+	cp_ret = copy_to_user(parg, zip, hdr.in_len);
-+	if (unlikely(cp_ret)) {
-+		zuf_err("copy_to_user =>%ld\n", cp_ret);
-+		err = -EFAULT;
-+		goto fail;
-+	}
-+
-+	file->private_data = &zpmi->zsf;
-+
-+out:
-+	kfree(zip);
-+	return err;
-+
-+fail:
-+	kfree(zpmi);
-+	goto out;
-+}
-+
- /* ~~~~ ZU_IOC_NUMA_MAP ~~~~ */
- static int _zu_numa_map(struct file *file, void *parg)
- {
-@@ -959,6 +1050,8 @@ long zufc_ioctl(struct file *file, unsigned int cmd, ulong arg)
- 		return _zu_wait(file, parg);
- 	case ZU_IOC_ALLOC_BUFFER:
- 		return _zu_ebuff_alloc(file, parg);
-+	case ZU_IOC_PRIVATE_MOUNT:
-+		return _zu_private_mounter(file, parg);
- 	case ZU_IOC_BREAK_ALL:
- 		return _zu_break(file, parg);
- 	default:
-@@ -981,6 +1074,8 @@ int zufc_release(struct inode *inode, struct file *file)
- 	case zlfs_e_mout_thread:
- 		zufc_mounter_release(file);
- 		return 0;
-+	case zlfs_e_private_mount:
-+		_zu_private_mounter_release(file);
- 	case zlfs_e_pmem:
- 		/* NOTHING to clean for pmem file yet */
- 		/* zuf_pmem_release(file);*/
 diff --git a/fs/zuf/zuf.h b/fs/zuf/zuf.h
-index 321f31124252..0192645ad49d 100644
+index 0192645ad49d..cc9a26b17e8e 100644
 --- a/fs/zuf/zuf.h
 +++ b/fs/zuf/zuf.h
-@@ -105,12 +105,33 @@ struct zuf_pmem_file {
- 	struct multi_devices *md;
- };
- 
-+/*
-+ * Private Super-block flags
-+ */
-+enum {
-+	ZUF_MOUNT_PEDANTIC	= 0x000001,	/* Check for memory leaks */
-+	ZUF_MOUNT_PEDANTIC_SHADOW = 0x00002,	/* */
-+	ZUF_MOUNT_SILENT	= 0x000004,	/* verbosity is silent */
-+	ZUF_MOUNT_EPHEMERAL	= 0x000008,	/* Don't persist the data */
-+	ZUF_MOUNT_FAILED	= 0x000010,	/* mark a failed-mount */
-+	ZUF_MOUNT_DAX		= 0x000020,	/* mounted with dax option */
-+	ZUF_MOUNT_POSIXACL	= 0x000040,	/* mounted with posix acls */
-+	ZUF_MOUNT_PRIVATE	= 0x000080,	/* private mount from runner */
-+};
-+
-+#define clear_opt(sbi, opt)       (sbi->s_mount_opt &= ~ZUF_MOUNT_ ## opt)
-+#define set_opt(sbi, opt)         (sbi->s_mount_opt |= ZUF_MOUNT_ ## opt)
-+#define test_opt(sbi, opt)      (sbi->s_mount_opt & ZUF_MOUNT_ ## opt)
- 
- /*
-  * ZUF per-inode data in memory
-  */
+@@ -129,6 +129,9 @@ enum {
  struct zuf_inode_info {
  	struct inode		vfs_inode;
-+
-+	/* cookies from Server */
-+	struct zus_inode	*zi;
-+	struct zus_inode_info	*zus_ii;
- };
  
- static inline struct zuf_inode_info *ZUII(struct inode *inode)
-@@ -163,6 +184,104 @@ static inline bool zuf_rdonly(struct super_block *sb)
- 	return sb_rdonly(sb);
++	/* Stuff for mmap write */
++	struct rw_semaphore	in_sync;
++
+ 	/* cookies from Server */
+ 	struct zus_inode	*zi;
+ 	struct zus_inode_info	*zus_ii;
+@@ -247,6 +250,66 @@ static inline void *zuf_dpp_t_addr(struct super_block *sb, zu_dpp_t v)
+ 	return md_addr_verify(SBI(sb)->md, zu_dpp_t_val(v));
  }
  
-+static inline bool zuf_is_nio_reads(struct inode *inode)
++/* ~~~~ inode locking ~~~~ */
++static inline void zuf_r_lock(struct zuf_inode_info *zii)
 +{
-+	return SBI(inode->i_sb)->fs_caps & ZUFS_FSC_NIO_READS;
++	inode_lock_shared(&zii->vfs_inode);
++}
++static inline void zuf_r_unlock(struct zuf_inode_info *zii)
++{
++	inode_unlock_shared(&zii->vfs_inode);
 +}
 +
-+static inline bool zuf_is_nio_writes(struct inode *inode)
++static inline void zuf_smr_lock(struct zuf_inode_info *zii)
 +{
-+	return SBI(inode->i_sb)->fs_caps & ZUFS_FSC_NIO_WRITES;
++	down_read_nested(&zii->in_sync, 1);
++}
++static inline void zuf_smr_lock_pagefault(struct zuf_inode_info *zii)
++{
++	down_read_nested(&zii->in_sync, 2);
++}
++static inline void zuf_smr_unlock(struct zuf_inode_info *zii)
++{
++	up_read(&zii->in_sync);
 +}
 +
-+static inline struct zus_inode *zus_zi(struct inode *inode)
++static inline void zuf_smw_lock(struct zuf_inode_info *zii)
 +{
-+	return ZUII(inode)->zi;
++	down_write(&zii->in_sync);
++}
++static inline void zuf_smw_lock_nested(struct zuf_inode_info *zii)
++{
++	down_write_nested(&zii->in_sync, 1);
++}
++static inline void zuf_smw_unlock(struct zuf_inode_info *zii)
++{
++	up_write(&zii->in_sync);
 +}
 +
-+/* An accessor because of the frequent use in prints */
-+static inline ulong _zi_ino(struct zus_inode *zi)
++static inline void zuf_w_lock(struct zuf_inode_info *zii)
 +{
-+	return le64_to_cpu(zi->i_ino);
++	inode_lock(&zii->vfs_inode);
++	zuf_smw_lock(zii);
++}
++static inline void zuf_w_lock_nested(struct zuf_inode_info *zii)
++{
++	inode_lock_nested(&zii->vfs_inode, 2);
++	zuf_smw_lock_nested(zii);
++}
++static inline void zuf_w_unlock(struct zuf_inode_info *zii)
++{
++	zuf_smw_unlock(zii);
++	inode_unlock(&zii->vfs_inode);
 +}
 +
-+static inline bool _zi_active(struct zus_inode *zi)
++static inline void ZUF_CHECK_I_W_LOCK(struct inode *inode)
 +{
-+	return (zi->i_nlink || zi->i_mode);
++#ifdef CONFIG_ZUF_DEBUG
++	if (WARN_ON(down_write_trylock(&inode->i_rwsem)))
++		up_write(&inode->i_rwsem);
++#endif
 +}
 +
-+static inline void mt_to_timespec(struct timespec64 *t, __le64 *mt)
-+{
-+	u32 nsec;
-+
-+	t->tv_sec = div_s64_rem(le64_to_cpu(*mt), NSEC_PER_SEC, &nsec);
-+	t->tv_nsec = nsec;
-+}
-+
-+static inline void timespec_to_mt(__le64 *mt, struct timespec64 *t)
-+{
-+	*mt = cpu_to_le64(t->tv_sec * NSEC_PER_SEC + t->tv_nsec);
-+}
-+
-+static inline
-+void zus_inode_cmtime_now(struct inode *inode, struct zus_inode *zi)
-+{
-+	inode->i_mtime = inode->i_ctime = current_time(inode);
-+	timespec_to_mt(&zi->i_ctime, &inode->i_ctime);
-+	zi->i_mtime = zi->i_ctime;
-+}
-+
-+static inline
-+void zus_inode_ctime_now(struct inode *inode, struct zus_inode *zi)
-+{
-+	inode->i_ctime = current_time(inode);
-+	timespec_to_mt(&zi->i_ctime, &inode->i_ctime);
-+}
-+
-+static inline void *zuf_dpp_t_addr(struct super_block *sb, zu_dpp_t v)
-+{
-+	/* TODO: Implement zufs_ioc_create_mempool already */
-+	if (WARN_ON(zu_dpp_t_pool(v)))
-+		return NULL;
-+
-+	return md_addr_verify(SBI(sb)->md, zu_dpp_t_val(v));
-+}
-+
-+enum big_alloc_type { ba_stack, ba_kmalloc, ba_vmalloc };
-+
-+static inline
-+void *big_alloc(uint bytes, uint local_size, void *local, gfp_t gfp,
-+		enum big_alloc_type *bat)
-+{
-+	void *ptr;
-+
-+	if (bytes <= local_size) {
-+		*bat = ba_stack;
-+		ptr = local;
-+	} else if (bytes <= PAGE_SIZE) {
-+		*bat = ba_kmalloc;
-+		ptr = kmalloc(bytes, gfp);
-+	} else {
-+		*bat = ba_vmalloc;
-+		ptr = vmalloc(bytes);
-+	}
-+
-+	return ptr;
-+}
-+
-+static inline void big_free(void *ptr, enum big_alloc_type bat)
-+{
-+	switch (bat) {
-+	case ba_stack:
-+		break;
-+	case ba_kmalloc:
-+		kfree(ptr);
-+		break;
-+	case ba_vmalloc:
-+		vfree(ptr);
-+	}
-+}
-+
- struct zuf_dispatch_op;
- typedef int (*overflow_handler)(struct zuf_dispatch_op *zdo, void *parg,
- 				ulong zt_max_bytes);
+ enum big_alloc_type { ba_stack, ba_kmalloc, ba_vmalloc };
+ 
+ static inline
 diff --git a/fs/zuf/zus_api.h b/fs/zuf/zus_api.h
-index 653ca24c9c92..c7681c53700c 100644
+index c7681c53700c..fe92471f7765 100644
 --- a/fs/zuf/zus_api.h
 +++ b/fs/zuf/zus_api.h
-@@ -334,6 +334,17 @@ struct  zufs_ioc_mount {
- };
- #define ZU_IOC_MOUNT		_IOWR('Z', 11, struct zufs_ioc_mount)
+@@ -450,6 +450,17 @@ enum e_zufs_operation {
+ 	ZUFS_OP_STATFS		= 2,
+ 	ZUFS_OP_SHOW_OPTIONS	= 3,
  
-+/* Mount locally with a zus-runner process */
-+#define ZUFS_PMDEV_OPT "zpmdev"
-+struct zufs_ioc_mount_private {
-+	struct zufs_ioc_hdr	hdr;
-+	__u32			mount_fd; /* kernel cookie */
-+	__u32			is_umount; /* true or false */
-+	struct register_fs_info	rfi;
-+	struct zufs_mount_info	zmi; /* must be last */
-+};
-+#define ZU_IOC_PRIVATE_MOUNT	_IOWR('Z', 12, struct zufs_ioc_mount_private)
++	ZUFS_OP_NEW_INODE	= 4,
++	ZUFS_OP_FREE_INODE	= 5,
++	ZUFS_OP_EVICT_INODE	= 6,
 +
- /* pmem  */
- struct zufs_cpu_set {
- 	ulong bits[16];
-@@ -436,7 +447,31 @@ enum e_zufs_operation {
- 	ZUFS_OP_NULL		= 0,
- 	ZUFS_OP_BREAK		= 1,	/* Kernel telling Server to exit */
- 
-+	ZUFS_OP_STATFS		= 2,
-+	ZUFS_OP_SHOW_OPTIONS	= 3,
++	ZUFS_OP_LOOKUP		= 7,
++	ZUFS_OP_ADD_DENTRY	= 8,
++	ZUFS_OP_REMOVE_DENTRY	= 9,
++	ZUFS_OP_RENAME		= 10,
++
++	ZUFS_OP_SETATTR		= 19,
 +
  	ZUFS_OP_MAX_OPT,
  };
  
-+#define ZUFS_MO_MAX	512
-+
-+struct zufs_ioc_mount_options {
-+	struct zufs_ioc_hdr hdr;
-+	/* IN */
-+	struct zus_sb_info *zus_sbi;
-+
-+	/* OUT */
-+	char	buf[0];
+@@ -474,4 +485,87 @@ struct zufs_ioc_statfs {
+ 	struct statfs64 statfs_out;
+ };
+ 
++/* zufs_ioc_new_inode flags: */
++enum zi_flags {
++	ZI_TMPFILE = 1,		/* for new_inode */
++	ZI_LOOKUP_RACE = 1,	/* for evict */
 +};
 +
-+/* ZUFS_OP_STATFS */
-+struct zufs_ioc_statfs {
++struct zufs_str {
++	__u8 len;
++	char name[ZUFS_NAME_LEN];
++};
++
++/* ZUFS_OP_NEW_INODE */
++struct zufs_ioc_new_inode {
++	struct zufs_ioc_hdr hdr;
++	 /* IN */
++	struct zus_inode zi;
++	struct zus_inode_info *dir_ii; /* If mktmp this is the root */
++	struct zufs_str str;
++	__u64 flags;
++
++	 /* OUT */
++	zu_dpp_t _zi;
++	struct zus_inode_info *zus_ii;
++};
++
++/* ZUFS_OP_FREE_INODE, ZUFS_OP_EVICT_INODE */
++struct zufs_ioc_evict_inode {
 +	struct zufs_ioc_hdr hdr;
 +	/* IN */
-+	struct zus_sb_info *zus_sbi;
-+
-+	/* OUT */
-+	struct statfs64 statfs_out;
++	struct zus_inode_info *zus_ii;
++	__u64 flags;
 +};
++
++/* ZUFS_OP_LOOKUP */
++struct zufs_ioc_lookup {
++	struct zufs_ioc_hdr hdr;
++	/* IN */
++	struct zus_inode_info *dir_ii;
++	struct zufs_str str;
++
++	 /* OUT */
++	zu_dpp_t _zi;
++	struct zus_inode_info *zus_ii;
++};
++
++/* ZUFS_OP_ADD_DENTRY, ZUFS_OP_REMOVE_DENTRY */
++struct zufs_ioc_dentry {
++	struct zufs_ioc_hdr hdr;
++	struct zus_inode_info *zus_ii; /* IN */
++	struct zus_inode_info *zus_dir_ii; /* IN */
++	struct zufs_str str; /* IN */
++	__u64 ino; /* OUT - only for lookup */
++};
++
++/* ZUFS_OP_RENAME */
++struct zufs_ioc_rename {
++	struct zufs_ioc_hdr hdr;
++	/* IN */
++	struct zus_inode_info *old_dir_ii;
++	struct zus_inode_info *new_dir_ii;
++	struct zus_inode_info *old_zus_ii;
++	struct zus_inode_info *new_zus_ii;
++	struct zufs_str old_d_str;
++	struct zufs_str new_d_str;
++	__u64 time;
++	__u64 flags;
++};
++
++/* ZUFS_OP_SETATTR */
++struct zufs_ioc_attr {
++	struct zufs_ioc_hdr hdr;
++	/* IN */
++	struct zus_inode_info *zus_ii;
++	__u32 zuf_attr;
++	__u32 pad;
++};
++
++/* Special flag for ZUFS_OP_FALLOCATE to specify a setattr(SIZE)
++ * IE. same as punch hole but set_i_size to be @filepos. In this
++ * case @last_pos == ~0ULL
++ */
++#define ZUFS_FL_TRUNCATE 0x80000000
 +
  #endif /* _LINUX_ZUFS_API_H */
 -- 
