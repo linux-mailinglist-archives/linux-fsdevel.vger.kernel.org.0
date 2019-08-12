@@ -2,109 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB3958A614
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 20:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 774468A6C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 21:02:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbfHLSZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 14:25:35 -0400
-Received: from mail-yb1-f202.google.com ([209.85.219.202]:55325 "EHLO
-        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727222AbfHLSZa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 14:25:30 -0400
-Received: by mail-yb1-f202.google.com with SMTP id m4so18325278ybp.22
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 11:25:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=wKRiEgRg+/DU2DEnW3JXAo2ALm03Zt5EFSXAgxYeqSQ=;
-        b=nZnW3WMQCz05l6ICEKDk76hmQbTheMtNmdq6JZ/QeZtYLtrZAiLqFFk1eMlHLSI2Od
-         tokkC6/x0TWcLVC526+YvItwTB3ptDoHYp4j+cKEDqvfWUkOE8rrgMYMDQMcytdEnpVK
-         Javjy9SQgBLtDD2dU2xplDFS+oxT0Ga2sX3Ril4r8MutRMQa14VuakHxFBNsWNrIAS4h
-         DIRtjGVGWR9OjKG7snnTFLDSjqbzGtpfYXGEzsQCXJHzRILzFeuxO2G2H0dY4nW8xd59
-         l8IM2CEN0WEFxIOai8A1vQcyPfIG9qh+YILDCG39P1E9EDx0psdbHXaGAxoXDAVQ1+6l
-         UrzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=wKRiEgRg+/DU2DEnW3JXAo2ALm03Zt5EFSXAgxYeqSQ=;
-        b=jbZLuJZTyb1iRv2I/Fb842ymAgNVgngYWug7UnlwK7iQPl5hBF1EObFuSrcp4Kz0Z0
-         ZLBZuXB54MSUfIsC/Qhr+rVUhqiPeuKl1seeA3XhIWk/0ZIADBEpV53m5cRCOZJzwrxH
-         90Sqp+n+lVm3SrCwpAWpt5zEmLJtFyGk00ueLR05sUv0OdvKiA3bZfO4CC339ayNfLlD
-         oVMS+u7eisdVG0OqPnIvIgACjaqbxkgxj8LdVaFKFDsBsV5T6O5i+BUsMaWuekUIhhnc
-         8nPLPLz1qhPzuaLyR09WQXY5ndEJ6mK0eRorMwdA0bNC2iCZSsl/opofWOjV/dfPvWVJ
-         bieg==
-X-Gm-Message-State: APjAAAUtc4sqNoFLtLgoXB8JfisEfm0PLBb3DzBz+7htk5Fm49p8GSkj
-        eShdErOqbTP3iyJLQ6FsGSdjGhi9098EVR5PQJQlug==
-X-Google-Smtp-Source: APXvYqxpxYTLOV5V1kn9LOQBhsmrb/fq8obCcCZvetERJ23Gxs2qvszs3YbcjsnmIpYv/bSBR6DeRIUcOWhVdcSb2iYi7g==
-X-Received: by 2002:a0d:ea06:: with SMTP id t6mr22043435ywe.186.1565634328967;
- Mon, 12 Aug 2019 11:25:28 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 11:24:21 -0700
-In-Reply-To: <20190812182421.141150-1-brendanhiggins@google.com>
-Message-Id: <20190812182421.141150-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190812182421.141150-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH v12 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
- SYSCTL section
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>,
-        Iurii Zaikin <yzaikin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726717AbfHLTCa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 15:02:30 -0400
+Received: from mga18.intel.com ([134.134.136.126]:63529 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726510AbfHLTC3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Aug 2019 15:02:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 12:01:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
+   d="scan'208";a="194025844"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Aug 2019 12:01:58 -0700
+Date:   Mon, 12 Aug 2019 12:01:58 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 11/19] mm/gup: Pass follow_page_context further
+ down the call stack
+Message-ID: <20190812190158.GA20634@iweiny-DESK2.sc.intel.com>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190809225833.6657-12-ira.weiny@intel.com>
+ <57000521-cc09-9c33-9fa4-1fae5a3972c2@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57000521-cc09-9c33-9fa4-1fae5a3972c2@nvidia.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add entry for the new proc sysctl KUnit test to the PROC SYSCTL section,
-and add Iurii as a maintainer.
+On Fri, Aug 09, 2019 at 05:18:31PM -0700, John Hubbard wrote:
+> On 8/9/19 3:58 PM, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > In preparation for passing more information (vaddr_pin) into
+> > follow_page_pte(), follow_devmap_pud(), and follow_devmap_pmd().
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+[snip]
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f0bd77e8a8a2f..0cac78807137b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12965,12 +12965,14 @@ F:	Documentation/filesystems/proc.txt
- PROC SYSCTL
- M:	Luis Chamberlain <mcgrof@kernel.org>
- M:	Kees Cook <keescook@chromium.org>
-+M:	Iurii Zaikin <yzaikin@google.com>
- L:	linux-kernel@vger.kernel.org
- L:	linux-fsdevel@vger.kernel.org
- S:	Maintained
- F:	fs/proc/proc_sysctl.c
- F:	include/linux/sysctl.h
- F:	kernel/sysctl.c
-+F:	kernel/sysctl-test.c
- F:	tools/testing/selftests/sysctl/
- 
- PS3 NETWORK SUPPORT
--- 
-2.23.0.rc1.153.gdeed80330f-goog
+> > @@ -786,7 +782,8 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+> >  static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+> >  		unsigned long start, unsigned long nr_pages,
+> >  		unsigned int gup_flags, struct page **pages,
+> > -		struct vm_area_struct **vmas, int *nonblocking)
+> > +		struct vm_area_struct **vmas, int *nonblocking,
+> > +		struct vaddr_pin *vaddr_pin)
+> 
+> I didn't expect to see more vaddr_pin arg passing, based on the commit
+> description. Did you want this as part of patch 9 or 10 instead? If not,
+> then let's mention it in the commit description.
 
+Yea that does seem out of place now that I look at it.  I'll add to the commit
+message because this is really getting vaddr_pin into the context _and_ passing
+it down the stack.  With all the rebasing I may have squashed something I did
+not mean to.  But I think this patch is ok because it is not to complicated to
+see what is going on.
+
+Thanks,
+Ira
+
+> 
+> >  {
+> >  	long ret = 0, i = 0;
+> >  	struct vm_area_struct *vma = NULL;
+> > @@ -797,6 +794,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+> >  
+> >  	VM_BUG_ON(!!pages != !!(gup_flags & FOLL_GET));
+> >  
+> > +	ctx.vaddr_pin = vaddr_pin;
+> > +
+> >  	/*
+> >  	 * If FOLL_FORCE is set then do not force a full fault as the hinting
+> >  	 * fault information is unrelated to the reference behaviour of a task
+> > @@ -1025,7 +1024,7 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+> >  	lock_dropped = false;
+> >  	for (;;) {
+> >  		ret = __get_user_pages(tsk, mm, start, nr_pages, flags, pages,
+> > -				       vmas, locked);
+> > +				       vmas, locked, vaddr_pin);
+> >  		if (!locked)
+> >  			/* VM_FAULT_RETRY couldn't trigger, bypass */
+> >  			return ret;
+> > @@ -1068,7 +1067,7 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+> >  		lock_dropped = true;
+> >  		down_read(&mm->mmap_sem);
+> >  		ret = __get_user_pages(tsk, mm, start, 1, flags | FOLL_TRIED,
+> > -				       pages, NULL, NULL);
+> > +				       pages, NULL, NULL, vaddr_pin);
+> >  		if (ret != 1) {
+> >  			BUG_ON(ret > 1);
+> >  			if (!pages_done)
+> > @@ -1226,7 +1225,7 @@ long populate_vma_page_range(struct vm_area_struct *vma,
+> >  	 * not result in a stack expansion that recurses back here.
+> >  	 */
+> >  	return __get_user_pages(current, mm, start, nr_pages, gup_flags,
+> > -				NULL, NULL, nonblocking);
+> > +				NULL, NULL, nonblocking, NULL);
+> >  }
+> >  
+> >  /*
+> > @@ -1311,7 +1310,7 @@ struct page *get_dump_page(unsigned long addr)
+> >  
+> >  	if (__get_user_pages(current, current->mm, addr, 1,
+> >  			     FOLL_FORCE | FOLL_DUMP | FOLL_GET, &page, &vma,
+> > -			     NULL) < 1)
+> > +			     NULL, NULL) < 1)
+> >  		return NULL;
+> >  	flush_cache_page(vma, addr, page_to_pfn(page));
+> >  	return page;
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index bc1a07a55be1..7e09f2f17ed8 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -916,8 +916,9 @@ static void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
+> >  }
+> >  
+> >  struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
+> > -		pmd_t *pmd, int flags, struct dev_pagemap **pgmap)
+> > +		pmd_t *pmd, int flags, struct follow_page_context *ctx)
+> >  {
+> > +	struct dev_pagemap **pgmap = &ctx->pgmap;
+> >  	unsigned long pfn = pmd_pfn(*pmd);
+> >  	struct mm_struct *mm = vma->vm_mm;
+> >  	struct page *page;
+> > @@ -1068,8 +1069,9 @@ static void touch_pud(struct vm_area_struct *vma, unsigned long addr,
+> >  }
+> >  
+> >  struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
+> > -		pud_t *pud, int flags, struct dev_pagemap **pgmap)
+> > +		pud_t *pud, int flags, struct follow_page_context *ctx)
+> >  {
+> > +	struct dev_pagemap **pgmap = &ctx->pgmap;
+> >  	unsigned long pfn = pud_pfn(*pud);
+> >  	struct mm_struct *mm = vma->vm_mm;
+> >  	struct page *page;
+> > diff --git a/mm/internal.h b/mm/internal.h
+> > index 0d5f720c75ab..46ada5279856 100644
+> > --- a/mm/internal.h
+> > +++ b/mm/internal.h
+> > @@ -12,6 +12,34 @@
+> >  #include <linux/pagemap.h>
+> >  #include <linux/tracepoint-defs.h>
+> >  
+> > +struct follow_page_context {
+> > +	struct dev_pagemap *pgmap;
+> > +	unsigned int page_mask;
+> > +	struct vaddr_pin *vaddr_pin;
+> > +};
+> > +
+> > +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> > +struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
+> > +		pmd_t *pmd, int flags, struct follow_page_context *ctx);
+> > +struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
+> > +		pud_t *pud, int flags, struct follow_page_context *ctx);
+> > +#else
+> > +static inline struct page *follow_devmap_pmd(struct vm_area_struct *vma,
+> > +	unsigned long addr, pmd_t *pmd, int flags,
+> > +	struct follow_page_context *ctx)
+> > +{
+> > +	return NULL;
+> > +}
+> > +
+> > +static inline struct page *follow_devmap_pud(struct vm_area_struct *vma,
+> > +	unsigned long addr, pud_t *pud, int flags,
+> > +	struct follow_page_context *ctx)
+> > +{
+> > +	return NULL;
+> > +}
+> > +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+> > +
+> > +
+> >  /*
+> >   * The set of flags that only affect watermark checking and reclaim
+> >   * behaviour. This is used by the MM to obey the caller constraints
+> > 
+> 
+> 
+> 
+> 
+> thanks,
+> -- 
+> John Hubbard
+> NVIDIA
