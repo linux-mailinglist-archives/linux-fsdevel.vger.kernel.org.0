@@ -2,103 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77D6B8A172
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 16:46:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE6208A1B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 16:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbfHLOqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 10:46:01 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39809 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbfHLOqA (ORCPT
+        id S1726956AbfHLO4X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 10:56:23 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35602 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbfHLO4X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 10:46:00 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x4so6408400ljj.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 07:45:59 -0700 (PDT)
+        Mon, 12 Aug 2019 10:56:23 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n4so7883739pgv.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 07:56:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZaGlV5OBaG8I83pvsjihid45NFnJRTn9496TwujIaXI=;
-        b=WIRUIIjknYqkFNwJtm38+0CsZRBPiSpzwtVX5R6JN55OGVYc4XsWYFX8X4zJLPeJKq
-         CSjXoysXYS5Y5zwLr7gvMjHYEzFyJW8nEQ5lJPD4OIOjy0krjWl0/wh+o8ejQRuz8dyZ
-         ZaqWAyxRJ7FHf86RVRZPM4Mv6VjuL49tMSTt4P5WgBhgovdP1LV++xjkwR3yhDFVvLPl
-         hmishGIPfyKnJTy1MB+0lRaL3sbqpkDJCOfrhB1GQ4HFWcr+OZ9x0jy6TDwn/uN1uPdG
-         jAOMLThn9V5WAjgyQKOBQDWZf80kAvxutL41GmstiWeFCnC8KZ0QjGZXxGjSpq5BI5FW
-         sDvQ==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3NQFlI4lPYDkvZgs+SnZFXq303TlZRy3bgOdazYblNc=;
+        b=NQ/9B5p6EJnc/jGagbLM/8utrsVRGSqpApLAwGccX5pyS3J/WcnaL76DY5ZPmNj/me
+         +sOQkXutAriyMqi+oLObLZvGQLAia8jcHXEZ76S2/2iX/m6q9ZxUBAuq6hc8fExbhUE5
+         WykTmRJksJRkfuwSeyqAdKimKYBeiv/vOihXA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZaGlV5OBaG8I83pvsjihid45NFnJRTn9496TwujIaXI=;
-        b=Hpexbb1YGme0gtrY4cDbP+9Wz0EHX21UNkBcsf0eyc5kgC+hXOb+swkDOtKayxMknB
-         KEFhywaTbZGSMvBuvhQldQelHqvwzZ7mg6+z8jYK1JZqIVCdFY2KCycKnXwdSxXsoeSt
-         pVrzE2df7t357xqR0wxyYCq1Kde+UB76DD6mvzcWEkwz5W01B/1zY1P0O4leBYrZqtJd
-         GuqsdouAfDAZiOVkvjmTmy1XFUG7CME5Zi6WlS2Z6tSokghoUmt9gWaeHJXM9CQaJhlt
-         R60fxtyG5FHjgQb6zvzXy4OHomVGqFDGWACgnxTHrnzWjpZcMQa7a/0ZqZM/BoV9COP5
-         b2KQ==
-X-Gm-Message-State: APjAAAWOkoSd4+AfDlFrZiv99cpcQpkhhq7ayO5O+3r1wYyaI9B2pxeg
-        h1LexZ6t0YCQuHQKCYJXn4Z2UjsvLpiFV5rre+rO
-X-Google-Smtp-Source: APXvYqzujkc2BH0FIqLuHrfT33Rlx6ggSYmZDFa3Ywl40gD0HkUkA9LWgXfs4wdbLflpo9wrcvV+NGkJ7yGDcN6IubE=
-X-Received: by 2002:a2e:9dc1:: with SMTP id x1mr6576889ljj.0.1565621158391;
- Mon, 12 Aug 2019 07:45:58 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3NQFlI4lPYDkvZgs+SnZFXq303TlZRy3bgOdazYblNc=;
+        b=qwd9Kzu0ixX9xQUiPF8BQlg+UnYfa05pgP3GvZZS7S8B7nTFE1+K5WKVnNlsIAp3hT
+         YWf6m4h91WHdjkwMPE4+RwcqZkSHkiSwOwrKppbGxgMZTRSwmzCXI9o5kDydSTxuldq8
+         TUN1fAuCVu6UBob/UT5mXv30C9us/DXtgSNk9GMJkMj10zFHpcRfXHsyQLJC+1/MEg/2
+         Nf/MAwYBa63rkop9c0aWqaK1icq0lez+vAGg73IKiCtj3F77StvBS+rYGQmskY5Top0e
+         CGuzs9b+19tF35HrHrxq+8bbQ84jOD6vNLS1F4cVdXkAAXfAlXHp2lzI4r23YJFecYGb
+         6wkQ==
+X-Gm-Message-State: APjAAAV2bDwvdKPJrqsH7J9c6SOOGCr3hT2dJaQBfYCJoVVyylzhhGew
+        2OtULcNhYx3vXYXMIygDzSSxIg==
+X-Google-Smtp-Source: APXvYqwENYmtyILjOnl4HilVvOmaVrKuBkJ28bAMVAwHSpsNFJRH+v3wmBUJf3pYNep/OXJa+KX7pQ==
+X-Received: by 2002:a65:4786:: with SMTP id e6mr29905703pgs.448.1565621782717;
+        Mon, 12 Aug 2019 07:56:22 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id y23sm5052754pfr.86.2019.08.12.07.56.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 07:56:21 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 10:56:20 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Robin Murphy <robin.murphy@arm.com>,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 1/6] mm/page_idle: Add per-pid idle page tracking
+ using virtual index
+Message-ID: <20190812145620.GB224541@google.com>
+References: <20190807171559.182301-1-joel@joelfernandes.org>
+ <20190807130402.49c9ea8bf144d2f83bfeb353@linux-foundation.org>
+ <20190807204530.GB90900@google.com>
+ <20190807135840.92b852e980a9593fe91fbf59@linux-foundation.org>
+ <20190807213105.GA14622@google.com>
+ <20190808080044.GA18351@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <20190731153443.4984-1-acgoide@tycho.nsa.gov> <CAHC9VhQUoDwBiLi+BiW=_Px18v3xMhhGYDD2mLdu9YZJDWw1yg@mail.gmail.com>
- <CAOQ4uxigYZunXgq0BubRFNM51Kh_g3wrtyNH77PozUX+3sM=aQ@mail.gmail.com>
- <CAHC9VhRpTuL2Lj1VFwHW4YLpx0hJVSxMnXefooHqsxpEUg6-0A@mail.gmail.com>
- <CAOQ4uxiGNXbZ-DWeXTkNM4ySFbBbo1XOF1=3pjknsf+EjbNuOw@mail.gmail.com>
- <16c7c0c4a60.280e.85c95baa4474aabc7814e68940a78392@paul-moore.com> <20190812134145.GA11343@quack2.suse.cz>
-In-Reply-To: <20190812134145.GA11343@quack2.suse.cz>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 12 Aug 2019 10:45:46 -0400
-Message-ID: <CAHC9VhTzQr3aUV8waM_VNQorDeWGz2SQuP9PVZO+oTWL+3oAHA@mail.gmail.com>
-Subject: Re: [PATCH] fanotify, inotify, dnotify, security: add security hook
- for fs notifications
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>, selinux@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808080044.GA18351@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 9:41 AM Jan Kara <jack@suse.cz> wrote:
-> On Sat 10-08-19 11:01:16, Paul Moore wrote:
-> > On August 10, 2019 6:05:27 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > >>>> Other than Casey's comments, and ACK, I'm not seeing much commentary
-> > >>>> on this patch so FS and LSM folks consider this your last chance - if
-> > >>>> I don't hear any objections by the end of this week I'll plan on
-> > >>>> merging this into selinux/next next week.
-> > >>>
-> > >>> Please consider it is summer time so people may be on vacation like I was...
-> > >>
-> > >> This is one of the reasons why I was speaking to the mailing list and
-> > >> not a particular individual :)
-> > >
-> > > Jan is fsnotify maintainer, so I think you should wait for an explicit ACK
-> > > from Jan or just merge the hook definition and ask Jan to merge to
-> > > fsnotify security hooks.
-> >
-> > Aaron posted his first patch a month ago in the beginning of July and I
-> > don't recall seeing any comments from Jan on any of the patch revisions.
-> > I would feel much better with an ACK/Reviewed-by from Jan, or you - which
-> > is why I sent that email - but I'm not going to wait forever and I'd like
-> > to get this into -next soon so we can get some testing.
->
-> Yeah, sorry for the delays. I'm aware of the patch but I was also on
-> vacation and pretty busy at work so Amir always beat me in commenting on
-> the patch and I didn't have much to add. Once Aaron fixes the latest
-> comments from Amir, I'll give the patch the final look and give my ack.
+On Thu, Aug 08, 2019 at 10:00:44AM +0200, Michal Hocko wrote:
+> On Wed 07-08-19 17:31:05, Joel Fernandes wrote:
+> > On Wed, Aug 07, 2019 at 01:58:40PM -0700, Andrew Morton wrote:
+> > > On Wed, 7 Aug 2019 16:45:30 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
+> > > 
+> > > > On Wed, Aug 07, 2019 at 01:04:02PM -0700, Andrew Morton wrote:
+> > > > > On Wed,  7 Aug 2019 13:15:54 -0400 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+> > > > > 
+> > > > > > In Android, we are using this for the heap profiler (heapprofd) which
+> > > > > > profiles and pin points code paths which allocates and leaves memory
+> > > > > > idle for long periods of time. This method solves the security issue
+> > > > > > with userspace learning the PFN, and while at it is also shown to yield
+> > > > > > better results than the pagemap lookup, the theory being that the window
+> > > > > > where the address space can change is reduced by eliminating the
+> > > > > > intermediate pagemap look up stage. In virtual address indexing, the
+> > > > > > process's mmap_sem is held for the duration of the access.
+> > > > > 
+> > > > > So is heapprofd a developer-only thing?  Is heapprofd included in
+> > > > > end-user android loads?  If not then, again, wouldn't it be better to
+> > > > > make the feature Kconfigurable so that Android developers can enable it
+> > > > > during development then disable it for production kernels?
+> > > > 
+> > > > Almost all of this code is already configurable with
+> > > > CONFIG_IDLE_PAGE_TRACKING. If you disable it, then all of this code gets
+> > > > disabled.
+> > > > 
+> > > > Or are you referring to something else that needs to be made configurable?
+> > > 
+> > > Yes - the 300+ lines of code which this patchset adds!
+> > > 
+> > > The impacted people will be those who use the existing
+> > > idle-page-tracking feature but who will not use the new feature.  I
+> > > guess we can assume this set is small...
+> > 
+> > Yes, I think this set should be small. The code size increase of page_idle.o
+> > is from ~1KB to ~2KB. Most of the extra space is consumed by
+> > page_idle_proc_generic() function which this patch adds. I don't think adding
+> > another CONFIG option to disable this while keeping existing
+> > CONFIG_IDLE_PAGE_TRACKING enabled, is worthwhile but I am open to the
+> > addition of such an option if anyone feels strongly about it. I believe that
+> > once this patch is merged, most like this new interface being added is what
+> > will be used more than the old interface (for some of the usecases) so it
+> > makes sense to keep it alive with CONFIG_IDLE_PAGE_TRACKING.
+> 
+> I would tend to agree with Joel here. The functionality falls into an
+> existing IDLE_PAGE_TRACKING config option quite nicely. If there really
+> are users who want to save some space and this is standing in the way
+> then they can easily add a new config option with some justification so
+> the savings are clear. Without that an additional config simply adds to
+> the already existing configurability complexity and balkanization.
 
-That is prefect, thanks.
+Michal, Andrew, Minchan,
 
--- 
-paul moore
-www.paul-moore.com
+Would you have any other review comments on the v5 series? This is just a new
+interface that does not disrupt existing users of the older page-idle
+tracking, so as such it is a safe change (as in, doesn't change existing
+functionality except for the draining bug fix).
+
+thanks,
+
+ - Joel
+
