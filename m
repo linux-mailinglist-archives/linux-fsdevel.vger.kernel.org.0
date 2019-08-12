@@ -2,230 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6961489544
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 03:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B71389555
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 04:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfHLBu7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Aug 2019 21:50:59 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41607 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbfHLBu6 (ORCPT
+        id S1726509AbfHLCHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Aug 2019 22:07:07 -0400
+Received: from mail-ot1-f71.google.com ([209.85.210.71]:47312 "EHLO
+        mail-ot1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbfHLCHH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Aug 2019 21:50:58 -0400
-Received: by mail-pl1-f194.google.com with SMTP id m9so47106182pls.8;
-        Sun, 11 Aug 2019 18:50:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5JtiWY0w31kuQOtn3l4X+8CaJzkxiVZy5vK9oZwhAyM=;
-        b=tN18OW3egtBoEIE9QN2L83YpkIuEmn8E/2vatlX2Rt8/d5Cz4UgSVajiq6e/mKLtaS
-         Y249S8PkRKY1XNNQCc1ShRk2rwVcEYBgq5dc/KhKvRDosjYbqzTKzsXamCtfiXYDc9Xp
-         e09h33F7vAARQiFw/FG8VCiqdIkvyyhBlY/mp3fdDfxf6u2KTJYoHRQkFO45IwfAa5bo
-         gJG8IrKfVZKwLlhGy/t3ERaR2nPJMfzZ5Lyz1p0oex5y7bLt3zvVM2vRFJ5rXSFt80t5
-         3snZBb+hSDGsUlRyup/QfXn5z03seNoHqcPJopyWhki+dM/QX6bD5iOeLfhwkSMlhTih
-         Gj3w==
+        Sun, 11 Aug 2019 22:07:07 -0400
+Received: by mail-ot1-f71.google.com with SMTP id g76so5886925otg.14
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2019 19:07:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5JtiWY0w31kuQOtn3l4X+8CaJzkxiVZy5vK9oZwhAyM=;
-        b=Wbw8fm51zM6+Z/vl5lKHDjQN3Y59AOd4sn6pZtN0WOw8imPTPeiG7cTMMo4KHaAus0
-         dVhn7Iqg6x04BP1+95q+p/1JvNJJ/WlwMbEBNMv1RDzRyUP+0Z/kND/ZM6HUzLVIPGtI
-         NHwYDUTJZjZKlwLHxxYOh3HebepGXJDwdR1SmEEoWOBG4nK5QXLBB/+vcdcw5UG2vwIT
-         dorfDQ7aEPMU38t0F29rsS6R8En6vbSmy/NljkfUoaBlLjCshnfBtsnPEhgs1OLwLJUq
-         GgoSa0AOaeut7w1PevjvvTFOTGUVzpRLVC1STjheZS7vc2YlPmABLRWrBNBqxUjFeuvX
-         qEGQ==
-X-Gm-Message-State: APjAAAVRkk8ukadmsDDEKmKl6OPedDj4d3rIjEH6QbD34MFA68Ir8tVa
-        XJNUutLZbhRWGfzdrRbPPEY=
-X-Google-Smtp-Source: APXvYqzBXwirWl6l+fEmHVCahvbTNzZTrBy2+Jlu3deIQj1LEMtfht+Rr+eRVfWYnMxSvK5SOCC2EQ==
-X-Received: by 2002:a17:902:e311:: with SMTP id cg17mr3605017plb.183.1565574657941;
-        Sun, 11 Aug 2019 18:50:57 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id j20sm100062363pfr.113.2019.08.11.18.50.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 11 Aug 2019 18:50:57 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-Date:   Sun, 11 Aug 2019 18:50:44 -0700
-Message-Id: <20190812015044.26176-3-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190812015044.26176-1-jhubbard@nvidia.com>
-References: <20190812015044.26176-1-jhubbard@nvidia.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=pA4ajK2mL+OR2q0DCzQWIvgz3qE+KSagbdoGlUva7a4=;
+        b=D0eLpGGKAduA+BJibNWMN9vtcfF5X/tsgClbDPnMb3O2BKk/6+eRbOQX7emnOeV5gD
+         rf/XxjoyvELFpFF/wj+Og7Vg7iYW+zxjeB1rlOMKYnqiQUVOaHUXj782qSRKyooO25XD
+         oG9Bk3aQHG4OTAU9QQq6yoa/vOY1DRvWirYFnphanK29DXIXLyH+2QphrzN4hy73CbGW
+         CJXTdW5K0cgvztGo9Iq3F2TvcCKxxVkshvD2oJcjL05/qzLS33D6fcMaauF8idnHhkPb
+         BtR54YlT7/fDiKiDjE9nbxbSqkb72S3hz9cw29JH24RFNeuC00zwNJNbrD9tWzroB+R7
+         e3Hg==
+X-Gm-Message-State: APjAAAV0yobyd9XpPH/EkeRUPiaGUhfthXMyWl1KquGHbBAGYZZNeSow
+        fjr+HexTy/ChUx3lhxMIezHXcYw2Gbicc11CaobsjmwAhZvy
+X-Google-Smtp-Source: APXvYqx1J6ZW+jxF/lQ3V1d2KJ2ik/J0TW7ZaJ61DK+gwmOM93ZnyWMxf+0k89SajqAmZLaFwW0gFQ58e5AGgbREvxXb7QiplNpo
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:e317:: with SMTP id u23mr20541853ioc.38.1565575626132;
+ Sun, 11 Aug 2019 19:07:06 -0700 (PDT)
+Date:   Sun, 11 Aug 2019 19:07:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001097b6058fe1fb22@google.com>
+Subject: BUG: Dentry still in use [unmount of nfsd nfsd]
+From:   syzbot <syzbot+2c95195d5d433f6ed6cb@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+Hello,
 
-This is the "vaddr_pin_pages" corresponding variant to
-get_user_pages_remote(), but with FOLL_PIN semantics: the implementation
-sets FOLL_PIN. That, in turn, means that the pages must ultimately be
-released by put_user_page*()--typically, via vaddr_unpin_pages*().
+syzbot found the following crash on:
 
-Note that the put_user_page*() requirement won't be truly
-required until all of the call sites have been converted, and
-the tracking of pages is actually activated.
+HEAD commit:    f4eb1423 Merge branch 'for-linus' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11ab1c74600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a4c9e9f08e9e8960
+dashboard link: https://syzkaller.appspot.com/bug?extid=2c95195d5d433f6ed6cb
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Also introduce vaddr_unpin_pages(), in order to have a simpler
-call for the error handling cases.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Use both of these new calls in the Infiniband drive, replacing
-get_user_pages_remote() and put_user_pages().
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2c95195d5d433f6ed6cb@syzkaller.appspotmail.com
 
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa0af7a86d4
+R13: 00000000004c018f R14: 00000000004d2228 R15: 0000000000000004
+BUG: Dentry 00000000117d3c54{i=0,n=clients}  still in use (1) [unmount of  
+nfsd nfsd]
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 18817 at fs/dcache.c:1595 umount_check  
+fs/dcache.c:1595 [inline]
+WARNING: CPU: 1 PID: 18817 at fs/dcache.c:1595 umount_check.cold+0xf5/0x116  
+fs/dcache.c:1576
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 18817 Comm: syz-executor.3 Not tainted 5.3.0-rc3+ #100
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2dc/0x755 kernel/panic.c:219
+  __warn.cold+0x20/0x4c kernel/panic.c:576
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+RIP: 0010:umount_check fs/dcache.c:1595 [inline]
+RIP: 0010:umount_check.cold+0xf5/0x116 fs/dcache.c:1576
+Code: 00 00 45 89 e8 4c 89 e1 53 4d 8b 0f 4c 89 f2 4c 89 e6 48 c7 c7 80 97  
+96 87 e8 61 a6 9f ff 48 c7 c7 00 98 96 87 e8 55 a6 9f ff <0f> 0b 58 e9 b1  
+15 ff ff e8 24 1f f0 ff e9 1d ff ff ff 45 31 f6 e9
+RSP: 0018:ffff888060187b88 EFLAGS: 00010282
+RAX: 0000000000000024 RBX: ffff8880624f8bb8 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815c3ba6 RDI: ffffed100c030f63
+RBP: ffff888060187bb8 R08: 0000000000000024 R09: fffffbfff11b42c5
+R10: fffffbfff11b42c4 R11: ffffffff88da1623 R12: ffff88803f50fa20
+R13: 0000000000000001 R14: 0000000000000000 R15: ffffffff88f75220
+  d_walk+0x283/0x950 fs/dcache.c:1305
+  do_one_tree+0x28/0x40 fs/dcache.c:1602
+  shrink_dcache_for_umount+0x72/0x170 fs/dcache.c:1618
+  generic_shutdown_super+0x6d/0x370 fs/super.c:443
+  kill_anon_super+0x3e/0x60 fs/super.c:1102
+  kill_litter_super+0x50/0x60 fs/super.c:1111
+  nfsd_umount+0x3f/0x90 fs/nfsd/nfsctl.c:1416
+  deactivate_locked_super+0x95/0x100 fs/super.c:331
+  vfs_get_super+0x210/0x270 fs/super.c:1185
+  nfsd_fs_get_tree+0x7a/0x90 fs/nfsd/nfsctl.c:1390
+  vfs_get_tree+0x8e/0x390 fs/super.c:1413
+  vfs_fsconfig_locked+0x236/0x3d0 fs/fsopen.c:232
+  __do_sys_fsconfig fs/fsopen.c:445 [inline]
+  __se_sys_fsconfig fs/fsopen.c:314 [inline]
+  __x64_sys_fsconfig+0x8e0/0xa40 fs/fsopen.c:314
+  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459829
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fa0af7a7c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+RAX: ffffffffffffffda RBX: 00007fa0af7a7c90 RCX: 0000000000459829
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000003
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa0af7a86d4
+R13: 00000000004c018f R14: 00000000004d2228 R15: 0000000000000004
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- drivers/infiniband/core/umem_odp.c | 15 +++++----
- include/linux/mm.h                 |  7 +++++
- mm/gup.c                           | 50 ++++++++++++++++++++++++++++++
- 3 files changed, 66 insertions(+), 6 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-index 53085896d718..fdff034a8a30 100644
---- a/drivers/infiniband/core/umem_odp.c
-+++ b/drivers/infiniband/core/umem_odp.c
-@@ -534,7 +534,7 @@ static int ib_umem_odp_map_dma_single_page(
- 	}
- 
- out:
--	put_user_page(page);
-+	vaddr_unpin_pages(&page, 1, &umem_odp->umem.vaddr_pin);
- 
- 	if (remove_existing_mapping) {
- 		ib_umem_notifier_start_account(umem_odp);
-@@ -635,9 +635,10 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
- 		 * complex (and doesn't gain us much performance in most use
- 		 * cases).
- 		 */
--		npages = get_user_pages_remote(owning_process, owning_mm,
-+		npages = vaddr_pin_pages_remote(owning_process, owning_mm,
- 				user_virt, gup_num_pages,
--				flags, local_page_list, NULL, NULL);
-+				flags, local_page_list, NULL, NULL,
-+				&umem_odp->umem.vaddr_pin);
- 		up_read(&owning_mm->mmap_sem);
- 
- 		if (npages < 0) {
-@@ -657,7 +658,8 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
- 					ret = -EFAULT;
- 					break;
- 				}
--				put_user_page(local_page_list[j]);
-+				vaddr_unpin_pages(&local_page_list[j], 1,
-+						  &umem_odp->umem.vaddr_pin);
- 				continue;
- 			}
- 
-@@ -684,8 +686,9 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
- 			 * ib_umem_odp_map_dma_single_page().
- 			 */
- 			if (npages - (j + 1) > 0)
--				put_user_pages(&local_page_list[j+1],
--					       npages - (j + 1));
-+				vaddr_unpin_pages(&local_page_list[j+1],
-+						  npages - (j + 1),
-+						  &umem_odp->umem.vaddr_pin);
- 			break;
- 		}
- 	}
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 61b616cd9243..2bd76ad8787e 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1606,6 +1606,13 @@ int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
- long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
- 		     unsigned int gup_flags, struct page **pages,
- 		     struct vaddr_pin *vaddr_pin);
-+long vaddr_pin_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
-+			    unsigned long start, unsigned long nr_pages,
-+			    unsigned int gup_flags, struct page **pages,
-+			    struct vm_area_struct **vmas, int *locked,
-+			    struct vaddr_pin *vaddr_pin);
-+void vaddr_unpin_pages(struct page **pages, unsigned long nr_pages,
-+		       struct vaddr_pin *vaddr_pin);
- void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
- 				  struct vaddr_pin *vaddr_pin, bool make_dirty);
- bool mapping_inode_has_layout(struct vaddr_pin *vaddr_pin, struct page *page);
-diff --git a/mm/gup.c b/mm/gup.c
-index 85f09958fbdc..bb95adfaf9b6 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -2518,6 +2518,38 @@ long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
- }
- EXPORT_SYMBOL(vaddr_pin_pages);
- 
-+/**
-+ * vaddr_pin_pages pin pages by virtual address and return the pages to the
-+ * user.
-+ *
-+ * @tsk:	the task_struct to use for page fault accounting, or
-+ *		NULL if faults are not to be recorded.
-+ * @mm:		mm_struct of target mm
-+ * @addr:	start address
-+ * @nr_pages:	number of pages to pin
-+ * @gup_flags:	flags to use for the pin
-+ * @pages:	array of pages returned
-+ * @vaddr_pin:	initialized meta information this pin is to be associated
-+ * with.
-+ *
-+ * This is the "vaddr_pin_pages" corresponding variant to
-+ * get_user_pages_remote(), but with FOLL_PIN semantics: the implementation sets
-+ * FOLL_PIN. That, in turn, means that the pages must ultimately be released
-+ * by put_user_page().
-+ */
-+long vaddr_pin_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
-+			    unsigned long start, unsigned long nr_pages,
-+			    unsigned int gup_flags, struct page **pages,
-+			    struct vm_area_struct **vmas, int *locked,
-+			    struct vaddr_pin *vaddr_pin)
-+{
-+	gup_flags |= FOLL_TOUCH | FOLL_REMOTE | FOLL_PIN;
-+
-+	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
-+				       locked, gup_flags, vaddr_pin);
-+}
-+EXPORT_SYMBOL(vaddr_pin_pages_remote);
-+
- /**
-  * vaddr_unpin_pages_dirty_lock - counterpart to vaddr_pin_pages
-  *
-@@ -2536,3 +2568,21 @@ void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
- 	__put_user_pages_dirty_lock(vaddr_pin, pages, nr_pages, make_dirty);
- }
- EXPORT_SYMBOL(vaddr_unpin_pages_dirty_lock);
-+
-+/**
-+ * vaddr_unpin_pages - simple, non-dirtying counterpart to vaddr_pin_pages
-+ *
-+ * @pages: array of pages returned
-+ * @nr_pages: number of pages in pages
-+ * @vaddr_pin: same information passed to vaddr_pin_pages
-+ *
-+ * Like vaddr_unpin_pages_dirty_lock, but for non-dirty pages. Useful in putting
-+ * back pages in an error case: they were never made dirty.
-+ */
-+void vaddr_unpin_pages(struct page **pages, unsigned long nr_pages,
-+		       struct vaddr_pin *vaddr_pin)
-+{
-+	__put_user_pages_dirty_lock(vaddr_pin, pages, nr_pages, false);
-+}
-+EXPORT_SYMBOL(vaddr_unpin_pages);
-+
--- 
-2.22.0
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
