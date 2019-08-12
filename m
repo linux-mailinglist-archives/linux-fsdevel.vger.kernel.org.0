@@ -2,139 +2,269 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEE138A87F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 22:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F3008A893
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 22:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbfHLUli (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 16:41:38 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45227 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfHLUli (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:41:38 -0400
-Received: by mail-pg1-f193.google.com with SMTP id o13so50054876pgp.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 13:41:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MJnh/DbbwUp2ykhuWtKroei6fTXCscBWC620YMU78kw=;
-        b=vB8BBLTcHyR/6MmManbwUwxuFJIulQIi8ssstEWavyxVjDjZTqCdDV4k+GvQznx2Gu
-         BYrmoSxq/p6EpObadBuog/qnQED0Er2g3FPY/R5mmU2+6prANR/EPeaPhjZJhguiIiRP
-         laVlnix+3k3ldsZoV0C1xagsklVYtYidBM9aE1xGrFVcLjBbwRpW6HahGY9+Avp/kWLm
-         T5NAN/tqvOLG0auDu2paiIhDdkHD9xVBreQFe50Qz3Fk4VEdJTBMNP4enXfrvN3t06qW
-         EUgtNhbhUYFQV5XLv75AMMsdUTUbhRhJq5GaejhlsHjGOrbIRPayAm9bBTghIOMPNAZO
-         gGvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MJnh/DbbwUp2ykhuWtKroei6fTXCscBWC620YMU78kw=;
-        b=Fh7oMqj/AtJ2eFUN1HllZsjN3aTbs7hzmUHcX7mdRW/cnZfDHlIpL9VrikXs6Y0kU5
-         5nPV1J+W3gULg9FoShySyvg6E11drK4PprqEu51kp+/gOBK0o89784r7lXS+evqrH5l7
-         3u9zeCVcYh68l/IDyUZK4AQOcJjvYw0PzUTmpMZgfDzUu62NkYYWiyf7f28vgKokPrt/
-         UpRd0v6KgL2SA7UhBmTRifYuVIdnKwhE73HNHqqkyxc/4ngXb1hrGkiRXk3J99HEl+Ms
-         MKJyFjixwRbr6jVtaUrMuDthIj5OLoFuc7Yhmt0tTv9GPt6jievQGeyvr2dlLY/P996/
-         +MyQ==
-X-Gm-Message-State: APjAAAWrBkA4+TmcJ4nf+C+5PxSId7BFTMDsQ5zINjVpf9F0zQPv3yx4
-        fkkiHgIqm6l07gTkXqSQUO0Gsny8lvex8pwj+87+DA==
-X-Google-Smtp-Source: APXvYqzmkY3rA1NydAKLLowsftOVMQA6KoE5ccWG/aJPzsMG71zwm21zQ2Wdnhb2Togz1F6UwE1Me36C6jQdnlOZ3bs=
-X-Received: by 2002:a63:b919:: with SMTP id z25mr31379684pge.201.1565642496668;
- Mon, 12 Aug 2019 13:41:36 -0700 (PDT)
+        id S1726808AbfHLUrA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 16:47:00 -0400
+Received: from mga02.intel.com ([134.134.136.20]:38434 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbfHLUrA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Aug 2019 16:47:00 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 13:46:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
+   d="scan'208";a="177592713"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga007.fm.intel.com with ESMTP; 12 Aug 2019 13:46:33 -0700
+Date:   Mon, 12 Aug 2019 13:46:33 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 12/19] mm/gup: Prep put_user_pages() to take an
+ vaddr_pin struct
+Message-ID: <20190812204633.GB20634@iweiny-DESK2.sc.intel.com>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190809225833.6657-13-ira.weiny@intel.com>
+ <12b6a576-7a64-102c-f4d7-7a4ad34df710@nvidia.com>
 MIME-Version: 1.0
-References: <20190716175021.9CA412173C@mail.kernel.org> <20190719000834.GA3228@google.com>
- <20190722200347.261D3218C9@mail.kernel.org> <CAFd5g45hdCxEavSxirr0un_uLzo5Z-J4gHRA06qjzcQrTzmjVg@mail.gmail.com>
- <20190722235411.06C1320840@mail.kernel.org> <20190724073125.xyzfywctrcvg6fmh@pathway.suse.cz>
- <CAFd5g47v3Mr4GEGOjqyYy9Jwwm+ow7ypbu9j88rxEN06QCzdxQ@mail.gmail.com>
- <20190726083148.d4gf57w2nt5k7t6n@pathway.suse.cz> <CAFd5g46iAhDZ5C_chi7oYLVOkwcoj6+0nw+kPWuXhqWwWKd9jA@mail.gmail.com>
- <CAFd5g473iFfvBnJs2pcwuJYgY+DpgD6RLzyDFL1otUuScgKUag@mail.gmail.com>
- <20190801211447.6D3D7206A2@mail.kernel.org> <CAFd5g47tk8x5iet=xfPVO6MphD3SsLtYQLrCi5O2h0bvdXwHtA@mail.gmail.com>
-In-Reply-To: <CAFd5g47tk8x5iet=xfPVO6MphD3SsLtYQLrCi5O2h0bvdXwHtA@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 12 Aug 2019 13:41:24 -0700
-Message-ID: <CAFd5g44bovSiiqGCip1Q4zBOUauXMcryxnPs8miOa0-QrPW61Q@mail.gmail.com>
-Subject: Re: [PATCH v9 04/18] kunit: test: add kunit_stream a std::stream like logger
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Petr Mladek <pmladek@suse.com>, Jeff Dike <jdike@addtoit.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@google.com>,
-        David Rientjes <rientjes@google.com>,
-        kunit-dev@googlegroups.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        wfg@linux.intel.com, Greg KH <gregkh@linuxfoundation.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Richard Weinberger <richard@nod.at>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Timothy Bird <Tim.Bird@sony.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12b6a576-7a64-102c-f4d7-7a4ad34df710@nvidia.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 2:43 PM Brendan Higgins
-<brendanhiggins@google.com> wrote:
->
-> On Thu, Aug 1, 2019 at 2:14 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Brendan Higgins (2019-08-01 11:59:57)
-> > > On Thu, Aug 1, 2019 at 11:55 AM Brendan Higgins
-> > > <brendanhiggins@google.com> wrote:
-> > > >
-> > > > On Fri, Jul 26, 2019 at 1:31 AM Petr Mladek <pmladek@suse.com> wrote:
-> > > >
-> > > > > To be honest I do not fully understand KUnit design. I am not
-> > > > > completely sure how the tested code is isolated from the running
-> > > > > system. Namely, I do not know if the tested code shares
-> > > > > the same locks with the system running the test.
-> > > >
-> > > > No worries, I don't expect printk to be the hang up in those cases. It
-> > > > sounds like KUnit has a long way to evolve before printk is going to
-> > > > be a limitation.
-> > >
-> > > So Stephen, what do you think?
-> > >
-> > > Do you want me to go forward with the new kunit_assert API wrapping
-> > > the string_stream as I have it now? Would you prefer to punt this to a
-> > > later patch? Or would you prefer something else?
-> > >
-> >
-> > I like the struct based approach. If anything, it can be adjusted to
-> > make the code throw some records into a spinlock later on and delay the
-> > formatting of the assertion if need be.
->
-> That's a fair point.
->
-> > Can you resend with that
-> > approach? I don't think I'll have any more comments after that.
+On Fri, Aug 09, 2019 at 05:30:00PM -0700, John Hubbard wrote:
+> On 8/9/19 3:58 PM, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > Once callers start to use vaddr_pin the put_user_pages calls will need
+> > to have access to this data coming in.  Prep put_user_pages() for this
+> > data.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-I sent a new revision, v12, that incorporates the kunit_assert stuff.
+[snip]
 
-Let me know what you think!
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index a7a9d2f5278c..10cfd30ff668 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -24,30 +24,41 @@
+> >  
+> >  #include "internal.h"
+> >  
+> > -/**
+> > - * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
+> > - * @pages:  array of pages to be maybe marked dirty, and definitely released.
+> 
+> A couple comments from our circular review chain: some fellow with the same
+> last name as you, recommended wording it like this:
+> 
+>       @pages:  array of pages to be put
+
+Sure, see below...
+
+> 
+> > - * @npages: number of pages in the @pages array.
+> > - * @make_dirty: whether to mark the pages dirty
+> > - *
+> > - * "gup-pinned page" refers to a page that has had one of the get_user_pages()
+> > - * variants called on that page.
+> > - *
+> > - * For each page in the @pages array, make that page (or its head page, if a
+> > - * compound page) dirty, if @make_dirty is true, and if the page was previously
+> > - * listed as clean. In any case, releases all pages using put_user_page(),
+> > - * possibly via put_user_pages(), for the non-dirty case.
+> > - *
+> > - * Please see the put_user_page() documentation for details.
+> > - *
+> > - * set_page_dirty_lock() is used internally. If instead, set_page_dirty() is
+> > - * required, then the caller should a) verify that this is really correct,
+> > - * because _lock() is usually required, and b) hand code it:
+> > - * set_page_dirty_lock(), put_user_page().
+> > - *
+> > - */
+> > -void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+> > -			       bool make_dirty)
+> > +static void __put_user_page(struct vaddr_pin *vaddr_pin, struct page *page)
+> > +{
+> > +	page = compound_head(page);
+> > +
+> > +	/*
+> > +	 * For devmap managed pages we need to catch refcount transition from
+> > +	 * GUP_PIN_COUNTING_BIAS to 1, when refcount reach one it means the
+> > +	 * page is free and we need to inform the device driver through
+> > +	 * callback. See include/linux/memremap.h and HMM for details.
+> > +	 */
+> > +	if (put_devmap_managed_page(page))
+> > +		return;
+> > +
+> > +	if (put_page_testzero(page))
+> > +		__put_page(page);
+> > +}
+> > +
+> > +static void __put_user_pages(struct vaddr_pin *vaddr_pin, struct page **pages,
+> > +			     unsigned long npages)
+> > +{
+> > +	unsigned long index;
+> > +
+> > +	/*
+> > +	 * TODO: this can be optimized for huge pages: if a series of pages is
+> > +	 * physically contiguous and part of the same compound page, then a
+> > +	 * single operation to the head page should suffice.
+> > +	 */
+> 
+> As discussed in the other review thread (""), let's just delete that comment,
+> as long as you're moving things around.
+
+Done.
+
+> 
+> 
+> > +	for (index = 0; index < npages; index++)
+> > +		__put_user_page(vaddr_pin, pages[index]);
+> > +}
+> > +
+> > +static void __put_user_pages_dirty_lock(struct vaddr_pin *vaddr_pin,
+> > +					struct page **pages,
+> > +					unsigned long npages,
+> > +					bool make_dirty)
+> 
+> Elsewhere in this series, we pass vaddr_pin at the end of the arg list.
+> Here we pass it at the beginning, and it caused a minor jar when reading it.
+> Obviously just bike shedding at this point, though. Either way. :)
+
+Yea I guess that is odd...  I changed it.  Not a big deal.
+
+> 
+> >  {
+> >  	unsigned long index;
+> >  
+> > @@ -58,7 +69,7 @@ void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+> >  	 */
+> >  
+> >  	if (!make_dirty) {
+> > -		put_user_pages(pages, npages);
+> > +		__put_user_pages(vaddr_pin, pages, npages);
+> >  		return;
+> >  	}
+> >  
+> > @@ -86,9 +97,58 @@ void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+> >  		 */
+> >  		if (!PageDirty(page))
+> >  			set_page_dirty_lock(page);
+> > -		put_user_page(page);
+> > +		__put_user_page(vaddr_pin, page);
+> >  	}
+> >  }
+> > +
+> > +/**
+> > + * put_user_page() - release a gup-pinned page
+> > + * @page:            pointer to page to be released
+> > + *
+> > + * Pages that were pinned via get_user_pages*() must be released via
+> > + * either put_user_page(), or one of the put_user_pages*() routines
+> > + * below. This is so that eventually, pages that are pinned via
+> > + * get_user_pages*() can be separately tracked and uniquely handled. In
+> > + * particular, interactions with RDMA and filesystems need special
+> > + * handling.
+> > + *
+> > + * put_user_page() and put_page() are not interchangeable, despite this early
+> > + * implementation that makes them look the same. put_user_page() calls must
+> > + * be perfectly matched up with get_user_page() calls.
+> > + */
+> > +void put_user_page(struct page *page)
+> > +{
+> > +	__put_user_page(NULL, page);
+> > +}
+> > +EXPORT_SYMBOL(put_user_page);
+> > +
+> > +/**
+> > + * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
+> > + * @pages:  array of pages to be maybe marked dirty, and definitely released.
+> 
+> Same here:
+> 
+>       @pages:  array of pages to be put
+
+Actually here is the only place.  Above was removing the text to be put here...
+
+Done -- I'll made a lead in patch because this was just copied text.
+
+> 
+> > + * @npages: number of pages in the @pages array.
+> > + * @make_dirty: whether to mark the pages dirty
+> > + *
+> > + * "gup-pinned page" refers to a page that has had one of the get_user_pages()
+> > + * variants called on that page.
+> > + *
+> > + * For each page in the @pages array, make that page (or its head page, if a
+> > + * compound page) dirty, if @make_dirty is true, and if the page was previously
+> > + * listed as clean. In any case, releases all pages using put_user_page(),
+> > + * possibly via put_user_pages(), for the non-dirty case.
+> > + *
+> > + * Please see the put_user_page() documentation for details.
+> > + *
+> > + * set_page_dirty_lock() is used internally. If instead, set_page_dirty() is
+> > + * required, then the caller should a) verify that this is really correct,
+> > + * because _lock() is usually required, and b) hand code it:
+> > + * set_page_dirty_lock(), put_user_page().
+> > + *
+> > + */
+> > +void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+> > +			       bool make_dirty)
+> > +{
+> > +	__put_user_pages_dirty_lock(NULL, pages, npages, make_dirty);
+> > +}
+> >  EXPORT_SYMBOL(put_user_pages_dirty_lock);
+> >  
+> >  /**
+> > @@ -102,15 +162,7 @@ EXPORT_SYMBOL(put_user_pages_dirty_lock);
+> >   */
+> >  void put_user_pages(struct page **pages, unsigned long npages)
+> >  {
+> > -	unsigned long index;
+> > -
+> > -	/*
+> > -	 * TODO: this can be optimized for huge pages: if a series of pages is
+> > -	 * physically contiguous and part of the same compound page, then a
+> > -	 * single operation to the head page should suffice.
+> > -	 */
+> > -	for (index = 0; index < npages; index++)
+> > -		put_user_page(pages[index]);
+> > +	__put_user_pages(NULL, pages, npages);
+> >  }
+> >  EXPORT_SYMBOL(put_user_pages);
+> >  
+> > 
+> 
+> This all looks pretty good, so regardless of the outcome of the minor
+> points above,
+>    
+>     Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+
+Thanks,
+Ira
+
+> 
+> 
+> thanks,
+> -- 
+> John Hubbard
+> NVIDIA
