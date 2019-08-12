@@ -2,116 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ECD88A91B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 23:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5F8A8A932
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 23:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfHLVQE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 17:16:04 -0400
-Received: from mga06.intel.com ([134.134.136.31]:44879 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbfHLVQE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 17:16:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 14:15:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
-   d="scan'208";a="376081222"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga006.fm.intel.com with ESMTP; 12 Aug 2019 14:15:37 -0700
-Date:   Mon, 12 Aug 2019 14:15:37 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        id S1727279AbfHLVUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 17:20:20 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4930 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbfHLVUU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Aug 2019 17:20:20 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d51d81e0001>; Mon, 12 Aug 2019 14:20:30 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 12 Aug 2019 14:20:19 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 12 Aug 2019 14:20:19 -0700
+Received: from MacBook-Pro-10.local (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 12 Aug
+ 2019 21:20:16 +0000
+Subject: Re: [RFC PATCH v2 15/19] mm/gup: Introduce vaddr_pin_pages()
+To:     Ira Weiny <ira.weiny@intel.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         Dan Williams <dan.j.williams@intel.com>,
         Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
- file object
-Message-ID: <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
+        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>,
+        <linux-xfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-ext4@vger.kernel.org>,
+        <linux-mm@kvack.org>
 References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-17-ira.weiny@intel.com>
- <20190812130039.GD24457@ziepe.ca>
- <20190812172826.GA19746@iweiny-DESK2.sc.intel.com>
- <20190812175615.GI24457@ziepe.ca>
+ <20190809225833.6657-16-ira.weiny@intel.com>
+ <6ed26a08-4371-9dc1-09eb-7b8a4689d93b@nvidia.com>
+ <20190812210013.GC20634@iweiny-DESK2.sc.intel.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <b4e15390-701d-c6e9-564c-04e6a3effd50@nvidia.com>
+Date:   Mon, 12 Aug 2019 14:20:14 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190812175615.GI24457@ziepe.ca>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190812210013.GC20634@iweiny-DESK2.sc.intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565644830; bh=JroT/x6S1SiN0zFyCuj22OCuZxP8/vKF5Bd4ngANWFg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=i3VfG8jwOmXxQPogIwZ3sMCwfa3CGn1sVpvN5L89ZpC8daRGO/R9vtPcQ47P9mJKh
+         RafMQn1lyj28wP20RL4bwfklVqGKlcfPAph9NXoIwgiQdHwPgcKbnROYw10gmdDVRB
+         1aS4zaWboi6HStNT7Yrmu295QTNK0j6K5HIrCLRwR8jCgH/8n6x020QR0zeCSySUVY
+         VAXLG041hhDzAzbF3ygoB+7XO9fFnjFaejfE1ChOqzhEU5/hswkEAbHCgQ7dScaDdG
+         w+6XfT+PtAoSQVM3gP/Vv3ydQrcAmDn+XK4KuZZlDuKzgjlPJSCpn8JEDKzDbcX5Uy
+         UcyfVCRj6Jjvg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 02:56:15PM -0300, Jason Gunthorpe wrote:
-> On Mon, Aug 12, 2019 at 10:28:27AM -0700, Ira Weiny wrote:
-> > On Mon, Aug 12, 2019 at 10:00:40AM -0300, Jason Gunthorpe wrote:
-> > > On Fri, Aug 09, 2019 at 03:58:30PM -0700, ira.weiny@intel.com wrote:
-> > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > 
-> > > > In order for MRs to be tracked against the open verbs context the ufile
-> > > > needs to have a pointer to hand to the GUP code.
-> > > > 
-> > > > No references need to be taken as this should be valid for the lifetime
-> > > > of the context.
-> > > > 
-> > > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > > >  drivers/infiniband/core/uverbs.h      | 1 +
-> > > >  drivers/infiniband/core/uverbs_main.c | 1 +
-> > > >  2 files changed, 2 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
-> > > > index 1e5aeb39f774..e802ba8c67d6 100644
-> > > > +++ b/drivers/infiniband/core/uverbs.h
-> > > > @@ -163,6 +163,7 @@ struct ib_uverbs_file {
-> > > >  	struct page *disassociate_page;
-> > > >  
-> > > >  	struct xarray		idr;
-> > > > +	struct file             *sys_file; /* backpointer to system file object */
-> > > >  };
-> > > 
-> > > The 'struct file' has a lifetime strictly shorter than the
-> > > ib_uverbs_file, which is kref'd on its own lifetime. Having a back
-> > > pointer like this is confouding as it will be invalid for some of the
-> > > lifetime of the struct.
-> > 
-> > Ah...  ok.  I really thought it was the other way around.
-> > 
-> > __fput() should not call ib_uverbs_close() until the last reference on struct
-> > file is released...  What holds references to struct ib_uverbs_file past that?
+On 8/12/19 2:00 PM, Ira Weiny wrote:
+> On Fri, Aug 09, 2019 at 05:09:54PM -0700, John Hubbard wrote:
+>> On 8/9/19 3:58 PM, ira.weiny@intel.com wrote:
+>>> From: Ira Weiny <ira.weiny@intel.com>
+...
 > 
-> Child fds hold onto the internal ib_uverbs_file until they are closed
-
-The FDs hold the struct file, don't they?
-
+> At one point I wanted to (and had in my tree) a new flag but I went away from
+> it.  Prior to the discussion on mlock last week I did not think we needed it.
+> But I'm ok to add it back in.
 > 
-> > Perhaps I need to add this (untested)?
-> > 
-> > diff --git a/drivers/infiniband/core/uverbs_main.c
-> > b/drivers/infiniband/core/uverbs_main.c
-> > index f628f9e4c09f..654e774d9cf2 100644
-> > +++ b/drivers/infiniband/core/uverbs_main.c
-> > @@ -1125,6 +1125,8 @@ static int ib_uverbs_close(struct inode *inode, struct file *filp)
-> >         list_del_init(&file->list);
-> >         mutex_unlock(&file->device->lists_mutex);
-> >  
-> > +       file->sys_file = NULL;
+> I was not ignoring the idea for this RFC I just wanted to get this out there
+> for people to see.  I see that you threw out a couple of patches which add this
+> flag in.
 > 
-> Now this has unlocked updates to that data.. you'd need some lock and
-> get not zero pattern
+> FWIW, I think it would be good to differentiate between an indefinite pinned
+> page vs a referenced "gotten" page.
+> 
+> What you and I have been working on is the former.  So it would be easy to
+> change your refcounting patches to simply key off of FOLL_PIN.
+> 
+> Would you like me to add in your FOLL_PIN patches to this series?
 
-You can't call "get" here because I'm 99% sure we only get here when struct
-file has no references left...  I could be wrong.  It took me a while to work
-through the reference counting so I could have missed something.
+Sure, that would be perfect. They don't make any sense on their own, and
+it's all part of the same design idea.
 
-Ira
-
+thanks,
+-- 
+John Hubbard
+NVIDIA
