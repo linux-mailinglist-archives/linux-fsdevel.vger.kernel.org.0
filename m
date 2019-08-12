@@ -2,143 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C19C58AB63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 01:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6A948AB6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 01:49:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfHLXqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 19:46:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39536 "EHLO mail.kernel.org"
+        id S1726753AbfHLXtv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 19:49:51 -0400
+Received: from mga05.intel.com ([192.55.52.43]:48708 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbfHLXqq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 19:46:46 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E054D20679;
-        Mon, 12 Aug 2019 23:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565653605;
-        bh=B5M35uPs7D5CLgV2WuA3jEwtQw8IijPFRqyXw/4bWMU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=AGOwiTgbdj+2ifl0a7Xbp5/lsMWfdJc7+aAllnZ0hjKfSs/gNRN2411MBEaSKQzNW
-         jmCAe62dNE3Eo33h9i7ShysYfWASja+7gi/ROqRCoY/PPSVzU5+gcDFa0QwS9wu2/G
-         09nGYZB8GjciLbmMfntmYaBwKJxcaqwUc60bVJjM=
-Content-Type: text/plain; charset="utf-8"
+        id S1726296AbfHLXtv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Aug 2019 19:49:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 16:49:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,379,1559545200"; 
+   d="scan'208";a="200305528"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga004.fm.intel.com with ESMTP; 12 Aug 2019 16:49:50 -0700
+Date:   Mon, 12 Aug 2019 16:49:50 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     john.hubbard@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
+Message-ID: <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
+References: <20190812015044.26176-1-jhubbard@nvidia.com>
+ <20190812015044.26176-3-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190812182421.141150-5-brendanhiggins@google.com>
-References: <20190812182421.141150-1-brendanhiggins@google.com> <20190812182421.141150-5-brendanhiggins@google.com>
-Subject: Re: [PATCH v12 04/18] kunit: test: add assertion printing library
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, shuah@kernel.org,
-        tytso@mit.edu, yamada.masahiro@socionext.com
-User-Agent: alot/0.8.1
-Date:   Mon, 12 Aug 2019 16:46:44 -0700
-Message-Id: <20190812234644.E054D20679@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812015044.26176-3-jhubbard@nvidia.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting Brendan Higgins (2019-08-12 11:24:07)
-> Add `struct kunit_assert` and friends which provide a structured way to
-> capture data from an expectation or an assertion (introduced later in
-> the series) so that it may be printed out in the event of a failure.
->=20
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+On Sun, Aug 11, 2019 at 06:50:44PM -0700, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> This is the "vaddr_pin_pages" corresponding variant to
+> get_user_pages_remote(), but with FOLL_PIN semantics: the implementation
+> sets FOLL_PIN. That, in turn, means that the pages must ultimately be
+> released by put_user_page*()--typically, via vaddr_unpin_pages*().
+> 
+> Note that the put_user_page*() requirement won't be truly
+> required until all of the call sites have been converted, and
+> the tracking of pages is actually activated.
+> 
+> Also introduce vaddr_unpin_pages(), in order to have a simpler
+> call for the error handling cases.
+> 
+> Use both of these new calls in the Infiniband drive, replacing
+> get_user_pages_remote() and put_user_pages().
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 > ---
+>  drivers/infiniband/core/umem_odp.c | 15 +++++----
+>  include/linux/mm.h                 |  7 +++++
+>  mm/gup.c                           | 50 ++++++++++++++++++++++++++++++
+>  3 files changed, 66 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
+> index 53085896d718..fdff034a8a30 100644
+> --- a/drivers/infiniband/core/umem_odp.c
+> +++ b/drivers/infiniband/core/umem_odp.c
+> @@ -534,7 +534,7 @@ static int ib_umem_odp_map_dma_single_page(
+>  	}
+>  
+>  out:
+> -	put_user_page(page);
+> +	vaddr_unpin_pages(&page, 1, &umem_odp->umem.vaddr_pin);
+>  
+>  	if (remove_existing_mapping) {
+>  		ib_umem_notifier_start_account(umem_odp);
+> @@ -635,9 +635,10 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
+>  		 * complex (and doesn't gain us much performance in most use
+>  		 * cases).
+>  		 */
+> -		npages = get_user_pages_remote(owning_process, owning_mm,
+> +		npages = vaddr_pin_pages_remote(owning_process, owning_mm,
+>  				user_virt, gup_num_pages,
+> -				flags, local_page_list, NULL, NULL);
+> +				flags, local_page_list, NULL, NULL,
+> +				&umem_odp->umem.vaddr_pin);
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Thinking about this part of the patch... is this pin really necessary?  This
+code is not doing a long term pin.  The page just needs a reference while we
+map it into the devices page tables.  Once that is done we should get notifiers
+if anything changes and we can adjust.  right?
 
-Just some minor nits below
+Ira
 
-> diff --git a/include/kunit/assert.h b/include/kunit/assert.h
-> new file mode 100644
-> index 0000000000000..55f1b88b0cb4d
-> --- /dev/null
-> +++ b/include/kunit/assert.h
-> @@ -0,0 +1,183 @@
-[...]
-> +                           struct string_stream *stream);
+>  		up_read(&owning_mm->mmap_sem);
+>  
+>  		if (npages < 0) {
+> @@ -657,7 +658,8 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
+>  					ret = -EFAULT;
+>  					break;
+>  				}
+> -				put_user_page(local_page_list[j]);
+> +				vaddr_unpin_pages(&local_page_list[j], 1,
+> +						  &umem_odp->umem.vaddr_pin);
+>  				continue;
+>  			}
+>  
+> @@ -684,8 +686,9 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
+>  			 * ib_umem_odp_map_dma_single_page().
+>  			 */
+>  			if (npages - (j + 1) > 0)
+> -				put_user_pages(&local_page_list[j+1],
+> -					       npages - (j + 1));
+> +				vaddr_unpin_pages(&local_page_list[j+1],
+> +						  npages - (j + 1),
+> +						  &umem_odp->umem.vaddr_pin);
+>  			break;
+>  		}
+>  	}
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 61b616cd9243..2bd76ad8787e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1606,6 +1606,13 @@ int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
+>  long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
+>  		     unsigned int gup_flags, struct page **pages,
+>  		     struct vaddr_pin *vaddr_pin);
+> +long vaddr_pin_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
+> +			    unsigned long start, unsigned long nr_pages,
+> +			    unsigned int gup_flags, struct page **pages,
+> +			    struct vm_area_struct **vmas, int *locked,
+> +			    struct vaddr_pin *vaddr_pin);
+> +void vaddr_unpin_pages(struct page **pages, unsigned long nr_pages,
+> +		       struct vaddr_pin *vaddr_pin);
+>  void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
+>  				  struct vaddr_pin *vaddr_pin, bool make_dirty);
+>  bool mapping_inode_has_layout(struct vaddr_pin *vaddr_pin, struct page *page);
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 85f09958fbdc..bb95adfaf9b6 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2518,6 +2518,38 @@ long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
+>  }
+>  EXPORT_SYMBOL(vaddr_pin_pages);
+>  
+> +/**
+> + * vaddr_pin_pages pin pages by virtual address and return the pages to the
+> + * user.
+> + *
+> + * @tsk:	the task_struct to use for page fault accounting, or
+> + *		NULL if faults are not to be recorded.
+> + * @mm:		mm_struct of target mm
+> + * @addr:	start address
+> + * @nr_pages:	number of pages to pin
+> + * @gup_flags:	flags to use for the pin
+> + * @pages:	array of pages returned
+> + * @vaddr_pin:	initialized meta information this pin is to be associated
+> + * with.
+> + *
+> + * This is the "vaddr_pin_pages" corresponding variant to
+> + * get_user_pages_remote(), but with FOLL_PIN semantics: the implementation sets
+> + * FOLL_PIN. That, in turn, means that the pages must ultimately be released
+> + * by put_user_page().
+> + */
+> +long vaddr_pin_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
+> +			    unsigned long start, unsigned long nr_pages,
+> +			    unsigned int gup_flags, struct page **pages,
+> +			    struct vm_area_struct **vmas, int *locked,
+> +			    struct vaddr_pin *vaddr_pin)
+> +{
+> +	gup_flags |= FOLL_TOUCH | FOLL_REMOTE | FOLL_PIN;
 > +
-> +struct kunit_fail_assert {
-> +       struct kunit_assert assert;
-> +};
-> +
-> +void kunit_fail_assert_format(const struct kunit_assert *assert,
-> +                             struct string_stream *stream);
-> +
-> +#define KUNIT_INIT_FAIL_ASSERT_STRUCT(test, type) {                     =
-      \
-> +               .assert =3D KUNIT_INIT_ASSERT_STRUCT(test,               =
-        \
-> +                                                  type,                 =
-      \
-> +                                                  kunit_fail_assert_form=
-at)   \
-
-This one got indented one too many times?
-
+> +	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
+> +				       locked, gup_flags, vaddr_pin);
 > +}
+> +EXPORT_SYMBOL(vaddr_pin_pages_remote);
 > +
-> +struct kunit_unary_assert {
-> +       struct kunit_assert assert;
-> +       const char *condition;
-> +       bool expected_true;
-> +};
+>  /**
+>   * vaddr_unpin_pages_dirty_lock - counterpart to vaddr_pin_pages
+>   *
+> @@ -2536,3 +2568,21 @@ void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
+>  	__put_user_pages_dirty_lock(vaddr_pin, pages, nr_pages, make_dirty);
+>  }
+>  EXPORT_SYMBOL(vaddr_unpin_pages_dirty_lock);
 > +
-> +void kunit_unary_assert_format(const struct kunit_assert *assert,
-> +                              struct string_stream *stream);
-> +
-[...]
-> +#define KUNIT_INIT_BINARY_STR_ASSERT_STRUCT(test,                       =
-      \
-> +                                           type,                        =
-      \
-> +                                           op_str,                      =
-      \
-> +                                           left_str,                    =
-      \
-> +                                           left_val,                    =
-      \
-> +                                           right_str,                   =
-      \
-> +                                           right_val) {                 =
-      \
-> +       .assert =3D KUNIT_INIT_ASSERT_STRUCT(test,                       =
-        \
-> +                                          type,                         =
-      \
-> +                                          kunit_binary_str_assert_format=
-),    \
-> +       .operation =3D op_str,                                           =
-        \
-> +       .left_text =3D left_str,                                         =
-        \
-> +       .left_value =3D left_val,                                        =
-        \
-> +       .right_text =3D right_str,                                       =
-        \
-> +       .right_value =3D right_val                                       =
-        \
+> +/**
+> + * vaddr_unpin_pages - simple, non-dirtying counterpart to vaddr_pin_pages
+> + *
+> + * @pages: array of pages returned
+> + * @nr_pages: number of pages in pages
+> + * @vaddr_pin: same information passed to vaddr_pin_pages
+> + *
+> + * Like vaddr_unpin_pages_dirty_lock, but for non-dirty pages. Useful in putting
+> + * back pages in an error case: they were never made dirty.
+> + */
+> +void vaddr_unpin_pages(struct page **pages, unsigned long nr_pages,
+> +		       struct vaddr_pin *vaddr_pin)
+> +{
+> +	__put_user_pages_dirty_lock(vaddr_pin, pages, nr_pages, false);
 > +}
-
-It would be nice to have kernel doc on these macros so we know how to
-use them.
-
+> +EXPORT_SYMBOL(vaddr_unpin_pages);
+> +
+> -- 
+> 2.22.0
+> 
