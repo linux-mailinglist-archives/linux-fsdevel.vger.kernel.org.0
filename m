@@ -2,59 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8918A390
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 18:43:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21BBF8A391
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 18:43:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbfHLQmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 12:42:49 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55658 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfHLQmt (ORCPT
+        id S1726786AbfHLQmv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 12:42:51 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43595 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfHLQmv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 12:42:49 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f72so145667wmf.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 09:42:47 -0700 (PDT)
+        Mon, 12 Aug 2019 12:42:51 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p13so30570044wru.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 09:42:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=plexistor-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/FKPizWGbGVEz/UndPoqN8/HIvU7KLf2kRrG7aN8su4=;
-        b=SJ5/NSuU5jYKbhI5Y1Mi7OcSVxKcng73BgI8hiwV+1n7et0QJ7YYCeyaxV8R7pjrgq
-         8UUz9Lq1NGGemGNE6CZceT22ochp/eIfFo1pENkK2C3Eu/Fzsu8YxezsWdDzbsWDOdr+
-         RzF43Unuo7/jJk+rjrAfNhtVQzUIbay/Td/ix3rRjGcv/KsMGZmWaRwwJfi4n74U1pco
-         fTs4CMtM9CyCTcGfJP9WK3O6oADKbjOUaBsEYjMz98btLxIkif/yMdnHgHObho1Wcjhu
-         dL5l0vRfzYbljfDNT2LJCb/Fv9l8ND3QydYOjIMEV5S6OUq3uSHUaTMK+F8Dgu/Nncje
-         3Sag==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=tomYsWi3MVaX9iVQ29F1A+RyVCL1vdq7gJSEqFPbu7g=;
+        b=JbE/yrxqOGer4sYs8cG0frn3AkwvFQp3x73SuGQnhBbQUlG66RGwjn5LtVcGMWCDEa
+         EiByPDY7QRKsnjVci83Pia8BH8NC5VlW+tej3PnoybSFNSzSuSkvkAs2FlSda8r4n8aG
+         6GEQhu2w32FfcQN6i7H/feERsPZdjrdQRkjJQGAv6nJkqsEHbwVHyJCKtbANI98RGahf
+         A+w5t80k6aoMRYpalv5nhU6SVKaoyqqQRdJBjkPZ56Dmh8DMMSWTp+Nqa4polpybLPDT
+         HdBlJpzrv2SdbNmcfQ7QnBPnUmXmzi2UG1tyBZyB2qBODrxAL3GHIanzbTZIwmIbPQ+j
+         E6sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/FKPizWGbGVEz/UndPoqN8/HIvU7KLf2kRrG7aN8su4=;
-        b=ug/mw/c2av4jS1aaOZUnZ5wGq2n9xFd5Xgkm8OMQ0Wi+smG4y9lP4BMnGeG1Ch2FLs
-         Ko0U+VEG5YddqbPHqoBlAnOMIkEknaOpOuAAbLFHcpddnOpPxiaH7GhW1w04VDyXHxQh
-         uLfsHL4eTfTbgmb6lod6aJXaorYDu8Ewl0U3m2AmsiBh0jqkABbIgCg81spUKGNHFpTt
-         Iv5UcXGzyhY7rsm75fL55OXcK9BRtZVY+9FLtLQX/B05gldGnkxGaFQuW0a02JAWVBmU
-         tSVt0dMTV2OGkjYoF+zYUUOJpMetflanrnUkG4ZLDMm+pYllISWgFHd7QJU3h7Agy4rU
-         UsZQ==
-X-Gm-Message-State: APjAAAVSUlpz4DbxoHG/pct2GTERfl7gKljrh9qPjfbrdjEHmNg7xQ+b
-        H0AFFvCV1Ktx3jqtH/Se79xBSA==
-X-Google-Smtp-Source: APXvYqwKRrNH5qC69r+xsOFF+2TtVoxXns7c2KHnTfJnSGi/vQU+4ZCTXdaZM4ZqrfET8zeNighD5Q==
-X-Received: by 2002:a7b:c632:: with SMTP id p18mr223351wmk.114.1565628166876;
-        Mon, 12 Aug 2019 09:42:46 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tomYsWi3MVaX9iVQ29F1A+RyVCL1vdq7gJSEqFPbu7g=;
+        b=YLKL0Jit6u6oQjluD6EnT8xP1vedEs7Vp3cWP2yAQ2Cr2zZ0W1Bvym4moRcpPIuD8m
+         GOfu3gONBQa2xqkIYZoJug/lV+4C8YFmu37vPJ/dOyEV7avG35yA6cZEpnDCGF6vH7tM
+         pVNY6PCJES5vLEpmXs/YkQk1jJSVH2WzBjylF0DQJI8jdZqw1hoYOfYpPBfUz5O1SmCZ
+         /Pe852H/+sFBhfY2ejLaljP5WYZcnF9oQ0QixFX5NmGUvf+PSCmoRqwKB+qwczkX8tMk
+         RIVyak/qEi82bc592fNrUAB4uAUlY8veT6TMhr7EbN34okbP8fDg/0BD48pkgiNgi47h
+         QmPw==
+X-Gm-Message-State: APjAAAWcu4W956klN/3v1ePx/7EG/qVhcro0/M/sQQGpC8pzBwPyODaM
+        R3qeE5ZKD20uBP9bRYnrI7ewdmx6e2I=
+X-Google-Smtp-Source: APXvYqw+rFowEwgR5CBJyYWT+QoIVWmxEaEXXCYz1fvn/HGjLELH/66K8DrUHJucd6dDvoxYMh9P7Q==
+X-Received: by 2002:adf:f5c5:: with SMTP id k5mr9175405wrp.42.1565628169035;
+        Mon, 12 Aug 2019 09:42:49 -0700 (PDT)
 Received: from Bfire.plexistor.com ([217.70.211.18])
-        by smtp.googlemail.com with ESMTPSA id w13sm46285233wre.44.2019.08.12.09.42.45
+        by smtp.googlemail.com with ESMTPSA id i5sm8901563wrn.48.2019.08.12.09.42.47
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 09:42:46 -0700 (PDT)
+        Mon, 12 Aug 2019 09:42:48 -0700 (PDT)
 From:   Boaz Harrosh <boaz@plexistor.com>
 X-Google-Original-From: Boaz Harrosh <boazh@netapp.com>
 To:     Boaz Harrosh <boaz@plexistor.com>,
         Boaz Harrosh <ooo@electrozaur.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Cc:     Boaz Harrosh <boazh@netapp.com>
-Subject: [PATCHSET 00/16] zuf: ZUFS Zero-copy User-mode FileSystem
-Date:   Mon, 12 Aug 2019 19:42:28 +0300
-Message-Id: <20190812164244.15580-1-boazh@netapp.com>
+Subject: [PATCH 01/16] fs: Add the ZUF filesystem to the build + License
+Date:   Mon, 12 Aug 2019 19:42:29 +0300
+Message-Id: <20190812164244.15580-2-boazh@netapp.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190812164244.15580-1-boazh@netapp.com>
+References: <20190812164244.15580-1-boazh@netapp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -62,192 +64,268 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I would please like to submit the Kernel code part of the ZUFS file system,
-for review.
+This adds the ZUF filesystem-in-user_mode module to the
+fs/ build system.
 
-ZUFS is a full implementation of a VFS filesystem. But mainly it is a very
-new way to communicate with user-mode servers.
-With performance and scalability never seen before. (<4us latency)
-Why? the core communication with user-mode is completely lockless,
-per-cpu locality, NUMA aware.
+Also added:
+	* fs/zuf/Kconfig
+	* fs/zuf/module.c - This file contains the LICENCE
+			    of zuf code base
+	* fs/zuf/Makefile - Rather empty Makefile with only
+			    module.c above
 
-The Kernel code presented here can be found at:
-	https://github.com/NetApp/zufs-zuf upstream
+I add the fs/zuf/Makefile to demonstrate that at every
+patch-set stage code still compiles and there are no external
+references outside of the code already submitted.
 
-And the User-mode Server + example FSs here:
-	https://github.com/NetApp/zufs-zus
+Off course only at the very last patch we have a working ZUF feeder
 
-ZUFS - stands for Zero-copy User-mode FS
-The Intention of this project was performance and low-latency.
-* True zero copy end to end of both data and meta data.
-* Very *low latency*, very high CPU locality, lock-less parallelism.
-* Synchronous operations (for low latency)
-* Numa awareness
+[LICENCE]
 
-Short description:
-  ZUFS is a from scratch implementation of a filesystem-in-user-space, which
-  tries to address the above goals. from the get go it is aimed for pmem
-  based FSs. But supports any other type of FSs.
-  The novelty of this project is that the interface is designed with a modern
-  multi-core NUMA machine in mind down to the ABI.
-  Also it utilizes the normal mount API of the Kernel.
-  Multiple block devices are supported per superblock, Kernel owns those
-  devices. FileSystem types are registered/exposed via the regular way
+  zuf.ko is a GPLv2 licensed project.
 
-The Kernel is released as a pure GPLv2 License. The user-mode core is
-BSD-3 so to be friendly with other OSs.
+  However the ZUS user mode Server is a BSD-3-Clause licensed
+  project.
+  Therefor you will see that:
+	zus_api.h
+	md_def.h
+	md.h
+	t2.h
+  Are common files with the ZUS project. And are separately dual
+  Licensed as:
+	GPL-2.0 WITH Linux-syscall-note or BSD-3-Clause.
 
-Current status: There are a couple of trivial open-source filesystem
-implementations and a full blown proprietary implementation from Netapp.
- 3 more ports to more serious open-source filesystems are on the way.
-A usermode CEPH client, a ZFS implementation, and port of the infamous PMFS
-to demonstrate the amazing pmem performance under zufs.
-(Will be released as Open source when they are ready)
+  Any code contributor to these headers should note that her/his code to
+  these files only, is dual licensed.
 
-Together with the Kernel module submitted here the User-mode-Server and the
-zusFSs User-mode plugins, pass Netapp QA including xfstests + internal QA tests.
-And is released to costumers as Maxdata 1.5.
-So it is very stable and performant
+  This is for the obvious reasons as these headers define the API between
+  Kernel and the user-mode Server.
 
-In the git repository above there is also a backport for rhel 7.6 and 7.7
-Including rpm packages for Kernel and Server components.
-(Also available evaluation licenses of Maxdata 1.5 for developers.
- Please contact Amit Golander <Amit.Golander@netapp.com> if you need one)
+Signed-off-by: Boaz Harrosh <boazh@netapp.com>
+---
+ fs/Kconfig       |   1 +
+ fs/Makefile      |   1 +
+ fs/zuf/Kconfig   |  24 ++++++++++++
+ fs/zuf/Makefile  |  14 +++++++
+ fs/zuf/module.c  |  28 +++++++++++++
+ fs/zuf/zus_api.h | 100 +++++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 168 insertions(+)
+ create mode 100644 fs/zuf/Kconfig
+ create mode 100644 fs/zuf/Makefile
+ create mode 100644 fs/zuf/module.c
+ create mode 100644 fs/zuf/zus_api.h
 
-Performance:
-A simple fio direct 4k random write test with incrementing number
-of threads.
+diff --git a/fs/Kconfig b/fs/Kconfig
+index bfb1c6095c7a..452244733bb5 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -261,6 +261,7 @@ source "fs/romfs/Kconfig"
+ source "fs/pstore/Kconfig"
+ source "fs/sysv/Kconfig"
+ source "fs/ufs/Kconfig"
++source "fs/zuf/Kconfig"
+ 
+ endif # MISC_FILESYSTEMS
+ 
+diff --git a/fs/Makefile b/fs/Makefile
+index c9aea23aba56..b007c542de45 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -130,3 +130,4 @@ obj-$(CONFIG_F2FS_FS)		+= f2fs/
+ obj-$(CONFIG_CEPH_FS)		+= ceph/
+ obj-$(CONFIG_PSTORE)		+= pstore/
+ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
++obj-$(CONFIG_ZUFS_FS)		+= zuf/
+diff --git a/fs/zuf/Kconfig b/fs/zuf/Kconfig
+new file mode 100644
+index 000000000000..58288f4245c2
+--- /dev/null
++++ b/fs/zuf/Kconfig
+@@ -0,0 +1,24 @@
++config ZUFS_FS
++	tristate "ZUF - Zero-copy User-mode Feeder"
++	depends on BLOCK
++	depends on ZONE_DEVICE
++	select CRC16
++	select MEMCG
++	help
++	   ZUFS Kernel part.
++	   To enable say Y here.
++
++	   To compile this as a module,  choose M here: the module will be
++	   called zuf.ko
++
++config ZUF_DEBUG
++	bool "ZUF: enable debug subsystems use"
++	depends on ZUFS_FS
++	default n
++	help
++	  INTERNAL QA USE ONLY!!! DO NOT USE!!!
++	  Please leave as N here
++
++	  This option adds some extra code that helps
++	  in QA testing of the code. It may slow the
++	  operation and produce bigger code
+diff --git a/fs/zuf/Makefile b/fs/zuf/Makefile
+new file mode 100644
+index 000000000000..452cec55f34d
+--- /dev/null
++++ b/fs/zuf/Makefile
+@@ -0,0 +1,14 @@
++#
++# ZUF: Zero-copy User-mode Feeder
++#
++# Copyright (c) 2018 NetApp Inc. All rights reserved.
++#
++# ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++#
++# Makefile for the Linux zufs Kernel Feeder.
++#
++
++obj-$(CONFIG_ZUFS_FS) += zuf.o
++
++# Main FS
++zuf-y += module.o
+diff --git a/fs/zuf/module.c b/fs/zuf/module.c
+new file mode 100644
+index 000000000000..523633c1bf9d
+--- /dev/null
++++ b/fs/zuf/module.c
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * zuf - Zero-copy User-mode Feeder
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * This program is free software; you may redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <https://www.gnu.org/licenses/>.
++ */
++#include <linux/module.h>
++
++#include "zus_api.h"
++
++MODULE_AUTHOR("Boaz Harrosh <boazh@netapp.com>");
++MODULE_AUTHOR("Sagi Manole <sagim@netapp.com>");
++MODULE_DESCRIPTION("Zero-copy User-mode Feeder");
++MODULE_LICENSE("GPL");
++MODULE_VERSION(__stringify(ZUFS_MAJOR_VERSION) "."
++		__stringify(ZUFS_MINOR_VERSION));
+diff --git a/fs/zuf/zus_api.h b/fs/zuf/zus_api.h
+new file mode 100644
+index 000000000000..4b1816e5dfd8
+--- /dev/null
++++ b/fs/zuf/zus_api.h
+@@ -0,0 +1,100 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note or BSD-3-Clause */
++/*
++ * zufs_api.h:
++ *	ZUFS (Zero-copy User-mode File System) is:
++ *		zuf (Zero-copy User-mode Feeder (Kernel)) +
++ *		zus (Zero-copy User-mode Server (daemon))
++ *
++ *	This file defines the API between the open source FS
++ *	Server, and the Kernel module,
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
++#ifndef _LINUX_ZUFS_API_H
++#define _LINUX_ZUFS_API_H
++
++#include <linux/types.h>
++#include <linux/uuid.h>
++#include <linux/fiemap.h>
++#include <stddef.h>
++
++#ifdef __cplusplus
++#define NAMELESS(X) X
++#else
++#define NAMELESS(X)
++#endif
++
++/*
++ * Version rules:
++ *   This is the zus-to-zuf API version. And not the Filesystem
++ * on disk structures versions. These are left to the FS-plugging
++ * to supply and check.
++ * Specifically any of the API structures and constants found in this
++ * file.
++ * If the changes are made in a way backward compatible with old
++ * user-space, MINOR is incremented. Else MAJOR is incremented.
++ *
++ * It is up to the Server to decides if it wants to run with this
++ * Kernel or not. Version is only passively reported.
++ */
++#define ZUFS_MINORS_PER_MAJOR	1024
++#define ZUFS_MAJOR_VERSION 1
++#define ZUFS_MINOR_VERSION 0
++
++/* Kernel versus User space compatibility definitions */
++#ifdef __KERNEL__
++
++#include <linux/statfs.h>
++
++#else /* ! __KERNEL__ */
++
++/* verify statfs64 definition is included */
++#if !defined(__USE_LARGEFILE64) && defined(_SYS_STATFS_H)
++#error "include to 'sys/statfs.h' must appear after 'zus_api.h'"
++#else
++#define __USE_LARGEFILE64 1
++#endif
++
++#include <sys/statfs.h>
++
++#include <string.h>
++
++#define u8 uint8_t
++#define umode_t uint16_t
++
++#define PAGE_SHIFT     12
++#define PAGE_SIZE      (1 << PAGE_SHIFT)
++
++#ifndef __packed
++#	define __packed __attribute__((packed))
++#endif
++
++#ifndef ALIGN
++#define ALIGN(x, a)		ALIGN_MASK(x, (typeof(x))(a) - 1)
++#define ALIGN_MASK(x, mask)	(((x) + (mask)) & ~(mask))
++#endif
++
++#ifndef likely
++#define likely(x_)	__builtin_expect(!!(x_), 1)
++#define unlikely(x_)	__builtin_expect(!!(x_), 0)
++#endif
++
++#ifndef BIT
++#define BIT(b)  (1UL << (b))
++#endif
++
++/* RHEL/CentOS7 are missing these */
++#ifndef FALLOC_FL_UNSHARE_RANGE
++#define FALLOC_FL_UNSHARE_RANGE         0x40
++#endif
++#ifndef FALLOC_FL_INSERT_RANGE
++#define FALLOC_FL_INSERT_RANGE		0x20
++#endif
++
++#endif /*  ndef __KERNEL__ */
++
++#endif /* _LINUX_ZUFS_API_H */
+-- 
+2.20.1
 
-[fuse]
-threads wr_iops	wr_bw	wr_lat
-1	33606	134424	26.53226
-2	57056	228224	30.38476
-4	88667	354668	40.12783
-7	116561	466245	53.98572
-8	129134	516539	55.6134
-
-[fuse-splice]
-threads	wr_iops	wr_bw	wr_lat
-1	39670	158682	21.8399
-2	51100	204400	34.63294
-4	75220	300882	47.42344
-7	97706	390825	63.04435
-8	98034	392137	73.24263
-
-[xfs-dax]
-threads	wr_iops	wr_bw		wr_lat   
-
-[Maxdata-1.5-zufs]
-threads	wr_iops	wr_bw		wr_lat
-1	1041802 260,450		3.623
-2	1983997 495,999		3.808
-4	3829456 957,364		3.959
-7	4501154 1,125,288	5.895330
-8	4400698 1,100,174	6.922174
-
-I have used an 8 way KVM-qemu with 2 NUMA nodes.
-(on an Intel(R) Xeon(R) CPU E3-1230 v6 @ 3.50GHz)
-
-Running fio with 4k random writes O_DIRECT | O_SYNC to a DRAM
-simulated pmem. (memmap=! at grub)
-Fuse-fs was a memcpy same 4k null-FS
-fio was run with more and more threads (see threads column)
-to test for scalability.
-
-We see a bit of a slowdown when pushing to 8 threads. This is
-mainly a scheduler and KVM issue. Big metal machines do better
-(more flat scalability) but also degrade a bit on full load
-I will try to post real metal scores later.
-
-The in Kernel xfs-dax is slower than a zufs-pmem because:
-1. It was not built specifically for pmem so there are latency
-   issues (async operations) and extra copies in places.
-2. In writes because of the Journal there are actually 3 IOPs
-   for every write. Where with pmem other means can keep things
-   crash-proof.
-3. Because in random write + DAX each block is written twice
-   It is first ZEROed then copied too.
-4. But mainly because we use a single pmem on one of the NUMAs
-   with zufs we put a pmem device on each NUMA node. And each core
-   writes locally. So the memory bandwith is doubled. (Perhaps there
-   is a way to use a dm configuration that makes this better but at
-   the base xfs is not NUMA aware)
-Is why I chose writes. With reads xfs-dax is much faster. In
-zufs reads are actually 10% slower because in reads we do regular
-memcpy-from-pmem which is exactly 10% slower than mov_nt operations
-
-[Changes since last RFC submission]
-
-Lots and lots of changes since then. More hardening stability
-and more fixtures.
-
-But mainly is the NEW-IO way.
-The old way of IO where we mmap application-pages into the Server is
-still there because there are modes where this is faster still.
-For example direct IO from network type of FSs. We are all about choice.
-(The zusFS is the one that decides which mode to use)
-But the results above are with the NEW-IO way. The new way is -
-we ask the Server what are the blocks to read/write (both pmem or bdev)
-and the IO or pmem_memcpy is done in Kernel.
-(We do not yet cache these results in Kernel but might in future
- ((when caching will actually make things faster currently xarray does
-   not scale for us)))
-
-Please help with *reviews*, comments, questions. We believe this is a very
-important project that opens new ways for implementing Server-applications,
-including but not restricted to FS Server applications.
-
-Thank you
-Boaz
-
-~~~~~~~~~~~~~~~~~~
-Boaz Harrosh (16):
-      fs: Add the ZUF filesystem to the build + License
-      MAINTAINERS: Add the ZUFS maintainership
-      zuf: Preliminary Documentation
-      zuf: zuf-rootfs
-      zuf: zuf-core The ZTs
-      zuf: Multy Devices
-      zuf: mounting
-      zuf: Namei and directory operations
-      zuf: readdir operation
-      zuf: symlink
-      zuf: Write/Read implementation
-      zuf: mmap & sync
-      zuf: More file operations
-      zuf: ioctl implementation
-      zuf: xattr && acl implementation
-      zuf: Support for dynamic-debug of zusFSs
-
- Documentation/filesystems/zufs.txt |  370 +++++++++++++++++++++++++++++
- MAINTAINERS                        |    6 +
- fs/Kconfig                         |    1 +
- fs/Makefile                        |    1 +
- fs/zuf/Kconfig                     |   24 ++
- fs/zuf/Makefile                    |   23 ++
- fs/zuf/_extern.h                   |  180 ++++++++++++++
- fs/zuf/_pr.h                       |   63 +++++
- fs/zuf/acl.c                       |  270 +++++++++++++++++++++
- fs/zuf/directory.c                 |  167 +++++++++++++
- fs/zuf/file.c                      |  840 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/zuf/inode.c                     |  693 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/zuf/ioctl.c                     |  313 +++++++++++++++++++++++++
- fs/zuf/md.c                        |  752 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/zuf/md.h                        |  332 ++++++++++++++++++++++++++
- fs/zuf/md_def.h                    |  145 ++++++++++++
- fs/zuf/mmap.c                      |  300 ++++++++++++++++++++++++
- fs/zuf/module.c                    |   28 +++
- fs/zuf/namei.c                     |  435 ++++++++++++++++++++++++++++++++++
- fs/zuf/relay.h                     |  104 +++++++++
- fs/zuf/rw.c                        |  977 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/zuf/super.c                     |  925 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/zuf/symlink.c                   |   74 ++++++
- fs/zuf/t1.c                        |  135 +++++++++++
- fs/zuf/t2.c                        |  356 ++++++++++++++++++++++++++++
- fs/zuf/t2.h                        |   68 ++++++
- fs/zuf/xattr.c                     |  314 +++++++++++++++++++++++++
- fs/zuf/zuf-core.c                  | 1716 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/zuf/zuf-root.c                  |  520 +++++++++++++++++++++++++++++++++++++++++
- fs/zuf/zuf.h                       |  437 ++++++++++++++++++++++++++++++++++
- fs/zuf/zus_api.h                   | 1079 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 31 files changed, 11648 insertions(+)
