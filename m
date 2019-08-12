@@ -2,171 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74EE38A085
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 16:17:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BF128A083
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 16:17:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfHLORT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 10:17:19 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33943 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726354AbfHLORS (ORCPT
+        id S1727766AbfHLORD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 10:17:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34624 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727684AbfHLORD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 10:17:18 -0400
-Received: from callcc.thunk.org (guestnat-104-133-9-109.corp.google.com [104.133.9.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7CEGtiI013115
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Aug 2019 10:16:57 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7E7C44218EF; Mon, 12 Aug 2019 10:16:55 -0400 (EDT)
-Date:   Mon, 12 Aug 2019 10:16:55 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        Paul Crowley <paulcrowley@google.com>,
-        Satya Tangirala <satyat@google.com>
-Subject: Re: [PATCH v7 07/16] fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl
-Message-ID: <20190812141655.GA11831@mit.edu>
-References: <20190726224141.14044-1-ebiggers@kernel.org>
- <20190726224141.14044-8-ebiggers@kernel.org>
- <20190728192417.GG6088@mit.edu>
- <20190729195827.GF169027@gmail.com>
- <20190731183802.GA687@sol.localdomain>
- <20190731233843.GA2769@mit.edu>
- <20190801011140.GB687@sol.localdomain>
- <20190801053108.GD2769@mit.edu>
- <20190801220432.GC223822@gmail.com>
- <20190802043827.GA19201@sol.localdomain>
+        Mon, 12 Aug 2019 10:17:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UnBehz4jsZ/osXbtN5Sf3BgUk5aQQ9ky7AyvIPjJnPM=; b=Vfjr3xcNQ0VvJCHJkkJrwgVf2
+        5L05Jtu2C9yCPm5Mcw30uA6FyuRaKbOgqKFh/VEpYDYFL+rfS4ZBMpQcxDtDTz3/38SixZPFOHzvd
+        lAJclNwlnMUDaTsONJ5byVzNhinJy0wzLjodHYemwfXS5w0BFcsGC6hXte4OFgwNKpwTaikFdJ+xz
+        Z2sRn0cbavt52hSKLgF/+GcwsRkYwFJVh8r+UuOqIIuxOwkCZINMrqUB8aQi8AgRTJlCJPUyIuZLj
+        GxLaWfQUZrZdxC7h9zz4hvdmzXeSEXyJmuMHOvIibFbVcn0WtSsAkSPWuNL/q/s8MKAWT04loLsCX
+        wjyqUWgxw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hxB89-00088q-Ve; Mon, 12 Aug 2019 14:17:01 +0000
+Date:   Mon, 12 Aug 2019 07:17:01 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v12 resend] fs: Add VirtualBox guest shared folder
+ (vboxsf) support
+Message-ID: <20190812141701.GA31267@infradead.org>
+References: <20190811163134.12708-1-hdegoede@redhat.com>
+ <20190811163134.12708-2-hdegoede@redhat.com>
+ <20190812114926.GB21901@infradead.org>
+ <b95eaa46-098d-0954-34b4-a96c7ed7ffa2@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190802043827.GA19201@sol.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <b95eaa46-098d-0954-34b4-a96c7ed7ffa2@redhat.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 09:38:27PM -0700, Eric Biggers wrote:
+On Mon, Aug 12, 2019 at 03:35:39PM +0200, Hans de Goede wrote:
+> > Also these casts to uintptr_t for a call that reads data look very
+> > odd.
 > 
-> Here's a slightly updated version (I missed removing some stale text):
+> Yes, as I already discussed with Al, that is because vboxsf_read
+> can be (and is) used with both kernel and userspace buffer pointers.
+> 
+> In case of a userspace pointer the underlying IPC code to the host takes
+> care of copy to / from user for us. That IPC code can also be used from
+> userspace through ioctls on /dev/vboxguest, so the handling of both
+> in kernel and userspace addresses is something which it must be able
+> to handle anyways, at which point we might as well use it in vboxsf too.
+> 
+> But since both Al and you pointed this out as being ugly, I will add
+> 2 separate vboxsf_read_user and vboxsf_read_kernel functions for the
+> next version, then the cast (and the true flag) can both go away.
 
-Apologies for the delaying in getting back.  Thanks, this looks great.
+What might be even better is to pass a struct iov_iter to the low-level
+function.  That gets you 90% of implementing the read_iter and
+write_iter methods, as well as a versatile low-level primite that
+can deal with kernel and user address, as well as pages.
 
-	      	  	      	      	     - Ted
+> > > +	/* Make sure any pending writes done through mmap are flushed */
+> > 
+> > Why?
+> 
+> I believe that if we were doing everything through the page-cache then a regular
+> write to the same range as a write done through mmap, with the regular write
+> happening after (in time) the mmap write, will overwrite the mmap
+> written data, we want the same behavior here.
+
+But what happens if you mmap and write at the same or at least
+barely the same time.
 
 > 
-> Removing keys
-> -------------
+> > > +	err = filemap_fdatawait_range(inode->i_mapping, pos, pos + nwritten);
+> > > +	if (err)
+> > > +		return err;
+> > 
+> > Also this whole write function seems to miss i_rwsem.
 > 
-> Two ioctls are available for removing a key that was added by
-> `FS_IOC_ADD_ENCRYPTION_KEY`_:
+> Hmm, I do not see e.g. v9fs_file_write_iter take that either, nor a couple
+> of other similar not block-backed filesystems. Will this still
+> be necessary after converting to the iter interfaces?
+
+Yes.
+
+> The problem is that the IPC to the host which we build upon only offers
+> regular read / write calls. So the most consistent (also cache coherent)
+> mapping which we can offer is to directly mapping read -> read and
+> wrtie->write without the pagecache. Ideally we would be able to just
+> say sorry cannot do mmap, but too much apps rely on mmap and the
+> out of tree driver has this mmap "emulation" which means not offering
+> it in the mainline version would be a serious regression.
 > 
-> - `FS_IOC_REMOVE_ENCRYPTION_KEY`_
-> - `FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS`_
+> In essence this is the same situation as a bunch of network filesystems
+> are in and I've looked at several for inspiration. Looking again at
+> e.g. v9fs_file_write_iter it does similar regular read -> read mapping
+> with invalidation of the page-cache for mmap users.
+
+v9 is probably not a good idea to copy in general.  While not the best
+idea to copy directly either I'd rather look at nfs - that is another
+protocol without a real distributed lock manager, but at least the
+NFS close to open semantics are reasonably well defined and allow using
+the pagecache.
+
+> I must admit that I've mostly cargo-culted this from other fs code
+> such as the 9p code, or the cifs code which has:
 > 
-> These two ioctls differ only in cases where v2 policy keys are added
-> or removed by non-root users.
+> /*
+>  * If the page is mmap'ed into a process' page tables, then we need to make
+>  * sure that it doesn't change while being written back.
+>  */
+> static vm_fault_t
+> cifs_page_mkwrite(struct vm_fault *vmf)
+> {
+>         struct page *page = vmf->page;
 > 
-> These ioctls don't work on keys that were added via the legacy
-> process-subscribed keyrings mechanism.
+>         lock_page(page);
+>         return VM_FAULT_LOCKED;
+> }
 > 
-> Before using these ioctls, read the `Kernel memory compromise`_
-> section for a discussion of the security goals and limitations of
-> these ioctls.
-> 
-> FS_IOC_REMOVE_ENCRYPTION_KEY
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> The FS_IOC_REMOVE_ENCRYPTION_KEY ioctl removes a claim to a master
-> encryption key from the filesystem, and possibly removes the key
-> itself.  It can be executed on any file or directory on the target
-> filesystem, but using the filesystem's root directory is recommended.
-> It takes in a pointer to a :c:type:`struct fscrypt_remove_key_arg`,
-> defined as follows::
-> 
->     struct fscrypt_remove_key_arg {
->             struct fscrypt_key_specifier key_spec;
->     #define FSCRYPT_KEY_REMOVAL_STATUS_FLAG_FILES_BUSY      0x00000001
->     #define FSCRYPT_KEY_REMOVAL_STATUS_FLAG_OTHER_USERS     0x00000002
->             __u32 removal_status_flags;     /* output */
->             __u32 __reserved[5];
->     };
-> 
-> This structure must be zeroed, then initialized as follows:
-> 
-> - The key to remove is specified by ``key_spec``:
-> 
->     - To remove a key used by v1 encryption policies, set
->       ``key_spec.type`` to FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR and fill
->       in ``key_spec.u.descriptor``.  To remove this type of key, the
->       calling process must have the CAP_SYS_ADMIN capability in the
->       initial user namespace.
-> 
->     - To remove a key used by v2 encryption policies, set
->       ``key_spec.type`` to FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER and fill
->       in ``key_spec.u.identifier``.
-> 
-> For v2 policy keys, this ioctl is usable by non-root users.  However,
-> to make this possible, it actually just removes the current user's
-> claim to the key, undoing a single call to FS_IOC_ADD_ENCRYPTION_KEY.
-> Only after all claims are removed is the key really removed.
-> 
-> For example, if FS_IOC_ADD_ENCRYPTION_KEY was called with uid 1000,
-> then the key will be "claimed" by uid 1000, and
-> FS_IOC_REMOVE_ENCRYPTION_KEY will only succeed as uid 1000.  Or, if
-> both uids 1000 and 2000 added the key, then for each uid
-> FS_IOC_REMOVE_ENCRYPTION_KEY will only remove their own claim.  Only
-> once *both* are removed is the key really removed.  (Think of it like
-> unlinking a file that may have hard links.)
-> 
-> If FS_IOC_REMOVE_ENCRYPTION_KEY really removes the key, it will also
-> try to "lock" all files that had been unlocked with the key.  It won't
-> lock files that are still in-use, so this ioctl is expected to be used
-> in cooperation with userspace ensuring that none of the files are
-> still open.  However, if necessary, the ioctl can be executed again
-> later to retry locking any remaining files.
-> 
-> FS_IOC_REMOVE_ENCRYPTION_KEY returns 0 if either the key was removed
-> (but may still have files remaining to be locked), the user's claim to
-> the key was removed, or the key was already removed but had files
-> remaining to be the locked so the ioctl retried locking them.  In any
-> of these cases, ``removal_status_flags`` is filled in with the
-> following informational status flags:
-> 
-> - ``FSCRYPT_KEY_REMOVAL_STATUS_FLAG_FILES_BUSY``: set if some file(s)
->   are still in-use.  Not guaranteed to be set in the case where only
->   the user's claim to the key was removed.
-> - ``FSCRYPT_KEY_REMOVAL_STATUS_FLAG_OTHER_USERS``: set if only the
->   user's claim to the key was removed, not the key itself
-> 
-> FS_IOC_REMOVE_ENCRYPTION_KEY can fail with the following errors:
-> 
-> - ``EACCES``: The FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR key specifier type
->   was specified, but the caller does not have the CAP_SYS_ADMIN
->   capability in the initial user namespace
-> - ``EINVAL``: invalid key specifier type, or reserved bits were set
-> - ``ENOKEY``: the key object was not found at all, i.e. it was never
->   added in the first place or was already fully removed including all
->   files locked; or, the user does not have a claim to the key.
-> - ``ENOTTY``: this type of filesystem does not implement encryption
-> - ``EOPNOTSUPP``: the kernel was not configured with encryption
->   support for this filesystem, or the filesystem superblock has not
->   had encryption enabled on it
-> 
-> FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS is exactly the same as
-> `FS_IOC_REMOVE_ENCRYPTION_KEY`_, except that for v2 policy keys, the
-> ALL_USERS version of the ioctl will remove all users' claims to the
-> key, not just the current user's.  I.e., the key itself will always be
-> removed, no matter how many users have added it.  This difference is
-> only meaningful if non-root users are adding and removing keys.
-> 
-> Because of this, FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS also requires
-> "root", namely the CAP_SYS_ADMIN capability in the initial user
-> namespace.  Otherwise it will fail with ``EACCES``.
+> The if (page->mapping != inode->i_mapping) is used in several places
+> including the 9p code, bit as you can see no in the cifs code. I couldn't
+> really find a rational for that check, so I'm fine with dropping that check.
+
+If you don't implement ->page_mkwrite the caller will just lock the page
+for you..
