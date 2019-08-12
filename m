@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 356318A3AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 18:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A87708A3AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 18:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfHLQsW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 12:48:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44559 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbfHLQsW (ORCPT
+        id S1726673AbfHLQsZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 12:48:25 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43124 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbfHLQsZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 12:48:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p17so105155895wrf.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 09:48:18 -0700 (PDT)
+        Mon, 12 Aug 2019 12:48:25 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p13so30584466wru.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 09:48:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=plexistor-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7ds4v6qg5XCbjPtJUW6ydjoaN8fyTJlvedFKQi1PLLU=;
-        b=pM1BMT27git2CiviYhLC8h5eMqcSAt/yige7e2wLqwmA1paStTaI6QY4E8VqSS30zK
-         0ApSSHpk0lx0HdBBRY3MJrLyaPyz48FZueduP2Y6RLYVZaeDBPM2NcZz/THPghcdwN8V
-         jdtfnvGzLqGtPzLnfxR24aTDdBLM8DPqmJFlBKRgk5Be1A6SEHTmupqApHP6It/3tEAs
-         Ryn7OxNw0S7AH1ELX0bF6rD+T16o8OGJ/Ztbrm9phcZEQUQNEIw38AuB75RYKp/D213k
-         tvumBBkhEBj2qqEGYccuWqCyOBvoitE4B+RPJ0Z+ej6jj3QjnnWo4JmtZ8Rhmeh+kK7u
-         Q7Bg==
+        bh=F+3wPzIXs1yuVNeme2SsehvdfeLoZ6zOitzyEMwj7eA=;
+        b=GDMXM01UchlO8SMI2SRRv7O7N+K408I8wQavNGIW6ZHyoHTOBg/Tk8TThkxDwv5BNE
+         n36NuMlOjd7Jpof0ucoonHR8CEu+5Aora6Tx8V+YFqQn8clooFwIWw8r0P7v+7Q1xcsT
+         hc7nU6VOQGaK1ZYanmCIM47n9abJO7sriBO3PwgJpHudrbOpGSWoY7HpzeV5tk5XluAD
+         Wa5RyBYri5RbUD6TygLOcRUdsQ4Oj7KU0kSHQb9+NndgQKJXHzE1y19dI8+/rRrSlZYL
+         I1siFU4pZivABOmBPZBy0wWjF3X+J3E6csQan5UXGI2TtocZXU+MLDc94Hujl5YrZGxT
+         9Lkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7ds4v6qg5XCbjPtJUW6ydjoaN8fyTJlvedFKQi1PLLU=;
-        b=K8brZxDJaOdfVa6/Fn62zWzf4whHxK/Aa7eM8MN/2UthzAHTbAg+odjP3ayXGiyrZf
-         tZhIqbEEfhsBdnYslGT31c1T8nY2Nvb+7aOl0CeZijvgEA3bd1nLYIcyXJlSCRHPK6BR
-         bMYyIMHmP6J1oZCblKWBdUu9JmrjVI4AxYEwpseCCVUXPx/h488qFzbHKa9RvTULmjzS
-         wwEm4tthYuIYHgW04yQsy52RYOK5oIl29FKpe909IZfKTCW5QkKy/muX60iXTnAEEcxZ
-         rEGvS/6mBteGUl+QvkwFW3VMzes+L3ZAzvmo/vyqencnqevcozsDT1WHePh2LZ03dVFv
-         Uwjw==
-X-Gm-Message-State: APjAAAUTUcSDTwNfRhgA2otQ0IXUb/WL5MUX63s3Vt7yCSGqCPIXvt89
-        ihlBxzIDhYY1KCclkYo1uU7j+ZTHeHQ=
-X-Google-Smtp-Source: APXvYqwhz5pSxDay1ftFtcVu20mH0svHRpIo8VdAQY98tDGNka9WYB7oIckdAU52OAasOXQdp0k4Gw==
-X-Received: by 2002:adf:fd82:: with SMTP id d2mr30450456wrr.194.1565628497707;
-        Mon, 12 Aug 2019 09:48:17 -0700 (PDT)
+        bh=F+3wPzIXs1yuVNeme2SsehvdfeLoZ6zOitzyEMwj7eA=;
+        b=bnPF39VTE0UBZFV+bMH/wsoLQrlq6nqopgnNKLD3dSzWq4qoB4zh0MIerw7Ehf58c1
+         j2RYYmBgTeUpfp8X/1mTezhOR0lkgEnmR9YPVP0sWNRchAb7b2jnlIvetzaAgBX3T1vS
+         EPJq12fRdyOAXi8tvkCJR8i4WSGnjjjhEG6EkHhbeUevIx5lXoHWQVMzoSRq0UufI2No
+         JY5fxNG2mLBWzTh+ihCEEJvetLuyrTBXIBlCT5HE3sgKN1rj4OUe7fc80xGptdnRAovT
+         mf4iVtLVFWVXGC8omkpzESS5vkNfb0jGBscgWa0Q56yRojRozoIv8dErK0RyKeWjAstS
+         weQw==
+X-Gm-Message-State: APjAAAXnkiR7yGvYiSWtZYdmNucq0dp3xVfdUTlf/o1B84lJhetsnvAk
+        +JJsXf9HMyFTsNpRP67tASOVPU2oKsU=
+X-Google-Smtp-Source: APXvYqwQQG1FI+nyxd1ax35gYSvJL77jU28ONR+VHP9/JYQ3gXHnarr5f9lgpYNxGlgEtg/2JKZy9Q==
+X-Received: by 2002:a5d:4b83:: with SMTP id b3mr36768053wrt.104.1565628500561;
+        Mon, 12 Aug 2019 09:48:20 -0700 (PDT)
 Received: from Bfire.plexistor.com ([217.70.211.18])
-        by smtp.googlemail.com with ESMTPSA id 39sm14439916wrc.45.2019.08.12.09.48.15
+        by smtp.googlemail.com with ESMTPSA id b136sm200290wme.18.2019.08.12.09.48.18
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 09:48:17 -0700 (PDT)
+        Mon, 12 Aug 2019 09:48:20 -0700 (PDT)
 From:   Boaz Harrosh <boaz@plexistor.com>
 X-Google-Original-From: Boaz Harrosh <boazh@netapp.com>
 To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -57,430 +57,941 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Sagi Manole <sagim@netapp.com>,
         Matthew Wilcox <willy@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 03/16] zuf: Preliminary Documentation
-Date:   Mon, 12 Aug 2019 19:47:53 +0300
-Message-Id: <20190812164806.15852-4-boazh@netapp.com>
+Subject: [PATCH 04/16] zuf: zuf-rootfs
+Date:   Mon, 12 Aug 2019 19:47:54 +0300
+Message-Id: <20190812164806.15852-5-boazh@netapp.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190812164806.15852-1-boazh@netapp.com>
 References: <20190812164806.15852-1-boazh@netapp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adding Documentation/filesystems/zufs.txt.
+zuf-root is a pseudo FS that the zusd Server communicates through,
+registers new file-systems. receives new mount requests.
 
-Adding some Documentation first. So to give the reviewer
-of the coming patch-set. Some background and overview of
-the all system.
+In this patch we have the bring up of that special FS.
 
-[v2]
-  Incorporated Randy's few comments.
+The principal communication with zuf-rootfs is done through
+tmep-files + io-ctls.
+Caller does an open(O_TMPFILE) and invokes some IOCTL_XXX on
+the file. The specific ioctl establishes one of zuf_special_file
+types object and attaches the object to the file-ptr and by that
+defining special behavior for that object.
 
-Randy Please give it an harder review?
+Otherwise zuf-rootfs is not an FS at all. It has a few viewable
+variable files, exposing state and info about the system. In this
+patch we can see the "state" variable-file, that denotes to user-mode
+when the Kernel is ready for new mounts. And the registered_fs which
+exposes what zufFS(s) where registered with the Kernel.
 
-CC: Randy Dunlap <rdunlap@infradead.org>
+There is a one-to-one relationship between a zuf-root SB and
+a zusd Server. Each zusd Server can support multiple zusFS
+plugins and register multiple filesystem-types.
+
+The zuf-rootfs (mount -t zuf) is usually mounted on
+/sys/fs/zuf. The /sys/fs/zuf directory is automatically created
+when zuf.ko is loaded. If an admin wants to run more zusd server
+applications she/he can mount a second instance of -t zuf on some
+dir and point the new zusd Server to it. (zusd has an optional path
+argument). Otherwise a second instance attempting to communicate
+with a busy zuf-root will fail.
+
+TODO: How to trigger a first mount on module_load. Currently
+admin needs to manually "mount -t zuf none /sys/fs/zuf"
+
 Signed-off-by: Boaz Harrosh <boazh@netapp.com>
 ---
- Documentation/filesystems/zufs.txt | 386 +++++++++++++++++++++++++++++
- 1 file changed, 386 insertions(+)
- create mode 100644 Documentation/filesystems/zufs.txt
+ fs/zuf/Makefile   |   4 +
+ fs/zuf/_extern.h  |  41 +++++
+ fs/zuf/_pr.h      |  63 +++++++
+ fs/zuf/super.c    |  53 ++++++
+ fs/zuf/zuf-core.c |  69 ++++++++
+ fs/zuf/zuf-root.c | 435 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/zuf.h      | 115 ++++++++++++
+ fs/zuf/zus_api.h  |  36 ++++
+ 8 files changed, 816 insertions(+)
+ create mode 100644 fs/zuf/_extern.h
+ create mode 100644 fs/zuf/_pr.h
+ create mode 100644 fs/zuf/super.c
+ create mode 100644 fs/zuf/zuf-core.c
+ create mode 100644 fs/zuf/zuf-root.c
+ create mode 100644 fs/zuf/zuf.h
 
-diff --git a/Documentation/filesystems/zufs.txt b/Documentation/filesystems/zufs.txt
+diff --git a/fs/zuf/Makefile b/fs/zuf/Makefile
+index 452cec55f34d..b08c08e73faa 100644
+--- a/fs/zuf/Makefile
++++ b/fs/zuf/Makefile
+@@ -10,5 +10,9 @@
+ 
+ obj-$(CONFIG_ZUFS_FS) += zuf.o
+ 
++# ZUF core
++zuf-y += zuf-core.o zuf-root.o
++
+ # Main FS
++zuf-y += super.o
+ zuf-y += module.o
+diff --git a/fs/zuf/_extern.h b/fs/zuf/_extern.h
 new file mode 100644
-index 000000000000..2a347a446aa7
+index 000000000000..0e8aa52f1259
 --- /dev/null
-+++ b/Documentation/filesystems/zufs.txt
-@@ -0,0 +1,386 @@
-+ZUFS - Zero-copy User-mode FileSystem
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++++ b/fs/zuf/_extern.h
+@@ -0,0 +1,41 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
 +
-+Trees:
-+	git clone https://github.com/NetApp/zufs-zuf -b upstream
-+	git clone https://github.com/NetApp/zufs-zus -b upstream
++#ifndef __ZUF_EXTERN_H__
++#define __ZUF_EXTERN_H__
++/*
++ * DO NOT INCLUDE this file directly, it is included by zuf.h
++ * It is here because zuf.h got to big
++ */
 +
-+patches, comments, questions, requests to:
-+	boazh@netapp.com
++/*
++ * extern functions declarations
++ */
 +
-+Introduction:
-+~~~~~~~~~~~~~
++/* zuf-core.c */
++int zufc_zts_init(struct zuf_root_info *zri); /* Some private types in core */
++void zufc_zts_fini(struct zuf_root_info *zri);
 +
-+ZUFS - stands for Zero-copy User-mode FS
-+▪ It is geared towards true zero copy end to end of both data and meta data.
-+▪ It is geared towards very *low latency*, very high CPU locality, lock-less
-+  parallelism.
-+▪ Synchronous operations
-+▪ Numa awareness
++long zufc_ioctl(struct file *filp, unsigned int cmd, ulong arg);
++int zufc_release(struct inode *inode, struct file *file);
++int zufc_mmap(struct file *file, struct vm_area_struct *vma);
 +
-+  ZUFS is a, from scratch, implementation of a filesystem-in-user-space, which
-+tries to address the above goals. It is aimed for pmem based FSs. But supports
-+any other type of FSs
++/* zuf-root.c */
++int zufr_register_fs(struct super_block *sb, struct zufs_ioc_register_fs *rfs);
 +
-+Glossary and names:
-+~~~~~~~~~~~~~~~~~~~
++/* super.c */
++int zuf_init_inodecache(void);
++void zuf_destroy_inodecache(void);
 +
-+ZUF - Zero-copy User-mode Feeder
-+  zuf.ko is the Kernel VFS component. Its job is to interface with the Kernel
-+  VFS and dispatch commands to a User-mode application Server.
-+  Uptodate code is found at:
-+	git clone https://github.com/NetApp/zufs-zuf -b upstream
++struct dentry *zuf_mount(struct file_system_type *fs_type, int flags,
++			 const char *dev_name, void *data);
 +
-+ZUS - Zero-copy User-mode Server
-+  zufs utilizes a User-mode server application. That takes care of the detailed
-+  communication protocol and correctness with the Kernel.
-+  In turn it utilizes many zusFS Filesystem plugins to implement the actual
-+  on disc Filesystem.
-+  Uptodate code is found at:
-+	git clone https://github.com/NetApp/zufs-zus -b upstream
++#endif	/*ndef __ZUF_EXTERN_H__*/
+diff --git a/fs/zuf/_pr.h b/fs/zuf/_pr.h
+new file mode 100644
+index 000000000000..51924b6bd2a5
+--- /dev/null
++++ b/fs/zuf/_pr.h
+@@ -0,0 +1,63 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
 +
-+zusFS - FS plugins
-+  These are .so loadable modules that implement one or more Filesystem-types
-+  (mount -t xyz).
-+  The zus server communicates with the plugin via a set of function vectors
-+  for the different operations. And establishes communication via defined
-+  structures.
++#ifndef __ZUF_PR_H__
++#define __ZUF_PR_H__
 +
-+Filesystem-type:
-+  At startup zus registers with the Kernel one or more Filesystem-type(s)
-+  Associated with the type is a unique type-name (mount -t foofs) +
-+  different info about the fs, like a magic number and so on.
-+  One Server can support many FS-types, in turn each FS-type can mount
-+  multiple super-blocks, each supporting multiple devices.
++#ifdef pr_fmt
++#undef pr_fmt
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++#endif
 +
-+Device-Table (MDT) - A zufs FS can support multiple devices
-+  ZUF in Kernel may receive, like any mount command a block-device or none.
-+  For the former if the specified FS-types states so in a special field.
-+  The mount will look for a Device table. A list of devices in a specific
-+  order sitting at some offset on each block-device. The system will then
-+  proceed to open and own all these devices and associate them to the mounting
-+  super-block.
-+  If FS-type specifies a -1 at DT_offset then there is no device table
-+  and a DT of a single device is created. (If we have no devices, none
-+  is specified than we operate without any block devices. (Mount options give
-+  some indication of the storage information))
-+  The device table has special consideration for pmem devices and will
-+  present the all linear array of devices to zus, as one flat mmap space.
-+  Alternatively all non-pmem devices are also provided an interface
-+  with facility of data movement from pmem to slower devices.
-+  A detailed NUMA info is exported to the Server for maximum utilization.
-+  Each device has an associated NUMA node, so Server can optimize IO to
-+  these devices
++/*
++ * Debug code
++ */
++#define zuf_err(s, args ...)		pr_err("[%s:%d] " s, __func__, \
++							__LINE__, ## args)
++#define zuf_err_cnd(silent, s, args ...) \
++	do {if (!silent) \
++		pr_err("[%s:%d] " s, __func__, __LINE__, ## args); \
++	} while (0)
++#define zuf_warn(s, args ...)		pr_warn("[%s:%d] " s, __func__, \
++							__LINE__, ## args)
++#define zuf_warn_cnd(silent, s, args ...) \
++	do {if (!silent) \
++		pr_warn("[%s:%d] " s, __func__, __LINE__, ## args); \
++	} while (0)
++#define zuf_info(s, args ...)          pr_info("~info~ " s, ## args)
 +
-+pmem: (Also called t1)
-+  Multiple pmem devices are presented to the server as a single
-+  linear file mmap. Something like /dev/dax. But it is strictly
-+  available only to the specific super-block that owns it.
++#define zuf_chan_debug(c, s, args...)	pr_debug(c " [%s:%d] " s, __func__, \
++							__LINE__, ## args)
 +
-+Shadow: (For debugging)
-+  "Shadow" is used for debugging the correct persistence of pmem based
-+  filesystems. With pmem if modified a user must call cl_flush/sfence
-+  for the data to be guarantied resistance. This is very hard to test
-+  and time consuming. So for that we invented the shadow.
-+  There is a special mode bit in the MDT header that denotes a shadow
-+  system. In a shadow setup each pmem device is divided in half. First
-+  half is available for FS storage. The second half is a Shadow. IE
-+  each time the FS calls cl_flush or mov_nt the data is then memcopied
-+  to the shadow.
-+  At mount time the Shadow is copied onto the main part. And thous
-+  presenting only those bits that where persisted by the FS. So a simple
-+  remount can simulate a full machine reboot.
-+  The Shadow is presented as the upper part of the mmaped region. IE
-+  the all t1 ranged is repeated again. The zus core code fasilitates
-+  zusFS implementors in accessing this facility
++/* ~~~ channel prints ~~~ */
++#define zuf_dbg_perf(s, args ...)	zuf_chan_debug("perfo", s, ##args)
++#define zuf_dbg_err(s, args ...)	zuf_chan_debug("error", s, ##args)
++#define zuf_dbg_vfs(s, args ...)	zuf_chan_debug("vfs  ", s, ##args)
++#define zuf_dbg_rw(s, args ...)		zuf_chan_debug("rw   ", s, ##args)
++#define zuf_dbg_t1(s, args ...)		zuf_chan_debug("t1   ", s, ##args)
++#define zuf_dbg_xattr(s, args ...)	zuf_chan_debug("xattr", s, ##args)
++#define zuf_dbg_acl(s, args ...)	zuf_chan_debug("acl  ", s, ##args)
++#define zuf_dbg_t2(s, args ...)		zuf_chan_debug("t2dbg", s, ##args)
++#define zuf_dbg_t2_rw(s, args ...)	zuf_chan_debug("t2grw", s, ##args)
++#define zuf_dbg_core(s, args ...)	zuf_chan_debug("core ", s, ##args)
++#define zuf_dbg_mmap(s, args ...)	zuf_chan_debug("mmap ", s, ##args)
++#define zuf_dbg_zus(s, args ...)	zuf_chan_debug("zusdg", s, ##args)
++#define zuf_dbg_verbose(s, args ...)	zuf_chan_debug("d-oto", s, ##args)
 +
-+zufs_dpp_t - Dual port pointer type
-+  At some points in the protocol there are objects that return from zus
-+  (The Server) to the Kernel via a dpp_t. This is a special kind of pointer
-+  It is actually an offset 8 bytes aligned with the 3 low bits specifying
-+  a pool code: [offset = dpp_t & ~0x7] [pool = dpp_t & 0x7]
-+  pool == 0 means the offset is in pmem who's management is by zuf and
-+  a full easy access is provided for zus.
-+
-+  pool != 0 Is a pre-established file (up to 6 such files per sb) where
-+  the zus has an mmap on the file and the Kernel can access that data
-+  via an offset into the file.
-+  pool == 7 denotes an offset into the application buffers associated
-+  with the current IO.
-+  All dpp_t objects life time rules are strictly defined.
-+  Mainly the primary use of dpp_t is the on-pmem inode structure. Both
-+  zus and zuf can access and change this structure. On any modification
-+  the zus is called so to be notified of any changes, persistence.
-+  More such objects are: Symlinks, xattrs, data-blocks etc...
-+
-+Relay-wait-object:
-+  communication between Kernel and server are done via zus-threads that
-+  sleep in Kernel (inside an IOCTL) and wait for commands. Once received
-+  the IOCTL returns operation id executed and the return info is returned via
-+  a new IOCTL call, which then waits for the next operation.
-+  To wake up the sleeping thread we use a Relay-wait-object. Currently
-+  it is two waitqueue_head(s) back to back.
-+  In future we should investigate the use of a new special scheduler object
-+  That switches from thread A to predefined thread ZT context without passing
-+  through the scheduler at all.
-+  (The switching is already very fast, faster then anything currently
-+   in the Kernel. But I believe I can shave another 1 micro off a roundtrip)
-+
-+ZT-threads-array:
-+  The novelty of the zufs is the ZT-threads system. 3 threads or more are
-+  pre-created for each active core in the system.
-+  ▪ The thread is AFFINITY set for that single core only.
-+  ▪ Special communication file per ZT (O_TMPFILE + IOCTL_ZUFS_INIT)
-+    At initialization the ZT thread communicates through a ZT_INIT ioctl
-+    and registers as the handler of that core (Channel)
-+  ▪ Also for each ZT, Kernel allocates an IOCTL-buffer that is directly
-+    accessed by Kernel. In turn that IOCTL-buffer is mmaped by zus
-+    for the Server access of that communication buffer. (This is for zero
-+    copy operations as well as avoiding the smem memory barrier)
-+  ▪ IOCTL_ZU_WAIT_OPT – threads sleeps in Kernel waiting for an operation
-+    via the IOCTL_ZU_WAIT_OPT call.
-+
-+  ▪ On operation dispatch current CPU's ZT free channel is selected.
-+    Operation info is set into the IOCTL-buffer, the ZT is woken and the
-+    application thread is put to sleep.
-+  ▪ After execution, ZT returns to kernel (IOCTL_ZU_WAIT_OPT), app is released,
-+    Server wait for new operation on that CPU.
-+  ▪ Each ZT has a cyclic logic. Each call to IOCTL_ZU_WAIT_OPT from Server
-+    returns the results of the previous operation, before going to sleep
-+    waiting to receive a new operation.
-+	zus			zuf-zt				application
-+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+     ---> IOCTL_ZU_WAIT_OPT    if (app-waiting)
-+     |					wake-up-application	 -> return to app
-+     |				FS-WAIT
-+     |				|				<- POSIX call
-+     |				V		<- fs-wake-up(dispatch)
-+     |			<- return with new command
-+     |--<- do_new_operation
-+
-+ZUS-mount-thread:
-+  The system utilizes a single mount thread. (This thread is not affinity to any
-+  core).
-+  ▪ It will first Register all FS-types supported by this Server (By calling
-+    all zusFS plugins to register their supported types). Once done
-+  ▪ As above, the thread sleeps in Kernel via the IOCTL_ZU_MOUNT call.
-+  ▪ When the Kernel receives a mount request (vfs calles the fs_type->mount opt)
-+    a mount is dispatched back to zus.
-+  ▪ NOTE: That only on very first mount the above ZT-threads-array is created
-+    the same ZT-array is then used for all super-blocks in the system
-+  ▪ As part of the mount command in the context of this same mount-thread
-+    a call to IOCTL_ZU_GRAB_PMEM will establish an interface to the pmem
-+    Associated with this super_block
-+  ▪ On return like above a new call to IOCTL_ZU_MOUNT will return info of the
-+    mount before sleeping in kernel waiting for a new dispatch. All SB info
-+    is provided to zuf, including the root inode info. Kernel then proceeds
-+    to complete the mount call.
-+  ▪ NOTE that since there is a single mount thread lots of FS-registration
-+    super_block and pmem management are lockless.
-+
-+Philosophy of operations:
-+~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+1. [zuf-root]
-+
-+On module load  (zuf.ko) A special pseudo FS is mounted on /sys/fs/zuf. This is
-+called zuf-root.
-+The zuf-root has no visible files. All communication is done via special-files.
-+special-files are open(O_TMPFILE) and establish a special role via an
-+IOCTL. (Example above ZT-thread is one such special file)
-+All communications with the server are done via the zuf-root. Each root owns
-+many FS-types and each FS-type owns many super-blocks of this type. All Sharing
-+the same communication channels.
-+Since all FS-type Servers live in the same zus application address space, at
-+times. If the administrator wants to separate between different servers, he/she
-+can mount a new zuf-root and point a new server instance on that new mount,
-+registering other FS-types on that other instance. The all communication array
-+will then be duplicated as well.
-+(Otherwise pointing a new server instance on a busy root will return an error)
-+
-+2. [zus server start]
-+  ▪ On load all configured zusFS plugins are loaded.
-+  ▪ The Server starts by starting a single mount thread.
-+  ▪ It than proceeds to register with Kernel all FS-types it will support.
-+    (This is done on the single mount thread, so FS-registration and
-+     mount/umount operate in a single thread and therefor need not any locks)
-+  ▪ Sleeping in the Kernel on a special-file of that zuf-root. waiting for
-+    a mount command.
-+
-+3. [mount -t xyz]
-+  [In Kernel]
-+  ▪ If xyz was registered above as part of the Server startup. the regular
-+    mount command will come to the zuf module with a zuf_mount() call. with
-+    the xyz-FS-info. In turn this points to a zuf-root.
-+  ▪ Code than proceed to load a device-table of devices as  specified above.
-+    It then establishes an multi_devices object with a specific sb_id.
-+  ▪ It proceeds to call mount_bdev. Always with the same main-device
-+    thous fully sporting automatic bind mounts. Even if different
-+    devices are given to the mount command.
-+  ▪ In zuf_fill_super it will then dispatch (awaken) the mount thread
-+    specifying two parameters. One the FS-type to mount, and then
-+    the sb_id Associated with this super_block.
-+
-+  [In zus]
-+  ▪ A zus_super_block_info is allocated.
-+  ▪ zus calls PMEM_GRAB(sb_id) to establish a direct mapping to its
-+    pmem devices. On return we have full access to our PMEM
-+
-+  ▪ ZT-threads-array
-+    If this is the first mount the ZT-threads-array is created and
-+    established. The mount thread will wait until all zt-threads finished
-+    initialization and ready to rock.
-+  ▪ Root-zus_inode is loaded and is returned to kernel
-+  ▪ More info about the mount like block sizes and so on are returned to kernel.
-+
-+  [In Kernel]
-+   The zuf_fill_super is finalized vectors established and we have a new
-+   super_block ready for operations.
-+
-+4. An FS operation like create or WRITE/READ and so on arrives from application
-+   via VFS. Eventually an Operation is dispatched to zus:
-+   ▪ A special per-operation descriptor is filled up with all parameters.
-+   ▪ A current CPU channel is grabbed. the operation descriptor is put on
-+     that channel (ZT). Including get_user_pages or Kernel-pages associated
-+     with this OPT.
-+   ▪ The ZT is awaken, app thread put to sleep.
-+   ▪ Optionally in ZT context pages are mapped to that ZT-vma. This is so we
-+     are sure the map is only on a single core. And no other core's TLB is
-+     affected.
-+   ▪ ZT thread is returned to user-space.
-+   ▪ In ZT context the zus Server calls the appropriate zusFS->operation
-+     vector. Output params filled.
-+   ▪ zus calls again with an IOCTL_ZU_WAIT_OPT with the same descriptor
-+     to return the requested info.
-+   ▪ At Kernel (zuf) the app thread is awaken with the results, and the
-+     ZT thread goes back to sleep waiting a new operation.
-+
-+   ZT rules:
-+       A ZT thread should try to minimize it's sleeps. it might take locks
-+   In which case we will see that the same CPU channel is reentered via another
-+   application/thread. But now that CPU channel is taken.  What we do is we
-+   utilize a few channels (ZTs) per core and those threads may grab another
-+   channel. But this only postpones the problem. On a busy contended system,
-+   all such channels will be consumed. If all channels are taken the
-+   application thread is put on a busy scheduling wait until a channel can
-+   be grabbed.
-+   If The server needs to sleep for a long time it should utilize the
-+   ZUFS_ASYNC return option. The app is then kept sleeping on an
-+   operation-context object and the ZT freed for foreground operation.
-+   At some point in time when the server completes the delayed operation
-+   it will notify the Kernel with a special async IO-context cookie.
-+   And the app will be awakened.
-+
-+4. On umount the operation is reversed and all resources are released.
-+5. In case of an application or Server crash, all resources are Associated
-+   with files, on file_release these resources are caught and freed.
-+
-+Objects and life-time
-+~~~~~~~~~~~~~~~~~~~~~
-+
-+Each Kernel object type has an assosiated zus Server object type who's life
-+time is governed by the life-time of the Kernel object. Therefor the Server's
-+job is easy because it need not establish any object caches / hashes and so on.
-+
-+Inside zus all objects are allocated by the zusFS plugin. So in turn it can
-+allocate a bigger space for its own private data and access it via the
-+container_off() coding pattern. So when I say below a zus-object I mean both
-+zus public part + zusFS private part of the same object.
-+
-+All operations return a User-mode pointer that are opaque to the the Kernel
-+code, they are just a cookie which is returned back to zus, when needed.
-+At times when we want the Kernel to have direct access to a zus object like
-+zufs_inode, along with the cookie we also return a dpp_t, with a defined
-+structure.
-+
-+Kernel object 			| zus object 		| Kernel access (via dpp_t)
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+zuf_fs_type
-+	file_system_type	| zus_fs_info		| no
-+
-+zuf_sb_info
-+	super_block		| zus_sb_info		| no
-+
-+zuf_inode_info			|			|
-+	vfs_inode		| zus_inode_info	| no
-+	zufs_inode *		| 	zufs_inode *	| yes
-+	synlink *		|	char-array	| yes
-+	xattr**			|	zus_xattr	| yes
-+
-+When a Kernel object's time is to die, a final call to zus is
-+dispatched so the associated object can also be freed. Which means
-+that on memory pressure when object caches are evicted also the zus
-+memory resources are freed.
++#define md_err		zuf_err
++#define md_warn		zuf_warn
++#define md_err_cnd	zuf_err_cnd
++#define md_warn_cnd	zuf_warn_cnd
++#define md_dbg_err	zuf_dbg_err
++#define md_dbg_verbose	zuf_dbg_verbose
 +
 +
-+How to use zufs:
-+~~~~~~~~~~~~~~~~
++#endif /* define __ZUF_PR_H__ */
+diff --git a/fs/zuf/super.c b/fs/zuf/super.c
+new file mode 100644
+index 000000000000..f7f7798425a9
+--- /dev/null
++++ b/fs/zuf/super.c
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Super block operations.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>
++ */
 +
-+The most updated documentation of how to use the latest code bases
-+is the script (set of scripts) at fs/do-zu/zudo on the zus git tree
++#include <linux/types.h>
++#include <linux/parser.h>
++#include <linux/statfs.h>
++#include <linux/backing-dev.h>
 +
-+We the developers at Netapp use this script to mount and test our
-+latest code. So any new Secret will be found in these scripts. Please
-+read them as the ultimate source of how to operate things.
++#include "zuf.h"
 +
-+We assume you cloned these git trees:
-+[]$ mkdir zufs; cd zufs
-+[]$ git clone https://github.com/NetApp/zufs-zuf -b upstream
-+[]$ git clone https://github.com/NetApp/zufs-zuf -b upstream
++static struct kmem_cache *zuf_inode_cachep;
 +
-+This will create the following trees
-+zufs/zus - Source code for Server
-+zufs/zuf - Linux Kernel source tree to compile and install on your machine
++static void _init_once(void *foo)
++{
++	struct zuf_inode_info *zii = foo;
 +
-+Also specifically:
-+zufs/zus/fs/do-zu/zudo - script Documenting how to run things
++	inode_init_once(&zii->vfs_inode);
++}
 +
-+[]$ cd zufs
++int __init zuf_init_inodecache(void)
++{
++	zuf_inode_cachep = kmem_cache_create("zuf_inode_cache",
++					       sizeof(struct zuf_inode_info),
++					       0,
++					       (SLAB_RECLAIM_ACCOUNT |
++						SLAB_MEM_SPREAD |
++						SLAB_TYPESAFE_BY_RCU),
++					       _init_once);
++	if (zuf_inode_cachep == NULL)
++		return -ENOMEM;
++	return 0;
++}
 +
-+First time
-+[] zus/fs/do-zu/zudo
-+this will create a file:
-+	zus/fs/do-zu/zu.conf
++void zuf_destroy_inodecache(void)
++{
++	kmem_cache_destroy(zuf_inode_cachep);
++}
 +
-+Edit this file for your environment. Devices, mount-point and so on.
-+On first run an example file will be created for you. Fill in the
-+blanks. Most params can stay as is in most cases
++struct dentry *zuf_mount(struct file_system_type *fs_type, int flags,
++			 const char *dev_name, void *data)
++{
++	return ERR_PTR(-ENOTSUPP);
++}
+diff --git a/fs/zuf/zuf-core.c b/fs/zuf/zuf-core.c
+new file mode 100644
+index 000000000000..c9bb31f75bed
+--- /dev/null
++++ b/fs/zuf/zuf-core.c
+@@ -0,0 +1,69 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Ioctl operations.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ */
 +
-+Now lets start running:
++#include <linux/types.h>
++#include <linux/mm.h>
++#include <linux/mm_types.h>
++#include <linux/delay.h>
++#include <linux/pfn_t.h>
++#include <linux/sched/signal.h>
 +
-+[1]$ zus/fs/do-zu/zudo mkfs
-+This will run the proper mkfs command selected at zu.conf file
-+with the proper devices.
++#include "zuf.h"
 +
-+[2]$ zus/fs/do-zu/zudo zuf-insmod
-+This loads the zuf.ko module
++int zufc_zts_init(struct zuf_root_info *zri)
++{
++	return 0;
++}
 +
-+[3]$ zus/fs/do-zu/zudo zuf-root
-+This mounts the zuf-root FS above on /sys/fs/zuf (automatically created in [2])
++void zufc_zts_fini(struct zuf_root_info *zri)
++{
++}
 +
-+[4]$ zus/fs/do-zu/zudo zus-up
-+This runs the zus daemon in the background
++long zufc_ioctl(struct file *file, unsigned int cmd, ulong arg)
++{
++	switch (cmd) {
++	default:
++		zuf_err("%d\n", cmd);
++		return -ENOTTY;
++	}
++}
 +
-+[5]$ zus/fs/do-zu/zudo mount
-+This mount the mkfs FS above on the specified dir in zu.conf
++int zufc_release(struct inode *inode, struct file *file)
++{
++	struct zuf_special_file *zsf = file->private_data;
 +
-+To run all the 5 commands above at once do:
-+[]$ zus/fs/do-zu/zudo up
++	if (!zsf)
++		return 0;
 +
-+To undo all the above in reverse order do:
-+[]$ zus/fs/do-zu/zudo down
++	switch (zsf->type) {
++	default:
++		return 0;
++	}
++}
 +
-+And the most magic command is:
-+[]$ zus/fs/do-zu/zudo again
-+Will do a "down", then update-mods, then "up"
-+(update-mods is a special script to copy the latest compiled binaries)
++int zufc_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	struct zuf_special_file *zsf = file->private_data;
 +
-+Now you are ready for some:
-+[]$ zus/fs/do-zu/zudo xfstest
-+xfstests is assumed to be installed in the regular /opt/xfstests dir
++	if (unlikely(!zsf)) {
++		zuf_err("Which mmap is that !!!!\n");
++		return -ENOTTY;
++	}
 +
-+Again please see inside the scripts what each command does
-+these scripts are the ultimate Documentation, do not believe
-+anything I'm saying here. (Because it is outdated by now)
++	switch (zsf->type) {
++	default:
++		zuf_err("type=%d\n", zsf->type);
++		return -ENOTTY;
++	}
++}
+diff --git a/fs/zuf/zuf-root.c b/fs/zuf/zuf-root.c
+new file mode 100644
+index 000000000000..1f5f886997f7
+--- /dev/null
++++ b/fs/zuf/zuf-root.c
+@@ -0,0 +1,435 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ZUF Root filesystem.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUS-ZUF interaction is done via a small specialized FS that
++ * provides the communication with the mount-thread, ZTs, pmem devices,
++ * and so on ...
++ * Subsequently all FS super_blocks are children of this root, and point
++ * to it. All sharing the same zuf communication channels.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ */
 +
-+Have a nice day
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/module.h>
++#include <linux/fs.h>
++#include <linux/magic.h>
++#include <asm-generic/mman.h>
++
++#include "zuf.h"
++
++/* ~~~~ Register/Unregister FS-types ~~~~ */
++#ifdef CONFIG_LOCKDEP
++
++/*
++ * NOTE: When CONFIG_LOCKDEP is on. register_filesystem() complains when
++ * the fstype object is from a kmalloc. Because of some lockdep_keys not
++ * being const_obj something.
++ *
++ * So in this case we have maximum of 16 fstypes system wide
++ * (Total for all mounted zuf_root(s)). This way we can have them
++ * in const_obj memory below at g_fs_array
++ */
++
++enum { MAX_LOCKDEP_FSs = 16 };
++static uint g_fs_next;
++static struct zuf_fs_type g_fs_array[MAX_LOCKDEP_FSs];
++
++static struct zuf_fs_type *_fs_type_alloc(void)
++{
++	struct zuf_fs_type *ret;
++
++	if (MAX_LOCKDEP_FSs <= g_fs_next)
++		return NULL;
++
++	ret = &g_fs_array[g_fs_next++];
++	memset(ret, 0, sizeof(*ret));
++	return ret;
++}
++
++static void _fs_type_free(struct zuf_fs_type *zft)
++{
++	if (zft == &g_fs_array[0])
++		g_fs_next = 0;
++}
++
++#else /* !CONFIG_LOCKDEP*/
++static struct zuf_fs_type *_fs_type_alloc(void)
++{
++	return kcalloc(1, sizeof(struct zuf_fs_type), GFP_KERNEL);
++}
++
++static void _fs_type_free(struct zuf_fs_type *zft)
++{
++	kfree(zft);
++}
++#endif /*CONFIG_LOCKDEP*/
++
++
++static ssize_t _state_read(struct file *file, char __user *buf, size_t len,
++			   loff_t *ppos)
++{
++	struct zuf_root_info *zri = ZRI(file->f_inode->i_sb);
++	const char *msg;
++
++	if (*ppos > 0)
++		return 0;
++
++	switch (zri->state) {
++	case ZUF_ROOT_INITIALIZING:
++		msg = "initializing\n";
++		break;
++	case ZUF_ROOT_REGISTERING_FS:
++		msg = "registering_fs\n";
++		break;
++	case ZUF_ROOT_MOUNT_READY:
++		msg = "mount_ready\n";
++		break;
++	default:
++		msg = "UNKNOWN\n";
++		break;
++	}
++
++	return simple_read_from_buffer(buf, len, ppos, msg, strlen(msg));
++}
++
++static const struct file_operations _state_ops = {
++	.open = nonseekable_open,
++	.read = _state_read,
++	.llseek = no_llseek,
++};
++
++static ssize_t _registered_fs_read(struct file *file, char __user *buf,
++				   size_t len, loff_t *ppos)
++{
++	struct zuf_root_info *zri = ZRI(file->f_inode->i_sb);
++	size_t buff_len = 0;
++	struct zuf_fs_type *zft;
++	char *fs_buff, *p;
++	ssize_t ret;
++	size_t name_len;
++
++	list_for_each_entry(zft, &zri->fst_list, list)
++		buff_len += strlen(zft->rfi.fsname) + 1;
++
++	if (unlikely(*ppos > buff_len))
++		return -EINVAL;
++	if (*ppos == buff_len)
++		return 0;
++
++	fs_buff = kzalloc(buff_len + 1, GFP_KERNEL);
++	if (unlikely(!fs_buff))
++		return -ENOMEM;
++
++	p = fs_buff;
++	list_for_each_entry(zft, &zri->fst_list, list) {
++		if (p != fs_buff) {
++			*p = ' ';
++			++p;
++		}
++		name_len = strlen(zft->rfi.fsname);
++		memcpy(p, zft->rfi.fsname, name_len);
++		p += name_len;
++	}
++
++	p = fs_buff + *ppos;
++	buff_len = buff_len - *ppos;
++	ret = simple_read_from_buffer(buf, len, ppos, p, buff_len);
++	kfree(fs_buff);
++
++	return ret;
++}
++
++static const struct file_operations _registered_fs_ops = {
++	.open = nonseekable_open,
++	.read = _registered_fs_read,
++	.llseek = no_llseek,
++};
++
++
++int zufr_register_fs(struct super_block *sb, struct zufs_ioc_register_fs *rfs)
++{
++	struct zuf_fs_type *zft = _fs_type_alloc();
++	struct zuf_root_info *zri = ZRI(sb);
++
++	if (unlikely(!zft))
++		return -ENOMEM;
++
++	if (zri->state == ZUF_ROOT_INITIALIZING)
++		zri->state = ZUF_ROOT_REGISTERING_FS;
++
++	/* Original vfs file type */
++	zft->vfs_fst.owner	= THIS_MODULE;
++	zft->vfs_fst.name	= kstrdup(rfs->rfi.fsname, GFP_KERNEL);
++	zft->vfs_fst.mount	= zuf_mount;
++	zft->vfs_fst.kill_sb	= kill_block_super;
++
++	/* ZUS info about this FS */
++	zft->rfi		= rfs->rfi;
++	zft->zus_zfi		= rfs->zus_zfi;
++	INIT_LIST_HEAD(&zft->list);
++	/* Back pointer to our communication channels */
++	zft->zri		= ZRI(sb);
++
++	zuf_add_fs_type(zft->zri, zft);
++	zuf_info("register_filesystem [%s]\n", zft->vfs_fst.name);
++	return register_filesystem(&zft->vfs_fst);
++}
++
++static void _unregister_all_fses(struct zuf_root_info *zri)
++{
++	struct zuf_fs_type *zft, *n;
++
++	list_for_each_entry_safe_reverse(zft, n, &zri->fst_list, list) {
++		unregister_filesystem(&zft->vfs_fst);
++		list_del_init(&zft->list);
++		_fs_type_free(zft);
++	}
++}
++
++static int zufr_unlink(struct inode *dir, struct dentry *dentry)
++{
++	struct inode *inode = dentry->d_inode;
++
++	drop_nlink(inode);
++	return 0;
++}
++
++/* Force alignment of 2M for all vma(s)
++ *
++ * This belongs to t1.c and what it does for mmap. But we do not mind
++ * that both our mmaps (grab_pmem or ZTs) will be 2M aligned so keep
++ * it here. And zus mappings just all match perfectly with no need for
++ * holes.
++ * FIXME: This is copy/paste from dax-device. It can be very much simplified
++ * for what we need.
++ */
++static unsigned long zufr_get_unmapped_area(struct file *filp,
++		unsigned long addr, unsigned long len, unsigned long pgoff,
++		unsigned long flags)
++{
++	unsigned long off, off_end, off_align, len_align, addr_align;
++	unsigned long align = PMD_SIZE;
++
++	if (addr)
++		goto out;
++
++	off = pgoff << PAGE_SHIFT;
++	off_end = off + len;
++	off_align = round_up(off, align);
++
++	if ((off_end <= off_align) || ((off_end - off_align) < align))
++		goto out;
++
++	len_align = len + align;
++	if ((off + len_align) < off)
++		goto out;
++
++	addr_align = current->mm->get_unmapped_area(filp, addr, len_align,
++			pgoff, flags);
++	if (!IS_ERR_VALUE(addr_align)) {
++		addr_align += (off - addr_align) & (align - 1);
++		return addr_align;
++	}
++ out:
++	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
++}
++
++static const struct inode_operations zufr_inode_operations;
++static const struct file_operations zufr_file_dir_operations = {
++	.open		= dcache_dir_open,
++	.release	= dcache_dir_close,
++	.llseek		= dcache_dir_lseek,
++	.read		= generic_read_dir,
++	.iterate_shared	= dcache_readdir,
++	.fsync		= noop_fsync,
++	.unlocked_ioctl = zufc_ioctl,
++};
++static const struct file_operations zufr_file_reg_operations = {
++	.fsync			= noop_fsync,
++	.unlocked_ioctl		= zufc_ioctl,
++	.get_unmapped_area	= zufr_get_unmapped_area,
++	.mmap			= zufc_mmap,
++	.release		= zufc_release,
++};
++
++static int zufr_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
++{
++	struct zuf_root_info *zri = ZRI(dir->i_sb);
++	struct inode *inode;
++	int err;
++
++	inode = new_inode(dir->i_sb);
++	if (!inode)
++		return -ENOMEM;
++
++	/* We need to impersonate device-dax (S_DAX + S_IFCHR) in order to get
++	 * the PMD (huge) page faults and allow RDMA memory access via GUP
++	 * (get_user_pages_longterm).
++	 */
++	inode->i_flags = S_DAX;
++	mode = (mode & ~S_IFREG) | S_IFCHR; /* change file type to char */
++
++	inode->i_ino = ++zri->next_ino; /* none atomic only one mount thread */
++	inode->i_blocks = inode->i_size = 0;
++	inode->i_ctime = inode->i_mtime = current_time(inode);
++	inode->i_atime = inode->i_ctime;
++	inode_init_owner(inode, dir, mode);
++
++	inode->i_op = &zufr_inode_operations;
++	inode->i_fop = &zufr_file_reg_operations;
++
++	err = insert_inode_locked(inode);
++	if (unlikely(err)) {
++		zuf_err("[%ld] insert_inode_locked => %d\n", inode->i_ino, err);
++		goto fail;
++	}
++	d_tmpfile(dentry, inode);
++	unlock_new_inode(inode);
++	return 0;
++
++fail:
++	clear_nlink(inode);
++	make_bad_inode(inode);
++	iput(inode);
++	return err;
++}
++
++static void zufr_put_super(struct super_block *sb)
++{
++	struct zuf_root_info *zri = ZRI(sb);
++
++	zufc_zts_fini(zri);
++	_unregister_all_fses(zri);
++
++	zuf_info("zuf_root umount\n");
++}
++
++static void zufr_evict_inode(struct inode *inode)
++{
++	clear_inode(inode);
++}
++
++static const struct inode_operations zufr_inode_operations = {
++	.lookup		= simple_lookup,
++
++	.tmpfile	= zufr_tmpfile,
++	.unlink		= zufr_unlink,
++};
++static const struct super_operations zufr_super_operations = {
++	.statfs		= simple_statfs,
++
++	.evict_inode	= zufr_evict_inode,
++	.put_super	= zufr_put_super,
++};
++
++#define ZUFR_SUPER_MAGIC 0x1717
++
++static int zufr_fill_super(struct super_block *sb, void *data, int silent)
++{
++	static struct tree_descr zufr_files[] = {
++		[2] = {"state", &_state_ops, S_IFREG | 0400},
++		[3] = {"registered_fs", &_registered_fs_ops, S_IFREG | 0400},
++		{""},
++	};
++	struct zuf_root_info *zri;
++	struct inode *root_i;
++	int err;
++
++	zri = kzalloc(sizeof(*zri), GFP_KERNEL);
++	if (!zri) {
++		zuf_err_cnd(silent,
++			    "Not enough memory to allocate zuf_root_info\n");
++		return -ENOMEM;
++	}
++
++	err = simple_fill_super(sb, ZUFR_SUPER_MAGIC, zufr_files);
++	if (unlikely(err)) {
++		kfree(zri);
++		return err;
++	}
++
++	sb->s_op = &zufr_super_operations;
++	sb->s_fs_info = zri;
++	zri->sb = sb;
++
++	root_i = sb->s_root->d_inode;
++	root_i->i_fop = &zufr_file_dir_operations;
++	root_i->i_op = &zufr_inode_operations;
++
++	mutex_init(&zri->sbl_lock);
++	INIT_LIST_HEAD(&zri->fst_list);
++
++	err = zufc_zts_init(zri);
++	if (unlikely(err))
++		return err; /* put will be called we have a root */
++
++	return 0;
++}
++
++static struct dentry *zufr_mount(struct file_system_type *fs_type,
++				  int flags, const char *dev_name,
++				  void *data)
++{
++	struct dentry *ret = mount_nodev(fs_type, flags, data, zufr_fill_super);
++
++	if (IS_ERR_OR_NULL(ret)) {
++		zuf_dbg_err("mount_nodev(%s, %s) => %ld\n", dev_name,
++			    (char *)data, PTR_ERR(ret));
++		return ret;
++	}
++
++	zuf_info("zuf_root mount [%s]\n", dev_name);
++	return ret;
++}
++
++static struct file_system_type zufr_type = {
++	.owner =	THIS_MODULE,
++	.name =		"zuf",
++	.mount =	zufr_mount,
++	.kill_sb	= kill_litter_super,
++};
++
++/* Create an /sys/fs/zuf/ directory. to mount on */
++static struct kset *zufr_kset;
++
++int __init zuf_root_init(void)
++{
++	int err = zuf_init_inodecache();
++
++	if (unlikely(err))
++		return err;
++
++	zufr_kset = kset_create_and_add("zuf", NULL, fs_kobj);
++	if (!zufr_kset) {
++		err = -ENOMEM;
++		goto un_inodecache;
++	}
++
++	err = register_filesystem(&zufr_type);
++	if (unlikely(err))
++		goto un_kset;
++
++	return 0;
++
++un_kset:
++	kset_unregister(zufr_kset);
++un_inodecache:
++	zuf_destroy_inodecache();
++	return err;
++}
++
++static void __exit zuf_root_exit(void)
++{
++	unregister_filesystem(&zufr_type);
++	kset_unregister(zufr_kset);
++	zuf_destroy_inodecache();
++}
++
++module_init(zuf_root_init)
++module_exit(zuf_root_exit)
+diff --git a/fs/zuf/zuf.h b/fs/zuf/zuf.h
+new file mode 100644
+index 000000000000..3062f78c72d4
+--- /dev/null
++++ b/fs/zuf/zuf.h
+@@ -0,0 +1,115 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Definitions for the ZUF filesystem.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
++
++#ifndef __ZUF_H
++#define __ZUF_H
++
++#include <linux/sched.h>
++#include <linux/fs.h>
++#include <linux/list.h>
++#include <linux/types.h>
++#include <linux/xattr.h>
++#include <linux/exportfs.h>
++#include <linux/page_ref.h>
++#include <linux/mm.h>
++
++#include "zus_api.h"
++
++#include "_pr.h"
++
++enum zlfs_e_special_file {
++	zlfs_e_zt = 1,
++	zlfs_e_mout_thread,
++	zlfs_e_pmem,
++	zlfs_e_dpp_buff,
++	zlfs_e_private_mount,
++};
++
++struct zuf_special_file {
++	enum zlfs_e_special_file type;
++	struct file *file;
++};
++
++struct zuf_private_mount_info {
++	struct zuf_special_file zsf;
++	struct super_block *sb;
++};
++
++enum {
++	ZUF_ROOT_INITIALIZING = 0,
++	ZUF_ROOT_REGISTERING_FS = 1,
++	ZUF_ROOT_MOUNT_READY = 2,
++};
++
++/* This is the zuf-root.c mini filesystem */
++struct zuf_root_info {
++	#define SBL_INC 64
++	struct sb_is_list {
++		uint num;
++		uint max;
++		struct super_block **array;
++	} sbl;
++	struct mutex sbl_lock;
++
++	ulong next_ino;
++
++	/* The definition of _ztp is private to zuf-core.c */
++	struct zuf_threads_pool *_ztp;
++
++	struct super_block *sb;
++	struct list_head fst_list;
++	int state;
++};
++
++static inline struct zuf_root_info *ZRI(struct super_block *sb)
++{
++	struct zuf_root_info *zri = sb->s_fs_info;
++
++	WARN_ON(zri->sb != sb);
++	return zri;
++}
++
++struct zuf_fs_type {
++	struct file_system_type vfs_fst;
++	struct zus_fs_info	*zus_zfi;
++	struct register_fs_info rfi;
++	struct zuf_root_info *zri;
++
++	struct list_head list;
++};
++
++static inline void zuf_add_fs_type(struct zuf_root_info *zri,
++				   struct zuf_fs_type *zft)
++{
++	/* Unlocked for now only one mount-thread with zus */
++	list_add(&zft->list, &zri->fst_list);
++}
++
++/*
++ * ZUF per-inode data in memory
++ */
++struct zuf_inode_info {
++	struct inode		vfs_inode;
++};
++
++static inline struct zuf_inode_info *ZUII(struct inode *inode)
++{
++	return container_of(inode, struct zuf_inode_info, vfs_inode);
++}
++
++/* Keep this include last thing in file */
++#include "_extern.h"
++
++#endif /* __ZUF_H */
+diff --git a/fs/zuf/zus_api.h b/fs/zuf/zus_api.h
+index 4b1816e5dfd8..181805052ec0 100644
+--- a/fs/zuf/zus_api.h
++++ b/fs/zuf/zus_api.h
+@@ -97,4 +97,40 @@
+ 
+ #endif /*  ndef __KERNEL__ */
+ 
++struct zufs_ioc_hdr {
++	__s32 err;	/* IN/OUT must be first */
++	__u16 in_len;	/* How much to be copied *to* zus */
++	__u16 out_max;	/* Max receive buffer at dispatch caller */
++	__u16 out_start;/* Start of output parameters (to caller) */
++	__u16 out_len;	/* How much to be copied *from* zus to caller */
++			/* can be modified by zus */
++	__u16 operation;/* One of e_zufs_operation */
++	__u16 flags;	/* e_zufs_hdr_flags bit flags */
++	__u32 offset;	/* Start of user buffer in ZT mmap */
++	__u32 len;	/* Len of user buffer in ZT mmap */
++};
++
++struct register_fs_info {
++	char fsname[16];	/* Only 4 chars and a NUL please      */
++	__u32 FS_magic;         /* This is the FS's version && magic  */
++	__u32 FS_ver_major;	/* on disk, not the zuf-to-zus version*/
++	__u32 FS_ver_minor;	/* (See also struct md_dev_table)   */
++	__u32 notused;
++
++	__u64 dt_offset;
++	__u64 s_maxbytes;
++	__u32 s_time_gran;
++	__u32 def_mode;
++};
++
++/* Register FS */
++/* A cookie from user-mode given in register_fs_info */
++struct zus_fs_info;
++struct zufs_ioc_register_fs {
++	struct zufs_ioc_hdr hdr;
++	struct zus_fs_info *zus_zfi;
++	struct register_fs_info rfi;
++};
++#define ZU_IOC_REGISTER_FS	_IOWR('Z', 10, struct zufs_ioc_register_fs)
++
+ #endif /* _LINUX_ZUFS_API_H */
 -- 
 2.20.1
 
