@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21DDE8953F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 03:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7510F89542
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2019 03:51:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfHLBu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Aug 2019 21:50:57 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43921 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfHLBu4 (ORCPT
+        id S1726839AbfHLBu7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Aug 2019 21:50:59 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36191 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfHLBu5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Aug 2019 21:50:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id v12so1141998pfn.10;
-        Sun, 11 Aug 2019 18:50:56 -0700 (PDT)
+        Sun, 11 Aug 2019 21:50:57 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g4so785412plo.3;
+        Sun, 11 Aug 2019 18:50:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pfaVFzFF0GvUkP+csExf9mRMYKLakGIqocXWtOijWcs=;
-        b=J3n5ZKeoQQ0bmNJgluv6gAytDIfBo9heugCs0XBMhVCrev0LMMnqqYvHMPS/Cr0eBt
-         gctxUlCPGnoXwjK2CwzgVvi28Wb22MRLlEhA2lKWros6W4HEdEFgJOn/NBCaUfYs2Th8
-         uPiE4ZxUz27VerKWtltJreVV1o5cNvwgiQmm2L4fmmkncjkGTaspegF0sY5rCwFaz1Bj
-         NmwHks4rnhNi7uAo/lBpxeuM3ZbiuZQc8DkW7I1xNK4QRa1pZCMUjYzqmjrptEEwb9Fi
-         DfhQnMHmRrF6nz3dpmgznKvjSD+eNOrb0yEq+WeDxCYjBjqUNCYLFdD0M1uwwALX4eRZ
-         OSMA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=//FfBrFJF4GgHRR+yYGohW47iWmsEIpsgR4o2CfLEaI=;
+        b=n9WdsBYCNshNyrjNwoA988ZTa5cUmZ3ftfo2srk4qVaeFk/3QoLLi5AAHL4AElSmiI
+         XuhzXcej3mP/qZgB3XHsGbTfB/yNKw6cCUUIAPQ+5Nz8QE6P37CaiJAF1juYEdwzcQ7x
+         KCBBLQdzMFyQAH/huuHEICl517WeOf9evlQYRM6ra2qmGObt90NYEQrc2g3Hrh2Z96nu
+         KDGoR5r30ngur4PCtV8FhCZSZwFtTuDq2bAvEGOaEF6xs7+I2IMBDgXvMsOlYXQ02UbB
+         3XrvtA2d2QJxWudzhOEkOmMrqZS8v6TJDdTbi1eDdq4ek8o80TJA5b2A6NTjpOCVITJa
+         5I0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pfaVFzFF0GvUkP+csExf9mRMYKLakGIqocXWtOijWcs=;
-        b=MXJwOuOHmKADAU2vW5Wl+ibhpMmFzsIFmV9dQVSznTMaeSqywa251ZKEmB8DChqAtv
-         MBzHJRjZnFMSWb7mnvbWw+FG+sZT9r0bYfuHgEGOU67iL6pb2NFfbim3jIpRNUJRU7oJ
-         HVxkxX/bX76r9mLlPlr10ooXMhXfs+yO7rsW0+3b2n3nSp9G/SH6jJLN2EI5sGp1tqZW
-         r7b6v5anIqIp5IvaEleQDqTaLAgV9BBHinmn8eEbIaG1pNpi/PVc1fFQwQ/Sq7iR2Ap7
-         4t4VUEvFH1/VSdF1D05tc8ALRAYZs8iHRCc/C1TUAigSFtO22OaTVKYnGauINordz8o+
-         rjOw==
-X-Gm-Message-State: APjAAAV5MRK7ASlQc6cFhAXEcnQ9SbO9LMetLVT5YBzO5i6NHDs4S/da
-        RinunS/jdu+RtHY9PI2hhDHGPMXA
-X-Google-Smtp-Source: APXvYqwiGohojGGhDnygsE9A4cyzbEHPkz9fH4ggMXoJfzmaJzcdAgT3McHJiakV36cLDMyvSwP/zg==
-X-Received: by 2002:a65:44cc:: with SMTP id g12mr27761338pgs.409.1565574656022;
-        Sun, 11 Aug 2019 18:50:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=//FfBrFJF4GgHRR+yYGohW47iWmsEIpsgR4o2CfLEaI=;
+        b=s1Tqi5Ho9l68qUnJg2DpDM3hCfFgcjt+i4BWmpcWAcbwnXmk0SrjKXI2sYWQLPbR3k
+         Z9Sdw14Zknfcw8zi/tExms3m4rxzuqw7CKOePEzaFhP9Yc5zf3Q6AlL6mWh1YiciSGHe
+         0hDpP8McVlJuP0+cFMnEMLtY640SHJJn0iIba0IFsVvjaGuYQik887A3IbK8yiFn3rj7
+         0xADGp+v0kVBoarO6LxZLpkxcPrb3/FgHz8eCfPBIM9f+XJYRI53hoJhoI+BDMP/g8K2
+         WMEdqZC+s6hpnQ5+S8ZtofKJ0j6wm0CLMXdWQUjo2scsE5EaNCNtcFcgSTXGXrnatl2k
+         R2MA==
+X-Gm-Message-State: APjAAAXC2ep1QKmxmbbK/yDsvSMgd9r8a3w4P+b+VYQxMLxn//f6OUiH
+        Dd3HkhNwS9+vWI61CQwAMmqKpDGv
+X-Google-Smtp-Source: APXvYqzT/0PLSkZoDJi/ZIzWxvm8QO/lLOlBRLMJ5/ogboYNq/cgR98nTHd4GJwrVGgRFe2BKV9BHg==
+X-Received: by 2002:a17:902:b604:: with SMTP id b4mr15581107pls.94.1565574657032;
+        Sun, 11 Aug 2019 18:50:57 -0700 (PDT)
 Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id j20sm100062363pfr.113.2019.08.11.18.50.55
+        by smtp.gmail.com with ESMTPSA id j20sm100062363pfr.113.2019.08.11.18.50.56
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 11 Aug 2019 18:50:55 -0700 (PDT)
+        Sun, 11 Aug 2019 18:50:56 -0700 (PDT)
 From:   john.hubbard@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -56,11 +56,14 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [RFC PATCH 0/2] mm/gup: introduce vaddr_pin_pages_remote(), FOLL_PIN
-Date:   Sun, 11 Aug 2019 18:50:42 -0700
-Message-Id: <20190812015044.26176-1-jhubbard@nvidia.com>
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: [RFC PATCH 1/2] mm/gup: introduce FOLL_PIN flag for get_user_pages()
+Date:   Sun, 11 Aug 2019 18:50:43 -0700
+Message-Id: <20190812015044.26176-2-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190812015044.26176-1-jhubbard@nvidia.com>
+References: <20190812015044.26176-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
@@ -71,39 +74,74 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: John Hubbard <jhubbard@nvidia.com>
 
-Hi,
+FOLL_PIN is set by vaddr_pin_pages(). This is different than
+FOLL_LONGTERM, because even short term page pins need a new kind
+of tracking, if those pinned pages' data is going to potentially
+be modified.
 
-Dave Chinner's head didn't seem to explode...much, when he saw Ira's
-series, so I optimistically started taking it from there...this builds on
-top of Ira's patchset that he just sent out:
+This situation is described in more detail in commit fc1d8e7cca2d
+("mm: introduce put_user_page*(), placeholder versions").
 
-  "[RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002   ;-)" [1]
+FOLL_PIN is added now, rather than waiting until there is code that
+takes action based on FOLL_PIN. That's because having FOLL_PIN in
+the code helps to highlight the differences between:
 
-...which in turn is based on the latest -mmotm.
+    a) get_user_pages(): soon to be deprecated. Used to pin pages,
+       but without awareness of file systems that might use those
+       pages,
 
-If Ira's series and this one are both acceptable, then
+    b) The original vaddr_pin_pages(): intended only for
+       FOLL_LONGTERM and DAX use cases. This assumes direct IO
+       and therefore is not applicable the most of the other
+       callers of get_user_pages(), and
 
-    a) I'll rework the 41-patch "put_user_pages(): miscellaneous call
-       sites" series, and
+    c) The new vaddr_pin_pages(), which provides the correct
+       get_user_pages() flags for all cases, by setting FOLL_PIN.
 
-    b) note that this will take rather longer and will be quite a bit more
-       intrusive for each call site (but it's worth it), due to the
-       need to plumb the owning struct file* all the way down to the gup()
-       call. whew.
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ include/linux/mm.h | 1 +
+ mm/gup.c           | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-[1] https://lore.kernel.org/r/20190809225833.6657-1-ira.weiny@intel.com
-
-[2] https://lore.kernel.org/r/20190807013340.9706-1-jhubbard@nvidia.com
-
-John Hubbard (2):
-  mm/gup: introduce FOLL_PIN flag for get_user_pages()
-  mm/gup: introduce vaddr_pin_pages_remote()
-
- drivers/infiniband/core/umem_odp.c | 15 ++++----
- include/linux/mm.h                 |  8 +++++
- mm/gup.c                           | 55 +++++++++++++++++++++++++++++-
- 3 files changed, 71 insertions(+), 7 deletions(-)
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 90c5802866df..61b616cd9243 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2663,6 +2663,7 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+ #define FOLL_ANON	0x8000	/* don't do file mappings */
+ #define FOLL_LONGTERM	0x10000	/* mapping lifetime is indefinite: see below */
+ #define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
++#define FOLL_PIN	0x40000	/* pages must be released via put_user_page() */
+ 
+ /*
+  * NOTE on FOLL_LONGTERM:
+diff --git a/mm/gup.c b/mm/gup.c
+index 58f008a3c153..85f09958fbdc 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2494,6 +2494,9 @@ EXPORT_SYMBOL_GPL(get_user_pages_fast);
+  * being made against.  Usually "current->mm".
+  *
+  * Expects mmap_sem to be read locked.
++ *
++ * Implementation note: this sets FOLL_PIN, which means that the pages must
++ * ultimately be released by put_user_page().
+  */
+ long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
+ 		     unsigned int gup_flags, struct page **pages,
+@@ -2501,7 +2504,7 @@ long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
+ {
+ 	long ret;
+ 
+-	gup_flags |= FOLL_LONGTERM;
++	gup_flags |= FOLL_LONGTERM | FOLL_PIN;
+ 
+ 	if (!vaddr_pin || (!vaddr_pin->mm && !vaddr_pin->f_owner))
+ 		return -EINVAL;
 -- 
 2.22.0
 
