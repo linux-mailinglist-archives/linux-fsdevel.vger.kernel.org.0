@@ -2,162 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CC8C8AE96
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 07:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F1918AEB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 07:25:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbfHMFJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 01:09:40 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39321 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbfHMFJj (ORCPT
+        id S1726124AbfHMFYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 01:24:46 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:39199 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbfHMFYq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 01:09:39 -0400
-Received: by mail-pg1-f194.google.com with SMTP id u17so50613344pgi.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 22:09:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uLkfmiy/QyxG+42Kpd1Hh2gG09JBSRi1kuJ0irEOT+Q=;
-        b=blOJdc2kt55ZqQDvPUZbAMrG0e9V6Lpz+glDC3wqeZ0WFkpdzH+BHVuWLKpOnhb42G
-         g/4gIqAUYUWwrSZVnoWlA0+3BTuFFHTn4QIkPhZ/yY/qHdFseTm5A1T8f5E1IwOIGPkQ
-         NjL2X3JkoAgV9wX66vJ01slCy0p6rnZ7bkyjxanoLsFcwNNC9ezGHFtGPQthuBsXEPdD
-         Vzi/25vZpUBOV4gIKVVTs3IY9Dq9AiSUtfWFy0iWSPQYG787ViekPjFY+1C9grp4yxiQ
-         WMAj2QOcebo3fC3yliGOOPA8v9/MAYuJN9q8LYDdlO8ROvEqJbK4dyCfU63RlOwjE9t3
-         XXgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uLkfmiy/QyxG+42Kpd1Hh2gG09JBSRi1kuJ0irEOT+Q=;
-        b=s493CINIONurSZ3bjkLHPlC0w7l03PImC0UZ43bSLPwt7jxZWxfoe4N9gQORT3R3dR
-         arVoT2IP3isZh/6GcWYrR44ItcljBmvx1IDqbdz3LLzsVdaMuw+iJKEdy2qwpHkD1B/u
-         /9mmtydG9TSLheHz8CgqjbKruhPP//XDONYOtRA7PX3deP/cHkA+VscZJg50on+2Wvo8
-         PjX05dQkV9+y7M0owX3tLvgvuWAyRGha+MkWv/xd6XfaE7deKwTWZ0MIyzYBCQ6F9ijF
-         P46ZpGpKv9Aq5/g4Hf9Zd2M/0w86AiGZBSg67YJIvmche6/8sZiwfIAMhN7ESgYy2RjQ
-         8sOg==
-X-Gm-Message-State: APjAAAVeun7JAoHNpBzyqCnFP54xuqBu+iDRJJ0MJm+Ps9nmyUaEMDbH
-        RMmX5Gm6B1sBkdCqcq0kkTY5vpvUdMkmxWRpGc1tSA==
-X-Google-Smtp-Source: APXvYqwuRvdkQRBufOH1je8RsECuoe8PsScuGBBjY118Ufh882DHOjHaTVKhOCRIYEV6VNsZUpt68lWBTKVfNRYZXa8=
-X-Received: by 2002:a17:90a:c391:: with SMTP id h17mr524990pjt.131.1565672978100;
- Mon, 12 Aug 2019 22:09:38 -0700 (PDT)
+        Tue, 13 Aug 2019 01:24:46 -0400
+Received: from [192.168.178.60] ([109.104.47.130]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MPGiR-1hevT50O45-00PbYR; Tue, 13 Aug 2019 07:23:46 +0200
+Subject: Re: [PATCH v2 15/34] staging/vc04_services: convert put_page() to
+ put_user_page*()
+To:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-fbdev@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        kvm@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+        ceph-devel@vger.kernel.org, devel@driverdev.osuosl.org,
+        rds-devel@oss.oracle.com, linux-rdma@vger.kernel.org,
+        Suniel Mahesh <sunil.m@techveda.org>, x86@kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mihaela Muraru <mihaela.muraru21@gmail.com>,
+        xen-devel@lists.xenproject.org, devel@lists.orangefs.org,
+        linux-media@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        intel-gfx@lists.freedesktop.org,
+        Kishore KP <kishore.p@techveda.org>,
+        linux-block@vger.kernel.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sidong Yang <realwakka@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-nfs@vger.kernel.org,
+        Eric Anholt <eric@anholt.net>, netdev@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+References: <20190804224915.28669-1-jhubbard@nvidia.com>
+ <20190804224915.28669-16-jhubbard@nvidia.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <f92a9b35-072c-a452-3248-ded047a9ee7e@i2se.com>
+Date:   Tue, 13 Aug 2019 07:23:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190812182421.141150-1-brendanhiggins@google.com>
- <20190812182421.141150-12-brendanhiggins@google.com> <20190813045510.C1D6E206C2@mail.kernel.org>
-In-Reply-To: <20190813045510.C1D6E206C2@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 12 Aug 2019 22:09:26 -0700
-Message-ID: <CAFd5g47jrUd+ES4AaWsLDRCfsGiKDB-rOP6TR-NdymCeVAK3Kg@mail.gmail.com>
-Subject: Re: [PATCH v12 11/18] kunit: test: add the concept of assertions
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190804224915.28669-16-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:WLtnGHSdIdsSOgSCw9gLWN/He07a3vhG8P/jw9q/ZsKCLbsJUeS
+ 5llVNlt7KE/tvHn+5EOmDYYv4pX1cHVWKOXHtrw4HQWAHuCkTohFsgxlEY0fExapDm8vR8t
+ zVIsUr/Bms6Kvxj5sCY8IbKiNL01LBum+j6x95pPZHXG9iG9KDUI7QIiVK2/58tc3NB1jnX
+ y7VHJG/KIA+fGCfAbINIQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:e2tiG/LoUCE=:MfCllk8c06iYHLUWJWcKAL
+ cdQ1fi1ypP4tC6pu8XAt4M+fU5mGlkjM5ziFPw9nAP5+ICbjFLhxsiDLATVpll3xwUgna69cS
+ Ev9bpFgmBYRqbHsiOVM335kNgAU19xY/LXN/GzEuigzotpDhc5IdC4FGsNTdqmIYi0Bx4dgCw
+ bLM/SrMXG40Mg1UArtxdqWQvHnINj7yK6JacwPswBAo33CV5S5U4U1PS67DpEMKA7dX0oduGb
+ 5fQtkN1kvCZEg2/ekJnnb+PAR6KRS8Eu0zqK7cwQwWxs+nxHFNvcdfFolT7waPuKj24rhpnjW
+ ZntPcErm15w8EJ72vFuARtCUk4Lh4jU+zYNtoDE6B8RJqr/+yxycmwEDucEbNXrujkaPH72RU
+ fWCHjlXjsJS29DRMlBs91cqiKMaK/ktbzSpegz+iLEJq/HkDuPh/jiz/b8w2crkMXTYEXfcIb
+ WqkuI5hHrAdEh99xa/X99FupD8F6iZ52Pv/g2glNHL9WlKL41btCn/KodqBqy/glIqHZeYzq2
+ SXjRol/t4oy36qgSCQmUGiCt1lssYLkBWOzcxjui5lZUL2V9O7wn91tHl7G+DbqjQzgMyVtBP
+ 60iHHkwkWe3su3M3o+o4m8sWd9OG5XIToU/4cSDhBQohrRIKKqoUbXAyCJH96bxaYdq/zseIf
+ oMsHaN/31pBaLs6MtsAa2tu5PRj9qlBX5kso+Y5up4mj5gl7CfIWyGwpM4gPWtVKv1En5k3ZR
+ HR/0MJ6spaP8P86u5+VALfxj2aM5bbcj+ZVczoVE2BIVl4lPQEesVoHHwFc=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 9:55 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On 05.08.19 00:48, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
 >
-> Quoting Brendan Higgins (2019-08-12 11:24:14)
-> > Add support for assertions which are like expectations except the test
-> > terminates if the assertion is not satisfied.
-> >
-> > The idea with assertions is that you use them to state all the
-> > preconditions for your test. Logically speaking, these are the premises
-> > of the test case, so if a premise isn't true, there is no point in
-> > continuing the test case because there are no conclusions that can be
-> > drawn without the premises. Whereas, the expectation is the thing you
-> > are trying to prove. It is not used universally in x-unit style test
-> > frameworks, but I really like it as a convention.  You could still
-> > express the idea of a premise using the above idiom, but I think
-> > KUNIT_ASSERT_* states the intended idea perfectly.
-> >
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> For pages that were retained via get_user_pages*(), release those pages
+> via the new put_user_page*() routines, instead of via put_page() or
+> release_pages().
 >
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+> ("mm: introduce put_user_page*(), placeholder versions").
 >
-> > + * Sets an expectation that the values that @left and @right evaluate to are
-> > + * not equal. This is semantically equivalent to
-> > + * KUNIT_ASSERT_TRUE(@test, strcmp((@left), (@right))). See KUNIT_ASSERT_TRUE()
-> > + * for more information.
-> > + */
-> > +#define KUNIT_ASSERT_STRNEQ(test, left, right)                                \
-> > +               KUNIT_BINARY_STR_NE_ASSERTION(test,                            \
-> > +                                             KUNIT_ASSERTION,                 \
-> > +                                             left,                            \
-> > +                                             right)
-> > +
-> > +#define KUNIT_ASSERT_STRNEQ_MSG(test, left, right, fmt, ...)                  \
-> > +               KUNIT_BINARY_STR_NE_MSG_ASSERTION(test,                        \
-> > +                                                 KUNIT_ASSERTION,             \
-> > +                                                 left,                        \
-> > +                                                 right,                       \
-> > +                                                 fmt,                         \
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 >
-> Same question about tabbing too.
-
-Yep. WIll fix.
-
-> > diff --git a/kunit/test-test.c b/kunit/test-test.c
-> > index 88f4cdf03db2a..058f3fb37458a 100644
-> > --- a/kunit/test-test.c
-> > +++ b/kunit/test-test.c
-> > @@ -78,11 +78,13 @@ static int kunit_try_catch_test_init(struct kunit *test)
-> >         struct kunit_try_catch_test_context *ctx;
-> >
-> >         ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-> > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
->
-> Ah ok. Question still stands if kunit_kzalloc() should just have the
-> assertion on failure.
-
-Right. In the previous patch KUNIT_ASSERT_* doesn't exist yet, so I
-can't use it. And rather than fall back to return -ENOMEM like I
-should have, I evidently forgot to do that.
-
-> >         test->priv = ctx;
-> >
-> >         ctx->try_catch = kunit_kmalloc(test,
-> >                                        sizeof(*ctx->try_catch),
-> >                                        GFP_KERNEL);
-> > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->try_catch);
-> >
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Mihaela Muraru <mihaela.muraru21@gmail.com>
+> Cc: Suniel Mahesh <sunil.m@techveda.org>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Sidong Yang <realwakka@gmail.com>
+> Cc: Kishore KP <kishore.p@techveda.org>
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: devel@driverdev.osuosl.org
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
