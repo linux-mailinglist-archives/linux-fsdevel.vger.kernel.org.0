@@ -2,128 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13AE18C235
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 22:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 532E28C348
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 23:09:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbfHMUjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 16:39:00 -0400
-Received: from mga11.intel.com ([192.55.52.93]:6361 "EHLO mga11.intel.com"
+        id S1726530AbfHMVI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 17:08:59 -0400
+Received: from mga11.intel.com ([192.55.52.93]:8766 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbfHMUjA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 16:39:00 -0400
+        id S1726124AbfHMVI7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Aug 2019 17:08:59 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 13:38:59 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 14:08:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,382,1559545200"; 
-   d="scan'208";a="376423872"
+   d="scan'208";a="167177095"
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Aug 2019 13:38:59 -0700
-Date:   Tue, 13 Aug 2019 13:38:59 -0700
+  by orsmga007.jf.intel.com with ESMTP; 13 Aug 2019 14:08:57 -0700
+Date:   Tue, 13 Aug 2019 14:08:57 -0700
 From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
+To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
- file object
-Message-ID: <20190813203858.GA12695@iweiny-DESK2.sc.intel.com>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-17-ira.weiny@intel.com>
- <20190812130039.GD24457@ziepe.ca>
- <20190812172826.GA19746@iweiny-DESK2.sc.intel.com>
- <20190812175615.GI24457@ziepe.ca>
- <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
- <20190813114842.GB29508@ziepe.ca>
- <20190813174142.GB11882@iweiny-DESK2.sc.intel.com>
- <20190813180022.GF29508@ziepe.ca>
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
+Message-ID: <20190813210857.GB12695@iweiny-DESK2.sc.intel.com>
+References: <20190812015044.26176-1-jhubbard@nvidia.com>
+ <20190812015044.26176-3-jhubbard@nvidia.com>
+ <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
+ <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813180022.GF29508@ziepe.ca>
+In-Reply-To: <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 03:00:22PM -0300, Jason Gunthorpe wrote:
-> On Tue, Aug 13, 2019 at 10:41:42AM -0700, Ira Weiny wrote:
-> 
-> > And I was pretty sure uverbs_destroy_ufile_hw() would take care of (or ensure
-> > that some other thread is) destroying all the MR's we have associated with this
-> > FD.
-> 
-> fd's can't be revoked, so destroy_ufile_hw() can't touch them. It
-> deletes any underlying HW resources, but the FD persists.
-
-I misspoke.  I should have said associated with this "context".  And of course
-uverbs_destroy_ufile_hw() does not touch the FD.  What I mean is that the
-struct file which had file_pins hanging off of it would be getting its file
-pins destroyed by uverbs_destroy_ufile_hw().  Therefore we don't need the FD
-after uverbs_destroy_ufile_hw() is done.
-
-But since it does not block it may be that the struct file is gone before the
-MR is actually destroyed.  Which means I think the GUP code would blow up in
-that case...  :-(
-
-I was thinking it was the other way around.  And in fact most of the time I
-think it is.  But we can't depend on that...
-
->  
-> > > This is why having a back pointer like this is so ugly, it creates a
-> > > reference counting cycle
+On Mon, Aug 12, 2019 at 05:07:32PM -0700, John Hubbard wrote:
+> On 8/12/19 4:49 PM, Ira Weiny wrote:
+> > On Sun, Aug 11, 2019 at 06:50:44PM -0700, john.hubbard@gmail.com wrote:
+> > > From: John Hubbard <jhubbard@nvidia.com>
+> ...
+> > > diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
+> > > index 53085896d718..fdff034a8a30 100644
+> > > --- a/drivers/infiniband/core/umem_odp.c
+> > > +++ b/drivers/infiniband/core/umem_odp.c
+> > > @@ -534,7 +534,7 @@ static int ib_umem_odp_map_dma_single_page(
+> > >   	}
+> > >   out:
+> > > -	put_user_page(page);
+> > > +	vaddr_unpin_pages(&page, 1, &umem_odp->umem.vaddr_pin);
+> > >   	if (remove_existing_mapping) {
+> > >   		ib_umem_notifier_start_account(umem_odp);
+> > > @@ -635,9 +635,10 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
+> > >   		 * complex (and doesn't gain us much performance in most use
+> > >   		 * cases).
+> > >   		 */
+> > > -		npages = get_user_pages_remote(owning_process, owning_mm,
+> > > +		npages = vaddr_pin_pages_remote(owning_process, owning_mm,
+> > >   				user_virt, gup_num_pages,
+> > > -				flags, local_page_list, NULL, NULL);
+> > > +				flags, local_page_list, NULL, NULL,
+> > > +				&umem_odp->umem.vaddr_pin);
 > > 
-> > Yep...  I worked through this...  and it was giving me fits...
+> > Thinking about this part of the patch... is this pin really necessary?  This
+> > code is not doing a long term pin.  The page just needs a reference while we
+> > map it into the devices page tables.  Once that is done we should get notifiers
+> > if anything changes and we can adjust.  right?
 > > 
-> > Anyway, the struct file is the only object in the core which was reasonable to
-> > store this information in since that is what is passed around to other
-> > processes...
 > 
-> It could be passed down in the uattr_bundle, once you are in file operations
+> OK, now it's a little interesting: the FOLL_PIN is necessary, but maybe not
+> FOLL_LONGTERM. Illustrating once again that it's actually necessary to allow
+> these flags to vary independently.
 
-What is "It"?  The struct file?  Or the file pin information?
+Why is PIN necessary?  I think we do want all drivers to use the new
+user_uaddr_vaddr_pin_user_pages() call...  :-P  But in this case I think a
+simple "get" reference is enough to reference the page while we are using it.
+If it changes after the "put/unpin" we get a fault which should handle the
+change right?
 
-> handle the file is guarenteed to exist, and we've now arranged things
+The other issue I have with FOLL_PIN is what does it mean to call "...pin...()"
+without FOLL_PIN?
 
-I don't understand what you mean by "... once you are in file operations handle... "?
+This is another confusion of get_user_pages()...  you can actually call it
+without FOLL_GET...  :-/  And you just don't get pages back.  I've never really
+dug into how (or if) you "put" them later...
 
-> so the uattr_bundle flows into the umem, as umems can only be
-> established under a system call.
+> 
+> And that leads to another API refinement idea: let's set FOLL_PIN within the
+> vaddr_pin_pages*() wrappers, and set FOLL_LONGTER in the *callers* of those
+> wrappers, yes?
 
-"uattr_bundle" == uverbs_attr_bundle right?
+I've thought about this before and I think any default flags should simply
+define what we want follow_pages to do.
 
-The problem is that I don't think the core should be handling
-uverbs_attr_bundles directly.  So, I think you are driving at the same idea I
-had WRT callbacks into the driver.
+Also, the addition of vaddr_pin information creates an implicit flag which if
+not there disallows any file pages from being pinned.  It becomes our new
+"longterm" flag.  FOLL_PIN _could_ be what we should use "internally".  But we
+could also just use this implicit vaddr_pin flag and not add a new flag.
 
-The drivers could provide some generic object (in RDMA this could be the
-uverbs_attr_bundle) which represents their "context".
+Finally, I struggle with converting everyone to a new call.  It is more
+overhead to use vaddr_pin in the call above because now the GUP code is going
+to associate a file pin object with that file when in ODP we don't need that
+because the pages can move around.
 
-The GUP code calls back into the driver with file pin information as it
-encounters and pins pages.  The driver, RDMA in this case, associates this
-information with the "context".
-
-But for the procfs interface, that context then needs to be associated with any
-file which points to it...  For RDMA, or any other "FD based pin mechanism", it
-would be up to the driver to "install" a procfs handler into any struct file
-which _may_ point to this context.  (before _or_ after memory pins).
-
-Then the procfs code can walk the FD array and if this handler is installed it
-knows there is file pin information associated with that struct file and it can
-be printed...
-
-This is not impossible.  But I think is a lot harder for drivers to make
-right...
+This overhead may be fine, not sure in this case, but I don't see everyone
+wanting it.
 
 Ira
 
