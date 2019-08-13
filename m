@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 254318B212
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 10:12:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0384B8B327
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 10:58:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbfHMIMD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 04:12:03 -0400
-Received: from mga04.intel.com ([192.55.52.120]:62188 "EHLO mga04.intel.com"
+        id S1727440AbfHMI6X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 04:58:23 -0400
+Received: from mga01.intel.com ([192.55.52.88]:37745 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfHMIMC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 04:12:02 -0400
+        id S1726265AbfHMI6W (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Aug 2019 04:58:22 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 01:12:01 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 01:58:21 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,380,1559545200"; 
-   d="gz'50?scan'50,208,50";a="178604338"
+   d="gz'50?scan'50,208,50";a="375532988"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 13 Aug 2019 01:11:57 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 13 Aug 2019 01:58:19 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1hxRuO-0005Hs-Vw; Tue, 13 Aug 2019 16:11:57 +0800
-Date:   Tue, 13 Aug 2019 16:11:53 +0800
+        id 1hxSdG-00096D-Hg; Tue, 13 Aug 2019 16:58:18 +0800
+Date:   Tue, 13 Aug 2019 16:58:05 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Boaz Harrosh <boaz@plexistor.com>
 Cc:     kbuild-all@01.org, Boaz Harrosh <boaz@plexistor.com>,
         Boaz Harrosh <ooo@electrozaur.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Boaz Harrosh <boazh@netapp.com>
-Subject: Re: [PATCH 06/16] zuf: Multy Devices
-Message-ID: <201908131625.nH4peW0F%lkp@intel.com>
-References: <20190812164244.15580-7-boazh@netapp.com>
+Subject: Re: [PATCH 07/16] zuf: mounting
+Message-ID: <201908131636.YCcvbjVD%lkp@intel.com>
+References: <20190812164244.15580-8-boazh@netapp.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="a2xxckt5wto3qmii"
+Content-Type: multipart/mixed; boundary="u5enw6n4prp3oa2p"
 Content-Disposition: inline
-In-Reply-To: <20190812164244.15580-7-boazh@netapp.com>
+In-Reply-To: <20190812164244.15580-8-boazh@netapp.com>
 X-Patchwork-Hint: ignore
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -46,7 +46,7 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---a2xxckt5wto3qmii
+--u5enw6n4prp3oa2p
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -70,64 +70,69 @@ Reported-by: kbuild test robot <lkp@intel.com>
 
 All warnings (new ones prefixed by >>):
 
-   In file included from include/linux/kernel.h:15:0,
-                    from include/asm-generic/bug.h:18,
-                    from arch/x86/include/asm/bug.h:83,
-                    from include/linux/bug.h:5,
-                    from include/linux/mmdebug.h:5,
-                    from include/linux/mm.h:9,
-                    from fs/zuf/t1.c:15:
-   fs/zuf/t1.c: In function 't1_fault':
-   include/linux/printk.h:304:2: warning: this statement may fall through [-Wimplicit-fallthrough=]
-     printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> fs/zuf/_pr.h:23:31: note: in expansion of macro 'pr_err'
-    #define zuf_err(s, args ...)  pr_err("[%s:%d] " s, __func__, \
-                                  ^~~~~~
->> fs/zuf/t1.c:75:3: note: in expansion of macro 'zuf_err'
-      zuf_err("[%ld] PTE fault not expected pgoff=0x%lx addr=0x%lx\n",
-      ^~~~~~~
-   fs/zuf/t1.c:78:2: note: here
-     case PE_SIZE_PMD:
+   fs/zuf/zuf-core.c: In function '_r_zufs_dispatch':
+   fs/zuf/zuf-core.c:860:46: error: 'struct task_struct' has no member named 'cpus_allowed'; did you mean 'nr_cpus_allowed'?
+     cpumask_copy(&zt->relay.cpus_allowed, &app->cpus_allowed);
+                                                 ^~~~~~~~~~~~
+                                                 nr_cpus_allowed
+   fs/zuf/zuf-core.c:861:21: error: 'struct task_struct' has no member named 'cpus_allowed'; did you mean 'nr_cpus_allowed'?
+     cpumask_copy(&app->cpus_allowed,  cpumask_of(smp_processor_id()));
+                        ^~~~~~~~~~~~
+                        nr_cpus_allowed
+   fs/zuf/zuf-core.c:884:22: error: 'struct task_struct' has no member named 'cpus_allowed'; did you mean 'nr_cpus_allowed'?
+      cpumask_copy(&app->cpus_allowed, &zt->relay.cpus_allowed);
+                         ^~~~~~~~~~~~
+                         nr_cpus_allowed
+   fs/zuf/zuf-core.c: In function 'zufc_release':
+>> fs/zuf/zuf-core.c:1078:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+      _zu_private_mounter_release(file);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/zuf/zuf-core.c:1079:2: note: here
+     case zlfs_e_pmem:
      ^~~~
 
-vim +/pr_err +23 fs/zuf/_pr.h
+vim +1078 fs/zuf/zuf-core.c
 
-f577115420e717 Boaz Harrosh 2019-08-12  19  
-f577115420e717 Boaz Harrosh 2019-08-12  20  /*
-f577115420e717 Boaz Harrosh 2019-08-12  21   * Debug code
-f577115420e717 Boaz Harrosh 2019-08-12  22   */
-f577115420e717 Boaz Harrosh 2019-08-12 @23  #define zuf_err(s, args ...)		pr_err("[%s:%d] " s, __func__, \
-f577115420e717 Boaz Harrosh 2019-08-12  24  							__LINE__, ## args)
-f577115420e717 Boaz Harrosh 2019-08-12  25  #define zuf_err_cnd(silent, s, args ...) \
-f577115420e717 Boaz Harrosh 2019-08-12  26  	do {if (!silent) \
-f577115420e717 Boaz Harrosh 2019-08-12  27  		pr_err("[%s:%d] " s, __func__, __LINE__, ## args); \
-f577115420e717 Boaz Harrosh 2019-08-12  28  	} while (0)
-f577115420e717 Boaz Harrosh 2019-08-12  29  #define zuf_warn(s, args ...)		pr_warn("[%s:%d] " s, __func__, \
-f577115420e717 Boaz Harrosh 2019-08-12  30  							__LINE__, ## args)
-f577115420e717 Boaz Harrosh 2019-08-12  31  #define zuf_warn_cnd(silent, s, args ...) \
-f577115420e717 Boaz Harrosh 2019-08-12  32  	do {if (!silent) \
-f577115420e717 Boaz Harrosh 2019-08-12  33  		pr_warn("[%s:%d] " s, __func__, __LINE__, ## args); \
-f577115420e717 Boaz Harrosh 2019-08-12  34  	} while (0)
-f577115420e717 Boaz Harrosh 2019-08-12  35  #define zuf_info(s, args ...)          pr_info("~info~ " s, ## args)
-f577115420e717 Boaz Harrosh 2019-08-12  36  
-
-:::::: The code at line 23 was first introduced by commit
-:::::: f577115420e717e536986a2e6055c584ec2f6829 zuf: zuf-rootfs
-
-:::::: TO: Boaz Harrosh <boaz@plexistor.com>
-:::::: CC: 0day robot <lkp@intel.com>
+  1062	
+  1063	int zufc_release(struct inode *inode, struct file *file)
+  1064	{
+  1065		struct zuf_special_file *zsf = file->private_data;
+  1066	
+  1067		if (!zsf)
+  1068			return 0;
+  1069	
+  1070		switch (zsf->type) {
+  1071		case zlfs_e_zt:
+  1072			zufc_zt_release(file);
+  1073			return 0;
+  1074		case zlfs_e_mout_thread:
+  1075			zufc_mounter_release(file);
+  1076			return 0;
+  1077		case zlfs_e_private_mount:
+> 1078			_zu_private_mounter_release(file);
+  1079		case zlfs_e_pmem:
+  1080			/* NOTHING to clean for pmem file yet */
+  1081			/* zuf_pmem_release(file);*/
+  1082			return 0;
+  1083		case zlfs_e_dpp_buff:
+  1084			zufc_ebuff_release(file);
+  1085			return 0;
+  1086		default:
+  1087			return 0;
+  1088		}
+  1089	}
+  1090	
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
 https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---a2xxckt5wto3qmii
+--u5enw6n4prp3oa2p
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICNtoUl0AAy5jb25maWcAlDzbctw2su/5iinnJXlwIsmy4nNO6QEkwRl4SIIBwNGMXliK
+H4sICN91Ul0AAy5jb25maWcAlDzbctw2su/5iinnJXlwIsmy4nNO6QEkwRl4SIIBwNGMXliK
 NPKq1pa8uuzaf3+6AV4al1G8qa212I1ro9F3zM8//bxgL88PX66e766vPn/+vvi0v98/Xj3v
 bxa3d5/3/7co5KKRZsELYX6DxtXd/cu33799OOvPThfvf3v329Hbx+vTxXr/eL//vMgf7m/v
 Pr1A/7uH+59+/gn+9zMAv3yFoR7/d/Hp+vrtH4tfiv1fd1f3iz9+O4Xex0e/ur+gbS6bUiz7
@@ -1415,4 +1420,4 @@ Gg4eeMz3soPuty7xhvPIbEV2BbwF0aLGOgM1oLwOopkyq1VOg6bloPKc7slpwLwiz4RYX0Im
 DldyuTye4DjDAQtd1OMZNX86UDkB9Qy3tUcdzrHyVFF4sT+G8wJ+rFN16HsH1QW7hK64whh1
 dV/WIW+NCTeX9qSKxpbHJdsrj7QAp7NBikKIrlnKkC468HP/Dyc8bw2LbAQA
 
---a2xxckt5wto3qmii--
+--u5enw6n4prp3oa2p--
