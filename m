@@ -2,194 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28E108B94C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 14:59:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC7648B96B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 15:03:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728762AbfHMM7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 08:59:01 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46765 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728364AbfHMM7A (ORCPT
+        id S1728813AbfHMNDY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 09:03:24 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40858 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728321AbfHMNDT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 08:59:00 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q139so3282652pfc.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2019 05:58:55 -0700 (PDT)
+        Tue, 13 Aug 2019 09:03:19 -0400
+Received: by mail-pl1-f193.google.com with SMTP id a93so49208634pla.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2019 06:03:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=BtgHrm08etfJjpF5KZmN8TsxqVOwcQO1JBv4H+Dr5cg=;
-        b=wEmr3cZiUAc2JpvdtUVMLKLT9KycYfEQTCLPN6raNK0E8SO/r2D6MAsFB8sxobyYTB
-         JKHsJgYhlJ71M2Rlf1ky2eEywEQE1JgqOuuGQm+6KVHDcnZn4XWKc8NshLfPWMTv8dHQ
-         9Ac288GNUhb8Cum4V/duyv4hUCR86xG5Uuv8PJaE8K6Wb/IkZ0Bt3TOExh2Da7X8EfGG
-         zAFjRbflE8ZDCijWL3TdCjVc3Beqo0oi7dVa6rxuXlTTtpSNi9W40Hz+3i+6e/yjBJpb
-         moSTb4d4/BQkNFf3UZP7KPmE8TYoL+t/56kin8CzTW45xpfBb3aM4+pUtYz0oq52jHZE
-         zvJA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0YYrt8fX8NBe3Ix0ZR8N7yG5IdU706M3lTlC7xsDXZg=;
+        b=nkYZnagQ/N+uvwC9Ff9zhOFqbOrUlnQYXOHbaXVlcf1nr0dsS69AaKbg1Sdb4bHqsS
+         Rw0nONPYNHH+ZI1uW9Pl/qa6ZrBVPgrdhUJDjDb31Umw9OmTNIk12NcZOYodMhVYSAlG
+         23CPdOXA+MqHPsRg0w23i+m4zmC12TNmy+XXKAbb9MQiARYNFSUlJSQZnQpMnxwVsbOO
+         HRmYifIH193V8+HqAAajmwf/NH2chEnFGsi6FGS+rrAVoqfKdD+toWpZ1HaLEBO6YkeS
+         cSIGOPhQUTmJT/u3a3EgJI8cGav7YQtcz2AbqF1+PcBStArN4hpDMUQRk1Y1j+UKWLw/
+         mfCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=BtgHrm08etfJjpF5KZmN8TsxqVOwcQO1JBv4H+Dr5cg=;
-        b=e8Q2O22yC6aTvP2WAL+BjCp0ezQrWLTpCLWsrteLBQYHtof0sibYDpiy3sJgUpDUeG
-         ckKWMrmnP6AcK4l+rzGgrNK43uzs2vse+UZwjMmzIwQskMowRaxLsxz1GcRyaJ0Z3Kmh
-         4dEV0lgwb6TynXYvevzw/zsEFIIVk/N+rFWsmJyDR9LLi0LvpgQy8HHU2K0TFNPhcPXL
-         JC/OnBNZKLYvR9Q3RqJG9hDyWKV1gLLB/bb/Krxfe68munOh6TCNNqrIwCgFXmliFLlU
-         eBsVbl9F75U/MkzdiD3m+e3HFeHsojL8a8pod6pwhv9wzHHf541yMk9yHN7PDgNYa9v2
-         vHqw==
-X-Gm-Message-State: APjAAAVpCMPQKaw4R8AgczYcipewo7+id6aJ3x9Ips0ufLwWkR5vIeIN
-        cAiNCmE46rwt2uD4NVRaDsV6pvAmNg==
-X-Google-Smtp-Source: APXvYqy/dcEWOI6c0eEjj5GAJ7wsf/ExpRRYdw8Xmi1ZmvBRpibcJa9dVGYOBop6r31MeVz4JOMGCw==
-X-Received: by 2002:a63:89c7:: with SMTP id v190mr33058801pgd.299.1565701134413;
-        Tue, 13 Aug 2019 05:58:54 -0700 (PDT)
-Received: from neo.Home ([114.78.226.167])
-        by smtp.gmail.com with ESMTPSA id x1sm22171627pfj.182.2019.08.13.05.58.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 05:58:53 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 22:58:42 +1000
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     RITESH HARJANI <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jack@suse.cz, tytso@mit.edu
-Subject: Re: [PATCH 4/5] ext4: introduce direct IO write code path using
- iomap infrastructure
-Message-ID: <20190813125840.GA10187@neo.Home>
-References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
- <581c3a2da89991e7ce5862d93dcfb23e1dc8ddc8.1565609891.git.mbobrowski@mbobrowski.org>
- <20190812170430.982E552051@d06av21.portsmouth.uk.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0YYrt8fX8NBe3Ix0ZR8N7yG5IdU706M3lTlC7xsDXZg=;
+        b=tS30f93V1bLXXHjpp0mnoTuhGRuhvmcnx1tj8kTL3jkRNMTRKBsgbhYY/7rI3klLS/
+         XutKpeHKymmIpbRTwVXm7+e3oVkqtui5DZ60oHhl9oyTek/aaUzXST0vSJUX38j4te0a
+         w4usYKvN8j/1sFLH+hwfHD3E0Wc+nkQc2VTveDrJoITwhndNzbwbYQutSQkwx9/xnNXk
+         ns/TlJGydHvPK3aKmtfrzK1wT1K5IQmWMLh/ZZSsZ/4DiLUQ0lSCR60Kh132wBS4sWLs
+         6DfeJQm9hvRQDOAJ08mq81ue/pivTnqCEnsvUn5da5mYbH0dVR4/D9XfM0RGnYTDd/nL
+         DaQA==
+X-Gm-Message-State: APjAAAXlIq+V2Qugly1hcoEKLQToRL95NHI8h5OHqEQZUY/uc/z0on+A
+        kM6P3i1Q5cnls+9Vbr/m8uUKzL/dOtv7rvetNQYiSQ==
+X-Google-Smtp-Source: APXvYqx5QN3Xu0FjLh/BJUrsZv+FEng8X5z4EG0iHTMxlFgLEZUcutUE5Zys4DzTpckKpqeQwJEkajNChyety2rhw38=
+X-Received: by 2002:a17:902:bb94:: with SMTP id m20mr5225493pls.336.1565701398386;
+ Tue, 13 Aug 2019 06:03:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190812170430.982E552051@d06av21.portsmouth.uk.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <000000000000532b860589f0669a@google.com>
+In-Reply-To: <000000000000532b860589f0669a@google.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 13 Aug 2019 15:03:07 +0200
+Message-ID: <CAAeHK+waUUNpGp1b2WqXQHkbBcQT_MonG62-bK-aEj2dvYr-gA@mail.gmail.com>
+Subject: Re: general protection fault in cdev_del
+To:     syzbot <syzbot+67b2bd0e34f952d0321e@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oliver Neukum <oneukum@suse.com>
+Content-Type: multipart/mixed; boundary="000000000000ad7835058fff43df"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 10:34:29PM +0530, RITESH HARJANI wrote:
-> > +	if (offset + count > i_size_read(inode) ||
-> > +	    offset + count > EXT4_I(inode)->i_disksize) {
-> > +		ext4_update_i_disksize(inode, inode->i_size);
-> > +		extend = true;
-> > +	}
-> > +
-> > +	ret = iomap_dio_rw(iocb, from, &ext4_iomap_ops, ext4_dio_write_end_io);
-> > +
-> > +	/*
-> > +	 * Unaligned direct AIO must be the only IO in flight or else
-> > +	 * any overlapping aligned IO after unaligned IO might result
-> > +	 * in data corruption.
-> > +	 */
-> > +	if (ret == -EIOCBQUEUED && (unaligned_aio || extend))
-> > +		inode_dio_wait(inode);
-> 
-> Could you please add explain & add a comment about why we wait in AIO DIO
-> case
-> when extend is true? As I see without iomap code this case was not present
-> earlier.
+--000000000000ad7835058fff43df
+Content-Type: text/plain; charset="UTF-8"
 
-Because while using the iomap infrastructure for AIO writes, we return to the
-caller prior to invoking the ->end_io() handler. This callback is responsible
-for performing the in-core/on-disk inode extension if it is deemed
-necessary. If we don't wait in the case of an extend, we run the risk of
-loosing inode size consistencies in addition to things leading to possible
-data corruption...
+On Tue, May 28, 2019 at 12:48 PM syzbot
+<syzbot+67b2bd0e34f952d0321e@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    69bbe8c7 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=178e4526a00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c309d28e15db39c5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=67b2bd0e34f952d0321e
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10dc5d54a00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17cae526a00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+67b2bd0e34f952d0321e@syzkaller.appspotmail.com
+>
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN PTI
+> CPU: 1 PID: 2486 Comm: kworker/1:2 Not tainted 5.2.0-rc1+ #9
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: usb_hub_wq hub_event
+> RIP: 0010:cdev_del+0x22/0x90 fs/char_dev.c:592
+> Code: cf 0f 1f 80 00 00 00 00 55 48 89 fd 48 83 ec 08 e8 93 a5 d5 ff 48 8d
+> 7d 64 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48
+> 89 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 4f 48
+> RSP: 0018:ffff8881d18e7218 EFLAGS: 00010207
+> RAX: dffffc0000000000 RBX: ffff8881d249a100 RCX: ffffffff820d879e
+> RDX: 000000000000000c RSI: ffffffff8167705d RDI: 0000000000000064
+> RBP: 0000000000000000 R08: ffff8881d18d1800 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: ffff8881d25c9100 R14: 0000000000000000 R15: ffff8881cc2a8070
+> FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f35af318000 CR3: 00000001cc182000 CR4: 00000000001406e0
+> Call Trace:
+>   tty_unregister_device drivers/tty/tty_io.c:3192 [inline]
+>   tty_unregister_device+0x10d/0x1a0 drivers/tty/tty_io.c:3187
+>   hso_serial_tty_unregister drivers/net/usb/hso.c:2245 [inline]
+>   hso_create_bulk_serial_device drivers/net/usb/hso.c:2682 [inline]
+>   hso_probe.cold+0xc8/0x120 drivers/net/usb/hso.c:2948
+>   usb_probe_interface+0x30b/0x7a0 drivers/usb/core/driver.c:361
+>   really_probe+0x287/0x660 drivers/base/dd.c:509
+>   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+>   __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
+>   bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x217/0x360 drivers/base/dd.c:843
+>   bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
+>   device_add+0xae6/0x1700 drivers/base/core.c:2111
+>   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+>   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+>   usb_probe_device+0xa2/0x100 drivers/usb/core/driver.c:266
+>   really_probe+0x287/0x660 drivers/base/dd.c:509
+>   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+>   __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
+>   bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x217/0x360 drivers/base/dd.c:843
+>   bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
+>   device_add+0xae6/0x1700 drivers/base/core.c:2111
+>   usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
+>   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+>   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+>   port_event drivers/usb/core/hub.c:5350 [inline]
+>   hub_event+0x1adc/0x35a0 drivers/usb/core/hub.c:5432
+>   process_one_work+0x90a/0x1580 kernel/workqueue.c:2268
+>   worker_thread+0x96/0xe20 kernel/workqueue.c:2414
+>   kthread+0x30e/0x420 kernel/kthread.c:254
+>   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+> Modules linked in:
+> ---[ end trace 3b56fa5a205cba42 ]---
+> RIP: 0010:cdev_del+0x22/0x90 fs/char_dev.c:592
+> Code: cf 0f 1f 80 00 00 00 00 55 48 89 fd 48 83 ec 08 e8 93 a5 d5 ff 48 8d
+> 7d 64 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48
+> 89 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 4f 48
+> RSP: 0018:ffff8881d18e7218 EFLAGS: 00010207
+> RAX: dffffc0000000000 RBX: ffff8881d249a100 RCX: ffffffff820d879e
+> RDX: 000000000000000c RSI: ffffffff8167705d RDI: 0000000000000064
+> RBP: 0000000000000000 R08: ffff8881d18d1800 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: ffff8881d25c9100 R14: 0000000000000000 R15: ffff8881cc2a8070
+> FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f35af318000 CR3: 00000001cc182000 CR4: 00000000001406e0
 
-> > +
-> > +	if (ret >= 0 && iov_iter_count(from)) {
-> > +		overwrite ? inode_unlock_shared(inode) : inode_unlock(inode);
-> > +		return ext4_buffered_write_iter(iocb, from);
-> > +	}
-> should not we copy code from "__generic_file_write_iter" which does below?
-> 
-> 3436                 /*
-> 3437                  * We need to ensure that the page cache pages are
-> written to
-> 3438                  * disk and invalidated to preserve the expected
-> O_DIRECT
-> 3439                  * semantics.
-> 3440                  */
+Trying Oliver's fix from [1]:
 
-Hm, I don't see why this would be required seeing as though the page cache
-invalidation semantics pre and post write are handled by iomap_dio_rw() and
-iomap_dio_complete(). But, I could be completely wrong here, so we may need to
-wait for some others to provide comments on this.
+#syz test: https://github.com/google/kasan.git 69bbe8c7
 
-> > +			WARN_ON(!(flags & IOMAP_DIRECT));
-> > +			if (round_down(offset, i_blocksize(inode)) >=
-> > +			    i_size_read(inode)) {
-> > +				ret = ext4_map_blocks(handle, inode, &map,
-> > +						      EXT4_GET_BLOCKS_CREATE);
-> > +			} else if (!ext4_test_inode_flag(inode,
-> > +							 EXT4_INODE_EXTENTS)) {
-> > +				/*
-> > +				 * We cannot fill holes in indirect
-> > +				 * tree based inodes as that could
-> > +				 * expose stale data in the case of a
-> > +				 * crash. Use magic error code to
-> > +				 * fallback to buffered IO.
-> > +				 */
-> > +				ret = ext4_map_blocks(handle, inode, &map, 0);
-> > +				if (ret == 0)
-> > +					ret = -ENOTBLK;
-> > +			} else {
-> > +				ret = ext4_map_blocks(handle, inode, &map,
-> > +						      EXT4_GET_BLOCKS_IO_CREATE_EXT);
-> > +			}
-> > +		}
-> 
-> Could you please check & confirm on below points -
-> 1. Do you see a problem @above in case of *overwrite* with extents mapping?
-> It will fall into EXT4_GET_BLOCKS_IO_CREATE_EXT case.
-> So are we piggy backing on the fact that ext4_map_blocks first call
-> ext4_ext_map_blocks
-> with flags & EXT4_GET_BLOCKS_KEEP_SIZE. And so for overwrite case since it
-> will return
-> val > 0 then we will anyway not create any blocks and so we don't need to
-> check overwrite
-> case specifically here?
-> 
-> 
-> 2. For cases with flags passed is 0 to ext4_map_blocks (overwrite &
-> fallocate without extent case),
-> we need not start the journaling transaction. But in above we are doing
-> ext4_journal_start/stop unconditionally
-> & unnecessarily reserving dio_credits blocks.
-> We need to take care of that right?
+[1] https://groups.google.com/forum/#!msg/syzkaller-bugs/5qVDUDTxXYQ/OlN_ZX6LBwAJ
 
-Hm, I think you raise valid points here.
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 
-Jan, do you have any comments on the above? I vaguely remember having a
-discussion around dropping the overwrite checks in ext4_iomap_begin() as we're
-removing the inode_lock() early on in ext4_dio_write_iter(), so it woudln't be
-necessary to do so. But, now that Ritesh mentioned it again I'm thinking it
-may actually be required...
+--000000000000ad7835058fff43df
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-usb-hso-initialize-so-that-we-can-tear-down-in-the-e.patch"
+Content-Disposition: attachment; 
+	filename="0001-usb-hso-initialize-so-that-we-can-tear-down-in-the-e.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jz9u5b6z0>
+X-Attachment-Id: f_jz9u5b6z0
 
-> >   		if (ret < 0) {
-> >   			ext4_journal_stop(handle);
-> >   			if (ret == -ENOSPC &&
-> > @@ -3581,10 +3611,10 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-> >   		iomap->type = delalloc ? IOMAP_DELALLOC : IOMAP_HOLE;
-> >   		iomap->addr = IOMAP_NULL_ADDR;
-> >   	} else {
-> > -		if (map.m_flags & EXT4_MAP_MAPPED) {
-> > -			iomap->type = IOMAP_MAPPED;
-> > -		} else if (map.m_flags & EXT4_MAP_UNWRITTEN) {
-> > +		if (map.m_flags & EXT4_MAP_UNWRITTEN) {
-> >   			iomap->type = IOMAP_UNWRITTEN;
-> > +		} else if (map.m_flags & EXT4_MAP_MAPPED) {
-> > +			iomap->type = IOMAP_MAPPED;
-> Maybe a comment as to explaining why checking UNWRITTEN before is necessary
-> for others.
-> So in case of fallocate & DIO write case we may get extent which is both
-> unwritten & mapped (right?).
-> so we need to check if we have an unwritten extent first so that it will
-> need the conversion in ->end_io
-> callback.
-
-Yes, that is essentially correct.
-
---M
+RnJvbSA2ODY3YWJjMTcwMWYxODg5MmQzMmU4YWVhZjY0NDkwMWU5YmNiZjgyIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29tPgpEYXRl
+OiBXZWQsIDUgSnVuIDIwMTkgMTM6NDk6MjEgKzAyMDAKU3ViamVjdDogW1BBVENIXSB1c2I6IGhz
+bzogaW5pdGlhbGl6ZSBzbyB0aGF0IHdlIGNhbiB0ZWFyIGRvd24gaW4gdGhlIGVycm9yCiBjYXNl
+CgpJbml0dWFsaXphdGlvbiBtdXN0IGZvbGxvdyB0aGUgc2VxdWVuY2Ugc3R1ZmYgaXMgdW5kb25l
+IGluIGNhc2UKd2UgYmFpbCBvdXQuIFRodXMgdGhlIHBhcmVudCBwb2ludGVyIG11c3QgYmUgc2V0
+IGVhcmxpZXIuCgpTaWduZWQtb2ZmLWJ5OiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29t
+PgotLS0KIGRyaXZlcnMvbmV0L3VzYi9oc28uYyB8IDYgKysrLS0tCiAxIGZpbGUgY2hhbmdlZCwg
+MyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0
+L3VzYi9oc28uYyBiL2RyaXZlcnMvbmV0L3VzYi9oc28uYwppbmRleCA2YTBlY2RkZmYzMTAuLjRk
+OTEwMGZiOWY2ZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9uZXQvdXNiL2hzby5jCisrKyBiL2RyaXZl
+cnMvbmV0L3VzYi9oc28uYwpAQCAtMjY1Myw2ICsyNjUzLDkgQEAgc3RhdGljIHN0cnVjdCBoc29f
+ZGV2aWNlICpoc29fY3JlYXRlX2J1bGtfc2VyaWFsX2RldmljZSgKIAkJCQkgICAgIEJVTEtfVVJC
+X1RYX1NJWkUpKQogCQlnb3RvIGV4aXQ7CiAKKwkvKiBhbmQgcmVjb3JkIHRoaXMgc2VyaWFsICov
+CisJc2V0X3NlcmlhbF9ieV9pbmRleChzZXJpYWwtPm1pbm9yLCBzZXJpYWwpOworCiAJc2VyaWFs
+LT5pbl9lbmRwID0gaHNvX2dldF9lcChpbnRlcmZhY2UsIFVTQl9FTkRQT0lOVF9YRkVSX0JVTEss
+CiAJCQkJICAgICBVU0JfRElSX0lOKTsKIAlpZiAoIXNlcmlhbC0+aW5fZW5kcCkgewpAQCAtMjY2
+OSw5ICsyNjcyLDYgQEAgc3RhdGljIHN0cnVjdCBoc29fZGV2aWNlICpoc29fY3JlYXRlX2J1bGtf
+c2VyaWFsX2RldmljZSgKIAogCXNlcmlhbC0+d3JpdGVfZGF0YSA9IGhzb19zdGRfc2VyaWFsX3dy
+aXRlX2RhdGE7CiAKLQkvKiBhbmQgcmVjb3JkIHRoaXMgc2VyaWFsICovCi0Jc2V0X3NlcmlhbF9i
+eV9pbmRleChzZXJpYWwtPm1pbm9yLCBzZXJpYWwpOwotCiAJLyogc2V0dXAgdGhlIHByb2MgZGly
+cyBhbmQgZmlsZXMgaWYgbmVlZGVkICovCiAJaHNvX2xvZ19wb3J0KGhzb19kZXYpOwogCi0tIAoy
+LjE2LjQKCg==
+--000000000000ad7835058fff43df--
