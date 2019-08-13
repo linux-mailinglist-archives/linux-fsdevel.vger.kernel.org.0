@@ -2,120 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF9138B777
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 13:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E128B77D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 13:48:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbfHMLrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 07:47:09 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38976 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbfHMLrI (ORCPT
+        id S1726890AbfHMLsZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 07:48:25 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55595 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfHMLsY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 07:47:08 -0400
-Received: by mail-qt1-f194.google.com with SMTP id l9so105906200qtu.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2019 04:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A5jSIc/RY/hZ7f+bEkMhOVRTEXKJZMsh3LcoJICOYZA=;
-        b=QCZ4PvH+HERINAIC/rIX57CfHFpykExOSCWoiRBdSClOqTC5WAYKVE/wNtLd1ZCdXb
-         KZp5v/22WAqZ0EMeHD9gQcL9jjBHQrauhwB1tY41cMyXOMQcHirf3q33hSp3+J4vow0U
-         GPXzEq3gqF2wrMV1Rw/sgqnEqIShtnXpz04NN7ACpnW2Kb2z/8KWS7MN/hESlyb75tlS
-         YMQH3uuf6z8f1q/jLKcYyFLyOZd7D+SDwoKD8lO4RahnM5opPz9OKgrwrp/X5BI8wvMd
-         OzyT60/eIe57jrf+8q2zyLqpHM8YRV9JQevqDnSiRM5+NRuM8rm/DiPdBJOWMMsLftQz
-         b4GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A5jSIc/RY/hZ7f+bEkMhOVRTEXKJZMsh3LcoJICOYZA=;
-        b=ZD8SPKmKOAjmVJNpFw6ArxiJWZIl+JNqvZDNFwKtDpcC2ydAcXNfWyvetEhM14Jdid
-         5mve7AN0hXdZETe5VBUAHfwQXW65OO9vX+TGXbB9fXys+rOQu+XwayXx9IKLmVZZ2xHS
-         0IHGR93nKowDugMeb5M+sr96u+/giSM7Qx/kjFbb0os5akfF01JeNTjP0cjzOREcSO+a
-         2VWEbborX2hmD99Kh0Zy8NUQsz32aTvQzVenBHY9kRgtwMtmfsPJwkf+tqHJwugZRGmC
-         qgGRYmvFeth99HBuPOH5vOAaHgog8TUWs6foWE4Ayi7M6O775B1UpLY21lBBeLpHesFq
-         sALw==
-X-Gm-Message-State: APjAAAWyskAbtloIeeS35c81KKot7qIwWDaR4vV3VK9CC9g0WV52Rqhi
-        X0MKMPp0SBL+w38DWSALIJqZ+Q==
-X-Google-Smtp-Source: APXvYqxNaQQNPStukKuBzbe7ho0VUZGNKPG9lP34sc9j+nxvDvhp77mkTMuiRQNU50cP5mt/nBqv4g==
-X-Received: by 2002:ac8:3f86:: with SMTP id d6mr30794575qtk.346.1565696827682;
-        Tue, 13 Aug 2019 04:47:07 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id 67sm47417797qkh.108.2019.08.13.04.47.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Aug 2019 04:47:07 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hxVGc-0007jx-3A; Tue, 13 Aug 2019 08:47:06 -0300
-Date:   Tue, 13 Aug 2019 08:47:06 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 15/19] mm/gup: Introduce vaddr_pin_pages()
-Message-ID: <20190813114706.GA29508@ziepe.ca>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-16-ira.weiny@intel.com>
- <20190812122814.GC24457@ziepe.ca>
- <20190812214854.GF20634@iweiny-DESK2.sc.intel.com>
+        Tue, 13 Aug 2019 07:48:24 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id BDA1980740; Tue, 13 Aug 2019 13:48:09 +0200 (CEST)
+Date:   Tue, 13 Aug 2019 13:48:21 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
+        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v7 08/24] erofs: add namei functions
+Message-ID: <20190813114821.GB11559@amd>
+References: <20190813091326.84652-1-gaoxiang25@huawei.com>
+ <20190813091326.84652-9-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
 Content-Disposition: inline
-In-Reply-To: <20190812214854.GF20634@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190813091326.84652-9-gaoxiang25@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 02:48:55PM -0700, Ira Weiny wrote:
-> On Mon, Aug 12, 2019 at 09:28:14AM -0300, Jason Gunthorpe wrote:
-> > On Fri, Aug 09, 2019 at 03:58:29PM -0700, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > > 
-> > > The addition of FOLL_LONGTERM has taken on additional meaning for CMA
-> > > pages.
-> > > 
-> > > In addition subsystems such as RDMA require new information to be passed
-> > > to the GUP interface to track file owning information.  As such a simple
-> > > FOLL_LONGTERM flag is no longer sufficient for these users to pin pages.
-> > > 
-> > > Introduce a new GUP like call which takes the newly introduced vaddr_pin
-> > > information.  Failure to pass the vaddr_pin object back to a vaddr_put*
-> > > call will result in a failure if pins were created on files during the
-> > > pin operation.
-> > 
-> > Is this a 'vaddr' in the traditional sense, ie does it work with
-> > something returned by valloc?
-> 
-> ...or malloc in user space, yes.  I think the idea is that it is a user virtual
-> address.
 
-valloc is a kernel call
+--IiVenqGWf+H9Y6IX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> So I'm open to suggestions.  Jan gave me this one, so I figured it was safer to
-> suggest it...
+Hi!
 
-Should have the word user in it, imho
+> +	/*
+> +	 * on-disk error, let's only BUG_ON in the debugging mode.
+> +	 * otherwise, it will return 1 to just skip the invalid name
+> +	 * and go on (in consideration of the lookup performance).
+> +	 */
+> +	DBG_BUGON(qd->name > qd->end);
 
-> > I also wish GUP like functions took in a 'void __user *' instead of
-> > the unsigned long to make this clear :\
-> 
-> Not a bad idea.  But I only see a couple of call sites who actually use a 'void
-> __user *' to pass into GUP...  :-/
-> 
-> For RDMA the address is _never_ a 'void __user *' AFAICS.
+I believe you should check for errors in non-debug mode, too.
 
-That is actually a bug, converting from u64 to a 'user VA' needs to go
-through u64_to_user_ptr().
 
-Jason
+> +			if (unlikely(!ndirents)) {
+> +				DBG_BUGON(1);
+> +				kunmap_atomic(de);
+> +				put_page(page);
+> +				page =3D ERR_PTR(-EIO);
+> +				goto out;
+> +			}
+
+-EUCLEAN is right error code for corrupted filesystem. (And you
+ probably want to print something to the syslog, too).
+
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--IiVenqGWf+H9Y6IX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1So4UACgkQMOfwapXb+vKgtQCgnPcBzF0lCtaBF3/a2HOvyqoZ
+WrgAoKKc3Oxnrh7f0dAM4iMbSPFCWbo6
+=JqsA
+-----END PGP SIGNATURE-----
+
+--IiVenqGWf+H9Y6IX--
