@@ -2,226 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 153B78B9E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 15:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 625F08BAC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 15:52:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729013AbfHMNTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 09:19:12 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37512 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728536AbfHMNTL (ORCPT
+        id S1729288AbfHMNv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 09:51:56 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33846 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728346AbfHMNvz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 09:19:11 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 129so4691215pfa.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2019 06:19:11 -0700 (PDT)
+        Tue, 13 Aug 2019 09:51:55 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b24so1143696pfp.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2019 06:51:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uemjYFdEavebUhJ0GnBokqufqwKQ33FBu/l/dF+LEI0=;
-        b=evSR8//jkv4lh38FHcIvPUs+vf6YgyDKYqB+w9LuRCeFO5POAJJ7GS9E6ChvQS7RNT
-         8w7SpU/u0XqSHkOk4E8iFHBsk8KN+lrfw/d3IktH2HPC+EGJ6sjA7bV6Vwtpo+T9rht9
-         ZsvPr84KY/jBfXo099RxMIJ6V6HB1kDzK94OCAoCVs/lUn8DfAR6Cc+pXFJPbWgbkmmL
-         vo0eLBBp+DllyrgqyGix3qKRjCFAnq5TmJPCCJ/LdYt/S4g6BV7KLukFYopY8fGPbpAl
-         JeuyZACyOK8y/9otuexUGK2bf4m4TgJKk719OVP4Kg6lKpDFPwJ6fVEg7/tGybQO2Yal
-         8XoQ==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=62sEQ9UsiJhcclRMyKqZ3t5XOCcMxxKpyjm1UZtT1rQ=;
+        b=f7nrvRhTXp9uue1H7nAtD3gUt/kdApcgjPByYIMpfshqNDLzNDwXkVEB23h3SYYqpd
+         +Vr2PqxXbv0BcOZA2KGmmEYjCJdKHLO/HZ9759zTlvN9d2EqjoE4HHnVKZAqABbEZnJ9
+         i9HxXjx4604T18/h2vPltIiw4UHhVioMF2Apw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uemjYFdEavebUhJ0GnBokqufqwKQ33FBu/l/dF+LEI0=;
-        b=kmiuAiVg53FX5gTKXcDOUgmWgCu35hU9N3FDjTEkPqMhaTMT2U5TgZwLJfm2rjdH7c
-         VxgLxUokaP1kVzEQi0gocKETL6+YrFGAtmxOLRxb1AA5/pJY5TwLzZxW6rIG6tdCEyl3
-         3EohS+v3gVBXoCaOqaDZIb+FiwQ2QAbdBqb4fqecfwCKyY6kzVdYTUFjzyPwsrMv768O
-         lL+uC3GYs2nwzCPWoeDT7PtUZKK8R6spGHmx87faMfSHtGq1yF6II8bvLNGsfOaRNZj7
-         DhyKAvd4SnvnLHrBcGbxvUZi4AEq7o3abWQMHk+Y/gWkYwwG01zGU97552vH/ilqCD2d
-         l+Tw==
-X-Gm-Message-State: APjAAAXgYcYnqxblHpkaHjwUtNn67AGfyf0jKIIS/WKLsaJTiCdUjXM7
-        HjioUScbllx1wG7+Ii17MOCIdFeNzX4YIC9rcysnnQ==
-X-Google-Smtp-Source: APXvYqwZtj5tYeZMHKa6hclTPlvzQlfXEebFzx4k80bKtFWSwOYcrQTPEwu0jntuYYbj/vWDYwba+Ws6peFvq3n0cl0=
-X-Received: by 2002:a63:c442:: with SMTP id m2mr35220963pgg.286.1565702350668;
- Tue, 13 Aug 2019 06:19:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=62sEQ9UsiJhcclRMyKqZ3t5XOCcMxxKpyjm1UZtT1rQ=;
+        b=H6mOzxb+7fl9jHLJyoIXKinpfFBXZN2F+xuPTmAowLKROXviHiVbtZLI/q8r7wbxp9
+         +OaENizEctbFjK1vBh6LNXcJmdvBExe9Z4E6y6eraxdGstdZMr184AyBUFoO9hb83d4K
+         wsxIFBcQTb7Fm48nLuKq7yYQcY9UZGqGFpljHT4o2y5DVCWbbnw02lyQsZb5JYY159rE
+         5awnHZbFcwVTiEERks1TKpVd4WxsSOldLPWsxeO7JCUcAbgVD0+durWJ8LWtS45xr8CA
+         55bCzpNoEaSNP5umVMp924ZoohFjeRCVgwVPh+0D5AN0u2D5FXPdPeFoT/UkhM1jqWaR
+         i9pA==
+X-Gm-Message-State: APjAAAW0AhgSffs1rNB7skMCa4ZpYD3KwXCp3ExmNO40q3ndGo/0cHiv
+        C8pUlLzsxRp9+5JN/Zi46cIO4A==
+X-Google-Smtp-Source: APXvYqxhO7tKD2Ct4ACAinWPlcqbL6OvBvPKuXBpuAsbrD4FXwQ3R7h+s+KsjdFosYM2UXvMiv5U1g==
+X-Received: by 2002:a65:6093:: with SMTP id t19mr3676061pgu.79.1565704314954;
+        Tue, 13 Aug 2019 06:51:54 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id m13sm50097285pgn.57.2019.08.13.06.51.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 13 Aug 2019 06:51:54 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 09:51:52 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Robin Murphy <robin.murphy@arm.com>,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 1/6] mm/page_idle: Add per-pid idle page tracking
+ using virtual index
+Message-ID: <20190813135152.GC258732@google.com>
+References: <20190807171559.182301-1-joel@joelfernandes.org>
+ <20190807130402.49c9ea8bf144d2f83bfeb353@linux-foundation.org>
+ <20190807204530.GB90900@google.com>
+ <20190807135840.92b852e980a9593fe91fbf59@linux-foundation.org>
+ <20190807213105.GA14622@google.com>
+ <20190808080044.GA18351@dhcp22.suse.cz>
+ <20190812145620.GB224541@google.com>
+ <20190813091430.GE17933@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <CAAeHK+waUUNpGp1b2WqXQHkbBcQT_MonG62-bK-aEj2dvYr-gA@mail.gmail.com>
- <000000000000199b6c058fff71c8@google.com>
-In-Reply-To: <000000000000199b6c058fff71c8@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 13 Aug 2019 15:18:59 +0200
-Message-ID: <CAAeHK+wa8zgfstvHSwHTHJANW=s_aJYQ3qc_aUDMpMHTtveFGg@mail.gmail.com>
-Subject: Re: general protection fault in cdev_del
-To:     syzbot <syzbot+67b2bd0e34f952d0321e@syzkaller.appspotmail.com>,
-        Oliver Neukum <oneukum@suse.com>
-Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813091430.GE17933@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 3:16 PM syzbot
-<syzbot+67b2bd0e34f952d0321e@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot has tested the proposed patch but the reproducer still triggered
-> crash:
-> KASAN: use-after-free Read in hso_free_interface
->
-> ==================================================================
-> BUG: KASAN: use-after-free in hso_free_interface+0x3f2/0x4f0
-> drivers/net/usb/hso.c:3108
-> Read of size 8 at addr ffff8881d112d998 by task kworker/0:1/12
->
-> CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.2.0-rc1+ #1
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Workqueue: usb_hub_wq hub_event
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0xca/0x13e lib/dump_stack.c:113
->   print_address_description+0x67/0x231 mm/kasan/report.c:188
->   __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
->   kasan_report+0xe/0x20 mm/kasan/common.c:614
->   hso_free_interface+0x3f2/0x4f0 drivers/net/usb/hso.c:3108
->   hso_probe+0x362/0x1a50 drivers/net/usb/hso.c:2963
->   usb_probe_interface+0x30b/0x7a0 drivers/usb/core/driver.c:361
->   really_probe+0x287/0x660 drivers/base/dd.c:509
->   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
->   __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
->   bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:843
->   bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x1700 drivers/base/core.c:2111
->   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
->   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
->   usb_probe_device+0xa2/0x100 drivers/usb/core/driver.c:266
->   really_probe+0x287/0x660 drivers/base/dd.c:509
->   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
->   __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
->   bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:843
->   bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x1700 drivers/base/core.c:2111
->   usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
->   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
->   port_event drivers/usb/core/hub.c:5350 [inline]
->   hub_event+0x1adc/0x35a0 drivers/usb/core/hub.c:5432
->   process_one_work+0x90a/0x1580 kernel/workqueue.c:2268
->   worker_thread+0x96/0xe20 kernel/workqueue.c:2414
->   kthread+0x30e/0x420 kernel/kthread.c:254
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
->
-> Allocated by task 12:
->   save_stack+0x1b/0x80 mm/kasan/common.c:71
->   set_track mm/kasan/common.c:79 [inline]
->   __kasan_kmalloc mm/kasan/common.c:489 [inline]
->   __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:462
->   kmalloc include/linux/slab.h:547 [inline]
->   kzalloc include/linux/slab.h:742 [inline]
->   hso_create_device+0x43/0x390 drivers/net/usb/hso.c:2336
->   hso_create_bulk_serial_device drivers/net/usb/hso.c:2617 [inline]
->   hso_probe+0xbb0/0x1a50 drivers/net/usb/hso.c:2948
->   usb_probe_interface+0x30b/0x7a0 drivers/usb/core/driver.c:361
->   really_probe+0x287/0x660 drivers/base/dd.c:509
->   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
->   __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
->   bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:843
->   bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x1700 drivers/base/core.c:2111
->   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
->   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
->   usb_probe_device+0xa2/0x100 drivers/usb/core/driver.c:266
->   really_probe+0x287/0x660 drivers/base/dd.c:509
->   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
->   __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
->   bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:843
->   bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x1700 drivers/base/core.c:2111
->   usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
->   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
->   port_event drivers/usb/core/hub.c:5350 [inline]
->   hub_event+0x1adc/0x35a0 drivers/usb/core/hub.c:5432
->   process_one_work+0x90a/0x1580 kernel/workqueue.c:2268
->   worker_thread+0x96/0xe20 kernel/workqueue.c:2414
->   kthread+0x30e/0x420 kernel/kthread.c:254
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
->
-> Freed by task 12:
->   save_stack+0x1b/0x80 mm/kasan/common.c:71
->   set_track mm/kasan/common.c:79 [inline]
->   __kasan_slab_free+0x130/0x180 mm/kasan/common.c:451
->   slab_free_hook mm/slub.c:1421 [inline]
->   slab_free_freelist_hook mm/slub.c:1448 [inline]
->   slab_free mm/slub.c:2994 [inline]
->   kfree+0xd7/0x290 mm/slub.c:3949
->   hso_create_bulk_serial_device drivers/net/usb/hso.c:2687 [inline]
->   hso_probe+0x13c6/0x1a50 drivers/net/usb/hso.c:2948
->   usb_probe_interface+0x30b/0x7a0 drivers/usb/core/driver.c:361
->   really_probe+0x287/0x660 drivers/base/dd.c:509
->   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
->   __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
->   bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:843
->   bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x1700 drivers/base/core.c:2111
->   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
->   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
->   usb_probe_device+0xa2/0x100 drivers/usb/core/driver.c:266
->   really_probe+0x287/0x660 drivers/base/dd.c:509
->   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
->   __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
->   bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:843
->   bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x1700 drivers/base/core.c:2111
->   usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
->   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
->   port_event drivers/usb/core/hub.c:5350 [inline]
->   hub_event+0x1adc/0x35a0 drivers/usb/core/hub.c:5432
->   process_one_work+0x90a/0x1580 kernel/workqueue.c:2268
->   worker_thread+0x96/0xe20 kernel/workqueue.c:2414
->   kthread+0x30e/0x420 kernel/kthread.c:254
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
->
-> The buggy address belongs to the object at ffff8881d112d900
->   which belongs to the cache kmalloc-512 of size 512
-> The buggy address is located 152 bytes inside of
->   512-byte region [ffff8881d112d900, ffff8881d112db00)
-> The buggy address belongs to the page:
-> page:ffffea0007444b00 refcount:1 mapcount:0 mapping:ffff8881dac02c00
-> index:0x0 compound_mapcount: 0
-> flags: 0x200000000010200(slab|head)
-> raw: 0200000000010200 ffffea000744ea80 0000000400000004 ffff8881dac02c00
-> raw: 0000000000000000 00000000000c000c 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->   ffff8881d112d880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff8881d112d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff8881d112d980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                              ^
->   ffff8881d112da00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff8881d112da80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
->
->
-> Tested on:
->
-> commit:         69bbe8c7 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14e6156a600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c309d28e15db39c5
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=1715ad4a600000
->
+On Tue, Aug 13, 2019 at 11:14:30AM +0200, Michal Hocko wrote:
+> On Mon 12-08-19 10:56:20, Joel Fernandes wrote:
+> > On Thu, Aug 08, 2019 at 10:00:44AM +0200, Michal Hocko wrote:
+> > > On Wed 07-08-19 17:31:05, Joel Fernandes wrote:
+> > > > On Wed, Aug 07, 2019 at 01:58:40PM -0700, Andrew Morton wrote:
+> > > > > On Wed, 7 Aug 2019 16:45:30 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
+> > > > > 
+> > > > > > On Wed, Aug 07, 2019 at 01:04:02PM -0700, Andrew Morton wrote:
+> > > > > > > On Wed,  7 Aug 2019 13:15:54 -0400 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+> > > > > > > 
+> > > > > > > > In Android, we are using this for the heap profiler (heapprofd) which
+> > > > > > > > profiles and pin points code paths which allocates and leaves memory
+> > > > > > > > idle for long periods of time. This method solves the security issue
+> > > > > > > > with userspace learning the PFN, and while at it is also shown to yield
+> > > > > > > > better results than the pagemap lookup, the theory being that the window
+> > > > > > > > where the address space can change is reduced by eliminating the
+> > > > > > > > intermediate pagemap look up stage. In virtual address indexing, the
+> > > > > > > > process's mmap_sem is held for the duration of the access.
+> > > > > > > 
+> > > > > > > So is heapprofd a developer-only thing?  Is heapprofd included in
+> > > > > > > end-user android loads?  If not then, again, wouldn't it be better to
+> > > > > > > make the feature Kconfigurable so that Android developers can enable it
+> > > > > > > during development then disable it for production kernels?
+> > > > > > 
+> > > > > > Almost all of this code is already configurable with
+> > > > > > CONFIG_IDLE_PAGE_TRACKING. If you disable it, then all of this code gets
+> > > > > > disabled.
+> > > > > > 
+> > > > > > Or are you referring to something else that needs to be made configurable?
+> > > > > 
+> > > > > Yes - the 300+ lines of code which this patchset adds!
+> > > > > 
+> > > > > The impacted people will be those who use the existing
+> > > > > idle-page-tracking feature but who will not use the new feature.  I
+> > > > > guess we can assume this set is small...
+> > > > 
+> > > > Yes, I think this set should be small. The code size increase of page_idle.o
+> > > > is from ~1KB to ~2KB. Most of the extra space is consumed by
+> > > > page_idle_proc_generic() function which this patch adds. I don't think adding
+> > > > another CONFIG option to disable this while keeping existing
+> > > > CONFIG_IDLE_PAGE_TRACKING enabled, is worthwhile but I am open to the
+> > > > addition of such an option if anyone feels strongly about it. I believe that
+> > > > once this patch is merged, most like this new interface being added is what
+> > > > will be used more than the old interface (for some of the usecases) so it
+> > > > makes sense to keep it alive with CONFIG_IDLE_PAGE_TRACKING.
+> > > 
+> > > I would tend to agree with Joel here. The functionality falls into an
+> > > existing IDLE_PAGE_TRACKING config option quite nicely. If there really
+> > > are users who want to save some space and this is standing in the way
+> > > then they can easily add a new config option with some justification so
+> > > the savings are clear. Without that an additional config simply adds to
+> > > the already existing configurability complexity and balkanization.
+> > 
+> > Michal, Andrew, Minchan,
+> > 
+> > Would you have any other review comments on the v5 series? This is just a new
+> > interface that does not disrupt existing users of the older page-idle
+> > tracking, so as such it is a safe change (as in, doesn't change existing
+> > functionality except for the draining bug fix).
+> 
+> I hope to find some more time to finish the review but let me point out
+> that "it's new it is regression safe" is not really a great argument for
+> a new user visible API.
 
-This bug looks very similar to the "KASAN: use-after-free Read in
-device_del" one, but the fix from that thread doesn't work here.
+Actually, I think you misunderstood me and took it out of context. I never
+intended to say "it is regression safe". I meant to say it is "low risk", as
+in that in all likelihood should not be hurting *existing users* of the *old
+interface*. Also as you know, it has been tested.
+
+> If the API is flawed then this is likely going
+> to kick us later and will be hard to fix. I am still not convinced about
+> the swap part of the thing TBH.
+
+Ok, then let us discuss it. As I mentioned before, without this we lose the
+access information due to MADVISE or swapping. Minchan and Konstantin both
+suggested it that's why I also added it (other than me also realizing that it
+is neeed). For x86, it uses existing bits in pte so it is not adding any more
+bits. For arm64, it uses unused bits that the hardware cannot use. So I
+don't see why this is an issue to you.
+
+thanks,
+
+ - Joel
+
