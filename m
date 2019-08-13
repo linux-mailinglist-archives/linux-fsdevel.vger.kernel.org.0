@@ -2,111 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C9968AC0A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 02:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B778AC19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 02:41:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfHMAj5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Aug 2019 20:39:57 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:40163 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726453AbfHMAj4 (ORCPT
+        id S1726759AbfHMAlS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Aug 2019 20:41:18 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44585 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbfHMAlS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Aug 2019 20:39:56 -0400
-Received: from callcc.thunk.org (guestnat-104-133-9-109.corp.google.com [104.133.9.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7D0dcO9023746
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Aug 2019 20:39:39 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id B8C504218EF; Mon, 12 Aug 2019 20:39:37 -0400 (EDT)
-Date:   Mon, 12 Aug 2019 20:39:37 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-api@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v8 13/20] fscrypt: v2 encryption policy support
-Message-ID: <20190813003937.GK28705@mit.edu>
-References: <20190805162521.90882-1-ebiggers@kernel.org>
- <20190805162521.90882-14-ebiggers@kernel.org>
+        Mon, 12 Aug 2019 20:41:18 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t14so48508300plr.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2019 17:41:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o2YhU7ZI7zRBNkSqHEOZBShLAkxc14NOfVdnGmm5fKU=;
+        b=jtHRbV2jvCMOrug1VL8DlniNesFQqe4mwKTZ3VzgssQ3VQs6b5LtUaNMVZsc5CuJDp
+         Iw8whkhdXJ7rcwjGwBhO6bOb4R9HDy3aGxnSkB24MJ9hY0F8GUX42o4R2L5RbO1mHvNQ
+         fgfZIIuryuM6MsMlE2FCQsFy9Ko0MwXC35YX0zFHFknsYf9vPZZbgUGmBgAsRIvp4Uqd
+         60LKpvXh51SGPv9+hzg4POm9qQcvjpOv0jvCdTcXtAwCmnYW+REf4ctA9Xh3nN2C0Pk2
+         Dfg6a9VXk1PXwpLh/pQidSNRP79rt83WW1lNCqDZaP/t4ID/ZKf6fmlxyUwdKcQccRx2
+         iAHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o2YhU7ZI7zRBNkSqHEOZBShLAkxc14NOfVdnGmm5fKU=;
+        b=lXp/953pM2VCKYwFw/T+YA4yz/9wR1egrfc6QsmP0wlUBWMxX3z6qisyTFC55so3te
+         3ODOjtfiKz0ExPPP5yzFuVyt9dI5/eAwp4F541l7W9Xc2/2Ip0M800JHk+sSr96lZv2H
+         +a+LG40eHPPLF65UpEeYNyldpi9L/32qeNwC9asGxGQr2oZGJfVC3vfXgZdsdLqUwAw4
+         fvcV1Zy+fBuVn/V6hTgIgELLTM20TAkTt/cf59IGvLynP2UMCybd8BdXt+KAJuUZy90E
+         Pxb9jX5Q4rttMhT9OngtGwqD8EzpcFEJuiiMb6r5X7EF+btfF/oJLELXcTTwIgJq/cXG
+         MEFA==
+X-Gm-Message-State: APjAAAUpd5gc+1dyQF4ntij/8nhWVsrjXs0fdHmA9AdllzUit8zviQyv
+        QfofNapyv0dnB85G1IijEXkNTZFeUMMvFggQFYFFdA==
+X-Google-Smtp-Source: APXvYqwMN7m1oxhncwRThnueyB+Cpwr7fkWXdNKhV0HMwJO6gvgJeykiY4kuCkE7DaZ3nG+H6w12tIuXT7ijhEgDApc=
+X-Received: by 2002:a17:902:5983:: with SMTP id p3mr25962931pli.232.1565656877406;
+ Mon, 12 Aug 2019 17:41:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805162521.90882-14-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190812182421.141150-1-brendanhiggins@google.com>
+ <20190812182421.141150-4-brendanhiggins@google.com> <20190812225520.5A67C206A2@mail.kernel.org>
+ <20190812233336.GA224410@google.com> <20190812235940.100842063F@mail.kernel.org>
+In-Reply-To: <20190812235940.100842063F@mail.kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 12 Aug 2019 17:41:05 -0700
+Message-ID: <CAFd5g44xciLPBhH_J3zUcY3TedWTijdnWgF055qffF+dAguhPQ@mail.gmail.com>
+Subject: Re: [PATCH v12 03/18] kunit: test: add string_stream a std::stream
+ like string builder
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 09:25:14AM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Add a new fscrypt policy version, "v2".  It has the following changes
-> from the original policy version, which we call "v1" (*):
-> 
-> - Master keys (the user-provided encryption keys) are only ever used as
->   input to HKDF-SHA512.  This is more flexible and less error-prone, and
->   it avoids the quirks and limitations of the AES-128-ECB based KDF.
->   Three classes of cryptographically isolated subkeys are defined:
-> 
->     - Per-file keys, like used in v1 policies except for the new KDF.
-> 
->     - Per-mode keys.  These implement the semantics of the DIRECT_KEY
->       flag, which for v1 policies made the master key be used directly.
->       These are also planned to be used for inline encryption when
->       support for it is added.
-> 
->     - Key identifiers (see below).
-> 
-> - Each master key is identified by a 16-byte master_key_identifier,
->   which is derived from the key itself using HKDF-SHA512.  This prevents
->   users from associating the wrong key with an encrypted file or
->   directory.  This was easily possible with v1 policies, which
->   identified the key by an arbitrary 8-byte master_key_descriptor.
-> 
-> - The key must be provided in the filesystem-level keyring, not in a
->   process-subscribed keyring.
-> 
-> The following UAPI additions are made:
-> 
-> - The existing ioctl FS_IOC_SET_ENCRYPTION_POLICY can now be passed a
->   fscrypt_policy_v2 to set a v2 encryption policy.  It's disambiguated
->   from fscrypt_policy/fscrypt_policy_v1 by the version code prefix.
-> 
-> - A new ioctl FS_IOC_GET_ENCRYPTION_POLICY_EX is added.  It allows
->   getting the v1 or v2 encryption policy of an encrypted file or
->   directory.  The existing FS_IOC_GET_ENCRYPTION_POLICY ioctl could not
->   be used because it did not have a way for userspace to indicate which
->   policy structure is expected.  The new ioctl includes a size field, so
->   it is extensible to future fscrypt policy versions.
-> 
-> - The ioctls FS_IOC_ADD_ENCRYPTION_KEY, FS_IOC_REMOVE_ENCRYPTION_KEY,
->   and FS_IOC_GET_ENCRYPTION_KEY_STATUS now support managing keys for v2
->   encryption policies.  Such keys are kept logically separate from keys
->   for v1 encryption policies, and are identified by 'identifier' rather
->   than by 'descriptor'.  The 'identifier' need not be provided when
->   adding a key, since the kernel will calculate it anyway.
-> 
-> This patch temporarily keeps adding/removing v2 policy keys behind the
-> same permission check done for adding/removing v1 policy keys:
-> capable(CAP_SYS_ADMIN).  However, the next patch will carefully take
-> advantage of the cryptographically secure master_key_identifier to allow
-> non-root users to add/remove v2 policy keys, thus providing a full
-> replacement for v1 policies.
-> 
-> (*) Actually, in the API fscrypt_policy::version is 0 while on-disk
->     fscrypt_context::format is 1.  But I believe it makes the most sense
->     to advance both to '2' to have them be in sync, and to consider the
->     numbering to start at 1 except for the API quirk.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Mon, Aug 12, 2019 at 4:59 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Brendan Higgins (2019-08-12 16:33:36)
+> > On Mon, Aug 12, 2019 at 03:55:19PM -0700, Stephen Boyd wrote:
+> > > Quoting Brendan Higgins (2019-08-12 11:24:06)
+> > > > +void string_stream_clear(struct string_stream *stream)
+> > > > +{
+> > > > +       struct string_stream_fragment *frag_container, *frag_container_safe;
+> > > > +
+> > > > +       spin_lock(&stream->lock);
+> > > > +       list_for_each_entry_safe(frag_container,
+> > > > +                                frag_container_safe,
+> > > > +                                &stream->fragments,
+> > > > +                                node) {
+> > > > +               list_del(&frag_container->node);
+> > >
+> > > Shouldn't we free the allocation here? Otherwise, if some test is going
+> > > to add, add, clear, add, it's going to leak until the test is over?
+> >
+> > So basically this means I should add a kunit_kfree and
+> > kunit_resource_destroy (respective equivalents to devm_kfree, and
+> > devres_destroy) and use kunit_kfree here?
+> >
+>
+> Yes, or drop the API entirely? Does anything need this functionality?
 
-Looks good, feel free to add:
+Drop the kunit_resource API? I would strongly prefer not to.
+string_stream uses it; the expectation stuff uses it via string
+stream; some of the tests in this patchset allocate memory as part of
+the test setup that uses it. The intention is that we would provide a
+kunit_res_* version of many (hopefully eventually most) common
+resources required by tests and it would be used in the same way that
+the devm_* stuff is.
 
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+Nevertheless, I am fine adding the kunit_resource_destroy, etc. I just
+wanted to make sure I understood what you were asking.
