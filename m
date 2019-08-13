@@ -2,141 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06BFD8BFC5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 19:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 787308BFDB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 19:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfHMRlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 13:41:44 -0400
-Received: from mga09.intel.com ([134.134.136.24]:57181 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726137AbfHMRln (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 13:41:43 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 10:41:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,382,1559545200"; 
-   d="scan'208";a="376374540"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Aug 2019 10:41:42 -0700
-Date:   Tue, 13 Aug 2019 10:41:42 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
- file object
-Message-ID: <20190813174142.GB11882@iweiny-DESK2.sc.intel.com>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-17-ira.weiny@intel.com>
- <20190812130039.GD24457@ziepe.ca>
- <20190812172826.GA19746@iweiny-DESK2.sc.intel.com>
- <20190812175615.GI24457@ziepe.ca>
- <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
- <20190813114842.GB29508@ziepe.ca>
+        id S1727962AbfHMRq3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 13:46:29 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44228 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbfHMRq3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Aug 2019 13:46:29 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c81so3003192pfc.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2019 10:46:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mXGH6sfF5Mv8489pO8HNMnvL4N6Kj76jRZqkd1Btows=;
+        b=j6j9cc3oeGRVjeb4q1mX5UvZe7oyDjzfb402Fg+7HhPoR8ZZ6I+HCu+AQE3gq0eDDd
+         5SBPUQaw2UJReVDDVyXNzMhXDX6rSNUrGZEzebEzR3mC+q1snggT0oxh7Uly5MzYNf5r
+         yJLjMHsZJW7MI2LqKKAA1/VIg6caDPkH/ibZtIg4WtRiccYwshL2Lm7PbBhc9gdSlBBi
+         BZoO7hz6wHRCK6BnX9Ew8PkGymJjUq48Of9zE+Aq9pDUvh2e/I/OMBDu85QL/WNz3rPv
+         lyKbsxEcKoQzkyqDhiw2oQOo/gaNSd8BdY6gFL1sHjdu/3qsLd9O7/r4sNtlcfFs2fOa
+         62CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mXGH6sfF5Mv8489pO8HNMnvL4N6Kj76jRZqkd1Btows=;
+        b=WIUg3ecOU/jxezAZeOt8Sb911CJ/YFm4gGSc0bbbbvbeg70RmkSOhFp6ZDS061FoeI
+         KmyemGULuMFRWufZWC45htnu1HwnMxY2vcm0pILHL1Hj/iY7Dp5tvVeE/o2+FzKoDHsg
+         VkGnSj5SMB4vwvp8HvJ2CDZqdDz7tcyX86uNM3RYJdogs0EclrKAiYx0kwbZj72li0UD
+         8zwfGlCt9n0hxASglt8utlVqcSdBwXRm7YsryRpyfVQaSiokcbcoKuuUrvhpAibuzV7a
+         sWhkzWMGo13uhP2q94VwNdqI85+dIEqu5Xh+dul+0Hz9nHEr7OmwW866u8I7cqcaoqGm
+         FqDw==
+X-Gm-Message-State: APjAAAWxZG+GyF1qq/+q1GGhLRl3W0NNVSRdP5+LM65AGemHb7gkT/LT
+        dtVdlqfnoMW+4keATP5itdvYYw==
+X-Google-Smtp-Source: APXvYqyIrpmWgiXBiK3PDYma3AbBRu7FLdOh0ZmeN1sG7QioNu25fJleeVa7zulYpZwXNMNhBdfcVQ==
+X-Received: by 2002:a17:90b:d8f:: with SMTP id bg15mr3266929pjb.65.1565718388234;
+        Tue, 13 Aug 2019 10:46:28 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::2:674])
+        by smtp.gmail.com with ESMTPSA id g11sm9780395pfh.121.2019.08.13.10.46.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2019 10:46:27 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 13:46:25 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] block: annotate refault stalls from IO submission
+Message-ID: <20190813174625.GA21982@cmpxchg.org>
+References: <20190808190300.GA9067@cmpxchg.org>
+ <20190809221248.GK7689@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813114842.GB29508@ziepe.ca>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190809221248.GK7689@dread.disaster.area>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 08:48:42AM -0300, Jason Gunthorpe wrote:
-> On Mon, Aug 12, 2019 at 02:15:37PM -0700, Ira Weiny wrote:
-> > On Mon, Aug 12, 2019 at 02:56:15PM -0300, Jason Gunthorpe wrote:
-> > > On Mon, Aug 12, 2019 at 10:28:27AM -0700, Ira Weiny wrote:
-> > > > On Mon, Aug 12, 2019 at 10:00:40AM -0300, Jason Gunthorpe wrote:
-> > > > > On Fri, Aug 09, 2019 at 03:58:30PM -0700, ira.weiny@intel.com wrote:
-> > > > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > > > 
-> > > > > > In order for MRs to be tracked against the open verbs context the ufile
-> > > > > > needs to have a pointer to hand to the GUP code.
-> > > > > > 
-> > > > > > No references need to be taken as this should be valid for the lifetime
-> > > > > > of the context.
-> > > > > > 
-> > > > > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > > > > >  drivers/infiniband/core/uverbs.h      | 1 +
-> > > > > >  drivers/infiniband/core/uverbs_main.c | 1 +
-> > > > > >  2 files changed, 2 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
-> > > > > > index 1e5aeb39f774..e802ba8c67d6 100644
-> > > > > > +++ b/drivers/infiniband/core/uverbs.h
-> > > > > > @@ -163,6 +163,7 @@ struct ib_uverbs_file {
-> > > > > >  	struct page *disassociate_page;
-> > > > > >  
-> > > > > >  	struct xarray		idr;
-> > > > > > +	struct file             *sys_file; /* backpointer to system file object */
-> > > > > >  };
-> > > > > 
-> > > > > The 'struct file' has a lifetime strictly shorter than the
-> > > > > ib_uverbs_file, which is kref'd on its own lifetime. Having a back
-> > > > > pointer like this is confouding as it will be invalid for some of the
-> > > > > lifetime of the struct.
-> > > > 
-> > > > Ah...  ok.  I really thought it was the other way around.
-> > > > 
-> > > > __fput() should not call ib_uverbs_close() until the last reference on struct
-> > > > file is released...  What holds references to struct ib_uverbs_file past that?
-> > > 
-> > > Child fds hold onto the internal ib_uverbs_file until they are closed
+On Sat, Aug 10, 2019 at 08:12:48AM +1000, Dave Chinner wrote:
+> On Thu, Aug 08, 2019 at 03:03:00PM -0400, Johannes Weiner wrote:
+> > psi tracks the time tasks wait for refaulting pages to become
+> > uptodate, but it does not track the time spent submitting the IO. The
+> > submission part can be significant if backing storage is contended or
+> > when cgroup throttling (io.latency) is in effect - a lot of time is
+> 
+> Or the wbt is throttling.
+> 
+> > spent in submit_bio(). In that case, we underreport memory pressure.
 > > 
-> > The FDs hold the struct file, don't they?
+> > Annotate submit_bio() to account submission time as memory stall when
+> > the bio is reading userspace workingset pages.
 > 
-> Only dups, there are other 'child' FDs we can create
+> PAtch looks fine to me, but it raises another question w.r.t. IO
+> stalls and reclaim pressure feedback to the vm: how do we make use
+> of the pressure stall infrastructure to track inode cache pressure
+> and stalls?
 > 
-> > > Now this has unlocked updates to that data.. you'd need some lock and
-> > > get not zero pattern
-> > 
-> > You can't call "get" here because I'm 99% sure we only get here when struct
-> > file has no references left...
-> 
-> Nope, like I said the other FDs hold the uverbs_file independent of
-> the struct file it is related too. 
+> With the congestion_wait() and wait_iff_congested() being entire
+> non-functional for block devices since 5.0, there is no IO load
+> based feedback going into memory reclaim from shrinkers that might
+> require IO to free objects before they can be reclaimed. This is
+> directly analogous to page reclaim writing back dirty pages from
+> the LRU, and as I understand it one of things the PSI is supposed
+> to be tracking.
+>
+> Lots of workloads create inode cache pressure and often it can
+> dominate the time spent in memory reclaim, so it would seem to me
+> that having PSI only track/calculate pressure and stalls from LRU
+> pages misses a fair chunk of the memory pressure and reclaim stalls
+> that can be occurring.
 
-<sigh>
+psi already tracks the entire reclaim operation. So if reclaim calls
+into the shrinker and the shrinker scans inodes, initiates IO, or even
+waits on IO, that time is accounted for as memory pressure stalling.
 
-We don't allow memory registrations to be created with those other FDs...
+If you can think of asynchronous events that are initiated from
+reclaim but cause indirect stalls in other contexts, contexts which
+can clearly link the stall back to reclaim activity, we can annotate
+them using psi_memstall_enter() / psi_memstall_leave().
 
-And I was pretty sure uverbs_destroy_ufile_hw() would take care of (or ensure
-that some other thread is) destroying all the MR's we have associated with this
-FD.
+In that vein, what would be great to have is be a distinction between
+read stalls on dentries/inodes that have never been touched before
+versus those that have been recently reclaimed - analogous to cold
+page faults vs refaults.
 
-I'll have to think on this more since uverbs_destroy_ufile_hw() does not
-block...  Which means there is a window here within the GUP code...  :-/
+It would help psi, sure, but more importantly it would help us better
+balance pressure between filesystem metadata and the data pages. We
+would be able to tell the difference between a `find /' and actual
+thrashing, where hot inodes are getting kicked out and reloaded
+repeatedly - and we could backfeed that pressure to the LRU pages to
+allow the metadata caches to grow as needed.
 
-> 
-> This is why having a back pointer like this is so ugly, it creates a
-> reference counting cycle
+For example, it could make sense to swap out a couple of completely
+unused anonymous pages if it means we could hold the metadata
+workingset fully in memory. But right now we cannot do that, because
+we cannot risk swapping just because somebody runs find /.
 
-Yep...  I worked through this...  and it was giving me fits...
-
-Anyway, the struct file is the only object in the core which was reasonable to
-store this information in since that is what is passed around to other
-processes...
-
-Another idea I explored was to create a callback into the driver from the core
-which put the responsibility of printing the pin information on the driver.
-
-But that started to be (and is likely going to be) a pretty complicated "dance"
-between the core and the drivers so I went this way...
-
-I also thought about holding some other reference on struct file which would
-allow release to be called while keeping struct file around.  But that seemed
-crazy...
-
-Ira
-
+I have semi-seriously talked to Josef about this before, but it wasn't
+quite obvious where we could track non-residency or eviction
+information for inodes, dentries etc. Maybe you have an idea?
