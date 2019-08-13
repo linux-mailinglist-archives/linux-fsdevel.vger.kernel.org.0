@@ -2,133 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE16F8C178
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 21:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13AE18C235
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 22:39:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfHMTYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 15:24:19 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37627 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfHMTYT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 15:24:19 -0400
-Received: by mail-ot1-f67.google.com with SMTP id f17so41323408otq.4;
-        Tue, 13 Aug 2019 12:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0BGADOSDNi0yEXJGYbIS7Es/7+y3WA9cMlUX5F4uA3I=;
-        b=KE3GYgXjoB+OjzuGsPmiAcRayJ6zju7RPzcdKGrMzVlkey77jjZxtEP2mh1WWv9sLH
-         ZLMlMjxt2wR2TGRUwQxDhztynGX3APXiJD1kSQjb2/KavbrOWht5m8t0cWuEoje6TxE7
-         44Huamiy10vZn8q+9xjaKC0GYqpD8w7HhTLT6L5zQu/2cugN4hbedB1kO+xS+TyMxLOv
-         bwl6kKSAXjiNinqMNDx86QfPebu18GpyViD0CXVdg4XK64TwicdGeuABSziFnP9+zdHz
-         u9cFnhGSRhgcXXGSo5Rlog586C+LQL8pZqnYwNVWTh3UrfdUpF3AseKSqw2mZ/pN7lus
-         rNRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0BGADOSDNi0yEXJGYbIS7Es/7+y3WA9cMlUX5F4uA3I=;
-        b=HN5Q05tDUPsBZJGrOtCIJJ2IOHvG4tqbvJamrtvSjs/B8IKzIsMKh9fzRjgg7JsNpT
-         Jg2czdvnN70YDpXFc3cUXL9tnkFcAyZKPaiuHVX3yx7T+3XJc697TE4f/xoz0NPpfLYb
-         PjIZlyJDD2tXAhnD+dQd2X3NAVOckiX2sJpBb4DxDS3T+l8bV/GZDJZGZ/Ghzr4l0DTe
-         glwBuAzb9eX6hELBLVh1SltLExcXoAtKLmOEqvn7SfuZZQU1ci0Rb6RGcGXKN7LG2B9T
-         I1op26C7yMxFVAhifuqFac58A6ld2REl4NXdx8ymDqQkTr8/Snk8bAi/lvcvbjHGVIHw
-         jsHA==
-X-Gm-Message-State: APjAAAUmg0l24usH56u5cL5EE9kS5HyTGlicxIXQmEZ+Y5JYoT4imgH7
-        Y1yg7d0fkCyEnQUXROJPHfZRN5quxJ64yF91soA=
-X-Google-Smtp-Source: APXvYqyNWl6EB6hqtWOLBAyHMMulekRu0qD9+ndzTr07RTNTOCPXCYzvAypulGqjwsebgf4b+owsuwKVp8jgDKJPlE8=
-X-Received: by 2002:a6b:f406:: with SMTP id i6mr6656iog.110.1565724258526;
- Tue, 13 Aug 2019 12:24:18 -0700 (PDT)
+        id S1726365AbfHMUjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 16:39:00 -0400
+Received: from mga11.intel.com ([192.55.52.93]:6361 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbfHMUjA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Aug 2019 16:39:00 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 13:38:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,382,1559545200"; 
+   d="scan'208";a="376423872"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga006.fm.intel.com with ESMTP; 13 Aug 2019 13:38:59 -0700
+Date:   Tue, 13 Aug 2019 13:38:59 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
+ file object
+Message-ID: <20190813203858.GA12695@iweiny-DESK2.sc.intel.com>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190809225833.6657-17-ira.weiny@intel.com>
+ <20190812130039.GD24457@ziepe.ca>
+ <20190812172826.GA19746@iweiny-DESK2.sc.intel.com>
+ <20190812175615.GI24457@ziepe.ca>
+ <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
+ <20190813114842.GB29508@ziepe.ca>
+ <20190813174142.GB11882@iweiny-DESK2.sc.intel.com>
+ <20190813180022.GF29508@ziepe.ca>
 MIME-Version: 1.0
-References: <20190807171559.182301-1-joel@joelfernandes.org>
- <20190807171559.182301-2-joel@joelfernandes.org> <20190813150450.GN17933@dhcp22.suse.cz>
- <20190813153659.GD14622@google.com>
-In-Reply-To: <20190813153659.GD14622@google.com>
-From:   Konstantin Khlebnikov <koct9i@gmail.com>
-Date:   Tue, 13 Aug 2019 22:24:06 +0300
-Message-ID: <CALYGNiOj4pxZAMvM_3fJZ0xJ0E5-FfSRQbGdxb4eFC37USCYvA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] mm/page_idle: Add support for handling swapped
- PG_Idle pages
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?B?0JrQvtC90YHRgtCw0L3RgtC40L0g0KXQu9C10LHQvdC40LrQvtCy?= 
-        <khlebnikov@yandex-team.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-doc@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org, Mike Rapoport <rppt@linux.ibm.com>,
-        namhyung@google.com, paulmck@linux.ibm.com,
-        Robin Murphy <robin.murphy@arm.com>,
-        Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813180022.GF29508@ziepe.ca>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 6:37 PM Joel Fernandes <joel@joelfernandes.org> wrote:
->
-> On Tue, Aug 13, 2019 at 05:04:50PM +0200, Michal Hocko wrote:
-> > On Wed 07-08-19 13:15:55, Joel Fernandes (Google) wrote:
-> > > Idle page tracking currently does not work well in the following
-> > > scenario:
-> > >  1. mark page-A idle which was present at that time.
-> > >  2. run workload
-> > >  3. page-A is not touched by workload
-> > >  4. *sudden* memory pressure happen so finally page A is finally swapped out
-> > >  5. now see the page A - it appears as if it was accessed (pte unmapped
-> > >     so idle bit not set in output) - but it's incorrect.
-> > >
-> > > To fix this, we store the idle information into a new idle bit of the
-> > > swap PTE during swapping of anonymous pages.
-> > >
-> > > Also in the future, madvise extensions will allow a system process
-> > > manager (like Android's ActivityManager) to swap pages out of a process
-> > > that it knows will be cold. To an external process like a heap profiler
-> > > that is doing idle tracking on another process, this procedure will
-> > > interfere with the idle page tracking similar to the above steps.
-> >
-> > This could be solved by checking the !present/swapped out pages
-> > right? Whoever decided to put the page out to the swap just made it
-> > idle effectively.  So the monitor can make some educated guess for
-> > tracking. If that is fundamentally not possible then please describe
-> > why.
->
-> But the monitoring process (profiler) does not have control over the 'whoever
-> made it effectively idle' process.
->
-> As you said it will be a guess, it will not be accurate.
+On Tue, Aug 13, 2019 at 03:00:22PM -0300, Jason Gunthorpe wrote:
+> On Tue, Aug 13, 2019 at 10:41:42AM -0700, Ira Weiny wrote:
+> 
+> > And I was pretty sure uverbs_destroy_ufile_hw() would take care of (or ensure
+> > that some other thread is) destroying all the MR's we have associated with this
+> > FD.
+> 
+> fd's can't be revoked, so destroy_ufile_hw() can't touch them. It
+> deletes any underlying HW resources, but the FD persists.
 
-Yep. Without saving idle bit in swap entry (and presuming that all swap is idle)
-profiler could miss access. This patch adds accurate tracking almost for free.
-After that profiler could work with any pace without races.
+I misspoke.  I should have said associated with this "context".  And of course
+uverbs_destroy_ufile_hw() does not touch the FD.  What I mean is that the
+struct file which had file_pins hanging off of it would be getting its file
+pins destroyed by uverbs_destroy_ufile_hw().  Therefore we don't need the FD
+after uverbs_destroy_ufile_hw() is done.
 
->
-> I am curious what is your concern with using a bit in the swap PTE?
->
-> (Adding Konstantin as well since we may be interested in this, since we also
-> suggested this idea).
->
-> thanks,
->
->  - Joel
->
->
+But since it does not block it may be that the struct file is gone before the
+MR is actually destroyed.  Which means I think the GUP code would blow up in
+that case...  :-(
+
+I was thinking it was the other way around.  And in fact most of the time I
+think it is.  But we can't depend on that...
+
+>  
+> > > This is why having a back pointer like this is so ugly, it creates a
+> > > reference counting cycle
+> > 
+> > Yep...  I worked through this...  and it was giving me fits...
+> > 
+> > Anyway, the struct file is the only object in the core which was reasonable to
+> > store this information in since that is what is passed around to other
+> > processes...
+> 
+> It could be passed down in the uattr_bundle, once you are in file operations
+
+What is "It"?  The struct file?  Or the file pin information?
+
+> handle the file is guarenteed to exist, and we've now arranged things
+
+I don't understand what you mean by "... once you are in file operations handle... "?
+
+> so the uattr_bundle flows into the umem, as umems can only be
+> established under a system call.
+
+"uattr_bundle" == uverbs_attr_bundle right?
+
+The problem is that I don't think the core should be handling
+uverbs_attr_bundles directly.  So, I think you are driving at the same idea I
+had WRT callbacks into the driver.
+
+The drivers could provide some generic object (in RDMA this could be the
+uverbs_attr_bundle) which represents their "context".
+
+The GUP code calls back into the driver with file pin information as it
+encounters and pins pages.  The driver, RDMA in this case, associates this
+information with the "context".
+
+But for the procfs interface, that context then needs to be associated with any
+file which points to it...  For RDMA, or any other "FD based pin mechanism", it
+would be up to the driver to "install" a procfs handler into any struct file
+which _may_ point to this context.  (before _or_ after memory pins).
+
+Then the procfs code can walk the FD array and if this handler is installed it
+knows there is file pin information associated with that struct file and it can
+be printed...
+
+This is not impossible.  But I think is a lot harder for drivers to make
+right...
+
+Ira
+
