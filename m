@@ -2,138 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC1108B788
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 13:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADEAB8B7F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2019 14:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbfHMLso (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 07:48:44 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36012 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727529AbfHMLso (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 07:48:44 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z4so106050748qtc.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2019 04:48:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Zt45e40hCF0YCbbLZ0aQGoNlrA/sQl/2BzKPlIDcczo=;
-        b=D9yc6YFGEplkH0AEJkqbv5QQ/YqFFErgaOhlLwwyajnLxYCmzuYuYjTPu5K8IzHc7W
-         EHziDWuZnP0EJUoJorsIB/Vle5Jq4HW1ZePpJfpxeJ3PiL6g9IJgSG7a6i4U9+NgvGWa
-         Ai92AkBB6qVdNZzDPFs/+bpyxdePG4eiTSYai6xHFsXo6eqanU0phpcPPEHhvrx1/xET
-         /OrVUPcq3jLH3XTfzYOI9j16wl1cGoll9zeKlcNrafKlJBFPS3Xu3jF23bvmZsNJxEuE
-         b6+41/KGpH+t1xSORBP9OYFknrdMrMYelZfdaoojCQpOYGYaQ11oiLC8AtSSDLjOlbXi
-         Q++A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zt45e40hCF0YCbbLZ0aQGoNlrA/sQl/2BzKPlIDcczo=;
-        b=aYmUwRnhJDn5BbC/ADmu5zC6lPXk7/aUyKDBTdIu9oBmH5g2LqkAfxTi6b7iIaSOK9
-         1RdpT+WxMKW6smFhKzQDBCqt6LOYWd29NRHDU6d7oDYRL/8hcac4r3wc+AOIMd7u9xx2
-         DEK4e/juCUQZ549Buh6jEuHblCC/Sk41YfCzHwYCaI9o10kHXWXJMkmsc4wozHbNNV4M
-         EDsztaVdTh0j8MpWbkzXOKVmIx4KEnooqpoLfz9FiMHmp2uttIHJKAkEkyb5381rwHef
-         jrNttm51dohX8kumc+RnG0Ve/oYizutt8rl0yQYSufhpOfym+jXu2UT/tCpf/H9ZkqIb
-         f2RQ==
-X-Gm-Message-State: APjAAAXCIjl31KqlvKg5/IqwwzNGNT2xAQAHVRFwEAKvA79uCKAmH8Fj
-        /LulUYEu50WpzYuIn92qNi/Eeg==
-X-Google-Smtp-Source: APXvYqw4TQlyWpH+GsoO+iiZQsGjdJlFsSEd7xLsZ4WRKAsozWVqNJgjFHJHWU5rc/t0VYgJHvE8mg==
-X-Received: by 2002:a0c:ae35:: with SMTP id y50mr33835040qvc.204.1565696923435;
-        Tue, 13 Aug 2019 04:48:43 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id m38sm12868061qta.43.2019.08.13.04.48.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Aug 2019 04:48:42 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hxVIA-0007l2-Ec; Tue, 13 Aug 2019 08:48:42 -0300
-Date:   Tue, 13 Aug 2019 08:48:42 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
- file object
-Message-ID: <20190813114842.GB29508@ziepe.ca>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-17-ira.weiny@intel.com>
- <20190812130039.GD24457@ziepe.ca>
- <20190812172826.GA19746@iweiny-DESK2.sc.intel.com>
- <20190812175615.GI24457@ziepe.ca>
- <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
+        id S1727528AbfHMMG3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 08:06:29 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3087 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726935AbfHMMG2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Aug 2019 08:06:28 -0400
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id CF558F30528089ECDCC9;
+        Tue, 13 Aug 2019 20:06:26 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 13 Aug 2019 20:06:26 +0800
+Received: from 138 (10.175.124.28) by dggeme762-chm.china.huawei.com
+ (10.3.19.108) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 13
+ Aug 2019 20:06:25 +0800
+Date:   Tue, 13 Aug 2019 20:23:32 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Pavel Machek <pavel@denx.de>
+CC:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Jaegeuk Kim" <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
+        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v7 08/24] erofs: add namei functions
+Message-ID: <20190813122332.GA17429@138>
+References: <20190813091326.84652-1-gaoxiang25@huawei.com>
+ <20190813091326.84652-9-gaoxiang25@huawei.com>
+ <20190813114821.GB11559@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190813114821.GB11559@amd>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Originating-IP: [10.175.124.28]
+X-ClientProxiedBy: dggeme716-chm.china.huawei.com (10.1.199.112) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 02:15:37PM -0700, Ira Weiny wrote:
-> On Mon, Aug 12, 2019 at 02:56:15PM -0300, Jason Gunthorpe wrote:
-> > On Mon, Aug 12, 2019 at 10:28:27AM -0700, Ira Weiny wrote:
-> > > On Mon, Aug 12, 2019 at 10:00:40AM -0300, Jason Gunthorpe wrote:
-> > > > On Fri, Aug 09, 2019 at 03:58:30PM -0700, ira.weiny@intel.com wrote:
-> > > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > > 
-> > > > > In order for MRs to be tracked against the open verbs context the ufile
-> > > > > needs to have a pointer to hand to the GUP code.
-> > > > > 
-> > > > > No references need to be taken as this should be valid for the lifetime
-> > > > > of the context.
-> > > > > 
-> > > > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > > > >  drivers/infiniband/core/uverbs.h      | 1 +
-> > > > >  drivers/infiniband/core/uverbs_main.c | 1 +
-> > > > >  2 files changed, 2 insertions(+)
-> > > > > 
-> > > > > diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
-> > > > > index 1e5aeb39f774..e802ba8c67d6 100644
-> > > > > +++ b/drivers/infiniband/core/uverbs.h
-> > > > > @@ -163,6 +163,7 @@ struct ib_uverbs_file {
-> > > > >  	struct page *disassociate_page;
-> > > > >  
-> > > > >  	struct xarray		idr;
-> > > > > +	struct file             *sys_file; /* backpointer to system file object */
-> > > > >  };
-> > > > 
-> > > > The 'struct file' has a lifetime strictly shorter than the
-> > > > ib_uverbs_file, which is kref'd on its own lifetime. Having a back
-> > > > pointer like this is confouding as it will be invalid for some of the
-> > > > lifetime of the struct.
-> > > 
-> > > Ah...  ok.  I really thought it was the other way around.
-> > > 
-> > > __fput() should not call ib_uverbs_close() until the last reference on struct
-> > > file is released...  What holds references to struct ib_uverbs_file past that?
-> > 
-> > Child fds hold onto the internal ib_uverbs_file until they are closed
+Hi Pavel,
+
+On Tue, Aug 13, 2019 at 01:48:21PM +0200, Pavel Machek wrote:
+> Hi!
 > 
-> The FDs hold the struct file, don't they?
-
-Only dups, there are other 'child' FDs we can create
-
-> > Now this has unlocked updates to that data.. you'd need some lock and
-> > get not zero pattern
+> > +	/*
+> > +	 * on-disk error, let's only BUG_ON in the debugging mode.
+> > +	 * otherwise, it will return 1 to just skip the invalid name
+> > +	 * and go on (in consideration of the lookup performance).
+> > +	 */
+> > +	DBG_BUGON(qd->name > qd->end);
 > 
-> You can't call "get" here because I'm 99% sure we only get here when struct
-> file has no references left...
+> I believe you should check for errors in non-debug mode, too.
 
-Nope, like I said the other FDs hold the uverbs_file independent of
-the struct file it is related too. 
+Thanks for your kindly reply!
 
-This is why having a back pointer like this is so ugly, it creates a
-reference counting cycle
+The following is just my personal thought... If I am wrong, please
+kindly point out...
 
-Jason
+As you can see, this is a new prefixed string binary search algorithm
+which can provide similar performance with hashed approach (but no
+need to store hash value at all), so I really care about its lookup
+performance.
+
+There is something needing to be concerned, is, whether namei() should
+report any potential on-disk issues or just return -ENOENT for these
+corrupted dirs, I think I tend to use the latter one.
+
+The reason (in my opinion) is if you consider another some another
+complicated non-transverse ondisk implementation, it cannot transverse
+all the entires so they could/couldn't report all potential issues
+in namei() (For such corrupted dir, they can return -ENOENT due
+to lack of information of course, just avoiding crashing the kernel
+is OK).
+
+Therefore, in my thought, such issue can be reported by fsck-like
+tools such as erofs.fsck. And actually readdir() will also report
+all issues as well, thus we can have performance gain on lookup.
+
+> 
+> 
+> > +			if (unlikely(!ndirents)) {
+> > +				DBG_BUGON(1);
+> > +				kunmap_atomic(de);
+> > +				put_page(page);
+> > +				page = ERR_PTR(-EIO);
+> > +				goto out;
+> > +			}
+> 
+> -EUCLEAN is right error code for corrupted filesystem. (And you
+>  probably want to print something to the syslog, too).
+
+Yes, you are right :) -EUCLEAN/EFSCORRUPTED is actually for such thing,
+nowadays, EROFS treats all EFSCORRUPTED cases into EIO, and I will
+update that in one patch... (Yes, it needs to print something of course :))
+
+Thanks,
+Gao Xiang
+
+> 
+> 								Pavel
+> -- 
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+
