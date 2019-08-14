@@ -2,107 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99A0E8CC2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 09:00:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5F98CC5F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 09:17:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbfHNHAy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 03:00:54 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3939 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726373AbfHNHAy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 03:00:54 -0400
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id E48AC89D4D0CCF1AD9C5;
-        Wed, 14 Aug 2019 15:00:50 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 14 Aug 2019 15:00:48 +0800
-Received: from 138 (10.175.124.28) by dggeme762-chm.china.huawei.com
- (10.3.19.108) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 14
- Aug 2019 15:00:47 +0800
-Date:   Wed, 14 Aug 2019 15:17:54 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3] vfs: fix page locking deadlocks when deduping files
-Message-ID: <20190814071754.GC28602@138>
-References: <20190813151434.GQ7138@magnolia>
- <20190813154010.GD5307@bombadil.infradead.org>
- <20190814070321.GB28602@138>
+        id S1727100AbfHNHQ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 03:16:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726880AbfHNHQ7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 03:16:59 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 066412054F;
+        Wed, 14 Aug 2019 07:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565767018;
+        bh=XDAYAIHKx15cbm4MLaeL2uyl4aIQnIOMeL1b9sGwwNE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=BivEU2xIZL82EeTgEkm0YeMoEaLJDpoEO7a2zS5hiA9cs3kvwHPeOwoR5hLAFoCSs
+         QN7vT/TulxQAdD2w0+cnf1mdxQEv+C8FQSllITsMUv0YH0f9tH2JKqFwShfbEex0li
+         PW40DSG+Nh81h9qArVWE/xPTvIfUmbeV1PbKJ/WE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190814070321.GB28602@138>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Originating-IP: [10.175.124.28]
-X-ClientProxiedBy: dggeme720-chm.china.huawei.com (10.1.199.116) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190814055108.214253-10-brendanhiggins@google.com>
+References: <20190814055108.214253-1-brendanhiggins@google.com> <20190814055108.214253-10-brendanhiggins@google.com>
+Subject: Re: [PATCH v13 09/18] kunit: test: add support for test abort
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
+        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
+        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, shuah@kernel.org,
+        tytso@mit.edu, yamada.masahiro@socionext.com
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 00:16:57 -0700
+Message-Id: <20190814071658.066412054F@mail.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 03:03:21PM +0800, Gao Xiang wrote:
-> On Tue, Aug 13, 2019 at 08:40:10AM -0700, Matthew Wilcox wrote:
-> > On Tue, Aug 13, 2019 at 08:14:34AM -0700, Darrick J. Wong wrote:
-> > > +		/*
-> > > +		 * Now that we've locked both pages, make sure they still
-> > > +		 * represent the data we're interested in.  If not, someone
-> > > +		 * is invalidating pages on us and we lose.
-> > > +		 */
-> > > +		if (src_page->mapping != src->i_mapping ||
-> > > +		    src_page->index != srcoff >> PAGE_SHIFT ||
-> > > +		    dest_page->mapping != dest->i_mapping ||
-> > > +		    dest_page->index != destoff >> PAGE_SHIFT) {
-> > > +			same = false;
-> > > +			goto unlock;
-> > > +		}
-> > 
-> > It is my understanding that you don't need to check the ->index here.
-> > If I'm wrong about that, I'd really appreciate being corrected, because
-> > the page cache locking is subtle.
-> > 
-> > You call read_mapping_page() which returns the page with an elevated
-> > refcount.  That means the page can't go back to the page allocator and
-> > be allocated again.  It can, because it's unlocked, still be truncated,
-> > so the check for ->mapping after locking it is needed.  But the check
-> > for ->index being correct was done by find_get_entry().
-> > 
-> > See pagecache_get_page() -- if we specify FGP_LOCK, then it will lock
-> > the page, check the ->mapping but not check ->index.  OK, it does check
-> > ->index, but in a VM_BUG_ON(), so it's not something that ought to be
-> > able to be wrong.
-> 
-> That is my understanding as well. In details...
-> 
-> The page data get ready after read_mapping_page() is successfully
-> returned. However, if someone needs to get a stable untruncated page,
-> lock_page() and recheck page->mapping are needed as well.
-> 
-> I have no idea how page->index can be changed safely without reallocating
-> the page, even some paths could keep using some truncated page temporarily
-> with some refcounts held but I think those paths cannot add these pages
+Quoting Brendan Higgins (2019-08-13 22:50:59)
+> Add support for aborting/bailing out of test cases, which is needed for
+> implementing assertions.
+>=20
+> An assertion is like an expectation, but bails out of the test case
+> early if the assertion is not met. The idea with assertions is that you
+> use them to state all the preconditions for your test. Logically
+> speaking, these are the premises of the test case, so if a premise isn't
+> true, there is no point in continuing the test case because there are no
+> conclusions that can be drawn without the premises. Whereas, the
+> expectation is the thing you are trying to prove.
+>=20
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
 
-Such a case is like that even if the page can be truncated
-at the same time without locking, some paths only needs to
-get its page data unstrictly (and note that these pages
-should be Uptodated before). Therefore those paths can
-only take a refcount without PG_lock... But such refcounts
-should be used temporarily, those pages cannot be added to
-page cache again without reallocating...
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-Thanks,
-Gao Xiang
-
-> directly to some page cache again without freeing since it seems really
-> unsafe.....
-> 
-> Thanks,
-> Gao Xiang
-> 
-> > 
