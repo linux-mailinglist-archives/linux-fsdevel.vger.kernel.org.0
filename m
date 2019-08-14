@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B5F98CC5F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 09:17:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE12D8CC79
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 09:17:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfHNHQ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 03:16:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50976 "EHLO mail.kernel.org"
+        id S1727601AbfHNHRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 03:17:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfHNHQ7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 03:16:59 -0400
+        id S1727100AbfHNHRx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 03:17:53 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 066412054F;
-        Wed, 14 Aug 2019 07:16:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CF0F2054F;
+        Wed, 14 Aug 2019 07:17:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565767018;
-        bh=XDAYAIHKx15cbm4MLaeL2uyl4aIQnIOMeL1b9sGwwNE=;
+        s=default; t=1565767072;
+        bh=fFSODLNozIGjhPTZNb2HDDCi9OpfDQhPl8bfSqvMcsU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=BivEU2xIZL82EeTgEkm0YeMoEaLJDpoEO7a2zS5hiA9cs3kvwHPeOwoR5hLAFoCSs
-         QN7vT/TulxQAdD2w0+cnf1mdxQEv+C8FQSllITsMUv0YH0f9tH2JKqFwShfbEex0li
-         PW40DSG+Nh81h9qArVWE/xPTvIfUmbeV1PbKJ/WE=
+        b=Tig6bqO+uLutcqoP8F96ocG1Zw8W4tfd0g/H7BQWrNvKiL9x7S1IaLUnEFmD/GI5B
+         3SZl55sPYQvUA5FzyIIn/HDJC+7sZkqtLbaf9LMihXQ+w5Rq1lRJj6TTVrLTSzMJ6b
+         Y6Dgtp5Id7PoxZl5W+jvWsXN4ST7X/w3KSvEKsMI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190814055108.214253-10-brendanhiggins@google.com>
-References: <20190814055108.214253-1-brendanhiggins@google.com> <20190814055108.214253-10-brendanhiggins@google.com>
-Subject: Re: [PATCH v13 09/18] kunit: test: add support for test abort
+In-Reply-To: <20190814055108.214253-4-brendanhiggins@google.com>
+References: <20190814055108.214253-1-brendanhiggins@google.com> <20190814055108.214253-4-brendanhiggins@google.com>
+Subject: Re: [PATCH v13 03/18] kunit: test: add string_stream a std::stream like string builder
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
@@ -49,29 +49,29 @@ To:     Brendan Higgins <brendanhiggins@google.com>,
         peterz@infradead.org, robh@kernel.org, shuah@kernel.org,
         tytso@mit.edu, yamada.masahiro@socionext.com
 User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 00:16:57 -0700
-Message-Id: <20190814071658.066412054F@mail.kernel.org>
+Date:   Wed, 14 Aug 2019 00:17:51 -0700
+Message-Id: <20190814071752.1CF0F2054F@mail.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting Brendan Higgins (2019-08-13 22:50:59)
-> Add support for aborting/bailing out of test cases, which is needed for
-> implementing assertions.
+Quoting Brendan Higgins (2019-08-13 22:50:53)
+> A number of test features need to do pretty complicated string printing
+> where it may not be possible to rely on a single preallocated string
+> with parameters.
 >=20
-> An assertion is like an expectation, but bails out of the test case
-> early if the assertion is not met. The idea with assertions is that you
-> use them to state all the preconditions for your test. Logically
-> speaking, these are the premises of the test case, so if a premise isn't
-> true, there is no point in continuing the test case because there are no
-> conclusions that can be drawn without the premises. Whereas, the
-> expectation is the thing you are trying to prove.
+> So provide a library for constructing the string as you go similar to
+> C++'s std::string. string_stream is really just a string builder,
+> nothing more.
 >=20
 > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 > ---
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+
+The spinlocks will probably need to change to be irqsaves in the future,
+but I guess we can cross that bridge when we come to it.
 
