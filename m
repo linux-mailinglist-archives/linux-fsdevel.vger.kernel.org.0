@@ -2,172 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FB6D8D29A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 13:58:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB408D2D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 14:19:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfHNL6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 07:58:19 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44842 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725888AbfHNL6T (ORCPT
+        id S1727266AbfHNMTF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 08:19:05 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:49939 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbfHNMTE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 07:58:19 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7EBvfpx083927
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2019 07:58:18 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ucgp9axqg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2019 07:58:17 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Wed, 14 Aug 2019 12:58:15 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 14 Aug 2019 12:58:12 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7EBwBTG51511502
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 11:58:11 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 80DFFAE051;
-        Wed, 14 Aug 2019 11:58:11 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78742AE045;
-        Wed, 14 Aug 2019 11:58:10 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.31.57])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 14 Aug 2019 11:58:10 +0000 (GMT)
-From:   RITESH HARJANI <riteshh@linux.ibm.com>
-Subject: Re: [PATCH 0/5] ext4: direct IO via iomap infrastructure
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jack@suse.cz, tytso@mit.edu, aneesh.kumar@linux.ibm.com
-References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
- <20190812173150.AF04F5204F@d06av21.portsmouth.uk.ibm.com>
- <20190813111004.GA12682@poseidon.bobrowski.net>
- <20190813122723.AE6264C040@d06av22.portsmouth.uk.ibm.com>
- <20190814094848.GA23465@poseidon.bobrowski.net>
-Date:   Wed, 14 Aug 2019 17:28:09 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 14 Aug 2019 08:19:04 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hxsEp-0005k9-EW; Wed, 14 Aug 2019 14:18:47 +0200
+Received: from sha by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hxsEm-00080y-Kp; Wed, 14 Aug 2019 14:18:44 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-mtd@lists.infradead.org, Jan Kara <jack@suse.com>,
+        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH 00/11] Add quota support to UBIFS
+Date:   Wed, 14 Aug 2019 14:18:23 +0200
+Message-Id: <20190814121834.13983-1-s.hauer@pengutronix.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190814094848.GA23465@poseidon.bobrowski.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19081411-0016-0000-0000-0000029EB4C5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081411-0017-0000-0000-000032FECE87
-Message-Id: <20190814115810.78742AE045@d06av26.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908140126
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This series adds quota support to UBIFS.
 
-On 8/14/19 3:18 PM, Matthew Bobrowski wrote:
-> On Tue, Aug 13, 2019 at 05:57:22PM +0530, RITESH HARJANI wrote:
->> On 8/13/19 4:40 PM, Matthew Bobrowski wrote:
->>> On Mon, Aug 12, 2019 at 11:01:50PM +0530, RITESH HARJANI wrote:
->>>> I was under the assumption that we need to maintain
->>>> ext4_test_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN) or
->>>> atomic_read(&EXT4_I(inode)->i_unwritten))
->>>> in case of non-AIO directIO or AIO directIO case as well (when we may
->>>> allocate unwritten extents),
->>>> to protect with some kind of race with other parts of code(maybe
->>>> truncate/bufferedIO/fallocate not sure?) which may call for
->>>> ext4_can_extents_be_merged()
->>>> to check if extents can be merged or not.
->>>>
->>>> Is it not the case?
->>>> Now that directIO code has no way of specifying that this inode has
->>>> unwritten extent, will it not race with any other path, where this info was
->>>> necessary (like
->>>> in above func ext4_can_extents_be_merged())?
->>> Ah yes, I was under the same assumption when reviewing the code
->>> initially and one of my first solutions was to also use this dynamic
->>> 'state' flag in the ->end_io() handler. But, I fell flat on my face as
->>> that deemed to be problematic... This is because there can be multiple
->>> direct IOs to unwritten extents against the same inode, so you cannot
->>> possibly get away with tracking them using this single inode flag. So,
->>> hence the reason why we drop using EXT4_STATE_DIO_UNWRITTEN and use
->>> IOMAP_DIO_UNWRITTEN instead in the ->end_io() handler, which tracks
->>> whether _this_ particular IO has an underlying unwritten extent.
->> Thanks for taking time to explain this.
->>
->> But what I meant was this (I may be wrong here since I haven't really looked
->> into it),
->> but for my understanding I would like to discuss this -
->>
->> So earlier with this flag(EXT4_STATE_DIO_UNWRITTEN) we were determining on
->> whether a newextent can be merged with ex1 in function
->> ext4_extents_can_be_merged. But now since we have removed that flag we have
->> no way of knowing that whether
->> this inode has any unwritten extents or not from any DIO path.
->> What I meant is isn't this removal of setting/unsetting of
->> flag(EXT4_STATE_DIO_UNWRITTEN)
->> changing the behavior of this func - ext4_extents_can_be_merged?
-> Ah yes, I see. I believe that what you're saying is correct and I
-> think we will need to account for this case. But, I haven't thought
-> about how to do this just yet.
+This series follows a very simple approach to quota: Neither the quota
+limits nor the quota usage are ever written to the medium. The quota
+usage is reconstructed from the filesystem during mount time. The quota
+limits must be set by the user each time after mount. This is probably
+not very convenient for systems that are used interactively, but UBIFS
+is targetted to embedded systems and here running a script after mount
+shouldn't be a problem. This of course isn't the way quota was thought
+to be, but I believe this is a good compromise for a feature that I predict
+is only rarely used on UBIFS. The big upside of this approach is that
+no on-disk format changes are required and thus we can't get any
+broken/corrupt filesystems because of quota support. Reconstructing the
+quota data each time during mount has an noticable but I think for many
+cases acceptable time overhead. I mounted a ~56MiB rootfs with 1920 files
+which takes around 0.7s longer when quota is enabled.
 
-That's not a problem, we can surely discuss the possible approaches.
+As UBIFS works on mtd there is no block_device involved. The quotactl
+system call requires a path to a block device as argument. To overcome
+this we add support for passing the mount point instead. quota uses
+ get_super_exclusive_thawed(), get_super_thawed() and get_super() to
+get hold of a super_block. All these functions require a block_device
+which we do not have for UBIFS, so this code has to be refactored a bit.
+I'm a bit outside of my comfort zone here, so please review carefully ;)
 
+The UBIFS quota support itself is based on a series by Dongsheng Yang
+posted here:
+http://lists.infradead.org/pipermail/linux-mtd/2015-September/061812.html
+This part hasn't changed much, except that the code for reading and writing
+quota files has been dropped.
 
->> Also - could you please explain why this check returns 0 in the first place
->> (line 1762 - 1766 below)?
->>
->> 1733 int
->> 1734 ext4_can_extents_be_merged(struct inode *inode, struct ext4_extent
->> *ex1,
->> 1735                                 struct ext4_extent *ex2)
->> <...>
->>
->> 1762         if (ext4_ext_is_unwritten(ex1) &&
->> 1763             (ext4_test_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN) ||
->> 1764              atomic_read(&EXT4_I(inode)->i_unwritten) ||
->> 1765              (ext1_ee_len + ext2_ee_len > EXT_UNWRITTEN_MAX_LEN)))
->> 1766                 return 0;
-> I cannot explain why, because I myself don't know exactly why in this
-> particular case the extents cannot be merged. Perhaps `git blame` is
-> our friend and we can direct that question accordingly, or someone
-> else on this mailing list knows the answer. :-)
+Sascha
 
-git blame didn't help much. But I think I may know what the above 
-condition means.
-So I think if there is an ongoing IO to an unwritten extent, we may 
-sometimes first split that extent
-to match the exact range of the IO, then write data to it and then 
-convert that *exact range* to written extent.
+Dongsheng Yang (1):
+  ubifs: Add quota support
 
-So this means while there is an ongoing IO to any inode which has 
-unwritten extents, we should not allow
-any other extent to merge with extents of this inode.
+Sascha Hauer (10):
+  quota: Make inode optional
+  quota: Only module_put the format when existing
+  fs: move __get_super() out of loop
+  fs, quota: introduce wait_super_thawed() to wait until a superblock is
+    thawed
+  quota: Allow to pass quotactl a mountpoint
+  ubifs: move checks and preparation into setflags()
+  ubifs: Add support for FS_IOC_FS[SG]ETXATTR ioctls
+  ubifs: do not ubifs_inode() on potentially NULL pointer
+  ubifs: Add support for project id
+  ubifs: export get_znode
 
-Now one race which I could think of it is, when we are doing AIO DIO and 
-in parallel doing fallocate to the end of the file.
-But since we wait for inode_dio_wait in fallocate, so that should not 
-race with any DIO paths.
+ fs/quota/dquot.c       |   9 +-
+ fs/quota/quota.c       |  79 ++++--
+ fs/super.c             |  74 +++---
+ fs/ubifs/Makefile      |   1 +
+ fs/ubifs/dir.c         |  31 ++-
+ fs/ubifs/file.c        |  43 +++
+ fs/ubifs/ioctl.c       | 222 ++++++++++++++--
+ fs/ubifs/journal.c     |   4 +-
+ fs/ubifs/quota.c       | 590 +++++++++++++++++++++++++++++++++++++++++
+ fs/ubifs/super.c       |  46 +++-
+ fs/ubifs/tnc.c         |  34 +--
+ fs/ubifs/ubifs-media.h |   6 +-
+ fs/ubifs/ubifs.h       |  33 +++
+ include/linux/fs.h     |   5 +-
+ 14 files changed, 1076 insertions(+), 101 deletions(-)
+ create mode 100644 fs/ubifs/quota.c
 
-I think, here we can wait to get answers from others to understand, if 
-there is any race with any of the DIO paths on removing this state 
-flag(EXT4_STATE_DIO_UNWRITTEN) & not
-setting "i_unwritten". Whether it can race with any other path and if 
-this state flag is necessary(in DIO cases also) for the correct 
-functionality?
-
-
-Regards
-Ritesh
+-- 
+2.20.1
 
