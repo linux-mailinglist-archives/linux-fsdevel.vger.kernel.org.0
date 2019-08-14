@@ -2,112 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 356058DF86
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 22:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16DA98DF8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 22:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729201AbfHNU5f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 16:57:35 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:50785 "EHLO
+        id S1730097AbfHNU6I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 16:58:08 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:33739 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfHNU5f (ORCPT
+        with ESMTP id S1729752AbfHNU6I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:57:35 -0400
+        Wed, 14 Aug 2019 16:58:08 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MPowd-1hckJz13UB-00MpFs; Wed, 14 Aug 2019 22:57:32 +0200
+ 1Mfpf7-1iVP9a30qP-00gHok; Wed, 14 Aug 2019 22:57:43 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Hannes Reinecke <hare@suse.de>
-Subject: [PATCH v5 17/18] pktcdvd: add compat_ioctl handler
-Date:   Wed, 14 Aug 2019 22:54:52 +0200
-Message-Id: <20190814205521.122180-8-arnd@arndb.de>
+        linux-fsdevel@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
+        Tejun Heo <tj@kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH v5 18/18] scsi: sd: enable compat ioctls for sed-opal
+Date:   Wed, 14 Aug 2019 22:54:53 +0200
+Message-Id: <20190814205521.122180-9-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190814204259.120942-1-arnd@arndb.de>
 References: <20190814204259.120942-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:vtBRrSTbxRM+4N7JG/SqINjMT8OwhCCnfEV9GLfJMlj7zzHmXqL
- wFcQBgM7/r/60w0dHWdIX39QTgYM4f/6oLGxqnTXmb0CHbl9e834v0p2Rmzje1ZTzLFB0d4
- ArUarrUL7+s3fgxa94yevKS1w3wmtdSr7o3Jo/MviF7gzdbq7Vr5Sa0PLjOc3+0XsDb7ayd
- Im2A9aO8g12wUfvh63IzQ==
+X-Provags-ID: V03:K1:GHU2BOUolFMuYU4JHf6S7Epw6n2I5F+s2JL2xcZ0QVFOtlz3LTM
+ Cg1Y0P2DCMYs/77HHCx1SBY6ljRsMtpIZLwfU9oRltiVTFqbskRhozs7BR1P4kelS1oZQdf
+ NO3WcQWcvIZWwBG0eNOOKMNkbslk2VdBMFzYBppBkPwj0oVa+cGYH4/9qltFy28mV3yE9NN
+ os1WcG3Ajoz39bCTJnZgg==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:oXxoA9Saf5U=:wn2CxSLASoltE+VPtsKsmS
- DbM3bcSOL5toXC7kI5Wz6RafyaM3cAUqLlE3zjj3c2paNf19x+xqkxDbfmVmBPA63QSHuNvlo
- aNikgXHDUJ8bhRVl3ntnHP/QQQhffoJlfbuIOka54SfVt754KI6HKMfBnl1uLRKT5k4+4ItGZ
- /itPTJ3SDZA1hRH4ZojXudrHRYkPWnJmzt4GYzIPq3Ewf2uH0vIg2s4swG5LPGrVV4gMiUiXf
- 3b3TQPCWgpHmS4mBiAigr/vnrj7Ps7Lr3BVqSAR8ioWfzXjnFesSIO3H8YHlIB5VZCYnozlpK
- rpXwIG8gGgfZejIX2FD5CW+2QCT766pjpVsSiQlCWlsREd7u4WNA+CcS3CX7WaAIKx0z8vSe5
- 7obgtro6nmMuqzOTcjPLrfLt4NQNPitX7upsF5WWyhUiMBqMnhBb95qBmr61t1yaR30GgYaKa
- nmKXPddvpCL8Dx+/T2jw2Eh7FDG5rr/H6Sh/ti8cH0/L0PBate4GA8OTM6yV3dwtOdSIMJEmO
- GcI941L57d5nOl7fZDJe2DxZyjKA6RG9kcEr17w+Ff/hJ6CbTGBAhwHDt9WMZsplcRj7LdJoO
- yv14a5pkTALtpSrjJd9JhqIn1MVYvyoTPee7UiU5MUtw366JG52QkMRjoDzcC7CBKlnrDDJDX
- 47JwnZHHclHBGahHLCJehDayQgvWpgjncjEbJpYMi5AVfW8LQrzJZ1Ue1XnaOM4sMLkd2HJJb
- zRdDmZjFRSEBmUUiGjtz5uyZGpGQ34zVToeIOg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zpxeGQV2Lis=:DxZ29hcJwmhH8cHBeJLpFh
+ cbl964bB0IHU8mgW586im24i2LN4vSL9QCCunqRoHxS7JbPtdo5H45SQ6PWsw9mw/Ulb/ScC1
+ 0wRZL4DfLEEd0+uxjvjXcsGHZWHGCFNQLqo4Q25G0MVi5VwZyzkAsDZ51/SJZ5+QyVes+Qt9I
+ jpKCw8zab86I+Rl7XhCLexRa9CBJThsIiej6aL+7uuwzbweouesQv0N8hCkZYPSHT+ujCSWh0
+ kLdAOCE6Biopn5K/CGKUYmuSjZ9apaCSOVDn5i0Q6JdR0putP+DLV+uMO99uB7qL1273rW5AM
+ aiOAT7BbnDBhLmofbzGwXZvCbgrWP9CBdLFxRXsB0Gh9sC8duzp3M3okSQ8EhDEBLKt7Xr82Y
+ 69IHO+8bAGW0Avqxepran8c+dzq2jov2jsQrrxJqinBc6KXjj1lwSbbsVisl1WnukDYcN6k2l
+ bXhBO2kcCQjrrjs8o/B2IdMo5vHHxsu883UHlrOuPk0+Pmdf4TrAwNirMNkik7rmJCC1VWD0M
+ YZ4JfrKoykoTAIz6RHX4zUk0RvgX/5+6B3ms7hZ5+mWytecx9vFhvM6dbSTVopHsuOfKorbtd
+ C/xUO8wK1iajpYzXGo+S0nhiHKBNVa/kboscA0C7kx3Ybwba60OSBHWJ1wHuQrvP5fihDvrMU
+ 3yg76Yq3EpfucvHZpAOym5tAjj1kALpm3aXVMSJBtBSlqHml5cwYgTvD1OW8YuOeCwuxBz2fH
+ 2hKYaB8bwrOK32MdonrxWgBxhRv5SfKCbUepsQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-pkt_ioctl() implements the generic SCSI_IOCTL_SEND_COMMAND
-and some cdrom ioctls by forwarding to the underlying block
-device. For compat_ioctl handling, this always takes a
-roundtrip through fs/compat_ioctl.c that we should try
-to avoid, at least for the compatible commands.
+The sed_ioctl() function is written to be compatible between
+32-bit and 64-bit processes, however compat mode is only
+wired up for nvme, not for sd.
 
-CDROM_SEND_PACKET is an exception here, it requires special
-translation in compat_blkdev_driver_ioctl().
+Add the missing call to sed_ioctl() in sd_compat_ioctl().
 
-CDROM_LAST_WRITTEN has no compat handling at the moment.
-
+Fixes: d80210f25ff0 ("sd: add support for TCG OPAL self encrypting disks")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/block/pktcdvd.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/scsi/sd.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 024060165afa..b5950b7851b0 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -2664,6 +2664,28 @@ static int pkt_ioctl(struct block_device *bdev, fmode_t mode, unsigned int cmd,
- 	return ret;
- }
- 
-+#ifdef CONFIG_COMPAT
-+static int pkt_compat_ioctl(struct block_device *bdev, fmode_t mode, unsigned int cmd, unsigned long arg)
-+{
-+	switch (cmd) {
-+	/* compatible */
-+	case CDROMEJECT:
-+	case CDROMMULTISESSION:
-+	case CDROMREADTOCENTRY:
-+	case SCSI_IOCTL_SEND_COMMAND:
-+		return pkt_ioctl(bdev, mode, cmd, (unsigned long)compat_ptr(arg));
-+
-+
-+	/* FIXME: no handler so far */
-+	case CDROM_LAST_WRITTEN:
-+	/* handled in compat_blkdev_driver_ioctl */
-+	case CDROM_SEND_PACKET:
-+	default:
-+		return -ENOIOCTLCMD;
-+	}
-+}
-+#endif
-+
- static unsigned int pkt_check_events(struct gendisk *disk,
- 				     unsigned int clearing)
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 149d406aacc9..8b71664c54bd 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1693,20 +1693,30 @@ static void sd_rescan(struct device *dev)
+ static int sd_compat_ioctl(struct block_device *bdev, fmode_t mode,
+ 			   unsigned int cmd, unsigned long arg)
  {
-@@ -2685,6 +2707,9 @@ static const struct block_device_operations pktcdvd_ops = {
- 	.open =			pkt_open,
- 	.release =		pkt_close,
- 	.ioctl =		pkt_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.ioctl =		pkt_compat_ioctl,
-+#endif
- 	.check_events =		pkt_check_events,
- };
+-	struct scsi_device *sdev = scsi_disk(bdev->bd_disk)->device;
++	struct gendisk *disk = bdev->bd_disk;
++	struct scsi_disk *sdkp = scsi_disk(disk);
++	struct scsi_device *sdev = sdkp->device;
++	void __user *p = compat_ptr(arg);
+ 	int error;
+ 
++	error = scsi_verify_blk_ioctl(bdev, cmd);
++	if (error < 0)
++		return error;
++
+ 	error = scsi_ioctl_block_when_processing_errors(sdev, cmd,
+ 			(mode & FMODE_NDELAY) != 0);
+ 	if (error)
+ 		return error;
++
++	if (is_sed_ioctl(cmd))
++		return sed_ioctl(sdkp->opal_dev, cmd, p);
+ 	       
+ 	/* 
+ 	 * Let the static ioctl translation table take care of it.
+ 	 */
+ 	if (!sdev->host->hostt->compat_ioctl)
+ 		return -ENOIOCTLCMD; 
+-	return sdev->host->hostt->compat_ioctl(sdev, cmd, (void __user *)arg);
++	return sdev->host->hostt->compat_ioctl(sdev, cmd, p);
+ }
+ #endif
  
 -- 
 2.20.0
