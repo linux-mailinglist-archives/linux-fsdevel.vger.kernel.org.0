@@ -2,199 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 688F48D001
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 11:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 103F58D008
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 11:49:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfHNJsH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 05:48:07 -0400
-Received: from mail-oi1-f200.google.com ([209.85.167.200]:39340 "EHLO
-        mail-oi1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfHNJsG (ORCPT
+        id S1725996AbfHNJs5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 05:48:57 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46527 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725280AbfHNJs5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 05:48:06 -0400
-Received: by mail-oi1-f200.google.com with SMTP id k22so1789098oic.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2019 02:48:06 -0700 (PDT)
+        Wed, 14 Aug 2019 05:48:57 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q139so4978282pfc.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2019 02:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Ve+BsJCVJIEcifwtByCuOW28rmegYHRoXiLEkQ98LcE=;
+        b=SvtDodok5nVnLyoolfForJK0EHeOoyIDE5YgsUdqEMry1xgwS6kWH5illdoZweCHeq
+         UYls/IAXDe9T4P8V69E/48WknUmCXkPKyZv83mXWJA4WEUbv55J3rNP1cHgnh5Mm4MwB
+         dzIUL4v6Cd2JT3H8lVc3EIPMDG8AoyqwdDuOTT3dCbCBXP/LWRqZF0SatqAnHgBFtb+B
+         M8Sc0VvG+qa64YHj1lop64haV2iZDuq1V16Fwdoq+Ljr7FN7bfd3o+sLaRx/j1lJCQ5z
+         M7lZdLSKtn8+SrlNQHNEyVdT7kUWwxaiRUc4z7PNcyqG1KkNX/SPqZWPlllEN8jSfxCZ
+         SpcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=XV02cgM0DiaLJPBZT/dcL2UEgRbdd37HvTZKiTSvZao=;
-        b=UQT7eCne7UIu7CUuvKc5uRqdFh5/aFyvkPv5QgsHZBc+7b8JkBNJnkI+cEPF4MLIT6
-         ROcTs1C9l1Vb6zPRf0N7USWpOybscUXgo/WmCnFM/9+pUhsFp5/aKzlBK/pJCSqPu61a
-         NP1ixG94vne/qrBLEzrpqqwELUUuxX9Ad4b8iqc/D1WoBfiDN8T7XzVqkxtmtP+E3OjF
-         YmZZQJ3HrbhMhx+sRNGZ1No8BGAahjEstPP17AqUrtbWR4MCUQ8yRBeo1dxnm5Qpz8eT
-         OWip+Vpf9SHTjp4+Ye1jvCRkl4WnOmYvD/PvG5sPA6xWYUNltp7eJipEZH1CLnz6phgY
-         A/Qw==
-X-Gm-Message-State: APjAAAVUgJZZJbNJwYjgOOejD3JHJDuAOFTmFDCoebTFYW5rgn2DSrwB
-        2X7HUAegJm0hwno1YuAhH8OZNclDUe6MgGYbtPBRflC8fJ0h
-X-Google-Smtp-Source: APXvYqwtNHvsouv3Ix3nM4wBkrtyFA3/tPsxw9Nhrd9lTSoNdWSy0FQVn0x4hxKROq5CgFY+BMIlNHAp4r7LuCJXb0+jMiaqNgNk
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Ve+BsJCVJIEcifwtByCuOW28rmegYHRoXiLEkQ98LcE=;
+        b=PiQCFcdiihwqCfEtEicoKtR6FoxJctaGtkJX4EZYaZ4Qav1424UC7HYfGNPXiCQLFX
+         soJ5xV3X2b8wzMpl05kETk350BwmVYzHnrK0HavYqZ1Ici+XkRkmn+zhZD/1xFI9uxEf
+         UEagHD3yx+HsCXvhS7UMb43reo13F9I1+HcSx5jltBwyCRuqN5OUUH6Kdz66nYBldc8A
+         UfIL+Wz3PwSzDYb5hFiypKZeg8i0VawguX3ivkR2dYnuna2D4MlbjPzeionhZqd6WNpi
+         uMdaYvTQhi/rJ51gg9ckKkb5AIpnhFiLEM+sJYWAZGod7RrRi5DHwirAjrej6LKgy2Dr
+         HQRw==
+X-Gm-Message-State: APjAAAWG7vUKfVmy6Xrm6k9guxkmvHJUnYwfVaBOrVd1iI9uQkuKwCku
+        Xiz0nT+T31bVApYoTS/eOAL3ODrXew==
+X-Google-Smtp-Source: APXvYqxMlpcm6/wPGb0sQMZFIa96c2xrKfs+EEDRJyQn8exRvnglI6LUZzNlec+lxXfArVXrgPFpnQ==
+X-Received: by 2002:a65:4c4d:: with SMTP id l13mr37500934pgr.156.1565776136665;
+        Wed, 14 Aug 2019 02:48:56 -0700 (PDT)
+Received: from poseidon.bobrowski.net ([114.78.226.167])
+        by smtp.gmail.com with ESMTPSA id r137sm28915301pfc.145.2019.08.14.02.48.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 14 Aug 2019 02:48:56 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 19:48:50 +1000
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     RITESH HARJANI <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.cz, tytso@mit.edu
+Subject: Re: [PATCH 0/5] ext4: direct IO via iomap infrastructure
+Message-ID: <20190814094848.GA23465@poseidon.bobrowski.net>
+References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
+ <20190812173150.AF04F5204F@d06av21.portsmouth.uk.ibm.com>
+ <20190813111004.GA12682@poseidon.bobrowski.net>
+ <20190813122723.AE6264C040@d06av22.portsmouth.uk.ibm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:b88b:: with SMTP id p11mr2437470jam.144.1565776085760;
- Wed, 14 Aug 2019 02:48:05 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 02:48:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000063c050059010a7d4@google.com>
-Subject: INFO: task hung in fuse_lookup (3)
-From:   syzbot <syzbot+b64df836ad08c8e31a47@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190813122723.AE6264C040@d06av22.portsmouth.uk.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Aug 13, 2019 at 05:57:22PM +0530, RITESH HARJANI wrote:
+> On 8/13/19 4:40 PM, Matthew Bobrowski wrote:
+> > On Mon, Aug 12, 2019 at 11:01:50PM +0530, RITESH HARJANI wrote:
+> > > I was under the assumption that we need to maintain
+> > > ext4_test_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN) or
+> > > atomic_read(&EXT4_I(inode)->i_unwritten))
+> > > in case of non-AIO directIO or AIO directIO case as well (when we may
+> > > allocate unwritten extents),
+> > > to protect with some kind of race with other parts of code(maybe
+> > > truncate/bufferedIO/fallocate not sure?) which may call for
+> > > ext4_can_extents_be_merged()
+> > > to check if extents can be merged or not.
+> > > 
+> > > Is it not the case?
+> > > Now that directIO code has no way of specifying that this inode has
+> > > unwritten extent, will it not race with any other path, where this info was
+> > > necessary (like
+> > > in above func ext4_can_extents_be_merged())?
+> > Ah yes, I was under the same assumption when reviewing the code
+> > initially and one of my first solutions was to also use this dynamic
+> > 'state' flag in the ->end_io() handler. But, I fell flat on my face as
+> > that deemed to be problematic... This is because there can be multiple
+> > direct IOs to unwritten extents against the same inode, so you cannot
+> > possibly get away with tracking them using this single inode flag. So,
+> > hence the reason why we drop using EXT4_STATE_DIO_UNWRITTEN and use
+> > IOMAP_DIO_UNWRITTEN instead in the ->end_io() handler, which tracks
+> > whether _this_ particular IO has an underlying unwritten extent.
+> 
+> Thanks for taking time to explain this.
+> 
+> But what I meant was this (I may be wrong here since I haven't really looked
+> into it),
+> but for my understanding I would like to discuss this -
+> 
+> So earlier with this flag(EXT4_STATE_DIO_UNWRITTEN) we were determining on
+> whether a newextent can be merged with ex1 in function
+> ext4_extents_can_be_merged. But now since we have removed that flag we have
+> no way of knowing that whether
+> this inode has any unwritten extents or not from any DIO path.
+> What I meant is isn't this removal of setting/unsetting of
+> flag(EXT4_STATE_DIO_UNWRITTEN)
+> changing the behavior of this func - ext4_extents_can_be_merged?
 
-syzbot found the following crash on:
+Ah yes, I see. I believe that what you're saying is correct and I
+think we will need to account for this case. But, I haven't thought
+about how to do this just yet.
 
-HEAD commit:    ee1c7bd3 Merge tag 'tpmdd-next-20190813' of git://git.infr..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=153f3422600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3ff364e429585cf2
-dashboard link: https://syzkaller.appspot.com/bug?extid=b64df836ad08c8e31a47
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176c385a600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12482e86600000
+> Also - could you please explain why this check returns 0 in the first place
+> (line 1762 - 1766 below)?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b64df836ad08c8e31a47@syzkaller.appspotmail.com
+I cannot explain why, because I myself don't know exactly why in this
+particular case the extents cannot be merged. Perhaps `git blame` is
+our friend and we can direct that question accordingly, or someone
+else on this mailing list knows the answer. :-)
 
-INFO: task init:1 blocked for more than 143 seconds.
-       Not tainted 5.3.0-rc4+ #101
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-init            D23792     1      0 0x00000000
-Call Trace:
-  context_switch kernel/sched/core.c:3254 [inline]
-  __schedule+0x755/0x1580 kernel/sched/core.c:3880
-  schedule+0xa8/0x270 kernel/sched/core.c:3944
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4003
-  __mutex_lock_common kernel/locking/mutex.c:1007 [inline]
-  __mutex_lock+0x7b0/0x13c0 kernel/locking/mutex.c:1077
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1092
-  fuse_lock_inode+0xba/0xf0 fs/fuse/inode.c:362
-  fuse_lookup+0x8e/0x360 fs/fuse/dir.c:335
-  __lookup_slow+0x279/0x500 fs/namei.c:1669
-  lookup_slow+0x58/0x80 fs/namei.c:1686
-  walk_component+0x747/0x2000 fs/namei.c:1808
-  link_path_walk.part.0+0x9a4/0x1340 fs/namei.c:2139
-  link_path_walk fs/namei.c:2267 [inline]
-  path_lookupat.isra.0+0xe3/0x8d0 fs/namei.c:2315
-  filename_lookup+0x1b0/0x410 fs/namei.c:2346
-  user_path_at_empty+0x43/0x50 fs/namei.c:2606
-  user_path_at include/linux/namei.h:60 [inline]
-  vfs_statx+0x129/0x200 fs/stat.c:187
-  vfs_stat include/linux/fs.h:3188 [inline]
-  __do_sys_newstat+0xa4/0x130 fs/stat.c:341
-  __se_sys_newstat fs/stat.c:337 [inline]
-  __x64_sys_newstat+0x54/0x80 fs/stat.c:337
-  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7eff41718c65
-Code: 00 00 00 e8 5d 01 00 00 48 83 c4 18 c3 90 90 90 90 90 90 90 90 83 ff  
-01 48 89 f0 77 18 48 89 c7 48 89 d6 b8 04 00 00 00 0f 05 <48> 3d 00 f0 ff  
-ff 77 17 f3 c3 90 48 8b 05 a1 51 2b 00 64 c7 00 16
-RSP: 002b:00007fff34a35eb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000004
-RAX: ffffffffffffffda RBX: 00007fff34a360f0 RCX: 00007eff41718c65
-RDX: 00007fff34a360f0 RSI: 00007fff34a360f0 RDI: 0000000000407545
-RBP: 0000000000000000 R08: 000000000159cb60 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00007fff34a365f0 R14: 0000000000000000 R15: 0000000000000000
-INFO: task syz-executor205:11118 blocked for more than 143 seconds.
-       Not tainted 5.3.0-rc4+ #101
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor205 D27656 11118  11116 0x00000000
-Call Trace:
-  context_switch kernel/sched/core.c:3254 [inline]
-  __schedule+0x755/0x1580 kernel/sched/core.c:3880
-  schedule+0xa8/0x270 kernel/sched/core.c:3944
-  d_wait_lookup fs/dcache.c:2506 [inline]
-  d_alloc_parallel+0x12cd/0x1c30 fs/dcache.c:2588
-  __lookup_slow+0x1ab/0x500 fs/namei.c:1652
-  lookup_slow+0x58/0x80 fs/namei.c:1686
-  walk_component+0x747/0x2000 fs/namei.c:1808
-  link_path_walk.part.0+0x9a4/0x1340 fs/namei.c:2139
-  link_path_walk fs/namei.c:2070 [inline]
-  path_openat+0x202/0x4630 fs/namei.c:3532
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1089
-  __do_sys_open fs/open.c:1107 [inline]
-  __se_sys_open fs/open.c:1102 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1102
-  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444ca0
-Code: Bad RIP value.
-RSP: 002b:00007ffec1436ed0 EFLAGS: 00000202 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444ca0
-RDX: 0000000000000000 RSI: 0000000000090800 RDI: 00000000004ae91e
-RBP: 0000000000002b72 R08: 0000000000002b6e R09: 0000555556c39880
-R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffec1437100
-R13: 00000000004075d0 R14: 0000000000000000 R15: 0000000000000000
-INFO: task syz-executor205:11122 blocked for more than 144 seconds.
-       Not tainted 5.3.0-rc4+ #101
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor205 D28336 11122  11118 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:3254 [inline]
-  __schedule+0x755/0x1580 kernel/sched/core.c:3880
-  schedule+0xa8/0x270 kernel/sched/core.c:3944
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4003
-  __mutex_lock_common kernel/locking/mutex.c:1007 [inline]
-  __mutex_lock+0x7b0/0x13c0 kernel/locking/mutex.c:1077
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1092
-  fuse_lock_inode+0xba/0xf0 fs/fuse/inode.c:362
-  fuse_lookup+0x8e/0x360 fs/fuse/dir.c:335
-  __lookup_slow+0x279/0x500 fs/namei.c:1669
-  lookup_slow+0x58/0x80 fs/namei.c:1686
-  walk_component+0x747/0x2000 fs/namei.c:1808
-  link_path_walk.part.0+0x9a4/0x1340 fs/namei.c:2139
-  link_path_walk fs/namei.c:2070 [inline]
-  path_openat+0x202/0x4630 fs/namei.c:3532
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1089
-  __do_sys_open fs/open.c:1107 [inline]
-  __se_sys_open fs/open.c:1102 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1102
-  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x405810
-Code: 00 48 85 c0 75 e8 8b 15 2e 33 20 00 83 e2 fb 89 15 25 33 20 00 f7 c2  
-00 00 00 10 74 4b 48 8b 05 c6 30 20 00 48 85 c0 75 15 eb <31> 0f 1f 80 00  
-00 00 00 48 8b 80 c0 00 00 00 48 85 c0 74 18 83 78
-RSP: 002b:00007ffec1436bd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007ffec1436c04 RCX: 0000000000405810
-RDX: 00007ffec1436c0a RSI: 0000000000080001 RDI: 00000000004ae93c
-RBP: 00007ffec1436c00 R08: 0000000000000000 R09: 0000000000000004
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000407540
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-INFO: lockdep is turned off.
-NMI backtrace for cpu 0
-CPU: 0 PID: 1057 Comm: khungtaskd Not tainted 5.3.0-rc4+ #101
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-  watchdog+0x9d0/0xef0 kernel/hung_task.c:289
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0xe/0x10  
-arch/x86/include/asm/irqflags.h:60
+> 1733 int
+> 1734 ext4_can_extents_be_merged(struct inode *inode, struct ext4_extent
+> *ex1,
+> 1735                                 struct ext4_extent *ex2)
+> <...>
+> 
+> 1762         if (ext4_ext_is_unwritten(ex1) &&
+> 1763             (ext4_test_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN) ||
+> 1764              atomic_read(&EXT4_I(inode)->i_unwritten) ||
+> 1765              (ext1_ee_len + ext2_ee_len > EXT_UNWRITTEN_MAX_LEN)))
+> 1766                 return 0;
 
+--M
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
