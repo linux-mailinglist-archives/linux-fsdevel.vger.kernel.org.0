@@ -2,104 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEFA78C553
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 02:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC2CE8C9B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 04:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfHNA4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Aug 2019 20:56:32 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8097 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbfHNA4c (ORCPT
+        id S1727260AbfHNCwq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Aug 2019 22:52:46 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:56391 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726750AbfHNCwq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Aug 2019 20:56:32 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d535c420000>; Tue, 13 Aug 2019 17:56:34 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 13 Aug 2019 17:56:31 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 13 Aug 2019 17:56:31 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 14 Aug
- 2019 00:56:31 +0000
-Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-rdma@vger.kernel.org>
-References: <20190812015044.26176-1-jhubbard@nvidia.com>
- <20190812015044.26176-3-jhubbard@nvidia.com>
- <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
- <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
- <20190813210857.GB12695@iweiny-DESK2.sc.intel.com>
- <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
-Date:   Tue, 13 Aug 2019 17:56:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 13 Aug 2019 22:52:46 -0400
+Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4FE0C361163;
+        Wed, 14 Aug 2019 12:52:37 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hxjNq-0007K4-DZ; Wed, 14 Aug 2019 12:51:30 +1000
+Date:   Wed, 14 Aug 2019 12:51:30 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] block: annotate refault stalls from IO submission
+Message-ID: <20190814025130.GI7777@dread.disaster.area>
+References: <20190808190300.GA9067@cmpxchg.org>
+ <20190809221248.GK7689@dread.disaster.area>
+ <20190813174625.GA21982@cmpxchg.org>
 MIME-Version: 1.0
-In-Reply-To: <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565744194; bh=B3YJYqlMW/Nxmi5w427DPkTLK+35GlKeQUmyIqwgbAQ=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=pb3lAkxG2jaq8faEuI4gHuG/y2mFdtVCVx2wmdFURM6MMK0LE9ZIfzarYhLjFCV9x
-         I4qkXlCYNapn9xvrWYGT8UIP0jz4syBdNwjPk1H39QXcnI0Gcujrna5uWL444p2Td7
-         QgJ6MrmnfOwUGp8cxQb8YdzplLtomAmCwn9/a7C5dtEhAXO5qAkMN6EYWf1zUC0wVL
-         BgjN6i4WEPA9KZhfpLPxwNp4vV9YMKUyONd1+nLDTmQ8Bl9vSy857RVNGNwatbrXGb
-         MjqfA4UxaXhWLS5vVCExkS7Q53ivS9Pe0EBVBMhQjgJlmcG7M+rGIMqAJWMHluoAg3
-         niFswF6dhE7Og==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813174625.GA21982@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=7-415B0cAAAA:8 a=bDTW_sOx19nDKLnYJhUA:9 a=cnofGfEq4Fq2u8Yj:21
+        a=FLub2pyhoGWWgdtb:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/13/19 5:51 PM, John Hubbard wrote:
-> On 8/13/19 2:08 PM, Ira Weiny wrote:
->> On Mon, Aug 12, 2019 at 05:07:32PM -0700, John Hubbard wrote:
->>> On 8/12/19 4:49 PM, Ira Weiny wrote:
->>>> On Sun, Aug 11, 2019 at 06:50:44PM -0700, john.hubbard@gmail.com wrote:
->>>>> From: John Hubbard <jhubbard@nvidia.com>
->>> ...
->> Finally, I struggle with converting everyone to a new call.  It is more
->> overhead to use vaddr_pin in the call above because now the GUP code is going
->> to associate a file pin object with that file when in ODP we don't need that
->> because the pages can move around.
+On Tue, Aug 13, 2019 at 01:46:25PM -0400, Johannes Weiner wrote:
+> On Sat, Aug 10, 2019 at 08:12:48AM +1000, Dave Chinner wrote:
+> > On Thu, Aug 08, 2019 at 03:03:00PM -0400, Johannes Weiner wrote:
+> > > psi tracks the time tasks wait for refaulting pages to become
+> > > uptodate, but it does not track the time spent submitting the IO. The
+> > > submission part can be significant if backing storage is contended or
+> > > when cgroup throttling (io.latency) is in effect - a lot of time is
+> > 
+> > Or the wbt is throttling.
+> > 
+> > > spent in submit_bio(). In that case, we underreport memory pressure.
+> > > 
+> > > Annotate submit_bio() to account submission time as memory stall when
+> > > the bio is reading userspace workingset pages.
+> > 
+> > PAtch looks fine to me, but it raises another question w.r.t. IO
+> > stalls and reclaim pressure feedback to the vm: how do we make use
+> > of the pressure stall infrastructure to track inode cache pressure
+> > and stalls?
+> > 
+> > With the congestion_wait() and wait_iff_congested() being entire
+> > non-functional for block devices since 5.0, there is no IO load
+> > based feedback going into memory reclaim from shrinkers that might
+> > require IO to free objects before they can be reclaimed. This is
+> > directly analogous to page reclaim writing back dirty pages from
+> > the LRU, and as I understand it one of things the PSI is supposed
+> > to be tracking.
+> >
+> > Lots of workloads create inode cache pressure and often it can
+> > dominate the time spent in memory reclaim, so it would seem to me
+> > that having PSI only track/calculate pressure and stalls from LRU
+> > pages misses a fair chunk of the memory pressure and reclaim stalls
+> > that can be occurring.
 > 
-> What if the pages in ODP are file-backed? 
-> 
+> psi already tracks the entire reclaim operation. So if reclaim calls
+> into the shrinker and the shrinker scans inodes, initiates IO, or even
+> waits on IO, that time is accounted for as memory pressure stalling.
 
-oops, strike that, you're right: in that case, even the file system case is covered.
-Don't mind me. :)
+hmmmm - reclaim _scanning_ is considered a stall event? i.e. even if
+scanning does not block, it's still accounting that _time_ as a
+memory pressure stall?
 
->>
->> This overhead may be fine, not sure in this case, but I don't see everyone
->> wanting it.
+I'm probably missing it, but I don't see anything in vmpressure()
+that actually accounts for time spent scanning.  AFAICT it accounts
+for LRU objects scanned and reclaimed from memcgs, and then the
+memory freed from the shrinkers is accounted only to the
+sc->target_mem_cgroup once all memcgs have been iterated.
 
-So now I see why you said that, but I will note that ODP hardware is rare,
-and will likely remain rare: replayable page faults require really special 
-hardware, and after all this time, we still only have CPUs, GPUs, and the
-Mellanox cards that do it.
+So, AFAICT, there's no time aspect to this, and the amount of
+scanning that shrinkers do is not taken into account, so pressure
+can't really be determined properly there. It seems like what the
+shrinkers reclaim will actually give an incorrect interpretation of
+pressure right now...
 
-That leaves a lot of other hardware to take care of.
+> If you can think of asynchronous events that are initiated from
+> reclaim but cause indirect stalls in other contexts, contexts which
+> can clearly link the stall back to reclaim activity, we can annotate
+> them using psi_memstall_enter() / psi_memstall_leave().
 
-thanks,
+Well, I was more thinking that issuing/waiting on IOs is a stall
+event, not scanning.
+
+The IO-less inode reclaim stuff for XFS really needs the main
+reclaim loop to back off under heavy IO load, but we cannot put the
+entire metadata writeback path under psi_memstall_enter/leave()
+because:
+
+	a) it's not linked to any user context - it's a
+	per-superblock kernel thread; and
+
+	b) it's designed to always be stalled on IO when there is
+	metadata writeback pressure. That pressure most often comes from
+	running out of journal space rather than memory pressure, and
+	really there is no way to distinguish between the two from
+	the writeback context.
+
+Hence I don't think the vmpressure mechanism does what the memory
+reclaim scanning loops really need because they do not feed back a
+clear picture of the load on the IO subsystem load into the reclaim
+loops.....
+
+> In that vein, what would be great to have is be a distinction between
+> read stalls on dentries/inodes that have never been touched before
+> versus those that have been recently reclaimed - analogous to cold
+> page faults vs refaults.
+
+See my "nonblocking inode reclaim for XFS" series. It adds new
+measures of that the shrinkers feed back to the main reclaim loop.
+
+One of those measures is the number of objects scanned. Shrinkers
+already report the number of objects they free, but that it tossed
+away and not used by the main reclaim loop.
+
+As for cold faults vs refaults, we could only report that for
+dentries - if the inode is still cached in memory, then the dentry
+hits the inode cache (hot fault), otherwise it's got to fetch the
+inode from disk (cold fault). There is no mechanisms for tracking
+inodes that have been recently reclaimed - the VFS uses a hash for
+tracking cached inodes and so there's nothign you can drop
+exceptional entries into to track reclaim state.
+
+That said, we /could/ do this with the XFS inode cache. It uses
+radix trees to index the cache, not the VFS level inode hash. Hence
+we could place exceptional entries into the tree on reclaim to do
+working set tracking similar to the way the page cache is used to
+track the working set of pages.
+
+The other thing we could do here is similar to the dentry cache - we
+often have inode metadata buffers in the buffer cache (we have a
+multi-level cache heirarchy that spans most of the metadata in the
+active working set in XFS) and so if we miss the inode cache we
+might hit the inode buffer in the buffer cache (hot fault).  If we
+miss the inode cache and have to do IO to read the inodes, then it's
+a cold fault.
+
+That might be misleading, however, because the inode buffers cache
+32 physical inodes and so reading 32 sequential cold inodes would
+give 1 cold fault and 31 hot faults, even though those 31 inodes
+have never been referenced by the workload before and that's not
+ideal.
+
+To complicate matters further, we can thrash the buffer cache,
+resulting in cached inodes that have no backing buffer in memory.
+then we we go to write the inode, we have to read in the inode
+buffer before we can write it. This may have nothing to do with
+working set thrashing, too. e.g. we have an inode that has been
+referenced over and over again by the workload for several hours,
+then a relatime update occurs and the inode is dirtied. when
+writeback occurs, the inode buffer is nowhere to be found because it
+was cycled out of the buffer cache hours ago and hasn't been
+referenced since. hence I think we're probably best to ignore the
+underlying filesystem metadata cache for the purposes of measuring
+and detecting inode cache working set thrashing...
+
+> It would help psi, sure, but more importantly it would help us better
+> balance pressure between filesystem metadata and the data pages. We
+> would be able to tell the difference between a `find /' and actual
+> thrashing, where hot inodes are getting kicked out and reloaded
+> repeatedly - and we could backfeed that pressure to the LRU pages to
+> allow the metadata caches to grow as needed.
+
+Well, hot inodes getting kicked out and immmediate re-used is
+something we largely already handle via caching inode buffers in the
+buffer cache.  So inode cache misses on XFS likely happen a lot more
+than is obvious as we only see inode cache thrashing when we have
+misses the metadata cache, not the inode cache.
+
+> For example, it could make sense to swap out a couple of completely
+> unused anonymous pages if it means we could hold the metadata
+> workingset fully in memory. But right now we cannot do that, because
+> we cannot risk swapping just because somebody runs find /.
+
+I have workloads that run find to produce slab cache memory
+pressure. On 5.2, they cause the system to swap madly because
+there's no file page cache to reclaim and so the only reclaim that
+can be done is inodes/dentries and swapping anonymous pages.
+
+And swap it does - if we don't throttle reclaim sufficiently to
+allow IO to make progress, then direct relcaim ends up in priority
+windup and I see lots of OOM kills on swap-in. I found quite a few
+ways to end up in "reclaim doesn't throttle on IO sufficiently and
+OOM kills" in the last 3-4 weeks...
+
+> I have semi-seriously talked to Josef about this before, but it wasn't
+> quite obvious where we could track non-residency or eviction
+> information for inodes, dentries etc. Maybe you have an idea?
+
+See above - I think only XFS could track working inodes because of
+it's unique caching infrastructure. Dentries largely don't matter,
+because dentry cache misses either hit or miss the inode cache and
+that's the working set that largely matters in terms of detecting
+IO-related thrashing...
+
+Cheers,
+
+Dave.
 -- 
-John Hubbard
-NVIDIA
-
+Dave Chinner
+david@fromorbit.com
