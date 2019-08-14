@@ -2,106 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B018B8D5CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 16:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B225A8D5E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 16:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfHNOSm convert rfc822-to-8bit (ORCPT
+        id S1726157AbfHNO0O convert rfc822-to-8bit (ORCPT
         <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 10:18:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44158 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbfHNOSm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 10:18:42 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ED1A6309BF21;
-        Wed, 14 Aug 2019 14:18:41 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A71625C1D4;
-        Wed, 14 Aug 2019 14:18:40 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, marc.dionne@auristor.com,
-        baijiaju1990@gmail.com, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] afs: Fixes
-MIME-Version: 1.0
+        Wed, 14 Aug 2019 10:26:14 -0400
+Received: from smtp.eckelmann.de ([217.19.183.80]:38778 "EHLO
+        EX-SRV2.eckelmann.group" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725800AbfHNO0N (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 10:26:13 -0400
+X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Aug 2019 10:26:13 EDT
+Received: from EX-SRV1.eckelmann.group (2a00:1f08:4007:e035:172:18:35:4) by
+ EX-SRV2.eckelmann.group (2a00:1f08:4007:e035:172:18:35:5) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1591.10; Wed, 14 Aug 2019 16:11:09 +0200
+Received: from EX-SRV1.eckelmann.group ([fe80::250:56ff:fe8b:faa6]) by
+ EX-SRV1.eckelmann.group ([fe80::250:56ff:fe8b:faa6%3]) with mapi id
+ 15.01.1591.017; Wed, 14 Aug 2019 16:11:09 +0200
+From:   "Mainz, Roland" <R.Mainz@eckelmann.de>
+To:     Sascha Hauer <s.hauer@pengutronix.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     Richard Weinberger <richard@nod.at>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Jan Kara <jack@suse.com>,
+        "Mainz, Roland" <R.Mainz@eckelmann.de>
+Subject: RE: [PATCH 07/11] ubifs: Add support for FS_IOC_FS[SG]ETXATTR ioctls
+Thread-Topic: [PATCH 07/11] ubifs: Add support for FS_IOC_FS[SG]ETXATTR ioctls
+Thread-Index: AQHVUprJKpCUtlXq4UynIEfGU5LZP6b6rqnA
+Date:   Wed, 14 Aug 2019 14:11:08 +0000
+Message-ID: <48831093afb8467b90ecf3c96601a2db@eckelmann.de>
+References: <20190814121834.13983-1-s.hauer@pengutronix.de>
+ <20190814121834.13983-8-s.hauer@pengutronix.de>
+In-Reply-To: <20190814121834.13983-8-s.hauer@pengutronix.de>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2a00:1f08:4007:3c00:dbc:b95a:c2c2:7d02]
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <13850.1565792319.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: 8BIT
-Date:   Wed, 14 Aug 2019 15:18:40 +0100
-Message-ID: <13851.1565792320@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 14 Aug 2019 14:18:42 +0000 (UTC)
+MIME-Version: 1.0
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
 
-Can you pull these afs fixes please?
 
- (1) Fix the CB.ProbeUuid handler to generate its reply correctly.
 
- (2) Fix a mix up in indices when parsing a Volume Location entry record.
+> -----Original Message-----
+> From: linux-mtd [mailto:linux-mtd-bounces@lists.infradead.org] On Behalf Of
+> Sascha Hauer
+> Sent: Wednesday, August 14, 2019 2:19 PM
+> To: linux-fsdevel@vger.kernel.org
+> Cc: Richard Weinberger <richard@nod.at>; Sascha Hauer
+> <s.hauer@pengutronix.de>; linux-mtd@lists.infradead.org;
+> kernel@pengutronix.de; Jan Kara <jack@suse.com>
+> Subject: [PATCH 07/11] ubifs: Add support for FS_IOC_FS[SG]ETXATTR ioctls
+> 
+> The FS_IOC_FS[SG]ETXATTR ioctls are an alternative to FS_IOC_[GS]ETFLAGS
+> with additional features. This patch adds support for these ioctls.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  fs/ubifs/ioctl.c | 89
+> +++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 84 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/ubifs/ioctl.c b/fs/ubifs/ioctl.c index
+> b9c4a51bceea..121aa1003e24 100644
+> --- a/fs/ubifs/ioctl.c
+> +++ b/fs/ubifs/ioctl.c
+> @@ -95,9 +95,39 @@ static int ubifs2ioctl(int ubifs_flags)
+>  	return ioctl_flags;
+>  }
+> 
+> -static int setflags(struct file *file, int flags)
+> +/* Transfer xflags flags to internal */ static inline unsigned long
+> +ubifs_xflags_to_iflags(__u32 xflags)
+>  {
+> -	int oldflags, err, release;
+> +	unsigned long iflags = 0;
+> +
+> +	if (xflags & FS_XFLAG_SYNC)
+> +		iflags |= UBIFS_APPEND_FL;
 
- (3) Fix a potential NULL-pointer deref when cleaning up a read request.
+Erm... what does |FS_XFLAG_SYNC| have to do with |*APPEND| ? Is this a typo ?
 
- (4) Fix the expected data version of the destination directory in
-     afs_rename().
+----
 
- (5) Fix afs_d_revalidate() to only update d_fsdata if it's not the same as
-     the directory data version to reduce the likelihood of overwriting the
-     result of a competing operation.  (d_fsdata carries the directory DV
-     or the least-significant word thereof).
+Bye,
+Roland
+-- 
+Roland Mainz, MAA/CAS
+Eckelmann AG, Berliner Str. 161, 65205 Wiesbaden
+Telefon +49/611/7103-661, Fax +49/611/7103-133
+r.mainz@eckelmann.de
 
- (6) Fix the tracking of the data-version on a directory and make sure that
-     dentry objects get properly initialised, updated and revalidated.
-
-     Also fix rename to update d_fsdata to match the new directory's DV if
-     the dentry gets moved over and unhash the dentry to stop
-     afs_d_revalidate() from interfering.
-
-David
----
-The following changes since commit 2a11c76e5301dddefcb618dac04f74e6314df6bc:
-
-  Merge tag 'for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost (2019-07-29 11:34:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-fixes-20190814
-
-for you to fetch changes up to 9dd0b82ef530cdfe805c9f7079c99e104be59a14:
-
-  afs: Fix missing dentry data version updating (2019-07-30 14:38:52 +0100)
-
-----------------------------------------------------------------
-AFS Fixes
-
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
-
-----------------------------------------------------------------
-David Howells (4):
-      afs: Fix the CB.ProbeUuid service handler to reply correctly
-      afs: Fix off-by-one in afs_rename() expected data version calculation
-      afs: Only update d_fsdata if different in afs_d_revalidate()
-      afs: Fix missing dentry data version updating
-
-Jia-Ju Bai (1):
-      fs: afs: Fix a possible null-pointer dereference in afs_put_read()
-
-Marc Dionne (1):
-      afs: Fix loop index mixup in afs_deliver_vl_get_entry_by_name_u()
-
- fs/afs/cmservice.c | 10 ++----
- fs/afs/dir.c       | 89 ++++++++++++++++++++++++++++++++++++++++++++----------
- fs/afs/file.c      | 12 +++++---
- fs/afs/vlclient.c  | 11 ++++---
- 4 files changed, 89 insertions(+), 33 deletions(-)
+Eckelmann Group - Source of inspiration
