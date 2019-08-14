@@ -2,139 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1B158DF21
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 22:45:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE8CD8DF3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 22:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbfHNUpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 16:45:00 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:56681 "EHLO
+        id S1729901AbfHNUqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 16:46:09 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:44517 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728682AbfHNUpA (ORCPT
+        with ESMTP id S1729252AbfHNUqE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:45:00 -0400
+        Wed, 14 Aug 2019 16:46:04 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M7Jj2-1huhHR2fpk-007orl; Wed, 14 Aug 2019 22:44:25 +0200
+ 1McXwD-1iYj0E0IkX-00d0se; Wed, 14 Aug 2019 22:45:19 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
+        linux-fsdevel@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Steve Whitehouse <swhiteho@redhat.com>,
-        Jan Kara <jack@suse.cz>, NeilBrown <neilb@suse.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        cluster-devel@redhat.com
-Subject: [PATCH v5 03/18] gfs2: add compat_ioctl support
-Date:   Wed, 14 Aug 2019 22:42:30 +0200
-Message-Id: <20190814204259.120942-4-arnd@arndb.de>
+        yangerkun <yangerkun@huawei.com>, Jan Kara <jack@suse.cz>,
+        Wang Shilong <wshilong@ddn.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Eric Biggers <ebiggers@google.com>, ecryptfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, ocfs2-devel@oss.oracle.com
+Subject: [PATCH v5 04/18] fs: compat_ioctl: move FITRIM emulation into file systems
+Date:   Wed, 14 Aug 2019 22:42:31 +0200
+Message-Id: <20190814204259.120942-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190814204259.120942-1-arnd@arndb.de>
 References: <20190814204259.120942-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:hGXDAxI7hFLVZ85cfnbZ5sHaSt06xrX/1XrFOyFm8J2VKLQB1xL
- hBlQ8eE8iy72h9XotCxexOE5vXgZNGCjvcELLBjVkIB7tPAfgy8TLWA63BTsyMQCgpafBDx
- jZ0RNjuG6UZOVeDWg0FNwnOOT9H3LwypCg9fmWIZJhiGV5jDAyBZ3xyqwXFe+8CVyaerHC9
- lXslO82tG51uc8cuCC8kQ==
+X-Provags-ID: V03:K1:z3dV4EMHHVTIqB6irmOt7mALlth6pUBx39cxp1q/MXyyb5my9TD
+ Ei9tu/20oLbXQdeGubAGFUglD7gSy7sRkwU20qqoaC5wM3V/cZvdLqBCQqcct//zQrEBTpY
+ PgotaPI/UqE9QOt6pD+oJC4mYA33c2x1Cmk05o5y4PekAgaxo/Ot1QZSZphz0pO284DyXEV
+ DWM5bnpXU7W9zHwvWm6+g==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8ZMJQ62I2nQ=:8iOcgb599uCKvsk3CfwfHr
- YoBxiVH0msauRk9nhPND2dv96UWgpbxfbtP0w7F0QLjQy+K7o2h8T55mcoXKv8Mvrn5JSOFp4
- HLq6u++mmMvVXYbiUKJ3ES+7vWWuqHvfTDmoKdgrAp2asQssIy33P4wB2gTDK++1sx7jHg7Ae
- Oltncw5miJqx9TiiAcurDTKS7cWDsghzKMj3p7DwOuHePlbBJsdlzFRA7vDVyXT7dnexHt6vI
- C2IIoLYYN7ed8Q0df/gag9j/niysF3ESIFJvD/VU59ml0s608eo3BMIcT3tCG5ONFeXBUTMwk
- TWcKN0L3Fyr9SMCepXxl8AT9rouJfNz/+RrWskxCCkwTNhcVrk4eDHudyfWBUZabK9WnUXHxh
- VdTvIXRpQ1jyJMy0/Yj9nLqD4kb1YU2XezLvq3XCmjlOHKNwYDUd+mOfv6YtNCBNeI6nDL2UC
- 5yriW4CxBZFiK6v79N8PSdAz98Ptoj0rZhbBRQccgW5dQ1lShmYa33cnLeujFYa5CsKsZmwvN
- oUEtYpDHWfs/RqgrZsTlePvMiETsUyKFhfiwJff6a8NjMfPXeeeknzbV1ufnYLnd3cSjiy1YT
- DVLrx2CqRzP9SHu0PgvhzdVUz3N4NulhDKwD8HXcORdRnZ7AZEYN2/IoxrenMtsqyD3wcHiAh
- ClbX2gXgbHQ1QvW9E1H43hcUJ831wxWHZ4l3iEgImJs6HwoaiJmG6kDFyliA8n7l7bBskqj+m
- 64cSfdymf8LL2fgPCbtKM8TB2Etv4Oo8Kq1A4g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:qJAN7Jtr+50=:Hn6FCDiPj6NPOBPlxdGPcD
+ u/sYhAF03jaoyRBk1JTzPSJhVA6sz1jenvAB2hCYhY8rJaynQ1wNziuco+p8X1rl9Kp67cMlD
+ 1KGuR6lzD1ZizOXIPdQ4gceT+kxjp8IdGN7ZrpkS0gKq9MoqQi3B0PxS5ThXI0Ng2kg6OLgdw
+ j63zI6RZs2sN2dyRoehSpkkplSL3gjKQ0ehTyzU4LRVfqWnqjCX3UVgTgPTMZc8mfZmVMthy8
+ cANIHtG1l+urhmm4NAoZd6sPkIeYchZlep67j9X/ZJ2+NNctF1pMbqGirTbZuMTPDtqAmCGhM
+ OJ3oW67vdkpUTnkySAOptMGqDCEuDkcVM7GWrRCs/sWNmrmxIuoRZh4uN5zlnY+iZh8soANqG
+ U4MZd09RCFAlvrtX/5sWC17n9SnT4LwmejHRG8lW6W/Q4cKOSEdsZSOsu93ymdZinsB5vTfuW
+ E28Jz9wFCu5Lw4QArUqwVjq5OYs0Cwrsx572RE2TgpMNPCg2vyehiqTcJ5RtlVG2yJW8IG5kH
+ +BqVGr47E8eINr6zbAHdgUVVu/MREg9NCspFJfr/kBeroTLhDyhys0jz/ewjHdYOY78CoFamB
+ Er8mGksHdLDynfrxBPfQGKoypEd2p1tUAebqYCMwga+G6h9oScx/lOvsvxPbWr8rBG+/9EJtl
+ gGAZjlTxh6MhDvFAH+dCwH4+fMDRQDlQ8lxqtUxTCBJ4VdpHcV+rzDKHjAz4Vflex8v/o40te
+ v8sereCDav9jt6NTEZnegE8b/RzQevTpcA27uQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Out of the four ioctl commands supported on gfs2, only FITRIM
-works in compat mode.
+Remove the special case for FITRIM, and make file systems
+handle that like all other ioctl commands with their own
+handlers.
 
-Add a proper handler based on the ext4 implementation.
-
-Fixes: 6ddc5c3ddf25 ("gfs2: getlabel support")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/gfs2/file.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ fs/compat_ioctl.c  | 2 --
+ fs/ecryptfs/file.c | 1 +
+ fs/ext4/ioctl.c    | 1 +
+ fs/f2fs/file.c     | 1 +
+ fs/hpfs/dir.c      | 1 +
+ fs/hpfs/file.c     | 1 +
+ fs/nilfs2/ioctl.c  | 1 +
+ fs/ocfs2/ioctl.c   | 1 +
+ 8 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index 52fa1ef8400b..49287f0b96d0 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -6,6 +6,7 @@
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 1e740f4406d3..b20228c19ccd 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -345,8 +345,6 @@ static int ppp_scompress(struct file *file, unsigned int cmd,
+ static unsigned int ioctl_pointer[] = {
+ /* Little t */
+ COMPATIBLE_IOCTL(TIOCOUTQ)
+-/* 'X' - originally XFS but some now in the VFS */
+-COMPATIBLE_IOCTL(FITRIM)
+ #ifdef CONFIG_BLOCK
+ /* Big S */
+ COMPATIBLE_IOCTL(SCSI_IOCTL_GET_IDLUN)
+diff --git a/fs/ecryptfs/file.c b/fs/ecryptfs/file.c
+index feecb57defa7..5fb45d865ce5 100644
+--- a/fs/ecryptfs/file.c
++++ b/fs/ecryptfs/file.c
+@@ -378,6 +378,7 @@ ecryptfs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		return rc;
  
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-+#include <linux/compat.h>
- #include <linux/completion.h>
- #include <linux/buffer_head.h>
- #include <linux/pagemap.h>
-@@ -354,6 +355,25 @@ static long gfs2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	return -ENOTTY;
- }
+ 	switch (cmd) {
++	case FITRIM:
+ 	case FS_IOC32_GETFLAGS:
+ 	case FS_IOC32_SETFLAGS:
+ 	case FS_IOC32_GETVERSION:
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index 442f7ef873fc..7a6e0f0f69e2 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -1227,6 +1227,7 @@ long ext4_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	}
+ 	case EXT4_IOC_MOVE_EXT:
+ 	case EXT4_IOC_RESIZE_FS:
++	case FITRIM:
+ 	case EXT4_IOC_PRECACHE_EXTENTS:
+ 	case EXT4_IOC_SET_ENCRYPTION_POLICY:
+ 	case EXT4_IOC_GET_ENCRYPTION_PWSALT:
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 3e58a6f697dd..befd2692160c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3216,6 +3216,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_RELEASE_VOLATILE_WRITE:
+ 	case F2FS_IOC_ABORT_VOLATILE_WRITE:
+ 	case F2FS_IOC_SHUTDOWN:
++	case FITRIM:
+ 	case F2FS_IOC_SET_ENCRYPTION_POLICY:
+ 	case F2FS_IOC_GET_ENCRYPTION_PWSALT:
+ 	case F2FS_IOC_GET_ENCRYPTION_POLICY:
+diff --git a/fs/hpfs/dir.c b/fs/hpfs/dir.c
+index d85230c84ef2..f32f15669996 100644
+--- a/fs/hpfs/dir.c
++++ b/fs/hpfs/dir.c
+@@ -325,4 +325,5 @@ const struct file_operations hpfs_dir_ops =
+ 	.release	= hpfs_dir_release,
+ 	.fsync		= hpfs_file_fsync,
+ 	.unlocked_ioctl	= hpfs_ioctl,
++	.compat_ioctl	= compat_ptr_ioctl,
+ };
+diff --git a/fs/hpfs/file.c b/fs/hpfs/file.c
+index 1ecec124e76f..b36abf9cb345 100644
+--- a/fs/hpfs/file.c
++++ b/fs/hpfs/file.c
+@@ -215,6 +215,7 @@ const struct file_operations hpfs_file_ops =
+ 	.fsync		= hpfs_file_fsync,
+ 	.splice_read	= generic_file_splice_read,
+ 	.unlocked_ioctl	= hpfs_ioctl,
++	.compat_ioctl	= compat_ptr_ioctl,
+ };
  
-+#ifdef CONFIG_COMPAT
-+static long gfs2_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-+{
-+	/* These are just misnamed, they actually get/put from/to user an int */
-+	switch(cmd) {
-+	case FS_IOC32_GETFLAGS:
-+		cmd = FS_IOC_GETFLAGS;
-+		break;
-+	case FS_IOC32_SETFLAGS:
-+		cmd = FS_IOC_SETFLAGS;
-+		break;
-+	}
-+
-+	return gfs2_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
-+}
-+#else
-+#define gfs2_compat_ioctl NULL
-+#endif
-+
- /**
-  * gfs2_size_hint - Give a hint to the size of a write request
-  * @filep: The struct file
-@@ -1294,6 +1314,7 @@ const struct file_operations gfs2_file_fops = {
- 	.write_iter	= gfs2_file_write_iter,
- 	.iopoll		= iomap_dio_iopoll,
- 	.unlocked_ioctl	= gfs2_ioctl,
-+	.compat_ioctl	= gfs2_compat_ioctl,
- 	.mmap		= gfs2_mmap,
- 	.open		= gfs2_open,
- 	.release	= gfs2_release,
-@@ -1309,6 +1330,7 @@ const struct file_operations gfs2_file_fops = {
- const struct file_operations gfs2_dir_fops = {
- 	.iterate_shared	= gfs2_readdir,
- 	.unlocked_ioctl	= gfs2_ioctl,
-+	.compat_ioctl	= gfs2_compat_ioctl,
- 	.open		= gfs2_open,
- 	.release	= gfs2_release,
- 	.fsync		= gfs2_fsync,
-@@ -1325,6 +1347,7 @@ const struct file_operations gfs2_file_fops_nolock = {
- 	.write_iter	= gfs2_file_write_iter,
- 	.iopoll		= iomap_dio_iopoll,
- 	.unlocked_ioctl	= gfs2_ioctl,
-+	.compat_ioctl	= gfs2_compat_ioctl,
- 	.mmap		= gfs2_mmap,
- 	.open		= gfs2_open,
- 	.release	= gfs2_release,
-@@ -1338,6 +1361,7 @@ const struct file_operations gfs2_file_fops_nolock = {
- const struct file_operations gfs2_dir_fops_nolock = {
- 	.iterate_shared	= gfs2_readdir,
- 	.unlocked_ioctl	= gfs2_ioctl,
-+	.compat_ioctl	= gfs2_compat_ioctl,
- 	.open		= gfs2_open,
- 	.release	= gfs2_release,
- 	.fsync		= gfs2_fsync,
+ const struct inode_operations hpfs_file_iops =
+diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
+index 91b9dac6b2cc..4ba73dbf3e8d 100644
+--- a/fs/nilfs2/ioctl.c
++++ b/fs/nilfs2/ioctl.c
+@@ -1354,6 +1354,7 @@ long nilfs_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	case NILFS_IOCTL_SYNC:
+ 	case NILFS_IOCTL_RESIZE:
+ 	case NILFS_IOCTL_SET_ALLOC_RANGE:
++	case FITRIM:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
+index d6f7b299eb23..2d517b5ec6ac 100644
+--- a/fs/ocfs2/ioctl.c
++++ b/fs/ocfs2/ioctl.c
+@@ -985,6 +985,7 @@ long ocfs2_compat_ioctl(struct file *file, unsigned cmd, unsigned long arg)
+ 			return -EFAULT;
+ 
+ 		return ocfs2_info_handle(inode, &info, 1);
++	case FITRIM:
+ 	case OCFS2_IOC_MOVE_EXT:
+ 		break;
+ 	default:
 -- 
 2.20.0
 
