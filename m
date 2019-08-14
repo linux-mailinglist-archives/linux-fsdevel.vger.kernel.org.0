@@ -2,167 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E38B48D572
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 15:54:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AED7D8D5BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 16:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbfHNNx6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 09:53:58 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42895 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbfHNNx6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 09:53:58 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i30so4908547pfk.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2019 06:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=n++KcFD4V/b6zBcrsczOTyMNO8jb/xPsUB8LHz0KWls=;
-        b=b04AglKvxQ5eDEWRWO6CxcfuRA8NK9xxVyKIVJlPRBQzDP0H96mQmDjbDsJABkRoMT
-         SwkIogOXf/Nrrkmgna6L0612c8DArkdixIzW7pbjX9u+B0tzzFZ4iK7rLq9TfpGvA63I
-         ocAuu7T3ee9N/nPxNiyb/PQVv67kREbw6vTFdv+bPs57XaDGX3H3XDFQBp9+CfKLxv3U
-         zRJ/m/4Jh3QRL9P5/dGv8E5IsMGoqRV3C6pjKyMj0ZM/6OFKesuACZaExyPuRRxon5fz
-         gu1DOOeMp5IfTMKH6iNuWwF98FoVffyNMdTwAWot/jHCmopG2UuFC6mBXIGCI2bRRiCg
-         E/TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n++KcFD4V/b6zBcrsczOTyMNO8jb/xPsUB8LHz0KWls=;
-        b=ZtdZLAl2TP+lIGAGU7LKzTGGIYNGv8Xm13Dh9oEtOsupHlnNTIAQWi//pxBzDYzTXX
-         Timh6NYsFF0KKXszQgQ1SyyC2o6gYcydk4Pyvu2hTEvfozTaWs+ox9wHaAvxf7RdgB1Y
-         /H/o+vWKYuMIqochQ5YLtSUAkjffZ140Id7AzG2rmK3s/vuj0Yhm5cFm0Lf6c868ch1a
-         Cd9T2pN+rRi8b7ILZiDwq6sFPCAc5j2DAp/s0fprIqNO4f53xWCJYShllv5Mwv+laLlO
-         5BQeB+4IwquTkr2h/0vqZdb1o/K08lL7kuhK+HHze9jvWQgho7zkWzgiJhN6PmLqJmEW
-         vpgQ==
-X-Gm-Message-State: APjAAAVLM9PyNmluZ7FwDMnuiSK1PNYypBGWDenTn1Ak+Z2eOG9OdzGD
-        MS5Wu9fwHoR+jx9begr6oYob5rZZ138=
-X-Google-Smtp-Source: APXvYqzke17f6CA3f3O7qxwwkDjXbUQ2aD4jV4h6qBmPzp0njUgRl6QAvBH7pexmJAZbHgXac4VhyQ==
-X-Received: by 2002:a65:52c5:: with SMTP id z5mr39237537pgp.118.1565790836994;
-        Wed, 14 Aug 2019 06:53:56 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:180::cd07])
-        by smtp.gmail.com with ESMTPSA id 203sm22454812pfz.107.2019.08.14.06.53.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2019 06:53:55 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 09:53:53 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] block: annotate refault stalls from IO submission
-Message-ID: <20190814135353.GA30543@cmpxchg.org>
-References: <20190808190300.GA9067@cmpxchg.org>
- <20190809221248.GK7689@dread.disaster.area>
- <20190813174625.GA21982@cmpxchg.org>
- <20190814025130.GI7777@dread.disaster.area>
+        id S1726522AbfHNOPL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 10:15:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726019AbfHNOPK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 10:15:10 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F11AF2133F;
+        Wed, 14 Aug 2019 14:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565792109;
+        bh=kburXRh82xHoH2ULBf4qbUaBruG20vqIvfvEbFcltJY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=YmMNPxPAWp25eQhuqgZ4ltWhMxF28BvGB5vskr14XqYVCQZZ96TVxfUdULrpt9Fg0
+         60trd+Jkb520pjcYaqrosDqW5ftToo6hZAXtZVmiRfDVvso+e6i9CkZS/dVjFp3R2p
+         sxNd0hLUe0BkrhCT6Rwkhd2HlJfkAotXSoeuAaW0=
+Message-ID: <fde2959db776616008fc5d31df700f5d7d899433.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 02/19] fs/locks: Add Exclusive flag to user
+ Layout lease
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ira.weiny@intel.com, Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Date:   Wed, 14 Aug 2019 10:15:06 -0400
+In-Reply-To: <20190809225833.6657-3-ira.weiny@intel.com>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+         <20190809225833.6657-3-ira.weiny@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814025130.GI7777@dread.disaster.area>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 12:51:30PM +1000, Dave Chinner wrote:
-> On Tue, Aug 13, 2019 at 01:46:25PM -0400, Johannes Weiner wrote:
-> > On Sat, Aug 10, 2019 at 08:12:48AM +1000, Dave Chinner wrote:
-> > > On Thu, Aug 08, 2019 at 03:03:00PM -0400, Johannes Weiner wrote:
-> > > > psi tracks the time tasks wait for refaulting pages to become
-> > > > uptodate, but it does not track the time spent submitting the IO. The
-> > > > submission part can be significant if backing storage is contended or
-> > > > when cgroup throttling (io.latency) is in effect - a lot of time is
-> > > 
-> > > Or the wbt is throttling.
-> > > 
-> > > > spent in submit_bio(). In that case, we underreport memory pressure.
-> > > > 
-> > > > Annotate submit_bio() to account submission time as memory stall when
-> > > > the bio is reading userspace workingset pages.
-> > > 
-> > > PAtch looks fine to me, but it raises another question w.r.t. IO
-> > > stalls and reclaim pressure feedback to the vm: how do we make use
-> > > of the pressure stall infrastructure to track inode cache pressure
-> > > and stalls?
-> > > 
-> > > With the congestion_wait() and wait_iff_congested() being entire
-> > > non-functional for block devices since 5.0, there is no IO load
-> > > based feedback going into memory reclaim from shrinkers that might
-> > > require IO to free objects before they can be reclaimed. This is
-> > > directly analogous to page reclaim writing back dirty pages from
-> > > the LRU, and as I understand it one of things the PSI is supposed
-> > > to be tracking.
-> > >
-> > > Lots of workloads create inode cache pressure and often it can
-> > > dominate the time spent in memory reclaim, so it would seem to me
-> > > that having PSI only track/calculate pressure and stalls from LRU
-> > > pages misses a fair chunk of the memory pressure and reclaim stalls
-> > > that can be occurring.
-> > 
-> > psi already tracks the entire reclaim operation. So if reclaim calls
-> > into the shrinker and the shrinker scans inodes, initiates IO, or even
-> > waits on IO, that time is accounted for as memory pressure stalling.
+On Fri, 2019-08-09 at 15:58 -0700, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> hmmmm - reclaim _scanning_ is considered a stall event? i.e. even if
-> scanning does not block, it's still accounting that _time_ as a
-> memory pressure stall?
-
-Yes. Reclaim doesn't need to block, the entire operation itself is an
-interruption of the workload that only happens due to a lack of RAM.
-
-Of course, as long as kswapd is just picking up one-off cache, it does
-not take a whole lot of time, and it will barely register as
-pressure. But as memory demand mounts and we have to look harder for
-unused pages, reclaim time can become significant, even without IO.
-
-> I'm probably missing it, but I don't see anything in vmpressure()
-> that actually accounts for time spent scanning.  AFAICT it accounts
-> for LRU objects scanned and reclaimed from memcgs, and then the
-> memory freed from the shrinkers is accounted only to the
-> sc->target_mem_cgroup once all memcgs have been iterated.
-
-vmpressure is an orthogonal feature that is based purely on reclaim
-efficiency (reclaimed/scanned).
-
-psi accounting begins when we first call into try_to_free_pages() and
-friends. psi_memstall_enter() marks the task, and it's the scheduler
-part of psi that aggregates task state time into pressure ratios.
-
-> > If you can think of asynchronous events that are initiated from
-> > reclaim but cause indirect stalls in other contexts, contexts which
-> > can clearly link the stall back to reclaim activity, we can annotate
-> > them using psi_memstall_enter() / psi_memstall_leave().
+> Add an exclusive lease flag which indicates that the layout mechanism
+> can not be broken.
 > 
-> Well, I was more thinking that issuing/waiting on IOs is a stall
-> event, not scanning.
+> Exclusive layout leases allow the file system to know that pages may be
+> GUP pined and that attempts to change the layout, ie truncate, should be
+> failed.
 > 
-> The IO-less inode reclaim stuff for XFS really needs the main
-> reclaim loop to back off under heavy IO load, but we cannot put the
-> entire metadata writeback path under psi_memstall_enter/leave()
-> because:
+> A process which attempts to break it's own exclusive lease gets an
+> EDEADLOCK return to help determine that this is likely a programming bug
+> vs someone else holding a resource.
 > 
-> 	a) it's not linked to any user context - it's a
-> 	per-superblock kernel thread; and
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  fs/locks.c                       | 23 +++++++++++++++++++++--
+>  include/linux/fs.h               |  1 +
+>  include/uapi/asm-generic/fcntl.h |  2 ++
+>  3 files changed, 24 insertions(+), 2 deletions(-)
 > 
-> 	b) it's designed to always be stalled on IO when there is
-> 	metadata writeback pressure. That pressure most often comes from
-> 	running out of journal space rather than memory pressure, and
-> 	really there is no way to distinguish between the two from
-> 	the writeback context.
-> 
-> Hence I don't think the vmpressure mechanism does what the memory
-> reclaim scanning loops really need because they do not feed back a
-> clear picture of the load on the IO subsystem load into the reclaim
-> loops.....
+> diff --git a/fs/locks.c b/fs/locks.c
+> index ad17c6ffca06..0c7359cdab92 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -626,6 +626,8 @@ static int lease_init(struct file *filp, long type, unsigned int flags,
+>  	fl->fl_flags = FL_LEASE;
+>  	if (flags & FL_LAYOUT)
+>  		fl->fl_flags |= FL_LAYOUT;
+> +	if (flags & FL_EXCLUSIVE)
+> +		fl->fl_flags |= FL_EXCLUSIVE;
+>  	fl->fl_start = 0;
+>  	fl->fl_end = OFFSET_MAX;
+>  	fl->fl_ops = NULL;
+> @@ -1619,6 +1621,14 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+>  	list_for_each_entry_safe(fl, tmp, &ctx->flc_lease, fl_list) {
+>  		if (!leases_conflict(fl, new_fl))
+>  			continue;
+> +		if (fl->fl_flags & FL_EXCLUSIVE) {
+> +			error = -ETXTBSY;
+> +			if (new_fl->fl_pid == fl->fl_pid) {
+> +				error = -EDEADLOCK;
+> +				goto out;
+> +			}
+> +			continue;
+> +		}
+>  		if (want_write) {
+>  			if (fl->fl_flags & FL_UNLOCK_PENDING)
+>  				continue;
+> @@ -1634,6 +1644,13 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+>  			locks_delete_lock_ctx(fl, &dispose);
+>  	}
+>  
+> +	/* We differentiate between -EDEADLOCK and -ETXTBSY so the above loop
+> +	 * continues with -ETXTBSY looking for a potential deadlock instead.
+> +	 * If deadlock is not found go ahead and return -ETXTBSY.
+> +	 */
+> +	if (error == -ETXTBSY)
+> +		goto out;
+> +
+>  	if (list_empty(&ctx->flc_lease))
+>  		goto out;
+>  
+> @@ -2044,9 +2061,11 @@ static int do_fcntl_add_lease(unsigned int fd, struct file *filp, long arg)
+>  	 * to revoke the lease in break_layout()  And this is done by using
+>  	 * F_WRLCK in the break code.
+>  	 */
+> -	if (arg == F_LAYOUT) {
+> +	if ((arg & F_LAYOUT) == F_LAYOUT) {
+> +		if ((arg & F_EXCLUSIVE) == F_EXCLUSIVE)
+> +			flags |= FL_EXCLUSIVE;
+>  		arg = F_RDLCK;
+> -		flags = FL_LAYOUT;
+> +		flags |= FL_LAYOUT;
+>  	}
+>  
+>  	fl = lease_alloc(filp, arg, flags);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index dd60d5be9886..2e41ce547913 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1005,6 +1005,7 @@ static inline struct file *get_file(struct file *f)
+>  #define FL_UNLOCK_PENDING	512 /* Lease is being broken */
+>  #define FL_OFDLCK	1024	/* lock is "owned" by struct file */
+>  #define FL_LAYOUT	2048	/* outstanding pNFS layout or user held pin */
+> +#define FL_EXCLUSIVE	4096	/* Layout lease is exclusive */
+>  
+>  #define FL_CLOSE_POSIX (FL_POSIX | FL_CLOSE)
+>  
+> diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+> index baddd54f3031..88b175ceccbc 100644
+> --- a/include/uapi/asm-generic/fcntl.h
+> +++ b/include/uapi/asm-generic/fcntl.h
+> @@ -176,6 +176,8 @@ struct f_owner_ex {
+>  
+>  #define F_LAYOUT	16      /* layout lease to allow longterm pins such as
+>  				   RDMA */
+> +#define F_EXCLUSIVE	32      /* layout lease is exclusive */
+> +				/* FIXME or shoudl this be F_EXLCK??? */
+>  
+>  /* operations for bsd flock(), also used by the kernel implementation */
+>  #define LOCK_SH		1	/* shared lock */
 
-Memory pressure metrics really seem unrelated to this problem, and
-that's not what vmpressure or psi try to solve in the first place.
+This interface just seems weird to me. The existing F_*LCK values aren't
+really set up to be flags, but are enumerated values (even if there are
+some gaps on some arches). For instance, on parisc and sparc:
 
-When you say we need better IO pressure feedback / congestion
-throttling in reclaim, I can believe it, even though it's not
-something we necessarily observed in our fleet.
+/* for posix fcntl() and lockf() */
+#define F_RDLCK         01
+#define F_WRLCK         02
+#define F_UNLCK         03
+
+While your new flag values are well above these values, it's still a bit
+sketchy to do what you're proposing from a cross-platform interface
+standpoint.
+
+I think this would be a lot cleaner if you weren't overloading the
+F_SETLEASE command with new flags, and instead added new
+F_SETLAYOUT/F_GETLAYOUT cmd values.
+
+You'd then be free to define a new set of "arg" values for use with
+layouts, and there's be a clear distinction interface-wise between
+setting a layout and a lease.
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
