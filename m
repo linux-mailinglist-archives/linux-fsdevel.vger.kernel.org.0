@@ -2,31 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA438DC4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 19:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 852A98DCC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 20:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfHNRus (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 13:50:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:46116 "EHLO mga11.intel.com"
+        id S1728286AbfHNSIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 14:08:51 -0400
+Received: from mga18.intel.com ([134.134.136.126]:51018 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728684AbfHNRur (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:50:47 -0400
+        id S1726166AbfHNSIv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 14:08:51 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 10:50:46 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 11:08:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,386,1559545200"; 
-   d="scan'208";a="181636379"
+   d="scan'208";a="376130035"
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga006.jf.intel.com with ESMTP; 14 Aug 2019 10:50:45 -0700
-Date:   Wed, 14 Aug 2019 10:50:45 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 14 Aug 2019 11:08:49 -0700
+Date:   Wed, 14 Aug 2019 11:08:49 -0700
 From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jan Kara <jack@suse.cz>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
         Theodore Ts'o <tytso@mit.edu>,
         John Hubbard <jhubbard@nvidia.com>,
         Michal Hocko <mhocko@suse.com>,
@@ -34,122 +35,129 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
- file object
-Message-ID: <20190814175045.GA31490@iweiny-DESK2.sc.intel.com>
-References: <20190809225833.6657-17-ira.weiny@intel.com>
- <20190812130039.GD24457@ziepe.ca>
- <20190812172826.GA19746@iweiny-DESK2.sc.intel.com>
- <20190812175615.GI24457@ziepe.ca>
- <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
- <20190813114842.GB29508@ziepe.ca>
- <20190813174142.GB11882@iweiny-DESK2.sc.intel.com>
- <20190813180022.GF29508@ziepe.ca>
- <20190813203858.GA12695@iweiny-DESK2.sc.intel.com>
- <20190814122308.GB13770@ziepe.ca>
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+Message-ID: <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190814101714.GA26273@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190814122308.GB13770@ziepe.ca>
+In-Reply-To: <20190814101714.GA26273@quack2.suse.cz>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 09:23:08AM -0300, Jason Gunthorpe wrote:
-> On Tue, Aug 13, 2019 at 01:38:59PM -0700, Ira Weiny wrote:
-> > On Tue, Aug 13, 2019 at 03:00:22PM -0300, Jason Gunthorpe wrote:
-> > > On Tue, Aug 13, 2019 at 10:41:42AM -0700, Ira Weiny wrote:
-> > > 
-> > > > And I was pretty sure uverbs_destroy_ufile_hw() would take care of (or ensure
-> > > > that some other thread is) destroying all the MR's we have associated with this
-> > > > FD.
-> > > 
-> > > fd's can't be revoked, so destroy_ufile_hw() can't touch them. It
-> > > deletes any underlying HW resources, but the FD persists.
+On Wed, Aug 14, 2019 at 12:17:14PM +0200, Jan Kara wrote:
+> Hello!
+> 
+> On Fri 09-08-19 15:58:14, ira.weiny@intel.com wrote:
+> > Pre-requisites
+> > ==============
+> > 	Based on mmotm tree.
 > > 
-> > I misspoke.  I should have said associated with this "context".  And of course
-> > uverbs_destroy_ufile_hw() does not touch the FD.  What I mean is that the
-> > struct file which had file_pins hanging off of it would be getting its file
-> > pins destroyed by uverbs_destroy_ufile_hw().  Therefore we don't need the FD
-> > after uverbs_destroy_ufile_hw() is done.
+> > Based on the feedback from LSFmm, the LWN article, the RFC series since
+> > then, and a ton of scenarios I've worked in my mind and/or tested...[1]
 > > 
-> > But since it does not block it may be that the struct file is gone before the
-> > MR is actually destroyed.  Which means I think the GUP code would blow up in
-> > that case...  :-(
+> > Solution summary
+> > ================
+> > 
+> > The real issue is that there is no use case for a user to have RDMA pinn'ed
+> > memory which is then truncated.  So really any solution we present which:
+> > 
+> > A) Prevents file system corruption or data leaks
+> > ...and...
+> > B) Informs the user that they did something wrong
+> > 
+> > Should be an acceptable solution.
+> > 
+> > Because this is slightly new behavior.  And because this is going to be
+> > specific to DAX (because of the lack of a page cache) we have made the user
+> > "opt in" to this behavior.
+> > 
+> > The following patches implement the following solution.
+> > 
+> > 0) Registrations to Device DAX char devs are not affected
+> > 
+> > 1) The user has to opt in to allowing page pins on a file with an exclusive
+> >    layout lease.  Both exclusive and layout lease flags are user visible now.
+> > 
+> > 2) page pins will fail if the lease is not active when the file back page is
+> >    encountered.
+> > 
+> > 3) Any truncate or hole punch operation on a pinned DAX page will fail.
 > 
-> Oh, yes, that is true, you also can't rely on the struct file living
-> longer than the HW objects either, that isn't how the lifetime model
-> works.
-> 
-> If GUP consumes the struct file it must allow the struct file to be
-> deleted before the GUP pin is released.
+> So I didn't fully grok the patch set yet but by "pinned DAX page" do you
+> mean a page which has corresponding file_pin covering it? Or do you mean a
+> page which has pincount increased? If the first then I'd rephrase this to
+> be less ambiguous, if the second then I think it is wrong. 
 
-I may have to think about this a bit.  But I'm starting to lean toward my
-callback method as a solution...
+I mean the second.  but by "fail" I mean hang.  Right now the "normal" page
+pincount processing will hang the truncate.  Given the discussion with John H
+we can make this a bit better if we use something like FOLL_PIN and the page
+count bias to indicate this type of pin.  Then I could fail the truncate
+outright.  but that is not done yet.
 
-> 
-> > The drivers could provide some generic object (in RDMA this could be the
-> > uverbs_attr_bundle) which represents their "context".
-> 
-> For RDMA the obvious context is the struct ib_mr *
-
-Not really, but maybe.  See below regarding tracking this across processes.
-
-> 
-> > But for the procfs interface, that context then needs to be associated with any
-> > file which points to it...  For RDMA, or any other "FD based pin mechanism", it
-> > would be up to the driver to "install" a procfs handler into any struct file
-> > which _may_ point to this context.  (before _or_ after memory pins).
-> 
-> Is this all just for debugging? Seems like a lot of complication just
-> to print a string
-
-No, this is a requirement to allow an admin to determine why their truncates
-may be failing.  As per our discussion here:
-
-https://lkml.org/lkml/2019/6/7/982
-
-Looking back at the thread apparently no one confirmed my question (assertion).
-But no one objected to it either!  :-D  From that post:
-
-	"... if we can keep track of who has the pins in lsof can we agree no
-	process needs to be SIGKILL'ed?  Admins can do this on their own
-	"killing" if they really need to stop the use of these files, right?"
-
-This is what I am trying to do here is ensure that no matter what the user
-does.  Fork, munmap, SCM_RIGHTS, close (on any FD), the underlying pin is
-associated to any process which has access to those pins and is holding
-references to those pages.  Then any user of the system who gets a failing
-truncate can figure out which processes are holding this up.
+so... I used the word "fail" to be a bit more vague as the final implementation
+may return ETXTBUSY or hang as noted.
 
 > 
-> Generally, I think you'd be better to associate things with the
-> mm_struct not some struct file... The whole design is simpler as GUP
-> already has the mm_struct.
+> > 4) The user has the option of holding the lease or releasing it.  If they
+> >    release it no other pin calls will work on the file.
+> 
+> Last time we spoke the plan was that the lease is kept while the pages are
+> pinned (and an attempt to release the lease would block until the pages are
+> unpinned). That also makes it clear that the *lease* is what is making
+> truncate and hole punch fail with ETXTBUSY and the file_pin structure is
+> just an implementation detail how the existence is efficiently tracked (and
+> what keeps the backing file for the pages open so that the lease does not
+> get auto-destroyed). Why did you change this?
 
-I wish I _could_ do that...  And for some simple users I do that.  This is why
-rdma_pin has the option to track against mm_struct _OR_ struct file.
+closing the file _and_ unmaping it will cause the lease to be released
+regardless of if we allow this or not.
 
-At first it seemed like carrying over the mm_struct info during fork would
-work...  but then there is SCM_RIGHTS where one can share the RDMA context with
-any "random" process...  AFAICS struct file has no concept of mm_struct (nor
-should it) so the dup for SCM_RIGHTS processing would not be able to do this.
-A further complication was that when the RDMA FD is dup'ed the RDMA subsystem
-does not know about it...  So it was not straight forward to have the RDMA
-subsystem do this either.  Not to mention that would be yet another
-complication the drivers would have to deal with...  I think you had similar
-issues which lead to the use of an "owning_mm" in the umem object.  So while
-_some_ mm_struct is held it may not be visible to the user since that mm_struct
-may belong to a process which is gone... Or even if not gone, killing it would not
-fully remove the pin...
+As we discussed preventing the close seemed intractable.
 
-So keeping this tracked against struct file works (and seemed straight forward)
-no matter where/how the RDMA FD is shared...  Even with the complication above
-I still think it is easier to do this way.
+I thought about failing the munmap but that seemed wrong as well.  But more
+importantly AFAIK RDMA can pass its memory pins to other processes via FD
+passing...  This means that one could pin this memory, pass it to another
+process and exit.  The file lease on the pin'ed file is lost.
 
-If I am missing something WRT the mm_struct "I'm all ears".
+The file lease is just a key to get the memory pin.  Once unlocked the procfs
+tracking keeps track of where that pin goes and which processes need to be
+killed to get rid of it.
 
+> 
+> > 5) Closing the file is ok.
+> > 
+> > 6) Unmapping the file is ok
+> > 
+> > 7) Pins against the files are tracked back to an owning file or an owning mm
+> >    depending on the internal subsystem needs.  With RDMA there is an owning
+> >    file which is related to the pined file.
+> > 
+> > 8) Only RDMA is currently supported
+> 
+> If you currently only need "owning file" variant in your patch set, then
+> I'd just implement that and leave "owning mm" variant for later if it
+> proves to be necessary. The things are complex enough as is...
+
+I can do that...  I was trying to get io_uring working as well with the
+owning_mm but I should save that for later.
+
+> 
+> > 9) Truncation of pages which are not actively pinned nor covered by a lease
+> >    will succeed.
+> 
+> Otherwise I like the design.
+
+Thanks,
 Ira
 
+> 
+> 								Honza
+> 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
