@@ -2,48 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88CC78CDCF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 10:12:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C5278CF41
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 11:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfHNIMK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 04:12:10 -0400
-Received: from slot0.abamarket.ga ([178.156.202.135]:34407 "EHLO
-        slot0.abamarket.ga" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727478AbfHNIMG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 04:12:06 -0400
-X-Greylist: delayed 677 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Aug 2019 04:12:05 EDT
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1727194AbfHNJWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 05:22:31 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4260 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726699AbfHNJWb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 05:22:31 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D101664A8DDC451216D5;
+        Wed, 14 Aug 2019 17:22:25 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 14 Aug
+ 2019 17:22:19 +0800
+Subject: Re: [PATCH RESEND 1/2] staging: erofs: introduce EFSCORRUPTED and
+ more logs
+To:     Gao Xiang <gaoxiang25@huawei.com>, Pavel Machek <pavel@denx.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>, <linux-fsdevel@vger.kernel.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+References: <20190814042525.4925-2-gaoxiang25@huawei.com>
+ <20190814043208.15591-1-gaoxiang25@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <db0e0d1d-9018-5c2c-93d0-b718e7e6853c@huawei.com>
+Date:   Wed, 14 Aug 2019 17:22:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: PLEASE CONFIRM PURCHASE ORDER
-To:     Recipients <mscarolynsmtih@gmail.com>
-From:   "Mr NARESH KUMAR" <mscarolynsmtih@gmail.com>
-Date:   Wed, 14 Aug 2019 15:50:53 +0800
-Reply-To: saiapex09@outlook.com
-Message-ID: <0.0.3.41B.1D55274B7BA1EFE.0@slot0.abamarket.ga>
+In-Reply-To: <20190814043208.15591-1-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Could you please confirm if your recieved our purchase order last week.
+On 2019/8/14 12:32, Gao Xiang wrote:
+> Previously, EROFS uses EIO to indicate that filesystem is
+> corrupted as well, but other filesystems tend to use
+> EUCLEAN instead, let's follow what others do right now.
+> 
+> Also, add some more prints to the syslog.
+> 
+> Suggested-by: Pavel Machek <pavel@denx.de>
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
-If no please confirm let me resend it to you.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-
-
-
-NARESH KUMAR
-
-Executive Purchase Saiapextrading Ltd
-
-Dubai, KSA.
-
-(T/F): +96-2667-264 777 / 778
-
-(Mo): +96 94284 02803
-
-Website - http://www.saiapexgeneraltrading.com
+Thanks,
