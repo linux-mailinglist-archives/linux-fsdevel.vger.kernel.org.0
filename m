@@ -2,174 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56DB08D0CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 12:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 078668D0F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 12:44:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbfHNKht (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 06:37:49 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58000 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726230AbfHNKht (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 06:37:49 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 383BC3802EDB3BCF20C5;
-        Wed, 14 Aug 2019 18:37:47 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 14 Aug
- 2019 18:37:40 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>, Pavel Machek <pavel@denx.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-fsdevel@vger.kernel.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 3/3] staging: erofs: correct all misused ENOTSUPP
-Date:   Wed, 14 Aug 2019 18:37:05 +0800
-Message-ID: <20190814103705.60698-3-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190814103705.60698-1-gaoxiang25@huawei.com>
-References: <20190814103705.60698-1-gaoxiang25@huawei.com>
+        id S1727299AbfHNKoY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 06:44:24 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:47358 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726383AbfHNKoX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 06:44:23 -0400
+Received: from dread.disaster.area (pa49-195-190-67.pa.nsw.optusnet.com.au [49.195.190.67])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9F7EB43D394;
+        Wed, 14 Aug 2019 20:44:18 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hxqkI-0001pY-Aq; Wed, 14 Aug 2019 20:43:10 +1000
+Date:   Wed, 14 Aug 2019 20:43:10 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Mike Snitzer <msnitzer@redhat.com>, junxiao.bi@oracle.com,
+        dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
+        honglei.wang@oracle.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] direct-io: use GFP_NOIO to avoid deadlock
+Message-ID: <20190814104310.GN6129@dread.disaster.area>
+References: <alpine.LRH.2.02.1908080540240.15519@file01.intranet.prod.int.rdu2.redhat.com>
+ <20190809013403.GY7777@dread.disaster.area>
+ <alpine.LRH.2.02.1908090725290.31061@file01.intranet.prod.int.rdu2.redhat.com>
+ <20190809215733.GZ7777@dread.disaster.area>
+ <alpine.LRH.2.02.1908131231010.6852@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1908131231010.6852@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=TR82T6zjGmBjdfWdGgpkDw==:117 a=TR82T6zjGmBjdfWdGgpkDw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=B-2tCdbVYXm3Rcn1sc0A:9
+        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As Chao pointed out [1], ENOTSUPP is used for NFS
-protocol only, we should use EOPNOTSUPP instead...
+On Tue, Aug 13, 2019 at 12:35:49PM -0400, Mikulas Patocka wrote:
+> 
+> 
+> On Sat, 10 Aug 2019, Dave Chinner wrote:
+> 
+> > No, you misunderstand. I'm talking about blocking kswapd being
+> > wrong.  i.e. Blocking kswapd in shrinkers causes problems
+> > because th ememory reclaim code does not expect kswapd to be
+> > arbitrarily delayed by waiting on IO. We've had this problem with
+> > the XFS inode cache shrinker for years, and there are many reports
+> > of extremely long reclaim latencies for both direct and kswapd
+> > reclaim that result from kswapd not making progress while waiting
+> > in shrinkers for IO to complete.
+> > 
+> > The work I'm currently doing to fix this XFS problem can be found
+> > here:
+> > 
+> > https://lore.kernel.org/linux-fsdevel/20190801021752.4986-1-david@fromorbit.com/
+> > 
+> > 
+> > i.e. the point I'm making is that waiting for IO in kswapd reclaim
+> > context is considered harmful - kswapd context shrinker reclaim
+> > should be as non-blocking as possible, and any back-off to wait for
+> > IO to complete should be done by the high level reclaim core once
+> > it's completed an entire reclaim scan cycle of everything....
+> > 
+> > What follows from that, and is pertinent for in this situation, is
+> > that if you don't block kswapd, then other reclaim contexts are not
+> > going to get stuck waiting for it regardless of the reclaim context
+> > they use.
+> > 
+> > Cheers,
+> > 
+> > Dave.
+> 
+> So, what do you think the dm-bufio shrinker should do?
 
-[1] https://lore.kernel.org/lkml/108ee2f9-75dd-b8ab-8da7-b81c17bafbf6@huawei.com/
+I'm not familiar with the constraints the code operates under, so
+I can't guarantee that I have an answer for you... :/
 
-Reported-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/decompressor.c | 2 +-
- drivers/staging/erofs/internal.h     | 6 +++---
- drivers/staging/erofs/xattr.c        | 2 +-
- drivers/staging/erofs/xattr.h        | 4 ++--
- drivers/staging/erofs/zmap.c         | 8 ++++----
- 5 files changed, 11 insertions(+), 11 deletions(-)
+> Currently it tries to free buffers on the clean list and if there are not 
+> enough buffers on the clean list, it goes into the dirty list - it writes 
+> the buffers back and then frees them.
+> 
+> What should it do? Should it just start writeback of the dirty list 
+> without waiting for it? What should it do if all the buffers are under 
+> writeback?
 
-diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
-index 5361a2bbedb6..32a811ac704a 100644
---- a/drivers/staging/erofs/decompressor.c
-+++ b/drivers/staging/erofs/decompressor.c
-@@ -124,7 +124,7 @@ static int lz4_decompress(struct z_erofs_decompress_req *rq, u8 *out)
- 	int ret;
- 
- 	if (rq->inputsize > PAGE_SIZE)
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	src = kmap_atomic(*rq->in);
- 	inputmargin = 0;
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index 12f737cbc0c0..0e8d58546c52 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -403,12 +403,12 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 			    struct erofs_map_blocks *map,
- 			    int flags);
- #else
--static inline int z_erofs_fill_inode(struct inode *inode) { return -ENOTSUPP; }
-+static inline int z_erofs_fill_inode(struct inode *inode) { return -EOPNOTSUPP; }
- static inline int z_erofs_map_blocks_iter(struct inode *inode,
- 					  struct erofs_map_blocks *map,
- 					  int flags)
- {
--	return -ENOTSUPP;
-+	return -EOPNOTSUPP;
- }
- #endif	/* !CONFIG_EROFS_FS_ZIP */
- 
-@@ -516,7 +516,7 @@ void *erofs_get_pcpubuf(unsigned int pagenr);
- #else
- static inline void *erofs_get_pcpubuf(unsigned int pagenr)
- {
--	return ERR_PTR(-ENOTSUPP);
-+	return ERR_PTR(-EOPNOTSUPP);
- }
- 
- #define erofs_put_pcpubuf(buf) do {} while (0)
-diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
-index c5bfc9be412f..e7e5840e3f9d 100644
---- a/drivers/staging/erofs/xattr.c
-+++ b/drivers/staging/erofs/xattr.c
-@@ -71,7 +71,7 @@ static int init_inode_xattrs(struct inode *inode)
- 	if (vi->xattr_isize == sizeof(struct erofs_xattr_ibody_header)) {
- 		errln("xattr_isize %d of nid %llu is not supported yet",
- 		      vi->xattr_isize, vi->nid);
--		ret = -ENOTSUPP;
-+		ret = -EOPNOTSUPP;
- 		goto out_unlock;
- 	} else if (vi->xattr_isize < sizeof(struct erofs_xattr_ibody_header)) {
- 		if (unlikely(vi->xattr_isize)) {
-diff --git a/drivers/staging/erofs/xattr.h b/drivers/staging/erofs/xattr.h
-index 63cc87e3d3f4..e20249647541 100644
---- a/drivers/staging/erofs/xattr.h
-+++ b/drivers/staging/erofs/xattr.h
-@@ -74,13 +74,13 @@ static inline int erofs_getxattr(struct inode *inode, int index,
- 				 const char *name, void *buffer,
- 				 size_t buffer_size)
- {
--	return -ENOTSUPP;
-+	return -EOPNOTSUPP;
- }
- 
- static inline ssize_t erofs_listxattr(struct dentry *dentry,
- 				      char *buffer, size_t buffer_size)
- {
--	return -ENOTSUPP;
-+	return -EOPNOTSUPP;
- }
- #endif	/* !CONFIG_EROFS_FS_XATTR */
- 
-diff --git a/drivers/staging/erofs/zmap.c b/drivers/staging/erofs/zmap.c
-index 5551e615e8ea..b61b9b5950ac 100644
---- a/drivers/staging/erofs/zmap.c
-+++ b/drivers/staging/erofs/zmap.c
-@@ -68,7 +68,7 @@ static int fill_inode_lazy(struct inode *inode)
- 	if (vi->z_algorithmtype[0] >= Z_EROFS_COMPRESSION_MAX) {
- 		errln("unknown compression format %u for nid %llu, please upgrade kernel",
- 		      vi->z_algorithmtype[0], vi->nid);
--		err = -ENOTSUPP;
-+		err = -EOPNOTSUPP;
- 		goto unmap_done;
- 	}
- 
-@@ -79,7 +79,7 @@ static int fill_inode_lazy(struct inode *inode)
- 	if (vi->z_physical_clusterbits[0] != LOG_BLOCK_SIZE) {
- 		errln("unsupported physical clusterbits %u for nid %llu, please upgrade kernel",
- 		      vi->z_physical_clusterbits[0], vi->nid);
--		err = -ENOTSUPP;
-+		err = -EOPNOTSUPP;
- 		goto unmap_done;
- 	}
- 
-@@ -211,7 +211,7 @@ static int unpack_compacted_index(struct z_erofs_maprecorder *m,
- 	else if (1 << amortizedshift == 2 && lclusterbits == 12)
- 		vcnt = 16;
- 	else
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	encodebits = ((vcnt << amortizedshift) - sizeof(__le32)) * 8 / vcnt;
- 	base = round_down(eofs, vcnt << amortizedshift);
-@@ -275,7 +275,7 @@ static int compacted_load_cluster_from_disk(struct z_erofs_maprecorder *m,
- 	int err;
- 
- 	if (lclusterbits != 12)
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	if (lcn >= totalidx)
- 		return -EINVAL;
+For kswapd, it should do what it can without blocking. e.g. kicking
+an async writer thread rather than submitting the IO itself. That's
+what I changes XFS to do.
+
+And if you look at the patchset in the above link, it also
+introduced a mechanism for shrinkers to communicate back to the high
+level reclaim code that kswapd needs to back off
+(reclaim_state->need_backoff).
+
+With these mechanism, the shrinker can start IO without blocking
+kswapd on congested request queues and tell memory reclaim to wait
+before calling this shrinker again. This allows kswapd to aggregate
+all the waits that shrinkers and page reclaim require to all
+progress to be made into a single backoff event. That means kswapd
+does other scanning work while background writeback goes on, and
+once everythign is scanned it does a single wait for everything that
+needs time to make progress...
+
+I think that should also work for the dm-bufio shrinker, and the the
+direct reclaim backoff parts of the patchset should work for
+non-blocking direct reclaim scanning as well, like it now does for
+XFS.
+
+Cheers,
+
+Dave.
 -- 
-2.17.1
-
+Dave Chinner
+david@fromorbit.com
