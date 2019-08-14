@@ -2,56 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB3B88E14B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 01:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44A208E14D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 01:36:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbfHNXf6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 19:35:58 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50272 "EHLO
+        id S1727913AbfHNXgd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 19:36:33 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50300 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728583AbfHNXf5 (ORCPT
+        with ESMTP id S1726221AbfHNXgd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 19:35:57 -0400
+        Wed, 14 Aug 2019 19:36:33 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hy2o8-0001eY-8P; Wed, 14 Aug 2019 23:35:56 +0000
-Date:   Thu, 15 Aug 2019 00:35:56 +0100
+        id 1hy2oi-0001fi-CO; Wed, 14 Aug 2019 23:36:32 +0000
+Date:   Thu, 15 Aug 2019 00:36:32 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Sascha Hauer <s.hauer@pengutronix.de>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
         Jan Kara <jack@suse.com>, Richard Weinberger <richard@nod.at>,
         kernel@pengutronix.de
-Subject: Re: [PATCH 04/11] fs, quota: introduce wait_super_thawed() to wait
- until a superblock is thawed
-Message-ID: <20190814233556.GV1131@ZenIV.linux.org.uk>
+Subject: Re: [PATCH 05/11] quota: Allow to pass quotactl a mountpoint
+Message-ID: <20190814233632.GW1131@ZenIV.linux.org.uk>
 References: <20190814121834.13983-1-s.hauer@pengutronix.de>
- <20190814121834.13983-5-s.hauer@pengutronix.de>
+ <20190814121834.13983-6-s.hauer@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190814121834.13983-5-s.hauer@pengutronix.de>
+In-Reply-To: <20190814121834.13983-6-s.hauer@pengutronix.de>
 User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 02:18:27PM +0200, Sascha Hauer wrote:
-> quota uses three different functions to get a superblock from a
-> block_device. Instead, retrieve the superblock always with get_super()
-> and introduce wait_super_thawed() which is then used to wait until the
-> superblock is thawed. This way the code can better be shared with the
-> code introduced in the next step: We want to add quota support for
-> filesystems without a block_device, so here functions around a
-> block_device can't be used.
-
-> + *	wait_super_thawed - wait for a superblock being thawed
-> + *	@sb: superblock to wait for
-> + *	@excl: if true, get s_umount semaphore exclusively
+On Wed, Aug 14, 2019 at 02:18:28PM +0200, Sascha Hauer wrote:
+> +/**
+> + * reference_super - get a reference to a given superblock
+> + * @sb: superblock to get the reference from
 > + *
-> + * Wait until the superblock is thawed. s_umount semaphore must be released on
-> + * entry and will be held when returning.
+> + * Takes a reference to a superblock. Can be used as when the superblock
+> + * is known and leaves it in a state as if get_super had been called.
 > + */
+> +void reference_super(struct super_block *sb)
+> +{
+> +	spin_lock(&sb_lock);
+> +	sb->s_count++;
+> +	spin_unlock(&sb_lock);
+> +
+> +	down_read(&sb->s_umount);
+> +}
+> +EXPORT_SYMBOL_GPL(reference_super);
 
-Never expose anything like that - if locking rules depend upon the flags,
-it MUST NOT be anything beyond a static helper.  I'm serious - that kind
-of stuff ends up with trouble again and again.  Just don't.
+NAK, for a plenty of reasons
+
+1) introduction of EXPORT_SYMBOL_GPL garbage
+2) aforementioned garbage on something that doesn't need to be exported
+3) *way* too easily abused - get_super() is, at least, not tempting to
+play with in random code.  This one is, and it's too low-level to
+allow.
