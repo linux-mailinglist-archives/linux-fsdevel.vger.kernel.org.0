@@ -2,161 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51BC38D37F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 14:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E38B48D572
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 15:54:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbfHNMuN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 08:50:13 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36356 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbfHNMuM (ORCPT
+        id S1728010AbfHNNx6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 09:53:58 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42895 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbfHNNx6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:50:12 -0400
-Received: by mail-oi1-f194.google.com with SMTP id c15so17251996oic.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2019 05:50:12 -0700 (PDT)
+        Wed, 14 Aug 2019 09:53:58 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i30so4908547pfk.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2019 06:53:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=/+aArS/+ZpXWQrNyAPbe/FVozsbsHho1Pyh+D5yt+eM=;
-        b=Q46RYsE22MhQi0qPL9mOVIvPiWIAlcb6XvRg2G1Kab100w6d33bkV6Nj7WbfBhZLFS
-         DePA24isLJdfXVfQiu01V6rvCiv+SNWBYE1TAmyt7D0OP0KaZLFg3PB7+pLJD+GF+OWk
-         MGcqJVVXmPl35qlkvYbT7sQLmXWlVgITTelZI=
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=n++KcFD4V/b6zBcrsczOTyMNO8jb/xPsUB8LHz0KWls=;
+        b=b04AglKvxQ5eDEWRWO6CxcfuRA8NK9xxVyKIVJlPRBQzDP0H96mQmDjbDsJABkRoMT
+         SwkIogOXf/Nrrkmgna6L0612c8DArkdixIzW7pbjX9u+B0tzzFZ4iK7rLq9TfpGvA63I
+         ocAuu7T3ee9N/nPxNiyb/PQVv67kREbw6vTFdv+bPs57XaDGX3H3XDFQBp9+CfKLxv3U
+         zRJ/m/4Jh3QRL9P5/dGv8E5IsMGoqRV3C6pjKyMj0ZM/6OFKesuACZaExyPuRRxon5fz
+         gu1DOOeMp5IfTMKH6iNuWwF98FoVffyNMdTwAWot/jHCmopG2UuFC6mBXIGCI2bRRiCg
+         E/TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/+aArS/+ZpXWQrNyAPbe/FVozsbsHho1Pyh+D5yt+eM=;
-        b=qiue62eCrBdV4s/OukrQkOYywz4T9Kz0h/b4UiG+QkATN/wyBWr0lCw9lxQkTAFYKc
-         2nq52Q6C8wXzqnlMsSAljOW130Ok23eMRJlvpP1vOrfkYDFWTBpvVoTrxh1Icqqgd3kT
-         7ry8h4iGzSLqwjZOnkUtwDGziGmd8rpyrV89r7mx4ZRVLxzanjw8FF0+AbmRoSN8GIyJ
-         8qOEOBz7XUWdyPcxLq7wD3yLMxvvmqzaTioqRI3nV4WQdFPDNL0aNerKH5riPp/CX6Fr
-         VRawvHv4/iH8GrOiyZqvbZxf6dV1Y0AAoJHuRVYBgK3xJPTePuMkTLKpj5GPtkiz/5EF
-         DyNQ==
-X-Gm-Message-State: APjAAAXCg+QGZGmSyboUdhsW4UIzZYE6JivTqG2jXW1uy/pxyLdKwk8C
-        rWcEt5t32AhStZVVCnHP8Qe3ZA==
-X-Google-Smtp-Source: APXvYqwDOApCZPr3cCgqfm3OG0AgLMRjBq0SWb9OHeIgBreHeTX11da+LxeS/BlgpYOjG+0S+p3dig==
-X-Received: by 2002:a02:9981:: with SMTP id a1mr3295802jal.17.1565787011740;
-        Wed, 14 Aug 2019 05:50:11 -0700 (PDT)
-Received: from iscandar.digidescorp.com ([50.73.98.161])
-        by smtp.googlemail.com with ESMTPSA id j5sm83102558iom.69.2019.08.14.05.50.10
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 05:50:11 -0700 (PDT)
-From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
-X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
-To:     Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Steven J . Magnani" <steve@digidescorp.com>
-Subject: [PATCH v2] udf: reduce leakage of blocks related to named streams
-Date:   Wed, 14 Aug 2019 07:50:02 -0500
-Message-Id: <20190814125002.10869-1-steve@digidescorp.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n++KcFD4V/b6zBcrsczOTyMNO8jb/xPsUB8LHz0KWls=;
+        b=ZtdZLAl2TP+lIGAGU7LKzTGGIYNGv8Xm13Dh9oEtOsupHlnNTIAQWi//pxBzDYzTXX
+         Timh6NYsFF0KKXszQgQ1SyyC2o6gYcydk4Pyvu2hTEvfozTaWs+ox9wHaAvxf7RdgB1Y
+         /H/o+vWKYuMIqochQ5YLtSUAkjffZ140Id7AzG2rmK3s/vuj0Yhm5cFm0Lf6c868ch1a
+         Cd9T2pN+rRi8b7ILZiDwq6sFPCAc5j2DAp/s0fprIqNO4f53xWCJYShllv5Mwv+laLlO
+         5BQeB+4IwquTkr2h/0vqZdb1o/K08lL7kuhK+HHze9jvWQgho7zkWzgiJhN6PmLqJmEW
+         vpgQ==
+X-Gm-Message-State: APjAAAVLM9PyNmluZ7FwDMnuiSK1PNYypBGWDenTn1Ak+Z2eOG9OdzGD
+        MS5Wu9fwHoR+jx9begr6oYob5rZZ138=
+X-Google-Smtp-Source: APXvYqzke17f6CA3f3O7qxwwkDjXbUQ2aD4jV4h6qBmPzp0njUgRl6QAvBH7pexmJAZbHgXac4VhyQ==
+X-Received: by 2002:a65:52c5:: with SMTP id z5mr39237537pgp.118.1565790836994;
+        Wed, 14 Aug 2019 06:53:56 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:180::cd07])
+        by smtp.gmail.com with ESMTPSA id 203sm22454812pfz.107.2019.08.14.06.53.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 06:53:55 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 09:53:53 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] block: annotate refault stalls from IO submission
+Message-ID: <20190814135353.GA30543@cmpxchg.org>
+References: <20190808190300.GA9067@cmpxchg.org>
+ <20190809221248.GK7689@dread.disaster.area>
+ <20190813174625.GA21982@cmpxchg.org>
+ <20190814025130.GI7777@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814025130.GI7777@dread.disaster.area>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Windows is capable of creating UDF files having named streams.
-One example is the "Zone.Identifier" stream attached automatically
-to files downloaded from a network. See:
-  https://msdn.microsoft.com/en-us/library/dn392609.aspx
+On Wed, Aug 14, 2019 at 12:51:30PM +1000, Dave Chinner wrote:
+> On Tue, Aug 13, 2019 at 01:46:25PM -0400, Johannes Weiner wrote:
+> > On Sat, Aug 10, 2019 at 08:12:48AM +1000, Dave Chinner wrote:
+> > > On Thu, Aug 08, 2019 at 03:03:00PM -0400, Johannes Weiner wrote:
+> > > > psi tracks the time tasks wait for refaulting pages to become
+> > > > uptodate, but it does not track the time spent submitting the IO. The
+> > > > submission part can be significant if backing storage is contended or
+> > > > when cgroup throttling (io.latency) is in effect - a lot of time is
+> > > 
+> > > Or the wbt is throttling.
+> > > 
+> > > > spent in submit_bio(). In that case, we underreport memory pressure.
+> > > > 
+> > > > Annotate submit_bio() to account submission time as memory stall when
+> > > > the bio is reading userspace workingset pages.
+> > > 
+> > > PAtch looks fine to me, but it raises another question w.r.t. IO
+> > > stalls and reclaim pressure feedback to the vm: how do we make use
+> > > of the pressure stall infrastructure to track inode cache pressure
+> > > and stalls?
+> > > 
+> > > With the congestion_wait() and wait_iff_congested() being entire
+> > > non-functional for block devices since 5.0, there is no IO load
+> > > based feedback going into memory reclaim from shrinkers that might
+> > > require IO to free objects before they can be reclaimed. This is
+> > > directly analogous to page reclaim writing back dirty pages from
+> > > the LRU, and as I understand it one of things the PSI is supposed
+> > > to be tracking.
+> > >
+> > > Lots of workloads create inode cache pressure and often it can
+> > > dominate the time spent in memory reclaim, so it would seem to me
+> > > that having PSI only track/calculate pressure and stalls from LRU
+> > > pages misses a fair chunk of the memory pressure and reclaim stalls
+> > > that can be occurring.
+> > 
+> > psi already tracks the entire reclaim operation. So if reclaim calls
+> > into the shrinker and the shrinker scans inodes, initiates IO, or even
+> > waits on IO, that time is accounted for as memory pressure stalling.
+> 
+> hmmmm - reclaim _scanning_ is considered a stall event? i.e. even if
+> scanning does not block, it's still accounting that _time_ as a
+> memory pressure stall?
 
-Modification of a file having one or more named streams in Linux causes
-the stream directory to become detached from the file, essentially leaking
-all blocks pertaining to the file's streams.
+Yes. Reclaim doesn't need to block, the entire operation itself is an
+interruption of the workload that only happens due to a lack of RAM.
 
-Fix by saving off information about an inode's streams when reading it,
-for later use when its on-disk data is updated.
+Of course, as long as kswapd is just picking up one-off cache, it does
+not take a whole lot of time, and it will barely register as
+pressure. But as memory demand mounts and we have to look harder for
+unused pages, reclaim time can become significant, even without IO.
 
-Changes from v1:
-Remove modifications that would limit leakage of all inode blocks
-on deletion.
-This restricts the patch to preservation of stream data during inode
-modification.
+> I'm probably missing it, but I don't see anything in vmpressure()
+> that actually accounts for time spent scanning.  AFAICT it accounts
+> for LRU objects scanned and reclaimed from memcgs, and then the
+> memory freed from the shrinkers is accounted only to the
+> sc->target_mem_cgroup once all memcgs have been iterated.
 
-Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+vmpressure is an orthogonal feature that is based purely on reclaim
+efficiency (reclaimed/scanned).
 
---- a/fs/udf/udf_i.h	2019-07-26 11:35:28.257563879 -0500
-+++ b/fs/udf/udf_i.h	2019-08-06 14:35:55.579654263 -0500
-@@ -42,12 +42,15 @@ struct udf_inode_info {
- 	unsigned		i_efe : 1;	/* extendedFileEntry */
- 	unsigned		i_use : 1;	/* unallocSpaceEntry */
- 	unsigned		i_strat4096 : 1;
--	unsigned		reserved : 26;
-+	unsigned		i_streamdir : 1;
-+	unsigned		reserved : 25;
- 	union {
- 		struct short_ad	*i_sad;
- 		struct long_ad		*i_lad;
- 		__u8		*i_data;
- 	} i_ext;
-+	struct kernel_lb_addr	i_locStreamdir;
-+	__u64			i_lenStreams;
- 	struct rw_semaphore	i_data_sem;
- 	struct udf_ext_cache cached_extent;
- 	/* Spinlock for protecting extent cache */
---- a/fs/udf/super.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/super.c	2019-08-06 15:04:30.851086957 -0500
-@@ -151,9 +151,13 @@ static struct inode *udf_alloc_inode(str
- 
- 	ei->i_unique = 0;
- 	ei->i_lenExtents = 0;
-+	ei->i_lenStreams = 0;
- 	ei->i_next_alloc_block = 0;
- 	ei->i_next_alloc_goal = 0;
- 	ei->i_strat4096 = 0;
-+	ei->i_streamdir = 0;
-+	ei->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-+	ei->i_locStreamdir.partitionReferenceNum = 0xFFFF;
- 	init_rwsem(&ei->i_data_sem);
- 	ei->cached_extent.lstart = -1;
- 	spin_lock_init(&ei->i_extent_cache_lock);
---- a/fs/udf/inode.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/inode.c	2019-08-06 15:04:30.851086957 -0500
-@@ -1485,6 +1485,10 @@ reread:
- 		iinfo->i_lenEAttr = le32_to_cpu(fe->lengthExtendedAttr);
- 		iinfo->i_lenAlloc = le32_to_cpu(fe->lengthAllocDescs);
- 		iinfo->i_checkpoint = le32_to_cpu(fe->checkpoint);
-+		iinfo->i_streamdir = 0;
-+		iinfo->i_lenStreams = 0;
-+		iinfo->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-+		iinfo->i_locStreamdir.partitionReferenceNum = 0xFFFF;
- 	} else {
- 		inode->i_blocks = le64_to_cpu(efe->logicalBlocksRecorded) <<
- 		    (inode->i_sb->s_blocksize_bits - 9);
-@@ -1498,6 +1502,16 @@ reread:
- 		iinfo->i_lenEAttr = le32_to_cpu(efe->lengthExtendedAttr);
- 		iinfo->i_lenAlloc = le32_to_cpu(efe->lengthAllocDescs);
- 		iinfo->i_checkpoint = le32_to_cpu(efe->checkpoint);
-+
-+		/* Named streams */
-+		iinfo->i_streamdir = (efe->streamDirectoryICB.extLength != 0);
-+		iinfo->i_locStreamdir =
-+			lelb_to_cpu(efe->streamDirectoryICB.extLocation);
-+		iinfo->i_lenStreams = le64_to_cpu(efe->objectSize);
-+		if (iinfo->i_lenStreams >= inode->i_size)
-+			iinfo->i_lenStreams -= inode->i_size;
-+		else
-+			iinfo->i_lenStreams = 0;
- 	}
- 	inode->i_generation = iinfo->i_unique;
- 
-@@ -1760,9 +1774,19 @@ static int udf_update_inode(struct inode
- 		       iinfo->i_ext.i_data,
- 		       inode->i_sb->s_blocksize -
- 					sizeof(struct extendedFileEntry));
--		efe->objectSize = cpu_to_le64(inode->i_size);
-+		efe->objectSize =
-+			cpu_to_le64(inode->i_size + iinfo->i_lenStreams);
- 		efe->logicalBlocksRecorded = cpu_to_le64(lb_recorded);
- 
-+		if (iinfo->i_streamdir) {
-+			struct long_ad *icb_lad = &efe->streamDirectoryICB;
-+
-+			icb_lad->extLocation =
-+				cpu_to_lelb(iinfo->i_locStreamdir);
-+			icb_lad->extLength =
-+				cpu_to_le32(inode->i_sb->s_blocksize);
-+		}
-+
- 		udf_adjust_time(iinfo, inode->i_atime);
- 		udf_adjust_time(iinfo, inode->i_mtime);
- 		udf_adjust_time(iinfo, inode->i_ctime);
+psi accounting begins when we first call into try_to_free_pages() and
+friends. psi_memstall_enter() marks the task, and it's the scheduler
+part of psi that aggregates task state time into pressure ratios.
+
+> > If you can think of asynchronous events that are initiated from
+> > reclaim but cause indirect stalls in other contexts, contexts which
+> > can clearly link the stall back to reclaim activity, we can annotate
+> > them using psi_memstall_enter() / psi_memstall_leave().
+> 
+> Well, I was more thinking that issuing/waiting on IOs is a stall
+> event, not scanning.
+> 
+> The IO-less inode reclaim stuff for XFS really needs the main
+> reclaim loop to back off under heavy IO load, but we cannot put the
+> entire metadata writeback path under psi_memstall_enter/leave()
+> because:
+> 
+> 	a) it's not linked to any user context - it's a
+> 	per-superblock kernel thread; and
+> 
+> 	b) it's designed to always be stalled on IO when there is
+> 	metadata writeback pressure. That pressure most often comes from
+> 	running out of journal space rather than memory pressure, and
+> 	really there is no way to distinguish between the two from
+> 	the writeback context.
+> 
+> Hence I don't think the vmpressure mechanism does what the memory
+> reclaim scanning loops really need because they do not feed back a
+> clear picture of the load on the IO subsystem load into the reclaim
+> loops.....
+
+Memory pressure metrics really seem unrelated to this problem, and
+that's not what vmpressure or psi try to solve in the first place.
+
+When you say we need better IO pressure feedback / congestion
+throttling in reclaim, I can believe it, even though it's not
+something we necessarily observed in our fleet.
