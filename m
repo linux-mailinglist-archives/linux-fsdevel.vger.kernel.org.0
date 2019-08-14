@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C5278CF41
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 11:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A542F8CF65
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 11:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfHNJWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 05:22:31 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4260 "EHLO huawei.com"
+        id S1727122AbfHNJ0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 05:26:02 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38570 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726699AbfHNJWb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 05:22:31 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D101664A8DDC451216D5;
-        Wed, 14 Aug 2019 17:22:25 +0800 (CST)
+        id S1725888AbfHNJ0C (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 05:26:02 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3EC4DE55934583B028EE;
+        Wed, 14 Aug 2019 17:25:55 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 14 Aug
- 2019 17:22:19 +0800
-Subject: Re: [PATCH RESEND 1/2] staging: erofs: introduce EFSCORRUPTED and
- more logs
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 14 Aug
+ 2019 17:25:48 +0800
+Subject: Re: [PATCH RESEND 2/2] staging: erofs: differentiate unsupported
+ on-disk format
 To:     Gao Xiang <gaoxiang25@huawei.com>, Pavel Machek <pavel@denx.de>,
         "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
         <devel@driverdev.osuosl.org>, <linux-fsdevel@vger.kernel.org>
@@ -28,13 +28,14 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         Fang Wei <fangwei1@huawei.com>
 References: <20190814042525.4925-2-gaoxiang25@huawei.com>
  <20190814043208.15591-1-gaoxiang25@huawei.com>
+ <20190814043208.15591-2-gaoxiang25@huawei.com>
 From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <db0e0d1d-9018-5c2c-93d0-b718e7e6853c@huawei.com>
-Date:   Wed, 14 Aug 2019 17:22:20 +0800
+Message-ID: <108ee2f9-75dd-b8ab-8da7-b81c17bafbf6@huawei.com>
+Date:   Wed, 14 Aug 2019 17:25:51 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190814043208.15591-1-gaoxiang25@huawei.com>
+In-Reply-To: <20190814043208.15591-2-gaoxiang25@huawei.com>
 Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -46,15 +47,16 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2019/8/14 12:32, Gao Xiang wrote:
-> Previously, EROFS uses EIO to indicate that filesystem is
-> corrupted as well, but other filesystems tend to use
-> EUCLEAN instead, let's follow what others do right now.
+> For some specific fields, use ENOTSUPP instead of EIO
+> for values which look sane but aren't supported right now.
 > 
-> Also, add some more prints to the syslog.
-> 
-> Suggested-by: Pavel Machek <pavel@denx.de>
 > Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+> +		return -ENOTSUPP;
+
+A little bit confused about when we need to use ENOTSUPP or EOPNOTSUPP, I
+checked several manual of syscall, it looks EOPNOTSUPP is widely used.
 
 Thanks,
