@@ -2,32 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 852A98DCC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 20:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55A7F8DCCA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2019 20:15:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbfHNSIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 14:08:51 -0400
-Received: from mga18.intel.com ([134.134.136.126]:51018 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726166AbfHNSIv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:08:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 11:08:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,386,1559545200"; 
-   d="scan'208";a="376130035"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Aug 2019 11:08:49 -0700
-Date:   Wed, 14 Aug 2019 11:08:49 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
+        id S1728674AbfHNSPc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 14:15:32 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35676 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728320AbfHNSPc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 14:15:32 -0400
+Received: by mail-qt1-f193.google.com with SMTP id u34so11856942qte.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2019 11:15:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yv3o7B3UHsHqSeSF1eawcreZUewpnoCKBkRqVbvZv+Y=;
+        b=b1+hpPlsUllmS55yStmayLIczHkh/gs2U6xTQjHLoJzP6BS9rrpQYU/Q+zjEtqYpZJ
+         bUfdxFnv/io/njD4H81VOrB5HpxoX0UpCfWVJE3iMK6BRX+7xz2/qyYNYBY1s0aQv9oC
+         57OzZnbd2E8pHcIPyMI3M38ltO867icv9pCABQ2nRkA4GhB4x8TTEWzbIIEp3I5Bu9v8
+         1j7u4CiNFmqOJmrgun4bWFv3s4L2PKJsY5MMwj8yq7JCEFqVNh4FZN9aCdeS6xLd4vsG
+         tzdz7jPh3keJQnQMNdxfDM5IWfs75T0jwE2SLAPsGzMCYk/egYJiAQxgc739HbYg2Btp
+         tbAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yv3o7B3UHsHqSeSF1eawcreZUewpnoCKBkRqVbvZv+Y=;
+        b=VjwuZx8lfroy7tQdvq0TNzqcMXwAcTFebg6zqGNteFV3sUkl0DatZJtkVKu6w/Zlu1
+         PF4VMvlccIGFs0kW9fseKI68x9XI1Pj7XyJ2Y4gbLyM6NWB0fAzpzH5NpqENH+SIzAlU
+         fuv58taapb6qnSIGDBADNKcaH7LakdrtxyQc3f2vOIv8jY3Yk/s05BHT7VQ9x6Ga8dVn
+         bjnNyP/7VJ7zzCCTLrKZ38a9HNu7CdN3Fjxgjitf1dh/dHJQAdnRtzv++3/msu6gkUIP
+         EgSbi951cLDHW7rq9SjCNVa3VYw7WbMeVOqVp+aKKQuDtDHSFh8+r1+rqmPNbWdNEcYd
+         y7Sg==
+X-Gm-Message-State: APjAAAUMWETw3JSFuBcjeeeWkEGQ4kOHfDB9z64XazEhgWjOTJIHRDQv
+        tizUFKD0+dNfWTZihXVtifNXfw==
+X-Google-Smtp-Source: APXvYqwQg84mNfjabrjxPWgnQFA0kP85o9/bjBwuu/n1RL4RSpA12tlrWJldmQ90D3a9zEfF7PDYNg==
+X-Received: by 2002:ac8:34ea:: with SMTP id x39mr609754qtb.311.1565806530924;
+        Wed, 14 Aug 2019 11:15:30 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id h66sm253461qke.61.2019.08.14.11.15.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Aug 2019 11:15:30 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hxxo2-00028Y-0t; Wed, 14 Aug 2019 15:15:30 -0300
+Date:   Wed, 14 Aug 2019 15:15:30 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Ira Weiny <ira.weiny@intel.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
         Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         Theodore Ts'o <tytso@mit.edu>,
         John Hubbard <jhubbard@nvidia.com>,
         Michal Hocko <mhocko@suse.com>,
@@ -35,129 +61,105 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190814101714.GA26273@quack2.suse.cz>
+Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
+ file object
+Message-ID: <20190814181529.GD13770@ziepe.ca>
+References: <20190812130039.GD24457@ziepe.ca>
+ <20190812172826.GA19746@iweiny-DESK2.sc.intel.com>
+ <20190812175615.GI24457@ziepe.ca>
+ <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
+ <20190813114842.GB29508@ziepe.ca>
+ <20190813174142.GB11882@iweiny-DESK2.sc.intel.com>
+ <20190813180022.GF29508@ziepe.ca>
+ <20190813203858.GA12695@iweiny-DESK2.sc.intel.com>
+ <20190814122308.GB13770@ziepe.ca>
+ <20190814175045.GA31490@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190814101714.GA26273@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190814175045.GA31490@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 12:17:14PM +0200, Jan Kara wrote:
-> Hello!
+On Wed, Aug 14, 2019 at 10:50:45AM -0700, Ira Weiny wrote:
+> On Wed, Aug 14, 2019 at 09:23:08AM -0300, Jason Gunthorpe wrote:
+> > On Tue, Aug 13, 2019 at 01:38:59PM -0700, Ira Weiny wrote:
+> > > On Tue, Aug 13, 2019 at 03:00:22PM -0300, Jason Gunthorpe wrote:
+> > > > On Tue, Aug 13, 2019 at 10:41:42AM -0700, Ira Weiny wrote:
+> > > > 
+> > > > > And I was pretty sure uverbs_destroy_ufile_hw() would take care of (or ensure
+> > > > > that some other thread is) destroying all the MR's we have associated with this
+> > > > > FD.
+> > > > 
+> > > > fd's can't be revoked, so destroy_ufile_hw() can't touch them. It
+> > > > deletes any underlying HW resources, but the FD persists.
+> > > 
+> > > I misspoke.  I should have said associated with this "context".  And of course
+> > > uverbs_destroy_ufile_hw() does not touch the FD.  What I mean is that the
+> > > struct file which had file_pins hanging off of it would be getting its file
+> > > pins destroyed by uverbs_destroy_ufile_hw().  Therefore we don't need the FD
+> > > after uverbs_destroy_ufile_hw() is done.
+> > > 
+> > > But since it does not block it may be that the struct file is gone before the
+> > > MR is actually destroyed.  Which means I think the GUP code would blow up in
+> > > that case...  :-(
+> > 
+> > Oh, yes, that is true, you also can't rely on the struct file living
+> > longer than the HW objects either, that isn't how the lifetime model
+> > works.
+> > 
+> > If GUP consumes the struct file it must allow the struct file to be
+> > deleted before the GUP pin is released.
 > 
-> On Fri 09-08-19 15:58:14, ira.weiny@intel.com wrote:
-> > Pre-requisites
-> > ==============
-> > 	Based on mmotm tree.
-> > 
-> > Based on the feedback from LSFmm, the LWN article, the RFC series since
-> > then, and a ton of scenarios I've worked in my mind and/or tested...[1]
-> > 
-> > Solution summary
-> > ================
-> > 
-> > The real issue is that there is no use case for a user to have RDMA pinn'ed
-> > memory which is then truncated.  So really any solution we present which:
-> > 
-> > A) Prevents file system corruption or data leaks
-> > ...and...
-> > B) Informs the user that they did something wrong
-> > 
-> > Should be an acceptable solution.
-> > 
-> > Because this is slightly new behavior.  And because this is going to be
-> > specific to DAX (because of the lack of a page cache) we have made the user
-> > "opt in" to this behavior.
-> > 
-> > The following patches implement the following solution.
-> > 
-> > 0) Registrations to Device DAX char devs are not affected
-> > 
-> > 1) The user has to opt in to allowing page pins on a file with an exclusive
-> >    layout lease.  Both exclusive and layout lease flags are user visible now.
-> > 
-> > 2) page pins will fail if the lease is not active when the file back page is
-> >    encountered.
-> > 
-> > 3) Any truncate or hole punch operation on a pinned DAX page will fail.
+> I may have to think about this a bit.  But I'm starting to lean toward my
+> callback method as a solution...
 > 
-> So I didn't fully grok the patch set yet but by "pinned DAX page" do you
-> mean a page which has corresponding file_pin covering it? Or do you mean a
-> page which has pincount increased? If the first then I'd rephrase this to
-> be less ambiguous, if the second then I think it is wrong. 
-
-I mean the second.  but by "fail" I mean hang.  Right now the "normal" page
-pincount processing will hang the truncate.  Given the discussion with John H
-we can make this a bit better if we use something like FOLL_PIN and the page
-count bias to indicate this type of pin.  Then I could fail the truncate
-outright.  but that is not done yet.
-
-so... I used the word "fail" to be a bit more vague as the final implementation
-may return ETXTBUSY or hang as noted.
-
-> 
-> > 4) The user has the option of holding the lease or releasing it.  If they
-> >    release it no other pin calls will work on the file.
-> 
-> Last time we spoke the plan was that the lease is kept while the pages are
-> pinned (and an attempt to release the lease would block until the pages are
-> unpinned). That also makes it clear that the *lease* is what is making
-> truncate and hole punch fail with ETXTBUSY and the file_pin structure is
-> just an implementation detail how the existence is efficiently tracked (and
-> what keeps the backing file for the pages open so that the lease does not
-> get auto-destroyed). Why did you change this?
-
-closing the file _and_ unmaping it will cause the lease to be released
-regardless of if we allow this or not.
-
-As we discussed preventing the close seemed intractable.
-
-I thought about failing the munmap but that seemed wrong as well.  But more
-importantly AFAIK RDMA can pass its memory pins to other processes via FD
-passing...  This means that one could pin this memory, pass it to another
-process and exit.  The file lease on the pin'ed file is lost.
-
-The file lease is just a key to get the memory pin.  Once unlocked the procfs
-tracking keeps track of where that pin goes and which processes need to be
-killed to get rid of it.
-
-> 
-> > 5) Closing the file is ok.
 > > 
-> > 6) Unmapping the file is ok
+> > > The drivers could provide some generic object (in RDMA this could be the
+> > > uverbs_attr_bundle) which represents their "context".
 > > 
-> > 7) Pins against the files are tracked back to an owning file or an owning mm
-> >    depending on the internal subsystem needs.  With RDMA there is an owning
-> >    file which is related to the pined file.
+> > For RDMA the obvious context is the struct ib_mr *
+> 
+> Not really, but maybe.  See below regarding tracking this across processes.
+> 
 > > 
-> > 8) Only RDMA is currently supported
+> > > But for the procfs interface, that context then needs to be associated with any
+> > > file which points to it...  For RDMA, or any other "FD based pin mechanism", it
+> > > would be up to the driver to "install" a procfs handler into any struct file
+> > > which _may_ point to this context.  (before _or_ after memory pins).
+> > 
+> > Is this all just for debugging? Seems like a lot of complication just
+> > to print a string
 > 
-> If you currently only need "owning file" variant in your patch set, then
-> I'd just implement that and leave "owning mm" variant for later if it
-> proves to be necessary. The things are complex enough as is...
+> No, this is a requirement to allow an admin to determine why their truncates
+> may be failing.  As per our discussion here:
+> 
+> https://lkml.org/lkml/2019/6/7/982
 
-I can do that...  I was trying to get io_uring working as well with the
-owning_mm but I should save that for later.
+visibility/debugging..
 
-> 
-> > 9) Truncation of pages which are not actively pinned nor covered by a lease
-> >    will succeed.
-> 
-> Otherwise I like the design.
+I don't see any solution here with the struct file - we apparently
+have a problem with deadlock if the uverbs close() waits as mmput()
+can trigger a call close() - see the comment on top of
+uverbs_destroy_ufile_hw()
 
-Thanks,
-Ira
+However, I wonder if that is now old information since commit
+4a9d4b024a31 ("switch fput to task_work_add") makes fput deferred, so
+mmdrop() should not drop waiting on fput??
 
-> 
-> 								Honza
-> 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+If you could unwrap this mystery, probably with some testing proof,
+then we could make uverbs_destroy_ufile_hw() a fence even for close
+and your task is much simpler.
+
+The general flow to trigger is to have a process that has mmap'd
+something from the uverbs fd, then trigger both device disassociate
+and process exit with just the right race so that the process has
+exited enough that the mmdrop on the disassociate threda does the
+final cleanup triggering the VMAs inside the mm to do the final fput
+on their FDs, triggering final fput() for uverbs inside the thread of
+disassociate.
+
+Jason
