@@ -2,92 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 514498EEAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 16:51:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C56E88EEAB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 16:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733144AbfHOOvI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 10:51:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48262 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731269AbfHOOvI (ORCPT
+        id S1733137AbfHOOvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 10:51:04 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:43655 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731581AbfHOOvE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 10:51:08 -0400
-Received: from mail-ot1-f72.google.com ([209.85.210.72])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <seth.forshee@canonical.com>)
-        id 1hyH5U-0008TI-CA
-        for linux-fsdevel@vger.kernel.org; Thu, 15 Aug 2019 14:50:48 +0000
-Received: by mail-ot1-f72.google.com with SMTP id p7so2359171otk.22
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2019 07:50:48 -0700 (PDT)
+        Thu, 15 Aug 2019 10:51:04 -0400
+Received: by mail-qk1-f195.google.com with SMTP id m2so1997513qkd.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2019 07:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z90nPpYO8UuUUSb9IN8rKS3L0KsgC8zXmObZdfo6ctQ=;
+        b=dU2EhV+6EWSs1MNrZJWfU76DaiGX5NQgWL4uohTv/GZxgH6FeggKTIKZ+d/6xxWmB5
+         Uq7EirJG422MX6svb2pK3O0rmVD5upXZhrC0obDyAVUsClwMUccie10LZ+VusUXs6G5t
+         Cfxm7G3duJErwOwTzL6wlTMWxPvhXqi0t55/HXZYJ0ksP5CllSxCeRSJEwA3qeLb3Mw+
+         H9tQF6/hs2KVjejIpKYI3tuEWzOasQMSO5OrPdyS6Tf6gZNSrPhr0d7BWVqY895GeZU7
+         3vhMlzFvKziDCq6pld4ycFVFRE1zOEJ/X+8kNMBCMNIgJ/nYLqTQqzhkO3QmO9Oxi/p7
+         z4xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yNivIfUkkplVV5pp6FTdEbZdfJdI5yapbUq276+kheo=;
-        b=tm+6208wGM9MIaanoaXtPa6jjrw9ofZVKFbDgGTlUffhEOU1sAp2ya65JBiN5z5Vs3
-         rKTE2wPek9i/f8CJdRmFsYSiWZy3W8tGbsPvVe5OFMXnAUO3ZXnt+I3eLTJLMTXbEqQj
-         6J2P/Kha6wQkR7OgrX5/wR19i2Mo01pc8dtPBUZjSOJzkY4HRAzrdNQ6Meq9hXEiokKU
-         9GTv5C7UrpFc/6PXk8n4If5jhBs44Mh67ChMak+/sEpIc3QMr545X53KRg0InJ4r7X9Z
-         rPoljsY+O61NmJeCIIyRQrERkbMl1FyVr30ixQ1q8B62XvdiaCdA86JjO1bhUZK32dR8
-         WCgA==
-X-Gm-Message-State: APjAAAWwMesmfehqAkDYGvlylQtESDaERbhCcon3LDHeJGEJpd7n8rm1
-        tCECkmLRRQcra/mfxj+CctPZmx+oqE4w/T5uxp77sCq7D6/nVWcRt83orsR+Sdf/itlb+XS1ToP
-        mQIbn1716gEHU1zpCuGdMuRiV8hXLk8nY5vuw1GoMLh4=
-X-Received: by 2002:a6b:8b47:: with SMTP id n68mr5665459iod.191.1565880646904;
-        Thu, 15 Aug 2019 07:50:46 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwcSUVoo5IYuezAtpbdOKSul/TTMZm3PFMuJPW0LxqdLEZKI7wZF2mkZZgZLypI7dFN39oqFA==
-X-Received: by 2002:a6b:8b47:: with SMTP id n68mr5665427iod.191.1565880646626;
-        Thu, 15 Aug 2019 07:50:46 -0700 (PDT)
-Received: from localhost ([2605:a601:ac3:9720:443b:aa6:53cb:2ee7])
-        by smtp.gmail.com with ESMTPSA id r5sm2054854iom.42.2019.08.15.07.50.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 07:50:46 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 09:50:45 -0500
-From:   Seth Forshee <seth.forshee@canonical.com>
-To:     Oleksandr Natalenko <oleksandr@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Stefan Bader <stefan.bader@canonical.com>,
-        Kleber Sacilotto de Souza <kleber.souza@canonical.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        Brad Figg <brad.figg@canonical.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [PATCH 0/1] Small potential fix for shiftfs
-Message-ID: <20190815145045.GY10402@ubuntu-xps13>
-References: <20190815143603.17127-1-oleksandr@redhat.com>
+        bh=z90nPpYO8UuUUSb9IN8rKS3L0KsgC8zXmObZdfo6ctQ=;
+        b=TvGHGdaLG4d9qQ6CHS0vEWcfS5th0DRmteryyViMI5dAvzcpnh6gu76YsBjH8GMSPC
+         rb0vwqXb1XaNZnicStzet4vPMlfdif/BP4vy2PH+xuJcwHBWRMJvMad18s75+cL6F3xT
+         KjM64sFxmjHc+GIRCWVlZ1GKed+MFq9hJvpljU4ly4uN3EThrMvF2mE5hrG1N8yAhPz7
+         azHv0gQCgA54y1m0GcKrNAYHYTRnTfHXc3JXusPF5Pyzd0bZ9FjEspwScKDerVJEJg4q
+         yUpUFs+op3AuiAhPAoI6fASgWbGu61kkucwehVphqtOTCvyjsBiwM1ZKErX2rp1R1xp6
+         nAyg==
+X-Gm-Message-State: APjAAAUHxJLdRisHJkIst4aui46yjkJYnkZEAy68+75JmQVxLdMBokDF
+        Oel3m8bwwyDU7KSg9O2uA7CMwQ==
+X-Google-Smtp-Source: APXvYqyMHfwmFKSYVNb8WeeauLH7Hep/WJZ+jheCJjAwrLvMcjUnfX6gEreyk5eeamBSEzYzpviglQ==
+X-Received: by 2002:a05:620a:71a:: with SMTP id 26mr4357407qkc.374.1565880663323;
+        Thu, 15 Aug 2019 07:51:03 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id e15sm805595qtr.51.2019.08.15.07.51.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Aug 2019 07:51:02 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hyH5i-0005L9-BH; Thu, 15 Aug 2019 11:51:02 -0300
+Date:   Thu, 15 Aug 2019 11:51:02 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
+Message-ID: <20190815145102.GH21596@ziepe.ca>
+References: <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
+ <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
+ <20190813210857.GB12695@iweiny-DESK2.sc.intel.com>
+ <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
+ <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
+ <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
+ <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
+ <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
+ <20190815132622.GG14313@quack2.suse.cz>
+ <20190815133510.GA21302@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190815143603.17127-1-oleksandr@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190815133510.GA21302@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 04:36:02PM +0200, Oleksandr Natalenko wrote:
-> Hey, people.
+On Thu, Aug 15, 2019 at 03:35:10PM +0200, Jan Kara wrote:
+
+> > 3) ODP case - GUP references to pages serving as DMA buffers, MMU notifiers
+> >    used to synchronize with page_mkclean() and munmap() => normal page
+> >    references are fine.
 > 
-> I was lurking at shiftfs just out of curiosity and managed to bump into
-> a compiler warning that is (as I suppose) easily fixed by the subsequent
-> patch.
-> 
-> Feel free to drag this into your Ubuntu tree if needed. I haven't played
-> with it yet, just compiling (because I'm looking for something that is
-> bindfs but in-kernel) :).
+> I want to add that I'd like to convert users in cases 1) and 2) from using
+> GUP to using differently named function. Users in case 3) can stay as they
+> are for now although ultimately I'd like to denote such use cases in a
+> special way as well...
 
-Thanks for the patch. Christian has actually already sent a patch for
-this along with another patch which is still under review:
+3) users also want a special function and path, right now it is called
+hmm_range_fault() but perhaps it would be good to harmonize it more
+with the GUP infrastructure?
 
-https://lists.ubuntu.com/archives/kernel-team/2019-July/102449.html
+I'm not quite sure what the best plan for that is yet.
 
-Also note that currently shiftfs is only in Ubuntu distro kernels, and
-Ubuntu-specific kernel patches should be directed at
-kernel-team@lists.ubuntu.com rather than lkml. If you'll be at LPC,
-there's a session to discuss the future of upstreaming shiftfs that you
-might find interesting.
-
-Thanks!
-Seth
+Jason
