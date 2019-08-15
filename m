@@ -2,113 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41B458E977
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 13:02:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B978E8E9F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 13:17:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731494AbfHOLCh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 07:02:37 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45849 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731238AbfHOLCh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 07:02:37 -0400
-Received: by mail-qk1-f194.google.com with SMTP id m2so1425871qki.12;
-        Thu, 15 Aug 2019 04:02:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ixfnPlK+rwVj932VbW13T/GSWLfhy/p7HuarjF6luFA=;
-        b=qeR6W2KxmDFq6IVpiGCHnM2UwZMhJzwZlWXa9u6c1yM/r7mKuunG9yhYx0vT0yMZog
-         +Z78mVTX/dmvJv8fzq5GmIKQJ/NUAGaoTu9f+EdHpuBbicw3GWHKwc+F1tD1eA5se5ux
-         zHU+YVFclAGCwhEL1z85Ly0S6EGCWnNaA3cLXsED5iDKkvyAcGuFDARLbefcKpVMhIq/
-         v9wQhu97TwUDTjGGFdp2++7Umms6Ay76aBfaO/BxfsMdQAe3Dapc92wjuzxhQYkuQjbm
-         tQLDcfHgkJAFRMqh3vNgNQZ1PTU7TnuI/qyS+uuzNEid5OSkS0+f1C1u38Xk7UOeUVgp
-         K6eg==
-X-Gm-Message-State: APjAAAUju6iRflwCbZ+gFC31bzHn6z6PDmfh8AS97MD0JkyKhQHmyPLN
-        OzRk8r3vznRfqaTdMIVw9/faeZqQ4arUlNJ4g1E=
-X-Google-Smtp-Source: APXvYqyXpHeJIvd+b99fNFc8nOvxOYKmr5krcLTUrLPsheJN0BLptRHKfW021hvb9zclheDXuX6WV/9ruuHsR11kpnU=
-X-Received: by 2002:a37:984:: with SMTP id 126mr3353679qkj.3.1565866956167;
- Thu, 15 Aug 2019 04:02:36 -0700 (PDT)
+        id S1730490AbfHOLRY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 07:17:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59852 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726352AbfHOLRX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Aug 2019 07:17:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D4536AFD4;
+        Thu, 15 Aug 2019 11:17:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1A75F1E4200; Thu, 15 Aug 2019 13:17:21 +0200 (CEST)
+Date:   Thu, 15 Aug 2019 13:17:21 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Dongsheng Yang <yangds.fnst@cn.fujitsu.com>,
+        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+        kernel@pengutronix.de, Jan Kara <jack@suse.com>
+Subject: Re: [PATCH 11/11] ubifs: Add quota support
+Message-ID: <20190815111721.GC14313@quack2.suse.cz>
+References: <20190814121834.13983-1-s.hauer@pengutronix.de>
+ <20190814121834.13983-12-s.hauer@pengutronix.de>
 MIME-Version: 1.0
-References: <20190814204259.120942-1-arnd@arndb.de> <20190814204259.120942-2-arnd@arndb.de>
- <20190814213753.GP6129@dread.disaster.area> <20190815071314.GA6960@infradead.org>
- <CAK8P3a2Hjfd49XY18cDr04ZpvC5ZBGudzxqpCesbSsDf1ydmSA@mail.gmail.com>
- <20190815080211.GA17055@infradead.org> <20190815102649.GA10821@infradead.org>
-In-Reply-To: <20190815102649.GA10821@infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 15 Aug 2019 13:02:19 +0200
-Message-ID: <CAK8P3a0jEsJbpkgKrjWNOsDSvQv5AXq_P7A92zr4my+uMnZijw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/18] xfs: compat_ioctl: use compat_ptr()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Nick Bowler <nbowler@draconx.ca>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814121834.13983-12-s.hauer@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 12:26 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Thu, Aug 15, 2019 at 01:02:11AM -0700, Christoph Hellwig wrote:
-> > In many ways I'd actually much rather have a table driven approach.
-> > Let me try something..
->
-> Ok, it seems like we don't even need a table containing native and
-> compat as we can just fall back.  The tables still seem nicer to read,
-> though.
->
-> Let me know what you think of this:
->
-> http://git.infradead.org/users/hch/xfs.git/shortlog/refs/heads/xfs-ioctl-table
+Hello,
 
-These all look like useful cleanups, but I'm a little worried about introducing
-merge conflicts with my own patches. I would want to have my series get
-merged as a complete branch since each patch that removes a bit of
-fs/compat_ioctl.c would clash with a patch removing the adjacent bits
-otherwise.
+On Wed 14-08-19 14:18:34, Sascha Hauer wrote:
+> From: Dongsheng Yang <yangds.fnst@cn.fujitsu.com>
+> 
+> This introduces poor man's quota support for UBIFS. Unlike other
+> implementations we never store anything on the flash. This has two
+> big advantages:
+> 
+> - No possible regressions with a changed on-disk format
+> - no quota files can get out of sync.
+> 
+> There are downsides aswell:
+> 
+> - During mount the whole index must be scanned which takes some time
+> - The quota limits must be set manually each time a filesystem is mounted.
+> 
+> UBIFS is targetted for embedded systems and quota limits are likely not
+> changed interactively, so having to restore the quota limits with a
+> script shouldn't be a big deal. The mount time penalty is a price we
+> must pay, but for that we get a simple and straight forward
+> implementation for this rather rarely used feature.
+> 
+> The quota data itself is stored in a red-black tree in memory. It is
+> implemented as a quota format. When enabled with the "quota" mount
+> option all three quota types (user, group, project) are enabled.
+> 
+> The quota integration into UBIFS is taken from a series posted earlier
+> by Dongsheng Yang. Like the earlier series we only account regular files
+> for quota. All others are counted in the number of files, but do not
+> require any quota space.
+> 
+> iSigned-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-I still haven't heard from Al regarding what he thinks of my v5 series.
-If he wants me to send a pull request for it, I can of course add in
-your patches  after they are fully reviewed.
+Missing Signed-off-by from Dongsheng? Also yours has 'i' there.
 
-> I also wonder if we should life the ioctl handler tables to the VFS.
+> +/**
+> + * ubifs_enable_quotas - enable quota
+> + * @c: UBIFS file-system description object
+> + *
+> + * Enable usage tracking for all quota types.
+> + */
+> +int ubifs_enable_quotas(struct ubifs_info *c)
+> +{
+> +	struct super_block *sb = c->vfs_sb;
+> +	struct quota_info *dqopt = sb_dqopt(sb);
+> +	int type;
+> +
+> +	if (!c->quota_enable)
+> +		return 0;
+> +
+> +	dqopt->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
+> +
+> +	for (type = 0; type < UBIFS_MAXQUOTAS; type++) {
+> +		struct mem_dqinfo *info = sb_dqinfo(sb, type);
+> +		unsigned int flags = DQUOT_USAGE_ENABLED | DQUOT_LIMITS_ENABLED;
+> +
+> +		dqopt->flags |= dquot_state_flag(flags, type);
+> +		dqopt->info[type].dqi_flags |= DQF_SYS_FILE;
+> +		dqopt->ops[type] = &ubifs_format_ops;
+> +
+> +		info->dqi_max_spc_limit = 0x7fffffffffffffffLL;
+> +		info->dqi_max_ino_limit = 0x7fffffffffffffffLL;
 
-The idea of these tables has come up a few times in the past,
-and there are a couple of subsystems that have something like it,
-e.g. drivers/media.
+This is wrong. You shouldn't mess with quota internals like that. You
+should use dquot_enable() (and you even implemented ->read_file_info()
+format operation to properly fill in info structure).  So you just need to
+change dquot_enable() to cope with situation when inode is NULL. Probably
+create a variant dquot_enable_sb() that gets superblock pointer instead of
+inode and then factor out bits from vfs_load_quota_inode() that are needed
+also for the case without quota inode.
 
-Usually you'd want to combine the table with a more generic way to
-do the copy_from_user()/copy_to_user() on the argument, but that
-in turn requires all commands to be defined correctly (a lot of drivers
-have some commands that specify the wrong direction or the wrong
-size, or one that predates the _IO() macro).
+> @@ -956,6 +970,7 @@ static const match_table_t tokens = {
+>  	{Opt_ignore, "ubi=%s"},
+>  	{Opt_ignore, "vol=%s"},
+>  	{Opt_assert, "assert=%s"},
+> +	{Opt_quota, "quota"},
+>  	{Opt_err, NULL},
+>  };
 
-What I could imaging having in the long run is to have the ioctl table
-attached to the file_operations structure, and then define it in a way
-that handles at least the more common variations:
+Usually, we have usrquota, grpquota, prjquota mount options to enable
+individual quota types. It would seem better not to differ from these
+unless you have a good reason.
 
-- copy_from_user to stack, pass a kernel pointer to handler
-- a single entry for commands that are 32/64-bit compatible
-- entries that are only used for native vs compat mode if they
-  have incompatible arguments (this could also be handled
-  by calling in_compat_syscall() in the handler itself).
-- a flag to specify handlers that require the __user pointer instead
-  of the implied copy.
-
-Doing this right will certainly require several revisions of patch
-series and lots of discussions, and is unrelated to the removal
-of fs/compat_ioctl.c, so I'd much prefer to get this series merged
-before we start working on that.
-
-       Arnd
+							Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
