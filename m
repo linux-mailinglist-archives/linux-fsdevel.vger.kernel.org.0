@@ -2,173 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C14DC8EC5C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 15:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 505578EC7F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 15:12:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732057AbfHONGC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 09:06:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37356 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730304AbfHONGC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 09:06:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B6D16ACC5;
-        Thu, 15 Aug 2019 13:05:59 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id F206B1E4200; Thu, 15 Aug 2019 15:05:58 +0200 (CEST)
-Date:   Thu, 15 Aug 2019 15:05:58 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190815130558.GF14313@quack2.suse.cz>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190814101714.GA26273@quack2.suse.cz>
- <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
+        id S1732127AbfHONM4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 09:12:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58952 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732049AbfHONM4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Aug 2019 09:12:56 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9EC80308620B;
+        Thu, 15 Aug 2019 13:12:55 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-117-92.ams2.redhat.com [10.36.117.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 85D311000337;
+        Thu, 15 Aug 2019 13:12:54 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v13] fs: Add VirtualBox guest shared folder (vboxsf) support
+Date:   Thu, 15 Aug 2019 15:12:52 +0200
+Message-Id: <20190815131253.237921-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 15 Aug 2019 13:12:55 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 14-08-19 11:08:49, Ira Weiny wrote:
-> On Wed, Aug 14, 2019 at 12:17:14PM +0200, Jan Kara wrote:
-> > Hello!
-> > 
-> > On Fri 09-08-19 15:58:14, ira.weiny@intel.com wrote:
-> > > Pre-requisites
-> > > ==============
-> > > 	Based on mmotm tree.
-> > > 
-> > > Based on the feedback from LSFmm, the LWN article, the RFC series since
-> > > then, and a ton of scenarios I've worked in my mind and/or tested...[1]
-> > > 
-> > > Solution summary
-> > > ================
-> > > 
-> > > The real issue is that there is no use case for a user to have RDMA pinn'ed
-> > > memory which is then truncated.  So really any solution we present which:
-> > > 
-> > > A) Prevents file system corruption or data leaks
-> > > ...and...
-> > > B) Informs the user that they did something wrong
-> > > 
-> > > Should be an acceptable solution.
-> > > 
-> > > Because this is slightly new behavior.  And because this is going to be
-> > > specific to DAX (because of the lack of a page cache) we have made the user
-> > > "opt in" to this behavior.
-> > > 
-> > > The following patches implement the following solution.
-> > > 
-> > > 0) Registrations to Device DAX char devs are not affected
-> > > 
-> > > 1) The user has to opt in to allowing page pins on a file with an exclusive
-> > >    layout lease.  Both exclusive and layout lease flags are user visible now.
-> > > 
-> > > 2) page pins will fail if the lease is not active when the file back page is
-> > >    encountered.
-> > > 
-> > > 3) Any truncate or hole punch operation on a pinned DAX page will fail.
-> > 
-> > So I didn't fully grok the patch set yet but by "pinned DAX page" do you
-> > mean a page which has corresponding file_pin covering it? Or do you mean a
-> > page which has pincount increased? If the first then I'd rephrase this to
-> > be less ambiguous, if the second then I think it is wrong. 
-> 
-> I mean the second.  but by "fail" I mean hang.  Right now the "normal" page
-> pincount processing will hang the truncate.  Given the discussion with John H
-> we can make this a bit better if we use something like FOLL_PIN and the page
-> count bias to indicate this type of pin.  Then I could fail the truncate
-> outright.  but that is not done yet.
-> 
-> so... I used the word "fail" to be a bit more vague as the final implementation
-> may return ETXTBUSY or hang as noted.
+Hello Everyone,
 
-Ah, OK. Hanging is fine in principle but with longterm pins, your work
-makes sure they actually fail with ETXTBUSY, doesn't it? The thing is that
-e.g. DIO will use page pins as well for its buffers and we must wait there
-until the pin is released. So please just clarify your 'fail' here a bit
-:).
+Here is the 13th version of my cleaned-up / refactored version of the
+VirtualBox shared-folder VFS driver. 
 
-> > > 4) The user has the option of holding the lease or releasing it.  If they
-> > >    release it no other pin calls will work on the file.
-> > 
-> > Last time we spoke the plan was that the lease is kept while the pages are
-> > pinned (and an attempt to release the lease would block until the pages are
-> > unpinned). That also makes it clear that the *lease* is what is making
-> > truncate and hole punch fail with ETXTBUSY and the file_pin structure is
-> > just an implementation detail how the existence is efficiently tracked (and
-> > what keeps the backing file for the pages open so that the lease does not
-> > get auto-destroyed). Why did you change this?
-> 
-> closing the file _and_ unmaping it will cause the lease to be released
-> regardless of if we allow this or not.
-> 
-> As we discussed preventing the close seemed intractable.
+This version hopefully addresses all issues pointed out in Christoph's
+review of v12 (thank you for the review Christoph):
 
-Yes, preventing the application from closing the file is difficult. But
-from a quick look at your patches it seemed to me that you actually hold a
-backing file reference from the file_pin structure thus even though the
-application closes its file descriptor, the struct file (and thus the
-lease) lives further until the file_pin gets released. And that should last
-as long as the pages are pinned. Am I missing something?
+Changes in v13:
+- Add SPDX tag to Makefile, use foo-y := to set objectfile list
+- Drop kerneldoc headers stating the obvious from vfs callbacks,
+  to avoid them going stale
+- Replace sf_ prefix of functions and data-types with vboxsf_
+- Use more normal naming scheme for sbi and private inode data:
+    struct vboxsf_sbi *sbi = VBOXSF_SBI(inode->i_sb);
+    struct vboxsf_inode *sf_i = VBOXSF_I(inode);
+- Refactor directory reading code
+- Use goto based unwinding instead of nested if-s in a number of places
+- Consolidate dir unlink and rmdir inode_operations into a single function
+- Use the page-cache for regular reads/writes too
+- Directly set super_operations.free_inode to what used to be our
+  vboxsf_i_callback, instead of setting super_operations.destroy_inode
+  to a function which just does: call_rcu(&inode->i_rcu, vboxsf_i_callback);
+- Use spinlock_irqsafe for ino_idr_lock
+  vboxsf_free_inode may be called from a RCU callback, and thus from
+  softirq context, so we need to use spinlock_irqsafe vboxsf_new_inode.
+  On alloc_inode failure vboxsf_free_inode may be called from process
+  context, so it too needs to use spinlock_irqsafe.
 
-> I thought about failing the munmap but that seemed wrong as well.  But more
-> importantly AFAIK RDMA can pass its memory pins to other processes via FD
-> passing...  This means that one could pin this memory, pass it to another
-> process and exit.  The file lease on the pin'ed file is lost.
+This version has been used by several distributions (arch, Fedora) for a
+while now, so hopefully we can get this upstream soonish, please review.
 
-Not if file_pin grabs struct file reference as I mentioned above...
- 
-> The file lease is just a key to get the memory pin.  Once unlocked the procfs
-> tracking keeps track of where that pin goes and which processes need to be
-> killed to get rid of it.
+Regards,
 
-I think having file lease being just a key to get the pin is conceptually
-wrong. The lease is what expresses: "I'm accessing these blocks directly,
-don't touch them without coordinating with me." So it would be only natural
-if we maintained the lease while we are accessing blocks instead of
-transferring this protection responsibility to another structure - namely
-file_pin - and letting the lease go. But maybe I miss some technical reason
-why maintaining file lease is difficult. If that's the case, I'd like to hear
-what...
- 
-> > > 5) Closing the file is ok.
-> > > 
-> > > 6) Unmapping the file is ok
-> > > 
-> > > 7) Pins against the files are tracked back to an owning file or an owning mm
-> > >    depending on the internal subsystem needs.  With RDMA there is an owning
-> > >    file which is related to the pined file.
-> > > 
-> > > 8) Only RDMA is currently supported
-> > 
-> > If you currently only need "owning file" variant in your patch set, then
-> > I'd just implement that and leave "owning mm" variant for later if it
-> > proves to be necessary. The things are complex enough as is...
-> 
-> I can do that...  I was trying to get io_uring working as well with the
-> owning_mm but I should save that for later.
+Hans
 
-Ah, OK. Yes, I guess io_uring can be next step.
+---
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Full changelog:
+
+Changes in v13:
+- Add SPDX tag to Makefile, use foo-y := to set objectfile list
+- Drop kerneldoc headers stating the obvious from vfs callbacks,
+  to avoid them going stale
+- Replace sf_ prefix of functions and data-types with vboxsf_
+- Use more normal naming scheme for sbi and private inode data:
+    struct vboxsf_sbi *sbi = VBOXSF_SBI(inode->i_sb);
+    struct vboxsf_inode *sf_i = VBOXSF_I(inode);
+- Refactor directory reading code
+- Use goto based unwinding instead of nested if-s in a number of places
+- Consolidate dir unlink and rmdir inode_operations into a single function
+- Use the page-cache for regular reads/writes too
+- Directly set super_operations.free_inode to what used to be our
+  vboxsf_i_callback, instead of setting super_operations.destroy_inode
+  to a function which just does: call_rcu(&inode->i_rcu, vboxsf_i_callback);
+- Use spinlock_irqsafe for ino_idr_lock
+  vboxsf_free_inode may be called from a RCU callback, and thus from
+  softirq context, so we need to use spinlock_irqsafe vboxsf_new_inode.
+  On alloc_inode failure vboxsf_free_inode may be called from process
+  context, so it too needs to use spinlock_irqsafe.
+
+Changes in v12:
+-Move make_kuid / make_kgid calls to option parsing time and add
+ uid_valid / gid_valid checks.
+-In init_fs_context call current_uid_gid() to init uid and gid
+-Validate dmode, fmode, dmask and fmask options during option parsing
+-Use correct types for various mount option variables (kuid_t, kgid_t, umode_t)
+-Some small coding-style tweaks
+
+Changes in v11:
+-Convert to the new Documentation/filesystems/mount_api.txt mount API
+-Fixed all the function kerneldoc comments to have things in the proper order
+-Change type of d_type variable passed as type to dir_emit from int to
+ unsigned int
+-Replaced the fake-ino overflow test with the one suggested by David Howells
+-Fixed various coding style issues
+
+Changes in v10:
+-Code-style fixes and remove some unneeded checks as suggested by Al Viro
+-Stop handle reuse between sf_create_aux and sf_reg_open, the code for this
+ was racy and the re-use meant the O_APPEND was not passed to the host for
+ newly created files with O_APPEND set
+-Use idr to generate unique inode number, modelled after the kernfs code
+-Only read and write the contents of the passed in offset pointer once in
+ sf_reg_write
+-Keep a list of refcounted open handles in the inode, so that writepage can
+ get a writeable handle this way. This replaces the old very racy code which
+ was just storing a pointer to the last opened struct file inside the inode.
+ This is modelled after how the cifs and fuse code do this
+
+Changes in v9:
+-Change license from GPL-2.0 or CDDL-1.0 to MIT, following upstream's
+ license change from: https://www.virtualbox.org/changeset/72627/vbox
+ I've gotten permission by email from VirtualBox upstream to retro-actively
+ apply the license-change to my "fork" of the vboxsf code
+-Fix not being able to mount any shared-folders when built with gcc9
+-Adjust for recent vboxguest changes
+-Fix potential buffer overrun in vboxsf_nlscpy
+-Fix build errors in some configs, caught by buildbot
+-Fix 3 sparse warnings
+-Some changes from upstream VirtualBox svn:
+ -Use 0x786f4256 /* 'VBox' little endian */ as super-magic matching upstream
+ -Implement AT_STATX_SYNC_TYPE support
+ -Properly return -EPERM when symlink creation is not supported
+
+Changes in v8:
+-Fix broken error-handling / oops when the vboxsf_map_folder() call fails
+-Fix umount using umount.nfs to umount vboxsf mounts
+-Prefixed the modules init and exit function names with vboxsf_
+-Delay connecting to the vbox hypervisor until the first mount, this fixes
+ vboxsf not working when it is builtin (in which case it may be initialized
+ before the vboxguest driver has bound to the guest communication PCI device)
+-Fix sf_write_end return value, return the number of bytes written or 0 on error:
+ https://github.com/jwrdegoede/vboxsf/issues/2
+-Use an ida id in the name passed to super_setup_bdi_name so that the same
+ shared-folder can be mounted twice without causing a
+ "sysfs: cannot create duplicate filename" error
+ https://github.com/jwrdegoede/vboxsf/issues/3
+
+Changes in v7:
+-Do not propagate sgid / suid bits between guest-host, note hosts with
+ VirtualBox version 5.2.6 or newer will filter these out regardless of what
+ we do
+-Better error messages when we cannot connect to the VirtualBox guest PCI
+ device, which may e.g. happen when trying to use vboxsf outside a vbox vm
+
+Changes in v6:
+-Address: https://www.virtualbox.org/ticket/819 which really is multiple bugs:
+ 1) Fix MAP_SHARED not being supported
+ 2) Fix changes done through regular read/write on the guest side not being
+    seen by guest apps using mmap() access
+ 3) Fix any changes done on the host side not being seen by guest apps using
+    mmap() access
+
+Changes in v5:
+-Honor CONFIG_NLS_DEFAULT (reported-by michael.thayer@oracle.com)
+
+Changes in v4:
+-Drop "name=..." mount option, instead use the dev_name argument to the
+ mount syscall, to keep compatibility with existing fstab entries
+-Fix "nls=%" match_table_t entry to "nls=%s"
+
+Changes in v3:
+-Use text only mount options, instead of a custom data struct
+-Stop caching full path in inode data, if parents gets renamed it will change
+-Fixed negative dentries handling
+-Dropped the force_reread flag for dirs, not sure what it was actually for
+ but it is no good, doing a re-read on unlink of a file will lead to
+ another file being skipped if the caller has already iterated over the
+ entry for the unlinked file.
+-Use file_inode(), file_dentry() and d_inode() helpers
+-Prefix any non object-private symbols with vboxsf_ so as to not pollute
+ the global namespace when builtin
+-Add MAINTAINERS entry
+-Misc. cleanups
+
+Changes in v2:
+-Removed various unused wrapper functions
+-Don't use i_private, instead defined alloc_inode and destroy_inode
+ methods and use container_of.
+-Drop obsolete comment referencing people to
+ http://www.atnf.csiro.au/people/rgooch/linux/vfs.txt
+-move the single symlink op of from lnkops.c to file.c
+-Use SPDX license headers
+-Replace SHFLROOT / SHFLHANDLE defines with normal types
+-Removed unnecessary S_ISREG checks
+-Got rid of bounce_buffer in regops, instead add a "user" flag to
+ vboxsf_read / vboxsf_write, re-using the existing __user address support
+ in the vboxguest module
+-Make vboxsf_wrappers return regular linux errno values
+-Use i_size_write to update size on writing
+-Convert doxygen style comments to kerneldoc style comments
+
+
