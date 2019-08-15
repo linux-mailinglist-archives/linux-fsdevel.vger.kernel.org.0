@@ -2,244 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BBA18F0B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 18:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB238F127
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 18:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbfHOQgz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 12:36:55 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51712 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728348AbfHOQgy (ORCPT
+        id S1728886AbfHOQrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 12:47:18 -0400
+Received: from sonic312-24.consmr.mail.gq1.yahoo.com ([98.137.69.205]:41165
+        "EHLO sonic312-24.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726008AbfHOQrS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:36:54 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FGYQWJ191500;
-        Thu, 15 Aug 2019 16:36:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=tQp5b+UWyvDkv+mGHv76dD+bCogpkczjZQzmfVTQMNA=;
- b=UhntzMAfWALdFCA48bRct57tOumFWBA3G42PC/w+X4/OsjQIx41oHRuI/w6t3OOZyIoF
- NdG1hCNIGQzZiOLbgkVJUHsKNM0j+Mps4ca0ICeOhOXb0mKZJqQdZFh/ZFrjOPj0MRlg
- encRmoGw4lQYevOL2Wpi2UQbHCLBM4iVnNT8/oDXVNdEWD0sfLW2rRn9L+ebu8qRhH8b
- 7Qg8rhhmpzZLubHbFue+jNF415ZfYdlqhvZXai/tjb0BvJDNK8/AR2fEcReBiDzcd7/n
- tbVDn1OQgbBWhExDCWddjeU1b0Zt04eP0HSxO3qTH2mjQg7z4Rfbzr8ggAJz7Ap4I+3M 1w== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2u9nbturdd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Aug 2019 16:36:37 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FGX7Yv003161;
-        Thu, 15 Aug 2019 16:34:36 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2ucs8858qr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Aug 2019 16:34:36 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7FGYZ0S027609;
-        Thu, 15 Aug 2019 16:34:35 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 15 Aug 2019 09:34:35 -0700
-Date:   Thu, 15 Aug 2019 09:34:34 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     hch@infradead.org, akpm@linux-foundation.org, tytso@mit.edu,
-        viro@zeniv.linux.org.uk
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        fstests <fstests@vger.kernel.org>
-Subject: [PATCH RFC 3/2] fstests: check that we can't write to swap files
-Message-ID: <20190815163434.GA15186@magnolia>
-References: <156588514105.111054.13645634739408399209.stgit@magnolia>
+        Thu, 15 Aug 2019 12:47:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1565887637; bh=synLMlaglsY0Z1eDHodD6fZP0N3IIeMoHfFfRAPdHSA=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=THAPNN1iVhpXmu/CI7B3zBiQNSrMASs+XgqCS+pihKjgUNDvQpMItp8MEiOaj72s/9wgLmDFsSllP4tu/lEY93aUsMkocu5U9Tt9N0cRps18lZ35QIKTil/BChWuwQnALwEvwyQ+IaxmVRT+gDv23QfySBgBgbtwO/M8DE9d5nuce8yNtqHM6Ke9EZLX2FTuPXH/G1jQdElTDK9IiEjoex6HPX0ZI9DHl7AN5lSYqPwgfqXoU9DknORdRJ48QsLLKDAraK/ZHH7l5trmK5PHX5WhPBxEN3cAm2JUzE8YpzUiTufpBivPOT+FqySzvgVl/E6GSaGtUuY+Xrmqw8AnRQ==
+X-YMail-OSG: DGMMZyYVM1nVJU6KZhXFai9ZsZzdlOD3JwSg.75gQuSAfWNRT_EdhIWzE9BEdkd
+ oz6gBRaOYYaMCZe8LZu4DlIWjmyM2ydY343Fk5E.IPEgQHsYdM7wwmqZ3qeqcAheN5QFoLjlo4Zd
+ P8vvxWuhodBdOw7P4bkeGiRBZkOZQd5z1FJOQfsfJUBxa92VWpbFvwkrjt7w8Wymwshtae.lUHyl
+ SZd3jYBdO8NVMacLZf4XFqbK8giyX0YjGNTbFN6Bi5XdjFF4O404ljiEg39huKQmx_GkHGV6X1_W
+ D.sTojNbGIZVqPKZeIu7uY.znsCq9THeltGrsE53G6pACdtQXNYY4BuoU9bs8IytRVM5sckdDqSB
+ vzcIYTjf_SL2exUr6uye3Lk6pcyr7MsgdjfO69bsuMJpHGMgn4KBIxJWs4rDrY8IGMNaM6WofrsH
+ 8bY28b2GKgtY01EXFJsAtWgO7Xc3_O2cbBJn.A9RYkp3MW905rALj73N8nTEVP3yqYKnbY1yR_j2
+ CSa0Ox_HPprd7d1PNsgkt_YPUxwU3PTdFM80oJKQZ_75PWVnqKom.n72vuW6HmHTev4N4mZprOHs
+ TfcVQsAme05z7tjxaTqvbJ8LS_ndTTx1Lqw3tIOtPEVSCf0BDevkgkE9FozKeL7phFdj_pAM7G3E
+ Oye6ej8vJztxw274hLF8b8G49wXzeU9J9uuuwihnWcqOx7GjpkaytItErGsfGUshAffLWAJi6BCs
+ DPrUKKU6.6thtlm3SiTolAi7zV73Yxphs0lpCKc_SSBhrjkps_6tFASc196bbKsiQ9P3qStvk5R8
+ YBcSgTPdg3xvSw93WtrAHrDJudAC0H5BZj6NKk5rn_8.K3MvGeSvCpCproE00WQyPeGOEnE6HUtm
+ bqGuQXiGEdrOOu6rd2O0groFg9qU9_ScAi37G_s9dwL40L6Ajw0Y0IikXpeeb0T5fLDp0FjTTihg
+ Cmsq_zON8rwea32UArZ.Z9_bTyvwTUNPeLRm80pWX0oivxIbX.PeIHc4YvuxLRL_VkOkT4jaqVuD
+ 4L9pI3QwFYdwNZtb7y.vg99qrp2QDwJe10qhaHQl_c.SoqKUMJTNM6e.AinWmDenI8xynYvSurJT
+ 6C_OpJQtX_9UJZhYkUUP2EOPjNRWFmEr9gBlvdRq0umIK3n3GrhufOOn80goFhaRDmg6EV9_r.Mp
+ HAQCS8gVleKfOeu7iI1QHhUo94k4lH8_jcQh.KKv9.Uy0xeq7qsNu3tdK.nYwuNjhX_q3IJ1om0z
+ c5Rr38ZhyxTDNvz_zEPhDCJWvHv223_K90Hs-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 15 Aug 2019 16:47:17 +0000
+Received: by smtp411.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 56dbf3541076f4413fe12889395d767b;
+          Thu, 15 Aug 2019 16:47:15 +0000 (UTC)
+Date:   Fri, 16 Aug 2019 00:46:56 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
+        devel@driverdev.osuosl.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Richard Weinberger <richard@nod.at>,
+        Christoph Hellwig <hch@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Pavel Machek <pavel@denx.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH v8 07/24] erofs: add directory operations
+Message-ID: <20190815164650.GA4958@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190815044155.88483-1-gaoxiang25@huawei.com>
+ <20190815044155.88483-8-gaoxiang25@huawei.com>
+ <CAHk-=wiUs+b=iVKM3mVooXgVk7cmmC67KTmnAuL0cd_cMMVAKw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <156588514105.111054.13645634739408399209.stgit@magnolia>
+In-Reply-To: <CAHk-=wiUs+b=iVKM3mVooXgVk7cmmC67KTmnAuL0cd_cMMVAKw@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908150161
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908150161
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Linus,
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+On Thu, Aug 15, 2019 at 09:13:19AM -0700, Linus Torvalds wrote:
+> On Wed, Aug 14, 2019 at 9:42 PM Gao Xiang <gaoxiang25@huawei.com> wrote:
+> >
+> > +
+> > +static const unsigned char erofs_filetype_table[EROFS_FT_MAX] = {
+> > +       [EROFS_FT_UNKNOWN]      = DT_UNKNOWN,
+> > +       [EROFS_FT_REG_FILE]     = DT_REG,
+> > +       [EROFS_FT_DIR]          = DT_DIR,
+> > +       [EROFS_FT_CHRDEV]       = DT_CHR,
+> > +       [EROFS_FT_BLKDEV]       = DT_BLK,
+> > +       [EROFS_FT_FIFO]         = DT_FIFO,
+> > +       [EROFS_FT_SOCK]         = DT_SOCK,
+> > +       [EROFS_FT_SYMLINK]      = DT_LNK,
+> > +};
+> 
+> Hmm.
+> 
+> The EROFS_FT_XYZ values seem to match the normal FT_XYZ values, and
+> we've lately tried to just have filesystems use the standard ones
+> instead of having a (pointless) duplicate conversion between the two.
+> 
+> And then you can use the common "fs_ftype_to_dtype()" to convert from
+> FT_XYZ to DT_XYZ.
+> 
+> Maybe I'm missing something, and the EROFS_FT_x list actually differs
+> from the normal FT_x list some way, but it would be good to not
+> introduce another case of this in normal filesystems, just as we've
+> been getting rid of them.
+> 
+> See for example commit e10892189428 ("ext2: use common file type conversion").
 
-While active, the media backing a swap file is leased to the kernel.
-Userspace has no business writing to it.  Make sure we can't do this.
+Yes, you're right. There is nothing different with DT_XYZ since
+I followed what f2fs did when I wrote this place.
 
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- tests/generic/717     |   60 +++++++++++++++++++++++++++++++++++++++++++++++++
- tests/generic/717.out |    7 ++++++
- tests/generic/718     |   46 ++++++++++++++++++++++++++++++++++++++
- tests/generic/718.out |    5 ++++
- tests/generic/group   |    2 ++
- 5 files changed, 120 insertions(+)
- create mode 100755 tests/generic/717
- create mode 100644 tests/generic/717.out
- create mode 100755 tests/generic/718
- create mode 100644 tests/generic/718.out
+Actually, I noticed that patchset once in mailing list months ago
+https://lore.kernel.org/r/20181023201952.GA15676@pathfinder/
+but I didn't keep eyes on it (whether this patchset is merged or not...)
 
-diff --git a/tests/generic/717 b/tests/generic/717
-new file mode 100755
-index 00000000..ab12ee4d
---- /dev/null
-+++ b/tests/generic/717
-@@ -0,0 +1,60 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0-or-newer
-+# Copyright (c) 2019, Oracle and/or its affiliates.  All Rights Reserved.
-+#
-+# FS QA Test No. 717
-+#
-+# Check that we can't modify a file that's an active swap file.
-+
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1    # failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	cd /
-+	swapoff $testfile
-+	rm -rf $tmp.* $testfile
-+}
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+
-+# real QA test starts here
-+_supported_os Linux
-+_supported_fs generic
-+_require_scratch_swapfile
-+
-+rm -f $seqres.full
-+
-+_scratch_mkfs > $seqres.full 2>&1
-+_scratch_mount >> $seqres.full 2>&1
-+
-+testfile=$SCRATCH_MNT/$seq.swap
-+
-+_format_swapfile $testfile 20m
-+swapon $testfile 2>&1 | _filter_scratch
-+
-+# Can we write to it?
-+$XFS_IO_PROG -c 'pwrite -S 0x59 64k 64k' $testfile
-+$XFS_IO_PROG -d -c 'pwrite -S 0x60 64k 64k' $testfile
-+$XFS_IO_PROG -c 'mmap -rw 64k 64k' -c 'mwrite -S 0x61 64k 64k' $testfile
-+
-+# Can we change the file size?
-+$XFS_IO_PROG -c 'truncate 18m' $testfile
-+
-+# Can you fallocate the file?
-+$XFS_IO_PROG -c 'falloc 0 32m' $testfile
-+
-+# We test that you can't reflink, dedupe, or copy_file_range into a swapfile
-+# in other tests.
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/717.out b/tests/generic/717.out
-new file mode 100644
-index 00000000..2cd9bcdb
---- /dev/null
-+++ b/tests/generic/717.out
-@@ -0,0 +1,7 @@
-+QA output created by 717
-+pwrite: Text file busy
-+pwrite: Text file busy
-+mmap: Text file busy
-+no mapped regions, try 'help mmap'
-+ftruncate: Text file busy
-+fallocate: Text file busy
-diff --git a/tests/generic/718 b/tests/generic/718
-new file mode 100755
-index 00000000..35cf718f
---- /dev/null
-+++ b/tests/generic/718
-@@ -0,0 +1,46 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0-or-newer
-+# Copyright (c) 2019, Oracle and/or its affiliates.  All Rights Reserved.
-+#
-+# FS QA Test No. 718
-+#
-+# Check that we can't modify a block device that's an active swap device.
-+
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1    # failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	cd /
-+	swapoff $SCRATCH_DEV
-+	rm -rf $tmp.*
-+}
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+
-+# real QA test starts here
-+_supported_os Linux
-+_supported_fs generic
-+_require_scratch_nocheck
-+
-+rm -f $seqres.full
-+
-+$MKSWAP_PROG "$SCRATCH_DEV" >> $seqres.full
-+swapon $SCRATCH_DEV 2>&1 | _filter_scratch
-+
-+# Can we write to it?
-+$XFS_IO_PROG -c 'pwrite -S 0x59 64k 64k' $SCRATCH_DEV
-+$XFS_IO_PROG -d -c 'pwrite -S 0x60 64k 64k' $SCRATCH_DEV
-+$XFS_IO_PROG -c 'mmap -rw 64k 64k' -c 'mwrite -S 0x61 64k 64k' $SCRATCH_DEV
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/718.out b/tests/generic/718.out
-new file mode 100644
-index 00000000..5cd25b9a
---- /dev/null
-+++ b/tests/generic/718.out
-@@ -0,0 +1,5 @@
-+QA output created by 718
-+pwrite: Text file busy
-+pwrite: Text file busy
-+mmap: Text file busy
-+no mapped regions, try 'help mmap'
-diff --git a/tests/generic/group b/tests/generic/group
-index 003fa963..c58d41e3 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -570,3 +570,5 @@
- 565 auto quick copy_range
- 715 auto quick rw
- 716 auto quick rw
-+717 auto quick rw swap
-+718 auto quick rw swap
+OK, let me fix that like other fses. Thanks for pointing out.
+
+Thanks,
+Gao Xiang
+
+> 
+>                Linus
