@@ -2,53 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D958F016
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 18:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 497198F017
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 18:06:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbfHOQGF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 12:06:05 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46768 "EHLO
+        id S1729327AbfHOQGH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 12:06:07 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46786 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbfHOQGF (ORCPT
+        with ESMTP id S1726370AbfHOQGG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:06:05 -0400
+        Thu, 15 Aug 2019 12:06:06 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FG3sOU002998;
-        Thu, 15 Aug 2019 16:05:46 GMT
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FG3t30003048;
+        Thu, 15 Aug 2019 16:05:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : date : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=5yuIMPIpR5tQleHFD55uwrKrfIrbzlh+2NW69UrzAmo=;
- b=dNRIY7FJevZFSa0/B3wDYb4rtEAIUYjO/HI0dgmgUfHHf90AiVoOV3KfrKNPQSApsD95
- vikkIX35sIVu0mChiuFu2eJREgzBywXKuwlj8AQ5dGvJqYgtKO4zMrqUikgFOtoYhMqI
- B19AYf9O1d4aAsFoc9fMZkJ0cJavC8VqyluSIChGYJ9GzB9WcG4PN3Q7Tz7EdkicNXlk
- M9geiGrNTrCS6fXai/oEZxdUi/b2osfW8ea6Y+itKAKkAitnaryez4inzMXgjAa8akBw
- BHP49vdEWRVgXcpLyaAqlK2W8JghBiPCOpcTTSs7A2FZS8n8gIiaUK/CUFjEmVvi8iZI FA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2u9nvpkp2t-1
+ cc : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=fGMpErgCA/O5M9vyBFLeT14i3Vu31Za+KYREJqkVJ/U=;
+ b=cHB+qxHp9WxMM2txiWT1G6ixmPnpbAvSckZYGJB52VFTP8AzGOFCYoMwMsLM11+Inwyv
+ lIYMdRSYhpDpCkmI/arv9j1G3prLRfMXufbsY+DuG8v5i6EvZwUwLbtTeuqjHpEXermQ
+ tPrkFDh2onQ3ZDiRbZ5o/pzG0XvBRVTwYUnGeRChFXsEov6EB96DwWRYyt6IYP5JNYif
+ OHyCXuGQCWpOCWcN7d7Hkc0n1k7XPIkX4mYuJmMEb69EHvCJRMUcqhsKw+fuiVxMmJGq
+ Bb7DWejbd0+wXSDlLwWbGZpSwbDnbIKU+icMP/4QG+7Hq4sHN1baanZtY00F6yVaGBp3 jw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2u9nvpkp3c-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Aug 2019 16:05:46 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FG3VCE058463;
-        Thu, 15 Aug 2019 16:05:45 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2ucgf169rr-1
+        Thu, 15 Aug 2019 16:05:53 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FG31ul107851;
+        Thu, 15 Aug 2019 16:05:52 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2ucmwjuwmq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Aug 2019 16:05:45 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7FG5gJN017382;
-        Thu, 15 Aug 2019 16:05:42 GMT
+        Thu, 15 Aug 2019 16:05:52 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7FG5pJX002636;
+        Thu, 15 Aug 2019 16:05:51 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 15 Aug 2019 09:05:42 -0700
-Subject: [PATCH v3 0/2] vfs: make active swap files unwritable
+        with ESMTP ; Thu, 15 Aug 2019 09:05:50 -0700
+Subject: [PATCH 1/2] mm: set S_SWAPFILE on blockdev swap devices
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     hch@infradead.org, akpm@linux-foundation.org, tytso@mit.edu,
         viro@zeniv.linux.org.uk, darrick.wong@oracle.com
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Date:   Thu, 15 Aug 2019 09:05:41 -0700
-Message-ID: <156588514105.111054.13645634739408399209.stgit@magnolia>
+Date:   Thu, 15 Aug 2019 09:05:47 -0700
+Message-ID: <156588514761.111054.15427341787826850860.stgit@magnolia>
+In-Reply-To: <156588514105.111054.13645634739408399209.stgit@magnolia>
+References: <156588514105.111054.13645634739408399209.stgit@magnolia>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,26 +71,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-I discovered that it's possible for userspace to write to active swap
-files and swap devices.  While activated, the kernel effectively holds
-an irrevocable (except by swapoff) longterm lease on the storage
-associated with the swap device, so we need to shut down this vector for
-memory corruption of userspace programs.
+Set S_SWAPFILE on block device inodes so that they have the same
+protections as a swap flie.
 
-Nothing new for v3 other than rebasing against 5.3-rc4.
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ mm/swapfile.c |   31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-If you're going to start using this mess, you probably ought to just
-pull from my git trees, which are linked below.
 
-This has been lightly tested with fstests.  Enjoy!
-Comments and questions are, as always, welcome.
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 0789a762ce2f..a53b7c49b40e 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -2368,9 +2368,8 @@ EXPORT_SYMBOL_GPL(add_swap_extent);
+  * requirements, they are simply tossed out - we will never use those blocks
+  * for swapping.
+  *
+- * For S_ISREG swapfiles we set S_SWAPFILE across the life of the swapon.  This
+- * prevents root from shooting her foot off by ftruncating an in-use swapfile,
+- * which will scribble on the fs.
++ * For all swap devices we set S_SWAPFILE across the life of the swapon.  This
++ * prevents users from writing to the swap device, which will corrupt memory.
+  *
+  * The amount of disk space which a single swap extent represents varies.
+  * Typically it is in the 1-4 megabyte range.  So we can have hundreds of
+@@ -2661,13 +2660,14 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
+ 	inode = mapping->host;
+ 	if (S_ISBLK(inode->i_mode)) {
+ 		struct block_device *bdev = I_BDEV(inode);
++
+ 		set_blocksize(bdev, old_block_size);
+ 		blkdev_put(bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
+-	} else {
+-		inode_lock(inode);
+-		inode->i_flags &= ~S_SWAPFILE;
+-		inode_unlock(inode);
+ 	}
++
++	inode_lock(inode);
++	inode->i_flags &= ~S_SWAPFILE;
++	inode_unlock(inode);
+ 	filp_close(swap_file, NULL);
+ 
+ 	/*
+@@ -2890,11 +2890,11 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
+ 		p->flags |= SWP_BLKDEV;
+ 	} else if (S_ISREG(inode->i_mode)) {
+ 		p->bdev = inode->i_sb->s_bdev;
+-		inode_lock(inode);
+-		if (IS_SWAPFILE(inode))
+-			return -EBUSY;
+-	} else
+-		return -EINVAL;
++	}
++
++	inode_lock(inode);
++	if (IS_SWAPFILE(inode))
++		return -EBUSY;
+ 
+ 	return 0;
+ }
+@@ -3295,8 +3295,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 	atomic_inc(&proc_poll_event);
+ 	wake_up_interruptible(&proc_poll_wait);
+ 
+-	if (S_ISREG(inode->i_mode))
+-		inode->i_flags |= S_SWAPFILE;
++	inode->i_flags |= S_SWAPFILE;
+ 	error = 0;
+ 	goto out;
+ bad_swap:
+@@ -3318,7 +3317,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 	if (inced_nr_rotate_swap)
+ 		atomic_dec(&nr_rotate_swap);
+ 	if (swap_file) {
+-		if (inode && S_ISREG(inode->i_mode)) {
++		if (inode) {
+ 			inode_unlock(inode);
+ 			inode = NULL;
+ 		}
+@@ -3331,7 +3330,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 	}
+ 	if (name)
+ 		putname(name);
+-	if (inode && S_ISREG(inode->i_mode))
++	if (inode)
+ 		inode_unlock(inode);
+ 	if (!error)
+ 		enable_swap_slots_cache();
 
---D
-
-kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=immutable-swapfiles
-
-fstests git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=immutable-swapfiles
