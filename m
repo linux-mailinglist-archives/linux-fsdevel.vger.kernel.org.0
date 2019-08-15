@@ -2,118 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E65A08ECC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 15:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B75E8ECE8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 15:33:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732267AbfHON0Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 09:26:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45032 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731846AbfHON0Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 09:26:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C4A59AE12;
-        Thu, 15 Aug 2019 13:26:22 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1C66F1E4200; Thu, 15 Aug 2019 15:26:22 +0200 (CEST)
-Date:   Thu, 15 Aug 2019 15:26:22 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1730775AbfHONdf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 09:33:35 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53444 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730304AbfHONdf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Aug 2019 09:33:35 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 10so1305019wmp.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2019 06:33:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IZSyysRAAgSD74VsmsQ6qEERpltshf4dwXy2Ucm6QKA=;
+        b=nZdbu9dqTUbbTYq79/uVkzIevhHJgrwGvLtOUKVRHwaP0qVSVkM1SEtdatNZl+KVqa
+         t6Un7d6KOH5uaSjFJddZCq74g4DkSghKFbQVkhX9DuEo5+KzBgBoeq8viA+h6b7nSZzU
+         dVqw00tJB02WXNEBvUShbhaetFMDgeKo0NPxsyWVS7SccmwLElJjU6usKYKeR7Fx5j6D
+         wZuZJ/NMcXJVdoM22X4NVSOxPLrYTVAV/18GzKoLrJNEoSldChPnv9IC37cCF187bORG
+         bHiHtO/JcRL1rJ+I47MyNW5Ae5OVY68a5LzXkyoAH7vunMyhVBWuT3365TWaAyTIBRWA
+         QC9A==
+X-Gm-Message-State: APjAAAUIBBWX+QvuLBkfwsNas5CQ0anbzWKAc//3o/F5bcaIQjEwqz/v
+        fAeFHbOD8sTIpoHkjC+24Vtzbw4Rhm4=
+X-Google-Smtp-Source: APXvYqzdGxDwXVHquY64vOBK/K0FUx++jevoTuxLRv5Y9BchvAEJZkPIXPyyJ/OQ8ROhyekTdO4LSQ==
+X-Received: by 2002:a05:600c:2056:: with SMTP id p22mr2762862wmg.155.1565876012785;
+        Thu, 15 Aug 2019 06:33:32 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id q20sm8454472wrc.79.2019.08.15.06.33.31
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 06:33:32 -0700 (PDT)
+Subject: Re: [PATCH v13] fs: Add VirtualBox guest shared folder (vboxsf)
+ support
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     David Howells <dhowells@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-Message-ID: <20190815132622.GG14313@quack2.suse.cz>
-References: <20190812015044.26176-1-jhubbard@nvidia.com>
- <20190812015044.26176-3-jhubbard@nvidia.com>
- <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
- <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
- <20190813210857.GB12695@iweiny-DESK2.sc.intel.com>
- <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
- <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
- <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
- <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
- <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
+        linux-fsdevel@vger.kernel.org
+References: <20190815131253.237921-1-hdegoede@redhat.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <da593279-4765-09c8-0594-3e9b4cbec3a1@redhat.com>
+Date:   Thu, 15 Aug 2019 15:33:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190815131253.237921-1-hdegoede@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 14-08-19 20:01:07, John Hubbard wrote:
-> On 8/14/19 5:02 PM, John Hubbard wrote:
-> > On 8/14/19 4:50 PM, Ira Weiny wrote:
-> > > On Tue, Aug 13, 2019 at 05:56:31PM -0700, John Hubbard wrote:
-> > > > On 8/13/19 5:51 PM, John Hubbard wrote:
-> > > > > On 8/13/19 2:08 PM, Ira Weiny wrote:
-> > > > > > On Mon, Aug 12, 2019 at 05:07:32PM -0700, John Hubbard wrote:
-> > > > > > > On 8/12/19 4:49 PM, Ira Weiny wrote:
-> > > > > > > > On Sun, Aug 11, 2019 at 06:50:44PM -0700, john.hubbard@gmail.com wrote:
-> > > > > > > > > From: John Hubbard <jhubbard@nvidia.com>
-> > > > > > > ...
-> > > > > > Finally, I struggle with converting everyone to a new call.  It is more
-> > > > > > overhead to use vaddr_pin in the call above because now the GUP code is going
-> > > > > > to associate a file pin object with that file when in ODP we don't need that
-> > > > > > because the pages can move around.
-> > > > > 
-> > > > > What if the pages in ODP are file-backed?
-> > > > > 
-> > > > 
-> > > > oops, strike that, you're right: in that case, even the file system case is covered.
-> > > > Don't mind me. :)
-> > > 
-> > > Ok so are we agreed we will drop the patch to the ODP code?  I'm going to keep
-> > > the FOLL_PIN flag and addition in the vaddr_pin_pages.
-> > > 
-> > 
-> > Yes. I hope I'm not overlooking anything, but it all seems to make sense to
-> > let ODP just rely on the MMU notifiers.
-> > 
-> 
-> Hold on, I *was* forgetting something: this was a two part thing, and
-> you're conflating the two points, but they need to remain separate and
-> distinct. There were:
-> 
-> 1. FOLL_PIN is necessary because the caller is clearly in the use case that
-> requires it--however briefly they might be there. As Jan described it,
-> 
-> "Anything that gets page reference and then touches page data (e.g.
-> direct IO) needs the new kind of tracking so that filesystem knows
-> someone is messing with the page data." [1]
+Hi,
 
-So when the GUP user uses MMU notifiers to stop writing to pages whenever
-they are writeprotected with page_mkclean(), they don't really need page
-pin - their access is then fully equivalent to any other mmap userspace
-access and filesystem knows how to deal with those. I forgot out this case
-when I wrote the above sentence.
+On 15-08-19 15:12, Hans de Goede wrote:
+> Hello Everyone,
+> 
+> Here is the 13th version of my cleaned-up / refactored version of the
+> VirtualBox shared-folder VFS driver.
+> 
+> This version hopefully addresses all issues pointed out in Christoph's
+> review of v12 (thank you for the review Christoph):
+> 
+> Changes in v13:
+> - Add SPDX tag to Makefile, use foo-y := to set objectfile list
+> - Drop kerneldoc headers stating the obvious from vfs callbacks,
+>    to avoid them going stale
+> - Replace sf_ prefix of functions and data-types with vboxsf_
+> - Use more normal naming scheme for sbi and private inode data:
+>      struct vboxsf_sbi *sbi = VBOXSF_SBI(inode->i_sb);
+>      struct vboxsf_inode *sf_i = VBOXSF_I(inode);
+> - Refactor directory reading code
+> - Use goto based unwinding instead of nested if-s in a number of places
+> - Consolidate dir unlink and rmdir inode_operations into a single function
+> - Use the page-cache for regular reads/writes too
+> - Directly set super_operations.free_inode to what used to be our
+>    vboxsf_i_callback, instead of setting super_operations.destroy_inode
+>    to a function which just does: call_rcu(&inode->i_rcu, vboxsf_i_callback);
+> - Use spinlock_irqsafe for ino_idr_lock
+>    vboxsf_free_inode may be called from a RCU callback, and thus from
+>    softirq context, so we need to use spinlock_irqsafe vboxsf_new_inode.
+>    On alloc_inode failure vboxsf_free_inode may be called from process
+>    context, so it too needs to use spinlock_irqsafe.
+> 
+> This version has been used by several distributions (arch, Fedora) for a
+> while now, so hopefully we can get this upstream soonish, please review.
 
-So to sum up there are three cases:
-1) DIO case - GUP references to pages serving as DIO buffers are needed for
-   relatively short time, no special synchronization with page_mkclean() or
-   munmap() => needs FOLL_PIN
-2) RDMA case - GUP references to pages serving as DMA buffers needed for a
-   long time, no special synchronization with page_mkclean() or munmap()
-   => needs FOLL_PIN | FOLL_LONGTERM
-   This case has also a special case when the pages are actually DAX. Then
-   the caller additionally needs file lease and additional file_pin
-   structure is used for tracking this usage.
-3) ODP case - GUP references to pages serving as DMA buffers, MMU notifiers
-   used to synchronize with page_mkclean() and munmap() => normal page
-   references are fine.
+I just noticed I forgot to add 0/1 to the subject of this cover letter,
+the second mail with the same subject (sorry) is the actual patch.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+
+Hans
