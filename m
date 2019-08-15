@@ -2,103 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85B358E1A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 02:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A4B8E1D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 02:30:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbfHOADr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Aug 2019 20:03:47 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:14990 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbfHOADq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Aug 2019 20:03:46 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d54a1640000>; Wed, 14 Aug 2019 17:03:48 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 14 Aug 2019 17:03:46 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 14 Aug 2019 17:03:46 -0700
-Received: from [10.2.171.178] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 15 Aug
- 2019 00:03:45 +0000
-Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-To:     Ira Weiny <ira.weiny@intel.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-rdma@vger.kernel.org>
-References: <20190812015044.26176-1-jhubbard@nvidia.com>
- <20190812015044.26176-3-jhubbard@nvidia.com>
- <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
- <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
- <20190813210857.GB12695@iweiny-DESK2.sc.intel.com>
- <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
- <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
- <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
-Date:   Wed, 14 Aug 2019 17:02:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728862AbfHOAaz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Aug 2019 20:30:55 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57456 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726490AbfHOAaz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Aug 2019 20:30:55 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 98BA4DA33EF7C6F0B2D4;
+        Thu, 15 Aug 2019 08:30:51 +0800 (CST)
+Received: from [127.0.0.1] (10.133.208.128) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 15 Aug 2019
+ 08:30:43 +0800
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
+        piaojun <piaojun@huawei.com>
+From:   wangyan <wangyan122@huawei.com>
+Subject: [QUESTION] A performance problem for buffer write compared with 9p
+Message-ID: <5abd7616-5351-761c-0c14-21d511251006@huawei.com>
+Date:   Thu, 15 Aug 2019 08:30:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-In-Reply-To: <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565827428; bh=hz8lTdgR0x8GaLCXZ+gwdewpGK5z8PDTvxWlhUrVd/U=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=IgA9r9wi9TjtWDXtQOaw18ttkfzxxnqWWK+KbZeDEl1Va/Ek14rGmc/fuZ8FVDdnK
-         F+xyO9NHzAtIOlP2woh9TTG0FbZbH+77iW7gIAu+unsfZC/stNXZzITa4Aqnt0yTNZ
-         vI4sZG0Qns16nkO3YBTG+kDr0a9dFuVA5wlTcvlVmhuQWN+nNgxRhw9igtUP6JRflT
-         uQDQO/ZLpW4Q4ozEdUVdHg4yVIQ2pCIEvM4IWIdCrd5uNC6owczN5yfsaZIYL+cTOC
-         uPCGn611bLCLb8ZDJV1A4g1ez8Fb2spQfxj6gwiWIq1/tkkUrxtUi8DkQ5uWZhQaz8
-         ImaSu3p4l2mSw==
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.133.208.128]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/14/19 4:50 PM, Ira Weiny wrote:
-> On Tue, Aug 13, 2019 at 05:56:31PM -0700, John Hubbard wrote:
->> On 8/13/19 5:51 PM, John Hubbard wrote:
->>> On 8/13/19 2:08 PM, Ira Weiny wrote:
->>>> On Mon, Aug 12, 2019 at 05:07:32PM -0700, John Hubbard wrote:
->>>>> On 8/12/19 4:49 PM, Ira Weiny wrote:
->>>>>> On Sun, Aug 11, 2019 at 06:50:44PM -0700, john.hubbard@gmail.com wrote:
->>>>>>> From: John Hubbard <jhubbard@nvidia.com>
->>>>> ...
->>>> Finally, I struggle with converting everyone to a new call.  It is more
->>>> overhead to use vaddr_pin in the call above because now the GUP code is going
->>>> to associate a file pin object with that file when in ODP we don't need that
->>>> because the pages can move around.
->>>
->>> What if the pages in ODP are file-backed?
->>>
->>
->> oops, strike that, you're right: in that case, even the file system case is covered.
->> Don't mind me. :)
-> 
-> Ok so are we agreed we will drop the patch to the ODP code?  I'm going to keep
-> the FOLL_PIN flag and addition in the vaddr_pin_pages.
-> 
+Hi all,
 
-Yes. I hope I'm not overlooking anything, but it all seems to make sense to
-let ODP just rely on the MMU notifiers.
+I met a performance problem when I tested buffer write compared with 9p.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+Guest configuration:
+     Kernel: https://github.com/rhvgoyal/linux/tree/virtio-fs-dev-5.1
+     2vCPU
+     8GB RAM
+Host configuration:
+     Intel(R) Xeon(R) CPU E5-2620 v2 @ 2.10GHz
+     128GB RAM
+     Linux 3.10.0
+     Qemu: https://gitlab.com/virtio-fs/qemu/tree/virtio-fs-dev
+     EXT4 + ramdisk for shared folder
+
+------------------------------------------------------------------------
+
+For virtiofs:
+virtiofsd cmd:
+     ./virtiofsd -o vhost_user_socket=/tmp/vhostqemu -o 
+source=/mnt/share/ -o cache=always -o writeback
+mount cmd:
+     mount -t virtio_fs myfs /mnt/virtiofs -o 
+rootmode=040000,user_id=0,group_id=0
+
+For 9p:
+mount cmd:
+     mount -t 9p -o 
+trans=virtio,version=9p2000.L,rw,dirsync,nodev,msize=1000000000,cache=fscache 
+sharedir /mnt/virtiofs/
+
+------------------------------------------------------------------------
+
+Compared with 9p, the test result:
+1. Latency
+     Test model：
+         fio -filename=/mnt/virtiofs/test -rw=write -bs=4K -size=1G 
+-iodepth=1 \
+             -ioengine=psync -numjobs=1 -group_reporting -name=4K 
+-time_based -runtime=30
+
+     virtiofs: avg-lat is 6.37 usec
+         4K: (g=0): rw=write, bs=4K-4K/4K-4K/4K-4K, ioengine=psync, 
+iodepth=1
+         fio-2.13
+         Starting 1 process
+         Jobs: 1 (f=1): [W(1)] [100.0% done] [0KB/471.9MB/0KB /s] 
+[0/121K/0 iops] [eta 00m:00s]
+         4K: (groupid=0, jobs=1): err= 0: pid=5558: Fri Aug  9 09:21:13 2019
+           write: io=13758MB, bw=469576KB/s, iops=117394, runt= 30001msec
+             clat (usec): min=2, max=10316, avg= 5.75, stdev=81.80
+              lat (usec): min=3, max=10317, avg= 6.37, stdev=81.80
+
+     9p: avg-lat is 3.94 usec
+         4K: (g=0): rw=write, bs=4K-4K/4K-4K/4K-4K, ioengine=psync, 
+iodepth=1
+         fio-2.13
+         Starting 1 process
+         Jobs: 1 (f=1): [W(1)] [100.0% done] [0KB/634.2MB/0KB /s] 
+[0/162K/0 iops] [eta 00m:00s]
+         4K: (groupid=0, jobs=1): err= 0: pid=5873: Fri Aug  9 09:53:46 2019
+           write: io=19700MB, bw=672414KB/s, iops=168103, runt= 30001msec
+             clat (usec): min=2, max=632, avg= 3.34, stdev= 3.77
+              lat (usec): min=2, max=633, avg= 3.94, stdev= 3.82
+
+
+2. Bandwidth
+     Test model:
+         fio -filename=/mnt/virtiofs/test -rw=write -bs=1M -size=1G 
+-iodepth=1 \
+             -ioengine=psync -numjobs=1 -group_reporting -name=1M 
+-time_based -runtime=30
+
+     virtiofs: bandwidth is 718961KB/s
+         1M: (g=0): rw=write, bs=1M-1M/1M-1M/1M-1M, ioengine=psync, 
+iodepth=1
+         fio-2.13
+         Starting 1 process
+         Jobs: 1 (f=1): [W(1)] [100.0% done] [0KB/753.8MB/0KB /s] 
+[0/753/0 iops] [eta 00m:00s]
+         1M: (groupid=0, jobs=1): err= 0: pid=5648: Fri Aug  9 09:24:36 2019
+             write: io=21064MB, bw=718961KB/s, iops=702, runt= 30001msec
+              clat (usec): min=390, max=11127, avg=1361.41, stdev=1551.50
+               lat (usec): min=432, max=11170, avg=1414.72, stdev=1553.28
+
+     9p: bandwidth is 2305.5MB/s
+         1M: (g=0): rw=write, bs=1M-1M/1M-1M/1M-1M, ioengine=psync, 
+iodepth=1
+         fio-2.13
+         Starting 1 process
+         Jobs: 1 (f=1): [W(1)] [100.0% done] [0KB/2406MB/0KB /s] 
+[0/2406/0 iops] [eta 00m:00s]
+         1M: (groupid=0, jobs=1): err= 0: pid=5907: Fri Aug  9 09:55:14 2019
+           write: io=69166MB, bw=2305.5MB/s, iops=2305, runt= 30001msec
+             clat (usec): min=287, max=17678, avg=352.00, stdev=503.43
+              lat (usec): min=330, max=17721, avg=402.76, stdev=503.41
+
+9p has a lower latency and higher bandwidth than virtiofs.
+
+------------------------------------------------------------------------ 
+
+
+I found that the judgement statement 'if (!TestSetPageDirty(page))' always
+true in function '__set_page_dirty_nobuffers', it will waste much time
+to mark inode dirty, no one page is dirty when write it the second time.
+The buffer write stack:
+     fuse_file_write_iter
+       ->fuse_cache_write_iter
+         ->generic_file_write_iter
+           ->__generic_file_write_iter
+             ->generic_perform_write
+               ->fuse_write_end
+                 ->set_page_dirty
+                   ->__set_page_dirty_nobuffers
+
+The reason for 'if (!TestSetPageDirty(page))' always true may be the pdflush
+process will clean the page's dirty flags in clear_page_dirty_for_io(),
+and call fuse_writepages_send() to flush all pages to the disk of the host.
+So when the page is written the second time, it always not dirty.
+The pdflush stack for fuse:
+     pdflush
+       ->...
+         ->do_writepages
+           ->fuse_writepages
+             ->write_cache_pages         // will clear all page's dirty 
+flags
+               ->clear_page_dirty_for_io // clear page's dirty flags
+             ->fuse_writepages_send      // write all pages to the host, 
+but don't wait the result
+Why not wait for getting the result of writing back pages to the host
+before cleaning all page's dirty flags?
+
+As for 9p, pdflush will call clear_page_dirty_for_io() to clean the page's
+dirty flags. Then call p9_client_write() to write the page to the host,
+waiting for the result, and then flush the next page. In this case, buffer
+write of 9p will hit the dirty page many times before it is being write
+back to the host by pdflush process.
+The pdflush stack for 9p:
+     pdflush
+       ->...
+         ->do_writepages
+           ->generic_writepages
+             ->write_cache_pages
+               ->clear_page_dirty_for_io // clear page's dirty flags
+               ->__writepage
+                 ->v9fs_vfs_writepage
+                   ->v9fs_vfs_writepage_locked
+                     ->p9_client_write   // it will get the writing back 
+page's result
+
+
+According to the test result, is the handling method of 9p for page writing
+back more reasonable than virtiofs?
+
+Thanks,
+Yan Wang
+
