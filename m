@@ -2,87 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3FD98F207
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 19:22:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FD2A8F243
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 19:32:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732219AbfHORWM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 13:22:12 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43576 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731530AbfHORWM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:22:12 -0400
-Received: by mail-qt1-f194.google.com with SMTP id b11so3097711qtp.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2019 10:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OQP1eUr9wWUBvltOQ9Z8Ub62tAaopiVDYE144Am9PUo=;
-        b=HZpXjn+wNo0sYnP8fO/9yi9VvMIl2O1vBqS8Gie0c3FRn6sQcTfP9It56G6JplB5nu
-         6VownGa1B8OF7b8irbXNCSR+PzKi7JmcuM4CQfuPlRxhfFejaHkab6ZOdE3AoI32m0ym
-         9kJ/FcPddnqe494h+5mJIqpN8bMFl29a2XjmzcKwArH2JCGXbQ9IqvTODG3SBiXDo6OK
-         yCF3is3A5wQj8iInyzHqtNlF6mJXcwZY3WY1cZAnr4RFS8A7douZtCnwhELnMFfM1jlj
-         QwAOY9+OGQNin1iSiarC/jXnwc6Mrf+qPsKiJHOkejdQmAIyz9D1rE115khKlpbX0f0O
-         kg7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OQP1eUr9wWUBvltOQ9Z8Ub62tAaopiVDYE144Am9PUo=;
-        b=B61y/iwaiJeBTaHGayHdAhDKQllqLDKFm5iFHaM7ISm6e/WhjxXG1STelL1LWV/tzJ
-         qyYlTBUxoWXpbWgkWuHC5IdLwQJWg8H5wVOaArMbYchYyAJY1JDvyvBqh6b5k2zckmOH
-         LD9YwfFKja/11sqwPATDUyaoHtL8eTf4DbUNt2Qr1X5EO9NZaiRGdKxmMmVtehD+mDHa
-         x8fWTyozY4lAEXU5+kRUlEMbhKYhGHy3unUsUmEXKPMBasR0RAbS41TJcrJaiY+vMppT
-         IcLPsZbb1Vjpk7cjvwLp8jzVxSQpHN7AMv2XbeTpeNwFiPqTLZU1eCSdG3gqy6dGlDQz
-         o9qg==
-X-Gm-Message-State: APjAAAX9C9D/g5/ub2jl2Xt6nO0dT80R9FvwIxkn3j1GSINxDWxRjS9i
-        TJiMPoQKYDzobdD43DKlZ9yPq/cEI4Rxpg==
-X-Google-Smtp-Source: APXvYqytVj4F93Lz8NG25cUqyDAsrQnJhJ3dX1TYfOQ21CEln44s8gEqzzxOvwnd/uQdneR7JttTRQ==
-X-Received: by 2002:a02:5105:: with SMTP id s5mr6163824jaa.42.1565889730912;
-        Thu, 15 Aug 2019 10:22:10 -0700 (PDT)
-Received: from [192.168.1.50] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f9sm4511731ioc.47.2019.08.15.10.22.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Aug 2019 10:22:10 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix manual setup of iov_iter for fixed buffers
-To:     Aleix Roca Nonell <aleix.rocanonell@bsc.es>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190815120322.GA19630@rocks>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ab327769-f18d-61d4-1c71-fb7ad60bb53d@kernel.dk>
-Date:   Thu, 15 Aug 2019 11:22:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731174AbfHORcj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 13:32:39 -0400
+Received: from mga14.intel.com ([192.55.52.115]:17145 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726203AbfHORcj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:32:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 10:32:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
+   d="scan'208";a="260880031"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga001.jf.intel.com with ESMTP; 15 Aug 2019 10:32:37 -0700
+Date:   Thu, 15 Aug 2019 10:32:37 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
+Message-ID: <20190815173237.GA30924@iweiny-DESK2.sc.intel.com>
+References: <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
+ <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
+ <20190813210857.GB12695@iweiny-DESK2.sc.intel.com>
+ <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
+ <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
+ <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
+ <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
+ <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
+ <20190815132622.GG14313@quack2.suse.cz>
+ <20190815133510.GA21302@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20190815120322.GA19630@rocks>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190815133510.GA21302@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/15/19 6:03 AM, Aleix Roca Nonell wrote:
-> Commit bd11b3a391e3 ("io_uring: don't use iov_iter_advance() for fixed
-> buffers") introduced an optimization to avoid using the slow
-> iov_iter_advance by manually populating the iov_iter iterator in some
-> cases.
+On Thu, Aug 15, 2019 at 03:35:10PM +0200, Jan Kara wrote:
+> On Thu 15-08-19 15:26:22, Jan Kara wrote:
+> > On Wed 14-08-19 20:01:07, John Hubbard wrote:
+> > > On 8/14/19 5:02 PM, John Hubbard wrote:
+> > > 
+> > > Hold on, I *was* forgetting something: this was a two part thing, and
+> > > you're conflating the two points, but they need to remain separate and
+> > > distinct. There were:
+> > > 
+> > > 1. FOLL_PIN is necessary because the caller is clearly in the use case that
+> > > requires it--however briefly they might be there. As Jan described it,
+> > > 
+> > > "Anything that gets page reference and then touches page data (e.g.
+> > > direct IO) needs the new kind of tracking so that filesystem knows
+> > > someone is messing with the page data." [1]
+> > 
+> > So when the GUP user uses MMU notifiers to stop writing to pages whenever
+> > they are writeprotected with page_mkclean(), they don't really need page
+> > pin - their access is then fully equivalent to any other mmap userspace
+> > access and filesystem knows how to deal with those. I forgot out this case
+> > when I wrote the above sentence.
+> > 
+> > So to sum up there are three cases:
+> > 1) DIO case - GUP references to pages serving as DIO buffers are needed for
+> >    relatively short time, no special synchronization with page_mkclean() or
+> >    munmap() => needs FOLL_PIN
+> > 2) RDMA case - GUP references to pages serving as DMA buffers needed for a
+> >    long time, no special synchronization with page_mkclean() or munmap()
+> >    => needs FOLL_PIN | FOLL_LONGTERM
+> >    This case has also a special case when the pages are actually DAX. Then
+> >    the caller additionally needs file lease and additional file_pin
+> >    structure is used for tracking this usage.
+> > 3) ODP case - GUP references to pages serving as DMA buffers, MMU notifiers
+> >    used to synchronize with page_mkclean() and munmap() => normal page
+> >    references are fine.
 > 
-> However, the computation of the iterator count field was erroneous: The
-> first bvec was always accounted for an extent of page size even if the
-> bvec length was smaller.
+> I want to add that I'd like to convert users in cases 1) and 2) from using
+> GUP to using differently named function. Users in case 3) can stay as they
+> are for now although ultimately I'd like to denote such use cases in a
+> special way as well...
 > 
-> In consequence, some I/O operations on fixed buffers were unable to
-> operate on the full extent of the buffer, consistently skipping some
-> bytes at the end of it.
 
-Applied, thanks.
+Ok just to make this clear I threw up my current tree with your patches here:
 
--- 
-Jens Axboe
+https://github.com/weiny2/linux-kernel/commits/mmotm-rdmafsdax-b0-v4
+
+I'm talking about dropping the final patch:
+05fd2d3afa6b rdma/umem_odp: Use vaddr_pin_pages_remote() in ODP
+
+The other 2 can stay.  I split out the *_remote() call.  We don't have a user
+but I'll keep it around for a bit.
+
+This tree is still WIP as I work through all the comments.  So I've not changed
+names or variable types etc...  Just wanted to settle this.
+
+Ira
 
