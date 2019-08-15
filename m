@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBD248E3F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 06:44:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FA348E3E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 06:43:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730132AbfHOEnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 00:43:20 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4268 "EHLO huawei.com"
+        id S1730185AbfHOEn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 00:43:26 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4269 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730087AbfHOEnU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 00:43:20 -0400
+        id S1730089AbfHOEnZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Aug 2019 00:43:25 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 77BC94A34F69037C2F95;
+        by Forcepoint Email with ESMTP id 82FE887EA8E85D941DED;
         Thu, 15 Aug 2019 12:43:13 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 15 Aug
- 2019 12:43:06 +0800
+ 2019 12:43:07 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
         "Alexander Viro" <viro@zeniv.linux.org.uk>
@@ -38,9 +38,9 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         Li Guifu <bluce.liguifu@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v8 23/24] erofs: introduce cached decompression
-Date:   Thu, 15 Aug 2019 12:41:54 +0800
-Message-ID: <20190815044155.88483-24-gaoxiang25@huawei.com>
+Subject: [PATCH v8 24/24] erofs: add document
+Date:   Thu, 15 Aug 2019 12:41:55 +0800
+Message-ID: <20190815044155.88483-25-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190815044155.88483-1-gaoxiang25@huawei.com>
 References: <20190815044155.88483-1-gaoxiang25@huawei.com>
@@ -53,564 +53,246 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch adds strategies which can be selected
-by users in order to cache both incomplete ends of
-compressed physical clusters as a complement of
-in-place I/O in order to boost random read, but
-it costs more memory than the in-place I/O only.
+This documents key features, usage, and
+on-disk design of erofs.
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- fs/erofs/internal.h |  16 +++++
- fs/erofs/super.c    | 126 ++++++++++++++++++++++++++++++++-
- fs/erofs/utils.c    |  40 ++++++++---
- fs/erofs/zdata.c    | 165 ++++++++++++++++++++++++++++++++++++++++++--
- fs/erofs/zdata.h    |   7 +-
- 5 files changed, 336 insertions(+), 18 deletions(-)
+ Documentation/filesystems/erofs.txt | 225 ++++++++++++++++++++++++++++
+ 1 file changed, 225 insertions(+)
+ create mode 100644 Documentation/filesystems/erofs.txt
 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 2be1ae700aca..ad3b6ba75979 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -72,6 +72,12 @@ struct erofs_sb_info {
- 	unsigned int max_sync_decompress_pages;
- 
- 	unsigned int shrinker_run_no;
+diff --git a/Documentation/filesystems/erofs.txt b/Documentation/filesystems/erofs.txt
+new file mode 100644
+index 000000000000..457e601e0467
+--- /dev/null
++++ b/Documentation/filesystems/erofs.txt
+@@ -0,0 +1,225 @@
++Overview
++========
 +
-+	/* current strategy of how to use managed cache */
-+	unsigned char cache_strategy;
++EROFS file-system stands for Enhanced Read-Only File System. Different
++from other read-only file systems, it aims to be designed for flexibility,
++scalability, but be kept simple and high performance.
 +
-+	/* pseudo inode to manage cached pages */
-+	struct inode *managed_cache;
- #endif	/* CONFIG_EROFS_FS_ZIP */
- 	u32 blocks;
- 	u32 meta_blkaddr;
-@@ -157,6 +163,12 @@ static inline void *erofs_kmalloc(struct erofs_sb_info *sbi,
- #define test_opt(sbi, option)	((sbi)->mount_opt & EROFS_MOUNT_##option)
- 
- #ifdef CONFIG_EROFS_FS_ZIP
-+enum {
-+	EROFS_ZIP_CACHE_DISABLED,
-+	EROFS_ZIP_CACHE_READAHEAD,
-+	EROFS_ZIP_CACHE_READAROUND
-+};
++It is designed as a better filesystem solution for the following scenarios:
++ - read-only storage media or
 +
- #define EROFS_LOCKED_MAGIC     (INT_MIN | 0xE0F510CCL)
- 
- /* basic unit of the workstation of a super_block */
-@@ -524,6 +536,10 @@ int __init erofs_init_shrinker(void);
- void erofs_exit_shrinker(void);
- int __init z_erofs_init_zip_subsystem(void);
- void z_erofs_exit_zip_subsystem(void);
-+int erofs_try_to_free_all_cached_pages(struct erofs_sb_info *sbi,
-+				       struct erofs_workgroup *egrp);
-+int erofs_try_to_free_cached_page(struct address_space *mapping,
-+				  struct page *page);
- #else
- static inline void erofs_shrinker_register(struct super_block *sb) {}
- static inline void erofs_shrinker_unregister(struct super_block *sb) {}
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index bdac8abf3aa7..95187619b3e3 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -197,10 +197,45 @@ static unsigned int erofs_get_fault_rate(struct erofs_sb_info *sbi)
- }
- #endif
- 
-+#ifdef CONFIG_EROFS_FS_ZIP
-+static int erofs_build_cache_strategy(struct erofs_sb_info *sbi,
-+				      substring_t *args)
-+{
-+	const char *cs = match_strdup(args);
-+	int err = 0;
++ - part of a fully trusted read-only solution, which means it needs to be
++   immutable and bit-for-bit identical to the official golden image for
++   their releases due to security and other considerations and
 +
-+	if (!cs) {
-+		errln("Not enough memory to store cache strategy");
-+		return -ENOMEM;
-+	}
++ - hope to save some extra storage space with guaranteed end-to-end performance
++   by using reduced metadata and transparent file compression, especially
++   for those embedded devices with limited memory (ex, smartphone);
 +
-+	if (!strcmp(cs, "disabled")) {
-+		sbi->cache_strategy = EROFS_ZIP_CACHE_DISABLED;
-+	} else if (!strcmp(cs, "readahead")) {
-+		sbi->cache_strategy = EROFS_ZIP_CACHE_READAHEAD;
-+	} else if (!strcmp(cs, "readaround")) {
-+		sbi->cache_strategy = EROFS_ZIP_CACHE_READAROUND;
-+	} else {
-+		errln("Unrecognized cache strategy \"%s\"", cs);
-+		err = -EINVAL;
-+	}
-+	kfree(cs);
-+	return err;
-+}
-+#else
-+static int erofs_build_cache_strategy(struct erofs_sb_info *sbi,
-+				      substring_t *args)
-+{
-+	infoln("EROFS compression is disabled, so cache strategy is ignored");
-+	return 0;
-+}
-+#endif
++Here is the main features of EROFS:
++ - Little endian on-disk design;
 +
- /* set up default EROFS parameters */
- static void default_options(struct erofs_sb_info *sbi)
- {
- #ifdef CONFIG_EROFS_FS_ZIP
-+	sbi->cache_strategy = EROFS_ZIP_CACHE_READAROUND;
- 	sbi->max_sync_decompress_pages = 3;
- #endif
- #ifdef CONFIG_EROFS_FS_XATTR
-@@ -217,6 +252,7 @@ enum {
- 	Opt_acl,
- 	Opt_noacl,
- 	Opt_fault_injection,
-+	Opt_cache_strategy,
- 	Opt_err
- };
- 
-@@ -226,6 +262,7 @@ static match_table_t erofs_tokens = {
- 	{Opt_acl, "acl"},
- 	{Opt_noacl, "noacl"},
- 	{Opt_fault_injection, "fault_injection=%u"},
-+	{Opt_cache_strategy, "cache_strategy=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -283,6 +320,11 @@ static int parse_options(struct super_block *sb, char *options)
- 			if (err)
- 				return err;
- 			break;
-+		case Opt_cache_strategy:
-+			err = erofs_build_cache_strategy(EROFS_SB(sb), args);
-+			if (err)
-+				return err;
-+			break;
- 		default:
- 			errln("Unrecognized mount option \"%s\" or missing value", p);
- 			return -EINVAL;
-@@ -291,6 +333,65 @@ static int parse_options(struct super_block *sb, char *options)
- 	return 0;
- }
- 
-+#ifdef CONFIG_EROFS_FS_ZIP
-+static const struct address_space_operations managed_cache_aops;
++ - Currently 4KB block size (nobh) and therefore maximum 16TB address space;
 +
-+static int managed_cache_releasepage(struct page *page, gfp_t gfp_mask)
-+{
-+	int ret = 1;	/* 0 - busy */
-+	struct address_space *const mapping = page->mapping;
++ - Metadata & data could be mixed by design;
 +
-+	DBG_BUGON(!PageLocked(page));
-+	DBG_BUGON(mapping->a_ops != &managed_cache_aops);
++ - 2 inode versions for different requirements:
++                          v1            v2
++   Inode metadata size:   32 bytes      64 bytes
++   Max file size:         4 GB          16 EB (also limited by max. vol size)
++   Max uids/gids:         65536         4294967296
++   File creation time:    no            yes (64 + 32-bit timestamp)
++   Max hardlinks:         65536         4294967296
++   Metadata reserved:     4 bytes       14 bytes
 +
-+	if (PagePrivate(page))
-+		ret = erofs_try_to_free_cached_page(mapping, page);
++ - Support extended attributes (xattrs) as an option;
 +
-+	return ret;
-+}
++ - Support xattr inline and tail-end data inline for all files;
 +
-+static void managed_cache_invalidatepage(struct page *page,
-+					 unsigned int offset,
-+					 unsigned int length)
-+{
-+	const unsigned int stop = length + offset;
++ - Support POSIX.1e ACLs by using xattrs;
 +
-+	DBG_BUGON(!PageLocked(page));
++ - Support statx();
 +
-+	/* Check for potential overflow in debug mode */
-+	DBG_BUGON(stop > PAGE_SIZE || stop < length);
++ - Support transparent file compression as an option:
++   LZ4 algorithm with 4 KB fixed-output compression for high performance;
 +
-+	if (offset == 0 && stop == PAGE_SIZE)
-+		while (!managed_cache_releasepage(page, GFP_NOFS))
-+			cond_resched();
-+}
++The following git tree provides the file system user-space tools under
++development (ex, formatting tool mkfs.erofs):
++>> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
 +
-+static const struct address_space_operations managed_cache_aops = {
-+	.releasepage = managed_cache_releasepage,
-+	.invalidatepage = managed_cache_invalidatepage,
-+};
++Bugs and patches are welcome, please kindly help us and send to the following
++linux-erofs mailing list:
++>> linux-erofs mailing list   <linux-erofs@lists.ozlabs.org>
 +
-+static int erofs_init_managed_cache(struct super_block *sb)
-+{
-+	struct erofs_sb_info *const sbi = EROFS_SB(sb);
-+	struct inode *const inode = new_inode(sb);
++Note that EROFS is still working in progress as a Linux staging driver,
++Cc the staging mailing list as well is highly recommended:
++>> Linux Driver Project Developer List <devel@driverdev.osuosl.org>
 +
-+	if (unlikely(!inode))
-+		return -ENOMEM;
++Mount options
++=============
 +
-+	set_nlink(inode, 1);
-+	inode->i_size = OFFSET_MAX;
++fault_injection=%d     Enable fault injection in all supported types with
++                       specified injection rate. Supported injection type:
++                       Type_Name                Type_Value
++                       FAULT_KMALLOC            0x000000001
++                       FAULT_READ_IO            0x000000002
++(no)user_xattr         Setup Extended User Attributes. Note: xattr is enabled
++                       by default if CONFIG_EROFS_FS_XATTR is selected.
++(no)acl                Setup POSIX Access Control List. Note: acl is enabled
++                       by default if CONFIG_EROFS_FS_POSIX_ACL is selected.
++cache_strategy=%s      Select a strategy for cached decompression from now on:
++                         disabled: In-place I/O decompression only;
++                        readahead: Cache the last incomplete compressed physical
++                                   cluster for further reading. It still does
++                                   in-place I/O decompression for the rest
++                                   compressed physical clusters;
++                       readaround: Cache the both ends of incomplete compressed
++                                   physical clusters for further reading.
++                                   It still does in-place I/O decompression
++                                   for the rest compressed physical clusters.
 +
-+	inode->i_mapping->a_ops = &managed_cache_aops;
-+	mapping_set_gfp_mask(inode->i_mapping,
-+			     GFP_NOFS | __GFP_HIGHMEM | __GFP_MOVABLE);
-+	sbi->managed_cache = inode;
-+	return 0;
-+}
-+#else
-+static int erofs_init_managed_cache(struct super_block *sb) { return 0; }
-+#endif
++Module parameters
++=================
++use_vmap=[0|1]         Use vmap() instead of vm_map_ram() (default 0).
 +
- static int erofs_fill_super(struct super_block *sb, void *data, int silent)
- {
- 	struct inode *inode;
-@@ -325,7 +426,6 @@ static int erofs_fill_super(struct super_block *sb, void *data, int silent)
- #ifdef CONFIG_EROFS_FS_XATTR
- 	sb->s_xattr = erofs_xattr_handlers;
- #endif
--
- 	/* set erofs default mount options */
- 	default_options(sbi);
- 
-@@ -362,6 +462,10 @@ static int erofs_fill_super(struct super_block *sb, void *data, int silent)
- 		return -ENOMEM;
- 
- 	erofs_shrinker_register(sb);
-+	/* sb->s_umount is already locked, SB_ACTIVE and SB_BORN are not set */
-+	err = erofs_init_managed_cache(sb);
-+	if (unlikely(err))
-+		return err;
- 
- 	if (!silent)
- 		infoln("mounted on %s with opts: %s.", sb->s_id, (char *)data);
-@@ -397,7 +501,15 @@ static void erofs_kill_sb(struct super_block *sb)
- /* called when ->s_root is non-NULL */
- static void erofs_put_super(struct super_block *sb)
- {
-+	struct erofs_sb_info *const sbi = EROFS_SB(sb);
++On-disk details
++===============
 +
-+	DBG_BUGON(!sbi);
++Summary
++-------
++Different from other read-only file systems, an EROFS volume is designed
++to be as simple as possible:
 +
- 	erofs_shrinker_unregister(sb);
-+#ifdef CONFIG_EROFS_FS_ZIP
-+	iput(sbi->managed_cache);
-+	sbi->managed_cache = NULL;
-+#endif
- }
- 
- static struct file_system_type erofs_fs_type = {
-@@ -495,6 +607,18 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- 	if (test_opt(sbi, FAULT_INJECTION))
- 		seq_printf(seq, ",fault_injection=%u",
- 			   erofs_get_fault_rate(sbi));
-+#ifdef CONFIG_EROFS_FS_ZIP
-+	if (sbi->cache_strategy == EROFS_ZIP_CACHE_DISABLED) {
-+		seq_puts(seq, ",cache_strategy=disabled");
-+	} else if (sbi->cache_strategy == EROFS_ZIP_CACHE_READAHEAD) {
-+		seq_puts(seq, ",cache_strategy=readahead");
-+	} else if (sbi->cache_strategy == EROFS_ZIP_CACHE_READAROUND) {
-+		seq_puts(seq, ",cache_strategy=readaround");
-+	} else {
-+		seq_puts(seq, ",cache_strategy=(unknown)");
-+		DBG_BUGON(1);
-+	}
-+#endif
- 	return 0;
- }
- 
-diff --git a/fs/erofs/utils.c b/fs/erofs/utils.c
-index ae6362abed67..c48e417d3926 100644
---- a/fs/erofs/utils.c
-+++ b/fs/erofs/utils.c
-@@ -144,24 +144,48 @@ int erofs_workgroup_put(struct erofs_workgroup *grp)
- 	return count;
- }
- 
--/* for nocache case, no customized reclaim path at all */
-+static void erofs_workgroup_unfreeze_final(struct erofs_workgroup *grp)
-+{
-+	erofs_workgroup_unfreeze(grp, 0);
-+	__erofs_workgroup_free(grp);
-+}
++                                |-> aligned with the block size
++   ____________________________________________________________
++  | |SB| | ... | Metadata | ... | Data | Metadata | ... | Data |
++  |_|__|_|_____|__________|_____|______|__________|_____|______|
++  0 +1K
 +
- static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
- 					   struct erofs_workgroup *grp,
- 					   bool cleanup)
- {
--	int cnt = atomic_read(&grp->refcount);
--
--	DBG_BUGON(cnt <= 0);
--	DBG_BUGON(cleanup && cnt != 1);
-+	/*
-+	 * If managed cache is on, refcount of workgroups
-+	 * themselves could be < 0 (freezed). In other words,
-+	 * there is no guarantee that all refcounts > 0.
-+	 */
-+	if (!erofs_workgroup_try_to_freeze(grp, 1))
-+		return false;
- 
--	if (cnt > 1)
-+	/*
-+	 * Note that all cached pages should be unattached
-+	 * before deleted from the radix tree. Otherwise some
-+	 * cached pages could be still attached to the orphan
-+	 * old workgroup when the new one is available in the tree.
-+	 */
-+	if (erofs_try_to_free_all_cached_pages(sbi, grp)) {
-+		erofs_workgroup_unfreeze(grp, 1);
- 		return false;
-+	}
- 
-+	/*
-+	 * It's impossible to fail after the workgroup is freezed,
-+	 * however in order to avoid some race conditions, add a
-+	 * DBG_BUGON to observe this in advance.
-+	 */
- 	DBG_BUGON(xa_untag_pointer(radix_tree_delete(&sbi->workstn_tree,
- 						     grp->index)) != grp);
- 
--	/* (rarely) could be grabbed again when freeing */
--	erofs_workgroup_put(grp);
-+	/*
-+	 * If managed cache is on, last refcount should indicate
-+	 * the related workstation.
-+	 */
-+	erofs_workgroup_unfreeze_final(grp);
- 	return true;
- }
- 
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index ffa64b1d8908..24be7d98bce3 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -167,7 +167,110 @@ static void preload_compressed_pages(struct z_erofs_collector *clt,
- 				     enum z_erofs_cache_alloctype type,
- 				     struct list_head *pagepool)
- {
--	/* nowhere to load compressed pages from */
-+	const struct z_erofs_pcluster *pcl = clt->pcl;
-+	const unsigned int clusterpages = BIT(pcl->clusterbits);
-+	struct page **pages = clt->compressedpages;
-+	pgoff_t index = pcl->obj.index + (pages - pcl->compressed_pages);
-+	bool standalone = true;
++All data areas should be aligned with the block size, but metadata areas
++may not. All metadatas can be now observed in two different spaces (views):
++ 1. Inode metadata space
++    Each valid inode should be aligned with an inode slot, which is a fixed
++    value (32 bytes) and designed to be kept in line with v1 inode size.
 +
-+	if (clt->mode < COLLECT_PRIMARY_FOLLOWED)
-+		return;
++    Each inode can be directly found with the following formula:
++         inode offset = meta_blkaddr * block_size + 32 * nid
 +
-+	for (; pages < pcl->compressed_pages + clusterpages; ++pages) {
-+		struct page *page;
-+		compressed_page_t t;
++                                |-> aligned with 8B
++                                           |-> followed closely
++    + meta_blkaddr blocks                                      |-> another slot
++     _____________________________________________________________________
++    |  ...   | inode |  xattrs  | extents  | data inline | ... | inode ...
++    |________|_______|(optional)|(optional)|__(optional)_|_____|__________
++             |-> aligned with the inode slot size
++                  .                   .
++                .                         .
++              .                              .
++            .                                    .
++          .                                         .
++        .                                              .
++      .____________________________________________________|-> aligned with 4B
++      | xattr_ibody_header | shared xattrs | inline xattrs |
++      |____________________|_______________|_______________|
++      |->    12 bytes    <-|->x * 4 bytes<-|               .
++                          .                .                 .
++                    .                      .                   .
++               .                           .                     .
++           ._______________________________.______________________.
++           | id | id | id | id |  ... | id | ent | ... | ent| ... |
++           |____|____|____|____|______|____|_____|_____|____|_____|
++                                           |-> aligned with 4B
++                                                       |-> aligned with 4B
 +
-+		/* the compressed page was loaded before */
-+		if (READ_ONCE(*pages))
-+			continue;
++    Inode could be 32 or 64 bytes, which can be distinguished from a common
++    field which all inode versions have -- i_advise:
 +
-+		page = find_get_page(mc, index);
++        __________________               __________________
++       |     i_advise     |             |     i_advise     |
++       |__________________|             |__________________|
++       |        ...       |             |        ...       |
++       |                  |             |                  |
++       |__________________| 32 bytes    |                  |
++                                        |                  |
++                                        |__________________| 64 bytes
 +
-+		if (page) {
-+			t = tag_compressed_page_justfound(page);
-+		} else if (type == DELAYEDALLOC) {
-+			t = tagptr_init(compressed_page_t, PAGE_UNALLOCATED);
-+		} else {	/* DONTALLOC */
-+			if (standalone)
-+				clt->compressedpages = pages;
-+			standalone = false;
-+			continue;
-+		}
++    Xattrs, extents, data inline are followed by the corresponding inode with
++    proper alignes, and they could be optional for different data mappings,
++    _currently_ there are totally 3 valid data mappings supported:
 +
-+		if (!cmpxchg_relaxed(pages, NULL, tagptr_cast_ptr(t)))
-+			continue;
++     1) flat file data without data inline (no extent);
++     2) fixed-output size data compression (must have extents);
++     3) flat file data with tail-end data inline (no extent);
 +
-+		if (page)
-+			put_page(page);
-+	}
++    The size of the optional xattrs is indicated by i_xattr_count in inode
++    header. Large xattrs or xattrs shared by many different files can be
++    stored in shared xattrs metadata rather than inlined right after inode.
 +
-+	if (standalone)		/* downgrade to PRIMARY_FOLLOWED_NOINPLACE */
-+		clt->mode = COLLECT_PRIMARY_FOLLOWED_NOINPLACE;
-+}
++ 2. Shared xattrs metadata space
++    Shared xattrs space is similar to the above inode space, started with
++    a specific block indicated by xattr_blkaddr, organized one by one with
++    proper align.
 +
-+/* called by erofs_shrinker to get rid of all compressed_pages */
-+int erofs_try_to_free_all_cached_pages(struct erofs_sb_info *sbi,
-+				       struct erofs_workgroup *grp)
-+{
-+	struct z_erofs_pcluster *const pcl =
-+		container_of(grp, struct z_erofs_pcluster, obj);
-+	struct address_space *const mapping = MNGD_MAPPING(sbi);
-+	const unsigned int clusterpages = BIT(pcl->clusterbits);
-+	int i;
++    Each share xattr can also be directly found by the following formula:
++         xattr offset = xattr_blkaddr * block_size + 4 * xattr_id
 +
-+	/*
-+	 * refcount of workgroup is now freezed as 1,
-+	 * therefore no need to worry about available decompression users.
-+	 */
-+	for (i = 0; i < clusterpages; ++i) {
-+		struct page *page = pcl->compressed_pages[i];
++                           |-> aligned by  4 bytes
++    + xattr_blkaddr blocks                     |-> aligned with 4 bytes
++     _________________________________________________________________________
++    |  ...   | xattr_entry |  xattr data | ... |  xattr_entry | xattr data  ...
++    |________|_____________|_____________|_____|______________|_______________
 +
-+		if (!page)
-+			continue;
++Directories
++-----------
++All directories are now organized in a compact on-disk format. Note that
++each directory block is divided into index and name areas in order to support
++random file lookup, and all directory entries are _strictly_ recorded in
++alphabetical order in order to support improved prefix binary search
++algorithm (could refer to the related source code).
 +
-+		/* block other users from reclaiming or migrating the page */
-+		if (!trylock_page(page))
-+			return -EBUSY;
++                 ___________________________
++                /                           |
++               /              ______________|________________
++              /              /              | nameoff1       | nameoffN-1
++ ____________.______________._______________v________________v__________
++| dirent | dirent | ... | dirent | filename | filename | ... | filename |
++|___.0___|____1___|_____|___N-1__|____0_____|____1_____|_____|___N-1____|
++     \                           ^
++      \                          |                           * could have
++       \                         |                             trailing '\0'
++        \________________________| nameoff0
 +
-+		if (unlikely(page->mapping != mapping))
-+			continue;
++                             Directory block
 +
-+		/* barrier is implied in the following 'unlock_page' */
-+		WRITE_ONCE(pcl->compressed_pages[i], NULL);
-+		set_page_private(page, 0);
-+		ClearPagePrivate(page);
++Note that apart from the offset of the first filename, nameoff0 also indicates
++the total number of directory entries in this block since it is no need to
++introduce another on-disk field at all.
 +
-+		unlock_page(page);
-+		put_page(page);
-+	}
-+	return 0;
-+}
++Compression
++-----------
++Currently, EROFS supports 4KB fixed-output clustersize transparent file
++compression, as illustrated below:
 +
-+int erofs_try_to_free_cached_page(struct address_space *mapping,
-+				  struct page *page)
-+{
-+	struct z_erofs_pcluster *const pcl = (void *)page_private(page);
-+	const unsigned int clusterpages = BIT(pcl->clusterbits);
-+	int ret = 0;	/* 0 - busy */
++         |---- Variant-Length Extent ----|-------- VLE --------|----- VLE -----
++         clusterofs                      clusterofs            clusterofs
++         |                               |                     |   logical data
++_________v_______________________________v_____________________v_______________
++... |    .        |             |        .    |             |  .          | ...
++____|____.________|_____________|________.____|_____________|__.__________|____
++    |-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|
++         size          size          size          size          size
++          .                             .                .                   .
++           .                       .               .                  .
++            .                  .              .                .
++      _______._____________._____________._____________._____________________
++         ... |             |             |             | ... physical data
++      _______|_____________|_____________|_____________|_____________________
++             |-> cluster <-|-> cluster <-|-> cluster <-|
++                  size          size          size
 +
-+	if (erofs_workgroup_try_to_freeze(&pcl->obj, 1)) {
-+		unsigned int i;
++Currently each on-disk physical cluster can contain 4KB (un)compressed data
++at most. For each logical cluster, there is a corresponding on-disk index to
++describe its cluster type, physical cluster address, etc.
 +
-+		for (i = 0; i < clusterpages; ++i) {
-+			if (pcl->compressed_pages[i] == page) {
-+				WRITE_ONCE(pcl->compressed_pages[i], NULL);
-+				ret = 1;
-+				break;
-+			}
-+		}
-+		erofs_workgroup_unfreeze(&pcl->obj, 1);
++See "struct z_erofs_vle_decompressed_index" in erofs_fs.h for more details.
 +
-+		if (ret) {
-+			ClearPagePrivate(page);
-+			put_page(page);
-+		}
-+	}
-+	return ret;
- }
- 
- /* page_type must be Z_EROFS_PAGE_TYPE_EXCLUSIVE */
-@@ -434,6 +537,20 @@ static inline struct page *__stagingpage_alloc(struct list_head *pagepool,
- 	return page;
- }
- 
-+static bool should_alloc_managed_pages(struct z_erofs_decompress_frontend *fe,
-+				       unsigned int cachestrategy,
-+				       erofs_off_t la)
-+{
-+	if (cachestrategy <= EROFS_ZIP_CACHE_DISABLED)
-+		return false;
-+
-+	if (fe->backmost)
-+		return true;
-+
-+	return cachestrategy >= EROFS_ZIP_CACHE_READAROUND &&
-+		la < fe->headoffset;
-+}
-+
- static int z_erofs_do_read_page(struct z_erofs_decompress_frontend *fe,
- 				struct page *page,
- 				struct list_head *pagepool)
-@@ -488,7 +605,13 @@ static int z_erofs_do_read_page(struct z_erofs_decompress_frontend *fe,
- 		goto err_out;
- 
- 	/* preload all compressed pages (maybe downgrade role if necessary) */
--	preload_compressed_pages(clt, MNGD_MAPPING(sbi), DONTALLOC, pagepool);
-+	if (should_alloc_managed_pages(fe, sbi->cache_strategy, map->m_la))
-+		cache_strategy = DELAYEDALLOC;
-+	else
-+		cache_strategy = DONTALLOC;
-+
-+	preload_compressed_pages(clt, MNGD_MAPPING(sbi),
-+				 cache_strategy, pagepool);
- 
- 	tight &= (clt->mode >= COLLECT_PRIMARY_HOOKED);
- hitted:
-@@ -987,6 +1110,7 @@ static struct z_erofs_unzip_io *jobqueue_init(struct super_block *sb,
- 
- /* define decompression jobqueue types */
- enum {
-+	JQ_BYPASS,
- 	JQ_SUBMIT,
- 	NR_JOBQUEUES,
- };
-@@ -997,6 +1121,13 @@ static void *jobqueueset_init(struct super_block *sb,
- 			      struct z_erofs_unzip_io *fgq,
- 			      bool forcefg)
- {
-+	/*
-+	 * if managed cache is enabled, bypass jobqueue is needed,
-+	 * no need to read from device for all pclusters in this queue.
-+	 */
-+	q[JQ_BYPASS] = jobqueue_init(sb, fgq + JQ_BYPASS, true);
-+	qtail[JQ_BYPASS] = &q[JQ_BYPASS]->head;
-+
- 	q[JQ_SUBMIT] = jobqueue_init(sb, fgq + JQ_SUBMIT, forcefg);
- 	qtail[JQ_SUBMIT] = &q[JQ_SUBMIT]->head;
- 
-@@ -1007,17 +1138,34 @@ static void move_to_bypass_jobqueue(struct z_erofs_pcluster *pcl,
- 				    z_erofs_next_pcluster_t qtail[],
- 				    z_erofs_next_pcluster_t owned_head)
- {
--	/* impossible to bypass submission for managed cache disabled */
--	DBG_BUGON(1);
-+	z_erofs_next_pcluster_t *const submit_qtail = qtail[JQ_SUBMIT];
-+	z_erofs_next_pcluster_t *const bypass_qtail = qtail[JQ_BYPASS];
-+
-+	DBG_BUGON(owned_head == Z_EROFS_PCLUSTER_TAIL_CLOSED);
-+	if (owned_head == Z_EROFS_PCLUSTER_TAIL)
-+		owned_head = Z_EROFS_PCLUSTER_TAIL_CLOSED;
-+
-+	WRITE_ONCE(pcl->next, Z_EROFS_PCLUSTER_TAIL_CLOSED);
-+
-+	WRITE_ONCE(*submit_qtail, owned_head);
-+	WRITE_ONCE(*bypass_qtail, &pcl->next);
-+
-+	qtail[JQ_BYPASS] = &pcl->next;
- }
- 
- static bool postsubmit_is_all_bypassed(struct z_erofs_unzip_io *q[],
- 				       unsigned int nr_bios,
- 				       bool force_fg)
- {
--	/* bios should be >0 if managed cache is disabled */
--	DBG_BUGON(!nr_bios);
--	return false;
-+	/*
-+	 * although background is preferred, no one is pending for submission.
-+	 * don't issue workqueue for decompression but drop it directly instead.
-+	 */
-+	if (force_fg || nr_bios)
-+		return false;
-+
-+	kvfree(container_of(q[JQ_SUBMIT], struct z_erofs_unzip_io_sb, io));
-+	return true;
- }
- 
- static bool z_erofs_vle_submit_all(struct super_block *sb,
-@@ -1130,6 +1278,9 @@ static void z_erofs_submit_and_unzip(struct super_block *sb,
- 				    pagepool, io, force_fg))
- 		return;
- 
-+	/* decompress no I/O pclusters immediately */
-+	z_erofs_vle_unzip_all(sb, &io[JQ_BYPASS], pagepool);
-+
- 	if (!force_fg)
- 		return;
- 
-diff --git a/fs/erofs/zdata.h b/fs/erofs/zdata.h
-index 3a82ae933015..506ca46727db 100644
---- a/fs/erofs/zdata.h
-+++ b/fs/erofs/zdata.h
-@@ -101,9 +101,12 @@ struct z_erofs_unzip_io_sb {
- 	struct super_block *sb;
- };
- 
--#define MNGD_MAPPING(sbi)	(NULL)
-+#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
- static inline bool erofs_page_is_managed(const struct erofs_sb_info *sbi,
--					 struct page *page) { return false; }
-+					 struct page *page)
-+{
-+	return page->mapping == MNGD_MAPPING(sbi);
-+}
- 
- #define Z_EROFS_ONLINEPAGE_COUNT_BITS   2
- #define Z_EROFS_ONLINEPAGE_COUNT_MASK   ((1 << Z_EROFS_ONLINEPAGE_COUNT_BITS) - 1)
 -- 
 2.17.1
 
