@@ -2,77 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ECBE8F020
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 18:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 128D78F060
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 18:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbfHOQHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 12:07:07 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59356 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726120AbfHOQHH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:07:07 -0400
-Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hyIHB-0001BN-TF; Thu, 15 Aug 2019 10:06:58 -0600
-To:     Max Gurtovoy <maxg@mellanox.com>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20190801234514.7941-1-logang@deltatee.com>
- <20190801234514.7941-9-logang@deltatee.com>
- <05a74e81-1dbd-725f-1369-5ca5c5918db1@mellanox.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <a6b9db95-a7f0-d1f6-1fa2-8dc13a6aa29e@deltatee.com>
-Date:   Thu, 15 Aug 2019 10:06:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730920AbfHOQVI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 12:21:08 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37514 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730277AbfHOQVH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Aug 2019 12:21:07 -0400
+Received: by mail-lj1-f196.google.com with SMTP id t14so2742091lji.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2019 09:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FuOQKA7vgPA06is52x9xKpXiDGgbCZoxJgLKNkyGfUs=;
+        b=GiMGu61r0de7kE+jxFqk2ISTMZec3MCIu0HBqAiSXGeSP8AeU/RC1ZhX/syTNiFag1
+         vef2zaQMkRgI5yQRnEcUQA2HqnQz4O2DAMgPqxYorQxLdg6N07Qt35SI/EEKkX7h+ocx
+         AGxQCZHY70aVP3rFrb29kL6nHWXMwFLTwSK+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FuOQKA7vgPA06is52x9xKpXiDGgbCZoxJgLKNkyGfUs=;
+        b=BKdLqJ/PkUgWB+8Nw6+SEQpXkoLGSZ5spg6giKkE/uBiVa0wNDVoIuaZ2k05JOO2RN
+         SzJoRIjxflAsBfXtAQKBwNkLkL0FrC38+aL/V2pD921qL4IwEJ4P0WJf+0N61BUxAtPG
+         X6grqgbVlhWYoXv/hu6KABeMAXLMJ9IaNC/gU0NP3d8r78wlxYySOVVND3TPvSivaEE2
+         4OnEGV7Z98bMFHarweNbTlfHzbN4vNMpMlO1Q/B+uPOQNQiY+HaAJlvtunVMDQhREfeU
+         uIbm42eZS2eskZzRevqeZNxaLAHlO5aTehNXSdvT027g7ezzvrO4tMEipieUW5dQFno5
+         ebbQ==
+X-Gm-Message-State: APjAAAUfaOxFbc/vtE0YW8Ukv61yJGLBM8/cG3YxVnjJhkUebigVAyYB
+        8wdRHEhkGlqbs1thC/bMzbB3vJkmbeM=
+X-Google-Smtp-Source: APXvYqz2fCPtsXs6kpR5WBLddsk6RRceSOI2/pf009PGYHmGDM5ZwAvlyDas9ykKmcGobgqGHNyYTw==
+X-Received: by 2002:a2e:805a:: with SMTP id p26mr1628577ljg.235.1565886065030;
+        Thu, 15 Aug 2019 09:21:05 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id g12sm519856lfc.96.2019.08.15.09.21.04
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2019 09:21:04 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id l14so2747838lje.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2019 09:21:04 -0700 (PDT)
+X-Received: by 2002:a2e:7018:: with SMTP id l24mr3046966ljc.165.1565885615360;
+ Thu, 15 Aug 2019 09:13:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <05a74e81-1dbd-725f-1369-5ca5c5918db1@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.73.163.230
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, kbusch@kernel.org, sagi@grimberg.me, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, maxg@mellanox.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v7 08/14] nvmet-core: allow one host per passthru-ctrl
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20190815044155.88483-1-gaoxiang25@huawei.com> <20190815044155.88483-8-gaoxiang25@huawei.com>
+In-Reply-To: <20190815044155.88483-8-gaoxiang25@huawei.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 15 Aug 2019 09:13:19 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiUs+b=iVKM3mVooXgVk7cmmC67KTmnAuL0cd_cMMVAKw@mail.gmail.com>
+Message-ID: <CAHk-=wiUs+b=iVKM3mVooXgVk7cmmC67KTmnAuL0cd_cMMVAKw@mail.gmail.com>
+Subject: Re: [PATCH v8 07/24] erofs: add directory operations
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        devel@driverdev.osuosl.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Theodore Ts'o" <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Richard Weinberger <richard@nod.at>,
+        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Aug 14, 2019 at 9:42 PM Gao Xiang <gaoxiang25@huawei.com> wrote:
+>
+> +
+> +static const unsigned char erofs_filetype_table[EROFS_FT_MAX] = {
+> +       [EROFS_FT_UNKNOWN]      = DT_UNKNOWN,
+> +       [EROFS_FT_REG_FILE]     = DT_REG,
+> +       [EROFS_FT_DIR]          = DT_DIR,
+> +       [EROFS_FT_CHRDEV]       = DT_CHR,
+> +       [EROFS_FT_BLKDEV]       = DT_BLK,
+> +       [EROFS_FT_FIFO]         = DT_FIFO,
+> +       [EROFS_FT_SOCK]         = DT_SOCK,
+> +       [EROFS_FT_SYMLINK]      = DT_LNK,
+> +};
 
+Hmm.
 
-On 2019-08-15 6:36 a.m., Max Gurtovoy wrote:
-> 
-> On 8/2/2019 2:45 AM, Logan Gunthorpe wrote:
->> This patch rejects any new connection to the passthru-ctrl if this
->> controller is already connected to a different host. At the time of
->> allocating the controller we check if the subsys associated with
->> the passthru ctrl is already connected to a host and reject it
->> if the hostnqn differs.
-> 
-> This is a big limitation.
-> 
-> Are we plan to enable many front-end ctrl's to connect to the single
-> back-end ctrl in the future ?
+The EROFS_FT_XYZ values seem to match the normal FT_XYZ values, and
+we've lately tried to just have filesystems use the standard ones
+instead of having a (pointless) duplicate conversion between the two.
 
-Honestly, I don't know that it's really necessary, but the limitation
-was requested by Sagi the first time this patch-set was submitted[1]
-citing unspecified user troubles. If there's consensus to remove the
-restriction I certainly can.
+And then you can use the common "fs_ftype_to_dtype()" to convert from
+FT_XYZ to DT_XYZ.
 
-Logan
+Maybe I'm missing something, and the EROFS_FT_x list actually differs
+from the normal FT_x list some way, but it would be good to not
+introduce another case of this in normal filesystems, just as we've
+been getting rid of them.
 
-[1] http://lists.infradead.org/pipermail/linux-nvme/2018-April/016588.html
+See for example commit e10892189428 ("ext2: use common file type conversion").
 
+               Linus
