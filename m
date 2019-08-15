@@ -2,101 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C56E88EEAB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 16:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 146E78EFE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2019 18:00:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733137AbfHOOvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 10:51:04 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43655 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731581AbfHOOvE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 10:51:04 -0400
-Received: by mail-qk1-f195.google.com with SMTP id m2so1997513qkd.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2019 07:51:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z90nPpYO8UuUUSb9IN8rKS3L0KsgC8zXmObZdfo6ctQ=;
-        b=dU2EhV+6EWSs1MNrZJWfU76DaiGX5NQgWL4uohTv/GZxgH6FeggKTIKZ+d/6xxWmB5
-         Uq7EirJG422MX6svb2pK3O0rmVD5upXZhrC0obDyAVUsClwMUccie10LZ+VusUXs6G5t
-         Cfxm7G3duJErwOwTzL6wlTMWxPvhXqi0t55/HXZYJ0ksP5CllSxCeRSJEwA3qeLb3Mw+
-         H9tQF6/hs2KVjejIpKYI3tuEWzOasQMSO5OrPdyS6Tf6gZNSrPhr0d7BWVqY895GeZU7
-         3vhMlzFvKziDCq6pld4ycFVFRE1zOEJ/X+8kNMBCMNIgJ/nYLqTQqzhkO3QmO9Oxi/p7
-         z4xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z90nPpYO8UuUUSb9IN8rKS3L0KsgC8zXmObZdfo6ctQ=;
-        b=TvGHGdaLG4d9qQ6CHS0vEWcfS5th0DRmteryyViMI5dAvzcpnh6gu76YsBjH8GMSPC
-         rb0vwqXb1XaNZnicStzet4vPMlfdif/BP4vy2PH+xuJcwHBWRMJvMad18s75+cL6F3xT
-         KjM64sFxmjHc+GIRCWVlZ1GKed+MFq9hJvpljU4ly4uN3EThrMvF2mE5hrG1N8yAhPz7
-         azHv0gQCgA54y1m0GcKrNAYHYTRnTfHXc3JXusPF5Pyzd0bZ9FjEspwScKDerVJEJg4q
-         yUpUFs+op3AuiAhPAoI6fASgWbGu61kkucwehVphqtOTCvyjsBiwM1ZKErX2rp1R1xp6
-         nAyg==
-X-Gm-Message-State: APjAAAUHxJLdRisHJkIst4aui46yjkJYnkZEAy68+75JmQVxLdMBokDF
-        Oel3m8bwwyDU7KSg9O2uA7CMwQ==
-X-Google-Smtp-Source: APXvYqyMHfwmFKSYVNb8WeeauLH7Hep/WJZ+jheCJjAwrLvMcjUnfX6gEreyk5eeamBSEzYzpviglQ==
-X-Received: by 2002:a05:620a:71a:: with SMTP id 26mr4357407qkc.374.1565880663323;
-        Thu, 15 Aug 2019 07:51:03 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id e15sm805595qtr.51.2019.08.15.07.51.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Aug 2019 07:51:02 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hyH5i-0005L9-BH; Thu, 15 Aug 2019 11:51:02 -0300
-Date:   Thu, 15 Aug 2019 11:51:02 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jan Kara <jack@suse.cz>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-Message-ID: <20190815145102.GH21596@ziepe.ca>
-References: <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
- <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
- <20190813210857.GB12695@iweiny-DESK2.sc.intel.com>
- <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
- <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
- <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
- <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
- <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
- <20190815132622.GG14313@quack2.suse.cz>
- <20190815133510.GA21302@quack2.suse.cz>
+        id S1729327AbfHOP77 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 11:59:59 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:59178 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728886AbfHOP77 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Aug 2019 11:59:59 -0400
+Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hyIAB-0000kk-MY; Thu, 15 Aug 2019 09:59:44 -0600
+To:     Max Gurtovoy <maxg@mellanox.com>, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20190801234514.7941-1-logang@deltatee.com>
+ <20190801234514.7941-2-logang@deltatee.com>
+ <563baec2-61f6-5705-d751-1eee75370e66@mellanox.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <3dc99450-bd6d-b994-4b4c-1af225565c2f@deltatee.com>
+Date:   Thu, 15 Aug 2019 09:59:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815133510.GA21302@quack2.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <563baec2-61f6-5705-d751-1eee75370e66@mellanox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 70.73.163.230
+X-SA-Exim-Rcpt-To: sbates@raithlin.com, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, kbusch@kernel.org, sagi@grimberg.me, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, maxg@mellanox.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v7 01/14] nvme-core: introduce nvme_ctrl_get_by_path()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 03:35:10PM +0200, Jan Kara wrote:
 
-> > 3) ODP case - GUP references to pages serving as DMA buffers, MMU notifiers
-> >    used to synchronize with page_mkclean() and munmap() => normal page
-> >    references are fine.
+
+On 2019-08-15 5:46 a.m., Max Gurtovoy wrote:
 > 
-> I want to add that I'd like to convert users in cases 1) and 2) from using
-> GUP to using differently named function. Users in case 3) can stay as they
-> are for now although ultimately I'd like to denote such use cases in a
-> special way as well...
+> On 8/2/2019 2:45 AM, Logan Gunthorpe wrote:
+>> nvme_ctrl_get_by_path() is analagous to blkdev_get_by_path() except it
+>> gets a struct nvme_ctrl from the path to its char dev (/dev/nvme0).
+>> It makes use of filp_open() to open the file and uses the private
+>> data to obtain a pointer to the struct nvme_ctrl. If the fops of the
+>> file do not match, -EINVAL is returned.
+>>
+>> The purpose of this function is to support NVMe-OF target passthru.
+>>
+>> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+>> ---
+>>   drivers/nvme/host/core.c | 24 ++++++++++++++++++++++++
+>>   drivers/nvme/host/nvme.h |  2 ++
+>>   2 files changed, 26 insertions(+)
+>>
+>> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+>> index e6ee6f2a3da6..f72334f34a30 100644
+>> --- a/drivers/nvme/host/core.c
+>> +++ b/drivers/nvme/host/core.c
+>> @@ -2817,6 +2817,30 @@ static const struct file_operations
+>> nvme_dev_fops = {
+>>       .compat_ioctl    = nvme_dev_ioctl,
+>>   };
+>>   +struct nvme_ctrl *nvme_ctrl_get_by_path(const char *path)
+>> +{
+>> +    struct nvme_ctrl *ctrl;
+>> +    struct file *f;
+>> +
+>> +    f = filp_open(path, O_RDWR, 0);
+>> +    if (IS_ERR(f))
+>> +        return ERR_CAST(f);
+>> +
+>> +    if (f->f_op != &nvme_dev_fops) {
+>> +        ctrl = ERR_PTR(-EINVAL);
+>> +        goto out_close;
+>> +    }
+> 
+> Logan,
+> 
+> this means that the PT is for nvme-pci and also nvme-fabrics as well.
+> 
+> Is this the intention ? or we want to restrict it to pci only.
 
-3) users also want a special function and path, right now it is called
-hmm_range_fault() but perhaps it would be good to harmonize it more
-with the GUP infrastructure?
+Yes, in theory, someone could passthru an nvme-fabrics controller or
+they could passthru a passthru'd passthru'd nvme-fabrics controller.
+This probably isn't a good idea but I don't know that we need to
+specifically reject it. If you think we should I could figure out a way
+to filter by pci controllers only.
 
-I'm not quite sure what the best plan for that is yet.
-
-Jason
+Logan
