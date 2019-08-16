@@ -2,161 +2,363 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E6590B91
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2019 01:55:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE05B90B96
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2019 01:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726012AbfHPXzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 19:55:12 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:54820 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfHPXzM (ORCPT
+        id S1726141AbfHPX5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 19:57:10 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53170 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbfHPX5K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 19:55:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1565999713; x=1597535713;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=oj3bcJTf94IkfV7XUhN1cBI/bwEpJS57PnqE1VUjn9w=;
-  b=VBpOSbwSiIwlYAvBq2l/s3pK5D8u/Ah3IogJwtkrJlIvLcReopLTGLYl
-   nUfw9Q6P5ulvimB/pwDRQoG7v7WTJvAXbA9idY0pzurTJzfPT4AmI7w0I
-   FxiMbQ6Od14MPpQBRlvQE4z8r9TPPCnswhnwPr2GNGk8AEs31UyT/F7L9
-   q+TqCTX5Lz2WP5QIr50VUr1/EX7M8IVIXtXLBqSzLm4vq4jP1xSQExISP
-   zpqqd4aXDSOm+B+LBUui7m/30XaC6DDv4VvVk5he9Nm5Qe59lPyiBe/ak
-   Mgyj18gA9vXOYj2OUdUpc6hHKDOAUaouKSqUMRgdxixRlx1gYypl+qYX5
-   w==;
-IronPort-SDR: w8vgI9HtyT8YjmDPHuPJLzAenlSobEaEGAiZdAQmi1gcw6Tx8+L6J5L+1b+V1e0iPXSt0wXATM
- MRkCFoW7HtOmoAWAh4Mn5vwSwoJl0v9ORWpVuoT2s8UkxJMnpK90jFCGQ62YYBrFv4WcL+sX3k
- Ht+u8O9sSuEQWgDNaRWJsgUmEIlR/mn/J+XsGqTWh5sof6jiMcSFAhNMd2+HJLycIs8soHay93
- OcgxkNbV45GGTLoM2EGRnnnegyBpxPuI9DrYK4H7QiU/afN5CMCMaWmTHUAaRiCmobpH6XwFE5
- lig=
-X-IronPort-AV: E=Sophos;i="5.64,395,1559491200"; 
-   d="scan'208";a="216403218"
-Received: from mail-cys01nam02lp2050.outbound.protection.outlook.com (HELO NAM02-CY1-obe.outbound.protection.outlook.com) ([104.47.37.50])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Aug 2019 07:55:11 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QKCaP9P551AHP1kTwbvX4T0dfygqNdBDygxGGAMuy15giCblrmoFR/ixETucg3u9+nHmfo4tF3LF3xoR0FlZyDGuT1eDVfc5HOX16ltPjDq/R/T6bcJjtYoLXv/L7gl2pYN9m3AHRkJY1Z62LuwRUYoK8ISsuak+kJJXsnI/rvpAEx7hpfU40cFd8yXPzzIb/nwwJ7g5d1uksgZeMcIhrbvANIa0bKehHaxQTDb9r92lPlPqp3DvN+NC13DJWuTkFEUa9eyH1GCEq4ssUN2+/jCsjyRFbsJv9K570Se31/cZ/kSg8K5I2cHcmi0CG1DsIz2iIYYja5URZD/vda9aSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mqTOlXhtG0i5umPVN0kj4FnuUExvDPRYUm3qWHMZxKQ=;
- b=QPS29zBGFscT8CaNIV7cGHaVuaS658SSYWfGsW3vE7tS38mXSsO3ZgS5tKva+XmO0NxwVqP061qiEz9TQuKWGILXjVRJdHkVsYVNRJ0ie8D7QGXBM5txAOtNvChJLcuoHsc64yQ7SBxyHQlwXKchDT1J/1tt4F1jfGhVykd+SKb7wgEyASTG/wrWotmxEstY+mJc+2K11PwxPSfguaN3znmEx9U8tNQ53h2pQkM4qUwbpcH9afYQ7FJsFg9ybrXfBMDkQJTwMuuiMw9BlzgVBQ2yB+DpqC+E++8GKCZX6clYLxoy/mo1fxZqZdqcHpjUB3ySWxoJOTwXt2lw7YjHMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mqTOlXhtG0i5umPVN0kj4FnuUExvDPRYUm3qWHMZxKQ=;
- b=f/Sflk3Dqm0VblpZ6Bsmqh0dygHksn+uXgNi2QUsp8db0mNcHUKYf/FZU+PEUuCJpFbRdr4z9TUKzOrVrey3yNyVcnCrMbqn5E1wHto+gCNBu2k9PSTOgWQ6oMeV06xuAUmTU2QAIjY2iLLnKCCt+yltbT6YZq1V2Y2Q/6loGHI=
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
- BYAPR04MB5847.namprd04.prod.outlook.com (20.179.59.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.20; Fri, 16 Aug 2019 23:55:09 +0000
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::a538:afd0:d62a:55bc]) by BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::a538:afd0:d62a:55bc%7]) with mapi id 15.20.2157.022; Fri, 16 Aug 2019
- 23:55:09 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Anand Jain <anand.jain@oracle.com>,
+        Fri, 16 Aug 2019 19:57:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7GNnuiP146344;
+        Fri, 16 Aug 2019 23:57:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=VP3L/06q+c1tXCnfwB/AVO3Cp/yff50SU/bMDEGfy54=;
+ b=DFwg6iIB739xCeYlN1eQt3LOVNOjV39DP5f919GH+o12aT+snIpwtECH0g453zOlI5cQ
+ gvEKjA4WKrJwAfXzrayeILoRTzCci32zEabJvOZ7phYb3aMuGhB7Xxj7oa1DuQOfK8j7
+ J2nmS6iAwlnaeiAnl4EdOigG2TtnAxsCpoqvW1wahR25yk2BlzzxwUH0cfZ/mcP8QnhS
+ 9VKiFVRk84ms13vdHrm7pFR3ODHPWUVCKSyyZd/QIxEwrtiWXhCCqgnRd8uQaR9mfsaD
+ jSrqrxru19+T3BG79i/1dxL1uPCQeaQI+55TKKUfgachSPLeZcsRSzv0idCNxq1SkEu1 3Q== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2u9nvpu5m4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Aug 2019 23:57:00 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7GNs1Xi080293;
+        Fri, 16 Aug 2019 23:57:00 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2udgqgpbm8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Aug 2019 23:56:59 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7GNuwR6032281;
+        Fri, 16 Aug 2019 23:56:58 GMT
+Received: from [192.168.1.145] (/39.109.145.141)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 16 Aug 2019 16:56:58 -0700
+Subject: Re: [PATCH v3 03/27] btrfs: Check and enable HMZONED mode
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
         Naohiro Aota <Naohiro.Aota@wdc.com>,
         "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
         David Sterba <dsterba@suse.com>
-CC:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Nikolay Borisov <nborisov@suse.com>,
         Matias Bjorling <Matias.Bjorling@wdc.com>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Hannes Reinecke <hare@suse.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3 02/27] btrfs: Get zone information of zoned block
- devices
-Thread-Topic: [PATCH v3 02/27] btrfs: Get zone information of zoned block
- devices
-Thread-Index: AQHVTcwJ3mXpSFAoAke32QrSccXb8g==
-Date:   Fri, 16 Aug 2019 23:55:09 +0000
-Message-ID: <BYAPR04MB58161B63A9D337AAD18D4E2BE7AF0@BYAPR04MB5816.namprd04.prod.outlook.com>
 References: <20190808093038.4163421-1-naohiro.aota@wdc.com>
- <20190808093038.4163421-3-naohiro.aota@wdc.com>
- <fd5b4006-0413-c63b-9376-8618e5fcb8f0@oracle.com>
- <BYAPR04MB5816442B6CD412BC6925D90AE7AF0@BYAPR04MB5816.namprd04.prod.outlook.com>
- <8e523d2c-f945-44bd-e6f2-c38037af2bf2@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Damien.LeMoal@wdc.com; 
-x-originating-ip: [66.201.36.5]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c7c3abb9-e833-4675-5551-08d722a52baa
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5847;
-x-ms-traffictypediagnostic: BYAPR04MB5847:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR04MB584798DAA0DFD4FE54C9E018E7AF0@BYAPR04MB5847.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0131D22242
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(39860400002)(396003)(376002)(346002)(366004)(199004)(189003)(43544003)(186003)(71200400001)(81166006)(478600001)(6506007)(2501003)(110136005)(256004)(14444005)(86362001)(7696005)(81156014)(102836004)(7736002)(53546011)(54906003)(53936002)(305945005)(74316002)(25786009)(5660300002)(4326008)(71190400001)(316002)(33656002)(99286004)(6246003)(76176011)(229853002)(66066001)(9686003)(446003)(3846002)(2906002)(6116002)(14454004)(476003)(486006)(8676002)(26005)(66476007)(55016002)(76116006)(6436002)(66946007)(52536014)(64756008)(66556008)(66446008)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5847;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: iyhPm4Lhuv/zgeAfTfVxBYHSXQs1pkeXmEpbKP+ZsazWHSjvN3IV+BFXy4lzmuZXAKgj/HDB/aF87XEa9fb7CdGWBZL438VCM8AEasUWRW9/aTxO5qiERRncWtjlPmJjR8/iwjhRXZdEAldDO+3i+KFl8GWvR2xe2FxvIxgCzt9Wopmv4v8j0DOWXafoZlcLX4bbb8GYEOMIVcky/IaJSNTXPh/qW6yLFba/CtRbbB68U/XAtCc6gjTq/xb0Bq0Q/LG14OZW7ub1noAgWa7vDyhwbh03QSZnmwU5Aj+TWTCGo+9j2/8ifcVrtXraN7CZ49vtyJtFac0nRbCl1+xCQ18me09SAflIDzE7dV3cyKr0yI+UU9AR3XO+ve4h/CJZUeEGtuPFFfb8A2y36HpVd470SqG6mQtGekLuCXgxXAY=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ <20190808093038.4163421-4-naohiro.aota@wdc.com>
+ <edcb46f5-1c3e-0b69-a2d9-66164e64b07e@oracle.com>
+ <BYAPR04MB5816FCD8F3A0330C8B3DC609E7AF0@BYAPR04MB5816.namprd04.prod.outlook.com>
+From:   Anand Jain <anand.jain@oracle.com>
+Message-ID: <86ef7944-0029-3d61-0ae3-874015726751@oracle.com>
+Date:   Sat, 17 Aug 2019 07:56:50 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7c3abb9-e833-4675-5551-08d722a52baa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2019 23:55:09.2476
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yHgbmGksVl3FLpNr0clOvsvRReJIHpQtafvwfZ7LxfIy/uT5Fxb6D2N3gXTCrgg2u56Yb+N7mFK2xElbW/Bzhg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5847
+In-Reply-To: <BYAPR04MB5816FCD8F3A0330C8B3DC609E7AF0@BYAPR04MB5816.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9351 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908160242
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9351 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908160242
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/08/16 16:48, Anand Jain wrote:=0A=
-[...]=0A=
->>> How many zones do we see in a disk? Not many I presume.=0A=
->>=0A=
->> A 15 TB SMR drive with 256 MB zones (which is a failry common value for =
-products=0A=
->> out there) has over 55,000 zones. "Not many" is subjective... I personal=
-ly=0A=
->> consider 55000 a large number and that one should take care to write app=
-ropriate=0A=
->> code to manage that many objects.=0A=
-> =0A=
->   Agree that's pretty large.=0A=
-> =0A=
->>> Here the allocation for %zones is inconsistent for each zone, unless=0A=
->>> there is substantial performance benefits, a consistent flow of=0A=
->>> alloc/free is fine as it makes the code easy to read and verify.=0A=
->>=0A=
->> I do not understand your comment here. btrfs_get_dev_zones() will alloca=
-te and=0A=
->> fill the zones array with at most BTRFS_REPORT_NR_ZONES zones descriptor=
-s on the=0A=
->> first call. On subsequent calls, the same array is reused until informat=
-ion on=0A=
->> all zones of the disk is obtained. "the allocation for %zones is inconsi=
-stent=0A=
->> for each zone" does not makes much sense. What exactly do you mean ?=0A=
-> =0A=
->   btrfs_get_dev_zones() allocates the memory for %zones_ret, and expects=
-=0A=
->   its parent function btrfs_get_dev_zone_info() to free, instead can we=
-=0A=
->   have alloc and free in the parent function btrfs_get_dev_zone_info().=
-=0A=
-=0A=
-Got it. Yes, we can change that. Thanks.=0A=
-=0A=
-> =0A=
-> Thanks, Anand=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+
+
+On 8/16/19 10:23 PM, Damien Le Moal wrote:
+> On 2019/08/15 22:46, Anand Jain wrote:
+>> On 8/8/19 5:30 PM, Naohiro Aota wrote:
+>>> HMZONED mode cannot be used together with the RAID5/6 profile for now.
+>>> Introduce the function btrfs_check_hmzoned_mode() to check this. This
+>>> function will also check if HMZONED flag is enabled on the file system and
+>>> if the file system consists of zoned devices with equal zone size.
+>>>
+>>> Additionally, as updates to the space cache are in-place, the space cache
+>>> cannot be located over sequential zones and there is no guarantees that the
+>>> device will have enough conventional zones to store this cache. Resolve
+>>> this problem by disabling completely the space cache.  This does not
+>>> introduces any problems with sequential block groups: all the free space is
+>>> located after the allocation pointer and no free space before the pointer.
+>>> There is no need to have such cache.
+>>>
+>>> For the same reason, NODATACOW is also disabled.
+>>>
+>>> Also INODE_MAP_CACHE is also disabled to avoid preallocation in the
+>>> INODE_MAP_CACHE inode.
+>>
+>>    A list of incompatibility features with zoned devices. This need better
+>>    documentation, may be a table and its reason is better.
+> 
+> Are you referring to the format of the commit message itself ? Or would you like
+> to see a documentation added to Documentation/filesystems/btrfs.txt ?
+
+  Documenting in the commit change log is fine. But it can be better
+  documented in a listed format as it looks like we have a list of
+  features which will be incompatible with zoned devices.
+
+more below..
+
+
+>>
+>>
+>>> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+>>> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+>>> ---
+>>>    fs/btrfs/ctree.h       |  3 ++
+>>>    fs/btrfs/dev-replace.c |  8 +++++
+>>>    fs/btrfs/disk-io.c     |  8 +++++
+>>>    fs/btrfs/hmzoned.c     | 67 ++++++++++++++++++++++++++++++++++++++++++
+>>>    fs/btrfs/hmzoned.h     | 18 ++++++++++++
+>>>    fs/btrfs/super.c       |  1 +
+>>>    fs/btrfs/volumes.c     |  5 ++++
+>>>    7 files changed, 110 insertions(+)
+>>>
+>>> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+>>> index 299e11e6c554..a00ce8c4d678 100644
+>>> --- a/fs/btrfs/ctree.h
+>>> +++ b/fs/btrfs/ctree.h
+>>> @@ -713,6 +713,9 @@ struct btrfs_fs_info {
+>>>    	struct btrfs_root *uuid_root;
+>>>    	struct btrfs_root *free_space_root;
+>>>    
+>>> +	/* Zone size when in HMZONED mode */
+>>> +	u64 zone_size;
+>>> +
+>>>    	/* the log root tree is a directory of all the other log roots */
+>>>    	struct btrfs_root *log_root_tree;
+>>>    
+>>> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
+>>> index 6b2e9aa83ffa..2cc3ac4d101d 100644
+>>> --- a/fs/btrfs/dev-replace.c
+>>> +++ b/fs/btrfs/dev-replace.c
+>>> @@ -20,6 +20,7 @@
+>>>    #include "rcu-string.h"
+>>>    #include "dev-replace.h"
+>>>    #include "sysfs.h"
+>>> +#include "hmzoned.h"
+>>>    
+>>>    static int btrfs_dev_replace_finishing(struct btrfs_fs_info *fs_info,
+>>>    				       int scrub_ret);
+>>> @@ -201,6 +202,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
+>>>    		return PTR_ERR(bdev);
+>>>    	}
+>>>    
+>>> +	if (!btrfs_check_device_zone_type(fs_info, bdev)) {
+>>> +		btrfs_err(fs_info,
+>>> +			  "zone type of target device mismatch with the filesystem!");
+>>> +		ret = -EINVAL;
+>>> +		goto error;
+>>> +	}
+>>> +
+>>>    	sync_blockdev(bdev);
+>>>    
+>>>    	devices = &fs_info->fs_devices->devices;
+>>> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+>>> index 5f7ee70b3d1a..8854ff2e5fa5 100644
+>>> --- a/fs/btrfs/disk-io.c
+>>> +++ b/fs/btrfs/disk-io.c
+>>> @@ -40,6 +40,7 @@
+>>>    #include "compression.h"
+>>>    #include "tree-checker.h"
+>>>    #include "ref-verify.h"
+>>> +#include "hmzoned.h"
+>>>    
+>>>    #define BTRFS_SUPER_FLAG_SUPP	(BTRFS_HEADER_FLAG_WRITTEN |\
+>>>    				 BTRFS_HEADER_FLAG_RELOC |\
+>>> @@ -3123,6 +3124,13 @@ int open_ctree(struct super_block *sb,
+>>>    
+>>>    	btrfs_free_extra_devids(fs_devices, 1);
+>>>    
+>>> +	ret = btrfs_check_hmzoned_mode(fs_info);
+>>> +	if (ret) {
+>>> +		btrfs_err(fs_info, "failed to init hmzoned mode: %d",
+>>> +				ret);
+>>> +		goto fail_block_groups;
+>>> +	}
+>>> +
+>>>    	ret = btrfs_sysfs_add_fsid(fs_devices, NULL);
+>>>    	if (ret) {
+>>>    		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
+>>> diff --git a/fs/btrfs/hmzoned.c b/fs/btrfs/hmzoned.c
+>>> index bfd04792dd62..512674d8f488 100644
+>>> --- a/fs/btrfs/hmzoned.c
+>>> +++ b/fs/btrfs/hmzoned.c
+>>> @@ -160,3 +160,70 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+>>>    
+>>>    	return 0;
+>>>    }
+>>> +
+>>> +int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
+>>> +{
+>>> +	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
+>>> +	struct btrfs_device *device;
+>>> +	u64 hmzoned_devices = 0;
+>>> +	u64 nr_devices = 0;
+>>> +	u64 zone_size = 0;
+>>> +	int incompat_hmzoned = btrfs_fs_incompat(fs_info, HMZONED);
+>>> +	int ret = 0;
+>>> +
+>>> +	/* Count zoned devices */
+>>> +	list_for_each_entry(device, &fs_devices->devices, dev_list) {
+>>> +		if (!device->bdev)
+>>> +			continue;
+>>> +		if (bdev_zoned_model(device->bdev) == BLK_ZONED_HM ||
+>>> +		    (bdev_zoned_model(device->bdev) == BLK_ZONED_HA &&
+>>> +		     incompat_hmzoned)) {
+>>> +			hmzoned_devices++;
+>>> +			if (!zone_size) {
+>>> +				zone_size = device->zone_info->zone_size;
+>>> +			} else if (device->zone_info->zone_size != zone_size) {
+>>> +				btrfs_err(fs_info,
+>>> +					  "Zoned block devices must have equal zone sizes");
+>>> +				ret = -EINVAL;
+>>> +				goto out;
+>>> +			}
+>>> +		}
+>>> +		nr_devices++;
+>>> +	}
+>>> +
+>>> +	if (!hmzoned_devices && incompat_hmzoned) {
+>>> +		/* No zoned block device found on HMZONED FS */
+>>> +		btrfs_err(fs_info, "HMZONED enabled file system should have zoned devices");
+>>> +		ret = -EINVAL;
+>>> +		goto out;
+>>
+>>
+>>    When does the HMZONED gets enabled? I presume during mkfs. Where are
+>>    the related btrfs-progs patches? Searching for the related btrfs-progs
+>>    patches doesn't show up anything in the ML. Looks like I am missing
+>>    something, nor the cover letter said anything about the progs part.
+
+
+  Any idea about this comment above?
+
+Thanks, Anand
+
+
+>> Thanks, Anand
+>>
+>>> +	}
+>>> +
+>>> +	if (!hmzoned_devices && !incompat_hmzoned)
+>>> +		goto out;
+>>> +
+>>> +	fs_info->zone_size = zone_size;
+>>> +
+>>> +	if (hmzoned_devices != nr_devices) {
+>>> +		btrfs_err(fs_info,
+>>> +			  "zoned devices cannot be mixed with regular devices");
+>>> +		ret = -EINVAL;
+>>> +		goto out;
+>>> +	}
+>>> +
+>>> +	/*
+>>> +	 * stripe_size is always aligned to BTRFS_STRIPE_LEN in
+>>> +	 * __btrfs_alloc_chunk(). Since we want stripe_len == zone_size,
+>>> +	 * check the alignment here.
+>>> +	 */
+>>> +	if (!IS_ALIGNED(zone_size, BTRFS_STRIPE_LEN)) {
+>>> +		btrfs_err(fs_info,
+>>> +			  "zone size is not aligned to BTRFS_STRIPE_LEN");
+>>> +		ret = -EINVAL;
+>>> +		goto out;
+>>> +	}
+>>> +
+>>> +	btrfs_info(fs_info, "HMZONED mode enabled, zone size %llu B",
+>>> +		   fs_info->zone_size);
+>>> +out:
+>>> +	return ret;
+>>> +}
+>>> diff --git a/fs/btrfs/hmzoned.h b/fs/btrfs/hmzoned.h
+>>> index ffc70842135e..29cfdcabff2f 100644
+>>> --- a/fs/btrfs/hmzoned.h
+>>> +++ b/fs/btrfs/hmzoned.h
+>>> @@ -9,6 +9,8 @@
+>>>    #ifndef BTRFS_HMZONED_H
+>>>    #define BTRFS_HMZONED_H
+>>>    
+>>> +#include <linux/blkdev.h>
+>>> +
+>>>    struct btrfs_zoned_device_info {
+>>>    	/*
+>>>    	 * Number of zones, zone size and types of zones if bdev is a
+>>> @@ -25,6 +27,7 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+>>>    		       struct blk_zone *zone, gfp_t gfp_mask);
+>>>    int btrfs_get_dev_zone_info(struct btrfs_device *device);
+>>>    void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
+>>> +int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info);
+>>>    
+>>>    static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
+>>>    {
+>>> @@ -76,4 +79,19 @@ static inline void btrfs_dev_clear_zone_empty(struct btrfs_device *device,
+>>>    	btrfs_dev_set_empty_zone_bit(device, pos, false);
+>>>    }
+>>>    
+>>> +static inline bool btrfs_check_device_zone_type(struct btrfs_fs_info *fs_info,
+>>> +						struct block_device *bdev)
+>>> +{
+>>> +	u64 zone_size;
+>>> +
+>>> +	if (btrfs_fs_incompat(fs_info, HMZONED)) {
+>>> +		zone_size = (u64)bdev_zone_sectors(bdev) << SECTOR_SHIFT;
+>>> +		/* Do not allow non-zoned device */
+>>> +		return bdev_is_zoned(bdev) && fs_info->zone_size == zone_size;
+>>> +	}
+>>> +
+>>> +	/* Do not allow Host Manged zoned device */
+>>> +	return bdev_zoned_model(bdev) != BLK_ZONED_HM;
+>>> +}
+>>> +
+>>>    #endif
+>>> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+>>> index 78de9d5d80c6..d7879a5a2536 100644
+>>> --- a/fs/btrfs/super.c
+>>> +++ b/fs/btrfs/super.c
+>>> @@ -43,6 +43,7 @@
+>>>    #include "free-space-cache.h"
+>>>    #include "backref.h"
+>>>    #include "space-info.h"
+>>> +#include "hmzoned.h"
+>>>    #include "tests/btrfs-tests.h"
+>>>    
+>>>    #include "qgroup.h"
+>>> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+>>> index 8e5a894e7bde..755b2ec1e0de 100644
+>>> --- a/fs/btrfs/volumes.c
+>>> +++ b/fs/btrfs/volumes.c
+>>> @@ -2572,6 +2572,11 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
+>>>    	if (IS_ERR(bdev))
+>>>    		return PTR_ERR(bdev);
+>>>    
+>>> +	if (!btrfs_check_device_zone_type(fs_info, bdev)) {
+>>> +		ret = -EINVAL;
+>>> +		goto error;
+>>> +	}
+>>> +
+>>>    	if (fs_devices->seeding) {
+>>>    		seeding_dev = 1;
+>>>    		down_write(&sb->s_umount);
+>>>
+>>
+>>
+> 
+> 
