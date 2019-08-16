@@ -2,147 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CA8E8F7DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 02:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77C6D8F8C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 04:14:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbfHPAKK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Aug 2019 20:10:10 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46582 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbfHPAKC (ORCPT
+        id S1726403AbfHPCOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Aug 2019 22:14:06 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54732 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfHPCOF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Aug 2019 20:10:02 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q139so2131016pfc.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2019 17:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XVcmO8RzpRC/BFyAhdGsg6GtacmmL8vW5DzIGcj2y00=;
-        b=UyJlZup3Cv7yWgUuLvmQAnNfqDuhuM74GoMYvrExOhXCciNnhsHNjBZs2PEruaFfjG
-         Jcui7w1fA8S36tDl5u6QHeKZF53YBkNnI8NRPTT9EsiCecxj3lysIb5IqKM09mKOGb1+
-         UDcxcyEFboiIxHynVYAC8K3EeVb9qsmZqVhaw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=XVcmO8RzpRC/BFyAhdGsg6GtacmmL8vW5DzIGcj2y00=;
-        b=CCJu22ItTbLSDH9RiXD0zk9ICJJOzcTni8dlmwSvK3flZxrkC+6gOlk5W5WcLqJEQ4
-         JefildtYtC6Og6ZybWIRTHAS5+ZvqB507pKBE3gOrolH5VpBdBLtTlfwGvIFVFWWuVFB
-         uUQLLVt8Ztb/96oL1jEm9JNXvIqn2m4vRzzZGSvNYCGR3Evq7O0dT50LAaMW3GfUhSv8
-         BZtAvZyqsjG3J+QOXbj9+g5YpXx2axwENLCaJQWrP1rxdxvmbo6hz6w9HfJ0uIRO0pQS
-         e1BFb3Uygo0ZDmIvbWBOaLTc4OGq5ek0XnYwXAsnNnMP+Zgf9pFYD96Ep7xB5V76XmDr
-         HyTA==
-X-Gm-Message-State: APjAAAWUVUyXO6MNUeP/OKL6GKfsq3eIhzSwcTlhR9tkWbFPlO1PTME0
-        Y5qaBo0RCLRBqfa7YNgKTU3zrg==
-X-Google-Smtp-Source: APXvYqwAprqv8uGMD++iNatIdUckz9u8bL8pKGeHjyJM0EavcZ5h0ap9TeggfP0kBtQm1ZfTd3GqbQ==
-X-Received: by 2002:a17:90a:b947:: with SMTP id f7mr4557928pjw.63.1565914200957;
-        Thu, 15 Aug 2019 17:10:00 -0700 (PDT)
-Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id g2sm4056916pfi.26.2019.08.15.17.09.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 17:10:00 -0700 (PDT)
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH 3/3] firmware: add mutex fw_lock_fallback for race condition
-Date:   Thu, 15 Aug 2019 17:09:45 -0700
-Message-Id: <20190816000945.29810-4-scott.branden@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190816000945.29810-1-scott.branden@broadcom.com>
-References: <20190816000945.29810-1-scott.branden@broadcom.com>
+        Thu, 15 Aug 2019 22:14:05 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7G29JWk069079;
+        Fri, 16 Aug 2019 02:13:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=vvbu60KIKuj2V/M8HyUSUiae8i9AsQEjSkmMklAQSU8=;
+ b=CrDWYXm3qcuFQaeesiwkTrgwYVJv1DCtUNMqQDKH19cdfsgdhbvkvj/C9W4fcvcAAhkS
+ xcel/2InimHmZCfN0WEYZJ1c2wbM/F+p/CbwiGtV2C2N7M0BdsyXtJvPyhtQUkRUpn76
+ VNmdsYRT2xF4dfmUOxaYLcp1Xm4j1Zc/qkAyt7bOrb1DqVdBgv+XKYb2sAis9gG7b/IF
+ apQt0JWxEFa/v1KP9NEE45U+BhuuxpGY9MVDMjiLfU9+cHMRbnZe1fpFJSaOPJep4u0o
+ SjQlFwpuo97CH/2XjO6DZihFE0ZpZKlKizLUmHMooEFojnQAW0Q1iMx5oXyOa39RhvgF HA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2u9pjqwtur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Aug 2019 02:13:46 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7G2D5aQ169960;
+        Fri, 16 Aug 2019 02:13:46 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2udgr2br7w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Aug 2019 02:13:45 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7G2DTqb018193;
+        Fri, 16 Aug 2019 02:13:29 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 15 Aug 2019 19:13:29 -0700
+Date:   Thu, 15 Aug 2019 19:13:27 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     hch@infradead.org, tytso@mit.edu, viro@zeniv.linux.org.uk,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        fstests <fstests@vger.kernel.org>
+Subject: Re: [PATCH RFC 3/2] fstests: check that we can't write to swap files
+Message-ID: <20190816021327.GD15198@magnolia>
+References: <156588514105.111054.13645634739408399209.stgit@magnolia>
+ <20190815163434.GA15186@magnolia>
+ <20190815142603.de9f1c0d9fcc017f3237708d@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190815142603.de9f1c0d9fcc017f3237708d@linux-foundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908160022
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908160021
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A race condition exists between _request_firmware_prepare checking
-if firmware is assigned and firmware_fallback_sysfs creating a sysfs
-entry (kernel trace below).  To avoid such condition add a mutex
-fw_lock_fallback to protect against such condition.
+On Thu, Aug 15, 2019 at 02:26:03PM -0700, Andrew Morton wrote:
+> On Thu, 15 Aug 2019 09:34:34 -0700 "Darrick J. Wong" <darrick.wong@oracle.com> wrote:
+> 
+> > While active, the media backing a swap file is leased to the kernel.
+> > Userspace has no business writing to it.  Make sure we can't do this.
+> 
+> I don't think this tests the case where a file was already open for
+> writing and someone does swapon(that file)?
+> 
+> And then does swapoff(that file), when writes should start working again?
+> 
+> Ditto all the above, with s/open/mmap/.
 
-misc test_firmware: Falling back to sysfs fallback for: nope-test-firmware.bin
-sysfs: cannot create duplicate filename '/devices/virtual/misc/test_firmware/nope-test-firmware.bin'
-CPU: 4 PID: 2059 Comm: test_firmware-3 Not tainted 5.3.0-rc4 #1
-Hardware name: Dell Inc. OptiPlex 7010/0KRC95, BIOS A13 03/25/2013
-Call Trace:
- dump_stack+0x67/0x90
- sysfs_warn_dup.cold+0x17/0x24
- sysfs_create_dir_ns+0xb3/0xd0
- kobject_add_internal+0xa6/0x2a0
- kobject_add+0x7e/0xb0
- ? _cond_resched+0x15/0x30
- device_add+0x121/0x670
- firmware_fallback_sysfs+0x15c/0x3c9
- _request_firmware+0x432/0x5a0
- ? devres_find+0x63/0xc0
- request_firmware_into_buf+0x63/0x80
- test_fw_run_batch_request+0x96/0xe0
- kthread+0xfb/0x130
- ? reset_store+0x30/0x30
- ? kthread_park+0x80/0x80
- ret_from_fork+0x3a/0x50
-kobject_add_internal failed for nope-test-firmware.bin with -EEXIST, don't try to register things with the same name in the same directory.
+Heh, ok.  I'll start working on a C program to do that.
 
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
----
- drivers/base/firmware_loader/main.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> Do we handle (and test!) the case where there's unwritten dirty
+> pagecache at the time of swapon()? Ditto pte-dirty MAP_SHARED pages?
 
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index bf44c79beae9..ce9896e3b782 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -88,6 +88,7 @@ static inline struct fw_priv *to_fw_priv(struct kref *ref)
- /* fw_lock could be moved to 'struct fw_sysfs' but since it is just
-  * guarding for corner cases a global lock should be OK */
- DEFINE_MUTEX(fw_lock);
-+DEFINE_MUTEX(fw_lock_fallback);
- 
- static struct firmware_cache fw_cache;
- 
-@@ -758,6 +759,17 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 	if (!firmware_p)
- 		return -EINVAL;
- 
-+	/*
-+	 * There is a race condition between _request_firmware_prepare checking
-+	 * if firmware is assigned and firmware_fallback_sysfs creating sysfs
-+	 * entries with duplicate names.
-+	 * Yet, with this lock the firmware_test locks up with cache enabled
-+	 * and no event used during firmware test.
-+	 * This points to some very racy code I don't know how to entirely fix.
-+	 */
-+	if (opt_flags & FW_OPT_NOCACHE)
-+		mutex_lock(&fw_lock_fallback);
-+
- 	if (!name || name[0] == '\0') {
- 		ret = -EINVAL;
- 		goto out;
-@@ -791,6 +803,9 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 		fw = NULL;
- 	}
- 
-+	if (opt_flags & FW_OPT_NOCACHE)
-+		mutex_unlock(&fw_lock_fallback);
-+
- 	*firmware_p = fw;
- 	return ret;
- }
--- 
-2.17.1
+One of the tests I wrote for iomap_swapfile_activate way back when
+checks that.  The iomap version calls vfs_fsync, but AFAICT
+generic_swapfile_activate doesn't do that.
 
+--D
