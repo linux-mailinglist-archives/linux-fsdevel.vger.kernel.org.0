@@ -2,183 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15A0590587
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 18:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBC259058B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 18:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfHPQNg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 12:13:36 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45014 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbfHPQNf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:13:35 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7GFxM80152563;
-        Fri, 16 Aug 2019 16:13:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=beMIpGusKdkJfAWG9ytguIHQbgtdJeDpnbjjZLRQ2hQ=;
- b=ZXNgLmnko6aPgjOlotlDQRgtZPb7Yb/rlGXC5nmIHUBpAKpxNG9YF8qmV9ChzAT6VHrO
- MC0LGh7JkHHbVy2y2QytIZnXRboXWbpDZh3ETq31yQZY6LZCGklehv4b1TdC2zbU1wGs
- L6wW25NVWAkfD4RpISuDYP5EqqcExoHkqSrCAYqd0sQtt33sxG19Uio7+v7b58udbyE7
- lP2Rw2WTZv74UGJsypvGRDihflXatftLdsIA/UmvNT5UTbfwPhG3wes8S9g5lqiCN0kl
- RW+gCB2hg9o+77RxDxQNSvIacRlRqeDQfksNuK3oUlQsjJlhczRUF55DjnUEATmm/7aa wQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2u9pjr19wd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Aug 2019 16:13:21 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7GGDKUl058625;
-        Fri, 16 Aug 2019 16:13:20 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2udscpjfaa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Aug 2019 16:13:20 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7GGDIuM024090;
-        Fri, 16 Aug 2019 16:13:18 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 16 Aug 2019 09:13:18 -0700
-Date:   Fri, 16 Aug 2019 09:13:16 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        fdmanana@gmail.com, gaoxiang25@huawei.com, willy@infradead.org,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v5] vfs: fix page locking deadlocks when deduping files
-Message-ID: <20190816161316.GI15186@magnolia>
-References: <20190815164940.GA15198@magnolia>
+        id S1727452AbfHPQOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 12:14:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45384 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726550AbfHPQOY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Aug 2019 12:14:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BDA24ABF6;
+        Fri, 16 Aug 2019 16:14:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id F03601E4009; Fri, 16 Aug 2019 18:13:55 +0200 (CEST)
+Date:   Fri, 16 Aug 2019 18:13:55 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
+Message-ID: <20190816161355.GL3041@quack2.suse.cz>
+References: <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
+ <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
+ <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
+ <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
+ <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
+ <20190815132622.GG14313@quack2.suse.cz>
+ <20190815133510.GA21302@quack2.suse.cz>
+ <0d6797d8-1e04-1ebe-80a7-3d6895fe71b0@suse.cz>
+ <20190816154404.GF3041@quack2.suse.cz>
+ <20190816155220.GC3149@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190815164940.GA15198@magnolia>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9351 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=970
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908160171
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9351 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908160170
+In-Reply-To: <20190816155220.GC3149@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+On Fri 16-08-19 11:52:20, Jerome Glisse wrote:
+> On Fri, Aug 16, 2019 at 05:44:04PM +0200, Jan Kara wrote:
+> > On Fri 16-08-19 10:47:21, Vlastimil Babka wrote:
+> > > On 8/15/19 3:35 PM, Jan Kara wrote:
+> > > >> 
+> > > >> So when the GUP user uses MMU notifiers to stop writing to pages whenever
+> > > >> they are writeprotected with page_mkclean(), they don't really need page
+> > > >> pin - their access is then fully equivalent to any other mmap userspace
+> > > >> access and filesystem knows how to deal with those. I forgot out this case
+> > > >> when I wrote the above sentence.
+> > > >> 
+> > > >> So to sum up there are three cases:
+> > > >> 1) DIO case - GUP references to pages serving as DIO buffers are needed for
+> > > >>    relatively short time, no special synchronization with page_mkclean() or
+> > > >>    munmap() => needs FOLL_PIN
+> > > >> 2) RDMA case - GUP references to pages serving as DMA buffers needed for a
+> > > >>    long time, no special synchronization with page_mkclean() or munmap()
+> > > >>    => needs FOLL_PIN | FOLL_LONGTERM
+> > > >>    This case has also a special case when the pages are actually DAX. Then
+> > > >>    the caller additionally needs file lease and additional file_pin
+> > > >>    structure is used for tracking this usage.
+> > > >> 3) ODP case - GUP references to pages serving as DMA buffers, MMU notifiers
+> > > >>    used to synchronize with page_mkclean() and munmap() => normal page
+> > > >>    references are fine.
+> > > 
+> > > IMHO the munlock lesson told us about another one, that's in the end equivalent
+> > > to 3)
+> > > 
+> > > 4) pinning for struct page manipulation only => normal page references
+> > > are fine
+> > 
+> > Right, it's good to have this for clarity.
+> > 
+> > > > I want to add that I'd like to convert users in cases 1) and 2) from using
+> > > > GUP to using differently named function. Users in case 3) can stay as they
+> > > > are for now although ultimately I'd like to denote such use cases in a
+> > > > special way as well...
+> > > 
+> > > So after 1/2/3 is renamed/specially denoted, only 4) keeps the current
+> > > interface?
+> > 
+> > Well, munlock() code doesn't even use GUP, just follow_page(). I'd wait to
+> > see what's left after handling cases 1), 2), and 3) to decide about the
+> > interface for the remainder.
+> > 
+> 
+> For 3 we do not need to take a reference at all :) So just forget about 3
+> it does not exist. For 3 the reference is the reference the CPU page table
+> has on the page and that's it. GUP is no longer involve in ODP or anything
+> like that.
 
-When dedupe wants to use the page cache to compare parts of two files
-for dedupe, we must be very careful to handle locking correctly.  The
-current code doesn't do this.  It must lock and unlock the page only
-once if the two pages are the same, since the overlapping range check
-doesn't catch this when blocksize < pagesize.  If the pages are distinct
-but from the same file, we must observe page locking order and lock them
-in order of increasing offset to avoid clashing with writeback locking.
+Yes, I understand. But the fact is that GUP calls are currently still there
+e.g. in ODP code. If you can make the code work without taking a page
+reference at all, I'm only happy :)
 
-Fixes: 876bec6f9bbfcb3 ("vfs: refactor clone/dedupe_file_range common functions")
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: Bill O'Donnell <billodo@redhat.com>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
-v5: recheck pageuptodate
-v4: drop the unnecessary page offset checks
-v3: revalidate page after locking it
-v2: provide an unlock helper
----
- fs/read_write.c |   49 +++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 41 insertions(+), 8 deletions(-)
-
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 1f5088dec566..5bbf587f5bc1 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1811,10 +1811,7 @@ static int generic_remap_check_len(struct inode *inode_in,
- 	return (remap_flags & REMAP_FILE_DEDUP) ? -EBADE : -EINVAL;
- }
- 
--/*
-- * Read a page's worth of file data into the page cache.  Return the page
-- * locked.
-- */
-+/* Read a page's worth of file data into the page cache. */
- static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
- {
- 	struct page *page;
-@@ -1826,10 +1823,32 @@ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
- 		put_page(page);
- 		return ERR_PTR(-EIO);
- 	}
--	lock_page(page);
- 	return page;
- }
- 
-+/*
-+ * Lock two pages, ensuring that we lock in offset order if the pages are from
-+ * the same file.
-+ */
-+static void vfs_lock_two_pages(struct page *page1, struct page *page2)
-+{
-+	/* Always lock in order of increasing index. */
-+	if (page1->index > page2->index)
-+		swap(page1, page2);
-+
-+	lock_page(page1);
-+	if (page1 != page2)
-+		lock_page(page2);
-+}
-+
-+/* Unlock two pages, being careful not to unlock the same page twice. */
-+static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
-+{
-+	unlock_page(page1);
-+	if (page1 != page2)
-+		unlock_page(page2);
-+}
-+
- /*
-  * Compare extents of two files to see if they are the same.
-  * Caller must have locked both inodes to prevent write races.
-@@ -1867,10 +1886,24 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- 		dest_page = vfs_dedupe_get_page(dest, destoff);
- 		if (IS_ERR(dest_page)) {
- 			error = PTR_ERR(dest_page);
--			unlock_page(src_page);
- 			put_page(src_page);
- 			goto out_error;
- 		}
-+
-+		vfs_lock_two_pages(src_page, dest_page);
-+
-+		/*
-+		 * Now that we've locked both pages, make sure they're still
-+		 * mapped to the file data we're interested in.  If not,
-+		 * someone is invalidating pages on us and we lose.
-+		 */
-+		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
-+		    src_page->mapping != src->i_mapping ||
-+		    dest_page->mapping != dest->i_mapping) {
-+			same = false;
-+			goto unlock;
-+		}
-+
- 		src_addr = kmap_atomic(src_page);
- 		dest_addr = kmap_atomic(dest_page);
- 
-@@ -1882,8 +1915,8 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- 
- 		kunmap_atomic(dest_addr);
- 		kunmap_atomic(src_addr);
--		unlock_page(dest_page);
--		unlock_page(src_page);
-+unlock:
-+		vfs_unlock_two_pages(src_page, dest_page);
- 		put_page(dest_page);
- 		put_page(src_page);
- 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
