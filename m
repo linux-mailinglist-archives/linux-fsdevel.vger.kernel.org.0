@@ -2,335 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 210708FA74
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 07:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C751F8FAAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 08:16:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfHPFql (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 01:46:41 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37062 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfHPFqk (ORCPT
+        id S1726519AbfHPGQv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 02:16:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32620 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725897AbfHPGQu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 01:46:40 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7G5j2Jt011982;
-        Fri, 16 Aug 2019 05:46:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=DmGydtyDfX/ydHP0RWEoumGUxSxJlW29NrmSrTvdFjw=;
- b=jnILjE1I2JGhjhPfUSrPYzKIb38QAe6uxWcYunNnAvkWBw1nJFzO8vlOcpphIcwpv92P
- +48Uc2lpWdEUbpi7L4zYrS56ZJ0UiLAX+1vRwvIX+xJyKZwZ59ToWqaLVlAwHXDI+wl9
- tsaTgemiVBwdHmT4HhIE3+xH0Ri08nVoqF7bN5+xiuMsSmVzJ8LsOm6HbVoCGbNlnE5I
- l8OiY5NQDCLNJ5u3HZz2qfmKIaygbEC89xVSsifRY64mcqjmZ760AEyhCl0bX5X4Z8z3
- vqrJ4PrDvSI1qIQXtN8J0sFb0T8kdMQ/ShH7ThfjrsnKBy1qqOSUvgnPEqdwcmhyE6uu Nw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2u9nbtxg5k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Aug 2019 05:46:09 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7G5hS1R121069;
-        Fri, 16 Aug 2019 05:46:08 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2udgqfr2c0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Aug 2019 05:46:08 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7G5k79e007090;
-        Fri, 16 Aug 2019 05:46:07 GMT
-Received: from [192.168.1.145] (/39.109.145.141)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 15 Aug 2019 22:46:06 -0700
-Subject: Re: [PATCH v3 03/27] btrfs: Check and enable HMZONED mode
-To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        David Sterba <dsterba@suse.com>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Matias Bjorling <Matias.Bjorling@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.com>, linux-fsdevel@vger.kernel.org
-References: <20190808093038.4163421-1-naohiro.aota@wdc.com>
- <20190808093038.4163421-4-naohiro.aota@wdc.com>
-From:   Anand Jain <anand.jain@oracle.com>
-Message-ID: <edcb46f5-1c3e-0b69-a2d9-66164e64b07e@oracle.com>
-Date:   Fri, 16 Aug 2019 13:46:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 16 Aug 2019 02:16:50 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7G64PT5144075
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2019 02:16:49 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2udkufnxcb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2019 02:16:48 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
+        Fri, 16 Aug 2019 07:16:48 +0100
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 16 Aug 2019 07:16:43 +0100
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7G6GgBn48431462
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Aug 2019 06:16:42 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 74AB311206E;
+        Fri, 16 Aug 2019 06:16:42 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 86AF6112061;
+        Fri, 16 Aug 2019 06:16:39 +0000 (GMT)
+Received: from localhost.in.ibm.com (unknown [9.124.35.23])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 16 Aug 2019 06:16:39 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.ibm.com>
+To:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org
+Cc:     Chandan Rajendra <chandan@linux.ibm.com>, chandanrmail@gmail.com,
+        tytso@mit.edu, adilger.kernel@dilger.ca, ebiggers@kernel.org,
+        jaegeuk@kernel.org, yuchao0@huawei.com, hch@infradead.org
+Subject: [PATCH V4 1/8] buffer_head: Introduce BH_Read_Cb flag
+Date:   Fri, 16 Aug 2019 11:47:57 +0530
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190816061804.14840-1-chandan@linux.ibm.com>
+References: <20190816061804.14840-1-chandan@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190808093038.4163421-4-naohiro.aota@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908160062
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908160062
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19081606-0064-0000-0000-000004091737
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011597; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01247516; UDB=6.00658410; IPR=6.01029025;
+ MB=3.00028195; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-16 06:16:46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19081606-0065-0000-0000-00003EAFDA61
+Message-Id: <20190816061804.14840-2-chandan@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-16_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908160066
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/8/19 5:30 PM, Naohiro Aota wrote:
-> HMZONED mode cannot be used together with the RAID5/6 profile for now.
-> Introduce the function btrfs_check_hmzoned_mode() to check this. This
-> function will also check if HMZONED flag is enabled on the file system and
-> if the file system consists of zoned devices with equal zone size.
-> 
-> Additionally, as updates to the space cache are in-place, the space cache
-> cannot be located over sequential zones and there is no guarantees that the
-> device will have enough conventional zones to store this cache. Resolve
-> this problem by disabling completely the space cache.  This does not
-> introduces any problems with sequential block groups: all the free space is
-> located after the allocation pointer and no free space before the pointer.
-> There is no need to have such cache.
-> 
-> For the same reason, NODATACOW is also disabled.
-> 
-> Also INODE_MAP_CACHE is also disabled to avoid preallocation in the
-> INODE_MAP_CACHE inode.
+Decryption of file content encrypted using fscrypt relies on
+bio->bi_private holding a pointer to an encryption context
+i.e. Decryption operation is not performed for bios having a NULL value
+at bio->bi_private.
 
-  A list of incompatibility features with zoned devices. This need better
-  documentation, may be a table and its reason is better.
+The same logic cannot be used on buffer heads because,
+1. In Btrfs, write_dev_supers() sets bh->b_private to 'struct
+   btrfs_device' pointer and submits the buffer head for a write
+   operation.
+   1. In btrfs/146 test, the write operation fails and hence the
+      endio function clears the BH_Uptodate flag.
+   2. A read operation initiated later will submit the buffer head to
+      the block layer. During endio processing, bh_>b_private would have a
+      non-NULL value.
 
+2. Another instance is when an Ext4 metadata block with BH_Uptodate set and
+   also part of the in-memory JBD list undergoes the following,
+   1. A sync() syscall is invoked by the userspace and the write
+      operation on the metadata block is initiated.
+   2. Due to an I/O failure, the BH_Uptodate flag is cleared by
+      end_buffer_async_write(). The bh->b_private member would be
+      pointing to a journal head structure.
+   3. In such a case, a read operation invoked on the block mapped by the
+      buffer head will initiate a read from the disk since the buffer head is
+      missing the BH_Uptodate flag.
+   4. After the read I/O request is submitted, end_buffer_async_read()
+      will find a non-NULL value at bh->b_private.
+   This scenario was observed when executing generic/475 test case.
 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> ---
->   fs/btrfs/ctree.h       |  3 ++
->   fs/btrfs/dev-replace.c |  8 +++++
->   fs/btrfs/disk-io.c     |  8 +++++
->   fs/btrfs/hmzoned.c     | 67 ++++++++++++++++++++++++++++++++++++++++++
->   fs/btrfs/hmzoned.h     | 18 ++++++++++++
->   fs/btrfs/super.c       |  1 +
->   fs/btrfs/volumes.c     |  5 ++++
->   7 files changed, 110 insertions(+)
-> 
-> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> index 299e11e6c554..a00ce8c4d678 100644
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -713,6 +713,9 @@ struct btrfs_fs_info {
->   	struct btrfs_root *uuid_root;
->   	struct btrfs_root *free_space_root;
->   
-> +	/* Zone size when in HMZONED mode */
-> +	u64 zone_size;
-> +
->   	/* the log root tree is a directory of all the other log roots */
->   	struct btrfs_root *log_root_tree;
->   
-> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-> index 6b2e9aa83ffa..2cc3ac4d101d 100644
-> --- a/fs/btrfs/dev-replace.c
-> +++ b/fs/btrfs/dev-replace.c
-> @@ -20,6 +20,7 @@
->   #include "rcu-string.h"
->   #include "dev-replace.h"
->   #include "sysfs.h"
-> +#include "hmzoned.h"
->   
->   static int btrfs_dev_replace_finishing(struct btrfs_fs_info *fs_info,
->   				       int scrub_ret);
-> @@ -201,6 +202,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
->   		return PTR_ERR(bdev);
->   	}
->   
-> +	if (!btrfs_check_device_zone_type(fs_info, bdev)) {
-> +		btrfs_err(fs_info,
-> +			  "zone type of target device mismatch with the filesystem!");
-> +		ret = -EINVAL;
-> +		goto error;
-> +	}
-> +
->   	sync_blockdev(bdev);
->   
->   	devices = &fs_info->fs_devices->devices;
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 5f7ee70b3d1a..8854ff2e5fa5 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -40,6 +40,7 @@
->   #include "compression.h"
->   #include "tree-checker.h"
->   #include "ref-verify.h"
-> +#include "hmzoned.h"
->   
->   #define BTRFS_SUPER_FLAG_SUPP	(BTRFS_HEADER_FLAG_WRITTEN |\
->   				 BTRFS_HEADER_FLAG_RELOC |\
-> @@ -3123,6 +3124,13 @@ int open_ctree(struct super_block *sb,
->   
->   	btrfs_free_extra_devids(fs_devices, 1);
->   
-> +	ret = btrfs_check_hmzoned_mode(fs_info);
-> +	if (ret) {
-> +		btrfs_err(fs_info, "failed to init hmzoned mode: %d",
-> +				ret);
-> +		goto fail_block_groups;
-> +	}
-> +
->   	ret = btrfs_sysfs_add_fsid(fs_devices, NULL);
->   	if (ret) {
->   		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
-> diff --git a/fs/btrfs/hmzoned.c b/fs/btrfs/hmzoned.c
-> index bfd04792dd62..512674d8f488 100644
-> --- a/fs/btrfs/hmzoned.c
-> +++ b/fs/btrfs/hmzoned.c
-> @@ -160,3 +160,70 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
->   
->   	return 0;
->   }
-> +
-> +int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
-> +{
-> +	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
-> +	struct btrfs_device *device;
-> +	u64 hmzoned_devices = 0;
-> +	u64 nr_devices = 0;
-> +	u64 zone_size = 0;
-> +	int incompat_hmzoned = btrfs_fs_incompat(fs_info, HMZONED);
-> +	int ret = 0;
-> +
-> +	/* Count zoned devices */
-> +	list_for_each_entry(device, &fs_devices->devices, dev_list) {
-> +		if (!device->bdev)
-> +			continue;
-> +		if (bdev_zoned_model(device->bdev) == BLK_ZONED_HM ||
-> +		    (bdev_zoned_model(device->bdev) == BLK_ZONED_HA &&
-> +		     incompat_hmzoned)) {
-> +			hmzoned_devices++;
-> +			if (!zone_size) {
-> +				zone_size = device->zone_info->zone_size;
-> +			} else if (device->zone_info->zone_size != zone_size) {
-> +				btrfs_err(fs_info,
-> +					  "Zoned block devices must have equal zone sizes");
-> +				ret = -EINVAL;
-> +				goto out;
-> +			}
-> +		}
-> +		nr_devices++;
-> +	}
-> +
-> +	if (!hmzoned_devices && incompat_hmzoned) {
-> +		/* No zoned block device found on HMZONED FS */
-> +		btrfs_err(fs_info, "HMZONED enabled file system should have zoned devices");
-> +		ret = -EINVAL;
-> +		goto out;
+Hence this commit introduces a new buffer head flag to reliably check for
+decryption of a buffer head's contents after the block has been read
+from the disk.
 
+Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+---
+ include/linux/buffer_head.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  When does the HMZONED gets enabled? I presume during mkfs. Where are
-  the related btrfs-progs patches? Searching for the related btrfs-progs
-  patches doesn't show up anything in the ML. Looks like I am missing
-  something, nor the cover letter said anything about the progs part.
-
-Thanks, Anand
-
-> +	}
-> +
-> +	if (!hmzoned_devices && !incompat_hmzoned)
-> +		goto out;
-> +
-> +	fs_info->zone_size = zone_size;
-> +
-> +	if (hmzoned_devices != nr_devices) {
-> +		btrfs_err(fs_info,
-> +			  "zoned devices cannot be mixed with regular devices");
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * stripe_size is always aligned to BTRFS_STRIPE_LEN in
-> +	 * __btrfs_alloc_chunk(). Since we want stripe_len == zone_size,
-> +	 * check the alignment here.
-> +	 */
-> +	if (!IS_ALIGNED(zone_size, BTRFS_STRIPE_LEN)) {
-> +		btrfs_err(fs_info,
-> +			  "zone size is not aligned to BTRFS_STRIPE_LEN");
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	btrfs_info(fs_info, "HMZONED mode enabled, zone size %llu B",
-> +		   fs_info->zone_size);
-> +out:
-> +	return ret;
-> +}
-> diff --git a/fs/btrfs/hmzoned.h b/fs/btrfs/hmzoned.h
-> index ffc70842135e..29cfdcabff2f 100644
-> --- a/fs/btrfs/hmzoned.h
-> +++ b/fs/btrfs/hmzoned.h
-> @@ -9,6 +9,8 @@
->   #ifndef BTRFS_HMZONED_H
->   #define BTRFS_HMZONED_H
->   
-> +#include <linux/blkdev.h>
-> +
->   struct btrfs_zoned_device_info {
->   	/*
->   	 * Number of zones, zone size and types of zones if bdev is a
-> @@ -25,6 +27,7 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
->   		       struct blk_zone *zone, gfp_t gfp_mask);
->   int btrfs_get_dev_zone_info(struct btrfs_device *device);
->   void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
-> +int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info);
->   
->   static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
->   {
-> @@ -76,4 +79,19 @@ static inline void btrfs_dev_clear_zone_empty(struct btrfs_device *device,
->   	btrfs_dev_set_empty_zone_bit(device, pos, false);
->   }
->   
-> +static inline bool btrfs_check_device_zone_type(struct btrfs_fs_info *fs_info,
-> +						struct block_device *bdev)
-> +{
-> +	u64 zone_size;
-> +
-> +	if (btrfs_fs_incompat(fs_info, HMZONED)) {
-> +		zone_size = (u64)bdev_zone_sectors(bdev) << SECTOR_SHIFT;
-> +		/* Do not allow non-zoned device */
-> +		return bdev_is_zoned(bdev) && fs_info->zone_size == zone_size;
-> +	}
-> +
-> +	/* Do not allow Host Manged zoned device */
-> +	return bdev_zoned_model(bdev) != BLK_ZONED_HM;
-> +}
-> +
->   #endif
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index 78de9d5d80c6..d7879a5a2536 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -43,6 +43,7 @@
->   #include "free-space-cache.h"
->   #include "backref.h"
->   #include "space-info.h"
-> +#include "hmzoned.h"
->   #include "tests/btrfs-tests.h"
->   
->   #include "qgroup.h"
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index 8e5a894e7bde..755b2ec1e0de 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -2572,6 +2572,11 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
->   	if (IS_ERR(bdev))
->   		return PTR_ERR(bdev);
->   
-> +	if (!btrfs_check_device_zone_type(fs_info, bdev)) {
-> +		ret = -EINVAL;
-> +		goto error;
-> +	}
-> +
->   	if (fs_devices->seeding) {
->   		seeding_dev = 1;
->   		down_write(&sb->s_umount);
-> 
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index 7b73ef7f902d..08f217ba8114 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -38,6 +38,7 @@ enum bh_state_bits {
+ 	BH_Meta,	/* Buffer contains metadata */
+ 	BH_Prio,	/* Buffer should be submitted with REQ_PRIO */
+ 	BH_Defer_Completion, /* Defer AIO completion to workqueue */
++	BH_Read_Cb,	     /* Block's contents needs to be decrypted */
+ 
+ 	BH_PrivateStart,/* not a state bit, but the first bit available
+ 			 * for private allocation by other entities
+@@ -134,6 +135,7 @@ BUFFER_FNS(Unwritten, unwritten)
+ BUFFER_FNS(Meta, meta)
+ BUFFER_FNS(Prio, prio)
+ BUFFER_FNS(Defer_Completion, defer_completion)
++BUFFER_FNS(Read_Cb, read_cb)
+ 
+ #define bh_offset(bh)		((unsigned long)(bh)->b_data & ~PAGE_MASK)
+ 
+-- 
+2.19.1
 
