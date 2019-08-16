@@ -2,102 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C15E90665
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 19:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 784B9906CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 19:25:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfHPREM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 13:04:12 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:41410 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbfHPREM (ORCPT
+        id S1727138AbfHPRZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 13:25:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13304 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726690AbfHPRZA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 13:04:12 -0400
-Received: by mail-qk1-f194.google.com with SMTP id g17so5253168qkk.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2019 10:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3/tESAZDqjf2ti4MOUFqaLyuCU2G0DdLcKzf9OCJK1A=;
-        b=CgyAwPGtGbDRUG8Q8IPdiAN946YBd9GiTLHLY9qdMO5DtczZ+v/ksZz5SGjHhHDB0g
-         hiV6XUJ4c9P/Fox7d6UOuEz97SD/EhMDbiCw8kD+oxlGk5WZy2o/dhyrB5D8Leo7SHAD
-         BKUA1fyEb0S2R5LJe+cV2l0+5GCV3Ei1qwVPLJVNjVyjL/1JaNhiXlUIMTcYmIQCwa5w
-         UFybR3WyOnO6J0TyWyymvk11R0w9E51nhI3I9ejTlLJRWh894PP5rmYob/zftnr58EHa
-         1R9EcYM6LGmbUn/CP/1T6cgliyd8l3igSjchOMhsF9pHYkfmf7q8dp+B8ImzDvpVFHxr
-         0xBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3/tESAZDqjf2ti4MOUFqaLyuCU2G0DdLcKzf9OCJK1A=;
-        b=gYS7wUNP5Py5D7ll/y/4Sl4MpUEhj3fe7F9mkQQoZNPylnqQyJ+3fgT5x6R43FA84V
-         FpXb+9+fBY5xguQqHlxe4V3WRlHwetfFsnOgLYBqUJB6DmsmDLzDT5jgmub5B35RN+pM
-         D4dlCEQgTCSpKDhTSfWY5VttsEX6Fo2jcYoYbrylkvSq4prAyCZdf7WGnouinYXW5aNX
-         GQpiHAlyFVTCIu6YVAzlAp+TJeFfYMnoZnxJ5OlYTBKF4gJAamcFyj8szx9L1mm8w9gi
-         OC7BFC0dTmJAhbTWA3qQDOcpqLqHmVUA3lCgMN2LDw+Jw8BOXE9BjTiM75Dr03MMpngj
-         Z4Sg==
-X-Gm-Message-State: APjAAAWzdEQiO6+IeXhqVHmBkBlmfA/Cz7x9iAsSRF4qKBvVojGb1CxO
-        BkaFKHV/Os32/W/MLy9f2ODRwA==
-X-Google-Smtp-Source: APXvYqx/H9DYP00gkOY/+C82HTHZ3xyAsu8DjOC+iOmym4LKCzVRjzFvWdNtwrKPess7YdPgQyP7Sw==
-X-Received: by 2002:a05:620a:16d6:: with SMTP id a22mr9866792qkn.414.1565975051948;
-        Fri, 16 Aug 2019 10:04:11 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id s58sm3477747qth.59.2019.08.16.10.04.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Aug 2019 10:04:10 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hyfe6-0000CI-Dj; Fri, 16 Aug 2019 14:04:10 -0300
-Date:   Fri, 16 Aug 2019 14:04:10 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-Message-ID: <20190816170410.GH5398@ziepe.ca>
-References: <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
- <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
- <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
- <20190815132622.GG14313@quack2.suse.cz>
- <20190815133510.GA21302@quack2.suse.cz>
- <0d6797d8-1e04-1ebe-80a7-3d6895fe71b0@suse.cz>
- <20190816154404.GF3041@quack2.suse.cz>
- <20190816155220.GC3149@redhat.com>
- <20190816161355.GL3041@quack2.suse.cz>
- <20190816165445.GD3149@redhat.com>
+        Fri, 16 Aug 2019 13:25:00 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7GHMZ6Y029674;
+        Fri, 16 Aug 2019 13:24:58 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2udyxct0yv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Aug 2019 13:24:58 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7GHK63D022862;
+        Fri, 16 Aug 2019 17:24:57 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma03dal.us.ibm.com with ESMTP id 2u9nj7mme7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Aug 2019 17:24:57 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7GHOt9f57278732
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Aug 2019 17:24:55 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB56CBE04F;
+        Fri, 16 Aug 2019 17:24:55 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 996B8BE053;
+        Fri, 16 Aug 2019 17:24:54 +0000 (GMT)
+Received: from LeoBras (unknown [9.85.220.147])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 16 Aug 2019 17:24:54 +0000 (GMT)
+Message-ID: <631f282f177871a0961d25f3afc98b4b805436e7.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] fs/splice.c: Fix old documentation about moving
+ pages
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Fri, 16 Aug 2019 14:24:52 -0300
+In-Reply-To: <52a42a7ab5052c7d35c98bca6439ff00e323a947.camel@linux.ibm.com>
+References: <20190801223852.16042-1-leonardo@linux.ibm.com>
+         <52a42a7ab5052c7d35c98bca6439ff00e323a947.camel@linux.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-6eSmA4V1izZy5SvSP69H"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816165445.GD3149@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-16_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908160179
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 12:54:45PM -0400, Jerome Glisse wrote:
 
-> > Yes, I understand. But the fact is that GUP calls are currently still there
-> > e.g. in ODP code. If you can make the code work without taking a page
-> > reference at all, I'm only happy :)
-> 
-> Already in rdma next AFAIK so in 5.4 it will be gone :)
+--=-6eSmA4V1izZy5SvSP69H
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Unfortunately no.. only a lot of patches supporting this change will
-be in 5.4. The notifiers are still a problem, and I need to figure out
-if the edge cases in hmm_range_fault are OK for ODP or not. :(
+On Thu, 2019-08-08 at 15:19 -0300, Leonardo Bras wrote:
+> On Thu, 2019-08-01 at 19:38 -0300, Leonardo Bras wrote:
+> > Since commit 485ddb4b9741 ("1/2 splice: dont steal")' (2007),
+> > the SPLICE_F_MOVE support was removed (became a no-op according
+> > to man pages), and thus disabling steal operation that would make
+> > moving pages possible.
+> >=20
+> > This fixes the comment, making clear pages are not moved.
+> >=20
+> > Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+> > ---
+> >  fs/splice.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >=20
+> > diff --git a/fs/splice.c b/fs/splice.c
+> > index 14cb602d9a2f..0ba151c40cef 100644
+> > --- a/fs/splice.c
+> > +++ b/fs/splice.c
+> > @@ -671,8 +671,7 @@ ssize_t splice_from_pipe(struct pipe_inode_info *pi=
+pe, struct file *out,
+> >   * @flags:	splice modifier flags
+> >   *
+> >   * Description:
+> > - *    Will either move or copy pages (determined by @flags options) fr=
+om
+> > - *    the given pipe inode to the given file.
+> > + *    Will copy pages from the given pipe inode to the given file.
+> >   *    This one is ->write_iter-based.
+> >   *
+> >   */
+>=20
+> Could you give any feedback on this patch?
+Please provide feedback on this patch
 
-This is taking a long time in part because ODP itself has all sorts of
-problems that make it hard to tell if the other changes are safe or
-not..
 
-Lots of effort is being spent to get there though.
+--=-6eSmA4V1izZy5SvSP69H
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Jason
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl1W5uQACgkQlQYWtz9S
+ttRY+Q//ThglhmvaCla8EYm+QsG82zy+ruaCSQt7j76ztvcCa+clDdPehf0TWNbU
+dtNgNpMra58EGW1Rw2oNAJ20PV9daBdebF+8gi1wzgVpJSTbVKp30RonDJ+Oe0zf
+PWyPLykM2fq/MyyEYEoPigona6klnfoEOP35Mqyl/MB6DOv/Mn+obeJ5V/RFF5mc
+DBhDYSXrPqu57ibWnb/qaQ42xy2q8QJp56cw/4yeoy5yvPAvghG2mvWnscZoGJmm
+/zrmyuLslQjOhbXD19AB9oKZNfk0IBXnxcfsNKRnP+/B9c2M0xb6qZBvXhS//GV4
+aTjObgbkN/Y1K9K9ntiXDb+MiLbH/GHx603x8HzMSLz3ThpmjopEnby+B4/1WUR6
+GZPI0srXLpefmUFSQR2IseJjkLw9D1aU1expZJAd+adencqWlpaQ0DIYKbzPMyWP
+fLb2ZplKt3JNvDG1i8vetUQtyKDvVRG6VaYSP7deNKRLM6AeWW9TfsOxmsxQCU++
+736PEmC15TwALx4NtjlS8yBFImmmXYdEoSAeb3wnZARdxaL8Upya3JUUUK8rW6aR
+eKpw0NxQrn8S6ygOyijafF16BhVhzLUC482TgBJffGLVCBrkOcOqG+q2JQl3OjWz
+/NOd5fbXK4Vyo/JgzjoGnkjThy+zS9XyG1N6VJa0GwGrV+ZLseM=
+=LUdQ
+-----END PGP SIGNATURE-----
+
+--=-6eSmA4V1izZy5SvSP69H--
+
