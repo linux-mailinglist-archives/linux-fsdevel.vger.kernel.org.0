@@ -2,113 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B73A8FF2D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 11:39:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B93188FFEF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 12:22:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfHPJjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 05:39:36 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35029 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726753AbfHPJjf (ORCPT
+        id S1726897AbfHPKWX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 06:22:23 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36759 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbfHPKWX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 05:39:35 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w20so4611586edd.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2019 02:39:34 -0700 (PDT)
+        Fri, 16 Aug 2019 06:22:23 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j17so3716945lfp.3;
+        Fri, 16 Aug 2019 03:22:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z8Whcxou6li//Ce6UssS2+puysTVPEZT2bFkzJanhf4=;
+        b=ITapklmwtQoZxnLqjgth4nFKgfSGo7+adpQSSx4OCUjjKz2y2odzwqDrVT8dXupt58
+         2xlZPLtCb8Cs4oDhRdh3Od3epxSsBfhA7xFDPctX5VdghUuyi4zch6KntVfV1VJ+W0XI
+         PzPdMMgRgaw2zBqwEkA6OeRl0X+3kCsyxj9SV742c7IEM2q5NBkJQD8nMYTZ/zvTHdlm
+         CoExg6sGcgnzDIL4CLv/2LuVVwIP1rUfVUG921bPX3dDoQbXhN53QcTRk0rNH7x6Xb5Y
+         dDWZfaR6K7VwxtTsOlrpuhjbp7mZfSRqlpiFts7Z/3s24JbwnvO6G+oha4djPGiMjLCE
+         Y51w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gHKBBtdm8mYVpe/qaj9ylis+vRE339fn2VRAT7d+440=;
-        b=UHV1klUL+34pAj9dvi7P/55EftE/P7lDD3e3w6HWNdiowtSMg1+lN3VgwiYyfS0Xrj
-         EARj7jnBre2L+xXC2K5LSgCvsChp4yC/Ptfn5NxTBsHGgVBQfCB2s4l0cjzfoSasMJ9h
-         CSg4riXOOcw4watdIqqNeKIzm8k4jv2VlCnPKcLAEZXnAKjwN7CIn7O/lf9FsbTAA6l5
-         /uszg3+kMw1ALJ+S/4ItCJAiSAWfs0CE3p8k+Lu8j6h6iis+Ke8JAx3gNKMCXV7y13NL
-         RaaLTC74t4Z/o/76LQdXbxIwZ9jc6Eux3yEakvvl5E0Vmdqee9Y0cuseAmZyXXtmDkIo
-         h1zg==
-X-Gm-Message-State: APjAAAV9pHQ8+6zGpCRoc9zSxnzOf+O32f9n6U1fcHFqWqxk7HOkVJaJ
-        xPZJQ6X5hGe5VenFfdCu4rfUQH6tZ7A=
-X-Google-Smtp-Source: APXvYqyXPmmAOIPgN7j+x4kC4fO9zrRuuf2mnoEf+p8W3AU3PWW0XGx0sVvzE5tJO0bg5y1sc14ewg==
-X-Received: by 2002:a17:906:11da:: with SMTP id o26mr8461644eja.64.1565948373831;
-        Fri, 16 Aug 2019 02:39:33 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id c14sm1013361edb.5.2019.08.16.02.39.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2019 02:39:33 -0700 (PDT)
-Subject: Re: [PATCH v13] fs: Add VirtualBox guest shared folder (vboxsf)
- support
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20190815131253.237921-1-hdegoede@redhat.com>
- <20190815131253.237921-2-hdegoede@redhat.com>
- <20190816075654.GA15363@infradead.org>
- <412a10a9-a681-4c7a-9175-e7509b3fea87@redhat.com>
-Message-ID: <5ce18de2-b594-c06d-21a0-aa9677dbcc0a@redhat.com>
-Date:   Fri, 16 Aug 2019 11:39:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z8Whcxou6li//Ce6UssS2+puysTVPEZT2bFkzJanhf4=;
+        b=kl3c71tIiy9e7YgtiB3JzT7I4iQFZfQO2yW++44TgcB+MedEWhL/tCSKaZUX+rL8zO
+         75BRp6fxaJyG3akmt+sZ3J/pkcXFawRQg+zI4sphlM40ocOPkC/d5nodRf+X2hUrVNqB
+         QpXnkGMU1mSNvePlRxSH0CAW1iUzT0MkgAhPFWHCOqmeXmkFNHp+z0hie8A9uLDYZBLn
+         nhMxXypg/6Y3WwQFFPdGjvEJx7duuH0U9apcosiGRxXVc0OTJiUOsYCtpu1XWgEjrp11
+         jjHjiRTevMPVH5evLFXVka+WOwRcHzj/CAEkutapaRvN8o7PghXhLApP/CioX5zB77kf
+         7E+A==
+X-Gm-Message-State: APjAAAVvpX9rOY5TQ1thoxF5D/Dzne2n4GHGxiQ4xW1EvzcDtY4NHfWT
+        NOFtQ/oci2O7JJncdiK6RRTqvcSMcIEXeDjzXrs=
+X-Google-Smtp-Source: APXvYqyhQGjrxNtTA8VpSttgLePNlAni5npFoym9t1xCM3mKwCzaGw2AQPrNcmr3QeXqZHyTh8W0nRhqIlReZIXkrsM=
+X-Received: by 2002:a19:2297:: with SMTP id i145mr4670760lfi.97.1565950941067;
+ Fri, 16 Aug 2019 03:22:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <412a10a9-a681-4c7a-9175-e7509b3fea87@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190816083246.169312-1-arul.jeniston@gmail.com>
+In-Reply-To: <20190816083246.169312-1-arul.jeniston@gmail.com>
+From:   Arul Jeniston <arul.jeniston@gmail.com>
+Date:   Fri, 16 Aug 2019 15:52:09 +0530
+Message-ID: <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com>
+Subject: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
+To:     viro@zeniv.linux.org.uk, tglx@linutronix.de
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arul_mc@dell.com, ARUL JENISTON MC <arul.jeniston@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-P.S.
+'hrtimer_forward_now()' returns zero due to bigger backward time drift.
+This causes timerfd_read to return 0. As per man page, read on timerfd
+ is not expected to return 0.
+This problem is well explained in https://lkml.org/lkml/2019/7/31/442
+. This patch fixes this problem.
+Signed-off-by: Arul Jeniston <arul.jeniston@gmail.com>
 
-On 16-08-19 11:01, Hans de Goede wrote:
-> On 16-08-19 09:56, Christoph Hellwig wrote:
 
-<snip>
+---
+ fs/timerfd.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
->>> + * Ideally we would wrap generic_file_read_iter with a function which also
->>> + * does this check, to reduce the chance of us missing writes happening on the
->>> + * host side after open(). But the vboxsf stat call to the host only works on
->>> + * filenames, so that would require caching the filename in our
->>> + * file->private_data and there is no guarantee that filename will still
->>> + * be valid at read_iter time. So this would be in no way bulletproof.
->>
->> Well, you can usually generate a file name from file->f_path.dentry.
->> The only odd case is opened by unliked files.  NFS has a special hack
->> for those called sillyrename (you can grep for that). 
-> 
-> Right, so since the unlink or a normal rename could happen on the host side
-> and there is no notification of that, those will be 2 areas where a stat
-> call to verify will fail, which leaves us with 3 options:
-> 
-> 1) Make stat calls before read() calls, if they fail purge the cache to be safe
-> 2) Make stat calls before read(), on failure ignore the stat call
-> 3) Treat read() calls like other page-cache reads such as sendfile or mmap
-> and only check if the cache is stale at open() time.
-
-I just realized there is a 4th option, which is to make vboxsf read_iter
-simply always do:
-
-4) Always evict non dirt pages from page-cache from read_iter, to ensure we
-    get the latest version from the host:
-
-So something like this:
-
-	/*
-          * Evict non dirt pages from page-cache, so that we reget them from
-          * the host in case they have been changed.
-          * /
-	invalidate_mapping_pages(inode->i_mapping, pos >> PAGE_SHIFT,
-				 (pos + len) >> PAGE_SHIFT);
-         generic_file_read_iter(...)
-
-This is in essence what the out of tree driver is doing on read(), except
-that it does not go through the page-cache at all.
-
-I think this might be the best option, perhaps controlled by a mount
-flag ?
-
-Regards,
-
-Hans
+diff --git a/fs/timerfd.c b/fs/timerfd.c
+index 6a6fc8aa1de7..f5094e070e9a 100644
+--- a/fs/timerfd.c
++++ b/fs/timerfd.c
+@@ -284,8 +284,16 @@ static ssize_t timerfd_read(struct file *file,
+char __user *buf, size_t count,
+                                        &ctx->t.alarm, ctx->tintv) - 1;
+                                alarm_restart(&ctx->t.alarm);
+                        } else {
+-                               ticks += hrtimer_forward_now(&ctx->t.tmr,
+-                                                            ctx->tintv) - 1;
++                               u64 nooftimeo = hrtimer_forward_now(&ctx->t.tmr,
++                                                                ctx->tintv);
++                               /*
++                                * ticks shouldn't become zero at this point.
++                                * Ignore if hrtimer_forward_now returns 0
++                                * due to larger backward time drift.
++                                */
++                               if (likely(nooftimeo)) {
++                                       ticks += nooftimeo - 1;
++                               }
+                                hrtimer_restart(&ctx->t.tmr);
+                        }
+                }
+--
+2.11.0
