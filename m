@@ -2,84 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 366918FEA6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 11:05:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B73A8FF2D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 11:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfHPJFl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 05:05:41 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41759 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbfHPJFl (ORCPT
+        id S1726882AbfHPJjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 05:39:36 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35029 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726753AbfHPJjf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 05:05:41 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hyYAz-0005kn-OB; Fri, 16 Aug 2019 11:05:37 +0200
-Date:   Fri, 16 Aug 2019 11:05:36 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     ARUL JENISTON MC <arul.jeniston@gmail.com>
-cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arul_mc@dell.com
-Subject: Re: [PATCH] FS: timerfd: [Trimmed unreadable long subject line ]
-In-Reply-To: <20190816083246.169312-1-arul.jeniston@gmail.com>
-Message-ID: <alpine.DEB.2.21.1908161055310.1908@nanos.tec.linutronix.de>
-References: <20190816083246.169312-1-arul.jeniston@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 16 Aug 2019 05:39:35 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w20so4611586edd.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2019 02:39:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gHKBBtdm8mYVpe/qaj9ylis+vRE339fn2VRAT7d+440=;
+        b=UHV1klUL+34pAj9dvi7P/55EftE/P7lDD3e3w6HWNdiowtSMg1+lN3VgwiYyfS0Xrj
+         EARj7jnBre2L+xXC2K5LSgCvsChp4yC/Ptfn5NxTBsHGgVBQfCB2s4l0cjzfoSasMJ9h
+         CSg4riXOOcw4watdIqqNeKIzm8k4jv2VlCnPKcLAEZXnAKjwN7CIn7O/lf9FsbTAA6l5
+         /uszg3+kMw1ALJ+S/4ItCJAiSAWfs0CE3p8k+Lu8j6h6iis+Ke8JAx3gNKMCXV7y13NL
+         RaaLTC74t4Z/o/76LQdXbxIwZ9jc6Eux3yEakvvl5E0Vmdqee9Y0cuseAmZyXXtmDkIo
+         h1zg==
+X-Gm-Message-State: APjAAAV9pHQ8+6zGpCRoc9zSxnzOf+O32f9n6U1fcHFqWqxk7HOkVJaJ
+        xPZJQ6X5hGe5VenFfdCu4rfUQH6tZ7A=
+X-Google-Smtp-Source: APXvYqyXPmmAOIPgN7j+x4kC4fO9zrRuuf2mnoEf+p8W3AU3PWW0XGx0sVvzE5tJO0bg5y1sc14ewg==
+X-Received: by 2002:a17:906:11da:: with SMTP id o26mr8461644eja.64.1565948373831;
+        Fri, 16 Aug 2019 02:39:33 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id c14sm1013361edb.5.2019.08.16.02.39.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2019 02:39:33 -0700 (PDT)
+Subject: Re: [PATCH v13] fs: Add VirtualBox guest shared folder (vboxsf)
+ support
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+References: <20190815131253.237921-1-hdegoede@redhat.com>
+ <20190815131253.237921-2-hdegoede@redhat.com>
+ <20190816075654.GA15363@infradead.org>
+ <412a10a9-a681-4c7a-9175-e7509b3fea87@redhat.com>
+Message-ID: <5ce18de2-b594-c06d-21a0-aa9677dbcc0a@redhat.com>
+Date:   Fri, 16 Aug 2019 11:39:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <412a10a9-a681-4c7a-9175-e7509b3fea87@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Arul,
+P.S.
 
-On Fri, 16 Aug 2019, arul.jeniston@gmail.com wrote:
+On 16-08-19 11:01, Hans de Goede wrote:
+> On 16-08-19 09:56, Christoph Hellwig wrote:
 
-Please write the subject as a short precise sentence which fits into 70
-characters and put the long explanation into the body, i.e. here.
+<snip>
 
-See Documentation/process/submitting-patches.rst
-
-> From: ARUL JENISTON MC <arul.jeniston@gmail.com>
-
-This lacks a Signed-off-by
-
-> ---
->  fs/timerfd.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+>>> + * Ideally we would wrap generic_file_read_iter with a function which also
+>>> + * does this check, to reduce the chance of us missing writes happening on the
+>>> + * host side after open(). But the vboxsf stat call to the host only works on
+>>> + * filenames, so that would require caching the filename in our
+>>> + * file->private_data and there is no guarantee that filename will still
+>>> + * be valid at read_iter time. So this would be in no way bulletproof.
+>>
+>> Well, you can usually generate a file name from file->f_path.dentry.
+>> The only odd case is opened by unliked files.  NFS has a special hack
+>> for those called sillyrename (you can grep for that). 
 > 
-> diff --git a/fs/timerfd.c b/fs/timerfd.c
-> index 6a6fc8aa1de7..f5094e070e9a 100644
-> --- a/fs/timerfd.c
-> +++ b/fs/timerfd.c
-> @@ -284,8 +284,16 @@ static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
->  					&ctx->t.alarm, ctx->tintv) - 1;
->  				alarm_restart(&ctx->t.alarm);
->  			} else {
-> -				ticks += hrtimer_forward_now(&ctx->t.tmr,
-> -							     ctx->tintv) - 1;
-> +				u64 nooftimeo = hrtimer_forward_now(&ctx->t.tmr,
-> +								 ctx->tintv);
-> +				/*
-> +				 * ticks shouldn't become zero at this point.
-> +				 * Ignore if hrtimer_forward_now returns 0
-> +				 * due to larger backward time drift.
-> +				 */
+> Right, so since the unlink or a normal rename could happen on the host side
+> and there is no notification of that, those will be 2 areas where a stat
+> call to verify will fail, which leaves us with 3 options:
+> 
+> 1) Make stat calls before read() calls, if they fail purge the cache to be safe
+> 2) Make stat calls before read(), on failure ignore the stat call
+> 3) Treat read() calls like other page-cache reads such as sendfile or mmap
+> and only check if the cache is stale at open() time.
 
-What? Backward time drift? Can you please explain how this would happen?
+I just realized there is a 4th option, which is to make vboxsf read_iter
+simply always do:
 
-> +				if (likely(nooftimeo)) {
-> +					ticks += nooftimeo - 1;
-> +				}
+4) Always evict non dirt pages from page-cache from read_iter, to ensure we
+    get the latest version from the host:
 
-Pointless brackets.
+So something like this:
 
-Thanks,
+	/*
+          * Evict non dirt pages from page-cache, so that we reget them from
+          * the host in case they have been changed.
+          * /
+	invalidate_mapping_pages(inode->i_mapping, pos >> PAGE_SHIFT,
+				 (pos + len) >> PAGE_SHIFT);
+         generic_file_read_iter(...)
 
-	tglx
+This is in essence what the out of tree driver is doing on read(), except
+that it does not go through the page-cache at all.
+
+I think this might be the best option, perhaps controlled by a mount
+flag ?
+
+Regards,
+
+Hans
