@@ -2,67 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7461905DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 18:33:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A55A690638
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 18:54:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfHPQbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 12:31:23 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42459 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726447AbfHPQbW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:31:22 -0400
-Received: by mail-qt1-f195.google.com with SMTP id t12so6688655qtp.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2019 09:31:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Q07PDQQFTsBG0+IljaPmiFmWlKr48/NTXtftkV/guY4=;
-        b=I8NWKYwa4+LMYIEL3v6vTz8y0vEwzbwwf2hFe9gwajh+1WXmOIgwGm77LQD0FK550N
-         YmOgkBjEo+LxcVe3peySHrZqigyvY2ximEDABzQ24c1Y/aeMeENxU8q1MpRNsx2C0Yv2
-         P6CSLX3qtWaTwMmlTJL7KqJuknLioR6OoiPRfqOUzT18MBUSa+JPVZhYJjZ5IkxM+Lpz
-         IZPRCrp30aBEarURJEXC86jWyfx6cw5XV1zVfBpopUAIovi8AWgC/U7SbaB+i16OrJ3p
-         glzrqXekDG7gZ9V2khdjtXapxYuhmKY9k6i12vc/eo2Vl+/8TFgLmknlVdSqNNh+ddMB
-         VBiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q07PDQQFTsBG0+IljaPmiFmWlKr48/NTXtftkV/guY4=;
-        b=FGXfpknCTcutfOpZB3K7Koeah2Ms9rNrGE4R0neYD30qWeb1TDaOX/QjeFHEd3B7VT
-         j8siakTkJnlf0jATFVvjnEfB9IsKxJBwOIgntuqZ7B2xZ2kBXdOpkymjJ77mV5JVYOIV
-         uWanwhO+gxi6XA7zsMKyq546ylbil4Az7JTjTEGn77Sl3mNITmTIBbOLA+QRmt5LRgEq
-         HdsbaWegEcMdSsdedILADr5J5/Y7KkHgrG9Nf841sugaHD45Wq8FaAEotv39Q1yi0Twd
-         wU2YZYPLLZ9FKRbjBnBqnV2TOcVTW9T+bde8kmhMdMUjSRrEl1tyI+/qOSlzh2YpOVjG
-         J+og==
-X-Gm-Message-State: APjAAAX6dkBLqJ62WFM1R3XIDNqQgOu/1dy3KoAuSKpvouEEHXxow4at
-        DuaVSXxdINrriJqPeygOnokUCnvIadQ=
-X-Google-Smtp-Source: APXvYqyOu4QUIxVU7pL68pfhAnBIR85+JknyfuXMsLG/1jKGE4MxqYbqiE8sQom1Us1Ccd0ZveLEZw==
-X-Received: by 2002:aed:3e6f:: with SMTP id m44mr9484086qtf.220.1565973081751;
-        Fri, 16 Aug 2019 09:31:21 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id m10sm2903557qka.43.2019.08.16.09.31.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Aug 2019 09:31:21 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hyf8K-0007ns-SK; Fri, 16 Aug 2019 13:31:20 -0300
-Date:   Fri, 16 Aug 2019 13:31:20 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
+        id S1726924AbfHPQyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 12:54:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48756 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726245AbfHPQyt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Aug 2019 12:54:49 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CF1BE3001895;
+        Fri, 16 Aug 2019 16:54:48 +0000 (UTC)
+Received: from redhat.com (ovpn-123-168.rdu2.redhat.com [10.10.123.168])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6CAC884256;
+        Fri, 16 Aug 2019 16:54:47 +0000 (UTC)
+Date:   Fri, 16 Aug 2019 12:54:45 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
 To:     Jan Kara <jack@suse.cz>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
         John Hubbard <jhubbard@nvidia.com>,
         Ira Weiny <ira.weiny@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Christoph Hellwig <hch@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Chinner <david@fromorbit.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
 Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-Message-ID: <20190816163120.GF5398@ziepe.ca>
+Message-ID: <20190816165445.GD3149@redhat.com>
 References: <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
  <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
  <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
@@ -74,17 +45,65 @@ References: <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
  <20190816155220.GC3149@redhat.com>
  <20190816161355.GL3041@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <20190816161355.GL3041@quack2.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 16 Aug 2019 16:54:48 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, Aug 16, 2019 at 06:13:55PM +0200, Jan Kara wrote:
-
+> On Fri 16-08-19 11:52:20, Jerome Glisse wrote:
+> > On Fri, Aug 16, 2019 at 05:44:04PM +0200, Jan Kara wrote:
+> > > On Fri 16-08-19 10:47:21, Vlastimil Babka wrote:
+> > > > On 8/15/19 3:35 PM, Jan Kara wrote:
+> > > > >> 
+> > > > >> So when the GUP user uses MMU notifiers to stop writing to pages whenever
+> > > > >> they are writeprotected with page_mkclean(), they don't really need page
+> > > > >> pin - their access is then fully equivalent to any other mmap userspace
+> > > > >> access and filesystem knows how to deal with those. I forgot out this case
+> > > > >> when I wrote the above sentence.
+> > > > >> 
+> > > > >> So to sum up there are three cases:
+> > > > >> 1) DIO case - GUP references to pages serving as DIO buffers are needed for
+> > > > >>    relatively short time, no special synchronization with page_mkclean() or
+> > > > >>    munmap() => needs FOLL_PIN
+> > > > >> 2) RDMA case - GUP references to pages serving as DMA buffers needed for a
+> > > > >>    long time, no special synchronization with page_mkclean() or munmap()
+> > > > >>    => needs FOLL_PIN | FOLL_LONGTERM
+> > > > >>    This case has also a special case when the pages are actually DAX. Then
+> > > > >>    the caller additionally needs file lease and additional file_pin
+> > > > >>    structure is used for tracking this usage.
+> > > > >> 3) ODP case - GUP references to pages serving as DMA buffers, MMU notifiers
+> > > > >>    used to synchronize with page_mkclean() and munmap() => normal page
+> > > > >>    references are fine.
+> > > > 
+> > > > IMHO the munlock lesson told us about another one, that's in the end equivalent
+> > > > to 3)
+> > > > 
+> > > > 4) pinning for struct page manipulation only => normal page references
+> > > > are fine
+> > > 
+> > > Right, it's good to have this for clarity.
+> > > 
+> > > > > I want to add that I'd like to convert users in cases 1) and 2) from using
+> > > > > GUP to using differently named function. Users in case 3) can stay as they
+> > > > > are for now although ultimately I'd like to denote such use cases in a
+> > > > > special way as well...
+> > > > 
+> > > > So after 1/2/3 is renamed/specially denoted, only 4) keeps the current
+> > > > interface?
+> > > 
+> > > Well, munlock() code doesn't even use GUP, just follow_page(). I'd wait to
+> > > see what's left after handling cases 1), 2), and 3) to decide about the
+> > > interface for the remainder.
+> > > 
+> > 
 > > For 3 we do not need to take a reference at all :) So just forget about 3
 > > it does not exist. For 3 the reference is the reference the CPU page table
 > > has on the page and that's it. GUP is no longer involve in ODP or anything
@@ -94,6 +113,9 @@ On Fri, Aug 16, 2019 at 06:13:55PM +0200, Jan Kara wrote:
 > e.g. in ODP code. If you can make the code work without taking a page
 > reference at all, I'm only happy :)
 
-We are working on it :)
+Already in rdma next AFAIK so in 5.4 it will be gone :) i have been
+removing all GUP users that do not need reference. Intel i915 driver
+is a left over i will work some more with them to get rid of it too.
 
-Jason
+Cheers,
+Jérôme
