@@ -2,185 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D47390654
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 19:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C15E90665
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 19:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfHPRAd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 13:00:33 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45897 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfHPRAd (ORCPT
+        id S1727525AbfHPREM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 13:04:12 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41410 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfHPREM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 13:00:33 -0400
-Received: by mail-lf1-f66.google.com with SMTP id a30so4497930lfk.12;
-        Fri, 16 Aug 2019 10:00:31 -0700 (PDT)
+        Fri, 16 Aug 2019 13:04:12 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g17so5253168qkk.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2019 10:04:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FFeowMwOfZvUOFR7qFp9T0Fg57QUMSHNhashmQ6YNsI=;
-        b=UTI6HTqrtjKgC30Vsc56x/QAO3559spivpML5U3PVB1+m0meGSQbInR6OOkaWR9Be0
-         56sbM1NfbQOOuTcNTt/fFZl9Zqm3aOSgZu2wpwRsuV107iS1sPhayKy7JCjh71bVR5ss
-         4gSYDXWy2R6cJ8vJWxHDCJ4+fQLGhK9S7HTsTHB4uZdJkzM5MpO4FTXryU8X55yseG2Q
-         uFhnz1hXCAa4QpadFAH4zZ2Og+SfFKrn+4u5Sagqwjp5/XpNAD3FwzzHz1b3NqbRZBh0
-         8H0JkCtqcmsD0KUORP+baHYQGgrhjcWlm6Ezma/mIoJ6mrQj1iC3Qif+3viCcYaCTPH5
-         8fvw==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3/tESAZDqjf2ti4MOUFqaLyuCU2G0DdLcKzf9OCJK1A=;
+        b=CgyAwPGtGbDRUG8Q8IPdiAN946YBd9GiTLHLY9qdMO5DtczZ+v/ksZz5SGjHhHDB0g
+         hiV6XUJ4c9P/Fox7d6UOuEz97SD/EhMDbiCw8kD+oxlGk5WZy2o/dhyrB5D8Leo7SHAD
+         BKUA1fyEb0S2R5LJe+cV2l0+5GCV3Ei1qwVPLJVNjVyjL/1JaNhiXlUIMTcYmIQCwa5w
+         UFybR3WyOnO6J0TyWyymvk11R0w9E51nhI3I9ejTlLJRWh894PP5rmYob/zftnr58EHa
+         1R9EcYM6LGmbUn/CP/1T6cgliyd8l3igSjchOMhsF9pHYkfmf7q8dp+B8ImzDvpVFHxr
+         0xBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FFeowMwOfZvUOFR7qFp9T0Fg57QUMSHNhashmQ6YNsI=;
-        b=t47ZxFIjyZ0p+tWMPNPoWCvQaP7BgEH/Zl9YIfRvZezikr+XZPELeJLZlxcB1YDg3d
-         ljHRVLzqplfEvxeUKv8aSEl5RVljBFfhi+cYm/z6OWqxqeUMF+pw6Q+KprPTzt6JoKjH
-         a4MvbIEZxedWgnPpz8/8uHY3yrbrdCkXET1LSZOfaitZUxBGkc5Ts+IUBF6q4myKb5uI
-         LMT9PCX5O5DueSmwJoNJlhV8IVu1gIAj59PIzcusOYtvlY/SG+SOREuGPCUFG3juB3Nb
-         8upXWVwrm2wpsakONxIubyQTktVMwZA3WWb23iDVruVEqzjpuxfDPwgVXalevM68jLol
-         iRfA==
-X-Gm-Message-State: APjAAAWvjT39MQoJFQWJOsUEuGxeAPmZENhDi7PaWIRd6cxh06vWmNtI
-        lsmXND5UjX0BA+7m8mPkOJ8WPseIrBIlc+Lwaqo=
-X-Google-Smtp-Source: APXvYqw4guuc5zoA2tl9fU/CLxd3JO4/xqCjmWnPVU4AeL/8c29q1SabHjTc0k+kTqv/tQSUKBHzbal4H3OVfmyzqVc=
-X-Received: by 2002:a05:6512:403:: with SMTP id u3mr5812376lfk.10.1565974830381;
- Fri, 16 Aug 2019 10:00:30 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3/tESAZDqjf2ti4MOUFqaLyuCU2G0DdLcKzf9OCJK1A=;
+        b=gYS7wUNP5Py5D7ll/y/4Sl4MpUEhj3fe7F9mkQQoZNPylnqQyJ+3fgT5x6R43FA84V
+         FpXb+9+fBY5xguQqHlxe4V3WRlHwetfFsnOgLYBqUJB6DmsmDLzDT5jgmub5B35RN+pM
+         D4dlCEQgTCSpKDhTSfWY5VttsEX6Fo2jcYoYbrylkvSq4prAyCZdf7WGnouinYXW5aNX
+         GQpiHAlyFVTCIu6YVAzlAp+TJeFfYMnoZnxJ5OlYTBKF4gJAamcFyj8szx9L1mm8w9gi
+         OC7BFC0dTmJAhbTWA3qQDOcpqLqHmVUA3lCgMN2LDw+Jw8BOXE9BjTiM75Dr03MMpngj
+         Z4Sg==
+X-Gm-Message-State: APjAAAWzdEQiO6+IeXhqVHmBkBlmfA/Cz7x9iAsSRF4qKBvVojGb1CxO
+        BkaFKHV/Os32/W/MLy9f2ODRwA==
+X-Google-Smtp-Source: APXvYqx/H9DYP00gkOY/+C82HTHZ3xyAsu8DjOC+iOmym4LKCzVRjzFvWdNtwrKPess7YdPgQyP7Sw==
+X-Received: by 2002:a05:620a:16d6:: with SMTP id a22mr9866792qkn.414.1565975051948;
+        Fri, 16 Aug 2019 10:04:11 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id s58sm3477747qth.59.2019.08.16.10.04.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Aug 2019 10:04:10 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hyfe6-0000CI-Dj; Fri, 16 Aug 2019 14:04:10 -0300
+Date:   Fri, 16 Aug 2019 14:04:10 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
+Message-ID: <20190816170410.GH5398@ziepe.ca>
+References: <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
+ <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
+ <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
+ <20190815132622.GG14313@quack2.suse.cz>
+ <20190815133510.GA21302@quack2.suse.cz>
+ <0d6797d8-1e04-1ebe-80a7-3d6895fe71b0@suse.cz>
+ <20190816154404.GF3041@quack2.suse.cz>
+ <20190816155220.GC3149@redhat.com>
+ <20190816161355.GL3041@quack2.suse.cz>
+ <20190816165445.GD3149@redhat.com>
 MIME-Version: 1.0
-References: <20190816083246.169312-1-arul.jeniston@gmail.com>
- <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com>
- <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de> <CACAVd4h05P2tWb7Eh1+3_0Cm7MkDNAt+SJVoBT4gErBfsBmsAQ@mail.gmail.com>
-In-Reply-To: <CACAVd4h05P2tWb7Eh1+3_0Cm7MkDNAt+SJVoBT4gErBfsBmsAQ@mail.gmail.com>
-From:   Arul Jeniston <arul.jeniston@gmail.com>
-Date:   Fri, 16 Aug 2019 22:30:18 +0530
-Message-ID: <CACAVd4gHQ+_y5QBSQm3pMFHKrVgvvJZAABGvtp6=qt3drVXpTA@mail.gmail.com>
-Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arul_mc@dell.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190816165445.GD3149@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adding few more data points...
+On Fri, Aug 16, 2019 at 12:54:45PM -0400, Jerome Glisse wrote:
 
-On Fri, Aug 16, 2019 at 10:25 PM Arul Jeniston <arul.jeniston@gmail.com> wrote:
->
-> Hi tglx,
->
-> Thank you for your comments.
-> Please find my commend in-lined
->
-> On Fri, Aug 16, 2019 at 4:15 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > Arul,
-> >
-> > On Fri, 16 Aug 2019, Arul Jeniston wrote:
-> >
-> > > Subject: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
-> >
-> > The prefix is not 'FS: timerfd:'
-> >
-> > 1) The usual prefix for fs/* is: 'fs:' but...
-> >
-> > 2) git log fs/timerfd.c gives you a pretty good hint for the proper
-> >    prefix. Look at the commits which actually do functional changes to that
-> >    file, not at those which do (sub)system wide cleanups/adjustments.
-> >
-> > Also 'timerfd_read function' can be written as 'timerfd_read()' which
-> > spares the redundant function and clearly marks it as function via the
-> > brackets.
-> >
-> > > 'hrtimer_forward_now()' returns zero due to bigger backward time drift.
-> > > This causes timerfd_read to return 0. As per man page, read on timerfd
-> > >  is not expected to return 0.
-> > > This problem is well explained in https://lkml.org/lkml/2019/7/31/442
-> >
-> > 1) The explanation needs to be in the changelog itself. Links can point to
-> >    discussions, bug-reports which have supplementary information.
-> >
-> > 2) Please do not use lkml.org links.
-> >
-> > Again: Please read and follow Documentation/process/submitting-patches.rst
-> >
-> > > . This patch fixes this problem.
-> > > Signed-off-by: Arul Jeniston <arul.jeniston@gmail.com>
-> >
-> > Missing empty line before Signed-off-by. Please use git-log to see how
-> > changelogs are properly formatted.
-> >
-> > Also: 'This patch fixes this problem' is not helpful at all. Again see the
-> > document I already pointed you to.
-> >
->
-> Agreed. Would incorporate all the above comments.
->
-> > > ---
-> > >  fs/timerfd.c | 12 ++++++++++--
-> > >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/timerfd.c b/fs/timerfd.c
-> > > index 6a6fc8aa1de7..f5094e070e9a 100644
-> > > --- a/fs/timerfd.c
-> > > +++ b/fs/timerfd.c
-> > > @@ -284,8 +284,16 @@ static ssize_t timerfd_read(struct file *file,
-> > > char __user *buf, size_t count,
-> > >                                         &ctx->t.alarm, ctx->tintv) - 1;
-> > >                                 alarm_restart(&ctx->t.alarm);
-> > >                         } else {
-> > > -                               ticks += hrtimer_forward_now(&ctx->t.tmr,
-> > > -                                                            ctx->tintv) - 1;
-> > > +                               u64 nooftimeo = hrtimer_forward_now(&ctx->t.tmr,
-> > > +                                                                ctx->tintv);
-> >
-> > nooftimeo is pretty non-intuitive. The function documentation of
-> > hrtimer_forward_now() says:
-> >
-> >       Returns the number of overruns.
-> >
-> > So the obvious variable name is overruns, right?
-> >
->
-> Agreed. Would change the variable name to overruns.
->
-> > > +                               /*
-> > > +                                * ticks shouldn't become zero at this point.
-> > > +                                * Ignore if hrtimer_forward_now returns 0
-> > > +                                * due to larger backward time drift.
-> >
-> > Again. This explanation does not make any sense at all.
-> >
-> > Time does not go backwards, except if it is CLOCK_REALTIME which can be set
-> > backwards via clock_settime() or settimeofday().
-> >
-> > > +                                */
-> > > +                               if (likely(nooftimeo)) {
-> > > +                                       ticks += nooftimeo - 1;
-> > > +                               }
-> >
-> > Again: Pointless brackets.
-> >
-> > If you disagree with my review comment, then tell me in a reply. If not,
-> > then fix it. If you decide to ignore my comments, then don't wonder if I
-> > ignore your patches.
-> >
->
-> We use CLOCK_REALTIME while creating timer_fd.
-> Can read() on timerfd return 0 when the clock is set to CLOCK_REALTIME?
->
-> We have Intel rangely 4 cpu system running debian stretch linux
-> kernel. The current clock source is set to tsc. During our testing, we
-> observed the time drifts backward occasionally. Through kernel
-> instrumentation, we observed, sometimes clocksource_delta() finds the
-> current time lesser than last time. and returns 0 delta.
->
+> > Yes, I understand. But the fact is that GUP calls are currently still there
+> > e.g. in ODP code. If you can make the code work without taking a page
+> > reference at all, I'm only happy :)
+> 
+> Already in rdma next AFAIK so in 5.4 it will be gone :)
 
-This causes the following code flow to return a time which is lesser
-than previously fetched time.
-ktime_get()-->timekeeping_get_ns()-->timekeeping_get_delta()-->clocksource_delta()
+Unfortunately no.. only a lot of patches supporting this change will
+be in 5.4. The notifiers are still a problem, and I need to figure out
+if the edge cases in hmm_range_fault are OK for ODP or not. :(
 
-Since ktime_get() returns a time which is lesser than the expiry time,
-hrtimer_forward_now return 0.
-This in-turn causes timerfd_read to return 0.
-Is it not a bug?
+This is taking a long time in part because ODP itself has all sorts of
+problems that make it hard to tell if the other changes are safe or
+not..
 
-> > Thanks,
-> >
-> >         tglx
+Lots of effort is being spent to get there though.
+
+Jason
