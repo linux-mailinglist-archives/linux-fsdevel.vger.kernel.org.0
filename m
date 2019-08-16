@@ -2,79 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C7E904B2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 17:31:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B43D1904DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 17:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbfHPPbw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 11:31:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55710 "EHLO mx1.suse.de"
+        id S1727397AbfHPPlL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 11:41:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58810 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727352AbfHPPbw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 11:31:52 -0400
+        id S1727376AbfHPPlK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Aug 2019 11:41:10 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 55429AF90;
-        Fri, 16 Aug 2019 15:31:50 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 5584DAD0F;
+        Fri, 16 Aug 2019 15:41:09 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 892F91E4009; Fri, 16 Aug 2019 17:31:49 +0200 (CEST)
-Date:   Fri, 16 Aug 2019 17:31:49 +0200
+        id B6F151E4009; Fri, 16 Aug 2019 17:41:08 +0200 (CEST)
+Date:   Fri, 16 Aug 2019 17:41:08 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: Deprecated mandatory file locking
-Message-ID: <20190816153149.GD3041@quack2.suse.cz>
-References: <20190814173345.GB10843@quack2.suse.cz>
- <20190814174604.GC10843@quack2.suse.cz>
- <01b6620186a18b167ca1bab1fadb2dbaffdd8379.camel@kernel.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
+Message-ID: <20190816154108.GE3041@quack2.suse.cz>
+References: <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
+ <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
+ <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
+ <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
+ <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
+ <20190815132622.GG14313@quack2.suse.cz>
+ <20190815133510.GA21302@quack2.suse.cz>
+ <20190815173237.GA30924@iweiny-DESK2.sc.intel.com>
+ <b378a363-f523-518d-9864-e2f8e5bd0c34@nvidia.com>
+ <58b75fa9-1272-b683-cb9f-722cc316bf8f@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <01b6620186a18b167ca1bab1fadb2dbaffdd8379.camel@kernel.org>
+In-Reply-To: <58b75fa9-1272-b683-cb9f-722cc316bf8f@nvidia.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 15-08-19 15:18:45, Jeff Layton wrote:
-> On Wed, 2019-08-14 at 19:46 +0200, Jan Kara wrote:
-> > Resending to proper Jeff's address...
+On Thu 15-08-19 19:14:08, John Hubbard wrote:
+> On 8/15/19 10:41 AM, John Hubbard wrote:
+> > On 8/15/19 10:32 AM, Ira Weiny wrote:
+> >> On Thu, Aug 15, 2019 at 03:35:10PM +0200, Jan Kara wrote:
+> >>> On Thu 15-08-19 15:26:22, Jan Kara wrote:
+> >>>> On Wed 14-08-19 20:01:07, John Hubbard wrote:
+> >>>>> On 8/14/19 5:02 PM, John Hubbard wrote:
+> ...
+> >> Ok just to make this clear I threw up my current tree with your patches here:
+> >>
+> >> https://github.com/weiny2/linux-kernel/commits/mmotm-rdmafsdax-b0-v4
+> >>
+> >> I'm talking about dropping the final patch:
+> >> 05fd2d3afa6b rdma/umem_odp: Use vaddr_pin_pages_remote() in ODP
+> >>
+> >> The other 2 can stay.  I split out the *_remote() call.  We don't have a user
+> >> but I'll keep it around for a bit.
+> >>
+> >> This tree is still WIP as I work through all the comments.  So I've not changed
+> >> names or variable types etc...  Just wanted to settle this.
+> >>
 > > 
-> > On Wed 14-08-19 19:33:45, Jan Kara wrote:
-> > > Hello Jeff,
-> > > 
-> > > we've got a report from user
-> > > (https://bugzilla.suse.com/show_bug.cgi?id=1145007) wondering why his fstab
-> > > entry (for root filesystem!) using 'mand' mount option stopped working.
-> > > Now I understand your rationale in 9e8925b67a "locks: Allow disabling
-> > > mandatory locking at compile time" but I guess there's some work to do wrt
-> > > documentation. At least mount(8) manpage could mention that mandatory
-> > > locking is broken and may be disabled referencing the rationale in fcntl
-> > > manpage? Or the kernel could mention something in the log about failing
-> > > mount because of 'mand' mount option?  What do you think? Because it took
-> > > me some code searching to understand why the mount is actually failing
-> > > which we can hardly expect from a normal sysadmin...
-> > > 
-> > > 								Honza
+> > Right. And now that ODP is not a user, I'll take a quick look through my other
+> > call site conversions and see if I can find an easy one, to include here as
+> > the first user of vaddr_pin_pages_remote(). I'll send it your way if that
+> > works out.
+> > 
 > 
-> Wow, I think this is the first actual user fallout we've ever had from
-> that change! Why was he setting that option? Does he actually use
-> mandatory locking?
+> OK, there was only process_vm_access.c, plus (sort of) Bharath's sgi-gru
+> patch, maybe eventually [1].  But looking at process_vm_access.c, I think 
+> it is one of the patches that is no longer applicable, and I can just
+> drop it entirely...I'd welcome a second opinion on that...
 
-Yeah, reportedly they had an application that required mandatory locking.
-But they don't use it anymore so they just removed the mount option.
-
-> I think a pr_notice() or pr_warn() at mount time when someone tries to
-> use it sounds like a very reasonable thing to do. Perhaps we can just
-> stick one in may_mandlock()?
-
-Yeah, sounds reasonable to me.
-
-> I'll draft up a patch, and also update
-> Documentation/filesystems/mandatory-locking.txt with the current
-> situation.
-
-Thanks!
+I don't think you can drop the patch. process_vm_rw_pages() clearly touches
+page contents and does not synchronize with page_mkclean(). So it is case
+1) and needs FOLL_PIN semantics.
 
 								Honza
 -- 
