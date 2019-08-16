@@ -2,89 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D8688FDDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 10:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31CE08FE79
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 10:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfHPIcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 04:32:54 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42657 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726739AbfHPIcy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:32:54 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i30so2771593pfk.9;
-        Fri, 16 Aug 2019 01:32:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=yuE873IbiwemYHZMD4KW0OvYRCF9sChEloERx3wmBIM=;
-        b=FhLJEG7YhCU0zZJ6JdxwQsm4Mj02X4bxWld0f+9ALxBLVr5UTKyBPJPbwp/AKIeK2m
-         CY7hEJHrGPpcxq1592Ha0F3qkPxTR/M1MVqAMaGSuuqIfWwmM22OcFD0keTOiO31vuFJ
-         //GLl+bVrg0OrKBXLKF0BTyrbZ6P+XIvzrVUYvhOhUaPmiRD/7yms1Eu2GvPoCyxtRlr
-         eSyHjqdXsLbloZIi+7iFEifnATWl8OLcTn+d8n4AeAVA6dCb+DJMrOjXftNA21sQI5df
-         hvAklMZZ43Ll0LljkiYjkU2TMCxkWjLZgToNWmN/glQ+yd9UZEvG8QenCp2nFkxsF8hL
-         gfcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yuE873IbiwemYHZMD4KW0OvYRCF9sChEloERx3wmBIM=;
-        b=drAL8D4asiFnN4Mbc5JBelyUPqH4CPFoAYUHvHZNq1bMSCJqnDqGORV9Nq71VqDML9
-         PvFj34psqd+oqrAA9wWJdmJizTLmxuCQ8C8slFVaA2+jGQyUUn4QGqhoQao1ujCEem9i
-         4oMhfh7Sr7QoArInN0CYQxwVs2GH4j9uLgu6NDMXyIQ0T3uPocdDJqox13fCHgna7Vmi
-         tdScu5NmDwsrcmNfafZcMD4WTOhtGh4U4op/LaCa/8OpsQDyk6DTDtJgsMd/yVri44tm
-         ecukJfaS1Ler4Y4j28BkmC+2oA8zv9SmIi7jdQac4bu3Tx2/xMWbjMbGycPs4lNtwajf
-         bmeQ==
-X-Gm-Message-State: APjAAAXfY1eY/u1o16rqRk7jjZy+dDHvqh3IbRJIeRM7SxUi1lf2vWV1
-        wnF3WJ4abKBhK5/wqWFHM1A=
-X-Google-Smtp-Source: APXvYqwH0DMAs0ppI6tDcRbJQwqINk2TOD2JE++LEGy84nkvf5UOiyc6kAJoPZ1FBqfhH36k28dKhQ==
-X-Received: by 2002:a65:5183:: with SMTP id h3mr6822290pgq.250.1565944373616;
-        Fri, 16 Aug 2019 01:32:53 -0700 (PDT)
-Received: from localhost.localdomain (sdc02.force10networks.com. [63.80.56.89])
-        by smtp.gmail.com with ESMTPSA id o24sm9824597pfp.135.2019.08.16.01.32.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2019 01:32:52 -0700 (PDT)
-From:   arul.jeniston@gmail.com
-To:     viro@zeniv.linux.org.uk, tglx@linutronix.de
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        arul_mc@dell.com, ARUL JENISTON MC <arul.jeniston@gmail.com>
-Subject: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.  'hrtimer_forward_now()' returns zero due to bigger backward time drift.  This causes timerfd_read to return 0. As per man page, read on timerfd  is not expected to return 0. This patch fixes this problem.  Signed-off-by: Arul Jeniston <arul.jeniston@gmail.com>
-Date:   Fri, 16 Aug 2019 01:32:46 -0700
-Message-Id: <20190816083246.169312-1-arul.jeniston@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        id S1726893AbfHPIrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 04:47:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47690 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726872AbfHPIrZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Aug 2019 04:47:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8416CB06B;
+        Fri, 16 Aug 2019 08:47:23 +0000 (UTC)
+Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
+To:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <20190812015044.26176-3-jhubbard@nvidia.com>
+ <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
+ <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
+ <20190813210857.GB12695@iweiny-DESK2.sc.intel.com>
+ <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
+ <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
+ <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
+ <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
+ <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
+ <20190815132622.GG14313@quack2.suse.cz>
+ <20190815133510.GA21302@quack2.suse.cz>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <0d6797d8-1e04-1ebe-80a7-3d6895fe71b0@suse.cz>
+Date:   Fri, 16 Aug 2019 10:47:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190815133510.GA21302@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: ARUL JENISTON MC <arul.jeniston@gmail.com>
+On 8/15/19 3:35 PM, Jan Kara wrote:
+>> 
+>> So when the GUP user uses MMU notifiers to stop writing to pages whenever
+>> they are writeprotected with page_mkclean(), they don't really need page
+>> pin - their access is then fully equivalent to any other mmap userspace
+>> access and filesystem knows how to deal with those. I forgot out this case
+>> when I wrote the above sentence.
+>> 
+>> So to sum up there are three cases:
+>> 1) DIO case - GUP references to pages serving as DIO buffers are needed for
+>>    relatively short time, no special synchronization with page_mkclean() or
+>>    munmap() => needs FOLL_PIN
+>> 2) RDMA case - GUP references to pages serving as DMA buffers needed for a
+>>    long time, no special synchronization with page_mkclean() or munmap()
+>>    => needs FOLL_PIN | FOLL_LONGTERM
+>>    This case has also a special case when the pages are actually DAX. Then
+>>    the caller additionally needs file lease and additional file_pin
+>>    structure is used for tracking this usage.
+>> 3) ODP case - GUP references to pages serving as DMA buffers, MMU notifiers
+>>    used to synchronize with page_mkclean() and munmap() => normal page
+>>    references are fine.
 
----
- fs/timerfd.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+IMHO the munlock lesson told us about another one, that's in the end equivalent
+to 3)
 
-diff --git a/fs/timerfd.c b/fs/timerfd.c
-index 6a6fc8aa1de7..f5094e070e9a 100644
---- a/fs/timerfd.c
-+++ b/fs/timerfd.c
-@@ -284,8 +284,16 @@ static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
- 					&ctx->t.alarm, ctx->tintv) - 1;
- 				alarm_restart(&ctx->t.alarm);
- 			} else {
--				ticks += hrtimer_forward_now(&ctx->t.tmr,
--							     ctx->tintv) - 1;
-+				u64 nooftimeo = hrtimer_forward_now(&ctx->t.tmr,
-+								 ctx->tintv);
-+				/*
-+				 * ticks shouldn't become zero at this point.
-+				 * Ignore if hrtimer_forward_now returns 0
-+				 * due to larger backward time drift.
-+				 */
-+				if (likely(nooftimeo)) {
-+					ticks += nooftimeo - 1;
-+				}
- 				hrtimer_restart(&ctx->t.tmr);
- 			}
- 		}
--- 
-2.11.0
+4) pinning for struct page manipulation only => normal page references are fine
+
+> I want to add that I'd like to convert users in cases 1) and 2) from using
+> GUP to using differently named function. Users in case 3) can stay as they
+> are for now although ultimately I'd like to denote such use cases in a
+> special way as well...
+
+So after 1/2/3 is renamed/specially denoted, only 4) keeps the current interface?
+
+> 								Honza
+> 
 
