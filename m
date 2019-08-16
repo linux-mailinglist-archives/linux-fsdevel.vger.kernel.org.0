@@ -2,50 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C0318FB70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 08:52:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C998FBD4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 09:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfHPGwa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 02:52:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60582 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfHPGwa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:52:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EdyyKKMIutVc3nOpSSkE+3twjEQDT2MXZfWI9z78Zh0=; b=owb7svbSNpMi0iO7jrBG7+kxb
-        2hf2B2xIFqTO6nBL6Wdxsbkdv4IA1S0Xixg6BAU7O1gL75v9dWlDWCo7cKH/sdnU8j+j6JqTUVgtD
-        jyIO43Z13qrpeC9/ojBe6x5HCTN80ehlXampGutkdanViKGWDCbibZ9HkZkkaYDnSvWM/1sVDtIWr
-        YMt5AzFlQiNVQqFRPGf81KxTngwQUMF+OSnssBnrlrzje8gXma6qs4yM6r5AcLjloBZhEslzlgJdx
-        B8KUIL/bgEv6BP9QD9of3mn5PJ4Uu1FEw694Y78wWspl/HEHE6ztoEjqiBI3Vzvj9Ml8tICplQ4/H
-        10p5PADqw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hyW69-0007rP-F5; Fri, 16 Aug 2019 06:52:29 +0000
-Date:   Thu, 15 Aug 2019 23:52:29 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Damien.LeMoal@wdc.com,
-        agruenba@redhat.com
-Subject: Re: [PATCH v4 0/6] iomap: lift the xfs writepage code into iomap
-Message-ID: <20190816065229.GA28744@infradead.org>
-References: <156444945993.2682261.3926017251626679029.stgit@magnolia>
+        id S1726927AbfHPHM2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 03:12:28 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4720 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726425AbfHPHM2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Aug 2019 03:12:28 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0B2F5E6B3FC0967671C6;
+        Fri, 16 Aug 2019 15:12:25 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 16 Aug
+ 2019 15:12:16 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>, <linux-fsdevel@vger.kernel.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        <weidu.du@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH] staging: erofs: use common file type conversion
+Date:   Fri, 16 Aug 2019 15:11:42 +0800
+Message-ID: <20190816071142.8633-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <156444945993.2682261.3926017251626679029.stgit@magnolia>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Darrick,
+Deduplicate the EROFS file type conversion implementation and
+remove EROFS_FT_* definitions since it's the same as defined
+by POSIX, let's follow ext2 as Linus pointed out [1]
+commit e10892189428 ("ext2: use common file type conversion").
 
-are you going to queue this up?
+[1] https://lore.kernel.org/r/CAHk-=wiUs+b=iVKM3mVooXgVk7cmmC67KTmnAuL0cd_cMMVAKw@mail.gmail.com/
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ drivers/staging/erofs/dir.c      | 16 +---------------
+ drivers/staging/erofs/erofs_fs.h | 17 +++++------------
+ drivers/staging/erofs/namei.c    |  2 +-
+ 3 files changed, 7 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/staging/erofs/dir.c b/drivers/staging/erofs/dir.c
+index 01efc96e1212..5f38382637e6 100644
+--- a/drivers/staging/erofs/dir.c
++++ b/drivers/staging/erofs/dir.c
+@@ -8,17 +8,6 @@
+  */
+ #include "internal.h"
+ 
+-static const unsigned char erofs_filetype_table[EROFS_FT_MAX] = {
+-	[EROFS_FT_UNKNOWN]	= DT_UNKNOWN,
+-	[EROFS_FT_REG_FILE]	= DT_REG,
+-	[EROFS_FT_DIR]		= DT_DIR,
+-	[EROFS_FT_CHRDEV]	= DT_CHR,
+-	[EROFS_FT_BLKDEV]	= DT_BLK,
+-	[EROFS_FT_FIFO]		= DT_FIFO,
+-	[EROFS_FT_SOCK]		= DT_SOCK,
+-	[EROFS_FT_SYMLINK]	= DT_LNK,
+-};
+-
+ static void debug_one_dentry(unsigned char d_type, const char *de_name,
+ 			     unsigned int de_namelen)
+ {
+@@ -46,10 +35,7 @@ static int erofs_fill_dentries(struct inode *dir, struct dir_context *ctx,
+ 		unsigned int de_namelen;
+ 		unsigned char d_type;
+ 
+-		if (de->file_type < EROFS_FT_MAX)
+-			d_type = erofs_filetype_table[de->file_type];
+-		else
+-			d_type = DT_UNKNOWN;
++		d_type = fs_ftype_to_dtype(de->file_type);
+ 
+ 		nameoff = le16_to_cpu(de->nameoff);
+ 		de_name = (char *)dentry_blk + nameoff;
+diff --git a/drivers/staging/erofs/erofs_fs.h b/drivers/staging/erofs/erofs_fs.h
+index 8dc2a75e478f..6db70f395937 100644
+--- a/drivers/staging/erofs/erofs_fs.h
++++ b/drivers/staging/erofs/erofs_fs.h
+@@ -282,18 +282,11 @@ struct erofs_dirent {
+ 	__u8 reserved;  /* 11, reserved */
+ } __packed;
+ 
+-/* file types used in inode_info->flags */
+-enum {
+-	EROFS_FT_UNKNOWN,
+-	EROFS_FT_REG_FILE,
+-	EROFS_FT_DIR,
+-	EROFS_FT_CHRDEV,
+-	EROFS_FT_BLKDEV,
+-	EROFS_FT_FIFO,
+-	EROFS_FT_SOCK,
+-	EROFS_FT_SYMLINK,
+-	EROFS_FT_MAX
+-};
++/*
++ * EROFS file types should match generic FT_* types and
++ * it seems no need to add BUILD_BUG_ONs since potential
++ * unmatchness will break other fses as well...
++ */
+ 
+ #define EROFS_NAME_LEN      255
+ 
+diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
+index c0963f5a2d22..8334a910acef 100644
+--- a/drivers/staging/erofs/namei.c
++++ b/drivers/staging/erofs/namei.c
+@@ -237,7 +237,7 @@ static struct dentry *erofs_lookup(struct inode *dir,
+ 	} else {
+ 		debugln("%s, %s (nid %llu) found, d_type %u", __func__,
+ 			dentry->d_name.name, nid, d_type);
+-		inode = erofs_iget(dir->i_sb, nid, d_type == EROFS_FT_DIR);
++		inode = erofs_iget(dir->i_sb, nid, d_type == FT_DIR);
+ 	}
+ 	return d_splice_alias(inode, dentry);
+ }
+-- 
+2.17.1
+
