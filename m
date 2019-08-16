@@ -2,120 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A55A690638
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 18:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9569063D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 18:55:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfHPQyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 12:54:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48756 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726245AbfHPQyt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:54:49 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CF1BE3001895;
-        Fri, 16 Aug 2019 16:54:48 +0000 (UTC)
-Received: from redhat.com (ovpn-123-168.rdu2.redhat.com [10.10.123.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6CAC884256;
-        Fri, 16 Aug 2019 16:54:47 +0000 (UTC)
-Date:   Fri, 16 Aug 2019 12:54:45 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-Message-ID: <20190816165445.GD3149@redhat.com>
-References: <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
- <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
- <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
- <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
- <20190815132622.GG14313@quack2.suse.cz>
- <20190815133510.GA21302@quack2.suse.cz>
- <0d6797d8-1e04-1ebe-80a7-3d6895fe71b0@suse.cz>
- <20190816154404.GF3041@quack2.suse.cz>
- <20190816155220.GC3149@redhat.com>
- <20190816161355.GL3041@quack2.suse.cz>
+        id S1727382AbfHPQzc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 12:55:32 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41864 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfHPQzb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Aug 2019 12:55:31 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m24so5875467ljg.8;
+        Fri, 16 Aug 2019 09:55:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lnA2Hi587HpAY+vMzCUnzpDdgs4QOMI2ZHnlLxFisIQ=;
+        b=Fe9iSDkOND1l9HNmW3AcpL5XfQvaS1SSBUH8WFJkOtQSru3ptC2Y1hZwPwlB3WyN5q
+         TIiOzkBjlWFdCLTSLCh1J3EbeFYKJuy/re1+TNxGWDYL7V8UO6zFelU5YeLrVFYCztlB
+         uVBtewWZ+sEKJU2HwjuDtbtCuScBStAvfjrhkALrofDHtQUDVQgEHKcy7a3OFWnCuKVW
+         nA6ba2c4+Jvo/5AFnfHF+JIYnpn9O+MDYEvJQBsfFa6n7klwSxRlv4ybzcf1IfkRJFj6
+         7Ui0Aiba5WmJW/PtFAM5KW8KnamhG8gEyAEhdBAvkBr89onaAgkNIY/Jpb4TaH1NP/6u
+         nlUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lnA2Hi587HpAY+vMzCUnzpDdgs4QOMI2ZHnlLxFisIQ=;
+        b=eDnIpLYUoB9gB0P8NqttJLSSeVC8ixE9qAIj8TAAgTMMLXhMErVTT1zfA0bn7VtoFW
+         uRXWXA258c1+7HMgKVZDc9mH7+iMGZyWgwhf18aIGIS38GzQjkhBeAAXZzzhSJ9MKHQ7
+         38ubJKtQMH8T7fmg0iqwisBDZxJZ7e0LkNm/7bqCUGYxAnhUL81Q1vZU0gP6Ya4b9fXN
+         03aTG68bbx3AKhBfPh5JI06hwHiEjkWqXsIFtHmugKC+elpEJkVHlRlURtgYqsdzpik/
+         vzuTHjl+hy6G2287Lr/a9fnAPu5YIwI0pU8+kC9yE3VB7ZAnF7oMnuMf+L9YkR8rP2qY
+         0tJA==
+X-Gm-Message-State: APjAAAW7ydHfvH/bvLFrwiDuHMVz93h5pwwqeIbzSOVaKSsbYFXBt3np
+        Bvmj+3yrEVvzTvm8fdumzOLtnJMl5hfkFPyODOM=
+X-Google-Smtp-Source: APXvYqxqb91sqNNqy9y8LRzbK57oLvfm80ZM2mSWzTt8pG7wpCRcJo5ot6kCpM5qJWj5RqSc4WYW9McBQzNck99q7Iw=
+X-Received: by 2002:a2e:a0c6:: with SMTP id f6mr6204011ljm.102.1565974529247;
+ Fri, 16 Aug 2019 09:55:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190816161355.GL3041@quack2.suse.cz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 16 Aug 2019 16:54:48 +0000 (UTC)
+References: <20190816083246.169312-1-arul.jeniston@gmail.com>
+ <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com> <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de>
+From:   Arul Jeniston <arul.jeniston@gmail.com>
+Date:   Fri, 16 Aug 2019 22:25:17 +0530
+Message-ID: <CACAVd4h05P2tWb7Eh1+3_0Cm7MkDNAt+SJVoBT4gErBfsBmsAQ@mail.gmail.com>
+Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arul_mc@dell.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 06:13:55PM +0200, Jan Kara wrote:
-> On Fri 16-08-19 11:52:20, Jerome Glisse wrote:
-> > On Fri, Aug 16, 2019 at 05:44:04PM +0200, Jan Kara wrote:
-> > > On Fri 16-08-19 10:47:21, Vlastimil Babka wrote:
-> > > > On 8/15/19 3:35 PM, Jan Kara wrote:
-> > > > >> 
-> > > > >> So when the GUP user uses MMU notifiers to stop writing to pages whenever
-> > > > >> they are writeprotected with page_mkclean(), they don't really need page
-> > > > >> pin - their access is then fully equivalent to any other mmap userspace
-> > > > >> access and filesystem knows how to deal with those. I forgot out this case
-> > > > >> when I wrote the above sentence.
-> > > > >> 
-> > > > >> So to sum up there are three cases:
-> > > > >> 1) DIO case - GUP references to pages serving as DIO buffers are needed for
-> > > > >>    relatively short time, no special synchronization with page_mkclean() or
-> > > > >>    munmap() => needs FOLL_PIN
-> > > > >> 2) RDMA case - GUP references to pages serving as DMA buffers needed for a
-> > > > >>    long time, no special synchronization with page_mkclean() or munmap()
-> > > > >>    => needs FOLL_PIN | FOLL_LONGTERM
-> > > > >>    This case has also a special case when the pages are actually DAX. Then
-> > > > >>    the caller additionally needs file lease and additional file_pin
-> > > > >>    structure is used for tracking this usage.
-> > > > >> 3) ODP case - GUP references to pages serving as DMA buffers, MMU notifiers
-> > > > >>    used to synchronize with page_mkclean() and munmap() => normal page
-> > > > >>    references are fine.
-> > > > 
-> > > > IMHO the munlock lesson told us about another one, that's in the end equivalent
-> > > > to 3)
-> > > > 
-> > > > 4) pinning for struct page manipulation only => normal page references
-> > > > are fine
-> > > 
-> > > Right, it's good to have this for clarity.
-> > > 
-> > > > > I want to add that I'd like to convert users in cases 1) and 2) from using
-> > > > > GUP to using differently named function. Users in case 3) can stay as they
-> > > > > are for now although ultimately I'd like to denote such use cases in a
-> > > > > special way as well...
-> > > > 
-> > > > So after 1/2/3 is renamed/specially denoted, only 4) keeps the current
-> > > > interface?
-> > > 
-> > > Well, munlock() code doesn't even use GUP, just follow_page(). I'd wait to
-> > > see what's left after handling cases 1), 2), and 3) to decide about the
-> > > interface for the remainder.
-> > > 
-> > 
-> > For 3 we do not need to take a reference at all :) So just forget about 3
-> > it does not exist. For 3 the reference is the reference the CPU page table
-> > has on the page and that's it. GUP is no longer involve in ODP or anything
-> > like that.
-> 
-> Yes, I understand. But the fact is that GUP calls are currently still there
-> e.g. in ODP code. If you can make the code work without taking a page
-> reference at all, I'm only happy :)
+Hi tglx,
 
-Already in rdma next AFAIK so in 5.4 it will be gone :) i have been
-removing all GUP users that do not need reference. Intel i915 driver
-is a left over i will work some more with them to get rid of it too.
+Thank you for your comments.
+Please find my commend in-lined
 
-Cheers,
-Jérôme
+On Fri, Aug 16, 2019 at 4:15 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Arul,
+>
+> On Fri, 16 Aug 2019, Arul Jeniston wrote:
+>
+> > Subject: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
+>
+> The prefix is not 'FS: timerfd:'
+>
+> 1) The usual prefix for fs/* is: 'fs:' but...
+>
+> 2) git log fs/timerfd.c gives you a pretty good hint for the proper
+>    prefix. Look at the commits which actually do functional changes to that
+>    file, not at those which do (sub)system wide cleanups/adjustments.
+>
+> Also 'timerfd_read function' can be written as 'timerfd_read()' which
+> spares the redundant function and clearly marks it as function via the
+> brackets.
+>
+> > 'hrtimer_forward_now()' returns zero due to bigger backward time drift.
+> > This causes timerfd_read to return 0. As per man page, read on timerfd
+> >  is not expected to return 0.
+> > This problem is well explained in https://lkml.org/lkml/2019/7/31/442
+>
+> 1) The explanation needs to be in the changelog itself. Links can point to
+>    discussions, bug-reports which have supplementary information.
+>
+> 2) Please do not use lkml.org links.
+>
+> Again: Please read and follow Documentation/process/submitting-patches.rst
+>
+> > . This patch fixes this problem.
+> > Signed-off-by: Arul Jeniston <arul.jeniston@gmail.com>
+>
+> Missing empty line before Signed-off-by. Please use git-log to see how
+> changelogs are properly formatted.
+>
+> Also: 'This patch fixes this problem' is not helpful at all. Again see the
+> document I already pointed you to.
+>
+
+Agreed. Would incorporate all the above comments.
+
+> > ---
+> >  fs/timerfd.c | 12 ++++++++++--
+> >  1 file changed, 10 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/timerfd.c b/fs/timerfd.c
+> > index 6a6fc8aa1de7..f5094e070e9a 100644
+> > --- a/fs/timerfd.c
+> > +++ b/fs/timerfd.c
+> > @@ -284,8 +284,16 @@ static ssize_t timerfd_read(struct file *file,
+> > char __user *buf, size_t count,
+> >                                         &ctx->t.alarm, ctx->tintv) - 1;
+> >                                 alarm_restart(&ctx->t.alarm);
+> >                         } else {
+> > -                               ticks += hrtimer_forward_now(&ctx->t.tmr,
+> > -                                                            ctx->tintv) - 1;
+> > +                               u64 nooftimeo = hrtimer_forward_now(&ctx->t.tmr,
+> > +                                                                ctx->tintv);
+>
+> nooftimeo is pretty non-intuitive. The function documentation of
+> hrtimer_forward_now() says:
+>
+>       Returns the number of overruns.
+>
+> So the obvious variable name is overruns, right?
+>
+
+Agreed. Would change the variable name to overruns.
+
+> > +                               /*
+> > +                                * ticks shouldn't become zero at this point.
+> > +                                * Ignore if hrtimer_forward_now returns 0
+> > +                                * due to larger backward time drift.
+>
+> Again. This explanation does not make any sense at all.
+>
+> Time does not go backwards, except if it is CLOCK_REALTIME which can be set
+> backwards via clock_settime() or settimeofday().
+>
+> > +                                */
+> > +                               if (likely(nooftimeo)) {
+> > +                                       ticks += nooftimeo - 1;
+> > +                               }
+>
+> Again: Pointless brackets.
+>
+> If you disagree with my review comment, then tell me in a reply. If not,
+> then fix it. If you decide to ignore my comments, then don't wonder if I
+> ignore your patches.
+>
+
+We use CLOCK_REALTIME while creating timer_fd.
+Can read() on timerfd return 0 when the clock is set to CLOCK_REALTIME?
+
+We have Intel rangely 4 cpu system running debian stretch linux
+kernel. The current clock source is set to tsc. During our testing, we
+observed the time drifts backward occasionally. Through kernel
+instrumentation, we observed, sometimes clocksource_delta() finds the
+current time lesser than last time. and returns 0 delta.
+This causes  the following code flow to return 0
+ ktime_get()-->timekeeping_get_ns()-->timekeeping_get_delta()-->clocksource_delta()
+
+> Thanks,
+>
+>         tglx
