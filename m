@@ -2,124 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4EED90034
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 12:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF429005D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 12:58:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfHPKpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 06:45:49 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41996 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727039AbfHPKpt (ORCPT
+        id S1727092AbfHPK6D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 06:58:03 -0400
+Received: from mail-io1-f48.google.com ([209.85.166.48]:46722 "EHLO
+        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726903AbfHPK6D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 06:45:49 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hyZjs-0007t3-3s; Fri, 16 Aug 2019 12:45:44 +0200
-Date:   Fri, 16 Aug 2019 12:45:39 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Arul Jeniston <arul.jeniston@gmail.com>
-cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arul_mc@dell.com
-Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read
- function.
-In-Reply-To: <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de>
-References: <20190816083246.169312-1-arul.jeniston@gmail.com> <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 16 Aug 2019 06:58:03 -0400
+Received: by mail-io1-f48.google.com with SMTP id x4so5294915iog.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2019 03:58:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=+lrkVNt5YGKheD75rVzVgYdoXjJTof5SmG6B1Qnkci8=;
+        b=u2ye3u0bttk/wFPuwgBD3GQPL5o6GtNRGdNtR8y73GW5IUvZTWGKS/2umUo5wIccOy
+         l16DtEt9PAu1tFu5Fk1N5IrvGfKUJi5eLKGUV7YcOf8o9veHCWx9jG2aag/D7Pwi2PB5
+         atuAPOWFWw6xfv1S2dZ5y2DrU14MEYB/y3shB6UbYxdVmfkDo5ojWlvamXzXTRtW6tlH
+         TjaVvXzoft2WC1tIzMlmsNFQdecFHl+zTGeDgARLtltT8KnK1VIS89MUuTW2GnGpnIO1
+         smlmil/13BU4E2UHE/Tox91hO0LnNKg2CG3RQVYLLRoOrZz0HsyOEe2qK1CwhMF/1pur
+         86xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=+lrkVNt5YGKheD75rVzVgYdoXjJTof5SmG6B1Qnkci8=;
+        b=J69QqOzan4MOtbxfjvQKRwaKr9OeK0/jP1bIZCcEg6vta+JkpUZqEtiWNaM/fbYNdu
+         KjTn+WPSZFNEkOu17bAyDX7Rd/ZBo5Gky1jscEHjOKFjj+p3UFgVjR4aIHLo5c6c2Eg+
+         FXYpbXw6PCIQrpAhsQ4quDbNVbi6HKIW1RKD0LLM5NqvLcb/i6VNJ8Q9sFFFDt6BlfSZ
+         7YagHMDRBZNZmLlXapQBl7lazno2edJc8jOh52PAjdY/BuErH3LnMg4xmwMAbNZJU644
+         rimX8tRfIAUxWYWDn0UR5wn0seLGHdgugsGI2lkhyIg6f2QtlMJOX/pQphkpXTn6nGPO
+         w/Uw==
+X-Gm-Message-State: APjAAAWuqW2mUupsrckqnwadwXv425aYnx9t9glTctmwpJu6B0T+KETL
+        Y5LjM+DnSzv0LhKfAkYS24ah8Wz51k6XvvhLiOZNI1mi
+X-Google-Smtp-Source: APXvYqxjCin27LHWU7JIuiLWtpPC0bIAyWi5CxofuIMsEFb/nuufCVWy+K2URiMIAxsRlegQsUjUMa7ubAp1/AvAizs=
+X-Received: by 2002:a05:6638:a12:: with SMTP id 18mr855107jan.123.1565953081924;
+ Fri, 16 Aug 2019 03:58:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From:   Denis Solonkov <solonkovda@gmail.com>
+Date:   Fri, 16 Aug 2019 12:57:25 +0200
+Message-ID: <CAPk=LjpzRG4q9DXSQ1kHU6=RmGXkhxYvnUKJTYnaNwMWanDmjw@mail.gmail.com>
+Subject: PROBLEM: Wrongly calculate AT_PHDR for ELF auxiliary vectors.
+To:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Arul,
+Hi,
 
-On Fri, 16 Aug 2019, Arul Jeniston wrote:
+I have found a potential bug in binfmt_elf.c, which was already filed
+on bugzilla(https://bugzilla.kernel.org/show_bug.cgi?id=197921), but
+didn't receive any responce since 2017. I assume it happened because
+the bug was filed in other/other category.
 
-> Subject: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
+get_maintainer.pl pointed at this mailing list, so I am redirecting
+the bug to it, since the issue is still present.
 
-The prefix is not 'FS: timerfd:'
-
-1) The usual prefix for fs/* is: 'fs:' but...
-
-2) git log fs/timerfd.c gives you a pretty good hint for the proper
-   prefix. Look at the commits which actually do functional changes to that
-   file, not at those which do (sub)system wide cleanups/adjustments.
-
-Also 'timerfd_read function' can be written as 'timerfd_read()' which
-spares the redundant function and clearly marks it as function via the
-brackets.
-
-> 'hrtimer_forward_now()' returns zero due to bigger backward time drift.
-> This causes timerfd_read to return 0. As per man page, read on timerfd
->  is not expected to return 0.
-> This problem is well explained in https://lkml.org/lkml/2019/7/31/442
-
-1) The explanation needs to be in the changelog itself. Links can point to
-   discussions, bug-reports which have supplementary information.
-
-2) Please do not use lkml.org links.
-
-Again: Please read and follow Documentation/process/submitting-patches.rst 
-
-> . This patch fixes this problem.
-> Signed-off-by: Arul Jeniston <arul.jeniston@gmail.com>
-
-Missing empty line before Signed-off-by. Please use git-log to see how
-changelogs are properly formatted.
-
-Also: 'This patch fixes this problem' is not helpful at all. Again see the
-document I already pointed you to.
-
-> ---
->  fs/timerfd.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/timerfd.c b/fs/timerfd.c
-> index 6a6fc8aa1de7..f5094e070e9a 100644
-> --- a/fs/timerfd.c
-> +++ b/fs/timerfd.c
-> @@ -284,8 +284,16 @@ static ssize_t timerfd_read(struct file *file,
-> char __user *buf, size_t count,
->                                         &ctx->t.alarm, ctx->tintv) - 1;
->                                 alarm_restart(&ctx->t.alarm);
->                         } else {
-> -                               ticks += hrtimer_forward_now(&ctx->t.tmr,
-> -                                                            ctx->tintv) - 1;
-> +                               u64 nooftimeo = hrtimer_forward_now(&ctx->t.tmr,
-> +                                                                ctx->tintv);
-
-nooftimeo is pretty non-intuitive. The function documentation of
-hrtimer_forward_now() says:
-
-      Returns the number of overruns.
-
-So the obvious variable name is overruns, right?
-
-> +                               /*
-> +                                * ticks shouldn't become zero at this point.
-> +                                * Ignore if hrtimer_forward_now returns 0
-> +                                * due to larger backward time drift.
-
-Again. This explanation does not make any sense at all.
-
-Time does not go backwards, except if it is CLOCK_REALTIME which can be set
-backwards via clock_settime() or settimeofday().
-
-> +                                */
-> +                               if (likely(nooftimeo)) {
-> +                                       ticks += nooftimeo - 1;
-> +                               }
-
-Again: Pointless brackets.
-
-If you disagree with my review comment, then tell me in a reply. If not,
-then fix it. If you decide to ignore my comments, then don't wonder if I
-ignore your patches.
-
-Thanks,
-
-	tglx
+Kind regards,
+Denis.
