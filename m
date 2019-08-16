@@ -2,72 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3CED900F3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 13:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FEDA901F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2019 14:49:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfHPLt1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Aug 2019 07:49:27 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33613 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfHPLt1 (ORCPT
+        id S1727218AbfHPMt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Aug 2019 08:49:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54038 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726981AbfHPMt2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Aug 2019 07:49:27 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1hyajV-0004L7-Bq; Fri, 16 Aug 2019 13:49:25 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1hyajS-0006mP-Ol; Fri, 16 Aug 2019 13:49:22 +0200
-Date:   Fri, 16 Aug 2019 13:49:22 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
-        Jan Kara <jack@suse.com>
-Subject: Re: [PATCH 02/11] quota: Only module_put the format when existing
-Message-ID: <20190816114922.jegjilnjb2wffhls@pengutronix.de>
-References: <20190814121834.13983-1-s.hauer@pengutronix.de>
- <20190814121834.13983-3-s.hauer@pengutronix.de>
- <20190815111800.GD14313@quack2.suse.cz>
+        Fri, 16 Aug 2019 08:49:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OZ9pK5t5TgRovBnzn4CAWECGo1/kyneV4i6IDqGeq2Q=; b=QdWv+8nm2FgbI7CiZMJlJVx27
+        JeUwmmPNzfZ41y9s5PVvX8rHKn3iYEcSpN+h4AwND7XfisCtl6CCyxotyept+rdxg3cIpO/y1+DZd
+        lQ9cmzbvDKHrAa+v0QZlK0sIUfU5rrby8NZyFnXnFM4/rIGnYMXA7SJNBTHAMi/ewW94zBKQunxGb
+        cv3wggzpSIVP2NCjHZbRWSmAkcCB9TDguD//UEWo2PbKYQpNbMc9sSf81cQfx2opl8ypYyUnli8HY
+        H4VDllNWHx2HBVXr7/cm5ZWwy8BvPCCil4SZWh/Slpr1vXUfmQtFUR/RG17h6ijlHN95zapYFnB57
+        bHclvnkGQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hybfa-0001uB-Ka; Fri, 16 Aug 2019 12:49:26 +0000
+Date:   Fri, 16 Aug 2019 05:49:26 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v13] fs: Add VirtualBox guest shared folder (vboxsf)
+ support
+Message-ID: <20190816124926.GA6223@infradead.org>
+References: <20190815131253.237921-1-hdegoede@redhat.com>
+ <20190815131253.237921-2-hdegoede@redhat.com>
+ <20190816075654.GA15363@infradead.org>
+ <412a10a9-a681-4c7a-9175-e7509b3fea87@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190815111800.GD14313@quack2.suse.cz>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 13:45:07 up 39 days, 17:55, 62 users,  load average: 0.15, 0.10,
- 0.09
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
+In-Reply-To: <412a10a9-a681-4c7a-9175-e7509b3fea87@redhat.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 01:18:00PM +0200, Jan Kara wrote:
-> On Wed 14-08-19 14:18:25, Sascha Hauer wrote:
-> > For filesystems which do not have a quota_format_type such as upcoming
-> > UBIFS quota fmt may be NULL. Only put the format when it's non NULL.
-> > 
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+On Fri, Aug 16, 2019 at 11:01:13AM +0200, Hans de Goede wrote:
+> TL;DR: I believe that the current approach which is 3. from above is
+> good enough and I like that it is very KISS. We can always switch to
+> 1. or 2. (or add 1. and 2. and make it configurable) later if this shows
+> to be necessary.
 > 
-> But you do have quota format in the end. So is this patch needed?
+> Can you please let me know if option 3. / the KISS method is ok with you,
+> or if you would prefer me to add code to do 1. or 2?
 
-I have quota_format_ops, but as I do not store any quota data I do not
-have a quota_format_type. Yes, this patch is needed.
+I'm not sure I actually care.  Reading through the code just made me
+realizie that no sane person should use this.  Obviously there are
+plenty of insane people, otherwise virtualbox wouldn't be around anymore
+anyway, and they apparently lived with much worse bugs before.
 
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+What I do care about is that someone actually thought about these
+issues, which you very much did (probably unlike the original authors).
+Maybe explaining these choice in code comments in addition to the email
+would help, though.
