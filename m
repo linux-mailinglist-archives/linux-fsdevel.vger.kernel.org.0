@@ -2,148 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF21912AB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2019 21:24:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 125619131D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2019 23:20:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbfHQTXn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Aug 2019 15:23:43 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44189 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbfHQTXn (ORCPT
+        id S1726198AbfHQVT6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Aug 2019 17:19:58 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:41538 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfHQVT6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Aug 2019 15:23:43 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hz4Ib-0007Hv-VH; Sat, 17 Aug 2019 21:23:38 +0200
-Date:   Sat, 17 Aug 2019 21:23:36 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Arul Jeniston <arul.jeniston@gmail.com>
-cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arul_mc@dell.com
-Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read
- function.
-In-Reply-To: <CACAVd4hT6QYtgtDsBcgy7c_s9WVBAH+1m0r5geBe7BUWJWYhbA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1908171942370.1923@nanos.tec.linutronix.de>
-References: <20190816083246.169312-1-arul.jeniston@gmail.com> <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com> <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de> <CACAVd4h05P2tWb7Eh1+3_0Cm7MkDNAt+SJVoBT4gErBfsBmsAQ@mail.gmail.com>
- <CACAVd4gHQ+_y5QBSQm3pMFHKrVgvvJZAABGvtp6=qt3drVXpTA@mail.gmail.com> <alpine.DEB.2.21.1908162255400.1923@nanos.tec.linutronix.de> <CACAVd4hT6QYtgtDsBcgy7c_s9WVBAH+1m0r5geBe7BUWJWYhbA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 17 Aug 2019 17:19:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 05377621FCD3;
+        Sat, 17 Aug 2019 23:19:55 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id XTABcBaKQNZk; Sat, 17 Aug 2019 23:19:51 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 839676083139;
+        Sat, 17 Aug 2019 23:19:51 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id l7v2AJV0SH0k; Sat, 17 Aug 2019 23:19:51 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 03E82621FCD3;
+        Sat, 17 Aug 2019 23:19:50 +0200 (CEST)
+Date:   Sat, 17 Aug 2019 23:19:50 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, tytso <tytso@mit.edu>,
+        Pavel Machek <pavel@denx.de>, David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        torvalds <torvalds@linux-foundation.org>,
+        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <1746679415.68815.1566076790942.JavaMail.zimbra@nod.at>
+In-Reply-To: <20190817082313.21040-1-hsiangkao@aol.com>
+References: <20190817082313.21040-1-hsiangkao@aol.com>
+Subject: Re: [PATCH] erofs: move erofs out of staging
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Topic: erofs: move erofs out of staging
+Thread-Index: 8FsSXU2wmXCQdCGPbfgJ42ALdSe6DQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Arul,
+----- Ursprüngliche Mail -----
+> Von: "Gao Xiang" <hsiangkao@aol.com>
+> An: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Al Viro" <viro@zeniv.linux.org.uk>, "linux-fsdevel"
+> <linux-fsdevel@vger.kernel.org>, devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org, "linux-kernel"
+> <linux-kernel@vger.kernel.org>
+> CC: "Andrew Morton" <akpm@linux-foundation.org>, "Stephen Rothwell" <sfr@canb.auug.org.au>, "tytso" <tytso@mit.edu>,
+> "Pavel Machek" <pavel@denx.de>, "David Sterba" <dsterba@suse.cz>, "Amir Goldstein" <amir73il@gmail.com>, "Christoph
+> Hellwig" <hch@infradead.org>, "Darrick J . Wong" <darrick.wong@oracle.com>, "Dave Chinner" <david@fromorbit.com>,
+> "Jaegeuk Kim" <jaegeuk@kernel.org>, "Jan Kara" <jack@suse.cz>, "richard" <richard@nod.at>, "torvalds"
+> <torvalds@linux-foundation.org>, "Chao Yu" <yuchao0@huawei.com>, "Miao Xie" <miaoxie@huawei.com>, "Li Guifu"
+> <bluce.liguifu@huawei.com>, "Fang Wei" <fangwei1@huawei.com>, "Gao Xiang" <gaoxiang25@huawei.com>
+> Gesendet: Samstag, 17. August 2019 10:23:13
+> Betreff: [PATCH] erofs: move erofs out of staging
 
-On Sat, 17 Aug 2019, Arul Jeniston wrote:
-
-> Do you agree the possibility of returning zero value from timerfd_read()?
-
-Obviosuly it happens.
+> EROFS filesystem has been merged into linux-staging for a year.
+> 
+> EROFS is designed to be a better solution of saving extra storage
+> space with guaranteed end-to-end performance for read-only files
+> with the help of reduced metadata, fixed-sized output compression
+> and decompression inplace technologies.
  
-> > That has absolutely nothing to do with CLOCK_REALTIME. Your machines
-> > TSC is either going backwards or not synchronized between cores.
-> >
-> > Hint: Dell has a track record of BIOS doing the wrong things to TSC in
-> > order to hide their 'value add' features stealing CPU time.
-> 
-> We haven't seen any issue in Dell hardware but we would definitely check
-> the possibility of hardware bug.
-
-BIOS is the more likely candidate.
-
-> Let us say, due to some reason the tsc goes backwards. Isn't it handled in
-> clocksource_delta().
-
-No. clocksource_delta() does damage limitation. It prevents insane large
-time jumps which would result if the read out TSC value is less than the
-base value which is used to calculate the delta. It cannot do more than
-that.
-
-> Is timerfd_read expected to return 0 if tsc drifts backwards? If so, why it
-> is not documented?
-> Being a system call, we expect all return values of read() on timerfd to be
-> documented in the man page.
-
-We expect TSC not to go backwards. If it does it's broken and not usable as
-a clocksource for the kernel. The problem is that this is not necessarily
-easy to detect.
-
-Fact is, that your machines TSC goes backwards or is not properly
-synchronized between the cores. Otherwise the problem would not exist at
-all. That's the problem which needs to be fixed and not papered over with
-crude hacks and weird justifications.
-
-> > ktime_get() is CLOCK_MONOTONIC and not CLOCK_REALTIME.
-> 
-> We see the same base used for CLOCK_MONOTONIC, CLOCK_REALTIME timers here.
-> both MONOTONIC, REALTIME timers hits the following code flow. we confirmed
-> it through instrumentation.
-> timerfd_read()-->hrtimer_forward_now()-->ktime_get()-->timekeeping_get_ns()-->timekeeping_get_delta()-->clocksource_delta().
->  Do you want me to share any other logs to confirm it?
-
-No. That's the case when you use a relative timer with CLOCK_REALTIME
-because only absolute timers are affected by modifications of
-CLOCK_REALTIME. So it's NOT an issue of a CLOCK_REALTIME modification via
-settimeofday() or adjtimex().
-
-> > It's a bug, but either a hardware or a BIOS bug and you are trying to
-> > paper over it at the place where you observe the symptom, which is
-> > obviously the wrong place because:
-> >
-> >  1) Any other time related function even in timerfd is affected as well
-> >
-> >  2) We do not cure symptoms, we cure the root cause. And clearly the root
-> >     cause hase not been explained and addressed.
-> 
-> if we don't fix this in kernel, can we document this return value in
-> timerfd read() man page?
-
-Again:
-
-You cannot fix a hardware problem by hacking around it at exactly one place
-where you can observe it. If that problem exists on your machine, then any
-other time related function is affected as well.
-
-Are you going to submit patches against _ALL_ time{r} related syscalls to
-fix^Wpaper over this? Either against the kernel or against the man pages?
-
-As this is a 4 core Rangely, it has a properly synchronized TSC on all 4
-cores which runs with constant frequency and is not affected by deeper
-C-States.
-
-Here is the flow:
-
-timerfd_read()
-
-   waitfortick()
-
-timer interrupt()
-      time = ktime_get()
-      expire timer			time >= timer_time
-        tick++;
-	wakeup_reader()
-
-   hrtimer_forward_now()
-	now = ktime_get()		In the failure case now < timer_time
-
-i.e. time went backwards since the timer was expired. That's absolutely
-unexpected behaviour and no, we are not papering over it.
-
-Did you ever quantify how much time goes backwards in that case?
-
-Is the timer expiry and the timerfd_read() on the same CPU or on different
-ones?
-
-Can you please provide a full dmesg from boot to after the point where this
-failure happens?
+How does erofs compare to squashfs?
+IIUC it is designed to be faster. Do you have numbers?
+Feel free to point me older mails if you already showed numbers,
+I have to admit I didn't follow the development very closely.
 
 Thanks,
-
-	tglx
+//richard
