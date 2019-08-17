@@ -2,112 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F526911FA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2019 18:37:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBF21912AB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2019 21:24:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbfHQQhA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Aug 2019 12:37:00 -0400
-Received: from mail-lj1-f170.google.com ([209.85.208.170]:38984 "EHLO
-        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfHQQhA (ORCPT
+        id S1725988AbfHQTXn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Aug 2019 15:23:43 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44189 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbfHQTXn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Aug 2019 12:37:00 -0400
-Received: by mail-lj1-f170.google.com with SMTP id x4so7937373ljj.6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Aug 2019 09:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hev-cc.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=gh4Uf54lGK4BZME7LVlHMNrohQu549X8RdaI8EEyc2U=;
-        b=ucmSPP0TeU4H54GmmFSX4Cbw/YJZftuFiiY89vjitwPTk9KKJY5ycyYQfwfYFdHg5c
-         ZMpTLVGFFJx541rvL34eMhfZM/MzoscItMRHiVw2GSlweHhfuE/GFEwcIlgjcDkwPjZb
-         s91eCkJZi50Zd82fmuQtlTG7cm7+EpxqhWLQP2T53D5zMMs9Jl8FtyEfQ29/yLEaIS3L
-         iAcSvON1BBiNBJXR4tHKjfD1/dlbJK09TCRh6ey1KyPlOE9wZUzx7mmnVneQMOolnM8/
-         Ta+isnau03b0FOX2KMb95v8o0sVN35kL8AO9XFsQnbhGL2ArPxZx6ud9C9V5ce4GOQSU
-         Pdlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=gh4Uf54lGK4BZME7LVlHMNrohQu549X8RdaI8EEyc2U=;
-        b=dJKtmX7DMt4EGHDRBbfayuh762GkAQrLUCrnUKy14APi527pxMu4tz/4QtzLNcCVvc
-         mekDKiKhhTLm/ckep4GzLALoF6ENFznwRzVvAR/SDbD3leL00UTDfx27I97lK5hqD65x
-         eLsZLb/0XNscK6wKnnDGE07oplpEDlBUoasOfNcmO44Ev4nEBKnzX/WsJ8nhLom8jO7a
-         IRbr2vEXe6FdINSr+p5HCBz84IJ46Ptn8X1iSRa+RVEfS67k2eDhTw1SQEProxDspKSS
-         zroRC8mrvMAxEPyOUde3uHgXLKQcQ58ui8K9jOPWqP2LPNu4RLLZmuUwKea+4mwnD4qT
-         6Sbw==
-X-Gm-Message-State: APjAAAV4CO2U1YVq+UbsZBagB75CJVh070S2zUqmVDShz3ZXQ5nkDBPU
-        KsO1sKjkikKrZDVUrrFWEgx+IT1pxMWnxkMhbzA1SIosknvZbg==
-X-Google-Smtp-Source: APXvYqykqyUbBf3gFxrxYebFwwEH7G9fHg8I2CBloFyhVPaSb9fhNy2DNaUEEsMzxIDRt18Ox0vyCgDmLwEfBQ1mEdI=
-X-Received: by 2002:a2e:6393:: with SMTP id s19mr8076155lje.46.1566059817953;
- Sat, 17 Aug 2019 09:36:57 -0700 (PDT)
+        Sat, 17 Aug 2019 15:23:43 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hz4Ib-0007Hv-VH; Sat, 17 Aug 2019 21:23:38 +0200
+Date:   Sat, 17 Aug 2019 21:23:36 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Arul Jeniston <arul.jeniston@gmail.com>
+cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arul_mc@dell.com
+Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read
+ function.
+In-Reply-To: <CACAVd4hT6QYtgtDsBcgy7c_s9WVBAH+1m0r5geBe7BUWJWYhbA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1908171942370.1923@nanos.tec.linutronix.de>
+References: <20190816083246.169312-1-arul.jeniston@gmail.com> <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com> <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de> <CACAVd4h05P2tWb7Eh1+3_0Cm7MkDNAt+SJVoBT4gErBfsBmsAQ@mail.gmail.com>
+ <CACAVd4gHQ+_y5QBSQm3pMFHKrVgvvJZAABGvtp6=qt3drVXpTA@mail.gmail.com> <alpine.DEB.2.21.1908162255400.1923@nanos.tec.linutronix.de> <CACAVd4hT6QYtgtDsBcgy7c_s9WVBAH+1m0r5geBe7BUWJWYhbA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-From:   Heiher <r@hev.cc>
-Date:   Sun, 18 Aug 2019 00:36:46 +0800
-Message-ID: <CAHirt9jesMHB_sXx7PyXTxrzLR=3xw9bHERueNMVkWOUkg6XXQ@mail.gmail.com>
-Subject: Why the edge-triggered mode doesn't work for epoll file descriptor?
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Arul,
 
-I've added a pipe file descriptor (fd1) to an epoll (fd3) with
-EPOLLOUT in edge-triggered mode, and then added the fd3 to another
-epoll (fd4) with EPOLLIN in edge-triggered too.
+On Sat, 17 Aug 2019, Arul Jeniston wrote:
 
-Next, waiting for fd4 without timeout. When fd1 to be writable, i
-think epoll_wait(fd4, ...)  only return once, because all file
-descriptors are added in edge-triggered mode.
+> Do you agree the possibility of returning zero value from timerfd_read()?
 
-But, the actual result is returns many and many times until do once
-eopll_wait(fd3, ...).
+Obviosuly it happens.
+ 
+> > That has absolutely nothing to do with CLOCK_REALTIME. Your machines
+> > TSC is either going backwards or not synchronized between cores.
+> >
+> > Hint: Dell has a track record of BIOS doing the wrong things to TSC in
+> > order to hide their 'value add' features stealing CPU time.
+> 
+> We haven't seen any issue in Dell hardware but we would definitely check
+> the possibility of hardware bug.
 
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/epoll.h>
+BIOS is the more likely candidate.
 
-int
-main (int argc, char *argv[])
-{
-    int efd[2];
-    struct epoll_event e;
+> Let us say, due to some reason the tsc goes backwards. Isn't it handled in
+> clocksource_delta().
 
-    efd[0] = epoll_create (1);
-    if (efd[0] < 0)
-        return -1;
+No. clocksource_delta() does damage limitation. It prevents insane large
+time jumps which would result if the read out TSC value is less than the
+base value which is used to calculate the delta. It cannot do more than
+that.
 
-    efd[1] = epoll_create (1);
-    if (efd[1] < 0)
-        return -2;
+> Is timerfd_read expected to return 0 if tsc drifts backwards? If so, why it
+> is not documented?
+> Being a system call, we expect all return values of read() on timerfd to be
+> documented in the man page.
 
-    e.events = EPOLLIN | EPOLLET;
-    e.data.u64 = 1;
-    if (epoll_ctl (efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
-        return -3;
+We expect TSC not to go backwards. If it does it's broken and not usable as
+a clocksource for the kernel. The problem is that this is not necessarily
+easy to detect.
 
-    e.events = EPOLLOUT | EPOLLET;
-    e.data.u64 = 2;
-    if (epoll_ctl (efd[1], EPOLL_CTL_ADD, 1, &e) < 0)
-        return -4;
+Fact is, that your machines TSC goes backwards or is not properly
+synchronized between the cores. Otherwise the problem would not exist at
+all. That's the problem which needs to be fixed and not papered over with
+crude hacks and weird justifications.
 
-    for (;;) {
-        struct epoll_event events[16];
-        int nfds;
+> > ktime_get() is CLOCK_MONOTONIC and not CLOCK_REALTIME.
+> 
+> We see the same base used for CLOCK_MONOTONIC, CLOCK_REALTIME timers here.
+> both MONOTONIC, REALTIME timers hits the following code flow. we confirmed
+> it through instrumentation.
+> timerfd_read()-->hrtimer_forward_now()-->ktime_get()-->timekeeping_get_ns()-->timekeeping_get_delta()-->clocksource_delta().
+>  Do you want me to share any other logs to confirm it?
 
-        nfds = epoll_wait (efd[0], events, 16, -1);
-        printf ("nfds: %d\n", nfds);
-    }
+No. That's the case when you use a relative timer with CLOCK_REALTIME
+because only absolute timers are affected by modifications of
+CLOCK_REALTIME. So it's NOT an issue of a CLOCK_REALTIME modification via
+settimeofday() or adjtimex().
 
-    close (efd[1]);
-    close (efd[0]);
+> > It's a bug, but either a hardware or a BIOS bug and you are trying to
+> > paper over it at the place where you observe the symptom, which is
+> > obviously the wrong place because:
+> >
+> >  1) Any other time related function even in timerfd is affected as well
+> >
+> >  2) We do not cure symptoms, we cure the root cause. And clearly the root
+> >     cause hase not been explained and addressed.
+> 
+> if we don't fix this in kernel, can we document this return value in
+> timerfd read() man page?
 
-    return 0;
-}
+Again:
 
--- 
-Best regards!
-Hev
-https://hev.cc
+You cannot fix a hardware problem by hacking around it at exactly one place
+where you can observe it. If that problem exists on your machine, then any
+other time related function is affected as well.
+
+Are you going to submit patches against _ALL_ time{r} related syscalls to
+fix^Wpaper over this? Either against the kernel or against the man pages?
+
+As this is a 4 core Rangely, it has a properly synchronized TSC on all 4
+cores which runs with constant frequency and is not affected by deeper
+C-States.
+
+Here is the flow:
+
+timerfd_read()
+
+   waitfortick()
+
+timer interrupt()
+      time = ktime_get()
+      expire timer			time >= timer_time
+        tick++;
+	wakeup_reader()
+
+   hrtimer_forward_now()
+	now = ktime_get()		In the failure case now < timer_time
+
+i.e. time went backwards since the timer was expired. That's absolutely
+unexpected behaviour and no, we are not papering over it.
+
+Did you ever quantify how much time goes backwards in that case?
+
+Is the timer expiry and the timerfd_read() on the same CPU or on different
+ones?
+
+Can you please provide a full dmesg from boot to after the point where this
+failure happens?
+
+Thanks,
+
+	tglx
