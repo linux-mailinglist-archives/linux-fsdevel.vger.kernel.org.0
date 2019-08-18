@@ -2,304 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF03E916D5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 15:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49FE0916F9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 16:00:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbfHRNps (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 09:45:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726115AbfHRNps (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 09:45:48 -0400
-Received: from [192.168.0.101] (unknown [180.111.132.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B66CD20851;
-        Sun, 18 Aug 2019 13:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566135946;
-        bh=Nr7rrKHcvy1z+eNsxwIvCzsl0uUvAgpFJWH0E+a5SFk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jmWiQRoHUcze1MQzEu6Er2b9AogczNjGV/+GFvIGM2/Kwn2GPjU5sB2beckOjfN8z
-         5207OnQ2zs9mxQv2NE0Oi9stDt6oflWt++DhBc+IhfGqqi/Gq5bbEvsxKxnIQpaCuI
-         mTGlbJnDi6kdukR2p+x6rVqwS/9l0yN/JHS4mCy0=
-Subject: Re: [f2fs-dev] [PATCH V4 5/8] f2fs: Use read_callbacks for decrypting
- file data
-To:     Chandan Rajendra <chandan@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org
-Cc:     hch@infradead.org, tytso@mit.edu, ebiggers@kernel.org,
-        adilger.kernel@dilger.ca, chandanrmail@gmail.com,
-        jaegeuk@kernel.org
-References: <20190816061804.14840-1-chandan@linux.ibm.com>
- <20190816061804.14840-6-chandan@linux.ibm.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <bb3dc624-1249-2418-f9da-93da8c11e7f5@kernel.org>
-Date:   Sun, 18 Aug 2019 21:45:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726523AbfHROAY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 10:00:24 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46266 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbfHROAY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 18 Aug 2019 10:00:24 -0400
+Received: by mail-io1-f68.google.com with SMTP id x4so15346579iog.13;
+        Sun, 18 Aug 2019 07:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6Lox1GwVXn3FfNaJc4tSQNHxrlDnE7ZTtqmRrPEy0V0=;
+        b=bgIJNrZLD9cEQKaX+WWl784pUPlA/tMWOGODRlCV0cwRfljdDw0TQroLAlEh8uMvR7
+         mRRaLCdUQE/DuVODp7dMxuEwKDsVq0zg8btmhZPhV0glEfeilVGnBJOlnXzuUfEBEwSv
+         lDSF11fy3DbrG7VimGQkh1nc/jGSgughWyUnzo3SvMFOpLm5DMx9KxTX+49HSr5ay9+n
+         zQiuA8ep8ndPO8CU4tSO0ANyWPzCPlOhqNXXCIjpu3t+KihQ4gNrjclIVDoWQjqa+RAi
+         aAof1xBUuM09Jdg1Uoumte0u6KtApThoryqZ4uwApj1DYcQt3AO9pKGjCpi0+4UCGY71
+         MgRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6Lox1GwVXn3FfNaJc4tSQNHxrlDnE7ZTtqmRrPEy0V0=;
+        b=Dby5ICIi/oaJ8+XFJiXtuEvLDUEfVe00MofwWsYb8KE0VWbUo8uuiat4qo9C/Dap9k
+         Yv488eRXRBNK7MGv2Y7LYr4AaTqb/9g0HIgH3QyNGDyeSsBL05/faQZbGnwDAz9Dejfi
+         1tuMERYdgFPD/OflW2abdfMdkrtrS4NHorzAQCVCcFeECb4kZ7NElkJ4xlZTJqqgToqS
+         xd91V0IK/fpF6CE5PL9OSP86RuOa0tLaAmgg8Vbehlmhka9ek1zVu3758rOMK+wGMXIc
+         PTJjq+v3CHxzmfiISyEf6/zLaatvqUvU0koAuikEuIRa5hYFzt1CcF1DVt7ckgo23LWg
+         feIw==
+X-Gm-Message-State: APjAAAWIw0ESXaqEYF4MikS02+aF3tpAex4AHyctcb233DnfMwqN/gcI
+        C9JhDEgich4KZMhq72miI/bsGk1QanAUXpyr+vo=
+X-Google-Smtp-Source: APXvYqxnImgJgmCUWa7dkjDd15eyh4IYUAjq63iKHeqQEvtSUIUevkYw9wGEuETJFb98Wxh4oq0CLfa0sHPYgtQcbq0=
+X-Received: by 2002:a5d:8599:: with SMTP id f25mr2358917ioj.265.1566136823400;
+ Sun, 18 Aug 2019 07:00:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190816061804.14840-6-chandan@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-20-deepa.kernel@gmail.com>
+ <201907292129.AC796230@keescook> <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
+ <CABeXuvrmNkUOH5ZU59Kg4Ge1cFE9nqp9NhTPJjus5KkCrYeC6w@mail.gmail.com> <CAK8P3a3DyWcvOpMsc__CZDmG50MXRisbBt+mTtwWCGKaNgg_Gg@mail.gmail.com>
+In-Reply-To: <CAK8P3a3DyWcvOpMsc__CZDmG50MXRisbBt+mTtwWCGKaNgg_Gg@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Sun, 18 Aug 2019 07:00:12 -0700
+Message-ID: <CABeXuvr=t4zM060UKJBv0nywGkQjK915gvr6bv5=0_EbEctKHg@mail.gmail.com>
+Subject: Re: [PATCH 19/20] pstore: fs superblock limits
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Chandan,
+On Fri, Aug 2, 2019 at 12:15 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Fri, Aug 2, 2019 at 4:26 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> >
+> > On Tue, Jul 30, 2019 at 12:36 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Tue, Jul 30, 2019 at 6:31 AM Kees Cook <keescook@chromium.org> wrote:
+> > > >
+> > > > On Mon, Jul 29, 2019 at 06:49:23PM -0700, Deepa Dinamani wrote:
+> > > > > Also update the gran since pstore has microsecond granularity.
+> > > >
+> > > > So, I'm fine with this, but technically the granularity depends on the
+> > > > backend storage... many have no actual time keeping, though. My point is,
+> > > > pstore's timestamps are really mostly a lie, but the most common backend
+> > > > (ramoops) is seconds-granularity.
+> > > >
+> > > > So, I'm fine with this, but it's a lie but it's a lie that doesn't
+> > > > matter, so ...
+> > > >
+> > > > Acked-by: Kees Cook <keescook@chromium.org>
+> > > >
+> > > > I'm open to suggestions to improve it...
+> > >
+> > > If we don't care about using sub-second granularity, then setting it
+> > > to one second unconditionally here will make it always use that and
+> > > report it correctly.
+> >
+> > Should this printf in ramoops_write_kmsg_hdr() also be fixed then?
+> >
+> >         RAMOOPS_KERNMSG_HDR "%lld.%06lu-%c\n",
+> >         (time64_t)record->time.tv_sec,
+> >         record->time.tv_nsec / 1000,
+> >         record->compressed ? 'C' : 'D');
+> >     persistent_ram_write(prz, hdr, len);
+> >
+> > ramoops_read_kmsg_hdr() doesn't read this as microseconds. Seems like
+> > a mismatch from above.
+>
+> Good catch. This seems to go back to commit 3f8f80f0cfeb ("pstore/ram:
+> Read and write to the 'compressed' flag of pstore"), which introduced the
+> nanosecond read. The write function however has always used
+> microseconds, and that was kept when the implementation changed
+> from timeval to timespec in commit 1e817fb62cd1 ("time: create
+> __getnstimeofday for WARNless calls").
+>
+> > If we want to agree that we just want seconds granularity for pstore,
+> > we could replace the tv_nsec part to be all 0's if anybody else is
+> > depending on this format.
+> > I could drop this patch from the series and post that patch seperately.
+>
+> We should definitely fix it to not produce a bogus nanosecond value.
+> Whether using full seconds or microsecond resolution is better here,
+> I don't know. It seems that pstore records generally get created
+> with a nanosecond nanosecond accurate timestamp from
+> ktime_get_real_fast_ns() and then truncated to the resolution of the
+> backend, rather than the normal jiffies-accurate inode timestamps that
+> we have for regular file systems.
+>
+> This might mean that we do want the highest possible resolution
+> and not further truncate here, in case that information ends
+> up being useful afterwards.
 
-On 2019-8-16 14:18, Chandan Rajendra wrote:
-> F2FS has a copy of "post read processing" code using which encrypted
-> file data is decrypted. This commit replaces it to make use of the
-> generic read_callbacks facility.
+I made a list of granularities used by pstore drivers using pstore_register():
 
-I remember that previously Jaegeuk had mentioned f2fs will support compression
-later, and it needs to reuse 'post read processing' fwk.
+1. efi - seconds
+2. ramoops - microsecond
+3. erst - seconds
+4. powerpc/nvram64 - seconds
 
-There is very initial version of compression feature in below link:
+I will leave pstore granularity at nanoseconds and fix the ramoops read.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=compression
-
-So my concern is how can we uplift the most common parts of this fwk into vfs,
-and meanwhile keeping the ability and flexibility when introducing private
-feature/step in specified filesytem(now f2fs)?
-
-According to current f2fs compression's requirement, maybe we can expand to
-
-- support callback to let filesystem set the function for the flow in
-decompression/verity/decryption step.
-- support to use individual/common workqueue according the parameter.
-
-Any thoughts?
-
-Thanks,
-
-> 
-> Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
-> ---
->  fs/f2fs/data.c  | 109 ++++--------------------------------------------
->  fs/f2fs/f2fs.h  |   2 -
->  fs/f2fs/super.c |   9 +---
->  3 files changed, 11 insertions(+), 109 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 757f050c650a..3cf1eca2ece9 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -18,6 +18,7 @@
->  #include <linux/uio.h>
->  #include <linux/cleancache.h>
->  #include <linux/sched/signal.h>
-> +#include <linux/read_callbacks.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -25,11 +26,6 @@
->  #include "trace.h"
->  #include <trace/events/f2fs.h>
->  
-> -#define NUM_PREALLOC_POST_READ_CTXS	128
-> -
-> -static struct kmem_cache *bio_post_read_ctx_cache;
-> -static mempool_t *bio_post_read_ctx_pool;
-> -
->  static bool __is_cp_guaranteed(struct page *page)
->  {
->  	struct address_space *mapping = page->mapping;
-> @@ -69,19 +65,6 @@ static enum count_type __read_io_type(struct page *page)
->  	return F2FS_RD_DATA;
->  }
->  
-> -/* postprocessing steps for read bios */
-> -enum bio_post_read_step {
-> -	STEP_INITIAL = 0,
-> -	STEP_DECRYPT,
-> -};
-> -
-> -struct bio_post_read_ctx {
-> -	struct bio *bio;
-> -	struct work_struct work;
-> -	unsigned int cur_step;
-> -	unsigned int enabled_steps;
-> -};
-> -
->  static void __read_end_io(struct bio *bio)
->  {
->  	struct page *page;
-> @@ -93,7 +76,7 @@ static void __read_end_io(struct bio *bio)
->  		page = bv->bv_page;
->  
->  		/* PG_error was set if any post_read step failed */
-> -		if (bio->bi_status || PageError(page)) {
-> +		if (bio->bi_status || read_callbacks_failed(page)) {
->  			ClearPageUptodate(page);
->  			/* will re-read again later */
->  			ClearPageError(page);
-> @@ -103,42 +86,8 @@ static void __read_end_io(struct bio *bio)
->  		dec_page_count(F2FS_P_SB(page), __read_io_type(page));
->  		unlock_page(page);
->  	}
-> -	if (bio->bi_private)
-> -		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
-> -	bio_put(bio);
-> -}
->  
-> -static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
-> -
-> -static void decrypt_work(struct work_struct *work)
-> -{
-> -	struct bio_post_read_ctx *ctx =
-> -		container_of(work, struct bio_post_read_ctx, work);
-> -
-> -	fscrypt_decrypt_bio(ctx->bio);
-> -
-> -	bio_post_read_processing(ctx);
-> -}
-> -
-> -static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
-> -{
-> -	switch (++ctx->cur_step) {
-> -	case STEP_DECRYPT:
-> -		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
-> -			INIT_WORK(&ctx->work, decrypt_work);
-> -			fscrypt_enqueue_decrypt_work(&ctx->work);
-> -			return;
-> -		}
-> -		ctx->cur_step++;
-> -		/* fall-through */
-> -	default:
-> -		__read_end_io(ctx->bio);
-> -	}
-> -}
-> -
-> -static bool f2fs_bio_post_read_required(struct bio *bio)
-> -{
-> -	return bio->bi_private && !bio->bi_status;
-> +	bio_put(bio);
->  }
->  
->  static void f2fs_read_end_io(struct bio *bio)
-> @@ -149,15 +98,7 @@ static void f2fs_read_end_io(struct bio *bio)
->  		bio->bi_status = BLK_STS_IOERR;
->  	}
->  
-> -	if (f2fs_bio_post_read_required(bio)) {
-> -		struct bio_post_read_ctx *ctx = bio->bi_private;
-> -
-> -		ctx->cur_step = STEP_INITIAL;
-> -		bio_post_read_processing(ctx);
-> -		return;
-> -	}
-> -
-> -	__read_end_io(bio);
-> +	read_callbacks_endio_bio(bio, __read_end_io);
->  }
->  
->  static void f2fs_write_end_io(struct bio *bio)
-> @@ -556,8 +497,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
->  {
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	struct bio *bio;
-> -	struct bio_post_read_ctx *ctx;
-> -	unsigned int post_read_steps = 0;
-> +	int err;
->  
->  	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, DATA_GENERIC))
->  		return ERR_PTR(-EFAULT);
-> @@ -569,17 +509,10 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
->  	bio->bi_end_io = f2fs_read_end_io;
->  	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
->  
-> -	if (f2fs_encrypted_file(inode))
-> -		post_read_steps |= 1 << STEP_DECRYPT;
-> -	if (post_read_steps) {
-> -		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
-> -		if (!ctx) {
-> -			bio_put(bio);
-> -			return ERR_PTR(-ENOMEM);
-> -		}
-> -		ctx->bio = bio;
-> -		ctx->enabled_steps = post_read_steps;
-> -		bio->bi_private = ctx;
-> +	err = read_callbacks_setup_bio(inode, bio);
-> +	if (err) {
-> +		bio_put(bio);
-> +		return ERR_PTR(err);
->  	}
->  
->  	return bio;
-> @@ -2860,27 +2793,3 @@ void f2fs_clear_page_cache_dirty_tag(struct page *page)
->  						PAGECACHE_TAG_DIRTY);
->  	xa_unlock_irqrestore(&mapping->i_pages, flags);
->  }
-> -
-> -int __init f2fs_init_post_read_processing(void)
-> -{
-> -	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, 0);
-> -	if (!bio_post_read_ctx_cache)
-> -		goto fail;
-> -	bio_post_read_ctx_pool =
-> -		mempool_create_slab_pool(NUM_PREALLOC_POST_READ_CTXS,
-> -					 bio_post_read_ctx_cache);
-> -	if (!bio_post_read_ctx_pool)
-> -		goto fail_free_cache;
-> -	return 0;
-> -
-> -fail_free_cache:
-> -	kmem_cache_destroy(bio_post_read_ctx_cache);
-> -fail:
-> -	return -ENOMEM;
-> -}
-> -
-> -void __exit f2fs_destroy_post_read_processing(void)
-> -{
-> -	mempool_destroy(bio_post_read_ctx_pool);
-> -	kmem_cache_destroy(bio_post_read_ctx_cache);
-> -}
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 87f75ebd2fd6..cea79321b794 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3125,8 +3125,6 @@ void f2fs_destroy_checkpoint_caches(void);
->  /*
->   * data.c
->   */
-> -int f2fs_init_post_read_processing(void);
-> -void f2fs_destroy_post_read_processing(void);
->  void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
->  void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
->  				struct inode *inode, struct page *page,
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 11b3a039a188..d7bbb4f1fdb3 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -3597,15 +3597,11 @@ static int __init init_f2fs_fs(void)
->  	err = register_filesystem(&f2fs_fs_type);
->  	if (err)
->  		goto free_shrinker;
-> +
->  	f2fs_create_root_stats();
-> -	err = f2fs_init_post_read_processing();
-> -	if (err)
-> -		goto free_root_stats;
-> +
->  	return 0;
->  
-> -free_root_stats:
-> -	f2fs_destroy_root_stats();
-> -	unregister_filesystem(&f2fs_fs_type);
->  free_shrinker:
->  	unregister_shrinker(&f2fs_shrinker_info);
->  free_sysfs:
-> @@ -3626,7 +3622,6 @@ static int __init init_f2fs_fs(void)
->  
->  static void __exit exit_f2fs_fs(void)
->  {
-> -	f2fs_destroy_post_read_processing();
->  	f2fs_destroy_root_stats();
->  	unregister_filesystem(&f2fs_fs_type);
->  	unregister_shrinker(&f2fs_shrinker_info);
-> 
+-Deepa
