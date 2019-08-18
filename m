@@ -2,96 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D8AA918E6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 20:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91F4B91948
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 21:33:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfHRSet (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 14:34:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726005AbfHRSet (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 14:34:49 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D91862184D;
-        Sun, 18 Aug 2019 18:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566153288;
-        bh=NoAluoc+Uq1qt0jwwoy3iiCN6uLBPDpdA+kJGNLfpEc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gGZ5UHz+VcRsH4bqNPorYZKMdOjs4yjmQumubPysA2fMTlAuE1QxyfIcxRbYwSVeI
-         Qb4pWxTOnTUKPIM2ipvQtTNTl0RqCtrF1ds4J+2Oe4TVNBnOCeRoFiFduU+U2Qjj+q
-         RM0RP0rlCS881frkAmEiHevGSBTCsQWY54ANTTN4=
-Date:   Sun, 18 Aug 2019 20:34:46 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
-        arnd@arndb.de, adrian.hunter@intel.com, dedekind1@gmail.com,
-        hch@lst.de, jaegeuk@kernel.org, jlbec@evilplan.org, richard@nod.at,
-        tj@kernel.org, yuchao0@huawei.com,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-ntfs-dev@lists.sourceforge.net, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v8 03/20] timestamp_truncate: Replace users of
- timespec64_trunc
-Message-ID: <20190818183446.GA2791@kroah.com>
-References: <20190818165817.32634-1-deepa.kernel@gmail.com>
- <20190818165817.32634-4-deepa.kernel@gmail.com>
+        id S1726247AbfHRTbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 15:31:49 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41106 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfHRTbt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 18 Aug 2019 15:31:49 -0400
+Received: by mail-qt1-f194.google.com with SMTP id i4so11816098qtj.8;
+        Sun, 18 Aug 2019 12:31:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mh5jr1rScriFxNzOWMaKI7sY0Xc2P0AIAoBRXShh9Rg=;
+        b=Gj6jWv4fzuKKYl1FkSbcQyrPfBe7yY1EnI0xOGXESL4nod3/DCcYFZpNwJFc0j/yh5
+         s7rHOmztnhMvg4xDroVqCC1oT3nQPOLC3m7SJRwxrmusnJH3WcI90w86CX1I01yl8vCr
+         HYXuXwCHn8BQY8pDGM/BSygpRPZNV7LWiQmfnuaGUj962uYOMyb/Ep7vbRvivyk6w0PO
+         qTJ76w3Hd/e5VaBg0NQwDBOQ5UaMlAFDP6/hZptOgkwghDi2BfXrIVcKXkax69GJxNOj
+         jz99DFjMC7NMXtA13RFk2bXoxpLjC6M6hAmZwHDIjuy5dBEdegyhwBmtIlE+ZdZTbLq2
+         O7ag==
+X-Gm-Message-State: APjAAAVX2cYNILOclIHD611uSNd/owHVPU7eUiBqYziQ014HKVdOt71d
+        hZCAUjB1I2/mwM7N57++B/dxUyZgl9StTbMbBXk=
+X-Google-Smtp-Source: APXvYqzz3AewI020l+nDXpUq+OQWStAhNnUt/bcyf6+mtzqDW/h8VdaaJlYz7EUAiQl8ug0PnJYJPjQg2gEgg+FtrXk=
+X-Received: by 2002:ad4:4b0c:: with SMTP id r12mr7996213qvw.45.1566156707449;
+ Sun, 18 Aug 2019 12:31:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190818165817.32634-4-deepa.kernel@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190814204259.120942-1-arnd@arndb.de> <20190814204259.120942-4-arnd@arndb.de>
+ <CAHc6FU5n9rBZuH=chOdmGCwyrX-B-Euq8oFrnu3UHHKSm5A5gQ@mail.gmail.com>
+In-Reply-To: <CAHc6FU5n9rBZuH=chOdmGCwyrX-B-Euq8oFrnu3UHHKSm5A5gQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sun, 18 Aug 2019 21:31:31 +0200
+Message-ID: <CAK8P3a3kiyytayaSs2LB=deK0OMs42Ayn4VErhjL6eM3FTGtpw@mail.gmail.com>
+Subject: Re: [PATCH v5 03/18] gfs2: add compat_ioctl support
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Steve Whitehouse <swhiteho@redhat.com>,
+        Jan Kara <jack@suse.cz>, NeilBrown <neilb@suse.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        cluster-devel <cluster-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 09:58:00AM -0700, Deepa Dinamani wrote:
-> Update the inode timestamp updates to use timestamp_truncate()
-> instead of timespec64_trunc().
-> 
-> The change was mostly generated by the following coccinelle
-> script.
-> 
-> virtual context
-> virtual patch
-> 
-> @r1 depends on patch forall@
-> struct inode *inode;
-> identifier i_xtime =~ "^i_[acm]time$";
-> expression e;
-> @@
-> 
-> inode->i_xtime =
-> - timespec64_trunc(
-> + timestamp_truncate(
-> ...,
-> - e);
-> + inode);
-> 
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Cc: adrian.hunter@intel.com
-> Cc: dedekind1@gmail.com
-> Cc: gregkh@linuxfoundation.org
-> Cc: hch@lst.de
-> Cc: jaegeuk@kernel.org
-> Cc: jlbec@evilplan.org
-> Cc: richard@nod.at
-> Cc: tj@kernel.org
-> Cc: yuchao0@huawei.com
-> Cc: linux-f2fs-devel@lists.sourceforge.net
-> Cc: linux-ntfs-dev@lists.sourceforge.net
-> Cc: linux-mtd@lists.infradead.org
-> ---
->  fs/attr.c           | 21 ++++++++++++---------
->  fs/configfs/inode.c | 12 ++++++------
->  fs/f2fs/file.c      | 21 ++++++++++++---------
->  fs/kernfs/inode.c   |  7 +++----
->  fs/ntfs/inode.c     | 21 ++++++++++++---------
->  fs/ubifs/file.c     | 21 ++++++++++++---------
->  6 files changed, 57 insertions(+), 46 deletions(-)
+On Fri, Aug 16, 2019 at 7:32 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>
+> On Wed, Aug 14, 2019 at 10:45 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > +       /* These are just misnamed, they actually get/put from/to user an int */
+> > +       switch(cmd) {
+> > +       case FS_IOC32_GETFLAGS:
+> > +               cmd = FS_IOC_GETFLAGS;
+> > +               break;
+> > +       case FS_IOC32_SETFLAGS:
+> > +               cmd = FS_IOC_SETFLAGS;
+> > +               break;
+>
+> I'd like the code to be more explicit here:
+>
+>         case FITRIM:
+>         case FS_IOC_GETFSLABEL:
+>               break;
+>         default:
+>               return -ENOIOCTLCMD;
 
-For kernfs:
-	Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I've looked at it again: if we do this, the function actually becomes
+longer than
+the native gfs2_ioctl(). Should we just make a full copy then?
+
+static long gfs2_compat_ioctl(struct file *filp, unsigned int cmd,
+unsigned long arg)
+{
+        switch(cmd) {
+        case FS_IOC32_GETFLAGS:
+                return gfs2_get_flags(filp, (u32 __user *)arg);
+        case FS_IOC32_SETFLAGS:
+                return gfs2_set_flags(filp, (u32 __user *)arg);
+        case FITRIM:
+                return gfs2_fitrim(filp, (void __user *)arg);
+        case FS_IOC_GETFSLABEL:
+                return gfs2_getlabel(filp, (char __user *)arg);
+        }
+
+        return -ENOTTY;
+}
+
+> Should we feed this through the gfs2 tree?
+
+A later patch that removes the FITRIM handling from fs/compat_ioctl.c
+depends on it, so I'd like to keep everything together.
+
+         Arnd
