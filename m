@@ -2,188 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC993913D1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 02:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D57FD9140A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 03:48:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbfHRAy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Aug 2019 20:54:26 -0400
-Received: from sonic314-47.consmr.mail.ir2.yahoo.com ([77.238.177.173]:45887
-        "EHLO sonic314-47.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726045AbfHRAyZ (ORCPT
+        id S1726556AbfHRBsv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Aug 2019 21:48:51 -0400
+Received: from sonic316-55.consmr.mail.gq1.yahoo.com ([98.137.69.31]:44203
+        "EHLO sonic316-55.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726229AbfHRBsu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Aug 2019 20:54:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1566089662; bh=pBWBwyARZnrzm33VPsM+sotY6iI5K4m2Qacgfi12VPg=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=N8kGHyihl8flFPtk1lEDvNKD7qeQrwa2VZG22wFLvMjekeH9ihFDMrlwOGDNyGYNGcTXvqxha5azq0xQM8TB9UDM6EfNh13tE0Vw7PlA65CZelCReG/Ng9VcyUeBJDf3/vrpfx/WDf3OHAz/Ut9ruvSkW9jmQtzfYcJWHbkZd+Lg4V7FVwK93qGUZuvPVWNsk7pP0mWFsQ8dvNYY1lP5XQKXyO0Fv921yZrTUmYrD4KWvTYfATBcEKiPHBa0OMMoZHZ1HCkbu/o4L5vi95XgUOr/OWcW7iWDh9AvW1fg9u67DJWhwZSFkDeKClwv7WQ1WWhO7J2uB2fkLbAT3WcYew==
-X-YMail-OSG: d7OXBJkVM1nW9fPWmebywH7Y56nwVgJNGgdGo3dOnKUoiafHfJGqeoMZ2Z1L63_
- 1NCcUccshIblqErhprGtdqNBn5Id0FHAwByqLrJLy3D8-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ir2.yahoo.com with HTTP; Sun, 18 Aug 2019 00:54:22 +0000
-Received: by smtp405.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 97deb381fe076b668cd11f47aa9377ca;
-          Sun, 18 Aug 2019 00:52:21 +0000 (UTC)
-Date:   Sun, 18 Aug 2019 08:52:11 +0800
+        Sat, 17 Aug 2019 21:48:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1566092929; bh=3z4YsL7cITdwo3WfgBzjdtBKxHfbzIYd54Y/QXXxpig=; h=From:To:Cc:Subject:Date:From:Subject; b=igjsmRk2B/VVMaIiwk6KZFJ2xs+vdkB0aTsEmbInOb3+X4jBeC3xc5GWN/bnYJeQ/3ugotsaMLuXLDNSVDW+RsZ2xQgJhXn6BlInOyZOt3zFUjpqF13OO8hBUngPCNJIpvCMsy1r2HWwsVzmI8NHrpH4pejQnUC05EffWbZXO9hACzDgoo8w1fbNBnZH9fDdTzQWkuwZ4ReO7PW7Fi3+/h5nAyV4psVt7lo+U2iOu5q7gwisfaumKBdTDLmceTpzftAWFAsCAWrGdADs0Bhw6+XIQ98o8Z0A1mPnET1PHgsm/WO6DvsANrRlZGVcqSgDITJDxZayIovb2713IBng4g==
+X-YMail-OSG: nH1tLc8VM1kDn9rx2c7sy4Ia4G0fR8nB1KDqylp4FskuR13tFJNVAPwp840OXp5
+ EhdNzOzVsNmE7oedZI.bicNh6Y.BUanFjxjAkKiRMaee40cc_0EVqmjKoLOjackBCV8S0iz6ujsp
+ RADzb3Hz7mDmBa3S3zCS7UcLlpImM.xDT4ovcBwWoHZ71b.fQWIQY0GPpGeUZQYE3Z4h8gcmsJXL
+ wAxWZRyExv_LAqhUEi0Ktc8sXAwljeXkuu2KRvHdAymTDslbi_17hUs6APnlTr2Jr4InQEZ8aUXw
+ YRdNha51u84WLXU_ljA20gbSaaqAZyHH5h1MHSJB61IIgsvKc.iyyDOdXj9NFVcBHffBsaWRsJrs
+ 1CnB.dH6ODkf2UNOjProgFs3PV.LtqTWZleiPe63zUc0FRpOolRYxmBCutnURgUYF66a43eFadr0
+ Cic3D5wt3QuPJOJjMzWSDirBuACdYLIrM4CI0fyw8W6AJ4M7A_Mn_H.IoZRz33SwCPnPofPuZcjE
+ JiQgGviKoqQRed3bwcT47oWp5iFdDhS07V192MYe1yQ6fAmDyhzgUSD1vewYdpJ7fN.N_4JaMRp6
+ P1nfunMU4NBxqwYJzW9WxZzdOWHHGwKLqjWDS1TylVvr1dSDMz.y8IkO2BLW0dZ7Lg3e.QousgcU
+ .84G1QxI4kiPY31wANpRIP1rPB_vBk84ecr08dmO_QRHVjLAxmvFAEWSl2ZvaWoJRzUolq4yrnTc
+ Do1WMUIVjlGP53sg9J6a5elF_uKzkbZ10qkYxpZjtioSqj5q7MhOOJNvl9E9w0sAZIEOscAv4LZY
+ MVQVkCeYTNfj1KZGNpnX5RmlfEoFlR9c7Jrbx6pXc2JJ7RErzQl2xsksY0K2tYk4BVQAi91H58kB
+ rqWHIU7t.HGxJ_N.pEl0WioD4aL8DBXT.FbVCgwshCkp6pq4x8ImtDz1dbjfK_YyzmSq7SIceAID
+ rZV..yrIopk0c4z9QIcARAA.ZGj22.MtATeg9iPC_2yZrqKjxjFe_AmWpFgelDKBXi17BIS81zQw
+ PeZKoDaI9SN4GuyvVJ1Ekr9jNxBI26HwJd8MhuWLcVMqTixd.dIgLodiZL3qJVFz0K10HOyK_ZEd
+ 1ohHBW4Vp9giHb3d5q1MZz.vXv_.nB9pUtSEwjGH9F_wVZqArmt2TRjo28N6hvCHtfKhl98bQioN
+ JdIpEhf4lkn3XK.LbY0C.083i3brSpG3uyhB13CP6rEgBw0NUkyu5eoKmvy7VSMnWKrJvMc2liSv
+ czKCr_7IpTwBhZUpzVapYwwMr00Y06wwZqzc-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Sun, 18 Aug 2019 01:48:49 +0000
+Received: by smtp411.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID be81c6d863eaec55ce60d29fea3fc0a8;
+          Sun, 18 Aug 2019 01:48:44 +0000 (UTC)
 From:   Gao Xiang <hsiangkao@aol.com>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        devel <devel@driverdev.osuosl.org>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, tytso <tytso@mit.edu>,
-        Pavel Machek <pavel@denx.de>, David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Darrick <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        torvalds <torvalds@linux-foundation.org>,
-        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
+To:     Chao Yu <yuchao0@huawei.com>, Richard Weinberger <richard@nod.at>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
+        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: Re: [PATCH] erofs: move erofs out of staging
-Message-ID: <20190818005202.GA3088@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20190817082313.21040-1-hsiangkao@aol.com>
- <1746679415.68815.1566076790942.JavaMail.zimbra@nod.at>
- <20190817220706.GA11443@hsiangkao-HP-ZHAN-66-Pro-G1>
- <1163995781.68824.1566084358245.JavaMail.zimbra@nod.at>
- <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190818000408.GA20778@hsiangkao-HP-ZHAN-66-Pro-G1>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190818000408.GA20778@hsiangkao-HP-ZHAN-66-Pro-G1>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Gao Xiang <gaoxiang25@huawei.com>, stable@vger.kernel.org
+Subject: [PATCH] staging: erofs: fix an error handling in erofs_readdir()
+Date:   Sun, 18 Aug 2019 09:48:35 +0800
+Message-Id: <20190818014835.5874-1-hsiangkao@aol.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 08:04:11AM +0800, Gao Xiang wrote:
-> On Sun, Aug 18, 2019 at 07:38:47AM +0800, Gao Xiang wrote:
-> > Hi Richard,
-> > 
-> > On Sun, Aug 18, 2019 at 01:25:58AM +0200, Richard Weinberger wrote:
-> 
-> []
-> 
-> > > 
-> > > While digging a little into the code I noticed that you have very few
-> > > checks of the on-disk data.
-> > > For example ->u.i_blkaddr. I gave it a try and created a
-> > > malformed filesystem where u.i_blkaddr is 0xdeadbeef, it causes the kernel
-> > > to loop forever around erofs_read_raw_page().
-> > 
-> > I don't fuzz all the on-disk fields for EROFS, I will do later..
-> > You can see many in-kernel filesystems are still hardening the related
-> > stuff. Anyway, I will dig into this field you mentioned recently, but
-> > I think it can be fixed easily later.
-> 
-> ...I take a simple try with the following erofs-utils diff and
-> a directory containing enwik9 only, with the latest kernel (5.3-rc)
-> and command line is
-> mkfs/mkfs.erofs -d9 enwik9.img testdir.
-> 
-> diff --git a/lib/inode.c b/lib/inode.c
-> index 581f263..2540338 100644
-> --- a/lib/inode.c
-> +++ b/lib/inode.c
-> @@ -388,8 +388,7 @@ static bool erofs_bh_flush_write_inode(struct erofs_buffer_head *bh)
->  			v1.i_u.compressed_blocks =
->  				cpu_to_le32(inode->u.i_blocks);
->  		else
-> -			v1.i_u.raw_blkaddr =
-> -				cpu_to_le32(inode->u.i_blkaddr);
-> +			v1.i_u.raw_blkaddr = 0xdeadbeef;
->  		break;
->  	}
-> 
-> I tested the corrupted image with looped device and real blockdevice
-> by dd, and it seems fine....
-> [36283.012381] erofs: initializing erofs 1.0
-> [36283.012510] erofs: successfully to initialize erofs
-> [36283.012975] erofs: read_super, device -> /dev/loop17
-> [36283.012976] erofs: options -> (null)
-> [36283.012983] erofs: root inode @ nid 36
-> [36283.012995] erofs: mounted on /dev/loop17 with opts: (null).
-> [36297.354090] attempt to access beyond end of device
-> [36297.354098] loop17: rw=0, want=29887428984, limit=1953128
-> [36297.354107] attempt to access beyond end of device
-> [36297.354109] loop17: rw=0, want=29887428480, limit=1953128
-> [36301.827234] attempt to access beyond end of device
-> [36301.827243] loop17: rw=0, want=29887428480, limit=1953128
-> [36371.426889] erofs: unmounted for /dev/loop17
-> [36518.156114] erofs: read_super, device -> /dev/nvme0n1p4
-> [36518.156115] erofs: options -> (null)
-> [36518.156260] erofs: root inode @ nid 36
-> [36518.156384] erofs: mounted on /dev/nvme0n1p4 with opts: (null).
-> [36522.818884] attempt to access beyond end of device
-> [36522.818889] nvme0n1p4: rw=0, want=29887428984, limit=62781440
-> [36522.818895] attempt to access beyond end of device
-> [36522.818896] nvme0n1p4: rw=0, want=29887428480, limit=62781440
-> [36524.072018] attempt to access beyond end of device
-> [36524.072028] nvme0n1p4: rw=0, want=29887428480, limit=62781440
-> 
-> Could you give me more hints how to reproduce that? and I will
-> dig into more maybe it needs more conditions...
+From: Gao Xiang <gaoxiang25@huawei.com>
 
-I think I found what happened here... That is not a bug due to lack of
-check of on-disk ->u.i_blkaddr (seems block layer will handle access
-beyond end of device) but actually a bug of erofs_readdir:
+Richard observed a forever loop of erofs_read_raw_page() [1]
+which can be generated by forcely setting ->u.i_blkaddr
+to 0xdeadbeef (as my understanding block layer can
+handle access beyond end of device correctly).
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index fda16ec8863e..5b5f35d47370 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -329,6 +329,8 @@ static int erofs_raw_access_readpage(struct file *file, struct page *page)
- 
- 	trace_erofs_readpage(page, true);
- 
-+	WARN_ON(1);
-+
- 	bio = erofs_read_raw_page(NULL, page->mapping,
- 				  page, &last_block, 1, false);
- 
-@@ -379,6 +381,8 @@ static int erofs_raw_access_readpages(struct file *filp,
- 	/* the rare case (end in gaps) */
- 	if (unlikely(bio))
- 		__submit_bio(bio, REQ_OP_READ, 0);
-+
-+	WARN_ON(1);
- 	return 0;
- }
- 
-diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
-index 637d70108d59..ccca954438ed 100644
---- a/fs/erofs/dir.c
-+++ b/fs/erofs/dir.c
-@@ -80,8 +80,10 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+After digging into that, it seems the problem is highly
+related with directories and then I found the root cause
+is an improper error handling in erofs_readdir().
+
+Let's fix it now.
+
+[1] https://lore.kernel.org/r/1746679415.68815.1566076790942.JavaMail.zimbra@nod.at/
+
+Reported-by: Richard Weinberger <richard@nod.at>
+Fixes: 3aa8ec716e52 ("staging: erofs: add directory operations")
+Cc: <stable@vger.kernel.org> # 4.19+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+
+Which is based on the following patch as well
+https://lore.kernel.org/r/20190816071142.8633-1-gaoxiang25@huawei.com/
+
+and
+https://lore.kernel.org/r/20190817082313.21040-1-hsiangkao@aol.com/
+can still be properly applied after this patch.
+
+ drivers/staging/erofs/dir.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/erofs/dir.c b/drivers/staging/erofs/dir.c
+index 5f38382637e6..f2d7539589e4 100644
+--- a/drivers/staging/erofs/dir.c
++++ b/drivers/staging/erofs/dir.c
+@@ -82,8 +82,12 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
  		unsigned int nameoff, maxsize;
  
  		dentry_page = read_mapping_page(mapping, i, NULL);
 -		if (IS_ERR(dentry_page))
 -			continue;
 +		if (IS_ERR(dentry_page)) {
++			errln("fail to readdir of logical block %u of nid %llu",
++			      i, EROFS_V(dir)->nid);
 +			err = PTR_ERR(dentry_page);
 +			break;
 +		}
  
  		de = (struct erofs_dirent *)kmap(dentry_page);
  
+-- 
+2.17.1
 
-It's a forever loop due to error handling of the read_mapping_page above.
-I will fix that in another patch and thanks for your report!
-
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> Gao Xiang
-> 
-> > 
-> > Thanks,
-> > Gao Xiang 
-> > 
-> > > 
-> > > Thanks,
-> > > //richard
