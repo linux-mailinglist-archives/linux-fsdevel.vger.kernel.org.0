@@ -2,62 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D16C91599
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 10:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2B4B915A1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 10:45:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbfHRIjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 04:39:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59058 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfHRIjk (ORCPT
+        id S1726608AbfHRIpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 04:45:43 -0400
+Received: from sonic301-21.consmr.mail.gq1.yahoo.com ([98.137.64.147]:33062
+        "EHLO sonic301-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726606AbfHRIpn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 04:39:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=A8d2I2K56+XviRcc09JFeUkjqbtGOWdxc/knibMVkIU=; b=uQpjyXdjSpz/Hwt2agEx42kAf
-        g+mz/QcKcO6V1V4Xtq3cYXDNbU+ahexhe6g4YACs/+mbI1t36oXkGrXyP5sfu8d401R4N0lbT7mZ3
-        imAzQ31GommzEmy+3D/q7XEthqyrOBZv/QZxlltY/D60997ot3RhVFCaXTqpDos9//n8D5KLAubry
-        mTO/hAB+WtGqCNfdFaXxeRoIUC3/3JrLsSWAMwxYDxy0R8PHGtlvKuxwedTsclaxY7pbRm5nBkN/J
-        x5vdCXJ0L5ycFl9dJ1RbbfRUB7sbiD2Mh9Q8WnyTvIQvtA/EwNYHv3+l0uiJs0B6j91pFSdNlsOuB
-        tTlE+niug==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hzGiv-0003cZ-6g; Sun, 18 Aug 2019 08:39:37 +0000
-Date:   Sun, 18 Aug 2019 01:39:37 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     hch@infradead.org, akpm@linux-foundation.org, tytso@mit.edu,
-        viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/2] vfs: don't allow writes to swap files
-Message-ID: <20190818083937.GC13583@infradead.org>
-References: <156588514105.111054.13645634739408399209.stgit@magnolia>
- <156588515613.111054.13578448017133006248.stgit@magnolia>
- <20190816161948.GJ15186@magnolia>
+        Sun, 18 Aug 2019 04:45:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1566117941; bh=U8+VQlxBUgWnoM/I+xVbuaXKkxs6yTI0ZywaCHT91wQ=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=M0TR0d7fH7+wgv0LnSYGhuOrHKfGjOQx7n0R4fEY11sADUXzesRYRc1+u04CmYyqu2WRlDqMabmeIN6DEya0vTLed49IrZipUJOLDjcFQkKumlSYlQCy4di5I5QPoVwY8b5S+TWwNoVvRLcwL8DRf3ZJd0uyBMxyqXViQxqSVcxITem8VC40KTaus5zhR8CFh0H2zEbsz0EwVG7OCQv6ks6B9qoTD6KSYlcfTSditi2X7aSRQM7oWcrTqrg33rafcsU3+QLqMA3tDOoTnthmWGvdJQitWJ78uF6JnNpQJYHO5n8V20Gdpcf+TJQQsy2NXXsiccFhxcmFkt6LJpRzqA==
+X-YMail-OSG: efZZ9FMVM1m.GtSPoalf4IvRpF36iTHGi2hNN9ZzEPgu2Sbkj8JraAameZUvrB0
+ Tm9Pk8KD1sfUYzw5gJm6.l8Us6mkfVj35P9F52n3cIUdf3LJy1dryt_c.wjgPfcQLiK3R0UZGd5N
+ Ky1fuIQtznRkZuAhSxD5RoHjvsoVGBC0DRP2HrgZyXEAk0lZW8cQ9.UeCQXVlbHKH9UKZlhbOd9n
+ sICgg6JVdTKKajIBATnYV.kfo1PXcl2elG2KEQ583VuQSNwejE2MKqoeVzzZaHQ7ml32trY6uif0
+ wxN3CCWDScqq16CbvpytMG9KqUhEGqOBSmXazXkSNTtxwFLmQYErIbZKEz4FeQiDwstZbts57.W2
+ PWou0BEWyo4e8oxdOvk17NdANU5_5OStvYGo1S4ufsUy4J92iM42mOLjbfUSGIG70gTufb8N1tkZ
+ QsriuZemtEJafBIAhjEODJWEQlfDkDGOS0kFzoKYo5miy9Mgl9BDmRUSx9ozeSDIdoF46MDgadhB
+ VxufLY76y5LbXXkT_2_rLrccNumA0hm.2KZW9r6LvhjnkJ0Mm5fDbjj_AxOkKy5zgVnMjK95eJIG
+ 3SSwFp6dPDY1l1EK_XMxX7ax4St7GhNPYjWKULao3VzFlafAEyPNsds4cZ.abCvb6GtGn7rPOjIX
+ .2WhWMhThkchR3JnurCUSDX7wUpPp5j20LcRBhnNee_WwZKexA54E1hLJ5VIN292.rENsF_FK0VQ
+ Vtn8SENNPHYeLn4HpG9CFUwBehTJN.VDU53F49EjyDxBA7.eqmhEVuu8.5zsrxTKOWin6cvesJuN
+ 2gNYJPbBDGyjO3uYd.b3aBWxqUXYq2xI4Bctn5Slef0JUyyjUpczjbfaF.UJRW0qdFzLFtXEFoyD
+ p5ZOYtK5Og6uqsTVd_B.xpLK0J56uGv8ZAKeUntsTLH5SBFt2URMPbGoIQPLN.fztahf.s65AVcM
+ BLN3Qrstum6sHHuBr4QjowVdbQJ7y0yHLxJVnTJEODm_olmIS6wJgNiGQ_nQmJLumRGNib3B3NqP
+ hiG577EJlQomKG6S2WJ5FK1jN1tDwUPIGE9NFSbYyMp4M_PelQd1PxaaHYvUeLhOraSxUVfXSYyY
+ 6z72p8OjS.cgZVxZsDxkK8UG961df1uDTqeG6rIEsdo0CeRcReJQljOSHRZ_rm9zREWz5wKfLOws
+ fA5wDsCBqNZnWkoPRp9Ah7xcMQxeP8bo2S9rLTVJBlkqvSjChaXLyi.A7FqlF9liXh1ObALSq_BY
+ s5fpoZq2IYxLEGSg0bNkgbo3MebhHys7nTofo
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Sun, 18 Aug 2019 08:45:41 +0000
+Received: by smtp427.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 7f42aa3751c9ef91b2ab4c4b10094af7;
+          Sun, 18 Aug 2019 08:45:41 +0000 (UTC)
+Date:   Sun, 18 Aug 2019 16:45:25 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        devel <devel@driverdev.osuosl.org>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, tytso <tytso@mit.edu>,
+        Pavel Machek <pavel@denx.de>, David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Darrick <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        torvalds <torvalds@linux-foundation.org>,
+        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: Re: [PATCH] erofs: move erofs out of staging
+Message-ID: <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190817082313.21040-1-hsiangkao@aol.com>
+ <1746679415.68815.1566076790942.JavaMail.zimbra@nod.at>
+ <20190817220706.GA11443@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <1163995781.68824.1566084358245.JavaMail.zimbra@nod.at>
+ <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190816161948.GJ15186@magnolia>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 09:19:49AM -0700, Darrick J. Wong wrote:
-> From: Darrick J. Wong <darrick.wong@oracle.com>
+On Sun, Aug 18, 2019 at 10:16:50AM +0200, Richard Weinberger wrote:
+> ----- Urspr?ngliche Mail -----
+> >> While digging a little into the code I noticed that you have very few
+> >> checks of the on-disk data.
+> >> For example ->u.i_blkaddr. I gave it a try and created a
+> >> malformed filesystem where u.i_blkaddr is 0xdeadbeef, it causes the kernel
+> >> to loop forever around erofs_read_raw_page().
+> > 
+> > I don't fuzz all the on-disk fields for EROFS, I will do later..
+> > You can see many in-kernel filesystems are still hardening the related
+> > stuff. Anyway, I will dig into this field you mentioned recently, but
+> > I think it can be fixed easily later.
 > 
-> Don't let userspace write to an active swap file because the kernel
-> effectively has a long term lease on the storage and things could get
-> seriously corrupted if we let this happen.
+> This is no excuse to redo all these bugs. :-)
+
+I agree with you, but what can we do now is trying our best to fuzz
+all the fields.
+
+So, what is your opinion about EROFS?
+
 > 
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> I know that many in-kernel filesystems trust the disk ultimately, this is a
+> problem and huge attack vector.
 
-Looks good,
+I EROFS already has many error handing paths to recover corrupted images,
+and your discovery is a bug out of one error handing path miswritten by me.
+I cannot make a guarantee that all the new things (every new kernel version
+will introduce new feature / new code) are bug-free since I am not a machine
+or code parser.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+My answer about this EROFS will be more stable with our development, we have
+a dedicated team with paid job, and since we currently use EROFS on the top of
+dm-verity for current Android, which will keep us from corrupted images.
+But yes, we will focus on fuzzing all the images for generic usages,
+and we will backport all these patches to old stable versions.
+
+Thanks,
+Gao Xiang
+
+> 
+> Thanks,
+> //richard
