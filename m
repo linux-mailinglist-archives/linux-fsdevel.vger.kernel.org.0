@@ -2,138 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49FE0916F9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 16:00:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CD0D91777
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 17:13:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfHROAY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 10:00:24 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46266 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726247AbfHROAY (ORCPT
+        id S1726523AbfHRPNC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 11:13:02 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36222 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726005AbfHRPNC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 10:00:24 -0400
-Received: by mail-io1-f68.google.com with SMTP id x4so15346579iog.13;
-        Sun, 18 Aug 2019 07:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Lox1GwVXn3FfNaJc4tSQNHxrlDnE7ZTtqmRrPEy0V0=;
-        b=bgIJNrZLD9cEQKaX+WWl784pUPlA/tMWOGODRlCV0cwRfljdDw0TQroLAlEh8uMvR7
-         mRRaLCdUQE/DuVODp7dMxuEwKDsVq0zg8btmhZPhV0glEfeilVGnBJOlnXzuUfEBEwSv
-         lDSF11fy3DbrG7VimGQkh1nc/jGSgughWyUnzo3SvMFOpLm5DMx9KxTX+49HSr5ay9+n
-         zQiuA8ep8ndPO8CU4tSO0ANyWPzCPlOhqNXXCIjpu3t+KihQ4gNrjclIVDoWQjqa+RAi
-         aAof1xBUuM09Jdg1Uoumte0u6KtApThoryqZ4uwApj1DYcQt3AO9pKGjCpi0+4UCGY71
-         MgRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Lox1GwVXn3FfNaJc4tSQNHxrlDnE7ZTtqmRrPEy0V0=;
-        b=Dby5ICIi/oaJ8+XFJiXtuEvLDUEfVe00MofwWsYb8KE0VWbUo8uuiat4qo9C/Dap9k
-         Yv488eRXRBNK7MGv2Y7LYr4AaTqb/9g0HIgH3QyNGDyeSsBL05/faQZbGnwDAz9Dejfi
-         1tuMERYdgFPD/OflW2abdfMdkrtrS4NHorzAQCVCcFeECb4kZ7NElkJ4xlZTJqqgToqS
-         xd91V0IK/fpF6CE5PL9OSP86RuOa0tLaAmgg8Vbehlmhka9ek1zVu3758rOMK+wGMXIc
-         PTJjq+v3CHxzmfiISyEf6/zLaatvqUvU0koAuikEuIRa5hYFzt1CcF1DVt7ckgo23LWg
-         feIw==
-X-Gm-Message-State: APjAAAWIw0ESXaqEYF4MikS02+aF3tpAex4AHyctcb233DnfMwqN/gcI
-        C9JhDEgich4KZMhq72miI/bsGk1QanAUXpyr+vo=
-X-Google-Smtp-Source: APXvYqxnImgJgmCUWa7dkjDd15eyh4IYUAjq63iKHeqQEvtSUIUevkYw9wGEuETJFb98Wxh4oq0CLfa0sHPYgtQcbq0=
-X-Received: by 2002:a5d:8599:: with SMTP id f25mr2358917ioj.265.1566136823400;
- Sun, 18 Aug 2019 07:00:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-20-deepa.kernel@gmail.com>
- <201907292129.AC796230@keescook> <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
- <CABeXuvrmNkUOH5ZU59Kg4Ge1cFE9nqp9NhTPJjus5KkCrYeC6w@mail.gmail.com> <CAK8P3a3DyWcvOpMsc__CZDmG50MXRisbBt+mTtwWCGKaNgg_Gg@mail.gmail.com>
-In-Reply-To: <CAK8P3a3DyWcvOpMsc__CZDmG50MXRisbBt+mTtwWCGKaNgg_Gg@mail.gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Sun, 18 Aug 2019 07:00:12 -0700
-Message-ID: <CABeXuvr=t4zM060UKJBv0nywGkQjK915gvr6bv5=0_EbEctKHg@mail.gmail.com>
-Subject: Re: [PATCH 19/20] pstore: fs superblock limits
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kees Cook <keescook@chromium.org>,
+        Sun, 18 Aug 2019 11:13:02 -0400
+Received: from callcc.thunk.org ([12.235.16.3])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7IFBt5Z011483
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 18 Aug 2019 11:11:56 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id E4DB04218EF; Sun, 18 Aug 2019 11:11:54 -0400 (EDT)
+Date:   Sun, 18 Aug 2019 11:11:54 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
+        Chao Yu <yuchao0@huawei.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
+        devel <devel@driverdev.osuosl.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Darrick <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>, Pavel Machek <pavel@denx.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] erofs: move erofs out of staging
+Message-ID: <20190818151154.GA32157@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Richard Weinberger <richard@nod.at>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
+        Chao Yu <yuchao0@huawei.com>, Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
+        devel <devel@driverdev.osuosl.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Darrick <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Li Guifu <bluce.liguifu@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        Pavel Machek <pavel@denx.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds <torvalds@linux-foundation.org>
+References: <20190817082313.21040-1-hsiangkao@aol.com>
+ <20190817220706.GA11443@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <1163995781.68824.1566084358245.JavaMail.zimbra@nod.at>
+ <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at>
+ <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at>
+ <20190818090949.GA30276@kroah.com>
+ <790210571.69061.1566120073465.JavaMail.zimbra@nod.at>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <790210571.69061.1566120073465.JavaMail.zimbra@nod.at>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 12:15 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Fri, Aug 2, 2019 at 4:26 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> >
-> > On Tue, Jul 30, 2019 at 12:36 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Tue, Jul 30, 2019 at 6:31 AM Kees Cook <keescook@chromium.org> wrote:
-> > > >
-> > > > On Mon, Jul 29, 2019 at 06:49:23PM -0700, Deepa Dinamani wrote:
-> > > > > Also update the gran since pstore has microsecond granularity.
-> > > >
-> > > > So, I'm fine with this, but technically the granularity depends on the
-> > > > backend storage... many have no actual time keeping, though. My point is,
-> > > > pstore's timestamps are really mostly a lie, but the most common backend
-> > > > (ramoops) is seconds-granularity.
-> > > >
-> > > > So, I'm fine with this, but it's a lie but it's a lie that doesn't
-> > > > matter, so ...
-> > > >
-> > > > Acked-by: Kees Cook <keescook@chromium.org>
-> > > >
-> > > > I'm open to suggestions to improve it...
-> > >
-> > > If we don't care about using sub-second granularity, then setting it
-> > > to one second unconditionally here will make it always use that and
-> > > report it correctly.
-> >
-> > Should this printf in ramoops_write_kmsg_hdr() also be fixed then?
-> >
-> >         RAMOOPS_KERNMSG_HDR "%lld.%06lu-%c\n",
-> >         (time64_t)record->time.tv_sec,
-> >         record->time.tv_nsec / 1000,
-> >         record->compressed ? 'C' : 'D');
-> >     persistent_ram_write(prz, hdr, len);
-> >
-> > ramoops_read_kmsg_hdr() doesn't read this as microseconds. Seems like
-> > a mismatch from above.
->
-> Good catch. This seems to go back to commit 3f8f80f0cfeb ("pstore/ram:
-> Read and write to the 'compressed' flag of pstore"), which introduced the
-> nanosecond read. The write function however has always used
-> microseconds, and that was kept when the implementation changed
-> from timeval to timespec in commit 1e817fb62cd1 ("time: create
-> __getnstimeofday for WARNless calls").
->
-> > If we want to agree that we just want seconds granularity for pstore,
-> > we could replace the tv_nsec part to be all 0's if anybody else is
-> > depending on this format.
-> > I could drop this patch from the series and post that patch seperately.
->
-> We should definitely fix it to not produce a bogus nanosecond value.
-> Whether using full seconds or microsecond resolution is better here,
-> I don't know. It seems that pstore records generally get created
-> with a nanosecond nanosecond accurate timestamp from
-> ktime_get_real_fast_ns() and then truncated to the resolution of the
-> backend, rather than the normal jiffies-accurate inode timestamps that
-> we have for regular file systems.
->
-> This might mean that we do want the highest possible resolution
-> and not further truncate here, in case that information ends
-> up being useful afterwards.
+On Sun, Aug 18, 2019 at 11:21:13AM +0200, Richard Weinberger wrote:
+> > Not to say that erofs shouldn't be worked on to fix these kinds of
+> > issues, just that it's not an unheard of thing to trust the disk image.
+> > Especially for the normal usage model of erofs, where the whole disk
+> > image is verfied before it is allowed to be mounted as part of the boot
+> > process.
+> 
+> For normal use I see no problem at all.
+> I fear distros that try to mount anything you plug into your USB.
+> 
+> At least SUSE already blacklists erofs:
+> https://github.com/openSUSE/suse-module-tools/blob/master/suse-module-tools.spec#L24
 
-I made a list of granularities used by pstore drivers using pstore_register():
+Note that of the mainstream file systems, ext4 and xfs don't guarantee
+that it's safe to blindly take maliciously provided file systems, such
+as those provided by a untrusted container, and mount it on a file
+system without problems.  As I recall, one of the XFS developers
+described file system fuzzing reports as a denial of service attack on
+the developers.  And on the ext4 side, while I try to address them, it
+is by no means considered a high priority work item, and I don't
+consider fixes of fuzzing reports to be worthy of coordinated
+disclosure or a high priority bug to fix.  (I have closed more bugs in
+this area than XFS has, although that may be that ext4 started with
+more file system format bugs than XFS; however given the time to first
+bug in 2017 using American Fuzzy Lop[1] being 5 seconds for btrfs, 10
+seconds for f2fs, 25 seconds for reiserfs, 4 minutes for ntfs, 1h45m
+for xfs, and 2h for ext4, that seems unlikely.)
 
-1. efi - seconds
-2. ramoops - microsecond
-3. erst - seconds
-4. powerpc/nvram64 - seconds
+[1] https://events.static.linuxfound.org/sites/events/files/slides/AFL%20filesystem%20fuzzing%2C%20Vault%202016_0.pdf
 
-I will leave pstore granularity at nanoseconds and fix the ramoops read.
+So holding a file system like EROFS to a higher standard than say,
+ext4, xfs, or btrfs hardly seems fair.  There seems to be a very
+unfortunate tendancy for us to hold new file systems to impossibly
+high standards, when in fact, adding a file system to Linux should
+not, in my opinion, be a remarkable event.  We have a huge number of
+them already, many of which are barely maintained and probably have
+far worse issues than file systems trying to get into the clubhouse.
 
--Deepa
+If a file system is requesting core changes to the VM or block layers,
+sure, we should care about the interfaces.  But this nitpicking about
+whether or not a file system can be trusted in what I consider to be
+COMPLETELY INSANE CONTAINER USE CASES is really not fair.
+
+Cheers,
+
+						- Ted
