@@ -2,41 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2B4B915A1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 10:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63501915B0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 11:04:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbfHRIpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 04:45:43 -0400
-Received: from sonic301-21.consmr.mail.gq1.yahoo.com ([98.137.64.147]:33062
-        "EHLO sonic301-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726606AbfHRIpn (ORCPT
+        id S1726552AbfHRJD4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 05:03:56 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:52138 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfHRJD4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 04:45:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1566117941; bh=U8+VQlxBUgWnoM/I+xVbuaXKkxs6yTI0ZywaCHT91wQ=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=M0TR0d7fH7+wgv0LnSYGhuOrHKfGjOQx7n0R4fEY11sADUXzesRYRc1+u04CmYyqu2WRlDqMabmeIN6DEya0vTLed49IrZipUJOLDjcFQkKumlSYlQCy4di5I5QPoVwY8b5S+TWwNoVvRLcwL8DRf3ZJd0uyBMxyqXViQxqSVcxITem8VC40KTaus5zhR8CFh0H2zEbsz0EwVG7OCQv6ks6B9qoTD6KSYlcfTSditi2X7aSRQM7oWcrTqrg33rafcsU3+QLqMA3tDOoTnthmWGvdJQitWJ78uF6JnNpQJYHO5n8V20Gdpcf+TJQQsy2NXXsiccFhxcmFkt6LJpRzqA==
-X-YMail-OSG: efZZ9FMVM1m.GtSPoalf4IvRpF36iTHGi2hNN9ZzEPgu2Sbkj8JraAameZUvrB0
- Tm9Pk8KD1sfUYzw5gJm6.l8Us6mkfVj35P9F52n3cIUdf3LJy1dryt_c.wjgPfcQLiK3R0UZGd5N
- Ky1fuIQtznRkZuAhSxD5RoHjvsoVGBC0DRP2HrgZyXEAk0lZW8cQ9.UeCQXVlbHKH9UKZlhbOd9n
- sICgg6JVdTKKajIBATnYV.kfo1PXcl2elG2KEQ583VuQSNwejE2MKqoeVzzZaHQ7ml32trY6uif0
- wxN3CCWDScqq16CbvpytMG9KqUhEGqOBSmXazXkSNTtxwFLmQYErIbZKEz4FeQiDwstZbts57.W2
- PWou0BEWyo4e8oxdOvk17NdANU5_5OStvYGo1S4ufsUy4J92iM42mOLjbfUSGIG70gTufb8N1tkZ
- QsriuZemtEJafBIAhjEODJWEQlfDkDGOS0kFzoKYo5miy9Mgl9BDmRUSx9ozeSDIdoF46MDgadhB
- VxufLY76y5LbXXkT_2_rLrccNumA0hm.2KZW9r6LvhjnkJ0Mm5fDbjj_AxOkKy5zgVnMjK95eJIG
- 3SSwFp6dPDY1l1EK_XMxX7ax4St7GhNPYjWKULao3VzFlafAEyPNsds4cZ.abCvb6GtGn7rPOjIX
- .2WhWMhThkchR3JnurCUSDX7wUpPp5j20LcRBhnNee_WwZKexA54E1hLJ5VIN292.rENsF_FK0VQ
- Vtn8SENNPHYeLn4HpG9CFUwBehTJN.VDU53F49EjyDxBA7.eqmhEVuu8.5zsrxTKOWin6cvesJuN
- 2gNYJPbBDGyjO3uYd.b3aBWxqUXYq2xI4Bctn5Slef0JUyyjUpczjbfaF.UJRW0qdFzLFtXEFoyD
- p5ZOYtK5Og6uqsTVd_B.xpLK0J56uGv8ZAKeUntsTLH5SBFt2URMPbGoIQPLN.fztahf.s65AVcM
- BLN3Qrstum6sHHuBr4QjowVdbQJ7y0yHLxJVnTJEODm_olmIS6wJgNiGQ_nQmJLumRGNib3B3NqP
- hiG577EJlQomKG6S2WJ5FK1jN1tDwUPIGE9NFSbYyMp4M_PelQd1PxaaHYvUeLhOraSxUVfXSYyY
- 6z72p8OjS.cgZVxZsDxkK8UG961df1uDTqeG6rIEsdo0CeRcReJQljOSHRZ_rm9zREWz5wKfLOws
- fA5wDsCBqNZnWkoPRp9Ah7xcMQxeP8bo2S9rLTVJBlkqvSjChaXLyi.A7FqlF9liXh1ObALSq_BY
- s5fpoZq2IYxLEGSg0bNkgbo3MebhHys7nTofo
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Sun, 18 Aug 2019 08:45:41 +0000
-Received: by smtp427.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 7f42aa3751c9ef91b2ab4c4b10094af7;
-          Sun, 18 Aug 2019 08:45:41 +0000 (UTC)
-Date:   Sun, 18 Aug 2019 16:45:25 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Richard Weinberger <richard@nod.at>
+        Sun, 18 Aug 2019 05:03:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 47E59608311C;
+        Sun, 18 Aug 2019 11:03:54 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id oPN-VV6EAqFe; Sun, 18 Aug 2019 11:03:54 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id D4E906083139;
+        Sun, 18 Aug 2019 11:03:53 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 6BRG8VH4p6ay; Sun, 18 Aug 2019 11:03:53 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 369BA608311C;
+        Sun, 18 Aug 2019 11:03:53 +0200 (CEST)
+Date:   Sun, 18 Aug 2019 11:03:53 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Gao Xiang <hsiangkao@aol.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -56,64 +50,37 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Li Guifu <bluce.liguifu@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at>
+In-Reply-To: <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190817082313.21040-1-hsiangkao@aol.com> <1746679415.68815.1566076790942.JavaMail.zimbra@nod.at> <20190817220706.GA11443@hsiangkao-HP-ZHAN-66-Pro-G1> <1163995781.68824.1566084358245.JavaMail.zimbra@nod.at> <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1> <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at> <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1>
 Subject: Re: [PATCH] erofs: move erofs out of staging
-Message-ID: <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20190817082313.21040-1-hsiangkao@aol.com>
- <1746679415.68815.1566076790942.JavaMail.zimbra@nod.at>
- <20190817220706.GA11443@hsiangkao-HP-ZHAN-66-Pro-G1>
- <1163995781.68824.1566084358245.JavaMail.zimbra@nod.at>
- <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1>
- <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Topic: erofs: move erofs out of staging
+Thread-Index: zPcjjr8wUC8isJCGfxMEFAfBoxlmEA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 10:16:50AM +0200, Richard Weinberger wrote:
-> ----- Urspr?ngliche Mail -----
-> >> While digging a little into the code I noticed that you have very few
-> >> checks of the on-disk data.
-> >> For example ->u.i_blkaddr. I gave it a try and created a
-> >> malformed filesystem where u.i_blkaddr is 0xdeadbeef, it causes the kernel
-> >> to loop forever around erofs_read_raw_page().
-> > 
-> > I don't fuzz all the on-disk fields for EROFS, I will do later..
-> > You can see many in-kernel filesystems are still hardening the related
-> > stuff. Anyway, I will dig into this field you mentioned recently, but
-> > I think it can be fixed easily later.
+----- Ursprüngliche Mail -----
+> I agree with you, but what can we do now is trying our best to fuzz
+> all the fields.
 > 
-> This is no excuse to redo all these bugs. :-)
+> So, what is your opinion about EROFS?
 
-I agree with you, but what can we do now is trying our best to fuzz
-all the fields.
+All I'm saying is that you should not blindly trust the disk.
 
-So, what is your opinion about EROFS?
+Another thing that raises my attention is in superblock_read():
+        memcpy(sbi->volume_name, layout->volume_name,
+               sizeof(layout->volume_name));
 
-> 
-> I know that many in-kernel filesystems trust the disk ultimately, this is a
-> problem and huge attack vector.
-
-I EROFS already has many error handing paths to recover corrupted images,
-and your discovery is a bug out of one error handing path miswritten by me.
-I cannot make a guarantee that all the new things (every new kernel version
-will introduce new feature / new code) are bug-free since I am not a machine
-or code parser.
-
-My answer about this EROFS will be more stable with our development, we have
-a dedicated team with paid job, and since we currently use EROFS on the top of
-dm-verity for current Android, which will keep us from corrupted images.
-But yes, we will focus on fuzzing all the images for generic usages,
-and we will backport all these patches to old stable versions.
+Where do you check whether ->volume_name has a NUL terminator?
+Currently this field has no user, maybe will add a check upon usage.
+But this kind of things makes me wonder.
 
 Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> //richard
+//richard
