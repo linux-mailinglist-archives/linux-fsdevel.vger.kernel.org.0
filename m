@@ -2,28 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CD0D91777
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 17:13:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D9AC91797
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 17:58:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfHRPNC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 11:13:02 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36222 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726005AbfHRPNC (ORCPT
+        id S1726256AbfHRP6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 11:58:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41610 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfHRP6h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 11:13:02 -0400
-Received: from callcc.thunk.org ([12.235.16.3])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7IFBt5Z011483
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 18 Aug 2019 11:11:56 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id E4DB04218EF; Sun, 18 Aug 2019 11:11:54 -0400 (EDT)
-Date:   Sun, 18 Aug 2019 11:11:54 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sun, 18 Aug 2019 11:58:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:To:From:Date:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=tIZZ/FYTg4zcRyMX1dDT7uD/VTliOCaMSPK8iFKI03c=; b=mEaJhougJmxShBi14iedqWYnSl
+        T5xUqdoX+PlWdPbb07JL0OLcmq4TMqzEV/i2TEeZbz3PKOirVDvizdOT2V1bmZ6BiEYJxBIDfHD7u
+        0vxgUmsY6El7Bk7d9qpDGt3Icf5KivaU6N7b6NmMh+glrwIUxVa/n3rC3kCMPqB6fcbxCxTM2GF0f
+        T1BDgybJyRhvTPwFZ51SSTW+hta7+b/v0Hu85H8AoZOLuCzrUB46Fcn0MmEdn0On4J4vTd3DH132m
+        U/4zSWAEHFn1LPPDzQEnQzugWBJreUm7VrPVFDSAaRKgwNtGwJ8T0GUQomopLVBHe0kRtBQfMMCKG
+        2Okqdggw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hzNZM-0003ZJ-KO; Sun, 18 Aug 2019 15:58:12 +0000
+Date:   Sun, 18 Aug 2019 08:58:12 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Richard Weinberger <richard@nod.at>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
         Chao Yu <yuchao0@huawei.com>,
         Dave Chinner <david@fromorbit.com>,
@@ -43,26 +50,7 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds <torvalds@linux-foundation.org>
 Subject: Re: [PATCH] erofs: move erofs out of staging
-Message-ID: <20190818151154.GA32157@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Richard Weinberger <richard@nod.at>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
-        Chao Yu <yuchao0@huawei.com>, Dave Chinner <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Darrick <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Li Guifu <bluce.liguifu@huawei.com>, Fang Wei <fangwei1@huawei.com>,
-        Pavel Machek <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
+Message-ID: <20190818155812.GB13230@infradead.org>
 References: <20190817082313.21040-1-hsiangkao@aol.com>
  <20190817220706.GA11443@hsiangkao-HP-ZHAN-66-Pro-G1>
  <1163995781.68824.1566084358245.JavaMail.zimbra@nod.at>
@@ -72,59 +60,31 @@ References: <20190817082313.21040-1-hsiangkao@aol.com>
  <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at>
  <20190818090949.GA30276@kroah.com>
  <790210571.69061.1566120073465.JavaMail.zimbra@nod.at>
+ <20190818151154.GA32157@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <790210571.69061.1566120073465.JavaMail.zimbra@nod.at>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190818151154.GA32157@mit.edu>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 11:21:13AM +0200, Richard Weinberger wrote:
-> > Not to say that erofs shouldn't be worked on to fix these kinds of
-> > issues, just that it's not an unheard of thing to trust the disk image.
-> > Especially for the normal usage model of erofs, where the whole disk
-> > image is verfied before it is allowed to be mounted as part of the boot
-> > process.
-> 
-> For normal use I see no problem at all.
-> I fear distros that try to mount anything you plug into your USB.
-> 
-> At least SUSE already blacklists erofs:
-> https://github.com/openSUSE/suse-module-tools/blob/master/suse-module-tools.spec#L24
+On Sun, Aug 18, 2019 at 11:11:54AM -0400, Theodore Y. Ts'o wrote:
+> Note that of the mainstream file systems, ext4 and xfs don't guarantee
+> that it's safe to blindly take maliciously provided file systems, such
+> as those provided by a untrusted container, and mount it on a file
+> system without problems.  As I recall, one of the XFS developers
+> described file system fuzzing reports as a denial of service attack on
+> the developers.
 
-Note that of the mainstream file systems, ext4 and xfs don't guarantee
-that it's safe to blindly take maliciously provided file systems, such
-as those provided by a untrusted container, and mount it on a file
-system without problems.  As I recall, one of the XFS developers
-described file system fuzzing reports as a denial of service attack on
-the developers.  And on the ext4 side, while I try to address them, it
-is by no means considered a high priority work item, and I don't
-consider fixes of fuzzing reports to be worthy of coordinated
-disclosure or a high priority bug to fix.  (I have closed more bugs in
-this area than XFS has, although that may be that ext4 started with
-more file system format bugs than XFS; however given the time to first
-bug in 2017 using American Fuzzy Lop[1] being 5 seconds for btrfs, 10
-seconds for f2fs, 25 seconds for reiserfs, 4 minutes for ntfs, 1h45m
-for xfs, and 2h for ext4, that seems unlikely.)
+I think this greatly misrepresents the general attitute of the XFS
+developers.  We take sanity checks for the modern v5 on disk format
+very series, and put a lot of effort into handling corrupted file
+systems as good as possible, although there are of course no guaranteeѕ.
 
-[1] https://events.static.linuxfound.org/sites/events/files/slides/AFL%20filesystem%20fuzzing%2C%20Vault%202016_0.pdf
-
-So holding a file system like EROFS to a higher standard than say,
-ext4, xfs, or btrfs hardly seems fair.  There seems to be a very
-unfortunate tendancy for us to hold new file systems to impossibly
-high standards, when in fact, adding a file system to Linux should
-not, in my opinion, be a remarkable event.  We have a huge number of
-them already, many of which are barely maintained and probably have
-far worse issues than file systems trying to get into the clubhouse.
-
-If a file system is requesting core changes to the VM or block layers,
-sure, we should care about the interfaces.  But this nitpicking about
-whether or not a file system can be trusted in what I consider to be
-COMPLETELY INSANE CONTAINER USE CASES is really not fair.
-
-Cheers,
-
-						- Ted
+The quote that you've taken out of context is for the legacy v4 format
+that has no checksums and other integrity features.
