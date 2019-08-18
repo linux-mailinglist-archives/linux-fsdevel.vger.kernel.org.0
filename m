@@ -2,45 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7537391674
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 14:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB1319167D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 14:20:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfHRMH4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 08:07:56 -0400
-Received: from mga09.intel.com ([134.134.136.24]:54471 "EHLO mga09.intel.com"
+        id S1726208AbfHRMT5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 08:19:57 -0400
+Received: from mga04.intel.com ([192.55.52.120]:42016 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726261AbfHRMH4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 08:07:56 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1726073AbfHRMT4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 18 Aug 2019 08:19:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Aug 2019 05:07:52 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Aug 2019 05:19:54 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,400,1559545200"; 
-   d="gz'50?scan'50,208,50";a="182626127"
+   d="gz'50?scan'50,208,50";a="329121570"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 18 Aug 2019 05:07:49 -0700
+  by orsmga004.jf.intel.com with ESMTP; 18 Aug 2019 05:19:49 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1hzJyO-000IW7-Jm; Sun, 18 Aug 2019 20:07:48 +0800
-Date:   Sun, 18 Aug 2019 20:07:04 +0800
+        id 1hzKA1-0002vT-7J; Sun, 18 Aug 2019 20:19:49 +0800
+Date:   Sun, 18 Aug 2019 20:18:54 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Gao Xiang <hsiangkao@aol.com>
 Cc:     kbuild-all@01.org, Chao Yu <yuchao0@huawei.com>,
         Richard Weinberger <richard@nod.at>,
-        Matthew Wilcox <willy@infradead.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
         linux-erofs@lists.ozlabs.org, Chao Yu <chao@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
         Fang Wei <fangwei1@huawei.com>, Miao Xie <miaoxie@huawei.com>
-Subject: Re: [PATCH] staging: erofs: fix an error handling in erofs_readdir()
-Message-ID: <201908182014.MqZNQ5gH%lkp@intel.com>
-References: <20190818031855.9723-1-hsiangkao@aol.com>
+Subject: Re: [PATCH] staging: erofs: refuse to mount images with malformed
+ volume name
+Message-ID: <201908182002.LJ4y6ay8%lkp@intel.com>
+References: <20190818102824.22330-1-hsiangkao@aol.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="cyswgjuamg54rcfu"
+Content-Type: multipart/mixed; boundary="jbtjafigocytfwt6"
 Content-Disposition: inline
-In-Reply-To: <20190818031855.9723-1-hsiangkao@aol.com>
+In-Reply-To: <20190818102824.22330-1-hsiangkao@aol.com>
 X-Patchwork-Hint: ignore
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -49,7 +50,7 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---cyswgjuamg54rcfu
+--jbtjafigocytfwt6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -61,7 +62,7 @@ I love your patch! Yet something to improve:
 [cannot apply to v5.3-rc4 next-20190816]
 [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-url:    https://github.com/0day-ci/linux/commits/Gao-Xiang/staging-erofs-fix-an-error-handling-in-erofs_readdir/20190818-191344
+url:    https://github.com/0day-ci/linux/commits/Gao-Xiang/staging-erofs-refuse-to-mount-images-with-malformed-volume-name/20190818-193037
 config: sparc64-allmodconfig (attached as .config)
 compiler: sparc64-linux-gcc (GCC) 7.4.0
 reproduce:
@@ -75,95 +76,48 @@ Reported-by: kbuild test robot <lkp@intel.com>
 
 All errors (new ones prefixed by >>):
 
-   drivers/staging//erofs/dir.c: In function 'erofs_readdir':
->> drivers/staging//erofs/dir.c:110:11: error: 'EFSCORRUPTED' undeclared (first use in this function)
-       err = -EFSCORRUPTED;
-              ^~~~~~~~~~~~
-   drivers/staging//erofs/dir.c:110:11: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/staging/erofs/super.c: In function 'superblock_read':
+>> drivers/staging/erofs/super.c:153:10: error: 'EFSCORRUPTED' undeclared (first use in this function); did you mean 'FS_NRSUPER'?
+      ret = -EFSCORRUPTED;
+             ^~~~~~~~~~~~
+             FS_NRSUPER
+   drivers/staging/erofs/super.c:153:10: note: each undeclared identifier is reported only once for each function it appears in
 
-vim +/EFSCORRUPTED +110 drivers/staging//erofs/dir.c
+vim +153 drivers/staging/erofs/super.c
 
-    85	
-    86	static int erofs_readdir(struct file *f, struct dir_context *ctx)
-    87	{
-    88		struct inode *dir = file_inode(f);
-    89		struct address_space *mapping = dir->i_mapping;
-    90		const size_t dirsize = i_size_read(dir);
-    91		unsigned int i = ctx->pos / EROFS_BLKSIZ;
-    92		unsigned int ofs = ctx->pos % EROFS_BLKSIZ;
-    93		int err = 0;
-    94		bool initial = true;
-    95	
-    96		while (ctx->pos < dirsize) {
-    97			struct page *dentry_page;
-    98			struct erofs_dirent *de;
-    99			unsigned int nameoff, maxsize;
-   100	
-   101			dentry_page = read_mapping_page(mapping, i, NULL);
-   102			if (dentry_page == ERR_PTR(-ENOMEM)) {
-   103				errln("no memory to readdir of logical block %u of nid %llu",
-   104				      i, EROFS_V(dir)->nid);
-   105				err = -ENOMEM;
-   106				break;
-   107			} else if (IS_ERR(dentry_page)) {
-   108				errln("fail to readdir of logical block %u of nid %llu",
-   109				      i, EROFS_V(dir)->nid);
- > 110				err = -EFSCORRUPTED;
-   111				break;
-   112			}
-   113	
-   114			de = (struct erofs_dirent *)kmap(dentry_page);
-   115	
-   116			nameoff = le16_to_cpu(de->nameoff);
-   117	
-   118			if (unlikely(nameoff < sizeof(struct erofs_dirent) ||
-   119				     nameoff >= PAGE_SIZE)) {
-   120				errln("%s, invalid de[0].nameoff %u",
-   121				      __func__, nameoff);
-   122	
-   123				err = -EIO;
-   124				goto skip_this;
-   125			}
-   126	
-   127			maxsize = min_t(unsigned int,
-   128					dirsize - ctx->pos + ofs, PAGE_SIZE);
-   129	
-   130			/* search dirents at the arbitrary position */
-   131			if (unlikely(initial)) {
-   132				initial = false;
-   133	
-   134				ofs = roundup(ofs, sizeof(struct erofs_dirent));
-   135				if (unlikely(ofs >= nameoff))
-   136					goto skip_this;
-   137			}
-   138	
-   139			err = erofs_fill_dentries(ctx, de, &ofs, nameoff, maxsize);
-   140	skip_this:
-   141			kunmap(dentry_page);
-   142	
-   143			put_page(dentry_page);
-   144	
-   145			ctx->pos = blknr_to_addr(i) + ofs;
+   140	
+   141		sbi->root_nid = le16_to_cpu(layout->root_nid);
+   142		sbi->inos = le64_to_cpu(layout->inos);
+   143	
+   144		sbi->build_time = le64_to_cpu(layout->build_time);
+   145		sbi->build_time_nsec = le32_to_cpu(layout->build_time_nsec);
    146	
-   147			if (unlikely(err))
-   148				break;
-   149			++i;
-   150			ofs = 0;
-   151		}
-   152		return err < 0 ? err : 0;
-   153	}
-   154	
+   147		memcpy(&sb->s_uuid, layout->uuid, sizeof(layout->uuid));
+   148	
+   149		ret = strscpy(sbi->volume_name, layout->volume_name,
+   150			      sizeof(layout->volume_name));
+   151		if (ret < 0) {	/* -E2BIG */
+   152			errln("bad volume name without NIL terminator");
+ > 153			ret = -EFSCORRUPTED;
+   154			goto out;
+   155		}
+   156		ret = 0;
+   157	out:
+   158		brelse(bh);
+   159		return ret;
+   160	}
+   161	
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
 https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---cyswgjuamg54rcfu
+--jbtjafigocytfwt6
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICOE6WV0AAy5jb25maWcAjFxbc+M2sn7Pr1BNXpKqk4kvM052T/kBJEEKEUlwAFCy/cJS
+H4sICHI+WV0AAy5jb25maWcAjFxbc+M2sn7Pr1BNXpKqk4kvM052T/kBJEEKEUlwAFCy/cJS
 PJqJK7blleScnX9/usEbbqSnamtjft1o3Bp9AzQ//vDjgrye9k/b08P99vHx2+Lr7nl32J52
 nxdfHh53/7tI+KLkakETpt4Dc/7w/PrfX48v28P91YfFx/eX789+Odx/WKx2h+fd4yLeP395
 +PoKAh72zz/8+AP870cAn15A1uHfi67dL48o5Zev9/eLn7I4/nnx2/sP78+AN+ZlyrImjhsm
@@ -1251,4 +1205,4 @@ ZZJdSodllzyZTYivboVsmhlKrDXvNGJuHA+bOa9oXhnuTeRMQPqF0P0pJudZMjI0AoOV2LVX
 qaUqUJt1F3r9sVC1LvgBJX3imbaKwm0Si4ta3VWI31h82g29LSY2XrK8TVRxpZJOkrZtFKUu
 FB0CkFt+NFRLvSpuRI7/A7Vw19DHpwMA
 
---cyswgjuamg54rcfu--
+--jbtjafigocytfwt6--
