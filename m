@@ -2,32 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4B391857
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 19:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE0A91871
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 19:44:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbfHRR3m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 13:29:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725786AbfHRR3m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 13:29:42 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 480E22146E;
-        Sun, 18 Aug 2019 17:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566149381;
-        bh=PgJleJMkSwlg249xRQ3F/CLBlnJ55j1fqyWspV/sxSo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FekiGl/L6shXdxivYe+rkyONVdHXfQ6Afmbfr/fNBY+CHkNu25IEPWPt56UlqUHno
-         bFpMcqrtl7K2u7xAZD9UH+7fT8gKqlVaSimOuXQXrY2NSWuSlGZnV8E0f/h03HFPB1
-         o0+oYsbdFDrx6uD30QvqnfFZ6AXv0QVAO+i0O/fc=
-Date:   Sun, 18 Aug 2019 10:29:38 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
+        id S1726925AbfHRRop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 13:44:45 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49458 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726247AbfHRRop (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 18 Aug 2019 13:44:45 -0400
+Received: from callcc.thunk.org ([12.235.16.3])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7IHhsaJ022921
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 18 Aug 2019 13:43:56 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 494464218EF; Sun, 18 Aug 2019 13:43:54 -0400 (EDT)
+Date:   Sun, 18 Aug 2019 13:43:54 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
 To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Richard Weinberger <richard@nod.at>,
+Cc:     Richard Weinberger <richard@nod.at>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
         Chao Yu <yuchao0@huawei.com>,
@@ -47,9 +43,9 @@ Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds <torvalds@linux-foundation.org>
 Subject: Re: [PATCH] erofs: move erofs out of staging
-Message-ID: <20190818172938.GA14413@sol.localdomain>
-Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
+Message-ID: <20190818174354.GA12940@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
         Richard Weinberger <richard@nod.at>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
@@ -67,7 +63,9 @@ Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds <torvalds@linux-foundation.org>
-References: <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190817220706.GA11443@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <1163995781.68824.1566084358245.JavaMail.zimbra@nod.at>
+ <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1>
  <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at>
  <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1>
  <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at>
@@ -75,49 +73,43 @@ References: <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1>
  <790210571.69061.1566120073465.JavaMail.zimbra@nod.at>
  <20190818151154.GA32157@mit.edu>
  <20190818155812.GB13230@infradead.org>
- <20190818161638.GE1118@sol.localdomain>
- <20190818162201.GA16269@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190818162201.GA16269@infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190818155812.GB13230@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 09:22:01AM -0700, Christoph Hellwig wrote:
-> On Sun, Aug 18, 2019 at 09:16:38AM -0700, Eric Biggers wrote:
-> > Ted's observation was about maliciously-crafted filesystems, though, so
-> > integrity-only features such as metadata checksums are irrelevant.  Also the
-> > filesystem version is irrelevant; anything accepted by the kernel code (even if
+On Sun, Aug 18, 2019 at 08:58:12AM -0700, Christoph Hellwig wrote:
+> On Sun, Aug 18, 2019 at 11:11:54AM -0400, Theodore Y. Ts'o wrote:
+> > Note that of the mainstream file systems, ext4 and xfs don't guarantee
+> > that it's safe to blindly take maliciously provided file systems, such
+> > as those provided by a untrusted container, and mount it on a file
+> > system without problems.  As I recall, one of the XFS developers
+> > described file system fuzzing reports as a denial of service attack on
+> > the developers.
 > 
-> I think allowing users to mount file systems (any of ours) without
-> privilege is a rather bad idea.  But that doesn't mean we should not be
-> as robust as we can.  Optionally disabling support for legacy formats
-> at compile and/or runtime is something we should actively look into as
-> well.
+> I think this greatly misrepresents the general attitute of the XFS
+> developers.  We take sanity checks for the modern v5 on disk format
+> very series, and put a lot of effort into handling corrupted file
+> systems as good as possible, although there are of course no guaranteeѕ.
 > 
-> > it's legacy/deprecated) is open attack surface.
-> > 
-> > I personally consider it *mandatory* that we deal with this stuff.  But I can
-> > understand that we don't do a good job at it, so we shouldn't hold a new
-> > filesystem to an unfairly high standard relative to other filesystems...
-> 
-> I very much disagree.  We can't really force anyone to fix up old file
-> systems.  But we can very much hold new ones to (slightly) higher
-> standards.  Thats the only way to get the average quality up.  Some as
-> for things like code style - we can't magically fix up all old stuff,
-> but we can and usually do hold new code to higher standards.  (Often not
-> to standards as high as I'd personally prefer, btw).
+> The quote that you've taken out of context is for the legacy v4 format
+> that has no checksums and other integrity features.
 
-Not sure what you're even disagreeing with, as I *do* expect new filesystems to
-be held to a high standard, and to be written with the assumption that the
-on-disk data may be corrupted or malicious.  We just can't expect the bar to be
-so high (e.g. no bugs) that it's never been attained by *any* filesystem even
-after years/decades of active development.  If the developers were careful, the
-code generally looks robust, and they are willing to address such bugs as they
-are found, realistically that's as good as we can expect to get...
+Actually, what Prof. Kim's research group was doing was taking the
+latest file system formats (for ext4 and xfs) and fixing up the
+checksum after fuzzing the metadata blocks.  The goal was to find
+potential security vulnerabilities, not to see if file systems would
+crash if fed invalid input.  At least for ext4, at least one of
+Prof. Kim's fuzzing results was one that that I believe could have
+been leveraged into a stack overflow attack.  I can't speak to his
+results with respect to XFS, since I didn't look at them.
 
-- Eric
+Cheers,
+
+					- Ted
