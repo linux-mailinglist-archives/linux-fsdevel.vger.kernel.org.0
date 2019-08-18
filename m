@@ -2,59 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D10899180E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 19:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73DA89180F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 19:03:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfHRQ7j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 12:59:39 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42984 "EHLO
+        id S1727019AbfHRQ7k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 12:59:40 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38494 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726988AbfHRQ7i (ORCPT
+        with ESMTP id S1727005AbfHRQ7k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 12:59:38 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p3so5500828pgb.9;
-        Sun, 18 Aug 2019 09:59:38 -0700 (PDT)
+        Sun, 18 Aug 2019 12:59:40 -0400
+Received: by mail-pg1-f193.google.com with SMTP id e11so5505905pga.5;
+        Sun, 18 Aug 2019 09:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XBoGugkhUC7RzEVn8NEyVinAwt3h5A3UJUwpo03Y32I=;
-        b=mlw3BTHmR65CECBGBfXGXHjTZ5nyHwdI6R8Rp5DQ3oO8pXG6+/TVmoY/X1eUUe7m4M
-         NywGeGa506MTS3HvJq+RKK7t3qeBzAy0zkmEjQJUw3iRS7ZGFvkA54/44d4skmg4mKPp
-         9BM+1IdlEpQwrbDb0bEN9VuGlPsG04Lgn7VDjI80Je7xwzN/p4ERNoksd0iHF6EWwxJ9
-         yscfg30lVzUcx3ZCiC0DGkrfUzoJicdlyogkoyW98sWY9bVjzwIJaV4mduy5FAvxqsxn
-         +J4B9McSFexn31/NZCFP74SXSJo58mjK/ALWOZExwDIlSqEGlWhsWa+t49PyLth6Z1T9
-         fn5g==
+        bh=6rUBVEJFml8xN/3NysGyzbXTdVn2u+LQ/JuruhLlfDg=;
+        b=pitzbBHZsC1uM0DL/w98n1NkYkBv923i14v+6uF3OjXUnuFklYRxPvDOOnm7pXQdRd
+         oO+y1taV/sMp/pDxW2kA7wRLIwmAk2aBWajXPvIftBYk4mJZplMsv16UaFaHsuJIZNrT
+         /0szjiFztu/xE2imziHMT0jT8VYx5yr1hAzNJtH7evNH/VPg2ZPS6rZJG7is2cnHZy+Q
+         9ye5q9vFZXdm5wfbF9B2NN+USdQERWmpQSHh+BNeUpjthdov6iZTRSAKRJ4kPHXiIbcn
+         LldQw5HHIAPwgGlcZruQ9ylZWCxDm/7mnYoc83+uu2dvfnE7DWs62B0OGJdZlquGVkIA
+         vuig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XBoGugkhUC7RzEVn8NEyVinAwt3h5A3UJUwpo03Y32I=;
-        b=T9u9AT05zA7wYXCJZjFC93FiQVnaJbdLx4d9LYrLFfUpo4/0nAk5KQydWDGbtfoGGN
-         j50kbYnaDa4hQSCf64gp6AMJRhJXivF6EEEKqfy5uzOOEk4eSRxy+MgaX2YHn5UzIbQG
-         Hv36ZXy71Zcz44THR2+RGflCxNXR+nHjVNCfqlyMQuv73ZGyYKPH/db1ywtXJ1YbzBH1
-         IzO0hzRmxxE0XRiqmwfAPz42KreyKiyflxCNc7W98k3ssCA4ITUXKIN/cnwEsT2AUwzh
-         vj+oMpbzdvFi5O72a6wO5mMlDFSkYHDL2NwdAfs6WF/KMqayP/1x3UEvPFaJ/4wtBoFx
-         rbzw==
-X-Gm-Message-State: APjAAAWfCGK9XNYMTxSiZOYDQQQ++CXvDo71qchwwP6GlaxxG8/1+57d
-        KyYKmq9E13djD/bJVYKwHCbighMIEaU=
-X-Google-Smtp-Source: APXvYqyMocWQPnOEOvETytOVzxJTuHH9RsqGxnRaQNh5G1nPmvEKz71Glx/Lb38BKq0xU4X4UktRWA==
-X-Received: by 2002:a63:e20a:: with SMTP id q10mr16098732pgh.24.1566147577789;
-        Sun, 18 Aug 2019 09:59:37 -0700 (PDT)
+        bh=6rUBVEJFml8xN/3NysGyzbXTdVn2u+LQ/JuruhLlfDg=;
+        b=s9BUfoW3s19RwidWjqSLqFdFzfO/V3VcCHQnzMstfzBvnLchz+q9WUgIcTluMjjRSS
+         t6jRkAVTtXppIPDEVASJlyI8R0o/2DFDby+ZlxdreibTumNnhu88yx+3dsq16qD5Q+F1
+         6OZ7NJ5GxmhRxRvY3vvAfc3W00RCuC2t32HRWhugV08yaS7htrTh8UOJDPixX54Lxb3v
+         lpc48sKXiGkyCoUsskYN2Anu0MU6CqZPsiTFBxCtUASoT6ZveZ/TGDqwYtbO6gBBvG9E
+         mVUDVxEVLr2w845G4mDiPP3+AsEpFfh+gKsUF0y9emuNRNXdcagwf51SFURpZa0wG6V/
+         vlVg==
+X-Gm-Message-State: APjAAAVq+/cHHxTaxAdEt5k4HSpecSBx3LJOUndpIriVV91xzJ8tk/wh
+        vSOqRFIuIWtFzPPPOAWocJU=
+X-Google-Smtp-Source: APXvYqwSEVrmo7MbgR7WT42005XrBMQC2eEXpXo+oxpUZuKIOAKm0W6XYP6C9mEpzMFD+JZMb4n+FA==
+X-Received: by 2002:a63:4042:: with SMTP id n63mr5870840pga.75.1566147579569;
+        Sun, 18 Aug 2019 09:59:39 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id b136sm15732831pfb.73.2019.08.18.09.59.36
+        by smtp.gmail.com with ESMTPSA id b136sm15732831pfb.73.2019.08.18.09.59.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 09:59:37 -0700 (PDT)
+        Sun, 18 Aug 2019 09:59:39 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
-        arnd@arndb.de, adrian.hunter@intel.com, dedekind1@gmail.com,
-        gregkh@linuxfoundation.org, hch@lst.de, jaegeuk@kernel.org,
-        jlbec@evilplan.org, richard@nod.at, tj@kernel.org,
-        yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net,
-        linux-ntfs-dev@lists.sourceforge.net, linux-mtd@lists.infradead.org
-Subject: [PATCH v8 03/20] timestamp_truncate: Replace users of timespec64_trunc
-Date:   Sun, 18 Aug 2019 09:58:00 -0700
-Message-Id: <20190818165817.32634-4-deepa.kernel@gmail.com>
+        arnd@arndb.de
+Subject: [PATCH v8 04/20] mount: Add mount warning for impending timestamp expiry
+Date:   Sun, 18 Aug 2019 09:58:01 -0700
+Message-Id: <20190818165817.32634-5-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190818165817.32634-1-deepa.kernel@gmail.com>
 References: <20190818165817.32634-1-deepa.kernel@gmail.com>
@@ -63,222 +59,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Update the inode timestamp updates to use timestamp_truncate()
-instead of timespec64_trunc().
+The warning reuses the uptime max of 30 years used by
+settimeofday().
 
-The change was mostly generated by the following coccinelle
-script.
+Note that the warning is only emitted for writable filesystem mounts
+through the mount syscall. Automounts do not have the same warning.
 
-virtual context
-virtual patch
-
-@r1 depends on patch forall@
-struct inode *inode;
-identifier i_xtime =~ "^i_[acm]time$";
-expression e;
-@@
-
-inode->i_xtime =
-- timespec64_trunc(
-+ timestamp_truncate(
-...,
-- e);
-+ inode);
+Print out the warning in human readable format using the struct tm.
+After discussion with Arnd Bergmann, we chose to print only the year number.
+The raw s_time_max is also displayed, and the user can easily decode
+it e.g. "date -u -d @$((0x7fffffff))". We did not want to consolidate
+struct rtc_tm and struct tm just to print the date using a format specifier
+as part of this series.
+Given that the rtc_tm is not compiled on all architectures, this is not a
+trivial patch. This can be added in the future.
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: adrian.hunter@intel.com
-Cc: dedekind1@gmail.com
-Cc: gregkh@linuxfoundation.org
-Cc: hch@lst.de
-Cc: jaegeuk@kernel.org
-Cc: jlbec@evilplan.org
-Cc: richard@nod.at
-Cc: tj@kernel.org
-Cc: yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-ntfs-dev@lists.sourceforge.net
-Cc: linux-mtd@lists.infradead.org
 ---
- fs/attr.c           | 21 ++++++++++++---------
- fs/configfs/inode.c | 12 ++++++------
- fs/f2fs/file.c      | 21 ++++++++++++---------
- fs/kernfs/inode.c   |  7 +++----
- fs/ntfs/inode.c     | 21 ++++++++++++---------
- fs/ubifs/file.c     | 21 ++++++++++++---------
- 6 files changed, 57 insertions(+), 46 deletions(-)
+ fs/namespace.c | 33 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index 1fcfdcc5b367..97b60ad7f419 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -183,15 +183,18 @@ void setattr_copy(struct inode *inode, const struct iattr *attr)
- 		inode->i_uid = attr->ia_uid;
- 	if (ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
--	if (ia_valid & ATTR_ATIME)
--		inode->i_atime = timespec64_trunc(attr->ia_atime,
--						  inode->i_sb->s_time_gran);
--	if (ia_valid & ATTR_MTIME)
--		inode->i_mtime = timespec64_trunc(attr->ia_mtime,
--						  inode->i_sb->s_time_gran);
--	if (ia_valid & ATTR_CTIME)
--		inode->i_ctime = timespec64_trunc(attr->ia_ctime,
--						  inode->i_sb->s_time_gran);
-+	if (ia_valid & ATTR_ATIME) {
-+		inode->i_atime = timestamp_truncate(attr->ia_atime,
-+						  inode);
-+	}
-+	if (ia_valid & ATTR_MTIME) {
-+		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
-+						  inode);
-+	}
-+	if (ia_valid & ATTR_CTIME) {
-+		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
-+						  inode);
-+	}
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 
-diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
-index ab0284321912..884dcf06cfbe 100644
---- a/fs/configfs/inode.c
-+++ b/fs/configfs/inode.c
-@@ -76,14 +76,14 @@ int configfs_setattr(struct dentry * dentry, struct iattr * iattr)
- 	if (ia_valid & ATTR_GID)
- 		sd_iattr->ia_gid = iattr->ia_gid;
- 	if (ia_valid & ATTR_ATIME)
--		sd_iattr->ia_atime = timespec64_trunc(iattr->ia_atime,
--						      inode->i_sb->s_time_gran);
-+		sd_iattr->ia_atime = timestamp_truncate(iattr->ia_atime,
-+						      inode);
- 	if (ia_valid & ATTR_MTIME)
--		sd_iattr->ia_mtime = timespec64_trunc(iattr->ia_mtime,
--						      inode->i_sb->s_time_gran);
-+		sd_iattr->ia_mtime = timestamp_truncate(iattr->ia_mtime,
-+						      inode);
- 	if (ia_valid & ATTR_CTIME)
--		sd_iattr->ia_ctime = timespec64_trunc(iattr->ia_ctime,
--						      inode->i_sb->s_time_gran);
-+		sd_iattr->ia_ctime = timestamp_truncate(iattr->ia_ctime,
-+						      inode);
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = iattr->ia_mode;
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 89a9ee22296d..af8cdd345f3d 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -749,15 +749,18 @@ static void __setattr_copy(struct inode *inode, const struct iattr *attr)
- 		inode->i_uid = attr->ia_uid;
- 	if (ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
--	if (ia_valid & ATTR_ATIME)
--		inode->i_atime = timespec64_trunc(attr->ia_atime,
--						  inode->i_sb->s_time_gran);
--	if (ia_valid & ATTR_MTIME)
--		inode->i_mtime = timespec64_trunc(attr->ia_mtime,
--						  inode->i_sb->s_time_gran);
--	if (ia_valid & ATTR_CTIME)
--		inode->i_ctime = timespec64_trunc(attr->ia_ctime,
--						  inode->i_sb->s_time_gran);
-+	if (ia_valid & ATTR_ATIME) {
-+		inode->i_atime = timestamp_truncate(attr->ia_atime,
-+						  inode);
-+	}
-+	if (ia_valid & ATTR_MTIME) {
-+		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
-+						  inode);
-+	}
-+	if (ia_valid & ATTR_CTIME) {
-+		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
-+						  inode);
-+	}
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index f3f3984cce80..f3eaa8869f42 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -158,12 +158,11 @@ static inline void set_default_inode_attr(struct inode *inode, umode_t mode)
- static inline void set_inode_attr(struct inode *inode,
- 				  struct kernfs_iattrs *attrs)
- {
--	struct super_block *sb = inode->i_sb;
- 	inode->i_uid = attrs->ia_uid;
- 	inode->i_gid = attrs->ia_gid;
--	inode->i_atime = timespec64_trunc(attrs->ia_atime, sb->s_time_gran);
--	inode->i_mtime = timespec64_trunc(attrs->ia_mtime, sb->s_time_gran);
--	inode->i_ctime = timespec64_trunc(attrs->ia_ctime, sb->s_time_gran);
-+	inode->i_atime = timestamp_truncate(attrs->ia_atime, inode);
-+	inode->i_mtime = timestamp_truncate(attrs->ia_mtime, inode);
-+	inode->i_ctime = timestamp_truncate(attrs->ia_ctime, inode);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index bfcb4e341257..7fcf289593c5 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2468,6 +2468,26 @@ static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
+ 	unlock_mount_hash();
  }
  
- static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
-diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
-index 8baa34baf548..6c7388430ad3 100644
---- a/fs/ntfs/inode.c
-+++ b/fs/ntfs/inode.c
-@@ -2899,15 +2899,18 @@ int ntfs_setattr(struct dentry *dentry, struct iattr *attr)
- 			ia_valid |= ATTR_MTIME | ATTR_CTIME;
++static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *mnt)
++{
++	struct super_block *sb = mnt->mnt_sb;
++
++	if (!__mnt_is_readonly(mnt) &&
++	   (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
++		char *buf = (char *)__get_free_page(GFP_KERNEL);
++		char *mntpath = buf ? d_path(mountpoint, buf, PAGE_SIZE) : ERR_PTR(-ENOMEM);
++		struct tm tm;
++
++		time64_to_tm(sb->s_time_max, 0, &tm);
++
++		pr_warn("Mounted %s file system at %s supports timestamps until %04ld (0x%llx)\n",
++			sb->s_type->name, mntpath,
++			tm.tm_year+1900, (unsigned long long)sb->s_time_max);
++
++		free_page((unsigned long)buf);
++	}
++}
++
+ /*
+  * Handle reconfiguration of the mountpoint only without alteration of the
+  * superblock it refers to.  This is triggered by specifying MS_REMOUNT|MS_BIND
+@@ -2493,6 +2513,9 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+ 	if (ret == 0)
+ 		set_mount_attributes(mnt, mnt_flags);
+ 	up_write(&sb->s_umount);
++
++	mnt_warn_timestamp_expiry(path, &mnt->mnt);
++
+ 	return ret;
+ }
+ 
+@@ -2533,6 +2556,9 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
  		}
+ 		up_write(&sb->s_umount);
  	}
--	if (ia_valid & ATTR_ATIME)
--		vi->i_atime = timespec64_trunc(attr->ia_atime,
--					       vi->i_sb->s_time_gran);
--	if (ia_valid & ATTR_MTIME)
--		vi->i_mtime = timespec64_trunc(attr->ia_mtime,
--					       vi->i_sb->s_time_gran);
--	if (ia_valid & ATTR_CTIME)
--		vi->i_ctime = timespec64_trunc(attr->ia_ctime,
--					       vi->i_sb->s_time_gran);
-+	if (ia_valid & ATTR_ATIME) {
-+		vi->i_atime = timestamp_truncate(attr->ia_atime,
-+					       vi);
-+	}
-+	if (ia_valid & ATTR_MTIME) {
-+		vi->i_mtime = timestamp_truncate(attr->ia_mtime,
-+					       vi);
-+	}
-+	if (ia_valid & ATTR_CTIME) {
-+		vi->i_ctime = timestamp_truncate(attr->ia_ctime,
-+					       vi);
-+	}
- 	mark_inode_dirty(vi);
- out:
++
++	mnt_warn_timestamp_expiry(path, &mnt->mnt);
++
+ 	put_fs_context(fc);
  	return err;
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index 400970d740bb..cd52585c8f4f 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1078,15 +1078,18 @@ static void do_attr_changes(struct inode *inode, const struct iattr *attr)
- 		inode->i_uid = attr->ia_uid;
- 	if (attr->ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
--	if (attr->ia_valid & ATTR_ATIME)
--		inode->i_atime = timespec64_trunc(attr->ia_atime,
--						  inode->i_sb->s_time_gran);
--	if (attr->ia_valid & ATTR_MTIME)
--		inode->i_mtime = timespec64_trunc(attr->ia_mtime,
--						  inode->i_sb->s_time_gran);
--	if (attr->ia_valid & ATTR_CTIME)
--		inode->i_ctime = timespec64_trunc(attr->ia_ctime,
--						  inode->i_sb->s_time_gran);
-+	if (attr->ia_valid & ATTR_ATIME) {
-+		inode->i_atime = timestamp_truncate(attr->ia_atime,
-+						  inode);
+ }
+@@ -2741,8 +2767,13 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
+ 		return PTR_ERR(mnt);
+ 
+ 	error = do_add_mount(real_mount(mnt), mountpoint, mnt_flags);
+-	if (error < 0)
++	if (error < 0) {
+ 		mntput(mnt);
++		return error;
 +	}
-+	if (attr->ia_valid & ATTR_MTIME) {
-+		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
-+						  inode);
-+	}
-+	if (attr->ia_valid & ATTR_CTIME) {
-+		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
-+						  inode);
-+	}
- 	if (attr->ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
++
++	mnt_warn_timestamp_expiry(mountpoint, mnt);
++
+ 	return error;
+ }
  
 -- 
 2.17.1
