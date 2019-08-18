@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA21991820
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 19:03:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C529691832
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2019 19:03:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfHRRAA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 13:00:00 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46171 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfHRQ76 (ORCPT
+        id S1727320AbfHRRAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Aug 2019 13:00:39 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43004 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727172AbfHRQ77 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 12:59:58 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q139so5701037pfc.13;
-        Sun, 18 Aug 2019 09:59:58 -0700 (PDT)
+        Sun, 18 Aug 2019 12:59:59 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p3so5501093pgb.9;
+        Sun, 18 Aug 2019 09:59:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=A08CQyPF693tmDGwyR4szt4dpA6CyB4J0ZetXSJxCsI=;
-        b=D3UzYMN0ubh5OjWIPnDT31k0PC+Ich0Iti3pY8agIwmBEfh4giotU36w7CPi4aJUDi
-         A8TNhlzmGX8N3gYYHeBmUl5gYG1Aps4+iKvb4f35zC5C7YcEEC0OByyfZWa1rn/O49Lt
-         68+eVWloTEJkFhTCp2xX+kNHj9dt3X6uBFi3jpq9OyZizQHEbx5k2zmja0JwdM+28t0l
-         TTWijpf7HfhmcQwyCcJFnxlwAI2YEXMtQPIkITSGzA8Im21zk2spABQgrB8RRZWFQ5AU
-         eehoFZArqJHemcbdJURNxrYnz49EKHnREgfoC+d2IpP+KePg604bCIye/3bBbLZYyXF8
-         t7Jw==
+        bh=3J/tBreUSwmCA21c4aXcQcRD2d0OTlcA32UpOssIiE8=;
+        b=gZwJ5HE2pHL1eTvcl02IMavV2M+r9J5ekcI4osMw8oKeg/9n0tSfpp3ucUd14xTF0k
+         Gnzd4zmGvhyTDlODzTE0d8CNyAVr+htyfETwQ0L09gLGLkEpzfZq2sRwNb0a5//dZFqP
+         OgTCs6xoNBT94V7xRjnYWdX6ZeHl04Ke2EbbQ0yYK4V1Z1Jb9KGTIKwS95V3ZNDolL2Q
+         sNunkDpySOe+TfMD1S36VPZa3gtFES9UBOM+4Oo58mM0mVJdbThPAUfZdA5aeRSaL94n
+         mA/xy5PTWuytM80F9CiYIusm3YnU5tR4XHR3X02aGOEHhIdQP97CIpsVnpbFzbpLke7m
+         jjXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=A08CQyPF693tmDGwyR4szt4dpA6CyB4J0ZetXSJxCsI=;
-        b=Ynx1pVjBnrU7GxTbal9W/qxIhZKTgV0CpJjFSe2z9ZwTX1Yp4f6hKN7mNfPIUD3aPM
-         ow0PnU9t+UQotLQcE/VlZIExAWnjge2M1LYN+i1NOrPl5evmIOr8cg0qF8hXBfNsnX+L
-         wZ9d5ML51sqyUEjNcaielekw7I02fXZy7WYDm/IuzPIxQtRK8e4Dj8wmRpbJ2f1Voas6
-         MXr9j9Qccze7lr4F0+Ix1M9ydfeMrApKu9ZVdGgui8fRgDdBA+gI0RrEBMH+wJ8H6dz6
-         KrrHBTGN/V2uu6j5wzfbihVckquHjxkMZIJ5wSIM7Aq02cS3CtYLnIJXcrLmnA+K3VyN
-         bppg==
-X-Gm-Message-State: APjAAAUv16emr1UkKFDghmcIC6JQPs8yaYjlftwix38URLJ5RTMkoIko
-        oquhYMSPAKoGq/Gxf/ZOMmg=
-X-Google-Smtp-Source: APXvYqx/sle7DSPuLV3QaIXCNVWde/w+5lmvjpliq7rm7/ePMmQOHOoZqsVToWT6ZCOTNTb876Y+/Q==
-X-Received: by 2002:a63:b10f:: with SMTP id r15mr16218681pgf.230.1566147597851;
-        Sun, 18 Aug 2019 09:59:57 -0700 (PDT)
+        bh=3J/tBreUSwmCA21c4aXcQcRD2d0OTlcA32UpOssIiE8=;
+        b=pD4RqzvcB2h7s58tzirTSPGpu22qMXjIsWrnTu90IWdpKzRK88ApFmksby50JWeDvS
+         L2EsSP8QkrtUQY1S6cDZ9SGpiE9AqusYyTydUTGIYRFdXaTqf1FPQOfLt9redK/ly5zl
+         1/K/HPbsgfj6EK93bp2LM0FT1wJV8HmHRJ93Osf1mMHKV52UwtghV/FnT00j+02FAoH1
+         y4yxRzLZ9spKxfhV/IaX/vNHkHLWwXOZeoWf5WENkYyjbQPuS2TY5Fcakm2/Rc+d771m
+         X57XY4skr2n26/ow3aFgxAzKYwyAyvWH5bhE0q/9M6U/TGpp2hQLS5AgjJeZhi90KABt
+         k0jg==
+X-Gm-Message-State: APjAAAWS4uz0k751i/MHiM7+wqBplqeueqRw3YzVfhH3c8Jd+P3kGSdo
+        1FuwZPqxXGJM4OdO/hHsOiU=
+X-Google-Smtp-Source: APXvYqzaNkM2HJbDHBWrBAPb+F5hpzNQpnHsP945rT4hwd4QMhQLtKT0BtFu+J+65VjwnowJkYIXlA==
+X-Received: by 2002:a63:62c6:: with SMTP id w189mr16322750pgb.312.1566147598968;
+        Sun, 18 Aug 2019 09:59:58 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id b136sm15732831pfb.73.2019.08.18.09.59.56
+        by smtp.gmail.com with ESMTPSA id b136sm15732831pfb.73.2019.08.18.09.59.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 09:59:57 -0700 (PDT)
+        Sun, 18 Aug 2019 09:59:58 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
-        arnd@arndb.de, hirofumi@mail.parknet.co.jp
-Subject: [PATCH v8 12/20] fs: fat: Initialize filesystem timestamp ranges
-Date:   Sun, 18 Aug 2019 09:58:09 -0700
-Message-Id: <20190818165817.32634-13-deepa.kernel@gmail.com>
+        arnd@arndb.de, dsterba@suse.com
+Subject: [PATCH v8 13/20] fs: affs: Initialize filesystem timestamp ranges
+Date:   Sun, 18 Aug 2019 09:58:10 -0700
+Message-Id: <20190818165817.32634-14-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190818165817.32634-1-deepa.kernel@gmail.com>
 References: <20190818165817.32634-1-deepa.kernel@gmail.com>
@@ -63,53 +63,78 @@ Fill in the appropriate limits to avoid inconsistencies
 in the vfs cached inode times when timestamps are
 outside the permitted range.
 
-Some FAT variants indicate that the years after 2099 are not supported.
-Since commit 7decd1cb0305 ("fat: Fix and cleanup timestamp conversion")
-we support the full range of years that can be represented, up to 2107.
+Also fix timestamp calculation to avoid overflow
+while converting from days to seconds.
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: hirofumi@mail.parknet.co.jp
+Acked-by: David Sterba <dsterba@suse.com>
+Cc: dsterba@suse.com
 ---
- fs/fat/inode.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/affs/amigaffs.c | 2 +-
+ fs/affs/amigaffs.h | 3 +++
+ fs/affs/inode.c    | 4 ++--
+ fs/affs/super.c    | 4 ++++
+ 4 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index 0bc2abc5d453..f27f84e2103f 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -31,6 +31,11 @@
+diff --git a/fs/affs/amigaffs.c b/fs/affs/amigaffs.c
+index 14a6c1b90c9f..f708c45d5f66 100644
+--- a/fs/affs/amigaffs.c
++++ b/fs/affs/amigaffs.c
+@@ -375,7 +375,7 @@ affs_secs_to_datestamp(time64_t secs, struct affs_date *ds)
+ 	u32	 minute;
+ 	s32	 rem;
  
- #define KB_IN_SECTORS 2
+-	secs -= sys_tz.tz_minuteswest * 60 + ((8 * 365 + 2) * 24 * 60 * 60);
++	secs -= sys_tz.tz_minuteswest * 60 + AFFS_EPOCH_DELTA;
+ 	if (secs < 0)
+ 		secs = 0;
+ 	days    = div_s64_rem(secs, 86400, &rem);
+diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
+index f9bef9056659..81fb396d4dfa 100644
+--- a/fs/affs/amigaffs.h
++++ b/fs/affs/amigaffs.h
+@@ -32,6 +32,9 @@
  
-+/* DOS dates from 1980/1/1 through 2107/12/31 */
-+#define FAT_DATE_MIN (0<<9 | 1<<5 | 1)
-+#define FAT_DATE_MAX (127<<9 | 12<<5 | 31)
-+#define FAT_TIME_MAX (23<<11 | 59<<5 | 29)
+ #define AFFS_ROOT_BMAPS		25
+ 
++/* Seconds since Amiga epoch of 1978/01/01 to UNIX */
++#define AFFS_EPOCH_DELTA ((8 * 365 + 2) * 86400LL)
 +
- /*
-  * A deserialized copy of the on-disk structure laid out in struct
-  * fat_boot_sector.
-@@ -1617,6 +1622,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
- 	int debug;
- 	long error;
- 	char buf[50];
-+	struct timespec64 ts;
+ struct affs_date {
+ 	__be32 days;
+ 	__be32 mins;
+diff --git a/fs/affs/inode.c b/fs/affs/inode.c
+index 73598bff8506..a346cf7659f1 100644
+--- a/fs/affs/inode.c
++++ b/fs/affs/inode.c
+@@ -150,10 +150,10 @@ struct inode *affs_iget(struct super_block *sb, unsigned long ino)
+ 	}
  
- 	/*
- 	 * GFP_KERNEL is ok here, because while we do hold the
-@@ -1710,6 +1716,12 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
- 	sbi->free_clus_valid = 0;
- 	sbi->prev_free = FAT_START_ENT;
- 	sb->s_maxbytes = 0xffffffff;
-+	fat_time_fat2unix(sbi, &ts, 0, cpu_to_le16(FAT_DATE_MIN), 0);
-+	sb->s_time_min = ts.tv_sec;
+ 	inode->i_mtime.tv_sec = inode->i_atime.tv_sec = inode->i_ctime.tv_sec
+-		       = (be32_to_cpu(tail->change.days) * (24 * 60 * 60) +
++		       = (be32_to_cpu(tail->change.days) * 86400LL +
+ 		         be32_to_cpu(tail->change.mins) * 60 +
+ 			 be32_to_cpu(tail->change.ticks) / 50 +
+-			 ((8 * 365 + 2) * 24 * 60 * 60)) +
++			 AFFS_EPOCH_DELTA) +
+ 			 sys_tz.tz_minuteswest * 60;
+ 	inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec = inode->i_atime.tv_nsec = 0;
+ 	affs_brelse(bh);
+diff --git a/fs/affs/super.c b/fs/affs/super.c
+index e7d036efbaa1..cc463ae47c12 100644
+--- a/fs/affs/super.c
++++ b/fs/affs/super.c
+@@ -355,6 +355,10 @@ static int affs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_op                = &affs_sops;
+ 	sb->s_flags |= SB_NODIRATIME;
+ 
++	sb->s_time_gran = NSEC_PER_SEC;
++	sb->s_time_min = sys_tz.tz_minuteswest * 60 + AFFS_EPOCH_DELTA;
++	sb->s_time_max = 86400LL * U32_MAX + 86400 + sb->s_time_min;
 +
-+	fat_time_fat2unix(sbi, &ts, cpu_to_le16(FAT_TIME_MAX),
-+			  cpu_to_le16(FAT_DATE_MAX), 0);
-+	sb->s_time_max = ts.tv_sec;
- 
- 	if (!sbi->fat_length && bpb.fat32_length) {
- 		struct fat_boot_fsinfo *fsinfo;
+ 	sbi = kzalloc(sizeof(struct affs_sb_info), GFP_KERNEL);
+ 	if (!sbi)
+ 		return -ENOMEM;
 -- 
 2.17.1
 
