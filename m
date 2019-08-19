@@ -2,112 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 308A5923A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 14:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7693692509
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 15:31:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfHSMit (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 08:38:49 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44429 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbfHSMin (ORCPT
+        id S1727487AbfHSNby (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 09:31:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12116 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727301AbfHSNby (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 08:38:43 -0400
-Received: by mail-qk1-f196.google.com with SMTP id d79so1205332qke.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2019 05:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kcl2qjS+S92HqUsWy/tjB3qoqqgCsFoa4lNkLGm9eqU=;
-        b=Kw5dYDPC3RCMymknBRy1kIe+iDY+gtMlsFiGqHh0HRHDdkA1mVDMtLhKZZ0CG2KFv3
-         LVYv+T9FGmeylYTDi+kh5M9/Ntuhs1KUREG17679sHQhmPsIVOwRG2eQbHs3GIhuH2De
-         teqAib33hkHc6gnoEGXxQH7ITS22Bxbhltn46+fBqORa9Jb9jv/kTbwn4XmLd12IuyM5
-         /yPvmu7+YELsKojRcfZOMaNBoqJ1qtrNgLmHYKwBdl9/gdtpWh1vLo6xyTHwMVm7oA6I
-         7K86YItRgHihPHUhSIgXXcp4Bm7RF41NJgLrAPGgKKR410ENEsEKjr9s9uuDjUGnheP5
-         bsRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kcl2qjS+S92HqUsWy/tjB3qoqqgCsFoa4lNkLGm9eqU=;
-        b=fHOxNAGihI9HmisG2tVMfS/HZgZ2T71Hzux/Z0pgkwG1MDOQI67fcleOZWaDGtzlZq
-         WZ0gSiAEAp6QA3lgc3IcFG16K2wFYLJt7gBuMyELLgj4bT0MfMyUma5fAkbxoB953WV4
-         6yFx9Ek+/o1DwFiCb8tKNrNc2FWvXZETt7PIkZLHuGKYwSFYu4SHhQB926QxjmkRD6+S
-         2t91GTeW8qaW6L4qwvCmrtZG1xiiez3Iiz+D19VRdcjNExW2JVrBAot2SFoRZ1SwHhDH
-         IXycst1AFa6nJRtUDVAThEH++CWDrOzOhD0DBj+F1w+vx8m1P3C678DeRnkhagUMcwY/
-         /rBQ==
-X-Gm-Message-State: APjAAAWd4M2zDrbK4tHTKpx2zhbvHUregLdI3lJfFcaa1dwIkmzGQwml
-        EQBQhCK4IoVMmsoSf07D8ZrCkw==
-X-Google-Smtp-Source: APXvYqzbQNTYwMVTncdSqshKmZtcSi8KUDzyxSrbcJIuOywIrId5vXd75IqedVtc8bcWHqWRX6iGcQ==
-X-Received: by 2002:a37:a14a:: with SMTP id k71mr20104946qke.281.1566218322367;
-        Mon, 19 Aug 2019 05:38:42 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id r15sm6916339qtp.94.2019.08.19.05.38.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Aug 2019 05:38:41 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hzgvp-0001vJ-9J; Mon, 19 Aug 2019 09:38:41 -0300
-Date:   Mon, 19 Aug 2019 09:38:41 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190819123841.GC5058@ziepe.ca>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190814101714.GA26273@quack2.suse.cz>
- <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
- <20190815130558.GF14313@quack2.suse.cz>
- <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
- <20190817022603.GW6129@dread.disaster.area>
- <20190819063412.GA20455@quack2.suse.cz>
- <20190819092409.GM7777@dread.disaster.area>
+        Mon, 19 Aug 2019 09:31:54 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JDTUXG053502
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2019 09:31:53 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ufuepkms5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2019 09:31:52 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
+        Mon, 19 Aug 2019 14:31:50 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 19 Aug 2019 14:31:46 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7JDVjd655574772
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Aug 2019 13:31:45 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 00B214C040;
+        Mon, 19 Aug 2019 13:31:45 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 804964C044;
+        Mon, 19 Aug 2019 13:31:42 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.69.146])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 19 Aug 2019 13:31:42 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.ibm.com>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org, hch@infradead.org, tytso@mit.edu,
+        ebiggers@kernel.org, adilger.kernel@dilger.ca,
+        chandanrmail@gmail.com, jaegeuk@kernel.org
+Subject: Re: [f2fs-dev] [PATCH V4 5/8] f2fs: Use read_callbacks for decrypting file data
+Date:   Mon, 19 Aug 2019 19:03:23 +0530
+Organization: IBM
+In-Reply-To: <bb3dc624-1249-2418-f9da-93da8c11e7f5@kernel.org>
+References: <20190816061804.14840-1-chandan@linux.ibm.com> <20190816061804.14840-6-chandan@linux.ibm.com> <bb3dc624-1249-2418-f9da-93da8c11e7f5@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190819092409.GM7777@dread.disaster.area>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 19081913-0020-0000-0000-000003615D4C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19081913-0021-0000-0000-000021B6895A
+Message-Id: <20104514.oSSJcvNEEM@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908190153
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 07:24:09PM +1000, Dave Chinner wrote:
+On Sunday, August 18, 2019 7:15:42 PM IST Chao Yu wrote:
+> Hi Chandan,
+> 
+> On 2019-8-16 14:18, Chandan Rajendra wrote:
+> > F2FS has a copy of "post read processing" code using which encrypted
+> > file data is decrypted. This commit replaces it to make use of the
+> > generic read_callbacks facility.
+> 
+> I remember that previously Jaegeuk had mentioned f2fs will support compression
+> later, and it needs to reuse 'post read processing' fwk.
+> 
+> There is very initial version of compression feature in below link:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=compression
+> 
+> So my concern is how can we uplift the most common parts of this fwk into vfs,
+> and meanwhile keeping the ability and flexibility when introducing private
+> feature/step in specified filesytem(now f2fs)?
+> 
+> According to current f2fs compression's requirement, maybe we can expand to
+> 
+> - support callback to let filesystem set the function for the flow in
+> decompression/verity/decryption step.
+> - support to use individual/common workqueue according the parameter.
+> 
+> Any thoughts?
+>
 
-> So that leaves just the normal close() syscall exit case, where the
-> application has full control of the order in which resources are
-> released. We've already established that we can block in this
-> context.  Blocking in an interruptible state will allow fatal signal
-> delivery to wake us, and then we fall into the
-> fatal_signal_pending() case if we get a SIGKILL while blocking.
+Hi,
 
-The major problem with RDMA is that it doesn't always wait on close() for the
-MR holding the page pins to be destoyed. This is done to avoid a
-deadlock of the form:
+F2FS can be made to use fscrypt's queue for decryption and hence can reuse
+"read callbacks" code for decrypting data.
 
-   uverbs_destroy_ufile_hw()
-      mutex_lock()
-       [..]
-        mmput()
-         exit_mmap()
-          remove_vma()
-           fput();
-            file_operations->release()
-             ib_uverbs_close()
-              uverbs_destroy_ufile_hw()
-               mutex_lock()   <-- Deadlock
+For decompression, we could have a STEP_MISC where we invoke a FS provided
+callback function for FS specific post read processing? 
 
-But, as I said to Ira earlier, I wonder if this is now impossible on
-modern kernels and we can switch to making the whole thing
-synchronous. That would resolve RDMA's main problem with this.
+Something like the following can be implemented in read_callbacks(),
+	  case STEP_MISC:
+		  if (ctx->enabled_steps & (1 << STEP_MISC)) {
+			  /*
+			    ctx->fs_misc() must process bio in a workqueue
+			    and later invoke read_callbacks() with
+			    bio->bi_private's value as an argument.
+			  */
+			  ctx->fs_misc(ctx->bio);
+			  return;
+		  }
+		  ctx->cur_step++;
 
-Jason
+The fs_misc() callback can be passed in by the filesystem when invoking
+read_callbacks_setup_bio().
+
+-- 
+chandan
+
+
+
