@@ -2,94 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF3994F42
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 22:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0354694F84
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 23:01:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbfHSUpP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 16:45:15 -0400
-Received: from sonic310-21.consmr.mail.gq1.yahoo.com ([98.137.69.147]:41246
-        "EHLO sonic310-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727971AbfHSUpP (ORCPT
+        id S1728353AbfHSVBL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 17:01:11 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6549 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728014AbfHSVBL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 16:45:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1566247513; bh=/FjyeBf66fBZlR8Gaqo2Oupc6SxE7IKBQvqIGSvJQNw=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=iMv/2qUZXCZBDhq8bD3TkgK5G7xiq8jYuD4xJuM0CVldIsTESdO23NRqKZ6P8QwQJ/hTXgML5tcdekiTJrVRuIV1LwbbfTkLFGSh76d+LzZALNd/sjyVcpKUoNCJPawsypqvvaViwP5HlC8Eo9BDyJkT5ZTUUoaklkgzh0qUtzT3b1aIVqEYIJF98Nm8MoSjLm6bLaekitNhRqdw/p1rHLCna6pYKVqLs6k3/s1Z/+PA6lO+uWbASymxyYEvAcn5usVrAd683oh8AtFsZxJGcPLbqOgT7B9b6dsVflHUvJxB3gE4AGbDourmwHzgvPiIiqH8ATi7chRSUwibkvNgvA==
-X-YMail-OSG: tqQ4ci4VM1n4wfQKEzqsIBEQfIquIcCUir4PEXZ3SDMJZCBPhJtiyrs1uRQx67t
- p4PjzGg4sYUNobwg5ner2opFh1xd0plGWLbRz6Qq6Qv0LilmB4863tOx1kXM5FnwnQssP6ANKwNS
- bfZQJW05._jlPalhRvnNYk3QYgEoxSeCV5zaAVO5hnMP0KhAHpYEr8gev9w4Lxs92dFXFp.ePcEW
- KHrR3MAIxp.EJC2LsyWF7PgiLEmcOYssgsON_pBFUQU8DuYBpG5QbjuBILOoMiJ3n2it6BwwqsEy
- v5_iuyD1GUpQLhH9k_dBGh4K7ZHPcsk0TeaRLpt46.4RA6VzLJIaQtrqwXC3ZapZ3K06Au7bILsB
- nD3eqmb5YOhkf3O51nZHPG_ByYXSOp4cKpkag9EflPAaqXDj5m8TLs03qd0PzfqrKE9INxAMG9Vg
- lEa0Jz.3g55seeIMxiAhfZzsGCa83ssFbPcIRl7qF4wkQrDzjYoBNxZzKuZ2FR95qN0RqsjprlsC
- BvyGErjN.jJGKZ2zteWT0tNV0Dm1FaLFLve7XaJNsTOfx4RV4flbq4l1Ddu_K5pTCLKDmgSfkR_m
- 0ZDLrgw.Y58lyH5VPwOfd7a4GkS3TZITQkF2gVN1n1if5s8fjMa2y4Fr3gpBAjRnCobXLNJ5pnZh
- PIjqluAKUdxOdxcu2rh2BN3jWejala18QxQoQ59C0PHTX7GfH9hGEqtYAkpF9fKKt.QaeoAdF_Z5
- aKC_RlWxtggq__y2.7_3YztAGMAmGupB9stVmfL.FBr5ri6HBBy7jYg92wJDNj3hPTJG14LkGpDH
- HwKWzYbBXj9YpARUsbrpxoDYagTk0LCoLMvXJxqSxIl6KrSzRZa4WTAGCWq4K.E9osQgFqP.Fvdm
- HYbwPbZQDvCyykJN4EGyL6CsBuZnoif0SBJbxu4cHSa1lFM0OxvuqXzs9iSFIrOtDacTskJiO126
- KoXZZKCjH2AW3Vqwm7vUoVDAx.YMJcQCFO8zrJUCrW3NbiS4M7lRXCk1eDVtOgMO2lprg_GkE0T9
- kKzMwNgS0R0E818h_gvx60LaCRyiFnmJKWCC.iRA0FHbveGLL02xNsNToezK_1OrN9jUPg3TtqfH
- IjBW_m.B9_FFE8NKAXNffEWHkbd2hb9FPPQOJhcrCJEmz0YyQ1WP6_vN7VXC97laT9lYGlL2QiQM
- hfJKsli7.MTTYQ76DEs2VRhRQpRbOJjKgE9r7axRCOb7pV19B3m0s4pRSk21gJB.PP8dh4_AfQh1
- 6I9QYgXkTO71tlERe.dY4bg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.gq1.yahoo.com with HTTP; Mon, 19 Aug 2019 20:45:13 +0000
-Received: by smtp424.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d4e306b9ca70839f217535bade4a91d7;
-          Mon, 19 Aug 2019 20:45:12 +0000 (UTC)
-Date:   Tue, 20 Aug 2019 04:45:08 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: erofs: Question on unused fields in on-disk structs
-Message-ID: <20190819204504.GB10075@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <1323459733.69859.1566234633793.JavaMail.zimbra@nod.at>
+        Mon, 19 Aug 2019 17:01:11 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5b0e150001>; Mon, 19 Aug 2019 14:01:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 19 Aug 2019 14:01:10 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 19 Aug 2019 14:01:10 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 21:01:09 +0000
+Received: from [10.2.161.11] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 21:01:09 +0000
+Subject: Re: [RFC PATCH v2 2/3] mm/gup: introduce FOLL_PIN flag for
+ get_user_pages()
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Bharath Vedartham" <linux.bhar@gmail.com>
+References: <20190817022419.23304-1-jhubbard@nvidia.com>
+ <20190817022419.23304-3-jhubbard@nvidia.com>
+ <5a95d15b-f54c-e663-7031-c2bf9b19899e@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <252677d2-9e98-d4c8-7fe4-26635c05334d@nvidia.com>
+Date:   Mon, 19 Aug 2019 13:59:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1323459733.69859.1566234633793.JavaMail.zimbra@nod.at>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <5a95d15b-f54c-e663-7031-c2bf9b19899e@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566248470; bh=vl1GVCNIrilyALRxb5n0ufm74IES1+XneLPl9dgh6lA=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=mM94VwganRCZrt6v6UGZSTEpO6uOcs8kAY0ekNDgsUXL4dZeWkSB7CsGeCRWy6/fR
+         OjEVn4ebUUA62eLB0+2XQSPDLNIAhoNem9MsNvJiq5usLc+e6nHIdIPhtYnw7qJZ03
+         Q4hQ57f4C30ediziBOifrI3wUN9gFsQUtPvY0WdBgYZgo9kYMEq1C1/eHqyOKVL8CW
+         FEg85YzjBn9AdL3FJPxeRBYUQP6RSPnALAT5yduufUXwM9pLEM6p8BT67OxwF8XGjh
+         /6w4lBWLddHMgwcuNVgG6yjU/kLluTlsWO4f+BmWSa6KkgPUVr2rLEq/QdzzK/Ac4z
+         5bg+buL4eKhfQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Richard,
+On 8/16/19 7:36 PM, John Hubbard wrote:
+> On 8/16/19 7:24 PM, jhubbard@nvidia.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+>> DKIM-Signature: v=01 a a-sha256; c=0Elaxed/relaxed; d idia.com; s=01;
+>> 	t=1566008674; bh=05Mai0va6k/z2enpQJ4Nfvbj5WByFxGAO1JwdIBbXio	h PGP-Univ=
+ersal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+>> 	 In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+>> 	 Content-Transfer-Encoding:Content-Type;
+>> 	b=C3=96UDSde9XF/IsNteBaYOBWeKiHhWmeU9ekUJNvCviHssBDCtw0T+M/2TlEPEzomIT
+>> 	 fGXzIQNlGN6MXFbaBoyBmF/zjCu02TmTNExbVJ3/5N6PTyOuJFCx9ZN1/5gXsB11m1
+>> 	 xAHIWE+VOZs4qqDeHDBqKZq+FaxQHNvGz0j6lyVBA70TfseNoZqZZrSil8uvaKJwKd
+>> 	 TQ1ht+AGWbw9p610JmaPb4u6o/eV6Ns8Sl3EVnjWWu94T6ISNIaWCiC6wQQF6L1YCH
+>> 	 G5Pjn+0rEjhk6XG4TyLudi5lWp3IVBHd8+WlWlnl+bvLCC55RUAjPJLn7LaVyVdh0F
+>> 	 nLHwm3bN2Jotg
+>=20
+> I cannot readily explain the above email glitch, but I did just now switc=
+h
+> back to mailgw.nvidia.com for this patchset, in order to get the nice beh=
+avior
+> of having "From:" really be my native NVIDIA email address. That's very n=
+ice,
+> but if the glitches happen again, I'll switch back to using gmail for
+> git-send-email.
+>=20
+> Sorry about the weirdness. It does still let you apply the patch, I
+> just now checked on that.
+>=20
 
-On Mon, Aug 19, 2019 at 07:10:33PM +0200, Richard Weinberger wrote:
-> Hi!
-> 
-> struct erofs_super_block has "checksum" and "features" fields,
-> but they are not used in the source.
-> What is the plan for these?
+Hi Ira, could you please let me know if you'd like me to repost this patch,=
+ or
+the entire patchset, or if you're able to deal with it as-is? As it stands,=
+ the
+DKIM-Signature cruft above needs to be manually removed, either from the pa=
+tch, or
+from the commit log after applying the patch.
 
-Yes, both will be used laterly (features is used for compatible
-features, we already have some incompatible features in 5.3).
+Also, as noted in the email thread involving Bharath and sgi-gru [1], I'm
+currently planning on branching from your tree, and continuing the misc
+call site conversions from there. And then just adapting to whatever API
+changes are made to vaddr_*() functions. And the biovec call site conversio=
+ns should
+be based on that as well.
 
-> 
-> Same for i_checksum in erofs_inode_v1 and erofs_inode_v2.
+[1] https://lore.kernel.org/r/0c2ad29b-934c-ec30-66c3-b153baf1fba5@nvidia.c=
+om
 
-checksum field apart from super_block has been reserved again
-for linux-next. checksum in the super_block still exists and
-will be used sooner.
+thanks,
+--=20
+John Hubbard
+NVIDIA
 
-The reason I discussed with Chao is
-since EROFS is a read-only filesystem, we will develop block-based
-checksum and integrity check to EROFS in the future version. It's
-more effectively than adding such fields to all metadata (some metadata
-is too large, we cannot calculate a checksum for the whole metadata
-and compare at runtime, but we can do block-based metadata chksum
-since EROFS is a read-only fs).
-
-> 
-> At least the "features" field in the super block is something I'd
-> expect to be used.
-> ...such that you can have new filesystem features in future.
-
-Of course, "features" is for compatible features, "requirements" is
-for incompatible features. Both will be used in the future.
-
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> //richard
