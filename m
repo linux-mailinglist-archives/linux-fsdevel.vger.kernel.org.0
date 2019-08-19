@@ -2,66 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFDDB92789
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 16:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 855A792796
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 16:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfHSOuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 10:50:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726168AbfHSOuY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:50:24 -0400
-Received: from [192.168.0.101] (unknown [180.111.132.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B2752070D;
-        Mon, 19 Aug 2019 14:50:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566226223;
-        bh=ymw3Kw+8cxX+oQfkPPvxyyrMYifjiGJnCyi5QOBej5E=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=szZD7vvv8SeH6gvjnceD6e8J8UL1NpP2W6v04Sz7qhA37WjawDfGvmZY+gMo01R9+
-         oPhpZN26USZIyWiUJN3WrHsFdMnUzGizZoZpc83Am1NlAd3drloEUoTMtxB1p+XFIO
-         sA1sHKdk2WgxYnNbt1nmv69DiBDqTta99OlZE1GE=
-Subject: Re: [PATCH 4/6] staging: erofs: avoid loop in submit chains
-To:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
-        Miao Xie <miaoxie@huawei.com>, weidu.du@huawei.com,
-        Fang Wei <fangwei1@huawei.com>
-References: <20190819080218.GA42231@138>
- <20190819103426.87579-1-gaoxiang25@huawei.com>
- <20190819103426.87579-5-gaoxiang25@huawei.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <24eacd62-3da1-e6cf-8166-43049dbedcf2@kernel.org>
-Date:   Mon, 19 Aug 2019 22:50:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726670AbfHSOxA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 10:53:00 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47482 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfHSOw7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Aug 2019 10:52:59 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hzj1j-00060d-P9; Mon, 19 Aug 2019 16:52:55 +0200
+Date:   Mon, 19 Aug 2019 16:52:55 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Arul Jeniston <arul.jeniston@gmail.com>
+cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arul_mc@dell.com
+Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read
+ function.
+In-Reply-To: <CACAVd4izozzXNF9qwNcXC+EUx5n1sfsNeb9JNXNJF56LdZkkYg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1908191646350.2147@nanos.tec.linutronix.de>
+References: <20190816083246.169312-1-arul.jeniston@gmail.com> <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com> <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de> <CACAVd4h05P2tWb7Eh1+3_0Cm7MkDNAt+SJVoBT4gErBfsBmsAQ@mail.gmail.com>
+ <CACAVd4gHQ+_y5QBSQm3pMFHKrVgvvJZAABGvtp6=qt3drVXpTA@mail.gmail.com> <alpine.DEB.2.21.1908162255400.1923@nanos.tec.linutronix.de> <CACAVd4hT6QYtgtDsBcgy7c_s9WVBAH+1m0r5geBe7BUWJWYhbA@mail.gmail.com> <alpine.DEB.2.21.1908171942370.1923@nanos.tec.linutronix.de>
+ <CACAVd4jfoSUK4xgLByKeMY5ZPHZ40exY+74e4fOcBDPeoLpqQg@mail.gmail.com> <alpine.DEB.2.21.1908190947290.1923@nanos.tec.linutronix.de> <CACAVd4izozzXNF9qwNcXC+EUx5n1sfsNeb9JNXNJF56LdZkkYg@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190819103426.87579-5-gaoxiang25@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-8-19 18:34, Gao Xiang wrote:
-> As reported by erofs-utils fuzzer, 2 conditions
-> can happen in corrupted images, which can cause
-> unexpected behaviors.
->  - access the same pcluster one more time;
->  - access the tail end pcluster again, e.g.
->             _ access again (will trigger tail merging)
->            |
->      1 2 3 1 2             ->   1 2 3 1
->      |_ tail end of the chain    \___/ (unexpected behavior)
-> Let's detect and avoid them now.
-> 
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Arul,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+On Mon, 19 Aug 2019, Arul Jeniston wrote:
+> >   1) TSCs are out of sync or affected otherwise
+> 
+> If the TSC clock is unstable and not synchronized, Linux kernel throws
+> dmesg logs and changes the current clock source to next best timer
+> (hpet). But we didn't see these logs in any of the 10000 units.
+
+Did you see "TSC ADJUST" entries?
+
+> >   2) Timekeeping has a bug.
+> 
+> As per our analysis,
+> 
+> After the timer expiry, after tsc is read in hrtimer_forward_now()
+> -->ktime_get()-->timekeeping_get_ns(), if the current thread (t1) is
+> interrupted and/or some other thread running in different CPU (t2)
+> updates timekeeper cycle_last value with a latest tsc than t1,
+> clocksource_delta() and timekeeping_get_delta() would return 0.
+> Eventually   timekeeping_delta_to_ns() would return a smaller value
+> based on the other two parameters (mult, xtime_nsec). If
+> base(timekeeper.tkr_mono.base) is not updated all this time, then
+> ktime_get() could return a value lesser than expiry time.
+> Note: CONFIG_DEBUG_TIMEKEEPING is not configured in our system.
+
+Sorry, but your analysis is wrong.
+
+The timekeeping code does never return time going backwards, except for the
+case where the hardware is buggered and the failure cannot be detected.
+
+But for the above scenario:
+
+ktime_get()
+  	do {
+                seq = read_seqcount_begin(&tk_core.seq);
+	        base = tk->tkr_mono.base;
+		nsecs = timekeeping_get_ns(&tk->tkr_mono);
+
+        } while (read_seqcount_retry(&tk_core.seq, seq));
+
+So if the interrupt which updates the timekeeper hits in the middle of
+timekeeping_get_ns() then the result is discarded because the sequence
+count changed and read_seqcount_retry() returns true. So it takes another
+round which will be perfectly aligned with the updated time keeper.
 
 Thanks,
+
+	tglx
