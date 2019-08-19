@@ -2,125 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 285D491A8E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 02:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD31291C6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 07:24:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfHSA6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Aug 2019 20:58:19 -0400
-Received: from mail-lj1-f170.google.com ([209.85.208.170]:43638 "EHLO
-        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbfHSA6T (ORCPT
+        id S1726132AbfHSFYi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 01:24:38 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40510 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfHSFYi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Aug 2019 20:58:19 -0400
-Received: by mail-lj1-f170.google.com with SMTP id h15so132256ljg.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Aug 2019 17:58:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hev-cc.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gAWLA6RndFaNzG8rdPLbOXymqdUVzWZhT6YCM9vqWCY=;
-        b=df9ezSH6JtFuameOXtvnUSlJUImajdAavNOPHNXMzUM/qXtlU48707BWIBLOKeH93F
-         kLbZIMi33jMeuWVUcqpfoSwjmaMWvDx9VVXg2qv0Bv6R3GdDXXME+otkbkLosPILaA6u
-         GKNcwX9zGUSCDENvH8v92rMU9Ekj2PxQCRkQuQUHZ9b/45Aca4eWEG8+NuKI8BeXR0vB
-         basnKSN6+IZXibOE5VNU9I5lSyI3C2Aa+TYZMNULZs46MIlbfBzfM8v/NzfL9btl2i/Y
-         Y1PdcmiDD9UmgI/4Kx8mNUNChU2WNAfci3X0WDieWW3EiIy0itzkgplovT2ZCpjDfRh5
-         2RZw==
+        Mon, 19 Aug 2019 01:24:38 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w10so488507pgj.7;
+        Sun, 18 Aug 2019 22:24:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gAWLA6RndFaNzG8rdPLbOXymqdUVzWZhT6YCM9vqWCY=;
-        b=nJmikdPGp59Ku0hq/s2vdtK7mhCj7p7lzxn+d0YAGa2UZWddgQXBrbiZLE00Cay0O5
-         BeG+ZsmY+qlxmQasxHpVXivEZIO0q6fUtQ3fCVBZLsvCiJBCy7O4GL+oPSPMaIvOsJ1Y
-         u/I2ssXvJMJkTbvqttST4BFachbLoLqwEEgoK6SPRZQwdUTfg08IUCUuaXxaCc6ih9Bj
-         skCg0t/ZY28lh748wXLHtb2agT3+GFHlaJe/4BwoRjJW6P4+asdEuBz4ts8mycGBIzeH
-         nZfqiOzMGF2ZD8HYkXdXMvwi1eHOSIh+bCCnRFNcepVUl9SF6t8yk7UWUw4PV6mJER1P
-         7BNw==
-X-Gm-Message-State: APjAAAX3812UoBJe6B6meHeTk8Fufv99lvTEjmxPrfO+p1t9s6UiBemf
-        ThAHzRxUA/gp6CxYo6W89xAZBBrYrmXXbxXkNdRHhQ==
-X-Google-Smtp-Source: APXvYqx2BS0WUUTEE3Z0Uus3hGRJind//UzqEc3IEWlMUjgggQOHwAdYJHApM88G3FoZ2eW3O+JcsbvbD0NDOiZUl9A=
-X-Received: by 2002:a2e:b4d4:: with SMTP id r20mr11245217ljm.5.1566176296975;
- Sun, 18 Aug 2019 17:58:16 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qsOsVTcbsaLeAXjaK1311MO5YXkzY4kusyeavtQleX8=;
+        b=XYwkzW7whuL3+6k5un5KyKvGQs72ZzW20n50dtyxhXYm+FKHLugFb5c0WNBZRU7Pqf
+         w7iMncsIHElNnQYw7kR70cJQpyjS6fhD7dEq0oPYR+D1ahT0dsdPvkJzZkM4Upwm+cFT
+         FaJlanj0JK3Ul6iSXKPT0vKNooGLc+nyrBIJbsqawjL/R7iaq0HrG0OjfRNQ9CcOyaP5
+         w8nyzMmSjXDQsbO3UkgAQm68z58FWEwC10Tztmk4BlgZWJDco6Entj/RL1EwvvqBk/hB
+         xEDiMIcPV6KKT1CYs/ErEefx8/o+Jlrt/idfs/VF9I1r3WcD2+afmFXZG6aZf3aj07iK
+         q1tw==
+X-Gm-Message-State: APjAAAWGEyEeuPbyUbSswIK545l5VN4dRrn9gfOG4u0J6xatoDYKdb7o
+        7OwxzM31p1LfBvIi4osyP/E=
+X-Google-Smtp-Source: APXvYqwkbh9HqpVG8ze4MM0YPxmcbSEVBB8UcElBg30R1v+jI+Z9IZAit39AmArkQuiAxWfl80sdGw==
+X-Received: by 2002:a65:6102:: with SMTP id z2mr18245403pgu.391.1566192276938;
+        Sun, 18 Aug 2019 22:24:36 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id n28sm14058892pgd.64.2019.08.18.22.24.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2019 22:24:35 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 6D95F40605; Mon, 19 Aug 2019 05:24:34 +0000 (UTC)
+Date:   Mon, 19 Aug 2019 05:24:34 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/3] test_firmware: add support for
+ request_firmware_into_buf
+Message-ID: <20190819052434.GP16384@42.do-not-panic.com>
+References: <20190816000945.29810-1-scott.branden@broadcom.com>
+ <20190816000945.29810-2-scott.branden@broadcom.com>
 MIME-Version: 1.0
-References: <CAHirt9jesMHB_sXx7PyXTxrzLR=3xw9bHERueNMVkWOUkg6XXQ@mail.gmail.com>
-In-Reply-To: <CAHirt9jesMHB_sXx7PyXTxrzLR=3xw9bHERueNMVkWOUkg6XXQ@mail.gmail.com>
-From:   Heiher <r@hev.cc>
-Date:   Mon, 19 Aug 2019 08:58:04 +0800
-Message-ID: <CAHirt9jvRPjg=PPJEso-gKhXBto3=MPu_+50D+L=6O35M0BzBw@mail.gmail.com>
-Subject: Re: Why the edge-triggered mode doesn't work for epoll file descriptor?
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190816000945.29810-2-scott.branden@broadcom.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 12:36 AM Heiher <r@hev.cc> wrote:
->
-> Hello,
->
-> I've added a pipe file descriptor (fd1) to an epoll (fd3) with
-> EPOLLOUT in edge-triggered mode, and then added the fd3 to another
-> epoll (fd4) with EPOLLIN in edge-triggered too.
->
-> Next, waiting for fd4 without timeout. When fd1 to be writable, i
-> think epoll_wait(fd4, ...)  only return once, because all file
-> descriptors are added in edge-triggered mode.
->
-> But, the actual result is returns many and many times until do once
-> eopll_wait(fd3, ...).
->
-> #include <stdio.h>
-> #include <unistd.h>
-> #include <sys/epoll.h>
->
-> int
-> main (int argc, char *argv[])
-> {
->     int efd[2];
->     struct epoll_event e;
->
->     efd[0] = epoll_create (1);
->     if (efd[0] < 0)
->         return -1;
->
->     efd[1] = epoll_create (1);
->     if (efd[1] < 0)
->         return -2;
->
->     e.events = EPOLLIN | EPOLLET;
->     e.data.u64 = 1;
->     if (epoll_ctl (efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
->         return -3;
->
->     e.events = EPOLLOUT | EPOLLET;
->     e.data.u64 = 2;
->     if (epoll_ctl (efd[1], EPOLL_CTL_ADD, 1, &e) < 0)
->         return -4;
->
->     for (;;) {
->         struct epoll_event events[16];
->         int nfds;
->
->         nfds = epoll_wait (efd[0], events, 16, -1);
->         printf ("nfds: %d\n", nfds);
->     }
->
->     close (efd[1]);
->     close (efd[0]);
->
->     return 0;
-> }
->
-> --
-> Best regards!
-> Hev
-> https://hev.cc
+On Thu, Aug 15, 2019 at 05:09:43PM -0700, Scott Branden wrote:
+> Add test config into_buf to allow request_firmware_into_buf to be
+> called instead of request_firmware/request_firmware_direct.  The number
+> of parameters differ calling request_firmware_into_buf and support
+> has not been added to test such api in test_firmware until now.
+> 
+> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 
-Is this behavior correct? any help?
+Thanks for the patch!
 
--- 
-Best regards!
-Hev
-https://hev.cc
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+
+  Luis
