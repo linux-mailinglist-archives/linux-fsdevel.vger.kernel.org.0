@@ -2,130 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7693692509
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 15:31:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7F12926A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 16:25:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbfHSNby (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 09:31:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12116 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727301AbfHSNby (ORCPT
+        id S1726627AbfHSOZy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 10:25:54 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45415 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbfHSOZy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 09:31:54 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JDTUXG053502
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2019 09:31:53 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ufuepkms5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2019 09:31:52 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
-        Mon, 19 Aug 2019 14:31:50 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 19 Aug 2019 14:31:46 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7JDVjd655574772
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Aug 2019 13:31:45 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 00B214C040;
-        Mon, 19 Aug 2019 13:31:45 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 804964C044;
-        Mon, 19 Aug 2019 13:31:42 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.69.146])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 19 Aug 2019 13:31:42 +0000 (GMT)
-From:   Chandan Rajendra <chandan@linux.ibm.com>
-To:     Chao Yu <chao@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org, hch@infradead.org, tytso@mit.edu,
-        ebiggers@kernel.org, adilger.kernel@dilger.ca,
-        chandanrmail@gmail.com, jaegeuk@kernel.org
-Subject: Re: [f2fs-dev] [PATCH V4 5/8] f2fs: Use read_callbacks for decrypting file data
-Date:   Mon, 19 Aug 2019 19:03:23 +0530
-Organization: IBM
-In-Reply-To: <bb3dc624-1249-2418-f9da-93da8c11e7f5@kernel.org>
-References: <20190816061804.14840-1-chandan@linux.ibm.com> <20190816061804.14840-6-chandan@linux.ibm.com> <bb3dc624-1249-2418-f9da-93da8c11e7f5@kernel.org>
+        Mon, 19 Aug 2019 10:25:54 -0400
+Received: by mail-lf1-f68.google.com with SMTP id a30so1538010lfk.12;
+        Mon, 19 Aug 2019 07:25:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xW4SbUbBrR7IZ2iuavDafioa85MLGYucANcU3EzeSsI=;
+        b=NYNeplhiIjJJ4KoiRzXiB4QuCgPYCfrWp14tXf3xHTakbaZu211UHFr6eaqhqcJ/Wa
+         jpNcRNefjLS7wYXQrYfY/0OlXXGWb0SiN1myI1KZCTRDh3aMLXln0S97mDWjWHsRTaFd
+         bz5IlSm+sXJhZmbNIGZuSFuINzXObiQiwUDAQ30j6BvJzV91pStuH4tmlyeHXu5Opiep
+         BpXjJBJei/DwEi/TD4zkDRzcshsPJwLwIJT5WG9yCYYRDwxE46ZK5AvMeWZvnetGHoWx
+         gVGYWoizI/zulcg2mpzLT0ohZR8dOCvlEtncn++9xa4jCUxrFdGLYesQDsAQNwrQvOos
+         vloQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xW4SbUbBrR7IZ2iuavDafioa85MLGYucANcU3EzeSsI=;
+        b=baQgPuxWanHfAnW+2r7iQjuvW1oEU1Naq6co1rpCzyLrwJyA969YpnDkb9OxDtPPYO
+         rRbR+//df6eHHU3WY4pZg6Ck5cjBshPLr4l/Yx4sAO5BW1tZOXF9Uu9Mct1FSiUNLf9l
+         xsl5SwVHy8SjNQf6irxgYoqaSkplIbAWar6kAmPdHlaL1wR32Bf6/Hz5vWCSKcJCnT8k
+         gTCi/sdJHIL9uZJhub+YwK7lnXFFcuKWEM/kVE5+zbVSUsWQOVbfWK0GxuSyNWVM62+r
+         7+Ifj5XR/r5jewiTFwCGSO9MaPG/+HjRv4tA9Zsb0+7sNeiDgJseNXpKeqJ7U1OFxL4z
+         kXPQ==
+X-Gm-Message-State: APjAAAXO/XytHcZ230uu0KdPZx8OOYi05Bnpl9iWSTURtRy0ljbXusId
+        Wub0pz02xdKKqQ0dwtBt8p7nN9hRy1EKSAca3kQ=
+X-Google-Smtp-Source: APXvYqxla4D/Yt023bMWhSPNnxV9BS218rcry1EpcZmv0TEajsTOFA8fZTgCv4FVyzOlqtQJzINke6qSuLDzwmykiWQ=
+X-Received: by 2002:ac2:42c3:: with SMTP id n3mr4613814lfl.117.1566224752080;
+ Mon, 19 Aug 2019 07:25:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-TM-AS-GCONF: 00
-x-cbid: 19081913-0020-0000-0000-000003615D4C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081913-0021-0000-0000-000021B6895A
-Message-Id: <20104514.oSSJcvNEEM@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908190153
+References: <20190816083246.169312-1-arul.jeniston@gmail.com>
+ <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com>
+ <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de>
+ <CACAVd4h05P2tWb7Eh1+3_0Cm7MkDNAt+SJVoBT4gErBfsBmsAQ@mail.gmail.com>
+ <CACAVd4gHQ+_y5QBSQm3pMFHKrVgvvJZAABGvtp6=qt3drVXpTA@mail.gmail.com>
+ <alpine.DEB.2.21.1908162255400.1923@nanos.tec.linutronix.de>
+ <CACAVd4hT6QYtgtDsBcgy7c_s9WVBAH+1m0r5geBe7BUWJWYhbA@mail.gmail.com>
+ <alpine.DEB.2.21.1908171942370.1923@nanos.tec.linutronix.de>
+ <CACAVd4jfoSUK4xgLByKeMY5ZPHZ40exY+74e4fOcBDPeoLpqQg@mail.gmail.com> <alpine.DEB.2.21.1908190947290.1923@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1908190947290.1923@nanos.tec.linutronix.de>
+From:   Arul Jeniston <arul.jeniston@gmail.com>
+Date:   Mon, 19 Aug 2019 19:55:40 +0530
+Message-ID: <CACAVd4izozzXNF9qwNcXC+EUx5n1sfsNeb9JNXNJF56LdZkkYg@mail.gmail.com>
+Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arul_mc@dell.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sunday, August 18, 2019 7:15:42 PM IST Chao Yu wrote:
-> Hi Chandan,
-> 
-> On 2019-8-16 14:18, Chandan Rajendra wrote:
-> > F2FS has a copy of "post read processing" code using which encrypted
-> > file data is decrypted. This commit replaces it to make use of the
-> > generic read_callbacks facility.
-> 
-> I remember that previously Jaegeuk had mentioned f2fs will support compression
-> later, and it needs to reuse 'post read processing' fwk.
-> 
-> There is very initial version of compression feature in below link:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=compression
-> 
-> So my concern is how can we uplift the most common parts of this fwk into vfs,
-> and meanwhile keeping the ability and flexibility when introducing private
-> feature/step in specified filesytem(now f2fs)?
-> 
-> According to current f2fs compression's requirement, maybe we can expand to
-> 
-> - support callback to let filesystem set the function for the flow in
-> decompression/verity/decryption step.
-> - support to use individual/common workqueue according the parameter.
-> 
-> Any thoughts?
->
+hi Tglx,
 
-Hi,
+...
+> > > Is the timer expiry and the timerfd_read() on the same CPU or on different
+> > > ones?
+> >
 
-F2FS can be made to use fscrypt's queue for decryption and hence can reuse
-"read callbacks" code for decrypting data.
+We have 10000+ units running in production. We see this problem ~20
+switches in a span of one year time.
+The problem is not seen more than once in the same unit. The
+occurrence is random and unpredictable.
+We tried to recreate this problem in LAB by loading the units similar
+to the production unit.
+so far we are not able to recreate it. It is very difficult to predict
+what triggered this in the production units.
+So, to find root cause, we studied and instrumented kernel code.
 
-For decompression, we could have a STEP_MISC where we invoke a FS provided
-callback function for FS specific post read processing? 
+>   1) TSCs are out of sync or affected otherwise
 
-Something like the following can be implemented in read_callbacks(),
-	  case STEP_MISC:
-		  if (ctx->enabled_steps & (1 << STEP_MISC)) {
-			  /*
-			    ctx->fs_misc() must process bio in a workqueue
-			    and later invoke read_callbacks() with
-			    bio->bi_private's value as an argument.
-			  */
-			  ctx->fs_misc(ctx->bio);
-			  return;
-		  }
-		  ctx->cur_step++;
+If the TSC clock is unstable and not synchronized, Linux kernel throws
+dmesg logs and changes the current clock source to next best timer
+(hpet). But we didn't see these logs in any of the 10000 units.
 
-The fs_misc() callback can be passed in by the filesystem when invoking
-read_callbacks_setup_bio().
+>   2) Timekeeping has a bug.
 
--- 
-chandan
+As per our analysis,
 
+After the timer expiry, after tsc is read in hrtimer_forward_now()
+-->ktime_get()-->timekeeping_get_ns(), if the current thread (t1) is
+interrupted and/or some other thread running in different CPU (t2)
+updates timekeeper cycle_last value with a latest tsc than t1,
+clocksource_delta() and timekeeping_get_delta() would return 0.
+Eventually   timekeeping_delta_to_ns() would return a smaller value
+based on the other two parameters (mult, xtime_nsec). If
+base(timekeeper.tkr_mono.base) is not updated all this time, then
+ktime_get() could return a value lesser than expiry time.
+Note: CONFIG_DEBUG_TIMEKEEPING is not configured in our system.
 
+> I was asking for a full boot log for a reason. Is it impossible to stick
+> that into a mail?
 
+Give me a day time to sync-up internally and update.
+
+Regards,
+Arul
