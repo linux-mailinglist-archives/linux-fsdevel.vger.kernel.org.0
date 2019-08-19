@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D003C92165
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 12:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6D9592170
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 12:36:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfHSKfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 06:35:18 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55472 "EHLO huawei.com"
+        id S1727341AbfHSKf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 06:35:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55482 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726477AbfHSKfS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 06:35:18 -0400
+        id S1727352AbfHSKf1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Aug 2019 06:35:27 -0400
 Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 51609BA7CB78A0572AFD;
+        by Forcepoint Email with ESMTP id 570DC10EA08F6E5BBDC8;
         Mon, 19 Aug 2019 18:35:12 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 19 Aug
- 2019 18:35:03 +0800
+ 2019 18:35:04 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Chao Yu <yuchao0@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -25,13 +25,14 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 0/6] staging: erofs: first stage of corrupted compressed images
-Date:   Mon, 19 Aug 2019 18:34:20 +0800
-Message-ID: <20190819103426.87579-1-gaoxiang25@huawei.com>
+        Gao Xiang <gaoxiang25@huawei.com>, <stable@vger.kernel.org>
+Subject: [PATCH 1/6] staging: erofs: some compressed cluster should be submitted for corrupted images
+Date:   Mon, 19 Aug 2019 18:34:21 +0800
+Message-ID: <20190819103426.87579-2-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190819080218.GA42231@138>
+In-Reply-To: <20190819103426.87579-1-gaoxiang25@huawei.com>
 References: <20190819080218.GA42231@138>
+ <20190819103426.87579-1-gaoxiang25@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.140.130.215]
@@ -41,38 +42,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+As reported by erofs_utils fuzzer, a logical page can belong
+to at most 2 compressed clusters, if one compressed cluster
+is corrupted, but the other has been ready in submitting chain.
 
-I have fuzzed EROFS for about a day and observed the following
-issues due to corrupted compression images by my first fuzzer
-(It seems ok for uncompressed images for now). Now it can survive
-for 10+ minutes on my PC (Let me send out what I'm done and
-I will dig it more deeply...)
+The chain needs to submit anyway in order to keep the page
+working properly (page unlocked with PG_error set, PG_uptodate
+not set).
 
-All the fixes are trivial.
+Let's fix it now.
 
-Note that those have dependency on EFSCORRUPTED, so for-next
-is needed and I will manually backport them by hand due to
-many cleanup patches...
+Fixes: 3883a79abd02 ("staging: erofs: introduce VLE decompression support")
+Cc: <stable@vger.kernel.org> # 4.19+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ drivers/staging/erofs/zdata.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-Thanks,
-Gao Xiang
-
-Gao Xiang (6):
-  staging: erofs: some compressed cluster should be submitted for
-    corrupted images
-  staging: erofs: cannot set EROFS_V_Z_INITED_BIT if fill_inode_lazy
-    fails
-  staging: erofs: add two missing erofs_workgroup_put for corrupted
-    images
-  staging: erofs: avoid loop in submit chains
-  staging: erofs: detect potential multiref due to corrupted images
-  staging: erofs: avoid endless loop of invalid lookback distance 0
-
- drivers/staging/erofs/zdata.c | 46 ++++++++++++++++++++++++++---------
- drivers/staging/erofs/zmap.c  |  9 +++++--
- 2 files changed, 42 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/staging/erofs/zdata.c b/drivers/staging/erofs/zdata.c
+index 2d7aaf98f7de..87b0c96caf8f 100644
+--- a/drivers/staging/erofs/zdata.c
++++ b/drivers/staging/erofs/zdata.c
+@@ -1307,19 +1307,18 @@ static int z_erofs_vle_normalaccess_readpage(struct file *file,
+ 	err = z_erofs_do_read_page(&f, page, &pagepool);
+ 	(void)z_erofs_collector_end(&f.clt);
+ 
+-	if (err) {
++	/* if some compressed cluster ready, need submit them anyway */
++	z_erofs_submit_and_unzip(inode->i_sb, &f.clt, &pagepool, true);
++
++	if (err)
+ 		errln("%s, failed to read, err [%d]", __func__, err);
+-		goto out;
+-	}
+ 
+-	z_erofs_submit_and_unzip(inode->i_sb, &f.clt, &pagepool, true);
+-out:
+ 	if (f.map.mpage)
+ 		put_page(f.map.mpage);
+ 
+ 	/* clean up the remaining free pages */
+ 	put_pages_list(&pagepool);
+-	return 0;
++	return err;
+ }
+ 
+ static bool should_decompress_synchronously(struct erofs_sb_info *sbi,
 -- 
 2.17.1
 
