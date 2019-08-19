@@ -2,59 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C618D91D31
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 08:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E63291D37
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 08:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfHSGeQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 02:34:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44952 "EHLO mx1.suse.de"
+        id S1726541AbfHSGhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 02:37:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45540 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725768AbfHSGeP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 02:34:15 -0400
+        id S1726132AbfHSGhC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Aug 2019 02:37:02 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ED46FAC26;
-        Mon, 19 Aug 2019 06:34:12 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 01D2AAC26;
+        Mon, 19 Aug 2019 06:36:59 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4D0DC1E155E; Mon, 19 Aug 2019 08:34:12 +0200 (CEST)
-Date:   Mon, 19 Aug 2019 08:34:12 +0200
+        id AB8171E155E; Mon, 19 Aug 2019 08:36:58 +0200 (CEST)
+Date:   Mon, 19 Aug 2019 08:36:58 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@suse.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-nvdimm@lists.01.org,
+        linux-rdma@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190819063412.GA20455@quack2.suse.cz>
+        linux-ext4@vger.kernel.org
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;
+ -)
+Message-ID: <20190819063658.GB20455@quack2.suse.cz>
 References: <20190809225833.6657-1-ira.weiny@intel.com>
  <20190814101714.GA26273@quack2.suse.cz>
  <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
  <20190815130558.GF14313@quack2.suse.cz>
  <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
- <20190817022603.GW6129@dread.disaster.area>
+ <20190816232006.GA11384@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190817022603.GW6129@dread.disaster.area>
+In-Reply-To: <20190816232006.GA11384@iweiny-DESK2.sc.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 17-08-19 12:26:03, Dave Chinner wrote:
-> On Fri, Aug 16, 2019 at 12:05:28PM -0700, Ira Weiny wrote:
+On Fri 16-08-19 16:20:07, Ira Weiny wrote:
+> On Fri, Aug 16, 2019 at 12:05:28PM -0700, 'Ira Weiny' wrote:
 > > On Thu, Aug 15, 2019 at 03:05:58PM +0200, Jan Kara wrote:
 > > > On Wed 14-08-19 11:08:49, Ira Weiny wrote:
 > > > > On Wed, Aug 14, 2019 at 12:17:14PM +0200, Jan Kara wrote:
+> > > > > Hello!
+> > > > > 
+> > > > > On Fri 09-08-19 15:58:14, ira.weiny@intel.com wrote:
+> > > > > > Pre-requisites
+> > > > > > ==============
+> > > > > > 	Based on mmotm tree.
+> > > > > > 
+> > > > > > Based on the feedback from LSFmm, the LWN article, the RFC series since
+> > > > > > then, and a ton of scenarios I've worked in my mind and/or tested...[1]
+> > > > > > 
+> > > > > > Solution summary
+> > > > > > ================
+> > > > > > 
+> > > > > > The real issue is that there is no use case for a user to have RDMA pinn'ed
+> > > > > > memory which is then truncated.  So really any solution we present which:
+> > > > > > 
+> > > > > > A) Prevents file system corruption or data leaks
+> > > > > > ...and...
+> > > > > > B) Informs the user that they did something wrong
+> > > > > > 
+> > > > > > Should be an acceptable solution.
+> > > > > > 
+> > > > > > Because this is slightly new behavior.  And because this is going to be
+> > > > > > specific to DAX (because of the lack of a page cache) we have made the user
+> > > > > > "opt in" to this behavior.
+> > > > > > 
+> > > > > > The following patches implement the following solution.
+> > > > > > 
+> > > > > > 0) Registrations to Device DAX char devs are not affected
+> > > > > > 
+> > > > > > 1) The user has to opt in to allowing page pins on a file with an exclusive
+> > > > > >    layout lease.  Both exclusive and layout lease flags are user visible now.
+> > > > > > 
+> > > > > > 2) page pins will fail if the lease is not active when the file back page is
+> > > > > >    encountered.
+> > > > > > 
+> > > > > > 3) Any truncate or hole punch operation on a pinned DAX page will fail.
+> > > > > 
+> > > > > So I didn't fully grok the patch set yet but by "pinned DAX page" do you
+> > > > > mean a page which has corresponding file_pin covering it? Or do you mean a
+> > > > > page which has pincount increased? If the first then I'd rephrase this to
+> > > > > be less ambiguous, if the second then I think it is wrong. 
+> > > > 
+> > > > I mean the second.  but by "fail" I mean hang.  Right now the "normal" page
+> > > > pincount processing will hang the truncate.  Given the discussion with John H
+> > > > we can make this a bit better if we use something like FOLL_PIN and the page
+> > > > count bias to indicate this type of pin.  Then I could fail the truncate
+> > > > outright.  but that is not done yet.
+> > > > 
+> > > > so... I used the word "fail" to be a bit more vague as the final implementation
+> > > > may return ETXTBUSY or hang as noted.
+> > > 
+> > > Ah, OK. Hanging is fine in principle but with longterm pins, your work
+> > > makes sure they actually fail with ETXTBUSY, doesn't it? The thing is that
+> > > e.g. DIO will use page pins as well for its buffers and we must wait there
+> > > until the pin is released. So please just clarify your 'fail' here a bit
+> > > :).
+> > 
+> > It will fail with ETXTBSY.  I've fixed a bug...  See below.
+> > 
+> > > 
+> > > > > > 4) The user has the option of holding the lease or releasing it.  If they
+> > > > > >    release it no other pin calls will work on the file.
+> > > > > 
+> > > > > Last time we spoke the plan was that the lease is kept while the pages are
+> > > > > pinned (and an attempt to release the lease would block until the pages are
+> > > > > unpinned). That also makes it clear that the *lease* is what is making
+> > > > > truncate and hole punch fail with ETXTBUSY and the file_pin structure is
+> > > > > just an implementation detail how the existence is efficiently tracked (and
+> > > > > what keeps the backing file for the pages open so that the lease does not
+> > > > > get auto-destroyed). Why did you change this?
+> > > > 
+> > > > closing the file _and_ unmaping it will cause the lease to be released
+> > > > regardless of if we allow this or not.
+> > > > 
+> > > > As we discussed preventing the close seemed intractable.
+> > > 
+> > > Yes, preventing the application from closing the file is difficult. But
+> > > from a quick look at your patches it seemed to me that you actually hold a
+> > > backing file reference from the file_pin structure thus even though the
+> > > application closes its file descriptor, the struct file (and thus the
+> > > lease) lives further until the file_pin gets released. And that should last
+> > > as long as the pages are pinned. Am I missing something?
+> > > 
+> > > > I thought about failing the munmap but that seemed wrong as well.  But more
+> > > > importantly AFAIK RDMA can pass its memory pins to other processes via FD
+> > > > passing...  This means that one could pin this memory, pass it to another
+> > > > process and exit.  The file lease on the pin'ed file is lost.
+> > > 
+> > > Not if file_pin grabs struct file reference as I mentioned above...
+> > >  
+> > > > The file lease is just a key to get the memory pin.  Once unlocked the procfs
+> > > > tracking keeps track of where that pin goes and which processes need to be
+> > > > killed to get rid of it.
+> > > 
+> > > I think having file lease being just a key to get the pin is conceptually
+> > > wrong. The lease is what expresses: "I'm accessing these blocks directly,
+> > > don't touch them without coordinating with me." So it would be only natural
+> > > if we maintained the lease while we are accessing blocks instead of
+> > > transferring this protection responsibility to another structure - namely
+> > > file_pin - and letting the lease go.
+> > 
+> > We do transfer that protection to the file_pin but we don't have to "let the
+> > lease" go.  We just keep the lease with the file_pin as you said.  See below...
+> > 
+> > > But maybe I miss some technical reason
+> > > why maintaining file lease is difficult. If that's the case, I'd like to hear
+> > > what...
+> > 
+> > Ok, I've thought a bit about what you said and indeed it should work that way.
+> > The reason I had to think a bit is that I was not sure why I thought we needed
+> > to hang...  Turns out there were a couple of reasons...  1 not so good and 1 ok
+> > but still not good enough to allow this...
+> > 
+> > 1) I had a bug in the XFS code which should have failed rather than hanging...
+> >    So this was not a good reason...  And I was able to find/fix it...  Thanks!
+> > 
 > > 2) Second reason is that I thought I did not have a good way to tell if the
 > >    lease was actually in use.  What I mean is that letting the lease go should
 > >    be ok IFF we don't have any pins...  I was thinking that without John's code
@@ -62,62 +177,23 @@ On Sat 17-08-19 12:26:03, Dave Chinner wrote:
 > >    All we have to do is check
 > > 
 > > 	!list_empty(file->file_pins)
-> > 
-> > So now with this detail I think you are right, we should be able to hold the
-> > lease through the struct file even if the process no longer has any
-> > "references" to it (ie closes and munmaps the file).
 > 
-> I really, really dislike the idea of zombie layout leases. It's a
-> nasty hack for poor application behaviour. This is a "we allow use
-> after layout lease release" API, and I think encoding largely
-> untraceable zombie objects into an API is very poor design.
+> Oops...  I got my "struct files" mixed up...  The RDMA struct file has the
+> file_pins hanging off it...  This will not work.
 > 
-> From the fcntl man page:
+> I'll have to try something else to prevent this.  However, I don't want to walk
+> all the pages of the inode.
 > 
-> LEASES
-> 	Leases are associated with an open file description (see
-> 	open(2)).  This means that duplicate file descriptors
-> 	(created by, for example, fork(2) or dup(2))  re‐ fer  to
-> 	the  same  lease,  and this lease may be modified or
-> 	released using any of these descriptors.  Furthermore, the
-> 	lease is released by either an explicit F_UNLCK operation on
-> 	any of these duplicate file descriptors, or when all such
-> 	file descriptors have been closed.
-> 
-> Leases are associated with *open* file descriptors, not the
-> lifetime of the struct file in the kernel. If the application closes
-> the open fds that refer to the lease, then the kernel does not
-> guarantee, and the application has no right to expect, that the
-> lease remains active in any way once the application closes all
-> direct references to the lease.
-> 
-> IOWs, applications using layout leases need to hold the lease fd
-> open for as long as the want access to the physical file layout. It
-> is a also a requirement of the layout lease that the holder releases
-> the resources it holds on the layout before it releases the layout
-> lease, exclusive lease or not. Closing the fd indicates they do not
-> need access to the file any more, and so the lease should be
-> reclaimed at that point.
-> 
-> I'm of a mind to make the last close() on a file block if there's an
-> active layout lease to prevent processes from zombie-ing layout
-> leases like this. i.e. you can't close the fd until resources that
-> pin the lease have been released.
+> Also I'm concerned about just failing if they happen to be pinned.  They need
+> to be LONGTERM pinned...  Otherwise we might have a transient failure of an
+> unlock based on some internal kernel transient pin...  :-/
 
-Yeah, so this was my initial though as well [1]. But as the discussion in
-that thread revealed, the problem with blocking last close is that kernel
-does not really expect close to block. You could easily deadlock e.g. if
-the process gets SIGKILL, file with lease has fd 10, and the RDMA context
-holding pages pinned has fd 15. Or you could wait for another process to
-release page pins and blocking SIGKILL on that is also bad. So in the end
-the least bad solution we've come up with were these "zombie" leases as you
-call them and tracking them in /proc so that userspace at least has a way
-of seeing them. But if you can come up with a different solution, I'm
-certainly not attached to the current one...
+My solution for this was that file_pin would contain counter of pinned
+pages which vaddr_pin_pages() would increment and vaddr_unpin_pages() would
+decrement. Checking whether there's any outstanding page pinned attached to
+the file_pin is then trivial...
 
 								Honza
-
-[1] https://lore.kernel.org/lkml/20190606104203.GF7433@quack2.suse.cz
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
