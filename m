@@ -2,125 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0354694F84
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 23:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B103C9502C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 23:53:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbfHSVBL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 17:01:11 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6549 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbfHSVBL (ORCPT
+        id S1728484AbfHSVwU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 17:52:20 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:47049 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728465AbfHSVwU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 17:01:11 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d5b0e150001>; Mon, 19 Aug 2019 14:01:10 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 19 Aug 2019 14:01:10 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 19 Aug 2019 14:01:10 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
- 2019 21:01:09 +0000
-Received: from [10.2.161.11] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
- 2019 21:01:09 +0000
-Subject: Re: [RFC PATCH v2 2/3] mm/gup: introduce FOLL_PIN flag for
- get_user_pages()
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Bharath Vedartham" <linux.bhar@gmail.com>
-References: <20190817022419.23304-1-jhubbard@nvidia.com>
- <20190817022419.23304-3-jhubbard@nvidia.com>
- <5a95d15b-f54c-e663-7031-c2bf9b19899e@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <252677d2-9e98-d4c8-7fe4-26635c05334d@nvidia.com>
-Date:   Mon, 19 Aug 2019 13:59:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 19 Aug 2019 17:52:20 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q139so1958314pfc.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2019 14:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1NM94xksOiht8RmgWrLEcFY3PgSHOoB3FnNWuwtEkT8=;
+        b=ZIz4IZobyazBKzjPdPXduiU9VmQv41GRQbby3Zhrveo6Tz9PhO7CfVQSbB/TBOqzVV
+         HKeoTTvO+/pPOZ6NjxPybqIoS90KhiOlS45PxA7pJUrdFjv/+xi3aMSn2GcoZjntjeft
+         Q/tWStO+V0j/UbB2Xya/5GYUIAa/rOxLiAaAo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1NM94xksOiht8RmgWrLEcFY3PgSHOoB3FnNWuwtEkT8=;
+        b=RR/7QBvIbxloZJ72/et+BDVwGiprmISdjxT9fPyiPvDQDbINkJh624rNBoa9e6xiZp
+         FAfNymdcXg7V73e807a5KTeAt77/u6sDhNnbG1Z19u7F79bAtFoQ2CaP4jzil5Yb7z85
+         238BwnSTl+OqwOINwY4HfvYoDZTof5zSAqSLsbqhqum95+WxhLTe4CEADpbiCej/Px0E
+         ehlxs8zHMZTW9HPax/6Mm1MT1ibAKsLwzluPjbjaeNuScYxiERQEvLofLdZW/i/bvTws
+         gMJV37CaXTtcfapH02zqeVK229IbZ9J9RshVHWdsAFGJ5E8oCgzGnhdOTs/pEOGmJlMd
+         PMow==
+X-Gm-Message-State: APjAAAUpVtKmrjZnU0wrZceI856PhOS0zQ3CcfknlnvahvxMn3I6NXoN
+        QMgeOT+vAZK9+BMeRoIpULvoug==
+X-Google-Smtp-Source: APXvYqwUvaI7TTB3Cq1JrLcXYfbfWpzlEsBG0HdCSLwtiPUe8V7Jo54+xeveGTu2L+fiSxLgsLREgA==
+X-Received: by 2002:a17:90a:3321:: with SMTP id m30mr23192445pjb.2.1566251538929;
+        Mon, 19 Aug 2019 14:52:18 -0700 (PDT)
+Received: from localhost ([172.19.216.18])
+        by smtp.gmail.com with ESMTPSA id v8sm19341824pjb.6.2019.08.19.14.52.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 14:52:18 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 17:52:01 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Jann Horn <jannh@google.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>,
+        Daniel Colascione <dancol@google.com>, fmayer@google.com,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        kernel-team <kernel-team@android.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Minchan Kim <minchan@kernel.org>, namhyung@google.com,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 1/6] mm/page_idle: Add per-pid idle page tracking
+ using virtual index
+Message-ID: <20190819215201.GG117548@google.com>
+References: <20190807171559.182301-1-joel@joelfernandes.org>
+ <CAG48ez0ysprvRiENhBkLeV9YPTN_MB18rbu2HDa2jsWo5FYR8g@mail.gmail.com>
+ <20190813100856.GF17933@dhcp22.suse.cz>
+ <CAG48ez2cuqe_VYhhaqw8Hcyswv47cmz2XmkqNdvkXEhokMVaXg@mail.gmail.com>
+ <20190814075601.GO17933@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <5a95d15b-f54c-e663-7031-c2bf9b19899e@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1566248470; bh=vl1GVCNIrilyALRxb5n0ufm74IES1+XneLPl9dgh6lA=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=mM94VwganRCZrt6v6UGZSTEpO6uOcs8kAY0ekNDgsUXL4dZeWkSB7CsGeCRWy6/fR
-         OjEVn4ebUUA62eLB0+2XQSPDLNIAhoNem9MsNvJiq5usLc+e6nHIdIPhtYnw7qJZ03
-         Q4hQ57f4C30ediziBOifrI3wUN9gFsQUtPvY0WdBgYZgo9kYMEq1C1/eHqyOKVL8CW
-         FEg85YzjBn9AdL3FJPxeRBYUQP6RSPnALAT5yduufUXwM9pLEM6p8BT67OxwF8XGjh
-         /6w4lBWLddHMgwcuNVgG6yjU/kLluTlsWO4f+BmWSa6KkgPUVr2rLEq/QdzzK/Ac4z
-         5bg+buL4eKhfQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814075601.GO17933@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/16/19 7:36 PM, John Hubbard wrote:
-> On 8/16/19 7:24 PM, jhubbard@nvidia.com wrote:
->> From: John Hubbard <jhubbard@nvidia.com>
->> DKIM-Signature: v=01 a a-sha256; c=0Elaxed/relaxed; d idia.com; s=01;
->> 	t=1566008674; bh=05Mai0va6k/z2enpQJ4Nfvbj5WByFxGAO1JwdIBbXio	h PGP-Univ=
-ersal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
->> 	 In-Reply-To:References:MIME-Version:X-NVConfidentiality:
->> 	 Content-Transfer-Encoding:Content-Type;
->> 	b=C3=96UDSde9XF/IsNteBaYOBWeKiHhWmeU9ekUJNvCviHssBDCtw0T+M/2TlEPEzomIT
->> 	 fGXzIQNlGN6MXFbaBoyBmF/zjCu02TmTNExbVJ3/5N6PTyOuJFCx9ZN1/5gXsB11m1
->> 	 xAHIWE+VOZs4qqDeHDBqKZq+FaxQHNvGz0j6lyVBA70TfseNoZqZZrSil8uvaKJwKd
->> 	 TQ1ht+AGWbw9p610JmaPb4u6o/eV6Ns8Sl3EVnjWWu94T6ISNIaWCiC6wQQF6L1YCH
->> 	 G5Pjn+0rEjhk6XG4TyLudi5lWp3IVBHd8+WlWlnl+bvLCC55RUAjPJLn7LaVyVdh0F
->> 	 nLHwm3bN2Jotg
->=20
-> I cannot readily explain the above email glitch, but I did just now switc=
-h
-> back to mailgw.nvidia.com for this patchset, in order to get the nice beh=
-avior
-> of having "From:" really be my native NVIDIA email address. That's very n=
-ice,
-> but if the glitches happen again, I'll switch back to using gmail for
-> git-send-email.
->=20
-> Sorry about the weirdness. It does still let you apply the patch, I
-> just now checked on that.
->=20
+On Wed, Aug 14, 2019 at 09:56:01AM +0200, Michal Hocko wrote:
+[snip]
+> > > > Can this be used to observe which library pages other processes are
+> > > > accessing, even if you don't have access to those processes, as long
+> > > > as you can map the same libraries? I realize that there are already a
+> > > > bunch of ways to do that with side channels and such; but if you're
+> > > > adding an interface that allows this by design, it seems to me like
+> > > > something that should be gated behind some sort of privilege check.
+> > >
+> > > Hmm, you need to be priviledged to get the pfn now and without that you
+> > > cannot get to any page so the new interface is weakening the rules.
+> > > Maybe we should limit setting the idle state to processes with the write
+> > > status. Or do you think that even observing idle status is useful for
+> > > practical side channel attacks? If yes, is that a problem of the
+> > > profiler which does potentially dangerous things?
+> > 
+> > I suppose read-only access isn't a real problem as long as the
+> > profiler isn't writing the idle state in a very tight loop... but I
+> > don't see a usecase where you'd actually want that? As far as I can
+> > tell, if you can't write the idle state, being able to read it is
+> > pretty much useless.
+> > 
+> > If the profiler only wants to profile process-private memory, then
+> > that should be implementable in a safe way in principle, I think, but
+> > since Joel said that they want to profile CoW memory as well, I think
+> > that's inherently somewhat dangerous.
+> 
+> I cannot really say how useful that would be but I can see that
+> implementing ownership checks would be really non-trivial for
+> shared pages. Reducing the interface to exclusive pages would make it
+> easier as you noted but less helpful.
+> 
+> Besides that the attack vector shouldn't be really much different from
+> the page cache access, right? So essentially can_do_mincore model.
+> 
+> I guess we want to document that page idle tracking should be used with
+> care because it potentially opens a side channel opportunity if used
+> on sensitive data.
 
-Hi Ira, could you please let me know if you'd like me to repost this patch,=
- or
-the entire patchset, or if you're able to deal with it as-is? As it stands,=
- the
-DKIM-Signature cruft above needs to be manually removed, either from the pa=
-tch, or
-from the commit log after applying the patch.
+I have been thinking of this, and discussing with our heap profiler folks.
+Not being able to track shared pages would be a limitation, but I don't see
+any way forward considering this security concern so maybe we have to
+limit what we can do.
 
-Also, as noted in the email thread involving Bharath and sgi-gru [1], I'm
-currently planning on branching from your tree, and continuing the misc
-call site conversions from there. And then just adapting to whatever API
-changes are made to vaddr_*() functions. And the biovec call site conversio=
-ns should
-be based on that as well.
+I will look into implementing this without doing the rmap but still make it
+work on shared pages from the point of view of the process being tracked. It
+just would no longer through the PTEs of *other* processes sharing the page.
 
-[1] https://lore.kernel.org/r/0c2ad29b-934c-ec30-66c3-b153baf1fba5@nvidia.c=
-om
+My current thought is to just rely on the PTE accessed bit, and not use the
+PageIdle flag at all. But we'd still set the PageYoung flag so that the
+reclaim code still sees the page as accessed. The reason I feel like avoiding
+the PageIdle flag is:
+
+1. It looks like mark_page_accessed() can be called from other paths which
+can also result in some kind of side-channel issue if a page was shared.
+
+2. I don't think I need the PageIdle flag since the access bit alone should
+let me know, although it could be a bit slower. Since previously, I did not
+need to check every PTE and if the PageIdle flag was already cleared, then
+the page was declared as idle.
+
+At least this series resulted in a bug fix and a tonne of learning, so thank
+you everyone!
+
+Any other thoughts?
 
 thanks,
---=20
-John Hubbard
-NVIDIA
+
+ - Joel
 
