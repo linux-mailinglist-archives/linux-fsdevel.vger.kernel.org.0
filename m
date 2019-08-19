@@ -2,100 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6F8194B62
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 19:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C30594B5A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2019 19:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfHSRLl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 13:11:41 -0400
-Received: from mail.onyx.syn-alias.com ([206.152.134.66]:7916 "EHLO
-        smtp.centurylink.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbfHSRLl (ORCPT
+        id S1727883AbfHSRKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 13:10:37 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:58618 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbfHSRKh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 13:11:41 -0400
-X_CMAE_Category: , ,
-X-CNFS-Analysis: v=2.3 cv=CrjBjUwD c=1 sm=1 tr=0 a=drvu8zGeucWdAOB5xm80Fw==:117 a=drvu8zGeucWdAOB5xm80Fw==:17 a=KGjhK52YXX0A:10 a=FmdZ9Uzk2mMA:10 a=5hZkEVmpKn8A:10 a=eQrCS-SpgXYA:10 a=6I5d2MoRAAAA:8 a=X0MrpzQjXdrw5BecmA0A:9 a=IjZwj45LgO3ly-622nXo:22 a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
-X-CM-Score: 0
-X-Scanned-by: Cloudmark Authority Engine
-Feedback-ID: dfw:ctl:res:onyx
-X-Authed-Username: YWxhbnNvbWVyc0BjZW50dXJ5bGluay5uZXQ=
-Authentication-Results:  smtp03.onyx.dfw.sync.lan smtp.user=alansomers@centurylink.net; auth=pass (LOGIN)
-Received: from [63.224.81.240] ([63.224.81.240:26824] helo=threonine.lauralan.noip.me)
-        by smtp.centurylink.net (envelope-from <asomers@freebsd.org>)
-        (ecelerity 3.6.25.56547 r(Core:3.6.25.0)) with ESMTPSA (cipher=DHE-RSA-AES128-GCM-SHA256) 
-        id B3/0A-03092-B48DA5D5; Mon, 19 Aug 2019 13:11:39 -0400
-From:   asomers@FreeBSD.org
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        Nikolaus@rath.org
-Cc:     Alan Somers <asomers@FreeBSD.org>
-Subject: [PATCH] fuse: Add changelog entries for protocols 7.1-7.8
-Date:   Mon, 19 Aug 2019 11:10:30 -0600
-Message-Id: <20190819171030.10586-1-asomers@FreeBSD.org>
-X-Mailer: git-send-email 2.22.0
+        Mon, 19 Aug 2019 13:10:37 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 4E1CE6083139;
+        Mon, 19 Aug 2019 19:10:34 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 1PQhCAiESOU6; Mon, 19 Aug 2019 19:10:34 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 0EF46621FCD3;
+        Mon, 19 Aug 2019 19:10:34 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 50KLyhFl0tO2; Mon, 19 Aug 2019 19:10:33 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id D5D506088967;
+        Mon, 19 Aug 2019 19:10:33 +0200 (CEST)
+Date:   Mon, 19 Aug 2019 19:10:33 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     linux-erofs@lists.ozlabs.org
+Cc:     gaoxiang25@huawei.com, linux-fsdevel@vger.kernel.org,
+        yuchao0@huawei.com, linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1323459733.69859.1566234633793.JavaMail.zimbra@nod.at>
+Subject: erofs: Question on unused fields in on-disk structs
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Index: bPOHXV7QxwRTyFuSImcS2EHKU0x0Yw==
+Thread-Topic: erofs: Question on unused fields in on-disk structs
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Alan Somers <asomers@FreeBSD.org>
+Hi!
 
-Retroactively add changelog entry for FUSE protocols 7.1 through 7.8.
+struct erofs_super_block has "checksum" and "features" fields,
+but they are not used in the source.
+What is the plan for these?
 
-Signed-off-by: Alan Somers <asomers@FreeBSD.org>
----
- include/uapi/linux/fuse.h | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Same for i_checksum in erofs_inode_v1 and erofs_inode_v2.
 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 19fb55e3c73e..93784c4509a1 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -38,6 +38,44 @@
-  *
-  * Protocol changelog:
-  *
-+ * 7.1:
-+ *  - add FUSE_SETATTR, FUSE_SYMLINK, FUSE_MKNOD, FUSE_MKDIR, FUSE_UNLINK,
-+ *    FUSE_RMDIR, FUSE_RENAME, and FUSE_LINK messages
-+ *  - add FUSE_OPEN, FUSE_READ, FUSE_WRITE, FUSE_RELEASE, FUSE_FSYNC, and
-+ *    FUSE_FLUSH messages
-+ *  - add FUSE_SETXATTR, FUSE_GETXATTR, FUSE_LISTXATTR, and FUSE_REMOVEXATTR
-+ *    messages
-+ *  - add padding to messages to accomodate 32-bit servers on 64-bit kernels
-+ *  - add FUSE_OPENDIR, FUSE_READDIR, and FUSE_RELEASEDIR messages
-+ *
-+ * 7.2:
-+ *  - add FOPEN_DIRECT_IO and FOPEN_KEEP_CACHE flags
-+ *  - add FUSE_FSYNCDIR message
-+ *
-+ * 7.3:
-+ *  - add FUSE_ACCESS message
-+ *  - add FUSE_CREATE message
-+ *  - add filehandle to fuse_setattr_in
-+ *
-+ * 7.4:
-+ *  - add frsize to fuse_kstatfs
-+ *  - clean up request size limit checking
-+ *
-+ * 7.5:
-+ *  - add flags and max_write to fuse_init_out
-+ *
-+ * 7.6:
-+ *  - add max_readahead to fuse_init_in and fuse_init_out
-+ *
-+ * 7.7:
-+ *  - add FUSE_INTERRUPT message
-+ *  - add POSIX file lock support
-+ *
-+ * 7.8:
-+ *  - add lock_owner and flags fields to fuse_release_in
-+ *  - add FUSE_BMAP message
-+ *  - add FUSE_DESTROY message
-+ *
-  * 7.9:
-  *  - new fuse_getattr_in input argument of GETATTR
-  *  - add lk_flags in fuse_lk_in
--- 
-2.21.0
+At least the "features" field in the super block is something I'd
+expect to be used.
+...such that you can have new filesystem features in future.
 
+Thanks,
+//richard
