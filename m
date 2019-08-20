@@ -2,137 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF67796C93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 00:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8171496D9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 01:24:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfHTW6H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 18:58:07 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:36685 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfHTW6H (ORCPT
+        id S1726466AbfHTXUz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 19:20:55 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:37265 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbfHTXUy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 18:58:07 -0400
-Received: by mail-io1-f70.google.com with SMTP id i6so500595ioi.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 15:58:07 -0700 (PDT)
+        Tue, 20 Aug 2019 19:20:54 -0400
+Received: by mail-vk1-f202.google.com with SMTP id c199so75201vkc.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 16:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=d/yRotIqofKL6ivNLT0spFL8C+ImKotVaARxIwjjT6U=;
+        b=AVw2bVu+4NwiDCTMe7ctCvAsytyWg/rXh1qSlFIYcZ34MZ2W4zFBX61usfUDXKDI+U
+         6mkzeHkKvCm3jsXc7ellvdvzMZ/yYq5pQYIgEJEeej2GmzjldUwbhas7sVL0y1BF9R5Q
+         aeLd89FDK15SPfbl+SuyrbqBs3o2uiag6LIW+dn6YgaIXzRVfITYu/qa+PVnh2pu0la1
+         EgwkQGeMgeft4WVs3y+cr1sGSCDFeF0e6bPs6wefJLtZGnA3fREotyJnv1WY33ED8Kos
+         PZta1YwDrJCXLZftQ0jdf7GzZQX+uUMqkEw7bGquy+vwd3aApIC+kCto7n+WJu4zEbsw
+         +lOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=96tDGWwwRLUJuc8ZLUttwZP0NNSrENPZkHRRK+Wfi44=;
-        b=ABRt7ECqV6l5aytk6uLIzkT1b2t1/6Iw/v2369boVq/tvQzVvLD9PpL9qd9rKoMgk7
-         OnuGqJC0AIKHE9nRa2wqGadYRQ+WB760LoyRtMhIXhwOXNFUkakYIWStS+HYv7P8PrMS
-         nOfqinAzJENLFK8ZjeLy1Iaqm0GVZYM+96nekMjJ3D6GdNsNbClD7T95yHnY5IG10tqo
-         BwCnwnuS6+1vZqaIySlF57FpQKkdlEhifdiLMy7NFd0pPIFSb/2wi9sqpJM7JnqFm3l1
-         raDLSO4HHBqV06o47lBr5zrh8sCMGe0SjxHWJtGuR13LD6wzwZ4jCr/tmDruG8rkihrl
-         GYQA==
-X-Gm-Message-State: APjAAAVMmEQTPRXbhhqg9q2bxWz3wGU5k7uXWZ7UUxi62VurnsUSirul
-        DvrS4+4VN5zdi8izN0XjrqdeZ1G1RfqJmwq91XyBaZE0cLbD
-X-Google-Smtp-Source: APXvYqz5NCXreIdnYQdGhBkGQdho4Cjw9M7clGtOieGpTNyO+v/kCngHgT18s6Ee+84CHbD/K3d+HpY/brmlpOl2ap/3VTur9qP5
-MIME-Version: 1.0
-X-Received: by 2002:a02:a492:: with SMTP id d18mr6795099jam.27.1566341886589;
- Tue, 20 Aug 2019 15:58:06 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 15:58:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bf410005909463ff@google.com>
-Subject: WARNING: refcount bug in cdev_get
-From:   syzbot <syzbot+82defefbbd8527e1c2cb@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=d/yRotIqofKL6ivNLT0spFL8C+ImKotVaARxIwjjT6U=;
+        b=TdQqxXF/gQ6DrOEXG+jnu6NdOUfaJVoZtfNCYNFjIhY5nzLZaxaVzVuY3JYiNKzR4n
+         ijQU++Z7LMwU6kqJybyAvbBXZw3LIIYni3ua4QEh3XN+A/bzgim6IfdPFobqLH4A91UT
+         AOp58osq73DAfqK92u86Qo+ctjP6f1dl/rGSShaRKw7UZWtg+X/Vj8hoG7f1PH+irJBI
+         rVaLfNG44uWzq3n8xnAOR10cke6FsNIaMurWJSZnlc8lBuE4YM2jnS9/LIZj9/JmDzyG
+         hqUJ2nDZ3f8CvAsThsCel04uZmHjMECxVlivblIi0ahYSMLiGYglkxb71AQScttecyUF
+         Nn2w==
+X-Gm-Message-State: APjAAAWSizqAXbN7ptCKK5WGF3KfE2/eVDpu98MVNypcSba7RFGoo1z3
+        jGpDCxhrMYaXCqlwmUFoDR6jx9UBf/MzG/Bd/6QReg==
+X-Google-Smtp-Source: APXvYqxI/nPId+DHfk6D741GOqFrVhdMCpaqnV+6xqhMReBcYshk3sm1bvTSqco2NKWiElhS3+UgytqYYzLVwPw9MVYXZA==
+X-Received: by 2002:a67:2605:: with SMTP id m5mr19353609vsm.120.1566343253112;
+ Tue, 20 Aug 2019 16:20:53 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 16:20:28 -0700
+Message-Id: <20190820232046.50175-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH v14 00/18] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
+        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
+        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
+        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+## TL;DR
 
-syzbot found the following crash on:
+This revision addresses comments from Shuah by removing two macros that
+were causing checkpatch errors. No API or major structual changes have
+been made since v13.
 
-HEAD commit:    2d63ba3e Merge tag 'pm-5.3-rc5' of git://git.kernel.org/pu..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=165d3302600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3ff364e429585cf2
-dashboard link: https://syzkaller.appspot.com/bug?extid=82defefbbd8527e1c2cb
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c8ab3c600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16be0c4c600000
+## Background
 
-Bisection is inconclusive: the bug happens on the oldest tested release.
+This patch set proposes KUnit, a lightweight unit testing and mocking
+framework for the Linux kernel.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11de3622600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=15de3622600000
+Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+it does not require installing the kernel on a test machine or in a VM
+(however, KUnit still allows you to run tests on test machines or in VMs
+if you want[1]) and does not require tests to be written in userspace
+running on a host kernel. Additionally, KUnit is fast: From invocation
+to completion KUnit can run several dozen tests in about a second.
+Currently, the entire KUnit test suite for KUnit runs in under a second
+from the initial invocation (build time excluded).
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+82defefbbd8527e1c2cb@syzkaller.appspotmail.com
+KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+Googletest/Googlemock for C++. KUnit provides facilities for defining
+unit test cases, grouping related test cases into test suites, providing
+common infrastructure for running tests, mocking, spying, and much more.
 
-------------[ cut here ]------------
-refcount_t: increment on 0; use-after-free.
-WARNING: CPU: 1 PID: 11828 at lib/refcount.c:156 refcount_inc_checked  
-lib/refcount.c:156 [inline]
-WARNING: CPU: 1 PID: 11828 at lib/refcount.c:156  
-refcount_inc_checked+0x61/0x70 lib/refcount.c:154
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 11828 Comm: syz-executor746 Not tainted 5.3.0-rc4+ #112
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2dc/0x755 kernel/panic.c:219
-  __warn.cold+0x20/0x4c kernel/panic.c:576
-  report_bug+0x263/0x2b0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:refcount_inc_checked lib/refcount.c:156 [inline]
-RIP: 0010:refcount_inc_checked+0x61/0x70 lib/refcount.c:154
-Code: 1d 8e c6 64 06 31 ff 89 de e8 ab 9c 35 fe 84 db 75 dd e8 62 9b 35 fe  
-48 c7 c7 00 05 c6 87 c6 05 6e c6 64 06 01 e8 67 26 07 fe <0f> 0b eb c1 90  
-90 90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57 41
-RSP: 0018:ffff8880907d78b8 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815c2466 RDI: ffffed10120faf09
-RBP: ffff8880907d78c8 R08: ffff8880a771a200 R09: fffffbfff134ae48
-R10: fffffbfff134ae47 R11: ffffffff89a5723f R12: ffff88809ea2bb80
-R13: 0000000000000000 R14: ffff88809ff6cd40 R15: ffff8880a1c56480
-  kref_get include/linux/kref.h:45 [inline]
-  kobject_get+0x66/0xc0 lib/kobject.c:644
-  cdev_get+0x60/0xb0 fs/char_dev.c:355
-  chrdev_open+0xb0/0x6b0 fs/char_dev.c:400
-  do_dentry_open+0x4df/0x1250 fs/open.c:797
-  vfs_open+0xa0/0xd0 fs/open.c:906
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x10e9/0x4630 fs/namei.c:3533
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1089
-  __do_sys_open fs/open.c:1107 [inline]
-  __se_sys_open fs/open.c:1102 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1102
-  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x406311
-Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 a4 18 00 00 c3 48  
-83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 02 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007f047e1c0960 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000406311
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007f047e1c0970
-RBP: 6666666666666667 R08: 000000000000000f R09: 00007f047e1c1700
-R10: 00007f047e1c19d0 R11: 0000000000000293 R12: 00000000006dbc3c
-R13: 0000000000000000 R14: 0000000000000000 R15: 00000000317a7973
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+### What's so special about unit testing?
 
+A unit test is supposed to test a single unit of code in isolation,
+hence the name. There should be no dependencies outside the control of
+the test; this means no external dependencies, which makes tests orders
+of magnitudes faster. Likewise, since there are no external dependencies,
+there are no hoops to jump through to run the tests. Additionally, this
+makes unit tests deterministic: a failing unit test always indicates a
+problem. Finally, because unit tests necessarily have finer granularity,
+they are able to test all code paths easily solving the classic problem
+of difficulty in exercising error handling code.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+### Is KUnit trying to replace other testing frameworks for the kernel?
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+No. Most existing tests for the Linux kernel are end-to-end tests, which
+have their place. A well tested system has lots of unit tests, a
+reasonable number of integration tests, and some end-to-end tests. KUnit
+is just trying to address the unit test space which is currently not
+being addressed.
+
+### More information on KUnit
+
+There is a bunch of documentation near the end of this patch set that
+describes how to use KUnit and best practices for writing unit tests.
+For convenience I am hosting the compiled docs here[2].
+
+Additionally for convenience, I have applied these patches to a
+branch[3]. The repo may be cloned with:
+git clone https://kunit.googlesource.com/linux
+This patchset is on the kunit/rfc/v5.3/v14 branch.
+
+## Changes Since Last Version
+
+- Removed to macros which helped define expectation and assertion
+  macros; these values are now just copied and pasted. Change was made
+  to fix checkpatch error, as suggested by Shuah.
+
+[1] https://google.github.io/kunit-docs/third_party/kernel/docs/usage.html#kunit-on-non-uml-architectures
+[2] https://google.github.io/kunit-docs/third_party/kernel/docs/
+[3] https://kunit.googlesource.com/linux/+/kunit/rfc/v5.3/v14
+
+-- 
+2.23.0.rc1.153.gdeed80330f-goog
+
