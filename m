@@ -2,119 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CBD79582F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 09:21:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8670E9586E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 09:30:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729365AbfHTHUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 03:20:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33026 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729281AbfHTHUt (ORCPT
+        id S1729288AbfHTHa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 03:30:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46098 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729198AbfHTHa1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 03:20:49 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g2so2836354pfq.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 00:20:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OStUPKo5sN9egAemPnPnKeBI2FmMQ5/hY6tft1KYiXk=;
-        b=DcPV47hlMeDiDYc/zFnnkUIz4niwFiL0MMwy40hlKCp8341i8StydIXRMol8VP79LX
-         rjtYzExU7TFxH/M32x/5x+ZHloiYg73XxwBOh+jVSzmI3HdnXHzhWLfDkArDNrLw1fks
-         ju5LKkVbfpQOjNOyhjwAVWgyuHRFRy9+YDDhY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OStUPKo5sN9egAemPnPnKeBI2FmMQ5/hY6tft1KYiXk=;
-        b=Vi8wuegeA7H1rDGJ5fFqSLryE7XgQhVuJuPrZTTiIZC4C+2o9vcr9T3hdvarVVUE+Q
-         uIc3yneqG8mHKq80GEgsJf29BHfnPKSoeB2x58wRjHcTz94pLNvRUBDD8sVz2Le5PvhW
-         o2PjO67dIFroxEZrX3C3A/c3M8YZ5Rlct5TtwKaRyrhayI7yquABAvRfL1E0fS17EdXe
-         JHAeNUbt6fvAJvRr+A6lo/mrIVziGTrAh9uZ7V3OqrPLJEXA4/R/p/dpqoGtyrIyqHgW
-         H571LZ6NiQ2xr0xX7Z4UHzWMdLxadMQpWY8QiFY5Pm4gCOpTa/gcgU+PvKLi0Jx6dyqy
-         uaPA==
-X-Gm-Message-State: APjAAAWuo7cQFIIxeLRvi7axZcAuWoMMzIrqgrMykU3Tc++LOUtcx+Ti
-        YL6c25pwJ6s8EGd76voX1w8mgg==
-X-Google-Smtp-Source: APXvYqwWUcjmVD0TwhGffPY2cJEQgD5exrALleD++McO3Q/ZZguhV4uJRUS979nQEXLo9MxExzpSGw==
-X-Received: by 2002:aa7:8b11:: with SMTP id f17mr28566271pfd.19.1566285648592;
-        Tue, 20 Aug 2019 00:20:48 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t7sm15240967pgp.68.2019.08.20.00.20.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Aug 2019 00:20:47 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 00:20:46 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
-        arnd@arndb.de, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com
-Subject: Re: [PATCH v8 19/20] pstore: fs superblock limits
-Message-ID: <201908200018.8C876788@keescook>
-References: <20190818165817.32634-1-deepa.kernel@gmail.com>
- <20190818165817.32634-20-deepa.kernel@gmail.com>
+        Tue, 20 Aug 2019 03:30:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yuiBGszRMG8jYGlr5edUN6NqZ7nqR/Q4hrdSdVriY+Y=; b=WBr0CROubugXg9aBfeqbWfLZT
+        hceMHl1ObeG2uKnMPYF41qu60CXmPig9ParKGolHg1Ah/ZLhbizntzH+JjHOgJ+G4MMxi/jwTv7yI
+        nkCxbv+awYLB0hHnvygi88hQq49hi9k/3vjqxIvnAIdZR4fzse44PEzSL/ZJ2OkXXbf+DsW8tlp48
+        gDXrtXqtNuTVDqxK4WqXvktoOq9xB2qUeMdGvhhSMPrnIDQICBDyeKpjdW2ldQSf6eXmj2OS7if/v
+        iGfwol1V4J3gWPOosmMs1T5PYGlQgQKTCLS6AB309NjdOVNBB87+hmtyAzGhkJON+UfERPuwKKw3I
+        v3Ad9ykKg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hzyb4-0007rX-N8; Tue, 20 Aug 2019 07:30:26 +0000
+Date:   Tue, 20 Aug 2019 00:30:26 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Damien.LeMoal@wdc.com,
+        agruenba@redhat.com
+Subject: Re: [PATCH v4 0/6] iomap: lift the xfs writepage code into iomap
+Message-ID: <20190820073026.GA23347@infradead.org>
+References: <156444945993.2682261.3926017251626679029.stgit@magnolia>
+ <20190816065229.GA28744@infradead.org>
+ <20190817014633.GE752159@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190818165817.32634-20-deepa.kernel@gmail.com>
+In-Reply-To: <20190817014633.GE752159@magnolia>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 09:58:16AM -0700, Deepa Dinamani wrote:
-> Leaving granularity at 1ns because it is dependent on the specific
-> attached backing pstore module. ramoops has microsecond resolution.
+On Fri, Aug 16, 2019 at 06:46:33PM -0700, Darrick J. Wong wrote:
+> On Thu, Aug 15, 2019 at 11:52:29PM -0700, Christoph Hellwig wrote:
+> > Darrick,
+> > 
+> > are you going to queue this up?
 > 
-> Fix the readback of ramoops fractional timestamp microseconds,
-> which has incorrectly been reporting the value as nanoseconds since
-> 3f8f80f0 ("pstore/ram: Read and write to the 'compressed' flag of pstore").
+> Yes, I'll go promote the iomap writeback branch to iomap-for-next.  I
+> haven't 100% convinced myself that it's a good idea to hook up xfs to it
+> yet, if nothing else because of all the other problems I've had getting
+> 5.3 testing to run to completion reliably...
 
-As such, this should also have:
+Oh well.  I had some XFS/iomap patches I want to dust off that depend
+on it, but I guess they'll have to wait then.
 
-Fixes: 3f8f80f0cfeb ("pstore/ram: Read and write to the 'compressed' flag of pstore")
-
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Acked-by: Kees Cook <keescook@chromium.org>
-
-Also: this is going via some other tree, yes? (Or should I pick this up
-for the pstore tree?)
-
-Thanks!
-
--Kees
-
-> Cc: anton@enomsg.org
-> Cc: ccross@android.com
-> Cc: keescook@chromium.org
-> Cc: tony.luck@intel.com
-> ---
->  fs/pstore/ram.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index 2bb3468fc93a..8caff834f002 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -144,6 +144,7 @@ static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
->  	if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lld.%lu-%c\n%n",
->  		   (time64_t *)&time->tv_sec, &time->tv_nsec, &data_type,
->  		   &header_length) == 3) {
-> +		time->tv_nsec *= 1000;
->  		if (data_type == 'C')
->  			*compressed = true;
->  		else
-> @@ -151,6 +152,7 @@ static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
->  	} else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lld.%lu\n%n",
->  			  (time64_t *)&time->tv_sec, &time->tv_nsec,
->  			  &header_length) == 2) {
-> +		time->tv_nsec *= 1000;
->  		*compressed = false;
->  	} else {
->  		time->tv_sec = 0;
-> -- 
-> 2.17.1
-> 
-
--- 
-Kees Cook
+We just need to be very careful the versions don't get out of sync,
+which would be a major pain in the butt.
