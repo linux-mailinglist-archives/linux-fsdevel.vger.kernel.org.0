@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09EC0954E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 05:15:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56CCA954E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 05:15:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfHTDOO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 23:14:14 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44358 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728719AbfHTDOO (ORCPT
+        id S1729075AbfHTDOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 23:14:25 -0400
+Received: from mail-pf1-f172.google.com ([209.85.210.172]:37373 "EHLO
+        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728890AbfHTDOZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 23:14:14 -0400
-Received: by mail-pf1-f194.google.com with SMTP id c81so2428145pfc.11;
-        Mon, 19 Aug 2019 20:14:13 -0700 (PDT)
+        Mon, 19 Aug 2019 23:14:25 -0400
+Received: by mail-pf1-f172.google.com with SMTP id 129so2435048pfa.4;
+        Mon, 19 Aug 2019 20:14:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mQPEFXG5NaLlLl7jM/5xQz0mHSvpnN8IjBBA+T4iEGI=;
-        b=iMbBm1t2dofey1/BjH/Eg1cEpum8t/m7wE9e1cyHBXL7q/vtT2D5LiAGnel49NAZs1
-         5xEy/yW7jwaNHsZBbu4hLW12egjPaBs8gj+opFvWOgSEI+IoO5M7FnuLR62+5rwGctpd
-         fAF/+nTqyGVGFDiMY1Q8FoP4W943aNDB1YdRAIEnT8fxcz2Z1GmDOaHMe3odEyqYu6SF
-         iDTmdXEByZOoQtpCS3yJj5EgnHmdAEboGvyme0iHZcnR3FQfO0LrJ6wNChu9iZhNeOwu
-         u6nxe7f2/gL0cvp2pSMeLllYTe/nkEWWN77pGqjtqyGV4QCOPp3ybAxjRxkwm0Xsht/8
-         lH4A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=K4of2PnnHi951vdKUeK2K+sxyHzoe/hoiqAy/eVEirM=;
+        b=qnvx2lkhaPKZ2PX5FAyasqmmW2NoOyz64n3FGHz179t53oPUjxZUlnwbnIk+4Dlg3D
+         EzguXrsYM8ygUZVVDCwCFcdo/++fB2CYHoLBUbn3WUEqKpQhN1+UTg5OpFs1B18ai88u
+         3v1SzY7sxLZQFdWWUYgFwNh3giTFWs3V9tuVqjLxgZTxsXGT5wbirhQd2czpspT5FoNL
+         ibmdQmM2egXzqR1sqZU/Hu66LpSBAIosjOCr6WLfQJtNJKEMZPuz2fDM1qzHWI7nr6nU
+         sT+WvHPw5Y5bSv8PuGW2oXUaxI3njyq7YSYoplv4frx38erw+my9Z7S0Lh6ELbGgpW8q
+         brug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mQPEFXG5NaLlLl7jM/5xQz0mHSvpnN8IjBBA+T4iEGI=;
-        b=pMTlPet/nly6zn946zHjUSmt+EuJBFKLbyn6JLQ6Hs6oKjaBFyQ/Wu9S0Z0ZGAjOX/
-         V7tGxF4QfluP1Eob3dBK0IhQAYJnjjoGxNuwTgmpyjKaHAo+wY9vx348o5Jpm9pAVVn8
-         NdGqaV9vu/FqP42qVq2Bsen2xHluO2MoogAhc1q23umK9BrrlAb0CtkRToWpv7gcz0XL
-         uXw9ZCFD6b9iev15NW3AID3vZG0m7AOp255J7IFAUczwXEmeHqDv7g0hhsGtN+T1iX5s
-         o+tRSUijuupckjXKRol5dubBuo7M4jrrJDjxFdZ0EMNYoEgW8Xipy2zXl0AGyv2XdFOD
-         S5jw==
-X-Gm-Message-State: APjAAAU9xLxCFYrHRmsf1QwwkJhe6qT8xsD24ObaFoVELiy+M6LqJMOv
-        7a8M/lVp8AmFN+thAkQFSp4=
-X-Google-Smtp-Source: APXvYqzTyrvm8j5S2KopDYOUCwWLbYjSfCB/F2McmAtf80ofjPkVHJavNFhSAmrdz0MFXxcGSNfoFA==
-X-Received: by 2002:aa7:8dd2:: with SMTP id j18mr27375110pfr.88.1566270853683;
-        Mon, 19 Aug 2019 20:14:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=K4of2PnnHi951vdKUeK2K+sxyHzoe/hoiqAy/eVEirM=;
+        b=B1MJF1536wQUwJFADj/eUxhalDpaVj1x4nk8SxJBGsJqdYyk0bLPRevyQVLTBpt/qO
+         ZUHEmlxaNzsnrz8n9lyjrdpbvMENcIMSVWk+6SnY3ooMiswfQ0KpniDZcbakICMvItf4
+         eep52MiVZOnrQGd0bA+CEcK8veEEsykb3r6Pc+PUHGttvaGJb7B0v/QJUroKSMZ4lzZa
+         CZCV1G0V1DTR3Omj9fsGgr/SE1xxZAMUaZpSZD1hxjOXjMzf4yuE0QYggTdnbvDiN8m7
+         XGAu8xzUSzBIXS5w0BKdzSAiVlFBj0hMTe8IQXNxA8YOUyTLgbDLXWriDnE1mosMGkc0
+         5/gA==
+X-Gm-Message-State: APjAAAUY8ou/Xb4iTn1vig+etKryCP0WebBSamHRHv1x7S2eblac7p9d
+        bE5/6WR61w7wmVazHjr+ZEs=
+X-Google-Smtp-Source: APXvYqz9a/3SyryqSwUMcB7DFqYmpTTlG+WpK9xSoJbY4pJWLd2w/rkmZkHdR5wOYLwXn7nrZmj2Kg==
+X-Received: by 2002:a65:52c5:: with SMTP id z5mr22933012pgp.118.1566270864801;
+        Mon, 19 Aug 2019 20:14:24 -0700 (PDT)
 Received: from localhost.localdomain ([175.223.16.125])
-        by smtp.gmail.com with ESMTPSA id y16sm22979651pfc.36.2019.08.19.20.14.09
+        by smtp.gmail.com with ESMTPSA id y16sm22979651pfc.36.2019.08.19.20.14.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 20:14:12 -0700 (PDT)
+        Mon, 19 Aug 2019 20:14:24 -0700 (PDT)
 From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 To:     Jani Nikula <jani.nikula@linux.intel.com>,
@@ -57,10 +57,12 @@ To:     Jani Nikula <jani.nikula@linux.intel.com>,
 Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCHv2 1/2] fs: export put_filesystem()
-Date:   Tue, 20 Aug 2019 12:13:58 +0900
-Message-Id: <20190820031359.11717-1-sergey.senozhatsky@gmail.com>
+Subject: [PATCHv2 2/2] i915: do not leak module ref counter
+Date:   Tue, 20 Aug 2019 12:13:59 +0900
+Message-Id: <20190820031359.11717-2-sergey.senozhatsky@gmail.com>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190820031359.11717-1-sergey.senozhatsky@gmail.com>
+References: <20190820031359.11717-1-sergey.senozhatsky@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -68,27 +70,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Modules, e.g. i915, can use exported get_fs_type(), but are
-unable to put_filesystem(). Export it and let modules to
-decrement file systems' reference counters.
+Always put_filesystem() in i915_gemfs_init().
 
 Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 ---
- fs/filesystems.c | 1 +
+ - v2: rebased (i915 does not remount gemfs anymore)
+
+ drivers/gpu/drm/i915/gem/i915_gemfs.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/fs/filesystems.c b/fs/filesystems.c
-index 9135646e41ac..02669839b584 100644
---- a/fs/filesystems.c
-+++ b/fs/filesystems.c
-@@ -45,6 +45,7 @@ void put_filesystem(struct file_system_type *fs)
- {
- 	module_put(fs->owner);
- }
-+EXPORT_SYMBOL(put_filesystem);
+diff --git a/drivers/gpu/drm/i915/gem/i915_gemfs.c b/drivers/gpu/drm/i915/gem/i915_gemfs.c
+index 5e6e8c91ab38..0a398e1e45fc 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gemfs.c
++++ b/drivers/gpu/drm/i915/gem/i915_gemfs.c
+@@ -30,6 +30,7 @@ int i915_gemfs_init(struct drm_i915_private *i915)
+ 	 */
  
- static struct file_system_type **find_filesystem(const char *name, unsigned len)
- {
+ 	gemfs = kern_mount(type);
++	put_filesystem(type);
+ 	if (IS_ERR(gemfs))
+ 		return PTR_ERR(gemfs);
+ 
 -- 
 2.23.0
 
