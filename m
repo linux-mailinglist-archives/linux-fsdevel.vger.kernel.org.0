@@ -2,138 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6526D9534E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 03:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDCB29535B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 03:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728819AbfHTBVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 21:21:36 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:35324 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728627AbfHTBVf (ORCPT
+        id S1728887AbfHTB07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 21:26:59 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33627 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728647AbfHTB06 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 21:21:35 -0400
-Received: from dread.disaster.area (pa49-195-190-67.pa.nsw.optusnet.com.au [49.195.190.67])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 484EE362204;
-        Tue, 20 Aug 2019 11:21:31 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hzsov-0001Ym-Er; Tue, 20 Aug 2019 11:20:21 +1000
-Date:   Tue, 20 Aug 2019 11:20:21 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
+        Mon, 19 Aug 2019 21:26:58 -0400
+Received: by mail-pl1-f195.google.com with SMTP id go14so1844806plb.0;
+        Mon, 19 Aug 2019 18:26:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=1f+qnxuSTkrKhQhWKPw8r3KGzNHzDoVDPUhIrlUlE4U=;
+        b=ZBtQCObjsYU8plmwtDPelF7jsZrSpaLaLe6lBEeeieODGofikgi93DLlwvPMAJTUfT
+         xxSipbrf4cAH+w6Gt/v2apc4UeDO+AV3auZctNowiflnI1SV2jnwmTNu117p7R3PT69i
+         41bAews7H4PTuBjBFAvPCSXfto3JbFTtwxGImlR1LqyTiN6U83WE8P3h7mJ5HBusyWxW
+         RFNTht19ngrU9/b50Z1YRiSL7gbnqBRcklE057Y2HjlVZxJSFhA7HpdZUWHUQBd5T3ET
+         /xqAXJDrQf8k1x3B7X5+7V4DcCZAZENn3PLUjK/SinHsQfA3qEKkFupgAqIzQpHyMpP+
+         beyA==
+X-Gm-Message-State: APjAAAWZFyG4vVU8fpNp/PXqI6F7s7KQcHFHQeSuKOuGuUMW1xDyr9iO
+        MAmhqZFQj6wJAhRDdHiBmIGuaWbf
+X-Google-Smtp-Source: APXvYqwqmd8RfIeVgvfWwDKTWUaFR0bqyFGd+0cynJ08MQsmabbIYy4tspHV9X9PTCioiALEkqHmag==
+X-Received: by 2002:a17:902:2f43:: with SMTP id s61mr9505645plb.22.1566264417657;
+        Mon, 19 Aug 2019 18:26:57 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id j9sm18162084pfe.103.2019.08.19.18.26.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 18:26:56 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 87CAF4035F; Tue, 20 Aug 2019 01:26:55 +0000 (UTC)
+Date:   Tue, 20 Aug 2019 01:26:55 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
-        linux-xfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190820012021.GQ7777@dread.disaster.area>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190814101714.GA26273@quack2.suse.cz>
- <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
- <20190815130558.GF14313@quack2.suse.cz>
- <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
- <20190817022603.GW6129@dread.disaster.area>
- <20190819063412.GA20455@quack2.suse.cz>
- <20190819092409.GM7777@dread.disaster.area>
- <ae64491b-85f8-eeca-14e8-2f09caf8abd2@nvidia.com>
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 3/3] firmware: add mutex fw_lock_fallback for race
+ condition
+Message-ID: <20190820012655.GU16384@42.do-not-panic.com>
+References: <20190816000945.29810-1-scott.branden@broadcom.com>
+ <20190816000945.29810-4-scott.branden@broadcom.com>
+ <20190819053937.GR16384@42.do-not-panic.com>
+ <16823ee6-c52a-b3b5-caed-79c00772fa68@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ae64491b-85f8-eeca-14e8-2f09caf8abd2@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <16823ee6-c52a-b3b5-caed-79c00772fa68@broadcom.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=TR82T6zjGmBjdfWdGgpkDw==:117 a=TR82T6zjGmBjdfWdGgpkDw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
-        a=7-415B0cAAAA:8 a=rV-TrcAmjTgZ-WCYr6sA:9 a=T_cMid2Q6N9PW1nF:21
-        a=ZVtkOv0JeXpnhdDN:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 05:05:53PM -0700, John Hubbard wrote:
-> On 8/19/19 2:24 AM, Dave Chinner wrote:
-> > On Mon, Aug 19, 2019 at 08:34:12AM +0200, Jan Kara wrote:
-> > > On Sat 17-08-19 12:26:03, Dave Chinner wrote:
-> > > > On Fri, Aug 16, 2019 at 12:05:28PM -0700, Ira Weiny wrote:
-> > > > > On Thu, Aug 15, 2019 at 03:05:58PM +0200, Jan Kara wrote:
-> > > > > > On Wed 14-08-19 11:08:49, Ira Weiny wrote:
-> > > > > > > On Wed, Aug 14, 2019 at 12:17:14PM +0200, Jan Kara wrote:
-> ...
-> > The last close is an interesting case because the __fput() call
-> > actually runs from task_work() context, not where the last reference
-> > is actually dropped. So it already has certain specific interactions
-> > with signals and task exit processing via task_add_work() and
-> > task_work_run().
-> > 
-> > task_add_work() calls set_notify_resume(task), so if nothing else
-> > triggers when returning to userspace we run this path:
-> > 
-> > exit_to_usermode_loop()
-> >    tracehook_notify_resume()
-> >      task_work_run()
-> >        __fput()
-> > 	locks_remove_file()
-> > 	  locks_remove_lease()
-> > 	    ....
-> > 
-> > It's worth noting that locks_remove_lease() does a
-> > percpu_down_read() which means we can already block in this context
-> > removing leases....
-> > 
-> > If there is a signal pending, the task work is run this way (before
-> > the above notify path):
-> > 
-> > exit_to_usermode_loop()
-> >    do_signal()
-> >      get_signal()
-> >        task_work_run()
-> >          __fput()
-> > 
-> > We can detect this case via signal_pending() and even SIGKILL via
-> > fatal_signal_pending(), and so we can decide not to block based on
-> > the fact the process is about to be reaped and so the lease largely
-> > doesn't matter anymore. I'd argue that it is close and we can't
-> > easily back out, so we'd only break the block on a fatal signal....
-> > 
-> > And then, of course, is the call path through do_exit(), which has
-> > the PF_EXITING task flag set:
-> > 
-> > do_exit()
-> >    exit_task_work()
-> >      task_work_run()
-> >        __fput()
-> > 
-> > and so it's easy to avoid blocking in this case, too.
+On Mon, Aug 19, 2019 at 09:19:51AM -0700, Scott Branden wrote:
+> To be honest, I find the entire firmware code sloppy.
+
+And that is after years of cleanup on my part. Try going back to v4.1
+for instance, check the code out then for an incredible horrific sight :)
+
+> I don't think the cache/no-cache feature is
+> implemented or tested properly nor fallback to begin with.
+
+I'm in total agreement! I *know* there must be holes in that code, and I
+acknowledge a few possible gotchas on the commit logs. For instance, I
+acknowledged that the firmware cache had a secondary purpose which was
+not well documented or understood through commit e44565f62a720
+("firmware: fix batched requests - wake all waiters"). The firmware
+cache allows for batching requests and sharing the same original request
+for multiple consecutive requests which *race against each other*.
+That's when I started having my doubts about the architecture of the
+firmware cache mechanism, it seemed too complex and perhaps overkill
+and considered killing it.
+
+As I noted in that commit, the firmware cache is used for:
+    
+1) Addressing races with file lookups during the suspend/resume cycle by
+keeping firmware in memory during the suspend/resume cycle
+	           
+2) Batched requests for the same file rely only on work from the first
+file lookup, which keeps the firmware in memory until the last
+release_firmware() is called
+
+Also worth quoting from that commit as well:
+
+"Batched requests *only* take effect if secondary requests come in
+prior to the first user calling release_firmware(). The devres name used
+for the internal firmware cache is used as a hint other pending requests
+are ongoing, the firmware buffer data is kept in memory until the last
+user of the buffer calls release_firmware(), therefore serializing
+requests and delaying the release until all requests are done."
+
+Later we discovered that the firmware cache had a serious security issue
+since its inception through commit 422b3db2a503 ("firmware: Fix security
+issue with request_firmware_into_buf()"). Granted, exploiting this would
+require the ability to load kernel code, so the vector of exploitation
+is rather small.
+
+The cache stuff cannot be removed as it *at least* resolves the fw
+suspend stuff, but still, this can likely use a revisit in rachitecture
+long term. The second implicit use case for batched requests however
+seems complex and not sure if its worth to maintain. I'll note that
+at least some drivers *do* their own firmware caching, iwlwifi, is one,
+so there is an example there to allow drivers to say "I actually don't
+need caching" for the future.
+
+If you're volunteering to cleaning / testing the cache stuff I highly
+welcome that. That and the fallback stuff has been needing testing for
+years. Someoone was working on patches on the test case for cache stuff
+a while ago, from Intel, but they disappeared.
+
+> I'm not claiming this patch is the final
+> solution and indicated such in the cover letter and the comment above.
+
+I missed that sorry.
+
+> I hope there is someone more familiar with this code to comment further and
+> come up with a proper solution.
+
+Alright, I'll dig in and take a look, and propose an alternative.
+
+> I have found numerous issues and race conditions with the firmware code (I
+> simply added a test).
+
+That is nothing compared to the amount of fixes I have found and
+actually fixed too, the code was a nightmare before I took on
+maintenance.
+
+> 1) Try loading the same valid firmware using no-cache once it has already
+> been loaded with cache.
+
+:) 
+
+> It won't work, which is why I had to use a different filename in the test
+> for request_firmware_into_buf.
+
+Alright, I'll go try to fix this. Thanks for the report.
+
+> 2) Try removing the "if (opt_flags & FW_OPT_NOCACHE)" in my patch and always
+> call the mutex.
 > 
-> Any thoughts about sockets? I'm looking at net/xdp/xdp_umem.c which pins
-> memory with FOLL_LONGTERM, and wondering how to make that work here.
+> The firmware test will lock up during a "no uevent" test.  I am not familiar
+> with the code to
+> 
+> know why such is true and what issue this exposes in the code.
 
-I'm not sure how this interacts with file mappings? I mean, this
-is just pinning anonymous pages for direct data placement into
-userspace, right?
+I hinted in my review of the oops what the issue was.
 
-Are you asking "what if this pinned memory was a file mapping?",
-or something else?
+> 3) I have a driver that uses request_firmware_into_buf and have multiple
+> instances of the driver
 
-> These are close to files, in how they're handled, but just different
-> enough that it's not clear to me how to make work with this system.
+Cool, is the driver upstream?
 
-I'm guessing that if they are pinning a file backed mapping, they
-are trying to dma direct to the file (zero copy into page cache?)
-and so they'll need to either play by ODP rules or take layout
-leases, too....
+> loading the same firmware in parallel.  Some of the data is not read
+> correctly in each instance.
 
-Cheers,
+Makes perfect sense considering the lack of testing I noted.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> I haven't yet to reproduce this issue with the firmware test 
+
+That's because of batched firmware request mechanism.
+
+> but currently
+> have a mutex around the entire
+> call to request_firmware_into_buf in our driver.
+
+I will take a look at this now.
+
+> Perhaps it is better at this point to add a mutex in
+> request_firmware_into_buf to make is entirely safe?
+
+No, that is not sufficient, although it would also solve the
+issue.
+
+> (Perhaps even with every request_firmware functions as none seems to be
+> tested properly.)
+
+No, you are incorrect. The other firmware API calls *have* been
+elaborately tested. The firmware cache stuff *is a mess* however,
+since we *use and support it*, I've done my best to salvage it and
+document it.
+
+I'll take a look at this and propose an alternative solution.
+
+  Luis
