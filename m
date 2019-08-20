@@ -2,135 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD30196A0F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 22:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01CC996B6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 23:26:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730819AbfHTUSL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 16:18:11 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:39574 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbfHTUSL (ORCPT
+        id S1730782AbfHTV0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 17:26:44 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:47074 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730501AbfHTV0o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 16:18:11 -0400
-Received: by mail-io1-f70.google.com with SMTP id g12so99456iok.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 13:18:11 -0700 (PDT)
+        Tue, 20 Aug 2019 17:26:44 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q139so4131007pfc.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 14:26:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kfF4vdGcFJm/Wf6JQ1wcuplxthXZW1HNbOa1JyPqpZg=;
+        b=YezYmx2WChZMi1DRr1XoN8XfZITumH+PgqY3JQdS5w4u2vwKLbtcH66ah2vjoQnnog
+         QyUxcFY+vLpiQeDhK9KTH5U7uOLNo0vnuD4a52N1MJjkiOZI294BDWFVvwrEEKdhPBaO
+         XVT2+i53gVsOodGBAl0E+xI0gCcD/lVNo3bqvB93NFaE/xG/irV6qGiYAx5Sa0TgkhIz
+         Derb91GymDQKbZ5lMgnZKtNSZMjrGXdFpCsjUGQOYWWslojKah3JT/incq30S9xuCblQ
+         rssihHZxJUKUKjpEGuvFLm+OHFk0eFFOuKdMDTyPyJe4rypnj3lPr/tiL1vR+LS2dnzq
+         EaFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=DX21hV2sHb8qnB6xf7xKFRXeU6pY2wJxsDPsJKyNCmo=;
-        b=beDht/SWU0ualeiOt5yRuZ6IwQsSrOfj1U34bCdwupxNIAB/s5wat5Vtwet2f/izJF
-         JxnJ6BKxS6uOJVqzZ864ap5IhEBr1tGa224SGcFvVTAmOmTP+RiUhaLD46UtktkwmMg+
-         U8cW37RhT+N3sAl6hW+co5/PJbU/MJp9iNvPhgDdF5l3kCayPWIaeJEXgcLmsUB1GFZw
-         KQcPppM0PyHPSrw/OinUKGY/gmft8dZef5ohWpryqh8a+Q0BodAYQeoAbvGyw8F/aGY8
-         9apc0R2y53I9Zhp9nygVxtfOj5x+kx9NbCNJXgkut8B6c1Bb962mbyUSbKQqwf5J4cJK
-         V9HQ==
-X-Gm-Message-State: APjAAAVtB/ityZ7E9HuNdwnCuUXJKu3SGqJDeVi3uzuCno425FUE2B0V
-        2QCszVw0Es0oyVG5/ML9QfP6xAM8jO6vAJaHpFPme8Xnj03b
-X-Google-Smtp-Source: APXvYqzT+lMwz6G0NA9p2ytCEk0WHlGbAH1wNj2zq1Z2cy59kWzfKnesMO3MKJONVcQpN7OamRxo8QYbHUDG6yolWDVeY8iEr/bq
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kfF4vdGcFJm/Wf6JQ1wcuplxthXZW1HNbOa1JyPqpZg=;
+        b=BAVYhbgNZHWaeZHr8pTzSamaU+3vSjZHTqb7GyhYg3DP7CjmTy/f9gIcT+Evzt325W
+         O6hykV/Ca+PSwmZSdx0j4e4iek4kfCem6HyGSv0zL8CAQBpUjFjp9bIRN5l9TAyUVbSI
+         wX9Yj6rr5cnY/7815AHMz88bzZ7a1fQjcsrvq0XC3htk61noHSwm8HCGSQhWe+0nT88L
+         UfcC3bohEjNB7/POiG0QKhHjtdw84Q3G4d4TxphCEZBbSUnABxxMaCFyZ+HONpNcNTzD
+         CaRj1E4pRn4tLdEsAvadx+iJaTEDw6SY+OenqmIizQOEoOUmE0CRhJJLkUok5mgzitUr
+         nGCg==
+X-Gm-Message-State: APjAAAVatb1JLKlYSwF4JsHpQ7oepl86bwzkMb+AC+4ZDqWUCRqBueCA
+        YhmRf0kp7JS2z3EIhocf+RDKRBRmXkuANX4q567dnQ==
+X-Google-Smtp-Source: APXvYqzLsasEUUNlQqQQsMBDlcH+Tp5YqnFlWE8k2udTHXgEapZH91qiWX0NVeTeH8163H7ZgTGtPG9Wj/vODuCC5PA=
+X-Received: by 2002:aa7:8f2e:: with SMTP id y14mr32322000pfr.113.1566336403144;
+ Tue, 20 Aug 2019 14:26:43 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a02:29ca:: with SMTP id p193mr5669638jap.88.1566332286772;
- Tue, 20 Aug 2019 13:18:06 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 13:18:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008dcde00590922713@google.com>
-Subject: WARNING: refcount bug in chrdev_open
-From:   syzbot <syzbot+1c85a21f1c6bc88eb388@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20190814055108.214253-1-brendanhiggins@google.com>
+ <5b880f49-0213-1a6e-9c9f-153e6ab91eeb@kernel.org> <20190820182450.GA38078@google.com>
+ <e8eaf28e-75df-c966-809a-2e3631353cc9@kernel.org>
+In-Reply-To: <e8eaf28e-75df-c966-809a-2e3631353cc9@kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 20 Aug 2019 14:26:32 -0700
+Message-ID: <CAFd5g44JT_KQ+OxjVdG0qMWuaEB0Zq5x=r6tLsqJdncwZ_zbGA@mail.gmail.com>
+Subject: Re: [PATCH v13 00/18] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     shuah <shuah@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Aug 20, 2019 at 12:08 PM shuah <shuah@kernel.org> wrote:
+>
+> On 8/20/19 12:24 PM, Brendan Higgins wrote:
+> > On Tue, Aug 20, 2019 at 11:24:45AM -0600, shuah wrote:
+> >> On 8/13/19 11:50 PM, Brendan Higgins wrote:
+> >>> ## TL;DR
+> >>>
+> >>> This revision addresses comments from Stephen and Bjorn Helgaas. Most
+> >>> changes are pretty minor stuff that doesn't affect the API in anyway.
+> >>> One significant change, however, is that I added support for freeing
+> >>> kunit_resource managed resources before the test case is finished via
+> >>> kunit_resource_destroy(). Additionally, Bjorn pointed out that I broke
+> >>> KUnit on certain configurations (like the default one for x86, whoops).
+> >>>
+> >>> Based on Stephen's feedback on the previous change, I think we are
+> >>> pretty close. I am not expecting any significant changes from here on
+> >>> out.
+> >>>
+> >>
+> >> Hi Brendan,
+> >>
+> >> I found checkpatch errors in one or two patches. Can you fix those and
+> >> send v14.
+> >
+> > Hi Shuah,
+> >
+> > Are you refering to the following errors?
+> >
+> > ERROR: Macros with complex values should be enclosed in parentheses
+> > #144: FILE: include/kunit/test.h:456:
+> > +#define KUNIT_BINARY_CLASS \
+> > +       kunit_binary_assert, KUNIT_INIT_BINARY_ASSERT_STRUCT
+> >
+> > ERROR: Macros with complex values should be enclosed in parentheses
+> > #146: FILE: include/kunit/test.h:458:
+> > +#define KUNIT_BINARY_PTR_CLASS \
+> > +       kunit_binary_ptr_assert, KUNIT_INIT_BINARY_PTR_ASSERT_STRUCT
+> >
+> > These values should *not* be in parentheses. I am guessing checkpatch is
+> > getting confused and thinks that these are complex expressions, when
+> > they are not.
+> >
+> > I ignored the errors since I figured checkpatch was complaining
+> > erroneously.
+> >
+> > I could refactor the code to remove these macros entirely, but I think
+> > the code is cleaner with them.
+> >
+>
+> Please do. I am not veru sure what value these macros add.
 
-syzbot found the following crash on:
-
-HEAD commit:    a69e9051 Merge tag 'xfs-5.3-fixes-2' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1450b25a600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3d7eaed8496da4da
-dashboard link: https://syzkaller.appspot.com/bug?extid=1c85a21f1c6bc88eb388
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1088edba600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10477772600000
-
-Bisection is inconclusive: the bug happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17d7389c600000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=1437389c600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1037389c600000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1c85a21f1c6bc88eb388@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-refcount_t: increment on 0; use-after-free.
-WARNING: CPU: 1 PID: 12599 at lib/refcount.c:156  
-refcount_inc_checked+0x4b/0x50 lib/refcount.c:156
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 12599 Comm: syz-executor314 Not tainted 5.3.0-rc4+ #78
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
-  panic+0x25c/0x799 kernel/panic.c:219
-  __warn+0x22f/0x230 kernel/panic.c:576
-  report_bug+0x190/0x290 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  do_error_trap+0xd7/0x440 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:refcount_inc_checked+0x4b/0x50 lib/refcount.c:156
-Code: 3d 2e 8b 68 05 01 75 08 e8 52 53 21 fe 5b 5d c3 e8 4a 53 21 fe c6 05  
-18 8b 68 05 01 48 c7 c7 34 4b 45 88 31 c0 e8 85 3a f4 fd <0f> 0b eb df 90  
-55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 ec 10
-RSP: 0018:ffff88808cb579b0 EFLAGS: 00010246
-RAX: cd29ce2624bf4d00 RBX: ffff8880934dcc00 RCX: ffff88809eec65c0
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff88808cb579b8 R08: ffffffff815cf524 R09: ffffed1015d640d2
-R10: ffffed1015d640d2 R11: 0000000000000000 R12: dffffc0000000000
-R13: ffff8880934dcbc8 R14: ffff8880934dcc04 R15: ffff8880934dcbc8
-  kref_get include/linux/kref.h:45 [inline]
-  kobject_get+0x91/0xc0 lib/kobject.c:644
-  cdev_get fs/char_dev.c:355 [inline]
-  chrdev_open+0x17e/0x590 fs/char_dev.c:400
-  do_dentry_open+0x73b/0xf90 fs/open.c:797
-  vfs_open+0x73/0x80 fs/open.c:906
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x1397/0x4460 fs/namei.c:3533
-  do_filp_open+0x192/0x3d0 fs/namei.c:3563
-  do_sys_open+0x29f/0x560 fs/open.c:1089
-  __do_sys_open fs/open.c:1107 [inline]
-  __se_sys_open fs/open.c:1102 [inline]
-  __x64_sys_open+0x87/0x90 fs/open.c:1102
-  do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x406311
-Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 a4 18 00 00 c3 48  
-83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 02 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007fb29f268960 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000406311
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007fb29f268970
-RBP: 6666666666666667 R08: 000000000000000f R09: 00007fb29f269700
-R10: 00007fb29f2699d0 R11: 0000000000000293 R12: 00000000006dbc3c
-R13: 0000000000000000 R14: 0000000000000000 R15: 00000000317a7973
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Alright, I will have something for you later today.
