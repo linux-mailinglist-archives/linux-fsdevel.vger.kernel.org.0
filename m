@@ -2,127 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60CBC965C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 18:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E0489664C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 18:26:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729933AbfHTQAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 12:00:17 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:42188 "EHLO
+        id S1729852AbfHTQ0l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 12:26:41 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54369 "EHLO
         outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727006AbfHTQAR (ORCPT
+        with ESMTP id S1726345AbfHTQ0l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 12:00:17 -0400
+        Tue, 20 Aug 2019 12:26:41 -0400
 Received: from callcc.thunk.org (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7KFx2Xh012879
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7KGPBGs030830
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Aug 2019 11:59:06 -0400
+        Tue, 20 Aug 2019 12:25:12 -0400
 Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4037D420843; Tue, 20 Aug 2019 11:56:23 -0400 (EDT)
-Date:   Tue, 20 Aug 2019 11:56:23 -0400
+        id B3927420843; Tue, 20 Aug 2019 12:25:10 -0400 (EDT)
+Date:   Tue, 20 Aug 2019 12:25:10 -0400
 From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Qu Wenruo <quwenruo.btrfs@gmx.com>, Gao Xiang <hsiangkao@aol.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, Pavel Machek <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] erofs: move erofs out of staging
-Message-ID: <20190820155623.GA10232@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Chao Yu <yuchao0@huawei.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        Gao Xiang <hsiangkao@aol.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Li Guifu <bluce.liguifu@huawei.com>, Fang Wei <fangwei1@huawei.com>,
-        Pavel Machek <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-References: <20190818161638.GE1118@sol.localdomain>
- <20190818162201.GA16269@infradead.org>
- <20190818172938.GA14413@sol.localdomain>
- <20190818174702.GA17633@infradead.org>
- <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190819160923.GG15198@magnolia>
- <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
- <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
- <ad62636f-ef1b-739f-42cc-28d9d7ed86da@huawei.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Chandan Rajendra <chandan@linux.ibm.com>, ebiggers@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org, chandanrmail@gmail.com,
+        adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com,
+        hch@infradead.org
+Subject: Re: [PATCH V4 5/8] f2fs: Use read_callbacks for decrypting file data
+Message-ID: <20190820162510.GC10232@mit.edu>
+References: <20190816061804.14840-1-chandan@linux.ibm.com>
+ <20190816061804.14840-6-chandan@linux.ibm.com>
+ <1652707.8YmLLlegLt@localhost.localdomain>
+ <20190820051236.GE159846@architecture4>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ad62636f-ef1b-739f-42cc-28d9d7ed86da@huawei.com>
+In-Reply-To: <20190820051236.GE159846@architecture4>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 10:24:11AM +0800, Chao Yu wrote:
-> Out of curiosity, it looks like every mainstream filesystem has its own
-> fuzz/injection tool in their tool-set, if it's really such a generic
-> requirement, why shouldn't there be a common tool to handle that, let specified
-> filesystem fill the tool's callback to seek a node/block and supported fields
-> can be fuzzed in inode. It can help to avoid redundant work whenever Linux
-> welcomes a new filesystem....
+On Tue, Aug 20, 2019 at 01:12:36PM +0800, Gao Xiang wrote:
+> Add a word, I have some little concern about post read procession order
+> a bit as I mentioned before, because I'd like to move common EROFS
+> decompression code out in the future as well for other fses to use
+> after we think it's mature enough.
+> 
+> It seems the current code mainly addresses eliminating duplicated code,
+> therefore I have no idea about that...
 
-The reason why there needs to be at least some file system specific
-code for fuzz testing is because for efficiency's sake, you don't want
-to fuzz every single bit in the file system, but just the ones which
-are most interesting (e.g., the metadata blocks).  For file systems
-which use checksum to protect against accidental corruption, the file
-system fuzzer needs to also fix up the checksums (since you can be
-sure malicious attackers will do this).
+Actually, we should chat.  I was actually thinking about "borrowing"
+code from erofs to provide ext4-specific compression.  I was really
+impressed with the efficiency goals in the erofs design[1] when I
+reviewed the Usenix ATC paper, and as the saying goes, the best
+artists know how to steal from the best.  :-)
 
-What you *can* do is to make the file system specific portion of the
-work as small as possible.  Great work in this area is Professor Kim's
-Janus[1][2] and Hydra[2] work.  (Hydra is about to be published at SOSP 19,
-and was partially funded from a Google Faculty Research Work.)
+[1] https://www.usenix.org/conference/atc19/presentation/gao
 
-[1] https://taesoo.kim/pubs/2019/xu:janus.pdf
-[2] https://github.com/sslab-gatech/janus
-[3] https://github.com/sslab-gatech/hydra
+My original specific thinking was to do code reuse by copy and paste,
+simply because it was simpler, and I have limited time to work on it.
+But if you are interested in making the erofs pipeline reusable by
+other file systems, and have the time to do the necessary code
+refactoring, I'd love to work with you on that.
 
-> > Personally speaking, debugging tool is way more important than a running
-> > kernel module/fuse.
-> > It's human trying to write the code, most of time is spent educating
-> > code readers, thus debugging tool is way more important than dead cold code.
+It should be noted that the f2fs developers have been working on their
+own compression scheme that was going to be f2fs-specific, unlike the
+file system generic approach used with fsverity and fscrypt.
 
-I personally find that having a tool like e2fsprogs' debugfs program
-to be really handy.  It's useful for creating regression test images;
-it's useful for debugging results from fuzzing systems like Janus;
-it's useful for examining broken file systems extracted from busted
-Android handsets during dogfood to root cause bugs which escaped
-xfstests testing; etc.
+My expectation is that we will need to modify the read pipeling code
+to support compression.  That's true whether we are looking at the
+existing file system-specific code used by ext4 and f2fs or in some
+combined work such as what Chandan has proposed.
 
 Cheers,
 
-						- Ted
+					- Ted
