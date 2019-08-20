@@ -2,114 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FBA895E09
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 13:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0CB95E83
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 14:29:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbfHTL5h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 07:57:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60532 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbfHTL5h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:57:37 -0400
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B88F811A13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 11:57:36 +0000 (UTC)
-Received: by mail-wr1-f69.google.com with SMTP id h8so6907236wrb.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 04:57:36 -0700 (PDT)
+        id S1729926AbfHTM2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 08:28:46 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36712 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728771AbfHTM2q (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Aug 2019 08:28:46 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g67so2496136wme.1;
+        Tue, 20 Aug 2019 05:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tSR8sb1uotjnjfdOyV2jp4tciGn/c2mOxbn+GtlfYOs=;
+        b=Sb8IcfXuDfRdmyL0CRWnFamS5vXoAjqTViv3zIBCL7F76sefcdcrviBEAfc8hUN6mY
+         3T2bTygs2djOmtPhghEO8PRH2iKMYaNCw9HCKu3MztXx0199Y3m3lZm7qg1ygnF5ZipV
+         9zTNPxjLh3mxv/gSW7AFCAFg96NijzXXkpMMfyZz9iK9Gu8BRzkt5jsP6rSh45v6mZaD
+         1Mp00pCMqRSNjKv24+RZJwwcK2onM8os9c3AzSupDq/Y6Tuboo7p5U9mMSviFfCMGbyH
+         4/mgJa/JCVh7gCKrE/mr+4oGqLmlc/13oohkYaUKNtCUmwcT0ufYIDDwRe4pOWb9o4KN
+         lcbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=XDKEoOdHwq1lbeRx7Aw+gnzvXTG37O7vnLdKpNshzwg=;
-        b=g+i3n65H6OfxPTDHLSf4bFy+lwoUCQVyErMfdLA32Y50fhCaAfn45rLSgORjqS/N6P
-         jyEUGbThPJQsxP3Ly29oCXSXgQpxpo/RIig1TbRbo7qjrgDpVK2yYwXjKqfji+I6XKvY
-         h41myu17/PtjT/umri+ymGOWU4T+KGG0PaKeQY/vgLnh52K8lH3YihC9WtBKzXWGVMpF
-         +YsG05xIBmfooCXp698NwFV4iknL+0IIyRkf3NCR/auPEjyIPbYt6JH6MI6op1Er0gfI
-         uwf63yP6Vz5iNFSUVQsM6iwt4y4p/nQl1EDFA3y3VmJs7qUfN6XwGHT8Dm0l1fx7G3XT
-         0wBg==
-X-Gm-Message-State: APjAAAXo+k8s/XXPIr1UrAUckGGnjCdpjTVz8aUkWxa3L+3zmRgn/xpJ
-        Inos2y6cx4iFQ2HCESWrbVrsX0wMzwoD5rhOdHqJad9HFmWFqDMxwIkBezeUcfnlDRNcSgRSe1B
-        Xsgq5UphoXKJOrVsQRU0dNdL2aQ==
-X-Received: by 2002:a5d:5302:: with SMTP id e2mr34260711wrv.345.1566302255528;
-        Tue, 20 Aug 2019 04:57:35 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxacsi4LfxSfRp+8+CxkC8yY0Yg8as35IT8Y5TfMDGMA3q7N5ldlBJvJxDKANyD5thffwKLXQ==
-X-Received: by 2002:a5d:5302:: with SMTP id e2mr34260687wrv.345.1566302255317;
-        Tue, 20 Aug 2019 04:57:35 -0700 (PDT)
-Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
-        by smtp.gmail.com with ESMTPSA id v124sm14321570wmf.23.2019.08.20.04.57.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 04:57:34 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 13:57:32 +0200
-From:   Carlos Maiolino <cmaiolino@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-fsdevel@vger.kernel.org, adilger@dilger.ca,
-        jaegeuk@kernel.org, darrick.wong@oracle.com, miklos@szeredi.hu,
-        rpeterso@redhat.com, linux-xfs@vger.kernel.org, dhowells@redhat.com
-Subject: Re: [PATCH 2/9] cachefiles: drop direct usage of ->bmap method.
-Message-ID: <20190820115731.bed7gwfygk66nj43@pegasus.maiolino.io>
-Mail-Followup-To: Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org, adilger@dilger.ca,
-        jaegeuk@kernel.org, darrick.wong@oracle.com, miklos@szeredi.hu,
-        rpeterso@redhat.com, linux-xfs@vger.kernel.org, dhowells@redhat.com
-References: <20190808082744.31405-1-cmaiolino@redhat.com>
- <20190808082744.31405-3-cmaiolino@redhat.com>
- <20190814111535.GC1885@lst.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tSR8sb1uotjnjfdOyV2jp4tciGn/c2mOxbn+GtlfYOs=;
+        b=FaMCm9tr2jksjCKWASEHmgRjWJ6XAE1RI0zxJp/GHsPdP4OhGFrGg38qam+hnNiuFZ
+         Kkx/LAWajyEL/QACoibwbQbhPZKF9PsR0yTzx3s9evK1c9wSz/s07TNHoNPVHON3dIrO
+         XQaet/EcnUPlVdCoktN8EjUAy+OGuYSKblikpQYRWIh5rjeJMMLcGjes6qWTUAPZTdx+
+         +02wCCingD+LaUTrzTbQ6XGvk1qwdlKveefr2noa8fu9YLn5/I1mEp7OyitaDKRR2y3i
+         JvTbq8zf/ZIX/1SH6wEs1MJKa/ZkwsJ49NCIafYVMQU2poQ4jv4ek+T9xZgEh+O466c7
+         DSEw==
+X-Gm-Message-State: APjAAAUX53w8VbFdei8PAuQEJ/6cAnPB9JHbAIcSXg6NN/SL09kmh5g4
+        /eJbzBw9qXfboHUzHuS2ItmeQUMP6KCQHLe0RFrBmMcc
+X-Google-Smtp-Source: APXvYqyRVbaXH5E+zsLwPDG0vuC0U7wlFSG7bKGWfN7PgLa4N/DQBhMBCHvfrfvM80hn+6Il6g7uH/noqPunFBw5Yzk=
+X-Received: by 2002:a1c:dd8a:: with SMTP id u132mr498571wmg.1.1566304123445;
+ Tue, 20 Aug 2019 05:28:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814111535.GC1885@lst.de>
-User-Agent: NeoMutt/20180716
+References: <20190818165817.32634-1-deepa.kernel@gmail.com>
+ <20190818165817.32634-7-deepa.kernel@gmail.com> <CAK+_RLmK0Vy79giAZnUCmmivvRT+GLZXyiMqBoFB0_Ed1W8BkA@mail.gmail.com>
+In-Reply-To: <CAK+_RLmK0Vy79giAZnUCmmivvRT+GLZXyiMqBoFB0_Ed1W8BkA@mail.gmail.com>
+From:   Tigran Aivazian <aivazian.tigran@gmail.com>
+Date:   Tue, 20 Aug 2019 13:28:32 +0100
+Message-ID: <CAK+_RL=ZK40XWY_c8wskAwNw8-Q3DY-+B0GoYo0JEVmqxYD7ig@mail.gmail.com>
+Subject: Re: [PATCH v8 06/20] fs: Fill in max and min timestamps in superblock
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 01:15:35PM +0200, Christoph Hellwig wrote:
-> On Thu, Aug 08, 2019 at 10:27:37AM +0200, Carlos Maiolino wrote:
-> > +	block = page->index;
-> > +	block <<= shift;
-> 
-> Can't this cause overflows?
-
-Hmm, I honestly don't know. I did look at the code, and I couldn't really spot
-anything concrete.
-
-Maybe if the block size is much smaller than PAGE_SIZE, but I am really not
-sure.
-
-Bear in mind though, I didn't change the logic here at all. I just reused one
-variable instead of juggling both (block0 and block) old variables. So, if this
-really can overflow, the code is already buggy even without my patch, I'm CC'ing
-dhowells just in case.
-
-
-> 
-> > +
-> > +	ret = bmap(inode, &block);
-> > +	ASSERT(!ret);
-> 
-> I think we want some real error handling here instead of just an
-> assert..
-
-I left this ASSERT() here, to match the current logic. By now, the only error we
-can get is -EINVAL, which basically says ->bmap() method does not exist, which
-is basically what does happen today with:
-
-ASSERT(inode->i_mapping->a_ops->bmap);
-
-
-But I do agree, it will be better to provide some sort of error handling here,
-maybe I should do something like:
-
-ASSERT(ret == -EINVAL)
-
-to keep the logic exactly the same and do not blow up in the future if/when we
-expand possible error values from bmap()
-
-What you think?
-
--- 
-Carlos
+I see no problems for BFS.
+Acked-By: Tigran Aivazian <aivazian.tigran@gmail.com>
