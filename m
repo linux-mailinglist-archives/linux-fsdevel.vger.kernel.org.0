@@ -2,65 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8670E9586E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 09:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84D6F958B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 09:43:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbfHTHa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 03:30:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46098 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729198AbfHTHa1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 03:30:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yuiBGszRMG8jYGlr5edUN6NqZ7nqR/Q4hrdSdVriY+Y=; b=WBr0CROubugXg9aBfeqbWfLZT
-        hceMHl1ObeG2uKnMPYF41qu60CXmPig9ParKGolHg1Ah/ZLhbizntzH+JjHOgJ+G4MMxi/jwTv7yI
-        nkCxbv+awYLB0hHnvygi88hQq49hi9k/3vjqxIvnAIdZR4fzse44PEzSL/ZJ2OkXXbf+DsW8tlp48
-        gDXrtXqtNuTVDqxK4WqXvktoOq9xB2qUeMdGvhhSMPrnIDQICBDyeKpjdW2ldQSf6eXmj2OS7if/v
-        iGfwol1V4J3gWPOosmMs1T5PYGlQgQKTCLS6AB309NjdOVNBB87+hmtyAzGhkJON+UfERPuwKKw3I
-        v3Ad9ykKg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hzyb4-0007rX-N8; Tue, 20 Aug 2019 07:30:26 +0000
-Date:   Tue, 20 Aug 2019 00:30:26 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Damien.LeMoal@wdc.com,
-        agruenba@redhat.com
-Subject: Re: [PATCH v4 0/6] iomap: lift the xfs writepage code into iomap
-Message-ID: <20190820073026.GA23347@infradead.org>
-References: <156444945993.2682261.3926017251626679029.stgit@magnolia>
- <20190816065229.GA28744@infradead.org>
- <20190817014633.GE752159@magnolia>
+        id S1729327AbfHTHnZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 03:43:25 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5161 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726049AbfHTHnZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Aug 2019 03:43:25 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B4DADC8A5D2DB9292ABB;
+        Tue, 20 Aug 2019 15:43:19 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 20 Aug
+ 2019 15:43:15 +0800
+Subject: Re: [f2fs-dev] [PATCH V4 5/8] f2fs: Use read_callbacks for decrypting
+ file data
+To:     Chandan Rajendra <chandan@linux.ibm.com>, Chao Yu <chao@kernel.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-fscrypt@vger.kernel.org>, <hch@infradead.org>,
+        <tytso@mit.edu>, <ebiggers@kernel.org>, <adilger.kernel@dilger.ca>,
+        <chandanrmail@gmail.com>, <jaegeuk@kernel.org>
+References: <20190816061804.14840-1-chandan@linux.ibm.com>
+ <20190816061804.14840-6-chandan@linux.ibm.com>
+ <bb3dc624-1249-2418-f9da-93da8c11e7f5@kernel.org>
+ <20104514.oSSJcvNEEM@localhost.localdomain>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <c4a16ead-bb85-b7db-948e-5ebe7bc4431d@huawei.com>
+Date:   Tue, 20 Aug 2019 15:43:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190817014633.GE752159@magnolia>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20104514.oSSJcvNEEM@localhost.localdomain>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 06:46:33PM -0700, Darrick J. Wong wrote:
-> On Thu, Aug 15, 2019 at 11:52:29PM -0700, Christoph Hellwig wrote:
-> > Darrick,
-> > 
-> > are you going to queue this up?
+On 2019/8/19 21:33, Chandan Rajendra wrote:
+> On Sunday, August 18, 2019 7:15:42 PM IST Chao Yu wrote:
+>> Hi Chandan,
+>>
+>> On 2019-8-16 14:18, Chandan Rajendra wrote:
+>>> F2FS has a copy of "post read processing" code using which encrypted
+>>> file data is decrypted. This commit replaces it to make use of the
+>>> generic read_callbacks facility.
+>>
+>> I remember that previously Jaegeuk had mentioned f2fs will support compression
+>> later, and it needs to reuse 'post read processing' fwk.
+>>
+>> There is very initial version of compression feature in below link:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=compression
+>>
+>> So my concern is how can we uplift the most common parts of this fwk into vfs,
+>> and meanwhile keeping the ability and flexibility when introducing private
+>> feature/step in specified filesytem(now f2fs)?
+>>
+>> According to current f2fs compression's requirement, maybe we can expand to
+>>
+>> - support callback to let filesystem set the function for the flow in
+>> decompression/verity/decryption step.
+>> - support to use individual/common workqueue according the parameter.
+>>
+>> Any thoughts?
+>>
 > 
-> Yes, I'll go promote the iomap writeback branch to iomap-for-next.  I
-> haven't 100% convinced myself that it's a good idea to hook up xfs to it
-> yet, if nothing else because of all the other problems I've had getting
-> 5.3 testing to run to completion reliably...
+> Hi,
+> 
+> F2FS can be made to use fscrypt's queue for decryption and hence can reuse
+> "read callbacks" code for decrypting data.
+> 
+> For decompression, we could have a STEP_MISC where we invoke a FS provided
+> callback function for FS specific post read processing? 
+> 
+> Something like the following can be implemented in read_callbacks(),
+> 	  case STEP_MISC:
+> 		  if (ctx->enabled_steps & (1 << STEP_MISC)) {
+> 			  /*
+> 			    ctx->fs_misc() must process bio in a workqueue
+> 			    and later invoke read_callbacks() with
+> 			    bio->bi_private's value as an argument.
+> 			  */
+> 			  ctx->fs_misc(ctx->bio);
+> 			  return;
+> 		  }
+> 		  ctx->cur_step++;
+> 
+> The fs_misc() callback can be passed in by the filesystem when invoking
+> read_callbacks_setup_bio().
 
-Oh well.  I had some XFS/iomap patches I want to dust off that depend
-on it, but I guess they'll have to wait then.
+Hi,
 
-We just need to be very careful the versions don't get out of sync,
-which would be a major pain in the butt.
+Yes, something like this, can we just use STEP_DECOMPRESS and fs_decompress(),
+not sure, I doubt this interface may has potential user which has compression
+feature.
+
+One more concern is that to avoid more context switch, maybe we can merge all
+background works into one workqueue if there is no conflict when call wants to.
+
+static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
+ {
+	switch (++ctx->cur_step) {
+	case STEP_DECRYPT:
+		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
+...
+			if (ctx->separated_wq)
+				return;
+		}
+		ctx->cur_step++;
+		/* fall-through */
+	case STEP_DECOMPRESS:
+...
+	default:
+		__read_end_io(ctx->bio);
+
+> 
