@@ -2,24 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CA349553E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 05:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E997C9554A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 05:37:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbfHTDev (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 23:34:51 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:60726 "EHLO mx2.mailbox.org"
+        id S1729163AbfHTDfD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 23:35:03 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:61224 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728647AbfHTDev (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 23:34:51 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        id S1729137AbfHTDfD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Aug 2019 23:35:03 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 48140A1638;
-        Tue, 20 Aug 2019 05:34:43 +0200 (CEST)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 59A24A139E;
+        Tue, 20 Aug 2019 05:34:59 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id N1m8x2icF4On; Tue, 20 Aug 2019 05:34:31 +0200 (CEST)
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id Q5gKBY4kPf3S; Tue, 20 Aug 2019 05:34:47 +0200 (CEST)
 From:   Aleksa Sarai <cyphar@cyphar.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
@@ -29,30 +29,31 @@ To:     Al Viro <viro@zeniv.linux.org.uk>,
         Shuah Khan <shuah@kernel.org>,
         Shuah Khan <skhan@linuxfoundation.org>
 Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Eric Biederman <ebiederm@xmission.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Jann Horn <jannh@google.com>,
         Christian Brauner <christian@brauner.io>,
-        David Drysdale <drysdale@google.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Eric Biederman <ebiederm@xmission.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
         Chanho Min <chanho.min@lge.com>,
         Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
         linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
         linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: [PATCH RESEND v11 0/8] openat2(2)
-Date:   Tue, 20 Aug 2019 13:33:58 +1000
-Message-Id: <20190820033406.29796-1-cyphar@cyphar.com>
+Subject: [PATCH RESEND v11 1/8] namei: obey trailing magic-link DAC permissions
+Date:   Tue, 20 Aug 2019 13:33:59 +1000
+Message-Id: <20190820033406.29796-2-cyphar@cyphar.com>
+In-Reply-To: <20190820033406.29796-1-cyphar@cyphar.com>
+References: <20190820033406.29796-1-cyphar@cyphar.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -60,199 +61,336 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset is being developed here:
-    <https://github.com/cyphar/linux/tree/resolveat/master>
+The ability for userspace to "re-open" file descriptors through
+/proc/self/fd has been a very useful tool for all sorts of usecases
+(container runtimes are one common example). However, the current
+interface for doing this has resulted in some pretty subtle security
+holes. Userspace can re-open a file descriptor with more permissions
+than the original, which can result in cases such as /proc/$pid/exe
+being re-opened O_RDWR at a later date even though (by definition)
+/proc/$pid/exe cannot be opened for writing. When combined with O_PATH
+the results can get even more confusing.
 
-Patch changelog:
- v11: [RESEND: <https://lore.kernel.org/lkml/20190728010207.9781-1-cyphar@cyphar.com/>]
-    * Fix checkpatch.pl errors and warnings where reasonable.
-    * Minor cleanup to pr_warn logging for may_open_magiclink().
-    * Drop kselftests patch to handle %m formatting correctly, and send
-      it through the kselftests tree directly. [Shuah Khan]
- v10: <https://lore.kernel.org/lkml/20190719164225.27083-1-cyphar@cyphar.com/>
- v09: <https://lore.kernel.org/lkml/20190706145737.5299-1-cyphar@cyphar.com/>
- v08: <https://lore.kernel.org/lkml/20190520133305.11925-1-cyphar@cyphar.com/>
- v07: <https://lore.kernel.org/lkml/20190507164317.13562-1-cyphar@cyphar.com/>
- v06: <https://lore.kernel.org/lkml/20190506165439.9155-1-cyphar@cyphar.com/>
- v05: <https://lore.kernel.org/lkml/20190320143717.2523-1-cyphar@cyphar.com/>
- v04: <https://lore.kernel.org/lkml/20181112142654.341-1-cyphar@cyphar.com/>
- v03: <https://lore.kernel.org/lkml/20181009070230.12884-1-cyphar@cyphar.com/>
- v02: <https://lore.kernel.org/lkml/20181009065300.11053-1-cyphar@cyphar.com/>
- v01: <https://lore.kernel.org/lkml/20180929103453.12025-1-cyphar@cyphar.com/>
+We cannot block this outright. Aside from userspace already depending on
+it, it's a useful feature which can actually increase the security of
+userspace. For instance, LXC keeps an O_PATH of the container's
+/dev/pts/ptmx that gets re-opened to create new ptys and then uses
+TIOCGPTPEER to get the slave end. This allows for pty allocation without
+resolving paths inside an (untrusted) container's rootfs. There isn't a
+trivial way of doing this that is as straight-forward and safe as O_PATH
+re-opening.
 
-The need for some sort of control over VFS's path resolution (to avoid
-malicious paths resulting in inadvertent breakouts) has been a very
-long-standing desire of many userspace applications. This patchset is a
-revival of Al Viro's old AT_NO_JUMPS[1,2] patchset (which was a variant
-of David Drysdale's O_BENEATH patchset[3] which was a spin-off of the
-Capsicum project[4]) with a few additions and changes made based on the
-previous discussion within [5] as well as others I felt were useful.
+Instead we have to restrict it in such a way that it doesn't break
+(good) users but does block potential attackers. The solution applied in
+this patch is to restrict *re-opening* (not resolution through)
+magic-links by requiring that mode of the link be obeyed. Normal
+symlinks have modes of a+rwx but magic-links have other modes. These
+magic-link modes were historically ignored during path resolution, but
+they've now been re-purposed for more useful ends.
 
-In line with the conclusions of the original discussion of AT_NO_JUMPS,
-the flag has been split up into separate flags. However, instead of
-being an openat(2) flag it is provided through a new syscall openat2(2)
-which provides several other improvements to the openat(2) interface (see the
-patch description for more details). The following new LOOKUP_* flags are
-added:
+It is also necessary to define semantics for the mode of an O_PATH
+descriptor, since re-opening a magic-link through an O_PATH needs to be
+just as restricted as the corresponding magic-link -- otherwise the
+above protection can be bypassed. There are two distinct cases:
 
-  * LOOKUP_NO_XDEV blocks all mountpoint crossings (upwards, downwards,
-    or through absolute links). Absolute pathnames alone in openat(2) do
-    not trigger this.
+ 1. The target is a regular file (not a magic-link). Userspace depends
+    on being able to re-open the O_PATH of a regular file, so we must
+    define the mode to be a+rwx.
 
-  * LOOKUP_NO_MAGICLINKS blocks resolution through /proc/$pid/fd-style
-    links. This is done by blocking the usage of nd_jump_link() during
-    resolution in a filesystem. The term "magic-links" is used to match
-    with the only reference to these links in Documentation/, but I'm
-    happy to change the name.
+ 2. The target is a magic-link. In this case, we simply copy the mode of
+    the magic-link. This results in an O_PATH of a magic-link
+    effectively acting as a no-op in terms of how much re-opening
+    privileges a process has.
 
-    It should be noted that this is different to the scope of
-    ~LOOKUP_FOLLOW in that it applies to all path components. However,
-    you can do openat2(NO_FOLLOW|NO_MAGICLINKS) on a magic-link and it
-    will *not* fail (assuming that no parent component was a
-    magic-link), and you will have an fd for the magic-link.
+CAP_DAC_OVERRIDE can be used to override all of these restrictions, but
+we only permit &init_userns's capabilities to affect these semantics.
+The reason for this is that there isn't a clear way to track what
+user_ns is the original owner of a given O_PATH chain -- thus an
+unprivileged user could create a new userns and O_PATH the file
+descriptor, owning it. All signs would indicate that the user really
+does have CAP_DAC_OVERRIDE over the new descriptor and the protection
+would be bypassed. We thus opt for the more conservative approach.
 
-  * LOOKUP_BENEATH disallows escapes to outside the starting dirfd's
-    tree, using techniques such as ".." or absolute links. Absolute
-    paths in openat(2) are also disallowed. Conceptually this flag is to
-    ensure you "stay below" a certain point in the filesystem tree --
-    but this requires some additional to protect against various races
-    that would allow escape using "..".
+I have run this patch on several machines for several days. So far, the
+only processes which have hit this case ("loadkeys" and "kbd_mode" from
+the kbd package[1]) gracefully handle the permission error and do not
+cause any user-visible problems. In order to give users a heads-up, a
+warning is output to dmesg whenever may_open_magiclink() refuses access.
 
-    Currently LOOKUP_BENEATH implies LOOKUP_NO_MAGICLINKS, because it
-    can trivially beam you around the filesystem (breaking the
-    protection). In future, there might be similar safety checks done as
-    in LOOKUP_IN_ROOT, but that requires more discussion.
+[1]: http://git.altlinux.org/people/legion/packages/kbd.git
 
-In addition, two new flags are added that expand on the above ideas:
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Christian Brauner <christian@brauner.io>
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+ Documentation/filesystems/path-lookup.rst |  12 +--
+ fs/internal.h                             |   1 +
+ fs/namei.c                                | 105 +++++++++++++++++++---
+ fs/open.c                                 |   3 +-
+ fs/proc/fd.c                              |  23 ++++-
+ include/linux/fs.h                        |   4 +
+ include/linux/namei.h                     |   1 +
+ 7 files changed, 130 insertions(+), 19 deletions(-)
 
-  * LOOKUP_NO_SYMLINKS does what it says on the tin. No symlink
-    resolution is allowed at all, including magic-links. Just as with
-    LOOKUP_NO_MAGICLINKS this can still be used with NOFOLLOW to open an
-    fd for the symlink as long as no parent path had a symlink
-    component.
-
-  * LOOKUP_IN_ROOT is an extension of LOOKUP_BENEATH that, rather than
-    blocking attempts to move past the root, forces all such movements
-    to be scoped to the starting point. This provides chroot(2)-like
-    protection but without the cost of a chroot(2) for each filesystem
-    operation, as well as being safe against race attacks that chroot(2)
-    is not.
-
-    If a race is detected (as with LOOKUP_BENEATH) then an error is
-    generated, and similar to LOOKUP_BENEATH it is not permitted to cross
-    magic-links with LOOKUP_IN_ROOT.
-
-    The primary need for this is from container runtimes, which
-    currently need to do symlink scoping in userspace[6] when opening
-    paths in a potentially malicious container. There is a long list of
-    CVEs that could have bene mitigated by having RESOLVE_THIS_ROOT
-    (such as CVE-2017-1002101, CVE-2017-1002102, CVE-2018-15664, and
-    CVE-2019-5736, just to name a few).
-
-And further, several semantics of file descriptor "re-opening" are now
-changed to prevent attacks like CVE-2019-5736 by restricting how
-magic-links can be resolved (based on their mode). This required some
-other changes to the semantics of the modes of O_PATH file descriptor's
-associated /proc/self/fd magic-links. openat2(2) has the ability to
-further restrict re-opening of its own O_PATH fds, so that users can
-make even better use of this feature.
-
-Finally, O_EMPTYPATH was added so that users can do /proc/self/fd-style
-re-opening without depending on procfs. The new restricted semantics for
-magic-links are applied here too.
-
-In order to make all of the above more usable, I'm working on
-libpathrs[7] which is a C-friendly library for safe path resolution. It
-features a userspace-emulated backend if the kernel doesn't support
-openat2(2). Hopefully we can get userspace to switch to using it, and
-thus get openat2(2) support for free once it's ready.
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Christian Brauner <christian@brauner.io>
-Cc: David Drysdale <drysdale@google.com>
-Cc: Tycho Andersen <tycho@tycho.ws>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <containers@lists.linux-foundation.org>
-Cc: <linux-fsdevel@vger.kernel.org>
-Cc: <linux-api@vger.kernel.org>
-
-[1]: https://lwn.net/Articles/721443/
-[2]: https://lore.kernel.org/patchwork/patch/784221/
-[3]: https://lwn.net/Articles/619151/
-[4]: https://lwn.net/Articles/603929/
-[5]: https://lwn.net/Articles/723057/
-[6]: https://github.com/cyphar/filepath-securejoin
-[7]: https://github.com/openSUSE/libpathrs
-
-Aleksa Sarai (8):
-  namei: obey trailing magic-link DAC permissions
-  procfs: switch magic-link modes to be more sane
-  open: O_EMPTYPATH: procfs-less file descriptor re-opening
-  namei: O_BENEATH-style path resolution flags
-  namei: LOOKUP_IN_ROOT: chroot-like path resolution
-  namei: aggressively check for nd->root escape on ".." resolution
-  open: openat2(2) syscall
-  selftests: add openat2(2) selftests
-
- Documentation/filesystems/path-lookup.rst     |  12 +-
- arch/alpha/include/uapi/asm/fcntl.h           |   1 +
- arch/alpha/kernel/syscalls/syscall.tbl        |   1 +
- arch/arm/tools/syscall.tbl                    |   1 +
- arch/arm64/include/asm/unistd.h               |   2 +-
- arch/arm64/include/asm/unistd32.h             |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl         |   1 +
- arch/m68k/kernel/syscalls/syscall.tbl         |   1 +
- arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl     |   1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl     |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl     |   1 +
- arch/parisc/include/uapi/asm/fcntl.h          |  39 +-
- arch/parisc/kernel/syscalls/syscall.tbl       |   1 +
- arch/powerpc/kernel/syscalls/syscall.tbl      |   1 +
- arch/s390/kernel/syscalls/syscall.tbl         |   1 +
- arch/sh/kernel/syscalls/syscall.tbl           |   1 +
- arch/sparc/include/uapi/asm/fcntl.h           |   1 +
- arch/sparc/kernel/syscalls/syscall.tbl        |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
- fs/fcntl.c                                    |   2 +-
- fs/internal.h                                 |   1 +
- fs/namei.c                                    | 270 ++++++++++--
- fs/open.c                                     | 112 ++++-
- fs/proc/base.c                                |  20 +-
- fs/proc/fd.c                                  |  23 +-
- fs/proc/namespaces.c                          |   2 +-
- include/linux/fcntl.h                         |  17 +-
- include/linux/fs.h                            |   8 +-
- include/linux/namei.h                         |   9 +
- include/linux/syscalls.h                      |  17 +-
- include/uapi/asm-generic/fcntl.h              |   4 +
- include/uapi/asm-generic/unistd.h             |   5 +-
- include/uapi/linux/fcntl.h                    |  42 ++
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/memfd/memfd_test.c    |   7 +-
- tools/testing/selftests/openat2/.gitignore    |   1 +
- tools/testing/selftests/openat2/Makefile      |   8 +
- tools/testing/selftests/openat2/helpers.c     | 162 +++++++
- tools/testing/selftests/openat2/helpers.h     | 116 +++++
- .../testing/selftests/openat2/linkmode_test.c | 333 +++++++++++++++
- .../selftests/openat2/rename_attack_test.c    | 127 ++++++
- .../testing/selftests/openat2/resolve_test.c  | 402 ++++++++++++++++++
- 45 files changed, 1655 insertions(+), 107 deletions(-)
- create mode 100644 tools/testing/selftests/openat2/.gitignore
- create mode 100644 tools/testing/selftests/openat2/Makefile
- create mode 100644 tools/testing/selftests/openat2/helpers.c
- create mode 100644 tools/testing/selftests/openat2/helpers.h
- create mode 100644 tools/testing/selftests/openat2/linkmode_test.c
- create mode 100644 tools/testing/selftests/openat2/rename_attack_test.c
- create mode 100644 tools/testing/selftests/openat2/resolve_test.c
-
+diff --git a/Documentation/filesystems/path-lookup.rst b/Documentation/filesystems/path-lookup.rst
+index 434a07b0002b..a57d78ec8bee 100644
+--- a/Documentation/filesystems/path-lookup.rst
++++ b/Documentation/filesystems/path-lookup.rst
+@@ -1310,12 +1310,14 @@ longer needed.
+ ``LOOKUP_JUMPED`` means that the current dentry was chosen not because
+ it had the right name but for some other reason.  This happens when
+ following "``..``", following a symlink to ``/``, crossing a mount point
+-or accessing a "``/proc/$PID/fd/$FD``" symlink.  In this case the
+-filesystem has not been asked to revalidate the name (with
+-``d_revalidate()``).  In such cases the inode may still need to be
+-revalidated, so ``d_op->d_weak_revalidate()`` is called if
++or accessing a "``/proc/$PID/fd/$FD``" symlink (also known as a "magic
++link"). In this case the filesystem has not been asked to revalidate the
++name (with ``d_revalidate()``).  In such cases the inode may still need
++to be revalidated, so ``d_op->d_weak_revalidate()`` is called if
+ ``LOOKUP_JUMPED`` is set when the look completes - which may be at the
+-final component or, when creating, unlinking, or renaming, at the penultimate component.
++final component or, when creating, unlinking, or renaming, at the
++penultimate component. ``LOOKUP_MAGICLINK_JUMPED`` is set alongside
++``LOOKUP_JUMPED`` if a magic-link was traversed.
+ 
+ Final-component flags
+ ~~~~~~~~~~~~~~~~~~~~~
+diff --git a/fs/internal.h b/fs/internal.h
+index 315fcd8d237c..f48449a43626 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -119,6 +119,7 @@ struct open_flags {
+ 	int acc_mode;
+ 	int intent;
+ 	int lookup_flags;
++	fmode_t opath_mask;
+ };
+ extern struct file *do_filp_open(int dfd, struct filename *pathname,
+ 		const struct open_flags *op);
+diff --git a/fs/namei.c b/fs/namei.c
+index 209c51a5226c..54d57dad0f91 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -872,7 +872,7 @@ void nd_jump_link(struct path *path)
+ 
+ 	nd->path = *path;
+ 	nd->inode = nd->path.dentry->d_inode;
+-	nd->flags |= LOOKUP_JUMPED;
++	nd->flags |= LOOKUP_JUMPED | LOOKUP_MAGICLINK_JUMPED;
+ }
+ 
+ static inline void put_link(struct nameidata *nd)
+@@ -1066,6 +1066,7 @@ const char *get_link(struct nameidata *nd)
+ 		return ERR_PTR(error);
+ 
+ 	nd->last_type = LAST_BIND;
++	nd->flags &= ~LOOKUP_MAGICLINK_JUMPED;
+ 	res = READ_ONCE(inode->i_link);
+ 	if (!res) {
+ 		const char * (*get)(struct dentry *, struct inode *,
+@@ -3501,16 +3502,73 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
+ 	return error;
+ }
+ 
+-static int do_o_path(struct nameidata *nd, unsigned flags, struct file *file)
++/**
++ * may_reopen_magiclink - Check permissions for opening a trailing magic-link
++ * @upgrade_mask: the upgrade-mask of the magic-link
++ * @acc_mode: ACC_MODE which the user is attempting
++ *
++ * We block magic-link re-opening if the @upgrade_mask is more strict than the
++ * @acc_mode being requested, unless the user is capable(CAP_DAC_OVERRIDE).
++ *
++ * Returns 0 if successful, -EACCES on error.
++ */
++static int may_open_magiclink(fmode_t upgrade_mask, int acc_mode)
+ {
+-	struct path path;
+-	int error = path_lookupat(nd, flags, &path);
+-	if (!error) {
+-		audit_inode(nd->name, path.dentry, 0);
+-		error = vfs_open(&path, file);
+-		path_put(&path);
+-	}
+-	return error;
++	/*
++	 * We only allow for init_userns to be able to override magic-links.
++	 * This is done to avoid cases where an unprivileged userns could take
++	 * an O_PATH of the fd, resulting in it being very unclear whether
++	 * CAP_DAC_OVERRIDE should work on the new O_PATH fd (given that it
++	 * pipes through to the underlying file).
++	 */
++	if (capable(CAP_DAC_OVERRIDE))
++		return 0;
++
++	if ((acc_mode & MAY_READ) &&
++	    !(upgrade_mask & (FMODE_READ | FMODE_PATH_READ)))
++		goto err;
++	if ((acc_mode & MAY_WRITE) &&
++	    !(upgrade_mask & (FMODE_WRITE | FMODE_PATH_WRITE)))
++		goto err;
++
++	return 0;
++
++err:
++	pr_warn_ratelimited("%s[%d]: magic-link re-open blocked ('%s%s%s' requested with an upgrade-mask of '%s%s%s%s')",
++		current->comm, task_pid_nr(current),
++		(acc_mode & MAY_READ) ? "r" : "",
++		(acc_mode & MAY_WRITE) ? "w" : "",
++		(acc_mode & MAY_EXEC) ? "x" : "",
++		(upgrade_mask & FMODE_READ) ? "r" : "",
++		(upgrade_mask & FMODE_PATH_READ) ? "R" : "",
++		(upgrade_mask & FMODE_WRITE) ? "w" : "",
++		(upgrade_mask & FMODE_PATH_WRITE) ? "W" : "");
++	return -EACCES;
++}
++
++static int trailing_magiclink(struct nameidata *nd, int acc_mode,
++			      fmode_t *opath_mask)
++{
++	struct inode *inode = nd->link_inode;
++	fmode_t upgrade_mask = 0;
++
++	/* Was the trailing_symlink() a magic-link? */
++	if (!(nd->flags & LOOKUP_MAGICLINK_JUMPED))
++		return 0;
++
++	/*
++	 * Figure out the upgrade-mask of the link_inode. Since these aren't
++	 * strictly POSIX semantics we don't do an acl_permission_check() here,
++	 * so we only care that at least one bit is set for each upgrade-mode.
++	 */
++	if (inode->i_mode & S_IRUGO)
++		upgrade_mask |= FMODE_PATH_READ;
++	if (inode->i_mode & S_IWUGO)
++		upgrade_mask |= FMODE_PATH_WRITE;
++	/* Restrict the O_PATH upgrade-mask of the caller. */
++	if (opath_mask)
++		*opath_mask &= upgrade_mask;
++	return may_open_magiclink(upgrade_mask, acc_mode);
+ }
+ 
+ static struct file *path_openat(struct nameidata *nd,
+@@ -3526,13 +3584,38 @@ static struct file *path_openat(struct nameidata *nd,
+ 	if (unlikely(file->f_flags & __O_TMPFILE)) {
+ 		error = do_tmpfile(nd, flags, op, file);
+ 	} else if (unlikely(file->f_flags & O_PATH)) {
+-		error = do_o_path(nd, flags, file);
++		/* Inlined path_lookupat() with a trailing_magiclink() check. */
++		fmode_t opath_mask = op->opath_mask;
++		const char *s = path_init(nd, flags);
++
++		while (!(error = link_path_walk(s, nd))
++			&& ((error = lookup_last(nd)) > 0)) {
++			s = trailing_symlink(nd);
++			error = trailing_magiclink(nd, op->acc_mode, &opath_mask);
++			if (error)
++				s = ERR_PTR(error);
++		}
++		if (!error)
++			error = complete_walk(nd);
++
++		if (!error && nd->flags & LOOKUP_DIRECTORY)
++			if (!d_can_lookup(nd->path.dentry))
++				error = -ENOTDIR;
++		if (!error) {
++			audit_inode(nd->name, nd->path.dentry, 0);
++			error = vfs_open(&nd->path, file);
++			file->f_mode |= opath_mask;
++		}
++		terminate_walk(nd);
+ 	} else {
+ 		const char *s = path_init(nd, flags);
+ 		while (!(error = link_path_walk(s, nd)) &&
+ 			(error = do_last(nd, file, op)) > 0) {
+ 			nd->flags &= ~(LOOKUP_OPEN|LOOKUP_CREATE|LOOKUP_EXCL);
+ 			s = trailing_symlink(nd);
++			error = trailing_magiclink(nd, op->acc_mode, NULL);
++			if (error)
++				s = ERR_PTR(error);
+ 		}
+ 		terminate_walk(nd);
+ 	}
+diff --git a/fs/open.c b/fs/open.c
+index a59abe3c669a..806a75d685e1 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1001,8 +1001,9 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
+ 		acc_mode |= MAY_APPEND;
+ 
+ 	op->acc_mode = acc_mode;
+-
+ 	op->intent = flags & O_PATH ? 0 : LOOKUP_OPEN;
++	/* For O_PATH backwards-compatibility we default to an all-set mask. */
++	op->opath_mask = FMODE_PATH_READ | FMODE_PATH_WRITE;
+ 
+ 	if (flags & O_CREAT) {
+ 		op->intent |= LOOKUP_CREATE;
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 81882a13212d..9b7d8becb002 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -104,11 +104,30 @@ static void tid_fd_update_inode(struct task_struct *task, struct inode *inode,
+ 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
+ 
+ 	if (S_ISLNK(inode->i_mode)) {
++		/*
++		 * Always set +x (depending on the fmode type), since there
++		 * currently aren't FMODE_PATH_EXEC restrictions and there is
++		 * no O_MAYEXEC yet. This might change in the future, in which
++		 * case we will restrict +x.
++		 */
+ 		unsigned i_mode = S_IFLNK;
++		if (f_mode & FMODE_PATH)
++			i_mode |= S_IXGRP;
++		else
++			i_mode |= S_IXUSR;
++		/*
++		 * Construct the mode bits based on the open-mode. The u+rwx
++		 * bits are for "ordinary" open modes while g+rwx are for
++		 * O_PATH modes.
++		 */
+ 		if (f_mode & FMODE_READ)
+-			i_mode |= S_IRUSR | S_IXUSR;
++			i_mode |= S_IRUSR;
+ 		if (f_mode & FMODE_WRITE)
+-			i_mode |= S_IWUSR | S_IXUSR;
++			i_mode |= S_IWUSR;
++		if (f_mode & FMODE_PATH_READ)
++			i_mode |= S_IRGRP;
++		if (f_mode & FMODE_PATH_WRITE)
++			i_mode |= S_IWGRP;
+ 		inode->i_mode = i_mode;
+ 	}
+ 	security_task_to_inode(task, inode);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 997a530ff4e9..a9ad596b28e2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -173,6 +173,10 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File does not contribute to nr_files count */
+ #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
+ 
++/* File is an O_PATH descriptor which can be upgraded to (read, write). */
++#define FMODE_PATH_READ		((__force fmode_t)0x40000000)
++#define FMODE_PATH_WRITE	((__force fmode_t)0x80000000)
++
+ /*
+  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+  * that indicates that they should check the contents of the iovec are
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 9138b4471dbf..bd6d3eb7764d 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -49,6 +49,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
+ #define LOOKUP_ROOT		0x2000
+ #define LOOKUP_EMPTY		0x4000
+ #define LOOKUP_DOWN		0x8000
++#define LOOKUP_MAGICLINK_JUMPED	0x10000
+ 
+ extern int path_pts(struct path *path);
+ 
 -- 
 2.22.0
 
