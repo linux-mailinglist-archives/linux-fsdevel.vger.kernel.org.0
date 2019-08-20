@@ -2,119 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 149EC95DEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 13:55:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FBA895E09
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 13:58:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729261AbfHTLzS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 07:55:18 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42296 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729024AbfHTLzR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:55:17 -0400
-Received: by mail-qt1-f195.google.com with SMTP id t12so5615997qtp.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 04:55:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cjWne9JJX/bamk/BsyOJB8Qocb+2jJnD/6EfxMqzNUc=;
-        b=F8bCgYAmAkUxSVlSTscXxlQRELIsOQnZmrvm1sUjW95CUd0khTshKRxwCuLjyokKev
-         BO8QDllptp/4vv0c5+22/EhhQN7BANX7GXbwhmoL4l4ncCnzuvcFIBhtQofbuqTX6nsg
-         zwql74Buzj9teOKUbKfj5TE3uHNM/5fbApiO0JHQMUUYJ/unQvJimJ2vf/e7eXWfu4Qr
-         e3qKOUbeDxtQCKEEnBFIKa+Y83F0ozkYPvP+sRDb4zW7tz+74GJgY/PNJGOy+FAsmX1f
-         luk7Y3QQ++vwxmyoZVrHTbe9U0I/Qk1BqrxGPfTC0MFEGoh/lly24xPvz/0fT0h+OEJy
-         qwWg==
+        id S1728682AbfHTL5h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 07:57:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60532 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727006AbfHTL5h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Aug 2019 07:57:37 -0400
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B88F811A13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 11:57:36 +0000 (UTC)
+Received: by mail-wr1-f69.google.com with SMTP id h8so6907236wrb.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2019 04:57:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cjWne9JJX/bamk/BsyOJB8Qocb+2jJnD/6EfxMqzNUc=;
-        b=LqJkFyRKWdYV/YhXsllt5Xu3DnrmVP3bGjlus8kW/vrAJrUft3h0gfWIgT72zBnyhM
-         6BE+gPXaV4KKW8j162S9pbd5RiAP05ldANwrYMCwJCt8djET7q1M7VAYlHDRW7q+qHAx
-         Ezzi0svulCniMFylvebu0WnIPjs8GKuvwdDThutSh29AgaZxyB3Zzy5xqhwRikw9yMrp
-         O3VQq+Rvm1jD6zhRO9pdkYX9xhn7Tt5tF4b8lO59P/rSmma0992LckYVhASTOgzNPje4
-         A5rCinnKpImsc9Z/8kxodaGEWyV4To3k2Ez+RNYZYqqj6x+ooPXa41a3fxZ+EIV3CA6L
-         ip2Q==
-X-Gm-Message-State: APjAAAXKmI0YcYkbM0QGvTRUeKv5riy78wtbvmD9NMO2+gQ0P/WSkIQp
-        n2c2fm/jz5jOPiVBoreSM/bBKg==
-X-Google-Smtp-Source: APXvYqz2loiM8+YcMWhCUXDCstClokgbXoeINv82DptJXTepeIjclfvYpo9S265xpxsrLBOY09rJbg==
-X-Received: by 2002:a0c:d251:: with SMTP id o17mr14202195qvh.109.1566302116866;
-        Tue, 20 Aug 2019 04:55:16 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id f23sm8218362qkk.80.2019.08.20.04.55.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Aug 2019 04:55:16 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1i02jL-0007t8-HZ; Tue, 20 Aug 2019 08:55:15 -0300
-Date:   Tue, 20 Aug 2019 08:55:15 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190820115515.GA29246@ziepe.ca>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190814101714.GA26273@quack2.suse.cz>
- <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
- <20190815130558.GF14313@quack2.suse.cz>
- <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
- <20190817022603.GW6129@dread.disaster.area>
- <20190819063412.GA20455@quack2.suse.cz>
- <20190819092409.GM7777@dread.disaster.area>
- <20190819123841.GC5058@ziepe.ca>
- <20190820011210.GP7777@dread.disaster.area>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=XDKEoOdHwq1lbeRx7Aw+gnzvXTG37O7vnLdKpNshzwg=;
+        b=g+i3n65H6OfxPTDHLSf4bFy+lwoUCQVyErMfdLA32Y50fhCaAfn45rLSgORjqS/N6P
+         jyEUGbThPJQsxP3Ly29oCXSXgQpxpo/RIig1TbRbo7qjrgDpVK2yYwXjKqfji+I6XKvY
+         h41myu17/PtjT/umri+ymGOWU4T+KGG0PaKeQY/vgLnh52K8lH3YihC9WtBKzXWGVMpF
+         +YsG05xIBmfooCXp698NwFV4iknL+0IIyRkf3NCR/auPEjyIPbYt6JH6MI6op1Er0gfI
+         uwf63yP6Vz5iNFSUVQsM6iwt4y4p/nQl1EDFA3y3VmJs7qUfN6XwGHT8Dm0l1fx7G3XT
+         0wBg==
+X-Gm-Message-State: APjAAAXo+k8s/XXPIr1UrAUckGGnjCdpjTVz8aUkWxa3L+3zmRgn/xpJ
+        Inos2y6cx4iFQ2HCESWrbVrsX0wMzwoD5rhOdHqJad9HFmWFqDMxwIkBezeUcfnlDRNcSgRSe1B
+        Xsgq5UphoXKJOrVsQRU0dNdL2aQ==
+X-Received: by 2002:a5d:5302:: with SMTP id e2mr34260711wrv.345.1566302255528;
+        Tue, 20 Aug 2019 04:57:35 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxacsi4LfxSfRp+8+CxkC8yY0Yg8as35IT8Y5TfMDGMA3q7N5ldlBJvJxDKANyD5thffwKLXQ==
+X-Received: by 2002:a5d:5302:: with SMTP id e2mr34260687wrv.345.1566302255317;
+        Tue, 20 Aug 2019 04:57:35 -0700 (PDT)
+Received: from pegasus.maiolino.io (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
+        by smtp.gmail.com with ESMTPSA id v124sm14321570wmf.23.2019.08.20.04.57.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 04:57:34 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 13:57:32 +0200
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-fsdevel@vger.kernel.org, adilger@dilger.ca,
+        jaegeuk@kernel.org, darrick.wong@oracle.com, miklos@szeredi.hu,
+        rpeterso@redhat.com, linux-xfs@vger.kernel.org, dhowells@redhat.com
+Subject: Re: [PATCH 2/9] cachefiles: drop direct usage of ->bmap method.
+Message-ID: <20190820115731.bed7gwfygk66nj43@pegasus.maiolino.io>
+Mail-Followup-To: Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel@vger.kernel.org, adilger@dilger.ca,
+        jaegeuk@kernel.org, darrick.wong@oracle.com, miklos@szeredi.hu,
+        rpeterso@redhat.com, linux-xfs@vger.kernel.org, dhowells@redhat.com
+References: <20190808082744.31405-1-cmaiolino@redhat.com>
+ <20190808082744.31405-3-cmaiolino@redhat.com>
+ <20190814111535.GC1885@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190820011210.GP7777@dread.disaster.area>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190814111535.GC1885@lst.de>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 11:12:10AM +1000, Dave Chinner wrote:
-> On Mon, Aug 19, 2019 at 09:38:41AM -0300, Jason Gunthorpe wrote:
-> > On Mon, Aug 19, 2019 at 07:24:09PM +1000, Dave Chinner wrote:
-> > 
-> > > So that leaves just the normal close() syscall exit case, where the
-> > > application has full control of the order in which resources are
-> > > released. We've already established that we can block in this
-> > > context.  Blocking in an interruptible state will allow fatal signal
-> > > delivery to wake us, and then we fall into the
-> > > fatal_signal_pending() case if we get a SIGKILL while blocking.
-> > 
-> > The major problem with RDMA is that it doesn't always wait on close() for the
-> > MR holding the page pins to be destoyed. This is done to avoid a
-> > deadlock of the form:
-> > 
-> >    uverbs_destroy_ufile_hw()
-> >       mutex_lock()
-> >        [..]
-> >         mmput()
-> >          exit_mmap()
-> >           remove_vma()
-> >            fput();
-> >             file_operations->release()
+On Wed, Aug 14, 2019 at 01:15:35PM +0200, Christoph Hellwig wrote:
+> On Thu, Aug 08, 2019 at 10:27:37AM +0200, Carlos Maiolino wrote:
+> > +	block = page->index;
+> > +	block <<= shift;
 > 
-> I think this is wrong, and I'm pretty sure it's an example of why
-> the final __fput() call is moved out of line.
+> Can't this cause overflows?
 
-Yes, I think so too, all I can say is this *used* to happen, as we
-have special code avoiding it, which is the code that is messing up
-Ira's lifetime model.
+Hmm, I honestly don't know. I did look at the code, and I couldn't really spot
+anything concrete.
 
-Ira, you could try unraveling the special locking, that solves your
-lifetime issues?
+Maybe if the block size is much smaller than PAGE_SIZE, but I am really not
+sure.
 
-Jason
+Bear in mind though, I didn't change the logic here at all. I just reused one
+variable instead of juggling both (block0 and block) old variables. So, if this
+really can overflow, the code is already buggy even without my patch, I'm CC'ing
+dhowells just in case.
+
+
+> 
+> > +
+> > +	ret = bmap(inode, &block);
+> > +	ASSERT(!ret);
+> 
+> I think we want some real error handling here instead of just an
+> assert..
+
+I left this ASSERT() here, to match the current logic. By now, the only error we
+can get is -EINVAL, which basically says ->bmap() method does not exist, which
+is basically what does happen today with:
+
+ASSERT(inode->i_mapping->a_ops->bmap);
+
+
+But I do agree, it will be better to provide some sort of error handling here,
+maybe I should do something like:
+
+ASSERT(ret == -EINVAL)
+
+to keep the logic exactly the same and do not blow up in the future if/when we
+expand possible error values from bmap()
+
+What you think?
+
+-- 
+Carlos
