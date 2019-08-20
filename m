@@ -2,83 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC7296764
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 19:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFA9E9679C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 19:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729351AbfHTRYu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 13:24:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47980 "EHLO mail.kernel.org"
+        id S1729852AbfHTRbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 13:31:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725971AbfHTRYu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 13:24:50 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727358AbfHTRbS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Aug 2019 13:31:18 -0400
+Received: from localhost (unknown [104.132.0.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D3702054F;
-        Tue, 20 Aug 2019 17:24:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA7F9206DF;
+        Tue, 20 Aug 2019 17:31:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566321889;
-        bh=32bftUSKN3Wtl2ZUSwOigociAvrqIpLWLd4sbLVVuNs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mNf7pt3nluqjn7wPRl9oxtXsVnuSZaSCBUZomyCyPzzn86pMm1C66eV2ovN537fzs
-         twDIX2TwIIhksR2hUFeG2rerO7ZyNg5kILiIjocQMh8JrJt3TqkiQ7ehTmVji22V5G
-         ZtcCI3OBDRsHFfQ2uCdN2ixEmqYcj9rmuODIJfnw=
-Subject: Re: [PATCH v13 00/18] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Bjorn Helgaas <bhelgaas@google.com>,
-        shuah <shuah@kernel.org>
-References: <20190814055108.214253-1-brendanhiggins@google.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <5b880f49-0213-1a6e-9c9f-153e6ab91eeb@kernel.org>
-Date:   Tue, 20 Aug 2019 11:24:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        s=default; t=1566322276;
+        bh=xchQBhCrLDaryEtWVa7H/buI3AaIEZHu2PtVlis3tCo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EALnhDjg14LpO0z6cXs41pGJl7VFZngK162MACYic3kP6I//VLW2CmWhxhuzm0c6H
+         wcvyfirgB/snkOQx4T15wm1bmb9l4uIsgtgzjBZ+9/uEO0LGb8H/igXp4ZS938r7Xf
+         hjpdWBYQLCRV1iQNAm+ZeItii52405uPaddS2Xug=
+Date:   Tue, 20 Aug 2019 10:31:16 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Chandan Rajendra <chandan@linux.ibm.com>, ebiggers@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org, chandanrmail@gmail.com,
+        adilger.kernel@dilger.ca, yuchao0@huawei.com, hch@infradead.org
+Subject: Re: [PATCH V4 5/8] f2fs: Use read_callbacks for decrypting file data
+Message-ID: <20190820173116.GA58214@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190816061804.14840-1-chandan@linux.ibm.com>
+ <20190816061804.14840-6-chandan@linux.ibm.com>
+ <1652707.8YmLLlegLt@localhost.localdomain>
+ <20190820163837.GD10232@mit.edu>
 MIME-Version: 1.0
-In-Reply-To: <20190814055108.214253-1-brendanhiggins@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190820163837.GD10232@mit.edu>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/13/19 11:50 PM, Brendan Higgins wrote:
-> ## TL;DR
-> 
-> This revision addresses comments from Stephen and Bjorn Helgaas. Most
-> changes are pretty minor stuff that doesn't affect the API in anyway.
-> One significant change, however, is that I added support for freeing
-> kunit_resource managed resources before the test case is finished via
-> kunit_resource_destroy(). Additionally, Bjorn pointed out that I broke
-> KUnit on certain configurations (like the default one for x86, whoops).
-> 
-> Based on Stephen's feedback on the previous change, I think we are
-> pretty close. I am not expecting any significant changes from here on
-> out.
-> 
+Hi Chandan,
 
-Hi Brendan,
+On 08/20, Theodore Y. Ts'o wrote:
+> On Tue, Aug 20, 2019 at 10:35:29AM +0530, Chandan Rajendra wrote:
+> > Looks like F2FS requires a lot more flexiblity than what can be offered by
+> > read callbacks i.e.
+> > 
+> > 1. F2FS wants to make use of its own workqueue for decryption, verity and
+> >    decompression.
+> > 2. F2FS' decompression code is not an FS independent entity like fscrypt and
+> >    fsverity. Hence they would need Filesystem specific callback functions to
+> >    be invoked from "read callbacks". 
+> > 
+> > Hence I would suggest that we should drop F2FS changes made in this
+> > patchset. Please let me know your thoughts on this.
+> 
+> That's probably the best way to go for now.  My one concern is that it
+> means that only ext4 will be using your framework.  I could imagine
+> that some people might argue that should just move the callback scheme
+> into ext4 code as opposed to leaving it in fscrypt --- at least until
+> we can find other file systems where we can show that it will be
+> useful for those other file systems.
 
-I found checkpatch errors in one or two patches. Can you fix those and
-send v14.
+I also have to raise a flag on this. Doesn't this patch series try to get rid
+of redundant work? What'd be the rationale, if it only supports ext4?
 
-thanks,
--- Shuah
+How about generalizing the framework to support generic_post_read and per-fs
+post_read for fscrypt/fsverity/... selectively?
+
+Thanks,
+
+> 
+> (Perhaps a useful experiment would be to have someone implement patches
+> to support fscrypt and fsverity in ext2 --- the patch might or might
+> not be accepted for upstream inclusion, but it would be useful to
+> demonstrate how easy it is to add fscrypt and fsverity.)
+> 
+> The other thing to consider is that there has been some discussion
+> about adding generalized support for I/O submission to the iomap
+> library.  It might be that if that work is accepted, support for
+> fscrypt and fsverity would be a requirement for ext4 to use that
+> portion of iomap's functionality.  So in that eventuality, it might be
+> that we'll want to move your read callbacks code into iomap, or we'll
+> need to rework the read callbacks code so it can work with iomap.
+> 
+> But this is all work for the future.  I'm a firm believe that the
+> perfect should not be the enemy of the good, and that none of this
+> should be a fundamental obstacle in having your code upstream.
+> 
+> Cheers,
+> 
+> 					- Ted
+> 
