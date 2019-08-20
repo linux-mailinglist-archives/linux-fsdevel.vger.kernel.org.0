@@ -2,205 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDCB29535B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 03:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5C4953E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2019 03:56:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbfHTB07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Aug 2019 21:26:59 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33627 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728647AbfHTB06 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Aug 2019 21:26:58 -0400
-Received: by mail-pl1-f195.google.com with SMTP id go14so1844806plb.0;
-        Mon, 19 Aug 2019 18:26:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1f+qnxuSTkrKhQhWKPw8r3KGzNHzDoVDPUhIrlUlE4U=;
-        b=ZBtQCObjsYU8plmwtDPelF7jsZrSpaLaLe6lBEeeieODGofikgi93DLlwvPMAJTUfT
-         xxSipbrf4cAH+w6Gt/v2apc4UeDO+AV3auZctNowiflnI1SV2jnwmTNu117p7R3PT69i
-         41bAews7H4PTuBjBFAvPCSXfto3JbFTtwxGImlR1LqyTiN6U83WE8P3h7mJ5HBusyWxW
-         RFNTht19ngrU9/b50Z1YRiSL7gbnqBRcklE057Y2HjlVZxJSFhA7HpdZUWHUQBd5T3ET
-         /xqAXJDrQf8k1x3B7X5+7V4DcCZAZENn3PLUjK/SinHsQfA3qEKkFupgAqIzQpHyMpP+
-         beyA==
-X-Gm-Message-State: APjAAAWZFyG4vVU8fpNp/PXqI6F7s7KQcHFHQeSuKOuGuUMW1xDyr9iO
-        MAmhqZFQj6wJAhRDdHiBmIGuaWbf
-X-Google-Smtp-Source: APXvYqwqmd8RfIeVgvfWwDKTWUaFR0bqyFGd+0cynJ08MQsmabbIYy4tspHV9X9PTCioiALEkqHmag==
-X-Received: by 2002:a17:902:2f43:: with SMTP id s61mr9505645plb.22.1566264417657;
-        Mon, 19 Aug 2019 18:26:57 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id j9sm18162084pfe.103.2019.08.19.18.26.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 18:26:56 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 87CAF4035F; Tue, 20 Aug 2019 01:26:55 +0000 (UTC)
-Date:   Tue, 20 Aug 2019 01:26:55 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 3/3] firmware: add mutex fw_lock_fallback for race
- condition
-Message-ID: <20190820012655.GU16384@42.do-not-panic.com>
-References: <20190816000945.29810-1-scott.branden@broadcom.com>
- <20190816000945.29810-4-scott.branden@broadcom.com>
- <20190819053937.GR16384@42.do-not-panic.com>
- <16823ee6-c52a-b3b5-caed-79c00772fa68@broadcom.com>
+        id S1728800AbfHTB4Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Aug 2019 21:56:25 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:3942 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728647AbfHTB4Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Aug 2019 21:56:25 -0400
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id C61FAB30F28E0AFC2348;
+        Tue, 20 Aug 2019 09:56:21 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 20 Aug 2019 09:56:21 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Tue, 20 Aug 2019 09:56:20 +0800
+Date:   Tue, 20 Aug 2019 09:55:41 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+CC:     Gao Xiang <hsiangkao@aol.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Richard Weinberger" <richard@nod.at>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>, Chao Yu <yuchao0@huawei.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
+        devel <devel@driverdev.osuosl.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Jaegeuk Kim" <jaegeuk@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Li Guifu" <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>, "Pavel Machek" <pavel@denx.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] erofs: move erofs out of staging
+Message-ID: <20190820015541.GA159846@architecture4>
+References: <20190818155812.GB13230@infradead.org>
+ <20190818161638.GE1118@sol.localdomain>
+ <20190818162201.GA16269@infradead.org>
+ <20190818172938.GA14413@sol.localdomain>
+ <20190818174702.GA17633@infradead.org>
+ <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190819160923.GG15198@magnolia>
+ <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <16823ee6-c52a-b3b5-caed-79c00772fa68@broadcom.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme707-chm.china.huawei.com (10.1.199.103) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 09:19:51AM -0700, Scott Branden wrote:
-> To be honest, I find the entire firmware code sloppy.
+Hi Qu,
 
-And that is after years of cleanup on my part. Try going back to v4.1
-for instance, check the code out then for an incredible horrific sight :)
-
-> I don't think the cache/no-cache feature is
-> implemented or tested properly nor fallback to begin with.
-
-I'm in total agreement! I *know* there must be holes in that code, and I
-acknowledge a few possible gotchas on the commit logs. For instance, I
-acknowledged that the firmware cache had a secondary purpose which was
-not well documented or understood through commit e44565f62a720
-("firmware: fix batched requests - wake all waiters"). The firmware
-cache allows for batching requests and sharing the same original request
-for multiple consecutive requests which *race against each other*.
-That's when I started having my doubts about the architecture of the
-firmware cache mechanism, it seemed too complex and perhaps overkill
-and considered killing it.
-
-As I noted in that commit, the firmware cache is used for:
-    
-1) Addressing races with file lookups during the suspend/resume cycle by
-keeping firmware in memory during the suspend/resume cycle
-	           
-2) Batched requests for the same file rely only on work from the first
-file lookup, which keeps the firmware in memory until the last
-release_firmware() is called
-
-Also worth quoting from that commit as well:
-
-"Batched requests *only* take effect if secondary requests come in
-prior to the first user calling release_firmware(). The devres name used
-for the internal firmware cache is used as a hint other pending requests
-are ongoing, the firmware buffer data is kept in memory until the last
-user of the buffer calls release_firmware(), therefore serializing
-requests and delaying the release until all requests are done."
-
-Later we discovered that the firmware cache had a serious security issue
-since its inception through commit 422b3db2a503 ("firmware: Fix security
-issue with request_firmware_into_buf()"). Granted, exploiting this would
-require the ability to load kernel code, so the vector of exploitation
-is rather small.
-
-The cache stuff cannot be removed as it *at least* resolves the fw
-suspend stuff, but still, this can likely use a revisit in rachitecture
-long term. The second implicit use case for batched requests however
-seems complex and not sure if its worth to maintain. I'll note that
-at least some drivers *do* their own firmware caching, iwlwifi, is one,
-so there is an example there to allow drivers to say "I actually don't
-need caching" for the future.
-
-If you're volunteering to cleaning / testing the cache stuff I highly
-welcome that. That and the fallback stuff has been needing testing for
-years. Someoone was working on patches on the test case for cache stuff
-a while ago, from Intel, but they disappeared.
-
-> I'm not claiming this patch is the final
-> solution and indicated such in the cover letter and the comment above.
-
-I missed that sorry.
-
-> I hope there is someone more familiar with this code to comment further and
-> come up with a proper solution.
-
-Alright, I'll dig in and take a look, and propose an alternative.
-
-> I have found numerous issues and race conditions with the firmware code (I
-> simply added a test).
-
-That is nothing compared to the amount of fixes I have found and
-actually fixed too, the code was a nightmare before I took on
-maintenance.
-
-> 1) Try loading the same valid firmware using no-cache once it has already
-> been loaded with cache.
-
-:) 
-
-> It won't work, which is why I had to use a different filename in the test
-> for request_firmware_into_buf.
-
-Alright, I'll go try to fix this. Thanks for the report.
-
-> 2) Try removing the "if (opt_flags & FW_OPT_NOCACHE)" in my patch and always
-> call the mutex.
+On Tue, Aug 20, 2019 at 08:55:32AM +0800, Qu Wenruo wrote:
+> [...]
+> >>> I have made a simple fuzzer to inject messy in inode metadata,
+> >>> dir data, compressed indexes and super block,
+> >>> https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/commit/?h=experimental-fuzzer
+> >>>
+> >>> I am testing with some given dirs and the following script.
+> >>> Does it look reasonable?
+> >>>
+> >>> # !/bin/bash
+> >>>
+> >>> mkdir -p mntdir
+> >>>
+> >>> for ((i=0; i<1000; ++i)); do
+> >>> 	mkfs/mkfs.erofs -F$i testdir_fsl.fuzz.img testdir_fsl > /dev/null 2>&1
+> >>
+> >> mkfs fuzzes the image? Er....
+> > 
+> > Thanks for your reply.
+> > 
+> > First, This is just the first step of erofs fuzzer I wrote yesterday night...
+> > 
+> >>
+> >> Over in XFS land we have an xfs debugging tool (xfs_db) that knows how
+> >> to dump (and write!) most every field of every metadata type.  This
+> >> makes it fairly easy to write systematic level 0 fuzzing tests that
+> >> check how well the filesystem reacts to garbage data (zeroing,
+> >> randomizing, oneing, adding and subtracting small integers) in a field.
+> >> (It also knows how to trash entire blocks.)
 > 
-> The firmware test will lock up during a "no uevent" test.  I am not familiar
-> with the code to
+> The same tool exists for btrfs, although lacks the write ability, but
+> that dump is more comprehensive and a great tool to learn the on-disk
+> format.
 > 
-> know why such is true and what issue this exposes in the code.
+> 
+> And for the fuzzing defending part, just a few kernel releases ago,
+> there is none for btrfs, and now we have a full static verification
+> layer to cover (almost) all on-disk data at read and write time.
+> (Along with enhanced runtime check)
+> 
+> We have covered from vague values inside tree blocks and invalid/missing
+> cross-ref find at runtime.
+> 
+> Currently the two layered check works pretty fine (well, sometimes too
+> good to detect older, improper behaved kernel).
+> - Tree blocks with vague data just get rejected by verification layer
+>   So that all members should fit on-disk format, from alignment to
+>   generation to inode mode.
+> 
+>   The error will trigger a good enough (TM) error message for developer
+>   to read, and if we have other copies, we retry other copies just as
+>   we hit a bad copy.
+> 
+> - At runtime, we have much less to check
+>   Only cross-ref related things can be wrong now. since everything
+>   inside a single tree block has already be checked.
+> 
+> In fact, from my respect of view, such read time check should be there
+> from the very beginning.
+> It acts kinda of a on-disk format spec. (In fact, by implementing the
+> verification layer itself, it already exposes a lot of btrfs design
+> trade-offs)
+> 
+> Even for a fs as complex (buggy) as btrfs, we only take 1K lines to
+> implement the verification layer.
+> So I'd like to see every new mainlined fs to have such ability.
 
-I hinted in my review of the oops what the issue was.
+It's already on our schedule, but we have limited manpower. Rome was
+not built in a day, as I mentioned eariler, we are doing our best.
 
-> 3) I have a driver that uses request_firmware_into_buf and have multiple
-> instances of the driver
+In principle, all the new Linux features on-disk can build their
+debugging tools, not only for file systems. You can hardly let your
+newborn baby go to university immediately.
 
-Cool, is the driver upstream?
+We're developping out of our interests for Linux community (our
+high level bosses care nothing except for money, you know) and
+we hope to better join in and contribute to Linux community, we need
+more time to enrich our eco-system in our spare time.
 
-> loading the same firmware in parallel.  Some of the data is not read
-> correctly in each instance.
+All HUAWEI smartphone products will continue using this filesystem,
+and its performance and stability is proven by our 10+ millions
+products, and maintaining this filesystem is one of our paid jobs.
 
-Makes perfect sense considering the lack of testing I noted.
+> 
+> > 
+> > Actually, compared with XFS, EROFS has rather simple on-disk format.
+> > What we inject one time is quite deterministic.
+> > 
+> > The first step just purposely writes some random fuzzed data to
+> > the base inode metadata, compressed indexes, or dir data field
+> > (one round one field) to make it validity and coverability.
+> > 
+> >>
+> >> You might want to write such a debugging tool for erofs so that you can
+> >> take apart crashed images to get a better idea of what went wrong, and
+> >> to write easy fuzzing tests.
+> > 
+> > Yes, we will do such a debugging tool of course. Actually Li Guifu is now
+> > developping a erofs-fuse to support old linux versions or other OSes for
+> > archiveing only use, we will base on that code to develop a better fuzzer
+> > tool as well.
+> 
+> Personally speaking, debugging tool is way more important than a running
+> kernel module/fuse.
+> It's human trying to write the code, most of time is spent educating
+> code readers, thus debugging tool is way more important than dead cold code.
 
-> I haven't yet to reproduce this issue with the firmware test 
+Debugging tools and erofs-fuse share common code, that is to parse
+the filesystem. That was the main point that I want to say.
 
-That's because of batched firmware request mechanism.
+Thanks,
+Gao Xiang
 
-> but currently
-> have a mutex around the entire
-> call to request_firmware_into_buf in our driver.
+> 
+> Thanks,
+> Qu
+> > 
+> > Thanks,
+> > Gao Xiang
+> > 
+> >>
+> >> --D
+> >>
+> >>> 	umount mntdir
+> >>> 	mount -t erofs -o loop testdir_fsl.fuzz.img mntdir
+> >>> 	for j in `find mntdir -type f`; do
+> >>> 		md5sum $j > /dev/null
+> >>> 	done
+> >>> done
+> >>>
+> >>> Thanks,
+> >>> Gao Xiang
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>> Gao Xiang
+> >>>>
+> 
 
-I will take a look at this now.
 
-> Perhaps it is better at this point to add a mutex in
-> request_firmware_into_buf to make is entirely safe?
 
-No, that is not sufficient, although it would also solve the
-issue.
-
-> (Perhaps even with every request_firmware functions as none seems to be
-> tested properly.)
-
-No, you are incorrect. The other firmware API calls *have* been
-elaborately tested. The firmware cache stuff *is a mess* however,
-since we *use and support it*, I've done my best to salvage it and
-document it.
-
-I'll take a look at this and propose an alternative solution.
-
-  Luis
