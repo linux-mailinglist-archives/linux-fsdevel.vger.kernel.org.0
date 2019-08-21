@@ -2,147 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B97982B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 20:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B08059838B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 20:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbfHUSYP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 14:24:15 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11858 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbfHUSYP (ORCPT
+        id S1728175AbfHUStQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 14:49:16 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49680 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726793AbfHUStQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 14:24:15 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d5d8c4d0000>; Wed, 21 Aug 2019 11:24:13 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 21 Aug 2019 11:24:13 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 21 Aug 2019 11:24:13 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
- 2019 18:24:12 +0000
-Received: from [10.2.161.131] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
- 2019 18:24:12 +0000
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-To:     Jason Gunthorpe <jgg@ziepe.ca>, Ira Weiny <ira.weiny@intel.com>
-CC:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
-        <linux-xfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-ext4@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
- <20190815130558.GF14313@quack2.suse.cz>
- <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
- <20190817022603.GW6129@dread.disaster.area>
- <20190819063412.GA20455@quack2.suse.cz>
- <20190819092409.GM7777@dread.disaster.area> <20190819123841.GC5058@ziepe.ca>
- <20190820011210.GP7777@dread.disaster.area> <20190820115515.GA29246@ziepe.ca>
- <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
- <20190821181343.GH8653@ziepe.ca>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <50905b73-b64a-2b02-f5d5-f66ba0d912ab@nvidia.com>
-Date:   Wed, 21 Aug 2019 11:22:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190821181343.GH8653@ziepe.ca>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1566411853; bh=CfqY8aJja8VV7vQdQwO0ArJP7UGyxBQ9FeuFR1zQxF4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=FVubjkvptshBNnluMQjtoEMnrXaPNCHMPCZ0L8jnjc9nEOnq6dqKhOe+TvOOP7K04
-         6I4vM3+3IHlNz4bj4WEE6vv6H1xbLRU22hJWsYyts0CsqEAEIR1/WJf1Lql9ZCrDWW
-         MJ6OCMA4rAS3PDporQJNy9PmW155jIzLu7SYKrtMZTMsGKDQqST56iTQpBp5eYgrOH
-         blDrmpTbHWZKLDV2Mk2gFjrXf8+pUhWMvIfMwlN+z/T6aNEBdOocUohhXbkxa9euoz
-         OtGAYEgIWVXbfAYV4A5vvnkWCH3bW4Gx4cxWy4g+M/67D1nmfmJlD3HcEd6W5ifcdA
-         KEmZJENkYkOOg==
+        Wed, 21 Aug 2019 14:49:16 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7LIbLgP106601
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 14:49:14 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uharp1yvv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 14:49:14 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 21 Aug 2019 19:49:13 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 21 Aug 2019 19:49:08 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7LIn7ub33620120
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Aug 2019 18:49:07 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55C0AA4053;
+        Wed, 21 Aug 2019 18:49:07 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EFD58A4040;
+        Wed, 21 Aug 2019 18:49:04 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.135.147])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 21 Aug 2019 18:49:04 +0000 (GMT)
+Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
+        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+In-Reply-To: <23498.1565962602@warthog.procyon.org.uk>
+References: <1562814435.4014.11.camel@linux.ibm.com>
+         <28477.1562362239@warthog.procyon.org.uk>
+         <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com>
+         <20190710194620.GA83443@gmail.com> <20190710201552.GB83443@gmail.com>
+         <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com>
+         <23498.1565962602@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 21 Aug 2019 10:20:44 -0400
+Mime-Version: 1.0
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19082118-0008-0000-0000-0000030B8E41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082118-0009-0000-0000-00004A29BA4E
+Message-Id: <1566397244.5162.11.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-21_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908210182
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/21/19 11:13 AM, Jason Gunthorpe wrote:
-> On Wed, Aug 21, 2019 at 11:02:00AM -0700, Ira Weiny wrote:
->> On Tue, Aug 20, 2019 at 08:55:15AM -0300, Jason Gunthorpe wrote:
->>> On Tue, Aug 20, 2019 at 11:12:10AM +1000, Dave Chinner wrote:
->>>> On Mon, Aug 19, 2019 at 09:38:41AM -0300, Jason Gunthorpe wrote:
->>>>> On Mon, Aug 19, 2019 at 07:24:09PM +1000, Dave Chinner wrote:
->>>>>
->>>>>> So that leaves just the normal close() syscall exit case, where the
->>>>>> application has full control of the order in which resources are
->>>>>> released. We've already established that we can block in this
->>>>>> context.  Blocking in an interruptible state will allow fatal signal
->>>>>> delivery to wake us, and then we fall into the
->>>>>> fatal_signal_pending() case if we get a SIGKILL while blocking.
->>>>>
->>>>> The major problem with RDMA is that it doesn't always wait on close() for the
->>>>> MR holding the page pins to be destoyed. This is done to avoid a
->>>>> deadlock of the form:
->>>>>
->>>>>     uverbs_destroy_ufile_hw()
->>>>>        mutex_lock()
->>>>>         [..]
->>>>>          mmput()
->>>>>           exit_mmap()
->>>>>            remove_vma()
->>>>>             fput();
->>>>>              file_operations->release()
->>>>
->>>> I think this is wrong, and I'm pretty sure it's an example of why
->>>> the final __fput() call is moved out of line.
->>>
->>> Yes, I think so too, all I can say is this *used* to happen, as we
->>> have special code avoiding it, which is the code that is messing up
->>> Ira's lifetime model.
->>>
->>> Ira, you could try unraveling the special locking, that solves your
->>> lifetime issues?
->>
->> Yes I will try to prove this out...  But I'm still not sure this fully solves
->> the problem.
->>
->> This only ensures that the process which has the RDMA context (RDMA FD) is safe
->> with regard to hanging the close for the "data file FD" (the file which has
->> pinned pages) in that _same_ process.  But what about the scenario.
+On Fri, 2019-08-16 at 14:36 +0100, David Howells wrote:
+> Mimi Zohar <zohar@linux.ibm.com> wrote:
 > 
-> Oh, I didn't think we were talking about that. Hanging the close of
-> the datafile fd contingent on some other FD's closure is a recipe for
-> deadlock..
+> > Sorry for the delay.  An exception is needed for loading builtin keys
+> > "KEY_ALLOC_BUILT_IN" onto a keyring that is not writable by userspace.
+> >  The following works, but probably is not how David would handle the
+> > exception.
 > 
-> IMHO the pin refcnt is held by the driver char dev FD, that is the
-> object you need to make it visible against.
+> I think the attached is the right way to fix it.
+> 
+> load_system_certificate_list(), for example, when it creates keys does this:
+> 
+> 	key = key_create_or_update(make_key_ref(builtin_trusted_keys, 1),
+> 
+> marking the keyring as "possessed" in make_key_ref().  This allows the
+> possessor permits to be used - and that's the *only* way to use them for
+> internal keyrings like this because you can't link to them and you can't join
+> them.
 
-
-If you do that, it might make it a lot simpler to add lease support
-to drivers like XDP, which is otherwise looking pretty difficult to
-set up with an fd. (It's socket-based, and not immediately clear where
-to connect up the fd.)
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+In addition, as long as additional keys still can't be added or
+existing keys updated by userspace on the .builtin_trusted_keys, then
+this is fine.
 
 > 
-> Why not just have a single table someplace of all the layout leases
-> with the file they are held on and the FD/socket/etc that is holding
-> the pin? Make it independent of processes and FDs?
-> 
-> Jason
-> 
+> David
+> ---
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 57be78b5fdfc..1f8f26f7bb05 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -99,7 +99,7 @@ static __init int system_trusted_keyring_init(void)
+>  	builtin_trusted_keys =
+>  		keyring_alloc(".builtin_trusted_keys",
+>  			      KUIDT_INIT(0), KGIDT_INIT(0), current_cred(),
+> -			      &internal_key_acl, KEY_ALLOC_NOT_IN_QUOTA,
+> +			      &internal_keyring_acl, KEY_ALLOC_NOT_IN_QUOTA,
+>  			      NULL, NULL);
+>  	if (IS_ERR(builtin_trusted_keys))
+>  		panic("Can't allocate builtin trusted keyring\n");
+> diff --git a/security/keys/permission.c b/security/keys/permission.c
+> index fc84d9ef6239..86efd3eaf083 100644
+> --- a/security/keys/permission.c
+> +++ b/security/keys/permission.c
+> @@ -47,7 +47,7 @@ struct key_acl internal_keyring_acl = {
+>  	.usage	= REFCOUNT_INIT(1),
+>  	.nr_ace	= 2,
+>  	.aces = {
+> -		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH),
+> +		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH | KEY_ACE_WRITE),
+>  		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ | KEY_ACE_SEARCH),
+>  	}
+>  };
+
+Thanks, David.  The builtin keys are now being loaded.
+
+Mimi
+
