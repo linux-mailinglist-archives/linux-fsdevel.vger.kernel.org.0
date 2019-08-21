@@ -2,106 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E07D99822B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C699820A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbfHUR5i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 13:57:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33228 "EHLO mx1.redhat.com"
+        id S1730115AbfHUR5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 13:57:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55780 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727014AbfHUR5h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 13:57:37 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1729817AbfHUR5n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Aug 2019 13:57:43 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8076D315C008;
-        Wed, 21 Aug 2019 17:57:37 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B723F1105201;
+        Wed, 21 Aug 2019 17:57:42 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E40E35D9D3;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F167C60127;
         Wed, 21 Aug 2019 17:57:32 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 778B8223CFC; Wed, 21 Aug 2019 13:57:32 -0400 (EDT)
+        id 7C3D6223CFD; Wed, 21 Aug 2019 13:57:32 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
 Cc:     virtio-fs@redhat.com, vgoyal@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com
-Subject: [PATCH v3 00/19][RFC] virtio-fs: Enable DAX support
-Date:   Wed, 21 Aug 2019 13:57:01 -0400
-Message-Id: <20190821175720.25901-1-vgoyal@redhat.com>
+        stefanha@redhat.com, dgilbert@redhat.com,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 01/19] dax: remove block device dependencies
+Date:   Wed, 21 Aug 2019 13:57:02 -0400
+Message-Id: <20190821175720.25901-2-vgoyal@redhat.com>
+In-Reply-To: <20190821175720.25901-1-vgoyal@redhat.com>
+References: <20190821175720.25901-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 21 Aug 2019 17:57:37 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Wed, 21 Aug 2019 17:57:42 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+From: Stefan Hajnoczi <stefanha@redhat.com>
 
-This patch series enables DAX support for virtio-fs filesystem. Patches
-are based on 5.3-rc5 kernel and need first patch series posted for
-virtio-fs support with subject "virtio-fs: shared file system for virtual
-machines".
+Although struct dax_device itself is not tied to a block device, some
+DAX code assumes there is a block device.  Make block devices optional
+by allowing bdev to be NULL in commonly used DAX APIs.
 
-https://www.redhat.com/archives/virtio-fs/2019-August/msg00281.html
+When there is no block device:
+ * Skip the partition offset calculation in bdev_dax_pgoff()
+ * Skip the blkdev_issue_zeroout() optimization
 
-Enabling DAX seems to improve performance for most of the operations
-in general a great deal. I have reported performance numbers in first patch
-series so I am not repeating these here.
+Note that more block device assumptions remain but I haven't reach those
+code paths yet.
 
-Any comments or feedback is welcome.
+Cc: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+---
+ drivers/dax/super.c | 3 ++-
+ fs/dax.c            | 7 ++++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-Thanks
-Vivek
-
-Sebastien Boeuf (3):
-  virtio: Add get_shm_region method
-  virtio: Implement get_shm_region for PCI transport
-  virtio: Implement get_shm_region for MMIO transport
-
-Stefan Hajnoczi (4):
-  dax: remove block device dependencies
-  fuse, dax: add fuse_conn->dax_dev field
-  virtio_fs, dax: Set up virtio_fs dax_device
-  fuse, dax: add DAX mmap support
-
-Vivek Goyal (12):
-  dax: Pass dax_dev to dax_writeback_mapping_range()
-  fuse: Keep a list of free dax memory ranges
-  fuse: implement FUSE_INIT map_alignment field
-  fuse: Introduce setupmapping/removemapping commands
-  fuse, dax: Implement dax read/write operations
-  fuse: Define dax address space operations
-  fuse, dax: Take ->i_mmap_sem lock during dax page fault
-  fuse: Maintain a list of busy elements
-  dax: Create a range version of dax_layout_busy_page()
-  fuse: Add logic to free up a memory range
-  fuse: Release file in process context
-  fuse: Take inode lock for dax inode truncation
-
- drivers/dax/super.c                |    3 +-
- drivers/virtio/virtio_mmio.c       |   32 +
- drivers/virtio/virtio_pci_modern.c |  108 +++
- fs/dax.c                           |   89 +-
- fs/ext2/inode.c                    |    2 +-
- fs/ext4/inode.c                    |    2 +-
- fs/fuse/cuse.c                     |    3 +-
- fs/fuse/dir.c                      |    2 +
- fs/fuse/file.c                     | 1206 +++++++++++++++++++++++++++-
- fs/fuse/fuse_i.h                   |   99 ++-
- fs/fuse/inode.c                    |  138 +++-
- fs/fuse/virtio_fs.c                |  134 +++-
- fs/xfs/xfs_aops.c                  |    2 +-
- include/linux/dax.h                |   12 +-
- include/linux/virtio_config.h      |   17 +
- include/uapi/linux/fuse.h          |   47 +-
- include/uapi/linux/virtio_fs.h     |    3 +
- include/uapi/linux/virtio_mmio.h   |   11 +
- include/uapi/linux/virtio_pci.h    |   11 +-
- 19 files changed, 1868 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 26a654dbc69a..3cbc97f3e653 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -46,7 +46,8 @@ EXPORT_SYMBOL_GPL(dax_read_unlock);
+ int bdev_dax_pgoff(struct block_device *bdev, sector_t sector, size_t size,
+ 		pgoff_t *pgoff)
+ {
+-	phys_addr_t phys_off = (get_start_sect(bdev) + sector) * 512;
++	sector_t start_sect = bdev ? get_start_sect(bdev) : 0;
++	phys_addr_t phys_off = (start_sect + sector) * 512;
+ 
+ 	if (pgoff)
+ 		*pgoff = PHYS_PFN(phys_off);
+diff --git a/fs/dax.c b/fs/dax.c
+index 6bf81f931de3..a11147bbaf9e 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1046,7 +1046,12 @@ static vm_fault_t dax_load_hole(struct xa_state *xas,
+ static bool dax_range_is_aligned(struct block_device *bdev,
+ 				 unsigned int offset, unsigned int length)
+ {
+-	unsigned short sector_size = bdev_logical_block_size(bdev);
++	unsigned short sector_size;
++
++	if (!bdev)
++		return false;
++
++	sector_size = bdev_logical_block_size(bdev);
+ 
+ 	if (!IS_ALIGNED(offset, sector_size))
+ 		return false;
 -- 
 2.20.1
 
