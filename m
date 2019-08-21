@@ -2,156 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A572981FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B5BB98211
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:58:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbfHUR5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 13:57:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58782 "EHLO mx1.redhat.com"
+        id S1728837AbfHUR60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 13:58:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48964 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730171AbfHUR5p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 13:57:45 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1729793AbfHUR5j (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Aug 2019 13:57:39 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D638F1801592;
-        Wed, 21 Aug 2019 17:57:44 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 08B011F8;
+        by mx1.redhat.com (Postfix) with ESMTPS id 105E87F768;
         Wed, 21 Aug 2019 17:57:39 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DE1FC17D29;
+        Wed, 21 Aug 2019 17:57:38 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id C8396223D0B; Wed, 21 Aug 2019 13:57:32 -0400 (EDT)
+        id CD458223D0C; Wed, 21 Aug 2019 13:57:32 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
 Cc:     virtio-fs@redhat.com, vgoyal@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com
-Subject: [PATCH 15/19] fuse: Maintain a list of busy elements
-Date:   Wed, 21 Aug 2019 13:57:16 -0400
-Message-Id: <20190821175720.25901-16-vgoyal@redhat.com>
+        stefanha@redhat.com, dgilbert@redhat.com,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 16/19] dax: Create a range version of dax_layout_busy_page()
+Date:   Wed, 21 Aug 2019 13:57:17 -0400
+Message-Id: <20190821175720.25901-17-vgoyal@redhat.com>
 In-Reply-To: <20190821175720.25901-1-vgoyal@redhat.com>
 References: <20190821175720.25901-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Wed, 21 Aug 2019 17:57:44 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Wed, 21 Aug 2019 17:57:39 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This list will be used selecting fuse_dax_mapping to free when number of
-free mappings drops below a threshold.
+While reclaiming a dax range, we do not want to unamap whole file instead
+want to make sure pages in a certain range do not have references taken
+on them. Hence create a version of the function which allows to pass in
+a range.
 
+Cc: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/file.c   | 22 ++++++++++++++++++++++
- fs/fuse/fuse_i.h |  8 ++++++++
- fs/fuse/inode.c  |  4 ++++
- 3 files changed, 34 insertions(+)
+ fs/dax.c            | 66 ++++++++++++++++++++++++++++++++-------------
+ include/linux/dax.h |  6 +++++
+ 2 files changed, 54 insertions(+), 18 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 7b70b5ea7f94..8c1777fb61f7 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -200,6 +200,23 @@ static struct fuse_dax_mapping *alloc_dax_mapping(struct fuse_conn *fc)
- 	return dmap;
+diff --git a/fs/dax.c b/fs/dax.c
+index 60620a37030c..435f5b67e828 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -557,27 +557,20 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 	return xa_mk_internal(VM_FAULT_FALLBACK);
  }
  
-+/* This assumes fc->lock is held */
-+static void __dmap_remove_busy_list(struct fuse_conn *fc,
-+				    struct fuse_dax_mapping *dmap)
-+{
-+	list_del_init(&dmap->busy_list);
-+	WARN_ON(fc->nr_busy_ranges == 0);
-+	fc->nr_busy_ranges--;
-+}
-+
-+static void dmap_remove_busy_list(struct fuse_conn *fc,
-+				  struct fuse_dax_mapping *dmap)
-+{
-+	spin_lock(&fc->lock);
-+	__dmap_remove_busy_list(fc, dmap);
-+	spin_unlock(&fc->lock);
-+}
-+
- /* This assumes fc->lock is held */
- static void __dmap_add_to_free_pool(struct fuse_conn *fc,
- 				struct fuse_dax_mapping *dmap)
-@@ -265,6 +282,10 @@ static int fuse_setup_one_mapping(struct inode *inode, loff_t offset,
- 		/* Protected by fi->i_dmap_sem */
- 		fuse_dax_interval_tree_insert(dmap, &fi->dmap_tree);
- 		fi->nr_dmaps++;
-+		spin_lock(&fc->lock);
-+		list_add_tail(&dmap->busy_list, &fc->busy_ranges);
-+		fc->nr_busy_ranges++;
-+		spin_unlock(&fc->lock);
- 	}
- 	return 0;
- }
-@@ -334,6 +355,7 @@ static void dmap_reinit_add_to_free_pool(struct fuse_conn *fc,
- 	pr_debug("fuse: freeing memory range start=0x%llx end=0x%llx "
- 		 "window_offset=0x%llx length=0x%llx\n", dmap->start,
- 		 dmap->end, dmap->window_offset, dmap->length);
-+	__dmap_remove_busy_list(fc, dmap);
- 	dmap->start = dmap->end = 0;
- 	__dmap_add_to_free_pool(fc, dmap);
- }
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 125bb7123651..070a5c2b6498 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -119,6 +119,10 @@ struct fuse_dax_mapping {
- 	/** End Position in file */
- 	__u64 end;
- 	__u64 __subtree_last;
-+
-+	/* Will connect in fc->busy_ranges to keep track busy memory */
-+	struct list_head busy_list;
-+
- 	/** Position in DAX window */
- 	u64 window_offset;
+-/**
+- * dax_layout_busy_page - find first pinned page in @mapping
+- * @mapping: address space to scan for a page with ref count > 1
+- *
+- * DAX requires ZONE_DEVICE mapped pages. These pages are never
+- * 'onlined' to the page allocator so they are considered idle when
+- * page->count == 1. A filesystem uses this interface to determine if
+- * any page in the mapping is busy, i.e. for DMA, or other
+- * get_user_pages() usages.
+- *
+- * It is expected that the filesystem is holding locks to block the
+- * establishment of new mappings in this address_space. I.e. it expects
+- * to be able to run unmap_mapping_range() and subsequently not race
+- * mapping_mapped() becoming true.
++/*
++ * Partial pages are included. If end is 0, pages in the range from start
++ * to end of the file are inluded.
+  */
+-struct page *dax_layout_busy_page(struct address_space *mapping)
++struct page *dax_layout_busy_page_range(struct address_space *mapping,
++					loff_t start, loff_t end)
+ {
+-	XA_STATE(xas, &mapping->i_pages, 0);
+ 	void *entry;
+ 	unsigned int scanned = 0;
+ 	struct page *page = NULL;
++	pgoff_t start_idx = start >> PAGE_SHIFT;
++	pgoff_t end_idx = end >> PAGE_SHIFT;
++	XA_STATE(xas, &mapping->i_pages, start_idx);
++	loff_t len, lstart = round_down(start, PAGE_SIZE);
  
-@@ -887,6 +891,10 @@ struct fuse_conn {
- 	/** DAX device, non-NULL if DAX is supported */
- 	struct dax_device *dax_dev;
+ 	/*
+ 	 * In the 'limited' case get_user_pages() for dax is disabled.
+@@ -588,6 +581,22 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
+ 		return NULL;
  
-+	/* List of memory ranges which are busy */
-+	unsigned long nr_busy_ranges;
-+	struct list_head busy_ranges;
++	/* If end == 0, all pages from start to till end of file */
++	if (!end) {
++		end_idx = ULONG_MAX;
++		len = 0;
++	} else {
++		/* length is being calculated from lstart and not start.
++		 * This is due to behavior of unmap_mapping_range(). If
++		 * start is say 4094 and end is on 4093 then want to
++		 * unamp two pages, idx 0 and 1. But unmap_mapping_range()
++		 * will unmap only page at idx 0. If we calculate len
++		 * from the rounded down start, this problem should not
++		 * happen.
++		 */
++		len = end - lstart + 1;
++	}
 +
  	/*
- 	 * DAX Window Free Ranges. TODO: This might not be best place to store
- 	 * this free list
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 52135b4616d2..b80e76a307f3 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -614,6 +614,8 @@ static void fuse_free_dax_mem_ranges(struct list_head *mem_list)
- 	/* Free All allocated elements */
- 	list_for_each_entry_safe(range, temp, mem_list, list) {
- 		list_del(&range->list);
-+		if (!list_empty(&range->busy_list))
-+			list_del(&range->busy_list);
- 		kfree(range);
- 	}
- }
-@@ -658,6 +660,7 @@ static int fuse_dax_mem_range_init(struct fuse_conn *fc,
- 		 */
- 		range->window_offset = i * FUSE_DAX_MEM_RANGE_SZ;
- 		range->length = FUSE_DAX_MEM_RANGE_SZ;
-+		INIT_LIST_HEAD(&range->busy_list);
- 		list_add_tail(&range->list, &mem_ranges);
- 	}
+ 	 * If we race get_user_pages_fast() here either we'll see the
+ 	 * elevated page count in the iteration and wait, or
+@@ -600,10 +609,10 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	 * guaranteed to either see new references or prevent new
+ 	 * references from being established.
+ 	 */
+-	unmap_mapping_range(mapping, 0, 0, 0);
++	unmap_mapping_range(mapping, start, len, 0);
  
-@@ -708,6 +711,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
- 	fc->user_ns = get_user_ns(user_ns);
- 	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
- 	INIT_LIST_HEAD(&fc->free_ranges);
-+	INIT_LIST_HEAD(&fc->busy_ranges);
+ 	xas_lock_irq(&xas);
+-	xas_for_each(&xas, entry, ULONG_MAX) {
++	xas_for_each(&xas, entry, end_idx) {
+ 		if (WARN_ON_ONCE(!xa_is_value(entry)))
+ 			continue;
+ 		if (unlikely(dax_is_locked(entry)))
+@@ -624,6 +633,27 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	xas_unlock_irq(&xas);
+ 	return page;
  }
- EXPORT_SYMBOL_GPL(fuse_conn_init);
++EXPORT_SYMBOL_GPL(dax_layout_busy_page_range);
++
++/**
++ * dax_layout_busy_page - find first pinned page in @mapping
++ * @mapping: address space to scan for a page with ref count > 1
++ *
++ * DAX requires ZONE_DEVICE mapped pages. These pages are never
++ * 'onlined' to the page allocator so they are considered idle when
++ * page->count == 1. A filesystem uses this interface to determine if
++ * any page in the mapping is busy, i.e. for DMA, or other
++ * get_user_pages() usages.
++ *
++ * It is expected that the filesystem is holding locks to block the
++ * establishment of new mappings in this address_space. I.e. it expects
++ * to be able to run unmap_mapping_range() and subsequently not race
++ * mapping_mapped() becoming true.
++ */
++struct page *dax_layout_busy_page(struct address_space *mapping)
++{
++	return dax_layout_busy_page_range(mapping, 0, 0);
++}
+ EXPORT_SYMBOL_GPL(dax_layout_busy_page);
  
+ static int __dax_invalidate_entry(struct address_space *mapping,
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index e7f40108f2c9..3ef6686c080b 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -145,6 +145,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+ 		struct writeback_control *wbc);
+ 
+ struct page *dax_layout_busy_page(struct address_space *mapping);
++struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
+ dax_entry_t dax_lock_page(struct page *page);
+ void dax_unlock_page(struct page *page, dax_entry_t cookie);
+ #else
+@@ -180,6 +181,11 @@ static inline struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	return NULL;
+ }
+ 
++static inline struct page *dax_layout_busy_page_range(struct address_space *mapping, pgoff_t start, pgoff_t nr_pages)
++{
++	return NULL;
++}
++
+ static inline int dax_writeback_mapping_range(struct address_space *mapping,
+ 		struct block_device *bdev, struct dax_device *dax_dev,
+ 		struct writeback_control *wbc)
 -- 
 2.20.1
 
