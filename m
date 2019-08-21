@@ -2,60 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 619AF972BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 08:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C889728C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 08:42:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbfHUGnM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 02:43:12 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:10161 "EHLO
+        id S1728126AbfHUGmc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 02:42:32 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:10195 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbfHUGmb (ORCPT
+        with ESMTP id S1728120AbfHUGmc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 02:42:31 -0400
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190821064227epoutp01be42e9d2416edec794c39181c9de1bd4~83Px_IBtr1005210052epoutp019
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 06:42:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190821064227epoutp01be42e9d2416edec794c39181c9de1bd4~83Px_IBtr1005210052epoutp019
+        Wed, 21 Aug 2019 02:42:32 -0400
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190821064229epoutp01eabf21a3161f96a16e4f7e0dc30c1af8~83PzoZ59g1005210052epoutp01C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 06:42:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190821064229epoutp01eabf21a3161f96a16e4f7e0dc30c1af8~83PzoZ59g1005210052epoutp01C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1566369747;
-        bh=RufiVNT5+Lb2KOyQZLDZhzg9HYJCDXGJWlH0uDh9Bn0=;
+        s=mail20170921; t=1566369749;
+        bh=b8+pMwnDM1Y+1iXK//zi6ce3SJBaE4H69uXsKujU+38=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=clS10835/affNGODFrWo2NUHKtnZdFS5lP+/Aw0A0qBoqhK7QHQ73e6PeySgDsPPs
-         hA3xePmpCtsxVnPnPa6b8QZe6cCy7LM52IiYYce3ekI0ze+cbhc8gyydsTEqHxCCoq
-         ZVGxIeV2mqit5FKe6+6VHbiGTkuA5I9Z+1LrNWcQ=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20190821064226epcas2p1753a8812f10c55908a889b5f613f6935~83PxEH5Fd0242202422epcas2p1s;
+        b=fVpFb1vrxLo+foImejemmircRJa4mQ8udZOFQ7x9vDDE2Nn21e6P2qonsSIr0HPnH
+         r8stAk3Sg8+o6Bt1znwpmKOjdKvcD0zPYiP8QlxkhsgLjoQs1e6UloCjzrU09PYTdp
+         VbTsYXoyowkmnf/DoXHNLdrhos2RB1w2u+/XHqkk=
+Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20190821064228epcas2p36798da66a85912049d5fd8f3ff0d2590~83Py-NNHH0923809238epcas2p3y;
+        Wed, 21 Aug 2019 06:42:28 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.40.181]) by
+        epsnrtp5.localdomain (Postfix) with ESMTP id 46Cyl72R0jzMqYkb; Wed, 21 Aug
+        2019 06:42:27 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9E.03.04149.3D7EC5D5; Wed, 21 Aug 2019 15:42:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab~83PxikxcE1369213692epcas2p2w;
         Wed, 21 Aug 2019 06:42:26 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.40.189]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 46Cyl36Fy8zMqYkf; Wed, 21 Aug
-        2019 06:42:23 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7C.0F.04112.FC7EC5D5; Wed, 21 Aug 2019 15:42:23 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190821064223epcas2p18a14724427711e22c6c76b24bce1c8e0~83PuUy3oh1228312283epcas2p1R;
-        Wed, 21 Aug 2019 06:42:23 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190821064223epsmtrp10047dd5905b9e4fa8ae715493939ee58~83PuTsqjI2011020110epsmtrp1X;
-        Wed, 21 Aug 2019 06:42:23 +0000 (GMT)
-X-AuditID: b6c32a48-f1fff70000001010-90-5d5ce7cfaa31
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8D.02.03706.FC7EC5D5; Wed, 21 Aug 2019 15:42:23 +0900 (KST)
-Received: from KORDO035251 (unknown [12.36.165.204]) by epsmtip1.samsung.com
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190821064226epsmtrp2483bd0cead0f3a7919ae583776a72772~83PxhkykF2201622016epsmtrp2a;
+        Wed, 21 Aug 2019 06:42:26 +0000 (GMT)
+X-AuditID: b6c32a46-fedff70000001035-38-5d5ce7d3d23a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EC.D2.03638.2D7EC5D5; Wed, 21 Aug 2019 15:42:26 +0900 (KST)
+Received: from KORDO035251 (unknown [12.36.165.204]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20190821064222epsmtip169b78fa5e45597d9ba7e035be2ddd798~83PtgT-AE0460704607epsmtip1G;
-        Wed, 21 Aug 2019 06:42:22 +0000 (GMT)
+        20190821064226epsmtip2bed414e68869ed8e55860f74e737a0bd~83PxE_0pa2463324633epsmtip2C;
+        Wed, 21 Aug 2019 06:42:26 +0000 (GMT)
 From:   "boojin.kim" <boojin.kim@samsung.com>
-To:     "'Ulf Hansson'" <ulf.hansson@linaro.org>,
-        "'Kukjin Kim'" <kgene@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To:     "'Jens Axboe'" <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
         "'David S. Miller'" <davem@davemloft.net>,
         "'Eric Biggers'" <ebiggers@kernel.org>,
@@ -79,232 +75,257 @@ Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
         <linux-samsung-soc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH 4/9] mmc: dw_mmc-exynos: support FMP
-Date:   Wed, 21 Aug 2019 15:42:22 +0900
-Message-ID: <004001d557eb$9697f5d0$c3c7e170$@samsung.com>
+Subject: [PATCH 5/9] block: support diskcipher
+Date:   Wed, 21 Aug 2019 15:42:26 +0900
+Message-ID: <004101d557eb$98b00060$ca100120$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AdVX6FzCeDd/I620REGbQnBHWgE56Q==
+Thread-Index: AdVX6NYgX/inL1D6QG+VYW/5L6wNPg==
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxTVxjOuV8taJdr6bZjs7h6h1vAgb0d7Q4OFpPpvIkuqdmPJSphN3BH
-        if2yt3Uwk0mUVUQEpjMZbSWEmUW7mc7SuCKUmeIkKKzLmN1AYYswP2CuCyALOHEtt2T8e973
-        fZ7zvE/eHDmu9MnU8kqrU3BYeTNDZRKXenP0ebF7e0u08dM69Gi2jkCB69dw9NVoE4VunB7E
-        kC9WS6DIX14SXej+F0fHJ19AEwEPjn5dcJOoaXwKR7HYNzIUHI+TKDKyEf02No+hltbbFPqp
-        fTuabJ0jUHekn0BDl30Uuvq0CaDPYz0Ycl98BNAnDfMy1HfhvS1rudD5YYyr7fiQu3RlAzc0
-        6OKC/mMUdzveTXEdZw9xXW0zGHd44HucS/TcpLjGkB9wM8F1xtW7zUUmgS8XHBrBWmYrr7RW
-        FDM73i19q1Rv0LJ5bCF6ndFYeYtQzGzdacx7u9KczM5oDvBmV7Jl5EWR2fRmkcPmcgoak010
-        FjOCvdxsZ1l7vshbRJe1Ir/MZtnMarU6fZL5vtk0OjVN2e/lVHXFD4MaMLC+HmTIIV0A/znS
-        Q9aDTLmSDgPYOz6LS8U0gD/eaU0XcwCeHwxiyxJvuD09iABYk6jDpOIBgIudM2SKRdEbYUef
-        H6QGKroeg72Nx6lUgdOLMjgxHSVSrKzkW2cW+pcwQW+A34WeUimsoAvh7IkWTMJrYH/LxBIH
-        p1+E3z704dIeGhgenAIprKLz4czcQJqjgt5j7qX9IP1EBhe7RghJsBWeqE2kQ2TByb6QTMJq
-        +KDJncaH4M0vv5BJ4gYABxaWB69Bz92jSTd50iEHBi5vSkFIvwSvjqR9n4F1vU9kUlsB69xK
-        SZgNz0wPYVJbDf9u+Fhqc3D87M9kM1jvWRHSsyKkZ0UYz/+2bYDwg+cEu2ipEESdvWDluYNg
-        6WfkcmFw5YedUUDLAbNaER7eU6Ik+QNitSUKoBxnVIoq3+4SpaKcr/5IcNhKHS6zIEaBPnmD
-        T3H1s2W25D+zOktZvc5g0Bbqkd6gQ8zziuCq4b1KuoJ3CvsEwS44lnWYPENdA2QO48uv7hfZ
-        yCpN7n6nlS+q7jR36NsSgV9O/bGZzGo/yLCn+h9/VqN7SK29futip+FWZllxa4m3sfncwYLH
-        TLNprNCt2bOODFz74J0b9wnv7/vGQDzjyGhf950tRu0O/3zPG9lHE7uKqqJ3XzFtI8XQtsBJ
-        z/01Yu7X8eyTf6qaGUI08Wwu7hD5/wBB5vuoLwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7bCSnO755zGxBqe3S1h8/dLBYrH+1DFm
-        i9V3+9ksTk89y2Qx53wLi8Xed7NZLdbu+cNs0f1KxuLJ+lnMFjd+tbFa9D9+zWxx/vwGdotN
-        j6+xWuy9pW1x/95PJouZ8+6wWVxa5G7xat43Fos9e0+yWFzeNYfN4sj/fkaLGef3MVm0bfzK
-        aNHa85Pd4vjacAdJjy0rbzJ5tGwu99h2QNXj8tlSj02rOtk87lzbw+axeUm9x+4Fn5k8ms4c
-        ZfZ4v+8qm0ffllWMHp83yQXwRHHZpKTmZJalFunbJXBl3H39ia3guWbF7mtNjA2MZxS7GDk5
-        JARMJGbvWMQMYgsJ7GaU+D27GCIuJbG1fQ8zhC0scb/lCGsXIxdQzXNGiW+TG1hBEmwC2hKb
-        j69iBEmICExgkviz9SEjSIJZYBqHxK4P4iC2MNCGub9OsoDYLAKqEvu3/GcDsXkFLCW+9M5k
-        grAFJU7OfAJUwwHUqyfRthFqjLzE9rdzoI5QkNhx9jVYXASo5PO3MywQNSISszvbmCcwCs5C
-        MmkWwqRZSCbNQtKxgJFlFaNkakFxbnpusWGBYV5quV5xYm5xaV66XnJ+7iZGcBLQ0tzBeHlJ
-        /CFGAQ5GJR7eHTejY4VYE8uKK3MPMUpwMCuJ8FbMiYoV4k1JrKxKLcqPLyrNSS0+xCjNwaIk
-        zvs071ikkEB6YklqdmpqQWoRTJaJg1OqgVHhnceZwqzN89gnLRBa+uNUtFhtgx+r7833Ra3H
-        Pk2Ve70h+GeXM8PXJm5T0/IHW018C2r0Toiryvd2cf6+saswlGdu0WK2DD0Fl4vVR51vOoRc
-        PPrzidzTjqlut7s5m912dgVPeyi5Uucgi+N1je4DrbY39JpU66NZak7u22eZvtF/3zXldiWW
-        4oxEQy3mouJEAAakvEn+AgAA
-X-CMS-MailID: 20190821064223epcas2p18a14724427711e22c6c76b24bce1c8e0
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUwTZxzee3e9q86aW+2214Zs3TmNSsC2W7sXJ9syjbsFl5AtxviBeIEL
+        JetXei2DmU1GWEVGBDVbsGWMCFHAMLQ02Cito+CqSOki0Yk6F2MDG4hTPnQ0qGt7NeO/531+
+        z5Pn9+SXV4rLXZRSWmy28zYzZ2TIxUR33xp9xvDYrjz10xNyNDtTRaDOgV9xdPKPWhJd/j6M
+        oYZIJYH8990S1NEzj6PvxtNQtNOFo+sxpwTV3p3AUSRyikKeu9ckyH8jHf15ew5DRxtvkejK
+        sY/QeOMjAvX4LxFo+GwDifqf1QJUHwlgyHl6FqBva+YoFOrY9sFy1ts2grGVXV+w3b+sZIfD
+        DtbTfoBkb13rIdmuln3suaZpjK0YvICz/wSukuxBbztgpz2v5S7ZYdxg4LlC3qbizQWWwmJz
+        UTaT81n+xnydXq3J0GShdxiVmTPx2cymLbkZm4uN8e6MqoQzOuJULicIzLr3NtgsDjuvMlgE
+        ezbDWwuNVo3GmilwJsFhLsossJjWa9RqrS6u3GM0DJ6uIKx1utKQN0iVA1d6NVgkhfTbsP5g
+        TFINFkvltA9At/NnID6mANx/MpSaPAKw7WIl/twye3iASGA57Y9bagtE0d8A1sz1gsSApNNh
+        V6g9iRU0D0cfPsMTIpx+SsHoVDDpXkZnwomWY0lM0Cth670ImcAyOgtOnothIn4JXjoaTWpw
+        +nV4ZrIhtYUK+sITqYBM2PawSSJqFNB9wJkMg/QcBedvhzHRsAk+HutImZfB8ZCXErESTt/3
+        kyLeB68eb6ZEcw2AgzFnSvQWdI3uj6dJ4wlrYOfZdQkI6RWw/0Zqt6Wwqu8JJdIyWOWUi8Y3
+        4Y9Tw5hIK+GDmq9FmoXzM/VYHXjDtaCka0FJ14Iyrv9jmwDRDl7hrYKpiBe0Vu3CY3tA8l+s
+        3ewDLUNbgoCWAmaJzDeyM08u4UqEMlMQQCnOKGSlDTvy5LJCruxL3mbJtzmMvBAEuvgNDuHK
+        lwss8V9mtudrdFq9Xp2lQzq9FjGvyjwvjuyS00Wcnf+c56287bkPky5SloPmZt379wKXvenl
+        rdW7/7UGLto/pX7q/m179+rzmFux6nHFhTtbgwOuBz+sMOR9crgpp+TJmPrEV76NvVH4wqR9
+        D3NlVSR3/fXjN/cuHT/invhLWRIt3ZvTmBbuvaNoPRJb/W7Fx9Kyb4aWd2zrG/odT6N3a011
+        /TcPfQjUga6tdTOnRhlCMHCatbhN4P4DeUtx9C0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SXUhTYRzGe3c+dhRHxyn4aqWxMHDWTDF8BxHddS69CUsTG3lSaZvrHHXa
+        RYroTAuVQeHmErFBOhG/P3JTcn5MTRlpmoa6Cy3DZWWmpIXlnJF3P3ie5/e+F38KE7vxECpD
+        ncVyaoVSQvriXYOSsPNTqzeTL7x4Hoe2fjzEUfP4CIYaFytI9PrJpACZnEU46vtSTaAm228M
+        PVo7iVaajRia29URqGLZjSGns0WI2pZnCdT3PhK5lnYEyFCzQKKpuqtorWYbR7a+MRxN95pI
+        NPSnAqAqZ78A6Vq3ACp+vCNEjqaEK8FMR8O8gClq1zJdr8KZ6clsps1SSjILszaSaTfnM9ba
+        TQFTODGMMV/7Z0imvMMCmM220Hi/RN9LqawyI4floi7f8k2faC3ENZUXcx0ddmEBMEaWAR8K
+        0rFwSz+OlwFfSkxbAdxr7ya8QQjsLLFhXg6ArqIhwltaBbDLpSc9AUlHwnaHBXg4kE6DP1/2
+        CjyM0U8p2PstyMMBtAy6zXW4h3E6HNZ/dh5sRbQcrlt3BV72h2OGlf0Otb+VQV0r8GrCYPe6
+        6fAPp2HPpPvwKRls2KglvJ1AWF2qwyqBv/GIyfjfZDxiMh5Z1ALcAoJZDa9KU/HRmhg1q5Xx
+        ChWfrU6T3c5UtYGDE5BKe8DoaIod0BSQ+Il65pOSxYQih89T2QGkMEmgKNeUmCwWpSry7rNc
+        ZgqXrWR5OzhB4ZIgUVjmyA0xnabIYu+yrIbl/qUCyiekAOS/7eeGW7IWEtHutfIH1jl6dsr5
+        TholUW7jSfdGO9jFTY05S6tvHIiNFmq1x6z5ef0lDlBneHacnRkqOTu7E3H93J2qrfr4lUG9
+        HO+UB0S8WZInhC6Gr8bMa4M4pHN9tIgbNnIM5u1P/nvDcfKBD6fiznyPIMqni82dGb8kOJ+u
+        iJZiHK/4C+t4TdD+AgAA
+X-CMS-MailID: 20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190821064223epcas2p18a14724427711e22c6c76b24bce1c8e0
-References: <CGME20190821064223epcas2p18a14724427711e22c6c76b24bce1c8e0@epcas2p1.samsung.com>
+X-CMS-RootMailID: 20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab
+References: <CGME20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab@epcas2p2.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Exynos MMC uses FMP to encrypt data stored on MMC device.
-FMP H/W reads crypto information from MMC descriptor.
-So, when using FMP H/W, the format of MMC descriptor should be extended.
-The FMP driver is registered with the diskcipher algorithm,
-so exynos MMC calls diskcipher API to use FMP.
+This patch supports crypto information to be maintained via BIO
+and passed to the storage driver.
 
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
+To do this, 'bi_aux_private', 'REQ_CYPTE' and 'bi_dun' are added
+to the block layer.
+
+'bi_aux_private' is added for loading additional private information into
+BIO.
+'REQ_CRYPT' is added to distinguish that bi_aux_private is being used
+for diskcipher.
+F2FS among encryption users uses DUN(device unit number) as
+the IV(initial vector) for cryptographic operations.
+DUN is stored in 'bi_dun' of bi_iter as a specific value for each BIO.
+
+Before attempting to merge the two BIOs, the operation is also added to
+verify that the crypto information contained in two BIOs is consistent.
+
+Cc: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
 ---
- drivers/mmc/host/Kconfig         |  8 ++++++
- drivers/mmc/host/dw_mmc-exynos.c | 62
-++++++++++++++++++++++++++++++++++++++++
- drivers/mmc/host/dw_mmc.c        | 26 +++++++++++++++++
- 3 files changed, 96 insertions(+)
+ block/bio.c               |  1 +
+ block/blk-merge.c         | 19 +++++++++++++++++--
+ block/bounce.c            |  5 ++++-
+ include/linux/bio.h       | 10 ++++++++++
+ include/linux/blk_types.h |  4 ++++
+ include/linux/bvec.h      |  3 +++
+ 6 files changed, 39 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 14d89a1..f6c5a54 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -761,6 +761,14 @@ config MMC_DW_EXYNOS
- 	  Synopsys DesignWare Memory Card Interface driver. Select this
-option
- 	  for platforms based on Exynos4 and Exynos5 SoC's.
+diff --git a/block/bio.c b/block/bio.c
+index 5476965..c60eb8e 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -588,6 +588,7 @@ void __bio_clone_fast(struct bio *bio, struct bio
+*bio_src)
+ 	bio->bi_write_hint = bio_src->bi_write_hint;
+ 	bio->bi_iter = bio_src->bi_iter;
+ 	bio->bi_io_vec = bio_src->bi_io_vec;
++	bio->bi_aux_private = bio_src->bi_aux_private;
  
-+config MMC_DW_EXYNOS_FMP
-+	tristate "EXYNOS Flash Memory Protector for MMC_DW"
-+	depends on MMC_DW_EXYNOS
-+	---help---
-+	  This selects the EXYNOS MMC_DW FMP Driver.
-+
-+	  If you have a controller with this interface, say Y or M here.
-+
- config MMC_DW_HI3798CV200
- 	tristate "Hi3798CV200 specific extensions for Synopsys DW Memory
-Card Interface"
- 	depends on MMC_DW
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c
-b/drivers/mmc/host/dw_mmc-exynos.c
-index 5e3d95b..d3848ba 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -14,10 +14,12 @@
- #include <linux/of_gpio.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-+#include <crypto/fmp.h>
+ 	bio_clone_blkg_association(bio, bio_src);
+ 	blkcg_bio_issue_init(bio);
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 48e6725..d031257 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -7,6 +7,7 @@
+ #include <linux/bio.h>
+ #include <linux/blkdev.h>
+ #include <linux/scatterlist.h>
++#include <crypto/diskcipher.h>
  
- #include "dw_mmc.h"
- #include "dw_mmc-pltfm.h"
- #include "dw_mmc-exynos.h"
-+#include "../core/queue.h"
+ #include <trace/events/block.h>
  
- /* Variations in Exynos specific dw-mshc controller */
- enum dw_mci_exynos_type {
-@@ -508,6 +510,62 @@ static int dw_mci_exynos_prepare_hs400_tuning(struct
-dw_mci *host,
- 	return 0;
- }
+@@ -576,6 +577,8 @@ int ll_back_merge_fn(struct request *req, struct bio
+*bio, unsigned int nr_segs)
+ 	if (blk_integrity_rq(req) &&
+ 	    integrity_req_gap_back_merge(req, bio))
+ 		return 0;
++	if (blk_try_merge(req, bio) != ELEVATOR_BACK_MERGE)
++		return 0;
+ 	if (blk_rq_sectors(req) + bio_sectors(bio) >
+ 	    blk_rq_get_max_sectors(req, blk_rq_pos(req))) {
+ 		req_set_nomerge(req->q, req);
+@@ -592,6 +595,8 @@ int ll_front_merge_fn(struct request *req, struct bio
+*bio, unsigned int nr_segs
+ 	if (blk_integrity_rq(req) &&
+ 	    integrity_req_gap_front_merge(req, bio))
+ 		return 0;
++	if (blk_try_merge(req, bio) != ELEVATOR_FRONT_MERGE)
++		return 0;
+ 	if (blk_rq_sectors(req) + bio_sectors(bio) >
+ 	    blk_rq_get_max_sectors(req, bio->bi_iter.bi_sector)) {
+ 		req_set_nomerge(req->q, req);
+@@ -738,6 +743,9 @@ static struct request *attempt_merge(struct
+request_queue *q,
+ 	    !blk_write_same_mergeable(req->bio, next->bio))
+ 		return NULL;
  
-+#ifdef CONFIG_MMC_DW_EXYNOS_FMP
-+static struct bio *get_bio(struct dw_mci *host,
-+				struct mmc_data *data, bool cmdq_enabled)
-+{
-+	struct bio *bio = NULL;
-+	struct mmc_queue_req *mq_rq = NULL;
-+	struct request *req = NULL;
-+	struct mmc_blk_request *brq = NULL;
-+
-+	if (!host || !data) {
-+		pr_err("%s: Invalid MMC:%p data:%p\n", __func__, host,
-data);
++	if (!crypto_diskcipher_blk_mergeble(req->bio, next->bio))
 +		return NULL;
++
+ 	/*
+ 	 * Don't allow merge of different write hints, or for a hint with
+ 	 * non-hint IO.
+@@ -887,9 +895,16 @@ enum elv_merge blk_try_merge(struct request *rq, struct
+bio *bio)
+ {
+ 	if (blk_discard_mergable(rq))
+ 		return ELEVATOR_DISCARD_MERGE;
+-	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) ==
+bio->bi_iter.bi_sector)
++	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) ==
++					bio->bi_iter.bi_sector) {
++		if (!crypto_diskcipher_blk_mergeble(rq->bio, bio))
++			return ELEVATOR_NO_MERGE;
+ 		return ELEVATOR_BACK_MERGE;
+-	else if (blk_rq_pos(rq) - bio_sectors(bio) ==
+bio->bi_iter.bi_sector)
++	} else if (blk_rq_pos(rq) - bio_sectors(bio) ==
++					bio->bi_iter.bi_sector) {
++		if (!crypto_diskcipher_blk_mergeble(bio, rq->bio))
++			return ELEVATOR_NO_MERGE;
+ 		return ELEVATOR_FRONT_MERGE;
 +	}
-+
-+	if (cmdq_enabled) {
-+		pr_err("%s: no support cmdq yet:%p\n", __func__, host);
-+		bio = NULL;
-+	} else {
-+		brq = container_of(data, struct mmc_blk_request, data);
-+		if (!brq)
-+			return NULL;
-+
-+		mq_rq = container_of(brq, struct mmc_queue_req, brq);
-+		if (virt_addr_valid(mq_rq))
-+			req = mmc_queue_req_to_req(mq_rq);
-+			if (virt_addr_valid(req))
-+				bio = req->bio;
-+	}
-+	return bio;
-+}
-+
-+static int dw_mci_exynos_crypto_engine_cfg(struct dw_mci *host,
-+					void *desc, struct mmc_data *data,
-+					struct page *page, int page_index,
-+					int sector_offset, bool
-cmdq_enabled)
-+{
-+	struct bio *bio = get_bio(host, host->data, cmdq_enabled);
-+
-+	if (!bio)
-+		return 0;
-+
-+	return exynos_fmp_crypt_cfg(bio, desc, page_index, sector_offset);
-+}
-+
-+static int dw_mci_exynos_crypto_engine_clear(struct dw_mci *host,
-+					void *desc, bool cmdq_enabled)
-+{
-+	struct bio *bio = get_bio(host, host->data, cmdq_enabled);
-+
-+	if (!bio)
-+		return 0;
-+
-+	return exynos_fmp_crypt_clear(bio, desc);
-+}
+ 	return ELEVATOR_NO_MERGE;
+ }
+diff --git a/block/bounce.c b/block/bounce.c
+index f8ed677..720b065 100644
+--- a/block/bounce.c
++++ b/block/bounce.c
+@@ -252,7 +252,10 @@ static struct bio *bounce_clone_bio(struct bio
+*bio_src, gfp_t gfp_mask,
+ 	bio->bi_write_hint	= bio_src->bi_write_hint;
+ 	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
+ 	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
+-
++	bio->bi_aux_private = bio_src->bi_aux_private;
++#ifdef CONFIG_CRYPTO_DISKCIPHER
++	bio->bi_iter.bi_dun = bio_src->bi_iter.bi_dun;
++#endif
+ 	switch (bio_op(bio)) {
+ 	case REQ_OP_DISCARD:
+ 	case REQ_OP_SECURE_ERASE:
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 3cdb84c..351e65e 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -49,6 +49,12 @@
+ #define bio_sectors(bio)	bvec_iter_sectors((bio)->bi_iter)
+ #define bio_end_sector(bio)	bvec_iter_end_sector((bio)->bi_iter)
+ 
++#ifdef CONFIG_CRYPTO_DISKCIPHER
++#define bio_dun(bio)            ((bio)->bi_iter.bi_dun)
++#define bio_duns(bio)           (bio_sectors(bio) >> 3) /* 4KB unit */
++#define bio_end_dun(bio)        (bio_dun(bio) + bio_duns(bio))
 +#endif
 +
- /* Common capabilities of Exynos4/Exynos5 SoC */
- static unsigned long exynos_dwmmc_caps[4] = {
- 	MMC_CAP_1_8V_DDR | MMC_CAP_8_BIT_DATA | MMC_CAP_CMD23,
-@@ -524,6 +582,10 @@ static const struct dw_mci_drv_data exynos_drv_data = {
- 	.parse_dt		= dw_mci_exynos_parse_dt,
- 	.execute_tuning		= dw_mci_exynos_execute_tuning,
- 	.prepare_hs400_tuning	= dw_mci_exynos_prepare_hs400_tuning,
-+#ifdef CONFIG_MMC_DW_EXYNOS_FMP
-+	.crypto_engine_cfg = dw_mci_exynos_crypto_engine_cfg,
-+	.crypto_engine_clear = dw_mci_exynos_crypto_engine_clear,
+ /*
+  * Return the data direction, READ or WRITE.
+  */
+@@ -143,6 +149,10 @@ static inline void bio_advance_iter(struct bio *bio,
+struct bvec_iter *iter,
+ {
+ 	iter->bi_sector += bytes >> 9;
+ 
++#ifdef CONFIG_CRYPTO_DISKCIPHER
++	if (iter->bi_dun)
++		iter->bi_dun += bytes >> 12;
++#endif
+ 	if (bio_no_advance_iter(bio))
+ 		iter->bi_size -= bytes;
+ 	else
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 75059c1..117119a 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -160,6 +160,8 @@ struct bio {
+ 	bio_end_io_t		*bi_end_io;
+ 
+ 	void			*bi_private;
++	void			*bi_aux_private;
++
+ #ifdef CONFIG_BLK_CGROUP
+ 	/*
+ 	 * Represents the association of the css and request_queue for the
+bio.
+@@ -311,6 +313,7 @@ enum req_flag_bits {
+ 	__REQ_INTEGRITY,	/* I/O includes block integrity payload */
+ 	__REQ_FUA,		/* forced unit access */
+ 	__REQ_PREFLUSH,		/* request for cache flush */
++	__REQ_CRYPT,		/* request inline crypt */
+ 	__REQ_RAHEAD,		/* read ahead, can fail anytime */
+ 	__REQ_BACKGROUND,	/* background IO */
+ 	__REQ_NOWAIT,           /* Don't wait if request will block */
+@@ -343,6 +346,7 @@ enum req_flag_bits {
+ #define REQ_NOMERGE		(1ULL << __REQ_NOMERGE)
+ #define REQ_IDLE		(1ULL << __REQ_IDLE)
+ #define REQ_INTEGRITY		(1ULL << __REQ_INTEGRITY)
++#define REQ_CRYPT		(1ULL << __REQ_CRYPT)
+ #define REQ_FUA			(1ULL << __REQ_FUA)
+ #define REQ_PREFLUSH		(1ULL << __REQ_PREFLUSH)
+ #define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
+diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+index a032f01..5f89641 100644
+--- a/include/linux/bvec.h
++++ b/include/linux/bvec.h
+@@ -30,6 +30,9 @@ struct bvec_iter {
+ 
+ 	unsigned int            bi_bvec_done;	/* number of bytes completed
+in
+ 						   current bvec */
++#ifdef CONFIG_CRYPTO_DISKCIPHER
++	u64                     bi_dun;
 +#endif
  };
  
- static const struct of_device_id dw_mci_exynos_match[] = {
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index 0cdf574..4de476a 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -79,6 +79,32 @@ struct idmac_desc_64addr {
- 
- 	u32		des6;	/* Lower 32-bits of Next Descriptor Address
-*/
- 	u32		des7;	/* Upper 32-bits of Next Descriptor Address
-*/
-+#if defined(CONFIG_MMC_DW_EXYNOS_FMP)
-+	u32 des8;		/* File IV 0 */
-+	u32 des9;		/* File IV 1 */
-+	u32 des10;		/* File IV 2 */
-+	u32 des11;		/* File IV 3 */
-+	u32 des12;		/* File EncKey 0 */
-+	u32 des13;		/* File EncKey 1 */
-+	u32 des14;		/* File EncKey 2 */
-+	u32 des15;		/* File EncKey 3 */
-+	u32 des16;		/* File EncKey 4 */
-+	u32 des17;		/* File EncKey 5 */
-+	u32 des18;		/* File EncKey 6 */
-+	u32 des19;		/* File EncKey 7 */
-+	u32 des20;		/* File TwKey 0 */
-+	u32 des21;		/* File TwKey 1 */
-+	u32 des22;		/* File TwKey 2 */
-+	u32 des23;		/* File TwKey 3 */
-+	u32 des24;		/* File TwKey 4 */
-+	u32 des25;		/* File TwKey 5 */
-+	u32 des26;		/* File TwKey 6 */
-+	u32 des27;		/* File TwKey 7 */
-+	u32 des28;		/* Disk IV 0 */
-+	u32 des29;		/* Disk IV 1 */
-+	u32 des30;		/* Disk IV 2 */
-+	u32 des31;		/* Disk IV 3 */
-+#endif
- };
- 
- struct idmac_desc {
+ struct bvec_iter_all {
 -- 
 2.7.4
 
