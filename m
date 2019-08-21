@@ -2,87 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A9498176
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FE7D9818B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:39:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730094AbfHURi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 13:38:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53568 "EHLO mx1.redhat.com"
+        id S1728152AbfHURjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 13:39:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50530 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730076AbfHURi0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 13:38:26 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1727656AbfHURiV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Aug 2019 13:38:21 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F1E2550F45;
-        Wed, 21 Aug 2019 17:38:25 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 00DAC2CE955;
+        Wed, 21 Aug 2019 17:38:21 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A290601AF;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D26D95C224;
         Wed, 21 Aug 2019 17:38:20 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id BACDB223D02; Wed, 21 Aug 2019 13:38:14 -0400 (EDT)
+        id BF6A5223D03; Wed, 21 Aug 2019 13:38:14 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         miklos@szeredi.hu
 Cc:     virtio-fs@redhat.com, vgoyal@redhat.com, stefanha@redhat.com,
         dgilbert@redhat.com
-Subject: [PATCH 06/13] fuse: export fuse_get_unique()
-Date:   Wed, 21 Aug 2019 13:37:35 -0400
-Message-Id: <20190821173742.24574-7-vgoyal@redhat.com>
+Subject: [PATCH 07/13] Export fuse_dequeue_forget() function
+Date:   Wed, 21 Aug 2019 13:37:36 -0400
+Message-Id: <20190821173742.24574-8-vgoyal@redhat.com>
 In-Reply-To: <20190821173742.24574-1-vgoyal@redhat.com>
 References: <20190821173742.24574-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 21 Aug 2019 17:38:26 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 21 Aug 2019 17:38:21 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Stefan Hajnoczi <stefanha@redhat.com>
+File systems like virtio-fs need to do not have to play directly with
+forget list data structures. There is a helper function use that instead.
 
-virtio-fs will need unique IDs for FORGET requests from outside
-fs/fuse/dev.c.  Make the symbol visible.
+Rename dequeue_forget() to fuse_dequeue_forget() and export it so that
+stacked filesystems can use it.
 
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/dev.c    | 3 ++-
- fs/fuse/fuse_i.h | 5 +++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ fs/fuse/dev.c    | 9 +++++----
+ fs/fuse/fuse_i.h | 3 +++
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 14c8ea3d189c..6215bc7d4255 100644
+index 6215bc7d4255..2bbfc1f77875 100644
 --- a/fs/fuse/dev.c
 +++ b/fs/fuse/dev.c
-@@ -363,11 +363,12 @@ unsigned fuse_len_args(unsigned numargs, struct fuse_arg *args)
+@@ -1185,7 +1185,7 @@ __releases(fiq->waitq.lock)
+ 	return err ? err : reqsize;
  }
- EXPORT_SYMBOL_GPL(fuse_len_args);
  
--static u64 fuse_get_unique(struct fuse_iqueue *fiq)
-+u64 fuse_get_unique(struct fuse_iqueue *fiq)
+-static struct fuse_forget_link *dequeue_forget(struct fuse_iqueue *fiq,
++struct fuse_forget_link *fuse_dequeue_forget(struct fuse_iqueue *fiq,
+ 					       unsigned max,
+ 					       unsigned *countp)
  {
- 	fiq->reqctr += FUSE_REQ_ID_STEP;
- 	return fiq->reqctr;
+@@ -1206,6 +1206,7 @@ static struct fuse_forget_link *dequeue_forget(struct fuse_iqueue *fiq,
+ 
+ 	return head;
  }
-+EXPORT_SYMBOL_GPL(fuse_get_unique);
++EXPORT_SYMBOL(fuse_dequeue_forget);
  
- static unsigned int fuse_req_hash(u64 unique)
+ static int fuse_read_single_forget(struct fuse_iqueue *fiq,
+ 				   struct fuse_copy_state *cs,
+@@ -1213,7 +1214,7 @@ static int fuse_read_single_forget(struct fuse_iqueue *fiq,
+ __releases(fiq->waitq.lock)
  {
+ 	int err;
+-	struct fuse_forget_link *forget = dequeue_forget(fiq, 1, NULL);
++	struct fuse_forget_link *forget = fuse_dequeue_forget(fiq, 1, NULL);
+ 	struct fuse_forget_in arg = {
+ 		.nlookup = forget->forget_one.nlookup,
+ 	};
+@@ -1261,7 +1262,7 @@ __releases(fiq->waitq.lock)
+ 	}
+ 
+ 	max_forgets = (nbytes - ih.len) / sizeof(struct fuse_forget_one);
+-	head = dequeue_forget(fiq, max_forgets, &count);
++	head = fuse_dequeue_forget(fiq, max_forgets, &count);
+ 	spin_unlock(&fiq->waitq.lock);
+ 
+ 	arg.count = count;
+@@ -2231,7 +2232,7 @@ void fuse_abort_conn(struct fuse_conn *fc)
+ 			clear_bit(FR_PENDING, &req->flags);
+ 		list_splice_tail_init(&fiq->pending, &to_end);
+ 		while (forget_pending(fiq))
+-			kfree(dequeue_forget(fiq, 1, NULL));
++			kfree(fuse_dequeue_forget(fiq, 1, NULL));
+ 		wake_up_all_locked(&fiq->waitq);
+ 		spin_unlock(&fiq->waitq.lock);
+ 		kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 49f83f00c79c..7da756e2859e 100644
+index 7da756e2859e..d4b27f048d81 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1104,4 +1104,9 @@ int fuse_readdir(struct file *file, struct dir_context *ctx);
-  */
- unsigned fuse_len_args(unsigned numargs, struct fuse_arg *args);
+@@ -820,6 +820,9 @@ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
  
-+/**
-+ * Get the next unique ID for a request
-+ */
-+u64 fuse_get_unique(struct fuse_iqueue *fiq);
+ struct fuse_forget_link *fuse_alloc_forget(void);
+ 
++struct fuse_forget_link *fuse_dequeue_forget(struct fuse_iqueue *fiq,
++					     unsigned max, unsigned *countp);
 +
- #endif /* _FS_FUSE_I_H */
+ /* Used by READDIRPLUS */
+ void fuse_force_forget(struct file *file, u64 nodeid);
+ 
 -- 
 2.20.1
 
