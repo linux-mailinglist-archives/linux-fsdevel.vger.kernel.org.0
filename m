@@ -2,102 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5C0398407
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 21:09:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F8A498441
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 21:23:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbfHUTJF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 15:09:05 -0400
-Received: from mga17.intel.com ([192.55.52.151]:6091 "EHLO mga17.intel.com"
+        id S1729379AbfHUTWn convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 15:22:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34116 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729037AbfHUTJF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 15:09:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 12:09:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="178594638"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga008.fm.intel.com with ESMTP; 21 Aug 2019 12:09:04 -0700
-Date:   Wed, 21 Aug 2019 12:09:04 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
-        linux-xfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190821190904.GD5965@iweiny-DESK2.sc.intel.com>
-References: <20190815130558.GF14313@quack2.suse.cz>
- <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
- <20190817022603.GW6129@dread.disaster.area>
- <20190819063412.GA20455@quack2.suse.cz>
- <20190819092409.GM7777@dread.disaster.area>
- <ae64491b-85f8-eeca-14e8-2f09caf8abd2@nvidia.com>
- <20190820012021.GQ7777@dread.disaster.area>
- <84318b51-bd07-1d9b-d842-e65cac2ff484@nvidia.com>
- <20190820033608.GB1119@dread.disaster.area>
- <29c89d84-d847-0221-70a7-9e5a3d472cda@nvidia.com>
+        id S1727998AbfHUTWn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Aug 2019 15:22:43 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F0F5630833CB;
+        Wed, 21 Aug 2019 19:22:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C53C04513;
+        Wed, 21 Aug 2019 19:22:39 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1566402203.5162.12.camel@linux.ibm.com>
+References: <1566402203.5162.12.camel@linux.ibm.com> <1562814435.4014.11.camel@linux.ibm.com> <28477.1562362239@warthog.procyon.org.uk> <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com> <20190710194620.GA83443@gmail.com> <20190710201552.GB83443@gmail.com> <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com> <23498.1565962602@warthog.procyon.org.uk>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
+        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29c89d84-d847-0221-70a7-9e5a3d472cda@nvidia.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <19087.1566415359.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 21 Aug 2019 20:22:39 +0100
+Message-ID: <19088.1566415359@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 21 Aug 2019 19:22:43 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 11:43:30AM -0700, John Hubbard wrote:
-> On 8/19/19 8:36 PM, Dave Chinner wrote:
-> > On Mon, Aug 19, 2019 at 08:09:33PM -0700, John Hubbard wrote:
-> > > On 8/19/19 6:20 PM, Dave Chinner wrote:
-> > > > On Mon, Aug 19, 2019 at 05:05:53PM -0700, John Hubbard wrote:
-> > > > > On 8/19/19 2:24 AM, Dave Chinner wrote:
-> > > > > > On Mon, Aug 19, 2019 at 08:34:12AM +0200, Jan Kara wrote:
-> > > > > > > On Sat 17-08-19 12:26:03, Dave Chinner wrote:
-> > > > > > > > On Fri, Aug 16, 2019 at 12:05:28PM -0700, Ira Weiny wrote:
-> > > > > > > > > On Thu, Aug 15, 2019 at 03:05:58PM +0200, Jan Kara wrote:
-> > > > > > > > > > On Wed 14-08-19 11:08:49, Ira Weiny wrote:
-> > > > > > > > > > > On Wed, Aug 14, 2019 at 12:17:14PM +0200, Jan Kara wrote:
-> > > > > ...
-> > AFAIA, there is no struct file here - the memory that has been pinned
-> > is just something mapped into the application's address space.
-> > 
-> > It seems to me that the socket here is equivalent of the RDMA handle
-> > that that owns the hardware that pins the pages. Again, that RDMA
-> > handle is not aware of waht the mapping represents, hence need to
-> > hold a layout lease if it's a file mapping.
-> > 
-> > SO from the filesystem persepctive, there's no difference between
-> > XDP or RDMA - if it's a FSDAX mapping then it is DMAing directly
-> > into the filesystem's backing store and that will require use of
-> > layout leases to perform safely.
-> > 
-> 
-> OK, got it! Makes perfect sense.
+I added a bunch of tests to the keyutils testsuite, currently on my -next
+branch:
 
-Just to chime in here... Yea from the FS perspective it is the same.
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/log/?h=next
 
-But on the driver side it is more complicated because of how the references to
-the pins can be shared among other processes.
+See:
 
-See the other branch of this thread
+	Add a keyctl command for granting a permit on a key
+	Handle kernel having key/keyring ACLs
 
-https://lkml.org/lkml/2019/8/21/828
+I've added manpages to describe the new bits, but I wonder whether I should
+add a manpage specifically to detail the permissions system.  It'll probably
+be useful when more advanced subjects become available, such as for specific
+UIDs and for containers-as-a-whole.
 
-Ira
-
-> 
-> thanks,
-> -- 
-> John Hubbard
-> NVIDIA
+David
