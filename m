@@ -2,34 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57FFA970AF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 06:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4F9970AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 06:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbfHUEEC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 00:04:02 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:18789 "EHLO
+        id S1727065AbfHUED7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 00:03:59 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18780 "EHLO
         hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbfHUEEB (ORCPT
+        with ESMTP id S1726409AbfHUED7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 00:04:01 -0400
+        Wed, 21 Aug 2019 00:03:59 -0400
 Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d5cc2ad0000>; Tue, 20 Aug 2019 21:03:57 -0700
+        id <B5d5cc2ad0002>; Tue, 20 Aug 2019 21:03:57 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
   Tue, 20 Aug 2019 21:03:57 -0700
 X-PGP-Universal: processed;
         by hqpgpgate102.nvidia.com on Tue, 20 Aug 2019 21:03:57 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL107.nvidia.com
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
  2019 04:03:57 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
- 2019 04:03:56 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 21 Aug 2019 04:03:56 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 21 Aug 2019 04:03:57 +0000
 Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d5cc2ac0000>; Tue, 20 Aug 2019 21:03:56 -0700
+        id <B5d5cc2ac0001>; Tue, 20 Aug 2019 21:03:56 -0700
 From:   John Hubbard <jhubbard@nvidia.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 CC:     Christoph Hellwig <hch@infradead.org>,
@@ -41,73 +38,68 @@ CC:     Christoph Hellwig <hch@infradead.org>,
         Vlastimil Babka <vbabka@suse.cz>,
         LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "Andy Whitcroft" <apw@canonical.com>,
-        Joe Perches <joe@perches.com>,
-        "Gilad Ben-Yossef" <gilad@benyossef.com>,
-        Ofir Drang <ofir.drang@arm.com>
-Subject: [PATCH 1/4] checkpatch: revert broken NOTIFIER_HEAD check
-Date:   Tue, 20 Aug 2019 21:03:52 -0700
-Message-ID: <20190821040355.19566-1-jhubbard@nvidia.com>
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 2/4] For Ira: tiny formatting tweak to kerneldoc
+Date:   Tue, 20 Aug 2019 21:03:53 -0700
+Message-ID: <20190821040355.19566-2-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.22.1
+In-Reply-To: <20190821040355.19566-1-jhubbard@nvidia.com>
+References: <20190821040355.19566-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1566360237; bh=b0DVOtsBG53vqmQyIWzNnfUqAU65Pon9C8BrFwFcc1M=;
+        t=1566360237; bh=N6ccyzf5PMKW+koaJVWa/WJ5yd4Gtcd+1v71ttVDCNg=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
-         Content-Type;
-        b=RCYmMjup+49b/+zlM0P/oVeE+gZMo0wjyYY2EUAhT1rekOgnfipguhjJHZ7SBUwr+
-         pA8/CDo2+IUJmyYtpK8ZnPHRk2seQr5lND0QkjR1ZMaqCQbH262dqNVO+054zFEbK8
-         uT1cXvR2T/upHLCdRwlLnU0fef5Fv5lcInQ5Cfysp8XIKy+z4tGs9wj2VtdkhKSfYf
-         k7b+QtXH4UP+aWWme7vPSCeQi5BYwUuyup4McTAZ90K3ZlxcpxwdEdVIYvsR97Tpu5
-         7QZCtVVMikBs3kYXP0ChmL0Bf1c2nZv8olUfiEi1ld5I/1Fk38nFdgtANUfGh9Pioz
-         BJhhcSmhgBkLg==
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=ejyl/X8LGp01d3V/HJlJwY+MWLCCvGZ39TTEg9R9pYbOpOmFI0ccB+jQnpnh9VgIH
+         dhWOd9LD5FqATRk2iyAHYsquSGNX0Xo2wNigIAsNVWdBCRelcHUQQsxpIQxXl0Rs3j
+         aJKpdDavlZNbpn9cPq29Qnxefgfefjf45gDj4mhxS9r1YIpIiIiRhBbZyOALotnhL/
+         zCqK+dG9WRz+1OGythS2WTZ2NiWsRhGnj9KI4bY1dIRXHMU9RMxxX2OYaE9obDVejW
+         OYakeTAaS4XHjrpRPDWfyhbjQJ5nbOyzY6cO75mhq/xJwCHEtDrt8CK+tNaRkhsIpa
+         pEMwZF6ZD4oTQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-commit 1a47005dd5aa ("checkpatch: add *_NOTIFIER_HEAD as var
-definition") causes the following warning when run on some
-patches:
+For your vaddr_pin_pages() and vaddr_unpin_pages().
+Just merge it into wherever it goes please. Didn't want to
+cause merge problems so it's a separate patch-let.
 
-Unescaped left brace in regex is passed through in regex;
-marked by < --HERE in m/(?:
-...
-   [238 lines of appalling perl output, mercifully not included]
-...
-)/ at ./scripts/checkpatch.pl line 3889.
-
-This is broken, so revert it until a better solution is found.
-
-Fixes: 1a47005dd5aa ("checkpatch: add *_NOTIFIER_HEAD as var
-definition")
-
-Cc: Andy Whitcroft <apw@canonical.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Ofir Drang <ofir.drang@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- scripts/checkpatch.pl | 1 -
- 1 file changed, 1 deletion(-)
+ mm/gup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 5c00151cdee8..284eb4bd84aa 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3891,7 +3891,6 @@ sub process {
- 				^.DEFINE_$Ident\(\Q$name\E\)|
- 				^.DECLARE_$Ident\(\Q$name\E\)|
- 				^.LIST_HEAD\(\Q$name\E\)|
--				^.{$Ident}_NOTIFIER_HEAD\(\Q$name\E\)|
- 				^.(?:$Storage\s+)?$Type\s*\(\s*\*\s*\Q$name\E\s*\)\s*\(|
- 				\b\Q$name\E(?:\s+$Attribute)*\s*(?:;|=3D|\[|\()
- 			    )/x) {
+diff --git a/mm/gup.c b/mm/gup.c
+index 56421b880325..e49096d012ea 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2465,7 +2465,7 @@ int get_user_pages_fast(unsigned long start, int nr_p=
+ages,
+ EXPORT_SYMBOL_GPL(get_user_pages_fast);
+=20
+ /**
+- * vaddr_pin_pages pin pages by virtual address and return the pages to th=
+e
++ * vaddr_pin_pages() - pin pages by virtual address and return the pages t=
+o the
+  * user.
+  *
+  * @addr: start address
+@@ -2505,7 +2505,7 @@ long vaddr_pin_pages(unsigned long addr, unsigned lon=
+g nr_pages,
+ EXPORT_SYMBOL(vaddr_pin_pages);
+=20
+ /**
+- * vaddr_unpin_pages - counterpart to vaddr_pin_pages
++ * vaddr_unpin_pages() - counterpart to vaddr_pin_pages
+  *
+  * @pages: array of pages returned
+  * @nr_pages: number of pages in pages
 --=20
 2.22.1
 
