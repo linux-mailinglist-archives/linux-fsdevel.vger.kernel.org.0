@@ -2,251 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5245B9820B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A796E9821A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbfHUR6R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 13:58:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53924 "EHLO mx1.redhat.com"
+        id S1730484AbfHUR6s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 13:58:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60562 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728837AbfHUR5n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 13:57:43 -0400
+        id S1729713AbfHUR5j (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Aug 2019 13:57:39 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 181AD30821C2;
-        Wed, 21 Aug 2019 17:57:43 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 99A3930014C6;
+        Wed, 21 Aug 2019 17:57:38 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6134B6763C;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 611886762B;
         Wed, 21 Aug 2019 17:57:38 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id A2B9C223D04; Wed, 21 Aug 2019 13:57:32 -0400 (EDT)
+        id A810E223D05; Wed, 21 Aug 2019 13:57:32 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
 Cc:     virtio-fs@redhat.com, vgoyal@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com,
-        Peng Tao <tao.peng@linux.alibaba.com>
-Subject: [PATCH 08/19] fuse: Keep a list of free dax memory ranges
-Date:   Wed, 21 Aug 2019 13:57:09 -0400
-Message-Id: <20190821175720.25901-9-vgoyal@redhat.com>
+        stefanha@redhat.com, dgilbert@redhat.com
+Subject: [PATCH 09/19] fuse: implement FUSE_INIT map_alignment field
+Date:   Wed, 21 Aug 2019 13:57:10 -0400
+Message-Id: <20190821175720.25901-10-vgoyal@redhat.com>
 In-Reply-To: <20190821175720.25901-1-vgoyal@redhat.com>
 References: <20190821175720.25901-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 21 Aug 2019 17:57:43 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 21 Aug 2019 17:57:38 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Divide the dax memory range into fixed size ranges (2MB for now) and put
-them in a list. This will track free ranges. Once an inode requires a
-free range, we will take one from here and put it in interval-tree
-of ranges assigned to inode.
+The device communicates FUSE_SETUPMAPPING/FUSE_REMOVMAPPING alignment
+constraints via the FUST_INIT map_alignment field.  Parse this field and
+ensure our DAX mappings meet the alignment constraints.
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Signed-off-by: Peng Tao <tao.peng@linux.alibaba.com>
+We don't actually align anything differently since our mappings are
+already 2MB aligned.  Just check the value when the connection is
+established.  If it becomes necessary to honor arbitrary alignments in
+the future we'll have to adjust how mappings are sized.
+
+The upshot of this commit is that we can be confident that mappings will
+work even when emulating x86 on Power and similar combinations where the
+host page sizes are different.
+
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
 ---
- fs/fuse/fuse_i.h    | 23 ++++++++++++
- fs/fuse/inode.c     | 86 +++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/virtio_fs.c |  2 ++
- 3 files changed, 111 insertions(+)
+ fs/fuse/fuse_i.h          |  5 ++++-
+ fs/fuse/inode.c           | 19 +++++++++++++++++--
+ include/uapi/linux/fuse.h |  7 ++++++-
+ 3 files changed, 27 insertions(+), 4 deletions(-)
 
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 7b365a29b156..f1059b51c539 100644
+index f1059b51c539..b020a4071f80 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -50,6 +50,10 @@
+@@ -50,7 +50,10 @@
  /** Number of page pointers embedded in fuse_req */
  #define FUSE_REQ_INLINE_PAGES 1
  
-+/* Default memory range size, 2MB */
-+#define FUSE_DAX_MEM_RANGE_SZ	(2*1024*1024)
-+#define FUSE_DAX_MEM_RANGE_PAGES	(FUSE_DAX_MEM_RANGE_SZ/PAGE_SIZE)
-+
- /** List of active connections */
- extern struct list_head fuse_conn_list;
+-/* Default memory range size, 2MB */
++/*
++ * Default memory range size.  A power of 2 so it agrees with common FUSE_INIT
++ * map_alignment values 4KB and 64KB.
++ */
+ #define FUSE_DAX_MEM_RANGE_SZ	(2*1024*1024)
+ #define FUSE_DAX_MEM_RANGE_PAGES	(FUSE_DAX_MEM_RANGE_SZ/PAGE_SIZE)
  
-@@ -97,6 +101,18 @@ struct fuse_forget_link {
- 	struct fuse_forget_link *next;
- };
- 
-+/** Translation information for file offsets to DAX window offsets */
-+struct fuse_dax_mapping {
-+	/* Will connect in fc->free_ranges to keep track of free memory */
-+	struct list_head list;
-+
-+	/** Position in DAX window */
-+	u64 window_offset;
-+
-+	/** Length of mapping, in bytes */
-+	loff_t length;
-+};
-+
- /** FUSE inode */
- struct fuse_inode {
- 	/** Inode data */
-@@ -838,6 +854,13 @@ struct fuse_conn {
- 
- 	/** DAX device, non-NULL if DAX is supported */
- 	struct dax_device *dax_dev;
-+
-+	/*
-+	 * DAX Window Free Ranges. TODO: This might not be best place to store
-+	 * this free list
-+	 */
-+	long nr_free_ranges;
-+	struct list_head free_ranges;
- };
- 
- static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
 diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 0f58107a8269..0af147c70558 100644
+index 0af147c70558..d5d134a01117 100644
 --- a/fs/fuse/inode.c
 +++ b/fs/fuse/inode.c
-@@ -22,6 +22,8 @@
- #include <linux/exportfs.h>
- #include <linux/posix_acl.h>
- #include <linux/pid_namespace.h>
-+#include <linux/dax.h>
-+#include <linux/pfn_t.h>
+@@ -949,9 +949,10 @@ static void process_init_limits(struct fuse_conn *fc, struct fuse_init_out *arg)
+ static void process_init_reply(struct fuse_conn *fc, struct fuse_req *req)
+ {
+ 	struct fuse_init_out *arg = &req->misc.init_out;
++	bool ok = true;
  
- MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
- MODULE_DESCRIPTION("Filesystem in Userspace");
-@@ -598,6 +600,76 @@ static void fuse_pqueue_init(struct fuse_pqueue *fpq)
- 	fpq->connected = 1;
- }
+ 	if (req->out.h.error || arg->major != FUSE_KERNEL_VERSION)
+-		fc->conn_error = 1;
++		ok = false;
+ 	else {
+ 		unsigned long ra_pages;
  
-+static void fuse_free_dax_mem_ranges(struct list_head *mem_list)
-+{
-+	struct fuse_dax_mapping *range, *temp;
-+
-+	/* Free All allocated elements */
-+	list_for_each_entry_safe(range, temp, mem_list, list) {
-+		list_del(&range->list);
-+		kfree(range);
-+	}
-+}
-+
-+#ifdef CONFIG_FS_DAX
-+static int fuse_dax_mem_range_init(struct fuse_conn *fc,
-+				   struct dax_device *dax_dev)
-+{
-+	long nr_pages, nr_ranges;
-+	void *kaddr;
-+	pfn_t pfn;
-+	struct fuse_dax_mapping *range;
-+	LIST_HEAD(mem_ranges);
-+	phys_addr_t phys_addr;
-+	int ret = 0, id;
-+	size_t dax_size = -1;
-+	unsigned long i;
-+
-+	id = dax_read_lock();
-+	nr_pages = dax_direct_access(dax_dev, 0, PHYS_PFN(dax_size), &kaddr,
-+					&pfn);
-+	dax_read_unlock(id);
-+	if (nr_pages < 0) {
-+		pr_debug("dax_direct_access() returned %ld\n", nr_pages);
-+		return nr_pages;
-+	}
-+
-+	phys_addr = pfn_t_to_phys(pfn);
-+	nr_ranges = nr_pages/FUSE_DAX_MEM_RANGE_PAGES;
-+	printk("fuse_dax_mem_range_init(): dax mapped %ld pages. nr_ranges=%ld\n", nr_pages, nr_ranges);
-+
-+	for (i = 0; i < nr_ranges; i++) {
-+		range = kzalloc(sizeof(struct fuse_dax_mapping), GFP_KERNEL);
-+		if (!range) {
-+			pr_debug("memory allocation for mem_range failed.\n");
-+			ret = -ENOMEM;
-+			goto out_err;
-+		}
-+		/* TODO: This offset only works if virtio-fs driver is not
-+		 * having some memory hidden at the beginning. This needs
-+		 * better handling
-+		 */
-+		range->window_offset = i * FUSE_DAX_MEM_RANGE_SZ;
-+		range->length = FUSE_DAX_MEM_RANGE_SZ;
-+		list_add_tail(&range->list, &mem_ranges);
-+	}
-+
-+	list_replace_init(&mem_ranges, &fc->free_ranges);
-+	fc->nr_free_ranges = nr_ranges;
-+	return 0;
-+out_err:
-+	/* Free All allocated elements */
-+	fuse_free_dax_mem_ranges(&mem_ranges);
-+	return ret;
-+}
-+#else /* !CONFIG_FS_DAX */
-+static inline int fuse_dax_mem_range_init(struct fuse_conn *fc,
-+					  struct dax_device *dax_dev)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_FS_DAX */
-+
- void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
- 			struct dax_device *dax_dev,
- 			const struct fuse_iqueue_ops *fiq_ops, void *fiq_priv)
-@@ -628,6 +700,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
- 	fc->dax_dev = dax_dev;
- 	fc->user_ns = get_user_ns(user_ns);
- 	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
-+	INIT_LIST_HEAD(&fc->free_ranges);
- }
- EXPORT_SYMBOL_GPL(fuse_conn_init);
- 
-@@ -636,6 +709,8 @@ void fuse_conn_put(struct fuse_conn *fc)
- 	if (refcount_dec_and_test(&fc->count)) {
- 		if (fc->destroy_req)
- 			fuse_request_free(fc->destroy_req);
-+		if (fc->dax_dev)
-+			fuse_free_dax_mem_ranges(&fc->free_ranges);
- 		put_pid_ns(fc->pid_ns);
- 		put_user_ns(fc->user_ns);
- 		fc->release(fc);
-@@ -1147,6 +1222,14 @@ int fuse_fill_super_common(struct super_block *sb,
- 		fc->release = fuse_free_conn;
+@@ -1014,6 +1015,13 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_req *req)
+ 					min_t(unsigned int, FUSE_MAX_MAX_PAGES,
+ 					max_t(unsigned int, arg->max_pages, 1));
+ 			}
++			if ((arg->flags & FUSE_MAP_ALIGNMENT) &&
++			    (FUSE_DAX_MEM_RANGE_SZ % arg->map_alignment)) {
++				printk(KERN_ERR "FUSE: map_alignment %u incompatible with dax mem range size %u\n",
++				       arg->map_alignment,
++				       FUSE_DAX_MEM_RANGE_SZ);
++				ok = false;
++			}
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1027,6 +1035,12 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_req *req)
+ 		fc->max_write = max_t(unsigned, 4096, fc->max_write);
+ 		fc->conn_init = 1;
  	}
- 
-+	if (mount_data->dax_dev) {
-+		err = fuse_dax_mem_range_init(fc, mount_data->dax_dev);
-+		if (err) {
-+			pr_debug("fuse_dax_mem_range_init() returned %d\n", err);
-+			goto err_free_ranges;
-+		}
++
++	if (!ok) {
++		fc->conn_init = 0;
++		fc->conn_error = 1;
 +	}
 +
- 	fud = fuse_dev_alloc_install(fc);
- 	if (!fud)
- 		goto err_put_conn;
-@@ -1208,6 +1291,9 @@ int fuse_fill_super_common(struct super_block *sb,
- 	dput(root_dentry);
-  err_dev_free:
- 	fuse_dev_free(fud);
-+ err_free_ranges:
-+	if (mount_data->dax_dev)
-+		fuse_free_dax_mem_ranges(&fc->free_ranges);
-  err_put_conn:
- 	fuse_conn_put(fc);
- 	sb->s_fs_info = NULL;
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 32604722a7fb..9198c2b84677 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -453,6 +453,8 @@ static long virtio_fs_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
- 	phys_addr_t offset = PFN_PHYS(pgoff);
- 	size_t max_nr_pages = fs->window_len/PAGE_SIZE - pgoff;
+ 	fuse_set_initialized(fc);
+ 	wake_up_all(&fc->blocked_waitq);
+ }
+@@ -1046,7 +1060,8 @@ void fuse_send_init(struct fuse_conn *fc, struct fuse_req *req)
+ 		FUSE_WRITEBACK_CACHE | FUSE_NO_OPEN_SUPPORT |
+ 		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+ 		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+-		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA;
++		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
++		FUSE_MAP_ALIGNMENT;
+ 	req->in.h.opcode = FUSE_INIT;
+ 	req->in.numargs = 1;
+ 	req->in.args[0].size = sizeof(*arg);
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 2971d29a42e4..4461fd640cf2 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -274,6 +274,9 @@ struct fuse_file_lock {
+  * FUSE_CACHE_SYMLINKS: cache READLINK responses
+  * FUSE_NO_OPENDIR_SUPPORT: kernel supports zero-message opendir
+  * FUSE_EXPLICIT_INVAL_DATA: only invalidate cached pages on explicit request
++ * FUSE_MAP_ALIGNMENT: init_out.map_alignment contains byte alignment for
++ *		       foffset and moffset fields in struct
++ *		       fuse_setupmapping_out and fuse_removemapping_one.
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -301,6 +304,7 @@ struct fuse_file_lock {
+ #define FUSE_CACHE_SYMLINKS	(1 << 23)
+ #define FUSE_NO_OPENDIR_SUPPORT (1 << 24)
+ #define FUSE_EXPLICIT_INVAL_DATA (1 << 25)
++#define FUSE_MAP_ALIGNMENT      (1 << 26)
  
-+	pr_debug("virtio_fs_direct_access(): called. nr_pages=%ld max_nr_pages=%zu\n", nr_pages, max_nr_pages);
-+
- 	if (kaddr)
- 		*kaddr = fs->window_kaddr + offset;
- 	if (pfn)
+ /**
+  * CUSE INIT request/reply flags
+@@ -653,7 +657,8 @@ struct fuse_init_out {
+ 	uint32_t	time_gran;
+ 	uint16_t	max_pages;
+ 	uint16_t	padding;
+-	uint32_t	unused[8];
++	uint32_t	map_alignment;
++	uint32_t	unused[7];
+ };
+ 
+ #define CUSE_INIT_INFO_MAX 4096
 -- 
 2.20.1
 
