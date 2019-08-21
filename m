@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F49972CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 08:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C887897282
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 08:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727887AbfHUGnV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 02:43:21 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:52553 "EHLO
+        id S1728100AbfHUGm2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 02:42:28 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:52605 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727448AbfHUGmV (ORCPT
+        with ESMTP id S1727817AbfHUGm1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 02:42:21 -0400
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190821064215epoutp048d58db974b56e7343997aa3eea02b982~83PmzHAUw1235612356epoutp04Y
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 06:42:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190821064215epoutp048d58db974b56e7343997aa3eea02b982~83PmzHAUw1235612356epoutp04Y
+        Wed, 21 Aug 2019 02:42:27 -0400
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190821064219epoutp04f58e1f647dfae50a2ae0f057292ae1bb~83Pqv_Xse1235612356epoutp04f
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 06:42:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190821064219epoutp04f58e1f647dfae50a2ae0f057292ae1bb~83Pqv_Xse1235612356epoutp04f
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1566369735;
-        bh=3tBehBqI5ol47OnqdVD6jgOstGMohbizIgAlADES1Zs=;
+        s=mail20170921; t=1566369739;
+        bh=WnbIs/qNlKp6oVnU05R1K6UO7fsp2PDSWNPY+dvDBss=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=GaaiRsWlI1HQ+VPFn8n7o+m/5QhZkKeV/KwPb73HsbPoVy1YgBylkgwcn5NAjybql
-         KJTGVvx2TPImiU3vAXwkS670dV43HOMuvh5Iq3nEoZsqeFe3KHfhRMOaxbcamuuteA
-         GVEuFNtGXscBmdDL+JcFE6t3Ox81n+7bCDVHo6so=
+        b=QnOOWE2ZfLMetCvmT2iUOuqMs4Aj9jFvHnd8vv+McBs/OTBTEvFaEO1FCk935IYS+
+         gJR9Io2gVOPz6qN3NmLvgmEJGrzLx4aBAsvEHczzRsr9f6LEcIwao50Q+greiFLdIX
+         /Oy0fIStk1lo9i0qhcJTpOMgUaWoPUGRgPV0UghA=
 Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
         epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190821064214epcas2p3a80d3627a4d4a89ca522e4a1df39ce34~83PlsBNAp0925009250epcas2p3k;
-        Wed, 21 Aug 2019 06:42:14 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.40.184]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 46Cykq5d85zMqYlr; Wed, 21 Aug
-        2019 06:42:11 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A0.CD.04156.3C7EC5D5; Wed, 21 Aug 2019 15:42:11 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20190821064211epcas2p43ed73f4fd126bcc5b470c9136db6aabc~83PjGS6jA1664116641epcas2p4w;
-        Wed, 21 Aug 2019 06:42:11 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190821064211epsmtrp1d58d3b97286205f84ed9e32b917d7d97~83PjFHVz_2011020110epsmtrp1H;
-        Wed, 21 Aug 2019 06:42:11 +0000 (GMT)
-X-AuditID: b6c32a45-df7ff7000000103c-3c-5d5ce7c3e480
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F3.D2.03638.3C7EC5D5; Wed, 21 Aug 2019 15:42:11 +0900 (KST)
-Received: from KORDO035251 (unknown [12.36.165.204]) by epsmtip2.samsung.com
+        20190821064218epcas2p3b8efd545ceb279ec179965d376a51e1e~83PqFkKCU0101901019epcas2p3l;
+        Wed, 21 Aug 2019 06:42:18 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.40.182]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 46Cykw73rZzMqYly; Wed, 21 Aug
+        2019 06:42:16 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        91.23.04068.8C7EC5D5; Wed, 21 Aug 2019 15:42:16 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190821064216epcas2p37df63284df4be04ba2f51b7f7b4b270b~83PndXVbQ0101901019epcas2p3j;
+        Wed, 21 Aug 2019 06:42:16 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190821064216epsmtrp2794511fe5f476429faa4c2367deca968~83PnZdtGA2242122421epsmtrp2P;
+        Wed, 21 Aug 2019 06:42:16 +0000 (GMT)
+X-AuditID: b6c32a47-589ff70000000fe4-62-5d5ce7c88e28
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FA.02.03706.7C7EC5D5; Wed, 21 Aug 2019 15:42:15 +0900 (KST)
+Received: from KORDO035251 (unknown [12.36.165.204]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20190821064210epsmtip2a3dce3779191a3b2627b21e3a9f6c08f~83PimYZXg2145821458epsmtip2C;
-        Wed, 21 Aug 2019 06:42:10 +0000 (GMT)
+        20190821064215epsmtip18b35762a7fc8e5ecabba39c5d415e4a7~83PmzwwDs3087530875epsmtip1G;
+        Wed, 21 Aug 2019 06:42:15 +0000 (GMT)
 From:   "boojin.kim" <boojin.kim@samsung.com>
 To:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
         "'David S. Miller'" <davem@davemloft.net>,
@@ -76,149 +76,159 @@ Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
         <linux-samsung-soc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH 1/9] crypt: Add diskcipher
-Date:   Wed, 21 Aug 2019 15:42:10 +0900
-Message-ID: <003d01d557eb$8f6ca210$ae45e630$@samsung.com>
+Subject: [PATCH 2/9] crypto: fmp: add Flash Memory Protector driver
+Date:   Wed, 21 Aug 2019 15:42:15 +0900
+Message-ID: <003e01d557eb$921d4320$b657c960$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AdVX6IuE1WJuT0BpQ1eJ5qpUVMZ+sg==
+Thread-Index: AdVX6ADMbtkusay8Q0KDduCY7aX4rA==
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wTZxjO17teT2eXW+3ct05nd1MjmELbrfixgDHOuYvyB4sjS0wJXsoN
-        mP21Xos/tkw2sANlK5oskdIBbqOGLoi0RImjxNAOpuNHIoMIo3OZMGMZTBFrcFPW9krGf8/7
-        vM/zfe+TNy+JyTwSBVlmtnM2M2ukidX4pVAaUoXu6AvVoRMq9HChGkft1/sw9H3ERaCfvxoU
-        Ic9wFY6Ccw1i1Nb9L4ZORdejqXY3hm4+doqR6/YMhoaHL0qQ//aYGAUntqFbvy2KUH3jJIFu
-        fPM2ijbGcNQdvIajkSseAoWXXACdHe4RIWfHQ4BO1C5KUH/beztfZDpbx0VMVeAwc+nqZmZk
-        0MH4fTUEMznWTTCB744zPzQ/EDGfDfyIMX/3jBLMl50+wDzwv5y/5oAxp5RjizmbkjMbLMVl
-        5pJcet/+ojeLdFlqjUqTjbbTSjNr4nLp3Xn5qj1lxnh2WlnOGh1xKp/leTpzR47N4rBzylIL
-        b8+lOWux0arRWDN41sQ7zCUZBovpDY1ardXFlQeNpUMTvxLW8AA44qqbxivAUAs4CVaRkHod
-        Pu34NI5XkzKqC8CKvvuEUMwDOB6ZkwhFDMC6jmZs2eKt/AMTGkEAw7FYyn8XwKb2mCShIqht
-        MNDvSzbkVBOAY5G55MMY9VQCp+Z78YRqLZUO6xpOihMYpzbDgdHGuJskpVQ2vHBOkaCl1HPw
-        Wv1UUo5RG+HlWU9qDCXsGpxJppBTGfBOZFIkaOSwocaZ0tSQ8Mm0VsC7YZv7tEjAa2G0v1Mi
-        YAW863Km8HE46v02mRlStQAOPF5uvAbdf34OErNhVBpsv5KZgJB6FYYnUqM9C6tDTyQCLYXV
-        Tplg3AS/nh8RCbQC3qv9RKAZ6L0/iNWBV9wrMrpXZHSvyOL+/9tmgPvAOs7Km0o4XmvVrFy3
-        HyQvI/2tLnB2KK8XUCSg10gX9fpCmZgt54+aegEkMVouPeI5UCiTFrNHj3E2S5HNYeT4XqCL
-        b+A0pnjeYInfmdlepNFps7LU2Tqky9Ii+gVp4JlxvYwqYe3cIY6zcrZln4hcpagArfo9eR/U
-        L0Q/XPJypwos5KMc37m+vzaob75fcJ1e+sId+iXKlru858PrGjetf2k+2GHY+o9l78YZo39X
-        yxbyzLFo5uzs+QvvXn1UGaE2zBItW/f2VBWogjda3zEc1s3J0zKro/tyFj7afu9iw62Pf/Lv
-        DNRPN3Vv2bX/YOXl3w/tqDLQOF/KatIxG8/+ByJqADcvBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLIsWRmVeSWpSXmKPExsWy7bCSvO7h5zGxBgfOiFl8/dLBYrH+1DFm
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLLsWRmVeSWpSXmKPExsWy7bCmme6J5zGxBv1HLC2+fulgsVh/6hiz
+        xeq7/WwWp6eeZbKYc76FxWLvu9msFmv3/GG26H4lY/Fk/Sxmixu/2lgt+h+/ZrY4f34Du8Wm
+        x9dYLfbe0ra4f+8nk8XMeXfYLC4tcrd4Ne8bi8WevSdZLC7vmsNmceR/P6PFjPP7mCzaNn5l
+        tGjt+clucXxtuIOkx5aVN5k8WjaXe2w7oOpx+Wypx6ZVnWwed67tYfPYvKTeY/eCz0weTWeO
+        Mnu833eVzaNvyypGj8+b5AJ4onJsMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU
+        8hJzU22VXHwCdN0yc4B+V1IoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUGBoW6BUn
+        5haX5qXrJefnWhkaGBiZAlUm5GSsu/ObuWDLHaaKFWvmMTUw3p/O1MXIySEhYCLx5eYM5i5G
+        Lg4hgR2MEucXH4VyPjFKtG++wQ7hfGOUmPNwBTtMy5u1i1lBbCGBvYwSDbPYIIpeMkpcezwb
+        LMEmoC2x+fgqRpCEiMB8oMTdd2BVzAL/2CWefDrEAlIlLOAscWn3erAOFgFViYlNkxlBbF4B
+        S4lvx55D2YISJ2c+AatnFpCX2P52DjPEGQoSO86+BqsREdCTmLzhIDtEjYjE7M42sCckBBo5
+        JF5928MI0eAisWTSX1YIW1ji1fEtUP9ISXx+t5cNwq6XuLpsMTtEcw+jxJlfbVBFxhKznrUD
+        DeIA2qApsX6XPogpIaAsceQW1G18Eh2H/7JDhHklOtqEIBpVJOZ+uswEEZaS+NBTBxH2kJh6
+        8SjzBEbFWUienIXkyVlInpmFsHYBI8sqRrHUguLc9NRiowJj5PjexAjOGlruOxi3nfM5xCjA
+        wajEw5twPTpWiDWxrLgy9xCjBAezkghvxZyoWCHelMTKqtSi/Pii0pzU4kOMpsA4mMgsJZqc
+        D8xoeSXxhqZGZmYGlqYWpmZGFkrivJu4b8YICaQnlqRmp6YWpBbB9DFxcEo1ME6qzS81Y9/8
+        T6N1udA3ZYcpWq+iPJSV6k8ds7unIR38Z5ex1puINUIvvOZM726WUMz9MFVZUOKhTFPQ9Eid
+        wzXzl83w/izz6d/EVy2HVwUq/2T1ls+b75AQ83rrjiTD5xMuiKyNTFVfqNanE6Zmf2ie3Dre
+        fOb6chvOh489WOXD7S2PB9zdqsRSnJFoqMVcVJwIAOm5LswwBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLIsWRmVeSWpSXmKPExsWy7bCSnO7x5zGxBq9fW1l8/dLBYrH+1DFm
         i9V3+9ksTk89y2Qx53wLi8Xed7NZLdbu+cNs0f1KxuLJ+lnMFjd+tbFa9D9+zWxx/vwGdotN
         j6+xWuy9pW1x/95PJouZ8+6wWVxa5G7xat43Fos9e0+yWFzeNYfN4sj/fkaLGef3MVm0bfzK
         aNHa85Pd4vjacAdJjy0rbzJ5tGwu99h2QNXj8tlSj02rOtk87lzbw+axeUm9x+4Fn5k8ms4c
-        ZfZ4v+8qm0ffllWMHp83yQXwRHHZpKTmZJalFunbJXBlnLt1m63gyBnGiv4JT1kaGM8tZexi
-        5OSQEDCRWNb8iLmLkYtDSGA3o8SWZ/tZIBJSElvb9zBD2MIS91uOsEIUPWeUeHl3GTtIgk1A
-        W2Lz8VWMIAkRgYWMEm9W72QDSTALTOOQ2PVBHMQWFtCSmDC7ixXEZhFQlThzdR5QMwcHr4Cl
-        xLqFUiBhXgFBiZMzn7CAhJkF9CTaNjJCTJGX2P52DtQNChI7zr4Gi4sAlTy/e4cJokZEYnZn
-        G/MERsFZSCbNQpg0C8mkWUg6FjCyrGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECE4E
-        Wlo7GE+ciD/EKMDBqMTDu+NmdKwQa2JZcWXuIUYJDmYlEd6KOVGxQrwpiZVVqUX58UWlOanF
-        hxilOViUxHnl849FCgmkJ5akZqemFqQWwWSZODilGhg5+OPbT+ysuTUlSDVhZonmBo1eWX5f
-        o7OpKim3Y+9u3H3fTmPtX6HJHlLJz7yKLofwxjcuvLm9frv8mXcf2gUu8Jr1l/VmeS5MEqqd
-        WPx2R/6E/J9XApn755xd8vf4jbCcG/2LftkmxEVMXBPB5qm78mR/97/zAXulVv649X999O+K
-        Hl3vE9uVWIozEg21mIuKEwElvNaVAAMAAA==
-X-CMS-MailID: 20190821064211epcas2p43ed73f4fd126bcc5b470c9136db6aabc
+        ZfZ4v+8qm0ffllWMHp83yQXwRHHZpKTmZJalFunbJXBlrLvzm7lgyx2mihVr5jE1MN6fztTF
+        yMkhIWAi8WbtYtYuRi4OIYHdjBLzF/ezQCSkJLa272GGsIUl7rccYQWxhQSeM0rMWuYJYrMJ
+        aEtsPr6KEaRZRGAho8Sb1TvZQBLMAtM4JHZ9EAexhQWcJS7tXg/WzCKgKjGxaTIjiM0rYCnx
+        7dhzKFtQ4uTMJ0CLOYB69STaNjJCjJGX2P52DtQNChI7zr4Gi4sAlUzecJAdokZEYnZnG/ME
+        RsFZSCbNQpg0C8mkWUg6FjCyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECE4EWpo7
+        GC8viT/EKMDBqMTDu+NmdKwQa2JZcWXuIUYJDmYlEd6KOVGxQrwpiZVVqUX58UWlOanFhxil
+        OViUxHmf5h2LFBJITyxJzU5NLUgtgskycXBKNTCynMwznOYY38X/WUw3ZfKlS+4T4gWf1Kxu
+        /C/d75cVn/KmnnmrabVXX4RnbeJNDSmfruzfvpdtWAJvrVrpfX2pZajD6+dS2fV6QnIGDzfP
+        lyg4/OLDX5OInIcaR8zOC1+7HPFXmKHUqK0hsandaeKHQ9JcnSo3Eo6td8iR2FPq/6BIed6Z
+        bUosxRmJhlrMRcWJAKq0DdQAAwAA
+X-CMS-MailID: 20190821064216epcas2p37df63284df4be04ba2f51b7f7b4b270b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190821064211epcas2p43ed73f4fd126bcc5b470c9136db6aabc
-References: <CGME20190821064211epcas2p43ed73f4fd126bcc5b470c9136db6aabc@epcas2p4.samsung.com>
+X-CMS-RootMailID: 20190821064216epcas2p37df63284df4be04ba2f51b7f7b4b270b
+References: <CGME20190821064216epcas2p37df63284df4be04ba2f51b7f7b4b270b@epcas2p3.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Diskcipher supports cryptographic operations of inline crypto engines like
-FMP. Inline crypto engine refers to hardware and solutions implemented
-to encrypt data stored in storage device.
+Exynos has FMP(Flash Memory Protector) H/W to protect data stored
+on storage device.
+FMP interworks with the storage controller to encrypt a data before writing
+to the storage device and decrypt the data after reading from storage
+device.
 
-When encrypting using the FMP, Additional control is required
-to carry and maintain the crypto information between
-the encryption user(fscrypt, DM-crypt) and FMP driver.
-Diskcipher provides this control.
+FMP driver is registered with a cipher algorithm of diskcipher.
+FMP driver writes crypto information in the descriptor of the storage
+controller.
+And then, FMP H/W encrypts plan-text with every write I/O
+and decrypts cipher-text with every read I/O.
 
-Diskcipher is a symmetric key cipher in linux crypto API to support FMP.
-FMP are registered with the cihper algorithm that uses diskcipher.
-
-Diskcipher has three major steps.
-The first step is to assign a cipher and set the key.
-The second step is to pass the cipher through the BIO to the storage
-driver.
-The third step is to get the cipher from BIO and request a crypt
-to FMP algorithm.
-
-In the first step, encryption users such as fscrypt or dm-crypt
-allocate/release a diskcipher and set key into the diskcipher.
-Diskcipher provides allocate(), free(), and setkey() that are similar
-to existing ciphers.
-
-In the second step, BIO is used to pass the diskcipher to the storage
-driver.
-The BIO submitters such as ext4, f2fs and DM-crypt set diskcipher to BIO.
-Diskcipher provides the set () API for this.
-
-In the third step, the storage driver extracts the diskcipher from the BIO
-and requests the actual encryption behavior to inline crypto engine driver.
-Diskcipher provides get() and crypt() APIs for this.
+FMP is divided into three blocks.
+The first is fmp driver to control FMP H/W.
+The second is the fmp-crypt that is responsible for the interface with
+the diskcipher and storage driver.
+The third is the fmp-test to test the fmp driver through testmgr of
+crypto API.
 
 Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: David S. Miller <davem@davemloft.net>
+Cc: "David S. Miller" <davem@davemloft.net>
 Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
 ---
- crypto/Kconfig              |   9 ++
- crypto/Makefile             |   1 +
- crypto/diskcipher.c         | 349
-++++++++++++++++++++++++++++++++++++++++++++
- crypto/testmgr.c            | 157 ++++++++++++++++++++
- include/crypto/diskcipher.h | 245 +++++++++++++++++++++++++++++++
- include/linux/crypto.h      |   1 +
- 6 files changed, 762 insertions(+)
- create mode 100644 crypto/diskcipher.c
- create mode 100644 include/crypto/diskcipher.h
+ drivers/crypto/Kconfig         |   2 +
+ drivers/crypto/Makefile        |   1 +
+ drivers/crypto/fmp/Kconfig     |  13 +
+ drivers/crypto/fmp/Makefile    |   1 +
+ drivers/crypto/fmp/fmp.c       | 595
++++++++++++++++++++++++++++++++++++++++++
+ drivers/crypto/fmp/fmp_crypt.c | 243 +++++++++++++++++
+ drivers/crypto/fmp/fmp_test.c  | 310 +++++++++++++++++++++
+ drivers/crypto/fmp/fmp_test.h  |  30 +++
+ include/crypto/fmp.h           | 324 ++++++++++++++++++++++
+ 9 files changed, 1519 insertions(+)
+ create mode 100644 drivers/crypto/fmp/Kconfig
+ create mode 100644 drivers/crypto/fmp/Makefile
+ create mode 100644 drivers/crypto/fmp/fmp.c
+ create mode 100644 drivers/crypto/fmp/fmp_crypt.c
+ create mode 100644 drivers/crypto/fmp/fmp_test.c
+ create mode 100644 drivers/crypto/fmp/fmp_test.h
+ create mode 100644 include/crypto/fmp.h
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 455a335..382d43a 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -1636,6 +1636,15 @@ config CRYPTO_TWOFISH_AVX_X86_64
- 	  See also:
- 	  <http://www.schneier.com/twofish.html>
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index b8c5087..43b8cc4 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -785,4 +785,6 @@ config CRYPTO_DEV_CCREE
  
-+config CRYPTO_DISKCIPHER
-+	bool "Diskcipher support"
-+	default n
-+	help
-+	  Disk cipher algorithm
+ source "drivers/crypto/hisilicon/Kconfig"
+ 
++source "drivers/crypto/fmp/Kconfig"
 +
-+	  This cipher supports the crypt operation of the block host device
-+	  that has inline crypto engine.
-+
- comment "Compression"
- 
- config CRYPTO_DEFLATE
-diff --git a/crypto/Makefile b/crypto/Makefile
-index 0d2cdd5..71df76a 100644
---- a/crypto/Makefile
-+++ b/crypto/Makefile
-@@ -165,6 +165,7 @@ obj-$(CONFIG_CRYPTO_USER_API_AEAD) += algif_aead.o
- obj-$(CONFIG_CRYPTO_ZSTD) += zstd.o
- obj-$(CONFIG_CRYPTO_OFB) += ofb.o
- obj-$(CONFIG_CRYPTO_ECC) += ecc.o
-+obj-$(CONFIG_CRYPTO_DISKCIPHER) += diskcipher.o
- 
- ecdh_generic-y += ecdh.o
- ecdh_generic-y += ecdh_helper.o
-diff --git a/crypto/diskcipher.c b/crypto/diskcipher.c
+ endif # CRYPTO_HW
+diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
+index afc4753..d43cf7a 100644
+--- a/drivers/crypto/Makefile
++++ b/drivers/crypto/Makefile
+@@ -48,3 +48,4 @@ obj-$(CONFIG_CRYPTO_DEV_BCM_SPU) += bcm/
+ obj-$(CONFIG_CRYPTO_DEV_SAFEXCEL) += inside-secure/
+ obj-$(CONFIG_CRYPTO_DEV_ARTPEC6) += axis/
+ obj-y += hisilicon/
++obj-$(CONFIG_EXYNOS_FMP) += fmp/
+diff --git a/drivers/crypto/fmp/Kconfig b/drivers/crypto/fmp/Kconfig
 new file mode 100644
-index 0000000..ffe95a5
+index 0000000..69cdb53
 --- /dev/null
-+++ b/crypto/diskcipher.c
-@@ -0,0 +1,349 @@
++++ b/drivers/crypto/fmp/Kconfig
+@@ -0,0 +1,13 @@
++#
++# SMU/FMP controller drivers
++#
++
++config EXYNOS_FMP
++	tristate "Samsung EXYNOS FMP driver"
++	depends on CRYPTO_DISKCIPHER && MMC_DW_EXYNOS_FMP
++	help
++	  Say yes here to build support for FMP (Flash Memory Protector)
++	  to encrypt and decrypt userdata using inline H/W crypto module.
++	  If unsure, say N.
++
++	  To compile this driver as a module, choose M here
+diff --git a/drivers/crypto/fmp/Makefile b/drivers/crypto/fmp/Makefile
+new file mode 100644
+index 0000000..5328947
+--- /dev/null
++++ b/drivers/crypto/fmp/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_EXYNOS_FMP) += fmp_crypt.o fmp.o fmp_test.o
+diff --git a/drivers/crypto/fmp/fmp.c b/drivers/crypto/fmp/fmp.c
+new file mode 100644
+index 0000000..475d471
+--- /dev/null
++++ b/drivers/crypto/fmp/fmp.c
+@@ -0,0 +1,595 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Copyright (C) 2017 Samsung Electronics Co., Ltd.
++ * Exynos FMP driver
++ *
++ * Copyright (C) 2015 Samsung Electronics Co., Ltd.
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -226,559 +236,611 @@ index 0000000..ffe95a5
 + * (at your option) any later version.
 + */
 +
-+#include <linux/kernel.h>
-+#include <linux/blkdev.h>
-+#include <linux/errno.h>
 +#include <linux/module.h>
-+#include <linux/seq_file.h>
-+#include <linux/string.h>
-+#include <linux/crypto.h>
-+#include <crypto/algapi.h>
-+#include <crypto/diskcipher.h>
-+#include <linux/delay.h>
-+#include <linux/mm_types.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
 +#include <linux/fs.h>
-+#include <linux/fscrypt.h>
++#include <linux/slab.h>
++#include <linux/smc.h>
++#include <asm/cacheflush.h>
++#include <linux/crypto.h>
++#include <linux/scatterlist.h>
++#include <crypto/fmp.h>
 +
-+#include "internal.h"
++#include "fmp_test.h"
 +
-+static int crypto_diskcipher_check(struct bio *bio)
-+{
-+	struct crypto_diskcipher *ci = NULL;
-+	struct inode *inode = NULL;
-+	struct page *page = NULL;
++#define WORD_SIZE 4
++#define FMP_IV_MAX_IDX (FMP_IV_SIZE_16 / WORD_SIZE)
 +
-+	if (!bio) {
-+		pr_err("%s: doesn't exist bio\n", __func__);
-+		return 0;
-+	}
-+
-+	/* enc without fscrypt */
-+	ci = bio->bi_aux_private;
-+	if (!ci->inode)
-+		return 0;
-+	if (ci->algo == 0)
-+		return 0;
-+
-+	page = bio->bi_io_vec[0].bv_page;
-+	if (!page || PageAnon(page) || !page->mapping ||
-!page->mapping->host)
-+		return 0;
-+
-+	inode = page->mapping->host;
-+	if (ci->inode != inode) {
-+		pr_err("%s: fails to invalid inode\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	if (!fscrypt_has_encryption_key(inode)) {
-+		pr_err("%s: fails to invalid key\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	ci = fscrypt_get_diskcipher(inode);
-+	if (!ci) {
-+		pr_err("%s: fails to invalid crypto info\n", __func__);
-+		return -EINVAL;
-+	} else if ((bio->bi_aux_private != ci) &&
-+			!(bio->bi_flags & REQ_OP_DISCARD)) {
-+		pr_err("%s: fails to async crypto info\n", __func__);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+struct crypto_diskcipher *crypto_diskcipher_get(struct bio *bio)
-+{
-+	struct crypto_diskcipher *diskc = NULL;
-+
-+	if (!bio || !virt_addr_valid(bio)) {
-+		pr_err("%s: Invalid bio:%pK\n", __func__, bio);
-+		return NULL;
-+	}
-+	if (bio->bi_opf & REQ_CRYPT) {
-+		if (bio->bi_aux_private) {
-+			if (!crypto_diskcipher_check(bio)) {
-+				diskc = bio->bi_aux_private;
-+			} else {
-+				pr_err("%s: fail to check diskcipher
-bio:%pK\n",
-+						__func__, bio);
-+				diskc = ERR_PTR(-EINVAL);
-+			}
-+		} else {
-+			pr_err("%s: no diskcipher on bio:%pK\n",
-+					__func__, bio);
-+			diskc = ERR_PTR(-EINVAL);
-+		}
-+	}
-+
-+	return diskc;
-+}
-+
-+static inline void *bio_has_crypt(struct bio *bio)
-+{
-+	if (bio)
-+		if (bio->bi_opf & REQ_CRYPT)
-+			return bio->bi_aux_private;
-+	return NULL;
-+}
-+
-+bool crypto_diskcipher_blk_mergeble(struct bio *bio1, struct bio *bio2)
-+{
-+	if (!bio_has_crypt(bio1) && !bio_has_crypt(bio2))
-+		return true;
-+
-+	if (bio_has_crypt(bio1) == bio_has_crypt(bio2)) {
-+		struct crypto_diskcipher *tfm1 = bio1->bi_aux_private;
-+		struct crypto_diskcipher *tfm2 = bio2->bi_aux_private;
-+
-+		/* no inode for DM-crypt and DM-default-key */
-+		if (!tfm1->inode)
-+			return true;
-+
-+		if ((tfm1->ivmode == IV_MODE_DUN) &&
-+			(tfm2->ivmode == IV_MODE_DUN)) {
-+			if (bio_dun(bio1) && bio_dun(bio2) &&
-+				(bio_end_dun(bio1) == bio_dun(bio2)))
-+				return true;
-+		} else if ((tfm1->ivmode == IV_MODE_LBA) &&
-+			(tfm2->ivmode == IV_MODE_LBA)) {
-+			return true;
-+		}
-+	}
-+	return false;
-+}
-+
-+void crypto_diskcipher_set(struct bio *bio, struct crypto_diskcipher *tfm,
-+				const struct inode *inode, u64 dun)
-+{
-+	if (bio && tfm) {
-+		bio->bi_opf |= REQ_CRYPT;
-+		bio->bi_aux_private = tfm;
-+		tfm->inode = (struct inode *)inode;
-+		if (dun)
-+			bio->bi_iter.bi_dun = dun;
-+	}
-+}
-+
-+int crypto_diskcipher_setkey(struct crypto_diskcipher *tfm, const char
-*in_key,
-+				unsigned int key_len, bool persistent)
-+{
-+	struct crypto_tfm *base = crypto_diskcipher_tfm(tfm);
-+	struct diskcipher_alg *cra =
-__crypto_diskcipher_alg(base->__crt_alg);
-+	int ret = -EINVAL;
-+	struct inode *inode = tfm->inode;
-+
-+	if (cra)
-+		ret = cra->setkey(tfm, in_key, key_len, persistent);
-+	else
-+		pr_err("%s: doesn't exist cra. base:%pK", __func__, base);
-+
-+	tfm->ivmode = IV_MODE_LBA;
-+	if (!persistent && inode) {
-+		/* check the filesystem for fscrypt */
-+		if (inode->i_sb)
-+			if (inode->i_sb->s_type)
-+				if (!strcmp(inode->i_sb->s_type->name,
-"f2fs"))
-+					tfm->ivmode = IV_MODE_DUN;
-+	}
-+	return ret;
-+}
-+
-+int crypto_diskcipher_clearkey(struct crypto_diskcipher *tfm)
-+{
-+	struct crypto_tfm *base = crypto_diskcipher_tfm(tfm);
-+	struct diskcipher_alg *cra =
-__crypto_diskcipher_alg(base->__crt_alg);
-+	int ret = -EINVAL;
-+
-+	if (cra)
-+		ret = cra->clearkey(tfm);
-+	else
-+		pr_err("%s: doesn't exist cra. base:%pK", __func__, base);
-+
-+	return ret;
-+}
-+
-+int crypto_diskcipher_set_crypt(struct crypto_diskcipher *tfm, void *req)
-+{
-+	struct crypto_tfm *base = crypto_diskcipher_tfm(tfm);
-+	struct diskcipher_alg *cra = NULL;
-+	int ret = -EINVAL;
-+
-+	if (!base) {
-+		pr_err("%s: doesn't exist base. tfm:%pK", __func__, tfm);
-+		goto out;
-+	}
-+
-+	cra = __crypto_diskcipher_alg(base->__crt_alg);
-+	if (!cra) {
-+		pr_err("%s: doesn't exist cra. base:%pK\n", __func__, base);
-+		goto out;
-+	}
-+
-+	ret = cra->crypt(tfm, req);
-+	if (ret)
-+		pr_err("%s fails ret:%d, cra:%pK\n", __func__, ret, cra);
-+out:
-+	return ret;
-+}
-+
-+int crypto_diskcipher_clear_crypt(struct crypto_diskcipher *tfm, void *req)
-+{
-+	struct crypto_tfm *base = crypto_diskcipher_tfm(tfm);
-+	struct diskcipher_alg *cra = NULL;
-+	int ret = -EINVAL;
-+
-+	if (!base) {
-+		pr_err("%s: doesn't exist base, tfm:%pK\n", __func__, tfm);
-+		goto out;
-+	}
-+
-+	cra = __crypto_diskcipher_alg(base->__crt_alg);
-+	if (!cra) {
-+		pr_err("%s: doesn't exist cra. base:%pK\n", __func__, base);
-+		goto out;
-+	}
-+
-+	ret = cra->clear(tfm, req);
-+	if (ret)
-+		pr_err("%s fails ret:%d, cra:%pK\n", __func__, ret, cra);
-+out:
-+	return ret;
-+}
-+
-+int diskcipher_do_crypt(struct crypto_diskcipher *tfm,
-+			struct diskcipher_test_request *req)
-+{
-+	struct crypto_tfm *base = crypto_diskcipher_tfm(tfm);
-+	struct diskcipher_alg *cra =
-__crypto_diskcipher_alg(base->__crt_alg);
-+	int ret = -EINVAL;
-+
-+	if (!cra) {
-+		pr_err("%s: doesn't exist cra. base:%pK\n", __func__, base);
-+		return ret;
-+	}
-+
-+	if (cra->do_crypt)
-+		ret = cra->do_crypt(tfm, req);
-+	if (ret)
-+		pr_err("%s fails ret:%d", __func__, ret);
-+	return ret;
-+}
-+
-+static int crypto_diskcipher_init_tfm(struct crypto_tfm *base)
-+{
-+	struct crypto_diskcipher *tfm = __crypto_diskcipher_cast(base);
-+	struct diskcipher_alg *alg = crypto_diskcipher_alg(tfm);
-+
-+	if (alg->init)
-+		alg->init(tfm);
-+	return 0;
-+}
-+
-+unsigned int crypto_diskcipher_extsize(struct crypto_alg *alg)
-+{
-+	return alg->cra_ctxsize +
-+		(alg->cra_alignmask & ~(crypto_tfm_ctx_alignment() - 1));
-+}
-+
-+static void crypto_diskcipher_show(struct seq_file *m, struct crypto_alg
-*alg)
-+{
-+	seq_puts(m, "type         : diskcipher\n");
-+}
-+
-+static const struct crypto_type crypto_diskcipher_type = {
-+	.extsize = crypto_diskcipher_extsize,
-+	.init_tfm = crypto_diskcipher_init_tfm,
-+#ifdef CONFIG_PROC_FS
-+	.show = crypto_diskcipher_show,
++#ifndef __SMC_H__
++#define exynos_smc(a, b, c, d) (-EINVAL)
 +#endif
-+	.maskclear = ~CRYPTO_ALG_TYPE_MASK,
-+	.maskset = CRYPTO_ALG_TYPE_MASK,
-+	.type = CRYPTO_ALG_TYPE_DISKCIPHER,
-+	.tfmsize = offsetof(struct crypto_diskcipher, base),
-+};
 +
-+#define DISKC_NAME		"-disk"
-+#define DISKC_NAME_SIZE		(5)
-+#define DISKCIPHER_MAX_IO_MS	(1000)
-+struct crypto_diskcipher *crypto_alloc_diskcipher(const char *alg_name,
-+					u32 type, u32 mask, bool force)
++#define byte2word(b0, b1, b2, b3)       \
++			(((unsigned int)(b0) << 24) | \
++			((unsigned int)(b1) << 16) | \
++			((unsigned int)(b2) << 8) | (b3))
++#define get_word(x, c)  byte2word(((unsigned char *)(x) + 4 * (c))[0], \
++				((unsigned char *)(x) + 4 * (c))[1], \
++				((unsigned char *)(x) + 4 * (c))[2], \
++				((unsigned char *)(x) + 4 * (c))[3])
++
++static inline void dump_ci(struct fmp_crypto_info *c)
 +{
-+	int alg_name_len;
-+
-+	if (!force)
-+		return crypto_alloc_tfm(alg_name,
-+				&crypto_diskcipher_type, type, mask);
-+
-+	alg_name_len = strlen(alg_name);
-+	if (alg_name_len + DISKC_NAME_SIZE < CRYPTO_MAX_ALG_NAME) {
-+		char diskc_name[CRYPTO_MAX_ALG_NAME];
-+
-+		strscpy(diskc_name, alg_name, alg_name_len);
-+		strcat(diskc_name, DISKC_NAME);
-+		return crypto_alloc_tfm(diskc_name,
-+				&crypto_diskcipher_type, type, mask);
++	if (c) {
++		pr_info
++		    ("%s: crypto:%p algo:%d enc:%d key_size:%d key:%p\n",
++		     __func__, c, c->algo_mode, c->enc_mode,
++		     c->key_size, c->key);
++		if (c->enc_mode == EXYNOS_FMP_FILE_ENC)
++			print_hex_dump(KERN_CONT, "key:",
++				       DUMP_PREFIX_OFFSET, 16, 1, c->key,
++				       sizeof(c->key), false);
 +	}
-+	return NULL;
 +}
 +
-+void crypto_free_diskcipher(struct crypto_diskcipher *tfm)
++static inline void dump_table(struct fmp_table_setting *table)
 +{
-+	crypto_destroy_tfm(tfm, crypto_diskcipher_tfm(tfm));
++	print_hex_dump(KERN_CONT, "dump:", DUMP_PREFIX_OFFSET, 16, 1,
++		       table, sizeof(struct fmp_table_setting), false);
 +}
 +
-+int crypto_register_diskcipher(struct diskcipher_alg *alg)
++static inline int is_set_fmp_disk_key(struct exynos_fmp *fmp)
 +{
-+	struct crypto_alg *base = &alg->base;
-+
-+	base->cra_type = &crypto_diskcipher_type;
-+	base->cra_flags = CRYPTO_ALG_TYPE_DISKCIPHER;
-+	return crypto_register_alg(base);
++	return (fmp->status_disk_key == KEY_SET) ? TRUE : FALSE;
 +}
 +
-+void crypto_unregister_diskcipher(struct diskcipher_alg *alg)
++static inline int is_stored_fmp_disk_key(struct exynos_fmp *fmp)
 +{
-+	crypto_unregister_alg(&alg->base);
++	return (fmp->status_disk_key == KEY_STORED) ? TRUE : FALSE;
 +}
 +
-+int crypto_register_diskciphers(struct diskcipher_alg *algs, int count)
++static inline int is_supported_ivsize(u32 ivlen)
 +{
-+	int i, ret;
++	if (ivlen && (ivlen <= FMP_IV_SIZE_16))
++		return TRUE;
++	else
++		return FALSE;
++}
 +
-+	for (i = 0; i < count; i++) {
-+		ret = crypto_register_diskcipher(algs + i);
-+		if (ret)
-+			goto err;
++static inline int check_aes_xts_size(struct fmp_table_setting *table,
++				     bool cmdq_enabled)
++{
++	int size;
++
++	if (cmdq_enabled)
++		size = GET_CMDQ_LENGTH(table);
++	else
++		size = GET_LENGTH(table);
++	return (size > MAX_AES_XTS_TRANSFER_SIZE) ? size : 0;
++}
++
++static inline int check_aes_xts_key(char *key,
++				    enum fmp_crypto_key_size key_size)
++{
++	char *enckey, *twkey;
++
++	enckey = key;
++	twkey = key + key_size;
++	return (memcmp(enckey, twkey, key_size)) ? 0 : -1;
++}
++
++int fmplib_set_algo_mode(struct fmp_table_setting *table,
++			 struct fmp_crypto_info *crypto, bool cmdq_enabled)
++{
++	int ret;
++	enum fmp_crypto_algo_mode algo_mode = crypto->algo_mode;
++
++	if (algo_mode == EXYNOS_FMP_ALGO_MODE_AES_XTS) {
++		ret = check_aes_xts_size(table, cmdq_enabled);
++		if (ret) {
++			pr_err("%s: Fail FMP XTS due to invalid size(%d)\n",
++			       __func__, ret);
++			return -EINVAL;
++		}
++	}
++
++	switch (crypto->enc_mode) {
++	case EXYNOS_FMP_FILE_ENC:
++		if (cmdq_enabled)
++			SET_CMDQ_FAS(table, algo_mode);
++		else
++			SET_FAS(table, algo_mode);
++		break;
++	case EXYNOS_FMP_DISK_ENC:
++		if (cmdq_enabled)
++			SET_CMDQ_DAS(table, algo_mode);
++		else
++			SET_DAS(table, algo_mode);
++		break;
++	default:
++		pr_err("%s: Invalid fmp enc mode %d\n", __func__,
++		       crypto->enc_mode);
++		return -EINVAL;
 +	}
 +	return 0;
-+
-+err:
-+	for (--i; i >= 0; --i)
-+		crypto_unregister_diskcipher(algs + i);
-+	return ret;
 +}
 +
-+void crypto_unregister_diskciphers(struct diskcipher_alg *algs, int count)
++static int fmplib_set_file_key(struct fmp_table_setting *table,
++			struct fmp_crypto_info *crypto)
 +{
-+	int i;
++	enum fmp_crypto_algo_mode algo_mode = crypto->algo_mode;
++	enum fmp_crypto_key_size key_size = crypto->fmp_key_size;
++	char *key = crypto->key;
++	int idx, max;
 +
-+	for (i = count - 1; i >= 0; --i)
-+		crypto_unregister_diskcipher(algs + i);
-+}
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index d990eba..348dafcb 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -30,6 +30,7 @@
- #include <crypto/rng.h>
- #include <crypto/drbg.h>
- #include <crypto/akcipher.h>
-+#include <crypto/diskcipher.h>
- #include <crypto/kpp.h>
- #include <crypto/acompress.h>
- #include <crypto/internal/simd.h>
-@@ -2291,6 +2292,146 @@ static int test_aead(const char *driver, int enc,
- 	return 0;
- }
- 
-+#if defined(CONFIG_CRYPTO_DISKCIPHER)
-+static int __test_diskcipher(struct crypto_diskcipher *tfm, int enc,
-+			const struct cipher_testvec *template,
-+			unsigned int tcount, const int align_offset)
-+{
-+	const char *algo =
-+		crypto_tfm_alg_driver_name(crypto_diskcipher_tfm(tfm));
-+	unsigned int i, j;
-+	char *q;
-+	struct scatterlist sg[8];
-+	struct scatterlist sgout[8];
-+	const char *e = (enc == ENCRYPT) ? "encryption" : "decryption";
-+	void *data;
-+	char iv[MAX_IVLEN];
-+	char *xbuf[XBUFSIZE];
-+	char *xoutbuf[XBUFSIZE];
-+	int ret = -ENOMEM;
-+	unsigned int ivsize = crypto_diskcipher_ivsize(tfm);
-+	struct diskcipher_test_request req;
-+	const char *input, *result;
-+
-+	if (testmgr_alloc_buf(xbuf))
-+		goto out_nobuf;
-+
-+	if (testmgr_alloc_buf(xoutbuf))
-+		goto out_nooutbuf;
-+
-+	j = 0;
-+	for (i = 0; i < tcount; i++) {
-+		if (template[i].np && !template[i].also_non_np)
-+			continue;
-+
-+		if (template[i].fips_skip)
-+			continue;
-+
-+		if (template[i].iv)
-+			memcpy(iv, template[i].iv, ivsize);
-+		else
-+			memset(iv, 0, MAX_IVLEN);
-+
-+		input  = enc ? template[i].ptext : template[i].ctext;
-+		result = enc ? template[i].ctext : template[i].ptext;
-+		j++;
-+		ret = -EINVAL;
-+		if (WARN_ON(align_offset + template[i].len > PAGE_SIZE))
-+			goto out;
-+
-+		ret = crypto_diskcipher_setkey(tfm, template[i].key,
-+					     template[i].klen, 0);
-+		if (ret == -ENOKEY) {
-+			pr_err("alg: diskcipher: no support %d keylen for
-%s. skip it\n",
-+			       template[i].klen, algo);
-+			continue;
-+		} else if (ret) {
-+			pr_err("alg: diskcipher: setkey failed on test %d
-for %s\n",
-+				   j, algo);
-+			goto out;
-+		}
-+
-+		data = xbuf[0];
-+		data += align_offset;
-+		memcpy(data, input, template[i].len);
-+		sg_init_one(&sg[0], data, template[i].len);
-+
-+		data = xoutbuf[0];
-+		data += align_offset;
-+		sg_init_one(&sgout[0], data, template[i].len);
-+
-+		diskcipher_request_set_crypt(&req, sg, sgout,
-+				template[i].len, iv, enc ? 1 : 0);
-+		ret = diskcipher_do_crypt(tfm, &req);
-+		if (ret) {
-+			pr_err("alg: diskcipher: %s failed on test %d for
-%s: ret=%d\n",
-+				   e, j, algo, -ret);
-+			goto out;
-+		}
-+
-+		q = data;
-+		if (memcmp(q, result, template[i].len)) {
-+			pr_err("alg: diskcipher: Test %d failed (invalid
-result) on %s for %s\n",
-+			       j, e, algo);
-+			hexdump(q, template[i].len);
-+			ret = -EINVAL;
-+			goto out;
-+		}
++	if (!key || (crypto->enc_mode != EXYNOS_FMP_FILE_ENC) ||
++		((key_size != EXYNOS_FMP_KEY_SIZE_16) &&
++		 (key_size != EXYNOS_FMP_KEY_SIZE_32))) {
++		pr_err("%s: Invalid crypto:%p key:%p key_size:%d
+enc_mode:%d\n",
++		       __func__, crypto, key, key_size, crypto->enc_mode);
++		return -EINVAL;
 +	}
-+	ret = 0;
 +
-+out:
-+	testmgr_free_buf(xoutbuf);
-+out_nooutbuf:
-+	testmgr_free_buf(xbuf);
-+out_nobuf:
-+	return ret;
++	if ((algo_mode == EXYNOS_FMP_ALGO_MODE_AES_XTS)
++	    && check_aes_xts_key(key, key_size)) {
++		pr_err("%s: Fail FMP XTS due to the same enc and twkey\n",
++		       __func__);
++		return -EINVAL;
++	}
++
++	if (algo_mode == EXYNOS_FMP_ALGO_MODE_AES_CBC) {
++		max = key_size / WORD_SIZE;
++		for (idx = 0; idx < max; idx++)
++			*(&table->file_enckey0 + idx) =
++			    get_word(key, max - (idx + 1));
++	} else if (algo_mode == EXYNOS_FMP_ALGO_MODE_AES_XTS) {
++		key_size *= 2;
++		max = key_size / WORD_SIZE;
++		for (idx = 0; idx < (max / 2); idx++)
++			*(&table->file_enckey0 + idx) =
++			    get_word(key, (max / 2) - (idx + 1));
++		for (idx = 0; idx < (max / 2); idx++)
++			*(&table->file_twkey0 + idx) =
++			    get_word(key, max - (idx + 1));
++	}
++	return 0;
 +}
 +
-+static int test_diskcipher(struct crypto_diskcipher *tfm, int enc,
-+			 const struct cipher_testvec *template,
-+			 unsigned int tcount)
++static int fmplib_set_key_size(struct fmp_table_setting *table,
++			struct fmp_crypto_info *crypto, bool cmdq_enabled)
++{
++	enum fmp_crypto_key_size key_size;
++
++	key_size = crypto->fmp_key_size;
++
++	if ((key_size != EXYNOS_FMP_KEY_SIZE_16) &&
++		(key_size != EXYNOS_FMP_KEY_SIZE_32)) {
++		pr_err("%s: Invalid keysize %d\n", __func__, key_size);
++		return -EINVAL;
++	}
++
++	switch (crypto->enc_mode) {
++	case EXYNOS_FMP_FILE_ENC:
++		if (cmdq_enabled)
++			SET_CMDQ_KEYLEN(table,
++					(key_size ==
++					 FMP_KEY_SIZE_32) ? FKL_CMDQ : 0);
++		else
++			SET_KEYLEN(table,
++				   (key_size == FMP_KEY_SIZE_32) ? FKL : 0);
++		break;
++	case EXYNOS_FMP_DISK_ENC:
++		if (cmdq_enabled)
++			SET_CMDQ_KEYLEN(table,
++					(key_size ==
++					 FMP_KEY_SIZE_32) ? DKL_CMDQ : 0);
++		else
++			SET_KEYLEN(table,
++				   (key_size == FMP_KEY_SIZE_32) ? DKL : 0);
++		break;
++	default:
++		pr_err("%s: Invalid fmp enc mode %d\n", __func__,
++		       crypto->enc_mode);
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static int fmplib_set_disk_key(struct exynos_fmp *fmp, u8 *key, u32
+key_size)
 +{
 +	int ret;
 +
-+	ret = __test_diskcipher(tfm, enc, template, tcount, 0);
-+	if (ret)
-+		return ret;
-+
-+	/* test unaligned buffers, check with one byte offset */
-+	ret = __test_diskcipher(tfm, enc, template, tcount, 1);
-+	if (ret)
-+		return ret;
-+
++	/* TODO: only set for host0 */
++	__flush_dcache_area(key, (size_t) FMP_MAX_KEY_SIZE);
++	ret =
++	    exynos_smc(SMC_CMD_FMP_DISK_KEY_STORED, 0, virt_to_phys(key),
++		       key_size);
++	if (ret) {
++		pr_err("%s: Fail to set FMP disk key. ret = %d\n", __func__,
++		       ret);
++		fmp->status_disk_key = KEY_ERROR;
++		return -EINVAL;
++	}
++	fmp->status_disk_key = KEY_STORED;
 +	return 0;
 +}
 +
-+static int alg_test_diskcipher(const struct alg_test_desc *desc,
-+			     const char *driver, u32 type, u32 mask)
++static int fmplib_clear_disk_key(struct exynos_fmp *fmp)
 +{
-+	struct crypto_diskcipher *tfm;
-+	const struct cipher_test_suite *suite = &desc->suite.cipher;
-+	int err = 0;
++	int ret;
 +
-+	tfm = crypto_alloc_diskcipher(driver, type | CRYPTO_ALG_INTERNAL,
-+					mask, 0);
-+	if (!tfm || IS_ERR(tfm)) {
-+		pr_err("alg: diskcipher: Failed to load transform for %s:
-%ld\n",
-+			driver, PTR_ERR(tfm));
-+		return PTR_ERR(tfm);
++	ret = exynos_smc(SMC_CMD_FMP_DISK_KEY_CLEAR, 0, 0, 0);
++	if (ret) {
++		pr_err("%s: Fail to clear FMP disk key. ret = %d\n",
++		       __func__, ret);
++		fmp->status_disk_key = KEY_ERROR;
++		return -EPERM;
 +	}
 +
-+	err = test_diskcipher(tfm, ENCRYPT, suite->vecs, suite->count);
-+	if (err)
-+		goto out;
-+
-+	err = test_diskcipher(tfm, DECRYPT, suite->vecs, suite->count);
-+out:
-+	crypto_free_diskcipher(tfm);
-+	return err;
++	fmp->status_disk_key = KEY_CLEAR;
++	return 0;
 +}
-+#endif
 +
- static int alg_test_aead(const struct alg_test_desc *desc, const char
-*driver,
- 			 u32 type, u32 mask)
- {
-@@ -4029,6 +4170,14 @@ static const struct alg_test_desc alg_test_descs[] =
-{
- 		.suite = {
- 			.cipher = __VECS(aes_cbc_tv_template)
- 		},
-+#if defined(CONFIG_CRYPTO_DISKCIPHER)
-+	}, {
-+		.alg = "cbc(aes)-disk",
-+		.test = alg_test_diskcipher,
-+		.suite = {
-+			.cipher = __VECS(aes_cbc_tv_template)
++static int fmplib_set_iv(struct fmp_table_setting *table,
++		  struct fmp_crypto_info *crypto, u8 *iv)
++{
++	int idx;
++
++	switch (crypto->enc_mode) {
++	case EXYNOS_FMP_FILE_ENC:
++		for (idx = 0; idx < FMP_IV_MAX_IDX; idx++)
++			*(&table->file_iv0 + idx) =
++			    get_word(iv, FMP_IV_MAX_IDX - (idx + 1));
++		break;
++	case EXYNOS_FMP_DISK_ENC:
++		for (idx = 0; idx < FMP_IV_MAX_IDX; idx++)
++			*(&table->disk_iv0 + idx) =
++			    get_word(iv, FMP_IV_MAX_IDX - (idx + 1));
++		break;
++	default:
++		pr_err("%s: Invalid fmp enc mode %d\n", __func__,
++		       crypto->enc_mode);
++		return -EINVAL;
++	}
++	return 0;
++}
++
++int exynos_fmp_crypt(struct fmp_crypto_info *ci, void *priv)
++{
++	struct exynos_fmp *fmp = ci->ctx;
++	struct fmp_request *r = priv;
++	int ret = 0;
++	u8 iv[FMP_IV_SIZE_16];
++
++	if (!r || !fmp) {
++		pr_err("%s: invalid req:%p, fmp:%p\n", __func__, r, fmp);
++		return -EINVAL;
++	}
++
++	/* check test mode */
++	if (ci->algo_mode & EXYNOS_FMP_ALGO_MODE_TEST) {
++		ci->algo_mode &= EXYNOS_FMP_ALGO_MODE_MASK;
++		if (!ci->algo_mode)
++			return 0;
++
++		if (!fmp->test_data) {
++			pr_err("%s: no test_data for test mode\n",
+__func__);
++			goto out;
 +		}
-+#endif
- 	}, {
- 		.alg = "cbc(anubis)",
- 		.test = alg_test_skcipher,
-@@ -5035,6 +5184,14 @@ static const struct alg_test_desc alg_test_descs[] =
-{
- 		.suite = {
- 			.cipher = __VECS(aes_xts_tv_template)
- 		}
-+#if defined(CONFIG_CRYPTO_DISKCIPHER)
-+	}, {
-+		.alg = "xts(aes)-disk",
-+		.test = alg_test_diskcipher,
-+		.suite = {
-+			.cipher = __VECS(aes_xts_tv_template)
++		/* use test manager's iv instead of host driver's iv */
++		r->iv = fmp->test_data->iv;
++		r->ivsize = sizeof(fmp->test_data->iv);
++	}
++
++	/* check crypto info & input param */
++	if (!ci->algo_mode || !is_supported_ivsize(r->ivsize) ||
++			!r->table || !r->iv) {
++		dev_err(fmp->dev,
++			"%s: invalid mode:%d iv:%p ivsize:%d table:%p\n",
++			__func__, ci->algo_mode, r->iv, r->ivsize,
+r->table);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* set algo & enc mode into table */
++	ret = fmplib_set_algo_mode(r->table, ci, r->cmdq_enabled);
++	if (ret) {
++		dev_err(fmp->dev, "%s: Fail to set FMP encryption mode\n",
++			__func__);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* set key size into table */
++	switch (ci->enc_mode) {
++	case EXYNOS_FMP_FILE_ENC:
++		ret = fmplib_set_file_key(r->table, ci);
++		if (ret) {
++			dev_err(fmp->dev, "%s: Fail to set FMP key\n",
++				__func__);
++			ret = -EINVAL;
++			goto out;
 +		}
-+#endif
- 	}, {
- 		.alg = "xts(camellia)",
- 		.generic_driver = "xts(ecb(camellia-generic))",
-diff --git a/include/crypto/diskcipher.h b/include/crypto/diskcipher.h
++		break;
++	case EXYNOS_FMP_DISK_ENC:
++		if (is_stored_fmp_disk_key(fmp)) {
++			ret = exynos_smc(SMC_CMD_FMP_DISK_KEY_SET, 0, 0, 0);
++			if (ret) {
++				dev_err(fmp->dev,
++					"%s: Fail to set disk key\n",
+__func__);
++				goto out;
++			}
++			fmp->status_disk_key = KEY_SET;
++		} else if (!is_set_fmp_disk_key(fmp)) {
++			dev_err(fmp->dev,
++				"%s: Fail because disk key is clear\n",
++				__func__);
++			ret = -EINVAL;
++			goto out;
++		}
++		break;
++	default:
++		dev_err(fmp->dev, "%s: Invalid fmp enc mode %d\n", __func__,
++			ci->enc_mode);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* set key size into table */
++	ret = fmplib_set_key_size(r->table, ci, r->cmdq_enabled);
++	if (ret) {
++		dev_err(fmp->dev, "%s: Fail to set FMP key size\n",
+__func__);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* set iv */
++	memset(iv, 0, FMP_IV_SIZE_16);
++	memcpy(iv, r->iv, r->ivsize);
++	ret = fmplib_set_iv(r->table, ci, iv);
++	if (ret) {
++		dev_err(fmp->dev, "%s: Fail to set FMP IV\n", __func__);
++		ret = -EINVAL;
++		goto out;
++	}
++out:
++	if (ret) {
++		dump_ci(ci);
++		if (r && r->table)
++			dump_table(r->table);
++	}
++	return ret;
++}
++
++static inline void fmplib_clear_file_key(struct fmp_table_setting *table)
++{
++	memset(&table->file_iv0, 0, sizeof(__le32) * 24);
++}
++
++int exynos_fmp_clear(struct fmp_crypto_info *ci, void *priv)
++{
++	struct fmp_request *r = priv;
++
++	if (!r) {
++		pr_err("%s: Invalid input\n", __func__);
++		return -EINVAL;
++	}
++
++	if (!r->table) {
++		pr_err("%s: Invalid input table\n", __func__);
++		return -EINVAL;
++	}
++
++	fmplib_clear_file_key(r->table);
++	return 0;
++}
++
++int exynos_fmp_setkey(struct fmp_crypto_info *ci, u8 *in_key, u32 keylen,
++		      bool persistent)
++{
++	struct exynos_fmp *fmp = ci->ctx;
++	int ret = 0;
++	int keylen_org = keylen;
++
++	if (!fmp || !in_key) {
++		pr_err("%s: invalid input param\n", __func__);
++		return -EINVAL;
++	}
++
++	/* set key_size & fmp_key_size */
++	if (ci->algo_mode == EXYNOS_FMP_ALGO_MODE_AES_XTS)
++		keylen = keylen >> 1;
++	switch (keylen) {
++	case FMP_KEY_SIZE_16:
++		ci->fmp_key_size = EXYNOS_FMP_KEY_SIZE_16;
++		break;
++	case FMP_KEY_SIZE_32:
++		ci->fmp_key_size = EXYNOS_FMP_KEY_SIZE_32;
++		break;
++	default:
++		pr_err("%s: FMP doesn't support key size %d\n", __func__,
++		       keylen);
++		return -ENOKEY;
++	}
++	ci->key_size = keylen_org;
++
++	/* set key */
++	if (persistent) {
++		ci->enc_mode = EXYNOS_FMP_DISK_ENC;
++		ret = fmplib_set_disk_key(fmp, in_key, ci->key_size);
++		if (ret)
++			pr_err("%s: Fail to set FMP disk key\n", __func__);
++	} else {
++		ci->enc_mode = EXYNOS_FMP_FILE_ENC;
++		memset(ci->key, 0, sizeof(ci->key));
++		memcpy(ci->key, in_key, ci->key_size);
++	}
++	return ret;
++}
++
++int exynos_fmp_clearkey(struct fmp_crypto_info *ci)
++{
++	struct exynos_fmp *fmp = ci->ctx;
++	int ret = 0;
++
++	if (!fmp) {
++		pr_err("%s: invalid input param\n", __func__);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (ci->enc_mode == EXYNOS_FMP_DISK_ENC) {
++		ret = fmplib_clear_disk_key(fmp);
++		if (ret)
++			pr_err("%s: fail to clear FMP disk key\n",
+__func__);
++	} else if (ci->enc_mode == EXYNOS_FMP_FILE_ENC) {
++		memset(ci->key, 0, sizeof(ci->key));
++		ci->key_size = 0;
++	} else {
++		pr_err("%s: invalid algo mode:%d\n", __func__,
+ci->enc_mode);
++		ret = -EINVAL;
++	}
++out:
++	return ret;
++}
++
++int exynos_fmp_test_crypt(struct fmp_crypto_info *ci,
++			const uint8_t *iv, uint32_t ivlen, uint8_t *src,
++			uint8_t *dst, uint32_t len, bool enc, void *priv)
++{
++	struct exynos_fmp *fmp = ci->ctx;
++	int ret = 0;
++
++	if (!fmp || !iv || !src || !dst) {
++		pr_err("%s: invalid input: fmp:%p, iv:%p, s:%p, d:%p\n",
++			__func__, fmp, iv, src, dst);
++		return -EINVAL;
++	}
++
++	/* init fmp test to get test block */
++	fmp->test_data = fmp_test_init(fmp);
++	if (!fmp->test_data) {
++		dev_err(fmp->dev, "%s: fail to initialize fmp test.",
++			__func__);
++		goto err;
++	}
++
++	/* setiv */
++	if (iv && (ivlen <= FMP_IV_SIZE_16)) {
++		memset(fmp->test_data->iv, 0, FMP_IV_SIZE_16);
++		memcpy(fmp->test_data->iv, iv, ivlen);
++	} else {
++		dev_err(fmp->dev, "%s: fail to set fmp iv. ret(%d)",
++			__func__, ret);
++		goto err;
++	}
++
++	/* do crypt: priv: struct crypto_diskcipher */
++	ret = fmp_test_crypt(fmp, fmp->test_data,
++		src, dst, len, enc ? ENCRYPT : DECRYPT, priv, ci);
++	if (ret)
++		dev_err(fmp->dev, "%s: fail to run fmp test. ret(%d)",
++			__func__, ret);
++
++err:
++	if (fmp->test_data)
++		fmp_test_exit(fmp->test_data);
++	return ret;
++}
++
++int exynos_fmp_smu_abort(int id)
++{
++	int ret = 0;
++
++	if (id == SMU_ID_MAX)
++		return 0;
++
++	ret = exynos_smc(SMC_CMD_SMU, SMU_ABORT, id, 0);
++	if (ret)
++		pr_err("%s: Fail smc call. ret(%d)\n", __func__, ret);
++
++	return ret;
++}
++
++#define CFG_DESCTYPE_3 0x3
++int exynos_fmp_sec_cfg(int fmp_id, int smu_id, bool init)
++{
++	int ret = 0;
++
++	if (fmp_id != SMU_ID_MAX) {
++		ret = exynos_smc(SMC_CMD_FMP_SECURITY, 0,
++				fmp_id, CFG_DESCTYPE_3);
++		if (ret)
++			pr_err("%s: Fail smc call for FMP_SECURITY.
+ret(%d)\n",
++					__func__, ret);
++	}
++
++	if (smu_id != SMU_ID_MAX) {
++		if (init)
++			ret = exynos_smc(SMC_CMD_SMU, SMU_INIT, smu_id, 0);
++		else
++			ret = exynos_smc(SMC_CMD_FMP_SMU_RESUME, 0, smu_id,
+0);
++		if (ret)
++			pr_err("%s: Fail smc call cmd:%d. ret(%d)\n",
++					__func__, init, ret);
++	}
++
++	return ret;
++}
++
++void *exynos_fmp_init(struct platform_device *pdev)
++{
++	struct exynos_fmp *fmp;
++
++	if (!pdev) {
++		pr_err("%s: Invalid platform_device.\n", __func__);
++		return NULL;
++	}
++
++	fmp = devm_kzalloc(&pdev->dev, sizeof(struct exynos_fmp),
+GFP_KERNEL);
++	if (!fmp)
++		return NULL;
++
++	fmp->dev = &pdev->dev;
++	if (!fmp->dev) {
++		pr_err("%s: Invalid device.\n", __func__);
++		goto err_dev;
++	}
++
++	/* init disk key status */
++	fmp->status_disk_key = KEY_CLEAR;
++
++	dev_info(fmp->dev, "Exynos FMP Version: %s\n", FMP_DRV_VERSION);
++	return fmp;
++
++err_dev:
++	kzfree(fmp);
++	return NULL;
++}
++
++void exynos_fmp_exit(struct exynos_fmp *fmp)
++{
++	kzfree(fmp);
++}
+diff --git a/drivers/crypto/fmp/fmp_crypt.c b/drivers/crypto/fmp/fmp_crypt.c
 new file mode 100644
-index 0000000..a0a9879
+index 0000000..78becb5
 --- /dev/null
-+++ b/include/crypto/diskcipher.h
-@@ -0,0 +1,245 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
++++ b/drivers/crypto/fmp/fmp_crypt.c
+@@ -0,0 +1,243 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Copyright (C) 2017 Samsung Electronics Co., Ltd.
++ * Exynos FMP crypt interface
++ *
++ * Copyright (C) 2018 Samsung Electronics Co., Ltd.
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -786,268 +848,936 @@ index 0000000..a0a9879
 + * (at your option) any later version.
 + */
 +
-+#ifndef _DISKCIPHER_H_
-+#define _DISKCIPHER_H_
-+
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/slab.h>
++#include <linux/bio.h>
 +#include <linux/crypto.h>
-+#include <linux/blk_types.h>
++#include <linux/scatterlist.h>
++#include <crypto/fmp.h>
++#include <crypto/diskcipher.h>
 +
-+struct diskcipher_alg;
-+
-+enum iv_mode {
-+	IV_MODE_LBA, /* dm-dcrypt/ext4 uses it for more blk merge */
-+	IV_MODE_DUN, /* f2fs should use it for garbeage colloection */
-+};
-+
-+struct crypto_diskcipher {
-+	u32 algo;
-+	unsigned int ivsize;
-+	struct inode *inode;
-+	/* for crypto_free_req_diskcipher */
-+	atomic_t status;
-+	struct crypto_tfm base;
-+	enum iv_mode ivmode;
-+};
-+
-+struct diskcipher_test_request {
-+	unsigned int cryptlen;
-+	const u8 *iv;
-+	struct scatterlist *src;
-+	struct scatterlist *dst;
-+	bool enc;
-+};
-+
-+/**
-+ * struct diskcipher_alg - disk cipher definition
-+ * for inline crypto engine on disk host device
-+ *
-+ * @setkey
-+ * @clearkey
-+ * @crypt
-+ * @clear
-+ * @do_crypt
-+ * @base:	Common crypto API algorithm data structure.
-+ *
-+ * Diskcipher supports APIs to set crypto information for dm-crypt and
-fscrypt
-+ * And pass the crypto information to disk host device via bio.
-+ * Crypt operation executes on inline crypto on disk host device.
-+ */
-+struct diskcipher_alg {
-+	int (*init)(struct crypto_diskcipher *tfm);
-+	int (*exit)(struct crypto_diskcipher *tfm);
-+	int (*setkey)(struct crypto_diskcipher *tfm, const char *key,
-+			u32 keylen, bool persistent);
-+	int (*clearkey)(struct crypto_diskcipher *tfm);
-+	int (*crypt)(struct crypto_diskcipher *tfm, void *req);
-+	int (*clear)(struct crypto_diskcipher *tfm, void *req);
-+	int (*do_crypt)(struct crypto_diskcipher *tfm,
-+			struct diskcipher_test_request *req);
-+	struct device *dev;
-+	struct crypto_alg base;
-+};
-+
-+static inline unsigned int crypto_diskcipher_ivsize(
-+		struct crypto_diskcipher *tfm)
++int exynos_fmp_crypt_clear(struct bio *bio, void *table_addr)
 +{
-+	return tfm->ivsize;
++	struct crypto_diskcipher *dtfm = crypto_diskcipher_get(bio);
++	struct fmp_crypto_info *ci;
++	struct fmp_request req;
++	int ret = 0;
++
++	if (unlikely(IS_ERR(dtfm))) {
++		pr_warn("%s: fails to get crypt\n", __func__);
++		return -EINVAL;
++	} else if (dtfm) {
++		ci = crypto_tfm_ctx(crypto_diskcipher_tfm(dtfm));
++		if (ci)
++			if (ci->enc_mode == EXYNOS_FMP_FILE_ENC) {
++				req.table = table_addr;
++				ret = crypto_diskcipher_clear_crypt(dtfm,
+&req);
++			}
++	}
++	if (ret)
++		pr_err("%s: fail to config desc (bio:%p, tfm:%p, ci:%p
+ret:%d)\n",
++				__func__, bio, dtfm, ci, ret);
++	return ret;
 +}
 +
-+static inline struct crypto_tfm *crypto_diskcipher_tfm(
-+		struct crypto_diskcipher *tfm)
++int exynos_fmp_crypt_cfg(struct bio *bio, void *table_addr,
++			u32 page_idx, u32 sector_unit)
 +{
-+	return &tfm->base;
++	struct crypto_diskcipher *dtfm = crypto_diskcipher_get(bio);
++	u64 iv;
++	struct fmp_request req;
++	int ret = 0;
++
++	if (unlikely(IS_ERR(dtfm))) {
++		pr_warn("%s: fails to get crypt\n", __func__);
++		return -EINVAL;
++	} else if (dtfm) {
++		req.table = table_addr;
++		req.cmdq_enabled = 0;
++		req.iv = &iv;
++		req.ivsize = sizeof(iv);
++		iv = (dtfm->ivmode == IV_MODE_DUN) ? (bio_dun(bio) +
+page_idx) :
++			(bio->bi_iter.bi_sector + (sector_t)sector_unit);
++		ret = crypto_diskcipher_set_crypt(dtfm, &req);
++		if (ret)
++			pr_err("%s: fail to config desc (bio:%p, tfm:%p,
+ret:%d)\n",
++					__func__, bio, dtfm, ret);
++		return ret;
++	}
++
++	exynos_fmp_bypass(table_addr, 0);
++	return 0;
 +}
 +
-+static inline struct diskcipher_alg *__crypto_diskcipher_alg(
-+		struct crypto_alg *alg)
++static int fmp_crypt(struct crypto_diskcipher *tfm, void *priv)
 +{
-+	return container_of(alg, struct diskcipher_alg, base);
++	struct fmp_crypto_info *ci =
+crypto_tfm_ctx(crypto_diskcipher_tfm(tfm));
++
++	return exynos_fmp_crypt(ci, priv);
 +}
-+static inline struct diskcipher_alg *crypto_diskcipher_alg(
-+		struct crypto_diskcipher *tfm)
++
++static int fmp_clear(struct crypto_diskcipher *tfm, void *priv)
 +{
++	struct fmp_crypto_info *ci =
+crypto_tfm_ctx(crypto_diskcipher_tfm(tfm));
++
++	return exynos_fmp_clear(ci, priv);
++}
++
++static int fmp_setkey(struct crypto_diskcipher *tfm, const char *in_key,
++			u32 keylen, bool persistent)
++{
++	struct fmp_crypto_info *ci =
+crypto_tfm_ctx(crypto_diskcipher_tfm(tfm));
++
++	return exynos_fmp_setkey(ci, (char *)in_key, keylen, persistent);
++}
++
++static int fmp_clearkey(struct crypto_diskcipher *tfm)
++{
++	struct fmp_crypto_info *ci =
+crypto_tfm_ctx(crypto_diskcipher_tfm(tfm));
++
++	return exynos_fmp_clearkey(ci);
++}
++
++/* support crypto manager test without CRYPTO_MANAGER_DISABLE_TESTS */
++static int fmp_do_test_crypt(struct crypto_diskcipher *tfm,
++			  struct diskcipher_test_request *req)
++{
++	if (!req) {
++		pr_err("%s: invalid parameter\n", __func__);
++		return -EINVAL;
++	}
++
 +	return
-__crypto_diskcipher_alg(crypto_diskcipher_tfm(tfm)->__crt_alg);
+exynos_fmp_test_crypt(crypto_tfm_ctx(crypto_diskcipher_tfm(tfm)),
++		    req->iv, tfm->ivsize,
++		    sg_virt(req->src), sg_virt(req->dst),
++		    req->cryptlen, req->enc ? 1 : 0, tfm);
 +}
 +
-+static inline struct crypto_diskcipher *__crypto_diskcipher_cast(
-+	struct crypto_tfm *tfm)
++
++static inline void fmp_algo_init(struct crypto_tfm *tfm,
++				 enum fmp_crypto_algo_mode algo)
 +{
-+	return container_of(tfm, struct crypto_diskcipher, base);
++	struct fmp_crypto_info *ci = crypto_tfm_ctx(tfm);
++	struct crypto_diskcipher *diskc = __crypto_diskcipher_cast(tfm);
++	struct diskcipher_alg *alg = crypto_diskcipher_alg(diskc);
++
++	/* This field's stongly aligned 'fmp_crypto_info->use_diskc' */
++	diskc->algo = (u32)algo;
++	diskc->ivsize = FMP_IV_SIZE_16;
++	ci->ctx = dev_get_drvdata(alg->dev);
++	ci->algo_mode = algo;
 +}
 +
-+int crypto_register_diskcipher(struct diskcipher_alg *alg);
-+void crypto_unregister_diskcipher(struct diskcipher_alg *alg);
-+int crypto_register_diskciphers(struct diskcipher_alg *algs, int count);
-+void crypto_unregister_diskciphers(struct diskcipher_alg *algs, int count);
-+
-+#if defined(CONFIG_CRYPTO_DISKCIPHER)
-+/**
-+ * crypto_alloc_diskcipher() - allocate disk cipher running on disk device
-+ * @alg_name: is the cra_name / name or cra_driver_name / driver name of
-the
-+ *	      skcipher cipher
-+ * @type: specifies the type of the cipher
-+ * @mask: specifies the mask for the cipher
-+ * @force: add diskcipher postfix '-disk' on algo_name
-+ *
-+ * Allocate a cipher handle for an diskcipher. The returned struct
-+ * crypto_diskcipher is the cipher handle that is required for any
-subsequent
-+ * API invocation for that diskcipher.
-+ *
-+ * Return: allocated cipher handle in case of success; IS_ERR() is true in
-case
-+ *	   of an error, PTR_ERR() returns the error code.
-+ */
-+struct crypto_diskcipher *crypto_alloc_diskcipher(const char *alg_name,
-+			  u32 type, u32 mask, bool force);
-+
-+/**
-+ * crypto_free_diskcipher() - zeroize and free cipher handle
-+ * @tfm: cipher handle to be freed
-+ */
-+void crypto_free_diskcipher(struct crypto_diskcipher *tfm);
-+
-+/**
-+ * crypto_diskcipher_get() - get diskcipher from bio
-+ * @bio: bio structure
-+ */
-+struct crypto_diskcipher *crypto_diskcipher_get(struct bio *bio);
-+
-+/**
-+ * crypto_diskcipher_set() - set diskcipher to bio
-+ * @bio: bio structure to contain diskcipher
-+ * @tfm: cipher handle
-+ *
-+ * This functions set thm to bio->bi_aux_private to pass it to host driver.
-+ *
-+ */
-+void crypto_diskcipher_set(struct bio *bio, struct crypto_diskcipher *tfm,
-+			const struct inode *inode, u64 dun);
-+
-+/**
-+ * crypto_diskcipher_setkey() - set key for cipher
-+ * @tfm: cipher handle
-+ * @key: buffer holding the key
-+ * @keylen: length of the key in bytes
-+ * @persistent: option of key storage option
-+ *
-+ * The caller provided key is set for the skcipher referenced by the cipher
-+ * handle.
-+ *
-+ * Return: 0 if the setting of the key was successful; < 0 if an error
-occurred
-+ */
-+int crypto_diskcipher_setkey(struct crypto_diskcipher *tfm, const char
-*key,
-+			     u32 keylen, bool persistent);
-+
-+/**
-+ * crypto_diskcipher_clearkey() - clear key
-+ * @tfm: cipher handle
-+ */
-+int crypto_diskcipher_clearkey(struct crypto_diskcipher *tfm);
-+
-+/**
-+ * crypto_diskcipher_set_crypt() - set crypto info for inline crypto engine
-+ * @tfm: cipher handle
-+ * @req: request handle. it's specific structure for inline crypt hardware
-+ *
-+ * Return: 0 if the setting of the key was successful; < 0 if an error
-occurred
-+ */
-+int crypto_diskcipher_set_crypt(struct crypto_diskcipher *tfm, void *req);
-+
-+/**
-+ * crypto_diskcipher_clear_crypt() - clear crypto info on inline crypt
-hardware
-+ * @tfm: cipher handle
-+ * @req: request handle. it's specific structure for inline crypt hardware
-+ *
-+ * Return: 0 if the setting of the key was successful; < 0 if an error
-occurred
-+ */
-+int crypto_diskcipher_clear_crypt(struct crypto_diskcipher *tfm, void
-*req);
-+
-+/**
-+ * diskcipher_do_crypt() - execute crypto for test
-+ * @tfm: cipher handle
-+ * @req: diskcipher_test_request handle
-+ *
-+ * The caller uses this function to request crypto
-+ * Diskcipher_algo allocates the block area for test and then request block
-I/O
-+ *
-+ */
-+int diskcipher_do_crypt(struct crypto_diskcipher *tfm,
-+				struct diskcipher_test_request *req);
-+
-+/**
-+ * diskcipher_request_set_crypt() - fill diskcipher_test_requeust
-+ * @req: request handle
-+ * @src: source scatter / gather list
-+ * @dst: destination scatter / gather list
-+ * @cryptlen: number of bytes to process from @src
-+ * @iv: IV for the cipher operation which must comply with the IV size
-defined
-+ *      by crypto_skcipher_ivsize
-+ * @enc: encrypt(1) / decrypt(0)
-+ *
-+ * This function allows setting of the source data and destination data
-+ * scatter / gather lists.
-+ *
-+ * For encryption, the source is treated as the plaintext and the
-+ * destination is the ciphertext. For a decryption operation, the use is
-+ * reversed - the source is the ciphertext and the destination is the
-plaintext.
-+ */
-+static inline void diskcipher_request_set_crypt(
-+	struct diskcipher_test_request *req,
-+	struct scatterlist *src, struct scatterlist *dst,
-+	unsigned int cryptlen, void *iv, bool enc)
++static int fmp_aes_xts_init(struct crypto_tfm *tfm)
 +{
-+	req->src = src;
-+	req->dst = dst;
-+	req->cryptlen = cryptlen;
-+	req->iv = iv;
-+	req->enc = enc;
++	fmp_algo_init(tfm, EXYNOS_FMP_ALGO_MODE_AES_XTS);
++	return 0;
 +}
 +
-+/**
-+ * crypto_diskcipher_blk_mergeble() - check the crypt option of bios and
-decide
-+ * whether to merge or not
-+ * @bio1: a bio to be mergeable
-+ * @bio2: a bio to be mergeable
++static int fmp_cbc_aes_init(struct crypto_tfm *tfm)
++{
++	fmp_algo_init(tfm, EXYNOS_FMP_ALGO_MODE_AES_CBC);
++	return 0;
++}
++
++static struct diskcipher_alg fmp_algs[] = {{
++	.base = {
++		.cra_name = "xts(aes)-disk",
++		.cra_driver_name = "xts(aes)-disk(fmp)",
++		.cra_priority = 200,
++		.cra_module = THIS_MODULE,
++		.cra_ctxsize = sizeof(struct fmp_crypto_info),
++		.cra_init = fmp_aes_xts_init,
++	}
++}, {
++	.base = {
++		.cra_name = "cbc(aes)-disk",
++		.cra_driver_name = "cbc(aes)-disk(fmp)",
++		.cra_priority = 200,
++		.cra_module = THIS_MODULE,
++		.cra_ctxsize = sizeof(struct fmp_crypto_info),
++		.cra_init = fmp_cbc_aes_init,
++	}
++} };
++
++static int exynos_fmp_probe(struct platform_device *pdev)
++{
++	struct diskcipher_alg *alg;
++	void *fmp_ctx = exynos_fmp_init(pdev);
++	int ret;
++	int i;
++
++	if (!fmp_ctx) {
++		dev_err(&pdev->dev,
++			"%s: Fail to register diskciphero\n", __func__);
++		return -EINVAL;
++	}
++	dev_set_drvdata(&pdev->dev, fmp_ctx);
++
++	for (i = 0; i < ARRAY_SIZE(fmp_algs); i++) {
++		alg = &fmp_algs[i];
++		alg->dev = &pdev->dev;
++		alg->init = NULL;
++		alg->setkey = fmp_setkey;
++		alg->clearkey = fmp_clearkey;
++		alg->crypt = fmp_crypt;
++		alg->clear = fmp_clear;
++		alg->do_crypt = fmp_do_test_crypt;
++	}
++	ret = crypto_register_diskciphers(fmp_algs, ARRAY_SIZE(fmp_algs));
++	if (ret) {
++		dev_err(&pdev->dev,
++			"%s: Fail to register diskciphero. ret = %d\n",
++			__func__, ret);
++		return -EINVAL;
++	}
++	dev_info(&pdev->dev, "Exynos FMP driver is registered to
+diskcipher\n");
++	return 0;
++}
++
++static int exynos_fmp_remove(struct platform_device *pdev)
++{
++	void *drv_data = dev_get_drvdata(&pdev->dev);
++
++	if (!drv_data) {
++		pr_err("%s: Fail to get drvdata\n", __func__);
++		return 0;
++	}
++	crypto_unregister_diskciphers(fmp_algs, ARRAY_SIZE(fmp_algs));
++	exynos_fmp_exit(drv_data);
++	return 0;
++}
++
++static const struct of_device_id exynos_fmp_match[] = {
++	{ .compatible = "samsung,exynos-fmp" },
++	{},
++};
++
++static struct platform_driver exynos_fmp_driver = {
++	.driver = {
++		   .name = "exynos-fmp",
++		   .owner = THIS_MODULE,
++		   .pm = NULL,
++		   .of_match_table = exynos_fmp_match,
++		   },
++	.probe = exynos_fmp_probe,
++	.remove = exynos_fmp_remove,
++};
++
++static int __init fmp_init(void)
++{
++	return platform_driver_register(&exynos_fmp_driver);
++}
++late_initcall(fmp_init);
++
++static void __exit fmp_exit(void)
++{
++	platform_driver_unregister(&exynos_fmp_driver);
++}
++module_exit(fmp_exit);
++MODULE_DESCRIPTION("Exynos Spedific crypto algo driver");
+diff --git a/drivers/crypto/fmp/fmp_test.c b/drivers/crypto/fmp/fmp_test.c
+new file mode 100644
+index 0000000..fb47bbd
+--- /dev/null
++++ b/drivers/crypto/fmp/fmp_test.c
+@@ -0,0 +1,310 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Exynos FMP cipher driver
++ *
++ * Copyright (C) 2016 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + */
-+bool crypto_diskcipher_blk_mergeble(struct bio *bio1, struct bio *bio2);
 +
-+#else
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/crypto.h>
++#include <linux/buffer_head.h>
++#include <linux/genhd.h>
++#include <linux/delay.h>
++#include <linux/fs.h>
++#include <linux/blk_types.h>
++#include <crypto/fmp.h>
 +
-+#define crypto_alloc_diskcipher(a, b, c, d) ((void *)NULL)
-+#define crypto_free_diskcipher(a) ((void)0)
-+#define crypto_diskcipher_get(a) ((void *)NULL)
-+#define crypto_diskcipher_set(a, b, c, d) ((void)0)
-+#define crypto_diskcipher_clearkey(a) ((void)0)
-+#define crypto_diskcipher_setkey(a, b, c, d) (-EINVAL)
-+#define crypto_diskcipher_blk_mergeble(a, b) (0)
++#include "fmp_test.h"
++
++#define MAX_SCAN_PART	(50)
++#define MAX_RETRY_COUNT (0x100000)
++
++static dev_t find_devt_for_test(struct exynos_fmp *fmp,
++				struct fmp_test_data *data)
++{
++	int i, idx = 0;
++	uint32_t count = 0;
++	uint64_t size;
++	uint64_t size_list[MAX_SCAN_PART];
++	dev_t devt_list[MAX_SCAN_PART];
++	dev_t devt_scan = 0;
++	dev_t devt = 0;
++	struct block_device *bdev = NULL;
++	struct device *dev = fmp->dev;
++	fmode_t fmode = FMODE_WRITE | FMODE_READ;
++
++	memset(size_list, 0, sizeof(size_list));
++	memset(devt_list, 0, sizeof(devt_list));
++	do {
++		for (i = 1; i < MAX_SCAN_PART; i++) {
++			devt_scan = blk_lookup_devt(data->block_type, i);
++			bdev = blkdev_get_by_dev(devt_scan, fmode, NULL);
++			if (IS_ERR(bdev))
++				continue;
++			else {
++				size_list[idx] =
++				    (uint64_t) i_size_read(bdev->bd_inode);
++				devt_list[idx++] = devt_scan;
++				blkdev_put(bdev, fmode);
++			}
++		}
++		if (!idx) {
++			mdelay(100);
++			count++;
++			continue;
++		}
++		for (i = 0; i < idx; i++) {
++			if (i == 0) {
++				size = size_list[i];
++				devt = devt_list[i];
++			} else {
++				if (size < size_list[i])
++					devt = devt_list[i];
++			}
++		}
++		bdev = blkdev_get_by_dev(devt, fmode, NULL);
++		dev_dbg(dev, "Found partno %d for FMP test\n",
++			bdev->bd_part->partno);
++		blkdev_put(bdev, fmode);
++		return devt;
++	} while (count < MAX_RETRY_COUNT);
++	dev_err(dev, "Block device isn't initialized yet for FMP test\n");
++	return (dev_t) 0;
++}
++
++static int get_fmp_host_type(struct device *dev,
++				    struct fmp_test_data *data)
++{
++	int ret;
++	struct device_node *node = dev->of_node;
++	const char *type;
++
++	ret =
++	    of_property_read_string_index(node, "exynos,block-type", 0,
+&type);
++	if (ret) {
++		pr_err("%s: Could not get block type\n", __func__);
++		return ret;
++	}
++	strscpy(data->block_type, type, FMP_BLOCK_TYPE_NAME_LEN);
++	return 0;
++}
++
++static int get_fmp_test_block_offset(struct device *dev,
++				      struct fmp_test_data *data)
++{
++	int ret = 0;
++	struct device_node *node = dev->of_node;
++	uint32_t offset;
++
++	ret = of_property_read_u32(node, "exynos,fips-block_offset",
+&offset);
++	if (ret) {
++		pr_err("%s: Could not get fips test block offset\n",
+__func__);
++		ret = -EINVAL;
++		goto err;
++	}
++	data->test_block_offset = offset;
++err:
++	return ret;
++}
++
++/* test block device init for fmp test */
++struct fmp_test_data *fmp_test_init(struct exynos_fmp *fmp)
++{
++	int ret = 0;
++	struct fmp_test_data *data;
++	struct device *dev;
++	struct inode *inode;
++	struct super_block *sb;
++	unsigned long blocksize;
++	unsigned char blocksize_bits;
++	fmode_t fmode = FMODE_WRITE | FMODE_READ;
++
++	if (!fmp) {
++		pr_err("%s: Invalid exynos fmp struct\n", __func__);
++		return NULL;
++	}
++
++	dev = fmp->dev;
++	data = kmalloc(sizeof(struct fmp_test_data), GFP_KERNEL);
++	if (!data)
++		return NULL;
++
++	ret = get_fmp_host_type(dev, data);
++	if (ret) {
++		dev_err(dev, "%s: Fail to get host type. ret(%d)", __func__,
++			ret);
++		goto err;
++	}
++	data->devt = find_devt_for_test(fmp, data);
++	if (!data->devt) {
++		dev_err(dev, "%s: Fail to find devt for self test\n",
+__func__);
++		goto err;
++	}
++	data->bdev = blkdev_get_by_dev(data->devt, fmode, NULL);
++	if (IS_ERR(data->bdev)) {
++		dev_err(dev, "%s: Fail to open block device\n", __func__);
++		goto err;
++	}
++	ret = get_fmp_test_block_offset(dev, data);
++	if (ret) {
++		dev_err(dev, "%s: Fail to get fips offset. ret(%d)\n",
++			__func__, ret);
++		goto err;
++	}
++	inode = data->bdev->bd_inode;
++	sb = inode->i_sb;
++	blocksize = sb->s_blocksize;
++	blocksize_bits = sb->s_blocksize_bits;
++	data->sector =
++	    (i_size_read(inode) -
++	     (blocksize * data->test_block_offset)) >> blocksize_bits;
++
++	return data;
++err:
++	kzfree(data);
++	return NULL;
++}
++
++int fmp_cipher_run(struct exynos_fmp *fmp, struct fmp_test_data *fdata,
++		uint8_t *data, uint32_t len, bool bypass, uint32_t write,
++		void *priv, struct fmp_crypto_info *ci)
++{
++	int ret = 0;
++	struct device *dev;
++	static struct buffer_head *bh;
++	u32 org_algo_mode;
++	int op_flags;
++
++	if (!fmp || !fdata || !ci) {
++		pr_err("%s: Invalid fmp struct: %p, %p, %p\n",
++			__func__, fmp, fdata, ci);
++		return -EINVAL;
++	}
++	dev = fmp->dev;
++
++	bh = __getblk(fdata->bdev, fdata->sector, FMP_BLK_SIZE);
++	if (!bh) {
++		dev_err(dev, "%s: Fail to get block from bdev\n", __func__);
++		return -ENODEV;
++	}
++
++	/* set algo_mode for test */
++	org_algo_mode = ci->algo_mode;
++	if (bypass)
++		ci->algo_mode = EXYNOS_FMP_BYPASS_MODE;
++	ci->algo_mode |= EXYNOS_FMP_ALGO_MODE_TEST;
++
++	get_bh(bh);
++	/* priv is diskc for crypto test. */
++	if (!priv) {
++		/* ci is fmp_test_data->ci */
++		fmp->test_data = fdata;
++		ci->ctx = fmp;
++		ci->use_diskc = 0;
++		ci->enc_mode = EXYNOS_FMP_FILE_ENC;
++		bh->b_private = ci;
++	} else {
++		/* ci is crypto_tfm_ctx(tfm) */
++		bh->b_private = priv;
++	}
++	op_flags = REQ_CRYPT;
++
++	if (write == WRITE_MODE) {
++		memcpy(bh->b_data, data, len);
++		set_buffer_dirty(bh);
++		ret = __sync_dirty_buffer(bh, op_flags | REQ_SYNC);
++		if (ret) {
++			dev_err(dev, "%s: IO error syncing for write
+mode\n",
++				__func__);
++			ret = -EIO;
++			goto out;
++		}
++		memset(bh->b_data, 0, FMP_BLK_SIZE);
++	} else {
++		lock_buffer(bh);
++		bh->b_end_io = end_buffer_read_sync;
++		submit_bh(REQ_OP_READ, REQ_SYNC | REQ_PRIO | op_flags, bh);
++		wait_on_buffer(bh);
++		if (unlikely(!buffer_uptodate(bh))) {
++			ret = -EIO;
++			goto out;
++		}
++		memcpy(data, bh->b_data, len);
++	}
++out:
++	if (ci)
++		ci->algo_mode = org_algo_mode;
++	put_bh(bh);
++	return ret;
++}
++
++int fmp_test_crypt(struct exynos_fmp *fmp, struct fmp_test_data *fdata,
++		uint8_t *src, uint8_t *dst, uint32_t len, uint32_t enc,
++		void *priv, struct fmp_crypto_info *ci)
++{
++	int ret = 0;
++
++	if (!fdata) {
++		pr_err("%s: Invalid exynos fmp struct\n", __func__);
++		return -1;
++	}
++
++	if (enc == ENCRYPT) {
++		ret = fmp_cipher_run(fmp, fdata, src, len, 0,
++				WRITE_MODE, priv, ci);
++		if (ret) {
++			pr_err("Fail to run fmp cipher ret(%d)\n",
++				ret);
++			goto err;
++		}
++		ret = fmp_cipher_run(fmp, fdata, dst, len, 1,
++				READ_MODE, priv, ci);
++		if (ret) {
++			pr_err("Fail to run fmp cipher ret(%d)\n",
++				ret);
++			goto err;
++		}
++	} else if (enc == DECRYPT) {
++		ret = fmp_cipher_run(fmp, fdata, src, len, 1,
++				WRITE_MODE, priv, ci);
++		if (ret) {
++			pr_err("Fail to run fmp cipher ret(%d)\n",
++				ret);
++			goto err;
++		}
++		ret = fmp_cipher_run(fmp, fdata, dst, len, 0,
++				READ_MODE, priv, ci);
++		if (ret) {
++			pr_err("Fail to run fmp cipher ret(%d)\n",
++				ret);
++			goto err;
++		}
++	} else {
++		pr_err("%s: Invalid enc %d mode\n", __func__, enc);
++		goto err;
++	}
++
++	return 0;
++err:
++	return -EINVAL;
++}
++
++/* test block device release for fmp test */
++void fmp_test_exit(struct fmp_test_data *fdata)
++{
++	fmode_t fmode = FMODE_WRITE | FMODE_READ;
++
++	if (!fdata) {
++		pr_err("%s: Invalid exynos fmp struct\n", __func__);
++		return;
++	}
++	if (fdata->bdev)
++		blkdev_put(fdata->bdev, fmode);
++	kzfree(fdata);
++}
+diff --git a/drivers/crypto/fmp/fmp_test.h b/drivers/crypto/fmp/fmp_test.h
+new file mode 100644
+index 0000000..42af22a
+--- /dev/null
++++ b/drivers/crypto/fmp/fmp_test.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (C) 2016 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef _FMP_TEST_H_
++#define _FMP_TEST_H_
++
++#define FMP_BLK_SIZE	(4096)
++
++#define WRITE_MODE	1
++#define READ_MODE	2
++
++#define ENCRYPT		1
++#define DECRYPT		2
++
++struct fmp_test_data *fmp_test_init(struct exynos_fmp *fmp);
++int fmp_cipher_run(struct exynos_fmp *fmp, struct fmp_test_data *fdata,
++		uint8_t *data, uint32_t len, bool bypass, uint32_t write,
++		void *priv, struct fmp_crypto_info *ci);
++int fmp_test_crypt(struct exynos_fmp *fmp, struct fmp_test_data *fdata,
++		uint8_t *src, uint8_t *dst, uint32_t len, uint32_t enc,
++		void *priv, struct fmp_crypto_info *ci);
++void fmp_test_exit(struct fmp_test_data *fdata);
++#endif /* _FMP_TEST_H_ */
+diff --git a/include/crypto/fmp.h b/include/crypto/fmp.h
+new file mode 100644
+index 0000000..b0ac483
+--- /dev/null
++++ b/include/crypto/fmp.h
+@@ -0,0 +1,324 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (C) 2016 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef _EXYNOS_FMP_H_
++#define _EXYNOS_FMP_H_
++
++#include <linux/platform_device.h>
++#include <linux/miscdevice.h>
++
++#define FMP_DRV_VERSION "1.5.0"
++
++#define FMP_KEY_SIZE_16		16
++#define FMP_KEY_SIZE_32		32
++#define FMP_IV_SIZE_16		16
++
++#define FMP_CBC_MAX_KEY_SIZE	FMP_KEY_SIZE_16
++#define FMP_XTS_MAX_KEY_SIZE	((FMP_KEY_SIZE_32) * (2))
++#define FMP_MAX_KEY_SIZE	FMP_XTS_MAX_KEY_SIZE
++
++#define FMP_HOST_TYPE_NAME_LEN	8
++#define FMP_BLOCK_TYPE_NAME_LEN	8
++
++#define FMP_SECTOR_SIZE	0x1000
++#define FMP_MIN_SECTOR_SIZE	0x200
++#define NUM_SECTOR_UNIT	((FMP_SECTOR_SIZE)/(FMP_MIN_SECTOR_SIZE))
++
++#define MAX_AES_XTS_TRANSFER_SIZE	0x1000
++
++#ifndef TRUE
++#define TRUE 1
 +#endif
-+#endif	/* _DISKCIPHER_H_ */
-diff --git a/include/linux/crypto.h b/include/linux/crypto.h
-index 19ea3a3..3a8be78 100644
---- a/include/linux/crypto.h
-+++ b/include/linux/crypto.h
-@@ -44,6 +44,7 @@
- #define CRYPTO_ALG_TYPE_BLKCIPHER	0x00000004
- #define CRYPTO_ALG_TYPE_ABLKCIPHER	0x00000005
- #define CRYPTO_ALG_TYPE_SKCIPHER	0x00000005
-+#define CRYPTO_ALG_TYPE_DISKCIPHER      0x00000007
- #define CRYPTO_ALG_TYPE_KPP		0x00000008
- #define CRYPTO_ALG_TYPE_ACOMPRESS	0x0000000a
- #define CRYPTO_ALG_TYPE_SCOMPRESS	0x0000000b
++
++#ifndef FALSE
++#define FALSE 0
++#endif
++
++enum fmp_crypto_algo_mode {
++	EXYNOS_FMP_BYPASS_MODE = 0,
++	EXYNOS_FMP_ALGO_MODE_AES_CBC = 1,
++	EXYNOS_FMP_ALGO_MODE_AES_XTS = 2,
++};
++
++enum fmp_crypto_key_size {
++	EXYNOS_FMP_KEY_SIZE_16 = 16,
++	EXYNOS_FMP_KEY_SIZE_32 = 32,
++};
++
++enum fmp_crypto_enc_mode {
++	EXYNOS_FMP_FILE_ENC = 0,
++	EXYNOS_FMP_DISK_ENC = 1,	/* use persistent key */
++	EXYNOS_FMP_ENC_MAX
++};
++
++enum fmp_disk_key_status {
++	KEY_STORED = 0,
++	KEY_SET = 1,
++	KEY_CLEAR = 2,
++	KEY_ERROR = -1,
++};
++
++struct fmp_crypto_info {
++	/* This field's stongly aligned 'crypto_diskcipher->algo' */
++	u32 use_diskc;
++	u8 key[FMP_MAX_KEY_SIZE];
++	u32 key_size;
++	enum fmp_crypto_key_size fmp_key_size;
++	enum fmp_crypto_enc_mode enc_mode;
++	enum fmp_crypto_algo_mode algo_mode;
++	void *ctx;
++};
++
++#if defined(CONFIG_MMC_DW_EXYNOS_FMP) &&
+defined(CONFIG_SCSI_UFS_EXYNOS_FMP)
++#error "FMP doesn't support muti-host"
++#elif defined(CONFIG_MMC_DW_EXYNOS_FMP)
++struct fmp_table_setting {
++	__le32 des0;		/* des0 */
++#define GET_CMDQ_LENGTH(d) \
++	(((d)->des0 & 0xffff0000) >> 16)
++	__le32 des1;		/* des1 */
++	__le32 des2;		/* des2 */
++#define FKL BIT(26)
++#define DKL BIT(27)
++#define SET_KEYLEN(d, v) ((d)->des2 |= (uint32_t)v)
++#define SET_FAS(d, v) \
++			((d)->des2 = ((d)->des2 & 0xcfffffff) | v << 28)
++#define SET_DAS(d, v) \
++			((d)->des2 = ((d)->des2 & 0x3fffffff) | v << 30)
++#define GET_FAS(d)      ((d)->des2 & 0x30000000)
++#define GET_DAS(d)      ((d)->des2 & 0xc0000000)
++#define GET_LENGTH(d) \
++			((d)->des2 & 0x3ffffff)
++	__le32 des3;		/* des3 */
++	/* CMDQ Operation */
++#define FKL_CMDQ BIT(0)
++#define DKL_CMDQ BIT(1)
++#define SET_CMDQ_KEYLEN(d, v) ((d)->des2 |= (uint32_t)v)
++#define SET_CMDQ_FAS(d, v) \
++			((d)->des3 = ((d)->des3 & 0xfffffff3) | v << 2)
++#define SET_CMDQ_DAS(d, v) \
++			((d)->des3 = ((d)->des3 & 0xffffffcf) | v << 4)
++#define GET_CMDQ_FAS(d) ((d)->des3 & 0x0000000c)
++#define GET_CMDQ_DAS(d) ((d)->des3 & 0x00000030)
++	__le32 reserved0;	/* des4 */
++	__le32 reserved1;
++	__le32 reserved2;
++	__le32 reserved3;
++	__le32 file_iv0;	/* des8 */
++	__le32 file_iv1;
++	__le32 file_iv2;
++	__le32 file_iv3;
++	__le32 file_enckey0;	/* des12 */
++	__le32 file_enckey1;
++	__le32 file_enckey2;
++	__le32 file_enckey3;
++	__le32 file_enckey4;
++	__le32 file_enckey5;
++	__le32 file_enckey6;
++	__le32 file_enckey7;
++	__le32 file_twkey0;	/* des20 */
++	__le32 file_twkey1;
++	__le32 file_twkey2;
++	__le32 file_twkey3;
++	__le32 file_twkey4;
++	__le32 file_twkey5;
++	__le32 file_twkey6;
++	__le32 file_twkey7;
++	__le32 disk_iv0;	/* des28 */
++	__le32 disk_iv1;
++	__le32 disk_iv2;
++	__le32 disk_iv3;
++};
++#elif defined(CONFIG_SCSI_UFS_EXYNOS_FMP)
++struct fmp_table_setting {
++	__le32 des0;		/* des0 */
++#define GET_CMDQ_LENGTH(d) \
++	(((d)->des0 & 0xffff0000) >> 16)
++	__le32 des1;		/* des1 */
++	__le32 des2;		/* des2 */
++	__le32 des3;		/* des3 */
++/* Legacy Operation */
++#define FKL BIT(26)
++#define DKL BIT(27)
++#define SET_KEYLEN(d, v) ((d)->des3 |= (uint32_t)v)
++#define SET_FAS(d, v) \
++	((d)->des3 = ((d)->des3 & 0xcfffffff) | v << 28)
++#define SET_DAS(d, v) \
++	((d)->des3 = ((d)->des3 & 0x3fffffff) | v << 30)
++#define GET_FAS(d)	((d)->des3 & 0x30000000)
++#define GET_DAS(d)	((d)->des3 & 0xc0000000)
++#define GET_LENGTH(d) \
++	((d)->des3 & 0x3ffffff)
++/* CMDQ Operation */
++#define FKL_CMDQ BIT(0)
++#define DKL_CMDQ BIT(1)
++#define SET_CMDQ_KEYLEN(d, v) ((d)->des3 |= (uint32_t)v)
++#define SET_CMDQ_FAS(d, v) \
++	((d)->des3 = ((d)->des3 & 0xfffffff3) | v << 2)
++#define SET_CMDQ_DAS(d, v) \
++	((d)->des3 = ((d)->des3 & 0xffffffcf) | v << 4)
++#define GET_CMDQ_FAS(d)	((d)->des3 & 0x0000000c)
++#define GET_CMDQ_DAS(d)	((d)->des3 & 0x00000030)
++	__le32 file_iv0;	/* des4 */
++	__le32 file_iv1;	/* des5 */
++	__le32 file_iv2;	/* des6 */
++	__le32 file_iv3;	/* des7 */
++	__le32 file_enckey0;	/* des8 */
++	__le32 file_enckey1;	/* des9 */
++	__le32 file_enckey2;	/* des10 */
++	__le32 file_enckey3;	/* des11 */
++	__le32 file_enckey4;	/* des12 */
++	__le32 file_enckey5;	/* des13 */
++	__le32 file_enckey6;	/* des14 */
++	__le32 file_enckey7;	/* des15 */
++	__le32 file_twkey0;	/* des16 */
++	__le32 file_twkey1;	/* des17 */
++	__le32 file_twkey2;	/* des18 */
++	__le32 file_twkey3;	/* des19 */
++	__le32 file_twkey4;	/* des20 */
++	__le32 file_twkey5;	/* des21 */
++	__le32 file_twkey6;	/* des22 */
++	__le32 file_twkey7;	/* des23 */
++	__le32 disk_iv0;	/* des24 */
++	__le32 disk_iv1;	/* des25 */
++	__le32 disk_iv2;	/* des26 */
++	__le32 disk_iv3;	/* des27 */
++	__le32 reserved0;	/* des28 */
++	__le32 reserved1;	/* des29 */
++	__le32 reserved2;	/* des30 */
++	__le32 reserved3;	/* des31 */
++};
++#endif
++
++struct fmp_data_setting {
++	struct fmp_crypto_info crypt[EXYNOS_FMP_ENC_MAX];
++	struct fmp_table_setting *table;
++	bool cmdq_enabled;
++};
++
++#define EXYNOS_FMP_ALGO_MODE_MASK (0x3)
++#define EXYNOS_FMP_ALGO_MODE_TEST_OFFSET (0xf)
++#define EXYNOS_FMP_ALGO_MODE_TEST (1 << EXYNOS_FMP_ALGO_MODE_TEST_OFFSET)
++
++struct fmp_test_data {
++	char block_type[FMP_BLOCK_TYPE_NAME_LEN];
++	struct block_device *bdev;
++	sector_t sector;
++	dev_t devt;
++	uint32_t test_block_offset;
++	/* iv to submitted */
++	u8 iv[FMP_IV_SIZE_16];
++	/* diskcipher for test */
++	struct fmp_crypto_info ci;
++};
++
++struct exynos_fmp {
++	struct device *dev;
++	enum fmp_disk_key_status status_disk_key;
++	struct fmp_test_data *test_data;
++};
++
++struct fmp_request {
++	void *table;
++	bool cmdq_enabled;
++	void *iv;
++	u32 ivsize;
++};
++
++static inline void exynos_fmp_bypass(void *desc, bool cmdq_enabled)
++{
++#if defined(CONFIG_MMC_DW_EXYNOS_FMP) ||
+defined(CONFIG_SCSI_UFS_EXYNOS_FMP)
++	if (cmdq_enabled) {
++		SET_CMDQ_FAS((struct fmp_table_setting *)desc, 0);
++		SET_CMDQ_DAS((struct fmp_table_setting *)desc, 0);
++	} else {
++		SET_FAS((struct fmp_table_setting *)desc, 0);
++		SET_DAS((struct fmp_table_setting *)desc, 0);
++	}
++#endif
++}
++
++#define ACCESS_CONTROL_ABORT	0x14
++
++#ifndef SMC_CMD_FMP_SECURITY
++/* For FMP/SMU Ctrl */
++#define SMC_CMD_FMP_SECURITY		(0xC2001810)
++#define SMC_CMD_FMP_DISK_KEY_STORED	(0xC2001820)
++#define SMC_CMD_FMP_DISK_KEY_SET	(0xC2001830)
++#define SMC_CMD_FMP_DISK_KEY_CLEAR	(0xC2001840)
++#define SMC_CMD_SMU			(0xC2001850)
++#define SMC_CMD_FMP_SMU_RESUME		(0xC2001860)
++#define SMC_CMD_FMP_SMU_DUMP		(0xC2001870)
++#define SMC_CMD_UFS_LOG			(0xC2001880)
++
++/* For FMP/SMU Ctrl */
++#define SMC_CMD_FMP_SECURITY		(0xC2001810)
++#define SMC_CMD_FMP_DISK_KEY_STORED	(0xC2001820)
++#define SMC_CMD_FMP_DISK_KEY_SET	(0xC2001830)
++#define SMC_CMD_FMP_DISK_KEY_CLEAR	(0xC2001840)
++#define SMC_CMD_SMU			(0xC2001850)
++#define SMC_CMD_FMP_SMU_RESUME		(0xC2001860)
++#define SMC_CMD_FMP_SMU_DUMP		(0xC2001870)
++#define SMC_CMD_UFS_LOG			(0xC2001880)
++#endif
++
++enum smu_id {
++	SMU_EMBEDDED = 0,
++	SMU_UFSCARD = 1,
++	SMU_SDCARD = 2,
++	SMU_ID_MAX,
++};
++
++enum smu_command {
++	SMU_INIT = 0,
++	SMU_SET = 1,
++	SMU_ABORT = 2,
++};
++
++/* fmp functions */
++#ifdef CONFIG_EXYNOS_FMP
++int exynos_fmp_sec_cfg(int fmp_id, int smu_id, bool init);
++int exynos_fmp_smu_abort(int id);
++int exynos_fmp_crypt_cfg(struct bio *bio, void *table_base,
++		u32 page_idx, u32 sector_unit);
++int exynos_fmp_crypt_clear(struct bio *bio, void *table_addr);
++#else
++int exynos_fmp_sec_cfg(int fmp_id, int smu_id, bool init)
++{
++	return 0;
++}
++
++int exynos_fmp_smu_abort(int id)
++{
++	return 0;
++}
++
++int exynos_fmp_crypt_cfg(struct bio *bio, void *table_base,
++		u32 page_idx, u32 sector_unit)
++{
++	return 0;
++}
++
++int exynos_fmp_crypt_clear(struct bio *bio, void *table_addr)
++{
++	return 0;
++}
++#endif
++int exynos_fmp_crypt(struct fmp_crypto_info *ci, void *priv);
++int exynos_fmp_clear(struct fmp_crypto_info *ci, void *priv);
++int exynos_fmp_setkey(struct fmp_crypto_info *ci,
++		u8 *in_key, u32 keylen, bool persistent);
++int exynos_fmp_clearkey(struct fmp_crypto_info *ci);
++void *exynos_fmp_init(struct platform_device *pdev);
++void exynos_fmp_exit(struct exynos_fmp *fmp);
++int exynos_fmp_test_crypt(struct fmp_crypto_info *ci,
++		const uint8_t *iv, uint32_t ivlen, uint8_t *src,
++		uint8_t *dst, uint32_t len, bool enc, void *priv);
++#endif	/* _EXYNOS_FMP_H_ */
 -- 
 2.7.4
 
