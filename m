@@ -2,150 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 984FA96F4B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 04:13:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0E6096F5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 04:19:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfHUCM5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 22:12:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53716 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726546AbfHUCM5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 22:12:57 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 53AE02C24E7B201D87F2;
-        Wed, 21 Aug 2019 10:12:55 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 21 Aug
- 2019 10:12:47 +0800
-Subject: Re: [PATCH] erofs: move erofs out of staging
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>, Gao Xiang <hsiangkao@aol.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, "Dave Chinner" <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Li Guifu" <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, "Pavel Machek" <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-References: <790210571.69061.1566120073465.JavaMail.zimbra@nod.at>
- <20190818151154.GA32157@mit.edu> <20190818155812.GB13230@infradead.org>
- <20190818161638.GE1118@sol.localdomain>
- <20190818162201.GA16269@infradead.org>
- <20190818172938.GA14413@sol.localdomain>
- <20190818174702.GA17633@infradead.org>
- <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190819160923.GG15198@magnolia>
- <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
- <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
- <ad62636f-ef1b-739f-42cc-28d9d7ed86da@huawei.com>
- <c6f6de48-2594-05e4-2048-9a9c59c018d7@gmx.com>
- <c9a27e20-33fa-2cad-79f2-ecc26f6f3490@huawei.com>
- <735b8d15-bcb5-b11b-07c1-0617eb1e5ce9@gmx.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <92e44c38-d52b-cd13-c893-351f959beb54@huawei.com>
-Date:   Wed, 21 Aug 2019 10:12:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726741AbfHUCTr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 22:19:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53574 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfHUCTr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Aug 2019 22:19:47 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C84EE22DA7;
+        Wed, 21 Aug 2019 02:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566353986;
+        bh=99ObL1cP+jG7BwJuhGr2xRiHMfm0AyVNnY16uyz8mng=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ru6a2+QADULs0wwoFX4YQsebNK/5qd6Kk+kCW16FnuAC9nOB84MNYRAHcouXWGbFA
+         jxDDlseEOkfLWKdjTvog2K/cs7Lp3dY0OF8fKx5O3Mim0AfBj86ctChYFeQLuM/7Lu
+         fYDzulv0SOkwznjOgALPI+7qG9dTtb1IsoG+OBUU=
+Date:   Tue, 20 Aug 2019 19:19:42 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Miao Xie <miaoxie@huawei.com>,
+        weidu.du@huawei.com, Fang Wei <fangwei1@huawei.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5/6] staging: erofs: detect potential multiref due to
+ corrupted images
+Message-ID: <20190821021942.GA14087@kroah.com>
+References: <20190819080218.GA42231@138>
+ <20190819103426.87579-1-gaoxiang25@huawei.com>
+ <20190819103426.87579-6-gaoxiang25@huawei.com>
+ <f302710e-0c7f-8695-d692-be0c01c431ea@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <735b8d15-bcb5-b11b-07c1-0617eb1e5ce9@gmx.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f302710e-0c7f-8695-d692-be0c01c431ea@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/8/20 16:46, Qu Wenruo wrote:
-> [...]
->>
->> Yeah, it looks like we need searching more levels mapping to find the final
->> physical block address of inode/node/data in btrfs.
->>
->> IMO, in a little lazy way, we can reform and reuse existed function in
->> btrfs-progs which can find the mapping info of inode/node/data according to
->> specified ino or ino+pg_no.
+On Mon, Aug 19, 2019 at 10:57:42PM +0800, Chao Yu wrote:
+> On 2019-8-19 18:34, Gao Xiang wrote:
+> > As reported by erofs-utils fuzzer, currently, multiref
+> > (ondisk deduplication) hasn't been supported for now,
+> > we should forbid it properly.
+> > 
+> > Fixes: 3883a79abd02 ("staging: erofs: introduce VLE decompression support")
+> > Cc: <stable@vger.kernel.org> # 4.19+
+> > Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> > ---
+> >  drivers/staging/erofs/zdata.c | 16 ++++++++++++++--
+> >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/staging/erofs/zdata.c b/drivers/staging/erofs/zdata.c
+> > index aae2f2b8353f..5b6fef5181af 100644
+> > --- a/drivers/staging/erofs/zdata.c
+> > +++ b/drivers/staging/erofs/zdata.c
+> > @@ -816,8 +816,16 @@ static int z_erofs_decompress_pcluster(struct super_block *sb,
+> >  			pagenr = z_erofs_onlinepage_index(page);
+> >  
+> >  		DBG_BUGON(pagenr >= nr_pages);
+> > -		DBG_BUGON(pages[pagenr]);
+> >  
+> > +		/*
+> > +		 * currently EROFS doesn't support multiref(dedup),
+> > +		 * so here erroring out one multiref page.
+> > +		 */
+> > +		if (unlikely(pages[pagenr])) {
+> > +			DBG_BUGON(1);
+> > +			SetPageError(pages[pagenr]);
+> > +			z_erofs_onlinepage_endio(pages[pagenr]);
 > 
-> Maybe no need to go as deep as ino.
-> 
-> What about just go physical bytenr? E.g. for XFS/EXT* choose a random
-> bytenr. Then verify if that block is used, if not, try again.
-> 
-> If used, check if it's metadata. If not, try again.
-> (feel free to corrupt data, in fact btrfs uses some data as space cache,
-> so it should make some sense)
-> 
-> If metadata, corrupt that bytenr/bytenr range in the metadata block,
-> regenerate checksum, call it a day and let kernel suffer.
-> 
-> For btrfs, just do extra physical -> logical convert in the first place,
-> then follow the same workflow.
-> It should work for any fs as long as it's on single device.
+> Should set err meanwhile?
 
-Agree, it will be easier to trigger random injection in specific area, and also
-I agreed with Ted, some of the time we prefer to do injection in specified field
-of meta, it looks developer needs to do more work for that.
+I've skipped this patch in this series for now, and applied the rest.
 
-> 
->>
->>>
->>> It may depends on the granularity. But definitely a good idea to do so
->>> in a generic way.
->>> Currently we depend on super kind student developers/reporters on such
->>
->> Yup, I just guess Wen Xu may be interested in working on a generic way to fuzz
->> filesystem, as I know they dig deep in filesystem code when doing fuzz.
-> 
-> Don't forget Yoon Jungyeon, I see more than one times he reported fuzzed
-> images with proper reproducer and bugzilla links.
+thanks,
 
-Of course I remember him. :)
-
-I guess btrfs/f2fs should has improved their stability/robustness a lot due to
-Jungyeon and Wen Xu's gret fuzz bug report.
-
-> Even using his personal mail address, not school mail address.
-> 
-> Those guys are really awesome!
-> 
->> BTW,
->> which impresses me is, constructing checkpoint by injecting one byte, and then
->> write a correct recalculated checksum value on that checkpoint, making that
->> checkpoint looks valid...
-> 
-> IIRC F2FS guys may be also investigating a similar mechanism, as they
-> also got a hard fight against reports from those awesome reporters.
-
-Actually, f2fs only support realtime fault injection framework, which allows us
-to inject memory exhausting, IO error, lack of free blocks, shutdown... error
-during fsstress test.
-
-I do think f2fs needs that kind of tool later.
-
-Thanks,
-
-> 
-> So such fuzzed image is a new trend for fs development.
-> 
-> Thanks,
-> Qu
-> 
->>
->> Thanks,
->>
-> 
+greg k-h
