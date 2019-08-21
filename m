@@ -2,78 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E83973DD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 09:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C0AE973EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 09:52:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726389AbfHUHuE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 03:50:04 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:50720 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbfHUHuE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 03:50:04 -0400
-X-Greylist: delayed 459 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Aug 2019 03:50:03 EDT
-Received: from localhost.localdomain (broadband-188-32-48-208.ip.moscow.rt.ru [188.32.48.208])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 1679B540081;
-        Wed, 21 Aug 2019 10:42:23 +0300 (MSK)
-From:   Denis Efremov <efremov@ispras.ru>
-To:     akpm@linux-foundation.org
-Cc:     Denis Efremov <efremov@ispras.ru>,
-        Akinobu Mita <akinobu.mita@gmail.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <matthew@wil.cx>, linux-kernel@vger.kernel.org,
-        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-media@vger.kernel.org, Erdem Tumurov <erdemus@gmail.com>,
-        Vladimir Shelekhov <vshel@iis.nsk.su>
-Subject: [PATCH] lib/memweight.c: optimize by inlining bitmap_weight()
-Date:   Wed, 21 Aug 2019 10:42:00 +0300
-Message-Id: <20190821074200.2203-1-efremov@ispras.ru>
-X-Mailer: git-send-email 2.21.0
+        id S1726828AbfHUHvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 03:51:32 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45901 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726409AbfHUHvb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Aug 2019 03:51:31 -0400
+Received: by mail-io1-f65.google.com with SMTP id t3so2649631ioj.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 00:51:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mZvfNhyGscpkSZ3ArnN1Kn2Ohroj07E84u704Jirwf8=;
+        b=CocCV7FT+vvRNv2WTAn65V30KzegW/8Wk/kvkKfN55wq3gpMeRFTLjdgzO8aZVdbwD
+         jFD8DaMSQgqlXLPddVzX1pno2H45JX0LyiqJjxvBzVrBJgSSHJ1455S8XTeosJnFgsaw
+         QQ3Iut++Ff0sTuIcBgiQSVw04Wzblj08sFkPY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mZvfNhyGscpkSZ3ArnN1Kn2Ohroj07E84u704Jirwf8=;
+        b=QcPCJ3Ck5zbzp3pRQN45LWEJSDPr6sal6pEyN3vZjScbqq/10aV3nYcXiSsj72ecZy
+         uSOy8YdHhLnG93a32wSbF1nbUILxKcMI4Yc1+8HsIKn6/8Dt1hizBfC5kjI+nTy/a7Jy
+         hWY6VfxZrmhs0IaAnIFOHGIAENQuYc2XIaVkBDX44u3l92fSKzUFJHtx5+KHaRsL/dH4
+         kcdcsaV8layRVrCN/udNkJ79WNRlN5x13P/WrkHNM+1D+uCT1QP7xFTInm0XTmZ34Owt
+         Zt/fTK5AzWZaYOlSl+Vg6WKLklXOgIUC0IgNbRbZAQBpqDzF1ip5OE+kdMlYp/7yFmJz
+         5UtA==
+X-Gm-Message-State: APjAAAXTdAquHcXLZYj2qTxmrIicWsffkPoxlqVQzPiNhgfBM4eCLMKb
+        o+US0SRJqslJJEUSlDJfSJYrNjwXTAHaBWI1TtFfe1Nu
+X-Google-Smtp-Source: APXvYqxIBEZzhbqmo1u7Ovv1/N2hg3ZqG+QUyRqFNtOA2g9qKP9yymn/n+xuXEYRrzWSrQD1eljjKY/Wq0O4lN+YFck=
+X-Received: by 2002:a02:b713:: with SMTP id g19mr8558235jam.77.1566373890871;
+ Wed, 21 Aug 2019 00:51:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <5abd7616-5351-761c-0c14-21d511251006@huawei.com> <20190820091650.GE9855@stefanha-x1.localdomain>
+In-Reply-To: <20190820091650.GE9855@stefanha-x1.localdomain>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 21 Aug 2019 09:51:20 +0200
+Message-ID: <CAJfpegs8fSLoUaWKhC1543Hoy9821vq8=nYZy-pw1+95+Yv4gQ@mail.gmail.com>
+Subject: Re: [Virtio-fs] [QUESTION] A performance problem for buffer write
+ compared with 9p
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     wangyan <wangyan122@huawei.com>, linux-fsdevel@vger.kernel.org,
+        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch inlines bitmap_weight() call. Thus, removing the BUG_ON,
-and 'longs to bits -> bits to longs' conversion by directly calling
-hweight_long().
+On Tue, Aug 20, 2019 at 11:16 AM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>
+> On Thu, Aug 15, 2019 at 08:30:43AM +0800, wangyan wrote:
+> > Hi all,
+> >
+> > I met a performance problem when I tested buffer write compared with 9p.
+>
+> CCing Miklos, FUSE maintainer, since this is mostly a FUSE file system
+> writeback question.
 
-./scripts/bloat-o-meter lib/memweight.o.old lib/memweight.o.new
-add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-10 (-10)
-Function                                     old     new   delta
-memweight                                    162     152     -10
+This is expected.   FUSE contains lots of complexity in the buffered
+write path related to preventing DoS caused by the userspace server.
 
-Co-developed-by: Erdem Tumurov <erdemus@gmail.com>
-Co-developed-by: Vladimir Shelekhov <vshel@iis.nsk.su>
-Signed-off-by: Erdem Tumurov <erdemus@gmail.com>
-Signed-off-by: Vladimir Shelekhov <vshel@iis.nsk.su>
-Signed-off-by: Denis Efremov <efremov@ispras.ru>
----
- lib/memweight.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+This added complexity, which causes the performance issue, could be
+disabled in virtio-fs, since the server lives on a different kernel
+than the filesystem.
 
-diff --git a/lib/memweight.c b/lib/memweight.c
-index 94dd72ccaa7f..f050b2b4c5e2 100644
---- a/lib/memweight.c
-+++ b/lib/memweight.c
-@@ -20,11 +20,13 @@ size_t memweight(const void *ptr, size_t bytes)
- 
- 	longs = bytes / sizeof(long);
- 	if (longs) {
--		BUG_ON(longs >= INT_MAX / BITS_PER_LONG);
--		ret += bitmap_weight((unsigned long *)bitmap,
--				longs * BITS_PER_LONG);
-+		const unsigned long *bitmap_long =
-+			(const unsigned long *)bitmap;
-+
- 		bytes -= longs * sizeof(long);
--		bitmap += longs * sizeof(long);
-+		for (; longs > 0; longs--, bitmap_long++)
-+			ret += hweight_long(*bitmap_long);
-+		bitmap = (const unsigned char *)bitmap_long;
- 	}
- 	/*
- 	 * The reason that this last loop is distinct from the preceding
--- 
-2.21.0
+I'll do a patch..
 
+Thanks,
+Miklos
