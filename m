@@ -2,119 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C7D997006
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 05:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C338D97090
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 05:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfHUDJ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 23:09:58 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5167 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726329AbfHUDJ6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 23:09:58 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B3456DC69904F5E4D189;
-        Wed, 21 Aug 2019 11:09:55 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 21 Aug
- 2019 11:09:48 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Chao Yu <chao@kernel.org>, <devel@driverdev.osuosl.org>,
-        Miao Xie <miaoxie@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 4/6] staging: erofs: avoid loop in submit chains
-Date:   Wed, 21 Aug 2019 11:09:08 +0800
-Message-ID: <20190821030908.40282-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727393AbfHUDz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 23:55:58 -0400
+Received: from 2.152.176.113.dyn.user.ono.com ([2.152.176.113]:36802 "EHLO
+        pulsar.hadrons.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727343AbfHUDz5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Aug 2019 23:55:57 -0400
+X-Greylist: delayed 1074 seconds by postgrey-1.27 at vger.kernel.org; Tue, 20 Aug 2019 23:55:56 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hadrons.org
+        ; s=201908; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=Y/aHT4MYLaye6HK+sQi6zX4qI4fkCoiILg3MznRvPso=; b=msEuF30t8SwyqIY71h/bo34ebC
+        oZgNFChUPgMS3OvuOXcpTZj434SxKIDn31LeeZZ16jQM/wECsWgZPrbYIY3Ruwal8Q0MBvFlxl8sr
+        INOGtofV2CcTLl3bMFJsUPIFo7Rs160RCYu6za+5LvaDKJt3sLL2mHBw+SvqwIgdkrRA/pw4KYVpK
+        6c8to36xOCQQjKBrfL+lSAcBFALvcZCoOB87gqeqw/395wwrgI847+IXHmGyBJgoVVMtAJQo2I3AH
+        zrCNcfdbUiN4UGGqxMCBfscx6DGpxb1YA740zKnHBNB2pt7PkiHo6GjCIbKVeynPvJ14gQR9DYDIy
+        M0PbxzrQ==;
+Received: from guillem by pulsar.hadrons.org with local (Exim 4.92)
+        (envelope-from <guillem@hadrons.org>)
+        id 1i0HSK-0003gy-H2; Wed, 21 Aug 2019 05:38:40 +0200
+From:   Guillem Jover <guillem@hadrons.org>
+To:     linux-aio@kvack.org
+Cc:     Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] aio: Fix io_pgetevents() struct __compat_aio_sigset layout
+Date:   Wed, 21 Aug 2019 05:38:20 +0200
+Message-Id: <20190821033820.14155-1-guillem@hadrons.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As reported by erofs-utils fuzzer, 2 conditions
-can happen in corrupted images, which can cause
-unexpected behaviors.
- - access the same pcluster one more time;
- - access the tail end pcluster again, e.g.
-            _ access again (will trigger tail merging)
-           |
-     1 2 3 1 2             ->   1 2 3 1
-     |_ tail end of the chain    \___/ (unexpected behavior)
-Let's detect and avoid them now.
+This type is used to pass the sigset_t from userland to the kernel,
+but it was using the kernel native pointer type for the member
+representing the compat userland pointer to the userland sigset_t.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+This messes up the layout, and makes the kernel eat up both the
+userland pointer and the size members into the kernel pointer, and
+then reads garbage into the kernel sigsetsize. Which makes the sigset_t
+size consistency check fail, and consequently the syscall always
+returns -EINVAL.
+
+This breaks both libaio and strace on 32-bit userland running on 64-bit
+kernels. And there are apparently no users in the wild of the current
+broken layout (at least according to codesearch.debian.org and a brief
+check over github.com search). So it looks safe to fix this directly
+in the kernel, instead of either letting userland deal with this
+permanently with the additional overhead or trying to make the syscall
+infer what layout userland used, even though this is also being worked
+around in libaio to temporarily cope with kernels that have not yet
+been fixed.
+
+We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
+
+Fixes: 7a074e96 ("aio: implement io_pgetevents")
+Signed-off-by: Guillem Jover <guillem@hadrons.org>
 ---
-Hi Greg,
+ fs/aio.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- It seems that you picked up [PATCH 4/6], could you replace it
- with this v2? It seems that I missed a condition here, which
- can be observed after a much longer fuzzing on corrupted
- compressed images. Or you could just drop this [PATCH 4/6]
- patch when you apply to staging-next since those patches are
- independent.
-
-Thanks you very much,
-Gao Xiang
-
- drivers/staging/erofs/zdata.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/erofs/zdata.c b/drivers/staging/erofs/zdata.c
-index 2d7aaf98f7de..5f8d3ac0e813 100644
---- a/drivers/staging/erofs/zdata.c
-+++ b/drivers/staging/erofs/zdata.c
-@@ -132,7 +132,7 @@ enum z_erofs_collectmode {
- struct z_erofs_collector {
- 	struct z_erofs_pagevec_ctor vector;
+diff --git a/fs/aio.c b/fs/aio.c
+index 01e0fb9ae45a..056f291bc66f 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -2179,7 +2179,7 @@ SYSCALL_DEFINE5(io_getevents_time32, __u32, ctx_id,
+ #ifdef CONFIG_COMPAT
  
--	struct z_erofs_pcluster *pcl;
-+	struct z_erofs_pcluster *pcl, *tailpcl;
- 	struct z_erofs_collection *cl;
- 	struct page **compressedpages;
- 	z_erofs_next_pcluster_t owned_head;
-@@ -353,6 +353,11 @@ static struct z_erofs_collection *cllookup(struct z_erofs_collector *clt,
- 		return NULL;
+ struct __compat_aio_sigset {
+-	compat_sigset_t __user	*sigmask;
++	compat_uptr_t		sigmask;
+ 	compat_size_t		sigsetsize;
+ };
  
- 	pcl = container_of(grp, struct z_erofs_pcluster, obj);
-+	if (clt->owned_head == &pcl->next || pcl == clt->tailpcl) {
-+		DBG_BUGON(1);
-+		erofs_workgroup_put(grp);
-+		return ERR_PTR(-EFSCORRUPTED);
-+	}
+@@ -2204,7 +2204,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
+ 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
+ 		return -EFAULT;
  
- 	cl = z_erofs_primarycollection(pcl);
- 	if (unlikely(cl->pageofs != (map->m_la & ~PAGE_MASK))) {
-@@ -379,7 +384,13 @@ static struct z_erofs_collection *cllookup(struct z_erofs_collector *clt,
- 		}
- 	}
- 	mutex_lock(&cl->lock);
-+	/* used to check tail merging loop due to corrupted images */
-+	if (clt->owned_head == Z_EROFS_PCLUSTER_TAIL)
-+		clt->tailpcl = pcl;
- 	clt->mode = try_to_claim_pcluster(pcl, &clt->owned_head);
-+	/* clean tailpcl if the current owned_head is Z_EROFS_PCLUSTER_TAIL */
-+	if (clt->owned_head == Z_EROFS_PCLUSTER_TAIL)
-+		clt->tailpcl = NULL;
- 	clt->pcl = pcl;
- 	clt->cl = cl;
- 	return cl;
-@@ -432,6 +443,9 @@ static struct z_erofs_collection *clregister(struct z_erofs_collector *clt,
- 		kmem_cache_free(pcluster_cachep, pcl);
- 		return ERR_PTR(-EAGAIN);
- 	}
-+	/* used to check tail merging loop due to corrupted images */
-+	if (clt->owned_head == Z_EROFS_PCLUSTER_TAIL)
-+		clt->tailpcl = pcl;
- 	clt->owned_head = &pcl->next;
- 	clt->pcl = pcl;
- 	clt->cl = cl;
+-	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
++	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2239,7 +2239,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
+ 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
+ 		return -EFAULT;
+ 
+-	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
++	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
-2.17.1
+2.23.0
 
