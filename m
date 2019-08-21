@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CFA59818D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9EAF9817D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 19:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730326AbfHURjQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 13:39:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:24418 "EHLO mx1.redhat.com"
+        id S1730168AbfHURij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 13:38:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49046 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728044AbfHURiU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 13:38:20 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1730087AbfHURi1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Aug 2019 13:38:27 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7E112307D930;
-        Wed, 21 Aug 2019 17:38:20 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0C90C91761;
+        Wed, 21 Aug 2019 17:38:27 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 126AA60E1C;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F57416D41;
         Wed, 21 Aug 2019 17:38:15 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9CC60223CFD; Wed, 21 Aug 2019 13:38:14 -0400 (EDT)
+        id A400D223CFE; Wed, 21 Aug 2019 13:38:14 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         miklos@szeredi.hu
 Cc:     virtio-fs@redhat.com, vgoyal@redhat.com, stefanha@redhat.com,
         dgilbert@redhat.com, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 01/13] fuse: delete dentry if timeout is zero
-Date:   Wed, 21 Aug 2019 13:37:30 -0400
-Message-Id: <20190821173742.24574-2-vgoyal@redhat.com>
+Subject: [PATCH 02/13] fuse: Use default_file_splice_read for direct IO
+Date:   Wed, 21 Aug 2019 13:37:31 -0400
+Message-Id: <20190821173742.24574-3-vgoyal@redhat.com>
 In-Reply-To: <20190821173742.24574-1-vgoyal@redhat.com>
 References: <20190821173742.24574-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 21 Aug 2019 17:38:20 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 21 Aug 2019 17:38:27 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -42,66 +42,79 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Miklos Szeredi <mszeredi@redhat.com>
 
-Don't hold onto dentry in lru list if need to re-lookup it anyway at next
-access.
-
-More advanced version of this patch would periodically flush out dentries
-from the lru which have gone stale.
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/fuse/dir.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ fs/fuse/file.c     | 15 ++++++++++++++-
+ fs/splice.c        |  3 ++-
+ include/linux/fs.h |  2 ++
+ 3 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index dd0f64f7bc06..fd8636e67ae9 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -29,12 +29,26 @@ union fuse_dentry {
- 	struct rcu_head rcu;
- };
- 
--static inline void fuse_dentry_settime(struct dentry *entry, u64 time)
-+static void fuse_dentry_settime(struct dentry *dentry, u64 time)
- {
--	((union fuse_dentry *) entry->d_fsdata)->time = time;
-+	/*
-+	 * Mess with DCACHE_OP_DELETE because dput() will be faster without it.
-+	 *  Don't care about races, either way it's just an optimization
-+	 */
-+	if ((time && (dentry->d_flags & DCACHE_OP_DELETE)) ||
-+	    (!time && !(dentry->d_flags & DCACHE_OP_DELETE))) {
-+		spin_lock(&dentry->d_lock);
-+		if (time)
-+			dentry->d_flags &= ~DCACHE_OP_DELETE;
-+		else
-+			dentry->d_flags |= DCACHE_OP_DELETE;
-+		spin_unlock(&dentry->d_lock);
-+	}
-+
-+	((union fuse_dentry *) dentry->d_fsdata)->time = time;
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 5ae2828beb00..c45ffe6f1ecb 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -2172,6 +2172,19 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return 0;
  }
  
--static inline u64 fuse_dentry_time(struct dentry *entry)
-+static inline u64 fuse_dentry_time(const struct dentry *entry)
- {
- 	return ((union fuse_dentry *) entry->d_fsdata)->time;
- }
-@@ -255,8 +269,14 @@ static void fuse_dentry_release(struct dentry *dentry)
- 	kfree_rcu(fd, rcu);
- }
- 
-+static int fuse_dentry_delete(const struct dentry *dentry)
++static ssize_t fuse_file_splice_read(struct file *in, loff_t *ppos,
++				     struct pipe_inode_info *pipe, size_t len,
++				     unsigned int flags)
 +{
-+	return time_before64(fuse_dentry_time(dentry), get_jiffies_64());
++	struct fuse_file *ff = in->private_data;
++
++	if (ff->open_flags & FOPEN_DIRECT_IO)
++		return default_file_splice_read(in, ppos, pipe, len, flags);
++	else
++		return generic_file_splice_read(in, ppos, pipe, len, flags);
++
 +}
 +
- const struct dentry_operations fuse_dentry_operations = {
- 	.d_revalidate	= fuse_dentry_revalidate,
-+	.d_delete	= fuse_dentry_delete,
- 	.d_init		= fuse_dentry_init,
- 	.d_release	= fuse_dentry_release,
- };
+ static int convert_fuse_file_lock(struct fuse_conn *fc,
+ 				  const struct fuse_file_lock *ffl,
+ 				  struct file_lock *fl)
+@@ -3228,7 +3241,7 @@ static const struct file_operations fuse_file_operations = {
+ 	.fsync		= fuse_fsync,
+ 	.lock		= fuse_file_lock,
+ 	.flock		= fuse_file_flock,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= fuse_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ 	.unlocked_ioctl	= fuse_file_ioctl,
+ 	.compat_ioctl	= fuse_file_compat_ioctl,
+diff --git a/fs/splice.c b/fs/splice.c
+index 98412721f056..652f541d953d 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -362,7 +362,7 @@ static ssize_t kernel_readv(struct file *file, const struct kvec *vec,
+ 	return res;
+ }
+ 
+-static ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
++ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
+ 				 struct pipe_inode_info *pipe, size_t len,
+ 				 unsigned int flags)
+ {
+@@ -426,6 +426,7 @@ static ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
+ 	iov_iter_advance(&to, copied);	/* truncates and discards */
+ 	return res;
+ }
++EXPORT_SYMBOL(default_file_splice_read);
+ 
+ /*
+  * Send 'sd->len' bytes to socket from 'sd->file' at position 'sd->pos'
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 997a530ff4e9..15ae8f5dd24e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3062,6 +3062,8 @@ extern void block_sync_page(struct page *page);
+ /* fs/splice.c */
+ extern ssize_t generic_file_splice_read(struct file *, loff_t *,
+ 		struct pipe_inode_info *, size_t, unsigned int);
++extern ssize_t default_file_splice_read(struct file *, loff_t *,
++		struct pipe_inode_info *, size_t, unsigned int);
+ extern ssize_t iter_file_splice_write(struct pipe_inode_info *,
+ 		struct file *, loff_t *, size_t, unsigned int);
+ extern ssize_t generic_splice_sendpage(struct pipe_inode_info *pipe,
 -- 
 2.20.1
 
