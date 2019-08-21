@@ -2,57 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C73F972C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 08:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 619AF972BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 08:43:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfHUGnQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 02:43:16 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:52650 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbfHUGmY (ORCPT
+        id S1728091AbfHUGnM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 02:43:12 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:10161 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728086AbfHUGmb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 02:42:24 -0400
+        Wed, 21 Aug 2019 02:42:31 -0400
 Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190821064221epoutp049a9fa6154317805c7f4e99192bd61ec7~83PstpqXw1247612476epoutp04W
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 06:42:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190821064221epoutp049a9fa6154317805c7f4e99192bd61ec7~83PstpqXw1247612476epoutp04W
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190821064227epoutp01be42e9d2416edec794c39181c9de1bd4~83Px_IBtr1005210052epoutp019
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 06:42:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190821064227epoutp01be42e9d2416edec794c39181c9de1bd4~83Px_IBtr1005210052epoutp019
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1566369741;
-        bh=XmvgRUmAe2wKYHiaDqlBZGz349t74yQ9imYtStg6lHE=;
+        s=mail20170921; t=1566369747;
+        bh=RufiVNT5+Lb2KOyQZLDZhzg9HYJCDXGJWlH0uDh9Bn0=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=EyrZTewcBbnxZ2ulz/otdpewDqEruz8Gud79PDG0yCy8/AeusfGxfVhKuVwJt8Pf2
-         SL0wiJqUSv0zYKfIsddwCagVIWTGRUImgR1K7TCBBnotK2s1AZAsg81SMgoJvNXp56
-         Rjxco0dg2OmIqVhl3gJ8bwZ39Vh4YGf39hZWq8v0=
-Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20190821064221epcas2p2684e6115ac12d837c9b5307f2df57c40~83PsF4bp_1369213692epcas2p2c;
-        Wed, 21 Aug 2019 06:42:21 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.40.186]) by
-        epsnrtp5.localdomain (Postfix) with ESMTP id 46Cykz5DwgzMqYkn; Wed, 21 Aug
-        2019 06:42:19 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2B.23.04068.BC7EC5D5; Wed, 21 Aug 2019 15:42:19 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190821064219epcas2p28b42391923012ecc7875313b8b2b9a1a~83PqdlOeq1149811498epcas2p2u;
-        Wed, 21 Aug 2019 06:42:19 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190821064219epsmtrp298889ca36b32f346ee40f3eadb0b6908~83PqcX4JK2201622016epsmtrp2V;
-        Wed, 21 Aug 2019 06:42:19 +0000 (GMT)
-X-AuditID: b6c32a47-5a1ff70000000fe4-6f-5d5ce7cb27a6
+        b=clS10835/affNGODFrWo2NUHKtnZdFS5lP+/Aw0A0qBoqhK7QHQ73e6PeySgDsPPs
+         hA3xePmpCtsxVnPnPa6b8QZe6cCy7LM52IiYYce3ekI0ze+cbhc8gyydsTEqHxCCoq
+         ZVGxIeV2mqit5FKe6+6VHbiGTkuA5I9Z+1LrNWcQ=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20190821064226epcas2p1753a8812f10c55908a889b5f613f6935~83PxEH5Fd0242202422epcas2p1s;
+        Wed, 21 Aug 2019 06:42:26 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.40.189]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 46Cyl36Fy8zMqYkf; Wed, 21 Aug
+        2019 06:42:23 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7C.0F.04112.FC7EC5D5; Wed, 21 Aug 2019 15:42:23 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190821064223epcas2p18a14724427711e22c6c76b24bce1c8e0~83PuUy3oh1228312283epcas2p1R;
+        Wed, 21 Aug 2019 06:42:23 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190821064223epsmtrp10047dd5905b9e4fa8ae715493939ee58~83PuTsqjI2011020110epsmtrp1X;
+        Wed, 21 Aug 2019 06:42:23 +0000 (GMT)
+X-AuditID: b6c32a48-f1fff70000001010-90-5d5ce7cfaa31
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F8.D2.03638.BC7EC5D5; Wed, 21 Aug 2019 15:42:19 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8D.02.03706.FC7EC5D5; Wed, 21 Aug 2019 15:42:23 +0900 (KST)
 Received: from KORDO035251 (unknown [12.36.165.204]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20190821064218epsmtip16b10bb697269b2ad72f00b6d9cd76543~83Pp9CBw40460704607epsmtip1E;
-        Wed, 21 Aug 2019 06:42:18 +0000 (GMT)
+        20190821064222epsmtip169b78fa5e45597d9ba7e035be2ddd798~83PtgT-AE0460704607epsmtip1G;
+        Wed, 21 Aug 2019 06:42:22 +0000 (GMT)
 From:   "boojin.kim" <boojin.kim@samsung.com>
-To:     "'Jaehoon Chung'" <jh80.chung@samsung.com>,
-        "'Ulf Hansson'" <ulf.hansson@linaro.org>,
-        <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To:     "'Ulf Hansson'" <ulf.hansson@linaro.org>,
+        "'Kukjin Kim'" <kgene@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
         "'David S. Miller'" <davem@davemloft.net>,
         "'Eric Biggers'" <ebiggers@kernel.org>,
@@ -76,152 +79,232 @@ Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
         <linux-samsung-soc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH 3/9] mmc: dw_mmc: support crypto operation
-Date:   Wed, 21 Aug 2019 15:42:18 +0900
-Message-ID: <003f01d557eb$94210260$bc630720$@samsung.com>
+Subject: [PATCH 4/9] mmc: dw_mmc-exynos: support FMP
+Date:   Wed, 21 Aug 2019 15:42:22 +0900
+Message-ID: <004001d557eb$9697f5d0$c3c7e170$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AdVX6DWbOAXQrOkmQ/qY5VJQXNywng==
+Thread-Index: AdVX6FzCeDd/I620REGbQnBHWgE56Q==
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0xTVxjN7fvRh6PyrIzdNZuWN1kCBmxhxUsHc3FmvmT+wVy2JU6GL/DS
-        MtrXrq9luCwTN9YhNmNkuthSicGpWx1BW4bEUX9UBlPsKiOgJXVkk8xIFRWQBHFuLQ8z/jv3
-        fOfk+8798lGY0i1XUVWCnbcJnIkhl+FdF7LX5w7c3F6mOdGfgx7MNOCo41Ifho5fbyLRwP6w
-        DHkj9TgKTrYQqL3nEYb2TjyHxjs8GLr20EmgphtxDEUiJ+TIf2OEQMHRtWjsjzkZcrfGSPR7
-        22Y00TqLo57gRRwNnfaSqPffJoAORM7IkPPkA4C+cM3JUX/7u68+y3b+EJWx9YGP2K5zWexQ
-        2MH6fXtINjbSQ7KB73axPx+alrGfXf4FY++eGSbZrzp9gJ32rypN3WYqNvJcJW9T80KFpbJK
-        MJQwb7xV/lq5rlCjzdUWofWMWuDMfAmzaUtp7utVpkR2Rl3DmRwJqpQTRWbdK8U2i8POq40W
-        0V7C8NZKk1WrteaJnFl0CIa8CotZr9Vo8nUJ5Q6Tsfl8vdx6O6PWN3MEqwNeZSNIoSD9Erx0
-        9STRCJZRSrobwCOueVJ6TAF4/Nv7WFKlpGcBPDf84RNH29m4TOKDALonVkmGWwD2heeJZIGk
-        18JAvw8kcTrtThSaPkiKMPqxHI5PhfBkYSWth1dibQsYp7Pg/c/H5EmsoIvgwZFBQsIr4EX3
-        +IIGo1fDU3e8mDSFGnaH44sN8mDz+SAmadJhyx4nlmwG6d0U7P2+G5cMm2B09h6Q8Eo40d8p
-        l7AKTk8GSQnvgsNHD8slswvAyw+di6IC6Pn7y4SZSnTIhh2n1yUhpF+AvaOLsy2HDRf+kUu0
-        AjY4F793DTw4NSSTaBW85/pUolkYntyPfw0yPUtCepaE9CwJ4/m/7SGA+0AGbxXNBl7MtxYs
-        3bUfLJxFzuZu0PXblhCgKcCkKnZcfa9MSXA14k5zCEAKY9IVtd5tZUpFJbfzY95mKbc5TLwY
-        ArrEDpox1dMVlsSRCfZyrS6/sFBTpEO6wnzEPKPwPxXdrqQNnJ2v5nkrb3vik1EpqjqgXR4t
-        1g8W11UTb26cTOF3Z1+7XVc7emUsPHBzQx/oPHbnr2/2nk0THvXNv5xx3RlYcTj64ttVKWPu
-        A60hB7obmM/8aV+avjHeG/x1aPUooTf8KPsk8/Gt9ngGZ3w+q+ao1jVY/U5sw/stM+z0xups
-        wb8m7U+d/pQxYoRzdCx1awGDi0ZOm4PZRO4/ucmGcSwEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7bCSnO7p5zGxBi97eC2+fulgsVh/6hiz
-        xeq7/WwWp6eeZbKYc76FxWLvu9msFmv3/GG26H4lY/Fk/Sxmixu/2lgt+h+/ZrY4f34Du8Wm
-        x9dYLfbe0ra4f+8nk8XMeXfYLC4tcrd4Ne8bi8WevSdZLC7vmsNmceR/P6PFjPP7mCzaNn5l
-        tGjt+clucXxtuIOkx5aVN5k8WjaXe2w7oOpx+Wypx6ZVnWwed67tYfPYvKTeY/eCz0weTWeO
-        Mnu833eVzaNvyypGj8+b5AJ4orhsUlJzMstSi/TtErgyJh5sYS94I1ax6stS5gbGOUJdjJwc
-        EgImEov2v2bqYuTiEBLYzSgxtfEKC0RCSmJr+x5mCFtY4n7LEVYQW0jgOaPEt8+FIDabgLbE
-        5uOrGEGaRQRmM0r8vfCcESTBLDCNQ2LXB3EQW1jASuLCnUVgQ1kEVCU+Nt9nB7F5BSwl5l67
-        yAphC0qcnPkEqIYDqFdPom0j1Bh5ie1v50DdoCCx4+xrsLgIUMnEg3uZIWpEJGZ3tjFPYBSc
-        hWTSLIRJs5BMmoWkYwEjyypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k/NxNjOAkoKW1g/HE
-        ifhDjAIcjEo8vDtuRscKsSaWFVfmHmKU4GBWEuGtmBMVK8SbklhZlVqUH19UmpNafIhRmoNF
-        SZxXPv9YpJBAemJJanZqakFqEUyWiYNTqoGR49ZSiUbF4w+XLgwVlV/2UZDZY92+iayFwY3L
-        v+bcvnBgy2Hj5/d9cuZvKKx9knfhhufxzt3XzL7IF394pJ4V8+Ps/nRuD8UXam99dwm7buxL
-        uOYx4ca6B/I1HAd3lohFZ95rkbgtb7yv68NNbfbzSq7Td97fa2Biz3mj8+X0jvWFobp6Nx96
-        K7EUZyQaajEXFScCAOfGz5v+AgAA
-X-CMS-MailID: 20190821064219epcas2p28b42391923012ecc7875313b8b2b9a1a
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxTVxjOuV8taJdr6bZjs7h6h1vAgb0d7Q4OFpPpvIkuqdmPJSphN3BH
+        if2yt3Uwk0mUVUQEpjMZbSWEmUW7mc7SuCKUmeIkKKzLmN1AYYswP2CuCyALOHEtt2T8e973
+        fZ7zvE/eHDmu9MnU8kqrU3BYeTNDZRKXenP0ebF7e0u08dM69Gi2jkCB69dw9NVoE4VunB7E
+        kC9WS6DIX14SXej+F0fHJ19AEwEPjn5dcJOoaXwKR7HYNzIUHI+TKDKyEf02No+hltbbFPqp
+        fTuabJ0jUHekn0BDl30Uuvq0CaDPYz0Ycl98BNAnDfMy1HfhvS1rudD5YYyr7fiQu3RlAzc0
+        6OKC/mMUdzveTXEdZw9xXW0zGHd44HucS/TcpLjGkB9wM8F1xtW7zUUmgS8XHBrBWmYrr7RW
+        FDM73i19q1Rv0LJ5bCF6ndFYeYtQzGzdacx7u9KczM5oDvBmV7Jl5EWR2fRmkcPmcgoak010
+        FjOCvdxsZ1l7vshbRJe1Ir/MZtnMarU6fZL5vtk0OjVN2e/lVHXFD4MaMLC+HmTIIV0A/znS
+        Q9aDTLmSDgPYOz6LS8U0gD/eaU0XcwCeHwxiyxJvuD09iABYk6jDpOIBgIudM2SKRdEbYUef
+        H6QGKroeg72Nx6lUgdOLMjgxHSVSrKzkW2cW+pcwQW+A34WeUimsoAvh7IkWTMJrYH/LxBIH
+        p1+E3z704dIeGhgenAIprKLz4czcQJqjgt5j7qX9IP1EBhe7RghJsBWeqE2kQ2TByb6QTMJq
+        +KDJncaH4M0vv5BJ4gYABxaWB69Bz92jSTd50iEHBi5vSkFIvwSvjqR9n4F1vU9kUlsB69xK
+        SZgNz0wPYVJbDf9u+Fhqc3D87M9kM1jvWRHSsyKkZ0UYz/+2bYDwg+cEu2ipEESdvWDluYNg
+        6WfkcmFw5YedUUDLAbNaER7eU6Ik+QNitSUKoBxnVIoq3+4SpaKcr/5IcNhKHS6zIEaBPnmD
+        T3H1s2W25D+zOktZvc5g0Bbqkd6gQ8zziuCq4b1KuoJ3CvsEwS44lnWYPENdA2QO48uv7hfZ
+        yCpN7n6nlS+q7jR36NsSgV9O/bGZzGo/yLCn+h9/VqN7SK29futip+FWZllxa4m3sfncwYLH
+        TLNprNCt2bOODFz74J0b9wnv7/vGQDzjyGhf950tRu0O/3zPG9lHE7uKqqJ3XzFtI8XQtsBJ
+        z/01Yu7X8eyTf6qaGUI08Wwu7hD5/wBB5vuoLwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7bCSnO755zGxBqe3S1h8/dLBYrH+1DFm
+        i9V3+9ksTk89y2Qx53wLi8Xed7NZLdbu+cNs0f1KxuLJ+lnMFjd+tbFa9D9+zWxx/vwGdotN
+        j6+xWuy9pW1x/95PJouZ8+6wWVxa5G7xat43Fos9e0+yWFzeNYfN4sj/fkaLGef3MVm0bfzK
+        aNHa85Pd4vjacAdJjy0rbzJ5tGwu99h2QNXj8tlSj02rOtk87lzbw+axeUm9x+4Fn5k8ms4c
+        ZfZ4v+8qm0ffllWMHp83yQXwRHHZpKTmZJalFunbJXBl3H39ia3guWbF7mtNjA2MZxS7GDk5
+        JARMJGbvWMQMYgsJ7GaU+D27GCIuJbG1fQ8zhC0scb/lCGsXIxdQzXNGiW+TG1hBEmwC2hKb
+        j69iBEmICExgkviz9SEjSIJZYBqHxK4P4iC2MNCGub9OsoDYLAKqEvu3/GcDsXkFLCW+9M5k
+        grAFJU7OfAJUwwHUqyfRthFqjLzE9rdzoI5QkNhx9jVYXASo5PO3MywQNSISszvbmCcwCs5C
+        MmkWwqRZSCbNQtKxgJFlFaNkakFxbnpusWGBYV5quV5xYm5xaV66XnJ+7iZGcBLQ0tzBeHlJ
+        /CFGAQ5GJR7eHTejY4VYE8uKK3MPMUpwMCuJ8FbMiYoV4k1JrKxKLcqPLyrNSS0+xCjNwaIk
+        zvs071ikkEB6YklqdmpqQWoRTJaJg1OqgVHhnceZwqzN89gnLRBa+uNUtFhtgx+r7833Ra3H
+        Pk2Ve70h+GeXM8PXJm5T0/IHW018C2r0Toiryvd2cf6+saswlGdu0WK2DD0Fl4vVR51vOoRc
+        PPrzidzTjqlut7s5m912dgVPeyi5Uucgi+N1je4DrbY39JpU66NZak7u22eZvtF/3zXldiWW
+        4oxEQy3mouJEAAakvEn+AgAA
+X-CMS-MailID: 20190821064223epcas2p18a14724427711e22c6c76b24bce1c8e0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190821064219epcas2p28b42391923012ecc7875313b8b2b9a1a
-References: <CGME20190821064219epcas2p28b42391923012ecc7875313b8b2b9a1a@epcas2p2.samsung.com>
+X-CMS-RootMailID: 20190821064223epcas2p18a14724427711e22c6c76b24bce1c8e0
+References: <CGME20190821064223epcas2p18a14724427711e22c6c76b24bce1c8e0@epcas2p1.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch supports the crypto operation in mmc driver.
-Two vops are added to dw_mci_drv_data for it.
-The crypto_engine_cfg() is required to set crypto information such as
-key and algorithm modes before I/O.
-The crypto_engine_clear() is required to clear the crypto information
-set in the H/W after I/O.
+Exynos MMC uses FMP to encrypt data stored on MMC device.
+FMP H/W reads crypto information from MMC descriptor.
+So, when using FMP H/W, the format of MMC descriptor should be extended.
+The FMP driver is registered with the diskcipher algorithm,
+so exynos MMC calls diskcipher API to use FMP.
 
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
 Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
 ---
- drivers/mmc/host/dw_mmc.c | 22 +++++++++++++++++++++-
- drivers/mmc/host/dw_mmc.h |  6 ++++++
- 2 files changed, 27 insertions(+), 1 deletion(-)
+ drivers/mmc/host/Kconfig         |  8 ++++++
+ drivers/mmc/host/dw_mmc-exynos.c | 62
+++++++++++++++++++++++++++++++++++++++++
+ drivers/mmc/host/dw_mmc.c        | 26 +++++++++++++++++
+ 3 files changed, 96 insertions(+)
 
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 14d89a1..f6c5a54 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -761,6 +761,14 @@ config MMC_DW_EXYNOS
+ 	  Synopsys DesignWare Memory Card Interface driver. Select this
+option
+ 	  for platforms based on Exynos4 and Exynos5 SoC's.
+ 
++config MMC_DW_EXYNOS_FMP
++	tristate "EXYNOS Flash Memory Protector for MMC_DW"
++	depends on MMC_DW_EXYNOS
++	---help---
++	  This selects the EXYNOS MMC_DW FMP Driver.
++
++	  If you have a controller with this interface, say Y or M here.
++
+ config MMC_DW_HI3798CV200
+ 	tristate "Hi3798CV200 specific extensions for Synopsys DW Memory
+Card Interface"
+ 	depends on MMC_DW
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c
+b/drivers/mmc/host/dw_mmc-exynos.c
+index 5e3d95b..d3848ba 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -14,10 +14,12 @@
+ #include <linux/of_gpio.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
++#include <crypto/fmp.h>
+ 
+ #include "dw_mmc.h"
+ #include "dw_mmc-pltfm.h"
+ #include "dw_mmc-exynos.h"
++#include "../core/queue.h"
+ 
+ /* Variations in Exynos specific dw-mshc controller */
+ enum dw_mci_exynos_type {
+@@ -508,6 +510,62 @@ static int dw_mci_exynos_prepare_hs400_tuning(struct
+dw_mci *host,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_MMC_DW_EXYNOS_FMP
++static struct bio *get_bio(struct dw_mci *host,
++				struct mmc_data *data, bool cmdq_enabled)
++{
++	struct bio *bio = NULL;
++	struct mmc_queue_req *mq_rq = NULL;
++	struct request *req = NULL;
++	struct mmc_blk_request *brq = NULL;
++
++	if (!host || !data) {
++		pr_err("%s: Invalid MMC:%p data:%p\n", __func__, host,
+data);
++		return NULL;
++	}
++
++	if (cmdq_enabled) {
++		pr_err("%s: no support cmdq yet:%p\n", __func__, host);
++		bio = NULL;
++	} else {
++		brq = container_of(data, struct mmc_blk_request, data);
++		if (!brq)
++			return NULL;
++
++		mq_rq = container_of(brq, struct mmc_queue_req, brq);
++		if (virt_addr_valid(mq_rq))
++			req = mmc_queue_req_to_req(mq_rq);
++			if (virt_addr_valid(req))
++				bio = req->bio;
++	}
++	return bio;
++}
++
++static int dw_mci_exynos_crypto_engine_cfg(struct dw_mci *host,
++					void *desc, struct mmc_data *data,
++					struct page *page, int page_index,
++					int sector_offset, bool
+cmdq_enabled)
++{
++	struct bio *bio = get_bio(host, host->data, cmdq_enabled);
++
++	if (!bio)
++		return 0;
++
++	return exynos_fmp_crypt_cfg(bio, desc, page_index, sector_offset);
++}
++
++static int dw_mci_exynos_crypto_engine_clear(struct dw_mci *host,
++					void *desc, bool cmdq_enabled)
++{
++	struct bio *bio = get_bio(host, host->data, cmdq_enabled);
++
++	if (!bio)
++		return 0;
++
++	return exynos_fmp_crypt_clear(bio, desc);
++}
++#endif
++
+ /* Common capabilities of Exynos4/Exynos5 SoC */
+ static unsigned long exynos_dwmmc_caps[4] = {
+ 	MMC_CAP_1_8V_DDR | MMC_CAP_8_BIT_DATA | MMC_CAP_CMD23,
+@@ -524,6 +582,10 @@ static const struct dw_mci_drv_data exynos_drv_data = {
+ 	.parse_dt		= dw_mci_exynos_parse_dt,
+ 	.execute_tuning		= dw_mci_exynos_execute_tuning,
+ 	.prepare_hs400_tuning	= dw_mci_exynos_prepare_hs400_tuning,
++#ifdef CONFIG_MMC_DW_EXYNOS_FMP
++	.crypto_engine_cfg = dw_mci_exynos_crypto_engine_cfg,
++	.crypto_engine_clear = dw_mci_exynos_crypto_engine_clear,
++#endif
+ };
+ 
+ static const struct of_device_id dw_mci_exynos_match[] = {
 diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index eea52e2..0cdf574 100644
+index 0cdf574..4de476a 100644
 --- a/drivers/mmc/host/dw_mmc.c
 +++ b/drivers/mmc/host/dw_mmc.c
-@@ -470,6 +470,7 @@ static void dw_mci_dmac_complete_dma(void *arg)
- {
- 	struct dw_mci *host = arg;
- 	struct mmc_data *data = host->data;
-+	const struct dw_mci_drv_data *drv_data = host->drv_data;
+@@ -79,6 +79,32 @@ struct idmac_desc_64addr {
  
- 	dev_vdbg(host->dev, "DMA complete\n");
- 
-@@ -481,6 +482,9 @@ static void dw_mci_dmac_complete_dma(void *arg)
- 				    data->sg_len,
- 				    DMA_FROM_DEVICE);
- 
-+	if (drv_data && drv_data->crypto_engine_clear)
-+		drv_data->crypto_engine_clear(host, host->sg_cpu, false);
-+
- 	host->dma_ops->cleanup(host);
- 
- 	/*
-@@ -577,8 +581,10 @@ static inline int dw_mci_prepare_desc64(struct dw_mci
-*host,
- {
- 	unsigned int desc_len;
- 	struct idmac_desc_64addr *desc_first, *desc_last, *desc;
-+	int i, ret;
-+	const struct dw_mci_drv_data *drv_data = host->drv_data;
-+	int sector_offset = 0;
- 	u32 val;
--	int i;
- 
- 	desc_first = desc_last = desc = host->sg_cpu;
- 
-@@ -618,6 +624,20 @@ static inline int dw_mci_prepare_desc64(struct dw_mci
-*host,
- 			desc->des4 = mem_addr & 0xffffffff;
- 			desc->des5 = mem_addr >> 32;
- 
-+			if (drv_data && drv_data->crypto_engine_cfg) {
-+				ret = drv_data->crypto_engine_cfg(host,
-desc,
-+						data, sg_page(&data->sg[i]),
-i,
-+						sector_offset, false);
-+				if (ret) {
-+					dev_err(host->dev,
-+						"%s: fail to set
-crypto(%d)\n",
-+						__func__, ret);
-+					return -EPERM;
-+				}
-+				/* mmc sector size */
-+				sector_offset += desc_len / 512;
-+			}
-+
- 			/* Update physical address for the next desc */
- 			mem_addr += desc_len;
- 
-diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-index da5923a..b32d39b 100644
---- a/drivers/mmc/host/dw_mmc.h
-+++ b/drivers/mmc/host/dw_mmc.h
-@@ -563,5 +563,11 @@ struct dw_mci_drv_data {
- 						struct mmc_ios *ios);
- 	int		(*switch_voltage)(struct mmc_host *mmc,
- 					  struct mmc_ios *ios);
-+	int		(*crypto_engine_cfg)(struct dw_mci *host, void
-*desc,
-+				struct mmc_data *data, struct page *page,
-+				int page_offset, int sector_offset,
-+				bool cmdq_enabled);
-+	int		(*crypto_engine_clear)(struct dw_mci *host,
-+				void *desc, bool cmdq_enabled);
+ 	u32		des6;	/* Lower 32-bits of Next Descriptor Address
+*/
+ 	u32		des7;	/* Upper 32-bits of Next Descriptor Address
+*/
++#if defined(CONFIG_MMC_DW_EXYNOS_FMP)
++	u32 des8;		/* File IV 0 */
++	u32 des9;		/* File IV 1 */
++	u32 des10;		/* File IV 2 */
++	u32 des11;		/* File IV 3 */
++	u32 des12;		/* File EncKey 0 */
++	u32 des13;		/* File EncKey 1 */
++	u32 des14;		/* File EncKey 2 */
++	u32 des15;		/* File EncKey 3 */
++	u32 des16;		/* File EncKey 4 */
++	u32 des17;		/* File EncKey 5 */
++	u32 des18;		/* File EncKey 6 */
++	u32 des19;		/* File EncKey 7 */
++	u32 des20;		/* File TwKey 0 */
++	u32 des21;		/* File TwKey 1 */
++	u32 des22;		/* File TwKey 2 */
++	u32 des23;		/* File TwKey 3 */
++	u32 des24;		/* File TwKey 4 */
++	u32 des25;		/* File TwKey 5 */
++	u32 des26;		/* File TwKey 6 */
++	u32 des27;		/* File TwKey 7 */
++	u32 des28;		/* Disk IV 0 */
++	u32 des29;		/* Disk IV 1 */
++	u32 des30;		/* Disk IV 2 */
++	u32 des31;		/* Disk IV 3 */
++#endif
  };
- #endif /* _DW_MMC_H_ */
+ 
+ struct idmac_desc {
 -- 
 2.7.4
 
