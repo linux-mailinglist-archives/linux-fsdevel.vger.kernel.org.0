@@ -2,55 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33C889728C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 08:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A4FD97295
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 08:42:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbfHUGmc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 02:42:32 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:10195 "EHLO
+        id S1728178AbfHUGmh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 02:42:37 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:10267 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728120AbfHUGmc (ORCPT
+        with ESMTP id S1728164AbfHUGmh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 02:42:32 -0400
+        Wed, 21 Aug 2019 02:42:37 -0400
 Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190821064229epoutp01eabf21a3161f96a16e4f7e0dc30c1af8~83PzoZ59g1005210052epoutp01C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 06:42:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190821064229epoutp01eabf21a3161f96a16e4f7e0dc30c1af8~83PzoZ59g1005210052epoutp01C
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190821064234epoutp0107761e50929f67ac24419c3ac15d853e~83P5AUZtT1005410054epoutp01P
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 06:42:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190821064234epoutp0107761e50929f67ac24419c3ac15d853e~83P5AUZtT1005410054epoutp01P
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1566369749;
-        bh=b8+pMwnDM1Y+1iXK//zi6ce3SJBaE4H69uXsKujU+38=;
+        s=mail20170921; t=1566369755;
+        bh=lXH3d3b7N+K3mylwot5v8bTO+J7LAkcQhHDSqMe7C/M=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=fVpFb1vrxLo+foImejemmircRJa4mQ8udZOFQ7x9vDDE2Nn21e6P2qonsSIr0HPnH
-         r8stAk3Sg8+o6Bt1znwpmKOjdKvcD0zPYiP8QlxkhsgLjoQs1e6UloCjzrU09PYTdp
-         VbTsYXoyowkmnf/DoXHNLdrhos2RB1w2u+/XHqkk=
-Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190821064228epcas2p36798da66a85912049d5fd8f3ff0d2590~83Py-NNHH0923809238epcas2p3y;
-        Wed, 21 Aug 2019 06:42:28 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.40.181]) by
-        epsnrtp5.localdomain (Postfix) with ESMTP id 46Cyl72R0jzMqYkb; Wed, 21 Aug
-        2019 06:42:27 +0000 (GMT)
+        b=TuEd8Kw0zTaI7r4uZxnSqmJVW4fzUnL/LG1UWCso2OV8NSVcJIP5eWeRkwcT1zClX
+         wP3b+6scxLvqa3gsV7yksHye4RuOc+mULYe/3smLGMGNIPwz6R6ksjYYoU8pK9MsvN
+         MUzdzgDOpw8tkrflUCrlFA4hTjKyDVDwBF07TI9I=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20190821064234epcas2p489f837a13ef14307261c52ca8b5cc5c7~83P4Otjor1664116641epcas2p4d;
+        Wed, 21 Aug 2019 06:42:34 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.40.189]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 46CylC3sMHzMqYkW; Wed, 21 Aug
+        2019 06:42:31 +0000 (GMT)
 Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9E.03.04149.3D7EC5D5; Wed, 21 Aug 2019 15:42:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab~83PxikxcE1369213692epcas2p2w;
-        Wed, 21 Aug 2019 06:42:26 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190821064226epsmtrp2483bd0cead0f3a7919ae583776a72772~83PxhkykF2201622016epsmtrp2a;
-        Wed, 21 Aug 2019 06:42:26 +0000 (GMT)
-X-AuditID: b6c32a46-fedff70000001035-38-5d5ce7d3d23a
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        93.FD.04156.7D7EC5D5; Wed, 21 Aug 2019 15:42:31 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190821064230epcas2p1ad7301f2b1331bcab3126e6e37c0e272~83P1P4DLo0242202422epcas2p13;
+        Wed, 21 Aug 2019 06:42:30 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190821064230epsmtrp199195e636f4cb974d74d7f324f642ead~83P1Oh0Pg2011020110epsmtrp1g;
+        Wed, 21 Aug 2019 06:42:30 +0000 (GMT)
+X-AuditID: b6c32a45-df7ff7000000103c-8b-5d5ce7d7c3ef
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EC.D2.03638.2D7EC5D5; Wed, 21 Aug 2019 15:42:26 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        02.12.03706.6D7EC5D5; Wed, 21 Aug 2019 15:42:30 +0900 (KST)
 Received: from KORDO035251 (unknown [12.36.165.204]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20190821064226epsmtip2bed414e68869ed8e55860f74e737a0bd~83PxE_0pa2463324633epsmtip2C;
-        Wed, 21 Aug 2019 06:42:26 +0000 (GMT)
+        20190821064230epsmtip269d9197aa07172ce59821d07762311d0~83P0vUduR2463324633epsmtip2F;
+        Wed, 21 Aug 2019 06:42:30 +0000 (GMT)
 From:   "boojin.kim" <boojin.kim@samsung.com>
-To:     "'Jens Axboe'" <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
+To:     "'Alasdair Kergon'" <agk@redhat.com>,
+        "'Mike Snitzer'" <snitzer@redhat.com>, <dm-devel@redhat.com>,
         <linux-kernel@vger.kernel.org>
 Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
         "'David S. Miller'" <davem@davemloft.net>,
@@ -75,257 +76,375 @@ Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
         <linux-samsung-soc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH 5/9] block: support diskcipher
-Date:   Wed, 21 Aug 2019 15:42:26 +0900
-Message-ID: <004101d557eb$98b00060$ca100120$@samsung.com>
+Subject: [PATCH 6/9] dm crypt: support diskcipher
+Date:   Wed, 21 Aug 2019 15:42:30 +0900
+Message-ID: <004201d557eb$9b0a4410$d11ecc30$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AdVX6NYgX/inL1D6QG+VYW/5L6wNPg==
+Thread-Index: AdVX6H6LclDwZf4gTNyTqFNYN8nzeA==
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUwTZxzee3e9q86aW+2214Zs3TmNSsC2W7sXJ9syjbsFl5AtxviBeIEL
-        JetXei2DmU1GWEVGBDVbsGWMCFHAMLQ02Cito+CqSOki0Yk6F2MDG4hTPnQ0qGt7NeO/531+
-        z5Pn9+SXV4rLXZRSWmy28zYzZ2TIxUR33xp9xvDYrjz10xNyNDtTRaDOgV9xdPKPWhJd/j6M
-        oYZIJYH8990S1NEzj6PvxtNQtNOFo+sxpwTV3p3AUSRyikKeu9ckyH8jHf15ew5DRxtvkejK
-        sY/QeOMjAvX4LxFo+GwDifqf1QJUHwlgyHl6FqBva+YoFOrY9sFy1ts2grGVXV+w3b+sZIfD
-        DtbTfoBkb13rIdmuln3suaZpjK0YvICz/wSukuxBbztgpz2v5S7ZYdxg4LlC3qbizQWWwmJz
-        UTaT81n+xnydXq3J0GShdxiVmTPx2cymLbkZm4uN8e6MqoQzOuJULicIzLr3NtgsDjuvMlgE
-        ezbDWwuNVo3GmilwJsFhLsossJjWa9RqrS6u3GM0DJ6uIKx1utKQN0iVA1d6NVgkhfTbsP5g
-        TFINFkvltA9At/NnID6mANx/MpSaPAKw7WIl/twye3iASGA57Y9bagtE0d8A1sz1gsSApNNh
-        V6g9iRU0D0cfPsMTIpx+SsHoVDDpXkZnwomWY0lM0Cth670ImcAyOgtOnothIn4JXjoaTWpw
-        +nV4ZrIhtYUK+sITqYBM2PawSSJqFNB9wJkMg/QcBedvhzHRsAk+HutImZfB8ZCXErESTt/3
-        kyLeB68eb6ZEcw2AgzFnSvQWdI3uj6dJ4wlrYOfZdQkI6RWw/0Zqt6Wwqu8JJdIyWOWUi8Y3
-        4Y9Tw5hIK+GDmq9FmoXzM/VYHXjDtaCka0FJ14Iyrv9jmwDRDl7hrYKpiBe0Vu3CY3tA8l+s
-        3ewDLUNbgoCWAmaJzDeyM08u4UqEMlMQQCnOKGSlDTvy5LJCruxL3mbJtzmMvBAEuvgNDuHK
-        lwss8V9mtudrdFq9Xp2lQzq9FjGvyjwvjuyS00Wcnf+c56287bkPky5SloPmZt379wKXvenl
-        rdW7/7UGLto/pX7q/m179+rzmFux6nHFhTtbgwOuBz+sMOR9crgpp+TJmPrEV76NvVH4wqR9
-        D3NlVSR3/fXjN/cuHT/invhLWRIt3ZvTmBbuvaNoPRJb/W7Fx9Kyb4aWd2zrG/odT6N3a011
-        /TcPfQjUga6tdTOnRhlCMHCatbhN4P4DeUtx9C0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SXUhTYRzGe3c+dhRHxyn4aqWxMHDWTDF8BxHddS69CUsTG3lSaZvrHHXa
-        RYroTAuVQeHmErFBOhG/P3JTcn5MTRlpmoa6Cy3DZWWmpIXlnJF3P3ie5/e+F38KE7vxECpD
-        ncVyaoVSQvriXYOSsPNTqzeTL7x4Hoe2fjzEUfP4CIYaFytI9PrJpACZnEU46vtSTaAm228M
-        PVo7iVaajRia29URqGLZjSGns0WI2pZnCdT3PhK5lnYEyFCzQKKpuqtorWYbR7a+MRxN95pI
-        NPSnAqAqZ78A6Vq3ACp+vCNEjqaEK8FMR8O8gClq1zJdr8KZ6clsps1SSjILszaSaTfnM9ba
-        TQFTODGMMV/7Z0imvMMCmM220Hi/RN9LqawyI4floi7f8k2faC3ENZUXcx0ddmEBMEaWAR8K
-        0rFwSz+OlwFfSkxbAdxr7ya8QQjsLLFhXg6ArqIhwltaBbDLpSc9AUlHwnaHBXg4kE6DP1/2
-        CjyM0U8p2PstyMMBtAy6zXW4h3E6HNZ/dh5sRbQcrlt3BV72h2OGlf0Otb+VQV0r8GrCYPe6
-        6fAPp2HPpPvwKRls2KglvJ1AWF2qwyqBv/GIyfjfZDxiMh5Z1ALcAoJZDa9KU/HRmhg1q5Xx
-        ChWfrU6T3c5UtYGDE5BKe8DoaIod0BSQ+Il65pOSxYQih89T2QGkMEmgKNeUmCwWpSry7rNc
-        ZgqXrWR5OzhB4ZIgUVjmyA0xnabIYu+yrIbl/qUCyiekAOS/7eeGW7IWEtHutfIH1jl6dsr5
-        TholUW7jSfdGO9jFTY05S6tvHIiNFmq1x6z5ef0lDlBneHacnRkqOTu7E3H93J2qrfr4lUG9
-        HO+UB0S8WZInhC6Gr8bMa4M4pHN9tIgbNnIM5u1P/nvDcfKBD6fiznyPIMqni82dGb8kOJ+u
-        iJZiHK/4C+t4TdD+AgAA
-X-CMS-MailID: 20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wTZxjO17veVUbdWRl+q5vrjpmgptB2a/ehsJDMH+fmEhaXLHEQdoFb
+        Yeuv9FpRl01HXCnKVow22gMZbsRtqPxoOySs7RZwIlNWJ9ENAroIborR8VOEDLe2Jxn/Pd/z
+        Ps/3vG/evDJMIZBKWanFwdktrIkmkvC2rjUG9W9/5RdowtOpaHrKjaPmn89j6NSQh0AXvb0S
+        VBvdj6Pw/RopOhP6B0MHR59BI80Chn6fc0mRZ/guhqLRFhL5h69JUXhgHbpxfVaCfHWDBLry
+        5RY0WvcAR6FwD476OmoJdO5fD0DHohEJcrVOA/Rp1SyJus+8nfs0E/y2X8LsD5QxbT+uZvp6
+        nYy/sZJgBq+FCCbQsJf5vn5SwpRf+glj/o5cJZjPg42AmfSvykveYcou4dhizq7iLEXW4lKL
+        MYd+fXvhq4V6g0ar1mahl2mVhTVzOfTGbXnqzaWm2Oy0aidrcsaoPJbn6cxXsu1Wp4NTlVh5
+        Rw7N2YpNNq3WlsGzZt5pMWYUWc3rtRqNTh9TvmsqGf9jEred3Lpr5usQvg/c2nAALJFB6iU4
+        f6KFPACSZAqqHcCh29VS8TEB4GW/gMdVCuoBgK397y84poauEyIfBrDat0c03AFwRDhCxgsE
+        tQ4GuhtBvJBCuQGsO9KfyMCoRyQcmehMfLuc0sKeihoQxzi1GjZExhO8nMqCY0f7gIiXwR7f
+        SILHqOfg2Xu1mNiGCrb33k1oUqgMWB8oB6ImBdZUurB4GKTmSfjJIR8hGjbCG99VSkW8HI52
+        B0kRK+Edj+sx3guvnvyKFM1VAF6aWyi8CIU/K2IJsljCGtjckRmHkEqD5wYe97YUurvmSZGW
+        Q7dLIRpfgMcn+iQirYRjVR+LNAPDJy5KqsHzwqIhhUVDCouGEf6PrQd4I0jlbLzZyPE6m3bx
+        sv0gcRdrN7WDY79s6wSUDNDJ8tn8/AKFlN3J7zZ3AijD6BT5rtodBQp5Mbt7D2e3FtqdJo7v
+        BPrYDg5hyqeKrLErszgKtXqdwaDJ0iO9QYfoFfLAE/35CsrIOrgPOM7G2Rd8EtkS5T7w1soL
+        lyuUH0VzS99oS3vvh2BPRys5JizVrPrC2IQdjsgPNq1Qa6rfFNI+S09Vq77pRd7hliuPPkzy
+        3gv6Bm5Peecix92ed1Qh3eax09mHt+Y+NN9/0p2sSS8bvznjPn3L215u/7Vr0/kZ+fpnz7Lp
+        bYMbmrbU5C27cLMhs2GmTPJagMb5Ela7FrPz7H9WNVOBLQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsWy7bCSvO615zGxBgsmGlt8/dLBYrH+1DFm
+        i9V3+9ksTk89y2Qx53wLi8Xed7NZLdbu+cNs0f1KxuLJ+lnMFjd+tbFa9D9+zWxx/vwGdotN
+        j6+xWuy9pW1x/95PJouZ8+6wWVxa5G7xat43Fos9e0+yWFzeNYfN4sj/fkaLGef3MVm0bfzK
+        aNHa85Pd4vjacAdJjy0rbzJ5tGwu99h2QNXj8tlSj02rOtk87lzbw+axeUm9x+4Fn5k8ms4c
+        ZfZ4v+8qm0ffllWMHp83yQXwRHHZpKTmZJalFunbJXBlfHzwmaVgmWfF9+V7WBoYn1p3MXJy
+        SAiYSHy5e4+ti5GLQ0hgN6PE6+vtLBAJKYmt7XuYIWxhifstR1ghip4zSsx90sAIkmAT0JbY
+        fHwVI0hCRKCHUeL5rd9gHcwC0zgkdn0QB7GFBQwlTrbPBmtgEVCVWLLvI9gGXgFLiQ/TLzNC
+        2IISJ2c+AYpzAPXqSbRtZIQYIy+x/e0cqCMUJHacfQ0WFwEqWbC5CapGRGJ2ZxvzBEbBWUgm
+        zUKYNAvJpFlIOhYwsqxilEwtKM5Nzy02LDDMSy3XK07MLS7NS9dLzs/dxAhOA1qaOxgvL4k/
+        xCjAwajEw7vjZnSsEGtiWXFl7iFGCQ5mJRHeijlRsUK8KYmVValF+fFFpTmpxYcYpTlYlMR5
+        n+YdixQSSE8sSc1OTS1ILYLJMnFwSjUw8jptKBfLLF1seeqra83FCxqBsgte5j2X2rq33pdp
+        qun1uybnfFY8mqqx4FZdh/Wl0OOB0843e8dpJC5+eS8usD1XpEPjou+bjfmtiSsWtwmazr03
+        LSf4oYpHVuSFSf6f8/svFMzKmHB4zoGYEt0jOybb8s2cnlqpNn0P050Lh7QuxiqVBZ4qUWIp
+        zkg01GIuKk4EAEdkX0f/AgAA
+X-CMS-MailID: 20190821064230epcas2p1ad7301f2b1331bcab3126e6e37c0e272
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab
-References: <CGME20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab@epcas2p2.samsung.com>
+X-CMS-RootMailID: 20190821064230epcas2p1ad7301f2b1331bcab3126e6e37c0e272
+References: <CGME20190821064230epcas2p1ad7301f2b1331bcab3126e6e37c0e272@epcas2p1.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch supports crypto information to be maintained via BIO
-and passed to the storage driver.
+This patch supports dm-crypt to use diskcipher in a specific ivmode
+(disk or fmp).
+Dm-crypt allocates diskcipher and sets the key on it.
+Then, dm-crypt sets diskcipher into BIO and submits the BIO without
+any additional data encryption.
 
-To do this, 'bi_aux_private', 'REQ_CYPTE' and 'bi_dun' are added
-to the block layer.
-
-'bi_aux_private' is added for loading additional private information into
-BIO.
-'REQ_CRYPT' is added to distinguish that bi_aux_private is being used
-for diskcipher.
-F2FS among encryption users uses DUN(device unit number) as
-the IV(initial vector) for cryptographic operations.
-DUN is stored in 'bi_dun' of bi_iter as a specific value for each BIO.
-
-Before attempting to merge the two BIOs, the operation is also added to
-verify that the crypto information contained in two BIOs is consistent.
-
-Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: dm-devel@redhat.com
 Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
 ---
- block/bio.c               |  1 +
- block/blk-merge.c         | 19 +++++++++++++++++--
- block/bounce.c            |  5 ++++-
- include/linux/bio.h       | 10 ++++++++++
- include/linux/blk_types.h |  4 ++++
- include/linux/bvec.h      |  3 +++
- 6 files changed, 39 insertions(+), 3 deletions(-)
+ drivers/md/dm-crypt.c | 112
+++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 103 insertions(+), 9 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 5476965..c60eb8e 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -588,6 +588,7 @@ void __bio_clone_fast(struct bio *bio, struct bio
-*bio_src)
- 	bio->bi_write_hint = bio_src->bi_write_hint;
- 	bio->bi_iter = bio_src->bi_iter;
- 	bio->bi_io_vec = bio_src->bi_io_vec;
-+	bio->bi_aux_private = bio_src->bi_aux_private;
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 9f8b654..271cfcc 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -37,6 +37,7 @@
+ #include <keys/user-type.h>
  
- 	bio_clone_blkg_association(bio, bio_src);
- 	blkcg_bio_issue_init(bio);
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 48e6725..d031257 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -7,6 +7,7 @@
- #include <linux/bio.h>
- #include <linux/blkdev.h>
- #include <linux/scatterlist.h>
+ #include <linux/device-mapper.h>
 +#include <crypto/diskcipher.h>
  
- #include <trace/events/block.h>
+ #define DM_MSG_PREFIX "crypt"
  
-@@ -576,6 +577,8 @@ int ll_back_merge_fn(struct request *req, struct bio
-*bio, unsigned int nr_segs)
- 	if (blk_integrity_rq(req) &&
- 	    integrity_req_gap_back_merge(req, bio))
- 		return 0;
-+	if (blk_try_merge(req, bio) != ELEVATOR_BACK_MERGE)
-+		return 0;
- 	if (blk_rq_sectors(req) + bio_sectors(bio) >
- 	    blk_rq_get_max_sectors(req, blk_rq_pos(req))) {
- 		req_set_nomerge(req->q, req);
-@@ -592,6 +595,8 @@ int ll_front_merge_fn(struct request *req, struct bio
-*bio, unsigned int nr_segs
- 	if (blk_integrity_rq(req) &&
- 	    integrity_req_gap_front_merge(req, bio))
- 		return 0;
-+	if (blk_try_merge(req, bio) != ELEVATOR_FRONT_MERGE)
-+		return 0;
- 	if (blk_rq_sectors(req) + bio_sectors(bio) >
- 	    blk_rq_get_max_sectors(req, bio->bi_iter.bi_sector)) {
- 		req_set_nomerge(req->q, req);
-@@ -738,6 +743,9 @@ static struct request *attempt_merge(struct
-request_queue *q,
- 	    !blk_write_same_mergeable(req->bio, next->bio))
- 		return NULL;
- 
-+	if (!crypto_diskcipher_blk_mergeble(req->bio, next->bio))
-+		return NULL;
-+
- 	/*
- 	 * Don't allow merge of different write hints, or for a hint with
- 	 * non-hint IO.
-@@ -887,9 +895,16 @@ enum elv_merge blk_try_merge(struct request *rq, struct
-bio *bio)
- {
- 	if (blk_discard_mergable(rq))
- 		return ELEVATOR_DISCARD_MERGE;
--	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) ==
-bio->bi_iter.bi_sector)
-+	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) ==
-+					bio->bi_iter.bi_sector) {
-+		if (!crypto_diskcipher_blk_mergeble(rq->bio, bio))
-+			return ELEVATOR_NO_MERGE;
- 		return ELEVATOR_BACK_MERGE;
--	else if (blk_rq_pos(rq) - bio_sectors(bio) ==
-bio->bi_iter.bi_sector)
-+	} else if (blk_rq_pos(rq) - bio_sectors(bio) ==
-+					bio->bi_iter.bi_sector) {
-+		if (!crypto_diskcipher_blk_mergeble(bio, rq->bio))
-+			return ELEVATOR_NO_MERGE;
- 		return ELEVATOR_FRONT_MERGE;
-+	}
- 	return ELEVATOR_NO_MERGE;
- }
-diff --git a/block/bounce.c b/block/bounce.c
-index f8ed677..720b065 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -252,7 +252,10 @@ static struct bio *bounce_clone_bio(struct bio
-*bio_src, gfp_t gfp_mask,
- 	bio->bi_write_hint	= bio_src->bi_write_hint;
- 	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
- 	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
--
-+	bio->bi_aux_private = bio_src->bi_aux_private;
-+#ifdef CONFIG_CRYPTO_DISKCIPHER
-+	bio->bi_iter.bi_dun = bio_src->bi_iter.bi_dun;
-+#endif
- 	switch (bio_op(bio)) {
- 	case REQ_OP_DISCARD:
- 	case REQ_OP_SECURE_ERASE:
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 3cdb84c..351e65e 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -49,6 +49,12 @@
- #define bio_sectors(bio)	bvec_iter_sectors((bio)->bi_iter)
- #define bio_end_sector(bio)	bvec_iter_end_sector((bio)->bi_iter)
- 
-+#ifdef CONFIG_CRYPTO_DISKCIPHER
-+#define bio_dun(bio)            ((bio)->bi_iter.bi_dun)
-+#define bio_duns(bio)           (bio_sectors(bio) >> 3) /* 4KB unit */
-+#define bio_end_dun(bio)        (bio_dun(bio) + bio_duns(bio))
-+#endif
-+
- /*
-  * Return the data direction, READ or WRITE.
-  */
-@@ -143,6 +149,10 @@ static inline void bio_advance_iter(struct bio *bio,
-struct bvec_iter *iter,
- {
- 	iter->bi_sector += bytes >> 9;
- 
-+#ifdef CONFIG_CRYPTO_DISKCIPHER
-+	if (iter->bi_dun)
-+		iter->bi_dun += bytes >> 12;
-+#endif
- 	if (bio_no_advance_iter(bio))
- 		iter->bi_size -= bytes;
- 	else
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 75059c1..117119a 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -160,6 +160,8 @@ struct bio {
- 	bio_end_io_t		*bi_end_io;
- 
- 	void			*bi_private;
-+	void			*bi_aux_private;
-+
- #ifdef CONFIG_BLK_CGROUP
- 	/*
- 	 * Represents the association of the css and request_queue for the
-bio.
-@@ -311,6 +313,7 @@ enum req_flag_bits {
- 	__REQ_INTEGRITY,	/* I/O includes block integrity payload */
- 	__REQ_FUA,		/* forced unit access */
- 	__REQ_PREFLUSH,		/* request for cache flush */
-+	__REQ_CRYPT,		/* request inline crypt */
- 	__REQ_RAHEAD,		/* read ahead, can fail anytime */
- 	__REQ_BACKGROUND,	/* background IO */
- 	__REQ_NOWAIT,           /* Don't wait if request will block */
-@@ -343,6 +346,7 @@ enum req_flag_bits {
- #define REQ_NOMERGE		(1ULL << __REQ_NOMERGE)
- #define REQ_IDLE		(1ULL << __REQ_IDLE)
- #define REQ_INTEGRITY		(1ULL << __REQ_INTEGRITY)
-+#define REQ_CRYPT		(1ULL << __REQ_CRYPT)
- #define REQ_FUA			(1ULL << __REQ_FUA)
- #define REQ_PREFLUSH		(1ULL << __REQ_PREFLUSH)
- #define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
-diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-index a032f01..5f89641 100644
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@ -30,6 +30,9 @@ struct bvec_iter {
- 
- 	unsigned int            bi_bvec_done;	/* number of bytes completed
-in
- 						   current bvec */
-+#ifdef CONFIG_CRYPTO_DISKCIPHER
-+	u64                     bi_dun;
-+#endif
+@@ -130,6 +131,8 @@ enum flags { DM_CRYPT_SUSPENDED, DM_CRYPT_KEY_VALID,
+ enum cipher_flags {
+ 	CRYPT_MODE_INTEGRITY_AEAD,	/* Use authenticated mode for cihper
+*/
+ 	CRYPT_IV_LARGE_SECTORS,		/* Calculate IV from sector_size,
+not 512B sectors */
++	CRYPT_MODE_DISKCIPHER,
++	CRYPT_MODE_SKCIPHER,
  };
  
- struct bvec_iter_all {
+ /*
+@@ -170,6 +173,7 @@ struct crypt_config {
+ 	union {
+ 		struct crypto_skcipher **tfms;
+ 		struct crypto_aead **tfms_aead;
++		struct crypto_diskcipher **tfms_diskc;
+ 	} cipher_tfm;
+ 	unsigned tfms_count;
+ 	unsigned long cipher_flags;
+@@ -955,6 +959,17 @@ static bool crypt_integrity_hmac(struct crypt_config
+*cc)
+ 	return crypt_integrity_aead(cc) && cc->key_mac_size;
+ }
+ 
++static bool crypt_mode_diskcipher(struct crypt_config *cc)
++{
++	return test_bit(CRYPT_MODE_DISKCIPHER, &cc->cipher_flags);
++}
++
++static bool crypt_mode_skcipher(struct crypt_config *cc)
++{
++	return test_bit(CRYPT_MODE_SKCIPHER, &cc->cipher_flags);
++}
++
++
+ /* Get sg containing data */
+ static struct scatterlist *crypt_get_sg_data(struct crypt_config *cc,
+ 					     struct scatterlist *sg)
+@@ -1573,13 +1588,13 @@ static void crypt_endio(struct bio *clone)
+ 	/*
+ 	 * free the processed pages
+ 	 */
+-	if (rw == WRITE)
++	if ((rw == WRITE) && !crypt_mode_diskcipher(cc))
+ 		crypt_free_buffer_pages(cc, clone);
+ 
+ 	error = clone->bi_status;
+ 	bio_put(clone);
+ 
+-	if (rw == READ && !error) {
++	if (rw == READ && !error && !crypt_mode_diskcipher(cc)) {
+ 		kcryptd_queue_crypt(io);
+ 		return;
+ 	}
+@@ -1618,6 +1633,11 @@ static int kcryptd_io_read(struct dm_crypt_io *io,
+gfp_t gfp)
+ 	crypt_inc_pending(io);
+ 
+ 	clone_init(io, clone);
++
++	if (crypt_mode_diskcipher(cc))
++		crypto_diskcipher_set(clone,
++			cc->cipher_tfm.tfms_diskc[0], NULL, 0);
++
+ 	clone->bi_iter.bi_sector = cc->start + io->sector;
+ 
+ 	if (dm_crypt_integrity_io_alloc(io, clone)) {
+@@ -1907,10 +1927,29 @@ static void crypt_free_tfms_skcipher(struct
+crypt_config *cc)
+ 	cc->cipher_tfm.tfms = NULL;
+ }
+ 
++static void crypt_free_tfms_diskcipher(struct crypt_config *cc)
++{
++	if (!crypt_mode_diskcipher(cc))
++		return;
++
++	if (cc->cipher_tfm.tfms_diskc[0] &&
++		!IS_ERR(cc->cipher_tfm.tfms_diskc[0])) {
++		crypto_diskcipher_clearkey(cc->cipher_tfm.tfms_diskc[0]);
++		crypto_free_diskcipher(cc->cipher_tfm.tfms_diskc[0]);
++		cc->cipher_tfm.tfms_diskc[0] = NULL;
++	}
++
++	kfree(cc->cipher_tfm.tfms_diskc);
++	cc->cipher_tfm.tfms_diskc = NULL;
++}
++
++
+ static void crypt_free_tfms(struct crypt_config *cc)
+ {
+ 	if (crypt_integrity_aead(cc))
+ 		crypt_free_tfms_aead(cc);
++	else if (crypt_mode_diskcipher(cc))
++		crypt_free_tfms_diskcipher(cc);
+ 	else
+ 		crypt_free_tfms_skcipher(cc);
+ }
+@@ -1934,6 +1973,7 @@ static int crypt_alloc_tfms_skcipher(struct
+crypt_config *cc, char *ciphermode)
+ 			return err;
+ 		}
+ 	}
++	set_bit(CRYPT_MODE_SKCIPHER, &cc->cipher_flags);
+ 
+ 	/*
+ 	 * dm-crypt performance can vary greatly depending on which crypto
+@@ -1965,10 +2005,34 @@ static int crypt_alloc_tfms_aead(struct crypt_config
+*cc, char *ciphermode)
+ 	return 0;
+ }
+ 
++static int crypt_alloc_tfms_diskcipher(struct crypt_config *cc,
++				char *ciphermode)
++{
++	int err;
++
++	cc->cipher_tfm.tfms = kmalloc(sizeof(struct crypto_aead *),
+GFP_KERNEL);
++	if (!cc->cipher_tfm.tfms)
++		return -ENOMEM;
++
++	cc->cipher_tfm.tfms_diskc[0] =
++	    crypto_alloc_diskcipher(ciphermode, 0, 0, 1);
++	if (IS_ERR(cc->cipher_tfm.tfms_diskc[0])) {
++		err = PTR_ERR(cc->cipher_tfm.tfms_diskc[0]);
++		crypt_free_tfms(cc);
++		pr_err("%s: no diskcipher with %s\n", __func__, ciphermode);
++		return err;
++	}
++	pr_info("%s is done with %s\n", __func__, ciphermode);
++
++	return 0;
++}
++
+ static int crypt_alloc_tfms(struct crypt_config *cc, char *ciphermode)
+ {
+ 	if (crypt_integrity_aead(cc))
+ 		return crypt_alloc_tfms_aead(cc, ciphermode);
++	else if (crypt_mode_diskcipher(cc))
++		return crypt_alloc_tfms_diskcipher(cc, ciphermode);
+ 	else
+ 		return crypt_alloc_tfms_skcipher(cc, ciphermode);
+ }
+@@ -2030,6 +2094,11 @@ static int crypt_setkey(struct crypt_config *cc)
+ 			r = crypto_aead_setkey(cc->cipher_tfm.tfms_aead[i],
+ 					       cc->key + (i * subkey_size),
+ 					       subkey_size);
++		else if (crypt_mode_diskcipher(cc))
++			r = crypto_diskcipher_setkey(
++
+cc->cipher_tfm.tfms_diskc[i],
++						cc->key + (i * subkey_size),
++						subkey_size, 1);
+ 		else
+ 			r = crypto_skcipher_setkey(cc->cipher_tfm.tfms[i],
+ 						   cc->key + (i *
+subkey_size),
+@@ -2510,7 +2579,7 @@ static int crypt_ctr_cipher_new(struct dm_target *ti,
+char *cipher_in, char *key
+ 			return -ENOMEM;
+ 		}
+ 		cc->iv_size = crypto_aead_ivsize(any_tfm_aead(cc));
+-	} else
++	} else if (crypt_mode_skcipher(cc))
+ 		cc->iv_size = crypto_skcipher_ivsize(any_tfm(cc));
+ 
+ 	ret = crypt_ctr_blkdev_cipher(cc);
+@@ -2560,6 +2629,9 @@ static int crypt_ctr_cipher_old(struct dm_target *ti,
+char *cipher_in, char *key
+ 	chainmode = strsep(&tmp, "-");
+ 	*ivmode = strsep(&tmp, ":");
+ 	*ivopts = tmp;
++	if (*ivmode)
++		if (!strcmp(*ivmode, "disk") || !strcmp(*ivmode, "fmp"))
++			set_bit(CRYPT_MODE_DISKCIPHER, &cc->cipher_flags);
+ 
+ 	/*
+ 	 * For compatibility with the original dm-crypt mapping format, if
+@@ -2621,9 +2693,11 @@ static int crypt_ctr_cipher(struct dm_target *ti,
+char *cipher_in, char *key)
+ 		return ret;
+ 
+ 	/* Initialize IV */
+-	ret = crypt_ctr_ivmode(ti, ivmode);
+-	if (ret < 0)
+-		return ret;
++	if (!crypt_mode_diskcipher(cc)) {
++		ret = crypt_ctr_ivmode(ti, ivmode);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	/* Initialize and set key */
+ 	ret = crypt_set_key(cc, key);
+@@ -2654,6 +2728,11 @@ static int crypt_ctr_cipher(struct dm_target *ti,
+char *cipher_in, char *key)
+ 	if (cc->key_string)
+ 		memset(cc->key, 0, cc->key_size * sizeof(u8));
+ 
++	pr_info("%s with ivmode:%s, ivopts:%s, aead:%d, diskcipher:%d(%p),
+skcipher:%d\n",
++			__func__, ivmode, ivopts, crypt_integrity_aead(cc),
++			crypt_mode_diskcipher(cc),
+cc->cipher_tfm.tfms_diskc[0],
++			crypt_mode_skcipher(cc));
++
+ 	return ret;
+ }
+ 
+@@ -2788,11 +2867,15 @@ static int crypt_ctr(struct dm_target *ti, unsigned
+int argc, char **argv)
+ 	ret = crypt_ctr_cipher(ti, argv[0], argv[1]);
+ 	if (ret < 0)
+ 		goto bad;
+-
+ 	if (crypt_integrity_aead(cc)) {
+ 		cc->dmreq_start = sizeof(struct aead_request);
+ 		cc->dmreq_start += crypto_aead_reqsize(any_tfm_aead(cc));
+ 		align_mask = crypto_aead_alignmask(any_tfm_aead(cc));
++	} else if (crypt_mode_diskcipher(cc)) {
++		cc->per_bio_data_size = ti->per_io_data_size =
++			ALIGN(sizeof(struct dm_crypt_io),
++			ARCH_KMALLOC_MINALIGN);
++		goto get_bio;
+ 	} else {
+ 		cc->dmreq_start = sizeof(struct skcipher_request);
+ 		cc->dmreq_start += crypto_skcipher_reqsize(any_tfm(cc));
+@@ -2836,6 +2919,7 @@ static int crypt_ctr(struct dm_target *ti, unsigned
+int argc, char **argv)
+ 		goto bad;
+ 	}
+ 
++get_bio:
+ 	ret = bioset_init(&cc->bs, MIN_IOS, 0, BIOSET_NEED_BVECS);
+ 	if (ret) {
+ 		ti->error = "Cannot allocate crypt bioset";
+@@ -2893,6 +2977,12 @@ static int crypt_ctr(struct dm_target *ti, unsigned
+int argc, char **argv)
+ 		goto bad;
+ 	}
+ 
++	if (crypt_mode_diskcipher(cc)) {
++		cc->crypt_queue = NULL;
++		cc->write_thread = NULL;
++		goto out;
++	}
++
+ 	if (test_bit(DM_CRYPT_SAME_CPU, &cc->flags))
+ 		cc->crypt_queue = alloc_workqueue("kcryptd/%s",
+ 						  WQ_HIGHPRI |
+WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM,
+@@ -2918,6 +3008,7 @@ static int crypt_ctr(struct dm_target *ti, unsigned
+int argc, char **argv)
+ 	}
+ 	wake_up_process(cc->write_thread);
+ 
++out:
+ 	ti->num_flush_bios = 1;
+ 
+ 	return 0;
+@@ -2981,10 +3072,10 @@ static int crypt_map(struct dm_target *ti, struct
+bio *bio)
+ 
+ 	if (crypt_integrity_aead(cc))
+ 		io->ctx.r.req_aead = (struct aead_request *)(io + 1);
+-	else
++	else if (crypt_mode_skcipher(cc))
+ 		io->ctx.r.req = (struct skcipher_request *)(io + 1);
+ 
+-	if (bio_data_dir(io->base_bio) == READ) {
++	if ((bio_data_dir(io->base_bio) == READ) ||
+crypt_mode_diskcipher(cc)) {
+ 		if (kcryptd_io_read(io, GFP_NOWAIT))
+ 			kcryptd_queue_read(io);
+ 	} else
+@@ -3143,6 +3234,9 @@ static void crypt_io_hints(struct dm_target *ti,
+struct queue_limits *limits)
+ 	limits->physical_block_size =
+ 		max_t(unsigned, limits->physical_block_size,
+cc->sector_size);
+ 	limits->io_min = max_t(unsigned, limits->io_min, cc->sector_size);
++
++	if (crypt_mode_diskcipher(cc))
++		limits->logical_block_size = PAGE_SIZE;
+ }
+ 
+ static struct target_type crypt_target = {
 -- 
 2.7.4
 
