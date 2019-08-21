@@ -2,68 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F8A498441
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 21:23:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E478984C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 21:48:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729379AbfHUTWn convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 15:22:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34116 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727998AbfHUTWn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 15:22:43 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F0F5630833CB;
-        Wed, 21 Aug 2019 19:22:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C53C04513;
-        Wed, 21 Aug 2019 19:22:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1566402203.5162.12.camel@linux.ibm.com>
-References: <1566402203.5162.12.camel@linux.ibm.com> <1562814435.4014.11.camel@linux.ibm.com> <28477.1562362239@warthog.procyon.org.uk> <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com> <20190710194620.GA83443@gmail.com> <20190710201552.GB83443@gmail.com> <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com> <23498.1565962602@warthog.procyon.org.uk>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
-        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
+        id S1730156AbfHUTsN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 15:48:13 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41199 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730137AbfHUTsM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Aug 2019 15:48:12 -0400
+Received: by mail-qt1-f194.google.com with SMTP id i4so4534611qtj.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 12:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RKaQWnWiA/zCcExfi75lqB9ALEnDHuRristulqneTd4=;
+        b=VF//ZkIgb0ccMf/fYMR8ys1oZHmy5JRKO8S8IVnwY93iOCu/W7+tqrcWFw+5rldxNI
+         aOtLu3PsXm0Him3edXbZNXCIhRk5dw4XYfKu4e3yv8iN/mxXDcev7A64Goh60uRoeToj
+         KsbYARzI5dfW3WUW2nHR+o8WkktwHJGaehfIiJX8Npx8V5kKAL0zIUWne13iFi3yzfE0
+         Mr3GgB9fCwjOgBICH92Ndb17k2AjhI3vfLJVcZ59QAI/xkGuigPoWEVo0xwQOrmHgZvG
+         +llknKnaKUAXOzinx5ExtHyGDbPgE5bGB/pnb1FjLysYXUDhwnplOXXe90luAkrxNaEF
+         /MsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RKaQWnWiA/zCcExfi75lqB9ALEnDHuRristulqneTd4=;
+        b=PdhRdmUlM2QYpZ36LpX28QK+Yxd/RR3nB1PVSV+F3unqTM8mNKeCInw2PTNQXkIRA4
+         fOlVD9kEE80VyzyDxmjpMrcOoJoqG0USBZHz3X6e2v6csNSR0izxFVtg66ZWLdUSsSB9
+         Qxe8S1gm6MXEvVMFAZlE+TrAcyAKHof4ADTdqIIIdUJVRXiic9BPtF9wqZXhTRjsoFfA
+         7remRHLvf5/5N97v14HNJAr54Y9tV0CnhHZL3MDC7LPP1ZJmwoEd+lsT7figQL3NMCa5
+         oqB6+zGOJm3VIWN3at5PuPcqWNb56ovMXFS/b6Vh4CvyNbORhb8aDeXkD19cXkcDxjiC
+         iAZA==
+X-Gm-Message-State: APjAAAVn7tt1Tu363ly4IKWkCNQ+h4bKe3kAddpOnxVXiv/EZGhYMh5N
+        psgX2/jfx6e2coPQcg+ty6Qq1A==
+X-Google-Smtp-Source: APXvYqynnJZ0Zi7g4jGmr+xM0aj4NgAU3mYFQCm90qX+6uBLqZGFaKsA8ELnMbT3xzkDRjmj+/uCGg==
+X-Received: by 2002:ac8:468f:: with SMTP id g15mr33328922qto.353.1566416891773;
+        Wed, 21 Aug 2019 12:48:11 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id q62sm11253497qkb.69.2019.08.21.12.48.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Aug 2019 12:48:11 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1i0WaY-0005kK-I1; Wed, 21 Aug 2019 16:48:10 -0300
+Date:   Wed, 21 Aug 2019 16:48:10 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+Message-ID: <20190821194810.GI8653@ziepe.ca>
+References: <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
+ <20190817022603.GW6129@dread.disaster.area>
+ <20190819063412.GA20455@quack2.suse.cz>
+ <20190819092409.GM7777@dread.disaster.area>
+ <20190819123841.GC5058@ziepe.ca>
+ <20190820011210.GP7777@dread.disaster.area>
+ <20190820115515.GA29246@ziepe.ca>
+ <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
+ <20190821181343.GH8653@ziepe.ca>
+ <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19087.1566415359.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 21 Aug 2019 20:22:39 +0100
-Message-ID: <19088.1566415359@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 21 Aug 2019 19:22:43 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I added a bunch of tests to the keyutils testsuite, currently on my -next
-branch:
+On Wed, Aug 21, 2019 at 11:57:03AM -0700, Ira Weiny wrote:
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/log/?h=next
+> > Oh, I didn't think we were talking about that. Hanging the close of
+> > the datafile fd contingent on some other FD's closure is a recipe for
+> > deadlock..
+> 
+> The discussion between Jan and Dave was concerning what happens when a user
+> calls
+> 
+> fd = open()
+> fnctl(...getlease...)
+> addr = mmap(fd...)
+> ib_reg_mr() <pin>
+> munmap(addr...)
+> close(fd)
 
-See:
+I don't see how blocking close(fd) could work. Write it like this:
 
-	Add a keyctl command for granting a permit on a key
-	Handle kernel having key/keyring ACLs
+ fd = open()
+ uverbs = open(/dev/uverbs)
+ fnctl(...getlease...)
+ addr = mmap(fd...)
+ ib_reg_mr() <pin>
+ munmap(addr...)
+  <sigkill>
 
-I've added manpages to describe the new bits, but I wonder whether I should
-add a manpage specifically to detail the permissions system.  It'll probably
-be useful when more advanced subjects become available, such as for specific
-UIDs and for containers-as-a-whole.
+The order FD's are closed during sigkill is not deterministic, so when
+all the fputs happen during a kill'd exit we could end up blocking in
+close(fd) as close(uverbs) will come after in the close
+list. close(uverbs) is the thing that does the dereg_mr and releases
+the pin.
 
-David
+We don't need complexity with dup to create problems.
+
+Jason
