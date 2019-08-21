@@ -2,118 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1113596DF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 01:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0072196E00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 02:03:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbfHTXz5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 19:55:57 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44270 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfHTXz4 (ORCPT
+        id S1726441AbfHUADV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Aug 2019 20:03:21 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33727 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfHUADV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 19:55:56 -0400
-Received: by mail-io1-f66.google.com with SMTP id j4so908990iop.11;
-        Tue, 20 Aug 2019 16:55:56 -0700 (PDT)
+        Tue, 20 Aug 2019 20:03:21 -0400
+Received: by mail-io1-f67.google.com with SMTP id z3so1078413iog.0;
+        Tue, 20 Aug 2019 17:03:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4VN45UlY/SIJMvVnIZBAGdkV8k84Qdp5IWpvTMUhkzY=;
-        b=DQs9BH3MbWD824XQ9LknEVh4mBDWxQgOXPr3k3XaYm/i+UznQX9+zpqyV1e0ujAhLX
-         yIGLbYK7wsSemDexIqkG+yczIxazaXV0qHsz2dOArvnfonGoeTivGguUskjEPVVBGTCY
-         ep3jM/+8iMqf7pcnNokfpxmxQw1TxsHWDnwmk/ERlx9FqwcLhi1zo9Y6CvwL1RLr3mmN
-         8NFHzlSynlP203ULWA8V6PFzoiVo3rDxWy1kTCaImo6zxZIYsWRQTZuxBPbNneo5L043
-         K87d3ryu3AhfZKP+gAOc/cHW1Ol7f3ESaA3xa43c6JM9Ftj9g+xUagXx/evITyjXP0JY
-         1nSg==
+        bh=/hK0xzub3tYFlOXLUKC5HkLTnr9OcFK2afBoeU8vIos=;
+        b=GUqixZEM/qGpnaXHE1DfSi29Qd96gfn+y1YZOG1EbLraVdbnrXZEsNAtIYIEzXLdNZ
+         R1V6Hn8lq//P+bJ4T6hBbCrp/flZP1FD0ZVNhvUaLfrFZbYBBODVrtcvGcRg94IrlxBV
+         5OymAdN1L9sc05Wt1nrnW/adiwy0RVXc8JYYKaJLppCLI3VUuvyxdBZULHcqVPQW2tQG
+         dO1aeud5wcCfb+0YOeoT8elQVyOuc+4leLAVRqDgAO5ROGlq/3vEhQ7FUHA1nm05j4Dx
+         oCTjkIfS2zxQAjNfBvptmOGWiLsV0veBHitA3CkofTU7FV/4R2b/iRgwmvRy8zkU6SSD
+         f9Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4VN45UlY/SIJMvVnIZBAGdkV8k84Qdp5IWpvTMUhkzY=;
-        b=uC1wAKrnGsxu77HjCXI3BPbxWo8ovcgMssR1LzOk6P8YnCARDw7TVH+f8JTOeq10BW
-         o7PXClihVYcHZyYjj+bx7C4VdvsR0MhQkiUpiGbkBOyMLGQjBGwPNG0HAfufVI8OkBu7
-         6nSro0x/o9Sdkx9dSud7wGxxmfiwx3aaLnhNmpSfLlDtPdhNu7d89SQXmQbhacK1vwvl
-         uIoOxWD8tZBv4CCRrUDXI+ccdC/sfb72wmWEBOE+vs3ULqwTd+T5kI7aQYoQNwT0uxph
-         eakLAYoJVxq51ocTWKMLHcfr6r9wc3mbM5+VSC0s3nGdBZN6tWAsmouCbE6Im1f4CdzS
-         e6Gw==
-X-Gm-Message-State: APjAAAXg1x97Mu5v+MHwocFTW622UlnW8De7OkqvzdoDA3kfyhtKuE4a
-        SxUhn3eoIEgAxyTqUYfGg4uitynOrHiXwoPaCxc=
-X-Google-Smtp-Source: APXvYqytxeS8L53oS7anlww6mkD6FxkkzlRqfznDU7NbmJRw48l356kP3488N8SKcyiC4ya2h0Aal4wUfTXOt3XuobM=
-X-Received: by 2002:a6b:ed09:: with SMTP id n9mr1843806iog.153.1566345355817;
- Tue, 20 Aug 2019 16:55:55 -0700 (PDT)
+        bh=/hK0xzub3tYFlOXLUKC5HkLTnr9OcFK2afBoeU8vIos=;
+        b=fntfm2dWtsagSMnMT1zb1RFo4nMkU2YwNEMuPkrjWvrTfe+sdyGdnLcav8inXQpNW7
+         Je2U8KxvToS/b4KpQFIPbEGW5drwpB9qLWKATLI56q8rMRXhWQrs6L0FGZAKfu38p94L
+         7qMp6zZWjppgE2lwEVO1okrI5xboePQa/71nnP6ekvvCQUnk1I0kOiDkIQgYRfxiJOmp
+         42vdJTc4urcXT7xfdE/281aT+sovF/YJIHfeU+koILC9Jo8RpWPmHrle3tFTQKF9YUFU
+         +wCPI4duzi/caEjqKz38HIbyV/TA5UyFOgSgZkTjMnh79H6NAViiisPj4isK5OUTgRgm
+         C6Tw==
+X-Gm-Message-State: APjAAAVoL50Vg71oceKyXiqFcwLhCXM0zgk7sF67fCNwyneLLgxUSY97
+        SEMyKoDaUuf5igyT7kaxqOYOpM+vvzhJ7+n1akM=
+X-Google-Smtp-Source: APXvYqwsCp2QRaWKlcwHARTdMz/Hzj+coQq02t1hRapfNDDGet0cC76VvV2Lj4s9gi2N9qNvwM9dWQQw1EIRgNhtm+s=
+X-Received: by 2002:a02:10:: with SMTP id 16mr6836969jaa.96.1566345800395;
+ Tue, 20 Aug 2019 17:03:20 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190818165817.32634-1-deepa.kernel@gmail.com>
- <20190818165817.32634-9-deepa.kernel@gmail.com> <20190820162856.GA21274@bombadil.infradead.org>
-In-Reply-To: <20190820162856.GA21274@bombadil.infradead.org>
+ <20190818165817.32634-20-deepa.kernel@gmail.com> <201908200018.8C876788@keescook>
+In-Reply-To: <201908200018.8C876788@keescook>
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Tue, 20 Aug 2019 16:55:44 -0700
-Message-ID: <CABeXuvoLHW2fYSNVC=N9tfNRtuq8Xg3QmqfcfMJEsCN5rEvuog@mail.gmail.com>
-Subject: Re: [PATCH v8 08/20] adfs: Fill in max and min timestamps in sb
-To:     Matthew Wilcox <willy@infradead.org>
+Date:   Tue, 20 Aug 2019 17:03:08 -0700
+Message-ID: <CABeXuvpjgE6azA27y8MTpnJ9QogLCPbXrmbDny16tkuAJytcsw@mail.gmail.com>
+Subject: Re: [PATCH v8 19/20] pstore: fs superblock limits
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         y2038 Mailman List <y2038@lists.linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 9:28 AM Matthew Wilcox <willy@infradead.org> wrote:
+On Tue, Aug 20, 2019 at 12:20 AM Kees Cook <keescook@chromium.org> wrote:
 >
-> On Sun, Aug 18, 2019 at 09:58:05AM -0700, Deepa Dinamani wrote:
-> > Note that the min timestamp is assumed to be
-> > 01 Jan 1970 00:00:00 (Unix epoch). This is consistent
-> > with the way we convert timestamps in adfs_adfs2unix_time().
+> On Sun, Aug 18, 2019 at 09:58:16AM -0700, Deepa Dinamani wrote:
+> > Leaving granularity at 1ns because it is dependent on the specific
+> > attached backing pstore module. ramoops has microsecond resolution.
+> >
+> > Fix the readback of ramoops fractional timestamp microseconds,
+> > which has incorrectly been reporting the value as nanoseconds since
+> > 3f8f80f0 ("pstore/ram: Read and write to the 'compressed' flag of pstore").
 >
-> That's not actually correct.  RISC OS timestamps are centiseconds since
-> 1900 stored in 5 bytes.
+> As such, this should also have:
+>
+> Fixes: 3f8f80f0cfeb ("pstore/ram: Read and write to the 'compressed' flag of pstore")
 
-The timestamp can hold earlier values but the fs implementation
-explicitly rejects those in adfs_adfs2unix_time() too_early check.
-We could fix the implementation to not throw away times before 1970.
-Are you suggesting we want to do this?
-I could post a separate patch to fix this or we could do it as part of
-the series.
+Will add that in. Thanks.
 
- static void
- adfs_adfs2unix_time(struct timespec64 *tv, struct inode *inode)
- {
-         unsigned int high, low;
-         static const s64 nsec_unix_epoch_diff_risc_os_epoch =
-RISC_OS_EPOCH_DELTA * NSEC_PER_SEC;
-         s64 nsec;
+> > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> > Acked-by: Kees Cook <keescook@chromium.org>
+>
+> Also: this is going via some other tree, yes? (Or should I pick this up
+> for the pstore tree?)
 
-         if (!adfs_inode_is_stamped(inode))
-                 goto cur_time;
-
-         high = ADFS_I(inode)->loadaddr & 0xFF; /* top 8 bits of timestamp */
-         low  = ADFS_I(inode)->execaddr;    /* bottom 32 bits of timestamp */
-
-         /* convert 40-bit centi-seconds to 32-bit seconds
-          * going via nanoseconds to retain precision
-          */
-         nsec = (((s64) high << 32) | (s64) low) * 10000000; /* cs to ns */
-
-         /* Files dated pre  01 Jan 1970 00:00:00. */
-         if (nsec < nsec_unix_epoch_diff_risc_os_epoch)
-                 goto too_early;
-
-         /* convert from RISC OS to Unix epoch */
-         nsec -= nsec_unix_epoch_diff_risc_os_epoch;
-
-         *tv = ns_to_timespec64(nsec);
-         return;
-
-  cur_time:
-         *tv = current_time(inode);
-         return;
-
-  too_early:
-         tv->tv_sec = tv->tv_nsec = 0;
-         return;
- }
+I am hoping Al can take the series as a whole.
 
 -Deepa
