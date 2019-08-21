@@ -2,108 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C338D97090
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 05:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FFA970AF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2019 06:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbfHUDz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Aug 2019 23:55:58 -0400
-Received: from 2.152.176.113.dyn.user.ono.com ([2.152.176.113]:36802 "EHLO
-        pulsar.hadrons.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbfHUDz5 (ORCPT
+        id S1727378AbfHUEEC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 00:04:02 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18789 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727335AbfHUEEB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Aug 2019 23:55:57 -0400
-X-Greylist: delayed 1074 seconds by postgrey-1.27 at vger.kernel.org; Tue, 20 Aug 2019 23:55:56 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hadrons.org
-        ; s=201908; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=Y/aHT4MYLaye6HK+sQi6zX4qI4fkCoiILg3MznRvPso=; b=msEuF30t8SwyqIY71h/bo34ebC
-        oZgNFChUPgMS3OvuOXcpTZj434SxKIDn31LeeZZ16jQM/wECsWgZPrbYIY3Ruwal8Q0MBvFlxl8sr
-        INOGtofV2CcTLl3bMFJsUPIFo7Rs160RCYu6za+5LvaDKJt3sLL2mHBw+SvqwIgdkrRA/pw4KYVpK
-        6c8to36xOCQQjKBrfL+lSAcBFALvcZCoOB87gqeqw/395wwrgI847+IXHmGyBJgoVVMtAJQo2I3AH
-        zrCNcfdbUiN4UGGqxMCBfscx6DGpxb1YA740zKnHBNB2pt7PkiHo6GjCIbKVeynPvJ14gQR9DYDIy
-        M0PbxzrQ==;
-Received: from guillem by pulsar.hadrons.org with local (Exim 4.92)
-        (envelope-from <guillem@hadrons.org>)
-        id 1i0HSK-0003gy-H2; Wed, 21 Aug 2019 05:38:40 +0200
-From:   Guillem Jover <guillem@hadrons.org>
-To:     linux-aio@kvack.org
-Cc:     Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] aio: Fix io_pgetevents() struct __compat_aio_sigset layout
-Date:   Wed, 21 Aug 2019 05:38:20 +0200
-Message-Id: <20190821033820.14155-1-guillem@hadrons.org>
-X-Mailer: git-send-email 2.20.1
+        Wed, 21 Aug 2019 00:04:01 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5cc2ad0000>; Tue, 20 Aug 2019 21:03:57 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 20 Aug 2019 21:03:57 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 20 Aug 2019 21:03:57 -0700
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
+ 2019 04:03:57 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
+ 2019 04:03:56 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 21 Aug 2019 04:03:56 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d5cc2ac0000>; Tue, 20 Aug 2019 21:03:56 -0700
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Andy Whitcroft" <apw@canonical.com>,
+        Joe Perches <joe@perches.com>,
+        "Gilad Ben-Yossef" <gilad@benyossef.com>,
+        Ofir Drang <ofir.drang@arm.com>
+Subject: [PATCH 1/4] checkpatch: revert broken NOTIFIER_HEAD check
+Date:   Tue, 20 Aug 2019 21:03:52 -0700
+Message-ID: <20190821040355.19566-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.22.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566360237; bh=b0DVOtsBG53vqmQyIWzNnfUqAU65Pon9C8BrFwFcc1M=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=RCYmMjup+49b/+zlM0P/oVeE+gZMo0wjyYY2EUAhT1rekOgnfipguhjJHZ7SBUwr+
+         pA8/CDo2+IUJmyYtpK8ZnPHRk2seQr5lND0QkjR1ZMaqCQbH262dqNVO+054zFEbK8
+         uT1cXvR2T/upHLCdRwlLnU0fef5Fv5lcInQ5Cfysp8XIKy+z4tGs9wj2VtdkhKSfYf
+         k7b+QtXH4UP+aWWme7vPSCeQi5BYwUuyup4McTAZ90K3ZlxcpxwdEdVIYvsR97Tpu5
+         7QZCtVVMikBs3kYXP0ChmL0Bf1c2nZv8olUfiEi1ld5I/1Fk38nFdgtANUfGh9Pioz
+         BJhhcSmhgBkLg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This type is used to pass the sigset_t from userland to the kernel,
-but it was using the kernel native pointer type for the member
-representing the compat userland pointer to the userland sigset_t.
+commit 1a47005dd5aa ("checkpatch: add *_NOTIFIER_HEAD as var
+definition") causes the following warning when run on some
+patches:
 
-This messes up the layout, and makes the kernel eat up both the
-userland pointer and the size members into the kernel pointer, and
-then reads garbage into the kernel sigsetsize. Which makes the sigset_t
-size consistency check fail, and consequently the syscall always
-returns -EINVAL.
+Unescaped left brace in regex is passed through in regex;
+marked by < --HERE in m/(?:
+...
+   [238 lines of appalling perl output, mercifully not included]
+...
+)/ at ./scripts/checkpatch.pl line 3889.
 
-This breaks both libaio and strace on 32-bit userland running on 64-bit
-kernels. And there are apparently no users in the wild of the current
-broken layout (at least according to codesearch.debian.org and a brief
-check over github.com search). So it looks safe to fix this directly
-in the kernel, instead of either letting userland deal with this
-permanently with the additional overhead or trying to make the syscall
-infer what layout userland used, even though this is also being worked
-around in libaio to temporarily cope with kernels that have not yet
-been fixed.
+This is broken, so revert it until a better solution is found.
 
-We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
+Fixes: 1a47005dd5aa ("checkpatch: add *_NOTIFIER_HEAD as var
+definition")
 
-Fixes: 7a074e96 ("aio: implement io_pgetevents")
-Signed-off-by: Guillem Jover <guillem@hadrons.org>
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Ofir Drang <ofir.drang@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- fs/aio.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ scripts/checkpatch.pl | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 01e0fb9ae45a..056f291bc66f 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -2179,7 +2179,7 @@ SYSCALL_DEFINE5(io_getevents_time32, __u32, ctx_id,
- #ifdef CONFIG_COMPAT
- 
- struct __compat_aio_sigset {
--	compat_sigset_t __user	*sigmask;
-+	compat_uptr_t		sigmask;
- 	compat_size_t		sigsetsize;
- };
- 
-@@ -2204,7 +2204,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
- 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
- 		return -EFAULT;
- 
--	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
-+	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
- 	if (ret)
- 		return ret;
- 
-@@ -2239,7 +2239,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
- 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
- 		return -EFAULT;
- 
--	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
-+	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
- 	if (ret)
- 		return ret;
- 
--- 
-2.23.0
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 5c00151cdee8..284eb4bd84aa 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3891,7 +3891,6 @@ sub process {
+ 				^.DEFINE_$Ident\(\Q$name\E\)|
+ 				^.DECLARE_$Ident\(\Q$name\E\)|
+ 				^.LIST_HEAD\(\Q$name\E\)|
+-				^.{$Ident}_NOTIFIER_HEAD\(\Q$name\E\)|
+ 				^.(?:$Storage\s+)?$Type\s*\(\s*\*\s*\Q$name\E\s*\)\s*\(|
+ 				\b\Q$name\E(?:\s+$Attribute)*\s*(?:;|=3D|\[|\()
+ 			    )/x) {
+--=20
+2.22.1
 
