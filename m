@@ -2,83 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CFA298C83
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 09:43:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2310898DC6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 10:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731616AbfHVHmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 03:42:52 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52075 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731525AbfHVHmw (ORCPT
+        id S1731507AbfHVIdP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 04:33:15 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51196 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbfHVIdP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 03:42:52 -0400
-Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7M7gR6B078219;
-        Thu, 22 Aug 2019 16:42:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
- Thu, 22 Aug 2019 16:42:27 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7M7gQ1A078163;
-        Thu, 22 Aug 2019 16:42:26 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x7M7gQJW078160;
-        Thu, 22 Aug 2019 16:42:26 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201908220742.x7M7gQJW078160@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on sockets.
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
-        "David S. Miller" <davem@davemloft.net>
+        Thu, 22 Aug 2019 04:33:15 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v15so4742685wml.0;
+        Thu, 22 Aug 2019 01:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7EauMan5wC2oHmJwa9VSCeeLzs1qH85S7tn6KqheO0Y=;
+        b=OQ7p6IVC1NIw7fex5ur1IYa1YmEGcmleiVeN1rAeX0LVjJz/+s8L+/4nTeG0Tr2Zm7
+         KOdjCjmLzgRxyDZjhzwqrfcOYWmX7FWZv8dwg8zAJOdeAQqNRxSiTXIiw7hwH7dofsmW
+         CMveJQR7Vtpbpz95ituoxFtAjIhxDa0pF6ZgZvqZuaiPAe4Z75dCgIrcLYaoBDHnN0vF
+         r7jwHMqyAir8eYR8R4oYIEpdspGiSRf1vVIYgjpklTqJSbOTmKcQuUOGJxlneCaO5wD3
+         hyXv99UXj/cNZ92Fi/DurOZsSnoGXeDaOwQDzubRKWZ6rB0ZDZaABc4b6rWXLOuYikjn
+         7Fkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7EauMan5wC2oHmJwa9VSCeeLzs1qH85S7tn6KqheO0Y=;
+        b=ip+UcbIt20XKBAPtc6xuI9SVPVFBbUHzVc+oPyAJc3weaz78VJ7HXYJC4L2r+uGFWV
+         3MF+Admcon4HKRK8kQNcVwFjhFe5mhpW3WJO8NUlVTe+ngtN60AepJQyCICMPXTBdSIv
+         OXnWN/LMWjwoBT7z4yTRB+jRHRt1HgcqgHdl2SZgqEGVJ5FuFdTTKCxxRcd896Rmg14a
+         WAjgm3366k87/Csu+Ix7xYh5mF4hZnH2TAU90YDezr7gc2yyXsRcepLS/g14IvoDVYDs
+         EJjKNZLSATIY9gv3L8qj0niFle3/b6mLXxingapjB1byWcSoOZgwZCn/sNE2rGEGowHe
+         zy6g==
+X-Gm-Message-State: APjAAAV10Ut5CLAsGAMpKzauMCpgjU2m3f/jPCEF8dcvpO94AC6mRyZC
+        aeRPktJMDSfvfpHgV66Ja5/7ZybYFtEDff9F1HM=
+X-Google-Smtp-Source: APXvYqwp3ugo/OV/r/Cwj2DfvvMbvNm+soB016hMmOviIAU2t8QWMrxQSxMeAbb9I1qyMe3BKgqWpfLfM68frYMNOPU=
+X-Received: by 2002:a7b:c155:: with SMTP id z21mr4840886wmi.137.1566462793252;
+ Thu, 22 Aug 2019 01:33:13 -0700 (PDT)
 MIME-Version: 1.0
-Date:   Thu, 22 Aug 2019 16:42:26 +0900
-References: <201908220655.x7M6tVmv029579@www262.sakura.ne.jp> <20190822070129.GL6111@zzz.localdomain>
-In-Reply-To: <20190822070129.GL6111@zzz.localdomain>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+References: <1323459733.69859.1566234633793.JavaMail.zimbra@nod.at>
+ <20190819204504.GB10075@hsiangkao-HP-ZHAN-66-Pro-G1> <CAFLxGvxr2UMeVa29M9pjLtWMFPz7w6udRV38CRxEF1moyA9_Rw@mail.gmail.com>
+ <20190821220251.GA3954@hsiangkao-HP-ZHAN-66-Pro-G1>
+In-Reply-To: <20190821220251.GA3954@hsiangkao-HP-ZHAN-66-Pro-G1>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Thu, 22 Aug 2019 10:33:01 +0200
+Message-ID: <CAFLxGvzLPgD22pVOV_jz1EvC-c7YU_2dEFbBt4q08bSkZ3U0Dg@mail.gmail.com>
+Subject: Re: erofs: Question on unused fields in on-disk structs
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers wrote:
-> On Thu, Aug 22, 2019 at 03:55:31PM +0900, Tetsuo Handa wrote:
-> > > Also, isn't the same bug in other places too?:
-> > > 
-> > > 	- tomoyo_path_chmod()
-> > > 	- tomoyo_path_chown()
-> > > 	- smack_inode_getsecurity()
-> > > 	- smack_inode_setsecurity()
-> > 
-> > What's the bug? The file descriptor returned by open(O_PATH) cannot be
-> > passed to read(2), write(2), fchmod(2), fchown(2), fgetxattr(2), mmap(2) etc.
-> > 
-> 
-> chmod(2), chown(2), getxattr(2), and setxattr(2) take a path, not a fd.
-> 
+On Thu, Aug 22, 2019 at 12:03 AM Gao Xiang <hsiangkao@aol.com> wrote:
+>
+> Hi Richard,
+>
+> On Wed, Aug 21, 2019 at 11:37:30PM +0200, Richard Weinberger wrote:
+> > Gao Xiang,
+> >
+> > On Mon, Aug 19, 2019 at 10:45 PM Gao Xiang via Linux-erofs
+> > <linux-erofs@lists.ozlabs.org> wrote:
+> > > > struct erofs_super_block has "checksum" and "features" fields,
+> > > > but they are not used in the source.
+> > > > What is the plan for these?
+> > >
+> > > Yes, both will be used laterly (features is used for compatible
+> > > features, we already have some incompatible features in 5.3).
+> >
+> > Good. :-)
+> > I suggest to check the fields being 0 right now.
+> > Otherwise you are in danger that they get burned if an mkfs.erofs does not
+> > initialize the fields.
+>
+> Sorry... I cannot get the point...
 
-OK. Then, is the correct fix
+Sorry for being unclear, let me explain in more detail.
 
-  inode_lock(inode);
-  if (SOCKET_I(inode)->sk) {
-    // Can access SOCKET_I(sock)->sk->*
-  } else {
-    // Already close()d. Don't touch.
-  }
-  inode_unlock(inode);
+> super block chksum could be a compatible feature right? which means
+> new kernel can support it (maybe we can add a warning if such image
+> doesn't have a chksum then when mounting) but old kernel doesn't
+> care it.
 
-thanks to
+Yes. But you need some why to indicate that the chksum field is now
+valid and must be used.
 
-  commit 6d8c50dcb029872b ("socket: close race condition between sock_close() and sockfs_setattr()")
-  commit ff7b11aa481f682e ("net: socket: set sock->sk to NULL after calling proto_ops::release()")
+The features field can be used for that, but you don't use it right now.
+I recommend to check it for being 0, 0 means then "no features".
+If somebody creates in future a erofs with more features this code
+can refuse to mount because it does not support these features.
 
-changes?
+But be very sure that existing erofs filesystems actually have this field
+set to 0 or something other which is always the same.
+Otherwise you cannot use the field anymore because it could be anything.
+A common bug is that the mkfs program keeps such unused fields
+uninitialized and then it can be a more or less random value without
+notice.
+
+> Or maybe you mean these reserved fields? I have no idea all other
+> filesystems check these fields to 0 or not... But I think it should
+> be used with some other flag is set rather than directly use, right?
+
+Basically you want a way to know when a field shall be used and when not.
+Most filesystems have version/feature fields. Often multiple to denote different
+levels of compatibility.
+
+-- 
+Thanks,
+//richard
