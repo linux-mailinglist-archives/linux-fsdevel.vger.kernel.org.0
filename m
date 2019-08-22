@@ -2,85 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0506998C76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 09:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CFA298C83
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 09:43:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731615AbfHVHdJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 03:33:09 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42517 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbfHVHdJ (ORCPT
+        id S1731616AbfHVHmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 03:42:52 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52075 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731525AbfHVHmw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 03:33:09 -0400
-Received: by mail-pf1-f194.google.com with SMTP id i30so3335629pfk.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 00:33:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition;
-        bh=GFPIU3HG0M4VBLKCagBRqf2xANHNJKxYGKLnGfhfjjE=;
-        b=bSlLtBizq89/eOMaP5JrccDfJSCz1rwoF5GhRste+iBjy5C/XWnkeHpontUNxFvad8
-         OaABzIbntZkh+BCjwcTeUVnZDMr2cFkRUbn9HXMtFENuP58YUe2x0nJIeB2GsYfrjE/n
-         5jvREKcyBVexALzw0TkZlvIzFb54ZtG9TIs9oQqA2NyqwXC03s2ZuGZfCgRekQbcXho+
-         JPJkuTBGfkDkUlQsXPjP5F6p4jDUzvbB2YkmaagPAx3Cm4TR2jlKymo59i0JcfIyLOqh
-         w5ZYl2GvvxfDgxVcXBNn6qtlP/yEE1FWiHEwrr6/IKyT88EQTv0qW6Eei8faPwsqBAbh
-         zi/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition;
-        bh=GFPIU3HG0M4VBLKCagBRqf2xANHNJKxYGKLnGfhfjjE=;
-        b=dVLLJgGKUCJBz6BTOK3Mhfp8hX6cf6YdpvL/spdreOLPFiB7hbToOpuaQbvWfRi20d
-         a5XAe/MzcBq22OX70huoSq1wrDWFj9FCdDpCi+zaWDlT4LXTx5EPPiTY8U8O4g4U+aH5
-         EKkJ5Pqj1Nl1/RBaGgH7uHn0C0flhY/KgNhNakQgnjGCFyxzVikwz1cCdgknPVQQ6Npe
-         HBiaqftvXi1KXjTAFbrfe34ZA44llrMruMckpin+wswVZhJBKctO0RD0srrfvqK9R1hW
-         i+2kBtaEo3f7fFYuD1kEvHgIdrtJ9vTy3MhwvPF8V9ybaUNB7CzdlXr/2yGqpNIFy8qJ
-         dAqQ==
-X-Gm-Message-State: APjAAAVeBKkjb2M02ePsTu+ehsu/k7+Hr0IKI9N18ub/f5NdZtY1BFyn
-        gkqsGkGfWjGFU9rEb8ZBWhtg0aWj
-X-Google-Smtp-Source: APXvYqxjld18WdZ7pRq+5LZWWlZh3AOZX6Wi3D3vDcERG7Rk8C4ZSrylLGcCNAEHfgs3SFzIExR7+A==
-X-Received: by 2002:a63:7a06:: with SMTP id v6mr1207570pgc.115.1566459188249;
-        Thu, 22 Aug 2019 00:33:08 -0700 (PDT)
-Received: from localhost ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id z24sm39650153pfr.51.2019.08.22.00.33.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Aug 2019 00:33:07 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 15:33:00 +0800
-From:   Murphy Zhou <jencce.kernel@gmail.com>
-To:     miklos@szeredi.hu, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs/open.c: update {m,c}time for truncate
-Message-ID: <20190822073300.6ljb36ieah5g2p55@XZHOUW.usersys.redhat.com>
+        Thu, 22 Aug 2019 03:42:52 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7M7gR6B078219;
+        Thu, 22 Aug 2019 16:42:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Thu, 22 Aug 2019 16:42:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7M7gQ1A078163;
+        Thu, 22 Aug 2019 16:42:26 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x7M7gQJW078160;
+        Thu, 22 Aug 2019 16:42:26 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201908220742.x7M7gQJW078160@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on sockets.
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        "David S. Miller" <davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Date:   Thu, 22 Aug 2019 16:42:26 +0900
+References: <201908220655.x7M6tVmv029579@www262.sakura.ne.jp> <20190822070129.GL6111@zzz.localdomain>
+In-Reply-To: <20190822070129.GL6111@zzz.localdomain>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Just like what we do for ftruncate. (Why not)
-Without this patch, cifs, sometimes NFS, fail to update timestamps
-after truncate call.
+Eric Biggers wrote:
+> On Thu, Aug 22, 2019 at 03:55:31PM +0900, Tetsuo Handa wrote:
+> > > Also, isn't the same bug in other places too?:
+> > > 
+> > > 	- tomoyo_path_chmod()
+> > > 	- tomoyo_path_chown()
+> > > 	- smack_inode_getsecurity()
+> > > 	- smack_inode_setsecurity()
+> > 
+> > What's the bug? The file descriptor returned by open(O_PATH) cannot be
+> > passed to read(2), write(2), fchmod(2), fchown(2), fgetxattr(2), mmap(2) etc.
+> > 
+> 
+> chmod(2), chown(2), getxattr(2), and setxattr(2) take a path, not a fd.
+> 
 
-Signed-off-by: Murphy Zhou <jencce.kernel@gmail.com>
----
- fs/open.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+OK. Then, is the correct fix
 
-diff --git a/fs/open.c b/fs/open.c
-index a59abe3c669a..f247085aaee4 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -107,7 +107,8 @@ long vfs_truncate(const struct path *path, loff_t length)
- 	if (!error)
- 		error = security_path_truncate(path);
- 	if (!error)
--		error = do_truncate(path->dentry, length, 0, NULL);
-+		error = do_truncate(path->dentry, length,
-+				ATTR_MTIME|ATTR_CTIME, NULL);
- 
- put_write_and_out:
- 	put_write_access(inode);
--- 
-2.21.0
+  inode_lock(inode);
+  if (SOCKET_I(inode)->sk) {
+    // Can access SOCKET_I(sock)->sk->*
+  } else {
+    // Already close()d. Don't touch.
+  }
+  inode_unlock(inode);
 
+thanks to
+
+  commit 6d8c50dcb029872b ("socket: close race condition between sock_close() and sockfs_setattr()")
+  commit ff7b11aa481f682e ("net: socket: set sock->sk to NULL after calling proto_ops::release()")
+
+changes?
