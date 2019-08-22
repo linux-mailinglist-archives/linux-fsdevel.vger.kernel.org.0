@@ -2,101 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4F0999FAE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 21:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5E1199FFD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 21:25:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391543AbfHVTRn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 15:17:43 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46571 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391860AbfHVTRn (ORCPT
+        id S2391895AbfHVTZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 15:25:07 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37466 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391707AbfHVTZH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 15:17:43 -0400
-Received: by mail-ot1-f65.google.com with SMTP id z17so6471255otk.13;
-        Thu, 22 Aug 2019 12:17:42 -0700 (PDT)
+        Thu, 22 Aug 2019 15:25:07 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d1so4239194pgp.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 12:25:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=V6iaCvkOKV70LTF1R2QxVbxqJJklSryV7VrfrPuNBPI=;
+        b=WM1U6q3fPx6VAdWuhVbasFSZ7o86MDefD/45MBjids0aZXHG3L567a42cBKkzs82Zy
+         zepTPT7of9GWrAA3oxb/hR24FzE6TL1jBjFt/La5FVBTSo5fAU9pLUw8QsoTi8c39do6
+         K6CLNpIF2TTudMamXSJHhT0QSIy/Gk+Qg06W4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=24eP7T52+CYL2dNJV8R097RDf634lSS5yuSIePFHGwk=;
-        b=eAbrKm5FJNzAHkCS/Z5RTD47hOZKeWADSxBDfsmBNfsJa31aNePzf2DAaBqnqn+TcN
-         cE6/kDiRsa4mthXJs42kKSP5E3jo1dtIjG1EoYi8ecz9tgmWp3xWrNniJhAxNcU5cT6B
-         5N57E849AJefGrd7xA4mMC5jrWcWLH/P0B1gaPs+wEwfvKVe3gEw5/eBrVebsO0CrZPI
-         5ifJJOXkzLBJMYgJr0qz+HSfHrRieVvlty7C3ioBSzq5L+GbxOW5RWJo2esyu3cQuIqh
-         pB38rZMsIIQ6K5avEvVQzxHRuU2q/uGX1GyIjlAADceGGKw5vMCY/+Y+VOIgkQXyOpc0
-         XcQA==
-X-Gm-Message-State: APjAAAUbqws7Ok41kGbUAZJeq/ROhgLjIO9Jcz0rWCtbhYtQusVcm/mR
-        EPc19iKyO2mt6bZtfTqBiPI=
-X-Google-Smtp-Source: APXvYqxop+1c9JiQDuqjxLlVpuweprhgD1ihezKlsMDwXHi6Dx3GUbjgB7f6MqabctH5Zf2GXdALrg==
-X-Received: by 2002:a05:6830:1db2:: with SMTP id z18mr1087490oti.110.1566501462198;
-        Thu, 22 Aug 2019 12:17:42 -0700 (PDT)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id j6sm157680otq.16.2019.08.22.12.17.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Aug 2019 12:17:41 -0700 (PDT)
-Subject: Re: [PATCH v7 08/14] nvmet-core: allow one host per passthru-ctrl
-From:   Sagi Grimberg <sagi@grimberg.me>
-To:     Max Gurtovoy <maxg@mellanox.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Stephen Bates <sbates@raithlin.com>, Jens Axboe <axboe@fb.com>,
-        Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
-References: <20190801234514.7941-1-logang@deltatee.com>
- <20190801234514.7941-9-logang@deltatee.com>
- <05a74e81-1dbd-725f-1369-5ca5c5918db1@mellanox.com>
- <a6b9db95-a7f0-d1f6-1fa2-8dc13a6aa29e@deltatee.com>
- <5717f515-e051-c420-07b7-299bcfcd1f32@mellanox.com>
- <b0921c72-93f1-f67a-c4b3-31baeb1c39cb@grimberg.me>
- <b352c7f1-2629-e72f-9c85-785e0cf7c2c1@mellanox.com>
- <24e2ddd0-4b2a-8092-cf91-df8c0fb482e5@grimberg.me>
-Message-ID: <e4430207-7def-8776-0289-0d58689dc0cd@grimberg.me>
-Date:   Thu, 22 Aug 2019 12:17:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <24e2ddd0-4b2a-8092-cf91-df8c0fb482e5@grimberg.me>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=V6iaCvkOKV70LTF1R2QxVbxqJJklSryV7VrfrPuNBPI=;
+        b=DjxUW/ww9ytmDc9XduqI8SfOZVIj8saFWA2x0ZPikeCju9AAzNr/vKXpmzuSBVxAZS
+         Ld+ZeItwzKeYIeDKd1SMe6CriDKLI4v5t+ekOiCmeRV+5yj2XhVv52f52hXLEiZxub1u
+         CS4xp93c0vzyVo+3Q29eF1p7qdjvj62I7Jd3uEMJVsQM5um/mRWHPjLmQqJrxTZK70Be
+         p1bXhbU+Ne0nMAWPVfyiNOa/y3TcW3fWFOpKmvRCDcYFz5MoqyEB5jGV0tzDZ3UT7YQU
+         l4qcOhZR8FGJ56ZBAK13IYbPNi+frx2oN/BzETmPQnlBIRu7zS2+yDatGNKon+vH7hjK
+         +qQg==
+X-Gm-Message-State: APjAAAU+qriKPRwY3tuDukcMrYOuDPIOhqCHOaFeTeqeY5Jz/RSIr3SF
+        4rDV6NWvxgA24KVPnHO/V0ttUQ==
+X-Google-Smtp-Source: APXvYqzSHf/VaI25XUU6JwgxHcTwum+eqwNg/nDEX2+Z4NtuYsQqfDBBgWEP7OESrOUbhgp0aExEbQ==
+X-Received: by 2002:a62:7503:: with SMTP id q3mr859120pfc.151.1566501906434;
+        Thu, 22 Aug 2019 12:25:06 -0700 (PDT)
+Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id c12sm198018pfc.22.2019.08.22.12.25.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 12:25:05 -0700 (PDT)
+From:   Scott Branden <scott.branden@broadcom.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH 0/7] firmware: add partial read support in request_firmware_into_buf
+Date:   Thu, 22 Aug 2019 12:24:44 -0700
+Message-Id: <20190822192451.5983-1-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This patch series adds partial read support in request_firmware_into_buf.
+In order to accept the enhanced API it has been requested that kernel
+selftests and upstreamed driver utilize the API enhancement and so
+are included in this patch series.
 
->>>> I don't understand why we don't limit a regular ctrl to single 
->>>> access and we do it for the PT ctrl.
->>>>
->>>> I guess the block layer helps to sync between multiple access in 
->>>> parallel but we can do it as well.
->>>>
->>>> Also, let's say you limit the access to this subsystem to 1 user, 
->>>> the bdev is still accessibly for local user and also you can create 
->>>> a different subsystem that will use this device (PT and non-PT ctrl).
->>>>
->>>> Sagi,
->>>>
->>>> can you explain the trouble you meant and how this limitation solve 
->>>> it ?
->>>
->>> Its different to emulate the controller with all its admin
->>> commands vs. passing it through to the nvme device.. (think of format 
->>> nvm)
->>>
->>>
->>>
->> we don't need to support format command for PT ctrl as we don't 
->> support other commands such create_sq/cq.
-> 
-> That is just an example, basically every command that we are not aware
-> of we simply passthru to the drive without knowing the implications
-> on a multi-host environment..
+Also, no tests existed for existing request_firmware_into_buf kernel API.
+Therefore tests have been created and submitted upstream here:
+"[PATCH v2 0/2] firmware: selftest for request_firmware_into_buf"
+https://lkml.org/lkml/2019/8/22/1367
 
-If we were to change the logic of nvmet_parse_passthru_admin_cmd to
-have the default case do nvmet_parse_admin_cmd, and only have
-the vendor-specific space opcodes do nvmet_passthru_execute_cmd
-then I could not see at the moment how we can break a multi-host
-export...
+The firmware selftests patches here require those patches to
+be applied first in order for the firmware selftest patches in this
+series to be valid.
+
+Finally, in this patch series is the addition of a new Broadcom Valkyrie driver
+utilizing the new request_firmware_into_buf enhanced API.
+
+Scott Branden (7):
+  fs: introduce kernel_pread_file* support
+  firmware: add offset to request_firmware_into_buf
+  test_firmware: add partial read support for request_firmware_into_buf
+  selftests: firmware: Test partial file reads of
+    request_firmware_into_buf
+  bcm-vk: add bcm_vk UAPI
+  misc: bcm-vk: add Broadcom Valkyrie driver
+  MAINTAINERS: bcm-vk: Add maintainer for Broadcom Valkyrie Driver
+
+ MAINTAINERS                                   |    7 +
+ drivers/base/firmware_loader/firmware.h       |    5 +
+ drivers/base/firmware_loader/main.c           |   49 +-
+ drivers/misc/Kconfig                          |    1 +
+ drivers/misc/Makefile                         |    1 +
+ drivers/misc/bcm-vk/Kconfig                   |   16 +
+ drivers/misc/bcm-vk/Makefile                  |    7 +
+ drivers/misc/bcm-vk/README                    |   29 +
+ drivers/misc/bcm-vk/bcm_vk.h                  |  229 +++
+ drivers/misc/bcm-vk/bcm_vk_dev.c              | 1558 +++++++++++++++++
+ drivers/misc/bcm-vk/bcm_vk_msg.c              |  963 ++++++++++
+ drivers/misc/bcm-vk/bcm_vk_msg.h              |  169 ++
+ drivers/misc/bcm-vk/bcm_vk_sg.c               |  273 +++
+ drivers/misc/bcm-vk/bcm_vk_sg.h               |   60 +
+ drivers/soc/qcom/mdt_loader.c                 |    7 +-
+ fs/exec.c                                     |   77 +-
+ include/linux/firmware.h                      |    8 +-
+ include/linux/fs.h                            |   15 +
+ include/uapi/linux/misc/bcm_vk.h              |   88 +
+ lib/test_firmware.c                           |  139 +-
+ .../selftests/firmware/fw_filesystem.sh       |   80 +
+ 21 files changed, 3744 insertions(+), 37 deletions(-)
+ create mode 100644 drivers/misc/bcm-vk/Kconfig
+ create mode 100644 drivers/misc/bcm-vk/Makefile
+ create mode 100644 drivers/misc/bcm-vk/README
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk.h
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_dev.c
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_msg.c
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_msg.h
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_sg.c
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_sg.h
+ create mode 100644 include/uapi/linux/misc/bcm_vk.h
+
+-- 
+2.17.1
+
