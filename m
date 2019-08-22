@@ -2,107 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC07298C6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 09:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0506998C76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 09:33:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731555AbfHVHaK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 03:30:10 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:41652 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729718AbfHVHaK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 03:30:10 -0400
-Received: from [10.68.32.192] (broadband-188-32-48-208.ip.moscow.rt.ru [188.32.48.208])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 7FD1C540089;
-        Thu, 22 Aug 2019 10:30:07 +0300 (MSK)
-Subject: Re: [PATCH] lib/memweight.c: optimize by inlining bitmap_weight()
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <matthew@wil.cx>, linux-kernel@vger.kernel.org,
-        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-media@vger.kernel.org, Erdem Tumurov <erdemus@gmail.com>,
-        Vladimir Shelekhov <vshel@iis.nsk.su>
-References: <20190821074200.2203-1-efremov@ispras.ru>
- <20190821182507.b0dea16f57360cf0ac40deb6@linux-foundation.org>
-From:   Denis Efremov <efremov@ispras.ru>
-Message-ID: <ad15bc93-0283-2518-8185-7683614d9965@ispras.ru>
-Date:   Thu, 22 Aug 2019 10:30:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731615AbfHVHdJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 03:33:09 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42517 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727875AbfHVHdJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Aug 2019 03:33:09 -0400
+Received: by mail-pf1-f194.google.com with SMTP id i30so3335629pfk.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 00:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition;
+        bh=GFPIU3HG0M4VBLKCagBRqf2xANHNJKxYGKLnGfhfjjE=;
+        b=bSlLtBizq89/eOMaP5JrccDfJSCz1rwoF5GhRste+iBjy5C/XWnkeHpontUNxFvad8
+         OaABzIbntZkh+BCjwcTeUVnZDMr2cFkRUbn9HXMtFENuP58YUe2x0nJIeB2GsYfrjE/n
+         5jvREKcyBVexALzw0TkZlvIzFb54ZtG9TIs9oQqA2NyqwXC03s2ZuGZfCgRekQbcXho+
+         JPJkuTBGfkDkUlQsXPjP5F6p4jDUzvbB2YkmaagPAx3Cm4TR2jlKymo59i0JcfIyLOqh
+         w5ZYl2GvvxfDgxVcXBNn6qtlP/yEE1FWiHEwrr6/IKyT88EQTv0qW6Eei8faPwsqBAbh
+         zi/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition;
+        bh=GFPIU3HG0M4VBLKCagBRqf2xANHNJKxYGKLnGfhfjjE=;
+        b=dVLLJgGKUCJBz6BTOK3Mhfp8hX6cf6YdpvL/spdreOLPFiB7hbToOpuaQbvWfRi20d
+         a5XAe/MzcBq22OX70huoSq1wrDWFj9FCdDpCi+zaWDlT4LXTx5EPPiTY8U8O4g4U+aH5
+         EKkJ5Pqj1Nl1/RBaGgH7uHn0C0flhY/KgNhNakQgnjGCFyxzVikwz1cCdgknPVQQ6Npe
+         HBiaqftvXi1KXjTAFbrfe34ZA44llrMruMckpin+wswVZhJBKctO0RD0srrfvqK9R1hW
+         i+2kBtaEo3f7fFYuD1kEvHgIdrtJ9vTy3MhwvPF8V9ybaUNB7CzdlXr/2yGqpNIFy8qJ
+         dAqQ==
+X-Gm-Message-State: APjAAAVeBKkjb2M02ePsTu+ehsu/k7+Hr0IKI9N18ub/f5NdZtY1BFyn
+        gkqsGkGfWjGFU9rEb8ZBWhtg0aWj
+X-Google-Smtp-Source: APXvYqxjld18WdZ7pRq+5LZWWlZh3AOZX6Wi3D3vDcERG7Rk8C4ZSrylLGcCNAEHfgs3SFzIExR7+A==
+X-Received: by 2002:a63:7a06:: with SMTP id v6mr1207570pgc.115.1566459188249;
+        Thu, 22 Aug 2019 00:33:08 -0700 (PDT)
+Received: from localhost ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id z24sm39650153pfr.51.2019.08.22.00.33.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Aug 2019 00:33:07 -0700 (PDT)
+Date:   Thu, 22 Aug 2019 15:33:00 +0800
+From:   Murphy Zhou <jencce.kernel@gmail.com>
+To:     miklos@szeredi.hu, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs/open.c: update {m,c}time for truncate
+Message-ID: <20190822073300.6ljb36ieah5g2p55@XZHOUW.usersys.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190821182507.b0dea16f57360cf0ac40deb6@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Just like what we do for ftruncate. (Why not)
+Without this patch, cifs, sometimes NFS, fail to update timestamps
+after truncate call.
 
+Signed-off-by: Murphy Zhou <jencce.kernel@gmail.com>
+---
+ fs/open.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On 22.08.2019 04:25, Andrew Morton wrote:
-> On Wed, 21 Aug 2019 10:42:00 +0300 Denis Efremov <efremov@ispras.ru> wrote:
-> 
->> This patch inlines bitmap_weight() call.
-> 
-> It is better to say the patch "open codes" the bitmap_weight() call.
-> 
->> Thus, removing the BUG_ON,
-> 
-> Why is that OK to do?
+diff --git a/fs/open.c b/fs/open.c
+index a59abe3c669a..f247085aaee4 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -107,7 +107,8 @@ long vfs_truncate(const struct path *path, loff_t length)
+ 	if (!error)
+ 		error = security_path_truncate(path);
+ 	if (!error)
+-		error = do_truncate(path->dentry, length, 0, NULL);
++		error = do_truncate(path->dentry, length,
++				ATTR_MTIME|ATTR_CTIME, NULL);
+ 
+ put_write_and_out:
+ 	put_write_access(inode);
+-- 
+2.21.0
 
-BUG_ON was necessary here to check that bitmap_weight will return a correct value,
-i.e. the computed weight will fit the int type: 
-static __always_inline int bitmap_weight(const unsigned long *src, unsigned int nbits);
-
-BUG_ON was added in the memweight v2
-https://lore.kernel.org/lkml/20120523092113.GG10452@quack.suse.cz/
-Jan Kara wrote:
->> +
->> +	for (longs = bytes / sizeof(long); longs > 0; ) {
->> +		size_t bits = min_t(size_t, INT_MAX & ~(BITS_PER_LONG - 1),
-> +					longs * BITS_PER_LONG);
->  I find it highly unlikely that someone would have such a large bitmap
-> (256 MB or more on 32-bit). Also the condition as you wrote it can just
-> overflow so it won't have the desired effect. Just do
->	BUG_ON(longs >= ULONG_MAX / BITS_PER_LONG);
-> and remove the loop completely. If someone comes with such a huge bitmap,
-> the code can be modified easily (after really closely inspecting whether
-> such a huge bitmap is really well justified).
->> +
->> +		w += bitmap_weight(bitmap.ptr, bits);
->> +		bytes -= bits / BITS_PER_BYTE;
->> +		bitmap.address += bits / BITS_PER_BYTE;
->> +		longs -= bits / BITS_PER_LONG;
-
-Akinobu Mita wrote:
-> The bits argument of bitmap_weight() is int type. So this should be
->
->        BUG_ON(longs >= INT_MAX / BITS_PER_LONG);
-
-We don't need this check, since we removed the bitmap_weight call and
-control the computation directly with size_t everywhere.
-
-We could add BUG_ON(bytes >= SIZE_MAX / BITS_PER_BYTE);
-at the very beginning of the function to check that the array is not
-very big (>2000PiB), but it seems excessive.
-
-> 
-> I expect all the code size improvements are from doing this?
-
-Yes, but I thought it's good to show that the total size is not
-increasing because of the manual "inlining".
-
-> 
->> and 'longs to bits -> bits to longs' conversion by directly calling
->> hweight_long().
->>
->> ./scripts/bloat-o-meter lib/memweight.o.old lib/memweight.o.new
->> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-10 (-10)
->> Function                                     old     new   delta
->> memweight                                    162     152     -10
->>
-> 
-
-Regards,
-Denis
