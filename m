@@ -2,128 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 235649A24F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 23:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 395C79A331
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 00:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393161AbfHVVn3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 17:43:29 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:44233 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391202AbfHVVn2 (ORCPT
+        id S2394110AbfHVWn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 18:43:58 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35927 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394082AbfHVWn6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 17:43:28 -0400
-Received: by mail-yb1-f194.google.com with SMTP id y21so3123746ybi.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 14:43:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jUm6yXYTlbTXopviUp4rylkFQbLJR/m96Sizb+UK2Sk=;
-        b=H31YN4ZNsUnU299kwk54yLpzwRjkKDvY2XEOe7J+nAsMhciLQ8pxdS2tbnNaGjgiID
-         A03OpSrudtbbeZUOHGHlPfuGOH8T4sflQ7jd9/Pmt7+CuIiUVLXEoDcp8t02bTzkXM88
-         FTWlKUQgTADJV3eWyOD/cvwdi9xAyXZUN18OSIBFgAlSaNns4xeMN6ccXtANOpwknQUJ
-         /I9yMuEBn7nIS0yu8302B4kf0H2NF1Q6F2CP4IfW/h30ysAAzaQZBqhIJ2PXtfCUBgUe
-         NTnG2KYoiHG+ZDkXih1IaR5Lx3OTOodsRcIwis4Bd9Ec5I2Shs+IELs+aGbeQK/9owR0
-         DkrA==
+        Thu, 22 Aug 2019 18:43:58 -0400
+Received: by mail-pf1-f193.google.com with SMTP id w2so4960854pfi.3;
+        Thu, 22 Aug 2019 15:43:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jUm6yXYTlbTXopviUp4rylkFQbLJR/m96Sizb+UK2Sk=;
-        b=SMg1cJ/ZT9SmgTU18a6nEHRZJVyrlm6kmuttPhY92pATu6BTaBn6GrOPMuVHNdsOFf
-         egP4qt5V3q3QQJYXADimBVec0ejZWjS+VE4wgXcEKdOk18uOTNnZn2dXNNBipNNhe7wd
-         kPTfpCrX9Ai+NaK2t+9n0HR2MeUb1sZkHmU97z+pCI3inYs4tVyBFe+5O3zvdLTENlr4
-         cFA5wT/xjXykSrfzj0bPzveGnttWIsMyPZeODIrMBwNmdjIkYAe1uEa1uvx9P5O+jVjJ
-         GyfuIHX7t4V20GMAgCgWcA2psSme5ai6SyI4rfhacijFg4LgAB/uIo9SfK+Dc2QQsPFt
-         t1HQ==
-X-Gm-Message-State: APjAAAVxjRPr38AfMSVvSuMfxsC8hQvnyiCxGLeNwhMyoMEBwhJ33BeT
-        H0IWM67lo6BsYlizLyC350pTe9eHPED4uwof50ufrg==
-X-Google-Smtp-Source: APXvYqxIFPR6FxUBY8A2LZP4EkBf4qhKlZgJC9O/95dzHUIJ5rZshrEUMo/6nlfJN7uIyc5vW0YNUzbrYPJCT2g48H0=
-X-Received: by 2002:a25:e6c9:: with SMTP id d192mr828435ybh.467.1566510207880;
- Thu, 22 Aug 2019 14:43:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YQxy7LG7DNBTUMkrggpj64fW1gmhMtjURQTq0iGs9uE=;
+        b=hkVcYBdNtASV/n7ywYECSZj7gQmRXBZ+0SMzZK88ilkr84vNP4UDw7FqnU3gtpEZ4E
+         3bA22+3URwKP40saxjPQLq2J2L8SQKKjzo/aRRm+sR/fFdJVAmf4d5Yxgk/ePg1rguzv
+         tRPFEPOOSjEs8urUcvcUI8vimr9A/zom297hY3f9nL4wEVQLi9/4hjLjQ2cZiiC6pvu3
+         1rEim3NPSS1liI5A9nqfCgclkAnoVOFGJGbsMxEek6CrebbH1ShuF9SAW92oaNvVKBEu
+         1c3gzK37+cAzhTtXTAk4hDShvPDW9VtsVOG3gfc5wNEy0YgClUoIiAiQdsVACWrRsCqq
+         Opnw==
+X-Gm-Message-State: APjAAAUVmGt/bUdxBhrUWp4yoeEcCaQBe0vU9j6jOgQZ4/OwKmHx094Z
+        f7dG+N8+aiSq/F0eNQM0rjYV7rEj
+X-Google-Smtp-Source: APXvYqzq5MAdFE8W+s3h6x+elqgSyD7DLrYGhZaQ+mvzJpjFxObTVVGVt+YPpEiF2OQPYZXg8CFg/Q==
+X-Received: by 2002:a17:90a:3a8d:: with SMTP id b13mr2051805pjc.75.1566513837445;
+        Thu, 22 Aug 2019 15:43:57 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id y8sm405397pfr.140.2019.08.22.15.43.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 15:43:56 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 97286403DC; Thu, 22 Aug 2019 22:43:55 +0000 (UTC)
+Date:   Thu, 22 Aug 2019 22:43:55 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Matias Bjorling <matias.bjorling@wdc.com>
+Subject: Re: [PATCH V2] fs: New zonefs file system
+Message-ID: <20190822224355.GX30113@42.do-not-panic.com>
+References: <20190820081249.27353-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-References: <20190822200030.141272-1-khazhy@google.com> <20190822200030.141272-3-khazhy@google.com>
-In-Reply-To: <20190822200030.141272-3-khazhy@google.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 22 Aug 2019 14:43:17 -0700
-Message-ID: <CALvZod4E7Cd08zUWQxKztUJWuCm=WyDRGGzyjvGFMTSPMqNK4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] fuse: kmemcg account fs data
-To:     Khazhismel Kumykov <khazhy@google.com>
-Cc:     miklos@szeredi.hu, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190820081249.27353-1-damien.lemoal@wdc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 1:00 PM Khazhismel Kumykov <khazhy@google.com> wrote:
->
-> account per-file, dentry, and inode data
->
-> accounts the per-file reserved request, adding new
-> fuse_request_alloc_account()
->
-> blockdev/superblock and temporary per-request data was left alone, as
-> this usually isn't accounted
->
-> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+On Tue, Aug 20, 2019 at 05:12:49PM +0900, Damien Le Moal wrote:
+> The aggregated conventional zone file can be used as a regular file.
+> Operations such as the following work.
+> 
+> mkfs.ext4 /mnt/cnv/0
+> mount -o loop /mnt/cnv/0 /data
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Should BLK_DEV_LOOP_MIN_COUNT be increased if this is enabled to
+a mich higher sensible default? Right now the default is 8. Also,
+can we infer this later dynamically so so this can grow at proper
+scale without having to have user interaction?
 
-> ---
->  fs/fuse/dir.c   | 3 ++-
->  fs/fuse/file.c  | 4 ++--
->  fs/fuse/inode.c | 3 ++-
->  3 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index f9c59a296568..2013e1222de7 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -258,7 +258,8 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
->  #if BITS_PER_LONG < 64
->  static int fuse_dentry_init(struct dentry *dentry)
->  {
-> -       dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry), GFP_KERNEL);
-> +       dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry),
-> +                                  GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
->
->         return dentry->d_fsdata ? 0 : -ENOMEM;
->  }
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 572d8347ebcb..ae8c8016bb8e 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -45,12 +45,12 @@ struct fuse_file *fuse_file_alloc(struct fuse_conn *fc)
->  {
->         struct fuse_file *ff;
->
-> -       ff = kzalloc(sizeof(struct fuse_file), GFP_KERNEL);
-> +       ff = kzalloc(sizeof(struct fuse_file), GFP_KERNEL_ACCOUNT);
->         if (unlikely(!ff))
->                 return NULL;
->
->         ff->fc = fc;
-> -       ff->reserved_req = fuse_request_alloc(0, GFP_KERNEL);
-> +       ff->reserved_req = fuse_request_alloc(0, GFP_KERNEL_ACCOUNT);
->         if (unlikely(!ff->reserved_req)) {
->                 kfree(ff);
->                 return NULL;
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 5afd1872b8b1..ad92e93eaddd 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -76,7 +76,8 @@ struct fuse_mount_data {
->
->  struct fuse_forget_link *fuse_alloc_forget(void)
->  {
-> -       return kzalloc(sizeof(struct fuse_forget_link), GFP_KERNEL);
-> +       return kzalloc(sizeof(struct fuse_forget_link),
-> +                      GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
->  }
->
->  static struct inode *fuse_alloc_inode(struct super_block *sb)
-> --
-> 2.23.0.187.g17f5b7556c-goog
->
+For now, I mean something like:
+
+diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
+index 1bb8ec575352..22ba4803b075 100644
+--- a/drivers/block/Kconfig
++++ b/drivers/block/Kconfig
+@@ -217,7 +217,8 @@ config BLK_DEV_LOOP
+ config BLK_DEV_LOOP_MIN_COUNT
+ 	int "Number of loop devices to pre-create at init time"
+ 	depends on BLK_DEV_LOOP
+-	default 8
++	default 8 if !ZONEFS FILESYSTEM
++	default 32 if ZONEFS FILESYSTEM
+ 	help
+ 	  Static number of loop devices to be unconditionally pre-created
+ 	  at init time.
+
+  Luis
