@@ -2,109 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A91A99E50
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 19:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 318EA99F0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 20:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731960AbfHVRxd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 13:53:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59226 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726234AbfHVRxd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:53:33 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DE11D3082E61;
-        Thu, 22 Aug 2019 17:53:32 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD21D5D6A7;
-        Thu, 22 Aug 2019 17:53:31 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Guillem Jover <guillem@hadrons.org>
-Cc:     linux-aio@kvack.org, Christoph Hellwig <hch@lst.de>,
-        Benjamin LaHaise <bcrl@kvack.org>,
+        id S2388934AbfHVSkW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 14:40:22 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35070 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730867AbfHVSkW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Aug 2019 14:40:22 -0400
+Received: by mail-pl1-f195.google.com with SMTP id gn20so3950760plb.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 11:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=l3f7J9dLXFEkkPEpHoZfCHDBojT5vl2BXru+bCQWM9k=;
+        b=ex7I0HZM1XZ6nwcwJqKZFzWwvGvKmcP9p6rxpsVI/+xYBxClCbtueXcVx0JxcT5oID
+         JXpkwA/Bhug+LEiV8vtZANPVM3IxNyQ+W/6m3o6LQa+FPXzahsdNpQXLz2q9/iBg5cf9
+         Q81XzJ2UHw+Xu2lkdOP+AvS2qPMEACeupEn/k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=l3f7J9dLXFEkkPEpHoZfCHDBojT5vl2BXru+bCQWM9k=;
+        b=l3KH7N9YZgEaM1Q0PlD/6a+k1WpuwBAJybdwFCEiIAwJzyN3GkzW8bLNDmqUbnAX41
+         f6G4Yt0vgTVPSjEqaHgLqniYELaKEPSdK8G0T8gQcuQgC2nBbFBLseLmbkRc/d/V9ULk
+         WRMc5lHw6yR2X5LsW5Jti8djAjyrVBfO4jpt0NtXOPsG4gSZsmzyJwuDpOoqW5i+vkxd
+         e8qSAu0CgI4YDD5i8NxUT3wjyduMIsqN0ycfjaqthjGO5JpexprBCvw44ua+kaeSzJrq
+         TUu06lw1RaT8daOxfc+6x3+fDGbpCSUmD3C0m0MZ1F2+drJbGmmph5zPNomfERBkkKvm
+         sQsQ==
+X-Gm-Message-State: APjAAAWHg9YWFpHNeFFFYOO8wLARM6C3BgaRm5JMxgO6okB3agEPjlZo
+        4V8Zho7/QLkoRvBbOiYNDdixQA==
+X-Google-Smtp-Source: APXvYqxPQ9aH3jF39LKTjf20cbeWadPkB+uuUPl7/RjqxCo7ecZeQNFkTtcAcpXBrjBObejQFr9TmQ==
+X-Received: by 2002:a17:902:a8:: with SMTP id a37mr226321pla.316.1566499220955;
+        Thu, 22 Aug 2019 11:40:20 -0700 (PDT)
+Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id z19sm51056pgv.35.2019.08.22.11.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 11:40:20 -0700 (PDT)
+From:   Scott Branden <scott.branden@broadcom.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] aio: Fix io_pgetevents() struct __compat_aio_sigset layout
-References: <20190821033820.14155-1-guillem@hadrons.org>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 22 Aug 2019 13:53:30 -0400
-In-Reply-To: <20190821033820.14155-1-guillem@hadrons.org> (Guillem Jover's
-        message of "Wed, 21 Aug 2019 05:38:20 +0200")
-Message-ID: <x49ef1dozmt.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 22 Aug 2019 17:53:33 +0000 (UTC)
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH v2 0/2] firmware: selftest for request_firmware_into_buf
+Date:   Thu, 22 Aug 2019 11:40:03 -0700
+Message-Id: <20190822184005.901-1-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Guillem Jover <guillem@hadrons.org> writes:
+This patch series adds kernel selftest of request_firmware_into_buf.
+The API was added to the kernel previously untested.
 
-> This type is used to pass the sigset_t from userland to the kernel,
-> but it was using the kernel native pointer type for the member
-> representing the compat userland pointer to the userland sigset_t.
->
-> This messes up the layout, and makes the kernel eat up both the
-> userland pointer and the size members into the kernel pointer, and
-> then reads garbage into the kernel sigsetsize. Which makes the sigset_t
-> size consistency check fail, and consequently the syscall always
-> returns -EINVAL.
->
-> This breaks both libaio and strace on 32-bit userland running on 64-bit
-> kernels. And there are apparently no users in the wild of the current
-> broken layout (at least according to codesearch.debian.org and a brief
-> check over github.com search). So it looks safe to fix this directly
-> in the kernel, instead of either letting userland deal with this
-> permanently with the additional overhead or trying to make the syscall
-> infer what layout userland used, even though this is also being worked
-> around in libaio to temporarily cope with kernels that have not yet
-> been fixed.
->
-> We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
->
-> Fixes: 7a074e96 ("aio: implement io_pgetevents")
-> Signed-off-by: Guillem Jover <guillem@hadrons.org>
+Changes from v1:
+- Dropped demonstration patch for a race condition discovered
+while testing request_firmare_into_buf.
+The new test exposes a kernel opps with the firmware fallback mechanism that may
+be fixed separate from these tests.
+- minor whitespace formatting in patch
+- added Ack's
+- added "s" in commit message (changed selftest: to selftests:)
 
-Looks good, thanks for finding and fixing this!
+Scott Branden (2):
+  test_firmware: add support for request_firmware_into_buf
+  selftests: firmware: Add request_firmware_into_buf tests
 
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+ lib/test_firmware.c                           | 50 +++++++++++++++-
+ .../selftests/firmware/fw_filesystem.sh       | 57 ++++++++++++++++++-
+ tools/testing/selftests/firmware/fw_lib.sh    | 11 ++++
+ 3 files changed, 114 insertions(+), 4 deletions(-)
 
-> ---
->  fs/aio.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 01e0fb9ae45a..056f291bc66f 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -2179,7 +2179,7 @@ SYSCALL_DEFINE5(io_getevents_time32, __u32, ctx_id,
->  #ifdef CONFIG_COMPAT
->  
->  struct __compat_aio_sigset {
-> -	compat_sigset_t __user	*sigmask;
-> +	compat_uptr_t		sigmask;
->  	compat_size_t		sigsetsize;
->  };
->  
-> @@ -2204,7 +2204,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
->  	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
->  		return -EFAULT;
->  
-> -	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
-> +	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
->  	if (ret)
->  		return ret;
->  
-> @@ -2239,7 +2239,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
->  	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
->  		return -EFAULT;
->  
-> -	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
-> +	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
->  	if (ret)
->  		return ret;
+-- 
+2.17.1
+
