@@ -2,201 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68C4F9886C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 02:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EA8A988BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 02:54:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfHVASi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Aug 2019 20:18:38 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:35749 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbfHVASh (ORCPT
+        id S1730427AbfHVAyr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Aug 2019 20:54:47 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:32998 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730339AbfHVAyr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Aug 2019 20:18:37 -0400
-Received: by mail-yw1-f66.google.com with SMTP id g19so1692348ywe.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2019 17:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZJuGzxgYEJJmtKKSqq5f5g5uuFonx8YcgqfrLKyhRok=;
-        b=OGJR3HzNBSkdxYQw12UylRSGalg3ZnUXc9khh8ugaTnSxiwGLyoqbvdJDRuiPVL5dq
-         W+thHR2a+jBR5rpUNM8m6s3mT6WKRquEPTeG8xY99LdyfhLdKt3uCCaPg/rV7ckJXu5n
-         OsNKtbYz2BYemMwWG5sDjuPUHFyCSF6QzmkxBYBC3d/oeOYwAa5vNHE1eHNq0786FWtF
-         6ecG5zWqihf5X0jV20hIfWIVsnmitAHpClsGMHYPFPfvOhVG39dzoeHYqc/VYVBUp50E
-         9ZUcG2Rk7y9l+AbK+XO0h2oFSucyA24vqWhTV8lv1UTfMUEa+I0syRiUsiMyaBpbl59Q
-         R0ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZJuGzxgYEJJmtKKSqq5f5g5uuFonx8YcgqfrLKyhRok=;
-        b=bJKewBmiOngdbc3uEZZTFp/AYdOYOumfGzPXr4jc3RghpMsv0D8044qu3Du4kuAK6Q
-         /0g8o86JmlQ8mBDgHwIDIxIBEqfSJS0S+iFzaOilu8Yp34bkQLvqQ8QNn2LSyX6+rsDa
-         hpayhHdEMHzdxCr2wikRbyMsuUoCZ/lNTejE4AGtqRR9T3kUSakHQDUer838yzDeUYqM
-         b7OLF63HfWgMJl/nmq/NAGNM3ZgO4/PLUx36lb29QbvMfWBqnKKe/xzEVgxcbbkdglNY
-         k6gM7iEKVuV9ZvX7b0SNsiZrbuC2A1/7WazeR4wCffn+xYfn3y2SWJIw+xAXI3ig0Orq
-         PeLg==
-X-Gm-Message-State: APjAAAXxKK9cqQtT4WCI8M7qZVwGfTmu2Eqx0ExACIFuXqh9UxD1TSsg
-        vO1xg7bl7uQBKtMiRChsVUUn7IkhSbQxjN/Fqbzc3A==
-X-Google-Smtp-Source: APXvYqz/+KzvuSRCI+8UB3npquns8i4yJV3iPDKr0QXmZdcoTE4nWyBLXhfOM65gga62VJI5FjurjupIFIYWSHTGLk4=
-X-Received: by 2002:a81:2e84:: with SMTP id u126mr25699468ywu.398.1566433116409;
- Wed, 21 Aug 2019 17:18:36 -0700 (PDT)
+        Wed, 21 Aug 2019 20:54:47 -0400
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190822005444epoutp02509616d67c930502f8e1d489f603b330~9GJd48OJr0040100401epoutp02b
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 00:54:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190822005444epoutp02509616d67c930502f8e1d489f603b330~9GJd48OJr0040100401epoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1566435284;
+        bh=zkZXU4UgR2xVWaur+CPkoWa/h3dr00YRZlhWS9MWMAc=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=LgsqbT+hYIIBvCF5mcNpSLjX71VwNOW3ECNKiy2AW9M3uUPWM77Adx70KiCIl9S6g
+         8BCo8Y4qWPQ92CXApOiUFoMXdJsXwcahI1N312DIPZXn1iuJDjZsyN95Wn0XJ9GJwM
+         pcZJtA6x5sXzKBtI4w7edPjs3L/3X5MzcmqT9uaY=
+Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20190822005443epcas2p12f0b23d4dfaf0bb9b991b29ddfea4ff8~9GJdH1To80306303063epcas2p1A;
+        Thu, 22 Aug 2019 00:54:43 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.40.186]) by
+        epsnrtp5.localdomain (Postfix) with ESMTP id 46DQzP0PDKzMqYkc; Thu, 22 Aug
+        2019 00:54:41 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        20.1F.04156.FC7ED5D5; Thu, 22 Aug 2019 09:54:39 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190822005438epcas2p337aba06b328cdcdd1549395f0bbcfdbc~9GJY5qmwx3233232332epcas2p3f;
+        Thu, 22 Aug 2019 00:54:38 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190822005438epsmtrp223bcbfc1f01624cd3dc41a63517cface~9GJY4itJ50123901239epsmtrp2Q;
+        Thu, 22 Aug 2019 00:54:38 +0000 (GMT)
+X-AuditID: b6c32a45-df7ff7000000103c-ab-5d5de7cf581d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        69.D2.03706.EC7ED5D5; Thu, 22 Aug 2019 09:54:38 +0900 (KST)
+Received: from KORDO035251 (unknown [12.36.165.204]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20190822005438epsmtip27b8ec42598e05dbe2605a805a7b78b25~9GJYp2w_l0938509385epsmtip2B;
+        Thu, 22 Aug 2019 00:54:38 +0000 (GMT)
+From:   "boojin.kim" <boojin.kim@samsung.com>
+To:     <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
+        "'David S. Miller'" <davem@davemloft.net>,
+        "'Eric Biggers'" <ebiggers@kernel.org>,
+        "'Theodore Y. Ts'o'" <tytso@mit.edu>,
+        "'Chao Yu'" <chao@kernel.org>,
+        "'Jaegeuk Kim'" <jaegeuk@kernel.org>,
+        "'Andreas Dilger'" <adilger.kernel@dilger.ca>,
+        "'Theodore Ts'o'" <tytso@mit.edu>, <dm-devel@redhat.com>,
+        "'Mike Snitzer'" <snitzer@redhat.com>,
+        "'Alasdair Kergon'" <agk@redhat.com>,
+        "'Jens Axboe'" <axboe@kernel.dk>,
+        "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+        "'Kukjin Kim'" <kgene@kernel.org>,
+        "'Jaehoon Chung'" <jh80.chung@samsung.com>,
+        "'Ulf Hansson'" <ulf.hansson@linaro.org>,
+        <linux-crypto@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 5/9] block: support diskcipher
+Date:   Thu, 22 Aug 2019 09:54:38 +0900
+Message-ID: <017901d55884$2cbc8f60$8635ae20$@samsung.com>
 MIME-Version: 1.0
-References: <20190822000933.180870-1-khazhy@google.com> <20190822000933.180870-3-khazhy@google.com>
-In-Reply-To: <20190822000933.180870-3-khazhy@google.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 21 Aug 2019 17:18:25 -0700
-Message-ID: <CALvZod5d1iyJtfwzW0qtHLJ4cB5zQqAHuVBM_ay9cWD=TTSPSw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] fuse: pass gfp flags to fuse_request_alloc
-To:     Khazhismel Kumykov <khazhy@google.com>
-Cc:     miklos@szeredi.hu, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 14.0
+Content-Language: ko
+Thread-Index: AdVYhCtkBjnnAwgAQWGl61cO3+ZKhw==
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wTdxTf9+56V5TOszL9rllcvQ0TNdS2W9kXIsuS6bxE/sCZjcRZ8QKX
+        QmyvTa9F3JIpTiogEd3iIi06f7KVTrtRqIiUOUA7N1nNWHEyx2KAbZappJ0E2BxrOcz47/M+
+        733e5728PDmu9FAqeZng4O0CZ2bIBUSwZxXKivxuNGp9NTR69Fc1gfzfXsOR75d6En13tA9D
+        jZH9BAo98MjQ+c5/cHQw9hwa8btx9NO0S4bqh8dwFIl8QaGW4QEZCg2uQb8OTWGo4cQdEv1w
+        eiOKnZggUGfoOoH6OxpJ1DtTD9CxSBeGXF8+AqiqbopC4fOFrz3LtnpvY+z+wC42eCWT7e9z
+        si3NNSR7Z6CTZANn97CXTyYwdt+Nqzj7sCtKsodamwGbaFlekL7VvK6U50p4u5oXiq0lZYIp
+        j9m0pej1IkO2Vpely0GvMGqBs/B5zPr8gqw3yszJ3Rl1OWd2JqkCThSZta+us1udDl5dahUd
+        eQxvKzHbdDqbRuQsolMwaYqtllydVqs3JCt3mEsHPmigbKNkxf3pSXIvuCSrBWlySL8M6891
+        4LVggVxJtwPYuS9OSkEcwMdBPyUFEwCOzNzFn0guBD1ziRCAp9p6ZVJwD8Daq0dmG5P0GhgI
+        N4MUzqDfhp/cmiFSRTgdouChtsrZxBJaD6tqD2IpTNCZ8MdgYtZCQedAX6xKJuHF8HrDCJHC
+        OP08vHi/cW4MNWzvGwMSnwE9NS5cMtPA/s+HQMoM0pVy6ImOAkmwHp76rAmT8BIYC7dSElbB
+        xIMQKeE9MNp0hpLEdQDemHbNFb0E3b8dSDaSJ91WQX/H2hSE9Auwd3Butqdhdc9jSqIVsNql
+        lIQvwuPxfkyiVXC87n2JZuHPg23gMFjhnreke96S7nmLuf+3PQmIZrCUt4kWEy/qbbr5124B
+        s4+xekM7OPZ9fjeg5YBJVxzOMhqVMq5c3G3pBlCOMxmKisatRqWihNv9Lm+3FtmdZl7sBobk
+        DY7gqmeKrck3ExxFOoM+O1ubY0CGbD1ilikCC29vU9ImzsHv5Hkbb3+iw+Rpqr3AEz/rzf3j
+        4/GxycJtkYEP0y487Ap/0+QNe24lKkSDb/zmgZ18+cjCtMylny7fBePvLK56j5q4sjL3zS1O
+        IXN0yiv4e/5Fmrei3uHqXj93eVNg0VddlT4m8Hd+eqyQuftUlNbcO527aMi+wnTGcnTDyo1f
+        T577c3Ng+7Kyyc03M659xBBiKadbjdtF7j9ZtnA9LgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsWy7bCSvO6557GxBj+36Ft8/dLBYrH+1DFm
+        i9V3+9ksTk89y2Qx53wLi8Xed7NZLdbu+cNs0f1KxuLJ+lnMFjd+tbFa9D9+zWxx/vwGdotN
+        j6+xWuy9pW1x/95PJouZ8+6wWVxa5G7xat43Fos9e0+yWFzeNYfN4sj/fkaLGef3MVm0bfzK
+        aNHa85Pd4vjacAdJjy0rbzJ5tGwu99h2QNXj8tlSj02rOtk87lzbw+axeUm9x+4Fn5k8ms4c
+        ZfZ4v+8qm0ffllWMHp83yQXwRHHZpKTmZJalFunbJXBlXGueyV7wlK3i7a8fbA2MO1m7GDk5
+        JARMJNZtm83excjFISSwm1HicesPqISUxNb2PcwQtrDE/ZYjrBBFzxklWi89YgdJsAloS2w+
+        vooRxBYRiJD4vKmZDaSIWeAyu8Svvg9sIAlhASOJ1q5uJhCbRUBV4sq2z2BTeQUsJVa/amWF
+        sAUlTs58wtLFyAHUrCfRthFsJrOAvMT2t3OgjlCQ2HH2NVRcRGJ2ZxszxF49ictr7jFOYBSc
+        hWTSLIRJs5BMmoWkewEjyypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOA0oKW5g/Hy
+        kvhDjAIcjEo8vBN0Y2OFWBPLiitzDzFKcDArifBWzImKFeJNSaysSi3Kjy8qzUktPsQozcGi
+        JM77NO9YpJBAemJJanZqakFqEUyWiYNTqoHR/3xjomm+UuNza36XT/syBRcuDdj2pvvHHj7v
+        Co5+z/JqscvTsoNWmN98Ul6ye8f1Q09rHkpuep167iuXgXjuERnen0//OhpvrD5pwGOoorWs
+        Qv6H8ONV3yZvv3Rx9qGtTFMtWAWc9u6duYqxsO17cllw0/bX93kWxe++rFG1xkdnd3HZOi0X
+        JZbijERDLeai4kQAbRpSev8CAAA=
+X-CMS-MailID: 20190822005438epcas2p337aba06b328cdcdd1549395f0bbcfdbc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190822005438epcas2p337aba06b328cdcdd1549395f0bbcfdbc
+References: <CGME20190822005438epcas2p337aba06b328cdcdd1549395f0bbcfdbc@epcas2p3.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 5:10 PM Khazhismel Kumykov <khazhy@google.com> wrote:
->
-> Instead of having a helper per flag
->
-> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+On 8/21/19 21:09 AM, Jens Axboe wrote:
+> This isn't going to happen. With this, and the inline encryption
+> proposed by Google, we'll bloat the bio even more. At least the Google
+> approach didn't include bio iter changes as well.
 
-I think it would be better to re-order the patch 2 and 3 of this
-series. There will be less code churn.
+> Please work it out between yourselves so we can have a single, clean
+> abstraction that works for both.
 
-> ---
->  fs/fuse/dev.c    | 22 +++-------------------
->  fs/fuse/file.c   |  6 +++---
->  fs/fuse/fuse_i.h |  6 +-----
->  fs/fuse/inode.c  |  4 ++--
->  4 files changed, 9 insertions(+), 29 deletions(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index a0d166a6596f..c957620ce7ba 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -66,7 +66,7 @@ static struct page **fuse_req_pages_alloc(unsigned int npages, gfp_t flags,
->         return pages;
->  }
->
-> -static struct fuse_req *__fuse_request_alloc(unsigned npages, gfp_t flags)
-> +struct fuse_req *fuse_request_alloc(unsigned int npages, gfp_t flags)
->  {
->         struct fuse_req *req = kmem_cache_zalloc(fuse_req_cachep, flags);
->         if (req) {
-> @@ -90,24 +90,8 @@ static struct fuse_req *__fuse_request_alloc(unsigned npages, gfp_t flags)
->         }
->         return req;
->  }
-> -
-> -struct fuse_req *fuse_request_alloc(unsigned npages)
-> -{
-> -       return __fuse_request_alloc(npages, GFP_KERNEL);
-> -}
->  EXPORT_SYMBOL_GPL(fuse_request_alloc);
->
-> -struct fuse_req *fuse_request_alloc_account(unsigned int npages)
-> -{
-> -       return __fuse_request_alloc(npages, GFP_KERNEL_ACCOUNT);
-> -}
-> -EXPORT_SYMBOL_GPL(fuse_request_alloc_account);
-> -
-> -struct fuse_req *fuse_request_alloc_nofs(unsigned npages)
-> -{
-> -       return __fuse_request_alloc(npages, GFP_NOFS);
-> -}
-> -
->  static void fuse_req_pages_free(struct fuse_req *req)
->  {
->         if (req->pages != req->inline_pages)
-> @@ -207,7 +191,7 @@ static struct fuse_req *__fuse_get_req(struct fuse_conn *fc, unsigned npages,
->         if (fc->conn_error)
->                 goto out;
->
-> -       req = fuse_request_alloc(npages);
-> +       req = fuse_request_alloc(npages, GFP_KERNEL);
->         err = -ENOMEM;
->         if (!req) {
->                 if (for_background)
-> @@ -316,7 +300,7 @@ struct fuse_req *fuse_get_req_nofail_nopages(struct fuse_conn *fc,
->         wait_event(fc->blocked_waitq, fc->initialized);
->         /* Matches smp_wmb() in fuse_set_initialized() */
->         smp_rmb();
-> -       req = fuse_request_alloc(0);
-> +       req = fuse_request_alloc(0, GFP_KERNEL);
->         if (!req)
->                 req = get_reserved_req(fc, file);
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index c584ad7478b3..ae8c8016bb8e 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -50,7 +50,7 @@ struct fuse_file *fuse_file_alloc(struct fuse_conn *fc)
->                 return NULL;
->
->         ff->fc = fc;
-> -       ff->reserved_req = fuse_request_alloc_account(0);
-> +       ff->reserved_req = fuse_request_alloc(0, GFP_KERNEL_ACCOUNT);
->         if (unlikely(!ff->reserved_req)) {
->                 kfree(ff);
->                 return NULL;
-> @@ -1703,7 +1703,7 @@ static int fuse_writepage_locked(struct page *page)
->
->         set_page_writeback(page);
->
-> -       req = fuse_request_alloc_nofs(1);
-> +       req = fuse_request_alloc(1, GFP_NOFS);
->         if (!req)
->                 goto err;
->
-> @@ -1923,7 +1923,7 @@ static int fuse_writepages_fill(struct page *page,
->                 struct fuse_inode *fi = get_fuse_inode(inode);
->
->                 err = -ENOMEM;
-> -               req = fuse_request_alloc_nofs(FUSE_REQ_INLINE_PAGES);
-> +               req = fuse_request_alloc(FUSE_REQ_INLINE_PAGES, GFP_NOFS);
->                 if (!req) {
->                         __free_page(tmp_page);
->                         goto out_unlock;
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 08161b2d9b08..8080a51096e9 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -902,11 +902,7 @@ void __exit fuse_ctl_cleanup(void);
->  /**
->   * Allocate a request
->   */
-> -struct fuse_req *fuse_request_alloc(unsigned npages);
-> -
-> -struct fuse_req *fuse_request_alloc_account(unsigned int npages);
-> -
-> -struct fuse_req *fuse_request_alloc_nofs(unsigned npages);
-> +struct fuse_req *fuse_request_alloc(unsigned int npages, gfp_t flags);
->
->  bool fuse_req_realloc_pages(struct fuse_conn *fc, struct fuse_req *req,
->                             gfp_t flags);
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index eab44ddc68b9..ad92e93eaddd 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1178,13 +1178,13 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
->         /* Root dentry doesn't have .d_revalidate */
->         sb->s_d_op = &fuse_dentry_operations;
->
-> -       init_req = fuse_request_alloc(0);
-> +       init_req = fuse_request_alloc(0, GFP_KERNEL);
->         if (!init_req)
->                 goto err_put_root;
->         __set_bit(FR_BACKGROUND, &init_req->flags);
->
->         if (is_bdev) {
-> -               fc->destroy_req = fuse_request_alloc(0);
-> +               fc->destroy_req = fuse_request_alloc(0, GFP_KERNEL);
->                 if (!fc->destroy_req)
->                         goto err_free_init_req;
->         }
-> --
-> 2.23.0.187.g17f5b7556c-goog
->
+I'm looking at inline encryption by Google. 
+I will find compatibility with inline encryption to avoid conflicts
+in BIO/F2FS.
+And changing bio iter has a benefit for diskcipher.
+Without changing bio iter, diskcipher should control(alloc/free) a buffer
+to hold a 'bi_dun' variable for every bio.
+But changing bio iter is difficult to accept for block layer,
+I will modify the diskcipher.
+And, as you mentioned, inline encryption by Google has this control.
+So I might be able to use it.
+
+Thanks.
+Boojin Kim.
+
