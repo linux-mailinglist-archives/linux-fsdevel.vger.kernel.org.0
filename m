@@ -2,90 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 395C79A331
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 00:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24EA69A3D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 01:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394110AbfHVWn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 18:43:58 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35927 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394082AbfHVWn6 (ORCPT
+        id S1726385AbfHVXam (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 19:30:42 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38822 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfHVXal (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 18:43:58 -0400
-Received: by mail-pf1-f193.google.com with SMTP id w2so4960854pfi.3;
-        Thu, 22 Aug 2019 15:43:57 -0700 (PDT)
+        Thu, 22 Aug 2019 19:30:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id o70so5035566pfg.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 16:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=pipHIj2z8t6n6jqMVgjlsl2tSXUd+7sKmIuVqD9kPY4=;
+        b=hMnkoT5tbbKTZsnL0o1jbPhA9Rz8Qwpwy4McYBokvjjLVHvSW4wOMynuN5oMcP122a
+         7WuQfzvAX0353Q+FkxsoKOMI95qLc2yuaJ1UYcq6w9RXgM4ouNA07MzId4svJ02rAvrs
+         ZYfoOc+wEVTW6rnnvuG4FkOXzoQ9sH0pA1diY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YQxy7LG7DNBTUMkrggpj64fW1gmhMtjURQTq0iGs9uE=;
-        b=hkVcYBdNtASV/n7ywYECSZj7gQmRXBZ+0SMzZK88ilkr84vNP4UDw7FqnU3gtpEZ4E
-         3bA22+3URwKP40saxjPQLq2J2L8SQKKjzo/aRRm+sR/fFdJVAmf4d5Yxgk/ePg1rguzv
-         tRPFEPOOSjEs8urUcvcUI8vimr9A/zom297hY3f9nL4wEVQLi9/4hjLjQ2cZiiC6pvu3
-         1rEim3NPSS1liI5A9nqfCgclkAnoVOFGJGbsMxEek6CrebbH1ShuF9SAW92oaNvVKBEu
-         1c3gzK37+cAzhTtXTAk4hDShvPDW9VtsVOG3gfc5wNEy0YgClUoIiAiQdsVACWrRsCqq
-         Opnw==
-X-Gm-Message-State: APjAAAUVmGt/bUdxBhrUWp4yoeEcCaQBe0vU9j6jOgQZ4/OwKmHx094Z
-        f7dG+N8+aiSq/F0eNQM0rjYV7rEj
-X-Google-Smtp-Source: APXvYqzq5MAdFE8W+s3h6x+elqgSyD7DLrYGhZaQ+mvzJpjFxObTVVGVt+YPpEiF2OQPYZXg8CFg/Q==
-X-Received: by 2002:a17:90a:3a8d:: with SMTP id b13mr2051805pjc.75.1566513837445;
-        Thu, 22 Aug 2019 15:43:57 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id y8sm405397pfr.140.2019.08.22.15.43.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 15:43:56 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 97286403DC; Thu, 22 Aug 2019 22:43:55 +0000 (UTC)
-Date:   Thu, 22 Aug 2019 22:43:55 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Matias Bjorling <matias.bjorling@wdc.com>
-Subject: Re: [PATCH V2] fs: New zonefs file system
-Message-ID: <20190822224355.GX30113@42.do-not-panic.com>
-References: <20190820081249.27353-1-damien.lemoal@wdc.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=pipHIj2z8t6n6jqMVgjlsl2tSXUd+7sKmIuVqD9kPY4=;
+        b=O31f3zCdDAXLpybxRq6vO/d6prIh0QiS93UpmHwaozp88q10Ho/hopfj2bg7RHZX/z
+         utXJ40HJji9liheaRmqC6dd6+pi5DKQQmgYD89EVZLmwnBHHtT1XDps6bCC5tSVkJVaR
+         Y3fnHWL2o/491vF/hpo6HEewW8rHIsLmJSWc0qbVSJ0w38IdPkdzfhJTeN8zauo/xNP9
+         WJxhBsRb8eTAfIQde4xw4bza5JqFRAvhkgkI+aB69I+zvnBOU5oTskZlTFx+TlauOcic
+         YNfUPZIoXbW8GrflkjJsCiAoOxz0fW0rs+/gSq0g86Om+ybOXxnvbfeSpdgpNKa6v50V
+         vFFw==
+X-Gm-Message-State: APjAAAWW0me/unhus0JOMsed5rRCXu1WJg3tY3LQJ6sOjzlABkJxLKYv
+        eBQHLwpUCzAG+x84xhBLpxXHqQ==
+X-Google-Smtp-Source: APXvYqzKrKT+k/MJjU1tTcW0RKdJpKgeuPCz/JwywMw0aLkN5Y6KHgx4CNyQzDQLoks+nrLfaVWIWQ==
+X-Received: by 2002:a17:90a:234f:: with SMTP id f73mr2274285pje.130.1566516640592;
+        Thu, 22 Aug 2019 16:30:40 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id c12sm526175pfc.22.2019.08.22.16.30.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Aug 2019 16:30:40 -0700 (PDT)
+Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org
+References: <20190822192451.5983-1-scott.branden@broadcom.com>
+ <20190822192451.5983-3-scott.branden@broadcom.com>
+ <20190822194712.GG16384@42.do-not-panic.com>
+ <7ee02971-e177-af05-28e0-90575ebe12e0@broadcom.com>
+ <20190822211220.GR16384@42.do-not-panic.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <009295ce-bdc5-61d8-b450-5fcdae041922@broadcom.com>
+Date:   Thu, 22 Aug 2019 16:30:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820081249.27353-1-damien.lemoal@wdc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190822211220.GR16384@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 05:12:49PM +0900, Damien Le Moal wrote:
-> The aggregated conventional zone file can be used as a regular file.
-> Operations such as the following work.
-> 
-> mkfs.ext4 /mnt/cnv/0
-> mount -o loop /mnt/cnv/0 /data
+Hi Luis,
 
-Should BLK_DEV_LOOP_MIN_COUNT be increased if this is enabled to
-a mich higher sensible default? Right now the default is 8. Also,
-can we infer this later dynamically so so this can grow at proper
-scale without having to have user interaction?
+On 2019-08-22 2:12 p.m., Luis Chamberlain wrote:
+> On Thu, Aug 22, 2019 at 01:07:41PM -0700, Scott Branden wrote:
+>> On 2019-08-22 12:47 p.m., Luis Chamberlain wrote:
+>>> This implies you having to change the other callers, and while currently
+>>> our list of drivers is small,
+>> Yes, the list is small, very small.
+>>
+>> There is a single driver making a call to the existing API.
+>>
+>> And, the maintainer of that driver wanted
+>> to start utilizing my enhanced API instead of the current API.
+> You mean in the near term future? Your change makes it use the full file.
+> Just checking.
 
-For now, I mean something like:
+The change in the patch keeps the existing functionality in the
 
-diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
-index 1bb8ec575352..22ba4803b075 100644
---- a/drivers/block/Kconfig
-+++ b/drivers/block/Kconfig
-@@ -217,7 +217,8 @@ config BLK_DEV_LOOP
- config BLK_DEV_LOOP_MIN_COUNT
- 	int "Number of loop devices to pre-create at init time"
- 	depends on BLK_DEV_LOOP
--	default 8
-+	default 8 if !ZONEFS FILESYSTEM
-+	default 32 if ZONEFS FILESYSTEM
- 	help
- 	  Static number of loop devices to be unconditionally pre-created
- 	  at init time.
+qcom mdt_loader by reading the full file using the enhanced api.
 
-  Luis
+I don't know when Bjorn will switch to use the partial firmware load:
+
+https://lkml.org/lkml/2019/5/27/9
+
+>
+>> As such I think it is very reasonable to update the API right now.
+> I'd prefer to see it separate, and we fix the race *before* we introduce
+> the new functionality. I'll be poking at that shortly but I should note
+> that I leave on vacation this weekend and won't be back for a good while.
+> I already have an idea of how to approach this.
+>
+> When the current user want to use the new API it can do so, and then we
+> just kill the older caller.
+
+We can kill the older api right now as my patch in qcom mdt_loader
+
+calls the new API which allows reading of full or partial files?
+
+>
+>>> following the history of the firmware API
+>>> and the long history of debate of *how* we should evolve its API, its
+>>> preferred we add yet another new caller for this functionality. So
+>>> please add a new caller, and use EXPORT_SYMBOL_GPL().
+>>>
+>>> And while at it, pleaase use firmware_request_*() as the prefix, as we
+>>> have want to use that as the instilled prefix. We have yet to complete
+>>> the rename of the others older callers but its just a matter of time.
+>>>
+>>> So something like: firmware_request_into_buf_offset()
+>> I would prefer to rename the API at this time given there is only a single
+>> user.
+>>
+>> Otherwise I would need to duplicate quite a bit in the test code to support
+>> testing the single user of the old api and then enhanced API.
+>> Or, I can leave existing API in place and change the test case to
+>> just test the enhanced API to keep things simpler in the test code?
+> If the new user is going to move to the API once available I will be
+> happy to then leave out testing for the older API. That would make
+> sense.
+
+I have switched the single user of the existing api to the new
+
+API in the patch already?  And both full and partial reads using
+
+the new API are tested with this patch series.  If you really insist
+
+on keeping the old API for a single user I can drop that change from the
+
+patch series and have the old request_firmware_api call simply
+
+be a wrapper calling the new API.
+
+>
+> But if you do want to keep testing for the old API, and allow an easy
+> removal for it on the test driver, wouldn't a function pointer suffice
+> for which API call to use based on a boolean?
+>
+> But yeah if we're going to abandon the old mechanism I'm happy to skip
+> its te
+
+We can skip right now then.  As enhanced API is a superset of old API.
+
+If you want the old API left in place I can just add the wrapper 
+described and
+
+only test the newly named function and thus indirectly test the old
+
+request_firmware_into_buf.
+
+> sting.
+>
+>    Luis
