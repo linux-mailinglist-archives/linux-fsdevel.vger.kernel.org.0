@@ -2,89 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A358F9942B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 14:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9782899464
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 15:00:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732590AbfHVMsn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 08:48:43 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56072 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388015AbfHVMsl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:48:41 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 86BBDB07C253D1E9F21B;
-        Thu, 22 Aug 2019 20:48:27 +0800 (CST)
-Received: from [127.0.0.1] (10.133.208.128) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Thu, 22 Aug 2019
- 20:48:24 +0800
-Subject: Re: [Virtio-fs] [QUESTION] A performance problem for buffer write
- compared with 9p
-To:     Miklos Szeredi <miklos@szeredi.hu>
-References: <5abd7616-5351-761c-0c14-21d511251006@huawei.com>
- <20190820091650.GE9855@stefanha-x1.localdomain>
- <CAJfpegs8fSLoUaWKhC1543Hoy9821vq8=nYZy-pw1+95+Yv4gQ@mail.gmail.com>
- <20190821160551.GD9095@stefanha-x1.localdomain>
- <954b5f8a-4007-f29c-f38e-dd5585879541@huawei.com>
- <CAJfpegtBYLJLWM8GJ1h66PMf2J9o38FG6udcd2hmamEEQddf5w@mail.gmail.com>
-CC:     Stefan Hajnoczi <stefanha@redhat.com>,
-        <linux-fsdevel@vger.kernel.org>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-From:   wangyan <wangyan122@huawei.com>
-Message-ID: <0e8090c7-0c7c-bcbe-af75-33054d3a3efb@huawei.com>
-Date:   Thu, 22 Aug 2019 20:48:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S2388828AbfHVM7d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 08:59:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48218 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387779AbfHVM7d (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Aug 2019 08:59:33 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1C3EE18C4261;
+        Thu, 22 Aug 2019 12:59:33 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 406585D772;
+        Thu, 22 Aug 2019 12:59:28 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id C5CFA223CFC; Thu, 22 Aug 2019 08:59:27 -0400 (EDT)
+Date:   Thu, 22 Aug 2019 08:59:27 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Liu Bo <bo.liu@linux.alibaba.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        stefanha@redhat.com, dgilbert@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>
+Subject: Re: [PATCH 11/19] fuse, dax: Implement dax read/write operations
+Message-ID: <20190822125927.GA8999@redhat.com>
+References: <20190821175720.25901-1-vgoyal@redhat.com>
+ <20190821175720.25901-12-vgoyal@redhat.com>
+ <20190821194934.rqswgc52juisunl2@US-160370MP2.local>
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegtBYLJLWM8GJ1h66PMf2J9o38FG6udcd2hmamEEQddf5w@mail.gmail.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.208.128]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821194934.rqswgc52juisunl2@US-160370MP2.local>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Thu, 22 Aug 2019 12:59:33 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/8/22 19:43, Miklos Szeredi wrote:
-> On Thu, Aug 22, 2019 at 2:59 AM wangyan <wangyan122@huawei.com> wrote:
->> I will test it when I get the patch, and post the compared result with
->> 9p.
->
-> Could you please try the attached patch?  My guess is that it should
-> improve the performance, perhaps by a big margin.
->
-> Further improvement is possible by eliminating page copies, but that
-> is less trivial.
->
-> Thanks,
-> Miklos
->
-Using the same test model. And the test result is:
-	1. Latency
-		virtiofs: avg-lat is 15.40 usec, bigger than before(6.64 usec).
-		4K: (g=0): rw=write, bs=4K-4K/4K-4K/4K-4K, ioengine=psync, iodepth=1
-		fio-2.13
-		Starting 1 process
-		Jobs: 1 (f=1): [W(1)] [100.0% done] [0KB/142.4MB/0KB /s] [0/36.5K/0 
-iops] [eta 00m:00s]
-		4K: (groupid=0, jobs=1): err= 0: pid=5528: Thu Aug 22 20:39:07 2019
-		  write: io=6633.2MB, bw=226404KB/s, iops=56600, runt= 30001msec
-			clat (usec): min=2, max=40403, avg=14.77, stdev=33.71
-			 lat (usec): min=3, max=40404, avg=15.40, stdev=33.74
+On Wed, Aug 21, 2019 at 12:49:34PM -0700, Liu Bo wrote:
 
-	2. Bandwidth
-		virtiofs: bandwidth is 280840KB/s, lower than before(691894KB/s).
-		1M: (g=0): rw=write, bs=1M-1M/1M-1M/1M-1M, ioengine=psync, iodepth=1
-		fio-2.13
-		Starting 1 process
-		Jobs: 1 (f=1): [f(1)] [100.0% done] [0KB/29755KB/0KB /s] [0/29/0 iops] 
-[eta 00m:00s]
-		1M: (groupid=0, jobs=1): err= 0: pid=5550: Thu Aug 22 20:41:28 2019
-		  write: io=8228.0MB, bw=280840KB/s, iops=274, runt= 30001msec
-			clat (usec): min=362, max=11038, avg=3571.33, stdev=1062.72
-			 lat (usec): min=411, max=11093, avg=3628.39, stdev=1064.53
+[..]
+> > +static int iomap_begin_upgrade_mapping(struct inode *inode, loff_t pos,
+> > +					 loff_t length, unsigned flags,
+> > +					 struct iomap *iomap)
+> > +{
+> > +	struct fuse_inode *fi = get_fuse_inode(inode);
+> > +	struct fuse_dax_mapping *dmap;
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * Take exclusive lock so that only one caller can try to setup
+> > +	 * mapping and others wait.
+> > +	 */
+> > +	down_write(&fi->i_dmap_sem);
+> > +	dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, pos, pos);
+> > +
+> > +	/* We are holding either inode lock or i_mmap_sem, and that should
+> > +	 * ensure that dmap can't reclaimed or truncated and it should still
+> > +	 * be there in tree despite the fact we dropped and re-acquired the
+> > +	 * lock.
+> > +	 */
+> > +	ret = -EIO;
+> > +	if (WARN_ON(!dmap))
+> > +		goto out_err;
+> > +
+> > +	/* Maybe another thread already upgraded mapping while we were not
+> > +	 * holding lock.
+> > +	 */
+> > +	if (dmap->writable)
+> > +		goto out_fill_iomap;
+> 
+> @ret needs to be reset here.
+> 
 
-According to the result, the patch doesn't work and make it worse than 
-before.
+Good catch. Will fix it.
 
+Vivek
