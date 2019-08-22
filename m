@@ -2,240 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02F0A99F06
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 20:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F0999FAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 21:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390989AbfHVSk2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 14:40:28 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45908 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390955AbfHVSk1 (ORCPT
+        id S2391543AbfHVTRn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 15:17:43 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46571 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391860AbfHVTRn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 14:40:27 -0400
-Received: by mail-pf1-f194.google.com with SMTP id w26so4511736pfq.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 11:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IA8z/5AqtCHFT32SY+cIXSmPc0kaoD29PlyZ57NhalY=;
-        b=BgB5KJgRI2OAMFO3lQmNArPftpDtD+nVUiJaoL/PL/14HemQ//f8oXX5mmTLwZrVeM
-         UpdaOWdFUaGyxjitCmu4G6tGH22q5Ilv8GjvfFNAiukCsGLnKENYAmgPzQfNG76hKWON
-         znl1GkmY7IAARq4+4slXfINLE8Of4Aji/+3EU=
+        Thu, 22 Aug 2019 15:17:43 -0400
+Received: by mail-ot1-f65.google.com with SMTP id z17so6471255otk.13;
+        Thu, 22 Aug 2019 12:17:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IA8z/5AqtCHFT32SY+cIXSmPc0kaoD29PlyZ57NhalY=;
-        b=moY/jkVNvt0oFwVKmuO0cMudx2P1EJwQ91LenLka1TChrf53S51mnr0ScXdGIE1f22
-         eCr2g59X4vOifq0C7fryozFzzDt/8CxEr15DZpQCKF+oV5m0s7iFxi/rd/dpC4o1Efxh
-         /fD6fmuK01c3R8UaWNeo/VpswBnv6F4A1qtDxnlgMfoaJel/40r23b5OPrLR/897EnN7
-         W4w/oA4J5bvkfvnba+sEeks1tCvyzkSl/ZL29ep8QHMKUelZxvBdVDjXfjCZu5NmBkAE
-         WbJIV6mFzwo0KDs5nivyItPmYPijn309p/osSvctKOK9qR7d8cLcoSknoZP2qXCcIMHZ
-         3mDA==
-X-Gm-Message-State: APjAAAWmpwqula6oT9V2BpC278ZuYV8NLrDyuSx6qPxAI5Tw4gjBwC+N
-        M9RAOIQN10gzrgLxY2TVo28BbQ==
-X-Google-Smtp-Source: APXvYqzSMdvmuGNbJy/sI3mS9i6KFKJnX0SBbijQnHdu2yhzqHbRk47dNRYki3R7ggqlt+YvXbkscQ==
-X-Received: by 2002:a17:90a:86c2:: with SMTP id y2mr1144374pjv.46.1566499226035;
-        Thu, 22 Aug 2019 11:40:26 -0700 (PDT)
-Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id z19sm51056pgv.35.2019.08.22.11.40.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 11:40:25 -0700 (PDT)
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v2 2/2] selftests: firmware: Add request_firmware_into_buf tests
-Date:   Thu, 22 Aug 2019 11:40:05 -0700
-Message-Id: <20190822184005.901-3-scott.branden@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190822184005.901-1-scott.branden@broadcom.com>
-References: <20190822184005.901-1-scott.branden@broadcom.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=24eP7T52+CYL2dNJV8R097RDf634lSS5yuSIePFHGwk=;
+        b=eAbrKm5FJNzAHkCS/Z5RTD47hOZKeWADSxBDfsmBNfsJa31aNePzf2DAaBqnqn+TcN
+         cE6/kDiRsa4mthXJs42kKSP5E3jo1dtIjG1EoYi8ecz9tgmWp3xWrNniJhAxNcU5cT6B
+         5N57E849AJefGrd7xA4mMC5jrWcWLH/P0B1gaPs+wEwfvKVe3gEw5/eBrVebsO0CrZPI
+         5ifJJOXkzLBJMYgJr0qz+HSfHrRieVvlty7C3ioBSzq5L+GbxOW5RWJo2esyu3cQuIqh
+         pB38rZMsIIQ6K5avEvVQzxHRuU2q/uGX1GyIjlAADceGGKw5vMCY/+Y+VOIgkQXyOpc0
+         XcQA==
+X-Gm-Message-State: APjAAAUbqws7Ok41kGbUAZJeq/ROhgLjIO9Jcz0rWCtbhYtQusVcm/mR
+        EPc19iKyO2mt6bZtfTqBiPI=
+X-Google-Smtp-Source: APXvYqxop+1c9JiQDuqjxLlVpuweprhgD1ihezKlsMDwXHi6Dx3GUbjgB7f6MqabctH5Zf2GXdALrg==
+X-Received: by 2002:a05:6830:1db2:: with SMTP id z18mr1087490oti.110.1566501462198;
+        Thu, 22 Aug 2019 12:17:42 -0700 (PDT)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id j6sm157680otq.16.2019.08.22.12.17.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Aug 2019 12:17:41 -0700 (PDT)
+Subject: Re: [PATCH v7 08/14] nvmet-core: allow one host per passthru-ctrl
+From:   Sagi Grimberg <sagi@grimberg.me>
+To:     Max Gurtovoy <maxg@mellanox.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Stephen Bates <sbates@raithlin.com>, Jens Axboe <axboe@fb.com>,
+        Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
+References: <20190801234514.7941-1-logang@deltatee.com>
+ <20190801234514.7941-9-logang@deltatee.com>
+ <05a74e81-1dbd-725f-1369-5ca5c5918db1@mellanox.com>
+ <a6b9db95-a7f0-d1f6-1fa2-8dc13a6aa29e@deltatee.com>
+ <5717f515-e051-c420-07b7-299bcfcd1f32@mellanox.com>
+ <b0921c72-93f1-f67a-c4b3-31baeb1c39cb@grimberg.me>
+ <b352c7f1-2629-e72f-9c85-785e0cf7c2c1@mellanox.com>
+ <24e2ddd0-4b2a-8092-cf91-df8c0fb482e5@grimberg.me>
+Message-ID: <e4430207-7def-8776-0289-0d58689dc0cd@grimberg.me>
+Date:   Thu, 22 Aug 2019 12:17:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <24e2ddd0-4b2a-8092-cf91-df8c0fb482e5@grimberg.me>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add tests cases for checking request_firmware_into_buf api.
-API was introduced into kernel with no testing present previously.
 
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
----
- .../selftests/firmware/fw_filesystem.sh       | 57 ++++++++++++++++++-
- tools/testing/selftests/firmware/fw_lib.sh    | 11 ++++
- 2 files changed, 66 insertions(+), 2 deletions(-)
+>>>> I don't understand why we don't limit a regular ctrl to single 
+>>>> access and we do it for the PT ctrl.
+>>>>
+>>>> I guess the block layer helps to sync between multiple access in 
+>>>> parallel but we can do it as well.
+>>>>
+>>>> Also, let's say you limit the access to this subsystem to 1 user, 
+>>>> the bdev is still accessibly for local user and also you can create 
+>>>> a different subsystem that will use this device (PT and non-PT ctrl).
+>>>>
+>>>> Sagi,
+>>>>
+>>>> can you explain the trouble you meant and how this limitation solve 
+>>>> it ?
+>>>
+>>> Its different to emulate the controller with all its admin
+>>> commands vs. passing it through to the nvme device.. (think of format 
+>>> nvm)
+>>>
+>>>
+>>>
+>> we don't need to support format command for PT ctrl as we don't 
+>> support other commands such create_sq/cq.
+> 
+> That is just an example, basically every command that we are not aware
+> of we simply passthru to the drive without knowing the implications
+> on a multi-host environment..
 
-diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/testing/selftests/firmware/fw_filesystem.sh
-index f901076aa2ea..56894477c8bd 100755
---- a/tools/testing/selftests/firmware/fw_filesystem.sh
-+++ b/tools/testing/selftests/firmware/fw_filesystem.sh
-@@ -116,6 +116,16 @@ config_set_name()
- 	echo -n $1 >  $DIR/config_name
- }
- 
-+config_set_into_buf()
-+{
-+	echo 1 >  $DIR/config_into_buf
-+}
-+
-+config_unset_into_buf()
-+{
-+	echo 0 >  $DIR/config_into_buf
-+}
-+
- config_set_sync_direct()
- {
- 	echo 1 >  $DIR/config_sync_direct
-@@ -153,11 +163,14 @@ config_set_read_fw_idx()
- 
- read_firmwares()
- {
--	if [ "$1" = "xzonly" ]; then
--		fwfile="${FW}-orig"
-+	if [ "$(cat $DIR/config_into_buf)" == "1" ]; then
-+		fwfile="$FW_INTO_BUF"
- 	else
- 		fwfile="$FW"
- 	fi
-+	if [ "$1" = "xzonly" ]; then
-+		fwfile="${fwfile}-orig"
-+	fi
- 	for i in $(seq 0 3); do
- 		config_set_read_fw_idx $i
- 		# Verify the contents are what we expect.
-@@ -194,6 +207,18 @@ test_batched_request_firmware_nofile()
- 	echo "OK"
- }
- 
-+test_batched_request_firmware_into_buf_nofile()
-+{
-+	echo -n "Batched request_firmware_into_buf() nofile try #$1: "
-+	config_reset
-+	config_set_name nope-test-firmware.bin
-+	config_set_into_buf
-+	config_trigger_sync
-+	read_firmwares_expect_nofile
-+	release_all_firmware
-+	echo "OK"
-+}
-+
- test_batched_request_firmware_direct_nofile()
- {
- 	echo -n "Batched request_firmware_direct() nofile try #$1: "
-@@ -259,6 +284,18 @@ test_batched_request_firmware()
- 	echo "OK"
- }
- 
-+test_batched_request_firmware_into_buf()
-+{
-+	echo -n "Batched request_firmware_into_buf() $2 try #$1: "
-+	config_reset
-+	config_set_name $TEST_FIRMWARE_INTO_BUF_FILENAME
-+	config_set_into_buf
-+	config_trigger_sync
-+	read_firmwares $2
-+	release_all_firmware
-+	echo "OK"
-+}
-+
- test_batched_request_firmware_direct()
- {
- 	echo -n "Batched request_firmware_direct() $2 try #$1: "
-@@ -307,6 +344,10 @@ for i in $(seq 1 5); do
- 	test_batched_request_firmware $i normal
- done
- 
-+for i in $(seq 1 5); do
-+	test_batched_request_firmware_into_buf $i normal
-+done
-+
- for i in $(seq 1 5); do
- 	test_batched_request_firmware_direct $i normal
- done
-@@ -327,6 +368,10 @@ for i in $(seq 1 5); do
- 	test_batched_request_firmware_nofile $i
- done
- 
-+for i in $(seq 1 5); do
-+	test_batched_request_firmware_into_buf_nofile $i
-+done
-+
- for i in $(seq 1 5); do
- 	test_batched_request_firmware_direct_nofile $i
- done
-@@ -350,6 +395,10 @@ for i in $(seq 1 5); do
- 	test_batched_request_firmware $i both
- done
- 
-+for i in $(seq 1 5); do
-+	test_batched_request_firmware_into_buf $i both
-+done
-+
- for i in $(seq 1 5); do
- 	test_batched_request_firmware_direct $i both
- done
-@@ -370,6 +419,10 @@ for i in $(seq 1 5); do
- 	test_batched_request_firmware $i xzonly
- done
- 
-+for i in $(seq 1 5); do
-+	test_batched_request_firmware_into_buf $i xzonly
-+done
-+
- for i in $(seq 1 5); do
- 	test_batched_request_firmware_direct $i xzonly
- done
-diff --git a/tools/testing/selftests/firmware/fw_lib.sh b/tools/testing/selftests/firmware/fw_lib.sh
-index f236cc295450..b879305a766d 100755
---- a/tools/testing/selftests/firmware/fw_lib.sh
-+++ b/tools/testing/selftests/firmware/fw_lib.sh
-@@ -9,6 +9,12 @@ DIR=/sys/devices/virtual/misc/test_firmware
- PROC_CONFIG="/proc/config.gz"
- TEST_DIR=$(dirname $0)
- 
-+# We need to load a different file to test request_firmware_into_buf
-+# I believe the issue is firmware loaded cached vs. non-cached
-+# with same filename is bungled.
-+# To reproduce rename this to test-firmware.bin
-+TEST_FIRMWARE_INTO_BUF_FILENAME=test-firmware-into-buf.bin
-+
- # Kselftest framework requirement - SKIP code is 4.
- ksft_skip=4
- 
-@@ -108,6 +114,8 @@ setup_tmp_file()
- 	FWPATH=$(mktemp -d)
- 	FW="$FWPATH/test-firmware.bin"
- 	echo "ABCD0123" >"$FW"
-+	FW_INTO_BUF="$FWPATH/$TEST_FIRMWARE_INTO_BUF_FILENAME"
-+	echo "EFGH4567" >"$FW_INTO_BUF"
- 	NAME=$(basename "$FW")
- 	if [ "$TEST_REQS_FW_SET_CUSTOM_PATH" = "yes" ]; then
- 		echo -n "$FWPATH" >/sys/module/firmware_class/parameters/path
-@@ -175,6 +183,9 @@ test_finish()
- 	if [ -f $FW ]; then
- 		rm -f "$FW"
- 	fi
-+	if [ -f $FW_INTO_BUF ]; then
-+		rm -f "$FW_INTO_BUF"
-+	fi
- 	if [ -d $FWPATH ]; then
- 		rm -rf "$FWPATH"
- 	fi
--- 
-2.17.1
-
+If we were to change the logic of nvmet_parse_passthru_admin_cmd to
+have the default case do nvmet_parse_admin_cmd, and only have
+the vendor-specific space opcodes do nvmet_passthru_execute_cmd
+then I could not see at the moment how we can break a multi-host
+export...
