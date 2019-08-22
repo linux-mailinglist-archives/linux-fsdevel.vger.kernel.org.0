@@ -2,207 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D23EA98DEA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 10:37:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80F8E98E5B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 10:50:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731978AbfHVIhm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 04:37:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731984AbfHVIhl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 04:37:41 -0400
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 339BF23427;
-        Thu, 22 Aug 2019 08:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566463059;
-        bh=XE3xK9iG8Wy7wo/kPx8rxFjUegSzi/UaDRIOdgmeG7Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jhs218aNaLA4Bq8OPujJ/oKGM90+zjHunggojHGSt42VmXqMKgeNTPazw8Mmev1Je
-         JwhDX50NdqNblLusEM/+477jQps0EsJvAhuJqHOEuGRyDPBMUO588mLhb49EyqUQu8
-         uON7wCWTLLCkC28QdqMP+2McwTT40RKkfLdU2OOE=
-Received: by mail-lj1-f179.google.com with SMTP id h15so4731563ljg.10;
-        Thu, 22 Aug 2019 01:37:39 -0700 (PDT)
-X-Gm-Message-State: APjAAAUcc0ABIBYnRNScEKkjjmWx5PaRSzszsLzE/+EP/xYyiZg5h/FE
-        Sa9AOW+KamagdVqYkkTgrrcY3FsZEDr0mzYDlhc=
-X-Google-Smtp-Source: APXvYqxXD3xVQJzrJLwcWiHpcv+TEgK10V+ZrGUMTV7We6eP5yS2aPqV9SO+VlhvYHW+opZdR7L81464kePe1T4gEFc=
-X-Received: by 2002:a2e:b4d4:: with SMTP id r20mr21412900ljm.5.1566463057314;
- Thu, 22 Aug 2019 01:37:37 -0700 (PDT)
+        id S1731732AbfHVIuu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 04:50:50 -0400
+Received: from mail-eopbgr130059.outbound.protection.outlook.com ([40.107.13.59]:40933
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730488AbfHVIuu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Aug 2019 04:50:50 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZssP3R6H2QtWg+Nm3knsDOp2nGmQJRpuDYMu6YVlfDlGetcfA5Fba0cqJi9UlnvZouJlZNiweA/aOYxf/1DZVwSLXr2GR/IBH3k1gBN0fszYV1ZBVNB+a2oWovX5db0JxeSglQgIDvgaH71JaWojmq8Jct7+qzKtsxZxcNwzAWdC8ukEJN/Q1yRg6Ria/jIki+mReordJfoqAlmoJtYliJGqFJw0IH6Y2k9ydaalkh1A0Rr5IOqJSbGMql4tTQR4nDUMWk9/cvZxN2kyxaMRWCksomirkx0yKh9OwaEFfBzdxbH/qI7ZSV/QvzJEQdIRF1+Yib3tm6Hb/nDfPoDGZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PnLoCxABMtAX3omr7pMVdNrggxZn5x0JCJL9YY/zEKA=;
+ b=BXpG7yCygj9zq9ubBo10zgOiZshBNe5OKbfyKQxVmU5TqYFhDNAaH+bDHzqDfa2EHXpDszaf+dPRagfC6N+eujZit0I/MHBU+9Nu5/+nW4VBS3orCVQSuZmoHZoJy86zDj3mwNG81KikXvr0xcQOOqPSOy4Ok6bfs7kK3Hq6X6n8t3OP7s8fDYtYr5ZlDQ0ANiMtMCOFWn9ZyjOAoU3rw+UbVuW/JPpdjPw0CEutkHBSxyG4R6hLmiT5M7RZInNFjRe7m6ILyVeJGSrfp0fwhPpLRMSlOzRqp8KUiiLSz0AO3B8oIRIKjqlpZd/wxHxxlPHzuMzIoIxpUXrYp+Nfjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.47.165.251) smtp.rcpttodomain=lst.de smtp.mailfrom=mellanox.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=mellanox.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PnLoCxABMtAX3omr7pMVdNrggxZn5x0JCJL9YY/zEKA=;
+ b=hiYyr9FWm9jxV+GF78d5r8usBa3UtpqshgDKSq1chOglmrtzuUILr6b2nwL2b7fzi/CKBAsygH5cX6tjYVGS4ZJ/m2KD/dYI58zQ56pRUQlpt1cc2oS1HC1LfBL5Hi5AMK3ONdOXM/twEbi9uq5UkBJH4GG1wb0DEsi4Ja7TOXw=
+Received: from DB6PR05CA0024.eurprd05.prod.outlook.com (2603:10a6:6:14::37) by
+ HE1PR05MB3386.eurprd05.prod.outlook.com (2603:10a6:7:33::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.18; Thu, 22 Aug 2019 08:50:44 +0000
+Received: from AM5EUR03FT008.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e08::203) by DB6PR05CA0024.outlook.office365.com
+ (2603:10a6:6:14::37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2199.14 via Frontend
+ Transport; Thu, 22 Aug 2019 08:50:44 +0000
+Authentication-Results: spf=pass (sender IP is 193.47.165.251)
+ smtp.mailfrom=mellanox.com; lst.de; dkim=none (message not signed)
+ header.d=none;lst.de; dmarc=pass action=none header.from=mellanox.com;
+Received-SPF: Pass (protection.outlook.com: domain of mellanox.com designates
+ 193.47.165.251 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.47.165.251; helo=mtlcas13.mtl.com;
+Received: from mtlcas13.mtl.com (193.47.165.251) by
+ AM5EUR03FT008.mail.protection.outlook.com (10.152.16.123) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2199.13 via Frontend Transport; Thu, 22 Aug 2019 08:50:43 +0000
+Received: from MTLCAS13.mtl.com (10.0.8.78) by mtlcas13.mtl.com (10.0.8.78)
+ with Microsoft SMTP Server (TLS) id 15.0.1178.4; Thu, 22 Aug 2019 11:50:43
+ +0300
+Received: from MTLCAS01.mtl.com (10.0.8.71) by MTLCAS13.mtl.com (10.0.8.78)
+ with Microsoft SMTP Server (TLS) id 15.0.1178.4 via Frontend Transport; Thu,
+ 22 Aug 2019 11:50:43 +0300
+Received: from [10.223.0.54] (10.223.0.54) by MTLCAS01.mtl.com (10.0.8.71)
+ with Microsoft SMTP Server (TLS) id 14.3.301.0; Thu, 22 Aug 2019 11:50:41
+ +0300
+Subject: Re: [PATCH v7 08/14] nvmet-core: allow one host per passthru-ctrl
+To:     Sagi Grimberg <sagi@grimberg.me>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        <linux-kernel@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Stephen Bates <sbates@raithlin.com>, Jens Axboe <axboe@fb.com>,
+        Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
+References: <20190801234514.7941-1-logang@deltatee.com>
+ <20190801234514.7941-9-logang@deltatee.com>
+ <05a74e81-1dbd-725f-1369-5ca5c5918db1@mellanox.com>
+ <a6b9db95-a7f0-d1f6-1fa2-8dc13a6aa29e@deltatee.com>
+ <5717f515-e051-c420-07b7-299bcfcd1f32@mellanox.com>
+ <b0921c72-93f1-f67a-c4b3-31baeb1c39cb@grimberg.me>
+From:   Max Gurtovoy <maxg@mellanox.com>
+Message-ID: <b352c7f1-2629-e72f-9c85-785e0cf7c2c1@mellanox.com>
+Date:   Thu, 22 Aug 2019 11:50:41 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CGME20190821064211epcas2p43ed73f4fd126bcc5b470c9136db6aabc@epcas2p4.samsung.com>
- <003d01d557eb$8f6ca210$ae45e630$@samsung.com>
-In-Reply-To: <003d01d557eb$8f6ca210$ae45e630$@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 22 Aug 2019 10:37:26 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdK3ZzQXjzPZLzu5q0HZsL1vohQ4UxYTONcWdtDbEe2ng@mail.gmail.com>
-Message-ID: <CAJKOXPdK3ZzQXjzPZLzu5q0HZsL1vohQ4UxYTONcWdtDbEe2ng@mail.gmail.com>
-Subject: Re: [PATCH 1/9] crypt: Add diskcipher
-To:     "boojin.kim" <boojin.kim@samsung.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Chao Yu <chao@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, dm-devel@redhat.com,
-        Mike Snitzer <snitzer@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-fscrypt@vger.kernel.org, linux-mmc@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-block@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b0921c72-93f1-f67a-c4b3-31baeb1c39cb@grimberg.me>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.223.0.54]
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:193.47.165.251;IPV:NLI;CTRY:IL;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(136003)(396003)(2980300002)(189003)(199004)(305945005)(4744005)(229853002)(81166006)(2201001)(14444005)(6116002)(65956001)(336012)(2616005)(2906002)(126002)(7416002)(476003)(7736002)(47776003)(81156014)(65806001)(8676002)(356004)(86362001)(446003)(11346002)(31696002)(110136005)(8936002)(70206006)(16526019)(76176011)(54906003)(5660300002)(58126008)(70586007)(26005)(53546011)(16576012)(2486003)(23676004)(230700001)(31686004)(50466002)(53936002)(4326008)(3846002)(486006)(6246003)(106002)(478600001)(36756003)(36906005)(186003)(316002)(3940600001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB3386;H:mtlcas13.mtl.com;FPR:;SPF:Pass;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 27cf8248-09ad-4689-adf4-08d726ddd199
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(4709080)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:HE1PR05MB3386;
+X-MS-TrafficTypeDiagnostic: HE1PR05MB3386:
+X-Microsoft-Antispam-PRVS: <HE1PR05MB3386A59D748B094A15D251A2B6A50@HE1PR05MB3386.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
+X-Forefront-PRVS: 01371B902F
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: o0D3b+LPtTFxEh6LIDZnvyDQ85SdBeQ9jRo13on+wTps+/+Ghi97u9iUcX57HNTYC0DUjkmQjCxNZknXihOm9caoL0CUeM47rfcUcH42VzoVauuCoXpugbFqU1lptvENkI38SGjSC5qudpcaNXfxeqSEOXO8vC/glKaEkTqLs2dgAFfH7e+JNXYRsQj3N1g9Smy7c3ZikJusnMYTecvOq/tSGS/tevJcBxJf3XxVfN0ccOncUuZWr5ziw/qvLiUKbQBOjrD3oDikCV7iiHTHVk710rsR2FwbdFYlACbw6k/JDZp16wubYMm/ETbeRNIetdLZ73VjpIMSNbdY7DaU3yxysZ0nvSuyilwShH1qiLgkgYnzB5EzPtJ6flAolw8gJJBunVLYu5JzFaIP/nrasmaEBeZW/t6ShIMk7RH8MMM=
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2019 08:50:43.8478
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27cf8248-09ad-4689-adf4-08d726ddd199
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a652971c-7d2e-4d9b-a6a4-d149256f461b;Ip=[193.47.165.251];Helo=[mtlcas13.mtl.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB3386
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 21 Aug 2019 at 08:42, boojin.kim <boojin.kim@samsung.com> wrote:
->
-> Diskcipher supports cryptographic operations of inline crypto engines like
-> FMP. Inline crypto engine refers to hardware and solutions implemented
-> to encrypt data stored in storage device.
->
-> When encrypting using the FMP, Additional control is required
-> to carry and maintain the crypto information between
-> the encryption user(fscrypt, DM-crypt) and FMP driver.
-> Diskcipher provides this control.
->
-> Diskcipher is a symmetric key cipher in linux crypto API to support FMP.
-> FMP are registered with the cihper algorithm that uses diskcipher.
->
-> Diskcipher has three major steps.
-> The first step is to assign a cipher and set the key.
-> The second step is to pass the cipher through the BIO to the storage
-> driver.
-> The third step is to get the cipher from BIO and request a crypt
-> to FMP algorithm.
->
-> In the first step, encryption users such as fscrypt or dm-crypt
-> allocate/release a diskcipher and set key into the diskcipher.
-> Diskcipher provides allocate(), free(), and setkey() that are similar
-> to existing ciphers.
->
-> In the second step, BIO is used to pass the diskcipher to the storage
-> driver.
-> The BIO submitters such as ext4, f2fs and DM-crypt set diskcipher to BIO.
-> Diskcipher provides the set () API for this.
->
-> In the third step, the storage driver extracts the diskcipher from the BIO
-> and requests the actual encryption behavior to inline crypto engine driver.
-> Diskcipher provides get() and crypt() APIs for this.
->
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> ---
->  crypto/Kconfig              |   9 ++
->  crypto/Makefile             |   1 +
->  crypto/diskcipher.c         | 349
-> ++++++++++++++++++++++++++++++++++++++++++++
->  crypto/testmgr.c            | 157 ++++++++++++++++++++
->  include/crypto/diskcipher.h | 245 +++++++++++++++++++++++++++++++
->  include/linux/crypto.h      |   1 +
->  6 files changed, 762 insertions(+)
->  create mode 100644 crypto/diskcipher.c
->  create mode 100644 include/crypto/diskcipher.h
->
-> diff --git a/crypto/Kconfig b/crypto/Kconfig
-> index 455a335..382d43a 100644
-> --- a/crypto/Kconfig
-> +++ b/crypto/Kconfig
-> @@ -1636,6 +1636,15 @@ config CRYPTO_TWOFISH_AVX_X86_64
->           See also:
->           <http://www.schneier.com/twofish.html>
->
-> +config CRYPTO_DISKCIPHER
-> +       bool "Diskcipher support"
-> +       default n
-> +       help
-> +         Disk cipher algorithm
-> +
-> +         This cipher supports the crypt operation of the block host device
-> +         that has inline crypto engine.
-> +
->  comment "Compression"
->
->  config CRYPTO_DEFLATE
-> diff --git a/crypto/Makefile b/crypto/Makefile
-> index 0d2cdd5..71df76a 100644
-> --- a/crypto/Makefile
-> +++ b/crypto/Makefile
-> @@ -165,6 +165,7 @@ obj-$(CONFIG_CRYPTO_USER_API_AEAD) += algif_aead.o
->  obj-$(CONFIG_CRYPTO_ZSTD) += zstd.o
->  obj-$(CONFIG_CRYPTO_OFB) += ofb.o
->  obj-$(CONFIG_CRYPTO_ECC) += ecc.o
-> +obj-$(CONFIG_CRYPTO_DISKCIPHER) += diskcipher.o
->
->  ecdh_generic-y += ecdh.o
->  ecdh_generic-y += ecdh_helper.o
-> diff --git a/crypto/diskcipher.c b/crypto/diskcipher.c
-> new file mode 100644
-> index 0000000..ffe95a5
-> --- /dev/null
-> +++ b/crypto/diskcipher.c
-> @@ -0,0 +1,349 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2017 Samsung Electronics Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/blkdev.h>
-> +#include <linux/errno.h>
-> +#include <linux/module.h>
-> +#include <linux/seq_file.h>
-> +#include <linux/string.h>
-> +#include <linux/crypto.h>
-> +#include <crypto/algapi.h>
-> +#include <crypto/diskcipher.h>
-> +#include <linux/delay.h>
-> +#include <linux/mm_types.h>
-> +#include <linux/fs.h>
-> +#include <linux/fscrypt.h>
-> +
-> +#include "internal.h"
-> +
-> +static int crypto_diskcipher_check(struct bio *bio)
-> +{
-> +       struct crypto_diskcipher *ci = NULL;
-> +       struct inode *inode = NULL;
-> +       struct page *page = NULL;
-> +
-> +       if (!bio) {
-> +               pr_err("%s: doesn't exist bio\n", __func__);
-> +               return 0;
-> +       }
-> +
-> +       /* enc without fscrypt */
-> +       ci = bio->bi_aux_private;
-> +       if (!ci->inode)
-> +               return 0;
-> +       if (ci->algo == 0)
-> +               return 0;
-> +
-> +       page = bio->bi_io_vec[0].bv_page;
-> +       if (!page || PageAnon(page) || !page->mapping ||
-> !page->mapping->host)
 
-Your patch looks corrupted - wrapped by mailer. The easiest way
-usually is to use git format-patch and git send-email - then you do
-not have to worry about formatting etc.
+On 8/22/2019 3:09 AM, Sagi Grimberg wrote:
+>
+>> I don't understand why we don't limit a regular ctrl to single access 
+>> and we do it for the PT ctrl.
+>>
+>> I guess the block layer helps to sync between multiple access in 
+>> parallel but we can do it as well.
+>>
+>> Also, let's say you limit the access to this subsystem to 1 user, the 
+>> bdev is still accessibly for local user and also you can create a 
+>> different subsystem that will use this device (PT and non-PT ctrl).
+>>
+>> Sagi,
+>>
+>> can you explain the trouble you meant and how this limitation solve it ?
+>
+> Its different to emulate the controller with all its admin
+> commands vs. passing it through to the nvme device.. (think of format 
+> nvm)
+>
+>
+>
+we don't need to support format command for PT ctrl as we don't support 
+other commands such create_sq/cq.
 
-Best regards,
-Krzysztof
