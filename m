@@ -2,48 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBC719A098
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 22:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA3F89A09A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 22:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388249AbfHVUAg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 16:00:36 -0400
-Received: from mail-vk1-f202.google.com ([209.85.221.202]:42814 "EHLO
-        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731648AbfHVUAg (ORCPT
+        id S2389063AbfHVUAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 16:00:39 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:52784 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389530AbfHVUAi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 16:00:36 -0400
-Received: by mail-vk1-f202.google.com with SMTP id t205so2755262vke.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 13:00:35 -0700 (PDT)
+        Thu, 22 Aug 2019 16:00:38 -0400
+Received: by mail-qt1-f201.google.com with SMTP id e2so7664754qtm.19
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 13:00:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=q2xEM4ZZIH60IhHUp/Tsrc3BwYRYS3HENwO9UK8ZY8A=;
-        b=sr9LjJuS+htHRlolM9YkWocHcNmySO3oWOJUlCW5vIRDBoMd6wQCLTBGuwEuqsC2Ur
-         Wma8aSSiAtzW0x3pzUQrZAkO2xN5hc6iK2purEAarL8Pn57u85rUGnZ4Z5Kb5c6wmko8
-         osjWvJYlNjDc82qCar5zR3/Yiffmj2juupyRjK82d70b2Vtm5UKfkHcqRuxyUwoL08nl
-         yMNbpjqkol5SNc04oi+ZOGu7nXeE9PZd/JN5LU+cmK/4JYzpGnfGv8H3JvOEfXDlFveS
-         l96DKLspK6+yW+KbyQCD+rP6J3xGnoD3UDJzgmrdUG2SbU8ICA3jNFDo6aBuqAtGrAVo
-         OBPw==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=9WhbLtA1PXXZFsn027jIR9WnGYXiAtblVNlzQiAJJRM=;
+        b=AkW4PEg8sMv0JywT4cALwVmK7sakobFBNA609slVBXgyG8MnxhqVyi9tIn5nwBPERu
+         /Il6KfJlShTL+7xkVedpbOriuKmmSnDwS1QbvswmpaOYKu/P+l5TZqxd0EL+rMJ8hhju
+         WqpUyTZultC9mQ7GPF3mRep7adSIG0Uf6FYCfxBmZEDSTzIUDTRKZtVkThozogeLUppD
+         L6z5FDhHLpn7fj69PbWz3utrOf2gUa65DXB3Mh2IFjZrxHCpzXKV5jNHXSu4cq1bOpkR
+         DpQqIaxhqy6jAAIZG8he16Vj7ll9IQca5qdfTNZrbco8yzKEToRhsYh+e+7mq0N4aNyT
+         +e/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=q2xEM4ZZIH60IhHUp/Tsrc3BwYRYS3HENwO9UK8ZY8A=;
-        b=VlDArcjtm7HGhrjywtekadTJDZ7pqE9klJzgq8A1ZDqxR2yiuRp1O6ZXLVOvJvbRj1
-         +M4Ldqrz1HWitLdUFiekL2WJSeL1sqe/eYOC96YOJZrkl9OlRxx+UvoqZ1jTMOUBm3vu
-         mjTiOr99CrVKFYboD/0NUIrUeyM0OrAo9i8FF7dsLjTEkfYORD9Vidca+FjjLIqLm4jB
-         oFw/pL8IuAnvXVjjQh89Qg7N2NcDgNGVH4MNp4DDnMweTj/eOpKygWh0JGURXMrI2eM1
-         c/wdLg/CH3kvEIcgAk47UjyQDGVeo/AiiCqG7RoDKYhOIbYrmjsl80GT7OIARdDeKxkt
-         8GRw==
-X-Gm-Message-State: APjAAAVmOwmLLi5kSftPnTFo3ncmawbNGFZnFhzwihqYRQ8FVyXzzCfz
-        R7kpnAVi1ZN4HUnj3qTJSOAuSSW7cCQ=
-X-Google-Smtp-Source: APXvYqwgnS+IPiPPbFOL3AM9ADOjTTbzmen8VHt2C1prErTvsrLAN7pIppKf4R1EZoMqfkOXMdHZEamKoYo=
-X-Received: by 2002:a67:fb90:: with SMTP id n16mr560113vsr.7.1566504034917;
- Thu, 22 Aug 2019 13:00:34 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 13:00:28 -0700
-Message-Id: <20190822200030.141272-1-khazhy@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=9WhbLtA1PXXZFsn027jIR9WnGYXiAtblVNlzQiAJJRM=;
+        b=qjbPh4fAoBE2TH+yRbTapWBT7XhXjPPTLE6lI8vPdI4JYKluapza4NMXTJDZhJewVu
+         TTwPkD1ovGTojh1TExOSlIfHo4mQmqYQe+bXbPHPsZrz7LXykHldw6k58eobBa/vZt73
+         scomlY2CyZiOrsSSQXEbMoyC6Bx80+sf+kS+B8PuclumvgmsmDwmO7f/XbQ9kAbrBRkJ
+         M4L09ytYjKHoym6hZrO9Sxkk16Rmyq9OXEI8Ne2+QHQoT73YAZcrbKJchu0/5J4luIbl
+         QkBlTQK4bNsTDGan/3taP5N9e6FEZ1YM8/EIbPLO2wsB3We/wtztA7kXOL+KLVFnTjV+
+         Fu2A==
+X-Gm-Message-State: APjAAAXm1LHic1z3ovr5Ngbw1giqTd4hoVdWIz1BuFRPLvgmcBu/lHGG
+        q138txMaeVLOoEjwWu2nOTqP7R7PgHA=
+X-Google-Smtp-Source: APXvYqxx8BxWXRQ3WUuUqowsTxGrCRGmGyHhwE4M6AywtCiosAGn84MKaz7FSzZ64J6yaYzk/KOj1mNUZ00=
+X-Received: by 2002:a0c:f147:: with SMTP id y7mr1083982qvl.244.1566504037397;
+ Thu, 22 Aug 2019 13:00:37 -0700 (PDT)
+Date:   Thu, 22 Aug 2019 13:00:29 -0700
+In-Reply-To: <20190822200030.141272-1-khazhy@google.com>
+Message-Id: <20190822200030.141272-2-khazhy@google.com>
 Mime-Version: 1.0
+References: <20190822200030.141272-1-khazhy@google.com>
 X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-Subject: [PATCH v2 1/3] fuse: on 64-bit store time in d_fsdata directly
+Subject: [PATCH v2 2/3] fuse: pass gfp flags to fuse_request_alloc
 From:   Khazhismel Kumykov <khazhy@google.com>
 To:     miklos@szeredi.hu
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -54,78 +58,132 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implements the optimization noted in f75fdf22b0a8 ("fuse: don't use
-->d_time"), as the additional memory can be significant. (In particular,
-on SLAB configurations this 8-byte alloc becomes 32 bytes). Per-dentry,
-this can consume significant memory.
+Instead of having a helper per flag
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
 Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
 ---
- fs/fuse/dir.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ fs/fuse/dev.c    | 16 +++-------------
+ fs/fuse/file.c   |  6 +++---
+ fs/fuse/fuse_i.h |  4 +---
+ fs/fuse/inode.c  |  4 ++--
+ 4 files changed, 9 insertions(+), 21 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index dd0f64f7bc06..f9c59a296568 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -24,6 +24,18 @@ static void fuse_advise_use_readdirplus(struct inode *dir)
- 	set_bit(FUSE_I_ADVISE_RDPLUS, &fi->state);
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index ea8237513dfa..c957620ce7ba 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -66,7 +66,7 @@ static struct page **fuse_req_pages_alloc(unsigned int npages, gfp_t flags,
+ 	return pages;
  }
  
-+#if BITS_PER_LONG >= 64
-+static inline void fuse_dentry_settime(struct dentry *entry, u64 time)
-+{
-+	entry->d_fsdata = (void *) time;
-+}
-+
-+static inline u64 fuse_dentry_time(struct dentry *entry)
-+{
-+	return (u64)entry->d_fsdata;
-+}
-+
-+#else
- union fuse_dentry {
- 	u64 time;
- 	struct rcu_head rcu;
-@@ -38,6 +50,7 @@ static inline u64 fuse_dentry_time(struct dentry *entry)
+-static struct fuse_req *__fuse_request_alloc(unsigned npages, gfp_t flags)
++struct fuse_req *fuse_request_alloc(unsigned int npages, gfp_t flags)
  {
- 	return ((union fuse_dentry *) entry->d_fsdata)->time;
+ 	struct fuse_req *req = kmem_cache_zalloc(fuse_req_cachep, flags);
+ 	if (req) {
+@@ -90,18 +90,8 @@ static struct fuse_req *__fuse_request_alloc(unsigned npages, gfp_t flags)
+ 	}
+ 	return req;
  }
-+#endif
+-
+-struct fuse_req *fuse_request_alloc(unsigned npages)
+-{
+-	return __fuse_request_alloc(npages, GFP_KERNEL);
+-}
+ EXPORT_SYMBOL_GPL(fuse_request_alloc);
  
- /*
-  * FUSE caches dentries and attributes with separate timeout.  The
-@@ -242,6 +255,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
- 	goto out;
- }
- 
-+#if BITS_PER_LONG < 64
- static int fuse_dentry_init(struct dentry *dentry)
+-struct fuse_req *fuse_request_alloc_nofs(unsigned npages)
+-{
+-	return __fuse_request_alloc(npages, GFP_NOFS);
+-}
+-
+ static void fuse_req_pages_free(struct fuse_req *req)
  {
- 	dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry), GFP_KERNEL);
-@@ -254,16 +268,21 @@ static void fuse_dentry_release(struct dentry *dentry)
+ 	if (req->pages != req->inline_pages)
+@@ -201,7 +191,7 @@ static struct fuse_req *__fuse_get_req(struct fuse_conn *fc, unsigned npages,
+ 	if (fc->conn_error)
+ 		goto out;
  
- 	kfree_rcu(fd, rcu);
- }
-+#endif
+-	req = fuse_request_alloc(npages);
++	req = fuse_request_alloc(npages, GFP_KERNEL);
+ 	err = -ENOMEM;
+ 	if (!req) {
+ 		if (for_background)
+@@ -310,7 +300,7 @@ struct fuse_req *fuse_get_req_nofail_nopages(struct fuse_conn *fc,
+ 	wait_event(fc->blocked_waitq, fc->initialized);
+ 	/* Matches smp_wmb() in fuse_set_initialized() */
+ 	smp_rmb();
+-	req = fuse_request_alloc(0);
++	req = fuse_request_alloc(0, GFP_KERNEL);
+ 	if (!req)
+ 		req = get_reserved_req(fc, file);
  
- const struct dentry_operations fuse_dentry_operations = {
- 	.d_revalidate	= fuse_dentry_revalidate,
-+#if BITS_PER_LONG < 64
- 	.d_init		= fuse_dentry_init,
- 	.d_release	= fuse_dentry_release,
-+#endif
- };
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 5ae2828beb00..572d8347ebcb 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -50,7 +50,7 @@ struct fuse_file *fuse_file_alloc(struct fuse_conn *fc)
+ 		return NULL;
  
- const struct dentry_operations fuse_root_dentry_operations = {
-+#if BITS_PER_LONG < 64
- 	.d_init		= fuse_dentry_init,
- 	.d_release	= fuse_dentry_release,
-+#endif
- };
+ 	ff->fc = fc;
+-	ff->reserved_req = fuse_request_alloc(0);
++	ff->reserved_req = fuse_request_alloc(0, GFP_KERNEL);
+ 	if (unlikely(!ff->reserved_req)) {
+ 		kfree(ff);
+ 		return NULL;
+@@ -1703,7 +1703,7 @@ static int fuse_writepage_locked(struct page *page)
  
- int fuse_valid_type(int m)
+ 	set_page_writeback(page);
+ 
+-	req = fuse_request_alloc_nofs(1);
++	req = fuse_request_alloc(1, GFP_NOFS);
+ 	if (!req)
+ 		goto err;
+ 
+@@ -1923,7 +1923,7 @@ static int fuse_writepages_fill(struct page *page,
+ 		struct fuse_inode *fi = get_fuse_inode(inode);
+ 
+ 		err = -ENOMEM;
+-		req = fuse_request_alloc_nofs(FUSE_REQ_INLINE_PAGES);
++		req = fuse_request_alloc(FUSE_REQ_INLINE_PAGES, GFP_NOFS);
+ 		if (!req) {
+ 			__free_page(tmp_page);
+ 			goto out_unlock;
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 24dbca777775..8080a51096e9 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -902,9 +902,7 @@ void __exit fuse_ctl_cleanup(void);
+ /**
+  * Allocate a request
+  */
+-struct fuse_req *fuse_request_alloc(unsigned npages);
+-
+-struct fuse_req *fuse_request_alloc_nofs(unsigned npages);
++struct fuse_req *fuse_request_alloc(unsigned int npages, gfp_t flags);
+ 
+ bool fuse_req_realloc_pages(struct fuse_conn *fc, struct fuse_req *req,
+ 			    gfp_t flags);
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 4bb885b0f032..5afd1872b8b1 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1177,13 +1177,13 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* Root dentry doesn't have .d_revalidate */
+ 	sb->s_d_op = &fuse_dentry_operations;
+ 
+-	init_req = fuse_request_alloc(0);
++	init_req = fuse_request_alloc(0, GFP_KERNEL);
+ 	if (!init_req)
+ 		goto err_put_root;
+ 	__set_bit(FR_BACKGROUND, &init_req->flags);
+ 
+ 	if (is_bdev) {
+-		fc->destroy_req = fuse_request_alloc(0);
++		fc->destroy_req = fuse_request_alloc(0, GFP_KERNEL);
+ 		if (!fc->destroy_req)
+ 			goto err_free_init_req;
+ 	}
 -- 
 2.23.0.187.g17f5b7556c-goog
 
