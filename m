@@ -2,93 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1509C99D47
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 19:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A91A99E50
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 19:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404260AbfHVRlS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 13:41:18 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33561 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404269AbfHVRlN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:41:13 -0400
-Received: by mail-oi1-f196.google.com with SMTP id l2so5014692oil.0;
-        Thu, 22 Aug 2019 10:41:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=S3Wtmx63qYO2RYwlc+u7gYjYEryNsm6UT+kYuRsp+wI=;
-        b=sslPEcfdgZ9KQvOL+TIkZ3p39+WJ/J1pxAnS69kBC5lwFuS1liEHgWhwPwHsB4YgnZ
-         1a2a38KNO3cCxO93DUcaUQEqA+czK18SqAATh2ZaVt5hFmRVr55jKzLdyn2bLoHlVNUG
-         72WePR9MVNTtEbEYjiF8IbClzrD0EpwSiO8A1ALSvjSgfskZewtIpBr6CX7D76EiKG5E
-         Ui6JWU1bpQHU+TRnFq0Buki8SxfL1IlSXx107CeGu8ImQpd6GbU9+/Fdo+NR6n4E2olf
-         tO/JYLdOJ2+/MdobZKxY82rtEZ0F9enWAySyYVOdMe4WKXSsJ+PxOwH+/H5HY6oHEapQ
-         dygQ==
-X-Gm-Message-State: APjAAAWB4coirRjoeXyl9gDo33VOcK6VtRUwkcKYe0n6dzuJWcTIHekX
-        J07Rv+RKxaDi7YFF1WT37Bg=
-X-Google-Smtp-Source: APXvYqxXzyiGzvP9QOEziqdHlRZkxskbjNq0zGJS3yjldmavVtqqk7S7wFueDS6GCxtSQweXW/XKyg==
-X-Received: by 2002:aca:3887:: with SMTP id f129mr224476oia.108.1566495671970;
-        Thu, 22 Aug 2019 10:41:11 -0700 (PDT)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id o26sm71264otl.34.2019.08.22.10.41.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Aug 2019 10:41:11 -0700 (PDT)
-Subject: Re: [PATCH v7 08/14] nvmet-core: allow one host per passthru-ctrl
-To:     Max Gurtovoy <maxg@mellanox.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Stephen Bates <sbates@raithlin.com>, Jens Axboe <axboe@fb.com>,
-        Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
-References: <20190801234514.7941-1-logang@deltatee.com>
- <20190801234514.7941-9-logang@deltatee.com>
- <05a74e81-1dbd-725f-1369-5ca5c5918db1@mellanox.com>
- <a6b9db95-a7f0-d1f6-1fa2-8dc13a6aa29e@deltatee.com>
- <5717f515-e051-c420-07b7-299bcfcd1f32@mellanox.com>
- <b0921c72-93f1-f67a-c4b3-31baeb1c39cb@grimberg.me>
- <b352c7f1-2629-e72f-9c85-785e0cf7c2c1@mellanox.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <24e2ddd0-4b2a-8092-cf91-df8c0fb482e5@grimberg.me>
-Date:   Thu, 22 Aug 2019 10:41:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731960AbfHVRxd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 13:53:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59226 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726234AbfHVRxd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:53:33 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DE11D3082E61;
+        Thu, 22 Aug 2019 17:53:32 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD21D5D6A7;
+        Thu, 22 Aug 2019 17:53:31 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Guillem Jover <guillem@hadrons.org>
+Cc:     linux-aio@kvack.org, Christoph Hellwig <hch@lst.de>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] aio: Fix io_pgetevents() struct __compat_aio_sigset layout
+References: <20190821033820.14155-1-guillem@hadrons.org>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 22 Aug 2019 13:53:30 -0400
+In-Reply-To: <20190821033820.14155-1-guillem@hadrons.org> (Guillem Jover's
+        message of "Wed, 21 Aug 2019 05:38:20 +0200")
+Message-ID: <x49ef1dozmt.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <b352c7f1-2629-e72f-9c85-785e0cf7c2c1@mellanox.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 22 Aug 2019 17:53:33 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Guillem Jover <guillem@hadrons.org> writes:
 
->>> I don't understand why we don't limit a regular ctrl to single access 
->>> and we do it for the PT ctrl.
->>>
->>> I guess the block layer helps to sync between multiple access in 
->>> parallel but we can do it as well.
->>>
->>> Also, let's say you limit the access to this subsystem to 1 user, the 
->>> bdev is still accessibly for local user and also you can create a 
->>> different subsystem that will use this device (PT and non-PT ctrl).
->>>
->>> Sagi,
->>>
->>> can you explain the trouble you meant and how this limitation solve it ?
->>
->> Its different to emulate the controller with all its admin
->> commands vs. passing it through to the nvme device.. (think of format 
->> nvm)
->>
->>
->>
-> we don't need to support format command for PT ctrl as we don't support 
-> other commands such create_sq/cq.
+> This type is used to pass the sigset_t from userland to the kernel,
+> but it was using the kernel native pointer type for the member
+> representing the compat userland pointer to the userland sigset_t.
+>
+> This messes up the layout, and makes the kernel eat up both the
+> userland pointer and the size members into the kernel pointer, and
+> then reads garbage into the kernel sigsetsize. Which makes the sigset_t
+> size consistency check fail, and consequently the syscall always
+> returns -EINVAL.
+>
+> This breaks both libaio and strace on 32-bit userland running on 64-bit
+> kernels. And there are apparently no users in the wild of the current
+> broken layout (at least according to codesearch.debian.org and a brief
+> check over github.com search). So it looks safe to fix this directly
+> in the kernel, instead of either letting userland deal with this
+> permanently with the additional overhead or trying to make the syscall
+> infer what layout userland used, even though this is also being worked
+> around in libaio to temporarily cope with kernels that have not yet
+> been fixed.
+>
+> We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
+>
+> Fixes: 7a074e96 ("aio: implement io_pgetevents")
+> Signed-off-by: Guillem Jover <guillem@hadrons.org>
 
-That is just an example, basically every command that we are not aware
-of we simply passthru to the drive without knowing the implications
-on a multi-host environment..
+Looks good, thanks for finding and fixing this!
+
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+
+> ---
+>  fs/aio.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 01e0fb9ae45a..056f291bc66f 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -2179,7 +2179,7 @@ SYSCALL_DEFINE5(io_getevents_time32, __u32, ctx_id,
+>  #ifdef CONFIG_COMPAT
+>  
+>  struct __compat_aio_sigset {
+> -	compat_sigset_t __user	*sigmask;
+> +	compat_uptr_t		sigmask;
+>  	compat_size_t		sigsetsize;
+>  };
+>  
+> @@ -2204,7 +2204,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
+>  	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
+>  		return -EFAULT;
+>  
+> -	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
+> +	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -2239,7 +2239,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
+>  	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
+>  		return -EFAULT;
+>  
+> -	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
+> +	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
+>  	if (ret)
+>  		return ret;
