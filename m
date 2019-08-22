@@ -2,93 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D05649926E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 13:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7CC2992C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2019 14:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732300AbfHVLnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 07:43:39 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35716 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732244AbfHVLnj (ORCPT
+        id S1733052AbfHVMAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 08:00:25 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43494 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732992AbfHVMAZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 07:43:39 -0400
-Received: by mail-io1-f68.google.com with SMTP id b10so2087747ioj.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 04:43:39 -0700 (PDT)
+        Thu, 22 Aug 2019 08:00:25 -0400
+Received: by mail-pl1-f196.google.com with SMTP id 4so3335797pld.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2019 05:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yYstloyjSDBsfXqj0xN9y3n2xT5TvhmuPjIH/+3aQXs=;
-        b=CN6h+SZZXGMRL7xBGgzsqNmrvEMzQZtY/l6+bBIlxzyo85Z91S646qkO7ZW9BJ6Zr2
-         V2mVw7VxaBpyszHjNPwsTjexhpGKLwwimgF5d4ZT/Zsv4pK7sNmHP9DP71/9MBk82TXA
-         RC9aA2v3IjW4Xejpuup1XbPdkGeX2kC8gkTpQ=
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=d5lwnucT/goOERbwcr+nMNokkaJEYrH6ff8I2mYa9Hg=;
+        b=jg6H0OFlGUlZblzORqlZKMjqL8twEnQJr3mqtrqMZXZthnH52Z53Y5gCeCfvcNM26c
+         HZqiB48pJhxw3j/5T6RpZJvIS8kR2gAMAAY2tDEQzMVcEW7cy+NX9wLI17iT0/MnwU5n
+         hO+h9cjuXEOw0ozmHUTFGm7ufwXfQ9mk9qMV+tZJsseqTlBVF3+aBB9L/iPf3XHqJJ/w
+         zYijFvpwLqeajKk6S1u1y/67XIyKO6RbBOk9zGauzEMbr15q76K+DYrQ6RkwIh0wMw5O
+         wJG+yd77Qgbn+wiT2dOefiSIbHufSa8ZqtW0QpHr0MRvGxzOwQbXVVhQEHuFzLSWIs/l
+         jsjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yYstloyjSDBsfXqj0xN9y3n2xT5TvhmuPjIH/+3aQXs=;
-        b=BSKxD9/Zxff73GH3HNX3nt31hee6G8HrsvHp6Lds+g+CqT8B8dEaYebwO2L2ZxpdzD
-         mPjI3fraBfbSm95/Ix+ywMRLM6fKYO5OR70C5smwJ8LmVH3iCmOLVE8ICxk4eCDx/je6
-         xBYk1iEGGB2sfdhF5PmT2U+AG9KdlVwwAR48umoCDXCuuU03Tq3yV643kbq9vGHp4ccL
-         AHJRz1VYfRHPt9UyctjORs9sSjfZ17PyocdIdak7hJe0h3jhc27W+oZuqK36/DsMMhna
-         qNg7sDFobysAHRVoZGUV2b4oSPEWtxWOuWoYxrYIyUIp0qZyjwQnHFXjpJweR1axRyCk
-         ++Pw==
-X-Gm-Message-State: APjAAAUz9c9RW6pZT+qNxdhRyZRPUFa86MNKwObtbliwE4bcgoZsHQJ9
-        pqYQ4k2V3oldtUMxZWUqOiZFPaVwCID3LQd+DVKf4g==
-X-Google-Smtp-Source: APXvYqwjgKTZDumhsZ7hd2lvgwtI6uuJmsJVHMahP2MZQso9/GNDB67Fd6ghS1/G9IcXJ4kajrQLyPOFBaTtmuERmcA=
-X-Received: by 2002:a02:a1c7:: with SMTP id o7mr15887782jah.26.1566474218838;
- Thu, 22 Aug 2019 04:43:38 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=d5lwnucT/goOERbwcr+nMNokkaJEYrH6ff8I2mYa9Hg=;
+        b=aYq0KEGvcNb6MZGVH0kpxtX9295VNIaJhalZOpQvp4v8YVGNrWAeRRdsBy6rtIZHVV
+         OPYhguMFg2yFSI9O/b8OUySq4f9SuQspFa/zMDAOsxchoNzDy7mIBoc9s5335E4sEMqS
+         4SELBelT6GSsIQuMvCav/Up0O3/6zCaxiY5//yWV6uX7DM1TeQE7klBtDJ1UMTwujPlW
+         TzTQYv3zqNRhiUzphdxqgq+reJFn2D6GgHmM3zoquIIoiN23jDsd+gb/non8jGGFlRkg
+         /JKR83O4Rb+HqUEnCUDV4Z5urUx8GG8swh00G+AC3iIfka1tjSVWKW4B98e0cPHEUvjI
+         KcxA==
+X-Gm-Message-State: APjAAAUW5Bqk/7fEQ+b2uC1sHNhjpSu1XaIIseMt6GhL25dZ4C4Zjz+o
+        SDV6v1RHcMHcT0cQEsEms5u0z0Vjw1B9
+X-Google-Smtp-Source: APXvYqw9rMIFwwqdxrvuBXR2v8TtRdN01FhpwJvilCA3YK65zchcK4BySx9O0xF+Ja9+rLA9jGausw==
+X-Received: by 2002:a17:902:543:: with SMTP id 61mr38996508plf.20.1566475223827;
+        Thu, 22 Aug 2019 05:00:23 -0700 (PDT)
+Received: from poseidon.bobrowski.net ([114.78.226.167])
+        by smtp.gmail.com with ESMTPSA id a6sm3252534pjv.30.2019.08.22.05.00.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 05:00:23 -0700 (PDT)
+Date:   Thu, 22 Aug 2019 22:00:17 +1000
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        riteshh@linux.ibm.com, hch@infradead.org
+Subject: Re: [PATCH 0/5] ext4: direct IO via iomap infrastructure
+Message-ID: <20190822120015.GA3330@poseidon.bobrowski.net>
+References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
+ <20190812173150.AF04F5204F@d06av21.portsmouth.uk.ibm.com>
+ <20190813111004.GA12682@poseidon.bobrowski.net>
+ <20190813122723.AE6264C040@d06av22.portsmouth.uk.ibm.com>
+ <20190821131405.GC24417@poseidon.bobrowski.net>
 MIME-Version: 1.0
-References: <5abd7616-5351-761c-0c14-21d511251006@huawei.com>
- <20190820091650.GE9855@stefanha-x1.localdomain> <CAJfpegs8fSLoUaWKhC1543Hoy9821vq8=nYZy-pw1+95+Yv4gQ@mail.gmail.com>
- <20190821160551.GD9095@stefanha-x1.localdomain> <954b5f8a-4007-f29c-f38e-dd5585879541@huawei.com>
-In-Reply-To: <954b5f8a-4007-f29c-f38e-dd5585879541@huawei.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 22 Aug 2019 13:43:27 +0200
-Message-ID: <CAJfpegtBYLJLWM8GJ1h66PMf2J9o38FG6udcd2hmamEEQddf5w@mail.gmail.com>
-Subject: Re: [Virtio-fs] [QUESTION] A performance problem for buffer write
- compared with 9p
-To:     wangyan <wangyan122@huawei.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Content-Type: multipart/mixed; boundary="0000000000005d57bb0590b33322"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821131405.GC24417@poseidon.bobrowski.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000005d57bb0590b33322
-Content-Type: text/plain; charset="UTF-8"
+On Wed, Aug 21, 2019 at 11:14:07PM +1000, Matthew Bobrowski wrote:
+> On Tue, Aug 13, 2019 at 05:57:22PM +0530, RITESH HARJANI wrote:
+> > But what I meant was this (I may be wrong here since I haven't
+> > really looked into it), but for my understanding I would like to
+> > discuss this -
+> > 
+> > So earlier with this flag(EXT4_STATE_DIO_UNWRITTEN) we were determining on
+> > whether a newextent can be merged with ex1 in function
+> > ext4_extents_can_be_merged. But now since we have removed that flag we have
+> > no way of knowing that whether this inode has any unwritten extents or not
+> > from any DIO path.
+> > 
+> > What I meant is isn't this removal of setting/unsetting of
+> > flag(EXT4_STATE_DIO_UNWRITTEN) changing the behavior of this func -
+> > ext4_extents_can_be_merged?
+> 
+> OK, I'm stuck and looking for either clarity, revalidation of my
+> thought process, or any input on how to solve this problem for that
+> matter.
+> 
+> In the current ext4 direct IO implementation, the dynamic state flag
+> EXT4_STATE_DIO_UNWRITTEN is set/unset for synchronous direct IO
+> writes. On the other hand, the flag EXT4_IO_END_UNWRITTEN is set/unset
+> for ext4_io_end->flag, and the value of i_unwritten is
+> incremented/decremented for asynchronous direct IO writes. All
+> mechanisms by which are used to track and determine whether the inode,
+> or an IO in flight against a particular inode have any pending
+> unwritten extents that need to be converted after the IO has
+> completed. In addition to this, we have ext4_can_extents_be_merged()
+> performing explicit checks against both EXT4_STATE_DIO_UNWRITTEN and
+> i_unwritten and using them to determine whether it can or cannot merge
+> a requested extent into an existing extent.
+> 
+> This is all fine for the current direct IO implementation. However,
+> while switching the direct IO code paths over to make use of the iomap
+> infrastructure, I believe that we can no longer simply track whether
+> an inode has unwritten extents needing to be converted by simply
+> setting and checking the EXT4_STATE_DIO_UNWRITTEN flag on the
+> inode. The reason being is that there can be multiple direct IO
+> operations to unwritten extents running against the inode and we don't
+> particularly distinguish synchronous from asynchronous writes within
+> ext4_iomap_begin() as there's really no need. So, the only way to
+> accurately determine whether extent conversion is deemed necessary for
+> an IO operation whether it'd be synchronous or asynchronous is by
+> checking the IOMAP_DIO_UNWRITTEN flag within the ->end_io()
+> callback. I'm certain that this portion of the logic is correct, but
+> we're still left with some issues when it comes to the checks that I
+> previously mentioned in ext4_can_extents_be_merged(), which is the
+> part I need some input on.
+> 
+> I was doing some thinking and I don't believe that making use of the
+> EXT4_STATE_DIO_UNWRITTEN flag is the solution at all here. This is not
+> only for reasons that I've briefly mentioned above, but also because
+> of the fact that it'll probably lead to a lot of inaccurate judgements
+> while taking particular code paths and some really ugly code that
+> creeps close to the definition of insanity. Rather, what if we solve
+> this problem by continuing to just use i_unwritten to keep track of
+> all the direct IOs to unwritten against running against an inode?
+> Within ext4_iomap_begin() post successful creation of unwritten
+> extents we'd call atomic_inc(&EXT4_I(inode)->i_unwritten) and
+> subsequently within the ->end_io() callback whether we take the
+> success or error path we'd call
+> atomic_dec(&EXT4_I(inode)->i_unwritten) accordingly? This way we can
+> still rely on this value to be used in the check within
+> ext4_can_extents_be_merged(). Open for alternate suggestions if anyone
+> has any...
 
-On Thu, Aug 22, 2019 at 2:59 AM wangyan <wangyan122@huawei.com> wrote:
-> I will test it when I get the patch, and post the compared result with
-> 9p.
+Actually, no...
 
-Could you please try the attached patch?  My guess is that it should
-improve the performance, perhaps by a big margin.
+I've done some more thinking and what I suggested above around the use
+of i_unwritten will also not work properly. Using iomap
+infrastructure, there is the possibility of calling into the
+->iomap_begin() more than once for a single direct IO operation. This
+means that by the time we even get to decrementing i_unwritten in the
+->end_io() callback after converting the unwritten extents we're
+already running the possibility of i_unwritten becoming unbalanced
+really quickly and staying that way. This also means that the
+statement checking i_unwritten in ext4_can_extents_be_merged() will be
+affected and potentially result in it being evaluated incorrectly. I
+was thinking that we could just decrement i_unwritten in
+->iomap_end(), but that seems to me like it would be racy and also
+lead to incorrect results. At this point I'm out of ideas on how to
+solve this, so any other ideas would be appreciated!
 
-Further improvement is possible by eliminating page copies, but that
-is less trivial.
-
-Thanks,
-Miklos
-
---0000000000005d57bb0590b33322
-Content-Type: text/x-patch; charset="US-ASCII"; name="virtio-fs-nostrict.patch"
-Content-Disposition: attachment; filename="virtio-fs-nostrict.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jzmm8sy40>
-X-Attachment-Id: f_jzmm8sy40
-
-SW5kZXg6IGxpbnV4L2ZzL2Z1c2UvdmlydGlvX2ZzLmMKPT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQotLS0gbGludXgub3Jp
-Zy9mcy9mdXNlL3ZpcnRpb19mcy5jCTIwMTktMDgtMjIgMTM6Mzg6MzEuNzgyODMzNTY0ICswMjAw
-CisrKyBsaW51eC9mcy9mdXNlL3ZpcnRpb19mcy5jCTIwMTktMDgtMjIgMTM6Mzc6NTUuNDM2NDA2
-MjYxICswMjAwCkBAIC04OTEsNiArODkxLDkgQEAgc3RhdGljIGludCB2aXJ0aW9fZnNfZmlsbF9z
-dXBlcihzdHJ1Y3QgcwogCWlmIChlcnIgPCAwKQogCQlnb3RvIGVycl9mcmVlX2luaXRfcmVxOwog
-CisJLyogTm8gc3RyaWN0IGFjY291bnRpbmcgbmVlZGVkIGZvciB2aXJ0aW8tZnMgKi8KKwlzYi0+
-c19iZGktPmNhcGFiaWxpdGllcyA9IDA7CisKIAlmYyA9IGZzLT52cXNbVlFfUkVRVUVTVF0uZnVk
-LT5mYzsKIAogCS8qIFRPRE8gdGFrZSBmdXNlX211dGV4IGFyb3VuZCB0aGlzIGxvb3A/ICovCg==
---0000000000005d57bb0590b33322--
+--M
