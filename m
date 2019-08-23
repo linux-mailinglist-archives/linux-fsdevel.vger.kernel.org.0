@@ -2,148 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B5839B53C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 19:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25AC19B571
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 19:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732590AbfHWRPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 13:15:10 -0400
-Received: from mga04.intel.com ([192.55.52.120]:6009 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726901AbfHWRPJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 13:15:09 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 10:15:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,422,1559545200"; 
-   d="scan'208";a="180736561"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga007.fm.intel.com with ESMTP; 23 Aug 2019 10:15:07 -0700
-Date:   Fri, 23 Aug 2019 10:15:04 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190823171504.GA1092@iweiny-DESK2.sc.intel.com>
-References: <20190815130558.GF14313@quack2.suse.cz>
- <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
- <20190817022603.GW6129@dread.disaster.area>
- <20190819063412.GA20455@quack2.suse.cz>
- <20190819092409.GM7777@dread.disaster.area>
- <20190819123841.GC5058@ziepe.ca>
- <20190820011210.GP7777@dread.disaster.area>
- <20190820115515.GA29246@ziepe.ca>
- <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
- <20190823005914.GF1119@dread.disaster.area>
+        id S2389070AbfHWR2D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 13:28:03 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41201 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389286AbfHWR2C (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Aug 2019 13:28:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x15so6121888pgg.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2019 10:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JpGZpvS6y7xgN7XnzsEu5TdSqjOQTKTe7TuWBgzpXxk=;
+        b=DPbWDrNSkF3m3LM0LR49Pzw0ikWe08dHQLzlDwCCEd7SbY6lXjBe4g0E0/Oh0SS+8L
+         1E2R3whjpm/iFQXBpTT4okhqcaJ9ZnLIQH02NXVEugo9GHSE50Jg8iFRbsmg/FsPppnw
+         MrLpLS4WEb0jVHfL7Ku4uZCHChd+71dF0jelCrk2VXPZsc/GseLHkRq3LfohfXHpj4oa
+         AeTShyhb7KisbZpowlWSJWUH5/NPhwM3qX6O9qpBe+sFL60yTW4cJ4vUQwBWpprLutHO
+         5jYbqQDNL1N504EYpXBVjn24evq+dP/NDByqBukweHmVAjQPQCqMp6Hlv66N/RkoT59S
+         yfsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JpGZpvS6y7xgN7XnzsEu5TdSqjOQTKTe7TuWBgzpXxk=;
+        b=detsDyYVKmfn6uZOd+soboGIbYagMY+ipF/7YG/3TCLg7IMObdyqr50uXoh5HqlGH9
+         uLX6To0CE/CHDOtcoFzym6ER05x+RRc1Bm9bc/OtQjY9u9nsDZzyNRzWLVsuxgBkg/mF
+         ENWKgjWVIpfaP+3/6BdCMzTAL5oYoYlFWaV+AaYqs+Q/6AvDCu8ALtHwuf92JDjtfOcX
+         a96c/5s1ROZrdLAUF17D8LhimpTI7kWd2girTxkM+003T13F9msc/4p0/5+SJixVWwKq
+         exkSaGLjFnO5lwSYniyRR0KH9yFmMfV4FJtMPMfFIql0QASV1w1t0/t5aXzswTR+uOm3
+         bW0w==
+X-Gm-Message-State: APjAAAX+78V5XMkHCFw13E6fh6NvmpTKUpps5IugnWFuuys1LhLzem/4
+        OiznmXWn9PoDHkGFT0P4SBzvETzM6uP6Znokq5ITnA==
+X-Google-Smtp-Source: APXvYqxO41uhCLsTUJZzB3icsTW0bMGI+WWDOYyKC539Pf/Fhot22x5RnB49yWHNSNlX8BLD0YS+A9/mQTKWddz6BQY=
+X-Received: by 2002:a63:b919:: with SMTP id z25mr4863766pge.201.1566581281074;
+ Fri, 23 Aug 2019 10:28:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190823005914.GF1119@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20190820232046.50175-1-brendanhiggins@google.com>
+ <20190820232046.50175-2-brendanhiggins@google.com> <7f2c8908-75f6-b793-7113-ad57c51777ce@kernel.org>
+ <CAFd5g44mRK9t4f58i_YMEt=e9RTxwrrhFY_V2LW_E7bUwR3cdg@mail.gmail.com> <4513d9f3-a69b-a9a4-768b-86c2962b62e0@kernel.org>
+In-Reply-To: <4513d9f3-a69b-a9a4-768b-86c2962b62e0@kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 23 Aug 2019 10:27:49 -0700
+Message-ID: <CAFd5g446J=cVW4QW+QeZMLDi+ANqshAW6KTrFFBTusPcdr6-GA@mail.gmail.com>
+Subject: Re: [PATCH v14 01/18] kunit: test: add KUnit test runner core
+To:     shuah <shuah@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 10:59:14AM +1000, Dave Chinner wrote:
-> On Wed, Aug 21, 2019 at 11:02:00AM -0700, Ira Weiny wrote:
-> > On Tue, Aug 20, 2019 at 08:55:15AM -0300, Jason Gunthorpe wrote:
-> > > On Tue, Aug 20, 2019 at 11:12:10AM +1000, Dave Chinner wrote:
-> > > > On Mon, Aug 19, 2019 at 09:38:41AM -0300, Jason Gunthorpe wrote:
-> > > > > On Mon, Aug 19, 2019 at 07:24:09PM +1000, Dave Chinner wrote:
-> > > > > 
-> > > > > > So that leaves just the normal close() syscall exit case, where the
-> > > > > > application has full control of the order in which resources are
-> > > > > > released. We've already established that we can block in this
-> > > > > > context.  Blocking in an interruptible state will allow fatal signal
-> > > > > > delivery to wake us, and then we fall into the
-> > > > > > fatal_signal_pending() case if we get a SIGKILL while blocking.
-> > > > > 
-> > > > > The major problem with RDMA is that it doesn't always wait on close() for the
-> > > > > MR holding the page pins to be destoyed. This is done to avoid a
-> > > > > deadlock of the form:
-> > > > > 
-> > > > >    uverbs_destroy_ufile_hw()
-> > > > >       mutex_lock()
-> > > > >        [..]
-> > > > >         mmput()
-> > > > >          exit_mmap()
-> > > > >           remove_vma()
-> > > > >            fput();
-> > > > >             file_operations->release()
-> > > > 
-> > > > I think this is wrong, and I'm pretty sure it's an example of why
-> > > > the final __fput() call is moved out of line.
-> > > 
-> > > Yes, I think so too, all I can say is this *used* to happen, as we
-> > > have special code avoiding it, which is the code that is messing up
-> > > Ira's lifetime model.
-> > > 
-> > > Ira, you could try unraveling the special locking, that solves your
-> > > lifetime issues?
-> > 
-> > Yes I will try to prove this out...  But I'm still not sure this fully solves
-> > the problem.
-> > 
-> > This only ensures that the process which has the RDMA context (RDMA FD) is safe
-> > with regard to hanging the close for the "data file FD" (the file which has
-> > pinned pages) in that _same_ process.  But what about the scenario.
-> > 
-> > Process A has the RDMA context FD and data file FD (with lease) open.
-> > 
-> > Process A uses SCM_RIGHTS to pass the RDMA context FD to Process B.
-> 
-> Passing the RDMA context dependent on a file layout lease to another
-> process that doesn't have a file layout lease or a reference to the
-> original lease should be considered a violation of the layout lease.
-> Process B does not have an active layout lease, and so by the rules
-> of layout leases, it is not allowed to pin the layout of the file.
-> 
+On Fri, Aug 23, 2019 at 10:05 AM shuah <shuah@kernel.org> wrote:
+>
+> On 8/23/19 10:48 AM, Brendan Higgins wrote:
+> > On Fri, Aug 23, 2019 at 8:33 AM shuah <shuah@kernel.org> wrote:
+> >>
+> >> Hi Brendan,
+> >>
+> >> On 8/20/19 5:20 PM, Brendan Higgins wrote:
+> >>> Add core facilities for defining unit tests; this provides a common way
+> >>> to define test cases, functions that execute code which is under test
+> >>> and determine whether the code under test behaves as expected; this also
+> >>> provides a way to group together related test cases in test suites (here
+> >>> we call them test_modules).
+> >>>
+> >>> Just define test cases and how to execute them for now; setting
+> >>> expectations on code will be defined later.
+> >>>
+> >>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> >>> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> >>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> >>> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> >>> ---
+> >>>    include/kunit/test.h | 179 ++++++++++++++++++++++++++++++++++++++++
+> >>>    kunit/Kconfig        |  17 ++++
+> >>>    kunit/Makefile       |   1 +
+> >>>    kunit/test.c         | 191 +++++++++++++++++++++++++++++++++++++++++++
+> >>>    4 files changed, 388 insertions(+)
+> >>>    create mode 100644 include/kunit/test.h
+> >>>    create mode 100644 kunit/Kconfig
+> >>>    create mode 100644 kunit/Makefile
+> >>>    create mode 100644 kunit/test.c
+> >>>
+> >>> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> >>> new file mode 100644
+> >>> index 0000000000000..e0b34acb9ee4e
+> >>> --- /dev/null
+> >>> +++ b/include/kunit/test.h
+> >>> @@ -0,0 +1,179 @@
+> >>> +/* SPDX-License-Identifier: GPL-2.0 */
+> >>> +/*
+> >>> + * Base unit test (KUnit) API.
+> >>> + *
+> >>> + * Copyright (C) 2019, Google LLC.
+> >>> + * Author: Brendan Higgins <brendanhiggins@google.com>
+> >>> + */
+> >>> +
+> >>> +#ifndef _KUNIT_TEST_H
+> >>> +#define _KUNIT_TEST_H
+> >>> +
+> >>> +#include <linux/types.h>
+> >>> +
+> >>> +struct kunit;
+> >>> +
+> >>> +/**
+> >>> + * struct kunit_case - represents an individual test case.
+> >>> + * @run_case: the function representing the actual test case.
+> >>> + * @name: the name of the test case.
+> >>> + *
+> >>> + * A test case is a function with the signature, ``void (*)(struct kunit *)``
+> >>> + * that makes expectations (see KUNIT_EXPECT_TRUE()) about code under test. Each
+> >>> + * test case is associated with a &struct kunit_suite and will be run after the
+> >>> + * suite's init function and followed by the suite's exit function.
+> >>> + *
+> >>> + * A test case should be static and should only be created with the KUNIT_CASE()
+> >>> + * macro; additionally, every array of test cases should be terminated with an
+> >>> + * empty test case.
+> >>> + *
+> >>> + * Example:
+> >>
+> >> Can you fix these line continuations. It makes it very hard to read.
+> >> Sorry for this late comment. These comments lines are longer than 80
+> >> and wrap.
+> >
+> > None of the lines in this commit are over 80 characters in column
+> > width. Some are exactly 80 characters (like above).
+> >
+> > My guess is that you are seeing the diff added text (+ ), which when
+> > you add that to a line which is exactly 80 char in length ends up
+> > being over 80 char in email. If you apply the patch you will see that
+> > they are only 80 chars.
+> >
+> >>
+> >> There are several comment lines in the file that are way too long.
+> >
+> > Note that checkpatch also does not complain about any over 80 char
+> > lines in this file.
+> >
+> > Sorry if I am misunderstanding what you are trying to tell me. Please
+> > confirm either way.
+> >
+>
+> WARNING: Avoid unnecessary line continuations
+> #258: FILE: include/kunit/test.h:137:
+> +                */                                                            \
+>
+> total: 0 errors, 2 warnings, 388 lines checked
 
-I don't disagree with the semantics of this.  I just don't know how to enforce
-it.
+Ah, okay so you don't like the warning about the line continuation.
+That's not because it is over 80 char, but because there is a line
+continuation after a comment. I don't really see a way to get rid of
+it without removing the comment from inside the macro.
 
-> > Process A attempts to exit (hangs because data file FD is pinned).
-> > 
-> > Admin kills process A.  kill works because we have allowed for it...
-> > 
-> > Process B _still_ has the RDMA context FD open _and_ therefore still holds the
-> > file pins.
-> > 
-> > Truncation still fails.
-> > 
-> > Admin does not know which process is holding the pin.
-> > 
-> > What am I missing?
-> 
-> Application does not hold the correct file layout lease references.
-> Passing the fd via SCM_RIGHTS to a process without a layout lease
-> is equivalent to not using layout leases in the first place.
+I put this TODO there in the first place a Luis' request, and I put it
+in the body of the macro because this macro already had a kernel-doc
+comment and I didn't think that an implementation detail TODO belonged
+in the user documentation.
 
-Ok, So If I understand you correctly you would support a failure of SCM_RIGHTS
-in this case?  I'm ok with that but not sure how to implement it right now.
+> Go ahead fix these. It appears there are few lines that either longer
+> than 80. In general, I keep them around 75, so it is easier read.
 
-To that end, I would like to simplify this slightly because I'm not convinced
-that SCM_RIGHTS is a problem we need to solve right now.  ie I don't know of a
-user who wants to do this.
+Sorry, the above is the only checkpatch warning other than the
+reminder to update the MAINTAINERS file.
 
-Right now duplication via SCM_RIGHTS could fail if _any_ file pins (and by
-definition leases) exist underneath the "RDMA FD" (or other direct access FD,
-like XDP etc) being duplicated.  Later, if this becomes a use case we will need
-to code up the proper checks, potentially within each of the subsystems.  This
-is because, with RDMA at least, there are potentially large numbers of MR's and
-file leases which may have to be checked.
-
-Ira
-
+Are you saying you want me to go through and make all the lines fit in
+75 char column width? I hope not because that is going to be a pretty
+substantial change to make.
