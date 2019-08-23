@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAB329ACC5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 12:12:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA6CC9ACC7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 12:12:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404576AbfHWKLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 06:11:48 -0400
+        id S2404597AbfHWKLu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 06:11:50 -0400
 Received: from esa3.hgst.iphmx.com ([216.71.153.141]:47806 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404383AbfHWKLr (ORCPT
+        with ESMTP id S2404383AbfHWKLt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:11:47 -0400
+        Fri, 23 Aug 2019 06:11:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566555107; x=1598091107;
+  t=1566555109; x=1598091109;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=4lhxbEjSXkBXDAScPSNFcUFtf8ehM0euARJ66fgeDFE=;
-  b=WyBfIuqkYeOKN/mlfBPD/ZG6ARlKAmZ4E1WZvU/7bkj7cGe+C+f71Jo5
-   bGZtW1cxswtF9atl/vJ6WxpbH/uUeZJI3zZD56g4a2WX6tChA8BeAR7Bg
-   CFlWKTManTfXvXFYxZ5Q3A6hq0XyMOEpH5FYs2yWLnESKVDoEzRUvcUaZ
-   IaDdnBzkgm+CoyUhfo6I9qP+bDwBZQ7cMa8/lAL9htybk+EZ15lgo/lFo
-   +7vpkl7Hg1rEavBZCeyyDIDjw4DCGprFRQFHG8yMlA+nWHWn/q3npCalf
-   38jy6n1IAKYSOyVIIVcSvKGr218GkAhlVIZcqB5/1/EQnq3Gv6DV9nwSP
-   A==;
-IronPort-SDR: hfVix9K9axNOACIvHwnHGh4g1JTdSqwTwdLbNlz20wdazH8Ga3wFXHBQ5BTksr3/w60Z2TRypL
- AP7oS6LDzGa+kURl6xAZ0Hp9UqGMs34W4m3BHYZg56OocAayH2NuIEQYOEMZKn19scdm+111o3
- oDuJmdThZ6iq+9ZdYCXDuVoRCTSGD/LjVucKnygYtvgXtS7UFwbZSxsRVIsG4wEtItURnxEMiN
- Y5VARGzZLxKeVYRY+AUvihjXJh04VOE0wDsosUeCp8ILb2GspeJ0XXcaem7qMIbczT6nQP7ehW
- gVA=
+  bh=yW9btYQxXmen4W7byA8IXC1sJmMINn7f2DFdlZItrXI=;
+  b=GWGyqWf3BGEnYyXRYshdEc24JWcQzqJOU8W33VqB43d03enJ8G54kTYR
+   /4DXHyrUhssUFlymnN0doy4Ma4gw7Y09DEJorBR6T9deC2BGT15O0CBZr
+   bVlyWSMIK2IzGkSuaA/60qanxVQPr005fuW2grC822HVc4PWfFBslLTGu
+   8M3pM1DYNvysy+DECMJ6DvqN0/B7w7i7nq7+7CzDwMCCl45PEQWU8Flqq
+   RlPOluUiTKFrgULqYDmJNqPiJ9+HPLm0iUMrQv/C649vMvLCbI8RrCObZ
+   SbHV3n/QurTE3ZJarP7F0NEeBs0MWq6Py0AG+G0rsMX5gqDWRW0shADdQ
+   w==;
+IronPort-SDR: F2qunQ0zpziNq+TqS/aQG4vQPRX53HuCenwf3MHvhro3Hp6ssf5UGxV+iDMBy82O1vw+i5CvWi
+ rlPtVApJZAJLfsCe8wB7i9UHQy8iLD3bj4rymf8FjaY7De1ilu+JDCwrAomwynB9ZvgcqxnJuX
+ 4NQGWJo1QW5miDlJUjBXZ1pAHAJSZ7+pWMlEvCjc4BrZ91vaSGeBhS1ZUSVEEbV/PYxQWi1/NE
+ b6j7mkwyEaWgh4ExSvw1yyz3afg6NlLYRZZIKmKo7nxh3bpWzkT2vLrheiUCvtkwjK1x9fobJw
+ ero=
 X-IronPort-AV: E=Sophos;i="5.64,420,1559491200"; 
-   d="scan'208";a="121096263"
+   d="scan'208";a="121096265"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 23 Aug 2019 18:11:47 +0800
-IronPort-SDR: Zf9/TS3CAgnTm9UhfvGd3Oee7LoWaLExXc6j5m4xocV9oH7qGaovvofTByGllhpYNMSMS46Rqn
- wIIvx8B7DQT9L1zFGonTeYgcJBG9DQTELcPY1tU3TTxPoObmB6y5FxqxQN49UGmzz2Qjct61Lr
- 1jQafXxBK6k2AL5c5tE2PQuv8LjWt69WDDOCskZV9yFibrZwR8vKxp+7fw15a+0wa63EilQ0gM
- JhEW2deCMBA6bOGxNabqf4p4gIMgcUFgYg7qTCDmacZD7BBKdVU8R10XL0ksxeNm2f+M5nt5rR
- gq6Wi2izj/geCC3s5/LA7Esq
+  by ob1.hgst.iphmx.com with ESMTP; 23 Aug 2019 18:11:49 +0800
+IronPort-SDR: o/+GeNrrmtaEDgjmikqL5tyUouMKfaYyoNsff4QSf0MAnoGIvGVgDkItxyZruPE5C/TdACqZ1M
+ tRWjsa9xaB0lOBECU/yM7rhON95yVIgfJS/QRZGsHmHWrFb/dL6zPscbY6/AYILnnjVDvNyvSU
+ dTvaMuXo6Fa5fl/WvFKHlKdhkXeGxSFdAUGKS9bMV4C/nDy60R218kD1Xell9K1v+o+QnApq7h
+ +cYJsLaDUcUyqTMRedOjfLQ6801ZAykhxERy50O81CPv1V2vRDMiRc/dXAQX76Yn66O/ADJsYL
+ ORLLOrgpGq32B04V8Nt+puuj
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 03:09:05 -0700
-IronPort-SDR: FoR4xtdV+xPrfbPGuNf80/8NBoJN0NrU373iGoEIePdrba0goFVrV01R/weRrky7GOSuhbU8aw
- bvWN6pxGWm0FLvb37m0WjHYz8ydc5S0xyoKlzFAKwDTUmUFHKEMrJrS5RMjULSu6hbxfKax36q
- H/+wOTplB/Sf2iHpZo5k9kQ6BN0vT4RpiNNqqAAKNBs2MToXE6XOaRE/EQN/SceKKxhjVs7dtZ
- Hb4ZP8EcSKNkm/HkXJuiUOwyNd3nd+XGw9K/drcoB3Fu5+7QASEjR2fd37eajqgoJtvo0a4Dys
- odM=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 03:09:07 -0700
+IronPort-SDR: wzU3Od9kC5oShRwkcaQSC8AfIS5YNM3g93ZFOjLGqCQ5LZ+EuCl9SJCBsRr5Oy4XWxaBRWgl3S
+ M96Xt+MiPt64S4Ips+TTCpoFbZQF7fCR6AmYcWMXDQ9GdX481MSee+3YCpWxnw5Ud9oEpE3f/m
+ MMjJ3/97ipAXTHBueuM7PdkIZtsPS2hFUGrNhx+DgpPfLR83TgyDKW6LGd3AnUJcYSJi6V3QJo
+ EsColpXJPO57giXsHppPnDMYtLUWmuN8E3XEGU6ysxG1GL9VAHERytQKrRd8BVv4jeWauCEf6N
+ Boo=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 23 Aug 2019 03:11:45 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 23 Aug 2019 03:11:47 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -59,9 +59,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v4 18/27] btrfs: support direct write IO in HMZONED
-Date:   Fri, 23 Aug 2019 19:10:27 +0900
-Message-Id: <20190823101036.796932-19-naohiro.aota@wdc.com>
+Subject: [PATCH v4 19/27] btrfs: serialize meta IOs on HMZONED mode
+Date:   Fri, 23 Aug 2019 19:10:28 +0900
+Message-Id: <20190823101036.796932-20-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190823101036.796932-1-naohiro.aota@wdc.com>
 References: <20190823101036.796932-1-naohiro.aota@wdc.com>
@@ -72,38 +72,205 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As same as with other IO submission, we must unlock a block group for the
-next allocation.
+As same as in data IO path, we must serialize write IOs for metadata. We
+cannot add mutex around allocation and submit because metadata blocks are
+allocated in an earlier stage to build up B-trees.
+
+Thus, this commit add hmzoned_meta_io_lock and hold it during metadata IO
+submission in btree_write_cache_pages() to serialize IOs. Furthermore, this
+commit add per-block grorup metadata IO submission pointer
+"meta_write_pointer" to ensure sequential writing.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/inode.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/btrfs/ctree.h     |  3 +++
+ fs/btrfs/disk-io.c   |  1 +
+ fs/btrfs/extent_io.c | 17 ++++++++++++++++-
+ fs/btrfs/hmzoned.c   | 45 ++++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/hmzoned.h   | 17 +++++++++++++++++
+ 5 files changed, 82 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 283ac11849b1..d7be97c6a069 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8519,6 +8519,7 @@ static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
- 	struct btrfs_io_bio *io_bio;
- 	bool write = (bio_op(dio_bio) == REQ_OP_WRITE);
- 	int ret = 0;
-+	u64 disk_bytenr;
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index d4df9624cb04..e974174e12a2 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -619,6 +619,7 @@ struct btrfs_block_group_cache {
+ 	 */
+ 	u64 alloc_offset;
+ 	struct mutex zone_io_lock;
++	u64 meta_write_pointer;
+ };
  
- 	bio = btrfs_bio_clone(dio_bio);
+ /* delayed seq elem */
+@@ -1105,6 +1106,8 @@ struct btrfs_fs_info {
+ 	spinlock_t ref_verify_lock;
+ 	struct rb_root block_tree;
+ #endif
++
++	struct mutex hmzoned_meta_io_lock;
+ };
  
-@@ -8562,7 +8563,11 @@ static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
- 			dio_data->unsubmitted_oe_range_end;
+ static inline struct btrfs_fs_info *btrfs_sb(struct super_block *sb)
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index d36cdb1b1421..a9632e455eb5 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2701,6 +2701,7 @@ int open_ctree(struct super_block *sb,
+ 	mutex_init(&fs_info->delete_unused_bgs_mutex);
+ 	mutex_init(&fs_info->reloc_mutex);
+ 	mutex_init(&fs_info->delalloc_root_mutex);
++	mutex_init(&fs_info->hmzoned_meta_io_lock);
+ 	seqlock_init(&fs_info->profiles_lock);
+ 
+ 	INIT_LIST_HEAD(&fs_info->dirty_cowonly_roots);
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 4e67b16c9f80..ff963b2214aa 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -3892,7 +3892,9 @@ int btree_write_cache_pages(struct address_space *mapping,
+ 				   struct writeback_control *wbc)
+ {
+ 	struct extent_io_tree *tree = &BTRFS_I(mapping->host)->io_tree;
++	struct btrfs_fs_info *fs_info = tree->fs_info;
+ 	struct extent_buffer *eb, *prev_eb = NULL;
++	struct btrfs_block_group_cache *cache = NULL;
+ 	struct extent_page_data epd = {
+ 		.bio = NULL,
+ 		.tree = tree,
+@@ -3922,6 +3924,7 @@ int btree_write_cache_pages(struct address_space *mapping,
+ 		tag = PAGECACHE_TAG_TOWRITE;
+ 	else
+ 		tag = PAGECACHE_TAG_DIRTY;
++	btrfs_hmzoned_meta_io_lock(fs_info);
+ retry:
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+ 		tag_pages_for_writeback(mapping, index, end);
+@@ -3965,6 +3968,14 @@ int btree_write_cache_pages(struct address_space *mapping,
+ 			if (!ret)
+ 				continue;
+ 
++			if (!btrfs_check_meta_write_pointer(fs_info, eb,
++							    &cache)) {
++				ret = 0;
++				done = 1;
++				free_extent_buffer(eb);
++				break;
++			}
++
+ 			prev_eb = eb;
+ 			ret = lock_extent_buffer_for_io(eb, &epd);
+ 			if (!ret) {
+@@ -3999,12 +4010,16 @@ int btree_write_cache_pages(struct address_space *mapping,
+ 		index = 0;
+ 		goto retry;
  	}
++	if (cache)
++		btrfs_put_block_group(cache);
+ 	ASSERT(ret <= 0);
+ 	if (ret < 0) {
+ 		end_write_bio(&epd, ret);
+-		return ret;
++		goto out;
+ 	}
+ 	ret = flush_write_bio(&epd);
++out:
++	btrfs_hmzoned_meta_io_unlock(fs_info);
+ 	return ret;
+ }
  
-+	disk_bytenr = dip->disk_bytenr;
- 	ret = btrfs_submit_direct_hook(dip);
-+	if (write)
-+		btrfs_hmzoned_data_io_unlock_logical(
-+			btrfs_sb(inode->i_sb), disk_bytenr);
- 	if (!ret)
- 		return;
+diff --git a/fs/btrfs/hmzoned.c b/fs/btrfs/hmzoned.c
+index 81d8037ae7f6..bfc95a0443d0 100644
+--- a/fs/btrfs/hmzoned.c
++++ b/fs/btrfs/hmzoned.c
+@@ -545,6 +545,9 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group_cache *cache)
  
+ out:
+ 	cache->alloc_type = alloc_type;
++	if (!ret)
++		cache->meta_write_pointer =
++			cache->alloc_offset + cache->key.objectid;
+ 	kfree(alloc_offsets);
+ 	free_extent_map(em);
+ 
+@@ -648,3 +651,45 @@ void btrfs_free_redirty_list(struct btrfs_transaction *trans)
+ 	}
+ 	spin_unlock(&trans->releasing_ebs_lock);
+ }
++
++bool btrfs_check_meta_write_pointer(struct btrfs_fs_info *fs_info,
++				    struct extent_buffer *eb,
++				    struct btrfs_block_group_cache **cache_ret)
++{
++	struct btrfs_block_group_cache *cache;
++
++	if (!btrfs_fs_incompat(fs_info, HMZONED))
++		return true;
++
++	cache = *cache_ret;
++
++	if (cache &&
++	    (eb->start < cache->key.objectid ||
++	     cache->key.objectid + cache->key.offset <= eb->start)) {
++		btrfs_put_block_group(cache);
++		cache = NULL;
++		*cache_ret = NULL;
++	}
++
++	if (!cache)
++		cache = btrfs_lookup_block_group(fs_info,
++						 eb->start);
++
++	if (cache) {
++		*cache_ret = cache;
++
++		if (cache->alloc_type != BTRFS_ALLOC_SEQ)
++			return true;
++
++		if (cache->meta_write_pointer != eb->start) {
++			btrfs_put_block_group(cache);
++			cache = NULL;
++			*cache_ret = NULL;
++			return false;
++		}
++
++		cache->meta_write_pointer = eb->start + eb->len;
++	}
++
++	return true;
++}
+diff --git a/fs/btrfs/hmzoned.h b/fs/btrfs/hmzoned.h
+index a8e7286708d4..c68c4b8056a4 100644
+--- a/fs/btrfs/hmzoned.h
++++ b/fs/btrfs/hmzoned.h
+@@ -40,6 +40,9 @@ void btrfs_redirty_list_add(struct btrfs_transaction *trans,
+ 			    struct extent_buffer *eb);
+ void btrfs_free_redirty_list(struct btrfs_transaction *trans);
+ void btrfs_hmzoned_data_io_unlock_at(struct inode *inode, u64 start, u64 len);
++bool btrfs_check_meta_write_pointer(struct btrfs_fs_info *fs_info,
++				    struct extent_buffer *eb,
++				    struct btrfs_block_group_cache **cache_ret);
+ 
+ static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
+ {
+@@ -174,4 +177,18 @@ static inline void btrfs_hmzoned_data_io_unlock_logical(
+ 	btrfs_put_block_group(cache);
+ }
+ 
++static inline void btrfs_hmzoned_meta_io_lock(struct btrfs_fs_info *fs_info)
++{
++	if (!btrfs_fs_incompat(fs_info, HMZONED))
++		return;
++	mutex_lock(&fs_info->hmzoned_meta_io_lock);
++}
++
++static inline void btrfs_hmzoned_meta_io_unlock(struct btrfs_fs_info *fs_info)
++{
++	if (!btrfs_fs_incompat(fs_info, HMZONED))
++		return;
++	mutex_unlock(&fs_info->hmzoned_meta_io_lock);
++}
++
+ #endif
 -- 
 2.23.0
 
