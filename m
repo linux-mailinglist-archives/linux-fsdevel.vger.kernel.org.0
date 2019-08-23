@@ -2,56 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71C919B742
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 21:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC0CF9B74B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 21:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436865AbfHWTor (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 15:44:47 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43146 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731763AbfHWToq (ORCPT
+        id S2436862AbfHWTsf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 15:48:35 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33834 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732627AbfHWTse (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 15:44:46 -0400
-Received: by mail-pg1-f195.google.com with SMTP id k3so6289839pgb.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2019 12:44:46 -0700 (PDT)
+        Fri, 23 Aug 2019 15:48:34 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n9so6325211pgc.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2019 12:48:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=oqC5xMMUbO+7V3ahvqsbNQ/fSXZ8+DsANxH/wBr9efU=;
-        b=Wg7Vh2cQk3mZ+LOk5wcrEiyksh6120g652gNH8TDhjTA5q3FBDvG0IIuxcjbCD8eIP
-         LhliYDFeq/BrRg6qXP6XtIWDjsY6gx2dzpOWFIWG2BC4hx3fHQ6RIqO6vH2uuXO+LlXy
-         K0ljUn6TVEunhoY/CgBzCEUPNHwh2/q8IJ6Ds=
+        bh=mmvH/MiPBr+v/9h/NqmKdTN+9qaz3FZdG5BKqSNbGjY=;
+        b=Tbb+QdzzrmYFKAD3GK9vLZkK/NM8omZ6WAKaHjyjKlIXmpyaUZNzp3xGyJygmI+m+P
+         EbRS/GTRurPgwAA93u1mgXPaA95I7A50nyQ9mVEYWX1ICugwFitTt2NFpRb9jbXrsYEV
+         SqQZ5gOgGEGKfbmjWSF9Ci8mtCOyazf4LFrp8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=oqC5xMMUbO+7V3ahvqsbNQ/fSXZ8+DsANxH/wBr9efU=;
-        b=YCJq3geONG3XhKiUyWy4BxU3bXjBpoDossOBEglXuqKcad03/lS47KWDdLNCX0XzBg
-         tc+2MYI8fs2BSVcx5ql0n7WhmJy27N/JK6ke+HID+dcBVYpuRCcSjDqiArYsXyvnjK/s
-         CHJoiZFhbIQh8vHBUnv1QAF9HXfba/DbAX4lw+9JzOduUkkJ856+hT//MO2SmIF61jvJ
-         cYgHdXXMcXAMFF5qXzDzjFlu0zgQoYVm1Q84Y/TqpLd4U3U2ILF5b7AizR+anDvPXwPC
-         QOttXTKALNSgFALN7ocQyrUrWT8f75rNMbYYA4C+pSoTx5zt7ipgJEagAnND+TxKLZkb
-         P5iA==
-X-Gm-Message-State: APjAAAUxRzTYkFA5P6QlBHkHkwDmlaTIxImy3dh2cvwgDp1DxLgPa+Ao
-        vPxfzM6ZdwGPb6/xt8/k3tvaMg==
-X-Google-Smtp-Source: APXvYqzkVWrnPqc1ZXrsqfv6TsSH/aBZJ8pJxskRShIF3jD8xD9RghuJl0fSJBDJTy57m4Ln5Pxwiw==
-X-Received: by 2002:a63:505a:: with SMTP id q26mr5298383pgl.18.1566589485862;
-        Fri, 23 Aug 2019 12:44:45 -0700 (PDT)
+        bh=mmvH/MiPBr+v/9h/NqmKdTN+9qaz3FZdG5BKqSNbGjY=;
+        b=jE4lXE9uhFzDUr/6XCRZUji9RQHm8ge0oj77Nd/SpcUEbKlqgbHCceBE6h5a2TdVqB
+         VSuNmfr4IXbLicydzwHWW82MAf7HHA9ZO8qeyKJUb5LsHu8Uq+GPOOfRiCabYpYY0xIw
+         ase1cMGHWvDQlXTYyg3jr7HdEnE0sPuDXXODTqd1nGtdlgNxdslcRE3h8AjLElycUMZ5
+         5dm3ClYpcukXMlqAuNMnRzONKi4t2Fr7FXGtey5yMaJ5Gmhvl0BCiIwtwlCzUlw0k0pz
+         CTRuO5H6Uo9JjZl3KX9NctpmsZ1f57QcudvGwftY8W/Y0DjnmZYRx5HEz+pZcnaE8wWf
+         AysA==
+X-Gm-Message-State: APjAAAUXSCEktG9P8Dl2xwThQQoWK4EHslvp6XbGATuLqSgw4oWHE99L
+        6wDKPP+kMuvx7YvIPgzDSYBOOg==
+X-Google-Smtp-Source: APXvYqy4Vu/BUixQkOsIGmHqPmpJ6AQ7tioo+6e6JH0ZmrWQBVeswubKUAMb+I6GuTOM8zvTUHfooA==
+X-Received: by 2002:a63:524f:: with SMTP id s15mr5160553pgl.2.1566589713570;
+        Fri, 23 Aug 2019 12:48:33 -0700 (PDT)
 Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id j15sm3332347pfr.146.2019.08.23.12.44.42
+        by smtp.gmail.com with ESMTPSA id e6sm3256802pfn.71.2019.08.23.12.48.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Aug 2019 12:44:44 -0700 (PDT)
-Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 23 Aug 2019 12:48:32 -0700 (PDT)
+Subject: Re: [PATCH 3/3] firmware: add mutex fw_lock_fallback for race
+ condition
+To:     Takashi Iwai <tiwai@suse.de>, Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
@@ -62,16 +61,18 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         Colin Ian King <colin.king@canonical.com>,
         Kees Cook <keescook@chromium.org>,
         linux-kselftest@vger.kernel.org
-References: <20190822192451.5983-1-scott.branden@broadcom.com>
- <20190822192451.5983-3-scott.branden@broadcom.com>
- <s5hef1crybq.wl-tiwai@suse.de>
+References: <20190816000945.29810-1-scott.branden@broadcom.com>
+ <20190816000945.29810-4-scott.branden@broadcom.com>
+ <20190819053937.GR16384@42.do-not-panic.com>
+ <16823ee6-c52a-b3b5-caed-79c00772fa68@broadcom.com>
+ <20190820012655.GU16384@42.do-not-panic.com> <s5hd0gwrx4j.wl-tiwai@suse.de>
 From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <10461fcf-9eca-32b6-0f9d-23c63b3f3442@broadcom.com>
-Date:   Fri, 23 Aug 2019 12:44:42 -0700
+Message-ID: <54ccd717-7749-3c45-320f-1c285e027d36@broadcom.com>
+Date:   Fri, 23 Aug 2019 12:48:30 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <s5hef1crybq.wl-tiwai@suse.de>
+In-Reply-To: <s5hd0gwrx4j.wl-tiwai@suse.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -80,27 +81,119 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Takashi,
 
-Thanks for review.  comments below.
+On 2019-08-23 3:31 a.m., Takashi Iwai wrote:
+> On Tue, 20 Aug 2019 03:26:55 +0200,
+> Luis Chamberlain wrote:
+>> On Mon, Aug 19, 2019 at 09:19:51AM -0700, Scott Branden wrote:
+>>> To be honest, I find the entire firmware code sloppy.
+>> And that is after years of cleanup on my part. Try going back to v4.1
+>> for instance, check the code out then for an incredible horrific sight :)
+>>
+>>> I don't think the cache/no-cache feature is
+>>> implemented or tested properly nor fallback to begin with.
+>> I'm in total agreement! I *know* there must be holes in that code, and I
+>> acknowledge a few possible gotchas on the commit logs. For instance, I
+>> acknowledged that the firmware cache had a secondary purpose which was
+>> not well documented or understood through commit e44565f62a720
+>> ("firmware: fix batched requests - wake all waiters"). The firmware
+>> cache allows for batching requests and sharing the same original request
+>> for multiple consecutive requests which *race against each other*.
+>> That's when I started having my doubts about the architecture of the
+>> firmware cache mechanism, it seemed too complex and perhaps overkill
+>> and considered killing it.
+>>
+>> As I noted in that commit, the firmware cache is used for:
+>>      
+>> 1) Addressing races with file lookups during the suspend/resume cycle by
+>> keeping firmware in memory during the suspend/resume cycle
+> Right, this one is the significant need.  And currently the fw loader
+> core takes a complicated approach as:
+>
+> - Store firmware name string in devres for each firmware
+> - Upon suspend, loop over all devices and associated firmware names,
+>    create a list, then loop over the list for loading the firmware
+>    files before sleeping.
+> - Upon resume, release the firmware files that have been loaded at
+>    suspend in a delayed manner.
+>
+> So we have different level of lists there, which make the code quite
+> hard to understand.
+>
+> The reason of the above approach is because we didn't know which
+> device driver would need the firmware at resume, so basically we do
+> cache for all devices.  Maybe it'd better to look for the exact
+> drivers that require the firmware at resume, and handle only such
+> ones instead of catch-all approach.
 
-On 2019-08-23 3:05 a.m., Takashi Iwai wrote:
-> On Thu, 22 Aug 2019 21:24:46 +0200,
-> Scott Branden wrote:
->> Add offset to request_firmware_into_buf to allow for portions
->> of firmware file to be read into a buffer.  Necessary where firmware
->> needs to be loaded in portions from file in memory constrained systems.
-> AFAIU, this won't work with the fallback user helper, right?
-Seems to work fine in the fw_run_tests.sh with fallbacks.
-> Also it won't work for the compressed firmware files as-is.
-Although unnecessary, seems to work fine in the fw_run_tests.sh with 
-"both" and "xzonly" options.
+Yes, that would be better.  Or remove this cache mechanism entirely
+
+and provide some helper functions of some sort to the limited
+
+drivers that actually require such mechanism.
+
 >
-> So this new API usage is for the limited use cases, hence it needs
-> such checks and returns error/warns if the condition isn't met.
+> OTOH, I find it's not bad to keep the loaded firmware file names per
+> device and expose e.g. via sysfs.  Currently we have no way to look at
+> which firmware files have been loaded afterwards; the only way to see
+> it is enabling some debug option and read through kernel messages.
+> (FWIW, I stumbled on this problem since I wanted to provide the split
+>   kernel-firmware package on SUSE distro, and let the installer decide
+>   which package to pick up.)
 >
-> IOW, this can't be a simple extension of request_firmware_into_buf()
-> to pass a new flag.
+>> 2) Batched requests for the same file rely only on work from the first
+>> file lookup, which keeps the firmware in memory until the last
+>> release_firmware() is called
+> IMO, this feature can be omitted if it makes things too complicated.
+> I guess it were added because we handle the fw caching in anyway.
+> There isn't a big need for this due to performance.  If the
+> performance matters, such driver should re-use its own firmware by
+> itself.
+
+Any simplifications would be appreciated.
+
+I sure don't understand what the code is trying to do.
+
+>
+> (snip)
+>>> 3) I have a driver that uses request_firmware_into_buf and have multiple
+>>> instances of the driver
+>> Cool, is the driver upstream?
+>>
+>>> loading the same firmware in parallel.  Some of the data is not read
+>>> correctly in each instance.
+>> Makes perfect sense considering the lack of testing I noted.
+>>
+>>> I haven't yet to reproduce this issue with the firmware test
+>> That's because of batched firmware request mechanism.
+>>
+>>> but currently
+>>> have a mutex around the entire
+>>> call to request_firmware_into_buf in our driver.
+>> I will take a look at this now.
+>>
+>>> Perhaps it is better at this point to add a mutex in
+>>> request_firmware_into_buf to make is entirely safe?
+>> No, that is not sufficient, although it would also solve the
+>> issue.
+> The mutex for request_firmware_into_buf() doesn't sound like a good
+> approach.  Basically the direct fw loading should work in parallel
+> for the same firmware file.  We might have some bug wrt cache stuff,
+> but it can be fixed properly.
+>
+> However, the fw loading in fallback mode can't run in parallel for
+> the same file, per design -- no matter whether cached or not.
+> So, if any, we'd need put a mutex around the fallback loader code.
+> And, the mutex should be rather per device, not a global one.
+
+Sure, whatever solves the issue.  All I wish to do is read
+
+part of file into a buffer specified.
+
+>
+> Or we may trick it by appending the second parallel caller into the
+> same wait queue, but the code will be more complex, so I don't think
+> worth for it.
 >
 >
 > thanks,
