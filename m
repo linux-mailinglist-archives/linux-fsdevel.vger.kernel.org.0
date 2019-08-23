@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B2639B4DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 18:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10BB19B4F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 18:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391675AbfHWQsW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 12:48:22 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35418 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391510AbfHWQsV (ORCPT
+        id S1728238AbfHWQ4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 12:56:36 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32968 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727685AbfHWQ4g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 12:48:21 -0400
-Received: by mail-pl1-f195.google.com with SMTP id gn20so5875319plb.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2019 09:48:21 -0700 (PDT)
+        Fri, 23 Aug 2019 12:56:36 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g2so6838398pfq.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2019 09:56:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=shB6SKOCWrivD7S412WveV0DXQGCOHDXUApJqsM/wlA=;
-        b=Ompr7qYsU3e4pxkTUvcGDfd4ML8vgFjnLheqC9j82bJxX2WMtGNPBrUA1tpfZZ7kkl
-         2MlcYLnijPbPInvIsR6zoBG80ArVaqo/qH8Nz2C1fLluKeQqMKpdn1Isx73kDPRrmtfA
-         uzlQbv8SAmt8wmBgLzDRa1pCbkLXVUC7pw3IzF7X6tCUWtvjtpbvC0Rxd012AHX4+phE
-         8vFfpItPxvkt5HF2AluYoxPT8xW+p0eqWdqhZxhn3iXjphBqdQMERaOSG3vodu0lrJ5X
-         dliaDAtQHPNKh2+Qm2AedTz/hBlaONpPrX2iSmH0iODNpBCdBlLEBbRkV7kNpmjj1hL+
-         ogpQ==
+        bh=Eyf6j/gVXVMMGXLncNU6lJUKpGu2Lo5yONVStoS/vek=;
+        b=e01cmg4z2qwwlBVZIjj4r36ADGh74/HeChPT4Xc3+xnauYALx3ljaOb6I0OHCgWFC6
+         rQxkkwcba9H0Hwo+Qn77ABmG9DcTvYF8jibhnaTMPM1nrVdxNKZzEmIE/ikiUQByAdoH
+         yzEmfG2SvpPGPU2xmVzi+3oSOWq4YxaRhM2q4S5p8J7KfJ7M8z/t0cYNHKqAKQJPb97d
+         M0Sl3D1TCEATpmxYmpnyeLih62JNGKj1u5mYPI2u3NUgBY9qaF0H4OGOAhUUKn8kIoVI
+         EUeI0F//okgpXz0iE6tX+sO6KYH2on7TpOEso17lY5c2LzqOvEhSxertM1ss+ZduvLJl
+         Y+zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=shB6SKOCWrivD7S412WveV0DXQGCOHDXUApJqsM/wlA=;
-        b=KlXUh7xtIDNHjHQwJ+nJCcmkqeowL4jvIXwyTJI5+DSEJXS9Cs6W+W/gHS6PwV9Tig
-         SofkXxQO0RmZtUugxtl5Y/N/VeOtthW1FnQprSqD4CKx3YFQ0Y7He9qMdGUGxEUVoK2+
-         lSZZGa01J+ba+I2pL/1I2ss/NaCPGJ+dHyuj3kgMkgDrrZMhJTcuRx2YO7Aw3wrkmtBT
-         2FpDTgviv+OABIOS5LgouFW0kANIDoM0xDAkYNGrl7tvCmXPU+9un0dLsFt1QN4zlDgs
-         AT9GlAiqRtQtZmgEsAmfebn4RdWNqFrKOfBNIPy/+7BGa8M9Hq1hx/3zuMkGI9sx/1+Q
-         ADOQ==
-X-Gm-Message-State: APjAAAXypYklfAVsKdIAFJ7hU3Ci3p74lZGuFGga0+oD7Th2mq0U53vN
-        pJp7XIgTZZ8IPGGwBPHWtpS6V4nMV2VKIQAe+qJRgg==
-X-Google-Smtp-Source: APXvYqyVqeK74/JWJUZ7pW5UAwhfOe02PTG6GeE5ufM2yWENnaiC/3vIkdv/0Gau1b+w32MpN7Tbr1pv4cTuRxiXwSc=
-X-Received: by 2002:a17:902:169:: with SMTP id 96mr5617305plb.297.1566578900191;
- Fri, 23 Aug 2019 09:48:20 -0700 (PDT)
+        bh=Eyf6j/gVXVMMGXLncNU6lJUKpGu2Lo5yONVStoS/vek=;
+        b=iIIjXc+kVYJVNkzaxemUUGWICKLwozezuD4J+RkR3+BhWQgDhLBnIzv1W+iTHVyfUB
+         fhQLC8IXo6ZlWAqQetr/zT7suMCEcZg1lyqQNV0mu0IwgNeTxkyiRrtiduddrtq8NDmO
+         7yzNJEt2Svwtnue63s8IEtANSvLDGy4GvAaPn38Kxary/j1S89I0N5ukyHAs4GuMQh9J
+         KPS/sq7M1PLvjwIJ2Lq6aoys3gGHZnDmOwhMUDNLK7anU9fzR+wxveqGq7f6+nG/Bcx9
+         mxcDE/ntk7DS+c27naV4Z+JjETPyylED2QZgn6ai37/VHrR5WS0l4cJHg11naJ+x1n8n
+         qQZA==
+X-Gm-Message-State: APjAAAWDS85LLkgB29XmFzMLBUpk7USTmlm/d1uJR8RZCJ+N9h55Ee2m
+        KUi7M0DB5d3XLPqLDuq6uECMt4l7/HKysRXutkUvgA==
+X-Google-Smtp-Source: APXvYqzUeOo2SBQqFHYb3fUN3a7IGUdSrb038esoP6u8HBz15ROwgjz1I/1KuXnhYobli1bMCbq38tH2g/9gUzXVvIY=
+X-Received: by 2002:a63:eb51:: with SMTP id b17mr4695072pgk.384.1566579394591;
+ Fri, 23 Aug 2019 09:56:34 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190820232046.50175-1-brendanhiggins@google.com>
- <20190820232046.50175-2-brendanhiggins@google.com> <7f2c8908-75f6-b793-7113-ad57c51777ce@kernel.org>
-In-Reply-To: <7f2c8908-75f6-b793-7113-ad57c51777ce@kernel.org>
+ <20190820232046.50175-10-brendanhiggins@google.com> <ae6722ce-80ac-5840-5c4b-6f6726e4239d@kernel.org>
+In-Reply-To: <ae6722ce-80ac-5840-5c4b-6f6726e4239d@kernel.org>
 From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Fri, 23 Aug 2019 09:48:08 -0700
-Message-ID: <CAFd5g44mRK9t4f58i_YMEt=e9RTxwrrhFY_V2LW_E7bUwR3cdg@mail.gmail.com>
-Subject: Re: [PATCH v14 01/18] kunit: test: add KUnit test runner core
+Date:   Fri, 23 Aug 2019 09:56:23 -0700
+Message-ID: <CAFd5g451bF2-RGZ3wT9gO1FOu+8e8yQO9evvxtQQ9Vkh4UUhVQ@mail.gmail.com>
+Subject: Re: [PATCH v14 09/18] kunit: test: add support for test abort
 To:     shuah <shuah@kernel.org>
 Cc:     Frank Rowand <frowand.list@gmail.com>,
         Greg KH <gregkh@linuxfoundation.org>,
@@ -81,6 +81,7 @@ Cc:     Frank Rowand <frowand.list@gmail.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Knut Omang <knut.omang@oracle.com>,
         Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Petr Mladek <pmladek@suse.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Richard Weinberger <richard@nod.at>,
@@ -92,92 +93,192 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 8:33 AM shuah <shuah@kernel.org> wrote:
+On Fri, Aug 23, 2019 at 8:36 AM shuah <shuah@kernel.org> wrote:
 >
 > Hi Brendan,
 >
 > On 8/20/19 5:20 PM, Brendan Higgins wrote:
-> > Add core facilities for defining unit tests; this provides a common way
-> > to define test cases, functions that execute code which is under test
-> > and determine whether the code under test behaves as expected; this also
-> > provides a way to group together related test cases in test suites (here
-> > we call them test_modules).
+> > Add support for aborting/bailing out of test cases, which is needed for
+> > implementing assertions.
 > >
-> > Just define test cases and how to execute them for now; setting
-> > expectations on code will be defined later.
+> > An assertion is like an expectation, but bails out of the test case
+> > early if the assertion is not met. The idea with assertions is that you
+> > use them to state all the preconditions for your test. Logically
+> > speaking, these are the premises of the test case, so if a premise isn't
+> > true, there is no point in continuing the test case because there are no
+> > conclusions that can be drawn without the premises. Whereas, the
+> > expectation is the thing you are trying to prove.
 > >
 > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 > > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> > Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 > > ---
-> >   include/kunit/test.h | 179 ++++++++++++++++++++++++++++++++++++++++
-> >   kunit/Kconfig        |  17 ++++
-> >   kunit/Makefile       |   1 +
-> >   kunit/test.c         | 191 +++++++++++++++++++++++++++++++++++++++++++
-> >   4 files changed, 388 insertions(+)
-> >   create mode 100644 include/kunit/test.h
-> >   create mode 100644 kunit/Kconfig
-> >   create mode 100644 kunit/Makefile
-> >   create mode 100644 kunit/test.c
+> >   include/kunit/test.h      |   2 +
+> >   include/kunit/try-catch.h |  75 +++++++++++++++++++++
+> >   kunit/Makefile            |   3 +-
+> >   kunit/test.c              | 137 +++++++++++++++++++++++++++++++++-----
+> >   kunit/try-catch.c         | 118 ++++++++++++++++++++++++++++++++
+> >   5 files changed, 319 insertions(+), 16 deletions(-)
+> >   create mode 100644 include/kunit/try-catch.h
+> >   create mode 100644 kunit/try-catch.c
 > >
 > > diff --git a/include/kunit/test.h b/include/kunit/test.h
-> > new file mode 100644
-> > index 0000000000000..e0b34acb9ee4e
-> > --- /dev/null
+> > index 6917b186b737a..390ce02f717b6 100644
+> > --- a/include/kunit/test.h
 > > +++ b/include/kunit/test.h
-> > @@ -0,0 +1,179 @@
+> > @@ -10,6 +10,7 @@
+> >   #define _KUNIT_TEST_H
+> >
+> >   #include <kunit/assert.h>
+> > +#include <kunit/try-catch.h>
+> >   #include <linux/kernel.h>
+> >   #include <linux/slab.h>
+> >   #include <linux/types.h>
+> > @@ -167,6 +168,7 @@ struct kunit {
+> >
+> >       /* private: internal use only. */
+> >       const char *name; /* Read only after initialization! */
+> > +     struct kunit_try_catch try_catch;
+> >       /*
+> >        * success starts as true, and may only be set to false during a test
+> >        * case; thus, it is safe to update this across multiple threads using
+> > diff --git a/include/kunit/try-catch.h b/include/kunit/try-catch.h
+> > new file mode 100644
+> > index 0000000000000..404f336cbdc85
+> > --- /dev/null
+> > +++ b/include/kunit/try-catch.h
+> > @@ -0,0 +1,75 @@
 > > +/* SPDX-License-Identifier: GPL-2.0 */
 > > +/*
-> > + * Base unit test (KUnit) API.
+> > + * An API to allow a function, that may fail, to be executed, and recover in a
+> > + * controlled manner.
 > > + *
 > > + * Copyright (C) 2019, Google LLC.
 > > + * Author: Brendan Higgins <brendanhiggins@google.com>
 > > + */
 > > +
-> > +#ifndef _KUNIT_TEST_H
-> > +#define _KUNIT_TEST_H
+> > +#ifndef _KUNIT_TRY_CATCH_H
+> > +#define _KUNIT_TRY_CATCH_H
 > > +
 > > +#include <linux/types.h>
 > > +
+> > +typedef void (*kunit_try_catch_func_t)(void *);
+> > +
+> > +struct completion;
 > > +struct kunit;
 > > +
 > > +/**
-> > + * struct kunit_case - represents an individual test case.
-> > + * @run_case: the function representing the actual test case.
-> > + * @name: the name of the test case.
+> > + * struct kunit_try_catch - provides a generic way to run code which might fail.
+> > + * @test: The test case that is currently being executed.
+> > + * @try_completion: Completion that the control thread waits on while test runs.
+> > + * @try_result: Contains any errno obtained while running test case.
+> > + * @try: The function, the test case, to attempt to run.
+> > + * @catch: The function called if @try bails out.
+> > + * @context: used to pass user data to the try and catch functions.
 > > + *
-> > + * A test case is a function with the signature, ``void (*)(struct kunit *)``
-> > + * that makes expectations (see KUNIT_EXPECT_TRUE()) about code under test. Each
-> > + * test case is associated with a &struct kunit_suite and will be run after the
-> > + * suite's init function and followed by the suite's exit function.
+> > + * kunit_try_catch provides a generic, architecture independent way to execute
+> > + * an arbitrary function of type kunit_try_catch_func_t which may bail out by
+> > + * calling kunit_try_catch_throw(). If kunit_try_catch_throw() is called, @try
+> > + * is stopped at the site of invocation and @catch is called.
 > > + *
-> > + * A test case should be static and should only be created with the KUNIT_CASE()
-> > + * macro; additionally, every array of test cases should be terminated with an
-> > + * empty test case.
+> > + * struct kunit_try_catch provides a generic interface for the functionality
+> > + * needed to implement kunit->abort() which in turn is needed for implementing
+> > + * assertions. Assertions allow stating a precondition for a test simplifying
+> > + * how test cases are written and presented.
 > > + *
-> > + * Example:
+> > + * Assertions are like expectations, except they abort (call
+> > + * kunit_try_catch_throw()) when the specified condition is not met. This is
+> > + * useful when you look at a test case as a logical statement about some piece
+> > + * of code, where assertions are the premises for the test case, and the
+> > + * conclusion is a set of predicates, rather expectations, that must all be
+> > + * true. If your premises are violated, it does not makes sense to continue.
+> > + */
+> > +struct kunit_try_catch {
+> > +     /* private: internal use only. */
+> > +     struct kunit *test;
+> > +     struct completion *try_completion;
+> > +     int try_result;
+> > +     kunit_try_catch_func_t try;
+> > +     kunit_try_catch_func_t catch;
+> > +     void *context;
+> > +};
+> > +
+> > +void kunit_try_catch_init(struct kunit_try_catch *try_catch,
+> > +                       struct kunit *test,
+> > +                       kunit_try_catch_func_t try,
+> > +                       kunit_try_catch_func_t catch);
+> > +
+> > +void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context);
+> > +
+> > +void __noreturn kunit_try_catch_throw(struct kunit_try_catch *try_catch);
+> > +
+> > +static inline int kunit_try_catch_get_result(struct kunit_try_catch *try_catch)
+> > +{
+> > +     return try_catch->try_result;
+> > +}
+> > +
+> > +/*
+> > + * Exposed for testing only.
+> > + */
+> > +void kunit_generic_try_catch_init(struct kunit_try_catch *try_catch);
+> > +
+> > +#endif /* _KUNIT_TRY_CATCH_H */
+> > diff --git a/kunit/Makefile b/kunit/Makefile
+> > index 4e46450bcb3a8..c9176c9c578c6 100644
+> > --- a/kunit/Makefile
+> > +++ b/kunit/Makefile
+> > @@ -1,6 +1,7 @@
+> >   obj-$(CONFIG_KUNIT) +=                      test.o \
+> >                                       string-stream.o \
+> > -                                     assert.o
+> > +                                     assert.o \
+> > +                                     try-catch.o
+> >
+> >   obj-$(CONFIG_KUNIT_TEST) +=         string-stream-test.o
+> >
+> > diff --git a/kunit/test.c b/kunit/test.c
+> > index 3cbceb34b3b36..ded9895143209 100644
+> > --- a/kunit/test.c
+> > +++ b/kunit/test.c
+> > @@ -7,7 +7,9 @@
+> >    */
+> >
+> >   #include <kunit/test.h>
+> > +#include <kunit/try-catch.h>
+> >   #include <linux/kernel.h>
+> > +#include <linux/sched/debug.h>
+> >
+> >   static void kunit_set_failure(struct kunit *test)
+> >   {
+> > @@ -162,6 +164,19 @@ static void kunit_fail(struct kunit *test, struct kunit_assert *assert)
+> >       WARN_ON(string_stream_destroy(stream));
+> >   }
+> >
+> > +static void __noreturn kunit_abort(struct kunit *test)
+> > +{
+> > +     kunit_try_catch_throw(&test->try_catch); /* Does not return. */
+> > +
+> > +     /*
+> > +      * Throw could not abort from test.
+> > +      *
+> > +      * XXX: we should never reach this line! As kunit_try_catch_throw is
+> > +      * marked __noreturn.
+> > +      */
+> > +     BUG();
 >
-> Can you fix these line continuations. It makes it very hard to read.
-> Sorry for this late comment. These comments lines are longer than 80
-> and wrap.
-
-None of the lines in this commit are over 80 characters in column
-width. Some are exactly 80 characters (like above).
-
-My guess is that you are seeing the diff added text (+ ), which when
-you add that to a line which is exactly 80 char in length ends up
-being over 80 char in email. If you apply the patch you will see that
-they are only 80 chars.
-
 >
-> There are several comment lines in the file that are way too long.
+> I recall discussion on this. What's the point in keeping thie
+> BUG() around when it doesn't even reach? It can even be a
+> WARN_ON() in that case right?
 
-Note that checkpatch also does not complain about any over 80 char
-lines in this file.
+Originally I had BUG() here, and Frank (I think it was Frank, sorry it
+was a while ago) told me it should be WARN_ON(). In v12 Stephen told
+me it should be BUG(), and nobody objected so I went back to making it
+a BUG() (note I also mentioned this change on the cover letter of v13
+and still no one objected).
 
-Sorry if I am misunderstanding what you are trying to tell me. Please
-confirm either way.
+You can see the most recent discussion with Stephen here:
+https://lore.kernel.org/linux-kselftest/20190812182421.141150-1-brendanhiggins@google.com/T/#mb108adc525092dd72fd3368ecae34251bad29edf
 
-Thanks
+Cheers
