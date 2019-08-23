@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1039AEB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 14:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C52D19AEC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 14:09:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390202AbfHWMHJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 08:07:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58966 "EHLO mx1.suse.de"
+        id S2390427AbfHWMJv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 08:09:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60516 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729830AbfHWMHI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:07:08 -0400
+        id S1730989AbfHWMJu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Aug 2019 08:09:50 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3FD14ADF1;
-        Fri, 23 Aug 2019 12:07:06 +0000 (UTC)
-Subject: Re: [PATCH v4 03/27] btrfs: Check and enable HMZONED mode
+        by mx1.suse.de (Postfix) with ESMTP id B1522B027;
+        Fri, 23 Aug 2019 12:09:48 +0000 (UTC)
+Subject: Re: [PATCH v4 04/27] btrfs: disallow RAID5/6 in HMZONED mode
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -26,7 +26,7 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org
 References: <20190823101036.796932-1-naohiro.aota@wdc.com>
- <20190823101036.796932-4-naohiro.aota@wdc.com>
+ <20190823101036.796932-5-naohiro.aota@wdc.com>
 From:   Johannes Thumshirn <jthumshirn@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
@@ -84,12 +84,12 @@ Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
  l2t2TyTuHm7wVUY2J3gJYgG723/PUGW4LaoqNrYQUr/rqo6NXw6c+EglRpm1BdpkwPwAng63
  W5VOQMdnozD2RsDM5GfA4aEFi5m00tE+8XPICCtkduyWw+Z+zIqYk2v+zraPLs9Gs0X2C7X0
  yvqY9voUoJjG6skkOToGZbqtMX9K4GOv9JAxVs075QRXL3brHtHONDt6udYobzz+
-Message-ID: <9c947b6c-c74d-24eb-ff6b-b448c8acfa40@suse.de>
-Date:   Fri, 23 Aug 2019 14:07:05 +0200
+Message-ID: <40a8226d-f24c-96f4-7bc8-18799c7b880e@suse.de>
+Date:   Fri, 23 Aug 2019 14:09:48 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190823101036.796932-4-naohiro.aota@wdc.com>
+In-Reply-To: <20190823101036.796932-5-naohiro.aota@wdc.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -98,227 +98,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 23/08/2019 12:10, Naohiro Aota wrote:
-> HMZONED mode cannot be used together with the RAID5/6 profile for now.
-> Introduce the function btrfs_check_hmzoned_mode() to check this. This
-> function will also check if HMZONED flag is enabled on the file system and
-> if the file system consists of zoned devices with equal zone size.
-> 
-> Additionally, as updates to the space cache are in-place, the space cache
-> cannot be located over sequential zones and there is no guarantees that the
-> device will have enough conventional zones to store this cache. Resolve
-> this problem by disabling completely the space cache.  This does not
-completely disabling ~^
-
-> introduces any problems with sequential block groups: all the free space is
-introduce ~^
-
-> located after the allocation pointer and no free space before the pointer.
-                                           is located? ~^
-> There is no need to have such cache.
-> 
-> For the same reason, NODATACOW is also disabled.
-> 
-> Also INODE_MAP_CACHE is also disabled to avoid preallocation in the
-> INODE_MAP_CACHE inode.
-> 
-> In summary, HMZONED will disable:
-> 
-> | Disabled features | Reason                                              |
-> |-------------------+-----------------------------------------------------|
-> | RAID5/6           | 1) Non-full stripe write cause overwriting of       |
-> |                   | parity block                                        |
-> |                   | 2) Rebuilding on high capacity volume (usually with |
-> |                   | SMR) can lead to higher failure rate                |
-> |-------------------+-----------------------------------------------------|
-> | space_cache (v1)  | In-place updating                                   |
-> | NODATACOW         | In-place updating                                   |
-> |-------------------+-----------------------------------------------------|
-> | tree-log          | Partial write out of metadata creates write holes   |
-> |-------------------+-----------------------------------------------------|
-> | fallocate         | Reserved extent will be a write hole                |
-> | INODE_MAP_CACHE   | Need pre-allocation. (and will be deprecated?)      |
-> |-------------------+-----------------------------------------------------|
-> | MIXED_BG          | Allocated metadata region will be write holes for   |
-> |                   | data writes                                         |
-> | async checksum    | Not to mix up bios by multiple workers              |
-> 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> ---
->  fs/btrfs/ctree.h       |  3 ++
->  fs/btrfs/dev-replace.c |  8 +++++
->  fs/btrfs/disk-io.c     |  8 +++++
->  fs/btrfs/hmzoned.c     | 67 ++++++++++++++++++++++++++++++++++++++++++
->  fs/btrfs/hmzoned.h     | 18 ++++++++++++
->  fs/btrfs/super.c       |  1 +
->  fs/btrfs/volumes.c     |  5 ++++
->  7 files changed, 110 insertions(+)
-> 
-> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> index 94660063a162..221259737703 100644
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -712,6 +712,9 @@ struct btrfs_fs_info {
->  	struct btrfs_root *uuid_root;
->  	struct btrfs_root *free_space_root;
->  
-> +	/* Zone size when in HMZONED mode */
-> +	u64 zone_size;
-> +
->  	/* the log root tree is a directory of all the other log roots */
->  	struct btrfs_root *log_root_tree;
->  
-> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-> index 6b2e9aa83ffa..2cc3ac4d101d 100644
-> --- a/fs/btrfs/dev-replace.c
-> +++ b/fs/btrfs/dev-replace.c
-> @@ -20,6 +20,7 @@
->  #include "rcu-string.h"
->  #include "dev-replace.h"
->  #include "sysfs.h"
-> +#include "hmzoned.h"
->  
->  static int btrfs_dev_replace_finishing(struct btrfs_fs_info *fs_info,
->  				       int scrub_ret);
-> @@ -201,6 +202,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
->  		return PTR_ERR(bdev);
->  	}
->  
-> +	if (!btrfs_check_device_zone_type(fs_info, bdev)) {
-> +		btrfs_err(fs_info,
-> +			  "zone type of target device mismatch with the filesystem!");
-> +		ret = -EINVAL;
-> +		goto error;
-> +	}
-> +
->  	sync_blockdev(bdev);
->  
->  	devices = &fs_info->fs_devices->devices;
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 97beb351a10c..3f5ea92f546c 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -40,6 +40,7 @@
->  #include "compression.h"
->  #include "tree-checker.h"
->  #include "ref-verify.h"
-> +#include "hmzoned.h"
->  
->  #define BTRFS_SUPER_FLAG_SUPP	(BTRFS_HEADER_FLAG_WRITTEN |\
->  				 BTRFS_HEADER_FLAG_RELOC |\
-> @@ -3121,6 +3122,13 @@ int open_ctree(struct super_block *sb,
->  
->  	btrfs_free_extra_devids(fs_devices, 1);
->  
-> +	ret = btrfs_check_hmzoned_mode(fs_info);
-> +	if (ret) {
-> +		btrfs_err(fs_info, "failed to init hmzoned mode: %d",
-> +				ret);
-> +		goto fail_block_groups;
-> +	}
-> +
->  	ret = btrfs_sysfs_add_fsid(fs_devices, NULL);
->  	if (ret) {
->  		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
-> diff --git a/fs/btrfs/hmzoned.c b/fs/btrfs/hmzoned.c
-> index 23bf58d3d7bb..ca58eee08a70 100644
-> --- a/fs/btrfs/hmzoned.c
-> +++ b/fs/btrfs/hmzoned.c
-> @@ -157,3 +157,70 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
->  
->  	return 0;
->  }
-> +
-> +int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
-> +{
-> +	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
-> +	struct btrfs_device *device;
-> +	u64 hmzoned_devices = 0;
-> +	u64 nr_devices = 0;
-> +	u64 zone_size = 0;
-> +	int incompat_hmzoned = btrfs_fs_incompat(fs_info, HMZONED);
-> +	int ret = 0;
-> +
-> +	/* Count zoned devices */
-> +	list_for_each_entry(device, &fs_devices->devices, dev_list) {
-> +		if (!device->bdev)
-> +			continue;
-> +		if (bdev_zoned_model(device->bdev) == BLK_ZONED_HM ||
-> +		    (bdev_zoned_model(device->bdev) == BLK_ZONED_HA &&
-> +		     incompat_hmzoned)) {
-> +			hmzoned_devices++;
-> +			if (!zone_size) {
-> +				zone_size = device->zone_info->zone_size;
-> +			} else if (device->zone_info->zone_size != zone_size) {
-> +				btrfs_err(fs_info,
-> +					  "Zoned block devices must have equal zone sizes");
-> +				ret = -EINVAL;
-> +				goto out;
-> +			}
-> +		}
-> +		nr_devices++;
-> +	}
-> +
-> +	if (!hmzoned_devices && incompat_hmzoned) {
-> +		/* No zoned block device found on HMZONED FS */
-> +		btrfs_err(fs_info, "HMZONED enabled file system should have zoned devices");
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (!hmzoned_devices && !incompat_hmzoned)
-> +		goto out;
-> +
-> +	fs_info->zone_size = zone_size;
-> +
-> +	if (hmzoned_devices != nr_devices) {
-> +		btrfs_err(fs_info,
-> +			  "zoned devices cannot be mixed with regular devices");
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * stripe_size is always aligned to BTRFS_STRIPE_LEN in
-> +	 * __btrfs_alloc_chunk(). Since we want stripe_len == zone_size,
-> +	 * check the alignment here.
-> +	 */
-> +	if (!IS_ALIGNED(zone_size, BTRFS_STRIPE_LEN)) {
-> +		btrfs_err(fs_info,
-> +			  "zone size is not aligned to BTRFS_STRIPE_LEN");
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	btrfs_info(fs_info, "HMZONED mode enabled, zone size %llu B",
-> +		   fs_info->zone_size);
-> +out:
-> +	return ret;
-> +}
-> diff --git a/fs/btrfs/hmzoned.h b/fs/btrfs/hmzoned.h
-> index ffc70842135e..29cfdcabff2f 100644
-> --- a/fs/btrfs/hmzoned.h
-> +++ b/fs/btrfs/hmzoned.h
-> @@ -9,6 +9,8 @@
->  #ifndef BTRFS_HMZONED_H
->  #define BTRFS_HMZONED_H
->  
-> +#include <linux/blkdev.h>
-> +
->  struct btrfs_zoned_device_info {
->  	/*
->  	 * Number of zones, zone size and types of zones if bdev is a
-> @@ -25,6 +27,7 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
->  		       struct blk_zone *zone, gfp_t gfp_mask);
->  int btrfs_get_dev_zone_info(struct btrfs_device *device);
->  void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
-> +int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info);
-
-
-While we're at it, shouldn't all the functions in hmzoned.[ch] have a
-!CONFIG_BLK_DEV_ZONED compat wrapper and hmzoned.o is dependent on
-CONFIG_BLK_DEV_ZONED?
+Looks good,
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 
 -- 
 Johannes Thumshirn                            SUSE Labs Filesystems
