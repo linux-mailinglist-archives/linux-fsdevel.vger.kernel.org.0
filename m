@@ -2,91 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C93209B48B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 18:35:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B2639B4DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 18:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436709AbfHWQel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 12:34:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43722 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389827AbfHWQek (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 12:34:40 -0400
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA325205C9;
-        Fri, 23 Aug 2019 16:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566578079;
-        bh=wKJz9YOkE0fj8OFVZwyerZJCWFSIUVaGmXLkqc4eHQU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ehiQ1jlRR/1ZPpGwcgYweF1sBjS3BoFZw8yWbXh+J9bvjP69gPEORLQDgIv2FL39H
-         9RS7AS3meA/8h7f3zoEwyfRexpZzYQ77Nxegt4U0hM8YkKPtQT8+ikxsLdO+MEu1bM
-         tj7Fg349rFcEk89yvGJrTch0tBDOPf6oAInCZ0AM=
-Date:   Fri, 23 Aug 2019 09:34:39 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: fixes for 5.3-rc6
-Message-ID: <20190823163439.GL1037350@magnolia>
+        id S2391675AbfHWQsW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 12:48:22 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35418 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391510AbfHWQsV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Aug 2019 12:48:21 -0400
+Received: by mail-pl1-f195.google.com with SMTP id gn20so5875319plb.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2019 09:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=shB6SKOCWrivD7S412WveV0DXQGCOHDXUApJqsM/wlA=;
+        b=Ompr7qYsU3e4pxkTUvcGDfd4ML8vgFjnLheqC9j82bJxX2WMtGNPBrUA1tpfZZ7kkl
+         2MlcYLnijPbPInvIsR6zoBG80ArVaqo/qH8Nz2C1fLluKeQqMKpdn1Isx73kDPRrmtfA
+         uzlQbv8SAmt8wmBgLzDRa1pCbkLXVUC7pw3IzF7X6tCUWtvjtpbvC0Rxd012AHX4+phE
+         8vFfpItPxvkt5HF2AluYoxPT8xW+p0eqWdqhZxhn3iXjphBqdQMERaOSG3vodu0lrJ5X
+         dliaDAtQHPNKh2+Qm2AedTz/hBlaONpPrX2iSmH0iODNpBCdBlLEBbRkV7kNpmjj1hL+
+         ogpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=shB6SKOCWrivD7S412WveV0DXQGCOHDXUApJqsM/wlA=;
+        b=KlXUh7xtIDNHjHQwJ+nJCcmkqeowL4jvIXwyTJI5+DSEJXS9Cs6W+W/gHS6PwV9Tig
+         SofkXxQO0RmZtUugxtl5Y/N/VeOtthW1FnQprSqD4CKx3YFQ0Y7He9qMdGUGxEUVoK2+
+         lSZZGa01J+ba+I2pL/1I2ss/NaCPGJ+dHyuj3kgMkgDrrZMhJTcuRx2YO7Aw3wrkmtBT
+         2FpDTgviv+OABIOS5LgouFW0kANIDoM0xDAkYNGrl7tvCmXPU+9un0dLsFt1QN4zlDgs
+         AT9GlAiqRtQtZmgEsAmfebn4RdWNqFrKOfBNIPy/+7BGa8M9Hq1hx/3zuMkGI9sx/1+Q
+         ADOQ==
+X-Gm-Message-State: APjAAAXypYklfAVsKdIAFJ7hU3Ci3p74lZGuFGga0+oD7Th2mq0U53vN
+        pJp7XIgTZZ8IPGGwBPHWtpS6V4nMV2VKIQAe+qJRgg==
+X-Google-Smtp-Source: APXvYqyVqeK74/JWJUZ7pW5UAwhfOe02PTG6GeE5ufM2yWENnaiC/3vIkdv/0Gau1b+w32MpN7Tbr1pv4cTuRxiXwSc=
+X-Received: by 2002:a17:902:169:: with SMTP id 96mr5617305plb.297.1566578900191;
+ Fri, 23 Aug 2019 09:48:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190820232046.50175-1-brendanhiggins@google.com>
+ <20190820232046.50175-2-brendanhiggins@google.com> <7f2c8908-75f6-b793-7113-ad57c51777ce@kernel.org>
+In-Reply-To: <7f2c8908-75f6-b793-7113-ad57c51777ce@kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 23 Aug 2019 09:48:08 -0700
+Message-ID: <CAFd5g44mRK9t4f58i_YMEt=e9RTxwrrhFY_V2LW_E7bUwR3cdg@mail.gmail.com>
+Subject: Re: [PATCH v14 01/18] kunit: test: add KUnit test runner core
+To:     shuah <shuah@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Fri, Aug 23, 2019 at 8:33 AM shuah <shuah@kernel.org> wrote:
+>
+> Hi Brendan,
+>
+> On 8/20/19 5:20 PM, Brendan Higgins wrote:
+> > Add core facilities for defining unit tests; this provides a common way
+> > to define test cases, functions that execute code which is under test
+> > and determine whether the code under test behaves as expected; this also
+> > provides a way to group together related test cases in test suites (here
+> > we call them test_modules).
+> >
+> > Just define test cases and how to execute them for now; setting
+> > expectations on code will be defined later.
+> >
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> > Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> > ---
+> >   include/kunit/test.h | 179 ++++++++++++++++++++++++++++++++++++++++
+> >   kunit/Kconfig        |  17 ++++
+> >   kunit/Makefile       |   1 +
+> >   kunit/test.c         | 191 +++++++++++++++++++++++++++++++++++++++++++
+> >   4 files changed, 388 insertions(+)
+> >   create mode 100644 include/kunit/test.h
+> >   create mode 100644 kunit/Kconfig
+> >   create mode 100644 kunit/Makefile
+> >   create mode 100644 kunit/test.c
+> >
+> > diff --git a/include/kunit/test.h b/include/kunit/test.h
+> > new file mode 100644
+> > index 0000000000000..e0b34acb9ee4e
+> > --- /dev/null
+> > +++ b/include/kunit/test.h
+> > @@ -0,0 +1,179 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Base unit test (KUnit) API.
+> > + *
+> > + * Copyright (C) 2019, Google LLC.
+> > + * Author: Brendan Higgins <brendanhiggins@google.com>
+> > + */
+> > +
+> > +#ifndef _KUNIT_TEST_H
+> > +#define _KUNIT_TEST_H
+> > +
+> > +#include <linux/types.h>
+> > +
+> > +struct kunit;
+> > +
+> > +/**
+> > + * struct kunit_case - represents an individual test case.
+> > + * @run_case: the function representing the actual test case.
+> > + * @name: the name of the test case.
+> > + *
+> > + * A test case is a function with the signature, ``void (*)(struct kunit *)``
+> > + * that makes expectations (see KUNIT_EXPECT_TRUE()) about code under test. Each
+> > + * test case is associated with a &struct kunit_suite and will be run after the
+> > + * suite's init function and followed by the suite's exit function.
+> > + *
+> > + * A test case should be static and should only be created with the KUNIT_CASE()
+> > + * macro; additionally, every array of test cases should be terminated with an
+> > + * empty test case.
+> > + *
+> > + * Example:
+>
+> Can you fix these line continuations. It makes it very hard to read.
+> Sorry for this late comment. These comments lines are longer than 80
+> and wrap.
 
-Here are a few more bug fixes that trickled in since the last pull.
-They've survived the usual xfstests runs and merge cleanly with this
-morning's master.  Please let me know if anything strange happens.
+None of the lines in this commit are over 80 characters in column
+width. Some are exactly 80 characters (like above).
 
-I expect there to be one more pull request tomorrow for the fix to that
-quota related inode unlock bug that we were reviewing last night, but it
-will continue to soak in the testing machine for several more hours.
+My guess is that you are seeing the diff added text (+ ), which when
+you add that to a line which is exactly 80 char in length ends up
+being over 80 char in email. If you apply the patch you will see that
+they are only 80 chars.
 
---D
+>
+> There are several comment lines in the file that are way too long.
 
-The following changes since commit 8612de3f7ba6e900465e340516b8313806d27b2d:
+Note that checkpatch also does not complain about any over 80 char
+lines in this file.
 
-  xfs: don't crash on null attr fork xfs_bmapi_read (2019-08-12 09:32:44 -0700)
+Sorry if I am misunderstanding what you are trying to tell me. Please
+confirm either way.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.3-fixes-4
-
-for you to fetch changes up to b68271609c4f16a79eae8069933f64345afcf888:
-
-  fs/xfs: Fix return code of xfs_break_leased_layouts() (2019-08-19 18:15:28 -0700)
-
-----------------------------------------------------------------
-Changes since last update:
-- Fix missing compat ioctl handling for get/setlabel
-- Fix missing ioctl pointer sanitization on s390
-- Fix a page locking deadlock in the dedupe comparison code
-- Fix inadequate locking in reflink code w.r.t. concurrent directio
-- Fix broken error detection when breaking layouts
-
-----------------------------------------------------------------
-Christoph Hellwig (2):
-      xfs: fall back to native ioctls for unhandled compat ones
-      xfs: compat_ioctl: use compat_ptr()
-
-Darrick J. Wong (2):
-      vfs: fix page locking deadlocks when deduping files
-      xfs: fix reflink source file racing with directio writes
-
-Ira Weiny (1):
-      fs/xfs: Fix return code of xfs_break_leased_layouts()
-
- fs/read_write.c      | 49 +++++++++++++++++++++++++++++++++-------
- fs/xfs/xfs_ioctl32.c | 56 +++-------------------------------------------
- fs/xfs/xfs_pnfs.c    |  2 +-
- fs/xfs/xfs_reflink.c | 63 ++++++++++++++++++++++++++++++----------------------
- 4 files changed, 82 insertions(+), 88 deletions(-)
+Thanks
