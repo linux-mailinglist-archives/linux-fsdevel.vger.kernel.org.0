@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C7B9ACC4
+	by mail.lfdr.de (Postfix) with ESMTP id CAB329ACC5
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 12:12:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404530AbfHWKLp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 06:11:45 -0400
+        id S2404576AbfHWKLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 06:11:48 -0400
 Received: from esa3.hgst.iphmx.com ([216.71.153.141]:47806 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404383AbfHWKLp (ORCPT
+        with ESMTP id S2404383AbfHWKLr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:11:45 -0400
+        Fri, 23 Aug 2019 06:11:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566555105; x=1598091105;
+  t=1566555107; x=1598091107;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=nIhIe5TVptpfqOEOHCwo5F/TfH05pQH7Mpvwi20f3vk=;
-  b=GMD3t2mslycXABg5hAEoCK/apNW1rlQC8x/fL9iOsF+QItdX7yVCN6Zv
-   i0zFPgsjZX6ZE3sqOk5FjpMM0Sf5x8E6J2Lvii9JHyPa8kNR9K3dBGZxe
-   RfzQ/ReT1PdId0cFQumejqM+HIpgn6LYDieedPGP6OYM8UE565TWls5iv
-   DrdU4LRRtDXYF4pEq/6AAvXmfQb0BV0ZIcaLfr1TPa7Fy1Tyfq5fpAjFQ
-   p3O8HPZFALpbVlAvpr7lEn67/RyXRcggi8Ljang0GgazZQa+a3JBRbsr5
-   tYr+hDpVcqjtuuVw9GO6OH/jH0BbOYOFJYP9gDwwO0eyjqXKhabXLZ4LT
+  bh=4lhxbEjSXkBXDAScPSNFcUFtf8ehM0euARJ66fgeDFE=;
+  b=WyBfIuqkYeOKN/mlfBPD/ZG6ARlKAmZ4E1WZvU/7bkj7cGe+C+f71Jo5
+   bGZtW1cxswtF9atl/vJ6WxpbH/uUeZJI3zZD56g4a2WX6tChA8BeAR7Bg
+   CFlWKTManTfXvXFYxZ5Q3A6hq0XyMOEpH5FYs2yWLnESKVDoEzRUvcUaZ
+   IaDdnBzkgm+CoyUhfo6I9qP+bDwBZQ7cMa8/lAL9htybk+EZ15lgo/lFo
+   +7vpkl7Hg1rEavBZCeyyDIDjw4DCGprFRQFHG8yMlA+nWHWn/q3npCalf
+   38jy6n1IAKYSOyVIIVcSvKGr218GkAhlVIZcqB5/1/EQnq3Gv6DV9nwSP
    A==;
-IronPort-SDR: E5BBdfLHpWnFn/hALdXLcZyXxDqxg4ib7/cAoBqeOMTCgXMJC2NCJNsk90i8cf1ew4lkIRQdQJ
- rq8hcP9IiXRXuB0GHwGGzXkQQdkR2YKdVZ5rdBZ77vHd3B89bhU4SMyQyONJohCMuVpEtSEdtP
- WzV7dKJRIMxiUfIE8F8jJU+L/IwE9b4KA7ZUWpUyCd3C/1ecIuOXAA8ZFfTtSvTLaTPBtrmBd8
- 7okWylMGBYxrlvjFyUaOkb9xvnzn26aPLzKGDYq+6IOBbC9UIHqOlAbESy4wJePdngnLAt84jd
- qoo=
+IronPort-SDR: hfVix9K9axNOACIvHwnHGh4g1JTdSqwTwdLbNlz20wdazH8Ga3wFXHBQ5BTksr3/w60Z2TRypL
+ AP7oS6LDzGa+kURl6xAZ0Hp9UqGMs34W4m3BHYZg56OocAayH2NuIEQYOEMZKn19scdm+111o3
+ oDuJmdThZ6iq+9ZdYCXDuVoRCTSGD/LjVucKnygYtvgXtS7UFwbZSxsRVIsG4wEtItURnxEMiN
+ Y5VARGzZLxKeVYRY+AUvihjXJh04VOE0wDsosUeCp8ILb2GspeJ0XXcaem7qMIbczT6nQP7ehW
+ gVA=
 X-IronPort-AV: E=Sophos;i="5.64,420,1559491200"; 
-   d="scan'208";a="121096260"
+   d="scan'208";a="121096263"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 23 Aug 2019 18:11:44 +0800
-IronPort-SDR: Z29JGMJqwY9rjYOqlYqSlCOYDNI0x2TmZ+6RP4Vl8xrzDi5CSG/7kp0+FIkZLJjWRmG9D7Vjpx
- 7VRPmxFrLd0Ak/y9ZUPgQTcrTttKdv7ClxekB7iLpc28uVlWjTUkts3jhK5KSDdMHq/tSu33pl
- QJQeDmtdz5LUjJT4SNKurCoiPuqHSCeijAXAyfeuoFR3JwX/rJyxLFeZLOttLi+UahQCLrJZiK
- m03372X+hMDhIFvRqxpOlPIkU4Ln/lgOuLtqBT9HWNLWj6m8EQxbKGi1gAbAzb5esn9LKen+Ft
- 9YlL5dOOHK/FlHy7cZ0AE1mh
+  by ob1.hgst.iphmx.com with ESMTP; 23 Aug 2019 18:11:47 +0800
+IronPort-SDR: Zf9/TS3CAgnTm9UhfvGd3Oee7LoWaLExXc6j5m4xocV9oH7qGaovvofTByGllhpYNMSMS46Rqn
+ wIIvx8B7DQT9L1zFGonTeYgcJBG9DQTELcPY1tU3TTxPoObmB6y5FxqxQN49UGmzz2Qjct61Lr
+ 1jQafXxBK6k2AL5c5tE2PQuv8LjWt69WDDOCskZV9yFibrZwR8vKxp+7fw15a+0wa63EilQ0gM
+ JhEW2deCMBA6bOGxNabqf4p4gIMgcUFgYg7qTCDmacZD7BBKdVU8R10XL0ksxeNm2f+M5nt5rR
+ gq6Wi2izj/geCC3s5/LA7Esq
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 03:09:03 -0700
-IronPort-SDR: lrAqJUgdHy4bFMwv2PId0PHQcBa203MYa30hbvXm7am1qfYNPzCZSppbPpFh+wEwkEAd3apgsX
- CwWXiniuWIRxRBItFVRLfuKk78ULGB+vYh0mtR6egvInrCfSmchEX1ZM9zXMWwIQ1wZVU7lW77
- paC6aq0CmrxUEgZNyT9faXp+77fviZS9g94BWfVTnxTF2pDhXvnMxtw4lmYLMXK+neFxcnF4Tg
- QJ8b8yVZ8a0MKF/YbDWQyyLJS/6dvKhx8J7zDvw/XCQYLcvpD4PDJl+QTH8fuHz9EdaN6UQJDm
- JLo=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 03:09:05 -0700
+IronPort-SDR: FoR4xtdV+xPrfbPGuNf80/8NBoJN0NrU373iGoEIePdrba0goFVrV01R/weRrky7GOSuhbU8aw
+ bvWN6pxGWm0FLvb37m0WjHYz8ydc5S0xyoKlzFAKwDTUmUFHKEMrJrS5RMjULSu6hbxfKax36q
+ H/+wOTplB/Sf2iHpZo5k9kQ6BN0vT4RpiNNqqAAKNBs2MToXE6XOaRE/EQN/SceKKxhjVs7dtZ
+ Hb4ZP8EcSKNkm/HkXJuiUOwyNd3nd+XGw9K/drcoB3Fu5+7QASEjR2fd37eajqgoJtvo0a4Dys
+ odM=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 23 Aug 2019 03:11:43 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 23 Aug 2019 03:11:45 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -59,9 +59,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v4 17/27] btrfs: implement atomic compressed IO submission
-Date:   Fri, 23 Aug 2019 19:10:26 +0900
-Message-Id: <20190823101036.796932-18-naohiro.aota@wdc.com>
+Subject: [PATCH v4 18/27] btrfs: support direct write IO in HMZONED
+Date:   Fri, 23 Aug 2019 19:10:27 +0900
+Message-Id: <20190823101036.796932-19-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190823101036.796932-1-naohiro.aota@wdc.com>
 References: <20190823101036.796932-1-naohiro.aota@wdc.com>
@@ -72,63 +72,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As same as with non-compressed IO submission, we must unlock a block group
-for the next allocation.
+As same as with other IO submission, we must unlock a block group for the
+next allocation.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/inode.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ fs/btrfs/inode.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index d504200c9767..283ac11849b1 100644
+index 283ac11849b1..d7be97c6a069 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -776,13 +776,26 @@ static noinline void submit_compressed_extents(struct async_chunk *async_chunk)
- 			 * and IO for us.  Otherwise, we need to submit
- 			 * all those pages down to the drive.
- 			 */
--			if (!page_started && !ret)
-+			if (!page_started && !ret) {
-+				struct extent_map *em;
-+				u64 logical;
-+
-+				em = btrfs_get_extent(BTRFS_I(inode), NULL, 0,
-+						      async_extent->start,
-+						      async_extent->ram_size,
-+						      0);
-+				logical = em->block_start;
-+				free_extent_map(em);
-+
- 				extent_write_locked_range(inode,
- 						  async_extent->start,
- 						  async_extent->start +
- 						  async_extent->ram_size - 1,
- 						  WB_SYNC_ALL);
--			else if (ret)
-+
-+				btrfs_hmzoned_data_io_unlock_logical(fs_info,
-+								     logical);
-+			} else if (ret)
- 				unlock_page(async_chunk->locked_page);
- 			kfree(async_extent);
- 			cond_resched();
-@@ -883,6 +896,7 @@ static noinline void submit_compressed_extents(struct async_chunk *async_chunk)
- 			free_async_extent_pages(async_extent);
- 		}
- 		alloc_hint = ins.objectid + ins.offset;
-+		btrfs_hmzoned_data_io_unlock_logical(fs_info, ins.objectid);
- 		kfree(async_extent);
- 		cond_resched();
+@@ -8519,6 +8519,7 @@ static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
+ 	struct btrfs_io_bio *io_bio;
+ 	bool write = (bio_op(dio_bio) == REQ_OP_WRITE);
+ 	int ret = 0;
++	u64 disk_bytenr;
+ 
+ 	bio = btrfs_bio_clone(dio_bio);
+ 
+@@ -8562,7 +8563,11 @@ static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
+ 			dio_data->unsubmitted_oe_range_end;
  	}
-@@ -890,6 +904,7 @@ static noinline void submit_compressed_extents(struct async_chunk *async_chunk)
- out_free_reserve:
- 	btrfs_dec_block_group_reservations(fs_info, ins.objectid);
- 	btrfs_free_reserved_extent(fs_info, ins.objectid, ins.offset, 1);
-+	btrfs_hmzoned_data_io_unlock_logical(fs_info, ins.objectid);
- out_free:
- 	extent_clear_unlock_delalloc(inode, async_extent->start,
- 				     async_extent->start +
+ 
++	disk_bytenr = dip->disk_bytenr;
+ 	ret = btrfs_submit_direct_hook(dip);
++	if (write)
++		btrfs_hmzoned_data_io_unlock_logical(
++			btrfs_sb(inode->i_sb), disk_bytenr);
+ 	if (!ret)
+ 		return;
+ 
 -- 
 2.23.0
 
