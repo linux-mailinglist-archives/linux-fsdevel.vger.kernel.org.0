@@ -2,145 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5902C9A468
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 02:50:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C51E9A479
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 03:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731730AbfHWAut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Aug 2019 20:50:49 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:55774 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729018AbfHWAus (ORCPT
+        id S1732548AbfHWBA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Aug 2019 21:00:29 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:42419 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731564AbfHWBA3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Aug 2019 20:50:48 -0400
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190823005045epoutp04c69e2e4cff9f77fb0f64c1e03bceccf8~9ZvRlKR4l1190011900epoutp04M
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2019 00:50:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190823005045epoutp04c69e2e4cff9f77fb0f64c1e03bceccf8~9ZvRlKR4l1190011900epoutp04M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1566521445;
-        bh=f2ThUHwqU6SxyDkaBykTiPQlcm0wcRMy3IpQiQiChcs=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=qjJP3CPDZUoPqC+TllhSHlEzayDCNEEA/ZeZhRffZlSa6IWzZNyyy/WghomGNCSH3
-         Ll12acSDQNebr7Gm85XsT73lLM+iAcMPvCd+fTuz8IXicflKfBccxTrV2stA77r50K
-         SbznIaYWExt+HtvjAggHXAnol3/leqScWyxLjaic=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20190823005044epcas2p4d26d2085b61ee54bd5954b1c574ebbe6~9ZvRA3S2Y1951719517epcas2p4w;
-        Fri, 23 Aug 2019 00:50:44 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.40.184]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 46F2rL3vD7zMqYkk; Fri, 23 Aug
-        2019 00:50:42 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5E.38.04149.2683F5D5; Fri, 23 Aug 2019 09:50:42 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190823005041epcas2p3c8550c3fabbd6a6db6429cb06dbbf3a6~9ZvObUZVL1059310593epcas2p3U;
-        Fri, 23 Aug 2019 00:50:41 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190823005041epsmtrp1e67b842e0eeb29d74f2dcb22b227f249~9ZvOaIzfb2194621946epsmtrp1o;
-        Fri, 23 Aug 2019 00:50:41 +0000 (GMT)
-X-AuditID: b6c32a46-fd5ff70000001035-b2-5d5f38625f08
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F7.1A.03706.1683F5D5; Fri, 23 Aug 2019 09:50:41 +0900 (KST)
-Received: from KORDO035251 (unknown [12.36.165.204]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20190823005041epsmtip2748af0669304060f493849067826a76f~9ZvOI_Fjj0682606826epsmtip2h;
-        Fri, 23 Aug 2019 00:50:41 +0000 (GMT)
-From:   "boojin.kim" <boojin.kim@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
-        "'David S. Miller'" <davem@davemloft.net>,
-        "'Eric Biggers'" <ebiggers@kernel.org>,
-        "'Theodore Y. Ts'o'" <tytso@mit.edu>,
-        "'Chao Yu'" <chao@kernel.org>,
-        "'Jaegeuk Kim'" <jaegeuk@kernel.org>,
-        "'Andreas Dilger'" <adilger.kernel@dilger.ca>,
-        "'Theodore Ts'o'" <tytso@mit.edu>, <dm-devel@redhat.com>,
-        "'Mike Snitzer'" <snitzer@redhat.com>,
-        "'Alasdair Kergon'" <agk@redhat.com>,
-        "'Jens Axboe'" <axboe@kernel.dk>,
-        "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-        "'Kukjin Kim'" <kgene@kernel.org>,
-        "'Jaehoon Chung'" <jh80.chung@samsung.com>,
-        "'Ulf Hansson'" <ulf.hansson@linaro.org>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-fscrypt@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/9] crypt: Add diskcipher
-Date:   Fri, 23 Aug 2019 09:50:41 +0900
-Message-ID: <00da01d5594c$c9d87390$5d895ab0$@samsung.com>
+        Thu, 22 Aug 2019 21:00:29 -0400
+Received: from dread.disaster.area (pa49-181-142-13.pa.nsw.optusnet.com.au [49.181.142.13])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B22C8362588;
+        Fri, 23 Aug 2019 11:00:22 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1i0xv8-0007PG-K9; Fri, 23 Aug 2019 10:59:14 +1000
+Date:   Fri, 23 Aug 2019 10:59:14 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+Message-ID: <20190823005914.GF1119@dread.disaster.area>
+References: <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
+ <20190815130558.GF14313@quack2.suse.cz>
+ <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
+ <20190817022603.GW6129@dread.disaster.area>
+ <20190819063412.GA20455@quack2.suse.cz>
+ <20190819092409.GM7777@dread.disaster.area>
+ <20190819123841.GC5058@ziepe.ca>
+ <20190820011210.GP7777@dread.disaster.area>
+ <20190820115515.GA29246@ziepe.ca>
+ <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AdVZTE1TDvDE+uWuReO+5O58h7ifGg==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFLsWRmVeSWpSXmKPExsWy7bCmhW6SRXysweKVkhZfv3SwWKw/dYzZ
-        YvXdfjaL01PPMlnMOd/CYrH33WxWi7V7/jBbdL+SsXiyfhazxY1fbawW/Y9fM1ucP7+B3WLT
-        42usFntvaVvcv/eTyWLmvDtsFpcWuVu8mveNxWLP3pMsFpd3zWGzOPK/n9Fixvl9TBZtG78y
-        WrT2/GS3OL423EHSY8vKm0weLZvLPbYdUPW4fLbUY9OqTjaPO9f2sHlsXlLvsXvBZyaPpjNH
-        mT3e77vK5tG3ZRWjx+dNcgE8UTk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koK
-        eYm5qbZKLj4Bum6ZOUC/KymUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKDA0L9IoT
-        c4tL89L1kvNzrQwNDIxMgSoTcjI6Ly5kKvjFXLFyz1PWBsaJzF2MnBwSAiYSL6bdBLK5OIQE
-        djBKHLn/Csr5xCix9PRDFgjnG6PEowUX2GFafl3vYoNI7GWUuPn/HVTLS0aJna+nsoBUsQlo
-        S2w+vooRxBYR0JXYfGM5O0gRs8A/doknnw6BFQkL6EnMeLCYCcRmEVCV2PysF2gsBwevgKXE
-        q49qIGFeAUGJkzOfgJUzC8hLbH87B+pwBYkdZ19DzdeTeN4xnR2iRkRidmcb2EESAj/ZJSb9
-        ameBaHCR6JtwBcoWlnh1fAvUO1ISL/vboOx6iavLFrNDNPcwSpz5BZMwlpj1rJ0R5DhmAU2J
-        9bv0QUwJAWWJI7egbuOT6Dj8lx0izCvR0SYE0agiMffTZSaIsJTEh546iLCHRPPBDrYJjIqz
-        kDw5C8mTs5A8Mwth7QJGllWMYqkFxbnpqcVGBUbIkb2JEZwvtNx2MC4553OIUYCDUYmHt6Aj
-        LlaINbGsuDL3EKMEB7OSCG/ZRKAQb0piZVVqUX58UWlOavEhRlNgFExklhJNzgfmsrySeENT
-        IzMzA0tTC1MzIwslcd5N3DdjhATSE0tSs1NTC1KLYPqYODilGhhb2VZ9bj/4j9m9Iuf7vUUs
-        J3MWHf0j1lTS2eO4QTdzw8b5G6K8pjDqvjtzN9nhxX13G1vnkq0G1TZrtL/4bHvHupRDP5rx
-        VqSo+KHqV+sObK02DLrOElD9o+/Xi+W1bfOcdJRutyZXXz9cM4dTcjbnAX/x5gzHh1uvntDf
-        efu79KO5c470TF6hxFKckWioxVxUnAgA7+Q96S0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsWy7bCSvG6iRXyswZrzuhZfv3SwWKw/dYzZ
-        YvXdfjaL01PPMlnMOd/CYrH33WxWi7V7/jBbdL+SsXiyfhazxY1fbawW/Y9fM1ucP7+B3WLT
-        42usFntvaVvcv/eTyWLmvDtsFpcWuVu8mveNxWLP3pMsFpd3zWGzOPK/n9Fixvl9TBZtG78y
-        WrT2/GS3OL423EHSY8vKm0weLZvLPbYdUPW4fLbUY9OqTjaPO9f2sHlsXlLvsXvBZyaPpjNH
-        mT3e77vK5tG3ZRWjx+dNcgE8UVw2Kak5mWWpRfp2CVwZnRcXMhX8Yq5YuecpawPjROYuRk4O
-        CQETiV/Xu9i6GLk4hAR2M0qc+72aHSIhJbG1fQ9UkbDE/ZYjrBBFzxklDhw4BVbEJqAtsfn4
-        KkYQW0RAV2LzjeVgcWaBaRwSuz6Ig9jCAnoSMx4sZgKxWQRUJTY/6wXaxsHBK2Ap8eqjGkiY
-        V0BQ4uTMJywgYWag8raNjBBT5CW2v50DdYKCxI6zr6E26Uk875gOtUlEYnZnG/MERsFZSCbN
-        Qpg0C8mkWUg6FjCyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECE4BWpo7GC8viT/E
-        KMDBqMTDW9ARFyvEmlhWXJl7iFGCg1lJhLdsIlCINyWxsiq1KD++qDQntfgQozQHi5I479O8
-        Y5FCAumJJanZqakFqUUwWSYOTqkGxpkCz5+oMws9PX3b/Iwkf+SF3W8rQ53jHge67jXfcttX
-        XfWf/YkDt2PWHm6XO/JJRet0fPHMFRtncfxadl8yhy+f9dwq5ZWcKeFMbiHrX7L3Sj37OZvd
-        4obsuk/CfvZi882OzLqbKXEtsXAff8/CwM0+Hnof3BSz71z2LO/ouybA31ka2n+AWYmlOCPR
-        UIu5qDgRAIuCqND9AgAA
-X-CMS-MailID: 20190823005041epcas2p3c8550c3fabbd6a6db6429cb06dbbf3a6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190823005041epcas2p3c8550c3fabbd6a6db6429cb06dbbf3a6
-References: <CGME20190823005041epcas2p3c8550c3fabbd6a6db6429cb06dbbf3a6@epcas2p3.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=pdRIKMFd4+xhzJrg6WzXNA==:117 a=pdRIKMFd4+xhzJrg6WzXNA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=7-415B0cAAAA:8 a=lzGJWfNdbh4cDx3VhMgA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 22 Aug 2019 at 17:37, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Your patch looks corrupted - wrapped by mailer. The easiest way
-> usually is to use git format-patch and git send-email - then you do
-> not have to worry about formatting etc.
->
-> Best regards,
-> Krzysztof
+On Wed, Aug 21, 2019 at 11:02:00AM -0700, Ira Weiny wrote:
+> On Tue, Aug 20, 2019 at 08:55:15AM -0300, Jason Gunthorpe wrote:
+> > On Tue, Aug 20, 2019 at 11:12:10AM +1000, Dave Chinner wrote:
+> > > On Mon, Aug 19, 2019 at 09:38:41AM -0300, Jason Gunthorpe wrote:
+> > > > On Mon, Aug 19, 2019 at 07:24:09PM +1000, Dave Chinner wrote:
+> > > > 
+> > > > > So that leaves just the normal close() syscall exit case, where the
+> > > > > application has full control of the order in which resources are
+> > > > > released. We've already established that we can block in this
+> > > > > context.  Blocking in an interruptible state will allow fatal signal
+> > > > > delivery to wake us, and then we fall into the
+> > > > > fatal_signal_pending() case if we get a SIGKILL while blocking.
+> > > > 
+> > > > The major problem with RDMA is that it doesn't always wait on close() for the
+> > > > MR holding the page pins to be destoyed. This is done to avoid a
+> > > > deadlock of the form:
+> > > > 
+> > > >    uverbs_destroy_ufile_hw()
+> > > >       mutex_lock()
+> > > >        [..]
+> > > >         mmput()
+> > > >          exit_mmap()
+> > > >           remove_vma()
+> > > >            fput();
+> > > >             file_operations->release()
+> > > 
+> > > I think this is wrong, and I'm pretty sure it's an example of why
+> > > the final __fput() call is moved out of line.
+> > 
+> > Yes, I think so too, all I can say is this *used* to happen, as we
+> > have special code avoiding it, which is the code that is messing up
+> > Ira's lifetime model.
+> > 
+> > Ira, you could try unraveling the special locking, that solves your
+> > lifetime issues?
+> 
+> Yes I will try to prove this out...  But I'm still not sure this fully solves
+> the problem.
+> 
+> This only ensures that the process which has the RDMA context (RDMA FD) is safe
+> with regard to hanging the close for the "data file FD" (the file which has
+> pinned pages) in that _same_ process.  But what about the scenario.
+> 
+> Process A has the RDMA context FD and data file FD (with lease) open.
+> 
+> Process A uses SCM_RIGHTS to pass the RDMA context FD to Process B.
 
-I'm using outlook instead of 'git send-email' because of workplace policy.
-It's probably broken when I copied the code.
-Thanks for your notice. I will be more careful.
+Passing the RDMA context dependent on a file layout lease to another
+process that doesn't have a file layout lease or a reference to the
+original lease should be considered a violation of the layout lease.
+Process B does not have an active layout lease, and so by the rules
+of layout leases, it is not allowed to pin the layout of the file.
 
-Thanks for your reply
-Boojin Kim.
+> Process A attempts to exit (hangs because data file FD is pinned).
+> 
+> Admin kills process A.  kill works because we have allowed for it...
+> 
+> Process B _still_ has the RDMA context FD open _and_ therefore still holds the
+> file pins.
+> 
+> Truncation still fails.
+> 
+> Admin does not know which process is holding the pin.
+> 
+> What am I missing?
 
+Application does not hold the correct file layout lease references.
+Passing the fd via SCM_RIGHTS to a process without a layout lease
+is equivalent to not using layout leases in the first place.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
