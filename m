@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2CBE9ACCA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 12:12:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D24CF9ACCC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 12:12:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404616AbfHWKLw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 06:11:52 -0400
+        id S2404662AbfHWKLz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 06:11:55 -0400
 Received: from esa3.hgst.iphmx.com ([216.71.153.141]:47806 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731760AbfHWKLv (ORCPT
+        with ESMTP id S1731760AbfHWKLz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:11:51 -0400
+        Fri, 23 Aug 2019 06:11:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566555111; x=1598091111;
+  t=1566555113; x=1598091113;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=It5/Lg5mTDTXfibuvpFKsVVhaXqA0aPNL3v2S0DwPNo=;
-  b=ali5hAXSuhUEFzcZVCW2NyQdqqxqdE0OWI6flH5KyCd0PwgYCUWZ0DPX
-   9QU683Pk1rvbKg/EdsZGAzd6y8u9N0FeLOL0FJ4CjlJrruR4e7vS55Bzk
-   0Ui+D3JlxkOf++Jjdd0Anoo38h+3eXSMnGe3seOPAMca4Nd8AIDYNnYDC
-   OjwDPC2yP99oZ378nMA5YG0Wdo7Xa0R5Re/mtbB9iCNCLDI0vlz5xZDeb
-   18PBGpvv///3/rnBiUjPat4Cme/vonNLlE68lbHGzEy53T4WSrJeOXLwO
-   oYqZIV8aINH/q838ciRW5IVjXMh0T4jTLM9OMAO8qpQKtc8/ZlO68nwS7
-   g==;
-IronPort-SDR: dIoqCXSmmht3fjHgkOpL/gI10FWzuGijrYemJuInv8Vd5+KZzn3vEFV9iB4ny+ETUdjBdx1xDo
- ALvzzV80rgZ6oCskPBvv7fOW7VfC5PYaY6dhF4p1FECaw1Y051fui3OOVl/3r4cbDtOLGGwydI
- lyv+6ZGrWG2CphFBpM+WXTsjp9valXgt7r77KOpLl/Wtsj++tH/4079SwbivKJE1h0Vjpp0P38
- iGtBStwwTcRbX7zJ5MWXg1LNC+hnbRMj4HRIBr60hxJUZ9b65ywJropsY2tI/GxLlx+1IFvldf
- 798=
+  bh=nyP2IhXLDkEoP/6eGvL9pL2rjUrWDTQDi/O4CUxLhMM=;
+  b=PG/PiTwAYmZYJyFPELoo1lnBI4BEhCJws1FtW8q/XKBR6v66KnQ1zW0f
+   C1yOqoLDWV2De9WIv8qysgOIfPDfzs2mw4GJ4gUtvSMPZ6oApolxzr4Np
+   x1tw5L+Ljdu8Prt9bzYefjGa+ZVHS/xNx1JPK20O5DbanWKEwkHPIcHw/
+   xV7YFA32pBhCmuWUMUXM7IbiF2ERdk0fCHKOV7RvTxw0N5DWwRet0CITN
+   MsfYXqqtt4YwnNUAG0rjrZMlgEmChFG5DgCaO9HYHfN1jTdKUEmsWoMqC
+   AjYQLfSnQNEyxTairR1GbH1STBX21zEjq8OD3ksNyN9pNxBqxOZwkJMKg
+   w==;
+IronPort-SDR: XUdiFiH3piKKPl1YgNqwCwTBTCRM7ewkn5gWOC9igy3o+0LjS0evw6lT5Qm5ETEUNX7ArtcuED
+ r8G/e5r3qZSRIs6TWdqNApRd4s5ucshTXGiOG3BKMQGwXIo+EIhllGQP8Miqo7cqDJidiXlHJD
+ vzHTr95wM0sV6ThH45dbSTuLEfTng8uto8B6JAoxS//juLF37ky99x0vwh/ZlkUjcDLgKoKhjc
+ wTY9XUZnt8y6Ylhe8TOEXb38jgVFIv8iUodtOzFPP+R63Clk11Nc8q1NmpQ4kuZA6UprhnD/cx
+ wQA=
 X-IronPort-AV: E=Sophos;i="5.64,420,1559491200"; 
-   d="scan'208";a="121096266"
+   d="scan'208";a="121096267"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 23 Aug 2019 18:11:51 +0800
-IronPort-SDR: jT1HskHn2ZRpBW9s2AaRHp80cjdLwDOOESMTHMuEsh/8yvE0nM9jKSHDAVLzmjeLlpa4y1YMu9
- 5o2R5XOuFklAZz1f8qpVQK3Gf9Vagb/IcSOswI4Jlg1omLh78vw02ys/n+MczrFIerqLjujFV0
- HU/R1XmXdgdeY5GCqslPgItX2yzeyWvlhD91UuIpmHFNrEyt4uAxjcPkKHxqQ8bM0dEgTUsDNx
- APE1sDNbZT5L6qYaDWbXu4Vr/6Ekmv1W6sDVhSryccYWOsLx7TTnH9fVST3Nr4EjSImdmf13i5
- tCs7LFafQssQxg29sLHcArxe
+  by ob1.hgst.iphmx.com with ESMTP; 23 Aug 2019 18:11:53 +0800
+IronPort-SDR: lSVgKL1oiTYPhuIrgGdAEUMuT0Aatu7oq09hpymO25KpnRPDavoHoAi2VgofmR3pAaCnbxMKkf
+ xQZbyV6ECqXVPVJcj7yUw9Zb/gwEpXNibTdmTQGxB/e4/FnztrxJgAoAmFdFrZDig7m8vJdmjy
+ qciqq8v0R9Lt69uxhfPF9corOfRWXCVCaWKuRow7+LqvYUsJIYGxEwtsNtfYADmpmka2U+XRcL
+ oS0SZ+V7ZkGj092AvuVbZlkLBT3Gybv2AM+8eR2rD4K+bDno+byoFh8qZ28EJIasBPOcPDkbly
+ akO4mcNGBHKu6WZoyEnfyE/z
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 03:09:09 -0700
-IronPort-SDR: lpYiKXHTImWpbXrp/PILasuHEiN1B23MbKvqTEoWaHKn8rIANLnBhTjOzPnVOmvqapjY3V9QLk
- sIAWoTfJXceRAFeyM8GO9qLtLvbG0b9OwO3hXU7WlloFLUFOzrymzbkzqYgjah3KkSF5GxhmzB
- 9FHJCECIJ1+Ng9OwZLGF/qzpJOMsPnSGVXpuMrXSR6pSy4U9h8Hpea1Ffmco22SOpz14s/+dB6
- PuE2Srkqj1wImg/xPUWGTgC3xMGw7rDRSZy3fiy/KDONodt8cT+4COsjxl+3OTvLwxYylVPEYk
- kRA=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 03:09:11 -0700
+IronPort-SDR: k3E6vKlHWSJTn8kpTF13V7eZhyugyJJk2cl9nyOfzNei0lLhkPF0ehf5MiSA/nx+Nr6pK962iK
+ 7hEo/ezEq1TrKTYRYOvHrlEpNdnu6laDaGNR6H669IAz2yqNaHOg2cK4tsp4mKJ4jL+hteMKOx
+ W8g1WFhFQpFbdygWzdg6At0rYOvy+K50+E4DTcNTIg5/STjsN4Qd6T1rYMq6+5lMUxchxOtFz6
+ 453r9uAnubqgEAGsXZLG0W589Y+ok6AitDmNw2rQ73VNQm65XX3Q4V4u0w8qbW9MPTcps4vFQe
+ pLI=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 23 Aug 2019 03:11:49 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 23 Aug 2019 03:11:51 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -59,9 +59,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v4 20/27] btrfs: wait existing extents before truncating
-Date:   Fri, 23 Aug 2019 19:10:29 +0900
-Message-Id: <20190823101036.796932-21-naohiro.aota@wdc.com>
+Subject: [PATCH v4 21/27] btrfs: avoid async checksum/submit on HMZONED mode
+Date:   Fri, 23 Aug 2019 19:10:30 +0900
+Message-Id: <20190823101036.796932-22-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190823101036.796932-1-naohiro.aota@wdc.com>
 References: <20190823101036.796932-1-naohiro.aota@wdc.com>
@@ -72,39 +72,111 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When truncating a file, file buffers which have already been allocated but
-not yet written may be truncated.  Truncating these buffers could cause
-breakage of a sequential write pattern in a block group if the truncated
-blocks are for example followed by blocks allocated to another file. To
-avoid this problem, always wait for write out of all unwritten buffers
-before proceeding with the truncate execution.
+In HMZONED, btrfs use per-Block Group zone_io_lock to serialize the data
+write IOs or use per-FS hmzoned_meta_io_lock to serialize the metadata
+write IOs.
+
+Even with these serialization, write bios sent from
+{btree,btrfs}_write_cache_pages can be reordered by async checksum workers
+as these workers are per CPU and not per zone.
+
+To preserve write BIO ordering, we can disable async checksum on HMZONED.
+This does not result in lower performance with HDDs as a single CPU core is
+fast enough to do checksum for a single zone write stream with the maximum
+possible bandwidth of the device. If multiple zones are being written
+simultaneously, HDD seek overhead lowers the achievable maximum bandwidth,
+resulting again in a per zone checksum serialization not affecting
+performance.
+
+Besides, this commit disable async_submit in
+btrfs_submit_compressed_write() for the same reason. This part will be
+unnecessary once btrfs get the "btrfs: fix cgroup writeback support"
+series.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/inode.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/btrfs/compression.c | 5 +++--
+ fs/btrfs/disk-io.c     | 2 ++
+ fs/btrfs/inode.c       | 9 ++++++---
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index 60c47b417a4b..058dea5e432f 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -322,6 +322,7 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
+ 	struct block_device *bdev;
+ 	blk_status_t ret;
+ 	int skip_sum = BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM;
++	int async_submit = !btrfs_fs_incompat(fs_info, HMZONED);
+ 
+ 	WARN_ON(!PAGE_ALIGNED(start));
+ 	cb = kmalloc(compressed_bio_size(fs_info, compressed_len), GFP_NOFS);
+@@ -377,7 +378,7 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
+ 				BUG_ON(ret); /* -ENOMEM */
+ 			}
+ 
+-			ret = btrfs_map_bio(fs_info, bio, 0, 1);
++			ret = btrfs_map_bio(fs_info, bio, 0, async_submit);
+ 			if (ret) {
+ 				bio->bi_status = ret;
+ 				bio_endio(bio);
+@@ -408,7 +409,7 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
+ 		BUG_ON(ret); /* -ENOMEM */
+ 	}
+ 
+-	ret = btrfs_map_bio(fs_info, bio, 0, 1);
++	ret = btrfs_map_bio(fs_info, bio, 0, async_submit);
+ 	if (ret) {
+ 		bio->bi_status = ret;
+ 		bio_endio(bio);
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index a9632e455eb5..9bae051f9f44 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -873,6 +873,8 @@ static blk_status_t btree_submit_bio_start(void *private_data, struct bio *bio,
+ static int check_async_write(struct btrfs_fs_info *fs_info,
+ 			     struct btrfs_inode *bi)
+ {
++	if (btrfs_fs_incompat(fs_info, HMZONED))
++		return 0;
+ 	if (atomic_read(&bi->sync_writers))
+ 		return 0;
+ 	if (test_bit(BTRFS_FS_CSUM_IMPL_FAST, &fs_info->flags))
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index d7be97c6a069..95f4ce8ac8d0 100644
+index 95f4ce8ac8d0..bb0ae3107e60 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -5236,6 +5236,16 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
- 		btrfs_end_write_no_snapshotting(root);
- 		btrfs_end_transaction(trans);
- 	} else {
-+		struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-+
-+		if (btrfs_fs_incompat(fs_info, HMZONED)) {
-+			ret = btrfs_wait_ordered_range(
-+				inode,
-+				ALIGN(newsize, fs_info->sectorsize),
-+				(u64)-1);
-+			if (ret)
-+				return ret;
-+		}
+@@ -2075,7 +2075,8 @@ static blk_status_t btrfs_submit_bio_hook(struct inode *inode, struct bio *bio,
+ 	enum btrfs_wq_endio_type metadata = BTRFS_WQ_ENDIO_DATA;
+ 	blk_status_t ret = 0;
+ 	int skip_sum;
+-	int async = !atomic_read(&BTRFS_I(inode)->sync_writers);
++	int async = !atomic_read(&BTRFS_I(inode)->sync_writers) &&
++		!btrfs_fs_incompat(fs_info, HMZONED);
  
- 		/*
- 		 * We're truncating a file that used to have good data down to
+ 	skip_sum = BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM;
+ 
+@@ -8383,7 +8384,8 @@ static inline blk_status_t btrfs_submit_dio_bio(struct bio *bio,
+ 
+ 	/* Check btrfs_submit_bio_hook() for rules about async submit. */
+ 	if (async_submit)
+-		async_submit = !atomic_read(&BTRFS_I(inode)->sync_writers);
++		async_submit = !atomic_read(&BTRFS_I(inode)->sync_writers) &&
++			!btrfs_fs_incompat(fs_info, HMZONED);
+ 
+ 	if (!write) {
+ 		ret = btrfs_bio_wq_end_io(fs_info, bio, BTRFS_WQ_ENDIO_DATA);
+@@ -8448,7 +8450,8 @@ static int btrfs_submit_direct_hook(struct btrfs_dio_private *dip)
+ 	}
+ 
+ 	/* async crcs make it difficult to collect full stripe writes. */
+-	if (btrfs_data_alloc_profile(fs_info) & BTRFS_BLOCK_GROUP_RAID56_MASK)
++	if (btrfs_data_alloc_profile(fs_info) & BTRFS_BLOCK_GROUP_RAID56_MASK ||
++	    btrfs_fs_incompat(fs_info, HMZONED))
+ 		async_submit = 0;
+ 	else
+ 		async_submit = 1;
 -- 
 2.23.0
 
