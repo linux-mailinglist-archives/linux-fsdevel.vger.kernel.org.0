@@ -2,369 +2,319 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE8E09B0C6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 15:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 010E79B12A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 15:45:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405467AbfHWNYw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 09:24:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:27306 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405457AbfHWNYu (ORCPT
+        id S2405698AbfHWNoI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 09:44:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53740 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2405695AbfHWNoH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 09:24:50 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7NDMx5m042893;
-        Fri, 23 Aug 2019 09:24:42 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ujf5g4jtw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Aug 2019 09:24:42 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7NDN7pB043644;
-        Fri, 23 Aug 2019 09:24:41 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ujf5g4jst-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Aug 2019 09:24:41 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7NDLHBv002490;
-        Fri, 23 Aug 2019 13:24:40 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma03dal.us.ibm.com with ESMTP id 2ue977cd9y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Aug 2019 13:24:40 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7NDOdvW41484612
+        Fri, 23 Aug 2019 09:44:07 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7NDgUBS026189
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2019 09:44:06 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ujfdvw1r0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2019 09:44:05 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Fri, 23 Aug 2019 14:44:04 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 23 Aug 2019 14:44:00 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7NDhwSU55574622
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Aug 2019 13:24:39 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 374A8AC059;
-        Fri, 23 Aug 2019 13:24:39 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CD791AC065;
-        Fri, 23 Aug 2019 13:24:35 +0000 (GMT)
-Received: from localhost.localdomain.com (unknown [9.199.53.214])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 23 Aug 2019 13:24:35 +0000 (GMT)
-From:   Chandan Rajendra <chandan@linux.ibm.com>
-To:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Cc:     Chandan Rajendra <chandan@linux.ibm.com>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, ebiggers@kernel.org, hch@infradead.org,
-        chandanrlinux@gmail.com
-Subject: [PATCH V5 7/7] fscrypt: remove struct fscrypt_ctx
-Date:   Fri, 23 Aug 2019 18:55:42 +0530
-Message-Id: <20190823132542.13434-8-chandan@linux.ibm.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190823132542.13434-1-chandan@linux.ibm.com>
-References: <20190823132542.13434-1-chandan@linux.ibm.com>
+        Fri, 23 Aug 2019 13:43:58 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF7C3A4053;
+        Fri, 23 Aug 2019 13:43:58 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1216CA404D;
+        Fri, 23 Aug 2019 13:43:57 +0000 (GMT)
+Received: from localhost.in.ibm.com (unknown [9.124.31.57])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 23 Aug 2019 13:43:56 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     mbobrowski@mbobrowski.org
+Cc:     riteshh@linux.ibm.com, tytso@mit.edu, jack@suse.cz,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@infradead.org,
+        aneesh.kumar@linux.ibm.com
+Subject: [RFC 1/1] ext4: PoC implementation of option-1
+Date:   Fri, 23 Aug 2019 19:13:52 +0530
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190822120015.GA3330@poseidon.bobrowski.net>
+References: <20190822120015.GA3330@poseidon.bobrowski.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
+x-cbid: 19082313-0012-0000-0000-00000342308B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082313-0013-0000-0000-0000217C5FB6
+Message-Id: <20190823134352.31243-1-riteshh@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-23_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908230138
+ mlxlogscore=735 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908230141
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit "fscrypt: remove the 'write' part of struct fscrypt_ctx" reduced
-"struct fscrypt_ctx" to be used only for decryption. With "read
-callbacks" being integrated into Ext4, we don't use "struct fscrypt_ctx"
-anymore. Hence this commit removes the structure and the associated
-code.
+This is just a PoC implementation of the option-1 which I was
+mentioning in the previous email.
+As mentioned, it is adding some flags & private pointer
+to iomap infrastructure.
 
-Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+I would let upto you and others to comment on this approach.
+Please note that I have run only few basic tests.
+
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 ---
- fs/crypto/bio.c             | 18 --------
- fs/crypto/crypto.c          | 89 +------------------------------------
- fs/crypto/fscrypt_private.h |  3 --
- include/linux/fscrypt.h     | 32 -------------
- 4 files changed, 2 insertions(+), 140 deletions(-)
+ fs/ext4/ext4.h        |  1 +
+ fs/ext4/file.c        | 37 ++++++++++++++++++++++++++++++++++---
+ fs/ext4/inode.c       | 31 +++++++++++++++++++++++++++++++
+ fs/iomap/direct-io.c  | 16 +++++++++++++++-
+ fs/xfs/xfs_file.c     |  3 ++-
+ include/linux/iomap.h |  5 ++++-
+ 6 files changed, 87 insertions(+), 6 deletions(-)
 
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index b4f47b98ee6d..c01f068bf19b 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -51,24 +51,6 @@ void fscrypt_decrypt_bio(struct bio *bio)
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 2ab91815f52d..93aa716c691e 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1555,6 +1555,7 @@ enum {
+ 	EXT4_STATE_NO_EXPAND,		/* No space for expansion */
+ 	EXT4_STATE_DA_ALLOC_CLOSE,	/* Alloc DA blks on close */
+ 	EXT4_STATE_EXT_MIGRATE,		/* Inode is migrating */
++	EXT4_STATE_DIO_UNWRITTEN,	/* need convert on dio done*/
+ 	EXT4_STATE_NEWENTRY,		/* File just added to dir */
+ 	EXT4_STATE_MAY_INLINE_DATA,	/* may have in-inode data */
+ 	EXT4_STATE_EXT_PRECACHED,	/* extents have been precached */
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 3736dbf28d0a..adfb56401312 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -314,8 +314,30 @@ static int ext4_handle_inode_extension(struct inode *inode, loff_t size,
+ 	return ret;
  }
- EXPORT_SYMBOL(fscrypt_decrypt_bio);
  
--static void completion_pages(struct work_struct *work)
--{
--	struct fscrypt_ctx *ctx = container_of(work, struct fscrypt_ctx, work);
--	struct bio *bio = ctx->bio;
--
--	__fscrypt_decrypt_bio(bio, true);
--	fscrypt_release_ctx(ctx);
--	bio_put(bio);
--}
--
--void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
--{
--	INIT_WORK(&ctx->work, completion_pages);
--	ctx->bio = bio;
--	fscrypt_enqueue_decrypt_work(&ctx->work);
--}
--EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
--
- int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
- 				sector_t pblk, unsigned int len)
++static int ext4_dio_write_end_io_convert(struct inode *inode, loff_t offset,
++					 ssize_t size, void *private)
++{
++	int ret = 0;
++	ext4_io_end_t *io_end = private;
++
++	if (!io_end) {
++		WARN_ON(!ext4_test_inode_state(inode,
++				EXT4_STATE_DIO_UNWRITTEN));
++		ret = ext4_convert_unwritten_extents(NULL, inode, offset, size);
++		if (ret)
++			return ret;
++		ext4_clear_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN);
++	} else {
++		io_end->offset = offset;
++		io_end->size = size;
++		ext4_put_io_end(io_end);
++	}
++	return ret;
++}
++
+ static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size,
+-				 ssize_t error, unsigned int flags)
++				 ssize_t error, unsigned int flags,
++				 void *private)
  {
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index dcf630d7e446..2e5245f5639f 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -31,24 +31,16 @@
- #include "fscrypt_private.h"
+ 	int ret = 0;
+ 	handle_t *handle;
+@@ -345,12 +367,21 @@ static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size,
+ 				ext4_orphan_del(handle, inode);
+ 			ext4_journal_stop(handle);
+ 		}
++
++		if (flags & IOMAP_DIO_UNWRITTEN) {
++			ret = ext4_dio_write_end_io_convert(inode, offset,
++					size, private);
++			if (ret < 0)
++				return ret;
++		}
++
+ 		return error;
+ 	}
  
- static unsigned int num_prealloc_crypto_pages = 32;
--static unsigned int num_prealloc_crypto_ctxs = 128;
+ 	if (flags & IOMAP_DIO_UNWRITTEN) {
+-		ret = ext4_convert_unwritten_extents(NULL, inode, offset, size);
+-		if (ret)
++		ret = ext4_dio_write_end_io_convert(inode, offset,
++						    size, private);
++		if (ret < 0)
+ 			return ret;
+ 	}
  
- module_param(num_prealloc_crypto_pages, uint, 0444);
- MODULE_PARM_DESC(num_prealloc_crypto_pages,
- 		"Number of crypto pages to preallocate");
--module_param(num_prealloc_crypto_ctxs, uint, 0444);
--MODULE_PARM_DESC(num_prealloc_crypto_ctxs,
--		"Number of crypto contexts to preallocate");
- 
- static mempool_t *fscrypt_bounce_page_pool = NULL;
- 
--static LIST_HEAD(fscrypt_free_ctxs);
--static DEFINE_SPINLOCK(fscrypt_ctx_lock);
--
- static struct workqueue_struct *fscrypt_read_workqueue;
- static DEFINE_MUTEX(fscrypt_init_mutex);
- 
--static struct kmem_cache *fscrypt_ctx_cachep;
- struct kmem_cache *fscrypt_info_cachep;
- 
- void fscrypt_enqueue_decrypt_work(struct work_struct *work)
-@@ -57,62 +49,6 @@ void fscrypt_enqueue_decrypt_work(struct work_struct *work)
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 15715d22808d..9d77ed2aa58c 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3322,6 +3322,26 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
+ 	return inode->i_state & I_DIRTY_DATASYNC;
  }
- EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
  
--/**
-- * fscrypt_release_ctx() - Release a decryption context
-- * @ctx: The decryption context to release.
-- *
-- * If the decryption context was allocated from the pre-allocated pool, return
-- * it to that pool.  Else, free it.
-- */
--void fscrypt_release_ctx(struct fscrypt_ctx *ctx)
--{
--	unsigned long flags;
--
--	if (ctx->flags & FS_CTX_REQUIRES_FREE_ENCRYPT_FL) {
--		kmem_cache_free(fscrypt_ctx_cachep, ctx);
--	} else {
--		spin_lock_irqsave(&fscrypt_ctx_lock, flags);
--		list_add(&ctx->free_list, &fscrypt_free_ctxs);
--		spin_unlock_irqrestore(&fscrypt_ctx_lock, flags);
--	}
--}
--EXPORT_SYMBOL(fscrypt_release_ctx);
--
--/**
-- * fscrypt_get_ctx() - Get a decryption context
-- * @gfp_flags:   The gfp flag for memory allocation
-- *
-- * Allocate and initialize a decryption context.
-- *
-- * Return: A new decryption context on success; an ERR_PTR() otherwise.
-- */
--struct fscrypt_ctx *fscrypt_get_ctx(gfp_t gfp_flags)
--{
--	struct fscrypt_ctx *ctx;
--	unsigned long flags;
--
--	/*
--	 * First try getting a ctx from the free list so that we don't have to
--	 * call into the slab allocator.
--	 */
--	spin_lock_irqsave(&fscrypt_ctx_lock, flags);
--	ctx = list_first_entry_or_null(&fscrypt_free_ctxs,
--					struct fscrypt_ctx, free_list);
--	if (ctx)
--		list_del(&ctx->free_list);
--	spin_unlock_irqrestore(&fscrypt_ctx_lock, flags);
--	if (!ctx) {
--		ctx = kmem_cache_zalloc(fscrypt_ctx_cachep, gfp_flags);
--		if (!ctx)
--			return ERR_PTR(-ENOMEM);
--		ctx->flags |= FS_CTX_REQUIRES_FREE_ENCRYPT_FL;
--	} else {
--		ctx->flags &= ~FS_CTX_REQUIRES_FREE_ENCRYPT_FL;
--	}
--	return ctx;
--}
--EXPORT_SYMBOL(fscrypt_get_ctx);
--
- struct page *fscrypt_alloc_bounce_page(gfp_t gfp_flags)
++static int ext4_iomap_init_io_end(struct inode *inode, struct iomap *iomap,
++				  unsigned flags)
++{
++	ext4_io_end_t *io_end;
++
++	if (flags & IOMAP_DIRECT_AIO) {
++		if (flags & IOMAP_PRIVATE)
++			return 0;
++		io_end = ext4_init_io_end(inode, GFP_KERNEL);
++		if (!io_end)
++			return -ENOMEM;
++		iomap->private = io_end;
++		ext4_set_io_unwritten_flag(inode, io_end);
++	} else {
++		iomap->private = NULL;
++		ext4_set_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN);
++	}
++	return 0;
++}
++
+ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 			    unsigned flags, struct iomap *iomap)
  {
- 	return mempool_alloc(fscrypt_bounce_page_pool, gfp_flags);
-@@ -399,11 +335,6 @@ const struct dentry_operations fscrypt_d_ops = {
+@@ -3433,6 +3453,17 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 				ret = ext4_map_blocks(handle, inode, &map,
+ 						      EXT4_GET_BLOCKS_IO_CREATE_EXT);
+ 			}
++
++			if (map.m_flags & EXT4_MAP_UNWRITTEN) {
++				int err;
++
++				err = ext4_iomap_init_io_end(inode, iomap,
++							     flags);
++				if (err < 0) {
++					ext4_journal_stop(handle);
++					return err;
++				}
++			}
+ 		}
  
- static void fscrypt_destroy(void)
- {
--	struct fscrypt_ctx *pos, *n;
--
--	list_for_each_entry_safe(pos, n, &fscrypt_free_ctxs, free_list)
--		kmem_cache_free(fscrypt_ctx_cachep, pos);
--	INIT_LIST_HEAD(&fscrypt_free_ctxs);
- 	mempool_destroy(fscrypt_bounce_page_pool);
- 	fscrypt_bounce_page_pool = NULL;
- }
-@@ -419,7 +350,7 @@ static void fscrypt_destroy(void)
+ 		if (ret < 0) {
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 2ccf1c6460d4..7d88683a0d93 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -17,6 +17,7 @@
+  * Private flags for iomap_dio, must not overlap with the public ones in
+  * iomap.h:
   */
- int fscrypt_initialize(unsigned int cop_flags)
++#define IOMAP_DIO_PRIVATE	(1 << 27)
+ #define IOMAP_DIO_WRITE_FUA	(1 << 28)
+ #define IOMAP_DIO_NEED_SYNC	(1 << 29)
+ #define IOMAP_DIO_WRITE		(1 << 30)
+@@ -31,6 +32,7 @@ struct iomap_dio {
+ 	unsigned		flags;
+ 	int			error;
+ 	bool			wait_for_completion;
++	void			*private;	/* FS specific */
+ 
+ 	union {
+ 		/* used during submission and for synchronous completion: */
+@@ -78,7 +80,8 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ 	ssize_t ret;
+ 
+ 	if (dio->end_io)
+-		ret = dio->end_io(iocb, dio->size, dio->error, dio->flags);
++		ret = dio->end_io(iocb, dio->size, dio->error, dio->flags,
++				  dio->private);
+ 	else
+ 		ret = dio->error;
+ 
+@@ -363,6 +366,11 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
  {
--	int i, res = -ENOMEM;
-+	int res = -ENOMEM;
+ 	struct iomap_dio *dio = data;
  
- 	/* No need to allocate a bounce page pool if this FS won't use it. */
- 	if (cop_flags & FS_CFLG_OWN_PAGES)
-@@ -429,15 +360,6 @@ int fscrypt_initialize(unsigned int cop_flags)
- 	if (fscrypt_bounce_page_pool)
- 		goto already_initialized;
++	if (!(dio->flags & IOMAP_DIO_PRIVATE) && iomap->private) {
++		dio->private = iomap->private;
++		dio->flags |= IOMAP_DIO_PRIVATE;
++	}
++
+ 	switch (iomap->type) {
+ 	case IOMAP_HOLE:
+ 		if (WARN_ON_ONCE(dio->flags & IOMAP_DIO_WRITE))
+@@ -421,6 +429,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	dio->end_io = end_io;
+ 	dio->error = 0;
+ 	dio->flags = 0;
++	dio->private = NULL;
  
--	for (i = 0; i < num_prealloc_crypto_ctxs; i++) {
--		struct fscrypt_ctx *ctx;
--
--		ctx = kmem_cache_zalloc(fscrypt_ctx_cachep, GFP_NOFS);
--		if (!ctx)
--			goto fail;
--		list_add(&ctx->free_list, &fscrypt_free_ctxs);
--	}
--
- 	fscrypt_bounce_page_pool =
- 		mempool_create_page_pool(num_prealloc_crypto_pages, 0);
- 	if (!fscrypt_bounce_page_pool)
-@@ -492,18 +414,12 @@ static int __init fscrypt_init(void)
- 	if (!fscrypt_read_workqueue)
- 		goto fail;
+ 	dio->submit.iter = iter;
+ 	dio->submit.waiter = current;
+@@ -458,6 +467,8 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		}
+ 		flags |= IOMAP_NOWAIT;
+ 	}
++	if (!is_sync_kiocb(iocb) && (flags & IOMAP_WRITE))
++		flags |= IOMAP_DIRECT_AIO;
  
--	fscrypt_ctx_cachep = KMEM_CACHE(fscrypt_ctx, SLAB_RECLAIM_ACCOUNT);
--	if (!fscrypt_ctx_cachep)
--		goto fail_free_queue;
--
- 	fscrypt_info_cachep = KMEM_CACHE(fscrypt_info, SLAB_RECLAIM_ACCOUNT);
- 	if (!fscrypt_info_cachep)
--		goto fail_free_ctx;
-+		goto fail_free_queue;
+ 	ret = filemap_write_and_wait_range(mapping, start, end);
+ 	if (ret)
+@@ -486,6 +497,9 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
  
- 	return 0;
- 
--fail_free_ctx:
--	kmem_cache_destroy(fscrypt_ctx_cachep);
- fail_free_queue:
- 	destroy_workqueue(fscrypt_read_workqueue);
- fail:
-@@ -520,7 +436,6 @@ static void __exit fscrypt_exit(void)
- 
- 	if (fscrypt_read_workqueue)
- 		destroy_workqueue(fscrypt_read_workqueue);
--	kmem_cache_destroy(fscrypt_ctx_cachep);
- 	kmem_cache_destroy(fscrypt_info_cachep);
- 
- 	fscrypt_essiv_cleanup();
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 8565536feb2b..702403dc7614 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -93,9 +93,6 @@ typedef enum {
- 	FS_ENCRYPT,
- } fscrypt_direction_t;
- 
--#define FS_CTX_REQUIRES_FREE_ENCRYPT_FL		0x00000001
--#define FS_CTX_HAS_BOUNCE_BUFFER_FL		0x00000002
--
- static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
- 					   u32 filenames_mode)
+ 	blk_start_plug(&plug);
+ 	do {
++		if (dio->flags & IOMAP_DIO_PRIVATE)
++			flags |= IOMAP_PRIVATE;
++
+ 		ret = iomap_apply(inode, pos, count, flags, ops, dio,
+ 				iomap_dio_actor);
+ 		if (ret <= 0) {
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index f2bc3ac4a60e..205c4219986c 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -370,7 +370,8 @@ xfs_dio_write_end_io(
+ 	struct kiocb		*iocb,
+ 	ssize_t			size,
+ 	ssize_t                 error,
+-	unsigned		flags)
++	unsigned		flags,
++	void			*private)
  {
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 4d6528351f25..2e61f75feab8 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -19,7 +19,6 @@
+ 	struct inode		*inode = file_inode(iocb->ki_filp);
+ 	struct xfs_inode	*ip = XFS_I(inode);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 900284e5c06c..57d3679442f9 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -102,6 +102,8 @@ struct iomap_page_ops {
+ #define IOMAP_FAULT		(1 << 3) /* mapping for page fault */
+ #define IOMAP_DIRECT		(1 << 4) /* direct I/O */
+ #define IOMAP_NOWAIT		(1 << 5) /* do not block */
++#define IOMAP_DIRECT_AIO	(1 << 6) /* AIO DIO */
++#define IOMAP_PRIVATE		(1 << 7) /* FS specific */
  
- #define FS_CRYPTO_BLOCK_SIZE		16
- 
--struct fscrypt_ctx;
- struct fscrypt_info;
- 
- struct fscrypt_str {
-@@ -63,18 +62,6 @@ struct fscrypt_operations {
- 	unsigned int max_namelen;
- };
- 
--/* Decryption work */
--struct fscrypt_ctx {
--	union {
--		struct {
--			struct bio *bio;
--			struct work_struct work;
--		};
--		struct list_head free_list;	/* Free list */
--	};
--	u8 flags;				/* Flags */
--};
--
- static inline bool fscrypt_has_encryption_key(const struct inode *inode)
- {
- 	/* pairs with cmpxchg_release() in fscrypt_get_encryption_info() */
-@@ -101,8 +88,6 @@ static inline void fscrypt_handle_d_move(struct dentry *dentry)
- 
- /* crypto.c */
- extern void fscrypt_enqueue_decrypt_work(struct work_struct *);
--extern struct fscrypt_ctx *fscrypt_get_ctx(gfp_t);
--extern void fscrypt_release_ctx(struct fscrypt_ctx *);
- 
- extern struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
- 						     unsigned int len,
-@@ -233,8 +218,6 @@ static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
- 
- /* bio.c */
- extern void fscrypt_decrypt_bio(struct bio *);
--extern void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
--					struct bio *bio);
- extern int fscrypt_zeroout_range(const struct inode *, pgoff_t, sector_t,
- 				 unsigned int);
- 
-@@ -279,16 +262,6 @@ static inline void fscrypt_enqueue_decrypt_work(struct work_struct *work)
- {
- }
- 
--static inline struct fscrypt_ctx *fscrypt_get_ctx(gfp_t gfp_flags)
--{
--	return ERR_PTR(-EOPNOTSUPP);
--}
--
--static inline void fscrypt_release_ctx(struct fscrypt_ctx *ctx)
--{
--	return;
--}
--
- static inline struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
- 							    unsigned int len,
- 							    unsigned int offs,
-@@ -430,11 +403,6 @@ static inline void fscrypt_decrypt_bio(struct bio *bio)
- {
- }
- 
--static inline void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
--					       struct bio *bio)
--{
--}
--
- static inline int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
- 					sector_t pblk, unsigned int len)
- {
+ struct iomap_ops {
+ 	/*
+@@ -189,7 +191,8 @@ sector_t iomap_bmap(struct address_space *mapping, sector_t bno,
+ #define IOMAP_DIO_UNWRITTEN	(1 << 0)	/* covers unwritten extent(s) */
+ #define IOMAP_DIO_COW		(1 << 1)	/* covers COW extent(s) */
+ typedef int (iomap_dio_end_io_t)(struct kiocb *iocb, ssize_t size,
+-				 ssize_t error, unsigned int flags);
++				 ssize_t error, unsigned int flags,
++				 void *private);
+ ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, iomap_dio_end_io_t end_io);
+ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
 -- 
-2.19.1
+2.21.0
 
