@@ -2,20 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1073F9AE5A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 13:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 489EC9AE78
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 13:57:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392997AbfHWLpR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 07:45:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51816 "EHLO mx1.suse.de"
+        id S2393468AbfHWL5g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 07:57:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56186 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727025AbfHWLpQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 07:45:16 -0400
+        id S2393004AbfHWL5g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Aug 2019 07:57:36 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E2C66B620;
-        Fri, 23 Aug 2019 11:45:14 +0000 (UTC)
-Subject: Re: [PATCH v4 01/27] btrfs: introduce HMZONED feature flag
+        by mx1.suse.de (Postfix) with ESMTP id 7A45FADF1;
+        Fri, 23 Aug 2019 11:57:34 +0000 (UTC)
+Subject: Re: [PATCH v4 02/27] btrfs: Get zone information of zoned block
+ devices
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -26,7 +27,7 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org
 References: <20190823101036.796932-1-naohiro.aota@wdc.com>
- <20190823101036.796932-2-naohiro.aota@wdc.com>
+ <20190823101036.796932-3-naohiro.aota@wdc.com>
 From:   Johannes Thumshirn <jthumshirn@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
@@ -84,12 +85,12 @@ Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
  l2t2TyTuHm7wVUY2J3gJYgG723/PUGW4LaoqNrYQUr/rqo6NXw6c+EglRpm1BdpkwPwAng63
  W5VOQMdnozD2RsDM5GfA4aEFi5m00tE+8XPICCtkduyWw+Z+zIqYk2v+zraPLs9Gs0X2C7X0
  yvqY9voUoJjG6skkOToGZbqtMX9K4GOv9JAxVs075QRXL3brHtHONDt6udYobzz+
-Message-ID: <fc3cbb57-ee86-0856-8dcf-3e6dd84dab57@suse.de>
-Date:   Fri, 23 Aug 2019 13:45:14 +0200
+Message-ID: <ae5e9761-7191-20fa-02c5-abe8b81d278c@suse.de>
+Date:   Fri, 23 Aug 2019 13:57:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190823101036.796932-2-naohiro.aota@wdc.com>
+In-Reply-To: <20190823101036.796932-3-naohiro.aota@wdc.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -98,8 +99,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+On 23/08/2019 12:10, Naohiro Aota wrote:
+[...]
+> +int btrfs_get_dev_zone_info(struct btrfs_device *device)
+> +{
+> +	struct btrfs_zoned_device_info *zone_info = NULL;
+> +	struct block_device *bdev = device->bdev;
+> +	sector_t nr_sectors = bdev->bd_part->nr_sects;
+> +	sector_t sector = 0;
+> +	struct blk_zone *zones = NULL;
+> +	unsigned int i, nreported = 0, nr_zones;
+> +	unsigned int zone_sectors;
+> +	int ret;
+> +
+> +	if (!bdev_is_zoned(bdev))
+> +		return 0;
+> +
+> +	zone_info = kzalloc(sizeof(*zone_info), GFP_KERNEL);
+> +	if (!zone_info)
+> +		return -ENOMEM;
+> +
+> +	zone_sectors = bdev_zone_sectors(bdev);
+> +	ASSERT(is_power_of_2(zone_sectors));
+> +	zone_info->zone_size = (u64)zone_sectors << SECTOR_SHIFT;
+> +	zone_info->zone_size_shift = ilog2(zone_info->zone_size);
+> +	zone_info->nr_zones = nr_sectors >> ilog2(bdev_zone_sectors(bdev));
+> +	if (nr_sectors & (bdev_zone_sectors(bdev) - 1))
+> +		zone_info->nr_zones++;
+> +
+> +	zone_info->seq_zones = kcalloc(BITS_TO_LONGS(zone_info->nr_zones),
+> +				       sizeof(*zone_info->seq_zones),
+> +				       GFP_KERNEL);
+> +	if (!zone_info->seq_zones) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	zone_info->empty_zones = kcalloc(BITS_TO_LONGS(zone_info->nr_zones),
+> +					 sizeof(*zone_info->empty_zones),
+> +					 GFP_KERNEL);
+> +	if (!zone_info->empty_zones) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +
+> +	zones = kcalloc(BTRFS_REPORT_NR_ZONES,
+> +			sizeof(struct blk_zone), GFP_KERNEL);
+> +	if (!zones)
+> +		return -ENOMEM;
+
+Won't this will leak zone_info, zone_info->seq_zones and
+zone_info->empty_zones.
+
+
+[...]
+
+> +out:
+> +	kfree(zones);
+> +
+> +	if (ret) {
+> +		kfree(zone_info->seq_zones);
+> +		kfree(zone_info->empty_zones);
+> +		kfree(zone_info);
+> +	}
+
+Which is why I think it would be more clear to have:
+free_zones:
+	kfree(zones);
+free_zi_emp_zones:
+	kfree(zone_info->empty_zones);
+free_zi_seq_zones:
+	kfree(zone_info->seq_zones);
+free_zi:
+	kfree(zone_info);
+
+
 
 -- 
 Johannes Thumshirn                            SUSE Labs Filesystems
