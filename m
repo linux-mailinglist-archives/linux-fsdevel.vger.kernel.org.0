@@ -2,67 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E0C9BCD2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 11:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B45F9BCE8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 12:01:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbfHXJmp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Aug 2019 05:42:45 -0400
-Received: from mail.kemkes.go.id ([202.70.136.175]:60869 "EHLO
-        mail.kemkes.go.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726966AbfHXJmp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Aug 2019 05:42:45 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.kemkes.go.id (Postfix) with ESMTP id A46AB7C12CD;
-        Sat, 24 Aug 2019 16:42:42 +0700 (WIB)
-Received: from mail.kemkes.go.id ([127.0.0.1])
-        by localhost (mail.kemkes.go.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id lCxCmBgHRp7u; Sat, 24 Aug 2019 16:42:41 +0700 (WIB)
-Received: from mail.kemkes.go.id (localhost.localdomain [127.0.0.1])
-        by mail.kemkes.go.id (Postfix) with ESMTPS id B37CD7C12B1;
-        Sat, 24 Aug 2019 16:42:39 +0700 (WIB)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.kemkes.go.id B37CD7C12B1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kemkes.go.id;
-        s=mail; t=1566639759;
-        bh=F7qDXN3r3Q4k6ZzeGMpuXFRA2tJgXJkxd7MF9JlYefM=;
-        h=Date:From:Message-ID:Subject:MIME-Version:Content-Type:
-         Content-Transfer-Encoding;
-        b=lJ/LwdAzZfTRuGP6rw0VI/ZoCE2417Y1vgdS6NiU49Msi8Kbch5Jw4apCL4/+NEVz
-         yOsfs+nWoDbKnuGNJqVYkLxlbRQ5Bna7XNRr79VsXHqE4ybxCRIp9bGgTO2oGW6pJe
-         t197qA2e7wTtr5lba0gymsFKjxuiWeK/iCAVtCIw=
-Received: from mail.kemkes.go.id (localhost.localdomain [127.0.0.1])
-        by mail.kemkes.go.id (Postfix) with ESMTP id 988837C10DC;
-        Sat, 24 Aug 2019 16:42:38 +0700 (WIB)
-X-JLM-Suspect: d7eb1404349248d089dc05cbd665a37a
-X-JLM-Spamstatus: NO
-Received: from mail.kemkes.go.id (mail.kemkes.go.id [192.168.50.175])
-        by mail.kemkes.go.id (Postfix) with ESMTP;
-        Sat, 24 Aug 2019 16:42:25 +0700 (WIB)
-Date:   Sat, 24 Aug 2019 16:42:25 +0700 (WIB)
-From:   "Sobari Pelayanan Penunjang Medik dan . Sarana Kesehatan" 
-        <sobari@kemkes.go.id>
-Message-ID: <507753834.74369972.1566639745301.JavaMail.zimbra@kemkes.go.id>
-Subject: Re: Validate Your Mailbox
+        id S1726927AbfHXKBT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Aug 2019 06:01:19 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:51218 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbfHXKBT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 24 Aug 2019 06:01:19 -0400
+Received: from black.home (broadband-188-32-48-208.ip.moscow.rt.ru [188.32.48.208])
+        by mail.ispras.ru (Postfix) with ESMTPSA id 2678854006A;
+        Sat, 24 Aug 2019 13:01:16 +0300 (MSK)
+From:   Denis Efremov <efremov@ispras.ru>
+To:     akpm@linux-foundation.org
+Cc:     Denis Efremov <efremov@ispras.ru>,
+        Akinobu Mita <akinobu.mita@gmail.com>, Jan Kara <jack@suse.cz>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <matthew@wil.cx>,
+        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, Erdem Tumurov <erdemus@gmail.com>,
+        Vladimir Shelekhov <vshel@iis.nsk.su>
+Subject: [PATCH v2] lib/memweight.c: open codes bitmap_weight()
+Date:   Sat, 24 Aug 2019 13:01:02 +0300
+Message-Id: <20190824100102.1167-1-efremov@ispras.ru>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190821074200.2203-1-efremov@ispras.ru>
+References: <20190821074200.2203-1-efremov@ispras.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [154.124.83.59]
-X-Mailer: Zimbra 8.6.0_GA_1242 (ZimbraWebClient - GC76 (Win)/8.6.0_GA_1242)
-Thread-Topic: Validate Your Mailbox
-Thread-Index: 7r6BwqAWqTQmUdOjr3szwX7oFh2UTw==
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Valid Subscriber,
+This patch open codes the bitmap_weight() call. The direct
+invocation of hweight_long() allows to remove the BUG_ON and
+excessive "longs to bits, bits to longs" conversion.
 
-Success alert your mailbox has exceeded it quota/limit you may not be able =
-to receive or send new mails until you re-validate. To re-validate click th=
-e below link or copy.
+BUG_ON was required to check that bitmap_weight() will return
+a correct value, i.e. the computed weight will fit the int type
+of the return value. With this patch memweight() controls the
+computation directly with size_t type everywhere. Thus, the BUG_ON
+becomes unnecessary.
 
-http://mailbox.mozello.com/
+Total size reduced:
+./scripts/bloat-o-meter lib/memweight.o.old lib/memweight.o.new
+add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-10 (-10)
+Function                                     old     new   delta
+memweight                                    162     152     -10
 
-Copyright =C2=A9 2019 System Administrator.
-Technical Support Team
+Co-developed-by: Erdem Tumurov <erdemus@gmail.com>
+Signed-off-by: Erdem Tumurov <erdemus@gmail.com>
+Co-developed-by: Vladimir Shelekhov <vshel@iis.nsk.su>
+Signed-off-by: Vladimir Shelekhov <vshel@iis.nsk.su>
+Signed-off-by: Denis Efremov <efremov@ispras.ru>
+---
+ lib/memweight.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/lib/memweight.c b/lib/memweight.c
+index 94dd72ccaa7f..f050b2b4c5e2 100644
+--- a/lib/memweight.c
++++ b/lib/memweight.c
+@@ -20,11 +20,13 @@ size_t memweight(const void *ptr, size_t bytes)
+ 
+ 	longs = bytes / sizeof(long);
+ 	if (longs) {
+-		BUG_ON(longs >= INT_MAX / BITS_PER_LONG);
+-		ret += bitmap_weight((unsigned long *)bitmap,
+-				longs * BITS_PER_LONG);
++		const unsigned long *bitmap_long =
++			(const unsigned long *)bitmap;
++
+ 		bytes -= longs * sizeof(long);
+-		bitmap += longs * sizeof(long);
++		for (; longs > 0; longs--, bitmap_long++)
++			ret += hweight_long(*bitmap_long);
++		bitmap = (const unsigned char *)bitmap_long;
+ 	}
+ 	/*
+ 	 * The reason that this last loop is distinct from the preceding
+-- 
+2.21.0
+
