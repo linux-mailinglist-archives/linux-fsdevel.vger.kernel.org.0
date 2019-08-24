@@ -2,141 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFAA99BBEC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 07:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B58479BC5A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 09:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbfHXFIi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Aug 2019 01:08:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:26578 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725616AbfHXFIi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Aug 2019 01:08:38 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 22:08:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,424,1559545200"; 
-   d="scan'208";a="191147429"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga002.jf.intel.com with ESMTP; 23 Aug 2019 22:08:36 -0700
-Date:   Fri, 23 Aug 2019 22:08:36 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190824050836.GC1092@iweiny-DESK2.sc.intel.com>
-References: <20190820011210.GP7777@dread.disaster.area>
- <20190820115515.GA29246@ziepe.ca>
- <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
- <20190821181343.GH8653@ziepe.ca>
- <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
- <20190821194810.GI8653@ziepe.ca>
- <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
- <20190823032345.GG1119@dread.disaster.area>
- <20190823120428.GA12968@ziepe.ca>
- <20190824001124.GI1119@dread.disaster.area>
+        id S1725930AbfHXHYy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Aug 2019 03:24:54 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:41005 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfHXHYy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 24 Aug 2019 03:24:54 -0400
+Received: by mail-wr1-f42.google.com with SMTP id j16so10522842wrr.8
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2019 00:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=algolia.com; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=s3Gss3HM5gbjg/V69lpsoE7stzUh5gs9evWb5TKK9xI=;
+        b=dy4guNnbYZIMBHJ0AW0E/6mA4/qKnE2OF+5WRYbdO/NL5CulNWWxXuQm6BL3cBfZ8G
+         p4SwJj4ST72NEcsXvnpcgRuYHsu0yZIFg46po5l/Y0xhlIBH8GEYQpx6/6Q1jjqlSz8N
+         LgnIqY4TxIbC9J9/SU+ZifrHdg1yevhIexhDk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=s3Gss3HM5gbjg/V69lpsoE7stzUh5gs9evWb5TKK9xI=;
+        b=HUXlmIC9N4DQ9T6+aTZ1S6VqFYEgmjoRzQngqi9A3FZ0rLH47+RzA4rBrrIS6xUiNS
+         RK4JWrvdXr0jwMlE6BrOk7ZWd5uGOFgs6u8UTbfnAzApqiquWAYKzB9A/PSPdUwATQ50
+         Ld7BCme0V3fu1a+l65Rq+TyiHBK3zYU+DHS0at9sQCquXKoS+lIQhPdGSzq+OQI/H/FQ
+         TOjdmoNu+Dus6lG84ee1pddqUDVBAJ/HDF7zCginNM+BQyj/6JU7Nlk/xIK+50FTNX88
+         QKATAcqu4sULxGP79gZsLcFIvPGmpweieidspBazYDZ5rCmygeK91fsCqHqtIymfsRmq
+         SVsw==
+X-Gm-Message-State: APjAAAW+i5ISrUDaBjuzQ6i/5y+qELNhTZzEqjWc5nGzzlxUGPkUb4f6
+        ec/v65WM92Qpasj3wbpK1M+yE3AqwqJiYRrWnJtj0i3Ge/hQxw==
+X-Google-Smtp-Source: APXvYqxCpKumqGenslAGg9UwlBBZpDQRkZj65PYjuK/tUlCQpMtygy3IHX6Yc8My/aZKbrtgtxymvWRzIlLpiXeHH/U=
+X-Received: by 2002:adf:ed8d:: with SMTP id c13mr9527222wro.106.1566631491570;
+ Sat, 24 Aug 2019 00:24:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190824001124.GI1119@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+From:   Xavier Roche <xavier.roche@algolia.com>
+Date:   Sat, 24 Aug 2019 09:24:40 +0200
+Message-ID: <CAE9vp3JsD1KVqLXnLWpNrAtDSmm6gUa0KC_degOECDsGntvUXw@mail.gmail.com>
+Subject: Possible FS race condition between vfs_rename and do_linkat (fs/namei.c)
+To:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 24, 2019 at 10:11:24AM +1000, Dave Chinner wrote:
-> On Fri, Aug 23, 2019 at 09:04:29AM -0300, Jason Gunthorpe wrote:
-> > On Fri, Aug 23, 2019 at 01:23:45PM +1000, Dave Chinner wrote:
-> > 
-> > > > But the fact that RDMA, and potentially others, can "pass the
-> > > > pins" to other processes is something I spent a lot of time trying to work out.
-> > > 
-> > > There's nothing in file layout lease architecture that says you
-> > > can't "pass the pins" to another process.  All the file layout lease
-> > > requirements say is that if you are going to pass a resource for
-> > > which the layout lease guarantees access for to another process,
-> > > then the destination process already have a valid, active layout
-> > > lease that covers the range of the pins being passed to it via the
-> > > RDMA handle.
-> > 
-> > How would the kernel detect and enforce this? There are many ways to
-> > pass a FD.
-> 
-> AFAIC, that's not really a kernel problem. It's more of an
-> application design constraint than anything else. i.e. if the app
-> passes the IB context to another process without a lease, then the
-> original process is still responsible for recalling the lease and
-> has to tell that other process to release the IB handle and it's
-> resources.
-> 
-> > IMHO it is wrong to try and create a model where the file lease exists
-> > independently from the kernel object relying on it. In other words the
-> > IB MR object itself should hold a reference to the lease it relies
-> > upon to function properly.
-> 
-> That still doesn't work. Leases are not individually trackable or
-> reference counted objects objects - they are attached to a struct
-> file bUt, in reality, they are far more restricted than a struct
-> file.
-> 
-> That is, a lease specifically tracks the pid and the _open fd_ it
-> was obtained for, so it is essentially owned by a specific process
-> context.  Hence a lease is not able to be passed to a separate
-> process context and have it still work correctly for lease break
-> notifications.  i.e. the layout break signal gets delivered to
-> original process that created the struct file, if it still exists
-> and has the original fd still open. It does not get sent to the
-> process that currently holds a reference to the IB context.
->
+Dear distinguished filesystem contributors,
 
-The fcntl man page says:
+There seem to be a race condition between vfs_rename and do_linkat,
+when those operations are done in parallel:
 
-"Leases are associated with an open file description (see open(2)).  This means
-that duplicate file descriptors (created by, for example, fork(2) or dup(2))
-refer to the same lease, and this lease may be modified or released using any
-of these descriptors.  Furthermore,  the lease is released by either an
-explicit F_UNLCK operation on any of these duplicate file descriptors, or when
-all such file descriptors have been closed."
+1. Moving a file to a target file (eg. mv file target)
+2. Creating a link from the target file (eg. ln target link)
 
-From this I took it that the child process FD would have the lease as well
-_and_ could release it.  I _assumed_ that applied to SCM_RIGHTS but it does not
-seem to work the same way as dup() so I'm not so sure.
+My understanding is that as the target file is never erased on client
+side, but just replaced, the link should never fail.
 
-Ira
+But maybe this is something the filesystem can not guarantee at all
+(w.r.t POSIX typically) ?
 
-> 
-> So while a struct file passed to another process might still have
-> an active lease, and you can change the owner of the struct file
-> via fcntl(F_SETOWN), you can't associate the existing lease with a
-> the new fd in the new process and so layout break signals can't be
-> directed at the lease fd....
-> 
-> This really means that a lease can only be owned by a single process
-> context - it can't be shared across multiple processes (so I was
-> wrong about dup/pass as being a possible way of passing them)
-> because there's only one process that can "own" a struct file, and
-> that where signals are sent when the lease needs to be broken.
-> 
-> So, fundamentally, if you want to pass a resource that pins a file
-> layout between processes, both processes need to hold a layout lease
-> on that file range. And that means exclusive leases and passing
-> layouts between processes are fundamentally incompatible because you
-> can't hold two exclusive leases on the same file range....
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+To demonstrate this issue, just run the following script (it will in
+loop move "file" to "target", and in parallel link "target" to "link")
+:
+
+========== Cut here ==========
+#!/bin/bash
+#
+
+rm -f link file target
+touch target
+
+# Link target -> link in loop
+while ln target link && rm link; do :; done &
+
+# Overwrite file -> target in loop
+while touch file && mv file target; do :; done &
+
+wait
+========== Cut here ==========
+
+Running the script will yield:
+./bug.sh
+ln: failed to create hard link 'link' => 'target': No such file or directory
+
+The issue seem to lie inside vfs_link (fs/namei.c):
+       inode_lock(inode);
+       /* Make sure we don't allow creating hardlink to an unlinked file */
+       if (inode->i_nlink == 0 && !(inode->i_state & I_LINKABLE))
+               error =  -ENOENT;
+
+The possible answer is that the inode refcount is zero because the
+file has just been replaced concurrently, old file being erased, and
+as such, the link operation is failing.
+
+Patching with this very naive fix "solves" the issue (but this is
+probably not something we want):
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 209c51a5226c..befb15f4b865 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4231,9 +4231,10 @@ int vfs_link(struct dentry *old_dentry, struct
+inode *dir, struct dentry *new_de
+
+        inode_lock(inode);
+        /* Make sure we don't allow creating hardlink to an unlinked file */
+-       if (inode->i_nlink == 0 && !(inode->i_state & I_LINKABLE))
+-               error =  -ENOENT;
+-       else if (max_links && inode->i_nlink >= max_links)
++       //if (inode->i_nlink == 0 && !(inode->i_state & I_LINKABLE))
++       //      error =  -ENOENT;
++       // else
++       if (max_links && inode->i_nlink >= max_links)
+                error = -EMLINK;
+        else {
+                error = try_break_deleg(inode, delegated_inode);
+
+Kudos to Xavier Grand from Algolia for spotting the issue with a
+reproducible case.
+
+-- 
+Xavier Roche -
+xavier.roche at algolia.com
