@@ -2,59 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 962DD9BE85
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 17:28:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C79259BEC4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 18:27:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbfHXP2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Aug 2019 11:28:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50214 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbfHXP2O (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Aug 2019 11:28:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=r+fW1Mxx/WIOu0q7eOdTyS41mAFDLJVl/S3haneWLp8=; b=TJwImQZiE0XYYd1CswYHKW5n6
-        jG39tv4RXZ9E9B3XED+e0S6SToGeMhKbPpp6dwYr5CxjxKxdgflwAfCVnFUwl/OeP0meDvFrlf75S
-        2o4ykmjqVh19ogfzTo/37YmlZ/g1Kwjf5arpB8hQiwMQGKQGQeP3VX0RdWSaK87+husw8zGa0+fZf
-        zlaWbbtggtuhd+5J4JY5k0MZHMXqGuVQlSGoqQ011ARiZHhj6NHN+5232GgXeRNNyHcbuikZkOJSs
-        sr71cua8POM0V9JPilHsDUDUMSdvCPrzlzrENXlVlCHwKgo74NgIO4PIFO8KcM97OLvPRuOqrrT9C
-        yWXLB2w8A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i1Xxa-0002mp-NM; Sat, 24 Aug 2019 15:28:10 +0000
-Date:   Sat, 24 Aug 2019 08:28:10 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-fsdevel@vger.kernel.org, hch@lst.de,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/5] mm: Add file_offset_of_ helpers
-Message-ID: <20190824152810.GA28002@bombadil.infradead.org>
-References: <20190821003039.12555-3-willy@infradead.org>
- <201908241913.Slt7yyks%lkp@intel.com>
+        id S1726810AbfHXQ1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Aug 2019 12:27:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49302 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726343AbfHXQ1G (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 24 Aug 2019 12:27:06 -0400
+Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B68562133F;
+        Sat, 24 Aug 2019 16:27:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566664025;
+        bh=hcaxNPorSpY124jIa9w8rWIov+dp/m3JU7ie7GcfkCE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=r94swXoKa/uz9lHpJMlR+xBqyk/7xwAbnOFs5+EGRgh4C1Kges/VUelKS2x6L9cL8
+         IRjvMOiYcOAYXGgEDA9PgodALUR3a01D0wdV1OEbasShQ5qNrbqbYZ2HpdYecBJLpo
+         fssndCq7omCzPd8HoQA+2YI8TRoCW2AHSa7oq0+M=
+Date:   Sat, 24 Aug 2019 09:27:05 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
+Subject: [GIT PULL] xfs: fix for 5.3-rc6
+Message-ID: <20190824162705.GM1037350@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201908241913.Slt7yyks%lkp@intel.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 24, 2019 at 07:48:24PM +0800, kbuild test robot wrote:
-> Hi Matthew,
-> 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on linus/master]
-> [cannot apply to v5.3-rc5 next-20190823]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Hi Linus,
 
-It depends on various patches which are in -next, although I didn't
-generate them against -next.
+Please pull this single patch that fixes a xfs lockup problem when a
+chown/chgrp operation fails due to running out of quota.  It has
+survived the usual xfstests runs and merges cleanly with this morning's
+master.  Please let me know if anything strange happens.
 
+--D
 
+The following changes since commit b68271609c4f16a79eae8069933f64345afcf888:
+
+  fs/xfs: Fix return code of xfs_break_leased_layouts() (2019-08-19 18:15:28 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.3-fixes-6
+
+for you to fetch changes up to 1fb254aa983bf190cfd685d40c64a480a9bafaee:
+
+  xfs: fix missing ILOCK unlock when xfs_setattr_nonsize fails due to EDQUOT (2019-08-22 20:55:54 -0700)
+
+----------------------------------------------------------------
+Changes since last time:
+- Fix a forgotten inode unlock when chown/chgrp fail due to quota.
+
+----------------------------------------------------------------
+Darrick J. Wong (1):
+      xfs: fix missing ILOCK unlock when xfs_setattr_nonsize fails due to EDQUOT
+
+ fs/xfs/xfs_iops.c | 1 +
+ 1 file changed, 1 insertion(+)
