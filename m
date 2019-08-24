@@ -2,100 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 182739B826
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2019 23:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C7A89B96C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 02:12:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405221AbfHWV3g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 17:29:36 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36104 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388346AbfHWV3g (ORCPT
+        id S1726387AbfHXAMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Aug 2019 20:12:40 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:45548 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726283AbfHXAMk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 17:29:36 -0400
-Received: by mail-pf1-f193.google.com with SMTP id w2so7311475pfi.3;
-        Fri, 23 Aug 2019 14:29:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=tHc2UDznI/uoDADxr2vQBdjC4lDElZPoW7dMZcPdM2Q=;
-        b=m2dginuydqnbCe8vxP0ntkIoZHFCc3EB2k3XGvkrRKngxa34uBnGCjRmOhBRW0uhZJ
-         KoEIp7+xjseLZiMLy6xSmC2acDa8qX7kqQNgAZ+IPGXdWy/7zHDRKJXzL5gGu68itb9k
-         4o2aIEA4fC6dBIsf3BfgMbP6jQdCJnBFAyql3vj4UW3t3/Ld9Jn6ctpCC7liXOcQDreJ
-         MoT9NVl/N0sgxePWMmqZPHw+u3HwERHeOTtJDFj67NHYW7Mo8D1M2dEm8p56xIik9iSr
-         LlXQh7uz5+yc7Hs8gW3sZAwNgfBkV6HO5YDxYpncg4jctwrzpqLEEpqcGi4tHQfOZ66G
-         p0+A==
-X-Gm-Message-State: APjAAAVmFk7MKjHw6+IxSuju98Ry9UjZhy9nLKjBoWWufffU2WujLl3H
-        TSn9JSBBG2PmZpORZp/Szc7+7XfM
-X-Google-Smtp-Source: APXvYqxNyAjgfQduz6dW+l+bgFvSrwQm451XbPDad0xibowVRhhovyr8KMcZhhgAtL2K2wTE+28YyA==
-X-Received: by 2002:a17:90a:1202:: with SMTP id f2mr7076664pja.39.1566595775063;
-        Fri, 23 Aug 2019 14:29:35 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id d128sm3626577pfa.42.2019.08.23.14.29.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2019 14:29:34 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id A98D6404D5; Fri, 23 Aug 2019 21:29:32 +0000 (UTC)
-Date:   Fri, 23 Aug 2019 21:29:32 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Takashi Iwai <tiwai@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
+        Fri, 23 Aug 2019 20:12:40 -0400
+Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id EF9B9361F93;
+        Sat, 24 Aug 2019 10:12:31 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1i1JeO-0007di-F2; Sat, 24 Aug 2019 10:11:24 +1000
+Date:   Sat, 24 Aug 2019 10:11:24 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kselftest@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: [PATCH 1/7] fs: introduce kernel_pread_file* support
-Message-ID: <20190823212932.GY16384@42.do-not-panic.com>
-References: <20190822192451.5983-1-scott.branden@broadcom.com>
- <20190822192451.5983-2-scott.branden@broadcom.com>
- <s5hsgpsqd49.wl-tiwai@suse.de>
- <5227a1bb-52e5-d547-2650-b06bee259012@broadcom.com>
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+Message-ID: <20190824001124.GI1119@dread.disaster.area>
+References: <20190819123841.GC5058@ziepe.ca>
+ <20190820011210.GP7777@dread.disaster.area>
+ <20190820115515.GA29246@ziepe.ca>
+ <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
+ <20190821181343.GH8653@ziepe.ca>
+ <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
+ <20190821194810.GI8653@ziepe.ca>
+ <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
+ <20190823032345.GG1119@dread.disaster.area>
+ <20190823120428.GA12968@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5227a1bb-52e5-d547-2650-b06bee259012@broadcom.com>
+In-Reply-To: <20190823120428.GA12968@ziepe.ca>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=7-415B0cAAAA:8 a=G1NtteZr6bW4K8DtrmYA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 12:55:30PM -0700, Scott Branden wrote:
-> Hi Takashi
+On Fri, Aug 23, 2019 at 09:04:29AM -0300, Jason Gunthorpe wrote:
+> On Fri, Aug 23, 2019 at 01:23:45PM +1000, Dave Chinner wrote:
 > 
-> On 2019-08-23 5:29 a.m., Takashi Iwai wrote:
-> > On Thu, 22 Aug 2019 21:24:45 +0200,
-> > Scott Branden wrote:
-> > > Add kernel_pread_file* support to kernel to allow for partial read
-> > > of files with an offset into the file.  Existing kernel_read_file
-> > > functions call new kernel_pread_file functions with offset=0 and
-> > > flags=KERNEL_PREAD_FLAG_WHOLE.
-> > Would this change passes the security check like ima?
-> > I thought security_kernel_post_read_file() checks the whole content
-> > for calculating the hash...
+> > > But the fact that RDMA, and potentially others, can "pass the
+> > > pins" to other processes is something I spent a lot of time trying to work out.
+> > 
+> > There's nothing in file layout lease architecture that says you
+> > can't "pass the pins" to another process.  All the file layout lease
+> > requirements say is that if you are going to pass a resource for
+> > which the layout lease guarantees access for to another process,
+> > then the destination process already have a valid, active layout
+> > lease that covers the range of the pins being passed to it via the
+> > RDMA handle.
 > 
-> It passes the fw_run_tests.sh.  How do you test the firmware loader passes
-> this security check?
+> How would the kernel detect and enforce this? There are many ways to
+> pass a FD.
 
-Its not a security check per code, its an audit of the code, to ensure
-that no new cases are not covered and its why I had CC'd Mimi. The
-question lies in *if* the approach exposes a new interface which cannot
-be attested. Its unclear to me if we can attest currently through
-security modules the fallback interface, as there are not APIs with a
-respective callback yet.
+AFAIC, that's not really a kernel problem. It's more of an
+application design constraint than anything else. i.e. if the app
+passes the IB context to another process without a lease, then the
+original process is still responsible for recalling the lease and
+has to tell that other process to release the IB handle and it's
+resources.
 
-  Luis
+> IMHO it is wrong to try and create a model where the file lease exists
+> independently from the kernel object relying on it. In other words the
+> IB MR object itself should hold a reference to the lease it relies
+> upon to function properly.
+
+That still doesn't work. Leases are not individually trackable or
+reference counted objects objects - they are attached to a struct
+file bUt, in reality, they are far more restricted than a struct
+file.
+
+That is, a lease specifically tracks the pid and the _open fd_ it
+was obtained for, so it is essentially owned by a specific process
+context. Hence a lease is not able to be passed to a separate
+process context and have it still work correctly for lease break
+notifications.  i.e. the layout break signal gets delivered to
+original process that created the struct file, if it still exists
+and has the original fd still open. It does not get sent to the
+process that currently holds a reference to the IB context.
+
+So while a struct file passed to another process might still have
+an active lease, and you can change the owner of the struct file
+via fcntl(F_SETOWN), you can't associate the existing lease with a
+the new fd in the new process and so layout break signals can't be
+directed at the lease fd....
+
+This really means that a lease can only be owned by a single process
+context - it can't be shared across multiple processes (so I was
+wrong about dup/pass as being a possible way of passing them)
+because there's only one process that can "own" a struct file, and
+that where signals are sent when the lease needs to be broken.
+
+So, fundamentally, if you want to pass a resource that pins a file
+layout between processes, both processes need to hold a layout lease
+on that file range. And that means exclusive leases and passing
+layouts between processes are fundamentally incompatible because you
+can't hold two exclusive leases on the same file range....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
