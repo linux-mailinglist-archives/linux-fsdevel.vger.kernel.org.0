@@ -2,229 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FE729BB8E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 05:56:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B26CC9BBD9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 06:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfHXD4Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Aug 2019 23:56:25 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:60870 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfHXD4Y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Aug 2019 23:56:24 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7O3trJe131602;
-        Sat, 24 Aug 2019 03:56:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=w58DgokBLfOsMI+3FftkHginsqg1nsUUesaYdyfqU+8=;
- b=n1RZJO+WJeSTIfOtWwsVrO5Xyj+mBuzTmR7CJOL/Rk4u8HBRAqs6zUzs1FU+mOrJcX9j
- RCvv7AXBwMp1KmYmEH7Xn4dazKRyhGvMO4Ru9+9iw2X/mjYeVrMTCqwA6BQaipO2NW1R
- 2aY6TXVij95muXtFZa3FEcOWNvCuptfcaqrTcvGoBMh8nWjkMGd+khG32wckjerJ9m0r
- OG6BCSRss/KNAs1+zkGAPwu5sFqhfW9dr70FEr5zoxs5Z7tvZI8aVztHJyIedPDhmmBa
- v30swawhVlv8jKATgf99iWT/YXnm3btL9tM2UUTNqea/D7NLxWYwyYlaztdrlYuCGjHI aA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2ujw6yr1wm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 24 Aug 2019 03:56:03 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7O3qq9I092408;
-        Sat, 24 Aug 2019 03:56:03 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2ujw6t0jrk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 24 Aug 2019 03:56:03 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7O3tt0b031942;
-        Sat, 24 Aug 2019 03:55:56 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 23 Aug 2019 20:55:55 -0700
-Date:   Fri, 23 Aug 2019 20:55:54 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, tytso@mit.edu,
-        jack@suse.cz, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        aneesh.kumar@linux.ibm.com
-Subject: Re: [PATCH 0/5] ext4: direct IO via iomap infrastructure
-Message-ID: <20190824035554.GA1037502@magnolia>
-References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
- <20190812173150.AF04F5204F@d06av21.portsmouth.uk.ibm.com>
- <20190813111004.GA12682@poseidon.bobrowski.net>
- <20190813122723.AE6264C040@d06av22.portsmouth.uk.ibm.com>
- <20190821131405.GC24417@poseidon.bobrowski.net>
- <20190822120015.GA3330@poseidon.bobrowski.net>
- <20190822141126.70A94A407B@d06av23.portsmouth.uk.ibm.com>
- <20190824031830.GB2174@poseidon.bobrowski.net>
+        id S1726077AbfHXEtO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Aug 2019 00:49:14 -0400
+Received: from mga18.intel.com ([134.134.136.126]:53747 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725379AbfHXEtO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 24 Aug 2019 00:49:14 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 21:49:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,423,1559545200"; 
+   d="scan'208";a="354867531"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga005.jf.intel.com with ESMTP; 23 Aug 2019 21:49:12 -0700
+Date:   Fri, 23 Aug 2019 21:49:12 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+Message-ID: <20190824044911.GB1092@iweiny-DESK2.sc.intel.com>
+References: <20190819092409.GM7777@dread.disaster.area>
+ <20190819123841.GC5058@ziepe.ca>
+ <20190820011210.GP7777@dread.disaster.area>
+ <20190820115515.GA29246@ziepe.ca>
+ <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
+ <20190821181343.GH8653@ziepe.ca>
+ <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
+ <20190821194810.GI8653@ziepe.ca>
+ <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
+ <20190823032345.GG1119@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190824031830.GB2174@poseidon.bobrowski.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9358 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908240042
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9358 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908240043
+In-Reply-To: <20190823032345.GG1119@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 24, 2019 at 01:18:31PM +1000, Matthew Bobrowski wrote:
-> On Thu, Aug 22, 2019 at 07:41:25PM +0530, Ritesh Harjani wrote:
-> > 
-> > 
-> > On 8/22/19 5:30 PM, Matthew Bobrowski wrote:
-> > > On Wed, Aug 21, 2019 at 11:14:07PM +1000, Matthew Bobrowski wrote:
-> > > > On Tue, Aug 13, 2019 at 05:57:22PM +0530, RITESH HARJANI wrote:
-> > > > > But what I meant was this (I may be wrong here since I haven't
-> > > > > really looked into it), but for my understanding I would like to
-> > > > > discuss this -
-> > > > > 
-> > > > > So earlier with this flag(EXT4_STATE_DIO_UNWRITTEN) we were determining on
-> > > > > whether a newextent can be merged with ex1 in function
-> > > > > ext4_extents_can_be_merged. But now since we have removed that flag we have
-> > > > > no way of knowing that whether this inode has any unwritten extents or not
-> > > > > from any DIO path.
-> > > > > 
-> > > > > What I meant is isn't this removal of setting/unsetting of
-> > > > > flag(EXT4_STATE_DIO_UNWRITTEN) changing the behavior of this func -
-> > > > > ext4_extents_can_be_merged?
-> > > > 
-> > > > OK, I'm stuck and looking for either clarity, revalidation of my
-> > > > thought process, or any input on how to solve this problem for that
-> > > > matter.
-> > > > 
-> > > > In the current ext4 direct IO implementation, the dynamic state flag
-> > > > EXT4_STATE_DIO_UNWRITTEN is set/unset for synchronous direct IO
-> > > > writes. On the other hand, the flag EXT4_IO_END_UNWRITTEN is set/unset
-> > > > for ext4_io_end->flag, and the value of i_unwritten is
-> > > > incremented/decremented for asynchronous direct IO writes. All
-> > > > mechanisms by which are used to track and determine whether the inode,
-> > > > or an IO in flight against a particular inode have any pending
-> > > > unwritten extents that need to be converted after the IO has
-> > > > completed. In addition to this, we have ext4_can_extents_be_merged()
-> > > > performing explicit checks against both EXT4_STATE_DIO_UNWRITTEN and
-> > > > i_unwritten and using them to determine whether it can or cannot merge
-> > > > a requested extent into an existing extent.
-> > > > 
-> > > > This is all fine for the current direct IO implementation. However,
-> > > > while switching the direct IO code paths over to make use of the iomap
-> > > > infrastructure, I believe that we can no longer simply track whether
-> > > > an inode has unwritten extents needing to be converted by simply
-> > > > setting and checking the EXT4_STATE_DIO_UNWRITTEN flag on the
-> > > > inode. The reason being is that there can be multiple direct IO
-> > > > operations to unwritten extents running against the inode and we don't
-> > > > particularly distinguish synchronous from asynchronous writes within
-> > > > ext4_iomap_begin() as there's really no need. So, the only way to
-> > > > accurately determine whether extent conversion is deemed necessary for
-> > > > an IO operation whether it'd be synchronous or asynchronous is by
-> > > > checking the IOMAP_DIO_UNWRITTEN flag within the ->end_io()
-> > > > callback. I'm certain that this portion of the logic is correct, but
-> > > > we're still left with some issues when it comes to the checks that I
-> > > > previously mentioned in ext4_can_extents_be_merged(), which is the
-> > > > part I need some input on.
-> > > > 
-> > > > I was doing some thinking and I don't believe that making use of the
-> > > > EXT4_STATE_DIO_UNWRITTEN flag is the solution at all here. This is not
-> > > > only for reasons that I've briefly mentioned above, but also because
-> > > > of the fact that it'll probably lead to a lot of inaccurate judgements
-> > > > while taking particular code paths and some really ugly code that
-> > > > creeps close to the definition of insanity. Rather, what if we solve
-> > > > this problem by continuing to just use i_unwritten to keep track of
-> > > > all the direct IOs to unwritten against running against an inode?
-> > > > Within ext4_iomap_begin() post successful creation of unwritten
-> > > > extents we'd call atomic_inc(&EXT4_I(inode)->i_unwritten) and
-> > > > subsequently within the ->end_io() callback whether we take the
-> > > > success or error path we'd call
-> > > > atomic_dec(&EXT4_I(inode)->i_unwritten) accordingly? This way we can
-> > > > still rely on this value to be used in the check within
-> > > > ext4_can_extents_be_merged(). Open for alternate suggestions if anyone
-> > > > has any...
+On Fri, Aug 23, 2019 at 01:23:45PM +1000, Dave Chinner wrote:
+> On Wed, Aug 21, 2019 at 01:44:21PM -0700, Ira Weiny wrote:
+> > On Wed, Aug 21, 2019 at 04:48:10PM -0300, Jason Gunthorpe wrote:
+> > > On Wed, Aug 21, 2019 at 11:57:03AM -0700, Ira Weiny wrote:
 > > > 
-> > > Actually, no...
+> > > > > Oh, I didn't think we were talking about that. Hanging the close of
+> > > > > the datafile fd contingent on some other FD's closure is a recipe for
+> > > > > deadlock..
+> > > > 
+> > > > The discussion between Jan and Dave was concerning what happens when a user
+> > > > calls
+> > > > 
+> > > > fd = open()
+> > > > fnctl(...getlease...)
+> > > > addr = mmap(fd...)
+> > > > ib_reg_mr() <pin>
+> > > > munmap(addr...)
+> > > > close(fd)
 > > > 
-> > > I've done some more thinking and what I suggested above around the use
-> > > of i_unwritten will also not work properly. Using iomap
-> > > infrastructure, there is the possibility of calling into the
-> > > ->iomap_begin() more than once for a single direct IO operation. This
-> > > means that by the time we even get to decrementing i_unwritten in the
-> > > ->end_io() callback after converting the unwritten extents we're
-> > > already running the possibility of i_unwritten becoming unbalanced
-> > > really quickly and staying that way. This also means that the
-> > > statement checking i_unwritten in ext4_can_extents_be_merged() will be
-> > > affected and potentially result in it being evaluated incorrectly. I
-> > > was thinking that we could just decrement i_unwritten in
-> > > ->iomap_end(), but that seems to me like it would be racy and also
-> > > lead to incorrect results. At this point I'm out of ideas on how to
-> > > solve this, so any other ideas would be appreciated!
+> > > I don't see how blocking close(fd) could work.
 > > 
-> > I will let others also comment, if someone has any other better approach.
-> > 
-> > 1. One approach is to add the infrastructure in iomap with
-> > iomap_dio->private which is filesystem specific pointer. This can be
-> > updated by filesystem in ->iomap_begin call into iomap->private.
-> > And in case of iomap_dio_rw, this iomap->private will be copied to
-> > iomap_dio->private if not already set.
-> > 
-> > But I think this will eventually become hacky in the sense when you will
-> > have to determine on whether the dio->private is already set or not when
-> > iomap_apply will be called second time. It will become a problem with AIO
-> > DIO in ext4 since we use i_unwritten which tells us whether there is any
-> > unwritten extent but it does not tell whether this unwritten extent is due
-> > to a DIRECT AIO DIO in progress or a buffered one.
-> > 
-> > So we can ignore this approach - unless you or someone else have some good
-> > design ideas to build on top of above.
+> > Well Dave was saying this _could_ work. FWIW I'm not 100% sure it will but I
+> > can't prove it won't..
 > 
-> I'm not sure whether _this_ is the solution or not, so let's maybe
-> wait for others to comment. One thing that I and probably the iomap
-> maintainers would like to avoid is adding any special case code to
-> iomap infrastructure, if possible. I mean, from what you suggest it
-> seems to be rather generic and not overly intrusive, although I know
-> for a fact that iomap infrastructure exists because stuff like
-> buffer_heads and the old direct IO code ended up accommodating so many
-> different edge cases making it almost unmodifiable and unmaintainable.
-
-I'm probably misunderstanding the ext4 extent cache horribly, but I keep
-wondering why any of this is necessary -- why can't ext4 track the
-unwritten status in the extent records directly?  And why is there all
-this strange "can merge" logic?  If you need to convert blocks X to Y
-to written state because a write to those blocks completed, isn't that
-just manipulation of a bunch of incore records?  And can't you just seek
-back and forth in the extent cache to look for adjacent records to merge
-with? <confuseD>
-
-(I'd really prefer not to go adding private fields all over the
-place...)
-
---D
-
-> > 2. Second approach which I was thinking is to track only those extents which
-> > are marked unwritten and are under IO. This can be done in ext4_map_blocks.
-> > This way we will not have to track a particular inode has any unwritten
-> > extents or not, but it will be extent based.
-> > Something similar was also done a while ago. Do you think this approach will
-> > work in our case?
-> > 
-> > So with this extents will be scanned in extent status tree to see if any
-> > among those are under IO and are unwritten in func
-> > ext4_can_extents_be_merged.
-> > 
-> > https://patchwork.ozlabs.org/patch/1013837/
+> Right, I proposed it as a possible way of making sure application
+> developers don't do this. It _could_ be made to work (e.g. recording
+> longterm page pins on the vma->file), but this is tangential to 
+> the discussion of requiring active references to all resources
+> covered by the layout lease.
 > 
-> Maybe this would be a better approach and I think that it'd
-> work. Based upon what I read within in that thread there weren't
-> really any objections to the idea, although I can't see that it made
-> it upstream, so I may be missing something?
+> I think allowing applications to behave like the above is simply
+> poor system level design, regardless of the interaction with
+> filesystems and layout leases.
 > 
-> --M
+> > Maybe we are all just touching a different part of this
+> > elephant[1] but the above scenario or one without munmap is very reasonably
+> > something a user would do.  So we can either allow the close to complete (my
+> > current patches) or try to make it block like Dave is suggesting.
+
+My belief when writing the current series was that hanging the close would
+cause deadlock.  But it seems I was wrong because of the delayed __fput().
+
+So far, I have not been able to get RDMA to have an issue like Jason suggested
+would happen (or used to happen).  So from that perspective it may be ok to
+hang the close.
+
+> > 
+> > I don't disagree with Dave with the semantics being nice and clean for the
+> > filesystem.
+> 
+> I'm not trying to make it "nice and clean for the filesystem".
+> 
+> The problem is not just RDMA/DAX - anything that is directly
+> accessing the block device under the filesystem has the same set of
+> issues. That is, the filesystem controls the life cycle of the
+> blocks in the block device, so direct access to the blocks by any
+> means needs to be co-ordinated with the filesystem. Pinning direct
+> access to a file via page pins attached to a hardware context that
+> the filesystem knows nothing about is not an access model that the
+> filesystems can support.
+> 
+> IOWs, anyone looking at this problem just from the RDMA POV of page
+> pins is not seeing all the other direct storage access mechainsms
+> that we need to support in the filesystems. RDMA on DAX is just one
+> of them.  pNFS is another. Remote acces via NVMeOF is another. XDP
+> -> DAX (direct file data placement from the network hardware) is
+> another. There are /lots/ of different direct storage access
+> mechanisms that filesystems need to support and we sure as hell do
+> not want to have to support special case semantics for every single
+> one of them.
+
+My use of struct file was based on the fact that FDs are a primary interface
+for linux and my thought was that they would be more universal than having file
+pin information stored in an RDMA specific structure.
+
+XDP is not as direct; it uses sockets.  But sockets also have a struct file
+which I believe could be used in a similar manner.  I'm not 100% sure of the
+xdp_umem lifetime yet but it seems that my choice of using struct file was a
+good one in this respect.
+
+> 
+> Hence if we don't start with a sane model for arbitrating direct
+> access to the storage at the filesystem level we'll never get this
+> stuff to work reliably, let alone work together coherently.  An
+> application that wants a direct data path to storage should have a
+> single API that enables then to safely access the storage,
+> regardless of how they are accessing the storage.
+> 
+> From that perspective, what we are talking about here with RDMA
+> doing "mmap, page pin, unmap, close" and "pass page pins via
+> SCM_RIGHTS" are fundamentally unworkable from the filesystem
+> perspective. They are use-after-free situations from the filesystem
+> perspective - they do not hold direct references to anything in the
+> filesystem, and so the filesytem is completely unaware of them.
+
+I see your point of view but looking at it from a different point of view I
+don't see this as a "use after free".
+
+The user has explicitly registered this memory (and layout) with another direct
+access subsystem (RDMA for example) so why do they need to keep the FD around?
+
+> 
+> The filesystem needs to be aware of /all users/ of it's resources if
+> it's going to manage them sanely.
+
+From the way I look at it the underlying filesystem _is_ aware of the leases
+with my patch set.  And so to is the user.  It is just not through the original
+"data file fd".
+
+And the owner of the lease becomes the subsystem object ("RDMA FD" in this
+case) which is holding the pins.  Furthermore, the lease is maintained and
+transferred automatically through the normal FD processing.
+
+(Furthermore, tracking of these pins is available for whatever subsystem by
+tracking them with struct file; _not_ just RDMA).  When those subsystem objects
+are released the "data file lease" will be released as well.  That was the
+design.
+
+> 
+> > But the fact that RDMA, and potentially others, can "pass the
+> > pins" to other processes is something I spent a lot of time trying to work out.
+> 
+> There's nothing in file layout lease architecture that says you
+> can't "pass the pins" to another process.  All the file layout lease
+> requirements say is that if you are going to pass a resource for
+> which the layout lease guarantees access for to another process,
+> then the destination process already have a valid, active layout
+> lease that covers the range of the pins being passed to it via the
+> RDMA handle.
+> 
+> i.e. as the pins pass from one process to another, they pass from
+> the protection of the lease process A holds to the protection that
+> the lease process B holds. This can probably even be done by
+> duplicating the lease fd and passing it by SCM_RIGHTS first.....
+
+My worry with this is how to enforce it.  As I said in the other thread I think
+we could potentially block SCM_RIGHTS use in the short term.  But I'm not sure
+about blocking every call which may "dup()" an FD to random processes.
+
+Ira
+
