@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE489BD22
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 12:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A6FA9BD4C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 13:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbfHXKtz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Aug 2019 06:49:55 -0400
-Received: from mga14.intel.com ([192.55.52.115]:30570 "EHLO mga14.intel.com"
+        id S1727894AbfHXLdG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Aug 2019 07:33:06 -0400
+Received: from mga04.intel.com ([192.55.52.120]:61042 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726793AbfHXKty (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Aug 2019 06:49:54 -0400
+        id S1727779AbfHXLdF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 24 Aug 2019 07:33:05 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2019 03:49:53 -0700
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2019 04:33:03 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,424,1559545200"; 
-   d="gz'50?scan'50,208,50";a="179400732"
+X-IronPort-AV: E=Sophos;i="5.64,425,1559545200"; 
+   d="gz'50?scan'50,208,50";a="181956470"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Aug 2019 03:49:48 -0700
+  by orsmga003.jf.intel.com with ESMTP; 24 Aug 2019 04:32:59 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1i1TcD-000A7a-Kg; Sat, 24 Aug 2019 18:49:49 +0800
-Date:   Sat, 24 Aug 2019 18:49:42 +0800
+        id 1i1UHz-0006x8-2z; Sat, 24 Aug 2019 19:32:59 +0800
+Date:   Sat, 24 Aug 2019 19:32:05 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Naohiro Aota <naohiro.aota@wdc.com>
 Cc:     kbuild-all@01.org, linux-btrfs@vger.kernel.org,
@@ -37,14 +37,13 @@ Cc:     kbuild-all@01.org, linux-btrfs@vger.kernel.org,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: Re: [PATCH v4 02/27] btrfs: Get zone information of zoned block
- devices
-Message-ID: <201908241820.QyEPQB7c%lkp@intel.com>
-References: <20190823101036.796932-3-naohiro.aota@wdc.com>
+Subject: Re: [PATCH v4 13/27] btrfs: reset zones of unused block groups
+Message-ID: <201908241902.uw1r8s4N%lkp@intel.com>
+References: <20190823101036.796932-14-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="yjd7kqw56wtlmydi"
+Content-Type: multipart/mixed; boundary="v5vz4c7r3myfarvm"
 Content-Disposition: inline
-In-Reply-To: <20190823101036.796932-3-naohiro.aota@wdc.com>
+In-Reply-To: <20190823101036.796932-14-naohiro.aota@wdc.com>
 X-Patchwork-Hint: ignore
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -53,7 +52,7 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---yjd7kqw56wtlmydi
+--v5vz4c7r3myfarvm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -78,46 +77,37 @@ Reported-by: kbuild test robot <lkp@intel.com>
 All errors (new ones prefixed by >>):
 
    fs/btrfs/hmzoned.c: In function 'btrfs_get_dev_zones':
->> fs/btrfs/hmzoned.c:25:8: error: implicit declaration of function 'blkdev_report_zones'; did you mean 'blkdev_nr_zones'? [-Werror=implicit-function-declaration]
+   fs/btrfs/hmzoned.c:31:8: error: implicit declaration of function 'blkdev_report_zones'; did you mean 'blkdev_nr_zones'? [-Werror=implicit-function-declaration]
      ret = blkdev_report_zones(device->bdev, pos >> SECTOR_SHIFT,
            ^~~~~~~~~~~~~~~~~~~
            blkdev_nr_zones
+   fs/btrfs/hmzoned.c: In function 'btrfs_reset_device_zone':
+>> fs/btrfs/hmzoned.c:602:8: error: implicit declaration of function 'blkdev_reset_zones'; did you mean 'blkdev_nr_zones'? [-Werror=implicit-function-declaration]
+     ret = blkdev_reset_zones(device->bdev,
+           ^~~~~~~~~~~~~~~~~~
+           blkdev_nr_zones
    cc1: some warnings being treated as errors
 
-vim +25 fs/btrfs/hmzoned.c
+vim +602 fs/btrfs/hmzoned.c
 
-    18	
-    19	static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
-    20				       struct blk_zone *zones,
-    21				       unsigned int *nr_zones, gfp_t gfp_mask)
-    22	{
-    23		int ret;
-    24	
-  > 25		ret = blkdev_report_zones(device->bdev, pos >> SECTOR_SHIFT,
-    26					  zones, nr_zones, gfp_mask);
-    27		if (ret != 0) {
-    28			btrfs_err_in_rcu(device->fs_info,
-    29					 "get zone at %llu on %s failed %d", pos,
-    30					 rcu_str_deref(device->name), ret);
-    31			return ret;
-    32		}
-    33		if (!*nr_zones)
-    34			return -EIO;
-    35	
-    36		return 0;
-    37	}
-    38	
+   596	
+   597	int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
+   598				    u64 length, u64 *bytes)
+   599	{
+   600		int ret;
+   601	
+ > 602		ret = blkdev_reset_zones(device->bdev,
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
 https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---yjd7kqw56wtlmydi
+--v5vz4c7r3myfarvm
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICPj/YF0AAy5jb25maWcAjFzdctw2sr7PU0w5N0lt2ZFkRfGeU7oASZCEhyRoABzN6Ial
+H4sICAAcYV0AAy5jb25maWcAjFzdctw2sr7PU0w5N0lt2ZFkRfGeU7oASZCEhyRoABzN6Ial
 yGOvKrLkM5I29tufboAgARAcZ2tr19PdAPHT6P660dDPP/28Ii/Pj19unu9ub+7vv68+7x/2
 h5vn/cfVp7v7/f+uMr5quFrRjKk3IFzdPbx8++3bu4v+4nz1+5u3b05eH25/X633h4f9/Sp9
 fPh09/kF2t89Pvz080/w35+B+OUrdHX4n9Xn29vXf6x+yfZ/3t08rP54cw6tT09+Nf8C2ZQ3
@@ -683,4 +673,4 @@ iQdXhrEipjttR1eYZAdjYOYjpVbH9NH1+RHbRYOCzUs54Qd93+t/igLmHqOHvDQmxxzeA6QJ
 pyCXJTg6kjKYlLlpXTLGWymmtnmgGTALAx6Oe7O9bDDzdzvWrD/XhHbvIv38DPLO//8BL1K3
 rLXhAQA=
 
---yjd7kqw56wtlmydi--
+--v5vz4c7r3myfarvm--
