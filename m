@@ -2,86 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B45F9BCE8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 12:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BD99BCEA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2019 12:02:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfHXKBT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Aug 2019 06:01:19 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:51218 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726072AbfHXKBT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Aug 2019 06:01:19 -0400
-Received: from black.home (broadband-188-32-48-208.ip.moscow.rt.ru [188.32.48.208])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 2678854006A;
-        Sat, 24 Aug 2019 13:01:16 +0300 (MSK)
-From:   Denis Efremov <efremov@ispras.ru>
-To:     akpm@linux-foundation.org
-Cc:     Denis Efremov <efremov@ispras.ru>,
-        Akinobu Mita <akinobu.mita@gmail.com>, Jan Kara <jack@suse.cz>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <matthew@wil.cx>,
-        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-media@vger.kernel.org, Erdem Tumurov <erdemus@gmail.com>,
-        Vladimir Shelekhov <vshel@iis.nsk.su>
-Subject: [PATCH v2] lib/memweight.c: open codes bitmap_weight()
-Date:   Sat, 24 Aug 2019 13:01:02 +0300
-Message-Id: <20190824100102.1167-1-efremov@ispras.ru>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190821074200.2203-1-efremov@ispras.ru>
-References: <20190821074200.2203-1-efremov@ispras.ru>
+        id S1727120AbfHXKCL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Aug 2019 06:02:11 -0400
+Received: from mail-wr1-f52.google.com ([209.85.221.52]:33649 "EHLO
+        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfHXKCL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 24 Aug 2019 06:02:11 -0400
+Received: by mail-wr1-f52.google.com with SMTP id u16so10783455wrr.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2019 03:02:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=algolia.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=WYpUeofe5vHaWgvFTlhkq7YwWLvf0aPrJjtylm8BrOE=;
+        b=JLU0C3NnMzgfz3n2z0785HY47FBicGDsNkkphNIIASGlDdoNXvSBh5ZH9TIP2xg5PK
+         0La39XOovUwY9y0F6r5F/fEQYcIe5wJy5PBLqNU2ph+c4KAUGjW4fznNdVn+hLojB5jr
+         ioJC0r0ZzzJNwOCZlWd5vo3PL0rWCufNQn2rc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=WYpUeofe5vHaWgvFTlhkq7YwWLvf0aPrJjtylm8BrOE=;
+        b=Haa+nilmY/i0nbWEj/LOkv/xYMwe+x/Mo1owmOuOyTz5+O2GsiokNQ5/yX/7MEQfRg
+         AHAv0LU8fxpaWbvk362iyftxOCw6Yj1wohqxHuv3zeDsYL1WWSWL6pXAj3EejIX709AQ
+         dPP6dopSZNSEBbdb4nHhR0w/yhfTxXU+AJGqqkNAD3ya79FS9q5cyfyjXmSIZO1hzgqc
+         TpGfdoy51Ty0SaSxEODxHNyNrRKw/YfVmdr/1IecZR29R+JKTw/lrDOwF1jCXcx7BYOf
+         aSg+HE96G1tPKA9TLJptiS5eSzNCAj4NoYiXvkMVRDs7O1aF4SMvWHoJ7EJfJ1D4MyEo
+         J8RQ==
+X-Gm-Message-State: APjAAAXraMgRtI0ifGoX/KOC0n1tualg8kHZOWxFiYnjcCSuDj3IJnI/
+        YYawqpuGN/MY3cbLtL51Rz60tIu5rxJwvvkLLhFdvHi89H4=
+X-Google-Smtp-Source: APXvYqxTtsXY0de8u6ZHm1t4glO/Lup3LKHswrhOS+PbdlRZ908womUcv4ewFI4qAdI6cxWXo08DRKnzNEpGHRYA2iQ=
+X-Received: by 2002:a5d:5543:: with SMTP id g3mr10497775wrw.166.1566640928980;
+ Sat, 24 Aug 2019 03:02:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAE9vp3JsD1KVqLXnLWpNrAtDSmm6gUa0KC_degOECDsGntvUXw@mail.gmail.com>
+In-Reply-To: <CAE9vp3JsD1KVqLXnLWpNrAtDSmm6gUa0KC_degOECDsGntvUXw@mail.gmail.com>
+From:   Xavier Roche <xavier.roche@algolia.com>
+Date:   Sat, 24 Aug 2019 12:01:58 +0200
+Message-ID: <CAE9vp3+SwbbEsXrttvTrw0+Go6CSL8ZrHCE6+zac+7O-dkkFuA@mail.gmail.com>
+Subject: Re: Possible FS race condition between vfs_rename and do_linkat (fs/namei.c)
+To:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch open codes the bitmap_weight() call. The direct
-invocation of hweight_long() allows to remove the BUG_ON and
-excessive "longs to bits, bits to longs" conversion.
+Just a small addition:
 
-BUG_ON was required to check that bitmap_weight() will return
-a correct value, i.e. the computed weight will fit the int type
-of the return value. With this patch memweight() controls the
-computation directly with size_t type everywhere. Thus, the BUG_ON
-becomes unnecessary.
+> But maybe this is something the filesystem can not guarantee at all
+> (w.r.t POSIX typically) ?
 
-Total size reduced:
-./scripts/bloat-o-meter lib/memweight.o.old lib/memweight.o.new
-add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-10 (-10)
-Function                                     old     new   delta
-memweight                                    162     152     -10
+The POSIX standard does not seem to directly address this case, but my
+understanding is that rename() atomicity should guarantee correct
+behavior w.r.t rename()/link() concurrent operations:
 
-Co-developed-by: Erdem Tumurov <erdemus@gmail.com>
-Signed-off-by: Erdem Tumurov <erdemus@gmail.com>
-Co-developed-by: Vladimir Shelekhov <vshel@iis.nsk.su>
-Signed-off-by: Vladimir Shelekhov <vshel@iis.nsk.su>
-Signed-off-by: Denis Efremov <efremov@ispras.ru>
----
- lib/memweight.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+See IEEE Std 1003.1,
 
-diff --git a/lib/memweight.c b/lib/memweight.c
-index 94dd72ccaa7f..f050b2b4c5e2 100644
---- a/lib/memweight.c
-+++ b/lib/memweight.c
-@@ -20,11 +20,13 @@ size_t memweight(const void *ptr, size_t bytes)
- 
- 	longs = bytes / sizeof(long);
- 	if (longs) {
--		BUG_ON(longs >= INT_MAX / BITS_PER_LONG);
--		ret += bitmap_weight((unsigned long *)bitmap,
--				longs * BITS_PER_LONG);
-+		const unsigned long *bitmap_long =
-+			(const unsigned long *)bitmap;
-+
- 		bytes -= longs * sizeof(long);
--		bitmap += longs * sizeof(long);
-+		for (; longs > 0; longs--, bitmap_long++)
-+			ret += hweight_long(*bitmap_long);
-+		bitmap = (const unsigned char *)bitmap_long;
- 	}
- 	/*
- 	 * The reason that this last loop is distinct from the preceding
+(1) https://pubs.opengroup.org/onlinepubs/009695399/functions/rename.html
+
+"If the link named by the new argument exists, it shall be removed and
+old renamed to new. In this case, a link named new shall remain
+visible to other processes throughout the renaming operation and refer
+either to the file referred to by new or old before the operation
+began."
+
+"This rename() function is equivalent for regular files to that
+defined by the ISO C standard. Its inclusion here expands that
+definition to include actions on directories and specifies behavior
+when the new parameter names a file that already exists. That
+specification requires that the action of the function be atomic."
+
+(2) https://pubs.opengroup.org/onlinepubs/009695399/functions/link.html
+[ENOENT]
+    "A component of either path prefix does not exist; the file named
+by path1 does not exist; or path1 or path2 points to an empty string."
+
+The only erroneous [ENOENT] case is when the file does not "exist";
+but the renaming should guarantee that the file always "exists" ("a
+link named new shall remain visible to other processes throughout the
+renaming operation and refer either to the file referred to by new or
+old before the operation began")
+
+Cheers,
+
 -- 
-2.21.0
-
+Xavier Roche
