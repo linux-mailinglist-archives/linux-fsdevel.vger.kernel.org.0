@@ -2,221 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 213C59C4EA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2019 18:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFFFB9C5D6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2019 21:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbfHYQig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Aug 2019 12:38:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47016 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbfHYQif (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Aug 2019 12:38:35 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2ECD437E79;
-        Sun, 25 Aug 2019 16:38:35 +0000 (UTC)
-Received: from llong.com (ovpn-120-143.rdu2.redhat.com [10.10.120.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 37A4F1001958;
-        Sun, 25 Aug 2019 16:38:27 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH] fs/proc/page: Skip uninitialized page when iterating page structures
-Date:   Sun, 25 Aug 2019 12:38:05 -0400
-Message-Id: <20190825163805.3036-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Sun, 25 Aug 2019 16:38:35 +0000 (UTC)
+        id S1729067AbfHYTjD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Aug 2019 15:39:03 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41185 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728699AbfHYTjD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Aug 2019 15:39:03 -0400
+Received: by mail-qt1-f195.google.com with SMTP id i4so15984161qtj.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Aug 2019 12:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IcftYbtF8hmiS81ypdWg52goznYue2k46OBNV8xIDyo=;
+        b=jY1JCn+ldE3+NTo3VG4D8ssjZZ/12uHiNC485pYaAlQaG8pq2px0AOjE6MH3L2daUE
+         OBQQMbkBAQx1ajmooyQh4PWVjIdt6ikqEPLDm20L670hA8QUe1IDUU8Cq7RXHKvaCJs6
+         htKXA0TQcvkuZNBGS9+1p2d+L62V+4CGU22UmkrAkD8MZulxOHzPTTFZ136Y5UdWTW5x
+         idbHVJEbZfo8m9QYHUrZMB8nBu9bO4c81G3htyFqwzCZfcFCkUU0+OO9AT3zsqJ59i9L
+         HxpSOEcHwKnDcvmLtQNemKrtsmfjrFYpGaWhT4ebFkdejRPPm33Mc2qKmXCed7vAMCi4
+         f5sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IcftYbtF8hmiS81ypdWg52goznYue2k46OBNV8xIDyo=;
+        b=rEJW9JgszuIAvpVyT9EG2Cv05sSDwSEMp5T5IxkzUseB+VR7jpg7k6KCZaUDszhEyJ
+         77uWFXTwYhDtwo9yVYoN5YGcddd8NCPanpc45ynBwoRWdtPJm1xd15cYVG39zk6DF2U2
+         9lDEw5qvUkSs8IT5oua0/O1GNDDf4OwOow9nTz7LwKKRCjY+sFFSgM5MQcBLcSuqdK0l
+         7ovD/Upft0fY+UvegYWa0268tmACIpzESvblbD6+avae5OSfRV8rQkyg0eLDxR+8JTf+
+         3+3l9Bfo7DbvXCSP9CMTWnBHAOByvc4off6RZa05aZZfUovucDoE5nAfqZz48KTow8pc
+         +gBg==
+X-Gm-Message-State: APjAAAX/VLJEJw7svcGr/w4EVgClfL7GR2wHEkDHgn5fxOqzOyzAs+TP
+        LCSIfeLkAJUtjVo58NFQ+xKzxw==
+X-Google-Smtp-Source: APXvYqxGjNntfiQL8TISYg5BInHS+cQ0ODQq/4ockdGbt/O3U8AzybLVwFgyx4YCA0QWh5oy2S8plQ==
+X-Received: by 2002:ac8:450c:: with SMTP id q12mr14722642qtn.298.1566761942403;
+        Sun, 25 Aug 2019 12:39:02 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-216-168.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.216.168])
+        by smtp.gmail.com with ESMTPSA id m10sm4699826qka.43.2019.08.25.12.39.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 25 Aug 2019 12:39:01 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1i1yLs-0005oN-Oc; Sun, 25 Aug 2019 16:39:00 -0300
+Date:   Sun, 25 Aug 2019 16:39:00 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+Message-ID: <20190825193900.GA21239@ziepe.ca>
+References: <20190820011210.GP7777@dread.disaster.area>
+ <20190820115515.GA29246@ziepe.ca>
+ <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
+ <20190821181343.GH8653@ziepe.ca>
+ <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
+ <20190821194810.GI8653@ziepe.ca>
+ <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
+ <20190823032345.GG1119@dread.disaster.area>
+ <20190823120428.GA12968@ziepe.ca>
+ <20190824001124.GI1119@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190824001124.GI1119@dread.disaster.area>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It was found that on a dual-socket x86-64 system with nvdimm, reading
-/proc/kpagecount may cause the system to panic:
+On Sat, Aug 24, 2019 at 10:11:24AM +1000, Dave Chinner wrote:
+> On Fri, Aug 23, 2019 at 09:04:29AM -0300, Jason Gunthorpe wrote:
+> > On Fri, Aug 23, 2019 at 01:23:45PM +1000, Dave Chinner wrote:
+> > 
+> > > > But the fact that RDMA, and potentially others, can "pass the
+> > > > pins" to other processes is something I spent a lot of time trying to work out.
+> > > 
+> > > There's nothing in file layout lease architecture that says you
+> > > can't "pass the pins" to another process.  All the file layout lease
+> > > requirements say is that if you are going to pass a resource for
+> > > which the layout lease guarantees access for to another process,
+> > > then the destination process already have a valid, active layout
+> > > lease that covers the range of the pins being passed to it via the
+> > > RDMA handle.
+> > 
+> > How would the kernel detect and enforce this? There are many ways to
+> > pass a FD.
+> 
+> AFAIC, that's not really a kernel problem. It's more of an
+> application design constraint than anything else. i.e. if the app
+> passes the IB context to another process without a lease, then the
+> original process is still responsible for recalling the lease and
+> has to tell that other process to release the IB handle and it's
+> resources.
 
-===================
-[   79.917682] BUG: unable to handle page fault for address: fffffffffffffffe
-[   79.924558] #PF: supervisor read access in kernel mode
-[   79.929696] #PF: error_code(0x0000) - not-present page
-[   79.934834] PGD 87b60d067 P4D 87b60d067 PUD 87b60f067 PMD 0
-[   79.940494] Oops: 0000 [#1] SMP NOPTI
-[   79.944157] CPU: 89 PID: 3455 Comm: cp Not tainted 5.3.0-rc5-test+ #14
-[   79.950682] Hardware name: Dell Inc. PowerEdge R740/07X9K0, BIOS 2.2.11 06/13/2019
-[   79.958246] RIP: 0010:kpagecount_read+0xdb/0x1a0
-[   79.962859] Code: e8 09 83 e0 3f 48 0f a3 02 73 2d 4c 89 f7 48 c1 e7 06 48 03 3d fe da de 00 74 1d 48 8b 57 08 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 02 75 06 83 7f 30 80 7d 62 31 c0 4c 89 f9 e8 5d c9
-[   79.981603] RSP: 0018:ffffb0d9c950fe70 EFLAGS: 00010202
-[   79.986830] RAX: fffffffffffffffe RBX: ffff8beebe5383c0 RCX: ffffb0d9c950ff00
-[   79.993963] RDX: 0000000000000001 RSI: 00007fd85b29e000 RDI: ffffe77a22000000
-[   80.001095] RBP: 0000000000020000 R08: 0000000000000001 R09: 0000000000000000
-[   80.008226] R10: 0000000000000000 R11: 0000000000000001 R12: 00007fd85b29e000
-[   80.015358] R13: ffffffff893f0480 R14: 0000000000880000 R15: 00007fd85b29e000
-[   80.022491] FS:  00007fd85b312800(0000) GS:ffff8c359fb00000(0000) knlGS:0000000000000000
-[   80.030576] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   80.036321] CR2: fffffffffffffffe CR3: 0000004f54a38001 CR4: 00000000007606e0
-[   80.043455] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   80.050586] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   80.057718] PKRU: 55555554
-[   80.060428] Call Trace:
-[   80.062877]  proc_reg_read+0x39/0x60
-[   80.066459]  vfs_read+0x91/0x140
-[   80.069686]  ksys_read+0x59/0xd0
-[   80.072922]  do_syscall_64+0x59/0x1e0
-[   80.076588]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   80.081637] RIP: 0033:0x7fd85a7f5d75
-===================
+It is a kernel problem, the MR exists and is doing DMA. That relies on
+the lease to prevent data corruption.
 
-It turns out the panic was caused by the kpagecount_read() function
-hitting an uninitialized page structure at PFN 0x880000 where all its
-fields were set to -1. The compound_head value of -1 will mislead the
-kernel to treat -2 as a pointer to the head page of the compound page
-leading to the crash.
+The sanest outcome I could suggest is that when the kernel detects the
+MR has outlived the lease it needs then we forcibly abort the entire
+RDMA state. Ie the application has malfunctioned and gets wacked with
+a very big hammer.
 
-The system have 12 GB of nvdimm ranging from PFN 0x880000-0xb7ffff.
-However, only PFN 0x88c200-0xb7ffff are released by the nvdimm
-driver to the kernel and initialized. IOW, PFN 0x880000-0x88c1ff
-remain uninitialized. Perhaps these 196 MB of nvdimm are reserved for
-internal use.
+> That still doesn't work. Leases are not individually trackable or
+> reference counted objects objects - they are attached to a struct
+> file bUt, in reality, they are far more restricted than a struct
+> file.
 
-To fix the panic, we need to find out if a page structure has been
-initialized. This is done now by checking if the PFN is in the range
-of a memory zone assuming that pages in a zone is either correctly
-marked as not present in the mem_section structure or have their page
-structures initialized.
+This is the problem. How to link something that is not refcounted to
+the refcounted world of file descriptors does not seem very obvious.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- fs/proc/page.c | 68 +++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 65 insertions(+), 3 deletions(-)
+There are too many places where struct file relies on its refcounting
+to try to and plug them.
 
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 544d1ee15aee..ef697eb42065 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -21,6 +21,64 @@
- #define KPMMASK (KPMSIZE - 1)
- #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
- 
-+/*
-+ * It is possible a page structure is contained in a mem_section that is
-+ * regarded as valid but the page structure itself is not properly
-+ * initialized. For example, portion of the device memory may be used
-+ * internally by device driver or firmware without being managed by the
-+ * kernel and hence their page structures may not be initialized.
-+ *
-+ * An uninitialized page structure may cause the PFN iteration code
-+ * in this file to panic the system. To safe-guard against this
-+ * possibility, an additional check of the PFN is done to make sure
-+ * that it is in a valid range in one of the memory zones:
-+ *
-+ *	[zone_start_pfn, zone_start_pfn + spanned_pages)
-+ *
-+ * It is possible that some of the PFNs within a zone is not present.
-+ * In this case, it will have to rely on the current mem_section check
-+ * as well as the affected page structures are still properly initialized.
-+ */
-+struct zone_range {
-+	unsigned long pfn_start;
-+	unsigned long pfn_end;
-+};
-+
-+static void find_next_zone_range(struct zone_range *range)
-+{
-+	unsigned long start, end;
-+	pg_data_t *pgdat;
-+	struct zone *zone;
-+	int i;
-+
-+	/*
-+	 * Scan all the zone structures to find the next closest one.
-+	 */
-+	start = end = -1UL
-+	for (pgdat = first_online_pgdat(); pgdat;
-+	     pgdat = next_online_pgdat(pgdat)) {
-+		for (zone = pgdat->node_zones, i = 0; i < MAX_NR_ZONES;
-+		     zone++, i++) {
-+			if (!zone->spanned_pages)
-+				continue;
-+			if ((zone->zone_start_pfn >= range->pfn_end) &&
-+			    (zone->zone_start_pfn < start)) {
-+				start = zone->zone_start_pfn;
-+				end   = start + zone->spanned_pages;
-+			}
-+		}
-+	}
-+	range->pfn_start = start;
-+	range->pfn_end   = end;
-+}
-+
-+static inline bool pfn_in_zone(unsigned long pfn, struct zone_range *range)
-+{
-+	if (pfn >= range->pfn_end)
-+		find_next_zone_range(range);
-+	return pfn >= range->start && pfn < range->end;
-+}
-+
- /* /proc/kpagecount - an array exposing page counts
-  *
-  * Each entry is a u64 representing the corresponding
-@@ -31,6 +89,7 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
- {
- 	u64 __user *out = (u64 __user *)buf;
- 	struct page *ppage;
-+	struct zone_range range = { 0, 0 };
- 	unsigned long src = *ppos;
- 	unsigned long pfn;
- 	ssize_t ret = 0;
-@@ -42,10 +101,11 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
- 		return -EINVAL;
- 
- 	while (count > 0) {
--		if (pfn_valid(pfn))
-+		if (pfn_valid(pfn) && pfn_in_zone(pfn, &range))
- 			ppage = pfn_to_page(pfn);
- 		else
- 			ppage = NULL;
-+
- 		if (!ppage || PageSlab(ppage) || page_has_type(ppage))
- 			pcount = 0;
- 		else
-@@ -206,6 +266,7 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
- {
- 	u64 __user *out = (u64 __user *)buf;
- 	struct page *ppage;
-+	struct zone_range range = { 0, 0 };
- 	unsigned long src = *ppos;
- 	unsigned long pfn;
- 	ssize_t ret = 0;
-@@ -216,7 +277,7 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
- 		return -EINVAL;
- 
- 	while (count > 0) {
--		if (pfn_valid(pfn))
-+		if (pfn_valid(pfn) && pfn_in_zone(pfn, &range))
- 			ppage = pfn_to_page(pfn);
- 		else
- 			ppage = NULL;
-@@ -250,6 +311,7 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
- {
- 	u64 __user *out = (u64 __user *)buf;
- 	struct page *ppage;
-+	struct zone_range range = { 0, 0 };
- 	unsigned long src = *ppos;
- 	unsigned long pfn;
- 	ssize_t ret = 0;
-@@ -261,7 +323,7 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
- 		return -EINVAL;
- 
- 	while (count > 0) {
--		if (pfn_valid(pfn))
-+		if (pfn_valid(pfn) && pfn_in_zone(pfn, &range))
- 			ppage = pfn_to_page(pfn);
- 		else
- 			ppage = NULL;
--- 
-2.18.1
-
+Jason
