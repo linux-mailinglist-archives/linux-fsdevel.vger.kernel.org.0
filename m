@@ -2,142 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D7B39C314
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2019 13:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 213C59C4EA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2019 18:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfHYLjv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Aug 2019 07:39:51 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:58050 "EHLO mail.ispras.ru"
+        id S1728511AbfHYQig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Aug 2019 12:38:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47016 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727056AbfHYLjv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Aug 2019 07:39:51 -0400
-Received: from [10.68.32.192] (broadband-188-32-48-208.ip.moscow.rt.ru [188.32.48.208])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 6026D54006B;
-        Sun, 25 Aug 2019 14:39:47 +0300 (MSK)
-Subject: Re: [PATCH v2] lib/memweight.c: open codes bitmap_weight()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, Akinobu Mita <akinobu.mita@gmail.com>,
-        Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <matthew@wil.cx>, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        Erdem Tumurov <erdemus@gmail.com>,
-        Vladimir Shelekhov <vshel@iis.nsk.su>
-References: <20190821074200.2203-1-efremov@ispras.ru>
- <20190824100102.1167-1-efremov@ispras.ru>
- <20190825061158.GC28002@bombadil.infradead.org>
-From:   Denis Efremov <efremov@ispras.ru>
-Message-ID: <ba051566-0343-ea75-0484-8852f65a15da@ispras.ru>
-Date:   Sun, 25 Aug 2019 14:39:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190825061158.GC28002@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726182AbfHYQif (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Aug 2019 12:38:35 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2ECD437E79;
+        Sun, 25 Aug 2019 16:38:35 +0000 (UTC)
+Received: from llong.com (ovpn-120-143.rdu2.redhat.com [10.10.120.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 37A4F1001958;
+        Sun, 25 Aug 2019 16:38:27 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH] fs/proc/page: Skip uninitialized page when iterating page structures
+Date:   Sun, 25 Aug 2019 12:38:05 -0400
+Message-Id: <20190825163805.3036-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Sun, 25 Aug 2019 16:38:35 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+It was found that on a dual-socket x86-64 system with nvdimm, reading
+/proc/kpagecount may cause the system to panic:
 
+===================
+[   79.917682] BUG: unable to handle page fault for address: fffffffffffffffe
+[   79.924558] #PF: supervisor read access in kernel mode
+[   79.929696] #PF: error_code(0x0000) - not-present page
+[   79.934834] PGD 87b60d067 P4D 87b60d067 PUD 87b60f067 PMD 0
+[   79.940494] Oops: 0000 [#1] SMP NOPTI
+[   79.944157] CPU: 89 PID: 3455 Comm: cp Not tainted 5.3.0-rc5-test+ #14
+[   79.950682] Hardware name: Dell Inc. PowerEdge R740/07X9K0, BIOS 2.2.11 06/13/2019
+[   79.958246] RIP: 0010:kpagecount_read+0xdb/0x1a0
+[   79.962859] Code: e8 09 83 e0 3f 48 0f a3 02 73 2d 4c 89 f7 48 c1 e7 06 48 03 3d fe da de 00 74 1d 48 8b 57 08 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 02 75 06 83 7f 30 80 7d 62 31 c0 4c 89 f9 e8 5d c9
+[   79.981603] RSP: 0018:ffffb0d9c950fe70 EFLAGS: 00010202
+[   79.986830] RAX: fffffffffffffffe RBX: ffff8beebe5383c0 RCX: ffffb0d9c950ff00
+[   79.993963] RDX: 0000000000000001 RSI: 00007fd85b29e000 RDI: ffffe77a22000000
+[   80.001095] RBP: 0000000000020000 R08: 0000000000000001 R09: 0000000000000000
+[   80.008226] R10: 0000000000000000 R11: 0000000000000001 R12: 00007fd85b29e000
+[   80.015358] R13: ffffffff893f0480 R14: 0000000000880000 R15: 00007fd85b29e000
+[   80.022491] FS:  00007fd85b312800(0000) GS:ffff8c359fb00000(0000) knlGS:0000000000000000
+[   80.030576] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   80.036321] CR2: fffffffffffffffe CR3: 0000004f54a38001 CR4: 00000000007606e0
+[   80.043455] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   80.050586] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   80.057718] PKRU: 55555554
+[   80.060428] Call Trace:
+[   80.062877]  proc_reg_read+0x39/0x60
+[   80.066459]  vfs_read+0x91/0x140
+[   80.069686]  ksys_read+0x59/0xd0
+[   80.072922]  do_syscall_64+0x59/0x1e0
+[   80.076588]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   80.081637] RIP: 0033:0x7fd85a7f5d75
+===================
 
-On 25.08.2019 09:11, Matthew Wilcox wrote:
-> On Sat, Aug 24, 2019 at 01:01:02PM +0300, Denis Efremov wrote:
->> This patch open codes the bitmap_weight() call. The direct
->> invocation of hweight_long() allows to remove the BUG_ON and
->> excessive "longs to bits, bits to longs" conversion.
-> 
-> Honestly, that's not the problem with this function.  Take a look
-> at https://danluu.com/assembly-intrinsics/ for a _benchmarked_
-> set of problems with popcnt.
-> 
->> BUG_ON was required to check that bitmap_weight() will return
->> a correct value, i.e. the computed weight will fit the int type
->> of the return value.
-> 
-> What?  No.  Look at the _arguments_ of bitmap_weight():
-> 
-> static __always_inline int bitmap_weight(const unsigned long *src, unsigned int nbits)
+It turns out the panic was caused by the kpagecount_read() function
+hitting an uninitialized page structure at PFN 0x880000 where all its
+fields were set to -1. The compound_head value of -1 will mislead the
+kernel to treat -2 as a pointer to the head page of the compound page
+leading to the crash.
 
-I'm not sure why it is INT_MAX then? I would expect in case we care only about arguments
-something like:
+The system have 12 GB of nvdimm ranging from PFN 0x880000-0xb7ffff.
+However, only PFN 0x88c200-0xb7ffff are released by the nvdimm
+driver to the kernel and initialized. IOW, PFN 0x880000-0x88c1ff
+remain uninitialized. Perhaps these 196 MB of nvdimm are reserved for
+internal use.
+
+To fix the panic, we need to find out if a page structure has been
+initialized. This is done now by checking if the PFN is in the range
+of a memory zone assuming that pages in a zone is either correctly
+marked as not present in the mem_section structure or have their page
+structures initialized.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ fs/proc/page.c | 68 +++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 65 insertions(+), 3 deletions(-)
+
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index 544d1ee15aee..ef697eb42065 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -21,6 +21,64 @@
+ #define KPMMASK (KPMSIZE - 1)
+ #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
  
-BUG_ON(longs >= UINT_MAX / BITS_PER_LONG);
++/*
++ * It is possible a page structure is contained in a mem_section that is
++ * regarded as valid but the page structure itself is not properly
++ * initialized. For example, portion of the device memory may be used
++ * internally by device driver or firmware without being managed by the
++ * kernel and hence their page structures may not be initialized.
++ *
++ * An uninitialized page structure may cause the PFN iteration code
++ * in this file to panic the system. To safe-guard against this
++ * possibility, an additional check of the PFN is done to make sure
++ * that it is in a valid range in one of the memory zones:
++ *
++ *	[zone_start_pfn, zone_start_pfn + spanned_pages)
++ *
++ * It is possible that some of the PFNs within a zone is not present.
++ * In this case, it will have to rely on the current mem_section check
++ * as well as the affected page structures are still properly initialized.
++ */
++struct zone_range {
++	unsigned long pfn_start;
++	unsigned long pfn_end;
++};
++
++static void find_next_zone_range(struct zone_range *range)
++{
++	unsigned long start, end;
++	pg_data_t *pgdat;
++	struct zone *zone;
++	int i;
++
++	/*
++	 * Scan all the zone structures to find the next closest one.
++	 */
++	start = end = -1UL
++	for (pgdat = first_online_pgdat(); pgdat;
++	     pgdat = next_online_pgdat(pgdat)) {
++		for (zone = pgdat->node_zones, i = 0; i < MAX_NR_ZONES;
++		     zone++, i++) {
++			if (!zone->spanned_pages)
++				continue;
++			if ((zone->zone_start_pfn >= range->pfn_end) &&
++			    (zone->zone_start_pfn < start)) {
++				start = zone->zone_start_pfn;
++				end   = start + zone->spanned_pages;
++			}
++		}
++	}
++	range->pfn_start = start;
++	range->pfn_end   = end;
++}
++
++static inline bool pfn_in_zone(unsigned long pfn, struct zone_range *range)
++{
++	if (pfn >= range->pfn_end)
++		find_next_zone_range(range);
++	return pfn >= range->start && pfn < range->end;
++}
++
+ /* /proc/kpagecount - an array exposing page counts
+  *
+  * Each entry is a u64 representing the corresponding
+@@ -31,6 +89,7 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ {
+ 	u64 __user *out = (u64 __user *)buf;
+ 	struct page *ppage;
++	struct zone_range range = { 0, 0 };
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
+@@ -42,10 +101,11 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ 		return -EINVAL;
+ 
+ 	while (count > 0) {
+-		if (pfn_valid(pfn))
++		if (pfn_valid(pfn) && pfn_in_zone(pfn, &range))
+ 			ppage = pfn_to_page(pfn);
+ 		else
+ 			ppage = NULL;
++
+ 		if (!ppage || PageSlab(ppage) || page_has_type(ppage))
+ 			pcount = 0;
+ 		else
+@@ -206,6 +266,7 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
+ {
+ 	u64 __user *out = (u64 __user *)buf;
+ 	struct page *ppage;
++	struct zone_range range = { 0, 0 };
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
+@@ -216,7 +277,7 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
+ 		return -EINVAL;
+ 
+ 	while (count > 0) {
+-		if (pfn_valid(pfn))
++		if (pfn_valid(pfn) && pfn_in_zone(pfn, &range))
+ 			ppage = pfn_to_page(pfn);
+ 		else
+ 			ppage = NULL;
+@@ -250,6 +311,7 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+ {
+ 	u64 __user *out = (u64 __user *)buf;
+ 	struct page *ppage;
++	struct zone_range range = { 0, 0 };
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
+@@ -261,7 +323,7 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+ 		return -EINVAL;
+ 
+ 	while (count > 0) {
+-		if (pfn_valid(pfn))
++		if (pfn_valid(pfn) && pfn_in_zone(pfn, &range))
+ 			ppage = pfn_to_page(pfn);
+ 		else
+ 			ppage = NULL;
+-- 
+2.18.1
 
-> 
->> With this patch memweight() controls the
->> computation directly with size_t type everywhere. Thus, the BUG_ON
->> becomes unnecessary.
-> 
-> Why are you bothering?  How are you allocating half a gigabyte of memory?
-> Why are you calling memweight() on half a gigabyte of memory?
-> 
-
-No, we don't use such big arrays. However, it's possible to remove BUG_ON and make
-the code more "straight". Why do we need to "artificially" limit this function
-to arrays of a particular size if we can relatively simple omit this restriction?
-
-> 
-> If you really must change anything, I'd rather see this turned into a
-> loop:
-> 
-> 	while (longs) {
-> 		unsigned int nbits;
-> 
-> 		if (longs >= INT_MAX / BITS_PER_LONG)
-> 			nbits = INT_MAX + 1;
-> 		else
-> 			nbits = longs * BITS_PER_LONG;
-> 
-> 		ret += bitmap_weight((unsigned long *)bitmap, sz);
-> 		bytes -= nbits / 8;
-> 		bitmap += nbits / 8;
-> 		longs -= nbits / BITS_PER_LONG;
-> 	}
-> 
-> then we only have to use Dan Luu's optimisation in bitmap_weight()
-> and not in memweight() as well.
-
-I don't know how the implementation of this optimization will look like in it's
-final shape, because of different hardware/compiler issues. It looks there are
-a number of different ways to do it https://arxiv.org/pdf/1611.07612.pdf, 
-http://0x80.pl/articles/sse-popcount.html.
-
-However, if it will be based on popcnt instruction I would expect that
-hweight_long will also contain this intrinsics. Since version 4.9.2
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=62011#c13 GCC knows of the
-false-dependency in popcnt and generates code to handle it
-(e.g. xor https://godbolt.org/z/Q7AW_d) Thus, I would expect that it's
-possible to use popcnt intrinsics in hweight_long that would be natively
-optimized in all loops like "for (...) { res += hweight_long() }" without
-requiring manual unrolling like in builtin_popcnt_unrolled_errata_manual
-example of Dan Luu's optimization.
-
-> 
-> Also, why does the trailer do this:
-> 
->         for (; bytes > 0; bytes--, bitmap++)
->                 ret += hweight8(*bitmap);
-> 
-> instead of calling hweight_long on *bitmap & mask?
-> 
-
-Do you mean something like this?
-
-        longs = bytes;
-        bytes = do_div(longs, sizeof(long));
-        bitmap_long = (const unsigned long *)bitmap;
-        if (longs) {
-                for (; longs > 0; longs--, bitmap_long++)
-                        ret += hweight_long(*bitmap_long);
-        }
-        if (bytes) {
-                ret += hweight_long(*bitmap_long &
-                                   ((0x1 << bytes * BITS_PER_BYTE) - 1));
-        }
-
-The *bitmap_long will lead to buffer overflow here.
-
-Thanks,
-Denis
