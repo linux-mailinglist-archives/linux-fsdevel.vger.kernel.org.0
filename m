@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF63B9C79B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 05:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11A589C7A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 05:16:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729465AbfHZDQV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Aug 2019 23:16:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35576 "EHLO mail.kernel.org"
+        id S1729485AbfHZDQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Aug 2019 23:16:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbfHZDQV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Aug 2019 23:16:21 -0400
+        id S1726434AbfHZDQd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Aug 2019 23:16:33 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C73AF217F4;
-        Mon, 26 Aug 2019 03:16:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2A1F2168B;
+        Mon, 26 Aug 2019 03:16:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566789380;
-        bh=D2J2yFbNfuX9EmYpsOlxL/yhHWHvzg/hw54VGoYgnN0=;
+        s=default; t=1566789391;
+        bh=uWC/H1l7v6d+/MwTfG766K9JXtMKh6YTaqA+3BYw+7E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pl6imcvKxaV3bep6DFK/+9RlMhgAZn6LLoDPEBksO06VfD6S8PaeLdwFkGJzLPob/
-         KdcZS1riYtxTSx3BR4doPcddoz2Aw5kKTwG9AvseKeJ6wAJwZTNtW10XAxVmrftRAr
-         KWPGkaLR1QL2zgW8MkUeonANezK7Swu703yRVv6g=
+        b=LY8BlqA7MeEPLijQUsaoCM5739rOMHUHX8tuJTSV1xWTYqHVPwt4LXiU9F5SPf1z7
+         A/8GRdiGRwkfvOFaUkmuc3x7JRamQ6mk5CoblNiWYzcwusDUpaq9ZKAxP3PNG+gTHI
+         IGDBnjQuz+aYkrql7nqEiNeNYkug3LQwmxVgKuRA=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Frank Rowand <frowand.list@gmail.com>
@@ -39,9 +39,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 03/19] skc: Add a boot setup routine from cmdline
-Date:   Mon, 26 Aug 2019 12:16:13 +0900
-Message-Id: <156678937345.21459.4178076251522180375.stgit@devnote2>
+Subject: [RFC PATCH v3 04/19] Documentation: skc: Add a doc for supplemental kernel cmdline
+Date:   Mon, 26 Aug 2019 12:16:25 +0900
+Message-Id: <156678938543.21459.628373407524491520.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <156678933823.21459.4100380582025186209.stgit@devnote2>
 References: <156678933823.21459.4100380582025186209.stgit@devnote2>
@@ -54,109 +54,181 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a boot setup routine from cmdline option "skc=ADDR,SIZE".
-Bootloader has to setup this cmdline option when it loads
-the skc file on memory. The ADDR must be a physical address.
+Add a documentation for supplemental kernel cmdline under
+admin-guide, since it is including the syntax of SKC file.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt |    5 ++
- init/main.c                                     |   54 +++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
+ Documentation/admin-guide/index.rst             |    1 
+ Documentation/admin-guide/kernel-parameters.txt |    1 
+ Documentation/admin-guide/skc.rst               |  123 +++++++++++++++++++++++
+ MAINTAINERS                                     |    1 
+ 4 files changed, 126 insertions(+)
+ create mode 100644 Documentation/admin-guide/skc.rst
 
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index 33feab2f4084..44b4cb61003a 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -106,6 +106,7 @@ configure specific aspects of kernel behavior to your liking.
+    rtc
+    svga
+    video-output
++   skc
+ 
+ .. only::  subproject and html
+ 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 47d981a86e2f..9a955b1bd1bf 100644
+index 9a955b1bd1bf..334ce59de23a 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4273,6 +4273,11 @@
- 	simeth=		[IA-64]
- 	simscsi=
+@@ -4277,6 +4277,7 @@
+ 			Pass the physical memory address and size of loaded
+ 			supplemental kernel cmdline (SKC) text. This will
+ 			be treated by bootloader which loads the SKC file.
++			See Documentation/admin-guide/skc.rst.
  
-+	skc=paddr,size	[SKC]
-+			Pass the physical memory address and size of loaded
-+			supplemental kernel cmdline (SKC) text. This will
-+			be treated by bootloader which loads the SKC file.
-+
  	slram=		[HW,MTD]
  
- 	slab_nomerge	[MM]
-diff --git a/init/main.c b/init/main.c
-index 96f8d5af52d6..d06eb3d63b77 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -36,6 +36,7 @@
- #include <linux/kernel_stat.h>
- #include <linux/start_kernel.h>
- #include <linux/security.h>
-+#include <linux/skc.h>
- #include <linux/smp.h>
- #include <linux/profile.h>
- #include <linux/rcupdate.h>
-@@ -245,6 +246,58 @@ static int __init loglevel(char *str)
- 
- early_param("loglevel", loglevel);
- 
-+#ifdef CONFIG_SKC
-+__initdata unsigned long initial_skc;
-+__initdata unsigned long initial_skc_len;
+diff --git a/Documentation/admin-guide/skc.rst b/Documentation/admin-guide/skc.rst
+new file mode 100644
+index 000000000000..dc6f7ba8e1d7
+--- /dev/null
++++ b/Documentation/admin-guide/skc.rst
+@@ -0,0 +1,123 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+static int __init save_skc_address(char *str)
-+{
-+	char *p;
++================================
++Supplemental Kernel Commandline
++================================
 +
-+	p = strchr(str, ',');
-+	if (!p)
-+		return -EINVAL;
-+	*p++ = '\0';
-+	/* First options should be physical address - int is not enough */
-+	if (kstrtoul(str, 0, &initial_skc) < 0)
-+		return -EINVAL;
-+	if (kstrtoul(p, 0, &initial_skc_len) < 0)
-+		return -EINVAL;
-+	if (initial_skc_len > SKC_DATA_MAX)
-+		return -E2BIG;
-+	/* Reserve it for protection */
-+	memblock_reserve(initial_skc, initial_skc_len);
++:Author: Masami Hiramatsu <mhiramat@kernel.org>
 +
-+	return 0;
++Overview
++========
++
++Supplemental Kernel Commandline (SKC) is expanding current kernel cmdline
++to support additional key-value data when boot the kernel in efficient way.
++This allows adoministrators to pass a tree-structured key-value text file
++(SKC file) via bootloaders.
++
++SKC File Syntax
++===============
++
++SKC basic syntax is simple. Each key consists of dot-connected-words, and
++key and value are connected by "=". The value has to be terminated by semi-
++colon (";"). For array value, array entries are separated by comma (",").
++
++KEY[.WORD[...]] = VALUE[, VALUE2[...]];
++
++Each key word only contains alphabet, number, dash ("-") or underscore ("_").
++If a value need to contain the delimiters, you can use double-quotes to
++quote it. A double quote in VALUE can be escaped by backslash. There can
++be a key which doesn't have value or has an empty value. Those keys are
++used for checking the key exists or not (like a boolean).
++
++Tree Structure
++--------------
++
++SKC allows user to merge partially same word keys by brace. For example,
++
++foo.bar.baz = value1;
++foo.bar.qux.quux = value2;
++
++These can be written also in
++
++foo.bar {
++   baz = value1;
++   qux.quux = value2;
 +}
-+early_param("skc", save_skc_address);
 +
-+static void __init setup_skc(void)
-+{
-+	u32 size;
-+	char *data, *copy;
++In both style, same key words are automatically merged when parsing it
++at boot time. So you can append similar trees or key-values.
 +
-+	if (!initial_skc)
-+		return;
++SKC File Limitation
++===================
 +
-+	data = early_memremap(initial_skc, initial_skc_len);
-+	size = initial_skc_len + 1;
++Currently the maximum SKC file size is 32KB and the total key-words (not
++key-value entries) must be under 512 nodes.
 +
-+	copy = memblock_alloc(size, SMP_CACHE_BYTES);
-+	if (!copy) {
-+		pr_err("Failed to allocate memory for structured kernel cmdline\n");
-+		goto end;
-+	}
-+	memcpy(copy, data, initial_skc_len);
-+	copy[size - 1] = '\0';
++/proc/sup_cmdline
++=================
 +
-+	skc_init(copy);
-+end:
-+	early_memunmap(data, initial_skc_len);
-+}
-+#else
-+#define setup_skc()	do { } while (0)
-+#endif
- /* Change NUL term back to "=", to make "param" the whole string. */
- static int __init repair_env_string(char *param, char *val,
- 				    const char *unused, void *arg)
-@@ -596,6 +649,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	setup_arch(&command_line);
- 	mm_init_cpumask(&init_mm);
- 	setup_command_line(command_line);
-+	setup_skc();
- 	setup_nr_cpu_ids();
- 	setup_per_cpu_areas();
- 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
++/proc/sup_cmdline is the user-space interface of supplemental kernel
++cmdline. Unlike /proc/cmdline, this file shows the key-value style list.
++Each key-value pair is shown in each line with following style.
++
++KEY[.WORDS...] = "[VALUE]"[,"VALUE2"...];
++
++How to Pass at Boot
++===================
++
++SKC file is passed to kernel via memory, so the boot loader must support
++loading SKC file. After loading the SKC file on memory, the boot loader
++has to add "skc=PADDR,SIZE" argument to kernel cmdline, where the PADDR
++is the physical address of the memory block and SIZE is the size of SKC
++file.
++
++SKC APIs
++========
++
++User can query or loop on key-value pairs, also it is possible to find
++a root (prefix) key node and find key-values under that node.
++
++If you have a key string, you can query the value directly with the key
++using skc_find_value(). If you want to know what keys exist in the SKC
++tree, you can use skc_for_each_key_value() to iterate key-value pairs.
++Note that you need to use skc_array_for_each_value() for accessing
++each arraies value, e.g.
++
++::
++
++ vnode = NULL;
++ skc_find_value("key.word", &vnode);
++ if (vnode && skc_node_is_array(vnode))
++    skc_array_for_each_value(vnode, value) {
++      printk("%s ", value);
++    }
++
++If you want to focus on keys which has a prefix string, you can use
++skc_find_node() to find a node which prefix key words, and iterate
++keys under the prefix node with skc_node_for_each_key_value().
++
++But the most typical usage is to get the named value under prefix
++or get the named array under prefix as below.
++
++::
++
++ root = skc_find_node("key.prefix");
++ value = skc_node_find_value(root, "option", &vnode);
++ ...
++ skc_node_for_each_array_value(root, "array-option", value, anode) {
++    ...
++ }
++
++This accesses a value of "key.prefix.option" and an array of
++"key.prefix.array-option".
++
++Locking is not needed, since after initialized, SKC becomes readonly.
++All data and keys must be copied if you need to modify it.
++
++
++Functions and structures
++========================
++
++.. kernel-doc:: include/linux/skc.h
++.. kernel-doc:: lib/skc.c
++
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 10dd38311d96..9c0b97643515 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15368,6 +15368,7 @@ S:	Maintained
+ F:	lib/skc.c
+ F:	fs/proc/sup_cmdline.c
+ F:	include/linux/skc.h
++F:	Documentation/admin-guide/skc.rst
+ 
+ SUN3/3X
+ M:	Sam Creasey <sammy@sammy.net>
 
