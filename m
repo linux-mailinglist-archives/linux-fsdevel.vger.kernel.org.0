@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EE489C7D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 05:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EE4E9C7DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 05:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729716AbfHZDTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Aug 2019 23:19:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37774 "EHLO mail.kernel.org"
+        id S1729563AbfHZDTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Aug 2019 23:19:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729437AbfHZDTT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Aug 2019 23:19:19 -0400
+        id S1729378AbfHZDTa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Aug 2019 23:19:30 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D93F62070B;
-        Mon, 26 Aug 2019 03:19:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED8022168B;
+        Mon, 26 Aug 2019 03:19:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566789558;
-        bh=2hqvqjb4JRbv59jAzcU+dKYGR+NXhgzGBeJ3dWiVhdU=;
+        s=default; t=1566789569;
+        bh=uHqfn9peEd3ORIM3wsSJk2LrEw61/eQUGWlnaFOeCsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sv3Fvm/tvtHGU71iCv0m7liX43HCg8VeHCygpsU35XNGDMcGKWwzDKrdw0yE++5e9
-         4zMTqUPTQEVCGxT8rerpMrq4uDWrQflAwvew7Hfec2BvYNDOU8449nhhOMEIJMLIof
-         lpS7xvOCoO9y4pwtelBgIa7XhQD2W53kVMkXZ8jE=
+        b=OwKoveKLdrVY+N9Mn6VFT/RfjDs8u4C7XtkqDlc9V8drC8GIXQz9Dd3PJjCJKkSFV
+         QDHc4BUijUjNWntQI5+6xAqZqxe3utIc0hcV5vz4ogz8CsD9weJqDPTL2g9+KMh8l+
+         j6sqbdG6g1+i06wePcS2bqqwWZh0xRfuWtJargtg=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Frank Rowand <frowand.list@gmail.com>
@@ -39,9 +39,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 18/19] tracing/boot: Add function-graph tracer options
-Date:   Mon, 26 Aug 2019 12:19:11 +0900
-Message-Id: <156678955140.21459.9556721429972023089.stgit@devnote2>
+Subject: [RFC PATCH v3 19/19] Documentation: tracing: Add boot-time tracing document
+Date:   Mon, 26 Aug 2019 12:19:23 +0900
+Message-Id: <156678956359.21459.7183859111623533121.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <156678933823.21459.4100380582025186209.stgit@devnote2>
 References: <156678933823.21459.4100380582025186209.stgit@devnote2>
@@ -54,249 +54,204 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add following function-graph tracer related options
-
- - ftrace.fgraph.filters = FILTER[, FILTER2...];
-   Add fgraph tracing function filters.
-
- - ftrace.fgraph.notraces = FILTER[, FILTER2...];
-   Add fgraph non tracing function filters.
-
- - ftrace.fgraph.max_depth = MAX_DEPTH;
-   Set MAX_DEPTH to maximum depth of fgraph tracer.
-
-Note that these properties are available on ftrace global node
-only, because these filters are globally applied.
+Add a documentation about boot-time tracing options for
+SKC file.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/ftrace.c     |   85 +++++++++++++++++++++++++++++----------------
- kernel/trace/trace_boot.c |   71 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 126 insertions(+), 30 deletions(-)
+ Documentation/trace/boottime-trace.rst |  185 ++++++++++++++++++++++++++++++++
+ 1 file changed, 185 insertions(+)
+ create mode 100644 Documentation/trace/boottime-trace.rst
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index eca34503f178..e016ce12e60a 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -1241,7 +1241,7 @@ static void clear_ftrace_mod_list(struct list_head *head)
- 	mutex_unlock(&ftrace_lock);
- }
- 
--static void free_ftrace_hash(struct ftrace_hash *hash)
-+void free_ftrace_hash(struct ftrace_hash *hash)
- {
- 	if (!hash || hash == EMPTY_HASH)
- 		return;
-@@ -4897,7 +4897,7 @@ __setup("ftrace_filter=", set_ftrace_filter);
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- static char ftrace_graph_buf[FTRACE_FILTER_SIZE] __initdata;
- static char ftrace_graph_notrace_buf[FTRACE_FILTER_SIZE] __initdata;
--static int ftrace_graph_set_hash(struct ftrace_hash *hash, char *buffer);
-+int ftrace_graph_set_hash(struct ftrace_hash *hash, char *buffer);
- 
- static int __init set_graph_function(char *str)
- {
-@@ -5226,6 +5226,26 @@ __ftrace_graph_open(struct inode *inode, struct file *file,
- 	return ret;
- }
- 
-+struct ftrace_hash *ftrace_graph_copy_hash(bool enable)
-+{
-+	struct ftrace_hash *hash;
+diff --git a/Documentation/trace/boottime-trace.rst b/Documentation/trace/boottime-trace.rst
+new file mode 100644
+index 000000000000..fc074afd014e
+--- /dev/null
++++ b/Documentation/trace/boottime-trace.rst
+@@ -0,0 +1,185 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+	mutex_lock(&graph_lock);
++=================
++Boot-time tracing
++=================
 +
-+	if (enable)
-+		hash = rcu_dereference_protected(ftrace_graph_hash,
-+					lockdep_is_held(&graph_lock));
-+	else
-+		hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
-+					lockdep_is_held(&graph_lock));
++:Author: Masami Hiramatsu <mhiramat@kernel.org>
 +
-+	hash = alloc_and_copy_ftrace_hash(FTRACE_HASH_DEFAULT_BITS, hash);
++Overview
++========
 +
-+	mutex_unlock(&graph_lock);
++Boot-time tracing allows users to trace boot-time process including
++device initialization with full features of ftrace including per-event
++filter and actions, histograms, kprobe-events and synthetic-events,
++and trace instances.
++Since kernel cmdline is not enough to control these complex features,
++this uses supplemental kernel cmdline (SKC) to describe tracing
++feature programming.
 +
-+	return hash;
-+}
++Options in Supplemental Kernel Cmdline
++======================================
 +
- static int
- ftrace_graph_open(struct inode *inode, struct file *file)
- {
-@@ -5282,11 +5302,40 @@ ftrace_graph_notrace_open(struct inode *inode, struct file *file)
- 	return ret;
- }
- 
-+int ftrace_graph_apply_hash(struct ftrace_hash *hash, bool enable)
-+{
-+	struct ftrace_hash *old_hash, *new_hash;
++Here is the list of available options list for boot time tracing in
++supplemental kenrel cmdline file [1]_. All options are under "ftrace."
++prefix to isolate from other subsystems.
 +
-+	new_hash = __ftrace_hash_move(hash);
-+	if (!new_hash)
-+		return -ENOMEM;
++.. [1] See Documentation/admin-guide/skc.rst for details.
 +
-+	mutex_lock(&graph_lock);
++Ftrace Global Options
++---------------------
 +
-+	if (enable) {
-+		old_hash = rcu_dereference_protected(ftrace_graph_hash,
-+				lockdep_is_held(&graph_lock));
-+		rcu_assign_pointer(ftrace_graph_hash, new_hash);
-+	} else {
-+		old_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
-+				lockdep_is_held(&graph_lock));
-+		rcu_assign_pointer(ftrace_graph_notrace_hash, new_hash);
-+	}
++These options are only for global ftrace node since these are globally
++applied.
 +
-+	mutex_unlock(&graph_lock);
++ftrace.tp_printk;
++   Output trace-event data on printk buffer too.
 +
-+	/* Wait till all users are no longer using the old hash */
-+	synchronize_rcu();
++ftrace.dump_on_oops [= MODE];
++   Dump ftrace on Oops. If MODE = 1 or omitted, dump trace buffer
++   on all CPUs. If MODE = 2, dump a buffer on a CPU which kicks Oops.
 +
-+	free_ftrace_hash(old_hash);
++ftrace.traceoff_on_warning;
++   Stop tracing if WARN_ON() occurs.
 +
-+	return 0;
-+}
++ftrace.fgraph.filters = FILTER[, FILTER2...];
++   Add fgraph tracing function filters.
 +
- static int
- ftrace_graph_release(struct inode *inode, struct file *file)
- {
- 	struct ftrace_graph_data *fgd;
--	struct ftrace_hash *old_hash, *new_hash;
- 	struct trace_parser *parser;
- 	int ret = 0;
- 
-@@ -5311,41 +5360,17 @@ ftrace_graph_release(struct inode *inode, struct file *file)
- 
- 		trace_parser_put(parser);
- 
--		new_hash = __ftrace_hash_move(fgd->new_hash);
--		if (!new_hash) {
--			ret = -ENOMEM;
--			goto out;
--		}
--
--		mutex_lock(&graph_lock);
--
--		if (fgd->type == GRAPH_FILTER_FUNCTION) {
--			old_hash = rcu_dereference_protected(ftrace_graph_hash,
--					lockdep_is_held(&graph_lock));
--			rcu_assign_pointer(ftrace_graph_hash, new_hash);
--		} else {
--			old_hash = rcu_dereference_protected(ftrace_graph_notrace_hash,
--					lockdep_is_held(&graph_lock));
--			rcu_assign_pointer(ftrace_graph_notrace_hash, new_hash);
--		}
--
--		mutex_unlock(&graph_lock);
--
--		/* Wait till all users are no longer using the old hash */
--		synchronize_rcu();
--
--		free_ftrace_hash(old_hash);
-+		ret = ftrace_graph_apply_hash(fgd->new_hash,
-+					fgd->type == GRAPH_FILTER_FUNCTION);
- 	}
- 
-- out:
- 	free_ftrace_hash(fgd->new_hash);
- 	kfree(fgd);
- 
- 	return ret;
- }
- 
--static int
--ftrace_graph_set_hash(struct ftrace_hash *hash, char *buffer)
-+int ftrace_graph_set_hash(struct ftrace_hash *hash, char *buffer)
- {
- 	struct ftrace_glob func_g;
- 	struct dyn_ftrace *rec;
-diff --git a/kernel/trace/trace_boot.c b/kernel/trace/trace_boot.c
-index 942ca8d3fcc8..b32688032d36 100644
---- a/kernel/trace/trace_boot.c
-+++ b/kernel/trace/trace_boot.c
-@@ -72,6 +72,75 @@ trace_boot_set_instance_options(struct trace_array *tr, struct skc_node *node)
- 	}
- }
- 
-+#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-+extern unsigned int fgraph_max_depth;
-+extern struct ftrace_hash *ftrace_graph_copy_hash(bool enable);
-+extern int ftrace_graph_set_hash(struct ftrace_hash *hash, char *buffer);
-+extern int ftrace_graph_apply_hash(struct ftrace_hash *hash, bool enable);
-+extern void free_ftrace_hash(struct ftrace_hash *hash);
++ftrace.fgraph.notraces = FILTER[, FILTER2...];
++   Add fgraph non tracing function filters.
 +
-+static void __init
-+trace_boot_set_fgraph_filter(struct skc_node *node, const char *option,
-+			     bool enable)
-+{
-+	struct ftrace_hash *hash;
-+	struct skc_node *anode;
-+	const char *p;
-+	char *q;
-+	int err;
-+	bool updated = false;
++ftrace.fgraph.max_depth = MAX_DEPTH;
++   Set MAX_DEPTH to maximum depth of fgraph tracer.
 +
-+	hash = ftrace_graph_copy_hash(enable);
-+	if (!hash) {
-+		pr_err("Failed to copy fgraph hash\n");
-+		return;
-+	}
-+	skc_node_for_each_array_value(node, option, anode, p) {
-+		q = kstrdup(p, GFP_KERNEL);
-+		if (!q)
-+			goto free_hash;
-+		err = ftrace_graph_set_hash(hash, q);
-+		kfree(q);
-+		if (err)
-+			pr_err("Failed to add %s: %s\n", option, p);
-+		else
-+			updated = true;
-+	}
-+	if (!updated)
-+		goto free_hash;
 +
-+	if (ftrace_graph_apply_hash(hash, enable) < 0)
-+		pr_err("Failed to apply new fgraph hash\n");
-+	else {
-+		/* If succeeded to apply new hash, old hash is released */
-+		return;
-+	}
++Ftrace Per-instance Options
++---------------------------
 +
-+free_hash:
-+	free_ftrace_hash(hash);
-+}
++These options can be used for each instance including global ftrace node.
 +
-+static void __init
-+trace_boot_set_fgraph_options(struct skc_node *node)
-+{
-+	const char *p;
-+	unsigned long v;
++ftrace.[instance.INSTANCE.]options = OPT1[, OPT2[...]];
++   Enable given ftrace options.
 +
-+	node = skc_node_find_child(node, "fgraph");
-+	if (!node)
-+		return;
++ftrace.[instance.INSTANCE.]trace_clock = CLOCK;
++   Set given CLOCK to ftrace's trace_clock.
 +
-+	trace_boot_set_fgraph_filter(node, "filters", true);
-+	trace_boot_set_fgraph_filter(node, "notraces", false);
++ftrace.[instance.INSTANCE.]buffer_size = SIZE;
++   Configure ftrace buffer size to SIZE. You can use "KB" or "MB"
++   for that SIZE.
 +
-+	p = skc_node_find_value(node, "max_depth", NULL);
-+	if (p && *p != '\0' && !kstrtoul(p, 0, &v))
-+		fgraph_max_depth = (unsigned int)v;
-+}
-+#else
-+#define trace_boot_set_fgraph_options(node)	do {} while (0)
-+#endif
++ftrace.[instance.INSTANCE.]alloc_snapshot;
++   Allocate snapshot buffer.
 +
- static void __init
- trace_boot_set_global_options(struct trace_array *tr, struct skc_node *node)
- {
-@@ -98,6 +167,8 @@ trace_boot_set_global_options(struct trace_array *tr, struct skc_node *node)
- 	if (skc_node_find_value(node, "alloc_snapshot", NULL))
- 		if (tracing_alloc_snapshot() < 0)
- 			pr_err("Failed to allocate snapshot buffer\n");
++ftrace.[instance.INSTANCE.]events = EVENT[, EVENT2[...]];
++   Enable given events on boot. You can use a wild card in EVENT.
 +
-+	trace_boot_set_fgraph_options(node);
- }
- 
- #ifdef CONFIG_EVENT_TRACING
++ftrace.[instance.INSTANCE.]tracer = TRACER;
++   Set TRACER to current tracer on boot. (e.g. function)
++
++ftrace.[instance.INSTANCE.]ftrace.filters
++   This will take an array of tracing function filter rules
++
++ftrace.[instance.INSTANCE.]ftrace.notraces
++   This will take an array of NON-tracing function filter rules
++
++
++Ftrace Per-Event Options
++------------------------
++
++These options are setting per-event options.
++
++ftrace.[instance.INSTANCE.]event.GROUP.EVENT.enable;
++   Enables GROUP:EVENT tracing.
++
++ftrace.[instance.INSTANCE.]event.GROUP.EVENT.filter = FILTER;
++   Set FILTER rule to the GROUP:EVENT.
++
++ftrace.[instance.INSTANCE.]event.GROUP.EVENT.actions = ACTION[, ACTION2[...]];
++   Set ACTIONs to the GROUP:EVENT.
++
++ftrace.[instance.INSTANCE.]event.kprobes.EVENT.probes = PROBE[, PROBE2[...]];
++   Defines new kprobe event based on PROBEs. It is able to define
++   multiple probes on one event, but those must have same type of
++   arguments. This option is available only for the event which
++   group name is "kprobes".
++
++ftrace.[instance.INSTANCE.]event.synthetic.EVENT.fields = FIELD[, FIELD2[...]];
++   Defines new synthetic event with FIELDs. Each field should be
++   "type varname".
++
++Note that kprobe and synthetic event definitions can be written under
++instance node, but those are also visible from other instances. So please
++take care for event name conflict.
++
++Examples
++========
++
++For example, to add filter and actions for each event, define kprobe
++events, and synthetic events with histogram, write SKC like below.
++
++::
++
++  ftrace.event {
++        task.task_newtask {
++                filter = "pid < 128";
++                enable;
++        }
++        kprobes.vfs_read {
++                probes = "vfs_read $arg1 $arg2";
++                filter = "common_pid < 200";
++                enable;
++        }
++        synthetic.initcall_latency {
++                fields = "unsigned long func", "u64 lat";
++                actions = "hist:keys=func.sym,lat:vals=lat:sort=lat";
++        }
++        initcall.initcall_start {
++                actions = "hist:keys=func:ts0=common_timestamp.usecs";
++        }
++        initcall.initcall_finish {
++                actions = "hist:keys=func:lat=common_timestamp.usecs-$ts0:onmatch(initcall.initcall_start).initcall_latency(func,$lat)";
++        }
++  }
++
++Also, boottime tracing supports "instance" node, which allows us to run
++several tracers for different purpose at once. For example, one tracer
++is for tracing functions in module alpha, and others tracing module beta,
++you can write as below.
++
++::
++
++  ftrace.instance {
++        foo {
++                tracer = "function";
++                ftrace-filters = "*:mod:alpha";
++        }
++        bar {
++                tracer = "function";
++                ftrace-filters = "*:mod:beta";
++        }
++  }
++
++The instance node also accepts event nodes so that each instance
++can customize its event tracing.
++
++This boot-time trace also supports ftrace kernel parameters.
++For example, following kernel parameters
++
++::
++
++ trace_options=sym-addr trace_event=initcall:* tp_printk trace_buf_size=1M ftrace=function ftrace_filter="vfs*"
++
++This can be written in SKC like below.
++
++::
++
++  ftrace {
++        options = sym-addr;
++        events = "initcall:*";
++        tp-printk;
++        buffer-size = 1MB;
++        ftrace-filters = "vfs*";
++  }
++
++However, since the initialization timing is different, if you need
++to trace very early boot, please use normal kernel parameters.
 
