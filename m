@@ -2,80 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CB709D7A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 22:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F25F19D7D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 22:58:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731330AbfHZUpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Aug 2019 16:45:10 -0400
-Received: from 195-159-176-226.customer.powertech.no ([195.159.176.226]:58990
-        "EHLO blaine.gmane.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727464AbfHZUpI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:45:08 -0400
-Received: from list by blaine.gmane.org with local (Exim 4.89)
-        (envelope-from <lnx-linux-fsdevel@m.gmane.org>)
-        id 1i2LrK-0007aw-I0
-        for linux-fsdevel@vger.kernel.org; Mon, 26 Aug 2019 22:45:02 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     linux-fsdevel@vger.kernel.org
-From:   sbaugh@catern.com
-Subject: Re: [PATCH RESEND v11 7/8] open: openat2(2) syscall
-Date:   Mon, 26 Aug 2019 19:50:50 +0000
-Message-ID: <854l2366zp.fsf@catern.com>
-References: <20190820033406.29796-1-cyphar@cyphar.com>
-        <20190820033406.29796-8-cyphar@cyphar.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-Cancel-Lock: sha1:ym8TD2+JE56rxevrCvTf9T8Ptcg=
-Cc:     linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@ozlabs.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@ozlabs.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@ozlabs.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org
+        id S1726537AbfHZU6g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Aug 2019 16:58:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60510 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725983AbfHZU6g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Aug 2019 16:58:36 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 49BBA3082B13;
+        Mon, 26 Aug 2019 20:58:35 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 78ECA5D9E2;
+        Mon, 26 Aug 2019 20:58:30 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 0B6E922017B; Mon, 26 Aug 2019 16:58:30 -0400 (EDT)
+Date:   Mon, 26 Aug 2019 16:58:29 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        stefanha@redhat.com, dgilbert@redhat.com,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 02/19] dax: Pass dax_dev to dax_writeback_mapping_range()
+Message-ID: <20190826205829.GC13860@redhat.com>
+References: <20190821175720.25901-1-vgoyal@redhat.com>
+ <20190821175720.25901-3-vgoyal@redhat.com>
+ <20190826115316.GB21051@infradead.org>
+ <20190826203326.GB13860@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190826203326.GB13860@redhat.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 26 Aug 2019 20:58:35 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Aleksa Sarai <cyphar@cyphar.com> writes:
-> To this end, we introduce the openat2(2) syscall. It provides all of the
-> features of openat(2) through the @how->flags argument, but also
-> also provides a new @how->resolve argument which exposes RESOLVE_* flags
-> that map to our new LOOKUP_* flags. It also eliminates the long-standing
-> ugliness of variadic-open(2) by embedding it in a struct.
+On Mon, Aug 26, 2019 at 04:33:26PM -0400, Vivek Goyal wrote:
+> On Mon, Aug 26, 2019 at 04:53:16AM -0700, Christoph Hellwig wrote:
+> > On Wed, Aug 21, 2019 at 01:57:03PM -0400, Vivek Goyal wrote:
+> > > Right now dax_writeback_mapping_range() is passed a bdev and dax_dev
+> > > is searched from that bdev name.
+> > > 
+> > > virtio-fs does not have a bdev. So pass in dax_dev also to
+> > > dax_writeback_mapping_range(). If dax_dev is passed in, bdev is not
+> > > used otherwise dax_dev is searched using bdev.
+> > 
+> > Please just pass in only the dax_device and get rid of the block device.
+> > The callers should have one at hand easily, e.g. for XFS just call
+> > xfs_find_daxdev_for_inode instead of xfs_find_bdev_for_inode.
+> 
+> Sure. Here is the updated patch.
+> 
+> This patch can probably go upstream independently. If you are fine with
+> the patch, I can post it separately for inclusion.
 
-I don't like this usage of a structure in memory to pass arguments that
-would fit in registers. This would be quite inconvenient for me as a
-userspace developer.
+Forgot to update function declaration in case of !CONFIG_FS_DAX. Here is
+the updated patch.
 
-Others have brought up issues with this: the issue of seccomp, and the
-issue of mismatch between the userspace interface and the kernel
-interface, are the most important for me. I want to add another,
-admittedly somewhat niche, concern.
+Subject: dax: Pass dax_dev instead of bdev to dax_writeback_mapping_range()
 
-This interfaces requires a program to allocate memory (even on the
-stack) just to pass arguments to the kernel which could be passed
-without allocating that memory. That makes it more difficult and less
-efficient to use this syscall in any case where memory is not so easily
-allocatable: such as early program startup or assembly, where the stack
-may be limited in size or not even available yet, or when injecting a
-syscall while ptracing.
+As of now dax_writeback_mapping_range() takes "struct block_device" as a
+parameter and dax_dev is searched from bdev name. This also involves taking
+a fresh reference on dax_dev and putting that reference at the end of
+function.
 
-A struct-passing interface was needed for clone, since we ran out of
-registers; but we have not run out of registers yet for openat, so it
-would be nice to avoid this if we can. We can always expand later...
+We are developing a new filesystem virtio-fs and using dax to access host
+page cache directly. But there is no block device. IOW, we want to make
+use of dax but want to get rid of this assumption that there is always
+a block device associated with dax_dev.
 
+So pass in "struct dax_device" as parameter instead of bdev.
+
+ext2/ext4/xfs are current users and they already have a reference on
+dax_device. So there is no need to take reference and drop reference to
+dax_device on each call of this function.
+
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+---
+ fs/dax.c            |    8 +-------
+ fs/ext2/inode.c     |    5 +++--
+ fs/ext4/inode.c     |    2 +-
+ fs/xfs/xfs_aops.c   |    2 +-
+ include/linux/dax.h |    4 ++--
+ 5 files changed, 8 insertions(+), 13 deletions(-)
+
+Index: rhvgoyal-linux-fuse/fs/dax.c
+===================================================================
+--- rhvgoyal-linux-fuse.orig/fs/dax.c	2019-08-26 16:45:26.093710196 -0400
++++ rhvgoyal-linux-fuse/fs/dax.c	2019-08-26 16:45:29.462710196 -0400
+@@ -936,12 +936,11 @@ static int dax_writeback_one(struct xa_s
+  * on persistent storage prior to completion of the operation.
+  */
+ int dax_writeback_mapping_range(struct address_space *mapping,
+-		struct block_device *bdev, struct writeback_control *wbc)
++		struct dax_device *dax_dev, struct writeback_control *wbc)
+ {
+ 	XA_STATE(xas, &mapping->i_pages, wbc->range_start >> PAGE_SHIFT);
+ 	struct inode *inode = mapping->host;
+ 	pgoff_t end_index = wbc->range_end >> PAGE_SHIFT;
+-	struct dax_device *dax_dev;
+ 	void *entry;
+ 	int ret = 0;
+ 	unsigned int scanned = 0;
+@@ -952,10 +951,6 @@ int dax_writeback_mapping_range(struct a
+ 	if (!mapping->nrexceptional || wbc->sync_mode != WB_SYNC_ALL)
+ 		return 0;
+ 
+-	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+-	if (!dax_dev)
+-		return -EIO;
+-
+ 	trace_dax_writeback_range(inode, xas.xa_index, end_index);
+ 
+ 	tag_pages_for_writeback(mapping, xas.xa_index, end_index);
+@@ -976,7 +971,6 @@ int dax_writeback_mapping_range(struct a
+ 		xas_lock_irq(&xas);
+ 	}
+ 	xas_unlock_irq(&xas);
+-	put_dax(dax_dev);
+ 	trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
+ 	return ret;
+ }
+Index: rhvgoyal-linux-fuse/include/linux/dax.h
+===================================================================
+--- rhvgoyal-linux-fuse.orig/include/linux/dax.h	2019-08-26 16:45:26.094710196 -0400
++++ rhvgoyal-linux-fuse/include/linux/dax.h	2019-08-26 16:46:08.101710196 -0400
+@@ -141,7 +141,7 @@ static inline void fs_put_dax(struct dax
+ 
+ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+ int dax_writeback_mapping_range(struct address_space *mapping,
+-		struct block_device *bdev, struct writeback_control *wbc);
++		struct dax_device *dax_dev, struct writeback_control *wbc);
+ 
+ struct page *dax_layout_busy_page(struct address_space *mapping);
+ dax_entry_t dax_lock_page(struct page *page);
+@@ -180,7 +180,7 @@ static inline struct page *dax_layout_bu
+ }
+ 
+ static inline int dax_writeback_mapping_range(struct address_space *mapping,
+-		struct block_device *bdev, struct writeback_control *wbc)
++		struct dax_device *dax_dev, struct writeback_control *wbc)
+ {
+ 	return -EOPNOTSUPP;
+ }
+Index: rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c
+===================================================================
+--- rhvgoyal-linux-fuse.orig/fs/xfs/xfs_aops.c	2019-08-26 16:45:26.094710196 -0400
++++ rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c	2019-08-26 16:45:29.471710196 -0400
+@@ -1120,7 +1120,7 @@ xfs_dax_writepages(
+ {
+ 	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+ 	return dax_writeback_mapping_range(mapping,
+-			xfs_find_bdev_for_inode(mapping->host), wbc);
++			xfs_find_daxdev_for_inode(mapping->host), wbc);
+ }
+ 
+ STATIC int
+Index: rhvgoyal-linux-fuse/fs/ext4/inode.c
+===================================================================
+--- rhvgoyal-linux-fuse.orig/fs/ext4/inode.c	2019-08-26 16:45:26.093710196 -0400
++++ rhvgoyal-linux-fuse/fs/ext4/inode.c	2019-08-26 16:45:29.475710196 -0400
+@@ -2992,7 +2992,7 @@ static int ext4_dax_writepages(struct ad
+ 	percpu_down_read(&sbi->s_journal_flag_rwsem);
+ 	trace_ext4_writepages(inode, wbc);
+ 
+-	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
++	ret = dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
+ 	trace_ext4_writepages_result(inode, wbc, ret,
+ 				     nr_to_write - wbc->nr_to_write);
+ 	percpu_up_read(&sbi->s_journal_flag_rwsem);
+Index: rhvgoyal-linux-fuse/fs/ext2/inode.c
+===================================================================
+--- rhvgoyal-linux-fuse.orig/fs/ext2/inode.c	2019-08-26 16:45:26.093710196 -0400
++++ rhvgoyal-linux-fuse/fs/ext2/inode.c	2019-08-26 16:45:29.477710196 -0400
+@@ -957,8 +957,9 @@ ext2_writepages(struct address_space *ma
+ static int
+ ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ {
+-	return dax_writeback_mapping_range(mapping,
+-			mapping->host->i_sb->s_bdev, wbc);
++	struct ext2_sb_info *sbi = EXT2_SB(mapping->host->i_sb);
++
++	return dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
+ }
+ 
+ const struct address_space_operations ext2_aops = {
