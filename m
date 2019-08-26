@@ -2,228 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C46A49CFB3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 14:39:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD939CFBF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 14:43:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731589AbfHZMjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Aug 2019 08:39:22 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40698 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730339AbfHZMjV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Aug 2019 08:39:21 -0400
-Received: by mail-io1-f67.google.com with SMTP id t6so36869810ios.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2019 05:39:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YOU9KpxnbxwjroAoLN6nO3rj6o1czLYsPrc8u9VJFHY=;
-        b=UGZXTR9rSsPK/bPMUD7uNXg0wdceU7KooQOPUZZp0ZuQnKz1rREClac5yFQKJRQ+pY
-         DDtrPL+YTYiovSXvBbTaMVWg6u6fW2bz058lwSkyA/1BnCv7rBVUBkZ6cvi9mbE13PIs
-         e6ZLpSvzqUnAuti3AM+Qbkas4/K15wSoFrT8g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YOU9KpxnbxwjroAoLN6nO3rj6o1czLYsPrc8u9VJFHY=;
-        b=tGdX7JfxNRD4q2B+72kJo+5Gk/hbIWSoEIX4NUbHlgbTxdapmGbsXYr269MdEAvB5j
-         OseWdHs50vKuGzLILZ6iGCRF5TN3kjh+gugWFYNMpIXeIErMUPpouy57a+yPuT+Iz3AV
-         mPMt+pYFqTDIk8Ll4YG7JcHozOnxlja4HXd2Zo5A1cI+WMyeAqftEnAyFw+8PH1m1eQa
-         KXUg4Lx62BjmgK9fZ8UyW+3ky3kfuCIoqhkbkkkaz69rayw3NUy4QcHpcpIP+eW059j5
-         rO6gZHEIYPHOHB8wjCDQoVtmvncgxJT/1ufh/HgoZ16NhWduGdxG18KidiaD1ADgJdiq
-         PJOQ==
-X-Gm-Message-State: APjAAAUIvKriLJ2DV23TkaZBPbvDXERzBtxkM96UHYHuG4QEsiIiPOu9
-        twBUwNBTFq0WW8qqBm8zGlC+8ZONJH7x4/WqMouuPi0v
-X-Google-Smtp-Source: APXvYqxdvM0/0EfiU9wUKkLve8iNkEyYaGWc0vEgYEFTJdpI5iFdLSM7bTjcXTdmLy9MzwkebLzQSmaUb48ObAurlbw=
-X-Received: by 2002:a5e:9403:: with SMTP id q3mr14186113ioj.63.1566823160918;
- Mon, 26 Aug 2019 05:39:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <5abd7616-5351-761c-0c14-21d511251006@huawei.com>
- <20190820091650.GE9855@stefanha-x1.localdomain> <CAJfpegs8fSLoUaWKhC1543Hoy9821vq8=nYZy-pw1+95+Yv4gQ@mail.gmail.com>
- <20190821160551.GD9095@stefanha-x1.localdomain> <954b5f8a-4007-f29c-f38e-dd5585879541@huawei.com>
- <CAJfpegtBYLJLWM8GJ1h66PMf2J9o38FG6udcd2hmamEEQddf5w@mail.gmail.com>
- <0e8090c7-0c7c-bcbe-af75-33054d3a3efb@huawei.com> <CAJfpegurYLAApon5Ai6Q33vEy+GPxtOTUwDCCbJ2JAbg4csDSg@mail.gmail.com>
- <a19866be-3693-648e-ee6c-8d302c830834@huawei.com> <CAOssrKd7bKts2tCAZaXLJt+BVoQtqWoJV6HfT76-qxg7W4g9PQ@mail.gmail.com>
- <CAJfpegt574w1Rzge-59-1dRVtfPgCrFuCpJ5DjLQwSWg+G3ArA@mail.gmail.com> <fd7a2791-d95c-3bd9-e387-b8778a9eca83@huawei.com>
-In-Reply-To: <fd7a2791-d95c-3bd9-e387-b8778a9eca83@huawei.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 26 Aug 2019 14:39:09 +0200
-Message-ID: <CAJfpegsd7v=DWwhAnNRq+L28xQFaw9EPhLyStnAG8V_hc_TZvg@mail.gmail.com>
-Subject: Re: [Virtio-fs] [QUESTION] A performance problem for buffer write
- compared with 9p
-To:     wangyan <wangyan122@huawei.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>
-Content-Type: multipart/mixed; boundary="000000000000eeed1d0591047149"
+        id S1731847AbfHZMny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Aug 2019 08:43:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36166 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730339AbfHZMny (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Aug 2019 08:43:54 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 02FB1307CDEA;
+        Mon, 26 Aug 2019 12:43:54 +0000 (UTC)
+Received: from llong.com (dhcp-17-160.bos.redhat.com [10.18.17.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B53C9100194E;
+        Mon, 26 Aug 2019 12:43:47 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] fs/proc/page: Skip uninitialized page when iterating page structures
+Date:   Mon, 26 Aug 2019 08:43:36 -0400
+Message-Id: <20190826124336.8742-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 26 Aug 2019 12:43:54 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000eeed1d0591047149
-Content-Type: text/plain; charset="UTF-8"
+It was found that on a dual-socket x86-64 system with nvdimm, reading
+/proc/kpagecount may cause the system to panic:
 
-On Sat, Aug 24, 2019 at 10:44 AM wangyan <wangyan122@huawei.com> wrote:
+===================
+[   79.917682] BUG: unable to handle page fault for address: fffffffffffffffe
+[   79.924558] #PF: supervisor read access in kernel mode
+[   79.929696] #PF: error_code(0x0000) - not-present page
+[   79.934834] PGD 87b60d067 P4D 87b60d067 PUD 87b60f067 PMD 0
+[   79.940494] Oops: 0000 [#1] SMP NOPTI
+[   79.944157] CPU: 89 PID: 3455 Comm: cp Not tainted 5.3.0-rc5-test+ #14
+[   79.950682] Hardware name: Dell Inc. PowerEdge R740/07X9K0, BIOS 2.2.11 06/13/2019
+[   79.958246] RIP: 0010:kpagecount_read+0xdb/0x1a0
+[   79.962859] Code: e8 09 83 e0 3f 48 0f a3 02 73 2d 4c 89 f7 48 c1 e7 06 48 03 3d fe da de 00 74 1d 48 8b 57 08 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 02 75 06 83 7f 30 80 7d 62 31 c0 4c 89 f9 e8 5d c9
+[   79.981603] RSP: 0018:ffffb0d9c950fe70 EFLAGS: 00010202
+[   79.986830] RAX: fffffffffffffffe RBX: ffff8beebe5383c0 RCX: ffffb0d9c950ff00
+[   79.993963] RDX: 0000000000000001 RSI: 00007fd85b29e000 RDI: ffffe77a22000000
+[   80.001095] RBP: 0000000000020000 R08: 0000000000000001 R09: 0000000000000000
+[   80.008226] R10: 0000000000000000 R11: 0000000000000001 R12: 00007fd85b29e000
+[   80.015358] R13: ffffffff893f0480 R14: 0000000000880000 R15: 00007fd85b29e000
+[   80.022491] FS:  00007fd85b312800(0000) GS:ffff8c359fb00000(0000) knlGS:0000000000000000
+[   80.030576] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   80.036321] CR2: fffffffffffffffe CR3: 0000004f54a38001 CR4: 00000000007606e0
+[   80.043455] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   80.050586] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   80.057718] PKRU: 55555554
+[   80.060428] Call Trace:
+[   80.062877]  proc_reg_read+0x39/0x60
+[   80.066459]  vfs_read+0x91/0x140
+[   80.069686]  ksys_read+0x59/0xd0
+[   80.072922]  do_syscall_64+0x59/0x1e0
+[   80.076588]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   80.081637] RIP: 0033:0x7fd85a7f5d75
+===================
 
-> According to the result, for "-size=1G", it maybe exceed the dirty pages'
-> upper limit, and it frequently triggered pdflush for write-back. And for
-> "-size=700M", it maybe didn't exceed the dirty pages' upper limit, so no
-> extra pdflush was triggered.
->
-> But for 9p using "-size=1G", the latency 3.94 usec, and the bandwidth is
-> 2305.5MB/s. It is better than virtiofs using "-size=1G". It seems that
-> it is not affected by the dirty pages' upper limit.
+It turns out the panic was caused by the kpagecount_read() function
+hitting an uninitialized page structure at PFN 0x880000 where all its
+fields were set to -1. The compound_head value of -1 will mislead the
+kernel to treat -2 as a pointer to the head page of the compound page
+leading to the crash.
 
-I tried to reproduce these results, but failed to get decent
-(>100MB/s) performance out of 9p.  I don't have fscache set up, does
-that play a part in getting high performance cached writes?
+The system have 12 GB of nvdimm ranging from PFN 0x880000-0xb7ffff.
+However, only PFN 0x88c200-0xb7ffff are released by the nvdimm
+driver to the kernel and initialized. IOW, PFN 0x880000-0x88c1ff
+remain uninitialized. Perhaps these 196 MB of nvdimm are reserved for
+internal use.
 
-What you describe makes sense, and I have a new patch (attached), but
-didn't see drastic improvement in performance of virtio-fs in my
-tests.
+To fix the panic, we need to find out if a page structure has been
+initialized. This is done now by checking if the PFN is in the range
+of a memory zone assuming that pages in a zone is either correctly
+marked as not present in the mem_section structure or have their page
+structures initialized.
 
-Thanks,
-Miklos
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ fs/proc/page.c | 68 +++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 65 insertions(+), 3 deletions(-)
 
---000000000000eeed1d0591047149
-Content-Type: text/x-patch; charset="US-ASCII"; name="virtio-fs-nostrict-v4.patch"
-Content-Disposition: attachment; filename="virtio-fs-nostrict-v4.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jzse068u0>
-X-Attachment-Id: f_jzse068u0
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index 544d1ee15aee..fee55ad95893 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -21,6 +21,64 @@
+ #define KPMMASK (KPMSIZE - 1)
+ #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
+ 
++/*
++ * It is possible a page structure is contained in a mem_section that is
++ * regarded as valid but the page structure itself is not properly
++ * initialized. For example, portion of the device memory may be used
++ * internally by device driver or firmware without being managed by the
++ * kernel and hence their page structures may not be initialized.
++ *
++ * An uninitialized page structure may cause the PFN iteration code
++ * in this file to panic the system. To safe-guard against this
++ * possibility, an additional check of the PFN is done to make sure
++ * that it is in a valid range in one of the memory zones:
++ *
++ *	[zone_start_pfn, zone_start_pfn + spanned_pages)
++ *
++ * It is possible that some of the PFNs within a zone is not present.
++ * In this case, it will have to rely on the current mem_section check
++ * as well as the affected page structures are still properly initialized.
++ */
++struct zone_range {
++	unsigned long pfn_start;
++	unsigned long pfn_end;
++};
++
++static void find_next_zone_range(struct zone_range *range)
++{
++	unsigned long start, end;
++	pg_data_t *pgdat;
++	struct zone *zone;
++	int i;
++
++	/*
++	 * Scan all the zone structures to find the next closest one.
++	 */
++	start = end = -1UL;
++	for (pgdat = first_online_pgdat(); pgdat;
++	     pgdat = next_online_pgdat(pgdat)) {
++		for (zone = pgdat->node_zones, i = 0; i < MAX_NR_ZONES;
++		     zone++, i++) {
++			if (!zone->spanned_pages)
++				continue;
++			if ((zone->zone_start_pfn >= range->pfn_end) &&
++			    (zone->zone_start_pfn < start)) {
++				start = zone->zone_start_pfn;
++				end   = start + zone->spanned_pages;
++			}
++		}
++	}
++	range->pfn_start = start;
++	range->pfn_end   = end;
++}
++
++static inline bool pfn_in_zone(unsigned long pfn, struct zone_range *range)
++{
++	if (pfn >= range->pfn_end)
++		find_next_zone_range(range);
++	return pfn >= range->pfn_start && pfn < range->pfn_end;
++}
++
+ /* /proc/kpagecount - an array exposing page counts
+  *
+  * Each entry is a u64 representing the corresponding
+@@ -31,6 +89,7 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ {
+ 	u64 __user *out = (u64 __user *)buf;
+ 	struct page *ppage;
++	struct zone_range range = { 0, 0 };
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
+@@ -42,10 +101,11 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ 		return -EINVAL;
+ 
+ 	while (count > 0) {
+-		if (pfn_valid(pfn))
++		if (pfn_valid(pfn) && pfn_in_zone(pfn, &range))
+ 			ppage = pfn_to_page(pfn);
+ 		else
+ 			ppage = NULL;
++
+ 		if (!ppage || PageSlab(ppage) || page_has_type(ppage))
+ 			pcount = 0;
+ 		else
+@@ -206,6 +266,7 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
+ {
+ 	u64 __user *out = (u64 __user *)buf;
+ 	struct page *ppage;
++	struct zone_range range = { 0, 0 };
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
+@@ -216,7 +277,7 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
+ 		return -EINVAL;
+ 
+ 	while (count > 0) {
+-		if (pfn_valid(pfn))
++		if (pfn_valid(pfn) && pfn_in_zone(pfn, &range))
+ 			ppage = pfn_to_page(pfn);
+ 		else
+ 			ppage = NULL;
+@@ -250,6 +311,7 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+ {
+ 	u64 __user *out = (u64 __user *)buf;
+ 	struct page *ppage;
++	struct zone_range range = { 0, 0 };
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
+@@ -261,7 +323,7 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+ 		return -EINVAL;
+ 
+ 	while (count > 0) {
+-		if (pfn_valid(pfn))
++		if (pfn_valid(pfn) && pfn_in_zone(pfn, &range))
+ 			ppage = pfn_to_page(pfn);
+ 		else
+ 			ppage = NULL;
+-- 
+2.18.1
 
-LS0tCiBmcy9mdXNlL2ZpbGUuYyAgICAgIHwgIDExMSArKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tCiBmcy9mdXNlL2Z1c2VfaS5oICAgIHwgICAgMyAr
-CiBmcy9mdXNlL2lub2RlLmMgICAgIHwgICAgMyArCiBmcy9mdXNlL3ZpcnRpb19mcy5jIHwgICAg
-NCArCiA0IGZpbGVzIGNoYW5nZWQsIDkwIGluc2VydGlvbnMoKyksIDMxIGRlbGV0aW9ucygtKQoK
-LS0tIGEvZnMvZnVzZS92aXJ0aW9fZnMuYworKysgYi9mcy9mdXNlL3ZpcnRpb19mcy5jCkBAIC04
-OTEsNiArODkxLDEwIEBAIHN0YXRpYyBpbnQgdmlydGlvX2ZzX2ZpbGxfc3VwZXIoc3RydWN0IHMK
-IAlpZiAoZXJyIDwgMCkKIAkJZ290byBlcnJfZnJlZV9pbml0X3JlcTsKIAorCS8qIE5vIHN0cmlj
-dCBhY2NvdW50aW5nIG5lZWRlZCBmb3IgdmlydGlvLWZzICovCisJc2ItPnNfYmRpLT5jYXBhYmls
-aXRpZXMgPSAwOworCWJkaV9zZXRfbWF4X3JhdGlvKHNiLT5zX2JkaSwgMTAwKTsKKwogCWZjID0g
-ZnMtPnZxc1tWUV9SRVFVRVNUXS5mdWQtPmZjOwogCiAJLyogVE9ETyB0YWtlIGZ1c2VfbXV0ZXgg
-YXJvdW5kIHRoaXMgbG9vcD8gKi8KLS0tIGEvZnMvZnVzZS9mdXNlX2kuaAorKysgYi9mcy9mdXNl
-L2Z1c2VfaS5oCkBAIC02OTUsNiArNjk1LDkgQEAgc3RydWN0IGZ1c2VfY29ubiB7CiAJLyoqIGNh
-Y2hlIFJFQURMSU5LIHJlc3BvbnNlcyBpbiBwYWdlIGNhY2hlICovCiAJdW5zaWduZWQgY2FjaGVf
-c3ltbGlua3M6MTsKIAorCS8qKiB1c2UgdGVtcCBwYWdlcyBmb3Igd3JpdGViYWNrICovCisJdW5z
-aWduZWQgd3JpdGViYWNrX3RtcDoxOworCiAJLyoKIAkgKiBUaGUgZm9sbG93aW5nIGJpdGZpZWxk
-cyBhcmUgb25seSBmb3Igb3B0aW1pemF0aW9uIHB1cnBvc2VzCiAJICogYW5kIGhlbmNlIHJhY2Vz
-IGluIHNldHRpbmcgdGhlbSB3aWxsIG5vdCBjYXVzZSBtYWxmdW5jdGlvbgotLS0gYS9mcy9mdXNl
-L2lub2RlLmMKKysrIGIvZnMvZnVzZS9pbm9kZS5jCkBAIC0xMjQ0LDYgKzEyNDQsOSBAQCBzdGF0
-aWMgaW50IGZ1c2VfZmlsbF9zdXBlcihzdHJ1Y3Qgc3VwZXJfCiAJZXJyID0gZnVzZV9maWxsX3N1
-cGVyX2NvbW1vbihzYiwgJmQpOwogCWlmIChlcnIgPCAwKQogCQlnb3RvIGVycl9mcmVlX2luaXRf
-cmVxOworCisJZ2V0X2Z1c2VfY29ubl9zdXBlcihzYiktPndyaXRlYmFja190bXAgPSAxOworCiAJ
-LyoKIAkgKiBhdG9taWNfZGVjX2FuZF90ZXN0KCkgaW4gZnB1dCgpIHByb3ZpZGVzIHRoZSBuZWNl
-c3NhcnkKIAkgKiBtZW1vcnkgYmFycmllciBmb3IgZmlsZS0+cHJpdmF0ZV9kYXRhIHRvIGJlIHZp
-c2libGUgb24gYWxsCi0tLSBhL2ZzL2Z1c2UvZmlsZS5jCisrKyBiL2ZzL2Z1c2UvZmlsZS5jCkBA
-IC0zNjMsMTEgKzM2MywxNiBAQCBzdGF0aWMgYm9vbCBmdXNlX3JhbmdlX2lzX3dyaXRlYmFjayhz
-dHJ1CiAJCQkJICAgcGdvZmZfdCBpZHhfdG8pCiB7CiAJc3RydWN0IGZ1c2VfaW5vZGUgKmZpID0g
-Z2V0X2Z1c2VfaW5vZGUoaW5vZGUpOwotCWJvb2wgZm91bmQ7CisJc3RydWN0IGZ1c2VfY29ubiAq
-ZmMgPSBnZXRfZnVzZV9jb25uKGlub2RlKTsKKwlib29sIGZvdW5kID0gZmFsc2U7CiAKLQlzcGlu
-X2xvY2soJmZpLT5sb2NrKTsKLQlmb3VuZCA9IGZ1c2VfZmluZF93cml0ZWJhY2soZmksIGlkeF9m
-cm9tLCBpZHhfdG8pOwotCXNwaW5fdW5sb2NrKCZmaS0+bG9jayk7CisJaWYgKGZjLT53cml0ZWJh
-Y2tfdG1wKSB7CisJCXNwaW5fbG9jaygmZmktPmxvY2spOworCQlmb3VuZCA9IGZ1c2VfZmluZF93
-cml0ZWJhY2soZmksIGlkeF9mcm9tLCBpZHhfdG8pOworCQlzcGluX3VubG9jaygmZmktPmxvY2sp
-OworCX0gZWxzZSB7CisJCVdBUk5fT04oIWxpc3RfZW1wdHkoJmZpLT53cml0ZXBhZ2VzKSk7CisJ
-fQogCiAJcmV0dXJuIGZvdW5kOwogfQpAQCAtMTUxNCw3ICsxNTE5LDcgQEAgc3RhdGljIHZvaWQg
-ZnVzZV93cml0ZXBhZ2VfZnJlZShzdHJ1Y3QgZgogCWludCBpOwogCiAJZm9yIChpID0gMDsgaSA8
-IHJlcS0+bnVtX3BhZ2VzOyBpKyspCi0JCV9fZnJlZV9wYWdlKHJlcS0+cGFnZXNbaV0pOworCQlw
-dXRfcGFnZShyZXEtPnBhZ2VzW2ldKTsKIAogCWlmIChyZXEtPmZmKQogCQlmdXNlX2ZpbGVfcHV0
-KHJlcS0+ZmYsIGZhbHNlLCBmYWxzZSk7CkBAIC0xNTI3LDExICsxNTMyLDE5IEBAIHN0YXRpYyB2
-b2lkIGZ1c2Vfd3JpdGVwYWdlX2ZpbmlzaChzdHJ1Y3QKIAlzdHJ1Y3QgYmFja2luZ19kZXZfaW5m
-byAqYmRpID0gaW5vZGVfdG9fYmRpKGlub2RlKTsKIAlpbnQgaTsKIAotCWxpc3RfZGVsKCZyZXEt
-PndyaXRlcGFnZXNfZW50cnkpOworCWlmIChmYy0+d3JpdGViYWNrX3RtcCkKKwkJbGlzdF9kZWwo
-JnJlcS0+d3JpdGVwYWdlc19lbnRyeSk7CisJZWxzZQorCQlXQVJOX09OKCFsaXN0X2VtcHR5KCZy
-ZXEtPndyaXRlcGFnZXNfZW50cnkpKTsKKwogCWZvciAoaSA9IDA7IGkgPCByZXEtPm51bV9wYWdl
-czsgaSsrKSB7Ci0JCWRlY193Yl9zdGF0KCZiZGktPndiLCBXQl9XUklURUJBQ0spOwotCQlkZWNf
-bm9kZV9wYWdlX3N0YXRlKHJlcS0+cGFnZXNbaV0sIE5SX1dSSVRFQkFDS19URU1QKTsKLQkJd2Jf
-d3JpdGVvdXRfaW5jKCZiZGktPndiKTsKKwkJaWYgKGZjLT53cml0ZWJhY2tfdG1wKSB7CisJCQlk
-ZWNfd2Jfc3RhdCgmYmRpLT53YiwgV0JfV1JJVEVCQUNLKTsKKwkJCWRlY19ub2RlX3BhZ2Vfc3Rh
-dGUocmVxLT5wYWdlc1tpXSwgTlJfV1JJVEVCQUNLX1RFTVApOworCQkJd2Jfd3JpdGVvdXRfaW5j
-KCZiZGktPndiKTsKKwkJfSBlbHNlIHsKKwkJCWVuZF9wYWdlX3dyaXRlYmFjayhyZXEtPnBhZ2Vz
-W2ldKTsKKwkJfQogCX0KIAl3YWtlX3VwKCZmaS0+cGFnZV93YWl0cSk7CiB9CkBAIC0xNjE2LDYg
-KzE2MjksMTAgQEAgc3RhdGljIHZvaWQgZnVzZV93cml0ZXBhZ2VfZW5kKHN0cnVjdCBmdQogCQlz
-dHJ1Y3QgZnVzZV9jb25uICpmYyA9IGdldF9mdXNlX2Nvbm4oaW5vZGUpOwogCQlzdHJ1Y3QgZnVz
-ZV93cml0ZV9pbiAqaW5hcmcgPSAmcmVxLT5taXNjLndyaXRlLmluOwogCQlzdHJ1Y3QgZnVzZV9y
-ZXEgKm5leHQgPSByZXEtPm1pc2Mud3JpdGUubmV4dDsKKworCQlpZiAoV0FSTl9PTighZmMtPndy
-aXRlYmFja190bXApKQorCQkJYnJlYWs7CisKIAkJcmVxLT5taXNjLndyaXRlLm5leHQgPSBuZXh0
-LT5taXNjLndyaXRlLm5leHQ7CiAJCW5leHQtPm1pc2Mud3JpdGUubmV4dCA9IE5VTEw7CiAJCW5l
-eHQtPmZmID0gZnVzZV9maWxlX2dldChyZXEtPmZmKTsKQEAgLTE3MDksOSArMTcyNiwxNiBAQCBz
-dGF0aWMgaW50IGZ1c2Vfd3JpdGVwYWdlX2xvY2tlZChzdHJ1Y3QKIAogCS8qIHdyaXRlYmFjayBh
-bHdheXMgZ29lcyB0byBiZ19xdWV1ZSAqLwogCV9fc2V0X2JpdChGUl9CQUNLR1JPVU5ELCAmcmVx
-LT5mbGFncyk7Ci0JdG1wX3BhZ2UgPSBhbGxvY19wYWdlKEdGUF9OT0ZTIHwgX19HRlBfSElHSE1F
-TSk7Ci0JaWYgKCF0bXBfcGFnZSkKLQkJZ290byBlcnJfZnJlZTsKKworCisJaWYgKGZjLT53cml0
-ZWJhY2tfdG1wKSB7CisJCXRtcF9wYWdlID0gYWxsb2NfcGFnZShHRlBfTk9GUyB8IF9fR0ZQX0hJ
-R0hNRU0pOworCQlpZiAoIXRtcF9wYWdlKQorCQkJZ290byBlcnJfZnJlZTsKKwl9IGVsc2Ugewor
-CQl0bXBfcGFnZSA9IHBhZ2U7CisJCWdldF9wYWdlKHRtcF9wYWdlKTsKKwl9CiAKIAllcnJvciA9
-IC1FSU87CiAJcmVxLT5mZiA9IGZ1c2Vfd3JpdGVfZmlsZV9nZXQoZmMsIGZpKTsKQEAgLTE3MjAs
-NyArMTc0NCw4IEBAIHN0YXRpYyBpbnQgZnVzZV93cml0ZXBhZ2VfbG9ja2VkKHN0cnVjdAogCiAJ
-ZnVzZV93cml0ZV9maWxsKHJlcSwgcmVxLT5mZiwgcGFnZV9vZmZzZXQocGFnZSksIDApOwogCi0J
-Y29weV9oaWdocGFnZSh0bXBfcGFnZSwgcGFnZSk7CisJaWYgKGZjLT53cml0ZWJhY2tfdG1wKQor
-CQljb3B5X2hpZ2hwYWdlKHRtcF9wYWdlLCBwYWdlKTsKIAlyZXEtPm1pc2Mud3JpdGUuaW4ud3Jp
-dGVfZmxhZ3MgfD0gRlVTRV9XUklURV9DQUNIRTsKIAlyZXEtPm1pc2Mud3JpdGUubmV4dCA9IE5V
-TEw7CiAJcmVxLT5pbi5hcmdwYWdlcyA9IDE7CkBAIC0xNzMxLDIxICsxNzU2LDI3IEBAIHN0YXRp
-YyBpbnQgZnVzZV93cml0ZXBhZ2VfbG9ja2VkKHN0cnVjdAogCXJlcS0+ZW5kID0gZnVzZV93cml0
-ZXBhZ2VfZW5kOwogCXJlcS0+aW5vZGUgPSBpbm9kZTsKIAotCWluY193Yl9zdGF0KCZpbm9kZV90
-b19iZGkoaW5vZGUpLT53YiwgV0JfV1JJVEVCQUNLKTsKLQlpbmNfbm9kZV9wYWdlX3N0YXRlKHRt
-cF9wYWdlLCBOUl9XUklURUJBQ0tfVEVNUCk7CisJaWYgKGZjLT53cml0ZWJhY2tfdG1wKSB7CisJ
-CWluY193Yl9zdGF0KCZpbm9kZV90b19iZGkoaW5vZGUpLT53YiwgV0JfV1JJVEVCQUNLKTsKKwkJ
-aW5jX25vZGVfcGFnZV9zdGF0ZSh0bXBfcGFnZSwgTlJfV1JJVEVCQUNLX1RFTVApOworCX0KIAog
-CXNwaW5fbG9jaygmZmktPmxvY2spOwotCWxpc3RfYWRkKCZyZXEtPndyaXRlcGFnZXNfZW50cnks
-ICZmaS0+d3JpdGVwYWdlcyk7CisJaWYgKGZjLT53cml0ZWJhY2tfdG1wKQorCQlsaXN0X2FkZCgm
-cmVxLT53cml0ZXBhZ2VzX2VudHJ5LCAmZmktPndyaXRlcGFnZXMpOworCWVsc2UKKwkJSU5JVF9M
-SVNUX0hFQUQoJnJlcS0+d3JpdGVwYWdlc19lbnRyeSk7CiAJbGlzdF9hZGRfdGFpbCgmcmVxLT5s
-aXN0LCAmZmktPnF1ZXVlZF93cml0ZXMpOwogCWZ1c2VfZmx1c2hfd3JpdGVwYWdlcyhpbm9kZSk7
-CiAJc3Bpbl91bmxvY2soJmZpLT5sb2NrKTsKIAotCWVuZF9wYWdlX3dyaXRlYmFjayhwYWdlKTsK
-KwlpZiAoZmMtPndyaXRlYmFja190bXApCisJCWVuZF9wYWdlX3dyaXRlYmFjayhwYWdlKTsKIAog
-CXJldHVybiAwOwogCiBlcnJfbm9maWxlOgotCV9fZnJlZV9wYWdlKHRtcF9wYWdlKTsKKwlwdXRf
-cGFnZSh0bXBfcGFnZSk7CiBlcnJfZnJlZToKIAlmdXNlX3JlcXVlc3RfZnJlZShyZXEpOwogZXJy
-OgpAQCAtMTc4OCw2ICsxODE5LDcgQEAgc3RhdGljIHZvaWQgZnVzZV93cml0ZXBhZ2VzX3NlbmQo
-c3RydWN0CiAJc3RydWN0IGZ1c2VfcmVxICpyZXEgPSBkYXRhLT5yZXE7CiAJc3RydWN0IGlub2Rl
-ICppbm9kZSA9IGRhdGEtPmlub2RlOwogCXN0cnVjdCBmdXNlX2lub2RlICpmaSA9IGdldF9mdXNl
-X2lub2RlKGlub2RlKTsKKwlzdHJ1Y3QgZnVzZV9jb25uICpmYyA9IGdldF9mdXNlX2Nvbm4oaW5v
-ZGUpOwogCWludCBudW1fcGFnZXMgPSByZXEtPm51bV9wYWdlczsKIAlpbnQgaTsKIApAQCAtMTc5
-Nyw4ICsxODI5LDEwIEBAIHN0YXRpYyB2b2lkIGZ1c2Vfd3JpdGVwYWdlc19zZW5kKHN0cnVjdAog
-CWZ1c2VfZmx1c2hfd3JpdGVwYWdlcyhpbm9kZSk7CiAJc3Bpbl91bmxvY2soJmZpLT5sb2NrKTsK
-IAotCWZvciAoaSA9IDA7IGkgPCBudW1fcGFnZXM7IGkrKykKLQkJZW5kX3BhZ2Vfd3JpdGViYWNr
-KGRhdGEtPm9yaWdfcGFnZXNbaV0pOworCWlmIChmYy0+d3JpdGViYWNrX3RtcCkgeworCQlmb3Ig
-KGkgPSAwOyBpIDwgbnVtX3BhZ2VzOyBpKyspCisJCQllbmRfcGFnZV93cml0ZWJhY2soZGF0YS0+
-b3JpZ19wYWdlc1tpXSk7CisJfQogfQogCiAvKgpAQCAtMTgxNiw2ICsxODUwLDkgQEAgc3RhdGlj
-IGJvb2wgZnVzZV93cml0ZXBhZ2VfaW5fZmxpZ2h0KHN0cgogCXN0cnVjdCBmdXNlX3JlcSAqdG1w
-OwogCXN0cnVjdCBmdXNlX3JlcSAqb2xkX3JlcTsKIAorCWlmIChXQVJOX09OKCFmYy0+d3JpdGVi
-YWNrX3RtcCkpCisJCXJldHVybiBmYWxzZTsKKwogCVdBUk5fT04obmV3X3JlcS0+bnVtX3BhZ2Vz
-ICE9IDApOwogCiAJc3Bpbl9sb2NrKCZmaS0+bG9jayk7CkBAIC0xOTAxLDEwICsxOTM4LDE1IEBA
-IHN0YXRpYyBpbnQgZnVzZV93cml0ZXBhZ2VzX2ZpbGwoc3RydWN0IHAKIAkJfQogCX0KIAotCWVy
-ciA9IC1FTk9NRU07Ci0JdG1wX3BhZ2UgPSBhbGxvY19wYWdlKEdGUF9OT0ZTIHwgX19HRlBfSElH
-SE1FTSk7Ci0JaWYgKCF0bXBfcGFnZSkKLQkJZ290byBvdXRfdW5sb2NrOworCWlmIChmYy0+d3Jp
-dGViYWNrX3RtcCkgeworCQllcnIgPSAtRU5PTUVNOworCQl0bXBfcGFnZSA9IGFsbG9jX3BhZ2Uo
-R0ZQX05PRlMgfCBfX0dGUF9ISUdITUVNKTsKKwkJaWYgKCF0bXBfcGFnZSkKKwkJCWdvdG8gb3V0
-X3VubG9jazsKKwl9IGVsc2UgeworCQl0bXBfcGFnZSA9IHBhZ2U7CisJCWdldF9wYWdlKHRtcF9w
-YWdlKTsKKwl9CiAKIAkvKgogCSAqIFRoZSBwYWdlIG11c3Qgbm90IGJlIHJlZGlydGllZCB1bnRp
-bCB0aGUgd3JpdGVvdXQgaXMgY29tcGxldGVkCkBAIC0xOTI1LDcgKzE5NjcsNyBAQCBzdGF0aWMg
-aW50IGZ1c2Vfd3JpdGVwYWdlc19maWxsKHN0cnVjdCBwCiAJCWVyciA9IC1FTk9NRU07CiAJCXJl
-cSA9IGZ1c2VfcmVxdWVzdF9hbGxvY19ub2ZzKEZVU0VfUkVRX0lOTElORV9QQUdFUyk7CiAJCWlm
-ICghcmVxKSB7Ci0JCQlfX2ZyZWVfcGFnZSh0bXBfcGFnZSk7CisJCQlwdXRfcGFnZSh0bXBfcGFn
-ZSk7CiAJCQlnb3RvIG91dF91bmxvY2s7CiAJCX0KIApAQCAtMTkzOCwyMSArMTk4MCwyOCBAQCBz
-dGF0aWMgaW50IGZ1c2Vfd3JpdGVwYWdlc19maWxsKHN0cnVjdCBwCiAJCXJlcS0+ZW5kID0gZnVz
-ZV93cml0ZXBhZ2VfZW5kOwogCQlyZXEtPmlub2RlID0gaW5vZGU7CiAKLQkJc3Bpbl9sb2NrKCZm
-aS0+bG9jayk7Ci0JCWxpc3RfYWRkKCZyZXEtPndyaXRlcGFnZXNfZW50cnksICZmaS0+d3JpdGVw
-YWdlcyk7Ci0JCXNwaW5fdW5sb2NrKCZmaS0+bG9jayk7CisJCWlmIChmYy0+d3JpdGViYWNrX3Rt
-cCkgeworCQkJc3Bpbl9sb2NrKCZmaS0+bG9jayk7CisJCQlsaXN0X2FkZCgmcmVxLT53cml0ZXBh
-Z2VzX2VudHJ5LCAmZmktPndyaXRlcGFnZXMpOworCQkJc3Bpbl91bmxvY2soJmZpLT5sb2NrKTsK
-KwkJfSBlbHNlIHsKKwkJCUlOSVRfTElTVF9IRUFEKCZyZXEtPndyaXRlcGFnZXNfZW50cnkpOwor
-CQl9CiAKIAkJZGF0YS0+cmVxID0gcmVxOwogCX0KIAlzZXRfcGFnZV93cml0ZWJhY2socGFnZSk7
-CiAKLQljb3B5X2hpZ2hwYWdlKHRtcF9wYWdlLCBwYWdlKTsKKwlpZiAoZmMtPndyaXRlYmFja190
-bXApCisJCWNvcHlfaGlnaHBhZ2UodG1wX3BhZ2UsIHBhZ2UpOwogCXJlcS0+cGFnZXNbcmVxLT5u
-dW1fcGFnZXNdID0gdG1wX3BhZ2U7CiAJcmVxLT5wYWdlX2Rlc2NzW3JlcS0+bnVtX3BhZ2VzXS5v
-ZmZzZXQgPSAwOwogCXJlcS0+cGFnZV9kZXNjc1tyZXEtPm51bV9wYWdlc10ubGVuZ3RoID0gUEFH
-RV9TSVpFOwogCi0JaW5jX3diX3N0YXQoJmlub2RlX3RvX2JkaShpbm9kZSktPndiLCBXQl9XUklU
-RUJBQ0spOwotCWluY19ub2RlX3BhZ2Vfc3RhdGUodG1wX3BhZ2UsIE5SX1dSSVRFQkFDS19URU1Q
-KTsKKwlpZiAoZmMtPndyaXRlYmFja190bXApIHsKKwkJaW5jX3diX3N0YXQoJmlub2RlX3RvX2Jk
-aShpbm9kZSktPndiLCBXQl9XUklURUJBQ0spOworCQlpbmNfbm9kZV9wYWdlX3N0YXRlKHRtcF9w
-YWdlLCBOUl9XUklURUJBQ0tfVEVNUCk7CisJfQogCiAJZXJyID0gMDsKIAlpZiAoaXNfd3JpdGVi
-YWNrICYmIGZ1c2Vfd3JpdGVwYWdlX2luX2ZsaWdodChyZXEsIHBhZ2UpKSB7Cg==
---000000000000eeed1d0591047149--
