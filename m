@@ -2,97 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C15B9C5E0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2019 21:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49C009C711
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 03:43:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729079AbfHYTkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Aug 2019 15:40:51 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38886 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbfHYTkv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Aug 2019 15:40:51 -0400
-Received: by mail-qt1-f195.google.com with SMTP id q64so4346621qtd.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Aug 2019 12:40:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MbwQAvf1EYum17/LkDk/Jqba2/uydGN6gfIsgEOsYXY=;
-        b=csbaERMJ0Qm3fTZnuLpzIjVz7PuxaBDQQJ/N3o9t1f1/O1EC67YkcNUX1PTDR0QX9F
-         CsiyO4OBG8bzeZJciVsQB91tb6blADeyhKHLyLThI3ARBz75ebkC45wlGR0IkSxBcUD2
-         2xeTuyMoSBYRe5bqNxCmJQnvuICJPZ9GuLJ4Nml7q/xr5iz9leiEmNUNS3NKBkqV5G3W
-         GoPTz9MQ0GzalUXYG6AV6bPU/WGtGLWX68CCfjNTgPu4NarALIprMgs485MAmtIHW4hf
-         3vVykhJ+Upyxi5DrpPD1TXlQZLPEEbmUpkTiXOjfd8adN/oepc2B/zAbciY4ewq8xIm/
-         RYnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MbwQAvf1EYum17/LkDk/Jqba2/uydGN6gfIsgEOsYXY=;
-        b=QzhBKUT76WIyYksSDPIQtwi+D48VWtOn85EDgsyxNoCzcQFYND69bZTpB+b6B+z2hz
-         L9RG9xIHL7NbTc9vx7keMNBQ/ap6baWzvP7ehLAbxo35hs3N6rTm5R6FEjXwCUchTLAR
-         PPL2M1SLRCunhEL2RdnBJpPXw+xbY2VKWDbvmEUuifD/6cliKPhYVBfBbZ4nlSgdehBr
-         EF68kAEyFXjVfj5LhMGnss9DGEkLSDDgbymPlzPouXxJzme/wtVJTcpnSVYeqeIjhUri
-         d8HCW4Y+Nht04B3O/i1NZp4Vgm6w4cvFkuJ7TzlnHxbXy6O2D23yfL4DcjjMqwZZOiu+
-         lTOA==
-X-Gm-Message-State: APjAAAXkdF6nq2FIeocQfm1EQtxnZTfaYFadPZOvBlvAbNz2kDtEKXye
-        EGfK7LYPn6m2TlmdTY1LR5hDRQ==
-X-Google-Smtp-Source: APXvYqxk7xnMH5RsCss+5xcOEKbvxQMkTe4ENpEKEAcbqmZYFpESkrWsVxsf7euTTp0g3Hl9/ekeqA==
-X-Received: by 2002:ac8:42c4:: with SMTP id g4mr14703846qtm.228.1566762050152;
-        Sun, 25 Aug 2019 12:40:50 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-216-168.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.216.168])
-        by smtp.gmail.com with ESMTPSA id c5sm5783563qtc.90.2019.08.25.12.40.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Aug 2019 12:40:49 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1i1yNd-0005pU-9Z; Sun, 25 Aug 2019 16:40:49 -0300
-Date:   Sun, 25 Aug 2019 16:40:49 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190825194049.GB21239@ziepe.ca>
-References: <20190819123841.GC5058@ziepe.ca>
- <20190820011210.GP7777@dread.disaster.area>
- <20190820115515.GA29246@ziepe.ca>
- <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
- <20190821181343.GH8653@ziepe.ca>
- <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
- <20190821194810.GI8653@ziepe.ca>
- <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
- <20190823032345.GG1119@dread.disaster.area>
- <20190824044911.GB1092@iweiny-DESK2.sc.intel.com>
+        id S1726555AbfHZBnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Aug 2019 21:43:20 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5653 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726406AbfHZBnT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Aug 2019 21:43:19 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 726897F4357E6411D154;
+        Mon, 26 Aug 2019 09:43:17 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 26 Aug 2019
+ 09:43:11 +0800
+Subject: Re: [Virtio-fs] [PATCH 04/19] virtio: Implement get_shm_region for
+ PCI transport
+To:     Vivek Goyal <vgoyal@redhat.com>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-nvdimm@lists.01.org>
+References: <20190821175720.25901-1-vgoyal@redhat.com>
+ <20190821175720.25901-5-vgoyal@redhat.com>
+CC:     kbuild test robot <lkp@intel.com>, <kvm@vger.kernel.org>,
+        <miklos@szeredi.hu>, <virtio-fs@redhat.com>,
+        Sebastien Boeuf <sebastien.boeuf@intel.com>
+From:   piaojun <piaojun@huawei.com>
+Message-ID: <5D63392C.3030404@huawei.com>
+Date:   Mon, 26 Aug 2019 09:43:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190824044911.GB1092@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190821175720.25901-5-vgoyal@redhat.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 09:49:12PM -0700, Ira Weiny wrote:
 
-> So far, I have not been able to get RDMA to have an issue like Jason suggested
-> would happen (or used to happen).  So from that perspective it may be ok to
-> hang the close.
 
-No, it is not OK to hang the close. You will deadlock on process
-destruction when the 'lease fd' hangs waiting for the 'uverbs fd'
-which is later in the single threaded destruction sequence.
+On 2019/8/22 1:57, Vivek Goyal wrote:
+> From: Sebastien Boeuf <sebastien.boeuf@intel.com>
+> 
+> On PCI the shm regions are found using capability entries;
+> find a region by searching for the capability.
+> 
+> Cc: kvm@vger.kernel.org
+> Signed-off-by: Sebastien Boeuf <sebastien.boeuf@intel.com>
+> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+> Signed-off-by: kbuild test robot <lkp@intel.com>
+> ---
+>  drivers/virtio/virtio_pci_modern.c | 108 +++++++++++++++++++++++++++++
+>  include/uapi/linux/virtio_pci.h    |  11 ++-
+>  2 files changed, 118 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+> index 7abcc50838b8..1cdedd93f42a 100644
+> --- a/drivers/virtio/virtio_pci_modern.c
+> +++ b/drivers/virtio/virtio_pci_modern.c
+> @@ -443,6 +443,112 @@ static void del_vq(struct virtio_pci_vq_info *info)
+>  	vring_del_virtqueue(vq);
+>  }
+>  
+> +static int virtio_pci_find_shm_cap(struct pci_dev *dev,
+> +                                   u8 required_id,
+> +                                   u8 *bar, u64 *offset, u64 *len)
+> +{
+> +	int pos;
+> +
+> +        for (pos = pci_find_capability(dev, PCI_CAP_ID_VNDR);
+> +             pos > 0;
+> +             pos = pci_find_next_capability(dev, pos, PCI_CAP_ID_VNDR)) {
+> +		u8 type, cap_len, id;
+> +                u32 tmp32;
+> +                u64 res_offset, res_length;
+> +
+> +		pci_read_config_byte(dev, pos + offsetof(struct virtio_pci_cap,
+> +                                                         cfg_type),
+> +                                     &type);
+> +                if (type != VIRTIO_PCI_CAP_SHARED_MEMORY_CFG)
+> +                        continue;
+> +
+> +		pci_read_config_byte(dev, pos + offsetof(struct virtio_pci_cap,
+> +                                                         cap_len),
+> +                                     &cap_len);
+> +		if (cap_len != sizeof(struct virtio_pci_cap64)) {
+> +		        printk(KERN_ERR "%s: shm cap with bad size offset: %d size: %d\n",
+> +                               __func__, pos, cap_len);
+> +                        continue;
+> +                }
+> +
+> +		pci_read_config_byte(dev, pos + offsetof(struct virtio_pci_cap,
+> +                                                         id),
+> +                                     &id);
+> +                if (id != required_id)
+> +                        continue;
+> +
+> +                /* Type, and ID match, looks good */
+> +                pci_read_config_byte(dev, pos + offsetof(struct virtio_pci_cap,
+> +                                                         bar),
+> +                                     bar);
+> +
+> +                /* Read the lower 32bit of length and offset */
+> +                pci_read_config_dword(dev, pos + offsetof(struct virtio_pci_cap, offset),
+> +                                      &tmp32);
+> +                res_offset = tmp32;
+> +                pci_read_config_dword(dev, pos + offsetof(struct virtio_pci_cap, length),
+> +                                      &tmp32);
+> +                res_length = tmp32;
+> +
+> +                /* and now the top half */
+> +                pci_read_config_dword(dev,
+> +                                      pos + offsetof(struct virtio_pci_cap64,
+> +                                                     offset_hi),
+> +                                      &tmp32);
+> +                res_offset |= ((u64)tmp32) << 32;
+> +                pci_read_config_dword(dev,
+> +                                      pos + offsetof(struct virtio_pci_cap64,
+> +                                                     length_hi),
+> +                                      &tmp32);
+> +                res_length |= ((u64)tmp32) << 32;
+> +
+> +                *offset = res_offset;
+> +                *len = res_length;
+> +
+> +                return pos;
+> +        }
+> +        return 0;
+> +}
+> +
+> +static bool vp_get_shm_region(struct virtio_device *vdev,
+> +			      struct virtio_shm_region *region, u8 id)
+> +{
+> +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> +	struct pci_dev *pci_dev = vp_dev->pci_dev;
+> +	u8 bar;
+> +	u64 offset, len;
+> +	phys_addr_t phys_addr;
+> +	size_t bar_len;
+> +	char *bar_name;
 
-This is different from the uverbs deadlock I outlined
+'char *bar_name' should be cleaned up to avoid compiling warning. And I
+wonder if you mix tab and blankspace for code indent? Or it's just my
+email display problem?
 
-Jason
+Thanks,
+Jun
