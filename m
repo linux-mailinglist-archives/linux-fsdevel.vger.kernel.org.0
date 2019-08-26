@@ -2,97 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4199C9CCA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 11:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0F909CD26
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 12:14:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730846AbfHZJga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Aug 2019 05:36:30 -0400
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:37724 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbfHZJga (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Aug 2019 05:36:30 -0400
-Received: by mail-wr1-f51.google.com with SMTP id z11so14631359wrt.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2019 02:36:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=algolia.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=gs/XcHuWdmUSJN2v6xljbmG9jqr2TGmxKKQc8QmB8+o=;
-        b=S1DXy1JhQIPV/5DP2ksXdIkiRim1RxezU9xx8cokphPS2RU6x2F9CsxruMiZ5VDTeU
-         GveBVMA8IGThBF+IvNbj1n9jTjZfMNIkrMCdfzHTGGod3PiNlrU2DvfQqFbOup6/kbhT
-         V4USvVsOWdr6vyyAbOFvrfeVly8JxtpmC06uc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=gs/XcHuWdmUSJN2v6xljbmG9jqr2TGmxKKQc8QmB8+o=;
-        b=K763gh/K2fOcQKGNsP4K5Fr7o2ncssUuveitd4OihQGOhE9Wrvm6jv4v57mTRo0m5Z
-         3snIFbnr6ICiNgkmP8Lu3mdJxCn/yL3JBneIPwNEqpuSwV7k+Qz3CQBPN2Tf35DEZqnm
-         A1dAM9gaTOXIWlqcORz8yamXmZ4UJmt13Uu6sK7jJ7wHr3+LVtWllERAgkaaTBOyFDFa
-         xGCl44ppeSvK4n06PnILIMwUqzAhati3tjqQVgU+9lM/ds2RGeAh8ogrE0hOqkEBWksp
-         XFduw2dDFlWceUKllq7/LkbN09H+0KIXySRh9XI8jil7UEuM6UBOVSXa8hlIORFYdxMT
-         zd2w==
-X-Gm-Message-State: APjAAAXabT5DSj4JFZUSBgxj2eZTCJvfV4U/OpTH39fuwFkBq1+K9QTC
-        /B/91Y4chVPRAabWDCoLNlv5BfkrSAm4CmMch3jAJDnI4KY=
-X-Google-Smtp-Source: APXvYqyf9sQWT41756JcOuElC8IR3PWP3kVgCqAbEdq5O+5Bgw30PdhH7gHsb+SQzZyp3394Phvk/mhnHeIfTJ7/qsw=
-X-Received: by 2002:adf:d08e:: with SMTP id y14mr20808856wrh.309.1566812187624;
- Mon, 26 Aug 2019 02:36:27 -0700 (PDT)
+        id S1730654AbfHZKOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Aug 2019 06:14:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46996 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726497AbfHZKOk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Aug 2019 06:14:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C8830AD09;
+        Mon, 26 Aug 2019 10:14:38 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4BE381E3FE3; Mon, 26 Aug 2019 12:14:38 +0200 (CEST)
+Date:   Mon, 26 Aug 2019 12:14:38 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     " Steven J. Magnani " <steve.magnani@digidescorp.com>
+Cc:     Jan Kara <jack@suse.com>,
+        "Steven J . Magnani" <steve@digidescorp.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] udf: augment owner permissions on new inodes
+Message-ID: <20190826101438.GC10614@quack2.suse.cz>
+References: <20190819142707.18070-1-steve@digidescorp.com>
 MIME-Version: 1.0
-References: <CAE9vp3JsD1KVqLXnLWpNrAtDSmm6gUa0KC_degOECDsGntvUXw@mail.gmail.com>
- <CAE9vp3+SwbbEsXrttvTrw0+Go6CSL8ZrHCE6+zac+7O-dkkFuA@mail.gmail.com>
-In-Reply-To: <CAE9vp3+SwbbEsXrttvTrw0+Go6CSL8ZrHCE6+zac+7O-dkkFuA@mail.gmail.com>
-From:   Xavier Roche <xavier.roche@algolia.com>
-Date:   Mon, 26 Aug 2019 11:36:16 +0200
-Message-ID: <CAE9vp3L2kpL4P1yp2F9Oi24Qm8_W6TSGGce4TvYYKXccd+8HrA@mail.gmail.com>
-Subject: Re: Possible FS race condition between vfs_rename and do_linkat (fs/namei.c)
-To:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819142707.18070-1-steve@digidescorp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-One more addition:
+On Mon 19-08-19 09:27:07,  Steven J. Magnani  wrote:
+> Windows presents files created within Linux as read-only, even when
+> permissions in Linux indicate the file should be writable.
+> 
+> 
+> UDF defines a slightly different set of basic file permissions than Linux.
+> Specifically, UDF has "delete" and "change attribute" permissions for each
+> access class (user/group/other). Linux has no equivalents for these.
+> 
+> When the Linux UDF driver creates a file (or directory), no UDF delete or
+> change attribute permissions are granted. The lack of delete permission
+> appears to cause Windows to mark an item read-only when its permissions
+> otherwise indicate that it should be read-write.
+> 
+> Fix this by granting UDF delete and change attribute permissions
+> to the owner when creating a new inode.
+> 
+> Reported by: Ty Young
+> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
 
-This issue seems to be a regression introduced by an old fix
-(aae8a97d3ec30) in fs/namei.c preventing to hardlink a deleted file
-(with i_nlink == 0):
+Thanks for the patch! The behavior for CHATTR and DELETE permissions is
+defined by UDF specification in 3.3.3.3 section. From that I'd say that we
+should set CHATTR for user on creation and otherwise leave it untouched
+(which is what you seem to be doing). For DELETE permission we should set
+it to match WRITE permission (needs handling on file create in in
+udf_setattr() when changing file permissions). Can you please fixup the
+DELETE permission behavior?
 
-Author: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Date:   Sat Jan 29 18:43:27 2011 +0530
+								Honza
 
-    fs: Don't allow to create hardlink for deleted file
-
-    Add inode->i_nlink == 0 check in VFS. Some of the file systems
-    do this internally. A followup patch will remove those instance.
-    This is needed to ensure that with link by handle we don't allow
-    to create hardlink of an unlinked file. The check also prevent a race
-    between unlink and link
-
-    Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 83e92bab79a6..33be51a2ddb7 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2906,7 +2906,11 @@ int vfs_link(struct dentry *old_dentry, struct
-inode *dir, struct dentry *new_de
-                return error;
-
-        mutex_lock(&inode->i_mutex);
--       error = dir->i_op->link(old_dentry, dir, new_dentry);
-+       /* Make sure we don't allow creating hardlink to an unlinked file */
-+       if (inode->i_nlink == 0)
-+               error =  -ENOENT;
-+       else
-+               error = dir->i_op->link(old_dentry, dir, new_dentry);
-        mutex_unlock(&inode->i_mutex);
-        if (!error)
-                fsnotify_link(dir, inode, new_dentry);
-
-
-Regards,
-
+> ---
+> --- a/fs/udf/udf_i.h	2019-08-14 07:24:05.029508342 -0500
+> +++ b/fs/udf/udf_i.h	2019-08-19 08:55:37.797394177 -0500
+> @@ -38,6 +38,7 @@ struct udf_inode_info {
+>  	__u32			i_next_alloc_block;
+>  	__u32			i_next_alloc_goal;
+>  	__u32			i_checkpoint;
+> +	__u32			i_extraPerms;
+>  	unsigned		i_alloc_type : 3;
+>  	unsigned		i_efe : 1;	/* extendedFileEntry */
+>  	unsigned		i_use : 1;	/* unallocSpaceEntry */
+> --- a/fs/udf/ialloc.c	2019-08-14 07:24:05.029508342 -0500
+> +++ b/fs/udf/ialloc.c	2019-08-19 08:33:08.992422457 -0500
+> @@ -118,6 +118,7 @@ struct inode *udf_new_inode(struct inode
+>  	iinfo->i_lenAlloc = 0;
+>  	iinfo->i_use = 0;
+>  	iinfo->i_checkpoint = 1;
+> +	iinfo->i_extraPerms = FE_PERM_U_DELETE | FE_PERM_U_CHATTR;
+>  	if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_AD_IN_ICB))
+>  		iinfo->i_alloc_type = ICBTAG_FLAG_AD_IN_ICB;
+>  	else if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_SHORT_AD))
+> --- a/fs/udf/inode.c	2019-08-14 07:24:05.029508342 -0500
+> +++ b/fs/udf/inode.c	2019-08-19 08:42:46.537530051 -0500
+> @@ -45,6 +45,10 @@
+>  
+>  #define EXTENT_MERGE_SIZE 5
+>  
+> +#define FE_MAPPED_PERMS	(FE_PERM_U_READ | FE_PERM_U_WRITE | FE_PERM_U_EXEC | \
+> +			 FE_PERM_G_READ | FE_PERM_G_WRITE | FE_PERM_G_EXEC | \
+> +			 FE_PERM_O_READ | FE_PERM_O_WRITE | FE_PERM_O_EXEC)
+> +
+>  static umode_t udf_convert_permissions(struct fileEntry *);
+>  static int udf_update_inode(struct inode *, int);
+>  static int udf_sync_inode(struct inode *inode);
+> @@ -1458,6 +1462,8 @@ reread:
+>  	else
+>  		inode->i_mode = udf_convert_permissions(fe);
+>  	inode->i_mode &= ~sbi->s_umask;
+> +	iinfo->i_extraPerms = le32_to_cpu(fe->permissions) & ~FE_MAPPED_PERMS;
+> +
+>  	read_unlock(&sbi->s_cred_lock);
+>  
+>  	link_count = le16_to_cpu(fe->fileLinkCount);
+> @@ -1691,10 +1697,7 @@ static int udf_update_inode(struct inode
+>  		   ((inode->i_mode & 0070) << 2) |
+>  		   ((inode->i_mode & 0700) << 4);
+>  
+> -	udfperms |= (le32_to_cpu(fe->permissions) &
+> -		    (FE_PERM_O_DELETE | FE_PERM_O_CHATTR |
+> -		     FE_PERM_G_DELETE | FE_PERM_G_CHATTR |
+> -		     FE_PERM_U_DELETE | FE_PERM_U_CHATTR));
+> +	udfperms |= iinfo->i_extraPerms;
+>  	fe->permissions = cpu_to_le32(udfperms);
+>  
+>  	if (S_ISDIR(inode->i_mode) && inode->i_nlink > 0)
+> 
 -- 
-Xavier Roche -
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
