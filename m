@@ -2,170 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F01B9C876
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 06:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C89C9C8D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 07:55:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729419AbfHZEjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Aug 2019 00:39:37 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:47241 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729100AbfHZEjh (ORCPT
+        id S1729222AbfHZFzV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Aug 2019 01:55:21 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:36676 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725806AbfHZFzV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Aug 2019 00:39:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566794377; x=1598330377;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=xJjqFcsR8vYMZBXNfORqW6HHhuJ85c9HAqRVtwNFXXs=;
-  b=Qm9omyy9nCkXksOGe8a9X4zoA0rzBOsSeDlC6q2FfxEdWibQHaAq2nau
-   hNSjOJDFDJTAJuK/VNcu2COoBO/wbPDG8u0KOfpf/HspRuq4swQmM6GfQ
-   MwdsiHdxAlC04e7fXjB6bnJohjoY3a+zRqPdYFo/+OFJ7Xc6YfG2JUcN8
-   FrRi6eH8DHFIYkcvOz4I4eOL8WfPczLKYtOAfXzT0BBsNl7RKThtRpV5Z
-   nHonvpjIrslQ9tBjVT7XJwzfqg55Hj+hIrHu3+Tf24LRTTPj08KKX4RVO
-   HlC0hNroHtHrJYAq+sPXzWXizyp8L13gsoad4JO7+VjV+baRhPVKr81Bs
-   A==;
-IronPort-SDR: QJDzR2vrW0KyoH40ksJHnUhkqCQ3u/bpVNJ2eEN7rO1vlUwlxQ7mD4kNbAeS+OTLsXMeKopNXo
- mrdVoBoj1IcQFb86ixYlW69BABzR4ILibsqhjXeCQ6IvHz/SAHlZn7WLhs1rmO/YUdXK7C2uDk
- /7+f3arXZJjJbCwMOkCQZ1HCCslOQF7saQvkH+ilZi9oDwUu7JCEvjYtfdnsxhV//9DjM3wJp7
- CyGS83AE31G/uz/z3Faf1MGJ7Ky+GIyzCtaC97juZ/doF6xSNYkVfQjzoFat/p4SYAR00Mw3VY
- YJc=
-X-IronPort-AV: E=Sophos;i="5.64,431,1559491200"; 
-   d="scan'208";a="118237847"
-Received: from mail-bl2nam02lp2050.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.50])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Aug 2019 12:39:35 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e6VpeFUIB6KUdLYN/4q833raJZ4gcn8csNKc0pPg6bFazR/e4aWxv+Gs0L6NEIrD+wgH6JSNoRujOyCnB7YTdwLWFWGY/q/9AmxzmyqsoT1XhzHo32RWtuZuA4q8upWy6qIpJpwdiUL9i6byAppL61ZpPq8cZgA4mI0ZYUXNx1P48zc2n2iBLUJhJb7hyCQjxygxOvGibw/FMdg+E7inp50mM4ZbmJhqN47LAm4KsxPqR6sRjaEK+ei9fUp6T/P9VEHG4c2c9SKr7uQeIU5lpQnsuq7dazhsKB35Bgf3o3N8w9cb1MIr4a4HjLuHVX3dxrvDXIOMb9DDYc2vSt83yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I4gdoEBS+l1vtTuy5mzIX7VvxBpG50mZ3OQL31myG80=;
- b=P7tzWboaiR3Ds7PdyUVXs2gzMdpQo1XgMi8ihRQsgk+Jlf5khJk75JBDRW5E3s4Vj5LTSDMgWhr9PM1mXlkcLlmr++TVDbje2WdnljyjlzfPamiGJdqJa4OvFwo3X2JggHd2M5VU/rytNZTBtukOPxNR1om6s4yOWVMAmKS5E7Dy+Q/k9V7FdNWf8SLktCiTLg+p1zbRSePBZzHGh+dQWjh6am/8jfCtMa8gdIAZKwnuK49HQecPy1WsnrcWKoNIpXJ26FtaD9/KdPYp5iJiE7FOKiJ/d3NgxWrWgjqBniky3swpc/wp5oTaAHFJL25nxgvGOoGvkV5q7JJfcyCKmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I4gdoEBS+l1vtTuy5mzIX7VvxBpG50mZ3OQL31myG80=;
- b=IxKKT3kX6FUORKpxtuwwr0SbHkdPx72Zc2jomAb9JjQk3/whXcS/a01+b8jhAnSJd25cSwb6ma/fIs3ZlVBvVkNuUd9BmRD6d5Tny5HeY5Tls87whJbIHSqACpd0YaKNL3cgHir9V/jLDa89rkQG+orBcg/iVYBRg5w4/7eXlUU=
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
- BYAPR04MB5062.namprd04.prod.outlook.com (52.135.235.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.19; Mon, 26 Aug 2019 04:39:34 +0000
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::a538:afd0:d62a:55bc]) by BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::a538:afd0:d62a:55bc%7]) with mapi id 15.20.2199.021; Mon, 26 Aug 2019
- 04:39:34 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Matias Bjorling <Matias.Bjorling@wdc.com>
-Subject: Re: [PATCH V2] fs: New zonefs file system
-Thread-Topic: [PATCH V2] fs: New zonefs file system
-Thread-Index: AQHVVy8UVAVGvwSe4Um+ID5oFBsG3w==
-Date:   Mon, 26 Aug 2019 04:39:33 +0000
-Message-ID: <BYAPR04MB5816B9DAA7DACD2DF62A0B3FE7A10@BYAPR04MB5816.namprd04.prod.outlook.com>
-References: <20190820081249.27353-1-damien.lemoal@wdc.com>
- <20190822224355.GX30113@42.do-not-panic.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Damien.LeMoal@wdc.com; 
-x-originating-ip: [199.255.47.9]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7e1e556c-fb3e-48c6-0007-08d729df64b5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5062;
-x-ms-traffictypediagnostic: BYAPR04MB5062:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR04MB50625801F83D68E2218BFD77E7A10@BYAPR04MB5062.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 01415BB535
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(346002)(376002)(39860400002)(136003)(396003)(199004)(189003)(52536014)(486006)(33656002)(2906002)(25786009)(81156014)(478600001)(9686003)(14454004)(53936002)(86362001)(316002)(6436002)(54906003)(55016002)(229853002)(91956017)(76116006)(53546011)(8936002)(102836004)(6506007)(26005)(66066001)(186003)(446003)(3846002)(71200400001)(71190400001)(5660300002)(6916009)(6116002)(66556008)(64756008)(74316002)(7736002)(305945005)(256004)(4326008)(99286004)(7696005)(66446008)(8676002)(66476007)(6246003)(81166006)(76176011)(66946007)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5062;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nS19F4qRB5ysQAFMbhuaRE8MjBTIdXHCfN+0llC4A4OEHjkJKxlx2TefNTioTovCifQiTvcKPmy5tqAKCfjl5t1Rq+4CEN82kflS1Zl4pn7b8TtoIVTXhFau+CSGX5WP5QF/4L4S3bESzCtLQuaUJ36hn6yUp8KSUNgtJFClmRAmTE12NczQjd+x2Pjy522Xk+E90SW7XkD90uemPJUtLI3iKYDh7/JXwSybGjnN8BcZp9mBUY22ou754c5wV9LY1cvcIY+2c+Hf4mGVESOK5DqRjAEEb5/185PUXGe+kH/69ATIINdqcW6JPjgz0Kf++BN08AZDaKXjcNfDSeU3/QKP4QtVeogDn5TIgZkhUlba2Mqk+QH7EtpllPt49386F9SvxImBcQ+2kKO0J7payNefx7c55JWMnhqAWjhu5Kg=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 26 Aug 2019 01:55:21 -0400
+Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 1199A43F692;
+        Mon, 26 Aug 2019 15:55:12 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1i27yA-0002Rg-EJ; Mon, 26 Aug 2019 15:55:10 +1000
+Date:   Mon, 26 Aug 2019 15:55:10 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+Message-ID: <20190826055510.GL1119@dread.disaster.area>
+References: <20190820115515.GA29246@ziepe.ca>
+ <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
+ <20190821181343.GH8653@ziepe.ca>
+ <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
+ <20190821194810.GI8653@ziepe.ca>
+ <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
+ <20190823032345.GG1119@dread.disaster.area>
+ <20190823120428.GA12968@ziepe.ca>
+ <20190824001124.GI1119@dread.disaster.area>
+ <20190824050836.GC1092@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e1e556c-fb3e-48c6-0007-08d729df64b5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 04:39:33.8974
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: EUwEpRdUwocWWzbF69Qfqdd4QyLfha3oEnqTMVCJwQICoL7zRPl0CAPv0Jb3bRrkBU/y3oH4QBunh49qMdSNwA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5062
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190824050836.GC1092@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=7-415B0cAAAA:8 a=l-5HZ6ThFU8XlB48y_YA:9 a=qRlaua0cGjGJrKa9:21
+        a=OEwtXWmnxFRK9C0v:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Luis,=0A=
-=0A=
-On 2019/08/23 7:44, Luis Chamberlain wrote:=0A=
-> On Tue, Aug 20, 2019 at 05:12:49PM +0900, Damien Le Moal wrote:=0A=
->> The aggregated conventional zone file can be used as a regular file.=0A=
->> Operations such as the following work.=0A=
->>=0A=
->> mkfs.ext4 /mnt/cnv/0=0A=
->> mount -o loop /mnt/cnv/0 /data=0A=
-> =0A=
-> Should BLK_DEV_LOOP_MIN_COUNT be increased if this is enabled to=0A=
-> a mich higher sensible default? Right now the default is 8. Also,=0A=
-> can we infer this later dynamically so so this can grow at proper=0A=
-> scale without having to have user interaction?=0A=
-=0A=
-I am not sure if this is really necessary, though I am not against it. I ad=
-ded=0A=
-this in the commit message as as an example, simply because it is a very ea=
-sy=0A=
-way to test that the aggregated conventional zone file is working correctly=
-. The=0A=
-tendency these days it for drives to have very little, if any at all,=0A=
-conventional zones. Even if they do, using dm-linear to chunk conventional =
-and=0A=
-sequential spaces into different block devices is probably a much better wa=
-y to=0A=
-separate the 2 zone types into different usage patterns.=0A=
-=0A=
-> =0A=
-> For now, I mean something like:=0A=
-> =0A=
-> diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig=0A=
-> index 1bb8ec575352..22ba4803b075 100644=0A=
-> --- a/drivers/block/Kconfig=0A=
-> +++ b/drivers/block/Kconfig=0A=
-> @@ -217,7 +217,8 @@ config BLK_DEV_LOOP=0A=
->  config BLK_DEV_LOOP_MIN_COUNT=0A=
->  	int "Number of loop devices to pre-create at init time"=0A=
->  	depends on BLK_DEV_LOOP=0A=
-> -	default 8=0A=
-> +	default 8 if !ZONEFS FILESYSTEM=0A=
-> +	default 32 if ZONEFS FILESYSTEM=0A=
->  	help=0A=
->  	  Static number of loop devices to be unconditionally pre-created=0A=
->  	  at init time.=0A=
-=0A=
-Since this is a simple fix, I think we could reserve it for later if the ne=
-ed=0A=
-for this change increases due to zonefs ? The default value can also be=0A=
-automatically inferred by counting the number of zoned disk in the system a=
-nd=0A=
-assuming one extra loop device for each zoned drive.=0A=
-=0A=
-Best regards.=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+On Fri, Aug 23, 2019 at 10:08:36PM -0700, Ira Weiny wrote:
+> On Sat, Aug 24, 2019 at 10:11:24AM +1000, Dave Chinner wrote:
+> > On Fri, Aug 23, 2019 at 09:04:29AM -0300, Jason Gunthorpe wrote:
+> > > On Fri, Aug 23, 2019 at 01:23:45PM +1000, Dave Chinner wrote:
+> > > 
+> > > > > But the fact that RDMA, and potentially others, can "pass the
+> > > > > pins" to other processes is something I spent a lot of time trying to work out.
+> > > > 
+> > > > There's nothing in file layout lease architecture that says you
+> > > > can't "pass the pins" to another process.  All the file layout lease
+> > > > requirements say is that if you are going to pass a resource for
+> > > > which the layout lease guarantees access for to another process,
+> > > > then the destination process already have a valid, active layout
+> > > > lease that covers the range of the pins being passed to it via the
+> > > > RDMA handle.
+> > > 
+> > > How would the kernel detect and enforce this? There are many ways to
+> > > pass a FD.
+> > 
+> > AFAIC, that's not really a kernel problem. It's more of an
+> > application design constraint than anything else. i.e. if the app
+> > passes the IB context to another process without a lease, then the
+> > original process is still responsible for recalling the lease and
+> > has to tell that other process to release the IB handle and it's
+> > resources.
+> > 
+> > > IMHO it is wrong to try and create a model where the file lease exists
+> > > independently from the kernel object relying on it. In other words the
+> > > IB MR object itself should hold a reference to the lease it relies
+> > > upon to function properly.
+> > 
+> > That still doesn't work. Leases are not individually trackable or
+> > reference counted objects objects - they are attached to a struct
+> > file bUt, in reality, they are far more restricted than a struct
+> > file.
+> > 
+> > That is, a lease specifically tracks the pid and the _open fd_ it
+> > was obtained for, so it is essentially owned by a specific process
+> > context.  Hence a lease is not able to be passed to a separate
+> > process context and have it still work correctly for lease break
+> > notifications.  i.e. the layout break signal gets delivered to
+> > original process that created the struct file, if it still exists
+> > and has the original fd still open. It does not get sent to the
+> > process that currently holds a reference to the IB context.
+> >
+> 
+> The fcntl man page says:
+> 
+> "Leases are associated with an open file description (see open(2)).  This means
+> that duplicate file descriptors (created by, for example, fork(2) or dup(2))
+> refer to the same lease, and this lease may be modified or released using any
+> of these descriptors.  Furthermore,  the lease is released by either an
+> explicit F_UNLCK operation on any of these duplicate file descriptors, or when
+> all such file descriptors have been closed."
+
+Right, the lease is attached to the struct file, so it follows
+where-ever the struct file goes. That doesn't mean it's actually
+useful when the struct file is duplicated and/or passed to another
+process. :/
+
+AFAICT, the problem is that when we take another reference to the
+struct file, or when the struct file is passed to a different
+process, nothing updates the lease or lease state attached to that
+struct file.
+
+> From this I took it that the child process FD would have the lease as well
+> _and_ could release it.  I _assumed_ that applied to SCM_RIGHTS but it does not
+> seem to work the same way as dup() so I'm not so sure.
+
+Sure, that part works because the struct file is passed. It doesn't
+end up with the same fd number in the other process, though.
+
+The issue is that layout leases need to notify userspace when they
+are broken by the kernel, so a lease stores the owner pid/tid in the
+file->f_owner field via __f_setown(). It also keeps a struct fasync
+attached to the file_lock that records the fd that the lease was
+created on.  When a signal needs to be sent to userspace for that
+lease, we call kill_fasync() and that walks the list of fasync
+structures on the lease and calls:
+
+	send_sigio(fown, fa->fa_fd, band);
+
+And it does for every fasync struct attached to a lease. Yes, a
+lease can track multiple fds, but it can only track them in a single
+process context. The moment the struct file is shared with another
+process, the lease is no longer capable of sending notifications to
+all the lease holders.
+
+Yes, you can change the owning process via F_SETOWNER, but that's
+still only a single process context, and you can't change the fd in
+the fasync list. You can add new fd to an existing lease by calling
+F_SETLEASE on the new fd, but you still only have a single process
+owner context for signal delivery.
+
+As such, leases that require callbacks to userspace are currently
+only valid within the process context the lease was taken in.
+Indeed, even closing the fd the lease was taken on without
+F_UNLCKing it first doesn't mean the lease has been torn down if
+there is some other reference to the struct file. That means the
+original lease owner will still get SIGIO delivered to that fd on a
+lease break regardless of whether it is open or not. ANd if we
+implement "layout lease not released within SIGIO response timeout"
+then that process will get killed, despite the fact it may not even
+have a reference to that file anymore.
+
+So, AFAICT, leases that require userspace callbacks only work within
+their original process context while they original fd is still open.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
