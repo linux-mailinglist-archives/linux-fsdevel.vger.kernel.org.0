@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8DC39C798
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 05:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF63B9C79B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 05:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbfHZDQJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Aug 2019 23:16:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35356 "EHLO mail.kernel.org"
+        id S1729465AbfHZDQV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Aug 2019 23:16:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726606AbfHZDQJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Aug 2019 23:16:09 -0400
+        id S1726434AbfHZDQV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Aug 2019 23:16:21 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2274A21744;
-        Mon, 26 Aug 2019 03:16:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C73AF217F4;
+        Mon, 26 Aug 2019 03:16:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566789368;
-        bh=wXFjl0zCbPJZwn2CEfUDC+aWkXCG/asIDm0k7WxJxXk=;
+        s=default; t=1566789380;
+        bh=D2J2yFbNfuX9EmYpsOlxL/yhHWHvzg/hw54VGoYgnN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CrHbAvOKb8sl5AtIIw8tSiWwAZ9CXJtXpmAfUUfZAtvlh5j1VDF5sDwpCTHlGbPuD
-         RRb0XGrjL6SkBuzlQ4DMUaAP0fNmY7nvKHn/ZZH8nlYIrC4ORmzFQPirseye23qfTk
-         9pmg9mELNZTxjRK3hq2kBZgpG3jVmZkzbq3bTqfw=
+        b=pl6imcvKxaV3bep6DFK/+9RlMhgAZn6LLoDPEBksO06VfD6S8PaeLdwFkGJzLPob/
+         KdcZS1riYtxTSx3BR4doPcddoz2Aw5kKTwG9AvseKeJ6wAJwZTNtW10XAxVmrftRAr
+         KWPGkaLR1QL2zgW8MkUeonANezK7Swu703yRVv6g=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Frank Rowand <frowand.list@gmail.com>
@@ -39,9 +39,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 02/19] skc: Add /proc/sup_cmdline to show SKC key-value list
-Date:   Mon, 26 Aug 2019 12:16:01 +0900
-Message-Id: <156678936178.21459.13301820262182543136.stgit@devnote2>
+Subject: [RFC PATCH v3 03/19] skc: Add a boot setup routine from cmdline
+Date:   Mon, 26 Aug 2019 12:16:13 +0900
+Message-Id: <156678937345.21459.4178076251522180375.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <156678933823.21459.4100380582025186209.stgit@devnote2>
 References: <156678933823.21459.4100380582025186209.stgit@devnote2>
@@ -54,150 +54,109 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add /proc/sup_cmdline which shows the list of key-value pairs
-in SKC data. Since after boot, all SKC data and tree are
-removed, this interface just keep a copy of key-value
-pairs in text.
+Add a boot setup routine from cmdline option "skc=ADDR,SIZE".
+Bootloader has to setup this cmdline option when it loads
+the skc file on memory. The ADDR must be a physical address.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- MAINTAINERS           |    1 
- fs/proc/Makefile      |    1 
- fs/proc/sup_cmdline.c |  106 +++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 108 insertions(+)
- create mode 100644 fs/proc/sup_cmdline.c
+ Documentation/admin-guide/kernel-parameters.txt |    5 ++
+ init/main.c                                     |   54 +++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 67590c0e37c5..10dd38311d96 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15366,6 +15366,7 @@ SUPPLEMENTAL KERNEL CMDLINE
- M:	Masami Hiramatsu <mhiramat@kernel.org>
- S:	Maintained
- F:	lib/skc.c
-+F:	fs/proc/sup_cmdline.c
- F:	include/linux/skc.h
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 47d981a86e2f..9a955b1bd1bf 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4273,6 +4273,11 @@
+ 	simeth=		[IA-64]
+ 	simscsi=
  
- SUN3/3X
-diff --git a/fs/proc/Makefile b/fs/proc/Makefile
-index ead487e80510..a5d018f9422c 100644
---- a/fs/proc/Makefile
-+++ b/fs/proc/Makefile
-@@ -33,3 +33,4 @@ proc-$(CONFIG_PROC_KCORE)	+= kcore.o
- proc-$(CONFIG_PROC_VMCORE)	+= vmcore.o
- proc-$(CONFIG_PRINTK)	+= kmsg.o
- proc-$(CONFIG_PROC_PAGE_MONITOR)	+= page.o
-+proc-$(CONFIG_SKC)	+= sup_cmdline.o
-diff --git a/fs/proc/sup_cmdline.c b/fs/proc/sup_cmdline.c
-new file mode 100644
-index 000000000000..97bc40f0c9dd
---- /dev/null
-+++ b/fs/proc/sup_cmdline.c
-@@ -0,0 +1,106 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * /proc/sup_cmdline - Supplemental kernel command line
-+ */
-+#include <linux/fs.h>
-+#include <linux/init.h>
-+#include <linux/printk.h>
-+#include <linux/proc_fs.h>
-+#include <linux/seq_file.h>
++	skc=paddr,size	[SKC]
++			Pass the physical memory address and size of loaded
++			supplemental kernel cmdline (SKC) text. This will
++			be treated by bootloader which loads the SKC file.
++
+ 	slram=		[HW,MTD]
+ 
+ 	slab_nomerge	[MM]
+diff --git a/init/main.c b/init/main.c
+index 96f8d5af52d6..d06eb3d63b77 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -36,6 +36,7 @@
+ #include <linux/kernel_stat.h>
+ #include <linux/start_kernel.h>
+ #include <linux/security.h>
 +#include <linux/skc.h>
-+#include <linux/slab.h>
+ #include <linux/smp.h>
+ #include <linux/profile.h>
+ #include <linux/rcupdate.h>
+@@ -245,6 +246,58 @@ static int __init loglevel(char *str)
+ 
+ early_param("loglevel", loglevel);
+ 
++#ifdef CONFIG_SKC
++__initdata unsigned long initial_skc;
++__initdata unsigned long initial_skc_len;
 +
-+static char *saved_sup_cmdline;
-+
-+static int skc_proc_show(struct seq_file *m, void *v)
++static int __init save_skc_address(char *str)
 +{
-+	if (saved_sup_cmdline)
-+		seq_puts(m, saved_sup_cmdline);
-+	else
-+		seq_putc(m, '\n');
-+	return 0;
-+}
++	char *p;
 +
-+static int __init update_snprintf(char **dstp, size_t *sizep,
-+				  const char *fmt, ...)
-+{
-+	va_list args;
-+	int ret;
-+
-+	va_start(args, fmt);
-+	ret = vsnprintf(*dstp, *sizep, fmt, args);
-+	va_end(args);
-+
-+	if (*sizep && ret > 0) {
-+		*sizep -= ret;
-+		*dstp += ret;
-+	}
-+
-+	return ret;
-+}
-+
-+/* Return the needed total length if @size is 0 */
-+static int __init copy_skc_key_value_list(char *dst, size_t size)
-+{
-+	struct skc_node *leaf, *vnode;
-+	const char *val;
-+	int len = 0, ret = 0;
-+	char *key;
-+
-+	key = kzalloc(SKC_KEYLEN_MAX, GFP_KERNEL);
-+
-+	skc_for_each_key_value(leaf, val) {
-+		ret = skc_node_compose_key(leaf, key, SKC_KEYLEN_MAX);
-+		if (ret < 0)
-+			break;
-+		ret = update_snprintf(&dst, &size, "%s = ", key);
-+		if (ret < 0)
-+			break;
-+		len += ret;
-+		vnode = skc_node_get_child(leaf);
-+		if (vnode && skc_node_is_array(vnode)) {
-+			skc_array_for_each_value(vnode, val) {
-+				ret = update_snprintf(&dst, &size, "\"%s\"%s",
-+					val, vnode->next ? ", " : ";\n");
-+				if (ret < 0)
-+					goto out;
-+				len += ret;
-+			}
-+		} else {
-+			ret = update_snprintf(&dst, &size, "\"%s\";\n", val);
-+			if (ret < 0)
-+				break;
-+			len += ret;
-+		}
-+	}
-+out:
-+	kfree(key);
-+
-+	return ret < 0 ? ret : len;
-+}
-+
-+static int __init proc_skc_init(void)
-+{
-+	int len;
-+
-+	len = copy_skc_key_value_list(NULL, 0);
-+	if (len < 0)
-+		return len;
-+
-+	if (len > 0) {
-+		saved_sup_cmdline = kzalloc(len + 1, GFP_KERNEL);
-+		if (!saved_sup_cmdline)
-+			return -ENOMEM;
-+
-+		len = copy_skc_key_value_list(saved_sup_cmdline, len + 1);
-+		if (len < 0) {
-+			kfree(saved_sup_cmdline);
-+			return len;
-+		}
-+	}
-+
-+	proc_create_single("sup_cmdline", 0, NULL, skc_proc_show);
++	p = strchr(str, ',');
++	if (!p)
++		return -EINVAL;
++	*p++ = '\0';
++	/* First options should be physical address - int is not enough */
++	if (kstrtoul(str, 0, &initial_skc) < 0)
++		return -EINVAL;
++	if (kstrtoul(p, 0, &initial_skc_len) < 0)
++		return -EINVAL;
++	if (initial_skc_len > SKC_DATA_MAX)
++		return -E2BIG;
++	/* Reserve it for protection */
++	memblock_reserve(initial_skc, initial_skc_len);
 +
 +	return 0;
 +}
-+fs_initcall(proc_skc_init);
++early_param("skc", save_skc_address);
++
++static void __init setup_skc(void)
++{
++	u32 size;
++	char *data, *copy;
++
++	if (!initial_skc)
++		return;
++
++	data = early_memremap(initial_skc, initial_skc_len);
++	size = initial_skc_len + 1;
++
++	copy = memblock_alloc(size, SMP_CACHE_BYTES);
++	if (!copy) {
++		pr_err("Failed to allocate memory for structured kernel cmdline\n");
++		goto end;
++	}
++	memcpy(copy, data, initial_skc_len);
++	copy[size - 1] = '\0';
++
++	skc_init(copy);
++end:
++	early_memunmap(data, initial_skc_len);
++}
++#else
++#define setup_skc()	do { } while (0)
++#endif
+ /* Change NUL term back to "=", to make "param" the whole string. */
+ static int __init repair_env_string(char *param, char *val,
+ 				    const char *unused, void *arg)
+@@ -596,6 +649,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	setup_arch(&command_line);
+ 	mm_init_cpumask(&init_mm);
+ 	setup_command_line(command_line);
++	setup_skc();
+ 	setup_nr_cpu_ids();
+ 	setup_per_cpu_areas();
+ 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
 
