@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EFF1B1396
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B0BFB13B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:29:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387628AbfILR25 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 13:28:57 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:7948 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387610AbfILR2y (ORCPT
+        id S2387668AbfILR3M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 13:29:12 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:6371 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387657AbfILR3K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 13:28:54 -0400
+        Thu, 12 Sep 2019 13:29:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1568309334; x=1599845334;
+  t=1568309350; x=1599845350;
   h=message-id:in-reply-to:references:from:date:subject:to:
    mime-version;
-  bh=/7carR8TUg6wHC1wDHhlHNRUEsQ5JS9MirXg3rUQnNE=;
-  b=ZRp1T1k6FSRs8mTGIAY9ryncxI+781nKASTrbslw/8gGCkFB1KAlOvrm
-   Jr/K77ImL6TATjlFxmjVsanB3/o0uT9A/i9PatKffMVJ1WIvy2qX9RfgB
-   yy1+AjCcvoiE+44h0dZMvvw3A4XLScLewfsJzVtepXcFD2zUem8cLbWTz
-   g=;
+  bh=JMkvGmAhLWg/y+NV5rC4rx1Y69PlrlwOYvitXPDQCFU=;
+  b=snpCTgDseER3rI6ezPMrFPdpHbpdE1a+v4zZ2bzlOePVmvf2QINxu39K
+   8WdNGn6/Z+pBEr2iKxT3CKt9F2phJlvS23aQIF5qKPdwzYdgreQZVQIDN
+   TzNdIp2Z8Ds0m1EI92APVOPjchFZSMqH/hLlRiNMVl7ip5wpjmZFQ4eV4
+   c=;
 X-IronPort-AV: E=Sophos;i="5.64,497,1559520000"; 
-   d="scan'208";a="414961241"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 12 Sep 2019 17:28:53 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com (Postfix) with ESMTPS id 029AFA271F;
+   d="scan'208";a="702191779"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 12 Sep 2019 17:28:58 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com (Postfix) with ESMTPS id A2E56C0837;
         Thu, 12 Sep 2019 17:28:52 +0000 (UTC)
-Received: from EX13D02UWB003.ant.amazon.com (10.43.161.48) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
+Received: from EX13D14UEE001.ant.amazon.com (10.43.62.238) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
  id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
- EX13D02UWB003.ant.amazon.com (10.43.161.48) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
+Received: from EX13MTAUEE001.ant.amazon.com (10.43.62.200) by
+ EX13D14UEE001.ant.amazon.com (10.43.62.238) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 12 Sep 2019 17:28:51 +0000
 Received: from kaos-source-ops-60003.pdx1.corp.amazon.com (10.36.133.164) by
- mail-relay.amazon.com (10.43.161.249) with Microsoft SMTP Server id
+ mail-relay.amazon.com (10.43.62.226) with Microsoft SMTP Server id
  15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:51 +0000
 Received: by kaos-source-ops-60003.pdx1.corp.amazon.com (Postfix, from userid 6262777)
-        id E5A1DC056F; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
-Message-ID: <378aa1d4b918a6f021105564369b809ffe4d9184.1568309119.git.fllinden@amazon.com>
+        id E3658C0557; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
+Message-ID: <ca85022779012228d7df42c5122c52b1afca1f8c.1568309119.git.fllinden@amazon.com>
 In-Reply-To: <cover.1568309119.git.fllinden@amazon.com>
 References: <cover.1568309119.git.fllinden@amazon.com>
 From:   Frank van der Linden <fllinden@amazon.com>
-Date:   Tue, 27 Aug 2019 15:46:07 +0000
-Subject: [RFC PATCH 11/35] nfs: define nfs_access_get_cached function
+Date:   Tue, 27 Aug 2019 16:01:06 +0000
+Subject: [RFC PATCH 12/35] NFSv4.2: query the extended attribute access bits
 To:     <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -54,77 +54,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The only consumer of nfs_access_get_cached_rcu and nfs_access_cached
-calls these static funtions in order to first try RCU access, and
-then locked access.
-
-Combine them in to a single function, and call that. Make this function
-available to the rest of the NFS code.
+RFC 8276 defines seperate ACCESS bits for extended attribute checking.
+Query them in nfs_do_access and opendata.
 
 Signed-off-by: Frank van der Linden <fllinden@amazon.com>
 ---
- fs/nfs/dir.c           | 20 ++++++++++++++++----
- include/linux/nfs_fs.h |  2 ++
- 2 files changed, 18 insertions(+), 4 deletions(-)
+ fs/nfs/dir.c      | 4 ++++
+ fs/nfs/nfs4proc.c | 6 ++++++
+ 2 files changed, 10 insertions(+)
 
 diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index 0adfd8840110..e7f4c25de362 100644
+index e7f4c25de362..78bc808addc9 100644
 --- a/fs/nfs/dir.c
 +++ b/fs/nfs/dir.c
-@@ -2285,7 +2285,7 @@ static struct nfs_access_entry *nfs_access_search_rbtree(struct inode *inode, co
- 	return NULL;
- }
- 
--static int nfs_access_get_cached(struct inode *inode, const struct cred *cred, struct nfs_access_entry *res, bool may_block)
-+static int nfs_access_get_cached_locked(struct inode *inode, const struct cred *cred, struct nfs_access_entry *res, bool may_block)
- {
- 	struct nfs_inode *nfsi = NFS_I(inode);
- 	struct nfs_access_entry *cache;
-@@ -2358,6 +2358,20 @@ static int nfs_access_get_cached_rcu(struct inode *inode, const struct cred *cre
- 	return err;
- }
- 
-+int nfs_access_get_cached(struct inode *inode, const struct cred *cred, struct
-+nfs_access_entry *res, bool may_block)
-+{
-+	int status;
-+
-+	status = nfs_access_get_cached_rcu(inode, cred, res);
-+	if (status != 0)
-+		status = nfs_access_get_cached_locked(inode, cred, res,
-+		    may_block);
-+
-+	return status;
-+}
-+EXPORT_SYMBOL_GPL(nfs_access_get_cached);
-+
- static void nfs_access_add_rbtree(struct inode *inode, struct nfs_access_entry *set)
- {
- 	struct nfs_inode *nfsi = NFS_I(inode);
-@@ -2472,9 +2486,7 @@ static int nfs_do_access(struct inode *inode, const struct cred *cred, int mask)
- 
- 	trace_nfs_access_enter(inode);
- 
--	status = nfs_access_get_cached_rcu(inode, cred, &cache);
--	if (status != 0)
--		status = nfs_access_get_cached(inode, cred, &cache, may_block);
-+	status = nfs_access_get_cached(inode, cred, &cache, may_block);
- 	if (status == 0)
- 		goto out_cached;
- 
-diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
-index e87c894d1960..dec76ec9808c 100644
---- a/include/linux/nfs_fs.h
-+++ b/include/linux/nfs_fs.h
-@@ -497,6 +497,8 @@ extern int nfs_instantiate(struct dentry *dentry, struct nfs_fh *fh,
- 			struct nfs_fattr *fattr, struct nfs4_label *label);
- extern int nfs_may_open(struct inode *inode, const struct cred *cred, int openflags);
- extern void nfs_access_zap_cache(struct inode *inode);
-+extern int nfs_access_get_cached(struct inode *inode, const struct cred *cred, struct nfs_access_entry *res,
-+				 bool may_block);
- 
- /*
-  * linux/fs/nfs/symlink.c
+@@ -2498,6 +2498,10 @@ static int nfs_do_access(struct inode *inode, const struct cred *cred, int mask)
+ 	 * Determine which access bits we want to ask for...
+ 	 */
+ 	cache.mask = NFS_ACCESS_READ | NFS_ACCESS_MODIFY | NFS_ACCESS_EXTEND;
++	if (nfs_server_capable(inode, NFS_CAP_XATTR)) {
++		cache.mask |= NFS_ACCESS_XAREAD | NFS_ACCESS_XAWRITE |
++		    NFS_ACCESS_XALIST;
++	}
+ 	if (S_ISDIR(inode->i_mode))
+ 		cache.mask |= NFS_ACCESS_DELETE | NFS_ACCESS_LOOKUP;
+ 	else
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index dad22450546d..029b07fef37f 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -1313,6 +1313,12 @@ static struct nfs4_opendata *nfs4_opendata_alloc(struct dentry *dentry,
+ 				NFS4_ACCESS_MODIFY |
+ 				NFS4_ACCESS_EXTEND |
+ 				NFS4_ACCESS_EXECUTE;
++#ifdef CONFIG_NFS_V4_XATTR
++			if (server->caps & NFS_CAP_XATTR)
++				p->o_arg.access |= NFS4_ACCESS_XAREAD |
++				    NFS4_ACCESS_XAWRITE |
++				    NFS4_ACCESS_XALIST;
++#endif
+ 		}
+ 	}
+ 	p->o_arg.clientid = server->nfs_client->cl_clientid;
 -- 
 2.17.2
 
