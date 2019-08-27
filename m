@@ -2,111 +2,309 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E8D49F535
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 23:39:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A0B9F637
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 00:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbfH0Vj6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Aug 2019 17:39:58 -0400
-Received: from sandeen.net ([63.231.237.45]:34216 "EHLO sandeen.net"
+        id S1726077AbfH0WeV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Aug 2019 18:34:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726735AbfH0Vj6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:39:58 -0400
-Received: from [10.0.0.4] (liberator [10.0.0.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725989AbfH0WeV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Aug 2019 18:34:21 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 246264CDD31;
-        Tue, 27 Aug 2019 16:39:56 -0500 (CDT)
-Subject: Re: ext4 fsck vs. kernel recovery policy
-From:   Eric Sandeen <sandeen@sandeen.net>
-To:     dann frazier <dann.frazier@canonical.com>,
-        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jan Kara <jack@suse.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Ryan Harper <ryan.harper@canonical.com>
-References: <CALdTtnuRqgZ=By1JQ0yJJYczUPxxYCWPkAey4BjBkmj77q7aaA@mail.gmail.com>
- <db1128a9-1316-e409-9dc6-9470bd2191f7@sandeen.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- mQINBE6x99QBEADMR+yNFBc1Y5avoUhzI/sdR9ANwznsNpiCtZlaO4pIWvqQJCjBzp96cpCs
- nQZV32nqJBYnDpBDITBqTa/EF+IrHx8gKq8TaSBLHUq2ju2gJJLfBoL7V3807PQcI18YzkF+
- WL05ODFQ2cemDhx5uLghHEeOxuGj+1AI+kh/FCzMedHc6k87Yu2ZuaWF+Gh1W2ix6hikRJmQ
- vj5BEeAx7xKkyBhzdbNIbbjV/iGi9b26B/dNcyd5w2My2gxMtxaiP7q5b6GM2rsQklHP8FtW
- ZiYO7jsg/qIppR1C6Zr5jK1GQlMUIclYFeBbKggJ9mSwXJH7MIftilGQ8KDvNuV5AbkronGC
- sEEHj2khs7GfVv4pmUUHf1MRIvV0x3WJkpmhuZaYg8AdJlyGKgp+TQ7B+wCjNTdVqMI1vDk2
- BS6Rg851ay7AypbCPx2w4d8jIkQEgNjACHVDU89PNKAjScK1aTnW+HNUqg9BliCvuX5g4z2j
- gJBs57loTWAGe2Ve3cMy3VoQ40Wt3yKK0Eno8jfgzgb48wyycINZgnseMRhxc2c8hd51tftK
- LKhPj4c7uqjnBjrgOVaVBupGUmvLiePlnW56zJZ51BR5igWnILeOJ1ZIcf7KsaHyE6B1mG+X
- dmYtjDhjf3NAcoBWJuj8euxMB6TcQN2MrSXy5wSKaw40evooGwARAQABtCVFcmljIFIuIFNh
- bmRlZW4gPHNhbmRlZW5Ac2FuZGVlbi5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgAUCUzMzbAIZAQAKCRAgrhaS4T3e4Fr7D/wO+fenqVvHjq21SCjDCrt8HdVj
- aJ28B1SqSU2toxyg5I160GllAxEHpLFGdbFAhQfBtnmlY9eMjwmJb0sCIrkrB6XNPSPA/B2B
- UPISh0z2odJv35/euJF71qIFgWzp2czJHkHWwVZaZpMWWNvsLIroXoR+uA9c2V1hQFVAJZyk
- EE4xzfm1+oVtjIC12B9tTCuS00pY3AUy21yzNowT6SSk7HAzmtG/PJ/uSB5wEkwldB6jVs2A
- sjOg1wMwVvh/JHilsQg4HSmDfObmZj1d0RWlMWcUE7csRnCE0ZWBMp/ttTn+oosioGa09HAS
- 9jAnauznmYg43oQ5Akd8iQRxz5I58F/+JsdKvWiyrPDfYZtFS+UIgWD7x+mHBZ53Qjazszox
- gjwO9ehZpwUQxBm4I0lPDAKw3HJA+GwwiubTSlq5PS3P7QoCjaV8llH1bNFZMz2o8wPANiDx
- 5FHgpRVgwLHakoCU1Gc+LXHXBzDXt7Cj02WYHdFzMm2hXaslRdhNGowLo1SXZFXa41KGTlNe
- 4di53y9CK5ynV0z+YUa+5LR6RdHrHtgywdKnjeWdqhoVpsWIeORtwWGX8evNOiKJ7j0RsHha
- WrePTubr5nuYTDsQqgc2r4aBIOpeSRR2brlT/UE3wGgy9LY78L4EwPR0MzzecfE1Ws60iSqw
- Pu3vhb7h3bkCDQROsffUARAA0DrUifTrXQzqxO8aiQOC5p9Tz25Np/Tfpv1rofOwL8VPBMvJ
- X4P5l1V2yd70MZRUVgjmCydEyxLJ6G2YyHO2IZTEajUY0Up+b3ErOpLpZwhvgWatjifpj6bB
- SKuDXeThqFdkphF5kAmgfVAIkan5SxWK3+S0V2F/oxstIViBhMhDwI6XsRlnVBoLLYcEilxA
- 2FlRUS7MOZGmRJkRtdGD5koVZSM6xVZQSmfEBaYQ/WJBGJQdPy94nnlAVn3lH3+N7pXvNUuC
- GV+t4YUt3tLcRuIpYBCOWlc7bpgeCps5Xa0dIZgJ8Louu6OBJ5vVXjPxTlkFdT0S0/uerCG5
- 1u8p6sGRLnUeAUGkQfIUqGUjW2rHaXgWNvzOV6i3tf9YaiXKl3avFaNW1kKBs0T5M1cnlWZU
- Utl6k04lz5OjoNY9J/bGyV3DSlkblXRMK87iLYQSrcV6cFz9PRl4vW1LGff3xRQHngeN5fPx
- ze8X5NE3hb+SSwyMSEqJxhVTXJVfQWWW0dQxP7HNwqmOWYF/6m+1gK/Y2gY3jAQnsWTru4RV
- TZGnKwEPmOCpSUvsTRXsVHgsWJ70qd0yOSjWuiv4b8vmD3+QFgyvCBxPMdP3xsxN5etheLMO
- gRwWpLn6yNFq/xtgs+ECgG+gR78yXQyA7iCs5tFs2OrMqV5juSMGmn0kxJUAEQEAAYkCHwQY
- AQIACQUCTrH31AIbDAAKCRAgrhaS4T3e4BKwD/0ZOOmUNOZCSOLAMjZx3mtYtjYgfUNKi0ki
- YPveGoRWTqbis8UitPtNrG4XxgzLOijSdOEzQwkdOIp/QnZhGNssMejCnsluK0GQd+RkFVWN
- mcQT78hBeGcnEMAXZKq7bkIKzvc06GFmkMbX/gAl6DiNGv0UNAX+5FYh+ucCJZSyAp3sA+9/
- LKjxnTedX0aygXA6rkpX0Y0FvN/9dfm47+LGq7WAqBOyYTU3E6/+Z72bZoG/cG7ANLxcPool
- LOrU43oqFnD8QwcN56y4VfFj3/jDF2MX3xu4v2OjglVjMEYHTCxP3mpxesGHuqOit/FR+mF0
- MP9JGfj6x+bj/9JMBtCW1bY/aPeMdPGTJvXjGtOVYblGZrSjXRn5++Uuy36CvkcrjuziSDG+
- JEexGxczWwN4mrOQWhMT5Jyb+18CO+CWxJfHaYXiLEW7dI1AynL4jjn4W0MSiXpWDUw+fsBO
- Pk6ah10C4+R1Jc7dyUsKksMfvvhRX1hTIXhth85H16706bneTayZBhlZ/hK18uqTX+s0onG/
- m1F3vYvdlE4p2ts1mmixMF7KajN9/E5RQtiSArvKTbfsB6Two4MthIuLuf+M0mI4gPl9SPlf
- fWCYVPhaU9o83y1KFbD/+lh1pjP7bEu/YudBvz7F2Myjh4/9GUAijrCTNeDTDAgvIJDjXuLX pA==
-Message-ID: <e017ad27-15f5-b44c-7180-7b1545665fcd@sandeen.net>
-Date:   Tue, 27 Aug 2019 16:39:55 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id B50CF20856;
+        Tue, 27 Aug 2019 22:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566945259;
+        bh=z3xopfZ51WkV8awSgGyWZJzCisrDG8pyxGkIqqDVBSE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IHnbWObz7IdfNCr+53RBoZHkmbFKif0Ubb3U5DkhOtvlRer9YxXdAsIT9YoL7Kidv
+         Q22s8MGqTqqZZeT2DNSgZhSuqMttd550jyK2IOBeMRSVdo96htJcCV2bX9pl4maVMR
+         Z2Gg+MPSg2Ep+r0t8NHplneXUJkCyIiA254+HXT8=
+Date:   Tue, 27 Aug 2019 15:34:17 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v4 3/8] block: blk-crypto for Inline Encryption
+Message-ID: <20190827223415.GC27166@gmail.com>
+Mail-Followup-To: Satya Tangirala <satyat@google.com>,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+References: <20190821075714.65140-1-satyat@google.com>
+ <20190821075714.65140-4-satyat@google.com>
 MIME-Version: 1.0
-In-Reply-To: <db1128a9-1316-e409-9dc6-9470bd2191f7@sandeen.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821075714.65140-4-satyat@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/27/19 3:29 PM, Eric Sandeen wrote:
-> On 8/27/19 2:10 PM, dann frazier wrote:
->> hey,
->>   I'm curious if there's a policy about what types of unclean
->> shutdowns 'e2fsck -p' can recover, vs. what the kernel will
->> automatically recover on mount. We're seeing that unclean shutdowns w/
->> data=journal,journal_csum frequently result in invalid checksums that
->> causes the kernel to abort recovery, while 'e2fsck -p' resolves the
->> issue non-interactively.
->>
->> Driver for this question is that some Ubuntu installs set fstab's
->> passno=0 for the root fs - which I'm told is based on the assumption
->> that both kernel & e2fsck -p have parity when it comes to automatic
->> recovery - that's obviously does not appear to be the case - but I
->> wanted to confirm whether or not that is by design.
->>
->>   -dann
-> 
-> Ted or others more involved w/ ext4 will speak w/ authority but it's my
-> understanding that log replay, whether done by userspace or by the kernel,
-> should always return the filesystem to a consistent state.
+On Wed, Aug 21, 2019 at 12:57:09AM -0700, Satya Tangirala wrote:
+> diff --git a/block/blk-crypto.c b/block/blk-crypto.c
+> new file mode 100644
+> index 000000000000..c8f06264a0f5
+> --- /dev/null
+> +++ b/block/blk-crypto.c
+> @@ -0,0 +1,737 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2019 Google LLC
+> + */
+> +
+> +/*
+> + * Refer to Documentation/block/inline-encryption.txt for detailed explanation.
+> + */
+> +
+> +#ifdef pr_fmt
+> +#undef pr_fmt
+> +#endif
 
-I should amend: "from an otherwise normal unclean shutdown"
+This is the beginning of the file, so the
 
-corruption discovered during recovery is a different matter, as adilger
-pointed out.
+#ifdef pr_fmt
+#undef pr_fmt
+#endif
 
--Eric
+is unnecessary.
+
+> +static struct blk_crypto_keyslot {
+> +	struct crypto_skcipher *tfm;
+> +	enum blk_crypto_mode_num crypto_mode;
+> +	u8 key[BLK_CRYPTO_MAX_KEY_SIZE];
+> +	struct crypto_skcipher *tfms[ARRAY_SIZE(blk_crypto_modes)];
+> +} *blk_crypto_keyslots;
+
+It would be helpful if there was a comment somewhere explaining what's going on
+with the crypto tfms now, like:
+
+/*
+ * Allocating a crypto tfm during I/O can deadlock, so we have to preallocate
+ * all a mode's tfms when that mode starts being used.  Since each mode may need
+ * all the keyslots at some point, each mode needs its own tfm for each keyslot;
+ * thus, a keyslot may contain tfms for multiple modes.  However, to match the
+ * behavior of real inline encryption hardware (which only supports a single
+ * encryption context per keyslot), we only allow one tfm per keyslot to be used
+ * at a time.  Unused tfms have their keys cleared.
+ */
+
+Otherwise it's not at all obvious what's going on.
+
+> +
+> +static struct mutex tfms_lock[ARRAY_SIZE(blk_crypto_modes)];
+> +static bool tfms_inited[ARRAY_SIZE(blk_crypto_modes)];
+> +
+> +struct work_mem {
+> +	struct work_struct crypto_work;
+> +	struct bio *bio;
+> +};
+> +
+> +/* The following few vars are only used during the crypto API fallback */
+> +static struct keyslot_manager *blk_crypto_ksm;
+> +static struct workqueue_struct *blk_crypto_wq;
+> +static mempool_t *blk_crypto_page_pool;
+> +static struct kmem_cache *blk_crypto_work_mem_cache;
+> +
+> +bool bio_crypt_swhandled(struct bio *bio)
+> +{
+> +	return bio_has_crypt_ctx(bio) &&
+> +	       bio->bi_crypt_context->processing_ksm == blk_crypto_ksm;
+> +}
+> +
+> +static const u8 zeroes[BLK_CRYPTO_MAX_KEY_SIZE];
+> +static void evict_keyslot(unsigned int slot)
+> +{
+> +	struct blk_crypto_keyslot *slotp = &blk_crypto_keyslots[slot];
+> +	enum blk_crypto_mode_num crypto_mode = slotp->crypto_mode;
+> +
+> +	/* Clear the key in the skcipher */
+> +	crypto_skcipher_setkey(slotp->tfms[crypto_mode], zeroes,
+> +			       blk_crypto_modes[crypto_mode].keysize);
+> +	memzero_explicit(slotp->key, BLK_CRYPTO_MAX_KEY_SIZE);
+> +}
+
+Unfortunately setting the all-zeroes key won't work, because the all-zeroes key
+fails the "weak key" check for XTS, as its two halves are the same.
+
+Presumably this wasn't noticed during testing because the return value of
+crypto_skcipher_setkey() is ignored.  So I suggest adding a WARN_ON():
+
+	err = crypto_skcipher_setkey(slotp->tfms[crypto_mode], blank_key,
+				     blk_crypto_modes[crypto_mode].keysize);
+	WARN_ON(err);
+
+Then for the actual fix, maybe set a random key instead of an all-zeroes one?
+
+> +
+> +static int blk_crypto_keyslot_program(void *priv, const u8 *key,
+> +				      enum blk_crypto_mode_num crypto_mode,
+> +				      unsigned int data_unit_size,
+> +				      unsigned int slot)
+> +{
+> +	struct blk_crypto_keyslot *slotp = &blk_crypto_keyslots[slot];
+> +	const struct blk_crypto_mode *mode = &blk_crypto_modes[crypto_mode];
+> +	size_t keysize = mode->keysize;
+> +	int err;
+> +
+> +	if (crypto_mode != slotp->crypto_mode) {
+> +		evict_keyslot(slot);
+> +		slotp->crypto_mode = crypto_mode;
+> +	}
+
+Currently the crypto_mode of every blk_crypto_keyslot starts out as AES_256_XTS
+(0).  So if the user starts by choosing some other mode, this will immediately
+call evict_keyslot() and crash dereferencing a NULL pointer.
+
+To fix this, how about initializing all the modes to
+BLK_ENCRYPTION_MODE_INVALID?
+
+Then here the code would need to be:
+
+	if (crypto_mode != slotp->crypto_mode &&
+	    slotp->crypto_mode != BLK_ENCRYPTION_MODE_INVALID)
+		evict_keyslot(slot);
+
+And evict_keyslot() should invalidate the crypto_mode:
+
+static void evict_keyslot(unsigned int slot)
+{
+	...
+
+	slotp->crypto_mode = BLK_ENCRYPTION_MODE_INVALID;
+}
+
+> +
+> +static int blk_crypto_keyslot_evict(void *priv, const u8 *key,
+> +				    enum blk_crypto_mode_num crypto_mode,
+> +				    unsigned int data_unit_size,
+> +				    unsigned int slot)
+> +{
+> +	evict_keyslot(slot);
+> +	return 0;
+> +}
+
+It might be useful to have a WARN_ON() here if the keyslot isn't in use
+(i.e., if slotp->crypto_mode == BLK_ENCRYPTION_MODE_INVALID).
+
+> +int blk_crypto_submit_bio(struct bio **bio_ptr)
+> +{
+> +	struct bio *bio = *bio_ptr;
+> +	struct request_queue *q;
+> +	int err;
+> +	struct bio_crypt_ctx *crypt_ctx;
+> +
+> +	if (!bio_has_crypt_ctx(bio) || !bio_has_data(bio))
+> +		return 0;
+> +
+> +	/*
+> +	 * When a read bio is marked for sw decryption, its bi_iter is saved
+> +	 * so that when we decrypt the bio later, we know what part of it was
+> +	 * marked for sw decryption (when the bio is passed down after
+> +	 * blk_crypto_submit bio, it may be split or advanced so we cannot rely
+> +	 * on the bi_iter while decrypting in blk_crypto_endio)
+> +	 */
+> +	if (bio_crypt_swhandled(bio))
+> +		return 0;
+> +
+> +	err = bio_crypt_check_alignment(bio);
+> +	if (err)
+> +		goto out;
+
+Need to set ->bi_status if bio_crypt_check_alignment() fails.
+
+> +bool blk_crypto_endio(struct bio *bio)
+> +{
+> +	if (!bio_has_crypt_ctx(bio))
+> +		return true;
+> +
+> +	if (bio_crypt_swhandled(bio)) {
+> +		/*
+> +		 * The only bios that are swhandled when they reach here
+> +		 * are those with bio_data_dir(bio) == READ, since WRITE
+> +		 * bios that are encrypted by the crypto API fallback are
+> +		 * handled by blk_crypto_encrypt_endio.
+> +		 */
+> +
+> +		/* If there was an IO error, don't decrypt. */
+> +		if (bio->bi_status)
+> +			return true;
+> +
+> +		blk_crypto_queue_decrypt_bio(bio);
+> +		return false;
+> +	}
+> +
+> +	if (bio_has_crypt_ctx(bio) && bio_crypt_has_keyslot(bio))
+> +		bio_crypt_ctx_release_keyslot(bio);
+
+No need to check bio_has_crypt_ctx(bio) here, as it was already checked above.
+
+> +int blk_crypto_mode_alloc_ciphers(enum blk_crypto_mode_num mode_num)
+> +{
+> +	struct blk_crypto_keyslot *slotp;
+> +	int err = 0;
+> +	int i;
+> +
+> +	/* Fast path */
+> +	if (likely(READ_ONCE(tfms_inited[mode_num]))) {
+> +		/*
+> +		 * Ensure that updates to blk_crypto_keyslots[i].tfms[mode_num]
+> +		 * for each i are visible before we try to access them.
+> +		 */
+> +		smp_rmb();
+> +		return 0;
+> +	}
+
+I think we want smp_load_acquire() here.
+
+	/* pairs with smp_store_release() below */
+	if (smp_load_acquire(&tfms_inited[mode_num]))
+		return 0;
+
+> +
+> +	mutex_lock(&tfms_lock[mode_num]);
+> +	if (likely(tfms_inited[mode_num]))
+> +		goto out;
+> +
+> +	for (i = 0; i < blk_crypto_num_keyslots; i++) {
+> +		slotp = &blk_crypto_keyslots[i];
+> +		slotp->tfms[mode_num] = crypto_alloc_skcipher(
+> +					blk_crypto_modes[mode_num].cipher_str,
+> +					0, 0);
+> +		if (IS_ERR(slotp->tfms[mode_num])) {
+> +			err = PTR_ERR(slotp->tfms[mode_num]);
+> +			slotp->tfms[mode_num] = NULL;
+> +			goto out_free_tfms;
+> +		}
+> +
+> +		crypto_skcipher_set_flags(slotp->tfms[mode_num],
+> +					  CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
+> +	}
+> +
+> +	/*
+> +	 * Ensure that updates to blk_crypto_keyslots[i].tfms[mode_num]
+> +	 * for each i are visible before we set tfms_inited[mode_num].
+> +	 */
+> +	smp_wmb();
+> +	WRITE_ONCE(tfms_inited[mode_num], true);
+> +	goto out;
+
+... and smp_store_release() here.
+
+	/* pairs with smp_load_acquire() above */
+	smp_store_release(&tfms_inited[mode_num], true);
+	goto out;
+
+- Eric
