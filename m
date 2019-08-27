@@ -2,185 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36A239E76E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 14:14:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90CE59E7CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 14:23:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbfH0MOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Aug 2019 08:14:06 -0400
-Received: from mail-io1-f43.google.com ([209.85.166.43]:34077 "EHLO
-        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfH0MOG (ORCPT
+        id S1729750AbfH0MWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Aug 2019 08:22:02 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41310 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729028AbfH0MWC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:14:06 -0400
-Received: by mail-io1-f43.google.com with SMTP id s21so45784312ioa.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2019 05:14:05 -0700 (PDT)
+        Tue, 27 Aug 2019 08:22:02 -0400
+Received: by mail-io1-f66.google.com with SMTP id j5so45744635ioj.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2019 05:22:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=H0oh2nokjXdEAdHLvSc07df1Vwg+DF4MMz66Wx4tFtA=;
-        b=Jy8rVNx2TzxAfDy0auKWAphmlk/SpL5WXW81sWdEnur+pDRhIQHvwdUrRCo0wRU3rD
-         FEgOpvqQGVg10bxvm+hBqGyAYMaNazn+I4r666kaOCLHzF/8QGt9jxe0NzVRr4lCMsoG
-         H/95aFym6Y7+arOH3j1vBfc36D5BlvJ5fhZzs=
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YOPd5XCgXy2+S/HOEhe/AbwhZFgb/NCnMmHVmWZ9n/8=;
+        b=I46V+ou5V4hHWnDItnnvqjB+gCXL4kLiCUAZqUtVLAEXu+8G5fOsrklMhEWjYcbJOB
+         27SsLVe62YYWccWKh2GrIzzKbXOrrQp35u4NgCCYY9U8bp6JWd6RDc980q/vVknkTz0A
+         Sq6sKtesc3vdPE/a1BGJE0Lit4NbK8YFBvcjk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=H0oh2nokjXdEAdHLvSc07df1Vwg+DF4MMz66Wx4tFtA=;
-        b=FrsZsJzJi+yAA97c0SHDvI1e0dUB1DWkJtAefvTALUOyZuQe6YwWXGyXeXt3R1D+Cw
-         2H9IKLbtIVk5+xk5EGeiNYFIi19jXSczYa/1RCUtkfwUEfpbiPmrgvtdFGV4l/IaFI6u
-         10dIx1P80mur6RNMRZsRWPYkgCEQ8TluZXaiI1k4wjLpFY9pSmJ1d+tYQhqYsrjSKCCK
-         RIjAMK+VjCQO4CqY1J/OzbJshT2YqiyIDze74ELVFYZWNLhq4HBAUEy9cGN/8b5SSOVW
-         Oo9n0OZw6zv2Dy1AkoFZENm8h88Bwy71Rhs8LwiMbCHwHAeaMpZt2S5B4AfpMifm70t6
-         uCLA==
-X-Gm-Message-State: APjAAAX6bwtwj/ztJ6Rs+Y4Po5UfbF6dFmmm99Y5YB3hwOw7wv3MP127
-        pyrS33aqbotyu7C/qhELVcoheQ==
-X-Google-Smtp-Source: APXvYqyWy4k7GbJREqoUvcHfn+Ju51hGtGCLquSKlQiF8TS6j+EOz9fMPyzuiwNuj7mJegedbd7mnA==
-X-Received: by 2002:a5d:9ec6:: with SMTP id a6mr23853869ioe.256.1566908045279;
-        Tue, 27 Aug 2019 05:14:05 -0700 (PDT)
-Received: from iscandar.digidescorp.com ([50.73.98.161])
-        by smtp.googlemail.com with ESMTPSA id q5sm13389061iot.5.2019.08.27.05.14.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 05:14:04 -0700 (PDT)
-From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
-X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
-To:     Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Steven J . Magnani" <steve@digidescorp.com>
-Subject: [PATCH v2] udf: augment UDF permissions on new inodes
-Date:   Tue, 27 Aug 2019 07:13:59 -0500
-Message-Id: <20190827121359.9954-1-steve@digidescorp.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YOPd5XCgXy2+S/HOEhe/AbwhZFgb/NCnMmHVmWZ9n/8=;
+        b=qOul61VADIbSzqAkkpy5WEDMt3PcSsvChC4Nw0Ct4iJamSZ/berFxnxrraPnWdEren
+         5BoxpSd9t8aKoiztFj3yZyy8Fifcv4/ygXy182ExHY2uYS0J6qunKzD7in39PQMYRnDj
+         cE2OhrKtpmOO0NyPWg/l03LAjCHF2Q+y7PsbHGjThCQoG7HegHwqFbb0oEcjbuNz7iSD
+         IjIuXbubqxpOMyhF3Lmc8sFTIwIU0/z6k3sQobrm7Cl3clIzDGgmlyFOXKuyaQPvSGW7
+         MA4ir7dS6rnfGo7gG1C6QZhrHgzHQKJElAVM8ep4Isl3hOEIgzg9I58Pi5ImRsWGLHtQ
+         Qw3Q==
+X-Gm-Message-State: APjAAAU+/lm6iPL0Nxd9wv9P2lHdTPyyxTiSAzUNbpHEtE8AON6IpBI/
+        nwLmWQOesrT2bLpU9dgSkUektlsi09S4w7Wab44SWA==
+X-Google-Smtp-Source: APXvYqzdO7khz/lQ7E41XNHmVf548e2uq3f63Tds7aCm6H0xbHbUl65agjxGBymMxkQplDqMmciNl0UPoo2J6FMQ+ow=
+X-Received: by 2002:a5e:da48:: with SMTP id o8mr3955838iop.252.1566908521634;
+ Tue, 27 Aug 2019 05:22:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190826024838.GN1131@ZenIV.linux.org.uk> <20190826162949.GA9980@ZenIV.linux.org.uk>
+ <20190826182017.GE15933@bombadil.infradead.org> <20190826192819.GO1131@ZenIV.linux.org.uk>
+ <20190827085144.GA31244@miu.piliscsaba.redhat.com> <20190827115808.GQ1131@ZenIV.linux.org.uk>
+In-Reply-To: <20190827115808.GQ1131@ZenIV.linux.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 27 Aug 2019 14:21:50 +0200
+Message-ID: <CAJfpegvvi0XLhtB3JxyVfzSG4T8A0k+CZ6=8EMUDsgWcwZkvyg@mail.gmail.com>
+Subject: Re: [RFC] Re: broken userland ABI in configfs binary attributes
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        Octavian Purdila <octavian.purdila@intel.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        =?UTF-8?Q?Kai_M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
+        linux-scsi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Windows presents files created within Linux as read-only, even when
-permissions in Linux indicate the file should be writable.
+On Tue, Aug 27, 2019 at 1:58 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Tue, Aug 27, 2019 at 10:51:44AM +0200, Miklos Szeredi wrote:
+>
+> > How about something like this:
+> >
+> > #if BITS_PER_LONG == 32
+> > #define F_COUNT_SHORTTERM ((1UL << 24) + 1)
+> > #else
+> > #define F_COUNT_SHORTTERM ((1UL << 48) + 1)
+> > #endif
+> >
+> > static inline void get_file_shortterm(struct file *f)
+> > {
+> >       atomic_long_add(F_COUNT_SHORTTERM, &f->f_count);
+> > }
+> >
+> > static inline void put_file_shortterm(struct file *f)
+> > {
+> >       fput_many(f, F_COUNT_SHORTTERM);
+> > }
+> >
+> > static inline bool file_is_last_longterm(struct file *f)
+> > {
+> >       return atomic_long_read(&f->f_count) % F_COUNT_SHORTTERM == 1;
+> > }
+>
+> So 256 threads boinking on the same fdinfo at the same time
+> and struct file can be freed right under them?
 
+Nope, 256 threads booking short term refs will result in f_count = 256
+(note the +1 in .F_COUNT_SHORTTERM).  Which can result in false
+negative returned by file_is_last_longterm() but no false freeing.
 
-UDF defines a slightly different set of basic file permissions than Linux.
-Specifically, UDF has "delete" and "change attribute" permissions for each
-access class (user/group/other). Linux has no equivalents for these.
+>  Or a bit over
+> million of dup(), then forking 15 more children, for that matter...
 
-When the Linux UDF driver creates a file (or directory), no UDF delete or
-change attribute permissions are granted. The lack of delete permission
-appears to cause Windows to mark an item read-only when its permissions
-otherwise indicate that it should be read-write.
+Can give false positive for file_is_last_longterm() but no false freeing.
 
-Fix this by having UDF delete permissions track Linux write permissions.
-Also grant UDF change attribute permission to the owner when creating a
-new inode.
+255 short term refs + ~16M long term refs together can result in false
+freeing, true.
 
-Reported by: Ty Young
-Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
----
+>
+> Seriously, it might be OK on 64bit (with something like "no more
+> than one reference held by a thread", otherwise you'll run
+> into overflows even there - 65536 of your shortterm references
+> aren't that much).  On 32bit it's a non-starter - too easy to
+> overflow.
 
-Changes since rev 1:
-UDF delete permission tracks with Linux write permission instead
-of being unconditionally granted to the owner at inode creation
+No, 64bit would be impossible to overflow.  But if we have to special
+case 32bit then it's not worth it...
 
---- a/fs/udf/udf_i.h	2019-08-14 07:24:05.029508342 -0500
-+++ b/fs/udf/udf_i.h	2019-08-26 21:33:05.064410067 -0500
-@@ -38,6 +38,7 @@ struct udf_inode_info {
- 	__u32			i_next_alloc_block;
- 	__u32			i_next_alloc_goal;
- 	__u32			i_checkpoint;
-+	__u32			i_extraPerms;
- 	unsigned		i_alloc_type : 3;
- 	unsigned		i_efe : 1;	/* extendedFileEntry */
- 	unsigned		i_use : 1;	/* unallocSpaceEntry */
---- a/fs/udf/udfdecl.h	2019-08-26 21:38:12.138562583 -0500
-+++ b/fs/udf/udfdecl.h	2019-08-26 21:09:19.465000110 -0500
-@@ -178,6 +178,7 @@ extern int8_t udf_next_aext(struct inode
- 			    struct kernel_lb_addr *, uint32_t *, int);
- extern int8_t udf_current_aext(struct inode *, struct extent_position *,
- 			       struct kernel_lb_addr *, uint32_t *, int);
-+extern void udf_update_extra_perms(struct inode *inode, umode_t mode);
- 
- /* misc.c */
- extern struct buffer_head *udf_tgetblk(struct super_block *sb,
---- a/fs/udf/ialloc.c	2019-08-14 07:24:05.029508342 -0500
-+++ b/fs/udf/ialloc.c	2019-08-26 21:16:43.379449924 -0500
-@@ -125,6 +125,9 @@ struct inode *udf_new_inode(struct inode
- 	iinfo->i_lenAlloc = 0;
- 	iinfo->i_use = 0;
- 	iinfo->i_checkpoint = 1;
-+	iinfo->i_extraPerms = FE_PERM_U_CHATTR;
-+	udf_update_extra_perms(inode, mode);
-+
- 	if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_AD_IN_ICB))
- 		iinfo->i_alloc_type = ICBTAG_FLAG_AD_IN_ICB;
- 	else if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_SHORT_AD))
---- a/fs/udf/inode.c	2019-08-14 07:24:05.029508342 -0500
-+++ b/fs/udf/inode.c	2019-08-26 21:40:17.865649383 -0500
-@@ -45,6 +45,13 @@
- 
- #define EXTENT_MERGE_SIZE 5
- 
-+#define FE_MAPPED_PERMS	(FE_PERM_U_READ | FE_PERM_U_WRITE | FE_PERM_U_EXEC | \
-+			 FE_PERM_G_READ | FE_PERM_G_WRITE | FE_PERM_G_EXEC | \
-+			 FE_PERM_O_READ | FE_PERM_O_WRITE | FE_PERM_O_EXEC)
-+
-+#define FE_DELETE_PERMS	(FE_PERM_U_DELETE | FE_PERM_G_DELETE | \
-+			 FE_PERM_O_DELETE)
-+
- static umode_t udf_convert_permissions(struct fileEntry *);
- static int udf_update_inode(struct inode *, int);
- static int udf_sync_inode(struct inode *inode);
-@@ -1458,6 +1465,8 @@ reread:
- 	else
- 		inode->i_mode = udf_convert_permissions(fe);
- 	inode->i_mode &= ~sbi->s_umask;
-+	iinfo->i_extraPerms = le32_to_cpu(fe->permissions) & ~FE_MAPPED_PERMS;
-+
- 	read_unlock(&sbi->s_cred_lock);
- 
- 	link_count = le16_to_cpu(fe->fileLinkCount);
-@@ -1631,6 +1640,23 @@ static umode_t udf_convert_permissions(s
- 	return mode;
- }
- 
-+void udf_update_extra_perms(struct inode *inode, umode_t mode)
-+{
-+	struct udf_inode_info *iinfo = UDF_I(inode);
-+
-+	/*
-+	 * UDF 2.01 sec. 3.3.3.3 Note 2:
-+	 * In Unix, delete permission tracks write
-+	 */
-+	iinfo->i_extraPerms &= ~FE_DELETE_PERMS;
-+	if (mode & 0200)
-+		iinfo->i_extraPerms |= FE_PERM_U_DELETE;
-+	if (mode & 0020)
-+		iinfo->i_extraPerms |= FE_PERM_G_DELETE;
-+	if (mode & 0002)
-+		iinfo->i_extraPerms |= FE_PERM_O_DELETE;
-+}
-+
- int udf_write_inode(struct inode *inode, struct writeback_control *wbc)
- {
- 	return udf_update_inode(inode, wbc->sync_mode == WB_SYNC_ALL);
-@@ -1703,10 +1729,7 @@ static int udf_update_inode(struct inode
- 		   ((inode->i_mode & 0070) << 2) |
- 		   ((inode->i_mode & 0700) << 4);
- 
--	udfperms |= (le32_to_cpu(fe->permissions) &
--		    (FE_PERM_O_DELETE | FE_PERM_O_CHATTR |
--		     FE_PERM_G_DELETE | FE_PERM_G_CHATTR |
--		     FE_PERM_U_DELETE | FE_PERM_U_CHATTR));
-+	udfperms |= iinfo->i_extraPerms;
- 	fe->permissions = cpu_to_le32(udfperms);
- 
- 	if (S_ISDIR(inode->i_mode) && inode->i_nlink > 0)
---- a/fs/udf/file.c	2019-08-26 21:38:12.138562583 -0500
-+++ b/fs/udf/file.c	2019-08-26 21:12:44.664536308 -0500
-@@ -280,6 +280,9 @@ static int udf_setattr(struct dentry *de
- 			return error;
- 	}
- 
-+	if (attr->ia_valid & ATTR_MODE)
-+		udf_update_extra_perms(inode, attr->ia_mode);
-+
- 	setattr_copy(inode, attr);
- 	mark_inode_dirty(inode);
- 	return 0;
+Thanks,
+Miklos
