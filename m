@@ -2,131 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32DF19EBCB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 17:03:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B7B9EC57
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 17:22:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbfH0PDH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Aug 2019 11:03:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33840 "EHLO mx1.suse.de"
+        id S1729836AbfH0PWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Aug 2019 11:22:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39158 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726955AbfH0PDH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:03:07 -0400
+        id S1727064AbfH0PWk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Aug 2019 11:22:40 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E5B54AEFB;
-        Tue, 27 Aug 2019 15:03:04 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 0F03BAD22;
+        Tue, 27 Aug 2019 15:22:38 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7C8D41E4362; Tue, 27 Aug 2019 17:03:04 +0200 (CEST)
-Date:   Tue, 27 Aug 2019 17:03:04 +0200
+        id D63BF1E4362; Tue, 27 Aug 2019 17:22:37 +0200 (CEST)
+Date:   Tue, 27 Aug 2019 17:22:37 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Max Kellermann <mk@cm4all.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        trond.myklebust@hammerspace.com, bfields@redhat.com, tytso@mit.edu,
-        adilger.kernel@dilger.ca, hughd@google.com,
-        anna.schumaker@netapp.com, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] linux/fs.h: fix umask on NFS with
- CONFIG_FS_POSIX_ACL=n
-Message-ID: <20190827150304.GB10306@quack2.suse.cz>
-References: <20190713041200.18566-1-mk@cm4all.com>
- <20190713041200.18566-3-mk@cm4all.com>
+To:     SunKe <sunke32@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/sync.c: Fix UBSAN Undefined behaviour in
+ sync_file_range
+Message-ID: <20190827152237.GC10306@quack2.suse.cz>
+References: <1562898517-143943-1-git-send-email-sunke32@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190713041200.18566-3-mk@cm4all.com>
+In-Reply-To: <1562898517-143943-1-git-send-email-sunke32@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri 12-07-19 10:28:37, SunKe wrote:
+> There is a UBSAN report:
+> UBSAN: Undefined behaviour in ../fs/sync.c:298:10
+> signed integer overflow:
+> -8 + -9223372036854775807 cannot be represented in type 'long long int'
+> CPU: 0 PID: 15876 Comm: syz-executor.3 Not tainted
+> Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+> Call trace:
+> [<ffffff90080ac450>] dump_backtrace+0x0/0x698 arch/arm64/kernel/traps.c:96
+> [<ffffff90080acb20>] show_stack+0x38/0x60 arch/arm64/kernel/traps.c:234
+> [<ffffff9008ca4500>] __dump_stack lib/dump_stack.c:15 [inline]
+> [<ffffff9008ca4500>] dump_stack+0x1a8/0x230 lib/dump_stack.c:51
+> [<ffffff9008d7e078>] ubsan_epilogue+0x34/0x9c lib/ubsan.c:164
+> [<ffffff9008d7ebb4>] handle_overflow+0x228/0x280 lib/ubsan.c:195
+> [<ffffff9008d7ed28>] __ubsan_handle_add_overflow+0x4c/0x68 lib/ubsan.c:203
+> [<ffffff900874c2b8>] SYSC_sync_file_range fs/sync.c:298 [inline]
+> [<ffffff900874c2b8>] SyS_sync_file_range+0x350/0x3e8 fs/sync.c:285
+> [<ffffff9008094480>] el0_svc_naked+0x30/0x34
+> 
+> When calculate the endbyte, there maybe an overflow, even if no effect
+> the kernel, but I also want to avoid overflowing and avoid UBSAN reporting.
+> The original compare is to ensure the offset >= 0 && nbytes >= 0 && no
+> overflow happened.
+> 
+> I do the calculate after compare. ensure the offset >= 0 && nbytes >= 0 &&
+> no overflow may happen first.
+> 
+> Signed-off-by: SunKe <sunke32@huawei.com>
 
-On Sat 13-07-19 06:11:59, Max Kellermann wrote:
-> Make IS_POSIXACL() return false if POSIX ACL support is disabled and
-> ignore SB_POSIXACL/MS_POSIXACL.
-> 
-> Never skip applying the umask in namei.c and never bother to do any
-> ACL specific checks if the filesystem falsely indicates it has ACLs
-> enabled when the feature is completely disabled in the kernel.
-> 
-> This fixes a problem where the umask is always ignored in the NFS
-> client when compiled without CONFIG_FS_POSIX_ACL.  This is a 4 year
-> old regression caused by commit 013cdf1088d723 which itself was not
-> completely wrong, but failed to consider all the side effects by
-> misdesigned VFS code.
-> 
-> Prior to that commit, there were two places where the umask could be
-> applied, for example when creating a directory:
-> 
->  1. in the VFS layer in SYSCALL_DEFINE3(mkdirat), but only if
->     !IS_POSIXACL()
-> 
->  2. again (unconditionally) in nfs3_proc_mkdir()
-> 
-> The first one does not apply, because even without
-> CONFIG_FS_POSIX_ACL, the NFS client sets MS_POSIXACL in
-> nfs_fill_super().
-> 
-> After that commit, (2.) was replaced by:
-> 
->  2b. in posix_acl_create(), called by nfs3_proc_mkdir()
-> 
-> There's one branch in posix_acl_create() which applies the umask;
-> however, without CONFIG_FS_POSIX_ACL, posix_acl_create() is an empty
-> dummy function which does not apply the umask.
-> 
-> The approach chosen by this patch is to make IS_POSIXACL() always
-> return false when POSIX ACL support is disabled, so the umask always
-> gets applied by the VFS layer.  This is consistent with the (regular)
-> behavior of posix_acl_create(): that function returns early if
-> IS_POSIXACL() is false, before applying the umask.
-> 
-> Therefore, posix_acl_create() is responsible for applying the umask if
-> there is ACL support enabled in the file system (SB_POSIXACL), and the
-> VFS layer is responsible for all other cases (no SB_POSIXACL or no
-> CONFIG_FS_POSIX_ACL).
-> 
-> Signed-off-by: Max Kellermann <mk@cm4all.com>
-> Cc: stable@vger.kernel.org
-
-Thanks for the patch. This patch definitely looks good to me so feel free
-to add:
+Thanks for the patch. The patch looks good to me. You can add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
-I just wonder, do you really need patches 1 and 2? Doesn't this patch alone
-fix the problem? Because AFAIU the problem, this patch should be enough and
-indeed the logic "VFS is responsible for applying umask if !IS_POSIXACL and
-otherwise posix_acl_create() is responsible for it" looks the most logical
-to me. BTW, I think you should add VFS maintainer - Al Viro
-<viro@ZenIV.linux.org.uk> - to CC to merge the patch.
+Al, care to pickup this fix?
 
 								Honza
 
-> ---
->  include/linux/fs.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f7fdfe93e25d..5e9f3aa7ba26 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1993,7 +1993,12 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
->  #define IS_NOQUOTA(inode)	((inode)->i_flags & S_NOQUOTA)
->  #define IS_APPEND(inode)	((inode)->i_flags & S_APPEND)
->  #define IS_IMMUTABLE(inode)	((inode)->i_flags & S_IMMUTABLE)
-> +
-> +#ifdef CONFIG_FS_POSIX_ACL
->  #define IS_POSIXACL(inode)	__IS_FLG(inode, SB_POSIXACL)
-> +#else
-> +#define IS_POSIXACL(inode)	0
-> +#endif
+> diff --git a/fs/sync.c b/fs/sync.c
+> index 4d1ff01..5827471 100644
+> --- a/fs/sync.c
+> +++ b/fs/sync.c
+> @@ -246,15 +246,15 @@ int sync_file_range(struct file *file, loff_t offset, loff_t nbytes,
+>  	if (flags & ~VALID_FLAGS)
+>  		goto out;
 >  
->  #define IS_DEADDIR(inode)	((inode)->i_flags & S_DEAD)
->  #define IS_NOCMTIME(inode)	((inode)->i_flags & S_NOCMTIME)
+> -	endbyte = offset + nbytes;
+> -
+>  	if ((s64)offset < 0)
+>  		goto out;
+> -	if ((s64)endbyte < 0)
+> +	if ((s64)nbytes < 0)
+>  		goto out;
+> -	if (endbyte < offset)
+> +	if (S64_MAX - offset < nbytes)
+>  		goto out;
+>  
+> +	endbyte = offset + nbytes;
+> +
+>  	if (sizeof(pgoff_t) == 4) {
+>  		if (offset >= (0x100000000ULL << PAGE_SHIFT)) {
+>  			/*
 > -- 
-> 2.20.1
+> 2.7.4
 > 
 -- 
 Jan Kara <jack@suse.com>
