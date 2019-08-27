@@ -2,51 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E5B6B13BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EFF1B1396
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:28:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387678AbfILR3Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 13:29:16 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:8060 "EHLO
+        id S2387628AbfILR25 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 13:28:57 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:7948 "EHLO
         smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387665AbfILR3M (ORCPT
+        with ESMTP id S2387610AbfILR2y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 13:29:12 -0400
+        Thu, 12 Sep 2019 13:28:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1568309352; x=1599845352;
+  t=1568309334; x=1599845334;
   h=message-id:in-reply-to:references:from:date:subject:to:
    mime-version;
-  bh=8dWtkihj51CdY9eSpqcNedZCKX1EeD1xhejnUbKXAgM=;
-  b=K2U5/SyUAd6YnUJEy5F/vFZ+bC2Pyp/Hulf54shaeeE25EnJL700TMUP
-   bH1f34O6pf94uFCM+Y5kG0z/MXC9FhxCytMW8v2HdpDZ6sdgcvoTZ/kwb
-   TAuNqYeyHIXq+2CkDOLqEX5qlW9ycIEbnhoEeCG5p/XfawokT2sW6vHwL
-   U=;
+  bh=/7carR8TUg6wHC1wDHhlHNRUEsQ5JS9MirXg3rUQnNE=;
+  b=ZRp1T1k6FSRs8mTGIAY9ryncxI+781nKASTrbslw/8gGCkFB1KAlOvrm
+   Jr/K77ImL6TATjlFxmjVsanB3/o0uT9A/i9PatKffMVJ1WIvy2qX9RfgB
+   yy1+AjCcvoiE+44h0dZMvvw3A4XLScLewfsJzVtepXcFD2zUem8cLbWTz
+   g=;
 X-IronPort-AV: E=Sophos;i="5.64,497,1559520000"; 
-   d="scan'208";a="414961359"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-62350142.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 12 Sep 2019 17:29:11 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-62350142.us-east-1.amazon.com (Postfix) with ESMTPS id D861FA1DD4;
-        Thu, 12 Sep 2019 17:29:10 +0000 (UTC)
-Received: from EX13D09UEA002.ant.amazon.com (10.43.61.145) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+   d="scan'208";a="414961241"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 12 Sep 2019 17:28:53 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com (Postfix) with ESMTPS id 029AFA271F;
+        Thu, 12 Sep 2019 17:28:52 +0000 (UTC)
+Received: from EX13D02UWB003.ant.amazon.com (10.43.161.48) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
  id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
- EX13D09UEA002.ant.amazon.com (10.43.61.145) with Microsoft SMTP Server (TLS)
+Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
+ EX13D02UWB003.ant.amazon.com (10.43.161.48) with Microsoft SMTP Server (TLS)
  id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
 Received: from kaos-source-ops-60003.pdx1.corp.amazon.com (10.36.133.164) by
- mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:52 +0000
+ mail-relay.amazon.com (10.43.161.249) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:51 +0000
 Received: by kaos-source-ops-60003.pdx1.corp.amazon.com (Postfix, from userid 6262777)
-        id E73CBC0568; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
-Message-ID: <0dc1762319d0515bf735daa9b27dd6535f24eb68.1568309119.git.fllinden@amazon.com>
+        id E5A1DC056F; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
+Message-ID: <378aa1d4b918a6f021105564369b809ffe4d9184.1568309119.git.fllinden@amazon.com>
 In-Reply-To: <cover.1568309119.git.fllinden@amazon.com>
 References: <cover.1568309119.git.fllinden@amazon.com>
 From:   Frank van der Linden <fllinden@amazon.com>
-Date:   Mon, 26 Aug 2019 23:09:27 +0000
-Subject: [RFC PATCH 09/35] NFSv4.2: define and use extended attribute overhead
- sizes
+Date:   Tue, 27 Aug 2019 15:46:07 +0000
+Subject: [RFC PATCH 11/35] nfs: define nfs_access_get_cached function
 To:     <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -55,116 +54,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Define, much like for read and write operations, the maximum overhead
-sizes for get/set/listxattr, and use them to limit the maximum payload
-size for those operations, in combination with the channel attributes.
+The only consumer of nfs_access_get_cached_rcu and nfs_access_cached
+calls these static funtions in order to first try RCU access, and
+then locked access.
+
+Combine them in to a single function, and call that. Make this function
+available to the rest of the NFS code.
 
 Signed-off-by: Frank van der Linden <fllinden@amazon.com>
 ---
- fs/nfs/internal.h   |  5 +++++
- fs/nfs/nfs42xdr.c   | 23 +++++++++++++++++++++++
- fs/nfs/nfs4client.c | 31 +++++++++++++++++++++++++++++++
- 3 files changed, 59 insertions(+)
+ fs/nfs/dir.c           | 20 ++++++++++++++++----
+ include/linux/nfs_fs.h |  2 ++
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index e64f810223be..a1464bf8d178 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -295,6 +295,11 @@ extern const u32 nfs41_maxread_overhead;
- extern const u32 nfs41_maxwrite_overhead;
- extern const u32 nfs41_maxgetdevinfo_overhead;
- #endif
-+#ifdef CONFIG_NFS_V4_XATTR
-+extern const u32 nfs42_maxsetxattr_overhead;
-+extern const u32 nfs42_maxgetxattr_overhead;
-+extern const u32 nfs42_maxlistxattrs_overhead;
-+#endif
- 
- /* nfs4proc.c */
- #if IS_ENABLED(CONFIG_NFS_V4)
-diff --git a/fs/nfs/nfs42xdr.c b/fs/nfs/nfs42xdr.c
-index d7657be74557..ca29d2702017 100644
---- a/fs/nfs/nfs42xdr.c
-+++ b/fs/nfs/nfs42xdr.c
-@@ -199,6 +199,29 @@
- 				decode_sequence_maxsz + \
- 				decode_putfh_maxsz + \
- 				decode_removexattr_maxsz)
-+
-+/*
-+ * These values specify the maximum amount of data that is not
-+ * associated with the extended attribute name or extended
-+ * attribute list in the SETXATTR, GETXATTR and LISTXATTR
-+ * respectively.
-+ */
-+const u32 nfs42_maxsetxattr_overhead = ((RPC_MAX_HEADER_WITH_AUTH +
-+					compound_encode_hdr_maxsz +
-+					encode_sequence_maxsz +
-+					encode_putfh_maxsz + 1 +
-+					nfs4_xattr_name_maxsz)
-+					* XDR_UNIT);
-+
-+const u32 nfs42_maxgetxattr_overhead = ((RPC_MAX_HEADER_WITH_AUTH +
-+					compound_decode_hdr_maxsz +
-+					decode_sequence_maxsz +
-+					decode_putfh_maxsz + 1) * XDR_UNIT);
-+
-+const u32 nfs42_maxlistxattrs_overhead = ((RPC_MAX_HEADER_WITH_AUTH +
-+					compound_decode_hdr_maxsz +
-+					decode_sequence_maxsz +
-+					decode_putfh_maxsz + 3) * XDR_UNIT);
- #endif
- 
- static void encode_fallocate(struct xdr_stream *xdr,
-diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
-index da6204025a2d..d6f28bcd0929 100644
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -990,6 +990,36 @@ static void nfs4_session_limit_rwsize(struct nfs_server *server)
- #endif /* CONFIG_NFS_V4_1 */
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index 0adfd8840110..e7f4c25de362 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -2285,7 +2285,7 @@ static struct nfs_access_entry *nfs_access_search_rbtree(struct inode *inode, co
+ 	return NULL;
  }
  
-+/*
-+ * Limit xattr sizes using the channel attributes.
-+ */
-+static void nfs4_session_limit_xasize(struct nfs_server *server)
-+{
-+#ifdef CONFIG_NFS_V4_XATTR
-+	struct nfs4_session *sess;
-+	u32 server_gxa_sz;
-+	u32 server_sxa_sz;
-+	u32 server_lxa_sz;
-+
-+	if (!nfs4_has_session(server->nfs_client))
-+		return;
-+
-+	sess = server->nfs_client->cl_session;
-+
-+	server_gxa_sz = sess->fc_attrs.max_resp_sz - nfs42_maxgetxattr_overhead;
-+	server_sxa_sz = sess->fc_attrs.max_rqst_sz - nfs42_maxsetxattr_overhead;
-+	server_lxa_sz = sess->fc_attrs.max_resp_sz -
-+	    nfs42_maxlistxattrs_overhead;
-+
-+	if (server->gxasize > server_gxa_sz)
-+		server->gxasize = server_gxa_sz;
-+	if (server->sxasize > server_sxa_sz)
-+		server->sxasize = server_sxa_sz;
-+	if (server->lxasize > server_lxa_sz)
-+		server->lxasize = server_lxa_sz;
-+#endif
-+}
-+
- static int nfs4_server_common_setup(struct nfs_server *server,
- 		struct nfs_fh *mntfh, bool auth_probe)
+-static int nfs_access_get_cached(struct inode *inode, const struct cred *cred, struct nfs_access_entry *res, bool may_block)
++static int nfs_access_get_cached_locked(struct inode *inode, const struct cred *cred, struct nfs_access_entry *res, bool may_block)
  {
-@@ -1037,6 +1067,7 @@ static int nfs4_server_common_setup(struct nfs_server *server,
- 		goto out;
+ 	struct nfs_inode *nfsi = NFS_I(inode);
+ 	struct nfs_access_entry *cache;
+@@ -2358,6 +2358,20 @@ static int nfs_access_get_cached_rcu(struct inode *inode, const struct cred *cre
+ 	return err;
+ }
  
- 	nfs4_session_limit_rwsize(server);
-+	nfs4_session_limit_xasize(server);
++int nfs_access_get_cached(struct inode *inode, const struct cred *cred, struct
++nfs_access_entry *res, bool may_block)
++{
++	int status;
++
++	status = nfs_access_get_cached_rcu(inode, cred, res);
++	if (status != 0)
++		status = nfs_access_get_cached_locked(inode, cred, res,
++		    may_block);
++
++	return status;
++}
++EXPORT_SYMBOL_GPL(nfs_access_get_cached);
++
+ static void nfs_access_add_rbtree(struct inode *inode, struct nfs_access_entry *set)
+ {
+ 	struct nfs_inode *nfsi = NFS_I(inode);
+@@ -2472,9 +2486,7 @@ static int nfs_do_access(struct inode *inode, const struct cred *cred, int mask)
  
- 	if (server->namelen == 0 || server->namelen > NFS4_MAXNAMLEN)
- 		server->namelen = NFS4_MAXNAMLEN;
+ 	trace_nfs_access_enter(inode);
+ 
+-	status = nfs_access_get_cached_rcu(inode, cred, &cache);
+-	if (status != 0)
+-		status = nfs_access_get_cached(inode, cred, &cache, may_block);
++	status = nfs_access_get_cached(inode, cred, &cache, may_block);
+ 	if (status == 0)
+ 		goto out_cached;
+ 
+diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+index e87c894d1960..dec76ec9808c 100644
+--- a/include/linux/nfs_fs.h
++++ b/include/linux/nfs_fs.h
+@@ -497,6 +497,8 @@ extern int nfs_instantiate(struct dentry *dentry, struct nfs_fh *fh,
+ 			struct nfs_fattr *fattr, struct nfs4_label *label);
+ extern int nfs_may_open(struct inode *inode, const struct cred *cred, int openflags);
+ extern void nfs_access_zap_cache(struct inode *inode);
++extern int nfs_access_get_cached(struct inode *inode, const struct cred *cred, struct nfs_access_entry *res,
++				 bool may_block);
+ 
+ /*
+  * linux/fs/nfs/symlink.c
 -- 
 2.17.2
 
