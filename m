@@ -2,258 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83CB79DACC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 02:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 042859DBA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 04:37:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbfH0AqV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Aug 2019 20:46:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41780 "EHLO mx1.redhat.com"
+        id S1728648AbfH0Chd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Aug 2019 22:37:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbfH0AqV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Aug 2019 20:46:21 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726487AbfH0Chd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Aug 2019 22:37:33 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 910312A09A7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2019 00:46:20 +0000 (UTC)
-Received: from [IPv6:::1] (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0343B196AE;
-        Tue, 27 Aug 2019 00:46:19 +0000 (UTC)
-To:     fsdevel <linux-fsdevel@vger.kernel.org>
-From:   Eric Sandeen <sandeen@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>
-Subject: [PATCH] fs: fs_parser: remove fs_parameter_description name field
-Message-ID: <7020be46-f21f-bd05-71a5-cb2bc073596b@redhat.com>
-Date:   Mon, 26 Aug 2019 19:46:18 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        by mail.kernel.org (Postfix) with ESMTPSA id BC527206E0;
+        Tue, 27 Aug 2019 02:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566873452;
+        bh=1IV2CM6ErWuo3N+yfdMw51ZAbsWRy4I36btniWe1qIA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Q7Go3M99ctkACkffmRIl2U9APAA7HHwtwnMynerXPU5BSUSZR8Ru99vPmYSG2aJLa
+         VYMoQrvB097EzDzv3sL6Ia+UOUks4qbnXOu6opjr96OAci7grhSLeKJjw2DQHJXYCK
+         dRgXzahaJxb2PBjJQCuInQN+zjyswv+UYbfMBiFw=
+Date:   Tue, 27 Aug 2019 11:37:24 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v3 01/19] skc: Add supplemental kernel cmdline
+ support
+Message-Id: <20190827113724.fa32ce580f5901004044d0f1@kernel.org>
+In-Reply-To: <CAL_Jsq+Pm4D_fm+iG9UfGSObx2fSXshZuMW4QKwGePbg4RUEjA@mail.gmail.com>
+References: <156678933823.21459.4100380582025186209.stgit@devnote2>
+        <156678934990.21459.10847677747264952252.stgit@devnote2>
+        <CAL_Jsq+Pm4D_fm+iG9UfGSObx2fSXshZuMW4QKwGePbg4RUEjA@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 27 Aug 2019 00:46:20 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There doesn't seem to be a strong reason to have another copy of the
-filesystem name string in the fs_parameter_description structure;
-it's easy enough to get the name from the fs_type, and using it
-instead ensures consistency across messages (for example,
-vfs_parse_fs_param() already uses fc->fs_type->name for the error
-messages, because it doesn't have the fs_parameter_description).
+Hi Rob,
 
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
----
+Thank you for your comment!
 
-If I'm missing a reason for the separate copy of the string, feel
-free to nak...
+On Mon, 26 Aug 2019 08:27:48 -0500
+Rob Herring <robh+dt@kernel.org> wrote:
 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index a46dee8e78db..5999eae23308 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -2047,7 +2047,6 @@ static const struct fs_parameter_spec rdt_param_specs[] = {
- };
- 
- static const struct fs_parameter_description rdt_fs_parameters = {
--	.name		= "rdt",
- 	.specs		= rdt_param_specs,
- };
- 
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index f18911e8d770..b7c2dd4219dd 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -90,7 +90,6 @@ static const struct fs_parameter_enum afs_param_enums[] = {
- };
- 
- static const struct fs_parameter_description afs_fs_parameters = {
--	.name		= "kAFS",
- 	.specs		= afs_param_specs,
- 	.enums		= afs_param_enums,
- };
-diff --git a/fs/filesystems.c b/fs/filesystems.c
-index 9135646e41ac..77bf5f95362d 100644
---- a/fs/filesystems.c
-+++ b/fs/filesystems.c
-@@ -74,7 +74,8 @@ int register_filesystem(struct file_system_type * fs)
- 	int res = 0;
- 	struct file_system_type ** p;
- 
--	if (fs->parameters && !fs_validate_description(fs->parameters))
-+	if (fs->parameters &&
-+	    !fs_validate_description(fs->name, fs->parameters))
- 		return -EINVAL;
- 
- 	BUG_ON(strchr(fs->name, '.'));
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index 460ea4206fa2..43d5ca08e629 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -111,7 +111,7 @@ int fs_parse(struct fs_context *fc,
- 
- 	if (p->flags & fs_param_deprecated)
- 		warnf(fc, "%s: Deprecated parameter '%s'",
--		      desc->name, param->key);
-+		      fc->fs_type->name, param->key);
- 
- 	if (result->negated)
- 		goto okay;
-@@ -147,7 +147,7 @@ int fs_parse(struct fs_context *fc,
- 		if (param->type != fs_value_is_flag &&
- 		    (param->type != fs_value_is_string || result->has_value))
- 			return invalf(fc, "%s: Unexpected value for '%s'",
--				      desc->name, param->key);
-+				      fc->fs_type->name, param->key);
- 		result->boolean = true;
- 		goto okay;
- 
-@@ -223,7 +223,8 @@ int fs_parse(struct fs_context *fc,
- 	return p->opt;
- 
- bad_value:
--	return invalf(fc, "%s: Bad value for '%s'", desc->name, param->key);
-+	return invalf(fc, "%s: Bad value for '%s'",
-+		      fc->fs_type->name, param->key);
- unknown_parameter:
- 	return -ENOPARAM;
- }
-@@ -343,22 +344,16 @@ bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
-  * fs_validate_description - Validate a parameter description
-  * @desc: The parameter description to validate.
-  */
--bool fs_validate_description(const struct fs_parameter_description *desc)
-+bool fs_validate_description(const char *name,
-+	const struct fs_parameter_description *desc)
- {
- 	const struct fs_parameter_spec *param, *p2;
- 	const struct fs_parameter_enum *e;
--	const char *name = desc->name;
- 	unsigned int nr_params = 0;
- 	bool good = true, enums = false;
- 
- 	pr_notice("*** VALIDATE %s ***\n", name);
- 
--	if (!name[0]) {
--		pr_err("VALIDATE Parser: No name\n");
--		name = "Unknown";
--		good = false;
--	}
--
- 	if (desc->specs) {
- 		for (param = desc->specs; param->name; param++) {
- 			enum fs_parameter_type t = param->type;
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index a478df035651..67b76e0125a4 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -85,7 +85,6 @@ static const struct fs_parameter_spec hugetlb_param_specs[] = {
- };
- 
- static const struct fs_parameter_description hugetlb_fs_parameters = {
--	.name		= "hugetlbfs",
- 	.specs		= hugetlb_param_specs,
- };
- 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 33f72d1b92cc..b3dc8e0da732 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -48,7 +48,6 @@ static const struct fs_parameter_spec proc_param_specs[] = {
- };
- 
- static const struct fs_parameter_description proc_fs_parameters = {
--	.name		= "proc",
- 	.specs		= proc_param_specs,
- };
- 
-diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
-index dee140db6240..090a2edf3e72 100644
---- a/include/linux/fs_parser.h
-+++ b/include/linux/fs_parser.h
-@@ -62,7 +62,6 @@ struct fs_parameter_enum {
- };
- 
- struct fs_parameter_description {
--	const char	name[16];		/* Name for logging purposes */
- 	const struct fs_parameter_spec *specs;	/* List of param specifications */
- 	const struct fs_parameter_enum *enums;	/* Enum values */
- };
-@@ -97,12 +96,14 @@ extern int __lookup_constant(const struct constant_table tbl[], size_t tbl_size,
- #ifdef CONFIG_VALIDATE_FS_PARSER
- extern bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
- 				    int low, int high, int special);
--extern bool fs_validate_description(const struct fs_parameter_description *desc);
-+extern bool fs_validate_description(const char *name,
-+				    const struct fs_parameter_description *desc);
- #else
- static inline bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
- 					   int low, int high, int special)
- { return true; }
--static inline bool fs_validate_description(const struct fs_parameter_description *desc)
-+static inline bool fs_validate_description(const char *name,
-+					   const struct fs_parameter_description *desc)
- { return true; }
- #endif
- 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 88006be40ea3..9a317f08b323 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -918,7 +918,6 @@ static const struct fs_parameter_spec cgroup1_param_specs[] = {
- };
- 
- const struct fs_parameter_description cgroup1_fs_parameters = {
--	.name		= "cgroup1",
- 	.specs		= cgroup1_param_specs,
- };
- 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 753afbca549f..ee3a84aa6599 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1826,7 +1826,6 @@ static const struct fs_parameter_spec cgroup2_param_specs[] = {
- };
- 
- static const struct fs_parameter_description cgroup2_fs_parameters = {
--	.name		= "cgroup2",
- 	.specs		= cgroup2_param_specs,
- };
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 74dd46de01b6..9e45cf94cd4d 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2820,7 +2820,6 @@ static const struct fs_parameter_spec selinux_param_specs[] = {
- };
- 
- static const struct fs_parameter_description selinux_fs_parameters = {
--	.name		= "SELinux",
- 	.specs		= selinux_param_specs,
- };
- 
-@@ -7021,7 +7020,7 @@ static __init int selinux_init(void)
- 	else
- 		pr_debug("SELinux:  Starting in permissive mode\n");
- 
--	fs_validate_description(&selinux_fs_parameters);
-+	fs_validate_description("selinux", &selinux_fs_parameters);
- 
- 	return 0;
- }
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 4c5e5a438f8b..87d9e4a1e3ed 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -690,7 +690,6 @@ static const struct fs_parameter_spec smack_param_specs[] = {
- };
- 
- static const struct fs_parameter_description smack_fs_parameters = {
--	.name		= "smack",
- 	.specs		= smack_param_specs,
- };
- 
+> On Sun, Aug 25, 2019 at 10:15 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >
+> > Supplemental kernel command line (SKC) allows admin to pass a
+> > tree-structured supplemental kernel commandline file (SKC file)
+> > when boot up kernel. This expands the kernel command line in
+> > efficient way.
+> >
+> > SKC file will contain some key-value commands, e.g.
+> >
+> > key.word = value1;
+> > another.key.word = value2;
+> >
+> > It can fold same keys with braces, also you can write array
+> > data. For example,
+> >
+> > key {
+> >    word1 {
+> >       setting1 = data;
+> >       setting2;
+> >    }
+> >    word2.array = "val1", "val2";
+> > }
+> 
+> Why invent a custom file format? You could use YAML (or JSON):
 
+Yeah, actually my early idea was using JSON, since it is widely used and
+many good tools. However, I thought that is not human friendly format :(.
+I would like to give an easy to read/write but structured interface.
+
+> 
+> key:
+>  word1:
+>   setting1: data
+>   setting2: true
+>  word2:
+>   - val1
+>   - val2
+
+(Ah, in above example "array" is just a part of key, and is not
+a reserved word.)
+
+> That would allow you to define a schema for defined options and can
+> easily be manipulated with python (or any language with dictionaries
+> and lists). That does imply adding a YAML parser to the kernel which
+> I'm not sure is a great idea. There is a C parser lib, but working
+> with YAML in C is not that great compared to python.
+
+Yes, using plain YAML maybe requires user-space coverter to some
+other format.
+
+> 
+> Another option would be using the DTS format, but as a separate file.
+> That's not unprecedented as u-boot FIT image is a DTB. Then the kernel
+> already has the parser. And you could still have schema now.
+
+Yeah, that is what I consider at first. I discussed it with Frank at
+OSSJ, but he suggested to not use DTS, nor touch current parser in kernel.
+So I finally convinced not using DTS.
+
+> A new interface will take a lot of bootloader work to make it easy to
+> use given the user has to manually load some file in the bootloader
+> and know a good address to load it to.
+
+Right, that is what I have to do next if this is accepted. As I shown, I
+modified Qemu and Grub. (Since U-Boot is very flexible, it is easy to
+load skc file and modify bootargs by manual.)
+What I found was, since the bootloaders already supported loading DTB,
+it would not be so hard to add loading another file :)  (curiously, the
+most complicated part was modifying kernel cmdline)
+
+> Between that and rebuilding the
+> kernel with the configuration, I'd pick rebuilding the kernel. Perhaps
+> this version will highlight that the original proposal was not so bad.
+
+Maybe for embedded, yes. For admins who use vendor kernel, no.
+
+> Another thought, maybe you could process the configuration file that's
+> in a readable/editable format into a flat representation that could
+> simply be added to the kernel command line:
+
+(BTW, it is easy to make a flat representation data as you can see
+in /proc/sup_cmdline, which is added by [2/19])
+
+> 
+> key.word1.setting1=data key.word1.setting2 key.word2=val1,val2
+> 
+> That would then use an existing interface and probably simplify the
+> kernel parsing.
+
+Hmm, if it is just for passing extended arguments, that will be enough
+(that was my first version of SKC, here 
+https://github.com/mhiramat/skc/tree/5f0429c244d1c9f8f84711bc33e1e6f90df62df8 )
+
+But I found that was not enough flexible for my usage. For expressing
+complex ftrace settings (e.g. nesting options, some options related to
+other options etc.), I need tree-structured data, something like Devicetree. 
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
