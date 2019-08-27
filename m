@@ -2,104 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74B7B9EC57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 17:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EAB69EC79
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 17:26:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729836AbfH0PWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Aug 2019 11:22:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39158 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727064AbfH0PWk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:22:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0F03BAD22;
-        Tue, 27 Aug 2019 15:22:38 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D63BF1E4362; Tue, 27 Aug 2019 17:22:37 +0200 (CEST)
-Date:   Tue, 27 Aug 2019 17:22:37 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     SunKe <sunke32@huawei.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/sync.c: Fix UBSAN Undefined behaviour in
- sync_file_range
-Message-ID: <20190827152237.GC10306@quack2.suse.cz>
-References: <1562898517-143943-1-git-send-email-sunke32@huawei.com>
+        id S1729122AbfH0PZ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Aug 2019 11:25:58 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45877 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728670AbfH0PZ6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Aug 2019 11:25:58 -0400
+Received: by mail-qt1-f196.google.com with SMTP id k13so21626188qtm.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2019 08:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version;
+        bh=UYsPsgGfUckufMeEUec2JwS26x9RnxC68LqfuMsCJb4=;
+        b=Q1NhQkKVxAJlcKICo7k5uO5wNqrqJBvNZeECLILQCFrPYYBxQy90++0mMzPVwDn4S8
+         TpWXTq7/bbzvvgU9XibqgTuSn9KYLWVYUi1wr9wQPm0n9tinq18kYuBsi9mSXbnjVrPJ
+         LI569nCbjvqAHQkLM+ORs/6pREwitnixakqmoxua+Bv9X29ughQwtfmxM2n/Ma4L3FlZ
+         2gjAgAiF2FJcNrKH4g6grpJB8XVrqdboghb2Lp7XhhnM/FOMqhACKeZyzu+PJMkQwCOg
+         dU4mOurRaiSuhta9WPdCrG3SSlUO0bBwb96IjQIJajtvjgjxfd4voZ23uY9kZi8KwooA
+         lKXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version;
+        bh=UYsPsgGfUckufMeEUec2JwS26x9RnxC68LqfuMsCJb4=;
+        b=eWcWrrz3G/WKOn3tYfYGmt4wjRAkEkhGXOiqZJnx0ww7/GKDvojJX5Wu8RBv0FV2Qs
+         cMC9wJQNbp1CeLKOE+8VmItfUHQCzRuXzo6Z4pDDoath2jvK9oMiU0C19OTutMGSJbkx
+         Q9zKLPpKXyMKJimjn1DE9w2Vs6D9I95PCB6aMVIk9cUQKso7pOcU6HPj3FKWZPTv+Re/
+         5pWcOLI/M5k4BkwJWkYdOKPr2B4BEIyoHpsSBzPjbpepYgB/F87FDNOka/zwm23RF/UV
+         JpbnRV+UWqHKD6MchKwu2keo+9D6HjVwtVd9h0f9HCh8Qyd6DMe5vIAZO3hTuvyfga3I
+         EaKA==
+X-Gm-Message-State: APjAAAVErppxvsedFQzBf1o9u8DC2ViyzTP7rQz670ex0hoandOyl/jp
+        lk0b72iJZVEMLmqMyTmFZhBeFw==
+X-Google-Smtp-Source: APXvYqyz2z2LwgJPPM/lvqPrfZk6dZuilv+UvVvnsCTjgYLjcKlMdJnfhv4XQUcExaXeKHLvVSiVZw==
+X-Received: by 2002:ac8:7b2a:: with SMTP id l10mr624196qtu.115.1566919557007;
+        Tue, 27 Aug 2019 08:25:57 -0700 (PDT)
+Received: from tpx230-nicolas (modemcable154.55-37-24.static.videotron.ca. [24.37.55.154])
+        by smtp.gmail.com with ESMTPSA id p201sm7988339qke.6.2019.08.27.08.25.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 08:25:55 -0700 (PDT)
+Message-ID: <ed170df34f3dadc941f509a84730fe94d7c6a3a4.camel@ndufresne.ca>
+Subject: Re: [PATCH 6/7] misc: bcm-vk: add Broadcom Valkyrie driver
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Scott Branden <scott.branden@broadcom.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Desmond Yan <desmond.yan@broadcom.com>,
+        James Hu <james.hu@broadcom.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Date:   Tue, 27 Aug 2019 11:25:53 -0400
+In-Reply-To: <CAK8P3a1WBkmXbJx=rZMumxn7EN4bmA1AdZEgrWBVyQ3XNngU6Q@mail.gmail.com>
+References: <20190822192451.5983-1-scott.branden@broadcom.com>
+         <20190822192451.5983-7-scott.branden@broadcom.com>
+         <CAK8P3a1WBkmXbJx=rZMumxn7EN4bmA1AdZEgrWBVyQ3XNngU6Q@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+        boundary="=-Q6lkT7+PAzBRKQ8Zlvb3"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1562898517-143943-1-git-send-email-sunke32@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 12-07-19 10:28:37, SunKe wrote:
-> There is a UBSAN report:
-> UBSAN: Undefined behaviour in ../fs/sync.c:298:10
-> signed integer overflow:
-> -8 + -9223372036854775807 cannot be represented in type 'long long int'
-> CPU: 0 PID: 15876 Comm: syz-executor.3 Not tainted
-> Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-> Call trace:
-> [<ffffff90080ac450>] dump_backtrace+0x0/0x698 arch/arm64/kernel/traps.c:96
-> [<ffffff90080acb20>] show_stack+0x38/0x60 arch/arm64/kernel/traps.c:234
-> [<ffffff9008ca4500>] __dump_stack lib/dump_stack.c:15 [inline]
-> [<ffffff9008ca4500>] dump_stack+0x1a8/0x230 lib/dump_stack.c:51
-> [<ffffff9008d7e078>] ubsan_epilogue+0x34/0x9c lib/ubsan.c:164
-> [<ffffff9008d7ebb4>] handle_overflow+0x228/0x280 lib/ubsan.c:195
-> [<ffffff9008d7ed28>] __ubsan_handle_add_overflow+0x4c/0x68 lib/ubsan.c:203
-> [<ffffff900874c2b8>] SYSC_sync_file_range fs/sync.c:298 [inline]
-> [<ffffff900874c2b8>] SyS_sync_file_range+0x350/0x3e8 fs/sync.c:285
-> [<ffffff9008094480>] el0_svc_naked+0x30/0x34
-> 
-> When calculate the endbyte, there maybe an overflow, even if no effect
-> the kernel, but I also want to avoid overflowing and avoid UBSAN reporting.
-> The original compare is to ensure the offset >= 0 && nbytes >= 0 && no
-> overflow happened.
-> 
-> I do the calculate after compare. ensure the offset >= 0 && nbytes >= 0 &&
-> no overflow may happen first.
-> 
-> Signed-off-by: SunKe <sunke32@huawei.com>
 
-Thanks for the patch. The patch looks good to me. You can add:
+--=-Q6lkT7+PAzBRKQ8Zlvb3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Le mardi 27 ao=C3=BBt 2019 =C3=A0 16:14 +0200, Arnd Bergmann a =C3=A9crit :
+> On Thu, Aug 22, 2019 at 9:25 PM Scott Branden
+> <scott.branden@broadcom.com> wrote:
+> > Add Broadcom Valkyrie driver offload engine.
+> > This driver interfaces to the Valkyrie PCIe offload engine to perform
+> > should offload functions as video transcoding on multiple streams
+> > in parallel.  Valkyrie device is booted from files loaded using
+> > request_firmware_into_buf mechanism.  After booted card status is updat=
+ed
+> > and messages can then be sent to the card.
+> > Such messages contain scatter gather list of addresses
+> > to pull data from the host to perform operations on.
+> >=20
+> > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+> > Signed-off-by: Desmond Yan <desmond.yan@broadcom.com>
+> > Signed-off-by: James Hu <james.hu@broadcom.com>
+>=20
+> Can you explain the decision to make this is a standalone misc driver
+> rather than hooking into the existing framework in drivers/media?
+>=20
+> There is an existing interface that looks like it could fit the hardware
+> in include/media/v4l2-mem2mem.h. Have you considered using that?
+>=20
+> There is also support for video transcoding using GPUs in
+> driver/gpu/drm/, that could also be used in theory, though it sounds
+> like a less optimal fit.
 
-Al, care to pickup this fix?
+I believe that a major obstacle with this driver is usability. Even
+though I have read through, I believe it's just impossible for anyone
+to actually write Open Source userspace for it. The commit message does
+not even try to help in this regard.
 
-								Honza
+Note that depending on the feature your transcoder has, there is also
+the option to model it around the media controller. That is notably
+useful for certain transcoders that will also do scaling and produce
+multiple streams (for adaptive streaming usecases were you want to
+share a single decoder).
 
-> diff --git a/fs/sync.c b/fs/sync.c
-> index 4d1ff01..5827471 100644
-> --- a/fs/sync.c
-> +++ b/fs/sync.c
-> @@ -246,15 +246,15 @@ int sync_file_range(struct file *file, loff_t offset, loff_t nbytes,
->  	if (flags & ~VALID_FLAGS)
->  		goto out;
->  
-> -	endbyte = offset + nbytes;
-> -
->  	if ((s64)offset < 0)
->  		goto out;
-> -	if ((s64)endbyte < 0)
-> +	if ((s64)nbytes < 0)
->  		goto out;
-> -	if (endbyte < offset)
-> +	if (S64_MAX - offset < nbytes)
->  		goto out;
->  
-> +	endbyte = offset + nbytes;
-> +
->  	if (sizeof(pgoff_t) == 4) {
->  		if (offset >= (0x100000000ULL << PAGE_SHIFT)) {
->  			/*
-> -- 
-> 2.7.4
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+An 1 to 1 transcoder modeled around m2m would eventually required
+documentation so that other transcoder can be implemented in a way that
+they would share the same userspace. This is currently being worked on
+for m2m encoder and decoders (including state-less variants).
+
+regards,
+Nicolas
+
+
+
+--=-Q6lkT7+PAzBRKQ8Zlvb3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCXWVLgQAKCRBxUwItrAao
+HOWtAJ9PEGIeS4lUvTlk5tzICIY0ocFUrgCfZ7hh+138dIIu9Aq/IBhBjjcgRwg=
+=7DWJ
+-----END PGP SIGNATURE-----
+
+--=-Q6lkT7+PAzBRKQ8Zlvb3--
+
