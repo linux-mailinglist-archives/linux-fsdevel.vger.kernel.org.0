@@ -2,177 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D2F29E9A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 15:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F4A9E9D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 15:45:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfH0NjO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Aug 2019 09:39:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55878 "EHLO mx1.suse.de"
+        id S1728415AbfH0Nps (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Aug 2019 09:45:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59284 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725825AbfH0NjN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:39:13 -0400
+        id S1726441AbfH0Nps (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:45:48 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D9B2BB684;
-        Tue, 27 Aug 2019 13:39:11 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 02745AC45;
+        Tue, 27 Aug 2019 13:45:46 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 703F71E4362; Tue, 27 Aug 2019 15:39:08 +0200 (CEST)
-Date:   Tue, 27 Aug 2019 15:39:08 +0200
+        id DC2361E4362; Tue, 27 Aug 2019 15:45:43 +0200 (CEST)
+Date:   Tue, 27 Aug 2019 15:45:43 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     " Steven J. Magnani " <steve.magnani@digidescorp.com>
-Cc:     Jan Kara <jack@suse.com>,
-        "Steven J . Magnani" <steve@digidescorp.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] udf: augment UDF permissions on new inodes
-Message-ID: <20190827133908.GA10098@quack2.suse.cz>
-References: <20190827121359.9954-1-steve@digidescorp.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        stefanha@redhat.com, dgilbert@redhat.com,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 02/19] dax: Pass dax_dev to dax_writeback_mapping_range()
+Message-ID: <20190827134543.GA10306@quack2.suse.cz>
+References: <20190821175720.25901-1-vgoyal@redhat.com>
+ <20190821175720.25901-3-vgoyal@redhat.com>
+ <20190826115316.GB21051@infradead.org>
+ <20190826203326.GB13860@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190827121359.9954-1-steve@digidescorp.com>
+In-Reply-To: <20190826203326.GB13860@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 27-08-19 07:13:59,  Steven J. Magnani  wrote:
-> Windows presents files created within Linux as read-only, even when
-> permissions in Linux indicate the file should be writable.
+On Mon 26-08-19 16:33:26, Vivek Goyal wrote:
+> On Mon, Aug 26, 2019 at 04:53:16AM -0700, Christoph Hellwig wrote:
+> > On Wed, Aug 21, 2019 at 01:57:03PM -0400, Vivek Goyal wrote:
+> > > Right now dax_writeback_mapping_range() is passed a bdev and dax_dev
+> > > is searched from that bdev name.
+> > > 
+> > > virtio-fs does not have a bdev. So pass in dax_dev also to
+> > > dax_writeback_mapping_range(). If dax_dev is passed in, bdev is not
+> > > used otherwise dax_dev is searched using bdev.
+> > 
+> > Please just pass in only the dax_device and get rid of the block device.
+> > The callers should have one at hand easily, e.g. for XFS just call
+> > xfs_find_daxdev_for_inode instead of xfs_find_bdev_for_inode.
+> 
+> Sure. Here is the updated patch.
+> 
+> This patch can probably go upstream independently. If you are fine with
+> the patch, I can post it separately for inclusion.
 > 
 > 
-> UDF defines a slightly different set of basic file permissions than Linux.
-> Specifically, UDF has "delete" and "change attribute" permissions for each
-> access class (user/group/other). Linux has no equivalents for these.
+> Subject: dax: Pass dax_dev instead of bdev to dax_writeback_mapping_range()
 > 
-> When the Linux UDF driver creates a file (or directory), no UDF delete or
-> change attribute permissions are granted. The lack of delete permission
-> appears to cause Windows to mark an item read-only when its permissions
-> otherwise indicate that it should be read-write.
+> As of now dax_writeback_mapping_range() takes "struct block_device" as a
+> parameter and dax_dev is searched from bdev name. This also involves taking
+> a fresh reference on dax_dev and putting that reference at the end of
+> function.
 > 
-> Fix this by having UDF delete permissions track Linux write permissions.
-> Also grant UDF change attribute permission to the owner when creating a
-> new inode.
+> We are developing a new filesystem virtio-fs and using dax to access host
+> page cache directly. But there is no block device. IOW, we want to make
+> use of dax but want to get rid of this assumption that there is always
+> a block device associated with dax_dev.
 > 
-> Reported by: Ty Young
-> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+> So pass in "struct dax_device" as parameter instead of bdev.
+> 
+> ext2/ext4/xfs are current users and they already have a reference on
+> dax_device. So there is no need to take reference and drop reference to
+> dax_device on each call of this function.
+> 
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 
-Thanks for the patch! I've added it to my tree.
+Looks good to me. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
-
 > ---
+>  fs/dax.c            |    8 +-------
+>  fs/ext2/inode.c     |    5 +++--
+>  fs/ext4/inode.c     |    2 +-
+>  fs/xfs/xfs_aops.c   |    2 +-
+>  include/linux/dax.h |    2 +-
+>  5 files changed, 7 insertions(+), 12 deletions(-)
 > 
-> Changes since rev 1:
-> UDF delete permission tracks with Linux write permission instead
-> of being unconditionally granted to the owner at inode creation
-> 
-> --- a/fs/udf/udf_i.h	2019-08-14 07:24:05.029508342 -0500
-> +++ b/fs/udf/udf_i.h	2019-08-26 21:33:05.064410067 -0500
-> @@ -38,6 +38,7 @@ struct udf_inode_info {
->  	__u32			i_next_alloc_block;
->  	__u32			i_next_alloc_goal;
->  	__u32			i_checkpoint;
-> +	__u32			i_extraPerms;
->  	unsigned		i_alloc_type : 3;
->  	unsigned		i_efe : 1;	/* extendedFileEntry */
->  	unsigned		i_use : 1;	/* unallocSpaceEntry */
-> --- a/fs/udf/udfdecl.h	2019-08-26 21:38:12.138562583 -0500
-> +++ b/fs/udf/udfdecl.h	2019-08-26 21:09:19.465000110 -0500
-> @@ -178,6 +178,7 @@ extern int8_t udf_next_aext(struct inode
->  			    struct kernel_lb_addr *, uint32_t *, int);
->  extern int8_t udf_current_aext(struct inode *, struct extent_position *,
->  			       struct kernel_lb_addr *, uint32_t *, int);
-> +extern void udf_update_extra_perms(struct inode *inode, umode_t mode);
+> Index: rhvgoyal-linux-fuse/fs/dax.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/dax.c	2019-08-26 11:20:36.545009968 -0400
+> +++ rhvgoyal-linux-fuse/fs/dax.c	2019-08-26 11:24:43.973009968 -0400
+> @@ -936,12 +936,11 @@ static int dax_writeback_one(struct xa_s
+>   * on persistent storage prior to completion of the operation.
+>   */
+>  int dax_writeback_mapping_range(struct address_space *mapping,
+> -		struct block_device *bdev, struct writeback_control *wbc)
+> +		struct dax_device *dax_dev, struct writeback_control *wbc)
+>  {
+>  	XA_STATE(xas, &mapping->i_pages, wbc->range_start >> PAGE_SHIFT);
+>  	struct inode *inode = mapping->host;
+>  	pgoff_t end_index = wbc->range_end >> PAGE_SHIFT;
+> -	struct dax_device *dax_dev;
+>  	void *entry;
+>  	int ret = 0;
+>  	unsigned int scanned = 0;
+> @@ -952,10 +951,6 @@ int dax_writeback_mapping_range(struct a
+>  	if (!mapping->nrexceptional || wbc->sync_mode != WB_SYNC_ALL)
+>  		return 0;
 >  
->  /* misc.c */
->  extern struct buffer_head *udf_tgetblk(struct super_block *sb,
-> --- a/fs/udf/ialloc.c	2019-08-14 07:24:05.029508342 -0500
-> +++ b/fs/udf/ialloc.c	2019-08-26 21:16:43.379449924 -0500
-> @@ -125,6 +125,9 @@ struct inode *udf_new_inode(struct inode
->  	iinfo->i_lenAlloc = 0;
->  	iinfo->i_use = 0;
->  	iinfo->i_checkpoint = 1;
-> +	iinfo->i_extraPerms = FE_PERM_U_CHATTR;
-> +	udf_update_extra_perms(inode, mode);
-> +
->  	if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_AD_IN_ICB))
->  		iinfo->i_alloc_type = ICBTAG_FLAG_AD_IN_ICB;
->  	else if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_SHORT_AD))
-> --- a/fs/udf/inode.c	2019-08-14 07:24:05.029508342 -0500
-> +++ b/fs/udf/inode.c	2019-08-26 21:40:17.865649383 -0500
-> @@ -45,6 +45,13 @@
+> -	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+> -	if (!dax_dev)
+> -		return -EIO;
+> -
+>  	trace_dax_writeback_range(inode, xas.xa_index, end_index);
 >  
->  #define EXTENT_MERGE_SIZE 5
+>  	tag_pages_for_writeback(mapping, xas.xa_index, end_index);
+> @@ -976,7 +971,6 @@ int dax_writeback_mapping_range(struct a
+>  		xas_lock_irq(&xas);
+>  	}
+>  	xas_unlock_irq(&xas);
+> -	put_dax(dax_dev);
+>  	trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
+>  	return ret;
+>  }
+> Index: rhvgoyal-linux-fuse/include/linux/dax.h
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/include/linux/dax.h	2019-08-26 11:20:36.545009968 -0400
+> +++ rhvgoyal-linux-fuse/include/linux/dax.h	2019-08-26 11:26:08.384009968 -0400
+> @@ -141,7 +141,7 @@ static inline void fs_put_dax(struct dax
 >  
-> +#define FE_MAPPED_PERMS	(FE_PERM_U_READ | FE_PERM_U_WRITE | FE_PERM_U_EXEC | \
-> +			 FE_PERM_G_READ | FE_PERM_G_WRITE | FE_PERM_G_EXEC | \
-> +			 FE_PERM_O_READ | FE_PERM_O_WRITE | FE_PERM_O_EXEC)
-> +
-> +#define FE_DELETE_PERMS	(FE_PERM_U_DELETE | FE_PERM_G_DELETE | \
-> +			 FE_PERM_O_DELETE)
-> +
->  static umode_t udf_convert_permissions(struct fileEntry *);
->  static int udf_update_inode(struct inode *, int);
->  static int udf_sync_inode(struct inode *inode);
-> @@ -1458,6 +1465,8 @@ reread:
->  	else
->  		inode->i_mode = udf_convert_permissions(fe);
->  	inode->i_mode &= ~sbi->s_umask;
-> +	iinfo->i_extraPerms = le32_to_cpu(fe->permissions) & ~FE_MAPPED_PERMS;
-> +
->  	read_unlock(&sbi->s_cred_lock);
+>  struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+>  int dax_writeback_mapping_range(struct address_space *mapping,
+> -		struct block_device *bdev, struct writeback_control *wbc);
+> +		struct dax_device *dax_dev, struct writeback_control *wbc);
 >  
->  	link_count = le16_to_cpu(fe->fileLinkCount);
-> @@ -1631,6 +1640,23 @@ static umode_t udf_convert_permissions(s
->  	return mode;
+>  struct page *dax_layout_busy_page(struct address_space *mapping);
+>  dax_entry_t dax_lock_page(struct page *page);
+> Index: rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/xfs/xfs_aops.c	2019-08-26 11:20:36.545009968 -0400
+> +++ rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c	2019-08-26 11:34:51.085009968 -0400
+> @@ -1120,7 +1120,7 @@ xfs_dax_writepages(
+>  {
+>  	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+>  	return dax_writeback_mapping_range(mapping,
+> -			xfs_find_bdev_for_inode(mapping->host), wbc);
+> +			xfs_find_daxdev_for_inode(mapping->host), wbc);
 >  }
 >  
-> +void udf_update_extra_perms(struct inode *inode, umode_t mode)
-> +{
-> +	struct udf_inode_info *iinfo = UDF_I(inode);
-> +
-> +	/*
-> +	 * UDF 2.01 sec. 3.3.3.3 Note 2:
-> +	 * In Unix, delete permission tracks write
-> +	 */
-> +	iinfo->i_extraPerms &= ~FE_DELETE_PERMS;
-> +	if (mode & 0200)
-> +		iinfo->i_extraPerms |= FE_PERM_U_DELETE;
-> +	if (mode & 0020)
-> +		iinfo->i_extraPerms |= FE_PERM_G_DELETE;
-> +	if (mode & 0002)
-> +		iinfo->i_extraPerms |= FE_PERM_O_DELETE;
-> +}
-> +
->  int udf_write_inode(struct inode *inode, struct writeback_control *wbc)
+>  STATIC int
+> Index: rhvgoyal-linux-fuse/fs/ext4/inode.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/ext4/inode.c	2019-08-26 11:20:36.545009968 -0400
+> +++ rhvgoyal-linux-fuse/fs/ext4/inode.c	2019-08-26 11:39:56.828009968 -0400
+> @@ -2992,7 +2992,7 @@ static int ext4_dax_writepages(struct ad
+>  	percpu_down_read(&sbi->s_journal_flag_rwsem);
+>  	trace_ext4_writepages(inode, wbc);
+>  
+> -	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
+> +	ret = dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
+>  	trace_ext4_writepages_result(inode, wbc, ret,
+>  				     nr_to_write - wbc->nr_to_write);
+>  	percpu_up_read(&sbi->s_journal_flag_rwsem);
+> Index: rhvgoyal-linux-fuse/fs/ext2/inode.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/ext2/inode.c	2019-08-26 11:20:36.545009968 -0400
+> +++ rhvgoyal-linux-fuse/fs/ext2/inode.c	2019-08-26 11:43:04.842009968 -0400
+> @@ -957,8 +957,9 @@ ext2_writepages(struct address_space *ma
+>  static int
+>  ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
 >  {
->  	return udf_update_inode(inode, wbc->sync_mode == WB_SYNC_ALL);
-> @@ -1703,10 +1729,7 @@ static int udf_update_inode(struct inode
->  		   ((inode->i_mode & 0070) << 2) |
->  		   ((inode->i_mode & 0700) << 4);
->  
-> -	udfperms |= (le32_to_cpu(fe->permissions) &
-> -		    (FE_PERM_O_DELETE | FE_PERM_O_CHATTR |
-> -		     FE_PERM_G_DELETE | FE_PERM_G_CHATTR |
-> -		     FE_PERM_U_DELETE | FE_PERM_U_CHATTR));
-> +	udfperms |= iinfo->i_extraPerms;
->  	fe->permissions = cpu_to_le32(udfperms);
->  
->  	if (S_ISDIR(inode->i_mode) && inode->i_nlink > 0)
-> --- a/fs/udf/file.c	2019-08-26 21:38:12.138562583 -0500
-> +++ b/fs/udf/file.c	2019-08-26 21:12:44.664536308 -0500
-> @@ -280,6 +280,9 @@ static int udf_setattr(struct dentry *de
->  			return error;
->  	}
->  
-> +	if (attr->ia_valid & ATTR_MODE)
-> +		udf_update_extra_perms(inode, attr->ia_mode);
+> -	return dax_writeback_mapping_range(mapping,
+> -			mapping->host->i_sb->s_bdev, wbc);
+> +	struct ext2_sb_info *sbi = EXT2_SB(mapping->host->i_sb);
 > +
->  	setattr_copy(inode, attr);
->  	mark_inode_dirty(inode);
->  	return 0;
-> 
+> +	return dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
+>  }
+>  
+>  const struct address_space_operations ext2_aops = {
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
