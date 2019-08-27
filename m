@@ -2,224 +2,258 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08C5D9D876
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2019 23:33:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83CB79DACC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 02:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfHZVdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Aug 2019 17:33:18 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44685 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728726AbfHZVdS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Aug 2019 17:33:18 -0400
-Received: by mail-ot1-f65.google.com with SMTP id w4so16626244ote.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2019 14:33:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=addQr9bC2wmMaOpWzp5KHixoxZuk44VTTnG3FHz50ro=;
-        b=KB19yNqe2JAyNdzPN93BH99s0SUUx4ly84Dg+4BhMZSnUtjRsgn1CtyZkk45Rg9IZz
-         Rch9ySnRAVAkgyrrsg2oJuq3zJPuBF0wbnoZXojIoOPlK7GJjU78phO75hePgy99qNJJ
-         4W7h+BXdL23ATAaiL+3u0fS6tnTdMb6hQq+IexH5BwTUvRW8ADRES45cItBkNr3sxEco
-         lxcLEukToOMG1qoky8nHKT8gqgrMJhfkGoEVqWjxcEQtqrw9BICZ1xZ6ze+048v+vHFn
-         5dGXWwcjEp9ea1R0z4blVj6VALBMF6hVCLufXjBS0+9Gm1gvp/C21pOA6gU2EArJ5AXi
-         H9Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=addQr9bC2wmMaOpWzp5KHixoxZuk44VTTnG3FHz50ro=;
-        b=HJKimpgYRhkTsnu8TImDbWtgK2PIg+UrvpcUigYwa4qwzExwTrbdC7P4vZaaRLb4uH
-         KeHT2M8KDn70e70U2N58sadp5ceEg5HNXLc/j8Apc0kvVQEaN33QREEguEaz/MCYaaNE
-         h3245ejtsxJlhgJqQtWr8GiBmIuZG+6Bpdn1dAWAIGvHUg3oXt+M6JN6XCCG8h//vPuR
-         R64lavKhx89BKlabZXUorpiV6BpzCDDoEY3pclDmzEsBY9t1j8GdfmQitGqewO73YW9r
-         fcNELg4StJi4BxQVn+cjTxb2kaN+TD78MvWf7gLEA/5cKhWCb14WH9ygozxdI9MltW0F
-         LLdQ==
-X-Gm-Message-State: APjAAAX2K7hBuLvcwsEr/DoASAXsDhAJivIafT59nA6W3roE9T1PLzMI
-        DNzTHY3Mf19KGDx1/ikFBp6O/sSW5JkOh6oee6wGBA==
-X-Google-Smtp-Source: APXvYqzdmrCxPsLGkwxNLbv0nCYfX5WN2PH0oFBVdK2D57wEJrFA0ck2wwQinKWCopRImeLq6iaGhc0qX19J1KqtxKY=
-X-Received: by 2002:a05:6830:1e05:: with SMTP id s5mr16213861otr.247.1566855197160;
- Mon, 26 Aug 2019 14:33:17 -0700 (PDT)
+        id S1726606AbfH0AqV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Aug 2019 20:46:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41780 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726307AbfH0AqV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Aug 2019 20:46:21 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 910312A09A7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Aug 2019 00:46:20 +0000 (UTC)
+Received: from [IPv6:::1] (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0343B196AE;
+        Tue, 27 Aug 2019 00:46:19 +0000 (UTC)
+To:     fsdevel <linux-fsdevel@vger.kernel.org>
+From:   Eric Sandeen <sandeen@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>
+Subject: [PATCH] fs: fs_parser: remove fs_parameter_description name field
+Message-ID: <7020be46-f21f-bd05-71a5-cb2bc073596b@redhat.com>
+Date:   Mon, 26 Aug 2019 19:46:18 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190821175720.25901-1-vgoyal@redhat.com> <20190821175720.25901-3-vgoyal@redhat.com>
- <20190826115316.GB21051@infradead.org> <20190826203326.GB13860@redhat.com> <20190826205829.GC13860@redhat.com>
-In-Reply-To: <20190826205829.GC13860@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 26 Aug 2019 14:33:04 -0700
-Message-ID: <CAPcyv4htarWQysXZh8JDh3mMBNM4WtVs7yL70LGOZ1mQg5bEFA@mail.gmail.com>
-Subject: Re: [PATCH 02/19] dax: Pass dax_dev to dax_writeback_mapping_range()
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, virtio-fs@redhat.com,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 27 Aug 2019 00:46:20 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ add Jan ]
+There doesn't seem to be a strong reason to have another copy of the
+filesystem name string in the fs_parameter_description structure;
+it's easy enough to get the name from the fs_type, and using it
+instead ensures consistency across messages (for example,
+vfs_parse_fs_param() already uses fc->fs_type->name for the error
+messages, because it doesn't have the fs_parameter_description).
 
-On Mon, Aug 26, 2019 at 1:58 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Mon, Aug 26, 2019 at 04:33:26PM -0400, Vivek Goyal wrote:
-> > On Mon, Aug 26, 2019 at 04:53:16AM -0700, Christoph Hellwig wrote:
-> > > On Wed, Aug 21, 2019 at 01:57:03PM -0400, Vivek Goyal wrote:
-> > > > Right now dax_writeback_mapping_range() is passed a bdev and dax_dev
-> > > > is searched from that bdev name.
-> > > >
-> > > > virtio-fs does not have a bdev. So pass in dax_dev also to
-> > > > dax_writeback_mapping_range(). If dax_dev is passed in, bdev is not
-> > > > used otherwise dax_dev is searched using bdev.
-> > >
-> > > Please just pass in only the dax_device and get rid of the block device.
-> > > The callers should have one at hand easily, e.g. for XFS just call
-> > > xfs_find_daxdev_for_inode instead of xfs_find_bdev_for_inode.
-> >
-> > Sure. Here is the updated patch.
-> >
-> > This patch can probably go upstream independently. If you are fine with
-> > the patch, I can post it separately for inclusion.
->
-> Forgot to update function declaration in case of !CONFIG_FS_DAX. Here is
-> the updated patch.
->
-> Subject: dax: Pass dax_dev instead of bdev to dax_writeback_mapping_range()
->
-> As of now dax_writeback_mapping_range() takes "struct block_device" as a
-> parameter and dax_dev is searched from bdev name. This also involves taking
-> a fresh reference on dax_dev and putting that reference at the end of
-> function.
->
-> We are developing a new filesystem virtio-fs and using dax to access host
-> page cache directly. But there is no block device. IOW, we want to make
-> use of dax but want to get rid of this assumption that there is always
-> a block device associated with dax_dev.
->
-> So pass in "struct dax_device" as parameter instead of bdev.
->
-> ext2/ext4/xfs are current users and they already have a reference on
-> dax_device. So there is no need to take reference and drop reference to
-> dax_device on each call of this function.
->
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/dax.c            |    8 +-------
->  fs/ext2/inode.c     |    5 +++--
->  fs/ext4/inode.c     |    2 +-
->  fs/xfs/xfs_aops.c   |    2 +-
->  include/linux/dax.h |    4 ++--
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+---
 
-Looks good to me. Would be nice to get some ext4 and xfs acks then
-I'll take it through the dax tree for v5.4.
+If I'm missing a reason for the separate copy of the string, feel
+free to nak...
 
->  5 files changed, 8 insertions(+), 13 deletions(-)
->
-> Index: rhvgoyal-linux-fuse/fs/dax.c
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/fs/dax.c   2019-08-26 16:45:26.093710196 -0400
-> +++ rhvgoyal-linux-fuse/fs/dax.c        2019-08-26 16:45:29.462710196 -0400
-> @@ -936,12 +936,11 @@ static int dax_writeback_one(struct xa_s
->   * on persistent storage prior to completion of the operation.
->   */
->  int dax_writeback_mapping_range(struct address_space *mapping,
-> -               struct block_device *bdev, struct writeback_control *wbc)
-> +               struct dax_device *dax_dev, struct writeback_control *wbc)
->  {
->         XA_STATE(xas, &mapping->i_pages, wbc->range_start >> PAGE_SHIFT);
->         struct inode *inode = mapping->host;
->         pgoff_t end_index = wbc->range_end >> PAGE_SHIFT;
-> -       struct dax_device *dax_dev;
->         void *entry;
->         int ret = 0;
->         unsigned int scanned = 0;
-> @@ -952,10 +951,6 @@ int dax_writeback_mapping_range(struct a
->         if (!mapping->nrexceptional || wbc->sync_mode != WB_SYNC_ALL)
->                 return 0;
->
-> -       dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
-> -       if (!dax_dev)
-> -               return -EIO;
-> -
->         trace_dax_writeback_range(inode, xas.xa_index, end_index);
->
->         tag_pages_for_writeback(mapping, xas.xa_index, end_index);
-> @@ -976,7 +971,6 @@ int dax_writeback_mapping_range(struct a
->                 xas_lock_irq(&xas);
->         }
->         xas_unlock_irq(&xas);
-> -       put_dax(dax_dev);
->         trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
->         return ret;
->  }
-> Index: rhvgoyal-linux-fuse/include/linux/dax.h
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/include/linux/dax.h        2019-08-26 16:45:26.094710196 -0400
-> +++ rhvgoyal-linux-fuse/include/linux/dax.h     2019-08-26 16:46:08.101710196 -0400
-> @@ -141,7 +141,7 @@ static inline void fs_put_dax(struct dax
->
->  struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
->  int dax_writeback_mapping_range(struct address_space *mapping,
-> -               struct block_device *bdev, struct writeback_control *wbc);
-> +               struct dax_device *dax_dev, struct writeback_control *wbc);
->
->  struct page *dax_layout_busy_page(struct address_space *mapping);
->  dax_entry_t dax_lock_page(struct page *page);
-> @@ -180,7 +180,7 @@ static inline struct page *dax_layout_bu
->  }
->
->  static inline int dax_writeback_mapping_range(struct address_space *mapping,
-> -               struct block_device *bdev, struct writeback_control *wbc)
-> +               struct dax_device *dax_dev, struct writeback_control *wbc)
->  {
->         return -EOPNOTSUPP;
->  }
-> Index: rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/fs/xfs/xfs_aops.c  2019-08-26 16:45:26.094710196 -0400
-> +++ rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c       2019-08-26 16:45:29.471710196 -0400
-> @@ -1120,7 +1120,7 @@ xfs_dax_writepages(
->  {
->         xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
->         return dax_writeback_mapping_range(mapping,
-> -                       xfs_find_bdev_for_inode(mapping->host), wbc);
-> +                       xfs_find_daxdev_for_inode(mapping->host), wbc);
->  }
->
->  STATIC int
-> Index: rhvgoyal-linux-fuse/fs/ext4/inode.c
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/fs/ext4/inode.c    2019-08-26 16:45:26.093710196 -0400
-> +++ rhvgoyal-linux-fuse/fs/ext4/inode.c 2019-08-26 16:45:29.475710196 -0400
-> @@ -2992,7 +2992,7 @@ static int ext4_dax_writepages(struct ad
->         percpu_down_read(&sbi->s_journal_flag_rwsem);
->         trace_ext4_writepages(inode, wbc);
->
-> -       ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
-> +       ret = dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
->         trace_ext4_writepages_result(inode, wbc, ret,
->                                      nr_to_write - wbc->nr_to_write);
->         percpu_up_read(&sbi->s_journal_flag_rwsem);
-> Index: rhvgoyal-linux-fuse/fs/ext2/inode.c
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/fs/ext2/inode.c    2019-08-26 16:45:26.093710196 -0400
-> +++ rhvgoyal-linux-fuse/fs/ext2/inode.c 2019-08-26 16:45:29.477710196 -0400
-> @@ -957,8 +957,9 @@ ext2_writepages(struct address_space *ma
->  static int
->  ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
->  {
-> -       return dax_writeback_mapping_range(mapping,
-> -                       mapping->host->i_sb->s_bdev, wbc);
-> +       struct ext2_sb_info *sbi = EXT2_SB(mapping->host->i_sb);
-> +
-> +       return dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
->  }
->
->  const struct address_space_operations ext2_aops = {
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index a46dee8e78db..5999eae23308 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -2047,7 +2047,6 @@ static const struct fs_parameter_spec rdt_param_specs[] = {
+ };
+ 
+ static const struct fs_parameter_description rdt_fs_parameters = {
+-	.name		= "rdt",
+ 	.specs		= rdt_param_specs,
+ };
+ 
+diff --git a/fs/afs/super.c b/fs/afs/super.c
+index f18911e8d770..b7c2dd4219dd 100644
+--- a/fs/afs/super.c
++++ b/fs/afs/super.c
+@@ -90,7 +90,6 @@ static const struct fs_parameter_enum afs_param_enums[] = {
+ };
+ 
+ static const struct fs_parameter_description afs_fs_parameters = {
+-	.name		= "kAFS",
+ 	.specs		= afs_param_specs,
+ 	.enums		= afs_param_enums,
+ };
+diff --git a/fs/filesystems.c b/fs/filesystems.c
+index 9135646e41ac..77bf5f95362d 100644
+--- a/fs/filesystems.c
++++ b/fs/filesystems.c
+@@ -74,7 +74,8 @@ int register_filesystem(struct file_system_type * fs)
+ 	int res = 0;
+ 	struct file_system_type ** p;
+ 
+-	if (fs->parameters && !fs_validate_description(fs->parameters))
++	if (fs->parameters &&
++	    !fs_validate_description(fs->name, fs->parameters))
+ 		return -EINVAL;
+ 
+ 	BUG_ON(strchr(fs->name, '.'));
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+index 460ea4206fa2..43d5ca08e629 100644
+--- a/fs/fs_parser.c
++++ b/fs/fs_parser.c
+@@ -111,7 +111,7 @@ int fs_parse(struct fs_context *fc,
+ 
+ 	if (p->flags & fs_param_deprecated)
+ 		warnf(fc, "%s: Deprecated parameter '%s'",
+-		      desc->name, param->key);
++		      fc->fs_type->name, param->key);
+ 
+ 	if (result->negated)
+ 		goto okay;
+@@ -147,7 +147,7 @@ int fs_parse(struct fs_context *fc,
+ 		if (param->type != fs_value_is_flag &&
+ 		    (param->type != fs_value_is_string || result->has_value))
+ 			return invalf(fc, "%s: Unexpected value for '%s'",
+-				      desc->name, param->key);
++				      fc->fs_type->name, param->key);
+ 		result->boolean = true;
+ 		goto okay;
+ 
+@@ -223,7 +223,8 @@ int fs_parse(struct fs_context *fc,
+ 	return p->opt;
+ 
+ bad_value:
+-	return invalf(fc, "%s: Bad value for '%s'", desc->name, param->key);
++	return invalf(fc, "%s: Bad value for '%s'",
++		      fc->fs_type->name, param->key);
+ unknown_parameter:
+ 	return -ENOPARAM;
+ }
+@@ -343,22 +344,16 @@ bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
+  * fs_validate_description - Validate a parameter description
+  * @desc: The parameter description to validate.
+  */
+-bool fs_validate_description(const struct fs_parameter_description *desc)
++bool fs_validate_description(const char *name,
++	const struct fs_parameter_description *desc)
+ {
+ 	const struct fs_parameter_spec *param, *p2;
+ 	const struct fs_parameter_enum *e;
+-	const char *name = desc->name;
+ 	unsigned int nr_params = 0;
+ 	bool good = true, enums = false;
+ 
+ 	pr_notice("*** VALIDATE %s ***\n", name);
+ 
+-	if (!name[0]) {
+-		pr_err("VALIDATE Parser: No name\n");
+-		name = "Unknown";
+-		good = false;
+-	}
+-
+ 	if (desc->specs) {
+ 		for (param = desc->specs; param->name; param++) {
+ 			enum fs_parameter_type t = param->type;
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index a478df035651..67b76e0125a4 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -85,7 +85,6 @@ static const struct fs_parameter_spec hugetlb_param_specs[] = {
+ };
+ 
+ static const struct fs_parameter_description hugetlb_fs_parameters = {
+-	.name		= "hugetlbfs",
+ 	.specs		= hugetlb_param_specs,
+ };
+ 
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 33f72d1b92cc..b3dc8e0da732 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -48,7 +48,6 @@ static const struct fs_parameter_spec proc_param_specs[] = {
+ };
+ 
+ static const struct fs_parameter_description proc_fs_parameters = {
+-	.name		= "proc",
+ 	.specs		= proc_param_specs,
+ };
+ 
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index dee140db6240..090a2edf3e72 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -62,7 +62,6 @@ struct fs_parameter_enum {
+ };
+ 
+ struct fs_parameter_description {
+-	const char	name[16];		/* Name for logging purposes */
+ 	const struct fs_parameter_spec *specs;	/* List of param specifications */
+ 	const struct fs_parameter_enum *enums;	/* Enum values */
+ };
+@@ -97,12 +96,14 @@ extern int __lookup_constant(const struct constant_table tbl[], size_t tbl_size,
+ #ifdef CONFIG_VALIDATE_FS_PARSER
+ extern bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
+ 				    int low, int high, int special);
+-extern bool fs_validate_description(const struct fs_parameter_description *desc);
++extern bool fs_validate_description(const char *name,
++				    const struct fs_parameter_description *desc);
+ #else
+ static inline bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
+ 					   int low, int high, int special)
+ { return true; }
+-static inline bool fs_validate_description(const struct fs_parameter_description *desc)
++static inline bool fs_validate_description(const char *name,
++					   const struct fs_parameter_description *desc)
+ { return true; }
+ #endif
+ 
+diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
+index 88006be40ea3..9a317f08b323 100644
+--- a/kernel/cgroup/cgroup-v1.c
++++ b/kernel/cgroup/cgroup-v1.c
+@@ -918,7 +918,6 @@ static const struct fs_parameter_spec cgroup1_param_specs[] = {
+ };
+ 
+ const struct fs_parameter_description cgroup1_fs_parameters = {
+-	.name		= "cgroup1",
+ 	.specs		= cgroup1_param_specs,
+ };
+ 
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 753afbca549f..ee3a84aa6599 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1826,7 +1826,6 @@ static const struct fs_parameter_spec cgroup2_param_specs[] = {
+ };
+ 
+ static const struct fs_parameter_description cgroup2_fs_parameters = {
+-	.name		= "cgroup2",
+ 	.specs		= cgroup2_param_specs,
+ };
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 74dd46de01b6..9e45cf94cd4d 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2820,7 +2820,6 @@ static const struct fs_parameter_spec selinux_param_specs[] = {
+ };
+ 
+ static const struct fs_parameter_description selinux_fs_parameters = {
+-	.name		= "SELinux",
+ 	.specs		= selinux_param_specs,
+ };
+ 
+@@ -7021,7 +7020,7 @@ static __init int selinux_init(void)
+ 	else
+ 		pr_debug("SELinux:  Starting in permissive mode\n");
+ 
+-	fs_validate_description(&selinux_fs_parameters);
++	fs_validate_description("selinux", &selinux_fs_parameters);
+ 
+ 	return 0;
+ }
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4c5e5a438f8b..87d9e4a1e3ed 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -690,7 +690,6 @@ static const struct fs_parameter_spec smack_param_specs[] = {
+ };
+ 
+ static const struct fs_parameter_description smack_fs_parameters = {
+-	.name		= "smack",
+ 	.specs		= smack_param_specs,
+ };
+ 
+
