@@ -2,111 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B40F9F41F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 22:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC0689F435
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2019 22:37:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731365AbfH0U3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Aug 2019 16:29:13 -0400
-Received: from sandeen.net ([63.231.237.45]:58890 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731253AbfH0U3N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Aug 2019 16:29:13 -0400
-Received: from [10.0.0.4] (liberator [10.0.0.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id BAC424CDD35;
-        Tue, 27 Aug 2019 15:29:11 -0500 (CDT)
-Subject: Re: ext4 fsck vs. kernel recovery policy
-To:     dann frazier <dann.frazier@canonical.com>,
-        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jan Kara <jack@suse.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Ryan Harper <ryan.harper@canonical.com>
-References: <CALdTtnuRqgZ=By1JQ0yJJYczUPxxYCWPkAey4BjBkmj77q7aaA@mail.gmail.com>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <db1128a9-1316-e409-9dc6-9470bd2191f7@sandeen.net>
-Date:   Tue, 27 Aug 2019 15:29:09 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S1728972AbfH0UhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Aug 2019 16:37:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50356 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726332AbfH0UhK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Aug 2019 16:37:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 46620AB9D;
+        Tue, 27 Aug 2019 20:37:07 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 22:36:37 +0200
+From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Steven Rostedt" <rostedt@goodmis.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Breno Leitao <leitao@debian.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Allison Randal <allison@lohutok.net>,
+        Michael Neuling <mikey@neuling.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/4] powerpc/64: make buildable without CONFIG_COMPAT
+Message-ID: <20190827223623.3244ec9b@naga>
+In-Reply-To: <7af66fde886e850fe137d91dfb60cf5869cbe41f.1566936688.git.msuchanek@suse.de>
+References: <cover.1566936688.git.msuchanek@suse.de>
+        <7af66fde886e850fe137d91dfb60cf5869cbe41f.1566936688.git.msuchanek@suse.de>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CALdTtnuRqgZ=By1JQ0yJJYczUPxxYCWPkAey4BjBkmj77q7aaA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/27/19 2:10 PM, dann frazier wrote:
-> hey,
->   I'm curious if there's a policy about what types of unclean
-> shutdowns 'e2fsck -p' can recover, vs. what the kernel will
-> automatically recover on mount. We're seeing that unclean shutdowns w/
-> data=journal,journal_csum frequently result in invalid checksums that
-> causes the kernel to abort recovery, while 'e2fsck -p' resolves the
-> issue non-interactively.
+On Tue, 27 Aug 2019 22:21:08 +0200
+Michal Suchanek <msuchanek@suse.de> wrote:
+
+> There are numerous references to 32bit functions in generic and 64bit
+> code so ifdef them out.
 > 
-> Driver for this question is that some Ubuntu installs set fstab's
-> passno=0 for the root fs - which I'm told is based on the assumption
-> that both kernel & e2fsck -p have parity when it comes to automatic
-> recovery - that's obviously does not appear to be the case - but I
-> wanted to confirm whether or not that is by design.
+> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> ---
+>  arch/powerpc/include/asm/syscall.h |  2 ++
+>  arch/powerpc/kernel/Makefile       | 15 ++++++++++++---
+>  arch/powerpc/kernel/entry_64.S     |  2 ++
+>  arch/powerpc/kernel/signal.c       |  5 +++--
+>  arch/powerpc/kernel/syscall_64.c   |  5 +++--
+>  arch/powerpc/kernel/vdso.c         |  4 +++-
+>  arch/powerpc/perf/callchain.c      | 14 ++++++++++----
+>  7 files changed, 35 insertions(+), 12 deletions(-)
 > 
->   -dann
+> diff --git a/arch/powerpc/include/asm/syscall.h b/arch/powerpc/include/asm/syscall.h
+> index 38d62acfdce7..3ed3b75541a1 100644
+> --- a/arch/powerpc/include/asm/syscall.h
+> +++ b/arch/powerpc/include/asm/syscall.h
+> @@ -16,7 +16,9 @@
+>  
+>  /* ftrace syscalls requires exporting the sys_call_table */
+>  extern const unsigned long sys_call_table[];
+> +#ifdef CONFIG_COMPAT
+>  extern const unsigned long compat_sys_call_table[];
+> +#endif
+>  
+>  static inline int syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
+>  {
+> diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+> index 1d646a94d96c..b0db365b83d8 100644
+> --- a/arch/powerpc/kernel/Makefile
+> +++ b/arch/powerpc/kernel/Makefile
+> @@ -44,16 +44,25 @@ CFLAGS_btext.o += -DDISABLE_BRANCH_PROFILING
+>  endif
+>  
+>  obj-y				:= cputable.o ptrace.o syscalls.o \
+> -				   irq.o align.o signal_32.o pmc.o vdso.o \
+> +				   irq.o align.o pmc.o vdso.o \
+>  				   process.o systbl.o idle.o \
+>  				   signal.o sysfs.o cacheinfo.o time.o \
+>  				   prom.o traps.o setup-common.o \
+>  				   udbg.o misc.o io.o misc_$(BITS).o \
+>  				   of_platform.o prom_parse.o
+> -obj-$(CONFIG_PPC64)		+= setup_64.o sys_ppc32.o \
+> -				   signal_64.o ptrace32.o \
+> +ifndef CONFIG_PPC64
+> +obj-y				+= signal_32.o
+> +else
+> +ifdef CONFIG_COMPAT
+> +obj-y				+= signal_32.o
+> +endif
+> +endif
+> +obj-$(CONFIG_PPC64)		+= setup_64.o signal_64.o \
+>  				   paca.o nvram_64.o firmware.o \
+>  				   syscall_64.o
+> +ifdef CONFIG_COMPAT
+> +obj-$(CONFIG_PPC64)		+= sys_ppc32.o ptrace32.o
+> +endif
+>  obj-$(CONFIG_VDSO32)		+= vdso32/
+>  obj-$(CONFIG_PPC_WATCHDOG)	+= watchdog.o
+>  obj-$(CONFIG_HAVE_HW_BREAKPOINT)	+= hw_breakpoint.o
+> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+> index 2ec825a85f5b..a2dbf216f607 100644
+> --- a/arch/powerpc/kernel/entry_64.S
+> +++ b/arch/powerpc/kernel/entry_64.S
+> @@ -51,8 +51,10 @@
+>  SYS_CALL_TABLE:
+>  	.tc sys_call_table[TC],sys_call_table
+>  
+> +#ifdef CONFIG_COMPAT
+>  COMPAT_SYS_CALL_TABLE:
+>  	.tc compat_sys_call_table[TC],compat_sys_call_table
+> +#endif
+>  
+>  /* This value is used to mark exception frames on the stack. */
+>  exception_marker:
+> diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+> index 60436432399f..71f4f1794f86 100644
+> --- a/arch/powerpc/kernel/signal.c
+> +++ b/arch/powerpc/kernel/signal.c
+> @@ -277,14 +277,15 @@ static void do_signal(struct task_struct *tsk)
+>  
+>  	rseq_signal_deliver(&ksig, tsk->thread.regs);
+>  
+> +#ifdef CONFIG_COMPAT
+This is common code so it needs 
+#if !defined(CONFIG_PPC64) || defined(CONFIG_COMPAT)
+>  	if (is32) {
+>          	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+>  			ret = handle_rt_signal32(&ksig, oldset, tsk);
+>  		else
+>  			ret = handle_signal32(&ksig, oldset, tsk);
+> -	} else {
+> +	} else
+> +#endif /* CONFIG_COMPAT */
+>  		ret = handle_rt_signal64(&ksig, oldset, tsk);
+> -	}
+>  
+>  	tsk->thread.regs->trap = 0;
+>  	signal_setup_done(ret, &ksig, test_thread_flag(TIF_SINGLESTEP));
+> diff --git a/arch/powerpc/kernel/syscall_64.c b/arch/powerpc/kernel/syscall_64.c
+> index 98ed970796d5..3f48262b512d 100644
+> --- a/arch/powerpc/kernel/syscall_64.c
+> +++ b/arch/powerpc/kernel/syscall_64.c
+> @@ -100,6 +100,7 @@ long system_call_exception(long r3, long r4, long r5, long r6, long r7, long r8,
+>  	/* May be faster to do array_index_nospec? */
+>  	barrier_nospec();
+>  
+> +#ifdef CONFIG_COMPAT
+>  	if (unlikely(ti_flags & _TIF_32BIT)) {
+>  		f = (void *)compat_sys_call_table[r0];
+>  
+> @@ -110,9 +111,9 @@ long system_call_exception(long r3, long r4, long r5, long r6, long r7, long r8,
+>  		r7 &= 0x00000000ffffffffULL;
+>  		r8 &= 0x00000000ffffffffULL;
+>  
+> -	} else {
+> +	} else
+> +#endif /* CONFIG_COMPAT */
+>  		f = (void *)sys_call_table[r0];
+> -	}
+>  
+>  	return f(r3, r4, r5, r6, r7, r8);
+>  }
+> diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
+> index d60598113a9f..2ab9327e44c4 100644
+> --- a/arch/powerpc/kernel/vdso.c
+> +++ b/arch/powerpc/kernel/vdso.c
+> @@ -667,7 +667,7 @@ static void __init vdso_setup_syscall_map(void)
+>  {
+>  	unsigned int i;
+>  	extern unsigned long *sys_call_table;
+> -#ifdef CONFIG_PPC64
+> +#if defined(CONFIG_PPC64) && defined(CONFIG_COMPAT)
+>  	extern unsigned long *compat_sys_call_table;
+>  #endif
+>  	extern unsigned long sys_ni_syscall;
+> @@ -678,9 +678,11 @@ static void __init vdso_setup_syscall_map(void)
+>  		if (sys_call_table[i] != sys_ni_syscall)
+>  			vdso_data->syscall_map_64[i >> 5] |=
+>  				0x80000000UL >> (i & 0x1f);
+> +#ifdef CONFIG_COMPAT
+>  		if (compat_sys_call_table[i] != sys_ni_syscall)
+>  			vdso_data->syscall_map_32[i >> 5] |=
+>  				0x80000000UL >> (i & 0x1f);
+> +#endif /* CONFIG_COMPAT */
+>  #else /* CONFIG_PPC64 */
+>  		if (sys_call_table[i] != sys_ni_syscall)
+>  			vdso_data->syscall_map_32[i >> 5] |=
+> diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
+> index c84bbd4298a0..0a4565820d6c 100644
+> --- a/arch/powerpc/perf/callchain.c
+> +++ b/arch/powerpc/perf/callchain.c
+> @@ -15,7 +15,7 @@
+>  #include <asm/sigcontext.h>
+>  #include <asm/ucontext.h>
+>  #include <asm/vdso.h>
+> -#ifdef CONFIG_PPC64
+> +#if defined(CONFIG_PPC64) && defined(CONFIG_COMPAT)
+>  #include "../kernel/ppc32.h"
+>  #endif
+>  #include <asm/pte-walk.h>
+> @@ -165,6 +165,7 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
+>  	return read_user_stack_slow(ptr, ret, 8);
+>  }
+>  
+> +#ifdef CONFIG_COMPAT
+>  static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+>  {
+>  	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+> @@ -180,6 +181,7 @@ static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+>  
+>  	return read_user_stack_slow(ptr, ret, 4);
+>  }
+> +#endif
+>  
+>  static inline int valid_user_sp(unsigned long sp, int is_64)
+>  {
+> @@ -341,6 +343,7 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
+>  
+>  #endif /* CONFIG_PPC64 */
+>  
+> +#if !defined(CONFIG_PPC64) || defined(CONFIG_COMPAT)
+>  /*
+>   * Layout for non-RT signal frames
+>   */
+> @@ -482,12 +485,15 @@ static void perf_callchain_user_32(struct perf_callchain_entry_ctx *entry,
+>  		sp = next_sp;
+>  	}
+>  }
+> +#endif /* 32bit */
+>  
+>  void
+>  perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs)
+>  {
+> -	if (current_is_64bit())
+> -		perf_callchain_user_64(entry, regs);
+> -	else
+> +#if !defined(CONFIG_PPC64) || defined(CONFIG_COMPAT)
+> +	if (!current_is_64bit())
+>  		perf_callchain_user_32(entry, regs);
+> +	else
+> +#endif
+> +		perf_callchain_user_64(entry, regs);
+>  }
 
-Ted or others more involved w/ ext4 will speak w/ authority but it's my
-understanding that log replay, whether done by userspace or by the kernel,
-should always return the filesystem to a consistent state.  If that's not
-the case, scripting things so that you grab a qcow-format e2image prior
-to fsck so that you can share the problematic image with developers may
-help.
-
-(In XFS land, a large portion of the unreplayable logs we see are the
-result of storage that didn't /actually/ persist IOs that it claimed were
-persisted prior to the crash/poweroff.)
-
--Eric
