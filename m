@@ -2,90 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94A1AA0D01
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 23:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 964EDA0CD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 23:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfH1Vyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 17:54:38 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:46438 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726400AbfH1Vyi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:54:38 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1i35tj-00071g-NO; Wed, 28 Aug 2019 15:54:37 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1i35ti-0001Cv-I1; Wed, 28 Aug 2019 15:54:34 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed, 28 Aug 2019 15:54:21 -0600
-Message-Id: <20190828215429.4572-6-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190828215429.4572-1-logang@deltatee.com>
-References: <20190828215429.4572-1-logang@deltatee.com>
+        id S1726997AbfH1Vya (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 17:54:30 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44241 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbfH1Vya (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Aug 2019 17:54:30 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t14so559433plr.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2019 14:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9AFvDPdMFXF3Oi+pi/ljks9u7VZds22rpfzOC3/TilY=;
+        b=fBUiQzofqeIX+1GAyoU7Al8WZfc+JCKB4NVcOGNJRp/tSzRJmpVSkBVFY/VDiuMZUJ
+         fQ5nW7Jj7SJJ5JAv1zEZzj7016mrwWeWpCjhv+VcOnZBx4BFl+nv0o5rryC+yf8sNLaa
+         O8rSwOnwgZC8QAEIfvNaiARRQW/gmJKG3lhOn3Wl3jS2rACx1hbYsk/bilW9a4KNE9LE
+         3hkMRD81yKAIF6j7DQn1nG0AHv51lxuu/XZJPQ74AnJit7lC7dKlUfbn4qJNRTSZavWM
+         YcG89xKJ0An3nIUXDGN1BRtpcarkuIoH9jWXQTresfZgxcD+eLHLBcVpzpybyL8SeWR2
+         2vMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9AFvDPdMFXF3Oi+pi/ljks9u7VZds22rpfzOC3/TilY=;
+        b=N/2ij+TEAvty1WF7fGT7CcpF1LGafXZXJbciHZsXMhLnpS3XOEPoi5U+X2lQJKK+er
+         siGAuivKJDUhgJ5HI85ldBDg6zwQeYSui3ocU4+EmRk2MkAIvKFeXZulkskBIPLIAIry
+         2FcCOVWZnSYXKXaOY+ObmsnmcMkjoep7/SdT+OWRZfpZtt8KcUnQaT/P4O78h2wPadi7
+         zzWrQcEjwk9tK+M4sfWhawGuYyM6PfjBXQqoCkz35LRriiN7j/GgS5FQEYO04zfbU0pw
+         128SFehvu/ggNThFnfbGdCpGDM4J82CAikiX2GWiHM1PILQ+kVFNikqWsEWQBeY+KDwr
+         1BWw==
+X-Gm-Message-State: APjAAAURDQDChWQvXDvpQUCHqLZAmUX1oJXgoSqSv9/IYLhR0dDarY7+
+        KdN6daHPkAvPBWZsYFZQxzPJ
+X-Google-Smtp-Source: APXvYqyOGe7gBgsmaUKeGFfWT+CozOsswSPGy6yvls0lKL8bUazuMad5uXpH3yCHa4sqwm1MoMv4qw==
+X-Received: by 2002:a17:902:3064:: with SMTP id u91mr6600966plb.244.1567029268996;
+        Wed, 28 Aug 2019 14:54:28 -0700 (PDT)
+Received: from athena.bobrowski.net ([120.18.194.154])
+        by smtp.gmail.com with ESMTPSA id a128sm353474pfb.185.2019.08.28.14.54.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 14:54:28 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 07:54:21 +1000
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, riteshh@linux.ibm.com
+Subject: Re: [PATCH 2/5] ext4: move inode extension/truncate code out from
+ ext4_iomap_end()
+Message-ID: <20190828215421.GA9221@athena.bobrowski.net>
+References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
+ <774754e9b2afc541df619921f7743d98c5c6a358.1565609891.git.mbobrowski@mbobrowski.org>
+ <20190828195914.GF22343@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, maxg@mellanox.com, sbates@raithlin.com, Chaitanya.Kulkarni@wdc.com, chaitanya.kulkarni@wdc.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH v8 05/13] nvmet-passthru: update KConfig with config passthru option
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828195914.GF22343@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+On Wed, Aug 28, 2019 at 09:59:14PM +0200, Jan Kara wrote:
+> On Mon 12-08-19 22:52:53, Matthew Bobrowski wrote:
+> > +static int ext4_handle_inode_extension(struct inode *inode, loff_t size,
+> > +				       size_t count)
+> > +{
+> > +	handle_t *handle;
+> > +	bool truncate = false;
+> > +	ext4_lblk_t written_blk, end_blk;
+> > +	int ret = 0, blkbits = inode->i_blkbits;
+> > +
+> > +	handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
+> > +	if (IS_ERR(handle)) {
+> > +		ret = PTR_ERR(handle);
+> > +		goto orphan_del;
+> > +	}
+> > +
+> > +	if (ext4_update_inode_size(inode, size))
+> > +		ext4_mark_inode_dirty(handle, inode);
+> > +
+> > +	/*
+> > +	 * We may need truncate allocated but not written blocks
+> > +	 * beyond EOF.
+> > +	 */
+> > +	written_blk = ALIGN(size, 1 << blkbits);
+> > +	end_blk = ALIGN(size + count, 1 << blkbits);
+> 
+> So this seems to imply that 'size' is really offset where IO started but
+> ext4_update_inode_size(inode, size) above suggests 'size' is really where
+> IO has ended and that's indeed what you pass into
+> ext4_handle_inode_extension(). So I'd just make the calling convention for
+> ext4_handle_inode_extension() less confusing and pass 'offset' and 'len'
+> and fixup the math inside the function...
 
-This patch updates KConfig file for the NVMeOF target where we add new
-option so that user can selectively enable/disable passthru code.
+Agree, that will help with making things more transparent.
 
-Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-[logang@deltatee.com: fixed some of the wording in the help message]
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
----
- drivers/nvme/target/Kconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Also, one other thing while looking at this patch again. See comment
+below.
 
-diff --git a/drivers/nvme/target/Kconfig b/drivers/nvme/target/Kconfig
-index d7f48c0fb311..2478cb5a932d 100644
---- a/drivers/nvme/target/Kconfig
-+++ b/drivers/nvme/target/Kconfig
-@@ -15,6 +15,16 @@ config NVME_TARGET
- 	  To configure the NVMe target you probably want to use the nvmetcli
- 	  tool from http://git.infradead.org/users/hch/nvmetcli.git.
- 
-+config NVME_TARGET_PASSTHRU
-+	bool "NVMe Target Passthrough support"
-+	depends on NVME_CORE
-+	depends on NVME_TARGET
-+	help
-+	  This enables target side NVMe passthru controller support for the
-+	  NVMe Over Fabrics protocol. It allows for hosts to manage and
-+	  directly access an actual NVMe controller residing on the target
-+	  side, incuding executing Vendor Unique Commands.
-+
- config NVME_TARGET_LOOP
- 	tristate "NVMe loopback device support"
- 	depends on NVME_TARGET
--- 
-2.20.1
+> > @@ -257,6 +308,13 @@ ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >  		goto out;
+> >  
+> >  	ret = dax_iomap_rw(iocb, from, &ext4_iomap_ops);
+> > +
+> > +	if (ret > 0 && iocb->ki_pos > i_size_read(inode)) {
+> > +		err = ext4_handle_inode_extension(inode, iocb->ki_pos,
+> > +						  iov_iter_count(from));
+> > +		if (err)
+> > +			ret = err;
+> > +	}
 
+I noticed that within ext4_dax_write_iter() we're not accommodating
+for error cases. Subsequently, there's no clean up code that goes with
+that. So, for example, in the case where we've added the inode onto
+the orphan list as a result of an extension and we bump into any error
+i.e. -ENOSPC, we'll be left with inconsistencies. Perhaps it might be
+worthwhile to introduce a helper here
+i.e. ext4_dax_handle_failed_write(), which would be the path taken to
+perform any necessary clean up routines in the case of a failed write?
+I think it'd be better to have this rather than polluting
+ext4_dax_write_iter(). What do you think?
+
+--M
