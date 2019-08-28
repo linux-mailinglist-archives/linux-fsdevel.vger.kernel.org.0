@@ -2,261 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 202FAA0B59
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 22:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E67EDA0CF0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 23:55:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfH1U0X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 16:26:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49840 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726763AbfH1U0X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 16:26:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E4A58B67E;
-        Wed, 28 Aug 2019 20:26:19 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 86EE31E4362; Wed, 28 Aug 2019 22:26:19 +0200 (CEST)
-Date:   Wed, 28 Aug 2019 22:26:19 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jack@suse.cz, tytso@mit.edu, riteshh@linux.ibm.com
-Subject: Re: [PATCH 4/5] ext4: introduce direct IO write code path using
- iomap infrastructure
-Message-ID: <20190828202619.GG22343@quack2.suse.cz>
-References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
- <581c3a2da89991e7ce5862d93dcfb23e1dc8ddc8.1565609891.git.mbobrowski@mbobrowski.org>
+        id S1727182AbfH1VzP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 17:55:15 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:46546 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727309AbfH1Vyp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Aug 2019 17:54:45 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1i35tj-00071b-NH; Wed, 28 Aug 2019 15:54:44 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1i35ti-0001Ch-1x; Wed, 28 Aug 2019 15:54:34 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Wed, 28 Aug 2019 15:54:16 -0600
+Message-Id: <20190828215429.4572-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <581c3a2da89991e7ce5862d93dcfb23e1dc8ddc8.1565609891.git.mbobrowski@mbobrowski.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, Chaitanya.Kulkarni@wdc.com, maxg@mellanox.com, sbates@raithlin.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.6 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_EXCLUSIVE,MYRULES_NO_TEXT autolearn=ham
+        autolearn_force=no version=3.4.2
+Subject: [PATCH v8 00/13] nvmet: add target passthru commands support
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 12-08-19 22:53:26, Matthew Bobrowski wrote:
-> This patch introduces a new direct IO write code path implementation
-> that makes use of the iomap infrastructure.
-> 
-> All direct IO write operations are now passed from the ->write_iter() callback
-> to the new function ext4_dio_write_iter(). This function is responsible for
-> calling into iomap infrastructure via iomap_dio_rw(). Snippets of the direct
-> IO code from within ext4_file_write_iter(), such as checking whether the IO
-> request is unaligned asynchronous IO, or whether it will ber overwriting
-> allocated and initialized blocks has been moved out and into
-> ext4_dio_write_iter().
-> 
-> The block mapping flags that are passed to ext4_map_blocks() from within
-> ext4_dio_get_block() and friends have effectively been taken out and
-> introduced within the ext4_iomap_begin(). If ext4_map_blocks() happens to have
-> instantiated blocks beyond the i_size, then we attempt to place the inode onto
-> the orphan list. Despite being able to perform i_size extension checking
-> earlier on in the direct IO code path, it makes most sense to perform this bit
-> post successful block allocation.
-> 
-> The ->end_io() callback ext4_dio_write_end_io() is responsible for removing
-> the inode from the orphan list and determining if we should truncate a failed
-> write in the case of an error. We also convert a range of unwritten extents to
-> written if IOMAP_DIO_UNWRITTEN is set and perform the necessary
-> i_size/i_disksize extension if the iocb->ki_pos + dio->size > i_size_read(inode).
-> 
-> In the instance of a short write, we fallback to buffered IO and complete
-> whatever is left the 'iter'. Any blocks that may have been allocated in
-> preparation for direct IO will be reused by buffered IO, so there's no issue
-> with leaving allocated blocks beyond EOF.
-> 
-> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
-> ---
->  fs/ext4/file.c  | 227 ++++++++++++++++++++++++++++++++++++++++----------------
->  fs/ext4/inode.c |  42 +++++++++--
->  2 files changed, 199 insertions(+), 70 deletions(-)
+Hi,
 
-Overall this is very nice. Some smaller comments below.
+This is v8 of the passthru patchset. This addresses the feedback
+so far from v7: allowing multiple connections from hosts but
+black-listing all admin commands besides the vendor specific ones.
 
-> @@ -235,6 +244,34 @@ static ssize_t ext4_write_checks(struct kiocb *iocb, struct iov_iter *from)
->  	return iov_iter_count(from);
->  }
->  
-> +static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
-> +					struct iov_iter *from)
-> +{
-> +	ssize_t ret;
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +
-> +	if (!inode_trylock(inode)) {
-> +		if (iocb->ki_flags & IOCB_NOWAIT)
-> +			return -EOPNOTSUPP;
-> +		inode_lock(inode);
-> +	}
+--
 
-Currently there's no support for IOCB_NOWAIT for buffered IO so you can
-replace this with "inode_lock(inode)".
+Chaitainya has asked us to take on these patches as we have an
+interest in getting them into upstream. To that end, we've done
+a large amount of testing, bug fixes and cleanup.
 
-> @@ -284,6 +321,128 @@ static int ext4_handle_inode_extension(struct inode *inode, loff_t size,
->  	return ret;
->  }
->  
+Passthru support for nvmet allows users to export an entire
+NVMe controller through NVMe-oF. When exported in this way (as opposed
+to exporting each namespace as a block device), all the NVMe commands
+are passed to the given controller unmodified, including most admin
+commands and Vendor Unique Commands (VUCs). A passthru target will
+expose all namespaces for a given device to the remote host.
 
-I'd mention here that for cases where inode size is extended,
-ext4_dio_write_iter() waits for DIO to complete and thus we are protected
-by inode_lock in that case.
+There are three major non-bugfix changes that we've done to the series:
 
-> +static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size,
-> +				 ssize_t error, unsigned int flags)
-> +{
-> +	int ret = 0;
-> +	handle_t *handle;
-> +	loff_t offset = iocb->ki_pos;
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +
-> +	if (error) {
-> +		if (offset + size > i_size_read(inode))
-> +			ext4_truncate_failed_write(inode);
-> +
-> +		/*
-> +		 * The inode may have been placed onto the orphan list
-> +		 * as a result of an extension. However, an error may
-> +		 * have been encountered prior to being able to
-> +		 * complete the write operation. Perform any necessary
-> +		 * clean up in this case.
-> +		 */
-> +		if (!list_empty(&EXT4_I(inode)->i_orphan)) {
-> +			handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
-> +			if (IS_ERR(handle)) {
-> +				if (inode->i_nlink)
-> +					ext4_orphan_del(NULL, inode);
-> +				return PTR_ERR(handle);
-> +			}
-> +
-> +			if (inode->i_nlink)
-> +				ext4_orphan_del(handle, inode);
-> +			ext4_journal_stop(handle);
-> +		}
-> +		return error;
-> +	}
-> +
-> +	if (flags & IOMAP_DIO_UNWRITTEN) {
-> +		ret = ext4_convert_unwritten_extents(NULL, inode, offset, size);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (offset + size > i_size_read(inode)) {
-> +		ret = ext4_handle_inode_extension(inode, offset + size, 0);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +	return ret;
-> +}
-> +
-> +static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	ssize_t ret;
-> +	loff_t offset = iocb->ki_pos;
-> +	size_t count = iov_iter_count(from);
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +	bool extend = false, overwrite = false, unaligned_aio = false;
-> +
-> +	if (!inode_trylock(inode)) {
-> +		if (iocb->ki_flags & IOCB_NOWAIT)
-> +			return -EAGAIN;
-> +		inode_lock(inode);
-> +	}
-> +
-> +	if (!ext4_dio_checks(inode)) {
-> +		inode_unlock(inode);
-> +		/*
-> +		 * Fallback to buffered IO if the operation on the
-> +		 * inode is not supported by direct IO.
-> +		 */
-> +		return ext4_buffered_write_iter(iocb, from);
-> +	}
-> +
-> +	ret = ext4_write_checks(iocb, from);
-> +	if (ret <= 0)
-> +		goto out;
-> +
-> +	/*
-> +	 * Unaligned direct AIO must be serialized among each other as
-> +	 * the zeroing of partial blocks of two competing unaligned
-> +	 * AIOs can result in data corruption.
-> +	 */
-> +	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS) &&
-> +	    !is_sync_kiocb(iocb) && ext4_unaligned_aio(inode, from, offset)) {
-> +		unaligned_aio = true;
-> +		inode_dio_wait(inode);
-> +	}
-> +
-> +	/*
-> +	 * Determine whether the IO operation will overwrite allocated
-> +	 * and initialized blocks. If so, check to see whether it is
-> +	 * possible to take the dioread_nolock path.
-> +	 */
-> +	if (!unaligned_aio && ext4_overwrite_io(inode, offset, count) &&
-> +	    ext4_should_dioread_nolock(inode)) {
-> +		overwrite = true;
-> +		downgrade_write(&inode->i_rwsem);
-> +	}
-> +
-> +	if (offset + count > i_size_read(inode) ||
-> +	    offset + count > EXT4_I(inode)->i_disksize) {
-> +		ext4_update_i_disksize(inode, inode->i_size);
-> +		extend = true;
-> +	}
-> +
-> +	ret = iomap_dio_rw(iocb, from, &ext4_iomap_ops, ext4_dio_write_end_io);
-> +
-> +	/*
-> +	 * Unaligned direct AIO must be the only IO in flight or else
-> +	 * any overlapping aligned IO after unaligned IO might result
-> +	 * in data corruption.
-> +	 */
+1) Instead of using a seperate special passthru subsystem in
+   configfs simply add a passthru directory that's analogous to
+   the existing namespace directories. The directories have
+   very similar attributes to namespaces but are mutually exclusive.
+   If a user enables a namespaces, they can't then enable
+   passthru controller and vice versa. This simplifies the code
+   required to implement passthru configfs and IMO creates a much
+   clearer and uniform interface.
 
-Here I'd expand the comment to explain that we wait in case inode is
-extended so that inode extension in ext4_dio_write_end_io() is properly
-covered by inode_lock.
+2) Instead of taking a bare controller name (ie. "nvme1"), take a
+   full device path to the controller's char device. This is more
+   consistent with the regular namespaces which take a path and
+   also allows users to make use of udev rules and symlinks to
+   manage their controllers instead of the potentially unstable
+   device names.
 
-> +	if (ret == -EIOCBQUEUED && (unaligned_aio || extend))
-> +		inode_dio_wait(inode);
-> +
-> +	if (ret >= 0 && iov_iter_count(from)) {
-> +		overwrite ? inode_unlock_shared(inode) : inode_unlock(inode);
-> +		return ext4_buffered_write_iter(iocb, from);
-> +	}
-> +out:
-> +	overwrite ? inode_unlock_shared(inode) : inode_unlock(inode);
-> +	return ret;
-> +}
-> +
->  #ifdef CONFIG_FS_DAX
->  static ssize_t
->  ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+3) Implement block accounting for the passthru devices. This is so
+   the target OS can still track device usage using /proc/diskstats.
 
-...
+Besides these three changes, we've also found a large number of bugs
+and crashes and did a bunch of testing with KASAN, lockdep and kmemleak.
+A more complete list of changes is given below.
 
-> @@ -3581,10 +3611,10 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  		iomap->type = delalloc ? IOMAP_DELALLOC : IOMAP_HOLE;
->  		iomap->addr = IOMAP_NULL_ADDR;
->  	} else {
-> -		if (map.m_flags & EXT4_MAP_MAPPED) {
-> -			iomap->type = IOMAP_MAPPED;
-> -		} else if (map.m_flags & EXT4_MAP_UNWRITTEN) {
-> +		if (map.m_flags & EXT4_MAP_UNWRITTEN) {
->  			iomap->type = IOMAP_UNWRITTEN;
-> +		} else if (map.m_flags & EXT4_MAP_MAPPED) {
-> +			iomap->type = IOMAP_MAPPED;
->  		} else {
->  			WARN_ON_ONCE(1);
->  			return -EIO;
+Additionally, we've written some new blktests to test the passthru
+code. A branch is available here[1] and can be submitted once these
+patches are upstream.
 
-Possibly this hunk should go into a separate patch (since this is not
-directly related with iomap conversion) with a changelog / comment
-explaining why we need to check EXT4_MAP_UNWRITTEN first.
+These patches are based off of v5.3-rc1 and a git branch is available
+at [2].
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+
+Logan
+
+[1] https://github.com/Eideticom/blktests nvmet_passthru
+[2] https://github.com/sbates130272/linux-p2pmem/ nvmet_passthru_v8
+
+--
+
+v8 Changes:
+  1. Rebased onto v5.3-rc6
+  2. Collected Max's Reviewed-By tags
+  3. Converted admin command black-list to a white-list, but
+     allow all vendor specific commands. With this, we feel
+     it's safe to allow multiple connections from hosts.
+     (As per Sagi's feedback)
+
+v7 Changes:
+  1. Rebased onto v5.3-rc2
+  2. Rework nvme_ctrl_get_by_path() to use filp_open() instead of
+     the cdev changes that were in v6. (Per Al)
+  3. Override the cmic bit to allow multipath and allow
+     multiple connections from the same hostnqn. (At the same
+     time I cleaned up the method of rejecting multiple connections.)
+     See Patch 8)
+  4. Found a bug when used with the tcp transport (See Patch 10)
+
+v6 Changes:
+  1. Rebased onto v5.3-rc1
+  2. Rework configfs interface to simply be a passthru directory
+     within the existing subsystem. The directory is similar to
+     and consistent with a namespace directory.
+  3. Have the configfs take a path instead of a bare controller name
+  4. Renamed the main passthru file to io-cmd-passthru.c for consistency
+     with the file and block-dev methods.
+  5. Cleaned up all the CONFIG_NVME_TARGET_PASSTHRU usage to remove
+     all the inline #ifdefs
+  6. Restructured nvmet_passthru_make_request() a bit for clearer code
+  7. Moved nvme_find_get_ns() call into nvmet_passthru_execute_cmd()
+     seeing calling it in nvmet_req_init() causes a lockdep warning
+     due to nvme_find_get_ns() being able to sleep.
+  8. Added a check in nvmet_passthru_execute_cmd() to ensure we don't
+     violate queue_max_segments or queue_max_hw_sectors and overrode
+     mdts to ensure hosts don't intentionally submit commands
+     that will exceed these limits.
+  9. Reworked the code which ensures there's only one subsystem per
+     passthru controller to use an xarray instead of a list as this is
+     simpler and more easily fixed some bugs triggered by disabling
+     subsystems that weren't enabled.
+ 10. Removed the overide of the target cntlid with the passthru cntlid;
+     this seemed like a really bad idea especially in the presence of
+     mixed systems as you could end up with two ctrlrs with the same
+     cntlid. For now, commands that depend on cntlid are black listed.
+ 11. Implement block accounting for passthru so the target can track
+     usage using /proc/diskstats
+ 12. A number of other minor bug fixes and cleanups
+
+v5 Changes (not sent to list, from Chaitanya):
+  1. Added workqueue for admin commands.
+  2. Added kconfig option for the pass-thru feature.
+  3. Restructure the parsing code according to your suggestion,
+     call nvmet_xxx_parse_cmd() from nvmet_passthru_parse_cmd().
+  4. Use pass-thru instead of pt.
+  5. Several cleanups and add comments at the appropriate locations.
+  6. Minimize the code for checking pass-thru ns across all the subsystems.
+  7. Removed the delays in the ns related admin commands since I was
+     not able to reproduce the previous bug.
+
+v4 Changes:
+  1. Add request polling interface to the block layer.
+  2. Use request polling interface in the NVMEoF target passthru code
+     path.
+  3. Add checks suggested by Sagi for creating one target ctrl per
+     passthru ctrl.
+  4. Don't enable the namespace if it belongs to the configured passthru
+     ctrl.
+  5. Adjust the code latest kernel.
+
+v3 Changes:
+  1. Split the addition of passthru command handlers and integration
+     into two different patches since we add guards to create one target
+     controller per passthru controller. This way it will be easier to
+     review the code.
+  2. Adjust the code for 4.18.
+
+v2 Changes:
+  1. Update the new nvme core controller find API naming and
+     changed the string comparison of the ctrl.
+  2. Get rid of the newly added #defines for target ctrl values.
+  3. Use the newly added structure members in the same patch where
+     they are used. Aggregate the passthru command handling support
+     and integration with nvmet-core into one patch.
+  4. Introduce global NVMe Target subsystem list for connected and
+     not connected subsystems on the target side.
+  5. Add check when configuring the target ns and target
+     passthru ctrl to allow only one target controller to be created
+     for one passthru subsystem.
+  6. Use the passthru ctrl cntlid when creating the
+     target controller.
+
+--
+
+Chaitanya Kulkarni (5):
+  nvme-core: export existing ctrl and ns interfaces
+  nvmet: add return value to  nvmet_add_async_event()
+  nvmet-passthru: update KConfig with config passthru option
+  nvmet-passthru: add passthru code to process commands
+  nvmet-core: don't check the data len for pt-ctrl
+
+Logan Gunthorpe (8):
+  nvme-core: introduce nvme_ctrl_get_by_path()
+  nvmet: make nvmet_copy_ns_identifier() non-static
+  nvmet-passthru: add enable/disable helpers
+  nvmet-tcp: don't check data_len in nvmet_tcp_map_data()
+  nvmet-configfs: introduce passthru configfs interface
+  block: don't check blk_rq_is_passthrough() in blk_do_io_stat()
+  block: call blk_account_io_start() in blk_execute_rq_nowait()
+  nvmet-passthru: support block accounting
+
+ block/blk-exec.c                      |   2 +
+ block/blk-mq.c                        |   2 +-
+ block/blk.h                           |   5 +-
+ drivers/nvme/host/core.c              |  41 +-
+ drivers/nvme/host/nvme.h              |   9 +
+ drivers/nvme/target/Kconfig           |  10 +
+ drivers/nvme/target/Makefile          |   1 +
+ drivers/nvme/target/admin-cmd.c       |   4 +-
+ drivers/nvme/target/configfs.c        |  99 ++++
+ drivers/nvme/target/core.c            |  36 +-
+ drivers/nvme/target/io-cmd-passthru.c | 644 ++++++++++++++++++++++++++
+ drivers/nvme/target/nvmet.h           |  61 ++-
+ drivers/nvme/target/tcp.c             |   2 +-
+ include/linux/nvme.h                  |   1 +
+ 14 files changed, 899 insertions(+), 18 deletions(-)
+ create mode 100644 drivers/nvme/target/io-cmd-passthru.c
+
+--
+2.20.1
