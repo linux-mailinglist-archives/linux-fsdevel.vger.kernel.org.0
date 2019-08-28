@@ -2,99 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED5DBA070D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 18:16:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBFF3A07FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 19:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfH1QPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 12:15:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54658 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726395AbfH1QPt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 12:15:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4DA50B04F;
-        Wed, 28 Aug 2019 16:15:48 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 8CD26DA809; Wed, 28 Aug 2019 18:16:10 +0200 (CEST)
-Date:   Wed, 28 Aug 2019 18:16:09 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Jan Kara <jack@suse.cz>
-Cc:     SunKe <sunke32@huawei.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/sync.c: Fix UBSAN Undefined behaviour in
- sync_file_range
-Message-ID: <20190828161609.GE2752@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Jan Kara <jack@suse.cz>,
-        SunKe <sunke32@huawei.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1562898517-143943-1-git-send-email-sunke32@huawei.com>
- <20190827152237.GC10306@quack2.suse.cz>
+        id S1726616AbfH1RA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 13:00:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726415AbfH1RA2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Aug 2019 13:00:28 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B558722CF5;
+        Wed, 28 Aug 2019 17:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567011627;
+        bh=ZARfaWUbuLbc3qSHosG2JV2Bb68PSz+bxh+2v5STyvE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NKOLjK5d8Reg2OCHJ7+BY+Soq9RzU45DRx1kt7HEjJh1xMM3xK6nV+vW2+x/phyrW
+         ycEkdZZ83X7aBD85usZseHdXFSXPtrdcly0vuTdCJsbPN8oc7gPUjYYl3ykxZiPR2K
+         PHxqq0tuLFk6VS7lIxXJP6/HVcchTp8df/yM7jv0=
+Date:   Wed, 28 Aug 2019 19:00:22 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     devel@driverdev.osuosl.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190828170022.GA7873@kroah.com>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190827152237.GC10306@quack2.suse.cz>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 05:22:37PM +0200, Jan Kara wrote:
-> On Fri 12-07-19 10:28:37, SunKe wrote:
-> > There is a UBSAN report:
-> > UBSAN: Undefined behaviour in ../fs/sync.c:298:10
-> > signed integer overflow:
-> > -8 + -9223372036854775807 cannot be represented in type 'long long int'
-> > CPU: 0 PID: 15876 Comm: syz-executor.3 Not tainted
-> > Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-> > Call trace:
-> > [<ffffff90080ac450>] dump_backtrace+0x0/0x698 arch/arm64/kernel/traps.c:96
-> > [<ffffff90080acb20>] show_stack+0x38/0x60 arch/arm64/kernel/traps.c:234
-> > [<ffffff9008ca4500>] __dump_stack lib/dump_stack.c:15 [inline]
-> > [<ffffff9008ca4500>] dump_stack+0x1a8/0x230 lib/dump_stack.c:51
-> > [<ffffff9008d7e078>] ubsan_epilogue+0x34/0x9c lib/ubsan.c:164
-> > [<ffffff9008d7ebb4>] handle_overflow+0x228/0x280 lib/ubsan.c:195
-> > [<ffffff9008d7ed28>] __ubsan_handle_add_overflow+0x4c/0x68 lib/ubsan.c:203
-> > [<ffffff900874c2b8>] SYSC_sync_file_range fs/sync.c:298 [inline]
-> > [<ffffff900874c2b8>] SyS_sync_file_range+0x350/0x3e8 fs/sync.c:285
-> > [<ffffff9008094480>] el0_svc_naked+0x30/0x34
-> > 
-> > When calculate the endbyte, there maybe an overflow, even if no effect
-> > the kernel, but I also want to avoid overflowing and avoid UBSAN reporting.
-> > The original compare is to ensure the offset >= 0 && nbytes >= 0 && no
-> > overflow happened.
-> > 
-> > I do the calculate after compare. ensure the offset >= 0 && nbytes >= 0 &&
-> > no overflow may happen first.
-> > 
-> > Signed-off-by: SunKe <sunke32@huawei.com>
+On Wed, Aug 28, 2019 at 06:08:17PM +0200, Greg Kroah-Hartman wrote:
+> From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
+> 
+> The exfat code needs a lot of work to get it into "real" shape for
+> the fs/ part of the kernel, so put it into drivers/staging/ for now so
+> that it can be worked on by everyone in the community.
+> 
+> The full specification of the filesystem can be found at:
+>   https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification
+> 
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  MAINTAINERS                          |    5 +
+>  drivers/staging/Kconfig              |    2 +
+>  drivers/staging/Makefile             |    1 +
+>  drivers/staging/exfat/Kconfig        |   39 +
+>  drivers/staging/exfat/Makefile       |   10 +
+>  drivers/staging/exfat/TODO           |   12 +
+>  drivers/staging/exfat/exfat.h        |  973 ++++++
+>  drivers/staging/exfat/exfat_blkdev.c |  136 +
+>  drivers/staging/exfat/exfat_cache.c  |  722 +++++
+>  drivers/staging/exfat/exfat_core.c   | 3704 +++++++++++++++++++++++
+>  drivers/staging/exfat/exfat_nls.c    |  404 +++
+>  drivers/staging/exfat/exfat_super.c  | 4137 ++++++++++++++++++++++++++
+>  drivers/staging/exfat/exfat_upcase.c |  740 +++++
+>  13 files changed, 10885 insertions(+)
+>  create mode 100644 drivers/staging/exfat/Kconfig
+>  create mode 100644 drivers/staging/exfat/Makefile
+>  create mode 100644 drivers/staging/exfat/TODO
+>  create mode 100644 drivers/staging/exfat/exfat.h
+>  create mode 100644 drivers/staging/exfat/exfat_blkdev.c
+>  create mode 100644 drivers/staging/exfat/exfat_cache.c
+>  create mode 100644 drivers/staging/exfat/exfat_core.c
+>  create mode 100644 drivers/staging/exfat/exfat_nls.c
+>  create mode 100644 drivers/staging/exfat/exfat_super.c
+>  create mode 100644 drivers/staging/exfat/exfat_upcase.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e3242687cd19..a484b36e5117 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6097,6 +6097,11 @@ F:	include/trace/events/mdio.h
+>  F:	include/uapi/linux/mdio.h
+>  F:	include/uapi/linux/mii.h
+>  
+> +EXFAT FILE SYSTEM
+> +M:	Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> +S:	Maintained
+> +F:	fs/exfat/
 
-I don't have the original mail in my mailbox to reply, let me qote the
-code here again:
+Oops, I messed this line up.  I moved this to drivers/staging/ and I
+forgot to update this line.  I'll do it in a follow-on patch.
 
-@@ -246,15 +246,15 @@ int sync_file_range(struct file *file, loff_t offset, loff_t nbytes,
- 	if (flags & ~VALID_FLAGS)
- 		goto out;
- 
--	endbyte = offset + nbytes;
--
- 	if ((s64)offset < 0)
- 		goto out;
--	if ((s64)endbyte < 0)
-+	if ((s64)nbytes < 0)
- 		goto out;
--	if (endbyte < offset)
-+	if (S64_MAX - offset < nbytes)
- 		goto out;
- 
-+	endbyte = offset + nbytes;
+thanks,
 
-Can this be replaced by check_add_overflow? This can handle
-signed/unsigned types while the opencoding obscures the meaning.
-
-And a shameless plug, I sent a fix for another UB report, in remap_verify_area
-https://lore.kernel.org/lkml/20190808123942.19592-1-dsterba@suse.com/
-
-that I'd like to get merged.
+greg k-h
