@@ -2,118 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9D2BA0950
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 20:17:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21378A097A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 20:30:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfH1SRI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 14:17:08 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:44589 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbfH1SRI (ORCPT
+        id S1726877AbfH1Sap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 14:30:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35034 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbfH1Sap (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 14:17:08 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1i32VH-0004Ux-5M; Wed, 28 Aug 2019 12:17:07 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1i32VG-0000s0-FB; Wed, 28 Aug 2019 12:17:06 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Michal Suchanek <msuchanek@suse.de>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Steven Rostedt" <rostedt@goodmis.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Breno Leitao <leitao@debian.org>,
-        Allison Randal <allison@lohutok.net>,
-        Michael Neuling <mikey@neuling.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <cover.1566936688.git.msuchanek@suse.de>
-        <80b1955b86fb81e4642881d498068b5a540ef029.1566936688.git.msuchanek@suse.de>
-        <8736hlyx8r.fsf@x220.int.ebiederm.org>
-Date:   Wed, 28 Aug 2019 13:16:55 -0500
-In-Reply-To: <8736hlyx8r.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Wed, 28 Aug 2019 13:13:08 -0500")
-Message-ID: <87y2zdxii0.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 28 Aug 2019 14:30:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=z/GTsMOG+FQ14Ym0CrHcgUMZHK5aHnNQzVskveU9sFI=; b=Li7H/9KkJmMz6GCqvX5y9EHsF
+        +rH6LaBMZx+HpuK0K0fVeaPwkqeEY1bHnK1uLkYcKLTbU5fvUYUQsZZVRc+w7EyOHGM+7Pm+aYDzj
+        lv8IwQQJ50WqfOtBlSURlzaBUdhASj25YJQ7zxbj80H3Y2I5+6G5Myhod459e8T1FtpYJEAYBUZ5U
+        GS0vt/SFZ6+KktBYOHTZq7pqeYCBVaA/GqnfcFnifKwk87MaB8bOhlJa1A8tXAUQLW7RlbDFLUIfX
+        Pg9C8cBK6CtV6Nh7SlVywqSv8sPTuM2gqLq2NRYZZgfTIe/QlRJpUQFOXuz/Yhbeyndl61cinK2yQ
+        ZQyStrNTA==;
+Received: from [2601:1c0:6200:6e8::4f71]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i32iN-0003wd-MP; Wed, 28 Aug 2019 18:30:39 +0000
+Subject: Re: mmotm 2019-08-27-20-39 uploaded (sound/hda/intel-nhlt.c)
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <274054ef-8611-2661-9e67-4aabae5a7728@infradead.org>
+Date:   Wed, 28 Aug 2019 11:30:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1i32VG-0000s0-FB;;;mid=<87y2zdxii0.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19FPHoR0c45QWgnOndw3RBOZkvxMXRg2is=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_XMDrugObfuBody_08,XMNoVowels autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4666]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Michal Suchanek <msuchanek@suse.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 200 ms - load_scoreonly_sql: 0.02 (0.0%),
-        signal_user_changed: 2.8 (1.4%), b_tie_ro: 1.99 (1.0%), parse: 0.96
-        (0.5%), extract_message_metadata: 13 (6.6%), get_uri_detail_list: 0.95
-        (0.5%), tests_pri_-1000: 18 (9.0%), tests_pri_-950: 1.06 (0.5%),
-        tests_pri_-900: 0.87 (0.4%), tests_pri_-90: 19 (9.5%), check_bayes: 18
-        (8.8%), b_tokenize: 5 (2.7%), b_tok_get_all: 6 (2.8%), b_comp_prob:
-        1.27 (0.6%), b_tok_touch_all: 3.4 (1.7%), b_finish: 0.67 (0.3%),
-        tests_pri_0: 135 (67.4%), check_dkim_signature: 0.38 (0.2%),
-        check_dkim_adsp: 2.3 (1.1%), poll_dns_idle: 0.90 (0.4%), tests_pri_10:
-        1.69 (0.8%), tests_pri_500: 5 (2.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/4] fs: always build llseek.
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+On 8/27/19 8:40 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-08-27-20-39 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
 
-> Michal Suchanek <msuchanek@suse.de> writes:
->
->> 64bit !COMPAT does not build because the llseek syscall is in the
->> tables.
->
-> Do I read this right you have a 128 bit offset to llseek on ppc64?
->
-> Looking at the signature it does not appear to make sense to build this
-> function on any 64bit platform.
->
-> Perhaps the proper fix to to take llseek out of your syscall tables?
+(from linux-next tree, but problem found/seen in mmotm)
 
-Sorry I missed seeing the 2 newer version of the patchset in my inbox
-it seems you have already made the change I am suggesting.
+Sorry, I don't know who is responsible for this driver.
 
-Never mind.
+~~~~~~~~~~~~~~~~~~~~~~
+on i386:
 
-Eric
+  CC      sound/hda/intel-nhlt.o
+../sound/hda/intel-nhlt.c:14:25: error: redefinition of ‘intel_nhlt_init’
+ struct nhlt_acpi_table *intel_nhlt_init(struct device *dev)
+                         ^~~~~~~~~~~~~~~
+In file included from ../sound/hda/intel-nhlt.c:5:0:
+../include/sound/intel-nhlt.h:134:39: note: previous definition of ‘intel_nhlt_init’ was here
+ static inline struct nhlt_acpi_table *intel_nhlt_init(struct device *dev)
+                                       ^~~~~~~~~~~~~~~
+../sound/hda/intel-nhlt.c: In function ‘intel_nhlt_init’:
+../sound/hda/intel-nhlt.c:39:14: error: dereferencing pointer to incomplete type ‘struct nhlt_resource_desc’
+  if (nhlt_ptr->length)
+              ^~
+../sound/hda/intel-nhlt.c:41:4: error: implicit declaration of function ‘memremap’; did you mean ‘ioremap’? [-Werror=implicit-function-declaration]
+    memremap(nhlt_ptr->min_addr, nhlt_ptr->length,
+    ^~~~~~~~
+    ioremap
+../sound/hda/intel-nhlt.c:42:6: error: ‘MEMREMAP_WB’ undeclared (first use in this function)
+      MEMREMAP_WB);
+      ^~~~~~~~~~~
+../sound/hda/intel-nhlt.c:42:6: note: each undeclared identifier is reported only once for each function it appears in
+../sound/hda/intel-nhlt.c:45:25: error: dereferencing pointer to incomplete type ‘struct nhlt_acpi_table’
+      (strncmp(nhlt_table->header.signature,
+                         ^~
+../sound/hda/intel-nhlt.c:48:3: error: implicit declaration of function ‘memunmap’; did you mean ‘vunmap’? [-Werror=implicit-function-declaration]
+   memunmap(nhlt_table);
+   ^~~~~~~~
+   vunmap
+../sound/hda/intel-nhlt.c: At top level:
+../sound/hda/intel-nhlt.c:56:6: error: redefinition of ‘intel_nhlt_free’
+ void intel_nhlt_free(struct nhlt_acpi_table *nhlt)
+      ^~~~~~~~~~~~~~~
+In file included from ../sound/hda/intel-nhlt.c:5:0:
+../include/sound/intel-nhlt.h:139:20: note: previous definition of ‘intel_nhlt_free’ was here
+ static inline void intel_nhlt_free(struct nhlt_acpi_table *addr)
+                    ^~~~~~~~~~~~~~~
+../sound/hda/intel-nhlt.c:62:5: error: redefinition of ‘intel_nhlt_get_dmic_geo’
+ int intel_nhlt_get_dmic_geo(struct device *dev, struct nhlt_acpi_table *nhlt)
+     ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from ../sound/hda/intel-nhlt.c:5:0:
+../include/sound/intel-nhlt.h:143:19: note: previous definition of ‘intel_nhlt_get_dmic_geo’ was here
+ static inline int intel_nhlt_get_dmic_geo(struct device *dev,
+                   ^~~~~~~~~~~~~~~~~~~~~~~
+../sound/hda/intel-nhlt.c: In function ‘intel_nhlt_get_dmic_geo’:
+../sound/hda/intel-nhlt.c:76:11: error: dereferencing pointer to incomplete type ‘struct nhlt_endpoint’
+   if (epnt->linktype == NHLT_LINK_DMIC) {
+           ^~
+../sound/hda/intel-nhlt.c:76:25: error: ‘NHLT_LINK_DMIC’ undeclared (first use in this function)
+   if (epnt->linktype == NHLT_LINK_DMIC) {
+                         ^~~~~~~~~~~~~~
+../sound/hda/intel-nhlt.c:79:15: error: dereferencing pointer to incomplete type ‘struct nhlt_dmic_array_config’
+    switch (cfg->array_type) {
+               ^~
+../sound/hda/intel-nhlt.c:80:9: error: ‘NHLT_MIC_ARRAY_2CH_SMALL’ undeclared (first use in this function)
+    case NHLT_MIC_ARRAY_2CH_SMALL:
+         ^~~~~~~~~~~~~~~~~~~~~~~~
+../sound/hda/intel-nhlt.c:81:9: error: ‘NHLT_MIC_ARRAY_2CH_BIG’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_2CH_SMALL’?
+    case NHLT_MIC_ARRAY_2CH_BIG:
+         ^~~~~~~~~~~~~~~~~~~~~~
+         NHLT_MIC_ARRAY_2CH_SMALL
+../sound/hda/intel-nhlt.c:82:16: error: ‘MIC_ARRAY_2CH’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_2CH_BIG’?
+     dmic_geo = MIC_ARRAY_2CH;
+                ^~~~~~~~~~~~~
+                NHLT_MIC_ARRAY_2CH_BIG
+../sound/hda/intel-nhlt.c:85:9: error: ‘NHLT_MIC_ARRAY_4CH_1ST_GEOM’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_2CH_BIG’?
+    case NHLT_MIC_ARRAY_4CH_1ST_GEOM:
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+         NHLT_MIC_ARRAY_2CH_BIG
+../sound/hda/intel-nhlt.c:86:9: error: ‘NHLT_MIC_ARRAY_4CH_L_SHAPED’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_4CH_1ST_GEOM’?
+    case NHLT_MIC_ARRAY_4CH_L_SHAPED:
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+         NHLT_MIC_ARRAY_4CH_1ST_GEOM
+  AR      sound/i2c/other/built-in.a
+../sound/hda/intel-nhlt.c:87:9: error: ‘NHLT_MIC_ARRAY_4CH_2ND_GEOM’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_4CH_1ST_GEOM’?
+    case NHLT_MIC_ARRAY_4CH_2ND_GEOM:
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+         NHLT_MIC_ARRAY_4CH_1ST_GEOM
+../sound/hda/intel-nhlt.c:88:16: error: ‘MIC_ARRAY_4CH’ undeclared (first use in this function); did you mean ‘MIC_ARRAY_2CH’?
+     dmic_geo = MIC_ARRAY_4CH;
+                ^~~~~~~~~~~~~
+                MIC_ARRAY_2CH
+  AR      sound/i2c/built-in.a
+  CC      drivers/bluetooth/btmtksdio.o
+../sound/hda/intel-nhlt.c:90:9: error: ‘NHLT_MIC_ARRAY_VENDOR_DEFINED’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_4CH_L_SHAPED’?
+    case NHLT_MIC_ARRAY_VENDOR_DEFINED:
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         NHLT_MIC_ARRAY_4CH_L_SHAPED
+../sound/hda/intel-nhlt.c:92:26: error: dereferencing pointer to incomplete type ‘struct nhlt_vendor_dmic_array_config’
+     dmic_geo = cfg_vendor->nb_mics;
+                          ^~
+../sound/hda/intel-nhlt.c: At top level:
+../sound/hda/intel-nhlt.c:106:16: error: expected declaration specifiers or ‘...’ before string constant
+ MODULE_LICENSE("GPL v2");
+                ^~~~~~~~
+../sound/hda/intel-nhlt.c:107:20: error: expected declaration specifiers or ‘...’ before string constant
+ MODULE_DESCRIPTION("Intel NHLT driver");
+                    ^~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[3]: *** [../scripts/Makefile.build:266: sound/hda/intel-nhlt.o] Error 1
 
+
+
+-- 
+~Randy
