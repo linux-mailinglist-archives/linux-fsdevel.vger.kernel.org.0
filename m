@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF88BA0CEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 23:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D2BA0CD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 23:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbfH1Vyu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 17:54:50 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:46526 "EHLO ale.deltatee.com"
+        id S1726943AbfH1Vyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 17:54:38 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:46434 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727385AbfH1Vyt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:54:49 -0400
+        id S1726583AbfH1Vyh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Aug 2019 17:54:37 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1i35to-00071n-Du; Wed, 28 Aug 2019 15:54:43 -0600
+        id 1i35tj-00071o-NI; Wed, 28 Aug 2019 15:54:36 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1i35tj-0001DG-8R; Wed, 28 Aug 2019 15:54:35 -0600
+        id 1i35tj-0001DJ-Bh; Wed, 28 Aug 2019 15:54:35 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
@@ -28,8 +28,8 @@ Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
         Max Gurtovoy <maxg@mellanox.com>,
         Stephen Bates <sbates@raithlin.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed, 28 Aug 2019 15:54:28 -0600
-Message-Id: <20190828215429.4572-13-logang@deltatee.com>
+Date:   Wed, 28 Aug 2019 15:54:29 -0600
+Message-Id: <20190828215429.4572-14-logang@deltatee.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190828215429.4572-1-logang@deltatee.com>
 References: <20190828215429.4572-1-logang@deltatee.com>
@@ -43,7 +43,7 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
         GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
         version=3.4.2
-Subject: [PATCH v8 12/13] block: call blk_account_io_start() in blk_execute_rq_nowait()
+Subject: [PATCH v8 13/13] nvmet-passthru: support block accounting
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -51,30 +51,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All existing users of blk_execute_rq[_nowait]() are for passthrough
-commands and will thus be rejected by blk_do_io_stat().
+Support block disk accounting by setting the RQF_IO_STAT flag
+and gendisk in the request.
 
-This allows passthrough requests to opt-in to IO accounting by setting
-RQF_IO_STAT.
+After this change, IO counts will be reflected correctly in
+/proc/diskstats for drives being used by passthru.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- block/blk-exec.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/nvme/target/io-cmd-passthru.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/block/blk-exec.c b/block/blk-exec.c
-index 1db44ca0f4a6..e20a852ae432 100644
---- a/block/blk-exec.c
-+++ b/block/blk-exec.c
-@@ -55,6 +55,8 @@ void blk_execute_rq_nowait(struct request_queue *q, struct gendisk *bd_disk,
- 	rq->rq_disk = bd_disk;
- 	rq->end_io = done;
+diff --git a/drivers/nvme/target/io-cmd-passthru.c b/drivers/nvme/target/io-cmd-passthru.c
+index 7557927a3451..63f12750a80d 100644
+--- a/drivers/nvme/target/io-cmd-passthru.c
++++ b/drivers/nvme/target/io-cmd-passthru.c
+@@ -410,6 +410,9 @@ static struct request *nvmet_passthru_blk_make_request(struct nvmet_req *req,
+ 	if (unlikely(IS_ERR(rq)))
+ 		return rq;
  
-+	blk_account_io_start(rq, true);
++	if (blk_queue_io_stat(q) && cmd->common.opcode != nvme_cmd_flush)
++		rq->rq_flags |= RQF_IO_STAT;
 +
- 	/*
- 	 * don't check dying flag for MQ because the request won't
- 	 * be reused after dying flag is set
+ 	if (req->sg_cnt) {
+ 		ret = nvmet_passthru_map_sg(req, rq);
+ 		if (unlikely(ret)) {
+@@ -474,7 +477,7 @@ static void nvmet_passthru_execute_cmd(struct nvmet_req *req)
+ 
+ 	rq->end_io_data = req;
+ 	if (req->sq->qid != 0) {
+-		blk_execute_rq_nowait(rq->q, NULL, rq, 0,
++		blk_execute_rq_nowait(rq->q, ns->disk, rq, 0,
+ 				      nvmet_passthru_req_done);
+ 	} else {
+ 		req->p.rq = rq;
 -- 
 2.20.1
 
