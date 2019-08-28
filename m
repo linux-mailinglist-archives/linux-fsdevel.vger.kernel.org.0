@@ -2,102 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBFF3A07FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 19:00:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ABE6A0847
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 19:19:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfH1RA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 13:00:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33392 "EHLO mail.kernel.org"
+        id S1726623AbfH1RT3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 13:19:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:25004 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbfH1RA2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:00:28 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726400AbfH1RT3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Aug 2019 13:19:29 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B558722CF5;
-        Wed, 28 Aug 2019 17:00:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567011627;
-        bh=ZARfaWUbuLbc3qSHosG2JV2Bb68PSz+bxh+2v5STyvE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NKOLjK5d8Reg2OCHJ7+BY+Soq9RzU45DRx1kt7HEjJh1xMM3xK6nV+vW2+x/phyrW
-         ycEkdZZ83X7aBD85usZseHdXFSXPtrdcly0vuTdCJsbPN8oc7gPUjYYl3ykxZiPR2K
-         PHxqq0tuLFk6VS7lIxXJP6/HVcchTp8df/yM7jv0=
-Date:   Wed, 28 Aug 2019 19:00:22 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     devel@driverdev.osuosl.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190828170022.GA7873@kroah.com>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id BB35A807064;
+        Wed, 28 Aug 2019 17:19:28 +0000 (UTC)
+Received: from treble (ovpn-121-55.rdu2.redhat.com [10.10.121.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FB1360BEC;
+        Wed, 28 Aug 2019 17:19:26 +0000 (UTC)
+Date:   Wed, 28 Aug 2019 12:19:23 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: mmotm 2019-08-27-20-39 uploaded (objtool: xen)
+Message-ID: <20190828171923.4sir3sxwsnc2pvjy@treble>
+References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
+ <8b09d93a-bc42-bd8e-29ee-cd37765f4899@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190828160817.6250-1-gregkh@linuxfoundation.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <8b09d93a-bc42-bd8e-29ee-cd37765f4899@infradead.org>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Wed, 28 Aug 2019 17:19:29 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 06:08:17PM +0200, Greg Kroah-Hartman wrote:
-> From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
+On Wed, Aug 28, 2019 at 09:58:37AM -0700, Randy Dunlap wrote:
+> On 8/27/19 8:40 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2019-08-27-20-39 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> > 
+> > You will need quilt to apply these patches to the latest Linus release (5.x
+> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > http://ozlabs.org/~akpm/mmotm/series
+> > 
+> > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> > followed by the base kernel version against which this patch series is to
+> > be applied.
 > 
-> The exfat code needs a lot of work to get it into "real" shape for
-> the fs/ part of the kernel, so put it into drivers/staging/ for now so
-> that it can be worked on by everyone in the community.
 > 
-> The full specification of the filesystem can be found at:
->   https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification
 > 
-> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  MAINTAINERS                          |    5 +
->  drivers/staging/Kconfig              |    2 +
->  drivers/staging/Makefile             |    1 +
->  drivers/staging/exfat/Kconfig        |   39 +
->  drivers/staging/exfat/Makefile       |   10 +
->  drivers/staging/exfat/TODO           |   12 +
->  drivers/staging/exfat/exfat.h        |  973 ++++++
->  drivers/staging/exfat/exfat_blkdev.c |  136 +
->  drivers/staging/exfat/exfat_cache.c  |  722 +++++
->  drivers/staging/exfat/exfat_core.c   | 3704 +++++++++++++++++++++++
->  drivers/staging/exfat/exfat_nls.c    |  404 +++
->  drivers/staging/exfat/exfat_super.c  | 4137 ++++++++++++++++++++++++++
->  drivers/staging/exfat/exfat_upcase.c |  740 +++++
->  13 files changed, 10885 insertions(+)
->  create mode 100644 drivers/staging/exfat/Kconfig
->  create mode 100644 drivers/staging/exfat/Makefile
->  create mode 100644 drivers/staging/exfat/TODO
->  create mode 100644 drivers/staging/exfat/exfat.h
->  create mode 100644 drivers/staging/exfat/exfat_blkdev.c
->  create mode 100644 drivers/staging/exfat/exfat_cache.c
->  create mode 100644 drivers/staging/exfat/exfat_core.c
->  create mode 100644 drivers/staging/exfat/exfat_nls.c
->  create mode 100644 drivers/staging/exfat/exfat_super.c
->  create mode 100644 drivers/staging/exfat/exfat_upcase.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e3242687cd19..a484b36e5117 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6097,6 +6097,11 @@ F:	include/trace/events/mdio.h
->  F:	include/uapi/linux/mdio.h
->  F:	include/uapi/linux/mii.h
->  
-> +EXFAT FILE SYSTEM
-> +M:	Valdis Kletnieks <valdis.kletnieks@vt.edu>
-> +S:	Maintained
-> +F:	fs/exfat/
+> drivers/xen/gntdev.o: warning: objtool: gntdev_copy()+0x229: call to __ubsan_handle_out_of_bounds() with UACCESS enabled
 
-Oops, I messed this line up.  I moved this to drivers/staging/ and I
-forgot to update this line.  I'll do it in a follow-on patch.
+Easy one :-)
 
-thanks,
-
-greg k-h
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 0c8e17f946cd..6a935ab93149 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -483,6 +483,7 @@ static const char *uaccess_safe_builtin[] = {
+ 	"ubsan_type_mismatch_common",
+ 	"__ubsan_handle_type_mismatch",
+ 	"__ubsan_handle_type_mismatch_v1",
++	"__ubsan_handle_out_of_bounds",
+ 	/* misc */
+ 	"csum_partial_copy_generic",
+ 	"__memcpy_mcsafe",
