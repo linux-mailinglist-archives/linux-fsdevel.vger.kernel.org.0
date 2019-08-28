@@ -2,129 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5190A0AAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 21:46:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BCB9A0AF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 21:59:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfH1TqO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 15:46:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60686 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfH1TqO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 15:46:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hgz1R5QUT/3HwdqWiBoXJEjgsTAkIAv2dRGNBsyqnxk=; b=Rm8Ri2tEMBapDNdB3tS8NGKJBM
-        z5Rq8Hj5vRSAxcFpyrTIzaG/+MT4NsQnvWV7/mV2hJF6gRa7y6uflXN/pKocPsEW3+1uIDcqhDT/d
-        nVn5GK/ST6ZnS4k1deCvzxjlhOzDyvPUBhbmsaCbiqSy4yWGM5TlmlSbxvkYeV7PUGjKfq11w4O6d
-        B6K21kFHA5FEY7Y5poC9Rbup6llyf0SFLQyUZGcPNKUtyKUUKmtqXMwj9rmC4ynL+BB6is1FCaG0v
-        5RDdSskGb5hOH0jTQ1cq94H/Lpm3HBF4RN3Hl/sqRH3RcAUqISgadxnEhq3e2+jm9c50kgmalm08Y
-        v6mF9MJw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i33tQ-0004Z6-3n; Wed, 28 Aug 2019 19:46:08 +0000
-Date:   Wed, 28 Aug 2019 12:46:08 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
- kmalloc(power-of-two)
-Message-ID: <20190828194607.GB6590@bombadil.infradead.org>
-References: <20190826111627.7505-1-vbabka@suse.cz>
- <20190826111627.7505-3-vbabka@suse.cz>
- <0100016cd98bb2c1-a2af7539-706f-47ba-a68e-5f6a91f2f495-000000@email.amazonses.com>
+        id S1726882AbfH1T7R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 15:59:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44898 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726315AbfH1T7R (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Aug 2019 15:59:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1CEDDAD45;
+        Wed, 28 Aug 2019 19:59:15 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5EDD91E4362; Wed, 28 Aug 2019 21:59:14 +0200 (CEST)
+Date:   Wed, 28 Aug 2019 21:59:14 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.cz, tytso@mit.edu, riteshh@linux.ibm.com
+Subject: Re: [PATCH 2/5] ext4: move inode extension/truncate code out from
+ ext4_iomap_end()
+Message-ID: <20190828195914.GF22343@quack2.suse.cz>
+References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
+ <774754e9b2afc541df619921f7743d98c5c6a358.1565609891.git.mbobrowski@mbobrowski.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0100016cd98bb2c1-a2af7539-706f-47ba-a68e-5f6a91f2f495-000000@email.amazonses.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <774754e9b2afc541df619921f7743d98c5c6a358.1565609891.git.mbobrowski@mbobrowski.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 06:45:07PM +0000, Christopher Lameter wrote:
-> > Ideally we should provide to mm users what they need without difficult
-> > workarounds or own reimplementations, so let's make the kmalloc() alignment to
-> > size explicitly guaranteed for power-of-two sizes under all configurations.
+On Mon 12-08-19 22:52:53, Matthew Bobrowski wrote:
+> In preparation for implementing the direct IO write code path modifications
+> that make us of iomap infrastructure we need to move out the inode
+> extension/truncate code from ext4_iomap_end() callback. For direct IO, if the
+> current code remained it would behave incorrectly. If we update the inode size
+> prior to converting unwritten extents we run the risk of allowing a racing
+> direct IO read operation to find unwritten extents before they are converted.
 > 
-> The objection remains that this will create exceptions for the general
-> notion that all kmalloc caches are aligned to KMALLOC_MINALIGN which may
-
-Hmm?  kmalloc caches will be aligned to both KMALLOC_MINALIGN and the
-natural alignment of the object.
-
-> be suprising and it limits the optimizations that slab allocators may use
-> for optimizing data use. The SLOB allocator was designed in such a way
-> that data wastage is limited. The changes here sabotage that goal and show
-> that future slab allocators may be similarly constrained with the
-> exceptional alignents implemented. Additional debugging features etc etc
-> must all support the exceptional alignment requirements.
-
-While I sympathise with the poor programmer who has to write the
-fourth implementation of the sl*b interface, it's more for the pain of
-picking a new letter than the pain of needing to honour the alignment
-of allocations.
-
-There are many places in the kernel which assume alignment.  They break
-when it's not supplied.  I believe we have a better overall system if
-the MM developers provide stronger guarantees than the MM consumers have
-to work around only weak guarantees.
-
-> > * SLOB has no implicit alignment so this patch adds it explicitly for
-> >   kmalloc(). The potential downside is increased fragmentation. While
-> >   pathological allocation scenarios are certainly possible, in my testing,
-> >   after booting a x86_64 kernel+userspace with virtme, around 16MB memory
-> >   was consumed by slab pages both before and after the patch, with difference
-> >   in the noise.
+> The inode extension/truncate has been moved out into a new function
+> ext4_handle_inode_extension(). This will be used by both direct IO and DAX
+> code paths if the write results with the inode being extended.
 > 
-> This change to slob will cause a significant additional use of memory. The
-> advertised advantage of SLOB is that *minimal* memory will be used since
-> it is targeted for embedded systems. Different types of slab objects of
-> varying sizes can be allocated in the same memory page to reduce
-> allocation overhead.
+> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> ---
+>  fs/ext4/file.c  | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  fs/ext4/inode.c | 48 +--------------------------------------------
+>  2 files changed, 60 insertions(+), 48 deletions(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 360eff7b6aa2..7470800c63b7 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -33,6 +33,7 @@
+>  #include "ext4_jbd2.h"
+>  #include "xattr.h"
+>  #include "acl.h"
+> +#include "truncate.h"
+>  
+>  static bool ext4_dio_checks(struct inode *inode)
+>  {
+> @@ -234,12 +235,62 @@ static ssize_t ext4_write_checks(struct kiocb *iocb, struct iov_iter *from)
+>  	return iov_iter_count(from);
+>  }
+>  
+> +static int ext4_handle_inode_extension(struct inode *inode, loff_t size,
+> +				       size_t count)
+> +{
+> +	handle_t *handle;
+> +	bool truncate = false;
+> +	ext4_lblk_t written_blk, end_blk;
+> +	int ret = 0, blkbits = inode->i_blkbits;
+> +
+> +	handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
+> +	if (IS_ERR(handle)) {
+> +		ret = PTR_ERR(handle);
+> +		goto orphan_del;
+> +	}
+> +
+> +	if (ext4_update_inode_size(inode, size))
+> +		ext4_mark_inode_dirty(handle, inode);
+> +
+> +	/*
+> +	 * We may need truncate allocated but not written blocks
+> +	 * beyond EOF.
+> +	 */
+> +	written_blk = ALIGN(size, 1 << blkbits);
+> +	end_blk = ALIGN(size + count, 1 << blkbits);
 
-Did you not read the part where he said the difference was in the noise?
+So this seems to imply that 'size' is really offset where IO started but
+ext4_update_inode_size(inode, size) above suggests 'size' is really where
+IO has ended and that's indeed what you pass into
+ext4_handle_inode_extension(). So I'd just make the calling convention for
+ext4_handle_inode_extension() less confusing and pass 'offset' and 'len'
+and fixup the math inside the function...
 
-> The result of this patch is just to use more memory to be safe from
-> certain pathologies where one subsystem was relying on an alignment that
-> was not specified. That is why this approach should not be called
-> �natural" but "implicit alignment". The one using the slab cache is not
-> aware that the slab allocator provides objects aligned in a special way
-> (which is in general not needed. There seems to be a single pathological
-> case that needs to be addressed and I thought that was due to some
-> brokenness in the hardware?).
+Otherwise the patch looks OK to me.
 
-It turns out there are lots of places which assume this, including the
-pmem driver, the ramdisk driver and a few other similar drivers.
+								Honza
 
-> It is better to ensure that subsystems that require special alignment
-> explicitly tell the allocator about this.
 
-But it's not the subsystems which have this limitation which do the
-allocation; it's the subsystems who allocate the memory that they then
-pass to the subsystems.  So you're forcing communication of these limits
-up & down the stack.
-
-> I still think implicit exceptions to alignments are a bad idea. Those need
-> to be explicity specified and that is possible using kmem_cache_create().
-
-I swear we covered this last time the topic came up, but XFS would need
-to create special slab caches for each size between 512 and PAGE_SIZE.
-Potentially larger, depending on whether the MM developers are willing to
-guarantee that kmalloc(PAGE_SIZE * 2, GFP_KERNEL) will return a PAGE_SIZE
-aligned block of memory indefinitely.
+> +	if (written_blk < end_blk && ext4_can_truncate(inode))
+> +		truncate = true;
+> +
+> +	/*
+> +	 * Remove the inode from the orphan list if it has been
+> +	 * extended and everything went OK.
+> +	 */
+> +	if (!truncate && inode->i_nlink)
+> +		ext4_orphan_del(handle, inode);
+> +	ext4_journal_stop(handle);
+> +
+> +	if (truncate) {
+> +		ext4_truncate_failed_write(inode);
+> +orphan_del:
+> +		/*
+> +		 * If the truncate operation failed early the inode
+> +		 * may still be on the orphan list. In that case, we
+> +		 * need try remove the inode from the linked list in
+> +		 * memory.
+> +		 */
+> +		if (inode->i_nlink)
+> +			ext4_orphan_del(NULL, inode);
+> +	}
+> +	return ret;
+> +}
+> +
+>  #ifdef CONFIG_FS_DAX
+>  static ssize_t
+>  ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  {
+> -	struct inode *inode = file_inode(iocb->ki_filp);
+> +	int err;
+>  	ssize_t ret;
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+>  
+>  	if (!inode_trylock(inode)) {
+>  		if (iocb->ki_flags & IOCB_NOWAIT)
+> @@ -257,6 +308,13 @@ ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		goto out;
+>  
+>  	ret = dax_iomap_rw(iocb, from, &ext4_iomap_ops);
+> +
+> +	if (ret > 0 && iocb->ki_pos > i_size_read(inode)) {
+> +		err = ext4_handle_inode_extension(inode, iocb->ki_pos,
+> +						  iov_iter_count(from));
+> +		if (err)
+> +			ret = err;
+> +	}
+>  out:
+>  	inode_unlock(inode);
+>  	if (ret > 0)
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 420fe3deed39..761ce6286b05 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3601,53 +3601,7 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+>  			  ssize_t written, unsigned flags, struct iomap *iomap)
+>  {
+> -	int ret = 0;
+> -	handle_t *handle;
+> -	int blkbits = inode->i_blkbits;
+> -	bool truncate = false;
+> -
+> -	if (!(flags & IOMAP_WRITE) || (flags & IOMAP_FAULT))
+> -		return 0;
+> -
+> -	handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
+> -	if (IS_ERR(handle)) {
+> -		ret = PTR_ERR(handle);
+> -		goto orphan_del;
+> -	}
+> -	if (ext4_update_inode_size(inode, offset + written))
+> -		ext4_mark_inode_dirty(handle, inode);
+> -	/*
+> -	 * We may need to truncate allocated but not written blocks beyond EOF.
+> -	 */
+> -	if (iomap->offset + iomap->length > 
+> -	    ALIGN(inode->i_size, 1 << blkbits)) {
+> -		ext4_lblk_t written_blk, end_blk;
+> -
+> -		written_blk = (offset + written) >> blkbits;
+> -		end_blk = (offset + length) >> blkbits;
+> -		if (written_blk < end_blk && ext4_can_truncate(inode))
+> -			truncate = true;
+> -	}
+> -	/*
+> -	 * Remove inode from orphan list if we were extending a inode and
+> -	 * everything went fine.
+> -	 */
+> -	if (!truncate && inode->i_nlink &&
+> -	    !list_empty(&EXT4_I(inode)->i_orphan))
+> -		ext4_orphan_del(handle, inode);
+> -	ext4_journal_stop(handle);
+> -	if (truncate) {
+> -		ext4_truncate_failed_write(inode);
+> -orphan_del:
+> -		/*
+> -		 * If truncate failed early the inode might still be on the
+> -		 * orphan list; we need to make sure the inode is removed from
+> -		 * the orphan list in that case.
+> -		 */
+> -		if (inode->i_nlink)
+> -			ext4_orphan_del(NULL, inode);
+> -	}
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  const struct iomap_ops ext4_iomap_ops = {
+> -- 
+> 2.16.4
+> 
+> 
+> -- 
+> Matthew Bobrowski
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
