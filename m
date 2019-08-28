@@ -2,86 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB409F79A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 02:57:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F41959F7B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 03:14:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfH1A5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Aug 2019 20:57:17 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50980 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726092AbfH1A5R (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Aug 2019 20:57:17 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 49ADBB0B9C51FE38F27C;
-        Wed, 28 Aug 2019 08:57:15 +0800 (CST)
-Received: from [127.0.0.1] (10.133.208.128) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 28 Aug 2019
- 08:57:09 +0800
-Subject: Re: [Virtio-fs] [QUESTION] A performance problem for buffer write
- compared with 9p
-To:     Miklos Szeredi <miklos@szeredi.hu>
-References: <5abd7616-5351-761c-0c14-21d511251006@huawei.com>
- <20190820091650.GE9855@stefanha-x1.localdomain>
- <CAJfpegs8fSLoUaWKhC1543Hoy9821vq8=nYZy-pw1+95+Yv4gQ@mail.gmail.com>
- <20190821160551.GD9095@stefanha-x1.localdomain>
- <954b5f8a-4007-f29c-f38e-dd5585879541@huawei.com>
- <CAJfpegtBYLJLWM8GJ1h66PMf2J9o38FG6udcd2hmamEEQddf5w@mail.gmail.com>
- <0e8090c7-0c7c-bcbe-af75-33054d3a3efb@huawei.com>
- <CAJfpegurYLAApon5Ai6Q33vEy+GPxtOTUwDCCbJ2JAbg4csDSg@mail.gmail.com>
- <a19866be-3693-648e-ee6c-8d302c830834@huawei.com>
- <CAOssrKd7bKts2tCAZaXLJt+BVoQtqWoJV6HfT76-qxg7W4g9PQ@mail.gmail.com>
- <CAJfpegt574w1Rzge-59-1dRVtfPgCrFuCpJ5DjLQwSWg+G3ArA@mail.gmail.com>
- <fd7a2791-d95c-3bd9-e387-b8778a9eca83@huawei.com>
- <CAJfpegsd7v=DWwhAnNRq+L28xQFaw9EPhLyStnAG8V_hc_TZvg@mail.gmail.com>
-CC:     Miklos Szeredi <mszeredi@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        piaojun <piaojun@huawei.com>
-From:   wangyan <wangyan122@huawei.com>
-Message-ID: <9e6b4aab-6939-e129-a048-d2fa272a0e0b@huawei.com>
-Date:   Wed, 28 Aug 2019 08:57:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S1726264AbfH1BOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Aug 2019 21:14:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59134 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfH1BOg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Aug 2019 21:14:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:Cc:From:References:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hfSx8v0zhIV+bXC+CodQztxjQ/b6g4dcxtBZrzRlWPs=; b=kxL5f0dWo7sB0WNPrB0IaSLY7
+        MbNT2c+q6KEjvIRj65dBT3HQu0J0qW2J+yuxyG93K/X1w6GQYhWFiPDwTrlwGDIUhnpoXDKMhvKNh
+        G7keMO2VEKiqAmLzL1v0r3lUDWwvnxe3F/H2LTPH7MCTOE0WGt0F4b+sHbwkaLfLcoPSaA5Uvs6Sx
+        X/7vpKszkDmVggCa7+U58gqc2KS2enuH4tRmyaZjeVU0ObU1qsqmO0gl5TQf1edJhcqJ0MnvSTvK7
+        MreUZ+Ucmf+3ez2qvttBxfq8782KE01IEy+gsHiBcoqkRGj+kkaeVulwpjNrFKxEhZuo04pzKqX0u
+        w4QUJsD/g==;
+Received: from [2601:1c0:6200:6e8::4f71]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i2mXh-0001yi-EV; Wed, 28 Aug 2019 01:14:33 +0000
+Subject: Re: mmotm 2019-08-24-16-02 uploaded
+ (drivers/tty/serial/fsl_linflexuart.c:)
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20190824230323.REILuVBbY%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Cc:     Fugang Duan <fugang.duan@nxp.com>
+Message-ID: <b082b200-7298-6cd5-6981-44439bc2d788@infradead.org>
+Date:   Tue, 27 Aug 2019 18:14:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegsd7v=DWwhAnNRq+L28xQFaw9EPhLyStnAG8V_hc_TZvg@mail.gmail.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.208.128]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190824230323.REILuVBbY%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/8/26 20:39, Miklos Szeredi wrote:
-> On Sat, Aug 24, 2019 at 10:44 AM wangyan <wangyan122@huawei.com> wrote:
->
->> According to the result, for "-size=1G", it maybe exceed the dirty pages'
->> upper limit, and it frequently triggered pdflush for write-back. And for
->> "-size=700M", it maybe didn't exceed the dirty pages' upper limit, so no
->> extra pdflush was triggered.
->>
->> But for 9p using "-size=1G", the latency 3.94 usec, and the bandwidth is
->> 2305.5MB/s. It is better than virtiofs using "-size=1G". It seems that
->> it is not affected by the dirty pages' upper limit.
->
-> I tried to reproduce these results, but failed to get decent
-> (>100MB/s) performance out of 9p.  I don't have fscache set up, does
-> that play a part in getting high performance cached writes?
-Yes, you should open fscache. My mount command is:
-mount -t 9p -o 
-trans=virtio,version=9p2000.L,rw,dirsync,nodev,msize=1000000000,cache=fscache 
-sharedir /mnt/virtiofs/
+On 8/24/19 4:03 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-08-24-16-02 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+> 
+> This tree is partially included in linux-next.  To see which patches are
+> included in linux-next, consult the `series' file.  Only the patches
+> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> linux-next.
 
-Thanks,
-Yan Wang
->
-> What you describe makes sense, and I have a new patch (attached), but
-> didn't see drastic improvement in performance of virtio-fs in my
-> tests.
->
-> Thanks,
-> Miklos
->
+on i386:
+when CONFIG_PRINTK is not set/enabled:
 
+../drivers/tty/serial/fsl_linflexuart.c: In function ‘linflex_earlycon_putchar’:
+../drivers/tty/serial/fsl_linflexuart.c:608:31: error: ‘CONFIG_LOG_BUF_SHIFT’ undeclared (first use in this function); did you mean ‘CONFIG_DEBUG_SHIRQ’?
+  if (earlycon_buf.len >= 1 << CONFIG_LOG_BUF_SHIFT)
+                               ^~~~~~~~~~~~~~~~~~~~
+                               CONFIG_DEBUG_SHIRQ
+
+
+-- 
+~Randy
