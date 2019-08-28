@@ -2,89 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D2BA0CD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Aug 2019 23:54:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD1BA0D7B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 00:20:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfH1Vyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 17:54:38 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:46434 "EHLO ale.deltatee.com"
+        id S1726935AbfH1WUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 18:20:48 -0400
+Received: from mga05.intel.com ([192.55.52.43]:37028 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726583AbfH1Vyh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:54:37 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1i35tj-00071o-NI; Wed, 28 Aug 2019 15:54:36 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1i35tj-0001DJ-Bh; Wed, 28 Aug 2019 15:54:35 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed, 28 Aug 2019 15:54:29 -0600
-Message-Id: <20190828215429.4572-14-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190828215429.4572-1-logang@deltatee.com>
-References: <20190828215429.4572-1-logang@deltatee.com>
+        id S1726828AbfH1WUs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Aug 2019 18:20:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 15:20:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
+   d="scan'208";a="380561193"
+Received: from amathu3-mobl1.amr.corp.intel.com (HELO [10.254.179.245]) ([10.254.179.245])
+  by fmsmga005.fm.intel.com with ESMTP; 28 Aug 2019 15:20:46 -0700
+Subject: Re: mmotm 2019-08-27-20-39 uploaded (sound/hda/intel-nhlt.c)
+To:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>
+References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
+ <274054ef-8611-2661-9e67-4aabae5a7728@infradead.org>
+ <5ac8a7a7-a9b4-89a5-e0a6-7c97ec1fabc6@linux.intel.com>
+ <98ada795-4700-7fcc-6d14-fcc1ab25d509@infradead.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <f0a62b08-cba9-d944-5792-8eac0ea39df1@linux.intel.com>
+Date:   Wed, 28 Aug 2019 17:20:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <98ada795-4700-7fcc-6d14-fcc1ab25d509@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, Chaitanya.Kulkarni@wdc.com, maxg@mellanox.com, sbates@raithlin.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH v8 13/13] nvmet-passthru: support block accounting
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Support block disk accounting by setting the RQF_IO_STAT flag
-and gendisk in the request.
 
-After this change, IO counts will be reflected correctly in
-/proc/diskstats for drives being used by passthru.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/nvme/target/io-cmd-passthru.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+On 8/28/19 4:06 PM, Randy Dunlap wrote:
+> On 8/28/19 12:28 PM, Pierre-Louis Bossart wrote:
+>>
+>>
+>> On 8/28/19 1:30 PM, Randy Dunlap wrote:
+> 
+>>>
+>>> (from linux-next tree, but problem found/seen in mmotm)
+>>>
+>>> Sorry, I don't know who is responsible for this driver.
+>>
+>> That would be me.
+>>
+>> I just checked with Mark Brown's for-next tree 8aceffa09b4b9867153bfe0ff6f40517240cee12
+>> and things are fine in i386 mode, see below.
+>>
+>> next-20190828 also works fine for me in i386 mode.
+>>
+>> if you can point me to a tree and configuration that don't work I'll look into this, I'd need more info to progress.
+> 
+> Please try the attached randconfig file.
+> 
+> Thanks for looking.
 
-diff --git a/drivers/nvme/target/io-cmd-passthru.c b/drivers/nvme/target/io-cmd-passthru.c
-index 7557927a3451..63f12750a80d 100644
---- a/drivers/nvme/target/io-cmd-passthru.c
-+++ b/drivers/nvme/target/io-cmd-passthru.c
-@@ -410,6 +410,9 @@ static struct request *nvmet_passthru_blk_make_request(struct nvmet_req *req,
- 	if (unlikely(IS_ERR(rq)))
- 		return rq;
- 
-+	if (blk_queue_io_stat(q) && cmd->common.opcode != nvme_cmd_flush)
-+		rq->rq_flags |= RQF_IO_STAT;
-+
- 	if (req->sg_cnt) {
- 		ret = nvmet_passthru_map_sg(req, rq);
- 		if (unlikely(ret)) {
-@@ -474,7 +477,7 @@ static void nvmet_passthru_execute_cmd(struct nvmet_req *req)
- 
- 	rq->end_io_data = req;
- 	if (req->sq->qid != 0) {
--		blk_execute_rq_nowait(rq->q, NULL, rq, 0,
-+		blk_execute_rq_nowait(rq->q, ns->disk, rq, 0,
- 				      nvmet_passthru_req_done);
- 	} else {
- 		req->p.rq = rq;
--- 
-2.20.1
+Ack, I see some errors as well with this config. Likely a missing 
+dependency somewhere, working on this now.
 
+> 
+>> make ARCH=i386
+>>    Using /data/pbossart/ktest/broonie-next as source for kernel
+>>    GEN     Makefile
+>>    CALL    /data/pbossart/ktest/broonie-next/scripts/checksyscalls.sh
+>>    CALL    /data/pbossart/ktest/broonie-next/scripts/atomic/check-atomics.sh
+>>    CHK     include/generated/compile.h
+>>    CC [M]  sound/hda/ext/hdac_ext_bus.o
+>>    CC [M]  sound/hda/ext/hdac_ext_controller.o
+>>    CC [M]  sound/hda/ext/hdac_ext_stream.o
+>>    LD [M]  sound/hda/ext/snd-hda-ext-core.o
+>>    CC [M]  sound/hda/hda_bus_type.o
+>>    CC [M]  sound/hda/hdac_bus.o
+>>    CC [M]  sound/hda/hdac_device.o
+>>    CC [M]  sound/hda/hdac_sysfs.o
+>>    CC [M]  sound/hda/hdac_regmap.o
+>>    CC [M]  sound/hda/hdac_controller.o
+>>    CC [M]  sound/hda/hdac_stream.o
+>>    CC [M]  sound/hda/array.o
+>>    CC [M]  sound/hda/hdmi_chmap.o
+>>    CC [M]  sound/hda/trace.o
+>>    CC [M]  sound/hda/hdac_component.o
+>>    CC [M]  sound/hda/hdac_i915.o
+>>    LD [M]  sound/hda/snd-hda-core.o
+>>    CC [M]  sound/hda/intel-nhlt.o
+>>    LD [M]  sound/hda/snd-intel-nhlt.o
+>> Kernel: arch/x86/boot/bzImage is ready  (#18)
+>>    Building modules, stage 2.
+>>    MODPOST 156 modules
+>>    CC      sound/hda/ext/snd-hda-ext-core.mod.o
+>>    LD [M]  sound/hda/ext/snd-hda-ext-core.ko
+>>    CC      sound/hda/snd-hda-core.mod.o
+>>    LD [M]  sound/hda/snd-hda-core.ko
+>>    CC      sound/hda/snd-intel-nhlt.mod.o
+>>    LD [M]  sound/hda/snd-intel-nhlt.ko
+>>
+>>
+>>>
+>>> ~~~~~~~~~~~~~~~~~~~~~~
+>>> on i386:
+>>>
+>>>     CC      sound/hda/intel-nhlt.o
+>>> ../sound/hda/intel-nhlt.c:14:25: error: redefinition of ‘intel_nhlt_init’
+>>>    struct nhlt_acpi_table *intel_nhlt_init(struct device *dev)
+>>>                            ^~~~~~~~~~~~~~~
+>>> In file included from ../sound/hda/intel-nhlt.c:5:0:
+>>> ../include/sound/intel-nhlt.h:134:39: note: previous definition of ‘intel_nhlt_init’ was here
+>>>    static inline struct nhlt_acpi_table *intel_nhlt_init(struct device *dev)
+>>>                                          ^~~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c: In function ‘intel_nhlt_init’:
+>>> ../sound/hda/intel-nhlt.c:39:14: error: dereferencing pointer to incomplete type ‘struct nhlt_resource_desc’
+>>>     if (nhlt_ptr->length)
+>>>                 ^~
+>>> ../sound/hda/intel-nhlt.c:41:4: error: implicit declaration of function ‘memremap’; did you mean ‘ioremap’? [-Werror=implicit-function-declaration]
+>>>       memremap(nhlt_ptr->min_addr, nhlt_ptr->length,
+>>>       ^~~~~~~~
+>>>       ioremap
+>>> ../sound/hda/intel-nhlt.c:42:6: error: ‘MEMREMAP_WB’ undeclared (first use in this function)
+>>>         MEMREMAP_WB);
+>>>         ^~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:42:6: note: each undeclared identifier is reported only once for each function it appears in
+>>> ../sound/hda/intel-nhlt.c:45:25: error: dereferencing pointer to incomplete type ‘struct nhlt_acpi_table’
+>>>         (strncmp(nhlt_table->header.signature,
+>>>                            ^~
+>>> ../sound/hda/intel-nhlt.c:48:3: error: implicit declaration of function ‘memunmap’; did you mean ‘vunmap’? [-Werror=implicit-function-declaration]
+>>>      memunmap(nhlt_table);
+>>>      ^~~~~~~~
+>>>      vunmap
+>>> ../sound/hda/intel-nhlt.c: At top level:
+>>> ../sound/hda/intel-nhlt.c:56:6: error: redefinition of ‘intel_nhlt_free’
+>>>    void intel_nhlt_free(struct nhlt_acpi_table *nhlt)
+>>>         ^~~~~~~~~~~~~~~
+>>> In file included from ../sound/hda/intel-nhlt.c:5:0:
+>>> ../include/sound/intel-nhlt.h:139:20: note: previous definition of ‘intel_nhlt_free’ was here
+>>>    static inline void intel_nhlt_free(struct nhlt_acpi_table *addr)
+>>>                       ^~~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:62:5: error: redefinition of ‘intel_nhlt_get_dmic_geo’
+>>>    int intel_nhlt_get_dmic_geo(struct device *dev, struct nhlt_acpi_table *nhlt)
+>>>        ^~~~~~~~~~~~~~~~~~~~~~~
+>>> In file included from ../sound/hda/intel-nhlt.c:5:0:
+>>> ../include/sound/intel-nhlt.h:143:19: note: previous definition of ‘intel_nhlt_get_dmic_geo’ was here
+>>>    static inline int intel_nhlt_get_dmic_geo(struct device *dev,
+>>>                      ^~~~~~~~~~~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c: In function ‘intel_nhlt_get_dmic_geo’:
+>>> ../sound/hda/intel-nhlt.c:76:11: error: dereferencing pointer to incomplete type ‘struct nhlt_endpoint’
+>>>      if (epnt->linktype == NHLT_LINK_DMIC) {
+>>>              ^~
+>>> ../sound/hda/intel-nhlt.c:76:25: error: ‘NHLT_LINK_DMIC’ undeclared (first use in this function)
+>>>      if (epnt->linktype == NHLT_LINK_DMIC) {
+>>>                            ^~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:79:15: error: dereferencing pointer to incomplete type ‘struct nhlt_dmic_array_config’
+>>>       switch (cfg->array_type) {
+>>>                  ^~
+>>> ../sound/hda/intel-nhlt.c:80:9: error: ‘NHLT_MIC_ARRAY_2CH_SMALL’ undeclared (first use in this function)
+>>>       case NHLT_MIC_ARRAY_2CH_SMALL:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:81:9: error: ‘NHLT_MIC_ARRAY_2CH_BIG’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_2CH_SMALL’?
+>>>       case NHLT_MIC_ARRAY_2CH_BIG:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_2CH_SMALL
+>>> ../sound/hda/intel-nhlt.c:82:16: error: ‘MIC_ARRAY_2CH’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_2CH_BIG’?
+>>>        dmic_geo = MIC_ARRAY_2CH;
+>>>                   ^~~~~~~~~~~~~
+>>>                   NHLT_MIC_ARRAY_2CH_BIG
+>>> ../sound/hda/intel-nhlt.c:85:9: error: ‘NHLT_MIC_ARRAY_4CH_1ST_GEOM’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_2CH_BIG’?
+>>>       case NHLT_MIC_ARRAY_4CH_1ST_GEOM:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_2CH_BIG
+>>> ../sound/hda/intel-nhlt.c:86:9: error: ‘NHLT_MIC_ARRAY_4CH_L_SHAPED’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_4CH_1ST_GEOM’?
+>>>       case NHLT_MIC_ARRAY_4CH_L_SHAPED:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_4CH_1ST_GEOM
+>>>     AR      sound/i2c/other/built-in.a
+>>> ../sound/hda/intel-nhlt.c:87:9: error: ‘NHLT_MIC_ARRAY_4CH_2ND_GEOM’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_4CH_1ST_GEOM’?
+>>>       case NHLT_MIC_ARRAY_4CH_2ND_GEOM:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_4CH_1ST_GEOM
+>>> ../sound/hda/intel-nhlt.c:88:16: error: ‘MIC_ARRAY_4CH’ undeclared (first use in this function); did you mean ‘MIC_ARRAY_2CH’?
+>>>        dmic_geo = MIC_ARRAY_4CH;
+>>>                   ^~~~~~~~~~~~~
+>>>                   MIC_ARRAY_2CH
+>>>     AR      sound/i2c/built-in.a
+>>>     CC      drivers/bluetooth/btmtksdio.o
+>>> ../sound/hda/intel-nhlt.c:90:9: error: ‘NHLT_MIC_ARRAY_VENDOR_DEFINED’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_4CH_L_SHAPED’?
+>>>       case NHLT_MIC_ARRAY_VENDOR_DEFINED:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_4CH_L_SHAPED
+>>> ../sound/hda/intel-nhlt.c:92:26: error: dereferencing pointer to incomplete type ‘struct nhlt_vendor_dmic_array_config’
+>>>        dmic_geo = cfg_vendor->nb_mics;
+>>>                             ^~
+>>> ../sound/hda/intel-nhlt.c: At top level:
+>>> ../sound/hda/intel-nhlt.c:106:16: error: expected declaration specifiers or ‘...’ before string constant
+>>>    MODULE_LICENSE("GPL v2");
+>>>                   ^~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:107:20: error: expected declaration specifiers or ‘...’ before string constant
+>>>    MODULE_DESCRIPTION("Intel NHLT driver");
+>>>                       ^~~~~~~~~~~~~~~~~~~
+>>> cc1: some warnings being treated as errors
+>>> make[3]: *** [../scripts/Makefile.build:266: sound/hda/intel-nhlt.o] Error 1
+>>>
+>>>
+>>>
+> 
+> 
