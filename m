@@ -2,104 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56582A1E52
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 17:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43688A1E6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 17:08:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfH2PFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 11:05:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41578 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727144AbfH2PFx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:05:53 -0400
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C217D4FCCE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 15:05:52 +0000 (UTC)
-Received: by mail-ed1-f71.google.com with SMTP id z25so2368208edm.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 08:05:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Nw2mlLM8bc9FI0d2sEqKTqg4PUH87WdFGKW7OFJalq8=;
-        b=DFMFku3efEK7chRWCDvmGllqFiXSxSfXv2FOOcbwMQkQEbRGf4W6bPAaEOED+ec+RJ
-         Xx3zqZiHtpuyyexeW5jJL0w/rf4MoBivRAndoVl/NRk6JhyjkM5yhMliEzf7dl5B+DUl
-         WoVW3xsBWBV3I4S4uTinyxQyZfciN45UyPpBpS9QYDsk1VG8vihaad5q6OWTrP7h57Cf
-         gagGazGLPgN5vMzid+FJM02e+YAFmKuOzPduKW7pWrN53BIWzkeO3L1aRnuafG+N8iwj
-         hJcFN57420FpjmKWkwEd8dyZFW3aBQKW5ldP11DDsSYyfExgQfmV7G+nY2gpmZjcmJK6
-         6f8w==
-X-Gm-Message-State: APjAAAXywwxABjemYNC5vhMreei5EfXpSvDuSuAaFHow2ZoKQI1F1EEj
-        V23aDLv/+V9naEtAHmXExnkzW3IDuqvrLvkP48GxOlNmtUKAfWH/AgAq/Bv0y8VmDBhVBPHReCV
-        b1ggj0P2RvAQLIVG3l3BWjbt6ig==
-X-Received: by 2002:a50:9401:: with SMTP id p1mr10178778eda.189.1567091151275;
-        Thu, 29 Aug 2019 08:05:51 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwwXwiptjjR/7c77QDkLBx0Paf9jt5kzOASqk7HklmcyE6bPBx6klxSLaAouqnf3yHZlC3aiQ==
-X-Received: by 2002:a50:9401:: with SMTP id p1mr10178759eda.189.1567091151152;
-        Thu, 29 Aug 2019 08:05:51 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id g11sm486363edu.4.2019.08.29.08.05.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2019 08:05:50 -0700 (PDT)
-Subject: Re: Merging virtualbox shared-folder VFS driver through
- drivers/staging?
-To:     Christoph Hellwig <hch@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-References: <f2a9c3c0-62da-0d70-4062-47d00ab530e0@redhat.com>
- <20190811074005.GA4765@kroah.com> <20190811074348.GA13485@infradead.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <c8495f31-5975-d4b1-1dd4-28d01b594a9a@redhat.com>
-Date:   Thu, 29 Aug 2019 17:05:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190811074348.GA13485@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727578AbfH2PIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 11:08:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40516 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727115AbfH2PIX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 11:08:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 691F7B681;
+        Thu, 29 Aug 2019 15:08:21 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 17:08:21 +0200
+Message-ID: <s5hzhjs102i.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>
+Subject: Re: [alsa-devel] mmotm 2019-08-27-20-39 uploaded       (sound/hda/intel-nhlt.c)
+In-Reply-To: <19edfb9a-f7b3-7a89-db5a-33289559aeef@linux.intel.com>
+References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
+        <274054ef-8611-2661-9e67-4aabae5a7728@infradead.org>
+        <5ac8a7a7-a9b4-89a5-e0a6-7c97ec1fabc6@linux.intel.com>
+        <98ada795-4700-7fcc-6d14-fcc1ab25d509@infradead.org>
+        <f0a62b08-cba9-d944-5792-8eac0ea39df1@linux.intel.com>
+        <19edfb9a-f7b3-7a89-db5a-33289559aeef@linux.intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
-
-On 11-08-19 09:43, Christoph Hellwig wrote:
-> On Sun, Aug 11, 2019 at 09:40:05AM +0200, Greg Kroah-Hartman wrote:
->>> Since I do not see the lack of reviewing capacity problem get solved
->>> anytime soon, I was wondering if you are ok with putting the code
->>> in drivers/staging/vboxsf for now, until someone can review it and ack it
->>> for moving over to sf/vboxsf ?
->>
->> I have no objection to that if the vfs developers do not mind.
+On Thu, 29 Aug 2019 00:45:05 +0200,
+Pierre-Louis Bossart wrote:
 > 
-> We had really bad experiences with fs code in staging.  I think it is
-> a bad idea that should not be repeated.
+> 
+> >>> I just checked with Mark Brown's for-next tree
+> >>> 8aceffa09b4b9867153bfe0ff6f40517240cee12
+> >>> and things are fine in i386 mode, see below.
+> >>>
+> >>> next-20190828 also works fine for me in i386 mode.
+> >>>
+> >>> if you can point me to a tree and configuration that don't work
+> >>> I'll look into this, I'd need more info to progress.
+> >>
+> >> Please try the attached randconfig file.
+> >>
+> >> Thanks for looking.
+> >
+> > Ack, I see some errors as well with this config. Likely a missing
+> > dependency somewhere, working on this now.
+> 
+> My bad, I added a fallback with static inline functions in the .h file
+> when ACPI is not defined, but the .c file was still compiled.
+> 
+> The diff below makes next-20190828 compile with Randy's config.
 
-So after resolving the problem with the patch not making it through
-to the list because of the patch-size, v12 got reviewed (thank you
-for that Christoph) and I did a v13.
+IMO, we need to fix the site that enables this config.  i.e.
+the "select SND_INTEL_NHLT" must be always conditional, e.g.
+	select SND_INTEL_NHLT if ACPI
 
-Then there was some discussion about read cache-coherency vs writes
-done on the host side underneath us (the guest) and in the end
-Christoph agreed that what was done in v13 was as good as it would
-get given the limitations of the shared folder API offered by
-the VirtualBox hypervisor, but Christoph did request to add a big
-comment explaining these issues in more detail.
+> It looks like the alsa-devel server is down btw?
 
-So I posted a v14, adding the big comment and addressing 2 very minor
-other issue spotted by Christoph, that was 10 days ago and things
-have gotten quiet again since. I realiz that 10 days is not very
-long but for previous revisions I have been waiting upto 60 days
-sometimes and the exfat in staging discussion reminded me of this.
+Now it seems starting again.
 
-So what is the plan going forward for vboxsf now?
 
-Regards,
+thanks,
 
-Hans
+Takashi
 
+> diff --git a/sound/hda/Makefile b/sound/hda/Makefile
+> index 8560f6ef1b19..b3af071ce06b 100644
+> --- a/sound/hda/Makefile
+> +++ b/sound/hda/Makefile
+> @@ -14,5 +14,7 @@ obj-$(CONFIG_SND_HDA_CORE) += snd-hda-core.o
+>  #extended hda
+>  obj-$(CONFIG_SND_HDA_EXT_CORE) += ext/
+> 
+> +ifdef CONFIG_ACPI
+>  snd-intel-nhlt-objs := intel-nhlt.o
+>  obj-$(CONFIG_SND_INTEL_NHLT) += snd-intel-nhlt.o
+> +endif
+> 
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+> 
