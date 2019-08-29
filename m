@@ -2,139 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90119A2A54
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 00:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 795DEA2A9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 01:18:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbfH2Wxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 18:53:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33857 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbfH2Wxy (ORCPT
+        id S1728023AbfH2XS0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 19:18:26 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:58892 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727991AbfH2XS0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:53:54 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <dann.frazier@canonical.com>)
-        id 1i3TIe-00068C-MH
-        for linux-fsdevel@vger.kernel.org; Thu, 29 Aug 2019 22:53:52 +0000
-Received: by mail-io1-f70.google.com with SMTP id h7so5888509ioj.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 15:53:52 -0700 (PDT)
+        Thu, 29 Aug 2019 19:18:26 -0400
+Received: from mr5.cc.vt.edu (mr5.cc.vt.edu [IPv6:2607:b400:92:8400:0:72:232:758b])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x7TNIP6K019114
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 19:18:25 -0400
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+        by mr5.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x7TNIKNP004725
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 19:18:25 -0400
+Received: by mail-qk1-f199.google.com with SMTP id d9so5353019qko.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 16:18:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W5tNZ8pk5+mXwwGMBEXrR6iGUCDn22iPErdXfsUdHGA=;
-        b=XRWFxubauAHC8S050yyRS0p9rg44y3IYLlVk67aVPnAIBwH3VXGHGHsnsmHktT+ieJ
-         rVi29kGdonG/4K3t+39EGlKebe/SYr/NWRCToXH+tjaZzKxCjEstwDT0EWikHURiES4b
-         wMczHbnlmkwqv3Bu6TQjfs5mc9ROlOTabHRUEX25/fWznZ/Wr/SLJI4j2cv7PBBmI7Ge
-         HKibL8E6LfiuBR3pB12flaOT9TY8Svw0GkFv/V5swlqwLq6lGnj2v70jY0FY4szWEzKF
-         63tpssGqMoCODWxrn9KMSOHX6aY9lAvkj4Y4ckHpD5Kj0L0HxooiAX/h+cyrSrG7AQaW
-         qpWA==
-X-Gm-Message-State: APjAAAVixgoZ84AdH2kGvEb0FwrBMaOMVGUwqqyJqdHZx+0BkoKZY8qx
-        UxlVNxtlOVHE1tU40t4LXyCMdQnM4diOOTqRcW5I9ZbyidARL+K6V+fEBVT+ph8XXc+OceVlErc
-        bkevY/twsYcYRySwFIIyFA8kCF1EQN6S+j+H0z9GawXY=
-X-Received: by 2002:a6b:9107:: with SMTP id t7mr10633601iod.150.1567119231509;
-        Thu, 29 Aug 2019 15:53:51 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyMu2HmqWRM4hRJDak0MNAQEWQVqI5SkWX+ag1YJqTIfXQ9BjE9aCIfJKUqGD/car75caUU0w==
-X-Received: by 2002:a6b:9107:: with SMTP id t7mr10633569iod.150.1567119231085;
-        Thu, 29 Aug 2019 15:53:51 -0700 (PDT)
-Received: from xps13.canonical.com (c-71-56-235-36.hsd1.co.comcast.net. [71.56.235.36])
-        by smtp.gmail.com with ESMTPSA id g8sm3121494ioc.30.2019.08.29.15.53.50
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=DcLFLaAqEp29ZGYNoD8NLhDO1+i3Ahy1cBfneYPS5dc=;
+        b=MgozguzAonHXuuxG7e2AgBTvSEifCYlwBXIR8DdUPLZXPkq40w96FHn/+1lj/Wz+DJ
+         RNtfwg8EepgnnyUMJwYBONVP6Zj9pVV2vBl4Kd3GeDXKzx9beJtQ2qw6VrYDPNnOZdWB
+         t23cl6YpT8cBPCBrP97kE0M5J8xQ8scNVKft9k+xuyxthTAUNScYGlUTeo0fPS1j9ll3
+         8iQ4eMNIpRIPCjrhk896j6+0RfLYheYAyLi/4oaGGO330bTAU146cJ7ufm4Gpi6IUdNp
+         rYFzZcSvGKjguGyk1JHbVvSoZ4XfJbfq8y+JPN0ia/4bFapzZqEqxI+zl5vWkIHpYjfq
+         8r5w==
+X-Gm-Message-State: APjAAAVKoAFnh4sMyzYzYBA+B/PurN2ASQbWlo6zOHKDwDBJrtBLWlBa
+        66xBkiP5K71/Sv/JQ/8t7mkhjOGXpyZu04Gz1peMa9K1EMDROqnQjSvCS60k/iMFCjjG7NiB+3r
+        WTpodLMzXv4zoFS2nls8+FqFB5W3XAJM2sv7l
+X-Received: by 2002:ac8:40cc:: with SMTP id f12mr12407868qtm.256.1567120699871;
+        Thu, 29 Aug 2019 16:18:19 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwRfRQ8XctL68FBd61p6RkC4McNCSssT+S7q+CnkZYf4L9k+NRhYpVxkO19yp//P/cbraMTJQ==
+X-Received: by 2002:ac8:40cc:: with SMTP id f12mr12407856qtm.256.1567120699589;
+        Thu, 29 Aug 2019 16:18:19 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4340::ba0])
+        by smtp.gmail.com with ESMTPSA id h137sm1498736qke.51.2019.08.29.16.18.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 15:53:50 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 16:53:48 -0600
-From:   dann frazier <dann.frazier@canonical.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jan Kara <jack@suse.com>,
-        Colin King <colin.king@canonical.com>,
-        Ryan Harper <ryan.harper@canonical.com>
-Subject: Re: ext4 fsck vs. kernel recovery policy
-Message-ID: <20190829225348.GA13045@xps13.dannf>
-References: <CALdTtnuRqgZ=By1JQ0yJJYczUPxxYCWPkAey4BjBkmj77q7aaA@mail.gmail.com>
- <5FEB4E1B-B21B-418D-801D-81FF7C6C069F@dilger.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5FEB4E1B-B21B-418D-801D-81FF7C6C069F@dilger.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 29 Aug 2019 16:18:17 -0700 (PDT)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+In-Reply-To: <20190829205631.uhz6jdboneej3j3c@pali>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190829205631.uhz6jdboneej3j3c@pali>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1567120695_4251P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 29 Aug 2019 19:18:16 -0400
+Message-ID: <184209.1567120696@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 02:27:25PM -0600, Andreas Dilger wrote:
-> On Aug 27, 2019, at 1:10 PM, dann frazier <dann.frazier@canonical.com> wrote:
-> > 
-> > hey,
-> >  I'm curious if there's a policy about what types of unclean
-> > shutdowns 'e2fsck -p' can recover, vs. what the kernel will
-> > automatically recover on mount. We're seeing that unclean shutdowns w/
-> > data=journal,journal_csum frequently result in invalid checksums that
-> > causes the kernel to abort recovery, while 'e2fsck -p' resolves the
-> > issue non-interactively.
-> 
-> The kernel journal recovery will only replay the journal blocks.  It
-> doesn't do any check and repair of filesystem correctness.  During and
-> after e2fsck replays the journal blocks it still does basic correctness
-> checking, and if an error is found it will fall back to a full scan.
+--==_Exmh_1567120695_4251P
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-hey Andreas!
+On Thu, 29 Aug 2019 22:56:31 +0200, Pali Roh=E1r said:
 
-Here's a log to clarify what I'm seeing:
+> I'm not really sure if this exfat implementation is fully suitable for
+> mainline linux kernel.
+>
+> In my opinion, proper way should be to implement exFAT support into
+> existing fs/fat/ code instead of replacing whole vfat/msdosfs by this
+> new (now staging) fat implementation.
 
-$ sudo mount /dev/nbd0 mnt
-JBD2: Invalid checksum recovering data block 517634 in log
-JBD2: Invalid checksum recovering data block 517633 in log
-[...]
-JBD2: Invalid checksum recovering data block 517004 in log
-JBD2: Invalid checksum recovering data block 4915712 in log
-JBD2: recovery failed
-EXT4-fs (nbd0): error loading journal
-mount: /tmp/mnt: can't read superblock on /dev/nbd0.
-$ sudo e2fsck -p /dev/nbd0 
-/dev/nbd0: recovering journal
-JBD2: Invalid checksum recovering block 517732 in log
-JBD2: Invalid checksum recovering block 517519 in log
-[...]
-JBD2: Invalid checksum recovering block 4915712 in log
-Journal checksum error found in /dev/nbd0
-/dev/nbd0: Clearing orphaned inode 128798 (uid=0, gid=0, mode=040600, size=4096)
-/dev/nbd0: Clearing orphaned inode 514998 (uid=0, gid=0, mode=040600, size=4096)
-[...]
-/dev/nbd0: Clearing orphaned inode 774759 (uid=0, gid=0, mode=0100600, size=4096)
-/dev/nbd0 was not cleanly unmounted, check forced.
-/dev/nbd0: 2127984/2195456 files (0.0% non-contiguous), 2963178/8780544 blocks
+> In linux kernel we really do not need two different implementation of
+> VFAT32.
 
+This patch however does have one major advantage over =22patch vfat to
+support exfat=22 - which is that the patch exists.
 
-So is it correct to say that the checksum errors were identifying
-filesystem correctness issues, and therefore e2fsck was needed to
-correct them?
+If somebody comes forward with an actual =22extend vfat to do exfat=22 pa=
+tch,
+we should at that point have a discussion about relative merits....
 
-> > Driver for this question is that some Ubuntu installs set fstab's
-> > passno=0 for the root fs - which I'm told is based on the assumption
-> > that both kernel & e2fsck -p have parity when it comes to automatic
-> > recovery - that's obviously does not appear to be the case - but I
-> > wanted to confirm whether or not that is by design.
-> 
-> The first thing to figure out is why there are errors with the journal
-> blocks.  That can cause problems for both the kernel and e2fsck journal
-> replay.
-> 
-> Using data=journal is not a common option, so it is likely that the
-> issue relates to this.
+--==_Exmh_1567120695_4251P
+Content-Type: application/pgp-signature
 
-You're probably right - this issue is very easy to reproduce w/
-data=journal,journal_checksum. I was never able to reproduce it
-otherwise.
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
 
-> IMHO, using data=journal could be helpful for
-> small file writes and/or sync IO, but there have been discussions lately
-> about removing this functionality.  If you have some use case that shows
-> real improvements with data=journal, please let us know.
+iQIVAwUBXWhdNwdmEQWDXROgAQKwxhAAkSM5ieCfKxqUaqzZUaVmPpuahxnowIFR
+eFxW+Tm+35kuld2GKKYZgRE4R8rm/JoklscOoVhrKxv/TSCOeKaWrGg3EDB8NKpB
+6Zk3vvC39n/bADWzoDyYdN5h0nwUX15GsFiP1VHVTyjOEszXpgz1FDoZMwBP+e8b
+wK/868C/mF1pbgMa2VMXa/ZVJbfzyNk3E9oUVTQukJZ2Pjj4p6v9TvTCOSuLahBq
+xvz4ZcYx0v9GlVzmpGYWYF86dkzTq/UfnLnt1vcHzdGXsmbAqj0NjXGOUnVy9VxX
+PjtUsR/0PkNkURAcMu52528LNfxYvhTKPxv+TuSpwFniW6bq8vh+AOm1BGCR+yPF
+mhNASlvEaXRGh1lEWcFx34z0zaGzOsfJOoQEUtIkdri+pNjNMo+GjE31BtgPHToZ
+VbOtbjdOXLTsVwW5v0rSyhZYYicN2Pd5nS/cw0K/OH1vq3p32X1IfNoS3/aPbh32
+BDhSUvJ05USbLRFtTDRZ7TPRyGyUjAjPqHQ24AIDHNfi42XW8mmXs7CSEltgPWA3
+Qm5hhAKt4l+UHoJ6DWJrxJc4Hpqj4HL3MVbqhc3J5LW8XEHXlUQQpqre1oaf5ZmT
+XZqC5A7azJKudRo3ceswErH2uxM8Geib+uhcjIofduUk8cJiyBhK459A7Z7BxTMG
+Rvrxs5lfh88=
+=9MW/
+-----END PGP SIGNATURE-----
 
-I don't have such a use case myself. The issue was reported by a user,
-and it got me wondering about the basis for our passno=0 default.
-
-  -dann
+--==_Exmh_1567120695_4251P--
