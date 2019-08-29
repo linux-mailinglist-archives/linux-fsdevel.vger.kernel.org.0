@@ -2,101 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69005A2A48
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 00:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90119A2A54
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 00:53:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbfH2WuA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 18:50:00 -0400
-Received: from mail.phunq.net ([66.183.183.73]:51320 "EHLO voyager.galaxy"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727686AbfH2WuA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:50:00 -0400
-X-Greylist: delayed 1989 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 18:49:59 EDT
-Received: from [172.16.1.14]
-        by voyager.galaxy with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-        (Exim 4.92.1)
-        (envelope-from <daniel@phunq.net>)
-        id 1i3Sim-00062X-Fo; Thu, 29 Aug 2019 15:16:48 -0700
-From:   Daniel Phillips <daniel@phunq.net>
-Subject: [ANNOUNCE] Three things.
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        daye <daye@dddancer.com>
-Message-ID: <8ccfa9b4-d76c-b25d-7eda-303d8faa0b79@phunq.net>
-Date:   Thu, 29 Aug 2019 15:16:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728158AbfH2Wxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 18:53:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33857 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfH2Wxy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 18:53:54 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <dann.frazier@canonical.com>)
+        id 1i3TIe-00068C-MH
+        for linux-fsdevel@vger.kernel.org; Thu, 29 Aug 2019 22:53:52 +0000
+Received: by mail-io1-f70.google.com with SMTP id h7so5888509ioj.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 15:53:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=W5tNZ8pk5+mXwwGMBEXrR6iGUCDn22iPErdXfsUdHGA=;
+        b=XRWFxubauAHC8S050yyRS0p9rg44y3IYLlVk67aVPnAIBwH3VXGHGHsnsmHktT+ieJ
+         rVi29kGdonG/4K3t+39EGlKebe/SYr/NWRCToXH+tjaZzKxCjEstwDT0EWikHURiES4b
+         wMczHbnlmkwqv3Bu6TQjfs5mc9ROlOTabHRUEX25/fWznZ/Wr/SLJI4j2cv7PBBmI7Ge
+         HKibL8E6LfiuBR3pB12flaOT9TY8Svw0GkFv/V5swlqwLq6lGnj2v70jY0FY4szWEzKF
+         63tpssGqMoCODWxrn9KMSOHX6aY9lAvkj4Y4ckHpD5Kj0L0HxooiAX/h+cyrSrG7AQaW
+         qpWA==
+X-Gm-Message-State: APjAAAVixgoZ84AdH2kGvEb0FwrBMaOMVGUwqqyJqdHZx+0BkoKZY8qx
+        UxlVNxtlOVHE1tU40t4LXyCMdQnM4diOOTqRcW5I9ZbyidARL+K6V+fEBVT+ph8XXc+OceVlErc
+        bkevY/twsYcYRySwFIIyFA8kCF1EQN6S+j+H0z9GawXY=
+X-Received: by 2002:a6b:9107:: with SMTP id t7mr10633601iod.150.1567119231509;
+        Thu, 29 Aug 2019 15:53:51 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyMu2HmqWRM4hRJDak0MNAQEWQVqI5SkWX+ag1YJqTIfXQ9BjE9aCIfJKUqGD/car75caUU0w==
+X-Received: by 2002:a6b:9107:: with SMTP id t7mr10633569iod.150.1567119231085;
+        Thu, 29 Aug 2019 15:53:51 -0700 (PDT)
+Received: from xps13.canonical.com (c-71-56-235-36.hsd1.co.comcast.net. [71.56.235.36])
+        by smtp.gmail.com with ESMTPSA id g8sm3121494ioc.30.2019.08.29.15.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 15:53:50 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 16:53:48 -0600
+From:   dann frazier <dann.frazier@canonical.com>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Jan Kara <jack@suse.com>,
+        Colin King <colin.king@canonical.com>,
+        Ryan Harper <ryan.harper@canonical.com>
+Subject: Re: ext4 fsck vs. kernel recovery policy
+Message-ID: <20190829225348.GA13045@xps13.dannf>
+References: <CALdTtnuRqgZ=By1JQ0yJJYczUPxxYCWPkAey4BjBkmj77q7aaA@mail.gmail.com>
+ <5FEB4E1B-B21B-418D-801D-81FF7C6C069F@dilger.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5FEB4E1B-B21B-418D-801D-81FF7C6C069F@dilger.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks, how's it going? Over here, we have been rather busy lately,
-and for the last five years or so to be honest. Today it is my pleasure
-to be able to announce three GPL open source projects:
+On Tue, Aug 27, 2019 at 02:27:25PM -0600, Andreas Dilger wrote:
+> On Aug 27, 2019, at 1:10 PM, dann frazier <dann.frazier@canonical.com> wrote:
+> > 
+> > hey,
+> >  I'm curious if there's a policy about what types of unclean
+> > shutdowns 'e2fsck -p' can recover, vs. what the kernel will
+> > automatically recover on mount. We're seeing that unclean shutdowns w/
+> > data=journal,journal_csum frequently result in invalid checksums that
+> > causes the kernel to abort recovery, while 'e2fsck -p' resolves the
+> > issue non-interactively.
+> 
+> The kernel journal recovery will only replay the journal blocks.  It
+> doesn't do any check and repair of filesystem correctness.  During and
+> after e2fsck replays the journal blocks it still does basic correctness
+> checking, and if an error is found it will fall back to a full scan.
 
-1) Shardmap
+hey Andreas!
 
-Shardmap is the next generation directory index developed for Tux3, and
-which we are now offering as a much needed replacement for Ext4 HTree.
-Shardmap meets but usually beats HTree at all scales, has way better
-readdir characteristics, and goes where HTree never did: up into the
-billions of files per directory, with ease. Shardmap also is well on
-its way to becoming a full blown standalone KVS in user space with sub
-microsecond ACID operations in persistent memory.[1]
+Here's a log to clarify what I'm seeing:
 
-Code for Shardmap is here:
+$ sudo mount /dev/nbd0 mnt
+JBD2: Invalid checksum recovering data block 517634 in log
+JBD2: Invalid checksum recovering data block 517633 in log
+[...]
+JBD2: Invalid checksum recovering data block 517004 in log
+JBD2: Invalid checksum recovering data block 4915712 in log
+JBD2: recovery failed
+EXT4-fs (nbd0): error loading journal
+mount: /tmp/mnt: can't read superblock on /dev/nbd0.
+$ sudo e2fsck -p /dev/nbd0 
+/dev/nbd0: recovering journal
+JBD2: Invalid checksum recovering block 517732 in log
+JBD2: Invalid checksum recovering block 517519 in log
+[...]
+JBD2: Invalid checksum recovering block 4915712 in log
+Journal checksum error found in /dev/nbd0
+/dev/nbd0: Clearing orphaned inode 128798 (uid=0, gid=0, mode=040600, size=4096)
+/dev/nbd0: Clearing orphaned inode 514998 (uid=0, gid=0, mode=040600, size=4096)
+[...]
+/dev/nbd0: Clearing orphaned inode 774759 (uid=0, gid=0, mode=0100600, size=4096)
+/dev/nbd0 was not cleanly unmounted, check forced.
+/dev/nbd0: 2127984/2195456 files (0.0% non-contiguous), 2963178/8780544 blocks
 
-    https://github.com/danielbot/Shardmap
 
-2) Teamachine
+So is it correct to say that the checksum errors were identifying
+filesystem correctness issues, and therefore e2fsck was needed to
+correct them?
 
-Teamachine is a direct threaded code virtual machine with a cycle time
-of .7 nanoseconds, which may just make it the fastest interpreter in the
-known universe. Teamachine embeds Shardmap as a set of micro ops. With
-Teamachine you can rapidly set up a set of Shardmap unit tests, or you
-can build a world-beating query engine. Or just kick back and script
-your game engine, the possibilities are endless.
+> > Driver for this question is that some Ubuntu installs set fstab's
+> > passno=0 for the root fs - which I'm told is based on the assumption
+> > that both kernel & e2fsck -p have parity when it comes to automatic
+> > recovery - that's obviously does not appear to be the case - but I
+> > wanted to confirm whether or not that is by design.
+> 
+> The first thing to figure out is why there are errors with the journal
+> blocks.  That can cause problems for both the kernel and e2fsck journal
+> replay.
+> 
+> Using data=journal is not a common option, so it is likely that the
+> issue relates to this.
 
-Code for Teamachine is here:
+You're probably right - this issue is very easy to reproduce w/
+data=journal,journal_checksum. I was never able to reproduce it
+otherwise.
 
-    https://github.com/danielbot/TeaMachine
+> IMHO, using data=journal could be helpful for
+> small file writes and/or sync IO, but there have been discussions lately
+> about removing this functionality.  If you have some use case that shows
+> real improvements with data=journal, please let us know.
 
-3) Tux3
+I don't have such a use case myself. The issue was reported by a user,
+and it got me wondering about the basis for our passno=0 default.
 
-Tux3 is still alive, is still maintained against current mainline, and
-is still faster, lighter, and more ACID than any other general purpose
-Linux file system. Inasmuch as other devs have discovered that the same
-issue cited as the blocker for merging Tux3 (get user pages) is also
-problematic for kernel code that is already merged, I propose today that
-we merge Tux3 without further ado, so that we can proceed to develop
-a good solution together as is right, proper and just.
-
-Code for Tux3 is here:
-
-    https://github.com/OGAWAHirofumi/tux3/tree/hirofumi
-
-Everyone is welcome to join OFTC #tux3 and/or post to:
-
-   http://tux3.org/cgi-bin/mailman/listinfo/tux3
-
-to discuss these things, or anything at all. Fun times. See you there!
-
-STANDARD DISCLAIMER: SHARDMAP WILL EAT YOUR DATA[2] TEAMACHINE WILL HALT
-YOUR MACHINE AND SET IT ON FIRE. DOWNLOAD AND RUN OF YOUR OWN FREE WILL.
-
-[1] Big shoutout to Yahoo! Japan for supporting Shardmap work.
-
-[2] Tux3 is actually pretty good about not eating your data, but that is
-another thing.
-
-NB: followup posts are in the works re the detailed nature and status of
-Shardmap, Teamachine and Tux3.
-
-Regards,
-
-Daniel
+  -dann
