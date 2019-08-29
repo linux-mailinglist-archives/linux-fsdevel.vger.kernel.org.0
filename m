@@ -2,136 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D10F2A1A63
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 14:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC0E6A1AB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 15:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfH2Mql (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 08:46:41 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50739 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbfH2Mql (ORCPT
+        id S1727534AbfH2NFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 09:05:11 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42109 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727503AbfH2NFK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 08:46:41 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v15so3601696wml.0;
-        Thu, 29 Aug 2019 05:46:39 -0700 (PDT)
+        Thu, 29 Aug 2019 09:05:10 -0400
+Received: by mail-lf1-f66.google.com with SMTP id u13so2448280lfm.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 06:05:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=QlVIC8TNhGJq1NB5dIfzGpZGGFQCIpdVZDF44V62VcQ=;
-        b=JV7b89eNFuS5WTpaC3U9r4/BkSvp1wlY4PXYTx3w4hEIfEm9P+CgbJu5H1VoJVWQKq
-         68PDD+FSCBps8rPl+joi/bUj2C42piXodE/gVgdqWh3svPwjrXJxRKxzw7Q4oKjmBkt+
-         zGiWqTGguB7RYgarPllP8n0o2MhkEOyxpN/aii3w/RS9DrO90+Qm+oB4VEdI1Gj0Qqz0
-         r+dKd/MMucszeGo4UlII4Qo/PhfiZve0FlS2G5VUlkSJYxgqTfZYnmFy7+4t+7u+o+tO
-         iAxEb4SrOcT+oKbKFDUD9lIGC7JhIUaJB18vI20gw1ZCsQeC/VeiekIrWA7ACbmdSV6K
-         5J7A==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+pz1tJCvEpXqhYntc4a+eXdQw4YkeZzY/CUqzEnQfhI=;
+        b=VwOF8bMUMlpcVPjnH7KLm7q9YPGAJyoJCaqTHg0eB7cJNs33HPtWse0a6S+38yOz8O
+         NHVqczdRdynKQIjzWAF9I3YpK+wBqgWsLCV+xSrpqG8v5x5MeuksDGvoajweRjwbjZ5a
+         38t56VL/f1C5Tbh/lNpCLIQcFzQtYKavA1iaY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=QlVIC8TNhGJq1NB5dIfzGpZGGFQCIpdVZDF44V62VcQ=;
-        b=I0/zp8Gi5zf35HTCc6gdLlnAnGBzy7pPyNKyN0xkFV+SzYvraojAuffklVKzlKCq/L
-         aKcEbWZsaDlAduPpP9XlOG+F20yCbhXGV/6lw6KwT9vNfWpHvpPbR4qAq3Z/LJ3AbKde
-         lQKTzVowyYp4dtPrAOheBxcQITKpQ9VXO6ebsuTKEPs+HA8e8UQMHzJZ/mdaam2mG8dn
-         OcoLVPnUl0pP8fIitIoftmIyvlUioEpLijyv1HuYpvXYmRoBo1ASVWnvDt6S+EdwLaqX
-         802lE3ptjZX9n2XJ7OT+v5vtVyQrt91yhriJquKsXRF+Ho7N+L2vzb1A8cDWxKyD8jKv
-         8jNA==
-X-Gm-Message-State: APjAAAX50mBkaAJqUs1wyuBdq4CMZhUV0PZyeYdM684HogFvfsPg3ZPg
-        f2DwKQ/Ne1lKlxGoCk3Fgeo=
-X-Google-Smtp-Source: APXvYqwrshnUNKamixaL2Mpydl0AFKu7KVc1CrEhTFhBwIf2wyr5clc4/DhX7uakfObPGE2AS4L4uw==
-X-Received: by 2002:a7b:c857:: with SMTP id c23mr12036367wml.51.1567082798038;
-        Thu, 29 Aug 2019 05:46:38 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id 25sm2552046wmi.40.2019.08.29.05.46.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Aug 2019 05:46:37 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 14:46:36 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190829124636.475c7znb4pxuq2hi@pali>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190829121435.bsl5cnx7yqgakpgb@pali>
- <81682.1567082044@turing-police>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+pz1tJCvEpXqhYntc4a+eXdQw4YkeZzY/CUqzEnQfhI=;
+        b=ehi75S5CdAHRzc7qlLLY238uaEhcYlRG/jbv2b4v/GNW6mA9kg3LTpF2fTAW9uo8bV
+         amPL+R9x6Rh0mfEnBYFRE9kL5b050vWLfgat7gYOcyqcca1/mk+862cOsFLAdMydYDZf
+         0H0DMAz0ARY6psU+I+3vX4rnZcXlOret5k8UMm/DBWv1N9OaRdxrvun+eBd8ke2U+7+a
+         MIkEsc6XiX3hyws0x1gZJQSQ/3SZT4+c4hG8H896KKmsGE73+12opIfsHiPFBnyrh/Ra
+         Lgy3CFu/SINIOD21xPlHbn7BE207wrvkjGwqKgfWEB1+NrSwObAi/4sQletjFLI7hntm
+         2aGg==
+X-Gm-Message-State: APjAAAU2M8lJ6LH/gxrvDd1ryTV8JzZmssDPuzgfeJ8DLvaANUEwvA8G
+        3o+Q0uqPjDbBVJUQadts7x9EeQ==
+X-Google-Smtp-Source: APXvYqzC/znEm7g6SWABzaV06VBY2y9BWKEbRXRSbaRH8cAy80Qu1m8PhCO/oz8TivPdICdvt4gS+A==
+X-Received: by 2002:a19:ef05:: with SMTP id n5mr6063058lfh.192.1567083908173;
+        Thu, 29 Aug 2019 06:05:08 -0700 (PDT)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id j23sm346381ljc.6.2019.08.29.06.05.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2019 06:05:07 -0700 (PDT)
+Subject: Re: [PATCH RESEND v11 7/8] open: openat2(2) syscall
+To:     Aleksa Sarai <cyphar@cyphar.com>,
+        Daniel Colascione <dancol@google.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        sparclinux@vger.kernel.org
+References: <20190820033406.29796-1-cyphar@cyphar.com>
+ <20190820033406.29796-8-cyphar@cyphar.com>
+ <CAKOZuesfxRBJe314rkTKXtjXdz6ki3uAUBYVbu5Q2rd3=ADphQ@mail.gmail.com>
+ <20190829121527.u2uvdyeatme5cgkb@yavin>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <899401fa-ff0a-2ce9-8826-09904efab2d2@rasmusvillemoes.dk>
+Date:   Thu, 29 Aug 2019 15:05:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <81682.1567082044@turing-police>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190829121527.u2uvdyeatme5cgkb@yavin>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday 29 August 2019 08:34:04 Valdis Klētnieks wrote:
-> On Thu, 29 Aug 2019 14:14:35 +0200, Pali Roh?r said:
-> > On Wednesday 28 August 2019 18:08:17 Greg Kroah-Hartman wrote:
-> > > The full specification of the filesystem can be found at:
-> > >   https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification
-> >
-> > This is not truth. This specification is not "full". There are missing
-> > important details, like how is TexFAT implemented. 
-> 
-> Well..given that the spec says it's an extension used by Windows CE...
+On 29/08/2019 14.15, Aleksa Sarai wrote:
+> On 2019-08-24, Daniel Colascione <dancol@google.com> wrote:
 
-It is extension which provides more error-prone write operations to
-minimize damage on filesystem.
+>> Why pad the structure when new functionality (perhaps accommodated via
+>> a larger structure) could be signaled by passing a new flag? Adding
+>> reserved fields to a structure with a size embedded in the ABI makes a
+>> lot of sense --- e.g., pthread_mutex_t can't grow. But this structure
+>> can grow, so the reservation seems needless to me.
+> 
+> Quite a few folks have said that ->reserved is either unnecessary or
+> too big. I will be changing this, though I am not clear what the best
+> way of extending the structure is. If anyone has a strong opinion on
+> this (or an alternative to the ones listed below), please chime in. I
+> don't have any really strong attachment to this aspect of the API.
+> 
+> There appear to be a few ways we can do it (that all have precedence
+> with other syscalls):
+> 
+>  1. Use O_* flags to indicate extensions.
+>  2. A separate "version" field that is incremented when we change.
+>  3. Add a size_t argument to openat2(2).
+>  4. Reserve space (as in this patchset).
+> 
+> (My personal preference would be (3), followed closely by (2).)
 
-> > 1.5 Windows CE and TexFAT
-> 
-> > TexFAT is an extension to exFAT that adds transaction-safe operational
-> > semantics on top of the base file system. TexFAT is used by Windows CE. TexFAT
-> > requires the use of the two FATs and allocation bitmaps for use in
-> > transactions. It also defines several additional structures including padding
-> > descriptors and security descriptors.
-> 
-> And these two pieces of info:
-> 
-> > 3.1.13.1 ActiveFat Field
-> 
-> > The ActiveFat field shall describe which FAT and Allocation Bitmap are active
-> > (and implementations shall use), as follows:
-> 
-> > 0, which means the First FAT and First Allocation Bitmap are active
-> 
-> > 1, which means the Second FAT and Second Allocation Bitmap are active and is
-> > possible only when the NumberOfFats field contains the value 2
-> 
-> > Implementations shall consider the inactive FAT and Allocation Bitmap as stale.
-> > Only TexFAT-aware implementations shall switch the active FAT and Allocation
-> > Bitmaps (see Section 7.1).
-> 
-> > 3.1.16 NumberOfFats Field
-> > The NumberOfFats field shall describe the number of FATs and Allocation Bitmaps
-> > the volume contains.
-> 
-> > The valid range of values for this field shall be:
-> 
-> > 1, which indicates the volume only contains the First FAT and First Allocation Bitmap
-> 
-> > 2, which indicates the volume contains the First FAT, Second FAT, First
-> > Allocation Bitmap, and Second Allocation Bitmap; this value is only valid for
-> > TexFAT volumes
-> 
-> I think we're OK if we just set ActiveFat to 0 and NumberOfFats to 1.
+3, definitely, and instead of having to invent a new scheme for every
+new syscall, make that the default pattern by providing a helper
 
-But this degrades whole FS. Even FAT32 uses two FAT tables due to big
-factor of brokenness and fsck takes care of it when repairing.
+int __copy_abi_struct(void *kernel, size_t ksize, const void __user
+*user, size_t usize)
+{
+	size_t copy = min(ksize, usize);
 
-There is not too much sense to use exFAT with just one FAT if we have
-already working FAT32 with redundancy of FAT table.
+	if (copy_from_user(kernel, user, copy))
+		return -EFAULT;
 
-> Unless somebody has actual evidence of a non-WindowsCE extfat that has
-> NumberOfFats == 2....
+	if (usize > ksize) {
+		/* maybe a separate "return user_is_zero(user + ksize, usize -
+ksize);" helper */
+		char c;
+		user += ksize;
+		usize -= ksize;
+		while (usize--) {
+			if (get_user(c, user++))
+				return -EFAULT;
+			if (c)
+				return -EINVAL;
+		}
+	} else if (ksize > usize) {
+		memset(kernel + usize, 0, ksize - usize);
+	}
+	return 0;
+}
+#define copy_abi_struct(kernel, user, usize)	\
+	__copy_abi_struct(kernel, sizeof(*kernel), user, usize)
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+> Both (1) and (2) have the problem that the "struct version" is inside
+> the struct so we'd need to copy_from_user() twice. This isn't the end of
+> the world, it just feels a bit less clean than is ideal. (3) fixes that
+> problem, at the cost of making the API slightly more cumbersome to use
+> directly (though again glibc could wrap that away).
+
+I don't see how 3 is cumbersome to use directly. Userspace code does
+struct openat_of_the_day args = {.field1 = x, .field3 = y} and passes
+&args, sizeof(args). What does glibc need to do beyond its usual munging
+of the userspace ABI registers to the syscall ABI registers?
+
+Rasmus
+
