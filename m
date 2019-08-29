@@ -2,87 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 319C6A1A2D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 14:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26911A1A35
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 14:38:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbfH2Mfb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 08:35:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43992 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726950AbfH2Mfa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 08:35:30 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 79F1A18B3D85;
-        Thu, 29 Aug 2019 12:35:30 +0000 (UTC)
-Received: from localhost (ovpn-117-104.ams2.redhat.com [10.36.117.104])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D1B5600C1;
-        Thu, 29 Aug 2019 12:35:29 +0000 (UTC)
-Date:   Thu, 29 Aug 2019 13:35:28 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v3 00/13] virtio-fs: shared file system for virtual
- machines
-Message-ID: <20190829123528.GA18693@stefanha-x1.localdomain>
-References: <20190821173742.24574-1-vgoyal@redhat.com>
- <CAJfpegv_XS=kLxw_FzWNM2Xao5wsn7oGbk3ow78gU8tpXwo-sg@mail.gmail.com>
+        id S1727014AbfH2Mi2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 08:38:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39984 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725782AbfH2Mi2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 08:38:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2F114AC67;
+        Thu, 29 Aug 2019 12:38:27 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 2A8601E3BE6; Thu, 29 Aug 2019 14:38:25 +0200 (CEST)
+Date:   Thu, 29 Aug 2019 14:38:25 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, riteshh@linux.ibm.com
+Subject: Re: [PATCH 4/5] ext4: introduce direct IO write code path using
+ iomap infrastructure
+Message-ID: <20190829123825.GB22939@quack2.suse.cz>
+References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
+ <581c3a2da89991e7ce5862d93dcfb23e1dc8ddc8.1565609891.git.mbobrowski@mbobrowski.org>
+ <20190828202619.GG22343@quack2.suse.cz>
+ <20190829114515.GB2486@poseidon.bobrowski.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegv_XS=kLxw_FzWNM2Xao5wsn7oGbk3ow78gU8tpXwo-sg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Thu, 29 Aug 2019 12:35:30 +0000 (UTC)
+In-Reply-To: <20190829114515.GB2486@poseidon.bobrowski.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu 29-08-19 21:45:17, Matthew Bobrowski wrote:
+> > > @@ -3581,10 +3611,10 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+> > >  		iomap->type = delalloc ? IOMAP_DELALLOC : IOMAP_HOLE;
+> > >  		iomap->addr = IOMAP_NULL_ADDR;
+> > >  	} else {
+> > > -		if (map.m_flags & EXT4_MAP_MAPPED) {
+> > > -			iomap->type = IOMAP_MAPPED;
+> > > -		} else if (map.m_flags & EXT4_MAP_UNWRITTEN) {
+> > > +		if (map.m_flags & EXT4_MAP_UNWRITTEN) {
+> > >  			iomap->type = IOMAP_UNWRITTEN;
+> > > +		} else if (map.m_flags & EXT4_MAP_MAPPED) {
+> > > +			iomap->type = IOMAP_MAPPED;
+> > >  		} else {
+> > >  			WARN_ON_ONCE(1);
+> > >  			return -EIO;
+> > 
+> > Possibly this hunk should go into a separate patch (since this is not
+> > directly related with iomap conversion) with a changelog / comment
+> > explaining why we need to check EXT4_MAP_UNWRITTEN first.
+> 
+> But wouldn't doing so break bisection? Seeing as though we needed to
+> change this statement specifically to accommodate for the weirdness
+> being returned from ext4_map_blocks()? i.e. map.m_flags being set to
+> either of the following:
+> 
+> 	- (EXT4_MAP_NEW | EXT4_MAP_MAPPED)
+>         or
+>         - (EXT4_MAP_NEW | EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)
+> 
+> So, if we left the statement in its original form, we'd allocate
+> unwritten extents but never actually get around to converting them in
+> ext4_dio_write_end_io() as IOMAP_DIO_UNWRITTEN would never be set?
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+By splitting into a separate patch, I meant that patch would go before this
+one. Original code in ext4_iomap_begin() never called ext4_map_blocks()
+with a set of flags that can return with both EXT4_MAP_MAPPED and
+EXT4_MAP_UNWRITTEN set so that patch would be a no-op but would fix that
+landmine you tripped over.
 
-On Thu, Aug 29, 2019 at 11:28:27AM +0200, Miklos Szeredi wrote:
-> On Wed, Aug 21, 2019 at 7:38 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+								Honza
 
-Thanks!
-
->  - removed option parsing completely.  Virtiofs config is fixed to "-o
-> rootmode=040000,user_id=0,group_id=0,allow_other,default_permissions".
-> Does this sound reasonable?
-
-That simplifies things for users and I've never seen a need to change
-these options in virtio-fs.  If we need the control for some reason in
-the future we can add options back in again.
-
-> I think we also need something in
-> "Documentation/filesystems/virtiofs.rst" which describes the design
-> (how  request gets to userspace and back) and how to set up the
-> server, etc...  Stefan, Vivek can you do something like that?
-
-Sure.  I'll send a patch.
-
-Stefan
-
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1nxpAACgkQnKSrs4Gr
-c8jjQwgAvWE4oapn65FxQy/VdB7RtefE3yzw3Eqivc7NYcdOZJxKNpfeU7w5HEgY
-QK6WGmXSW7udfIoPEmVO9MLd9G4+sjbewz5OhGKYm8b0rDfGXPTD9JZO75MkvrSO
-3nTLOX7Qoe2omYOyCcwQRXqFujBerFwsY22L0+QnubAWgHgHuV4+vgUKc1iJ6PlD
-7jDG5W6l0omMY2G7kym4QYr/jk67cRdzUonm3rYTKIy1q0xLzg/XeQta/rvXVfFB
-vCx5+Fks5LZ6bO9Sj+SkzyP3etHAQH8dzYXtcuAsZk7clqcuYqGn4NSAHt+AqNFx
-1e6kZW2gsPPyUfBAAIDYRkFJ28Dy9g==
-=PAGO
------END PGP SIGNATURE-----
-
---zhXaljGHf11kAtnf--
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
