@@ -2,141 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BAC1A1A4F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 14:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D10F2A1A63
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 14:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbfH2Mmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 08:42:35 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54922 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725782AbfH2Mmf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 08:42:35 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9F9C75D8F33C676BBDFA;
-        Thu, 29 Aug 2019 20:42:33 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.203) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Thu, 29 Aug 2019
- 20:42:30 +0800
-To:     <keescook@chromium.org>, <kernel-hardening@lists.openwall.com>,
-        <linux-fsdevel@vger.kernel.org>
-From:   Jason Yan <yanaijie@huawei.com>
-Subject: CONFIG_HARDENED_USERCOPY
-Message-ID: <6e02a518-fea9-19fe-dca7-0323a576750d@huawei.com>
-Date:   Thu, 29 Aug 2019 20:42:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1727213AbfH2Mql (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 08:46:41 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50739 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbfH2Mql (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 08:46:41 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v15so3601696wml.0;
+        Thu, 29 Aug 2019 05:46:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=QlVIC8TNhGJq1NB5dIfzGpZGGFQCIpdVZDF44V62VcQ=;
+        b=JV7b89eNFuS5WTpaC3U9r4/BkSvp1wlY4PXYTx3w4hEIfEm9P+CgbJu5H1VoJVWQKq
+         68PDD+FSCBps8rPl+joi/bUj2C42piXodE/gVgdqWh3svPwjrXJxRKxzw7Q4oKjmBkt+
+         zGiWqTGguB7RYgarPllP8n0o2MhkEOyxpN/aii3w/RS9DrO90+Qm+oB4VEdI1Gj0Qqz0
+         r+dKd/MMucszeGo4UlII4Qo/PhfiZve0FlS2G5VUlkSJYxgqTfZYnmFy7+4t+7u+o+tO
+         iAxEb4SrOcT+oKbKFDUD9lIGC7JhIUaJB18vI20gw1ZCsQeC/VeiekIrWA7ACbmdSV6K
+         5J7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=QlVIC8TNhGJq1NB5dIfzGpZGGFQCIpdVZDF44V62VcQ=;
+        b=I0/zp8Gi5zf35HTCc6gdLlnAnGBzy7pPyNKyN0xkFV+SzYvraojAuffklVKzlKCq/L
+         aKcEbWZsaDlAduPpP9XlOG+F20yCbhXGV/6lw6KwT9vNfWpHvpPbR4qAq3Z/LJ3AbKde
+         lQKTzVowyYp4dtPrAOheBxcQITKpQ9VXO6ebsuTKEPs+HA8e8UQMHzJZ/mdaam2mG8dn
+         OcoLVPnUl0pP8fIitIoftmIyvlUioEpLijyv1HuYpvXYmRoBo1ASVWnvDt6S+EdwLaqX
+         802lE3ptjZX9n2XJ7OT+v5vtVyQrt91yhriJquKsXRF+Ho7N+L2vzb1A8cDWxKyD8jKv
+         8jNA==
+X-Gm-Message-State: APjAAAX50mBkaAJqUs1wyuBdq4CMZhUV0PZyeYdM684HogFvfsPg3ZPg
+        f2DwKQ/Ne1lKlxGoCk3Fgeo=
+X-Google-Smtp-Source: APXvYqwrshnUNKamixaL2Mpydl0AFKu7KVc1CrEhTFhBwIf2wyr5clc4/DhX7uakfObPGE2AS4L4uw==
+X-Received: by 2002:a7b:c857:: with SMTP id c23mr12036367wml.51.1567082798038;
+        Thu, 29 Aug 2019 05:46:38 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id 25sm2552046wmi.40.2019.08.29.05.46.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Aug 2019 05:46:37 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 14:46:36 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190829124636.475c7znb4pxuq2hi@pali>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190829121435.bsl5cnx7yqgakpgb@pali>
+ <81682.1567082044@turing-police>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <81682.1567082044@turing-police>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Kees,
+On Thursday 29 August 2019 08:34:04 Valdis Klētnieks wrote:
+> On Thu, 29 Aug 2019 14:14:35 +0200, Pali Roh?r said:
+> > On Wednesday 28 August 2019 18:08:17 Greg Kroah-Hartman wrote:
+> > > The full specification of the filesystem can be found at:
+> > >   https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification
+> >
+> > This is not truth. This specification is not "full". There are missing
+> > important details, like how is TexFAT implemented. 
+> 
+> Well..given that the spec says it's an extension used by Windows CE...
 
-We found an issue of kernel bug related to HARDENED_USERCOPY.
-When copying an IO buffer to userspace, HARDENED_USERCOPY thought it is
-illegal to copy this buffer. Actually this is because this IO buffer was
-merged from two bio vectors, and the two bio vectors buffer was 
-allocated with kmalloc() in the filesystem layer.
+It is extension which provides more error-prone write operations to
+minimize damage on filesystem.
 
-The block layer __blk_segment_map_sg() do the merge if two bio vectors 
-is continuous in physical.
+> > 1.5 Windows CE and TexFAT
+> 
+> > TexFAT is an extension to exFAT that adds transaction-safe operational
+> > semantics on top of the base file system. TexFAT is used by Windows CE. TexFAT
+> > requires the use of the two FATs and allocation bitmaps for use in
+> > transactions. It also defines several additional structures including padding
+> > descriptors and security descriptors.
+> 
+> And these two pieces of info:
+> 
+> > 3.1.13.1 ActiveFat Field
+> 
+> > The ActiveFat field shall describe which FAT and Allocation Bitmap are active
+> > (and implementations shall use), as follows:
+> 
+> > 0, which means the First FAT and First Allocation Bitmap are active
+> 
+> > 1, which means the Second FAT and Second Allocation Bitmap are active and is
+> > possible only when the NumberOfFats field contains the value 2
+> 
+> > Implementations shall consider the inactive FAT and Allocation Bitmap as stale.
+> > Only TexFAT-aware implementations shall switch the active FAT and Allocation
+> > Bitmaps (see Section 7.1).
+> 
+> > 3.1.16 NumberOfFats Field
+> > The NumberOfFats field shall describe the number of FATs and Allocation Bitmaps
+> > the volume contains.
+> 
+> > The valid range of values for this field shall be:
+> 
+> > 1, which indicates the volume only contains the First FAT and First Allocation Bitmap
+> 
+> > 2, which indicates the volume contains the First FAT, Second FAT, First
+> > Allocation Bitmap, and Second Allocation Bitmap; this value is only valid for
+> > TexFAT volumes
+> 
+> I think we're OK if we just set ActiveFat to 0 and NumberOfFats to 1.
 
-/* Default implementation of BIOVEC_PHYS_MERGEABLE */
-#define __BIOVEC_PHYS_MERGEABLE(vec1, vec2)	\
-	((bvec_to_phys((vec1)) + (vec1)->bv_len) == bvec_to_phys((vec2)))
+But this degrades whole FS. Even FAT32 uses two FAT tables due to big
+factor of brokenness and fsck takes care of it when repairing.
 
-After the merge, driver do not know the buffer is consist of two slab 
-objects. It copies this buffer at once with the total length.
-Obviously this cannot through the check of HARDENED_USERCOPY.
+There is not too much sense to use exFAT with just one FAT if we have
+already working FAT32 with redundancy of FAT table.
 
-So how can we do in this situation?
-1.Shutdown HARDENED_USERCOPY ?
-2.Tell filesystems not to use kmalloc to send IOs down?
-3.Tell the driver to use _copy_to_user instead of copy_to_user ?
+> Unless somebody has actual evidence of a non-WindowsCE extfat that has
+> NumberOfFats == 2....
 
-Thoughts? suggestions?
-
-crash> bt
-PID: 38986  TASK: ffff803dc0b9ae80  CPU: 12  COMMAND: "scsi_init_0"
-  #0 [ffff00001cbfb470] machine_kexec at ffff0000080a2724
-  #1 [ffff00001cbfb4d0] __crash_kexec at ffff0000081b7b74
-  #2 [ffff00001cbfb660] panic at ffff0000080ee8cc
-  #3 [ffff00001cbfb740] die at ffff00000808f6ac
-  #4 [ffff00001cbfb790] bug_handler at ffff00000808f744
-  #5 [ffff00001cbfb7c0] brk_handler at ffff000008085d1c
-  #6 [ffff00001cbfb7e0] do_debug_exception at ffff000008081194
-  #7 [ffff00001cbfb9f0] el1_dbg at ffff00000808332c
-      PC: ffff0000083395d8  [usercopy_abort+136]
-      LR: ffff0000083395d8  [usercopy_abort+136]
-      SP: ffff00001cbfba00  PSTATE: 40000005
-     X29: ffff00001cbfba10  X28: 0000000000000000  X27: ffff80244802e000
-     X26: 0000000000000400  X25: 0000000000000000  X24: ffff80380625fa00
-     X23: 0000000000000001  X22: 0000000000000400  X21: 0000000000000000
-     X20: ffff000008c95698  X19: ffff000008c99970  X18: ffffffffffffffff
-     X17: 0000000000000000  X16: 0000000000000000  X15: 0000000000000001
-     X14: ffff000008aa7e48  X13: 0000000000000000  X12: 0000000000000000
-     X11: 00000000ffffffff  X10: 0000000000000010   X9: ffff000008ef1018
-      X8: 0000000000000854   X7: 0000000000000003   X6: ffff803ffbf8b3c8
-      X5: ffff803ffbf8b3c8   X4: 0000000000000000   X3: ffff803ffbf93b08
-      X2: 902990500743b200   X1: 0000000000000000   X0: 0000000000000067
-  #8 [ffff00001cbfba10] usercopy_abort at ffff0000083395d4
-  #9 [ffff00001cbfba50] __check_heap_object at ffff000008310910
-#10 [ffff00001cbfba80] __check_object_size at ffff000008339770
-#11 [ffff00001cbfbac0] vsc_xfer_data at ffff000000ca9bac [vsc]
-#12 [ffff00001cbfbb60] vsc_scsi_cmd_data at ffff000000cab368 [vsc]
-#13 [ffff00001cbfbc00] vsc_get_msg_unlock at ffff000000cad198 [vsc]
-#14 [ffff00001cbfbc90] vsc_get_msg at ffff000000cad6f0 [vsc]
-#15 [ffff00001cbfbcd0] vsc_dev_read at ffff000000ca2688 [vsc]
-#16 [ffff00001cbfbd00] __vfs_read at ffff00000833f234
-#17 [ffff00001cbfbdb0] vfs_read at ffff00000833f3f0
-#18 [ffff00001cbfbdf0] ksys_read at ffff00000833fb50
-#19 [ffff00001cbfbe40] __arm64_sys_read at ffff00000833fbe0
-#20 [ffff00001cbfbe60] el0_svc_common at ffff000008097b54
-#21 [ffff00001cbfbea0] el0_svc_handler at ffff000008097c44
-#22 [ffff00001cbfbff0] el0_svc at ffff000008084144
-      PC: 000040003a653548   LR: 000040003a653530   SP: 00004001f1087ad0
-     X29: 00004001f1087ad0  X28: 000040002b1f7000  X27: 0000400034c5b958
-     X26: 00004001042f7d58  X25: 0000000000000004  X24: 0000000000000000
-     X23: 00004001f1087c38  X22: 00004001f1087c58  X21: 00004001f1087d38
-     X20: 0000000000000400  X19: 000000000000001c  X18: 0000000000000000
-     X17: 000040003a6534d8  X16: 000040002b1ecc48  X15: 0000000000001268
-     X14: 000000000000003b  X13: 0000000000000400  X12: 00004000f4291000
-     X11: 0000000000000400  X10: 0000000100000010   X9: 0000001000000002
-      X8: 000000000000003f   X7: 004cf56500000000   X6: 0000000000000000
-      X5: 00004001f1088ac0   X4: 00000000ffffffbb   X3: 0000000000000000
-      X2: 0000000000000400   X1: 00004001f1087d38   X0: 000000000000001c
-     ORIG_X0: 000000000000001c  SYSCALLNO: 3f  PSTATE: 80000000
-crash>
-
-   sc_data_direction = DMA_TO_DEVICE,
-   cmnd = 0xffff802187d69d38 "*",
-   sdb = {
-     table = {
-       sgl = 0xffff80380625fa00,
-       nents = 1,
-       orig_nents = 2
-     },
-     length = 1024,
-     resid = 0
-   },
-
-crash> struct bio_vec 0xffff80217ce4a2b0
-struct bio_vec {
-   bv_page = 0xffff7e0091200b80,
-   bv_len = 512,
-   bv_offset = 0
-}
-crash> struct bio_vec 0xffff80217ce4a8b0
-struct bio_vec {
-   bv_page = 0xffff7e0091200b80,
-   bv_len = 512,
-   bv_offset = 512
-}
-
-
+-- 
+Pali Rohár
+pali.rohar@gmail.com
