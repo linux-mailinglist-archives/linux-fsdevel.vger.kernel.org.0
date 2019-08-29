@@ -2,140 +2,322 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33AC0A0E7F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 02:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA89A0EE5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 03:29:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfH2AEY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 20:04:24 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46003 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfH2AEX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 20:04:23 -0400
-Received: by mail-ot1-f65.google.com with SMTP id m24so1601850otp.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2019 17:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9V1I2O+TivEgbBfrL+sbjQm1nhJ9MH50acKxm7Jxy80=;
-        b=ESaJoc8uAcMghQKXnUGzQAUXuyljQbXi8D9tnbGffCiBjVzZuOXCax8X2qwURhna8D
-         ZCii/AXaKhwWr4hlRiHLcZ2NkaEVT4y9nfs/aJf8phUBTO5AwR8KTXRZurFFafCjLRhd
-         OY1VXkibH9HabUYOOfTgCyiw8cBHoj6YGzW1YRj33glxC4a0hjLp6bsL2Q74qKKC1DM4
-         hGhKheWRBV0QQd9KYQXbvrdnWI7S30xJ8O484RMAId2aedVlxTJHFFgkevMGBuf5JDwI
-         s88SmUnmj6LY0LPGMVexZlcan5Vud1uQzml64dgeu8YJZO+YkEohexOj5GRTXIpu3dam
-         wc4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9V1I2O+TivEgbBfrL+sbjQm1nhJ9MH50acKxm7Jxy80=;
-        b=XAPnpCChfNtsiatdkKlhS0Ya3efn+toSRu79A1J9gbLCdepC2/FEz+sT+P2wrBPF5t
-         Ol0NCA6OgmlQiQhZgnRIjeELtoRa+xJW15gvN6ApLAH3Tmv0KXvFB+VQHMbfneoWyjWt
-         z2A9qq0RXBAHCMwJ0tYCubI7E+6EYr6UIJ921NO+/g3ytYaIXsanC6XGXI6cG4EzlFCd
-         SOTqOWTlrghmMDmDpXJmB+q5fOJzXYYOnAkRLW33nFEygJa9rBtIEbDTPsFQCtcYSDX/
-         GbyX/JY6UyBemDyQvC6HjXm9dp2lEmrZ6WhpnkbhZhX+hFujXeJJmCeZA5JbQaoVi2Nf
-         ZujQ==
-X-Gm-Message-State: APjAAAXfmqoMPIlWZRHGfzckM8cGqBj/vyHw9Cln/RYIQX7t18FFLuUx
-        z8BRsgmy1nusZwsZ/EIwqrRKXMzEn5k59IQCO8UxRQ==
-X-Google-Smtp-Source: APXvYqw9NltuXUDjLqBgr7ARTZxSXB64T52L8qLE03K+SnICANvhCQNurFmsvJfjCF782hyug4nnoI73YcgZgqRJ+Zo=
-X-Received: by 2002:a9d:6b96:: with SMTP id b22mr5658299otq.363.1567037063279;
- Wed, 28 Aug 2019 17:04:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190821175720.25901-1-vgoyal@redhat.com> <20190821175720.25901-2-vgoyal@redhat.com>
- <20190826115152.GA21051@infradead.org> <20190827163828.GA6859@redhat.com>
- <20190828065809.GA27426@infradead.org> <20190828175843.GB912@redhat.com> <20190828225322.GA7777@dread.disaster.area>
-In-Reply-To: <20190828225322.GA7777@dread.disaster.area>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 28 Aug 2019 17:04:11 -0700
-Message-ID: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        id S1726825AbfH2B3Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 21:29:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43456 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726128AbfH2B3Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Aug 2019 21:29:16 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1639F883CA;
+        Thu, 29 Aug 2019 01:29:16 +0000 (UTC)
+Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C96F6060D;
+        Thu, 29 Aug 2019 01:29:12 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 09:36:04 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
+        <andreas.gruenbacher@gmail.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <david@fromorbit.com>, jencce.kernel@gmail.com,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        fstests <fstests@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Christoph Hellwig <hch@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        cluster-devel <cluster-devel@redhat.com>
+Subject: Re: [PATCH v2 2/2] iomap: partially revert 4721a601099 (simulated
+ directio short read on EFAULT)
+Message-ID: <20190829013604.GQ7239@dhcp-12-102.nay.redhat.com>
+References: <20181202180832.GR8125@magnolia>
+ <20181202181045.GS8125@magnolia>
+ <CAHpGcM+WQYFHOOC8SzKq+=DuHVZ4fw4RHLTMUDN-o6GX3YtGvQ@mail.gmail.com>
+ <20190828142332.GT1037422@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190828142332.GT1037422@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 29 Aug 2019 01:29:16 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 3:53 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Wed, Aug 28, 2019 at 01:58:43PM -0400, Vivek Goyal wrote:
-> > On Tue, Aug 27, 2019 at 11:58:09PM -0700, Christoph Hellwig wrote:
-> > > On Tue, Aug 27, 2019 at 12:38:28PM -0400, Vivek Goyal wrote:
-> > > > > For bdev_dax_pgoff
-> > > > > I'd much rather have the partition offset if there is on in the daxdev
-> > > > > somehow so that we can get rid of the block device entirely.
-> > > >
-> > > > IIUC, there is one block_device per partition while there is only one
-> > > > dax_device for the whole disk. So we can't directly move bdev logical
-> > > > offset into dax_device.
+On Wed, Aug 28, 2019 at 07:23:32AM -0700, Darrick J. Wong wrote:
+> On Wed, Aug 21, 2019 at 10:23:49PM +0200, Andreas Grünbacher wrote:
+> > Hi Darrick,
+> > 
+> > Am So., 2. Dez. 2018 um 19:13 Uhr schrieb Darrick J. Wong
+> > <darrick.wong@oracle.com>:
+> > > From: Darrick J. Wong <darrick.wong@oracle.com>
 > > >
-> > > Well, then we need to find a way to get partitions for dax devices,
-> > > as we really should not expect a block device hiding behind a dax
-> > > dev.  That is just a weird legacy assumption - block device need to
-> > > layer on top of the dax device optionally.
+> > > In commit 4721a601099, we tried to fix a problem wherein directio reads
+> > > into a splice pipe will bounce EFAULT/EAGAIN all the way out to
+> > > userspace by simulating a zero-byte short read.  This happens because
+> > > some directio read implementations (xfs) will call
+> > > bio_iov_iter_get_pages to grab pipe buffer pages and issue asynchronous
+> > > reads, but as soon as we run out of pipe buffers that _get_pages call
+> > > returns EFAULT, which the splice code translates to EAGAIN and bounces
+> > > out to userspace.
 > > >
-> > > >
-> > > > We probably could put this in "iomap" and leave it to filesystems to
-> > > > report offset into dax_dev in iomap that way dax generic code does not
-> > > > have to deal with it. But that probably will be a bigger change.
+> > > In that commit, the iomap code catches the EFAULT and simulates a
+> > > zero-byte read, but that causes assertion errors on regular splice reads
+> > > because xfs doesn't allow short directio reads.  This causes infinite
+> > > splice() loops and assertion failures on generic/095 on overlayfs
+> > > because xfs only permit total success or total failure of a directio
+> > > operation.  The underlying issue in the pipe splice code has now been
+> > > fixed by changing the pipe splice loop to avoid avoid reading more data
+> > > than there is space in the pipe.
 > > >
-> > > And where would the file system get that information from?
-> >
-> > File system knows about block device, can it just call get_start_sect()
-> > while filling iomap->addr. And this means we don't have to have
-> > parition information in dax device. Will something like following work?
-> > (Just a proof of concept patch).
-> >
-> >
-> > ---
-> >  drivers/dax/super.c |   11 +++++++++++
-> >  fs/dax.c            |    6 +++---
-> >  fs/ext4/inode.c     |    6 +++++-
-> >  include/linux/dax.h |    1 +
-> >  4 files changed, 20 insertions(+), 4 deletions(-)
-> >
-> > Index: rhvgoyal-linux/fs/ext4/inode.c
-> > ===================================================================
-> > --- rhvgoyal-linux.orig/fs/ext4/inode.c       2019-08-28 13:51:16.051937204 -0400
-> > +++ rhvgoyal-linux/fs/ext4/inode.c    2019-08-28 13:51:44.453937204 -0400
-> > @@ -3589,7 +3589,11 @@ retry:
-> >                       WARN_ON_ONCE(1);
-> >                       return -EIO;
-> >               }
-> > -             iomap->addr = (u64)map.m_pblk << blkbits;
-> > +             if (IS_DAX(inode))
-> > +                     iomap->addr = ((u64)map.m_pblk << blkbits) +
-> > +                                   (get_start_sect(iomap->bdev) * 512);
-> > +             else
-> > +                     iomap->addr = (u64)map.m_pblk << blkbits;
->
-> I'm not a fan of returning a physical device sector address from an
-> interface where ever other user/caller expects this address to be a
-> logical block address into the block device. It creates a landmine
-> in the iomap API that callers may not be aware of and that's going
-> to cause bugs. We're trying really hard to keep special case hacks
-> like this out of the iomap infrastructure, so on those grounds alone
-> I'd suggest this is a dead end approach.
->
-> Hence I think that if the dax device needs a physical offset from
-> the start of the block device the filesystem sits on, it should be
-> set up at dax device instantiation time and so the filesystem/bdev
-> never needs to be queried again for this information.
->
+> > > Therefore, it's no longer necessary to simulate the short directio, so
+> > > remove the hack from iomap.
+> > >
+> > > Fixes: 4721a601099 ("iomap: dio data corruption and spurious errors when pipes fill")
+> > > Reported-by: Amir Goldstein <amir73il@gmail.com>
+> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > > ---
+> > > v2: split into two patches per hch request
+> > > ---
+> > >  fs/iomap.c |    9 ---------
+> > >  1 file changed, 9 deletions(-)
+> > >
+> > > diff --git a/fs/iomap.c b/fs/iomap.c
+> > > index 3ffb776fbebe..d6bc98ae8d35 100644
+> > > --- a/fs/iomap.c
+> > > +++ b/fs/iomap.c
+> > > @@ -1877,15 +1877,6 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >                                 dio->wait_for_completion = true;
+> > >                                 ret = 0;
+> > >                         }
+> > > -
+> > > -                       /*
+> > > -                        * Splicing to pipes can fail on a full pipe. We have to
+> > > -                        * swallow this to make it look like a short IO
+> > > -                        * otherwise the higher splice layers will completely
+> > > -                        * mishandle the error and stop moving data.
+> > > -                        */
+> > > -                       if (ret == -EFAULT)
+> > > -                               ret = 0;
+> > >                         break;
+> > >                 }
+> > >                 pos += ret;
+> > 
+> > I'm afraid this breaks the following test case on xfs and gfs2, the
+> > two current users of iomap_dio_rw.
+> 
+> Hmm, I had kinda wondered if regular pipes still needed this help.
+> Evidently we don't have a lot of splice tests in fstests. :(
+> 
+> > Here, the splice system call fails with errno = EAGAIN when trying to
+> > "move data" from a file opened with O_DIRECT into a pipe.
+> > 
+> > The test case can be run with option -d to not use O_DIRECT, which
+> > makes the test succeed.
+> > 
+> > The -r option switches from reading from the pipe sequentially to
+> > reading concurrently with the splice, which doesn't change the
+> > behavior.
+> > 
+> > Any thoughts?
+> 
+> This would be great as an xfstest! :)
 
-Agree. In retrospect it was my laziness in the dax-device
-implementation to expect the block-device to be available.
+JFYI, I added splice operation into fsstress, and I tried to add splice operation
+into xfs_io long time ago:
 
-It looks like fs_dax_get_by_bdev() is an intercept point where a
-dax_device could be dynamically created to represent the subset range
-indicated by the block-device partition. That would open up more
-cleanup opportunities.
+https://marc.info/?l=linux-xfs&m=155828702128047&w=2
+
+But it haven't been merged. If you have any suggestion, please feel free to
+review it:)
+
+Thanks,
+Zorro
+
+> 
+> Do you have one ready to go, or should I just make one from the source
+> code?
+> 
+> --D
+> 
+> > Thanks,
+> > Andreas
+> > 
+> > =================================== 8< ===================================
+> > #define _GNU_SOURCE
+> > #include <sys/types.h>
+> > #include <sys/stat.h>
+> > #include <sys/wait.h>
+> > #include <unistd.h>
+> > #include <fcntl.h>
+> > #include <err.h>
+> > 
+> > #include <stdlib.h>
+> > #include <stdio.h>
+> > #include <stdbool.h>
+> > #include <string.h>
+> > #include <errno.h>
+> > 
+> > #define SECTOR_SIZE 512
+> > #define BUFFER_SIZE (150 * SECTOR_SIZE)
+> > 
+> > void read_from_pipe(int fd, const char *filename, size_t size)
+> > {
+> >     char buffer[SECTOR_SIZE];
+> >     size_t sz;
+> >     ssize_t ret;
+> > 
+> >     while (size) {
+> >         sz = size;
+> >         if (sz > sizeof buffer)
+> >             sz = sizeof buffer;
+> >         ret = read(fd, buffer, sz);
+> >         if (ret < 0)
+> >             err(1, "read: %s", filename);
+> >         if (ret == 0) {
+> >             fprintf(stderr, "read: %s: unexpected EOF\n", filename);
+> >             exit(1);
+> >         }
+> >         size -= sz;
+> >     }
+> > }
+> > 
+> > void do_splice1(int fd, const char *filename, size_t size)
+> > {
+> >     bool retried = false;
+> >     int pipefd[2];
+> > 
+> >     if (pipe(pipefd) == -1)
+> >         err(1, "pipe");
+> >     while (size) {
+> >         ssize_t spliced;
+> > 
+> >         spliced = splice(fd, NULL, pipefd[1], NULL, size, SPLICE_F_MOVE);
+> >         if (spliced == -1) {
+> >             if (errno == EAGAIN && !retried) {
+> >                 retried = true;
+> >                 fprintf(stderr, "retrying splice\n");
+> >                 sleep(1);
+> >                 continue;
+> >             }
+> >             err(1, "splice");
+> >         }
+> >         read_from_pipe(pipefd[0], filename, spliced);
+> >         size -= spliced;
+> >     }
+> >     close(pipefd[0]);
+> >     close(pipefd[1]);
+> > }
+> > 
+> > void do_splice2(int fd, const char *filename, size_t size)
+> > {
+> >     bool retried = false;
+> >     int pipefd[2];
+> >     int pid;
+> > 
+> >     if (pipe(pipefd) == -1)
+> >         err(1, "pipe");
+> > 
+> >     pid = fork();
+> >     if (pid == 0) {
+> >         close(pipefd[1]);
+> >         read_from_pipe(pipefd[0], filename, size);
+> >         exit(0);
+> >     } else {
+> >         close(pipefd[0]);
+> >         while (size) {
+> >             ssize_t spliced;
+> > 
+> >             spliced = splice(fd, NULL, pipefd[1], NULL, size, SPLICE_F_MOVE);
+> >             if (spliced == -1) {
+> >                 if (errno == EAGAIN && !retried) {
+> >                     retried = true;
+> >                     fprintf(stderr, "retrying splice\n");
+> >                     sleep(1);
+> >                     continue;
+> >                 }
+> >                 err(1, "splice");
+> >             }
+> >             size -= spliced;
+> >         }
+> >         close(pipefd[1]);
+> >         waitpid(pid, NULL, 0);
+> >     }
+> > }
+> > 
+> > void usage(const char *argv0)
+> > {
+> >     fprintf(stderr, "USAGE: %s [-rd] {filename}\n", basename(argv0));
+> >     exit(2);
+> > }
+> > 
+> > int main(int argc, char *argv[])
+> > {
+> >     void (*do_splice)(int fd, const char *filename, size_t size);
+> >     const char *filename;
+> >     char *buffer;
+> >     int opt, open_flags, fd;
+> >     ssize_t ret;
+> > 
+> >     do_splice = do_splice1;
+> >     open_flags = O_CREAT | O_TRUNC | O_RDWR | O_DIRECT;
+> > 
+> >     while ((opt = getopt(argc, argv, "rd")) != -1) {
+> >         switch(opt) {
+> >         case 'r':
+> >             do_splice = do_splice2;
+> >             break;
+> >         case 'd':
+> >             open_flags &= ~O_DIRECT;
+> >             break;
+> >         default:  /* '?' */
+> >             usage(argv[0]);
+> >         }
+> >     }
+> > 
+> >     if (optind >= argc)
+> >         usage(argv[0]);
+> >     filename = argv[optind];
+> > 
+> >     printf("%s reader %s O_DIRECT\n",
+> >            do_splice == do_splice1 ? "sequential" : "concurrent",
+> >            (open_flags & O_DIRECT) ? "with" : "without");
+> > 
+> >     buffer = aligned_alloc(SECTOR_SIZE, BUFFER_SIZE);
+> >     if (buffer == NULL)
+> >         err(1, "aligned_alloc");
+> > 
+> >     fd = open(filename, open_flags, 0666);
+> >     if (fd == -1)
+> >         err(1, "open: %s", filename);
+> > 
+> >     memset(buffer, 'x', BUFFER_SIZE);
+> >     ret = write(fd, buffer, BUFFER_SIZE);
+> >     if (ret < 0)
+> >         err(1, "write: %s", filename);
+> >     if (ret != BUFFER_SIZE) {
+> >         fprintf(stderr, "%s: short write\n", filename);
+> >         exit(1);
+> >     }
+> > 
+> >     ret = lseek(fd, 0, SEEK_SET);
+> >     if (ret != 0)
+> >         err(1, "lseek: %s", filename);
+> > 
+> >     do_splice(fd, filename, BUFFER_SIZE);
+> > 
+> >     if (unlink(filename) == -1)
+> >         err(1, "unlink: %s", filename);
+> > 
+> >     return 0;
+> > }
+> > =================================== 8< ===================================
