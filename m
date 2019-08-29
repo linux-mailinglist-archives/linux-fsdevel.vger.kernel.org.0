@@ -2,329 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5571CA204E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 18:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAF10A2067
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 18:12:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbfH2QFf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 12:05:35 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:59142 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726973AbfH2QFf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:05:35 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 4C09B35D276DC1393A0C;
-        Fri, 30 Aug 2019 00:05:29 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 30 Aug 2019 00:05:28 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Fri, 30 Aug 2019 00:05:28 +0800
-Date:   Fri, 30 Aug 2019 00:04:41 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     <devel@driverdev.osuosl.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Valdis =?gbk?Q?Kl=A8=A5tnieks?= <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190829160441.GA141079@architecture4>
-References: <20190829062340.GB3047@infradead.org>
- <20190829063955.GA30193@kroah.com>
- <20190829094136.GA28643@infradead.org>
- <20190829095019.GA13557@kroah.com>
- <20190829103749.GA13661@infradead.org>
- <20190829111810.GA23393@kroah.com>
- <20190829151144.GJ23584@kadam>
- <20190829152757.GA125003@architecture4>
- <20190829154346.GK23584@kadam>
- <20190829155127.GA136563@architecture4>
+        id S1727257AbfH2QMB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 12:12:01 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:56762 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbfH2QMB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 12:12:01 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TG9RiF040206;
+        Thu, 29 Aug 2019 16:11:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2019-08-05;
+ bh=3CUI0Cvu1f5KuI3WE0OqIW3h5zxF9JVj5PFCxOZppVY=;
+ b=XMzk/Uf17L1l/EpAfiFTE5YDENBuYakRCs9ajqfMv4FRq3KvoHM6S4ToPdeHcgGVrnwT
+ sUJhCapYOgC+QcBi+vW0MhxpI5W6TWnRlRD4WCBhg4gXaxK/VDO08UVMltt30POhlBx+
+ 9CdP4UvXeAjouhooJvTAeoSA2JNGecF0FwfXPqAwtQsuCior4OgCxHIxXzs3dfae0NP8
+ zGFI4ZInJhokmMGkhemOl+AE2yQWgDdrKWVLtURWUI2KV0AbCsneO6Dn42us9OcE13Ts
+ DbtBymAhrnLsVcAfNYJNb3NnrjE7YwvoIO5Yw7SP9s6EQtgavNDmzMm+G4+2c3CWeB/w vA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2uphyc00x8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 16:11:58 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TG8NgW020090;
+        Thu, 29 Aug 2019 16:11:57 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2upc8uvmae-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 16:11:57 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TGBuZM013206;
+        Thu, 29 Aug 2019 16:11:56 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Aug 2019 09:11:56 -0700
+Date:   Thu, 29 Aug 2019 09:11:55 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     viro@zeniv.linux.org.uk, andreas.gruenbacher@gmail.com
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH] splice: only read in as much information as there is pipe
+ buffer space
+Message-ID: <20190829161155.GA5360@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190829155127.GA136563@architecture4>
+Content-Transfer-Encoding: 8bit
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme703-chm.china.huawei.com (10.1.199.99) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908290170
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908290170
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Dan,
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-On Thu, Aug 29, 2019 at 11:51:27PM +0800, Gao Xiang wrote:
-> Hi Dan,
-> 
-> On Thu, Aug 29, 2019 at 06:43:46PM +0300, Dan Carpenter wrote:
-> > > p.s. There are 2947 (un)likely places in fs/ directory.
-> > 
-> > I was complaining about you adding new pointless ones, not existing
-> > ones.  The likely/unlikely annotations are supposed to be functional and
-> > not decorative.  I explained this very clearly.
-> 
-> I don't think that is mostly pointless. I think it has functional use
-> because all error handling paths are rarely happened, or can you remove
-> the unlikely in IS_ERR as well?
-> 
-> > 
-> > Probably most of the annotations in fs/ are wrong but they are also
-> > harmless except for the slight messiness.  However there are definitely
-> > some which are important so removing them all isn't a good idea.
-> > 
-> > > If you like, I will delete them all.
-> > 
-> > But for erofs, I don't think that any of the likely/unlikely calls have
-> > been thought about so I'm fine with removing all of them in one go.
-> 
-> Maybe some misuse but rare, I will show you case by case. Wait a minute.
+Andreas Grünbacher reports that on the two filesystems that support
+iomap directio, it's possible for splice() to return -EAGAIN (instead of
+a short splice) if the pipe being written to has less space available in
+its pipe buffers than the length supplied by the calling process.
 
-Anyway, I'm fine to delete them all if you like, but I think majority of these
-are meaningful.
+Months ago we fixed splice_direct_to_actor to clamp the length of the
+read request to the size of the splice pipe.  Do the same to do_splice.
 
-data.c-		/* page is already locked */
-data.c-		DBG_BUGON(PageUptodate(page));
-data.c-
-data.c:		if (unlikely(err))
-data.c-			SetPageError(page);
-data.c-		else
-data.c-			SetPageUptodate(page);
---
-IO error
-
-data.c-
-data.c-repeat:
-data.c-	page = find_or_create_page(mapping, blkaddr, gfp);
-data.c:	if (unlikely(!page)) {
-data.c-		DBG_BUGON(nofail);
-data.c-		return ERR_PTR(-ENOMEM);
-data.c-	}
---
-NO MEM
-
-
-data.c-		}
-data.c-
-data.c-		err = bio_add_page(bio, page, PAGE_SIZE, 0);
-data.c:		if (unlikely(err != PAGE_SIZE)) {
-data.c-			err = -EFAULT;
-data.c-			goto err_out;
-
-Internal error (since it is a single bio with one page).
-
-data.c-		}
+Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
+Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
+ fs/splice.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-data.c-		lock_page(page);
-data.c-
-data.c-		/* this page has been truncated by others */
-data.c:		if (unlikely(page->mapping != mapping)) {
-data.c-unlock_repeat:
-data.c-			unlock_page(page);
-data.c-			put_page(page);
-data.c-			goto repeat;
-data.c-		}
-
-truncated
-
-data.c-
-data.c:		/* more likely a read error */
-data.c:		if (unlikely(!PageUptodate(page))) {
-data.c-			if (io_retries) {
-data.c-				--io_retries;
-data.c-				goto unlock_repeat;
-
-IO err
-
---
-data.c-	nblocks = DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
-data.c-	lastblk = nblocks - is_inode_flat_inline(inode);
-data.c-
-data.c:	if (unlikely(offset >= inode->i_size)) {
-data.c-		/* leave out-of-bound access unmapped */
-data.c-		map->m_flags = 0;
-data.c-		map->m_plen = 0;
---
-
-FS corrupted
-
-data.c-int erofs_map_blocks(struct inode *inode,
-data.c-		     struct erofs_map_blocks *map, int flags)
-data.c-{
-data.c:	if (unlikely(is_inode_layout_compression(inode))) {
-
-for compressed files, should call z_erofs_map_blocks_iter since it
-behaves in iterative way. but I think that can be deleted.
-
-data.c-		int err = z_erofs_map_blocks_iter(inode, map, flags);
-data.c-
-data.c-		if (map->mpage) {
---
-data.c-		unsigned int blkoff;
-data.c-
-data.c-		err = erofs_map_blocks(inode, &map, EROFS_GET_BLOCKS_RAW);
-data.c:		if (unlikely(err))
-data.c-			goto err_out;
-
-Error
-
-data.c-
-data.c-		/* zero out the holed page */
-data.c:		if (unlikely(!(map.m_flags & EROFS_MAP_MAPPED))) {
-
-no hole in erofs.
-
-data.c-			zero_user_segment(page, 0, PAGE_SIZE);
-data.c-			SetPageUptodate(page);
-data.c-
---
-data.c-submit_bio_out:
-data.c-		__submit_bio(bio, REQ_OP_READ, 0);
-data.c-
-data.c:	return unlikely(err) ? ERR_PTR(err) : NULL;
-
-err
-
-data.c-}
-data.c-
-data.c-/*
---
-data.c-	DBG_BUGON(!list_empty(pages));
-data.c-
-data.c-	/* the rare case (end in gaps) */
-data.c:	if (unlikely(bio))
-data.c-		__submit_bio(bio, REQ_OP_READ, 0);
-data.c-	return 0;
-data.c-}
-
-
-decompressor.c-			get_page(victim);
-decompressor.c-		} else {
-decompressor.c-			victim = erofs_allocpage(pagepool, GFP_KERNEL, false);
-decompressor.c:			if (unlikely(!victim))
-decompressor.c-				return -ENOMEM;
-
-nomem
-
-decompressor.c-			victim->mapping = Z_EROFS_MAPPING_STAGING;
-decompressor.c-		}
-
-
-dir.c-			de_namelen = le16_to_cpu(de[1].nameoff) - nameoff;
-dir.c-
-dir.c-		/* a corrupted entry is found */
-dir.c:		if (unlikely(nameoff + de_namelen > maxsize ||
-dir.c-			     de_namelen > EROFS_NAME_LEN)) {
-
-corrupted
-
-dir.c-			errln("bogus dirent @ nid %llu", EROFS_V(dir)->nid);
-dir.c-			DBG_BUGON(1);
---
-dir.c-
-dir.c-		nameoff = le16_to_cpu(de->nameoff);
-dir.c-
-dir.c:		if (unlikely(nameoff < sizeof(struct erofs_dirent) ||
-dir.c-			     nameoff >= PAGE_SIZE)) {
-
-corrupted
-
-dir.c-			errln("%s, invalid de[0].nameoff %u @ nid %llu",
-dir.c-			      __func__, nameoff, EROFS_V(dir)->nid);
---
-dir.c-				dirsize - ctx->pos + ofs, PAGE_SIZE);
-dir.c-
-dir.c-		/* search dirents at the arbitrary position */
-dir.c:		if (unlikely(initial)) {
-
-as comments said
-
-dir.c-			initial = false;
-dir.c-
-dir.c-			ofs = roundup(ofs, sizeof(struct erofs_dirent));
-dir.c:			if (unlikely(ofs >= nameoff))
-dir.c-				goto skip_this;
-dir.c-		}
-dir.c-
---
-dir.c-
-dir.c-		ctx->pos = blknr_to_addr(i) + ofs;
-dir.c-
-dir.c:		if (unlikely(err))
-
-err
-
-dir.c-			break;
-dir.c-		++i;
-dir.c-		ofs = 0;
-
-inode.c-
-inode.c-	vi->datamode = __inode_data_mapping(advise);
-inode.c-
-inode.c:	if (unlikely(vi->datamode >= EROFS_INODE_LAYOUT_MAX)) {
-inode.c-		errln("unsupported data mapping %u of nid %llu",
-inode.c-		      vi->datamode, vi->nid);
-inode.c-		DBG_BUGON(1);
-
-err
-
---
-inode.c-	if (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) {
-inode.c-		char *lnk = erofs_kmalloc(sbi, inode->i_size + 1, GFP_KERNEL);
-inode.c-
-inode.c:		if (unlikely(!lnk))
-inode.c-			return -ENOMEM;
-inode.c-
-inode.c-		m_pofs += vi->inode_isize + vi->xattr_isize;
-inode.c-
-inode.c-		/* inline symlink data shouldn't across page boundary as well */
-inode.c:		if (unlikely(m_pofs + inode->i_size > PAGE_SIZE)) {
-inode.c-			kfree(lnk);
-inode.c-			errln("inline data cross block boundary @ nid %llu",
-inode.c-			      vi->nid);
-
-err
-
---
-inode.c-{
-inode.c-	struct inode *inode = erofs_iget_locked(sb, nid);
-inode.c-
-inode.c:	if (unlikely(!inode))
-inode.c-		return ERR_PTR(-ENOMEM);
-
-err
-
-inode.c-
-inode.c-	if (inode->i_state & I_NEW) {
---
-inode.c-		vi->nid = nid;
-inode.c-
-inode.c-		err = fill_inode(inode, isdir);
-inode.c:		if (likely(!err))
-inode.c-			unlock_new_inode(inode);
-inode.c-		else {
-
-err
-
-inode.c-			iget_failed(inode);
-
-I will stop here.
-
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> Gao Xiang
-> 
-> > 
-> > regards,
-> > dan carpenter
-> > 
+diff --git a/fs/splice.c b/fs/splice.c
+index 98412721f056..7865a3bb6d88 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1101,6 +1101,7 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+ 	struct pipe_inode_info *ipipe;
+ 	struct pipe_inode_info *opipe;
+ 	loff_t offset;
++	unsigned int pipe_pages;
+ 	long ret;
+ 
+ 	ipipe = get_pipe_info(in);
+@@ -1123,6 +1124,10 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+ 		if ((in->f_flags | out->f_flags) & O_NONBLOCK)
+ 			flags |= SPLICE_F_NONBLOCK;
+ 
++		/* Don't try to read more the pipe has space for. */
++		pipe_pages = opipe->buffers - opipe->nrbufs;
++		len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
++
+ 		return splice_pipe_to_pipe(ipipe, opipe, len, flags);
+ 	}
+ 
+@@ -1180,8 +1185,13 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+ 
+ 		pipe_lock(opipe);
+ 		ret = wait_for_space(opipe, flags);
+-		if (!ret)
++		if (!ret) {
++			/* Don't try to read more the pipe has space for. */
++			pipe_pages = opipe->buffers - opipe->nrbufs;
++			len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
++
+ 			ret = do_splice_to(in, &offset, opipe, len, flags);
++		}
+ 		pipe_unlock(opipe);
+ 		if (ret > 0)
+ 			wakeup_pipe_readers(opipe);
