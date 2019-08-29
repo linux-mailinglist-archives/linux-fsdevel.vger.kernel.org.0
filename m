@@ -2,91 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 778C2A14EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 11:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33513A1504
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 11:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbfH2J2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 05:28:39 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34445 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbfH2J2j (ORCPT
+        id S1726330AbfH2Jcl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 05:32:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42802 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfH2Jcl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 05:28:39 -0400
-Received: by mail-io1-f67.google.com with SMTP id s21so5648202ioa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 02:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v06lta4MYVBJBZLQ73bBpIez3Zzb0/6n6ZDJgeZvvFA=;
-        b=Hc9GLAgOOnaaXsF3NrbM7AecX7f3q0LEmVqWdNl+cCygzK/RxeejM05rD+PoBYvpNy
-         iCfIvK00i3nYnz/7hEF1IyoD0raYoTA0Fi7pIXSNsQiydr+b2RWwANqNTLEGdoi4TVze
-         EI0HrSen2CJeJvMGU2pb8OzX9tm5amIQIkLoI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v06lta4MYVBJBZLQ73bBpIez3Zzb0/6n6ZDJgeZvvFA=;
-        b=QUcygq2sOaMH0RkjhwYc+9ShPaVSL/O7N/Bqxik+2ws3cPJli9bWr5bSbeT+ldXORr
-         NMCVe3RkBAoS44aAJaJJNCmqVK+646QxoFlE+MxkdPmSTknRAinBqhektqstm7kXtZm9
-         QJLJluZh28UQwOymgmyb/Uoyzpr8sppEAd7BF7Wn5Xn54F+lLGGRdphxPYzsOw4CY1ld
-         W31G8Omeb5VQR/V0MRLSB6rxqapIEmsTW87GO28w9E18VmjZo1jm1xW1qo9X8gdmWERn
-         +V771fq3Arx9yI40Ikpe17ejRKiTWjSko9oFZAIwMdkQyh7g3Yx+b32KHtCLBHkZ2MZe
-         58oA==
-X-Gm-Message-State: APjAAAVbv1EFJAp48nPDk/O5CHVRdd2Wo16rB4jXiujd/5SKFLiWLsx7
-        zPEFHEDJyPNtsrGhUkMRp40QqO53+1MQ+owMDPt2VA==
-X-Google-Smtp-Source: APXvYqyUavfINYtqJHGpZUBR9A9V8dAVHmilYmO0JxPFl0AJag7dkVSKSrPI4+FtMTzlVFjVPwtJnqsyT6kSq+5gC8c=
-X-Received: by 2002:a5e:da48:: with SMTP id o8mr593380iop.252.1567070918305;
- Thu, 29 Aug 2019 02:28:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190821173742.24574-1-vgoyal@redhat.com>
-In-Reply-To: <20190821173742.24574-1-vgoyal@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 29 Aug 2019 11:28:27 +0200
-Message-ID: <CAJfpegv_XS=kLxw_FzWNM2Xao5wsn7oGbk3ow78gU8tpXwo-sg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/13] virtio-fs: shared file system for virtual machines
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thu, 29 Aug 2019 05:32:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jXWv6rxcD/Ytdxuw9oCBSvjHqSotwy8H8FiFgT6NRRg=; b=eNdor4/fygoZH6Xvs2bMeOvXp
+        tLJNYDfk1cimf7+kbTn2BtXDWxLqRI4BEoxvkM59QMQwbcBMvCELCNq/zJkLCXbTBzuB4qK60s7R/
+        haWdRVRaEqnJlYuCV4UwO8CFnpN8keiifEYRocm9hSV7hdJbuhyANoVbu4fvGSZZTtQWctl+4PkEQ
+        /oN+phe7MFMf78kAF3jl7VDQ4vwdv93FRJN87qRsxSrA+o2vNKwsWkTPjLWfJ6jdO987prP1KZI6Z
+        19zNadIV1LWue77KVSIM1O13lgtmraWBA1EkdjuK6SDKTpSqH94t7Ag5Ad+KKj2s3isfBEvJQ6hgD
+        xAZ0rNRsA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3GnG-0007NX-Pm; Thu, 29 Aug 2019 09:32:38 +0000
+Date:   Thu, 29 Aug 2019 02:32:38 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
         virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+Message-ID: <20190829093238.GA23102@infradead.org>
+References: <20190821175720.25901-1-vgoyal@redhat.com>
+ <20190821175720.25901-2-vgoyal@redhat.com>
+ <20190826115152.GA21051@infradead.org>
+ <20190827163828.GA6859@redhat.com>
+ <20190828065809.GA27426@infradead.org>
+ <20190828175843.GB912@redhat.com>
+ <20190828225322.GA7777@dread.disaster.area>
+ <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 7:38 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> Hi,
->
-> Here are the V3 patches for virtio-fs filesystem. This time I have
-> broken the patch series in two parts. This is first part which does
-> not contain DAX support. Second patch series will contain the patches
-> for DAX support.
->
-> I have also dropped RFC tag from first patch series as we believe its
-> in good enough shape that it should get a consideration for inclusion
-> upstream.
+On Wed, Aug 28, 2019 at 05:04:11PM -0700, Dan Williams wrote:
+> Agree. In retrospect it was my laziness in the dax-device
+> implementation to expect the block-device to be available.
+> 
+> It looks like fs_dax_get_by_bdev() is an intercept point where a
+> dax_device could be dynamically created to represent the subset range
+> indicated by the block-device partition. That would open up more
+> cleanup opportunities.
 
-Pushed out to
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#for-next
-
-Major changes compared to patchset:
-
- - renamed to "virtiofs".  Filesystem names don't usually have
-underscore before "fs" postfix.
-
- - removed option parsing completely.  Virtiofs config is fixed to "-o
-rootmode=040000,user_id=0,group_id=0,allow_other,default_permissions".
-Does this sound reasonable?
-
-There are miscellaneous changes, so needs to be thoroughly tested.
-
-I think we also need something in
-"Documentation/filesystems/virtiofs.rst" which describes the design
-(how  request gets to userspace and back) and how to set up the
-server, etc...  Stefan, Vivek can you do something like that?
-
-Thanks,
-Miklos
+That seems like a decent short-term plan.  But in the long I'd just let
+dax call into the partition table parser directly, as we might want to
+support partitions without first having to create a block device on top
+of the dax device.  Same for the badblocks handling story.
