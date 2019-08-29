@@ -2,126 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF10A2067
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 18:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AE65A2085
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 18:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbfH2QMB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 12:12:01 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56762 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727118AbfH2QMB (ORCPT
+        id S1727344AbfH2QPj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 12:15:39 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46926 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727161AbfH2QPj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:12:01 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TG9RiF040206;
-        Thu, 29 Aug 2019 16:11:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=3CUI0Cvu1f5KuI3WE0OqIW3h5zxF9JVj5PFCxOZppVY=;
- b=XMzk/Uf17L1l/EpAfiFTE5YDENBuYakRCs9ajqfMv4FRq3KvoHM6S4ToPdeHcgGVrnwT
- sUJhCapYOgC+QcBi+vW0MhxpI5W6TWnRlRD4WCBhg4gXaxK/VDO08UVMltt30POhlBx+
- 9CdP4UvXeAjouhooJvTAeoSA2JNGecF0FwfXPqAwtQsuCior4OgCxHIxXzs3dfae0NP8
- zGFI4ZInJhokmMGkhemOl+AE2yQWgDdrKWVLtURWUI2KV0AbCsneO6Dn42us9OcE13Ts
- DbtBymAhrnLsVcAfNYJNb3NnrjE7YwvoIO5Yw7SP9s6EQtgavNDmzMm+G4+2c3CWeB/w vA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2uphyc00x8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 16:11:58 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TG8NgW020090;
-        Thu, 29 Aug 2019 16:11:57 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2upc8uvmae-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 16:11:57 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TGBuZM013206;
-        Thu, 29 Aug 2019 16:11:56 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Aug 2019 09:11:56 -0700
-Date:   Thu, 29 Aug 2019 09:11:55 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     viro@zeniv.linux.org.uk, andreas.gruenbacher@gmail.com
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH] splice: only read in as much information as there is pipe
- buffer space
-Message-ID: <20190829161155.GA5360@magnolia>
+        Thu, 29 Aug 2019 12:15:39 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q139so2360556pfc.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 09:15:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Szvq847dDpWg4DATPvTxScYZpekJZ5L13FYPdVzObVQ=;
+        b=ByTqi19bVKsCTeyUO9bvA2dpHjEA79ypwTv0Iygwog7IDdsC6KsuUOVwC6XWOJ0unq
+         uxj5NAB2yg0uPrMqhkPkveUPbFxm4c+s2KPsXMHgpww8T9pEpc4M9Iwc4sL5VeNGWSF0
+         GJmfPBJLDjW5OhK0SdzgHV25DOT6wGcENMIsM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Szvq847dDpWg4DATPvTxScYZpekJZ5L13FYPdVzObVQ=;
+        b=kB7JHz3ofrVZDLpTSnasWnAhJQX/RhuHUDPqTe78Ojfxabh/BZQSObby/aLh+RqDyH
+         MAXl4J7aDJkWrvrOiBzm/UIOCS/dbCKm68Tya+TSxVuFo2gA39dJUTJfPzdBJ+wJnqal
+         3cL6+gcm+WbiBGrsEp1CJzgIPVtEIJwjFflRporo3n1VOVJBuuIzHlkGDiA5lcsme0s8
+         nQsNlsK3/GyD+K5gYGoaMlVXsBIU+G500SBx0Y0PMzE/+f9NoDzyTR8LDq2+p4afLCnv
+         V0yCY2I/d7vTDLz5PhIGSxTAnpamfd5busdd4+pohbzTIscKBXr6JHKV67F7G1setqLo
+         vBog==
+X-Gm-Message-State: APjAAAUwpnZ4Kv3nqne+ATnVO18nUskpUT64xqeGYqCfN45L3fSlmO/y
+        /bGnxP+NGHVsa8wjw62mu/efkw==
+X-Google-Smtp-Source: APXvYqySDhlA1gi35UhNfMvKIL9EA+HbT30vnjkpVccc/ySUcyeTOWq92b5sIwFGcCrvh2IT+Ymq/w==
+X-Received: by 2002:a63:58c:: with SMTP id 134mr9549282pgf.106.1567095338237;
+        Thu, 29 Aug 2019 09:15:38 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c12sm4840232pfc.22.2019.08.29.09.15.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 09:15:37 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 09:15:36 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jason Yan <yanaijie@huawei.com>
+Cc:     kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org
+Subject: Re: CONFIG_HARDENED_USERCOPY
+Message-ID: <201908290914.F0F929EA@keescook>
+References: <6e02a518-fea9-19fe-dca7-0323a576750d@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908290170
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908290170
+In-Reply-To: <6e02a518-fea9-19fe-dca7-0323a576750d@huawei.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+On Thu, Aug 29, 2019 at 08:42:30PM +0800, Jason Yan wrote:
+> We found an issue of kernel bug related to HARDENED_USERCOPY.
+> When copying an IO buffer to userspace, HARDENED_USERCOPY thought it is
+> illegal to copy this buffer. Actually this is because this IO buffer was
+> merged from two bio vectors, and the two bio vectors buffer was allocated
+> with kmalloc() in the filesystem layer.
 
-Andreas Grünbacher reports that on the two filesystems that support
-iomap directio, it's possible for splice() to return -EAGAIN (instead of
-a short splice) if the pipe being written to has less space available in
-its pipe buffers than the length supplied by the calling process.
+Ew. I thought the FS layer was always using page_alloc?
 
-Months ago we fixed splice_direct_to_actor to clamp the length of the
-read request to the size of the splice pipe.  Do the same to do_splice.
+> The block layer __blk_segment_map_sg() do the merge if two bio vectors is
+> continuous in physical.
+> 
+> /* Default implementation of BIOVEC_PHYS_MERGEABLE */
+> #define __BIOVEC_PHYS_MERGEABLE(vec1, vec2)	\
+> 	((bvec_to_phys((vec1)) + (vec1)->bv_len) == bvec_to_phys((vec2)))
+> 
+> After the merge, driver do not know the buffer is consist of two slab
+> objects. It copies this buffer at once with the total length.
+> Obviously this cannot through the check of HARDENED_USERCOPY.
+> 
+> So how can we do in this situation?
+> 1.Shutdown HARDENED_USERCOPY ?
+> 2.Tell filesystems not to use kmalloc to send IOs down?
+> 3.Tell the driver to use _copy_to_user instead of copy_to_user ?
 
-Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
-Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/splice.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+What about disallowing merges across slab allocations?
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 98412721f056..7865a3bb6d88 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1101,6 +1101,7 @@ static long do_splice(struct file *in, loff_t __user *off_in,
- 	struct pipe_inode_info *ipipe;
- 	struct pipe_inode_info *opipe;
- 	loff_t offset;
-+	unsigned int pipe_pages;
- 	long ret;
- 
- 	ipipe = get_pipe_info(in);
-@@ -1123,6 +1124,10 @@ static long do_splice(struct file *in, loff_t __user *off_in,
- 		if ((in->f_flags | out->f_flags) & O_NONBLOCK)
- 			flags |= SPLICE_F_NONBLOCK;
- 
-+		/* Don't try to read more the pipe has space for. */
-+		pipe_pages = opipe->buffers - opipe->nrbufs;
-+		len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
-+
- 		return splice_pipe_to_pipe(ipipe, opipe, len, flags);
- 	}
- 
-@@ -1180,8 +1185,13 @@ static long do_splice(struct file *in, loff_t __user *off_in,
- 
- 		pipe_lock(opipe);
- 		ret = wait_for_space(opipe, flags);
--		if (!ret)
-+		if (!ret) {
-+			/* Don't try to read more the pipe has space for. */
-+			pipe_pages = opipe->buffers - opipe->nrbufs;
-+			len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
-+
- 			ret = do_splice_to(in, &offset, opipe, len, flags);
-+		}
- 		pipe_unlock(opipe);
- 		if (ret > 0)
- 			wakeup_pipe_readers(opipe);
+-Kees
+
+> 
+> Thoughts? suggestions?
+> 
+> crash> bt
+> PID: 38986  TASK: ffff803dc0b9ae80  CPU: 12  COMMAND: "scsi_init_0"
+>  #0 [ffff00001cbfb470] machine_kexec at ffff0000080a2724
+>  #1 [ffff00001cbfb4d0] __crash_kexec at ffff0000081b7b74
+>  #2 [ffff00001cbfb660] panic at ffff0000080ee8cc
+>  #3 [ffff00001cbfb740] die at ffff00000808f6ac
+>  #4 [ffff00001cbfb790] bug_handler at ffff00000808f744
+>  #5 [ffff00001cbfb7c0] brk_handler at ffff000008085d1c
+>  #6 [ffff00001cbfb7e0] do_debug_exception at ffff000008081194
+>  #7 [ffff00001cbfb9f0] el1_dbg at ffff00000808332c
+>      PC: ffff0000083395d8  [usercopy_abort+136]
+>      LR: ffff0000083395d8  [usercopy_abort+136]
+>      SP: ffff00001cbfba00  PSTATE: 40000005
+>     X29: ffff00001cbfba10  X28: 0000000000000000  X27: ffff80244802e000
+>     X26: 0000000000000400  X25: 0000000000000000  X24: ffff80380625fa00
+>     X23: 0000000000000001  X22: 0000000000000400  X21: 0000000000000000
+>     X20: ffff000008c95698  X19: ffff000008c99970  X18: ffffffffffffffff
+>     X17: 0000000000000000  X16: 0000000000000000  X15: 0000000000000001
+>     X14: ffff000008aa7e48  X13: 0000000000000000  X12: 0000000000000000
+>     X11: 00000000ffffffff  X10: 0000000000000010   X9: ffff000008ef1018
+>      X8: 0000000000000854   X7: 0000000000000003   X6: ffff803ffbf8b3c8
+>      X5: ffff803ffbf8b3c8   X4: 0000000000000000   X3: ffff803ffbf93b08
+>      X2: 902990500743b200   X1: 0000000000000000   X0: 0000000000000067
+>  #8 [ffff00001cbfba10] usercopy_abort at ffff0000083395d4
+>  #9 [ffff00001cbfba50] __check_heap_object at ffff000008310910
+> #10 [ffff00001cbfba80] __check_object_size at ffff000008339770
+> #11 [ffff00001cbfbac0] vsc_xfer_data at ffff000000ca9bac [vsc]
+> #12 [ffff00001cbfbb60] vsc_scsi_cmd_data at ffff000000cab368 [vsc]
+> #13 [ffff00001cbfbc00] vsc_get_msg_unlock at ffff000000cad198 [vsc]
+> #14 [ffff00001cbfbc90] vsc_get_msg at ffff000000cad6f0 [vsc]
+> #15 [ffff00001cbfbcd0] vsc_dev_read at ffff000000ca2688 [vsc]
+> #16 [ffff00001cbfbd00] __vfs_read at ffff00000833f234
+> #17 [ffff00001cbfbdb0] vfs_read at ffff00000833f3f0
+> #18 [ffff00001cbfbdf0] ksys_read at ffff00000833fb50
+> #19 [ffff00001cbfbe40] __arm64_sys_read at ffff00000833fbe0
+> #20 [ffff00001cbfbe60] el0_svc_common at ffff000008097b54
+> #21 [ffff00001cbfbea0] el0_svc_handler at ffff000008097c44
+> #22 [ffff00001cbfbff0] el0_svc at ffff000008084144
+>      PC: 000040003a653548   LR: 000040003a653530   SP: 00004001f1087ad0
+>     X29: 00004001f1087ad0  X28: 000040002b1f7000  X27: 0000400034c5b958
+>     X26: 00004001042f7d58  X25: 0000000000000004  X24: 0000000000000000
+>     X23: 00004001f1087c38  X22: 00004001f1087c58  X21: 00004001f1087d38
+>     X20: 0000000000000400  X19: 000000000000001c  X18: 0000000000000000
+>     X17: 000040003a6534d8  X16: 000040002b1ecc48  X15: 0000000000001268
+>     X14: 000000000000003b  X13: 0000000000000400  X12: 00004000f4291000
+>     X11: 0000000000000400  X10: 0000000100000010   X9: 0000001000000002
+>      X8: 000000000000003f   X7: 004cf56500000000   X6: 0000000000000000
+>      X5: 00004001f1088ac0   X4: 00000000ffffffbb   X3: 0000000000000000
+>      X2: 0000000000000400   X1: 00004001f1087d38   X0: 000000000000001c
+>     ORIG_X0: 000000000000001c  SYSCALLNO: 3f  PSTATE: 80000000
+> crash>
+> 
+>   sc_data_direction = DMA_TO_DEVICE,
+>   cmnd = 0xffff802187d69d38 "*",
+>   sdb = {
+>     table = {
+>       sgl = 0xffff80380625fa00,
+>       nents = 1,
+>       orig_nents = 2
+>     },
+>     length = 1024,
+>     resid = 0
+>   },
+> 
+> crash> struct bio_vec 0xffff80217ce4a2b0
+> struct bio_vec {
+>   bv_page = 0xffff7e0091200b80,
+>   bv_len = 512,
+>   bv_offset = 0
+> }
+> crash> struct bio_vec 0xffff80217ce4a8b0
+> struct bio_vec {
+>   bv_page = 0xffff7e0091200b80,
+>   bv_len = 512,
+>   bv_offset = 512
+> }
+> 
+> 
+
+-- 
+Kees Cook
