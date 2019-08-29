@@ -2,125 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FF60A0FF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 05:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D90A0FFB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 05:39:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfH2D3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 23:29:24 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13912 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbfH2D3Y (ORCPT
+        id S1727226AbfH2Djz convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 23:39:55 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:42302 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbfH2Djy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 23:29:24 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d6746950001>; Wed, 28 Aug 2019 20:29:25 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 28 Aug 2019 20:29:23 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 28 Aug 2019 20:29:23 -0700
-Received: from [10.2.174.243] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 29 Aug
- 2019 03:29:22 +0000
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-To:     Ira Weiny <ira.weiny@intel.com>, Dave Chinner <david@fromorbit.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        Wed, 28 Aug 2019 23:39:54 -0400
+X-Greylist: delayed 884 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Aug 2019 23:39:54 EDT
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x7T3Or8A010001
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 29 Aug 2019 12:24:53 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x7T3Or60018255;
+        Thu, 29 Aug 2019 12:24:53 +0900
+Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x7T3Or8q018852;
+        Thu, 29 Aug 2019 12:24:53 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-545660; Thu, 29 Aug 2019 10:47:15 +0900
+Received: from BPXM20GP.gisp.nec.co.jp ([10.38.151.212]) by
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Thu,
+ 29 Aug 2019 10:47:14 +0900
+From:   Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+To:     Waiman Long <longman@redhat.com>, Michal Hocko <mhocko@kernel.org>
+CC:     Dan Williams <dan.j.williams@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
-        <linux-xfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-ext4@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
- <20190821181343.GH8653@ziepe.ca>
- <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
- <20190821194810.GI8653@ziepe.ca>
- <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
- <20190823032345.GG1119@dread.disaster.area> <20190823120428.GA12968@ziepe.ca>
- <20190824001124.GI1119@dread.disaster.area>
- <20190824050836.GC1092@iweiny-DESK2.sc.intel.com>
- <20190826055510.GL1119@dread.disaster.area>
- <20190829020230.GA18249@iweiny-DESK2.sc.intel.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <3e5c5053-a74a-509c-660c-a6075ed87f11@nvidia.com>
-Date:   Wed, 28 Aug 2019 20:27:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Junichi Nomura <j-nomura@ce.jp.nec.com>,
+        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+Subject: Re: [PATCH v2] fs/proc/page: Skip uninitialized page when iterating
+ page structures
+Thread-Topic: [PATCH v2] fs/proc/page: Skip uninitialized page when
+ iterating page structures
+Thread-Index: AQHVXab+AB6W4hF4zE+DO3WxOpzL56cQAkYAgAACh4CAAMCOgA==
+Date:   Thu, 29 Aug 2019 01:47:13 +0000
+Message-ID: <9a1395bc-d568-c4d7-2dde-7dde7b48ac0b@vx.jp.nec.com>
+References: <20190826124336.8742-1-longman@redhat.com>
+ <20190827142238.GB10223@dhcp22.suse.cz>
+ <20190828080006.GG7386@dhcp22.suse.cz>
+ <8363a4ba-e26f-f88c-21fc-5dd1fe64f646@redhat.com>
+ <20190828140938.GL28313@dhcp22.suse.cz>
+ <4367f507-97ba-a74e-6bf5-811cdd6ecdf9@redhat.com>
+In-Reply-To: <4367f507-97ba-a74e-6bf5-811cdd6ecdf9@redhat.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.135]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <43FF7CD7AC5C9E4DA042E82DA36846D9@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20190829020230.GA18249@iweiny-DESK2.sc.intel.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1567049365; bh=U2zxSkDmfFQFUW8ITCuFuqzogPoHzY3eUcatrjlA5a8=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=br5k4UQ1c3ttyAEINc727xSgtnH39dAWjWSCaXGTLwro1CU1YneuoppDXhLMmA4uD
-         aDQ3MTA6HOZLsrWjeRsmclmc+9VuPFDc3mjUYq5LVFTaiCoeFJ5fy4G3b324J/gsUa
-         1/2Te/7AfanbM290SQcF7x/TWeee+3u45vwvCyED11F/dogTN4V6SByz3yIloOJ3jT
-         cLvs8UFo3vWu0RzGtWuxTuxbTth7a/DwXWriVQxLCn7BVTFeq34iQK1UkdryZj/+oB
-         pVGut1zha9UABjnIclmX/RBYsT1gxtKg14OYbEVTjMUr+uzTVtNuUOwSxrEb1ZPXtX
-         CMDU/9O7s997Q==
+X-TM-AS-MML: disable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/28/19 7:02 PM, Ira Weiny wrote:
-> On Mon, Aug 26, 2019 at 03:55:10PM +1000, Dave Chinner wrote:
->> On Fri, Aug 23, 2019 at 10:08:36PM -0700, Ira Weiny wrote:
->>> On Sat, Aug 24, 2019 at 10:11:24AM +1000, Dave Chinner wrote:
->>>> On Fri, Aug 23, 2019 at 09:04:29AM -0300, Jason Gunthorpe wrote:
-...
->>
->> Sure, that part works because the struct file is passed. It doesn't
->> end up with the same fd number in the other process, though.
->>
->> The issue is that layout leases need to notify userspace when they
->> are broken by the kernel, so a lease stores the owner pid/tid in the
->> file->f_owner field via __f_setown(). It also keeps a struct fasync
->> attached to the file_lock that records the fd that the lease was
->> created on.  When a signal needs to be sent to userspace for that
->> lease, we call kill_fasync() and that walks the list of fasync
->> structures on the lease and calls:
->>
->> 	send_sigio(fown, fa->fa_fd, band);
->>
->> And it does for every fasync struct attached to a lease. Yes, a
->> lease can track multiple fds, but it can only track them in a single
->> process context. The moment the struct file is shared with another
->> process, the lease is no longer capable of sending notifications to
->> all the lease holders.
->>
->> Yes, you can change the owning process via F_SETOWNER, but that's
->> still only a single process context, and you can't change the fd in
->> the fasync list. You can add new fd to an existing lease by calling
->> F_SETLEASE on the new fd, but you still only have a single process
->> owner context for signal delivery.
->>
->> As such, leases that require callbacks to userspace are currently
->> only valid within the process context the lease was taken in.
+On 2019/08/28 23:18, Waiman Long wrote:
+> On 8/28/19 10:09 AM, Michal Hocko wrote:
+>> On Wed 28-08-19 09:46:21, Waiman Long wrote:
+>>> On 8/28/19 4:00 AM, Michal Hocko wrote:
+>>>> On Tue 27-08-19 16:22:38, Michal Hocko wrote:
+>>>>> Dan, isn't this something we have discussed recently?
+>>>> This was http://lkml.kernel.org/r/20190725023100.31141-3-t-fukasawa@vx.jp.nec.com
+>>>> and talked about /proc/kpageflags but this is essentially the same thing
+>>>> AFAIU. I hope we get a consistent solution for both issues.
+>>>>
+>>> Yes, it is the same problem. The uninitialized page structure problem
+>>> affects all the 3 /proc/kpage{cgroup,count,flags) files.
+>>>
+>>> Toshiki's patch seems to fix it just for /proc/kpageflags, though.
+>> Yup. I was arguing that whacking a mole kinda fix is far from good. Dan
+>> had some arguments on why initializing those struct pages is a problem.
+>> The discussion had a half open end though. I hoped that Dan would try
+>> out the initialization side but I migh have misunderstood.
 > 
-> But for long term pins we are not requiring callbacks.
+> If the page structures of the reserved PFNs are always initialized, that
+> will fix the problem too. I am not familiar with the zone device code.
+> So I didn't attempt to do that.
 > 
+> Cheers,
+> Longman
+> 
+> 
+I also think that the struct pages should be initialized.
+I'm preparing to post the patch.
 
-Hi Ira,
-
-If "require callbacks to userspace" means sending SIGIO, then actually
-FOLL_LONGTERM *does* require those callbacks. Because we've been, so
-far, equating FOLL_LONGTERM with the vaddr_pin struct and with a lease.
-
-What am I missing here?
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+Toshiki Fukasawa
