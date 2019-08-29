@@ -2,101 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D90A0FFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 05:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A667A1035
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 06:12:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbfH2Djz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 23:39:55 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:42302 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbfH2Djy (ORCPT
+        id S1725847AbfH2EMu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 00:12:50 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38109 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfH2EMu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 23:39:54 -0400
-X-Greylist: delayed 884 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Aug 2019 23:39:54 EDT
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x7T3Or8A010001
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 29 Aug 2019 12:24:53 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x7T3Or60018255;
-        Thu, 29 Aug 2019 12:24:53 +0900
-Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x7T3Or8q018852;
-        Thu, 29 Aug 2019 12:24:53 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-545660; Thu, 29 Aug 2019 10:47:15 +0900
-Received: from BPXM20GP.gisp.nec.co.jp ([10.38.151.212]) by
- BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Thu,
- 29 Aug 2019 10:47:14 +0900
-From:   Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-To:     Waiman Long <longman@redhat.com>, Michal Hocko <mhocko@kernel.org>
-CC:     Dan Williams <dan.j.williams@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-Subject: Re: [PATCH v2] fs/proc/page: Skip uninitialized page when iterating
- page structures
-Thread-Topic: [PATCH v2] fs/proc/page: Skip uninitialized page when
- iterating page structures
-Thread-Index: AQHVXab+AB6W4hF4zE+DO3WxOpzL56cQAkYAgAACh4CAAMCOgA==
-Date:   Thu, 29 Aug 2019 01:47:13 +0000
-Message-ID: <9a1395bc-d568-c4d7-2dde-7dde7b48ac0b@vx.jp.nec.com>
-References: <20190826124336.8742-1-longman@redhat.com>
- <20190827142238.GB10223@dhcp22.suse.cz>
- <20190828080006.GG7386@dhcp22.suse.cz>
- <8363a4ba-e26f-f88c-21fc-5dd1fe64f646@redhat.com>
- <20190828140938.GL28313@dhcp22.suse.cz>
- <4367f507-97ba-a74e-6bf5-811cdd6ecdf9@redhat.com>
-In-Reply-To: <4367f507-97ba-a74e-6bf5-811cdd6ecdf9@redhat.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.135]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <43FF7CD7AC5C9E4DA042E82DA36846D9@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-TM-AS-MML: disable
+        Thu, 29 Aug 2019 00:12:50 -0400
+Received: by mail-pg1-f193.google.com with SMTP id e11so865592pga.5;
+        Wed, 28 Aug 2019 21:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EG/nlMo9sP7VIjxFB1Sc+6BPesxcZGuG6xPJe080Aa8=;
+        b=awUmS8TKKZhEUsvBd30XL7dJi4TMlyAAY7XI9O7APgENcrczkLZ3Yj6LPYuGSFOjv4
+         L/kGCkvyzsWvnugiO5mWNgJP0tOMZNyd4lR99mKOcJqZoiYZbQtR+uutIkNF4oL4KM1J
+         4NiFiNwBRwozz7OtQEyK2kxShtFmS3Jfd9tXeXrSav99Xz2QHwm0rm2xwvVeXED8HbXK
+         Am0PYpF4baGkg/a83iE0R4g0SabBbqedlp/GJeWz6TczkPVfRflacv1XF8PyDZo2/D0q
+         VJM9TqbaOINQqSY2iG9qvoIrQyUV8RKZo3ayDrzNkN1WnwQxDuMYQW8wRBqsmUPWa8G5
+         z4Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EG/nlMo9sP7VIjxFB1Sc+6BPesxcZGuG6xPJe080Aa8=;
+        b=p34k4B035qXqq6bDHxitt5/EkRtErjl+q27Ksu52twfyVdYqTD2rXc7ma//iC8mhqv
+         cYmvDGkMmOqFm3NRJnTHNkyvDaTCLv3LybOELBLtc4xqFgmftMvaQ59ZloqYZGOZYVTb
+         gp0vCWpPjODhqGUdFDXemk38CHH4ro3DpT8NTIM7c2ISdBqUBvOxFVWj9kjkZCDOGNNU
+         LOgJND8/uu6YE0p5SdN8Gkw3yzfyERYw8X+pEhKqBvLnpvTegeb9fVgcS2RRwrYR1xZN
+         jXkTgIBLoLYuvSH2uLKOzk6J77V76lAMVsMHeKIFljyL/C1zH8+/mpLsKg6ZAKY652LG
+         AsFg==
+X-Gm-Message-State: APjAAAXJaQ8S3ze2VpknQ6upiVqeCRSX1Dr9C2bn0j+5qcS8DzIv47bu
+        pcLLWe6NjRxMqoofR340Y/A=
+X-Google-Smtp-Source: APXvYqypUAO0QBmHyf7wnf18+BInWWfbWlIbmCzRMZSSur5w4VberObekUlJWy9ZznjXWHl7E7459g==
+X-Received: by 2002:aa7:8585:: with SMTP id w5mr8602574pfn.1.1567051969706;
+        Wed, 28 Aug 2019 21:12:49 -0700 (PDT)
+Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
+        by smtp.gmail.com with ESMTPSA id g3sm1017689pfm.179.2019.08.28.21.12.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 21:12:48 -0700 (PDT)
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+To:     viro@zeniv.linux.org.uk, arnd@arndb.de
+Cc:     adilger@dilger.ca, aivazian.tigran@gmail.com,
+        darrick.wong@oracle.com, dsterba@suse.com,
+        gregkh@linuxfoundation.org, jlayton@kernel.org,
+        keescook@chromium.org, me@bobcopeland.com, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        y2038@lists.linaro.org
+Subject: [GIT PULL] vfs: Add support for timestamp limits
+Date:   Wed, 28 Aug 2019 21:11:32 -0700
+Message-Id: <20190829041132.26677-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/08/28 23:18, Waiman Long wrote:
-> On 8/28/19 10:09 AM, Michal Hocko wrote:
->> On Wed 28-08-19 09:46:21, Waiman Long wrote:
->>> On 8/28/19 4:00 AM, Michal Hocko wrote:
->>>> On Tue 27-08-19 16:22:38, Michal Hocko wrote:
->>>>> Dan, isn't this something we have discussed recently?
->>>> This was http://lkml.kernel.org/r/20190725023100.31141-3-t-fukasawa@vx.jp.nec.com
->>>> and talked about /proc/kpageflags but this is essentially the same thing
->>>> AFAIU. I hope we get a consistent solution for both issues.
->>>>
->>> Yes, it is the same problem. The uninitialized page structure problem
->>> affects all the 3 /proc/kpage{cgroup,count,flags) files.
->>>
->>> Toshiki's patch seems to fix it just for /proc/kpageflags, though.
->> Yup. I was arguing that whacking a mole kinda fix is far from good. Dan
->> had some arguments on why initializing those struct pages is a problem.
->> The discussion had a half open end though. I hoped that Dan would try
->> out the initialization side but I migh have misunderstood.
-> 
-> If the page structures of the reserved PFNs are always initialized, that
-> will fix the problem too. I am not familiar with the zone device code.
-> So I didn't attempt to do that.
-> 
-> Cheers,
-> Longman
-> 
-> 
-I also think that the struct pages should be initialized.
-I'm preparing to post the patch.
+Hi Al, Arnd,
 
-Toshiki Fukasawa
+This is a pull request for filling in min and max timestamps for filesystems.
+I've added all the acks, and dropped the adfs patch. That will be merged through
+Russell's tree.
+
+Thanks,
+Deepa
+
+The following changes since commit 5d18cb62218608a1388858880ad3ec76d6cb0d3b:
+
+  Add linux-next specific files for 20190828 (2019-08-28 19:59:14 +1000)
+
+are available in the Git repository at:
+
+  https://github.com/deepa-hub/vfs limits
+
+for you to fetch changes up to f0f216afa4c7e4dee9121fde52ccf57f76119188:
+
+  isofs: Initialize filesystem timestamp ranges (2019-08-28 19:19:36 -0700)
+
+----------------------------------------------------------------
+Deepa Dinamani (19):
+      vfs: Add file timestamp range support
+      vfs: Add timestamp_truncate() api
+      timestamp_truncate: Replace users of timespec64_trunc
+      mount: Add mount warning for impending timestamp expiry
+      utimes: Clamp the timestamps before update
+      fs: Fill in max and min timestamps in superblock
+      9p: Fill min and max timestamps in sb
+      ext4: Initialize timestamps limits
+      fs: nfs: Initialize filesystem timestamp ranges
+      fs: cifs: Initialize filesystem timestamp ranges
+      fs: fat: Initialize filesystem timestamp ranges
+      fs: affs: Initialize filesystem timestamp ranges
+      fs: sysv: Initialize filesystem timestamp ranges
+      fs: ceph: Initialize filesystem timestamp ranges
+      fs: orangefs: Initialize filesystem timestamp ranges
+      fs: hpfs: Initialize filesystem timestamp ranges
+      fs: omfs: Initialize filesystem timestamp ranges
+      pstore: fs superblock limits
+      isofs: Initialize filesystem timestamp ranges
+
+ fs/9p/vfs_super.c        |  6 +++++-
+ fs/affs/amigaffs.c       |  2 +-
+ fs/affs/amigaffs.h       |  3 +++
+ fs/affs/inode.c          |  4 ++--
+ fs/affs/super.c          |  4 ++++
+ fs/attr.c                | 21 ++++++++++++---------
+ fs/befs/linuxvfs.c       |  2 ++
+ fs/bfs/inode.c           |  2 ++
+ fs/ceph/super.c          |  2 ++
+ fs/cifs/cifsfs.c         | 22 ++++++++++++++++++++++
+ fs/cifs/netmisc.c        | 14 +++++++-------
+ fs/coda/inode.c          |  3 +++
+ fs/configfs/inode.c      | 12 ++++++------
+ fs/cramfs/inode.c        |  2 ++
+ fs/efs/super.c           |  2 ++
+ fs/ext2/super.c          |  2 ++
+ fs/ext4/ext4.h           | 10 +++++++++-
+ fs/ext4/super.c          | 17 +++++++++++++++--
+ fs/f2fs/file.c           | 21 ++++++++++++---------
+ fs/fat/inode.c           | 12 ++++++++++++
+ fs/freevxfs/vxfs_super.c |  2 ++
+ fs/hpfs/hpfs_fn.h        |  6 ++----
+ fs/hpfs/super.c          |  2 ++
+ fs/inode.c               | 33 ++++++++++++++++++++++++++++++++-
+ fs/isofs/inode.c         |  7 +++++++
+ fs/jffs2/fs.c            |  3 +++
+ fs/jfs/super.c           |  2 ++
+ fs/kernfs/inode.c        |  7 +++----
+ fs/minix/inode.c         |  2 ++
+ fs/namespace.c           | 33 ++++++++++++++++++++++++++++++++-
+ fs/nfs/super.c           | 20 +++++++++++++++++++-
+ fs/ntfs/inode.c          | 21 ++++++++++++---------
+ fs/omfs/inode.c          |  4 ++++
+ fs/orangefs/super.c      |  2 ++
+ fs/pstore/ram.c          |  2 ++
+ fs/qnx4/inode.c          |  2 ++
+ fs/qnx6/inode.c          |  2 ++
+ fs/reiserfs/super.c      |  3 +++
+ fs/romfs/super.c         |  2 ++
+ fs/squashfs/super.c      |  2 ++
+ fs/super.c               |  2 ++
+ fs/sysv/super.c          |  5 ++++-
+ fs/ubifs/file.c          | 21 ++++++++++++---------
+ fs/ufs/super.c           |  7 +++++++
+ fs/utimes.c              |  6 ++----
+ fs/xfs/xfs_super.c       |  2 ++
+ include/linux/fs.h       |  5 +++++
+ include/linux/time64.h   |  2 ++
+ 48 files changed, 298 insertions(+), 72 deletions(-)
