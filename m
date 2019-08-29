@@ -2,129 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87142A1844
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 13:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86F37A1879
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 13:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbfH2LU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 07:20:58 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39382 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbfH2LU6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:20:58 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y200so1842684pfb.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 04:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MO1at3htvy+QBiGMsZ4p3IurvkhEqFEhhsP44+X95CE=;
-        b=rJojcqdn4jRu5pAqPMUfE93udKprNxEHdg/UMkhlc2PipSnotKuR429QUIPq+cn3cV
-         CfBv9d7MeYJZxSeJ/ux5WjlYNSyTOUeK+exsWcN01/HwgXkPwiMKlVspY1lFg1T0LZUo
-         KY/UTYXyWNOa+PtCaX69THNbsOp9QaZGboYOwoGc2f6Jsj1i1IocSoFpr+AI2KsKKkMp
-         j/FxR6PwtOMR63Oio7sZn5jYz00HzE6dji8DCgzzToWMOE4e7meFLJMtVnkx3H+oLqrv
-         V+YUt1P/rZoIGoCkdyGOrmzSF0yxYNkFfR9i1I1yNvVLmtZobazbEI+cR8xCTHG/xGY5
-         J0rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MO1at3htvy+QBiGMsZ4p3IurvkhEqFEhhsP44+X95CE=;
-        b=Dc0yz29pEMgbfUPXJg/qD8fZ9sZV9ptEZFBU9d+36IAESOSXxKNzC0W6JG2sHr60GX
-         mMgj5RvqeKeJYhBtmk0pYKCjqXzQ2p53GoREbjM/HrN/d4Tcbc2JIVAVSvp8SBuBAkJk
-         9Izwax/YEd5jYQ1zhuO+GC3UfolxhL67SdCB8uQQw4SI/FlyqsYpnNN2Dv96K+Waam5v
-         wAvP10JW5TIeiyk8BcjotJ8rmokIAQKKE3od/SslquRgc8Uv7ow17zJJAh3hOTWkJU16
-         nNQlCn0jw2ew2vsL4e1nTJ6ughQvOYVBZTKB7XGa8tjjQIxnQbn22gFNVrx+gWN9k1gz
-         e0EQ==
-X-Gm-Message-State: APjAAAX2/pK5gxAk6LA/Ugsz0KKJ8qRBuTOi/xGjGU4e1FLxCv6q//0p
-        2GGM1CXDLb8e+8gSbATw/V/I
-X-Google-Smtp-Source: APXvYqyPZX1a8Wl3Hv5h/GqI8hkbGT710z+NBi9F2BVP28ztiJx4E/HcSUO+OhBDFk/z0X/imxPwdA==
-X-Received: by 2002:a17:90a:1a8d:: with SMTP id p13mr9579500pjp.15.1567077657344;
-        Thu, 29 Aug 2019 04:20:57 -0700 (PDT)
-Received: from poseidon.bobrowski.net ([114.78.226.167])
-        by smtp.gmail.com with ESMTPSA id f26sm3055950pfq.38.2019.08.29.04.20.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 04:20:56 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 21:20:50 +1000
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+        id S1727182AbfH2L30 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 07:29:26 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3540 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726379AbfH2L30 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 07:29:26 -0400
+Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id AAFEA3C849874D2B6330;
+        Thu, 29 Aug 2019 19:29:24 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 29 Aug 2019 19:29:23 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 29 Aug 2019 19:29:20 +0800
+Date:   Thu, 29 Aug 2019 19:28:33 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, aneesh.kumar@linux.ibm.com
-Subject: Re: [PATCH 0/5] ext4: direct IO via iomap infrastructure
-Message-ID: <20190829112048.GA2486@poseidon.bobrowski.net>
-References: <20190822120015.GA3330@poseidon.bobrowski.net>
- <20190822141126.70A94A407B@d06av23.portsmouth.uk.ibm.com>
- <20190824031830.GB2174@poseidon.bobrowski.net>
- <20190824035554.GA1037502@magnolia>
- <20190824230427.GA32012@infradead.org>
- <20190827095221.GA1568@poseidon.bobrowski.net>
- <20190828120509.GC22165@poseidon.bobrowski.net>
- <20190828142729.GB24857@mit.edu>
- <20190828180215.GE22343@quack2.suse.cz>
- <20190829063608.GA17426@infradead.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 08/24] erofs: add namei functions
+Message-ID: <20190829112833.GE64893@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-9-gaoxiang25@huawei.com>
+ <20190829102838.GG20598@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190829063608.GA17426@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190829102838.GG20598@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Awesome, and thank you *all* for your very valueable input.
-
-On Wed, Aug 28, 2019 at 11:36:08PM -0700, Christoph Hellwig wrote:
-> On Wed, Aug 28, 2019 at 08:02:15PM +0200, Jan Kara wrote:
-> > > The original reason why we created the DIO_STATE_UNWRITTEN flag was a
-> > > fast path, where the common case is writing blocks to an existing
-> > > location in a file where the blocks are already allocated, and marked
-> > > as written.  So consulting the on-disk extent tree to determine
-> > > whether unwritten extents need to be converted and/or split is
-> > > certainly doable.  However, it's expensive for the common case.  So
-> > > having a hint whether we need to schedule a workqueue to possibly
-> > > convert an unwritten region is helpful.  If we can just free the bio
-> > > and exit the I/O completion handler without having to take shared
-> > > locks to examine the on-disk extent tree, so much the better.
-> > 
-> > Yes, but for determining whether extent conversion on IO completion is
-> > needed we now use IOMAP_DIO_UNWRITTEN flag iomap infrastructure provides to
-> > us. So we don't have to track this internally in ext4 anymore.
+On Thu, Aug 29, 2019 at 03:28:38AM -0700, Christoph Hellwig wrote:
+> On Fri, Aug 02, 2019 at 08:53:31PM +0800, Gao Xiang wrote:
+> > +struct erofs_qstr {
+> > +	const unsigned char *name;
+> > +	const unsigned char *end;
+> > +};
 > 
-> Exactly.  As mentioned before the ioend to track unwritten thing was
-> in XFS by the time ext4 copied the ioend approach. but we actually got
-> rid of that long before the iomap conversion.  Maybe to make everything
-> easier to understand and bisect you might want to get rid of the ioend
-> for direct I/O in ext4 as a prep path as well.
+> Maybe erofs_name?  The q in qstr stands for quick, because of the
+> existing hash and len, which this doesn't really provide.
 > 
-> The relevant commit is: 273dda76f757 ("xfs: don't use ioends for direct
-> write completions")
+> Also I don't really see why you don't just pass the actual qstr and
+> just document that dirnamecmp does not look at the hash and thus
+> doesn't require it to be filled out.
 
-Uh ha! So, we conclude that there's no need to muck around with hairy
-ioend's, or the need to denote whether there's unwritten extents held
-against the inode using tricky state flag for that matter.
+q in erofs_qstr also means quick substring.
+If you have some time to look into it more, it uses a prefixed
+binary search algorithm (rather than linear traversal), which
+provides similar proformance with hashed approach but no need
+to save such hash field and it's natively sorted in alphabet
+order.
 
-> > > To be honest, i'm not 100% sure what would happen if we removed that
-> > > restriction; it might be that things would work just fine (just slower
-> > > in some workloads), or whether there is some hidden dependency that
-> > > would explode.  I suspect we'd have to try the experiment to be sure.
-> > 
-> > As far as I remember the concern was that extent split may need block
-> > allocation and we may not have enough free blocks to do it. These days we
-> > have some blocks reserved in the filesystem to accomodate unexpected extent
-> > splits so this shouldn't happen anymore so the only real concern is the
-> > wasted performance due to unnecessary extent merge & split. Kind of a
-> > stress test for this would be to fire of lots of sequential AIO DIO
-> > requests against a hole in a file.
+Thanks,
+Gao Xiang
+
 > 
-> Well, you can always add a don't merge flag to the actual allocation.
-> You might still get a merge for pathological case (fallocate adjacent
-> to a dio write just submitted), but if the merging is such a performance
-> over head here is easy ways to avoid it for the common case.
-
-After I've posted through the next version of this patch series, I
-will attempt to perform some stress testing to see what the
-performance hit could potentially be.
