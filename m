@@ -2,70 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD3E6A270F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 21:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A512A2875
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 22:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfH2TMB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 15:12:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42447 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727798AbfH2TMB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 15:12:01 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D94FF307D868;
-        Thu, 29 Aug 2019 19:12:00 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1123F196B2;
-        Thu, 29 Aug 2019 19:11:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <03eb0974-3996-f356-5fbe-17cf598b0e31@tycho.nsa.gov>
-References: <03eb0974-3996-f356-5fbe-17cf598b0e31@tycho.nsa.gov> <156710338860.10009.12524626894838499011.stgit@warthog.procyon.org.uk> <156710348066.10009.17986469867635955040.stgit@warthog.procyon.org.uk>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/11] selinux: Implement the watch_key security hook [ver #6]
+        id S1726944AbfH2U4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 16:56:36 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36263 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbfH2U4g (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 16:56:36 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p13so5217346wmh.1;
+        Thu, 29 Aug 2019 13:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5OTD/ZF052UijPlaWHCU7Ea6/DP3zSnIydnyfbQXH7E=;
+        b=CwuTR8XUyaLrdcjJY8/b566IfEuB1F8FTncyUSw/jAoq8v+gWEvkj7YHi47i1uX/eq
+         a0OuCmIDRaosbb3VIoSMbiy/1/MdDR0H1cnkr/IhTXridpk2ZWFNLil18EUcIXrsXDU7
+         LMoVbc3C6/mRCWWjKN0MgWfhMCA7v12O7FJvXN6UHKZkKa8eAF5iwVcZCxSPfqE/stRn
+         J+WaL22jPUxTXElwUyjVHuXfqvwMVwyQjkq2TXn1BXC81WOjLzMFLWfGiFxVj04pb71l
+         NMp/yG8LRyqU9hR2bzSGDsTBWGwayFAsbpHhHeqer+JVT+j/zmno0ijiyEQxdOAutwkH
+         CqpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5OTD/ZF052UijPlaWHCU7Ea6/DP3zSnIydnyfbQXH7E=;
+        b=dTykIR+A0iNlXGLX1htXvIEMU735PE7ZmARPovdil5Xko542elSh/FOhEt0NfYKziz
+         cLcRaq/ZzOtKhDIB68nimfLP8f6ZOM4yof6f0GlqGWL5f1QYA05XxMEgP420Ns6Frkuy
+         d1g5hZ3t8imcFzho9fSw5wp/QVJ9zhyXgxmykk+zbNTkxqScjmlcCISw+vA40/tenCVB
+         HKvL13pdFuCbOQQ4ssby0NKyWMUuNZpSSrkb7w/jQ50RHu6rNQUJVnqv/xF9O9f3Gc+k
+         8f52+nFeu4wN7GyMTEQrGeAf61lggHFbRsUjijTxY95bxdDSIwlGaZP+sfFqZyzgHUql
+         XSpA==
+X-Gm-Message-State: APjAAAVDz83qWStviJOOl0goPI10+0aKU/yPgOIWWQ4ZvSWRsp7ddX9x
+        gy3X7KuP5vNiBNUPhJlRi+91oyNckeM=
+X-Google-Smtp-Source: APXvYqygssWtVylOkfeDXUlxBM6Q63NK3RvJdvkErdIKchX1tJ0I8+1y3Yzz+aHslkBbBxKFZdcCYw==
+X-Received: by 2002:a7b:c775:: with SMTP id x21mr14634755wmk.90.1567112193854;
+        Thu, 29 Aug 2019 13:56:33 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id e14sm3883812wme.35.2019.08.29.13.56.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Aug 2019 13:56:32 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 22:56:31 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190829205631.uhz6jdboneej3j3c@pali>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <14148.1567105917.1@warthog.procyon.org.uk>
-Date:   Thu, 29 Aug 2019 20:11:57 +0100
-Message-ID: <14149.1567105917@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 29 Aug 2019 19:12:01 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="22htbofgnb45e3kb"
+Content-Disposition: inline
+In-Reply-To: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Stephen Smalley <sds@tycho.nsa.gov> wrote:
 
-> Can watch->cred ever differ from current's cred here?  If not, why can't we
-> just use current_sid() here
+--22htbofgnb45e3kb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Um.  Not currently.  I'm not sure whether its ever likely to be otherwise.
-Probably we could just use that and fix it up later if we do find otherwise.
+On Wednesday 28 August 2019 18:08:17 Greg Kroah-Hartman wrote:
+> From: Valdis Kl=C4=93tnieks <valdis.kletnieks@vt.edu>
+>=20
+> The exfat code needs a lot of work to get it into "real" shape for
+> the fs/ part of the kernel, so put it into drivers/staging/ for now so
+> that it can be worked on by everyone in the community.
+>=20
+> The full specification of the filesystem can be found at:
+>   https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specificati=
+on
+>=20
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> and why do we need the watch object at all?
+Hi Greg!
 
-It carries more than just the creds for the caller of keyctl_watch_key(), it
-also carries information about the queue to which notifications will be
-written, including the creds that were active when that was set up.
+I'm not really sure if this exfat implementation is fully suitable for
+mainline linux kernel.
 
-Note that there's no requirement that the process that opened /dev/watch_queue
-be the one that sets the watch.  In the keyutils testsuite, I 'leak' a file
-descriptor from the session wrangler into the program that it runs so that
-tests running inside the test script can add watches to it.
+In my opinion, proper way should be to implement exFAT support into
+existing fs/fat/ code instead of replacing whole vfat/msdosfs by this
+new (now staging) fat implementation.
 
-David
+In linux kernel we really do not need two different implementation of
+VFAT32.
+
+So I'm a bit sceptical about usefulness of this exfat code/driver, if it
+makes any sense to have it even in staging.
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--22htbofgnb45e3kb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXWg7/QAKCRCL8Mk9A+RD
+UscXAJwPPJqKcOQjnAYTGn7FOoM5do7AtgCfVuTe+I2XcSSZjydWed7Afnz64cs=
+=Xup+
+-----END PGP SIGNATURE-----
+
+--22htbofgnb45e3kb--
