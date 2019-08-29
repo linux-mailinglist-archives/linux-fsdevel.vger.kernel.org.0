@@ -2,88 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5F0A2AF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 01:35:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D45B8A2AFE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 01:37:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbfH2XfI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 19:35:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40902 "EHLO mail.kernel.org"
+        id S1726526AbfH2Xhj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 19:37:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45210 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfH2XfI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 19:35:08 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725844AbfH2Xhj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 19:37:39 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A0392173E;
-        Thu, 29 Aug 2019 23:35:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567121707;
-        bh=MyHmJUU3Gn2uuapEBmq5L4LI7DM7u2Evj0T5dUzngj8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MbKkKKR0uyA41FC66Oo4hTRux8s83095GYUAliZ9zLkaKe7iz2b30Mi8EiHVPoF3q
-         clZF0De+LYVO+xsNkIjkfxYgtwFaKjdINb7Y+oqJyLdMAB35Ic2zGoEYOPH7Ny5ELw
-         TBILAOb2LwnxMigNkC8Cbk1WoUYTG/6qrjCEEQos=
-Date:   Thu, 29 Aug 2019 19:35:06 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190829233506.GT5281@sasha-vm>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190829205631.uhz6jdboneej3j3c@pali>
- <184209.1567120696@turing-police>
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F807317528C;
+        Thu, 29 Aug 2019 23:37:39 +0000 (UTC)
+Received: from treble (ovpn-121-55.rdu2.redhat.com [10.10.121.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D0B9C608C1;
+        Thu, 29 Aug 2019 23:37:37 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 18:37:35 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject: Re: mmotm 2019-08-27-20-39 uploaded (objtool: xen)
+Message-ID: <20190829233735.yp3mwhg6er353qw5@treble>
+References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
+ <8b09d93a-bc42-bd8e-29ee-cd37765f4899@infradead.org>
+ <20190828171923.4sir3sxwsnc2pvjy@treble>
+ <57d6ab2e-1bae-dca3-2544-4f6e6a936c3a@infradead.org>
+ <20190828200134.d3lwgyunlpxc6cbn@treble>
+ <20190829082445.GM2369@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <184209.1567120696@turing-police>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190829082445.GM2369@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 29 Aug 2019 23:37:39 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 07:18:16PM -0400, Valdis Klētnieks wrote:
->On Thu, 29 Aug 2019 22:56:31 +0200, Pali Roh?r said:
->
->> I'm not really sure if this exfat implementation is fully suitable for
->> mainline linux kernel.
->>
->> In my opinion, proper way should be to implement exFAT support into
->> existing fs/fat/ code instead of replacing whole vfat/msdosfs by this
->> new (now staging) fat implementation.
->
->> In linux kernel we really do not need two different implementation of
->> VFAT32.
->
->This patch however does have one major advantage over "patch vfat to
->support exfat" - which is that the patch exists.
->
->If somebody comes forward with an actual "extend vfat to do exfat" patch,
->we should at that point have a discussion about relative merits....
+On Thu, Aug 29, 2019 at 10:24:45AM +0200, Peter Zijlstra wrote:
+> On Wed, Aug 28, 2019 at 03:01:34PM -0500, Josh Poimboeuf wrote:
+> > On Wed, Aug 28, 2019 at 10:56:25AM -0700, Randy Dunlap wrote:
+> > > >> drivers/xen/gntdev.o: warning: objtool: gntdev_copy()+0x229: call to __ubsan_handle_out_of_bounds() with UACCESS enabled
+> > > > 
+> > > > Easy one :-)
+> > > > 
+> > > > diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> > > > index 0c8e17f946cd..6a935ab93149 100644
+> > > > --- a/tools/objtool/check.c
+> > > > +++ b/tools/objtool/check.c
+> > > > @@ -483,6 +483,7 @@ static const char *uaccess_safe_builtin[] = {
+> > > >  	"ubsan_type_mismatch_common",
+> > > >  	"__ubsan_handle_type_mismatch",
+> > > >  	"__ubsan_handle_type_mismatch_v1",
+> > > > +	"__ubsan_handle_out_of_bounds",
+> > > >  	/* misc */
+> > > >  	"csum_partial_copy_generic",
+> > > >  	"__memcpy_mcsafe",
+> > > > 
+> > > 
+> > > 
+> > > then I get this one:
+> > > 
+> > > lib/ubsan.o: warning: objtool: __ubsan_handle_out_of_bounds()+0x5d: call to ubsan_prologue() with UACCESS enabled
+> > 
+> > And of course I jinxed it by calling it easy.
+> > 
+> > Peter, how do you want to handle this?
+> > 
+> > Should we just disable UACCESS checking in lib/ubsan.c?
+> 
+> No, that is actually unsafe and could break things (as would you patch
+> above).
 
-This patch going into staging doesn't necessarily mean that one day
-it'll get moved to fs/exfat/. It's very possible that the approach would
-instead be to use the staging code for reference, build this
-functionality in fs/fat/, and kill off the staging code when it's not
-needed anymore.
+Oops.  -EFIXINGTOOMANYOBJTOOLISSUESATONCE
 
-With regards to missing specs/docs/whatever - our main concern with this
-release was that we want full interoperability, which is why the spec
-was made public as-is without modifications from what was used
-internally. There's no "secret sauce" that Microsoft is hiding here.
+> I'm thinking the below patch ought to cure things:
+> 
+> ---
+> Subject: x86/uaccess: Don't leak the AC flags into __get_user() argument evalidation
 
-How about we give this spec/code time to get soaked and reviewed for a
-bit, and if folks still feel (in a month or so?) that there are missing
-bits of information related to exfat, I'll be happy to go back and try
-to get them out as well.
+s/evalidation/evaluation
 
---
-Thanks,
-Sasha
+> Identical to __put_user(); the __get_user() argument evalution will too
+> leak UBSAN crud into the __uaccess_begin() / __uaccess_end() region.
+> While uncommon this was observed to happen for:
+> 
+>   drivers/xen/gntdev.c: if (__get_user(old_status, batch->status[i]))
+> 
+> where UBSAN added array bound checking.
+> 
+> This complements commit:
+> 
+>   6ae865615fc4 ("x86/uaccess: Dont leak the AC flag into __put_user() argument evaluation")
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Cc: luto@kernel.org
+> ---
+>  arch/x86/include/asm/uaccess.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+> index 9c4435307ff8..35c225ede0e4 100644
+> --- a/arch/x86/include/asm/uaccess.h
+> +++ b/arch/x86/include/asm/uaccess.h
+> @@ -444,8 +444,10 @@ __pu_label:							\
+>  ({									\
+>  	int __gu_err;							\
+>  	__inttype(*(ptr)) __gu_val;					\
+> +	__typeof__(ptr) __gu_ptr = (ptr);				\
+> +	__typeof__(size) __gu_size = (size);				\
+>  	__uaccess_begin_nospec();					\
+> -	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
+> +	__get_user_size(__gu_val, __gu_ptr, __gu_size, __gu_err, -EFAULT);	\
+>  	__uaccess_end();						\
+>  	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
+>  	__builtin_expect(__gu_err, 0);					\
 
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+
+-- 
+Josh
