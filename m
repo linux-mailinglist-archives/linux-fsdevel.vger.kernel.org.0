@@ -2,96 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82967A0DF8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 00:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33AC0A0E7F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 02:04:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfH1W7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Aug 2019 18:59:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49280 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfH1W7N (ORCPT
+        id S1726935AbfH2AEY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Aug 2019 20:04:24 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46003 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfH2AEX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Aug 2019 18:59:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=T68LB0FXO/suGbld1wN+JgjhePzUkb8K5QqC/l1w5Tc=; b=apGZ0790F2Byb5ula3d4xEfxr
-        vCjo6bsgtwe4WgjOKnRvMWgsodT4X3lpKavbp9MiQzkPtDOnTFrchnEeMdw+Vx2MIZVjEEf23oowl
-        DISybElP+QbxZq7nPWML9lidFMVgoH+7M0GKhghLYX0bbTSUmsJ+jH6WgG8AuU9AvAXrOLr0jI1/e
-        WE1nOt7XvbJU0oergHsoRQgLPB0QgAPECF2R7WGoZVRCeqVMSpJ0Mgvf6TC7br7r2Ol7mgHVQbUN3
-        otmWsubVT7rRRfi3SVZFpXRx46nTGP4EJ5bmQ4Z9G1u7FCzA9cXDCMJ8guvpQvsbdeoS0UMJdrCOU
-        sv/Vl4I4A==;
-Received: from [2601:1c0:6200:6e8::4f71]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i36uA-00017t-VK; Wed, 28 Aug 2019 22:59:07 +0000
-Subject: Re: mmotm 2019-08-27-20-39 uploaded (sound/hda/intel-nhlt.c)
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>
-References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
- <274054ef-8611-2661-9e67-4aabae5a7728@infradead.org>
- <5ac8a7a7-a9b4-89a5-e0a6-7c97ec1fabc6@linux.intel.com>
- <98ada795-4700-7fcc-6d14-fcc1ab25d509@infradead.org>
- <f0a62b08-cba9-d944-5792-8eac0ea39df1@linux.intel.com>
- <19edfb9a-f7b3-7a89-db5a-33289559aeef@linux.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4725bbed-81e1-9724-b51c-47eba8e414d0@infradead.org>
-Date:   Wed, 28 Aug 2019 15:59:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 28 Aug 2019 20:04:23 -0400
+Received: by mail-ot1-f65.google.com with SMTP id m24so1601850otp.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Aug 2019 17:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9V1I2O+TivEgbBfrL+sbjQm1nhJ9MH50acKxm7Jxy80=;
+        b=ESaJoc8uAcMghQKXnUGzQAUXuyljQbXi8D9tnbGffCiBjVzZuOXCax8X2qwURhna8D
+         ZCii/AXaKhwWr4hlRiHLcZ2NkaEVT4y9nfs/aJf8phUBTO5AwR8KTXRZurFFafCjLRhd
+         OY1VXkibH9HabUYOOfTgCyiw8cBHoj6YGzW1YRj33glxC4a0hjLp6bsL2Q74qKKC1DM4
+         hGhKheWRBV0QQd9KYQXbvrdnWI7S30xJ8O484RMAId2aedVlxTJHFFgkevMGBuf5JDwI
+         s88SmUnmj6LY0LPGMVexZlcan5Vud1uQzml64dgeu8YJZO+YkEohexOj5GRTXIpu3dam
+         wc4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9V1I2O+TivEgbBfrL+sbjQm1nhJ9MH50acKxm7Jxy80=;
+        b=XAPnpCChfNtsiatdkKlhS0Ya3efn+toSRu79A1J9gbLCdepC2/FEz+sT+P2wrBPF5t
+         Ol0NCA6OgmlQiQhZgnRIjeELtoRa+xJW15gvN6ApLAH3Tmv0KXvFB+VQHMbfneoWyjWt
+         z2A9qq0RXBAHCMwJ0tYCubI7E+6EYr6UIJ921NO+/g3ytYaIXsanC6XGXI6cG4EzlFCd
+         SOTqOWTlrghmMDmDpXJmB+q5fOJzXYYOnAkRLW33nFEygJa9rBtIEbDTPsFQCtcYSDX/
+         GbyX/JY6UyBemDyQvC6HjXm9dp2lEmrZ6WhpnkbhZhX+hFujXeJJmCeZA5JbQaoVi2Nf
+         ZujQ==
+X-Gm-Message-State: APjAAAXfmqoMPIlWZRHGfzckM8cGqBj/vyHw9Cln/RYIQX7t18FFLuUx
+        z8BRsgmy1nusZwsZ/EIwqrRKXMzEn5k59IQCO8UxRQ==
+X-Google-Smtp-Source: APXvYqw9NltuXUDjLqBgr7ARTZxSXB64T52L8qLE03K+SnICANvhCQNurFmsvJfjCF782hyug4nnoI73YcgZgqRJ+Zo=
+X-Received: by 2002:a9d:6b96:: with SMTP id b22mr5658299otq.363.1567037063279;
+ Wed, 28 Aug 2019 17:04:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <19edfb9a-f7b3-7a89-db5a-33289559aeef@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190821175720.25901-1-vgoyal@redhat.com> <20190821175720.25901-2-vgoyal@redhat.com>
+ <20190826115152.GA21051@infradead.org> <20190827163828.GA6859@redhat.com>
+ <20190828065809.GA27426@infradead.org> <20190828175843.GB912@redhat.com> <20190828225322.GA7777@dread.disaster.area>
+In-Reply-To: <20190828225322.GA7777@dread.disaster.area>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 28 Aug 2019 17:04:11 -0700
+Message-ID: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/28/19 3:45 PM, Pierre-Louis Bossart wrote:
-> 
->>>> I just checked with Mark Brown's for-next tree 8aceffa09b4b9867153bfe0ff6f40517240cee12
->>>> and things are fine in i386 mode, see below.
->>>>
->>>> next-20190828 also works fine for me in i386 mode.
->>>>
->>>> if you can point me to a tree and configuration that don't work I'll look into this, I'd need more info to progress.
->>>
->>> Please try the attached randconfig file.
->>>
->>> Thanks for looking.
->>
->> Ack, I see some errors as well with this config. Likely a missing dependency somewhere, working on this now.
-> 
-> My bad, I added a fallback with static inline functions in the .h file when ACPI is not defined, but the .c file was still compiled.
-> 
-> The diff below makes next-20190828 compile with Randy's config.
-> 
-> It looks like the alsa-devel server is down btw?
-> 
-> diff --git a/sound/hda/Makefile b/sound/hda/Makefile
-> index 8560f6ef1b19..b3af071ce06b 100644
-> --- a/sound/hda/Makefile
-> +++ b/sound/hda/Makefile
-> @@ -14,5 +14,7 @@ obj-$(CONFIG_SND_HDA_CORE) += snd-hda-core.o
->  #extended hda
->  obj-$(CONFIG_SND_HDA_EXT_CORE) += ext/
-> 
-> +ifdef CONFIG_ACPI
->  snd-intel-nhlt-objs := intel-nhlt.o
->  obj-$(CONFIG_SND_INTEL_NHLT) += snd-intel-nhlt.o
-> +endif
-> 
+On Wed, Aug 28, 2019 at 3:53 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Wed, Aug 28, 2019 at 01:58:43PM -0400, Vivek Goyal wrote:
+> > On Tue, Aug 27, 2019 at 11:58:09PM -0700, Christoph Hellwig wrote:
+> > > On Tue, Aug 27, 2019 at 12:38:28PM -0400, Vivek Goyal wrote:
+> > > > > For bdev_dax_pgoff
+> > > > > I'd much rather have the partition offset if there is on in the daxdev
+> > > > > somehow so that we can get rid of the block device entirely.
+> > > >
+> > > > IIUC, there is one block_device per partition while there is only one
+> > > > dax_device for the whole disk. So we can't directly move bdev logical
+> > > > offset into dax_device.
+> > >
+> > > Well, then we need to find a way to get partitions for dax devices,
+> > > as we really should not expect a block device hiding behind a dax
+> > > dev.  That is just a weird legacy assumption - block device need to
+> > > layer on top of the dax device optionally.
+> > >
+> > > >
+> > > > We probably could put this in "iomap" and leave it to filesystems to
+> > > > report offset into dax_dev in iomap that way dax generic code does not
+> > > > have to deal with it. But that probably will be a bigger change.
+> > >
+> > > And where would the file system get that information from?
+> >
+> > File system knows about block device, can it just call get_start_sect()
+> > while filling iomap->addr. And this means we don't have to have
+> > parition information in dax device. Will something like following work?
+> > (Just a proof of concept patch).
+> >
+> >
+> > ---
+> >  drivers/dax/super.c |   11 +++++++++++
+> >  fs/dax.c            |    6 +++---
+> >  fs/ext4/inode.c     |    6 +++++-
+> >  include/linux/dax.h |    1 +
+> >  4 files changed, 20 insertions(+), 4 deletions(-)
+> >
+> > Index: rhvgoyal-linux/fs/ext4/inode.c
+> > ===================================================================
+> > --- rhvgoyal-linux.orig/fs/ext4/inode.c       2019-08-28 13:51:16.051937204 -0400
+> > +++ rhvgoyal-linux/fs/ext4/inode.c    2019-08-28 13:51:44.453937204 -0400
+> > @@ -3589,7 +3589,11 @@ retry:
+> >                       WARN_ON_ONCE(1);
+> >                       return -EIO;
+> >               }
+> > -             iomap->addr = (u64)map.m_pblk << blkbits;
+> > +             if (IS_DAX(inode))
+> > +                     iomap->addr = ((u64)map.m_pblk << blkbits) +
+> > +                                   (get_start_sect(iomap->bdev) * 512);
+> > +             else
+> > +                     iomap->addr = (u64)map.m_pblk << blkbits;
+>
+> I'm not a fan of returning a physical device sector address from an
+> interface where ever other user/caller expects this address to be a
+> logical block address into the block device. It creates a landmine
+> in the iomap API that callers may not be aware of and that's going
+> to cause bugs. We're trying really hard to keep special case hacks
+> like this out of the iomap infrastructure, so on those grounds alone
+> I'd suggest this is a dead end approach.
+>
+> Hence I think that if the dax device needs a physical offset from
+> the start of the block device the filesystem sits on, it should be
+> set up at dax device instantiation time and so the filesystem/bdev
+> never needs to be queried again for this information.
+>
 
-works for me.  Thanks.
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Agree. In retrospect it was my laziness in the dax-device
+implementation to expect the block-device to be available.
 
--- 
-~Randy
+It looks like fs_dax_get_by_bdev() is an intercept point where a
+dax_device could be dynamically created to represent the subset range
+indicated by the block-device partition. That would open up more
+cleanup opportunities.
