@@ -2,161 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 524BAA1FFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 17:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1077EA2028
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 17:58:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728460AbfH2PwU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 11:52:20 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37820 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728804AbfH2PwS (ORCPT
+        id S1727008AbfH2P6Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 11:58:25 -0400
+Received: from smtprelay0139.hostedemail.com ([216.40.44.139]:39409 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726283AbfH2P6Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:52:18 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFhrNr030706;
-        Thu, 29 Aug 2019 15:52:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=sZ2wJVCaCx4ayGv+glOtET55sKUDTDNz0zk7gEWxJE8=;
- b=YJ4EdWrqPjZgsd3oxpHYkPGMwSGEtsJmxmWls45AQyRIRiYZ0CZ59Tg77T/9MwoHWOra
- 2XxwqaEqrpq4gw/9hj/94VyDHa/rLeGs/4BRG2FCkHYWtOSOM6zGOGR/7cEIVdbHqRLh
- Jj+O7pzQ7qhfUkISrk1sOv3BpeC4VCvd/Xvcwds5apVSmH9ft6Fw/rmGMAS3jaDfmdjX
- VI1b6MzqRtlWRFE1xJTDOMWhVerxM3SN4XsUz9FDOq+IImYDwPImfFNwiYgqMifQg5xM
- wGE6fIvRqmG1RoOkDPEG96T5idBskSJrqYbuOU6iXabRgegjqqqulv0QgKP+l1cNE1KH 9Q== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2uphcyg7aw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 15:52:10 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFicHC049247;
-        Thu, 29 Aug 2019 15:52:09 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2untev826q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 15:52:08 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TFq6HA012139;
-        Thu, 29 Aug 2019 15:52:06 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Aug 2019 08:52:05 -0700
-Date:   Thu, 29 Aug 2019 08:52:04 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        Thu, 29 Aug 2019 11:58:24 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 22F09182251AF;
+        Thu, 29 Aug 2019 15:58:23 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3354:3622:3865:3867:3868:3870:3871:3872:3874:4321:4605:5007:6119:6742:6743:7903:10004:10400:10848:11026:11232:11657:11658:11914:12296:12297:12740:12760:12895:13069:13138:13161:13229:13231:13311:13357:13439:14096:14097:14180:14659:14721:21060:21080:21611:21627:21740:30012:30030:30054:30069:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: cub88_2b93c88708b5f
+X-Filterd-Recvd-Size: 3480
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 29 Aug 2019 15:58:19 +0000 (UTC)
+Message-ID: <67d6efbbc9ac6db23215660cb970b7ef29dc0c1d.camel@perches.com>
+Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
+From:   Joe Perches <joe@perches.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
         Amir Goldstein <amir73il@gmail.com>,
-        Boaz Harrosh <boaz@plexistor.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3/3] xfs: Fix stale data exposure when readahead races
- with hole punch
-Message-ID: <20190829155204.GD5354@magnolia>
-References: <20190829131034.10563-1-jack@suse.cz>
- <20190829131034.10563-4-jack@suse.cz>
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Date:   Thu, 29 Aug 2019 08:58:17 -0700
+In-Reply-To: <20190829103252.GA64893@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+         <20190802125347.166018-2-gaoxiang25@huawei.com>
+         <20190829095954.GB20598@infradead.org>
+         <20190829103252.GA64893@architecture4>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829131034.10563-4-jack@suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908290168
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908290168
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 03:10:34PM +0200, Jan Kara wrote:
-> Hole puching currently evicts pages from page cache and then goes on to
-> remove blocks from the inode. This happens under both XFS_IOLOCK_EXCL
-> and XFS_MMAPLOCK_EXCL which provides appropriate serialization with
-> racing reads or page faults. However there is currently nothing that
-> prevents readahead triggered by fadvise() or madvise() from racing with
-> the hole punch and instantiating page cache page after hole punching has
-> evicted page cache in xfs_flush_unmap_range() but before it has removed
-> blocks from the inode. This page cache page will be mapping soon to be
-> freed block and that can lead to returning stale data to userspace or
-> even filesystem corruption.
+On Thu, 2019-08-29 at 18:32 +0800, Gao Xiang wrote:
+> Hi Christoph,
 > 
-> Fix the problem by protecting handling of readahead requests by
-> XFS_IOLOCK_SHARED similarly as we protect reads.
+> On Thu, Aug 29, 2019 at 02:59:54AM -0700, Christoph Hellwig wrote:
+> > > --- /dev/null
+> > > +++ b/fs/erofs/erofs_fs.h
+> > > @@ -0,0 +1,316 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0-only OR Apache-2.0 */
+> > > +/*
+> > > + * linux/fs/erofs/erofs_fs.h
+> > 
+> > Please remove the pointless file names in the comment headers.
 > 
-> CC: stable@vger.kernel.org
-> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
-> Reported-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-
-Is there a test on xfstests to demonstrate this race?
-
-Will test it out though...
-
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  fs/xfs/xfs_file.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+> Already removed in the latest version.
 > 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 28101bbc0b78..d952d5962e93 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -28,6 +28,7 @@
->  #include <linux/falloc.h>
->  #include <linux/backing-dev.h>
->  #include <linux/mman.h>
-> +#include <linux/fadvise.h>
->  
->  static const struct vm_operations_struct xfs_file_vm_ops;
->  
-> @@ -933,6 +934,30 @@ xfs_file_fallocate(
->  	return error;
->  }
->  
-> +STATIC int
-> +xfs_file_fadvise(
-> +	struct file	*file,
-> +	loff_t		start,
-> +	loff_t		end,
-> +	int		advice)
-> +{
-> +	struct xfs_inode *ip = XFS_I(file_inode(file));
-> +	int ret;
-> +	int lockflags = 0;
-> +
-> +	/*
-> +	 * Operations creating pages in page cache need protection from hole
-> +	 * punching and similar ops
-> +	 */
-> +	if (advice == POSIX_FADV_WILLNEED) {
-> +		lockflags = XFS_IOLOCK_SHARED;
-> +		xfs_ilock(ip, lockflags);
-> +	}
-> +	ret = generic_fadvise(file, start, end, advice);
-> +	if (lockflags)
-> +		xfs_iunlock(ip, lockflags);
-> +	return ret;
-> +}
->  
->  STATIC loff_t
->  xfs_file_remap_range(
-> @@ -1232,6 +1257,7 @@ const struct file_operations xfs_file_operations = {
->  	.fsync		= xfs_file_fsync,
->  	.get_unmapped_area = thp_get_unmapped_area,
->  	.fallocate	= xfs_file_fallocate,
-> +	.fadvise	= xfs_file_fadvise,
->  	.remap_file_range = xfs_file_remap_range,
->  };
->  
-> -- 
-> 2.16.4
+> > > +struct erofs_super_block {
+> > > +/*  0 */__le32 magic;           /* in the little endian */
+> > > +/*  4 */__le32 checksum;        /* crc32c(super_block) */
+> > > +/*  8 */__le32 features;        /* (aka. feature_compat) */
+> > > +/* 12 */__u8 blkszbits;         /* support block_size == PAGE_SIZE only */
+> > 
+> > Please remove all the byte offset comments.  That is something that can
+> > easily be checked with gdb or pahole.
 > 
+> I have no idea the actual issue here.
+> It will help all developpers better add fields or calculate
+> these offsets in their mind, and with care.
+> 
+> Rather than they didn't run "gdb" or "pahole" and change it by mistake.
+
+I think Christoph is not right here.
+
+Using external tools for validation is extra work
+when necessary for understanding the code.
+
+The expected offset is somewhat valuable, but
+perhaps the form is a bit off given the visual
+run-in to the field types.
+
+The extra work with this form is manipulating all
+the offsets whenever a structure change occurs.
+
+The comments might be better with a form more like:
+
+struct erofs_super_block {	/* offset description */
+	__le32 magic;		/*   0  */
+	__le32 checksum;	/*   4  crc32c(super_block) */
+	__le32 features;	/*   8  (aka. feature_compat) */
+	__u8 blkszbits;		/*  12  support block_size == PAGE_SIZE only */
+
+
