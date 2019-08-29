@@ -2,144 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CD4A1FAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 17:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0D5A2007
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 17:52:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbfH2Ptt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 11:49:49 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34710 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbfH2Ptt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:49:49 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFiF1v031211;
-        Thu, 29 Aug 2019 15:49:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=a3VcsoTcsM17daz5ifjQxU9eyu5QEXdo1iwDaIZe2bc=;
- b=o60jjx3GsEg7PlWXOQ6rtoNfNOXXy4eVCzlRk7Wc2ya+08DkgzUaEMEIOdt5Bo9+GzYw
- 02L5GnBE2xvZP3uuirO7ApWJShyL47YyDnxfaJb08fOpwVpiHE5S3qXA0s36WU5b1MOZ
- i5fAcKyo4w7wWXvsFiQHsPgW8S8yIZ+OxtF6mecjIpk/TknOhpIxYswF2Y8fQ4h96UmQ
- LXbqvXwQ5hivvY4pHBeifDz1JYA9YtcgKqvxqT+xEGlxcF/HU40Y3mz83ds/8DTFtpsb
- ldO+jbpkNN2rJgDq30uL7CzNZZLEA9+QZBRX25Rmrna460o17a30WVoAb7jgEznlLIKc Kg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2uphcyg6r8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 15:49:41 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFiFGf129148;
-        Thu, 29 Aug 2019 15:49:41 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2upc8uurw6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 15:49:41 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TFnd39010514;
-        Thu, 29 Aug 2019 15:49:39 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Aug 2019 08:49:38 -0700
-Date:   Thu, 29 Aug 2019 08:49:37 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        Amir Goldstein <amir73il@gmail.com>,
-        Boaz Harrosh <boaz@plexistor.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm: Handle MADV_WILLNEED through vfs_fadvise()
-Message-ID: <20190829154937.GC5354@magnolia>
-References: <20190829131034.10563-1-jack@suse.cz>
- <20190829131034.10563-2-jack@suse.cz>
+        id S1728041AbfH2PwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 11:52:23 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:3958 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728374AbfH2PwT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 11:52:19 -0400
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 0C6C9E086C35E691A811;
+        Thu, 29 Aug 2019 23:52:15 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 29 Aug 2019 23:52:14 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 29 Aug 2019 23:52:14 +0800
+Date:   Thu, 29 Aug 2019 23:51:27 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     <devel@driverdev.osuosl.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Valdis =?gbk?Q?Kl=A8=A5tnieks?= <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190829155127.GA136563@architecture4>
+References: <20190828170022.GA7873@kroah.com>
+ <20190829062340.GB3047@infradead.org>
+ <20190829063955.GA30193@kroah.com>
+ <20190829094136.GA28643@infradead.org>
+ <20190829095019.GA13557@kroah.com>
+ <20190829103749.GA13661@infradead.org>
+ <20190829111810.GA23393@kroah.com>
+ <20190829151144.GJ23584@kadam>
+ <20190829152757.GA125003@architecture4>
+ <20190829154346.GK23584@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190829131034.10563-2-jack@suse.cz>
+In-Reply-To: <20190829154346.GK23584@kadam>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908290168
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908290168
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme703-chm.china.huawei.com (10.1.199.99) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 03:10:32PM +0200, Jan Kara wrote:
-> Currently handling of MADV_WILLNEED hint calls directly into readahead
-> code. Handle it by calling vfs_fadvise() instead so that filesystem can
-> use its ->fadvise() callback to acquire necessary locks or otherwise
-> prepare for the request.
+Hi Dan,
+
+On Thu, Aug 29, 2019 at 06:43:46PM +0300, Dan Carpenter wrote:
+> > p.s. There are 2947 (un)likely places in fs/ directory.
 > 
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Boaz Harrosh <boazh@netapp.com>
-> CC: stable@vger.kernel.org
-> Signed-off-by: Jan Kara <jack@suse.cz>
+> I was complaining about you adding new pointless ones, not existing
+> ones.  The likely/unlikely annotations are supposed to be functional and
+> not decorative.  I explained this very clearly.
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+I don't think that is mostly pointless. I think it has functional use
+because all error handling paths are rarely happened, or can you remove
+the unlikely in IS_ERR as well?
 
---D
-
-> ---
->  mm/madvise.c | 22 ++++++++++++++++------
->  1 file changed, 16 insertions(+), 6 deletions(-)
 > 
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 968df3aa069f..bac973b9f2cc 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -14,6 +14,7 @@
->  #include <linux/userfaultfd_k.h>
->  #include <linux/hugetlb.h>
->  #include <linux/falloc.h>
-> +#include <linux/fadvise.h>
->  #include <linux/sched.h>
->  #include <linux/ksm.h>
->  #include <linux/fs.h>
-> @@ -275,6 +276,7 @@ static long madvise_willneed(struct vm_area_struct *vma,
->  			     unsigned long start, unsigned long end)
->  {
->  	struct file *file = vma->vm_file;
-> +	loff_t offset;
->  
->  	*prev = vma;
->  #ifdef CONFIG_SWAP
-> @@ -298,12 +300,20 @@ static long madvise_willneed(struct vm_area_struct *vma,
->  		return 0;
->  	}
->  
-> -	start = ((start - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
-> -	if (end > vma->vm_end)
-> -		end = vma->vm_end;
-> -	end = ((end - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
-> -
-> -	force_page_cache_readahead(file->f_mapping, file, start, end - start);
-> +	/*
-> +	 * Filesystem's fadvise may need to take various locks.  We need to
-> +	 * explicitly grab a reference because the vma (and hence the
-> +	 * vma's reference to the file) can go away as soon as we drop
-> +	 * mmap_sem.
-> +	 */
-> +	*prev = NULL;	/* tell sys_madvise we drop mmap_sem */
-> +	get_file(file);
-> +	up_read(&current->mm->mmap_sem);
-> +	offset = (loff_t)(start - vma->vm_start)
-> +			+ ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-> +	vfs_fadvise(file, offset, end - start, POSIX_FADV_WILLNEED);
-> +	fput(file);
-> +	down_read(&current->mm->mmap_sem);
->  	return 0;
->  }
->  
-> -- 
-> 2.16.4
+> Probably most of the annotations in fs/ are wrong but they are also
+> harmless except for the slight messiness.  However there are definitely
+> some which are important so removing them all isn't a good idea.
+> 
+> > If you like, I will delete them all.
+> 
+> But for erofs, I don't think that any of the likely/unlikely calls have
+> been thought about so I'm fine with removing all of them in one go.
+
+Maybe some misuse but rare, I will show you case by case. Wait a minute.
+
+Thanks,
+Gao Xiang
+
+> 
+> regards,
+> dan carpenter
 > 
