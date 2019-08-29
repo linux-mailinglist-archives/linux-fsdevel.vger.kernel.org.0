@@ -2,37 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5021A252F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 20:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE419A24A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 20:24:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730101AbfH2S3E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 14:29:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56778 "EHLO mail.kernel.org"
+        id S1728596AbfH2SYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 14:24:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728293AbfH2SPI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:15:08 -0400
+        id S1728213AbfH2SQR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:16:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75BFF2189D;
-        Thu, 29 Aug 2019 18:15:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1415923404;
+        Thu, 29 Aug 2019 18:16:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102508;
-        bh=5GRht+bIAa0hz22+5MeBH34xCjSsB4QkhPYcDHuiw80=;
+        s=default; t=1567102576;
+        bh=xVe0SO2iGzckCruoLW2k9E9IGcjFTpDGhy4yyzlE/XU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i5QQ9ubKlBOvZqQV5UvFpfDzIU0eDuoaHG0BqF9UzHr/3f2m1seoD5jETrNHaAxKr
-         RxzaNnfHtGrIP0i02WYOXzQ6xGsO2Ag/MFFgSEroKvGGf6g4eJP5VxSNroacC6JSLW
-         cDK1C40y/Exeq/E498rbNeQvPXy1MLwaeBeNgtyE=
+        b=N1XkF2vLtqt1hVdrVrYx2V/YcotWXlPn83DJ+uxyZmedyU8oAwUWxhQC1hp/eOKC3
+         wBUTWr1vXzaCQ+WxQ+Cz1KzBzRDtkfmoU6x31GV/P659In2WjG4Altal7QlUoQ8Axb
+         FzOWLr7KTixc69Fjka9aNN7UBmH6KaTYDyAx8G3M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 58/76] io_uring: don't enter poll loop if we have CQEs pending
-Date:   Thu, 29 Aug 2019 14:12:53 -0400
-Message-Id: <20190829181311.7562-58-sashal@kernel.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Bill O'Donnell <billodo@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 22/45] vfs: fix page locking deadlocks when deduping files
+Date:   Thu, 29 Aug 2019 14:15:22 -0400
+Message-Id: <20190829181547.8280-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
-References: <20190829181311.7562-1-sashal@kernel.org>
+In-Reply-To: <20190829181547.8280-1-sashal@kernel.org>
+References: <20190829181547.8280-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -42,68 +44,114 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
 
-[ Upstream commit a3a0e43fd77013819e4b6f55e37e0efe8e35d805 ]
+[ Upstream commit edc58dd0123b552453a74369bd0c8d890b497b4b ]
 
-We need to check if we have CQEs pending before starting a poll loop,
-as those could be the events we will be spinning for (and hence we'll
-find none). This can happen if a CQE triggers an error, or if it is
-found by eg an IRQ before we get a chance to find it through polling.
+When dedupe wants to use the page cache to compare parts of two files
+for dedupe, we must be very careful to handle locking correctly.  The
+current code doesn't do this.  It must lock and unlock the page only
+once if the two pages are the same, since the overlapping range check
+doesn't catch this when blocksize < pagesize.  If the pages are distinct
+but from the same file, we must observe page locking order and lock them
+in order of increasing offset to avoid clashing with writeback locking.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 876bec6f9bbfcb3 ("vfs: refactor clone/dedupe_file_range common functions")
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Bill O'Donnell <billodo@redhat.com>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io_uring.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ fs/read_write.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 41 insertions(+), 8 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5bb01d84f38d3..83e3cede11220 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -618,6 +618,13 @@ static void io_put_req(struct io_kiocb *req)
- 		io_free_req(req);
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 85fd7a8ee29eb..5fb5ee5b8cd70 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1888,10 +1888,7 @@ int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
+ }
+ EXPORT_SYMBOL(vfs_clone_file_range);
+ 
+-/*
+- * Read a page's worth of file data into the page cache.  Return the page
+- * locked.
+- */
++/* Read a page's worth of file data into the page cache. */
+ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
+ {
+ 	struct address_space *mapping;
+@@ -1907,10 +1904,32 @@ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
+ 		put_page(page);
+ 		return ERR_PTR(-EIO);
+ 	}
+-	lock_page(page);
+ 	return page;
  }
  
-+static unsigned io_cqring_events(struct io_cq_ring *ring)
++/*
++ * Lock two pages, ensuring that we lock in offset order if the pages are from
++ * the same file.
++ */
++static void vfs_lock_two_pages(struct page *page1, struct page *page2)
 +{
-+	/* See comment at the top of this file */
-+	smp_rmb();
-+	return READ_ONCE(ring->r.tail) - READ_ONCE(ring->r.head);
++	/* Always lock in order of increasing index. */
++	if (page1->index > page2->index)
++		swap(page1, page2);
++
++	lock_page(page1);
++	if (page1 != page2)
++		lock_page(page2);
++}
++
++/* Unlock two pages, being careful not to unlock the same page twice. */
++static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
++{
++	unlock_page(page1);
++	if (page1 != page2)
++		unlock_page(page2);
 +}
 +
  /*
-  * Find and free completed poll iocbs
-  */
-@@ -756,6 +763,14 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
- 	do {
- 		int tmin = 0;
- 
-+		/*
-+		 * Don't enter poll loop if we already have events pending.
-+		 * If we do, we can potentially be spinning for commands that
-+		 * already triggered a CQE (eg in error).
-+		 */
-+		if (io_cqring_events(ctx->cq_ring))
-+			break;
+  * Compare extents of two files to see if they are the same.
+  * Caller must have locked both inodes to prevent write races.
+@@ -1948,10 +1967,24 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 		dest_page = vfs_dedupe_get_page(dest, destoff);
+ 		if (IS_ERR(dest_page)) {
+ 			error = PTR_ERR(dest_page);
+-			unlock_page(src_page);
+ 			put_page(src_page);
+ 			goto out_error;
+ 		}
 +
- 		/*
- 		 * If a submit got punted to a workqueue, we can have the
- 		 * application entering polling for a command before it gets
-@@ -2232,13 +2247,6 @@ static int io_ring_submit(struct io_ring_ctx *ctx, unsigned int to_submit)
- 	return submit;
- }
++		vfs_lock_two_pages(src_page, dest_page);
++
++		/*
++		 * Now that we've locked both pages, make sure they're still
++		 * mapped to the file data we're interested in.  If not,
++		 * someone is invalidating pages on us and we lose.
++		 */
++		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
++		    src_page->mapping != src->i_mapping ||
++		    dest_page->mapping != dest->i_mapping) {
++			same = false;
++			goto unlock;
++		}
++
+ 		src_addr = kmap_atomic(src_page);
+ 		dest_addr = kmap_atomic(dest_page);
  
--static unsigned io_cqring_events(struct io_cq_ring *ring)
--{
--	/* See comment at the top of this file */
--	smp_rmb();
--	return READ_ONCE(ring->r.tail) - READ_ONCE(ring->r.head);
--}
--
- /*
-  * Wait until events become available, if we don't already have some. The
-  * application must reap them itself, as they reside on the shared cq ring.
+@@ -1963,8 +1996,8 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 
+ 		kunmap_atomic(dest_addr);
+ 		kunmap_atomic(src_addr);
+-		unlock_page(dest_page);
+-		unlock_page(src_page);
++unlock:
++		vfs_unlock_two_pages(src_page, dest_page);
+ 		put_page(dest_page);
+ 		put_page(src_page);
+ 
 -- 
 2.20.1
 
