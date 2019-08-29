@@ -2,91 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0D5A2007
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 17:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 524BAA1FFB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 17:52:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbfH2PwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 11:52:23 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3958 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728374AbfH2PwT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:52:19 -0400
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id 0C6C9E086C35E691A811;
-        Thu, 29 Aug 2019 23:52:15 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 29 Aug 2019 23:52:14 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Thu, 29 Aug 2019 23:52:14 +0800
-Date:   Thu, 29 Aug 2019 23:51:27 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     <devel@driverdev.osuosl.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Valdis =?gbk?Q?Kl=A8=A5tnieks?= <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190829155127.GA136563@architecture4>
-References: <20190828170022.GA7873@kroah.com>
- <20190829062340.GB3047@infradead.org>
- <20190829063955.GA30193@kroah.com>
- <20190829094136.GA28643@infradead.org>
- <20190829095019.GA13557@kroah.com>
- <20190829103749.GA13661@infradead.org>
- <20190829111810.GA23393@kroah.com>
- <20190829151144.GJ23584@kadam>
- <20190829152757.GA125003@architecture4>
- <20190829154346.GK23584@kadam>
+        id S1728460AbfH2PwU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 11:52:20 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37820 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728804AbfH2PwS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 11:52:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFhrNr030706;
+        Thu, 29 Aug 2019 15:52:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=sZ2wJVCaCx4ayGv+glOtET55sKUDTDNz0zk7gEWxJE8=;
+ b=YJ4EdWrqPjZgsd3oxpHYkPGMwSGEtsJmxmWls45AQyRIRiYZ0CZ59Tg77T/9MwoHWOra
+ 2XxwqaEqrpq4gw/9hj/94VyDHa/rLeGs/4BRG2FCkHYWtOSOM6zGOGR/7cEIVdbHqRLh
+ Jj+O7pzQ7qhfUkISrk1sOv3BpeC4VCvd/Xvcwds5apVSmH9ft6Fw/rmGMAS3jaDfmdjX
+ VI1b6MzqRtlWRFE1xJTDOMWhVerxM3SN4XsUz9FDOq+IImYDwPImfFNwiYgqMifQg5xM
+ wGE6fIvRqmG1RoOkDPEG96T5idBskSJrqYbuOU6iXabRgegjqqqulv0QgKP+l1cNE1KH 9Q== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2uphcyg7aw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 15:52:10 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFicHC049247;
+        Thu, 29 Aug 2019 15:52:09 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2untev826q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 15:52:08 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TFq6HA012139;
+        Thu, 29 Aug 2019 15:52:06 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Aug 2019 08:52:05 -0700
+Date:   Thu, 29 Aug 2019 08:52:04 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        Amir Goldstein <amir73il@gmail.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3/3] xfs: Fix stale data exposure when readahead races
+ with hole punch
+Message-ID: <20190829155204.GD5354@magnolia>
+References: <20190829131034.10563-1-jack@suse.cz>
+ <20190829131034.10563-4-jack@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829154346.GK23584@kadam>
+In-Reply-To: <20190829131034.10563-4-jack@suse.cz>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme703-chm.china.huawei.com (10.1.199.99) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908290168
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908290168
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Dan,
-
-On Thu, Aug 29, 2019 at 06:43:46PM +0300, Dan Carpenter wrote:
-> > p.s. There are 2947 (un)likely places in fs/ directory.
+On Thu, Aug 29, 2019 at 03:10:34PM +0200, Jan Kara wrote:
+> Hole puching currently evicts pages from page cache and then goes on to
+> remove blocks from the inode. This happens under both XFS_IOLOCK_EXCL
+> and XFS_MMAPLOCK_EXCL which provides appropriate serialization with
+> racing reads or page faults. However there is currently nothing that
+> prevents readahead triggered by fadvise() or madvise() from racing with
+> the hole punch and instantiating page cache page after hole punching has
+> evicted page cache in xfs_flush_unmap_range() but before it has removed
+> blocks from the inode. This page cache page will be mapping soon to be
+> freed block and that can lead to returning stale data to userspace or
+> even filesystem corruption.
 > 
-> I was complaining about you adding new pointless ones, not existing
-> ones.  The likely/unlikely annotations are supposed to be functional and
-> not decorative.  I explained this very clearly.
-
-I don't think that is mostly pointless. I think it has functional use
-because all error handling paths are rarely happened, or can you remove
-the unlikely in IS_ERR as well?
-
+> Fix the problem by protecting handling of readahead requests by
+> XFS_IOLOCK_SHARED similarly as we protect reads.
 > 
-> Probably most of the annotations in fs/ are wrong but they are also
-> harmless except for the slight messiness.  However there are definitely
-> some which are important so removing them all isn't a good idea.
-> 
-> > If you like, I will delete them all.
-> 
-> But for erofs, I don't think that any of the likely/unlikely calls have
-> been thought about so I'm fine with removing all of them in one go.
+> CC: stable@vger.kernel.org
+> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
+> Reported-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
-Maybe some misuse but rare, I will show you case by case. Wait a minute.
+Is there a test on xfstests to demonstrate this race?
 
-Thanks,
-Gao Xiang
+Will test it out though...
 
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> ---
+>  fs/xfs/xfs_file.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 > 
-> regards,
-> dan carpenter
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 28101bbc0b78..d952d5962e93 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/falloc.h>
+>  #include <linux/backing-dev.h>
+>  #include <linux/mman.h>
+> +#include <linux/fadvise.h>
+>  
+>  static const struct vm_operations_struct xfs_file_vm_ops;
+>  
+> @@ -933,6 +934,30 @@ xfs_file_fallocate(
+>  	return error;
+>  }
+>  
+> +STATIC int
+> +xfs_file_fadvise(
+> +	struct file	*file,
+> +	loff_t		start,
+> +	loff_t		end,
+> +	int		advice)
+> +{
+> +	struct xfs_inode *ip = XFS_I(file_inode(file));
+> +	int ret;
+> +	int lockflags = 0;
+> +
+> +	/*
+> +	 * Operations creating pages in page cache need protection from hole
+> +	 * punching and similar ops
+> +	 */
+> +	if (advice == POSIX_FADV_WILLNEED) {
+> +		lockflags = XFS_IOLOCK_SHARED;
+> +		xfs_ilock(ip, lockflags);
+> +	}
+> +	ret = generic_fadvise(file, start, end, advice);
+> +	if (lockflags)
+> +		xfs_iunlock(ip, lockflags);
+> +	return ret;
+> +}
+>  
+>  STATIC loff_t
+>  xfs_file_remap_range(
+> @@ -1232,6 +1257,7 @@ const struct file_operations xfs_file_operations = {
+>  	.fsync		= xfs_file_fsync,
+>  	.get_unmapped_area = thp_get_unmapped_area,
+>  	.fallocate	= xfs_file_fallocate,
+> +	.fadvise	= xfs_file_fadvise,
+>  	.remap_file_range = xfs_file_remap_range,
+>  };
+>  
+> -- 
+> 2.16.4
 > 
