@@ -2,76 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B9DA1CC9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 16:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31548A1D56
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 16:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbfH2ObR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 10:31:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52710 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbfH2ObR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:31:17 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 36B1E2A09CD;
-        Thu, 29 Aug 2019 14:31:17 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 572151001B2A;
-        Thu, 29 Aug 2019 14:31:08 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id D65632206F5; Thu, 29 Aug 2019 10:31:07 -0400 (EDT)
-Date:   Thu, 29 Aug 2019 10:31:07 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v3 00/13] virtio-fs: shared file system for virtual
- machines
-Message-ID: <20190829143107.GB6744@redhat.com>
-References: <20190821173742.24574-1-vgoyal@redhat.com>
- <CAJfpegv_XS=kLxw_FzWNM2Xao5wsn7oGbk3ow78gU8tpXwo-sg@mail.gmail.com>
- <20190829132949.GA6744@redhat.com>
- <CAJfpegtd-MQNbUW9YuL4xdXDkGR8K6LMHCqDG2Ppu9F_Hyk2RQ@mail.gmail.com>
+        id S1728885AbfH2OlV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 10:41:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48678 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728032AbfH2OlU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 10:41:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KdVEQ5VHWxxvnLBymhZvGgMWXmV/8HO1L9jLY+cC+b4=; b=kNRVBxJEcBa0af3GiXPGGFOZT
+        oCh+HQZnQv4RvcQGc+jSeepfyhlLUVsHDVH/T4WP8No1q3gznXe7HfqRZS2YNX00hi0dTdnb/04D+
+        PasJEtLwJ2nkcDEHtIGAtdo3pBzMhfXMcA3I3QrVzzwJnyQTRHcltq86qSDPsVRAQfPR69Exn2vPX
+        wumT6ZC0llos6PXgfW5wO21RT97FgH4cJhNmSjg3mhMGoTdeULBaJ9OFHUQcljnhTPtwbc7sVVdSX
+        m3s0D3gE2VPjKc2c3x5kclJy3LHFLN2g4ga3feezppd4VnMzgpRlo2FhqO0KmDIrR/IwBLwHC+RRI
+        UryEw8zeQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3Lbk-0001H5-38; Thu, 29 Aug 2019 14:41:04 +0000
+Date:   Thu, 29 Aug 2019 07:41:04 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, aneesh.kumar@linux.ibm.com
+Subject: Re: [PATCH 0/5] ext4: direct IO via iomap infrastructure
+Message-ID: <20190829144103.GA1683@infradead.org>
+References: <20190822141126.70A94A407B@d06av23.portsmouth.uk.ibm.com>
+ <20190824031830.GB2174@poseidon.bobrowski.net>
+ <20190824035554.GA1037502@magnolia>
+ <20190824230427.GA32012@infradead.org>
+ <20190827095221.GA1568@poseidon.bobrowski.net>
+ <20190828120509.GC22165@poseidon.bobrowski.net>
+ <20190828142729.GB24857@mit.edu>
+ <20190828180215.GE22343@quack2.suse.cz>
+ <20190829063608.GA17426@infradead.org>
+ <20190829112048.GA2486@poseidon.bobrowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegtd-MQNbUW9YuL4xdXDkGR8K6LMHCqDG2Ppu9F_Hyk2RQ@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 29 Aug 2019 14:31:17 +0000 (UTC)
+In-Reply-To: <20190829112048.GA2486@poseidon.bobrowski.net>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 03:41:26PM +0200, Miklos Szeredi wrote:
-> On Thu, Aug 29, 2019 at 3:29 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> 
-> > #ifdef CONFIG_VIRTIO_FS
-> >         /** virtio-fs's physically contiguous buffer for in and out args */
-> >         void *argbuf;
-> > #endif
-> >
-> > It should have worked. Not sure why it is not working.
-> 
-> Needs to be changed to
-> 
-> #if IS_ENABLED(CONFIG_VIRTIO_FS)
-> 
-> Pushed out fixed version.
+On Thu, Aug 29, 2019 at 09:20:50PM +1000, Matthew Bobrowski wrote:
+> Uh ha! So, we conclude that there's no need to muck around with hairy
+> ioend's, or the need to denote whether there's unwritten extents held
+> against the inode using tricky state flag for that matter.
 
-Cool. That works. Faced another compilation error with "make allmodconfig"
-config file.
-
-  HDRINST usr/include/linux/virtio_fs.h
-error: include/uapi/linux/virtio_fs.h: missing "WITH Linux-syscall-note" for SPDX-License-Identifier
-make[1]: *** [scripts/Makefile.headersinst:66: usr/include/linux/virtio_fs.h] Error 1
-
-Looks like include/uapi/linux/virtio_fs.h needs following.
-
--/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
-+/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-
-Vivek
+So in XFS we never had the i_unwritten counter, that is something
+purely ext4 specific, and I can't really help with that unfortunately,
+but maybe the people who implemented it might be able to help on that
+one.
