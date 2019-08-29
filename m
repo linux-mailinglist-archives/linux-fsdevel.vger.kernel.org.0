@@ -2,36 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B672A2532
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 20:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5021A252F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 20:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729163AbfH2SPH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 14:15:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56752 "EHLO mail.kernel.org"
+        id S1730101AbfH2S3E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 14:29:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729149AbfH2SPG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:15:06 -0400
+        id S1728293AbfH2SPI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:15:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AE3B2189D;
-        Thu, 29 Aug 2019 18:15:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75BFF2189D;
+        Thu, 29 Aug 2019 18:15:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102504;
-        bh=XZKfI7GPEXf1VuEVjRMuwNrmQbjMSQI1t/1wy7dJtws=;
+        s=default; t=1567102508;
+        bh=5GRht+bIAa0hz22+5MeBH34xCjSsB4QkhPYcDHuiw80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EG/RO7LrTqEtX2vI8SM4WzWeIq1YiDXozI8GnQSPTV8mQhz3NkAvoivYHDeu4mXfJ
-         vZwvUBelD6AIsfJ45wMkPjqHeugAnxJbp4tCQrnwmK44nYftOWxwSdixhheRVGgQ28
-         ff3a1/t41lb+J4Ng8BsScz4lAEMFI3HZFuPX6gp4=
+        b=i5QQ9ubKlBOvZqQV5UvFpfDzIU0eDuoaHG0BqF9UzHr/3f2m1seoD5jETrNHaAxKr
+         RxzaNnfHtGrIP0i02WYOXzQ6xGsO2Ag/MFFgSEroKvGGf6g4eJP5VxSNroacC6JSLW
+         cDK1C40y/Exeq/E498rbNeQvPXy1MLwaeBeNgtyE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "Jeffrey M . Birnbaum" <jmbnyc@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 55/76] io_uring: fix potential hang with polled IO
-Date:   Thu, 29 Aug 2019 14:12:50 -0400
-Message-Id: <20190829181311.7562-55-sashal@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 58/76] io_uring: don't enter poll loop if we have CQEs pending
+Date:   Thu, 29 Aug 2019 14:12:53 -0400
+Message-Id: <20190829181311.7562-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -46,103 +44,66 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 500f9fbadef86466a435726192f4ca4df7d94236 ]
+[ Upstream commit a3a0e43fd77013819e4b6f55e37e0efe8e35d805 ]
 
-If a request issue ends up being punted to async context to avoid
-blocking, we can get into a situation where the original application
-enters the poll loop for that very request before it has been issued.
-This should not be an issue, except that the polling will hold the
-io_uring uring_ctx mutex for the duration of the poll. When the async
-worker has actually issued the request, it needs to acquire this mutex
-to add the request to the poll issued list. Since the application
-polling is already holding this mutex, the workqueue sleeps on the
-mutex forever, and the application thus never gets a chance to poll for
-the very request it was interested in.
+We need to check if we have CQEs pending before starting a poll loop,
+as those could be the events we will be spinning for (and hence we'll
+find none). This can happen if a CQE triggers an error, or if it is
+found by eg an IRQ before we get a chance to find it through polling.
 
-Fix this by ensuring that the polling drops the uring_ctx occasionally
-if it's not making any progress.
-
-Reported-by: Jeffrey M. Birnbaum <jmbnyc@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io_uring.c | 36 +++++++++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 11 deletions(-)
+ fs/io_uring.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 61018559e8fe6..5bb01d84f38d3 100644
+index 5bb01d84f38d3..83e3cede11220 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -743,11 +743,34 @@ static void io_iopoll_reap_events(struct io_ring_ctx *ctx)
- static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
- 			   long min)
- {
--	int ret = 0;
-+	int iters, ret = 0;
-+
-+	/*
-+	 * We disallow the app entering submit/complete with polling, but we
-+	 * still need to lock the ring to prevent racing with polled issue
-+	 * that got punted to a workqueue.
-+	 */
-+	mutex_lock(&ctx->uring_lock);
+@@ -618,6 +618,13 @@ static void io_put_req(struct io_kiocb *req)
+ 		io_free_req(req);
+ }
  
-+	iters = 0;
++static unsigned io_cqring_events(struct io_cq_ring *ring)
++{
++	/* See comment at the top of this file */
++	smp_rmb();
++	return READ_ONCE(ring->r.tail) - READ_ONCE(ring->r.head);
++}
++
+ /*
+  * Find and free completed poll iocbs
+  */
+@@ -756,6 +763,14 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
  	do {
  		int tmin = 0;
  
 +		/*
-+		 * If a submit got punted to a workqueue, we can have the
-+		 * application entering polling for a command before it gets
-+		 * issued. That app will hold the uring_lock for the duration
-+		 * of the poll right here, so we need to take a breather every
-+		 * now and then to ensure that the issue has a chance to add
-+		 * the poll to the issued list. Otherwise we can spin here
-+		 * forever, while the workqueue is stuck trying to acquire the
-+		 * very same mutex.
++		 * Don't enter poll loop if we already have events pending.
++		 * If we do, we can potentially be spinning for commands that
++		 * already triggered a CQE (eg in error).
 +		 */
-+		if (!(++iters & 7)) {
-+			mutex_unlock(&ctx->uring_lock);
-+			mutex_lock(&ctx->uring_lock);
-+		}
++		if (io_cqring_events(ctx->cq_ring))
++			break;
 +
- 		if (*nr_events < min)
- 			tmin = min - *nr_events;
- 
-@@ -757,6 +780,7 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
- 		ret = 0;
- 	} while (min && !*nr_events && !need_resched());
- 
-+	mutex_unlock(&ctx->uring_lock);
- 	return ret;
+ 		/*
+ 		 * If a submit got punted to a workqueue, we can have the
+ 		 * application entering polling for a command before it gets
+@@ -2232,13 +2247,6 @@ static int io_ring_submit(struct io_ring_ctx *ctx, unsigned int to_submit)
+ 	return submit;
  }
  
-@@ -2073,15 +2097,7 @@ static int io_sq_thread(void *data)
- 			unsigned nr_events = 0;
- 
- 			if (ctx->flags & IORING_SETUP_IOPOLL) {
--				/*
--				 * We disallow the app entering submit/complete
--				 * with polling, but we still need to lock the
--				 * ring to prevent racing with polled issue
--				 * that got punted to a workqueue.
--				 */
--				mutex_lock(&ctx->uring_lock);
- 				io_iopoll_check(ctx, &nr_events, 0);
--				mutex_unlock(&ctx->uring_lock);
- 			} else {
- 				/*
- 				 * Normal IO, just pretend everything completed.
-@@ -2978,9 +2994,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		min_complete = min(min_complete, ctx->cq_entries);
- 
- 		if (ctx->flags & IORING_SETUP_IOPOLL) {
--			mutex_lock(&ctx->uring_lock);
- 			ret = io_iopoll_check(ctx, &nr_events, min_complete);
--			mutex_unlock(&ctx->uring_lock);
- 		} else {
- 			ret = io_cqring_wait(ctx, min_complete, sig, sigsz);
- 		}
+-static unsigned io_cqring_events(struct io_cq_ring *ring)
+-{
+-	/* See comment at the top of this file */
+-	smp_rmb();
+-	return READ_ONCE(ring->r.tail) - READ_ONCE(ring->r.head);
+-}
+-
+ /*
+  * Wait until events become available, if we don't already have some. The
+  * application must reap them itself, as they reside on the shared cq ring.
 -- 
 2.20.1
 
