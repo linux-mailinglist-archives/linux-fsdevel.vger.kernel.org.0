@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE419A24A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 20:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA07EA244B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 20:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728596AbfH2SYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 14:24:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58312 "EHLO mail.kernel.org"
+        id S1729945AbfH2SRQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 14:17:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728213AbfH2SQR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:16:17 -0400
+        id S1729225AbfH2SRP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:17:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1415923404;
-        Thu, 29 Aug 2019 18:16:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A78C5233FF;
+        Thu, 29 Aug 2019 18:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102576;
-        bh=xVe0SO2iGzckCruoLW2k9E9IGcjFTpDGhy4yyzlE/XU=;
+        s=default; t=1567102634;
+        bh=QxZaXZ0zijJUWnGqXLJsdGGyfICNLhjFRpE5M0KDN0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N1XkF2vLtqt1hVdrVrYx2V/YcotWXlPn83DJ+uxyZmedyU8oAwUWxhQC1hp/eOKC3
-         wBUTWr1vXzaCQ+WxQ+Cz1KzBzRDtkfmoU6x31GV/P659In2WjG4Altal7QlUoQ8Axb
-         FzOWLr7KTixc69Fjka9aNN7UBmH6KaTYDyAx8G3M=
+        b=K9PWQ1lXTWfYFzYI0DkBas47B87ahSU+uQJGxjGaO2X1v7WLWUmyXdM8rJqd9seRl
+         WtEyG0If35SfHgBQiE8+wCuxs+q0+rRRsSsmMrm5N+NA/imkcLOVfHCduAcVpdx+Cy
+         BeIzOHHzOFABECU5K1czt4dJ8wKR8g40CrlAJqlw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
         Bill O'Donnell <billodo@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 22/45] vfs: fix page locking deadlocks when deduping files
-Date:   Thu, 29 Aug 2019 14:15:22 -0400
-Message-Id: <20190829181547.8280-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 14/27] vfs: fix page locking deadlocks when deduping files
+Date:   Thu, 29 Aug 2019 14:16:40 -0400
+Message-Id: <20190829181655.8741-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829181547.8280-1-sashal@kernel.org>
-References: <20190829181547.8280-1-sashal@kernel.org>
+In-Reply-To: <20190829181655.8741-1-sashal@kernel.org>
+References: <20190829181655.8741-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -66,10 +66,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 41 insertions(+), 8 deletions(-)
 
 diff --git a/fs/read_write.c b/fs/read_write.c
-index 85fd7a8ee29eb..5fb5ee5b8cd70 100644
+index d6f8bfb0f7942..38a8bcccf0dd0 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
-@@ -1888,10 +1888,7 @@ int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
+@@ -1882,10 +1882,7 @@ int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
  }
  EXPORT_SYMBOL(vfs_clone_file_range);
  
@@ -81,7 +81,7 @@ index 85fd7a8ee29eb..5fb5ee5b8cd70 100644
  static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
  {
  	struct address_space *mapping;
-@@ -1907,10 +1904,32 @@ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
+@@ -1901,10 +1898,32 @@ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
  		put_page(page);
  		return ERR_PTR(-EIO);
  	}
@@ -115,7 +115,7 @@ index 85fd7a8ee29eb..5fb5ee5b8cd70 100644
  /*
   * Compare extents of two files to see if they are the same.
   * Caller must have locked both inodes to prevent write races.
-@@ -1948,10 +1967,24 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+@@ -1942,10 +1961,24 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
  		dest_page = vfs_dedupe_get_page(dest, destoff);
  		if (IS_ERR(dest_page)) {
  			error = PTR_ERR(dest_page);
@@ -141,7 +141,7 @@ index 85fd7a8ee29eb..5fb5ee5b8cd70 100644
  		src_addr = kmap_atomic(src_page);
  		dest_addr = kmap_atomic(dest_page);
  
-@@ -1963,8 +1996,8 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+@@ -1957,8 +1990,8 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
  
  		kunmap_atomic(dest_addr);
  		kunmap_atomic(src_addr);
