@@ -2,97 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F121A196D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 13:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B690A1978
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 14:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfH2L61 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 07:58:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:23660 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726739AbfH2L61 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:58:27 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4ED03308FC4A;
-        Thu, 29 Aug 2019 11:58:27 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EA1160872;
-        Thu, 29 Aug 2019 11:58:23 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 966A12206F5; Thu, 29 Aug 2019 07:58:22 -0400 (EDT)
-Date:   Thu, 29 Aug 2019 07:58:22 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v3 00/13] virtio-fs: shared file system for virtual
- machines
-Message-ID: <20190829115822.GA10416@redhat.com>
-References: <20190821173742.24574-1-vgoyal@redhat.com>
- <CAJfpegv_XS=kLxw_FzWNM2Xao5wsn7oGbk3ow78gU8tpXwo-sg@mail.gmail.com>
+        id S1727012AbfH2MAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 08:00:22 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:34016 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726379AbfH2MAV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 08:00:21 -0400
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 1F79FF69D7A4173BC632;
+        Thu, 29 Aug 2019 20:00:11 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 29 Aug 2019 20:00:10 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 29 Aug 2019 20:00:09 +0800
+Date:   Thu, 29 Aug 2019 19:59:22 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 05/24] erofs: add inode operations
+Message-ID: <20190829115922.GG64893@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-6-gaoxiang25@huawei.com>
+ <20190829102426.GE20598@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAJfpegv_XS=kLxw_FzWNM2Xao5wsn7oGbk3ow78gU8tpXwo-sg@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 29 Aug 2019 11:58:27 +0000 (UTC)
+In-Reply-To: <20190829102426.GE20598@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme712-chm.china.huawei.com (10.1.199.108) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 11:28:27AM +0200, Miklos Szeredi wrote:
-> On Wed, Aug 21, 2019 at 7:38 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > Hi,
-> >
-> > Here are the V3 patches for virtio-fs filesystem. This time I have
-> > broken the patch series in two parts. This is first part which does
-> > not contain DAX support. Second patch series will contain the patches
-> > for DAX support.
-> >
-> > I have also dropped RFC tag from first patch series as we believe its
-> > in good enough shape that it should get a consideration for inclusion
-> > upstream.
-> 
-> Pushed out to
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#for-next
-> 
+On Thu, Aug 29, 2019 at 03:24:26AM -0700, Christoph Hellwig wrote:
 
-Awesome.
-
-> Major changes compared to patchset:
-> 
->  - renamed to "virtiofs".  Filesystem names don't usually have
-> underscore before "fs" postfix.
-> 
-
-Sound good to me.
-
->  - removed option parsing completely.  Virtiofs config is fixed to "-o
-> rootmode=040000,user_id=0,group_id=0,allow_other,default_permissions".
-> Does this sound reasonable?
-
-These are the options we are using now and looks like they make lot of
-sense for virtiofs. I guess if somebody needs a different configuration
-later we can introduce option parsing and override these defaults.
+[]
 
 > 
-> There are miscellaneous changes, so needs to be thoroughly tested.
+> > +
+> > +		/* fill last page if inline data is available */
+> > +		err = fill_inline_data(inode, data, ofs);
+> 
+> Well, I think you should move the is_inode_flat_inline and
+> (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) checks from that
+> helper here, as otherwise you make everyone wonder why you'd always
+> fill out the inline data.
 
-I will test these.
+Currently, fill_inline_data() only fills for fast symlink,
+later we can fill any tail-end block (such as dir block)
+for our requirements.
+
+And I think that is minor.
 
 > 
-> I think we also need something in
-> "Documentation/filesystems/virtiofs.rst" which describes the design
-> (how  request gets to userspace and back) and how to set up the
-> server, etc...  Stefan, Vivek can you do something like that?
+> > +static inline struct inode *erofs_iget_locked(struct super_block *sb,
+> > +					      erofs_nid_t nid)
+> > +{
+> > +	const unsigned long hashval = erofs_inode_hash(nid);
+> > +
+> > +#if BITS_PER_LONG >= 64
+> > +	/* it is safe to use iget_locked for >= 64-bit platform */
+> > +	return iget_locked(sb, hashval);
+> > +#else
+> > +	return iget5_locked(sb, hashval, erofs_ilookup_test_actor,
+> > +		erofs_iget_set_actor, &nid);
+> > +#endif
+> 
+> Just use the slightly more complicated 32-bit version everywhere so that
+> you have a single actually tested code path.  And then remove this
+> helper.
 
-Sure, I will write up something and take Stefan's input as well.
+The consideration is simply because iget_locked performs better
+than iget5_locked.
 
-Thanks
-Vivek
+Thanks,
+Gao Xiang
+
