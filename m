@@ -2,98 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E47A193A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 13:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A63A1956
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 13:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfH2Lrs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 07:47:48 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34008 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfH2Lrs (ORCPT
+        id S1727087AbfH2Ltm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 07:49:42 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44999 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbfH2Ltl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:47:48 -0400
-Received: by mail-pl1-f194.google.com with SMTP id d3so1475450plr.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 04:47:47 -0700 (PDT)
+        Thu, 29 Aug 2019 07:49:41 -0400
+Received: by mail-io1-f68.google.com with SMTP id j4so6197035iog.11;
+        Thu, 29 Aug 2019 04:49:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GJEPwHyOcI+9dLEPiZabTxPmPRqcFsYfFf6j8W16rfw=;
-        b=Do9PVhF7XnMVGEyzkcgD1V4MEr0kOY1BTS0PQogGdlpNArgszV7Li4uTixwFTX0B0e
-         rz7bLocIOK5pi1fWJU7G2tUI6q9EYLbgiQkhwL7YhjYYZDoCAnnAdezrIbTL+ywgsojO
-         XIioUS5nl3xf4ACNOjrkTSQJKdApent1GnNNmvCg2Zvg3U4joWVuDb1jclxwJpg4kkJv
-         5aSxhmukG9pD7VvTWEXb9qrF8DAE4jpdHsnfYw83piGwg8+znU/sCfPjxlrhGSnVRsd1
-         B4ICe535ezIk5MRRvVullgUENVe81buiPzGyRNV/wVKCXT3izPsrIMk1FMct5oTvoxeQ
-         PKxw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ebi6DvryipDbJMt7Vs5Y6UzNPCCfjozPAm+m3gRZ1cY=;
+        b=HnQVcABTef4wmDs+EEBqAROiuUJ/fDy5haGSBWNMqg0NyQEcuu3kMeOtyJK3LLYX87
+         97PGFzvGKf5em+PrI8Q4mUkHKPD3A6Wps0Wb6HJM5OpKbp8tlsekl5obLa6vti/pUQv8
+         k4rwFFOJcg5+v/GQUbRaOXaQcTwfidXLu8zkeLfERuauyWsazilRoiBkD1RrercIaaU+
+         IsgvbSbifqYV70hFWGZP7QXrGk3GBSTON+oM6ft4TQM63fOm7IYqOL6X3iSGQ9oCHdE7
+         JAuoLdWYFiS4VQgFsP2lDQbZza3261q60moRPMIsTdBCAW6LRqrvYOB0mC683lLWiiNu
+         ZTWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GJEPwHyOcI+9dLEPiZabTxPmPRqcFsYfFf6j8W16rfw=;
-        b=fJLCCrnHyvD1nNZSMH+XSG8Wnr2+qz3JhYgxtMpwGhR7e2GUdAuJAzmoVPfDy9le+u
-         S5AbSazG2h+AY6k/f7drZIZqH6LMucnIdmuCRgxu0bG7ec+a0Nay2SBy8u0cYXgj3ikH
-         JLAWqmUivPmtvQhyw9yNTwVNDn7FxbbMl5Gt8EjfGhXeMnuTzhPpP6GUzYls5OXkUQmc
-         jkcjF72JuNwvWpV97hvuYkd8TPOi+Io2tqOBLJ+7XR0xh2s3OQFE1O0Symx1BzcXxxGt
-         +tEpzjuBpOtCRPngkO+ERLgR1JKsXVmG6HSHK+V2ovG+8MHpEE8t1NXJPIIl8ol34qk8
-         AMjg==
-X-Gm-Message-State: APjAAAU/CdjdqOwLI6M8JH58SB+YbilqHDccLxzkh9S0h3tHZAuVpGqI
-        ndAQtkgIMlYFubdso6TodJRl
-X-Google-Smtp-Source: APXvYqxy2YKWkWFfGKTMt2jffl5EV3jl3XWiD1TU9NPDdRtyU6Ua+uySGZA5Njp1Zj11WaK7T1p65A==
-X-Received: by 2002:a17:902:7892:: with SMTP id q18mr9016585pll.206.1567079267436;
-        Thu, 29 Aug 2019 04:47:47 -0700 (PDT)
-Received: from poseidon.bobrowski.net ([114.78.226.167])
-        by smtp.gmail.com with ESMTPSA id b18sm3137286pfi.160.2019.08.29.04.47.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 04:47:46 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 21:47:41 +1000
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, riteshh@linux.ibm.com
-Subject: Re: [PATCH 4/5] ext4: introduce direct IO write code path using
- iomap infrastructure
-Message-ID: <20190829114740.GC2486@poseidon.bobrowski.net>
-References: <cover.1565609891.git.mbobrowski@mbobrowski.org>
- <581c3a2da89991e7ce5862d93dcfb23e1dc8ddc8.1565609891.git.mbobrowski@mbobrowski.org>
- <20190828202619.GG22343@quack2.suse.cz>
- <20190828223218.GZ7777@dread.disaster.area>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ebi6DvryipDbJMt7Vs5Y6UzNPCCfjozPAm+m3gRZ1cY=;
+        b=uV1coI3ZnELNVqwW6qLAov4HxfoN8rWneufAyDsFxJxvcORFnxnE7L8EfGrCkomT8l
+         egmsuIUukfI6icdvo3gDEwHjw7wkTOm3N8isxz3hjhMrETIDOzfdYqJM/BJkqg5lTHAA
+         T/R9Nsz2JboeXElMctj/xcph/UA5XUaRS8c4WjwTdK1FZalRVQCVvrxqeddopjX7JVzs
+         NSLnFPZUytZzZvWJBPAFboRcA5/+vyGIN8aXHojXmfOmbWfbFvEjJQoSf58hKDcdlGDO
+         3Kh6i2lQ+FaqRpNeWXEgKQEBKl2kdIjNSbXSlUzTBWWQoq1zmPexZBGGjXOBwS0zoVQv
+         DTpw==
+X-Gm-Message-State: APjAAAVExV0hzGS50yxOeAGlV3398O11bvN89A+C7dh4KIAs5sCdUoDS
+        RXXLQ+f+C7ymXBXg619+ek0e9zk7Kjl1G1DnXmw=
+X-Google-Smtp-Source: APXvYqwENsRASBmSEOl6YE44hcCuRaYScqwow/qESu/tkVMsG2dt16pzNKaq9E5EKUIWbFl1OAlxQl2yEGWsVIScfz8=
+X-Received: by 2002:a6b:7002:: with SMTP id l2mr2304538ioc.300.1567079380885;
+ Thu, 29 Aug 2019 04:49:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828223218.GZ7777@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181202180832.GR8125@magnolia> <20181202181045.GS8125@magnolia>
+ <CAHpGcM+WQYFHOOC8SzKq+=DuHVZ4fw4RHLTMUDN-o6GX3YtGvQ@mail.gmail.com>
+ <20190828142332.GT1037422@magnolia> <CAHpGcMLGWVssWAC1PqBJevr1+1rE_hj4QN27D26j7-Fp_Kzpsg@mail.gmail.com>
+ <20190829031216.GW1037422@magnolia>
+In-Reply-To: <20190829031216.GW1037422@magnolia>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Thu, 29 Aug 2019 13:49:29 +0200
+Message-ID: <CAHpGcM+Aq+BxD0_TPx9sqTCt8N6X3Q+UO6CkyfV3NZMaN8AU8w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] iomap: partially revert 4721a601099 (simulated
+ directio short read on EFAULT)
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <david@fromorbit.com>, jencce.kernel@gmail.com,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Zorro Lang <zlang@redhat.com>,
+        fstests <fstests@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 08:32:18AM +1000, Dave Chinner wrote:
-> On Wed, Aug 28, 2019 at 10:26:19PM +0200, Jan Kara wrote:
-> > On Mon 12-08-19 22:53:26, Matthew Bobrowski wrote:
-> > > @@ -235,6 +244,34 @@ static ssize_t ext4_write_checks(struct kiocb *iocb, struct iov_iter *from)
-> > >  	return iov_iter_count(from);
-> > >  }
-> > >  
-> > > +static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
-> > > +					struct iov_iter *from)
-> > > +{
-> > > +	ssize_t ret;
-> > > +	struct inode *inode = file_inode(iocb->ki_filp);
-> > > +
-> > > +	if (!inode_trylock(inode)) {
-> > > +		if (iocb->ki_flags & IOCB_NOWAIT)
-> > > +			return -EOPNOTSUPP;
-> > > +		inode_lock(inode);
-> > > +	}
-> > 
-> > Currently there's no support for IOCB_NOWAIT for buffered IO so you can
-> > replace this with "inode_lock(inode)".
-> 
-> IOCB_NOWAIT is supported for buffered reads. It is not supported on
-> buffered writes (as yet), so this should return EOPNOTSUPP if
-> IOCB_NOWAIT is set, regardless of whether the lock can be grabbed or
-> not.
+Hi Darrick,
 
-Noted! Thank you Dave. ;-)
+Am Do., 29. Aug. 2019 um 05:12 Uhr schrieb Darrick J. Wong
+<darrick.wong@oracle.com>:
+> Hm, so I made an xfstest out of the program you sent me, and indeed
+> reverting that chunk makes the failure go away, but that got me
+> wondering -- that iomap kludge was a workaround for the splice code
+> telling iomap to try to stuff XXXX bytes into a pipe that only has X
+> bytes of free buffer space.  We fixed splice_direct_to_actor to clamp
+> the length parameter to the available pipe space, but we never did the
+> same to do_splice:
+>
+>         /* Don't try to read more the pipe has space for. */
+>         read_len = min_t(size_t, len,
+>                          (pipe->buffers - pipe->nrbufs) << PAGE_SHIFT);
+>         ret = do_splice_to(in, &pos, pipe, read_len, flags);
+>
+> Applying similar logic to the two (opipe != NULL) cases of do_splice()
+> seem to make the EAGAIN problem go away too.  So why don't we teach
+> do_splice to only ask for as many bytes as the pipe has space here too?
+>
+> Does the following patch fix it for you?
 
---M
+Yes, that works, thank you.
+
+> From: Darrick J. Wong <darrick.wong@oracle.com>
+> Subject: [PATCH] splice: only read in as much information as there is pipe buffer space
+>
+> Andreas Gruenbacher reports that on the two filesystems that support
+> iomap directio, it's possible for splice() to return -EAGAIN (instead of
+> a short splice) if the pipe being written to has less space available in
+> its pipe buffers than the length supplied by the calling process.
+>
+> Months ago we fixed splice_direct_to_actor to clamp the length of the
+> read request to the size of the splice pipe.  Do the same to do_splice.
+
+Can you add a reference to that commit here (17614445576b6)?
+
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> ---
+>  fs/splice.c |   12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 98412721f056..50335515d7c1 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -1101,6 +1101,7 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+>         struct pipe_inode_info *ipipe;
+>         struct pipe_inode_info *opipe;
+>         loff_t offset;
+> +       unsigned int pipe_pages;
+>         long ret;
+>
+>         ipipe = get_pipe_info(in);
+> @@ -1123,6 +1124,10 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+>                 if ((in->f_flags | out->f_flags) & O_NONBLOCK)
+>                         flags |= SPLICE_F_NONBLOCK;
+>
+> +               /* Don't try to read more the pipe has space for. */
+> +               pipe_pages = opipe->buffers - opipe->nrbufs;
+> +               len = min_t(size_t, len, pipe_pages << PAGE_SHIFT);
+
+This should probably be min(len, (size_t)pipe_pages << PAGE_SHIFT).
+Same for the second min_t here and the one added by commit
+17614445576b6.
+
+> +
+>                 return splice_pipe_to_pipe(ipipe, opipe, len, flags);
+>         }
+>
+> @@ -1180,8 +1185,13 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+>
+>                 pipe_lock(opipe);
+>                 ret = wait_for_space(opipe, flags);
+> -               if (!ret)
+> +               if (!ret) {
+> +                       /* Don't try to read more the pipe has space for. */
+> +                       pipe_pages = opipe->buffers - opipe->nrbufs;
+> +                       len = min_t(size_t, len, pipe_pages << PAGE_SHIFT);
+> +
+>                         ret = do_splice_to(in, &offset, opipe, len, flags);
+> +               }
+>                 pipe_unlock(opipe);
+>                 if (ret > 0)
+>                         wakeup_pipe_readers(opipe);
+
+Thanks,
+Andreas
