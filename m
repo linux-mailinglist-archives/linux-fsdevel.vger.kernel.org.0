@@ -2,110 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0D9A29AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 00:23:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69005A2A48
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 00:50:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbfH2WXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 18:23:06 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40826 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727912AbfH2WXG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:23:06 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3Sok-0000EE-UR; Thu, 29 Aug 2019 22:22:59 +0000
-Date:   Thu, 29 Aug 2019 23:22:58 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Boaz Harrosh <boaz@plexistor.com>
-Cc:     Kai =?iso-8859-1?Q?M=E4kisara_=28Kolumbus=29?= 
-        <kai.makisara@kolumbus.fi>, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org,
-        Octavian Purdila <octavian.purdila@intel.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-scsi@vger.kernel.org
-Subject: Re: [RFC] Re: broken userland ABI in configfs binary attributes
-Message-ID: <20190829222258.GA16625@ZenIV.linux.org.uk>
-References: <20190826024838.GN1131@ZenIV.linux.org.uk>
- <20190826162949.GA9980@ZenIV.linux.org.uk>
- <B35B5EA9-939C-49F5-BF65-491D70BCA8D4@kolumbus.fi>
- <20190826193210.GP1131@ZenIV.linux.org.uk>
- <b362af55-4f45-bf29-9bc4-dd64e6b04688@plexistor.com>
- <20190827172734.GS1131@ZenIV.linux.org.uk>
+        id S1728158AbfH2WuA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 18:50:00 -0400
+Received: from mail.phunq.net ([66.183.183.73]:51320 "EHLO voyager.galaxy"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727686AbfH2WuA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 18:50:00 -0400
+X-Greylist: delayed 1989 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 18:49:59 EDT
+Received: from [172.16.1.14]
+        by voyager.galaxy with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.1)
+        (envelope-from <daniel@phunq.net>)
+        id 1i3Sim-00062X-Fo; Thu, 29 Aug 2019 15:16:48 -0700
+From:   Daniel Phillips <daniel@phunq.net>
+Subject: [ANNOUNCE] Three things.
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        daye <daye@dddancer.com>
+Message-ID: <8ccfa9b4-d76c-b25d-7eda-303d8faa0b79@phunq.net>
+Date:   Thu, 29 Aug 2019 15:16:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827172734.GS1131@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 06:27:35PM +0100, Al Viro wrote:
+Hi folks, how's it going? Over here, we have been rather busy lately,
+and for the last five years or so to be honest. Today it is my pleasure
+to be able to announce three GPL open source projects:
 
-> Most of them are actually pure bollocks - "it can never happen, but if it does,
-> let's return -EWHATEVER to feel better".  Some are crap like -EINTR, which is
-> also bollocks - for one thing, process might've been closing files precisely
-> because it's been hit by SIGKILL.  For another, it's a destructor.  It won't
-> be retried by the caller - there's nothing called for that object afterwards.
-> What you don't do in it won't be done at all.
-> 
-> And some are "commit on final close" kind of thing, both with the hardware
-> errors and parsing errors.
+1) Shardmap
 
-FWIW, here's the picture for fs/*: 6 instances.
+Shardmap is the next generation directory index developed for Tux3, and
+which we are now offering as a much needed replacement for Ext4 HTree.
+Shardmap meets but usually beats HTree at all scales, has way better
+readdir characteristics, and goes where HTree never did: up into the
+billions of files per directory, with ease. Shardmap also is well on
+its way to becoming a full blown standalone KVS in user space with sub
+microsecond ACID operations in persistent memory.[1]
 
-afs_release():
-	 calls vfs_fsync() if file had been opened for write, tries to pass
-	the return value to caller.  Job for ->flush(), AFAICS.
+Code for Shardmap is here:
 
-coda_psdev_release():
-	returns -1 in situation impossible after successful ->open().
-	Can't happen without memory corruption.
+    https://github.com/danielbot/Shardmap
 
-configfs_release_bin_file():
-	discussed upthread
+2) Teamachine
 
-dlm device_close():
-	returns -ENOENT if dlm_find_lockspace_local(proc->lockspace) fails.
-No idea if that can happen.
+Teamachine is a direct threaded code virtual machine with a cycle time
+of .7 nanoseconds, which may just make it the fastest interpreter in the
+known universe. Teamachine embeds Shardmap as a set of micro ops. With
+Teamachine you can rapidly set up a set of Shardmap unit tests, or you
+can build a world-beating query engine. Or just kick back and script
+your game engine, the possibilities are endless.
 
-reiserfs_file_release():
-	tries to return an error if it can't free preallocated blocks.
+Code for Teamachine is here:
 
-xfs_release():
-	similar to the previous case.
+    https://github.com/danielbot/TeaMachine
 
-In kernel/*: ftrace_graph_release() might return -ENOMEM.  No idea whether it's
-actually possible.
+3) Tux3
 
-In net/*: none
+Tux3 is still alive, is still maintained against current mainline, and
+is still faster, lighter, and more ACID than any other general purpose
+Linux file system. Inasmuch as other devs have discovered that the same
+issue cited as the blocker for merging Tux3 (get user pages) is also
+problematic for kernel code that is already merged, I propose today that
+we merge Tux3 without further ado, so that we can proceed to develop
+a good solution together as is right, proper and just.
 
-In sound/*: 4 instances.
+Code for Tux3 is here:
 
-snd_pcm_oss_release():
-        if (snd_BUG_ON(!substream))
-                return -ENXIO;
-	IOW, whine in impossible case.
+    https://github.com/OGAWAHirofumi/tux3/tree/hirofumi
 
-snd_pcm_release():
-	ditto.
+Everyone is welcome to join OFTC #tux3 and/or post to:
 
-sq_release():
-        if (file->f_mode & FMODE_WRITE) {
-                if (write_sq.busy)
-                        rc = sq_fsync();
-	subsequently returns rc; sq_fsync() can return an error, both on timeout
-	and in case of interrupted wait.
+   http://tux3.org/cgi-bin/mailman/listinfo/tux3
 
-snd_hwdep_release():
-	passes the return value of hwdep ->release() method; two of those
-	can return an error.   snd_asihpi_hpi_release() is, AFAICS, impossible,
-	unless you manage to flip this module_param(enable_hpi_hwdep, bool, 0644);
-	off after opening a file.  And snd_usX2Y_hwdep_pcm_release() calls
-	usX2Y_pcms_busy_check() and passes its return value out.  No idea
-	whether that can be triggered.
+to discuss these things, or anything at all. Fun times. See you there!
 
+STANDARD DISCLAIMER: SHARDMAP WILL EAT YOUR DATA[2] TEAMACHINE WILL HALT
+YOUR MACHINE AND SET IT ON FIRE. DOWNLOAD AND RUN OF YOUR OWN FREE WILL.
 
-In other words, the real mess is hidden in drivers/*...
+[1] Big shoutout to Yahoo! Japan for supporting Shardmap work.
+
+[2] Tux3 is actually pretty good about not eating your data, but that is
+another thing.
+
+NB: followup posts are in the works re the detailed nature and status of
+Shardmap, Teamachine and Tux3.
+
+Regards,
+
+Daniel
