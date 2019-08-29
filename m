@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D782A16CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 12:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FE61A16FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 12:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbfH2KvI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 06:51:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58840 "EHLO mail.kernel.org"
+        id S1728137AbfH2Kw2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 06:52:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728457AbfH2KvH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 06:51:07 -0400
+        id S1728546AbfH2KvP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 06:51:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94BBE23407;
-        Thu, 29 Aug 2019 10:51:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D84EB2173E;
+        Thu, 29 Aug 2019 10:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567075866;
-        bh=imuHXRV4QcrRgGXQAC81XYtejf4eEqNDiZEY/XxI8SE=;
+        s=default; t=1567075874;
+        bh=qlCOFZjNYI2nNPOt+PsqTthpDctJ6cRrpNMdWEJrrLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OQUlcxiHh4EOut2ZjELcteKgIB3rbnby+hz9D4O5R2s17VPwOzYf549RovupIvtpi
-         4V15wq9qYd/nn2SwtUeJuWYjeJ4cpprNxaOfZq9rU5M8FI0lHJpzRE/EJcMyi0vAxV
-         N7ZxLJdKtO/uEXbhfDZcOjsirIOGWIwoNEEUaeoU=
+        b=P+clGxND6JmQeK5rrFLFqq22mIFy1Bttpej90QRx089OxvcUyLjorf7Y6nc/uI0n/
+         b/5+SIYCqetzQPdShjVZkXWTNJ8f25+FCusHJ1WHnk+W45j4rEYy8PONmf3amH4/6A
+         eKSxdpr9xt2KC1qJHNwg9fmvls4Pco0jdTfGCijs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Oleg Nesterov <oleg@redhat.com>,
@@ -37,12 +37,12 @@ Cc:     Oleg Nesterov <oleg@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 4/8] userfaultfd_release: always remove uffd flags and clear vm_userfaultfd_ctx
-Date:   Thu, 29 Aug 2019 06:50:56 -0400
-Message-Id: <20190829105100.2649-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 2/6] userfaultfd_release: always remove uffd flags and clear vm_userfaultfd_ctx
+Date:   Thu, 29 Aug 2019 06:51:06 -0400
+Message-Id: <20190829105110.2748-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829105100.2649-1-sashal@kernel.org>
-References: <20190829105100.2649-1-sashal@kernel.org>
+In-Reply-To: <20190829105110.2748-1-sashal@kernel.org>
+References: <20190829105110.2748-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -83,10 +83,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 8bf425a103f05..de63d4e2dfba1 100644
+index f187e02d267e2..fe1c146f4032e 100644
 --- a/fs/userfaultfd.c
 +++ b/fs/userfaultfd.c
-@@ -464,6 +464,7 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+@@ -431,6 +431,7 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
  	/* len == 0 means wake all */
  	struct userfaultfd_wake_range range = { .len = 0, };
  	unsigned long new_flags;
@@ -94,7 +94,7 @@ index 8bf425a103f05..de63d4e2dfba1 100644
  
  	ACCESS_ONCE(ctx->released) = true;
  
-@@ -479,8 +480,7 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+@@ -446,8 +447,7 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
  	 * taking the mmap_sem for writing.
  	 */
  	down_write(&mm->mmap_sem);
@@ -104,7 +104,7 @@ index 8bf425a103f05..de63d4e2dfba1 100644
  	prev = NULL;
  	for (vma = mm->mmap; vma; vma = vma->vm_next) {
  		cond_resched();
-@@ -491,19 +491,20 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+@@ -458,19 +458,20 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
  			continue;
  		}
  		new_flags = vma->vm_flags & ~(VM_UFFD_MISSING | VM_UFFD_WP);
