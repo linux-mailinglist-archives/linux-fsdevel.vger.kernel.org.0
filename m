@@ -2,132 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D45B8A2AFE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 01:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F81A2B2D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 01:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfH2Xhj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 19:37:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45210 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbfH2Xhj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 19:37:39 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4F807317528C;
-        Thu, 29 Aug 2019 23:37:39 +0000 (UTC)
-Received: from treble (ovpn-121-55.rdu2.redhat.com [10.10.121.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D0B9C608C1;
-        Thu, 29 Aug 2019 23:37:37 +0000 (UTC)
-Date:   Thu, 29 Aug 2019 18:37:35 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
-        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject: Re: mmotm 2019-08-27-20-39 uploaded (objtool: xen)
-Message-ID: <20190829233735.yp3mwhg6er353qw5@treble>
-References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
- <8b09d93a-bc42-bd8e-29ee-cd37765f4899@infradead.org>
- <20190828171923.4sir3sxwsnc2pvjy@treble>
- <57d6ab2e-1bae-dca3-2544-4f6e6a936c3a@infradead.org>
- <20190828200134.d3lwgyunlpxc6cbn@treble>
- <20190829082445.GM2369@hirez.programming.kicks-ass.net>
+        id S1726416AbfH2XvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 19:51:00 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34998 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbfH2XvA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 19:51:00 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <dann.frazier@canonical.com>)
+        id 1i3UBu-0001yj-7H
+        for linux-fsdevel@vger.kernel.org; Thu, 29 Aug 2019 23:50:58 +0000
+Received: by mail-io1-f69.google.com with SMTP id t8so6001127iom.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 16:50:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3bplvyURywyrZUbCnQRJbRY3iQ4HwcWNIDQydpGaXzw=;
+        b=kGmzErBnfOK1F41gUXQ6vlM4ap9S0wBrKTVPyyciyBiTn/75MfBaLwEmLVURs9Ns8l
+         g77rho2A2SVpd7LlK++8FnV1Q2Jbp8ZfpnsdswBSaTjRnQNTO/91aFampcJ5pMeCufwg
+         9RCqgErc8OX9omjHyUvaRTbS0EHDJI1DtURJVqFa/g7zGLb63iCQJGfFjQ/Vs3IIh9MZ
+         2+JEarvWC5Bb0pKlWnBB4iPpQ7r3CJMC9HybMQuFX2AqdJtJP83rOx95SPphO/S69QEu
+         BLpsFngHaB6887vTy2wOXqiQ4A2NqbtPu5D+Ff5O3RmRz3WHUhTd5GFND9tRVEauMs2q
+         7Msg==
+X-Gm-Message-State: APjAAAWqlHYkf+CLhDJ718JFy2ae4lx68N6glS7cwahmJlOx/DMUWND+
+        hTkOMcihQwp1RxYaNOVVx5Nbszf3L1Ex2cppRVJ4HNqMF1Dho+WbThaHLRJtXDtHiFgR40OghVA
+        RegYe3jlplLO43lbRgndP6Idhm4jQwFBp08NDStxgThE=
+X-Received: by 2002:a5e:c601:: with SMTP id f1mr1460473iok.57.1567122657091;
+        Thu, 29 Aug 2019 16:50:57 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwVuQnZ/cvr+tJx6ohprUk+vQVxjt8IJle6PnfnhhWSHmODgvICpS6ziu4ipRwqPguJYD5bpQ==
+X-Received: by 2002:a5e:c601:: with SMTP id f1mr1460442iok.57.1567122656802;
+        Thu, 29 Aug 2019 16:50:56 -0700 (PDT)
+Received: from xps13.canonical.com (c-71-56-235-36.hsd1.co.comcast.net. [71.56.235.36])
+        by smtp.gmail.com with ESMTPSA id v12sm3744576ios.16.2019.08.29.16.50.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 16:50:55 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 17:50:54 -0600
+From:   dann frazier <dann.frazier@canonical.com>
+To:     Eric Sandeen <sandeen@sandeen.net>
+Cc:     linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Jan Kara <jack@suse.com>,
+        Colin King <colin.king@canonical.com>,
+        Ryan Harper <ryan.harper@canonical.com>
+Subject: Re: ext4 fsck vs. kernel recovery policy
+Message-ID: <20190829235054.GB13045@xps13.dannf>
+References: <CALdTtnuRqgZ=By1JQ0yJJYczUPxxYCWPkAey4BjBkmj77q7aaA@mail.gmail.com>
+ <db1128a9-1316-e409-9dc6-9470bd2191f7@sandeen.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829082445.GM2369@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 29 Aug 2019 23:37:39 +0000 (UTC)
+In-Reply-To: <db1128a9-1316-e409-9dc6-9470bd2191f7@sandeen.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 10:24:45AM +0200, Peter Zijlstra wrote:
-> On Wed, Aug 28, 2019 at 03:01:34PM -0500, Josh Poimboeuf wrote:
-> > On Wed, Aug 28, 2019 at 10:56:25AM -0700, Randy Dunlap wrote:
-> > > >> drivers/xen/gntdev.o: warning: objtool: gntdev_copy()+0x229: call to __ubsan_handle_out_of_bounds() with UACCESS enabled
-> > > > 
-> > > > Easy one :-)
-> > > > 
-> > > > diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> > > > index 0c8e17f946cd..6a935ab93149 100644
-> > > > --- a/tools/objtool/check.c
-> > > > +++ b/tools/objtool/check.c
-> > > > @@ -483,6 +483,7 @@ static const char *uaccess_safe_builtin[] = {
-> > > >  	"ubsan_type_mismatch_common",
-> > > >  	"__ubsan_handle_type_mismatch",
-> > > >  	"__ubsan_handle_type_mismatch_v1",
-> > > > +	"__ubsan_handle_out_of_bounds",
-> > > >  	/* misc */
-> > > >  	"csum_partial_copy_generic",
-> > > >  	"__memcpy_mcsafe",
-> > > > 
-> > > 
-> > > 
-> > > then I get this one:
-> > > 
-> > > lib/ubsan.o: warning: objtool: __ubsan_handle_out_of_bounds()+0x5d: call to ubsan_prologue() with UACCESS enabled
+On Tue, Aug 27, 2019 at 03:29:09PM -0500, Eric Sandeen wrote:
+> On 8/27/19 2:10 PM, dann frazier wrote:
+> > hey,
+> >   I'm curious if there's a policy about what types of unclean
+> > shutdowns 'e2fsck -p' can recover, vs. what the kernel will
+> > automatically recover on mount. We're seeing that unclean shutdowns w/
+> > data=journal,journal_csum frequently result in invalid checksums that
+> > causes the kernel to abort recovery, while 'e2fsck -p' resolves the
+> > issue non-interactively.
 > > 
-> > And of course I jinxed it by calling it easy.
+> > Driver for this question is that some Ubuntu installs set fstab's
+> > passno=0 for the root fs - which I'm told is based on the assumption
+> > that both kernel & e2fsck -p have parity when it comes to automatic
+> > recovery - that's obviously does not appear to be the case - but I
+> > wanted to confirm whether or not that is by design.
 > > 
-> > Peter, how do you want to handle this?
-> > 
-> > Should we just disable UACCESS checking in lib/ubsan.c?
+> >   -dann
 > 
-> No, that is actually unsafe and could break things (as would you patch
-> above).
+> Ted or others more involved w/ ext4 will speak w/ authority but it's my
+> understanding that log replay, whether done by userspace or by the kernel,
+> should always return the filesystem to a consistent state.  If that's not
+> the case, scripting things so that you grab a qcow-format e2image prior
+> to fsck so that you can share the problematic image with developers may
+> help.
 
-Oops.  -EFIXINGTOOMANYOBJTOOLISSUESATONCE
+Thanks Eric. I captured an image in case it's useful:
 
-> I'm thinking the below patch ought to cure things:
-> 
-> ---
-> Subject: x86/uaccess: Don't leak the AC flags into __get_user() argument evalidation
+  https://people.canonical.com/~dannf/md2.e2ic.qcow2
 
-s/evalidation/evaluation
+  -dann
 
-> Identical to __put_user(); the __get_user() argument evalution will too
-> leak UBSAN crud into the __uaccess_begin() / __uaccess_end() region.
-> While uncommon this was observed to happen for:
-> 
->   drivers/xen/gntdev.c: if (__get_user(old_status, batch->status[i]))
-> 
-> where UBSAN added array bound checking.
-> 
-> This complements commit:
-> 
->   6ae865615fc4 ("x86/uaccess: Dont leak the AC flag into __put_user() argument evaluation")
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Cc: luto@kernel.org
-> ---
->  arch/x86/include/asm/uaccess.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-> index 9c4435307ff8..35c225ede0e4 100644
-> --- a/arch/x86/include/asm/uaccess.h
-> +++ b/arch/x86/include/asm/uaccess.h
-> @@ -444,8 +444,10 @@ __pu_label:							\
->  ({									\
->  	int __gu_err;							\
->  	__inttype(*(ptr)) __gu_val;					\
-> +	__typeof__(ptr) __gu_ptr = (ptr);				\
-> +	__typeof__(size) __gu_size = (size);				\
->  	__uaccess_begin_nospec();					\
-> -	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
-> +	__get_user_size(__gu_val, __gu_ptr, __gu_size, __gu_err, -EFAULT);	\
->  	__uaccess_end();						\
->  	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
->  	__builtin_expect(__gu_err, 0);					\
 
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-
--- 
-Josh
+> 
+> (In XFS land, a large portion of the unreplayable logs we see are the
+> result of storage that didn't /actually/ persist IOs that it claimed were
+> persisted prior to the crash/poweroff.)
+> 
+> -Eric
