@@ -2,125 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BA30A2236
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 19:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A71A2347
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 20:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbfH2R1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 13:27:07 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:55038 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726661AbfH2R1H (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:27:07 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id 67FB2820B3EF025C7953;
-        Fri, 30 Aug 2019 01:26:51 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 30 Aug 2019 01:26:50 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Fri, 30 Aug 2019 01:26:49 +0800
-Date:   Fri, 30 Aug 2019 01:26:02 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Joe Perches <joe@perches.com>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Dave Chinner" <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
-Message-ID: <20190829172602.GA228414@architecture4>
-References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-2-gaoxiang25@huawei.com>
- <20190829095954.GB20598@infradead.org>
- <20190829103252.GA64893@architecture4>
- <67d6efbbc9ac6db23215660cb970b7ef29dc0c1d.camel@perches.com>
+        id S1728935AbfH2SOi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 14:14:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728919AbfH2SOi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:14:38 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F05DB233FF;
+        Thu, 29 Aug 2019 18:14:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567102476;
+        bh=FL8bHyiyQZxqHEAAaSx3IsT3DTGpqyV0KzVXHvH5kpo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l92DR7+FdrrN+6t51yCPr5YDJXVh9e5cGEcKr4oDWn8KNOm3cVY2OZq1Lp7p+V4qe
+         r1Ugsirr7Fq6l7E8xtIWsQjpiUNekhfKfcN8ftkahN4jibWfFdGQmdLq6QJP2YWP2h
+         Ioig2zmKcWw/6Zu5yyGDP1DJ7ZvzZUYSDFOBvcfM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Bill O'Donnell <billodo@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 40/76] vfs: fix page locking deadlocks when deduping files
+Date:   Thu, 29 Aug 2019 14:12:35 -0400
+Message-Id: <20190829181311.7562-40-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
+References: <20190829181311.7562-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <67d6efbbc9ac6db23215660cb970b7ef29dc0c1d.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme715-chm.china.huawei.com (10.1.199.111) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Joe,
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
 
-On Thu, Aug 29, 2019 at 08:58:17AM -0700, Joe Perches wrote:
-> On Thu, 2019-08-29 at 18:32 +0800, Gao Xiang wrote:
-> > Hi Christoph,
-> > 
-> > On Thu, Aug 29, 2019 at 02:59:54AM -0700, Christoph Hellwig wrote:
-> > > > --- /dev/null
-> > > > +++ b/fs/erofs/erofs_fs.h
-> > > > @@ -0,0 +1,316 @@
-> > > > +/* SPDX-License-Identifier: GPL-2.0-only OR Apache-2.0 */
-> > > > +/*
-> > > > + * linux/fs/erofs/erofs_fs.h
-> > > 
-> > > Please remove the pointless file names in the comment headers.
-> > 
-> > Already removed in the latest version.
-> > 
-> > > > +struct erofs_super_block {
-> > > > +/*  0 */__le32 magic;           /* in the little endian */
-> > > > +/*  4 */__le32 checksum;        /* crc32c(super_block) */
-> > > > +/*  8 */__le32 features;        /* (aka. feature_compat) */
-> > > > +/* 12 */__u8 blkszbits;         /* support block_size == PAGE_SIZE only */
-> > > 
-> > > Please remove all the byte offset comments.  That is something that can
-> > > easily be checked with gdb or pahole.
-> > 
-> > I have no idea the actual issue here.
-> > It will help all developpers better add fields or calculate
-> > these offsets in their mind, and with care.
-> > 
-> > Rather than they didn't run "gdb" or "pahole" and change it by mistake.
-> 
-> I think Christoph is not right here.
-> 
-> Using external tools for validation is extra work
-> when necessary for understanding the code.
-> 
-> The expected offset is somewhat valuable, but
-> perhaps the form is a bit off given the visual
-> run-in to the field types.
-> 
-> The extra work with this form is manipulating all
-> the offsets whenever a structure change occurs.
-> 
-> The comments might be better with a form more like:
+[ Upstream commit edc58dd0123b552453a74369bd0c8d890b497b4b ]
 
-Thanks for your comment.
-I will change those places as you suggested, that is fine.
+When dedupe wants to use the page cache to compare parts of two files
+for dedupe, we must be very careful to handle locking correctly.  The
+current code doesn't do this.  It must lock and unlock the page only
+once if the two pages are the same, since the overlapping range check
+doesn't catch this when blocksize < pagesize.  If the pages are distinct
+but from the same file, we must observe page locking order and lock them
+in order of increasing offset to avoid clashing with writeback locking.
 
-Thanks,
-Gao Xiang
+Fixes: 876bec6f9bbfcb3 ("vfs: refactor clone/dedupe_file_range common functions")
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Bill O'Donnell <billodo@redhat.com>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/read_write.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 41 insertions(+), 8 deletions(-)
 
-> 
-> struct erofs_super_block {	/* offset description */
-> 	__le32 magic;		/*   0  */
-> 	__le32 checksum;	/*   4  crc32c(super_block) */
-> 	__le32 features;	/*   8  (aka. feature_compat) */
-> 	__u8 blkszbits;		/*  12  support block_size == PAGE_SIZE only */
-> 
-> 
+diff --git a/fs/read_write.c b/fs/read_write.c
+index c543d965e2880..e8b0f1192a3a4 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1776,10 +1776,7 @@ static int generic_remap_check_len(struct inode *inode_in,
+ 	return (remap_flags & REMAP_FILE_DEDUP) ? -EBADE : -EINVAL;
+ }
+ 
+-/*
+- * Read a page's worth of file data into the page cache.  Return the page
+- * locked.
+- */
++/* Read a page's worth of file data into the page cache. */
+ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
+ {
+ 	struct page *page;
+@@ -1791,10 +1788,32 @@ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
+ 		put_page(page);
+ 		return ERR_PTR(-EIO);
+ 	}
+-	lock_page(page);
+ 	return page;
+ }
+ 
++/*
++ * Lock two pages, ensuring that we lock in offset order if the pages are from
++ * the same file.
++ */
++static void vfs_lock_two_pages(struct page *page1, struct page *page2)
++{
++	/* Always lock in order of increasing index. */
++	if (page1->index > page2->index)
++		swap(page1, page2);
++
++	lock_page(page1);
++	if (page1 != page2)
++		lock_page(page2);
++}
++
++/* Unlock two pages, being careful not to unlock the same page twice. */
++static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
++{
++	unlock_page(page1);
++	if (page1 != page2)
++		unlock_page(page2);
++}
++
+ /*
+  * Compare extents of two files to see if they are the same.
+  * Caller must have locked both inodes to prevent write races.
+@@ -1832,10 +1851,24 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 		dest_page = vfs_dedupe_get_page(dest, destoff);
+ 		if (IS_ERR(dest_page)) {
+ 			error = PTR_ERR(dest_page);
+-			unlock_page(src_page);
+ 			put_page(src_page);
+ 			goto out_error;
+ 		}
++
++		vfs_lock_two_pages(src_page, dest_page);
++
++		/*
++		 * Now that we've locked both pages, make sure they're still
++		 * mapped to the file data we're interested in.  If not,
++		 * someone is invalidating pages on us and we lose.
++		 */
++		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
++		    src_page->mapping != src->i_mapping ||
++		    dest_page->mapping != dest->i_mapping) {
++			same = false;
++			goto unlock;
++		}
++
+ 		src_addr = kmap_atomic(src_page);
+ 		dest_addr = kmap_atomic(dest_page);
+ 
+@@ -1847,8 +1880,8 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 
+ 		kunmap_atomic(dest_addr);
+ 		kunmap_atomic(src_addr);
+-		unlock_page(dest_page);
+-		unlock_page(src_page);
++unlock:
++		vfs_unlock_two_pages(src_page, dest_page);
+ 		put_page(dest_page);
+ 		put_page(src_page);
+ 
+-- 
+2.20.1
+
