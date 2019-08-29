@@ -2,134 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15886A1BA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 15:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78E11A1BA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Aug 2019 15:41:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfH2NlM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 09:41:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:32945 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727069AbfH2NlM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:41:12 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB09987521B;
-        Thu, 29 Aug 2019 13:41:11 +0000 (UTC)
-Received: from localhost (ovpn-117-104.ams2.redhat.com [10.36.117.104])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2FD89600C1;
-        Thu, 29 Aug 2019 13:41:05 +0000 (UTC)
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-kernel@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>, virtio-fs@redhat.com,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: [PATCH] virtio-fs: add Documentation/filesystems/virtiofs.rst
-Date:   Thu, 29 Aug 2019 14:41:04 +0100
-Message-Id: <20190829134104.23653-1-stefanha@redhat.com>
+        id S1727500AbfH2Nlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 09:41:40 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42667 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726739AbfH2Nlj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 09:41:39 -0400
+Received: by mail-io1-f68.google.com with SMTP id n197so4986594iod.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 06:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ul0ttpZX8OaU+EBmALZ96xYYyCTstLYpC4GnYFarZNw=;
+        b=BdfA7qONrUsx4A59nrxQQRxyjZMRkrGbqIPEVHms5IqmXTPPwE1mOuiPUmLjh3idfb
+         qaC5Ifvf8wMelanxFTmnu/IIA21Q8dVP2kH44Urk3sHVXB1taDT3p9kO0Bf0wtJn8NPb
+         33QKwni3K68F/+upvxd3jimKoGWOkSBUfSxu0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ul0ttpZX8OaU+EBmALZ96xYYyCTstLYpC4GnYFarZNw=;
+        b=M7/OFThtDQsffITk1z634ZPtuna5+0pKPTWE5SyF7dmBeYMsounTPT4WqW1DrXWmGx
+         dULLOFKgWpprL/pwN7yMALk9y5IAIZ3Dgy0riTJXmBhLDWyquLV6t1tX0GFQNpuJPdXT
+         AEytYbS2Rl7osK9wwlJpNOVqZ5SrKLRvz0dPihSOk6wAyT/JVkOBst1XF3k4ORTiZCkb
+         MitHrOF+G5VDKIYn8H3b2+g89GA6zc1eVCAfufKNNHDScpDxGfraYfAwEHVCQwM1UGOG
+         gc9Lh6zry1z34+HUO6wDztxNFpxtvPfcCC5bC6r8thm9d5Bz+Vjkxqlik9JXGbTsBteH
+         Hymg==
+X-Gm-Message-State: APjAAAVzVpTED+sx5MnH26WTWUT5oEhvaRRDZF+bg1xZj425vfO6cwXa
+        3lBY7m3CHIlIxBbH1Bp3Umeqr4yjYSb4Z3kB9ama7g==
+X-Google-Smtp-Source: APXvYqxfpG+jMqi5qihZJi9IHh9FiDX9js/5q0ycE73tZwZBFFnEG8Lz+l/93G/VZExz+enUcOKKN0q3BCm8e/kHvME=
+X-Received: by 2002:a5e:aa03:: with SMTP id s3mr3381601ioe.212.1567086099021;
+ Thu, 29 Aug 2019 06:41:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Thu, 29 Aug 2019 13:41:11 +0000 (UTC)
+References: <20190821173742.24574-1-vgoyal@redhat.com> <CAJfpegv_XS=kLxw_FzWNM2Xao5wsn7oGbk3ow78gU8tpXwo-sg@mail.gmail.com>
+ <20190829132949.GA6744@redhat.com>
+In-Reply-To: <20190829132949.GA6744@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 29 Aug 2019 15:41:26 +0200
+Message-ID: <CAJfpegtd-MQNbUW9YuL4xdXDkGR8K6LMHCqDG2Ppu9F_Hyk2RQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/13] virtio-fs: shared file system for virtual machines
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add information about the new "virtiofs" file system.
+On Thu, Aug 29, 2019 at 3:29 PM Vivek Goyal <vgoyal@redhat.com> wrote:
 
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
----
- Documentation/filesystems/index.rst    | 10 +++++
- Documentation/filesystems/virtiofs.rst | 60 ++++++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
- create mode 100644 Documentation/filesystems/virtiofs.rst
+> #ifdef CONFIG_VIRTIO_FS
+>         /** virtio-fs's physically contiguous buffer for in and out args */
+>         void *argbuf;
+> #endif
+>
+> It should have worked. Not sure why it is not working.
 
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 2de2fe2ab078..56e94bfc580f 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -32,3 +32,13 @@ filesystem implementations.
- 
-    journalling
-    fscrypt
-+
-+Filesystems
-+===========
-+
-+Documentation for filesystem implementations.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-+   virtiofs
-diff --git a/Documentation/filesystems/virtiofs.rst b/Documentation/filesystems/virtiofs.rst
-new file mode 100644
-index 000000000000..4f338e3cb3f7
---- /dev/null
-+++ b/Documentation/filesystems/virtiofs.rst
-@@ -0,0 +1,60 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===================================================
-+virtiofs: virtio-fs host<->guest shared file system
-+===================================================
-+
-+- Copyright (C) 2019 Red Hat, Inc.
-+
-+Introduction
-+============
-+The virtiofs file system for Linux implements a driver for the paravirtualized
-+VIRTIO "virtio-fs" device for guest<->host file system sharing.  It allows a
-+guest to mount a directory that has been exported on the host.
-+
-+Guests often require access to files residing on the host or remote systems.
-+Use cases include making files available to new guests during installation,
-+booting from a root file system located on the host, persistent storage for
-+stateless or ephemeral guests, and sharing a directory between guests.
-+
-+Although it is possible to use existing network file systems for some of these
-+tasks, they require configuration steps that are hard to automate and they
-+expose the storage network to the guest.  The virtio-fs device was designed to
-+solve these problems by providing file system access without networking.
-+
-+Furthermore the virtio-fs device takes advantage of the co-location of the
-+guest and host to increase performance and provide semantics that are not
-+possible with network file systems.
-+
-+Usage
-+=====
-+Mount file system with tag ``myfs`` on ``/mnt``:
-+
-+.. code-block:: sh
-+
-+  guest# mount -t virtiofs myfs /mnt
-+
-+Please see https://virtio-fs.gitlab.io/ for details on how to configure QEMU
-+and the virtiofsd daemon.
-+
-+Internals
-+=========
-+Since the virtio-fs device uses the FUSE protocol for file system requests, the
-+virtiofs file system for Linux is integrated closely with the FUSE file system
-+client.  The guest acts as the FUSE client while the host acts as the FUSE
-+server.  The /dev/fuse interface between the kernel and userspace is replaced
-+with the virtio-fs device interface.
-+
-+FUSE requests are placed into a virtqueue and processed by the host.  The
-+response portion of the buffer is filled in by the host and the guest handles
-+the request completion.
-+
-+Mapping /dev/fuse to virtqueues requires solving differences in semantics
-+between /dev/fuse and virtqueues.  Each time the /dev/fuse device is read, the
-+FUSE client may choose which request to transfer, making it possible to
-+prioritize certain requests over others.  Virtqueues have queue semantics and
-+it is not possible to change the order of requests that have been enqueued.
-+This is especially important if the virtqueue becomes full since it is then
-+impossible to add high priority requests.  In order to address this difference,
-+the virtio-fs device uses a "hiprio" virtqueue specifically for requests that
-+have priority over normal requests.
--- 
-2.21.0
+Needs to be changed to
 
+#if IS_ENABLED(CONFIG_VIRTIO_FS)
+
+Pushed out fixed version.
+
+Thanks,
+Miklos
