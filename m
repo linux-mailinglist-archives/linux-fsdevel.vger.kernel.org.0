@@ -2,51 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C75F1B13A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:29:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A841B13B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387634AbfILR27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 13:28:59 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:50455 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387615AbfILR2z (ORCPT
+        id S2387664AbfILR3M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 13:29:12 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:57821 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387645AbfILR3L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 13:28:55 -0400
+        Thu, 12 Sep 2019 13:29:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1568309334; x=1599845334;
+  t=1568309350; x=1599845350;
   h=message-id:in-reply-to:references:from:date:subject:to:
    mime-version;
-  bh=28IySAVKxoJRV0LmgCtPNOskQLC1lDBZonx5ptDZpxE=;
-  b=tK4nfSIoEuoEWIe7UZvBfqmjqB5AhzyGV9pXc2mAEOwlgCViTyRDgG5c
-   +Rugk0mWM/gWi0+ks4YqojNBKFH3ct6il+1Fa00U2c8TFVNkuzQ45Bi4i
-   23+nmLb5B/a4ovdJvNIFX1lzdk5msL6iEfZs6Xj1JBIHvay0vb7Tm9v3e
-   0=;
+  bh=cppOhrCS7ATHTbfPlLYKQfLvi0c5+MKzD8qR957mkfI=;
+  b=b6hXTVEpzOnKleE+Q22Yxxj3qPBpTSEbOqkapd7mj2ae6ehmIv/VNSOv
+   rmmoyEXoSLefhklay+14X5jd+1zW7CwQS75IqxHJf/5TtU2MRQ04XoDzU
+   hG0n41CSJ5R7kcALzVj+EFKcTZb9dJcooPCXXt+joRMUXJApEb/UVf+td
+   g=;
 X-IronPort-AV: E=Sophos;i="5.64,497,1559520000"; 
-   d="scan'208";a="420869470"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 12 Sep 2019 17:28:53 +0000
-Received: from EX13MTAUEB001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com (Postfix) with ESMTPS id 5914AA2335;
+   d="scan'208";a="702191778"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1d-9ec21598.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 12 Sep 2019 17:28:57 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1d-9ec21598.us-east-1.amazon.com (Postfix) with ESMTPS id 705F6A2619;
         Thu, 12 Sep 2019 17:28:52 +0000 (UTC)
-Received: from EX13D13UEB003.ant.amazon.com (10.43.60.212) by
- EX13MTAUEB001.ant.amazon.com (10.43.60.129) with Microsoft SMTP Server (TLS)
+Received: from EX13D18UEA001.ant.amazon.com (10.43.61.129) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
  id 15.0.1367.3; Thu, 12 Sep 2019 17:28:51 +0000
-Received: from EX13MTAUEB001.ant.amazon.com (10.43.60.96) by
- EX13D13UEB003.ant.amazon.com (10.43.60.212) with Microsoft SMTP Server (TLS)
+Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
+ EX13D18UEA001.ant.amazon.com (10.43.61.129) with Microsoft SMTP Server (TLS)
  id 15.0.1367.3; Thu, 12 Sep 2019 17:28:51 +0000
 Received: from kaos-source-ops-60003.pdx1.corp.amazon.com (10.36.133.164) by
- mail-relay.amazon.com (10.43.60.129) with Microsoft SMTP Server id
+ mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP Server id
  15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:51 +0000
 Received: by kaos-source-ops-60003.pdx1.corp.amazon.com (Postfix, from userid 6262777)
-        id E3333C057F; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
-Message-ID: <91d9eecc2db69f7f7d01173d693983a658f87811.1568309119.git.fllinden@amazon.com>
+        id E249AC053B; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
+Message-ID: <69bcfd7de0c47fb0fd45788394ffa52478a63bdc.1568309119.git.fllinden@amazon.com>
 In-Reply-To: <cover.1568309119.git.fllinden@amazon.com>
 References: <cover.1568309119.git.fllinden@amazon.com>
 From:   Frank van der Linden <fllinden@amazon.com>
-Date:   Fri, 30 Aug 2019 23:31:46 +0000
-Subject: [RFC PATCH 17/35] NFSv4.2: hook in the user extended attribute
- handlers
+Date:   Fri, 30 Aug 2019 23:38:36 +0000
+Subject: [RFC PATCH 18/35] NFSv4.2: add client side xattr caching functions
 To:     <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -55,181 +54,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that all the lower level code is there to make the RPC calls, hook
-it in to the xattr handlers and the listxattr entry point, to make them
-available.
+Implement client side caching for NFSv4.2 extended attributes.
+
+[note: this currently does nothing]
 
 Signed-off-by: Frank van der Linden <fllinden@amazon.com>
 ---
- fs/nfs/nfs4proc.c | 123 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 121 insertions(+), 2 deletions(-)
+ fs/nfs/Makefile             |  1 +
+ fs/nfs/internal.h           | 16 +++++++++
+ fs/nfs/nfs42xattr.c         | 72 +++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/nfs_fs.h |  1 +
+ 4 files changed, 90 insertions(+)
+ create mode 100644 fs/nfs/nfs42xattr.c
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 19d8fd087bf8..36cca076ccdb 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -66,6 +66,7 @@
- #include "nfs4idmap.h"
- #include "nfs4session.h"
- #include "fscache.h"
-+#include "nfs42.h"
+diff --git a/fs/nfs/Makefile b/fs/nfs/Makefile
+index 34cdeaecccf6..0917598db270 100644
+--- a/fs/nfs/Makefile
++++ b/fs/nfs/Makefile
+@@ -31,6 +31,7 @@ nfsv4-$(CONFIG_NFS_USE_LEGACY_DNS) += cache_lib.o
+ nfsv4-$(CONFIG_SYSCTL)	+= nfs4sysctl.o
+ nfsv4-$(CONFIG_NFS_V4_1)	+= pnfs.o pnfs_dev.o pnfs_nfs.o
+ nfsv4-$(CONFIG_NFS_V4_2)	+= nfs42proc.o
++nfsv4-$(CONFIG_NFS_V4_XATTR)	+= nfs42xattr.o
  
- #include "nfs4trace.h"
- 
-@@ -7318,6 +7319,103 @@ nfs4_listxattr_nfs4_label(struct inode *inode, char *list, size_t list_len)
- 
- #endif
+ obj-$(CONFIG_PNFS_FILE_LAYOUT) += filelayout/
+ obj-$(CONFIG_PNFS_BLOCK) += blocklayout/
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index 75645d9ff10b..558b9c8ddfbf 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -583,6 +583,22 @@ extern void nfs4_test_session_trunk(struct rpc_clnt *clnt,
+ 				struct rpc_xprt *xprt,
+ 				void *data);
  
 +#ifdef CONFIG_NFS_V4_XATTR
-+static int nfs4_xattr_set_nfs4_user(const struct xattr_handler *handler,
-+				    struct dentry *unused, struct inode *inode,
-+				    const char *key, const void *buf,
-+				    size_t buflen, int flags)
-+{
-+	struct nfs_access_entry cache;
-+
-+	if (!nfs_server_capable(inode, NFS_CAP_XATTR))
-+		return -EOPNOTSUPP;
-+
-+	/*
-+	 * There is no mapping from the MAY_* flags to the NFS_ACCESS_XA*
-+	 * flags right now. Handling of xattr operations use the normal
-+	 * file read/write permissions.
-+	 *
-+	 * Just in case the server has other ideas (which RFC 8276 allows),
-+	 * do a cached access check for the XA* flags to possibly avoid
-+	 * doing an RPC and getting EACCES back.
-+	 */
-+	if (!nfs_access_get_cached(inode, current_cred(), &cache, true)) {
-+		if (!(cache.mask & NFS_ACCESS_XAWRITE))
-+			return -EACCES;
-+	}
-+
-+	if (buf == NULL)
-+		return nfs42_proc_removexattr(inode, key);
-+	else
-+		return nfs42_proc_setxattr(inode, key, buf, buflen, flags);
-+}
-+
-+static int nfs4_xattr_get_nfs4_user(const struct xattr_handler *handler,
-+				    struct dentry *unused, struct inode *inode,
-+				    const char *key, void *buf, size_t buflen)
-+{
-+	struct nfs_access_entry cache;
-+
-+	if (!nfs_server_capable(inode, NFS_CAP_XATTR))
-+		return -EOPNOTSUPP;
-+
-+	if (!nfs_access_get_cached(inode, current_cred(), &cache, true)) {
-+		if (!(cache.mask & NFS_ACCESS_XAREAD))
-+			return -EACCES;
-+	}
-+
-+	return nfs42_proc_getxattr(inode, key, buf, buflen);
-+}
-+
-+static ssize_t
-+nfs4_listxattr_nfs4_user(struct inode *inode, char *list, size_t list_len)
-+{
-+	u64 cookie;
-+	bool eof;
-+	int ret, size;
-+	char *buf;
-+	size_t buflen;
-+	struct nfs_access_entry cache;
-+
-+	if (!nfs_server_capable(inode, NFS_CAP_XATTR))
-+		return 0;
-+
-+	if (!nfs_access_get_cached(inode, current_cred(), &cache, true)) {
-+		if (!(cache.mask & NFS_ACCESS_XALIST))
-+			return 0;
-+	}
-+
-+	cookie = 0;
-+	eof = false;
-+	buflen = list_len ? list_len : XATTR_LIST_MAX;
-+	buf = list_len ? list : NULL;
-+	size = 0;
-+
-+	while (!eof) {
-+		ret = nfs42_proc_listxattrs(inode, buf, buflen,
-+		    &cookie, &eof);
-+		if (ret < 0) {
-+			return ret;
-+		}
-+		if (list_len) {
-+			buf += ret;
-+			buflen -= ret;
-+		}
-+		size += ret;
-+	}
-+
-+	return size;
-+}
-+
++extern void nfs4_xattr_cache_add(struct inode *, const char *name,
++				 const char *buf, ssize_t buflen);
++extern void nfs4_xattr_cache_remove(struct inode *, const char *name);
++extern ssize_t nfs4_xattr_cache_get(struct inode *inode, const char *name,
++				char *buf, ssize_t buflen);
++extern void nfs4_xattr_cache_set_list(struct inode *, const char *buf,
++				      ssize_t buflen);
++extern ssize_t nfs4_xattr_cache_list(struct inode *, char *buf, ssize_t buflen);
++extern void nfs4_xattr_cache_zap(struct inode *);
 +#else
-+
-+static ssize_t
-+nfs4_listxattr_nfs4_user(struct inode *inode, char *list, size_t list_len)
++static inline void nfs4_xattr_cache_zap(struct inode *)
 +{
-+	return 0;
 +}
-+#endif /* CONFIG_NFS_V4_XATTR */
++#endif
 +
- /*
-  * nfs_fhget will use either the mounted_on_fileid or the fileid
-  */
-@@ -9886,7 +9984,7 @@ const struct nfs4_minor_version_ops *nfs_v4_minor_ops[] = {
- 
- static ssize_t nfs4_listxattr(struct dentry *dentry, char *list, size_t size)
+ static inline struct inode *nfs_igrab_and_active(struct inode *inode)
  {
--	ssize_t error, error2;
-+	ssize_t error, error2, error3;
+ 	inode = igrab(inode);
+diff --git a/fs/nfs/nfs42xattr.c b/fs/nfs/nfs42xattr.c
+new file mode 100644
+index 000000000000..40c190cfaa75
+--- /dev/null
++++ b/fs/nfs/nfs42xattr.c
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2019 Amazon.com, Inc. or its affiliates. All rights reserved.
++ *
++ * User extended attribute client side cache functions.
++ *
++ * Author: Frank van der Linden <fllinden@amazon.com>
++ */
++
++#include <linux/errno.h>
++#include <linux/nfs_fs.h>
++
++#include "nfs4_fs.h"
++#include "internal.h"
++
++#define NFSDBG_FACILITY         NFSDBG_XATTRCACHE
++
++
++/*
++ * Retrieve an xattr from the cache.
++ */
++ssize_t nfs4_xattr_cache_get(struct inode *inode, const char *name, char *buf,
++			 ssize_t buflen)
++{
++	return -ENOENT;
++}
++
++/*
++ * Retrieve a cached list of xattrs from the cache.
++ */
++ssize_t nfs4_xattr_cache_list(struct inode *inode, char *buf, ssize_t buflen)
++{
++	return -ENOENT;
++}
++
++/*
++ * Add an xattr to the cache.
++ *
++ * This also invalidates the xattr list cache.
++ */
++void nfs4_xattr_cache_add(struct inode *inode, const char *name,
++			  const char *buf, ssize_t buflen)
++{
++}
++
++
++/*
++ * Remove an xattr to the cache.
++ *
++ * This also invalidates the xattr list cache.
++ */
++void nfs4_xattr_cache_remove(struct inode *inode, const char *name)
++{
++}
++
++/*
++ * Cache listxattr output, replacing any possible old one.
++ *
++ * Should validate existing cache entries.
++ */
++void nfs4_xattr_cache_set_list(struct inode *inode, const char *buf,
++			       ssize_t buflen)
++{
++}
++
++/*
++ * Zap the entire cache.
++ */
++void nfs4_xattr_cache_zap(struct inode *inode)
++{
++}
+diff --git a/include/uapi/linux/nfs_fs.h b/include/uapi/linux/nfs_fs.h
+index 7bcc8cd6831d..3afe3767c55d 100644
+--- a/include/uapi/linux/nfs_fs.h
++++ b/include/uapi/linux/nfs_fs.h
+@@ -56,6 +56,7 @@
+ #define NFSDBG_PNFS		0x1000
+ #define NFSDBG_PNFS_LD		0x2000
+ #define NFSDBG_STATE		0x4000
++#define NFSDBG_XATTRCACHE	0x8000
+ #define NFSDBG_ALL		0xFFFF
  
- 	error = generic_listxattr(dentry, list, size);
- 	if (error < 0)
-@@ -9899,7 +9997,17 @@ static ssize_t nfs4_listxattr(struct dentry *dentry, char *list, size_t size)
- 	error2 = nfs4_listxattr_nfs4_label(d_inode(dentry), list, size);
- 	if (error2 < 0)
- 		return error2;
--	return error + error2;
-+
-+	if (list) {
-+		list += error2;
-+		size -= error2;
-+	}
-+
-+	error3 = nfs4_listxattr_nfs4_user(d_inode(dentry), list, size);
-+	if (error3 < 0)
-+		return error3;
-+
-+	return error + error2 + error3;
- }
  
- static const struct inode_operations nfs4_dir_inode_operations = {
-@@ -9987,10 +10095,21 @@ static const struct xattr_handler nfs4_xattr_nfs4_acl_handler = {
- 	.set	= nfs4_xattr_set_nfs4_acl,
- };
- 
-+#ifdef CONFIG_NFS_V4_XATTR
-+static const struct xattr_handler nfs4_xattr_nfs4_user_handler = {
-+	.prefix	= XATTR_USER_PREFIX,
-+	.get	= nfs4_xattr_get_nfs4_user,
-+	.set	= nfs4_xattr_set_nfs4_user,
-+};
-+#endif
-+
- const struct xattr_handler *nfs4_xattr_handlers[] = {
- 	&nfs4_xattr_nfs4_acl_handler,
- #ifdef CONFIG_NFS_V4_SECURITY_LABEL
- 	&nfs4_xattr_nfs4_label_handler,
-+#endif
-+#ifdef CONFIG_NFS_V4_XATTR
-+	&nfs4_xattr_nfs4_user_handler,
- #endif
- 	NULL
- };
 -- 
 2.17.2
 
