@@ -2,96 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A716A3317
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 10:45:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1589A338B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 11:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfH3Io2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 04:44:28 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:3542 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727236AbfH3Io2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 04:44:28 -0400
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id B098D2181E2B1D99C5AA;
-        Fri, 30 Aug 2019 16:44:22 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 30 Aug 2019 16:44:22 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Fri, 30 Aug 2019 16:44:21 +0800
-Date:   Fri, 30 Aug 2019 16:43:33 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     <devel@driverdev.osuosl.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Valdis =?gbk?Q?Kl=A8=A5tnieks?= <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        <linux-fsdevel@vger.kernel.org>,
-        "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190830084333.GA193084@architecture4>
-References: <20190829094136.GA28643@infradead.org>
- <20190829095019.GA13557@kroah.com>
- <20190829103749.GA13661@infradead.org>
- <20190829111810.GA23393@kroah.com>
- <20190829151144.GJ23584@kadam>
- <20190829152757.GA125003@architecture4>
- <20190829154346.GK23584@kadam>
- <20190829155127.GA136563@architecture4>
- <20190829160441.GA141079@architecture4>
- <20190830083445.GL23584@kadam>
+        id S1727634AbfH3JSB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 05:18:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:21152 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725780AbfH3JSB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Aug 2019 05:18:01 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7U9AHZq085793
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2019 05:18:00 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uq0xd0967-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2019 05:18:00 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Fri, 30 Aug 2019 10:17:58 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 30 Aug 2019 10:17:55 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7U9HsMk52166668
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Aug 2019 09:17:54 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0AC4811C050;
+        Fri, 30 Aug 2019 09:17:54 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 63CA211C04A;
+        Fri, 30 Aug 2019 09:17:53 +0000 (GMT)
+Received: from dhcp-9-199-158-229.in.ibm.com (unknown [9.124.31.57])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 30 Aug 2019 09:17:53 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     riteshh@linux.ibm.com
+Subject: [PATCH 0/2] Trivial changes found during code-review
+Date:   Fri, 30 Aug 2019 14:47:49 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190830083445.GL23584@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme704-chm.china.huawei.com (10.1.199.100) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19083009-0012-0000-0000-000003449647
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19083009-0013-0000-0000-0000217ED996
+Message-Id: <20190830091751.10284-1-riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-30_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=427 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908300099
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Dan,
+Just couple of trivial changes, found during code-review.
 
-On Fri, Aug 30, 2019 at 11:34:45AM +0300, Dan Carpenter wrote:
-> On Fri, Aug 30, 2019 at 12:04:41AM +0800, Gao Xiang wrote:
-> > Anyway, I'm fine to delete them all if you like, but I think majority of these
-> > are meaningful.
-> > 
-> > data.c-		/* page is already locked */
-> > data.c-		DBG_BUGON(PageUptodate(page));
-> > data.c-
-> > data.c:		if (unlikely(err))
-> > data.c-			SetPageError(page);
-> > data.c-		else
-> > data.c-			SetPageUptodate(page);
-> 
-> If we cared about speed here then we would delete the DBG_BUGON() check
-> because that's going to be expensive.  The likely/unlikely annotations
-> should be used in places a reasonable person thinks it will make a
-> difference to benchmarks.
+Ritesh Harjani (2):
+  direct-io: Change is_async member of struct dio from int to bool
+  Doc: vfs: Update few inode specific super_operations methods
 
-DBG_BUGON will be a no-op ((void)x) in non-debugging mode,
-I discussed related stuffs with Greg many months before [1] and
-other filesystems also have similar functions...
+ Documentation/filesystems/vfs.rst | 26 ++++++++++++++++++--------
+ fs/direct-io.c                    |  2 +-
+ 2 files changed, 19 insertions(+), 9 deletions(-)
 
-p.s. I think we come to an agreement here...
-I killed all unlikely/likely.
+-- 
+2.21.0
 
-[1] http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-November/128951.html
-sorry about no lore here.
-
-Thanks,
-Gao Xiang
-
-> 
-> regards,
-> dan carpenter
-> 
