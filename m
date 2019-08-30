@@ -2,64 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B6CCA2E61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 06:30:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EBA3A2EA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 06:44:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbfH3EaD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 00:30:03 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:34419 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725812AbfH3EaD (ORCPT
+        id S1725838AbfH3Eop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 00:44:45 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:44704 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfH3Eop (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 00:30:03 -0400
-Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 95475360EAD;
-        Fri, 30 Aug 2019 14:30:00 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1i3YXu-0003RX-IX; Fri, 30 Aug 2019 14:29:58 +1000
-Date:   Fri, 30 Aug 2019 14:29:58 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jason Yan <yanaijie@huawei.com>,
-        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org
-Subject: Re: CONFIG_HARDENED_USERCOPY
-Message-ID: <20190830042958.GC7777@dread.disaster.area>
-References: <6e02a518-fea9-19fe-dca7-0323a576750d@huawei.com>
- <201908290914.F0F929EA@keescook>
+        Fri, 30 Aug 2019 00:44:45 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3Ym7-0000W4-4h; Fri, 30 Aug 2019 04:44:39 +0000
+Date:   Fri, 30 Aug 2019 05:44:39 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Boaz Harrosh <boaz@plexistor.com>,
+        Kai =?iso-8859-1?Q?M=E4kisara_=28Kolumbus=29?= 
+        <kai.makisara@kolumbus.fi>, Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel@vger.kernel.org,
+        Octavian Purdila <octavian.purdila@intel.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-scsi@vger.kernel.org
+Subject: Re: [RFC] Re: broken userland ABI in configfs binary attributes
+Message-ID: <20190830044439.GV1131@ZenIV.linux.org.uk>
+References: <20190826024838.GN1131@ZenIV.linux.org.uk>
+ <20190826162949.GA9980@ZenIV.linux.org.uk>
+ <B35B5EA9-939C-49F5-BF65-491D70BCA8D4@kolumbus.fi>
+ <20190826193210.GP1131@ZenIV.linux.org.uk>
+ <b362af55-4f45-bf29-9bc4-dd64e6b04688@plexistor.com>
+ <20190827172734.GS1131@ZenIV.linux.org.uk>
+ <20190829222258.GA16625@ZenIV.linux.org.uk>
+ <20190830041042.GB7777@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201908290914.F0F929EA@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
-        a=7-415B0cAAAA:8 a=hzK9nwXln0vweuEjbcYA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20190830041042.GB7777@dread.disaster.area>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 09:15:36AM -0700, Kees Cook wrote:
-> On Thu, Aug 29, 2019 at 08:42:30PM +0800, Jason Yan wrote:
-> > We found an issue of kernel bug related to HARDENED_USERCOPY.
-> > When copying an IO buffer to userspace, HARDENED_USERCOPY thought it is
-> > illegal to copy this buffer. Actually this is because this IO buffer was
-> > merged from two bio vectors, and the two bio vectors buffer was allocated
-> > with kmalloc() in the filesystem layer.
+On Fri, Aug 30, 2019 at 02:10:42PM +1000, Dave Chinner wrote:
+
+> > reiserfs_file_release():
+> > 	tries to return an error if it can't free preallocated blocks.
+> > 
+> > xfs_release():
+> > 	similar to the previous case.
 > 
-> Ew. I thought the FS layer was always using page_alloc?
+> Not quite right. XFS only returns an error if there is data
+> writeback failure or filesystem corruption or shutdown detected
+> during whatever operation it is performing.
+> 
+> We don't really care what is done with the error that we return;
+> we're just returning an error because that's what the function
+> prototype indicates we should do...
 
-No, they don't. It's perfectly legal to use heap memory for bio
-buffers - we've been doing it since, at least, XFS got merged all
-those years ago.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I thought that xfs_release() and friends followed the prototypes
+you had on IRIX, while xfs_file_release() et.al. were the
+impedance-matching layer for Linux.  Oh, well...
