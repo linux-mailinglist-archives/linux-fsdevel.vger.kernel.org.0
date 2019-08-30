@@ -2,76 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A67B0A3D1A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 19:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B636A3DE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 20:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfH3Rlr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 13:41:47 -0400
-Received: from a9-46.smtp-out.amazonses.com ([54.240.9.46]:43362 "EHLO
-        a9-46.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727914AbfH3Rlr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 13:41:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1567186906;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=O4l8bfyB+VvL+95TNWx4FpZqRMWRe8LWpmXp151rZPQ=;
-        b=jOwxuN0/GsY64oKXgfJmdwBB+AXtX2WpGHqJuhQjx2ptbH8DVIIqkqyXxRD8yOn8
-        GV8ejswyFu4wYPPvC5trc2TJ+u/8YK8DHJOysSHUEOvy5EY/yEQJyv85OgQB3tVrNRO
-        oEjKdNcHWMyjIds//broy3iaTxgNIeqHLNuDl3dY=
-Date:   Fri, 30 Aug 2019 17:41:46 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
+        id S1727979AbfH3Sq7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 14:46:59 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:42968 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727304AbfH3Sq7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Aug 2019 14:46:59 -0400
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 6A8539DBA69EB7AA3A3A;
+        Sat, 31 Aug 2019 02:46:56 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sat, 31 Aug 2019 02:46:55 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Sat, 31 Aug 2019 02:46:54 +0800
+Date:   Sat, 31 Aug 2019 02:46:06 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
- kmalloc(power-of-two)
-In-Reply-To: <20190829073921.GA21880@dhcp22.suse.cz>
-Message-ID: <0100016ce39e6bb9-ad20e033-f3f4-4e6d-85d6-87e7d07823ae-000000@email.amazonses.com>
-References: <20190826111627.7505-1-vbabka@suse.cz> <20190826111627.7505-3-vbabka@suse.cz> <0100016cd98bb2c1-a2af7539-706f-47ba-a68e-5f6a91f2f495-000000@email.amazonses.com> <20190828194607.GB6590@bombadil.infradead.org>
- <20190829073921.GA21880@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        "Dave Chinner" <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 05/24] erofs: add inode operations
+Message-ID: <20190830184606.GA175612@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-6-gaoxiang25@huawei.com>
+ <20190829102426.GE20598@infradead.org>
+ <20190829115922.GG64893@architecture4>
+ <20190830164205.GD29603@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.08.30-54.240.9.46
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190830164205.GD29603@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 29 Aug 2019, Michal Hocko wrote:
+Hi Christoph,
 
-> > There are many places in the kernel which assume alignment.  They break
-> > when it's not supplied.  I believe we have a better overall system if
-> > the MM developers provide stronger guarantees than the MM consumers have
-> > to work around only weak guarantees.
->
-> I absolutely agree. A hypothetical benefit of a new implementation
-> doesn't outweigh the complexity the existing code has to jump over or
-> worse is not aware of and it is broken silently. My general experience
-> is that the later is more likely with a large variety of drivers we have
-> in the tree and odd things they do in general.
+On Fri, Aug 30, 2019 at 09:42:05AM -0700, Christoph Hellwig wrote:
+> On Thu, Aug 29, 2019 at 07:59:22PM +0800, Gao Xiang wrote:
+> > On Thu, Aug 29, 2019 at 03:24:26AM -0700, Christoph Hellwig wrote:
+> > 
+> > []
+> > 
+> > > 
+> > > > +
+> > > > +		/* fill last page if inline data is available */
+> > > > +		err = fill_inline_data(inode, data, ofs);
+> > > 
+> > > Well, I think you should move the is_inode_flat_inline and
+> > > (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) checks from that
+> > > helper here, as otherwise you make everyone wonder why you'd always
+> > > fill out the inline data.
+> > 
+> > Currently, fill_inline_data() only fills for fast symlink,
+> > later we can fill any tail-end block (such as dir block)
+> > for our requirements.
+> 
+> So change it when that later changes actually come in.  And even then
+> having the checks outside the function is a lot more obvious.
 
+Okay.
 
-The current behavior without special alignment for these caches has been
-in the wild for over a decade. And this is now coming up?
+> 
+> > And I think that is minor.
+> 
+> The problem is that each of these issues might appear minor on their
+> own.  But combined a lot of the coding style choices lead to code that
+> is more suitable an obsfucated code contest than the Linux kernel as
+> trying to understand even just a few places requires jumping through
+> tons of helpers with misleading names and spread over various files.
+> 
+> > The consideration is simply because iget_locked performs better
+> > than iget5_locked.
+> 
+> In what benchmark do the differences show up?
 
-There is one case now it seems with a broken hardware that has issues and
-we now move to an alignment requirement from the slabs with exceptions and
-this and that?
+In a word, no benchmark here, just because
+"unsigned long on 32-bit platforms is 4 bytes."
+but erofs nid is a 64-bit number.
 
-If there is an exceptional alignment requirement then that needs to be
-communicated to the allocator. A special flag or create a special
-kmem_cache or something.
+iget_locked will do find_inode_fast (no callback at all)
+rather than iget5_locked --> find_inode (test callback) ->
+            inode_insert5(set callback) for each new inode.
+
+For most 64-bit platforms, iget_locked is enough,
+32-bit platforms become rare...
+
+Thanks,
+Gao Xiang
+
