@@ -2,146 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B07CA3F66
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 23:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D9DA3FFF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 23:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbfH3VGI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 17:06:08 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43824 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbfH3VGI (ORCPT
+        id S1728217AbfH3VyS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 17:54:18 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41751 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728111AbfH3VyR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 17:06:08 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UL4OP3052181;
-        Fri, 30 Aug 2019 21:06:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=X0qTs6quRkeDzh6JsWpMpr4j3/R7HoLuineFF9PtkUM=;
- b=B6J8WGrLpX/O5g43lTMjZEkpBTejd35tNxHNpt0F+VEYkvu1AIzN3AX/f8mey1uyZGXe
- eGpblgYW9tYltwOQAhSbMDbi1nt6LfAkI2dRyIIm1DAnIfR1I7RP52+IYw6zTxr0Wxa+
- FMSAOFow9EtauioLvdND+3KysoaQirxMuZ95dGexrLWqmnAWAtGEC7ZbyTNhYpbhI5fi
- P8fzfNg5ztl8U7A3Jfv+ur1kG7CSObqkH4yoq5zqO99UKknvpuVeqdQ0F3FSJSyNunjs
- WXyGfuJHQ4Sf8m7KnmwF9w7ikDse1lMTKglkWdjb6M53fa0awMuoqyJRjnVgX3JBHy1Q mQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2uqbcx005j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Aug 2019 21:06:05 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UL4EII066304;
-        Fri, 30 Aug 2019 21:06:05 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2uphavq7k3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Aug 2019 21:06:05 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7UL64xQ019365;
-        Fri, 30 Aug 2019 21:06:04 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 30 Aug 2019 14:06:04 -0700
-Date:   Fri, 30 Aug 2019 14:06:03 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     viro@zeniv.linux.org.uk, andreas.gruenbacher@gmail.com
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v2] splice: only read in as much information as there is pipe
- buffer space
-Message-ID: <20190830210603.GB5340@magnolia>
-References: <20190829161155.GA5360@magnolia>
+        Fri, 30 Aug 2019 17:54:17 -0400
+Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 1E94A43D08B;
+        Sat, 31 Aug 2019 07:54:12 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1i3oqQ-0001cH-9d; Sat, 31 Aug 2019 07:54:10 +1000
+Date:   Sat, 31 Aug 2019 07:54:10 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, devel@driverdev.osuosl.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190830215410.GD7777@dread.disaster.area>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190828170022.GA7873@kroah.com>
+ <20190829062340.GB3047@infradead.org>
+ <20190829063955.GA30193@kroah.com>
+ <20190829094136.GA28643@infradead.org>
+ <20190829095019.GA13557@kroah.com>
+ <20190829103749.GA13661@infradead.org>
+ <20190829111810.GA23393@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190829161155.GA5360@magnolia>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9365 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908300202
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9365 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908300202
+In-Reply-To: <20190829111810.GA23393@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=7-415B0cAAAA:8 a=nsflCM8SZg1gMuGxmi4A:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+On Thu, Aug 29, 2019 at 01:18:10PM +0200, Greg Kroah-Hartman wrote:
+> On Thu, Aug 29, 2019 at 03:37:49AM -0700, Christoph Hellwig wrote:
+> > On Thu, Aug 29, 2019 at 11:50:19AM +0200, Greg Kroah-Hartman wrote:
+> > > I know the code is horrible, but I will gladly take horrible code into
+> > > staging.  If it bothers you, just please ignore it.  That's what staging
+> > > is there for :)
+> > 
+> > And then after a while you decide it's been long enough and force move
+> > it out of staging like the POS erofs code?
+> 
+> Hey, that's not nice, erofs isn't a POS.  It could always use more
+> review, which the developers asked for numerous times.
+> 
+> There's nothing different from a filesystem compared to a driver.  If
+> its stand-alone, and touches nothing else, all issues with it are
+> self-contained and do not bother anyone else in the kernel.  We merge
 
-Andreas Grünbacher reports that on the two filesystems that support
-iomap directio, it's possible for splice() to return -EAGAIN (instead of
-a short splice) if the pipe being written to has less space available in
-its pipe buffers than the length supplied by the calling process.
+I whole-heartedly disagree with that statement.
 
-Months ago we fixed splice_direct_to_actor to clamp the length of the
-read request to the size of the splice pipe.  Do the same to do_splice.
+The major difference between filesystems and the rest of the kernel
+that seems to be missed by most kernel developers is that
+filesystems maintain persistent data - you can't fix a problem/bug
+by rebooting or power cycling. Once the filesystem code screws up,
+the user is left with a mess they have to fix and that invariably
+results in data loss.
 
-Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
-Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
----
-v2: tidy up the other call site per Andreas' request
----
- fs/splice.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Users remember when a filesystem eats their data - they don't tend
+to want to have anything to do with that filesystem ever again if it
+happens to them. We still get people saying "XFS ate my data back in
+2002, I dont trust it and I'll never use it again".
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 98412721f056..2ddbace9129f 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -945,12 +945,13 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
- 	WARN_ON_ONCE(pipe->nrbufs != 0);
- 
- 	while (len) {
-+		unsigned int pipe_pages;
- 		size_t read_len;
- 		loff_t pos = sd->pos, prev_pos = pos;
- 
- 		/* Don't try to read more the pipe has space for. */
--		read_len = min_t(size_t, len,
--				 (pipe->buffers - pipe->nrbufs) << PAGE_SHIFT);
-+		pipe_pages = pipe->buffers - pipe->nrbufs;
-+		read_len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
- 		ret = do_splice_to(in, &pos, pipe, read_len, flags);
- 		if (unlikely(ret <= 0))
- 			goto out_release;
-@@ -1101,6 +1102,7 @@ static long do_splice(struct file *in, loff_t __user *off_in,
- 	struct pipe_inode_info *ipipe;
- 	struct pipe_inode_info *opipe;
- 	loff_t offset;
-+	unsigned int pipe_pages;
- 	long ret;
- 
- 	ipipe = get_pipe_info(in);
-@@ -1123,6 +1125,10 @@ static long do_splice(struct file *in, loff_t __user *off_in,
- 		if ((in->f_flags | out->f_flags) & O_NONBLOCK)
- 			flags |= SPLICE_F_NONBLOCK;
- 
-+		/* Don't try to read more the pipe has space for. */
-+		pipe_pages = opipe->buffers - opipe->nrbufs;
-+		len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
-+
- 		return splice_pipe_to_pipe(ipipe, opipe, len, flags);
- 	}
- 
-@@ -1180,8 +1186,13 @@ static long do_splice(struct file *in, loff_t __user *off_in,
- 
- 		pipe_lock(opipe);
- 		ret = wait_for_space(opipe, flags);
--		if (!ret)
-+		if (!ret) {
-+			/* Don't try to read more the pipe has space for. */
-+			pipe_pages = opipe->buffers - opipe->nrbufs;
-+			len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
-+
- 			ret = do_splice_to(in, &offset, opipe, len, flags);
-+		}
- 		pipe_unlock(opipe);
- 		if (ret > 0)
- 			wakeup_pipe_readers(opipe);
+Users put up with shit hardware and drivers - it's an inconvenience
+more than anything. They don't put up with buggy filesystems that
+lose their data - that is completely unacceptible to users.  As a
+result, the quality and stability standard for merging a new
+filesystem needs to be far higher that what is acceptible for
+merging a new driver.
+
+The correct place for new filesystem review is where all the
+experienced filesystem developers hang out - that's linux-fsdevel,
+not the driver staging tree.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
