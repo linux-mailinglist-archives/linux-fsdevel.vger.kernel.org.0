@@ -2,209 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE2EA2F27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 07:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F56A3024
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 08:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbfH3FpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 01:45:07 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40286 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbfH3FpH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 01:45:07 -0400
-Received: by mail-ot1-f65.google.com with SMTP id c34so5821548otb.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 22:45:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hev-cc.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5xuuSwgJWCqcDc1AbsIjp7yN/mRhhcSgBhiJdsYZVCA=;
-        b=GI1KfcM4GYbh05OZLb000/qx2D4gy8snqMb4Nhu0mPHzjXiIQGXvxjYUu8geuOgkEB
-         W+7KNsA2w9g1tN5YyxSNCuuG/SgM0+hEqdr7pO0ovTrxikZ55cXaGkJLeiAX9ICEef0S
-         MkaShiZ1rT5cIDvil50XfiJD2diLLxqwk+So/ITlpV4VnZpykUPf78Qk/8IghjPUNAYx
-         s7NMYkKy2G7zYAM5ZRu/zmDYl3w2FlqcK3Vu6ES8cPh9nOPsb7sS3nqZVr7jcXJbcOtz
-         OrTpNN/50fQWFlzosGaObZK0aVCbv7wFfdFYqtHdIiRcjVPagMNnLydCj5TMZLfIsa0L
-         PiqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5xuuSwgJWCqcDc1AbsIjp7yN/mRhhcSgBhiJdsYZVCA=;
-        b=TfQZAkB0osL1j599fjlKsgvZhNkpGIIl8TsMO+Yf4ZC+6XsVYG8AkCY9MTB3/goKEz
-         JbrM+SrzygaHFu0Efihd7jWmNI+4dfva5HMzIbiEd3fYQXNWAYWXsEdpXPorVgFa7sDD
-         FVFmBVGmql7vSSRA2Dy4dBkIv9DuMbqtxnZWZf760WCGz6OT8az+fNtKFvRQnGqWFKDG
-         ClpUq1NdVRFJg6PO+ETxfufzBq/D6b21fJq4iIiZBeweWqERF4TSU+WOgea99zuKYgF7
-         SSAmUrHzxH0JYxZI/RGVZlqx+cGRKGUgMsPmpXCTk3FJBBHDL/k5i8KSWejBvEShPhXs
-         RJuQ==
-X-Gm-Message-State: APjAAAXykO9YTfeGS9Gn5Hn2I4xGjtSTiXj/azIgSfCGYkmS4iMqMJWj
-        YFzKQDRY64jIhr+zPpqSGraJ4mbPeDKCCg==
-X-Google-Smtp-Source: APXvYqzGUyuAkVpBq01B1WkMHWncGpb/6RmallypNCRKvbAeHOKYuZlwyLICrAHdHcpk3ucJyNP5ug==
-X-Received: by 2002:a9d:6852:: with SMTP id c18mr11051720oto.218.1567143905919;
-        Thu, 29 Aug 2019 22:45:05 -0700 (PDT)
-Received: from hev-sbc.hz.ali.com ([47.89.83.40])
-        by smtp.gmail.com with ESMTPSA id l14sm1310424oii.27.2019.08.29.22.45.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 22:45:04 -0700 (PDT)
-From:   hev <r@hev.cc>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     e@80x24.org, Heiher <r@hev.cc>, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/epoll: fix the edge-triggered mode for epoll itself
-Date:   Fri, 30 Aug 2019 13:44:57 +0800
-Message-Id: <20190830054457.5445-1-r@hev.cc>
-X-Mailer: git-send-email 2.23.0
+        id S1726452AbfH3Gjb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 02:39:31 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3983 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726005AbfH3Gja (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Aug 2019 02:39:30 -0400
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 965DF347AF6FC41C08BF;
+        Fri, 30 Aug 2019 14:39:27 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 30 Aug 2019 14:39:27 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Fri, 30 Aug 2019 14:39:26 +0800
+Date:   Fri, 30 Aug 2019 14:38:39 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     Chao Yu <yuchao0@huawei.com>, <devel@driverdev.osuosl.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Valdis =?gbk?Q?Kl=A8=A5tnieks?= <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190830063838.GA144157@architecture4>
+References: <20190829062340.GB3047@infradead.org>
+ <20190829063955.GA30193@kroah.com>
+ <20190829094136.GA28643@infradead.org>
+ <20190829095019.GA13557@kroah.com>
+ <20190829103749.GA13661@infradead.org>
+ <20190829111810.GA23393@kroah.com>
+ <20190829151144.GJ23584@kadam>
+ <20190829152757.GA125003@architecture4>
+ <20190829154346.GK23584@kadam>
+ <cd38b645-2930-3e02-6c6a-5972ea02b537@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cd38b645-2930-3e02-6c6a-5972ea02b537@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme710-chm.china.huawei.com (10.1.199.106) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Heiher <r@hev.cc>
+Hi Dan,
 
-The structure of event pools:
- efd[2]:
- {
-     sfd[0] (EPOLLIN)
- }
+On Fri, Aug 30, 2019 at 10:06:25AM +0800, Chao Yu wrote:
+> On 2019/8/29 23:43, Dan Carpenter wrote:
+> >> p.s. There are 2947 (un)likely places in fs/ directory.
+> > 
+> > I was complaining about you adding new pointless ones, not existing
+> > ones.  The likely/unlikely annotations are supposed to be functional and
+> > not decorative.  I explained this very clearly.
+> > 
+> > Probably most of the annotations in fs/ are wrong but they are also
+> > harmless except for the slight messiness.  However there are definitely
+> > some which are important so removing them all isn't a good idea.
+> 
+> Hi Dan,
+> 
+> Could you please pick up one positive example using likely and unlikely
+> correctly? so we can follow the example, rather than removing them all blindly.
 
- efd[1]:
- {
-     efd[2] (EPOLLIN)
- }
+I'm also curious about that, what is the filesystem or kernel standard about
+likely/unlikely use (since I didn't find some documented standard so I used
+in my personal way, I think it is reasonable at least to cover all error
+handling paths), maybe I'm an _idiot_ as some earlier unfriendly word said
+somewhere so I'm too stupid to understand the implicit meaning of some document.
 
- efd[0]:
- {
-     efd[2] (EPOLLIN | EPOLLET)
- }
+> 
+> Thanks,
+> 
+> > 
+> >> If you like, I will delete them all.
+> > 
+> > But for erofs, I don't think that any of the likely/unlikely calls have
+> > been thought about so I'm fine with removing all of them in one go.
 
-When sfd[0] to be readable:
- * the epoll_wait(efd[0], ..., 0) should return efd[2]'s events on first call,
-   and returns 0 on next calls, because efd[2] is added in edge-triggered mode.
- * the epoll_wait(efd[1], ..., 0) should returns efd[2]'s events on every calls
-   until efd[2] is not readable (epoll_wait(efd[2], ...) => 0), because efd[1]
-   is added in level-triggered mode.
- * the epoll_wait(efd[2], ..., 0) should returns sfd[0]'s events on every calls
-   until sfd[0] is not readable (read(sfd[0], ...) => EAGAIN), because sfd[0]
-   is added in level-triggered mode.
+Add a word (just a note), I don't think such kind of "any", "few", "all"
+words are meaningful without some explicit evidence. (e.g. such as EROFS
+have few error handling path. I don't think that is true and worth to
+give many details since EROFS code is here for more than one year.)
 
- #include <stdio.h>
- #include <unistd.h>
- #include <sys/epoll.h>
- #include <sys/socket.h>
+Yes, EROFS is not prefectly, I have to admit, and I said similar words
+on other threads for many times if you decide to check each likely/unlikely
+line by line, I cannot say all unlikely/likely cases I wrote are reasonable
+(just as bug-free, I think no one can make such guarantee even for new code),
+but I can say the majority of them are reasonable in my personal understanding
+of likely/unlikely. And I can fix all your reports in time (but maybe some
+are not urgent at all.)
 
- int main(int argc, char *argv[])
- {
- 	int sfd[2];
- 	int efd[3];
- 	int nfds;
- 	struct epoll_event e;
+In addition there will be endless discussions on detailed code since there are
+many personal tendencies from various people in it, as the saying goes "There
+are a thousand Hamlets in a thousand people's eyes. "
 
- 	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
- 		goto out;
+Anyway, I have sent a patch to kill them all blindly as you like, so I think
+we can come to an agreement on it, but I still don't fully agree with your
+"for EROFS, I don't think that any of the likely/unlikely calls have been
+thought about" conclusion.
 
- 	efd[0] = epoll_create(1);
- 	if (efd[0] < 0)
- 		goto out;
+Thanks,
+Gao Xiang
 
- 	efd[1] = epoll_create(1);
- 	if (efd[1] < 0)
- 		goto out;
-
- 	efd[2] = epoll_create(1);
- 	if (efd[2] < 0)
- 		goto out;
-
- 	e.events = EPOLLIN;
- 	if (epoll_ctl(efd[2], EPOLL_CTL_ADD, sfd[0], &e) < 0)
- 		goto out;
-
- 	e.events = EPOLLIN;
- 	if (epoll_ctl(efd[1], EPOLL_CTL_ADD, efd[2], &e) < 0)
- 		goto out;
-
- 	e.events = EPOLLIN | EPOLLET;
- 	if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[2], &e) < 0)
- 		goto out;
-
- 	if (write(sfd[1], "w", 1) != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[0], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[0], &e, 1, 0);
- 	if (nfds != 0)
- 		goto out;
-
- 	nfds = epoll_wait(efd[1], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[1], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[2], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[2], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	close(efd[1]);
- 	close(efd[0]);
- 	close(sfd[0]);
- 	close(sfd[1]);
-
- 	printf("SUCC\n");
- 	return 0;
-
- out:
- 	printf("FAIL\n");
- 	return -1;
- }
-
-Signed-off-by: hev <r@hev.cc>
-Cc: Eric Wong <e@80x24.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
----
- fs/eventpoll.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index d7f1f5011fac..a44cb27c636c 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -672,6 +672,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
- {
- 	__poll_t res;
- 	int pwake = 0;
-+	int nwake = 0;
- 	struct epitem *epi, *nepi;
- 	LIST_HEAD(txlist);
- 
-@@ -685,6 +686,9 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
- 	if (!ep_locked)
- 		mutex_lock_nested(&ep->mtx, depth);
- 
-+	if (!depth || list_empty(&ep->rdllist))
-+		nwake = 1;
-+
- 	/*
- 	 * Steal the ready list, and re-init the original one to the
- 	 * empty list. Also, set ep->ovflist to NULL so that events
-@@ -739,7 +743,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
- 	list_splice(&txlist, &ep->rdllist);
- 	__pm_relax(ep->ws);
- 
--	if (!list_empty(&ep->rdllist)) {
-+	if (nwake && !list_empty(&ep->rdllist)) {
- 		/*
- 		 * Wake up (if active) both the eventpoll wait list and
- 		 * the ->poll() wait list (delayed after we release the lock).
--- 
-2.23.0
-
+> > 
+> > regards,
+> > dan carpenter
+> > 
+> > .
+> > 
