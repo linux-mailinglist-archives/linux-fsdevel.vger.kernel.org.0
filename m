@@ -2,103 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF9FFA3968
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 16:41:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C48C1A3A43
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 17:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbfH3Ole convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 10:41:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50472 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727791AbfH3Ole (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 10:41:34 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A45901053717;
-        Fri, 30 Aug 2019 14:41:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F31AF414B;
-        Fri, 30 Aug 2019 14:41:30 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <21eb33e8-5624-0124-8690-bbea41a1b589@tycho.nsa.gov>
-References: <21eb33e8-5624-0124-8690-bbea41a1b589@tycho.nsa.gov> <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk> <156717352079.2204.16378075382991665807.stgit@warthog.procyon.org.uk>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/11] selinux: Implement the watch_key security hook [ver #7]
+        id S1727884AbfH3PYw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 11:24:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40034 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727135AbfH3PYw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:24:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 17DFEAD49;
+        Fri, 30 Aug 2019 15:24:50 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 82B441E43A8; Fri, 30 Aug 2019 17:24:49 +0200 (CEST)
+Date:   Fri, 30 Aug 2019 17:24:49 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, Amir Goldstein <amir73il@gmail.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3/3] xfs: Fix stale data exposure when readahead races
+ with hole punch
+Message-ID: <20190830152449.GA25069@quack2.suse.cz>
+References: <20190829131034.10563-1-jack@suse.cz>
+ <20190829131034.10563-4-jack@suse.cz>
+ <20190829155204.GD5354@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <13307.1567176090.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Fri, 30 Aug 2019 15:41:30 +0100
-Message-ID: <13308.1567176090@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Fri, 30 Aug 2019 14:41:33 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829155204.GD5354@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-How about the attached instead, then?
+On Thu 29-08-19 08:52:04, Darrick J. Wong wrote:
+> On Thu, Aug 29, 2019 at 03:10:34PM +0200, Jan Kara wrote:
+> > Hole puching currently evicts pages from page cache and then goes on to
+> > remove blocks from the inode. This happens under both XFS_IOLOCK_EXCL
+> > and XFS_MMAPLOCK_EXCL which provides appropriate serialization with
+> > racing reads or page faults. However there is currently nothing that
+> > prevents readahead triggered by fadvise() or madvise() from racing with
+> > the hole punch and instantiating page cache page after hole punching has
+> > evicted page cache in xfs_flush_unmap_range() but before it has removed
+> > blocks from the inode. This page cache page will be mapping soon to be
+> > freed block and that can lead to returning stale data to userspace or
+> > even filesystem corruption.
+> > 
+> > Fix the problem by protecting handling of readahead requests by
+> > XFS_IOLOCK_SHARED similarly as we protect reads.
+> > 
+> > CC: stable@vger.kernel.org
+> > Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
+> > Reported-by: Amir Goldstein <amir73il@gmail.com>
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> 
+> Is there a test on xfstests to demonstrate this race?
 
-David
----
-commit 00444a695b35c602230ac2cabb4f1d7e94e3966d
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Aug 29 17:01:34 2019 +0100
+No, but I can try to create one.
 
-    selinux: Implement the watch_key security hook
-    
-    Implement the watch_key security hook to make sure that a key grants the
-    caller View permission in order to set a watch on a key.
-    
-    For the moment, the watch_devices security hook is left unimplemented as
-    it's not obvious what the object should be since the queue is global and
-    didn't previously exist.
-    
-    Signed-off-by: David Howells <dhowells@redhat.com>
+> Will test it out though...
+> 
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 74dd46de01b6..88df06969bed 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6533,6 +6533,17 @@ static int selinux_key_getsecurity(struct key *key, char **_buffer)
- 	*_buffer = context;
- 	return rc;
- }
-+
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+static int selinux_watch_key(struct key *key)
-+{
-+	struct key_security_struct *ksec = key->security;
-+	u32 sid = current_sid();
-+
-+	return avc_has_perm(&selinux_state,
-+			    sid, ksec->sid, SECCLASS_KEY, KEY_NEED_VIEW, NULL);
-+}
-+#endif
- #endif
- 
- #ifdef CONFIG_SECURITY_INFINIBAND
-@@ -6965,6 +6976,9 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(key_free, selinux_key_free),
- 	LSM_HOOK_INIT(key_permission, selinux_key_permission),
- 	LSM_HOOK_INIT(key_getsecurity, selinux_key_getsecurity),
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+	LSM_HOOK_INIT(watch_key, selinux_watch_key),
-+#endif
- #endif
- 
- #ifdef CONFIG_AUDIT
+Thanks. BTW, will you pick up these patches please?
+
+								Honza
+
+> 
+> --D
+> 
+> > ---
+> >  fs/xfs/xfs_file.c | 26 ++++++++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
+> > 
+> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > index 28101bbc0b78..d952d5962e93 100644
+> > --- a/fs/xfs/xfs_file.c
+> > +++ b/fs/xfs/xfs_file.c
+> > @@ -28,6 +28,7 @@
+> >  #include <linux/falloc.h>
+> >  #include <linux/backing-dev.h>
+> >  #include <linux/mman.h>
+> > +#include <linux/fadvise.h>
+> >  
+> >  static const struct vm_operations_struct xfs_file_vm_ops;
+> >  
+> > @@ -933,6 +934,30 @@ xfs_file_fallocate(
+> >  	return error;
+> >  }
+> >  
+> > +STATIC int
+> > +xfs_file_fadvise(
+> > +	struct file	*file,
+> > +	loff_t		start,
+> > +	loff_t		end,
+> > +	int		advice)
+> > +{
+> > +	struct xfs_inode *ip = XFS_I(file_inode(file));
+> > +	int ret;
+> > +	int lockflags = 0;
+> > +
+> > +	/*
+> > +	 * Operations creating pages in page cache need protection from hole
+> > +	 * punching and similar ops
+> > +	 */
+> > +	if (advice == POSIX_FADV_WILLNEED) {
+> > +		lockflags = XFS_IOLOCK_SHARED;
+> > +		xfs_ilock(ip, lockflags);
+> > +	}
+> > +	ret = generic_fadvise(file, start, end, advice);
+> > +	if (lockflags)
+> > +		xfs_iunlock(ip, lockflags);
+> > +	return ret;
+> > +}
+> >  
+> >  STATIC loff_t
+> >  xfs_file_remap_range(
+> > @@ -1232,6 +1257,7 @@ const struct file_operations xfs_file_operations = {
+> >  	.fsync		= xfs_file_fsync,
+> >  	.get_unmapped_area = thp_get_unmapped_area,
+> >  	.fallocate	= xfs_file_fallocate,
+> > +	.fadvise	= xfs_file_fadvise,
+> >  	.remap_file_range = xfs_file_remap_range,
+> >  };
+> >  
+> > -- 
+> > 2.16.4
+> > 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
