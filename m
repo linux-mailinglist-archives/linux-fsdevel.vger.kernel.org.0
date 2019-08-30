@@ -2,99 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 698FBA3C49
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 18:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F78A3C4E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 18:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfH3QmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 12:42:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49882 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727976AbfH3QmT (ORCPT
+        id S1728255AbfH3Qmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 12:42:49 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:40046 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727976AbfH3Qms (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:42:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zT6Sffc7p6dXxr/DqLVZuPlm0esCLyE+d/3ikz+/jqI=; b=Nb5baDLHs6tOVMnZ2y1xUxHzs
-        MhSwjOCDGxy8BvtXnOfjEW35qlNWyTbB5J8UoRl4zzLn+YSkRG+J46vsn972X8NpB8I7gKz1i1ZcD
-        Bi2JWKJq4ZUANCc0oWI11+X0jE7gzpS3IFc1UfQGoD9Mk+ov4ZRJqRweV6Ek2FRGvomWDP7hd3ryu
-        oaPu2QpDsqEh4GwblDsXtaPgKEHbndclLqmmnGyF5+5JhqE/2wMWTx6zkz1YCrd3bEALL5KVNQKUQ
-        WpHREdtO/JtxBC5fHQ2repjFQJhEBNYaFxOJln6YisDqgjlMrFlhxRGO4FqgfssIOHIyKIy5OFC+0
-        f9lySr1Cg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3jyP-0002rX-Ku; Fri, 30 Aug 2019 16:42:05 +0000
-Date:   Fri, 30 Aug 2019 09:42:05 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v6 05/24] erofs: add inode operations
-Message-ID: <20190830164205.GD29603@infradead.org>
-References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-6-gaoxiang25@huawei.com>
- <20190829102426.GE20598@infradead.org>
- <20190829115922.GG64893@architecture4>
-MIME-Version: 1.0
+        Fri, 30 Aug 2019 12:42:48 -0400
+Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x7UGglUr029605
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2019 12:42:47 -0400
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x7UGggAF011207
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2019 12:42:47 -0400
+Received: by mail-qt1-f197.google.com with SMTP id t5so7645512qtd.21
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2019 09:42:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
+         :message-id;
+        bh=AMywH1n1mw6t5p5hLpZTz0Q6W8htDSaR2tsRwWJpbB4=;
+        b=a7se+sdexIGjMQVn8wMNiZ7PRWN32c/jG2DoaglPN2MmN0ia99YEQN0BAAy0cNQOnv
+         g0BRP97kk0MephzHcxkNWa6kjNlST4QEXBXmuXXrTO47OAEPEfufHvg1w1yDsGN5o3Oc
+         4o5l6IGaDw9waVAuBQwiVnWjhZVG+SvydL67nWoaZwG87GHuTE3yqWmjQimfzf45ebsp
+         dwDlNgBkSTUr2HIl96Y8z6+KOVAs3D1D+vHaHMboQPTwmKWwcozG86R1Sdrzqt6j1iHU
+         /GQIPj3BrIVbPkrkEVLyOhHZvSGmHbcRTQCu/GxHCtimOxlaeNbtN6muhn966BnOVKZF
+         P9zw==
+X-Gm-Message-State: APjAAAVulUC4thjnEUP6Cj3MH5q9ZicJRUFjK82WK8ZdddsHtIPJWhCU
+        CFZn8w5ZWz5a+tKveSsIALodgF+xCu4f/2gAhDVhO3KNQpAZF1n7sHtzoYYkeNk7i9P7lIMAnlx
+        1rjvlhfM5abZpr+QyuH3ig+kGj79LiVVS6S4+
+X-Received: by 2002:ac8:120c:: with SMTP id x12mr8899867qti.315.1567183361958;
+        Fri, 30 Aug 2019 09:42:41 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwaY2l4b6tk1M6trceqg9AZjRhcMlNGwJvpCK2NExWnBnD86JM81kuWaQfA7O5TUsj17REnaA==
+X-Received: by 2002:ac8:120c:: with SMTP id x12mr8899847qti.315.1567183361693;
+        Fri, 30 Aug 2019 09:42:41 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4340::ba0])
+        by smtp.gmail.com with ESMTPSA id f27sm2703076qkl.25.2019.08.30.09.42.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 09:42:40 -0700 (PDT)
+From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/staging/exfat - by default, prohibit mount of fat/vfat
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829115922.GG64893@architecture4>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Date:   Fri, 30 Aug 2019 12:42:39 -0400
+Message-ID: <245727.1567183359@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 07:59:22PM +0800, Gao Xiang wrote:
-> On Thu, Aug 29, 2019 at 03:24:26AM -0700, Christoph Hellwig wrote:
-> 
-> []
-> 
-> > 
-> > > +
-> > > +		/* fill last page if inline data is available */
-> > > +		err = fill_inline_data(inode, data, ofs);
-> > 
-> > Well, I think you should move the is_inode_flat_inline and
-> > (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) checks from that
-> > helper here, as otherwise you make everyone wonder why you'd always
-> > fill out the inline data.
-> 
-> Currently, fill_inline_data() only fills for fast symlink,
-> later we can fill any tail-end block (such as dir block)
-> for our requirements.
+Concerns have been raised about the exfat driver accidentally mounting
+fat/vfat file systems.  Add an extra configure option to help prevent that.
 
-So change it when that later changes actually come in.  And even then
-having the checks outside the function is a lot more obvious.
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-> And I think that is minor.
+diff --git a/drivers/staging/exfat/Kconfig b/drivers/staging/exfat/Kconfig
+index 78b32aa2ca19..1df177b1dc72 100644
+--- a/drivers/staging/exfat/Kconfig
++++ b/drivers/staging/exfat/Kconfig
+@@ -4,6 +4,14 @@ config EXFAT_FS
+ 	help
+ 	  This adds support for the exFAT file system.
+ 
++config EXFAT_DONT_MOUNT_VFAT
++	bool "Prohibit mounting of fat/vfat filesysems by exFAT"
++	default y
++	help
++	  By default, the exFAT driver will only mount exFAT filesystems, and refuse
++	  to mount fat/vfat filesystems.  Set this to 'n' to allow the exFAT driver
++	  to mount these filesystems.
++
+ config EXFAT_DISCARD
+ 	bool "enable discard support"
+ 	depends on EXFAT_FS
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 5b5c2ca8c9aa..7fdb5b8bc928 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -486,10 +486,16 @@ static int ffsMountVol(struct super_block *sb)
+ 			break;
+ 
+ 	if (i < 53) {
++#ifdef CONFIG_EXFAT_DONT_MOUNT_VFAT
++		ret = -EINVAL;
++		printk(KERN_INFO "EXFAT: Attempted to mount VFAT filesystem\n");
++		goto out;
++#else
+ 		if (GET16(p_pbr->bpb + 11)) /* num_fat_sectors */
+ 			ret = fat16_mount(sb, p_pbr);
+ 		else
+ 			ret = fat32_mount(sb, p_pbr);
++#endif
+ 	} else {
+ 		ret = exfat_mount(sb, p_pbr);
+ 	}
 
-The problem is that each of these issues might appear minor on their
-own.  But combined a lot of the coding style choices lead to code that
-is more suitable an obsfucated code contest than the Linux kernel as
-trying to understand even just a few places requires jumping through
-tons of helpers with misleading names and spread over various files.
-
-> The consideration is simply because iget_locked performs better
-> than iget5_locked.
-
-In what benchmark do the differences show up?
