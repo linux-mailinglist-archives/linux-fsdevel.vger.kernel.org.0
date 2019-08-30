@@ -2,115 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13E23A3AAA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 17:43:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF59CA3AE9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 17:48:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbfH3PnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 11:43:22 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52872 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727792AbfH3PnW (ORCPT
+        id S1728235AbfH3Psg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 11:48:36 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40743 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbfH3Psg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:43:22 -0400
-Received: by mail-wm1-f68.google.com with SMTP id t17so7834051wmi.2;
-        Fri, 30 Aug 2019 08:43:20 -0700 (PDT)
+        Fri, 30 Aug 2019 11:48:36 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w10so3745662pgj.7;
+        Fri, 30 Aug 2019 08:48:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hSPruanynkI2nxLpUzm3uL7IYac5dvQ3oQe3jl6VLFU=;
-        b=nfnaCKLdbctQKQUkacHhaZsoiKIsJEgXtg5ZQt+aGp5XFQAijpASM1A5BmrlCejEQK
-         kOn9FIrc5vpJ8YLaYL5eFAK6POudjWvd6F6UG2MjC9FsdgStYp/LLU4N80UDo9w+txIr
-         ZGCd4rjnswWooLVkkdd044Q+cVTRymuE5uFn7bixg5CDB75cQTdTxkGKIGk7s3p0XF3C
-         mW7IruyFo9/JeAeQbgl0gjnPxXc9pjhPpkWJN1bw8srfRh90bwbtmbH8FjhFG3ChGLHs
-         WkPLgEhVf1WASqNOUcy7tq/HeiBFrg2VH8GJpxQjkFcM9jZuvT3w4VRgxoR1A6Ct88VY
-         FewQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=4oHQ/J6gD7m5a2hZJIzg30k30/iTJHkHY5qB+o+D4cE=;
+        b=h7oWCY6wHIupyilklhVw3zKKmS4N6rNYStKFd6M4mXY2zoBod9UZ8VCkDGXpvOwPEx
+         y0aASnlb2KjG+wF+/aUT2biKn+NEObcgE8m7DGPrZYueZa0oebuiKl0kXOBZW/YvAFgG
+         wiNfxFX1BU+QMvruLmfNr9RwuUgTVgZhni7EzWpQBGg9w69s5GjxRS3CR8rDUkEmFDvX
+         StbzvePxJ6JAeogsEcWDy1lOLEazKGBM7XSWMidYvC4oTqL+OIaD7n27qxye/p6T0bld
+         MAh4tx6oguKUb4RPv6qhdVfxJi3jyYGLfFoX32P7ntEtN8+5CPxBMCDh7sUKz71y0419
+         8ZHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hSPruanynkI2nxLpUzm3uL7IYac5dvQ3oQe3jl6VLFU=;
-        b=oITyu9nqKJo9kYrfS6lxGMIOL3bf+lu/Nbsv6Xln1SQyxRIi6BhYBj+pg+dF5HsRoI
-         eJpSdDUkDlY4XlFC9XJNDXfHuQ64rPdE7BU3PcWrk5PfG9HupbvuNFdriYgColF6lZpk
-         TzXaZhKeTvdU/scpZRUXX7ZfzDbViiuPnYHVvmHhTfBlWw6H6F3aNP/otmIJSCqBtS7p
-         BAUyJ/sLycPiDG9+/TZppccwJ+BG7y2wq+hr7dyr4QKTsnQl+Lzxtq4qsYbev/gB6xi1
-         bYo/lnlxhYQe9t0RtXk4YIbC74SKgR4agejGkP7oD/8vYIVpdXYz9sulxD9oCUxQJ44w
-         mynQ==
-X-Gm-Message-State: APjAAAW9HsyIacA48t62ZW1HngNf+WfViBS1h7KCfzt+xIRI2uZt1xJQ
-        oyXO7ZccwExtGD1jzPzqjoo=
-X-Google-Smtp-Source: APXvYqzHRdHs4oKVvSRpy8X7yKHta2hE6g56Kl/oPBafz13i4AYYofq0MPcNwspxJ4vIBJRN+3KfyA==
-X-Received: by 2002:a1c:3944:: with SMTP id g65mr19938452wma.68.1567179800378;
-        Fri, 30 Aug 2019 08:43:20 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id y3sm12403115wmg.2.2019.08.30.08.43.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Aug 2019 08:43:19 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 17:43:18 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190830154318.ppggurnejlgtrly5@pali>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190829205631.uhz6jdboneej3j3c@pali>
- <20190830154006.GB30863@infradead.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="r4iv4rpxa6pvfbis"
-Content-Disposition: inline
-In-Reply-To: <20190830154006.GB30863@infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=4oHQ/J6gD7m5a2hZJIzg30k30/iTJHkHY5qB+o+D4cE=;
+        b=Rz2IvZhXVmR270TP1rqP+bsFbqlAzUFU+ogsw0a3zcwY73Ays/M2RoDIJGwjPEAIqb
+         VYIwMfiipdHXcn9UC5yDpmbdtlCxpSodv34k2jMbhAMUb4I1D1yTK97Vu+tKBIsc37s8
+         GSCCNIKpF+abp2YA7U7eDhepIydRU1+LGf+acYScrkZkAfI3Hsr9G0xmS6leWTO9GV1P
+         qKDUHC9/gYZhX6lYFYRG/Xe02tstyg3JDXt3BT27nS1ahs9QQ9wMYFFB/h96WRjXfAq2
+         cbwSTh8hXhQ9zOW+8zNECzDG6byv/+l0qNgvc+1tAE4pTmC0mHYePB1ZZAf5EqhfCUie
+         a90g==
+X-Gm-Message-State: APjAAAW5HNQUG6kwZYONGxLATMVAklsEp4QxQYDrVtQ9vXyJEDMlefx4
+        CC+IzJtV3xgw4tuO/Q2bDZk=
+X-Google-Smtp-Source: APXvYqw+TTjvl6C13mK+Kx+U+c7BoLzOucbYEU3GqDfQjm5bxaW7IFfh1q/TNPR40tNdaKG3mocNEw==
+X-Received: by 2002:a17:90a:c386:: with SMTP id h6mr16090687pjt.122.1567180114546;
+        Fri, 30 Aug 2019 08:48:34 -0700 (PDT)
+Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
+        by smtp.gmail.com with ESMTPSA id z28sm8093085pfj.74.2019.08.30.08.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 08:48:33 -0700 (PDT)
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+To:     arnd@arndb.de, viro@zeniv.linux.org.uk
+Cc:     adilger@dilger.ca, aivazian.tigran@gmail.com,
+        darrick.wong@oracle.com, deepa.kernel@gmail.com, dsterba@suse.com,
+        gregkh@linuxfoundation.org, jlayton@kernel.org,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        me@bobcopeland.com, y2038@lists.linaro.org,
+        adrian.hunter@intel.com, al@alarsen.net, anna.schumaker@netapp.com,
+        anton@enomsg.org, asmadeus@codewreck.org, ccross@android.com,
+        ceph-devel@vger.kernel.org, coda@cs.cmu.edu,
+        codalist@coda.cs.cmu.edu, dedekind1@gmail.com,
+        devel@lists.orangefs.org, dushistov@mail.ru, dwmw2@infradead.org,
+        ericvh@gmail.com, hch@infradead.org, hch@lst.de,
+        hirofumi@mail.parknet.co.jp, hubcap@omnibond.com,
+        idryomov@gmail.com, jack@suse.com, jaegeuk@kernel.org,
+        jaharkes@cs.cmu.edu, jfs-discussion@lists.sourceforge.net,
+        jlbec@evilplan.org, linux-cifs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-karma-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        lucho@ionkov.net, luisbg@kernel.org, martin@omnibond.com,
+        mikulas@artax.karlin.mff.cuni.cz, nico@fluxnic.net,
+        phillip@squashfs.org.uk, reiserfs-devel@vger.kernel.org,
+        richard@nod.at, sage@redhat.com, salah.triki@gmail.com,
+        sfrench@samba.org, shaggy@kernel.org, tj@kernel.org,
+        tony.luck@intel.com, trond.myklebust@hammerspace.com,
+        tytso@mit.edu, v9fs-developer@lists.sourceforge.net,
+        yuchao0@huawei.com, zyan@redhat.com
+Subject: [GIT PULL RESEND] vfs: Add support for timestamp limits
+Date:   Fri, 30 Aug 2019 08:47:44 -0700
+Message-Id: <20190830154744.4868-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <CAK8P3a1XjOMpuS12Xao1xqOLFOuz1Jb8dTAfrhLcE643sSkC5g@mail.gmail.com>
+References: <CAK8P3a1XjOMpuS12Xao1xqOLFOuz1Jb8dTAfrhLcE643sSkC5g@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+[resending, rebased onto linux v5.3-rc6, and dropped orangefs patch from the series]
 
---r4iv4rpxa6pvfbis
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Al, Arnd,
 
-On Friday 30 August 2019 08:40:06 Christoph Hellwig wrote:
-> On Thu, Aug 29, 2019 at 10:56:31PM +0200, Pali Roh=C3=A1r wrote:
-> > In my opinion, proper way should be to implement exFAT support into
-> > existing fs/fat/ code instead of replacing whole vfat/msdosfs by this
-> > new (now staging) fat implementation.
-> >=20
-> > In linux kernel we really do not need two different implementation of
-> > VFAT32.
->=20
-> Not only not useful, but having another one is actively harmful, as
-> people might actually accidentally used it for classic fat.
->=20
-> But what I'm really annoyed at is this whole culture of just dumping
-> some crap into staging and hoping it'll sort itself out.  Which it
-> won't.  We'll need a dedidcated developer spending some time on it
-> and just get it into shape, and having it in staging does not help
-> with that at all - it will get various random cleanup that could
-> be trivially scripted, but that is rarely the main issue with any
-> codebase.
+This is a pull request for filling in min and max timestamps for filesystems.
+I've added all the acks, and dropped the adfs patch. That will be merged through
+Russell's tree.
 
-Exactly. Somebody should take this code and work on it. Otherwise we can
-say it is dead code and would happen same thing as with other staging
-drivers -- ready to be removed.
+Dropped orangefs until the maintainers decide what its limits should be.
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+The following changes since commit a55aa89aab90fae7c815b0551b07be37db359d76:
 
---r4iv4rpxa6pvfbis
-Content-Type: application/pgp-signature; name="signature.asc"
+  Linux 5.3-rc6 (2019-08-25 12:01:23 -0700)
 
------BEGIN PGP SIGNATURE-----
+are available in the Git repository at:
 
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXWlEFAAKCRCL8Mk9A+RD
-UhoKAJ4vZsLuZYAJ6Er06ChAjCyn4WGWCACeLwf/3Q10nG7S6qqrLYFhUaO8WJQ=
-=F393
------END PGP SIGNATURE-----
+  https://github.com/deepa-hub/vfs limits
 
---r4iv4rpxa6pvfbis--
+for you to fetch changes up to 5ad32b3acded06183f40806f76b030c3143017bb:
+
+  isofs: Initialize filesystem timestamp ranges (2019-08-30 08:11:25 -0700)
+
+----------------------------------------------------------------
+
+- Deepa
+
+Deepa Dinamani (18):
+      vfs: Add file timestamp range support
+      vfs: Add timestamp_truncate() api
+      timestamp_truncate: Replace users of timespec64_trunc
+      mount: Add mount warning for impending timestamp expiry
+      utimes: Clamp the timestamps before update
+      fs: Fill in max and min timestamps in superblock
+      9p: Fill min and max timestamps in sb
+      ext4: Initialize timestamps limits
+      fs: nfs: Initialize filesystem timestamp ranges
+      fs: cifs: Initialize filesystem timestamp ranges
+      fs: fat: Initialize filesystem timestamp ranges
+      fs: affs: Initialize filesystem timestamp ranges
+      fs: sysv: Initialize filesystem timestamp ranges
+      fs: ceph: Initialize filesystem timestamp ranges
+      fs: hpfs: Initialize filesystem timestamp ranges
+      fs: omfs: Initialize filesystem timestamp ranges
+      pstore: fs superblock limits
+      isofs: Initialize filesystem timestamp ranges
+
+ fs/9p/vfs_super.c        |  6 +++++-
+ fs/affs/amigaffs.c       |  2 +-
+ fs/affs/amigaffs.h       |  3 +++
+ fs/affs/inode.c          |  4 ++--
+ fs/affs/super.c          |  4 ++++
+ fs/attr.c                | 21 ++++++++++++---------
+ fs/befs/linuxvfs.c       |  2 ++
+ fs/bfs/inode.c           |  2 ++
+ fs/ceph/super.c          |  2 ++
+ fs/cifs/cifsfs.c         | 22 ++++++++++++++++++++++
+ fs/cifs/netmisc.c        | 14 +++++++-------
+ fs/coda/inode.c          |  3 +++
+ fs/configfs/inode.c      | 12 ++++++------
+ fs/cramfs/inode.c        |  2 ++
+ fs/efs/super.c           |  2 ++
+ fs/ext2/super.c          |  2 ++
+ fs/ext4/ext4.h           | 10 +++++++++-
+ fs/ext4/super.c          | 17 +++++++++++++++--
+ fs/f2fs/file.c           | 21 ++++++++++++---------
+ fs/fat/inode.c           | 12 ++++++++++++
+ fs/freevxfs/vxfs_super.c |  2 ++
+ fs/hpfs/hpfs_fn.h        |  6 ++----
+ fs/hpfs/super.c          |  2 ++
+ fs/inode.c               | 33 ++++++++++++++++++++++++++++++++-
+ fs/isofs/inode.c         |  7 +++++++
+ fs/jffs2/fs.c            |  3 +++
+ fs/jfs/super.c           |  2 ++
+ fs/kernfs/inode.c        |  7 +++----
+ fs/minix/inode.c         |  2 ++
+ fs/namespace.c           | 33 ++++++++++++++++++++++++++++++++-
+ fs/nfs/super.c           | 20 +++++++++++++++++++-
+ fs/ntfs/inode.c          | 21 ++++++++++++---------
+ fs/omfs/inode.c          |  4 ++++
+ fs/pstore/ram.c          |  2 ++
+ fs/qnx4/inode.c          |  2 ++
+ fs/qnx6/inode.c          |  2 ++
+ fs/reiserfs/super.c      |  3 +++
+ fs/romfs/super.c         |  2 ++
+ fs/squashfs/super.c      |  2 ++
+ fs/super.c               |  2 ++
+ fs/sysv/super.c          |  5 ++++-
+ fs/ubifs/file.c          | 21 ++++++++++++---------
+ fs/ufs/super.c           |  7 +++++++
+ fs/utimes.c              |  6 ++----
+ fs/xfs/xfs_super.c       |  2 ++
+ include/linux/fs.h       |  5 +++++
+ include/linux/time64.h   |  2 ++
+ 47 files changed, 296 insertions(+), 72 deletions(-)
