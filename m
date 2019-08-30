@@ -2,99 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BF95A3EA3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 21:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49023A3EA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 21:48:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbfH3Trv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 15:47:51 -0400
-Received: from mail-pf1-f172.google.com ([209.85.210.172]:35762 "EHLO
-        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbfH3Trv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 15:47:51 -0400
-Received: by mail-pf1-f172.google.com with SMTP id 205so2807946pfw.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2019 12:47:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lfElKMam/T9V6bsHLEtrVU85ksJ2VDYhroR6xFrZWzc=;
-        b=S2+GEn1dwls7W9EjbKis0gEXBDsdZQPxoEf3WKnPui0h4AaQOe1DySp16Ru1yOEUR7
-         Mm6Q+D3hLV7Y3ti33qQgOpq2rSHyLPakdr2RDl46NbsvRtJ4YLZUZ0V3ZWDGJCD9sZrB
-         SQf4HSxDlqVFWh152qgTsEBU0mXYPt3NoxqBA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lfElKMam/T9V6bsHLEtrVU85ksJ2VDYhroR6xFrZWzc=;
-        b=F7RxpYzMutEyeP8oEym2Np3Kx3ppZ9zLBaMWcKdB6XhjxkTMy1tIM3eRUSrzI5JkOG
-         y93SmrlFN+Fr7hqEZSNelLyOnFK5uNjos3v00l83u1z1XFn4Wglc2klpomRwZ+jjCnZO
-         tTJXD63RhkEARih0UIBGsFlhjwC9LppxFmKMfTKEk5LLP6NXJihLjLQBejCN8qrMYjej
-         f4bCHbvDCTpehQ3VeOlBl9amCv1kbonvp9A15tg6XBpxpoRedLfcno3epjGFUK9dNsPJ
-         mzH5NtV2f5F/9UGhFt8pq5MMRkiTPIoJ8t3A58qHlbl3j3xhwRL1cguuwPSizxfXBi2Q
-         N+aQ==
-X-Gm-Message-State: APjAAAWTAOjAVz/mdfeu03TKmnQ9mlHyxVLlJV57Mftd/qjfouu0seBK
-        gICHHgZlLduhKca/h4coNPxzNA==
-X-Google-Smtp-Source: APXvYqzQ7f5w2apaQfPAmRolacGQV7qES2OFHKPlOr231SsxxsJG+Tu1jnpgIbKXgFIB/alf1uAmAQ==
-X-Received: by 2002:a17:90a:d990:: with SMTP id d16mr219208pjv.55.1567194470301;
-        Fri, 30 Aug 2019 12:47:50 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k36sm5262114pgl.42.2019.08.30.12.47.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 12:47:49 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 12:47:48 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jason Yan <yanaijie@huawei.com>,
-        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org
-Subject: Re: CONFIG_HARDENED_USERCOPY
-Message-ID: <201908301242.EAC8111@keescook>
-References: <6e02a518-fea9-19fe-dca7-0323a576750d@huawei.com>
- <201908290914.F0F929EA@keescook>
- <20190830042958.GC7777@dread.disaster.area>
+        id S1728079AbfH3TsH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 15:48:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727304AbfH3TsH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Aug 2019 15:48:07 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEEC023430;
+        Fri, 30 Aug 2019 19:48:05 +0000 (UTC)
+Date:   Fri, 30 Aug 2019 15:48:04 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     David Sterba <dsterba@suse.com>, Christoph Hellwig <hch@lst.de>,
+        Joel Becker <jlbec@evilplan.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v3 04/10] tracefs: call fsnotify_{unlink,rmdir}() hooks
+Message-ID: <20190830154804.1f51bf89@gandalf.local.home>
+In-Reply-To: <CAOQ4uxg5e4zJ+GVCXs1X55TTBdNKHVASkA1Q-Xz_pyLnD8UDpA@mail.gmail.com>
+References: <20190526143411.11244-1-amir73il@gmail.com>
+        <20190526143411.11244-5-amir73il@gmail.com>
+        <CAOQ4uxg5e4zJ+GVCXs1X55TTBdNKHVASkA1Q-Xz_pyLnD8UDpA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190830042958.GC7777@dread.disaster.area>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 02:29:58PM +1000, Dave Chinner wrote:
-> On Thu, Aug 29, 2019 at 09:15:36AM -0700, Kees Cook wrote:
-> > On Thu, Aug 29, 2019 at 08:42:30PM +0800, Jason Yan wrote:
-> > > We found an issue of kernel bug related to HARDENED_USERCOPY.
-> > > When copying an IO buffer to userspace, HARDENED_USERCOPY thought it is
-> > > illegal to copy this buffer. Actually this is because this IO buffer was
-> > > merged from two bio vectors, and the two bio vectors buffer was allocated
-> > > with kmalloc() in the filesystem layer.
-> > 
-> > Ew. I thought the FS layer was always using page_alloc?
+On Thu, 13 Jun 2019 19:53:25 +0300
+Amir Goldstein <amir73il@gmail.com> wrote:
+
+> On Sun, May 26, 2019 at 5:34 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > This will allow generating fsnotify delete events after the
+> > fsnotify_nameremove() hook is removed from d_delete().
+> >
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>  
 > 
-> No, they don't. It's perfectly legal to use heap memory for bio
-> buffers - we've been doing it since, at least, XFS got merged all
-> those years ago.
+> Hi Steven,
+> 
+> Would you be able to provide an ACK on this patch?
+> We need to add those explicit fsnotify hooks to match the existing
+> fsnotify_create/mkdir hooks in tracefs, because
+> the hook embedded inside d_delete() is going away [1].
+> 
+> Thanks,
+> Amir.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20190526143411.11244-1-amir73il@gmail.com/
+> 
 
-Okay, so I have some observations/thoughts about this:
+Sorry, this got lost in my INBOX. I see it was already merged, but I
+would have acked it ;-)
 
-- This "cross allocation merging" is going to continue being a problem
-  in the future when we have hardware-backed allocation tagging (like
-  ARM's MTE). It'll be exactly the same kind of detection: a tagged
-  pointer crossed into a separately allocated region and access through
-  it will be rejected.
-
-- I don't think using _copy_to_user() unconditionally is correct here
-  unless we can be absolutely sure that the size calculation really
-  was correct. (i.e. is the merge close enough to the copy that the
-  non-merge paths don't lose the validation?)
-
-- If this has gone until now to get noticed (hardened usercopy was
-  introduced in v4.8), is this optimization (and, frankly, layering
-  violation) actually useful?
-
-- We could just turn off allocation merging in the face of having
-  hardened usercopy or allocation tagging enabled...
-
--- 
-Kees Cook
+-- Steve
