@@ -2,138 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C48C1A3A43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 17:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B841AA3A76
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 17:36:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbfH3PYw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 11:24:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40034 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727135AbfH3PYw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:24:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 17DFEAD49;
-        Fri, 30 Aug 2019 15:24:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 82B441E43A8; Fri, 30 Aug 2019 17:24:49 +0200 (CEST)
-Date:   Fri, 30 Aug 2019 17:24:49 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, Amir Goldstein <amir73il@gmail.com>,
-        Boaz Harrosh <boaz@plexistor.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3/3] xfs: Fix stale data exposure when readahead races
- with hole punch
-Message-ID: <20190830152449.GA25069@quack2.suse.cz>
-References: <20190829131034.10563-1-jack@suse.cz>
- <20190829131034.10563-4-jack@suse.cz>
- <20190829155204.GD5354@magnolia>
+        id S1727901AbfH3Pgt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 11:36:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57820 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727434AbfH3Pgs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:36:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=93WudhjZ/7xMl3hmNwhgEaX4yRqNBxu9/y9u0PV6xso=; b=NBtdgbKWOzN5GwzwZepTB6VHF
+        xu8AdemKZdBmb29lTV5i609Dd4738mggdVIrYC1Z9L91PnBRbIz5ilAXJ8Xk2miyGlm7lBter5Hsl
+        JaBPEVCwRADDacBN1at2pJ+u62vBMrcxE6l3QLu7UYytNdL+P1NZAdqAxorWqeEpUfW4/Z5uNQir1
+        DB5OpT3k4z6KLIw2vb9Q/6vLncoZA0v9TLWGwG1BPrD+QcoNOpcTHFtuUKWUzTEGiq5ScRT9nhlXO
+        C/TQOxogIY7h0Vhh+5GNfUNvkQn/i3B3gUqkUAuVnoNUCedCNBrcDzo/j3wncZMR4ANhCMjtZXjsM
+        0ahObHONA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3ixA-000162-EL; Fri, 30 Aug 2019 15:36:44 +0000
+Date:   Fri, 30 Aug 2019 08:36:44 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, devel@driverdev.osuosl.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190830153644.GA30863@infradead.org>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190828170022.GA7873@kroah.com>
+ <20190829062340.GB3047@infradead.org>
+ <20190829063955.GA30193@kroah.com>
+ <20190829094136.GA28643@infradead.org>
+ <20190829095019.GA13557@kroah.com>
+ <20190829103749.GA13661@infradead.org>
+ <20190829111810.GA23393@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829155204.GD5354@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190829111810.GA23393@kroah.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 29-08-19 08:52:04, Darrick J. Wong wrote:
-> On Thu, Aug 29, 2019 at 03:10:34PM +0200, Jan Kara wrote:
-> > Hole puching currently evicts pages from page cache and then goes on to
-> > remove blocks from the inode. This happens under both XFS_IOLOCK_EXCL
-> > and XFS_MMAPLOCK_EXCL which provides appropriate serialization with
-> > racing reads or page faults. However there is currently nothing that
-> > prevents readahead triggered by fadvise() or madvise() from racing with
-> > the hole punch and instantiating page cache page after hole punching has
-> > evicted page cache in xfs_flush_unmap_range() but before it has removed
-> > blocks from the inode. This page cache page will be mapping soon to be
-> > freed block and that can lead to returning stale data to userspace or
-> > even filesystem corruption.
-> > 
-> > Fix the problem by protecting handling of readahead requests by
-> > XFS_IOLOCK_SHARED similarly as we protect reads.
-> > 
-> > CC: stable@vger.kernel.org
-> > Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
-> > Reported-by: Amir Goldstein <amir73il@gmail.com>
-> > Signed-off-by: Jan Kara <jack@suse.cz>
+On Thu, Aug 29, 2019 at 01:18:10PM +0200, Greg Kroah-Hartman wrote:
+> Hey, that's not nice, erofs isn't a POS.  It could always use more
+> review, which the developers asked for numerous times.
 > 
-> Is there a test on xfstests to demonstrate this race?
+> There's nothing different from a filesystem compared to a driver.  If
+> its stand-alone, and touches nothing else, all issues with it are
+> self-contained and do not bother anyone else in the kernel.  We merge
+> drivers all the time that need more work because our review cycles are
+> low.  And review cycles for vfs developers are even more scarce than
+> driver reviewers.
 
-No, but I can try to create one.
-
-> Will test it out though...
-> 
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
-Thanks. BTW, will you pick up these patches please?
-
-								Honza
-
-> 
-> --D
-> 
-> > ---
-> >  fs/xfs/xfs_file.c | 26 ++++++++++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
-> > 
-> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> > index 28101bbc0b78..d952d5962e93 100644
-> > --- a/fs/xfs/xfs_file.c
-> > +++ b/fs/xfs/xfs_file.c
-> > @@ -28,6 +28,7 @@
-> >  #include <linux/falloc.h>
-> >  #include <linux/backing-dev.h>
-> >  #include <linux/mman.h>
-> > +#include <linux/fadvise.h>
-> >  
-> >  static const struct vm_operations_struct xfs_file_vm_ops;
-> >  
-> > @@ -933,6 +934,30 @@ xfs_file_fallocate(
-> >  	return error;
-> >  }
-> >  
-> > +STATIC int
-> > +xfs_file_fadvise(
-> > +	struct file	*file,
-> > +	loff_t		start,
-> > +	loff_t		end,
-> > +	int		advice)
-> > +{
-> > +	struct xfs_inode *ip = XFS_I(file_inode(file));
-> > +	int ret;
-> > +	int lockflags = 0;
-> > +
-> > +	/*
-> > +	 * Operations creating pages in page cache need protection from hole
-> > +	 * punching and similar ops
-> > +	 */
-> > +	if (advice == POSIX_FADV_WILLNEED) {
-> > +		lockflags = XFS_IOLOCK_SHARED;
-> > +		xfs_ilock(ip, lockflags);
-> > +	}
-> > +	ret = generic_fadvise(file, start, end, advice);
-> > +	if (lockflags)
-> > +		xfs_iunlock(ip, lockflags);
-> > +	return ret;
-> > +}
-> >  
-> >  STATIC loff_t
-> >  xfs_file_remap_range(
-> > @@ -1232,6 +1257,7 @@ const struct file_operations xfs_file_operations = {
-> >  	.fsync		= xfs_file_fsync,
-> >  	.get_unmapped_area = thp_get_unmapped_area,
-> >  	.fallocate	= xfs_file_fallocate,
-> > +	.fadvise	= xfs_file_fadvise,
-> >  	.remap_file_range = xfs_file_remap_range,
-> >  };
-> >  
-> > -- 
-> > 2.16.4
-> > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+A lot of the issue that are trivial to pick are really just very basic
+issue that don't even require file system know how.  Or in other ways
+just a little less lazy developer that looks out for similar code
+outside their own little fiefdom.
