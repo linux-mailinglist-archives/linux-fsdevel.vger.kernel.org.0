@@ -2,110 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 374AEA2C52
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 03:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D02DDA2C9F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 04:07:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfH3BaI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Aug 2019 21:30:08 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:46856 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbfH3BaB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Aug 2019 21:30:01 -0400
-Received: by mail-yw1-f68.google.com with SMTP id 201so1758940ywo.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Aug 2019 18:30:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yDmQxANGbqTJGtO1OhTa4PkciZSXcUVcA6Y2VnUF5Ug=;
-        b=tRuQF9NGsWriwh9rOUGWV/XnpvxEIfrIBLDnzsNlL2DcXYptI5uYx9v9XRgXG9ikj+
-         lAdRFBmN8WWgzpxjYwMBvOBMGH9vQkyzn/bAHiywFTqTy8Rv0zmy7NK3LdyKNjjgvNdr
-         mcLlIarH9lbZWT5t7oU7MIVWXKIhgWd4FFEn+XvtJUHOlIO0rItLGA+Zt6tlzfYijXTt
-         MmEvGy0xnlwDGgt/OUq/OkC9egtS+p7sT3eJ3BcAb9vNf6OatXnbSWZ0hHXVonsgbMVH
-         pMy2zHMasv+EgzYrXDb3idQdrvXUOVYyNS1FKC2EzXUecfAda8U+O/uwCTXSTJ6SOTSm
-         T3ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yDmQxANGbqTJGtO1OhTa4PkciZSXcUVcA6Y2VnUF5Ug=;
-        b=BGy4nHp7bvygpt5FGlDSXwoL1S+Ofm9uvAekZiCSFCKVixUR5hjz9rB+xqZnyU8iN6
-         5q6MPqC2qPDUKzO20w9lYEqgBLMR+K+Y4xItC3XUkgeIy6R4R+uiz00d5yKDje8wf50N
-         FydV/iRBKOVedCCV60PgBliqkQVSiUNbEppypjqYtygtJK6Lk+w73hyyTS6iXidCJ2q+
-         oU43Wa2EPLI3SLCE3nvPrROrG8tzP8CMaJumeCLdVX5g9bSoBd3I4OWCvqQUpDGVa/8l
-         xmHG1E0pw8CA5fBWUtyR6N7ushWGNVTe++4zXKoN+WrdWflxXZRuiW99AstacHAbCeML
-         xOAA==
-X-Gm-Message-State: APjAAAX6dxNNmL958+tVnLa7SlQX21Cqsf9hRBkLONz/FNiTFACmdVvC
-        SzQtmWILuZXxOYsHxzBCPbbr5JuMk2FqIqFvyxRRZw==
-X-Google-Smtp-Source: APXvYqyIDKOrxjb28zWL9kagM4gqNHMvZYp0EWQP/d+eBC6/dEWbXTKwXclpCyHxrYDHzsr0mwrMijbohn/hHGTlziQ=
-X-Received: by 2002:a81:3681:: with SMTP id d123mr9802172ywa.348.1567128600919;
- Thu, 29 Aug 2019 18:30:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190807013340.9706-1-jhubbard@nvidia.com> <912eb2bd-4102-05c1-5571-c261617ad30b@nvidia.com>
-In-Reply-To: <912eb2bd-4102-05c1-5571-c261617ad30b@nvidia.com>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Thu, 29 Aug 2019 21:29:50 -0400
-Message-ID: <CAOg9mSQKGDywcMde2DE42diUS7J8m74Hdv+xp_PJhC39EXZQuw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/39] put_user_pages(): miscellaneous call sites
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        id S1727836AbfH3CG4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Aug 2019 22:06:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5696 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727270AbfH3CGz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Aug 2019 22:06:55 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0EC28CB0385988FD9438;
+        Fri, 30 Aug 2019 10:06:42 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 30 Aug
+ 2019 10:06:31 +0800
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+CC:     <devel@driverdev.osuosl.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>,
         Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-media@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-rdma@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-xfs@vger.kernel.org, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, sparclinux@vger.kernel.org,
-        x86@kernel.org, xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="UTF-8"
+        <linux-fsdevel@vger.kernel.org>,
+        "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190828170022.GA7873@kroah.com> <20190829062340.GB3047@infradead.org>
+ <20190829063955.GA30193@kroah.com> <20190829094136.GA28643@infradead.org>
+ <20190829095019.GA13557@kroah.com> <20190829103749.GA13661@infradead.org>
+ <20190829111810.GA23393@kroah.com> <20190829151144.GJ23584@kadam>
+ <20190829152757.GA125003@architecture4> <20190829154346.GK23584@kadam>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <cd38b645-2930-3e02-6c6a-5972ea02b537@huawei.com>
+Date:   Fri, 30 Aug 2019 10:06:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190829154346.GK23584@kadam>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi John...
+On 2019/8/29 23:43, Dan Carpenter wrote:
+>> p.s. There are 2947 (un)likely places in fs/ directory.
+> 
+> I was complaining about you adding new pointless ones, not existing
+> ones.  The likely/unlikely annotations are supposed to be functional and
+> not decorative.  I explained this very clearly.
+> 
+> Probably most of the annotations in fs/ are wrong but they are also
+> harmless except for the slight messiness.  However there are definitely
+> some which are important so removing them all isn't a good idea.
 
-I added this patch series on top of Linux 5.3rc6 and ran
-xfstests with no regressions...
+Hi Dan,
 
-Acked-by: Mike Marshall <hubcap@omnibond.com>
+Could you please pick up one positive example using likely and unlikely
+correctly? so we can follow the example, rather than removing them all blindly.
 
--Mike
+Thanks,
 
-On Tue, Aug 6, 2019 at 9:50 PM John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 8/6/19 6:32 PM, john.hubbard@gmail.com wrote:
-> > From: John Hubbard <jhubbard@nvidia.com>
-> > ...
-> >
-> > John Hubbard (38):
-> >   mm/gup: add make_dirty arg to put_user_pages_dirty_lock()
-> ...
-> >  54 files changed, 191 insertions(+), 323 deletions(-)
-> >
-> ahem, yes, apparently this is what happens if I add a few patches while editing
-> the cover letter... :)
->
-> The subject line should read "00/41", and the list of files affected here is
-> therefore under-reported in this cover letter. However, the patch series itself is
-> intact and ready for submission.
->
-> thanks,
-> --
-> John Hubbard
-> NVIDIA
+> 
+>> If you like, I will delete them all.
+> 
+> But for erofs, I don't think that any of the likely/unlikely calls have
+> been thought about so I'm fine with removing all of them in one go.
+> 
+> regards,
+> dan carpenter
+> 
+> .
+> 
