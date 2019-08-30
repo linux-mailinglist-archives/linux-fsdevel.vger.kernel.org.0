@@ -2,82 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 906BEA3749
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 14:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 224DAA3795
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Aug 2019 15:13:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbfH3M5E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 08:57:04 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36318 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbfH3M5E (ORCPT
+        id S1727781AbfH3NNy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 09:13:54 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36948 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727718AbfH3NNx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 08:57:04 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z4so7487045qtc.3;
-        Fri, 30 Aug 2019 05:57:03 -0700 (PDT)
+        Fri, 30 Aug 2019 09:13:53 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z11so6938562wrt.4;
+        Fri, 30 Aug 2019 06:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JqpdhCNElm8Ik1HxewZXY9EY8Fd3DEXFwvJVx75KrYE=;
+        b=n50sbYC+FgutUT7ECCoEMtCug2yBV6K89ro+gQqT6r1hIcdSjVf15jSwbB8hUCOvLP
+         yZLK+P0vmE9jkvdq5ldZbdx4hSEPJCCytNdGmBacEpRTTw1qkYW//YwY7S6Q1UuB31a/
+         dm6Ij3rD8rVxb1CxacJC8Ak2E0UCED4sB1R+Odygxmoh3SLjPHsV3sz57t/I/AkdnT4C
+         cSrRgRFlzS/PIeUcokSHgOIxdoQzFd1MvL6OORmv8y685F4xHpFyarX8iieHU1PN2qel
+         o98HwNeJ1U4ysDW4uIIAIQm6g8vWqxK4YzmC+uisxozec9BF0RdHTNDjzc1+g1wApTwF
+         C3Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SFaIBBUhr4/2SlKlC0SL+JS7SwhLYOWGWRxz8fCIXxs=;
-        b=V7y82OeYxHoKF2bMgFWXDxbpr5IM9dUbPZ9UDk1SoC+/u4ItFqpuSO3uNH7DB9Rx9w
-         qYPTqv5OINm45mVxdoC9D0lh11juJGQX5OiDqOU8G/RdBEb6Jc97JExC74Iiwz8VQG8F
-         CLoP6DRB/xEUVlZVyZWtxBBYigkOAtQiqsCght6YPNvzmX3VSplR0WUG1w37cgN17ixT
-         Ap9Azd5HAYqwsPaF7NGJVvOb/8Sl9JE2f4SC1xbaDeGpYSPhHG+fFJvA+mYf0SVwnzNG
-         zxhrpa1WUDa2ezgDKlDGm5itn0+RSq1w5OWNyLRf31dD0wdaTBJincXJVoL/LzwGvWNI
-         Bjhw==
-X-Gm-Message-State: APjAAAXGt9rQMoZLZn322xlpnh4zQagQ/XxEJ7DTM11yzOpuhVrAYn7H
-        r9elxp7LZmbkW0JtwpWXkkLCB7bwywu1kciUgiE=
-X-Google-Smtp-Source: APXvYqx86F6I04uUf5dj55lbh3ezYYy6ct+9ri3fU2IjZXZtb6IRyo6Yls4GC5k0q7MYBeyK3/385Tfjt0p1owjzSts=
-X-Received: by 2002:ac8:117:: with SMTP id e23mr15085989qtg.18.1567169823216;
- Fri, 30 Aug 2019 05:57:03 -0700 (PDT)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=JqpdhCNElm8Ik1HxewZXY9EY8Fd3DEXFwvJVx75KrYE=;
+        b=hGMJpa1ktkuvjdRKLYCBjd2sYLxpmTitSHejnCbrl3P0zqpVyw5F3xr52tYpNayWK3
+         c68WlgGiDBpX/2Jf7K6GiL89gaj+jsWtQeHmIqCt8/yCz97oaCXKBSzWY6u1y70k4Mxl
+         +a7q4aGO8KTfU8lrJNp8Zcn+aLFphe3yFhSQ2VKHjluA0z++Q1XfQNxiUD1+c5Ul3et+
+         nFl3+e4f8GdiMrVU5RZgFxEettvHQZzqP21wiBKRvx93++qlhQZke2Vzk139lXBlFUZ2
+         ODTj78mIYxO1VJwcNFVLsNpgui5sik9UtnkzYdGAC6eniTjzORwnKXLnnpcferHdb9NE
+         T8aw==
+X-Gm-Message-State: APjAAAXOTi6InGcZl8hHp4u5qoz2Eh1zLP48v1h3RPsGYWCZtKmuzCu/
+        4G34WTFgRoP/r4rnQ76BMrhkQPl1z0A=
+X-Google-Smtp-Source: APXvYqz6EC78MzgkBTxKRKjQA9m/g4eSPMCtfmGenxFJAPq755Flmn2cDtfuHwFVmUL3368buS/NAA==
+X-Received: by 2002:adf:f304:: with SMTP id i4mr20016620wro.61.1567170831384;
+        Fri, 30 Aug 2019 06:13:51 -0700 (PDT)
+Received: from localhost.localdomain (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
+        by smtp.gmail.com with ESMTPSA id a141sm18323244wmd.0.2019.08.30.06.13.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 06:13:50 -0700 (PDT)
+From:   Krzysztof Wilczynski <kw@linux.com>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] unicode: Move static keyword to the front of declarations
+Date:   Fri, 30 Aug 2019 15:13:49 +0200
+Message-Id: <20190830131349.14074-1-kw@linux.com>
+X-Mailer: git-send-email 2.22.1
 MIME-Version: 1.0
-References: <20190829041132.26677-1-deepa.kernel@gmail.com>
-In-Reply-To: <20190829041132.26677-1-deepa.kernel@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 30 Aug 2019 14:56:46 +0200
-Message-ID: <CAK8P3a1XjOMpuS12Xao1xqOLFOuz1Jb8dTAfrhLcE643sSkC5g@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs: Add support for timestamp limits
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger@dilger.ca>, aivazian.tigran@gmail.com,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Kees Cook <keescook@chromium.org>, me@bobcopeland.com,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 6:12 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->
-> Hi Al, Arnd,
->
-> This is a pull request for filling in min and max timestamps for filesystems.
-> I've added all the acks, and dropped the adfs patch. That will be merged through
-> Russell's tree.
->
-> Thanks,
-> Deepa
->
-> The following changes since commit 5d18cb62218608a1388858880ad3ec76d6cb0d3b:
->
->   Add linux-next specific files for 20190828 (2019-08-28 19:59:14 +1000)
->
-> are available in the Git repository at:
->
->   https://github.com/deepa-hub/vfs limits
+Move the static keyword to the front of declarations of nfdi_test_data
+and nfdicf_test_data, and resolve the following compiler warnings that
+can be seen when building with warnings enabled (W=1):
 
-Please rebase this branch on top of linux-5.3-rc6 and resend.
-I can't pull a branch that contains linux-next.
+fs/unicode/utf8-selftest.c:38:1: warning:
+  ‘static’ is not at beginning of declaration [-Wold-style-declaration]
 
-Maybe drop the orangefs patch for now, at least until we have come
-to a conclusion on that.
+fs/unicode/utf8-selftest.c:92:1: warning:
+  ‘static’ is not at beginning of declaration [-Wold-style-declaration]
 
-       Arnd
+Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+---
+Related: https://lore.kernel.org/r/20190827233017.GK9987@google.com
+
+ fs/unicode/utf8-selftest.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
+index 6c1a36bbf6ad..6fe8af7edccb 100644
+--- a/fs/unicode/utf8-selftest.c
++++ b/fs/unicode/utf8-selftest.c
+@@ -35,7 +35,7 @@ unsigned int total_tests;
+ #define test_f(cond, fmt, ...) _test(cond, __func__, __LINE__, fmt, ##__VA_ARGS__)
+ #define test(cond) _test(cond, __func__, __LINE__, "")
+ 
+-const static struct {
++static const struct {
+ 	/* UTF-8 strings in this vector _must_ be NULL-terminated. */
+ 	unsigned char str[10];
+ 	unsigned char dec[10];
+@@ -89,7 +89,7 @@ const static struct {
+ 
+ };
+ 
+-const static struct {
++static const struct {
+ 	/* UTF-8 strings in this vector _must_ be NULL-terminated. */
+ 	unsigned char str[30];
+ 	unsigned char ncf[30];
+-- 
+2.22.1
+
