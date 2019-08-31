@@ -2,100 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E002EA4398
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2019 11:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 218F3A43DA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2019 11:59:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbfHaJQY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 31 Aug 2019 05:16:24 -0400
-Received: from mout.web.de ([212.227.15.3]:54289 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726062AbfHaJQY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 31 Aug 2019 05:16:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1567242926;
-        bh=W42yxbYmQCv9tl6YPZs0YFC5fDpZrDuUEO40d5+J5IY=;
-        h=X-UI-Sender-Class:To:Cc:References:Subject:From:Date:In-Reply-To;
-        b=Rb418DWmi/RVbd8sECvNY7M6am3zzXtvu6Z8MKvDEcaqy80J5NzEeIsZquRc+o3+K
-         RcMPUbulCWil2CYSmPwWqfOWbsvJq8lYGIRKuYobskoTbIVH51G/a5nLZzGK7B0dUo
-         Ub/VAcIMteSPNk9yZ43wLPYl/AxtOIz+Ty7w1ZYE=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.132.129.60]) by smtp.web.de (mrweb001
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MXHt7-1hjODj0cab-00WIUk; Sat, 31
- Aug 2019 11:15:26 +0200
-To:     Denis Efremov <efremov@linux.com>, Joe Perches <joe@perches.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Boris Pismenny <borisp@mellanox.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
-        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-rdma@vger.kernel.org,
-        linux-wimax@intel.com, linux-xfs@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        netdev@vger.kernel.org,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sean Paul <sean@poorly.run>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        xen-devel@lists.xenproject.org, Enrico Weigelt <lkml@metux.net>
-References: <20190829165025.15750-1-efremov@linux.com>
-Subject: Re: [PATCH v3 01/11] checkpatch: check for nested (un)?likely() calls
-From:   Markus Elfring <Markus.Elfring@web.de>
-Message-ID: <0d9345ed-f16a-de0b-6125-1f663765eb46@web.de>
-Date:   Sat, 31 Aug 2019 11:15:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.0
+        id S1727166AbfHaJ7t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 31 Aug 2019 05:59:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46504 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726679AbfHaJ7t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 31 Aug 2019 05:59:49 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0D4B4AD86143BB26683F;
+        Sat, 31 Aug 2019 17:59:47 +0800 (CST)
+Received: from RH5885H-V3.huawei.com (10.90.53.225) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 31 Aug 2019 17:59:37 +0800
+From:   yangerkun <yangerkun@huawei.com>
+To:     <adobriyan@gmail.com>, <viro@zeniv.linux.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>, <yi.zhang@huawei.com>,
+        <houtao1@huawei.com>
+Subject: [PATCH] proc: fix ubsan waring in mem_lseek
+Date:   Sat, 31 Aug 2019 18:06:15 +0800
+Message-ID: <20190831100615.41132-1-yangerkun@huawei.com>
+X-Mailer: git-send-email 2.9.5
 MIME-Version: 1.0
-In-Reply-To: <20190829165025.15750-1-efremov@linux.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qKSdXHHLYLKjlRCvxxm0CG4/ObWxvY7GHVNBMu8mxxGycRrayx8
- 4PbzO2dvqjNnF+AFg4bA1W4zmeQSpNZ7vt9DbPnL5lk34WKJYWD9NUPM0PlrCLMjYkm1F6U
- BXfMva6PP5qxs+6jegtT9nR1r+jzSjNeTTC2AqMHglXEtSWbQLq9Fa4eMsUVMGo2eepnDXr
- VwnOxGgwPijQTQTX/f+uw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:nkNVUAuCw5k=:pAP5U5L7C1x2boPp1IRXmn
- D13IzlXT/kI0Odb0OEskHBv1fRCMj7J727enJOB+vAgZd2n6ZXAAaWlSqHLVcohKzncPx6QpO
- Jkkz3w/W/rmQNzfpoIhIUW3Uccf/fl14QBw5X5i4PyFGDK9jzI0Phtg8JML9FgdHalKCIpNWP
- o213QJNReSqJUzIClMxbcGq2voyTmxMmGEwBIXqC58OGwigFy7zuu2Fy5ondTj8F6i3gbb38h
- c6JrfIYpAxvFnO9nRMcO25oqflwZdAfHvFzJ2iu+3r8XsTgWukdxyVbMiL8ftz50QxC2DJqzq
- Ayqcpn0a9Y7cTytKg/qxVHdxdOIF48+PWbHaSEgzP4SLLOPElveDdWhJEc0vM5xdTU1Dqb7hM
- NcCaA0zHOKUIDqcYJ6jN44G6CZgVS/MFofCq8QcCo4GFiBNWMHS4cmZtOpUQJMXQuRbrwvm5s
- QLUFHQhzpAX2K0Aj8VIVILu1mHvF1oeAJg0lG6KqkOeZEm+Unicxfz9HErsixNGFodYh0D3/K
- Pus4ocado7zBlJoZThrgPZ8TvIHn8mX0WI7LW+JhXvD1rFkJmT4VMVuezkSvp3NJ9GaBnkiEN
- 2DsKyjBxY/6mcp9cg5MLZTh0zU4f7ZpgvIRT7mBBrJ5TGKKmZLH7U/Z5qQmwJz28iIVaVlH4p
- wK8w2niZej5noXMTOemcJJnIR+evko7BhWXbZHiUAALjl38emkz357bvLjEkVGm7h8qIAQyjv
- 9Ffe8YuiaY+tWayyEFK6qfYIHwGdEZNrYmIuX9tupSwJCJ8bCFsx9n7SNCZvSRm61MjQsWB76
- icYRtytGOYmCsolycXG6KEM734RMbdaPv2pCjSKPk80uNsPY10n0pxzKUpdSnG1O5lboelK/K
- +pQTb7oUbCkyxCvKMOBAo+HHvPT1QQcSGkQreepWbCChdY7O5TxdjvwnEYYPBYSyBIKA4j2t6
- gmzI4FQ5Tbv5lKlap9HBlQSeD5ynZnaeINJfHFu/XpQei9uMkeptC8IYqtcno5/KHj4gVLoN6
- dvIF455p6LB73n4l5ci1UNJB4L7BiFhMmqFWnfszzCVLZrOOA94053rwKZECu2B8PgnRB8RwQ
- RHR8X1QZRRFkw/YnadMqgavlvTg6QJ2wAh3pxzJ+iXjpxC1IgfnMhR3w1p3UqTC4whz3ngKbv
- qqUbKY+8ilN57KkwviQJZULRks7t3CtGMgptQJeouQnu6rZg==
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +# nested likely/unlikely calls
-> +		if ($line =3D~ /\b(?:(?:un)?likely)\s*\(\s*!?\s*(IS_ERR(?:_OR_NULL|_V=
-ALUE)?|WARN)/) {
-> +			WARN("LIKELY_MISUSE",
+UBSAN has reported a overflow with mem_lseek. And it's fine with
+mem_open set file mode with FMODE_UNSIGNED_OFFSET(memory_lseek).
+However, another file use mem_lseek do lseek can have not
+FMODE_UNSIGNED_OFFSET(proc_kpagecount_operations/proc_pagemap_operations),
+fix it by checking overflow and FMODE_UNSIGNED_OFFSET.
 
-How do you think about to use the specification =E2=80=9C(?:IS_ERR(?:_(?:O=
-R_NULL|VALUE))?|WARN)=E2=80=9D
-in this regular expression?
+==================================================================
+UBSAN: Undefined behaviour in ../fs/proc/base.c:941:15
+signed integer overflow:
+4611686018427387904 + 4611686018427387904 cannot be represented in type 'long long int'
+CPU: 4 PID: 4762 Comm: syz-executor.1 Not tainted 4.4.189 #3
+Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+Call trace:
+[<ffffff90080a5f28>] dump_backtrace+0x0/0x590 arch/arm64/kernel/traps.c:91
+[<ffffff90080a64f0>] show_stack+0x38/0x60 arch/arm64/kernel/traps.c:234
+[<ffffff9008986a34>] __dump_stack lib/dump_stack.c:15 [inline]
+[<ffffff9008986a34>] dump_stack+0x128/0x184 lib/dump_stack.c:51
+[<ffffff9008a2d120>] ubsan_epilogue+0x34/0x9c lib/ubsan.c:166
+[<ffffff9008a2d8b8>] handle_overflow+0x228/0x280 lib/ubsan.c:197
+[<ffffff9008a2da2c>] __ubsan_handle_add_overflow+0x4c/0x68 lib/ubsan.c:204
+[<ffffff900862b9f4>] mem_lseek+0x12c/0x130 fs/proc/base.c:941
+[<ffffff90084ef78c>] vfs_llseek fs/read_write.c:260 [inline]
+[<ffffff90084ef78c>] SYSC_lseek fs/read_write.c:285 [inline]
+[<ffffff90084ef78c>] SyS_lseek+0x164/0x1f0 fs/read_write.c:276
+[<ffffff9008093c80>] el0_svc_naked+0x30/0x34
+==================================================================
 
-Regards,
-Markus
+Signed-off-by: yangerkun <yangerkun@huawei.com>
+---
+ fs/proc/base.c     | 20 +++++++++++++++-----
+ fs/read_write.c    |  5 -----
+ include/linux/fs.h |  5 +++++
+ 3 files changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea950..61c9a0a 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -882,16 +882,26 @@ static ssize_t mem_write(struct file *file, const char __user *buf,
+ 
+ loff_t mem_lseek(struct file *file, loff_t offset, int orig)
+ {
++	spin_lock(&file->f_lock);
+ 	switch (orig) {
+-	case 0:
+-		file->f_pos = offset;
+-		break;
+-	case 1:
+-		file->f_pos += offset;
++	case SEEK_CUR:
++		offset += file->f_pos;
++		/* fall through */
++	case SEEK_SET:
++		/* to avoid userland mistaking f_pos=-9 as -EBADF=-9 */
++		if ((unsigned long long)offset >= -MAX_ERRNO)
++			return -EOVERFLOW;
++
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
++
++	if (offset < 0 && !(unsigned_offsets(file)))
++		return -EINVAL;
++
++	file->f_pos = offset;
++	spin_unlock(&file->f_lock);
+ 	force_successful_syscall_return();
+ 	return file->f_pos;
+ }
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5bbf587..961966e 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -34,11 +34,6 @@ const struct file_operations generic_ro_fops = {
+ 
+ EXPORT_SYMBOL(generic_ro_fops);
+ 
+-static inline bool unsigned_offsets(struct file *file)
+-{
+-	return file->f_mode & FMODE_UNSIGNED_OFFSET;
+-}
+-
+ /**
+  * vfs_setpos - update the file offset for lseek
+  * @file:	file structure in question
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 997a530..e5edbc9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3074,6 +3074,11 @@ extern void
+ file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping);
+ extern loff_t noop_llseek(struct file *file, loff_t offset, int whence);
+ extern loff_t no_llseek(struct file *file, loff_t offset, int whence);
++static inline bool unsigned_offsets(struct file *file)
++{
++	return file->f_mode & FMODE_UNSIGNED_OFFSET;
++}
++
+ extern loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize);
+ extern loff_t generic_file_llseek(struct file *file, loff_t offset, int whence);
+ extern loff_t generic_file_llseek_size(struct file *file, loff_t offset,
+-- 
+2.9.5
+
