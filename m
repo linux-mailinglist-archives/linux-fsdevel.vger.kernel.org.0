@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE05EB1391
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 445A6B13AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:29:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387622AbfILR2z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 13:28:55 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:44567 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387598AbfILR2x (ORCPT
+        id S2387649AbfILR3I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 13:29:08 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:2868 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387594AbfILR3I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 13:28:53 -0400
+        Thu, 12 Sep 2019 13:29:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1568309333; x=1599845333;
+  t=1568309347; x=1599845347;
   h=message-id:in-reply-to:references:from:date:subject:to:
    mime-version;
-  bh=AGAO4q+sahYkfsrmsJLVcWrv5VJxiw7TVhVh6xK5AXY=;
-  b=beHXutplI5rDNUk7DBJ6SuCpd1q4irB1Sz9bjzXsQApnUpwVx3TtKhv3
-   T2P6K6ukB+5A4KatdMSqgvAIIX6ly0+Od8Uy6oOIuFFgc5U47y0sChGEh
-   EqYuYj182FOfCvJvIeY4fZViscM+dPb7lTGRpbDxewCMXl/uJ7y6CzEs8
-   Y=;
+  bh=JPrJloghTz0psyuIOLhm/qvf4ymtHQcLhqh0B7GkyL8=;
+  b=coCnlgOFfuD2OFnrS0LajeMV2UTR6MVx83vx7t87ljnsGlqhkL/PrJ5+
+   YC6IXI0BJgbBY0XhK4T00sWksR32Ei9yL4I5yL7dYtXUMy1Ch8b7BbCVk
+   zZkMio7ZTujqYNCT7eLclhzVoRqIMW7Ko9mk3H3jwg6gOXxJaWabqCcAl
+   E=;
 X-IronPort-AV: E=Sophos;i="5.64,497,1559520000"; 
-   d="scan'208";a="750440659"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 12 Sep 2019 17:28:52 +0000
-Received: from EX13MTAUEB001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com (Postfix) with ESMTPS id E9216A23A6;
-        Thu, 12 Sep 2019 17:28:51 +0000 (UTC)
-Received: from EX13D01UEB002.ant.amazon.com (10.43.60.219) by
- EX13MTAUEB001.ant.amazon.com (10.43.60.96) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 12 Sep 2019 17:28:51 +0000
-Received: from EX13MTAUEB001.ant.amazon.com (10.43.60.96) by
- EX13D01UEB002.ant.amazon.com (10.43.60.219) with Microsoft SMTP Server (TLS)
+   d="scan'208";a="702191772"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2c-87a10be6.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 12 Sep 2019 17:28:57 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2c-87a10be6.us-west-2.amazon.com (Postfix) with ESMTPS id 6EF94A223C;
+        Thu, 12 Sep 2019 17:28:52 +0000 (UTC)
+Received: from EX13D06UWC002.ant.amazon.com (10.43.162.205) by
+ EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (10.43.162.135) by
+ EX13D06UWC002.ant.amazon.com (10.43.162.205) with Microsoft SMTP Server (TLS)
  id 15.0.1367.3; Thu, 12 Sep 2019 17:28:51 +0000
 Received: from kaos-source-ops-60003.pdx1.corp.amazon.com (10.36.133.164) by
- mail-relay.amazon.com (10.43.60.129) with Microsoft SMTP Server id
+ mail-relay.amazon.com (10.43.162.232) with Microsoft SMTP Server id
  15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:51 +0000
 Received: by kaos-source-ops-60003.pdx1.corp.amazon.com (Postfix, from userid 6262777)
-        id E1935C053D; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
-Message-ID: <11fbf78833638e57b76950a74998b0c489fb3020.1568309119.git.fllinden@amazon.com>
+        id E47B0C0563; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
+Message-ID: <5b49cb855ec94a477bad4730f936931af353e31d.1568309119.git.fllinden@amazon.com>
 In-Reply-To: <cover.1568309119.git.fllinden@amazon.com>
 References: <cover.1568309119.git.fllinden@amazon.com>
 From:   Frank van der Linden <fllinden@amazon.com>
-Date:   Sat, 31 Aug 2019 19:00:31 +0000
-Subject: [RFC PATCH 22/35] nfsd: split off the write decode code in to a
- seperate function
+Date:   Sat, 31 Aug 2019 19:19:00 +0000
+Subject: [RFC PATCH 23/35] nfsd: add defines for NFSv4.2 extended attribute
+ support
 To:     <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -55,114 +55,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-nfs4_decode_write has code to parse incoming XDR write data in to
-a kvec head, and a list of pages.
-
-Put this code in to a seperate function, so that it can be used
-later by the xattr code, for setxattr. No functional change.
+Add defines for server-side extended attribute support. Most have
+already been added as part of client support, but these are
+the network order error codes for the noxattr and xattr2big errors,
+and the addition of the xattr support to the supported file
+attributes (if configured).
 
 Signed-off-by: Frank van der Linden <fllinden@amazon.com>
 ---
- fs/nfsd/nfs4xdr.c | 72 +++++++++++++++++++++++++++--------------------
- 1 file changed, 42 insertions(+), 30 deletions(-)
+ fs/nfsd/nfsd.h | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index f2090f7fed42..25cd597f7b4e 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -248,6 +248,44 @@ svcxdr_dupstr(struct nfsd4_compoundargs *argp, void *buf, u32 len)
- 	return p;
- }
+diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
+index af2947551e9c..7e2a2f4dcb24 100644
+--- a/fs/nfsd/nfsd.h
++++ b/fs/nfsd/nfsd.h
+@@ -280,7 +280,9 @@ void		nfsd_lockd_shutdown(void);
+ #define nfserr_union_notsupp		cpu_to_be32(NFS4ERR_UNION_NOTSUPP)
+ #define nfserr_offload_denied		cpu_to_be32(NFS4ERR_OFFLOAD_DENIED)
+ #define nfserr_wrong_lfs		cpu_to_be32(NFS4ERR_WRONG_LFS)
+-#define nfserr_badlabel		cpu_to_be32(NFS4ERR_BADLABEL)
++#define nfserr_badlabel			cpu_to_be32(NFS4ERR_BADLABEL)
++#define nfserr_xattr2big		cpu_to_be32(NFS4ERR_XATTR2BIG)
++#define nfserr_noxattr			cpu_to_be32(NFS4ERR_NOXATTR)
  
-+static __be32
-+svcxdr_construct_vector(struct nfsd4_compoundargs *argp, struct kvec *head,
-+                       struct page ***pagelist, u32 buflen)
-+{
-+	int avail;
-+	int len;
-+	int pages;
-+
-+	/* Sorry .. no magic macros for this.. *
-+	 * READ_BUF(write->wr_buflen);
-+	 * SAVEMEM(write->wr_buf, write->wr_buflen);
-+	 */
-+	avail = (char*)argp->end - (char*)argp->p;
-+	if (avail + argp->pagelen < buflen) {
-+		dprintk("NFSD: xdr error (%s:%d)\n",
-+			       __FILE__, __LINE__);
-+		return nfserr_bad_xdr;
-+	}
-+	head->iov_base = argp->p;
-+	head->iov_len = avail;
-+	*pagelist = argp->pagelist;
-+
-+	len = XDR_QUADLEN(buflen) << 2;
-+	if (len >= avail) {
-+	       len -= avail;
-+
-+	       pages = len >> PAGE_SHIFT;
-+	       argp->pagelist += pages;
-+	       argp->pagelen -= pages * PAGE_SIZE;
-+	       len -= pages * PAGE_SIZE;
-+
-+	       next_decode_page(argp);
-+	}
-+	argp->p += XDR_QUADLEN(len);
-+
-+	return 0;
-+}
-+
- /**
-  * savemem - duplicate a chunk of memory for later processing
-  * @argp: NFSv4 compound argument structure to be freed with
-@@ -1251,8 +1289,6 @@ nfsd4_decode_verify(struct nfsd4_compoundargs *argp, struct nfsd4_verify *verify
- static __be32
- nfsd4_decode_write(struct nfsd4_compoundargs *argp, struct nfsd4_write *write)
- {
--	int avail;
--	int len;
- 	DECODE_HEAD;
+ /* error codes for internal use */
+ /* if a request fails due to kmalloc failure, it gets dropped.
+@@ -378,11 +380,18 @@ void		nfsd_lockd_shutdown(void);
+ #define NFSD4_2_SECURITY_ATTRS		0
+ #endif
  
- 	status = nfsd4_decode_stateid(argp, &write->wr_stateid);
-@@ -1265,34 +1301,10 @@ nfsd4_decode_write(struct nfsd4_compoundargs *argp, struct nfsd4_write *write)
- 		goto xdr_error;
- 	write->wr_buflen = be32_to_cpup(p++);
++#ifdef CONFIG_NFSD_V4_XATTR
++#define NFSD4_2_XATTR			FATTR4_WORD2_XATTR_SUPPORT
++#else
++#define NFSD4_2_XATTR			0
++#endif
++
+ #define NFSD4_2_SUPPORTED_ATTRS_WORD2 \
+ 	(NFSD4_1_SUPPORTED_ATTRS_WORD2 | \
+ 	FATTR4_WORD2_CHANGE_ATTR_TYPE | \
+ 	FATTR4_WORD2_MODE_UMASK | \
+-	NFSD4_2_SECURITY_ATTRS)
++	NFSD4_2_SECURITY_ATTRS | \
++	NFSD4_2_XATTR)
  
--	/* Sorry .. no magic macros for this.. *
--	 * READ_BUF(write->wr_buflen);
--	 * SAVEMEM(write->wr_buf, write->wr_buflen);
--	 */
--	avail = (char*)argp->end - (char*)argp->p;
--	if (avail + argp->pagelen < write->wr_buflen) {
--		dprintk("NFSD: xdr error (%s:%d)\n",
--				__FILE__, __LINE__);
--		goto xdr_error;
--	}
--	write->wr_head.iov_base = p;
--	write->wr_head.iov_len = avail;
--	write->wr_pagelist = argp->pagelist;
--
--	len = XDR_QUADLEN(write->wr_buflen) << 2;
--	if (len >= avail) {
--		int pages;
--
--		len -= avail;
--
--		pages = len >> PAGE_SHIFT;
--		argp->pagelist += pages;
--		argp->pagelen -= pages * PAGE_SIZE;
--		len -= pages * PAGE_SIZE;
--
--		next_decode_page(argp);
--	}
--	argp->p += XDR_QUADLEN(len);
-+	status = svcxdr_construct_vector(argp, &write->wr_head,
-+					 &write->wr_pagelist, write->wr_buflen);
-+	if (status)
-+		return status;
+ extern const u32 nfsd_suppattrs[3][3];
  
- 	DECODE_TAIL;
- }
 -- 
 2.17.2
 
