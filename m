@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C83FB13A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE05EB1391
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:28:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387640AbfILR3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 13:29:01 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:44607 "EHLO
+        id S2387622AbfILR2z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 13:28:55 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:44567 "EHLO
         smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387597AbfILR26 (ORCPT
+        with ESMTP id S2387598AbfILR2x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 13:28:58 -0400
+        Thu, 12 Sep 2019 13:28:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1568309338; x=1599845338;
+  t=1568309333; x=1599845333;
   h=message-id:in-reply-to:references:from:date:subject:to:
    mime-version;
-  bh=+8uLLJBHkKd2f2TwaLb19UdDfsUlykAE/ru2EoaUj/s=;
-  b=L8KtES7U0WPhY0TPOJZ1xS6oRVxktalZsh4vuSIwk3YzliIMMguHJVnq
-   ED0Yq0YDgmYbDoVNzy2zUF4Hz/UVs3uAWzDQ86n/0quYNCZeqa0J5DOwY
-   aL3EDiP028z9i1RNXQHXtKbBnq+tKwfOE1a5y+DrjN43wVMdMlIedCVSL
-   k=;
+  bh=AGAO4q+sahYkfsrmsJLVcWrv5VJxiw7TVhVh6xK5AXY=;
+  b=beHXutplI5rDNUk7DBJ6SuCpd1q4irB1Sz9bjzXsQApnUpwVx3TtKhv3
+   T2P6K6ukB+5A4KatdMSqgvAIIX6ly0+Od8Uy6oOIuFFgc5U47y0sChGEh
+   EqYuYj182FOfCvJvIeY4fZViscM+dPb7lTGRpbDxewCMXl/uJ7y6CzEs8
+   Y=;
 X-IronPort-AV: E=Sophos;i="5.64,497,1559520000"; 
-   d="scan'208";a="750440670"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 12 Sep 2019 17:28:53 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com (Postfix) with ESMTPS id 1BEE8A2CAD;
-        Thu, 12 Sep 2019 17:28:52 +0000 (UTC)
-Received: from EX13D04UWB001.ant.amazon.com (10.43.161.46) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
- EX13D04UWB001.ant.amazon.com (10.43.161.46) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
+   d="scan'208";a="750440659"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 12 Sep 2019 17:28:52 +0000
+Received: from EX13MTAUEB001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com (Postfix) with ESMTPS id E9216A23A6;
+        Thu, 12 Sep 2019 17:28:51 +0000 (UTC)
+Received: from EX13D01UEB002.ant.amazon.com (10.43.60.219) by
+ EX13MTAUEB001.ant.amazon.com (10.43.60.96) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 12 Sep 2019 17:28:51 +0000
+Received: from EX13MTAUEB001.ant.amazon.com (10.43.60.96) by
+ EX13D01UEB002.ant.amazon.com (10.43.60.219) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 12 Sep 2019 17:28:51 +0000
 Received: from kaos-source-ops-60003.pdx1.corp.amazon.com (10.36.133.164) by
- mail-relay.amazon.com (10.43.161.249) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:52 +0000
+ mail-relay.amazon.com (10.43.60.129) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:51 +0000
 Received: by kaos-source-ops-60003.pdx1.corp.amazon.com (Postfix, from userid 6262777)
-        id E6C6DC04C6; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
-Message-ID: <2afeb5330f488b70f7ae5495b2b0d56e75ee9392.1568309119.git.fllinden@amazon.com>
+        id E1935C053D; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
+Message-ID: <11fbf78833638e57b76950a74998b0c489fb3020.1568309119.git.fllinden@amazon.com>
 In-Reply-To: <cover.1568309119.git.fllinden@amazon.com>
 References: <cover.1568309119.git.fllinden@amazon.com>
 From:   Frank van der Linden <fllinden@amazon.com>
-Date:   Sat, 31 Aug 2019 02:12:53 +0000
-Subject: [RFC PATCH 21/35] xattr: modify vfs_{set,remove}xattr for NFS server
- use
+Date:   Sat, 31 Aug 2019 19:00:31 +0000
+Subject: [RFC PATCH 22/35] nfsd: split off the write decode code in to a
+ seperate function
 To:     <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -55,163 +55,114 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-To be called from the upcoming NFS server xattr code, the vfs_removexattr
-and vfs_setxattr need some modifications.
+nfs4_decode_write has code to parse incoming XDR write data in to
+a kvec head, and a list of pages.
 
-First, they need to grow a _locked variant, since the NFS server code
-will call this with i_rwsem held. It needs to do that in fh_lock to be
-able to atomically provide the before and after change attributes.
-
-Second, RFC 8276 (NFSv4 extended attribute support) specifies that
-delegations should be recalled (8.4.2.4, 8.4.4.4) when a SETXATTR
-or REMOVEXATTR operation is performed. So, like with other fs
-operations, try to break the delegation. The _locked version of
-these operations will not wait for the delegation to be successfully
-broken, instead returning an error if it wasn't, so that the NFS
-server code can return NFS4ERR_DELAY to the client (similar to
-what e.g. vfs_link does).
+Put this code in to a seperate function, so that it can be used
+later by the xattr code, for setxattr. No functional change.
 
 Signed-off-by: Frank van der Linden <fllinden@amazon.com>
 ---
- fs/xattr.c            | 63 ++++++++++++++++++++++++++++++++++++++-----
- include/linux/xattr.h |  2 ++
- 2 files changed, 58 insertions(+), 7 deletions(-)
+ fs/nfsd/nfs4xdr.c | 72 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 42 insertions(+), 30 deletions(-)
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 90dd78f0eb27..58013bcbc333 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -204,10 +204,10 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
- 	return error;
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index f2090f7fed42..25cd597f7b4e 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -248,6 +248,44 @@ svcxdr_dupstr(struct nfsd4_compoundargs *argp, void *buf, u32 len)
+ 	return p;
  }
  
--
- int
--vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
--		size_t size, int flags)
-+__vfs_setxattr_locked(struct dentry *dentry, const char *name,
-+		const void *value, size_t size, int flags,
-+		struct inode **delegated_inode)
- {
- 	struct inode *inode = dentry->d_inode;
- 	int error;
-@@ -216,15 +216,40 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
- 	if (error)
- 		return error;
- 
--	inode_lock(inode);
- 	error = security_inode_setxattr(dentry, name, value, size, flags);
- 	if (error)
- 		goto out;
- 
-+	error = try_break_deleg(inode, delegated_inode);
-+	if (error)
-+		goto out;
-+
- 	error = __vfs_setxattr_noperm(dentry, name, value, size, flags);
- 
- out:
-+	return error;
-+}
-+EXPORT_SYMBOL_GPL(__vfs_setxattr_locked);
-+
-+int
-+vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
-+		size_t size, int flags)
++static __be32
++svcxdr_construct_vector(struct nfsd4_compoundargs *argp, struct kvec *head,
++                       struct page ***pagelist, u32 buflen)
 +{
-+	struct inode *inode = dentry->d_inode;
-+	struct inode *delegated_inode = NULL;
-+	int error;
++	int avail;
++	int len;
++	int pages;
 +
-+retry_deleg:
-+	inode_lock(inode);
-+	error = __vfs_setxattr_locked(dentry, name, value, size, flags,
-+	    &delegated_inode);
- 	inode_unlock(inode);
-+
-+	if (delegated_inode) {
-+		error = break_deleg_wait(&delegated_inode);
-+		if (!error)
-+			goto retry_deleg;
++	/* Sorry .. no magic macros for this.. *
++	 * READ_BUF(write->wr_buflen);
++	 * SAVEMEM(write->wr_buf, write->wr_buflen);
++	 */
++	avail = (char*)argp->end - (char*)argp->p;
++	if (avail + argp->pagelen < buflen) {
++		dprintk("NFSD: xdr error (%s:%d)\n",
++			       __FILE__, __LINE__);
++		return nfserr_bad_xdr;
 +	}
- 	return error;
- }
- EXPORT_SYMBOL_GPL(vfs_setxattr);
-@@ -379,7 +404,8 @@ __vfs_removexattr(struct dentry *dentry, const char *name)
- EXPORT_SYMBOL(__vfs_removexattr);
- 
- int
--vfs_removexattr(struct dentry *dentry, const char *name)
-+__vfs_removexattr_locked(struct dentry *dentry, const char *name,
-+		struct inode **delegated_inode)
- {
- 	struct inode *inode = dentry->d_inode;
- 	int error;
-@@ -388,11 +414,14 @@ vfs_removexattr(struct dentry *dentry, const char *name)
- 	if (error)
- 		return error;
- 
--	inode_lock(inode);
- 	error = security_inode_removexattr(dentry, name);
- 	if (error)
- 		goto out;
- 
-+	error = try_break_deleg(inode, delegated_inode);
-+	if (error)
-+		goto out;
++	head->iov_base = argp->p;
++	head->iov_len = avail;
++	*pagelist = argp->pagelist;
 +
- 	error = __vfs_removexattr(dentry, name);
- 
- 	if (!error) {
-@@ -401,12 +430,32 @@ vfs_removexattr(struct dentry *dentry, const char *name)
- 	}
- 
- out:
-+	return error;
++	len = XDR_QUADLEN(buflen) << 2;
++	if (len >= avail) {
++	       len -= avail;
++
++	       pages = len >> PAGE_SHIFT;
++	       argp->pagelist += pages;
++	       argp->pagelen -= pages * PAGE_SIZE;
++	       len -= pages * PAGE_SIZE;
++
++	       next_decode_page(argp);
++	}
++	argp->p += XDR_QUADLEN(len);
++
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(__vfs_removexattr_locked);
 +
-+int
-+vfs_removexattr(struct dentry *dentry, const char *name)
-+{
-+	struct inode *inode = dentry->d_inode;
-+	struct inode *delegated_inode = NULL;
-+	int error;
-+
-+retry_deleg:
-+	inode_lock(inode);
-+	error = __vfs_removexattr_locked(dentry, name, &delegated_inode);
- 	inode_unlock(inode);
-+
-+	if (delegated_inode) {
-+		error = break_deleg_wait(&delegated_inode);
-+		if (!error)
-+			goto retry_deleg;
-+	}
-+
- 	return error;
- }
- EXPORT_SYMBOL_GPL(vfs_removexattr);
+ /**
+  * savemem - duplicate a chunk of memory for later processing
+  * @argp: NFSv4 compound argument structure to be freed with
+@@ -1251,8 +1289,6 @@ nfsd4_decode_verify(struct nfsd4_compoundargs *argp, struct nfsd4_verify *verify
+ static __be32
+ nfsd4_decode_write(struct nfsd4_compoundargs *argp, struct nfsd4_write *write)
+ {
+-	int avail;
+-	int len;
+ 	DECODE_HEAD;
  
+ 	status = nfsd4_decode_stateid(argp, &write->wr_stateid);
+@@ -1265,34 +1301,10 @@ nfsd4_decode_write(struct nfsd4_compoundargs *argp, struct nfsd4_write *write)
+ 		goto xdr_error;
+ 	write->wr_buflen = be32_to_cpup(p++);
+ 
+-	/* Sorry .. no magic macros for this.. *
+-	 * READ_BUF(write->wr_buflen);
+-	 * SAVEMEM(write->wr_buf, write->wr_buflen);
+-	 */
+-	avail = (char*)argp->end - (char*)argp->p;
+-	if (avail + argp->pagelen < write->wr_buflen) {
+-		dprintk("NFSD: xdr error (%s:%d)\n",
+-				__FILE__, __LINE__);
+-		goto xdr_error;
+-	}
+-	write->wr_head.iov_base = p;
+-	write->wr_head.iov_len = avail;
+-	write->wr_pagelist = argp->pagelist;
 -
- /*
-  * Extended attribute SET operations
-  */
-diff --git a/include/linux/xattr.h b/include/linux/xattr.h
-index 6dad031be3c2..3a71ad716da5 100644
---- a/include/linux/xattr.h
-+++ b/include/linux/xattr.h
-@@ -51,8 +51,10 @@ ssize_t vfs_getxattr(struct dentry *, const char *, void *, size_t);
- ssize_t vfs_listxattr(struct dentry *d, char *list, size_t size);
- int __vfs_setxattr(struct dentry *, struct inode *, const char *, const void *, size_t, int);
- int __vfs_setxattr_noperm(struct dentry *, const char *, const void *, size_t, int);
-+int __vfs_setxattr_locked(struct dentry *, const char *, const void *, size_t, int, struct inode **);
- int vfs_setxattr(struct dentry *, const char *, const void *, size_t, int);
- int __vfs_removexattr(struct dentry *, const char *);
-+int __vfs_removexattr_locked(struct dentry *, const char *, struct inode **);
- int vfs_removexattr(struct dentry *, const char *);
+-	len = XDR_QUADLEN(write->wr_buflen) << 2;
+-	if (len >= avail) {
+-		int pages;
+-
+-		len -= avail;
+-
+-		pages = len >> PAGE_SHIFT;
+-		argp->pagelist += pages;
+-		argp->pagelen -= pages * PAGE_SIZE;
+-		len -= pages * PAGE_SIZE;
+-
+-		next_decode_page(argp);
+-	}
+-	argp->p += XDR_QUADLEN(len);
++	status = svcxdr_construct_vector(argp, &write->wr_head,
++					 &write->wr_pagelist, write->wr_buflen);
++	if (status)
++		return status;
  
- ssize_t generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size);
+ 	DECODE_TAIL;
+ }
 -- 
 2.17.2
 
