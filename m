@@ -2,86 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 842ADA4107
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2019 01:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2F3A416B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2019 02:46:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbfH3X3f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 19:29:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45674 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728138AbfH3X3e (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 19:29:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=silDtNj8mBmuN3iX2OzWF6cGvby74qt7BRdpejRaOic=; b=S9fCFjGUZ2Lut9Cu9VLcsHpdh
-        A6M95AuaGrMr+Ka1cWS0Fn3FdclW+antlSHEZq5Xcn7XiHWWyTNworuL18pF18CosT3HB8V7YNZoj
-        pCuv7DGQq+frjo4rgadCda45kET0FDx01qqMc3nPbli+TV2Gg7rxwODDzVivcYhO6jRvme9RYDEZb
-        cZgUUNCfDyeBDx0rWBWdW9bcRkDiLfVhHcgkS1ruYJ6uf1mH6Ycif9IMahjxX2BMWq1UmStKxz4cL
-        dj3jTrVjJKa3lyq4cJOYY6dGaBdXWhNNhY2mSK1u0gpN93HLVp7gNelq9ecqTMyP/dJ4W+omh/qxA
-        DrTWGYUQQ==;
-Received: from [2601:1c0:6200:6e8::4f71]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3qKj-0001by-QN; Fri, 30 Aug 2019 23:29:33 +0000
-To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] fuse: fix virtio_fs.c build warnings
-Message-ID: <4dbb6d9e-846f-e566-30a4-0082dd113bd3@infradead.org>
-Date:   Fri, 30 Aug 2019 16:29:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728358AbfHaAqC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Aug 2019 20:46:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37214 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728279AbfHaAqC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Aug 2019 20:46:02 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 816D2308404E;
+        Sat, 31 Aug 2019 00:46:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF4A860BF7;
+        Sat, 31 Aug 2019 00:45:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190830165920.GA28182@lst.de>
+References: <20190830165920.GA28182@lst.de> <20190829071312.GE11909@lst.de> <20190820115731.bed7gwfygk66nj43@pegasus.maiolino.io> <20190808082744.31405-1-cmaiolino@redhat.com> <20190808082744.31405-3-cmaiolino@redhat.com> <20190814111535.GC1885@lst.de> <7003.1566305430@warthog.procyon.org.uk> <2587.1567181871@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dhowells@redhat.com, Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel@vger.kernel.org, adilger@dilger.ca,
+        jaegeuk@kernel.org, darrick.wong@oracle.com, miklos@szeredi.hu,
+        rpeterso@redhat.com, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 2/9] cachefiles: drop direct usage of ->bmap method.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <28401.1567212357.1@warthog.procyon.org.uk>
+Date:   Sat, 31 Aug 2019 01:45:57 +0100
+Message-ID: <28402.1567212357@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Sat, 31 Aug 2019 00:46:02 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Christoph Hellwig <hch@lst.de> wrote:
 
-Be consistent in using CONFIG_PM_SLEEP for the freeze and restore
-functions to avoid build warnings.
+> We'll you'd need to implement a IOCB_NOHOLE, but that wouldn't be all
+> that hard.  Having a READ_PLUS like interface that actually tells you
+> how large the hole is might be hard.
 
-../fs/fuse/virtio_fs.c:501:12: warning: ‘virtio_fs_restore’ defined but not used [-Wunused-function]
- static int virtio_fs_restore(struct virtio_device *vdev)
-            ^~~~~~~~~~~~~~~~~
-../fs/fuse/virtio_fs.c:496:12: warning: ‘virtio_fs_freeze’ defined but not used [-Wunused-function]
- static int virtio_fs_freeze(struct virtio_device *vdev)
-            ^~~~~~~~~~~~~~~~
+Actually, that raises another couple of questions:
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org
----
- fs/fuse/virtio_fs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ (1) Is a filesystem allowed to join up two disjoint blocks of data with a
+     block of zeros to make a single extent?  If this happens, I'll see the
+     inserted block of zeros to be valid data.
 
---- linux-next-20190830.orig/fs/fuse/virtio_fs.c
-+++ linux-next-20190830/fs/fuse/virtio_fs.c
-@@ -492,7 +492,7 @@ static void virtio_fs_remove(struct virt
- 	vdev->priv = NULL;
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_PM_SLEEP
- static int virtio_fs_freeze(struct virtio_device *vdev)
- {
- 	return 0; /* TODO */
-@@ -502,7 +502,7 @@ static int virtio_fs_restore(struct virt
- {
- 	return 0; /* TODO */
- }
--#endif /* CONFIG_PM */
-+#endif /* CONFIG_PM_SLEEP */
- 
- const static struct virtio_device_id id_table[] = {
- 	{ VIRTIO_ID_FS, VIRTIO_DEV_ANY_ID },
+ (2) Is a filesystem allowed to punch out a block of valid zero data to make a
+     hole?  This would cause me to refetch the data.
 
-
+David
