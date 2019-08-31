@@ -2,99 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E64A41FC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2019 05:50:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E61A426F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2019 07:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728391AbfHaDud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Aug 2019 23:50:33 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6151 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726942AbfHaDud (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Aug 2019 23:50:33 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 573B89E32BE16FCE1349;
-        Sat, 31 Aug 2019 11:50:31 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sat, 31 Aug
- 2019 11:50:22 +0800
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-To:     <dsterba@suse.cz>, Dan Carpenter <dan.carpenter@oracle.com>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        <devel@driverdev.osuosl.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-References: <20190829062340.GB3047@infradead.org>
- <20190829063955.GA30193@kroah.com> <20190829094136.GA28643@infradead.org>
- <20190829095019.GA13557@kroah.com> <20190829103749.GA13661@infradead.org>
- <20190829111810.GA23393@kroah.com> <20190829151144.GJ23584@kadam>
- <20190829152757.GA125003@architecture4> <20190829154346.GK23584@kadam>
- <cd38b645-2930-3e02-6c6a-5972ea02b537@huawei.com>
- <20190830115142.GM2752@twin.jikos.cz>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <29d7e697-3d74-bc0e-a756-713f682c32ff@huawei.com>
-Date:   Sat, 31 Aug 2019 11:50:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726137AbfHaFqk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 31 Aug 2019 01:46:40 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40306 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbfHaFqk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 31 Aug 2019 01:46:40 -0400
+Received: by mail-io1-f66.google.com with SMTP id h144so3129142iof.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Aug 2019 22:46:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WOhpJr5tHKYGv4ZK0AZEodoAvczvxbwsxiG+g58CPSs=;
+        b=AzNCUdOEXkVwKcnJjrrzdT8T9BXEGdnj5LnXTA3jsHKPVwhxRTS54L+zKAJfk1McCZ
+         v2iSDmsKiPscsLnl1Q75W2eXy5q7fRUcnEG32yp0RRQ+huKkKuvGVbQGQT54TWd9O9JZ
+         EGlVNMqeKOnWWUGl3SbbozlhVrqQ0d5tZ+dV8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WOhpJr5tHKYGv4ZK0AZEodoAvczvxbwsxiG+g58CPSs=;
+        b=NDs//TmQz2Jf9OOlSY6u4xZxDQQg+IJ5bPAVLHUcbwPRsIEaFhEj8a6sLPp+utJAoR
+         xjwFW6a+rZZfWT5pGq3/lsoreNi8qoddz2XujvvNSNEzIcs+/coxN6bbrcQc6naAvcP9
+         Z6hBdxT/i7WvdWGZf9543uOimkZ40Co0itChK6ptpceK5v0wFJKqs/xm5g82QOp63j0B
+         CApV9OK+A6igFQyS+yBByt+zijscC0aZDJUspFhlc+bAnSsrdsGXt+kCHSsr/VTWsf0D
+         3rErc8p+zUgTY/q9PTVmqkGkb2Vs+FwK7I73Z9ilDuC0saslLI7LfCPnUigO/ayzpI1y
+         W2QA==
+X-Gm-Message-State: APjAAAWoxu/HmKyTZSFHbMcGrPkWvBCbvYVhK0Z5qZI5CoC3WyodJmoV
+        apEIHdPDSMUtwyIV0paHdaY6ro3LaMlZCNlzuajVVw==
+X-Google-Smtp-Source: APXvYqzTQ6X1gw8RVQ9UztzASzRQB9OfdUi4aEvgBDjMnNaXFg7p95/i1Qk3oGdVaCTySPWdW4nWnQQzC2V7P3kIS2c=
+X-Received: by 2002:a5e:da48:: with SMTP id o8mr13245634iop.252.1567230399342;
+ Fri, 30 Aug 2019 22:46:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190830115142.GM2752@twin.jikos.cz>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+References: <20190821173742.24574-1-vgoyal@redhat.com> <CAJfpegv_XS=kLxw_FzWNM2Xao5wsn7oGbk3ow78gU8tpXwo-sg@mail.gmail.com>
+ <20190829160106.GC6744@redhat.com>
+In-Reply-To: <20190829160106.GC6744@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Sat, 31 Aug 2019 07:46:28 +0200
+Message-ID: <CAJfpegvnx=Na67367hAXNX17P6qv2nJ-OaL6FPSEa07qL4Jxgw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/13] virtio-fs: shared file system for virtual machines
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/8/30 19:51, David Sterba wrote:
-> On Fri, Aug 30, 2019 at 10:06:25AM +0800, Chao Yu wrote:
->> On 2019/8/29 23:43, Dan Carpenter wrote:
->>>> p.s. There are 2947 (un)likely places in fs/ directory.
->>>
->>> I was complaining about you adding new pointless ones, not existing
->>> ones.  The likely/unlikely annotations are supposed to be functional and
->>> not decorative.  I explained this very clearly.
->>>
->>> Probably most of the annotations in fs/ are wrong but they are also
->>> harmless except for the slight messiness.  However there are definitely
->>> some which are important so removing them all isn't a good idea.
->>
->> Hi Dan,
->>
->> Could you please pick up one positive example using likely and unlikely
->> correctly? so we can follow the example, rather than removing them all blindly.
-> 
-> Remove all of them and re-add with explanation if and how each is going
-> to make things better. If you can't reason about, prove by benchmarks or
-> point to inefficient asm code generated, then don't add them again.
+On Thu, Aug 29, 2019 at 6:01 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Thu, Aug 29, 2019 at 11:28:27AM +0200, Miklos Szeredi wrote:
+>
+> [..]
+> > There are miscellaneous changes, so needs to be thoroughly tested.
+>
+> Hi Miklos,
+>
+> First round of tests passed. Ran pjdfstests, blogbench and bunch of fio
+> jobs and everyting looks good.
 
-It seems the result of it is strongly related to arch and compiler, if we readd
-it after we just prove its gain only in one combination, I doubt we may suffer
-regression in other combination in between archs and comilers. It looks like we
-don't have any cheaper way to readd it? instead of verifying all/most combinations.
+fsx-linux with cache=always revealed a couple of bugs in the argpages
+case.  Pushed fixes for those too.
 
-> 
-> The feedback I got from CPU and compiler people over the years is not to
-> bother using the annotations. CPUs are doing dynamic branch prediction
-> and compilers are applying tons of optimizations.
-> 
-> GCC docs state about the builtin: "In general, you should prefer to use
-> actual profile feedback for this (-fprofile-arcs), as programmers are
-> notoriously bad at predicting how their programs actually perform."
-> (https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
-
-Yes, I agree with this. Thanks a lot for sharing your experience. :)
-
-The removal change has done and been merged into Greg's tree, let's consider to
-readd it later if possible as you suggested.
-
-thanks,
-
-> .
-> 
+Thanks,
+Miklos
