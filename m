@@ -2,140 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42E55A42E2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2019 08:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC541A434C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Aug 2019 10:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbfHaGtq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 31 Aug 2019 02:49:46 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:3985 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725953AbfHaGtp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 31 Aug 2019 02:49:45 -0400
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 9D52E350C09520126B0B;
-        Sat, 31 Aug 2019 14:49:43 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Sat, 31 Aug 2019 14:49:43 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Sat, 31 Aug 2019 14:49:42 +0800
-Date:   Sat, 31 Aug 2019 14:48:53 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        id S1726659AbfHaI2N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 31 Aug 2019 04:28:13 -0400
+Received: from verein.lst.de ([213.95.11.211]:33927 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726287AbfHaI2N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 31 Aug 2019 04:28:13 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 81F1F227A8A; Sat, 31 Aug 2019 10:28:08 +0200 (CEST)
+Date:   Sat, 31 Aug 2019 10:28:08 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        Kai =?iso-8859-1?Q?M=E4kisara_=28Kolumbus=29?= 
+        <kai.makisara@kolumbus.fi>, Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel@vger.kernel.org,
+        Octavian Purdila <octavian.purdila@intel.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v6 03/24] erofs: add super block operations
-Message-ID: <20190831064853.GA162401@architecture4>
-References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-4-gaoxiang25@huawei.com>
- <20190829101545.GC20598@infradead.org>
- <20190829105048.GB64893@architecture4>
- <20190830163910.GB29603@infradead.org>
- <20190830171510.GC107220@architecture4>
- <CAOQ4uxichLUsPyg5Fqg-pSL85oqoDFcQHZbzdrkXX_-kK=CjDQ@mail.gmail.com>
+        linux-scsi@vger.kernel.org
+Subject: Re: [RFC] Re: broken userland ABI in configfs binary attributes
+Message-ID: <20190831082808.GB28527@lst.de>
+References: <20190826024838.GN1131@ZenIV.linux.org.uk> <20190826162949.GA9980@ZenIV.linux.org.uk> <B35B5EA9-939C-49F5-BF65-491D70BCA8D4@kolumbus.fi> <20190826193210.GP1131@ZenIV.linux.org.uk> <b362af55-4f45-bf29-9bc4-dd64e6b04688@plexistor.com> <20190827172734.GS1131@ZenIV.linux.org.uk> <20190829222258.GA16625@ZenIV.linux.org.uk> <20190830041042.GB7777@dread.disaster.area> <20190830044439.GV1131@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxichLUsPyg5Fqg-pSL85oqoDFcQHZbzdrkXX_-kK=CjDQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme707-chm.china.huawei.com (10.1.199.103) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190830044439.GV1131@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 31, 2019 at 09:34:44AM +0300, Amir Goldstein wrote:
-> On Fri, Aug 30, 2019 at 8:16 PM Gao Xiang <gaoxiang25@huawei.com> wrote:
-> >
-> > Hi Christoph,
-> >
-> > On Fri, Aug 30, 2019 at 09:39:10AM -0700, Christoph Hellwig wrote:
-> > > On Thu, Aug 29, 2019 at 06:50:48PM +0800, Gao Xiang wrote:
-> > > > > Please use an erofs_ prefix for all your functions.
-> > > >
-> > > > It is already a static function, I have no idea what is wrong here.
-> > >
-> > > Which part of all wasn't clear?  Have you looked at the prefixes for
-> > > most functions in the various other big filesystems?
-> >
-> > I will add erofs prefix to free_inode as you said.
-> >
-> > At least, all non-prefix functions in erofs are all static functions,
-> > it won't pollute namespace... I will add "erofs_" to other meaningful
-> > callbacks...And as you can see...
-> >
-> > cifs/cifsfs.c
-> > 1303:cifs_init_inodecache(void)
-> > 1509:   rc = cifs_init_inodecache();
-> >
-> > hpfs/super.c
-> > 254:static int init_inodecache(void)
-> > 771:    int err = init_inodecache();
-> >
-> > minix/inode.c
-> > 84:static int __init init_inodecache(void)
-> > 665:    int err = init_inodecache();
-> >
+On Fri, Aug 30, 2019 at 05:44:39AM +0100, Al Viro wrote:
+> > Not quite right. XFS only returns an error if there is data
+> > writeback failure or filesystem corruption or shutdown detected
+> > during whatever operation it is performing.
+> > 
+> > We don't really care what is done with the error that we return;
+> > we're just returning an error because that's what the function
+> > prototype indicates we should do...
 > 
-> Hi Gao,
-> 
-> "They did it first" is never a good reply for code review comments.
-> Nobody cares if you copy&paste code with init_inodecache().
-> I understand why you thought static function names do not pollute
-> the (linker) namespace, but they do pollute the global namespace.
-> 
-> free_inode() as a local function name is one of the worst examples
-> for VFS namespace pollution.
-> 
-> VFS code uses function names like those a lot in the global namespace, e.g.:
-> clear_inode(),new_inode().
-> 
-> For example from recent history of namespace collision caused by your line
-> of thinking, see:
-> e6fd2093a85d md: namespace private helper names
-> 
-> Besides, you really have nothing to loose from prefixing everything
-> with erofs_, do you? It's better for review, for debugging...
+> I thought that xfs_release() and friends followed the prototypes
+> you had on IRIX, while xfs_file_release() et.al. were the
+> impedance-matching layer for Linux.  Oh, well...
 
-Hi Amir,
+That is how it started out originally.  Since then a lot changed,
+including the prototypes.  We could easily do something like the
+patch below.  Additionally the read-only check probably should
+check FMODE_WRITE instead, but that should be left for a separate
+patch:
 
-Thanks for you kind reply...
+---
+From fbdf4e24ad1505129fb4db38644d11fa9b7e11f0 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Sat, 31 Aug 2019 10:24:55 +0200
+Subject: xfs: remove xfs_release
 
-Yes, I understand that some generic header files
-could have the same function names and cause bad
-behaviors...
+We can just move the code directly to xfs_file_release.  Additionally
+remove the pointless i_mode verification, and the error returns that
+are entirely ignored by the calller of ->release.
 
-I will fix them, my only one question is "if all
-function/variable names are prefixed with "erofs_"
-(including all inline helpers in header files),
-it seems somewhat strange... (too many statements
-start "erofs_" in the source code...)"
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/xfs/xfs_file.c  | 63 ++++++++++++++++++++++++++++++++++--
+ fs/xfs/xfs_inode.c | 80 ----------------------------------------------
+ fs/xfs/xfs_inode.h |  1 -
+ 3 files changed, 60 insertions(+), 84 deletions(-)
 
-I will fix common and short names at once...
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index d952d5962e93..cbaba0cc1fa4 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -1060,10 +1060,67 @@ xfs_dir_open(
+ 
+ STATIC int
+ xfs_file_release(
+-	struct inode	*inode,
+-	struct file	*filp)
++	struct inode		*inode,
++	struct file		*file)
+ {
+-	return xfs_release(XFS_I(inode));
++	struct xfs_inode	*ip = XFS_I(inode);
++	struct xfs_mount	*mp = ip->i_mount;
++
++	if ((mp->m_flags & XFS_MOUNT_RDONLY) || XFS_FORCED_SHUTDOWN(mp))
++		return 0;
++
++	/*
++	 * If we previously truncated this file and removed old data in the
++	 * process, we want to initiate "early" writeout on the last close.
++	 * This is an attempt to combat the notorious NULL files problem which
++	 * is particularly noticeable from a truncate down, buffered (re-)write
++	 * (delalloc), followed by a crash.  What we are effectively doing here
++	 * is significantly reducing the time window where we'd otherwise be
++	 * exposed to that problem.
++	 */
++	if (xfs_iflags_test_and_clear(ip, XFS_ITRUNCATED)) {
++		xfs_iflags_clear(ip, XFS_IDIRTY_RELEASE);
++		if (ip->i_delayed_blks > 0)
++			filemap_flush(inode->i_mapping);
++		return 0;
++	}
++
++	if (inode->i_nlink == 0 || !xfs_can_free_eofblocks(ip, false))
++		return 0;
++
++	/*
++	 * Check if the inode is being opened, written and closed frequently and
++	 * we have delayed allocation blocks outstanding (e.g. streaming writes
++	 * from the NFS server), truncating the blocks past EOF will cause
++	 * fragmentation to occur.
++	 *
++	 * In this case don't do the truncation, but we have to be careful how
++	 * we detect this case. Blocks beyond EOF show up as i_delayed_blks even
++	 * when the inode is clean, so we need to truncate them away first
++	 * before checking for a dirty release.  Hence on the first dirty close
++	 * we will still remove the speculative allocation, but after that we
++	 * will leave it in place.
++	 */
++	if (xfs_iflags_test(ip, XFS_IDIRTY_RELEASE))
++		return 0;
++
++	/*
++	 * If we can't get the iolock just skip truncating the blocks past EOF
++	 * because we could deadlock with the mmap_sem otherwise.  We'll get
++	 * another chance to drop them once the last reference to the inode is
++	 * dropped, so we'll never leak blocks permanently.
++	 */
++	if (xfs_ilock_nowait(ip, XFS_IOLOCK_EXCL)) {
++		xfs_free_eofblocks(ip);
++		xfs_iunlock(ip, XFS_IOLOCK_EXCL);
++	}
++
++	/*
++	 * Delalloc blocks after truncation means it really is dirty.
++	 */
++	if (ip->i_delayed_blks)
++		xfs_iflags_set(ip, XFS_IDIRTY_RELEASE);
++	return 0;
+ }
+ 
+ STATIC int
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index cdb97fa027fa..b0e85b7b8dc3 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -1590,86 +1590,6 @@ xfs_itruncate_extents_flags(
+ 	return error;
+ }
+ 
+-int
+-xfs_release(
+-	xfs_inode_t	*ip)
+-{
+-	xfs_mount_t	*mp = ip->i_mount;
+-	int		error;
+-
+-	if (!S_ISREG(VFS_I(ip)->i_mode) || (VFS_I(ip)->i_mode == 0))
+-		return 0;
+-
+-	/* If this is a read-only mount, don't do this (would generate I/O) */
+-	if (mp->m_flags & XFS_MOUNT_RDONLY)
+-		return 0;
+-
+-	if (!XFS_FORCED_SHUTDOWN(mp)) {
+-		int truncated;
+-
+-		/*
+-		 * If we previously truncated this file and removed old data
+-		 * in the process, we want to initiate "early" writeout on
+-		 * the last close.  This is an attempt to combat the notorious
+-		 * NULL files problem which is particularly noticeable from a
+-		 * truncate down, buffered (re-)write (delalloc), followed by
+-		 * a crash.  What we are effectively doing here is
+-		 * significantly reducing the time window where we'd otherwise
+-		 * be exposed to that problem.
+-		 */
+-		truncated = xfs_iflags_test_and_clear(ip, XFS_ITRUNCATED);
+-		if (truncated) {
+-			xfs_iflags_clear(ip, XFS_IDIRTY_RELEASE);
+-			if (ip->i_delayed_blks > 0) {
+-				error = filemap_flush(VFS_I(ip)->i_mapping);
+-				if (error)
+-					return error;
+-			}
+-		}
+-	}
+-
+-	if (VFS_I(ip)->i_nlink == 0)
+-		return 0;
+-
+-	if (xfs_can_free_eofblocks(ip, false)) {
+-
+-		/*
+-		 * Check if the inode is being opened, written and closed
+-		 * frequently and we have delayed allocation blocks outstanding
+-		 * (e.g. streaming writes from the NFS server), truncating the
+-		 * blocks past EOF will cause fragmentation to occur.
+-		 *
+-		 * In this case don't do the truncation, but we have to be
+-		 * careful how we detect this case. Blocks beyond EOF show up as
+-		 * i_delayed_blks even when the inode is clean, so we need to
+-		 * truncate them away first before checking for a dirty release.
+-		 * Hence on the first dirty close we will still remove the
+-		 * speculative allocation, but after that we will leave it in
+-		 * place.
+-		 */
+-		if (xfs_iflags_test(ip, XFS_IDIRTY_RELEASE))
+-			return 0;
+-		/*
+-		 * If we can't get the iolock just skip truncating the blocks
+-		 * past EOF because we could deadlock with the mmap_sem
+-		 * otherwise. We'll get another chance to drop them once the
+-		 * last reference to the inode is dropped, so we'll never leak
+-		 * blocks permanently.
+-		 */
+-		if (xfs_ilock_nowait(ip, XFS_IOLOCK_EXCL)) {
+-			error = xfs_free_eofblocks(ip);
+-			xfs_iunlock(ip, XFS_IOLOCK_EXCL);
+-			if (error)
+-				return error;
+-		}
+-
+-		/* delalloc blocks after truncation means it really is dirty */
+-		if (ip->i_delayed_blks)
+-			xfs_iflags_set(ip, XFS_IDIRTY_RELEASE);
+-	}
+-	return 0;
+-}
+-
+ /*
+  * xfs_inactive_truncate
+  *
+diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+index 558173f95a03..4299905135b2 100644
+--- a/fs/xfs/xfs_inode.h
++++ b/fs/xfs/xfs_inode.h
+@@ -410,7 +410,6 @@ enum layout_break_reason {
+ 	(((pip)->i_mount->m_flags & XFS_MOUNT_GRPID) || \
+ 	 (VFS_I(pip)->i_mode & S_ISGID))
+ 
+-int		xfs_release(struct xfs_inode *ip);
+ void		xfs_inactive(struct xfs_inode *ip);
+ int		xfs_lookup(struct xfs_inode *dp, struct xfs_name *name,
+ 			   struct xfs_inode **ipp, struct xfs_name *ci_name);
+-- 
+2.20.1
 
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> Amir.
