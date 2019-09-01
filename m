@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 505DEA4B9D
+	by mail.lfdr.de (Postfix) with ESMTP id BEA33A4B9E
 	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 22:14:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbfIAUJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Sep 2019 16:09:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50546 "EHLO mx1.suse.de"
+        id S1729035AbfIAUJI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Sep 2019 16:09:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50566 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729010AbfIAUJE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Sep 2019 16:09:04 -0400
+        id S1729020AbfIAUJH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 1 Sep 2019 16:09:07 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B9D02B63B;
-        Sun,  1 Sep 2019 20:09:03 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id C9120B62E;
+        Sun,  1 Sep 2019 20:09:05 +0000 (UTC)
 From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-btrfs@vger.kernel.org, darrick.wong@oracle.com, hch@lst.de,
         david@fromorbit.com, riteshh@linux.ibm.com,
         Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 08/15] fs: Export generic_file_buffered_read()
-Date:   Sun,  1 Sep 2019 15:08:29 -0500
-Message-Id: <20190901200836.14959-9-rgoldwyn@suse.de>
+Subject: [PATCH 09/15] btrfs: basic direct read operation
+Date:   Sun,  1 Sep 2019 15:08:30 -0500
+Message-Id: <20190901200836.14959-10-rgoldwyn@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190901200836.14959-1-rgoldwyn@suse.de>
 References: <20190901200836.14959-1-rgoldwyn@suse.de>
@@ -33,78 +33,89 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-Export generic_file_buffered_read() to be used to
-supplement incomplete direct reads.
+Add btrfs_dio_iomap_ops for iomap.begin() function. In order to
+accomodate dio reads, add a new function btrfs_file_read_iter()
+which would call btrfs_dio_iomap_read() for DIO reads and
+fallback to generic_file_buffered_read otherwise.
 
-While we are at it, correct the comments and variable names.
+Changed parameter written in generic_file_buffered_read() to
+already_read.
 
 Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 ---
- include/linux/fs.h |  2 ++
- mm/filemap.c       | 13 +++++++------
- 2 files changed, 9 insertions(+), 6 deletions(-)
+ fs/btrfs/ctree.h |  2 ++
+ fs/btrfs/file.c  | 13 ++++++++++++-
+ fs/btrfs/iomap.c | 20 ++++++++++++++++++++
+ 3 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 997a530ff4e9..26d827434060 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3041,6 +3041,8 @@ extern int generic_file_rw_checks(struct file *file_in, struct file *file_out);
- extern int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
- 				    struct file *file_out, loff_t pos_out,
- 				    size_t *count, unsigned int flags);
-+extern ssize_t generic_file_buffered_read(struct kiocb *iocb,
-+		struct iov_iter *to, ssize_t already_read);
- extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d0cf700bf201..2121ae01eae8 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2014,7 +2014,7 @@ static void shrink_readahead_size_eio(struct file *filp,
-  * generic_file_buffered_read - generic file read routine
-  * @iocb:	the iocb to read
-  * @iter:	data destination
-- * @written:	already copied
-+ * @copied:	already copied
-  *
-  * This is a generic file read routine, and uses the
-  * mapping->a_ops->readpage() function for the actual low-level stuff.
-@@ -2023,11 +2023,11 @@ static void shrink_readahead_size_eio(struct file *filp,
-  * of the logic when it comes to error handling etc.
-  *
-  * Return:
-- * * total number of bytes copied, including those the were already @written
-+ * * total number of bytes copied, including those the were @copied
-  * * negative error code if nothing was copied
-  */
--static ssize_t generic_file_buffered_read(struct kiocb *iocb,
--		struct iov_iter *iter, ssize_t written)
-+ssize_t generic_file_buffered_read(struct kiocb *iocb,
-+		struct iov_iter *iter, ssize_t copied)
- {
- 	struct file *filp = iocb->ki_filp;
- 	struct address_space *mapping = filp->f_mapping;
-@@ -2168,7 +2168,7 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		prev_offset = offset;
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 9c501c7826b4..5ca3a365e639 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -3243,7 +3243,9 @@ int btrfs_fdatawrite_range(struct inode *inode, loff_t start, loff_t end);
+ loff_t btrfs_remap_file_range(struct file *file_in, loff_t pos_in,
+ 			      struct file *file_out, loff_t pos_out,
+ 			      loff_t len, unsigned int remap_flags);
++/* iomap.c */
+ size_t btrfs_buffered_iomap_write(struct kiocb *iocb, struct iov_iter *from);
++ssize_t btrfs_dio_iomap_read(struct kiocb *iocb, struct iov_iter *to);
  
- 		put_page(page);
--		written += ret;
-+		copied += ret;
- 		if (!iov_iter_count(iter))
- 			goto out;
- 		if (ret < nr) {
-@@ -2276,8 +2276,9 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 
- 	*ppos = ((loff_t)index << PAGE_SHIFT) + offset;
- 	file_accessed(filp);
--	return written ? written : error;
-+	return copied ? copied : error;
+ /* tree-defrag.c */
+ int btrfs_defrag_leaves(struct btrfs_trans_handle *trans,
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index f7087e28ac08..e7f67d514ba8 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -2839,9 +2839,20 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
+ 	return generic_file_open(inode, filp);
  }
-+EXPORT_SYMBOL_GPL(generic_file_buffered_read);
  
- /**
-  * generic_file_read_iter - generic filesystem read routine
++static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	ssize_t ret = 0;
++	if (iocb->ki_flags & IOCB_DIRECT)
++		ret = btrfs_dio_iomap_read(iocb, to);
++	if (ret < 0)
++		return ret;
++
++	return generic_file_buffered_read(iocb, to, ret);
++}
++
+ const struct file_operations btrfs_file_operations = {
+ 	.llseek		= btrfs_file_llseek,
+-	.read_iter      = generic_file_read_iter,
++	.read_iter      = btrfs_file_read_iter,
+ 	.splice_read	= generic_file_splice_read,
+ 	.write_iter	= btrfs_file_write_iter,
+ 	.mmap		= btrfs_file_mmap,
+diff --git a/fs/btrfs/iomap.c b/fs/btrfs/iomap.c
+index 8ed93d427962..ee94c687db1a 100644
+--- a/fs/btrfs/iomap.c
++++ b/fs/btrfs/iomap.c
+@@ -421,3 +421,23 @@ size_t btrfs_buffered_iomap_write(struct kiocb *iocb, struct iov_iter *from)
+ 	return written;
+ }
+ 
++static int btrfs_dio_iomap_begin(struct inode *inode, loff_t pos,
++		loff_t length, unsigned flags, struct iomap *iomap,
++		struct iomap *srcmap)
++{
++	return get_iomap(inode, pos, length, iomap);
++}
++
++static const struct iomap_ops btrfs_dio_iomap_ops = {
++	.iomap_begin            = btrfs_dio_iomap_begin,
++};
++
++ssize_t btrfs_dio_iomap_read(struct kiocb *iocb, struct iov_iter *to)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++	ssize_t ret;
++	inode_lock_shared(inode);
++	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, NULL);
++	inode_unlock_shared(inode);
++	return ret;
++}
 -- 
 2.16.4
 
