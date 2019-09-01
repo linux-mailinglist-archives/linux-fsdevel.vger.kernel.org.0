@@ -2,39 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E06A4895
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 11:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E6CA489D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 11:39:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbfIAJeU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Sep 2019 05:34:20 -0400
-Received: from sonic309-24.consmr.mail.ir2.yahoo.com ([77.238.179.82]:46675
-        "EHLO sonic309-24.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726934AbfIAJeT (ORCPT
+        id S1728658AbfIAJjd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Sep 2019 05:39:33 -0400
+Received: from sonic301-21.consmr.mail.gq1.yahoo.com ([98.137.64.147]:37312
+        "EHLO sonic301-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728390AbfIAJjd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Sep 2019 05:34:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567330457; bh=g5yXQHB7Kk7HxHhwVdFwXodQM6FzAGkXnqqWXk4trBI=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=JIzevFkam3l4stg2GlqDuqnfDI7FUSI/l+S+Vdv996FVDNE9t+WuGOS6iEZpf0CqN7GGOVkeMAaQtN5JizN4jf5V7Y94Dolktuy9cy167AE680PAv4KfTAmvBVFgPx760FUrEZNUm32zSc22IZLOPuEDs1Ns7hhv1FmUivxhhIS8TqmSrBN5ciSX9FEMPFRF7EtM/TzmMc23AZV2lJaHppKRP/lddx3LHFYuZrRBnl5LN4qDrXnt1RlnATPqikOeZf0bR5VuBdeJ6qQdr/y/Hhd6cQaQG9lqniY8wAwPhah2CB5y5nCg3mx8n46YBNNzT+uVxE3Zmm0CjXIJHJQiQg==
-X-YMail-OSG: MFKWzecVM1nIgYnVH80CIQ4xBkj5jYivDMSXEJi57RJCecPkngTHFdDiebUwhG1
- U9ylqANRuSks3o7j6SCMpkLGPkiRWvkpSnju_wKXN10x6O.zMqBlMGYACVjc372pUCNp8z4nfB.H
- kmdZDGzcJt5q62QwD0o04hFwQrUqPI.6NX7s6h29J8gBzQjppXU4oG1x48V7_8mD0FV9qyG4Ya3b
- R1BY3gbGDrik7THCRzafihFAaadBNAUZ4mGK8DO76Kld7yGZy4di3izpC5qusnmjHCVq72a2wUrx
- Sfb0f4SpzNY464s1QFYf7.rJMyvu3aYmx8ijWIt6JNd2CsKWvlg9PXG2E80GZkXo1hE763ojFxwA
- oiePU6CzJQgEEbT.MVp7uPmqbwJyTY6n9MXXW5n7E95B5VNKlDbFyb.qre9G2O_pIauxeejtmdwz
- dlahIwIt7dTYFkpuBfRIMXEhgdb6S9Kgq6a4SGjLKJ90yjnDOVd3TCrGjDSfmeZAbKZGCJUdj.mM
- B9KzKDEJuLgtyGSX2iCFWo__uPwyD0wxeaCNYt4vllMk9ghHCLh_1Z9SkjeVWdUqTYQN7Y0BXInV
- tS._MDOlCbZahW7_IzJ1MgSa3kxU3D2ind7oBsmKr4mJiEA6XCpyrOvTLH.VbsNVeekyLOx6n61_
- aLhyu6_tOG3Sm8AlbIi_VBh9tvWenVqV6RZKZ2zNQp.H8y5UU7KVvMgzXLPEV_q07YLk8GhW9_KW
- NPkUCauRe.XTdnSzRKfzVOlLIrjr8tR7FwVaftcxq8RnAGqQ43YF9MPuaKjLv7wqsp043v6DV4R.
- 52WRAWwzaztNHrBkXIUZLj9MjbHjQ5OvkVZn6A2hrW3UKs6Imp_AzmQ2q4OmzTmxMKREv6tiZgTc
- .iMK1fpJFOGIwGK0gz0CkDduBIepZYzMBAAQbT8R1fL.h7mzDFrmMfM1XvfxgBZlPx.X9FRIJiW_
- fHkOMbcaSziSyxS1QLVHbLZTe8vKt83Ak3MdF_F4KIFFKTWaQHQJXuH5yB7ZgiCmcE2RDpqLK3.1
- diWFvNPmmjDSIAOxwYKq070rkR0jd4ZxKam0.3mxKFGqAmWzf617XQzZZWwpyvwxMgiUzzZ3Updg
- 0wZDss_oYd.6F1bUDnYaZhxwAVbg8R4pZf2yRgvDpFdupy1h72fHW8LpqeLlMqQu_mNSNWh59bQy
- vbv8f1lfaW3qhUgad9sTI5ZvRIGvRmEJOc9ok_bxrAO_VifkxmGARVaTr4h4W2STwFp9WrKEu0gF
- Tlm66cffmzd2uVxlqkJZJBa37Kk.1IMKyM_AG3Twu2Q--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ir2.yahoo.com with HTTP; Sun, 1 Sep 2019 09:34:17 +0000
-Received: by smtp419.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID dd0865617b38edab24fbf9714f9b2201;
-          Sun, 01 Sep 2019 09:34:13 +0000 (UTC)
-Date:   Sun, 1 Sep 2019 17:34:00 +0800
+        Sun, 1 Sep 2019 05:39:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567330771; bh=cHlH9WiAvjL21Ab1gMYZyJ5FOMKVRsvNZyUnXUBAmGo=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=MfPXUqTOfnneZL37s56uLRiVNXb/M4DXFFztSTMa06uZCQZkBANnS/h23XQpTSBDtq4fX3ZbBa+MLYGk7VEX3qZlVauR8E30nfpxh+lJ7EaSQMU8fyDTStFsS2EiCGTe6Xbc/haS5SM4+JEeF4ctnKcyc5F3crKT+wZCLfYdsIKxyBRwwJkiuv4GDfOiM8Js6o14Z7hwHJcswVwU0/xmO1XjyHBGoOUt8gem91Sdpdn0KKMkAjzGqVMXpIgnH8e5TyDqm+fpxeRljp6+MdHyN26uGARwyWc3y1F9azzgMMmJPzOtQNqStk3CunWFaf3+RU1Yd+JrdRs2ce/j16AveQ==
+X-YMail-OSG: tSsyId0VM1l6cGeulFe5p.tIwPmQXn8GOW_0lfxtbeyd1dMhHMVsQe_1t5dK3Lt
+ ko3BaUa_o4XZSFIu.kaZeAiY63TfQZm9KmR8YiQmo1IHijjm3GWJqgn_QFnfkzQ0r.CIBkS63ZsH
+ IOgB_98F3LollxWzIK3aLQf_CpGhoV0YT2mXc4NGiqFYBPa3m4HsA4cGwX9DRrpxXy3wtUR1sfuu
+ 34ahEtxknsFvV.X4PFRBA3RZzofOLZmI9sfsun9kzDkBBLg5cb0dbrDBkRuu6za_HsdajtIR6Zd9
+ krkQ0uXsy3sbEAFQYIL9tZaO2f0M9r_hIa0oeiHdAWlAYitb_9Ko2SkDs7bab7ynbp79EIoBeSP5
+ eLk2PTuXclDo4PZqM1K1q4wujCp91nRVwGep9MomW3mSpXH9CVWqY0SRt7FfitdtjGi0EjRv6f1G
+ 2bda9S.Sy7DQhpvqr0_vsGVIltWxF_7eA5rmbFr3.Lr0EDkf.wnelI5YEjM0eK.294dmbF7aCz_j
+ BdMITfDdCI6uZjZI1zuqH_dQiCtpiOei9WMJtjidNhPtPTUBgCM11GIGUZ_VefFblu0vWK9FJKOk
+ HKsx7DPe7N4KKrBbJf7JoOwvOKZyM_uFcS73dQDLCuS5gIOW_lHA4aPK4G7uoH6MaIXYkbYY1HbP
+ K4FPwbWLefVj1ykMhTADONRuR6XrKC6djnY5jXIvnK4dQIXT_UXzPZntALaCRK1yom0lnIYtlNzs
+ .2tXMLetoh7OV6FgGEMKA4W6y1_mmtOKTcLKKwA0KnDdJJ9HygI6rsgmXB_e141l68v.Oy_z4FQx
+ MS32vW3.2QpkntNrxZDVgIT067.WKaWjrKDYK2efCKOISecfqjE10HGJBkXwSgdjIx93DBN0MiuB
+ A8kfCSEMN1dhfjhx0WACWuiHe9D_LuKFovc2YV.ibQememms0F42dk5IYD5XdEUl3Zpxi3ZrJlul
+ vXXu9qrpbiuA0rcmV8m1NKLVVySAuLr67znzTgltqT0TLRi5iIWqSWK7YiVJxg8u2c8eWvgNQMou
+ k1U6aA9hBup7vFmS0OWDlUxlCZ0X.l7QYtVzH9nwmvlfgYGXB13PsHUWNCcOjGMX9EN0lIlp4G_d
+ QWxEpmjJRQYS6xGzDM2EcDJ1bQa2iPmXFR57PLwnPk4tPBSrq7G54eAJZ4ECX6APRNu5vq1UqZHj
+ HUJ.86x2dwrX50ZrF.x9nFhSQg8yRXxI4FXU4vfVFqLOQ06LMyrLVbfzECR4JNYvp4ZWtvS1Ln.N
+ j8URE72BAnOj8gsGP4BF.0W6ZAdJAtAf5J7m9ZKsoW3tQddU1VB0uTa5poSs14fXke9TKNxOu6ti
+ wGSD2i7hN41nw
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Sun, 1 Sep 2019 09:39:31 +0000
+Received: by smtp401.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 682a89ffe636f493a8dcfa91a6749f63;
+          Sun, 01 Sep 2019 09:39:26 +0000 (UTC)
+Date:   Sun, 1 Sep 2019 17:39:13 +0800
 From:   Gao Xiang <hsiangkao@aol.com>
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Gao Xiang <gaoxiang25@huawei.com>, Jan Kara <jack@suse.cz>,
@@ -53,16 +54,17 @@ Cc:     Gao Xiang <gaoxiang25@huawei.com>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH v6 05/24] erofs: add inode operations
-Message-ID: <20190901093326.GA6267@hsiangkao-HP-ZHAN-66-Pro-G1>
+Subject: Re: [PATCH v6 06/24] erofs: support special inode
+Message-ID: <20190901093912.GB6267@hsiangkao-HP-ZHAN-66-Pro-G1>
 References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-6-gaoxiang25@huawei.com>
- <20190829102426.GE20598@infradead.org>
+ <20190802125347.166018-7-gaoxiang25@huawei.com>
+ <20190829102503.GF20598@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829102426.GE20598@infradead.org>
+In-Reply-To: <20190829102503.GF20598@infradead.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Mailer: WebService/1.1.14303 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -70,185 +72,42 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi Christoph,
 
-Here are redo-ed comments of your suggestions...
-
-On Thu, Aug 29, 2019 at 03:24:26AM -0700, Christoph Hellwig wrote:
-> On Fri, Aug 02, 2019 at 08:53:28PM +0800, Gao Xiang wrote:
-> > This adds core functions to get, read an inode.
-> > It adds statx support as well.
+On Thu, Aug 29, 2019 at 03:25:03AM -0700, Christoph Hellwig wrote:
+> On Fri, Aug 02, 2019 at 08:53:29PM +0800, Gao Xiang wrote:
+> > This patch adds to support special inode, such as
+> > block dev, char, socket, pipe inode.
 > > 
 > > Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 > > ---
-> >  fs/erofs/inode.c | 291 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 291 insertions(+)
-> >  create mode 100644 fs/erofs/inode.c
+> >  fs/erofs/inode.c | 27 +++++++++++++++++++++++++--
+> >  1 file changed, 25 insertions(+), 2 deletions(-)
 > > 
 > > diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-> > new file mode 100644
-> > index 000000000000..b6ea997bc4ae
-> > --- /dev/null
+> > index b6ea997bc4ae..637bf6e4de44 100644
+> > --- a/fs/erofs/inode.c
 > > +++ b/fs/erofs/inode.c
-> > @@ -0,0 +1,291 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * linux/fs/erofs/inode.c
-> > + *
-> > + * Copyright (C) 2017-2018 HUAWEI, Inc.
-> > + *             http://www.huawei.com/
-> > + * Created by Gao Xiang <gaoxiang25@huawei.com>
-> > + */
-> > +#include "internal.h"
-> > +
-> > +#include <trace/events/erofs.h>
-> > +
-> > +/* no locking */
-> > +static int read_inode(struct inode *inode, void *data)
-> > +{
-> > +	struct erofs_vnode *vi = EROFS_V(inode);
-> > +	struct erofs_inode_v1 *v1 = data;
-> > +	const unsigned int advise = le16_to_cpu(v1->i_advise);
-> > +	erofs_blk_t nblks = 0;
-> > +
-> > +	vi->datamode = __inode_data_mapping(advise);
-> 
-> What is the deal with these magic underscores here and various
-> other similar helpers?
-
-Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-17-hsiangkao@aol.com/
-
-underscores means 'internal' in my thought, it seems somewhat
-some common practice of Linux kernel, or some recent discussions
-about it?... I didn't notice these discussions...
-
-> 
-> > +	/* fast symlink (following ext4) */
-> 
-> This actually originates in FFS.  But it is so common that the comment
-> seems a little pointless.
-
-Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-9-hsiangkao@aol.com/
-
-> 
-> > +	if (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) {
-> > +		char *lnk = erofs_kmalloc(sbi, inode->i_size + 1, GFP_KERNEL);
-> 
-> Please just use plain kmalloc everywhere and let the normal kernel
-> error injection code take care of injeting any errors.
-
-Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-20-hsiangkao@aol.com/
-
-> 
-> > +		/* inline symlink data shouldn't across page boundary as well */
-> 
-> ... should not cross ..
-
-Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-9-hsiangkao@aol.com/
-
-> 
-> > +		if (unlikely(m_pofs + inode->i_size > PAGE_SIZE)) {
-> > +			DBG_BUGON(1);
-> > +			kfree(lnk);
+> > @@ -34,7 +34,16 @@ static int read_inode(struct inode *inode, void *data)
+> >  		vi->xattr_isize = ondisk_xattr_ibody_size(v2->i_xattr_icount);
+> >  
+> >  		inode->i_mode = le16_to_cpu(v2->i_mode);
+> > -		vi->raw_blkaddr = le32_to_cpu(v2->i_u.raw_blkaddr);
+> > +		if (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
+> > +		    S_ISLNK(inode->i_mode))
+> > +			vi->raw_blkaddr = le32_to_cpu(v2->i_u.raw_blkaddr);
+> > +		else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
+> > +			inode->i_rdev =
+> > +				new_decode_dev(le32_to_cpu(v2->i_u.rdev));
+> > +		else if (S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode))
+> > +			inode->i_rdev = 0;
+> > +		else
 > > +			return -EIO;
-> > +		}
-> > +
-> > +		/* get in-page inline data */
 > 
-> s/get/copy/, but the comment seems rather pointless.
+> Please use a switch statement when dealing with the file modes to
+> make everything easier to read.
 
 Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-9-hsiangkao@aol.com/
-
-> 
-> > +		memcpy(lnk, data + m_pofs, inode->i_size);
-> > +		lnk[inode->i_size] = '\0';
-> > +
-> > +		inode->i_link = lnk;
-> > +		set_inode_fast_symlink(inode);
-> 
-> Please just set the ops directly instead of obsfucating that in a single
-> caller, single line inline function.  And please set it instead of the
-> normal symlink iops in the same place where you also set those.:w
-
-Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-10-hsiangkao@aol.com/
-
-> 
-> > +	err = read_inode(inode, data + ofs);
-> > +	if (!err) {
-> 
-> 	if (err)
-> 		goto out_unlock;
-> 
-> .. and save one level of indentation.
-
-Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-22-hsiangkao@aol.com/
-
-> 
-> > +		if (is_inode_layout_compression(inode)) {
-> 
-> The name of this helper is a little odd.  But I think just
-> opencoding it seems generally cleaner anyway.
-
-Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-11-hsiangkao@aol.com/
-
-> 
-> 
-> > +			err = -ENOTSUPP;
-> > +			goto out_unlock;
-> > +		}
-> > +
-> > +		inode->i_mapping->a_ops = &erofs_raw_access_aops;
-> > +
-> > +		/* fill last page if inline data is available */
-> > +		err = fill_inline_data(inode, data, ofs);
-> 
-> Well, I think you should move the is_inode_flat_inline and
-> (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) checks from that
-> helper here, as otherwise you make everyone wonder why you'd always
-> fill out the inline data.
-
-fill_inline_data is killed, and the similar function turns into
-erofs_fill_symlink which is called at erofs_fill_inode():
-
- 		case S_IFLNK:
--			/* by default, page_get_link is used for symlink */
--			inode->i_op = &erofs_symlink_iops;
-+			err = erofs_fill_symlink(inode, data, ofs);
-+			if (err)
-+				goto out_unlock;
- 			inode_nohighmem(inode);
- 			break;
-
-> 
-> > +static inline struct inode *erofs_iget_locked(struct super_block *sb,
-> > +					      erofs_nid_t nid)
-> > +{
-> > +	const unsigned long hashval = erofs_inode_hash(nid);
-> > +
-> > +#if BITS_PER_LONG >= 64
-> > +	/* it is safe to use iget_locked for >= 64-bit platform */
-> > +	return iget_locked(sb, hashval);
-> > +#else
-> > +	return iget5_locked(sb, hashval, erofs_ilookup_test_actor,
-> > +		erofs_iget_set_actor, &nid);
-> > +#endif
-> 
-> Just use the slightly more complicated 32-bit version everywhere so that
-> you have a single actually tested code path.  And then remove this
-> helper.
-
-As I said before, 64-bit platforms is common currently,
-I think iget_locked is enough.
-https://lore.kernel.org/r/20190830184606.GA175612@architecture4/
+https://lore.kernel.org/linux-fsdevel/20190901055130.30572-18-hsiangkao@aol.com/
 
 Thanks,
 Gao Xiang
-
-
 
