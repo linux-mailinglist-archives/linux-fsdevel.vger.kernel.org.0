@@ -2,94 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F839A469B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 02:05:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A78DEA46AC
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 02:52:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfIAAEt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 31 Aug 2019 20:04:49 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50047 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726150AbfIAAEt (ORCPT
+        id S1728595AbfIAAwM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 31 Aug 2019 20:52:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56238 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfIAAwL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 31 Aug 2019 20:04:49 -0400
-Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2957643D6F0;
-        Sun,  1 Sep 2019 10:04:44 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1i4DMI-00034W-TN; Sun, 01 Sep 2019 10:04:42 +1000
-Date:   Sun, 1 Sep 2019 10:04:42 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        devel@driverdev.osuosl.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190901000442.GF7777@dread.disaster.area>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190828170022.GA7873@kroah.com>
- <20190829062340.GB3047@infradead.org>
- <20190829063955.GA30193@kroah.com>
- <20190829094136.GA28643@infradead.org>
- <20190829095019.GA13557@kroah.com>
- <20190829103749.GA13661@infradead.org>
- <20190829111810.GA23393@kroah.com>
- <20190830215410.GD7777@dread.disaster.area>
- <295503.1567247505@turing-police>
+        Sat, 31 Aug 2019 20:52:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jXXM66EKtvmEAYvb1Llji9/A136eINaxlL5uqBe0OBY=; b=eBz5M1QVpKJZMQDzXUQ9MXhMT
+        rIK2EkzUbSraojFclMxJ7OU+sf7tbq9mwzo0REl3yaDUt2YpbGdUBXr1PBULu2aic9sZuNzSPwoCp
+        owngjkSk9HrwVrtscNCYj+aZ/17/cGG88hXmrwj3PKy0BJCvg4ElKAVolJU/MnnAZSwlpMqAmc62e
+        AMUhgpKdATQQ056Kf77qv58BUxrXE6ktixwa0beiRV9gpk+ZAtbCCa1VAH88gCyyf5jTc6PxLSazv
+        wV7o8Fq43JPBfe5nZRIUcQcvYRvRzMraHjUnFk9kNgyg6rLAwcalK0UgYckSGwX3KhjlxftyTplES
+        EIwb3V+yg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i4E69-0007JD-OE; Sun, 01 Sep 2019 00:52:05 +0000
+Date:   Sat, 31 Aug 2019 17:52:05 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
+ kmalloc(power-of-two)
+Message-ID: <20190901005205.GA2431@bombadil.infradead.org>
+References: <20190826111627.7505-1-vbabka@suse.cz>
+ <20190826111627.7505-3-vbabka@suse.cz>
+ <0100016cd98bb2c1-a2af7539-706f-47ba-a68e-5f6a91f2f495-000000@email.amazonses.com>
+ <20190828194607.GB6590@bombadil.infradead.org>
+ <20190829073921.GA21880@dhcp22.suse.cz>
+ <0100016ce39e6bb9-ad20e033-f3f4-4e6d-85d6-87e7d07823ae-000000@email.amazonses.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <295503.1567247505@turing-police>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=J70Eh1EUuV4A:10
-        a=7-415B0cAAAA:8 a=xnCBgfmyHqVRtrSWEYsA:9 a=QEXdDO2ut3YA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <0100016ce39e6bb9-ad20e033-f3f4-4e6d-85d6-87e7d07823ae-000000@email.amazonses.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 31, 2019 at 06:31:45AM -0400, Valdis Klētnieks wrote:
-> On Sat, 31 Aug 2019 07:54:10 +1000, Dave Chinner said:
+On Fri, Aug 30, 2019 at 05:41:46PM +0000, Christopher Lameter wrote:
+> On Thu, 29 Aug 2019, Michal Hocko wrote:
+> > > There are many places in the kernel which assume alignment.  They break
+> > > when it's not supplied.  I believe we have a better overall system if
+> > > the MM developers provide stronger guarantees than the MM consumers have
+> > > to work around only weak guarantees.
+> >
+> > I absolutely agree. A hypothetical benefit of a new implementation
+> > doesn't outweigh the complexity the existing code has to jump over or
+> > worse is not aware of and it is broken silently. My general experience
+> > is that the later is more likely with a large variety of drivers we have
+> > in the tree and odd things they do in general.
 > 
-> > The correct place for new filesystem review is where all the
-> > experienced filesystem developers hang out - that's linux-fsdevel,
-> > not the driver staging tree.
-> 
-> So far everything's been cc'ed to linux-fsdevel, which has been spending
-> more time discussing unlikely() usage in a different filesystem.
+> The current behavior without special alignment for these caches has been
+> in the wild for over a decade. And this is now coming up?
 
-That's just noise - you'll get whitespace and other trivial
-review on any list you post a patch series for review. Go back and
-look at what other people have raised w.r.t. to that filesystem -
-on-disk format validation, re-implementation of largely generic
-code, lack of namespacing of functions leading to conflicts with
-generic/VFS functionality, etc.
+In the wild ... and rarely enabled.  When it is enabled, it may or may
+not be noticed as data corruption, or tripping other debugging asserts.
+Users then turn off the rare debugging option.
 
-Review bandwidth for things like on-disk format definition and
-manipulation, consistency with other filesystems, efficient
-integration into the generic infrastructure, etc is limited.
-Everyone has to juggle that around the load they have for their own
-filesystem maintenance, and there's usually only bandwidth for a
-single filesystem at a time.
+> There is one case now it seems with a broken hardware that has issues and
+> we now move to an alignment requirement from the slabs with exceptions and
+> this and that?
 
-Just be patient - trying to force the merging of code before there's
-even been consensus on fundamental architecture choices doesn't make
-things better for anyone.  Merging incomplete filesystem code early
-in the development cycle has -always- been something we've regretted
-in the long run.  We've learn this lesson many times before, yet we
-seem doomed to repeat it yet again...
+Perhaps you could try reading what hasa been written instead of sticking
+to a strawman of your own invention?
 
-Cheers,
+> If there is an exceptional alignment requirement then that needs to be
+> communicated to the allocator. A special flag or create a special
+> kmem_cache or something.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+The only way I'd agree to that is if we deliberately misalign every
+allocation that doesn't have this special flag set.  Because right now,
+breakage happens everywhere when these debug options are enabled, and
+the very people who need to be helped are being hurt by the debugging.
