@@ -2,128 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 149B1A46FE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 05:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 171D7A478D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 07:51:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728605AbfIADhh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 31 Aug 2019 23:37:37 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:53730 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728569AbfIADhh (ORCPT
+        id S1725895AbfIAFvu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Sep 2019 01:51:50 -0400
+Received: from sonic303-23.consmr.mail.gq1.yahoo.com ([98.137.64.204]:46495
+        "EHLO sonic303-23.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725800AbfIAFvt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 31 Aug 2019 23:37:37 -0400
-Received: from mr6.cc.vt.edu (mr6.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x813bZ8C015852
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Aug 2019 23:37:35 -0400
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x813bUaU027344
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Aug 2019 23:37:35 -0400
-Received: by mail-qk1-f198.google.com with SMTP id b13so12010997qkk.20
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Aug 2019 20:37:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=ydhN3Zp44Nu3CzxHTEXAf4iY4jzb23b8YjDdP2BxiiM=;
-        b=X8nOWWoBSYEJvr35KFWf2t8rzwttSIvhSDp7LOyO2ZWO7YiU6W/9NjU46HrG4bjPfp
-         LoHajZZJujVby32GxJELnr3TWZ6xBDAkJXL/JXDI3WmCU9ewj8E3s7JEG8P0D8R8PTVC
-         EzGQ/BB18PiKYMmNAgfsRsYwVejgVDii8ZW7JGb3wbXoRzqtkxLDyRFiudN8bkmNqtJQ
-         R+vhd6QxmGK4il4cjfCDMdvb8aSWm+tfl23f5DJZ0tCJbXaKs3t3C6Renjl+WyM7Nw/D
-         pvxENh7NaAlATtWZyWiMGwdiM5IWDxJKnD8nkYRqwvaAZRwnaoXdh5sN/0WxsQF948cW
-         fF4g==
-X-Gm-Message-State: APjAAAW9Ak9I/d0sebtIVDJi5Chi2ZIBocmFsw8yNqM24TuTxMI5qtjE
-        HsVpuMzB6xD0tg49Nu5AUFGTJol9bpR9Y9J3zqmaOpZi+VLHOxfUw9cyJxtY4oPx5dMyQBk0BGw
-        5iGvSzG3O8yTzXKD8XRl1MaH7I5hrUgb9wVig
-X-Received: by 2002:ac8:42c4:: with SMTP id g4mr23192827qtm.228.1567309050462;
-        Sat, 31 Aug 2019 20:37:30 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzdbEq5WvB8OWvM4ln+gCz5eDg2qSDFppv92WU5CgIKxhPekUVxbz1sJQpBcWAbWCMyHaActg==
-X-Received: by 2002:ac8:42c4:: with SMTP id g4mr23192811qtm.228.1567309050186;
-        Sat, 31 Aug 2019 20:37:30 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:4340::ba0])
-        by smtp.gmail.com with ESMTPSA id n187sm5288044qkc.98.2019.08.31.20.37.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2019 20:37:28 -0700 (PDT)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/staging/exfat - by default, prohibit mount of fat/vfat
-In-Reply-To: <20190901010721.GG7777@dread.disaster.area>
-References: <245727.1567183359@turing-police> <20190830164503.GA12978@infradead.org> <267691.1567212516@turing-police> <20190831064616.GA13286@infradead.org> <295233.1567247121@turing-police>
- <20190901010721.GG7777@dread.disaster.area>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1567309047_4251P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 31 Aug 2019 23:37:27 -0400
-Message-ID: <339527.1567309047@turing-police>
+        Sun, 1 Sep 2019 01:51:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567317108; bh=8vuTTgilnndAay+1QQhKe0yY1WR62jcI88iV2uYpBWI=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=kdZcaoW15p6mDZzbSEdi+fMRDYamfJ7wHFN2NMHnGVvOaCMsSu478b3Cs42vYZGNkk8uXIKoNqGU9LVvGVKIIrKGp9KwLiHA/Fzu9qUAIR97djtpO6u3uI9rr2NRzcG6bWz6XSrFsnVm7TLK0N/eK0CplNUnZ/JxKiWE6pM5UtiU2sKY9MwKTiNWVMd55gPixuE05cnnm1o0T1UY4Bf91c+kwCps5xZvPvpDubYjE+q1P0Imx1qV7PMGxwjKuQmwd73Hh74R9aX0YHITuxTN+YnbfW5/tZpCgZYFBbrS4tG7a12DpXGEpumGer/A5lCndt1VURj007XLdMJ/MmZbdA==
+X-YMail-OSG: vcTN0YUVM1l1H75oH9NnT74c_r398x0WEkE3foLHiahdtX7wph9UuQPnnfJ123X
+ 1aOj20tzQ4E5076QEZZwrtfYtCwsTft.Qg80X2j9j2.DDTMs2JvLBghd9qNwzWHn_OHies2KhtwB
+ EzbVLHqGRiSC8Bf5KFfe3cs3RKkbbtC8o8DHnFpwmylivsqo4muUOCqnj8kJppv3AgtXQSvt8SKq
+ pluH0eKwZT5LS4sNeV85qU6ap.YTzCbl_fDMEPZf1PHazWepyNr7Nwmiou7CdE7Pxq.bL0DOM_FN
+ ZrJAY8a822JP1zfsOH.k2oml6y5kVKMl.zdhx6obsojtnM4mthEetWrlbZz0qlx8dLpLfK0sZPC1
+ Um1eModXM1XiXvaT2TCAyFoMSBLY0jbQclCiWy6CvXb_nH5TC_2QfvMzHhNZdCOiYKAA2UpwR11U
+ 0qR27uH9QT4rBbptEL_MCHxW5iQ1usL5qj87KP7bw6cNvB4aQljPf2I.WYYTVnGz.DfPsVkuBahQ
+ yPCIhzrZvBR6X94NbLPBeTmIh2EIVK1nJVGaeFswrN0pZ8v5A3GcMz54rdVo1GUdJUGe1jfs.D.C
+ 6wys0b1fikCMq4h5POYomNIipRxyF5Arg0xMNBZ3ios7Z4qte4O55ek86WeMXfe8KZPMaF.fzgIQ
+ UBvifBZLy5M.B_.jhRwaNwR0S6dFo09p2SToeWwCrAShHthW9CUhAbt5UwhsuZFqvz8ePqndXenC
+ qQzaBsfVS7fhm4Ok2HZq50nhH5g54K0oYI_5AwrUnAg8Ag4kf2LpFdXE71ljwxcDNBAOi2BfP9mt
+ k6B_XbOtVGhrCWUxPOtsE7cKFbEpfHCawcaVRoBCkdGaA.JW2szvHsxzKlg20Rq36ZtZRp6tTqtU
+ ALBYj4ZJQdeymeVYc3kczLvwUrKxxhkICvv_Yi8z9IAXnZTTeWVCx_1UyMFnzxagf4pEKClchwEc
+ mcUBISF2YbcMV6ViQQk5Dqk6uA9z7WA_oTBmOgMweGvUWCO9MCXyFIruVETxZr941lHBbwpOB0m9
+ 8zDNMMuvMcmM47WuO_nVgn2qj5ELVSPw5oZ.BsJTe59jFWK5qLf16fvyY4myz_Zq.zz7BC3pBZH5
+ EwCpeQGiEU.Q9XfNiLMWscN.6qcIYrW5iri3RUAiTOi8VHkiCqp.uOPbDOYuyi83nf36wMzSwTDH
+ iIiQQpaEq4TtLOsDoJ.DxSQBYocpBBXHTZKLEHw5z9fopkpKPqLVytJQl4KuKu5kKfotyUffESQA
+ nvkk1zW_EoXVW4hNWfFcXcQRScSs-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.gq1.yahoo.com with HTTP; Sun, 1 Sep 2019 05:51:48 +0000
+Received: by smtp406.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 426e3b5ec1af9e36f409445c51071a70;
+          Sun, 01 Sep 2019 05:51:46 +0000 (UTC)
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-erofs@lists.ozlabs.org, Chao Yu <chao@kernel.org>,
+        Gao Xiang <hsiangkao@aol.com>
+Subject: [PATCH 00/21] erofs: patchset addressing Christoph's comments
+Date:   Sun,  1 Sep 2019 13:51:09 +0800
+Message-Id: <20190901055130.30572-1-hsiangkao@aol.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190802125347.166018-1-gaoxiang25@huawei.com>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1567309047_4251P
-Content-Type: text/plain; charset=us-ascii
+Hi,
 
-On Sun, 01 Sep 2019 11:07:21 +1000, Dave Chinner said:
-> Totally irrelevant to the issue at hand. You can easily co-ordinate
-> out of tree contributions through a github tree, or a tree on
-> kernel.org, etc.
+This patchset is based on the following patch by Pratik Shinde,
+https://lore.kernel.org/linux-erofs/20190830095615.10995-1-pratikshinde320@gmail.com/
 
-Well.. I'm not personally wedded to the staging tree.  I'm just interested in
-getting a driver done and upstreamed with as little pain as possible. :)
+All patches addressing Christoph's comments on v6, which are trivial,
+most deleted code are from erofs specific fault injection, which was
+followed f2fs and previously discussed in earlier topic [1], but
+let's follow what Christoph's said now.
 
-Is there any preference for github versus kernel.org?  I can set up a github
-tree on my own, no idea who needs to do what for a kernel.org tree.
+Comments and suggestions are welcome...
 
-Also, this (from another email of yours) was (at least to me) the most useful
-thing said so far:
+[1] https://lore.kernel.org/r/1eed1e6b-f95e-aa8e-c3e7-e9870401ee23@kernel.org/
 
-> look at what other people have raised w.r.t. to that filesystem -
-> on-disk format validation, re-implementation of largely generic
-> code, lack of namespacing of functions leading to conflicts with
-> generic/VFS functionality, etc.
+Thanks,
+Gao Xiang
 
-All of which are now on the to-do list, thanks.
+Gao Xiang (21):
+  erofs: remove all the byte offset comments
+  erofs: on-disk format should have explicitly assigned numbers
+  erofs: some macros are much more readable as a function
+  erofs: kill __packed for on-disk structures
+  erofs: update erofs_inode_is_data_compressed helper
+  erofs: kill erofs_{init,exit}_inode_cache
+  erofs: use erofs_inode naming
+  erofs: update comments in inode.c
+  erofs: update erofs symlink stuffs
+  erofs: kill is_inode_layout_compression()
+  erofs: use dsb instead of layout for ondisk super_block
+  erofs: kill verbose debug info in erofs_fill_super
+  erofs: simplify erofs_grab_bio() since bio_alloc() never fail
+  erofs: kill prio and nofail of erofs_get_meta_page()
+  erofs: kill __submit_bio()
+  erofs: kill magic underscores
+  erofs: use a switch statement when dealing with the file modes
+  erofs: add "erofs_" prefix for common and short functions
+  erofs: kill all erofs specific fault injection
+  erofs: kill use_vmap module parameter
+  erofs: save one level of indentation
 
-Now one big question:
+ Documentation/filesystems/erofs.txt |   9 --
+ fs/erofs/Kconfig                    |   7 --
+ fs/erofs/data.c                     |  62 +++-------
+ fs/erofs/decompressor.c             |  34 ++---
+ fs/erofs/dir.c                      |   6 +-
+ fs/erofs/erofs_fs.h                 | 162 ++++++++++++------------
+ fs/erofs/inode.c                    | 176 +++++++++++++-------------
+ fs/erofs/internal.h                 | 156 +++--------------------
+ fs/erofs/namei.c                    |  12 +-
+ fs/erofs/super.c                    | 185 ++++++++--------------------
+ fs/erofs/xattr.c                    |  33 +++--
+ fs/erofs/xattr.h                    |   4 +-
+ fs/erofs/zdata.c                    |  44 +++----
+ fs/erofs/zmap.c                     |  32 ++---
+ include/trace/events/erofs.h        |  14 +--
+ 15 files changed, 338 insertions(+), 598 deletions(-)
 
-Should I heave all the vfat stuff overboard and make a module that
-*only* does exfat, or is there enough interest in an extended FAT module
-that does vfat and extfat, in which case the direction should be to re-align
-this module's code with vfat?
+-- 
+2.17.1
 
-> That's the choice you have to make now: listen to the reviewers
-> saying "resolve the fundamental issues before goign any further",
-
-Well... *getting* a laundry list of what the reviewers see as the fundamental
-issues is the first step in resolving them ;)
-
-
-
---==_Exmh_1567309047_4251P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXWs89gdmEQWDXROgAQKZYA//VanZme910x03PXbB6eZJIFNkl0Ii0sHW
-AGGKa0skVNf+/uwf0kL25WoaCFjgEFrZmEP+w1yU+rv3aQ8zzconLLsxwEX0V0PT
-t7KzGcGHewKMv+56bMSpDE1CIHwwlOIARcz9SpoQ669CuudQbfILkrOW19DqxBYQ
-OBBZgdPPd3+jcoYb8EcYl3HIAfoAYn6EWpyo8qjP70xrfl/iICA2AUyZUnSIEHPT
-LLyBbDeb0tFNYNHk4/+82OIOh1BglgmHZmTmM8jKUSAAYEINHHRUpoyuOWWXSBY0
-3gvjmsooCFUQxsCfVXLjXCwvYZqU/9IlNsWvfGLK+rfwS9Huzx1mSvqsBLp78vN/
-63gGH5eR7yvq1f1hPl2l33QTvJCjCnT58OLZU9TlwAleqkSsyDCHj+vtVF8jyB91
-r/80bJyfG0CklcVPOsVXF1UkoVdty4V+EHVb3rK9D/UM4z8a8I43xjR1NJf8F5Jm
-W8lht0MkT8I+Y6ibapQTg9ZfBpzcyH0edZ0cTbX/4u92EaMVcvx0n8O2uhAxT2GV
-WPQJAj/b46xLW39OSbZAxSdLxTth908x49EhzIa5bMMFKFOfCg7Mzu6a4e5elQjP
-dTPvjTgNQLBML8I8B8+ZE581WOzRGusKzq7v2//dpKg0NbxEhThVgPG9aoWUmrgX
-6wdwmWFjcQQ=
-=zNgs
------END PGP SIGNATURE-----
-
---==_Exmh_1567309047_4251P--
