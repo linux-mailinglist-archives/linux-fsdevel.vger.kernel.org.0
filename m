@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE77A4799
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 07:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA0D9A479A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 07:52:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbfIAFwR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Sep 2019 01:52:17 -0400
-Received: from sonic302-20.consmr.mail.gq1.yahoo.com ([98.137.68.146]:33144
-        "EHLO sonic302-20.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725954AbfIAFwQ (ORCPT
+        id S1726383AbfIAFwV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Sep 2019 01:52:21 -0400
+Received: from sonic312-25.consmr.mail.gq1.yahoo.com ([98.137.69.206]:37528
+        "EHLO sonic312-25.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725265AbfIAFwU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Sep 2019 01:52:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567317136; bh=3O6cJFKVmB7hCW3cVQChsdJJWaBz5U9+tHWa8vcLe+U=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=QOPExNavkt/GHUqZYU9X5WaEfpze8nv1M5zC0X+n5XYof3R3zMwCTkjQFvqejaRW2w90g8QVBrT1Gtm17XQ+Dy9v7wkk607jHrJElNm00o+UDSg80e6SJnYp1K7+raqdGdKo9xde4cBEJG6VumE9iAYolF5VMe1sCdHWMCil0u+htRsXzv3maPqOCsiJHu63B++SuJz+31p2uLzbEKd/ybA5cFQ8P7YdZrCTKMBSSyGZg/b9Zne/Qe5gD4VB8XlNgQdw3Pj3rYMLrcsA4X2BUri1mYs1KWsRw9JVijV7IMy/WCWUOJtsFX7AFs8ChB1NTKEThgGQ5i/vW7X3SvcSPA==
-X-YMail-OSG: UXeh09AVM1mo9zHexmvdphOLm7OQTRfeAh35.5FA.3MbkzFD8u_UjsmX2ubTytI
- 8vcdihwqaAFZEspWFkUQzqyeBBYdbG.U_HuhVbLp3fh8JXmyAJApbLNyqx7otKvupGQzvcurU0hq
- a1.LsFFvex8ahbmu2RwbkL6tptxtze_Kl_NML.KYZlrBlZH.7SBPTGxYRwJDDfVuY_RrNmkxs6km
- iZbZsMEoowePDF29MNAnfhx6jpbF9R06Cvi.yaQ.bdACmaiZBszlmAmKrFsTKr05SfeJ_3C8P.XA
- X.Ol5zr7fZHFohrMtQDBb_pkbnHZGZV44XmWjZ385pWhV82m_AcJMWz5HWsFqNrVKZKg6MRrRCZO
- .PzDYSBqO75ip6r5taXsVxFTknIsmIrsmRajA5h_T9iKSFpY5mXJZjZTo5mdriVpoqxuLziC2IVY
- .rdx4o2VtNYq3oNhsYhi7jccwCUgD.1qwA0M3rFPZ64xN2mVa.bHIA2vB3BdHi.KP1OtjQUIuPV0
- 69cApWDTjZd0H6A4Ww595VFy.5jXOaLVaiIysZQSS21hExk3d0hULzmVKkFVBIAmscqhNO.BQxSb
- VoNdoYjV6YMN.XxQ8FYioV_s7Hdzx7ozlIWfGX1rgbLq_qOP3Kq7ezlBY0W8zJUHugavn.7G9jBr
- uMJiMVh4CRkONXyHs_JTbH63_p5HijlmYBwfAlGPqS.e4Sy..NZO9fJRCqkxLUaGZ1neECDpo2tp
- bPtdlbBDEKwZQZ7_RZnh6qxJAhwZ9nc2djbu9zupGW0EKqIYlOu3kJgsILYFZOpntK8uW8QQFlbY
- aHyFHKrfLjEfaWLNKt_p_iE4KV_wonMa2l7g.doVsUQAEkriSdCK8tdJMrsuVX1KYw_Kr6AtpRu8
- oDfxo_jpK_yVHCmtA3TZQBgHTI7wXtebKRpZ1LLIN6MJp88Obw91i0xagMtfeAPgq_Imo0ZIRXZi
- YEc5ENu4G.Z1xT9nJtlF05X3HE6EyfJd7d3g.hOBkJLBtrUHSwfZYdfE7pX35vUFHCqjcr0i7_fl
- Gg7cpGb3A14mXowjFkz5MAU6hXyaDujbJcqte4e7TEXGIYpPogzNsDBW7qlbRtm7a0IosVCCExNg
- UEfV2o8PTR3yhUhgMQYwfra_9NKcx6C.FEvXYF4u3J.1GJodIs5bC4OLaHu5fFzGeDY_ghZpR0RR
- V3UhAX3L7.6gIaItVlfxny9RbhWhaJ5L3v2t8BEWHpa_z8o2GUuotN6K5qkIs3Oc555m0OfUcKmz
- DAHa7cirZ0IOC7_pTFoUZk.lJUod0Z5FJj6jLk6yb
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Sun, 1 Sep 2019 05:52:16 +0000
+        Sun, 1 Sep 2019 01:52:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567317139; bh=1sQb/tNo0p576X+fPV8AoiHAB+gWz10qYr1i4knfAXg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=epnKajy9YyLjCSb0/7QBK5ApfcqBh168Hugbn6iuTCGH7fCblWDDEZ4ixRF75YcAdYQxSwHhEuH/mm672xwy/SM3YDzyE1orKrJCD8Sg6Il6L7j/7zX+mj4qBxpudF1F6Zl9nMRkLrXgYReNciUMBmaYFLunfUcNTdXTkEaSUTUDEdCKSvvjWwCRFku3HqSXpyBb9COoKRlWL5FZOOA++Aw38TgUKpKQmPYmZqP1i40PQ5Fz60ImNEv15G5KJ6xET+qyQ7AFPzG/jkNalto0CneXSqrRrhEtazy7Do7jxlCF7YrxRt/+wBJHqPi3M+bocL9VqeCvAWlQUOto8jphLg==
+X-YMail-OSG: VxWNJpIVM1m9Ishr394dGrKLkvR0JqLF5BGY9R4FFEVN.OPh3QAETuIlYNDpKva
+ 3wqCm38zimTkFwOGygzFznmZrNchRSVcZuSLE72owLJ15c3kIToVTRLNdIIPrVWF.LMjMi2bq9nE
+ OF49PpyDYh8T0pDt3suD8fAxKF7VEwGLitAuy.2KlcYSc.tSr4wTODbY09jlCEYsWN6YZ5DShqiI
+ .wnDwHlXnMBtdy5N6dOGN8D1XUIxzWXmxl_5bgBIAIWiA55NVrrNQCyxVWmsB2mIcatFYXvgIlqW
+ r3NuYKOHaRp.lb1KO.3..tICl.8v.7YAw3DDrh10eMijJBsBgBc_5gAqHZPwzYH_Xq.5Ch.5Y7JT
+ HaYE6CUltYdFwtPfzF6e4Avs4hdPZAtZOqTbAHb9ehJ6tZ09pDdaTnBZriRcSrZF0hV4KzsijLwh
+ 9mi6GHExpPzrsO.P5ck3eefJmMvi3ceHIgP03WyE6XVrrwUAjZUmSGWXnfAo0q5IPkB2IS6L5.OV
+ e5JBwTDruYePteFxuE6YfxW9xkgrnbCqvRAbsqMN7mesjBhl9nCsULon0W6O9wMt1Bgr9DlaYK.h
+ OEvvJCesHtpOLltIsOBgnjDo7l1TSPYN1JP31jFKd3t0V5gKXR3zZnlDUyEswpSobPTuTiSXFZ5x
+ 04h415X4N.WnchccGLRji9dcDI_mKhqPoZra.A2rNmYytbYAtKoBGe8IVwKfx9jNogfDcp78UOyl
+ IOvSALLuMBtwAyEGMFLjkaEM1N6b5UXfFxXGEEv4f0CuuSzZ5TvdIc1O3Ouxj3c2WXsij0tqGy.s
+ HMVtbQtvCaRYvjOaNK6l1Lnu7J.1CiGnWzlZ6sa3Pn__X4RoPL1CnmEwTO9O0co5S7HYLw1hNr3n
+ KWiR5LVxf0BElLt4uB0BjSVRPXygOIGsamOq5EmjU3_ubwHW2BWP_yNAJW_w72ZxIrchm0T1E3_u
+ whoYvq4M5O_8YZ31FoJrlWaYzk4S6RueZDVJFcZr59jBklrVY2c7NgodSCukpfd3Jg_EP1og0iIU
+ v3sjhOP730gu5fSUiLBnnn74g87cFYvorEjEbeAwwDNalV6EXocmC2xGuuv_jZsXy56cIYJpLvUG
+ QP1X1.RZYMXMd.eVDoFhJMmEi0wd6bYNwdvX9Fq20apmYKVHzOIfAFfQxMJpvsTLAvYtelBgoLbP
+ YWuM2.QGk0cn7kGCYJg2crCZ6GGORlhgyyYSX9SL3Xu4WTIGXygPyzLUYrV2bwADPMSIGP3qisJV
+ sKjATMj8plQBWB2hxc3aS5__P8ayabvKwdvwIcrOlfA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Sun, 1 Sep 2019 05:52:19 +0000
 Received: by smtp406.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 426e3b5ec1af9e36f409445c51071a70;
-          Sun, 01 Sep 2019 05:52:13 +0000 (UTC)
+          Sun, 01 Sep 2019 05:52:18 +0000 (UTC)
 From:   Gao Xiang <hsiangkao@aol.com>
 To:     Christoph Hellwig <hch@infradead.org>,
         Chao Yu <yuchao0@huawei.com>,
@@ -41,9 +41,9 @@ To:     Christoph Hellwig <hch@infradead.org>,
 Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-erofs@lists.ozlabs.org, Chao Yu <chao@kernel.org>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 05/21] erofs: update erofs_inode_is_data_compressed helper
-Date:   Sun,  1 Sep 2019 13:51:14 +0800
-Message-Id: <20190901055130.30572-6-hsiangkao@aol.com>
+Subject: [PATCH 06/21] erofs: kill erofs_{init,exit}_inode_cache
+Date:   Sun,  1 Sep 2019 13:51:15 +0800
+Message-Id: <20190901055130.30572-7-hsiangkao@aol.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190901055130.30572-1-hsiangkao@aol.com>
 References: <20190802125347.166018-1-gaoxiang25@huawei.com>
@@ -55,36 +55,85 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Gao Xiang <gaoxiang25@huawei.com>
 
-As Christoph said, "This looks like a really obsfucated
-way to write:
-	return datamode == EROFS_INODE_FLAT_COMPRESSION ||
-		datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY; "
+As Christoph said [1] "having this function seems
+entirely pointless", let's kill those.
 
-Although I had my own consideration, it's the right way for now.
+filesystem                              function name
+ext2,f2fs,ext4,isofs,squashfs,cifs,...  init_inodecache
 
-[1] https://lore.kernel.org/linux-fsdevel/20190829095954.GB20598@infradead.org/
+In addition, add a necessary "rcu_barrier()" on exit_fs();
+
+[1] https://lore.kernel.org/r/20190829101545.GC20598@infradead.org/
 Reported-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- fs/erofs/erofs_fs.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/erofs/super.c | 31 ++++++++++++-------------------
+ 1 file changed, 12 insertions(+), 19 deletions(-)
 
-diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-index 59dcc2e8cb02..87d7ae82339a 100644
---- a/fs/erofs/erofs_fs.h
-+++ b/fs/erofs/erofs_fs.h
-@@ -62,9 +62,8 @@ enum {
- 
- static inline bool erofs_inode_is_data_compressed(unsigned int datamode)
- {
--	if (datamode == EROFS_INODE_FLAT_COMPRESSION)
--		return true;
--	return datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
-+	return datamode == EROFS_INODE_FLAT_COMPRESSION ||
-+		datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 6603f0ba8905..0c412de33315 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -23,21 +23,6 @@ static void init_once(void *ptr)
+ 	inode_init_once(&vi->vfs_inode);
  }
  
- /* bit definitions of inode i_advise */
+-static int __init erofs_init_inode_cache(void)
+-{
+-	erofs_inode_cachep = kmem_cache_create("erofs_inode",
+-					       sizeof(struct erofs_vnode), 0,
+-					       SLAB_RECLAIM_ACCOUNT,
+-					       init_once);
+-
+-	return erofs_inode_cachep ? 0 : -ENOMEM;
+-}
+-
+-static void erofs_exit_inode_cache(void)
+-{
+-	kmem_cache_destroy(erofs_inode_cachep);
+-}
+-
+ static struct inode *alloc_inode(struct super_block *sb)
+ {
+ 	struct erofs_vnode *vi =
+@@ -531,9 +516,14 @@ static int __init erofs_module_init(void)
+ 	erofs_check_ondisk_layout_definitions();
+ 	infoln("initializing erofs " EROFS_VERSION);
+ 
+-	err = erofs_init_inode_cache();
+-	if (err)
++	erofs_inode_cachep = kmem_cache_create("erofs_inode",
++					       sizeof(struct erofs_vnode), 0,
++					       SLAB_RECLAIM_ACCOUNT,
++					       init_once);
++	if (!erofs_inode_cachep) {
++		err = -ENOMEM;
+ 		goto icache_err;
++	}
+ 
+ 	err = erofs_init_shrinker();
+ 	if (err)
+@@ -555,7 +545,7 @@ static int __init erofs_module_init(void)
+ zip_err:
+ 	erofs_exit_shrinker();
+ shrinker_err:
+-	erofs_exit_inode_cache();
++	kmem_cache_destroy(erofs_inode_cachep);
+ icache_err:
+ 	return err;
+ }
+@@ -565,7 +555,10 @@ static void __exit erofs_module_exit(void)
+ 	unregister_filesystem(&erofs_fs_type);
+ 	z_erofs_exit_zip_subsystem();
+ 	erofs_exit_shrinker();
+-	erofs_exit_inode_cache();
++
++	/* Ensure all RCU free inodes are safe before cache is destroyed. */
++	rcu_barrier();
++	kmem_cache_destroy(erofs_inode_cachep);
+ 	infoln("successfully finalize erofs");
+ }
+ 
 -- 
 2.17.1
 
