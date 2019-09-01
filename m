@@ -2,112 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94328A4C72
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 00:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B62AA4C7B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 00:43:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbfIAWMz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Sep 2019 18:12:55 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:54240 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728942AbfIAWMz (ORCPT
+        id S1729079AbfIAWng (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Sep 2019 18:43:36 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:49409 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728942AbfIAWng (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Sep 2019 18:12:55 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x81MBuee196148;
-        Sun, 1 Sep 2019 22:12:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=SMZ7kBtjRpfMdbM6ZyF2aXvSW5Zkg/0feBi5AFHROE8=;
- b=S4KfFrmUQheeYW2CWFHc/dV21cSrUCqS52SB8ugd/qNlnVFaua6fvWwHqSRHHBFnSJMJ
- 6rliME1TaLFL5MFZdhN47blT3VOh1BAirDMBiL3OCWy3zA6MD4N+S4WVHnhCQ/CdJS85
- m4Wz0R9n47xqtksy+9pb9wVLCnCRjo0nD5SEFA4Dv7jzXJgYOvYM0jHgZ5go0FGTZfck
- 5E15CuHbnhxtQ8fyjneXEklTxABtdOMadvvtCvVhvzSRTBv2eDzV66lcS2iZ64ufN9Ok
- SlZ1tmyANUn2VQ5n2ZQqvGJBdmiq4SLdvzIJNZC1I9vNkoibN/AIMOuw6+6JnVHUm4rN Fg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2urpj4803k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 01 Sep 2019 22:12:38 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x81KhABO064623;
-        Sun, 1 Sep 2019 20:44:05 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2uqg827jvt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 01 Sep 2019 20:44:05 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x81Khw8b007806;
-        Sun, 1 Sep 2019 20:43:58 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 01 Sep 2019 13:43:58 -0700
-Date:   Sun, 1 Sep 2019 13:44:00 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Damien.LeMoal@wdc.com, agruenba@redhat.com
-Subject: Re: [PATCH v4 0/6] iomap: lift the xfs writepage code into iomap
-Message-ID: <20190901204400.GQ5354@magnolia>
-References: <156444945993.2682261.3926017251626679029.stgit@magnolia>
- <20190816065229.GA28744@infradead.org>
- <20190817014633.GE752159@magnolia>
- <20190901073440.GB13954@infradead.org>
+        Sun, 1 Sep 2019 18:43:36 -0400
+Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 251FA3610F5;
+        Mon,  2 Sep 2019 08:43:31 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1i4YZF-00035I-RZ; Mon, 02 Sep 2019 08:43:29 +1000
+Date:   Mon, 2 Sep 2019 08:43:29 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/staging/exfat - by default, prohibit mount of
+ fat/vfat
+Message-ID: <20190901224329.GH7777@dread.disaster.area>
+References: <245727.1567183359@turing-police>
+ <20190830164503.GA12978@infradead.org>
+ <267691.1567212516@turing-police>
+ <20190831064616.GA13286@infradead.org>
+ <295233.1567247121@turing-police>
+ <20190901010721.GG7777@dread.disaster.area>
+ <339527.1567309047@turing-police>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190901073440.GB13954@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9367 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909010238
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9367 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909010254
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <339527.1567309047@turing-police>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=J70Eh1EUuV4A:10
+        a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=K2SI45MAujIxdphGjPIA:9
+        a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 01, 2019 at 12:34:40AM -0700, Christoph Hellwig wrote:
-> On Fri, Aug 16, 2019 at 06:46:33PM -0700, Darrick J. Wong wrote:
-> > On Thu, Aug 15, 2019 at 11:52:29PM -0700, Christoph Hellwig wrote:
-> > > Darrick,
-> > > 
-> > > are you going to queue this up?
-> > 
-> > Yes, I'll go promote the iomap writeback branch to iomap-for-next.  I
-> > haven't 100% convinced myself that it's a good idea to hook up xfs to it
-> > yet, if nothing else because of all the other problems I've had getting
-> > 5.3 testing to run to completion reliably...
+On Sat, Aug 31, 2019 at 11:37:27PM -0400, Valdis Klētnieks wrote:
+> On Sun, 01 Sep 2019 11:07:21 +1000, Dave Chinner said:
+> > Totally irrelevant to the issue at hand. You can easily co-ordinate
+> > out of tree contributions through a github tree, or a tree on
+> > kernel.org, etc.
 > 
-> So what is the current status?  We are going to get an -rc8 to give
-> you some more time, and I'd really hate to miss the second merge window
-> for the change, espececially as things tend to get out of sync, and I
-> have various bits touching the code planned for the 5.5 merge window.
+> Well.. I'm not personally wedded to the staging tree.  I'm just interested in
+> getting a driver done and upstreamed with as little pain as possible. :)
 
-Heh, I had assumed today was going to be 5.3 final and that would be
-that for 5.4.  However, if the 5.4 merge window isn't going to close
-until Sept. 29 then there's still time for more soaking.
+Understood - I'm trying to head off you guys getting delayed
+by sitting for a year in the staging tree polishing a turd and not
+addressing the things that really need to be done first...
 
-Would you mind rebasing the remaining patches against iomap-for-next and
-sending that out?  I'll try to get to it before I go on vacation 6 - 15
-Sept.
+> Is there any preference for github versus kernel.org?  I can set up a github
+> tree on my own, no idea who needs to do what for a kernel.org tree.
 
-Admittedly I think the controversial questions are still "How much
-writeback code are we outsourcing to iomap anyway?" and "Do we want to
-do the added stress of keeping that going without breaking everyone
-else"?  IOWs, more philosophical than just the mechanics of porting code
-around.
+What ever is most convenient for you to manage and co-ordinate. :P
 
-I still want a CONFIG_IOMAP_DEBUG which turns on stricter checking of
-the iomap(s) that ->begin_iomap pass to the actor, if you have the time;
-I for one am starting to forget exactly what are the valid combinations
-of iomap flag inputs that ->begin_iomap has to handle for a given actor
-and what are the valid imaps for each actor that it can pass back.  :)
+> Also, this (from another email of yours) was (at least to me) the most useful
+> thing said so far:
+> 
+> > look at what other people have raised w.r.t. to that filesystem -
+> > on-disk format validation, re-implementation of largely generic
+> > code, lack of namespacing of functions leading to conflicts with
+> > generic/VFS functionality, etc.
+> 
+> All of which are now on the to-do list, thanks.
+> 
+> Now one big question:
+> 
+> Should I heave all the vfat stuff overboard and make a module that
+> *only* does exfat, or is there enough interest in an extended FAT module
+> that does vfat and extfat, in which case the direction should be to re-align
+> this module's code with vfat?
 
---D
+I don't know the details of the exfat spec or the code to know what
+the best approach is. I've worked fairly closely with Christoph for
+more than a decade - you need to think about what he says rather
+than /how he says it/ because there's a lot of thought and knowledge
+behind his reasoning. Hence if I were implementing exfat and
+Christoph was saying "throw it away and extend fs/fat"
+then that's what I'd be doing.
+
+A lot of this is largely risk management - there's a good chance
+that the people developing the code move on after the project is
+done and merged, which leaves the people like Christoph with the
+burden of long term code maintenance for that filesystem. There's
+enough crusty, old, largely unmaintained filesystem code already,
+and we don't want more. Implementing exfat on top of fs/fat kills
+two birds with one stone - it modernises the fs/fat code base and
+brings new functionality that will have more developers interested
+in maintaining it over the long term. So from an overall filesystem
+maintenance perspective, building on top of fs/fat makes a lot of
+sense to a kernel filesystem developer...
+
+This is not a judgement on the quality of the existing exfat code
+or it's developers - it's just that there are very good reasons for
+building on existing codebase rather than creating a whole new code
+base that has very similar functionality.
+
+That's my total involvement in this - I don't really care about
+exfat at all - my stake in this is to improve the development,
+review and merge process being undertaken. We have a history of lax
+review, poor processes and really shitty code being merged into the
+kernel and I've been on the cleanup squad for a few of them over the
+past couple of years. That's a burnout vector, so it's in the
+interests of my own sanity (and fs developers) to set standards and
+precedence to prevent more trainwrecks from happening before the
+train even leaves the station...
+
+> > That's the choice you have to make now: listen to the reviewers
+> > saying "resolve the fundamental issues before goign any further",
+> 
+> Well... *getting* a laundry list of what the reviewers see as the fundamental
+> issues is the first step in resolving them ;)
+
+You won't get them all at once. You'll get something new every round
+of review as the bigger issues are worked out, the reviewers become
+more familiar with the code and notice more detailed/subtle
+issues. Most filesystem reviews start with developers trying to
+understand the on-disk structure and architecture rather that focus
+on whitespace and code cleanliness. Cleaning up the code can be done
+after we work through all the structural issues...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
