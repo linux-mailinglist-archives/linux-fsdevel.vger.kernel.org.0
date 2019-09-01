@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B2F6A47A2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 07:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEE95A47A7
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 07:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfIAFwf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Sep 2019 01:52:35 -0400
-Received: from sonic316-8.consmr.mail.gq1.yahoo.com ([98.137.69.32]:38593 "EHLO
-        sonic316-8.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726496AbfIAFwf (ORCPT
+        id S1726585AbfIAFwk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Sep 2019 01:52:40 -0400
+Received: from sonic307-8.consmr.mail.gq1.yahoo.com ([98.137.64.32]:37590 "EHLO
+        sonic307-8.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726496AbfIAFwk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Sep 2019 01:52:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567317154; bh=FzeNItiene0TBHzyekGv1R2lNe17KNzxF1AaAx9+9Tc=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=N+i/cZhTNsNwmzZ0LdOKZyO/dY/jBflyfRu6J6kVwgL1YsTQfT2IW2aenms2yXDv5bU0nXum4thMkMB5JRbV2FetvxfGaBvg3DNvRC1G5R0Zk1wzBZvCJ8u4nWL1yJt+FNu2KErLjQ/4k18pWIAlPmC2FJmOcfreR37PkB5TZnVdKEDUnizb5T42sYyVjVIoPPMYlRt6EPK3FvWd5yCbzuHddk6JHGr+KzDsLFpmnrxpT6joONB98kaZF9twDKJjrWgxWMcuWpq2cTKoO79Iy0568i9KBAv2+pe33TdVNsKm/3GQki+YUZefHb2PAG+vCRStRBdp4ibncl7T5bJfbw==
-X-YMail-OSG: tJJSDhAVM1nwAZ94SgMfRaI2OS7mUthquNMV3K4p0AnHtEhYYyRBLNURv._gJ6j
- S460wzP1bCv0bBw1zFd_5d1ZpPoeNNyapMByKcN.ixbb0xbVKFoUz4eRw3aP3mPMMXnBIqBBp5Ob
- Fd_qlFy3TZOoXawugio8nq6RDhcfJqya_FPLW48Zrht6KGApll7rLy92r6sV4RwtS2WLcAl7YnAD
- ByssQrHVvn9jU1SA9UIRwCxqe02HaR0kuA.xCc7Avs_3A9wQfCpBwuEo.PYL0mg_dGsSitbp0X2R
- xjUDUNjB16nuQIv3eYB.5b9ZPemL6wF5HFzUFP67TuacEBsN1UH8Lydww1TOjjmumdyxd1f1LoFm
- YYnkrGOZeRn__C9SQxxWDf7DqGFRSDpYYGEjipD88uzUvHgiaCI2AQvjj7jYjdgUhfW78DzN_bcL
- DEPvBfzzQSuSmW2ftOQijf8BnVtE5.pGYa16bjlfH6QkSy9QKgdJgbHY23HZ5428JQ35EhcT0ryo
- OSLgVt7OAdeuzSxtG.JpiBLzFOq8xxyIlCWD3E9nhewOzC2A_U4CtiuIpFolqbsy5GGPzztRm032
- qMGUjb.OSvDBSrGU7fp.IR16xGdP6EVdxTjbPOnNF_OjZ5lP_GAeuny0LZlM7WFFM34IidP_2GkE
- Gjch4yJOjK_.wQC4OX1pKJ_hPVU1DOjwxbTSYd8g8EJIwa58bRBQ_qVXSdSPDVMq3Rkx7VskSrP.
- 3d1vDrbyy27GfTZYRh4wDlMTwRArxAlnZwY1HIpOkkcVZF9KfalAGa.X5D9BrQXAYoH5omZgXo21
- hEwdA1mVSMKETkgYAiSa0hXYNr0v29D3ldpkv8wCogu6cIsqrA6t5XGmX5PxJsBb_Cvv2O08gyds
- SAHZ22L_GHdBHA3u4a4sbzHNE7C9LTuCvxehWXD9KnBVdJ_7FpKdbFebGw1enIfku3H1bDSElQt2
- x9ooJTk5LYpSEZV9tfs9k7atMHUCWhh7FOY_X63NGMgIAd_dcykT.0RNnsiXVtdK9qTNQLFkuSVA
- mLv0rAQXNAJjqxxgdbDXVOLzOkA_HMJW5.su4emhuNDSM0_g46eScsEYcjFPmitq69RJlmncawK_
- wSrSo4M8I03hzeDmypAOEZJZFZ05eLL5d_TGM5u0ksude.DS9.XxLapfGIB6LONfG4iuKkyq6lOc
- VPmu.f4ng6NSsWV_O_mrh_oU3NVZQA3TUZUFOqlh88JRCboCZN4DzXwESIDEQnNE9vqnjQ0toEi3
- uTGwsIvG2DIv.FhKlzV3tknbU1ucBB4cFaLlZ4a11h6ud
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Sun, 1 Sep 2019 05:52:34 +0000
+        Sun, 1 Sep 2019 01:52:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567317159; bh=f05SOMjhcbrllSkIEXOI4eRR/x6TrSdhoBITnwjaQY0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=q+MeV2ah9X/xMnfHbHWejNVpqJ0n1Pot/QtnxizQW7z3YeaPC7ounQjdo6lP/n754/1GSxw/IYc+ITIUic5kiGY4tsWH8NFA5hKOzQjEiXvQuSPCLHMSQedxtdetNnJNxd/TnrrIKkXBM6S3Um04JzeKzpWHAiy3mYL1NjAhtOB9ZJtmWATWtydtQHZfnkv74rIsSUTgEDlATY4eUxx4NL7ItVta3Cchll1T49b5zvyECSyZHTbOvrOBSNRalXl+hiCqsA+LCQX+MLKKtHbuCzRv8vxaiRSzDi1Ppvt26tFe6hO6l4BiuILG+WZuJ6PlB5S19OU5kaAh7oWmQwzz/w==
+X-YMail-OSG: 3OgvbfcVM1m.J9qM0HpXLxrcKXINJlnPJ7PNZ4hqbBeAmGwoLwx6qbstNjAc0EG
+ AUAbS5ZwM0l9wQRfcyV_msAVm5XUcG6mlIJAD7q34CZyJIpKr7iMTlwjVCCgFNU_Tz5ma424Xr8W
+ Mm6de3ZKqLNRpMbNuMasHAJ1EK3yA5skDN10jBPzITd4uypFvM0ki5Rg8hTfc3_zeFpWY0kR6PIj
+ S.22fH9dQPHRMi23WVzTLTQPfUAAeoa5whlgF7SgmNJhjcIce7nn0vydJ8RHmtkWuSb_oYOKC3AX
+ FAdMZUP17tijU4g981P4b9z1_SQSF5xeDSlvrL1eblj21G0EsGbToYRm6RWCg.iI_gljVexK1HrC
+ g89ZE3eF3HgOdSJC4a61pzDNt13TuPzn__m.xskI6L4Ac9Ko5wModz8NZ9BNx_JVEcUJ9ft9fWMO
+ .F4fhlS._f7WBDZz2ef_3bUfi1lYm0j.3C1ahpTNbbEJs4bCQ768NRgQQBLjYxXLjkI1Mo7mUPhZ
+ SlEgubBACKU3TKCl0Auc3soLYX25KPc83IRU4r8Ft9Pkg1iQ_TQzpb.411uEDygvImnfXXdbUAOr
+ ieiz4Qw4Y6sup8fm_dgl5a0srmwTmDt1pNkklUlIrYaJCYJ2fGZZR4_vxbB1s.m4v_kgPPB3NDeK
+ w4C8KsLPJGNI9FASs7xSXLATNRMJtWCepaAY7ovkv881ZulqPFDbUYejwndWree6aFVO7lQWPNp4
+ O1rKdK09s5rkbWgVTCitWGZQ95Iy2Ma.5duWMwbDTBas_.ZFBksS40GIlVC0_6Bj7QW_MdTiuAiu
+ kZ84drzYplODx2PKf5vI9bZ0etbh3GzCMX4WD0Ogq3__PzmN5UfWgSeqDTO1u9Qobv9KIcOvzX8y
+ KGgZTN_G2dDw6HunTGapzsXWJDlFMlM4Jdxt0GVYJa_1di61O.mYxx2OOErF6jU3zQcBXUD2Q9yI
+ 6su_HtEiLVmoAgYtbtjRJ4f7EMw.FDwnRWsaiiPxRg7O5sstrctqS2uaH6sDHFRzxX1u.G6MKaMh
+ 7_dz23L8oQpofzjCmpvDN2oXjl9DnHdiTZMLKV2b6Hktm4qW5ftqdQFt8EWR3dD5f7bqTB8.x5Zm
+ DC1aRh8SF4I7a76nna_rdY6fHvFHGD5_2TMpKz5Ye43clJXVp.lY83_Sj2whgk_2HlQFoWZDgLFy
+ t0O8io_sdtDXRaxlMiHe3MovujHltXa_khQbsKRuh9IN97tYIKUtePoOO75mg7uvIqscwtfKshcw
+ WrIuLGSvdSAvQxIo_s77.iPqN47euyW3w.IgO.B6EFWdy
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.gq1.yahoo.com with HTTP; Sun, 1 Sep 2019 05:52:39 +0000
 Received: by smtp406.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 426e3b5ec1af9e36f409445c51071a70;
-          Sun, 01 Sep 2019 05:52:34 +0000 (UTC)
+          Sun, 01 Sep 2019 05:52:39 +0000 (UTC)
 From:   Gao Xiang <hsiangkao@aol.com>
 To:     Christoph Hellwig <hch@infradead.org>,
         Chao Yu <yuchao0@huawei.com>,
@@ -41,9 +41,9 @@ To:     Christoph Hellwig <hch@infradead.org>,
 Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-erofs@lists.ozlabs.org, Chao Yu <chao@kernel.org>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 09/21] erofs: update erofs symlink stuffs
-Date:   Sun,  1 Sep 2019 13:51:18 +0800
-Message-Id: <20190901055130.30572-10-hsiangkao@aol.com>
+Subject: [PATCH 10/21] erofs: kill is_inode_layout_compression()
+Date:   Sun,  1 Sep 2019 13:51:19 +0800
+Message-Id: <20190901055130.30572-11-hsiangkao@aol.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190901055130.30572-1-hsiangkao@aol.com>
 References: <20190802125347.166018-1-gaoxiang25@huawei.com>
@@ -55,135 +55,88 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Gao Xiang <gaoxiang25@huawei.com>
 
-Fix as Christoph suggested [1] [2], "remove is_inode_fast_symlink
-and just opencode it in the few places using it"
+As Christoph suggested [1], "The name of this helper
+is a little odd.  But I think just opencoding it seems
+generally cleaner anyway. "
 
-and
-"Please just set the ops directly instead of obsfucating that in
-a single caller, single line inline function.  And please set it
-instead of the normal symlink iops in the same place where you
-also set those."
-
-[1] https://lore.kernel.org/r/20190830163910.GB29603@infradead.org/
-[2] https://lore.kernel.org/r/20190829102426.GE20598@infradead.org/
+[1] https://lore.kernel.org/r/20190829102426.GE20598@infradead.org/
 Reported-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- fs/erofs/inode.c    | 35 ++++++++++-------------------------
- fs/erofs/internal.h | 10 ----------
- fs/erofs/super.c    |  5 ++---
- 3 files changed, 12 insertions(+), 38 deletions(-)
+ fs/erofs/data.c     | 2 +-
+ fs/erofs/inode.c    | 8 ++++----
+ fs/erofs/internal.h | 5 -----
+ 3 files changed, 5 insertions(+), 10 deletions(-)
 
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index d736d2e551a1..e2e40ec2bfd1 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -169,7 +169,7 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
+ int erofs_map_blocks(struct inode *inode,
+ 		     struct erofs_map_blocks *map, int flags)
+ {
+-	if (is_inode_layout_compression(inode)) {
++	if (erofs_inode_is_data_compressed(EROFS_I(inode)->datamode)) {
+ 		int err = z_erofs_map_blocks_iter(inode, map, flags);
+ 
+ 		if (map->mpage) {
 diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 24c94a7865f2..29a52138fa9d 100644
+index 29a52138fa9d..d501ceb62c29 100644
 --- a/fs/erofs/inode.c
 +++ b/fs/erofs/inode.c
-@@ -109,28 +109,14 @@ static int read_inode(struct inode *inode, void *data)
- 	return -EFSCORRUPTED;
- }
+@@ -56,7 +56,7 @@ static int read_inode(struct inode *inode, void *data)
+ 		inode->i_size = le64_to_cpu(v2->i_size);
  
--/*
-- * try_lock can be required since locking order is:
-- *   file data(fs_inode)
-- *        meta(bd_inode)
-- * but the majority of the callers is "iget",
-- * in that case we are pretty sure no deadlock since
-- * no data operations exist. However I tend to
-- * try_lock since it takes no much overhead and
-- * will success immediately.
-- */
--static int fill_inline_data(struct inode *inode, void *data,
--			    unsigned int m_pofs)
-+static int erofs_fill_symlink(struct inode *inode, void *data,
-+			      unsigned int m_pofs)
- {
- 	struct erofs_inode *vi = EROFS_I(inode);
- 	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
+ 		/* total blocks for compressed files */
+-		if (is_inode_layout_compression(inode))
++		if (erofs_inode_is_data_compressed(vi->datamode))
+ 			nblks = le32_to_cpu(v2->i_u.compressed_blocks);
+ 	} else if (__inode_version(advise) == EROFS_INODE_LAYOUT_V1) {
+ 		struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
+@@ -87,7 +87,7 @@ static int read_inode(struct inode *inode, void *data)
+ 			sbi->build_time_nsec;
  
--	/* should be inode inline C */
--	if (!is_inode_flat_inline(inode))
--		return 0;
--
--	/* fast symlink */
--	if (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) {
-+	/* if it can be handled with fast symlink scheme */
-+	if (is_inode_flat_inline(inode) && inode->i_size < PAGE_SIZE) {
- 		char *lnk = erofs_kmalloc(sbi, inode->i_size + 1, GFP_KERNEL);
+ 		inode->i_size = le32_to_cpu(v1->i_size);
+-		if (is_inode_layout_compression(inode))
++		if (erofs_inode_is_data_compressed(vi->datamode))
+ 			nblks = le32_to_cpu(v1->i_u.compressed_blocks);
+ 	} else {
+ 		errln("unsupported on-disk inode version %u of nid %llu",
+@@ -204,7 +204,7 @@ static int fill_inode(struct inode *inode, int isdir)
+ 			goto out_unlock;
+ 		}
  
- 		if (!lnk)
-@@ -151,7 +137,9 @@ static int fill_inline_data(struct inode *inode, void *data,
- 		lnk[inode->i_size] = '\0';
- 
- 		inode->i_link = lnk;
--		set_inode_fast_symlink(inode);
-+		inode->i_op = &erofs_fast_symlink_iops;
-+	} else {
-+		inode->i_op = &erofs_symlink_iops;
- 	}
- 	return 0;
- }
-@@ -199,8 +187,9 @@ static int fill_inode(struct inode *inode, int isdir)
- 			inode->i_fop = &erofs_dir_fops;
- 			break;
- 		case S_IFLNK:
--			/* by default, page_get_link is used for symlink */
--			inode->i_op = &erofs_symlink_iops;
-+			err = erofs_fill_symlink(inode, data, ofs);
-+			if (err)
-+				goto out_unlock;
- 			inode_nohighmem(inode);
- 			break;
- 		case S_IFCHR:
-@@ -219,11 +208,7 @@ static int fill_inode(struct inode *inode, int isdir)
+-		if (is_inode_layout_compression(inode)) {
++		if (erofs_inode_is_data_compressed(vi->datamode)) {
  			err = z_erofs_fill_inode(inode);
  			goto out_unlock;
  		}
--
- 		inode->i_mapping->a_ops = &erofs_raw_access_aops;
--
--		/* fill last page if inline data is available */
--		err = fill_inline_data(inode, data, ofs);
- 	}
+@@ -283,7 +283,7 @@ int erofs_getattr(const struct path *path, struct kstat *stat,
+ {
+ 	struct inode *const inode = d_inode(path->dentry);
  
- out_unlock:
+-	if (is_inode_layout_compression(inode))
++	if (erofs_inode_is_data_compressed(EROFS_I(inode)->datamode))
+ 		stat->attributes |= STATX_ATTR_COMPRESSED;
+ 
+ 	stat->attributes |= STATX_ATTR_IMMUTABLE;
 diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index e576650bd4f4..4442a6622504 100644
+index 4442a6622504..6bd82a82b11f 100644
 --- a/fs/erofs/internal.h
 +++ b/fs/erofs/internal.h
-@@ -480,16 +480,6 @@ extern const struct inode_operations erofs_generic_iops;
- extern const struct inode_operations erofs_symlink_iops;
- extern const struct inode_operations erofs_fast_symlink_iops;
+@@ -327,11 +327,6 @@ static inline unsigned long inode_datablocks(struct inode *inode)
+ 	return DIV_ROUND_UP(inode->i_size, EROFS_BLKSIZ);
+ }
  
--static inline void set_inode_fast_symlink(struct inode *inode)
+-static inline bool is_inode_layout_compression(struct inode *inode)
 -{
--	inode->i_op = &erofs_fast_symlink_iops;
+-	return erofs_inode_is_data_compressed(EROFS_I(inode)->datamode);
 -}
 -
--static inline bool is_inode_fast_symlink(struct inode *inode)
--{
--	return inode->i_op == &erofs_fast_symlink_iops;
--}
--
- struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid, bool dir);
- int erofs_getattr(const struct path *path, struct kstat *stat,
- 		  u32 request_mask, unsigned int query_flags);
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index b0d318a8eb22..8c43af5d5e57 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -38,10 +38,9 @@ static void free_inode(struct inode *inode)
+ static inline bool is_inode_flat_inline(struct inode *inode)
  {
- 	struct erofs_inode *vi = EROFS_I(inode);
- 
--	/* be careful RCU symlink path (see ext4_inode_info->i_data)! */
--	if (is_inode_fast_symlink(inode))
-+	/* be careful of RCU symlink path */
-+	if (inode->i_op == &erofs_fast_symlink_iops)
- 		kfree(inode->i_link);
--
- 	kfree(vi->xattr_shared_xattrs);
- 
- 	kmem_cache_free(erofs_inode_cachep, vi);
+ 	return EROFS_I(inode)->datamode == EROFS_INODE_FLAT_INLINE;
 -- 
 2.17.1
 
