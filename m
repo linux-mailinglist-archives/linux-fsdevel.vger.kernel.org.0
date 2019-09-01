@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC2EB139D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63276B1399
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:29:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387633AbfILR26 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 13:28:58 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:7941 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387609AbfILR2z (ORCPT
+        id S2387603AbfILR2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 13:28:53 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:44567 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387596AbfILR2x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 13:28:55 -0400
+        Thu, 12 Sep 2019 13:28:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1568309334; x=1599845334;
+  t=1568309332; x=1599845332;
   h=message-id:in-reply-to:references:from:date:subject:to:
    mime-version;
-  bh=QPUvBZ7JzV6tMB76TfMxsyNnBqRiFeDigXzq545zAoE=;
-  b=qW6nu2TODBWM/aZ5iA2G7CAQO01LFgSN66PmKOp+zRZ3B9iFIz3qepVW
-   5n8uPHmwRACE8kxQEgEPkJjLknr3BYhBtcwM5YrNaqhxm8zcj9+g0+Fpy
-   mo1SQPfNkJKd0ETKId35yz1RKzic+Ty5qEfq80RsGVHVRcHrWIHmoQE69
-   g=;
+  bh=h7J2uw9Ut0Icf/XeWVsnv5/0niF/+yNuDvFrdNwUNvI=;
+  b=AhEPHZsX3T9pk3EfX9fY4q815PHYQenZ1eQ9frqibeH6kIHsYe4oulHD
+   caYklL6r5Em/dbj6JJhmrnBuSkeZV8Dk1oa+YGRjolgYGqos7ZhH4eH3F
+   PSdJ1caGuzoMF+qE9fEx07mN5VoKI/HEiyOy1wLc6NKEXfMavU9UuQWGw
+   U=;
 X-IronPort-AV: E=Sophos;i="5.64,497,1559520000"; 
-   d="scan'208";a="414961239"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 12 Sep 2019 17:28:53 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (Postfix) with ESMTPS id CF982A179F;
-        Thu, 12 Sep 2019 17:28:52 +0000 (UTC)
-Received: from EX13D12UWC001.ant.amazon.com (10.43.162.78) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (10.43.162.135) by
- EX13D12UWC001.ant.amazon.com (10.43.162.78) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
+   d="scan'208";a="750440654"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2c-168cbb73.us-west-2.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 12 Sep 2019 17:28:51 +0000
+Received: from EX13MTAUEB001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2c-168cbb73.us-west-2.amazon.com (Postfix) with ESMTPS id 4E66FA1E72;
+        Thu, 12 Sep 2019 17:28:51 +0000 (UTC)
+Received: from EX13D11UEB004.ant.amazon.com (10.43.60.132) by
+ EX13MTAUEB001.ant.amazon.com (10.43.60.96) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 12 Sep 2019 17:28:50 +0000
+Received: from EX13MTAUEB001.ant.amazon.com (10.43.60.96) by
+ EX13D11UEB004.ant.amazon.com (10.43.60.132) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 12 Sep 2019 17:28:50 +0000
 Received: from kaos-source-ops-60003.pdx1.corp.amazon.com (10.36.133.164) by
- mail-relay.amazon.com (10.43.162.232) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:52 +0000
+ mail-relay.amazon.com (10.43.60.129) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:50 +0000
 Received: by kaos-source-ops-60003.pdx1.corp.amazon.com (Postfix, from userid 6262777)
-        id E6FD8C0565; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
-Message-ID: <fb951c1cfcef37751ee8ff59563de2896e332ef1.1568309119.git.fllinden@amazon.com>
+        id E0DB5C011C; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
+Message-ID: <3856e70da4d1742b77e6d26987618c58ec4acef5.1568309119.git.fllinden@amazon.com>
 In-Reply-To: <cover.1568309119.git.fllinden@amazon.com>
 References: <cover.1568309119.git.fllinden@amazon.com>
 From:   Frank van der Linden <fllinden@amazon.com>
-Date:   Sat, 31 Aug 2019 23:53:14 +0000
-Subject: [RFC PATCH 24/35] nfsd: define xattr functions to call in to their
- vfs counterparts
+Date:   Sun, 1 Sep 2019 00:13:54 +0000
+Subject: [RFC PATCH 25/35] nfsd: take xattr access bits in to account when
+ checking
 To:     <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -55,176 +55,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds the filehandle based functions for the xattr operations
-that call in to the vfs layer to do the actual work.
+Since the NFSv4.2 extended attributes extension defines 3 new access
+bits for xattr operations, take them in to account when validating
+what the client is asking for, and when checking permissions.
 
 Signed-off-by: Frank van der Linden <fllinden@amazon.com>
 ---
- fs/nfsd/vfs.c | 129 ++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nfsd/vfs.h |  10 ++++
- 2 files changed, 139 insertions(+)
+ fs/nfsd/nfs4proc.c | 10 +++++++++-
+ fs/nfsd/vfs.c      | 12 ++++++++++++
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index 6fc960677644..6ade983dd9b2 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -557,8 +557,16 @@ nfsd4_access(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	     union nfsd4_op_u *u)
+ {
+ 	struct nfsd4_access *access = &u->access;
++	u32 access_full;
+ 
+-	if (access->ac_req_access & ~NFS3_ACCESS_FULL)
++	access_full = NFS3_ACCESS_FULL;
++#ifdef CONFIG_NFSD_V4_XATTR
++	if (cstate->minorversion >= 2)
++		access_full |= NFS4_ACCESS_XALIST | NFS4_ACCESS_XAREAD |
++			       NFS4_ACCESS_XAWRITE;
++#endif
++
++	if (access->ac_req_access & ~access_full)
+ 		return nfserr_inval;
+ 
+ 	access->ac_resp_access = access->ac_req_access;
 diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index c85783e536d5..99363e7ce044 100644
+index 99363e7ce044..d76e3041fa8e 100644
 --- a/fs/nfsd/vfs.c
 +++ b/fs/nfsd/vfs.c
-@@ -1990,6 +1990,135 @@ static int exp_rdonly(struct svc_rqst *rqstp, struct svc_export *exp)
- 	return nfsexp_flags(rqstp, exp) & NFSEXP_READONLY;
- }
+@@ -611,6 +611,12 @@ static struct accessmap	nfs3_regaccess[] = {
+     {	NFS3_ACCESS_MODIFY,	NFSD_MAY_WRITE|NFSD_MAY_TRUNC	},
+     {	NFS3_ACCESS_EXTEND,	NFSD_MAY_WRITE			},
  
 +#ifdef CONFIG_NFSD_V4_XATTR
-+/*
-+ * Helper function to translate error numbers. In the case of xattr operations,
-+ * some error codes need to be translated outside of the standard translations.
-+ *
-+ * ENODATA needs to be translated to nfserr_noxattr.
-+ * E2BIG to nfserr_xattr2big.
-+ *
-+ * Additionally, vfs_listxattr can return -ERANGE. This means that the
-+ * file has too many extended attributes to retrieve inside an
-+ * XATTR_LIST_MAX sized buffer. This is a bug in the xattr implementation:
-+ * filesystems will allow the adding of extended attributes until they hit
-+ * their own internal limit. This limit may be larger than XATTR_LIST_MAX.
-+ * So, at that point, the attributes are present and valid, but can't
-+ * be retrieved using listxattr, since the upper level xattr code enforces
-+ * the XATTR_LIST_MAX limit.
-+ *
-+ * This bug means that we need to deal with listxattr returning -ERANGE. The
-+ * best mapping is to return TOOSMALL.
-+ */
-+static __be32
-+nfsd_xattr_errno(int err)
-+{
-+	switch (err) {
-+	case -ENODATA:
-+		return nfserr_noxattr;
-+	case -E2BIG:
-+		return nfserr_xattr2big;
-+	case -ERANGE:
-+		return nfserr_toosmall;
-+	}
-+	return nfserrno(err);
-+}
-+
-+__be32
-+nfsd_getxattr(struct svc_rqst *rqstp, struct svc_fh *fhp, char *name, void *buf, int *lenp)
-+{
-+	ssize_t lerr;
-+	int err;
-+
-+	err = fh_verify(rqstp, fhp, 0, NFSD_MAY_READ);
-+	if (err)
-+		return err;
-+
-+	lerr = vfs_getxattr(fhp->fh_dentry, name, buf, *lenp);
-+	if (lerr < 0)
-+		err = nfsd_xattr_errno(lerr);
-+	else
-+		*lenp = lerr;
-+
-+	return err;
-+}
-+
-+__be32
-+nfsd_listxattr(struct svc_rqst *rqstp, struct svc_fh *fhp, void *buf, int *lenp)
-+{
-+	ssize_t lerr;
-+	int err;
-+
-+	err = fh_verify(rqstp, fhp, 0, NFSD_MAY_READ);
-+	if (err)
-+		return err;
-+
-+	lerr = vfs_listxattr(fhp->fh_dentry, buf, *lenp);
-+
-+	if (lerr < 0)
-+		err = nfsd_xattr_errno(lerr);
-+	else
-+		*lenp = lerr;
-+
-+	return err;
-+}
-+
-+/*
-+ * Removexattr and setxattr need to call fh_lock to both lock the inode
-+ * and set the change attribute. Since the top-level vfs_removexattr
-+ * and vfs_setxattr calls already do their own inode_lock calls, call
-+ * the _locked variant. Pass in a NULL pointer for delegated_inode,
-+ * and let the client deal with NFS4ERR_DELAY (same as with e.g.
-+ * setattr and remove).
-+ */
-+__be32
-+nfsd_removexattr(struct svc_rqst *rqstp, struct svc_fh *fhp, char *name)
-+{
-+	int err, ret;
-+
-+	err = fh_verify(rqstp, fhp, 0, NFSD_MAY_WRITE);
-+	if (err)
-+		return err;
-+
-+	ret = fh_want_write(fhp);
-+	if (ret)
-+		return nfserrno(ret);
-+
-+	fh_lock(fhp);
-+
-+	ret = __vfs_removexattr_locked(fhp->fh_dentry, name, NULL);
-+
-+	fh_unlock(fhp);
-+	fh_drop_write(fhp);
-+
-+	return nfsd_xattr_errno(ret);
-+}
-+
-+__be32
-+nfsd_setxattr(struct svc_rqst *rqstp, struct svc_fh *fhp, char *name,
-+	      void *buf, u32 len, u32 flags)
-+{
-+	int err, ret;
-+
-+	err = fh_verify(rqstp, fhp, 0, NFSD_MAY_WRITE);
-+	if (err)
-+		return err;
-+
-+	ret = fh_want_write(fhp);
-+	if (ret)
-+		return nfserrno(ret);
-+	fh_lock(fhp);
-+
-+	ret = __vfs_setxattr_locked(fhp->fh_dentry, name, buf, len, flags,
-+				    NULL);
-+
-+	fh_unlock(fhp);
-+	fh_drop_write(fhp);
-+
-+	return nfsd_xattr_errno(ret);
-+}
++    {	NFS4_ACCESS_XAREAD,	NFSD_MAY_READ			},
++    {	NFS4_ACCESS_XAWRITE,	NFSD_MAY_WRITE			},
++    {	NFS4_ACCESS_XALIST,	NFSD_MAY_READ			},
 +#endif
 +
- /*
-  * Check for a user's access permissions to this inode.
-  */
-diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
-index db351247892d..ef4e6eaf9c78 100644
---- a/fs/nfsd/vfs.h
-+++ b/fs/nfsd/vfs.h
-@@ -75,6 +75,16 @@ __be32		do_nfsd_create(struct svc_rqst *, struct svc_fh *,
- __be32		nfsd_commit(struct svc_rqst *, struct svc_fh *,
- 				loff_t, unsigned long);
- #endif /* CONFIG_NFSD_V3 */
+     {	0,			0				}
+ };
+ 
+@@ -621,6 +627,12 @@ static struct accessmap	nfs3_diraccess[] = {
+     {	NFS3_ACCESS_EXTEND,	NFSD_MAY_EXEC|NFSD_MAY_WRITE	},
+     {	NFS3_ACCESS_DELETE,	NFSD_MAY_REMOVE			},
+ 
 +#ifdef CONFIG_NFSD_V4_XATTR
-+__be32         nfsd_getxattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
-+			     char *name, void *buf, int *lenp);
-+__be32         nfsd_listxattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
-+			      void *buf, int *lenp);
-+__be32         nfsd_removexattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
-+				char *name);
-+__be32         nfsd_setxattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
-+			     char *name, void *buf, u32 len, u32 flags);
++    {	NFS4_ACCESS_XAREAD,	NFSD_MAY_READ			},
++    {	NFS4_ACCESS_XAWRITE,	NFSD_MAY_WRITE			},
++    {	NFS4_ACCESS_XALIST,	NFSD_MAY_READ			},
 +#endif
- __be32		nfsd_open(struct svc_rqst *, struct svc_fh *, umode_t,
- 				int, struct file **);
- struct raparms;
++
+     {	0,			0				}
+ };
+ 
 -- 
 2.17.2
 
