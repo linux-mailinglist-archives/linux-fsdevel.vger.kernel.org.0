@@ -2,98 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EA66A46FB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 05:26:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 149B1A46FE
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 05:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbfIAD0O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 31 Aug 2019 23:26:14 -0400
-Received: from sonic304-21.consmr.mail.ir2.yahoo.com ([77.238.179.146]:33473
-        "EHLO sonic304-21.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728589AbfIAD0O (ORCPT
+        id S1728605AbfIADhh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 31 Aug 2019 23:37:37 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:53730 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728569AbfIADhh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 31 Aug 2019 23:26:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567308371; bh=3X2f9zs5GoXqXZm5o2SXF6TFWr2jmxRBZChGynN2BZc=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=GTycHylHBAXMTQpnu4dWFdjA0ut9ctneGRmHJ1FPniUgZQ59vE9dKJlFKkjUkfda42wrD3nmkx0pLGuQzw4bMna87Nni8h5FnHu1/Ckr+u/ySjKb7rLDapaUCxTjtfhI0yYuqLe8rEdwJyAbi699Ud3M2WqyTf/EpinnUmMoLLv4f27FrD9XrG5eGV0lyV5GxhnpOBfBJ7I5r1ccYDm1dZ5NWcICr1hMm+cYP3QwhIc6BBymn7mRjKa8y5CueiBRL8kw16ubbfTyYfHesN709RxuFO/k8kEWqkIs02zWSDnWfC24N6oXmdhK/ImPw4lKfjdfik+rdF3xchn6LABe0w==
-X-YMail-OSG: GTeh2YMVM1n5yD.ak5OmbVFFHnlwMILK6igcPhx1U_Eo0A_T5HSPqcOOTIF.81e
- IhgktODjKH.fA8S5yBMfL_.GLUSGVLzlhLgSKzZg1qShGjRUGZSDJCwCn7szoQBilGvGXc7LcHxb
- GAldLG.h942mu4tow44xfNHdBM7xkZXlVItcrF.CbUlmyw0.NNjnlCSRSg5Ygqzv0o5z20EnxLsY
- l00.xyJRJMoKYKkUKM6ttYzYYgeUQPXGHroFqDi_2XJrJVvXoYwNB6SUWWtdsDojBNXxrzlrGWwn
- 32YIEOWPFZflUG2q7aNwAixjwn0RB4P0iKKv3ZbuehQMe25Ap2toLDaHxRGXY249RZePMEzub7hf
- Uh6W5DKFZv2pfXJyvAZ.eqUi4F4_uGvsauTEvFFlby.L63N9vR6HsuuT7EqBBwu_OP0OT.drMW8R
- _.0DlicJ44mYbgrmvyqYADl1Nf4qRlnnontrcB_zzm2nMt.G2kyghN7UY7Tjy3F3un8bSCG72uSW
- 4ZBzY4uQ1dgcVfIWGONzy9FYmo9lXdGCxO36X0TmD1VfUzlmGWi0VWQk63YsmQbq56Qr9pfYhYYS
- 9B.VMJVj9hnAkbAQLKmg825kRXbp70gXq1yS96h7a27jP_Dpxi_EfQqF0GLXidFFKgpgx5pBAJAy
- qwd1IkpewHC88EWqZwQo0Q5nr.bG4xah1SQnB__Z7KNKZhxgVWsrzoxpl8lM4LghvTKWtCXLVbod
- xYl2sXQ82v0DGF1kgYxCDhFkRdTECPi2TSS.qp2NgZ43G3O5vUKA0h27SyXR6NEBrtlUlZZvnYeE
- 5d3NlvG9xgNscloeAxiRye7dVNuzprZtEaNuOjLzJM_CDvt3Zpue4TAsKDhlVP.sP5BH1xTQJNMA
- 7kt7gcEDhRO8DaFEGiFDityueupedSIHFcN__koDZvYGTGWLxksHI8RGimIRK7Pl.LMbesQGM56P
- 0xYXKYiqLikluaQf9CDQVIBb8d_zZC_3oTBrOApVmJAWetB7grk5tX9VG8Dc8FPZ2ec.AbVt.QC_
- WBLPvMb0JTs5zm0Ve5f42_ll0xF0z0rDoLv7n7oP0YYIKYjKLc94ruLCeLxYNGLKP5t70PZdyQIT
- r4xz3C8zyNCq3dtTLqZ.hmXkdta5adiUKAtBN5Cmkwb3htpQLVnA3irCQNasSpP8zqK6iDCN7dO3
- cq1lBf1xOm6hJmVxHOrm6JHfn_BbnwIwbV2.2Q_m1s0KyIJ2ibO7yxzwbgiLieRFVUunk7N855Yf
- E5kgsXeeZQ4weDYC5v5XuzGtXJL_1iA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ir2.yahoo.com with HTTP; Sun, 1 Sep 2019 03:26:11 +0000
-Received: by smtp417.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8e7cd5b2d147bd51f8bfb889d9d01e6d;
-          Sun, 01 Sep 2019 03:26:10 +0000 (UTC)
-Date:   Sun, 1 Sep 2019 11:26:02 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Valdis =?gbk?Q?Kl=A8=A5tnieks?= <valdis.kletnieks@vt.edu>,
-        Christoph Hellwig <hch@infradead.org>,
+        Sat, 31 Aug 2019 23:37:37 -0400
+Received: from mr6.cc.vt.edu (mr6.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x813bZ8C015852
+        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Aug 2019 23:37:35 -0400
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x813bUaU027344
+        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Aug 2019 23:37:35 -0400
+Received: by mail-qk1-f198.google.com with SMTP id b13so12010997qkk.20
+        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Aug 2019 20:37:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=ydhN3Zp44Nu3CzxHTEXAf4iY4jzb23b8YjDdP2BxiiM=;
+        b=X8nOWWoBSYEJvr35KFWf2t8rzwttSIvhSDp7LOyO2ZWO7YiU6W/9NjU46HrG4bjPfp
+         LoHajZZJujVby32GxJELnr3TWZ6xBDAkJXL/JXDI3WmCU9ewj8E3s7JEG8P0D8R8PTVC
+         EzGQ/BB18PiKYMmNAgfsRsYwVejgVDii8ZW7JGb3wbXoRzqtkxLDyRFiudN8bkmNqtJQ
+         R+vhd6QxmGK4il4cjfCDMdvb8aSWm+tfl23f5DJZ0tCJbXaKs3t3C6Renjl+WyM7Nw/D
+         pvxENh7NaAlATtWZyWiMGwdiM5IWDxJKnD8nkYRqwvaAZRwnaoXdh5sN/0WxsQF948cW
+         fF4g==
+X-Gm-Message-State: APjAAAW9Ak9I/d0sebtIVDJi5Chi2ZIBocmFsw8yNqM24TuTxMI5qtjE
+        HsVpuMzB6xD0tg49Nu5AUFGTJol9bpR9Y9J3zqmaOpZi+VLHOxfUw9cyJxtY4oPx5dMyQBk0BGw
+        5iGvSzG3O8yTzXKD8XRl1MaH7I5hrUgb9wVig
+X-Received: by 2002:ac8:42c4:: with SMTP id g4mr23192827qtm.228.1567309050462;
+        Sat, 31 Aug 2019 20:37:30 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzdbEq5WvB8OWvM4ln+gCz5eDg2qSDFppv92WU5CgIKxhPekUVxbz1sJQpBcWAbWCMyHaActg==
+X-Received: by 2002:ac8:42c4:: with SMTP id g4mr23192811qtm.228.1567309050186;
+        Sat, 31 Aug 2019 20:37:30 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4340::ba0])
+        by smtp.gmail.com with ESMTPSA id n187sm5288044qkc.98.2019.08.31.20.37.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Aug 2019 20:37:28 -0700 (PDT)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/staging/exfat - by default, prohibit mount of
- fat/vfat
-Message-ID: <20190901032556.GA10186@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <245727.1567183359@turing-police>
- <20190830164503.GA12978@infradead.org>
- <267691.1567212516@turing-police>
- <20190831064616.GA13286@infradead.org>
- <295233.1567247121@turing-police>
+Subject: Re: [PATCH] drivers/staging/exfat - by default, prohibit mount of fat/vfat
+In-Reply-To: <20190901010721.GG7777@dread.disaster.area>
+References: <245727.1567183359@turing-police> <20190830164503.GA12978@infradead.org> <267691.1567212516@turing-police> <20190831064616.GA13286@infradead.org> <295233.1567247121@turing-police>
  <20190901010721.GG7777@dread.disaster.area>
- <20190901013715.GA8243@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190901030514.GC1131@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190901030514.GC1131@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1567309047_4251P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Sat, 31 Aug 2019 23:37:27 -0400
+Message-ID: <339527.1567309047@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+--==_Exmh_1567309047_4251P
+Content-Type: text/plain; charset=us-ascii
 
-On Sun, Sep 01, 2019 at 04:05:14AM +0100, Al Viro wrote:
-> On Sun, Sep 01, 2019 at 09:37:19AM +0800, Gao Xiang wrote:
-> 
-> > fs/orangefs/file.c
-> >  19 static int flush_racache(struct inode *inode)
-> 
-> Just why the hell would _that_ one be a problem?  It's static in
-> file; it can't pollute the namespace even if linked into the
-> kernel.
-> 
-> Folks, let's keep at least some degree of sanity - this is sinking
-> to the level of certain killfile denizens...
+On Sun, 01 Sep 2019 11:07:21 +1000, Dave Chinner said:
+> Totally irrelevant to the issue at hand. You can easily co-ordinate
+> out of tree contributions through a github tree, or a tree on
+> kernel.org, etc.
 
-Thanks for your kind reply. I think in the same way.
-And Christoph did many great suggestions for erofs, thanks him
-for erofs, and I'm already fixed most of them, and some
-suggestions I have no idea to do....
-  1) add "erofs_" to all functions [1] [2];
-  2) avoid sb_bread and use read_mapping_page, actually
-      read_mapping_page will call block_read_full_page and
-      buffer_heads still there;
+Well.. I'm not personally wedded to the staging tree.  I'm just interested in
+getting a driver done and upstreamed with as little pain as possible. :)
 
-and I don't know what erofs "rapidly turning" means, all great
-suggestions I can fix them all, I have no idea it's a bad thing.
+Is there any preference for github versus kernel.org?  I can set up a github
+tree on my own, no idea who needs to do what for a kernel.org tree.
 
-[1] https://lore.kernel.org/linux-fsdevel/20190830163910.GB29603@infradead.org/
-[2] https://lore.kernel.org/linux-fsdevel/20190831064853.GA162401@architecture4/
+Also, this (from another email of yours) was (at least to me) the most useful
+thing said so far:
 
-Thanks,
-Gao Xiang
+> look at what other people have raised w.r.t. to that filesystem -
+> on-disk format validation, re-implementation of largely generic
+> code, lack of namespacing of functions leading to conflicts with
+> generic/VFS functionality, etc.
 
+All of which are now on the to-do list, thanks.
+
+Now one big question:
+
+Should I heave all the vfat stuff overboard and make a module that
+*only* does exfat, or is there enough interest in an extended FAT module
+that does vfat and extfat, in which case the direction should be to re-align
+this module's code with vfat?
+
+> That's the choice you have to make now: listen to the reviewers
+> saying "resolve the fundamental issues before goign any further",
+
+Well... *getting* a laundry list of what the reviewers see as the fundamental
+issues is the first step in resolving them ;)
+
+
+
+--==_Exmh_1567309047_4251P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXWs89gdmEQWDXROgAQKZYA//VanZme910x03PXbB6eZJIFNkl0Ii0sHW
+AGGKa0skVNf+/uwf0kL25WoaCFjgEFrZmEP+w1yU+rv3aQ8zzconLLsxwEX0V0PT
+t7KzGcGHewKMv+56bMSpDE1CIHwwlOIARcz9SpoQ669CuudQbfILkrOW19DqxBYQ
+OBBZgdPPd3+jcoYb8EcYl3HIAfoAYn6EWpyo8qjP70xrfl/iICA2AUyZUnSIEHPT
+LLyBbDeb0tFNYNHk4/+82OIOh1BglgmHZmTmM8jKUSAAYEINHHRUpoyuOWWXSBY0
+3gvjmsooCFUQxsCfVXLjXCwvYZqU/9IlNsWvfGLK+rfwS9Huzx1mSvqsBLp78vN/
+63gGH5eR7yvq1f1hPl2l33QTvJCjCnT58OLZU9TlwAleqkSsyDCHj+vtVF8jyB91
+r/80bJyfG0CklcVPOsVXF1UkoVdty4V+EHVb3rK9D/UM4z8a8I43xjR1NJf8F5Jm
+W8lht0MkT8I+Y6ibapQTg9ZfBpzcyH0edZ0cTbX/4u92EaMVcvx0n8O2uhAxT2GV
+WPQJAj/b46xLW39OSbZAxSdLxTth908x49EhzIa5bMMFKFOfCg7Mzu6a4e5elQjP
+dTPvjTgNQLBML8I8B8+ZE581WOzRGusKzq7v2//dpKg0NbxEhThVgPG9aoWUmrgX
+6wdwmWFjcQQ=
+=zNgs
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1567309047_4251P--
