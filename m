@@ -2,42 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 379F5A4838
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 09:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF7AA4873
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Sep 2019 10:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbfIAHya (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Sep 2019 03:54:30 -0400
-Received: from sonic313-21.consmr.mail.gq1.yahoo.com ([98.137.65.84]:41816
-        "EHLO sonic313-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728617AbfIAHya (ORCPT
+        id S1728870AbfIAIzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Sep 2019 04:55:11 -0400
+Received: from sonic308-54.consmr.mail.gq1.yahoo.com ([98.137.68.30]:36419
+        "EHLO sonic308-54.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728829AbfIAIzK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Sep 2019 03:54:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567324468; bh=J79Y2G0I1TVmLSwHXC2+aHwiZC3n4iAsXF26Qi7Ltf0=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=BAZ6J2wQqaturspfP9wEbdbIUBOw6uu3evfEmM/odzvUE02SzB1pthpkbT4SAz4QAgLhOauNApdTpQxLCfDj/b3339ticFXo0WAZE+x/QhlCwCT2wzx01vKs63ER4QCRDPQxg8JsEAe5y8NG9zpVDjtnFDWK0or/jdRVDpUCFHPL35s06avCO+2esleo+5qP75md25Qtnc6QFGaLR0KD02i9m77yJgBGR3QlLmYLuALZyH/7Fr6H+f7Ua+mgGnbS+NT9JDhEPkKhIvRxIbzRk8wSrYq1SzeGHv/Yy7Lw3V+WGo1kzewumAF3YQBgwYbII8zMJL1ReALf2YgpIrTRng==
-X-YMail-OSG: IK5Sy_QVM1lsoz686qqnQ5aOLnuon34Ax7CkeDH4ttkQ_2w7F1nFqX4BN1OWbyz
- jnJ1Ek4ZlDGe0OXj9WCXiYeUUGb4h9Kah3DKqTr3GZDjfqga3q.SIMXB87RMpNAx0DQB0pqiBizX
- nZQQIVpl1HFYR_ySgFv0JpjBx7u87JBJ.TNsGJTLhYDtIHXmE_sfrBt8nqM58AftBvPcN68E1lnr
- x2DWvzSeFilm5JxLOCPR4S1PFz0lMXvpXh7iZlro5IKdtw.VPVg1r9zY.g4SeM6UdsO10Lcu_9dE
- G6hpmL.yKptifXABfGNOLsoqaIhWlpJjM2bnH6CuE1xfrHcyaeJ.3ADn8DXtyFaq40jcDKC5lg0W
- Qzn.cI6XbrNIChJ2FOg6uVy6wiTNufR_1LnuExnin2ZZlGKqZsFEhDeEMfjxjFNi2KqSsf3hmdh1
- etirIOJDoGaxF9yvzMHiLhLk5DImk.JhhrYpHLmY7D.kqDBNl6eW_Kx6uo3T8Gdo9_02OcQ9npP4
- gEI6dLUVj4rCWd.vJk71txkifQ1E5.Id89giamJSzIqGHYWFjAAMKEE0N0ChEY4yaReJ2GMU1rRe
- 8ts7AjVhMTkMQLQrZqZ6t_yI45dgvrznWE29_nfXA8DGA_LYpEtah66oi_gwr8k1OqsC9Ns413ck
- oyjVtmRP1LTyiNQ1NAOEpLfOaF5lk0SJxVGEqUwsEfFJtVfGOlNnocSj2hSlFxlInttwDKUBiIcE
- x8xZQhvQnxoLNKuvUQ7ZC4qVHwkitv3XyrMlrYLUsT.FFmk79y3WbIQQofklKNHsdJE11nz98Zan
- ejomns5l8femmbSjXLgp8BuFn8k6qlNzjbi0R4A2jcMhskVLw5l3XAGd24IwkTVAyuyF3XD1cy5K
- PVBr_MUNSoAwS8BTwfmHFZYJADov.xJb65DbHT1IKaBgT8Duaqat1a3O2r1iSxAu8BQRAKBYH16F
- DTxQsqQuoMg5ig9uCRlMjdjQhDq7SKvAlY.Ai41NdEXM7k13TdZHMemzWn7fcM2Q9GTndtBdqeF1
- gG9FMjpU9kQI.h5XtrrlfHUthGYajGPCTCQgjanHWW5tjXVYPH30Ll.EZVaz_2LJg4wFFUJDE3Ck
- vB3Dgi_KxHC7QkeueFaGIGjCWWbGPUEGJrbxaalSFHcVsESfvRmP6SH598uAXyMXgICb66u.ImIQ
- I.YOt3dSwgilTMKfauLcOj6IE2IdxGnwB9DIinsQS5KS3U7gSZkS0cSPmdZn49mSzKQGO_jxsA17
- AZg34rGP8S4Bin7CUHHJJdXkSoYdM.hfDK6w-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Sun, 1 Sep 2019 07:54:28 +0000
-Received: by smtp409.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 91e90752a14b0d45ad1c1695aa749d56;
-          Sun, 01 Sep 2019 07:54:24 +0000 (UTC)
-Date:   Sun, 1 Sep 2019 15:54:11 +0800
+        Sun, 1 Sep 2019 04:55:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567328109; bh=2T51wfLeso6fqYmhF4Q+DmVdeuKTXdhukyK2Q6Uk8Qs=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=azR6xs8Y0MaN1hedD9e+nh7laftJZbI5g4hJw/9O+dA8LmfbZ/R04RBwLcQfEUoLqi5yvGhoXZDGAMZdB2+VAmvxO2OjrY7GvXAZzZXytUd4UuEpbuZ7S32Ws/l/xFEs8dpV2Yxxw9EMGSeKLPgMcCVkPAsnApKCc8ro2kGEbO/x5x8BcBCrquxX5T+cRhNFL6xPS5fRaxouUp4JHN7ByZhy21bOJComz4Zj/VBgnTNMDlAYTrkoZhZHGEAs47z1Gu3oTnLpAQEtiQWQAbfTwqIrIclJbgTBFG13y7wLKvo5Dx1w9SH1Jo2JxTT5mngCcIqYWS9WevH73ncMMZP06Q==
+X-YMail-OSG: lwVpAlMVM1kyFIQv33969BR4RnCx3_IO9fyUSJldVLAZ7.ZGoYRQUS4gOAHVAzL
+ m8LPsMJVXBRkzHz665ce1L3VE.LojgTmLDErlnLPoPGehSlIyotVZsAO1bt9Ub1xbL7T5.faOyf1
+ La5ESlsY5A7DhKU7R4jvSjXa29HvfcO_ry27irB9INX9RfTyqhgcfA8ovpAZZvIpHHZPZxwbSp.u
+ OTyXXWJjIaINl23VAi7PgHzsuo76TB_fOGcNNUWy8Cj8sDznXEdRf03cchnV17bjTeVVUcncDXaZ
+ 2oA4ONm813vmW51rclHamQ8WA2T2tP2p2wzAQ_Tzz.wl5MYMPW4PrCcfg3HUmwHh0YJkdWADE3SZ
+ OviyYHjkJ2O_4mSH4dXte5Ai8S4AFv8Oqc4rEmwMOMSshoQmRMA_fc4T11MAjoAk3R70u4CHDBcM
+ Md_ZSCoXmDX16pXsG1Q7Y3n80aF3XkSqZOOcb_IM9OtfxHe8.6t8TYRt6_s6jy4GcjQjxjjHt2qV
+ XMJg_Q37eGXL8LTiMOGV5j4AnvOF1vxQPRu08ckUISnBhTdwHOTngZvxtA28Nrv8n2FWQbRAYMRl
+ iTt9CL8kYNe4PIblciIQyqyV7M7xlKDXMa7vR16WtUyFqZ4WNdPzLezsI_KHq9l6.oq96rQl2VC5
+ 3EoOob.TIDLZZeOj21pOlMnsN6owqtcUEv0h0A1cy_M.pM.uMuRb_75N.VvIVZtPZ1GPtxdOQ4MZ
+ 4HLqirRJVn904UuMA2NLxSOQE8MFZoTrUQ5kwuuciAfaxFUSaDuGZ.sW7x2CCOcUEf0jQ9oywm6m
+ sogBc4ofIRmeJp8OAlUfbT8KN9lBGOo.l8MqCVfhHwSVltF39A0yPrJ8qZae8WknRZGTpY6j2W.D
+ u_Rr814KRKOZR0TPQzxXaGy2HVjbYFfJiAx_lipsF8AybHhYB4Ar7h2q_x9mRZ.I3yE1.erWohg7
+ Hry4BkGSKQWZFyaojPNhuxnLooFIULI.Afq8bhATU2YpeXTZMZe_Ojp0c9V0bK.qTlfeaLA64qTZ
+ Viu_Oo_0UDvcsh.GWC_dR8DaFMXuiOsvj8Ot8_2FSCXLiiyBzpCoTsYJPsMluIYiEuvEXIEYMAXz
+ EMnzEsvubTphUaSpbgWmy82gBOpOkaroAVuOC9tAQD.wHLbGUVdTwevLTedn5hsxj5oa4jy4VLiD
+ 1kPl3wDTsIcP9YH04wVAx5ZkycrBeQW.ApO13YVeXfKAiy_IctPX_kNco.AfXHWNymA.SO_UkXDM
+ OEo3NYeip0en.Men2SIrwcH_TuvCP0NUMd5LD_g--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Sun, 1 Sep 2019 08:55:09 +0000
+Received: by smtp403.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c571dfb48f74266536ca9ef163c4409d;
+          Sun, 01 Sep 2019 08:55:05 +0000 (UTC)
+Date:   Sun, 1 Sep 2019 16:54:55 +0800
 From:   Gao Xiang <hsiangkao@aol.com>
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Gao Xiang <gaoxiang25@huawei.com>, Jan Kara <jack@suse.cz>,
+        Chao Yu <yuchao0@huawei.com>,
         Dave Chinner <david@fromorbit.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Miao Xie <miaoxie@huawei.com>, devel@driverdev.osuosl.org,
@@ -49,19 +50,21 @@ Cc:     Gao Xiang <gaoxiang25@huawei.com>, Jan Kara <jack@suse.cz>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
         David Sterba <dsterba@suse.cz>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
-Message-ID: <20190901075240.GA2938@hsiangkao-HP-ZHAN-66-Pro-G1>
+Subject: Re: [PATCH v6 03/24] erofs: add super block operations
+Message-ID: <20190901085452.GA4663@hsiangkao-HP-ZHAN-66-Pro-G1>
 References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-2-gaoxiang25@huawei.com>
- <20190829095954.GB20598@infradead.org>
+ <20190802125347.166018-4-gaoxiang25@huawei.com>
+ <20190829101545.GC20598@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829095954.GB20598@infradead.org>
+In-Reply-To: <20190829101545.GC20598@infradead.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
@@ -70,193 +73,221 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi Christoph,
 
-Sorry about my first response, sincerely...
-Here is my redo-ed comments to all your suggestions...
+Here is also my redo-ed comments...
 
-On Thu, Aug 29, 2019 at 02:59:54AM -0700, Christoph Hellwig wrote:
-> > --- /dev/null
-> > +++ b/fs/erofs/erofs_fs.h
-> > @@ -0,0 +1,316 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only OR Apache-2.0 */
-> > +/*
-> > + * linux/fs/erofs/erofs_fs.h
-> 
-> Please remove the pointless file names in the comment headers.
-
-Has already fixed in the latest version, and I will resend
-the whole v9 addressing all suggestions from you these days...
-
-However it's somewhat hard to spilt the whole code prefectly
-since erofs is ~7KLOC code and linux-fsdevel mailing list
-have some limitation, I have spilted it in the form of features...
-
-> 
-> > +struct erofs_super_block {
-> > +/*  0 */__le32 magic;           /* in the little endian */
-> > +/*  4 */__le32 checksum;        /* crc32c(super_block) */
-> > +/*  8 */__le32 features;        /* (aka. feature_compat) */
-> > +/* 12 */__u8 blkszbits;         /* support block_size == PAGE_SIZE only */
-> 
-> Please remove all the byte offset comments.  That is something that can
-> easily be checked with gdb or pahole.
-
-fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-2-hsiangkao@aol.com/
-
-> 
-> > +/* 64 */__u8 volume_name[16];   /* volume name */
-> > +/* 80 */__le32 requirements;    /* (aka. feature_incompat) */
+On Thu, Aug 29, 2019 at 03:15:45AM -0700, Christoph Hellwig wrote:
+> On Fri, Aug 02, 2019 at 08:53:26PM +0800, Gao Xiang wrote:
+> > +static int __init erofs_init_inode_cache(void)
+> > +{
+> > +	erofs_inode_cachep = kmem_cache_create("erofs_inode",
+> > +					       sizeof(struct erofs_vnode), 0,
+> > +					       SLAB_RECLAIM_ACCOUNT,
+> > +					       init_once);
 > > +
-> > +/* 84 */__u8 reserved2[44];
-> > +} __packed;                     /* 128 bytes */
+> > +	return erofs_inode_cachep ? 0 : -ENOMEM;
 > 
-> Please don't add __packed.  In this case I think you don't need it
-> (but double check with pahole), but even if you would need it using
-> proper padding fields and making sure all fields are naturally aligned
-> will give you much better code generation on architectures that don't
-> support native unaligned access.
-
-fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-5-hsiangkao@aol.com/
-
-> 
-> > +/*
-> > + * erofs inode data mapping:
-> > + * 0 - inode plain without inline data A:
-> > + * inode, [xattrs], ... | ... | no-holed data
-> > + * 1 - inode VLE compression B (legacy):
-> > + * inode, [xattrs], extents ... | ...
-> > + * 2 - inode plain with inline data C:
-> > + * inode, [xattrs], last_inline_data, ... | ... | no-holed data
-> > + * 3 - inode compression D:
-> > + * inode, [xattrs], map_header, extents ... | ...
-> > + * 4~7 - reserved
-> > + */
-> > +enum {
-> > +	EROFS_INODE_FLAT_PLAIN,
-> 
-> This one doesn't actually seem to be used.
-
-It could be better has a name though, because 1) erofs.mkfs uses this
-definition explicitly, and we keep this on-disk definition erofs_fs.h
-file up with erofs-utils.
-
-2) For kernel use, first we have,
-   datamode < EROFS_INODE_LAYOUT_MAX; and
-   !erofs_inode_is_data_compressed, so there are only two mode here,
-        1) EROFS_INODE_FLAT_INLINE,
-        2) EROFS_INODE_FLAT_PLAIN
-   if its datamode isn't EROFS_INODE_FLAT_INLINE (tail-end block packing),
-   it should be EROFS_INODE_FLAT_PLAIN.
-
-   The detailed logic in erofs_read_inode and
-   erofs_map_blocks_flatmode....
-
-> 
-> > +	EROFS_INODE_FLAT_COMPRESSION_LEGACY,
-> 
-> why are we adding a legacy field to a brand new file system?
-
-The difference is just EROFS_INODE_FLAT_COMPRESSION_LEGACY doesn't
-have z_erofs_map_header, so it only supports default (4k clustersize)
-fixed-sized output compression rather than per-file setting, nothing
-special at all...
-
-> 
-> > +	EROFS_INODE_FLAT_INLINE,
-> > +	EROFS_INODE_FLAT_COMPRESSION,
-> > +	EROFS_INODE_LAYOUT_MAX
-> 
-> It seems like these come from the on-disk format, in which case they
-> should have explicit values assigned to them.
+> Please just use normal if/else.  Also having this function seems
+> entirely pointless.
 
 Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-3-hsiangkao@aol.com/
+https://lore.kernel.org/r/20190901055130.30572-7-hsiangkao@aol.com/
 
 > 
-> Btw, I think it generally helps file system implementation quality
-> if you use a separate header for the on-disk structures vs in-memory
-> structures, as that keeps it clear in everyones mind what needs to
-> stay persistent and what can be chenged easily.
-
-All fields in this file are on-disk representation by design
-(no logic for in-memory presentation).
-
-> 
-> > +static bool erofs_inode_is_data_compressed(unsigned int datamode)
+> > +static void erofs_exit_inode_cache(void)
 > > +{
-> > +	if (datamode == EROFS_INODE_FLAT_COMPRESSION)
-> > +		return true;
-> > +	return datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
+> > +	kmem_cache_destroy(erofs_inode_cachep);
 > > +}
 > 
-> This looks like a really obsfucated way to write:
-> 
-> 	return datamode == EROFS_INODE_FLAT_COMPRESSION ||
-> 		datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
+> Same for this one.
 
 Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-6-hsiangkao@aol.com/
+https://lore.kernel.org/r/20190901055130.30572-7-hsiangkao@aol.com/
 
 > 
-> > +/* 28 */__le32 i_reserved2;
-> > +} __packed;
+> > +static void free_inode(struct inode *inode)
 > 
-> Sane comment as above.
+> Please use an erofs_ prefix for all your functions.
+
+free_inode and most short, common static functions are fixed in
+https://lore.kernel.org/r/20190901055130.30572-19-hsiangkao@aol.com/
+
+For all non-static functions, all are prefixed with "erofs_"
+
+> 
+> > +{
+> > +	struct erofs_vnode *vi = EROFS_V(inode);
+> 
+> Why is this called vnode instead of inode?  That seems like a rather
+> odd naming for a Linux file system.
 
 Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-5-hsiangkao@aol.com/
+https://lore.kernel.org/r/20190901055130.30572-8-hsiangkao@aol.com/
 
 > 
 > > +
-> > +/* 32 bytes on-disk inode */
-> > +#define EROFS_INODE_LAYOUT_V1   0
-> > +/* 64 bytes on-disk inode */
-> > +#define EROFS_INODE_LAYOUT_V2   1
+> > +	/* be careful RCU symlink path (see ext4_inode_info->i_data)! */
+> > +	if (is_inode_fast_symlink(inode))
+> > +		kfree(inode->i_link);
+> 
+> is_inode_fast_symlink only shows up in a later patch.  And really
+> obsfucates the check here in the only caller as you can just do an
+> unconditional kfree here - i_link will be NULL except for the case
+> where you explicitly set it.
+
+Fixed in
+https://lore.kernel.org/r/20190901055130.30572-10-hsiangkao@aol.com/
+
+and with my following comments....
+https://lore.kernel.org/r/20190831005446.GA233871@architecture4/
+
+> 
+> Also this code is nothing like ext4, so the code seems a little confusing.
+> 
+> > +static bool check_layout_compatibility(struct super_block *sb,
+> > +				       struct erofs_super_block *layout)
+> > +{
+> > +	const unsigned int requirements = le32_to_cpu(layout->requirements);
+> 
+> Why is the variable name for the on-disk subperblock layout?  We usually
+> still calls this something with sb in the name, e.g. dsb. for disk
+> super block.
+
+Fixed in
+https://lore.kernel.org/r/20190901055130.30572-12-hsiangkao@aol.com/
+
+> 
+> > +	EROFS_SB(sb)->requirements = requirements;
 > > +
-> > +struct erofs_inode_v2 {
-> > +/*  0 */__le16 i_advise;
+> > +	/* check if current kernel meets all mandatory requirements */
+> > +	if (requirements & (~EROFS_ALL_REQUIREMENTS)) {
+> > +		errln("unidentified requirements %x, please upgrade kernel version",
+> > +		      requirements & ~EROFS_ALL_REQUIREMENTS);
+> > +		return false;
+> > +	}
+> > +	return true;
 > 
-> Why do we have two inode version in a newly added file system?
+> Note that normally we call this features, but that doesn't really
+> matter too much.
 
-There is no new or old, both can be used for the current EROFS in one image.
+No modification at this... (some comments already right here...)
 
-v2 is an exhanced on-disk inode form, it has 64 bytes,
-v1 is more reduced one, which is already suitable for Android use case.
+ 20 /* 128-byte erofs on-disk super block */
+ 21 struct erofs_super_block {
+...
+ 24         __le32 features;        /* (aka. feature_compat) */
+...
+ 38         __le32 requirements;    /* (aka. feature_incompat) */
+...
+ 41 };
 
 > 
-> > +#define ondisk_xattr_ibody_size(count)	({\
-> > +	u32 __count = le16_to_cpu(count); \
-> > +	((__count) == 0) ? 0 : \
-> > +	sizeof(struct erofs_xattr_ibody_header) + \
-> > +		sizeof(__u32) * ((__count) - 1); })
+> > +static int superblock_read(struct super_block *sb)
+> > +{
+> > +	struct erofs_sb_info *sbi;
+> > +	struct buffer_head *bh;
+> > +	struct erofs_super_block *layout;
+> > +	unsigned int blkszbits;
+> > +	int ret;
+> > +
+> > +	bh = sb_bread(sb, 0);
 > 
-> This would be much more readable as a function.
+> Is there any good reasons to use buffer heads like this in new code
+> vs directly using bios?
+
+As you said, I want it in the page cache.
+
+The reason "why not use read_mapping_page or similar?" is simply
+read_mapping_page -> .readpage -> (for bdev inode) block_read_full_page
+ -> create_page_buffers anyway...
+
+sb_bread haven't obsoleted... It has similar function though...
+
+> 
+> > +
+> > +	sbi->blocks = le32_to_cpu(layout->blocks);
+> > +	sbi->meta_blkaddr = le32_to_cpu(layout->meta_blkaddr);
+> > +	sbi->islotbits = ffs(sizeof(struct erofs_inode_v1)) - 1;
+> > +	sbi->root_nid = le16_to_cpu(layout->root_nid);
+> > +	sbi->inos = le64_to_cpu(layout->inos);
+> > +
+> > +	sbi->build_time = le64_to_cpu(layout->build_time);
+> > +	sbi->build_time_nsec = le32_to_cpu(layout->build_time_nsec);
+> > +
+> > +	memcpy(&sb->s_uuid, layout->uuid, sizeof(layout->uuid));
+> > +	memcpy(sbi->volume_name, layout->volume_name,
+> > +	       sizeof(layout->volume_name));
+> 
+> s_uuid should preferably be a uuid_t (assuming it is a real BE uuid,
+> if it is le it should be a guid_t).
+
+For this case, I have no idea how to deal with...
+I have little knowledge about this uuid stuff, so I just copied
+from f2fs... (Could be no urgent of this field...)
+
+> 
+> > +/* set up default EROFS parameters */
+> > +static void default_options(struct erofs_sb_info *sbi)
+> > +{
+> > +}
+> 
+> No need to add an empty function.
+
+My fault of spilting patches...
+
+> 
+> > +static int erofs_fill_super(struct super_block *sb, void *data, int silent)
+> > +{
+> > +	struct inode *inode;
+> > +	struct erofs_sb_info *sbi;
+> > +	int err;
+> > +
+> > +	infoln("fill_super, device -> %s", sb->s_id);
+> > +	infoln("options -> %s", (char *)data);
+> 
+> That is some very verbose debug info.  We usually don't add that and
+> let people trace the function instead.  Also you should probably
+> implement the new mount API.
+> new mount API.
 
 Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-4-hsiangkao@aol.com/
-> 
-> > +#define EROFS_XATTR_ENTRY_SIZE(entry) EROFS_XATTR_ALIGN( \
-> > +	sizeof(struct erofs_xattr_entry) + \
-> > +	(entry)->e_name_len + le16_to_cpu((entry)->e_value_size))
-> 
-> Same here.
+https://lore.kernel.org/r/20190901055130.30572-13-hsiangkao@aol.com/
 
-Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-4-hsiangkao@aol.com/
+(For new mount API,
+ https://lore.kernel.org/r/20190721040547.GF17978@ZenIV.linux.org.uk/
+ , I will a look later)
 
 > 
-> > +/* available compression algorithm types */
-> > +enum {
-> > +	Z_EROFS_COMPRESSION_LZ4,
-> > +	Z_EROFS_COMPRESSION_MAX
-> > +};
+> > +static void erofs_kill_sb(struct super_block *sb)
+> > +{
+> > +	struct erofs_sb_info *sbi;
+> > +
+> > +	WARN_ON(sb->s_magic != EROFS_SUPER_MAGIC);
+> > +	infoln("unmounting for %s", sb->s_id);
+> > +
+> > +	kill_block_super(sb);
+> > +
+> > +	sbi = EROFS_SB(sb);
+> > +	if (!sbi)
+> > +		return;
+> > +	kfree(sbi);
+> > +	sb->s_fs_info = NULL;
+> > +}
 > 
-> Seems like an on-disk value again that should use explicitly assigned
-> numbers.
+> Why is this needed?  You can just free your sb privatte information in
+> ->put_super and wire up kill_block_super as the ->kill_sb method
+> directly.
 
-Fixed in
-https://lore.kernel.org/linux-fsdevel/20190901055130.30572-3-hsiangkao@aol.com/
+The background is Al's comments in erofs v2....
+(which simplify erofs_fill_super logic)
+https://lore.kernel.org/r/20190720224955.GD17978@ZenIV.linux.org.uk/
+
+with a specific notation...
+https://lore.kernel.org/r/20190721040547.GF17978@ZenIV.linux.org.uk/
+
+"
+> OTOH, for the case of NULL ->s_root ->put_super() won't be called
+> at all, so in that case you need it directly in ->kill_sb().
+"
 
 Thanks,
 Gao Xiang
