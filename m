@@ -2,97 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73649A572A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 15:06:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7802DA57A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 15:26:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbfIBNG0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 09:06:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42918 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729761AbfIBNG0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:06:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7B1EFAC9A;
-        Mon,  2 Sep 2019 13:06:24 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 8B96BDA796; Mon,  2 Sep 2019 15:06:44 +0200 (CEST)
-Date:   Mon, 2 Sep 2019 15:06:44 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>, linux-fsdevel@vger.kernel.org,
-        devel@driverdev.osuosl.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
+        id S1730203AbfIBN0N convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 2 Sep 2019 09:26:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43450 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726441AbfIBN0M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 09:26:12 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 51D7B10A8136;
+        Mon,  2 Sep 2019 13:26:12 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5556360933;
+        Mon,  2 Sep 2019 13:26:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <563ae8b4-753a-179d-4f6d-94d2dd058f3b@schaufler-ca.com>
+References: <563ae8b4-753a-179d-4f6d-94d2dd058f3b@schaufler-ca.com> <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        Stephen Smalley <sds@tycho.nsa.gov>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v8 11/24] erofs: introduce xattr & posixacl support
-Message-ID: <20190902130644.GT2752@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Christoph Hellwig <hch@infradead.org>,
-        Gao Xiang <gaoxiang25@huawei.com>, linux-fsdevel@vger.kernel.org,
-        devel@driverdev.osuosl.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-References: <20190815044155.88483-1-gaoxiang25@huawei.com>
- <20190815044155.88483-12-gaoxiang25@huawei.com>
- <20190902125711.GA23462@infradead.org>
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] Keyrings, Block and USB notifications [ver #7]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902125711.GA23462@infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <30969.1567430765.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Mon, 02 Sep 2019 14:26:05 +0100
+Message-ID: <30970.1567430765@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Mon, 02 Sep 2019 13:26:12 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 05:57:11AM -0700, Christoph Hellwig wrote:
-> > +config EROFS_FS_XATTR
-> > +	bool "EROFS extended attributes"
-> > +	depends on EROFS_FS
-> > +	default y
-> > +	help
-> > +	  Extended attributes are name:value pairs associated with inodes by
-> > +	  the kernel or by users (see the attr(5) manual page, or visit
-> > +	  <http://acl.bestbits.at/> for details).
-> > +
-> > +	  If unsure, say N.
-> > +
-> > +config EROFS_FS_POSIX_ACL
-> > +	bool "EROFS Access Control Lists"
-> > +	depends on EROFS_FS_XATTR
-> > +	select FS_POSIX_ACL
-> > +	default y
-> 
-> Is there any good reason to make these optional these days?
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-I objected against adding so many config options, not to say for the
-standard features. The various cache strategies or other implementation
-details have been removed but I agree that making xattr/acl configurable
-is not necessary as well.
+> > Tests for the key/keyring events can be found on the keyutils next branch:
+> >
+> > 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/log/?h=next
+> 
+> I'm having trouble with the "make install" on Fedora. Is there an
+> unusual dependency?
+
+I've pushed a couple of patches to my next branch.  Do "make install" and
+"make rpm" now work for you?
+
+David
