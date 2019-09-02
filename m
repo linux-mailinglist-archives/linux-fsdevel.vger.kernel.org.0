@@ -2,59 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD3A1A5AB3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 17:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4E96A5ABE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 17:46:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbfIBPnC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 11:43:02 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:51844 "EHLO huawei.com"
+        id S1726142AbfIBPqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 11:46:01 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:54408 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725807AbfIBPnC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 11:43:02 -0400
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 539BF47A9E3273CCD727;
-        Mon,  2 Sep 2019 23:22:33 +0800 (CST)
+        id S1725886AbfIBPqA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 11:46:00 -0400
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id 63347F3EFAF56709ABD5;
+        Mon,  2 Sep 2019 23:25:44 +0800 (CST)
 Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 2 Sep 2019 23:22:33 +0800
+ DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 2 Sep 2019 23:25:44 +0800
 Received: from architecture4 (10.140.130.215) by
  dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Mon, 2 Sep 2019 23:22:30 +0800
-Date:   Mon, 2 Sep 2019 23:21:39 +0800
+ 15.1.1591.10; Mon, 2 Sep 2019 23:25:43 +0800
+Date:   Mon, 2 Sep 2019 23:24:52 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Christoph Hellwig <hch@infradead.org>
-CC:     <dsterba@suse.cz>, Chao Yu <chao@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+CC:     Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
+        Chao Yu <yuchao0@huawei.com>,
+        Dave Chinner <david@fromorbit.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Miao Xie <miaoxie@huawei.com>, <devel@driverdev.osuosl.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        Amir Goldstein <amir73il@gmail.com>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Dave Chinner" <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
         Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v8 11/24] erofs: introduce xattr & posixacl support
-Message-ID: <20190902152139.GB179615@architecture4>
-References: <20190815044155.88483-1-gaoxiang25@huawei.com>
- <20190815044155.88483-12-gaoxiang25@huawei.com>
- <20190902125711.GA23462@infradead.org>
- <20190902130644.GT2752@suse.cz>
- <813e1b65-e6ba-631c-6506-f356738c477f@kernel.org>
- <20190902142037.GW2752@twin.jikos.cz>
- <20190902150640.GA23089@infradead.org>
+        Fang Wei <fangwei1@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-erofs@lists.ozlabs.org>
+Subject: Re: [PATCH v6 03/24] erofs: add super block operations
+Message-ID: <20190902152451.GC179615@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-4-gaoxiang25@huawei.com>
+ <20190829101545.GC20598@infradead.org>
+ <20190901085452.GA4663@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190902125109.GA9826@infradead.org>
+ <20190902144303.GF2664@architecture4>
+ <20190902151910.GA14009@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190902150640.GA23089@infradead.org>
+In-Reply-To: <20190902151910.GA14009@infradead.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Originating-IP: [10.140.130.215]
 X-ClientProxiedBy: dggeme710-chm.china.huawei.com (10.1.199.106) To
@@ -67,29 +68,53 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi Christoph,
 
-On Mon, Sep 02, 2019 at 08:06:40AM -0700, Christoph Hellwig wrote:
-> On Mon, Sep 02, 2019 at 04:20:37PM +0200, David Sterba wrote:
-> > Oh right, I think the reasons are historical and that we can remove the
-> > options nowadays. From the compatibility POV this should be safe, with
-> > ACLs compiled out, no tool would use them, and no harm done when the
-> > code is present but not used.
+On Mon, Sep 02, 2019 at 08:19:10AM -0700, Christoph Hellwig wrote:
+> On Mon, Sep 02, 2019 at 10:43:04PM +0800, Gao Xiang wrote:
+> > Hi Christoph,
+> > > > ...
+> > > >  24         __le32 features;        /* (aka. feature_compat) */
+> > > > ...
+> > > >  38         __le32 requirements;    /* (aka. feature_incompat) */
+> > > > ...
+> > > >  41 };
+> > > 
+> > > This is only cosmetic, why not stick to feature_compat and
+> > > feature_incompat?
 > > 
-> > There were some efforts by embedded guys to make parts of kernel more
-> > configurable to allow removing subsystems to reduce the final image
-> > size. In this case I don't think it would make any noticeable
-> > difference, eg. the size of fs/btrfs/acl.o on release config is 1.6KiB,
-> > while the whole module is over 1.3MiB.
+> > Okay, will fix. (however, in my mind, I'm some confused why
+> > "features" could be incompatible...)
 > 
-> Given that the erofs folks have an actual use case for it I think
-> it is fine to keep the options, I just wanted to ensure this wasn't
-> copy and pasted for no good reason.  Note that for XFS we don't have
-> an option for xattrs, as those are integral to a lot of file system
-> features.  WE have an ACL option mostly for historic reasons.
+> The feature is incompatible if it requires changes to the driver.
+> An easy to understand historic example is that ext3 originally did not
+> have the file types in the directory entry.  Adding them means old
+> file system drivers can not read a file system with this new feature,
+> so an incompat flag has to be added.
 
-Add a word, xattr is necessary for Android, but ACL is not.
-I'm fine with killing these two, but EROFS can be used in
-more wider embedded scenerios (other than Android), I have
-no idea xattrs is useful for those embedded devices...
+Got it.
+
+> 
+> > > > > > +	memcpy(&sb->s_uuid, layout->uuid, sizeof(layout->uuid));
+> > > > > > +	memcpy(sbi->volume_name, layout->volume_name,
+> > > > > > +	       sizeof(layout->volume_name));
+> > > > > 
+> > > > > s_uuid should preferably be a uuid_t (assuming it is a real BE uuid,
+> > > > > if it is le it should be a guid_t).
+> > > > 
+> > > > For this case, I have no idea how to deal with...
+> > > > I have little knowledge about this uuid stuff, so I just copied
+> > > > from f2fs... (Could be no urgent of this field...)
+> > > 
+> > > Who fills out this field in the on-disk format and how?
+> > 
+> > mkfs.erofs, but this field leaves 0 for now. Is that reasonable?
+> > (using libuuid can generate it easily...)
+> 
+> If the filed is always zero for now please don't fill it out.  If you
+> decide it is worth adding the uuid eventually please add a compat
+> feature flag that you have a valid uuid and only fill out the field
+> if the file system actualy has a valid uuid.
+
+Okay. Will do that then (as a note here).
 
 Thanks,
 Gao Xiang
