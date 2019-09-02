@@ -2,57 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20158A5BE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 19:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65800A5BE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 19:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbfIBRmU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 13:42:20 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:39881 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725988AbfIBRmT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 13:42:19 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 67523630;
-        Mon,  2 Sep 2019 13:42:18 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 02 Sep 2019 13:42:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=BLQf3tO97Wi14x6M3GhiSwqq4qL
-        qM/J8Uzc11uP9n8Q=; b=VSVLV5iV+BBpZ/84KJ7tAAlbdEvI5sZpIY1V2HYk0j8
-        Vcr34J+NEvNcwX4ro8ZbYtnOCVXcmKM6lbpYZHWl0hk0sSV9hUjlpC1N+q6dcc/T
-        kmYbCwu1KnVhvu0v3d2eU59TYOyO3K2LC/tSJhUAqLAvmh0LMEsH6txVMoT7EIrx
-        n5gG4sp//GohCHRdyGbvDmBeBWAjbEZ+MqtYmDnu5O86VKPz9qMk5tKqDOq/d7Cr
-        3POwhxBgNxvBPfW7UQYDUTNu3JlgKCyvAe/y1QucBEeF7sEPJnPTECzoeWtWIKQW
-        mTxVVuUIgrA6yOSnslztlvkTG44V/JTnX24fQEXNclg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=BLQf3t
-        O97Wi14x6M3GhiSwqq4qLqM/J8Uzc11uP9n8Q=; b=ozWWgYiWZDQ7UswvnEfEFg
-        M//l0QJTTRy66pgE5yXgKnbwiaUN2isut/Tsd4hiEfWw3y44YfNfJYrBPHDJtXZ2
-        ciHBXepE6lPSwjdv+zG0Y3TwUOtMsR2HDZxknLPyuWfnL1mM+BZBmo6+usafVUwi
-        MXoYpwfZoPH3AC3Phosy4edwJ2sr5ijZ7FtDL5ZrqS9a0/mV/iOwYFCQQkAJJh8d
-        NhwxsiekdCyWgtUgyHdgPBW7ni1JoBG1Tfw5vIdI70MbvIVThSdwBFVO/55TtXEY
-        kAcTOk5yF36/QZ3qgDm9z2OUBE+oYZ2CRmxtbfL47zPh1UCUzNhAXNHRyfmG79xQ
-        ==
-X-ME-Sender: <xms:eFRtXT4gU8lTHmJ7EEhJjqkRxdLIM_xm5GLTD6PPMMa-qLSGjTKuRA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudejtddgudduiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
-    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrd
-    dutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:eFRtXbWaDVbPGq2qMIjbQFpOY1v1qBi7Kj9C9A72-Zjn4Z-FZuCVDw>
-    <xmx:eFRtXYJe2n4tPz5dXIfqdmnsCFZggnim5mxA2tGB8iO5LYh6Jv9abw>
-    <xmx:eFRtXTT6oYZ1n77v7ISBhvdAa0MEgcHD52JqiAJG5qFwOUcuZUl7Jg>
-    <xmx:elRtXXd2SqfiQSx6UJZFTla7j8U4mqsRSAed0_gKoeQmaCPqjG3_Cw>
+        id S1726653AbfIBRqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 13:46:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbfIBRqf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 13:46:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 334A4D60062;
-        Mon,  2 Sep 2019 13:42:16 -0400 (EDT)
-Date:   Mon, 2 Sep 2019 19:42:14 +0200
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 990A8208E4;
+        Mon,  2 Sep 2019 17:46:33 +0000 (UTC)
+Date:   Mon, 2 Sep 2019 19:46:31 +0200
 From:   Greg KH <greg@kroah.com>
 To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
@@ -62,7 +26,7 @@ Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>
 Subject: Re: linux-next: Tree for Sep 2 (exfat)
-Message-ID: <20190902174214.GA31445@kroah.com>
+Message-ID: <20190902174631.GB31445@kroah.com>
 References: <20190902224310.208575dc@canb.auug.org.au>
  <cecc2af6-7ef6-29f6-569e-b591365e45ad@infradead.org>
 MIME-Version: 1.0
@@ -92,6 +56,43 @@ On Mon, Sep 02, 2019 at 10:39:39AM -0700, Randy Dunlap wrote:
 > 	depends on BLOCK
 > ?
 
-Yes it should, sorry, will go fix that up now...
+Here's what I committed to my tree:
 
-greg k-h
+
+From e2b880d3d1afaa5cad108c29be3e307b1917d195 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Mon, 2 Sep 2019 19:45:06 +0200
+Subject: staging: exfat: make exfat depend on BLOCK
+
+This should fix a build error in some configurations when CONFIG_BLOCK
+is not selected.  Also properly set the dependancy for no FAT support at
+the same time.
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/staging/exfat/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/staging/exfat/Kconfig b/drivers/staging/exfat/Kconfig
+index f52129c67f97..290dbfc7ace1 100644
+--- a/drivers/staging/exfat/Kconfig
++++ b/drivers/staging/exfat/Kconfig
+@@ -1,11 +1,13 @@
+ config EXFAT_FS
+ 	tristate "exFAT fs support"
++	depends on BLOCK
+ 	select NLS
+ 	help
+ 	  This adds support for the exFAT file system.
+ 
+ config EXFAT_DONT_MOUNT_VFAT
+ 	bool "Prohibit mounting of fat/vfat filesysems by exFAT"
++	depends on EXFAT_FS
+ 	default y
+ 	help
+ 	  By default, the exFAT driver will only mount exFAT filesystems, and refuse
+-- 
+2.23.0
+
