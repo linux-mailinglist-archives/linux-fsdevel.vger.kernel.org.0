@@ -2,91 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 055BDA518A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 10:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E57FA5201
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 10:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbfIBI07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 04:26:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53910 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729382AbfIBI06 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:26:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EF187AF0D;
-        Mon,  2 Sep 2019 08:26:56 +0000 (UTC)
-Date:   Mon, 2 Sep 2019 10:26:53 +0200
-From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Breno Leitao <leitao@debian.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Diana Craciun <diana.craciun@nxp.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
+        id S1730151AbfIBIkX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 04:40:23 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39009 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729870AbfIBIkX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:40:23 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 28B04813BA; Mon,  2 Sep 2019 10:40:07 +0200 (CEST)
+Date:   Mon, 2 Sep 2019 10:40:20 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v7 3/6] powerpc/perf: consolidate read_user_stack_32
-Message-ID: <20190902102653.6d477e16@naga>
-In-Reply-To: <877e6rtkhe.fsf@mpe.ellerman.id.au>
-References: <cover.1567198491.git.msuchanek@suse.de>
-        <ea3783a1640b707ef9ce4740562850ef1152829b.1567198491.git.msuchanek@suse.de>
-        <87a7bntkum.fsf@mpe.ellerman.id.au>
-        <877e6rtkhe.fsf@mpe.ellerman.id.au>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
+Message-ID: <20190902084020.GB19557@amd>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-2-gaoxiang25@huawei.com>
+ <20190829095954.GB20598@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
+Content-Disposition: inline
+In-Reply-To: <20190829095954.GB20598@infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 02 Sep 2019 14:01:17 +1000
-Michael Ellerman <mpe@ellerman.id.au> wrote:
 
-> Michael Ellerman <mpe@ellerman.id.au> writes:
-> > Michal Suchanek <msuchanek@suse.de> writes:  
-> ...
-> >> @@ -295,6 +279,12 @@ static inline int current_is_64bit(void)
-> >>  }
-> >>  
-> >>  #else  /* CONFIG_PPC64 */
-> >> +static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
-> >> +{
-> >> +	return 0;
-> >> +}
-> >> +#endif /* CONFIG_PPC64 */  
-> >
-> > Ending the PPC64 else case here, and then restarting it below with an
-> > ifndef means we end up with two parts of the file that define 32-bit
-> > code, with a common chunk in the middle, which I dislike.
-> >
-> > I'd rather you add the empty read_user_stack_slow() in the existing
-> > #else section and then move read_user_stack_32() below the whole ifdef
-> > PPC64/else/endif section.
-> >
-> > Is there some reason that doesn't work?  
-> 
-> Gah, I missed that you split the whole file later in the series. Any
-> reason you did it in two steps rather than moving patch 6 earlier in the
-> series?
+--NMuMz9nt05w80d4+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-To make this patch readable.
+Hi!
 
-Thanks
+> > +struct erofs_super_block {
+> > +/*  0 */__le32 magic;           /* in the little endian */
+> > +/*  4 */__le32 checksum;        /* crc32c(super_block) */
+> > +/*  8 */__le32 features;        /* (aka. feature_compat) */
+> > +/* 12 */__u8 blkszbits;         /* support block_size =3D=3D PAGE_SIZE=
+ only */
+>=20
+> Please remove all the byte offset comments.  That is something that can
+> easily be checked with gdb or pahole.
 
-Michal
+I don't think I agree. gdb will tell you byte offsets _on one
+architecture_. But filesystem is supposed to be portable between them.=20
+
+> > +/* 64 */__u8 volume_name[16];   /* volume name */
+> > +/* 80 */__le32 requirements;    /* (aka. feature_incompat) */
+> > +
+> > +/* 84 */__u8 reserved2[44];
+> > +} __packed;                     /* 128 bytes */
+>=20
+> Please don't add __packed.  In this case I think you don't need it
+> (but double check with pahole), but even if you would need it using
+> proper padding fields and making sure all fields are naturally aligned
+> will give you much better code generation on architectures that don't
+> support native unaligned access.
+
+This is on-disk structure, right?
+
+drivers/staging/erofs/super.c:	struct erofs_super_block *layout;
+drivers/staging/erofs/super.c:	layout =3D (struct erofs_super_block
+*)((u8 *)bh->b_data
+
+So __packed is right thing to do. If architecture accesses that
+slowly, that's ungood, but different structures between architectures
+would be really bad.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--NMuMz9nt05w80d4+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1s1XQACgkQMOfwapXb+vK1qgCeMhRodxdCMHktGBYzM6YZ0upo
+P8IAnRXsAoM5UyuAx4MPbJJVq8NtKIG8
+=L04e
+-----END PGP SIGNATURE-----
+
+--NMuMz9nt05w80d4+--
