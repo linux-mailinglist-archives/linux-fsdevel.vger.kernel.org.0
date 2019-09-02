@@ -2,73 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 409D2A5004
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 09:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 055BDA518A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 10:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729669AbfIBHiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 03:38:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39236 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729371AbfIBHiL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 03:38:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vsHiWU/4ZPU2tbVPI9rb4pxa+QdD8xZBTuST3h8mTdg=; b=BN3iSfPlTiY4WHZU3B40JcynXk
-        62lMMna7KOeFVGs2Cxp4qgVDzy0YHdmoDwwWJFl7pyzAb1NM8f1BJtnxfm3cgVxeK2XqUUGb6mb9e
-        yh07JrgQrpVusvB47SvIhV4FDGDBong6D1sHv3EtjFutIw8h46tGNSeei30o+/cx+fpmswfnRJ4ly
-        Ank96Cer5yn0cMRjj6LYFelRK23g7FFJBUyrzIkd6pPC+cawbH/t4NerbWN9jZdr3LgPLNOjManfw
-        fn279X5jf55iurjg780IWh/QCRTmcRa1B4FZgkcs/EgeJbSP4hR5NbOM5TliU4858fNmyJ5KoTlyi
-        CJNnQ49A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i4guZ-0008K2-CB; Mon, 02 Sep 2019 07:38:03 +0000
-Date:   Mon, 2 Sep 2019 00:38:03 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
+        id S1729636AbfIBI07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 04:26:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53910 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729382AbfIBI06 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:26:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EF187AF0D;
+        Mon,  2 Sep 2019 08:26:56 +0000 (UTC)
+Date:   Mon, 2 Sep 2019 10:26:53 +0200
+From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Breno Leitao <leitao@debian.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Diana Craciun <diana.craciun@nxp.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/staging/exfat - by default, prohibit mount of
- fat/vfat
-Message-ID: <20190902073803.GB18988@infradead.org>
-References: <245727.1567183359@turing-police>
- <20190830164503.GA12978@infradead.org>
- <267691.1567212516@turing-police>
- <20190831064616.GA13286@infradead.org>
- <295233.1567247121@turing-police>
- <20190901010721.GG7777@dread.disaster.area>
- <339527.1567309047@turing-police>
- <20190901224329.GH7777@dread.disaster.area>
- <389078.1567379634@turing-police>
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v7 3/6] powerpc/perf: consolidate read_user_stack_32
+Message-ID: <20190902102653.6d477e16@naga>
+In-Reply-To: <877e6rtkhe.fsf@mpe.ellerman.id.au>
+References: <cover.1567198491.git.msuchanek@suse.de>
+        <ea3783a1640b707ef9ce4740562850ef1152829b.1567198491.git.msuchanek@suse.de>
+        <87a7bntkum.fsf@mpe.ellerman.id.au>
+        <877e6rtkhe.fsf@mpe.ellerman.id.au>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <389078.1567379634@turing-police>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 01, 2019 at 07:13:54PM -0400, Valdis Klētnieks wrote:
-> Any recommendations on how to approach that?   Clone the current fs/fat code
-> and develop on top of that, or create a branch of it and on occasion do the
-> merging needed to track further fs/fat development?
-> 
-> Mostly asking for workflow suggestions - what's known to work well for this
-> sort of situation, where we know we won't be merging until we have several
-> thousand lines of new code?  And any "don't do <this> or you'll regret it
-> later" advice is also appreciated. :)
+On Mon, 02 Sep 2019 14:01:17 +1000
+Michael Ellerman <mpe@ellerman.id.au> wrote:
 
-Just try to hack it in in your local tree and see if it works at all.
-Normally you should have a feeling of where this is heading at this
-point and start iterating.  One it looks somewhat presentable send it
-out to the list and ask for comments.
+> Michael Ellerman <mpe@ellerman.id.au> writes:
+> > Michal Suchanek <msuchanek@suse.de> writes:  
+> ...
+> >> @@ -295,6 +279,12 @@ static inline int current_is_64bit(void)
+> >>  }
+> >>  
+> >>  #else  /* CONFIG_PPC64 */
+> >> +static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
+> >> +{
+> >> +	return 0;
+> >> +}
+> >> +#endif /* CONFIG_PPC64 */  
+> >
+> > Ending the PPC64 else case here, and then restarting it below with an
+> > ifndef means we end up with two parts of the file that define 32-bit
+> > code, with a common chunk in the middle, which I dislike.
+> >
+> > I'd rather you add the empty read_user_stack_slow() in the existing
+> > #else section and then move read_user_stack_32() below the whole ifdef
+> > PPC64/else/endif section.
+> >
+> > Is there some reason that doesn't work?  
+> 
+> Gah, I missed that you split the whole file later in the series. Any
+> reason you did it in two steps rather than moving patch 6 earlier in the
+> series?
+
+To make this patch readable.
+
+Thanks
+
+Michal
