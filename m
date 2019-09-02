@@ -2,63 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B6C8A5BC6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 19:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1884EA5BDC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 19:39:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfIBRSF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 13:18:05 -0400
-Received: from verein.lst.de ([213.95.11.211]:51712 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbfIBRSF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 13:18:05 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D715968AFE; Mon,  2 Sep 2019 19:18:00 +0200 (CEST)
-Date:   Mon, 2 Sep 2019 19:18:00 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        david@fromorbit.com, riteshh@linux.ibm.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 01/15] iomap: Introduce CONFIG_FS_IOMAP_DEBUG
-Message-ID: <20190902171800.GA7201@lst.de>
-References: <20190901200836.14959-1-rgoldwyn@suse.de> <20190901200836.14959-2-rgoldwyn@suse.de> <20190902162934.GA6263@lst.de> <20190902170916.GE568270@magnolia>
+        id S1726620AbfIBRjl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 13:39:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51242 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfIBRjl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 13:39:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hEGWoA2tYnse4FOhsxlEH/jFHn84yJrgUujZ+4IiIa0=; b=SGnGV0+pbDM5rhHxiPkQ4xpwq
+        x1hSrK8wB/eqxQj3w8PwB2x4+zvIj6JAHzC+MizEH1JZoXlBabDFBRikErFoxpY+2tFaqzqyZxCb7
+        zshjdYup4vA0RmXnCa+RP/n2e7uT3KgxbWASVCh4pYb9Y3W+dZlIAkVCkCkJMPZ39uRtU24LuyrPr
+        uKv77MJGwrZ9gHUYW3bggdXVm69N9NSDZS6EIxtpHmZ8ge9WW99zy6Azz1FdaUJXeFfLVcH1p94fw
+        MTym2Yo6Tk26Cv5APe8XiGV4gtZYylywthwojnHyPQzlDd8gA9Q85UPLZBAu9oSaKOUqIgyv5uALy
+        fq5BSxPWw==;
+Received: from [2601:1c0:6200:6e8::4f71]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i4qIm-0004GB-Di; Mon, 02 Sep 2019 17:39:40 +0000
+Subject: Re: linux-next: Tree for Sep 2 (exfat)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <20190902224310.208575dc@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <cecc2af6-7ef6-29f6-569e-b591365e45ad@infradead.org>
+Date:   Mon, 2 Sep 2019 10:39:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902170916.GE568270@magnolia>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190902224310.208575dc@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 10:09:16AM -0700, Darrick J. Wong wrote:
-> On Mon, Sep 02, 2019 at 06:29:34PM +0200, Christoph Hellwig wrote:
-> > On Sun, Sep 01, 2019 at 03:08:22PM -0500, Goldwyn Rodrigues wrote:
-> > > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > 
-> > > To improve debugging abilities, especially invalid option
-> > > asserts.
-> > 
-> > Looking at the code I'd much rather have unconditional WARN_ON_ONCE
-> > statements in most places.  Including returning an error when we see
-> > something invalid in most cases.
+On 9/2/19 5:43 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Yeah, I was thinking something like this, which has the advantage that
-> the report format is familiar to XFS developers and will get picked up
-> by the automated error collection stuff I put in xfstests to complain
-> about any XFS assertion failures:
+> News: I will only be doing 2 more releases before I leave for Kernel
+> Summit (there may be some reports on Thursday, but I doubt I will have
+> time to finish the full release) and then no more until Sept 30.
 > 
-> iomap: Introduce CONFIG_FS_IOMAP_DEBUG
+> Changes since 20190830:
 > 
-> To improve debugging abilities, especially invalid option
-> asserts.
 
-I'd actually just rather have more unconditional WARN_ON_ONCE calls,
-including actually recovering from the situation by return an actual
-error code.  That is more
+Hi,
+I am seeing lots of exfat build errors when CONFIG_BLOCK is not set/enabled.
+Maybe its Kconfig should also say
+	depends on BLOCK
+?
 
-	if (WARN_ON_ONCE(some_impossible_condition))
-		return -EIO;
+-- 
+~Randy
