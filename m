@@ -2,91 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82397A567D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 14:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE89A5683
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 14:45:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729726AbfIBMoM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 08:44:12 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3969 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729690AbfIBMoM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 08:44:12 -0400
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id C88019D5F1F8E04FB1EB;
-        Mon,  2 Sep 2019 20:44:10 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 2 Sep 2019 20:44:10 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Mon, 2 Sep 2019 20:44:10 +0800
-Date:   Mon, 2 Sep 2019 20:43:19 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Gao Xiang <hsiangkao@aol.com>, Chao Yu <yuchao0@huawei.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 20/21] erofs: kill use_vmap module parameter
-Message-ID: <20190902124318.GB17916@architecture4>
+        id S1730106AbfIBMpa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 08:45:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49038 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729571AbfIBMpa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 08:45:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8e5pl/cUyEaSaTIP0gVix4kLe1LPGSDBfLiK5Z6oMK4=; b=ZVUGTMspxfe3xQHunBefXYA5b
+        RRbaGgX6OxaI5bD/kap+hgR/IMcivPmetVVU0OUh7XfX/onX4ou9VeUjDQzoj7QsZuFRnisygmRMR
+        6aSRZqCeGTIR7HBudutdMooyrGcPpR0hkheR6CyDRkG5dnHP0PPWBnPiut+u+ir5xS3zAUTvIKeMp
+        9kadYDIyHlr8crmhMNQf+xk98sFwL/p9FMNGUL465OFDk2tte+kQXPCeD4kLiTtAJCrJKcZsmRYhZ
+        uS4+zLv9VrGHCAGQSoOHn9VVeP/qV/SEF74aqb+LcB7q27YkoFsxkDnZqLUWMBKzyYIaO02PDTHcf
+        rwwT6O0Pw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i4lhx-00028u-J6; Mon, 02 Sep 2019 12:45:21 +0000
+Date:   Mon, 2 Sep 2019 05:45:21 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Gao Xiang <gaoxiang25@huawei.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, devel@driverdev.osuosl.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
+Message-ID: <20190902124521.GA22153@infradead.org>
 References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190901055130.30572-1-hsiangkao@aol.com>
- <20190901055130.30572-21-hsiangkao@aol.com>
- <20190902123124.GR15931@infradead.org>
+ <20190802125347.166018-2-gaoxiang25@huawei.com>
+ <20190829095954.GB20598@infradead.org>
+ <20190901075240.GA2938@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190902123124.GR15931@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme711-chm.china.huawei.com (10.1.199.107) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190901075240.GA2938@hsiangkao-HP-ZHAN-66-Pro-G1>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christoph,
-
-On Mon, Sep 02, 2019 at 05:31:24AM -0700, Christoph Hellwig wrote:
-> > @@ -224,9 +220,6 @@ static void *erofs_vmap(struct page **pages, unsigned int count)
-> >  {
-> >  	int i = 0;
-> >  
-> > -	if (use_vmap)
-> > -		return vmap(pages, count, VM_MAP, PAGE_KERNEL);
-> > -
-> >  	while (1) {
-> >  		void *addr = vm_map_ram(pages, count, -1, PAGE_KERNEL);
+On Sun, Sep 01, 2019 at 03:54:11PM +0800, Gao Xiang wrote:
+> It could be better has a name though, because 1) erofs.mkfs uses this
+> definition explicitly, and we keep this on-disk definition erofs_fs.h
+> file up with erofs-utils.
 > 
-> I think you can just open code this in the caller.
-
-Yes, the only one user... will fix...
-
+> 2) For kernel use, first we have,
+>    datamode < EROFS_INODE_LAYOUT_MAX; and
+>    !erofs_inode_is_data_compressed, so there are only two mode here,
+>         1) EROFS_INODE_FLAT_INLINE,
+>         2) EROFS_INODE_FLAT_PLAIN
+>    if its datamode isn't EROFS_INODE_FLAT_INLINE (tail-end block packing),
+>    it should be EROFS_INODE_FLAT_PLAIN.
 > 
-> >  static void erofs_vunmap(const void *mem, unsigned int count)
-> >  {
-> > -	if (!use_vmap)
-> > -		vm_unmap_ram(mem, count);
-> > -	else
-> > -		vunmap(mem);
-> > +	vm_unmap_ram(mem, count);
-> >  }
+>    The detailed logic in erofs_read_inode and
+>    erofs_map_blocks_flatmode....
+
+Ok.  At least the explicit numbering makes this a little more obvious
+now.  What seems fairly odd is that there are only various places that
+check for some inode layouts/formats but nothing that does a switch
+over all of them.
+
+> > why are we adding a legacy field to a brand new file system?
 > 
-> And this wrapper can go away entirely.
+> The difference is just EROFS_INODE_FLAT_COMPRESSION_LEGACY doesn't
+> have z_erofs_map_header, so it only supports default (4k clustersize)
+> fixed-sized output compression rather than per-file setting, nothing
+> special at all...
 
-Got it. will fix.
+It still seems odd to add a legacy field to a brand new file system.
 
+> > structures, as that keeps it clear in everyones mind what needs to
+> > stay persistent and what can be chenged easily.
 > 
-> And don't forget to report your performance observations to the arm64
-> maintainers!
+> All fields in this file are on-disk representation by design
+> (no logic for in-memory presentation).
 
-In my observation, vm_map_ram always performs better...
-If there are something strange later, I will report to them
-immediately... :)
+Ok, make sense.    Maybe add a note to the top of the file comment
+that this is the on-disk format.
 
-Thanks,
-Gao Xiang
-
+One little oddity is that erofs_inode_is_data_compressed is here, while
+is_inode_flat_inline is in internal.h.  There are arguments for either
+place, but I'd suggest to keep the related macros together.
