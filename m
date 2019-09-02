@@ -2,221 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF750A4ECC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 07:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF7CAA4F5E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 08:50:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729537AbfIBFVs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 01:21:48 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41727 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729335AbfIBFVq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 01:21:46 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b13so1705404pfo.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Sep 2019 22:21:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hev-cc.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WNHOWN+0Coztu38fB5yaHQpPDHparb+VQPnzTlZJ0JE=;
-        b=qGL5ZUYGDLtShp6IGgeoveuGqiflKyRIhYWTwSBVGkQ43dxoV3iFZnW5QpB5+Hlbz5
-         ICIVLCdmC8l3ZuZX8aGB3liCE2ieHjV6JDw0I79Z3rvqNjUiT/UaMYm8k+i4teCYOSg/
-         lbp9WDH3hamYhncb7TgQhCKbiWZXh7LFKItDjQMUyV/UwUxXTSC+ykctPkZXBumrUmMI
-         K4g3fcZHPqbgtiVqXxextA2WLFxgGz3zhaDYiUzgbqKNcAZus7gnXqyJFC0m131RiG8G
-         6eL2ypB8E5zAh+1ahaEzu4jBmB5FXpWMaWpPENWnxmKtRwNmuvbLEOC/XDEMrxDApxan
-         0NAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WNHOWN+0Coztu38fB5yaHQpPDHparb+VQPnzTlZJ0JE=;
-        b=dGDZTTY3Nov++mm0OESZurJKv60MiTYn3mzwKdQQLznkgsrJkKE/gVKX9F/DYh0Gh0
-         JgpcV3H/Ol/JnjS6w98AEFXAU2+TFGJ2yE2JHgO0elEag0SICZk0schkyUX9//hnU5PL
-         +/CzOY+NoKcER1s/2oUWUmsHQ9IK9IRwymuwRtg8OhCAEwwi0+r7PKhOG7A1Je4JT28a
-         WNTjSCoADfSa7Y89oKjSegk3LxN9fKXphCIOsxBydzySIoR9wYlGM+Th+cB/23wrNib9
-         ebswvKE2FSMvyk5makpHBybqtlXqhtVf+ZxNKwLayncwUOOvFhr3Q/3YIpsyqOqEnAbz
-         rthQ==
-X-Gm-Message-State: APjAAAWesvaLDTrLYUB+wRmxiXmcXVAUUMsypd4CGmE8jYUc1uXNAi8+
-        3/dqS44DegTbWjXiGzlT0KSMIicVmBVqNw==
-X-Google-Smtp-Source: APXvYqzSc8PJTNOasSxVo2SAiBObjLCkzFGQxDy5LaUIXeaU2EEHSvJ7j/aHYhbPwwPar2MHcMsIEg==
-X-Received: by 2002:a65:6458:: with SMTP id s24mr23405467pgv.158.1567401705371;
-        Sun, 01 Sep 2019 22:21:45 -0700 (PDT)
-Received: from hev-sbc.hz.ali.com ([47.89.83.40])
-        by smtp.gmail.com with ESMTPSA id w207sm14636242pff.93.2019.09.01.22.21.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2019 22:21:44 -0700 (PDT)
-From:   hev <r@hev.cc>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     e@80x24.org, Heiher <r@hev.cc>, Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Jason Baron <jbaron@akamai.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] fs/epoll: fix the edge-triggered mode for nested epoll
-Date:   Mon,  2 Sep 2019 13:20:34 +0800
-Message-Id: <20190902052034.16423-1-r@hev.cc>
-X-Mailer: git-send-email 2.23.0
+        id S1729490AbfIBGul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 02:50:41 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6174 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729359AbfIBGul (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 02:50:41 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DADB49B80CFD408005E0;
+        Mon,  2 Sep 2019 14:50:36 +0800 (CST)
+Received: from RH5885H-V3.huawei.com (10.90.53.225) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 2 Sep 2019 14:50:29 +0800
+From:   yangerkun <yangerkun@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <adobriyan@gmail.com>
+CC:     <linux-fsdevel@vger.kernel.org>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>, <houtao1@huawei.com>, <yangerkun@huawei.com>
+Subject: [PATCH V2] proc: fix ubsan warning in mem_lseek
+Date:   Mon, 2 Sep 2019 14:57:06 +0800
+Message-ID: <20190902065706.60754-1-yangerkun@huawei.com>
+X-Mailer: git-send-email 2.9.5
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Heiher <r@hev.cc>
+UBSAN has reported a overflow with mem_lseek. And it's fine with
+mem_open set file mode with FMODE_UNSIGNED_OFFSET(memory_lseek).
+However, another file use mem_lseek do lseek can have not
+FMODE_UNSIGNED_OFFSET(proc_kpagecount_operations/proc_pagemap_operations),
+fix it by checking overflow and FMODE_UNSIGNED_OFFSET.
 
-The structure of event pools:
- efd[1]: { efd[2] (EPOLLIN) }        efd[0]: { efd[2] (EPOLLIN | EPOLLET) }
-               |                                   |
-               +-----------------+-----------------+
-                                 |
-                                 v
-                             efd[2]: { sfd[0] (EPOLLIN) }
+==================================================================
+UBSAN: Undefined behaviour in ../fs/proc/base.c:941:15
+signed integer overflow:
+4611686018427387904 + 4611686018427387904 cannot be represented in type 'long long int'
+CPU: 4 PID: 4762 Comm: syz-executor.1 Not tainted 4.4.189 #3
+Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+Call trace:
+[<ffffff90080a5f28>] dump_backtrace+0x0/0x590 arch/arm64/kernel/traps.c:91
+[<ffffff90080a64f0>] show_stack+0x38/0x60 arch/arm64/kernel/traps.c:234
+[<ffffff9008986a34>] __dump_stack lib/dump_stack.c:15 [inline]
+[<ffffff9008986a34>] dump_stack+0x128/0x184 lib/dump_stack.c:51
+[<ffffff9008a2d120>] ubsan_epilogue+0x34/0x9c lib/ubsan.c:166
+[<ffffff9008a2d8b8>] handle_overflow+0x228/0x280 lib/ubsan.c:197
+[<ffffff9008a2da2c>] __ubsan_handle_add_overflow+0x4c/0x68 lib/ubsan.c:204
+[<ffffff900862b9f4>] mem_lseek+0x12c/0x130 fs/proc/base.c:941
+[<ffffff90084ef78c>] vfs_llseek fs/read_write.c:260 [inline]
+[<ffffff90084ef78c>] SYSC_lseek fs/read_write.c:285 [inline]
+[<ffffff90084ef78c>] SyS_lseek+0x164/0x1f0 fs/read_write.c:276
+[<ffffff9008093c80>] el0_svc_naked+0x30/0x34
+==================================================================
 
-When sfd[0] to be readable:
- * the epoll_wait(efd[0], ..., 0) should return efd[2]'s events on first call,
-   and returns 0 on next calls, because efd[2] is added in edge-triggered mode.
- * the epoll_wait(efd[1], ..., 0) should returns efd[2]'s events on every calls
-   until efd[2] is not readable (epoll_wait(efd[2], ...) => 0), because efd[1]
-   is added in level-triggered mode.
- * the epoll_wait(efd[2], ..., 0) should returns sfd[0]'s events on every calls
-   until sfd[0] is not readable (read(sfd[0], ...) => EAGAIN), because sfd[0]
-   is added in level-triggered mode.
-
-Test code:
- #include <stdio.h>
- #include <unistd.h>
- #include <sys/epoll.h>
- #include <sys/socket.h>
-
- int main(int argc, char *argv[])
- {
- 	int sfd[2];
- 	int efd[3];
- 	int nfds;
- 	struct epoll_event e;
-
- 	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
- 		goto out;
-
- 	efd[0] = epoll_create(1);
- 	if (efd[0] < 0)
- 		goto out;
-
- 	efd[1] = epoll_create(1);
- 	if (efd[1] < 0)
- 		goto out;
-
- 	efd[2] = epoll_create(1);
- 	if (efd[2] < 0)
- 		goto out;
-
- 	e.events = EPOLLIN;
- 	if (epoll_ctl(efd[2], EPOLL_CTL_ADD, sfd[0], &e) < 0)
- 		goto out;
-
- 	e.events = EPOLLIN;
- 	if (epoll_ctl(efd[1], EPOLL_CTL_ADD, efd[2], &e) < 0)
- 		goto out;
-
- 	e.events = EPOLLIN | EPOLLET;
- 	if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[2], &e) < 0)
- 		goto out;
-
- 	if (write(sfd[1], "w", 1) != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[0], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[0], &e, 1, 0);
- 	if (nfds != 0)
- 		goto out;
-
- 	nfds = epoll_wait(efd[1], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[1], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[2], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	nfds = epoll_wait(efd[2], &e, 1, 0);
- 	if (nfds != 1)
- 		goto out;
-
- 	close(efd[2]);
- 	close(efd[1]);
- 	close(efd[0]);
- 	close(sfd[0]);
- 	close(sfd[1]);
-
- 	printf("PASS\n");
- 	return 0;
-
- out:
- 	printf("FAIL\n");
- 	return -1;
- }
-
-Cc: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Davide Libenzi <davidel@xmailserver.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Eric Wong <e@80x24.org>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Roman Penyaev <rpenyaev@suse.de>
-Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: hev <r@hev.cc>
+Signed-off-by: yangerkun <yangerkun@huawei.com>
 ---
- fs/eventpoll.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/proc/base.c     | 32 ++++++++++++++++++++++++--------
+ fs/read_write.c    |  5 -----
+ include/linux/fs.h |  5 +++++
+ 3 files changed, 29 insertions(+), 13 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index d7f1f5011fac..a44cb27c636c 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -672,6 +672,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea950..a6c701b 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -882,18 +882,34 @@ static ssize_t mem_write(struct file *file, const char __user *buf,
+ 
+ loff_t mem_lseek(struct file *file, loff_t offset, int orig)
  {
- 	__poll_t res;
- 	int pwake = 0;
-+	int nwake = 0;
- 	struct epitem *epi, *nepi;
- 	LIST_HEAD(txlist);
- 
-@@ -685,6 +686,9 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
- 	if (!ep_locked)
- 		mutex_lock_nested(&ep->mtx, depth);
- 
-+	if (!depth || list_empty(&ep->rdllist))
-+		nwake = 1;
++	loff_t ret = 0;
 +
- 	/*
- 	 * Steal the ready list, and re-init the original one to the
- 	 * empty list. Also, set ep->ovflist to NULL so that events
-@@ -739,7 +743,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
- 	list_splice(&txlist, &ep->rdllist);
- 	__pm_relax(ep->ws);
++	spin_lock(&file->f_lock);
+ 	switch (orig) {
+-	case 0:
+-		file->f_pos = offset;
+-		break;
+-	case 1:
+-		file->f_pos += offset;
++	case SEEK_CUR:
++		offset += file->f_pos;
++		/* fall through */
++	case SEEK_SET:
++		/* to avoid userland mistaking f_pos=-9 as -EBADF=-9 */
++		if ((unsigned long long)offset >= -MAX_ERRNO)
++			ret = -EOVERFLOW;
+ 		break;
+ 	default:
+-		return -EINVAL;
++		ret = -EINVAL;
++	}
++
++	if (!ret) {
++		if (offset < 0 && !(unsigned_offsets(file))) {
++			ret = -EINVAL;
++		} else {
++			file->f_pos = offset;
++			ret = file->f_pos;
++			force_successful_syscall_return();
++		}
+ 	}
+-	force_successful_syscall_return();
+-	return file->f_pos;
++
++	spin_unlock(&file->f_lock);
++	return ret;
+ }
  
--	if (!list_empty(&ep->rdllist)) {
-+	if (nwake && !list_empty(&ep->rdllist)) {
- 		/*
- 		 * Wake up (if active) both the eventpoll wait list and
- 		 * the ->poll() wait list (delayed after we release the lock).
+ static int mem_release(struct inode *inode, struct file *file)
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5bbf587..961966e 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -34,11 +34,6 @@ const struct file_operations generic_ro_fops = {
+ 
+ EXPORT_SYMBOL(generic_ro_fops);
+ 
+-static inline bool unsigned_offsets(struct file *file)
+-{
+-	return file->f_mode & FMODE_UNSIGNED_OFFSET;
+-}
+-
+ /**
+  * vfs_setpos - update the file offset for lseek
+  * @file:	file structure in question
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 997a530..e5edbc9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3074,6 +3074,11 @@ extern void
+ file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping);
+ extern loff_t noop_llseek(struct file *file, loff_t offset, int whence);
+ extern loff_t no_llseek(struct file *file, loff_t offset, int whence);
++static inline bool unsigned_offsets(struct file *file)
++{
++	return file->f_mode & FMODE_UNSIGNED_OFFSET;
++}
++
+ extern loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize);
+ extern loff_t generic_file_llseek(struct file *file, loff_t offset, int whence);
+ extern loff_t generic_file_llseek_size(struct file *file, loff_t offset,
 -- 
-2.23.0
+2.9.5
 
