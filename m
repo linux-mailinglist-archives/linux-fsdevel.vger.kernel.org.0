@@ -2,105 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E85CEA520C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 10:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BEB6A521C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 10:46:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730330AbfIBInH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 04:43:07 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39534 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729714AbfIBInG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:43:06 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id ACB57809D3; Mon,  2 Sep 2019 10:42:50 +0200 (CEST)
-Date:   Mon, 2 Sep 2019 10:43:03 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     dsterba@suse.cz, Joe Perches <joe@perches.com>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S1730751AbfIBIqk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 04:46:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43326 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729524AbfIBIqj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:46:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3AC9BB674;
+        Mon,  2 Sep 2019 08:46:37 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1EAC21E406C; Mon,  2 Sep 2019 10:46:34 +0200 (CEST)
+Date:   Mon, 2 Sep 2019 10:46:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        David Sterba <dsterba@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Joel Becker <jlbec@evilplan.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
-Message-ID: <20190902084303.GC19557@amd>
-References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-2-gaoxiang25@huawei.com>
- <20190829095954.GB20598@infradead.org>
- <20190829103252.GA64893@architecture4>
- <67d6efbbc9ac6db23215660cb970b7ef29dc0c1d.camel@perches.com>
- <20190830120714.GN2752@twin.jikos.cz>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v3 04/10] tracefs: call fsnotify_{unlink,rmdir}() hooks
+Message-ID: <20190902084634.GB14207@quack2.suse.cz>
+References: <20190526143411.11244-1-amir73il@gmail.com>
+ <20190526143411.11244-5-amir73il@gmail.com>
+ <CAOQ4uxg5e4zJ+GVCXs1X55TTBdNKHVASkA1Q-Xz_pyLnD8UDpA@mail.gmail.com>
+ <20190830154804.1f51bf89@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="lMM8JwqTlfDpEaS6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190830120714.GN2752@twin.jikos.cz>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190830154804.1f51bf89@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri 30-08-19 15:48:04, Steven Rostedt wrote:
+> On Thu, 13 Jun 2019 19:53:25 +0300
+> Amir Goldstein <amir73il@gmail.com> wrote:
+> 
+> > On Sun, May 26, 2019 at 5:34 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > This will allow generating fsnotify delete events after the
+> > > fsnotify_nameremove() hook is removed from d_delete().
+> > >
+> > > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>  
+> > 
+> > Hi Steven,
+> > 
+> > Would you be able to provide an ACK on this patch?
+> > We need to add those explicit fsnotify hooks to match the existing
+> > fsnotify_create/mkdir hooks in tracefs, because
+> > the hook embedded inside d_delete() is going away [1].
+> > 
+> > Thanks,
+> > Amir.
+> > 
+> > [1] https://lore.kernel.org/linux-fsdevel/20190526143411.11244-1-amir73il@gmail.com/
+> > 
+> 
+> Sorry, this got lost in my INBOX. I see it was already merged, but I
+> would have acked it ;-)
 
---lMM8JwqTlfDpEaS6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > > Rather than they didn't run "gdb" or "pahole" and change it by mistak=
-e.
-> >=20
-> > I think Christoph is not right here.
-> >=20
-> > Using external tools for validation is extra work
-> > when necessary for understanding the code.
->=20
-> The advantage of using the external tools that the information about
-> offsets is provably correct ...
-
-No. gdb tells you what the actual offsets _are_.
-
-> > The expected offset is somewhat valuable, but
-> > perhaps the form is a bit off given the visual
-> > run-in to the field types.
-> >=20
-> > The extra work with this form is manipulating all
-> > the offsets whenever a structure change occurs.
->=20
-> ... while this is error prone.
-
-While the comment tells you what they _should be_.
-
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---lMM8JwqTlfDpEaS6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1s1hcACgkQMOfwapXb+vLwegCgmC1y9HxKZu/YFm0T4U+rH5ko
-oJcAni3phOqqriczOS1slpVzLy+HY7Nv
-=pnr4
------END PGP SIGNATURE-----
-
---lMM8JwqTlfDpEaS6--
+Thanks for the dealayed ack. I've used my best judgement and decided that
+you probably would not object when pushing the patch :).
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
