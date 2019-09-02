@@ -2,111 +2,283 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88EB1A5A9E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 17:33:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 309C8A5AA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 17:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbfIBPcz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 11:32:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726245AbfIBPcz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 11:32:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFC302087E;
-        Mon,  2 Sep 2019 15:25:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567437927;
-        bh=3FyOb3NOmdW+LRdn0QHv4m2ODQwf2BoW2WsJbsDPHUs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YO49k8S8nQ/tbOklUjSrjl0gNhWws9QAu6j3zCuwsvbsdanEBHUUFhcshnCaryu4P
-         58s+2PtPXWNvOtqZkudV4cmVvwNAb6jugZQcX5Xq2hkmlu4rJ1kcqFdU3TH/mgeOds
-         lXpGXrx+H9QF4feX4kUa/OyYwhSCczkgzJdmotzo=
-Date:   Mon, 2 Sep 2019 17:25:24 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/staging/exfat - by default, prohibit mount of
- fat/vfat
-Message-ID: <20190902152524.GA4964@kroah.com>
-References: <245727.1567183359@turing-police>
- <20190830164503.GA12978@infradead.org>
- <267691.1567212516@turing-police>
- <20190831064616.GA13286@infradead.org>
- <295233.1567247121@turing-police>
- <20190902073525.GA18988@infradead.org>
+        id S1725821AbfIBPhA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 11:37:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48684 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725806AbfIBPhA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 11:37:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CD57AACC9;
+        Mon,  2 Sep 2019 15:36:57 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190902073525.GA18988@infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 02 Sep 2019 17:36:54 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     hev <r@hev.cc>
+Cc:     linux-fsdevel@vger.kernel.org, e@80x24.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Jason Baron <jbaron@akamai.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sridhar Samudrala <sridhar.samudrala@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] fs/epoll: fix the edge-triggered mode for nested
+ epoll
+In-Reply-To: <20190902052034.16423-1-r@hev.cc>
+References: <20190902052034.16423-1-r@hev.cc>
+Message-ID: <0cdc9905efb9b77b159e09bee17d3ad4@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 12:35:25AM -0700, Christoph Hellwig wrote:
-> On Sat, Aug 31, 2019 at 06:25:21AM -0400, Valdis Klētnieks wrote:
-> > On Fri, 30 Aug 2019 23:46:16 -0700, Christoph Hellwig said:
-> > 
-> > > Since when did Linux kernel submissions become "show me a better patch"
-> > > to reject something obviously bad?
-> > 
-> > Well, do you even have a *suggestion* for a better idea?  Other than "just rip
-> > it out"?  Keeping in mind that:
+Hi,
+
+This is indeed a bug. (quick side note: could you please remove efd[1]
+from your test, because it is not related to the reproduction of a
+current bug).
+
+Your patch lacks a good description, what exactly you've fixed.  Let
+me speak out loud and please correct me if I'm wrong, my understanding
+of epoll internals has become a bit rusty: when epoll fds are nested
+an attempt to harvest events (ep_scan_ready_list() call) produces a
+second (repeated) event from an internal fd up to an external fd:
+
+      epoll_wait(efd[0], ...):
+        ep_send_events():
+           ep_scan_ready_list(depth=0):
+             ep_send_events_proc():
+                 ep_item_poll():
+                   ep_scan_ready_list(depth=1):
+                     ep_poll_safewake():
+                       ep_poll_callback()
+                         list_add_tail(&epi, &epi->rdllist);
+                         ^^^^^^
+                         repeated event
+
+
+In your patch you forbid wakeup for the cases, where depth != 0, i.e.
+for all nested cases. That seems clear.  But what if we can go further
+and remove the whole chunk, which seems excessive:
+
+@@ -885,26 +886,11 @@ static __poll_t ep_scan_ready_list(struct 
+eventpoll *ep,
+
+-
+-       if (!list_empty(&ep->rdllist)) {
+-               /*
+-                * Wake up (if active) both the eventpoll wait list and
+-                * the ->poll() wait list (delayed after we release the 
+lock).
+-                */
+-               if (waitqueue_active(&ep->wq))
+-                       wake_up(&ep->wq);
+-               if (waitqueue_active(&ep->poll_wait))
+-                       pwake++;
+-       }
+         write_unlock_irq(&ep->lock);
+
+         if (!ep_locked)
+                 mutex_unlock(&ep->mtx);
+
+-       /* We have to call this outside the lock */
+-       if (pwake)
+-               ep_poll_safewake(&ep->poll_wait);
+
+
+I reason like that: by the time we've reached the point of scanning 
+events
+for readiness all wakeups from ep_poll_callback have been already fired 
+and
+new events have been already accounted in ready list (ep_poll_callback() 
+calls
+the same ep_poll_safewake()). Here, frankly, I'm not 100% sure and 
+probably
+missing some corner cases.
+
+Thoughts?
+
+PS.  You call list_empty(&ep->rdllist) without ep->lock taken, that is 
+fine,
+      but you should be _careful_, so list_empty_careful(&ep->rdllist) 
+call
+      instead.
+
+--
+Roman
+
+
+
+On 2019-09-02 07:20, hev wrote:
+> From: Heiher <r@hev.cc>
 > 
-> The right approach in my opinion is to start submitting patches to fs/fat
-> to add exfat support.  But more importantly it is to first coordinate
-> with other stakeholder most importantly the fs/fat/ maintainer and the
-> dosfstools maintainers as our local experts for fat-like file systems
-> instead of shooting from the hip.
-
-I dug up my old discussion with the current vfat maintainer and he said
-something to the affect of, "leave the existing code alone, make a new
-filesystem, I don't want anything to do with exfat".
-
-And I don't blame them, vfat is fine as-is and stable and shouldn't be
-touched for new things.
-
-We can keep non-vfat filesystems from being mounted with the exfat
-codebase, and make things simpler for everyone involved.
-
-> > Now, if what you want is "Please make it so the fat16/fat32 code is in separate
-> > files that aren't built unless requested", that's in fact doable and a
-> > reasonable request, and one that both doesn't conflict with anything other
-> > directions we might want to go, and also prepares the code for more easy
-> > separation if it's decided we really do want an exfat-only module.
+> The structure of event pools:
+>  efd[1]: { efd[2] (EPOLLIN) }        efd[0]: { efd[2] (EPOLLIN | 
+> EPOLLET) }
+>                |                                   |
+>                +-----------------+-----------------+
+>                                  |
+>                                  v
+>                              efd[2]: { sfd[0] (EPOLLIN) }
 > 
-> No.  Assuming we even want the current codebase (which only you and
-> Greg seem to think so), that fat16/32 code simply has to go.
+> When sfd[0] to be readable:
+>  * the epoll_wait(efd[0], ..., 0) should return efd[2]'s events on 
+> first call,
+>    and returns 0 on next calls, because efd[2] is added in 
+> edge-triggered mode.
+>  * the epoll_wait(efd[1], ..., 0) should returns efd[2]'s events on 
+> every calls
+>    until efd[2] is not readable (epoll_wait(efd[2], ...) => 0), because 
+> efd[1]
+>    is added in level-triggered mode.
+>  * the epoll_wait(efd[2], ..., 0) should returns sfd[0]'s events on 
+> every calls
+>    until sfd[0] is not readable (read(sfd[0], ...) => EAGAIN), because 
+> sfd[0]
+>    is added in level-triggered mode.
+> 
+> Test code:
+>  #include <stdio.h>
+>  #include <unistd.h>
+>  #include <sys/epoll.h>
+>  #include <sys/socket.h>
+> 
+>  int main(int argc, char *argv[])
+>  {
+>  	int sfd[2];
+>  	int efd[3];
+>  	int nfds;
+>  	struct epoll_event e;
+> 
+>  	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
+>  		goto out;
+> 
+>  	efd[0] = epoll_create(1);
+>  	if (efd[0] < 0)
+>  		goto out;
+> 
+>  	efd[1] = epoll_create(1);
+>  	if (efd[1] < 0)
+>  		goto out;
+> 
+>  	efd[2] = epoll_create(1);
+>  	if (efd[2] < 0)
+>  		goto out;
+> 
+>  	e.events = EPOLLIN;
+>  	if (epoll_ctl(efd[2], EPOLL_CTL_ADD, sfd[0], &e) < 0)
+>  		goto out;
+> 
+>  	e.events = EPOLLIN;
+>  	if (epoll_ctl(efd[1], EPOLL_CTL_ADD, efd[2], &e) < 0)
+>  		goto out;
+> 
+>  	e.events = EPOLLIN | EPOLLET;
+>  	if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[2], &e) < 0)
+>  		goto out;
+> 
+>  	if (write(sfd[1], "w", 1) != 1)
+>  		goto out;
+> 
+>  	nfds = epoll_wait(efd[0], &e, 1, 0);
+>  	if (nfds != 1)
+>  		goto out;
+> 
+>  	nfds = epoll_wait(efd[0], &e, 1, 0);
+>  	if (nfds != 0)
+>  		goto out;
+> 
+>  	nfds = epoll_wait(efd[1], &e, 1, 0);
+>  	if (nfds != 1)
+>  		goto out;
+> 
+>  	nfds = epoll_wait(efd[1], &e, 1, 0);
+>  	if (nfds != 1)
+>  		goto out;
+> 
+>  	nfds = epoll_wait(efd[2], &e, 1, 0);
+>  	if (nfds != 1)
+>  		goto out;
+> 
+>  	nfds = epoll_wait(efd[2], &e, 1, 0);
+>  	if (nfds != 1)
+>  		goto out;
+> 
+>  	close(efd[2]);
+>  	close(efd[1]);
+>  	close(efd[0]);
+>  	close(sfd[0]);
+>  	close(sfd[1]);
+> 
+>  	printf("PASS\n");
+>  	return 0;
+> 
+>  out:
+>  	printf("FAIL\n");
+>  	return -1;
+>  }
+> 
+> Cc: Al Viro <viro@ZenIV.linux.org.uk>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Davide Libenzi <davidel@xmailserver.org>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Eric Wong <e@80x24.org>
+> Cc: Jason Baron <jbaron@akamai.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Roman Penyaev <rpenyaev@suse.de>
+> Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: hev <r@hev.cc>
+> ---
+>  fs/eventpoll.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index d7f1f5011fac..a44cb27c636c 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -672,6 +672,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll 
+> *ep,
+>  {
+>  	__poll_t res;
+>  	int pwake = 0;
+> +	int nwake = 0;
+>  	struct epitem *epi, *nepi;
+>  	LIST_HEAD(txlist);
+> 
+> @@ -685,6 +686,9 @@ static __poll_t ep_scan_ready_list(struct eventpoll 
+> *ep,
+>  	if (!ep_locked)
+>  		mutex_lock_nested(&ep->mtx, depth);
+> 
+> +	if (!depth || list_empty(&ep->rdllist))
+> +		nwake = 1;
+> +
+>  	/*
+>  	 * Steal the ready list, and re-init the original one to the
+>  	 * empty list. Also, set ep->ovflist to NULL so that events
+> @@ -739,7 +743,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll 
+> *ep,
+>  	list_splice(&txlist, &ep->rdllist);
+>  	__pm_relax(ep->ws);
+> 
+> -	if (!list_empty(&ep->rdllist)) {
+> +	if (nwake && !list_empty(&ep->rdllist)) {
+>  		/*
+>  		 * Wake up (if active) both the eventpoll wait list and
+>  		 * the ->poll() wait list (delayed after we release the lock).
 
-I don't think it should stay in there, let's drop it from the exfat
-code.
-
-As for the other issues discussed here in this thread:
-  - yes, putting a filesystem in staging is extra work overall, but for
-    projects that want to do that extra work, wonderful, do it here in a
-    common place for everyone to work on together.
-  - working on in a common place is what we need for exfat right now,
-    as there are 40+ different github forks and no one knows which one
-    is "correct" or most up to date.  We needed to decide on "one" and
-    here it is, the in-tree one.
-  - for vfs developers who don't want to even look at the crud in
-    staging (remember, it's TAINT_CRAP if you load code from here),
-    don't.  Just keep on your own normal development cycles and if you
-    break any staging code, it's fine, I will fix it up no complaints at
-    all.
-  - staging code is for crappy code to get fixed up.  If it isn't
-    constantly updated, it will be dropped.  Yes, there is code in there
-    that probably should be dropped now as I haven't done a sweep in a
-    few years, suggestions always welcome.  There is also code that
-    needs to be moved out with just a bit more work needed (greybus,
-    comedi, speakup, etc.)  Some of that is underway right now.
-
-thanks,
-
-greg k-h
