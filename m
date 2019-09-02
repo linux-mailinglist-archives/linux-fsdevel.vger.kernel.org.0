@@ -2,152 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 449F2A59AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 16:45:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D1A8A5A27
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Sep 2019 17:06:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731658AbfIBOoM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 10:44:12 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:4405 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726382AbfIBOoL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 10:44:11 -0400
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 58F3A420F300ACFA4260;
-        Mon,  2 Sep 2019 22:43:56 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 2 Sep 2019 22:43:55 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Mon, 2 Sep 2019 22:43:55 +0800
-Date:   Mon, 2 Sep 2019 22:43:04 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
-        Chao Yu <yuchao0@huawei.com>,
-        Dave Chinner <david@fromorbit.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
+        id S1731801AbfIBPGp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 11:06:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34568 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731307AbfIBPGp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 11:06:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nNUDDXya3h8hqFlB3tiL0TsifnVLRoZdKphNekPMo0s=; b=tLPkucC5rxvW7BgJAmnNzExc4
+        jCapxosKXIHpknqAkYvSi3cp2jeockOD66WW1kwhnydi/5iiDzv08sSwt+y2+Te0GRAnFNTy5l4Nn
+        bPRW62bal2Azk1tepSwDyWTTcx0rhUPPD92aUfB6GZjINZamiP9k0jXlDPCfI5FAg7JOwFrHEN8h0
+        bn2WgpiHzivlJGyNW0s9cDfix4/jZnjEGr6nvQiGOpklSkdIAvVIFbwRm2zxWMCzzLkNvGikY+fgE
+        dZOMVOMeExieYAnXWniEGIiwbWQKYVYc1Uis0znCdI4FAJClNgNqLYMH7kk561bAMgM+SEUO6meMX
+        2iMABbwFg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i4nui-0007SA-OE; Mon, 02 Sep 2019 15:06:40 +0000
+Date:   Mon, 2 Sep 2019 08:06:40 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     dsterba@suse.cz, Chao Yu <chao@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-fsdevel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        <linux-erofs@lists.ozlabs.org>
-Subject: Re: [PATCH v6 03/24] erofs: add super block operations
-Message-ID: <20190902144303.GF2664@architecture4>
-References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-4-gaoxiang25@huawei.com>
- <20190829101545.GC20598@infradead.org>
- <20190901085452.GA4663@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190902125109.GA9826@infradead.org>
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v8 11/24] erofs: introduce xattr & posixacl support
+Message-ID: <20190902150640.GA23089@infradead.org>
+References: <20190815044155.88483-1-gaoxiang25@huawei.com>
+ <20190815044155.88483-12-gaoxiang25@huawei.com>
+ <20190902125711.GA23462@infradead.org>
+ <20190902130644.GT2752@suse.cz>
+ <813e1b65-e6ba-631c-6506-f356738c477f@kernel.org>
+ <20190902142037.GW2752@twin.jikos.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190902125109.GA9826@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme706-chm.china.huawei.com (10.1.199.102) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190902142037.GW2752@twin.jikos.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christoph,
-
-On Mon, Sep 02, 2019 at 05:51:09AM -0700, Christoph Hellwig wrote:
-> On Sun, Sep 01, 2019 at 04:54:55PM +0800, Gao Xiang wrote:
-> > No modification at this... (some comments already right here...)
+On Mon, Sep 02, 2019 at 04:20:37PM +0200, David Sterba wrote:
+> Oh right, I think the reasons are historical and that we can remove the
+> options nowadays. From the compatibility POV this should be safe, with
+> ACLs compiled out, no tool would use them, and no harm done when the
+> code is present but not used.
 > 
-> >  20 /* 128-byte erofs on-disk super block */
-> >  21 struct erofs_super_block {
-> > ...
-> >  24         __le32 features;        /* (aka. feature_compat) */
-> > ...
-> >  38         __le32 requirements;    /* (aka. feature_incompat) */
-> > ...
-> >  41 };
-> 
-> This is only cosmetic, why not stick to feature_compat and
-> feature_incompat?
+> There were some efforts by embedded guys to make parts of kernel more
+> configurable to allow removing subsystems to reduce the final image
+> size. In this case I don't think it would make any noticeable
+> difference, eg. the size of fs/btrfs/acl.o on release config is 1.6KiB,
+> while the whole module is over 1.3MiB.
 
-Okay, will fix. (however, in my mind, I'm some confused why
-"features" could be incompatible...)
-
-> 
-> > > > +	bh = sb_bread(sb, 0);
-> > > 
-> > > Is there any good reasons to use buffer heads like this in new code
-> > > vs directly using bios?
-> > 
-> > As you said, I want it in the page cache.
-> > 
-> > The reason "why not use read_mapping_page or similar?" is simply
-> > read_mapping_page -> .readpage -> (for bdev inode) block_read_full_page
-> >  -> create_page_buffers anyway...
-> > 
-> > sb_bread haven't obsoleted... It has similar function though...
-> 
-> With the different that it keeps you isolated from the buffer_head
-> internals.  This seems to be your only direct use of buffer heads,
-> which while not deprecated are a bit of an ugly step child.  So if
-> you can easily avoid creating a buffer_head dependency in a new
-> filesystem I think you should avoid it.
-
-OK, let's use read_mapping_page instead.
-
-> 
-> > > > +	sbi->build_time = le64_to_cpu(layout->build_time);
-> > > > +	sbi->build_time_nsec = le32_to_cpu(layout->build_time_nsec);
-> > > > +
-> > > > +	memcpy(&sb->s_uuid, layout->uuid, sizeof(layout->uuid));
-> > > > +	memcpy(sbi->volume_name, layout->volume_name,
-> > > > +	       sizeof(layout->volume_name));
-> > > 
-> > > s_uuid should preferably be a uuid_t (assuming it is a real BE uuid,
-> > > if it is le it should be a guid_t).
-> > 
-> > For this case, I have no idea how to deal with...
-> > I have little knowledge about this uuid stuff, so I just copied
-> > from f2fs... (Could be no urgent of this field...)
-> 
-> Who fills out this field in the on-disk format and how?
-
-mkfs.erofs, but this field leaves 0 for now. Is that reasonable?
-(using libuuid can generate it easily...)
-
-> 
-> > The background is Al's comments in erofs v2....
-> > (which simplify erofs_fill_super logic)
-> > https://lore.kernel.org/r/20190720224955.GD17978@ZenIV.linux.org.uk/
-> > 
-> > with a specific notation...
-> > https://lore.kernel.org/r/20190721040547.GF17978@ZenIV.linux.org.uk/
-> > 
-> > "
-> > > OTOH, for the case of NULL ->s_root ->put_super() won't be called
-> > > at all, so in that case you need it directly in ->kill_sb().
-> > "
-> 
-> Yes.  Although none of that is relevant for this initial version,
-> just after more features are added.
-
-This patch uses it actually... since no failure path in erofs_fill_super()
-and s_root will be filled nearly at the end of the function...
-
-Thanks,
-Gao Xiang
-
-
-
+Given that the erofs folks have an actual use case for it I think
+it is fine to keep the options, I just wanted to ensure this wasn't
+copy and pasted for no good reason.  Note that for XFS we don't have
+an option for xattrs, as those are integral to a lot of file system
+features.  WE have an ACL option mostly for historic reasons.
