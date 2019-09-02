@@ -2,141 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75ECAA5DCB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 00:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82520A5E3E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 01:45:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbfIBW03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 18:26:29 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:58860 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727454AbfIBW03 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 18:26:29 -0400
-Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 16DDF43D911;
-        Tue,  3 Sep 2019 08:26:19 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1i4umA-0003Ym-4t; Tue, 03 Sep 2019 08:26:18 +1000
-Date:   Tue, 3 Sep 2019 08:26:18 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-Message-ID: <20190902222618.GR1119@dread.disaster.area>
-References: <20190821181343.GH8653@ziepe.ca>
- <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
- <20190821194810.GI8653@ziepe.ca>
- <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
- <20190823032345.GG1119@dread.disaster.area>
- <20190823120428.GA12968@ziepe.ca>
- <20190824001124.GI1119@dread.disaster.area>
- <20190824050836.GC1092@iweiny-DESK2.sc.intel.com>
- <20190826055510.GL1119@dread.disaster.area>
- <20190829020230.GA18249@iweiny-DESK2.sc.intel.com>
+        id S1727854AbfIBXpO convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 2 Sep 2019 19:45:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:55925 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726849AbfIBXpO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 19:45:14 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46Mmsb27qjz9s7T;
+        Tue,  3 Sep 2019 09:45:07 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Michal =?utf-8?Q?Such=C3=A1nek?= <msuchanek@suse.de>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Breno Leitao <leitao@debian.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Diana Craciun <diana.craciun@nxp.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v7 3/6] powerpc/perf: consolidate read_user_stack_32
+In-Reply-To: <20190902102653.6d477e16@naga>
+References: <cover.1567198491.git.msuchanek@suse.de> <ea3783a1640b707ef9ce4740562850ef1152829b.1567198491.git.msuchanek@suse.de> <87a7bntkum.fsf@mpe.ellerman.id.au> <877e6rtkhe.fsf@mpe.ellerman.id.au> <20190902102653.6d477e16@naga>
+Date:   Tue, 03 Sep 2019 09:45:05 +1000
+Message-ID: <87mufms1oe.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829020230.GA18249@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
-        a=7-415B0cAAAA:8 a=uquYBjWIGtznz3R1yhAA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 07:02:31PM -0700, Ira Weiny wrote:
-> On Mon, Aug 26, 2019 at 03:55:10PM +1000, Dave Chinner wrote:
-> > On Fri, Aug 23, 2019 at 10:08:36PM -0700, Ira Weiny wrote:
-> > > On Sat, Aug 24, 2019 at 10:11:24AM +1000, Dave Chinner wrote:
-> > > > On Fri, Aug 23, 2019 at 09:04:29AM -0300, Jason Gunthorpe wrote:
-> > > "Leases are associated with an open file description (see open(2)).  This means
-> > > that duplicate file descriptors (created by, for example, fork(2) or dup(2))
-> > > refer to the same lease, and this lease may be modified or released using any
-> > > of these descriptors.  Furthermore,  the lease is released by either an
-> > > explicit F_UNLCK operation on any of these duplicate file descriptors, or when
-> > > all such file descriptors have been closed."
-> > 
-> > Right, the lease is attached to the struct file, so it follows
-> > where-ever the struct file goes. That doesn't mean it's actually
-> > useful when the struct file is duplicated and/or passed to another
-> > process. :/
-> > 
-> > AFAICT, the problem is that when we take another reference to the
-> > struct file, or when the struct file is passed to a different
-> > process, nothing updates the lease or lease state attached to that
-> > struct file.
-> 
-> Ok, I probably should have made this more clear in the cover letter but _only_
-> the process which took the lease can actually pin memory.
+Michal Suchánek <msuchanek@suse.de> writes:
+> On Mon, 02 Sep 2019 14:01:17 +1000
+> Michael Ellerman <mpe@ellerman.id.au> wrote:
+>> Michael Ellerman <mpe@ellerman.id.au> writes:
+>> > Michal Suchanek <msuchanek@suse.de> writes:  
+>> ...
+>> >> @@ -295,6 +279,12 @@ static inline int current_is_64bit(void)
+>> >>  }
+>> >>  
+>> >>  #else  /* CONFIG_PPC64 */
+>> >> +static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
+>> >> +{
+>> >> +	return 0;
+>> >> +}
+>> >> +#endif /* CONFIG_PPC64 */  
+>> >
+>> > Ending the PPC64 else case here, and then restarting it below with an
+>> > ifndef means we end up with two parts of the file that define 32-bit
+>> > code, with a common chunk in the middle, which I dislike.
+>> >
+>> > I'd rather you add the empty read_user_stack_slow() in the existing
+>> > #else section and then move read_user_stack_32() below the whole ifdef
+>> > PPC64/else/endif section.
+>> >
+>> > Is there some reason that doesn't work?  
+>> 
+>> Gah, I missed that you split the whole file later in the series. Any
+>> reason you did it in two steps rather than moving patch 6 earlier in the
+>> series?
+>
+> To make this patch readable.
 
-Sure, no question about that.
+But it's not very readable :)
 
-> That pinned memory _can_ be passed to another process but those sub-process' can
-> _not_ use the original lease to pin _more_ of the file.  They would need to
-> take their own lease to do that.
+You also retained the comment about the 32-bit behaviour which is now a
+bit confusing, because the function is used on both 32 & 64-bit.
 
-Yes, they would need a new lease to extend it. But that ignores the
-fact they don't have a lease on the existing pins they are using and
-have no control over the lease those pins originated under.  e.g.
-the originating process dies (for whatever reason) and now we have
-pins without a valid lease holder.
+I think moving it as I suggested in my first reply makes for a better
+diff, something like eg:
 
-If something else now takes an exclusive lease on the file (because
-the original exclusive lease no longer exists), it's not going to
-work correctly because of the zombied page pins caused by closing
-the exclusive lease they were gained under. IOWs, pages pinned under
-an exclusive lease are no longer "exclusive" the moment the original
-exclusive lease is dropped, and pins passed to another process are
-no longer covered by the original lease they were created under.
+diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
+index c84bbd4298a0..82c0f81b89a5 100644
+--- a/arch/powerpc/perf/callchain.c
++++ b/arch/powerpc/perf/callchain.c
+@@ -165,22 +165,6 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
+ 	return read_user_stack_slow(ptr, ret, 8);
+ }
+ 
+-static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+-{
+-	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+-	    ((unsigned long)ptr & 3))
+-		return -EFAULT;
+-
+-	pagefault_disable();
+-	if (!__get_user_inatomic(*ret, ptr)) {
+-		pagefault_enable();
+-		return 0;
+-	}
+-	pagefault_enable();
+-
+-	return read_user_stack_slow(ptr, ret, 4);
+-}
+-
+ static inline int valid_user_sp(unsigned long sp, int is_64)
+ {
+ 	if (!sp || (sp & 7) || sp > (is_64 ? TASK_SIZE : 0x100000000UL) - 32)
+@@ -295,27 +279,6 @@ static inline int current_is_64bit(void)
+ }
+ 
+ #else  /* CONFIG_PPC64 */
+-/*
+- * On 32-bit we just access the address and let hash_page create a
+- * HPTE if necessary, so there is no need to fall back to reading
+- * the page tables.  Since this is called at interrupt level,
+- * do_page_fault() won't treat a DSI as a page fault.
+- */
+-static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+-{
+-	int rc;
+-
+-	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+-	    ((unsigned long)ptr & 3))
+-		return -EFAULT;
+-
+-	pagefault_disable();
+-	rc = __get_user_inatomic(*ret, ptr);
+-	pagefault_enable();
+-
+-	return rc;
+-}
+-
+ static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+ 					  struct pt_regs *regs)
+ {
+@@ -333,6 +296,11 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
+ 	return 1;
+ }
+ 
++static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
++{
++	return 0;
++}
++
+ #define __SIGNAL_FRAMESIZE32	__SIGNAL_FRAMESIZE
+ #define sigcontext32		sigcontext
+ #define mcontext32		mcontext
+@@ -341,6 +309,33 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
+ 
+ #endif /* CONFIG_PPC64 */
+ 
++static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
++{
++	int rc;
++
++	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
++	    ((unsigned long)ptr & 3))
++		return -EFAULT;
++
++	pagefault_disable();
++	rc = __get_user_inatomic(*ret, ptr);
++	pagefault_enable();
++
++	/*
++	 * On 32-bit we just access the address and let hash_page() create a
++	 * HPTE if necessary, so there is no need to fall back to reading the
++	 * page tables. Since this is called at interrupt level, do_page_fault()
++	 * won't treat a DSI as a page fault.
++	 *
++	 * On 64-bit if the access faults we fall back to
++	 * read_user_stack_slow(), see the comment there for more details.
++	 */
++	if (IS_ENABLED(CONFIG_PPC64) && rc)
++		return read_user_stack_slow(ptr, ret, 4);
++
++	return rc;
++}
++
+ /*
+  * Layout for non-RT signal frames
+  */
 
-> Sorry for not being clear on that.
 
-I know exactly what you are saying. What I'm failing to get across
-is that file layout leases don't actually allow the behaviour you
-want to have.
-
-> > As such, leases that require callbacks to userspace are currently
-> > only valid within the process context the lease was taken in.
-> 
-> But for long term pins we are not requiring callbacks.
-
-Regardless, we still require an active lease for long term pins so
-that other lease holders fail operations appropriately. And that
-exclusive lease must follow the process that pins the pages so that
-the life cycle is the same...
-
-> > Indeed, even closing the fd the lease was taken on without
-> > F_UNLCKing it first doesn't mean the lease has been torn down if
-> > there is some other reference to the struct file. That means the
-> > original lease owner will still get SIGIO delivered to that fd on a
-> > lease break regardless of whether it is open or not. ANd if we
-> > implement "layout lease not released within SIGIO response timeout"
-> > then that process will get killed, despite the fact it may not even
-> > have a reference to that file anymore.
-> 
-> I'm not seeing that as a problem.  This is all a result of the application
-> failing to do the right thing.
-
-How is that not a problem?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+cheers
