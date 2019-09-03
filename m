@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BE0FA6380
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 10:05:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B29FA639C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 10:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbfICIFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 04:05:15 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38070 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfICIFP (ORCPT
+        id S1727077AbfICINY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 04:13:24 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45305 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbfICINY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 04:05:15 -0400
-Received: by mail-io1-f67.google.com with SMTP id p12so33905494iog.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 01:05:14 -0700 (PDT)
+        Tue, 3 Sep 2019 04:13:24 -0400
+Received: by mail-lf1-f66.google.com with SMTP id r134so11248537lff.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 01:13:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=pYYZchTkTnHaaYUPZ9aSFMmI9ZgRbXHQopY1f0OJvLU=;
-        b=D85dO2rkGDxWItS4+Vv6mrgY+n6ZYU+qG9cJ24pWQe71OTpSk7O/m7HqQ/yhvUnGP/
-         2UcDj48UswSDkOTqNSEHCfqubDGVKHbe+tnzR8pHH+soD/2kZWId08ePrtSabQqhXxpl
-         S+A5SStZdKvklHl7z2L6boDBMXQcxdTNjNi8o=
+        bh=tolH3D55wRJVvoVj7G+TtEu5ivH6DhNUR4UBADzwzKg=;
+        b=o6oUECDeFmzOs8qtAv7INu7XZ4/K9fjKDS6TECghoijZHBSPwtgjdn8F8f6LfpLT6x
+         d/d1CN79oDHPMSpvo7aawL3qEhwVTDhBz5lSv6vbpt/1+VssyUFVZ2JFhWTE8WhXZNlI
+         mZbS0Meiro/kd8ISCE9vcexmMM3es5hsFky5+V1DnyeT8dozwj+AelxHYUBIF2/4BMGR
+         cruUJI8Ze7tLGSx5zB2njBxetNwswlXi/CnXjXEs7UW+Mgb8rsx4IP0GaW9X6rkb5YCa
+         +/EQoygrK/qpIyzsnn3I9YxSWTQzc8uRQtSXaYHLlC9iaxCx3sywwCngOYcCY2auWWPs
+         MKhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pYYZchTkTnHaaYUPZ9aSFMmI9ZgRbXHQopY1f0OJvLU=;
-        b=eQd2MPZOE6fW+M6F1k6tky584lBa9L8OEGdrZujsc+Fk3+uUmEzBXqIEJIAUUi/7ag
-         pmpf2NCSQhi6CpRld8ASFQbEpLsYPJZ7/pDcPkC++uraUeaoZZ76XQ+cAP4JtOlwY1jU
-         PjeHG2A392+zWC1zCO336TS1GeNgjNkNDEyqaDuXryzjo7lz4c/dJNhQRvomLNHv8rQk
-         NNbMOzksQYE5ScnddKcpIn5lTEdb+Rq0s+HBI8SZgCFRf5on2b01ovgOQn9gAyTAQpyi
-         g+4AmZq+fXylsJ6bmB4jXY2g6QdAG5u8Af5a+ZjkBxzOOw7OEXvqiFlV8JGPmPXaWNKH
-         nn2A==
-X-Gm-Message-State: APjAAAUkoRoSZORoUBvD/JKJCIeuIhP7DX8eBs2ixh5eXOtlbF8L2Ixy
-        bkJ/GCeAQSRaQTKTP8m7xhNI/PrlbHfsBjBHBN+QUA==
-X-Google-Smtp-Source: APXvYqxFcbUqeehr5Ugpif2bQhvKi5Xl3qPp5YojMTiUxbzHxFlX2TqDf0tY+v8jLZVSVlZXjpE5dmUSPI1IH4fxYKo=
-X-Received: by 2002:a5e:d70b:: with SMTP id v11mr5001741iom.252.1567497913964;
- Tue, 03 Sep 2019 01:05:13 -0700 (PDT)
+        bh=tolH3D55wRJVvoVj7G+TtEu5ivH6DhNUR4UBADzwzKg=;
+        b=a5IxfQXL2ffjzv/KKjPGsMX/E29n/XHCvWVdVf93Ay3pmyqTbOeB440hNRzVPBYz+s
+         yQ26nHmn6GuQxewAgvdRI4rnMVKaY9Lxwtika9VeAmBgU3zbG7D0zS+CmTk+w3yKbjkO
+         C9OERb5t0EfHpSIPscC2eoomQboq32wfDFLvsms+wb1ZcOwgWkhXqNb+IU48cj4bpEkj
+         mEmrsaIsbrzUDaM4ylzHVH2x9DZlwLUKQohG2urVE9MoVRROpptrewzrRvqrsOAAQyU6
+         tpowukuLIJjzeeGN0i1lYHdKyN53FiWPPbkpmvUQ/EzgprMErES6vbgA7uuIcHDv6og+
+         4ByA==
+X-Gm-Message-State: APjAAAVBIhR7ZF4H0I1JSBWyzDgmjKPh1nQ0LsBNq2R1+88KtoxNHoZ8
+        vAK7ZVdhQC4yd17rzVZ5IVhvanFdnWKwcTmlShfGpQ==
+X-Google-Smtp-Source: APXvYqyQRgeTjLJvsiQUasNopOTOQbGwBZmdzgUXGWyN41mBKTiKI7Dxp6Hj9Do78HMmSnOo1lF5Q5phzs2eezTyDB8=
+X-Received: by 2002:a19:8017:: with SMTP id b23mr19036406lfd.132.1567498400885;
+ Tue, 03 Sep 2019 01:13:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190821173742.24574-1-vgoyal@redhat.com>
-In-Reply-To: <20190821173742.24574-1-vgoyal@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 3 Sep 2019 10:05:02 +0200
-Message-ID: <CAJfpegvPTxkaNhXWhiQSprSJqyW1cLXeZEz6x_f0PxCd-yzHQg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/13] virtio-fs: shared file system for virtual machines
-To:     Vivek Goyal <vgoyal@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+References: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw>
+In-Reply-To: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 3 Sep 2019 13:43:09 +0530
+Message-ID: <CA+G9fYvOUch79HoBiJbuod2bTGS5h8se5EB5LRJAwTCfPQr2ow@mail.gmail.com>
+Subject: Re: "fs/namei.c: keep track of nd->root refcount status" causes boot panic
+To:     Qian Cai <cai@lca.pw>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -59,333 +59,180 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Cc:  virtualization@lists.linux-foundation.org, "Michael S. Tsirkin"
-<mst@redhat.com>, Jason Wang <jasowang@redhat.com>]
+On Tue, 3 Sep 2019 at 09:51, Qian Cai <cai@lca.pw> wrote:
+>
+> The linux-next commit "fs/namei.c: keep track of nd->root refcount status=
+=E2=80=9D [1] causes boot panic on all
+> architectures here on today=E2=80=99s linux-next (0902). Reverted it will=
+ fix the issue.
 
-It'd be nice to have an ACK for this from the virtio maintainers.
+I have same problem and reverting this patch fixed the kernel crash.
 
-Thanks,
-Miklos
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/c=
+ommit/?id=3De013ec23b8231cf7f95605cbb0e47aa0e3d047a4
+>
 
-On Wed, Aug 21, 2019 at 7:38 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> Hi,
->
-> Here are the V3 patches for virtio-fs filesystem. This time I have
-> broken the patch series in two parts. This is first part which does
-> not contain DAX support. Second patch series will contain the patches
-> for DAX support.
->
-> I have also dropped RFC tag from first patch series as we believe its
-> in good enough shape that it should get a consideration for inclusion
-> upstream.
->
-> These patches apply on top of 5.3-rc5 kernel and are also available
-> here.
->
-> https://github.com/rhvgoyal/linux/commits/vivek-5.3-aug-21-2019
->
-> Patches for V1 and V2 were posted here.
->
-> https://lwn.net/ml/linux-fsdevel/20181210171318.16998-1-vgoyal@redhat.com=
-/
-> http://lkml.iu.edu/hypermail/linux/kernel/1905.1/07232.html
->
-> More information about the project can be found here.
->
-> https://virtio-fs.gitlab.io
->
-> Changes from V2
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> - Various bug fixes and performance improvements.
->
-> HOWTO
-> =3D=3D=3D=3D=3D=3D
-> We have put instructions on how to use it here.
->
-> https://virtio-fs.gitlab.io/
->
-> Some Performance Numbers
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> I have basically run bunch of fio jobs to get a sense of speed of
-> various operations. I wrote a simple wrapper script to run fio jobs
-> 3 times and take their average and report it. These scripts are available
-> here.
->
-> https://github.com/rhvgoyal/virtiofs-tests
->
-> I set up a directory on ramfs on host and exported that directory inside
-> guest using virtio-9p and virtio-fs and ran tests inside guests. Ran
-> tests with cache=3Dnone both for virtio-9p and virtio-fs so that no cachi=
-ng
-> happens in guest. For virtio-fs, I ran an additional set of tests with
-> dax enabled. Dax is not part of first patch series but I included
-> results here because dax seems to get the maximum performance advantage
-> and its shows the real potential of virtio-fs.
->
-> Test Setup
-> -----------
-> - A fedora 28 host with 32G RAM, 2 sockets (6 cores per socket, 2
->   threads per core)
->
-> - Using ramfs on host as backing store. 4 fio files of 2G each.
->
-> - Created a VM with 16 VCPUS and 8GB memory. An 8GB cache window (for dax
->   mmap).
->
-> Test Results
-> ------------
-> - Results in three configurations have been reported. 9p (cache=3Dnone),
->   virtio-fs (cache=3Dnone) and virtio-fs (cache=3Dnone + dax).
->
->   There are other caching modes as well but to me cache=3Dnone seemed mos=
-t
->   interesting for now because it does not cache anything in guest
->   and provides strong coherence. Other modes which provide less strong
->   coherence and hence are faster are yet to be benchmarked.
->
-> - Three fio ioengines psync, libaio and mmap have been used.
->
-> - I/O Workload of randread, radwrite, seqread and seqwrite have been run.
->
-> - Each file size is 2G. Block size 4K. iodepth=3D16
->
-> - "multi" means same operation was done with 4 jobs and each job is
->   operating on a file of size 2G.
->
-> - Some results are "0 (KiB/s)". That means that particular operation is
->   not supported in that configuration.
->
-> NAME                    I/O Operation           BW(Read/Write)
->
-> 9p-cache-none           seqread-psync           27(MiB/s)
-> virtiofs-cache-none     seqread-psync           35(MiB/s)
-> virtiofs-dax-cache-none seqread-psync           245(MiB/s)
->
-> 9p-cache-none           seqread-psync-multi     117(MiB/s)
-> virtiofs-cache-none     seqread-psync-multi     162(MiB/s)
-> virtiofs-dax-cache-none seqread-psync-multi     894(MiB/s)
->
-> 9p-cache-none           seqread-mmap            24(MiB/s)
-> virtiofs-cache-none     seqread-mmap            0(KiB/s)
-> virtiofs-dax-cache-none seqread-mmap            168(MiB/s)
->
-> 9p-cache-none           seqread-mmap-multi      115(MiB/s)
-> virtiofs-cache-none     seqread-mmap-multi      0(KiB/s)
-> virtiofs-dax-cache-none seqread-mmap-multi      614(MiB/s)
->
-> 9p-cache-none           seqread-libaio          26(MiB/s)
-> virtiofs-cache-none     seqread-libaio          139(MiB/s)
-> virtiofs-dax-cache-none seqread-libaio          160(MiB/s)
->
-> 9p-cache-none           seqread-libaio-multi    129(MiB/s)
-> virtiofs-cache-none     seqread-libaio-multi    142(MiB/s)
-> virtiofs-dax-cache-none seqread-libaio-multi    577(MiB/s)
->
-> 9p-cache-none           randread-psync          29(MiB/s)
-> virtiofs-cache-none     randread-psync          34(MiB/s)
-> virtiofs-dax-cache-none randread-psync          256(MiB/s)
->
-> 9p-cache-none           randread-psync-multi    139(MiB/s)
-> virtiofs-cache-none     randread-psync-multi    153(MiB/s)
-> virtiofs-dax-cache-none randread-psync-multi    245(MiB/s)
->
-> 9p-cache-none           randread-mmap           22(MiB/s)
-> virtiofs-cache-none     randread-mmap           0(KiB/s)
-> virtiofs-dax-cache-none randread-mmap           162(MiB/s)
->
-> 9p-cache-none           randread-mmap-multi     111(MiB/s)
-> virtiofs-cache-none     randread-mmap-multi     0(KiB/s)
-> virtiofs-dax-cache-none randread-mmap-multi     215(MiB/s)
->
-> 9p-cache-none           randread-libaio         26(MiB/s)
-> virtiofs-cache-none     randread-libaio         135(MiB/s)
-> virtiofs-dax-cache-none randread-libaio         157(MiB/s)
->
-> 9p-cache-none           randread-libaio-multi   133(MiB/s)
-> virtiofs-cache-none     randread-libaio-multi   245(MiB/s)
-> virtiofs-dax-cache-none randread-libaio-multi   163(MiB/s)
->
-> 9p-cache-none           seqwrite-psync          28(MiB/s)
-> virtiofs-cache-none     seqwrite-psync          34(MiB/s)
-> virtiofs-dax-cache-none seqwrite-psync          203(MiB/s)
->
-> 9p-cache-none           seqwrite-psync-multi    128(MiB/s)
-> virtiofs-cache-none     seqwrite-psync-multi    155(MiB/s)
-> virtiofs-dax-cache-none seqwrite-psync-multi    717(MiB/s)
->
-> 9p-cache-none           seqwrite-mmap           0(KiB/s)
-> virtiofs-cache-none     seqwrite-mmap           0(KiB/s)
-> virtiofs-dax-cache-none seqwrite-mmap           165(MiB/s)
->
-> 9p-cache-none           seqwrite-mmap-multi     0(KiB/s)
-> virtiofs-cache-none     seqwrite-mmap-multi     0(KiB/s)
-> virtiofs-dax-cache-none seqwrite-mmap-multi     511(MiB/s)
->
-> 9p-cache-none           seqwrite-libaio         27(MiB/s)
-> virtiofs-cache-none     seqwrite-libaio         128(MiB/s)
-> virtiofs-dax-cache-none seqwrite-libaio         141(MiB/s)
->
-> 9p-cache-none           seqwrite-libaio-multi   119(MiB/s)
-> virtiofs-cache-none     seqwrite-libaio-multi   242(MiB/s)
-> virtiofs-dax-cache-none seqwrite-libaio-multi   505(MiB/s)
->
-> 9p-cache-none           randwrite-psync         27(MiB/s)
-> virtiofs-cache-none     randwrite-psync         34(MiB/s)
-> virtiofs-dax-cache-none randwrite-psync         189(MiB/s)
->
-> 9p-cache-none           randwrite-psync-multi   137(MiB/s)
-> virtiofs-cache-none     randwrite-psync-multi   150(MiB/s)
-> virtiofs-dax-cache-none randwrite-psync-multi   233(MiB/s)
->
-> 9p-cache-none           randwrite-mmap          0(KiB/s)
-> virtiofs-cache-none     randwrite-mmap          0(KiB/s)
-> virtiofs-dax-cache-none randwrite-mmap          120(MiB/s)
->
-> 9p-cache-none           randwrite-mmap-multi    0(KiB/s)
-> virtiofs-cache-none     randwrite-mmap-multi    0(KiB/s)
-> virtiofs-dax-cache-none randwrite-mmap-multi    200(MiB/s)
->
-> 9p-cache-none           randwrite-libaio        25(MiB/s)
-> virtiofs-cache-none     randwrite-libaio        124(MiB/s)
-> virtiofs-dax-cache-none randwrite-libaio        131(MiB/s)
->
-> 9p-cache-none           randwrite-libaio-multi  125(MiB/s)
-> virtiofs-cache-none     randwrite-libaio-multi  241(MiB/s)
-> virtiofs-dax-cache-none randwrite-libaio-multi  163(MiB/s)
->
-> Conclusions
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> - In general virtio-fs seems faster than virtio-9p. Using dax makes it
->   really interesting.
->
-> Note:
->   Right now dax window is 8G and max fio file size is 8G as well (4
->   files of 2G each). That means everything fits into dax window and no
->   reclaim is needed. Dax window reclaim logic is slower and if file
->   size is bigger than dax window size, performance slows down.
->
-> Description from previous postings
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Design Overview
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> With the goal of designing something with better performance and local fi=
-le
-> system semantics, a bunch of ideas were proposed.
->
-> - Use fuse protocol (instead of 9p) for communication between guest
->   and host. Guest kernel will be fuse client and a fuse server will
->   run on host to serve the requests.
->
-> - For data access inside guest, mmap portion of file in QEMU address
->   space and guest accesses this memory using dax. That way guest page
->   cache is bypassed and there is only one copy of data (on host). This
->   will also enable mmap(MAP_SHARED) between guests.
->
-> - For metadata coherency, there is a shared memory region which contains
->   version number associated with metadata and any guest changing metadata
->   updates version number and other guests refresh metadata on next
->   access. This is yet to be implemented.
->
-> How virtio-fs differs from existing approaches
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> The unique idea behind virtio-fs is to take advantage of the co-location
-> of the virtual machine and hypervisor to avoid communication (vmexits).
->
-> DAX allows file contents to be accessed without communication with the
-> hypervisor. The shared memory region for metadata avoids communication in
-> the common case where metadata is unchanged.
->
-> By replacing expensive communication with cheaper shared memory accesses,
-> we expect to achieve better performance than approaches based on network
-> file system protocols. In addition, this also makes it easier to achieve
-> local file system semantics (coherency).
->
-> These techniques are not applicable to network file system protocols sinc=
-e
-> the communications channel is bypassed by taking advantage of shared memo=
-ry
-> on a local machine. This is why we decided to build virtio-fs rather than
-> focus on 9P or NFS.
->
-> Caching Modes
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Like virtio-9p, different caching modes are supported which determine the
-> coherency level as well. The =E2=80=9Ccache=3DFOO=E2=80=9D and =E2=80=9Cw=
-riteback=E2=80=9D options control the
-> level of coherence between the guest and host filesystems.
->
-> - cache=3Dnone
->   metadata, data and pathname lookup are not cached in guest. They are al=
-ways
->   fetched from host and any changes are immediately pushed to host.
->
-> - cache=3Dalways
->   metadata, data and pathname lookup are cached in guest and never expire=
-.
->
-> - cache=3Dauto
->   metadata and pathname lookup cache expires after a configured amount of=
- time
->   (default is 1 second). Data is cached while the file is open (close to =
-open
->   consistency).
->
-> - writeback/no_writeback
->   These options control the writeback strategy.  If writeback is disabled=
-,
->   then normal writes will immediately be synchronized with the host fs. I=
-f
->   writeback is enabled, then writes may be cached in the guest until the =
-file
->   is closed or an fsync(2) performed. This option has no effect on mmap-e=
-d
->   writes or writes going through the DAX mechanism.
->
-> Thanks
-> Vivek
->
-> Miklos Szeredi (2):
->   fuse: delete dentry if timeout is zero
->   fuse: Use default_file_splice_read for direct IO
->
-> Stefan Hajnoczi (6):
->   fuse: export fuse_end_request()
->   fuse: export fuse_len_args()
->   fuse: export fuse_get_unique()
->   fuse: extract fuse_fill_super_common()
->   fuse: add fuse_iqueue_ops callbacks
->   virtio_fs: add skeleton virtio_fs.ko module
->
-> Vivek Goyal (5):
->   fuse: Export fuse_send_init_request()
->   Export fuse_dequeue_forget() function
->   fuse: Separate fuse device allocation and installation in fuse_conn
->   virtio-fs: Do not provide abort interface in fusectl
->   init/do_mounts.c: add virtio_fs root fs support
->
->  fs/fuse/Kconfig                 |   11 +
->  fs/fuse/Makefile                |    1 +
->  fs/fuse/control.c               |    4 +-
->  fs/fuse/cuse.c                  |    4 +-
->  fs/fuse/dev.c                   |   89 ++-
->  fs/fuse/dir.c                   |   26 +-
->  fs/fuse/file.c                  |   15 +-
->  fs/fuse/fuse_i.h                |  120 +++-
->  fs/fuse/inode.c                 |  203 +++---
->  fs/fuse/virtio_fs.c             | 1061 +++++++++++++++++++++++++++++++
->  fs/splice.c                     |    3 +-
->  include/linux/fs.h              |    2 +
->  include/uapi/linux/virtio_fs.h  |   41 ++
->  include/uapi/linux/virtio_ids.h |    1 +
->  init/do_mounts.c                |   10 +
->  15 files changed, 1462 insertions(+), 129 deletions(-)
->  create mode 100644 fs/fuse/virtio_fs.c
->  create mode 100644 include/uapi/linux/virtio_fs.h
->
-> --
-> 2.20.1
->
+FYI,
+on x86_64 device I have noticed kernel bug [1].
+
+[   12.941007] Run /sbin/init as init process
+[   12.946381] random: fast init done
+[   13.023482] BUG: kernel NULL pointer dereference, address: 0000000000000=
+235
+[   13.030444] #PF: supervisor read access in kernel mode
+[   13.035576] #PF: error_code(0x0000) - not-present page
+[   13.040725] PGD 0 P4D 0
+[   13.043263] Oops: 0000 [#1] SMP PTI
+[   13.046755] CPU: 2 PID: 1 Comm: systemd Not tainted
+5.3.0-rc6-next-20190902 #1
+[   13.053966] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[   13.061438] RIP: 0010:dput+0x72/0x4a0
+[   13.065101] Code: 68 0d 5f 41 56 31 d2 45 31 c9 45 31 c0 31 f6 b9
+02 00 00 00 48 c7 c7 e0 dd 66 a2 e8 48 6c e1 ff e8 e3 9f e3 ff 85 c0
+5a 75 76 <f6> 03 08 4c 8d a3 80 00 00 00 4c 89 e7 0f 85 7b 01 00 00 e8
+16 66
+[   13.083838] RSP: 0018:ffffb16100027c00 EFLAGS: 00010202
+[   13.089055] RAX: 0000000000000001 RBX: 0000000000000235 RCX: 00000000fff=
+78e19
+[   13.096180] RDX: ffffffffa0f3f630 RSI: 00000000ffffffff RDI: 00000000000=
+00000
+[   13.103301] RBP: ffffb16100027c30 R08: 0000000000000000 R09: 00000000000=
+00000
+[   13.110425] R10: 0000000000000000 R11: 0000000000000000 R12: ffffb161000=
+27e30
+[   13.117550] R13: ffffffffa23a557f R14: ffffffffa0f3f630 R15: ffffb161000=
+27e30
+[   13.124685] FS:  00007f2541dc4840(0000) GS:ffff9983dfb00000(0000)
+knlGS:0000000000000000
+[   13.132767] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   13.138506] CR2: 0000000000000235 CR3: 000000045a2fe003 CR4: 00000000003=
+606e0
+[   13.145630] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[   13.152752] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[   13.159875] Call Trace:
+[   13.162323]  terminate_walk+0x104/0x160
+[   13.166162]  path_lookupat+0xa4/0x210
+[   13.169828]  filename_lookup+0xb6/0x180
+[   13.173682]  ? fs_reclaim_release.part.107+0x5/0x30
+[   13.178581]  ? getname_flags+0x4b/0x1e0
+[   13.182419]  ? rcu_read_lock_sched_held+0x4f/0x80
+[   13.187116]  ? kmem_cache_alloc+0x290/0x2c0
+[   13.191293]  ? __might_fault+0x85/0x90
+[   13.195037]  user_path_at_empty+0x36/0x40
+[   13.199041]  ? user_path_at_empty+0x36/0x40
+[   13.203217]  vfs_statx+0x76/0xe0
+[   13.206442]  __do_sys_newfstatat+0x35/0x70
+[   13.210535]  ? entry_SYSCALL_64_after_hwframe+0x3e/0xbe
+[   13.215758]  ? trace_hardirqs_off_caller+0x22/0xf0
+[   13.220542]  ? do_syscall_64+0x17/0x1c0
+[   13.224374]  ? lockdep_hardirqs_on+0xf6/0x190
+[   13.228730]  ? do_syscall_64+0x17/0x1c0
+[   13.232564]  ? trace_hardirqs_on+0x4c/0x100
+[   13.236747]  __x64_sys_newfstatat+0x1e/0x20
+[   13.240925]  do_syscall_64+0x55/0x1c0
+[   13.244582]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   13.249625] RIP: 0033:0x7f25405bba09
+[   13.253196] Code: 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 0f 1f 40
+00 89 f0 48 89 d6 83 ff 01 77 36 89 c7 45 89 c2 48 89 ca b8 06 01 00
+00 0f 05 <48> 3d 00 f0 ff ff 77 07 c3 66 0f 1f 44 00 00 48 8b 15 59 94
+2c 00
+[   13.271934] RSP: 002b:00007ffd6722dfc8 EFLAGS: 00000246 ORIG_RAX:
+0000000000000106
+[   13.279490] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f25405=
+bba09
+[   13.286614] RDX: 00007ffd6722e090 RSI: 00007f25418c06d6 RDI: 00000000000=
+00004
+[   13.293738] RBP: 0000000000000004 R08: 0000000000001000 R09: 00000000000=
+00001
+[   13.300860] R10: 0000000000001000 R11: 0000000000000246 R12: 000055bd9f6=
+67281
+[   13.307984] R13: 0000000000000400 R14: 00007ffd6722e518 R15: 00000000000=
+00001
+[   13.315111] Modules linked in:
+[   13.318170] CR2: 0000000000000235
+[   13.321489] ---[ end trace 2f1042f3cbf26726 ]---
+[   13.326107] RIP: 0010:dput+0x72/0x4a0
+[   13.329763] Code: 68 0d 5f 41 56 31 d2 45 31 c9 45 31 c0 31 f6 b9
+02 00 00 00 48 c7 c7 e0 dd 66 a2 e8 48 6c e1 ff e8 e3 9f e3 ff 85 c0
+5a 75 76 <f6> 03 08 4c 8d a3 80 00 00 00 4c 89 e7 0f 85 7b 01 00 00 e8
+16 66
+[   13.348499] RSP: 0018:ffffb16100027c00 EFLAGS: 00010202
+[   13.353740] RAX: 0000000000000001 RBX: 0000000000000235 RCX: 00000000fff=
+78e19
+[   13.360865] RDX: ffffffffa0f3f630 RSI: 00000000ffffffff RDI: 00000000000=
+00000
+[   13.367990] RBP: ffffb16100027c30 R08: 0000000000000000 R09: 00000000000=
+00000
+[   13.375115] R10: 0000000000000000 R11: 0000000000000000 R12: ffffb161000=
+27e30
+[   13.382238] R13: ffffffffa23a557f R14: ffffffffa0f3f630 R15: ffffb161000=
+27e30
+[   13.389361] FS:  00007f2541dc4840(0000) GS:ffff9983dfb00000(0000)
+knlGS:0000000000000000
+[   13.397439] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   13.403176] CR2: 0000000000000235 CR3: 000000045a2fe003 CR4: 00000000003=
+606e0
+[   13.410301] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[   13.417422] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[   13.424549] BUG: sleeping function called from invalid context at
+/usr/src/kernel/include/linux/percpu-rwsem.h:38
+[   13.434793] in_atomic(): 1, irqs_disabled(): 1, pid: 1, name: systemd
+[   13.441222] INFO: lockdep is turned off.
+[   13.445138] irq event stamp: 1373108
+[   13.448740] hardirqs last  enabled at (1373107):
+[<ffffffffa0f3216b>] path_init+0x21b/0x520
+[   13.457083] hardirqs last disabled at (1373108):
+[<ffffffffa0c01c9a>] trace_hardirqs_off_thunk+0x1a/0x20
+[   13.466555] softirqs last  enabled at (1373040):
+[<ffffffffa16ea835>] release_sock+0x85/0xb0
+[   13.474985] softirqs last disabled at (1373038):
+[<ffffffffa16ea7ce>] release_sock+0x1e/0xb0
+[   13.483409] CPU: 2 PID: 1 Comm: systemd Tainted: G      D
+5.3.0-rc6-next-20190902 #1
+[   13.492007] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[   13.499478] Call Trace:
+[   13.501923]  dump_stack+0x70/0xa5
+[   13.505243]  ___might_sleep+0x152/0x240
+[   13.509080]  __might_sleep+0x4a/0x80
+[   13.512679]  exit_signals+0x33/0x2e0
+[   13.516273]  do_exit+0xb1/0xce0
+[   13.519410]  ? do_syscall_64+0x17/0x1c0
+[   13.523240]  ? trace_hardirqs_on+0x4c/0x100
+[   13.527419]  rewind_stack_do_exit+0x17/0x20
+[   13.531595] RIP: 0033:0x7f25405bba09
+[   13.535166] Code: 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 0f 1f 40
+00 89 f0 48 89 d6 83 ff 01 77 36 89 c7 45 89 c2 48 89 ca b8 06 01 00
+00 0f 05 <48> 3d 00 f0 ff ff 77 07 c3 66 0f 1f 44 00 00 48 8b 15 59 94
+2c 00
+[   13.553900] RSP: 002b:00007ffd6722dfc8 EFLAGS: 00000246 ORIG_RAX:
+0000000000000106
+[   13.561459] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f25405=
+bba09
+[   13.568581] RDX: 00007ffd6722e090 RSI: 00007f25418c06d6 RDI: 00000000000=
+00004
+[   13.575735] RBP: 0000000000000004 R08: 0000000000001000 R09: 00000000000=
+00001
+[   13.582865] R10: 0000000000001000 R11: 0000000000000246 R12: 000055bd9f6=
+67281
+[   13.589990] R13: 0000000000000400 R14: 00007ffd6722e518 R15: 00000000000=
+00001
+[   13.597146] note: systemd[1] exited with preempt_count 1
+[   13.602674] Kernel panic - not syncing: Attempted to kill init!
+exitcode=3D0x00000009
+[   13.610402] Kernel Offset: 0x1fc00000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+
+
+Full test log,
+[1] https://lkft.validation.linaro.org/scheduler/job/896370#L970
+
+
+Best regards
+Naresh Kamboju
