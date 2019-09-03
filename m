@@ -2,104 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 323ACA6745
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5048CA6762
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbfICLTQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 07:19:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53068 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbfICLTQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:19:16 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 797898AC6E1;
-        Tue,  3 Sep 2019 11:19:16 +0000 (UTC)
-Received: from dhcp-12-115.nay.redhat.com (dhcp-12-115.nay.redhat.com [10.66.12.115])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4107E196AE;
-        Tue,  3 Sep 2019 11:19:08 +0000 (UTC)
-From:   "Jianhong.Yin" <yin-jianhong@163.com>
-To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     lsahlber@redhat.com, alexander198961@gmail.com,
-        fengxiaoli0714@gmail.com, dchinner@redhat.com, sandeen@redhat.com,
-        "Jianhong.Yin" <yin-jianhong@163.com>
-Subject: [PATCH v2] xfsprogs: io/copy_range: cover corner case (fd_in == fd_out)
-Date:   Tue,  3 Sep 2019 19:19:03 +0800
-Message-Id: <20190903111903.12231-1-yin-jianhong@163.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Tue, 03 Sep 2019 11:19:16 +0000 (UTC)
+        id S1728678AbfICL1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 07:27:13 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44464 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728270AbfICL1N (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 07:27:13 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id BFF3C819EF; Tue,  3 Sep 2019 13:26:54 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 13:27:07 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     dsterba@suse.cz, Pavel Machek <pavel@denx.de>,
+        Joe Perches <joe@perches.com>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
+Message-ID: <20190903112707.GA3844@amd>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-2-gaoxiang25@huawei.com>
+ <20190829095954.GB20598@infradead.org>
+ <20190829103252.GA64893@architecture4>
+ <67d6efbbc9ac6db23215660cb970b7ef29dc0c1d.camel@perches.com>
+ <20190830120714.GN2752@twin.jikos.cz>
+ <20190902084303.GC19557@amd>
+ <20190902140712.GV2752@twin.jikos.cz>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+Content-Disposition: inline
+In-Reply-To: <20190902140712.GV2752@twin.jikos.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Related bug:
-  copy_file_range return "Invalid argument" when copy in the same file
-  https://bugzilla.kernel.org/show_bug.cgi?id=202935
 
-if argument of option -f is "-", use current file->fd as fd_in
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Usage:
-  xfs_io -c 'copy_range -f -' some_file
+Hi!
 
-Signed-off-by: Jianhong Yin <yin-jianhong@163.com>
----
- io/copy_file_range.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+> > No. gdb tells you what the actual offsets _are_.
+>=20
+> Ok, reading your reply twice, I think we have different perspectives. I
+> don't trust the comments.
+>=20
+> The tool I had in mind is pahole that parses dwarf information about the
+> structures, the same as gdb does. The actual value of the struct members
+> is the thing that needs to be investigated in memory dumps or disk image
+> dumps.
+>=20
+> > > > The expected offset is somewhat valuable, but
+> > > > perhaps the form is a bit off given the visual
+> > > > run-in to the field types.
+> > > >=20
+> > > > The extra work with this form is manipulating all
+> > > > the offsets whenever a structure change occurs.
+> > >=20
+> > > ... while this is error prone.
+> >=20
+> > While the comment tells you what they _should be_.
+>=20
+> That's exactly the source of confusion and bugs. For me an acceptable
+> way of asserting that a value has certain offset is a build check, eg.
+> like
+>=20
+> BUILD_BUG_ON(strct my_superblock, magic, 16);
 
-diff --git a/io/copy_file_range.c b/io/copy_file_range.c
-index b7b9fd88..2dde8a31 100644
---- a/io/copy_file_range.c
-+++ b/io/copy_file_range.c
-@@ -28,6 +28,7 @@ copy_range_help(void)
-                           at position 0\n\
-  'copy_range -f 2' - copies all bytes from open file 2 into the current open file\n\
-                           at position 0\n\
-+ 'copy_range -f -' - copies all bytes from current open file append the current open file\n\
- "));
- }
- 
-@@ -114,11 +115,15 @@ copy_range_f(int argc, char **argv)
- 			}
- 			break;
- 		case 'f':
--			src_file_nr = atoi(argv[1]);
--			if (src_file_nr < 0 || src_file_nr >= filecount) {
--				printf(_("file value %d is out of range (0-%d)\n"),
--					src_file_nr, filecount - 1);
--				return 0;
-+			if (strcmp(argv[1], "-") == 0)
-+				src_file_nr = (file - &filetable[0]) / sizeof(fileio_t);
-+			else {
-+				src_file_nr = atoi(argv[1]);
-+				if (src_file_nr < 0 || src_file_nr >= filecount) {
-+					printf(_("file value %d is out of range (0-%d)\n"),
-+						src_file_nr, filecount - 1);
-+					return 0;
-+				}
- 			}
- 			/* Expect no src_path arg */
- 			src_path_arg = 0;
-@@ -147,10 +152,14 @@ copy_range_f(int argc, char **argv)
- 		}
- 		len = sz;
- 
--		ret = copy_dst_truncate();
--		if (ret < 0) {
--			ret = 1;
--			goto out;
-+		if (fd != file->fd) {
-+			ret = copy_dst_truncate();
-+			if (ret < 0) {
-+				ret = 1;
-+				goto out;
-+			}
-+		} else {
-+			dst = sz;
- 		}
- 	}
- 
--- 
-2.17.2
+Yes, that would work, too. As would documentation file with the disk
+structures.
 
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1uTgsACgkQMOfwapXb+vL2IgCgs+lvDMnGJBdzf4Ded3ls5qz4
+u/sAn1m34p0fdk6NLGSW8jaPems7I5EL
+=38MN
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
