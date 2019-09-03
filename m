@@ -2,129 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C083A67DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9172A6858
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 14:12:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbfICLwr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 07:52:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51670 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727005AbfICLwr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:52:47 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9F8FEC010923;
-        Tue,  3 Sep 2019 11:52:46 +0000 (UTC)
-Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D8F3B5D6B7;
-        Tue,  3 Sep 2019 11:52:43 +0000 (UTC)
-Date:   Tue, 3 Sep 2019 19:59:43 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     "Jianhong.Yin" <yin-jianhong@163.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        lsahlber@redhat.com, alexander198961@gmail.com,
-        fengxiaoli0714@gmail.com, dchinner@redhat.com, sandeen@redhat.com
-Subject: Re: [PATCH] xfsprogs: io/copy_range: cover corner case (fd_in ==
- fd_out)
-Message-ID: <20190903115943.GU7239@dhcp-12-102.nay.redhat.com>
-References: <20190903105632.11667-1-yin-jianhong@163.com>
+        id S1729028AbfICML5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 08:11:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37254 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbfICML4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 08:11:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8EXrYd4RsH6BhIOlTTrp7nSzyNrjaXwYb7WWqgrRr9Y=; b=btqI5faIUT1LIYYiY9J4zINYa
+        3jWPSYkalrJbyjVLIJldORJvZuDJ/zHsD1VvNmD4bdXCqkmlPA4w9XGItTEClgoh6M0RckxISoiqc
+        r6niZXlB+7EoS7c6IyPny4ucc7gVTb6eTxrg3fmqRSKg4G66qRDSNmqNUpvZeEfnB4R9iTozEskz7
+        bbPH5Fa24IlPi9kjfXG3Rie8eQNOoIZB8hkVd/YqYDz9+EBL80/FVfoKcColNHXuUdCBjstZufBB2
+        hDA2QJyO9yDtah+GC7XcO8XZu47qpuo3x42WciEpEIuFH5lChFZiUVRS6iWB9ohV6ANbP//yvJxUm
+        bozNI4a2g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i57f9-0002ll-Km; Tue, 03 Sep 2019 12:11:55 +0000
+Date:   Tue, 3 Sep 2019 05:11:55 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     William Kucharski <william.kucharski@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Bob Kasten <robert.a.kasten@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Chad Mynhier <chad.mynhier@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Johannes Weiner <jweiner@fb.com>
+Subject: Re: [PATCH v5 1/2] mm: Allow the page cache to allocate large pages
+Message-ID: <20190903121155.GD29434@bombadil.infradead.org>
+References: <20190902092341.26712-1-william.kucharski@oracle.com>
+ <20190902092341.26712-2-william.kucharski@oracle.com>
+ <20190903115748.GS14028@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190903105632.11667-1-yin-jianhong@163.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 03 Sep 2019 11:52:46 +0000 (UTC)
+In-Reply-To: <20190903115748.GS14028@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 06:56:32PM +0800, Jianhong.Yin wrote:
-> Related bug:
->   copy_file_range return "Invalid argument" when copy in the same file
->   https://bugzilla.kernel.org/show_bug.cgi?id=202935
+On Tue, Sep 03, 2019 at 01:57:48PM +0200, Michal Hocko wrote:
+> On Mon 02-09-19 03:23:40, William Kucharski wrote:
+> > Add an 'order' argument to __page_cache_alloc() and
+> > do_read_cache_page(). Ensure the allocated pages are compound pages.
 > 
-> if argument of option -f is "-", use current file->fd as fd_in
-> 
-> Usage:
->   xfs_io -c 'copy_range -f -' some_file
-> 
-> Signed-off-by: Jianhong Yin <yin-jianhong@163.com>
-> ---
+> Why do we need to touch all the existing callers and change them to use
+> order 0 when none is actually converted to a different order? This just
+> seem to add a lot of code churn without a good reason. If anything I
+> would simply add __page_cache_alloc_order and make __page_cache_alloc
+> call it with order 0 argument.
 
-Hi,
+Patch 2/2 uses a non-zero order.  I agree it's a lot of churn without
+good reason; that's why I tried to add GFP_ORDER flags a few months ago.
+Unfortunately, you didn't like that approach either.
 
-Actually, I'm thinking about if you need same 'fd' or same file path?
-If you just need same file path, I think
+> Also is it so much to ask callers to provide __GFP_COMP explicitly?
 
-  # xfs_io -c "copy_range testfile" testfile
+Yes, it's an unreasonable burden on the callers.  Those that pass 0 will
+have the test optimised away by the compiler (for the non-NUMA case).
+For the NUMA case, passing zero is going to be only a couple of extra
+instructions to not set the GFP_COMP flag.
 
-already can help that. The only one problem stop you doing that is
-"copy_dst_truncate()".
+> >  #ifdef CONFIG_NUMA
+> > -extern struct page *__page_cache_alloc(gfp_t gfp);
+> > +extern struct page *__page_cache_alloc(gfp_t gfp, unsigned int order);
+> >  #else
+> > -static inline struct page *__page_cache_alloc(gfp_t gfp)
+> > +static inline struct page *__page_cache_alloc(gfp_t gfp, unsigned int order)
+> >  {
+> > -	return alloc_pages(gfp, 0);
+> > +	if (order > 0)
+> > +		gfp |= __GFP_COMP;
+> > +	return alloc_pages(gfp, order);
+> >  }
+> >  #endif
 
-If all above I suppose is right, we can turn to talk about if that
-copy_dst_truncate() is necessary, or how can we skip it.
-
-Thanks,
-Zorro
-
->  io/copy_file_range.c | 27 ++++++++++++++++++---------
->  1 file changed, 18 insertions(+), 9 deletions(-)
-> 
-> diff --git a/io/copy_file_range.c b/io/copy_file_range.c
-> index b7b9fd88..2dde8a31 100644
-> --- a/io/copy_file_range.c
-> +++ b/io/copy_file_range.c
-> @@ -28,6 +28,7 @@ copy_range_help(void)
->                            at position 0\n\
->   'copy_range -f 2' - copies all bytes from open file 2 into the current open file\n\
->                            at position 0\n\
-> + 'copy_range -f -' - copies all bytes from current open file append the current open file\n\
->  "));
->  }
->  
-> @@ -114,11 +115,15 @@ copy_range_f(int argc, char **argv)
->  			}
->  			break;
->  		case 'f':
-> -			src_file_nr = atoi(argv[1]);
-> -			if (src_file_nr < 0 || src_file_nr >= filecount) {
-> -				printf(_("file value %d is out of range (0-%d)\n"),
-> -					src_file_nr, filecount - 1);
-> -				return 0;
-> +			if (strcmp(argv[1], "-"))
-> +				src_file_nr = (file - &filetable[0]) / sizeof(fileio_t);
-> +			else {
-> +				src_file_nr = atoi(argv[1]);
-> +				if (src_file_nr < 0 || src_file_nr >= filecount) {
-> +					printf(_("file value %d is out of range (0-%d)\n"),
-> +						src_file_nr, filecount - 1);
-> +					return 0;
-> +				}
->  			}
->  			/* Expect no src_path arg */
->  			src_path_arg = 0;
-> @@ -147,10 +152,14 @@ copy_range_f(int argc, char **argv)
->  		}
->  		len = sz;
->  
-> -		ret = copy_dst_truncate();
-> -		if (ret < 0) {
-> -			ret = 1;
-> -			goto out;
-> +		if (fd != file->fd) {
-> +			ret = copy_dst_truncate();
-> +			if (ret < 0) {
-> +				ret = 1;
-> +				goto out;
-> +			}
-> +		} else {
-> +			dst = sz;
->  		}
->  	}
->  
-> -- 
-> 2.17.2
-> 
