@@ -2,127 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE827A767E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 23:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7517A768C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 23:52:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfICVsb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 17:48:31 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33990 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbfICVsb (ORCPT
+        id S1726810AbfICVw3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 17:52:29 -0400
+Received: from mail.thelounge.net ([91.118.73.15]:26785 "EHLO
+        mail.thelounge.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfICVw2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 17:48:31 -0400
-Received: by mail-qk1-f193.google.com with SMTP id q203so8395980qke.1;
-        Tue, 03 Sep 2019 14:48:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QSeacdjH5KAA63hvqQ3TjMDtSK79CrnZ88ADfY1YuBk=;
-        b=VTqX9qS4xLMsnfmi7LgqloDsV8yxTDCMh/D4j4kIDQdX0rYvHrovcIg0frBYzptj5u
-         UG6d8Jn/smiI5LS6VNAk41ZSUvmDhrK4ho400cWMDCrSnNbs7SSRVa64rEFU9X+xe3jh
-         uOcwEmT2377giYg9IH9N8eZImDav4F8u1WeU6lNwBOS2s1ay+z9o4lo0VLMHW1qHijia
-         Jq1Zgv6HLeIKwMIC1q5iMTVQsMciA985agehwZN57tlRyZhbDUw0Acqq5vq78QXHoESR
-         n5o/desuwnLptOwLgftJUgaMav/Fm6OXWCfkkEPqdnP6kX2NJ0Fz9L5kg3U+GL0q0I4H
-         yI4w==
-X-Gm-Message-State: APjAAAW79fkYytVri2gwoXokP49e+yvTC3ca2WAA2iU/qKxWfz9x9LDJ
-        XnWs3bdG7fG9B2Ngq1CfV5KILI8cfKJWLQIYORo=
-X-Google-Smtp-Source: APXvYqzGKjDEhNTaKl3R14NK+vIWHogZl6KI2fkl/dkDT6OD3zO0Nzt0XMYejfSqEsJrSDvEjDRIjXOnS1JgTvyNhZE=
-X-Received: by 2002:a37:4fcf:: with SMTP id d198mr36096134qkb.394.1567547310386;
- Tue, 03 Sep 2019 14:48:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <1567523922.5576.57.camel@lca.pw> <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
- <20190903211747.GD2899@mit.edu> <CABeXuvoYh0mhg049+pXbMqh-eM=rw+Ui1=rDree4Yb=7H7mQRg@mail.gmail.com>
-In-Reply-To: <CABeXuvoYh0mhg049+pXbMqh-eM=rw+Ui1=rDree4Yb=7H7mQRg@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 3 Sep 2019 23:48:14 +0200
-Message-ID: <CAK8P3a0AcPzuGeNFMW=ymO0wH_cmgnynLGYXGjqyrQb65o6aOw@mail.gmail.com>
+        Tue, 3 Sep 2019 17:52:28 -0400
+Received: from srv-rhsoft.rhsoft.net  (Authenticated sender: h.reindl@thelounge.net) by mail.thelounge.net (THELOUNGE MTA) with ESMTPSA id 46NLK42364zXMk;
+        Tue,  3 Sep 2019 23:52:19 +0200 (CEST)
 Subject: Re: "beyond 2038" warnings from loopback mount is noisy
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, Qian Cai <cai@lca.pw>,
-        Jeff Layton <jlayton@kernel.org>,
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Qian Cai <cai@lca.pw>, Jeff Layton <jlayton@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Content-Type: text/plain; charset="UTF-8"
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <1567523922.5576.57.camel@lca.pw>
+ <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
+ <20190903211747.GD2899@mit.edu>
+From:   Reindl Harald <h.reindl@thelounge.net>
+Openpgp: id=9D2B46CDBC140A36753AE4D733174D5A5892B7B8;
+ url=https://arrakis-tls.thelounge.net/gpg/h.reindl_thelounge.net.pub.txt
+Organization: the lounge interactive design
+Message-ID: <31a671ea-a00b-37da-5f30-558c3ab6d690@thelounge.net>
+Date:   Tue, 3 Sep 2019 23:52:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190903211747.GD2899@mit.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-CH
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 11:31 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> On Tue, Sep 3, 2019 at 2:18 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> > On Tue, Sep 03, 2019 at 09:18:44AM -0700, Deepa Dinamani wrote:
-> > >
-> > > This prints a warning for each inode that doesn't extend limits beyond
-> > > 2038. It is rate limited by the ext4_warning_inode().
-> > > Looks like your filesystem has inodes that cannot be extended.
-> > > We could use a different rate limit or ignore this corner case. Do the
-> > > maintainers have a preference?
-> >
-> > We need to drop this commit (ext4: Initialize timestamps limits), or
-> > at least the portion which adds the call to the EXT4_INODE_SET_XTIME
-> > macro in ext4.h.
->
-> As Arnd said, I think this can be fixed by warning only when the inode
-> size is not uniformly 128 bytes in ext4.h. Is this an acceptable
-> solution or we want to drop this warning altogether?
 
-I think the warning as it was intended makes sense, the idea
-was never to warn on every inode update for file systems that
-cannot handle future dates, only to warn when we
 
-a) try to set a future date
-b) fail to do that because the space cannot be made available.
+Am 03.09.19 um 23:17 schrieb Theodore Y. Ts'o:
+> I know of a truly vast number of servers in production all over the
+> world which are using 128 byte inodes, and spamming the inodes at the
+> maximum rate limit is a really bad idea.  This includes at some major
+> cloud data centers where the life of individual servers in their data
+> centers is well understood (they're not going to last until 2038)
 
-> Arnd, should I be sending a pull request again with the fix? Or, we
-> drop the ext4 patch and I can send it to the maintainers directly?
+well, i didn't ask the Fedora installer for 128 byte indoes in 2008 on
+the 500 MB small /boot while the 6 GB rootfs has 256 byte while this
+setups are surely targeted to last longer than 2038 until someone kills
+Fedora with all the shiny new stuff nobody needs
 
-I would prefer to fix it on top of the patches I already merged.
+but yes, don't start to spam me about it
 
-Maybe something like:
-
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 9e3ae3be3de9..5a971d1b6d5e 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -835,7 +835,9 @@ do {
-                                 \
-                }
-         \
-        else    {\
-                (raw_inode)->xtime = cpu_to_le32(clamp_t(int32_t,
-(inode)->xtime.tv_sec, S32_MIN, S32_MAX));    \
--               ext4_warning_inode(inode, "inode does not support
-timestamps beyond 2038"); \
-+               if (((inode)->xtime.tv_sec != (raw_inode)->xtime) &&     \
-+                   ((inode)->i_sb->s_time_max > S32_MAX))
-         \
-+                       ext4_warning_inode(inode, "inode does not
-support timestamps beyond 2038"); \
-        } \
- } while (0)
-
-> > In cases where the inode size is such that there is no chance at all
-> > to support timestamps beyond 2038, a single warning at mount time, or
-> > maybe a warning at mkfs time might be acceptable.  But there's no
-> > point printing a warning time each time we set a timestamp on such a
-> > file system.  It's not going to change, and past a certain point, we
-> > need to trust that people who are using 128 byte inodes did so knowing
-> > what the tradeoffs might be.  After all, it is *not* the default.
->
-> We have a single mount time warning already in place here. I did not
-> realize some people actually chose to use 128 byte inodes on purpose.
-
-This is also new to me, as I always assumed a normal ext4 would be y2038
-safe. I suspect that a few of those users are unaware of the y2038
-problem they might run into because of that, but that's what the mount-time
-warning should help with.
-
-However, I did expect that people might have legacy ext3 file system
-images that they mount, and printing a warning for each write would
-also be wrong for those.
-
-      Arnd
+[root@arrakis:~]$ tune2fs -l /dev/sda1
+tune2fs 1.44.6 (5-Mar-2019)
+Filesystem volume name:   boot
+Last mounted on:          /boot
+Filesystem UUID:          b834776d-69d1-49c6-97c1-d6d758a438f0
+Filesystem magic number:  0xEF53
+Filesystem revision #:    1 (dynamic)
+Filesystem features:      has_journal ext_attr resize_inode dir_index
+filetype needs_recovery extent sparse_super uninit_bg
+Filesystem flags:         signed_directory_hash
+Default mount options:    (none)
+Filesystem state:         clean
+Errors behavior:          Continue
+Filesystem OS type:       Linux
+Inode count:              130560
+Block count:              521215
+Reserved block count:     2
+Free blocks:              455376
+Free inodes:              130216
+First block:              1
+Block size:               1024
+Fragment size:            1024
+Reserved GDT blocks:      256
+Blocks per group:         8192
+Fragments per group:      8192
+Inodes per group:         2040
+Inode blocks per group:   255
+Filesystem created:       Mon Aug 18 06:48:14 2008
+Last mount time:          Sat Aug 17 02:49:03 2019
+Last write time:          Tue Sep  3 02:03:44 2019
+Mount count:              19
+Maximum mount count:      30
+Last checked:             Sat Dec 15 04:36:27 2018
+Check interval:           31104000 (12 months)
+Next check after:         Tue Dec 10 04:36:27 2019
+Lifetime writes:          64 GB
+Reserved blocks uid:      0 (user root)
+Reserved blocks gid:      0 (group root)
+First inode:              11
+Inode size:               128
+Journal inode:            8
+Default directory hash:   half_md4
+Directory Hash Seed:      2cc862b9-dc3e-4707-b6ed-9a7fe724dd2e
+Journal backup:           inode blocks
