@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6258EA677E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F2F6A6780
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbfICLgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 07:36:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:9156 "EHLO mx1.redhat.com"
+        id S1728270AbfICLhE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 07:37:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33270 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728904AbfICLgv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:36:51 -0400
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        id S1728949AbfICLgx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 07:36:53 -0400
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5DC4E757C0
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2019 11:36:50 +0000 (UTC)
-Received: by mail-wm1-f72.google.com with SMTP id c11so4226687wml.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 04:36:50 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id C35B551EE6
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2019 11:36:51 +0000 (UTC)
+Received: by mail-wr1-f72.google.com with SMTP id l6so6109501wrn.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 04:36:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=P3ITaB+F8loZbcEn4YrJIgIB7m3BqeKZtOyPY/Ayk1w=;
-        b=PiR7c36cfHi1bZfbG+XO2a/kOdHlX4Z07+jYAToKx3QrOnx9LgL8k8cxNTJKJ2qtG7
-         fcDE2ipuutvTjC8mBGa3CtdlOC1J9WzFQw+JyXDbyrslcFVBAx3m9q1zrbIn0Bkf6vYS
-         87tHuEhYO2j7HUn9PRldD3A2xf3418jrHp+gZUYXBdOSg4bD7j27MgckPIfhgtpWkHO6
-         XOuRqS+rtmtyfOiNwZYLYFBUcsyWxaMuuuYKCCweyPgcSZD7E6xoJwdtgtpmLJ4PyW2l
-         t3R1nXCxdgbzMnXdFrNZgCuaCoZZB5uKarPMbBTOhwe9dGo4LRU9ckXDeqVLwKzJLuQn
-         cJlA==
-X-Gm-Message-State: APjAAAX/ntOSfU3t7RnSc25PcB0mSLrWnEg9uF17Odc1AKkS04+TyrnL
-        Uj9brS28P/2nsHxxuQNRUDABEujvhjiBPOuFqmpZp5uxSgy0b17uQCAc5ni4En17QXDhI7IBgvH
-        PJ53PqV7yj0faoH2DDhJ3OI7oCQ==
-X-Received: by 2002:a05:6000:1081:: with SMTP id y1mr38940115wrw.53.1567510608782;
-        Tue, 03 Sep 2019 04:36:48 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwu8OC/y6yanKYsj1cT00XOuOjwHESvhNUhBsPBTa/oAejpHDFyTDxNuNmfoqJGHtub3HzQeg==
-X-Received: by 2002:a05:6000:1081:: with SMTP id y1mr38940087wrw.53.1567510608580;
-        Tue, 03 Sep 2019 04:36:48 -0700 (PDT)
+        bh=OsyL7og31crqN7mW+zNo/EDQhj9gbNoC++NWMLJEmWs=;
+        b=gNUWP06IS9qB95Lx0aduBBu6qsyfkjjxijTzi+jhSVaN7tnYyW2vx/irXwc5zR4Ux4
+         ASh9/o8K4N4FDbVHucojRvk/qYq4TRvZHujg8jho0mYID0+WsmGZKBQCr4k4p4J1cADz
+         4fye1udb+wDsdeUR9lcU9hQugAMsoXd5AmCpELQBLG1cEpvTTyLJvdMjLk1YJviOKkXO
+         pKmnNRNTQdfdKb+zclFvAMcS/jQ3R77j31UE1cgQbAqNiI1wAW7FKrQiwA/1vN5EJlqU
+         QeF71useiLZlqWrOJs57P3xrEmDPxWpZIzGTN5l5kfPJH4rEFduj+lsDs8Y0PEOlnWBj
+         0bmw==
+X-Gm-Message-State: APjAAAVccpCgfBlRKzGLe7DRP2yVJUBJ5VoLBi8nLBl3+ZDPm+54gpVJ
+        pNVq0VHLCshj4/QsKtQkrcpkAl0uj3lsbLMztiZI7m3224Vdd8S7Pg91ggIliKV97ORvqFXEdf7
+        QQDvVd3vK9Cw3Ul1f43dBNSQxJw==
+X-Received: by 2002:a5d:6a49:: with SMTP id t9mr8078611wrw.134.1567510610260;
+        Tue, 03 Sep 2019 04:36:50 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwocwl2439SugQ27Vg4mzi8kOHuxJ+dSwBGojgwUcuGQuWd35PES6B2Iq8drLurJeiwa0hwcw==
+X-Received: by 2002:a5d:6a49:: with SMTP id t9mr8078567wrw.134.1567510609935;
+        Tue, 03 Sep 2019 04:36:49 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id v186sm40446906wmb.5.2019.09.03.04.36.47
+        by smtp.gmail.com with ESMTPSA id v186sm40446906wmb.5.2019.09.03.04.36.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 04:36:47 -0700 (PDT)
+        Tue, 03 Sep 2019 04:36:49 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-kernel@vger.kernel.org,
         "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
         Vivek Goyal <vgoyal@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v4 03/16] vfs: subtype handling moved to fuse
-Date:   Tue,  3 Sep 2019 13:36:27 +0200
-Message-Id: <20190903113640.7984-4-mszeredi@redhat.com>
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Subject: [PATCH v4 04/16] fuse: export fuse_end_request()
+Date:   Tue,  3 Sep 2019 13:36:28 +0200
+Message-Id: <20190903113640.7984-5-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190903113640.7984-1-mszeredi@redhat.com>
 References: <20190903113640.7984-1-mszeredi@redhat.com>
@@ -63,135 +62,124 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Stefan Hajnoczi <stefanha@redhat.com>
 
-The unused vfs code can be removed.  Don't pass empty subtype (same as if
-->parse callback isn't called).
+virtio-fs will need to complete requests from outside fs/fuse/dev.c.  Make
+the symbol visible.
 
-The bits that are left involve determining whether it's permitted to split the
-filesystem type string passed in to mount(2).  Consequently, this means that we
-cannot get rid of the FS_HAS_SUBTYPE flag unless we define that a type string
-with a dot in it always indicates a subtype specification.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/fs_context.c            | 14 --------------
- fs/fuse/inode.c            |  3 +--
- fs/namespace.c             |  2 --
- fs/proc_namespace.c        |  2 +-
- fs/super.c                 |  5 -----
- include/linux/fs_context.h |  1 -
- 6 files changed, 2 insertions(+), 25 deletions(-)
+ fs/fuse/dev.c    | 19 ++++++++++---------
+ fs/fuse/fuse_i.h |  5 +++++
+ 2 files changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 270ecae32216..f6dee3b2b7de 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -508,7 +508,6 @@ void put_fs_context(struct fs_context *fc)
- 	put_net(fc->net_ns);
- 	put_user_ns(fc->user_ns);
- 	put_cred(fc->cred);
--	kfree(fc->subtype);
- 	put_fc_log(fc);
- 	put_filesystem(fc->fs_type);
- 	kfree(fc->source);
-@@ -575,17 +574,6 @@ static int legacy_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		return 0;
- 	}
- 
--	if ((fc->fs_type->fs_flags & FS_HAS_SUBTYPE) &&
--	    strcmp(param->key, "subtype") == 0) {
--		if (param->type != fs_value_is_string)
--			return invalf(fc, "VFS: Legacy: Non-string subtype");
--		if (fc->subtype)
--			return invalf(fc, "VFS: Legacy: Multiple subtype");
--		fc->subtype = param->string;
--		param->string = NULL;
--		return 0;
--	}
--
- 	if (ctx->param_type == LEGACY_FS_MONOLITHIC_PARAMS)
- 		return invalf(fc, "VFS: Legacy: Can't mix monolithic and individual options");
- 
-@@ -742,8 +730,6 @@ void vfs_clean_context(struct fs_context *fc)
- 	fc->s_fs_info = NULL;
- 	fc->sb_flags = 0;
- 	security_free_mnt_opts(&fc->security);
--	kfree(fc->subtype);
--	fc->subtype = NULL;
- 	kfree(fc->source);
- 	fc->source = NULL;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 2597ed237ada..e3375ce8e97f 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -473,8 +473,7 @@ static const struct fs_parameter_spec fuse_param_specs[] = {
- 	fsparam_flag	("allow_other",		OPT_ALLOW_OTHER),
- 	fsparam_u32	("max_read",		OPT_MAX_READ),
- 	fsparam_u32	("blksize",		OPT_BLKSIZE),
--	__fsparam(fs_param_is_string, "subtype", OPT_SUBTYPE,
--		  fs_param_v_optional),
-+	fsparam_string	("subtype",		OPT_SUBTYPE),
- 	{}
- };
- 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d28d30b13043..105f995543f6 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2768,8 +2768,6 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
- 				put_filesystem(type);
- 				return -EINVAL;
- 			}
--		} else {
--			subtype = "";
- 		}
- 	}
- 
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index e16fb8f2049e..273ee82d8aa9 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -88,7 +88,7 @@ static inline void mangle(struct seq_file *m, const char *s)
- static void show_type(struct seq_file *m, struct super_block *sb)
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index fdb85895737b..137b3de511ac 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -427,7 +427,7 @@ static void flush_bg_queue(struct fuse_conn *fc)
+  * the 'end' callback is called if given, else the reference to the
+  * request is released
+  */
+-static void request_end(struct fuse_conn *fc, struct fuse_req *req)
++void fuse_request_end(struct fuse_conn *fc, struct fuse_req *req)
  {
- 	mangle(m, sb->s_type->name);
--	if (sb->s_subtype && sb->s_subtype[0]) {
-+	if (sb->s_subtype) {
- 		seq_putc(m, '.');
- 		mangle(m, sb->s_subtype);
- 	}
-diff --git a/fs/super.c b/fs/super.c
-index 80b56bc7d2db..e30a4279784c 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1535,11 +1535,6 @@ int vfs_get_tree(struct fs_context *fc)
- 	sb = fc->root->d_sb;
- 	WARN_ON(!sb->s_bdi);
+ 	struct fuse_iqueue *fiq = &fc->iq;
  
--	if (fc->subtype && !sb->s_subtype) {
--		sb->s_subtype = fc->subtype;
--		fc->subtype = NULL;
--	}
--
- 	/*
- 	 * Write barrier is for super_cache_count(). We place it before setting
- 	 * SB_BORN as the data dependency between the two functions is the
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index ed5b4349671e..461d37912bed 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -97,7 +97,6 @@ struct fs_context {
- 	const struct cred	*cred;		/* The mounter's credentials */
- 	struct fc_log		*log;		/* Logging buffer */
- 	const char		*source;	/* The source name (eg. dev path) */
--	const char		*subtype;	/* The subtype to set on the superblock */
- 	void			*security;	/* Linux S&M options */
- 	void			*s_fs_info;	/* Proposed s_fs_info */
- 	fmode_t			bdev_mode;	/* File open mode for bdev */
+@@ -480,6 +480,7 @@ static void request_end(struct fuse_conn *fc, struct fuse_req *req)
+ put_request:
+ 	fuse_put_request(fc, req);
+ }
++EXPORT_SYMBOL_GPL(fuse_request_end);
+ 
+ static int queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
+ {
+@@ -567,12 +568,12 @@ static void __fuse_request_send(struct fuse_conn *fc, struct fuse_req *req)
+ 		req->in.h.unique = fuse_get_unique(fiq);
+ 		queue_request(fiq, req);
+ 		/* acquire extra reference, since request is still needed
+-		   after request_end() */
++		   after fuse_request_end() */
+ 		__fuse_get_request(req);
+ 		spin_unlock(&fiq->waitq.lock);
+ 
+ 		request_wait_answer(fc, req);
+-		/* Pairs with smp_wmb() in request_end() */
++		/* Pairs with smp_wmb() in fuse_request_end() */
+ 		smp_rmb();
+ 	}
+ }
+@@ -1302,7 +1303,7 @@ __releases(fiq->waitq.lock)
+  * the pending list and copies request data to userspace buffer.  If
+  * no reply is needed (FORGET) or request has been aborted or there
+  * was an error during the copying then it's finished by calling
+- * request_end().  Otherwise add it to the processing list, and set
++ * fuse_request_end().  Otherwise add it to the processing list, and set
+  * the 'sent' flag.
+  */
+ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+@@ -1380,7 +1381,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+ 		/* SETXATTR is special, since it may contain too large data */
+ 		if (in->h.opcode == FUSE_SETXATTR)
+ 			req->out.h.error = -E2BIG;
+-		request_end(fc, req);
++		fuse_request_end(fc, req);
+ 		goto restart;
+ 	}
+ 	spin_lock(&fpq->lock);
+@@ -1423,7 +1424,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+ 	if (!test_bit(FR_PRIVATE, &req->flags))
+ 		list_del_init(&req->list);
+ 	spin_unlock(&fpq->lock);
+-	request_end(fc, req);
++	fuse_request_end(fc, req);
+ 	return err;
+ 
+  err_unlock:
+@@ -1931,7 +1932,7 @@ static int copy_out_args(struct fuse_copy_state *cs, struct fuse_out *out,
+  * the write buffer.  The request is then searched on the processing
+  * list by the unique ID found in the header.  If found, then remove
+  * it from the list and copy the rest of the buffer to the request.
+- * The request is finished by calling request_end()
++ * The request is finished by calling fuse_request_end().
+  */
+ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+ 				 struct fuse_copy_state *cs, size_t nbytes)
+@@ -2018,7 +2019,7 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+ 		list_del_init(&req->list);
+ 	spin_unlock(&fpq->lock);
+ 
+-	request_end(fc, req);
++	fuse_request_end(fc, req);
+ out:
+ 	return err ? err : nbytes;
+ 
+@@ -2158,7 +2159,7 @@ static void end_requests(struct fuse_conn *fc, struct list_head *head)
+ 		req->out.h.error = -ECONNABORTED;
+ 		clear_bit(FR_SENT, &req->flags);
+ 		list_del_init(&req->list);
+-		request_end(fc, req);
++		fuse_request_end(fc, req);
+ 	}
+ }
+ 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 24dbca777775..67521103d3b2 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -956,6 +956,11 @@ ssize_t fuse_simple_request(struct fuse_conn *fc, struct fuse_args *args);
+ void fuse_request_send_background(struct fuse_conn *fc, struct fuse_req *req);
+ bool fuse_request_queue_background(struct fuse_conn *fc, struct fuse_req *req);
+ 
++/**
++ * End a finished request
++ */
++void fuse_request_end(struct fuse_conn *fc, struct fuse_req *req);
++
+ /* Abort all requests */
+ void fuse_abort_conn(struct fuse_conn *fc);
+ void fuse_wait_aborted(struct fuse_conn *fc);
 -- 
 2.21.0
 
