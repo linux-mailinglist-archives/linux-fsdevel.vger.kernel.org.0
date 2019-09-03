@@ -2,121 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C16BA64B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 11:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C324A64E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 11:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbfICJIl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Tue, 3 Sep 2019 05:08:41 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:61316 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726740AbfICJIk (ORCPT
+        id S1728309AbfICJRt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 05:17:49 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38642 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728169AbfICJRt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 05:08:40 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8393Lvi002591
-        for <linux-fsdevel@vger.kernel.org>; Tue, 3 Sep 2019 05:08:39 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2usjjswh3k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 05:08:39 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <sachinp@linux.vnet.ibm.com>;
-        Tue, 3 Sep 2019 10:08:37 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Sep 2019 10:08:34 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8398XTO44499362
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Sep 2019 09:08:33 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4AFB7A4054;
-        Tue,  3 Sep 2019 09:08:33 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 67AD8A405F;
-        Tue,  3 Sep 2019 09:08:32 +0000 (GMT)
-Received: from [9.199.196.129] (unknown [9.199.196.129])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Sep 2019 09:08:32 +0000 (GMT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: "fs/namei.c: keep track of nd->root refcount status" causes boot
- panic
-From:   Sachin Sant <sachinp@linux.vnet.ibm.com>
-In-Reply-To: <CA+G9fYvOUch79HoBiJbuod2bTGS5h8se5EB5LRJAwTCfPQr2ow@mail.gmail.com>
-Date:   Tue, 3 Sep 2019 14:38:31 +0530
-Cc:     Qian Cai <cai@lca.pw>, Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-References: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw>
- <CA+G9fYvOUch79HoBiJbuod2bTGS5h8se5EB5LRJAwTCfPQr2ow@mail.gmail.com>
-To:     linux-fsdevel@vger.kernel.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-X-Mailer: Apple Mail (2.3445.104.11)
-X-TM-AS-GCONF: 00
-x-cbid: 19090309-0020-0000-0000-00000367064C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19090309-0021-0000-0000-000021BC6E98
-Message-Id: <FB310917-04B3-4263-8033-8D10428D119D@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-03_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=27 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=730 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909030096
+        Tue, 3 Sep 2019 05:17:49 -0400
+Received: by mail-io1-f66.google.com with SMTP id p12so34310673iog.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 02:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EuENc7crj8rqhon/s/3YCSFArTMbg3aHshy4WFfnKAI=;
+        b=Od7NQm+xjFA01cLuFmHtQg+5TCm8UxKX2tGkiw8Mr4ix+wsAC5OqGe+z4RAxvjqQg/
+         hOmmsMGgfL9ALOuzShRamJV28nj5bc9nAX+IVwfcCIvdcYByCAo2CXCt3AMWA49czLno
+         sGMa721iOqpXpP31sm3p2t8tpiPNVDM2tg89o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EuENc7crj8rqhon/s/3YCSFArTMbg3aHshy4WFfnKAI=;
+        b=Nd8PkkXknraBTxqbczoQ44HdtaInheaqMLkrYKJoXg8xSLFURichaSukMt/fyInnUC
+         ZJep7gm4hVNYtbrF05MtfVFfv5jhSOsKDaqPDV+IZgKvUs6EeRCQzE1RhtcYO9MVXXkk
+         aM3Ln2zDiQj76clqJ/FCdxWAKa3Mj459a89VYicRh91jOtpwhTHKGbdOQAqqT1Vpr/YW
+         nkl+NLH6XKcYKXp+qqU2ERejTanE+R0WjXfRcYoCxIU3Xd/0BcmaRnTXiJONAcgK9+6Y
+         o7tgvV2amC+FZK99pAB1hetOpGJXA35nSYCPjeBmqIVC9NuWqDK3kwp7g8gWSUQuFIwA
+         850w==
+X-Gm-Message-State: APjAAAXjagy4HJmQrU/J/WVpYJcoNNNZrL9iPb6GHyPu1FNPuvkaG8IK
+        HheGfB/1kpcPo2X2/reK2K9VKNoXvIxVE5rFygpYPg==
+X-Google-Smtp-Source: APXvYqzSAqgiAZOGqKdxa2ybdBypwTKeZ7jt6jzTE8fFeVXwQ2aRbTvX6cO5BVl/b39XJh9PglydDRoEYuNDaq5h9II=
+X-Received: by 2002:a02:c94b:: with SMTP id u11mr34398002jao.35.1567502266965;
+ Tue, 03 Sep 2019 02:17:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190821173742.24574-1-vgoyal@redhat.com> <CAJfpegvPTxkaNhXWhiQSprSJqyW1cLXeZEz6x_f0PxCd-yzHQg@mail.gmail.com>
+ <20190903041507-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190903041507-mutt-send-email-mst@kernel.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 3 Sep 2019 11:17:35 +0200
+Message-ID: <CAJfpeguB6fFhghuFS420ZQ+JuQvTLc5TgsGjoB_RvFrSVf+v5w@mail.gmail.com>
+Subject: Re: [PATCH v3 00/13] virtio-fs: shared file system for virtual machines
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Sep 3, 2019 at 10:31 AM Michael S. Tsirkin <mst@redhat.com> wrote:
 
+> Can the patches themselves be posted to the relevant list(s) please?
+> If possible, please also include "v3" in all patches so they are
+> easier to find.
 
-> On 03-Sep-2019, at 1:43 PM, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> 
-> On Tue, 3 Sep 2019 at 09:51, Qian Cai <cai@lca.pw> wrote:
->> 
->> The linux-next commit "fs/namei.c: keep track of nd->root refcount status” [1] causes boot panic on all
->> architectures here on today’s linux-next (0902). Reverted it will fix the issue.
+I'll post a v4.
 
-Similar problem is seen on ppc64le arch.
+> I poked at
+> https://lwn.net/ml/linux-kernel/20190821173742.24574-1-vgoyal@redhat.com/
+> specifically
+> https://lwn.net/ml/linux-kernel/20190821173742.24574-12-vgoyal@redhat.com/
+> and things like:
+> +       /* TODO lock */
+> give me pause.
+>
+> Cleanup generally seems broken to me - what pauses the FS
+>
+> What about the rest of TODOs in that file?
 
-[    0.493235] BUG: Kernel NULL pointer dereference at 0x00000cc0
-[    0.493241] Faulting instruction address: 0xc0000000003e9260
-[    0.493245] Oops: Kernel access of bad area, sig: 11 [#1]
-[    0.493250] LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA pSeries
-[    0.493254] Modules linked in:
-[    0.493260] CPU: 1 PID: 1 Comm: systemd Not tainted 5.3.0-rc6-next-20190902-autotest-autotest #1
-[    0.493265] NIP:  c0000000003e9260 LR: c0000000003e925c CTR: 00000000000001fc
-[    0.493270] REGS: c0000004f85038c0 TRAP: 0300   Not tainted  (5.3.0-rc6-next-20190902-autotest-autotest)
-[    0.493274] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 28002842  XER: 00000000
-[    0.493282] CFAR: c00000000000df44 DAR: 0000000000000cc0 DSISR: 40000000 IRQMASK: 0 
-[    0.493282] GPR00: c0000000003e925c c0000004f8503b50 c000000001458e00 0000000000000000 
-[    0.493282] GPR04: c0000004f8503ce0 0000000000000000 0000000000000064 0000000000000000 
-[    0.493282] GPR08: 0000000000000000 c000000000ff7a65 0000000000000000 c0000004f70100c0 
-[    0.493282] GPR12: 0000000000002200 c00000001ecaee00 0000000000000000 0000000000000000 
-[    0.493282] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-[    0.493282] GPR20: 0000000000077624 0000000000000000 0000000000000000 00007fffa1099e20 
-[    0.493282] GPR24: 0000000000000000 000000010f9572a4 0000000000000000 0000000000000001 
-[    0.493282] GPR28: 0000000000080060 0000000000080040 0000000000000000 0000000000000cc0 
-[    0.493327] NIP [c0000000003e9260] dput+0x70/0x4e0
-[    0.493332] LR [c0000000003e925c] dput+0x6c/0x4e0
-[    0.493334] Call Trace:
-[    0.493338] [c0000004f8503b50] [c0000000003e925c] dput+0x6c/0x4e0 (unreliable)
-[    0.493345] [c0000004f8503bc0] [c0000000003d5da4] terminate_walk+0x104/0x130
-[    0.493351] [c0000004f8503c00] [c0000000003da9d8] path_lookupat+0xe8/0x2b0
-[    0.493356] [c0000004f8503c70] [c0000000003dd668] filename_lookup+0xa8/0x1c0
-[    0.493362] [c0000004f8503da0] [c00000000046c4d4] sys_name_to_handle_at+0xe4/0x2d0
-[    0.493369] [c0000004f8503e20] [c00000000000b378] system_call+0x5c/0x68
-[    0.493373] Instruction dump:
-[    0.493376] f8010010 f821ff91 7c7f1b79 41820050 3d200008 3b600001 613c0060 613d0040 
-[    0.493383] 3b400000 3b000000 48707b11 60000000 <813f0000> 3bdf0058 7fc3f378 71390008 
-[    0.493391] ---[ end trace 7701d360352c734d ]—
+AFAICS, some of those are QOI issues, and some are long term
+performance items.  I see no blockers or things that would pose a
+security concern.
 
-Reverting the mentioned commit allows next to boot.
+That said, it would be nice to get rid of them at some point.
 
-Thanks
--Sachin
+> use of usleep is hacky - can't we do better e.g. with a
+> completion?
+
+Yes.  I have a different implementation, but was planning to leave
+this one in until the dust settles.
+
+> Some typos - e.g. "reuests".
+
+Fixed.
+
+> > >  fs/fuse/Kconfig                 |   11 +
+> > >  fs/fuse/Makefile                |    1 +
+> > >  fs/fuse/control.c               |    4 +-
+> > >  fs/fuse/cuse.c                  |    4 +-
+> > >  fs/fuse/dev.c                   |   89 ++-
+> > >  fs/fuse/dir.c                   |   26 +-
+> > >  fs/fuse/file.c                  |   15 +-
+> > >  fs/fuse/fuse_i.h                |  120 +++-
+> > >  fs/fuse/inode.c                 |  203 +++---
+> > >  fs/fuse/virtio_fs.c             | 1061 +++++++++++++++++++++++++++++++
+> > >  fs/splice.c                     |    3 +-
+> > >  include/linux/fs.h              |    2 +
+> > >  include/uapi/linux/virtio_fs.h  |   41 ++
+> > >  include/uapi/linux/virtio_ids.h |    1 +
+> > >  init/do_mounts.c                |   10 +
+> > >  15 files changed, 1462 insertions(+), 129 deletions(-)
+> > >  create mode 100644 fs/fuse/virtio_fs.c
+> > >  create mode 100644 include/uapi/linux/virtio_fs.h
+>
+> Don't the new files need a MAINTAINERS entry?
+> I think we want virtualization@lists.linux-foundation.org to be
+> copied.
+
+Yep.
+
+Stefan, do you want to formally maintain this file?
+
+Thanks,
+Miklos
