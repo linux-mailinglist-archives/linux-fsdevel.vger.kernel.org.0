@@ -2,382 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E1D7A6A16
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 15:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5193EA6A32
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 15:41:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbfICNjR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 09:39:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727005AbfICNjQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:39:16 -0400
-Received: from zzz.localdomain (h184-61-154-48.mdsnwi.dsl.dynamic.tds.net [184.61.154.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 851622339D;
-        Tue,  3 Sep 2019 13:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567517953;
-        bh=WX++lsiW5/n4fIM7J1U21PJ8GwhnB7VQJktttkSjvK8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hdJyn8Ctp+DxnTUsVAaOGnh0ern1YQvY+SnVrEVrcIeSu2DdSjP8e0F8uM+TEpejk
-         QdKB45J1OxrhjmvZBjp99LHzNO+iXO/O9WJgUtdU6YEu7al170dFUvLtJK356bRKOJ
-         GcnejJKzWUCosUW26X03lm1oAFjVeCvrQq18e1D8=
-Date:   Tue, 3 Sep 2019 08:39:10 -0500
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-aio <linux-aio@kvack.org>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        stable <stable@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] fuse: disable irqs for fuse_iqueue::waitq.lock
-Message-ID: <20190903133910.GA5144@zzz.localdomain>
-Mail-Followup-To: Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org, linux-aio <linux-aio@kvack.org>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        stable <stable@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
-References: <0000000000008d8eac05906691ac@google.com>
- <20190822233529.4176-1-ebiggers@kernel.org>
- <CAJfpegvHgcZGFi-Ydyo2j89zQxqAtZ1Lh0+vC6vWeU-aEFZkYQ@mail.gmail.com>
+        id S1729118AbfICNlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 09:41:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58628 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727107AbfICNlo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 09:41:44 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x83DbIpt086592
+        for <linux-fsdevel@vger.kernel.org>; Tue, 3 Sep 2019 09:41:43 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2usrsuskf7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 09:41:42 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Tue, 3 Sep 2019 14:41:35 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Sep 2019 14:41:32 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x83DfVYW51839196
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Sep 2019 13:41:31 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0A9CBA4062;
+        Tue,  3 Sep 2019 13:41:31 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC5E6A405B;
+        Tue,  3 Sep 2019 13:41:29 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.124.31.57])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Sep 2019 13:41:29 +0000 (GMT)
+Subject: Re: [RFC] - vfs: Null pointer dereference issue with symlink create
+ and read of symlink
+To:     Gao Xiang <hsiangkao@aol.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, aneesh.kumar@linux.ibm.com,
+        Jeff Layton <jlayton@kernel.org>, wugyuan@cn.ibm.com
+References: <20190903115827.0A8A0A405B@b06wcsmtp001.portsmouth.uk.ibm.com>
+ <20190903125946.GA11069@hsiangkao-HP-ZHAN-66-Pro-G1>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Tue, 3 Sep 2019 19:11:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegvHgcZGFi-Ydyo2j89zQxqAtZ1Lh0+vC6vWeU-aEFZkYQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190903125946.GA11069@hsiangkao-HP-ZHAN-66-Pro-G1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19090313-0016-0000-0000-000002A620A4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090313-0017-0000-0000-0000330688B1
+Message-Id: <20190903134129.EC5E6A405B@b06wcsmtp001.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-03_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909030144
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 09:31:29AM +0200, Miklos Szeredi wrote:
-> On Fri, Aug 23, 2019 at 1:35 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > From: Eric Biggers <ebiggers@google.com>
-> >
-> > When IOCB_CMD_POLL is used on the FUSE device, aio_poll() disables IRQs
-> > and takes kioctx::ctx_lock, then fuse_iqueue::waitq.lock.
+
+
+On 9/3/19 6:29 PM, Gao Xiang wrote:
+> On Tue, Sep 03, 2019 at 05:28:26PM +0530, Ritesh Harjani wrote:
+>> Hi Viro/All,
+>>
+>> Could you please review below issue and it's proposed solutions.
+>> If you could let me know which of the two you think will be a better
+>> approach to solve this or in case if you have any other better approach, I
+>> can prepare and submit a official patch with that.
+>>
+>>
+>>
+>> Issue signature:-
+>>   [NIP  : trailing_symlink+80]
+>>   [LR   : trailing_symlink+1092]
+>>   #4 [c00000198069bb70] trailing_symlink at c0000000004bae60  (unreliable)
+>>   #5 [c00000198069bc00] path_openat at c0000000004bdd14
+>>   #6 [c00000198069bc90] do_filp_open at c0000000004c0274
+>>   #7 [c00000198069bdb0] do_sys_open at c00000000049b248
+>>   #8 [c00000198069be30] system_call at c00000000000b388
+>>
+>>
+>>
+>> Test case:-
+>> shell-1 - "while [ 1 ]; do cat /gpfs/g1/testdir/file3; sleep 1; done"
+>> shell-2 - "while [ 1 ]; do ln -s /gpfs/g1/testdir/file1
+>> /gpfs/g1/testdir/file3; sleep 1; rm /gpfs/g1/testdir/file3 sleep 1; done
+>>
+>>
+>>
+>> Problem description:-
+>> In some filesystems like GPFS below described scenario may happen on some
+>> platforms (Reported-By:- wugyuan)
+>>
+>> Here, two threads are being run in 2 different shells. Thread-1(cat) does
+>> cat of the symlink and Thread-2(ln) is creating the symlink.
+>>
+>> Now on any platform with GPFS like filesystem, if CPU does out-of-order
+>> execution (or any kind of re-ordering due compiler optimization?) in
+>> function __d_set_and_inode_type(), then we see a NULL pointer dereference
+>> due to inode->i_uid.
+>>
+>> This happens because in lookup_fast in nonRCU path or say REF-walk (i.e. in
+>> else condition), we check d_is_negative() without any lock protection.
+>> And since in __d_set_and_inode_type() re-ordering may happen in setting of
+>> dentry->type & dentry->inode => this means that there is this tiny window
+>> where things are going wrong.
+>>
+>>
+>> (GPFS like):- Any FS with -inode_operations ->permission callback returning
+>> -ECHILD in case of (mask & MAY_NOT_BLOCK) may cause this problem to happen.
+>> (few e.g. found were - ocfs2, ceph, coda, afs)
+>>
+>> int xxx_permission(struct inode *inode, int mask)
+>> {
+>>           if (mask & MAY_NOT_BLOCK)
+>>                   return -ECHILD;
+>> 	<...>
+>> }
+>>
+>> Wugyuan(cc), could reproduce this problem with GPFS filesystem.
+>> Since, I didn't have the GPFS setup, so I tried replicating on a native FS
+>> by forcing out-of-order execution in function __d_set_inode_and_type() and
+>> making sure we return -ECHILD in MAY_NOT_BLOCK case in ->permission
+>> operation for all inodes.
+>>
+>> With above changes in kernel, I could as well hit this issue on a native FS
+>> too.
+>>
+>> (basically what we observed is link_path_walk will do nonRCU(REF-walk)
+>> lookup due to may_lookup -> inode_permission return -ECHILD and then
+>> unlazy_walk drops the LOOKUP_RCU flag (nd->flag). After that below race is
+>> possible).
+>>
+>>
+>>
+>> Sequence of events:-
+>>
+>> Thread-2(Comm: ln)		Thread-1(Comm: cat)
+>>
+>> 				dentry = __d_lookup() //nonRCU
+>>
+>> __d_set_and_inode_type() (Out-of-order execution)
+>> 	flags = READ_ONCE(dentry->d_flags);
+>> 	flags &= ~(DCACHE_ENTRY_TYPE | DCACHE_FALLTHRU);
+>> 	flags |= type_flags;
+>> 	WRITE_ONCE(dentry->d_flags, flags);
+>>
+>> 					
+>> 				if (unlikely(d_is_negative()) // fails
+>>    					{}
+>> 				// since type is already updated in
+>> 				// Thread-2 in parallel but inode
+>> 				// not yet set.
+>> 				// d_is_negative returns false
+>>
+>> 				*inode = d_backing_inode(path->dentry);
+>> 				// means inode is still NULL
+>>
+>> 	dentry->d_inode = inode;
+>> 	
+>> 				trailing_symlink()
+>> 					may_follow_link()
+>> 						inode = nd->link_inode;
+>> 						// nd->link_inode = NULL
+>> 						//Then it crashes while
+>> 						//doing inode->i_uid
+>> 					
+>> 	
 > 
-> Not in -linus.
-> 
-> Which tree was this reproduced with?
-> 
-> Thanks,
-> Miklos
+> It seems much similar to
+> https://lore.kernel.org/r/20190419084810.63732-1-houtao1@huawei.com/
 
-Linus's tree.  Here's the full symbolized output on v5.3-rc7:
+Thanks, yes two same symptoms with different use cases.
+But except the fact that here, we see the issue with GPFS quite 
+frequently. So let's hope that we could have some solution to this 
+problem in upstream.
 
-=====================================================
-WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
-5.3.0-rc7 #1 Not tainted
------------------------------------------------------
-syz_fuse/150 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-00000000c2701b26 (&fiq->waitq){+.+.}, at: spin_lock include/linux/spinlock.h:338 [inline]
-00000000c2701b26 (&fiq->waitq){+.+.}, at: aio_poll fs/aio.c:1751 [inline]
-00000000c2701b26 (&fiq->waitq){+.+.}, at: __io_submit_one.constprop.0+0x203/0x5b0 fs/aio.c:1825
+ From the thread:-
+ >> We could simply use d_really_is_negative() there, avoiding all that
+ >> mess.  If and when we get around to whiteouts-in-dcache (i.e. if
+ >> unionfs series gets resurrected), we can revisit that
 
-and this task is already holding:
-00000000f4c02e81 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq include/linux/spinlock.h:363 [inline]
-00000000f4c02e81 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll fs/aio.c:1749 [inline]
-00000000f4c02e81 (&(&ctx->ctx_lock)->rlock){..-.}, at: __io_submit_one.constprop.0+0x1f4/0x5b0 fs/aio.c:1825
-which would create a new lock dependency:
- (&(&ctx->ctx_lock)->rlock){..-.} -> (&fiq->waitq){+.+.}
+I didn't get this part. Does it mean, d_really_is_negative can only be 
+used, once whiteouts-in-dcache series is resurrected?
+If yes, meanwhile could we have any other solution in place?
 
-but this new dependency connects a SOFTIRQ-irq-safe lock:
- (&(&ctx->ctx_lock)->rlock){..-.}
+-ritesh
 
-... which became SOFTIRQ-irq-safe at:
-  lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
-  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
-  _raw_spin_lock_irq+0x32/0x50 kernel/locking/spinlock.c:167
-  spin_lock_irq include/linux/spinlock.h:363 [inline]
-  free_ioctx_users+0x25/0x190 fs/aio.c:618
-  percpu_ref_put_many include/linux/percpu-refcount.h:293 [inline]
-  percpu_ref_put include/linux/percpu-refcount.h:309 [inline]
-  percpu_ref_call_confirm_rcu lib/percpu-refcount.c:130 [inline]
-  percpu_ref_switch_to_atomic_rcu+0x202/0x210 lib/percpu-refcount.c:165
-  __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
-  rcu_do_batch+0x2ae/0x890 kernel/rcu/tree.c:2114
-  rcu_core+0x13a/0x370 kernel/rcu/tree.c:2314
-  rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2323
-  __do_softirq+0xbe/0x400 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x8f/0xc0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:537 [inline]
-  smp_apic_timer_interrupt+0x8e/0x210 arch/x86/kernel/apic/apic.c:1133
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
-  native_safe_halt arch/x86/include/asm/irqflags.h:60 [inline]
-  arch_safe_halt arch/x86/include/asm/irqflags.h:103 [inline]
-  default_idle+0x29/0x160 arch/x86/kernel/process.c:580
-  arch_cpu_idle+0xa/0x10 arch/x86/kernel/process.c:571
-  default_idle_call+0x1e/0x30 kernel/sched/idle.c:94
-  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
-  do_idle+0x1f0/0x220 kernel/sched/idle.c:263
-  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:354
-  rest_init+0x18a/0x24d init/main.c:451
-  arch_call_rest_init+0x9/0xc
-  start_kernel+0x530/0x54e init/main.c:785
-  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:472
-  x86_64_start_kernel+0x6d/0x71 arch/x86/kernel/head64.c:453
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
-
-to a SOFTIRQ-irq-unsafe lock:
- (&fiq->waitq){+.+.}
-
-... which became SOFTIRQ-irq-unsafe at:
-...
-  lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2b/0x40 kernel/locking/spinlock.c:151
-  spin_lock include/linux/spinlock.h:338 [inline]
-  flush_bg_queue+0x91/0xf0 fs/fuse/dev.c:415
-  fuse_request_queue_background+0xd1/0x140 fs/fuse/dev.c:676
-  fuse_request_send_background+0x27/0x60 fs/fuse/dev.c:687
-  fuse_send_init fs/fuse/inode.c:986 [inline]
-  fuse_fill_super+0x656/0x681 fs/fuse/inode.c:1211
-  mount_nodev+0x42/0x90 fs/super.c:1329
-  fuse_mount+0x13/0x20 fs/fuse/inode.c:1236
-  legacy_get_tree+0x2c/0x50 fs/fs_context.c:661
-  vfs_get_tree+0x22/0xc0 fs/super.c:1413
-  do_new_mount fs/namespace.c:2791 [inline]
-  do_mount+0x7e3/0xa60 fs/namespace.c:3111
-  ksys_mount+0x7d/0xd0 fs/namespace.c:3320
-  __do_sys_mount fs/namespace.c:3334 [inline]
-  __se_sys_mount fs/namespace.c:3331 [inline]
-  __x64_sys_mount+0x20/0x30 fs/namespace.c:3331
-  do_syscall_64+0x4a/0x1a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
- Possible interrupt unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&fiq->waitq);
-                               local_irq_disable();
-                               lock(&(&ctx->ctx_lock)->rlock);
-                               lock(&fiq->waitq);
-  <Interrupt>
-    lock(&(&ctx->ctx_lock)->rlock);
-
- *** DEADLOCK ***
-
-1 lock held by syz_fuse/150:
- #0: 00000000f4c02e81 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq include/linux/spinlock.h:363 [inline]
- #0: 00000000f4c02e81 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll fs/aio.c:1749 [inline]
- #0: 00000000f4c02e81 (&(&ctx->ctx_lock)->rlock){..-.}, at: __io_submit_one.constprop.0+0x1f4/0x5b0 fs/aio.c:1825
-
-the dependencies between SOFTIRQ-irq-safe lock and the holding lock:
--> (&(&ctx->ctx_lock)->rlock){..-.} {
-   IN-SOFTIRQ-W at:
-                    lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
-                    __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
-                    _raw_spin_lock_irq+0x32/0x50 kernel/locking/spinlock.c:167
-                    spin_lock_irq include/linux/spinlock.h:363 [inline]
-                    free_ioctx_users+0x25/0x190 fs/aio.c:618
-                    percpu_ref_put_many include/linux/percpu-refcount.h:293 [inline]
-                    percpu_ref_put include/linux/percpu-refcount.h:309 [inline]
-                    percpu_ref_call_confirm_rcu lib/percpu-refcount.c:130 [inline]
-                    percpu_ref_switch_to_atomic_rcu+0x202/0x210 lib/percpu-refcount.c:165
-                    __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
-                    rcu_do_batch+0x2ae/0x890 kernel/rcu/tree.c:2114
-                    rcu_core+0x13a/0x370 kernel/rcu/tree.c:2314
-                    rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2323
-                    __do_softirq+0xbe/0x400 kernel/softirq.c:292
-                    invoke_softirq kernel/softirq.c:373 [inline]
-                    irq_exit+0x8f/0xc0 kernel/softirq.c:413
-                    exiting_irq arch/x86/include/asm/apic.h:537 [inline]
-                    smp_apic_timer_interrupt+0x8e/0x210 arch/x86/kernel/apic/apic.c:1133
-                    apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
-                    native_safe_halt arch/x86/include/asm/irqflags.h:60 [inline]
-                    arch_safe_halt arch/x86/include/asm/irqflags.h:103 [inline]
-                    default_idle+0x29/0x160 arch/x86/kernel/process.c:580
-                    arch_cpu_idle+0xa/0x10 arch/x86/kernel/process.c:571
-                    default_idle_call+0x1e/0x30 kernel/sched/idle.c:94
-                    cpuidle_idle_call kernel/sched/idle.c:154 [inline]
-                    do_idle+0x1f0/0x220 kernel/sched/idle.c:263
-                    cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:354
-                    rest_init+0x18a/0x24d init/main.c:451
-                    arch_call_rest_init+0x9/0xc
-                    start_kernel+0x530/0x54e init/main.c:785
-                    x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:472
-                    x86_64_start_kernel+0x6d/0x71 arch/x86/kernel/head64.c:453
-                    secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
-   INITIAL USE at:
-                   lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
-                   __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
-                   _raw_spin_lock_irq+0x32/0x50 kernel/locking/spinlock.c:167
-                   spin_lock_irq include/linux/spinlock.h:363 [inline]
-                   free_ioctx_users+0x25/0x190 fs/aio.c:618
-                   percpu_ref_put_many include/linux/percpu-refcount.h:293 [inline]
-                   percpu_ref_put include/linux/percpu-refcount.h:309 [inline]
-                   percpu_ref_call_confirm_rcu lib/percpu-refcount.c:130 [inline]
-                   percpu_ref_switch_to_atomic_rcu+0x202/0x210 lib/percpu-refcount.c:165
-                   __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
-                   rcu_do_batch+0x2ae/0x890 kernel/rcu/tree.c:2114
-                   rcu_core+0x13a/0x370 kernel/rcu/tree.c:2314
-                   rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2323
-                   __do_softirq+0xbe/0x400 kernel/softirq.c:292
-                   invoke_softirq kernel/softirq.c:373 [inline]
-                   irq_exit+0x8f/0xc0 kernel/softirq.c:413
-                   exiting_irq arch/x86/include/asm/apic.h:537 [inline]
-                   smp_apic_timer_interrupt+0x8e/0x210 arch/x86/kernel/apic/apic.c:1133
-                   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
-                   native_safe_halt arch/x86/include/asm/irqflags.h:60 [inline]
-                   arch_safe_halt arch/x86/include/asm/irqflags.h:103 [inline]
-                   default_idle+0x29/0x160 arch/x86/kernel/process.c:580
-                   arch_cpu_idle+0xa/0x10 arch/x86/kernel/process.c:571
-                   default_idle_call+0x1e/0x30 kernel/sched/idle.c:94
-                   cpuidle_idle_call kernel/sched/idle.c:154 [inline]
-                   do_idle+0x1f0/0x220 kernel/sched/idle.c:263
-                   cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:354
-                   rest_init+0x18a/0x24d init/main.c:451
-                   arch_call_rest_init+0x9/0xc
-                   start_kernel+0x530/0x54e init/main.c:785
-                   x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:472
-                   x86_64_start_kernel+0x6d/0x71 arch/x86/kernel/head64.c:453
-                   secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
- }
- ... key      at: [<ffffffff82860670>] __key.50377+0x0/0x10
- ... acquired at:
-   check_prev_add+0xa7/0x950 kernel/locking/lockdep.c:2409
-   check_prevs_add kernel/locking/lockdep.c:2507 [inline]
-   validate_chain+0x483/0x870 kernel/locking/lockdep.c:2897
-   __lock_acquire+0x447/0x7d0 kernel/locking/lockdep.c:3880
-   lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
-   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-   _raw_spin_lock+0x2b/0x40 kernel/locking/spinlock.c:151
-   spin_lock include/linux/spinlock.h:338 [inline]
-   aio_poll fs/aio.c:1751 [inline]
-   __io_submit_one.constprop.0+0x203/0x5b0 fs/aio.c:1825
-   io_submit_one+0x146/0x5b0 fs/aio.c:1862
-   __do_sys_io_submit fs/aio.c:1921 [inline]
-   __se_sys_io_submit+0x8e/0x270 fs/aio.c:1891
-   __x64_sys_io_submit+0x15/0x20 fs/aio.c:1891
-   do_syscall_64+0x4a/0x1a0 arch/x86/entry/common.c:296
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-
-the dependencies between the lock to be acquired
- and SOFTIRQ-irq-unsafe lock:
--> (&fiq->waitq){+.+.} {
-   HARDIRQ-ON-W at:
-                    lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
-                    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-                    _raw_spin_lock+0x2b/0x40 kernel/locking/spinlock.c:151
-                    spin_lock include/linux/spinlock.h:338 [inline]
-                    flush_bg_queue+0x91/0xf0 fs/fuse/dev.c:415
-                    fuse_request_queue_background+0xd1/0x140 fs/fuse/dev.c:676
-                    fuse_request_send_background+0x27/0x60 fs/fuse/dev.c:687
-                    fuse_send_init fs/fuse/inode.c:986 [inline]
-                    fuse_fill_super+0x656/0x681 fs/fuse/inode.c:1211
-                    mount_nodev+0x42/0x90 fs/super.c:1329
-                    fuse_mount+0x13/0x20 fs/fuse/inode.c:1236
-                    legacy_get_tree+0x2c/0x50 fs/fs_context.c:661
-                    vfs_get_tree+0x22/0xc0 fs/super.c:1413
-                    do_new_mount fs/namespace.c:2791 [inline]
-                    do_mount+0x7e3/0xa60 fs/namespace.c:3111
-                    ksys_mount+0x7d/0xd0 fs/namespace.c:3320
-                    __do_sys_mount fs/namespace.c:3334 [inline]
-                    __se_sys_mount fs/namespace.c:3331 [inline]
-                    __x64_sys_mount+0x20/0x30 fs/namespace.c:3331
-                    do_syscall_64+0x4a/0x1a0 arch/x86/entry/common.c:296
-                    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-   SOFTIRQ-ON-W at:
-                    lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
-                    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-                    _raw_spin_lock+0x2b/0x40 kernel/locking/spinlock.c:151
-                    spin_lock include/linux/spinlock.h:338 [inline]
-                    flush_bg_queue+0x91/0xf0 fs/fuse/dev.c:415
-                    fuse_request_queue_background+0xd1/0x140 fs/fuse/dev.c:676
-                    fuse_request_send_background+0x27/0x60 fs/fuse/dev.c:687
-                    fuse_send_init fs/fuse/inode.c:986 [inline]
-                    fuse_fill_super+0x656/0x681 fs/fuse/inode.c:1211
-                    mount_nodev+0x42/0x90 fs/super.c:1329
-                    fuse_mount+0x13/0x20 fs/fuse/inode.c:1236
-                    legacy_get_tree+0x2c/0x50 fs/fs_context.c:661
-                    vfs_get_tree+0x22/0xc0 fs/super.c:1413
-                    do_new_mount fs/namespace.c:2791 [inline]
-                    do_mount+0x7e3/0xa60 fs/namespace.c:3111
-                    ksys_mount+0x7d/0xd0 fs/namespace.c:3320
-                    __do_sys_mount fs/namespace.c:3334 [inline]
-                    __se_sys_mount fs/namespace.c:3331 [inline]
-                    __x64_sys_mount+0x20/0x30 fs/namespace.c:3331
-                    do_syscall_64+0x4a/0x1a0 arch/x86/entry/common.c:296
-                    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-   INITIAL USE at:
-                   lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
-                   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-                   _raw_spin_lock+0x2b/0x40 kernel/locking/spinlock.c:151
-                   spin_lock include/linux/spinlock.h:338 [inline]
-                   flush_bg_queue+0x91/0xf0 fs/fuse/dev.c:415
-                   fuse_request_queue_background+0xd1/0x140 fs/fuse/dev.c:676
-                   fuse_request_send_background+0x27/0x60 fs/fuse/dev.c:687
-                   fuse_send_init fs/fuse/inode.c:986 [inline]
-                   fuse_fill_super+0x656/0x681 fs/fuse/inode.c:1211
-                   mount_nodev+0x42/0x90 fs/super.c:1329
-                   fuse_mount+0x13/0x20 fs/fuse/inode.c:1236
-                   legacy_get_tree+0x2c/0x50 fs/fs_context.c:661
-                   vfs_get_tree+0x22/0xc0 fs/super.c:1413
-                   do_new_mount fs/namespace.c:2791 [inline]
-                   do_mount+0x7e3/0xa60 fs/namespace.c:3111
-                   ksys_mount+0x7d/0xd0 fs/namespace.c:3320
-                   __do_sys_mount fs/namespace.c:3334 [inline]
-                   __se_sys_mount fs/namespace.c:3331 [inline]
-                   __x64_sys_mount+0x20/0x30 fs/namespace.c:3331
-                   do_syscall_64+0x4a/0x1a0 arch/x86/entry/common.c:296
-                   entry_SYSCALL_64_after_hwframe+0x49/0xbe
- }
- ... key      at: [<ffffffff82863ea0>] __key.40870+0x0/0x10
- ... acquired at:
-   check_prev_add+0xa7/0x950 kernel/locking/lockdep.c:2409
-   check_prevs_add kernel/locking/lockdep.c:2507 [inline]
-   validate_chain+0x483/0x870 kernel/locking/lockdep.c:2897
-   __lock_acquire+0x447/0x7d0 kernel/locking/lockdep.c:3880
-   lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
-   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-   _raw_spin_lock+0x2b/0x40 kernel/locking/spinlock.c:151
-   spin_lock include/linux/spinlock.h:338 [inline]
-   aio_poll fs/aio.c:1751 [inline]
-   __io_submit_one.constprop.0+0x203/0x5b0 fs/aio.c:1825
-   io_submit_one+0x146/0x5b0 fs/aio.c:1862
-   __do_sys_io_submit fs/aio.c:1921 [inline]
-   __se_sys_io_submit+0x8e/0x270 fs/aio.c:1891
-   __x64_sys_io_submit+0x15/0x20 fs/aio.c:1891
-   do_syscall_64+0x4a/0x1a0 arch/x86/entry/common.c:296
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-
-stack backtrace:
-CPU: 1 PID: 150 Comm: syz_fuse Not tainted 5.3.0-rc7 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-20181126_142135-anatol 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x70/0x9a lib/dump_stack.c:113
- print_bad_irq_dependency.cold+0x380/0x3d8 kernel/locking/lockdep.c:2025
- check_irq_usage+0x337/0x400 kernel/locking/lockdep.c:2223
- check_prev_add+0xa7/0x950 kernel/locking/lockdep.c:2409
- check_prevs_add kernel/locking/lockdep.c:2507 [inline]
- validate_chain+0x483/0x870 kernel/locking/lockdep.c:2897
- __lock_acquire+0x447/0x7d0 kernel/locking/lockdep.c:3880
- lock_acquire+0x99/0x180 kernel/locking/lockdep.c:4412
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2b/0x40 kernel/locking/spinlock.c:151
- spin_lock include/linux/spinlock.h:338 [inline]
- aio_poll fs/aio.c:1751 [inline]
- __io_submit_one.constprop.0+0x203/0x5b0 fs/aio.c:1825
- io_submit_one+0x146/0x5b0 fs/aio.c:1862
- __do_sys_io_submit fs/aio.c:1921 [inline]
- __se_sys_io_submit+0x8e/0x270 fs/aio.c:1891
- __x64_sys_io_submit+0x15/0x20 fs/aio.c:1891
- do_syscall_64+0x4a/0x1a0 arch/x86/entry/common.c:296
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f1bbde7ec6d
-Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d f3 51 0c 00 f7 d8 64 89 01 48
-RSP: 002b:00007ffffa3a70e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 00007ffffa3a7140 RCX: 00007f1bbde7ec6d
-RDX: 00007ffffa3a70f8 RSI: 0000000000000001 RDI: 00007f1bbe27d000
-RBP: 0000559337c29290 R08: 0000000000000000 R09: 00007f1bbe27d000
-R10: 0000000000000029 R11: 0000000000000246 R12: 0000559337c29190
-R13: 00007ffffa3a72b0 R14: 0000000000000000 R15: 0000000000000000
