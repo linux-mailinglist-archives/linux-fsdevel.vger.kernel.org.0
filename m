@@ -2,98 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E14EDA6EC9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 18:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A37AA6EE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 18:30:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729661AbfICQ2e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 12:28:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36526 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfICQ2c (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:28:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=A01EoZVAbENBU2ODnei5aZC/eSyCxIe7RviRDSpgglA=; b=oCJ92zCv0vaLqsiIF+BEQ5E5E
-        8tWg574OR1tXDNAdgxaEW9ZOtC9RgXU1YeUw55xOc80zTVRnxZCyUCNLfBkNAZiwoSCt+KyE7f7Kk
-        ECF8MrNiznXkAufY1RvmwEc4odtOEh9+oHbf3hsI4VKg4VwUYZq5xwAupL2R1uln6DSGhJXwYQuI8
-        RZQyCR8PGBPL7nxrArCSdqjcBVWN6LLgHZFUTqJMg7UzRJqLSd6mxYw8FwJFmVgpPJ2xIqwp5z5fm
-        /eE8MkNJ96Iu/HNE71eque6R66Ku7pz2Xo1iouPfCUsPb8CZ13tGOYrgSNMyfPJp/XL4BMK5TpA+i
-        lQqXK0fyg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5BfT-000149-Ek; Tue, 03 Sep 2019 16:28:31 +0000
-Date:   Tue, 3 Sep 2019 09:28:31 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     William Kucharski <william.kucharski@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Bob Kasten <robert.a.kasten@intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Chad Mynhier <chad.mynhier@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <jweiner@fb.com>
-Subject: Re: [PATCH v5 1/2] mm: Allow the page cache to allocate large pages
-Message-ID: <20190903162831.GI29434@bombadil.infradead.org>
-References: <20190902092341.26712-1-william.kucharski@oracle.com>
- <20190902092341.26712-2-william.kucharski@oracle.com>
- <20190903115748.GS14028@dhcp22.suse.cz>
- <20190903121155.GD29434@bombadil.infradead.org>
- <20190903121952.GU14028@dhcp22.suse.cz>
+        id S1730849AbfICQ30 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 12:29:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34172 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730333AbfICQ30 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:29:26 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 563E187521B;
+        Tue,  3 Sep 2019 16:29:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 57C0A19C78;
+        Tue,  3 Sep 2019 16:29:22 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190903161202.GB22754@roeck-us.net>
+References: <20190903161202.GB22754@roeck-us.net> <20190903125129.GA18838@roeck-us.net> <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk> <156717350329.2204.7056537095039252263.stgit@warthog.procyon.org.uk> <7481.1567526867@warthog.procyon.org.uk>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/11] usb: Add USB subsystem notifications [ver #7]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903121952.GU14028@dhcp22.suse.cz>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <29418.1567528161.1@warthog.procyon.org.uk>
+Date:   Tue, 03 Sep 2019 17:29:21 +0100
+Message-ID: <29419.1567528161@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Tue, 03 Sep 2019 16:29:25 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 02:19:52PM +0200, Michal Hocko wrote:
-> On Tue 03-09-19 05:11:55, Matthew Wilcox wrote:
-> > On Tue, Sep 03, 2019 at 01:57:48PM +0200, Michal Hocko wrote:
-> > > On Mon 02-09-19 03:23:40, William Kucharski wrote:
-> > > > Add an 'order' argument to __page_cache_alloc() and
-> > > > do_read_cache_page(). Ensure the allocated pages are compound pages.
-> > > 
-> > > Why do we need to touch all the existing callers and change them to use
-> > > order 0 when none is actually converted to a different order? This just
-> > > seem to add a lot of code churn without a good reason. If anything I
-> > > would simply add __page_cache_alloc_order and make __page_cache_alloc
-> > > call it with order 0 argument.
+Guenter Roeck <linux@roeck-us.net> wrote:
+
+> > > This added call to usbdev_remove() results in a crash when running
+> > > the qemu "tosa" emulation. Removing the call fixes the problem.
 > > 
-> > Patch 2/2 uses a non-zero order.
-> 
-> It is a new caller and it can use a new function right?
-> 
-> > I agree it's a lot of churn without
-> > good reason; that's why I tried to add GFP_ORDER flags a few months ago.
-> > Unfortunately, you didn't like that approach either.
-> 
-> Is there any future plan that all/most __page_cache_alloc will get a
-> non-zero order argument?
-
-I'm not sure about "most".  It will certainly become more common, as
-far as I can tell.
-
-> > > Also is it so much to ask callers to provide __GFP_COMP explicitly?
+> > Yeah - I'm going to drop the bus notification messages for now.
 > > 
-> > Yes, it's an unreasonable burden on the callers.
-> 
-> Care to exaplain why? __GFP_COMP tends to be used in the kernel quite
-> extensively.
+> It is not the bus notification itself causing problems. It is the
+> call to usbdev_remove().
 
-Most of the places which call this function get their gfp_t from
-mapping->gfp_mask.  If we only want to allocate a single page, we
-must not set __GFP_COMP.  If we want to allocate a large page, we must
-set __GFP_COMP.  Rather than require individual filesystems to concern
-themselves with this wart of the GFP interface, we can solve it in the
-page cache.
+Unfortunately, I don't know how to fix it and don't have much time to
+investigate it right now - and it's something that can be added back later.
 
+David
