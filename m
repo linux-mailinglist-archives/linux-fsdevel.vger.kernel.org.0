@@ -2,111 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7367A6C32
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 17:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 411F2A6C91
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 17:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbfICPG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 11:06:57 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44788 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727667AbfICPG5 (ORCPT
+        id S1729540AbfICPKR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 11:10:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40456 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729079AbfICPKR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:06:57 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83F51XX143119;
-        Tue, 3 Sep 2019 15:06:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=mb7r7IpLcqFfuHiQdoaLa2PH8+6dTWhoBQ+QnFEmC5I=;
- b=gvucVr9HSCaL6SaEx1frp7802m/s3eaIztzLFO7UYp8BbowQA3XEqWMsfgbaQmjx8Gw+
- aoA5LqQ7005Z4RoAHfWym+498wDA1ZKjxIzbdzgrV0Skj6MtnPGl1vQrFGIcDUqjs3cm
- AsI3NeiRmExSAHc+jiTekLacNr4MJ2sVXW2fjFbTY6OBAjzT4IcGHF1vJ8MEvIm9bAN8
- NAZzJuaEOncxNViqiBb8euNU1qsoUi4sxzuO4hCzupcL0R/rs1i745YcPN70TAHciq1U
- g73+su6qfcmS/4d3tus/moj3jivJvBHr6/MbLa1FAUWp7KZUXEz+qwxF6sRCiRgrFTTL 0Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2ustgc00yn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Sep 2019 15:06:40 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83F3V8h011814;
-        Tue, 3 Sep 2019 15:06:39 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2usk7dxagd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Sep 2019 15:06:39 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x83F6cnc004679;
-        Tue, 3 Sep 2019 15:06:38 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 03 Sep 2019 08:06:37 -0700
-Date:   Tue, 3 Sep 2019 08:06:36 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        david@fromorbit.com, riteshh@linux.ibm.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 01/15] iomap: Introduce CONFIG_FS_IOMAP_DEBUG
-Message-ID: <20190903150636.GF5340@magnolia>
-References: <20190901200836.14959-1-rgoldwyn@suse.de>
- <20190901200836.14959-2-rgoldwyn@suse.de>
- <20190902162934.GA6263@lst.de>
- <20190902170916.GE568270@magnolia>
- <20190902171800.GA7201@lst.de>
+        Tue, 3 Sep 2019 11:10:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kMYjLPkGWlldvgkaEMtVa8ofXfOGNI4Vt2JfjkgF+V8=; b=ua+qEoKR5NGKobxrhyfObMiaz
+        28qJVK5Cmtj469tUpUMjB5lIhBAeCh8YKXRWmBqvQ4pA4q2geWOc7hwsuuLD8+20ifshN6X4mmUS8
+        dnku9KimzBjhNU+wOPyckNP9v2fCKVt0JqP6dfPr2Iy2wR6+wKii5AXoHWgk31haG0tSLeZ9E705l
+        OgK0SqS7wfjf5NjzHOsFVLkmeE914uKAhFYNYTgaxuyEY7xR1vymBvwcopjWnk96vWdEiuI0IbOp7
+        HGt1Xj+QSm5q/t4M5uq0KOhEsWQL/MElDbumvXJxhbLoV4Mop2RQClRXXx2FzsZes+pqT9yHt9vfO
+        O3Dtop/1A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5ARj-0008Bn-Vp; Tue, 03 Sep 2019 15:10:15 +0000
+Date:   Tue, 3 Sep 2019 08:10:15 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     William Kucharski <william.kucharski@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Bob Kasten <robert.a.kasten@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Chad Mynhier <chad.mynhier@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Johannes Weiner <jweiner@fb.com>
+Subject: Re: [PATCH v5 2/2] mm,thp: Add experimental config option
+ RO_EXEC_FILEMAP_HUGE_FAULT_THP
+Message-ID: <20190903151015.GF29434@bombadil.infradead.org>
+References: <20190902092341.26712-1-william.kucharski@oracle.com>
+ <20190902092341.26712-3-william.kucharski@oracle.com>
+ <20190903121424.GT14028@dhcp22.suse.cz>
+ <20190903122208.GE29434@bombadil.infradead.org>
+ <20190903125150.GW14028@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190902171800.GA7201@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9368 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=969
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909030159
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9368 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909030159
+In-Reply-To: <20190903125150.GW14028@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 07:18:00PM +0200, Christoph Hellwig wrote:
-> On Mon, Sep 02, 2019 at 10:09:16AM -0700, Darrick J. Wong wrote:
-> > On Mon, Sep 02, 2019 at 06:29:34PM +0200, Christoph Hellwig wrote:
-> > > On Sun, Sep 01, 2019 at 03:08:22PM -0500, Goldwyn Rodrigues wrote:
-> > > > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > > 
-> > > > To improve debugging abilities, especially invalid option
-> > > > asserts.
+On Tue, Sep 03, 2019 at 02:51:50PM +0200, Michal Hocko wrote:
+> On Tue 03-09-19 05:22:08, Matthew Wilcox wrote:
+> > On Tue, Sep 03, 2019 at 02:14:24PM +0200, Michal Hocko wrote:
+> > > On Mon 02-09-19 03:23:41, William Kucharski wrote:
+> > > > Add filemap_huge_fault() to attempt to satisfy page
+> > > > faults on memory-mapped read-only text pages using THP when possible.
 > > > 
-> > > Looking at the code I'd much rather have unconditional WARN_ON_ONCE
-> > > statements in most places.  Including returning an error when we see
-> > > something invalid in most cases.
+> > > This deserves much more description of how the thing is implemented and
+> > > expected to work. For one thing it is not really clear to me why you
+> > > need CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP at all. You need a support
+> > > from the filesystem anyway. So who is going to enable/disable this
+> > > config?
 > > 
-> > Yeah, I was thinking something like this, which has the advantage that
-> > the report format is familiar to XFS developers and will get picked up
-> > by the automated error collection stuff I put in xfstests to complain
-> > about any XFS assertion failures:
-> > 
-> > iomap: Introduce CONFIG_FS_IOMAP_DEBUG
-> > 
-> > To improve debugging abilities, especially invalid option
-> > asserts.
+> > There are definitely situations in which enabling this code will crash
+> > the kernel.  But we want to get filesystems to a point where they can
+> > start working on their support for large pages.  So our workaround is
+> > to try to get the core pieces merged under a CONFIG_I_KNOW_WHAT_IM_DOING
+> > flag and let people play with it.  Then continue to work on the core
+> > to eliminate those places that are broken.
 > 
-> I'd actually just rather have more unconditional WARN_ON_ONCE calls,
-> including actually recovering from the situation by return an actual
-> error code.  That is more
-> 
-> 	if (WARN_ON_ONCE(some_impossible_condition))
-> 		return -EIO;
+> I am not sure I understand. Each fs has to opt in to the feature
+> anyway. If it doesn't then there should be no risk of regression, right?
+> I do not expect any fs would rush an implementation in while not being
+> sure about the correctness. So how exactly does a config option help
+> here.
 
-Oh, right, WARNings actually do spit out the file and line number.
-Let's do that. :)
+Filesystems won't see large pages unless they've opted into them.
+But there's a huge amount of page-cache work that needs to get done
+before this can be enabled by default.  For example, truncate() won't
+work properly.
 
---D
+Rather than try to do all the page cache work upfront, then wait for the
+filesystems to catch up, we want to get some basics merged.  Since we've
+been talking about this for so long without any movement in the kernel
+towards actual support, this felt like a good way to go.
+
+We could, of course, develop the entire thing out of tree, but that's
+likely to lead to pain and anguish.
+
