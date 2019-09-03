@@ -2,70 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2041A6D1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 17:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A601CA6D20
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 17:42:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbfICPlR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 11:41:17 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:59404 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729109AbfICPlQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:41:16 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.1 #3 (Red Hat Linux))
-        id 1i5Avi-0007j7-2D; Tue, 03 Sep 2019 15:41:14 +0000
-Date:   Tue, 3 Sep 2019 16:41:14 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     "zhengbin (A)" <zhengbin13@huawei.com>
-Cc:     jack@suse.cz, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>
-Subject: Re: Possible FS race condition between iterate_dir and
- d_alloc_parallel
-Message-ID: <20190903154114.GK1131@ZenIV.linux.org.uk>
-References: <fd00be2c-257a-8e1f-eb1e-943a40c71c9a@huawei.com>
- <20190903154007.GJ1131@ZenIV.linux.org.uk>
+        id S1729709AbfICPlz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 11:41:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35500 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727107AbfICPlz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 11:41:55 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E59A155E0;
+        Tue,  3 Sep 2019 15:41:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AA15B5D6B2;
+        Tue,  3 Sep 2019 15:41:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <e36fa722-a300-2abf-ae9c-a0246fc66d0e@schaufler-ca.com>
+References: <e36fa722-a300-2abf-ae9c-a0246fc66d0e@schaufler-ca.com> <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk> <156717352917.2204.17206219813087348132.stgit@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/11] smack: Implement the watch_key and post_notification hooks [untested] [ver #7]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190903154007.GJ1131@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4909.1567525310.1@warthog.procyon.org.uk>
+Date:   Tue, 03 Sep 2019 16:41:50 +0100
+Message-ID: <4910.1567525310@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 03 Sep 2019 15:41:54 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 04:40:07PM +0100, Al Viro wrote:
-> On Tue, Sep 03, 2019 at 10:44:32PM +0800, zhengbin (A) wrote:
-> > We recently encountered an oops(the filesystem is tmpfs)
-> > crash> bt
-> >  #9 [ffff0000ae77bd60] dcache_readdir at ffff0000672954bc
-> > 
-> > The reason is as follows:
-> > Process 1 cat test which is not exist in directory A, process 2 cat test in directory A too.
-> > process 3 create new file in directory B, process 4 ls directory A.
-> 
-> 
-> good grief, what screen width do you have to make the table below readable?
-> 
-> What I do not understand is how the hell does your dtry2 manage to get actually
-> freed and reused without an RCU delay between its removal from parent's
-> ->d_subdirs and freeing its memory.  What should've happened in that
-> scenario is
-> 	* process 4, in next_positive() grabs rcu_read_lock().
-> 	* it walks into your dtry2, which might very well be
-> just a chunk of memory waiting to be freed; it sure as hell is
-> not positive.  skipped is set to true, 'i' is not decremented.
-> Note that ->d_child.next points to the next non-cursor sibling
-> (if any) or to the ->d_subdir of parent, so we can keep walking.
-> 	* we keep walking for a while; eventually we run out of
-> counter and leave the loop.
-> 
-> Only after that we do rcu_read_unlock() and only then anything
-> observed in that loop might be freed and reused.
-> 
-> Confused...  OTOH, I might be misreading that table of yours -
-> it's about 30% wider than the widest xterm I can get while still
-> being able to read the font...
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Incidentally, which kernel was that on?
+> I tried running your key tests and they fail in "keyctl/move/valid",
+> with 11 FAILED messages, finally hanging after "UNLINK KEY FROM SESSION".
+> It's possible that my Fedora26 system is somehow incompatible with the
+> tests. I don't see anything in your code that would cause this, as the
+> Smack policy on the system shouldn't restrict any access.
+
+Can you go into keyutils/tests/keyctl/move/valid/ and grab the test.out file?
+
+I presume you're running with an upstream-ish kernel and a cutting edge
+keyutils installed?
+
+David
