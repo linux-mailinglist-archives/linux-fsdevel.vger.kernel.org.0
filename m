@@ -2,377 +2,1601 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7ECDA5F90
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 05:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F98BA5FA1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 05:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726016AbfICDMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Sep 2019 23:12:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50430 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725306AbfICDMl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Sep 2019 23:12:41 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7C5A081F0F;
-        Tue,  3 Sep 2019 03:12:40 +0000 (UTC)
-Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C01075D9CC;
-        Tue,  3 Sep 2019 03:12:39 +0000 (UTC)
-Date:   Tue, 3 Sep 2019 11:19:38 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     andreas.gruenbacher@gmail.com, xfs <linux-xfs@vger.kernel.org>,
-        viro@zeniv.linux.org.uk,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        fstests <fstests@vger.kernel.org>
-Subject: Re: [RFC PATCH] generic: test splice() with pipes
-Message-ID: <20190903031937.GS7239@dhcp-12-102.nay.redhat.com>
-References: <20190829161155.GA5360@magnolia>
- <20190830004407.GA5340@magnolia>
- <20190902022052.GR7239@dhcp-12-102.nay.redhat.com>
- <20190902165607.GA725229@magnolia>
+        id S1725848AbfICD0Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Sep 2019 23:26:16 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43566 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbfICD0Q (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Sep 2019 23:26:16 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x833KQCH123077;
+        Tue, 3 Sep 2019 03:26:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=96V05LDmge0gyeTZOl8ZNONvFHVevOZ0OG3AHzve2h8=;
+ b=hsTFYTM9d7ZzZFTWinJ3dSzvKhtiGnwO1GU95mejNQT/rSrEnPk0dAKhIj1BZuriNZ51
+ XwAzgK70K1pBFUNre3c4wtxVgSYSB/Z7f2VXRYBzFfzkjtRR0qrJksLTOYsIfkZqOjB+
+ x/guqYyBcjANlr4AkKhvrC3uQ7Wj9mKEx9fvY4pHHIrFB+e+whkYdxZlPn4SqCtaR32q
+ T4Hw58mPiXqcONxcAMoXZ1uNLkcrjl49fHKw6qY/zi2lHo6cOcUT1cKwnGbkDZKLa6Hn
+ mD/4vjWnRstdAnWiOw1uWqZQj8rzBj/Yns/dhDQRzSGfJksgfp+kVoNs7Uhjy/Ak0d3j yw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2usg5vg0tr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Sep 2019 03:26:04 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x833NA6Z096942;
+        Tue, 3 Sep 2019 03:26:03 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2urww70c96-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Sep 2019 03:26:02 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x833Q1M4023202;
+        Tue, 3 Sep 2019 03:26:01 GMT
+Received: from localhost (/10.159.255.57)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Sep 2019 20:26:00 -0700
+Date:   Mon, 2 Sep 2019 20:26:01 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Matias Bjorling <Matias.Bjorling@wdc.com>
+Subject: Re: [PATCH V4] fs: New zonefs file system
+Message-ID: <20190903032601.GV5354@magnolia>
+References: <20190826065750.11674-1-damien.lemoal@wdc.com>
+ <BYAPR04MB5816E881D9881D5F559A3947E7B90@BYAPR04MB5816.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190902165607.GA725229@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 03 Sep 2019 03:12:40 +0000 (UTC)
+In-Reply-To: <BYAPR04MB5816E881D9881D5F559A3947E7B90@BYAPR04MB5816.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9368 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909030035
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9368 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909030035
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 09:56:07AM -0700, Darrick J. Wong wrote:
-> On Mon, Sep 02, 2019 at 10:20:52AM +0800, Zorro Lang wrote:
-> > On Thu, Aug 29, 2019 at 05:44:07PM -0700, Darrick J. Wong wrote:
-> > > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > > 
-> > > Andreas Grünbacher reports that on the two filesystems that support
-> > > iomap directio, it's possible for splice() to return -EAGAIN (instead of
-> > > a short splice) if the pipe being written to has less space available in
-> > > its pipe buffers than the length supplied by the calling process.
-> > > 
-> > > This is a regression test to check for correct operation.
-> > > 
-> > > XXX Andreas: Since you wrote the C reproducer, can you send me the
-> > > proper copyright and author attribution statement for the C program?
-> > > 
-> > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > > ---
-> > 
-> > Hi Darrick,
-> > 
-> > I tried to add a splice_f operation into xfs_io long time ago:
-> > https://marc.info/?l=linux-xfs&m=155828702128047&w=2
-> > 
-> > For we can easily write more splice related test case later, I'd like to have
-> > a xfs_io to help that (if it can). Would you like to help to review that patch,
-> > if it can match your requirement to write this case? Or it can be improved to
-> > cover more testing conditions? I'm really appreciate that:)
+On Tue, Sep 03, 2019 at 12:59:17AM +0000, Damien Le Moal wrote:
+> Hi Darrick,
 > 
-> Yeah, I'll try to have a look this week.
+> Any comments on this new version ?
 
-Thanks so much, I wrote this patch with 'fsstress supports splice' together,
-when we found a XFS regression bug by splice operation. But this xfs_io command
-doesn't have a specified usage to reproduce a bug. So if it can be improved to
-be used to cover the case which you just wrote (about splice), that might be
-better I think.
+I took a brief glance a few days ago and it looked ok wrt the iomap
+parts.  I'm assuming you received the same complaint from the kbuild
+robot as I did?
 
-Thanks,
-Zorro
+> Should I wait for the iomap code to make it to 5.4 first before trying to get
+> this new FS included ?
 
+Given that the merge window apparently won't close until Sept. 29, that
+gives us more time to make any more minor tweaks.
+
+(That means 80% of a "Go for it" but I'll look more closely tomorrow ;))
+
+--D
+
+> Best regards.
 > 
-> (FWIW I think Eric is backed up with dozens of xfsprogs patches...)
-> 
-> --D
-> 
-> > Thanks,
-> > Zorro
+> On 2019/08/26 15:58, Damien Le Moal wrote:
+> > zonefs is a very simple file system exposing each zone of a zoned
+> > block device as a file. zonefs is in fact closer to a raw block device
+> > access interface than to a full feature POSIX file system.
 > > 
-> > >  .gitignore            |    1 
-> > >  src/Makefile          |    2 -
-> > >  src/splice-test.c     |  173 +++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  tests/generic/720     |   41 ++++++++++++
-> > >  tests/generic/720.out |    7 ++
-> > >  tests/generic/group   |    1 
-> > >  6 files changed, 224 insertions(+), 1 deletion(-)
-> > >  create mode 100644 src/splice-test.c
-> > >  create mode 100755 tests/generic/720
-> > >  create mode 100644 tests/generic/720.out
-> > > 
-> > > diff --git a/.gitignore b/.gitignore
-> > > index c8c815f9..26d4da11 100644
-> > > --- a/.gitignore
-> > > +++ b/.gitignore
-> > > @@ -112,6 +112,7 @@
-> > >  /src/runas
-> > >  /src/seek_copy_test
-> > >  /src/seek_sanity_test
-> > > +/src/splice-test
-> > >  /src/stale_handle
-> > >  /src/stat_test
-> > >  /src/swapon
-> > > diff --git a/src/Makefile b/src/Makefile
-> > > index c4fcf370..2920dfb1 100644
-> > > --- a/src/Makefile
-> > > +++ b/src/Makefile
-> > > @@ -28,7 +28,7 @@ LINUX_TARGETS = xfsctl bstat t_mtab getdevicesize preallo_rw_pattern_reader \
-> > >  	attr-list-by-handle-cursor-test listxattr dio-interleaved t_dir_type \
-> > >  	dio-invalidate-cache stat_test t_encrypted_d_revalidate \
-> > >  	attr_replace_test swapon mkswap t_attr_corruption t_open_tmpfiles \
-> > > -	fscrypt-crypt-util bulkstat_null_ocount
-> > > +	fscrypt-crypt-util bulkstat_null_ocount splice-test
-> > >  
-> > >  SUBDIRS = log-writes perf
-> > >  
-> > > diff --git a/src/splice-test.c b/src/splice-test.c
-> > > new file mode 100644
-> > > index 00000000..d3c12075
-> > > --- /dev/null
-> > > +++ b/src/splice-test.c
-> > > @@ -0,0 +1,173 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > +/*
-> > > + * Copyright (C) 2019 ?????????????????????????????
-> > > + * Author: 
-> > > + *
-> > > + * Make sure that reading and writing to a pipe via splice.
-> > > + */
-> > > +#include <sys/types.h>
-> > > +#include <sys/stat.h>
-> > > +#include <sys/wait.h>
-> > > +#include <unistd.h>
-> > > +#include <fcntl.h>
-> > > +#include <err.h>
-> > > +
-> > > +#include <stdlib.h>
-> > > +#include <stdio.h>
-> > > +#include <stdbool.h>
-> > > +#include <string.h>
-> > > +#include <errno.h>
-> > > +
-> > > +#define SECTOR_SIZE 512
-> > > +#define BUFFER_SIZE (150 * SECTOR_SIZE)
-> > > +
-> > > +void read_from_pipe(int fd, const char *filename, size_t size)
-> > > +{
-> > > +	char buffer[SECTOR_SIZE];
-> > > +	size_t sz;
-> > > +	ssize_t ret;
-> > > +
-> > > +	while (size) {
-> > > +		sz = size;
-> > > +		if (sz > sizeof buffer)
-> > > +			sz = sizeof buffer;
-> > > +		ret = read(fd, buffer, sz);
-> > > +		if (ret < 0)
-> > > +			err(1, "read: %s", filename);
-> > > +		if (ret == 0) {
-> > > +			fprintf(stderr, "read: %s: unexpected EOF\n", filename);
-> > > +			exit(1);
-> > > +		}
-> > > +		size -= sz;
-> > > +	}
-> > > +}
-> > > +
-> > > +void do_splice1(int fd, const char *filename, size_t size)
-> > > +{
-> > > +	bool retried = false;
-> > > +	int pipefd[2];
-> > > +
-> > > +	if (pipe(pipefd) == -1)
-> > > +		err(1, "pipe");
-> > > +	while (size) {
-> > > +		ssize_t spliced;
-> > > +
-> > > +		spliced = splice(fd, NULL, pipefd[1], NULL, size, SPLICE_F_MOVE);
-> > > +		if (spliced == -1) {
-> > > +			if (errno == EAGAIN && !retried) {
-> > > +				retried = true;
-> > > +				fprintf(stderr, "retrying splice\n");
-> > > +				sleep(1);
-> > > +				continue;
-> > > +			}
-> > > +			err(1, "splice");
-> > > +		}
-> > > +		read_from_pipe(pipefd[0], filename, spliced);
-> > > +		size -= spliced;
-> > > +	}
-> > > +	close(pipefd[0]);
-> > > +	close(pipefd[1]);
-> > > +}
-> > > +
-> > > +void do_splice2(int fd, const char *filename, size_t size)
-> > > +{
-> > > +	bool retried = false;
-> > > +	int pipefd[2];
-> > > +	int pid;
-> > > +
-> > > +	if (pipe(pipefd) == -1)
-> > > +		err(1, "pipe");
-> > > +
-> > > +	pid = fork();
-> > > +	if (pid == 0) {
-> > > +		close(pipefd[1]);
-> > > +		read_from_pipe(pipefd[0], filename, size);
-> > > +		exit(0);
-> > > +	} else {
-> > > +		close(pipefd[0]);
-> > > +		while (size) {
-> > > +			ssize_t spliced;
-> > > +
-> > > +			spliced = splice(fd, NULL, pipefd[1], NULL, size, SPLICE_F_MOVE);
-> > > +			if (spliced == -1) {
-> > > +				if (errno == EAGAIN && !retried) {
-> > > +					retried = true;
-> > > +					fprintf(stderr, "retrying splice\n");
-> > > +					sleep(1);
-> > > +					continue;
-> > > +				}
-> > > +				err(1, "splice");
-> > > +			}
-> > > +			size -= spliced;
-> > > +		}
-> > > +		close(pipefd[1]);
-> > > +		waitpid(pid, NULL, 0);
-> > > +	}
-> > > +}
-> > > +
-> > > +void usage(const char *argv0)
-> > > +{
-> > > +	fprintf(stderr, "USAGE: %s [-rd] {filename}\n", basename(argv0));
-> > > +	exit(2);
-> > > +}
-> > > +
-> > > +int main(int argc, char *argv[])
-> > > +{
-> > > +	void (*do_splice)(int fd, const char *filename, size_t size);
-> > > +	const char *filename;
-> > > +	char *buffer;
-> > > +	int opt, open_flags, fd;
-> > > +	ssize_t ret;
-> > > +
-> > > +	do_splice = do_splice1;
-> > > +	open_flags = O_CREAT | O_TRUNC | O_RDWR | O_DIRECT;
-> > > +
-> > > +	while ((opt = getopt(argc, argv, "rd")) != -1) {
-> > > +		switch(opt) {
-> > > +		case 'r':
-> > > +			do_splice = do_splice2;
-> > > +			break;
-> > > +		case 'd':
-> > > +			open_flags &= ~O_DIRECT;
-> > > +			break;
-> > > +		default:  /* '?' */
-> > > +			usage(argv[0]);
-> > > +		}
-> > > +	}
-> > > +
-> > > +	if (optind >= argc)
-> > > +		usage(argv[0]);
-> > > +	filename = argv[optind];
-> > > +
-> > > +	printf("%s reader %s O_DIRECT\n",
-> > > +		   do_splice == do_splice1 ? "sequential" : "concurrent",
-> > > +		   (open_flags & O_DIRECT) ? "with" : "without");
-> > > +
-> > > +	buffer = aligned_alloc(SECTOR_SIZE, BUFFER_SIZE);
-> > > +	if (buffer == NULL)
-> > > +		err(1, "aligned_alloc");
-> > > +
-> > > +	fd = open(filename, open_flags, 0666);
-> > > +	if (fd == -1)
-> > > +		err(1, "open: %s", filename);
-> > > +
-> > > +	memset(buffer, 'x', BUFFER_SIZE);
-> > > +	ret = write(fd, buffer, BUFFER_SIZE);
-> > > +	if (ret < 0)
-> > > +		err(1, "write: %s", filename);
-> > > +	if (ret != BUFFER_SIZE) {
-> > > +		fprintf(stderr, "%s: short write\n", filename);
-> > > +		exit(1);
-> > > +	}
-> > > +
-> > > +	ret = lseek(fd, 0, SEEK_SET);
-> > > +	if (ret != 0)
-> > > +		err(1, "lseek: %s", filename);
-> > > +
-> > > +	do_splice(fd, filename, BUFFER_SIZE);
-> > > +
-> > > +	if (unlink(filename) == -1)
-> > > +		err(1, "unlink: %s", filename);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > diff --git a/tests/generic/720 b/tests/generic/720
-> > > new file mode 100755
-> > > index 00000000..b7f09c40
-> > > --- /dev/null
-> > > +++ b/tests/generic/720
-> > > @@ -0,0 +1,41 @@
-> > > +#! /bin/bash
-> > > +# SPDX-License-Identifier: GPL-2.0-or-later
-> > > +# Copyright (c) 2019, Oracle and/or its affiliates.  All Rights Reserved.
-> > > +#
-> > > +# FS QA Test No. 720
-> > > +#
-> > > +# Test using splice() to read from pipes.
-> > > +
-> > > +seq=`basename $0`
-> > > +seqres=$RESULT_DIR/$seq
-> > > +echo "QA output created by $seq"
-> > > +
-> > > +here=`pwd`
-> > > +tmp=/tmp/$$
-> > > +status=1    # failure is the default!
-> > > +trap "_cleanup; exit \$status" 0 1 2 3 15
-> > > +
-> > > +_cleanup()
-> > > +{
-> > > +	cd /
-> > > +	rm -f $TEST_DIR/a
-> > > +}
-> > > +
-> > > +# get standard environment, filters and checks
-> > > +. ./common/rc
-> > > +
-> > > +# real QA test starts here
-> > > +_supported_os Linux
-> > > +_supported_fs generic
-> > > +_require_test
-> > > +
-> > > +rm -f $seqres.full
-> > > +
-> > > +src/splice-test -r $TEST_DIR/a
-> > > +src/splice-test -rd $TEST_DIR/a
-> > > +src/splice-test $TEST_DIR/a
-> > > +src/splice-test -d $TEST_DIR/a
-> > > +
-> > > +# success, all done
-> > > +status=0
-> > > +exit
-> > > diff --git a/tests/generic/720.out b/tests/generic/720.out
-> > > new file mode 100644
-> > > index 00000000..b0fc9935
-> > > --- /dev/null
-> > > +++ b/tests/generic/720.out
-> > > @@ -0,0 +1,7 @@
-> > > +QA output created by 720
-> > > +concurrent reader with O_DIRECT
-> > > +concurrent reader with O_DIRECT
-> > > +concurrent reader without O_DIRECT
-> > > +concurrent reader without O_DIRECT
-> > > +sequential reader with O_DIRECT
-> > > +sequential reader without O_DIRECT
-> > > diff --git a/tests/generic/group b/tests/generic/group
-> > > index cd418106..f75d4e60 100644
-> > > --- a/tests/generic/group
-> > > +++ b/tests/generic/group
-> > > @@ -569,3 +569,4 @@
-> > >  564 auto quick copy_range
-> > >  565 auto quick copy_range
-> > >  719 auto quick quota metadata
-> > > +720 auto quick rw pipe splice
+> > The goal of zonefs is to simplify implementation of zoned block device
+> > raw access by applications by allowing switching to the well known POSIX
+> > file API rather than relying on direct block device file ioctls and
+> > read/write. Zonefs, for instance, greatly simplifies the implementation
+> > of LSM (log-structured merge) tree structures (such as used in RocksDB
+> > and LevelDB) on zoned block devices by allowing SSTables to be stored in
+> > a zone file similarly to a regular file system architecture, hence
+> > reducing the amount of change needed in the application.
+> > 
+> > Zonefs on-disk metadata is reduced to a super block to store a magic
+> > number, a uuid and optional features flags and values. On mount, zonefs
+> > uses blkdev_report_zones() to obtain the device zone configuration and
+> > populates the mount point with a static file tree solely based on this
+> > information. E.g. file sizes come from zone write pointer offset managed
+> > by the device itself.
+> > 
+> > The zone files created on mount have the following characteristics.
+> > 1) Files representing zones of the same type are grouped together
+> >    under a common directory:
+> >   * For conventional zones, the directory "cnv" is used.
+> >   * For sequential write zones, the directory "seq" is used.
+> >   These two directories are the only directories that exist in zonefs.
+> >   Users cannot create other directories and cannot rename nor delete
+> >   the "cnv" and "seq" directories.
+> > 2) The name of zone files is by default the number of the file within
+> >    the zone type directory, in order of increasing zone start sector.
+> > 3) The size of conventional zone files is fixed to the device zone size.
+> >    Conventional zone files cannot be truncated.
+> > 4) The size of sequential zone files represent the file zone write
+> >    pointer position relative to the zone start sector. Truncating these
+> >    files is allowed only down to 0, in wich case, the zone is reset to
+> >    rewind the file zone write pointer position to the start of the zone.
+> > 5) All read and write operations to files are not allowed beyond the
+> >    file zone size. Any access exceeding the zone size is failed with
+> >    the -EFBIG error.
+> > 6) Creating, deleting, renaming or modifying any attribute of files
+> >    and directories is not allowed. The only exception being the file
+> >    size of sequential zone files which can be modified by write
+> >    operations or truncation to 0.
+> > 
+> > Several optional features of zonefs can be enabled at format time.
+> > * Conventional zone aggregation: contiguous conventional zones can be
+> >   agregated into a single larger file instead of multiple per-zone
+> >   files.
+> > * File naming: the default file number file name can be switched to
+> >   using the base-10 value of the file zone start sector.
+> > * File ownership: The owner UID and GID of zone files is by default 0
+> >   (root) but can be changed to any valid UID/GID.
+> > * File access permissions: the default 640 access permissions can be
+> >   changed.
+> > 
+> > The mkzonefs tool is used to format zonefs. This tool is available
+> > on Github at: git@github.com:damien-lemoal/zonefs-tools.git.
+> > zonefs-tools includes a simple test suite which can be run against any
+> > zoned block device, including null_blk block device created with zoned
+> > mode.
+> > 
+> > Example: the following formats a host-managed SMR HDD with the
+> > conventional zone aggregation feature enabled.
+> > 
+> > mkzonefs -o aggr_cnv /dev/sdX
+> > mount -t zonefs /dev/sdX /mnt
+> > ls -l /mnt/
+> > total 0
+> > dr-xr-xr-x 2 root root 0 Apr 11 13:00 cnv
+> > dr-xr-xr-x 2 root root 0 Apr 11 13:00 seq
+> > 
+> > ls -l /mnt/cnv
+> > total 137363456
+> > -rw-rw---- 1 root root 140660178944 Apr 11 13:00 0
+> > 
+> > ls -Fal -v /mnt/seq
+> > total 14511243264
+> > dr-xr-xr-x 2 root root 15942528 Jul 10 11:53 ./
+> > drwxr-xr-x 4 root root     1152 Jul 10 11:53 ../
+> > -rw-r----- 1 root root        0 Jul 10 11:53 0
+> > -rw-r----- 1 root root 33554432 Jul 10 13:43 1
+> > -rw-r----- 1 root root        0 Jul 10 11:53 2
+> > -rw-r----- 1 root root        0 Jul 10 11:53 3
+> > ...
+> > 
+> > The aggregated conventional zone file can be used as a regular file.
+> > Operations such as the following work.
+> > 
+> > mkfs.ext4 /mnt/cnv/0
+> > mount -o loop /mnt/cnv/0 /data
+> > 
+> > Contains contributions from Johannes Thumshirn <jthumshirn@suse.de>
+> > and Christoph Hellwig <hch@lst.de>.
+> > 
+> > Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> > ---
+> > Changes from v3:
+> > * Enhanced super block features and reserved field handling as suggested
+> >   by Darrick.
+> > * Expose offline zones as non-accessible files to avoid zone to file
+> >   name mapping changes.
+> > 
+> > Changes from v2:
+> > * Addressed comments from Darrick: Typo, added checksum to super block,
+> >   enhance cheks of the super block fields validity (used reserved bytes
+> >   and unknown features bits)
+> > * Rebased on XFS tree iomap-for-next branch
+> > 
+> > Changes from v1:
+> > * Rebased on latest iomap branch iomap-5.4-merge of XFS tree at
+> >   git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+> > * Addressed all comments from Dave Chinner and others
+> > 
+> >  MAINTAINERS                |   10 +
+> >  fs/Kconfig                 |    1 +
+> >  fs/Makefile                |    1 +
+> >  fs/zonefs/Kconfig          |    9 +
+> >  fs/zonefs/Makefile         |    4 +
+> >  fs/zonefs/super.c          | 1093 ++++++++++++++++++++++++++++++++++++
+> >  fs/zonefs/zonefs.h         |  185 ++++++
+> >  include/uapi/linux/magic.h |    1 +
+> >  8 files changed, 1304 insertions(+)
+> >  create mode 100644 fs/zonefs/Kconfig
+> >  create mode 100644 fs/zonefs/Makefile
+> >  create mode 100644 fs/zonefs/super.c
+> >  create mode 100644 fs/zonefs/zonefs.h
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 6426db5198f0..a1b2c9836073 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -17793,6 +17793,16 @@ L:	linux-kernel@vger.kernel.org
+> >  S:	Maintained
+> >  F:	arch/x86/kernel/cpu/zhaoxin.c
+> >  
+> > +ZONEFS FILESYSTEM
+> > +M:	Damien Le Moal <damien.lemoal@wdc.com>
+> > +M:	Naohiro Aota <naohiro.aota@wdc.com>
+> > +R:	Johannes Thumshirn <jth@kernel.org>
+> > +L:	linux-fsdevel@vger.kernel.org
+> > +T:	git git@github.com:damien-lemoal/zonefs.git
+> > +S:	Maintained
+> > +F:	Documentation/filesystems/zonefs.txt
+> > +F:	fs/zonefs/
+> > +
+> >  ZPOOL COMPRESSED PAGE STORAGE API
+> >  M:	Dan Streetman <ddstreet@ieee.org>
+> >  L:	linux-mm@kvack.org
+> > diff --git a/fs/Kconfig b/fs/Kconfig
+> > index bfb1c6095c7a..dcaf3e07680f 100644
+> > --- a/fs/Kconfig
+> > +++ b/fs/Kconfig
+> > @@ -40,6 +40,7 @@ source "fs/ocfs2/Kconfig"
+> >  source "fs/btrfs/Kconfig"
+> >  source "fs/nilfs2/Kconfig"
+> >  source "fs/f2fs/Kconfig"
+> > +source "fs/zonefs/Kconfig"
+> >  
+> >  config FS_DAX
+> >  	bool "Direct Access (DAX) support"
+> > diff --git a/fs/Makefile b/fs/Makefile
+> > index d60089fd689b..7d3c90e1ad79 100644
+> > --- a/fs/Makefile
+> > +++ b/fs/Makefile
+> > @@ -130,3 +130,4 @@ obj-$(CONFIG_F2FS_FS)		+= f2fs/
+> >  obj-$(CONFIG_CEPH_FS)		+= ceph/
+> >  obj-$(CONFIG_PSTORE)		+= pstore/
+> >  obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
+> > +obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
+> > diff --git a/fs/zonefs/Kconfig b/fs/zonefs/Kconfig
+> > new file mode 100644
+> > index 000000000000..6490547e9763
+> > --- /dev/null
+> > +++ b/fs/zonefs/Kconfig
+> > @@ -0,0 +1,9 @@
+> > +config ZONEFS_FS
+> > +	tristate "zonefs filesystem support"
+> > +	depends on BLOCK
+> > +	depends on BLK_DEV_ZONED
+> > +	help
+> > +	  zonefs is a simple File System which exposes zones of a zoned block
+> > +	  device as files.
+> > +
+> > +	  If unsure, say N.
+> > diff --git a/fs/zonefs/Makefile b/fs/zonefs/Makefile
+> > new file mode 100644
+> > index 000000000000..75a380aa1ae1
+> > --- /dev/null
+> > +++ b/fs/zonefs/Makefile
+> > @@ -0,0 +1,4 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +obj-$(CONFIG_ZONEFS_FS) += zonefs.o
+> > +
+> > +zonefs-y	:= super.o
+> > diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> > new file mode 100644
+> > index 000000000000..8659878c6aec
+> > --- /dev/null
+> > +++ b/fs/zonefs/super.c
+> > @@ -0,0 +1,1093 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Simple zone file system for zoned block devices.
+> > + *
+> > + * Copyright (C) 2019 Western Digital Corporation or its affiliates.
+> > + */
+> > +#include <linux/module.h>
+> > +#include <linux/fs.h>
+> > +#include <linux/magic.h>
+> > +#include <linux/iomap.h>
+> > +#include <linux/init.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/blkdev.h>
+> > +#include <linux/statfs.h>
+> > +#include <linux/writeback.h>
+> > +#include <linux/quotaops.h>
+> > +#include <linux/seq_file.h>
+> > +#include <linux/parser.h>
+> > +#include <linux/uio.h>
+> > +#include <linux/mman.h>
+> > +#include <linux/sched/mm.h>
+> > +#include <linux/crc32.h>
+> > +
+> > +#include "zonefs.h"
+> > +
+> > +static int zonefs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+> > +			      unsigned int flags, struct iomap *iomap)
+> > +{
+> > +	struct zonefs_sb_info *sbi = ZONEFS_SB(inode->i_sb);
+> > +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > +	loff_t max_isize = zonefs_file_max_size(inode);
+> > +	loff_t isize;
+> > +
+> > +	/*
+> > +	 * For sequential zones, enforce direct IO writes. This is already
+> > +	 * checked when writes are issued, so warn about this here if we
+> > +	 * get buffered write to a sequential file inode.
+> > +	 */
+> > +	if (WARN_ON_ONCE(zonefs_file_is_seq(inode) && (flags & IOMAP_WRITE) &&
+> > +			 !(flags & IOMAP_DIRECT)))
+> > +		return -EIO;
+> > +
+> > +	/* An IO cannot exceed the zone size */
+> > +	if (offset >= max_isize)
+> > +		return -EFBIG;
+> > +
+> > +	/* All blocks are always mapped */
+> > +	mutex_lock(&zi->i_truncate_mutex);
+> > +	isize = i_size_read(inode);
+> > +	if (offset >= isize) {
+> > +		length = min(length, max_isize - offset);
+> > +		iomap->type = IOMAP_UNWRITTEN;
+> > +	} else {
+> > +		length = min(length, isize - offset);
+> > +		iomap->type = IOMAP_MAPPED;
+> > +	}
+> > +	mutex_unlock(&zi->i_truncate_mutex);
+> > +
+> > +	iomap->offset = offset & (~sbi->s_blocksize_mask);
+> > +	iomap->length = ((offset + length + sbi->s_blocksize_mask) &
+> > +			 (~sbi->s_blocksize_mask)) - iomap->offset;
+> > +	iomap->bdev = inode->i_sb->s_bdev;
+> > +	iomap->addr = (zonefs_file_start_sector(inode) << SECTOR_SHIFT)
+> > +		      + iomap->offset;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct iomap_ops zonefs_iomap_ops = {
+> > +	.iomap_begin	= zonefs_iomap_begin,
+> > +};
+> > +
+> > +static int zonefs_readpage(struct file *unused, struct page *page)
+> > +{
+> > +	return iomap_readpage(page, &zonefs_iomap_ops);
+> > +}
+> > +
+> > +static int zonefs_readpages(struct file *unused, struct address_space *mapping,
+> > +			    struct list_head *pages, unsigned int nr_pages)
+> > +{
+> > +	return iomap_readpages(mapping, pages, nr_pages, &zonefs_iomap_ops);
+> > +}
+> > +
+> > +static int zonefs_map_blocks(struct iomap_writepage_ctx *wpc,
+> > +			     struct inode *inode, loff_t offset)
+> > +{
+> > +	if (offset >= wpc->iomap.offset &&
+> > +	    offset < wpc->iomap.offset + wpc->iomap.length)
+> > +		return 0;
+> > +
+> > +	memset(&wpc->iomap, 0, sizeof(wpc->iomap));
+> > +	return zonefs_iomap_begin(inode, offset, zonefs_file_max_size(inode),
+> > +				  0, &wpc->iomap);
+> > +}
+> > +
+> > +static const struct iomap_writeback_ops zonefs_writeback_ops = {
+> > +	.map_blocks		= zonefs_map_blocks,
+> > +};
+> > +
+> > +static int zonefs_writepage(struct page *page, struct writeback_control *wbc)
+> > +{
+> > +	struct iomap_writepage_ctx wpc = { };
+> > +
+> > +	return iomap_writepage(page, wbc, &wpc, &zonefs_writeback_ops);
+> > +}
+> > +
+> > +static int zonefs_writepages(struct address_space *mapping,
+> > +			     struct writeback_control *wbc)
+> > +{
+> > +	struct iomap_writepage_ctx wpc = { };
+> > +
+> > +	return iomap_writepages(mapping, wbc, &wpc, &zonefs_writeback_ops);
+> > +}
+> > +
+> > +static const struct address_space_operations zonefs_file_aops = {
+> > +	.readpage		= zonefs_readpage,
+> > +	.readpages		= zonefs_readpages,
+> > +	.writepage		= zonefs_writepage,
+> > +	.writepages		= zonefs_writepages,
+> > +	.set_page_dirty		= iomap_set_page_dirty,
+> > +	.releasepage		= iomap_releasepage,
+> > +	.invalidatepage		= iomap_invalidatepage,
+> > +	.migratepage		= iomap_migrate_page,
+> > +	.is_partially_uptodate  = iomap_is_partially_uptodate,
+> > +	.error_remove_page	= generic_error_remove_page,
+> > +	.direct_IO		= noop_direct_IO,
+> > +};
+> > +
+> > +static int zonefs_seq_file_truncate(struct inode *inode)
+> > +{
+> > +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > +	int ret;
+> > +
+> > +	inode_dio_wait(inode);
+> > +
+> > +	/* Serialize against page faults */
+> > +	down_write(&zi->i_mmap_sem);
+> > +
+> > +	/* Serialize against zonefs_iomap_begin() */
+> > +	mutex_lock(&zi->i_truncate_mutex);
+> > +
+> > +	ret = blkdev_reset_zones(inode->i_sb->s_bdev,
+> > +				 zonefs_file_start_sector(inode),
+> > +				 zonefs_file_max_size(inode) >> SECTOR_SHIFT,
+> > +				 GFP_NOFS);
+> > +	if (ret) {
+> > +		zonefs_err(inode->i_sb,
+> > +			   "Reset zone at %llu failed %d",
+> > +			   zonefs_file_start_sector(inode),
+> > +			   ret);
+> > +	} else {
+> > +		truncate_setsize(inode, 0);
+> > +		zi->i_wpoffset = 0;
+> > +	}
+> > +
+> > +	mutex_unlock(&zi->i_truncate_mutex);
+> > +	up_write(&zi->i_mmap_sem);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int zonefs_inode_setattr(struct dentry *dentry, struct iattr *iattr)
+> > +{
+> > +	struct inode *inode = d_inode(dentry);
+> > +	int ret;
+> > +
+> > +	ret = setattr_prepare(dentry, iattr);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if ((iattr->ia_valid & ATTR_UID &&
+> > +	     !uid_eq(iattr->ia_uid, inode->i_uid)) ||
+> > +	    (iattr->ia_valid & ATTR_GID &&
+> > +	     !gid_eq(iattr->ia_gid, inode->i_gid))) {
+> > +		ret = dquot_transfer(inode, iattr);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	if (iattr->ia_valid & ATTR_SIZE) {
+> > +		/* The size of conventional zone files cannot be changed */
+> > +		if (zonefs_file_is_conv(inode))
+> > +			return -EPERM;
+> > +
+> > +		/*
+> > +		 * For sequential zone files, we can only allow truncating to
+> > +		 * 0 size which is equivalent to a zone reset.
+> > +		 */
+> > +		if (iattr->ia_size != 0)
+> > +			return -EPERM;
+> > +
+> > +		ret = zonefs_seq_file_truncate(inode);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	setattr_copy(inode, iattr);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct inode_operations zonefs_file_inode_operations = {
+> > +	.setattr	= zonefs_inode_setattr,
+> > +};
+> > +
+> > +static int zonefs_conv_file_write_and_wait(struct file *file, loff_t start,
+> > +					   loff_t end)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = file_write_and_wait_range(file, start, end);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return file_check_and_advance_wb_err(file);
+> > +}
+> > +
+> > +static int zonefs_file_fsync(struct file *file, loff_t start, loff_t end,
+> > +			     int datasync)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +	int ret = 0;
+> > +
+> > +	/*
+> > +	 * Since only direct writes are allowed in sequential files, page cache
+> > +	 * flush is needed only for conventional zone files.
+> > +	 */
+> > +	if (zonefs_file_is_conv(inode))
+> > +		ret = zonefs_conv_file_write_and_wait(file, start, end);
+> > +
+> > +	if (ret == 0)
+> > +		ret = blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static vm_fault_t zonefs_filemap_fault(struct vm_fault *vmf)
+> > +{
+> > +	struct zonefs_inode_info *zi = ZONEFS_I(file_inode(vmf->vma->vm_file));
+> > +	vm_fault_t ret;
+> > +
+> > +	down_read(&zi->i_mmap_sem);
+> > +	ret = filemap_fault(vmf);
+> > +	up_read(&zi->i_mmap_sem);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static vm_fault_t zonefs_filemap_page_mkwrite(struct vm_fault *vmf)
+> > +{
+> > +	struct inode *inode = file_inode(vmf->vma->vm_file);
+> > +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > +	vm_fault_t ret;
+> > +
+> > +	sb_start_pagefault(inode->i_sb);
+> > +	file_update_time(vmf->vma->vm_file);
+> > +
+> > +	/* Serialize against truncates */
+> > +	down_read(&zi->i_mmap_sem);
+> > +	ret = iomap_page_mkwrite(vmf, &zonefs_iomap_ops);
+> > +	up_read(&zi->i_mmap_sem);
+> > +
+> > +	sb_end_pagefault(inode->i_sb);
+> > +	return ret;
+> > +}
+> > +
+> > +static const struct vm_operations_struct zonefs_file_vm_ops = {
+> > +	.fault		= zonefs_filemap_fault,
+> > +	.map_pages	= filemap_map_pages,
+> > +	.page_mkwrite	= zonefs_filemap_page_mkwrite,
+> > +};
+> > +
+> > +static int zonefs_file_mmap(struct file *file, struct vm_area_struct *vma)
+> > +{
+> > +	/*
+> > +	 * Conventional zone files can be mmap-ed READ/WRITE.
+> > +	 * For sequential zone files, only readonly mappings are possible.
+> > +	 */
+> > +	if (zonefs_file_is_seq(file_inode(file)) &&
+> > +	    (vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_MAYWRITE))
+> > +		return -EINVAL;
+> > +
+> > +	file_accessed(file);
+> > +	vma->vm_ops = &zonefs_file_vm_ops;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static loff_t zonefs_file_llseek(struct file *file, loff_t offset, int whence)
+> > +{
+> > +	loff_t isize = i_size_read(file_inode(file));
+> > +
+> > +	/*
+> > +	 * Seeks are limited to below the zone size for conventional zones
+> > +	 * and below the zone write pointer for sequential zones. In both
+> > +	 * cases, this limit is the inode size.
+> > +	 */
+> > +	return generic_file_llseek_size(file, offset, whence, isize, isize);
+> > +}
+> > +
+> > +static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > +{
+> > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > +	struct zonefs_sb_info *sbi = ZONEFS_SB(inode->i_sb);
+> > +	loff_t max_pos;
+> > +	size_t count;
+> > +	ssize_t ret;
+> > +
+> > +	if (iocb->ki_pos >= zonefs_file_max_size(inode))
+> > +		return 0;
+> > +
+> > +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> > +		if (!inode_trylock_shared(inode))
+> > +			return -EAGAIN;
+> > +	} else {
+> > +		inode_lock_shared(inode);
+> > +	}
+> > +
+> > +	mutex_lock(&zi->i_truncate_mutex);
+> > +
+> > +	/*
+> > +	 * Limit read operations to written data.
+> > +	 */
+> > +	max_pos = i_size_read(inode);
+> > +	if (iocb->ki_pos >= max_pos) {
+> > +		mutex_unlock(&zi->i_truncate_mutex);
+> > +		ret = 0;
+> > +		goto out;
+> > +	}
+> > +
+> > +	iov_iter_truncate(to, max_pos - iocb->ki_pos);
+> > +
+> > +	mutex_unlock(&zi->i_truncate_mutex);
+> > +
+> > +	count = iov_iter_count(to);
+> > +
+> > +	if (iocb->ki_flags & IOCB_DIRECT) {
+> > +		/*
+> > +		 * Direct IO reads must be aligned to device physical sector
+> > +		 * size.
+> > +		 */
+> > +		if ((iocb->ki_pos | count) & sbi->s_blocksize_mask) {
+> > +			ret = -EINVAL;
+> > +		} else {
+> > +			file_accessed(iocb->ki_filp);
+> > +			ret = iomap_dio_rw(iocb, to, &zonefs_iomap_ops, NULL);
+> > +		}
+> > +	} else {
+> > +		ret = generic_file_read_iter(iocb, to);
+> > +	}
+> > +
+> > +out:
+> > +	inode_unlock_shared(inode);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +/*
+> > + * When a write error occurs in a sequential zone, the zone write pointer
+> > + * position must be refreshed to correct the file size and zonefs inode
+> > + * write pointer offset.
+> > + */
+> > +static int zonefs_seq_file_write_failed(struct inode *inode, int error)
+> > +{
+> > +	struct super_block *sb = inode->i_sb;
+> > +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > +	sector_t sector = zi->i_zsector;
+> > +	unsigned int nofs_flag;
+> > +	struct blk_zone zone;
+> > +	int n = 1, ret;
+> > +	loff_t pos;
+> > +
+> > +	zonefs_warn(sb, "Updating inode zone %llu info\n", sector);
+> > +
+> > +	/*
+> > +	 * blkdev_report_zones() uses GFP_KERNEL by default. Force execution as
+> > +	 * if GFP_NOFS was specified to no end up recusrsing into the FS on
+> > +	 * memory allocation.
+> > +	 */
+> > +	nofs_flag = memalloc_nofs_save();
+> > +	ret = blkdev_report_zones(sb->s_bdev, sector, &zone, &n);
+> > +	memalloc_nofs_restore(nofs_flag);
+> > +
+> > +	if (ret || !n) {
+> > +		if (!n)
+> > +			ret = -EIO;
+> > +		zonefs_err(sb, "Get zone %llu report failed %d\n",
+> > +			   sector, ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	pos = (zone.wp - zone.start) << SECTOR_SHIFT;
+> > +	zi->i_wpoffset = pos;
+> > +	if (i_size_read(inode) != pos)
+> > +		i_size_write(inode, pos);
+> > +
+> > +	return error;
+> > +}
+> > +
+> > +static int zonefs_file_dio_write_end(struct kiocb *iocb, ssize_t size,
+> > +				     unsigned int flags)
+> > +{
+> > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > +	int ret = 0;
+> > +
+> > +	/*
+> > +	 * Conventional zone file size is fixed to the zone size so there
+> > +	 * is no need to do anything.
+> > +	 */
+> > +	if (zonefs_file_is_conv(inode))
+> > +		return 0;
+> > +
+> > +	mutex_lock(&zi->i_truncate_mutex);
+> > +
+> > +	if (size < 0) {
+> > +		ret = zonefs_seq_file_write_failed(inode, size);
+> > +	} else {
+> > +		/* Update seq file size */
+> > +		if (i_size_read(inode) < iocb->ki_pos + size)
+> > +			i_size_write(inode, iocb->ki_pos + size);
+> > +	}
+> > +
+> > +	mutex_unlock(&zi->i_truncate_mutex);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+> > +{
+> > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > +	struct zonefs_sb_info *sbi = ZONEFS_SB(inode->i_sb);
+> > +	size_t count;
+> > +	ssize_t ret;
+> > +
+> > +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> > +		if (!inode_trylock(inode))
+> > +			return -EAGAIN;
+> > +	} else {
+> > +		inode_lock(inode);
+> > +	}
+> > +
+> > +	ret = generic_write_checks(iocb, from);
+> > +	if (ret <= 0)
+> > +		goto out;
+> > +
+> > +	iov_iter_truncate(from, zonefs_file_max_size(inode) - iocb->ki_pos);
+> > +	count = iov_iter_count(from);
+> > +
+> > +	/*
+> > +	 * Direct writes must be aligned to the block size, that is, the device
+> > +	 * physical sector size, to avoid errors when writing sequential zones
+> > +	 * on 512e devices (512B logical sector, 4KB physical sectors).
+> > +	 */
+> > +	if ((iocb->ki_pos | count) & sbi->s_blocksize_mask) {
+> > +		ret = -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Enforce sequential writes (append only) in sequential zones.
+> > +	 */
+> > +	mutex_lock(&zi->i_truncate_mutex);
+> > +	if (zonefs_file_is_seq(inode) &&
+> > +	    iocb->ki_pos != zi->i_wpoffset) {
+> > +		zonefs_err(inode->i_sb,
+> > +			   "Unaligned write at %llu + %zu (wp %llu)\n",
+> > +			   iocb->ki_pos, count,
+> > +			   zi->i_wpoffset);
+> > +		mutex_unlock(&zi->i_truncate_mutex);
+> > +		ret = -EINVAL;
+> > +		goto out;
+> > +	}
+> > +	mutex_unlock(&zi->i_truncate_mutex);
+> > +
+> > +	ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
+> > +			   zonefs_file_dio_write_end);
+> > +	if (zonefs_file_is_seq(inode) &&
+> > +	    (ret > 0 || ret == -EIOCBQUEUED)) {
+> > +		if (ret > 0)
+> > +			count = ret;
+> > +		mutex_lock(&zi->i_truncate_mutex);
+> > +		zi->i_wpoffset += count;
+> > +		mutex_unlock(&zi->i_truncate_mutex);
+> > +	}
+> > +
+> > +out:
+> > +	inode_unlock(inode);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static ssize_t zonefs_file_buffered_write(struct kiocb *iocb,
+> > +					  struct iov_iter *from)
+> > +{
+> > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > +	size_t count;
+> > +	ssize_t ret;
+> > +
+> > +	/*
+> > +	 * Direct IO writes are mandatory for sequential zones so that the
+> > +	 * write IO order is preserved.
+> > +	 */
+> > +	if (zonefs_file_is_seq(inode))
+> > +		return -EIO;
+> > +
+> > +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> > +		if (!inode_trylock(inode))
+> > +			return -EAGAIN;
+> > +	} else {
+> > +		inode_lock(inode);
+> > +	}
+> > +
+> > +	ret = generic_write_checks(iocb, from);
+> > +	if (ret <= 0)
+> > +		goto out;
+> > +
+> > +	iov_iter_truncate(from, zonefs_file_max_size(inode) - iocb->ki_pos);
+> > +	count = iov_iter_count(from);
+> > +
+> > +	ret = iomap_file_buffered_write(iocb, from, &zonefs_iomap_ops);
+> > +	if (ret > 0)
+> > +		iocb->ki_pos += ret;
+> > +
+> > +out:
+> > +	inode_unlock(inode);
+> > +
+> > +	if (ret > 0)
+> > +		ret = generic_write_sync(iocb, ret);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static ssize_t zonefs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > +{
+> > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > +
+> > +	/*
+> > +	 * Check that the write operation does not go beyond the zone size.
+> > +	 */
+> > +	if (iocb->ki_pos >= zonefs_file_max_size(inode))
+> > +		return -EFBIG;
+> > +
+> > +	if (iocb->ki_flags & IOCB_DIRECT)
+> > +		return zonefs_file_dio_write(iocb, from);
+> > +
+> > +	return zonefs_file_buffered_write(iocb, from);
+> > +}
+> > +
+> > +static const struct file_operations zonefs_file_operations = {
+> > +	.open		= generic_file_open,
+> > +	.fsync		= zonefs_file_fsync,
+> > +	.mmap		= zonefs_file_mmap,
+> > +	.llseek		= zonefs_file_llseek,
+> > +	.read_iter	= zonefs_file_read_iter,
+> > +	.write_iter	= zonefs_file_write_iter,
+> > +	.splice_read	= generic_file_splice_read,
+> > +	.splice_write	= iter_file_splice_write,
+> > +	.iopoll		= iomap_dio_iopoll,
+> > +};
+> > +
+> > +
+> > +static struct kmem_cache *zonefs_inode_cachep;
+> > +
+> > +static struct inode *zonefs_alloc_inode(struct super_block *sb)
+> > +{
+> > +	struct zonefs_inode_info *zi;
+> > +
+> > +	zi = kmem_cache_alloc(zonefs_inode_cachep, GFP_KERNEL);
+> > +	if (!zi)
+> > +		return NULL;
+> > +
+> > +	mutex_init(&zi->i_truncate_mutex);
+> > +	init_rwsem(&zi->i_mmap_sem);
+> > +	inode_init_once(&zi->i_vnode);
+> > +
+> > +	return &zi->i_vnode;
+> > +}
+> > +
+> > +static void zonefs_free_inode(struct inode *inode)
+> > +{
+> > +	kmem_cache_free(zonefs_inode_cachep, ZONEFS_I(inode));
+> > +}
+> > +
+> > +static struct dentry *zonefs_create_inode(struct dentry *parent,
+> > +					  const char *name,
+> > +					  struct blk_zone *zone)
+> > +{
+> > +	struct zonefs_sb_info *sbi = ZONEFS_SB(parent->d_sb);
+> > +	struct inode *dir = d_inode(parent);
+> > +	struct dentry *dentry;
+> > +	struct inode *inode;
+> > +
+> > +	dentry = d_alloc_name(parent, name);
+> > +	if (!dentry)
+> > +		return NULL;
+> > +
+> > +	inode = new_inode(parent->d_sb);
+> > +	if (!inode)
+> > +		goto out_dput;
+> > +
+> > +	inode->i_ino = get_next_ino();
+> > +	if (zone) {
+> > +		struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > +
+> > +		/*
+> > +		 * Zone file: for read-only zones, do not allow writes.
+> > +		 * For offline zones, disable all accesses and set the file
+> > +		 * size to 0.
+> > +		 */
+> > +		inode->i_mode = S_IFREG;
+> > +		switch (zone->cond) {
+> > +		case BLK_ZONE_COND_READONLY:
+> > +			inode->i_mode |= sbi->s_perm & ~(0222); /* S_IWUGO */
+> > +		case BLK_ZONE_COND_OFFLINE:
+> > +			break;
+> > +		default:
+> > +			inode->i_mode |= sbi->s_perm;
+> > +		}
+> > +		inode->i_uid = sbi->s_uid;
+> > +		inode->i_gid = sbi->s_gid;
+> > +		zi->i_ztype = zonefs_zone_type(zone);
+> > +		zi->i_zsector = zone->start;
+> > +		zi->i_max_size = zone->len << SECTOR_SHIFT;
+> > +
+> > +		if (zone->cond == BLK_ZONE_COND_OFFLINE)
+> > +			zi->i_wpoffset = 0;
+> > +		else if (zonefs_file_is_conv(inode))
+> > +			zi->i_wpoffset = zi->i_max_size;
+> > +		else
+> > +			zi->i_wpoffset =
+> > +				(zone->wp - zone->start) << SECTOR_SHIFT;
+> > +
+> > +		inode->i_size = zi->i_wpoffset;
+> > +		inode->i_blocks = zone->len;
+> > +		inode->i_fop = &zonefs_file_operations;
+> > +		inode->i_op = &zonefs_file_inode_operations;
+> > +		inode->i_mapping->a_ops = &zonefs_file_aops;
+> > +		inode->i_mapping->a_ops = &zonefs_file_aops;
+> > +	} else {
+> > +		/* Zone group directory */
+> > +		inode_init_owner(inode, dir, S_IFDIR | 0555);
+> > +		inode->i_fop = &simple_dir_operations;
+> > +		inode->i_op = &simple_dir_inode_operations;
+> > +		set_nlink(inode, 2);
+> > +		inc_nlink(dir);
+> > +	}
+> > +	inode->i_ctime = inode->i_mtime = inode->i_atime = dir->i_ctime;
+> > +
+> > +	d_add(dentry, inode);
+> > +	d_inode(parent)->i_size += sizeof(struct dentry);
+> > +
+> > +	return dentry;
+> > +
+> > +out_dput:
+> > +	dput(dentry);
+> > +	return NULL;
+> > +}
+> > +
+> > +/*
+> > + * File system stat.
+> > + */
+> > +static int zonefs_statfs(struct dentry *dentry, struct kstatfs *buf)
+> > +{
+> > +	struct super_block *sb = dentry->d_sb;
+> > +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> > +	sector_t nr_sectors = sb->s_bdev->bd_part->nr_sects;
+> > +	enum zonefs_ztype t;
+> > +	u64 fsid;
+> > +
+> > +	buf->f_type = ZONEFS_MAGIC;
+> > +	buf->f_bsize = dentry->d_sb->s_blocksize;
+> > +	buf->f_namelen = ZONEFS_NAME_MAX;
+> > +
+> > +	buf->f_blocks = nr_sectors >> (sb->s_blocksize_bits - SECTOR_SHIFT);
+> > +	buf->f_bfree = 0;
+> > +	buf->f_bavail = 0;
+> > +
+> > +	buf->f_files = blkdev_nr_zones(sb->s_bdev);
+> > +	for (t = 0 ; t < ZONEFS_ZTYPE_MAX; t++) {
+> > +		if (sbi->s_nr_zones[t])
+> > +			buf->f_files++;
+> > +	}
+> > +	buf->f_ffree = 0;
+> > +
+> > +	fsid = le64_to_cpup((void *)sbi->s_uuid.b) ^
+> > +		le64_to_cpup((void *)sbi->s_uuid.b + sizeof(u64));
+> > +	buf->f_fsid.val[0] = (u32)fsid;
+> > +	buf->f_fsid.val[1] = (u32)(fsid >> 32);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct super_operations zonefs_sops = {
+> > +	.alloc_inode	= zonefs_alloc_inode,
+> > +	.free_inode	= zonefs_free_inode,
+> > +	.statfs		= zonefs_statfs,
+> > +};
+> > +
+> > +static char *zgroups_name[ZONEFS_ZTYPE_MAX] = {
+> > +	"cnv",
+> > +	"seq"
+> > +};
+> > +
+> > +/*
+> > + * Create a zone group and populate it with zone files.
+> > + */
+> > +static int zonefs_create_zgroup(struct super_block *sb, struct blk_zone *zones,
+> > +				enum zonefs_ztype type)
+> > +{
+> > +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> > +	struct blk_zone *zone, *next, *end;
+> > +	char name[ZONEFS_NAME_MAX];
+> > +	unsigned int nr_files = 0;
+> > +	struct dentry *dir;
+> > +
+> > +	/* If the group is empty, nothing to do */
+> > +	if (!sbi->s_nr_zones[type])
+> > +		return 0;
+> > +
+> > +	dir = zonefs_create_inode(sb->s_root, zgroups_name[type], NULL);
+> > +	if (!dir)
+> > +		return -ENOMEM;
+> > +
+> > +	/*
+> > +	 * Note: The first zone contains the super block: skip it.
+> > +	 */
+> > +	end = zones + blkdev_nr_zones(sb->s_bdev);
+> > +	for (zone = &zones[1]; zone < end; zone = next) {
+> > +
+> > +		next = zone + 1;
+> > +		if (zonefs_zone_type(zone) != type)
+> > +			continue;
+> > +
+> > +		/*
+> > +		 * For conventional zones, contiguous zones can be aggregated
+> > +		 * together to form larger files.
+> > +		 * Note that this overwrites the length of the first zone of
+> > +		 * the set of contiguous zones aggregated together.
+> > +		 * Only zones with the same condition can be agreggated so that
+> > +		 * offline zones are excluded and readonly zones are aggregated
+> > +		 * together into a read only file.
+> > +		 */
+> > +		if (type == ZONEFS_ZTYPE_CNV &&
+> > +		    zonefs_has_feature(sbi, ZONEFS_F_AGRCNV)) {
+> > +			for (; next < end; next++) {
+> > +				if (zonefs_zone_type(next) != type ||
+> > +				    next->cond != zone->cond)
+> > +					break;
+> > +				zone->len += next->len;
+> > +			}
+> > +		}
+> > +
+> > +		if (zonefs_has_feature(sbi, ZONEFS_F_STARTSECT_NAME))
+> > +			/* Use zone start sector as file names */
+> > +			snprintf(name, ZONEFS_NAME_MAX - 1, "%llu",
+> > +				 zone->start);
+> > +		else
+> > +			/* Use file number as file names */
+> > +			snprintf(name, ZONEFS_NAME_MAX - 1, "%u", nr_files);
+> > +		nr_files++;
+> > +
+> > +		if (!zonefs_create_inode(dir, name, zone))
+> > +			return -ENOMEM;
+> > +	}
+> > +
+> > +	zonefs_info(sb, "Zone group %d (%s), %u zones -> %u file%s\n",
+> > +		    type, zgroups_name[type], sbi->s_nr_zones[type],
+> > +		    nr_files, nr_files > 1 ? "s" : "");
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static struct blk_zone *zonefs_get_zone_info(struct super_block *sb)
+> > +{
+> > +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> > +	struct block_device *bdev = sb->s_bdev;
+> > +	sector_t nr_sectors = bdev->bd_part->nr_sects;
+> > +	unsigned int i, n, nr_zones = 0;
+> > +	struct blk_zone *zones, *zone;
+> > +	sector_t sector = 0;
+> > +	int ret;
+> > +
+> > +	zones = kvcalloc(blkdev_nr_zones(bdev),
+> > +			 sizeof(struct blk_zone), GFP_KERNEL);
+> > +	if (!zones)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	/* Get zones information */
+> > +	zone = zones;
+> > +	while (nr_zones < blkdev_nr_zones(bdev) &&
+> > +	       sector < nr_sectors) {
+> > +
+> > +		n = blkdev_nr_zones(bdev) - nr_zones;
+> > +		ret = blkdev_report_zones(bdev, sector, zone, &n);
+> > +		if (ret) {
+> > +			zonefs_err(sb, "Zone report failed %d\n", ret);
+> > +			goto err;
+> > +		}
+> > +		if (!n) {
+> > +			zonefs_err(sb, "No zones reported\n");
+> > +			ret = -EIO;
+> > +			goto err;
+> > +		}
+> > +
+> > +		for (i = 0; i < n; i++) {
+> > +			switch (zone->type) {
+> > +			case BLK_ZONE_TYPE_CONVENTIONAL:
+> > +				zone->wp = zone->start + zone->len;
+> > +				if (zone > zones)
+> > +					sbi->s_nr_zones[ZONEFS_ZTYPE_CNV]++;
+> > +				break;
+> > +			case BLK_ZONE_TYPE_SEQWRITE_REQ:
+> > +			case BLK_ZONE_TYPE_SEQWRITE_PREF:
+> > +				if (zone > zones)
+> > +					sbi->s_nr_zones[ZONEFS_ZTYPE_SEQ]++;
+> > +				break;
+> > +			default:
+> > +				zonefs_err(sb, "Unsupported zone type 0x%x\n",
+> > +					   zone->type);
+> > +				ret = -EIO;
+> > +				goto err;
+> > +			}
+> > +			sector += zone->len;
+> > +			zone++;
+> > +		}
+> > +
+> > +		nr_zones += n;
+> > +	}
+> > +
+> > +	if (sector < nr_sectors ||
+> > +	    nr_zones != blkdev_nr_zones(bdev)) {
+> > +		zonefs_err(sb, "Invalid zone report\n");
+> > +		ret = -EIO;
+> > +		goto err;
+> > +	}
+> > +
+> > +	return zones;
+> > +
+> > +err:
+> > +	kvfree(zones);
+> > +	return ERR_PTR(ret);
+> > +}
+> > +
+> > +/*
+> > + * Read super block information from the device.
+> > + */
+> > +static int zonefs_read_super(struct super_block *sb)
+> > +{
+> > +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> > +	struct zonefs_super *super;
+> > +	struct bio bio;
+> > +	struct bio_vec bio_vec;
+> > +	struct page *page;
+> > +	u32 crc, stored_crc;
+> > +	int ret;
+> > +
+> > +	page = alloc_page(GFP_KERNEL);
+> > +	if (!page)
+> > +		return -ENOMEM;
+> > +
+> > +	bio_init(&bio, &bio_vec, 1);
+> > +	bio.bi_iter.bi_sector = 0;
+> > +	bio_set_dev(&bio, sb->s_bdev);
+> > +	bio_set_op_attrs(&bio, REQ_OP_READ, 0);
+> > +	bio_add_page(&bio, page, PAGE_SIZE, 0);
+> > +
+> > +	ret = submit_bio_wait(&bio);
+> > +	if (ret)
+> > +		goto out;
+> > +
+> > +	super = page_address(page);
+> > +
+> > +	stored_crc = super->s_crc;
+> > +	super->s_crc = 0;
+> > +	crc = crc32_le(ZONEFS_MAGIC, (unsigned char *)super,
+> > +		       sizeof(struct zonefs_super));
+> > +	if (crc != stored_crc) {
+> > +		zonefs_err(sb, "Invalid checksum (Expected 0x%08x, got 0x%08x)",
+> > +			   crc, stored_crc);
+> > +		ret = -EIO;
+> > +		goto out;
+> > +	}
+> > +
+> > +	ret = -EINVAL;
+> > +	if (le32_to_cpu(super->s_magic) != ZONEFS_MAGIC)
+> > +		goto out;
+> > +
+> > +	sbi->s_features = le64_to_cpu(super->s_features);
+> > +	if (sbi->s_features & ~ZONEFS_F_DEFINED_FEATURES) {
+> > +		zonefs_err(sb, "Unknown features set 0x%llx\n",
+> > +			   sbi->s_features);
+> > +		goto out;
+> > +	}
+> > +
+> > +
+> > +	if (zonefs_has_feature(sbi, ZONEFS_F_UID)) {
+> > +		sbi->s_uid = make_kuid(current_user_ns(),
+> > +				       le32_to_cpu(super->s_uid));
+> > +		if (!uid_valid(sbi->s_uid)) {
+> > +			zonefs_err(sb, "Invalid UID feature\n");
+> > +			goto out;
+> > +		}
+> > +	}
+> > +	if (zonefs_has_feature(sbi, ZONEFS_F_GID)) {
+> > +		sbi->s_gid = make_kgid(current_user_ns(),
+> > +				       le32_to_cpu(super->s_gid));
+> > +		if (!gid_valid(sbi->s_gid)) {
+> > +			zonefs_err(sb, "Invalid GID feature\n");
+> > +			goto out;
+> > +		}
+> > +	}
+> > +
+> > +	if (zonefs_has_feature(sbi, ZONEFS_F_PERM))
+> > +		sbi->s_perm = le32_to_cpu(super->s_perm);
+> > +
+> > +	if (memchr_inv(super->s_reserved, 0, sizeof(super->s_reserved))) {
+> > +		zonefs_err(sb, "Reserved area is being used\n");
+> > +		goto out;
+> > +	}
+> > +
+> > +	uuid_copy(&sbi->s_uuid, &super->s_uuid);
+> > +	ret = 0;
+> > +
+> > +out:
+> > +	__free_page(page);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +/*
+> > + * Check that the device is zoned. If it is, get the list of zones and create
+> > + * sub-directories and files according to the device zone configuration.
+> > + */
+> > +static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+> > +{
+> > +	struct zonefs_sb_info *sbi;
+> > +	struct blk_zone *zones;
+> > +	struct inode *inode;
+> > +	enum zonefs_ztype t;
+> > +	int ret;
+> > +
+> > +	/* Check device type */
+> > +	if (!bdev_is_zoned(sb->s_bdev)) {
+> > +		zonefs_err(sb, "Not a zoned block device\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Initialize super block information */
+> > +	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
+> > +	if (!sbi)
+> > +		return -ENOMEM;
+> > +
+> > +	sb->s_fs_info = sbi;
+> > +	sb->s_magic = ZONEFS_MAGIC;
+> > +	sb->s_maxbytes = MAX_LFS_FILESIZE;
+> > +	sb->s_op = &zonefs_sops;
+> > +	sb->s_time_gran	= 1;
+> > +
+> > +	/*
+> > +	 * The block size is always equal to the device physical sector size to
+> > +	 * ensure that writes on 512e disks (512B logical block and 4KB
+> > +	 * physical block) are always aligned.
+> > +	 */
+> > +	sb_set_blocksize(sb, bdev_physical_block_size(sb->s_bdev));
+> > +	sbi->s_blocksize_mask = sb->s_blocksize - 1;
+> > +
+> > +	sbi->s_uid = GLOBAL_ROOT_UID;
+> > +	sbi->s_gid = GLOBAL_ROOT_GID;
+> > +	sbi->s_perm = 0640; /* S_IRUSR | S_IWUSR | S_IRGRP */
+> > +
+> > +	ret = zonefs_read_super(sb);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	zones = zonefs_get_zone_info(sb);
+> > +	if (IS_ERR(zones))
+> > +		return PTR_ERR(zones);
+> > +
+> > +	pr_info("zonefs: Mounting %s, %u zones",
+> > +		sb->s_id, blkdev_nr_zones(sb->s_bdev));
+> > +
+> > +	/* Create root directory inode */
+> > +	ret = -ENOMEM;
+> > +	inode = new_inode(sb);
+> > +	if (!inode)
+> > +		goto out;
+> > +
+> > +	inode->i_ino = get_next_ino();
+> > +	inode->i_mode = S_IFDIR | 0755;
+> > +	inode->i_ctime = inode->i_mtime = inode->i_atime = current_time(inode);
+> > +	inode->i_op = &simple_dir_inode_operations;
+> > +	inode->i_fop = &simple_dir_operations;
+> > +	inode->i_size = sizeof(struct dentry) * 2;
+> > +	set_nlink(inode, 2);
+> > +
+> > +	sb->s_root = d_make_root(inode);
+> > +	if (!sb->s_root)
+> > +		goto out;
+> > +
+> > +	/* Create and populate zone groups */
+> > +	for (t = ZONEFS_ZTYPE_CNV; t < ZONEFS_ZTYPE_MAX; t++) {
+> > +		ret = zonefs_create_zgroup(sb, zones, t);
+> > +		if (ret)
+> > +			break;
+> > +	}
+> > +
+> > +out:
+> > +	kvfree(zones);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static struct dentry *zonefs_mount(struct file_system_type *fs_type,
+> > +				 int flags, const char *dev_name, void *data)
+> > +{
+> > +	return mount_bdev(fs_type, flags, dev_name, data, zonefs_fill_super);
+> > +}
+> > +
+> > +static void zonefs_kill_super(struct super_block *sb)
+> > +{
+> > +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> > +
+> > +	kfree(sbi);
+> > +	if (sb->s_root)
+> > +		d_genocide(sb->s_root);
+> > +	kill_block_super(sb);
+> > +}
+> > +
+> > +/*
+> > + * File system definition and registration.
+> > + */
+> > +static struct file_system_type zonefs_type = {
+> > +	.owner		= THIS_MODULE,
+> > +	.name		= "zonefs",
+> > +	.mount		= zonefs_mount,
+> > +	.kill_sb	= zonefs_kill_super,
+> > +	.fs_flags	= FS_REQUIRES_DEV,
+> > +};
+> > +
+> > +static int __init zonefs_init_inodecache(void)
+> > +{
+> > +	zonefs_inode_cachep = kmem_cache_create("zonefs_inode_cache",
+> > +			sizeof(struct zonefs_inode_info), 0,
+> > +			(SLAB_RECLAIM_ACCOUNT | SLAB_MEM_SPREAD | SLAB_ACCOUNT),
+> > +			NULL);
+> > +	if (zonefs_inode_cachep == NULL)
+> > +		return -ENOMEM;
+> > +	return 0;
+> > +}
+> > +
+> > +static void zonefs_destroy_inodecache(void)
+> > +{
+> > +	/*
+> > +	 * Make sure all delayed rcu free inodes are flushed before we
+> > +	 * destroy the inode cache.
+> > +	 */
+> > +	rcu_barrier();
+> > +	kmem_cache_destroy(zonefs_inode_cachep);
+> > +}
+> > +
+> > +static int __init zonefs_init(void)
+> > +{
+> > +	int ret;
+> > +
+> > +	BUILD_BUG_ON(sizeof(struct zonefs_super) != ZONEFS_SUPER_SIZE);
+> > +
+> > +	ret = zonefs_init_inodecache();
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = register_filesystem(&zonefs_type);
+> > +	if (ret) {
+> > +		zonefs_destroy_inodecache();
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void __exit zonefs_exit(void)
+> > +{
+> > +	zonefs_destroy_inodecache();
+> > +	unregister_filesystem(&zonefs_type);
+> > +}
+> > +
+> > +MODULE_AUTHOR("Damien Le Moal");
+> > +MODULE_DESCRIPTION("Zone file system for zoned block devices");
+> > +MODULE_LICENSE("GPL");
+> > +module_init(zonefs_init);
+> > +module_exit(zonefs_exit);
+> > diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
+> > new file mode 100644
+> > index 000000000000..5338663711b4
+> > --- /dev/null
+> > +++ b/fs/zonefs/zonefs.h
+> > @@ -0,0 +1,185 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Simple zone file system for zoned block devices.
+> > + *
+> > + * Copyright (C) 2019 Western Digital Corporation or its affiliates.
+> > + */
+> > +#ifndef __ZONEFS_H__
+> > +#define __ZONEFS_H__
+> > +
+> > +#include <linux/fs.h>
+> > +#include <linux/magic.h>
+> > +#include <linux/uuid.h>
+> > +#include <linux/mutex.h>
+> > +#include <linux/rwsem.h>
+> > +
+> > +/*
+> > + * Maximum length of file names: this only needs to be large enough to fit
+> > + * the zone group directory names and a decimal value of the start sector of
+> > + * the zones for file names. 16 characters is plenty.
+> > + */
+> > +#define ZONEFS_NAME_MAX		16
+> > +
+> > +/*
+> > + * Zone types: ZONEFS_ZTYPE_SEQ is used for all sequential zone types
+> > + * defined in linux/blkzoned.h, that is, BLK_ZONE_TYPE_SEQWRITE_REQ and
+> > + * BLK_ZONE_TYPE_SEQWRITE_PREF.
+> > + */
+> > +enum zonefs_ztype {
+> > +	ZONEFS_ZTYPE_CNV,
+> > +	ZONEFS_ZTYPE_SEQ,
+> > +	ZONEFS_ZTYPE_MAX,
+> > +};
+> > +
+> > +static inline enum zonefs_ztype zonefs_zone_type(struct blk_zone *zone)
+> > +{
+> > +	if (zone->type == BLK_ZONE_TYPE_CONVENTIONAL)
+> > +		return ZONEFS_ZTYPE_CNV;
+> > +	return ZONEFS_ZTYPE_SEQ;
+> > +}
+> > +
+> > +/*
+> > + * Inode private data.
+> > + */
+> > +struct zonefs_inode_info {
+> > +	struct inode		i_vnode;
+> > +	enum zonefs_ztype	i_ztype;
+> > +	sector_t		i_zsector;
+> > +	loff_t			i_wpoffset;
+> > +	loff_t			i_max_size;
+> > +	struct mutex		i_truncate_mutex;
+> > +	struct rw_semaphore	i_mmap_sem;
+> > +};
+> > +
+> > +static inline struct zonefs_inode_info *ZONEFS_I(struct inode *inode)
+> > +{
+> > +	return container_of(inode, struct zonefs_inode_info, i_vnode);
+> > +}
+> > +
+> > +static inline bool zonefs_file_is_conv(struct inode *inode)
+> > +{
+> > +	return ZONEFS_I(inode)->i_ztype == ZONEFS_ZTYPE_CNV;
+> > +}
+> > +
+> > +static inline bool zonefs_file_is_seq(struct inode *inode)
+> > +{
+> > +	return ZONEFS_I(inode)->i_ztype == ZONEFS_ZTYPE_SEQ;
+> > +}
+> > +
+> > +/*
+> > + * Start sector on disk of a file zone.
+> > + */
+> > +static inline loff_t zonefs_file_start_sector(struct inode *inode)
+> > +{
+> > +	return ZONEFS_I(inode)->i_zsector;
+> > +}
+> > +
+> > +/*
+> > + * Maximum possible size of a file (i.e. the zone size).
+> > + */
+> > +static inline loff_t zonefs_file_max_size(struct inode *inode)
+> > +{
+> > +	return ZONEFS_I(inode)->i_max_size;
+> > +}
+> > +
+> > +/*
+> > + * On-disk super block (block 0).
+> > + */
+> > +#define ZONEFS_SUPER_SIZE	4096
+> > +struct zonefs_super {
+> > +
+> > +	/* Magic number */
+> > +	__le32		s_magic;
+> > +
+> > +	/* Checksum */
+> > +	__le32		s_crc;
+> > +
+> > +	/* Features */
+> > +	__le64		s_features;
+> > +
+> > +	/* 128-bit uuid */
+> > +	uuid_t		s_uuid;
+> > +
+> > +	/* UID/GID to use for files */
+> > +	__le32		s_uid;
+> > +	__le32		s_gid;
+> > +
+> > +	/* File permissions */
+> > +	__le32		s_perm;
+> > +
+> > +	/* Padding to ZONEFS_SUPER_SIZE bytes */
+> > +	__u8		s_reserved[4052];
+> > +
+> > +} __packed;
+> > +
+> > +/*
+> > + * Feature flags: used on disk in the s_features field of struct zonefs_super
+> > + * and in-memory in the s_feartures field of struct zonefs_sb_info.
+> > + */
+> > +enum zonefs_features {
+> > +	/*
+> > +	 * Use a zone start sector value as file name.
+> > +	 */
+> > +	__ZONEFS_F_STARTSECT_NAME,
+> > +	/*
+> > +	 * Aggregate contiguous conventional zones into a single file.
+> > +	 */
+> > +	__ZONEFS_F_AGRCNV,
+> > +	/*
+> > +	 * Use super block specified UID for files instead of default.
+> > +	 */
+> > +	__ZONEFS_F_UID,
+> > +	/*
+> > +	 * Use super block specified GID for files instead of default.
+> > +	 */
+> > +	__ZONEFS_F_GID,
+> > +	/*
+> > +	 * Use super block specified file permissions instead of default 640.
+> > +	 */
+> > +	__ZONEFS_F_PERM,
+> > +};
+> > +
+> > +#define ZONEFS_F_STARTSECT_NAME	(1ULL << __ZONEFS_F_STARTSECT_NAME)
+> > +#define ZONEFS_F_AGRCNV		(1ULL << __ZONEFS_F_AGRCNV)
+> > +#define ZONEFS_F_UID		(1ULL << __ZONEFS_F_UID)
+> > +#define ZONEFS_F_GID		(1ULL << __ZONEFS_F_GID)
+> > +#define ZONEFS_F_PERM		(1ULL << __ZONEFS_F_PERM)
+> > +
+> > +#define ZONEFS_F_DEFINED_FEATURES \
+> > +	(ZONEFS_F_STARTSECT_NAME | ZONEFS_F_AGRCNV | \
+> > +	 ZONEFS_F_UID | ZONEFS_F_GID | ZONEFS_F_PERM)
+> > +
+> > +/*
+> > + * In-memory Super block information.
+> > + */
+> > +struct zonefs_sb_info {
+> > +
+> > +	unsigned long long	s_features;
+> > +	kuid_t			s_uid;		/* File owner UID */
+> > +	kgid_t			s_gid;		/* File owner GID */
+> > +	umode_t			s_perm;		/* File permissions */
+> > +	uuid_t			s_uuid;
+> > +
+> > +	loff_t			s_blocksize_mask;
+> > +	unsigned int		s_nr_zones[ZONEFS_ZTYPE_MAX];
+> > +};
+> > +
+> > +static inline struct zonefs_sb_info *ZONEFS_SB(struct super_block *sb)
+> > +{
+> > +	return sb->s_fs_info;
+> > +}
+> > +
+> > +static inline bool zonefs_has_feature(struct zonefs_sb_info *sbi,
+> > +				      enum zonefs_features f)
+> > +{
+> > +	return sbi->s_features & f;
+> > +}
+> > +
+> > +#define zonefs_info(sb, format, args...)	\
+> > +	pr_info("zonefs (%s): " format, sb->s_id, ## args)
+> > +#define zonefs_err(sb, format, args...)	\
+> > +	pr_err("zonefs (%s) ERROR: " format, sb->s_id, ## args)
+> > +#define zonefs_warn(sb, format, args...)	\
+> > +	pr_warn("zonefs (%s) WARN: " format, sb->s_id, ## args)
+> > +
+> > +#endif
+> > diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+> > index 1274c692e59c..3be20c774142 100644
+> > --- a/include/uapi/linux/magic.h
+> > +++ b/include/uapi/linux/magic.h
+> > @@ -86,6 +86,7 @@
+> >  #define NSFS_MAGIC		0x6e736673
+> >  #define BPF_FS_MAGIC		0xcafe4a11
+> >  #define AAFS_MAGIC		0x5a3c69f0
+> > +#define ZONEFS_MAGIC		0x5a4f4653
+> >  
+> >  /* Since UDF 2.01 is ISO 13346 based... */
+> >  #define UDF_SUPER_MAGIC		0x15013346
+> > 
+> 
+> 
+> -- 
+> Damien Le Moal
+> Western Digital Research
