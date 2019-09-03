@@ -2,305 +2,254 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9930DA67E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 552D5A67EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:58:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbfICL5u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 07:57:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59918 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726936AbfICL5u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:57:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5F385AE16;
-        Tue,  3 Sep 2019 11:57:48 +0000 (UTC)
-Date:   Tue, 3 Sep 2019 13:57:48 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     William Kucharski <william.kucharski@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Bob Kasten <robert.a.kasten@intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Chad Mynhier <chad.mynhier@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <jweiner@fb.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v5 1/2] mm: Allow the page cache to allocate large pages
-Message-ID: <20190903115748.GS14028@dhcp22.suse.cz>
-References: <20190902092341.26712-1-william.kucharski@oracle.com>
- <20190902092341.26712-2-william.kucharski@oracle.com>
+        id S1728860AbfICL6j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 07:58:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39508 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727107AbfICL6j (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 07:58:39 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x83Bvouq133276
+        for <linux-fsdevel@vger.kernel.org>; Tue, 3 Sep 2019 07:58:37 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2usntnc3nr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 07:58:37 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Tue, 3 Sep 2019 12:58:35 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Sep 2019 12:58:32 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x83BwS3A61014132
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Sep 2019 11:58:28 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4F2AA4060;
+        Tue,  3 Sep 2019 11:58:27 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0A8A0A405B;
+        Tue,  3 Sep 2019 11:58:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.124.31.57])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Sep 2019 11:58:26 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [RFC] - vfs: Null pointer dereference issue with symlink create and
+ read of symlink
+To:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     aneesh.kumar@linux.ibm.com, Jeff Layton <jlayton@kernel.org>,
+        wugyuan@cn.ibm.com
+Date:   Tue, 3 Sep 2019 17:28:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902092341.26712-2-william.kucharski@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19090311-0012-0000-0000-000003461720
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090311-0013-0000-0000-00002180650C
+Message-Id: <20190903115827.0A8A0A405B@b06wcsmtp001.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-03_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909030127
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 02-09-19 03:23:40, William Kucharski wrote:
-> Add an 'order' argument to __page_cache_alloc() and
-> do_read_cache_page(). Ensure the allocated pages are compound pages.
+Hi Viro/All,
 
-Why do we need to touch all the existing callers and change them to use
-order 0 when none is actually converted to a different order? This just
-seem to add a lot of code churn without a good reason. If anything I
-would simply add __page_cache_alloc_order and make __page_cache_alloc
-call it with order 0 argument.
+Could you please review below issue and it's proposed solutions.
+If you could let me know which of the two you think will be a better 
+approach to solve this or in case if you have any other better approach, 
+I can prepare and submit a official patch with that.
 
-Also is it so much to ask callers to provide __GFP_COMP explicitly?
 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Signed-off-by: William Kucharski <william.kucharski@oracle.com>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> ---
->  fs/afs/dir.c            |  2 +-
->  fs/btrfs/compression.c  |  2 +-
->  fs/cachefiles/rdwr.c    |  4 ++--
->  fs/ceph/addr.c          |  2 +-
->  fs/ceph/file.c          |  2 +-
->  include/linux/pagemap.h | 10 ++++++----
->  mm/filemap.c            | 20 +++++++++++---------
->  mm/readahead.c          |  2 +-
->  net/ceph/pagelist.c     |  4 ++--
->  net/ceph/pagevec.c      |  2 +-
->  10 files changed, 27 insertions(+), 23 deletions(-)
-> 
-> diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-> index 139b4e3cc946..ca8f8e77e012 100644
-> --- a/fs/afs/dir.c
-> +++ b/fs/afs/dir.c
-> @@ -274,7 +274,7 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
->  				afs_stat_v(dvnode, n_inval);
->  
->  			ret = -ENOMEM;
-> -			req->pages[i] = __page_cache_alloc(gfp);
-> +			req->pages[i] = __page_cache_alloc(gfp, 0);
->  			if (!req->pages[i])
->  				goto error;
->  			ret = add_to_page_cache_lru(req->pages[i],
-> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-> index 60c47b417a4b..5280e7477b7e 100644
-> --- a/fs/btrfs/compression.c
-> +++ b/fs/btrfs/compression.c
-> @@ -466,7 +466,7 @@ static noinline int add_ra_bio_pages(struct inode *inode,
->  		}
->  
->  		page = __page_cache_alloc(mapping_gfp_constraint(mapping,
-> -								 ~__GFP_FS));
-> +								 ~__GFP_FS), 0);
->  		if (!page)
->  			break;
->  
-> diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-> index 44a3ce1e4ce4..11d30212745f 100644
-> --- a/fs/cachefiles/rdwr.c
-> +++ b/fs/cachefiles/rdwr.c
-> @@ -259,7 +259,7 @@ static int cachefiles_read_backing_file_one(struct cachefiles_object *object,
->  			goto backing_page_already_present;
->  
->  		if (!newpage) {
-> -			newpage = __page_cache_alloc(cachefiles_gfp);
-> +			newpage = __page_cache_alloc(cachefiles_gfp, 0);
->  			if (!newpage)
->  				goto nomem_monitor;
->  		}
-> @@ -495,7 +495,7 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
->  				goto backing_page_already_present;
->  
->  			if (!newpage) {
-> -				newpage = __page_cache_alloc(cachefiles_gfp);
-> +				newpage = __page_cache_alloc(cachefiles_gfp, 0);
->  				if (!newpage)
->  					goto nomem;
->  			}
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index b3c8b886bf64..7c1c3857fbb9 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1708,7 +1708,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
->  		if (len > PAGE_SIZE)
->  			len = PAGE_SIZE;
->  	} else {
-> -		page = __page_cache_alloc(GFP_NOFS);
-> +		page = __page_cache_alloc(GFP_NOFS, 0);
->  		if (!page) {
->  			err = -ENOMEM;
->  			goto out;
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 685a03cc4b77..ae58d7c31aa4 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1305,7 +1305,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  		struct page *page = NULL;
->  		loff_t i_size;
->  		if (retry_op == READ_INLINE) {
-> -			page = __page_cache_alloc(GFP_KERNEL);
-> +			page = __page_cache_alloc(GFP_KERNEL, 0);
->  			if (!page)
->  				return -ENOMEM;
->  		}
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index c7552459a15f..92e026d9a6b7 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -208,17 +208,19 @@ static inline int page_cache_add_speculative(struct page *page, int count)
->  }
->  
->  #ifdef CONFIG_NUMA
-> -extern struct page *__page_cache_alloc(gfp_t gfp);
-> +extern struct page *__page_cache_alloc(gfp_t gfp, unsigned int order);
->  #else
-> -static inline struct page *__page_cache_alloc(gfp_t gfp)
-> +static inline struct page *__page_cache_alloc(gfp_t gfp, unsigned int order)
->  {
-> -	return alloc_pages(gfp, 0);
-> +	if (order > 0)
-> +		gfp |= __GFP_COMP;
-> +	return alloc_pages(gfp, order);
->  }
->  #endif
->  
->  static inline struct page *page_cache_alloc(struct address_space *x)
->  {
-> -	return __page_cache_alloc(mapping_gfp_mask(x));
-> +	return __page_cache_alloc(mapping_gfp_mask(x), 0);
->  }
->  
->  static inline gfp_t readahead_gfp_mask(struct address_space *x)
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index d0cf700bf201..38b46fc00855 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -954,22 +954,25 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
->  EXPORT_SYMBOL_GPL(add_to_page_cache_lru);
->  
->  #ifdef CONFIG_NUMA
-> -struct page *__page_cache_alloc(gfp_t gfp)
-> +struct page *__page_cache_alloc(gfp_t gfp, unsigned int order)
->  {
->  	int n;
->  	struct page *page;
->  
-> +	if (order > 0)
-> +		gfp |= __GFP_COMP;
-> +
->  	if (cpuset_do_page_mem_spread()) {
->  		unsigned int cpuset_mems_cookie;
->  		do {
->  			cpuset_mems_cookie = read_mems_allowed_begin();
->  			n = cpuset_mem_spread_node();
-> -			page = __alloc_pages_node(n, gfp, 0);
-> +			page = __alloc_pages_node(n, gfp, order);
->  		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
->  
->  		return page;
->  	}
-> -	return alloc_pages(gfp, 0);
-> +	return alloc_pages(gfp, order);
->  }
->  EXPORT_SYMBOL(__page_cache_alloc);
->  #endif
-> @@ -1665,7 +1668,7 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
->  		if (fgp_flags & FGP_NOFS)
->  			gfp_mask &= ~__GFP_FS;
->  
-> -		page = __page_cache_alloc(gfp_mask);
-> +		page = __page_cache_alloc(gfp_mask, 0);
->  		if (!page)
->  			return NULL;
->  
-> @@ -2802,15 +2805,14 @@ static struct page *wait_on_page_read(struct page *page)
->  static struct page *do_read_cache_page(struct address_space *mapping,
->  				pgoff_t index,
->  				int (*filler)(void *, struct page *),
-> -				void *data,
-> -				gfp_t gfp)
-> +				void *data, unsigned int order, gfp_t gfp)
->  {
->  	struct page *page;
->  	int err;
->  repeat:
->  	page = find_get_page(mapping, index);
->  	if (!page) {
-> -		page = __page_cache_alloc(gfp);
-> +		page = __page_cache_alloc(gfp, order);
->  		if (!page)
->  			return ERR_PTR(-ENOMEM);
->  		err = add_to_page_cache_lru(page, mapping, index, gfp);
-> @@ -2917,7 +2919,7 @@ struct page *read_cache_page(struct address_space *mapping,
->  				int (*filler)(void *, struct page *),
->  				void *data)
->  {
-> -	return do_read_cache_page(mapping, index, filler, data,
-> +	return do_read_cache_page(mapping, index, filler, data, 0,
->  			mapping_gfp_mask(mapping));
->  }
->  EXPORT_SYMBOL(read_cache_page);
-> @@ -2939,7 +2941,7 @@ struct page *read_cache_page_gfp(struct address_space *mapping,
->  				pgoff_t index,
->  				gfp_t gfp)
->  {
-> -	return do_read_cache_page(mapping, index, NULL, NULL, gfp);
-> +	return do_read_cache_page(mapping, index, NULL, NULL, 0, gfp);
->  }
->  EXPORT_SYMBOL(read_cache_page_gfp);
->  
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 2fe72cd29b47..954760a612ea 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -193,7 +193,7 @@ unsigned int __do_page_cache_readahead(struct address_space *mapping,
->  			continue;
->  		}
->  
-> -		page = __page_cache_alloc(gfp_mask);
-> +		page = __page_cache_alloc(gfp_mask, 0);
->  		if (!page)
->  			break;
->  		page->index = page_offset;
-> diff --git a/net/ceph/pagelist.c b/net/ceph/pagelist.c
-> index 65e34f78b05d..0c3face908dc 100644
-> --- a/net/ceph/pagelist.c
-> +++ b/net/ceph/pagelist.c
-> @@ -56,7 +56,7 @@ static int ceph_pagelist_addpage(struct ceph_pagelist *pl)
->  	struct page *page;
->  
->  	if (!pl->num_pages_free) {
-> -		page = __page_cache_alloc(GFP_NOFS);
-> +		page = __page_cache_alloc(GFP_NOFS, 0);
->  	} else {
->  		page = list_first_entry(&pl->free_list, struct page, lru);
->  		list_del(&page->lru);
-> @@ -107,7 +107,7 @@ int ceph_pagelist_reserve(struct ceph_pagelist *pl, size_t space)
->  	space = (space + PAGE_SIZE - 1) >> PAGE_SHIFT;   /* conv to num pages */
->  
->  	while (space > pl->num_pages_free) {
-> -		struct page *page = __page_cache_alloc(GFP_NOFS);
-> +		struct page *page = __page_cache_alloc(GFP_NOFS, 0);
->  		if (!page)
->  			return -ENOMEM;
->  		list_add_tail(&page->lru, &pl->free_list);
-> diff --git a/net/ceph/pagevec.c b/net/ceph/pagevec.c
-> index 64305e7056a1..1d07e639216d 100644
-> --- a/net/ceph/pagevec.c
-> +++ b/net/ceph/pagevec.c
-> @@ -45,7 +45,7 @@ struct page **ceph_alloc_page_vector(int num_pages, gfp_t flags)
->  	if (!pages)
->  		return ERR_PTR(-ENOMEM);
->  	for (i = 0; i < num_pages; i++) {
-> -		pages[i] = __page_cache_alloc(flags);
-> +		pages[i] = __page_cache_alloc(flags, 0);
->  		if (pages[i] == NULL) {
->  			ceph_release_page_vector(pages, i);
->  			return ERR_PTR(-ENOMEM);
-> -- 
-> 2.21.0
 
--- 
-Michal Hocko
-SUSE Labs
+Issue signature:-
+  [NIP  : trailing_symlink+80]
+  [LR   : trailing_symlink+1092]
+  #4 [c00000198069bb70] trailing_symlink at c0000000004bae60  (unreliable)
+  #5 [c00000198069bc00] path_openat at c0000000004bdd14
+  #6 [c00000198069bc90] do_filp_open at c0000000004c0274
+  #7 [c00000198069bdb0] do_sys_open at c00000000049b248
+  #8 [c00000198069be30] system_call at c00000000000b388
+
+
+
+Test case:-
+shell-1 - "while [ 1 ]; do cat /gpfs/g1/testdir/file3; sleep 1; done"
+shell-2 - "while [ 1 ]; do ln -s /gpfs/g1/testdir/file1 
+/gpfs/g1/testdir/file3; sleep 1; rm /gpfs/g1/testdir/file3 sleep 1; done
+
+
+
+Problem description:-
+In some filesystems like GPFS below described scenario may happen on 
+some platforms (Reported-By:- wugyuan)
+
+Here, two threads are being run in 2 different shells. Thread-1(cat) 
+does cat of the symlink and Thread-2(ln) is creating the symlink.
+
+Now on any platform with GPFS like filesystem, if CPU does out-of-order 
+execution (or any kind of re-ordering due compiler optimization?) in 
+function __d_set_and_inode_type(), then we see a NULL pointer 
+dereference due to inode->i_uid.
+
+This happens because in lookup_fast in nonRCU path or say REF-walk (i.e. 
+in else condition), we check d_is_negative() without any lock protection.
+And since in __d_set_and_inode_type() re-ordering may happen in setting 
+of dentry->type & dentry->inode => this means that there is this tiny 
+window where things are going wrong.
+
+
+(GPFS like):- Any FS with -inode_operations ->permission callback 
+returning -ECHILD in case of (mask & MAY_NOT_BLOCK) may cause this 
+problem to happen. (few e.g. found were - ocfs2, ceph, coda, afs)
+
+int xxx_permission(struct inode *inode, int mask)
+{
+          if (mask & MAY_NOT_BLOCK)
+                  return -ECHILD;
+	<...>
+}
+
+Wugyuan(cc), could reproduce this problem with GPFS filesystem.
+Since, I didn't have the GPFS setup, so I tried replicating on a native 
+FS by forcing out-of-order execution in function 
+__d_set_inode_and_type() and making sure we return -ECHILD in 
+MAY_NOT_BLOCK case in ->permission operation for all inodes.
+
+With above changes in kernel, I could as well hit this issue on a native 
+FS too.
+
+(basically what we observed is link_path_walk will do nonRCU(REF-walk) 
+lookup due to may_lookup -> inode_permission return -ECHILD and then 
+unlazy_walk drops the LOOKUP_RCU flag (nd->flag). After that below race 
+is possible).
+
+
+
+Sequence of events:-
+
+Thread-2(Comm: ln)		Thread-1(Comm: cat)
+
+				dentry = __d_lookup() //nonRCU
+
+__d_set_and_inode_type() (Out-of-order execution)
+	flags = READ_ONCE(dentry->d_flags);
+	flags &= ~(DCACHE_ENTRY_TYPE | DCACHE_FALLTHRU);
+	flags |= type_flags;
+	WRITE_ONCE(dentry->d_flags, flags);
+
+					
+				if (unlikely(d_is_negative()) // fails
+   					{}
+				// since type is already updated in
+				// Thread-2 in parallel but inode
+				// not yet set.
+				// d_is_negative returns false
+
+				*inode = d_backing_inode(path->dentry);
+				// means inode is still NULL
+
+	dentry->d_inode = inode;
+	
+				trailing_symlink()
+					may_follow_link()
+						inode = nd->link_inode;
+						// nd->link_inode = NULL
+						//Then it crashes while
+						//doing inode->i_uid
+					
+	
+
+
+
+Approach-1:- using wmb()
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index e88cf0554e65..966172df77ee 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -316,6 +316,7 @@ static inline void __d_set_inode_and_type(struct 
+dentry *dentry,
+         unsigned flags;
+
+         dentry->d_inode = inode;
++       smp_wmb();
+         flags = READ_ONCE(dentry->d_flags);
+         flags &= ~(DCACHE_ENTRY_TYPE | DCACHE_FALLTHRU);
+         flags |= type_flags;
+
+
+
+Approach-2:- using spin_lock(&dentry->d_lock);
+
+Do you think lock should be a better approach, given that we are already
+in REF-walk mode. As per the Documentation, we should be able to take
+spin_lock(&dentry->d_lock) in Ref-walk mode whenever required?
+
+
+With smp_wmb(), if added, should add a small latency in both
+RCU/REF-walk. But should be able to cover all the cases in general 
+related to dentry->type & dentry->inode ordering. Though, we don't have 
+any other race conditions reported or tested, other than the one, 
+mentioned in this email.
+
+Confused :(
+
+
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 209c51a5226c..a3145594da1c 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1557,6 +1557,7 @@ static int lookup_fast(struct nameidata *nd,
+         struct dentry *dentry, *parent = nd->path.dentry;
+         int status = 1;
+         int err;
++       bool negative;
+
+         /*
+          * Rename seqlock is not required here because in the off chance
+@@ -1565,7 +1566,6 @@ static int lookup_fast(struct nameidata *nd,
+          */
+         if (nd->flags & LOOKUP_RCU) {
+                 unsigned seq;
+-               bool negative;
+                 dentry = __d_lookup_rcu(parent, &nd->last, &seq);
+                 if (unlikely(!dentry)) {
+                         if (unlazy_walk(nd))
+@@ -1623,7 +1623,11 @@ static int lookup_fast(struct nameidata *nd,
+                 dput(dentry);
+                 return status;
+         }
+-       if (unlikely(d_is_negative(dentry))) {
++
++       spin_lock(&dentry->d_lock);
++       negative = d_is_negative(dentry);
++       spin_unlock(&dentry->d_lock);
++       if (unlikely(negative)) {
+                 dput(dentry);
+                 return -ENOENT;
+         }
+
+
+Regards
+Ritesh
+
