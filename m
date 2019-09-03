@@ -2,68 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31B3CA7018
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 18:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3526FA7023
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 18:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbfICQhE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 12:37:04 -0400
-Received: from mail-io1-f41.google.com ([209.85.166.41]:47033 "EHLO
-        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730832AbfICQhA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:37:00 -0400
-Received: by mail-io1-f41.google.com with SMTP id x4so37262345iog.13;
-        Tue, 03 Sep 2019 09:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=86NmJMb/PMXwG/w20757BijiqFPtv6jsMz3d0NJXQY0=;
-        b=a996jW3QaxWUE7wDbAblf3oagbPf4XFwKXdaxLmQMvelz5tqGRy6Wn9tgzMdI5OgSF
-         9lWVwAzlgZZxhk1USQe8VlIWHF54xkZXguBnLeiLk+5JwhzSL3NYguTo9jaMQweTQlx7
-         6jgZyFxLMkTyES8GWkRxdBCCjOp6buAvBePOeDhADN8AER3uc2ARVLeGXW9ctcklk0tT
-         8MPmXndEB3ajmSnJmZ/l3v8hHo/NnJmpL5VZwhnamE6PuyI2d33ciw+Nmoy1Vuc3SK4T
-         k5lZTPNU5dJMH5POmYJtJMVDuMjR3lsMfDsGB+2hdLsGk3afAUVC/xhrTvt0JHaaeoge
-         lYeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=86NmJMb/PMXwG/w20757BijiqFPtv6jsMz3d0NJXQY0=;
-        b=hWaxqD8ADpYmP5JPsvgXsUFgUI9G70D1Ll2UQp1xRoxErbC19oai75CfiIyQY0WmyN
-         P+OtlcSVJHYCGD/y88COlHhyF960AdRZOoyg2VbRV8kzjqfIemrCJTi0AkCMxAJgXJkx
-         dfIapDr+0Zd490bK8qUwPzWqivnbpTSqWFhwV/NZt9wzqpaKKKFcXO8LWG8dJREKdb8Z
-         FJ88GVRJAomRH/S9mOIdvawAHokpChpzYpLn8YKrQE0EYqGPQahFZEuND3puG0wCDYMx
-         SvoImtZCwMnwJdReB/EqHINiFhBbwd8XZMYC7/VB7Es53yNzfirr2aoenFzUZWtrUKbf
-         n/Ng==
-X-Gm-Message-State: APjAAAXvCTKrdAWytUAubMSkuhiCPCzWDXQEDRfDRUDB+6DInoctqGCN
-        eFSBX46FQIMitne2VOcn07kZnQqEc482l42/PqY=
-X-Google-Smtp-Source: APXvYqxw4eC5fbEEGGIKB6d8XCBCVkWxCov0hCXx3VO6dvzkd/8wVoYdi3MD6BsiuI5pf228iDaCqPDsf1BkJ2DJHjg=
-X-Received: by 2002:a02:23cc:: with SMTP id u195mr38523370jau.136.1567528619842;
- Tue, 03 Sep 2019 09:36:59 -0700 (PDT)
+        id S1731302AbfICQhS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 12:37:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45328 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730717AbfICQhO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:37:14 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 08C61308FC22;
+        Tue,  3 Sep 2019 16:37:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EED7E608AB;
+        Tue,  3 Sep 2019 16:37:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190903085706.7700-1-hdanton@sina.com>
+References: <20190903085706.7700-1-hdanton@sina.com> <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/11] General notification queue with user mmap()'able ring buffer [ver #7]
 MIME-Version: 1.0
-References: <1567523922.5576.57.camel@lca.pw> <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
-In-Reply-To: <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Tue, 3 Sep 2019 09:36:47 -0700
-Message-ID: <CABeXuvq7n+ZW7-HOiur+cyQXBjYKKWw1nRgFTJXTBZ9JNusPeg@mail.gmail.com>
-Subject: Re: "beyond 2038" warnings from loopback mount is noisy
-To:     Qian Cai <cai@lca.pw>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <27532.1567528630.1@warthog.procyon.org.uk>
+Date:   Tue, 03 Sep 2019 17:37:10 +0100
+Message-ID: <27533.1567528630@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 03 Sep 2019 16:37:14 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We might also want to consider updating the file system the LTP is
-being run on here.
+Hillf Danton <hdanton@sina.com> wrote:
 
--Deepa
+> > +	for (i = 0; i < wf->nr_filters; i++) {
+> > +		wt = &wf->filters[i];
+> > +		if (n->type == wt->type &&
+> > +		    (wt->subtype_filter[n->subtype >> 5] &
+> > +		     (1U << (n->subtype & 31))) &&
+> 
+> Replace the pure numbers with something easier to understand.
+
+How about the following:
+
+static bool filter_watch_notification(const struct watch_filter *wf,
+				      const struct watch_notification *n)
+{
+	const struct watch_type_filter *wt;
+	unsigned int st_bits = sizeof(wt->subtype_filter[0]) * 8;
+	unsigned int st_index = n->subtype / st_bits;
+	unsigned int st_bit = 1U << (n->subtype % st_bits);
+	int i;
+
+	if (!test_bit(n->type, wf->type_filter))
+		return false;
+
+	for (i = 0; i < wf->nr_filters; i++) {
+		wt = &wf->filters[i];
+		if (n->type == wt->type &&
+		    (wt->subtype_filter[st_index] & st_bit) &&
+		    (n->info & wt->info_mask) == wt->info_filter)
+			return true;
+	}
+
+	return false; /* If there is a filter, the default is to reject. */
+}
+
+David
