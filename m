@@ -2,171 +2,385 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A3CA75F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 23:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7B18A75FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 23:13:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfICVIU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 17:08:20 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45104 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbfICVIU (ORCPT
+        id S1726831AbfICVNa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 17:13:30 -0400
+Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:56938 "EHLO
+        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726394AbfICVNa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 17:08:20 -0400
-Received: by mail-oi1-f194.google.com with SMTP id v12so14023309oic.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 14:08:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0UF2P6jBmZTalAZpiNYok41chfv7muSCjlkjkBSebiA=;
-        b=kWkzS1hiEFG76FW8Ude9YAyAeEhuHQclP4qTZ2Dmjoatw1JalUXZTCgQkjm4RY3Yzr
-         G+VH/6sfRtA+xkqcAZHrouU02GTBvsOWMtgrdgveNZ6gu/RSpxQfbZort4XO9n14KZFQ
-         duB6TZ2ZTnFGKNAg3ONPXe2b0fD7QKZKDmTOUEtOc2r1XDR6aNmLAjAtgi+ypFTbmytS
-         7eTIIJggi9tf6nMnpScEc/+14vlzrCtaC9NBpSj5RitAm4NKZlYyRsNFahfxi0s6LyL9
-         melAxKjXBhq5uqQqqxD4A7x+N4YESsefFUKI508XnTk/sFW2ILM5iFrkq2z9tnPKKi7R
-         ps0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0UF2P6jBmZTalAZpiNYok41chfv7muSCjlkjkBSebiA=;
-        b=TEFRv2sGYYdJIwxJDHoaEWg/ZcXk8xNaFIx39hySnN8sELBxgvNKt2QgW+fxrk7Z9t
-         mOdPytIulZlg2407ztmB71PdPnfJjp51V5esA4yFnKEeSc3Mq1Br3iWD5JWaGqhnx+zx
-         XGlB9m6syWwZNPBOBSw2dx10aSdbn2/cCxvfbLdYaSvUl/aI09yKr9XOYB+wqS3yMxoy
-         f7ICty60lHqVjUQi4WHZ0sQPXjmdB/FSdJ7M5wOv4xJ/Bq6bP+FRqR33QPmVwi2/4oSe
-         m/HeWwVqsXJGJzFX40/kgjkRkeJ+o5WrG0KyOPBncvnKdrpGn9ChyDnHG2IQSQbbKvU2
-         kj4Q==
-X-Gm-Message-State: APjAAAWBU3j6ek87GueYPlVZM8PzyZpy+8tHxBVUuZksnerYsD7WbLek
-        5uaI9a86KXVHnfaU9d5rKaldUkxmDD+0j7js424ke+Wm
-X-Google-Smtp-Source: APXvYqx7vCcqY7JYSqJ7ruyJLsM5+4x6by5t5sMbC45cXVsxXe3O3v5ljDXh0T9jJ66uyg/z2WW2jKwk6p/Nm5eI8fA=
-X-Received: by 2002:aca:3a87:: with SMTP id h129mr1006349oia.4.1567544898133;
- Tue, 03 Sep 2019 14:08:18 -0700 (PDT)
+        Tue, 3 Sep 2019 17:13:30 -0400
+Received: from pps.filterd (m0050096.ppops.net [127.0.0.1])
+        by m0050096.ppops.net-00190b01. (8.16.0.42/8.16.0.42) with SMTP id x83L814m023834;
+        Tue, 3 Sep 2019 22:13:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=jan2016.eng;
+ bh=gPWVbkgN08R1ppDLHnfL+6CZi4CX6Wpq1jATwHiD4Nk=;
+ b=WkwZSfqqnJ+xvmiTxc8aUaJUHXCNqgTcWBhyy0M4Olpcg4uy6VYl17wJBxXLreeA6VcU
+ 1oqx0Ij8PBSjruKDK24LRXYd+SvsIp03mgiM0SucDEJhQpx/L63jzOL6jcE4ZE6rsqsb
+ 9BwxR0BKLkLHlMF87NUi8HGRhz+/Pv0T78YVnYqNLCLH6XvLBTmrC0QaAZoEgZWY5ncH
+ uTOjaTSRl8mOtdWwf3W/XhMitrjXPmJSvHTrPUVD3ll4eQK8OTSWj4YMflqanLZZLdTW
+ JRNieOPthJGap2V8e9wR2VRRZZ6v/9anpBW/ga06xZcQwLMEjNtdZi61VOEevRyVNXEP KA== 
+Received: from prod-mail-ppoint4 (prod-mail-ppoint4.akamai.com [96.6.114.87] (may be forged))
+        by m0050096.ppops.net-00190b01. with ESMTP id 2uqha7yytm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 03 Sep 2019 22:13:13 +0100
+Received: from pps.filterd (prod-mail-ppoint4.akamai.com [127.0.0.1])
+        by prod-mail-ppoint4.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x83L2N5V005892;
+        Tue, 3 Sep 2019 17:13:12 -0400
+Received: from prod-mail-relay14.akamai.com ([172.27.17.39])
+        by prod-mail-ppoint4.akamai.com with ESMTP id 2uqm80p4bh-1;
+        Tue, 03 Sep 2019 17:13:12 -0400
+Received: from [172.29.170.83] (bos-lpjec.kendall.corp.akamai.com [172.29.170.83])
+        by prod-mail-relay14.akamai.com (Postfix) with ESMTP id 1D6B180E97;
+        Tue,  3 Sep 2019 21:13:11 +0000 (GMT)
+Subject: Re: [PATCH RESEND] fs/epoll: fix the edge-triggered mode for nested
+ epoll
+To:     Roman Penyaev <rpenyaev@suse.de>, hev <r@hev.cc>
+Cc:     linux-fsdevel@vger.kernel.org, e@80x24.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sridhar Samudrala <sridhar.samudrala@intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20190902052034.16423-1-r@hev.cc>
+ <0cdc9905efb9b77b159e09bee17d3ad4@suse.de>
+From:   Jason Baron <jbaron@akamai.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jbaron@akamai.com; prefer-encrypt=mutual; keydata=
+ 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
+ JeQ7iQ==
+Message-ID: <7075dd44-feea-a52f-ddaa-087d7bb2c4f6@akamai.com>
+Date:   Tue, 3 Sep 2019 17:08:56 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190822200030.141272-1-khazhy@google.com>
-In-Reply-To: <20190822200030.141272-1-khazhy@google.com>
-From:   Khazhismel Kumykov <khazhy@google.com>
-Date:   Tue, 3 Sep 2019 14:08:07 -0700
-Message-ID: <CACGdZYKPyBnJvZWY7+JiUoHZvzC+RWonbZ1PBKtpCXCa4BVa6w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] fuse: on 64-bit store time in d_fsdata directly
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shakeel Butt <shakeelb@google.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000dbfbf80591ac7c61"
+In-Reply-To: <0cdc9905efb9b77b159e09bee17d3ad4@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-03_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909030212
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-03_04:2019-09-03,2019-09-03 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxlogscore=999
+ priorityscore=1501 spamscore=0 bulkscore=0 adultscore=0 clxscore=1011
+ phishscore=0 suspectscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
+ definitions=main-1909030213
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000dbfbf80591ac7c61
-Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 22, 2019 at 1:00 PM Khazhismel Kumykov <khazhy@google.com> wrote:
->
-> Implements the optimization noted in f75fdf22b0a8 ("fuse: don't use
-> ->d_time"), as the additional memory can be significant. (In particular,
-> on SLAB configurations this 8-byte alloc becomes 32 bytes). Per-dentry,
-> this can consume significant memory.
->
-> Reviewed-by: Shakeel Butt <shakeelb@google.com>
-> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
-> ---
->  fs/fuse/dir.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->
 
-ping?
+On 9/2/19 11:36 AM, Roman Penyaev wrote:
+> Hi,
+> 
+> This is indeed a bug. (quick side note: could you please remove efd[1]
+> from your test, because it is not related to the reproduction of a
+> current bug).
+> 
+> Your patch lacks a good description, what exactly you've fixed.  Let
+> me speak out loud and please correct me if I'm wrong, my understanding
+> of epoll internals has become a bit rusty: when epoll fds are nested
+> an attempt to harvest events (ep_scan_ready_list() call) produces a
+> second (repeated) event from an internal fd up to an external fd:
+> 
+>      epoll_wait(efd[0], ...):
+>        ep_send_events():
+>           ep_scan_ready_list(depth=0):
+>             ep_send_events_proc():
+>                 ep_item_poll():
+>                   ep_scan_ready_list(depth=1):
+>                     ep_poll_safewake():
+>                       ep_poll_callback()
+>                         list_add_tail(&epi, &epi->rdllist);
+>                         ^^^^^^
+>                         repeated event
+> 
+> 
+> In your patch you forbid wakeup for the cases, where depth != 0, i.e.
+> for all nested cases. That seems clear.  But what if we can go further
+> and remove the whole chunk, which seems excessive:
+> 
+> @@ -885,26 +886,11 @@ static __poll_t ep_scan_ready_list(struct
+> eventpoll *ep,
+> 
+> -
+> -       if (!list_empty(&ep->rdllist)) {
+> -               /*
+> -                * Wake up (if active) both the eventpoll wait list and
+> -                * the ->poll() wait list (delayed after we release the
+> lock).
+> -                */
+> -               if (waitqueue_active(&ep->wq))
+> -                       wake_up(&ep->wq);
+> -               if (waitqueue_active(&ep->poll_wait))
+> -                       pwake++;
+> -       }
+>         write_unlock_irq(&ep->lock);
+> 
+>         if (!ep_locked)
+>                 mutex_unlock(&ep->mtx);
+> 
+> -       /* We have to call this outside the lock */
+> -       if (pwake)
+> -               ep_poll_safewake(&ep->poll_wait);
+> 
+> 
+> I reason like that: by the time we've reached the point of scanning events
+> for readiness all wakeups from ep_poll_callback have been already fired and
+> new events have been already accounted in ready list (ep_poll_callback()
+> calls
+> the same ep_poll_safewake()). Here, frankly, I'm not 100% sure and probably
+> missing some corner cases.
+> 
+> Thoughts?
 
---000000000000dbfbf80591ac7c61
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+So the: 'wake_up(&ep->wq);' part, I think is about waking up other
+threads that may be in waiting in epoll_wait(). For example, there may
+be multiple threads doing epoll_wait() on the same epoll fd, and the
+logic above seems to say thread 1 may have processed say N events and
+now its going to to go off to work those, so let's wake up thread 2 now
+to handle the next chunk. So I think removing all that even for the
+depth 0 case is going to change some behavior here. So perhaps, it
+should be removed for all depths except for 0? And if so, it may be
+better to make 2 patches here to separate these changes.
 
-MIIS5wYJKoZIhvcNAQcCoIIS2DCCEtQCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghBNMIIEXDCCA0SgAwIBAgIOSBtqDm4P/739RPqw/wcwDQYJKoZIhvcNAQELBQAwZDELMAkGA1UE
-BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVy
-c29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hBMjU2IC0gRzIwHhcNMTYwNjE1MDAwMDAwWhcNMjEw
-NjE1MDAwMDAwWjBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEiMCAG
-A1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
-AQoCggEBALR23lKtjlZW/17kthzYcMHHKFgywfc4vLIjfq42NmMWbXkNUabIgS8KX4PnIFsTlD6F
-GO2fqnsTygvYPFBSMX4OCFtJXoikP2CQlEvO7WooyE94tqmqD+w0YtyP2IB5j4KvOIeNv1Gbnnes
-BIUWLFxs1ERvYDhmk+OrvW7Vd8ZfpRJj71Rb+QQsUpkyTySaqALXnyztTDp1L5d1bABJN/bJbEU3
-Hf5FLrANmognIu+Npty6GrA6p3yKELzTsilOFmYNWg7L838NS2JbFOndl+ce89gM36CW7vyhszi6
-6LqqzJL8MsmkP53GGhf11YMP9EkmawYouMDP/PwQYhIiUO0CAwEAAaOCASIwggEeMA4GA1UdDwEB
-/wQEAwIBBjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEgYDVR0TAQH/BAgwBgEB/wIB
-ADAdBgNVHQ4EFgQUyzgSsMeZwHiSjLMhleb0JmLA4D8wHwYDVR0jBBgwFoAUJiSSix/TRK+xsBtt
-r+500ox4AAMwSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9ncy9n
-c3BlcnNvbmFsc2lnbnB0bnJzc2hhMmcyLmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIG
-CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG
-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
-BQUHMAKGNGh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzaHZzbWltZWNhMS5j
-cnQwHQYDVR0OBBYEFKBLk14axMQMpZ/b8PKcFvP/M5dTMB8GA1UdIwQYMBaAFMs4ErDHmcB4koyz
-IZXm9CZiwOA/MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8v
-d3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMDsGA1UdHwQ0MDIwMKAuoCyGKmh0dHA6Ly9j
-cmwuZ2xvYmFsc2lnbi5jb20vZ3NodnNtaW1lY2ExLmNybDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0l
-BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4IBAQBKP0VRR9yRe7hRjO9f
-l8vyi9FFUHwUYhQNrCn759p3gcg02mxtS8zV2g/xgJuYRni5WstweUmeTAslWVGNcsYVUOn973Ep
-l/19VTDE1G3k+wvs3xY5+Y11hUzgDVsCvuicWAOWAmHgoKEd95uNI30HFT/XRIHAizSXG3uZTciq
-c77VPsnICGmrIQnD9UJGknakL8eyVDAcdO1FxpGiWmW1c2eTMf2mqOTrB+1+ixiDCV5Iq7vFY/vk
-/OjbOc2/RCcDlA6VNEeLUeSWQe59aQ+YiO1jrgnLn3fMgcE7o3t3Lah9K3fFRP8foYGcx8XOESWI
-zZM9o9E2BY7eSO1XYXxyMYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xv
-YmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIMTewG74t+
-Y00MjT2SMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDXTjFC5qnUa5hvoqlvwDxq
-0GWaTVym4W9r2f0RHDIwCTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-Fw0xOTA5MDMyMTA4MThaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQB
-FjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglg
-hkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAitjUS5nnJ0YjaX/JdsIbn0yTVlLLC7phdG7JKYC/
-TW1L9URFHyzl+fBaz/Q9aRPCkdRD3YwPlvpzsSECwW61PM+7irbBiPn1WevGyOIOrzB3SMJGSeex
-wTMWbLt0LJ34SFaVLSHN6vM4HjwoiaMwq/YTed1znVTpv33l21oogBxEUSZiipxsl9O03X8cqagO
-MD6yoZSiBORn4SJBdpnhZNj7TyqnPrG2QHHnkTKaJ8Ju8WAPqeidVFVnFNzo5LOPiWVPpSe2zc7I
-EDBVeKW1dYXY6jnApZ5chOfic3j9orgzqF3Kf0dUHVtyygsCZlnW95GmdupPrlKypjNxMy5OMg==
---000000000000dbfbf80591ac7c61--
+For the nested wakeups, I agree that the extra wakeups seem unnecessary
+and it may make sense to remove them for all depths. I don't think the
+nested epoll semantics are particularly well spelled out, and afaict,
+nested epoll() has behaved this way for quite some time. And the current
+behavior is not bad in the way that a missing wakeup or false negative
+would be. It woulbe be good to better understand the use-case more here
+and to try and spell out the nested semantics more clearly?
+
+Thanks,
+
+-Jason
+
+
+> 
+> PS.  You call list_empty(&ep->rdllist) without ep->lock taken, that is
+> fine,
+>      but you should be _careful_, so list_empty_careful(&ep->rdllist) call
+>      instead.
+> 
+> -- 
+> Roman
+> 
+> 
+> 
+> On 2019-09-02 07:20, hev wrote:
+>> From: Heiher <r@hev.cc>
+>>
+>> The structure of event pools:
+>>  efd[1]: { efd[2] (EPOLLIN) }        efd[0]: { efd[2] (EPOLLIN |
+>> EPOLLET) }
+>>                |                                   |
+>>                +-----------------+-----------------+
+>>                                  |
+>>                                  v
+>>                              efd[2]: { sfd[0] (EPOLLIN) }
+>>
+>> When sfd[0] to be readable:
+>>  * the epoll_wait(efd[0], ..., 0) should return efd[2]'s events on
+>> first call,
+>>    and returns 0 on next calls, because efd[2] is added in
+>> edge-triggered mode.
+>>  * the epoll_wait(efd[1], ..., 0) should returns efd[2]'s events on
+>> every calls
+>>    until efd[2] is not readable (epoll_wait(efd[2], ...) => 0),
+>> because efd[1]
+>>    is added in level-triggered mode.
+>>  * the epoll_wait(efd[2], ..., 0) should returns sfd[0]'s events on
+>> every calls
+>>    until sfd[0] is not readable (read(sfd[0], ...) => EAGAIN), because
+>> sfd[0]
+>>    is added in level-triggered mode.
+>>
+>> Test code:
+>>  #include <stdio.h>
+>>  #include <unistd.h>
+>>  #include <sys/epoll.h>
+>>  #include <sys/socket.h>
+>>
+>>  int main(int argc, char *argv[])
+>>  {
+>>      int sfd[2];
+>>      int efd[3];
+>>      int nfds;
+>>      struct epoll_event e;
+>>
+>>      if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
+>>          goto out;
+>>
+>>      efd[0] = epoll_create(1);
+>>      if (efd[0] < 0)
+>>          goto out;
+>>
+>>      efd[1] = epoll_create(1);
+>>      if (efd[1] < 0)
+>>          goto out;
+>>
+>>      efd[2] = epoll_create(1);
+>>      if (efd[2] < 0)
+>>          goto out;
+>>
+>>      e.events = EPOLLIN;
+>>      if (epoll_ctl(efd[2], EPOLL_CTL_ADD, sfd[0], &e) < 0)
+>>          goto out;
+>>
+>>      e.events = EPOLLIN;
+>>      if (epoll_ctl(efd[1], EPOLL_CTL_ADD, efd[2], &e) < 0)
+>>          goto out;
+>>
+>>      e.events = EPOLLIN | EPOLLET;
+>>      if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[2], &e) < 0)
+>>          goto out;
+>>
+>>      if (write(sfd[1], "w", 1) != 1)
+>>          goto out;
+>>
+>>      nfds = epoll_wait(efd[0], &e, 1, 0);
+>>      if (nfds != 1)
+>>          goto out;
+>>
+>>      nfds = epoll_wait(efd[0], &e, 1, 0);
+>>      if (nfds != 0)
+>>          goto out;
+>>
+>>      nfds = epoll_wait(efd[1], &e, 1, 0);
+>>      if (nfds != 1)
+>>          goto out;
+>>
+>>      nfds = epoll_wait(efd[1], &e, 1, 0);
+>>      if (nfds != 1)
+>>          goto out;
+>>
+>>      nfds = epoll_wait(efd[2], &e, 1, 0);
+>>      if (nfds != 1)
+>>          goto out;
+>>
+>>      nfds = epoll_wait(efd[2], &e, 1, 0);
+>>      if (nfds != 1)
+>>          goto out;
+>>
+>>      close(efd[2]);
+>>      close(efd[1]);
+>>      close(efd[0]);
+>>      close(sfd[0]);
+>>      close(sfd[1]);
+>>
+>>      printf("PASS\n");
+>>      return 0;
+>>
+>>  out:
+>>      printf("FAIL\n");
+>>      return -1;
+>>  }
+>>
+>> Cc: Al Viro <viro@ZenIV.linux.org.uk>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Davide Libenzi <davidel@xmailserver.org>
+>> Cc: Davidlohr Bueso <dave@stgolabs.net>
+>> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+>> Cc: Eric Wong <e@80x24.org>
+>> Cc: Jason Baron <jbaron@akamai.com>
+>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> Cc: Roman Penyaev <rpenyaev@suse.de>
+>> Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-fsdevel@vger.kernel.org
+>> Signed-off-by: hev <r@hev.cc>
+>> ---
+>>  fs/eventpoll.c | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+>> index d7f1f5011fac..a44cb27c636c 100644
+>> --- a/fs/eventpoll.c
+>> +++ b/fs/eventpoll.c
+>> @@ -672,6 +672,7 @@ static __poll_t ep_scan_ready_list(struct
+>> eventpoll *ep,
+>>  {
+>>      __poll_t res;
+>>      int pwake = 0;
+>> +    int nwake = 0;
+>>      struct epitem *epi, *nepi;
+>>      LIST_HEAD(txlist);
+>>
+>> @@ -685,6 +686,9 @@ static __poll_t ep_scan_ready_list(struct
+>> eventpoll *ep,
+>>      if (!ep_locked)
+>>          mutex_lock_nested(&ep->mtx, depth);
+>>
+>> +    if (!depth || list_empty(&ep->rdllist))
+>> +        nwake = 1;
+>> +
+>>      /*
+>>       * Steal the ready list, and re-init the original one to the
+>>       * empty list. Also, set ep->ovflist to NULL so that events
+>> @@ -739,7 +743,7 @@ static __poll_t ep_scan_ready_list(struct
+>> eventpoll *ep,
+>>      list_splice(&txlist, &ep->rdllist);
+>>      __pm_relax(ep->ws);
+>>
+>> -    if (!list_empty(&ep->rdllist)) {
+>> +    if (nwake && !list_empty(&ep->rdllist)) {
+>>          /*
+>>           * Wake up (if active) both the eventpoll wait list and
+>>           * the ->poll() wait list (delayed after we release the lock).
+> 
