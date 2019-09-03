@@ -2,56 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 556D8A679E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:40:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F256A67B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbfICLkx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 07:40:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40116 "EHLO mx1.redhat.com"
+        id S1729003AbfICLmH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 07:42:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35528 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728270AbfICLku (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:40:50 -0400
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+        id S1727077AbfICLmH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 07:42:07 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AAAF085543
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2019 11:40:49 +0000 (UTC)
-Received: by mail-wm1-f71.google.com with SMTP id f10so6875007wmh.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 04:40:49 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id 55C0E4E83E
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2019 11:42:06 +0000 (UTC)
+Received: by mail-wr1-f71.google.com with SMTP id e14so10249644wrd.23
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 04:42:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=utliAxXHlzv/OkA2fKwkZhMhH80mu0eBxhklhX2mOKE=;
-        b=qX/YHKPXWJsuQpN8XMviUbFG7D07zWYyw26b2AucuXxSYtTlMVvUMV25nY98QPtz/S
-         HnVzAftVna5ZzswDXMKgHtToWDhpUmCAzjizpHIaYOF9GZjRXd+cR1mhgnt9vycxhFfW
-         uFrybOOsaWPYikxUxyRIRGv6HZSEtUCgk11gYltzjuHS6OfHmba9bYBOo+mZGk3dCAxv
-         EXWfcQMqHKFtHCsdyPgkecZYlAcCR9sypM3VXaPzmYlJxhgbYz4Rbz5f+2/GYZ5RD74U
-         SVL4xVa0XgtgXqsbDGwHJks0iz4hk1qzmaEnFfWf5NhUOgidptvkRwgQUM7MoQyrFVFj
-         LT0w==
-X-Gm-Message-State: APjAAAXreMU0zwGrIe82bl6KRNUveEQ8OvRY48gXyqMNnChs3zO3E3qv
-        BBTkKGDKlzwSrtgFEET9arMxQ3esB7tpamAQmi3IY/J6h2E0Bq9l1/3QUYv6XvGPx6guE5iIdVO
-        R4UGPGIyila2yFXJQ1brF7dKIQA==
-X-Received: by 2002:a1c:1f10:: with SMTP id f16mr43374377wmf.176.1567510847262;
-        Tue, 03 Sep 2019 04:40:47 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwMCBM14tG/0MBT/Fvv9aOKldtm4+v9uJCHaNYSDrxbguWdlacEKZgsi+EmXgjnGTm4vUpItQ==
-X-Received: by 2002:a1c:1f10:: with SMTP id f16mr43374359wmf.176.1567510847039;
-        Tue, 03 Sep 2019 04:40:47 -0700 (PDT)
+        bh=Vn/jz2gcH9WzFmEVn9PNqatEbrLnybKVejt0ugjCIsw=;
+        b=Tecpo5a0A551/icJVDd719D9gTEc1J5FBNYNkU0y8N7Sb6fJrhdxVM5l0JYZ+meiuy
+         yqkAsrwl0wMGPHPsPu+6TPAm/n+qbD47nU/vhZD3SpttU0Zokm6e05ivhUhQ9Kf5k9Uh
+         0AHTfp5nMLYM3IQFzhNXmuffK9fEup+1FwyS565Clu8bWqu1EVNg4eeASCGPzHAwjO3F
+         bVV0QfHLqNgkZ5Lj/wCJiiKK8F2ugf2cqi/L/ummDWc+YYuucKz31PaAZXxLOEo1m/qx
+         CskF9gfG36H341qS8hyorOtY5gR9H7SjfyQzf8PvWKAcOnZUXLau/a+SM+sA7Gc0ZRoG
+         Q3/Q==
+X-Gm-Message-State: APjAAAVtxVoTzvU4Z7e7q9b3bB268iDzJDKk2sjL0P743+yP90h9zosT
+        qGEF5hIQ8nE6ENzPUiYTSiyyeL/61BIN2OlWY5fU2N6MD4No8T1nc2QlgppSUfeHmPTngNqcRRg
+        0FDkH5Ci2gWD4pgUAbgRZbl4quQ==
+X-Received: by 2002:adf:cd02:: with SMTP id w2mr24310187wrm.327.1567510925175;
+        Tue, 03 Sep 2019 04:42:05 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzYOxWV68FVlLb8fgvNxM4Wpgmp33Vrksyfgrwh2b6mFu7usl4RaqMBglgZaRcAZYU+InCz9w==
+X-Received: by 2002:adf:cd02:: with SMTP id w2mr24310173wrm.327.1567510925032;
+        Tue, 03 Sep 2019 04:42:05 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id b3sm9823058wrw.4.2019.09.03.04.40.45
+        by smtp.gmail.com with ESMTPSA id x6sm2087551wmf.38.2019.09.03.04.42.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 04:40:46 -0700 (PDT)
+        Tue, 03 Sep 2019 04:42:04 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-kernel@vger.kernel.org,
+Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-kernel@vger.kernel.org,
         "Michael S. Tsirkin" <mst@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
         "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: [PATCH v4 05/16] fuse: export fuse_len_args()
-Date:   Tue,  3 Sep 2019 13:40:33 +0200
-Message-Id: <20190903114044.8201-1-mszeredi@redhat.com>
+Subject: [PATCH v4 06/16] fuse: export fuse_send_init_request()
+Date:   Tue,  3 Sep 2019 13:41:53 +0200
+Message-Id: <20190903114203.8278-1-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190903113640.7984-1-mszeredi@redhat.com>
 References: <20190903113640.7984-1-mszeredi@redhat.com>
@@ -62,71 +61,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Stefan Hajnoczi <stefanha@redhat.com>
+From: Vivek Goyal <vgoyal@redhat.com>
 
-virtio-fs will need to query the length of fuse_arg lists.  Make the symbol
-visible.
+This will be used by virtio-fs to send init request to fuse server after
+initialization of virt queues.
 
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/fuse/dev.c    | 7 ++++---
- fs/fuse/fuse_i.h | 5 +++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ fs/fuse/dev.c    | 1 +
+ fs/fuse/fuse_i.h | 1 +
+ fs/fuse/inode.c  | 3 ++-
+ 3 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 137b3de511ac..985654560d1a 100644
+index 985654560d1a..bd2e5958d2f9 100644
 --- a/fs/fuse/dev.c
 +++ b/fs/fuse/dev.c
-@@ -350,7 +350,7 @@ void fuse_put_request(struct fuse_conn *fc, struct fuse_req *req)
+@@ -139,6 +139,7 @@ void fuse_request_free(struct fuse_req *req)
+ 	fuse_req_pages_free(req);
+ 	kmem_cache_free(fuse_req_cachep, req);
  }
- EXPORT_SYMBOL_GPL(fuse_put_request);
++EXPORT_SYMBOL_GPL(fuse_request_free);
  
--static unsigned len_args(unsigned numargs, struct fuse_arg *args)
-+unsigned int fuse_len_args(unsigned int numargs, struct fuse_arg *args)
+ void __fuse_get_request(struct fuse_req *req)
  {
- 	unsigned nbytes = 0;
- 	unsigned i;
-@@ -360,6 +360,7 @@ static unsigned len_args(unsigned numargs, struct fuse_arg *args)
- 
- 	return nbytes;
- }
-+EXPORT_SYMBOL_GPL(fuse_len_args);
- 
- static u64 fuse_get_unique(struct fuse_iqueue *fiq)
- {
-@@ -375,7 +376,7 @@ static unsigned int fuse_req_hash(u64 unique)
- static void queue_request(struct fuse_iqueue *fiq, struct fuse_req *req)
- {
- 	req->in.h.len = sizeof(struct fuse_in_header) +
--		len_args(req->in.numargs, (struct fuse_arg *) req->in.args);
-+		fuse_len_args(req->in.numargs, (struct fuse_arg *) req->in.args);
- 	list_add_tail(&req->list, &fiq->pending);
- 	wake_up_locked(&fiq->waitq);
- 	kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
-@@ -1912,7 +1913,7 @@ static int copy_out_args(struct fuse_copy_state *cs, struct fuse_out *out,
- 	if (out->h.error)
- 		return nbytes != reqsize ? -EINVAL : 0;
- 
--	reqsize += len_args(out->numargs, out->args);
-+	reqsize += fuse_len_args(out->numargs, out->args);
- 
- 	if (reqsize < nbytes || (reqsize > nbytes && !out->argvar))
- 		return -EINVAL;
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 67521103d3b2..81e436c9620a 100644
+index 81e436c9620a..8ced5e74e5a8 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1098,4 +1098,9 @@ int fuse_set_acl(struct inode *inode, struct posix_acl *acl, int type);
- /* readdir.c */
- int fuse_readdir(struct file *file, struct dir_context *ctx);
+@@ -994,6 +994,7 @@ void fuse_conn_put(struct fuse_conn *fc);
  
-+/**
-+ * Return the number of bytes in an arguments list
-+ */
-+unsigned int fuse_len_args(unsigned int numargs, struct fuse_arg *args);
-+
- #endif /* _FS_FUSE_I_H */
+ struct fuse_dev *fuse_dev_alloc(struct fuse_conn *fc);
+ void fuse_dev_free(struct fuse_dev *fud);
++void fuse_send_init(struct fuse_conn *fc, struct fuse_req *req);
+ 
+ /**
+  * Add connection to control filesystem
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index e3375ce8e97f..31cf0c47da13 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -962,7 +962,7 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_req *req)
+ 	wake_up_all(&fc->blocked_waitq);
+ }
+ 
+-static void fuse_send_init(struct fuse_conn *fc, struct fuse_req *req)
++void fuse_send_init(struct fuse_conn *fc, struct fuse_req *req)
+ {
+ 	struct fuse_init_in *arg = &req->misc.init_in;
+ 
+@@ -992,6 +992,7 @@ static void fuse_send_init(struct fuse_conn *fc, struct fuse_req *req)
+ 	req->end = process_init_reply;
+ 	fuse_request_send_background(fc, req);
+ }
++EXPORT_SYMBOL_GPL(fuse_send_init);
+ 
+ static void fuse_free_conn(struct fuse_conn *fc)
+ {
 -- 
 2.21.0
 
