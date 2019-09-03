@@ -2,98 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A58A771E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 00:38:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2AA4A7723
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 00:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbfICWi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 18:38:26 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:45947 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725882AbfICWi0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 18:38:26 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-96.corp.google.com [104.133.0.96] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x83McFRu018715
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 3 Sep 2019 18:38:16 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 5DF7442049E; Tue,  3 Sep 2019 18:38:15 -0400 (EDT)
-Date:   Tue, 3 Sep 2019 18:38:15 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>, Qian Cai <cai@lca.pw>,
-        Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Subject: Re: "beyond 2038" warnings from loopback mount is noisy
-Message-ID: <20190903223815.GH2899@mit.edu>
-References: <1567523922.5576.57.camel@lca.pw>
- <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
- <20190903211747.GD2899@mit.edu>
- <CABeXuvoYh0mhg049+pXbMqh-eM=rw+Ui1=rDree4Yb=7H7mQRg@mail.gmail.com>
- <CAK8P3a0AcPzuGeNFMW=ymO0wH_cmgnynLGYXGjqyrQb65o6aOw@mail.gmail.com>
+        id S1727314AbfICWjM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 18:39:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47028 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725882AbfICWjM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 18:39:12 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 225807F750;
+        Tue,  3 Sep 2019 22:39:12 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3BF44194B2;
+        Tue,  3 Sep 2019 22:39:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <23d61564-026e-b37a-8b16-ce68d5949f6c@schaufler-ca.com>
+References: <23d61564-026e-b37a-8b16-ce68d5949f6c@schaufler-ca.com> <87bf0363-af77-1e5a-961f-72730e39e3a6@schaufler-ca.com> <e36fa722-a300-2abf-ae9c-a0246fc66d0e@schaufler-ca.com> <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk> <156717352917.2204.17206219813087348132.stgit@warthog.procyon.org.uk> <4910.1567525310@warthog.procyon.org.uk> <11467.1567534014@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/11] smack: Implement the watch_key and post_notification hooks [untested] [ver #7]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0AcPzuGeNFMW=ymO0wH_cmgnynLGYXGjqyrQb65o6aOw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <14968.1567550348.1@warthog.procyon.org.uk>
+Date:   Tue, 03 Sep 2019 23:39:08 +0100
+Message-ID: <14969.1567550348@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Tue, 03 Sep 2019 22:39:12 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 11:48:14PM +0200, Arnd Bergmann wrote:
-> I think the warning as it was intended makes sense, the idea
-> was never to warn on every inode update for file systems that
-> cannot handle future dates, only to warn when we
-> 
-> a) try to set a future date
-> b) fail to do that because the space cannot be made available.
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-What do you mean by "try to set a future date"?  Do you mean a trying
-to set a date after 2038 (when it can no longer fit in a signed 32-bit
-value)?  Because that's not what the commit is currently doing.....
+> I rebuilt with keys-next, updated the tests again, and now
+> the suite looks to be running trouble free.
 
-> I would prefer to fix it on top of the patches I already merged.
-> 
-> Maybe something like:
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 9e3ae3be3de9..5a971d1b6d5e 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -835,7 +835,9 @@ do {
->                                  \
->                 }
->          \
->         else    {\
->                 (raw_inode)->xtime = cpu_to_le32(clamp_t(int32_t,
-> (inode)->xtime.tv_sec, S32_MIN, S32_MAX));    \
-> -               ext4_warning_inode(inode, "inode does not support
-> timestamps beyond 2038"); \
-> +               if (((inode)->xtime.tv_sec != (raw_inode)->xtime) &&     \
-> +                   ((inode)->i_sb->s_time_max > S32_MAX))
->          \
-> +                       ext4_warning_inode(inode, "inode does not
-> support timestamps beyond 2038"); \
->         } \
->  } while (0)
+Glad to hear that, thanks.
 
-Sure, that's much less objectionable.
+> I do see a message SKIP DUE TO DISABLED SELINUX which I take to mean that
+> there is an SELinux specific test.
 
-> However, I did expect that people might have legacy ext3 file system
-> images that they mount, and printing a warning for each write would
-> also be wrong for those.
+tests/bugzillas/bz1031154/runtest.sh
 
-I guess I'm much less convinced that 10-15 years from now, there will
-be many legacy ext3 file systems left.  Storage media doesn't last
-that long, and if file systems get moved around, e2fsck will be run at
-least once, and so adding some e2fsck-time warnings seems to be a
-better approach IMHO.
-
-						- Ted
+David
