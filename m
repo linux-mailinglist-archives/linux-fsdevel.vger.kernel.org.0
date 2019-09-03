@@ -2,55 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86550A7741
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 00:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1978BA7768
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 01:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbfICWsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 18:48:08 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45274 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbfICWsI (ORCPT
+        id S1726935AbfICXDg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 19:03:36 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:52781 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726440AbfICXDf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 18:48:08 -0400
-Received: by mail-io1-f68.google.com with SMTP id f12so22301081iog.12;
-        Tue, 03 Sep 2019 15:48:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b+0ODIduqf/tig5TqOM+YYbA2pYXGKyyZMpPjI/CsX8=;
-        b=J0XNMsKqjAhcQwLt76rnH8en27O9JMnuKV7ZBTjpCzepEvmogt9TmOjqRlunlJTEvA
-         c+kq4qKWV/V524gOdnZFpjgCnt0LcQ2NL70JRUKYqmcFHeSS18g7rtpTtTxYD8VOU4P1
-         JRAbwIsZQRth7gFv1DnvUaDRrX6o3tyqpqZ0DgYUq2ETaPj/YB0ykk8k0coxttXBZpNc
-         ZqSa+gx/yLUrEgBOgAImPkWHky5HJrpkDnBAiomnVVudaoFshDxwHUHX3O+kXg4bHT0z
-         aBoxmGDtdFv7sxBfiPCAp9YSZCXsU7k1bzlZV8osegPJZsMUTEhLm0H2IUlAioUYtauI
-         pOkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b+0ODIduqf/tig5TqOM+YYbA2pYXGKyyZMpPjI/CsX8=;
-        b=pqBjSfvM5gtRdCxS7Kgf+NtsEDeSAf8HkJfpWtPNKr7HCQMmw0xpSVlRVQstvRNnN+
-         QlHSdwL6klcwzKS4pIG7mSjZkqeh+5T5xLMPeUWIXiyvTglxVWmLVSDB3reJkTy1BCGB
-         bTB5bJxPz1ASDgi1+dbuvPbt9oCPpthi1EI1NNhpgpIEG7ZJpIFgz6cIXIQYcWrFNWO0
-         Pd1UEtWZ3SkzXK572YYdtWzB+eRWpvhtvJgfT/wY9OTESXTdv5+NzKkZjrrSzUSh6YeO
-         1gfQGKJeO32+qs0YPZjN0Fn+wJtpZ2IMULWm+tXvnkwhp6zZ4GmpTGYW9A159Zjpy/QS
-         fLDg==
-X-Gm-Message-State: APjAAAXfHF67c3HB/mvwlV3Y4DEn5ZeMZwG4XgUcGEJWvb5yXc0FV4Ep
-        XMI7qlm/+aZbCzEXSYx6cdsJsyTjbN0JQrZ/r7k=
-X-Google-Smtp-Source: APXvYqxL7i4UeofXXJaH/gf00fdwKKSPYQoL60LkhxA+rTFqNotrqukDI/d4cZTKeFr27MjQ1rT6YHRuwhb24v4vQ04=
-X-Received: by 2002:a6b:400f:: with SMTP id k15mr2827489ioa.153.1567550887031;
- Tue, 03 Sep 2019 15:48:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <1567523922.5576.57.camel@lca.pw> <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
- <20190903211747.GD2899@mit.edu> <CABeXuvoYh0mhg049+pXbMqh-eM=rw+Ui1=rDree4Yb=7H7mQRg@mail.gmail.com>
- <CAK8P3a0AcPzuGeNFMW=ymO0wH_cmgnynLGYXGjqyrQb65o6aOw@mail.gmail.com> <20190903223815.GH2899@mit.edu>
-In-Reply-To: <20190903223815.GH2899@mit.edu>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Tue, 3 Sep 2019 15:47:54 -0700
-Message-ID: <CABeXuvp2F4cr_77UJDYVfQ=gD8QXn+t4X3Qxs6YbyMXYJYO7mg@mail.gmail.com>
-Subject: Re: "beyond 2038" warnings from loopback mount is noisy
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+        Tue, 3 Sep 2019 19:03:35 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-96.corp.google.com [104.133.0.96] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x83N3PY0026192
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 3 Sep 2019 19:03:26 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0FD5242049E; Tue,  3 Sep 2019 19:03:25 -0400 (EDT)
+Date:   Tue, 3 Sep 2019 19:03:25 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>, Qian Cai <cai@lca.pw>,
         Jeff Layton <jlayton@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -58,37 +30,70 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Qian Cai <cai@lca.pw>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Ext4 Developers List <linux-ext4@vger.kernel.org>,
         Andreas Dilger <adilger.kernel@dilger.ca>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: "beyond 2038" warnings from loopback mount is noisy
+Message-ID: <20190903230324.GI2899@mit.edu>
+References: <1567523922.5576.57.camel@lca.pw>
+ <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
+ <20190903211747.GD2899@mit.edu>
+ <CABeXuvoYh0mhg049+pXbMqh-eM=rw+Ui1=rDree4Yb=7H7mQRg@mail.gmail.com>
+ <CAK8P3a0AcPzuGeNFMW=ymO0wH_cmgnynLGYXGjqyrQb65o6aOw@mail.gmail.com>
+ <20190903223815.GH2899@mit.edu>
+ <CABeXuvp2F4cr_77UJDYVfQ=gD8QXn+t4X3Qxs6YbyMXYJYO7mg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABeXuvp2F4cr_77UJDYVfQ=gD8QXn+t4X3Qxs6YbyMXYJYO7mg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> > index 9e3ae3be3de9..5a971d1b6d5e 100644
-> > --- a/fs/ext4/ext4.h
-> > +++ b/fs/ext4/ext4.h
-> > @@ -835,7 +835,9 @@ do {
-> >                                  \
-> >                 }
-> >          \
-> >         else    {\
-> >                 (raw_inode)->xtime = cpu_to_le32(clamp_t(int32_t,
-> > (inode)->xtime.tv_sec, S32_MIN, S32_MAX));    \
-> > -               ext4_warning_inode(inode, "inode does not support
-> > timestamps beyond 2038"); \
-> > +               if (((inode)->xtime.tv_sec != (raw_inode)->xtime) &&     \
-> > +                   ((inode)->i_sb->s_time_max > S32_MAX))
-> >          \
-> > +                       ext4_warning_inode(inode, "inode does not
-> > support timestamps beyond 2038"); \
-> >         } \
-> >  } while (0)
->
-> Sure, that's much less objectionable.
+On Tue, Sep 03, 2019 at 03:47:54PM -0700, Deepa Dinamani wrote:
+> > > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > > index 9e3ae3be3de9..5a971d1b6d5e 100644
+> > > --- a/fs/ext4/ext4.h
+> > > +++ b/fs/ext4/ext4.h
+> > > @@ -835,7 +835,9 @@ do {
+> > >                                  \
+> > >                 }
+> > >          \
+> > >         else    {\
+> > >                 (raw_inode)->xtime = cpu_to_le32(clamp_t(int32_t,
+> > > (inode)->xtime.tv_sec, S32_MIN, S32_MAX));    \
+> > > -               ext4_warning_inode(inode, "inode does not support
+> > > timestamps beyond 2038"); \
+> > > +               if (((inode)->xtime.tv_sec != (raw_inode)->xtime) &&     \
+> > > +                   ((inode)->i_sb->s_time_max > S32_MAX))
+> > >          \
+> > > +                       ext4_warning_inode(inode, "inode does not
+> > > support timestamps beyond 2038"); \
+> > >         } \
+> > >  } while (0)
+> >
+> > Sure, that's much less objectionable.
+> 
+> The reason it was warning for every update was because of the
+> ratelimiting. I think ratelimiting is not working well here. I will
+> check that part.
 
-The reason it was warning for every update was because of the
-ratelimiting. I think ratelimiting is not working well here. I will
-check that part.
+If you are calling ext4_warning_inode() on every single update, you
+really can't depend on rate limiting to prevent log spam.  The problem
+is sometimes we *do* need more than say, one ext4 warning every hour.
+Rate limiting is a last-ditch prevention against an unintentional
+denial of service attack against the system, but we can't depend on it
+as license to call ext4_warning() every time we set a timestamp.  That
+happens essentially constantly on a running system.  So if you set the
+limits aggressively enough that it's not seriously annoying, it will
+suppress all other potential uses of ext4_warning() --- essentially,
+it will make ext4_warning useless.
 
--Deepa
+The other concern I would have if that warning message is being
+constantly called, post 2038, is that even *with* rate limiting, it
+will turn into a massive scalability bottleneck --- remember, the
+ratelimit structure has a spinlock, so even if you are suppressing
+things so that we're only logging one message an hour, if it's being
+called hundreds of times a second from multiple CPU's, the cache line
+thrashing will make this to be a performance *nightmare*.
+
+		       	    	       - Ted
