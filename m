@@ -2,150 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E75B6A60FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 08:00:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03622A6124
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 08:16:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbfICGAN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 02:00:13 -0400
-Received: from mail-eopbgr1310103.outbound.protection.outlook.com ([40.107.131.103]:36027
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725919AbfICGAN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:00:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YGGfc4XNBxEZ4kKvI1CdvHjNcwpiAzU72ksBCPK2Qw56vQLx4CeiFXY5rNpULNkWtXThmGSYJl21nGVRr2d1Y0SDx2NpTLG1qTVcOojPTKMutDtYZ/UVkZVCRiXBKeiTyfICiWj15F0ICpvF5F8BmNH3dNV+JtDjL/UXS2YdrTBsuQucXOiVXoB+A6PwCxqpnySJG4ODaDJ36L+KXLOhroTk2xxnIjklGaQoZ3R6BpgZYpLtm18pTrePcgImjfT19J1zhBGeTDKuea0F8tC0v2/Sb06CqdhYyhQdhRdy6/+UX0NbpuGqIfflxd72+c17/sT2s5MAlCfZB5KzdCBPGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mpwu8ROwUscLkYBXZeg40SuRIUVnbVkK4ZYfg3Lu9Kk=;
- b=aRSupJR5Nbb5OtH0mvdR0ZiSjViimEXyvvtKlO5NRHgveFI2jN801TR9d26Zh+q3iyszHA4QMrB9doOFHvhU+GUXCk4KcHxJicsfPQB/BSH36ZRH5B3zIKZreuj/eem3iZx140Wn+jUzfQmZrrARaIksDGgbnBBtIEG1ehNC/UN/4LZHfACzbA+eDdqxkLblm9uxiVNp3PtgNUxt5H6HsrOJqKXx9QzFstgyl8ax06k76puXzA1S0ywyQXD9x3w5XNAyUgCAW/ozmAs2sCASyNtFh5JMrtozPuN4kczQ7aO+4OfD8Ilomgpv2u7jdLufxoIxdXPqbWUkyNlyOFL84A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mpwu8ROwUscLkYBXZeg40SuRIUVnbVkK4ZYfg3Lu9Kk=;
- b=hNUoMHsK+R5t5KBpg1AyGv05lLTZ8aSwNdT8Xj3vYQA/fARB5AkqNr+8w7Yhi/AOWPgQ6cFPHWQRAa/M1KnFSMsizPvBQ9D5O5b4Oak9tuFY9eS9zZNwzW1uMmwgaU7+WpZ50X98kwMRSgojHCBjNd8r33TN4MQ0VT4FbOBDt9k=
-Received: from KU1P153MB0166.APCP153.PROD.OUTLOOK.COM (10.170.173.13) by
- KU1P153MB0133.APCP153.PROD.OUTLOOK.COM (10.170.172.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.1; Tue, 3 Sep 2019 06:00:06 +0000
-Received: from KU1P153MB0166.APCP153.PROD.OUTLOOK.COM
- ([fe80::f112:af3b:a908:db07]) by KU1P153MB0166.APCP153.PROD.OUTLOOK.COM
- ([fe80::f112:af3b:a908:db07%7]) with mapi id 15.20.2263.004; Tue, 3 Sep 2019
- 06:00:06 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>, Qian Cai <cai@lca.pw>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Dexuan-Linux Cui <dexuan.linux@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Lili Deng (Wicresoft North America Ltd)" <v-lide@microsoft.com>
-Subject: RE: "fs/namei.c: keep track of nd->root refcount status" causes boot
- panic
-Thread-Topic: "fs/namei.c: keep track of nd->root refcount status" causes boot
- panic
-Thread-Index: AQHVYhea2RO2fNjnZkqQ7htfXZO/uKcZbPIQgAAHtWA=
-Date:   Tue, 3 Sep 2019 06:00:06 +0000
-Message-ID: <KU1P153MB016668095F9181680464173BBFB90@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
-References: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw>
- <CAA42JLZySdadoL5LAhofXZx3T41A9hm=_izyrRs0MHbSbMf3MA@mail.gmail.com>
- <KU1P153MB016606E33CF2FFEBF2581C58BFB90@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
-In-Reply-To: <KU1P153MB016606E33CF2FFEBF2581C58BFB90@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-09-03T05:50:31.7179496Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=4d8d62fd-1bc7-4759-8732-2e13cbb300f8;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2601:600:a280:7f70:45b3:904b:db76:f1a7]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 37849b41-9be9-4a5b-52d6-08d73033f87c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:KU1P153MB0133;
-x-ms-traffictypediagnostic: KU1P153MB0133:|KU1P153MB0133:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <KU1P153MB01333FDF0E972DC57A15C720BFB90@KU1P153MB0133.APCP153.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 01494FA7F7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(396003)(366004)(346002)(136003)(376002)(199004)(189003)(71200400001)(11346002)(305945005)(66446008)(186003)(7696005)(229853002)(66946007)(46003)(316002)(64756008)(66556008)(66476007)(22452003)(74316002)(9686003)(25786009)(10090500001)(8936002)(71190400001)(2940100002)(8990500004)(52536014)(33656002)(86362001)(76116006)(53936002)(4326008)(10290500003)(81156014)(81166006)(478600001)(256004)(14444005)(6506007)(2906002)(446003)(6436002)(5660300002)(6116002)(76176011)(55016002)(6246003)(7736002)(486006)(110136005)(54906003)(8676002)(14454004)(476003)(102836004)(107886003)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:KU1P153MB0133;H:KU1P153MB0166.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: kW5OkFwoyka/jyoH7DbeKBW+O2QQhBlUC0YY1QWY7nydjpm5nDJuz3vJ0fI4gsgzEr7pV2OJcgPYLzZKcdD/z+sedtVMAg5DaBS/o4nwHnNZO8nPyqGqE68F7RBeF+8bl8/2wDraRK6qONriJmzHZaNtGuj25O4sE247gpeDJNxf1hSsWFFtZ+tHPpZ2PA72QWCaKS3dkqkxsWkR2d96uHUMh/juAARzR93khL8Z7c5JjJH95kt+EmaWJsoDJVlJzsYEFa3U+rIQTMDeTJonLMdvUJ2WrEOz43bglR3ewkfUINcuQT9Zg4OU9WKOscFj1095JgpqI6VyOztmNzXrXu0q+38QLjlC3lEvUz2ZAWcT+6euprfXX34J3/UL4bD4HEhqdTpHRPZyDuNBtSM4QEVoEhEc7pWl2Yx/SJ/BHgw=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726889AbfICGQF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 02:16:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52274 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbfICGQE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 02:16:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xuEBZWOCInCyL2ssbEtjYC1CQKH+4u9D0fLGnPJ4ZQE=; b=Ar8AVZVTD6fmXNlmZYSXzJgSi
+        IkYykApZ8rEj5oI8HcXgnnFWzaOZxzJgH1SYPYctW2EyZXAsr7gsPqoJj+K/FeddZhQjY8kbJ2bdg
+        mA1LWnBHxu0qlRucxdVqumq4+GgqIOD8u0UwRIUrpod+MrInNE8PRVBKQ074DwQ8QVe2V9ssk8EmB
+        LBaaMXgmKo7/28Cl0cl3yfbBD5q1t5HCrbJ/NzAq7q9sdyhu+c4ReTHdENYuAcvqHBLBHRYsUN6Ur
+        HoSnIXRFJ3Y9LLr10P0y3I/iOn0rg/ej6eCwQwLg/yY25kELxXpO65QplBMwLnOb0oBO8lp5aB8ab
+        s47b8Y7LQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i526k-0008R6-Ol; Tue, 03 Sep 2019 06:16:02 +0000
+Date:   Mon, 2 Sep 2019 23:16:02 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Matias Bjorling <Matias.Bjorling@wdc.com>
+Subject: Re: [PATCH V4] fs: New zonefs file system
+Message-ID: <20190903061602.GB26583@infradead.org>
+References: <20190826065750.11674-1-damien.lemoal@wdc.com>
+ <BYAPR04MB5816E881D9881D5F559A3947E7B90@BYAPR04MB5816.namprd04.prod.outlook.com>
+ <20190903032601.GV5354@magnolia>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37849b41-9be9-4a5b-52d6-08d73033f87c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2019 06:00:06.1859
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ST842N1FzEKHWd+O4Y4dEBMspUzDEmU9FsS2O1h5jL71FIEUNABn74p3Y0fpxdTxyEoGJzMAAt++B68ZnmKTFw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU1P153MB0133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190903032601.GV5354@magnolia>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RllJOiB0aGlzIGlzIGEgc2xpZ2h0bHkgZGlmZmVyZW50IGNhbGwtdHJhY2UuIEkgYmVsaWV2ZSB0
-aGlzIGFsc28gc2hvdyBhIG1lbW9yeSBjb3JydXB0aW9uLi4uDQoNClsgICAxNy44NDg5NzVdIFJ1
-biAvaW5pdCBhcyBpbml0IHByb2Nlc3MNCkxvYWRpbmcsIHBsZWFzZSB3YWl0Li4uDQpzdGFydGlu
-ZyB2ZXJzaW9uIDIzOQ0KWyAgIDE4LjA0NTkxM10gQlVHOiB1bmFibGUgdG8gaGFuZGxlIHBhZ2Ug
-ZmF1bHQgZm9yIGFkZHJlc3M6IGZmZmY4ODg0YmI4ZjRiOTgNClsgICAxOC4wNDYwMTJdICNQRjog
-c3VwZXJ2aXNvciB3cml0ZSBhY2Nlc3MgaW4ga2VybmVsIG1vZGUNClsgICAxOC4wNDYwNjFdICNQ
-RjogZXJyb3JfY29kZSgweDAwMDIpIC0gbm90LXByZXNlbnQgcGFnZQ0KWyAgIDE4LjA0NjEyNF0g
-UEdEIDNhMDIwNjcgUDREIDNhMDIwNjcgUFVEIDUwNWFmMDA2NyBQTUQgNTA1OTEzMDY3IFBURSA4
-MDBmZmZmYjQ0NzBiMDYwDQpbICAgMTguMDQ2Mjg2XSBPb3BzOiAwMDAyIFsjMV0gUFJFRU1QVCBT
-TVAgREVCVUdfUEFHRUFMTE9DIFBUSQ0KWyAgIDE4LjA0NjM1NV0gQ1BVOiAzMyBQSUQ6IDQyOCBD
-b21tOiB1ZGV2YWRtIE5vdCB0YWludGVkIDUuMy4wLXJjNi1uZXh0LTIwMTkwOTAyKyAjMg0KWyAg
-IDE4LjA0NjUyOF0gUklQOiAwMDEwOl9fbG9ja19hY3F1aXJlKzB4YTgvMHgxNmMwDQpbICAgMTgu
-MDQ2NTkwXSBDb2RlOiA0OCA4OSBjMyA0NCA4YiA0YyAyNCAxMCAwZiA4NCAxMyAwNCAwMCAwMCA0
-OCA4MSBlYiA4MCBkNyBhOSAuLi4NClsgICAxOC4wNDY3ODJdIFJTUDogMDAxODpmZmZmYzkwMDA0
-M2ZmYzEwIEVGTEFHUzogMDAwMTA4MDMNClsgICAxOC4wNDY4MjhdIFJBWDogMmU4YmEyZThiYTJl
-OGJhMyBSQlg6IDQ2NmRiMzg0ZmEwY2JjN2EgUkNYOiAwMDAwMDAwMDAwMDAwMDAwDQpbICAgMTgu
-MDQ2ODkzXSBSRFg6IDAwMDAwMDAwMDAwMDAwMDAgUlNJOiAwMDAwMDAwMDAwMDAwMDAwIFJESTog
-ZmZmZjg4ODRlMzM4MjQ1OA0KWyAgIDE4LjA0Njk1OV0gUkJQOiBmZmZmODg4NGUyODljYzAwIFIw
-ODogMDAwMDAwMDAwMDAwMDAwMSBSMDk6IDAwMDAwMDAwMDAwMDAwMDANClsgICAxOC4wNDcwMjJd
-IFIxMDogMDAwMDAwMDAwMDAwMDAwMSBSMTE6IGZmZmZmZmZmZmEwY2JjN2EgUjEyOiAwMDAwMDAw
-MDAwMDAwMDAwDQpbICAgMTguMDQ3MTAxXSBSMTM6IDAwMDAwMDAwMDAwMDAwMDEgUjE0OiAwMDAw
-MDAwMDAwMDAwMDAwIFIxNTogZmZmZjg4ODRlMzM4MjQ1OA0KWyAgIDE4LjA0NzE2M10gRlM6ICAw
-MDAwN2ZkODE4M2E4OGMwKDAwMDApIEdTOmZmZmY4ODg0ZWIyODAwMDAoMDAwMCkga25sR1M6MDAw
-MDAwMDAwMDAwMDAwMA0KWyAgIDE4LjA0NzIzOF0gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAw
-IENSMDogMDAwMDAwMDA4MDA1MDAzMw0KWyAgIDE4LjA0NzI4N10gQ1IyOiBmZmZmODg4NGJiOGY0
-Yjk4IENSMzogMDAwMDAwMDRlMzI5ODAwNSBDUjQ6IDAwMDAwMDAwMDAzNjA2ZTANClsgICAxOC4w
-NDczNTZdIERSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAw
-MDAwMDAwMDAwMDAwMDAwDQpbICAgMTguMDQ3NDI0XSBEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2
-OiAwMDAwMDAwMGZmZmUwZmYwIERSNzogMDAwMDAwMDAwMDAwMDQwMA0KWyAgIDE4LjA0NzQ4Nl0g
-Q2FsbCBUcmFjZToNClsgICAxOC4wNDc1NDNdICBsb2NrX2FjcXVpcmUrMHhiNS8weDFjMA0KWyAg
-IDE4LjA0NzYzOV0gIF9yYXdfc3Bpbl9sb2NrKzB4MmYvMHg0MA0KWyAgIDE4LjA0NzcwNl0gIGRw
-dXQucGFydC4zMysweDFmYi8weDRmMA0KWyAgIDE4LjA0NzczNl0gIHRlcm1pbmF0ZV93YWxrKzB4
-MTI2LzB4MTUwDQpbICAgMTguMDQ3Nzc3XSAgcGF0aF9sb29rdXBhdC5pc3JhLjYzKzB4YTMvMHgy
-MjANClsgICAxOC4wNDc4MjZdICBmaWxlbmFtZV9sb29rdXAucGFydC43OCsweGEwLzB4MTcwDQpb
-ICAgMTguMjQ3Mjc3XSAgZG9fcmVhZGxpbmthdCsweDVkLzB4MTEwDQpbICAgMTguMjQ3Mjc3XSAg
-X194NjRfc3lzX3JlYWRsaW5rYXQrMHgxYS8weDIwDQpbICAgMTguMjQ3Mjc3XSAgZG9fc3lzY2Fs
-bF82NCsweDU4LzB4MjcwDQpbICAgMTguMjQ3Mjc3XSAgZW50cnlfU1lTQ0FMTF82NF9hZnRlcl9o
-d2ZyYW1lKzB4NDkvMHhiZQ0KWyAgIDE4LjI0NzI3N10gUklQOiAwMDMzOjB4N2ZkODE4YzI2YTRh
-DQpbICAgMTguMjQ3Mjc3XSBDb2RlOiA0OCA4YiAwZCA0OSA4NCAwZCAwMCBmNyBkOCA2NCA4OSAw
-MSA0OCA4MyBjOCBmZiBjMyA2NiAyZSAwZiAuLi4NClsgICAxOC4yNDcyNzddIFJTUDogMDAyYjow
-MDAwN2ZmZWNiMWJhZGU4IEVGTEFHUzogMDAwMDAyMDIgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAx
-MGINClsgICAxOC4yNDcyNzddIFJBWDogZmZmZmZmZmZmZmZmZmZkYSBSQlg6IDAwMDA1NjBkNTZi
-Y2EyMjAgUkNYOiAwMDAwN2ZkODE4YzI2YTRhDQpbICAgMTguMjQ3Mjc3XSBSRFg6IDAwMDA1NjBk
-NTZiY2EyMjAgUlNJOiAwMDAwNTYwZDU2YmNhMjAxIFJESTogMDAwMDAwMDAwMDAwMDAwNQ0KWyAg
-IDE4LjI0NzI3N10gUkJQOiAwMDAwMDAwMDAwMDAwMDY0IFIwODogMDAwMDU2MGQ1NmJiOTAxMCBS
-MDk6IDAwMDAwMDAwMDAwMDAwMDANClsgICAxOC4yNDcyNzddIFIxMDogMDAwMDAwMDAwMDAwMDA2
-MyBSMTE6IDAwMDAwMDAwMDAwMDAyMDIgUjEyOiAwMDAwNTYwZDU2YmNhMjAxDQpbICAgMTguMjQ3
-Mjc3XSBSMTM6IDAwMDAwMDAwMDAwMDAwMDUgUjE0OiAwMDAwN2ZmZWNiMWJhZTc4IFIxNTogMDAw
-MDAwMDAwMDAwMDA2Mw0KWyAgIDE4LjI0NzI3N10gTW9kdWxlcyBsaW5rZWQgaW46DQpbICAgMTgu
-MjQ3Mjc3XSBDUjI6IGZmZmY4ODg0YmI4ZjRiOTgNCg0KVGhhbmtzLA0KLS0gRGV4dWFuDQo=
+On Mon, Sep 02, 2019 at 08:26:01PM -0700, Darrick J. Wong wrote:
+> 
+> Given that the merge window apparently won't close until Sept. 29, that
+> gives us more time to make any more minor tweaks.
+
+I think 5.3 final should be out at about Sep 15.  Isn't that the
+traditional definition of closing the merge window?
