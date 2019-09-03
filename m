@@ -2,106 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE23FA6BBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 16:44:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01896A6BBC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 16:44:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbfICOoy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 10:44:54 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46782 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725782AbfICOoy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:44:54 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 44E691B4534D18A27ED1;
-        Tue,  3 Sep 2019 22:44:51 +0800 (CST)
-Received: from [127.0.0.1] (10.184.213.217) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Tue, 3 Sep 2019
- 22:44:41 +0800
-To:     <jack@suse.cz>, Al Viro <viro@ZenIV.linux.org.uk>,
-        <akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>
-From:   "zhengbin (A)" <zhengbin13@huawei.com>
-Subject: Possible FS race condition between iterate_dir and d_alloc_parallel
-CC:     "zhangyi (F)" <yi.zhang@huawei.com>, <zhengbin13@huawei.com>
-Message-ID: <fd00be2c-257a-8e1f-eb1e-943a40c71c9a@huawei.com>
-Date:   Tue, 3 Sep 2019 22:44:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1729537AbfICOom (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 10:44:42 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:49648 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbfICOom (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 10:44:42 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83EiJc8126556;
+        Tue, 3 Sep 2019 14:44:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=DGZ0Ams3rJ7t8wNRWOTGIli9HNjd9r48MN7ex/MQzpk=;
+ b=VN3jyUyYXcthOGnSxc0RLGSo4jj068qlk0ceHrV4/D7+fg0wWJB1Tpyz2s6yLD2ATP9f
+ 4FGN2i5/Q0RLXqYWZoZH96NBOyr0SHWu2MV8WWeCRRfn/j/ChuFXuCHSCWL+0p5Glt58
+ BH/y7vHBXmbRVAnEpofMCGq2NKAzQpIjlq8y1hcthw+AUcIaUcd+jVbQ6hTKwZBZeJD8
+ m8bBl9PgBTXmY+Ib75vFe4Rp8q74r+GyAG04JNTwdZnGD+mKCjL5bLhn1aG19EWzQXd8
+ W6nzeNU7J0z6T6SPXPd1OnfeQ/2vELXq3KLdqmxPh7YlgLrS1zuv+UNyjkllZLBhcAJk BA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2ussx904m3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Sep 2019 14:44:33 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83EgddK155113;
+        Tue, 3 Sep 2019 14:44:33 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2us5pgxct4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Sep 2019 14:44:33 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x83EiVXK015308;
+        Tue, 3 Sep 2019 14:44:31 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Sep 2019 07:44:30 -0700
+Date:   Tue, 3 Sep 2019 07:44:33 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Subject: Re: [PATCH 1/2] iomap: split size and error for iomap_dio_rw ->end_io
+Message-ID: <20190903144433.GX5354@magnolia>
+References: <20190903130327.6023-1-hch@lst.de>
+ <20190903130327.6023-2-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.184.213.217]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190903130327.6023-2-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9368 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909030155
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9368 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909030155
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We recently encountered an oops(the filesystem is tmpfs)
-crash> bt
-PID: 108367  TASK: ffff8020d28eda00  CPU: 123  COMMAND: "du"
- #0 [ffff0000ae77b7e0] machine_kexec at ffff00006709d674
- #1 [ffff0000ae77b830] __crash_kexec at ffff000067150354
- #2 [ffff0000ae77b9c0] panic at ffff0000670a9358
- #3 [ffff0000ae77baa0] die at ffff00006708ec98
- #4 [ffff0000ae77bae0] die_kernel_fault at ffff0000670a1c6c
- #5 [ffff0000ae77bb10] __do_kernel_fault at ffff0000670a1924
- #6 [ffff0000ae77bb40] do_translation_fault at ffff0000676bb754
- #7 [ffff0000ae77bb50] do_mem_abort at ffff0000670812e0
- #8 [ffff0000ae77bd50] el1_ia at ffff000067083214
-     PC: ffff0000672954c0  [dcache_readdir+216]
-     LR: ffff0000672954f8  [dcache_readdir+272]
-     SP: ffff0000ae77bd60  PSTATE: 60400009
-    X29: ffff0000ae77bd60  X28: ffff8020d28eda00  X27: 0000000000000000
-    X26: 0000000000000000  X25: 0000000056000000  X24: ffff80215c854000
-    X23: 0000000000000001  X22: ffff8021f2f03290  X21: ffff803f74359698
-    X20: ffff803f74359960  X19: ffff0000ae77be30  X18: 0000000000000000
-    X17: 0000000000000000  X16: 0000000000000000  X15: 0000000000000000
-    X14: 0000000000000000  X13: 0000000000000000  X12: 0000000000000000
-    X11: 0000000000000000  X10: ffff8020fee99b18   X9: ffff8020fee99878
-     X8: 0000000000a1f3aa   X7: 0000000000000000   X6: ffff00006727d760
-     X5: ffffffffffff0073   X4: 0000000315d1d1c6   X3: 000000000000001b
-     X2: 00000000ffff803f   X1: 656d616e00676f6c   X0: ffff0000ae77be30
- #9 [ffff0000ae77bd60] dcache_readdir at ffff0000672954bc
+On Tue, Sep 03, 2019 at 03:03:26PM +0200, Christoph Hellwig wrote:
+> From: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> 
+> Modify the calling convention for the iomap_dio_rw ->end_io() callback.
+> Rather than passing either dio->error or dio->size as the 'size' argument,
+> instead pass both the dio->error and the dio->size value separately.
+> 
+> In the instance that an error occurred during a write, we currently cannot
+> determine whether any blocks have been allocated beyond the current EOF and
+> data has subsequently been written to these blocks within the ->end_io()
+> callback. As a result, we cannot judge whether we should take the truncate
+> failed write path. Having both dio->error and dio->size will allow us to
+> perform such checks within this callback.
+> 
+> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> [hch: minor cleanups]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-The reason is as follows:
-Process 1 cat test which is not exist in directory A, process 2 cat test in directory A too.
-process 3 create new file in directory B, process 4 ls directory A.
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-process 1(dirA)                  |process 2(dirA)                            |process 3(dirB)                       |process 4(dirA)
-do_last                          |do_last                                    |do_last                               |iterate_dir
-  inode_lock_shared              |  inode_lock_shared                        |  inode_lock(dirB)                    |  inode_lock_shared
-  lookup_open                    |  lookup_open                              |  lookup_open                         |
-    d_alloc_parallel             |    d_alloc_parallel                       |    d_alloc_parallel                  |
-      d_alloc(add dtry1 to dirA) |                                           |                                      |
-      hlist_bl_lock              |      d_alloc(add dtry2 to dirA)           |                                      |
-      hlist_bl_add_head_rcu      |                                           |                                      |  dcache_readdir
-      hlist_bl_unlock            |                                           |                                      |    p = &dentry->d_subdirs
-                                 |      hlist_bl_lock                        |                                      |    next_positive(dentry, p, 1)
-                                 |		hlist_bl_for_each_entry      |                                      |      p = from->next(p is dtry2)
-                                 |		hlist_bl_unlock              |                                      |
-                                 |		dput                         |                                      |
-                                 |		  retain_dentry(dentry) false|                                      |
-                                 |		  dentry_kill                |                                      |
-                                 |		    spin_trylock(&parent)    |                                      |
-                                 |			__dentry_kill        |                                      |
-                                 |			  dentry_unlist      |                                      |
-                                 |			  dentry_free(dtry2) |                                      |
-                                 |                                           |      d_alloc(add dtry2 to dirB)      |
-                                 |                                           |      hlist_bl_add_head_rcu           |
-                                 |                                           |    dir_inode->i_op->create(new inode)|
-                                 |                                           |                                      |      d = list_entry(p, struct dentry, d_child)
-                                 |                                           |                                      |      if (!simple_positive(d))-->d belongs to dirB now
+--D
 
-lookup_open-->d_in_lookup-->simple_lookup(shmem_dir_inode_operations)-->dentry->d_op = simple_dentry_operations
-const struct dentry_operations simple_dentry_operations = {
-	.d_delete = always_delete_dentry,
-};
-retain_dentry will return false
-
-
-We should use spin_lock(&parent->d_lock) in next_positive. commit ebaaa80e8f20 ("lockless next_positive()") removes spin_lock, is it just for performance optimization?
-
-Or if dput dentry, use inode_lock instead of inode_lock_shared?
-
-
+> ---
+>  fs/iomap/direct-io.c  | 9 +++------
+>  fs/xfs/xfs_file.c     | 8 +++++---
+>  include/linux/iomap.h | 4 ++--
+>  3 files changed, 10 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 10517cea9682..2ccf1c6460d4 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -77,13 +77,10 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
+>  	loff_t offset = iocb->ki_pos;
+>  	ssize_t ret;
+>  
+> -	if (dio->end_io) {
+> -		ret = dio->end_io(iocb,
+> -				dio->error ? dio->error : dio->size,
+> -				dio->flags);
+> -	} else {
+> +	if (dio->end_io)
+> +		ret = dio->end_io(iocb, dio->size, dio->error, dio->flags);
+> +	else
+>  		ret = dio->error;
+> -	}
+>  
+>  	if (likely(!ret)) {
+>  		ret = dio->size;
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index d952d5962e93..3d8e6db9ef77 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -370,21 +370,23 @@ static int
+>  xfs_dio_write_end_io(
+>  	struct kiocb		*iocb,
+>  	ssize_t			size,
+> +	int			error,
+>  	unsigned		flags)
+>  {
+>  	struct inode		*inode = file_inode(iocb->ki_filp);
+>  	struct xfs_inode	*ip = XFS_I(inode);
+>  	loff_t			offset = iocb->ki_pos;
+>  	unsigned int		nofs_flag;
+> -	int			error = 0;
+>  
+>  	trace_xfs_end_io_direct_write(ip, offset, size);
+>  
+>  	if (XFS_FORCED_SHUTDOWN(ip->i_mount))
+>  		return -EIO;
+>  
+> -	if (size <= 0)
+> -		return size;
+> +	if (error)
+> +		return error;
+> +	if (!size)
+> +		return 0;
+>  
+>  	/*
+>  	 * Capture amount written on completion as we can't reliably account
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index bc499ceae392..50bb746d2216 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -188,8 +188,8 @@ sector_t iomap_bmap(struct address_space *mapping, sector_t bno,
+>   */
+>  #define IOMAP_DIO_UNWRITTEN	(1 << 0)	/* covers unwritten extent(s) */
+>  #define IOMAP_DIO_COW		(1 << 1)	/* covers COW extent(s) */
+> -typedef int (iomap_dio_end_io_t)(struct kiocb *iocb, ssize_t ret,
+> -		unsigned flags);
+> +typedef int (iomap_dio_end_io_t)(struct kiocb *iocb, ssize_t size, int error,
+> +				 unsigned int flags);
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, iomap_dio_end_io_t end_io);
+>  int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
+> -- 
+> 2.20.1
+> 
