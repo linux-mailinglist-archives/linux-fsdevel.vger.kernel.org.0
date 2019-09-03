@@ -2,74 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C49F0A6158
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 08:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE600A6178
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 08:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbfICGYO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 02:24:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55242 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbfICGYO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:24:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=klPLnvUccpQZCH53OTFKR/8SWIz98cjkWp1cNaTwaYM=; b=aqUrBKoGkBk7RUTs21xZC4EVv
-        9k6eFLV+fp4QiCehIZ4ZlNYiwqFizUuP/T6KN2VWtM5ELjHGBRn2vKIIxLPAD8bxMvHLEQ5QvGKX6
-        //PJXptSFd6m/ndGn2oMdcE6+YS5o/T21eeAtaVB1YmCpW1EsU6A2+zWzlhFPW7SDsphSX8EvWAuk
-        8SyBaDUTz2YOm0vU0Z9oVWzzJGfBFNpzGrYtmH62bNb291Ohud2hV7/cGrEG5NqHQzDE4RZPDz7nV
-        5yOo8/ed+TfQepmmDHJ+noMZxo2XL+wM2qduty9nCxmzMGX+dXjBnTS070R3pubpCdqmKB5luxqUr
-        p3ON6jnig==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i52Ed-00027p-Uv; Tue, 03 Sep 2019 06:24:11 +0000
-Date:   Mon, 2 Sep 2019 23:24:11 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Matias Bjorling <Matias.Bjorling@wdc.com>
-Subject: Re: [PATCH V4] fs: New zonefs file system
-Message-ID: <20190903062411.GA7944@infradead.org>
-References: <20190826065750.11674-1-damien.lemoal@wdc.com>
- <BYAPR04MB5816E881D9881D5F559A3947E7B90@BYAPR04MB5816.namprd04.prod.outlook.com>
- <20190903032601.GV5354@magnolia>
- <20190903061602.GB26583@infradead.org>
- <BYAPR04MB5816D246389AAFD484D600C0E7B90@BYAPR04MB5816.namprd04.prod.outlook.com>
+        id S1726743AbfICGbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 02:31:09 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34858 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725888AbfICGbJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 02:31:09 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7037E8B6A2F31DF55807;
+        Tue,  3 Sep 2019 14:31:07 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 3 Sep 2019
+ 14:30:56 +0800
+Subject: Re: [PATCH v8 11/24] erofs: introduce xattr & posixacl support
+To:     <dsterba@suse.cz>, Chao Yu <chao@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-erofs@lists.ozlabs.org>, Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+References: <20190815044155.88483-1-gaoxiang25@huawei.com>
+ <20190815044155.88483-12-gaoxiang25@huawei.com>
+ <20190902125711.GA23462@infradead.org> <20190902130644.GT2752@suse.cz>
+ <813e1b65-e6ba-631c-6506-f356738c477f@kernel.org>
+ <20190902142037.GW2752@twin.jikos.cz>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <12d37c63-dd0e-04fb-91f8-f4b930e867e5@huawei.com>
+Date:   Tue, 3 Sep 2019 14:30:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BYAPR04MB5816D246389AAFD484D600C0E7B90@BYAPR04MB5816.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190902142037.GW2752@twin.jikos.cz>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 06:21:38AM +0000, Damien Le Moal wrote:
-> On 2019/09/03 15:16, Christoph Hellwig wrote:
-> > On Mon, Sep 02, 2019 at 08:26:01PM -0700, Darrick J. Wong wrote:
-> >>
-> >> Given that the merge window apparently won't close until Sept. 29, that
-> >> gives us more time to make any more minor tweaks.
-> > 
-> > I think 5.3 final should be out at about Sep 15.  Isn't that the
-> > traditional definition of closing the merge window?
-> > 
+On 2019/9/2 22:20, David Sterba wrote:
+> Oh right, I think the reasons are historical and that we can remove the
+> options nowadays. From the compatibility POV this should be safe, with
+> ACLs compiled out, no tool would use them, and no harm done when the
+> code is present but not used.
 > 
-> If we have an rc8, yes, 5.3 final will be on Sep 15. And then the merge window
-> for 5.4 opens for 2 weeks until Sep 29, no ?
+> There were some efforts by embedded guys to make parts of kernel more
+> configurable to allow removing subsystems to reduce the final image
+> size. In this case I don't think it would make any noticeable
+> difference, eg. the size of fs/btrfs/acl.o on release config is 1.6KiB,
+> while the whole module is over 1.3MiB.
 
-I've always considered the merge window the time to queue up patches
-in the maintainer trees, which would end with the release of the
-previous release.
+Actually, btrfs's LOC is about 20 times larger than erofs's, acl part's LOC
+could be very small one in btrfs.
+
+EROFS can be slimmed about 10% size if we disable XATTR/ACL config, which is
+worth to keep that, at least for now.
+
+Thanks,
+
+
