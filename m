@@ -2,97 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 411F2A6C91
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 17:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA5DA6CBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 17:18:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729540AbfICPKR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 11:10:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40456 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729079AbfICPKR (ORCPT
+        id S1729577AbfICPSp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 11:18:45 -0400
+Received: from mail-qt1-f180.google.com ([209.85.160.180]:34145 "EHLO
+        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729510AbfICPSo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:10:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kMYjLPkGWlldvgkaEMtVa8ofXfOGNI4Vt2JfjkgF+V8=; b=ua+qEoKR5NGKobxrhyfObMiaz
-        28qJVK5Cmtj469tUpUMjB5lIhBAeCh8YKXRWmBqvQ4pA4q2geWOc7hwsuuLD8+20ifshN6X4mmUS8
-        dnku9KimzBjhNU+wOPyckNP9v2fCKVt0JqP6dfPr2Iy2wR6+wKii5AXoHWgk31haG0tSLeZ9E705l
-        OgK0SqS7wfjf5NjzHOsFVLkmeE914uKAhFYNYTgaxuyEY7xR1vymBvwcopjWnk96vWdEiuI0IbOp7
-        HGt1Xj+QSm5q/t4M5uq0KOhEsWQL/MElDbumvXJxhbLoV4Mop2RQClRXXx2FzsZes+pqT9yHt9vfO
-        O3Dtop/1A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5ARj-0008Bn-Vp; Tue, 03 Sep 2019 15:10:15 +0000
-Date:   Tue, 3 Sep 2019 08:10:15 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     William Kucharski <william.kucharski@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Bob Kasten <robert.a.kasten@intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Chad Mynhier <chad.mynhier@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <jweiner@fb.com>
-Subject: Re: [PATCH v5 2/2] mm,thp: Add experimental config option
- RO_EXEC_FILEMAP_HUGE_FAULT_THP
-Message-ID: <20190903151015.GF29434@bombadil.infradead.org>
-References: <20190902092341.26712-1-william.kucharski@oracle.com>
- <20190902092341.26712-3-william.kucharski@oracle.com>
- <20190903121424.GT14028@dhcp22.suse.cz>
- <20190903122208.GE29434@bombadil.infradead.org>
- <20190903125150.GW14028@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903125150.GW14028@dhcp22.suse.cz>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        Tue, 3 Sep 2019 11:18:44 -0400
+Received: by mail-qt1-f180.google.com with SMTP id a13so20405495qtj.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 08:18:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=41G2aVZ2UIyZbN+qqTnEEAlUQce0psMlCxkdXRi0woc=;
+        b=gGAhjK8E3JYUeHFI+hfwuyPjgS754Z/R0J/ID1JCj50+hthV15w4vhsy7SXXBUNkCf
+         eGqZI3wy4vUOxlFjmxqqMroyQq/VghmOQASc0xovzbPzL8uBZZA4dDesrgsFmI4g25er
+         frH1b85rDzemofj4z+F8adqllRrbHnZERhDAmMx2tyOqj36b+5U3IsJaobQSo6dVDsZC
+         40nSEISIvq/KCWBmk8ZO/IdffaQqByrI2ZemeLR9qRFXJyZiZYMiwnbOnPlsXAacBr6n
+         WwAX8wEGbiDKFCY0n9oI1D+txFfX+HU/4sApuv0c8GB5f8U7UXesIBUGK96Qbp9TgGsr
+         M1wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=41G2aVZ2UIyZbN+qqTnEEAlUQce0psMlCxkdXRi0woc=;
+        b=YHRD/SJ6UTI+5T0UQSNN9xzP2H9ernF8AjtBWIM30aR0JO760Hxod99AKN+Nu/xqg0
+         lMLhDQjl91+/9xSpVg5TDg/BdQy1DLQOHGskiSTBTIbBqsGMLLUmwtr9f2sBm97x4zfV
+         KwdgLqfMjNhM/7/IVgDbsAvVxhwDxZX4lyOKwj//uXjT1jC5sIW6dzgG7s8iIHusPBZt
+         Z6vayHP7jVKK+tvuBLmDU+/V7eiQPesmwRLyk1NkppaFBnns5VkZ5zkU3WAR/K6HqUsr
+         ldELGCGfwEHBen6BwZNm8meoBeOhvsk7ryLOMLDNVdSRCgR5oleAZyuO6FTCdCUTVikh
+         D9sA==
+X-Gm-Message-State: APjAAAUovvtjc7wDLKmLQ3SB3JdVPQ0PpP7E1YhI4IfgkUyQsr45QGmM
+        VGKNbWyV6DLxmjE31k2CpHMSxw==
+X-Google-Smtp-Source: APXvYqx+zxtcnskjuSmXfYN7TaHQhfcYZA+gg2du0ohxxNXHWZJliwkamJBZLwCZf0UiLCwKsdnE7A==
+X-Received: by 2002:ac8:2392:: with SMTP id q18mr9332116qtq.261.1567523923826;
+        Tue, 03 Sep 2019 08:18:43 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id f83sm802705qke.80.2019.09.03.08.18.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Sep 2019 08:18:43 -0700 (PDT)
+Message-ID: <1567523922.5576.57.camel@lca.pw>
+Subject: "beyond 2038" warnings from loopback mount is noisy
+From:   Qian Cai <cai@lca.pw>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tytso@mit.edu, linux-ext4@vger.kernel.org
+Date:   Tue, 03 Sep 2019 11:18:42 -0400
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 02:51:50PM +0200, Michal Hocko wrote:
-> On Tue 03-09-19 05:22:08, Matthew Wilcox wrote:
-> > On Tue, Sep 03, 2019 at 02:14:24PM +0200, Michal Hocko wrote:
-> > > On Mon 02-09-19 03:23:41, William Kucharski wrote:
-> > > > Add filemap_huge_fault() to attempt to satisfy page
-> > > > faults on memory-mapped read-only text pages using THP when possible.
-> > > 
-> > > This deserves much more description of how the thing is implemented and
-> > > expected to work. For one thing it is not really clear to me why you
-> > > need CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP at all. You need a support
-> > > from the filesystem anyway. So who is going to enable/disable this
-> > > config?
-> > 
-> > There are definitely situations in which enabling this code will crash
-> > the kernel.  But we want to get filesystems to a point where they can
-> > start working on their support for large pages.  So our workaround is
-> > to try to get the core pieces merged under a CONFIG_I_KNOW_WHAT_IM_DOING
-> > flag and let people play with it.  Then continue to work on the core
-> > to eliminate those places that are broken.
-> 
-> I am not sure I understand. Each fs has to opt in to the feature
-> anyway. If it doesn't then there should be no risk of regression, right?
-> I do not expect any fs would rush an implementation in while not being
-> sure about the correctness. So how exactly does a config option help
-> here.
+https://lore.kernel.org/linux-fsdevel/20190818165817.32634-5-deepa.kernel@gmail.
+com/
 
-Filesystems won't see large pages unless they've opted into them.
-But there's a huge amount of page-cache work that needs to get done
-before this can be enabled by default.  For example, truncate() won't
-work properly.
+Running only a subset of the LTP testsuite on today's linux-next with the above
+commit is now generating ~800 warnings on this machine which seems a bit crazy.
 
-Rather than try to do all the page cache work upfront, then wait for the
-filesystems to catch up, we want to get some basics merged.  Since we've
-been talking about this for so long without any movement in the kernel
-towards actual support, this felt like a good way to go.
-
-We could, of course, develop the entire thing out of tree, but that's
-likely to lead to pain and anguish.
-
+[ 2130.970782] EXT4-fs warning (device loop0): ext4_do_update_inode:5261: inode
+#40961: comm statx04: inode does not support timestamps beyond 2038
+[ 2130.970808] EXT4-fs warning (device loop0): ext4_do_update_inode:5262: inode
+#40961: comm statx04: inode does not support timestamps beyond 2038
+[ 2130.970838] EXT4-fs warning (device loop0): ext4_do_update_inode:5263: inode
+#40961: comm statx04: inode does not support timestamps beyond 2038
+[ 2130.971440] EXT4-fs warning (device loop0): ext4_do_update_inode:5261: inode
+#40961: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.847613] EXT4-fs warning (device loop0): ext4_do_update_inode:5261: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.847647] EXT4-fs warning (device loop0): ext4_do_update_inode:5262: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.847681] EXT4-fs warning (device loop0): ext4_do_update_inode:5263: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.847717] EXT4-fs warning (device loop0): ext4_do_update_inode:5261: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.847774] EXT4-fs warning (device loop0): ext4_do_update_inode:5262: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.847817] EXT4-fs warning (device loop0): ext4_do_update_inode:5263: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.847909] EXT4-fs warning (device loop0): ext4_do_update_inode:5261: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.847970] EXT4-fs warning (device loop0): ext4_do_update_inode:5262: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.848004] EXT4-fs warning (device loop0): ext4_do_update_inode:5263: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2131.848415] EXT4-fs warning (device loop0): ext4_do_update_inode:5261: inode
+#32769: comm statx04: inode does not support timestamps beyond 2038
+[ 2134.753752] EXT4-fs warning (device loop0): ext4_do_update_inode:5261: inode
+#12: comm statx05: inode does not support timestamps beyond 2038
+[ 2134.753783] EXT4-fs warning (device loop0): ext4_do_update_inode:5262: inode
+#12: comm statx05: inode does not support timestamps beyond 2038
+[ 2134.753814] EXT4-fs warning (device loop0): ext4_do_update_inode:5263: inode
+#12: comm statx05: inode does not support timestamps beyond 2038
+[ 2134.753847] EXT4-fs warning (device loop0): ext4_do_update_inode:5261: inode
+#12: comm statx05: inode does not support timestamps beyond 2038
+[ 2134.753889] EXT4-fs warning (device loop0): ext4_do_update_inode:5262: inode
+#12: comm statx05: inode does not support timestamps beyond 2038
+[ 2134.753929] EXT4-fs warning (device loop0): ext4_do_update_inode:5263: inode
+#12: comm statx05: inode does not support timestamps beyond 2038
+[ 2134.754021] EXT4-fs warning (device loop0): ext4_do_update_inode:5261: inode
+#12: comm statx05: inode does not support timestamps beyond 2038
+[ 2134.754064] EXT4-fs warning (device loop0): ext4_do_update_inode:5262: inode
+#12: comm statx05: inode does not support timestamps beyond 2038
+[ 2134.754105] EXT4-fs warning (device loop0): ext4_do_update_inode:5263: inode
+#12: comm statx05: inode does not support timestamps beyond 2038
