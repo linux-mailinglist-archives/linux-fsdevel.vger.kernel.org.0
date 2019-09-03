@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E9BA6781
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6258EA677E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 13:37:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbfICLhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 07:37:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33652 "EHLO mx1.redhat.com"
+        id S1728969AbfICLgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 07:36:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:9156 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728923AbfICLgt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:36:49 -0400
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+        id S1728904AbfICLgv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 07:36:51 -0400
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 94C6C2A09AC
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2019 11:36:48 +0000 (UTC)
-Received: by mail-wr1-f72.google.com with SMTP id n6so8629022wrw.14
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 04:36:48 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DC4E757C0
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Sep 2019 11:36:50 +0000 (UTC)
+Received: by mail-wm1-f72.google.com with SMTP id c11so4226687wml.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Sep 2019 04:36:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GsTPmCBROXkWENE8u9zhZAvKwRylFezdTcPk/AGw/ug=;
-        b=cfdDU3KOCzc5IlVHa48yFGJwXAnsSWaOhg7ons9dU/gBwji1SbnAUijoMztmrSGItX
-         sKEULURWpqfcE+qpeENEh4053oj++HAmDdX62GeQ3KFszTMJZT3abV18s+fCsGUngJGJ
-         TVDkScaZpYvRc1G3PzDQoaJhPumJAskjbxf5prgys3lzIW50aTRoqaOgM0MoTX43YM6C
-         uWEKcoXy+JGUsPKyaN8cz/jYaNF5elOyj4DvSikwD+8armrj07NBADq5pTN0DAVhz0Y0
-         f9qFInaaTGdP1Y0DUSKc+SgrzTIrYiI1uo8LVa+GcaE+stXK/cgEvP7KpUWyGEsVomSB
-         yz4A==
-X-Gm-Message-State: APjAAAWib1GAjx1qs/qrqZKVU8RzYzqwUYJrl4NAbv9szWzd8VoJuILY
-        M6HN1Lel8M1vjsSLt9sCiHQEIwT1deFQkVQEbYFomHM9oi6IWKi7+cWd0BKi6Gibd9lXJNlp+lo
-        tq4MaIV0KQDsSwKUZeb7OcNLmDg==
-X-Received: by 2002:a1c:cf8c:: with SMTP id f134mr36659170wmg.174.1567510607222;
-        Tue, 03 Sep 2019 04:36:47 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyaQmM6ki55/MXLUqsRFjhUVH9FR9teEsXG03/JzDrxL6iIV536blqTA9FvfRi/RsyYgT+xpA==
-X-Received: by 2002:a1c:cf8c:: with SMTP id f134mr36659137wmg.174.1567510606923;
-        Tue, 03 Sep 2019 04:36:46 -0700 (PDT)
+        bh=P3ITaB+F8loZbcEn4YrJIgIB7m3BqeKZtOyPY/Ayk1w=;
+        b=PiR7c36cfHi1bZfbG+XO2a/kOdHlX4Z07+jYAToKx3QrOnx9LgL8k8cxNTJKJ2qtG7
+         fcDE2ipuutvTjC8mBGa3CtdlOC1J9WzFQw+JyXDbyrslcFVBAx3m9q1zrbIn0Bkf6vYS
+         87tHuEhYO2j7HUn9PRldD3A2xf3418jrHp+gZUYXBdOSg4bD7j27MgckPIfhgtpWkHO6
+         XOuRqS+rtmtyfOiNwZYLYFBUcsyWxaMuuuYKCCweyPgcSZD7E6xoJwdtgtpmLJ4PyW2l
+         t3R1nXCxdgbzMnXdFrNZgCuaCoZZB5uKarPMbBTOhwe9dGo4LRU9ckXDeqVLwKzJLuQn
+         cJlA==
+X-Gm-Message-State: APjAAAX/ntOSfU3t7RnSc25PcB0mSLrWnEg9uF17Odc1AKkS04+TyrnL
+        Uj9brS28P/2nsHxxuQNRUDABEujvhjiBPOuFqmpZp5uxSgy0b17uQCAc5ni4En17QXDhI7IBgvH
+        PJ53PqV7yj0faoH2DDhJ3OI7oCQ==
+X-Received: by 2002:a05:6000:1081:: with SMTP id y1mr38940115wrw.53.1567510608782;
+        Tue, 03 Sep 2019 04:36:48 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwu8OC/y6yanKYsj1cT00XOuOjwHESvhNUhBsPBTa/oAejpHDFyTDxNuNmfoqJGHtub3HzQeg==
+X-Received: by 2002:a05:6000:1081:: with SMTP id y1mr38940087wrw.53.1567510608580;
+        Tue, 03 Sep 2019 04:36:48 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id v186sm40446906wmb.5.2019.09.03.04.36.45
+        by smtp.gmail.com with ESMTPSA id v186sm40446906wmb.5.2019.09.03.04.36.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 04:36:46 -0700 (PDT)
+        Tue, 03 Sep 2019 04:36:47 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org
@@ -50,9 +50,9 @@ Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
         Vivek Goyal <vgoyal@redhat.com>,
         "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v4 02/16] fuse: convert to use the new mount API
-Date:   Tue,  3 Sep 2019 13:36:26 +0200
-Message-Id: <20190903113640.7984-3-mszeredi@redhat.com>
+Subject: [PATCH v4 03/16] vfs: subtype handling moved to fuse
+Date:   Tue,  3 Sep 2019 13:36:27 +0200
+Message-Id: <20190903113640.7984-4-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190903113640.7984-1-mszeredi@redhat.com>
 References: <20190903113640.7984-1-mszeredi@redhat.com>
@@ -65,425 +65,133 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: David Howells <dhowells@redhat.com>
 
-Convert the fuse filesystem to the new internal mount API as the old
-one will be obsoleted and removed.  This allows greater flexibility in
-communication of mount parameters between userspace, the VFS and the
-filesystem.
+The unused vfs code can be removed.  Don't pass empty subtype (same as if
+->parse callback isn't called).
 
-See Documentation/filesystems/mount_api.txt for more information.
+The bits that are left involve determining whether it's permitted to split the
+filesystem type string passed in to mount(2).  Consequently, this means that we
+cannot get rid of the FS_HAS_SUBTYPE flag unless we define that a type string
+with a dot in it always indicates a subtype specification.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/fuse/inode.c | 292 +++++++++++++++++++++++++++---------------------
- 1 file changed, 167 insertions(+), 125 deletions(-)
+ fs/fs_context.c            | 14 --------------
+ fs/fuse/inode.c            |  3 +--
+ fs/namespace.c             |  2 --
+ fs/proc_namespace.c        |  2 +-
+ fs/super.c                 |  5 -----
+ include/linux/fs_context.h |  1 -
+ 6 files changed, 2 insertions(+), 25 deletions(-)
 
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 270ecae32216..f6dee3b2b7de 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -508,7 +508,6 @@ void put_fs_context(struct fs_context *fc)
+ 	put_net(fc->net_ns);
+ 	put_user_ns(fc->user_ns);
+ 	put_cred(fc->cred);
+-	kfree(fc->subtype);
+ 	put_fc_log(fc);
+ 	put_filesystem(fc->fs_type);
+ 	kfree(fc->source);
+@@ -575,17 +574,6 @@ static int legacy_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		return 0;
+ 	}
+ 
+-	if ((fc->fs_type->fs_flags & FS_HAS_SUBTYPE) &&
+-	    strcmp(param->key, "subtype") == 0) {
+-		if (param->type != fs_value_is_string)
+-			return invalf(fc, "VFS: Legacy: Non-string subtype");
+-		if (fc->subtype)
+-			return invalf(fc, "VFS: Legacy: Multiple subtype");
+-		fc->subtype = param->string;
+-		param->string = NULL;
+-		return 0;
+-	}
+-
+ 	if (ctx->param_type == LEGACY_FS_MONOLITHIC_PARAMS)
+ 		return invalf(fc, "VFS: Legacy: Can't mix monolithic and individual options");
+ 
+@@ -742,8 +730,6 @@ void vfs_clean_context(struct fs_context *fc)
+ 	fc->s_fs_info = NULL;
+ 	fc->sb_flags = 0;
+ 	security_free_mnt_opts(&fc->security);
+-	kfree(fc->subtype);
+-	fc->subtype = NULL;
+ 	kfree(fc->source);
+ 	fc->source = NULL;
+ 
 diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 4bb885b0f032..2597ed237ada 100644
+index 2597ed237ada..e3375ce8e97f 100644
 --- a/fs/fuse/inode.c
 +++ b/fs/fuse/inode.c
-@@ -15,7 +15,8 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
--#include <linux/parser.h>
-+#include <linux/fs_context.h>
-+#include <linux/fs_parser.h>
- #include <linux/statfs.h>
- #include <linux/random.h>
- #include <linux/sched.h>
-@@ -59,7 +60,13 @@ MODULE_PARM_DESC(max_user_congthresh,
- /** Congestion starts at 75% of maximum */
- #define FUSE_DEFAULT_CONGESTION_THRESHOLD (FUSE_DEFAULT_MAX_BACKGROUND * 3 / 4)
- 
--struct fuse_mount_data {
-+#ifdef CONFIG_BLOCK
-+static struct file_system_type fuseblk_fs_type;
-+#endif
-+
-+struct fuse_fs_context {
-+	const char	*subtype;
-+	bool		is_bdev;
- 	int fd;
- 	unsigned rootmode;
- 	kuid_t user_id;
-@@ -443,6 +450,8 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
- }
- 
- enum {
-+	OPT_SOURCE,
-+	OPT_SUBTYPE,
- 	OPT_FD,
- 	OPT_ROOTMODE,
- 	OPT_USER_ID,
-@@ -454,111 +463,110 @@ enum {
- 	OPT_ERR
+@@ -473,8 +473,7 @@ static const struct fs_parameter_spec fuse_param_specs[] = {
+ 	fsparam_flag	("allow_other",		OPT_ALLOW_OTHER),
+ 	fsparam_u32	("max_read",		OPT_MAX_READ),
+ 	fsparam_u32	("blksize",		OPT_BLKSIZE),
+-	__fsparam(fs_param_is_string, "subtype", OPT_SUBTYPE,
+-		  fs_param_v_optional),
++	fsparam_string	("subtype",		OPT_SUBTYPE),
+ 	{}
  };
  
--static const match_table_t tokens = {
--	{OPT_FD,			"fd=%u"},
--	{OPT_ROOTMODE,			"rootmode=%o"},
--	{OPT_USER_ID,			"user_id=%u"},
--	{OPT_GROUP_ID,			"group_id=%u"},
--	{OPT_DEFAULT_PERMISSIONS,	"default_permissions"},
--	{OPT_ALLOW_OTHER,		"allow_other"},
--	{OPT_MAX_READ,			"max_read=%u"},
--	{OPT_BLKSIZE,			"blksize=%u"},
--	{OPT_ERR,			NULL}
-+static const struct fs_parameter_spec fuse_param_specs[] = {
-+	fsparam_string	("source",		OPT_SOURCE),
-+	fsparam_u32	("fd",			OPT_FD),
-+	fsparam_u32oct	("rootmode",		OPT_ROOTMODE),
-+	fsparam_u32	("user_id",		OPT_USER_ID),
-+	fsparam_u32	("group_id",		OPT_GROUP_ID),
-+	fsparam_flag	("default_permissions",	OPT_DEFAULT_PERMISSIONS),
-+	fsparam_flag	("allow_other",		OPT_ALLOW_OTHER),
-+	fsparam_u32	("max_read",		OPT_MAX_READ),
-+	fsparam_u32	("blksize",		OPT_BLKSIZE),
-+	__fsparam(fs_param_is_string, "subtype", OPT_SUBTYPE,
-+		  fs_param_v_optional),
-+	{}
-+};
-+
-+static const struct fs_parameter_description fuse_fs_parameters = {
-+	.name		= "fuse",
-+	.specs		= fuse_param_specs,
- };
- 
--static int fuse_match_uint(substring_t *s, unsigned int *res)
-+static int fuse_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
--	int err = -ENOMEM;
--	char *buf = match_strdup(s);
--	if (buf) {
--		err = kstrtouint(buf, 10, res);
--		kfree(buf);
-+	struct fs_parse_result result;
-+	struct fuse_fs_context *ctx = fc->fs_private;
-+	int opt;
-+
-+	opt = fs_parse(fc, &fuse_fs_parameters, param, &result);
-+	if (opt < 0)
-+		return opt;
-+
-+	switch (opt) {
-+	case OPT_SOURCE:
-+		if (fc->source)
-+			return invalf(fc, "fuse: Multiple sources specified");
-+		fc->source = param->string;
-+		param->string = NULL;
-+		break;
-+
-+	case OPT_SUBTYPE:
-+		if (ctx->subtype)
-+			return invalf(fc, "fuse: Multiple subtypes specified");
-+		ctx->subtype = param->string;
-+		param->string = NULL;
-+		return 0;
-+
-+	case OPT_FD:
-+		ctx->fd = result.uint_32;
-+		ctx->fd_present = 1;
-+		break;
-+
-+	case OPT_ROOTMODE:
-+		if (!fuse_valid_type(result.uint_32))
-+			return invalf(fc, "fuse: Invalid rootmode");
-+		ctx->rootmode = result.uint_32;
-+		ctx->rootmode_present = 1;
-+		break;
-+
-+	case OPT_USER_ID:
-+		ctx->user_id = make_kuid(fc->user_ns, result.uint_32);
-+		if (!uid_valid(ctx->user_id))
-+			return invalf(fc, "fuse: Invalid user_id");
-+		ctx->user_id_present = 1;
-+		break;
-+
-+	case OPT_GROUP_ID:
-+		ctx->group_id = make_kgid(fc->user_ns, result.uint_32);
-+		if (!gid_valid(ctx->group_id))
-+			return invalf(fc, "fuse: Invalid group_id");
-+		ctx->group_id_present = 1;
-+		break;
-+
-+	case OPT_DEFAULT_PERMISSIONS:
-+		ctx->default_permissions = 1;
-+		break;
-+
-+	case OPT_ALLOW_OTHER:
-+		ctx->allow_other = 1;
-+		break;
-+
-+	case OPT_MAX_READ:
-+		ctx->max_read = result.uint_32;
-+		break;
-+
-+	case OPT_BLKSIZE:
-+		if (!ctx->is_bdev)
-+			return invalf(fc, "fuse: blksize only supported for fuseblk");
-+		ctx->blksize = result.uint_32;
-+		break;
-+
-+	default:
-+		return -EINVAL;
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d28d30b13043..105f995543f6 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2768,8 +2768,6 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
+ 				put_filesystem(type);
+ 				return -EINVAL;
+ 			}
+-		} else {
+-			subtype = "";
+ 		}
  	}
--	return err;
-+
-+	return 0;
- }
  
--static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev,
--			  struct user_namespace *user_ns)
-+static void fuse_free_fc(struct fs_context *fc)
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index e16fb8f2049e..273ee82d8aa9 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -88,7 +88,7 @@ static inline void mangle(struct seq_file *m, const char *s)
+ static void show_type(struct seq_file *m, struct super_block *sb)
  {
--	char *p;
--	memset(d, 0, sizeof(struct fuse_mount_data));
--	d->max_read = ~0;
--	d->blksize = FUSE_DEFAULT_BLKSIZE;
--
--	while ((p = strsep(&opt, ",")) != NULL) {
--		int token;
--		int value;
--		unsigned uv;
--		substring_t args[MAX_OPT_ARGS];
--		if (!*p)
--			continue;
--
--		token = match_token(p, tokens, args);
--		switch (token) {
--		case OPT_FD:
--			if (match_int(&args[0], &value))
--				return 0;
--			d->fd = value;
--			d->fd_present = 1;
--			break;
--
--		case OPT_ROOTMODE:
--			if (match_octal(&args[0], &value))
--				return 0;
--			if (!fuse_valid_type(value))
--				return 0;
--			d->rootmode = value;
--			d->rootmode_present = 1;
--			break;
--
--		case OPT_USER_ID:
--			if (fuse_match_uint(&args[0], &uv))
--				return 0;
--			d->user_id = make_kuid(user_ns, uv);
--			if (!uid_valid(d->user_id))
--				return 0;
--			d->user_id_present = 1;
--			break;
--
--		case OPT_GROUP_ID:
--			if (fuse_match_uint(&args[0], &uv))
--				return 0;
--			d->group_id = make_kgid(user_ns, uv);
--			if (!gid_valid(d->group_id))
--				return 0;
--			d->group_id_present = 1;
--			break;
--
--		case OPT_DEFAULT_PERMISSIONS:
--			d->default_permissions = 1;
--			break;
--
--		case OPT_ALLOW_OTHER:
--			d->allow_other = 1;
--			break;
--
--		case OPT_MAX_READ:
--			if (match_int(&args[0], &value))
--				return 0;
--			d->max_read = value;
--			break;
--
--		case OPT_BLKSIZE:
--			if (!is_bdev || match_int(&args[0], &value))
--				return 0;
--			d->blksize = value;
--			break;
--
--		default:
--			return 0;
--		}
+ 	mangle(m, sb->s_type->name);
+-	if (sb->s_subtype && sb->s_subtype[0]) {
++	if (sb->s_subtype) {
+ 		seq_putc(m, '.');
+ 		mangle(m, sb->s_subtype);
+ 	}
+diff --git a/fs/super.c b/fs/super.c
+index 80b56bc7d2db..e30a4279784c 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1535,11 +1535,6 @@ int vfs_get_tree(struct fs_context *fc)
+ 	sb = fc->root->d_sb;
+ 	WARN_ON(!sb->s_bdi);
+ 
+-	if (fc->subtype && !sb->s_subtype) {
+-		sb->s_subtype = fc->subtype;
+-		fc->subtype = NULL;
 -	}
-+	struct fuse_fs_context *ctx = fc->fs_private;
- 
--	if (!d->fd_present || !d->rootmode_present ||
--	    !d->user_id_present || !d->group_id_present)
--		return 0;
 -
--	return 1;
-+	if (ctx) {
-+		kfree(ctx->subtype);
-+		kfree(ctx);
-+	}
- }
- 
- static int fuse_show_options(struct seq_file *m, struct dentry *root)
-@@ -1075,12 +1083,12 @@ void fuse_dev_free(struct fuse_dev *fud)
- }
- EXPORT_SYMBOL_GPL(fuse_dev_free);
- 
--static int fuse_fill_super(struct super_block *sb, void *data, int silent)
-+static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
- {
-+	struct fuse_fs_context *ctx = fsc->fs_private;
- 	struct fuse_dev *fud;
- 	struct fuse_conn *fc;
- 	struct inode *root;
--	struct fuse_mount_data d;
- 	struct file *file;
- 	struct dentry *root_dentry;
- 	struct fuse_req *init_req;
-@@ -1093,19 +1101,19 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	sb->s_flags &= ~(SB_NOSEC | SB_I_VERSION);
- 
--	if (!parse_fuse_opt(data, &d, is_bdev, sb->s_user_ns))
--		goto err;
--
- 	if (is_bdev) {
- #ifdef CONFIG_BLOCK
- 		err = -EINVAL;
--		if (!sb_set_blocksize(sb, d.blksize))
-+		if (!sb_set_blocksize(sb, ctx->blksize))
- 			goto err;
- #endif
- 	} else {
- 		sb->s_blocksize = PAGE_SIZE;
- 		sb->s_blocksize_bits = PAGE_SHIFT;
- 	}
-+
-+	sb->s_subtype = ctx->subtype;
-+	ctx->subtype = NULL;
- 	sb->s_magic = FUSE_SUPER_MAGIC;
- 	sb->s_op = &fuse_super_operations;
- 	sb->s_xattr = fuse_xattr_handlers;
-@@ -1116,7 +1124,7 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
- 	if (sb->s_user_ns != &init_user_ns)
- 		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
- 
--	file = fget(d.fd);
-+	file = fget(ctx->fd);
- 	err = -EINVAL;
- 	if (!file)
- 		goto err;
-@@ -1159,17 +1167,17 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
- 		fc->dont_mask = 1;
- 	sb->s_flags |= SB_POSIXACL;
- 
--	fc->default_permissions = d.default_permissions;
--	fc->allow_other = d.allow_other;
--	fc->user_id = d.user_id;
--	fc->group_id = d.group_id;
--	fc->max_read = max_t(unsigned, 4096, d.max_read);
-+	fc->default_permissions = ctx->default_permissions;
-+	fc->allow_other = ctx->allow_other;
-+	fc->user_id = ctx->user_id;
-+	fc->group_id = ctx->group_id;
-+	fc->max_read = max_t(unsigned, 4096, ctx->max_read);
- 
- 	/* Used by get_root_inode() */
- 	sb->s_fs_info = fc;
- 
- 	err = -ENOMEM;
--	root = fuse_get_root_inode(sb, d.rootmode);
-+	root = fuse_get_root_inode(sb, ctx->rootmode);
- 	sb->s_d_op = &fuse_root_dentry_operations;
- 	root_dentry = d_make_root(root);
- 	if (!root_dentry)
-@@ -1229,11 +1237,50 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
- 	return err;
- }
- 
--static struct dentry *fuse_mount(struct file_system_type *fs_type,
--		       int flags, const char *dev_name,
--		       void *raw_data)
-+static int fuse_get_tree(struct fs_context *fc)
- {
--	return mount_nodev(fs_type, flags, raw_data, fuse_fill_super);
-+	struct fuse_fs_context *ctx = fc->fs_private;
-+
-+	if (!ctx->fd_present || !ctx->rootmode_present ||
-+	    !ctx->user_id_present || !ctx->group_id_present)
-+		return -EINVAL;
-+
-+#ifdef CONFIG_BLOCK
-+	if (ctx->is_bdev)
-+		return vfs_get_block_super(fc, fuse_fill_super);
-+#endif
-+
-+	return get_tree_nodev(fc, fuse_fill_super);
-+}
-+
-+static const struct fs_context_operations fuse_context_ops = {
-+	.free		= fuse_free_fc,
-+	.parse_param	= fuse_parse_param,
-+	.get_tree	= fuse_get_tree,
-+};
-+
-+/*
-+ * Set up the filesystem mount context.
-+ */
-+static int fuse_init_fs_context(struct fs_context *fc)
-+{
-+	struct fuse_fs_context *ctx;
-+
-+	ctx = kzalloc(sizeof(struct fuse_fs_context), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->max_read = ~0;
-+	ctx->blksize = FUSE_DEFAULT_BLKSIZE;
-+
-+#ifdef CONFIG_BLOCK
-+	if (fc->fs_type == &fuseblk_fs_type)
-+		ctx->is_bdev = true;
-+#endif
-+
-+	fc->fs_private = ctx;
-+	fc->ops = &fuse_context_ops;
-+	return 0;
- }
- 
- static void fuse_sb_destroy(struct super_block *sb)
-@@ -1262,19 +1309,13 @@ static struct file_system_type fuse_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "fuse",
- 	.fs_flags	= FS_HAS_SUBTYPE | FS_USERNS_MOUNT,
--	.mount		= fuse_mount,
-+	.init_fs_context = fuse_init_fs_context,
-+	.parameters	= &fuse_fs_parameters,
- 	.kill_sb	= fuse_kill_sb_anon,
- };
- MODULE_ALIAS_FS("fuse");
- 
- #ifdef CONFIG_BLOCK
--static struct dentry *fuse_mount_blk(struct file_system_type *fs_type,
--			   int flags, const char *dev_name,
--			   void *raw_data)
--{
--	return mount_bdev(fs_type, flags, dev_name, raw_data, fuse_fill_super);
--}
--
- static void fuse_kill_sb_blk(struct super_block *sb)
- {
- 	fuse_sb_destroy(sb);
-@@ -1284,7 +1325,8 @@ static void fuse_kill_sb_blk(struct super_block *sb)
- static struct file_system_type fuseblk_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "fuseblk",
--	.mount		= fuse_mount_blk,
-+	.init_fs_context = fuse_init_fs_context,
-+	.parameters	= &fuse_fs_parameters,
- 	.kill_sb	= fuse_kill_sb_blk,
- 	.fs_flags	= FS_REQUIRES_DEV | FS_HAS_SUBTYPE,
- };
+ 	/*
+ 	 * Write barrier is for super_cache_count(). We place it before setting
+ 	 * SB_BORN as the data dependency between the two functions is the
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index ed5b4349671e..461d37912bed 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -97,7 +97,6 @@ struct fs_context {
+ 	const struct cred	*cred;		/* The mounter's credentials */
+ 	struct fc_log		*log;		/* Logging buffer */
+ 	const char		*source;	/* The source name (eg. dev path) */
+-	const char		*subtype;	/* The subtype to set on the superblock */
+ 	void			*security;	/* Linux S&M options */
+ 	void			*s_fs_info;	/* Proposed s_fs_info */
+ 	fmode_t			bdev_mode;	/* File open mode for bdev */
 -- 
 2.21.0
 
