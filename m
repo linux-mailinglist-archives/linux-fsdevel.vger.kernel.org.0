@@ -2,51 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CDB9A6064
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 07:00:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDACFA6078
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 07:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725956AbfICFA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 01:00:26 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:8030 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725440AbfICFAZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 01:00:25 -0400
-X-IronPort-AV: E=Sophos;i="5.64,461,1559491200"; 
-   d="scan'208";a="74745103"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 03 Sep 2019 13:00:23 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 4CA174CE14E4;
-        Tue,  3 Sep 2019 13:00:20 +0800 (CST)
-Received: from [10.167.225.140] (10.167.225.140) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.439.0; Tue, 3 Sep 2019 13:00:27 +0800
-Subject: Re: [PATCH v3 0/15] Btrfs iomap
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        <linux-fsdevel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
-        <david@fromorbit.com>, <riteshh@linux.ibm.com>
-References: <20190901200836.14959-1-rgoldwyn@suse.de>
- <20190902164331.GE6263@lst.de>
- <4d039e8e-dc35-8092-4ee0-4a2e0f43f233@cn.fujitsu.com>
- <20190903042935.GD5340@magnolia>
-From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-Message-ID: <eedb066b-af6e-0188-9342-f1f2850f8f60@cn.fujitsu.com>
-Date:   Tue, 3 Sep 2019 13:00:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726180AbfICFVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 01:21:54 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:10698 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbfICFVy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 01:21:54 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46MwL728ttz9vBn0;
+        Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=jBFEMAcM; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id z_oZM-nQGOxo; Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46MwL70zsbz9vBmy;
+        Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1567488111; bh=qbuG+RUrs+H+R7AEWaZZdUx62SA2ZhQIuC96dqC+GUI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=jBFEMAcMs2AHYbs/GpdtbDn7S1VrRGQBB7YEJw9TsnpRgS+AtzCpbQ4eSe3jBkhyx
+         Mn/CKCwsDWhlgbLSe0Os7Zs5OnqddxZHdmZB+flZnhK/DFByF7d29SbMSGfWBzi78Y
+         2iEoMt5mUBcFzMS+fAwFb5fuF9OciRdNJ3irQjxA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E63A58B79F;
+        Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id sB_vCzEfMRgO; Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
+Received: from localhost.localdomain (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 213A08B761;
+        Tue,  3 Sep 2019 07:21:50 +0200 (CEST)
+Subject: Re: [PATCH v7 5/6] powerpc/64: Make COMPAT user-selectable disabled
+ on littleendian by default.
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Michal Suchanek <msuchanek@suse.de>, linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Breno Leitao <leitao@debian.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joel Stanley <joel@jms.id.au>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Russell Currey <ruscur@russell.cc>,
+        Diana Craciun <diana.craciun@nxp.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        David Hildenbrand <david@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <cover.1567198491.git.msuchanek@suse.de>
+ <c7c88e88408588fa6fcf858a5ae503b5e2f4ec0b.1567198492.git.msuchanek@suse.de>
+ <87ftlftpy7.fsf@mpe.ellerman.id.au>
+ <20190902130008.GZ31406@gate.crashing.org>
+ <87k1aqs19n.fsf@mpe.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <296c9fce-f38c-cc53-4c1e-306c4dec17bc@c-s.fr>
+Date:   Tue, 3 Sep 2019 05:21:49 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190903042935.GD5340@magnolia>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <87k1aqs19n.fsf@mpe.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.225.140]
-X-yoursite-MailScanner-ID: 4CA174CE14E4.AC634
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
-X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -54,58 +90,47 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 9/3/19 12:29 PM, Darrick J. Wong wrote:
-> On Tue, Sep 03, 2019 at 11:51:24AM +0800, Shiyang Ruan wrote:
->>
->>
->> On 9/3/19 12:43 AM, Christoph Hellwig wrote:
->>> On Sun, Sep 01, 2019 at 03:08:21PM -0500, Goldwyn Rodrigues wrote:
->>>> This is an effort to use iomap for btrfs. This would keep most
->>>> responsibility of page handling during writes in iomap code, hence
->>>> code reduction. For CoW support, changes are needed in iomap code
->>>> to make sure we perform a copy before the write.
->>>> This is in line with the discussion we had during adding dax support in
->>>> btrfs.
+On 09/02/2019 11:53 PM, Michael Ellerman wrote:
+> Segher Boessenkool <segher@kernel.crashing.org> writes:
+>> On Mon, Sep 02, 2019 at 12:03:12PM +1000, Michael Ellerman wrote:
+>>> Michal Suchanek <msuchanek@suse.de> writes:
+>>>> On bigendian ppc64 it is common to have 32bit legacy binaries but much
+>>>> less so on littleendian.
 >>>
->>> This looks pretty good modulo a few comments.
->>>
->>> Can you please convert the XFS code to use your two iomaps for COW
->>> approach as well to validate it?
->>
->> Hi,
->>
->> The XFS part of dax CoW support has been implementing recently.  Please
->> review this[1] if necessary.  It's based on this iomap patchset(the 1st
->> version), and uses the new srcmap.
->>
->> [1]: https://lkml.org/lkml/2019/7/31/449
+>>> I think the toolchain people will tell you that there is no 32-bit
+>>> little endian ABI defined at all, if anything works it's by accident.
+>                  ^
+>                  v2
 > 
-> It sure would be nice to have (a) this patchset of Goldwyn's cleaned up
-> a bit per the review comments and (b) the XFS DAX COW series rebased on
-> that (instead of a month-old submission). ;)
-
-Yes, I think so too.  Just in case Christoph did not notice that.
-
--- 
-Thanks,
-Shiyang Ruan.
+>> There of course is a lot of powerpcle-* support.  The ABI used for it
+>> on linux is the SYSV ABI, just like on BE 32-bit.
 > 
-> --D
+> I was talking about ELFv2, which is 64-bit only. But that was based on
+> me thinking we had a hard assumption in the kernel that ppc64le kernels
+> always expect ELFv2 userland. Looking at the code though I was wrong
+> about that, it looks like we will run little endian ELFv1 binaries,
+> though I don't think anyone is testing it.
 > 
->> -- 
->> Thanks,
->> Shiyang Ruan.
->>>
->>> Also the iomap_file_dirty helper would really benefit from using the
->>> two iomaps, any chance you could look into improving it to use your
->>> new infrastructure?
->>>
->>>
+>> There also is specific powerpcle-linux support in GCC, and in binutils,
+>> too.  Also, config.guess/config.sub supports it.  Half a year ago this
+>> all built fine (no, I don't test it often either).
 >>
+>> I don't think glibc supports it though, so I wonder if anyone builds an
+>> actual system with it?  Maybe busybox or the like?
 >>
+>>> So I think we should not make this selectable, unless someone puts their
+>>> hand up to say they want it and are willing to test it and keep it
+>>> working.
 >>
+>> What about actual 32-bit LE systems?  Does anyone still use those?
 > 
+> Not that I've ever heard of.
 > 
 
+We dropped support from 32-bit LE at least with a1f3ae3fe8a1 
+("powerpc/32: Use stmw/lmw for registers save/restore in asm").
 
+Discussion about it can be found at 
+https://patchwork.ozlabs.org/patch/899465/
 
+Christophe
