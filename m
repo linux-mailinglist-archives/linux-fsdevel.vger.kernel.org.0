@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD3C8A7372
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 21:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 813E1A7387
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 21:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbfICTPb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 15:15:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53954 "EHLO mx1.suse.de"
+        id S1726090AbfICTSW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 15:18:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54784 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725882AbfICTPb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 15:15:31 -0400
+        id S1725914AbfICTSW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 15:18:22 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 363C0AF10;
-        Tue,  3 Sep 2019 19:15:30 +0000 (UTC)
-Date:   Tue, 3 Sep 2019 21:15:28 +0200
+        by mx1.suse.de (Postfix) with ESMTP id AFCC2AF10;
+        Tue,  3 Sep 2019 19:18:20 +0000 (UTC)
+Date:   Tue, 3 Sep 2019 21:18:19 +0200
 From:   Michal Hocko <mhocko@kernel.org>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     William Kucharski <william.kucharski@oracle.com>,
@@ -28,71 +28,72 @@ Cc:     William Kucharski <william.kucharski@oracle.com>,
         Chad Mynhier <chad.mynhier@oracle.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Johannes Weiner <jweiner@fb.com>
-Subject: Re: [PATCH v5 2/2] mm,thp: Add experimental config option
- RO_EXEC_FILEMAP_HUGE_FAULT_THP
-Message-ID: <20190903191528.GC14028@dhcp22.suse.cz>
+Subject: Re: [PATCH v5 1/2] mm: Allow the page cache to allocate large pages
+Message-ID: <20190903191819.GD14028@dhcp22.suse.cz>
 References: <20190902092341.26712-1-william.kucharski@oracle.com>
- <20190902092341.26712-3-william.kucharski@oracle.com>
- <20190903121424.GT14028@dhcp22.suse.cz>
- <20190903122208.GE29434@bombadil.infradead.org>
- <20190903125150.GW14028@dhcp22.suse.cz>
- <20190903151015.GF29434@bombadil.infradead.org>
+ <20190902092341.26712-2-william.kucharski@oracle.com>
+ <20190903115748.GS14028@dhcp22.suse.cz>
+ <20190903121155.GD29434@bombadil.infradead.org>
+ <20190903121952.GU14028@dhcp22.suse.cz>
+ <20190903162831.GI29434@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190903151015.GF29434@bombadil.infradead.org>
+In-Reply-To: <20190903162831.GI29434@bombadil.infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 03-09-19 08:10:15, Matthew Wilcox wrote:
-> On Tue, Sep 03, 2019 at 02:51:50PM +0200, Michal Hocko wrote:
-> > On Tue 03-09-19 05:22:08, Matthew Wilcox wrote:
-> > > On Tue, Sep 03, 2019 at 02:14:24PM +0200, Michal Hocko wrote:
-> > > > On Mon 02-09-19 03:23:41, William Kucharski wrote:
-> > > > > Add filemap_huge_fault() to attempt to satisfy page
-> > > > > faults on memory-mapped read-only text pages using THP when possible.
+On Tue 03-09-19 09:28:31, Matthew Wilcox wrote:
+> On Tue, Sep 03, 2019 at 02:19:52PM +0200, Michal Hocko wrote:
+> > On Tue 03-09-19 05:11:55, Matthew Wilcox wrote:
+> > > On Tue, Sep 03, 2019 at 01:57:48PM +0200, Michal Hocko wrote:
+> > > > On Mon 02-09-19 03:23:40, William Kucharski wrote:
+> > > > > Add an 'order' argument to __page_cache_alloc() and
+> > > > > do_read_cache_page(). Ensure the allocated pages are compound pages.
 > > > > 
-> > > > This deserves much more description of how the thing is implemented and
-> > > > expected to work. For one thing it is not really clear to me why you
-> > > > need CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP at all. You need a support
-> > > > from the filesystem anyway. So who is going to enable/disable this
-> > > > config?
+> > > > Why do we need to touch all the existing callers and change them to use
+> > > > order 0 when none is actually converted to a different order? This just
+> > > > seem to add a lot of code churn without a good reason. If anything I
+> > > > would simply add __page_cache_alloc_order and make __page_cache_alloc
+> > > > call it with order 0 argument.
 > > > 
-> > > There are definitely situations in which enabling this code will crash
-> > > the kernel.  But we want to get filesystems to a point where they can
-> > > start working on their support for large pages.  So our workaround is
-> > > to try to get the core pieces merged under a CONFIG_I_KNOW_WHAT_IM_DOING
-> > > flag and let people play with it.  Then continue to work on the core
-> > > to eliminate those places that are broken.
+> > > Patch 2/2 uses a non-zero order.
 > > 
-> > I am not sure I understand. Each fs has to opt in to the feature
-> > anyway. If it doesn't then there should be no risk of regression, right?
-> > I do not expect any fs would rush an implementation in while not being
-> > sure about the correctness. So how exactly does a config option help
-> > here.
+> > It is a new caller and it can use a new function right?
+> > 
+> > > I agree it's a lot of churn without
+> > > good reason; that's why I tried to add GFP_ORDER flags a few months ago.
+> > > Unfortunately, you didn't like that approach either.
+> > 
+> > Is there any future plan that all/most __page_cache_alloc will get a
+> > non-zero order argument?
 > 
-> Filesystems won't see large pages unless they've opted into them.
-> But there's a huge amount of page-cache work that needs to get done
-> before this can be enabled by default.  For example, truncate() won't
-> work properly.
-> 
-> Rather than try to do all the page cache work upfront, then wait for the
-> filesystems to catch up, we want to get some basics merged.  Since we've
-> been talking about this for so long without any movement in the kernel
-> towards actual support, this felt like a good way to go.
-> 
-> We could, of course, develop the entire thing out of tree, but that's
-> likely to lead to pain and anguish.
+> I'm not sure about "most".  It will certainly become more common, as
+> far as I can tell.
 
-Then I would suggest mentioning all this in the changelog so that the
-overall intention is clear. It is also up to you fs developers to find a
-consensus on how to move forward. I have brought that up mostly because
-I really hate seeing new config options added due to shortage of
-confidence in the code. That really smells like working around standard
-code quality inclusion process.
+I would personally still go with  __page_cache_alloc_order way, but this
+is up to you and other fs people what suits best. I was just surprised
+to see a lot of code churn when it was not really used in the second
+patch. That's why I brought it up. 
+
+> > > > Also is it so much to ask callers to provide __GFP_COMP explicitly?
+> > > 
+> > > Yes, it's an unreasonable burden on the callers.
+> > 
+> > Care to exaplain why? __GFP_COMP tends to be used in the kernel quite
+> > extensively.
+> 
+> Most of the places which call this function get their gfp_t from
+> mapping->gfp_mask.  If we only want to allocate a single page, we
+> must not set __GFP_COMP.  If we want to allocate a large page, we must
+> set __GFP_COMP.  Rather than require individual filesystems to concern
+> themselves with this wart of the GFP interface, we can solve it in the
+> page cache.
+
+Fair enough.
 
 -- 
 Michal Hocko
