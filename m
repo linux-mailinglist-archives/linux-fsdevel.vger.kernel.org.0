@@ -2,135 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDACFA6078
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 07:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553AAA607B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Sep 2019 07:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbfICFVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 01:21:54 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:10698 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbfICFVy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 01:21:54 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46MwL728ttz9vBn0;
-        Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=jBFEMAcM; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id z_oZM-nQGOxo; Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46MwL70zsbz9vBmy;
-        Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1567488111; bh=qbuG+RUrs+H+R7AEWaZZdUx62SA2ZhQIuC96dqC+GUI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jBFEMAcMs2AHYbs/GpdtbDn7S1VrRGQBB7YEJw9TsnpRgS+AtzCpbQ4eSe3jBkhyx
-         Mn/CKCwsDWhlgbLSe0Os7Zs5OnqddxZHdmZB+flZnhK/DFByF7d29SbMSGfWBzi78Y
-         2iEoMt5mUBcFzMS+fAwFb5fuF9OciRdNJ3irQjxA=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E63A58B79F;
-        Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id sB_vCzEfMRgO; Tue,  3 Sep 2019 07:21:51 +0200 (CEST)
-Received: from localhost.localdomain (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 213A08B761;
-        Tue,  3 Sep 2019 07:21:50 +0200 (CEST)
-Subject: Re: [PATCH v7 5/6] powerpc/64: Make COMPAT user-selectable disabled
- on littleendian by default.
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Michal Suchanek <msuchanek@suse.de>, linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Breno Leitao <leitao@debian.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Stanley <joel@jms.id.au>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Russell Currey <ruscur@russell.cc>,
-        Diana Craciun <diana.craciun@nxp.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Hildenbrand <david@redhat.com>,
-        Allison Randal <allison@lohutok.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <cover.1567198491.git.msuchanek@suse.de>
- <c7c88e88408588fa6fcf858a5ae503b5e2f4ec0b.1567198492.git.msuchanek@suse.de>
- <87ftlftpy7.fsf@mpe.ellerman.id.au>
- <20190902130008.GZ31406@gate.crashing.org>
- <87k1aqs19n.fsf@mpe.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <296c9fce-f38c-cc53-4c1e-306c4dec17bc@c-s.fr>
-Date:   Tue, 3 Sep 2019 05:21:49 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726481AbfICFWd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 01:22:33 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45841 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbfICFWd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 01:22:33 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y72so2451649pfb.12;
+        Mon, 02 Sep 2019 22:22:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PG4gs15gIZ4A13AM7KKBtxfHSobNNxID1O7jVrr704s=;
+        b=Dnowmga+8FytPRC2oXActJjrzdSdzqoiEHPYcxadH83Lyo7BNsdvs7VtAK5N+Y5HTh
+         9SwRvLqy23QG9Gf+njtCCn6zJWNccBpObYcunOGxLPu5C2TFX6wWHqrn8BGl810LfPad
+         5oe24tdoOsB68DmHjdE0swC/HPEI4bbAIxSCjFBfpRj4yR890BYNIccWZ+qUQ2k/BTfx
+         nReAInNBxiVFLgEoakH66wVVImN/uTQf3wPlEqQBkiOqun2dAp2uuNiF2tsDeXakWNaZ
+         BsiZbKDprfINyL2+Jf0Lg2a/SODVYKj6vE0zhBZrJv7ZpLY47/D3uPLq7o2w3kZFho7W
+         kMoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PG4gs15gIZ4A13AM7KKBtxfHSobNNxID1O7jVrr704s=;
+        b=cjFXKDSjRwh6abEXkelofoCetvaJxQ9lrBsUjbafV1r4atEHD002VS+7ACKNI+pCHS
+         TJ8CjokFWaugwfjdAVIv/FVkZauABYQjQFk+P6YlmbyDOEUXWEdLN+yMidBJ7CqKkLE4
+         Qfiz4s0uBkaGmE/1TJGywxDBeAPiDvhgrwXUC72LkUcX70qktjtCgF+lI3VmfHje5B/N
+         iJMwB4NnCTgjpS+aEcwUdCKcaFu3VDMYe/C3S0+2sQ76peQGINnlep+/cOenxZEYAQQU
+         AE3SBeKwaRyWI87qYx+6hwtS3EJDXTbzNfUmPfPUn2C9tVPviXtH6ya+IHtWij/EAlyO
+         ah5w==
+X-Gm-Message-State: APjAAAVPB6qvWBhY6m1f+WVNVzim8XOO7b4cJyHD2giBm7r7Ywep8TTj
+        fBftOJnJFESIVW2sQExQhneXctVPHyIyA8+p4PLCIJgM
+X-Google-Smtp-Source: APXvYqyHperALgm8lL5IUNIg8lI94/bFS4z+MWn1R8zmDLyouND7eyQlZJ7RsDFiVza98N/nXlfou84UJx/41OzfdbU=
+X-Received: by 2002:a63:211c:: with SMTP id h28mr28193617pgh.438.1567488152793;
+ Mon, 02 Sep 2019 22:22:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87k1aqs19n.fsf@mpe.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw>
+In-Reply-To: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw>
+From:   Dexuan-Linux Cui <dexuan.linux@gmail.com>
+Date:   Mon, 2 Sep 2019 22:22:21 -0700
+Message-ID: <CAA42JLZySdadoL5LAhofXZx3T41A9hm=_izyrRs0MHbSbMf3MA@mail.gmail.com>
+Subject: Re: "fs/namei.c: keep track of nd->root refcount status" causes boot panic
+To:     Qian Cai <cai@lca.pw>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dexuan Cui <decui@microsoft.com>, v-lide@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Sep 2, 2019 at 9:22 PM Qian Cai <cai@lca.pw> wrote:
+>
+> The linux-next commit "fs/namei.c: keep track of nd->root refcount status=
+=E2=80=9D [1] causes boot panic on all
+> architectures here on today=E2=80=99s linux-next (0902). Reverted it will=
+ fix the issue.
 
+I believe I'm seeing the same issue with next-20190902 in a Linux VM
+running on Hyper-V (next-20190830 is good).
 
-On 09/02/2019 11:53 PM, Michael Ellerman wrote:
-> Segher Boessenkool <segher@kernel.crashing.org> writes:
->> On Mon, Sep 02, 2019 at 12:03:12PM +1000, Michael Ellerman wrote:
->>> Michal Suchanek <msuchanek@suse.de> writes:
->>>> On bigendian ppc64 it is common to have 32bit legacy binaries but much
->>>> less so on littleendian.
->>>
->>> I think the toolchain people will tell you that there is no 32-bit
->>> little endian ABI defined at all, if anything works it's by accident.
->                  ^
->                  v2
-> 
->> There of course is a lot of powerpcle-* support.  The ABI used for it
->> on linux is the SYSV ABI, just like on BE 32-bit.
-> 
-> I was talking about ELFv2, which is 64-bit only. But that was based on
-> me thinking we had a hard assumption in the kernel that ppc64le kernels
-> always expect ELFv2 userland. Looking at the code though I was wrong
-> about that, it looks like we will run little endian ELFv1 binaries,
-> though I don't think anyone is testing it.
-> 
->> There also is specific powerpcle-linux support in GCC, and in binutils,
->> too.  Also, config.guess/config.sub supports it.  Half a year ago this
->> all built fine (no, I don't test it often either).
->>
->> I don't think glibc supports it though, so I wonder if anyone builds an
->> actual system with it?  Maybe busybox or the like?
->>
->>> So I think we should not make this selectable, unless someone puts their
->>> hand up to say they want it and are willing to test it and keep it
->>> working.
->>
->> What about actual 32-bit LE systems?  Does anyone still use those?
-> 
-> Not that I've ever heard of.
-> 
+git-bisect points to the same commit in linux-next:
+    e013ec23b823 ("fs/namei.c: keep track of nd->root refcount status")
 
-We dropped support from 32-bit LE at least with a1f3ae3fe8a1 
-("powerpc/32: Use stmw/lmw for registers save/restore in asm").
+I can reproduce the issue every time I reboot the system.
 
-Discussion about it can be found at 
-https://patchwork.ozlabs.org/patch/899465/
-
-Christophe
+Thanks,
+Dexuan
