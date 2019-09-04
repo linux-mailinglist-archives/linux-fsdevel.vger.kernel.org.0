@@ -2,114 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9AF4A9659
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E6DA9669
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730453AbfIDWZw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 18:25:52 -0400
-Received: from mga05.intel.com ([192.55.52.43]:12586 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbfIDWZw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 18:25:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 15:25:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,468,1559545200"; 
-   d="scan'208";a="185252801"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga003.jf.intel.com with ESMTP; 04 Sep 2019 15:25:50 -0700
-Date:   Wed, 4 Sep 2019 15:25:50 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
- file object
-Message-ID: <20190904222549.GC31319@iweiny-DESK2.sc.intel.com>
-References: <20190809225833.6657-17-ira.weiny@intel.com>
- <20190812130039.GD24457@ziepe.ca>
- <20190812172826.GA19746@iweiny-DESK2.sc.intel.com>
- <20190812175615.GI24457@ziepe.ca>
- <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
- <20190813114842.GB29508@ziepe.ca>
- <20190813174142.GB11882@iweiny-DESK2.sc.intel.com>
- <20190813180022.GF29508@ziepe.ca>
- <20190813203858.GA12695@iweiny-DESK2.sc.intel.com>
- <20190814122308.GB13770@ziepe.ca>
+        id S1730528AbfIDW2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 18:28:25 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36205 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727562AbfIDW2Z (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 18:28:25 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x80so302305lff.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 15:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N2MMR8Y9nF2WKJ/GwXu7Orie3221sa5b9mT2pSMScP0=;
+        b=fJ3Uw5l+iJ6RQgyGxaGpdfmIjWnE5F6x31rjDuCqfKxB8VAjbqJtmAWjWR9quPy177
+         kSc2B1tiYJnm6N1rDryl38O0XT+KrCxDR5lxJB7HlM5pTNWW6oATfW3XbXy7OWukzkZ2
+         g/kQFWidQUGLu16LN7J3E3MLC7X6Q8WHam9qY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N2MMR8Y9nF2WKJ/GwXu7Orie3221sa5b9mT2pSMScP0=;
+        b=VlvDtr7bDFLZXuqP6ywG/OBZAztrmKNKTCh7rZTM+TGeZhDpn214MdP8DMHxm6wkU1
+         TLt6JftEdyakElJ1JCzdZPP7BsSCtZOzX/y00XTkNKWuBBzpNhL5EkP1Eqoqg0nlnfdl
+         UjZo7SVMJCUfGevGUB+AWGqFzaBTIQs9GRcMN9PU9v0jC70xdh6UW8AkY7UftmHOVJEq
+         4arzUud/juWgtca2Bcx0SweJZ7ZTQbW18R6+Ub/v0Ypa7dYhOqdq8MoR5gMzLJ8Ad4kH
+         0+IOY5TZGA4jFPTpKuQGCSqnQbIUe029IP+fPzO35YTdyXzLEojo4BQJdMiaxKITI5yg
+         23pA==
+X-Gm-Message-State: APjAAAXo20owngkfImVYoBrCoa68DWEKDcaLuIi61ozj112O7xZ0+1hE
+        1OWbwWRNOZ2x5460fQOcAZsnHWQ3v9s=
+X-Google-Smtp-Source: APXvYqywLR9lwesTzrGFjBCgQ4dR3SmEICZK5o+Eu7495U02kvo/EpCiTR7D05eKJvO10GemsIAY4Q==
+X-Received: by 2002:ac2:5229:: with SMTP id i9mr229470lfl.161.1567636103070;
+        Wed, 04 Sep 2019 15:28:23 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id i6sm38825lfc.37.2019.09.04.15.28.22
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2019 15:28:22 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id d5so293661lja.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 15:28:22 -0700 (PDT)
+X-Received: by 2002:a05:651c:1104:: with SMTP id d4mr7069ljo.90.1567636101831;
+ Wed, 04 Sep 2019 15:28:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814122308.GB13770@ziepe.ca>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 4 Sep 2019 15:28:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
+Message-ID: <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
+Subject: Re: [PATCH 00/11] Keyrings, Block and USB notifications [ver #8]
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 09:23:08AM -0300, Jason Gunthorpe wrote:
-> On Tue, Aug 13, 2019 at 01:38:59PM -0700, Ira Weiny wrote:
-> > On Tue, Aug 13, 2019 at 03:00:22PM -0300, Jason Gunthorpe wrote:
-> > > On Tue, Aug 13, 2019 at 10:41:42AM -0700, Ira Weiny wrote:
-> > > 
-> > > > And I was pretty sure uverbs_destroy_ufile_hw() would take care of (or ensure
-> > > > that some other thread is) destroying all the MR's we have associated with this
-> > > > FD.
-> > > 
-> > > fd's can't be revoked, so destroy_ufile_hw() can't touch them. It
-> > > deletes any underlying HW resources, but the FD persists.
-> > 
-> > I misspoke.  I should have said associated with this "context".  And of course
-> > uverbs_destroy_ufile_hw() does not touch the FD.  What I mean is that the
-> > struct file which had file_pins hanging off of it would be getting its file
-> > pins destroyed by uverbs_destroy_ufile_hw().  Therefore we don't need the FD
-> > after uverbs_destroy_ufile_hw() is done.
-> > 
-> > But since it does not block it may be that the struct file is gone before the
-> > MR is actually destroyed.  Which means I think the GUP code would blow up in
-> > that case...  :-(
-> 
-> Oh, yes, that is true, you also can't rely on the struct file living
-> longer than the HW objects either, that isn't how the lifetime model
-> works.
+On Wed, Sep 4, 2019 at 3:15 PM David Howells <dhowells@redhat.com> wrote:
+>
+>
+> Here's a set of patches to add a general notification queue concept and to
+> add event sources such as:
 
-Reviewing all these old threads...  And this made me think.  While the HW
-objects may out live the struct file.
+Why?
 
-They _are_ going away in a finite amount of time right?  It is not like they
-could be held forever right?
+I'm just going to be very blunt about this, and say that there is no
+way I can merge any of this *ever*, unless other people stand up and
+say that
 
-Ira
+ (a) they'll use it
 
-> 
-> If GUP consumes the struct file it must allow the struct file to be
-> deleted before the GUP pin is released.
-> 
-> > The drivers could provide some generic object (in RDMA this could be the
-> > uverbs_attr_bundle) which represents their "context".
-> 
-> For RDMA the obvious context is the struct ib_mr *
-> 
-> > But for the procfs interface, that context then needs to be associated with any
-> > file which points to it...  For RDMA, or any other "FD based pin mechanism", it
-> > would be up to the driver to "install" a procfs handler into any struct file
-> > which _may_ point to this context.  (before _or_ after memory pins).
-> 
-> Is this all just for debugging? Seems like a lot of complication just
-> to print a string
-> 
-> Generally, I think you'd be better to associate things with the
-> mm_struct not some struct file... The whole design is simpler as GUP
-> already has the mm_struct.
-> 
-> Jason
+and
+
+ (b) they'll actively develop it and participate in testing and coding
+
+Because I'm simply not willing to have the same situation that
+happened with the keyring ACL stuff this merge window happen with some
+other random feature some day in the future.
+
+That change never had anybody else that showed any interest in it, it
+was never really clear why it was made, and it broke booting for me.
+
+That had better never happen again, and I'm tired of seeing
+unexplained random changes to key handling that have one single author
+and nobody else involved.
+
+And there is this whole long cover letter to explain what the code
+does, what you can do with it, and what the changes have been in
+revisions, but AT NO POINT does it explain what the point of the
+feature is at all.
+
+Why would we want this, and what is the advantage over udev etc that
+already has event handling for things like block events and USB
+events?
+
+What's the advantage of another random character device, and what's
+the use? Who is asking for this, and who would use it? Why are keys
+special, and why should you be able to track events on keys in the
+first place? Who is co-developing and testing this, and what's the
+point?
+
+Fundamentally, I'm not even interested in seeing "Reviewed-by". New
+features need actual users and explanations for what they are, over
+and beyond the developer itself.
+
+IOW, you need to have an outside person step in and say "yes, I need
+this". No more of these "David makes random changes without any
+external input" series.
+
+                 Linus
