@@ -2,150 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E9FA783A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 03:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D8DCA7846
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 03:56:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbfIDBxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 21:53:07 -0400
-Received: from mail-eopbgr1410137.outbound.protection.outlook.com ([40.107.141.137]:16910
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726589AbfIDBxG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 21:53:06 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Zey7bZpPF3UheO98b+vAxYFGu6HtgjdzaHR5j7uL875orsSTxin/UvZWnX6e0SaQ2gGV6jTkkARPg0jZgsWU0qwwOtxWChxJ7Ot5JnZCkmhJYPbUmX+Fm9BRYdg0vV4nCNtsmwO2T5SLl2d9vF02b2Zn3OztRFx4HQf9d1OuyQaplj9kCIo87/UGV04H7XVigLTPU7GElT6sR5ZjI1ztFzgw1CwNMQBcYO0nz0ex/WsBylxb5ag6wZFKO717cTWfiN7E+kvg1FTWn1bG4cywD92okd1xjLi7KTN2bhbiVRYvqyu2WBoXPrVbrIMI4G0Lf+XzH60NtdrkbZl8IhkrFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HuKBieB+g1++pW4pKO9wNGvSZ4A91H7c7FnFMzErAVY=;
- b=FSKtHVQXYY7Mv07vAmTtHRcDV9EqCf7zCG8Th71NlIylN2Gb2S8UaJYTulNU6DRBzRdXxzXVuu3esIwQt9ogqWTe8xdfsE9IVYHpk3etNZFAuiY0SGBuSX2peC6sF+4DwTtwdwe+oTXWgkWuVDlC8l2Bxp5SdJBGNqM+HYSc/LGM86E5HOWZm9CreN8ccmNlL/6gCLWhl7K3CiHJbU+ZRam68CPX+SVbES/yTSU2wuCJrTEjLW1g6o0ySW2wGwltpDB9/1dQIZcwsavT23SlpBT90q4D3ns5dQZ8cr4UiziW6JQlW8DYiDlBZc08xiT4htLgIG7LYu5Vop4t1ZMs1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HuKBieB+g1++pW4pKO9wNGvSZ4A91H7c7FnFMzErAVY=;
- b=kVugVezUdA0xmZSMfGoRRVUGubSklSBD73Ww9nmFceN7iWOoLJPsp1xgU78E3UDhbX2K4yFs2OO2sR9CbIWZBgmPAhEHCEr8GkJNlF56h12usGSuFKN7fs7g+XrQ72yKxNJXFrehhtBS6cwIaolE1mQMjuO/biXXaxvbnWvFp+M=
-Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com (20.179.175.203) by
- TYAPR01MB4624.jpnprd01.prod.outlook.com (20.179.174.206) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.21; Wed, 4 Sep 2019 01:53:02 +0000
-Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com
- ([fe80::6564:f61f:f179:facf]) by TYAPR01MB4544.jpnprd01.prod.outlook.com
- ([fe80::6564:f61f:f179:facf%5]) with mapi id 15.20.2220.022; Wed, 4 Sep 2019
- 01:53:02 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     David Howells <dhowells@redhat.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
-        "raven@themaw.net" <raven@themaw.net>,
-        Christian Brauner <christian@brauner.io>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 08/11] usb: Add USB subsystem notifications [ver #7]
-Thread-Topic: [PATCH 08/11] usb: Add USB subsystem notifications [ver #7]
-Thread-Index: AQHVXzsMLREEIlZGOEClLfV6eehsdKcZpnywgAARagCAARAuwA==
-Date:   Wed, 4 Sep 2019 01:53:01 +0000
-Message-ID: <TYAPR01MB45441054C3956CCA7BBD80CBD8B80@TYAPR01MB4544.jpnprd01.prod.outlook.com>
-References: <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk>
- <156717350329.2204.7056537095039252263.stgit@warthog.procyon.org.uk>
- <TYAPR01MB4544829484474FC61E850F32D8B90@TYAPR01MB4544.jpnprd01.prod.outlook.com>
- <20190903093720.GD12325@kroah.com>
-In-Reply-To: <20190903093720.GD12325@kroah.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [150.249.235.54]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5807f942-2c90-4679-2844-08d730da9ec9
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:TYAPR01MB4624;
-x-ms-traffictypediagnostic: TYAPR01MB4624:
-x-microsoft-antispam-prvs: <TYAPR01MB4624B79926458D8E0323E6ECD8B80@TYAPR01MB4624.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0150F3F97D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(4636009)(396003)(376002)(366004)(136003)(346002)(39860400002)(189003)(51914003)(199004)(66446008)(76116006)(6116002)(76176011)(81166006)(99286004)(6436002)(7416002)(8936002)(6246003)(64756008)(478600001)(54906003)(66476007)(66946007)(81156014)(9686003)(3846002)(66556008)(71190400001)(14444005)(71200400001)(4326008)(86362001)(53936002)(55016002)(256004)(229853002)(74316002)(476003)(14454004)(486006)(6506007)(5660300002)(102836004)(2906002)(6916009)(11346002)(52536014)(26005)(446003)(305945005)(186003)(7736002)(33656002)(316002)(7696005)(25786009)(8676002)(66066001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB4624;H:TYAPR01MB4544.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: uNmXCM2YWDvC1x/S4vmwiutzGkD8n4K4kmO3b4qBnRSwqvl1qYxNkBKRHhpRnzU+Ut3PKzJA8+unUbE4oqJT4d+QEf79M1W6C+gjk8CuviqilfCxbC+Q926b0sQIWPcdlzHcrgfjiLUu6RR61KNw1cF0i/RT76lapNzp4kmeDCCYs8koMLUmAkthY8X1lcKSR6JvvhOfHpkQX/iuYJ2T4pPtlMCyQF54Z/UEA9D3wRJj3wXnF/mcwSNkJmq24ULxdi6CBXmoO5adSIXEMYnxump7oKAE1GjKO8aGXcdSZXGYTT1Gq4HQRl1nei+fFWWMZJNPi4zEi+LfcxrV+kyUM2ywYCkcprmoIOwPY9r4n7P3AnLxfNctW/5ICbq5KR2LSat2pcyRqd3LcPGjS3qggzcaNOJ0cs43vl76bfrSeMM=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727168AbfIDB45 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 21:56:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53468 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726009AbfIDB45 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 21:56:57 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BB49E8980F8;
+        Wed,  4 Sep 2019 01:56:56 +0000 (UTC)
+Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 327A319C4F;
+        Wed,  4 Sep 2019 01:56:55 +0000 (UTC)
+Date:   Wed, 4 Sep 2019 10:03:57 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     =?gb2312?B?0vy9o7rn?= <yin-jianhong@163.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] xfsprogs: io/copy_range: cover corner case (fd_in ==
+ fd_out)
+Message-ID: <20190904020357.GW7239@dhcp-12-102.nay.redhat.com>
+References: <20190903105632.11667-1-yin-jianhong@163.com>
+ <20190903115943.GU7239@dhcp-12-102.nay.redhat.com>
+ <20190903131928.GV7239@dhcp-12-102.nay.redhat.com>
+ <7689497e.d24e.16cf7f750d6.Coremail.yin-jianhong@163.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5807f942-2c90-4679-2844-08d730da9ec9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2019 01:53:02.0192
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QgwGWGDHxAjp04N98FrcyX+g/u6VGoCfySVFCbZXeJ/ur22VorZxVX6lvxrSletlflzscrkcvb0VeghSPE7YBc2FZZl6G81ig3b7CA1m79cuTxIuAdnmaLmWX0yLQcnb
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB4624
+Content-Type: text/plain; charset=gb2312
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7689497e.d24e.16cf7f750d6.Coremail.yin-jianhong@163.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Wed, 04 Sep 2019 01:56:56 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Greg,
+On Wed, Sep 04, 2019 at 12:31:16AM +0800, Òü½£ºç wrote:
+> We need cover the scenario that fd_in == fd_out
+> not just same path.
 
-> From: Greg Kroah-Hartman, Sent: Tuesday, September 3, 2019 6:37 PM
-<snip>
-> > > +void post_usb_bus_notification(const struct usb_bus *ubus,
+Please reply to mail list, not 'me' only, to get more review:)
+
+The patch which you're trying to cover is commit 9ab70ca653 as below[1].
+From the code, I really doubt if you need same `struct file`, looks like
+you need same `struct inode`.
+
+Have you tried to test on same inode but not same 'fd'? I'm not a CIFS
+expert, can CIFS have same file with different inode?
+
+Thanks,
+Zorro
+
+[1]
+commit 9ab70ca653307771589e1414102c552d8dbdbbef
+Author: Kovtunenko Oleksandr <alexander198961@gmail.com>
+Date:   Tue May 14 05:52:34 2019 +0000
+
+    Fixed https://bugzilla.kernel.org/show_bug.cgi?id=202935 allow write on the same file
+    
+    Copychunk allows source and target to be on the same file.
+    For details on restrictions see MS-SMB2 3.3.5.15.6
+    
+    Signed-off-by: Kovtunenko Oleksandr <alexander198961@gmail.com>
+    Signed-off-by: Steve French <stfrench@microsoft.com>
+
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index b1a5fcfa3ce1..d0cb042732cb 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1070,11 +1070,6 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+ 
+        cifs_dbg(FYI, "copychunk range\n");
+ 
+-       if (src_inode == target_inode) {
+-               rc = -EINVAL;
+-               goto out;
+-       }
+-
+        if (!src_file->private_data || !dst_file->private_data) {
+                rc = -EBADF;
+                cifs_dbg(VFS, "missing cifsFileInfo on copy range src file\n");
+
+> 
+> #Did you read the summary and commit log?
+> 
+> 
+> | |
+> Òü½£ºç
+> |
+> |
+> ÓÊÏä£ºyin-jianhong@163.com
+> |
+> 
+> Ç©ÃûÓÉ ÍøÒ×ÓÊÏä´óÊ¦ ¶¨ÖÆ
+> 
+> On 09/03/2019 21:19, Zorro Lang wrote:
+> On Tue, Sep 03, 2019 at 07:59:43PM +0800, Zorro Lang wrote:
+> > On Tue, Sep 03, 2019 at 06:56:32PM +0800, Jianhong.Yin wrote:
+> > > Related bug:
+> > >   copy_file_range return "Invalid argument" when copy in the same file
+> > >   https://bugzilla.kernel.org/show_bug.cgi?id=202935
+> > >
+> > > if argument of option -f is "-", use current file->fd as fd_in
+> > >
+> > > Usage:
+> > >   xfs_io -c 'copy_range -f -' some_file
+> > >
+> > > Signed-off-by: Jianhong Yin <yin-jianhong@163.com>
+> > > ---
 > >
-> > This function's argument is struct usb_bus *, but ...
+> > Hi,
 > >
-> > > +			       enum usb_notification_type subtype, u32 error)
-> > > +{
-> > > +	post_usb_notification(ubus->bus_name, subtype, error);
-> > > +}
-> > > +#endif
-> > > +
-> > >  static int usbdev_notify(struct notifier_block *self,
-> > >  			       unsigned long action, void *dev)
-> > >  {
-> > >  	switch (action) {
-> > >  	case USB_DEVICE_ADD:
-> > > +		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_ADD, 0);
-> > >  		break;
-> > >  	case USB_DEVICE_REMOVE:
-> > > +		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_REMOVE, 0);
-> > > +		usbdev_remove(dev);
-> > > +		break;
-> > > +	case USB_BUS_ADD:
-> > > +		post_usb_bus_notification(dev, NOTIFY_USB_BUS_ADD, 0);
-> > > +		break;
-> > > +	case USB_BUS_REMOVE:
-> > > +		post_usb_bus_notification(dev, NOTIFY_USB_BUS_REMOVE, 0);
-> > >  		usbdev_remove(dev);
+> > Actually, I'm thinking about if you need same 'fd' or same file path?
+> > If you just need same file path, I think
 > >
-> > this function calls usbdev_remove() with incorrect argument if the acti=
-on
-> > is USB_BUS_REMOVE. So, this seems to cause the following issue [1] on
-> > my environment (R-Car H3 / r8a7795 on next-20190902) [2]. However, I ha=
-ve
-> > no idea how to fix the issue, so I report this issue at the first step.
->=20
-> As a few of us just discussed this on IRC, these bus notifiers should
-> probably be dropped as these are the incorrect structure type as you
-> found out.  Thanks for the report.
-
-Thank you for the discussion. I got it.
-
-Best regards,
-Yoshihiro Shimoda
-
-> greg k-h
+> >   # xfs_io -c "copy_range testfile" testfile
+> >
+> > already can help that. The only one problem stop you doing that is
+> > "copy_dst_truncate()".
+> >
+> > If all above I suppose is right, we can turn to talk about if that
+> > copy_dst_truncate() is necessary, or how can we skip it.
+> 
+> I just checked, the copy_dst_truncate() is only called when:
+> 
+>  if (src == 0 && dst == 0 && len == 0) {
+> 
+> So if you can give your reproducer a "length"(or offset), likes:
+> 
+>  # xfs_io -c "copy_range -l 64k testfile" testfile
+> 
+> You can avoid the copy_dst_truncate() too.
+> 
+> Is that helpful?
+> 
+> Thanks,
+> Zorro
+> 
+> >
+> > Thanks,
+> > Zorro
+> >
+> > >  io/copy_file_range.c | 27 ++++++++++++++++++---------
+> > >  1 file changed, 18 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/io/copy_file_range.c b/io/copy_file_range.c
+> > > index b7b9fd88..2dde8a31 100644
+> > > --- a/io/copy_file_range.c
+> > > +++ b/io/copy_file_range.c
+> > > @@ -28,6 +28,7 @@ copy_range_help(void)
+> > >                            at position 0\n\
+> > >   'copy_range -f 2' - copies all bytes from open file 2 into the current open file\n\
+> > >                            at position 0\n\
+> > > + 'copy_range -f -' - copies all bytes from current open file append the current open file\n\
+> > >  "));
+> > >  }
+> > >  
+> > > @@ -114,11 +115,15 @@ copy_range_f(int argc, char **argv)
+> > >                 }
+> > >                 break;
+> > >            case 'f':
+> > > -               src_file_nr = atoi(argv[1]);
+> > > -               if (src_file_nr < 0 || src_file_nr >= filecount) {
+> > > -                    printf(_("file value %d is out of range (0-%d)\n"),
+> > > -                         src_file_nr, filecount - 1);
+> > > -                    return 0;
+> > > +               if (strcmp(argv[1], "-"))
+> > > +                    src_file_nr = (file - &filetable[0]) / sizeof(fileio_t);
+> > > +               else {
+> > > +                    src_file_nr = atoi(argv[1]);
+> > > +                    if (src_file_nr < 0 || src_file_nr >= filecount) {
+> > > +                         printf(_("file value %d is out of range (0-%d)\n"),
+> > > +                              src_file_nr, filecount - 1);
+> > > +                         return 0;
+> > > +                    }
+> > >                 }
+> > >                 /* Expect no src_path arg */
+> > >                 src_path_arg = 0;
+> > > @@ -147,10 +152,14 @@ copy_range_f(int argc, char **argv)
+> > >            }
+> > >            len = sz;
+> > >  
+> > > -          ret = copy_dst_truncate();
+> > > -          if (ret < 0) {
+> > > -               ret = 1;
+> > > -               goto out;
+> > > +          if (fd != file->fd) {
+> > > +               ret = copy_dst_truncate();
+> > > +               if (ret < 0) {
+> > > +                    ret = 1;
+> > > +                    goto out;
+> > > +               }
+> > > +          } else {
+> > > +               dst = sz;
+> > >            }
+> > >       }
+> > >  
+> > > --
+> > > 2.17.2
+> > >
