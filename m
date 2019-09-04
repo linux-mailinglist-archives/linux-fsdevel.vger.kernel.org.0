@@ -2,77 +2,405 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56A68A8466
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 15:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C33B3A8859
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 21:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729597AbfIDNVV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 09:21:21 -0400
-Received: from mail.thelounge.net ([91.118.73.15]:59163 "EHLO
-        mail.thelounge.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729020AbfIDNVV (ORCPT
+        id S1730623AbfIDOCy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 10:02:54 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45236 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730533AbfIDOCy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 09:21:21 -0400
-Received: from srv-rhsoft.rhsoft.net  (Authenticated sender: h.reindl@thelounge.net) by mail.thelounge.net (THELOUNGE MTA) with ESMTPSA id 46Nkws0PVKzXMk;
-        Wed,  4 Sep 2019 15:21:17 +0200 (CEST)
-Subject: Re: "beyond 2038" warnings from loopback mount is noisy
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Qian Cai <cai@lca.pw>,
-        Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-References: <1567523922.5576.57.camel@lca.pw>
- <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
- <20190903211747.GD2899@mit.edu>
- <CABeXuvoYh0mhg049+pXbMqh-eM=rw+Ui1=rDree4Yb=7H7mQRg@mail.gmail.com>
- <CAK8P3a0AcPzuGeNFMW=ymO0wH_cmgnynLGYXGjqyrQb65o6aOw@mail.gmail.com>
- <CABeXuvq0_YsyuFY509XmwFsX6tX5EVHmWGuzHnSyOEX=9X6TFg@mail.gmail.com>
- <20190904125834.GA3044@mit.edu>
-From:   Reindl Harald <h.reindl@thelounge.net>
-Openpgp: id=9D2B46CDBC140A36753AE4D733174D5A5892B7B8;
- url=https://arrakis-tls.thelounge.net/gpg/h.reindl_thelounge.net.pub.txt
-Organization: the lounge interactive design
-Message-ID: <ffa30399-00a4-e105-8f1b-a04c8d2360c7@thelounge.net>
-Date:   Wed, 4 Sep 2019 15:21:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 4 Sep 2019 10:02:54 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l1so19701949lji.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 07:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hev-cc.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PNoDx7fLvh74hebBREwxpllmhOCLYXj7kn6FrqXucok=;
+        b=qXVuspQJdftcYeloY0gBUAnJGch3IynSsFaRHtueekTIKarOdA8qD9Fnv2pwvBCJAp
+         uGaIFpPxmNjVlTYIU/w1HGGbCmHJwM9h9wt9CiqS6XxaJg1CTsJFDwvwMQ9jKChI1qPv
+         bVp+xKxabmzzXfypsjcmGiuqy6eEJfvUEZi5hL+L+uhB3iARYERj9vR/y49Aa5GZr102
+         bmmwM3JMSEsVTWjISCYJYmyCTnsspudfWkBj09ksfw0egU0K/VwGYCGFuTftsyYpQ39k
+         ZOQCdgJIm/gN2l2AFm55Y8LJbD3OhvkcAENPLvuY/bv8m9uBsUtpJjFG6BAebbmGvWIn
+         qHkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PNoDx7fLvh74hebBREwxpllmhOCLYXj7kn6FrqXucok=;
+        b=r+rx0X2XrLTZ/eb153hGSGf85G3KDOTauVbFuJ16WHRKyl7VRGYbuJ+Pw/76YFzAM+
+         F2KbBlZPOux8KFj5w9WwdcPBE7oaXTxyF/bWyhmDQ5Za0rcPuc2fvFH2xu0aYuL++QkG
+         BRyeaZaqNBuE/D64q5rNrNX5umOMulP4L9gUzwHce58FpQH60x3xehpg2FXz9kE7bj04
+         6oEliLcxWzxHPMy7MzdI0eSw1AV9AT6FPjkZ51fREJcLxrEGsGYXSh/h1DzmHHt8k7jM
+         pYuJ8SPzEDLVICmVxUlnUBHMDK36GCZ4B1tqmDQAn/hxm3/PeDwfSfGfEtAl7BwBLEz/
+         xGtA==
+X-Gm-Message-State: APjAAAVWK38QpIa9fsmPrvy8IKWQ4oq2ZcTqmhAK12OjoH3tNn2H5rDV
+        6WB7hLXukCJb6ENRbUgtSTRf1qFrIuCyB0HPbTFboQ==
+X-Google-Smtp-Source: APXvYqwSFab5bKz0pl4pxoMm7hM8PlhqrcXElcLtMC0TSi135ieQkqWAr6Jhd7wPQwTQEDTntWH+b04Zkw+4ZDyNryI=
+X-Received: by 2002:a2e:96da:: with SMTP id d26mr13980025ljj.7.1567605770657;
+ Wed, 04 Sep 2019 07:02:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190904125834.GA3044@mit.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-CH
-Content-Transfer-Encoding: 7bit
+References: <20190902052034.16423-1-r@hev.cc> <0cdc9905efb9b77b159e09bee17d3ad4@suse.de>
+ <7075dd44-feea-a52f-ddaa-087d7bb2c4f6@akamai.com> <23659bc3e5f80efe9746aefd4d6791e8@suse.de>
+ <341df9eb-7e8e-98c8-5183-402bdfff7d59@akamai.com>
+In-Reply-To: <341df9eb-7e8e-98c8-5183-402bdfff7d59@akamai.com>
+From:   Heiher <r@hev.cc>
+Date:   Wed, 4 Sep 2019 22:02:11 +0800
+Message-ID: <CAHirt9hra2tA_OPNSow+CgD_CF2Z11ZqGG=1P45noqtdMtWuJw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] fs/epoll: fix the edge-triggered mode for nested epoll
+To:     Jason Baron <jbaron@akamai.com>, linux-fsdevel@vger.kernel.org,
+        Roman Penyaev <rpenyaev@suse.de>
+Cc:     Eric Wong <e@80x24.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sridhar Samudrala <sridhar.samudrala@intel.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
 
+On Wed, Sep 4, 2019 at 8:02 PM Jason Baron <jbaron@akamai.com> wrote:
+>
+>
+>
+> On 9/4/19 5:57 AM, Roman Penyaev wrote:
+> > On 2019-09-03 23:08, Jason Baron wrote:
+> >> On 9/2/19 11:36 AM, Roman Penyaev wrote:
+> >>> Hi,
+> >>>
+> >>> This is indeed a bug. (quick side note: could you please remove efd[1]
+> >>> from your test, because it is not related to the reproduction of a
+> >>> current bug).
+> >>>
+> >>> Your patch lacks a good description, what exactly you've fixed.  Let
+> >>> me speak out loud and please correct me if I'm wrong, my understanding
+> >>> of epoll internals has become a bit rusty: when epoll fds are nested
+> >>> an attempt to harvest events (ep_scan_ready_list() call) produces a
+> >>> second (repeated) event from an internal fd up to an external fd:
+> >>>
+> >>>      epoll_wait(efd[0], ...):
+> >>>        ep_send_events():
+> >>>           ep_scan_ready_list(depth=0):
+> >>>             ep_send_events_proc():
+> >>>                 ep_item_poll():
+> >>>                   ep_scan_ready_list(depth=1):
+> >>>                     ep_poll_safewake():
+> >>>                       ep_poll_callback()
+> >>>                         list_add_tail(&epi, &epi->rdllist);
+> >>>                         ^^^^^^
+> >>>                         repeated event
+> >>>
+> >>>
+> >>> In your patch you forbid wakeup for the cases, where depth != 0, i.e.
+> >>> for all nested cases. That seems clear.  But what if we can go further
+> >>> and remove the whole chunk, which seems excessive:
+> >>>
+> >>> @@ -885,26 +886,11 @@ static __poll_t ep_scan_ready_list(struct
+> >>> eventpoll *ep,
+> >>>
+> >>> -
+> >>> -       if (!list_empty(&ep->rdllist)) {
+> >>> -               /*
+> >>> -                * Wake up (if active) both the eventpoll wait list and
+> >>> -                * the ->poll() wait list (delayed after we release the
+> >>> lock).
+> >>> -                */
+> >>> -               if (waitqueue_active(&ep->wq))
+> >>> -                       wake_up(&ep->wq);
+> >>> -               if (waitqueue_active(&ep->poll_wait))
+> >>> -                       pwake++;
+> >>> -       }
+> >>>         write_unlock_irq(&ep->lock);
+> >>>
+> >>>         if (!ep_locked)
+> >>>                 mutex_unlock(&ep->mtx);
+> >>>
+> >>> -       /* We have to call this outside the lock */
+> >>> -       if (pwake)
+> >>> -               ep_poll_safewake(&ep->poll_wait);
+> >>>
+> >>>
+> >>> I reason like that: by the time we've reached the point of scanning events
+> >>> for readiness all wakeups from ep_poll_callback have been already fired and
+> >>> new events have been already accounted in ready list (ep_poll_callback()
+> >>> calls
+> >>> the same ep_poll_safewake()). Here, frankly, I'm not 100% sure and probably
+> >>> missing some corner cases.
+> >>>
+> >>> Thoughts?
+> >>
+> >> So the: 'wake_up(&ep->wq);' part, I think is about waking up other
+> >> threads that may be in waiting in epoll_wait(). For example, there may
+> >> be multiple threads doing epoll_wait() on the same epoll fd, and the
+> >> logic above seems to say thread 1 may have processed say N events and
+> >> now its going to to go off to work those, so let's wake up thread 2 now
+> >> to handle the next chunk.
+> >
+> > Not quite. Thread which calls ep_scan_ready_list() processes all the
+> > events, and while processing those, removes them one by one from the
+> > ready list.  But if event mask is !0 and event belongs to
+> > Level Triggered Mode descriptor (let's say default mode) it tails event
+> > again back to the list (because we are in level mode, so event should
+> > be there).  So at the end of this traversing loop ready list is likely
+> > not empty, and if so, wake up again is called for nested epoll fds.
+> > But, those nested epoll fds should get already all the notifications
+> > from the main event callback ep_poll_callback(), regardless any thread
+> > which traverses events.
+> >
+> > I suppose this logic exists for decades, when Davide (the author) was
+> > reshuffling the code here and there.
+> >
+> > But I do not feel confidence to state that this extra wakeup is bogus,
+> > I just have a gut feeling that it looks excessive.
+>
+> Note that I was talking about the wakeup done on ep->wq not ep->poll_wait.
+> The path that I'm concerned about is let's say that there are N events
+> queued on the ready list. A thread that was woken up in epoll_wait may
+> decide to only process say N/2 of then. Then it will call wakeup on ep->wq
+> and this will wakeup another thread to process the remaining N/2. Without
+> the wakeup, the original thread isn't going to process the events until
+> it finishes with the original N/2 and gets back to epoll_wait(). So I'm not
+> sure how important that path is but I wanted to at least note the change
+> here would impact that behavior.
+>
+> Thanks,
+>
+> -Jason
+>
+>
+> >
+> >> So I think removing all that even for the
+> >> depth 0 case is going to change some behavior here. So perhaps, it
+> >> should be removed for all depths except for 0? And if so, it may be
+> >> better to make 2 patches here to separate these changes.
+> >>
+> >> For the nested wakeups, I agree that the extra wakeups seem unnecessary
+> >> and it may make sense to remove them for all depths. I don't think the
+> >> nested epoll semantics are particularly well spelled out, and afaict,
+> >> nested epoll() has behaved this way for quite some time. And the current
+> >> behavior is not bad in the way that a missing wakeup or false negative
+> >> would be.
+> >
+> > That's 100% true! For edge mode extra wake up is not a bug, not optimal
+> > for userspace - yes, but that can't lead to any lost wakeups.
+> >
+> > --
+> > Roman
+> >
 
-Am 04.09.19 um 14:58 schrieb Theodore Y. Ts'o:
-> Again, the likelihood that there will be file systems that have this
-> problem in 2038 is... extremely low in my judgement.  Storage media
-> just doesn't last that long
+I tried to remove the whole chunk of code that Roman said, and it
+seems that there
+are no obvious problems with the two test programs below:
 
-in times of virtualization storage media are below the vdisk and the
-file system lasts that long and even longer
+Test case 1:
+           t0
+            |
+           e0
+            |
+           e1 (et)
+            |
+           s0 (lt)
 
-in times of running RAID on your storage they last that long because you
-happily replace dead disks and move you hard drives to the next computer
-when the rest of the hardware is dead
+When s0 is readable, the thread 0 can only read once event from e0.
 
-> and distributions such as Red Hat and
-> SuSE very strongly encourage people to reformat file systems and do
-> *not* support upgrades from ext3 to ext4 by using tune2fs.  If you do
-> this, their help desk will laugh at you and refuse to help you.
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/epoll.h>
+#include <sys/socket.h>
 
-i would have laughed at somebody telling me in 2010 that i have to start
-again from scratch instead convert all the virtual servers installed two
-years ago to ext4 or in general install repeatly from scratch instead
-doing all the dist-upgrades from Fedora 9 to Fedora 30 with no downtime
-longer than a ordinary kernel update and reboot
+int main(int argc, char *argv[])
+{
+    int sfd[2];
+    int efd[2];
+    int nfds;
+    struct epoll_event e;
 
-and here we are, with file systems and operating systems installed in
-2008 running 11 years later just fine - it's Linux not Windows
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
+        goto out;
+
+    efd[0] = epoll_create(1);
+    if (efd[0] < 0)
+        goto out;
+
+    efd[1] = epoll_create(1);
+    if (efd[1] < 0)
+        goto out;
+
+    e.events = EPOLLIN;
+    if (epoll_ctl(efd[1], EPOLL_CTL_ADD, sfd[0], &e) < 0)
+        goto out;
+
+    e.events = EPOLLIN | EPOLLET;
+    if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
+        goto out;
+
+    if (write(sfd[1], "w", 1) != 1)
+        goto out;
+
+    nfds = epoll_wait(efd[0], &e, 1, 0);
+    if (nfds != 1)
+        goto out;
+
+    nfds = epoll_wait(efd[0], &e, 1, 0);
+    if (nfds != 0)
+        goto out;
+
+    nfds = epoll_wait(efd[1], &e, 1, 0);
+    if (nfds != 1)
+        goto out;
+
+    nfds = epoll_wait(efd[1], &e, 1, 0);
+    if (nfds != 1)
+        goto out;
+
+    close(efd[1]);
+    close(efd[0]);
+    close(sfd[0]);
+    close(sfd[1]);
+
+    printf("PASS\n");
+    return 0;
+
+out:
+    printf("FAIL\n");
+    return -1;
+}
+
+Test case 2:
+           t0  t1
+            \   /
+             e0
+            /   \
+    (et) e1   e2 (et)
+           |      |
+     (lt) s0    s2 (lt)
+
+When s0 and s2 are readable, both thread 0 and thread 1 can read an
+event from e0.
+
+#include <stdio.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <sys/epoll.h>
+#include <sys/socket.h>
+
+static int efd[3];
+static int sfd[4];
+static int count;
+
+static void *
+thread_handler(void *data)
+{
+    struct epoll_event e;
+
+    if (epoll_wait(efd[0], &e, 1, -1) == 1)
+        count++;
+
+    return NULL;
+}
+
+static void *
+emit_handler(void *data)
+{
+    usleep (100000);
+
+    write(sfd[1], "w", 1);
+    write(sfd[3], "w", 1);
+
+    return NULL;
+}
+
+int main(int argc, char *argv[])
+{
+    struct epoll_event e;
+    pthread_t tw, te;
+
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[0]) < 0)
+        goto out;
+
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[2]) < 0)
+        goto out;
+
+    efd[0] = epoll_create(1);
+    if (efd[0] < 0)
+        goto out;
+
+    efd[1] = epoll_create(1);
+    if (efd[1] < 0)
+        goto out;
+
+    efd[2] = epoll_create(1);
+    if (efd[2] < 0)
+        goto out;
+
+    e.events = EPOLLIN;
+    if (epoll_ctl(efd[1], EPOLL_CTL_ADD, sfd[0], &e) < 0)
+        goto out;
+
+    e.events = EPOLLIN;
+    if (epoll_ctl(efd[2], EPOLL_CTL_ADD, sfd[2], &e) < 0)
+        goto out;
+
+    e.events = EPOLLIN | EPOLLET;
+    if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
+        goto out;
+
+    e.events = EPOLLIN | EPOLLET;
+    if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[2], &e) < 0)
+        goto out;
+
+    if (pthread_create(&tw, NULL, thread_handler, NULL) < 0)
+        goto out;
+
+    if (pthread_create(&te, NULL, emit_handler, NULL) < 0)
+        goto out;
+
+    if (epoll_wait(efd[0], &e, 1, -1) == 1)
+        count++;
+
+    if (pthread_join(tw, NULL) < 0)
+        goto out;
+
+    if (count != 2)
+        goto out;
+
+    close(efd[0]);
+    close(efd[1]);
+    close(efd[2]);
+    close(sfd[0]);
+    close(sfd[1]);
+    close(sfd[2]);
+    close(sfd[3]);
+
+    printf ("PASS\n");
+    return 0;
+
+out:
+    printf("FAIL\n");
+    return -1;
+}
+
+t0: thread0
+t1: thread1
+e0: epoll0 (efd[0])
+e1: epoll1 (efd[1])
+e2: epoll2 (efd[2])
+s0: socket0 (sfd[0])
+s2: socket2 (sfd[2])
+
+Is it possible to prove that this modification is correct, or any
+other corner cases are missing?
+
+-- 
+Best regards!
+Hev
+https://hev.cc
