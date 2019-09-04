@@ -2,80 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A97EA7DD7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 10:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BD4FA7E3D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 10:46:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfIDI2H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 04:28:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42422 "EHLO mx1.suse.de"
+        id S1729366AbfIDIqd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 04:46:33 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44870 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725966AbfIDI2G (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:28:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 77B1EAE91;
-        Wed,  4 Sep 2019 08:28:05 +0000 (UTC)
-Date:   Wed, 4 Sep 2019 10:28:05 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     William Kucharski <william.kucharski@oracle.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Bob Kasten <robert.a.kasten@intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Chad Mynhier <chad.mynhier@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <jweiner@fb.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v5 1/2] mm: Allow the page cache to allocate large pages
-Message-ID: <20190904082805.GJ3838@dhcp22.suse.cz>
-References: <20190902092341.26712-1-william.kucharski@oracle.com>
- <20190902092341.26712-2-william.kucharski@oracle.com>
- <20190903115748.GS14028@dhcp22.suse.cz>
- <68E123A9-22A8-40ED-B2ED-897FC02D7D75@oracle.com>
+        id S1726358AbfIDIqd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 04:46:33 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 104D88E9AD57C4C66251;
+        Wed,  4 Sep 2019 16:46:31 +0800 (CST)
+Received: from [127.0.0.1] (10.184.213.217) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
+ 16:46:20 +0800
+Subject: Re: [PATCH] fuse: fix memleak in cuse_channel_open
+To:     <mszeredi@suse.cz>, <ashish.samant@oracle.com>,
+        <mszeredi@redhat.com>, <linux-fsdevel@vger.kernel.org>
+CC:     <yi.zhang@huawei.com>
+References: <1565769549-127890-1-git-send-email-zhengbin13@huawei.com>
+From:   "zhengbin (A)" <zhengbin13@huawei.com>
+Message-ID: <94639cb1-8d41-4039-d72c-efc29bd20c6c@huawei.com>
+Date:   Wed, 4 Sep 2019 16:46:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68E123A9-22A8-40ED-B2ED-897FC02D7D75@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1565769549-127890-1-git-send-email-zhengbin13@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.184.213.217]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 03-09-19 21:30:30, William Kucharski wrote:
-> 
-> 
-> > On Sep 3, 2019, at 5:57 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> > 
-> > On Mon 02-09-19 03:23:40, William Kucharski wrote:
-> >> Add an 'order' argument to __page_cache_alloc() and
-> >> do_read_cache_page(). Ensure the allocated pages are compound pages.
-> > 
-> > Why do we need to touch all the existing callers and change them to use
-> > order 0 when none is actually converted to a different order? This just
-> > seem to add a lot of code churn without a good reason. If anything I
-> > would simply add __page_cache_alloc_order and make __page_cache_alloc
-> > call it with order 0 argument.
-> 
-> All the EXISTING code in patch [1/2] is changed to call it with an order
-> of 0, as you would expect.
-> 
-> However, new code in part [2/2] of the patch calls it with an order of
-> HPAGE_PMD_ORDER, as it seems cleaner to have those routines operate on
-> a page, regardless of the order of the page desired.
-> 
-> I certainly can change this as you request, but once again the question
-> is whether "page" should MEAN "page" regardless of the order desired,
-> or whether the assumption will always be "page" means base PAGESIZE.
-> 
-> Either approach works, but what is the semantic we want going forward?
+ping
 
-I do not have anything against handling page as compound, if that is the
-question. All I was interested in whether adding a new helper to
-_allocate_ the comound page wouldn't be easier than touching all
-existing __page_cache_alloc users.
--- 
-Michal Hocko
-SUSE Labs
+On 2019/8/14 15:59, zhengbin wrote:
+> If cuse_send_init fails, need to fuse_conn_put cc->fc.
+>
+> cuse_channel_open->fuse_conn_init->refcount_set(&fc->count, 1)
+>                  ->fuse_dev_alloc->fuse_conn_get
+>                  ->fuse_dev_free->fuse_conn_put
+>
+> Fixes: cc080e9e9be1 ("fuse: introduce per-instance fuse_dev structure")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: zhengbin <zhengbin13@huawei.com>
+> ---
+>  fs/fuse/cuse.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+> index bab7a0d..f3b7208 100644
+> --- a/fs/fuse/cuse.c
+> +++ b/fs/fuse/cuse.c
+> @@ -519,6 +519,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+>  	rc = cuse_send_init(cc);
+>  	if (rc) {
+>  		fuse_dev_free(fud);
+> +		fuse_conn_put(&cc->fc);
+>  		return rc;
+>  	}
+>  	file->private_data = fud;
+> --
+> 2.7.4
+>
+>
+> .
+>
+
