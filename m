@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB9FDA9629
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF58A9632
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:17:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730986AbfIDWRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 18:17:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59146 "EHLO mx1.redhat.com"
+        id S1730457AbfIDWRa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 18:17:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59222 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730140AbfIDWRT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 18:17:19 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1730435AbfIDWR3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 18:17:29 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CD0EB3084050;
-        Wed,  4 Sep 2019 22:17:18 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9B8F43007C30;
+        Wed,  4 Sep 2019 22:17:28 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A19AA5D6D0;
-        Wed,  4 Sep 2019 22:17:15 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D534460C18;
+        Wed,  4 Sep 2019 22:17:24 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 10/11] selinux: Implement the watch_key security hook [ver
- #8]
+Subject: [PATCH 11/11] smack: Implement the watch_key and post_notification
+ hooks [ver #8]
 From:   David Howells <dhowells@redhat.com>
 To:     keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-block@vger.kernel.org
@@ -37,65 +37,160 @@ Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 04 Sep 2019 23:17:14 +0100
-Message-ID: <156763543468.18676.2518876207052977804.stgit@warthog.procyon.org.uk>
+Date:   Wed, 04 Sep 2019 23:17:24 +0100
+Message-ID: <156763544404.18676.1316696252943973122.stgit@warthog.procyon.org.uk>
 In-Reply-To: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
 References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 04 Sep 2019 22:17:19 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 04 Sep 2019 22:17:28 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement the watch_key security hook to make sure that a key grants the
-caller View permission in order to set a watch on a key.
+Implement the watch_key security hook in Smack to make sure that a key
+grants the caller Read permission in order to set a watch on a key.
+
+Also implement the post_notification security hook to make sure that the
+notification source is granted Write permission by the watch queue.
 
 For the moment, the watch_devices security hook is left unimplemented as
 it's not obvious what the object should be since the queue is global and
 didn't previously exist.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
 
- security/selinux/hooks.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ include/linux/lsm_audit.h  |    1 +
+ security/smack/smack_lsm.c |   82 +++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 82 insertions(+), 1 deletion(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 74dd46de01b6..88df06969bed 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6533,6 +6533,17 @@ static int selinux_key_getsecurity(struct key *key, char **_buffer)
- 	*_buffer = context;
- 	return rc;
- }
-+
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+static int selinux_watch_key(struct key *key)
-+{
-+	struct key_security_struct *ksec = key->security;
-+	u32 sid = current_sid();
-+
-+	return avc_has_perm(&selinux_state,
-+			    sid, ksec->sid, SECCLASS_KEY, KEY_NEED_VIEW, NULL);
-+}
-+#endif
- #endif
+diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
+index 915330abf6e5..734d67889826 100644
+--- a/include/linux/lsm_audit.h
++++ b/include/linux/lsm_audit.h
+@@ -74,6 +74,7 @@ struct common_audit_data {
+ #define LSM_AUDIT_DATA_FILE	12
+ #define LSM_AUDIT_DATA_IBPKEY	13
+ #define LSM_AUDIT_DATA_IBENDPORT 14
++#define LSM_AUDIT_DATA_NOTIFICATION 15
+ 	union 	{
+ 		struct path path;
+ 		struct dentry *dentry;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4c5e5a438f8b..1c2a908c6446 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4274,7 +4274,7 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	if (tkp == NULL)
+ 		return -EACCES;
  
- #ifdef CONFIG_SECURITY_INFINIBAND
-@@ -6965,6 +6976,9 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(key_free, selinux_key_free),
- 	LSM_HOOK_INIT(key_permission, selinux_key_permission),
- 	LSM_HOOK_INIT(key_getsecurity, selinux_key_getsecurity),
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+	LSM_HOOK_INIT(watch_key, selinux_watch_key),
-+#endif
- #endif
+-	if (smack_privileged_cred(CAP_MAC_OVERRIDE, cred))
++	if (smack_privileged(CAP_MAC_OVERRIDE))
+ 		return 0;
  
  #ifdef CONFIG_AUDIT
+@@ -4320,8 +4320,81 @@ static int smack_key_getsecurity(struct key *key, char **_buffer)
+ 	return length;
+ }
+ 
++
++#ifdef CONFIG_KEY_NOTIFICATIONS
++/**
++ * smack_watch_key - Smack access to watch a key for notifications.
++ * @key: The key to be watched
++ *
++ * Return 0 if the @watch->cred has permission to read from the key object and
++ * an error otherwise.
++ */
++static int smack_watch_key(struct key *key)
++{
++	struct smk_audit_info ad;
++	struct smack_known *tkp = smk_of_current();
++	int rc;
++
++	if (key == NULL)
++		return -EINVAL;
++	/*
++	 * If the key hasn't been initialized give it access so that
++	 * it may do so.
++	 */
++	if (key->security == NULL)
++		return 0;
++	/*
++	 * This should not occur
++	 */
++	if (tkp == NULL)
++		return -EACCES;
++
++	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
++		return 0;
++
++#ifdef CONFIG_AUDIT
++	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_KEY);
++	ad.a.u.key_struct.key = key->serial;
++	ad.a.u.key_struct.key_desc = key->description;
++#endif
++	rc = smk_access(tkp, key->security, MAY_READ, &ad);
++	rc = smk_bu_note("key watch", tkp, key->security, MAY_READ, rc);
++	return rc;
++}
++#endif /* CONFIG_KEY_NOTIFICATIONS */
+ #endif /* CONFIG_KEYS */
+ 
++#ifdef CONFIG_WATCH_QUEUE
++/**
++ * smack_post_notification - Smack access to post a notification to a queue
++ * @w_cred: The credentials of the watcher.
++ * @cred: The credentials of the event source (may be NULL).
++ * @n: The notification message to be posted.
++ */
++static int smack_post_notification(const struct cred *w_cred,
++				   const struct cred *cred,
++				   struct watch_notification *n)
++{
++	struct smk_audit_info ad;
++	struct smack_known *subj, *obj;
++	int rc;
++
++	/* Always let maintenance notifications through. */
++	if (n->type == WATCH_TYPE_META)
++		return 0;
++
++	if (!cred)
++		return 0;
++	subj = smk_of_task(smack_cred(cred));
++	obj = smk_of_task(smack_cred(w_cred));
++
++	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NOTIFICATION);
++	rc = smk_access(subj, obj, MAY_WRITE, &ad);
++	rc = smk_bu_note("notification", subj, obj, MAY_WRITE, rc);
++	return rc;
++}
++#endif /* CONFIG_WATCH_QUEUE */
++
+ /*
+  * Smack Audit hooks
+  *
+@@ -4710,8 +4783,15 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(key_free, smack_key_free),
+ 	LSM_HOOK_INIT(key_permission, smack_key_permission),
+ 	LSM_HOOK_INIT(key_getsecurity, smack_key_getsecurity),
++#ifdef CONFIG_KEY_NOTIFICATIONS
++	LSM_HOOK_INIT(watch_key, smack_watch_key),
++#endif
+ #endif /* CONFIG_KEYS */
+ 
++#ifdef CONFIG_WATCH_QUEUE
++	LSM_HOOK_INIT(post_notification, smack_post_notification),
++#endif
++
+  /* Audit hooks */
+ #ifdef CONFIG_AUDIT
+ 	LSM_HOOK_INIT(audit_rule_init, smack_audit_rule_init),
 
