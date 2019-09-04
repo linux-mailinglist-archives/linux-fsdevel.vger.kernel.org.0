@@ -2,91 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B162DA917E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 21:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2E05A91E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 21:40:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387474AbfIDSQm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 14:16:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59088 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730269AbfIDSQl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:16:41 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A1812307D971;
-        Wed,  4 Sep 2019 18:16:40 +0000 (UTC)
-Received: from localhost (ovpn-116-88.ams2.redhat.com [10.36.116.88])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A8B505C22F;
-        Wed,  4 Sep 2019 18:16:31 +0000 (UTC)
-Date:   Wed, 4 Sep 2019 19:16:30 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v4 15/16] virtio-fs: add virtiofs filesystem
-Message-ID: <20190904181630.GB26826@stefanha-x1.localdomain>
-References: <20190903113640.7984-1-mszeredi@redhat.com>
- <20190903114203.8278-10-mszeredi@redhat.com>
- <20190903092222-mutt-send-email-mst@kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uZ3hkaAS1mZxFaxD"
-Content-Disposition: inline
-In-Reply-To: <20190903092222-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 04 Sep 2019 18:16:40 +0000 (UTC)
+        id S1732991AbfIDSjZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 14:39:25 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33215 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732885AbfIDSjY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:39:24 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t11so3873306plo.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 11:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=RFVxIo+Qn+D3l74R0gbfOnsQVErdkpTLqYjhLCUkAbw=;
+        b=jv5RYYTHFRDQwQoavPr+s26IndTLQO1TBV8cq+L3X/QMkeT0/ARB3rrjSwpb5wT7pf
+         HtAMic+J1yHXdWpxSKcqVbMIg1qIjlRvQrl2FC694er0m9eDz9r15q7fzqREYWveN3q/
+         INbD175q4V8GheY5yqsIeOAt2YahZu+uSA5DZVxnb+U2tUCevLqsvSO4ddZ8xDU8dwt1
+         xDID7Ea5A1yayF/lfUXOZ/7V8pNUnkbju8VHPFtEuCHaNyc+qDXu1EtssjenusvKOXof
+         R67M83ORZEZQVKvh8VIOJeFUUOkfriI2Q8FLCGJTLS4s7Df2JvUiqA4G8r1sJhp9runZ
+         yeOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=RFVxIo+Qn+D3l74R0gbfOnsQVErdkpTLqYjhLCUkAbw=;
+        b=lUdVR654ViQBvVjMVyfU3uE2NMcTl1GQ51E/SXDd1JjtuaSupmr3SMdUPvWiNfAiNY
+         enh/NY1w4zUHno/lZ+agMlTG+NXOhHkq5uLWscKOIlgc2RThlRaK1coE/GwJ1Bi2OM6s
+         fqkDAvQ/mLA3OLCdNLsENsfUtK0+IL0sBHfo3Kzq4htc1e96TFpiNqRALdAlexPTgGFv
+         w8KUtPCixBTZNh2CtvlVrYMYARlPflmlFj7vCmOjeK4Z/mQ3NH7s7baYlvgSb9t1yBpA
+         lJ1v7uGpxtR0VNfyOEc0QY6UHEJPJc9F5XtqezKEVER1HTYUQ5ARDzOCjOyFMnWEsJgw
+         PYWQ==
+X-Gm-Message-State: APjAAAUyxJhBsMWgaBQ0u2DrdiHJC+eCwPrhSGwdqH7QttUndvJKlrMg
+        6aWXgJqx3nwuSCH2Y4c93DkkMQ==
+X-Google-Smtp-Source: APXvYqxW4kSbEq+gLWZofsFSTIckmnFnzgI+tc5jk4KG+Xa2V1PDira6ogt0MI+oocn1p8X2+FPZow==
+X-Received: by 2002:a17:902:b201:: with SMTP id t1mr8923386plr.144.1567622363810;
+        Wed, 04 Sep 2019 11:39:23 -0700 (PDT)
+Received: from [192.168.10.175] (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id k31sm6938153pjb.14.2019.09.04.11.39.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Sep 2019 11:39:23 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] ext4: Reduce ext4 timestamp warnings
+From:   Andreas Dilger <adilger@dilger.ca>
+X-Mailer: iPhone Mail (16G102)
+In-Reply-To: <20190904150251.27004-1-deepa.kernel@gmail.com>
+Date:   Wed, 4 Sep 2019 12:39:22 -0600
+Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, cai@lca.pw, jlayton@kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <ECBC97E7-53C5-4B4C-BC4C-1FCDC4C371B9@dilger.ca>
+References: <31a671ea-a00b-37da-5f30-558c3ab6d690@thelounge.net> <20190904150251.27004-1-deepa.kernel@gmail.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---uZ3hkaAS1mZxFaxD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Sep 03, 2019 at 09:55:49AM -0400, Michael S. Tsirkin wrote:
-> On Tue, Sep 03, 2019 at 01:42:02PM +0200, Miklos Szeredi wrote:
-> Endian-ness for fuse header also looks wrong.
-[...]
-> > +struct virtio_fs_forget {
-> > +	struct fuse_in_header ih;
-> > +	struct fuse_forget_in arg;
+On Sep 4, 2019, at 09:02, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
 >=20
-> These structures are all native endian.
+> When ext4 file systems were created intentionally with 128 byte inodes,
+> the rate-limited warning of eventual possible timestamp overflow are
+> still emitted rather frequently.  Remove the warning for now.
 >=20
-> Passing them to host will make cross-endian setups painful to support,
-> and hardware implementations impossible.
+> Discussion for whether any warning is needed,
+> and where it should be emitted, can be found at
+> https://lore.kernel.org/lkml/1567523922.5576.57.camel@lca.pw/.
+> I can post a separate follow-up patch after the conclusion.
 >=20
-> How about converting everything to LE?
+> Reported-by: Qian Cai <cai@lca.pw>
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 
-The driver dictates the endianness of the FUSE protocol session.  The
-virtio-fs device specification states that the device looks at the first
-request's fuse_in_header::opcode field to detect the guest endianness.
+I'd be in favor of a severely rare-limited warning in the actual case
+that Y2038 timestamps cannot be stored, but the current message is
+too verbose for now and I agree it is better to remove it while discussions
+on the best solution are underway.=20
 
-If it sees FUSE_INIT in its native endianness then no byte-swapping is
-necessary.  If it sees FUSE_INIT in the opposite endianness then
-byte-swapping is necessary on the device side.
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
---uZ3hkaAS1mZxFaxD
-Content-Type: application/pgp-signature; name="signature.asc"
+> ---
+> fs/ext4/ext4.h | 4 +---
+> 1 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 9e3ae3be3de9..24b14bd3feab 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -833,10 +833,8 @@ do {                                        \
+>        (raw_inode)->xtime ## _extra =3D                    \
+>                ext4_encode_extra_time(&(inode)->xtime);    \
+>        }                                \
+> -    else    {\
+> +    else    \
+>        (raw_inode)->xtime =3D cpu_to_le32(clamp_t(int32_t, (inode)->xtime.=
+tv_sec, S32_MIN, S32_MAX));    \
+> -        ext4_warning_inode(inode, "inode does not support timestamps beyo=
+nd 2038"); \
+> -    } \
+> } while (0)
+>=20
+> #define EXT4_EINODE_SET_XTIME(xtime, einode, raw_inode)                   \=
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1v/34ACgkQnKSrs4Gr
-c8i/Ngf/avxJID8kUoTNNjfyRoLArYmKGT1yBKp6x5LN822UCgyyHpur20MmX6XI
-zFrzqnp+AlNkaQu9P9RKeh2mhdnZNjHx9KSg/UezvIHG055WKJ2WTw2SQDhuAY5q
-Yz4+5Se2gV8OeNDIPoqBFXM+yLLJpXATZGrtKSoAQd5x8Q/ll6ctpzcM71rCDVla
-2kbcqDNOBo+A45A8cfHLJ8a4ppNOKoFbWPp+DLsyHPiifbdFAxxMbG4SgsnN6i59
-1n/+Y6Nz/92n6kL/czYdZ6kwovv9IUdO0DFzn/lQpgRYL3dLO/qS5G7/korqfnyf
-JUECay8lk+EPxVOJPt9HFaen8QA2xw==
-=sBLJ
------END PGP SIGNATURE-----
-
---uZ3hkaAS1mZxFaxD--
+> --=20
+> 2.17.1
+>=20
