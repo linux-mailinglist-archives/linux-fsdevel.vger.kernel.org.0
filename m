@@ -2,242 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD8DBA8D09
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 21:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B941DA8D6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 21:31:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731512AbfIDQWK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 12:22:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51088 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730299AbfIDQWJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:22:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 70F0FAD2B;
-        Wed,  4 Sep 2019 16:22:08 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 0E8971E4440; Wed,  4 Sep 2019 18:22:08 +0200 (CEST)
-Date:   Wed, 4 Sep 2019 18:22:08 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Steve Magnani <steve.magnani@digidescorp.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Subject: Re: [PATCH 1/2] udf: Verify domain identifier fields
-Message-ID: <20190904162208.GC25751@quack2.suse.cz>
-References: <20190829122543.22805-1-jack@suse.cz>
- <20190829122543.22805-2-jack@suse.cz>
- <f260ecfb-271d-6533-06c5-1de25c462501@digidescorp.com>
+        id S1731599AbfIDQy1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 12:54:27 -0400
+Received: from mga07.intel.com ([134.134.136.100]:23377 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725965AbfIDQy1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:54:27 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 09:54:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
+   d="scan'208";a="185171841"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga003.jf.intel.com with ESMTP; 04 Sep 2019 09:54:25 -0700
+Date:   Wed, 4 Sep 2019 09:54:25 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+Message-ID: <20190904165425.GB31319@iweiny-DESK2.sc.intel.com>
+References: <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
+ <20190821194810.GI8653@ziepe.ca>
+ <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
+ <20190823032345.GG1119@dread.disaster.area>
+ <20190823120428.GA12968@ziepe.ca>
+ <20190824001124.GI1119@dread.disaster.area>
+ <20190824050836.GC1092@iweiny-DESK2.sc.intel.com>
+ <20190826055510.GL1119@dread.disaster.area>
+ <20190829020230.GA18249@iweiny-DESK2.sc.intel.com>
+ <20190902222618.GR1119@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f260ecfb-271d-6533-06c5-1de25c462501@digidescorp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190902222618.GR1119@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 04-09-19 08:12:50, Steve Magnani wrote:
-> Jan -
-> 
-> Tested-by: Steven J. Magnani <steve@digidescorp.com>
-> 
-> Reviewed-by: Steven J. Magnani <steve@digidescorp.com>
-
-Thanks!
-
-								Honza
-
-> 
-> On 8/29/19 7:25 AM, Jan Kara wrote:
-> > OSTA UDF standard defines that domain identifier in logical volume
-> > descriptor and file set descriptor should contain a particular string
-> > and the identifier suffix contains flags possibly making media
-> > write-protected. Verify these constraints and allow only read-only mount
-> > if they are not met.
+On Tue, Sep 03, 2019 at 08:26:18AM +1000, Dave Chinner wrote:
+> On Wed, Aug 28, 2019 at 07:02:31PM -0700, Ira Weiny wrote:
+> > On Mon, Aug 26, 2019 at 03:55:10PM +1000, Dave Chinner wrote:
+> > > On Fri, Aug 23, 2019 at 10:08:36PM -0700, Ira Weiny wrote:
+> > > > On Sat, Aug 24, 2019 at 10:11:24AM +1000, Dave Chinner wrote:
+> > > > > On Fri, Aug 23, 2019 at 09:04:29AM -0300, Jason Gunthorpe wrote:
+> > > > "Leases are associated with an open file description (see open(2)).  This means
+> > > > that duplicate file descriptors (created by, for example, fork(2) or dup(2))
+> > > > refer to the same lease, and this lease may be modified or released using any
+> > > > of these descriptors.  Furthermore,  the lease is released by either an
+> > > > explicit F_UNLCK operation on any of these duplicate file descriptors, or when
+> > > > all such file descriptors have been closed."
+> > > 
+> > > Right, the lease is attached to the struct file, so it follows
+> > > where-ever the struct file goes. That doesn't mean it's actually
+> > > useful when the struct file is duplicated and/or passed to another
+> > > process. :/
+> > > 
+> > > AFAICT, the problem is that when we take another reference to the
+> > > struct file, or when the struct file is passed to a different
+> > > process, nothing updates the lease or lease state attached to that
+> > > struct file.
 > > 
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >   fs/udf/ecma_167.h | 14 +++++++++
-> >   fs/udf/super.c    | 91 ++++++++++++++++++++++++++++++++++++++-----------------
-> >   2 files changed, 78 insertions(+), 27 deletions(-)
+> > Ok, I probably should have made this more clear in the cover letter but _only_
+> > the process which took the lease can actually pin memory.
+> 
+> Sure, no question about that.
+> 
+> > That pinned memory _can_ be passed to another process but those sub-process' can
+> > _not_ use the original lease to pin _more_ of the file.  They would need to
+> > take their own lease to do that.
+> 
+> Yes, they would need a new lease to extend it. But that ignores the
+> fact they don't have a lease on the existing pins they are using and
+> have no control over the lease those pins originated under.  e.g.
+> the originating process dies (for whatever reason) and now we have
+> pins without a valid lease holder.
+
+Define "valid lease holder"?
+
+> 
+> If something else now takes an exclusive lease on the file (because
+> the original exclusive lease no longer exists), it's not going to
+> work correctly because of the zombied page pins caused by closing
+> the exclusive lease they were gained under. IOWs, pages pinned under
+> an exclusive lease are no longer "exclusive" the moment the original
+> exclusive lease is dropped, and pins passed to another process are
+> no longer covered by the original lease they were created under.
+
+The page pins are not zombied the lease is.  The lease still exists, it can't
+be dropped while the pins are in place.  I need to double check the
+implementation but that was the intent.
+
+Yep just did a quick check, I have a test for that.  If the page pins exist
+then the lease can _not_ be released.  Closing the FD will "zombie" the lease
+but it and the struct file will still exist until the pins go away.
+
+Furthermore, a "zombie" lease is _not_ sufficient to pin more pages.  (I have a
+test for this too.)  I apologize that I don't have something to submit to
+xfstests.  I'm new to that code base.
+
+I'm happy to share the code I have which I've been using to test...  But it is
+pretty rough as it has undergone a number of changes.  I think it would be
+better to convert my test series to xfstests.
+
+However, I don't know if it is ok to require RDMA within those tests.  Right
+now that is the only sub-system I have allowed to create these page pins.  So
+I'm not sure what to do at this time.  I'm open to suggestions.
+
+> 
+> > Sorry for not being clear on that.
+> 
+> I know exactly what you are saying. What I'm failing to get across
+> is that file layout leases don't actually allow the behaviour you
+> want to have.
+
+Not currently, no.  But we are discussing the semantics to allow them _to_ have
+the behavior needed.
+
+> 
+> > > As such, leases that require callbacks to userspace are currently
+> > > only valid within the process context the lease was taken in.
 > > 
-> > diff --git a/fs/udf/ecma_167.h b/fs/udf/ecma_167.h
-> > index 9f24bd1a9f44..fb7f2c7bec9c 100644
-> > --- a/fs/udf/ecma_167.h
-> > +++ b/fs/udf/ecma_167.h
-> > @@ -88,6 +88,20 @@ struct regid {
-> >   #define ENTITYID_FLAGS_DIRTY		0x00
-> >   #define ENTITYID_FLAGS_PROTECTED	0x01
-> > +/* OSTA UDF 2.1.5.2 */
-> > +#define UDF_ID_COMPLIANT "*OSTA UDF Compliant"
-> > +
-> > +/* OSTA UDF 2.1.5.3 */
-> > +struct domainEntityIDSuffix {
-> > +	uint16_t	revision;
-> > +	uint8_t		flags;
-> > +	uint8_t		reserved[5];
-> > +};
-> > +
-> > +/* OSTA UDF 2.1.5.3 */
-> > +#define ENTITYIDSUFFIX_FLAGS_HARDWRITEPROTECT 0
-> > +#define ENTITYIDSUFFIX_FLAGS_SOFTWRITEPROTECT 1
-> > +
-> >   /* Volume Structure Descriptor (ECMA 167r3 2/9.1) */
-> >   #define VSD_STD_ID_LEN			5
-> >   struct volStructDesc {
-> > diff --git a/fs/udf/super.c b/fs/udf/super.c
-> > index a14346137361..42db3dd51dfc 100644
-> > --- a/fs/udf/super.c
-> > +++ b/fs/udf/super.c
-> > @@ -94,8 +94,8 @@ static int udf_remount_fs(struct super_block *, int *, char *);
-> >   static void udf_load_logicalvolint(struct super_block *, struct kernel_extent_ad);
-> >   static int udf_find_fileset(struct super_block *, struct kernel_lb_addr *,
-> >   			    struct kernel_lb_addr *);
-> > -static void udf_load_fileset(struct super_block *, struct buffer_head *,
-> > -			     struct kernel_lb_addr *);
-> > +static int udf_load_fileset(struct super_block *, struct fileSetDesc *,
-> > +			    struct kernel_lb_addr *);
-> >   static void udf_open_lvid(struct super_block *);
-> >   static void udf_close_lvid(struct super_block *);
-> >   static unsigned int udf_count_free(struct super_block *);
-> > @@ -757,28 +757,27 @@ static int udf_find_fileset(struct super_block *sb,
-> >   {
-> >   	struct buffer_head *bh = NULL;
-> >   	uint16_t ident;
-> > +	int ret;
-> > -	if (fileset->logicalBlockNum != 0xFFFFFFFF ||
-> > -	    fileset->partitionReferenceNum != 0xFFFF) {
-> > -		bh = udf_read_ptagged(sb, fileset, 0, &ident);
-> > -
-> > -		if (!bh) {
-> > -			return 1;
-> > -		} else if (ident != TAG_IDENT_FSD) {
-> > -			brelse(bh);
-> > -			return 1;
-> > -		}
-> > -
-> > -		udf_debug("Fileset at block=%u, partition=%u\n",
-> > -			  fileset->logicalBlockNum,
-> > -			  fileset->partitionReferenceNum);
-> > +	if (fileset->logicalBlockNum == 0xFFFFFFFF &&
-> > +	    fileset->partitionReferenceNum == 0xFFFF)
-> > +		return -EINVAL;
-> > -		UDF_SB(sb)->s_partition = fileset->partitionReferenceNum;
-> > -		udf_load_fileset(sb, bh, root);
-> > +	bh = udf_read_ptagged(sb, fileset, 0, &ident);
-> > +	if (!bh)
-> > +		return -EIO;
-> > +	if (ident != TAG_IDENT_FSD) {
-> >   		brelse(bh);
-> > -		return 0;
-> > +		return -EINVAL;
-> >   	}
-> > -	return 1;
-> > +
-> > +	udf_debug("Fileset at block=%u, partition=%u\n",
-> > +		  fileset->logicalBlockNum, fileset->partitionReferenceNum);
-> > +
-> > +	UDF_SB(sb)->s_partition = fileset->partitionReferenceNum;
-> > +	ret = udf_load_fileset(sb, (struct fileSetDesc *)bh->b_data, root);
-> > +	brelse(bh);
-> > +	return ret;
-> >   }
-> >   /*
-> > @@ -939,19 +938,53 @@ static int udf_load_metadata_files(struct super_block *sb, int partition,
-> >   	return 0;
-> >   }
-> > -static void udf_load_fileset(struct super_block *sb, struct buffer_head *bh,
-> > -			     struct kernel_lb_addr *root)
-> > +static int udf_verify_domain_identifier(struct super_block *sb,
-> > +					struct regid *ident, char *dname)
+> > But for long term pins we are not requiring callbacks.
 > 
-> The latter two can be 'const'.
+> Regardless, we still require an active lease for long term pins so
+> that other lease holders fail operations appropriately. And that
+> exclusive lease must follow the process that pins the pages so that
+> the life cycle is the same...
+
+I disagree.  See below.
+
 > 
-> >   {
-> > -	struct fileSetDesc *fset;
-> > +	struct domainEntityIDSuffix *suffix;
-> > -	fset = (struct fileSetDesc *)bh->b_data;
-> > +	if (memcmp(ident->ident, UDF_ID_COMPLIANT, strlen(UDF_ID_COMPLIANT))) {
-> > +		udf_warn(sb, "Not OSTA UDF compliant %s descriptor.\n", dname);
-> > +		goto force_ro;
-> > +	}
-> > +	if (ident->flags & (1 << ENTITYID_FLAGS_DIRTY)) {
-> > +		udf_warn(sb, "Possibly not OSTA UDF compliant %s descriptor.\n",
-> > +			 dname);
-> > +		goto force_ro;
-> > +	}
-> > +	suffix = (struct domainEntityIDSuffix *)ident->identSuffix;
-> > +	if (suffix->flags & (1 << ENTITYIDSUFFIX_FLAGS_HARDWRITEPROTECT) ||
-> > +	    suffix->flags & (1 << ENTITYIDSUFFIX_FLAGS_SOFTWRITEPROTECT)) {
-> > +		if (!sb_rdonly(sb)) {
-> > +			udf_warn(sb, "Descriptor for %s marked write protected."
-> > +				 " Forcing read only mount.\n", dname);
-> > +		}
-> > +		goto force_ro;
-> > +	}
-> > +	return 0;
-> > -	*root = lelb_to_cpu(fset->rootDirectoryICB.extLocation);
-> > +force_ro:
-> > +	if (!sb_rdonly(sb))
-> > +		return -EACCES;
-> > +	UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
-> > +	return 0;
-> > +}
-> > +static int udf_load_fileset(struct super_block *sb, struct fileSetDesc *fset,
-> > +			    struct kernel_lb_addr *root)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = udf_verify_domain_identifier(sb, &fset->domainIdent, "file set");
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	*root = lelb_to_cpu(fset->rootDirectoryICB.extLocation);
-> >   	UDF_SB(sb)->s_serial_number = le16_to_cpu(fset->descTag.tagSerialNum);
-> >   	udf_debug("Rootdir at block=%u, partition=%u\n",
-> >   		  root->logicalBlockNum, root->partitionReferenceNum);
-> > +	return 0;
-> >   }
-> >   int udf_compute_nr_groups(struct super_block *sb, u32 partition)
-> > @@ -1364,6 +1397,10 @@ static int udf_load_logicalvol(struct super_block *sb, sector_t block,
-> >   		goto out_bh;
-> >   	}
+> > > Indeed, even closing the fd the lease was taken on without
+> > > F_UNLCKing it first doesn't mean the lease has been torn down if
+> > > there is some other reference to the struct file. That means the
+> > > original lease owner will still get SIGIO delivered to that fd on a
+> > > lease break regardless of whether it is open or not. ANd if we
+> > > implement "layout lease not released within SIGIO response timeout"
+> > > then that process will get killed, despite the fact it may not even
+> > > have a reference to that file anymore.
+> > 
+> > I'm not seeing that as a problem.  This is all a result of the application
+> > failing to do the right thing.
 > 
-> FYI just a little above this there is a 'BUG_ON(ident != TAG_IDENT_LVD)'
-> that would probably be better coded as 'ret = -EINVAL; goto out_bh;'
-> 
-> > +	ret = udf_verify_domain_identifier(sb, &lvd->domainIdent,
-> > +					   "logical volume");
-> > +	if (ret)
-> > +		goto out_bh;
-> >   	ret = udf_sb_alloc_partition_maps(sb, le32_to_cpu(lvd->numPartitionMaps));
-> >   	if (ret)
-> >   		goto out_bh;
-> > @@ -2216,9 +2253,9 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
-> >   		UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
-> >   	}
-> > -	if (udf_find_fileset(sb, &fileset, &rootdir)) {
-> > +	ret = udf_find_fileset(sb, &fileset, &rootdir);
-> > +	if (ret < 0) {
-> 
-> Consider making the "No fileset found" warning conditional on ret != -EACCES,
-> it's a little confusing to see this in the log:
-> 
->   UDF-fs: warning (device loop0): udf_verify_domain_identifier: Descriptor for file set marked write protected. Forcing read only mount.
->   UDF-fs: warning (device loop0): udf_fill_super: No fileset found
-> 
-> >   		udf_warn(sb, "No fileset found\n");
-> > -		ret = -EINVAL;
-> >   		goto error_out;
-> >   	}
-> 
-> ------------------------------------------------------------------------
->  Steven J. Magnani               "I claim this network for MARS!
->  www.digidescorp.com              Earthling, return my space modulator!"
-> 
->  #include <standard.disclaimer>
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> How is that not a problem?
+
+The application has taken an exclusive lease and they don't have to let it go.
+
+IOW, there is little difference between the application closing the FD and
+creating a zombie lease vs keeping the FD open with a real lease.  Because no
+SIGIO is sent and there is no need to react to it anyway as the intention is to
+keep the lease active and the layout pinned "indefinitely".
+
+Furthermore, in both cases the admin must kill the application to change the
+layout forcibly.  Basically applications don't _have_ to do the right thing but
+the kernel and the filesystem is still protected while the admin has a way to
+correct the situation given a bad application.
+
+Therefore, from the POV of the kernel and file system I don't see a problem.
+
+Ira
+
