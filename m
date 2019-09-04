@@ -2,82 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93528A7B30
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 08:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC9EDA7B69
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 08:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbfIDGI1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 02:08:27 -0400
-Received: from sonic314-21.consmr.mail.gq1.yahoo.com ([98.137.69.84]:35478
-        "EHLO sonic314-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726045AbfIDGI1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 02:08:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567577306; bh=hwLoSYhXaI9y1p2SeQMw4UaD3K63yJIgvZMxCenrJ/4=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=A+pfb8eQm4peOZ7svJ0j1Qo9AmvbYV20x/99EhMVcJWBNW/Q8hV7yoEd9tYpUsYIOKfWuQU7QwEaYCoW7IZkMMIvs2LmeCLa3+LvbTwjOKMMP4ZoeXheYAuCmxTWC3czBSoQdNTrCdwvcPy8okkVdN1fnT7mI7YkPD6fqmSM9POAyhJWFj8pP/Mo6k1DO3atKjeILLdQy2xwBiyL8h3ew56xmTwFfPxAHDK8iq5EJCcUo0uV8wCWG1ZqudfIAISgsux7uTzL/vd9/TBu94qB1uP3CdiN5NDoh18JFKErKZIZ7b9iTBqXDSsELOTaL/admA43Skk0979h2JuvnHpuYg==
-X-YMail-OSG: ORKeb9IVM1kThrZ67B2VWu5_tzJzSqCtP6NT4Tejriu6270Qli6JTkfLt5XExMJ
- npk9JAOimvEeGPR2FCYFreY7PiGc1PxTtW6xyatHYr5qiruzm.9A_2_H6KiC1gis_eUQDKbqH0k3
- ORmm7NKBxpzdVqh7kUKZP7Sq0t9K3M_gnQ4iTY3TINJqrvq339IAJIpcgHRAbtauNtPJuRyTjnP9
- EFoNMXNefNQ9rzM3OjkI0ZpwxWL8opZkTMhq1VHh9U5P2sq00Pb2meb20fb7qR4OZx4iN_4amsL_
- d_1csYetXVlmbwbsZTWjur_k4l2TXyt6iLmflbNED_yp6JNq_6CDmOxp7zPuPlvfGnOlbL0SfSVD
- S7W4rJKwjJ2_U2e0vLIDR7BIWm0htHYmthv3Qmf499XCEIutE8f.1WJzW3H4FN_RuXFs2NMdXWWA
- GQQpUceT4AEfv2mGqgecbLqFkCsrp7IRgwceGRmKUH0HRonOVQ5T6hegQHi1.zINqb7vTYPOj1io
- SaNCU4iAZVoA1W4xMHDa65uUbIsfkg8eJ2V.OnQ0zJngFbJcodvv0IEH7wBzkvgt40Y1v0y6Wu9r
- 7N40AsqavL_R7ZvZQkG1Diqu8x8uTu3hSw7622eBqS2u9_6zR1.XuIqBSi8buagzaGu0YTzGGwNo
- _iyE2hisIjMCdCwVAvAukEuqvqkIrKNC5WTlRjXJaItnVkgx5nc83HHvhsUmGV45Q0u91t8YfgYF
- hkEg1QUlfWQcgkW7LVNGblczxvNxV4xkcvD.8RQP5gPmESgJVjQL3cwHJxeB4hPj9Mprv.x8aVl_
- ZrTUgm6iftZJZxM075AZflisSpli4zMh_J6ersi7xePxE_O7czwk9UtyNWCAPYSjaQORjiVPnC81
- M1Qn5wmSoefAyATLZdwGSQOhw_XT9nlC9r6TBowxw9hoqQebRWAk8HtwTX8M.lZCTkMfxcTwJD2F
- mVJ8TlwipCnPgBjnqLThG9lD.b40HrC8hRkLKBwferwSgfrDJrcFI4ESxW0DG23LdG9mr6xGJxon
- OQDeGw_nqgBsfoVxGUogx5NZlB_T0TA8ayaa6Q7eDyPDhIUnZXCojjHenOI4Pgsi8hD2b2bqIbP2
- AgkJzth1_lAjPOBI2y4RoGvlRm9dyPQDCOsjHeBO6L73nnKw3WY0DfbeAHEwW_846tzQQwyu64_s
- 4HqMqAj8htnMeFUKHR04vyCBQXQSv16jQASMbhnN6uStUZDWPOZqsrGt8GWnu7LZ0p8AUgc6MjMy
- CCLQQPWQw.SfOu36XKpMafrAKavQarNNPLkMFS6iozfh.fiAj5BuKR3fDG.RrCevPzcyeaA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.gq1.yahoo.com with HTTP; Wed, 4 Sep 2019 06:08:26 +0000
-Received: by smtp411.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3e160abbfe0b3ab899cbfee2cf1f96f3;
-          Wed, 04 Sep 2019 06:08:24 +0000 (UTC)
-Date:   Wed, 4 Sep 2019 14:08:18 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>, devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Miao Xie <miaoxie@huawei.com>, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH v2 00/25] erofs: patchset addressing Christoph's comments
-Message-ID: <20190904060817.GA27072@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20190901055130.30572-1-hsiangkao@aol.com>
- <20190904020912.63925-1-gaoxiang25@huawei.com>
- <20190904051655.GA10183@lst.de>
+        id S1728764AbfIDGQO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 02:16:14 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6199 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728756AbfIDGQO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 02:16:14 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4E91F158A750B92E3B7A;
+        Wed,  4 Sep 2019 14:16:12 +0800 (CST)
+Received: from [127.0.0.1] (10.184.213.217) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
+ 14:16:04 +0800
+Subject: Re: Possible FS race condition between iterate_dir and
+ d_alloc_parallel
+To:     Al Viro <viro@zeniv.linux.org.uk>
+CC:     <jack@suse.cz>, <akpm@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        "zhangyi (F)" <yi.zhang@huawei.com>, <renxudong1@huawei.com>
+References: <fd00be2c-257a-8e1f-eb1e-943a40c71c9a@huawei.com>
+ <20190903154007.GJ1131@ZenIV.linux.org.uk>
+ <20190903154114.GK1131@ZenIV.linux.org.uk>
+From:   "zhengbin (A)" <zhengbin13@huawei.com>
+Message-ID: <b5876e84-853c-e1f6-4fef-83d3d45e1767@huawei.com>
+Date:   Wed, 4 Sep 2019 14:15:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904051655.GA10183@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190903154114.GK1131@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.184.213.217]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christoph,
+On 2019/9/3 23:41, Al Viro wrote:
 
-On Wed, Sep 04, 2019 at 07:16:55AM +0200, Christoph Hellwig wrote:
-> On Wed, Sep 04, 2019 at 10:08:47AM +0800, Gao Xiang wrote:
-> > Hi,
-> > 
-> > This patchset is based on the following patch by Pratik Shinde,
-> > https://lore.kernel.org/linux-erofs/20190830095615.10995-1-pratikshinde320@gmail.com/
-> > 
-> > All patches addressing Christoph's comments on v6, which are trivial,
-> > most deleted code are from erofs specific fault injection, which was
-> > followed f2fs and previously discussed in earlier topic [1], but
-> > let's follow what Christoph's said now.
-> > 
-> > Comments and suggestions are welcome...
-> 
-> Do you have a git branch available somewhere containing the state
-> with all these patches applied?
+> On Tue, Sep 03, 2019 at 04:40:07PM +0100, Al Viro wrote:
+>> On Tue, Sep 03, 2019 at 10:44:32PM +0800, zhengbin (A) wrote:
+>>> We recently encountered an oops(the filesystem is tmpfs)
+>>> crash> bt
+>>>  #9 [ffff0000ae77bd60] dcache_readdir at ffff0000672954bc
+>>>
+>>> The reason is as follows:
+>>> Process 1 cat test which is not exist in directory A, process 2 cat test in directory A too.
+>>> process 3 create new file in directory B, process 4 ls directory A.
+>>
+>> good grief, what screen width do you have to make the table below readable?
+>>
+>> What I do not understand is how the hell does your dtry2 manage to get actually
+>> freed and reused without an RCU delay between its removal from parent's
+>> ->d_subdirs and freeing its memory.  What should've happened in that
+>> scenario is
+>> 	* process 4, in next_positive() grabs rcu_read_lock().
+>> 	* it walks into your dtry2, which might very well be
+>> just a chunk of memory waiting to be freed; it sure as hell is
+>> not positive.  skipped is set to true, 'i' is not decremented.
+>> Note that ->d_child.next points to the next non-cursor sibling
+>> (if any) or to the ->d_subdir of parent, so we can keep walking.
+>> 	* we keep walking for a while; eventually we run out of
+>> counter and leave the loop.
+>>
+>> Only after that we do rcu_read_unlock() and only then anything
+>> observed in that loop might be freed and reused.
+You are right, I miss this.
+>>
+>> Confused...  OTOH, I might be misreading that table of yours -
+>> it's about 30% wider than the widest xterm I can get while still
+>> being able to read the font...
 
-here you are...
-git://git.kernel.org/pub/scm/linux/kernel/git/xiang/linux.git -b erofs-experimental
+The table is my guess. This oops happens sometimes
 
-Thanks,
-Gao Xiang
+(We have one vmcore, others just have log, and the backtrace is same with vmcore, so the reason should be same).
+
+Unfortunately, we do not know how to reproduce it. The vmcore has such a law:
+
+1、dirA has 177 files, and it is OK
+
+2、dirB has 25 files, and it is OK
+
+3、When we ls dirA, it begins with ".", "..", dirB's first file, second file... last file,  last file->next = &(dirB->d_subdirs)
+
+-------->
+
+crash> struct dir_context ffff0000ae77be30  --->dcache_readdir ctx
+
+struct dir_context {
+
+actor = 0xffff00006727d760 <filldir64>,
+
+pos = 27   --->27 = . + .. + 25 files
+
+}
+
+
+next_positive
+
+  for (p = from->next; p != &parent->d_subdirs; p = p->next)  --->parent is dirA, so will continue
+
+
+This should be a bug, I think it is related with locks,  especially with commit ebaaa80e8f20 ("lockless next_positive()").
+
+Howerver, until now, I do not find the reason, Any suggestions?
+> Incidentally, which kernel was that on?
+4.19-stable,  the code of iterate_dir and d_alloc_parallel is same with master
+>
+> .
+>
 
