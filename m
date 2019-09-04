@@ -2,113 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8505A9423
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 22:54:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CFD3A9438
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 22:56:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbfIDUyX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 16:54:23 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46763 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfIDUyX (ORCPT
+        id S1730667AbfIDU4h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 16:56:37 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37219 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfIDU4g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 16:54:23 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t8so89424lfc.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 13:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YRdCAVRAhTdLrO2mQDquZKKD1XyXDQFQecwZBQrW2l0=;
-        b=Ze7jrxDdyMP3SGOIesp7e7J/31BijZsyDh1sIQ7zUiaQzSssRLwu0Ke8i7Ma6J1ANp
-         +Y5ZM0aEii6+0RhihFBDvVJHDKpgy6odNUVXcrGCLgyyDaE911gL75i/CI9XscaVSNbQ
-         F9aqFQyEV98rhO6Nc66q5tz/D9khPZIijk1p4=
+        Wed, 4 Sep 2019 16:56:36 -0400
+Received: by mail-qk1-f195.google.com with SMTP id s14so11621qkm.4;
+        Wed, 04 Sep 2019 13:56:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YRdCAVRAhTdLrO2mQDquZKKD1XyXDQFQecwZBQrW2l0=;
-        b=pogXRTWl4HjgXPodeBjsyaeCniXpdxTkBBaW8oNX3/kzGO16FQ9LI3wtkHGhkq75hL
-         ZgyHRa+Kkn35TtuPgYC2q+QR5lmoi5bOaeaALxB0f7hCXspOgyT0pFhwd4Arr6YnKYnk
-         9zisWoVUgBWfeKoDf/2o1CyjSxsBKs0N34+6z3nYCjxn6RsPT3Gd2mbJScYH5vikXM0b
-         sznJ0NkP2kvsmpVEtzBjLRTlmuOYd3ZrtnGvcCn32u0bATJP70r7ffwZkGQTH0ip4t6Q
-         niYLDDekk8yeAbsvgamASBiGkCALj3K7o+cp+6DQlGW7GnoOffHEAjTQbB5x4FWwy1Zs
-         K8ew==
-X-Gm-Message-State: APjAAAW20rt5xXsKqXLWJNXzqd71u9qbyweaA0hjOQ/FYO6CZzHCQ8iW
-        PlRq/IbVMBjoJX9PeXW/ZKnS465AvtE=
-X-Google-Smtp-Source: APXvYqzSHpf3T7meF7s3venTSAGHttC6aWiGVPKOplvna11Aanlw3WxhbVCuuc4mOvnLi8GMAn+osw==
-X-Received: by 2002:a19:6d02:: with SMTP id i2mr42352lfc.191.1567630460400;
-        Wed, 04 Sep 2019 13:54:20 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id o2sm2173800lfl.20.2019.09.04.13.54.20
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2019 13:54:20 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id j4so111377lfh.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 13:54:20 -0700 (PDT)
-X-Received: by 2002:a19:f204:: with SMTP id q4mr52203lfh.29.1567630138756;
- Wed, 04 Sep 2019 13:48:58 -0700 (PDT)
+        bh=8rwFcbv8ysatmI5tLrkRcCFyc0txYVdfJq7aSGtxta8=;
+        b=uVL9Sh+brLAh2oENCqd9GJim4fJD6f/2ZPJbt6Puxmi4psn+XdiHSLo59Ugh36kWQt
+         MljWnlBoyhSXZD2ykdPQ7Q4iiPGItBMpJ3sEqC/qIY8Rsa7pXe0uxpCo1DEc47zTUksr
+         jACC6ZOq8Kt+wMprg4K5HzSmurXTfIuOWu3MV023tb5g2U53QY4Jy+WCN7b17fH2/2bQ
+         wYIo71njSc8A5L1CGB9kGGyP+bTUWPbmPHZ5ckXVjILvjRgrbK5url9teLhbenoPwL1I
+         q//vl1FZFeJGsF6VKcH8UdXS/C5VY1ryreYWlVPyXt1Dz8kLTFlVCvWdBszWXefGVRCS
+         GZEg==
+X-Gm-Message-State: APjAAAW9gKeRQ+jh0dDndqBfsTMWn++Nfq2ppvbPkpZpFt6wtRgBrBwT
+        /mcU1ArHaS6b9ND6f9cO+WHBPORm7bjgXr2dXRI=
+X-Google-Smtp-Source: APXvYqyNf6/R0CbOS/YJtFLQ3Jl51yOjJsflDfUUqw3iFf5p9kL3WvWb3FQ6id+qoirrK19x8FXOv/jcWr5ZQm0ML2c=
+X-Received: by 2002:a37:4051:: with SMTP id n78mr40135453qka.138.1567630595588;
+ Wed, 04 Sep 2019 13:56:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-2-cyphar@cyphar.com>
-In-Reply-To: <20190904201933.10736-2-cyphar@cyphar.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 4 Sep 2019 13:48:43 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiDUA-cMy4VZxO6o6q+Cs3D6Od_MwEK53gcXuVn-dqv2g@mail.gmail.com>
-Message-ID: <CAHk-=wiDUA-cMy4VZxO6o6q+Cs3D6Od_MwEK53gcXuVn-dqv2g@mail.gmail.com>
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user helpers
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+References: <31a671ea-a00b-37da-5f30-558c3ab6d690@thelounge.net>
+ <20190904150251.27004-1-deepa.kernel@gmail.com> <ECBC97E7-53C5-4B4C-BC4C-1FCDC4C371B9@dilger.ca>
+In-Reply-To: <ECBC97E7-53C5-4B4C-BC4C-1FCDC4C371B9@dilger.ca>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 4 Sep 2019 22:56:19 +0200
+Message-ID: <CAK8P3a1YnNbzoRE_=3_F9ppqNaS7TO3a+ccN7mCgwjSUuNcW3w@mail.gmail.com>
+Subject: Re: [PATCH] ext4: Reduce ext4 timestamp warnings
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Qian Cai <cai@lca.pw>, Jeff Layton <jlayton@kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 1:20 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+On Wed, Sep 4, 2019 at 8:39 PM Andreas Dilger <adilger@dilger.ca> wrote:
 >
-> A common pattern for syscall extensions is increasing the size of a
-> struct passed from userspace, such that the zero-value of the new fields
-> result in the old kernel behaviour (allowing for a mix of userspace and
-> kernel vintages to operate on one another in most cases).
+> On Sep 4, 2019, at 09:02, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> >
+> > When ext4 file systems were created intentionally with 128 byte inodes,
+> > the rate-limited warning of eventual possible timestamp overflow are
+> > still emitted rather frequently.  Remove the warning for now.
+> >
+> > Discussion for whether any warning is needed,
+> > and where it should be emitted, can be found at
+> > https://lore.kernel.org/lkml/1567523922.5576.57.camel@lca.pw/.
+> > I can post a separate follow-up patch after the conclusion.
+> >
+> > Reported-by: Qian Cai <cai@lca.pw>
+> > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+>
+> I'd be in favor of a severely rare-limited warning in the actual case
+> that Y2038 timestamps cannot be stored, but the current message is
+> too verbose for now and I agree it is better to remove it while discussions
+> on the best solution are underway.
+>
+> Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
-Ack, this makes the whole series (and a few unrelated system calls) cleaner.
+Agreed completely.
 
-           Linus
+Applied on top of the y2038 branch now, thanks a lot for the update!
+
+This should be part of tomorrow's linux-next then.
+
+       Arnd
