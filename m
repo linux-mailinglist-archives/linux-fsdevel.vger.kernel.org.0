@@ -2,278 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE8AA960C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:16:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C0A2A9621
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730801AbfIDWQx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 18:16:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58328 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727722AbfIDWQw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 18:16:52 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EB466877A62;
-        Wed,  4 Sep 2019 22:16:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E4AF19C58;
-        Wed,  4 Sep 2019 22:16:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 07/11] block: Add block layer notifications [ver #8]
-From:   David Howells <dhowells@redhat.com>
-To:     keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 04 Sep 2019 23:16:48 +0100
-Message-ID: <156763540841.18676.14358801295475248408.stgit@warthog.procyon.org.uk>
-In-Reply-To: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
-References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1730939AbfIDWRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 18:17:15 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43641 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730927AbfIDWRM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 18:17:12 -0400
+Received: by mail-lj1-f195.google.com with SMTP id d5so274227lja.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 15:17:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L+6eZ5jXr9FHa9aXBFBl0ghBEbFlLODFrE967a3DFmE=;
+        b=hfyCSdKgCY/Fe6ZhOgmUuzH+l1Av9MeoieBRJhOHgspd/HlfkJB3tRok9F33ql8Uzt
+         YCi53+gSbOv7WH3zYmMiTF0zGBnANwxV7c7oClcZwaNIXXqds0cxD5Xcu535ms7QpKLP
+         zDVTwLMuj95aI+DpS0Y7tzdH7BHLTHU6tmSJs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L+6eZ5jXr9FHa9aXBFBl0ghBEbFlLODFrE967a3DFmE=;
+        b=LpZDtQfWou3deCRF5ZhyqahaCMy25FnuF9W6Tm+TsBUsG7jBARQMh2ydAuQgJso1nT
+         9+KZoH5mQBFhWjELpp0rqQROUkLEwECEtB5xk5jkMHXoWilnSGVgPqEduDMYvrzAPeej
+         JkNgyKR7bsXtVWFtN4D4Y08Dff24dM/223cWabfx2MbUibBHMGLUUzDxkVWS0SaOU/8V
+         AhkXC2cXF0ufW0oYPwhAy+a927eP5BpgDxgQv1L8aG5WIpSILyZGDh/6FirzmtGi/EQi
+         S6WpCDGL1I+qnEjRkZFiSwfm673hF4jJO+QXK91n/qrsbHbX4OtCHzDqTvBwEHBqadLm
+         zPZQ==
+X-Gm-Message-State: APjAAAVOz7B1X56RgdrW8JKv8hFZOEGkv4LsHYI67o1AHG105wIjflGS
+        ZUUOkgAOFYsrTMtQUoQXZzqxQGdkODQ=
+X-Google-Smtp-Source: APXvYqwv77blT3CmMsT+/3cfIGy6svBTi+t7jS0v3Z/OV0oXdGvBNlqnydXMRx5ueDLY8VrEkpKgDQ==
+X-Received: by 2002:a2e:29dc:: with SMTP id p89mr11440162ljp.228.1567635429454;
+        Wed, 04 Sep 2019 15:17:09 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id s7sm15105lji.26.2019.09.04.15.17.06
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2019 15:17:08 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id t14so309689lji.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 15:17:06 -0700 (PDT)
+X-Received: by 2002:a2e:9a84:: with SMTP id p4mr24283824lji.52.1567635425244;
+ Wed, 04 Sep 2019 15:17:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Wed, 04 Sep 2019 22:16:52 +0000 (UTC)
+References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-11-cyphar@cyphar.com>
+ <CAHk-=wiod1rQMU+6Zew=cLE8uX4tUdf42bM5eKngMnNVS2My7g@mail.gmail.com> <20190904214856.vnvom7h5xontvngq@yavin.dot.cyphar.com>
+In-Reply-To: <20190904214856.vnvom7h5xontvngq@yavin.dot.cyphar.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 4 Sep 2019 15:16:49 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgcJq21Hydh7Tx5-o8empoPp7ULDBw0Am-du_Pa+fcftQ@mail.gmail.com>
+Message-ID: <CAHk-=wgcJq21Hydh7Tx5-o8empoPp7ULDBw0Am-du_Pa+fcftQ@mail.gmail.com>
+Subject: Re: [PATCH v12 10/12] namei: aggressively check for nd->root escape
+ on ".." resolution
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a block layer notification mechanism whereby notifications about
-block-layer events such as I/O errors, can be reported to a monitoring
-process asynchronously.
+On Wed, Sep 4, 2019 at 2:49 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+>
+> Hinting to userspace to do a retry (with -EAGAIN as you mention in your
+> other mail) wouldn't be a bad thing at all, though you'd almost
+> certainly get quite a few spurious -EAGAINs -- &{mount,rename}_lock are
+> global for the entire machine, after all.
 
-Firstly, an event queue needs to be created:
+I'd hope that we have some future (possibly very long-term)
+alternative that is not quite system-global, but yes, right now they
+are.
 
-	fd = open("/dev/event_queue", O_RDWR);
-	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
+Which is one reason I'd rather see EAGAIN in user space - yes, it
+probably makes it even easier to trigger, but it also means that user
+space might be able to do something about it when it does trigger.
 
-then a notification can be set up to report block notifications via that
-queue:
+For example, maybe user space can first just use an untrusted path
+as-is, and if it gets EAGAIN or EXDEV, it may be that user space can
+simplify the path (ie turn "xyz/.../abc" into just "abc".
 
-	struct watch_notification_filter filter = {
-		.nr_filters = 1,
-		.filters = {
-			[0] = {
-				.type = WATCH_TYPE_BLOCK_NOTIFY,
-				.subtype_filter[0] = UINT_MAX;
-			},
-		},
-	};
-	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
-	watch_devices(fd, 12);
+And even if user space doesn't do anything like that, I suspect a
+performance problem is going to be a whole lot easier to debug and
+report when somebody ends up seeing excessive retries happening. As a
+developer you'll see it in profiles or in system call traces, rather
+than it resulting in very odd possible slowdowns for the kernel.
 
-After that, records will be placed into the queue when, for example, errors
-occur on a block device.  Records are of the following format:
+And yeah, it would probably be best to then at least delay doing
+option 3 indefinitely, just to make sure user space knows about and
+actually has a test-case for that EAGAIN happening.
 
-	struct block_notification {
-		struct watch_notification watch;
-		__u64	dev;
-		__u64	sector;
-	} *n;
-
-Where:
-
-	n->watch.type will be WATCH_TYPE_BLOCK_NOTIFY
-
-	n->watch.subtype will be the type of notification, such as
-	NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM.
-
-	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
-	record.
-
-	n->watch.info & WATCH_INFO_ID will be the second argument to
-	watch_devices(), shifted.
-
-	n->dev will be the device numbers munged together.
-
-	n->sector will indicate the affected sector (if appropriate for the
-	event).
-
-Note that it is permissible for event records to be of variable length -
-or, at least, the length may be dependent on the subtype.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- Documentation/watch_queue.rst    |    4 +++-
- block/Kconfig                    |    9 +++++++++
- block/blk-core.c                 |   29 +++++++++++++++++++++++++++++
- include/linux/blkdev.h           |   15 +++++++++++++++
- include/uapi/linux/watch_queue.h |   30 +++++++++++++++++++++++++++++-
- 5 files changed, 85 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
-index 393905b904c8..5cc9c6924727 100644
---- a/Documentation/watch_queue.rst
-+++ b/Documentation/watch_queue.rst
-@@ -7,7 +7,9 @@ receive notifications from the kernel.  This can be used in conjunction with::
- 
-   * Key/keyring notifications
- 
--  * General device event notifications
-+  * General device event notifications, including::
-+
-+    * Block layer event notifications
- 
- 
- The notifications buffers can be enabled by:
-diff --git a/block/Kconfig b/block/Kconfig
-index 8b5f8e560eb4..cc93e4ca29a7 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -164,6 +164,15 @@ config BLK_SED_OPAL
- 	Enabling this option enables users to setup/unlock/lock
- 	Locking ranges for SED devices using the Opal protocol.
- 
-+config BLK_NOTIFICATIONS
-+	bool "Block layer event notifications"
-+	depends on DEVICE_NOTIFICATIONS
-+	help
-+	  This option provides support for getting block layer event
-+	  notifications.  This makes use of the /dev/watch_queue misc device to
-+	  handle the notification buffer and provides the device_notify() system
-+	  call to enable/disable watches.
-+
- menu "Partition Types"
- 
- source "block/partitions/Kconfig"
-diff --git a/block/blk-core.c b/block/blk-core.c
-index d0cc6e14d2f0..8ab1e07aa311 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -181,6 +181,22 @@ static const struct {
- 	[BLK_STS_IOERR]		= { -EIO,	"I/O" },
- };
- 
-+#ifdef CONFIG_BLK_NOTIFICATIONS
-+static const
-+enum block_notification_type blk_notifications[ARRAY_SIZE(blk_errors)] = {
-+	[BLK_STS_TIMEOUT]	= NOTIFY_BLOCK_ERROR_TIMEOUT,
-+	[BLK_STS_NOSPC]		= NOTIFY_BLOCK_ERROR_NO_SPACE,
-+	[BLK_STS_TRANSPORT]	= NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT,
-+	[BLK_STS_TARGET]	= NOTIFY_BLOCK_ERROR_CRITICAL_TARGET,
-+	[BLK_STS_NEXUS]		= NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS,
-+	[BLK_STS_MEDIUM]	= NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM,
-+	[BLK_STS_PROTECTION]	= NOTIFY_BLOCK_ERROR_PROTECTION,
-+	[BLK_STS_RESOURCE]	= NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE,
-+	[BLK_STS_DEV_RESOURCE]	= NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE,
-+	[BLK_STS_IOERR]		= NOTIFY_BLOCK_ERROR_IO,
-+};
-+#endif
-+
- blk_status_t errno_to_blk_status(int errno)
- {
- 	int i;
-@@ -221,6 +237,19 @@ static void print_req_error(struct request *req, blk_status_t status,
- 		req->cmd_flags & ~REQ_OP_MASK,
- 		req->nr_phys_segments,
- 		IOPRIO_PRIO_CLASS(req->ioprio));
-+
-+#ifdef CONFIG_BLK_NOTIFICATIONS
-+	if (blk_notifications[idx]) {
-+		struct block_notification n = {
-+			.watch.type	= WATCH_TYPE_BLOCK_NOTIFY,
-+			.watch.subtype	= blk_notifications[idx],
-+			.watch.info	= watch_sizeof(n),
-+			.dev		= req->rq_disk ? disk_devt(req->rq_disk) : 0,
-+			.sector		= blk_rq_pos(req),
-+		};
-+		post_block_notification(&n);
-+	}
-+#endif
- }
- 
- static void req_bio_endio(struct request *rq, struct bio *bio,
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 1ef375dafb1c..5d856f670a8f 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -27,6 +27,7 @@
- #include <linux/percpu-refcount.h>
- #include <linux/scatterlist.h>
- #include <linux/blkzoned.h>
-+#include <linux/watch_queue.h>
- 
- struct module;
- struct scsi_ioctl_command;
-@@ -1742,6 +1743,20 @@ static inline bool blk_req_can_dispatch_to_zone(struct request *rq)
- }
- #endif /* CONFIG_BLK_DEV_ZONED */
- 
-+#ifdef CONFIG_BLK_NOTIFICATIONS
-+static inline void post_block_notification(struct block_notification *n)
-+{
-+	u64 id = 0; /* Might want to allow dev# here. */
-+
-+	post_device_notification(&n->watch, id);
-+}
-+#else
-+static inline void post_block_notification(struct block_notification *n)
-+{
-+}
-+#endif
-+
-+
- #else /* CONFIG_BLOCK */
- 
- struct block_device;
-diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
-index 654d4ba8b909..9a6c059af09d 100644
---- a/include/uapi/linux/watch_queue.h
-+++ b/include/uapi/linux/watch_queue.h
-@@ -11,7 +11,8 @@
- enum watch_notification_type {
- 	WATCH_TYPE_META		= 0,	/* Special record */
- 	WATCH_TYPE_KEY_NOTIFY	= 1,	/* Key change event notification */
--	WATCH_TYPE___NR		= 2
-+	WATCH_TYPE_BLOCK_NOTIFY	= 2,	/* Block layer event notification */
-+	WATCH_TYPE___NR		= 3
- };
- 
- enum watch_meta_notification_subtype {
-@@ -124,4 +125,31 @@ struct key_notification {
- 	__u32	aux;		/* Per-type auxiliary data */
- };
- 
-+/*
-+ * Type of block layer notification.
-+ */
-+enum block_notification_type {
-+	NOTIFY_BLOCK_ERROR_TIMEOUT		= 1, /* Timeout error */
-+	NOTIFY_BLOCK_ERROR_NO_SPACE		= 2, /* Critical space allocation error */
-+	NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT = 3, /* Recoverable transport error */
-+	NOTIFY_BLOCK_ERROR_CRITICAL_TARGET	= 4, /* Critical target error */
-+	NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS	= 5, /* Critical nexus error */
-+	NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM	= 6, /* Critical medium error */
-+	NOTIFY_BLOCK_ERROR_PROTECTION		= 7, /* Protection error */
-+	NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE	= 8, /* Kernel resource error */
-+	NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE	= 9, /* Device resource error */
-+	NOTIFY_BLOCK_ERROR_IO			= 10, /* Other I/O error */
-+};
-+
-+/*
-+ * Block layer notification record.
-+ * - watch.type = WATCH_TYPE_BLOCK_NOTIFY
-+ * - watch.subtype = enum block_notification_type
-+ */
-+struct block_notification {
-+	struct watch_notification watch; /* WATCH_TYPE_BLOCK_NOTIFY */
-+	__u64	dev;			/* Device number */
-+	__u64	sector;			/* Affected sector */
-+};
-+
- #endif /* _UAPI_LINUX_WATCH_QUEUE_H */
-
+              Linus
