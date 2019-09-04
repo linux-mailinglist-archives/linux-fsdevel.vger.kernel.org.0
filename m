@@ -2,189 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA46BA88E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 21:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48974A890C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 21:23:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730846AbfIDOj2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 10:39:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730153AbfIDOj1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 10:39:27 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E31B23401;
-        Wed,  4 Sep 2019 14:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567607966;
-        bh=aD2iCJ22nEGEI/+riKk0ElhPI0pFP/JdVCELOqTyRLc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=CXWl3wrv7B1MhicxS//ASRwy9E2tI43lQpfM25B6tGvResu/lXBTAG8gWvHIEpOfh
-         /0AzWvLU2EG4J2ImPnL4/wTGNuwHC82IHlWW21YAkc5hrNh1i5W+jTGvW3l7iabdMx
-         cb3gr/1m3m8tv+cfcWcux4KJ/bH8br+M0CG0Kd0Q=
-Message-ID: <9b3433ebec78bb99690fd4805b329266edf21686.camel@kernel.org>
-Subject: Re: [RFC] - vfs: Null pointer dereference issue with symlink create
- and read of symlink
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>,
-        Gao Xiang <hsiangkao@aol.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, aneesh.kumar@linux.ibm.com,
-        wugyuan@cn.ibm.com
-Date:   Wed, 04 Sep 2019 10:39:24 -0400
-In-Reply-To: <20190903134129.EC5E6A405B@b06wcsmtp001.portsmouth.uk.ibm.com>
-References: <20190903115827.0A8A0A405B@b06wcsmtp001.portsmouth.uk.ibm.com>
-         <20190903125946.GA11069@hsiangkao-HP-ZHAN-66-Pro-G1>
-         <20190903134129.EC5E6A405B@b06wcsmtp001.portsmouth.uk.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1730324AbfIDO4v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 10:56:51 -0400
+Received: from sonic303-27.consmr.mail.ne1.yahoo.com ([66.163.188.153]:33093
+        "EHLO sonic303-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727929AbfIDO4u (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 10:56:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567609008; bh=ZiZUpa4OlflpyykovNV00Zn2esYZ6QcbKLYZHtiNUds=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=kdTM8h4SvoXCtFh3aPtY0+13TysL9zTXW0z6Uyd1g2MFYlhcPLO2YfsD6a0NAY0n2a3JYANIy+7Xq0IpDlYqA1knU2FqmA4Ap3QGaUE0pKnXr82qfDdispihs+/LILi8RoBIGnO4XpN6B0kAneSe1e0W6sZHxAkrf+ZUCzp4NIPakTEpO/j4qQNaZ7FGbjPky5QN0Za6nAVc5XCtyNL3RXAAkvzrvUc+00Dnpv/kmOKXQfUC0lcd3EWV6sLr8g7jCcRUkPc4bUuCDymw6sko1oFXUjMgaJRx+EnXhNAlmWsKIJZbKEMklDfBAF8/SXfmMqp3cuLuZWJy/I54rhjFIA==
+X-YMail-OSG: opM.IoIVM1nmPQ6ac22krzy3RhYyjsKlAXH..fafy0u1.b.v4c6Wst5wl4gwQZc
+ kTsSvw7BqxrCGP075bn_ZMxZyduB5r90n5msR5B.4wDeABhoJ.3RTEnqSFut0Z3EfqvbzGwChUOj
+ vGoA6QuK8NdhfCpXute0rpFHFYe3eL4hwWpyDPs6IRLZISdWGTmAzNwTowydw6lcfHIU.1g0z8UU
+ CRlmnVLWjQu1z3SkDGcbympDZVRFuToMqECjO8z_KS6pFdwsaLy_HnU.t.80TejK_fVp5QRVJlj_
+ oCtQGdLcBeS27MCucR1UpAG08DnBN3Pbqzi9vaWvjKqybLI9XvX.FBlfB2QC6_Fpkr70gQ6P4ZFu
+ h7VqGy4vsVr1_cvw1EnARMfx25zEtF.JF2S6xpoloa1_5iVSRoglSF7bS2NIyEd8WY4e1xFKWxFj
+ w24.V2AGGGUk302jPO4igK_HwxmYiTPjuamXwJ12Sm.ex2WwJfYzkiVmUkL5l.1zIH72QMKOcEkq
+ 5KQ8uAxX68oxn29eJeAlmdYutg4Dci1N2iwekXXGBDCw5hMpYnwTgKbaGho5LKedUrp4eQc8c.3V
+ 8wnq.qXjXR0rZfSCoB4Sm26kjGBUCAd5rBKstuXAvye7CrVm.s.cluybTF9O2A.9VghbGUhKmr_A
+ _JSSQQ_Icmi9OS.OSwnvv_yCzRUAcd1sVyUsrA1btQYDLZhMSHMeD3sYCXMOFC6dqXpqGWrW9luN
+ TX3mmwu6FPEGTWllORiJl.32.NS1AHeEvAkG0rxPhMaQkzGwdM_dx7okQg9_TBhjvsY6X3r8XR09
+ Ln37Ne_gowGu6dOwpxwctC9wbOj7pZieFbDKf3Fp4wGIOdICbcCau63OrD23pwBpVkSoEgnjrBb4
+ ZFOoKA_VKSGeh36umXadTqlQilhU74H0B.WXxfDYWbOZjfkQ3A0sBpsFyJNf95PgTDTp0C.UlQkg
+ .QebP8aRAsp1nSPb3s9opmOlrlHpI2utLb1nYAnP9x1bIZTRgfTJBUp8L8psdwVdmLuz.OI.2rv.
+ rOA7BtAsrSO3ycuHqALj4oIjugzd5xb8TKM1pvyc2W9ZKYO9uAYZ2BAtAQ6E5iiHEoWbPXdNrI.P
+ lrnDg.f85u3yS2KtyAE61rvvgfzpVibnwGG7s1TboD47CVhhtsoYY_TxONC6fE9Knv.u1VHLII2F
+ _F_rFz6nxKn6Ucj6UbtCvccxj7COilwe9s44nClkdUY7dfvV6WWXANRYApOeksAvpuw9C_A6S4FP
+ NHe03IUfHxPXKv7DrtFvolZZAn8NfmznWc7U8MfHaqkysw4GG71Q9HGKrm3wiVCbRCJjCHT5k4ly
+ b4bW5Pzp_1BYTK2AOZ2ib.gmWOs.nTzrfjjJp
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Wed, 4 Sep 2019 14:56:48 +0000
+Received: by smtp431.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ab143955ae61667d238fde3beed8cf6c;
+          Wed, 04 Sep 2019 14:56:47 +0000 (UTC)
+Subject: Re: [PATCH 11/11] smack: Implement the watch_key and
+ post_notification hooks [untested] [ver #7]
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        casey@schaufler-ca.com
+References: <23d61564-026e-b37a-8b16-ce68d5949f6c@schaufler-ca.com>
+ <87bf0363-af77-1e5a-961f-72730e39e3a6@schaufler-ca.com>
+ <e36fa722-a300-2abf-ae9c-a0246fc66d0e@schaufler-ca.com>
+ <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk>
+ <156717352917.2204.17206219813087348132.stgit@warthog.procyon.org.uk>
+ <4910.1567525310@warthog.procyon.org.uk>
+ <11467.1567534014@warthog.procyon.org.uk>
+ <31205.1567598939@warthog.procyon.org.uk>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <5be00881-258a-d888-e544-0d14ac496dcf@schaufler-ca.com>
+Date:   Wed, 4 Sep 2019 07:56:46 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <31205.1567598939@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2019-09-03 at 19:11 +0530, Ritesh Harjani wrote:
-> 
-> On 9/3/19 6:29 PM, Gao Xiang wrote:
-> > On Tue, Sep 03, 2019 at 05:28:26PM +0530, Ritesh Harjani wrote:
-> > > Hi Viro/All,
-> > > 
-> > > Could you please review below issue and it's proposed solutions.
-> > > If you could let me know which of the two you think will be a better
-> > > approach to solve this or in case if you have any other better approach, I
-> > > can prepare and submit a official patch with that.
-> > > 
-> > > 
-> > > 
-> > > Issue signature:-
-> > >   [NIP  : trailing_symlink+80]
-> > >   [LR   : trailing_symlink+1092]
-> > >   #4 [c00000198069bb70] trailing_symlink at c0000000004bae60  (unreliable)
-> > >   #5 [c00000198069bc00] path_openat at c0000000004bdd14
-> > >   #6 [c00000198069bc90] do_filp_open at c0000000004c0274
-> > >   #7 [c00000198069bdb0] do_sys_open at c00000000049b248
-> > >   #8 [c00000198069be30] system_call at c00000000000b388
-> > > 
-> > > 
-> > > 
-> > > Test case:-
-> > > shell-1 - "while [ 1 ]; do cat /gpfs/g1/testdir/file3; sleep 1; done"
-> > > shell-2 - "while [ 1 ]; do ln -s /gpfs/g1/testdir/file1
-> > > /gpfs/g1/testdir/file3; sleep 1; rm /gpfs/g1/testdir/file3 sleep 1; done
-> > > 
-> > > 
-> > > 
-> > > Problem description:-
-> > > In some filesystems like GPFS below described scenario may happen on some
-> > > platforms (Reported-By:- wugyuan)
-> > > 
-> > > Here, two threads are being run in 2 different shells. Thread-1(cat) does
-> > > cat of the symlink and Thread-2(ln) is creating the symlink.
-> > > 
-> > > Now on any platform with GPFS like filesystem, if CPU does out-of-order
-> > > execution (or any kind of re-ordering due compiler optimization?) in
-> > > function __d_set_and_inode_type(), then we see a NULL pointer dereference
-> > > due to inode->i_uid.
-> > > 
-> > > This happens because in lookup_fast in nonRCU path or say REF-walk (i.e. in
-> > > else condition), we check d_is_negative() without any lock protection.
-> > > And since in __d_set_and_inode_type() re-ordering may happen in setting of
-> > > dentry->type & dentry->inode => this means that there is this tiny window
-> > > where things are going wrong.
-> > > 
-> > > 
-> > > (GPFS like):- Any FS with -inode_operations ->permission callback returning
-> > > -ECHILD in case of (mask & MAY_NOT_BLOCK) may cause this problem to happen.
-> > > (few e.g. found were - ocfs2, ceph, coda, afs)
-> > > 
-> > > int xxx_permission(struct inode *inode, int mask)
-> > > {
-> > >           if (mask & MAY_NOT_BLOCK)
-> > >                   return -ECHILD;
-> > > 	<...>
-> > > }
-> > > 
-> > > Wugyuan(cc), could reproduce this problem with GPFS filesystem.
-> > > Since, I didn't have the GPFS setup, so I tried replicating on a native FS
-> > > by forcing out-of-order execution in function __d_set_inode_and_type() and
-> > > making sure we return -ECHILD in MAY_NOT_BLOCK case in ->permission
-> > > operation for all inodes.
-> > > 
-> > > With above changes in kernel, I could as well hit this issue on a native FS
-> > > too.
-> > > 
-> > > (basically what we observed is link_path_walk will do nonRCU(REF-walk)
-> > > lookup due to may_lookup -> inode_permission return -ECHILD and then
-> > > unlazy_walk drops the LOOKUP_RCU flag (nd->flag). After that below race is
-> > > possible).
-> > > 
-> > > 
-> > > 
-> > > Sequence of events:-
-> > > 
-> > > Thread-2(Comm: ln)		Thread-1(Comm: cat)
-> > > 
-> > > 				dentry = __d_lookup() //nonRCU
-> > > 
-> > > __d_set_and_inode_type() (Out-of-order execution)
-> > > 	flags = READ_ONCE(dentry->d_flags);
-> > > 	flags &= ~(DCACHE_ENTRY_TYPE | DCACHE_FALLTHRU);
-> > > 	flags |= type_flags;
-> > > 	WRITE_ONCE(dentry->d_flags, flags);
-> > > 
-> > > 					
-> > > 				if (unlikely(d_is_negative()) // fails
-> > >    					{}
-> > > 				// since type is already updated in
-> > > 				// Thread-2 in parallel but inode
-> > > 				// not yet set.
-> > > 				// d_is_negative returns false
-> > > 
-> > > 				*inode = d_backing_inode(path->dentry);
-> > > 				// means inode is still NULL
-> > > 
-> > > 	dentry->d_inode = inode;
-> > > 	
-> > > 				trailing_symlink()
-> > > 					may_follow_link()
-> > > 						inode = nd->link_inode;
-> > > 						// nd->link_inode = NULL
-> > > 						//Then it crashes while
-> > > 						//doing inode->i_uid
-> > > 					
-> > > 	
-> > 
-> > It seems much similar to
-> > https://lore.kernel.org/r/20190419084810.63732-1-houtao1@huawei.com/
-> 
-> Thanks, yes two same symptoms with different use cases.
-> But except the fact that here, we see the issue with GPFS quite 
-> frequently. So let's hope that we could have some solution to this 
-> problem in upstream.
-> 
+On 9/4/2019 5:08 AM, David Howells wrote:
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+>> I rebuilt with keys-next, updated the tests again, and now
+>> the suite looks to be running trouble free.
+> Can I put you down as an Acked-by or something on this patch?
 
-Agreed. Looks a lot like the same issue.
+I haven't done anything to see if the patch is actually useful.
+I don't have much (read: anything) in the way of key tests for
+Smack, so I can't say if this is what I want long term. But as
+it does appear harmless, yes, you can add my Acked-by on this.
 
->  From the thread:-
->  >> We could simply use d_really_is_negative() there, avoiding all that
->  >> mess.  If and when we get around to whiteouts-in-dcache (i.e. if
->  >> unionfs series gets resurrected), we can revisit that
-> 
-> I didn't get this part. Does it mean, d_really_is_negative can only be 
-> used, once whiteouts-in-dcache series is resurrected?
-> If yes, meanwhile could we have any other solution in place?
-> 
-
-I think Al was saying that you could change this to use
-d_really_is_negative now but the whiteouts-in-dcache series would have
-to deal with that. That series seems to be stalled for the time being,
-so I wouldn't let it stop you from changing this.
-
-It wouldn't hurt to put in some comments with this change too, to make
-sure everyone understands why that's being used there.
--- 
-Jeff Layton <jlayton@kernel.org>
-
+>
+> Thanks,
+> David
