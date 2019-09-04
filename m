@@ -2,195 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF58A9632
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9AF4A9659
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730457AbfIDWRa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 18:17:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59222 "EHLO mx1.redhat.com"
+        id S1730453AbfIDWZw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 18:25:52 -0400
+Received: from mga05.intel.com ([192.55.52.43]:12586 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730435AbfIDWR3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 18:17:29 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9B8F43007C30;
-        Wed,  4 Sep 2019 22:17:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D534460C18;
-        Wed,  4 Sep 2019 22:17:24 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 11/11] smack: Implement the watch_key and post_notification
- hooks [ver #8]
-From:   David Howells <dhowells@redhat.com>
-To:     keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 04 Sep 2019 23:17:24 +0100
-Message-ID: <156763544404.18676.1316696252943973122.stgit@warthog.procyon.org.uk>
-In-Reply-To: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
-References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1725965AbfIDWZw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 18:25:52 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 15:25:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,468,1559545200"; 
+   d="scan'208";a="185252801"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga003.jf.intel.com with ESMTP; 04 Sep 2019 15:25:50 -0700
+Date:   Wed, 4 Sep 2019 15:25:50 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system
+ file object
+Message-ID: <20190904222549.GC31319@iweiny-DESK2.sc.intel.com>
+References: <20190809225833.6657-17-ira.weiny@intel.com>
+ <20190812130039.GD24457@ziepe.ca>
+ <20190812172826.GA19746@iweiny-DESK2.sc.intel.com>
+ <20190812175615.GI24457@ziepe.ca>
+ <20190812211537.GE20634@iweiny-DESK2.sc.intel.com>
+ <20190813114842.GB29508@ziepe.ca>
+ <20190813174142.GB11882@iweiny-DESK2.sc.intel.com>
+ <20190813180022.GF29508@ziepe.ca>
+ <20190813203858.GA12695@iweiny-DESK2.sc.intel.com>
+ <20190814122308.GB13770@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 04 Sep 2019 22:17:28 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814122308.GB13770@ziepe.ca>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement the watch_key security hook in Smack to make sure that a key
-grants the caller Read permission in order to set a watch on a key.
+On Wed, Aug 14, 2019 at 09:23:08AM -0300, Jason Gunthorpe wrote:
+> On Tue, Aug 13, 2019 at 01:38:59PM -0700, Ira Weiny wrote:
+> > On Tue, Aug 13, 2019 at 03:00:22PM -0300, Jason Gunthorpe wrote:
+> > > On Tue, Aug 13, 2019 at 10:41:42AM -0700, Ira Weiny wrote:
+> > > 
+> > > > And I was pretty sure uverbs_destroy_ufile_hw() would take care of (or ensure
+> > > > that some other thread is) destroying all the MR's we have associated with this
+> > > > FD.
+> > > 
+> > > fd's can't be revoked, so destroy_ufile_hw() can't touch them. It
+> > > deletes any underlying HW resources, but the FD persists.
+> > 
+> > I misspoke.  I should have said associated with this "context".  And of course
+> > uverbs_destroy_ufile_hw() does not touch the FD.  What I mean is that the
+> > struct file which had file_pins hanging off of it would be getting its file
+> > pins destroyed by uverbs_destroy_ufile_hw().  Therefore we don't need the FD
+> > after uverbs_destroy_ufile_hw() is done.
+> > 
+> > But since it does not block it may be that the struct file is gone before the
+> > MR is actually destroyed.  Which means I think the GUP code would blow up in
+> > that case...  :-(
+> 
+> Oh, yes, that is true, you also can't rely on the struct file living
+> longer than the HW objects either, that isn't how the lifetime model
+> works.
 
-Also implement the post_notification security hook to make sure that the
-notification source is granted Write permission by the watch queue.
+Reviewing all these old threads...  And this made me think.  While the HW
+objects may out live the struct file.
 
-For the moment, the watch_devices security hook is left unimplemented as
-it's not obvious what the object should be since the queue is global and
-didn't previously exist.
+They _are_ going away in a finite amount of time right?  It is not like they
+could be held forever right?
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
----
+Ira
 
- include/linux/lsm_audit.h  |    1 +
- security/smack/smack_lsm.c |   82 +++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 82 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-index 915330abf6e5..734d67889826 100644
---- a/include/linux/lsm_audit.h
-+++ b/include/linux/lsm_audit.h
-@@ -74,6 +74,7 @@ struct common_audit_data {
- #define LSM_AUDIT_DATA_FILE	12
- #define LSM_AUDIT_DATA_IBPKEY	13
- #define LSM_AUDIT_DATA_IBENDPORT 14
-+#define LSM_AUDIT_DATA_NOTIFICATION 15
- 	union 	{
- 		struct path path;
- 		struct dentry *dentry;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 4c5e5a438f8b..1c2a908c6446 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4274,7 +4274,7 @@ static int smack_key_permission(key_ref_t key_ref,
- 	if (tkp == NULL)
- 		return -EACCES;
- 
--	if (smack_privileged_cred(CAP_MAC_OVERRIDE, cred))
-+	if (smack_privileged(CAP_MAC_OVERRIDE))
- 		return 0;
- 
- #ifdef CONFIG_AUDIT
-@@ -4320,8 +4320,81 @@ static int smack_key_getsecurity(struct key *key, char **_buffer)
- 	return length;
- }
- 
-+
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+/**
-+ * smack_watch_key - Smack access to watch a key for notifications.
-+ * @key: The key to be watched
-+ *
-+ * Return 0 if the @watch->cred has permission to read from the key object and
-+ * an error otherwise.
-+ */
-+static int smack_watch_key(struct key *key)
-+{
-+	struct smk_audit_info ad;
-+	struct smack_known *tkp = smk_of_current();
-+	int rc;
-+
-+	if (key == NULL)
-+		return -EINVAL;
-+	/*
-+	 * If the key hasn't been initialized give it access so that
-+	 * it may do so.
-+	 */
-+	if (key->security == NULL)
-+		return 0;
-+	/*
-+	 * This should not occur
-+	 */
-+	if (tkp == NULL)
-+		return -EACCES;
-+
-+	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
-+		return 0;
-+
-+#ifdef CONFIG_AUDIT
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_KEY);
-+	ad.a.u.key_struct.key = key->serial;
-+	ad.a.u.key_struct.key_desc = key->description;
-+#endif
-+	rc = smk_access(tkp, key->security, MAY_READ, &ad);
-+	rc = smk_bu_note("key watch", tkp, key->security, MAY_READ, rc);
-+	return rc;
-+}
-+#endif /* CONFIG_KEY_NOTIFICATIONS */
- #endif /* CONFIG_KEYS */
- 
-+#ifdef CONFIG_WATCH_QUEUE
-+/**
-+ * smack_post_notification - Smack access to post a notification to a queue
-+ * @w_cred: The credentials of the watcher.
-+ * @cred: The credentials of the event source (may be NULL).
-+ * @n: The notification message to be posted.
-+ */
-+static int smack_post_notification(const struct cred *w_cred,
-+				   const struct cred *cred,
-+				   struct watch_notification *n)
-+{
-+	struct smk_audit_info ad;
-+	struct smack_known *subj, *obj;
-+	int rc;
-+
-+	/* Always let maintenance notifications through. */
-+	if (n->type == WATCH_TYPE_META)
-+		return 0;
-+
-+	if (!cred)
-+		return 0;
-+	subj = smk_of_task(smack_cred(cred));
-+	obj = smk_of_task(smack_cred(w_cred));
-+
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NOTIFICATION);
-+	rc = smk_access(subj, obj, MAY_WRITE, &ad);
-+	rc = smk_bu_note("notification", subj, obj, MAY_WRITE, rc);
-+	return rc;
-+}
-+#endif /* CONFIG_WATCH_QUEUE */
-+
- /*
-  * Smack Audit hooks
-  *
-@@ -4710,8 +4783,15 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(key_free, smack_key_free),
- 	LSM_HOOK_INIT(key_permission, smack_key_permission),
- 	LSM_HOOK_INIT(key_getsecurity, smack_key_getsecurity),
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+	LSM_HOOK_INIT(watch_key, smack_watch_key),
-+#endif
- #endif /* CONFIG_KEYS */
- 
-+#ifdef CONFIG_WATCH_QUEUE
-+	LSM_HOOK_INIT(post_notification, smack_post_notification),
-+#endif
-+
-  /* Audit hooks */
- #ifdef CONFIG_AUDIT
- 	LSM_HOOK_INIT(audit_rule_init, smack_audit_rule_init),
-
+> 
+> If GUP consumes the struct file it must allow the struct file to be
+> deleted before the GUP pin is released.
+> 
+> > The drivers could provide some generic object (in RDMA this could be the
+> > uverbs_attr_bundle) which represents their "context".
+> 
+> For RDMA the obvious context is the struct ib_mr *
+> 
+> > But for the procfs interface, that context then needs to be associated with any
+> > file which points to it...  For RDMA, or any other "FD based pin mechanism", it
+> > would be up to the driver to "install" a procfs handler into any struct file
+> > which _may_ point to this context.  (before _or_ after memory pins).
+> 
+> Is this all just for debugging? Seems like a lot of complication just
+> to print a string
+> 
+> Generally, I think you'd be better to associate things with the
+> mm_struct not some struct file... The whole design is simpler as GUP
+> already has the mm_struct.
+> 
+> Jason
