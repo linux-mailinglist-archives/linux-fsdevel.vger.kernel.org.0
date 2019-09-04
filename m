@@ -2,136 +2,344 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C0A2A9621
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:17:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C37F3A9612
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730939AbfIDWRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 18:17:15 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43641 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730927AbfIDWRM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 18:17:12 -0400
-Received: by mail-lj1-f195.google.com with SMTP id d5so274227lja.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 15:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L+6eZ5jXr9FHa9aXBFBl0ghBEbFlLODFrE967a3DFmE=;
-        b=hfyCSdKgCY/Fe6ZhOgmUuzH+l1Av9MeoieBRJhOHgspd/HlfkJB3tRok9F33ql8Uzt
-         YCi53+gSbOv7WH3zYmMiTF0zGBnANwxV7c7oClcZwaNIXXqds0cxD5Xcu535ms7QpKLP
-         zDVTwLMuj95aI+DpS0Y7tzdH7BHLTHU6tmSJs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L+6eZ5jXr9FHa9aXBFBl0ghBEbFlLODFrE967a3DFmE=;
-        b=LpZDtQfWou3deCRF5ZhyqahaCMy25FnuF9W6Tm+TsBUsG7jBARQMh2ydAuQgJso1nT
-         9+KZoH5mQBFhWjELpp0rqQROUkLEwECEtB5xk5jkMHXoWilnSGVgPqEduDMYvrzAPeej
-         JkNgyKR7bsXtVWFtN4D4Y08Dff24dM/223cWabfx2MbUibBHMGLUUzDxkVWS0SaOU/8V
-         AhkXC2cXF0ufW0oYPwhAy+a927eP5BpgDxgQv1L8aG5WIpSILyZGDh/6FirzmtGi/EQi
-         S6WpCDGL1I+qnEjRkZFiSwfm673hF4jJO+QXK91n/qrsbHbX4OtCHzDqTvBwEHBqadLm
-         zPZQ==
-X-Gm-Message-State: APjAAAVOz7B1X56RgdrW8JKv8hFZOEGkv4LsHYI67o1AHG105wIjflGS
-        ZUUOkgAOFYsrTMtQUoQXZzqxQGdkODQ=
-X-Google-Smtp-Source: APXvYqwv77blT3CmMsT+/3cfIGy6svBTi+t7jS0v3Z/OV0oXdGvBNlqnydXMRx5ueDLY8VrEkpKgDQ==
-X-Received: by 2002:a2e:29dc:: with SMTP id p89mr11440162ljp.228.1567635429454;
-        Wed, 04 Sep 2019 15:17:09 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id s7sm15105lji.26.2019.09.04.15.17.06
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2019 15:17:08 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id t14so309689lji.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 15:17:06 -0700 (PDT)
-X-Received: by 2002:a2e:9a84:: with SMTP id p4mr24283824lji.52.1567635425244;
- Wed, 04 Sep 2019 15:17:05 -0700 (PDT)
+        id S1730848AbfIDWRB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 18:17:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49228 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727722AbfIDWRB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 18:17:01 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7ED3F2A09CC;
+        Wed,  4 Sep 2019 22:17:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D9CED1001958;
+        Wed,  4 Sep 2019 22:16:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 08/11] usb: Add USB subsystem notifications [ver #8]
+From:   David Howells <dhowells@redhat.com>
+To:     keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 04 Sep 2019 23:16:57 +0100
+Message-ID: <156763541717.18676.18226584227008699587.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-11-cyphar@cyphar.com>
- <CAHk-=wiod1rQMU+6Zew=cLE8uX4tUdf42bM5eKngMnNVS2My7g@mail.gmail.com> <20190904214856.vnvom7h5xontvngq@yavin.dot.cyphar.com>
-In-Reply-To: <20190904214856.vnvom7h5xontvngq@yavin.dot.cyphar.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 4 Sep 2019 15:16:49 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgcJq21Hydh7Tx5-o8empoPp7ULDBw0Am-du_Pa+fcftQ@mail.gmail.com>
-Message-ID: <CAHk-=wgcJq21Hydh7Tx5-o8empoPp7ULDBw0Am-du_Pa+fcftQ@mail.gmail.com>
-Subject: Re: [PATCH v12 10/12] namei: aggressively check for nd->root escape
- on ".." resolution
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 04 Sep 2019 22:17:00 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 2:49 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> Hinting to userspace to do a retry (with -EAGAIN as you mention in your
-> other mail) wouldn't be a bad thing at all, though you'd almost
-> certainly get quite a few spurious -EAGAINs -- &{mount,rename}_lock are
-> global for the entire machine, after all.
+Add a USB subsystem notification mechanism whereby notifications about
+hardware events such as device connection, disconnection, reset and I/O
+errors, can be reported to a monitoring process asynchronously.
 
-I'd hope that we have some future (possibly very long-term)
-alternative that is not quite system-global, but yes, right now they
-are.
+Firstly, an event queue needs to be created:
 
-Which is one reason I'd rather see EAGAIN in user space - yes, it
-probably makes it even easier to trigger, but it also means that user
-space might be able to do something about it when it does trigger.
+	fd = open("/dev/event_queue", O_RDWR);
+	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
 
-For example, maybe user space can first just use an untrusted path
-as-is, and if it gets EAGAIN or EXDEV, it may be that user space can
-simplify the path (ie turn "xyz/.../abc" into just "abc".
+then a notification can be set up to report USB notifications via that
+queue:
 
-And even if user space doesn't do anything like that, I suspect a
-performance problem is going to be a whole lot easier to debug and
-report when somebody ends up seeing excessive retries happening. As a
-developer you'll see it in profiles or in system call traces, rather
-than it resulting in very odd possible slowdowns for the kernel.
+	struct watch_notification_filter filter = {
+		.nr_filters = 1,
+		.filters = {
+			[0] = {
+				.type = WATCH_TYPE_USB_NOTIFY,
+				.subtype_filter[0] = UINT_MAX;
+			},
+		},
+	};
+	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+	notify_devices(fd, 12);
 
-And yeah, it would probably be best to then at least delay doing
-option 3 indefinitely, just to make sure user space knows about and
-actually has a test-case for that EAGAIN happening.
+After that, records will be placed into the queue when events occur on a
+USB device or bus.  Records are of the following format:
 
-              Linus
+	struct usb_notification {
+		struct watch_notification watch;
+		__u32	error;
+		__u32	reserved;
+		__u8	name_len;
+		__u8	name[0];
+	} *n;
+
+Where:
+
+	n->watch.type will be WATCH_TYPE_USB_NOTIFY
+
+	n->watch.subtype will be the type of notification, such as
+	NOTIFY_USB_DEVICE_ADD.
+
+	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
+	record.
+
+	n->watch.info & WATCH_INFO_ID will be the second argument to
+	device_notify(), shifted.
+
+	n->error and n->reserved are intended to convey information such as
+	error codes, but are currently not used
+
+	n->name_len and n->name convey the USB device name as an
+	unterminated string.  This may be truncated - it is currently
+	limited to a maximum 63 chars.
+
+Note that it is permissible for event records to be of variable length -
+or, at least, the length may be dependent on the subtype.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: linux-usb@vger.kernel.org
+---
+
+ Documentation/watch_queue.rst    |    9 +++++++
+ drivers/usb/core/Kconfig         |    9 +++++++
+ drivers/usb/core/devio.c         |   49 ++++++++++++++++++++++++++++++++++++++
+ drivers/usb/core/hub.c           |    4 +++
+ include/linux/usb.h              |   18 ++++++++++++++
+ include/uapi/linux/watch_queue.h |   28 +++++++++++++++++++++-
+ 6 files changed, 116 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
+index 5cc9c6924727..4087a8e670a8 100644
+--- a/Documentation/watch_queue.rst
++++ b/Documentation/watch_queue.rst
+@@ -11,6 +11,8 @@ receive notifications from the kernel.  This can be used in conjunction with::
+ 
+     * Block layer event notifications
+ 
++    * USB subsystem event notifications
++
+ 
+ The notifications buffers can be enabled by:
+ 
+@@ -315,6 +317,13 @@ Any particular buffer can be fed from multiple sources.  Sources include:
+     or temporary link loss.  Watches of this type are set on the global device
+     watch list.
+ 
++  * WATCH_TYPE_USB_NOTIFY
++
++    Notifications of this type indicate USB subsystem events, such as
++    attachment, removal, reset and I/O errors.  Separate events are generated
++    for buses and devices.  Watchpoints of this type are set on the global
++    device watch list.
++
+ 
+ Event Filtering
+ ===============
+diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+index ecaacc8ed311..57e7b649e48b 100644
+--- a/drivers/usb/core/Kconfig
++++ b/drivers/usb/core/Kconfig
+@@ -102,3 +102,12 @@ config USB_AUTOSUSPEND_DELAY
+ 	  The default value Linux has always had is 2 seconds.  Change
+ 	  this value if you want a different delay and cannot modify
+ 	  the command line or module parameter.
++
++config USB_NOTIFICATIONS
++	bool "Provide USB hardware event notifications"
++	depends on USB && DEVICE_NOTIFICATIONS
++	help
++	  This option provides support for getting hardware event notifications
++	  on USB devices and interfaces.  This makes use of the
++	  /dev/watch_queue misc device to handle the notification buffer.
++	  device_notify(2) is used to set/remove watches.
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index 9063ede411ae..21c07d76f7d7 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -41,6 +41,7 @@
+ #include <linux/dma-mapping.h>
+ #include <asm/byteorder.h>
+ #include <linux/moduleparam.h>
++#include <linux/watch_queue.h>
+ 
+ #include "usb.h"
+ 
+@@ -2660,13 +2661,61 @@ static void usbdev_remove(struct usb_device *udev)
+ 	}
+ }
+ 
++#ifdef CONFIG_USB_NOTIFICATIONS
++static noinline void post_usb_notification(const char *devname,
++					   enum usb_notification_type subtype,
++					   u32 error)
++{
++	unsigned int gran = WATCH_LENGTH_GRANULARITY;
++	unsigned int name_len, n_len;
++	u64 id = 0; /* Might want to put a dev# here. */
++
++	struct {
++		struct usb_notification n;
++		char more_name[USB_NOTIFICATION_MAX_NAME_LEN -
++			       (sizeof(struct usb_notification) -
++				offsetof(struct usb_notification, name))];
++	} n;
++
++	name_len = strlen(devname);
++	name_len = min_t(size_t, name_len, USB_NOTIFICATION_MAX_NAME_LEN);
++	n_len = round_up(offsetof(struct usb_notification, name) + name_len,
++			 gran) / gran;
++
++	memset(&n, 0, sizeof(n));
++	memcpy(n.n.name, devname, n_len);
++
++	n.n.watch.type		= WATCH_TYPE_USB_NOTIFY;
++	n.n.watch.subtype	= subtype;
++	n.n.watch.info		= n_len;
++	n.n.error		= error;
++	n.n.name_len		= name_len;
++
++	post_device_notification(&n.n.watch, id);
++}
++
++void post_usb_device_notification(const struct usb_device *udev,
++				  enum usb_notification_type subtype, u32 error)
++{
++	post_usb_notification(dev_name(&udev->dev), subtype, error);
++}
++
++void post_usb_bus_notification(const struct usb_bus *ubus,
++			       enum usb_notification_type subtype, u32 error)
++{
++	post_usb_notification(ubus->bus_name, subtype, error);
++}
++#endif
++
+ static int usbdev_notify(struct notifier_block *self,
+ 			       unsigned long action, void *dev)
+ {
+ 	switch (action) {
+ 	case USB_DEVICE_ADD:
++		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_ADD, 0);
+ 		break;
+ 	case USB_DEVICE_REMOVE:
++		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_REMOVE, 0);
+ 		usbdev_remove(dev);
+ 		break;
+ 	}
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 236313f41f4a..e8ebacc15a32 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -29,6 +29,7 @@
+ #include <linux/random.h>
+ #include <linux/pm_qos.h>
+ #include <linux/kobject.h>
++#include <linux/watch_queue.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/byteorder.h>
+@@ -4605,6 +4606,9 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+ 				(udev->config) ? "reset" : "new", speed,
+ 				devnum, driver_name);
+ 
++	if (udev->config)
++		post_usb_device_notification(udev, NOTIFY_USB_DEVICE_RESET, 0);
++
+ 	/* Set up TT records, if needed  */
+ 	if (hdev->tt) {
+ 		udev->tt = hdev->tt;
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index e87826e23d59..ddfb9dc2473e 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -26,6 +26,7 @@
+ struct usb_device;
+ struct usb_driver;
+ struct wusb_dev;
++enum usb_notification_type;
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+@@ -2010,6 +2011,23 @@ extern void usb_led_activity(enum usb_led_event ev);
+ static inline void usb_led_activity(enum usb_led_event ev) {}
+ #endif
+ 
++/*
++ * Notification functions.
++ */
++#ifdef CONFIG_USB_NOTIFICATIONS
++extern void post_usb_device_notification(const struct usb_device *udev,
++					 enum usb_notification_type subtype,
++					 u32 error);
++extern void post_usb_bus_notification(const struct usb_bus *ubus,
++				      enum usb_notification_type subtype,
++				      u32 error);
++#else
++static inline void post_usb_device_notification(const struct usb_device *udev,
++						unsigned int subtype, u32 error) {}
++static inline void post_usb_bus_notification(const struct usb_bus *ubus,
++					     unsigned int subtype, u32 error) {}
++#endif
++
+ #endif  /* __KERNEL__ */
+ 
+ #endif
+diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
+index 9a6c059af09d..baa4b3ead006 100644
+--- a/include/uapi/linux/watch_queue.h
++++ b/include/uapi/linux/watch_queue.h
+@@ -12,7 +12,8 @@ enum watch_notification_type {
+ 	WATCH_TYPE_META		= 0,	/* Special record */
+ 	WATCH_TYPE_KEY_NOTIFY	= 1,	/* Key change event notification */
+ 	WATCH_TYPE_BLOCK_NOTIFY	= 2,	/* Block layer event notification */
+-	WATCH_TYPE___NR		= 3
++	WATCH_TYPE_USB_NOTIFY	= 3,	/* USB subsystem event notification */
++	WATCH_TYPE___NR		= 4
+ };
+ 
+ enum watch_meta_notification_subtype {
+@@ -152,4 +153,29 @@ struct block_notification {
+ 	__u64	sector;			/* Affected sector */
+ };
+ 
++/*
++ * Type of USB layer notification.
++ */
++enum usb_notification_type {
++	NOTIFY_USB_DEVICE_ADD		= 0, /* USB device added */
++	NOTIFY_USB_DEVICE_REMOVE	= 1, /* USB device removed */
++	NOTIFY_USB_DEVICE_RESET		= 2, /* USB device reset */
++	NOTIFY_USB_DEVICE_ERROR		= 3, /* USB device error */
++};
++
++/*
++ * USB subsystem notification record.
++ * - watch.type = WATCH_TYPE_USB_NOTIFY
++ * - watch.subtype = enum usb_notification_type
++ */
++struct usb_notification {
++	struct watch_notification watch; /* WATCH_TYPE_USB_NOTIFY */
++	__u32	error;
++	__u32	reserved;
++	__u8	name_len;		/* Length of device name */
++	__u8	name[0];		/* Device name (padded to __u64, truncated at 63 chars) */
++};
++
++#define USB_NOTIFICATION_MAX_NAME_LEN 63
++
+ #endif /* _UAPI_LINUX_WATCH_QUEUE_H */
+
