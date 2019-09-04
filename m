@@ -2,99 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59DA9A8DD2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 21:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A522A90C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 21:38:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729863AbfIDRqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 13:46:09 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42952 "EHLO
+        id S2389775AbfIDSLj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 14:11:39 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:43420 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbfIDRqJ (ORCPT
+        with ESMTP id S2388806AbfIDSLi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:46:09 -0400
+        Wed, 4 Sep 2019 14:11:38 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x84HjXS0167122;
-        Wed, 4 Sep 2019 17:45:51 GMT
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x84I8mw4188517;
+        Wed, 4 Sep 2019 18:11:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=m1xb93kdFsK6mm3L3edDblCpTmvsIqxTLcRfkK3xq/8=;
- b=sZTJnGzfeX9NqJJNVnouW2ubwAIgGt2MapsgJ4Y1B1OGatmZZrmjjGsP8amBYCNp/4VG
- tC5/cMZQ0sI+S9K9zJJokNxeLflv7y7VraAYzQ6HUN9IIaIb617eGwRRa1WAQLEgW10P
- 5Q68yubVTxC075kx7W45LeHKPVl+CvPx0svwK2l2WuqPA62Y4LZF+uBou4b303sFmN1s
- B4rJfwyYpbtBUyY82y9GpI1h5c19BNaBLq4M7BReBEh8ygk2Joop2/dpZxELk5yLTaZL
- L5VXnWDkHeSWF43ljTQ4kveJRAKHm2JyFFbaXiSuEJv3rVUQK51+eq/3rF27ZQFpVaV3 7Q== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2uthxm003a-1
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=wvZM2113YZRSbQoV6qQJLkw3huwJtvX/oXClQJB4Jvc=;
+ b=A2GKlXLgwEszQiTsa6NzgoKwyFbFtm/SA4iHBqQPamP+Ds87xNzD1E9TbtlhhDSqzazb
+ vJNCqitpOLt6Tz+G7Qsek+6cV1rol0x53pDFY9Upf0WedKOOG549k4VO9tR8tETJVxuD
+ n3gk97fmnKM0SzZ+nZN4uPnbKfM8TqFvQFgCvJiCrRNiyI+sUsOeIjy7s479pjDe4TQd
+ hHbl4lYnbiOdvAnmxoO+8PYtS0Zy7/N8ymfbZJ75tw0RfgmZbKtdyPCL7zrRrE2EQAnp
+ vl0sC9OYAmQZdMKa2e7ztZ8gOZFgGBlE0r0hm9P+EX3EbfG1tIEhkFNfCxaP8C8D4eoY nA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2utj93r0uu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 04 Sep 2019 17:45:51 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x84Hhctw154778;
-        Wed, 4 Sep 2019 17:45:51 GMT
+        Wed, 04 Sep 2019 18:11:18 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x84I8U6j096404;
+        Wed, 4 Sep 2019 18:11:17 GMT
 Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2uthq0rggs-1
+        by userp3030.oracle.com with ESMTP id 2usu53fcq3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 04 Sep 2019 17:45:51 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x84HjlOx012901;
-        Wed, 4 Sep 2019 17:45:49 GMT
+        Wed, 04 Sep 2019 18:11:17 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x84IBFo5029889;
+        Wed, 4 Sep 2019 18:11:16 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 04 Sep 2019 10:45:47 -0700
-Date:   Wed, 4 Sep 2019 10:45:45 -0700
+        with ESMTP ; Wed, 04 Sep 2019 11:11:14 -0700
+Date:   Wed, 4 Sep 2019 11:11:13 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs@vger.kernel.org,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: iomap_dio_rw ->end_io improvements
-Message-ID: <20190904174545.GJ5340@magnolia>
-References: <20190903130327.6023-1-hch@lst.de>
- <20190903221621.GH568270@magnolia>
- <20190904051229.GA9970@lst.de>
- <CAHc6FU42hsk9Ld7+mezh6Ba++5yvzJk30AyJzHOq3Ob7YASDgg@mail.gmail.com>
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to 68494b8e248f
+Message-ID: <20190904181113.GK5340@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHc6FU42hsk9Ld7+mezh6Ba++5yvzJk30AyJzHOq3Ob7YASDgg@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9370 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909040177
+ engine=8.0.1-1906280000 definitions=main-1909040182
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9370 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909040177
+ definitions=main-1909040182
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 01:46:23PM +0200, Andreas Gruenbacher wrote:
-> On Wed, Sep 4, 2019 at 7:12 AM Christoph Hellwig <hch@lst.de> wrote:
-> > On Tue, Sep 03, 2019 at 03:16:21PM -0700, Darrick J. Wong wrote:
-> > > The biggest problem with merging these patches (and while we're at it,
-> > > Goldwyn's patch adding a srcmap parameter to ->iomap_begin) for 5.4 is
-> > > that they'll break whatever Andreas and Damien have been preparing for
-> > > gfs2 and zonefs (respectively) based off the iomap-writeback work branch
-> > > that I created off of 5.3-rc2 a month ago.
-> >
-> > Does Andreas have changes pending that actually pass an end_io call
-> > back to gfs2?  So far it just passed NULL so nothing should change.
-> 
-> Right, we don't currently use that and there's nothing in queue in
-> that direction.
+Hi folks,
 
-Ok, sounds good.  I'll pull these two changes into the iomap tree for
-5.4 then.
+The iomap-for-next branch of the xfs-linux repository at:
 
---D
+	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-> Andreas
+has just been updated.
+
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.  I will send around for review an amended zonefs patch
+with the recent api breakage fixed.
+
+The new head of the iomap-for-next branch is commit:
+
+68494b8e248f iomap: move the iomap_dio_rw ->end_io callback into a structure
+
+New Commits:
+
+Andreas Gruenbacher (1):
+      [791ee52eb10b] iomap: Fix trivial typo
+
+Christoph Hellwig (9):
+      [31c20dede460] list.h: add list_pop and list_pop_entry helpers
+      [a12c4b4602f1] iomap: copy the xfs writeback code to iomap.c
+      [4b45a4b5c1f5] iomap: add tracing for the address space operations
+      [6f0af1def491] iomap: warn on inline maps in iomap_writepage_map
+      [84be4599c1a6] xfs: set IOMAP_F_NEW more carefully
+      [f61be89fed56] iomap: zero newly allocated mapped blocks
+      [3d2d71b4fdff] xfs: initialize iomap->flags in xfs_bmbt_to_iomap
+      [1c1daa47a0ae] xfs: refactor the ioend merging code
+      [68494b8e248f] iomap: move the iomap_dio_rw ->end_io callback into a structure
+
+Matthew Bobrowski (1):
+      [db10bd824bc0] iomap: split size and error for iomap_dio_rw ->end_io
+
+Randy Dunlap (1):
+      [32e3cf9f41c7] tracing: fix iomap.h build warnings
+
+
+Code Diffstat:
+
+ fs/iomap/buffered-io.c       | 575 ++++++++++++++++++++++++++++++++++++++++++-
+ fs/iomap/direct-io.c         |  24 +-
+ fs/xfs/xfs_aops.c            |  70 +++---
+ fs/xfs/xfs_file.c            |  14 +-
+ fs/xfs/xfs_iomap.c           |  35 ++-
+ fs/xfs/xfs_iomap.h           |   2 +-
+ fs/xfs/xfs_pnfs.c            |   2 +-
+ include/linux/iomap.h        |  53 +++-
+ include/linux/list.h         |  33 +++
+ include/trace/events/iomap.h |  87 +++++++
+ 10 files changed, 824 insertions(+), 71 deletions(-)
+ create mode 100644 include/trace/events/iomap.h
