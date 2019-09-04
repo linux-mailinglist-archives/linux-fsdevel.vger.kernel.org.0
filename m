@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 524A6A7868
+	by mail.lfdr.de (Postfix) with ESMTP id C8B6FA7869
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 04:10:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfIDCKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727968AbfIDCKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 3 Sep 2019 22:10:32 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6194 "EHLO huawei.com"
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6193 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727891AbfIDCKb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1727947AbfIDCKb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 3 Sep 2019 22:10:31 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8E6641D8DF0B184D0233;
+        by Forcepoint Email with ESMTP id 88A9C8B5EE1071CFCEE2;
         Wed,  4 Sep 2019 10:10:30 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 4 Sep 2019
- 10:10:21 +0800
+ 10:10:22 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Chao Yu <yuchao0@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -24,9 +24,9 @@ To:     Chao Yu <yuchao0@huawei.com>,
 CC:     <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
         Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 15/25] erofs: localize erofs_grab_bio()
-Date:   Wed, 4 Sep 2019 10:09:02 +0800
-Message-ID: <20190904020912.63925-16-gaoxiang25@huawei.com>
+Subject: [PATCH v2 16/25] erofs: kill prio and nofail of erofs_get_meta_page()
+Date:   Wed, 4 Sep 2019 10:09:03 +0800
+Message-ID: <20190904020912.63925-17-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190904020912.63925-1-gaoxiang25@huawei.com>
 References: <20190901055130.30572-1-hsiangkao@aol.com>
@@ -40,137 +40,229 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As Christoph pointed out [1], "erofs_grab_bio tries to
-handle a bio_alloc failure, except that the function will
-not actually fail due the mempool backing it."
+As Christoph pointed out [1],
+"Why is there __erofs_get_meta_page with the two weird
+booleans instead of a single erofs_get_meta_page that
+gets and gfp_t for additional flags and an unsigned int
+for additional bio op flags."
 
-Sorry about useless code, fix it now and
-localize erofs_grab_bio [2].
+And since all callers can handle errors, let's kill
+prio and nofail and erofs_get_inline_page() now.
 
 [1] https://lore.kernel.org/r/20190830162812.GA10694@infradead.org/
-[2] https://lore.kernel.org/r/20190902122016.GL15931@infradead.org/
 Reported-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- fs/erofs/data.c     | 28 +++++++++++++++-------------
- fs/erofs/internal.h | 29 -----------------------------
- fs/erofs/zdata.c    | 10 +++++++---
- 3 files changed, 22 insertions(+), 45 deletions(-)
+ fs/erofs/data.c     | 25 ++++++-------------------
+ fs/erofs/inode.c    |  2 +-
+ fs/erofs/internal.h | 18 +-----------------
+ fs/erofs/xattr.c    | 13 ++++++-------
+ fs/erofs/zmap.c     |  4 ++--
+ 5 files changed, 16 insertions(+), 46 deletions(-)
 
 diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index be11b5ea9d2e..0136ea117934 100644
+index 0136ea117934..28eda71bb1a9 100644
 --- a/fs/erofs/data.c
 +++ b/fs/erofs/data.c
-@@ -38,6 +38,19 @@ static inline void read_endio(struct bio *bio)
- 	bio_put(bio);
+@@ -51,25 +51,19 @@ static struct bio *erofs_grab_raw_bio(struct super_block *sb,
+ 	return bio;
  }
  
-+static struct bio *erofs_grab_raw_bio(struct super_block *sb,
-+				      erofs_blk_t blkaddr,
-+				      unsigned int nr_pages)
-+{
-+	struct bio *bio = bio_alloc(GFP_NOIO, nr_pages);
+-/* prio -- true is used for dir */
+-struct page *__erofs_get_meta_page(struct super_block *sb,
+-				   erofs_blk_t blkaddr, bool prio, bool nofail)
++struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr)
+ {
+ 	struct inode *const bd_inode = sb->s_bdev->bd_inode;
+ 	struct address_space *const mapping = bd_inode->i_mapping;
+-	/* prefer retrying in the allocator to blindly looping below */
+-	const gfp_t gfp = mapping_gfp_constraint(mapping, ~__GFP_FS) |
+-		(nofail ? __GFP_NOFAIL : 0);
+-	unsigned int io_retries = nofail ? EROFS_IO_MAX_RETRIES_NOFAIL : 0;
++	const gfp_t gfp = mapping_gfp_constraint(mapping, ~__GFP_FS);
+ 	struct page *page;
+ 	int err;
+ 
+ repeat:
+ 	page = find_or_create_page(mapping, blkaddr, gfp);
+-	if (!page) {
+-		DBG_BUGON(nofail);
++	if (!page)
+ 		return ERR_PTR(-ENOMEM);
+-	}
 +
-+	bio->bi_end_io = read_endio;
-+	bio_set_dev(bio, sb->s_bdev);
-+	bio->bi_iter.bi_sector = (sector_t)blkaddr << LOG_SECTORS_PER_BLOCK;
-+	bio->bi_private = sb;
-+	return bio;
-+}
-+
- /* prio -- true is used for dir */
- struct page *__erofs_get_meta_page(struct super_block *sb,
- 				   erofs_blk_t blkaddr, bool prio, bool nofail)
-@@ -62,12 +75,7 @@ struct page *__erofs_get_meta_page(struct super_block *sb,
+ 	DBG_BUGON(!PageLocked(page));
+ 
  	if (!PageUptodate(page)) {
- 		struct bio *bio;
+@@ -82,14 +76,11 @@ struct page *__erofs_get_meta_page(struct super_block *sb,
+ 			goto err_out;
+ 		}
  
--		bio = erofs_grab_bio(sb, blkaddr, 1, sb, read_endio, nofail);
--		if (IS_ERR(bio)) {
--			DBG_BUGON(nofail);
--			err = PTR_ERR(bio);
--			goto err_out;
--		}
-+		bio = erofs_grab_raw_bio(sb, blkaddr, 1);
+-		__submit_bio(bio, REQ_OP_READ,
+-			     REQ_META | (prio ? REQ_PRIO : 0));
+-
++		__submit_bio(bio, REQ_OP_READ, REQ_META);
+ 		lock_page(page);
  
- 		if (bio_add_page(bio, page, PAGE_SIZE, 0) != PAGE_SIZE) {
- 			err = -EFAULT;
-@@ -276,13 +284,7 @@ static inline struct bio *erofs_read_raw_page(struct bio *bio,
- 		if (nblocks > BIO_MAX_PAGES)
- 			nblocks = BIO_MAX_PAGES;
+ 		/* this page has been truncated by others */
+ 		if (page->mapping != mapping) {
+-unlock_repeat:
+ 			unlock_page(page);
+ 			put_page(page);
+ 			goto repeat;
+@@ -97,10 +88,6 @@ struct page *__erofs_get_meta_page(struct super_block *sb,
  
--		bio = erofs_grab_bio(sb, blknr, nblocks, sb,
--				     read_endio, false);
--		if (IS_ERR(bio)) {
--			err = PTR_ERR(bio);
--			bio = NULL;
--			goto err_out;
--		}
-+		bio = erofs_grab_raw_bio(sb, blknr, nblocks);
- 	}
+ 		/* more likely a read error */
+ 		if (!PageUptodate(page)) {
+-			if (io_retries) {
+-				--io_retries;
+-				goto unlock_repeat;
+-			}
+ 			err = -EIO;
+ 			goto err_out;
+ 		}
+@@ -251,7 +238,7 @@ static inline struct bio *erofs_read_raw_page(struct bio *bio,
  
- 	err = bio_add_page(bio, page, PAGE_SIZE, 0);
+ 			DBG_BUGON(map.m_plen > PAGE_SIZE);
+ 
+-			ipage = erofs_get_meta_page(inode->i_sb, blknr, 0);
++			ipage = erofs_get_meta_page(inode->i_sb, blknr);
+ 
+ 			if (IS_ERR(ipage)) {
+ 				err = PTR_ERR(ipage);
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 770f3259c862..8d496adbeaea 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -182,7 +182,7 @@ static int fill_inode(struct inode *inode, int isdir)
+ 	debugln("%s, reading inode nid %llu at %u of blkaddr %u",
+ 		__func__, vi->nid, ofs, blkaddr);
+ 
+-	page = erofs_get_meta_page(inode->i_sb, blkaddr, isdir);
++	page = erofs_get_meta_page(inode->i_sb, blkaddr);
+ 
+ 	if (IS_ERR(page)) {
+ 		errln("failed to get inode (nid: %llu) page, err %ld",
 diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index cc1ea98c5c89..000ea92b36a3 100644
+index 000ea92b36a3..90c62fb5f80d 100644
 --- a/fs/erofs/internal.h
 +++ b/fs/erofs/internal.h
-@@ -411,35 +411,6 @@ static inline int z_erofs_map_blocks_iter(struct inode *inode,
- #endif	/* !CONFIG_EROFS_FS_ZIP */
+@@ -258,8 +258,6 @@ static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
+ #error erofs cannot be used in this platform
+ #endif
  
- /* data.c */
--static inline struct bio *erofs_grab_bio(struct super_block *sb,
--					 erofs_blk_t blkaddr,
--					 unsigned int nr_pages,
--					 void *bi_private, bio_end_io_t endio,
--					 bool nofail)
+-#define EROFS_IO_MAX_RETRIES_NOFAIL     5
+-
+ #define ROOT_NID(sb)		((sb)->root_nid)
+ 
+ #define erofs_blknr(addr)       ((addr) / EROFS_BLKSIZ)
+@@ -418,24 +416,10 @@ static inline void __submit_bio(struct bio *bio, unsigned int op,
+ 	submit_bio(bio);
+ }
+ 
+-struct page *__erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr,
+-				   bool prio, bool nofail);
+-
+-static inline struct page *erofs_get_meta_page(struct super_block *sb,
+-	erofs_blk_t blkaddr, bool prio)
 -{
--	const gfp_t gfp = GFP_NOIO;
--	struct bio *bio;
--
--	do {
--		if (nr_pages == 1) {
--			bio = bio_alloc(gfp | (nofail ? __GFP_NOFAIL : 0), 1);
--			if (!bio) {
--				DBG_BUGON(nofail);
--				return ERR_PTR(-ENOMEM);
--			}
--			break;
--		}
--		bio = bio_alloc(gfp, nr_pages);
--		nr_pages /= 2;
--	} while (!bio);
--
--	bio->bi_end_io = endio;
--	bio_set_dev(bio, sb->s_bdev);
--	bio->bi_iter.bi_sector = (sector_t)blkaddr << LOG_SECTORS_PER_BLOCK;
--	bio->bi_private = bi_private;
--	return bio;
+-	return __erofs_get_meta_page(sb, blkaddr, prio, false);
+-}
++struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr);
+ 
+ int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
+ 
+-static inline struct page *erofs_get_inline_page(struct inode *inode,
+-						 erofs_blk_t blkaddr)
+-{
+-	return erofs_get_meta_page(inode->i_sb, blkaddr,
+-				   S_ISDIR(inode->i_mode));
 -}
 -
- static inline void __submit_bio(struct bio *bio, unsigned int op,
- 				unsigned int op_flags)
+ /* inode.c */
+ static inline unsigned long erofs_inode_hash(erofs_nid_t nid)
  {
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index f06a2fad7af2..21ade322cc81 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -1263,9 +1263,13 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
- 		}
+diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
+index d5b7fe0bee45..dd445c81c41f 100644
+--- a/fs/erofs/xattr.c
++++ b/fs/erofs/xattr.c
+@@ -87,7 +87,7 @@ static int init_inode_xattrs(struct inode *inode)
+ 	it.blkaddr = erofs_blknr(iloc(sbi, vi->nid) + vi->inode_isize);
+ 	it.ofs = erofs_blkoff(iloc(sbi, vi->nid) + vi->inode_isize);
  
- 		if (!bio) {
--			bio = erofs_grab_bio(sb, first_index + i,
--					     BIO_MAX_PAGES, bi_private,
--					     z_erofs_vle_read_endio, true);
-+			bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
-+
-+			bio->bi_end_io = z_erofs_vle_read_endio;
-+			bio_set_dev(bio, sb->s_bdev);
-+			bio->bi_iter.bi_sector = (sector_t)(first_index + i) <<
-+				LOG_SECTORS_PER_BLOCK;
-+			bio->bi_private = bi_private;
- 			++nr_bios;
- 		}
+-	it.page = erofs_get_inline_page(inode, it.blkaddr);
++	it.page = erofs_get_meta_page(sb, it.blkaddr);
+ 	if (IS_ERR(it.page)) {
+ 		ret = PTR_ERR(it.page);
+ 		goto out_unlock;
+@@ -117,8 +117,7 @@ static int init_inode_xattrs(struct inode *inode)
+ 			DBG_BUGON(it.ofs != EROFS_BLKSIZ);
+ 			xattr_iter_end(&it, atomic_map);
  
+-			it.page = erofs_get_meta_page(sb, ++it.blkaddr,
+-						      S_ISDIR(inode->i_mode));
++			it.page = erofs_get_meta_page(sb, ++it.blkaddr);
+ 			if (IS_ERR(it.page)) {
+ 				kfree(vi->xattr_shared_xattrs);
+ 				vi->xattr_shared_xattrs = NULL;
+@@ -168,7 +167,7 @@ static inline int xattr_iter_fixup(struct xattr_iter *it)
+ 
+ 	it->blkaddr += erofs_blknr(it->ofs);
+ 
+-	it->page = erofs_get_meta_page(it->sb, it->blkaddr, false);
++	it->page = erofs_get_meta_page(it->sb, it->blkaddr);
+ 	if (IS_ERR(it->page)) {
+ 		int err = PTR_ERR(it->page);
+ 
+@@ -199,7 +198,7 @@ static int inline_xattr_iter_begin(struct xattr_iter *it,
+ 	it->blkaddr = erofs_blknr(iloc(sbi, vi->nid) + inline_xattr_ofs);
+ 	it->ofs = erofs_blkoff(iloc(sbi, vi->nid) + inline_xattr_ofs);
+ 
+-	it->page = erofs_get_inline_page(inode, it->blkaddr);
++	it->page = erofs_get_meta_page(inode->i_sb, it->blkaddr);
+ 	if (IS_ERR(it->page))
+ 		return PTR_ERR(it->page);
+ 
+@@ -401,7 +400,7 @@ static int shared_getxattr(struct inode *inode, struct getxattr_iter *it)
+ 			if (i)
+ 				xattr_iter_end(&it->it, true);
+ 
+-			it->it.page = erofs_get_meta_page(sb, blkaddr, false);
++			it->it.page = erofs_get_meta_page(sb, blkaddr);
+ 			if (IS_ERR(it->it.page))
+ 				return PTR_ERR(it->it.page);
+ 
+@@ -623,7 +622,7 @@ static int shared_listxattr(struct listxattr_iter *it)
+ 			if (i)
+ 				xattr_iter_end(&it->it, true);
+ 
+-			it->it.page = erofs_get_meta_page(sb, blkaddr, false);
++			it->it.page = erofs_get_meta_page(sb, blkaddr);
+ 			if (IS_ERR(it->it.page))
+ 				return PTR_ERR(it->it.page);
+ 
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index 30a5171637d7..9c141f145508 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -50,7 +50,7 @@ static int fill_inode_lazy(struct inode *inode)
+ 
+ 	pos = ALIGN(iloc(EROFS_SB(sb), vi->nid) + vi->inode_isize +
+ 		    vi->xattr_isize, 8);
+-	page = erofs_get_meta_page(sb, erofs_blknr(pos), false);
++	page = erofs_get_meta_page(sb, erofs_blknr(pos));
+ 	if (IS_ERR(page)) {
+ 		err = PTR_ERR(page);
+ 		goto out_unlock;
+@@ -127,7 +127,7 @@ static int z_erofs_reload_indexes(struct z_erofs_maprecorder *m,
+ 		put_page(mpage);
+ 	}
+ 
+-	mpage = erofs_get_meta_page(sb, eblk, false);
++	mpage = erofs_get_meta_page(sb, eblk);
+ 	if (IS_ERR(mpage)) {
+ 		map->mpage = NULL;
+ 		return PTR_ERR(mpage);
 -- 
 2.17.1
 
