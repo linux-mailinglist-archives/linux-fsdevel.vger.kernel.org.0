@@ -2,29 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0250A9604
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE8AA960C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 00:16:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbfIDWQo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 18:16:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50996 "EHLO mx1.redhat.com"
+        id S1730801AbfIDWQx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 18:16:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58328 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727722AbfIDWQo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 18:16:44 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1727722AbfIDWQw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 18:16:52 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3887A31752AF;
-        Wed,  4 Sep 2019 22:16:43 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id EB466877A62;
+        Wed,  4 Sep 2019 22:16:51 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 415515D9E2;
-        Wed,  4 Sep 2019 22:16:40 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E4AF19C58;
+        Wed,  4 Sep 2019 22:16:49 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 06/11] Add a general,
- global device notification watch list [ver #8]
+Subject: [PATCH 07/11] block: Add block layer notifications [ver #8]
 From:   David Howells <dhowells@redhat.com>
 To:     keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-block@vger.kernel.org
@@ -37,489 +36,244 @@ Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 04 Sep 2019 23:16:39 +0100
-Message-ID: <156763539947.18676.6445516382957346645.stgit@warthog.procyon.org.uk>
+Date:   Wed, 04 Sep 2019 23:16:48 +0100
+Message-ID: <156763540841.18676.14358801295475248408.stgit@warthog.procyon.org.uk>
 In-Reply-To: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
 References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 04 Sep 2019 22:16:43 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Wed, 04 Sep 2019 22:16:52 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Create a general, global watch list that can be used for the posting of
-device notification events, for such things as device attachment,
-detachment and errors on sources such as block devices and USB devices.
-This can be enabled with:
+Add a block layer notification mechanism whereby notifications about
+block-layer events such as I/O errors, can be reported to a monitoring
+process asynchronously.
 
-	CONFIG_DEVICE_NOTIFICATIONS
+Firstly, an event queue needs to be created:
 
-To add a watch on this list, an event queue must be created and configured:
+	fd = open("/dev/event_queue", O_RDWR);
+	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
 
-        fd = open("/dev/event_queue", O_RDWR);
-        ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
-
-and then a watch can be placed upon it using a system call:
-
-        watch_devices(fd, 12, 0);
-
-Unless the application wants to receive all events, it should employ
-appropriate filters.  For example, to receive just USB notifications, it
-could do:
+then a notification can be set up to report block notifications via that
+queue:
 
 	struct watch_notification_filter filter = {
 		.nr_filters = 1,
 		.filters = {
 			[0] = {
-				.type = WATCH_TYPE_USB_NOTIFY,
+				.type = WATCH_TYPE_BLOCK_NOTIFY,
 				.subtype_filter[0] = UINT_MAX;
 			},
 		},
 	};
 	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+	watch_devices(fd, 12);
+
+After that, records will be placed into the queue when, for example, errors
+occur on a block device.  Records are of the following format:
+
+	struct block_notification {
+		struct watch_notification watch;
+		__u64	dev;
+		__u64	sector;
+	} *n;
+
+Where:
+
+	n->watch.type will be WATCH_TYPE_BLOCK_NOTIFY
+
+	n->watch.subtype will be the type of notification, such as
+	NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM.
+
+	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
+	record.
+
+	n->watch.info & WATCH_INFO_ID will be the second argument to
+	watch_devices(), shifted.
+
+	n->dev will be the device numbers munged together.
+
+	n->sector will indicate the affected sector (if appropriate for the
+	event).
+
+Note that it is permissible for event records to be of variable length -
+or, at least, the length may be dependent on the subtype.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- Documentation/watch_queue.rst               |   22 ++++++-
- arch/alpha/kernel/syscalls/syscall.tbl      |    1 
- arch/arm/tools/syscall.tbl                  |    1 
- arch/arm64/include/asm/unistd.h             |    2 -
- arch/arm64/include/asm/unistd32.h           |    2 +
- arch/ia64/kernel/syscalls/syscall.tbl       |    1 
- arch/m68k/kernel/syscalls/syscall.tbl       |    1 
- arch/microblaze/kernel/syscalls/syscall.tbl |    1 
- arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 
- arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 
- arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 
- arch/parisc/kernel/syscalls/syscall.tbl     |    1 
- arch/powerpc/kernel/syscalls/syscall.tbl    |    1 
- arch/s390/kernel/syscalls/syscall.tbl       |    1 
- arch/sh/kernel/syscalls/syscall.tbl         |    1 
- arch/sparc/kernel/syscalls/syscall.tbl      |    1 
- arch/x86/entry/syscalls/syscall_32.tbl      |    1 
- arch/x86/entry/syscalls/syscall_64.tbl      |    1 
- arch/xtensa/kernel/syscalls/syscall.tbl     |    1 
- drivers/base/Kconfig                        |    9 +++
- drivers/base/Makefile                       |    1 
- drivers/base/watch.c                        |   90 +++++++++++++++++++++++++++
- include/linux/device.h                      |    7 ++
- include/linux/syscalls.h                    |    1 
- include/uapi/asm-generic/unistd.h           |    4 +
- kernel/sys_ni.c                             |    1 
- 26 files changed, 152 insertions(+), 3 deletions(-)
- create mode 100644 drivers/base/watch.c
+ Documentation/watch_queue.rst    |    4 +++-
+ block/Kconfig                    |    9 +++++++++
+ block/blk-core.c                 |   29 +++++++++++++++++++++++++++++
+ include/linux/blkdev.h           |   15 +++++++++++++++
+ include/uapi/linux/watch_queue.h |   30 +++++++++++++++++++++++++++++-
+ 5 files changed, 85 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
-index 6fb3aa3356d3..393905b904c8 100644
+index 393905b904c8..5cc9c6924727 100644
 --- a/Documentation/watch_queue.rst
 +++ b/Documentation/watch_queue.rst
-@@ -276,6 +276,25 @@ The ``id`` is the ID of the source object (such as the serial number on a key).
- Only watches that have the same ID set in them will see this notification.
+@@ -7,7 +7,9 @@ receive notifications from the kernel.  This can be used in conjunction with::
  
+   * Key/keyring notifications
  
-+Global Device Watch List
-+========================
+-  * General device event notifications
++  * General device event notifications, including::
 +
-+There is a global watch list that hardware generated events, such as device
-+connection, disconnection, failure and error can be posted upon.  It must be
-+enabled using::
-+
-+	CONFIG_DEVICE_NOTIFICATIONS
-+
-+Watchpoints are set in userspace using the device_notify(2) system call.
-+Within the kernel events are posted upon it using::
-+
-+	void post_device_notification(struct watch_notification *n, u64 id);
-+
-+where ``n`` is the formatted notification record to post.  ``id`` is an
-+identifier that can be used to direct to specific watches, but it should be 0
-+for general use on this queue.
-+
-+
- Watch Sources
- =============
- 
-@@ -291,7 +310,8 @@ Any particular buffer can be fed from multiple sources.  Sources include:
-   * WATCH_TYPE_BLOCK_NOTIFY
- 
-     Notifications of this type indicate block layer events, such as I/O errors
--    or temporary link loss.  Watches of this type are set on a global queue.
-+    or temporary link loss.  Watches of this type are set on the global device
-+    watch list.
++    * Block layer event notifications
  
  
- Event Filtering
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 728fe028c02c..8e841d8e4c22 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -475,3 +475,4 @@
- 543	common	fspick				sys_fspick
- 544	common	pidfd_open			sys_pidfd_open
- # 545 reserved for clone3
-+546	common	watch_devices			sys_watch_devices
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 6da7dc4d79cc..0f080cf44cc9 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -449,3 +449,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 2629a68b8724..368761302768 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ The notifications buffers can be enabled by:
+diff --git a/block/Kconfig b/block/Kconfig
+index 8b5f8e560eb4..cc93e4ca29a7 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -164,6 +164,15 @@ config BLK_SED_OPAL
+ 	Enabling this option enables users to setup/unlock/lock
+ 	Locking ranges for SED devices using the Opal protocol.
  
--#define __NR_compat_syscalls		436
-+#define __NR_compat_syscalls		437
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 94ab29cf4f00..b5310789ce7a 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -879,6 +879,8 @@ __SYSCALL(__NR_fspick, sys_fspick)
- __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #define __NR_clone3 435
- __SYSCALL(__NR_clone3, sys_clone3)
-+#define __NR_watch_devices 436
-+__SYSCALL(__NR_watch_devices, sys_watch_devices)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index 36d5faf4c86c..2f33f5db2fed 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -356,3 +356,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index a88a285a0e5f..83e4e8784b88 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -435,3 +435,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 09b0cd7dab0a..9a70a3be3b7b 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -441,3 +441,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index c9c879ec9b6d..2ba5b649f0ab 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -374,3 +374,4 @@
- 433	n32	fspick				sys_fspick
- 434	n32	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	n32	watch_devices			sys_watch_devices
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index bbce9159caa1..ff350988584d 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -350,3 +350,4 @@
- 433	n64	fspick				sys_fspick
- 434	n64	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	n64	watch_devices			sys_watch_devices
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 9653591428ec..7b26bd39900e 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -423,3 +423,4 @@
- 433	o32	fspick				sys_fspick
- 434	o32	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	o32	watch_devices			sys_watch_devices
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 670d1371aca1..d846365a4f7c 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -432,3 +432,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3_wrapper
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 43f736ed47f2..0a503239ab5c 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -517,3 +517,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	nospu	clone3				ppc_clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 3054e9c035a3..19b43c0d928a 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,4 @@
- 433  common	fspick			sys_fspick			sys_fspick
- 434  common	pidfd_open		sys_pidfd_open			sys_pidfd_open
- 435  common	clone3			sys_clone3			sys_clone3
-+436  common	watch_devices		sys_watch_devices		sys_watch_devices
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index b5ed26c4c005..b454e07c9372 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 8c8cc7537fb2..8ef43c27457e 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -481,3 +481,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index c00019abd076..0e34ddeb97a1 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -440,3 +440,4 @@
- 433	i386	fspick			sys_fspick			__ia32_sys_fspick
- 434	i386	pidfd_open		sys_pidfd_open			__ia32_sys_pidfd_open
- 435	i386	clone3			sys_clone3			__ia32_sys_clone3
-+436	i386	watch_devices		sys_watch_devices		__ia32_sys_watch_devices
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index c29976eca4a8..29293d103829 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -357,6 +357,7 @@
- 433	common	fspick			__x64_sys_fspick
- 434	common	pidfd_open		__x64_sys_pidfd_open
- 435	common	clone3			__x64_sys_clone3/ptregs
-+436	common	watch_devices		__x64_sys_watch_devices
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 25f4de729a6d..243fa18b8d1e 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -406,3 +406,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+436	common	watch_devices			sys_watch_devices
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index dc404492381d..7f899cae41a0 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -1,6 +1,15 @@
- # SPDX-License-Identifier: GPL-2.0
- menu "Generic Driver Options"
- 
-+config DEVICE_NOTIFICATIONS
-+	bool "Provide device event notifications"
-+	depends on WATCH_QUEUE
++config BLK_NOTIFICATIONS
++	bool "Block layer event notifications"
++	depends on DEVICE_NOTIFICATIONS
 +	help
-+	  This option provides support for getting hardware event notifications
-+	  on devices, buses and interfaces.  This makes use of the
-+	  /dev/watch_queue misc device to handle the notification buffer.
-+	  device_notify(2) is used to set/remove watches.
++	  This option provides support for getting block layer event
++	  notifications.  This makes use of the /dev/watch_queue misc device to
++	  handle the notification buffer and provides the device_notify() system
++	  call to enable/disable watches.
 +
- config UEVENT_HELPER
- 	bool "Support for uevent helper"
- 	help
-diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index 157452080f3d..4db2e8f1a1f4 100644
---- a/drivers/base/Makefile
-+++ b/drivers/base/Makefile
-@@ -7,6 +7,7 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
- 			   attribute_container.o transport_class.o \
- 			   topology.o container.o property.o cacheinfo.o \
- 			   devcon.o swnode.o
-+obj-$(CONFIG_DEVICE_NOTIFICATIONS) += watch.o
- obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
- obj-y			+= power/
- obj-$(CONFIG_ISA_BUS_API)	+= isa.o
-diff --git a/drivers/base/watch.c b/drivers/base/watch.c
-new file mode 100644
-index 000000000000..725aaa24275b
---- /dev/null
-+++ b/drivers/base/watch.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Event notifications.
-+ *
-+ * Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/watch_queue.h>
-+#include <linux/syscalls.h>
-+#include <linux/init_task.h>
-+#include <linux/security.h>
-+
-+/*
-+ * Global queue for watching for device layer events.
-+ */
-+static struct watch_list device_watchers = {
-+	.watchers	= HLIST_HEAD_INIT,
-+	.lock		= __SPIN_LOCK_UNLOCKED(&device_watchers.lock),
+ menu "Partition Types"
+ 
+ source "block/partitions/Kconfig"
+diff --git a/block/blk-core.c b/block/blk-core.c
+index d0cc6e14d2f0..8ab1e07aa311 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -181,6 +181,22 @@ static const struct {
+ 	[BLK_STS_IOERR]		= { -EIO,	"I/O" },
+ };
+ 
++#ifdef CONFIG_BLK_NOTIFICATIONS
++static const
++enum block_notification_type blk_notifications[ARRAY_SIZE(blk_errors)] = {
++	[BLK_STS_TIMEOUT]	= NOTIFY_BLOCK_ERROR_TIMEOUT,
++	[BLK_STS_NOSPC]		= NOTIFY_BLOCK_ERROR_NO_SPACE,
++	[BLK_STS_TRANSPORT]	= NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT,
++	[BLK_STS_TARGET]	= NOTIFY_BLOCK_ERROR_CRITICAL_TARGET,
++	[BLK_STS_NEXUS]		= NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS,
++	[BLK_STS_MEDIUM]	= NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM,
++	[BLK_STS_PROTECTION]	= NOTIFY_BLOCK_ERROR_PROTECTION,
++	[BLK_STS_RESOURCE]	= NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE,
++	[BLK_STS_DEV_RESOURCE]	= NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE,
++	[BLK_STS_IOERR]		= NOTIFY_BLOCK_ERROR_IO,
 +};
-+
-+static DEFINE_SPINLOCK(device_watchers_lock);
-+
-+/**
-+ * post_device_notification - Post notification of a device event
-+ * @n - The notification to post
-+ * @id - The device ID
-+ *
-+ * Note that there's only a global queue to which all events are posted.  Might
-+ * want to provide per-dev queues also.
-+ */
-+void post_device_notification(struct watch_notification *n, u64 id)
-+{
-+	post_watch_notification(&device_watchers, n, &init_cred, id);
-+}
-+EXPORT_SYMBOL(post_device_notification);
-+
-+/**
-+ * sys_watch_devices - Watch for device events.
-+ * @watch_fd: The watch queue to send notifications to.
-+ * @watch_id: The watch ID to be placed in the notification (-1 to remove watch)
-+ * @flags: Flags (reserved for future)
-+ */
-+SYSCALL_DEFINE3(watch_devices, int, watch_fd, int, watch_id, unsigned int, flags)
-+{
-+	struct watch_queue *wqueue;
-+	struct watch *watch = NULL;
-+	long ret = -ENOMEM;
-+
-+	if (watch_id < -1 || watch_id > 0xff || flags)
-+		return -EINVAL;
-+
-+	wqueue = get_watch_queue(watch_fd);
-+	if (IS_ERR(wqueue)) {
-+		ret = PTR_ERR(wqueue);
-+		goto err;
-+	}
-+
-+	if (watch_id >= 0) {
-+		watch = kzalloc(sizeof(*watch), GFP_KERNEL);
-+		if (!watch)
-+			goto err_wqueue;
-+
-+		init_watch(watch, wqueue);
-+		watch->info_id = (u32)watch_id << WATCH_INFO_ID__SHIFT;
-+
-+		ret = security_watch_devices();
-+		if (ret < 0)
-+			goto err_watch;
-+
-+		spin_lock(&device_watchers_lock);
-+		ret = add_watch_to_object(watch, &device_watchers);
-+		spin_unlock(&device_watchers_lock);
-+		if (ret == 0)
-+			watch = NULL;
-+	} else {
-+		spin_lock(&device_watchers_lock);
-+		ret = remove_watch_from_object(&device_watchers, wqueue, 0,
-+					       false);
-+		spin_unlock(&device_watchers_lock);
-+	}
-+
-+err_watch:
-+	kfree(watch);
-+err_wqueue:
-+	put_watch_queue(wqueue);
-+err:
-+	return ret;
-+}
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 6717adee33f0..9def6a53b598 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -43,6 +43,7 @@ struct iommu_group;
- struct iommu_fwspec;
- struct dev_pin_info;
- struct iommu_param;
-+struct watch_notification;
- 
- struct bus_attribute {
- 	struct attribute	attr;
-@@ -1412,6 +1413,12 @@ struct device_link *device_link_add(struct device *consumer,
- void device_link_del(struct device_link *link);
- void device_link_remove(void *consumer, struct device *supplier);
- 
-+#ifdef CONFIG_DEVICE_NOTIFICATIONS
-+extern void post_device_notification(struct watch_notification *n, u64 id);
-+#else
-+static inline void post_device_notification(struct watch_notification *n, u64 id) {}
 +#endif
 +
- #ifndef dev_fmt
- #define dev_fmt(fmt) fmt
- #endif
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 88145da7d140..5bac5daec51e 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1000,6 +1000,7 @@ asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags)
- asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
- 				       siginfo_t __user *info,
- 				       unsigned int flags);
-+asmlinkage long sys_watch_devices(int watch_fd, int watch_id, unsigned int flags);
+ blk_status_t errno_to_blk_status(int errno)
+ {
+ 	int i;
+@@ -221,6 +237,19 @@ static void print_req_error(struct request *req, blk_status_t status,
+ 		req->cmd_flags & ~REQ_OP_MASK,
+ 		req->nr_phys_segments,
+ 		IOPRIO_PRIO_CLASS(req->ioprio));
++
++#ifdef CONFIG_BLK_NOTIFICATIONS
++	if (blk_notifications[idx]) {
++		struct block_notification n = {
++			.watch.type	= WATCH_TYPE_BLOCK_NOTIFY,
++			.watch.subtype	= blk_notifications[idx],
++			.watch.info	= watch_sizeof(n),
++			.dev		= req->rq_disk ? disk_devt(req->rq_disk) : 0,
++			.sector		= blk_rq_pos(req),
++		};
++		post_block_notification(&n);
++	}
++#endif
+ }
  
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 1be0e798e362..fd63ff0196fd 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -850,9 +850,11 @@ __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #define __NR_clone3 435
- __SYSCALL(__NR_clone3, sys_clone3)
- #endif
-+#define __NR_watch_devices 436
-+__SYSCALL(__NR_watch_devices, sys_watch_devices)
+ static void req_bio_endio(struct request *rq, struct bio *bio,
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 1ef375dafb1c..5d856f670a8f 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -27,6 +27,7 @@
+ #include <linux/percpu-refcount.h>
+ #include <linux/scatterlist.h>
+ #include <linux/blkzoned.h>
++#include <linux/watch_queue.h>
  
- #undef __NR_syscalls
--#define __NR_syscalls 436
-+#define __NR_syscalls 437
+ struct module;
+ struct scsi_ioctl_command;
+@@ -1742,6 +1743,20 @@ static inline bool blk_req_can_dispatch_to_zone(struct request *rq)
+ }
+ #endif /* CONFIG_BLK_DEV_ZONED */
  
- /*
-  * 32 bit systems traditionally used different
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index 34b76895b81e..184ad68c087f 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -51,6 +51,7 @@ COND_SYSCALL_COMPAT(io_pgetevents);
- COND_SYSCALL(io_uring_setup);
- COND_SYSCALL(io_uring_enter);
- COND_SYSCALL(io_uring_register);
-+COND_SYSCALL(watch_devices);
++#ifdef CONFIG_BLK_NOTIFICATIONS
++static inline void post_block_notification(struct block_notification *n)
++{
++	u64 id = 0; /* Might want to allow dev# here. */
++
++	post_device_notification(&n->watch, id);
++}
++#else
++static inline void post_block_notification(struct block_notification *n)
++{
++}
++#endif
++
++
+ #else /* CONFIG_BLOCK */
  
- /* fs/xattr.c */
+ struct block_device;
+diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
+index 654d4ba8b909..9a6c059af09d 100644
+--- a/include/uapi/linux/watch_queue.h
++++ b/include/uapi/linux/watch_queue.h
+@@ -11,7 +11,8 @@
+ enum watch_notification_type {
+ 	WATCH_TYPE_META		= 0,	/* Special record */
+ 	WATCH_TYPE_KEY_NOTIFY	= 1,	/* Key change event notification */
+-	WATCH_TYPE___NR		= 2
++	WATCH_TYPE_BLOCK_NOTIFY	= 2,	/* Block layer event notification */
++	WATCH_TYPE___NR		= 3
+ };
  
+ enum watch_meta_notification_subtype {
+@@ -124,4 +125,31 @@ struct key_notification {
+ 	__u32	aux;		/* Per-type auxiliary data */
+ };
+ 
++/*
++ * Type of block layer notification.
++ */
++enum block_notification_type {
++	NOTIFY_BLOCK_ERROR_TIMEOUT		= 1, /* Timeout error */
++	NOTIFY_BLOCK_ERROR_NO_SPACE		= 2, /* Critical space allocation error */
++	NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT = 3, /* Recoverable transport error */
++	NOTIFY_BLOCK_ERROR_CRITICAL_TARGET	= 4, /* Critical target error */
++	NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS	= 5, /* Critical nexus error */
++	NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM	= 6, /* Critical medium error */
++	NOTIFY_BLOCK_ERROR_PROTECTION		= 7, /* Protection error */
++	NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE	= 8, /* Kernel resource error */
++	NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE	= 9, /* Device resource error */
++	NOTIFY_BLOCK_ERROR_IO			= 10, /* Other I/O error */
++};
++
++/*
++ * Block layer notification record.
++ * - watch.type = WATCH_TYPE_BLOCK_NOTIFY
++ * - watch.subtype = enum block_notification_type
++ */
++struct block_notification {
++	struct watch_notification watch; /* WATCH_TYPE_BLOCK_NOTIFY */
++	__u64	dev;			/* Device number */
++	__u64	sector;			/* Affected sector */
++};
++
+ #endif /* _UAPI_LINUX_WATCH_QUEUE_H */
 
