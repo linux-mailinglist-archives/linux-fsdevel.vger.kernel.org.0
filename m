@@ -2,106 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0139CA7941
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 05:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8489FA7947
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 05:27:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbfIDDYf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 23:24:35 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50890 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfIDDYf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 23:24:35 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x843Mauu178986;
-        Wed, 4 Sep 2019 03:23:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2019-08-05; bh=THg7OdVe+H13Wicp3Cku/2yXM5fjaUIJKiClqu9N+6k=;
- b=ml+1imRv3FyfRRKBibYB55RAT0zuUhxlyxyxn5PfjBciWwyXB/CGi7rRpmQCSoic2nwt
- X6hs2+7Ib5gpGV6DrkZ8lo+16HG/GTj/g5XxhPt4UkOZKO9nu7mDt7T4S13BWfbGHpJK
- xCK9T9UpiQRtu5nkpuOMef4VgoK5jrjyK/rPwSX5+b3RH51Pat8P+uBjq6d3UJv03e00
- 7PkyIJTkqHkba9FNUaQnsfNVy6gxKRQO716wX5+jeVBMVtCWF+NdtgPbpcf0LK1D/nu7
- iQM/oqJiii79c8WrluV84b+fIEr1Rv0ANQLhc2S7icP40mWjnTZtszpaNz8V28tpH9N1 6g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2ut5a6r08x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 04 Sep 2019 03:23:43 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x843NguE082969;
-        Wed, 4 Sep 2019 03:23:42 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2ut1hmrf4g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 04 Sep 2019 03:23:42 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x843NamI026386;
-        Wed, 4 Sep 2019 03:23:36 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 03 Sep 2019 20:23:35 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3578.1\))
-Subject: Re: [PATCH v5 2/2] mm,thp: Add experimental config option
- RO_EXEC_FILEMAP_HUGE_FAULT_THP
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <20190903191528.GC14028@dhcp22.suse.cz>
-Date:   Tue, 3 Sep 2019 21:23:34 -0600
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Bob Kasten <robert.a.kasten@intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Chad Mynhier <chad.mynhier@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <jweiner@fb.com>
+        id S1727701AbfIDD1X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 23:27:23 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6198 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727065AbfIDD1X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 23:27:23 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 17F84E5E9B6BD6E5B513;
+        Wed,  4 Sep 2019 11:27:21 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 4 Sep 2019
+ 11:27:12 +0800
+Subject: Re: [PATCH v2 00/25] erofs: patchset addressing Christoph's comments
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>, <devel@driverdev.osuosl.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>
+References: <20190901055130.30572-1-hsiangkao@aol.com>
+ <20190904020912.63925-1-gaoxiang25@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <52a38cb7-b394-b8a8-7254-aafe47f2caa5@huawei.com>
+Date:   Wed, 4 Sep 2019 11:27:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190904020912.63925-1-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Message-Id: <4AB1ABA7-B659-41B7-8364-132AD3608FA6@oracle.com>
-References: <20190902092341.26712-1-william.kucharski@oracle.com>
- <20190902092341.26712-3-william.kucharski@oracle.com>
- <20190903121424.GT14028@dhcp22.suse.cz>
- <20190903122208.GE29434@bombadil.infradead.org>
- <20190903125150.GW14028@dhcp22.suse.cz>
- <20190903151015.GF29434@bombadil.infradead.org>
- <20190903191528.GC14028@dhcp22.suse.cz>
-To:     Michal Hocko <mhocko@kernel.org>
-X-Mailer: Apple Mail (2.3578.1)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909040034
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909040034
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-> On Sep 3, 2019, at 1:15 PM, Michal Hocko <mhocko@kernel.org> wrote:
+On 2019/9/4 10:08, Gao Xiang wrote:
+> Hi,
 > 
-> Then I would suggest mentioning all this in the changelog so that the
-> overall intention is clear. It is also up to you fs developers to find a
-> consensus on how to move forward. I have brought that up mostly because
-> I really hate seeing new config options added due to shortage of
-> confidence in the code. That really smells like working around standard
-> code quality inclusion process.
+> This patchset is based on the following patch by Pratik Shinde,
+> https://lore.kernel.org/linux-erofs/20190830095615.10995-1-pratikshinde320@gmail.com/
+> 
+> All patches addressing Christoph's comments on v6, which are trivial,
+> most deleted code are from erofs specific fault injection, which was
+> followed f2fs and previously discussed in earlier topic [1], but
+> let's follow what Christoph's said now.
 
-I do mention a good deal of this in the blurb in part [0/2] of the patch,
-though I don't cover the readpage/readpages() debate. Ideally readpage()
-should do just that, read a page, based on the size of the page passed,
-and not assume "page" means "PAGESIZE."
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-I can also make the "help" text for the option more descriptive if
-desired.
+Thanks,
 
-Thanks for your comments!
+> 
+> Comments and suggestions are welcome...
+> 
+> [1] https://lore.kernel.org/r/1eed1e6b-f95e-aa8e-c3e7-e9870401ee23@kernel.org/
+> 
+> changes since v1:
+>  - leave some comments near the numbers to indicate where they are stored;
+>  - avoid a u8 cast;
+>  - use erofs_{err,info,dbg} and print sb->s_id as a prefix before
+>    the actual message;
+>  - add a on-disk title in erofs_fs.h
+>  - use feature_{compat,incompat} rather than features and requirements;
+>  - suggestions on erofs_grab_bio:
+>    https://lore.kernel.org/r/20190902122016.GL15931@infradead.org/
+>  - use compact/extended instead of erofs_inode_v1/v2 and
+>    i_format instead of i_advise;
+>  - avoid chained if/else if/else if statements in erofs_read_inode;
+>  - avoid erofs_vmap/vunmap wrappers;
+>  - use read_cache_page_gfp for erofs_get_meta_page;
+> 
+> Gao Xiang (25):
+>   erofs: remove all the byte offset comments
+>   erofs: on-disk format should have explicitly assigned numbers
+>   erofs: some macros are much more readable as a function
+>   erofs: kill __packed for on-disk structures
+>   erofs: update erofs_inode_is_data_compressed helper
+>   erofs: use feature_incompat rather than requirements
+>   erofs: better naming for erofs inode related stuffs
+>   erofs: kill erofs_{init,exit}_inode_cache
+>   erofs: use erofs_inode naming
+>   erofs: update erofs_fs.h comments
+>   erofs: update comments in inode.c
+>   erofs: better erofs symlink stuffs
+>   erofs: use dsb instead of layout for ondisk super_block
+>   erofs: kill verbose debug info in erofs_fill_super
+>   erofs: localize erofs_grab_bio()
+>   erofs: kill prio and nofail of erofs_get_meta_page()
+>   erofs: kill __submit_bio()
+>   erofs: add "erofs_" prefix for common and short functions
+>   erofs: kill all erofs specific fault injection
+>   erofs: kill use_vmap module parameter
+>   erofs: save one level of indentation
+>   erofs: rename errln/infoln/debugln to erofs_{err,info,dbg}
+>   erofs: use read_mapping_page instead of sb_bread
+>   erofs: always use iget5_locked
+>   erofs: use read_cache_page_gfp for erofs_get_meta_page
+> 
+>  Documentation/filesystems/erofs.txt |   9 -
+>  fs/erofs/Kconfig                    |   7 -
+>  fs/erofs/data.c                     | 118 +++--------
+>  fs/erofs/decompressor.c             |  76 +++----
+>  fs/erofs/dir.c                      |  17 +-
+>  fs/erofs/erofs_fs.h                 | 197 +++++++++---------
+>  fs/erofs/inode.c                    | 297 ++++++++++++++--------------
+>  fs/erofs/internal.h                 | 192 ++++--------------
+>  fs/erofs/namei.c                    |  21 +-
+>  fs/erofs/super.c                    | 282 +++++++++++---------------
+>  fs/erofs/xattr.c                    |  41 ++--
+>  fs/erofs/xattr.h                    |   4 +-
+>  fs/erofs/zdata.c                    |  63 +++---
+>  fs/erofs/zdata.h                    |   2 +-
+>  fs/erofs/zmap.c                     |  73 +++----
+>  include/trace/events/erofs.h        |  14 +-
+>  16 files changed, 578 insertions(+), 835 deletions(-)
+> 
