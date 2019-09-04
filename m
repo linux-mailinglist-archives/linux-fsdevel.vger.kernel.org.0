@@ -2,150 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A3BA7950
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 05:30:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E886A7952
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 05:31:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfIDDaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Sep 2019 23:30:23 -0400
-Received: from m13-11.163.com ([220.181.13.11]:53964 "EHLO m13-11.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727692AbfIDDaX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Sep 2019 23:30:23 -0400
-X-Greylist: delayed 358 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Sep 2019 23:30:20 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=MqgB5
-        FtmZrOhyE2OHWC5rM6kWB7se2rtPjPYsmTL2Dg=; b=iyiwG2RrpTMAXcPJqvLUR
-        7jMRYzeHdzBQIlFjmTxOdo/kL/nrqF31XGErjYh/vJJkgSmPzwhNeQKbdCDPfih9
-        BLnfs0RpbAu0PDMpc+WzFQ9RifvyLDe+pdA4H2yMAHkDkEjje/XM6onejmALW41x
-        iVD+bwPp5XgzJmCIwxPwuk=
-Received: from yin-jianhong$163.com ( [119.254.120.66] ) by
- ajax-webmail-wmsvr11 (Coremail) ; Wed, 4 Sep 2019 11:30:15 +0800 (CST)
-X-Originating-IP: [119.254.120.66]
-Date:   Wed, 4 Sep 2019 11:30:15 +0800 (CST)
-From:   =?GBK?B?0vy9o7rn?= <yin-jianhong@163.com>
-To:     "Zorro Lang" <zlang@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re:Re: [PATCH] xfsprogs: io/copy_range: cover corner case (fd_in ==
- fd_out)
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.10 build 20190724(ac680a23)
- Copyright (c) 2002-2019 www.mailtech.cn 163com
-In-Reply-To: <20190904020357.GW7239@dhcp-12-102.nay.redhat.com>
-References: <20190903105632.11667-1-yin-jianhong@163.com>
- <20190903115943.GU7239@dhcp-12-102.nay.redhat.com>
- <20190903131928.GV7239@dhcp-12-102.nay.redhat.com>
- <7689497e.d24e.16cf7f750d6.Coremail.yin-jianhong@163.com>
- <20190904020357.GW7239@dhcp-12-102.nay.redhat.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
-MIME-Version: 1.0
-Message-ID: <10d63ab.4152.16cfa52a523.Coremail.yin-jianhong@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: C8GowACXTdHIL29d8yKtAA--.25624W
-X-CM-SenderInfo: p1lqgyxldqx0lqj6il2tof0z/1tbiMA0mBFWBpYtLjAACsg
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+        id S1727805AbfIDDbp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Sep 2019 23:31:45 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46922 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727374AbfIDDbp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Sep 2019 23:31:45 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x843OxvF181183;
+        Wed, 4 Sep 2019 03:30:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=/yozfkmsZkCl6GVHGm2yICi3pPNQQonPColbnD8GEnI=;
+ b=ALbQ/r385Oq6bKNTcHJTr4qOuM/Dmuljrqkv6711uhQOyTbHPsHQVyGWkTm4bVziiZXz
+ v8iHJXOxYeBm6S8thLZgdQnhXPDxFOxAMEwEQzQ30XD3rZw8icS9Hyh2eNkWja0W9cxs
+ ufa/t8thHHg70nv1NgkTXhVxqZa2PcgBm0156ouPcoXp8uAhXC5ehHqmi1FRHVf6Y4vv
+ bz6EW+90Gj9e4m/umInsLr2pCQB+Qrgc9P2hqiLVhOvS6t7ahy6hr7waSAEytdaRcaDa
+ bx0qxTfXJsf2nyYBaGjpg2POPKfUJnM2hPHh5swEiyEvpzXjHYygEqZPB/A34T5WLOVa BQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2ut59r013e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Sep 2019 03:30:34 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x843SbjG122606;
+        Wed, 4 Sep 2019 03:30:33 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2us5phkdk2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Sep 2019 03:30:33 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x843UWVU023334;
+        Wed, 4 Sep 2019 03:30:32 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Sep 2019 20:30:31 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3578.1\))
+Subject: Re: [PATCH v5 1/2] mm: Allow the page cache to allocate large pages
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20190903115748.GS14028@dhcp22.suse.cz>
+Date:   Tue, 3 Sep 2019 21:30:30 -0600
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Bob Kasten <robert.a.kasten@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Chad Mynhier <chad.mynhier@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Johannes Weiner <jweiner@fb.com>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <68E123A9-22A8-40ED-B2ED-897FC02D7D75@oracle.com>
+References: <20190902092341.26712-1-william.kucharski@oracle.com>
+ <20190902092341.26712-2-william.kucharski@oracle.com>
+ <20190903115748.GS14028@dhcp22.suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+X-Mailer: Apple Mail (2.3578.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=896
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909040035
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=955 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909040035
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-CgpBdCAyMDE5LTA5LTA0IDEwOjAzOjU3LCAiWm9ycm8gTGFuZyIgPHpsYW5nQHJlZGhhdC5jb20+
-IHdyb3RlOgo+T24gV2VkLCBTZXAgMDQsIDIwMTkgYXQgMTI6MzE6MTZBTSArMDgwMCwg0vy9o7rn
-IHdyb3RlOgo+PiBXZSBuZWVkIGNvdmVyIHRoZSBzY2VuYXJpbyB0aGF0IGZkX2luID09IGZkX291
-dAo+PiBub3QganVzdCBzYW1lIHBhdGguCj4KPlBsZWFzZSByZXBseSB0byBtYWlsIGxpc3QsIG5v
-dCAnbWUnIG9ubHksIHRvIGdldCBtb3JlIHJldmlldzopCj4KPlRoZSBwYXRjaCB3aGljaCB5b3Un
-cmUgdHJ5aW5nIHRvIGNvdmVyIGlzIGNvbW1pdCA5YWI3MGNhNjUzIGFzIGJlbG93WzFdLgo+RnJv
-bSB0aGUgY29kZSwgSSByZWFsbHkgZG91YnQgaWYgeW91IG5lZWQgc2FtZSBgc3RydWN0IGZpbGVg
-LCBsb29rcyBsaWtlCj55b3UgbmVlZCBzYW1lIGBzdHJ1Y3QgaW5vZGVgLgo+Cj5IYXZlIHlvdSB0
-cmllZCB0byB0ZXN0IG9uIHNhbWUgaW5vZGUgYnV0IG5vdCBzYW1lICdmZCc/IEknbSBub3QgYSBD
-SUZTCj5leHBlcnQsIGNhbiBDSUZTIGhhdmUgc2FtZSBmaWxlIHdpdGggZGlmZmVyZW50IGlub2Rl
-PwoKVGhhbmtzIFpvcnJvLCB5b3UgYXJlIHJpZ2h0LiBzYW1lIGZkIGlzIG5vdCBuZWNlc3Nhcnk7
-Cgpkcm9wIHRoaXMgcGF0Y2guCgo+Cj5UaGFua3MsCj5ab3Jybwo+Cj5bMV0KPmNvbW1pdCA5YWI3
-MGNhNjUzMzA3NzcxNTg5ZTE0MTQxMDJjNTUyZDhkYmRiYmVmCj5BdXRob3I6IEtvdnR1bmVua28g
-T2xla3NhbmRyIDxhbGV4YW5kZXIxOTg5NjFAZ21haWwuY29tPgo+RGF0ZTogICBUdWUgTWF5IDE0
-IDA1OjUyOjM0IDIwMTkgKzAwMDAKPgo+ICAgIEZpeGVkIGh0dHBzOi8vYnVnemlsbGEua2VybmVs
-Lm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAyOTM1IGFsbG93IHdyaXRlIG9uIHRoZSBzYW1lIGZpbGUK
-PiAgICAKPiAgICBDb3B5Y2h1bmsgYWxsb3dzIHNvdXJjZSBhbmQgdGFyZ2V0IHRvIGJlIG9uIHRo
-ZSBzYW1lIGZpbGUuCj4gICAgRm9yIGRldGFpbHMgb24gcmVzdHJpY3Rpb25zIHNlZSBNUy1TTUIy
-IDMuMy41LjE1LjYKPiAgICAKPiAgICBTaWduZWQtb2ZmLWJ5OiBLb3Z0dW5lbmtvIE9sZWtzYW5k
-ciA8YWxleGFuZGVyMTk4OTYxQGdtYWlsLmNvbT4KPiAgICBTaWduZWQtb2ZmLWJ5OiBTdGV2ZSBG
-cmVuY2ggPHN0ZnJlbmNoQG1pY3Jvc29mdC5jb20+Cj4KPmRpZmYgLS1naXQgYS9mcy9jaWZzL2Np
-ZnNmcy5jIGIvZnMvY2lmcy9jaWZzZnMuYwo+aW5kZXggYjFhNWZjZmEzY2UxLi5kMGNiMDQyNzMy
-Y2IgMTAwNjQ0Cj4tLS0gYS9mcy9jaWZzL2NpZnNmcy5jCj4rKysgYi9mcy9jaWZzL2NpZnNmcy5j
-Cj5AQCAtMTA3MCwxMSArMTA3MCw2IEBAIHNzaXplX3QgY2lmc19maWxlX2NvcHljaHVua19yYW5n
-ZSh1bnNpZ25lZCBpbnQgeGlkLAo+IAo+ICAgICAgICBjaWZzX2RiZyhGWUksICJjb3B5Y2h1bmsg
-cmFuZ2VcbiIpOwo+IAo+LSAgICAgICBpZiAoc3JjX2lub2RlID09IHRhcmdldF9pbm9kZSkgewo+
-LSAgICAgICAgICAgICAgIHJjID0gLUVJTlZBTDsKPi0gICAgICAgICAgICAgICBnb3RvIG91dDsK
-Pi0gICAgICAgfQo+LQo+ICAgICAgICBpZiAoIXNyY19maWxlLT5wcml2YXRlX2RhdGEgfHwgIWRz
-dF9maWxlLT5wcml2YXRlX2RhdGEpIHsKPiAgICAgICAgICAgICAgICByYyA9IC1FQkFERjsKPiAg
-ICAgICAgICAgICAgICBjaWZzX2RiZyhWRlMsICJtaXNzaW5nIGNpZnNGaWxlSW5mbyBvbiBjb3B5
-IHJhbmdlIHNyYyBmaWxlXG4iKTsKPgo+PiAKPj4gI0RpZCB5b3UgcmVhZCB0aGUgc3VtbWFyeSBh
-bmQgY29tbWl0IGxvZz8KPj4gCj4+IAo+PiB8IHwKPj4g0vy9o7rnCj4+IHwKPj4gfAo+PiDTys/k
-o7p5aW4tamlhbmhvbmdAMTYzLmNvbQo+PiB8Cj4+IAo+PiDHqcP708kgzfjS19PKz+S088qmILao
-1sYKPj4gCj4+IE9uIDA5LzAzLzIwMTkgMjE6MTksIFpvcnJvIExhbmcgd3JvdGU6Cj4+IE9uIFR1
-ZSwgU2VwIDAzLCAyMDE5IGF0IDA3OjU5OjQzUE0gKzA4MDAsIFpvcnJvIExhbmcgd3JvdGU6Cj4+
-ID4gT24gVHVlLCBTZXAgMDMsIDIwMTkgYXQgMDY6NTY6MzJQTSArMDgwMCwgSmlhbmhvbmcuWWlu
-IHdyb3RlOgo+PiA+ID4gUmVsYXRlZCBidWc6Cj4+ID4gPiAgIGNvcHlfZmlsZV9yYW5nZSByZXR1
-cm4gIkludmFsaWQgYXJndW1lbnQiIHdoZW4gY29weSBpbiB0aGUgc2FtZSBmaWxlCj4+ID4gPiAg
-IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAyOTM1Cj4+ID4g
-Pgo+PiA+ID4gaWYgYXJndW1lbnQgb2Ygb3B0aW9uIC1mIGlzICItIiwgdXNlIGN1cnJlbnQgZmls
-ZS0+ZmQgYXMgZmRfaW4KPj4gPiA+Cj4+ID4gPiBVc2FnZToKPj4gPiA+ICAgeGZzX2lvIC1jICdj
-b3B5X3JhbmdlIC1mIC0nIHNvbWVfZmlsZQo+PiA+ID4KPj4gPiA+IFNpZ25lZC1vZmYtYnk6IEpp
-YW5ob25nIFlpbiA8eWluLWppYW5ob25nQDE2My5jb20+Cj4+ID4gPiAtLS0KPj4gPgo+PiA+IEhp
-LAo+PiA+Cj4+ID4gQWN0dWFsbHksIEknbSB0aGlua2luZyBhYm91dCBpZiB5b3UgbmVlZCBzYW1l
-ICdmZCcgb3Igc2FtZSBmaWxlIHBhdGg/Cj4+ID4gSWYgeW91IGp1c3QgbmVlZCBzYW1lIGZpbGUg
-cGF0aCwgSSB0aGluawo+PiA+Cj4+ID4gICAjIHhmc19pbyAtYyAiY29weV9yYW5nZSB0ZXN0Zmls
-ZSIgdGVzdGZpbGUKPj4gPgo+PiA+IGFscmVhZHkgY2FuIGhlbHAgdGhhdC4gVGhlIG9ubHkgb25l
-IHByb2JsZW0gc3RvcCB5b3UgZG9pbmcgdGhhdCBpcwo+PiA+ICJjb3B5X2RzdF90cnVuY2F0ZSgp
-Ii4KPj4gPgo+PiA+IElmIGFsbCBhYm92ZSBJIHN1cHBvc2UgaXMgcmlnaHQsIHdlIGNhbiB0dXJu
-IHRvIHRhbGsgYWJvdXQgaWYgdGhhdAo+PiA+IGNvcHlfZHN0X3RydW5jYXRlKCkgaXMgbmVjZXNz
-YXJ5LCBvciBob3cgY2FuIHdlIHNraXAgaXQuCj4+IAo+PiBJIGp1c3QgY2hlY2tlZCwgdGhlIGNv
-cHlfZHN0X3RydW5jYXRlKCkgaXMgb25seSBjYWxsZWQgd2hlbjoKPj4gCj4+ICBpZiAoc3JjID09
-IDAgJiYgZHN0ID09IDAgJiYgbGVuID09IDApIHsKPj4gCj4+IFNvIGlmIHlvdSBjYW4gZ2l2ZSB5
-b3VyIHJlcHJvZHVjZXIgYSAibGVuZ3RoIihvciBvZmZzZXQpLCBsaWtlczoKPj4gCj4+ICAjIHhm
-c19pbyAtYyAiY29weV9yYW5nZSAtbCA2NGsgdGVzdGZpbGUiIHRlc3RmaWxlCj4+IAo+PiBZb3Ug
-Y2FuIGF2b2lkIHRoZSBjb3B5X2RzdF90cnVuY2F0ZSgpIHRvby4KPj4gCj4+IElzIHRoYXQgaGVs
-cGZ1bD8KPj4gCj4+IFRoYW5rcywKPj4gWm9ycm8KPj4gCj4+ID4KPj4gPiBUaGFua3MsCj4+ID4g
-Wm9ycm8KPj4gPgo+PiA+ID4gIGlvL2NvcHlfZmlsZV9yYW5nZS5jIHwgMjcgKysrKysrKysrKysr
-KysrKysrLS0tLS0tLS0tCj4+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKyks
-IDkgZGVsZXRpb25zKC0pCj4+ID4gPgo+PiA+ID4gZGlmZiAtLWdpdCBhL2lvL2NvcHlfZmlsZV9y
-YW5nZS5jIGIvaW8vY29weV9maWxlX3JhbmdlLmMKPj4gPiA+IGluZGV4IGI3YjlmZDg4Li4yZGRl
-OGEzMSAxMDA2NDQKPj4gPiA+IC0tLSBhL2lvL2NvcHlfZmlsZV9yYW5nZS5jCj4+ID4gPiArKysg
-Yi9pby9jb3B5X2ZpbGVfcmFuZ2UuYwo+PiA+ID4gQEAgLTI4LDYgKzI4LDcgQEAgY29weV9yYW5n
-ZV9oZWxwKHZvaWQpCj4+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICBhdCBwb3NpdGlv
-biAwXG5cCj4+ID4gPiAgICdjb3B5X3JhbmdlIC1mIDInIC0gY29waWVzIGFsbCBieXRlcyBmcm9t
-IG9wZW4gZmlsZSAyIGludG8gdGhlIGN1cnJlbnQgb3BlbiBmaWxlXG5cCj4+ID4gPiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBhdCBwb3NpdGlvbiAwXG5cCj4+ID4gPiArICdjb3B5X3Jhbmdl
-IC1mIC0nIC0gY29waWVzIGFsbCBieXRlcyBmcm9tIGN1cnJlbnQgb3BlbiBmaWxlIGFwcGVuZCB0
-aGUgY3VycmVudCBvcGVuIGZpbGVcblwKPj4gPiA+ICAiKSk7Cj4+ID4gPiAgfQo+PiA+ID4gIAo+
-PiA+ID4gQEAgLTExNCwxMSArMTE1LDE1IEBAIGNvcHlfcmFuZ2VfZihpbnQgYXJnYywgY2hhciAq
-KmFyZ3YpCj4+ID4gPiAgICAgICAgICAgICAgICAgfQo+PiA+ID4gICAgICAgICAgICAgICAgIGJy
-ZWFrOwo+PiA+ID4gICAgICAgICAgICBjYXNlICdmJzoKPj4gPiA+IC0gICAgICAgICAgICAgICBz
-cmNfZmlsZV9uciA9IGF0b2koYXJndlsxXSk7Cj4+ID4gPiAtICAgICAgICAgICAgICAgaWYgKHNy
-Y19maWxlX25yIDwgMCB8fCBzcmNfZmlsZV9uciA+PSBmaWxlY291bnQpIHsKPj4gPiA+IC0gICAg
-ICAgICAgICAgICAgICAgIHByaW50ZihfKCJmaWxlIHZhbHVlICVkIGlzIG91dCBvZiByYW5nZSAo
-MC0lZClcbiIpLAo+PiA+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICBzcmNfZmlsZV9uciwg
-ZmlsZWNvdW50IC0gMSk7Cj4+ID4gPiAtICAgICAgICAgICAgICAgICAgICByZXR1cm4gMDsKPj4g
-PiA+ICsgICAgICAgICAgICAgICBpZiAoc3RyY21wKGFyZ3ZbMV0sICItIikpCj4+ID4gPiArICAg
-ICAgICAgICAgICAgICAgICBzcmNfZmlsZV9uciA9IChmaWxlIC0gJmZpbGV0YWJsZVswXSkgLyBz
-aXplb2YoZmlsZWlvX3QpOwo+PiA+ID4gKyAgICAgICAgICAgICAgIGVsc2Ugewo+PiA+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgc3JjX2ZpbGVfbnIgPSBhdG9pKGFyZ3ZbMV0pOwo+PiA+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgaWYgKHNyY19maWxlX25yIDwgMCB8fCBzcmNfZmlsZV9uciA+PSBm
-aWxlY291bnQpIHsKPj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgcHJpbnRmKF8oImZp
-bGUgdmFsdWUgJWQgaXMgb3V0IG9mIHJhbmdlICgwLSVkKVxuIiksCj4+ID4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgc3JjX2ZpbGVfbnIsIGZpbGVjb3VudCAtIDEpOwo+PiA+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gMDsKPj4gPiA+ICsgICAgICAgICAgICAg
-ICAgICAgIH0KPj4gPiA+ICAgICAgICAgICAgICAgICB9Cj4+ID4gPiAgICAgICAgICAgICAgICAg
-LyogRXhwZWN0IG5vIHNyY19wYXRoIGFyZyAqLwo+PiA+ID4gICAgICAgICAgICAgICAgIHNyY19w
-YXRoX2FyZyA9IDA7Cj4+ID4gPiBAQCAtMTQ3LDEwICsxNTIsMTQgQEAgY29weV9yYW5nZV9mKGlu
-dCBhcmdjLCBjaGFyICoqYXJndikKPj4gPiA+ICAgICAgICAgICAgfQo+PiA+ID4gICAgICAgICAg
-ICBsZW4gPSBzejsKPj4gPiA+ICAKPj4gPiA+IC0gICAgICAgICAgcmV0ID0gY29weV9kc3RfdHJ1
-bmNhdGUoKTsKPj4gPiA+IC0gICAgICAgICAgaWYgKHJldCA8IDApIHsKPj4gPiA+IC0gICAgICAg
-ICAgICAgICByZXQgPSAxOwo+PiA+ID4gLSAgICAgICAgICAgICAgIGdvdG8gb3V0Owo+PiA+ID4g
-KyAgICAgICAgICBpZiAoZmQgIT0gZmlsZS0+ZmQpIHsKPj4gPiA+ICsgICAgICAgICAgICAgICBy
-ZXQgPSBjb3B5X2RzdF90cnVuY2F0ZSgpOwo+PiA+ID4gKyAgICAgICAgICAgICAgIGlmIChyZXQg
-PCAwKSB7Cj4+ID4gPiArICAgICAgICAgICAgICAgICAgICByZXQgPSAxOwo+PiA+ID4gKyAgICAg
-ICAgICAgICAgICAgICAgZ290byBvdXQ7Cj4+ID4gPiArICAgICAgICAgICAgICAgfQo+PiA+ID4g
-KyAgICAgICAgICB9IGVsc2Ugewo+PiA+ID4gKyAgICAgICAgICAgICAgIGRzdCA9IHN6Owo+PiA+
-ID4gICAgICAgICAgICB9Cj4+ID4gPiAgICAgICB9Cj4+ID4gPiAgCj4+ID4gPiAtLQo+PiA+ID4g
-Mi4xNy4yCj4+ID4gPgo=
+
+
+> On Sep 3, 2019, at 5:57 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> 
+> On Mon 02-09-19 03:23:40, William Kucharski wrote:
+>> Add an 'order' argument to __page_cache_alloc() and
+>> do_read_cache_page(). Ensure the allocated pages are compound pages.
+> 
+> Why do we need to touch all the existing callers and change them to use
+> order 0 when none is actually converted to a different order? This just
+> seem to add a lot of code churn without a good reason. If anything I
+> would simply add __page_cache_alloc_order and make __page_cache_alloc
+> call it with order 0 argument.
+
+All the EXISTING code in patch [1/2] is changed to call it with an order
+of 0, as you would expect.
+
+However, new code in part [2/2] of the patch calls it with an order of
+HPAGE_PMD_ORDER, as it seems cleaner to have those routines operate on
+a page, regardless of the order of the page desired.
+
+I certainly can change this as you request, but once again the question
+is whether "page" should MEAN "page" regardless of the order desired,
+or whether the assumption will always be "page" means base PAGESIZE.
+
+Either approach works, but what is the semantic we want going forward?
+
+Thanks again!
+
+
