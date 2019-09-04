@@ -2,90 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E56EAA8312
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 14:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A808A831C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 14:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729727AbfIDMgj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 08:36:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35456 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726943AbfIDMgj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:36:39 -0400
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 45D02796EB
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Sep 2019 12:36:39 +0000 (UTC)
-Received: by mail-qk1-f200.google.com with SMTP id l64so22903800qkb.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 05:36:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=Y7+4jzmWO4GQ/wOMEZ/4ITLQiTP1h3eEC+zHNesrpcA=;
-        b=q+1DfYjzN2p/bM4IDm+4F55LFOeoZPYqbkdREPBODzQdz0BJZbeFGP1NgueHn1KzRP
-         s/sKjcXk17Iw3VvNhcboaWuJGuF4OdE5Wqhhcocqw81Ub4X7cOd5F+c3+JlZZUKEtb5J
-         09jfsaqCwnlDVvfGA9GXDW+wv3PF89t64DwTQiOWZDp+RXwDF50DB7i4QzzGTaq6I4d8
-         fNlsYQG5U4Uq5AVZzwBWwZ8kIPoKF3Bojr1lA5xZCxhX1yHTt5APz91ccKISqZdylKJ7
-         OxqrqqaV/IJrzGZaOeh2dbqcbVSB1lc1a3Y35Xlgfd2NI7lzj96g6UbNnvJXMyKjx2/h
-         2woA==
-X-Gm-Message-State: APjAAAX3PK6Lo0wxbzgv9+tAj7PoCUa7PAcvjP5pWxpgPhueUUToGZZX
-        o+iTT4XuFcBJ8BG3YG6kBvYbeh94A5Q7MOBvMrtzi34SbGMPuWvRzRWz6uGw8KCBDelQIsehOnX
-        qc7GzRIMDqd7oxBft3Q4QTj1YFg==
-X-Received: by 2002:ac8:5388:: with SMTP id x8mr37130970qtp.26.1567600598619;
-        Wed, 04 Sep 2019 05:36:38 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzEZra2IRRbs1ImLBTb5SFO4EmzxasydlkHZDaR00UT9cJoLOJxESMOITKvTaUwBGo07h4nzg==
-X-Received: by 2002:ac8:5388:: with SMTP id x8mr37130953qtp.26.1567600598487;
-        Wed, 04 Sep 2019 05:36:38 -0700 (PDT)
-Received: from redhat.com (bzq-79-176-40-226.red.bezeqint.net. [79.176.40.226])
-        by smtp.gmail.com with ESMTPSA id s23sm11658356qte.72.2019.09.04.05.36.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2019 05:36:37 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 08:36:33 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        stefanha@redhat.com, dgilbert@redhat.com
-Subject: [PATCH] fuse: reserve byteswapped init opcodes
-Message-ID: <20190904123607.10048-1-mst@redhat.com>
+        id S1729656AbfIDMjn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 08:39:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45700 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbfIDMjn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Sep 2019 08:39:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=46rtVsP+q58WyAZYY2K+ydWmL8S5cK07U6g6MAPCNAg=; b=RAmgutrtgnLTFmU9yGZ/SUWkB
+        LuClrQ2GLdcUPAHrPlGQc8x5ax11QVMddy8SGnoirlP2/dpb0qD9ZkpXkptm1pnHRHPMOaSoXP90u
+        h5JXbbIwtzrOEP60fS6+Q8qVTA/FiZ7XS9pKho16aRex4HUTyjfAXN3BoBBhgCoQ3IMA81ycOEzSQ
+        XF0SKVPlJvythOeYc2y9uPZYcN2evBnZFUVjEFZhKTLFkJSA7nRLXMdxnX6vYJkHC3hEsKrljiHc1
+        s6iN+3ehLT6ZSew4A5dohw1lhtPN4+vpCcXPHGYj4d6LWsKAXMYc9eBvqF4+XS32Dh3LJheT6rAn1
+        E+uQQ0dzg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5UZZ-0007Rw-1x; Wed, 04 Sep 2019 12:39:41 +0000
+Date:   Wed, 4 Sep 2019 05:39:41 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christoph Hellwig <hch@infradead.org>, Qian Cai <cai@lca.pw>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: "fs/namei.c: keep track of nd->root refcount status" causes boot
+ panic
+Message-ID: <20190904123940.GA24520@infradead.org>
+References: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw>
+ <20190903123719.GF1131@ZenIV.linux.org.uk>
+ <20190903130456.GA9567@infradead.org>
+ <20190903134832.GH1131@ZenIV.linux.org.uk>
+ <20190903135024.GA8274@infradead.org>
+ <20190903135354.GI1131@ZenIV.linux.org.uk>
+ <20190903153930.GA2791@infradead.org>
+ <20190903175610.GM1131@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email 2.22.0.678.g13338e74b8
-X-Mutt-Fcc: =sent
+In-Reply-To: <20190903175610.GM1131@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-virtio fs tunnels fuse over a virtio channel.  One issue is two sides
-might be speaking different endian-ness. To detects this,
-host side looks at the opcode value in the FUSE_INIT command.
-Works fine at the moment but might fail if a future version
-of fuse will use such an opcode for initialization.
-Let's reserve this opcode so we remember and don't do this.
+On Tue, Sep 03, 2019 at 06:56:10PM +0100, Al Viro wrote:
+> On Tue, Sep 03, 2019 at 08:39:30AM -0700, Christoph Hellwig wrote:
+> 
+> > > There's much nastier situation than "new upstream kernel released,
+> > > need to rebuild" - it's bisect in mainline trying to locate something...
+> > 
+> > I really don't get the point.  And it's not like we've card about
+> > this anywhere else.  And jumping wildly around with the numeric values
+> > for constants will lead to bugs like the one you added and fixed again
+> > and again.
+> 
+> The thing is, there are several groups - it's not as if all additions
+> were guaranteed to be at the end.  So either we play with renumbering
+> again and again, or we are back to the square one...
+> 
+> Is there any common trick that would allow to verify the lack of duplicates
+> at the build time?
+> 
+> Or we can reorder the list by constant value, with no grouping visible
+> anywhere...
 
-Same for CUSE_INIT.
+Here is what I'd do.  No validation of duplicates, but the 1 << bit
+notation makes them very easy to spot:
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- include/uapi/linux/fuse.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 2971d29a42e4..f042e63f4aa0 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -425,6 +425,10 @@ enum fuse_opcode {
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 397a08ade6a2..a9536f90936c 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -16,28 +16,47 @@ enum { MAX_NESTED_LINKS = 8 };
+  */
+ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
  
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
+-/* pathwalk mode */
+-#define LOOKUP_FOLLOW		0x0001	/* follow links at the end */
+-#define LOOKUP_DIRECTORY	0x0002	/* require a directory */
+-#define LOOKUP_AUTOMOUNT	0x0004  /* force terminal automount */
+-#define LOOKUP_EMPTY		0x4000	/* accept empty path [user_... only] */
+-#define LOOKUP_DOWN		0x8000	/* follow mounts in the starting point */
+-
+-#define LOOKUP_REVAL		0x0020	/* tell ->d_revalidate() to trust no cache */
+-#define LOOKUP_RCU		0x0040	/* RCU pathwalk mode; semi-internal */
+-
+-/* These tell filesystem methods that we are dealing with the final component... */
+-#define LOOKUP_OPEN		0x0100	/* ... in open */
+-#define LOOKUP_CREATE		0x0200	/* ... in object creation */
+-#define LOOKUP_EXCL		0x0400	/* ... in exclusive creation */
+-#define LOOKUP_RENAME_TARGET	0x0800	/* ... in destination of rename() */
+-
+-/* internal use only */
+-#define LOOKUP_PARENT		0x0010
+-#define LOOKUP_NO_REVAL		0x0080
+-#define LOOKUP_JUMPED		0x1000
+-#define LOOKUP_ROOT		0x2000
+-#define LOOKUP_ROOT_GRABBED	0x0008
++/*
++ * Pathwalk mode:
++ */
 +
-+	/* Reserved opcodes: helpful to detect structure endian-ness */
-+	FUSE_INIT_BSWAP_RESERVED	= 26 << 24,
-+	CUSE_INIT_BSWAP_RESERVED	= 16 << 16,
- };
++/* follow links at the end */
++#define LOOKUP_FOLLOW		(1 << 0)
++/* require a directory */
++#define LOOKUP_DIRECTORY	(1 << 1)
++/* force terminal automount */
++#define LOOKUP_AUTOMOUNT	(1 << 2)
++/* accept empty path [user_... only] */
++#define LOOKUP_EMPTY		(1 << 3)
++/* follow mounts in the starting point */
++#define LOOKUP_DOWN		(1 << 4)
++/* tell ->d_revalidate() to trust no cache */
++#define LOOKUP_REVAL		(1 << 5)
++/* RCU pathwalk mode; semi-internal */
++#define LOOKUP_RCU		(1 << 6)
++
++
++/*
++ * These tell filesystem methods that we are dealing with the final component:
++ */
++
++/* ... in open */
++#define LOOKUP_OPEN		(1 << 10)
++/* ... in object creation */
++#define LOOKUP_CREATE		(1 << 11)
++/* ... in exclusive creation */
++#define LOOKUP_EXCL		(1 << 12)
++/* ... in destination of rename() */
++#define LOOKUP_RENAME_TARGET	(1 << 13)
++
++/*
++ * Internal use only:
++ */
++#define LOOKUP_PARENT		(1 << 20)
++#define LOOKUP_NO_REVAL		(1 << 21)
++#define LOOKUP_JUMPED		(1 << 22)
++#define LOOKUP_ROOT		(1 << 23)
++#define LOOKUP_ROOT_GRABBED	(1 << 24)
  
- enum fuse_notify_code {
--- 
-MST
+ extern int path_pts(struct path *path);
+ 
