@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B6FA7869
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 04:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A1E6A786B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Sep 2019 04:10:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfIDCKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727961AbfIDCKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 3 Sep 2019 22:10:32 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6193 "EHLO huawei.com"
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6196 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727947AbfIDCKb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1727950AbfIDCKb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 3 Sep 2019 22:10:31 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 88A9C8B5EE1071CFCEE2;
+        by Forcepoint Email with ESMTP id 938614BD2A40AB5CB661;
         Wed,  4 Sep 2019 10:10:30 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 4 Sep 2019
- 10:10:22 +0800
+ 10:10:24 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Chao Yu <yuchao0@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -24,9 +24,9 @@ To:     Chao Yu <yuchao0@huawei.com>,
 CC:     <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
         Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 16/25] erofs: kill prio and nofail of erofs_get_meta_page()
-Date:   Wed, 4 Sep 2019 10:09:03 +0800
-Message-ID: <20190904020912.63925-17-gaoxiang25@huawei.com>
+Subject: [PATCH v2 17/25] erofs: kill __submit_bio()
+Date:   Wed, 4 Sep 2019 10:09:04 +0800
+Message-ID: <20190904020912.63925-18-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190904020912.63925-1-gaoxiang25@huawei.com>
 References: <20190901055130.30572-1-hsiangkao@aol.com>
@@ -40,229 +40,152 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As Christoph pointed out [1],
-"Why is there __erofs_get_meta_page with the two weird
-booleans instead of a single erofs_get_meta_page that
-gets and gfp_t for additional flags and an unsigned int
-for additional bio op flags."
+As Christoph pointed out [1], "
+Why is there __submit_bio which really just obsfucates
+what is going on?  Also why is __submit_bio using
+bio_set_op_attrs instead of opencode it as the comment
+right next to it asks you to? "
 
-And since all callers can handle errors, let's kill
-prio and nofail and erofs_get_inline_page() now.
+Let's use submit_bio directly instead.
 
 [1] https://lore.kernel.org/r/20190830162812.GA10694@infradead.org/
 Reported-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- fs/erofs/data.c     | 25 ++++++-------------------
- fs/erofs/inode.c    |  2 +-
- fs/erofs/internal.h | 18 +-----------------
- fs/erofs/xattr.c    | 13 ++++++-------
- fs/erofs/zmap.c     |  4 ++--
- 5 files changed, 16 insertions(+), 46 deletions(-)
+ fs/erofs/data.c     | 21 +++++++++++++--------
+ fs/erofs/internal.h |  7 -------
+ fs/erofs/zdata.c    |  6 ++++--
+ 3 files changed, 17 insertions(+), 17 deletions(-)
 
 diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 0136ea117934..28eda71bb1a9 100644
+index 28eda71bb1a9..70b1e353756e 100644
 --- a/fs/erofs/data.c
 +++ b/fs/erofs/data.c
-@@ -51,25 +51,19 @@ static struct bio *erofs_grab_raw_bio(struct super_block *sb,
+@@ -40,7 +40,8 @@ static inline void read_endio(struct bio *bio)
+ 
+ static struct bio *erofs_grab_raw_bio(struct super_block *sb,
+ 				      erofs_blk_t blkaddr,
+-				      unsigned int nr_pages)
++				      unsigned int nr_pages,
++				      bool ismeta)
+ {
+ 	struct bio *bio = bio_alloc(GFP_NOIO, nr_pages);
+ 
+@@ -48,6 +49,11 @@ static struct bio *erofs_grab_raw_bio(struct super_block *sb,
+ 	bio_set_dev(bio, sb->s_bdev);
+ 	bio->bi_iter.bi_sector = (sector_t)blkaddr << LOG_SECTORS_PER_BLOCK;
+ 	bio->bi_private = sb;
++	if (ismeta)
++		bio->bi_opf = REQ_OP_READ | REQ_META;
++	else
++		bio->bi_opf = REQ_OP_READ;
++
  	return bio;
  }
  
--/* prio -- true is used for dir */
--struct page *__erofs_get_meta_page(struct super_block *sb,
--				   erofs_blk_t blkaddr, bool prio, bool nofail)
-+struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr)
- {
- 	struct inode *const bd_inode = sb->s_bdev->bd_inode;
- 	struct address_space *const mapping = bd_inode->i_mapping;
--	/* prefer retrying in the allocator to blindly looping below */
--	const gfp_t gfp = mapping_gfp_constraint(mapping, ~__GFP_FS) |
--		(nofail ? __GFP_NOFAIL : 0);
--	unsigned int io_retries = nofail ? EROFS_IO_MAX_RETRIES_NOFAIL : 0;
-+	const gfp_t gfp = mapping_gfp_constraint(mapping, ~__GFP_FS);
- 	struct page *page;
- 	int err;
- 
- repeat:
- 	page = find_or_create_page(mapping, blkaddr, gfp);
--	if (!page) {
--		DBG_BUGON(nofail);
-+	if (!page)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	DBG_BUGON(!PageLocked(page));
- 
+@@ -69,14 +75,14 @@ struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr)
  	if (!PageUptodate(page)) {
-@@ -82,14 +76,11 @@ struct page *__erofs_get_meta_page(struct super_block *sb,
+ 		struct bio *bio;
+ 
+-		bio = erofs_grab_raw_bio(sb, blkaddr, 1);
++		bio = erofs_grab_raw_bio(sb, blkaddr, 1, true);
+ 
+ 		if (bio_add_page(bio, page, PAGE_SIZE, 0) != PAGE_SIZE) {
+ 			err = -EFAULT;
  			goto err_out;
  		}
  
--		__submit_bio(bio, REQ_OP_READ,
--			     REQ_META | (prio ? REQ_PRIO : 0));
--
-+		__submit_bio(bio, REQ_OP_READ, REQ_META);
+-		__submit_bio(bio, REQ_OP_READ, REQ_META);
++		submit_bio(bio);
  		lock_page(page);
  
  		/* this page has been truncated by others */
- 		if (page->mapping != mapping) {
--unlock_repeat:
- 			unlock_page(page);
- 			put_page(page);
- 			goto repeat;
-@@ -97,10 +88,6 @@ struct page *__erofs_get_meta_page(struct super_block *sb,
- 
- 		/* more likely a read error */
- 		if (!PageUptodate(page)) {
--			if (io_retries) {
--				--io_retries;
--				goto unlock_repeat;
--			}
- 			err = -EIO;
- 			goto err_out;
- 		}
-@@ -251,7 +238,7 @@ static inline struct bio *erofs_read_raw_page(struct bio *bio,
- 
- 			DBG_BUGON(map.m_plen > PAGE_SIZE);
- 
--			ipage = erofs_get_meta_page(inode->i_sb, blknr, 0);
-+			ipage = erofs_get_meta_page(inode->i_sb, blknr);
- 
- 			if (IS_ERR(ipage)) {
- 				err = PTR_ERR(ipage);
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 770f3259c862..8d496adbeaea 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -182,7 +182,7 @@ static int fill_inode(struct inode *inode, int isdir)
- 	debugln("%s, reading inode nid %llu at %u of blkaddr %u",
- 		__func__, vi->nid, ofs, blkaddr);
- 
--	page = erofs_get_meta_page(inode->i_sb, blkaddr, isdir);
-+	page = erofs_get_meta_page(inode->i_sb, blkaddr);
- 
- 	if (IS_ERR(page)) {
- 		errln("failed to get inode (nid: %llu) page, err %ld",
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 000ea92b36a3..90c62fb5f80d 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -258,8 +258,6 @@ static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
- #error erofs cannot be used in this platform
- #endif
- 
--#define EROFS_IO_MAX_RETRIES_NOFAIL     5
--
- #define ROOT_NID(sb)		((sb)->root_nid)
- 
- #define erofs_blknr(addr)       ((addr) / EROFS_BLKSIZ)
-@@ -418,24 +416,10 @@ static inline void __submit_bio(struct bio *bio, unsigned int op,
- 	submit_bio(bio);
- }
- 
--struct page *__erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr,
--				   bool prio, bool nofail);
--
--static inline struct page *erofs_get_meta_page(struct super_block *sb,
--	erofs_blk_t blkaddr, bool prio)
--{
--	return __erofs_get_meta_page(sb, blkaddr, prio, false);
--}
-+struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr);
- 
- int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
- 
--static inline struct page *erofs_get_inline_page(struct inode *inode,
--						 erofs_blk_t blkaddr)
--{
--	return erofs_get_meta_page(inode->i_sb, blkaddr,
--				   S_ISDIR(inode->i_mode));
--}
--
- /* inode.c */
- static inline unsigned long erofs_inode_hash(erofs_nid_t nid)
- {
-diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
-index d5b7fe0bee45..dd445c81c41f 100644
---- a/fs/erofs/xattr.c
-+++ b/fs/erofs/xattr.c
-@@ -87,7 +87,7 @@ static int init_inode_xattrs(struct inode *inode)
- 	it.blkaddr = erofs_blknr(iloc(sbi, vi->nid) + vi->inode_isize);
- 	it.ofs = erofs_blkoff(iloc(sbi, vi->nid) + vi->inode_isize);
- 
--	it.page = erofs_get_inline_page(inode, it.blkaddr);
-+	it.page = erofs_get_meta_page(sb, it.blkaddr);
- 	if (IS_ERR(it.page)) {
- 		ret = PTR_ERR(it.page);
- 		goto out_unlock;
-@@ -117,8 +117,7 @@ static int init_inode_xattrs(struct inode *inode)
- 			DBG_BUGON(it.ofs != EROFS_BLKSIZ);
- 			xattr_iter_end(&it, atomic_map);
- 
--			it.page = erofs_get_meta_page(sb, ++it.blkaddr,
--						      S_ISDIR(inode->i_mode));
-+			it.page = erofs_get_meta_page(sb, ++it.blkaddr);
- 			if (IS_ERR(it.page)) {
- 				kfree(vi->xattr_shared_xattrs);
- 				vi->xattr_shared_xattrs = NULL;
-@@ -168,7 +167,7 @@ static inline int xattr_iter_fixup(struct xattr_iter *it)
- 
- 	it->blkaddr += erofs_blknr(it->ofs);
- 
--	it->page = erofs_get_meta_page(it->sb, it->blkaddr, false);
-+	it->page = erofs_get_meta_page(it->sb, it->blkaddr);
- 	if (IS_ERR(it->page)) {
- 		int err = PTR_ERR(it->page);
- 
-@@ -199,7 +198,7 @@ static int inline_xattr_iter_begin(struct xattr_iter *it,
- 	it->blkaddr = erofs_blknr(iloc(sbi, vi->nid) + inline_xattr_ofs);
- 	it->ofs = erofs_blkoff(iloc(sbi, vi->nid) + inline_xattr_ofs);
- 
--	it->page = erofs_get_inline_page(inode, it->blkaddr);
-+	it->page = erofs_get_meta_page(inode->i_sb, it->blkaddr);
- 	if (IS_ERR(it->page))
- 		return PTR_ERR(it->page);
- 
-@@ -401,7 +400,7 @@ static int shared_getxattr(struct inode *inode, struct getxattr_iter *it)
- 			if (i)
- 				xattr_iter_end(&it->it, true);
- 
--			it->it.page = erofs_get_meta_page(sb, blkaddr, false);
-+			it->it.page = erofs_get_meta_page(sb, blkaddr);
- 			if (IS_ERR(it->it.page))
- 				return PTR_ERR(it->it.page);
- 
-@@ -623,7 +622,7 @@ static int shared_listxattr(struct listxattr_iter *it)
- 			if (i)
- 				xattr_iter_end(&it->it, true);
- 
--			it->it.page = erofs_get_meta_page(sb, blkaddr, false);
-+			it->it.page = erofs_get_meta_page(sb, blkaddr);
- 			if (IS_ERR(it->it.page))
- 				return PTR_ERR(it->it.page);
- 
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index 30a5171637d7..9c141f145508 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -50,7 +50,7 @@ static int fill_inode_lazy(struct inode *inode)
- 
- 	pos = ALIGN(iloc(EROFS_SB(sb), vi->nid) + vi->inode_isize +
- 		    vi->xattr_isize, 8);
--	page = erofs_get_meta_page(sb, erofs_blknr(pos), false);
-+	page = erofs_get_meta_page(sb, erofs_blknr(pos));
- 	if (IS_ERR(page)) {
- 		err = PTR_ERR(page);
- 		goto out_unlock;
-@@ -127,7 +127,7 @@ static int z_erofs_reload_indexes(struct z_erofs_maprecorder *m,
- 		put_page(mpage);
+@@ -201,7 +207,7 @@ static inline struct bio *erofs_read_raw_page(struct bio *bio,
+ 	    /* not continuous */
+ 	    *last_block + 1 != current_block) {
+ submit_bio_retry:
+-		__submit_bio(bio, REQ_OP_READ, 0);
++		submit_bio(bio);
+ 		bio = NULL;
  	}
  
--	mpage = erofs_get_meta_page(sb, eblk, false);
-+	mpage = erofs_get_meta_page(sb, eblk);
- 	if (IS_ERR(mpage)) {
- 		map->mpage = NULL;
- 		return PTR_ERR(mpage);
+@@ -271,7 +277,7 @@ static inline struct bio *erofs_read_raw_page(struct bio *bio,
+ 		if (nblocks > BIO_MAX_PAGES)
+ 			nblocks = BIO_MAX_PAGES;
+ 
+-		bio = erofs_grab_raw_bio(sb, blknr, nblocks);
++		bio = erofs_grab_raw_bio(sb, blknr, nblocks, false);
+ 	}
+ 
+ 	err = bio_add_page(bio, page, PAGE_SIZE, 0);
+@@ -302,8 +308,7 @@ static inline struct bio *erofs_read_raw_page(struct bio *bio,
+ 	/* if updated manually, continuous pages has a gap */
+ 	if (bio)
+ submit_bio_out:
+-		__submit_bio(bio, REQ_OP_READ, 0);
+-
++		submit_bio(bio);
+ 	return err ? ERR_PTR(err) : NULL;
+ }
+ 
+@@ -367,7 +372,7 @@ static int erofs_raw_access_readpages(struct file *filp,
+ 
+ 	/* the rare case (end in gaps) */
+ 	if (bio)
+-		__submit_bio(bio, REQ_OP_READ, 0);
++		submit_bio(bio);
+ 	return 0;
+ }
+ 
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 90c62fb5f80d..13c8d841c43a 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -409,13 +409,6 @@ static inline int z_erofs_map_blocks_iter(struct inode *inode,
+ #endif	/* !CONFIG_EROFS_FS_ZIP */
+ 
+ /* data.c */
+-static inline void __submit_bio(struct bio *bio, unsigned int op,
+-				unsigned int op_flags)
+-{
+-	bio_set_op_attrs(bio, op, op_flags);
+-	submit_bio(bio);
+-}
+-
+ struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr);
+ 
+ int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 21ade322cc81..3010fa3d1ac3 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -1258,7 +1258,7 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
+ 
+ 		if (bio && force_submit) {
+ submit_bio_retry:
+-			__submit_bio(bio, REQ_OP_READ, 0);
++			submit_bio(bio);
+ 			bio = NULL;
+ 		}
+ 
+@@ -1270,6 +1270,8 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
+ 			bio->bi_iter.bi_sector = (sector_t)(first_index + i) <<
+ 				LOG_SECTORS_PER_BLOCK;
+ 			bio->bi_private = bi_private;
++			bio->bi_opf = REQ_OP_READ;
++
+ 			++nr_bios;
+ 		}
+ 
+@@ -1290,7 +1292,7 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
+ 	} while (owned_head != Z_EROFS_PCLUSTER_TAIL);
+ 
+ 	if (bio)
+-		__submit_bio(bio, REQ_OP_READ, 0);
++		submit_bio(bio);
+ 
+ 	if (postsubmit_is_all_bypassed(q, nr_bios, force_fg))
+ 		return true;
 -- 
 2.17.1
 
