@@ -2,136 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74436AA99B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 19:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0694AA9D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 19:20:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390923AbfIERBw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 5 Sep 2019 13:01:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:64759 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733299AbfIERBw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 13:01:52 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 62DF07FDF4;
-        Thu,  5 Sep 2019 17:01:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E24AE60BE1;
-        Thu,  5 Sep 2019 17:01:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
-References: <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com> <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rstrode@redhat.com, swhiteho@redhat.com, nicolas.dichtel@6wind.com,
-        raven@themaw.net, keyrings@vger.kernel.org,
-        linux-usb@vger.kernel.org,
+        id S2389081AbfIERUO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 13:20:14 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40702 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731215AbfIERUO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 13:20:14 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 7so3313323ljw.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 10:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1KYTdnyfvsSaF6SRrjqwQi9Gt/hCAHZIxAtXY6aZZJ0=;
+        b=JGdKASNkgFHvBA05jXqdXX7Gpi6+9NL4cvo+gcNYqUSvjqoKuIvNGkviDlPZtR6WeE
+         TlbHiadWjxZKtu9iPHXIVgBm9c/Q2iEzthUZRUK4NhHiCU4gT3Zrwu7Fj6GF8TOr2PYi
+         RUy/jSH90pSu65c5M/A/XF8yr8GznFTNLI8nc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1KYTdnyfvsSaF6SRrjqwQi9Gt/hCAHZIxAtXY6aZZJ0=;
+        b=Mg8UYcnZG0W0++W68kzlwfRO/rAWPMzbMMZjT6vkiakvBWdvnrUdCfIWtEItuFM4UN
+         BBJa2qG5efROULqLXcJhUxGKxrQia7nmwNT4BiYohYZFXr/N475DZsJA/4fkP31HV0SJ
+         vGW25XCLR82p/WxfRYYOBCIudeDayCgJbs2gYBI9iatkWUqsleYgeu6IeLAHZkrWBwdY
+         44XE+1+Lnx+wVvimAp3MYy/K0yZWv5X1ZK1/gTbTiWEArFtayKDai6AC4/1b723HbK43
+         epSClS01PVma5EaueszjPni9NA3zURFwiIooSV9/W4HYJZQp9rt+ZtgTvWn/JNrZmdpW
+         9Mrg==
+X-Gm-Message-State: APjAAAVGhJWaOqQjsbByK9Iax0XDBtWL3gIWPVyW1KN54AGPY+Rkmo9X
+        0fkOEOgpnE3D+EBw2ZGLmpN0Sc9B7nU=
+X-Google-Smtp-Source: APXvYqwPC/10Y4JUlkiTFYkhsRmGpBAG5fcX/gOgsuayPngc7jbCk3w9Tk4RctAtrnTLoY+WenjKeA==
+X-Received: by 2002:a2e:9cd3:: with SMTP id g19mr2964257ljj.150.1567704011821;
+        Thu, 05 Sep 2019 10:20:11 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id c21sm483386ljj.6.2019.09.05.10.20.10
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2019 10:20:10 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id u13so2673480lfm.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 10:20:10 -0700 (PDT)
+X-Received: by 2002:ac2:5a4c:: with SMTP id r12mr3118360lfn.52.1567704010099;
+ Thu, 05 Sep 2019 10:20:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+ <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com> <17703.1567702907@warthog.procyon.org.uk>
+In-Reply-To: <17703.1567702907@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Sep 2019 10:19:54 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+Message-ID: <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+Subject: Re: Why add the general notification queue and its sources
+To:     David Howells <dhowells@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rstrode@redhat.com, swhiteho@redhat.com,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-block <linux-block@vger.kernel.org>,
         Christian Brauner <christian@brauner.io>,
         LSM List <linux-security-module@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Why add the general notification queue and its sources
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17702.1567702907.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 05 Sep 2019 18:01:47 +0100
-Message-ID: <17703.1567702907@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 05 Sep 2019 17:01:51 +0000 (UTC)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, Sep 5, 2019 at 10:01 AM David Howells <dhowells@redhat.com> wrote:
+> >
+> > I'm just going to be very blunt about this, and say that there is no
+> > way I can merge any of this *ever*, unless other people stand up and
+> > say that
+> >
+> >  (a) they'll use it
+> >
+> > and
+> >
+> >  (b) they'll actively develop it and participate in testing and coding
+>
+> Besides the core notification buffer which ties this together, there are a
+> number of sources that I've implemented, not all of which are in this patch
+> series:
 
-> > Here's a set of patches to add a general notification queue concept and to
-> > add event sources such as:
-> 
-> Why?
-> 
-> I'm just going to be very blunt about this, and say that there is no
-> way I can merge any of this *ever*, unless other people stand up and
-> say that
-> 
->  (a) they'll use it
-> 
-> and
-> 
->  (b) they'll actively develop it and participate in testing and coding
+You've at least now answered part of the "Why", but you didn't
+actually answer the whole "another developer" part.
 
-Besides the core notification buffer which ties this together, there are a
-number of sources that I've implemented, not all of which are in this patch
-series:
+I really don't like how nobody else than you seems to even look at any
+of the key handling patches. Because nobody else seems to care.
 
- (1) Key/keyring notifications.
+This seems to be another new subsystem / driver that has the same
+pattern. If it's all just you, I don't want to merge it, because I
+really want more than just other developers doing "Reviewed-by" after
+looking at somebody elses code that they don't actually use or really
+care about.
 
-     If you have your kerberos tickets in a file/directory, your gnome desktop
-     will monitor that using something like fanotify and tell you if your
-     credentials cache changes.
+See what I'm saying?
 
-     We also have the ability to cache your kerberos tickets in the session,
-     user or persistent keyring so that it isn't left around on disk across a
-     reboot or logout.  Keyrings, however, cannot currently be monitored
-     asynchronously, so the desktop has to poll for it - not so good on a
-     laptop.
+New features that go into the kernel should have multiple users. Not a
+single developer who pushes both the kernel feature and the single use
+of that feature.
 
-     This source will allow the desktop to avoid the need to poll.
+This very much comes from me reverting the key ACL pull. Not only did
+I revert it, ABSOLUTELY NOBODY even reacted to the revert. Nobody
+stepped up and said they they want that new ACL code, and pushed for a
+fix. There was some very little murmuring about it when Mimi at least
+figured out _why_ it broke, but other than that all the noise I saw
+about the revert was Eric Biggers pointing out it broke other things
+too, and that it had actually broken some test suites. But since it
+hadn't even been in linux-next, that too had been noticed much too
+late.
 
- (2) USB notifications.
+See what I'm saying? This whole "David Howells does his own features
+that nobody else uses" needs to stop. You need to have a champion. I
+just don't feel safe pulling these kinds of changes from you, because
+I get the feeling that ABSOLUTELY NOBODY ELSE ever really looked at it
+or really cared.
 
-     GregKH was looking for a way to do USB notifications as I was looking to
-     find additional sources to implement.  I'm not sure how he wants to use
-     them, but I'll let him speak to that himself.
+Most of the patches has nobody else even Cc'd, and even the patches
+that do have some "Reviewed-by" feel more like somebody else went "ok,
+the change looks fine to me", without any other real attachment to the
+code.
 
- (3) Block notifications.
+New kernel features and interfaces really need to have a higher
+barrier of entry than one developer working on his or her own thing.
 
-     This one I was thinking that I could make something like ddrescue better
-     by letting it get notifications this way.  This was a target of
-     convenience since I had a dodgy disk I was trying to rescue.
+Is that a change from 25 years ago? Or yes it is. We can point to lots
+of "single developer did a thing" from years past. But things have
+changed. And once bitten, twice shy: I really am a _lot_ more nervous
+about all these key changes now.
 
-     It could also potentially be used help systemd, say, detect broken
-     devices and avoid trying to unmount them when trying to reboot the machine.
-
-     I can drop this for now if you prefer.
-
- (4) Mount notifications.
-
-     This one is wanted to avoid repeated trawling of /proc/mounts or similar
-     to work out changes to the mount object attributes and mount topology.
-     I'm told that the proc file holding the namespace_sem is a point of
-     contention, especially as the process of generating the text descriptions
-     of the mounts/superblocks can be quite involved.
-
-     The notifications directly indicate the mounts involved in any particular
-     event and what the change was.  You can poll /proc/mounts, but all you
-     know is that something changed; you don't know what and you don't know
-     how and reading that file may race with multiple changed being effected.
-
-     I pair this with a new fsinfo() system call that allows, amongst other
-     things, the ability to retrieve in one go an { id, change counter } tuple
-     from all the children of a specified mount, allowing buffer overruns to
-     be cleaned up quickly.
-
-     It's not just Red Hat that's potentially interested in this:
-
-	https://lore.kernel.org/linux-fsdevel/293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com/
-
- (5) Superblock notifications.
-
-     This one is provided to allow systemd or the desktop to more easily
-     detect events such as I/O errors and EDQUOT/ENOSPC.
-
-I've tried to make the core multipurpose so that the price of the code
-footprint is mitigated.
-
-David
+                    Linus
