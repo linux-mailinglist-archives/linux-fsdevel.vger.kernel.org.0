@@ -2,94 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2083AAB25
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 20:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D464AAB36
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 20:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390220AbfIESgD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 14:36:03 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43350 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725290AbfIESgD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:36:03 -0400
-Received: from [46.114.37.115] (helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1i5wbZ-0006Ee-52; Thu, 05 Sep 2019 18:35:37 +0000
-Date:   Thu, 5 Sep 2019 20:35:32 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        id S2390325AbfIESho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 14:37:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59734 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732093AbfIEShn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 14:37:43 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C5A793090FD1;
+        Thu,  5 Sep 2019 18:37:42 +0000 (UTC)
+Received: from fogou.chygwyn.com (unknown [10.33.36.100])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BA512600F8;
+        Thu,  5 Sep 2019 18:37:38 +0000 (UTC)
+Subject: Re: Why add the general notification queue and its sources
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rstrode@redhat.com, Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        raven@themaw.net, keyrings@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
         Christian Brauner <christian@brauner.io>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
- helpers
-Message-ID: <20190905183532.GA25049@localhost>
-References: <20190904201933.10736-1-cyphar@cyphar.com>
- <20190904201933.10736-2-cyphar@cyphar.com>
- <20190905180750.GQ1131@ZenIV.linux.org.uk>
- <20190905182303.7f6bxpa2enbgcegv@wittgenstein>
- <20190905182801.GR1131@ZenIV.linux.org.uk>
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        David Lehman <dlehman@redhat.com>, Ian Kent <ikent@redhat.com>
+References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+ <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
+ <17703.1567702907@warthog.procyon.org.uk>
+ <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <11667f69-fbb5-28d2-3c31-7f865f2b93e5@redhat.com>
+Date:   Thu, 5 Sep 2019 19:37:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190905182801.GR1131@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 05 Sep 2019 18:37:42 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 07:28:01PM +0100, Al Viro wrote:
-> On Thu, Sep 05, 2019 at 08:23:03PM +0200, Christian Brauner wrote:
-> 
-> > Because every caller of that function right now has that limit set
-> > anyway iirc. So we can either remove it from here and place it back for
-> > the individual callers or leave it in the helper.
-> > Also, I'm really asking, why not? Is it unreasonable to have an upper
-> > bound on the size (for a long time probably) or are you disagreeing with
-> > PAGE_SIZE being used? PAGE_SIZE limit is currently used by sched, perf,
-> > bpf, and clone3 and in a few other places.
-> 
-> For a primitive that can be safely used with any size (OK, any within
-> the usual 2Gb limit)?  Why push the random policy into the place where
-> it doesn't belong?
+Hi,
 
-Ah, the "not in the helper part" makes sense.
-As long as leave the check for the callers themselves.
+On 05/09/2019 18:19, Linus Torvalds wrote:
+> On Thu, Sep 5, 2019 at 10:01 AM David Howells <dhowells@redhat.com> wrote:
+>>> I'm just going to be very blunt about this, and say that there is no
+>>> way I can merge any of this *ever*, unless other people stand up and
+>>> say that
+>>>
+>>>   (a) they'll use it
+>>>
+>>> and
+>>>
+>>>   (b) they'll actively develop it and participate in testing and coding
+>> Besides the core notification buffer which ties this together, there are a
+>> number of sources that I've implemented, not all of which are in this patch
+>> series:
+> You've at least now answered part of the "Why", but you didn't
+> actually answer the whole "another developer" part.
+>
+> I really don't like how nobody else than you seems to even look at any
+> of the key handling patches. Because nobody else seems to care.
+>
+> This seems to be another new subsystem / driver that has the same
+> pattern. If it's all just you, I don't want to merge it, because I
+> really want more than just other developers doing "Reviewed-by" after
+> looking at somebody elses code that they don't actually use or really
+> care about.
+>
+> See what I'm saying?
+>
+> New features that go into the kernel should have multiple users. Not a
+> single developer who pushes both the kernel feature and the single use
+> of that feature.
+>
+> This very much comes from me reverting the key ACL pull. Not only did
+> I revert it, ABSOLUTELY NOBODY even reacted to the revert. Nobody
+> stepped up and said they they want that new ACL code, and pushed for a
+> fix. There was some very little murmuring about it when Mimi at least
+> figured out _why_ it broke, but other than that all the noise I saw
+> about the revert was Eric Biggers pointing out it broke other things
+> too, and that it had actually broken some test suites. But since it
+> hadn't even been in linux-next, that too had been noticed much too
+> late.
+>
+> See what I'm saying? This whole "David Howells does his own features
+> that nobody else uses" needs to stop. You need to have a champion. I
+> just don't feel safe pulling these kinds of changes from you, because
+> I get the feeling that ABSOLUTELY NOBODY ELSE ever really looked at it
+> or really cared.
+>
+> Most of the patches has nobody else even Cc'd, and even the patches
+> that do have some "Reviewed-by" feel more like somebody else went "ok,
+> the change looks fine to me", without any other real attachment to the
+> code.
+>
+> New kernel features and interfaces really need to have a higher
+> barrier of entry than one developer working on his or her own thing.
+>
+> Is that a change from 25 years ago? Or yes it is. We can point to lots
+> of "single developer did a thing" from years past. But things have
+> changed. And once bitten, twice shy: I really am a _lot_ more nervous
+> about all these key changes now.
+>
+>                      Linus
 
-> 
-> Seriously, what's the point?  If they want to have a large chunk of
-> userland memory zeroed or checked for non-zeroes - why would that
-> be a problem?
+There are a number of potential users, some waiting just to have a 
+mechanism to avoid the racy alternatives to (for example) parsing 
+/proc/mounts repeatedly, others perhaps a bit further away, but who have 
+nonetheless expressed interest in having an interface which allows 
+notifications for mounts.
+
+The subject of mount notifications has been discussed at LSF/MM in the 
+past too, I proposed it as a topic a little while back: 
+https://www.spinics.net/lists/linux-block/msg07653.html and David's 
+patch set is a potential solution to some of the issues that I raised 
+there. The original series for the new mount API came from an idea of 
+Al/Miklos which was also presented at LSF/MM 2017, and this is a follow 
+on project. So it has not come out of nowhere, but has been something 
+that has been discussed in various forums over a period of time.
+
+Originally, there was a proposal to use netlink for the notifications, 
+however that didn't seem to meet with general approval, even though Ian 
+Kent did some work towards figuring out whether that would be a useful 
+direction to go in.
+
+David has since come up with the proposal presented here, which is 
+intended to improve on the original proposal in various ways - mostly 
+making the notifications more efficient (i.e. smaller) and also generic 
+enough that it might have uses beyond the original intent of just being 
+a mount notification mechanism.
+
+The original reason for the mount notification mechanism was so that we 
+are able to provide information to GUIs and similar filesystem and 
+storage management tools, matching the state of the filesystem with the 
+state of the underlying devices. This is part of a larger project 
+entitled "Project Springfield" to try and provide better management 
+tools for storage and filesystems. I've copied David Lehman in, since he 
+can provide a wider view on this topic.
+
+It is something that I do expect will receive wide use, and which will 
+be tested carefully. I know that Ian Kent has started work on some 
+support for libmount for example, even outside of autofs.
+
+We do regularly hear from customers that better storage and filesystem 
+management tools are something that they consider very important, so 
+that is why we are spending such a lot of effort in trying to improve 
+the support in this area.
+
+I'm not sure if that really answers your question, except to say that it 
+is something that is much more than a personal project of David's and 
+that other people do care about it too,
+
+Steve.
+
+
