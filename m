@@ -2,143 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 207FBA974E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 01:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF49BA97C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 03:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730541AbfIDXpS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Sep 2019 19:45:18 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37471 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730496AbfIDXpS (ORCPT
+        id S1727125AbfIEBEG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Sep 2019 21:04:06 -0400
+Received: from sonic307-7.consmr.mail.ir2.yahoo.com ([87.248.110.32]:46329
+        "EHLO sonic307-7.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725965AbfIEBEG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Sep 2019 19:45:18 -0400
-Received: by mail-lf1-f65.google.com with SMTP id w67so410642lff.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 16:45:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lkW/YWLZKFkaRlur1cRxiMMOTA0gNhHwo+TbpZCC63g=;
-        b=Cnu5WYs/aAthmsXfnwtWzL5CNjpaY23sMnhFtcX1zve3r2rc/Ho+dRzPF32HPRMBnj
-         gveXLtTDU7YHSGctyOcfke7l1YNaudqputmw6AJ3ZcUOsNYmqHCIu9DY9WHGlywCQ4Su
-         iCCcCFmwH9f6fkeMSqS83pY7B6dx4aSlHZljU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lkW/YWLZKFkaRlur1cRxiMMOTA0gNhHwo+TbpZCC63g=;
-        b=gtDq8g/E6mKOaH1p0xau1V3z9bJevAzxI8D4gZplAEvfLZrsMBlwOtvZlhWFIj0PyG
-         4y/gsVJv19NmujwM/3/i2rFhKsb8YGOFAUnzaDU9ExmRAFH+QeGciX9notaa2UQdGtId
-         uCvJ/fB0qrfSscLs2AguoenuYSaEhSBoigCwyhCXayaUuOgF5JfzhVWZdV9uTWgXY8SC
-         1/ZxC6OhY7Wkt5qvge9dmE5OZ7xi471x8DwwVII3OQZnLcffX8AJ9HUqCPDzbeaQVSC4
-         Ykrk40ePOXzyeWKejDZm0glgbwm2lHERefQhLLDTOIOpCzyI/8jPGS8N0NE0q9mSDbFd
-         yq3g==
-X-Gm-Message-State: APjAAAV/k1ynEK8sgNJL5d99Npkjijk6lcE+eMAp4oS9yKMckn7Bd35q
-        wCL9DPA0xJe94XJJ9d7Jv7lyQtrHtBA=
-X-Google-Smtp-Source: APXvYqyM8sV7uJtVwuKqOhMCQVVXj0v/lEtGgXA9Kf3rIZYS8LzFVpFuVUFKzM2MnidB7sR7UFkXqw==
-X-Received: by 2002:ac2:5ec1:: with SMTP id d1mr360193lfq.83.1567640715864;
-        Wed, 04 Sep 2019 16:45:15 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id t1sm44467lji.101.2019.09.04.16.45.12
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2019 16:45:14 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id a22so478761ljd.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Sep 2019 16:45:12 -0700 (PDT)
-X-Received: by 2002:a2e:3a0e:: with SMTP id h14mr127121lja.180.1567640710863;
- Wed, 04 Sep 2019 16:45:10 -0700 (PDT)
+        Wed, 4 Sep 2019 21:04:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1567645443; bh=4b8n4T3EgXBNYEU3+TfHpe17gl48aHIqQ+x8f/qQM1k=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=Du9eMyoFu8T+65UVjsqsrrG9OFD89V0kaQ+OxwR2cTeV3mpb6c/R/DCattd0+5AzclqpAv0dAY4GPzoGOKRNRaNzBR+etkyRLFJYBLW5WhHDVzpkba/Adhc2haMDnAM0EQ4XDutSnRtjvXJLd2T89TvkaWxApBlGPL77E3t9j516kugw/5ORozkvC7kx9Q1lxQayvl5EztUVWHrdFBJ9rJVJOBn3ZDvDVHpf9Nk1GBaBDn6sQDoROg5sMu2ovFQyiVRHK9vWr/30qebssRvBfewO0X7jT8YeTnyEx83FiIxAXelOXEQGwMzlGQ5dDqdjsGe72k+ybGjx/hxuzEECog==
+X-YMail-OSG: 4unSnbUVM1k3ATGEQfOMWu420qP9Ev983uSJ30R3iHTmcCj2NrJy4oEbzIVCfoL
+ frxe98FSWUAXpzGA2_vCUPQWAXLWDnmNalXSeu5uy20Tot8oL9ReyZM6LAvP3SZyCrqGu5Sdbw2H
+ STpxQHR_dTtuR0WLVgG78vGn4puJaBlOPev6useSSTTz6iUyVF75BfzpwKe6D.z.eQPXuPVllauk
+ .4r1rlQPkghHWdwO8wqCJlSdOOLb38UtVtgfUQ7Po4K0zc7.bkOZHpYmJfLjc_HpTk05KChySxoh
+ 9rmV3WIhNoHQKW.Pn.x7n9x69qGn_GJKJ0GnyJBkH1a4Nhuu_apVfBkLec7YZWuc2W5cNtJZC2av
+ _twlKXVy_fEeYoA7OI_9mdUuGYlPw7hoasHwRsaJ_WEWuyi4PrwlS.iKZVmfBjJgIuh_fS5CkKu9
+ Wcei7NMGvO77R144DGrTMa8jNPJ7T01P6PO5YWVo9H4CAuvLMRZlDlMlnER1OsaRyNRk2Vatck_1
+ yBPAGdVtBzFsVS0Hn_fHA0yTZvQmNRSXsUDy0ar3j8dEjcLb2YRhlFtlRQk1k6wSp_i1lS.sBS6p
+ 1sYU3YxuZQT2rNavnti78ofX2GIf6ucYsi8cskH3lIm4qVjdCoNLAgDCRZVXeryO2fqmVrRugzaP
+ TLWKlN2yWrb_8MaojtmwTnqenYaOz7QNUz.olCCCd42GUZAGhrj9DLksk2i6RnkUQGi85Y_.e2C0
+ f4EoXwGGx3XxBbn.ifRYrVPmo8BxXuOCELdTIzPVksTplwLMo1d1obYmwBZRt9raDHAsvHDq0yFz
+ Pe9.HPMzp_LBUyyTmCUlCBU786J176Hq8ZmsSMh6AsYYGVi5r6wxvXaPypl.j1.FsLVUKfvuoa3s
+ aVimP3evDR0S9wSq1L44BIYfulXF20_MNqOL.FyE8iFiB5zieLgbJx18QCmcXmf2cDZiYw1yVx_6
+ 5amYo87QcXQFcGJ65w6cHargiNseeV1f3uEy22hgPRMYNjDKPtUsZVZIxBz7JLh3AoKRh3Sx7ljl
+ lZuwotK1XH9nMCccujhJLm5w9UhGHgbXkAj5kO5OtHs32eV673MYrxEEAcAEPZoqF2TvVZYpQBlt
+ .qW_HBJ8vV.8.CDkt3.iNb25Qa8dXhxQQCMxoPoZMsbILruCyelulNuzEaiTrKXTOrN_Wl8QIvR.
+ LqIxIsakxAzU9O4u3Zerk_HKeEBIwNDqKSznZnrruPshwnKlLQbeTYkoTGR4S78NKeDlIcT8vw6T
+ LVkO9QWCZ5ZNISpu6CvZzfYyRfm25I4o9uIijDNCzJV8yjx_6j5Kb25FECsk-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ir2.yahoo.com with HTTP; Thu, 5 Sep 2019 01:04:03 +0000
+Received: by smtp426.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8dca055fbec642163ec5566d488a20c8;
+          Thu, 05 Sep 2019 01:03:59 +0000 (UTC)
+Date:   Thu, 5 Sep 2019 09:03:54 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chao Yu <yuchao0@huawei.com>, devel@driverdev.osuosl.org,
+        linux-fsdevel@vger.kernel.org, Miao Xie <miaoxie@huawei.com>,
+        Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH v2 00/25] erofs: patchset addressing Christoph's comments
+Message-ID: <20190905010328.GA15409@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190901055130.30572-1-hsiangkao@aol.com>
+ <20190904020912.63925-1-gaoxiang25@huawei.com>
+ <52a38cb7-b394-b8a8-7254-aafe47f2caa5@huawei.com>
 MIME-Version: 1.0
-References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-11-cyphar@cyphar.com>
- <CAHk-=wiod1rQMU+6Zew=cLE8uX4tUdf42bM5eKngMnNVS2My7g@mail.gmail.com>
- <20190904214856.vnvom7h5xontvngq@yavin.dot.cyphar.com> <CAHk-=wgcJq21Hydh7Tx5-o8empoPp7ULDBw0Am-du_Pa+fcftQ@mail.gmail.com>
- <20592.1567636276@warthog.procyon.org.uk> <CAHk-=wg7Wq1kj8kZ+SSpfU_o991woW60NWca9yBA2ccs2eNx8Q@mail.gmail.com>
- <20190904232911.GN1131@ZenIV.linux.org.uk>
-In-Reply-To: <20190904232911.GN1131@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 4 Sep 2019 16:44:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjx3y1Y7iE6T0yiERc8G5iT1sTABWbX_nFxw9NVHCFCPA@mail.gmail.com>
-Message-ID: <CAHk-=wjx3y1Y7iE6T0yiERc8G5iT1sTABWbX_nFxw9NVHCFCPA@mail.gmail.com>
-Subject: Re: [PATCH v12 10/12] namei: aggressively check for nd->root escape
- on ".." resolution
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52a38cb7-b394-b8a8-7254-aafe47f2caa5@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 4:29 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Sep 04, 2019 at 03:38:20PM -0700, Linus Torvalds wrote:
-> > On Wed, Sep 4, 2019 at 3:31 PM David Howells <dhowells@redhat.com> wrote:
-> > >
-> > > It ought to be reasonably easy to make them per-sb at least, I think.  We
-> > > don't allow cross-super rename, right?
-> >
-> > Right now the sequence count handling very much depends on it being a
-> > global entity on the reader side, at least.
-> >
-> > And while the rename sequence count could (and probably should) be
-> > per-sb, the same is very much not true of the mount one.
->
-> Huh?  That will cost us having to have a per-superblock dentry
-> hash table; recall that lockless lockup can give false negatives
-> if something gets moved from chain to chain, and rename_lock is
-> first and foremost used to catch those and retry.  If we split
-> it on per-superblock basis, we can't have dentries from different
-> superblocks in the same chain anymore...
+Hi Christoph,
 
-That's exactly the "very much depends on it being a global entity on
-the reader side" thing.
+On Wed, Sep 04, 2019 at 11:27:11AM +0800, Chao Yu wrote:
+> On 2019/9/4 10:08, Gao Xiang wrote:
+> > Hi,
+> > 
+> > This patchset is based on the following patch by Pratik Shinde,
+> > https://lore.kernel.org/linux-erofs/20190830095615.10995-1-pratikshinde320@gmail.com/
+> > 
+> > All patches addressing Christoph's comments on v6, which are trivial,
+> > most deleted code are from erofs specific fault injection, which was
+> > followed f2fs and previously discussed in earlier topic [1], but
+> > let's follow what Christoph's said now.
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
+> Thanks,
 
-I'm not convinced that's the _only_ way to handle things. Maybe a
-combination of (wild handwaving) per-hashqueue sequence count and some
-clever scheme for pathname handling could work.
+Could we submit these patches if these patches look good...
+Since I'd like to work based on these patches, it makes a difference
+to the current code though...
 
-I've not personally seen a load where the global rename lock has been
-a problem (very few things really do a lot of renames), but
-system-wide locks do make me nervous.
+Thanks a lot!
 
-We have other (and worse) ones. tasklist_lock comes to mind.
+Thanks,
+Gao Xiang
 
-             Linus
+> 
+> > 
+> > Comments and suggestions are welcome...
+> > 
+> > [1] https://lore.kernel.org/r/1eed1e6b-f95e-aa8e-c3e7-e9870401ee23@kernel.org/
+> > 
+> > changes since v1:
+> >  - leave some comments near the numbers to indicate where they are stored;
+> >  - avoid a u8 cast;
+> >  - use erofs_{err,info,dbg} and print sb->s_id as a prefix before
+> >    the actual message;
+> >  - add a on-disk title in erofs_fs.h
+> >  - use feature_{compat,incompat} rather than features and requirements;
+> >  - suggestions on erofs_grab_bio:
+> >    https://lore.kernel.org/r/20190902122016.GL15931@infradead.org/
+> >  - use compact/extended instead of erofs_inode_v1/v2 and
+> >    i_format instead of i_advise;
+> >  - avoid chained if/else if/else if statements in erofs_read_inode;
+> >  - avoid erofs_vmap/vunmap wrappers;
+> >  - use read_cache_page_gfp for erofs_get_meta_page;
+> > 
+> > Gao Xiang (25):
+> >   erofs: remove all the byte offset comments
+> >   erofs: on-disk format should have explicitly assigned numbers
+> >   erofs: some macros are much more readable as a function
+> >   erofs: kill __packed for on-disk structures
+> >   erofs: update erofs_inode_is_data_compressed helper
+> >   erofs: use feature_incompat rather than requirements
+> >   erofs: better naming for erofs inode related stuffs
+> >   erofs: kill erofs_{init,exit}_inode_cache
+> >   erofs: use erofs_inode naming
+> >   erofs: update erofs_fs.h comments
+> >   erofs: update comments in inode.c
+> >   erofs: better erofs symlink stuffs
+> >   erofs: use dsb instead of layout for ondisk super_block
+> >   erofs: kill verbose debug info in erofs_fill_super
+> >   erofs: localize erofs_grab_bio()
+> >   erofs: kill prio and nofail of erofs_get_meta_page()
+> >   erofs: kill __submit_bio()
+> >   erofs: add "erofs_" prefix for common and short functions
+> >   erofs: kill all erofs specific fault injection
+> >   erofs: kill use_vmap module parameter
+> >   erofs: save one level of indentation
+> >   erofs: rename errln/infoln/debugln to erofs_{err,info,dbg}
+> >   erofs: use read_mapping_page instead of sb_bread
+> >   erofs: always use iget5_locked
+> >   erofs: use read_cache_page_gfp for erofs_get_meta_page
+> > 
+> >  Documentation/filesystems/erofs.txt |   9 -
+> >  fs/erofs/Kconfig                    |   7 -
+> >  fs/erofs/data.c                     | 118 +++--------
+> >  fs/erofs/decompressor.c             |  76 +++----
+> >  fs/erofs/dir.c                      |  17 +-
+> >  fs/erofs/erofs_fs.h                 | 197 +++++++++---------
+> >  fs/erofs/inode.c                    | 297 ++++++++++++++--------------
+> >  fs/erofs/internal.h                 | 192 ++++--------------
+> >  fs/erofs/namei.c                    |  21 +-
+> >  fs/erofs/super.c                    | 282 +++++++++++---------------
+> >  fs/erofs/xattr.c                    |  41 ++--
+> >  fs/erofs/xattr.h                    |   4 +-
+> >  fs/erofs/zdata.c                    |  63 +++---
+> >  fs/erofs/zdata.h                    |   2 +-
+> >  fs/erofs/zmap.c                     |  73 +++----
+> >  include/trace/events/erofs.h        |  14 +-
+> >  16 files changed, 578 insertions(+), 835 deletions(-)
+> > 
+> _______________________________________________
+> devel mailing list
+> devel@linuxdriverproject.org
+> http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
