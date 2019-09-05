@@ -2,124 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 876F3AAC87
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 21:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF6AAACCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 22:10:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391559AbfIET4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 15:56:54 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:58904 "EHLO mx2.mailbox.org"
+        id S2388596AbfIEUKC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 16:10:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39844 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733174AbfIET4y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 15:56:54 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        id S1732468AbfIEUKC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 16:10:02 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id DCACBA0D19;
-        Thu,  5 Sep 2019 21:56:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id MUcBvZslYqK5; Thu,  5 Sep 2019 21:56:42 +0200 (CEST)
-Date:   Fri, 6 Sep 2019 05:56:18 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C742300BEAE;
+        Thu,  5 Sep 2019 20:10:01 +0000 (UTC)
+Received: from ovpn-124-235.rdu2.redhat.com (ovpn-124-235.rdu2.redhat.com [10.10.124.235])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 26E605C1D4;
+        Thu,  5 Sep 2019 20:09:59 +0000 (UTC)
+Message-ID: <d19e8783e7fe47e51fbc12bf33c95fea16c93070.camel@redhat.com>
+Subject: Re: Why add the general notification queue and its sources
+From:   David Lehman <dlehman@redhat.com>
+To:     Ray Strode <rstrode@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
         Christian Brauner <christian@brauner.io>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
- helpers
-Message-ID: <20190905195618.pwzgvuzadkfpznfz@yavin.dot.cyphar.com>
-References: <20190904201933.10736-1-cyphar@cyphar.com>
- <20190904201933.10736-2-cyphar@cyphar.com>
- <20190905180750.GQ1131@ZenIV.linux.org.uk>
- <20190905182303.7f6bxpa2enbgcegv@wittgenstein>
- <20190905182801.GR1131@ZenIV.linux.org.uk>
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ian Kent <ikent@redhat.com>
+Date:   Thu, 05 Sep 2019 16:09:58 -0400
+In-Reply-To: <CAKCoTu7ms4ckwDA_-onuJg+famnMzGZE9gGUcqqMz0kCAAECRg@mail.gmail.com>
+References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+         <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
+         <17703.1567702907@warthog.procyon.org.uk>
+         <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+         <11667f69-fbb5-28d2-3c31-7f865f2b93e5@redhat.com>
+         <CAKCoTu7ms4ckwDA_-onuJg+famnMzGZE9gGUcqqMz0kCAAECRg@mail.gmail.com>
+Organization: Red Hat, Inc.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lkob4nx2s4nikwgg"
-Content-Disposition: inline
-In-Reply-To: <20190905182801.GR1131@ZenIV.linux.org.uk>
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 05 Sep 2019 20:10:01 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, 2019-09-05 at 14:51 -0400, Ray Strode wrote:
+> Hi,
+> 
+> On Thu, Sep 5, 2019 at 2:37 PM Steven Whitehouse <swhiteho@redhat.com
+> > wrote:
+> > The original reason for the mount notification mechanism was so
+> > that we
+> > are able to provide information to GUIs and similar filesystem and
+> > storage management tools, matching the state of the filesystem with
+> > the
+> > state of the underlying devices. This is part of a larger project
+> > entitled "Project Springfield" to try and provide better management
+> > tools for storage and filesystems. I've copied David Lehman in,
+> > since he
+> > can provide a wider view on this topic.
+> So one problem that I've heard discussed before is what happens in a
+> thinp
+> setup when the disk space is overallocated and gets used up. IIRC,
+> the
+> volumes just sort of eat themselves?
+> 
+> Getting proper notification of looming catastrophic failure to the
+> workstation user
+> before it's too late would be useful, indeed.
+> 
+> I don't know if this new mechanism dhowells has development can help
+> with that,
 
---lkob4nx2s4nikwgg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My understanding is that there is already a dm devent that gets sent
+when the low water mark is crossed for a thin pool, but there is
+nothing in userspace that knows how to effectively get the user's
+attention at that time.
 
-On 2019-09-05, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Thu, Sep 05, 2019 at 08:23:03PM +0200, Christian Brauner wrote:
->=20
-> > Because every caller of that function right now has that limit set
-> > anyway iirc. So we can either remove it from here and place it back for
-> > the individual callers or leave it in the helper.
-> > Also, I'm really asking, why not? Is it unreasonable to have an upper
-> > bound on the size (for a long time probably) or are you disagreeing with
-> > PAGE_SIZE being used? PAGE_SIZE limit is currently used by sched, perf,
-> > bpf, and clone3 and in a few other places.
->=20
-> For a primitive that can be safely used with any size (OK, any within
-> the usual 2Gb limit)?  Why push the random policy into the place where
-> it doesn't belong?
->=20
-> Seriously, what's the point?  If they want to have a large chunk of
-> userland memory zeroed or checked for non-zeroes - why would that
-> be a problem?
+> and/or if solving that problem is part of the Project Springfield
+> initiative or not. Do you
+> know off hand?
 
-Thinking about it some more, there isn't really any r/w amplification --
-so there isn't much to gain by passing giant structs. Though, if we are
-going to permit 2GB buffers, isn't that also an argument to use
-memchr_inv()? :P
+We have been looking into building a userspace event notification
+service (for storage, initially) to aggregate and add context to low-
+level events such as these, providing a single source for all kinds of
+storage events with an excellent signal:noise ratio. Thin pool
+exhaustion is high on the list of problems we would want to address.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
 
---lkob4nx2s4nikwgg
-Content-Type: application/pgp-signature; name="signature.asc"
+David
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXFoXwAKCRCdlLljIbnQ
-EkH6AP4mTXfGXldo6DW9pN3b8QgoKfRKIsKKRirvrHzSGLXpkgEAgJQFw7jvGxM5
-R7P96Ylo52dN3tmTa+41vZfPhMozHwA=
-=OHll
------END PGP SIGNATURE-----
-
---lkob4nx2s4nikwgg--
