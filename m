@@ -2,112 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F053AAD91
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 23:05:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32DC1AADD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 23:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391732AbfIEVFo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 17:05:44 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44884 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391724AbfIEVFo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 17:05:44 -0400
-Received: by mail-io1-f66.google.com with SMTP id j4so7955665iog.11;
-        Thu, 05 Sep 2019 14:05:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8iIlyAotvW4/18LwXApdfEoPXtA2KQQGEH61jRfRVAo=;
-        b=sHXnG50SGTAEMamnJiePV25Po8ZEH8WUcAJsqNeVSvbJi4KV0S3Cr5cd8EF4KTFY2V
-         t6edZIJhwHxVz8F9u3N4HlECsMSqqGzPFAjMmx4svi8TBzmUhYKBBVi6v9kmaH/o/x80
-         Ek3Qzq3OZ+VuIlklEMCtJOa3egi90xym2pFOQrccb0O7QZEvUmRE9opcTD6D247AGajW
-         zwqsWZTFHR5M6R8udErfw+cCFHIWFO0cyPY/3c7UociWcrIkXM/nNVhTLNJePRleXzIx
-         1OBBvIaWb77euYq/lOP+whcpS7og8UwJa/Pt+MoCYijj+uKwjAfikwk0n1k6lhsyK3nq
-         CPlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8iIlyAotvW4/18LwXApdfEoPXtA2KQQGEH61jRfRVAo=;
-        b=aJem6F5rGPAaa7et8STNxa0B/C0W9ozfucFEWjID7/tEVnOW8uIYhTeB88IERMLI8L
-         jfhef2Oh97B7h8X1t9wWZD8Jtj4nrJcFnbxnHe1dRVbSNbB+/zdDGbxuDRMcvcP6K425
-         plw5ANd2OEyTDFRl1xtdqk2pFbJsGC9L2B1lD3iLVLueskrgizo2psvKw7CmgDO2MW7I
-         D5IPtldzw4v42+G1HHh8nj4Z8Yx+d5ISQwzySsMyLqfr1Fhk3V/dcUXBwdc8d1AjInAE
-         HXG4XJlcKn8jz4JGnboa0CmhLmy1FR7qRwaOemzqjG8dSA3nhYoKEz0ilfWZbhVTD8V+
-         z7ng==
-X-Gm-Message-State: APjAAAWxL+79jahz2W5BanuvtEmeJCvaACxTRfSkSD4Uzh7kgOJ3rRNQ
-        J2T5BVZFbKR0IEjnNkQ8mc0O1IGt+XKWU7xSpHQ=
-X-Google-Smtp-Source: APXvYqwCvwJOw20p4s9Eazhb+LVC8v7V4AWVLbMPedSP/EC2a4khEk6OwDQ8iZprMwwnnjQxgLX8S/Mf51kbguSXTzY=
-X-Received: by 2002:a5d:8444:: with SMTP id w4mr6449112ior.51.1567717543746;
- Thu, 05 Sep 2019 14:05:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190905190558.25717-1-jlayton@kernel.org>
-In-Reply-To: <20190905190558.25717-1-jlayton@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 5 Sep 2019 23:05:33 +0200
-Message-ID: <CAOi1vP_OYDevF9Kn-FU6bEbCY2MG811Hvvshu=Feb3r9MGDMgg@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: Convert ceph to use the new mount API
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
+        id S2390677AbfIEVcu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 17:32:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:8816 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731418AbfIEVct (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 17:32:49 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 37A8C18C4266;
+        Thu,  5 Sep 2019 21:32:49 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A7BBA60BE1;
+        Thu,  5 Sep 2019 21:32:45 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjcsxQ8QB_v=cwBQw4pkJg7pp-bBsdWyPivFO_OeF-y+g@mail.gmail.com>
+References: <CAHk-=wjcsxQ8QB_v=cwBQw4pkJg7pp-bBsdWyPivFO_OeF-y+g@mail.gmail.com> <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk> <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com> <17703.1567702907@warthog.procyon.org.uk> <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com> <CAKCoTu7ms_Mr-q08d9XB3uascpzwBa5LF9JTT2aq8uUsoFE8aQ@mail.gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Ray Strode <rstrode@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        LSM List <linux-security-module@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Ray, Debarshi" <debarshi.ray@gmail.com>,
+        Robbie Harwood <rharwood@redhat.com>
+Subject: Re: Why add the general notification queue and its sources
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <5395.1567719164.1@warthog.procyon.org.uk>
+Date:   Thu, 05 Sep 2019 22:32:44 +0100
+Message-ID: <5396.1567719164@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Thu, 05 Sep 2019 21:32:49 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 5, 2019 at 9:06 PM Jeff Layton <jlayton@kernel.org> wrote:
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> Also, what is the security model here? Open a special character
+> device, and you get access to random notifications from random
+> sources?
 >
-> From: David Howells <dhowells@redhat.com>
->
-> Convert the ceph filesystem to the new internal mount API as the old
-> one will be obsoleted and removed.  This allows greater flexibility in
-> communication of mount parameters between userspace, the VFS and the
-> filesystem.
->
-> See Documentation/filesystems/mount_api.txt for more information.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: Sage Weil <sage@redhat.com>
-> cc: ceph-devel@vger.kernel.org
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  drivers/block/rbd.c          | 341 ++++++++---------
->  fs/ceph/cache.c              |  10 +-
->  fs/ceph/cache.h              |   5 +-
->  fs/ceph/super.c              | 687 +++++++++++++++++------------------
->  fs/ceph/super.h              |   1 -
->  include/linux/ceph/libceph.h |  17 +-
->  net/ceph/ceph_common.c       | 410 +++++++++------------
->  7 files changed, 715 insertions(+), 756 deletions(-)
->
-> v2: fix several string parsing bugs in rbd_add_parse_args and rbd_parse_monolithic
->     prefix rbd log message with "rbd:"
->     drop unneeded #undef from ceph_debug.h
->     drop unrelated comment fixes in fs/fs_*.c
->     rebase onto current ceph/testing branch
+> That makes no sense. Do they have the same security permissions?
 
-This is still broken.
+Sigh.  It doesn't work like that.  I tried to describe this in the manpages I
+referred to in the cover note.  Obviously I didn't do a good enough job.  Let
+me try and explain the general workings and the security model here.
 
-A simple "rbd map" works, but option parsing is busted:
+ (1) /dev/watch_queue just implements locked-in-memory buffers.  It gets you
+     no events by simply opening it.
 
-  $ sudo rbd map -o ro testimg
-  rbd: sysfs write failed
-  In some cases useful info is found in syslog - try "dmesg | tail".
-  rbd: map failed: (519) Unknown error 519
+     Each time you open it you get your own private buffer.  Buffers are not
+     shares.  Creation of buffers is limited by ENFILE, EMFILE and
+     RLIMIT_MEMLOCK.
 
-meaning errno = 519 from write()...
+ (2) A buffer is implemented as a pollable ring buffer, with the head pointer
+     belonging to the kernel and the tail pointer belonging to userspace.
+     Userspace mmaps the buffer.
 
-On one of the attempts it crashed in kfree(), probably called from
-rbd_parse_monolithic().
+     The kernel *only ever* reads the head and tail pointer from a buffer; it
+     never reads anything else.
 
-Thanks,
+     When it wants to post a message to a buffer, the kernel reads the
+     pointers and then does one of three things:
 
-                Ilya
+	(a) If the pointers were incoherent it drops the message.
+
+	(b) If the buffer was full the kernel writes a flag to indicate this
+	    and drops the message.
+
+	(c) Otherwise, the kernel writes a message and maybe padding at the
+     	    place(s) it expects and writes the head pointer.  If userspace was
+     	    busy trashing the place, that should not cause a problem for the
+     	    kernel.
+
+     The buffer pointers are expected to run to the end and wrap naturally;
+     they're only masked off at the point of actually accessing the buffer.
+
+ (3) You connect event sources to your buffer, e.g.:
+
+	fd = open("/dev/watch_queue", ...);
+	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, ...);
+
+     or:
+
+	watch_mount(AT_FDCWD, "/net", 0, fd, ...);
+
+     Security is checked at the point of connection to make sure you have
+     permission to access that source.  You have to have View permission on a
+     key/keyring for key events, for example, and you have to have execute
+     permission on a directory for mount events.
+
+     The LSM gets a look-in too: Smack checks you have read permission on a
+     key for example.
+
+ (4) You can connect multiple sources of different types to your buffer and a
+     source can be connected to multiple buffers at a time.
+
+ (5) Security is checked when an event is delivered to make sure the triggerer
+     of the event has permission to give you that event.  Smack requires that
+     the triggerer has write permission on the opener of the buffer for
+     example.
+
+ (6) poll() signals POLLIN|POLLRDNORM if there is stuff in the buffer and
+     POLLERR if the pointers are incoherent.
+
+David
