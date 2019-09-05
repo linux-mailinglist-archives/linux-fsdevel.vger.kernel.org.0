@@ -2,85 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B5B1AAAF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 20:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E48B8AAAFB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 20:29:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391262AbfIES2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 14:28:39 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39716 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731541AbfIES2j (ORCPT
+        id S2403881AbfIES3A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 14:29:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36714 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390029AbfIES27 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:28:39 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.1 #3 (Red Hat Linux))
-        id 1i5wUD-0004ZK-Jy; Thu, 05 Sep 2019 18:28:02 +0000
-Date:   Thu, 5 Sep 2019 19:28:01 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
- helpers
-Message-ID: <20190905182801.GR1131@ZenIV.linux.org.uk>
-References: <20190904201933.10736-1-cyphar@cyphar.com>
- <20190904201933.10736-2-cyphar@cyphar.com>
- <20190905180750.GQ1131@ZenIV.linux.org.uk>
- <20190905182303.7f6bxpa2enbgcegv@wittgenstein>
+        Thu, 5 Sep 2019 14:28:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=acxEENEa/DqMCNqNx4aBDRRIK560ncz4Caqw5lxEPBs=; b=Qqt13/dNdTpOF/UEMQ73DriBY
+        +VchaP0F0KycJLtkPdlJQqQZwlt+gUeo8pCDHDsHtHYir37mRbm5OPWy/dP9bgPQwRMrVYURW0iK9
+        OVVxf51ZsaBTSpRk+UxB27lvyLvXZxCYzonU11dcYngMZUt1fxBmaE5uPjC+Cjsx/IUWdvlgzmlsA
+        XYJPwOjTlLcbCsguxdG7bUwe+mgHe/6JJ0aAQ5SdhVPrhKsA9kVMhgL/A10WKAArcXr2Lr5eUhUGD
+        q2qdAGvs1zl26/WbEMyQ51kmnm9vJdCcTF872vqBB1Suv3o0Fu7k+Ud9+EcmEPfjwkdsFRw6MUrLH
+        8zrqFlqJg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5wV9-0003Li-Gr; Thu, 05 Sep 2019 18:28:59 +0000
+Date:   Thu, 5 Sep 2019 11:28:59 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc:     Kirill Shutemov <kirill@shutemov.name>,
+        Song Liu <songliubraving@fb.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Johannes Weiner <jweiner@fb.com>
+Subject: Re: [PATCH 2/3] mm: Allow large pages to be added to the page cache
+Message-ID: <20190905182859.GR29434@bombadil.infradead.org>
+References: <20190905182348.5319-1-willy@infradead.org>
+ <20190905182348.5319-3-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190905182303.7f6bxpa2enbgcegv@wittgenstein>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190905182348.5319-3-willy@infradead.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 08:23:03PM +0200, Christian Brauner wrote:
+On Thu, Sep 05, 2019 at 11:23:47AM -0700, Matthew Wilcox wrote:
+> +		xas_for_each_conflict(&xas, old) {
+> +			if (!xa_is_value(old))
+> +				break;
+> +			exceptional++;
+> +			if (shadowp)
+> +				*shadowp = old;
+> +		}
+> +		if (old) {
+>  			xas_set_err(&xas, -EEXIST);
+> -		xas_store(&xas, page);
+> +			break;
 
-> Because every caller of that function right now has that limit set
-> anyway iirc. So we can either remove it from here and place it back for
-> the individual callers or leave it in the helper.
-> Also, I'm really asking, why not? Is it unreasonable to have an upper
-> bound on the size (for a long time probably) or are you disagreeing with
-> PAGE_SIZE being used? PAGE_SIZE limit is currently used by sched, perf,
-> bpf, and clone3 and in a few other places.
+Of course, one cannot see one's own bugs until one has posted them
+publically.  This will exit the loop with the lock held.
 
-For a primitive that can be safely used with any size (OK, any within
-the usual 2Gb limit)?  Why push the random policy into the place where
-it doesn't belong?
+> +		}
+> +		xas_create_range(&xas);
+>  		if (xas_error(&xas))
+>  			goto unlock;
+>  
 
-Seriously, what's the point?  If they want to have a large chunk of
-userland memory zeroed or checked for non-zeroes - why would that
-be a problem?
+The stanza should read:
+
+                if (old) 
+                        xas_set_err(&xas, -EEXIST);
+                xas_create_range(&xas);
+                if (xas_error(&xas))
+                        goto unlock;
+
+just like the corresponding stanza in mm/shmem.c.
+
+(while the xa_state is in an error condition, the xas_create_range()
+function will return without doing anything).
