@@ -2,114 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD78DAAE3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 00:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C1BAAAE3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 00:12:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389348AbfIEWOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 18:14:39 -0400
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:42477 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732092AbfIEWOi (ORCPT
+        id S1732232AbfIEWMe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 18:12:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38300 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbfIEWMe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 18:14:38 -0400
-Received: by mail-lj1-f180.google.com with SMTP id y23so4089238lje.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 15:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3+bS8S77AzTpTBzzxsdlLs0HnCbtRjNnmkiZK0MPy0c=;
-        b=LbASCsGx0k6udtd2AsgFeBhmCaCLrlsklx+62iSSE5Gkytkq0WN1acnDpFn5oCNEQS
-         KMkfsxyWBngO5Ing5S64rk5RN/Socr904CmKtCx01r5GqFjCKXQfIr7B9uXv9DslB2br
-         7qADnXCimEFjoVvgCL5m3EkgAFlL+VHV2J5FE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3+bS8S77AzTpTBzzxsdlLs0HnCbtRjNnmkiZK0MPy0c=;
-        b=C/PK8LG8OA1mBCJcGe+oqogPb7wiQ/18qi/vjIJbYf+IBqBNg5xgc0qQiUogdW8ff/
-         kR5Kf5qiljlZaQ9j3tlArXvkFbW2kTX6aqE8ujZEniSpCDUnPvNAWvYNqfcEKfdz5TAd
-         XDfKg80BChoInMYQPOmKfnbq1lN0bQb88NqTRyfiPo7IfXx2gVJcUHl7nMAABMVM4REs
-         M8392umrgh26bFR/F7rz87oGsJFO56fGUUPU6w4dxUmDi6au1W53snjY2nm5P+hxm+kj
-         pXNZ99/N1OSgQ+hlvOnxslwVN96PLinEwlw4s830wBbltHyWd+LfTMUrgYBHo7F/FffC
-         pD1Q==
-X-Gm-Message-State: APjAAAVmXiYHqVnlEuC/jE6bQ3ka3DH5GON8eXC533Zv0lmkEEBAVZTZ
-        CSRcqxST2nSbNzgJub3OMyu/1qBWMSw=
-X-Google-Smtp-Source: APXvYqxTE0Rn2UwMp44134rpXTASR6Cvf0Sg6vY7I7u7WWoOKj4SiqvdhsmVPO5tq6DDT1pI05oumw==
-X-Received: by 2002:a2e:898d:: with SMTP id c13mr3733797lji.164.1567721676396;
-        Thu, 05 Sep 2019 15:14:36 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id e62sm603892ljf.82.2019.09.05.15.14.35
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2019 15:14:36 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id l11so3327251lfk.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 15:14:35 -0700 (PDT)
-X-Received: by 2002:a19:f204:: with SMTP id q4mr3910741lfh.29.1567721338167;
- Thu, 05 Sep 2019 15:08:58 -0700 (PDT)
+        Thu, 5 Sep 2019 18:12:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hXxhd2FAe3cwB9R+ZW9hYGuNtaZo0DXOOGKLsZp7Vlg=; b=DwJAHupYCe0KBYPUY++xKXNtX
+        KNFsVks8Q6faF0UinUX03iscnrEEQfBD9LwGf673IRScjuZIxM6EDPHpRjrDMW9W5Z/zdRbcI1iVj
+        DmTiqJzddle/jwr2qPw+ONbSQ6MLp5ifm7oB/9fXTYpDoLz2Qp8vusbM+isLkyJOGaWl7flVTfq6u
+        IIjPZa4Cq1Urw3dQY/kyB10TNLBthJdFR6BP/PEM9r3PKugJixBQnGhO08HXGTny2tArqIAFbrQnm
+        zqt4d9Ud4ymRK2EVtu9MdO32qQum/vfbHzRJmM9CDxSHUGyTpivuPH266I6BS4s5wTxQQ725Wsn+X
+        HBIDTWMtA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5zzU-0004ms-F5; Thu, 05 Sep 2019 22:12:32 +0000
+Date:   Thu, 5 Sep 2019 15:12:32 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Kirill Shutemov <kirill@shutemov.name>,
+        Song Liu <songliubraving@fb.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Johannes Weiner <jweiner@fb.com>
+Subject: Re: [PATCH 3/3] mm: Allow find_get_page to be used for large pages
+Message-ID: <20190905221232.GU29434@bombadil.infradead.org>
+References: <20190905182348.5319-4-willy@infradead.org>
+ <201909060632.Sn0F0fP6%lkp@intel.com>
 MIME-Version: 1.0
-References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
- <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
- <17703.1567702907@warthog.procyon.org.uk> <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
- <CAKCoTu7ms_Mr-q08d9XB3uascpzwBa5LF9JTT2aq8uUsoFE8aQ@mail.gmail.com>
- <CAHk-=wjcsxQ8QB_v=cwBQw4pkJg7pp-bBsdWyPivFO_OeF-y+g@mail.gmail.com> <5396.1567719164@warthog.procyon.org.uk>
-In-Reply-To: <5396.1567719164@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 5 Sep 2019 15:08:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgbCXea1a9OTWgMMvcsCGGiNiPp+ty-edZrBWn63NCYdw@mail.gmail.com>
-Message-ID: <CAHk-=wgbCXea1a9OTWgMMvcsCGGiNiPp+ty-edZrBWn63NCYdw@mail.gmail.com>
-Subject: Re: Why add the general notification queue and its sources
-To:     David Howells <dhowells@redhat.com>
-Cc:     Ray Strode <rstrode@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Ray, Debarshi" <debarshi.ray@gmail.com>,
-        Robbie Harwood <rharwood@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201909060632.Sn0F0fP6%lkp@intel.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 5, 2019 at 2:32 PM David Howells <dhowells@redhat.com> wrote:
->
->  (1) /dev/watch_queue just implements locked-in-memory buffers.  It gets you
->      no events by simply opening it.
+On Fri, Sep 06, 2019 at 06:04:05AM +0800, kbuild test robot wrote:
+> Hi Matthew,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on linus/master]
+> [cannot apply to v5.3-rc7 next-20190904]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Cool. In-memory buffers.
+It looks like you're not applying these to the -mm tree?  I thought that
+was included in -next.
 
-But I know - we *have* one of those. There's already a system call for
-it, and has been forever. One that we then extended to allow people to
-change the buffer size, and do a lot of other things with.
 
-It's called "pipe()". And you can give the writing side to other user
-space processes too, in case you are running an older kernel that
-didn't have some "event pipe support". It comes with resource
-management, because people already use those things.
-
-If you want to make a message protocol on top of it, it has cool
-atomicity guarantees for any message size less than PIPE_BUF, but to
-make things simple, maybe just say "fixed record sizes of 64 bytes" or
-something like that for events.
-
-Then you can use them from things like perl scripts, not just magical
-C programs.
-
-Why do we need a new kind of super-fancy high-speed thing for event reporting?
-
-If you have *so* many events that pipe handling is a performance
-issue, you have something seriously wrong going on.
-
-So no. I'm not interested in a magical memory-mapped pipe that is
-actually more limited than the real thing.
-
-                  Linus
