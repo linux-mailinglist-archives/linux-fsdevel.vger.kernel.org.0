@@ -2,22 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F67DAAA9D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 20:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39615AAACA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 20:23:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391212AbfIESIY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 14:08:24 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39314 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfIESIY (ORCPT
+        id S2389044AbfIESXm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 14:23:42 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43028 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727764AbfIESXl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:08:24 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.1 #3 (Red Hat Linux))
-        id 1i5wAg-000437-LE; Thu, 05 Sep 2019 18:07:51 +0000
-Date:   Thu, 5 Sep 2019 19:07:50 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
+        Thu, 5 Sep 2019 14:23:41 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1i5wPR-00053t-Nn; Thu, 05 Sep 2019 18:23:05 +0000
+Date:   Thu, 5 Sep 2019 20:23:03 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
         Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
@@ -52,124 +55,58 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
 Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
  helpers
-Message-ID: <20190905180750.GQ1131@ZenIV.linux.org.uk>
+Message-ID: <20190905182303.7f6bxpa2enbgcegv@wittgenstein>
 References: <20190904201933.10736-1-cyphar@cyphar.com>
  <20190904201933.10736-2-cyphar@cyphar.com>
+ <20190905180750.GQ1131@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190904201933.10736-2-cyphar@cyphar.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190905180750.GQ1131@ZenIV.linux.org.uk>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
-> +/*
-> + * "memset(p, 0, size)" but for user space buffers. Caller must have already
-> + * checked access_ok(p, size).
-> + */
-> +static int __memzero_user(void __user *p, size_t s)
-> +{
-> +	const char zeros[BUFFER_SIZE] = {};
-> +	while (s > 0) {
-> +		size_t n = min(s, sizeof(zeros));
-> +
-> +		if (__copy_to_user(p, zeros, n))
-> +			return -EFAULT;
-> +
-> +		p += n;
-> +		s -= n;
-> +	}
-> +	return 0;
-> +}
+On Thu, Sep 05, 2019 at 07:07:50PM +0100, Al Viro wrote:
+> On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
+> > +/*
+> > + * "memset(p, 0, size)" but for user space buffers. Caller must have already
+> > + * checked access_ok(p, size).
+> > + */
+> > +static int __memzero_user(void __user *p, size_t s)
+> > +{
+> > +	const char zeros[BUFFER_SIZE] = {};
+> > +	while (s > 0) {
+> > +		size_t n = min(s, sizeof(zeros));
+> > +
+> > +		if (__copy_to_user(p, zeros, n))
+> > +			return -EFAULT;
+> > +
+> > +		p += n;
+> > +		s -= n;
+> > +	}
+> > +	return 0;
+> > +}
+> 
+> That's called clear_user().
+> 
+> > +int copy_struct_to_user(void __user *dst, size_t usize,
+> > +			const void *src, size_t ksize)
+> > +{
+> > +	size_t size = min(ksize, usize);
+> > +	size_t rest = abs(ksize - usize);
+> > +
+> > +	if (unlikely(usize > PAGE_SIZE))
+> > +		return -EFAULT;
+> 
+> Why?
 
-That's called clear_user().
-
-> +int copy_struct_to_user(void __user *dst, size_t usize,
-> +			const void *src, size_t ksize)
-> +{
-> +	size_t size = min(ksize, usize);
-> +	size_t rest = abs(ksize - usize);
-> +
-> +	if (unlikely(usize > PAGE_SIZE))
-> +		return -EFAULT;
-
-Why?
-
-> +	} else if (usize > ksize) {
-> +		if (__memzero_user(dst + size, rest))
-> +			return -EFAULT;
-> +	}
-> +	/* Copy the interoperable parts of the struct. */
-> +	if (__copy_to_user(dst, src, size))
-> +		return -EFAULT;
-
-Why not simply clear_user() and copy_to_user()?
-
-> +int copy_struct_from_user(void *dst, size_t ksize,
-> +			  const void __user *src, size_t usize)
-> +{
-> +	size_t size = min(ksize, usize);
-> +	size_t rest = abs(ksize - usize);
-
-Cute, but... you would be just as well without that 'rest' thing.
-
-> +
-> +	if (unlikely(usize > PAGE_SIZE))
-> +		return -EFAULT;
-
-Again, why?
-
-> +	if (unlikely(!access_ok(src, usize)))
-> +		return -EFAULT;
-
-Why not simply copy_from_user() here?
-
-> +	/* Deal with trailing bytes. */
-> +	if (usize < ksize)
-> +		memset(dst + size, 0, rest);
-> +	else if (usize > ksize) {
-> +		const void __user *addr = src + size;
-> +		char buffer[BUFFER_SIZE] = {};
-> +
-> +		while (rest > 0) {
-> +			size_t bufsize = min(rest, sizeof(buffer));
-> +
-> +			if (__copy_from_user(buffer, addr, bufsize))
-> +				return -EFAULT;
-> +			if (memchr_inv(buffer, 0, bufsize))
-> +				return -E2BIG;
-
-Frankly, that looks like a candidate for is_all_zeroes_user().
-With the loop like above serving as a dumb default.  And on
-badly alighed address it _will_ be dumb.  Probably too much
-so - something like
-	if ((unsigned long)addr & 1) {
-		u8 v;
-		if (get_user(v, (__u8 __user *)addr))
-			return -EFAULT;
-		if (v)
-			return -E2BIG;
-		addr++;
-	}
-	if ((unsigned long)addr & 2) {
-		u16 v;
-		if (get_user(v, (__u16 __user *)addr))
-			return -EFAULT;
-		if (v)
-			return -E2BIG;
-		addr +=2;
-	}
-	if ((unsigned long)addr & 4) {
-		u32 v;
-		if (get_user(v, (__u32 __user *)addr))
-			return -EFAULT;
-		if (v)
-			return -E2BIG;
-	}
-	<read the rest like you currently do>
-would be saner, and things like x86 could trivially add an
-asm variant - it's not hard.  Incidentally, memchr_inv() is
-an overkill in this case...
+Because every caller of that function right now has that limit set
+anyway iirc. So we can either remove it from here and place it back for
+the individual callers or leave it in the helper.
+Also, I'm really asking, why not? Is it unreasonable to have an upper
+bound on the size (for a long time probably) or are you disagreeing with
+PAGE_SIZE being used? PAGE_SIZE limit is currently used by sched, perf,
+bpf, and clone3 and in a few other places.
