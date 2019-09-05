@@ -2,51 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1DEAA11D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 13:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 630FCAA15D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 13:28:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388288AbfIELRs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 07:17:48 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40104 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732773AbfIELRn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:17:43 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 7so2023618ljw.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 04:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FZQLTiI56V9ejCTERxmKEuoyOsqpXI4ROWUat/u48IQ=;
-        b=TmAHYZxqRc6xu2le8iULfxikI7ku0uT9OqruTeiVIjBtHlSUVtr7xfmu4YCFlsjTOs
-         Rhq1GYmaO5KwXBXGMlzcAxQ/LcO6e9A60OIH5XcxDVVNn2uwqfJXj5l04xQJTBjas8S+
-         rezhJDHHi4QSeAmUuvBdnaXdMHr6k1YEDw8fQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FZQLTiI56V9ejCTERxmKEuoyOsqpXI4ROWUat/u48IQ=;
-        b=NnoDkI7/0AdesHUfNIgkTi13EomY3lLRjCY7O35L/4YrrDpPIg5FigdIq4CyXD2MWz
-         wzqD4Azy7sOqoFcC/5jJDJmXlyKyfkIRSic01IlZ2Oe8IwkF1lDIKoa4Jx48M4cLbjuT
-         gqTJoDPsyE85nkByE9lAqoFbTzA3tm6cquRBowUhUKmZ5ehDucHhEgCZ2qtBQHfl4JER
-         G+3vW/VwXa1TJOwsElApT5gBH3GeUlX1k8DQJTDH8Ekj59jH1xpbfZM99oC+9vwtUEMa
-         QjUUlV5vBYI/Oc+J2aoKhbUOkd6ql0aHA69V54Suawa6SPgpsu5C8yvHacBos88ndrVZ
-         TAyg==
-X-Gm-Message-State: APjAAAUjH85vxPeQcStTOLPg0zTRsFLUTFvns61biKZyLBmABlpF+YZT
-        fnOAoWG2PMmr7PdxfCBMpa/XCg==
-X-Google-Smtp-Source: APXvYqy+jIyWA4s/Awrv2CCVQWWEoIb0eYt4SAhqVoZ9KSv6Iim6pns0uTxVPV5vb5IsmAlCA9M4vg==
-X-Received: by 2002:a2e:5418:: with SMTP id i24mr1705390ljb.126.1567682261376;
-        Thu, 05 Sep 2019 04:17:41 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id l3sm377157lfc.31.2019.09.05.04.17.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2019 04:17:40 -0700 (PDT)
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
- helpers
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>
+        id S1732134AbfIEL14 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 07:27:56 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:61762 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726231AbfIEL1z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 07:27:55 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 80455A162A;
+        Thu,  5 Sep 2019 13:27:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id bvZM-eYrS-l9; Thu,  5 Sep 2019 13:27:44 +0200 (CEST)
+Date:   Thu, 5 Sep 2019 21:27:18 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
@@ -57,6 +33,7 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Eric Biederman <ebiederm@xmission.com>,
         Andy Lutomirski <luto@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -80,50 +57,75 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
         linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190905112718.ojg3znly6x3m4mjq@yavin.dot.cyphar.com>
 References: <20190904201933.10736-1-cyphar@cyphar.com>
  <20190904201933.10736-2-cyphar@cyphar.com>
- <20190905110544.d6c5t7rx25kvywmi@wittgenstein>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <ae415ea8-4442-d81c-3b46-2ae5fb35bbdf@rasmusvillemoes.dk>
-Date:   Thu, 5 Sep 2019 13:17:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ <20190905110915.4vvhicg4ldmpi5u6@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <20190905110544.d6c5t7rx25kvywmi@wittgenstein>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nkbo7v76ghbobp4m"
+Content-Disposition: inline
+In-Reply-To: <20190905110915.4vvhicg4ldmpi5u6@wittgenstein>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/09/2019 13.05, Christian Brauner wrote:
+
+--nkbo7v76ghbobp4m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2019-09-05, Christian Brauner <christian.brauner@ubuntu.com> wrote:
 > On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
+> > A common pattern for syscall extensions is increasing the size of a
+> > struct passed from userspace, such that the zero-value of the new fields
+> > result in the old kernel behaviour (allowing for a mix of userspace and
+> > kernel vintages to operate on one another in most cases). This is done
+> > in both directions -- hence two helpers -- though it's more common to
+> > have to copy user space structs into kernel space.
+> >=20
+> > Previously there was no common lib/ function that implemented
+> > the necessary extension-checking semantics (and different syscalls
+> > implemented them slightly differently or incompletely[1]). A future
+> > patch replaces all of the common uses of this pattern to use the new
+> > copy_struct_{to,from}_user() helpers.
+> >=20
+> > [1]: For instance {sched_setattr,perf_event_open,clone3}(2) all do do
+> >      similar checks to copy_struct_from_user() while rt_sigprocmask(2)
+> >      always rejects differently-sized struct arguments.
+> >=20
+> > Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+>=20
+> I would probably split this out into a separate patchset. It can very
+> well go in before openat2(). Thoughts?
 
->> +	if (unlikely(!access_ok(dst, usize)))
->> +		return -EFAULT;
->> +
->> +	/* Deal with trailing bytes. */
->> +	if (usize < ksize) {
->> +		if (memchr_inv(src + size, 0, rest))
->> +			return -EFBIG;
->> +	} else if (usize > ksize) {
->> +		if (__memzero_user(dst + size, rest))
->> +			return -EFAULT;
-> 
-> Is zeroing that memory really our job? Seems to me we should just check
-> it is zeroed.
+Yeah, I'll split this and the related patches out -- though I will admit
+I'm not sure how you're supposed to deal with multiple independent
+patchsets that depend on each other. How will folks reviewing openat2(2)
+know to include the lib/struct_user.c changes?
 
-Of course it is, otherwise you'd require userspace to clear the output
-buffer it gives us, which in the majority of cases is wasted work. It's
-much easier to reason about if we just say "the kernel populates [uaddr,
-uaddr + usize)".
+Also, whose tree should it go through?
 
-It's completely symmetric to copy_struct_from_user doing a memset() of
-the tail of the kernel buffer in case of ksize>usize - you wouldn't want
-to require the kernel callers to pass a zeroed buffer to
-copy_struct_from_user() - it's just that when we memset(__user*),
-there's an error check to do.
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-Rasmus
+--nkbo7v76ghbobp4m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXDxEwAKCRCdlLljIbnQ
+EqovAQD8WBncNVUTEL0Y3xtDhqYMDFHga+X5xWtEwl2PAh4uVQEAhuzdaAU+gBqt
+VqtP9IF4PFfoqMmGbekI1BKCWI4gmgo=
+=UsGw
+-----END PGP SIGNATURE-----
+
+--nkbo7v76ghbobp4m--
