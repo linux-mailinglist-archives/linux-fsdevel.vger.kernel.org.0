@@ -2,119 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 495BDA9DD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 11:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98C34A9DF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 11:13:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733022AbfIEJJr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 05:09:47 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:43258 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731421AbfIEJJr (ORCPT
+        id S1733083AbfIEJN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 05:13:26 -0400
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:43408 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732345AbfIEJN0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 05:09:47 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 46PFJ40dnZz1rK5J;
-        Thu,  5 Sep 2019 11:09:40 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 46PFJ32zjcz1qqkk;
-        Thu,  5 Sep 2019 11:09:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id bsFr3srmzyBP; Thu,  5 Sep 2019 11:09:36 +0200 (CEST)
-X-Auth-Info: HjUMDzwcEehHBjaVffXZjtB4a4fj/TG0EaQI9SDHSpRwfnDQz77oFMRdUd9Aa8bN
-Received: from hawking (charybdis-ext.suse.de [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu,  5 Sep 2019 11:09:36 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user helpers
-References: <20190904201933.10736-1-cyphar@cyphar.com>
-        <20190904201933.10736-2-cyphar@cyphar.com>
-X-Yow:  RELATIVES!!
-Date:   Thu, 05 Sep 2019 11:09:35 +0200
-In-Reply-To: <20190904201933.10736-2-cyphar@cyphar.com> (Aleksa Sarai's
-        message of "Thu, 5 Sep 2019 06:19:22 +1000")
-Message-ID: <mvma7bj85yo.fsf@linux-m68k.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Thu, 5 Sep 2019 05:13:26 -0400
+Received: by mail-lj1-f170.google.com with SMTP id d5so1619584lja.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 02:13:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lg+YMpq+gNDI7xAM1SDSvOeQlpL3bUFXipKQWY1s63k=;
+        b=shXHw/QY1ASWgitkU/tyiV7VOOMF7hyYLjT/iDUwItxDaP1N7LClS0e8XHmU+qY8W1
+         9fdyt2mAYLROze4tMA1n7IKnlShLUrDVatCS0Tf6bsDIqs0wLlrmbe3LZE7DvEjYpIG1
+         F2H7V0ziSg7Y3DLAjPmYr9TmkRgQvjUVxVW/C0UyQ1BM109wmTUmuappdobvU1Os1ZE+
+         fthm3RK517nRHJTaFe+RS5LNydSxIFe+aoCxTZhndemSRkm5FTpBOjG2F0rUpOgRqH/M
+         oa1R0RY6KpeXYbSeMamG1o9o9b4L5pUVWr4Q6IwP4JCCUoywOk3RJhVsYzxVCiGHnN38
+         xK1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lg+YMpq+gNDI7xAM1SDSvOeQlpL3bUFXipKQWY1s63k=;
+        b=POo/Kr5Fuhrq5AUtZYk4hJNj7VFMu4jT0Uy1jTzE8C9jbMVH1wYx2jy/66rdlC1fwo
+         2YiF71P4fzTu4omVZTNtEA5VOtcAufEkU2WzQd49DpNd4iuLN4kcz6eXxczCThyIf9Ow
+         kNZ4bKHbi9pgxNujeag2x/b64aW7wgE/4lggBUOwRfcrzRJHIUQMGzkSwo5QM+5/zvz6
+         UfCjQkYPVZa/mruVCKh57aGUNB+LeQ2Ik/NlVgPexlPDHUr+DPdobcIp9KOV678P7N41
+         buafU63iLlNb+mRq16iyBNX3tgHbD8fcGqMLXe81wfWj1RtBTmzS5a1ttaHbI+goeE1a
+         r6rA==
+X-Gm-Message-State: APjAAAVsEGIvp0hepeQsvK6NsvMLtMS5Ao0EdIuCsoZOnk8AiJJt10Gw
+        vxGxWMw4XMugdLvwqnAu+UafUXZcrkifF4B4eM9ouw==
+X-Google-Smtp-Source: APXvYqxs7StB/zHZBT6cbVWDGsXZppnf8u0EPpozPSsrwy7Sjyo5pTckCUC8G6y1E9FCq8UFjNZWbaplA6eKwnLCr/M=
+X-Received: by 2002:a2e:94cd:: with SMTP id r13mr1349759ljh.24.1567674804268;
+ Thu, 05 Sep 2019 02:13:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw> <20190903123719.GF1131@ZenIV.linux.org.uk>
+ <20190903130456.GA9567@infradead.org> <20190903134832.GH1131@ZenIV.linux.org.uk>
+ <20190903135024.GA8274@infradead.org> <20190903135354.GI1131@ZenIV.linux.org.uk>
+ <20190903153930.GA2791@infradead.org> <20190903175610.GM1131@ZenIV.linux.org.uk>
+ <20190904123940.GA24520@infradead.org>
+In-Reply-To: <20190904123940.GA24520@infradead.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 5 Sep 2019 14:43:12 +0530
+Message-ID: <CA+G9fYtwEfp482+8qzGKD9NSHOGtKyp4pKbVxQK8G4L94UvOVQ@mail.gmail.com>
+Subject: Re: "fs/namei.c: keep track of nd->root refcount status" causes boot panic
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Qian Cai <cai@lca.pw>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sep 05 2019, Aleksa Sarai <cyphar@cyphar.com> wrote:
+Hi Christoph and Al Viro,
 
-> diff --git a/lib/struct_user.c b/lib/struct_user.c
-> new file mode 100644
-> index 000000000000..7301ab1bbe98
-> --- /dev/null
-> +++ b/lib/struct_user.c
-> @@ -0,0 +1,182 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2019 SUSE LLC
-> + * Copyright (C) 2019 Aleksa Sarai <cyphar@cyphar.com>
-> + */
-> +
-> +#include <linux/types.h>
-> +#include <linux/export.h>
-> +#include <linux/uaccess.h>
-> +#include <linux/kernel.h>
-> +#include <linux/string.h>
-> +
-> +#define BUFFER_SIZE 64
-> +
-> +/*
-> + * "memset(p, 0, size)" but for user space buffers. Caller must have already
-> + * checked access_ok(p, size).
-> + */
-> +static int __memzero_user(void __user *p, size_t s)
-> +{
-> +	const char zeros[BUFFER_SIZE] = {};
+Linux next 20190904 boot PASS now.
+May i know which patch fixed this problem ?
 
-Perhaps make that static?
-
-Andreas.
-
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+- Naresh
