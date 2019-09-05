@@ -2,387 +2,440 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 602E7A9ED0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 11:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D376A9EFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 11:57:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732470AbfIEJvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 05:51:01 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:14964 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731806AbfIEJvA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 05:51:00 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id B12A0A1D27;
-        Thu,  5 Sep 2019 11:50:53 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id H6fKP-o1gXOv; Thu,  5 Sep 2019 11:50:49 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 19:50:26 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
- helpers
-Message-ID: <20190905095026.gjemg2gqua2vufxb@yavin.dot.cyphar.com>
-References: <20190904201933.10736-1-cyphar@cyphar.com>
- <20190904201933.10736-2-cyphar@cyphar.com>
- <57ba3752-c4a6-d2a4-1a4d-a0e13bccd473@rasmusvillemoes.dk>
+        id S2387650AbfIEJ5P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 05:57:15 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43522 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387632AbfIEJ5O (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 05:57:14 -0400
+Received: by mail-lj1-f193.google.com with SMTP id d5so1762107lja.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 02:57:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hev-cc.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=htThZQ9bkFrXRu2uWt6MhvWvGla0t86zhXC4a+eUqAE=;
+        b=JLsH8Dmdbjjwhs8W5qIIYtbOexbf4yOp2wdufXqeCZriYD38aITgfvKN9sAA5p9SAx
+         CycnJiXATL7Q5F+Q/S3fYxh0f5MOVu/jk0lHofZ492SFnkCk0PY4WPBZA4nWx0SHOtOE
+         U9RKHfukJqwpyyDy/q3Ez0D/kEv756M+6WxDSvRJUcyG1vjSJOSnMWuJdu6YBQnEBcQB
+         Pyl8lUbHh5MVa3JlxJiceVvjb7j1M4bNEHwnLOjBWcnpLh2tPxndlnlW1OShYyTzh212
+         /DAnUKPiJSlMQvgKHlrXeZFXo1qEhoSS998umQItJGJudkxd9NeJCh6QHQV89aX0l45q
+         yy5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=htThZQ9bkFrXRu2uWt6MhvWvGla0t86zhXC4a+eUqAE=;
+        b=LJGD+bJjrjaNP40aIT1lOUk2ZK35brNsJm6WCWZYNi77GBiAykWD1jvFMJ12+MGnmK
+         LMdMGYRZOmLepNO8m7KuBk/pJlLiLImsuQkYvbcPrGMHb1zpnrh7U7U8gt6uAssUY+i0
+         za2GjsO71wyvBljbe5Apvbbuk8EKOEnM/4PthstfRhJ4g0Y3Ku3awDledToim6pXuc0e
+         71yCB37iWCiq6orkQ36v0pV/iUOwdmurUYvDdKV2SCfpCSvhJwfCdpUIQqUE+2xi8b5Q
+         HHiFgJRIMKxxOPBnfdbOBfjSxixBpaAG3iLWKK5NfcTdnbQRgVthAeeC7hBZ5qcD9qio
+         GIpw==
+X-Gm-Message-State: APjAAAVnqQqs1pgJjpxm+rDZ5tde3zdIHKGK3A/3yvaQXjwUfwZKT3mW
+        fOgYcw11FwUHWWoSscT6EBSfNVpw8B6/+jcP3wWQQg==
+X-Google-Smtp-Source: APXvYqxnXA5Riqu0pJ1/k/N60vd5nTziJpFALviM+2MfbEtTEwheLpBEV7Fd2NbGga5xc9ugTjVZAvLPQ2q1DRdSTuM=
+X-Received: by 2002:a2e:8507:: with SMTP id j7mr1508058lji.156.1567677432082;
+ Thu, 05 Sep 2019 02:57:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="npvprxbrvxn3jdkc"
-Content-Disposition: inline
-In-Reply-To: <57ba3752-c4a6-d2a4-1a4d-a0e13bccd473@rasmusvillemoes.dk>
+References: <20190902052034.16423-1-r@hev.cc> <0cdc9905efb9b77b159e09bee17d3ad4@suse.de>
+ <7075dd44-feea-a52f-ddaa-087d7bb2c4f6@akamai.com> <23659bc3e5f80efe9746aefd4d6791e8@suse.de>
+ <341df9eb-7e8e-98c8-5183-402bdfff7d59@akamai.com> <CAHirt9hra2tA_OPNSow+CgD_CF2Z11ZqGG=1P45noqtdMtWuJw@mail.gmail.com>
+ <CAHirt9j+DSR+uP-SBLHn0ika86uixSOPLXft+vVj5G5Ge0xr5w@mail.gmail.com>
+In-Reply-To: <CAHirt9j+DSR+uP-SBLHn0ika86uixSOPLXft+vVj5G5Ge0xr5w@mail.gmail.com>
+From:   Heiher <r@hev.cc>
+Date:   Thu, 5 Sep 2019 17:56:30 +0800
+Message-ID: <CAHirt9iZAj67FVnhd9ORp2Sk2xAXHDrJ2BANf4VrtM4dLWv9ww@mail.gmail.com>
+Subject: Re: [PATCH RESEND] fs/epoll: fix the edge-triggered mode for nested epoll
+To:     Jason Baron <jbaron@akamai.com>, linux-fsdevel@vger.kernel.org,
+        Roman Penyaev <rpenyaev@suse.de>
+Cc:     Eric Wong <e@80x24.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sridhar Samudrala <sridhar.samudrala@intel.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
 
---npvprxbrvxn3jdkc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2019-09-05, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
-> On 04/09/2019 22.19, Aleksa Sarai wrote:
-> > A common pattern for syscall extensions is increasing the size of a
-> > struct passed from userspace, such that the zero-value of the new fields
-> > result in the old kernel behaviour (allowing for a mix of userspace and
-> > kernel vintages to operate on one another in most cases). This is done
-> > in both directions -- hence two helpers -- though it's more common to
-> > have to copy user space structs into kernel space.
-> >=20
-> > Previously there was no common lib/ function that implemented
-> > the necessary extension-checking semantics (and different syscalls
-> > implemented them slightly differently or incompletely[1]). A future
-> > patch replaces all of the common uses of this pattern to use the new
-> > copy_struct_{to,from}_user() helpers.
-> >=20
-> > [1]: For instance {sched_setattr,perf_event_open,clone3}(2) all do do
-> >      similar checks to copy_struct_from_user() while rt_sigprocmask(2)
-> >      always rejects differently-sized struct arguments.
-> >=20
-> > Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > ---
-> > diff --git a/lib/struct_user.c b/lib/struct_user.c
-> > new file mode 100644
-> > index 000000000000..7301ab1bbe98
-> > --- /dev/null
-> > +++ b/lib/struct_user.c
-> > @@ -0,0 +1,182 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * Copyright (C) 2019 SUSE LLC
-> > + * Copyright (C) 2019 Aleksa Sarai <cyphar@cyphar.com>
-> > + */
-> > +
-> > +#include <linux/types.h>
-> > +#include <linux/export.h>
-> > +#include <linux/uaccess.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/string.h>
-> > +
-> > +#define BUFFER_SIZE 64
-> > +
-> > +/*
-> > + * "memset(p, 0, size)" but for user space buffers. Caller must have a=
-lready
-> > + * checked access_ok(p, size).
-> > + */
->=20
-> Isn't this __clear_user() exactly (perhaps except for the return value)?
-> Perhaps not every arch has that?
-
-I didn't know about clear_user() -- I will switch to it.
-
-> > +static int __memzero_user(void __user *p, size_t s)
-> > +{
-> > +	const char zeros[BUFFER_SIZE] =3D {};
-> > +	while (s > 0) {
-> > +		size_t n =3D min(s, sizeof(zeros));
-> > +
-> > +		if (__copy_to_user(p, zeros, n))
-> > +			return -EFAULT;
-> > +
-> > +		p +=3D n;
-> > +		s -=3D n;
-> > +	}
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * copy_struct_to_user: copy a struct to user space
-> > + * @dst:   Destination address, in user space.
-> > + * @usize: Size of @dst struct.
-> > + * @src:   Source address, in kernel space.
-> > + * @ksize: Size of @src struct.
-> > + *
-> > + * Returns (in all cases, some data may have been copied):
-> > + *  * -EFBIG:  (@usize < @ksize) and there are non-zero trailing bytes=
- in @src.
-> > + *  * -EFAULT: access to user space failed.
-> > + */
-> > +int copy_struct_to_user(void __user *dst, size_t usize,
-> > +			const void *src, size_t ksize)
-> > +{
-> > +	size_t size =3D min(ksize, usize);
-> > +	size_t rest =3D abs(ksize - usize);
->=20
-> Eh, I'd avoid abs() here due to the funkiness of the implicit type
-> conversions - ksize-usize has type size_t, then that's coerced to an int
-> (or a long maybe?), the abs is applied which return an int/long (or
-> unsigned versions?). Something like "rest =3D max(ksize, usize) - size;"
-> is more obviously correct and doesn't fall into any
-> narrowing/widening/sign extending traps.
-
-Yeah, I originally used "max(ksize, usize) - size" for that reason but
-was worried it looked too funky (and some quick tests showed that abs()
-gives the right results in most cases -- though I just realised it would
-probably not give the right results around SIZE_MAX). I'll switch back.
-
-> > +	if (unlikely(usize > PAGE_SIZE))
-> > +		return -EFAULT;
->=20
-> Please don't. That is a restriction on all future extensions - once a
-> kernel is shipped with a syscall using this helper with that arbitrary
-> restriction in place, that syscall is forever prevented from extending
-> its arg struct beyond PAGE_SIZE (which is arch-dependent anyway). Sure,
-> it's hard to imagine, but who'd have thought 32 O_* or CLONE_* bits
-> weren't enough for everybody?
+On Thu, Sep 5, 2019 at 10:53 AM Heiher <r@hev.cc> wrote:
 >
-> This is only for future compatibility, and if someone runs an app
-> compiled against 7.3 headers on a 5.4 kernel, they probably don't care
-> about performance, but they would like their app to run.
+> Hi,
+>
+> I created an epoll wakeup test project, listed some possible cases,
+> and any other corner cases needs to be added?
+>
+> https://github.com/heiher/epoll-wakeup/blob/master/README.md
+>
+> On Wed, Sep 4, 2019 at 10:02 PM Heiher <r@hev.cc> wrote:
+> >
+> > Hi,
+> >
+> > On Wed, Sep 4, 2019 at 8:02 PM Jason Baron <jbaron@akamai.com> wrote:
+> > >
+> > >
+> > >
+> > > On 9/4/19 5:57 AM, Roman Penyaev wrote:
+> > > > On 2019-09-03 23:08, Jason Baron wrote:
+> > > >> On 9/2/19 11:36 AM, Roman Penyaev wrote:
+> > > >>> Hi,
+> > > >>>
+> > > >>> This is indeed a bug. (quick side note: could you please remove efd[1]
+> > > >>> from your test, because it is not related to the reproduction of a
+> > > >>> current bug).
+> > > >>>
+> > > >>> Your patch lacks a good description, what exactly you've fixed.  Let
+> > > >>> me speak out loud and please correct me if I'm wrong, my understanding
+> > > >>> of epoll internals has become a bit rusty: when epoll fds are nested
+> > > >>> an attempt to harvest events (ep_scan_ready_list() call) produces a
+> > > >>> second (repeated) event from an internal fd up to an external fd:
+> > > >>>
+> > > >>>      epoll_wait(efd[0], ...):
+> > > >>>        ep_send_events():
+> > > >>>           ep_scan_ready_list(depth=0):
+> > > >>>             ep_send_events_proc():
+> > > >>>                 ep_item_poll():
+> > > >>>                   ep_scan_ready_list(depth=1):
+> > > >>>                     ep_poll_safewake():
+> > > >>>                       ep_poll_callback()
+> > > >>>                         list_add_tail(&epi, &epi->rdllist);
+> > > >>>                         ^^^^^^
+> > > >>>                         repeated event
+> > > >>>
+> > > >>>
+> > > >>> In your patch you forbid wakeup for the cases, where depth != 0, i.e.
+> > > >>> for all nested cases. That seems clear.  But what if we can go further
+> > > >>> and remove the whole chunk, which seems excessive:
+> > > >>>
+> > > >>> @@ -885,26 +886,11 @@ static __poll_t ep_scan_ready_list(struct
+> > > >>> eventpoll *ep,
+> > > >>>
+> > > >>> -
+> > > >>> -       if (!list_empty(&ep->rdllist)) {
+> > > >>> -               /*
+> > > >>> -                * Wake up (if active) both the eventpoll wait list and
+> > > >>> -                * the ->poll() wait list (delayed after we release the
+> > > >>> lock).
+> > > >>> -                */
+> > > >>> -               if (waitqueue_active(&ep->wq))
+> > > >>> -                       wake_up(&ep->wq);
+> > > >>> -               if (waitqueue_active(&ep->poll_wait))
+> > > >>> -                       pwake++;
+> > > >>> -       }
+> > > >>>         write_unlock_irq(&ep->lock);
+> > > >>>
+> > > >>>         if (!ep_locked)
+> > > >>>                 mutex_unlock(&ep->mtx);
+> > > >>>
+> > > >>> -       /* We have to call this outside the lock */
+> > > >>> -       if (pwake)
+> > > >>> -               ep_poll_safewake(&ep->poll_wait);
+> > > >>>
+> > > >>>
+> > > >>> I reason like that: by the time we've reached the point of scanning events
+> > > >>> for readiness all wakeups from ep_poll_callback have been already fired and
+> > > >>> new events have been already accounted in ready list (ep_poll_callback()
+> > > >>> calls
+> > > >>> the same ep_poll_safewake()). Here, frankly, I'm not 100% sure and probably
+> > > >>> missing some corner cases.
+> > > >>>
+> > > >>> Thoughts?
+> > > >>
+> > > >> So the: 'wake_up(&ep->wq);' part, I think is about waking up other
+> > > >> threads that may be in waiting in epoll_wait(). For example, there may
+> > > >> be multiple threads doing epoll_wait() on the same epoll fd, and the
+> > > >> logic above seems to say thread 1 may have processed say N events and
+> > > >> now its going to to go off to work those, so let's wake up thread 2 now
+> > > >> to handle the next chunk.
+> > > >
+> > > > Not quite. Thread which calls ep_scan_ready_list() processes all the
+> > > > events, and while processing those, removes them one by one from the
+> > > > ready list.  But if event mask is !0 and event belongs to
+> > > > Level Triggered Mode descriptor (let's say default mode) it tails event
+> > > > again back to the list (because we are in level mode, so event should
+> > > > be there).  So at the end of this traversing loop ready list is likely
+> > > > not empty, and if so, wake up again is called for nested epoll fds.
+> > > > But, those nested epoll fds should get already all the notifications
+> > > > from the main event callback ep_poll_callback(), regardless any thread
+> > > > which traverses events.
+> > > >
+> > > > I suppose this logic exists for decades, when Davide (the author) was
+> > > > reshuffling the code here and there.
+> > > >
+> > > > But I do not feel confidence to state that this extra wakeup is bogus,
+> > > > I just have a gut feeling that it looks excessive.
+> > >
+> > > Note that I was talking about the wakeup done on ep->wq not ep->poll_wait.
+> > > The path that I'm concerned about is let's say that there are N events
+> > > queued on the ready list. A thread that was woken up in epoll_wait may
+> > > decide to only process say N/2 of then. Then it will call wakeup on ep->wq
+> > > and this will wakeup another thread to process the remaining N/2. Without
+> > > the wakeup, the original thread isn't going to process the events until
+> > > it finishes with the original N/2 and gets back to epoll_wait(). So I'm not
+> > > sure how important that path is but I wanted to at least note the change
+> > > here would impact that behavior.
+> > >
+> > > Thanks,
+> > >
+> > > -Jason
+> > >
+> > >
+> > > >
+> > > >> So I think removing all that even for the
+> > > >> depth 0 case is going to change some behavior here. So perhaps, it
+> > > >> should be removed for all depths except for 0? And if so, it may be
+> > > >> better to make 2 patches here to separate these changes.
+> > > >>
+> > > >> For the nested wakeups, I agree that the extra wakeups seem unnecessary
+> > > >> and it may make sense to remove them for all depths. I don't think the
+> > > >> nested epoll semantics are particularly well spelled out, and afaict,
+> > > >> nested epoll() has behaved this way for quite some time. And the current
+> > > >> behavior is not bad in the way that a missing wakeup or false negative
+> > > >> would be.
+> > > >
+> > > > That's 100% true! For edge mode extra wake up is not a bug, not optimal
+> > > > for userspace - yes, but that can't lead to any lost wakeups.
+> > > >
+> > > > --
+> > > > Roman
+> > > >
+> >
+> > I tried to remove the whole chunk of code that Roman said, and it
+> > seems that there
+> > are no obvious problems with the two test programs below:
 
-I'm not sure I agree that the limit is in place *forever* -- it's
-generally not a break in compatibility to convert an error into a
-success (though, there are counterexamples such as mknod(2) -- but that
-was a very specific case).
+I recall this message, the test case 9/25/26 of epoll-wakeup (on
+github) are failed while
+the whole chunk are removed.
 
-You're right that it would mean that some very new code won't run on
-very ancient kernels (assuming we ever pass around structs that
-massive), but there should be a reasonable trade-off here IMHO.
+Apply the original patch, all tests passed.
 
-If we allow very large sizes, a program could probably DoS the kernel by
-allocating a moderately-large block of memory and then spawning a bunch
-of threads that all cause the kernel to re-check that the same 1GB block
-of memory is zeroed. I haven't tried, but it seems like it's best to
-avoid the possibility altogether.
+> >
+> > Test case 1:
+> >            t0
+> >             |
+> >            e0
+> >             |
+> >            e1 (et)
+> >             |
+> >            s0 (lt)
+> >
+> > When s0 is readable, the thread 0 can only read once event from e0.
+> >
+> > #include <stdio.h>
+> > #include <unistd.h>
+> > #include <sys/epoll.h>
+> > #include <sys/socket.h>
+> >
+> > int main(int argc, char *argv[])
+> > {
+> >     int sfd[2];
+> >     int efd[2];
+> >     int nfds;
+> >     struct epoll_event e;
+> >
+> >     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
+> >         goto out;
+> >
+> >     efd[0] = epoll_create(1);
+> >     if (efd[0] < 0)
+> >         goto out;
+> >
+> >     efd[1] = epoll_create(1);
+> >     if (efd[1] < 0)
+> >         goto out;
+> >
+> >     e.events = EPOLLIN;
+> >     if (epoll_ctl(efd[1], EPOLL_CTL_ADD, sfd[0], &e) < 0)
+> >         goto out;
+> >
+> >     e.events = EPOLLIN | EPOLLET;
+> >     if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
+> >         goto out;
+> >
+> >     if (write(sfd[1], "w", 1) != 1)
+> >         goto out;
+> >
+> >     nfds = epoll_wait(efd[0], &e, 1, 0);
+> >     if (nfds != 1)
+> >         goto out;
+> >
+> >     nfds = epoll_wait(efd[0], &e, 1, 0);
+> >     if (nfds != 0)
+> >         goto out;
+> >
+> >     nfds = epoll_wait(efd[1], &e, 1, 0);
+> >     if (nfds != 1)
+> >         goto out;
+> >
+> >     nfds = epoll_wait(efd[1], &e, 1, 0);
+> >     if (nfds != 1)
+> >         goto out;
+> >
+> >     close(efd[1]);
+> >     close(efd[0]);
+> >     close(sfd[0]);
+> >     close(sfd[1]);
+> >
+> >     printf("PASS\n");
+> >     return 0;
+> >
+> > out:
+> >     printf("FAIL\n");
+> >     return -1;
+> > }
+> >
+> > Test case 2:
+> >            t0  t1
+> >             \   /
+> >              e0
+> >             /   \
+> >     (et) e1   e2 (et)
+> >            |      |
+> >      (lt) s0    s2 (lt)
+> >
+> > When s0 and s2 are readable, both thread 0 and thread 1 can read an
+> > event from e0.
+> >
+> > #include <stdio.h>
+> > #include <unistd.h>
+> > #include <pthread.h>
+> > #include <sys/epoll.h>
+> > #include <sys/socket.h>
+> >
+> > static int efd[3];
+> > static int sfd[4];
+> > static int count;
+> >
+> > static void *
+> > thread_handler(void *data)
+> > {
+> >     struct epoll_event e;
+> >
+> >     if (epoll_wait(efd[0], &e, 1, -1) == 1)
+> >         count++;
+> >
+> >     return NULL;
+> > }
+> >
+> > static void *
+> > emit_handler(void *data)
+> > {
+> >     usleep (100000);
+> >
+> >     write(sfd[1], "w", 1);
+> >     write(sfd[3], "w", 1);
+> >
+> >     return NULL;
+> > }
+> >
+> > int main(int argc, char *argv[])
+> > {
+> >     struct epoll_event e;
+> >     pthread_t tw, te;
+> >
+> >     if (socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[0]) < 0)
+> >         goto out;
+> >
+> >     if (socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[2]) < 0)
+> >         goto out;
+> >
+> >     efd[0] = epoll_create(1);
+> >     if (efd[0] < 0)
+> >         goto out;
+> >
+> >     efd[1] = epoll_create(1);
+> >     if (efd[1] < 0)
+> >         goto out;
+> >
+> >     efd[2] = epoll_create(1);
+> >     if (efd[2] < 0)
+> >         goto out;
+> >
+> >     e.events = EPOLLIN;
+> >     if (epoll_ctl(efd[1], EPOLL_CTL_ADD, sfd[0], &e) < 0)
+> >         goto out;
+> >
+> >     e.events = EPOLLIN;
+> >     if (epoll_ctl(efd[2], EPOLL_CTL_ADD, sfd[2], &e) < 0)
+> >         goto out;
+> >
+> >     e.events = EPOLLIN | EPOLLET;
+> >     if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
+> >         goto out;
+> >
+> >     e.events = EPOLLIN | EPOLLET;
+> >     if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[2], &e) < 0)
+> >         goto out;
+> >
+> >     if (pthread_create(&tw, NULL, thread_handler, NULL) < 0)
+> >         goto out;
+> >
+> >     if (pthread_create(&te, NULL, emit_handler, NULL) < 0)
+> >         goto out;
+> >
+> >     if (epoll_wait(efd[0], &e, 1, -1) == 1)
+> >         count++;
+> >
+> >     if (pthread_join(tw, NULL) < 0)
+> >         goto out;
+> >
+> >     if (count != 2)
+> >         goto out;
+> >
+> >     close(efd[0]);
+> >     close(efd[1]);
+> >     close(efd[2]);
+> >     close(sfd[0]);
+> >     close(sfd[1]);
+> >     close(sfd[2]);
+> >     close(sfd[3]);
+> >
+> >     printf ("PASS\n");
+> >     return 0;
+> >
+> > out:
+> >     printf("FAIL\n");
+> >     return -1;
+> > }
+> >
+> > t0: thread0
+> > t1: thread1
+> > e0: epoll0 (efd[0])
+> > e1: epoll1 (efd[1])
+> > e2: epoll2 (efd[2])
+> > s0: socket0 (sfd[0])
+> > s2: socket2 (sfd[2])
+> >
+> > Is it possible to prove that this modification is correct, or any
+> > other corner cases are missing?
+> >
+> > --
+> > Best regards!
+> > Hev
+> > https://hev.cc
+>
+>
+>
+> --
+> Best regards!
+> Hev
+> https://hev.cc
 
-> > +	}
-> > +	/* Copy the interoperable parts of the struct. */
-> > +	if (__copy_to_user(dst, src, size))
-> > +		return -EFAULT;
->=20
-> I think I understand why you put this last instead of handling the
-> buffer in the "natural" order. However,
-> I'm wondering whether we should actually do this copy before checking
-> that the extra kernel bytes are 0 - the user will still be told that
-> there was some extra information via the -EFBIG/-E2BIG return, but maybe
-> in some cases the part he understands is good enough. But I also guess
-> we have to look to existing users to see whether that would prevent them
-> from being converted to using this helper.
->=20
-> linux-api folks, WDYT?
 
-Regarding the order, I just copied what sched and perf already do. I
-wouldn't mind doing it the other way around -- though I am a little
-cautious about implicitly making guarantees like that. The syscall that
-uses copy_struct_to_user() might not want to make that guarantee (it
-might not make sense for them), and there are some -E2BIG returns that
-won't result in data being copied (usize > PAGE_SIZE).
 
-As for feedback, this is syscall-dependent at the moment. The sched and
-perf users explicitly return the size of the kernel structure (by
-overwriting uattr->size if -E2BIG is returned) for copies in either
-direction. So users arguably already have some kind of feedback about
-size issues. clone3() on the other hand doesn't do that (though it
-doesn't copy anything to user-space so this isn't relevant to this
-particular question).
-
-Effectively, I'd like to see someone argue that this is something that
-they would personally want (before we do it).
-
-> > +	return 0;
->=20
-> Maybe more useful to "return size;", some users might want to know/pass
-> on how much was actually copied.
-
-Even though it is "just" min(ksize, usize), I don't see any harm in
-returning it. Will do.
-
-> > +}
-> > +EXPORT_SYMBOL(copy_struct_to_user);
->=20
-> Can't we wait with this until a modular user shows up? The primary users
-> are syscalls, which can't be modular AFAIK.
-
-Yeah, I'll drop it. You could use them for ioctl()s but we can always
-add EXPORT_SYMBOL() later.
-
-> > +/**
-> > + * copy_struct_from_user: copy a struct from user space
-> > + * @dst:   Destination address, in kernel space. This buffer must be @=
-ksize
-> > + *         bytes long.
-> > + * @ksize: Size of @dst struct.
-> > + * @src:   Source address, in user space.
-> > + * @usize: (Alleged) size of @src struct.
-> > + *
-> > + * Copies a struct from user space to kernel space, in a way that guar=
-antees
-> > + * backwards-compatibility for struct syscall arguments (as long as fu=
-ture
-> > + * struct extensions are made such that all new fields are *appended* =
-to the
-> > + * old struct, and zeroed-out new fields have the same meaning as the =
-old
-> > + * struct).
-> > + *
-> > + * @ksize is just sizeof(*dst), and @usize should've been passed by us=
-er space.
-> > + * The recommended usage is something like the following:
-> > + *
-> > + *   SYSCALL_DEFINE2(foobar, const struct foo __user *, uarg, size_t, =
-usize)
-> > + *   {
-> > + *      int err;
-> > + *      struct foo karg =3D {};
-> > + *
-> > + *      err =3D copy_struct_from_user(&karg, sizeof(karg), uarg, size);
-> > + *      if (err)
-> > + *        return err;
-> > + *
-> > + *      // ...
-> > + *   }
-> > + *
-> > + * There are three cases to consider:
-> > + *  * If @usize =3D=3D @ksize, then it's copied verbatim.
-> > + *  * If @usize < @ksize, then the user space has passed an old struct=
- to a
-> > + *    newer kernel. The rest of the trailing bytes in @dst (@ksize - @=
-usize)
-> > + *    are to be zero-filled.
-> > + *  * If @usize > @ksize, then the user space has passed a new struct =
-to an
-> > + *    older kernel. The trailing bytes unknown to the kernel (@usize -=
- @ksize)
-> > + *    are checked to ensure they are zeroed, otherwise -E2BIG is retur=
-ned.
-> > + *
-> > + * Returns (in all cases, some data may have been copied):
-> > + *  * -E2BIG:  (@usize > @ksize) and there are non-zero trailing bytes=
- in @src.
-> > + *  * -E2BIG:  @usize is "too big" (at time of writing, >PAGE_SIZE).
-> > + *  * -EFAULT: access to user space failed.
-> > + */
-> > +int copy_struct_from_user(void *dst, size_t ksize,
-> > +			  const void __user *src, size_t usize)
-> > +{
-> > +	size_t size =3D min(ksize, usize);
-> > +	size_t rest =3D abs(ksize - usize);
->=20
-> As above.
->=20
-> > +	if (unlikely(usize > PAGE_SIZE))
-> > +		return -EFAULT;
->=20
-> As above.
->=20
-> > +	if (unlikely(!access_ok(src, usize)))
-> > +		return -EFAULT;
-> > +
-> > +	/* Deal with trailing bytes. */
-> > +	if (usize < ksize)
-> > +		memset(dst + size, 0, rest);
-> > +	else if (usize > ksize) {
-> > +		const void __user *addr =3D src + size;
-> > +		char buffer[BUFFER_SIZE] =3D {};
-> > +
-> > +		while (rest > 0) {
-> > +			size_t bufsize =3D min(rest, sizeof(buffer));
-> > +
-> > +			if (__copy_from_user(buffer, addr, bufsize))
-> > +				return -EFAULT;
-> > +			if (memchr_inv(buffer, 0, bufsize))
-> > +				return -E2BIG;
-> > +
-> > +			addr +=3D bufsize;
-> > +			rest -=3D bufsize;
-> > +		}
->=20
-> I'd create a __user_is_zero() helper for this - that way the two
-> branches in the two helpers become nicely symmetric, each just calling a
-> single helper that deals appropriately with the tail. And we can discuss
-> how to implement __user_is_zero() in another bikeshed.
-
-Will do.
-
->=20
-> > +	}
-> > +	/* Copy the interoperable parts of the struct. */
-> > +	if (__copy_from_user(dst, src, size))
-> > +		return -EFAULT;
->=20
-> If you do move up the __copy_to_user(), please move this as well - on
-> the kernel side, we certainly don't care that we copied some bytes to a
-> local buffer which we then ignore because the user had a non-zero tail.
-> But if __copy_to_user() is kept last in copy_struct_to_user(), this
-> should stay for symmetry.
-
-I will keep that in mind.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---npvprxbrvxn3jdkc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXDaXgAKCRCdlLljIbnQ
-Emf2AQDodc/azw4b6cwwZDqnqxOM8t8DCzDdAdvqvdxibvlNZQEA0FAaEvh21B5s
-gAEhZHoS+52ad2ZdUjMFOGVxov8Odg8=
-=BfyA
------END PGP SIGNATURE-----
-
---npvprxbrvxn3jdkc--
+-- 
+Best regards!
+Hev
+https://hev.cc
