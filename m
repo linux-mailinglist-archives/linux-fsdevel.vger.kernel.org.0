@@ -2,167 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2914AAC56
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 21:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D61DAAC57
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 21:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391506AbfIETuS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2391503AbfIETuS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 5 Sep 2019 15:50:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59162 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:60334 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388034AbfIETt0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 15:49:26 -0400
+        id S2388067AbfIETt1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 15:49:27 -0400
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8F37C10A8122;
+        by mx1.redhat.com (Postfix) with ESMTPS id E1282308FC20;
         Thu,  5 Sep 2019 19:49:26 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6861160166;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BBF88600F8;
         Thu,  5 Sep 2019 19:49:26 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E940B2253A0; Thu,  5 Sep 2019 15:49:17 -0400 (EDT)
+        id 08BE92253A3; Thu,  5 Sep 2019 15:49:18 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org,
         virtualization@lists.linux-foundation.org, miklos@szeredi.hu
 Cc:     linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
         vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com,
         mst@redhat.com
-Subject: [PATCH 08/18] virtiofs: Drain all pending requests during ->remove time
-Date:   Thu,  5 Sep 2019 15:48:49 -0400
-Message-Id: <20190905194859.16219-9-vgoyal@redhat.com>
+Subject: [PATCH 11/18] virtiofs: stop and drain queues after sending DESTROY
+Date:   Thu,  5 Sep 2019 15:48:52 -0400
+Message-Id: <20190905194859.16219-12-vgoyal@redhat.com>
 In-Reply-To: <20190905194859.16219-1-vgoyal@redhat.com>
 References: <20190905194859.16219-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Thu, 05 Sep 2019 19:49:26 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 05 Sep 2019 19:49:26 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When device is going away, drain all pending requests.
+During virtio_kill_sb() we first stop forget queue and drain it and then
+call fuse_kill_sb_anon(). This will result in sending DESTROY request to
+fuse server. Once finished, stop all the queues and drain one more time
+just to be sure and then free up the devices.
+
+Given drain queues will call flush_work() on various workers, remove this
+logic from virtio_free_devs().
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/virtio_fs.c | 83 ++++++++++++++++++++++++++++-----------------
- 1 file changed, 51 insertions(+), 32 deletions(-)
+ fs/fuse/virtio_fs.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 90e7b2f345e5..d5730a50b303 100644
+index 1ea0f889e804..a76bd5a04521 100644
 --- a/fs/fuse/virtio_fs.c
 +++ b/fs/fuse/virtio_fs.c
-@@ -63,6 +63,55 @@ static inline struct fuse_pqueue *vq_to_fpq(struct virtqueue *vq)
- 	return &vq_to_fsvq(vq)->fud->pq;
- }
+@@ -180,9 +180,6 @@ static void virtio_fs_free_devs(struct virtio_fs *fs)
+ 		if (!fsvq->fud)
+ 			continue;
  
-+static void virtio_fs_drain_queue(struct virtio_fs_vq *fsvq)
-+{
-+	WARN_ON(fsvq->in_flight < 0);
-+
-+	/* Wait for in flight requests to finish.*/
-+	while (1) {
-+		spin_lock(&fsvq->lock);
-+		if (!fsvq->in_flight) {
-+			spin_unlock(&fsvq->lock);
-+			break;
-+		}
-+		spin_unlock(&fsvq->lock);
-+		usleep_range(1000, 2000);
-+	}
-+
-+	flush_work(&fsvq->done_work);
-+	flush_delayed_work(&fsvq->dispatch_work);
-+}
-+
-+static inline void drain_hiprio_queued_reqs(struct virtio_fs_vq *fsvq)
-+{
-+	struct virtio_fs_forget *forget;
-+
-+	spin_lock(&fsvq->lock);
-+	while (1) {
-+		forget = list_first_entry_or_null(&fsvq->queued_reqs,
-+						struct virtio_fs_forget, list);
-+		if (!forget)
-+			break;
-+		list_del(&forget->list);
-+		kfree(forget);
-+	}
-+	spin_unlock(&fsvq->lock);
-+}
-+
-+static void virtio_fs_drain_all_queues(struct virtio_fs *fs)
-+{
-+	struct virtio_fs_vq *fsvq;
-+	int i;
-+
-+	for (i = 0; i < fs->nvqs; i++) {
-+		fsvq = &fs->vqs[i];
-+		if (i == VQ_HIPRIO)
-+			drain_hiprio_queued_reqs(fsvq);
-+
-+		virtio_fs_drain_queue(fsvq);
-+	}
-+}
-+
- /* Add a new instance to the list or return -EEXIST if tag name exists*/
- static int virtio_fs_add_instance(struct virtio_fs *fs)
- {
-@@ -511,6 +560,7 @@ static void virtio_fs_remove(struct virtio_device *vdev)
- 	struct virtio_fs *fs = vdev->priv;
- 
- 	virtio_fs_stop_all_queues(fs);
-+	virtio_fs_drain_all_queues(fs);
- 	vdev->config->reset(vdev);
- 	virtio_fs_cleanup_vqs(vdev, fs);
- 
-@@ -865,37 +915,6 @@ __releases(fiq->waitq.lock)
+-		flush_work(&fsvq->done_work);
+-		flush_delayed_work(&fsvq->dispatch_work);
+-
+ 		/* TODO need to quiesce/end_requests/decrement dev_count */
+ 		fuse_dev_free(fsvq->fud);
+ 		fsvq->fud = NULL;
+@@ -994,6 +991,8 @@ static int virtio_fs_fill_super(struct super_block *sb)
+ 		atomic_inc(&fc->dev_count);
  	}
- }
  
--static void virtio_fs_flush_hiprio_queue(struct virtio_fs_vq *fsvq)
--{
--	struct virtio_fs_forget *forget;
--
--	WARN_ON(fsvq->in_flight < 0);
--
--	/* Go through pending forget requests and free them */
--	spin_lock(&fsvq->lock);
--	while (1) {
--		forget = list_first_entry_or_null(&fsvq->queued_reqs,
--					struct virtio_fs_forget, list);
--		if (!forget)
--			break;
--		list_del(&forget->list);
--		kfree(forget);
--	}
--
--	spin_unlock(&fsvq->lock);
--
--	/* Wait for in flight requests to finish.*/
--	while (1) {
--		spin_lock(&fsvq->lock);
--		if (!fsvq->in_flight) {
--			spin_unlock(&fsvq->lock);
--			break;
--		}
--		spin_unlock(&fsvq->lock);
--		usleep_range(1000, 2000);
--	}
--}
--
- const static struct fuse_iqueue_ops virtio_fs_fiq_ops = {
- 	.wake_forget_and_unlock		= virtio_fs_wake_forget_and_unlock,
- 	.wake_interrupt_and_unlock	= virtio_fs_wake_interrupt_and_unlock,
-@@ -988,7 +1007,7 @@ static void virtio_kill_sb(struct super_block *sb)
- 	spin_lock(&fsvq->lock);
- 	fsvq->connected = false;
- 	spin_unlock(&fsvq->lock);
--	virtio_fs_flush_hiprio_queue(fsvq);
-+	virtio_fs_drain_all_queues(vfs);
++	/* Previous unmount will stop all queues. Start these again */
++	virtio_fs_start_all_queues(fs);
+ 	fuse_send_init(fc, init_req);
+ 	return 0;
+ 
+@@ -1026,6 +1025,12 @@ static void virtio_kill_sb(struct super_block *sb)
+ 	virtio_fs_drain_all_queues(vfs);
  
  	fuse_kill_sb_anon(sb);
++
++	/* fuse_kill_sb_anon() must have sent destroy. Stop all queues
++	 * and drain one more time and free fuse devices.
++	 */
++	virtio_fs_stop_all_queues(vfs);
++	virtio_fs_drain_all_queues(vfs);
  	virtio_fs_free_devs(vfs);
+ }
+ 
 -- 
 2.20.1
 
