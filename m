@@ -2,61 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8BAEAA7CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 17:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 415D8AA8D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 18:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389275AbfIEP5m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 11:57:42 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36903 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730753AbfIEP5m (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 11:57:42 -0400
-Received: by mail-io1-f68.google.com with SMTP id r4so5993339iop.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 08:57:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=pVhJ5FIkvUTqzEfYAQxgt1Rh/38UVxTZmdaXbmZsrMI=;
-        b=o1p9qyLKcPcyfBE+AhIss7wTrhwGKPjgKjyarN9gxMvMzS+sSIiVUp3B+7S7OQxfbk
-         qyIYAU93XmmSAlmKeAReSHTD1OQSgtX7NIwUDwWHoMbBqnUt+hqmuAijxWJiI6DCJAWe
-         dOhOiuZ+1wDfhtewfOWj7gJiljqlgmEs8ApJoj3QLmxqz+9XM9L1FUeAVpW0xSjS3qKZ
-         Twy0YJSEhhpbshoKxMUygw33P6owF1Y2WlswJ8047XPprYnLJYMh+twfFJeju7ASWjeI
-         OIrp+MxCiMDLVa2NSXwcttCM1BgE24E2niOxBWQQ1M+VVM3FIJPPTN1cMdNiv0DXJLys
-         A6Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=pVhJ5FIkvUTqzEfYAQxgt1Rh/38UVxTZmdaXbmZsrMI=;
-        b=TKEzXkxZeYaqUb0zDJTx5wn+epgMtmrQcKORstjO7+4c/2KgO4KJxiFAznMkPaKQYm
-         TB9tU5RmjFByxBibeZXdBbxwTl0TyZdnaFQsOU+7Wmcnzhw6l8GaLZyosY2DWCrnV1Pp
-         HRTrUjQSIEH+r69WL7KZ7h+7i6ReHkeWIgdRfPZ6euyKADFn6Dd3ANKENmO8J1txJg5B
-         T0QVhxgrTdS3VfqdFqw7nuZtuEwJs+UTzfHVxrnN+/9M9EXU7BkNxFFDnHHBBJl0tzeW
-         EJ2I3HvMC1/qzh7uJr9MyPD/Fb1qIWo4X3uqSDcqTYxcPA8d8KKAUxTtUCWcHYnaT3o6
-         MPxA==
-X-Gm-Message-State: APjAAAUFOVs2hAJMyxnKrBQ/RvNahdv+RxUH5aFsSnO0oYEfkQmFQaE4
-        Ma1RWZyf5LC2dJZAZYGXIGP4IJDp66IYgM79CQY=
-X-Google-Smtp-Source: APXvYqy6F0yE3R5ahT3e8J5Qc0qeG3KpXKKCFLCeMGEaKFVAm/V7GwCG5JrSZB7OPTFStaeGAenDKYXmy9F2KU3O2LU=
-X-Received: by 2002:a6b:b494:: with SMTP id d142mr1299875iof.156.1567699061519;
- Thu, 05 Sep 2019 08:57:41 -0700 (PDT)
+        id S1726626AbfIEQXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 12:23:50 -0400
+Received: from verein.lst.de ([213.95.11.211]:50105 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726008AbfIEQXt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 12:23:49 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 17F2468B05; Thu,  5 Sep 2019 18:23:44 +0200 (CEST)
+Date:   Thu, 5 Sep 2019 18:23:44 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        darrick.wong@oracle.com, hch@lst.de, linux-xfs@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 04/15] btrfs: Add a simple buffered iomap write
+Message-ID: <20190905162344.GA22450@lst.de>
+References: <20190905150650.21089-1-rgoldwyn@suse.de> <20190905150650.21089-5-rgoldwyn@suse.de>
 MIME-Version: 1.0
-Received: by 2002:ac0:8995:0:0:0:0:0 with HTTP; Thu, 5 Sep 2019 08:57:41 -0700 (PDT)
-Reply-To: peacemaurice55@gmail.com
-From:   Peace maurice <kojosunday816@gmail.com>
-Date:   Thu, 5 Sep 2019 15:57:41 +0000
-Message-ID: <CA+8_W+Pb2LkBZiKD-jZKNsfwvj=H1HmpOYwy7xXFcBQi40kjMA@mail.gmail.com>
-Subject: Dear
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190905150650.21089-5-rgoldwyn@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear,i am Peace Maurice,it would be great to know you,i have a very
-important and confidential matter that i want to discuss with
-you,reply me back for more discus.
+> Most of the code is "inspired" by
+> fs/btrfs/file.c. To keep the size small, all removals are in
+> following patches.
 
-Regards,
-Peace.
+Wouldn't it be better to massage the existing code into a form where you
+can fairly easily switch over to iomap?  That is start refactoring the
+code into helpers that are mostly reusable and then just have a patch
+switching over.  That helps reviewing what actually changes.  It's
+also what we did for XFS.
+
+
+> +		if (!ordered) {
+> +			break;
+> +		}
+
+No need for the braces.
+
+> +static void btrfs_buffered_page_done(struct inode *inode, loff_t pos,
+> +		unsigned copied, struct page *page,
+> +		struct iomap *iomap)
+> +{
+> +	if (!page)
+> +		return;
+> +	SetPageUptodate(page);
+> +	ClearPageChecked(page);
+> +	set_page_dirty(page);
+> +	get_page(page);
+> +}
+
+Thіs looks really strange.  Can you explain me why you need the
+manual dirtying and SetPageUptodate, and an additional page refcount
+here?
+
+> +	if (ret < 0) {
+> +		/*
+> +		 * Space allocation failed. Let's check if we can
+> +		 * continue I/O without allocations
+> +		 */
+> +		if ((BTRFS_I(inode)->flags & (BTRFS_INODE_NODATACOW |
+> +						BTRFS_INODE_PREALLOC)) &&
+> +				check_can_nocow(BTRFS_I(inode), pos,
+> +					&write_bytes) > 0) {
+> +			bi->nocow = true;
+> +			/*
+> +			 * our prealloc extent may be smaller than
+> +			 * write_bytes, so scale down.
+> +			 */
+> +			bi->reserved_bytes = round_up(write_bytes +
+> +					sector_offset,
+> +					fs_info->sectorsize);
+> +		} else {
+> +			goto error;
+> +		}
+
+Maybe move the goto into the inverted if so you can reduce indentation
+by one level?
+
+> +		} else {
+> +			u64 __pos = round_down(pos + written, fs_info->sectorsize);
+
+Line over > 80 characters, and a somewhat odd variabke name.
+
+> +	if (bi->nocow) {
+> +		struct btrfs_root *root = BTRFS_I(inode)->root;
+> +		btrfs_end_write_no_snapshotting(root);
+> +		if (written > 0) {
+> +			u64 start = round_down(pos, fs_info->sectorsize);
+> +			u64 end = round_up(pos + written, fs_info->sectorsize) - 1;
+
+Line > 80 chars.
+
+> +			set_extent_bit(&BTRFS_I(inode)->io_tree, start, end,
+> +					EXTENT_NORESERVE, NULL, NULL, GFP_NOFS);
+> +		}
+> +
+> +	}
+> +	btrfs_delalloc_release_extents(BTRFS_I(inode), bi->reserved_bytes,
+> +			true);
+> +
+> +	if (written < fs_info->nodesize)
+> +		btrfs_btree_balance_dirty(fs_info);
+> +
+> +	extent_changeset_free(bi->data_reserved);
+> +	kfree(bi);
+> +	return ret;
+> +}
+
+> +static const struct iomap_ops btrfs_buffered_iomap_ops = {
+> +	.iomap_begin            = btrfs_buffered_iomap_begin,
+> +	.iomap_end              = btrfs_buffered_iomap_end,
+> +};
+> +
+> +size_t btrfs_buffered_iomap_write(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +	ssize_t written;
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	written = iomap_file_buffered_write(iocb, from, &btrfs_buffered_iomap_ops);
+
+no empty line after the variable declarations?  Also this adds a > 80
+character line.
+
+> +	if (written > 0)
+> +		iocb->ki_pos += written;
+
+I wonder if we should fold the ki_pos update into
+iomap_file_buffered_write.  But the patch looks fine even without that.
+
+Also any reason to not name this function btrfs_buffered_write and
+keep it in file.c with the rest of the write code?
+
+
