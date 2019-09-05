@@ -2,162 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EBAEAA97E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 18:58:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 631C6AA98C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 19:01:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388100AbfIEQ6j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 12:58:39 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:39300 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730258AbfIEQ6j (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:58:39 -0400
-Received: by mail-yw1-f65.google.com with SMTP id n11so1028205ywn.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 09:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=AVUVRGDyuKNEGiNm9nCBdT2Xlc/MKKgTSAov2l6n83s=;
-        b=bQiJZqqVfd7csK83h3DoiHbI4NOiOYmNFyYVqCQs+RR63WbARcw4s1vo58Fq5xtbif
-         eP2kaqWNSk6tyFM2WvU3vs34ZNnBNveplwtijaqmYIgQr6etxQl8KcA77xE1nK4X3OGd
-         42RaDtuutbOWkHk5E0kIx0FudHLyjNBooy7GUklwIg+jlDPl5KQJ6n6xF56piunqOgiG
-         GkNJlZ0I/bceNc3DoifT//HajQD4ZJDuzB1ODI4XNUkIBuNBMJlW6NB327fOEpcA7sf7
-         rTAISvDXAwm7qAY7pHrnEXZwn6Fd+tibBG5P9riNx2wAvrMYc49hhKKm9F8bo7Xs6wSJ
-         YdHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=AVUVRGDyuKNEGiNm9nCBdT2Xlc/MKKgTSAov2l6n83s=;
-        b=Je/NCsTVFCT6OeQzDfCOQ6z3WeWMAUAqBuRIDwNvAipAsosJWbqPfU9BThThdRrg56
-         TkRZNxHQRJVU1k7HzHtwhzrEeE9DqeqP4xv6+e99SuDRYMk+T0jPyc39yP+nb1iQCgnq
-         KF/kcKAMrQbiLgTu1eLjZtS+oprB28j8kE8vGqrCg+FR+N/V0KRwc9hWQK+d30Ca51ii
-         NWPWkhyL52h3IctCUsPwGwpaQ4Z5uK5KtKGj6Iimxy//pJcaJr8JI1R79nYpCkzpldpy
-         X74sgnYLxhC7Okkr6x+LOpOt9c/yJt2Vg7MKlq0oAirT8l0CPQ+bsJpl64AGlredAWej
-         yhVw==
-X-Gm-Message-State: APjAAAWNmLFkvock197qFhHZY0jgJx81qFkZ7sFzSk0Tw0XyozQ0vo5U
-        0kPupVbnOkVnxwRbAluRDpNKdGkzMLimoF1Z+MTfGyFURISrWw==
-X-Google-Smtp-Source: APXvYqzyS+rpfDaFGyLq+z1DE1Zi8cGSGntCiCb8qnCCgzu3whYQj8qC8lOd+48RvXGCLm/69zAa7aZQ2dM7XSIOO0Y=
-X-Received: by 2002:a0d:d596:: with SMTP id x144mr2925630ywd.69.1567702718228;
- Thu, 05 Sep 2019 09:58:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190829041132.26677-1-deepa.kernel@gmail.com>
- <CABeXuvoKD83B7iUqE33Y9E2OVtf61DKv-swZr-N=ozz-cMmGOA@mail.gmail.com>
- <CAOg9mSR25eAH7e1KhDZt_uscJSzyuSmELbCxgyh=-KWRxjZtcw@mail.gmail.com>
- <CABeXuvpe9vADLZUr4zHrH0izt=1BaLQvBMxAu=T1A2CV3AN4vA@mail.gmail.com>
- <CAK8P3a0NMUv2xOw=fCxJXo_2wbmBMG24Fst3U1LT-m7C8uxz0w@mail.gmail.com> <CABeXuvrm76iKnFrd7Wo=z4d0v7i7xT+Ta37D-mwVwy7-P3YyUg@mail.gmail.com>
-In-Reply-To: <CABeXuvrm76iKnFrd7Wo=z4d0v7i7xT+Ta37D-mwVwy7-P3YyUg@mail.gmail.com>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Thu, 5 Sep 2019 12:58:27 -0400
-Message-ID: <CAOg9mSS=V7cQqPMCj90LtudxhN7_owoEBKxkvsXjzdtu+R69hA@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs: Add support for timestamp limits
-To:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        id S2390906AbfIERBk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 13:01:40 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:61604 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733299AbfIERBk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 13:01:40 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id A0FCBA01CE;
+        Thu,  5 Sep 2019 19:01:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id l96lis2EinZ8; Thu,  5 Sep 2019 19:01:30 +0200 (CEST)
+Date:   Fri, 6 Sep 2019 03:01:06 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mike Marshall <hubcap@omnibond.com>
-Content-Type: text/plain; charset="UTF-8"
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190905170106.7j4nmgwnvkcwn6md@yavin.dot.cyphar.com>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
+ <20190905073205.GY2332@hirez.programming.kicks-ass.net>
+ <20190905092622.tlb6nn3uisssdfbu@yavin.dot.cyphar.com>
+ <20190905094305.GJ2349@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kmvm5dxbzyhfjvqj"
+Content-Disposition: inline
+In-Reply-To: <20190905094305.GJ2349@hirez.programming.kicks-ass.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I spoke to Walt Ligon about the versioning code, and also shared
-this thread with him. He isn't a fan of the versioning code.
-and we think it should go. As I read through the commit messages
-from when the versioning code was added, it relates to mtime
-on directories. If a directory is read, and it has enough entries,
-it might take several operations to collect all the entries. During
-this time the directory might change. The versioning is a way to
-tell that something changed between one of the operations...
 
-   commit: 7878027e9c2 (Oct 2004)
-     - added a directory version that is passed back from the server to
-       the client on each successful readdir call (happens to be the
-       directory's mtime encoded as an opaque uint64_t)
+--kmvm5dxbzyhfjvqj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We will work to see if we can figure out what we need to do to Orangefs
-on both the userspace side and the kernel module side to have all 64 bit
-time values.
+On 2019-09-05, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Thu, Sep 05, 2019 at 07:26:22PM +1000, Aleksa Sarai wrote:
+> > On 2019-09-05, Peter Zijlstra <peterz@infradead.org> wrote:
+> > > On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
+> > > > +
+> > > > +		while (rest > 0) {
+> > > > +			size_t bufsize =3D min(rest, sizeof(buffer));
+> > > > +
+> > > > +			if (__copy_from_user(buffer, addr, bufsize))
+> > > > +				return -EFAULT;
+> > > > +			if (memchr_inv(buffer, 0, bufsize))
+> > > > +				return -E2BIG;
+> > > > +
+> > > > +			addr +=3D bufsize;
+> > > > +			rest -=3D bufsize;
+> > > > +		}
+> > >=20
+> > > The perf implementation uses get_user(); but if that is too slow, sur=
+ely
+> > > we can do something with uaccess_try() here?
+> >=20
+> > Is there a non-x86-specific way to do that (unless I'm mistaken only x86
+> > has uaccess_try() or the other *_try() wrappers)? The main "performance
+> > improvement" (if you can even call it that) is that we use memchr_inv()
+> > which finds non-matching characters more efficiently than just doing a
+> > loop.
+>=20
+> Oh, you're right, that's x86 only :/
 
-I've also read up some on the y2038 cleanup work that Arnd and Deepa
-have been doing...
+Though, I just had an idea -- am I wrong to think that the following
+would work just as well (without the need for an intermediate buffer)?
 
-Thanks to Arnd and Deepa for looking so deeply into the Orangefs
-userspace code...
+   if (memchr_inv((const char __force *) src + size, 0, rest))
+     return -E2BIG;
 
--Mike
+Or is this type of thing very much frowned upon? What if it was a
+separate memchr_inv_user() instead -- I feel as though there's not a
+strong argument for needing to use a buffer when we're single-passing
+the __user buffer and doing a basic boolean check.
 
-On Sat, Aug 31, 2019 at 6:50 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->
-> > I think it's unclear from the orangefs source code what the intention is,
-> > as there is a mixed of signed and unsigned types used for the inode
-> > stamps:
-> >
-> > #define encode_PVFS_time encode_int64_t
-> > #define encode_int64_t(pptr,x) do { \
-> >     *(int64_t*) *(pptr) = cpu_to_le64(*(x)); \
-> >     *(pptr) += 8; \
-> > } while (0)
-> > #define decode_PVFS_time decode_int64_t
-> > #define decode_int64_t(pptr,x) do { \
-> >     *(x) = le64_to_cpu(*(int64_t*) *(pptr)); \
-> >     *(pptr) += 8; \
-> > } while (0)
-> >
-> > This suggests that making it unsigned may have been an accident.
-> >
-> > Then again,  it's clearly and consistently printed as unsigned in
-> > user space:
-> >
-> >         gossip_debug(
-> >             GOSSIP_GETATTR_DEBUG, " VERSION is %llu, mtime is %llu\n",
-> >             llu(s_op->attr.mtime), llu(resp_attr->mtime));
->
-> I think I had noticed these two and decided maybe the intention was to
-> use unsigned types.
->
-> > A related issue I noticed is this:
-> >
-> > PVFS_time PINT_util_mktime_version(PVFS_time time)
-> > {
-> >     struct timeval t = {0,0};
-> >     PVFS_time version = (time << 32);
-> >
-> >     gettimeofday(&t, NULL);
-> >     version |= (PVFS_time)t.tv_usec;
-> >     return version;
-> > }
-> > PVFS_time PINT_util_mkversion_time(PVFS_time version)
-> > {
-> >     return (PVFS_time)(version >> 32);
-> > }
-> > static PINT_sm_action getattr_verify_attribs(
-> >         struct PINT_smcb *smcb, job_status_s *js_p)
-> > {
-> > ...
-> >     resp_attr->mtime = PINT_util_mkversion_time(s_op->attr.mtime);
-> > ...
-> > }
-> >
-> > which suggests that at least for some purposes, the mtime field
-> > is only an unsigned 32-bit number (1970..2106). From my readiing,
-> > this affects the on-disk format, but not the protocol implemented
-> > by the kernel.
-> >
-> > atime and ctime are apparently 64-bit, but mtime is only 32-bit
-> > seconds, plus a 32-bit 'version'. I suppose the server could be
-> > fixed to allow a larger range, but probably would take it out of
-> > the 'version' bits, not the upper half.
->
-> I had missed this part. Thanks.
->
-> > To be on the safe side, I suppose the kernel can only assume
-> > an unsigned 32-bit range to be available. If the server gets
-> > extended beyond that, it would have to pass a feature flag.
->
-> This makes sense to me also. And, as Arnd pointed out on the IRC, if
-> there are negative timestamps that are already in use, this will be a
-> problem for those use cases.
-> I can update tha patch to use limits 0-u32_max.
->
-> -Deepa
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--kmvm5dxbzyhfjvqj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXE/TgAKCRCdlLljIbnQ
+Eo4lAP4vz7qxi6aZbZTeed0ZbnEtPkuMnCkFo0v18rHfgnM6xgD/bV/SICkzrufH
+DwNHgRAu5z8daivqeybakfQqvQMhpA4=
+=SteT
+-----END PGP SIGNATURE-----
+
+--kmvm5dxbzyhfjvqj--
