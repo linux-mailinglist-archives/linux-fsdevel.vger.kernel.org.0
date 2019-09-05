@@ -2,76 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2324AAC5A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 21:50:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 876F3AAC87
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Sep 2019 21:56:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391492AbfIETuR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Sep 2019 15:50:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60340 "EHLO mx1.redhat.com"
+        id S2391559AbfIET4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Sep 2019 15:56:54 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:58904 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388269AbfIETt1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Sep 2019 15:49:27 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1733174AbfIET4y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Sep 2019 15:56:54 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 01828308FBAC;
-        Thu,  5 Sep 2019 19:49:27 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CFF0660127;
-        Thu,  5 Sep 2019 19:49:26 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 2B9612253A9; Thu,  5 Sep 2019 15:49:18 -0400 (EDT)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, miklos@szeredi.hu
-Cc:     linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com,
-        mst@redhat.com
-Subject: [PATCH 17/18] virtiofs: Remove TODO to quiesce/end_requests
-Date:   Thu,  5 Sep 2019 15:48:58 -0400
-Message-Id: <20190905194859.16219-18-vgoyal@redhat.com>
-In-Reply-To: <20190905194859.16219-1-vgoyal@redhat.com>
-References: <20190905194859.16219-1-vgoyal@redhat.com>
+        by mx2.mailbox.org (Postfix) with ESMTPS id DCACBA0D19;
+        Thu,  5 Sep 2019 21:56:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
+        with ESMTP id MUcBvZslYqK5; Thu,  5 Sep 2019 21:56:42 +0200 (CEST)
+Date:   Fri, 6 Sep 2019 05:56:18 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190905195618.pwzgvuzadkfpznfz@yavin.dot.cyphar.com>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
+ <20190905180750.GQ1131@ZenIV.linux.org.uk>
+ <20190905182303.7f6bxpa2enbgcegv@wittgenstein>
+ <20190905182801.GR1131@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 05 Sep 2019 19:49:27 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lkob4nx2s4nikwgg"
+Content-Disposition: inline
+In-Reply-To: <20190905182801.GR1131@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We now stop queues and drain all the pending requests from all virtqueues.
-So this is not a TODO anymore.
 
-Got rid of incrementing fc->dev_count as well. It did not seem meaningful
-for virtio_fs.
+--lkob4nx2s4nikwgg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/fuse/virtio_fs.c | 2 --
- 1 file changed, 2 deletions(-)
+On 2019-09-05, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Thu, Sep 05, 2019 at 08:23:03PM +0200, Christian Brauner wrote:
+>=20
+> > Because every caller of that function right now has that limit set
+> > anyway iirc. So we can either remove it from here and place it back for
+> > the individual callers or leave it in the helper.
+> > Also, I'm really asking, why not? Is it unreasonable to have an upper
+> > bound on the size (for a long time probably) or are you disagreeing with
+> > PAGE_SIZE being used? PAGE_SIZE limit is currently used by sched, perf,
+> > bpf, and clone3 and in a few other places.
+>=20
+> For a primitive that can be safely used with any size (OK, any within
+> the usual 2Gb limit)?  Why push the random policy into the place where
+> it doesn't belong?
+>=20
+> Seriously, what's the point?  If they want to have a large chunk of
+> userland memory zeroed or checked for non-zeroes - why would that
+> be a problem?
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index c483482185b6..eadaea6eb8e2 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -208,7 +208,6 @@ static void virtio_fs_free_devs(struct virtio_fs *fs)
- 		if (!fsvq->fud)
- 			continue;
- 
--		/* TODO need to quiesce/end_requests/decrement dev_count */
- 		fuse_dev_free(fsvq->fud);
- 		fsvq->fud = NULL;
- 	}
-@@ -1022,7 +1021,6 @@ static int virtio_fs_fill_super(struct super_block *sb)
- 		if (i == VQ_REQUEST)
- 			continue; /* already initialized */
- 		fuse_dev_install(fsvq->fud, fc);
--		atomic_inc(&fc->dev_count);
- 	}
- 
- 	/* Previous unmount will stop all queues. Start these again */
--- 
-2.20.1
+Thinking about it some more, there isn't really any r/w amplification --
+so there isn't much to gain by passing giant structs. Though, if we are
+going to permit 2GB buffers, isn't that also an argument to use
+memchr_inv()? :P
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--lkob4nx2s4nikwgg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXFoXwAKCRCdlLljIbnQ
+EkH6AP4mTXfGXldo6DW9pN3b8QgoKfRKIsKKRirvrHzSGLXpkgEAgJQFw7jvGxM5
+R7P96Ylo52dN3tmTa+41vZfPhMozHwA=
+=OHll
+-----END PGP SIGNATURE-----
+
+--lkob4nx2s4nikwgg--
