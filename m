@@ -2,159 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1353AAC2A8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2019 00:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F251AC2E7
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2019 01:15:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405140AbfIFWoj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 18:44:39 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:34998 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405124AbfIFWoi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 18:44:38 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 2F49CA018F;
-        Sat,  7 Sep 2019 00:44:35 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id ah2HSFJ0Uz9J; Sat,  7 Sep 2019 00:44:31 +0200 (CEST)
-Date:   Sat, 7 Sep 2019 08:44:10 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Steve Grubb <sgrubb@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut S autereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Add support for O_MAYEXEC
-Message-ID: <20190906224410.lffd6l5lnm4z3hht@yavin.dot.cyphar.com>
-References: <20190906152455.22757-1-mic@digikod.net>
- <2989749.1YmIBkDdQn@x2>
- <87mufhckxv.fsf@oldenburg2.str.redhat.com>
- <1802966.yheqmZt8Si@x2>
- <C95B704C-F84F-4341-BDE7-CD70C5DDBEEF@amacapital.net>
+        id S2392784AbfIFXPb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 19:15:31 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:54774 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732440AbfIFXPb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Sep 2019 19:15:31 -0400
+Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9307A36115B;
+        Sat,  7 Sep 2019 09:15:27 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1i6NRu-0004fL-K6; Sat, 07 Sep 2019 09:15:26 +1000
+Date:   Sat, 7 Sep 2019 09:15:26 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Lukas Czerner <lczerner@redhat.com>
+Subject: Re: [Q] gfs2: mmap write vs. punch_hole consistency
+Message-ID: <20190906231526.GA16973@dread.disaster.area>
+References: <20190906205241.2292-1-agruenba@redhat.com>
+ <20190906212758.GO1119@dread.disaster.area>
+ <CAHc6FU5BxOHkgHKKWTL7jFq0oL4TbAPpe49QDB6X35ndjYTWKQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wklcrvy7q5jmmd7k"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <C95B704C-F84F-4341-BDE7-CD70C5DDBEEF@amacapital.net>
+In-Reply-To: <CAHc6FU5BxOHkgHKKWTL7jFq0oL4TbAPpe49QDB6X35ndjYTWKQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
+        a=7-415B0cAAAA:8 a=8fbbZ4Ib-xQoSIbtoJoA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Sep 06, 2019 at 11:48:31PM +0200, Andreas Gruenbacher wrote:
+> On Fri, Sep 6, 2019 at 11:28 PM Dave Chinner <david@fromorbit.com> wrote:
+> > On Fri, Sep 06, 2019 at 10:52:41PM +0200, Andreas Gruenbacher wrote:
+> > > Hi,
+> > >
+> > > I've just fixed a mmap write vs. truncate consistency issue on gfs on
+> > > filesystems with a block size smaller that the page size [1].
+> > >
+> > > It turns out that the same problem exists between mmap write and hole
+> > > punching, and since xfstests doesn't seem to cover that,
+> >
+> > AFAIA, fsx exercises it pretty often. Certainly it's found problems
+> > with XFS in the past w.r.t. these operations.
+> >
+> > > I've written a
+> > > new test [2].
+> >
+> > I suspect that what we really want is a test that runs
+> > _test_generic_punch using mmap rather than pwrite...
+> >
+> > > Ext4 and xfs both pass that test; they both apparently
+> > > mark the pages that have a hole punched in them as read-only so that
+> > > page_mkwrite is called before those pages can be written to again.
+> >
+> > XFS invalidates the range being hole punched (see
+> > xfs_flush_unmap_range() under XFS_MMAPLOCK_EXCL, which means any
+> > attempt to fault that page back in will block on the MMAPLOCK until
+> > the hole punch finishes.
+> 
+> This isn't about writes during the hole punching, this is about writes
+> once the hole is punched.
 
---wklcrvy7q5jmmd7k
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+How do you prevent this:
 
-On 2019-09-06, Andy Lutomirski <luto@amacapital.net> wrote:
-> > On Sep 6, 2019, at 12:07 PM, Steve Grubb <sgrubb@redhat.com> wrote:
-> >=20
-> >> On Friday, September 6, 2019 2:57:00 PM EDT Florian Weimer wrote:
-> >> * Steve Grubb:
-> >>> Now with LD_AUDIT
-> >>> $ LD_AUDIT=3D/home/sgrubb/test/openflags/strip-flags.so.0 strace ./te=
-st
-> >>> 2>&1 | grep passwd openat(3, "passwd", O_RDONLY)           =3D 4
-> >>>=20
-> >>> No O_CLOEXEC flag.
-> >>=20
-> >> I think you need to explain in detail why you consider this a problem.
-> >=20
-> > Because you can strip the O_MAYEXEC flag from being passed into the ker=
-nel.=20
-> > Once you do that, you defeat the security mechanism because it never ge=
-ts=20
-> > invoked. The issue is that the only thing that knows _why_ something is=
- being=20
-> > opened is user space. With this mechanism, you can attempt to pass this=
-=20
-> > reason to the kernel so that it may see if policy permits this. But you=
- can=20
-> > just remove the flag.
->=20
-> I=E2=80=99m with Florian here. Once you are executing code in a process, =
-you
-> could just emulate some other unapproved code. This series is not
-> intended to provide the kind of absolute protection you=E2=80=99re imagin=
-ing.
+hole punch process:		other process
+  clean page
+  invalidate page
+				write page fault
+				instantiate new page
+				page_mkwrite
+				page dirty
+  do hole punch
+  overwrite hole
 
-I also agree, though I think that there is a separate argument to be
-made that there are two possible problems with O_MAYEXEC (which might
-not be really big concerns):
+Firstly, you end up with a dirty page over a hole with no backing
+store, and second, you get no page fault on overwrite because the
+pages are already dirty.
 
-  * It's very footgun-prone if you didn't call O_MAYEXEC yourself and
-    you pass the descriptor elsewhere. You need to check f_flags to see
-    if it contains O_MAYEXEC. Maybe there is an argument to be made that
-    passing O_MAYEXECs around isn't a valid use-case, but in that case
-    there should be some warnings about that.
+That's the problem the MMAPLOCK in XFS solves - it's integral to
+ensuring the page faults on mmap write are correctly serialised with
+both the page cache invalidation and the underlying extent
+manipulation that the hole punch operation then does.
 
-  * There's effectively a TOCTOU flaw (even if you are sure O_MAYEXEC is
-    in f_flags) -- if the filesystem becomes re-mounted noexec (or the
-    file has a-x permissions) after you've done the check you won't get
-    hit with an error when you go to use the file descriptor later.
+i.e. if you want a page fault /after/ a hole punch, you have to
+prevent it occurring during the hole punch after the page has
+already been marked clean and/or invalidated.
 
-To fix both you'd need to do what you mention later:
+> For example, the test case I've posted
+> creates the following file layout with 1k blocksize:
+> 
+>   DDDD DDDD DDDD
+> 
+> Then it punches a hole like this:
+> 
+>   DDHH HHHH HHDD
+> 
+> Then it fills the hole again with mwrite:
+> 
+>   DDDD DDDD DDDD
+> 
+> As far as I can tell, that needs to trigger page faults on all three
+> pages.
 
-> What the kernel *could* do is prevent mmapping a non-FMODE_EXEC file
-> with PROT_EXEC, which would indeed have a real effect (in an iOS-like
-> world, for example) but would break many, many things.
+Yes, but only /after/ the hole has been punched.
 
-And I think this would be useful (with the two possible ways of
-executing .text split into FMODE_EXEC and FMODE_MAP_EXEC, as mentioned
-in a sister subthread), but would have to be opt-in for the obvious
-reason you outlined. However, we could make it the default for
-openat2(2) -- assuming we can agree on what the semantics of a
-theoretical FMODE_EXEC should be.
+> I did get these on ext4; judging from the fact that xfs works,
+> the also seem to occur there; but on gfs2, page_mkwrite isn't called
+> for the two partially mapped pages, only for the page in the middle
+> that's entirely within the hole. And I don't see where those pages are
+> marked read-only; it appears like pagecache_isize_extended isn't
+> called on ext4 or xfs. So how does this work there?
 
-And of course we'd need to do FMODE_UPGRADE_EXEC (which would need to
-also permit fexecve(2) though probably not PROT_EXEC -- I don't think
-you can mmap() an O_PATH descriptor).
+As I said in my last response, the answer is in
+xfs_flush_unmap_range(). That uses truncate_pagecache_range() to do
+the necessary page cache manipulation.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+Cheers,
 
---wklcrvy7q5jmmd7k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXLhNwAKCRCdlLljIbnQ
-EqESAP4hGdjnhIiY8PqSsSWOneHYlpSs5PmQeVFEMID7L1q5eQD/VYLQV7Re28+C
-Vwi3t+FOW7oGNIMCuKekC3BbxXyYGA0=
-=kolV
------END PGP SIGNATURE-----
-
---wklcrvy7q5jmmd7k--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
