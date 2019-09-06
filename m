@@ -2,97 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EC2DAC030
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 21:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 169BEAC05A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 21:16:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392548AbfIFTHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 15:07:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60896 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729131AbfIFTHX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 15:07:23 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0877830860BF;
-        Fri,  6 Sep 2019 19:07:23 +0000 (UTC)
-Received: from x2.localnet (ovpn-117-48.phx2.redhat.com [10.3.117.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A44560BF7;
-        Fri,  6 Sep 2019 19:07:20 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut S autereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Add support for O_MAYEXEC
-Date:   Fri, 06 Sep 2019 15:07:19 -0400
-Message-ID: <1802966.yheqmZt8Si@x2>
-Organization: Red Hat
-In-Reply-To: <87mufhckxv.fsf@oldenburg2.str.redhat.com>
-References: <20190906152455.22757-1-mic@digikod.net> <2989749.1YmIBkDdQn@x2> <87mufhckxv.fsf@oldenburg2.str.redhat.com>
+        id S2387591AbfIFTQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 15:16:18 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37678 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbfIFTQS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Sep 2019 15:16:18 -0400
+Received: by mail-wr1-f66.google.com with SMTP id i1so7088795wro.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 12:16:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+aO/6jXNqNXXcS6p9tmtZukCpuO9djKLRLCvoL9fw9w=;
+        b=CPEdVtfz1sgH31piL52ESoHaZuSFy/Ud5evLE2wfsAFP4EpHEngY9+aSlwZGLFTGjg
+         t7h+LoforL25lp+jxOSpgwqETxQalIQAVRAdcsUXCOUvUxWjqoxYB4oDBLwZk1d//pXb
+         AFLDeKck81gDkcR7C3A8rPLsygAnqnBflbA108pvtILpCddM3Yqd47a2oilbkrgJfd9H
+         4tNfzPCOoArhAkv2gNbbogOy6Bbp0NtbhZRwPgUOr2m6qdX8jcWnPe8y9tqSl+LpOFtO
+         bNAy+w0is8FJXKq3XT0Y7BH7cVJoa3anDwa7+h025PK2DZqIbNiGAJq9K8gO/put5cvL
+         75Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+aO/6jXNqNXXcS6p9tmtZukCpuO9djKLRLCvoL9fw9w=;
+        b=Tx5s6s3DC7HZ7XQMO9xP9rjuejrsWXK7QM+7LNGsnu8iiW0F8nwXOuqhjYgDOWu1Yv
+         AFcyZO3frI2RZTM0UMd/vdL6s0QP0lrjGvKeGaAJPEQJTcq9YzukwZFOlk7VWYWPUDyX
+         3bQ5+4TDTX8UEw5xnzQriDssvXb6dIIjYgkZBDNJIeWimHzAxoyqkXv5Y5uku12rFrEd
+         qpFA6AA+aUqaNcptJ+hi4JJIAlQRaXW5t4HPKKUcuQlyxVG786wL3Ep98B5p7/ctKgyR
+         Gsiththhn8F7AYxiWfNaWdSJQj65Zo4BGAJCgmW83iXyK8By/qp8ClfX111XqZVyAFXJ
+         Zu6A==
+X-Gm-Message-State: APjAAAW5Vh/OfXXrWEvyTMeeS5kNa0ZVrSNFtbNXXMWYshihECMoa2Yy
+        LWmjOXp7Kq+aBRaNxRsCbiS09CmalMtTYznisDI=
+X-Google-Smtp-Source: APXvYqxDpronZ22I8bbMJ2eikOWgbq16y8jbR/rEH4AS+PcNYJGuvORbphQy7pVKjwbE0EKn9q/bBp5nBmSuHK9s9lY=
+X-Received: by 2002:a5d:4402:: with SMTP id z2mr8163279wrq.183.1567797376132;
+ Fri, 06 Sep 2019 12:16:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 06 Sep 2019 19:07:23 +0000 (UTC)
+References: <20190906100324.8492-1-stefanha@redhat.com>
+In-Reply-To: <20190906100324.8492-1-stefanha@redhat.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Fri, 6 Sep 2019 21:16:04 +0200
+Message-ID: <CAFLxGvw-n2VYcYR9kei7Hu2RBhCG9PeWuW7Z+SaiyDQVBRiugw@mail.gmail.com>
+Subject: Re: [PATCH] init/do_mounts.c: add virtiofs root fs support
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     virtio-fs@redhat.com, Miklos Szeredi <mszeredi@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Friday, September 6, 2019 2:57:00 PM EDT Florian Weimer wrote:
-> * Steve Grubb:
-> > Now with LD_AUDIT
-> > $ LD_AUDIT=/home/sgrubb/test/openflags/strip-flags.so.0 strace ./test
-> > 2>&1 | grep passwd openat(3, "passwd", O_RDONLY)           = 4
-> > 
-> > No O_CLOEXEC flag.
-> 
-> I think you need to explain in detail why you consider this a problem.
+On Fri, Sep 6, 2019 at 1:15 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>
+> Make it possible to boot directly from a virtiofs file system with tag
+> 'myfs' using the following kernel parameters:
+>
+>   rootfstype=virtiofs root=myfs rw
+>
+> Booting directly from virtiofs makes it possible to use a directory on
+> the host as the root file system.  This is convenient for testing and
+> situations where manipulating disk image files is cumbersome.
+>
+> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+> ---
+> This patch is based on linux-next (next-20190904) but should apply
+> cleanly to other virtiofs trees.
+>
+>  init/do_mounts.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/init/do_mounts.c b/init/do_mounts.c
+> index 9634ecf3743d..030be2f1999a 100644
+> --- a/init/do_mounts.c
+> +++ b/init/do_mounts.c
+> @@ -554,6 +554,16 @@ void __init mount_root(void)
+>                         change_floppy("root floppy");
+>         }
+>  #endif
+> +#ifdef CONFIG_VIRTIO_FS
+> +       if (root_fs_names && !strcmp(root_fs_names, "virtiofs")) {
+> +               if (!do_mount_root(root_device_name, "virtiofs",
+> +                                  root_mountflags, root_mount_data))
+> +                       return;
+> +
+> +               panic("VFS: Unable to mount root fs \"%s\" from virtiofs",
+> +                     root_device_name);
+> +       }
+> +#endif
 
-Because you can strip the O_MAYEXEC flag from being passed into the kernel. 
-Once you do that, you defeat the security mechanism because it never gets 
-invoked. The issue is that the only thing that knows _why_ something is being 
-opened is user space. With this mechanism, you can attempt to pass this 
-reason to the kernel so that it may see if policy permits this. But you can 
-just remove the flag.
+I think you don't need this, you can abuse a hack for mtd/ubi in
+prepare_namespace().
+At least for 9p it works well:
+qemu-system-x86_64 -m 4G -M pc,accel=kvm -nographic -kernel
+arch/x86/boot/bzImage -append "rootfstype=9p
+rootflags=trans=virtio,version=9p2000.L root=mtdfake console=ttyS0 ro
+init=/bin/sh" -virtfs
+local,id=rootfs,path=/,security_model=passthrough,mount_tag=mtdfake
 
--Steve
+If this works too for virtiofs I suggest to cleanup the hack and
+generalize it. B-)
 
-> With LD_PRELOAD and LD_AUDIT, you can already do anything, including
-> scanning other loaded objects for a system call instruction and jumping
-> to that (in case a security module in the kernel performs a PC check to
-> confer additional privileges).
-> 
-> Thanks,
-> Florian
-
-
-
-
+-- 
+Thanks,
+//richard
