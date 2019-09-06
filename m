@@ -2,79 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08C0FAB547
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 12:03:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D97FBAB56C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 12:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389084AbfIFKDc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 06:03:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51162 "EHLO mx1.redhat.com"
+        id S2389452AbfIFKJW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 06:09:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49512 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730500AbfIFKDb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 06:03:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S2387843AbfIFKJV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Sep 2019 06:09:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B7A11315C010;
-        Fri,  6 Sep 2019 10:03:31 +0000 (UTC)
-Received: from localhost (ovpn-117-208.ams2.redhat.com [10.36.117.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A3BBC5C1D4;
-        Fri,  6 Sep 2019 10:03:25 +0000 (UTC)
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     virtio-fs@redhat.com
-Cc:     mszeredi@redhat.com, David Howells <dhowells@redhat.com>,
+        by mx1.redhat.com (Postfix) with ESMTPS id 9B78C3084288;
+        Fri,  6 Sep 2019 10:09:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 126BB60A97;
+        Fri,  6 Sep 2019 10:09:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjt2Eb+yEDOcQwCa0SrZ4cWu967OtQG8Vz21c=n5ZP1Nw@mail.gmail.com>
+References: <CAHk-=wjt2Eb+yEDOcQwCa0SrZ4cWu967OtQG8Vz21c=n5ZP1Nw@mail.gmail.com> <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk> <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com> <17703.1567702907@warthog.procyon.org.uk> <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com> <CAKCoTu7ms_Mr-q08d9XB3uascpzwBa5LF9JTT2aq8uUsoFE8aQ@mail.gmail.com> <CAHk-=wjcsxQ8QB_v=cwBQw4pkJg7pp-bBsdWyPivFO_OeF-y+g@mail.gmail.com> <5396.1567719164@warthog.procyon.org.uk> <CAHk-=wgbCXea1a9OTWgMMvcsCGGiNiPp+ty-edZrBWn63NCYdw@mail.gmail.com> <14883.1567725508@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Ray Strode <rstrode@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: [PATCH] init/do_mounts.c: add virtiofs root fs support
-Date:   Fri,  6 Sep 2019 11:03:24 +0100
-Message-Id: <20190906100324.8492-1-stefanha@redhat.com>
+        "Ray, Debarshi" <debarshi.ray@gmail.com>,
+        Robbie Harwood <rharwood@redhat.com>
+Subject: Re: Why add the general notification queue and its sources
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 06 Sep 2019 10:03:31 +0000 (UTC)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <27731.1567764557.1@warthog.procyon.org.uk>
+Date:   Fri, 06 Sep 2019 11:09:17 +0100
+Message-ID: <27732.1567764557@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 06 Sep 2019 10:09:21 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make it possible to boot directly from a virtiofs file system with tag
-'myfs' using the following kernel parameters:
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-  rootfstype=virtiofs root=myfs rw
+> But it's *literally* just finding the places that work with
+> pipe->curbuf/nrbufs and making them use atomic updates.
 
-Booting directly from virtiofs makes it possible to use a directory on
-the host as the root file system.  This is convenient for testing and
-situations where manipulating disk image files is cumbersome.
+No.  It really isn't.  That's two variables that describe the occupied section
+of the buffer.  Unless you have something like a 68020 with CAS2, or put them
+next to each other so you can use CMPXCHG8, you can't do that.
 
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
----
-This patch is based on linux-next (next-20190904) but should apply
-cleanly to other virtiofs trees.
+They need converting to head/tail pointers first.
 
- init/do_mounts.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> They really would work with almost anything. You could even mix-and-match
+> "data generated by kernel" and "data done by 'write()' or 'splice()' by a
+> user process".
 
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 9634ecf3743d..030be2f1999a 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -554,6 +554,16 @@ void __init mount_root(void)
- 			change_floppy("root floppy");
- 	}
- #endif
-+#ifdef CONFIG_VIRTIO_FS
-+	if (root_fs_names && !strcmp(root_fs_names, "virtiofs")) {
-+		if (!do_mount_root(root_device_name, "virtiofs",
-+				   root_mountflags, root_mount_data))
-+			return;
-+
-+		panic("VFS: Unable to mount root fs \"%s\" from virtiofs",
-+		      root_device_name);
-+	}
-+#endif
- #ifdef CONFIG_BLOCK
- 	{
- 		int err = create_dev("/dev/root", ROOT_DEV);
--- 
-2.21.0
+Imagine that userspace writes a large message and takes the mutex.  At the
+same time something in softirq context decides *it* wants to write a message -
+it can't take the mutex and it can't wait, so the userspace write would have
+to cause the kernel message to be dropped.
 
+What I would have to do is make a write to a notification pipe go through
+post_notification() and limit the size to the maximum for a single message.
+
+Much easier to simply suppress writes and splices on pipes that have been set
+up to be notification queues - at least for now.
+
+David
