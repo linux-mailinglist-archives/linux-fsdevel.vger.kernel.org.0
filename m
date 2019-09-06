@@ -2,103 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E8FAB372
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 09:47:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98AE6AB3C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 10:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731750AbfIFHq7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 03:46:59 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:42955 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728590AbfIFHq7 (ORCPT
+        id S2389171AbfIFIP0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 04:15:26 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34970 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733020AbfIFIPZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 03:46:59 -0400
-Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id AFFBF43E333;
-        Fri,  6 Sep 2019 17:46:56 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1i68xK-0006ZH-Kb; Fri, 06 Sep 2019 17:46:54 +1000
-Date:   Fri, 6 Sep 2019 17:46:54 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     Omar Sandoval <osandov@osandov.com>, linux-btrfs@vger.kernel.org,
-        kernel-team@fb.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] btrfs: add ioctl for directly writing compressed data
-Message-ID: <20190906074654.GM7777@dread.disaster.area>
-References: <cover.1567623877.git.osandov@fb.com>
- <8eae56abb90c0fe87c350322485ce8674e135074.1567623877.git.osandov@fb.com>
- <20190905021012.GL7777@dread.disaster.area>
- <8acbff04-aee0-9f88-b2cd-a85bb7b94df8@suse.de>
+        Fri, 6 Sep 2019 04:15:25 -0400
+Received: by mail-io1-f67.google.com with SMTP id f4so10137820ion.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 01:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=71+P9Y1aQOgw6Dp9fK4XNoBcCfSmpfYHfETpowIUBEc=;
+        b=mOY+F7IoXze5/oEY9qnxW4BtDV3c6OGnOM65rcAz4tBQ+pP1oCmZx3kBCsHFdm9ssi
+         tdD9aqu1qDCinK7SZKtFdQ7WsDaXA5OVnxl3jnwgL/Rl00M0BEsmJ/uoAk72kSFu5qei
+         FYQzoLZKR/w9+CtVp9n067d669r/fYv2PpYlk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=71+P9Y1aQOgw6Dp9fK4XNoBcCfSmpfYHfETpowIUBEc=;
+        b=tAnRpTy+JdXAqj5n3e7XAPV2NZ6/odSrE5NB9dZUbUe54oL8KOPOr3qyx50ieWdB1C
+         fkOmJ5EIMWqsRTx34GUydyhsnKO5Y6HEEsCm+vd3cTaOYqP1jDLG1QWPTh+GiPuUpadl
+         4PaB3XQM4wnDOV484tSywBBvQytNscv1xf6ie2VXTlQUtBYBjB2iQ6dNNSinm+Dz3+3n
+         gbOjy6e2HCI2kpq5gi6Jupei1vyMaLECe/sSIB5MZSfB7rHBc0Fd6RhJ4zGDK7VlP+8y
+         QwWjWTEZYCU8+peHOysFf+Gfh+Tq3BxjJD6IvfaHTcfZt5DSu8Z+DtTTI669idziUk1n
+         ejbA==
+X-Gm-Message-State: APjAAAUFJO4iHNdzZfcQmnyg1qiNEHVaoz+XoGlNRN0txgxx6YzF++20
+        HEmPeNEstcWL5OZYwZezufsloDj2Po+9yersWGqfRlqd
+X-Google-Smtp-Source: APXvYqzMtxa4XtA7wApmndxSDp7Bu8ZqzrPn0Tms4HAAjPUjMhyeA/vR5U1wZspaH+eF6zgoriVn3BWfEXcffE6I7Is=
+X-Received: by 2002:a6b:bec6:: with SMTP id o189mr8631585iof.62.1567757724963;
+ Fri, 06 Sep 2019 01:15:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8acbff04-aee0-9f88-b2cd-a85bb7b94df8@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
-        a=FOH2dFAWAAAA:8 a=7-415B0cAAAA:8 a=vmlKb14kAB5wCteP1LsA:9
-        a=CjuIK1q_8ugA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20190905194859.16219-1-vgoyal@redhat.com>
+In-Reply-To: <20190905194859.16219-1-vgoyal@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 6 Sep 2019 10:15:14 +0200
+Message-ID: <CAJfpegu8POz9gC4MDEcXxDWBD0giUNFgJhMEzntJX_u4+cS9Zw@mail.gmail.com>
+Subject: Re: [PATCH 00/18] virtiofs: Fix various races and cleanups round 1
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 02:16:37PM +0200, Johannes Thumshirn wrote:
-> On 05/09/2019 04:10, Dave Chinner wrote:
-> > On Wed, Sep 04, 2019 at 12:13:26PM -0700, Omar Sandoval wrote:
-> >> From: Omar Sandoval <osandov@fb.com>
-> >>
-> >> This adds an API for writing compressed data directly to the filesystem.
-> >> The use case that I have in mind is send/receive: currently, when
-> >> sending data from one compressed filesystem to another, the sending side
-> >> decompresses the data and the receiving side recompresses it before
-> >> writing it out. This is wasteful and can be avoided if we can just send
-> >> and write compressed extents. The send part will be implemented in a
-> >> separate series, as this ioctl can stand alone.
-> >>
-> >> The interface is essentially pwrite(2) with some extra information:
-> >>
-> >> - The input buffer contains the compressed data.
-> >> - Both the compressed and decompressed sizes of the data are given.
-> >> - The compression type (zlib, lzo, or zstd) is given.
-> > 
-> > So why can't you do this with pwritev2()? Heaps of flags, and
-> > use a second iovec to hold the decompressed size of the previous
-> > iovec. i.e.
-> > 
-> > 	iov[0].iov_base = compressed_data;
-> > 	iov[0].iov_len = compressed_size;
-> > 	iov[1].iov_base = NULL;
-> > 	iov[1].iov_len = uncompressed_size;
-> > 	pwritev2(fd, iov, 2, offset, RWF_COMPRESSED_ZLIB);
-> > 
-> > And you don't need to reinvent pwritev() with some whacky ioctl that
-> > is bound to be completely screwed up is ways not noticed until
-> > someone else tries to use it...
-> > 
-> > I'd also suggest atht if we are going to be able to write compressed
-> > data directly, then we should be able to read them as well directly
-> > via preadv2()....
-> 
-> 
-> While I'm with you on this from a design PoV, one question remains:
-> What to do with the file systems that do not support compression?
+On Thu, Sep 5, 2019 at 9:49 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> Hi,
+>
+> Michael Tsirkin pointed out issues w.r.t various locking related TODO
+> items and races w.r.t device removal.
+>
+> In this first round of cleanups, I have taken care of most pressing
+> issues.
+>
+> These patches apply on top of following.
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#virtiofs-v4
+>
+> I have tested these patches with mount/umount and device removal using
+> qemu monitor. For example.
 
-EINVAL.
+Is device removal mandatory?  Can't this be made a non-removable
+device?  Is there a good reason why removing the virtio-fs device
+makes sense?
 
-> Currently there's only a kernel global check for known RWF_* flags in
-> kiocb_set_rw_flags().
-
-That's really an implementation detail, there's lots of ways of
-doing it, probably a superblock feature flag would be the easiest
-way to specify support for a filesystem supporting direct read/write
-of compressed data.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Miklos
