@@ -2,95 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A82B1AC303
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2019 01:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2055BAC315
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2019 01:33:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405362AbfIFX2R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 19:28:17 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:60386 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405045AbfIFX2R (ORCPT
+        id S2392935AbfIFXdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 19:33:31 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:35843 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392874AbfIFXdb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 19:28:17 -0400
-Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D5462360F92;
-        Sat,  7 Sep 2019 09:28:13 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1i6NeG-0004os-7p; Sat, 07 Sep 2019 09:28:12 +1000
-Date:   Sat, 7 Sep 2019 09:28:12 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 15/15] xfs: Use the new iomap infrastructure for CoW
-Message-ID: <20190906232812.GB16973@dread.disaster.area>
-References: <20190905150650.21089-1-rgoldwyn@suse.de>
- <20190905150650.21089-16-rgoldwyn@suse.de>
- <20190906165507.GA12842@lst.de>
+        Fri, 6 Sep 2019 19:33:31 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 67so7352044oto.3;
+        Fri, 06 Sep 2019 16:33:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
+        b=jdesAfIeqYR/VZVBFIv9KOmq7Ibhq3CC0pLqIHgiUA9qioYXELpFeWTaKtAFfT5nS2
+         Bsq4SMztUC28ZmyxFJiHYZs/hGBAJ1vbZXpckvQQkPRE1/kioo0M2Ln0EHlSk1ZQIwKe
+         eSriNg1g02CP0PAkTGWECTXYsOh2lEMEDM84Mom1SkaMhVuFgAHC+A+JWlHr0t8Ek5RY
+         dS5Z+VR9bKpW1BPR4wnFFhGyGNidBcscEfeo1ZUeB6zmKrnNna3cDmxPoeSO08+Q6HWh
+         o4T+5zmnwRS8CIxgJHmMvfnsMqBH9VLo1TOgoHXqfVr/B3O0cSAKZxUzpB3Rl8omyTFq
+         RSDQ==
+X-Gm-Message-State: APjAAAVQOGgJSwGkqDIu0cYKcqrukhGtGrkFeXNwpCKiS8KIuxnRhxKV
+        NFHIZwgIWSY6BedKeHiZYuU=
+X-Google-Smtp-Source: APXvYqyerfyqDjBSkqBV5awpri+gcw1eOii1hkXi4+t7I8BPKUfhltTsqe2asvXehkt1m+lTJphnMw==
+X-Received: by 2002:a9d:6acb:: with SMTP id m11mr9725890otq.40.1567812810260;
+        Fri, 06 Sep 2019 16:33:30 -0700 (PDT)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id z33sm2710525otb.75.2019.09.06.16.33.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Sep 2019 16:33:29 -0700 (PDT)
+Subject: Re: [PATCH v8 01/13] nvme-core: introduce nvme_ctrl_get_by_path()
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
+        Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20190828215429.4572-1-logang@deltatee.com>
+ <20190828215429.4572-2-logang@deltatee.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <f67b6e12-8d88-6dab-1211-64595ea58421@grimberg.me>
+Date:   Fri, 6 Sep 2019 16:33:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906165507.GA12842@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
-        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=kd9TP_cp1AsMHmmDf5oA:9
-        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20190828215429.4572-2-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 06:55:07PM +0200, Christoph Hellwig wrote:
-> On Thu, Sep 05, 2019 at 10:06:50AM -0500, Goldwyn Rodrigues wrote:
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index 8321733c16c3..13495d8a1ee2 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-> > @@ -1006,7 +1006,10 @@ xfs_file_iomap_begin(
-> >  		 */
-> >  		if (directio || imap.br_startblock == HOLESTARTBLOCK)
-> >  			imap = cmap;
-> > +		else
-> > +			xfs_bmbt_to_iomap(ip, srcmap, &cmap, false);
-> >  
-> > +		iomap->flags |= IOMAP_F_COW;
-> 
-> I don't think this is correct.  We should only set IOMAP_F_COW
-> when we actually fill out the srcmap.  Which is a very good agument
-> for Darrick's suggestion to check for a non-emptry srcmap.
-> 
-> Also this is missing the actually interesting part in
-> xfs_file_iomap_begin_delay.
-> 
-> I ended up spending the better half of the day trying to implement
-> that and did run into a few bugs in the core iomap changes, mostly
-> due to a confusion which iomap to use.  So I ended up reworking those
-> a bit to:
-> 
->   a) check srcmap->type to see if there is a valid srcmap
->   b) set the srcmap pointer to iomap so that it doesn't need to
->      be special cased all over
->   c) fixed up a few more places to use the srcmap
-> 
-> This now at least survives xfstests -g quick on a 4k xfs file system
-> for.  Here is my current tree:
-> 
-> http://git.infradead.org/users/hch/xfs.git/shortlog/refs/heads/xfs-cow-iomap
-
-That looks somewhat reasonable. The XFS mapping function is turning
-into spagetti and getting really hard to follow again, though.
-Perhaps we should consider splitting the shared/COW path out of
-it...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
