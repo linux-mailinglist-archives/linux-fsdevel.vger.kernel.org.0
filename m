@@ -2,114 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 169BEAC05A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 21:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF49AC087
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 21:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387591AbfIFTQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 15:16:18 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37678 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbfIFTQS (ORCPT
+        id S2393269AbfIFT0y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 15:26:54 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46992 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393068AbfIFT0y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 15:16:18 -0400
-Received: by mail-wr1-f66.google.com with SMTP id i1so7088795wro.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 12:16:16 -0700 (PDT)
+        Fri, 6 Sep 2019 15:26:54 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q5so5140488pfg.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 12:26:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+aO/6jXNqNXXcS6p9tmtZukCpuO9djKLRLCvoL9fw9w=;
-        b=CPEdVtfz1sgH31piL52ESoHaZuSFy/Ud5evLE2wfsAFP4EpHEngY9+aSlwZGLFTGjg
-         t7h+LoforL25lp+jxOSpgwqETxQalIQAVRAdcsUXCOUvUxWjqoxYB4oDBLwZk1d//pXb
-         AFLDeKck81gDkcR7C3A8rPLsygAnqnBflbA108pvtILpCddM3Yqd47a2oilbkrgJfd9H
-         4tNfzPCOoArhAkv2gNbbogOy6Bbp0NtbhZRwPgUOr2m6qdX8jcWnPe8y9tqSl+LpOFtO
-         bNAy+w0is8FJXKq3XT0Y7BH7cVJoa3anDwa7+h025PK2DZqIbNiGAJq9K8gO/put5cvL
-         75Nw==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=sT4y3CTgBYYtNnGarz3x+6thexIZIH7G3cYm8cMIUKQ=;
+        b=PUlerU1rm1o41pTmV5KAjMoYKrczJxdkqqAsYNlzY/Wa7eDBmqtvItMFE46WtBKToZ
+         VCuPteRT1/rLy1ZK/CfMMuPbVYP1YrDhyNNizNk2L4Lw6AsY1/Lwj8B48tdeCSlHjVzh
+         HINtmovfAV2mhmzF/o1/nnnIdCulL5I31kes91DyNiGM4mL7gfcI3wPSmMPO7h0mz8Mx
+         EcNxB9eMznHeWd1Rw1tSxIWsdL3hu/XZikw4QFp+8c1Tk2u4JF2DXDZLQmg7YTxvat9G
+         mDAhYwckpcH1lKPwGZAs4Hptn/2a7GlooykTvhZ5MrxgjuAHKTgai4E4SF62vDJ7AHZu
+         S81Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+aO/6jXNqNXXcS6p9tmtZukCpuO9djKLRLCvoL9fw9w=;
-        b=Tx5s6s3DC7HZ7XQMO9xP9rjuejrsWXK7QM+7LNGsnu8iiW0F8nwXOuqhjYgDOWu1Yv
-         AFcyZO3frI2RZTM0UMd/vdL6s0QP0lrjGvKeGaAJPEQJTcq9YzukwZFOlk7VWYWPUDyX
-         3bQ5+4TDTX8UEw5xnzQriDssvXb6dIIjYgkZBDNJIeWimHzAxoyqkXv5Y5uku12rFrEd
-         qpFA6AA+aUqaNcptJ+hi4JJIAlQRaXW5t4HPKKUcuQlyxVG786wL3Ep98B5p7/ctKgyR
-         Gsiththhn8F7AYxiWfNaWdSJQj65Zo4BGAJCgmW83iXyK8By/qp8ClfX111XqZVyAFXJ
-         Zu6A==
-X-Gm-Message-State: APjAAAW5Vh/OfXXrWEvyTMeeS5kNa0ZVrSNFtbNXXMWYshihECMoa2Yy
-        LWmjOXp7Kq+aBRaNxRsCbiS09CmalMtTYznisDI=
-X-Google-Smtp-Source: APXvYqxDpronZ22I8bbMJ2eikOWgbq16y8jbR/rEH4AS+PcNYJGuvORbphQy7pVKjwbE0EKn9q/bBp5nBmSuHK9s9lY=
-X-Received: by 2002:a5d:4402:: with SMTP id z2mr8163279wrq.183.1567797376132;
- Fri, 06 Sep 2019 12:16:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190906100324.8492-1-stefanha@redhat.com>
-In-Reply-To: <20190906100324.8492-1-stefanha@redhat.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Fri, 6 Sep 2019 21:16:04 +0200
-Message-ID: <CAFLxGvw-n2VYcYR9kei7Hu2RBhCG9PeWuW7Z+SaiyDQVBRiugw@mail.gmail.com>
-Subject: Re: [PATCH] init/do_mounts.c: add virtiofs root fs support
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     virtio-fs@redhat.com, Miklos Szeredi <mszeredi@redhat.com>,
-        David Howells <dhowells@redhat.com>,
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=sT4y3CTgBYYtNnGarz3x+6thexIZIH7G3cYm8cMIUKQ=;
+        b=nRrhLmhy0LvHNhsTCeb0wDPCKhT8KUcrcJG7vfF7zQA7+GBSKCLDe9UiY7C+ggDh7I
+         U9KQ8g0iRQk2Efn8kdyWySn8GLNu1gqCO2iRCIoY5Iv1eIZCd51/kc4fFGUcIjKfca+f
+         UCR59zmj12Fu/7/wIAjVqnPYpeBkvc3TXwSKGW0pluzjbr5NYyiKb7SwH8CvN6zppEe0
+         pLLXS+Z0Q3CqkBsltGm3gUNgn8NjfkzY5FGzm3DJ/9SF53mbl0ueBgr+EeVCJG3sCDeL
+         fh0iKWF79icll/dT8Y2scG5LIL3mkWGYCYt1ZXrg0P1KTwGPv6ZhUgG63xqGGPrF9VZu
+         lhgQ==
+X-Gm-Message-State: APjAAAWJlV6yb/LYZB2CE7WHOy01EHhpiqEwoXgfGjoyaB3fwPqzDG/8
+        H/74T3VGD0167pcgGM3Fpzy+jg==
+X-Google-Smtp-Source: APXvYqzLKnx6gmrxEA2t3QvgVMgbsPAWbrDNzl75rw940UK/KcrRM5WCsQwR52Ya/WVS6aBnXlQZFg==
+X-Received: by 2002:a63:c006:: with SMTP id h6mr9243639pgg.290.1567798013573;
+        Fri, 06 Sep 2019 12:26:53 -0700 (PDT)
+Received: from ?IPv6:2600:100f:b121:da37:bc66:d4de:83c7:e0cd? ([2600:100f:b121:da37:bc66:d4de:83c7:e0cd])
+        by smtp.gmail.com with ESMTPSA id n66sm9546860pfn.90.2019.09.06.12.26.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Sep 2019 12:26:52 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 0/5] Add support for O_MAYEXEC
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16G102)
+In-Reply-To: <1802966.yheqmZt8Si@x2>
+Date:   Fri, 6 Sep 2019 12:26:51 -0700
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?utf-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut S autereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C95B704C-F84F-4341-BDE7-CD70C5DDBEEF@amacapital.net>
+References: <20190906152455.22757-1-mic@digikod.net> <2989749.1YmIBkDdQn@x2> <87mufhckxv.fsf@oldenburg2.str.redhat.com> <1802966.yheqmZt8Si@x2>
+To:     Steve Grubb <sgrubb@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 1:15 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->
-> Make it possible to boot directly from a virtiofs file system with tag
-> 'myfs' using the following kernel parameters:
->
->   rootfstype=virtiofs root=myfs rw
->
-> Booting directly from virtiofs makes it possible to use a directory on
-> the host as the root file system.  This is convenient for testing and
-> situations where manipulating disk image files is cumbersome.
->
-> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-> ---
-> This patch is based on linux-next (next-20190904) but should apply
-> cleanly to other virtiofs trees.
->
->  init/do_mounts.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/init/do_mounts.c b/init/do_mounts.c
-> index 9634ecf3743d..030be2f1999a 100644
-> --- a/init/do_mounts.c
-> +++ b/init/do_mounts.c
-> @@ -554,6 +554,16 @@ void __init mount_root(void)
->                         change_floppy("root floppy");
->         }
->  #endif
-> +#ifdef CONFIG_VIRTIO_FS
-> +       if (root_fs_names && !strcmp(root_fs_names, "virtiofs")) {
-> +               if (!do_mount_root(root_device_name, "virtiofs",
-> +                                  root_mountflags, root_mount_data))
-> +                       return;
-> +
-> +               panic("VFS: Unable to mount root fs \"%s\" from virtiofs",
-> +                     root_device_name);
-> +       }
-> +#endif
 
-I think you don't need this, you can abuse a hack for mtd/ubi in
-prepare_namespace().
-At least for 9p it works well:
-qemu-system-x86_64 -m 4G -M pc,accel=kvm -nographic -kernel
-arch/x86/boot/bzImage -append "rootfstype=9p
-rootflags=trans=virtio,version=9p2000.L root=mtdfake console=ttyS0 ro
-init=/bin/sh" -virtfs
-local,id=rootfs,path=/,security_model=passthrough,mount_tag=mtdfake
 
-If this works too for virtiofs I suggest to cleanup the hack and
-generalize it. B-)
+> On Sep 6, 2019, at 12:07 PM, Steve Grubb <sgrubb@redhat.com> wrote:
+>=20
+>> On Friday, September 6, 2019 2:57:00 PM EDT Florian Weimer wrote:
+>> * Steve Grubb:
+>>> Now with LD_AUDIT
+>>> $ LD_AUDIT=3D/home/sgrubb/test/openflags/strip-flags.so.0 strace ./test
+>>> 2>&1 | grep passwd openat(3, "passwd", O_RDONLY)           =3D 4
+>>>=20
+>>> No O_CLOEXEC flag.
+>>=20
+>> I think you need to explain in detail why you consider this a problem.
+>=20
+> Because you can strip the O_MAYEXEC flag from being passed into the kernel=
+.=20
+> Once you do that, you defeat the security mechanism because it never gets=20=
 
--- 
-Thanks,
-//richard
+> invoked. The issue is that the only thing that knows _why_ something is be=
+ing=20
+> opened is user space. With this mechanism, you can attempt to pass this=20=
+
+> reason to the kernel so that it may see if policy permits this. But you ca=
+n=20
+> just remove the flag.
+
+I=E2=80=99m with Florian here. Once you are executing code in a process, you=
+ could just emulate some other unapproved code. This series is not intended t=
+o provide the kind of absolute protection you=E2=80=99re imagining.
+
+What the kernel *could* do is prevent mmapping a non-FMODE_EXEC file with PR=
+OT_EXEC, which would indeed have a real effect (in an iOS-like world, for ex=
+ample) but would break many, many things.=
