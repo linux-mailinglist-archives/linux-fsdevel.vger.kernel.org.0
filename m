@@ -2,150 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46534ABD23
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 17:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EBB6ABD71
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 18:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393116AbfIFP7w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 11:59:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60044 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727762AbfIFP7w (ORCPT
+        id S1728117AbfIFQO1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 12:14:27 -0400
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:59907 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfIFQO0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:59:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nVVfwL9jPbxbv3UU7EoQYh7TMejKlo+fUaut0VfJfrw=; b=EyqSM1ABuGTf/zoM83qIcUFVi
-        1wUQCwyFHi2EyzPSjT0zHjuZAdS8/ubNh3DpDu9PXz9B1wFy2P94iJUrycdEu7ZPC+Yhr0RR20erg
-        mU0Rrx7BFCspWQcJt/ce1e2+mofN5QnlQfiD5zvAecgwnbC18I7yt1LZSqF9UOCgnt9091qUIypBO
-        KqRLxP7Q21GIbWDVBj/VeIdjCuNuFQ8AHfrTbrFYiguBmv2xKU1wkFoDA1zBT5ZzQIy7fC7IggLdQ
-        6q27uwvAZFklafc9/rIw6nirCYmPKby2ZAWlvtMnUQTq7XT7NtDBlxOgq6S3Lg6NYoZxhUexyLgje
-        lhf7gEzrw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i6GeN-00050e-JA; Fri, 06 Sep 2019 15:59:51 +0000
-Date:   Fri, 6 Sep 2019 08:59:51 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc:     Kirill Shutemov <kirill@shutemov.name>,
+        Fri, 6 Sep 2019 12:14:26 -0400
+X-Greylist: delayed 476 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Sep 2019 12:14:25 EDT
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 9EB54D0007D;
+        Fri,  6 Sep 2019 18:06:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1567785987;
+        bh=FwyTlVCqm8aP3xoN7suXSpGig40n/ST/gCqz/6H+pJg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=rvdNIvMbXElr2pL5DlaPYCAoEQ4gCJcigMVtxhzkc9XgVjWGP5lDlgpwyRzEDC11D
+         ozsDEfHCHPNwt6IIN/rFneyehInkshXlhaj88Mm7rEZ6fa3os/yGNCRaPfZzGt3Oe0
+         QG1Ercf9tHLDWoaBsG6/ukDLiBPrjB5Myyg4MBP0oz1q31qbtXmyp88E1gnMvKcFw2
+         LvEYL4upJAai1Aciu/tyNFtf0ptWrKOyzgVkh3LWlh6EfljZ3aS6z8I8elg+KYIquS
+         4AEBbUxmUEW87/C2ueqmJvbBNuMEWI5F+APrdwiTW9qYjGwMROhUju0SOQsCZt9+br
+         fhTtuqPfDzn2Q==
+Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
+ sys_open()
+To:     Florian Weimer <fweimer@redhat.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
         Song Liu <songliubraving@fb.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Johannes Weiner <jweiner@fb.com>
-Subject: Re: [PATCH 4/3] Prepare transhuge pages properly
-Message-ID: <20190906155951.GZ29434@bombadil.infradead.org>
-References: <20190905182348.5319-1-willy@infradead.org>
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20190906152455.22757-1-mic@digikod.net>
+ <20190906152455.22757-2-mic@digikod.net>
+ <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
+Date:   Fri, 6 Sep 2019 18:06:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190905182348.5319-1-willy@infradead.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-Bill pointed out I'd forgotten to call prep_transhuge_page().  I'll
-fold this into some of the other commits, but this is what I'm thinking
-of doing in case anyone has a better idea:
+On 06/09/2019 17:56, Florian Weimer wrote:
+> Let's assume I want to add support for this to the glibc dynamic loader,
+> while still being able to run on older kernels.
+>
+> Is it safe to try the open call first, with O_MAYEXEC, and if that fails
+> with EINVAL, try again without O_MAYEXEC?
 
-Basically, I prefer being able to do this:
+The kernel ignore unknown open(2) flags, so yes, it is safe even for
+older kernel to use O_MAYEXEC.
 
--	return alloc_pages(gfp, order);
-+	return prep_transhuge_page(alloc_pages(gfp, order));
+>
+> Or do I risk disabling this security feature if I do that?
 
-to this:
+It is only a security feature if the kernel support it, otherwise it is
+a no-op.
 
-+	struct page *page;
--	return alloc_pages(gfp, order);
-+	page = alloc_pages(gfp, order);
-+	if (page && (gfp & __GFP_COMP))
-+		prep_transhuge_page(page);
-+	return page;
+>
+> Do we need a different way for recognizing kernel support.  (Note that
+> we cannot probe paths in /proc for various reasons.)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 45ede62aa85b..159e63438806 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -153,7 +153,7 @@ extern unsigned long thp_get_unmapped_area(struct file *filp,
- 		unsigned long addr, unsigned long len, unsigned long pgoff,
- 		unsigned long flags);
- 
--extern void prep_transhuge_page(struct page *page);
-+extern struct page *prep_transhuge_page(struct page *page);
- extern void free_transhuge_page(struct page *page);
- 
- bool can_split_huge_page(struct page *page, int *pextra_pins);
-@@ -294,7 +294,10 @@ static inline bool transhuge_vma_suitable(struct vm_area_struct *vma,
- 	return false;
- }
- 
--static inline void prep_transhuge_page(struct page *page) {}
-+static inline struct page *prep_transhuge_page(struct page *page)
-+{
-+	return page;
-+}
- 
- #define transparent_hugepage_flags 0UL
- 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 72101811524c..8b9d672d868c 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -215,7 +215,7 @@ struct page *__page_cache_alloc_order(gfp_t gfp, unsigned int order)
- {
- 	if (order > 0)
- 		gfp |= __GFP_COMP;
--	return alloc_pages(gfp, order);
-+	return prep_transhuge_page(alloc_pages(gfp, order));
- }
- #endif
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index a7fa3a50f750..c2b11799b968 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -986,11 +986,12 @@ struct page *__page_cache_alloc_order(gfp_t gfp, unsigned int order)
- 			cpuset_mems_cookie = read_mems_allowed_begin();
- 			n = cpuset_mem_spread_node();
- 			page = __alloc_pages_node(n, gfp, order);
-+			prep_transhuge_page(page);
- 		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
- 
- 		return page;
- 	}
--	return alloc_pages(gfp, order);
-+	return prep_transhuge_page(alloc_pages(gfp, order));
- }
- EXPORT_SYMBOL(__page_cache_alloc_order);
- #endif
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 483b07b2d6ae..3961af907dd7 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -502,15 +502,20 @@ static inline struct list_head *page_deferred_list(struct page *page)
- 	return &page[2].deferred_list;
- }
- 
--void prep_transhuge_page(struct page *page)
-+struct page *prep_transhuge_page(struct page *page)
- {
-+	if (!page || compound_order(page) == 0)
-+		return page;
- 	/*
--	 * we use page->mapping and page->indexlru in second tail page
-+	 * we use page->mapping and page->index in second tail page
- 	 * as list_head: assuming THP order >= 2
- 	 */
-+	BUG_ON(compound_order(page) == 1);
- 
- 	INIT_LIST_HEAD(page_deferred_list(page));
- 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
-+
-+	return page;
- }
- 
- static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
+There is no need to probe for kernel support.
 
+>
+> Thanks,
+> Florian
+>
+
+--
+Micka=C3=ABl Sala=C3=BCn
+
+Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
+es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
+=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
+nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
+=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
+tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
+acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
+eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
+t de d=C3=A9truire le message. The personal data collected and processed du=
+ring this exchange aims solely at completing a business relationship and is=
+ limited to the necessary duration of that relationship. If you wish to use=
+ your rights of consultation, rectification and deletion of your data, plea=
+se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
+n error, we thank you for informing the sender and destroying the message.
