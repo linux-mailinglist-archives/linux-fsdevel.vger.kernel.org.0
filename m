@@ -2,82 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DC7FABD12
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 17:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8558DABD21
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 17:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393018AbfIFP4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 11:56:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52954 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730955AbfIFP4k (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:56:40 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C440F3090FD1;
-        Fri,  6 Sep 2019 15:56:39 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (dhcp-192-200.str.redhat.com [10.33.192.200])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2D2A95C22C;
-        Fri,  6 Sep 2019 15:56:34 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        id S2394991AbfIFP7L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 11:59:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59490 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfIFP7K (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Sep 2019 11:59:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=22s3suVEwybuDGOmnl63bE4bs9K3fxHohFliCUIcsdI=; b=bo2NORtcqX+pna5uqNLOVaY3lP
+        GcjxJLygzVcRUR9QCu2ryEqYBNUsSitjTcyCcA73nnV6tftFfy573yMV/iR0JmPi1m9YtArvHdF50
+        1NnKeUwaQCOqb/Bk9eGmrlHkHcWIKJpwi7GmjHBZytCSrxdxWSKbMxjAJvnhgwNjHMAzKrmWTB22K
+        5sOCIH2N5bXeUNHWif3K4FEerULx2MpVhdIhMT0MPeGAD8X4C7H5hBFFCoumISrpMw8JpqNypN7gs
+        SKVKbigK6tOH3wRKQ+zIGt2NsYILncqRydAEp1DJAIijZLRKVO3JaXcCBfqMA02pCd29ccfSBi3Sb
+        yU4ueQpg==;
+Received: from 213-225-38-191.nat.highway.a1.net ([213.225.38.191] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i6Gda-0004lW-9k; Fri, 06 Sep 2019 15:59:02 +0000
+Date:   Fri, 6 Sep 2019 17:56:50 +0200
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Joel Becker <jlbec@evilplan.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
-References: <20190906152455.22757-1-mic@digikod.net>
-        <20190906152455.22757-2-mic@digikod.net>
-Date:   Fri, 06 Sep 2019 17:56:32 +0200
-In-Reply-To: <20190906152455.22757-2-mic@digikod.net> (=?utf-8?Q?=22Micka?=
- =?utf-8?Q?=C3=ABl_Sala=C3=BCn=22's?=
-        message of "Fri, 6 Sep 2019 17:24:51 +0200")
-Message-ID: <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] configfs fixes for 5.3
+Message-ID: <20190906155650.GA32004@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 06 Sep 2019 15:56:40 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Let's assume I want to add support for this to the glibc dynamic loader,
-while still being able to run on older kernels.
+Hi Linus,
 
-Is it safe to try the open call first, with O_MAYEXEC, and if that fails
-with EINVAL, try again without O_MAYEXEC?
+please pull these late configfs fixe from Al that fix pretty nasty
+removal vs attribute access races.
 
-Or do I risk disabling this security feature if I do that?
+The following changes since commit 089cf7f6ecb266b6a4164919a2e69bd2f938374a:
 
-Do we need a different way for recognizing kernel support.  (Note that
-we cannot probe paths in /proc for various reasons.)
+  Linux 5.3-rc7 (2019-09-02 09:57:40 -0700)
 
-Thanks,
-Florian
+are available in the Git repository at:
+
+  git://git.infradead.org/users/hch/configfs.git tags/configfs-for-5.3
+
+for you to fetch changes up to b0841eefd9693827afb9888235e26ddd098f9cef:
+
+  configfs: provide exclusion between IO and removals (2019-09-04 22:33:51 +0200)
+
+----------------------------------------------------------------
+configfs fixes for 5.3
+
+ - fix removal vs attribute read/write races (Al Viro)
+
+----------------------------------------------------------------
+Al Viro (4):
+      configfs: stash the data we need into configfs_buffer at open time
+      configfs_register_group() shouldn't be (and isn't) called in rmdirable parts
+      configfs: new object reprsenting tree fragments
+      configfs: provide exclusion between IO and removals
+
+ fs/configfs/configfs_internal.h |  15 ++-
+ fs/configfs/dir.c               | 137 +++++++++++++++-----
+ fs/configfs/file.c              | 280 ++++++++++++++++++++--------------------
+ 3 files changed, 257 insertions(+), 175 deletions(-)
