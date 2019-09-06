@@ -2,113 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9251AAB9F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 15:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42FE5ABA01
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 15:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393691AbfIFNzd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 09:55:33 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40660 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbfIFNzd (ORCPT
+        id S2393774AbfIFN4f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 09:56:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13754 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388097AbfIFN4e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 09:55:33 -0400
-Received: by mail-io1-f66.google.com with SMTP id h144so12853975iof.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 06:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dcmyyYxsqdiEv0SNbtEtPLVRqtn2jGS9PqXA4dwbE3U=;
-        b=B4OSDpddWZe47ugichOkX/imLBvNKswCV0dbKstPAw/+U+9vciLm6xStunfZCickyP
-         Ho3A6tqbPWmU/Ws8P02JF3IyY4fVNkq6SEkJ4pKqhntGCsLpsEcOFwtH17Hn6ejrIZWE
-         eBWLNXul50+Hjrpq1Th64M8qE4oAdLPO1tk9c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dcmyyYxsqdiEv0SNbtEtPLVRqtn2jGS9PqXA4dwbE3U=;
-        b=kozSMOGr+SZEL9HqNgRWBW0sz6bSzh5ncjK5Qm9F8l/bMiFcfHnV0m9XavWlfO1i89
-         Ttr7cWvziXuYwVvDhN99vFAXLB3l2Rd6W77lxV5+mfmS3I57GlUce70CUWmFcwqiINMy
-         wj1Z6w81ng/+t1ni5C4RTYk4piUuQElyb3/uzKk1ZDzW4B2mxgcIf5rjDtYIhzB1/a4K
-         KOCeCwVZUrXvEeMhuEk1P3Hq3cUcucceZ5IzqF93/FAA3+C6+fkSEnOFo2f4awhyB1zD
-         Dnm+GuxbZcdgPtGbBg1dpDESZ8j+N8wIznjBNiJtof6UhEpcx/ExFie3QSLZB6vvaVWV
-         0o+g==
-X-Gm-Message-State: APjAAAXmNG+5YpkziOHvCM49dFevEgehUbBdGq38JmQeIaHuicgN/JZU
-        cA0w4Jv0FKTd4O/mXeX7FeFTeT6bwGArpNRCGaTqbQ==
-X-Google-Smtp-Source: APXvYqyesOafui7EisCf65he+vGO+0RObENd8TxztxTIE83r8g7dcjMJNn1jevJ3E/uacv0hS5BHmUm7+QCoL/L1zKs=
-X-Received: by 2002:a6b:bec6:: with SMTP id o189mr10035532iof.62.1567778132891;
- Fri, 06 Sep 2019 06:55:32 -0700 (PDT)
+        Fri, 6 Sep 2019 09:56:34 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x86DqYHq051512
+        for <linux-fsdevel@vger.kernel.org>; Fri, 6 Sep 2019 09:56:33 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uuq9sbrwy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 09:56:32 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Fri, 6 Sep 2019 14:56:30 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 6 Sep 2019 14:56:28 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x86DuOcU54591668
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 6 Sep 2019 13:56:25 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CD75AA405E;
+        Fri,  6 Sep 2019 13:56:24 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96A3CA405D;
+        Fri,  6 Sep 2019 13:56:23 +0000 (GMT)
+Received: from localhost.in.ibm.com (unknown [9.124.31.57])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  6 Sep 2019 13:56:23 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     jlayton@kernel.org, viro@zeniv.linux.org.uk
+Cc:     hsiangkao@aol.com, linux-fsdevel@vger.kernel.org,
+        aneesh.kumar@linux.ibm.com, wugyuan@cn.ibm.com,
+        riteshh@linux.ibm.com
+Subject: [PATCH 1/1] vfs: Really check for inode ptr in lookup_fast
+Date:   Fri,  6 Sep 2019 19:26:21 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190905194859.16219-1-vgoyal@redhat.com> <CAJfpegu8POz9gC4MDEcXxDWBD0giUNFgJhMEzntJX_u4+cS9Zw@mail.gmail.com>
- <20190906103613.GH5900@stefanha-x1.localdomain> <CAJfpegudNVZitQ5L8gPvA45mRPFDk9fhyboceVW6xShpJ4mLww@mail.gmail.com>
- <20190906120817.GA22083@redhat.com>
-In-Reply-To: <20190906120817.GA22083@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 6 Sep 2019 15:55:21 +0200
-Message-ID: <CAJfpegsL4PLvROr58vtjmyvQu-F17X3xoKCztP2H0fog0xUXhA@mail.gmail.com>
-Subject: Re: [PATCH 00/18] virtiofs: Fix various races and cleanups round 1
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19090613-4275-0000-0000-00000361FAD4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090613-4276-0000-0000-0000387446C0
+Message-Id: <20190906135621.16410-1-riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-06_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909060148
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 2:08 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Fri, Sep 06, 2019 at 01:52:41PM +0200, Miklos Szeredi wrote:
-> > On Fri, Sep 6, 2019 at 12:36 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
-> > >
-> > > On Fri, Sep 06, 2019 at 10:15:14AM +0200, Miklos Szeredi wrote:
-> > > > On Thu, Sep 5, 2019 at 9:49 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > Michael Tsirkin pointed out issues w.r.t various locking related TODO
-> > > > > items and races w.r.t device removal.
-> > > > >
-> > > > > In this first round of cleanups, I have taken care of most pressing
-> > > > > issues.
-> > > > >
-> > > > > These patches apply on top of following.
-> > > > >
-> > > > > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#virtiofs-v4
-> > > > >
-> > > > > I have tested these patches with mount/umount and device removal using
-> > > > > qemu monitor. For example.
-> > > >
-> > > > Is device removal mandatory?  Can't this be made a non-removable
-> > > > device?  Is there a good reason why removing the virtio-fs device
-> > > > makes sense?
-> > >
-> > > Hot plugging and unplugging virtio PCI adapters is common.  I'd very
-> > > much like removal to work from the beginning.
-> >
-> > Can you give an example use case?
->
-> David Gilbert mentioned this could be useful if daemon stops responding
-> or dies. One could remove device. That will fail all future requests
-> and allow unmounting filesystem.
->
-> Havind said that, current implementation will help in above situation
-> only if there are no pending requests. If there are pending requests
-> and daemon stops responding, then removal will hang too, as we wait
-> for draining the queues.
->
-> So at some point of time, we also need some sort of timeout functionality
-> where we end requests with error after a timeout.
->
-> I feel we should support removing device at some point of time. But its
-> not necessarily a must have feature for first round.
+d_is_negative can race with d_instantiate_new()
+-> __d_set_inode_and_type().
+For e.g. in use cases where Thread-1 is creating
+symlink (doing d_instantiate_new()) & Thread-2 is doing
+cat of that symlink while doing lookup_fast (via REF-walk-
+one such case is, when ->permission returns -ECHILD).
 
-If there's no compelling reason to do it in the first round, than I'd
-prefer to not do it.   More complexity -> more bugs.
+During this race if __d_set_and_inode_type() does out-of-order
+execution and set the dentry->d_flags before setting
+dentry->inode, then it can result into following kernel panic.
 
-Thanks,
-Miklos
+This change fixes the issue by directly checking for inode.
+
+E.g. kernel panic, since inode was NULL.
+trailing_symlink() -> may_follow_link() -> inode->i_uid.
+Issue signature:-
+  [NIP  : trailing_symlink+80]
+  [LR   : trailing_symlink+1092]
+  #4 [c00000198069bb70] trailing_symlink at c0000000004bae60  (unreliable)
+  #5 [c00000198069bc00] path_openat at c0000000004bdd14
+  #6 [c00000198069bc90] do_filp_open at c0000000004c0274
+  #7 [c00000198069bdb0] do_sys_open at c00000000049b248
+  #8 [c00000198069be30] system_call at c00000000000b388
+
+Sequence of events:-
+Thread-2(Comm: ln) 	       Thread-1(Comm: cat)
+
+	                dentry = __d_lookup() //nonRCU
+
+__d_set_and_inode_type() (Out-of-order execution)
+    flags = READ_ONCE(dentry->d_flags);
+    flags &= ~(DCACHE_ENTRY_TYPE | DCACHE_FALLTHRU);
+    flags |= type_flags;
+    WRITE_ONCE(dentry->d_flags, flags);
+
+	                if (unlikely(d_is_negative()) // fails
+	                       {}
+	                // since d_flags is already updated in
+	                // Thread-2 in parallel but inode
+	                // not yet set.
+	                // d_is_negative returns false
+
+	                *inode = d_backing_inode(path->dentry);
+	                // means inode is still NULL
+
+    dentry->d_inode = inode;
+
+	                trailing_symlink()
+	                    may_follow_link()
+	                        inode = nd->link_inode;
+	                        // nd->link_inode = NULL
+	                        //Then it crashes while
+	                        //doing inode->i_uid
+
+Reported-by: Guang Yuan Wu <wugyuan@cn.ibm.com>
+Tested-by: Guang Yuan Wu <wugyuan@cn.ibm.com>
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+---
+ fs/namei.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 209c51a5226c..b5867fe988e0 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1623,7 +1623,21 @@ static int lookup_fast(struct nameidata *nd,
+ 		dput(dentry);
+ 		return status;
+ 	}
+-	if (unlikely(d_is_negative(dentry))) {
++
++	/*
++	 * Caution: d_is_negative() can race with
++	 * __d_set_inode_and_type().
++	 * For e.g. in use cases where Thread-1 is creating
++	 * symlink (doing d_instantiate_new()) & Thread-2 is doing
++	 * cat of that symlink and falling here (via Ref-walk) while
++	 * doing lookup_fast (one such case is when ->permission
++	 * returns -ECHILD).
++	 * Now if __d_set_inode_and_type() does out-of-order execution
++	 * i.e. it first sets the dentry->d_flags & then dentry->inode
++	 * then it can result into inode being NULL, causing panic later.
++	 * Hence directly check if inode is NULL here.
++	 */
++	if (unlikely(d_really_is_negative(dentry))) {
+ 		dput(dentry);
+ 		return -ENOENT;
+ 	}
+-- 
+2.21.0
+
