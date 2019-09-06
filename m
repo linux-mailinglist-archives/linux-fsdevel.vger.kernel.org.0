@@ -2,202 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D0ACAC1F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 23:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E2A4AC1FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 23:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388857AbfIFV1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 17:27:13 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40015 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388210AbfIFV1M (ORCPT
+        id S2404101AbfIFV1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 17:27:33 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34175 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388545AbfIFV1c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 17:27:12 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w10so4230879pgj.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 14:27:12 -0700 (PDT)
+        Fri, 6 Sep 2019 17:27:32 -0400
+Received: by mail-wr1-f68.google.com with SMTP id s18so7972215wrn.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 14:27:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zp8c9FLNMZEWCL0gNT+yehsPSnrA53ER9UiJIJvS9kA=;
-        b=wX83E0tAgpuMSlrvnQlUEHKcpX5XUX5HJzrMkrU3esWVFeEgDzrhtcRT2QsymIDQOL
-         xCt83E1f6ryxUP4gLRCutSrzRr/Tna7ygXnmUSDT9yN8LpuQvBVrXFGQdmUIsjcpk/b0
-         zXv4wfPyEd18BNo3Xd+r0eYL/BjjJR3JgebuUMHkk4PTTtC6HWix/kD59iw7Ic702cgn
-         nBRQMdQkY/5HHpGkbLtMEjwW/KHT9uSBbduiQRJ6PIrQ9VRHSs/Cr7A2OQD0JAO1K7I8
-         QilkiX5g6C1AR/39podaVYWxBZildqnNLP+HkigAwuSw7WPQvP92rJZEl9QWQvkumq8J
-         0ZLQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=wrOUeKLOBiJ84ary/XbohFbZ13Zk1ML2RYjXdtdAXc8=;
+        b=r9+0Nr8WSDe0BeX/xgAvWhVEvW9tH0MuECx4aYmadpoy+3AFNgE6P9zxnYbpi57Qg7
+         oi8mXEOkBqQuZ1KEtgbaT+Pl2O1KbPwC6Vc3Hjpv81mmG+Dl0F6ElTIY2un5As6UNNd8
+         1Nr6igDyk8LhIW78BM3pgjMt6zvMStcW3LOt64HlJVN6uQhJdt6goRVp3jM5WH/6pv2S
+         bMbj9IcbdmWNBc7L0ckUq4/u2TCeVPxp8MB/7bohTe03clXVLIJki9/BahI4idCJLobh
+         H6szFVATb+QD+ne0aA7JwOOrYm0C5HsO4tg2YjOsgyf2nHjIT91yC15X7Jgl3N6l+cFz
+         GTcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zp8c9FLNMZEWCL0gNT+yehsPSnrA53ER9UiJIJvS9kA=;
-        b=euAjM3Q1zilGrnEoUO7IYceLscTLSTJvzf7SI9tNhgP9k1GJo/mQoU8avQ9w54bxRa
-         qpBa3u/J3Gh0pHW8Yo7ctoWkAwcmzV1RtnXE44gvmq6LA1kRanuC89e1ZDUprksXY3yO
-         4o+3EnR9NCJw1nJbryTlpd2B2S48rxdgU+iw2SQxcKsYrPygXFJa2Gp0771v6bWRnwDJ
-         qLzwmMwBUMIS4NsrYy8fPU2nNkrmYp4IS86mLeRWx8AhVRsg5fsYopPKe3+sml8JSr50
-         yhZEO48KuwLw+s5gmObxgpfd+hXojaJumxfiqhSsPX1/H0RZ4fAb5eyQD017G8IxJaZf
-         CgEQ==
-X-Gm-Message-State: APjAAAWNd9urAB3SoZvEYnGxYQd65E6x4bbEz93o5kZyOZf7IkU1hXcg
-        qIv4w5zvArdqtDncrOCpbM9Vlf0GXF0=
-X-Google-Smtp-Source: APXvYqyUm6quYg3c6vRJijWkBpXGA45Rp2tgZqej7qLENQJHh5dHW8BIZnRuebMhjYIUsW66JyYq7A==
-X-Received: by 2002:a65:4786:: with SMTP id e6mr9584057pgs.448.1567805231533;
-        Fri, 06 Sep 2019 14:27:11 -0700 (PDT)
-Received: from vader ([2620:10d:c090:200::3:4069])
-        by smtp.gmail.com with ESMTPSA id y15sm8992813pfp.111.2019.09.06.14.27.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2019 14:27:10 -0700 (PDT)
-Date:   Fri, 6 Sep 2019 14:27:10 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] btrfs: add ioctl for directly writing compressed data
-Message-ID: <20190906212710.GI7452@vader>
-References: <cover.1567623877.git.osandov@fb.com>
- <8eae56abb90c0fe87c350322485ce8674e135074.1567623877.git.osandov@fb.com>
- <20190905021012.GL7777@dread.disaster.area>
- <20190906181949.GG7452@vader>
- <20190906210717.GN7777@dread.disaster.area>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=wrOUeKLOBiJ84ary/XbohFbZ13Zk1ML2RYjXdtdAXc8=;
+        b=SAzspr0ULtoFhDQwpoI6Ag+jQVc9mR0X4s5EOqR20QLEhn7qULREzQTe/qgH1qiZDy
+         rp5SodBFqpoVkcdTY9YXwpKrjCPbW9t+2LsW5ObLsg0OhrQoVUqQYvVNn2g7hP677D7Z
+         VX5kTt9XIuyRzzjkK5BgaZyxE2izUhWbB+vD9WJWe5yOgKrHbDUsKKAsEEVSe/2J5CbM
+         up+fISJ2IbQh8NMxHn0HuUAdZzfYdo7o2eY9I+oS/UVcwYOlVCBXM/rWYhgcQCoQwnJr
+         L7DIUMoBA+zGhIv8Uy1Sppq98fSeAozh+G7I3ZQJvkUyhsj8we/E7ToB6H3/oHOuzxjt
+         WeBQ==
+X-Gm-Message-State: APjAAAX4o9vYuFvp4/2JgS/Vri8PRWFt2Mji+nEAddClYGn/ukILHOIL
+        LOQBAgodUgPvMzdM5el4hy4kW3YhejUz+P7SUDQqJA==
+X-Google-Smtp-Source: APXvYqyQvYUwaDE/LHd6zbqUqBfKDoNlGm2VDQzp7ApQIQOK1Au2qKqEKdxutbrRvuaMW9sopVqvXXG4ciLpqp7XHr8=
+X-Received: by 2002:adf:dcc4:: with SMTP id x4mr1493611wrm.221.1567805250597;
+ Fri, 06 Sep 2019 14:27:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906210717.GN7777@dread.disaster.area>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190906152455.22757-1-mic@digikod.net> <20190906152455.22757-2-mic@digikod.net>
+ <87ef0te7v3.fsf@oldenburg2.str.redhat.com> <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
+ <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
+ <20190906171335.d7mc3no5tdrcn6r5@yavin.dot.cyphar.com> <e1ac9428e6b768ac3145aafbe19b24dd6cf410b9.camel@kernel.org>
+ <D2A57C7B-B0FD-424E-9F81-B858FFF21FF0@amacapital.net> <8dc59d585a133e96f9adaf0a148334e7f19058b9.camel@kernel.org>
+In-Reply-To: <8dc59d585a133e96f9adaf0a148334e7f19058b9.camel@kernel.org>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Fri, 6 Sep 2019 14:27:19 -0700
+Message-ID: <CALCETrVR5d2XTpAN8QLRv3cYDfpAdZRNNcD-TtE5H+v7-i7QhQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        Florian Weimer <fweimer@redhat.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 07, 2019 at 07:07:17AM +1000, Dave Chinner wrote:
-> On Fri, Sep 06, 2019 at 11:19:49AM -0700, Omar Sandoval wrote:
-> > On Thu, Sep 05, 2019 at 12:10:12PM +1000, Dave Chinner wrote:
-> > > On Wed, Sep 04, 2019 at 12:13:26PM -0700, Omar Sandoval wrote:
-> > > > From: Omar Sandoval <osandov@fb.com>
-> > > > 
-> > > > This adds an API for writing compressed data directly to the filesystem.
-> > > > The use case that I have in mind is send/receive: currently, when
-> > > > sending data from one compressed filesystem to another, the sending side
-> > > > decompresses the data and the receiving side recompresses it before
-> > > > writing it out. This is wasteful and can be avoided if we can just send
-> > > > and write compressed extents. The send part will be implemented in a
-> > > > separate series, as this ioctl can stand alone.
-> > > > 
-> > > > The interface is essentially pwrite(2) with some extra information:
-> > > > 
-> > > > - The input buffer contains the compressed data.
-> > > > - Both the compressed and decompressed sizes of the data are given.
-> > > > - The compression type (zlib, lzo, or zstd) is given.
-> > 
-> > Hi, Dave,
-> > 
-> > > So why can't you do this with pwritev2()? Heaps of flags, and
-> > > use a second iovec to hold the decompressed size of the previous
-> > > iovec. i.e.
-> > > 
-> > > 	iov[0].iov_base = compressed_data;
-> > > 	iov[0].iov_len = compressed_size;
-> > > 	iov[1].iov_base = NULL;
-> > > 	iov[1].iov_len = uncompressed_size;
-> > > 	pwritev2(fd, iov, 2, offset, RWF_COMPRESSED_ZLIB);
-> > > 
-> > > And you don't need to reinvent pwritev() with some whacky ioctl that
-> > > is bound to be completely screwed up is ways not noticed until
-> > > someone else tries to use it...
-> > 
-> > This is a good suggestion, thanks. I hadn't considered (ab?)using iovecs
-> > in this way.
-> 
-> Yeah, it is a bit of API abuse to pass per-iovec context in the next
-> iovec, but ISTR it being proposed in past times for other
-> mechanisms. I think it's far better than a whole new filesystem
-> private ioctl interface and structure to do what is effectively
-> direct IO...
-> 
-> > One modification I'd make would be to put the encoding into the second
-> > iovec and use a single RWF_ENCODED flag so that we don't have to keep
-> > stealing from RWF_* every time we add a new compression
-> > algorithm/encryption type/whatever:
-> > 
-> >  	iov[0].iov_base = compressed_data;
-> >  	iov[0].iov_len = compressed_size;
-> >  	iov[1].iov_base = (void *)IOV_ENCODING_ZLIB;
-> >  	iov[1].iov_len = uncompressed_size;
-> >  	pwritev2(fd, iov, 2, offset, RWF_ENCODED);
-> > 
-> > Making every other iovec a metadata iovec in this way would be a major
-> > pain to plumb through the iov_iter and VFS code, though. Instead, we
-> > could put the metadata in iov[0] and the encoded data in iov[1..iovcnt -
-> > 1]:
-> > 
-> > 	iov[0].iov_base = (void *)IOV_ENCODING_ZLIB;
-> > 	iov[0].iov_len = unencoded_len;
-> > 	iov[1].iov_base = encoded_data1;
-> > 	iov[1].iov_len = encoded_size1;
-> > 	iov[2].iov_base = encoded_data2;
-> > 	iov[2].iov_len = encoded_size2;
-> >  	pwritev2(fd, iov, 3, offset, RWF_ENCODED);
-> > 
-> > In my opinion, these are both reasonable interfaces. The former allows
-> > the user to write multiple encoded "extents" at once, while the latter
-> > allows writing a single encoded extent from scattered buffers. The
-> > latter is much simpler to implement ;) Thoughts?
-> 
-> Both reasonable, and I have no real concern about how it is done as
-> long as the format is well documented and works for both read and
-> write.
-> 
-> The only other thing I think we need to be careful of is that
-> interface works with AIO (via the RWF flag) and the new uioring async
-> interface  - I think thw RWF flag is all that is needed there). I
-> think that's another good reason for taking the preadv2/pwritev2
-> path, as that should all largely just work with the right iocb
-> frobbing in the syscall context...
+> On Sep 6, 2019, at 1:51 PM, Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Fri, 2019-09-06 at 13:06 -0700, Andy Lutomirski wrote:
+>
+>> I=E2=80=99m not at all convinced that the kernel needs to distinguish al=
+l these, but at least upgradability should be its own thing IMO.
+>
+> Good point. Upgradability is definitely orthogonal, though the idea
+> there is to alter the default behavior. If the default is NOEXEC then
+> UPGRADE_EXEC would make sense.
+>
+> In any case, I was mostly thinking about the middle two in your list
+> above. After more careful reading of the patches, I now get get that
+> Micka=C3=ABl is more interested in the first, and that's really a differe=
+nt
+> sort of use-case.
+>
+> Most opens never result in the fd being fed to fexecve or mmapped with
+> PROT_EXEC, so having userland explicitly opt-in to allowing that during
+> the open sounds like a reasonable thing to do.
+>
+> But I get that preventing execution via script interpreters of files
+> that are not executable might be something nice to have.
+>
+> Perhaps we need two flags for openat2?
+>
+> OA2_MAYEXEC : test that permissions allow execution and that the file
+> doesn't reside on a noexec mount before allowing the open
+>
+> OA2_EXECABLE : only allow fexecve or mmapping with PROT_EXEC if the fd
+> was opened with this
+>
+>
+>
 
-A symmetric interface for preadv2 would look something like this:
+We could go one step farther and have three masks: check_perms,
+fd_perms, and upgrade_perms.  check_perms says =E2=80=9Cfail if I don=E2=80=
+=99t have
+these perms=E2=80=9D.  fd_perms is the permissions on the returned fd, and
+upgrade_perms is the upgrade mask.  (fd_perms  & ~check_perms) !=3D 0 is
+an error.  This makes it possible to say "I want to make sure the file
+is writable, but I don't actually want to write to it", which could
+plausibly be useful.
 
-	iov[1].iov_base = encoded_data1;
-	iov[1].iov_len = encoded_size1;
-	iov[2].iov_base = encoded_data2;
-	iov[2].iov_len = encoded_size2;
-	preadv2(fd, iov, 3, offset, RWF_ENCODED);
-	/*
-	 * iov[0].iov_base gets filled in with the encoding flags,
-	 * iov[0].iov_len gets filled in with unencoded length.
-	 */
+I would argue that these things should have new, sane bits, e.g.
+FILE_READ, FILE_WRITE, and FILE_EXECUTE (or maybe FILE_MAP_EXEC and
+FILE_EXECVE).  And maybe there should be at least 16 bits for each
+mask reserved.  Windows has a lot more mode bits than Linux, and it's
+not entirely nuts.  We do *not* need any direct equivalent of O_RDWR
+for openat2().
 
-But, iov is passed as a const struct iovec *, so it'd be nasty to write
-to it in the RWF_ENCODED case. Maybe we actually want to pass the
-encoding information through an extra indirection. Something along the
-lines of this for writes:
-
-	struct encoded_rw {
-		size_t unencoded_len;
-		int compression;
-		int encryption;
-		...
-	};
-	
-	struct encoded_rw encoded = {
-		unencoded_len,
-		ENCODED_RW_ZLIB,
-	};
-	iov[0].iov_base = &encoded;
-	iov[0].iov_len = sizeof(encoded);
-	iov[1].iov_base = encoded_data1;
-	iov[1].iov_len = encoded_size1;
-	iov[2].iov_base = encoded_data2;
-	iov[2].iov_len = encoded_size2;
-	pwritev2(fd, iov, 3, offset, RWF_ENCODED);
-
-And similar for reads:
-
-	struct encoded_rw encoded;
-	iov[0].iov_base = &encoded;
-	iov[0].iov_len = sizeof(encoded);
-	iov[1].iov_base = encoded_data1;
-	iov[1].iov_len = encoded_size1;
-	iov[2].iov_base = encoded_data2;
-	iov[2].iov_len = encoded_size2;
-	preadv2(fd, iov, 3, offset, RWF_ENCODED);
-	/* encoded gets filled in with the encoding information. */
-
-I'll draft something with this interface.
+--Andy
