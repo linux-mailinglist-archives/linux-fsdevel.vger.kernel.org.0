@@ -2,151 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA0EEABDD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 18:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 909C4ABE02
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 18:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388758AbfIFQgy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 12:36:54 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36431 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbfIFQgy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 12:36:54 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l20so6604191ljj.3;
-        Fri, 06 Sep 2019 09:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S3nw5KJgvoogjXUpclfafJOXkBikfp0oqPVUV7e3hUA=;
-        b=a8VpDudn+L1zKw5NgFwUkIPMMw9Tnx+IYueVVEwHZLswUHPq5bDGV6RdlBvy15H1BP
-         f++2UOR2BcXu5NK7Xo13aa1dVXiVIFaGGA4JBqdnU9q7UnjIiQKbOJHXHnU9O896pFH6
-         MYNZng7KLPumqC1aQIElot0/QZ5Fe/fTmAWkPltcW8E6sUMFimIZ66FyPv9b3y7g/fiN
-         3DQeci9XrRonhkAmB/zw6XiS7+u+rHGIqy27yCncpBVd9wGHA6A+UrdWVwAripHzdhlN
-         qD321mS0fma4Ir3FUYjz0HcYLY41/jpP5EkKyNoD3HWMiGvLLdEIs63XTBGphVAM97kv
-         /Dng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S3nw5KJgvoogjXUpclfafJOXkBikfp0oqPVUV7e3hUA=;
-        b=OBlpt06/5/a8q6/g8hRMM/uUMI/nMaZC1fiX1tAgqPhjjOU8p0m/hLjDqBHYeQHzxs
-         qYqE1zk9Db3axWAfS1Bgbmj6jHdJ+T5Xt19K8uk2vJviISNfgFhpjj05BS41Yse7KRMp
-         u/FLlyN3efVoAmWn15wIs5tWUMYybfXo81ly3LtgQF2fcJAdu5o1KRbaz0AUGrCjMVJL
-         Y22BnaOzwqGHAc2AQWzCfvqS8yy9wcEG4j8K8i1cAmfcmFLlatBWPan5ajbKsxiCgBYP
-         Wk9DraQvja9fNUqXoX2P+ChatCorS4UlHk2bbRyj/9LrzPM4at0piFiYEjKgMfzjC+AG
-         IrQw==
-X-Gm-Message-State: APjAAAUt9MIDiZLWEPJ5xN3t2Sst9ES/8PEL45Kj07+xpHg63qKlNQjd
-        nbQV0nz3ERjHMsAjkKWZG1nT8SNBWuhhbg3/UZ4j4HX3
-X-Google-Smtp-Source: APXvYqwxVBhjms0lsdGKAK1nR3MSZGIPAxrNcdmhdfP+nXSUvuAleSgmHEBhCM6/9ljBMOM9ncj0gpauSKtec1qW3Bc=
-X-Received: by 2002:a2e:1648:: with SMTP id 8mr6027913ljw.194.1567787812149;
- Fri, 06 Sep 2019 09:36:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190816083246.169312-1-arul.jeniston@gmail.com>
- <CACAVd4hT6QYtgtDsBcgy7c_s9WVBAH+1m0r5geBe7BUWJWYhbA@mail.gmail.com>
- <alpine.DEB.2.21.1908171942370.1923@nanos.tec.linutronix.de>
- <CACAVd4jfoSUK4xgLByKeMY5ZPHZ40exY+74e4fOcBDPeoLpqQg@mail.gmail.com>
- <alpine.DEB.2.21.1908190947290.1923@nanos.tec.linutronix.de>
- <CACAVd4izozzXNF9qwNcXC+EUx5n1sfsNeb9JNXNJF56LdZkkYg@mail.gmail.com>
- <alpine.DEB.2.21.1908191646350.2147@nanos.tec.linutronix.de>
- <CACAVd4j60pn=td5hh485SJOcoYZ_jWQDQg2DVasSodPtsaupkw@mail.gmail.com>
- <alpine.DEB.2.21.1908191752580.2147@nanos.tec.linutronix.de>
- <CACAVd4iRN7=eq_B1+Yb-xcspU-Sg1dmMo_=VtLXXVPkjN1hY5Q@mail.gmail.com>
- <alpine.DEB.2.21.1908191943280.1796@nanos.tec.linutronix.de>
- <CACAVd4jAJ5QcOH=q=Q9kAz20X4_nAc7=vVU_gPWTS1UuiGK-fg@mail.gmail.com>
- <alpine.DEB.2.21.1908201036200.2223@nanos.tec.linutronix.de>
- <CACAVd4jT4Ke7giPmKSzt+Wo3Ro-g9zWDRz_GHaRcs0Nb3_rkBw@mail.gmail.com>
- <CACAVd4gRoQih6f_K7kMzr=AwA_DvP0OksxBKj1bGPsP2F_9sFg@mail.gmail.com> <alpine.DEB.2.21.1909051707150.1902@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1909051707150.1902@nanos.tec.linutronix.de>
-From:   Arul Jeniston <arul.jeniston@gmail.com>
-Date:   Fri, 6 Sep 2019 22:06:39 +0530
-Message-ID: <CACAVd4hS1i--fxWaarXP2psagW-JmBoLAJRrfu9gkRc49Ja4pg@mail.gmail.com>
-Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arul_mc@dell.com
+        id S2405940AbfIFQtE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 12:49:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55288 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405934AbfIFQtE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Sep 2019 12:49:04 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE05620644;
+        Fri,  6 Sep 2019 16:49:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567788543;
+        bh=xWpSJFUS4h9orrA331aLGvjdzbINh7yeaGYKw2j49vE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=f2hfBkg1hv++7RhCjFnGYFYZ7UpLwMTDlXmWlwYszll17PrezP1cyi1PEEmnh+HNN
+         pnFT3OLPKxEOE5McxRb6hxqaoesj0DEtnoHNAQbAtp1/Ro9WmKNQ4jdHnENi4ZBFiz
+         IKixR/rSalsZdHuMF3yJ3i0ZTpyfCcai5ni0Vlng=
+Message-ID: <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
+Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
+ sys_open()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Florian Weimer <fweimer@redhat.com>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Fri, 06 Sep 2019 12:48:59 -0400
+In-Reply-To: <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
+References: <20190906152455.22757-1-mic@digikod.net>
+         <20190906152455.22757-2-mic@digikod.net>
+         <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
+         <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi tglx,
+On Fri, 2019-09-06 at 18:06 +0200, Mickaël Salaün wrote:
+> On 06/09/2019 17:56, Florian Weimer wrote:
+> > Let's assume I want to add support for this to the glibc dynamic loader,
+> > while still being able to run on older kernels.
+> > 
+> > Is it safe to try the open call first, with O_MAYEXEC, and if that fails
+> > with EINVAL, try again without O_MAYEXEC?
+> 
+> The kernel ignore unknown open(2) flags, so yes, it is safe even for
+> older kernel to use O_MAYEXEC.
+> 
 
->Changing the return value to 1 would be just a cosmetic workaround.
+Well...maybe. What about existing programs that are sending down bogus
+open flags? Once you turn this on, they may break...or provide a way to
+circumvent the protections this gives.
 
-Agreed. Returning 1 is incorrect as It causes the next read() to
-return before the interval time passed.
+Maybe this should be a new flag that is only usable in the new openat2()
+syscall that's still under discussion? That syscall will enforce that
+all flags are recognized. You presumably wouldn't need the sysctl if you
+went that route too.
 
->So I rather change the documentation (this applies only to CLOCK_REALTIME
->and CLOCK_REALTIME_ALARM) and explain the rationale.
+Anyone that wants to use this will have to recompile anyway. If the
+kernel doesn't support openat2 or if the flag is rejected then you know
+that you have no O_MAYEXEC support and can decide what to do.
 
-When timerfd_read() returns 0, hrtimer_forward() doesn't change expiry
-time, So, instead of modifying the man page, can we call
-timerfd_read() functionality once again from kernel.
+> > Or do I risk disabling this security feature if I do that?
+> 
+> It is only a security feature if the kernel support it, otherwise it is
+> a no-op.
+> 
 
-For example:-
-timerfd_read_wrapper()
-{
-   do {
-     ret = timerfd_read(...);
-   } while (ret == 0);
-}
+With a security feature, I think we really want userland to aware of
+whether it works.
 
-Let us know whether you see any problem in handling this race in kernel.
+> > Do we need a different way for recognizing kernel support.  (Note that
+> > we cannot probe paths in /proc for various reasons.)
+> 
+> There is no need to probe for kernel support.
+> 
+> > Thanks,
+> > Florian
+> > 
+> 
+> --
+> Mickaël Salaün
+> 
+> Les données à caractère personnel recueillies et traitées dans le cadre de cet échange, le sont à seule fin d’exécution d’une relation professionnelle et s’opèrent dans cette seule finalité et pour la durée nécessaire à cette relation. Si vous souhaitez faire usage de vos droits de consultation, de rectification et de suppression de vos données, veuillez contacter contact.rgpd@sgdsn.gouv.fr. Si vous avez reçu ce message par erreur, nous vous remercions d’en informer l’expéditeur et de détruire le message. The personal data collected and processed during this exchange aims solely at completing a business relationship and is limited to the necessary duration of that relationship. If you wish to use your rights of consultation, rectification and deletion of your data, please contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message in error, we thank you for informing the sender and destroying the message.
 
-Regards,
-Arul
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-
-On Thu, Sep 5, 2019 at 9:04 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Arul,
->
-> On Thu, 5 Sep 2019, Arul Jeniston wrote:
-> > When we adjust the date setting using date command we observed
-> > 'timerfd_read()' on CLOCK_REALTIME (TFD_TIMER_ABSTIME flag is set)
-> > returns 0.
-> > we don't see any hardware influence here and we are able to recreate
-> > it consistently. Is it expected? if yes, isn't it something to be
-> > documented in timerfd read() man page?
->
-> It's expected, yes. Simply because it hits the following condition:
->
->      armtimer(T1)
->
->      settime(T1 + X)  --> causes timer to fire
->
->                                  wakeup reader
->      settime(T0)
->
->                                  read number of intervals: 0
->
->                                  i.e. timer did not expire
->
-> Changing the return value to 1 would be just a cosmetic workaround. We
-> could also jump back and wait again. But that's all not consistent because
->
->      armtimer(T1)
->
->      settime(T1 + X)  --> causes timer to fire
->
->                                  wakeup reader
->
->                                  read number of intervals: 1
->      settime(T0)
->
->                                  user space reads time and figures that
->                                  the returned tick is bogus.
->
-> So I rather change the documentation (this applies only to CLOCK_REALTIME
-> and CLOCK_REALTIME_ALARM) and explain the rationale.
->
-> For applications which care about notifications when the time was set,
-> timerfd_settime() provides TFD_TIMER_CANCEL_ON_SET which causes the timer
-> to be canceled when time is set and returns -ECANCELED from the
-> read. That's unambiguous.
->
-> Thanks,
->
->         tglx
