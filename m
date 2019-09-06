@@ -2,99 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D26B8AB2AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 08:59:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70438AB2D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 09:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391689AbfIFG7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 02:59:03 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35869 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391691AbfIFG7D (ORCPT
+        id S2404075AbfIFHBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 03:01:33 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57022 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391691AbfIFHBc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 02:59:03 -0400
-Received: by mail-io1-f66.google.com with SMTP id b136so10496378iof.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Sep 2019 23:59:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bfktZU2LgTx6D7En0Wx2Mu5plOyFie+VjtJALYkbimU=;
-        b=Yak3xoXIqMKV5zuJXeaGtnIkCfLjFJbvThhEFLgtKC68SrbvkGOBucZ//qS5ymKDDj
-         WyyaBeb2JminBNDU6uvZzWy147y3b2D3IhAm5ZpuETBYXdn9u1VGy1zpF9Mjcdmc1kes
-         ekmY4xylU70A8hX3eQygyGuAe7cIqMcFCZZck=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bfktZU2LgTx6D7En0Wx2Mu5plOyFie+VjtJALYkbimU=;
-        b=NzaUruaxqLXp83U4+tOIFgEKGFv3QlY5WIR0NIQMcRtfGPBhYIXZ1TeaF26sHY5TVM
-         5IAWOwl8pn0Xw5B4LbBjczozKINPzaz3LRv9n1ESQOeSWlMpbS5GK3qxxWEer33zHNlw
-         izBas1TeD6ZLjDNF4Cq9Ee+GxEmqWjySNegsLdPXuzysoXanQscVDqBzm8NBojWfynwQ
-         SfECEQA/bc0r0dlmkU/Cq5dQ0JgrZTBEjjxQO0Y+a3PtMTc6u5+1T1UhE2xRXixg4+UU
-         fipF2Z8AJ5ToKyh/Z3toGjY/KFFL8tgyp+Ss5tBjT0/ugpIspdsWSr86aIt9qKfMKJhF
-         t0lg==
-X-Gm-Message-State: APjAAAVbP6qsU0BUNO8dNjU9LVjaP2P256QYDasOBG0lWvRaWIo17g+y
-        feOSUcBiZDC0bJZWpemDHSdxMz2dd1i4ZgXN+4Pd0A==
-X-Google-Smtp-Source: APXvYqz6GOf3eZ8CIMGHYsCOx3oBkV38YAzTnCm5dhz4Vkacx+VwGnwOL5JYOLIRyClGsyYOX7qR7TsW4MsEHWJess4=
-X-Received: by 2002:a02:c94b:: with SMTP id u11mr5163432jao.35.1567753142656;
- Thu, 05 Sep 2019 23:59:02 -0700 (PDT)
+        Fri, 6 Sep 2019 03:01:32 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1i68El-00072o-Nh; Fri, 06 Sep 2019 07:00:51 +0000
+Date:   Fri, 6 Sep 2019 09:00:49 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190906070048.tmhuemasmsn55spq@wittgenstein>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
+ <20190905180750.GQ1131@ZenIV.linux.org.uk>
+ <20190905182303.7f6bxpa2enbgcegv@wittgenstein>
+ <20190905182801.GR1131@ZenIV.linux.org.uk>
+ <20190905195618.pwzgvuzadkfpznfz@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-References: <0000000000008d8eac05906691ac@google.com> <20190822233529.4176-1-ebiggers@kernel.org>
- <CAJfpegvHgcZGFi-Ydyo2j89zQxqAtZ1Lh0+vC6vWeU-aEFZkYQ@mail.gmail.com>
- <20190903133910.GA5144@zzz.localdomain> <CAJfpegtrkxAYq4_rXVNEhe=6SFCfXGgpNVtaiuyfSdh+kthazA@mail.gmail.com>
- <20190906044324.GE803@sol.localdomain>
-In-Reply-To: <20190906044324.GE803@sol.localdomain>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 6 Sep 2019 08:58:51 +0200
-Message-ID: <CAJfpegvdh53VSQ9okuUTS3jQFjkbcwPdJFmUorE0nseeFRPaoA@mail.gmail.com>
-Subject: Re: [PATCH] fuse: disable irqs for fuse_iqueue::waitq.lock
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-aio <linux-aio@kvack.org>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        stable <stable@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190905195618.pwzgvuzadkfpznfz@yavin.dot.cyphar.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 6:43 AM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Wed, Sep 04, 2019 at 04:29:03PM +0200, Miklos Szeredi wrote:
+On Fri, Sep 06, 2019 at 05:56:18AM +1000, Aleksa Sarai wrote:
+> On 2019-09-05, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > On Thu, Sep 05, 2019 at 08:23:03PM +0200, Christian Brauner wrote:
+> > 
+> > > Because every caller of that function right now has that limit set
+> > > anyway iirc. So we can either remove it from here and place it back for
+> > > the individual callers or leave it in the helper.
+> > > Also, I'm really asking, why not? Is it unreasonable to have an upper
+> > > bound on the size (for a long time probably) or are you disagreeing with
+> > > PAGE_SIZE being used? PAGE_SIZE limit is currently used by sched, perf,
+> > > bpf, and clone3 and in a few other places.
+> > 
+> > For a primitive that can be safely used with any size (OK, any within
+> > the usual 2Gb limit)?  Why push the random policy into the place where
+> > it doesn't belong?
+> > 
+> > Seriously, what's the point?  If they want to have a large chunk of
+> > userland memory zeroed or checked for non-zeroes - why would that
+> > be a problem?
+> 
+> Thinking about it some more, there isn't really any r/w amplification --
+> so there isn't much to gain by passing giant structs. Though, if we are
+> going to permit 2GB buffers, isn't that also an argument to use
+> memchr_inv()? :P
 
-> > TBH, I find the fix disgusting. It's confusing to sprinke code that
-> > has absolutely nothing to do with interrupts with spin_lock_irq()
-> > calls.
-> >
-> > I think the lock/unlock calls should at least be done with a helper
-> > with a comment explaining why disabling interrupts is needed (though I
-> > have not managed to understand why aio needs to actually mess with the
-> > waitq lock...)
->
-> The aio code is doing a poll(), so it needs to use the wait queue.
+I think we should just do a really dumb, easy to understand minimal
+thing for now. It could even just be what every caller is doing right
+now anyway with the get_user() loop.
+The only way to settle memchr_inv() vs all the other clever ways
+suggested here is to benchmark it and see if it matters *for the current
+users* of this helper. If it does, great we can do it. If it doesn't why
+bother having that argument right now?
+Once we somehow end up in a possible world where we apparently have
+decided it's a great idea to copy 2GB argument structures for a syscall
+into or from the kernel we can start optimizing the hell out of this.
+Before that and especially with current callers I honestly doubt it
+matters whether we use memchr_inv() or while() {get_user()} loops.
 
-Doesn't explain why the irq disabled nested locking is needed in
-aio_poll().  poll/select manage to do that without messing with waitq
-internals.   How is aio poll different?
-
-> >
-> > Probably a better fix would be to just use a separate spinlock to
-> > avoid the need to disable interrupts in cases where it's not
-> > necessary.
->
-> Well, the below is what a separate lock would look like.  Note that it actually
-> still disables IRQs in some places; it's just hidden away in the nested
-> spin_lock_irqsave() in wake_up().  Likewise, adding something to the fuse_iqueue
-> then requires taking 2 spin locks -- one explicit, and one hidden in wake_up().
-
-Right, that's exactly why the waitq lock was used.
-
-> Is this the solution you'd prefer?
-
-I'd actually prefer if aio was fixed.   But I guess that's not
-realistic, so yes, the below patch looks okay.  If fiq->lock is in the
-same cacheline as fiq->waitq then it shouldn't make a difference.
-
-Thanks,
-Miklos
+Christian
