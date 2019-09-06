@@ -2,129 +2,372 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B24AB9D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 15:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67B12AB9D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 15:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404520AbfIFNwS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 09:52:18 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44401 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404398AbfIFNwR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 09:52:17 -0400
-Received: by mail-ed1-f66.google.com with SMTP id p2so5191704edx.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 06:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pSwKQqKejHvomA4UPmYTw+LwVuiZyDGPrk1Lq89yOlc=;
-        b=krIXjZuVxCJl33L5P7YERwE4VpW6UrHy0iuJSfbsUbAM2HhB6s8TIJj2x5Hf3zSSY1
-         MGNmvNeJHedKm9o8yTZ4y3OWRnSZpy1E89bkh8N6KCZcGEvnUD2QDqGx4aWMI4mJGvcL
-         Ppngok3/qzQFA60NDMu9y3Q2d+DBULexYZr3CRhAE2biifMMgReAKg2wLCahJVaZmLIe
-         U6QyykZqKzBuNjnaOLd6b5CpCS7/4xcWLvjvu94C9WJ0MilQrePsupa948MD7IKO/fA+
-         lBnIO/x45lK43GFvdSCfU7J+usjhIpohx3G5q9zUwCDJbMKC787DRIQfcSfSI0yFIUE6
-         9ARA==
+        id S2404561AbfIFNwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 09:52:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60142 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731351AbfIFNwz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Sep 2019 09:52:55 -0400
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3165E85A03
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Sep 2019 13:52:54 +0000 (UTC)
+Received: by mail-qk1-f199.google.com with SMTP id t6so6496125qkm.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 06:52:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pSwKQqKejHvomA4UPmYTw+LwVuiZyDGPrk1Lq89yOlc=;
-        b=su3D/Bk0bBmx4eY+kqB3fTJf64OwCWyZ/iG5HdkeY66HqgP3vhDyF8K+XefCwDkAdt
-         KAHQ23WS8AYmYTP4xTehTTGoCgq0QQnu+HpYg6xXAtwdpDQCBJoHTzfaqpV1zMTkfArX
-         p9Pbz1V+4OOYMfr+vH3GeK98aGFT5zKgChUWQy0Xr5oUS8JjMDdG/aLBD+XcM/3FfVAN
-         HK6sVF4oIS5Bzg0OBHInH7SdX6Lb9jP9sAAIYdcHhoco+NOCXmkl8NkYDYypScLcFhyw
-         SA4VOfdzR4BfQwSLmObB1OhfO71M5YRsSAuCQlrX3PoM+8z//7GHBuostEi8pbKv9a3w
-         miBA==
-X-Gm-Message-State: APjAAAUpk/BTnk5q9Glybe9Y65aBvXUXjDsS4EEqvh2h7JpwM32uTltC
-        JaY77PCTCbKXMcmzB1dz2Kmn5Q==
-X-Google-Smtp-Source: APXvYqw0w8tC1bR5JsQaeK6MSBWtjs6baFEFAYcol6N9qf3I0kpnA/iP0itaefwAoZGEL3PxWMG0Pg==
-X-Received: by 2002:aa7:df1a:: with SMTP id c26mr9588705edy.106.1567777936212;
-        Fri, 06 Sep 2019 06:52:16 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id g6sm955486edk.40.2019.09.06.06.52.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Sep 2019 06:52:15 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 4DA191049F1; Fri,  6 Sep 2019 16:52:15 +0300 (+03)
-Date:   Fri, 6 Sep 2019 16:52:15 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Johannes Weiner <jweiner@fb.com>
-Subject: Re: [PATCH 3/3] mm: Allow find_get_page to be used for large pages
-Message-ID: <20190906135215.f4qvsswrjaentvmi@box>
-References: <20190905182348.5319-1-willy@infradead.org>
- <20190905182348.5319-4-willy@infradead.org>
- <20190906125928.urwopgpd66qibbil@box>
- <20190906134145.GW29434@bombadil.infradead.org>
+         :mime-version:content-disposition:in-reply-to;
+        bh=52CdE8+JncbMvzRoKqRhgWDSd6sOQytSaTvTEm45d7g=;
+        b=ulyaMgF5qOMTjXAMDey5rWRT1CED+6YdGwWPoJddBpoAp6WlTHk57Cu+z39d/0tCUp
+         8Cv0xGFcyAh43me4ulvvG0Ou5A7pr0sAxx4WH3ozozwTbU8b3kbIkICCHkp7Az6UQOqM
+         Q9O0ODqkZEcCbH8XQThodihorMo2tGkV1MYbcneuFywak3SKUl4iAQ/M5uf6mcTXZVuv
+         gpVKXjRUyLBhE2z6pDUigENFUXs6vUrcpjVdchLJuyH6BjSeBym9nQFBidgcM4w0r61f
+         wgj5Zi7e2F7PefnyBNy3VspSxr+fKQpF6dT6BIyWiNFatqwlzYH9eTnpp6YiohX1u4EK
+         j0eQ==
+X-Gm-Message-State: APjAAAVqC6DSVCbjosqKma+YeCoyEfVax3xiveoWbhlHIYD5KZR3ImmM
+        t1dN89SMZWvt/j028shi5Q+Vvx9jowy0Tpl69aiiH/t6JxB1wwj/PDNywYNm8o3EGmd/ca/J3Hz
+        6FP0sODWXyJ6fYLh8NYveDE2ZKw==
+X-Received: by 2002:a37:4dc5:: with SMTP id a188mr9282445qkb.206.1567777973493;
+        Fri, 06 Sep 2019 06:52:53 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqx5nL7m9gBqvQ6w+E8IFqHc3MzC/N4FmuJLBEZW8gdUYpvWXEr0tbso415mOcImpMKdmdjLqA==
+X-Received: by 2002:a37:4dc5:: with SMTP id a188mr9282427qkb.206.1567777973222;
+        Fri, 06 Sep 2019 06:52:53 -0700 (PDT)
+Received: from redhat.com (bzq-79-176-40-226.red.bezeqint.net. [79.176.40.226])
+        by smtp.gmail.com with ESMTPSA id c29sm3697800qtc.89.2019.09.06.06.52.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 06:52:52 -0700 (PDT)
+Date:   Fri, 6 Sep 2019 09:52:42 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v4 15/16] virtio-fs: add virtiofs filesystem
+Message-ID: <20190906095225-mutt-send-email-mst@kernel.org>
+References: <20190903113640.7984-1-mszeredi@redhat.com>
+ <20190903114203.8278-10-mszeredi@redhat.com>
+ <20190903092222-mutt-send-email-mst@kernel.org>
+ <20190905191515.GA11702@redhat.com>
+ <20190906102209.GD5900@stefanha-x1.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190906134145.GW29434@bombadil.infradead.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190906102209.GD5900@stefanha-x1.localdomain>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 06:41:45AM -0700, Matthew Wilcox wrote:
-> On Fri, Sep 06, 2019 at 03:59:28PM +0300, Kirill A. Shutemov wrote:
-> > > +/**
-> > > + * __find_get_page - Find and get a page cache entry.
-> > > + * @mapping: The address_space to search.
-> > > + * @offset: The page cache index.
-> > > + * @order: The minimum order of the entry to return.
-> > > + *
-> > > + * Looks up the page cache entries at @mapping between @offset and
-> > > + * @offset + 2^@order.  If there is a page cache page, it is returned with
+On Fri, Sep 06, 2019 at 11:22:09AM +0100, Stefan Hajnoczi wrote:
+> On Thu, Sep 05, 2019 at 03:15:15PM -0400, Vivek Goyal wrote:
+> > On Tue, Sep 03, 2019 at 09:55:49AM -0400, Michael S. Tsirkin wrote:
+> > [..]
+> > > What's with all of the TODOs? Some of these are really scary,
+> > > looks like they need to be figured out before this is merged.
 > > 
-> > Off by one? :P
+> > Hi Michael,
+> > 
+> > One of the issue I noticed is races w.r.t device removal and super
+> > block initialization. I am about to post a set of patches which
+> > take care of these races and also get rid of some of the scary
+> > TODOs. Other TODOs like suspend/restore, multiqueue support etc
+> > are improvements which we can do over a period of time.
+> > 
+> > [..]
+> > > > +/* Per-virtqueue state */
+> > > > +struct virtio_fs_vq {
+> > > > +	spinlock_t lock;
+> > > > +	struct virtqueue *vq;     /* protected by ->lock */
+> > > > +	struct work_struct done_work;
+> > > > +	struct list_head queued_reqs;
+> > > > +	struct delayed_work dispatch_work;
+> > > > +	struct fuse_dev *fud;
+> > > > +	bool connected;
+> > > > +	long in_flight;
+> > > > +	char name[24];
+> > > 
+> > > I'd keep names somewhere separate as they are not used on data path.
+> > 
+> > Ok, this sounds like a nice to have. Will take care of this once base
+> > patch gets merged.
+> > 
+> > [..]
+> > > > +struct virtio_fs_forget {
+> > > > +	struct fuse_in_header ih;
+> > > > +	struct fuse_forget_in arg;
+> > > 
+> > > These structures are all native endian.
+> > > 
+> > > Passing them to host will make cross-endian setups painful to support,
+> > > and hardware implementations impossible.
+> > > 
+> > > How about converting everything to LE?
+> > 
+> > So looks like endianness issue is now resolved (going by the other
+> > emails). So I will not worry about it.
+> > 
+> > [..]
+> > > > +/* Add a new instance to the list or return -EEXIST if tag name exists*/
+> > > > +static int virtio_fs_add_instance(struct virtio_fs *fs)
+> > > > +{
+> > > > +	struct virtio_fs *fs2;
+> > > > +	bool duplicate = false;
+> > > > +
+> > > > +	mutex_lock(&virtio_fs_mutex);
+> > > > +
+> > > > +	list_for_each_entry(fs2, &virtio_fs_instances, list) {
+> > > > +		if (strcmp(fs->tag, fs2->tag) == 0)
+> > > > +			duplicate = true;
+> > > > +	}
+> > > > +
+> > > > +	if (!duplicate)
+> > > > +		list_add_tail(&fs->list, &virtio_fs_instances);
+> > > 
+> > > 
+> > > This is O(N^2) as it's presumably called for each istance.
+> > > Doesn't scale - please switch to a tree or such.
+> > 
+> > This is O(N) and not O(N^2) right? Addition of device is O(N), search
+> > during mount is O(N).
+> > 
+> > This is not a frequent event at all and number of virtiofs instances
+> > per guest are expected to be fairly small (say less than 10). So I 
+> > really don't think there is any value in converting this into a tree
+> > (instead of a list).
+> > 
+> > [..]
+> > > > +static void virtio_fs_free_devs(struct virtio_fs *fs)
+> > > > +{
+> > > > +	unsigned int i;
+> > > > +
+> > > > +	/* TODO lock */
+> > > 
+> > > Doesn't inspire confidence, does it?
+> > 
+> > Agreed. Getting rid of this in set of fixes I am about to post.
+> > 
+> > > 
+> > > > +
+> > > > +	for (i = 0; i < fs->nvqs; i++) {
+> > > > +		struct virtio_fs_vq *fsvq = &fs->vqs[i];
+> > > > +
+> > > > +		if (!fsvq->fud)
+> > > > +			continue;
+> > > > +
+> > > > +		flush_work(&fsvq->done_work);
+> > > > +		flush_delayed_work(&fsvq->dispatch_work);
+> > > > +
+> > > > +		/* TODO need to quiesce/end_requests/decrement dev_count */
+> > > 
+> > > Indeed. Won't this crash if we don't?
+> > 
+> > Took care of this as well.
+> > 
+> > [..]
+> > > > +static void virtio_fs_hiprio_dispatch_work(struct work_struct *work)
+> > > > +{
+> > > > +	struct virtio_fs_forget *forget;
+> > > > +	struct virtio_fs_vq *fsvq = container_of(work, struct virtio_fs_vq,
+> > > > +						 dispatch_work.work);
+> > > > +	struct virtqueue *vq = fsvq->vq;
+> > > > +	struct scatterlist sg;
+> > > > +	struct scatterlist *sgs[] = {&sg};
+> > > > +	bool notify;
+> > > > +	int ret;
+> > > > +
+> > > > +	pr_debug("virtio-fs: worker %s called.\n", __func__);
+> > > > +	while (1) {
+> > > > +		spin_lock(&fsvq->lock);
+> > > > +		forget = list_first_entry_or_null(&fsvq->queued_reqs,
+> > > > +					struct virtio_fs_forget, list);
+> > > > +		if (!forget) {
+> > > > +			spin_unlock(&fsvq->lock);
+> > > > +			return;
+> > > > +		}
+> > > > +
+> > > > +		list_del(&forget->list);
+> > > > +		if (!fsvq->connected) {
+> > > > +			spin_unlock(&fsvq->lock);
+> > > > +			kfree(forget);
+> > > > +			continue;
+> > > > +		}
+> > > > +
+> > > > +		sg_init_one(&sg, forget, sizeof(*forget));
+> > > 
+> > > This passes to host a structure including "struct list_head list";
+> > > 
+> > > Not a good idea.
+> > 
+> > Ok, host does not have to see "struct list_head list". Its needed for
+> > guest. Will look into getting rid of this.
+> > 
+> > > 
+> > > 
+> > > > +
+> > > > +		/* Enqueue the request */
+> > > > +		dev_dbg(&vq->vdev->dev, "%s\n", __func__);
+> > > > +		ret = virtqueue_add_sgs(vq, sgs, 1, 0, forget, GFP_ATOMIC);
+> > > 
+> > > 
+> > > This is easier as add_outbuf.
+> > 
+> > Will look into it.
+> > 
+> > > 
+> > > Also - why GFP_ATOMIC?
+> > 
+> > Hmm..., may be it can be GFP_KERNEL. I don't see atomic context here. Will
+> > look into it.
+> > 
+> > > 
+> > > > +		if (ret < 0) {
+> > > > +			if (ret == -ENOMEM || ret == -ENOSPC) {
+> > > > +				pr_debug("virtio-fs: Could not queue FORGET: err=%d. Will try later\n",
+> > > > +					 ret);
+> > > > +				list_add_tail(&forget->list,
+> > > > +						&fsvq->queued_reqs);
+> > > > +				schedule_delayed_work(&fsvq->dispatch_work,
+> > > > +						msecs_to_jiffies(1));
+> > > 
+> > > Can't we we requeue after some buffers get consumed?
+> > 
+> > That's what dispatch work is doing. It tries to requeue the request after
+> > a while.
+> > 
+> > [..]
+> > > > +static int virtio_fs_probe(struct virtio_device *vdev)
+> > > > +{
+> > > > +	struct virtio_fs *fs;
+> > > > +	int ret;
+> > > > +
+> > > > +	fs = devm_kzalloc(&vdev->dev, sizeof(*fs), GFP_KERNEL);
+> > > > +	if (!fs)
+> > > > +		return -ENOMEM;
+> > > > +	vdev->priv = fs;
+> > > > +
+> > > > +	ret = virtio_fs_read_tag(vdev, fs);
+> > > > +	if (ret < 0)
+> > > > +		goto out;
+> > > > +
+> > > > +	ret = virtio_fs_setup_vqs(vdev, fs);
+> > > > +	if (ret < 0)
+> > > > +		goto out;
+> > > > +
+> > > > +	/* TODO vq affinity */
+> > > > +	/* TODO populate notifications vq */
+> > > 
+> > > what's notifications vq?
+> > 
+> > It has not been implemented yet. At some point of time we want to have
+> > a notion of notification queue so that host can send notifications to
+> > guest. Will get rid of this comment for now.
+> > 
+> > [..]
+> > > > +#ifdef CONFIG_PM_SLEEP
+> > > > +static int virtio_fs_freeze(struct virtio_device *vdev)
+> > > > +{
+> > > > +	return 0; /* TODO */
+> > > > +}
+> > > > +
+> > > > +static int virtio_fs_restore(struct virtio_device *vdev)
+> > > > +{
+> > > > +	return 0; /* TODO */
+> > > > +}
+> > > 
+> > > Is this really a good idea? I'd rather it was implemented,
+> > > but if not possible at all disabling PM seems better than just
+> > > keep going.
+> > 
+> > I agree. Will look into disabling it.
+> > 
+> > > 
+> > > > +#endif /* CONFIG_PM_SLEEP */
+> > > > +
+> > > > +const static struct virtio_device_id id_table[] = {
+> > > > +	{ VIRTIO_ID_FS, VIRTIO_DEV_ANY_ID },
+> > > > +	{},
+> > > > +};
+> > > > +
+> > > > +const static unsigned int feature_table[] = {};
+> > > > +
+> > > > +static struct virtio_driver virtio_fs_driver = {
+> > > > +	.driver.name		= KBUILD_MODNAME,
+> > > > +	.driver.owner		= THIS_MODULE,
+> > > > +	.id_table		= id_table,
+> > > > +	.feature_table		= feature_table,
+> > > > +	.feature_table_size	= ARRAY_SIZE(feature_table),
+> > > > +	/* TODO validate config_get != NULL */
+> > > 
+> > > Why?
+> > 
+> > Don't know. Stefan, do you remember why did you put this comment? If not,
+> > I will get rid of it.
 > 
-> Hah!  I thought it reasonable to be ambiguous in the English description
-> ...  it's not entirely uncommon to describe something being 'between A
-> and B' when meaning ">= A and < B".
-
-It is reasable. I was just a nitpick.
-
-> > > +	if (compound_order(page) < order) {
-> > > +		page = XA_RETRY_ENTRY;
-> > > +		goto out;
-> > > +	}
-> > 
-> > compound_order() is not stable if you don't have pin on the page.
-> > Check it after page_cache_get_speculative().
+> This comment can be removed.
 > 
-> Maybe check both before and after?  If we check it before, we don't bother
-> to bump the refcount on a page which is too small.
-
-Makes sense. False-positives should be rare enough to ignore them.
-
-> > > @@ -1632,6 +1696,10 @@ EXPORT_SYMBOL(find_lock_entry);
-> > >   * - FGP_FOR_MMAP: Similar to FGP_CREAT, only we want to allow the caller to do
-> > >   *   its own locking dance if the page is already in cache, or unlock the page
-> > >   *   before returning if we had to add the page to pagecache.
-> > > + * - FGP_PMD: We're only interested in pages at PMD granularity.  If there
-> > > + *   is no page here (and FGP_CREATE is set), we'll create one large enough.
-> > > + *   If there is a smaller page in the cache that overlaps the PMD page, we
-> > > + *   return %NULL and do not attempt to create a page.
+> > > > +static void virtio_fs_wake_pending_and_unlock(struct fuse_iqueue *fiq)
+> > > > +__releases(fiq->waitq.lock)
+> > > > +{
+> > > > +	unsigned int queue_id = VQ_REQUEST; /* TODO multiqueue */
+> > > > +	struct virtio_fs *fs;
+> > > > +	struct fuse_conn *fc;
+> > > > +	struct fuse_req *req;
+> > > > +	struct fuse_pqueue *fpq;
+> > > > +	int ret;
+> > > > +
+> > > > +	WARN_ON(list_empty(&fiq->pending));
+> > > > +	req = list_last_entry(&fiq->pending, struct fuse_req, list);
+> > > > +	clear_bit(FR_PENDING, &req->flags);
+> > > > +	list_del_init(&req->list);
+> > > > +	WARN_ON(!list_empty(&fiq->pending));
+> > > > +	spin_unlock(&fiq->waitq.lock);
+> > > > +
+> > > > +	fs = fiq->priv;
+> > > > +	fc = fs->vqs[queue_id].fud->fc;
+> > > > +
+> > > > +	dev_dbg(&fs->vqs[queue_id].vq->vdev->dev,
+> > > > +		"%s: opcode %u unique %#llx nodeid %#llx in.len %u out.len %u\n",
+> > > > +		__func__, req->in.h.opcode, req->in.h.unique, req->in.h.nodeid,
+> > > > +		req->in.h.len, fuse_len_args(req->out.numargs, req->out.args));
+> > > > +
+> > > > +	fpq = &fs->vqs[queue_id].fud->pq;
+> > > > +	spin_lock(&fpq->lock);
+> > > > +	if (!fpq->connected) {
+> > > > +		spin_unlock(&fpq->lock);
+> > > > +		req->out.h.error = -ENODEV;
+> > > > +		pr_err("virtio-fs: %s disconnected\n", __func__);
+> > > > +		fuse_request_end(fc, req);
+> > > > +		return;
+> > > > +	}
+> > > > +	list_add_tail(&req->list, fpq->processing);
+> > > > +	spin_unlock(&fpq->lock);
+> > > > +	set_bit(FR_SENT, &req->flags);
+> > > > +	/* matches barrier in request_wait_answer() */
+> > > > +	smp_mb__after_atomic();
+> > > > +	/* TODO check for FR_INTERRUPTED? */
+> > > 
+> > > 
+> > > ?
 > > 
-> > Is it really the best inteface?
-> > 
-> > Maybe allow user to ask bitmask of allowed orders? For THP order-0 is fine
-> > if order-9 has failed.
+> > hmm... we don't support FR_INTERRUPTED. Stefan, do you remember why
+> > this TODO is here. If not, I will get rid of it.
 > 
-> That's the semantics that filemap_huge_fault() wants.  If the page isn't
-> available at order-9, it needs to return VM_FAULT_FALLBACK (and the VM
-> will call into filemap_fault() to handle the regular sized fault).
+> We don't support FUSE_INTERRUPT yet.  The purpose of this comment is
+> that when we do support FUSE_INTERRUPT we'll need to follow
+> fuse_dev_do_read() in queuing a FUSE_INTERRUPT here.
+> 
+> Stefan
 
-Ideally, we should not have division between ->fault and ->huge_fault.
-Integrating them together will give a shorter fallback loop and more
-flexible inteface here would give benefit.
 
-But I guess it's out-of-scope of the patchset.
+
+OK so pls write this explicitly in the comment.
 
 -- 
- Kirill A. Shutemov
+MST
