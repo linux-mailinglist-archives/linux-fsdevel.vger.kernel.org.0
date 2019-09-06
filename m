@@ -2,113 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70438AB2D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 09:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0581AB32B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 09:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404075AbfIFHBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 03:01:33 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:57022 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391691AbfIFHBc (ORCPT
+        id S2391722AbfIFH20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 03:28:26 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39314 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390788AbfIFH2Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 03:01:32 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1i68El-00072o-Nh; Fri, 06 Sep 2019 07:00:51 +0000
-Date:   Fri, 6 Sep 2019 09:00:49 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
- helpers
-Message-ID: <20190906070048.tmhuemasmsn55spq@wittgenstein>
-References: <20190904201933.10736-1-cyphar@cyphar.com>
- <20190904201933.10736-2-cyphar@cyphar.com>
- <20190905180750.GQ1131@ZenIV.linux.org.uk>
- <20190905182303.7f6bxpa2enbgcegv@wittgenstein>
- <20190905182801.GR1131@ZenIV.linux.org.uk>
- <20190905195618.pwzgvuzadkfpznfz@yavin.dot.cyphar.com>
+        Fri, 6 Sep 2019 03:28:25 -0400
+Received: by mail-io1-f67.google.com with SMTP id d25so10607346iob.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Sep 2019 00:28:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EPV93q9yLYIKpn8nh2t+hGtrutkW9tKqXiA9UxMOKvI=;
+        b=Rb5hjLH97fWG9p+/yNu96w9UO3OKt4FmFKmAw11vyG2iZI06iEgcHhxGgyg28O20Kr
+         Rbghe6XoI+sRXgV7YJBO/FPPQUesLs1FXAB+/9VWM553hR2QYn3uxlrlNjd/AL+/+wtr
+         kfQn6PC4J6PQJUOSyYUVi8f0h31wY1hhPDB7A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EPV93q9yLYIKpn8nh2t+hGtrutkW9tKqXiA9UxMOKvI=;
+        b=SGLrkcrXxriJitHJSQyr+vc/GVaulBV2UHy0fZXM1lSmJZ9kboa+5uKORDlKxbkdy1
+         vHH+XEQT2F30SuINnsNX7Hwq8Mmw3e0d9htc7H+500HRsi0Uik2R69VD153aP/a/iwIS
+         g/o9PMBTQVwrGY1/AtYfShHkpVM2gcJwxAqJf5t9nek2+BOcprUtWOpJTOy2+Yq/xlYv
+         ex5LomnGfucBqZBgHNf0Kp9xZyqe50fc3CbqY01wsJONY+QOwke5CKsO09/gVX2Im2VQ
+         KW4jmwuJtnYOV2sKflXH8LQZJEB2rWvct31r9U8h3FrDima2ri5uc0c0tm+9C+7yk425
+         mVeg==
+X-Gm-Message-State: APjAAAVBYYV6Vln/859ONtNiQIeNq+xQ1ofF0VZAI+RmNr9kwEbmiI4L
+        F13KVItCzBVi663VNsXQxrm/BVWWYpQmSy7N3ccAwA==
+X-Google-Smtp-Source: APXvYqxR3pH944s5Ok7PV+C2BDLvozfEi9oSPmHQa7sH6FfFjXkuExp6qDUMbbUZDXntpKIoHTPtClMWSvVQofi6VEw=
+X-Received: by 2002:a6b:5d18:: with SMTP id r24mr8826984iob.285.1567754905146;
+ Fri, 06 Sep 2019 00:28:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190905195618.pwzgvuzadkfpznfz@yavin.dot.cyphar.com>
-User-Agent: NeoMutt/20180716
+References: <20190619123019.30032-1-mszeredi@redhat.com> <CAJfpegv_ezsXOLV2f7yd07=T3MenJoMKhu=MBac1-80s0BFg9A@mail.gmail.com>
+ <11485.1562257188@warthog.procyon.org.uk>
+In-Reply-To: <11485.1562257188@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 6 Sep 2019 09:28:14 +0200
+Message-ID: <CAJfpegutbB+kb8oOx5zHx38vGE90H=JdgkM-7bVE3wxypmfAuw@mail.gmail.com>
+Subject: Re: [PATCH 01/13] vfs: verify param type in vfs_parse_sb_flag()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 05:56:18AM +1000, Aleksa Sarai wrote:
-> On 2019-09-05, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Thu, Sep 05, 2019 at 08:23:03PM +0200, Christian Brauner wrote:
-> > 
-> > > Because every caller of that function right now has that limit set
-> > > anyway iirc. So we can either remove it from here and place it back for
-> > > the individual callers or leave it in the helper.
-> > > Also, I'm really asking, why not? Is it unreasonable to have an upper
-> > > bound on the size (for a long time probably) or are you disagreeing with
-> > > PAGE_SIZE being used? PAGE_SIZE limit is currently used by sched, perf,
-> > > bpf, and clone3 and in a few other places.
-> > 
-> > For a primitive that can be safely used with any size (OK, any within
-> > the usual 2Gb limit)?  Why push the random policy into the place where
-> > it doesn't belong?
-> > 
-> > Seriously, what's the point?  If they want to have a large chunk of
-> > userland memory zeroed or checked for non-zeroes - why would that
-> > be a problem?
-> 
-> Thinking about it some more, there isn't really any r/w amplification --
-> so there isn't much to gain by passing giant structs. Though, if we are
-> going to permit 2GB buffers, isn't that also an argument to use
-> memchr_inv()? :P
+On Thu, Jul 4, 2019 at 6:20 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > Ping?  Have you had a chance of looking at this series?
+>
+> Yeah, through due to time pressure, I haven't managed to do much with it.
+>
+> I don't agree with all your changes, and also I'd like them to wait till after
+> the branch of mount API filesystem conversions that I've given to Al has had a
+> chance to hopefully go in in this merge window, along with whatever changes Al
+> has made to it.
 
-I think we should just do a really dumb, easy to understand minimal
-thing for now. It could even just be what every caller is doing right
-now anyway with the get_user() loop.
-The only way to settle memchr_inv() vs all the other clever ways
-suggested here is to benchmark it and see if it matters *for the current
-users* of this helper. If it does, great we can do it. If it doesn't why
-bother having that argument right now?
-Once we somehow end up in a possible world where we apparently have
-decided it's a great idea to copy 2GB argument structures for a syscall
-into or from the kernel we can start optimizing the hell out of this.
-Before that and especially with current callers I honestly doubt it
-matters whether we use memchr_inv() or while() {get_user()} loops.
+Ping?
 
-Christian
+Thanks,
+Miklos
