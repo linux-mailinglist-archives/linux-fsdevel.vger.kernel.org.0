@@ -2,83 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4241AB641
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 12:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96CE5AB645
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 12:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387865AbfIFKoc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 06:44:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45388 "EHLO mx1.redhat.com"
+        id S2388510AbfIFKpz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 06:45:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47432 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728218AbfIFKob (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 06:44:31 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1726080AbfIFKpz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Sep 2019 06:45:55 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9B40D369CC;
-        Fri,  6 Sep 2019 10:44:31 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9468D878E46;
+        Fri,  6 Sep 2019 10:45:55 +0000 (UTC)
 Received: from localhost (ovpn-117-208.ams2.redhat.com [10.36.117.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 447CE60605;
-        Fri,  6 Sep 2019 10:44:26 +0000 (UTC)
-Date:   Fri, 6 Sep 2019 11:44:25 +0100
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0ACE81000321;
+        Fri,  6 Sep 2019 10:45:49 +0000 (UTC)
+Date:   Fri, 6 Sep 2019 11:45:49 +0100
 From:   Stefan Hajnoczi <stefanha@redhat.com>
 To:     Vivek Goyal <vgoyal@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org,
         virtualization@lists.linux-foundation.org, miklos@szeredi.hu,
         linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
         dgilbert@redhat.com, mst@redhat.com
-Subject: Re: [PATCH 03/18] virtiofs: Pass fsvq instead of vq as parameter to
- virtio_fs_enqueue_req
-Message-ID: <20190906104425.GK5900@stefanha-x1.localdomain>
+Subject: Re: [PATCH 04/18] virtiofs: Check connected state for VQ_REQUEST
+ queue as well
+Message-ID: <20190906104549.GL5900@stefanha-x1.localdomain>
 References: <20190905194859.16219-1-vgoyal@redhat.com>
- <20190905194859.16219-4-vgoyal@redhat.com>
+ <20190905194859.16219-5-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ee6FjwWxuMujAVRe"
+        protocol="application/pgp-signature"; boundary="L/Qt9NZ8t00Dhfad"
 Content-Disposition: inline
-In-Reply-To: <20190905194859.16219-4-vgoyal@redhat.com>
+In-Reply-To: <20190905194859.16219-5-vgoyal@redhat.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 06 Sep 2019 10:44:31 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Fri, 06 Sep 2019 10:45:55 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---ee6FjwWxuMujAVRe
+--L/Qt9NZ8t00Dhfad
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 05, 2019 at 03:48:44PM -0400, Vivek Goyal wrote:
-> Pass fsvq instead of vq as parameter to virtio_fs_enqueue_req(). We will
-> retrieve vq from fsvq under spin lock.
+On Thu, Sep 05, 2019 at 03:48:45PM -0400, Vivek Goyal wrote:
+> Right now we are checking ->connected state only for VQ_HIPRIO. Now we wa=
+nt
+> to make use of this method for all queues. So check it for VQ_REQUEST as
+> well.
 >=20
-> Later in the patch series we will retrieve vq only if fsvq is still conne=
-cted
-> other vq might have been cleaned up by device ->remove code and we will
-> return error.
+> This will be helpful if device has been removed and virtqueue is gone. In
+> that case ->connected will be false and request can't be submitted anymore
+> and user space will see error -ENOTCONN.
 >=20
 > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 > ---
->  fs/fuse/virtio_fs.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
+>  fs/fuse/virtio_fs.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
 Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
---ee6FjwWxuMujAVRe
+--L/Qt9NZ8t00Dhfad
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1yOIgACgkQnKSrs4Gr
-c8g+8Qf9HHMGZxy914gG38i6e+DYwvC5CryjFWlCDopWdJemyDaSNvh8UTIgIHGs
-swJeFt68ZxTzEW1c/YGufHhbxDlaDhTZEs6lfIvd7I+feMa1Ovwo3fZ4UfqFBiAp
-SC12MZ7/8B8wMQ1z9IG2JykyYJqoe2jQLKzr1/bQ2rW/wsh7nK+i14SkbiR560z7
-bAM610aHlhhm5IPmbDuKwvui2cwyMRnHsSSWatrM3IvuOoR9fd/5DhqPKoGALSNH
-FLI3zz4UiELQl2ln/hAI46cFN5b3zOucaegRvn7+C4msZkccGjAMUshVh3UPpdjK
-DLFNt7LWNZp+0euYiznREAKikwyZrA==
-=O1h4
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1yONwACgkQnKSrs4Gr
+c8hiJQf/RcdMwTruxvR/8Bl1CjfN+mUt21UCtv0K/otHklhGEdna7AzGT1QFFBqi
+iyQUlYckbqC72mhKLNOWT/I8JJkq3jUS+xUf2i/qzNv/4B3yVfCFazfumOIcb7P+
+XriTd61VYMSaPfJRPXLvn+oxLknVB9LohRBQHZc0ljt339uGCt9YBlc38G2/XRud
+PT41SRg8rwBjDyfqx3OVTzL7kgxdXaM5ZbUJo24/To3ZQdmzO/QWWDJqUCGi0kCQ
+r5x6rkMUjd9gZCIUcgio7ourUi3+gfQA+sIQHU3FUH+UCyL7+nM5XM61n7t80BpH
+P8ACIKgUO0IDNTm9uaTHnuUTZAUrrw==
+=+Vva
 -----END PGP SIGNATURE-----
 
---ee6FjwWxuMujAVRe--
+--L/Qt9NZ8t00Dhfad--
