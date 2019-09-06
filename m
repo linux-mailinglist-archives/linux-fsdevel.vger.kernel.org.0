@@ -2,79 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8558DABD21
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 17:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46534ABD23
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Sep 2019 17:59:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394991AbfIFP7L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Sep 2019 11:59:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59490 "EHLO
+        id S2393116AbfIFP7w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Sep 2019 11:59:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60044 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfIFP7K (ORCPT
+        with ESMTP id S1727762AbfIFP7w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:59:10 -0400
+        Fri, 6 Sep 2019 11:59:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=22s3suVEwybuDGOmnl63bE4bs9K3fxHohFliCUIcsdI=; b=bo2NORtcqX+pna5uqNLOVaY3lP
-        GcjxJLygzVcRUR9QCu2ryEqYBNUsSitjTcyCcA73nnV6tftFfy573yMV/iR0JmPi1m9YtArvHdF50
-        1NnKeUwaQCOqb/Bk9eGmrlHkHcWIKJpwi7GmjHBZytCSrxdxWSKbMxjAJvnhgwNjHMAzKrmWTB22K
-        5sOCIH2N5bXeUNHWif3K4FEerULx2MpVhdIhMT0MPeGAD8X4C7H5hBFFCoumISrpMw8JpqNypN7gs
-        SKVKbigK6tOH3wRKQ+zIGt2NsYILncqRydAEp1DJAIijZLRKVO3JaXcCBfqMA02pCd29ccfSBi3Sb
-        yU4ueQpg==;
-Received: from 213-225-38-191.nat.highway.a1.net ([213.225.38.191] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i6Gda-0004lW-9k; Fri, 06 Sep 2019 15:59:02 +0000
-Date:   Fri, 6 Sep 2019 17:56:50 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Joel Becker <jlbec@evilplan.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] configfs fixes for 5.3
-Message-ID: <20190906155650.GA32004@infradead.org>
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nVVfwL9jPbxbv3UU7EoQYh7TMejKlo+fUaut0VfJfrw=; b=EyqSM1ABuGTf/zoM83qIcUFVi
+        1wUQCwyFHi2EyzPSjT0zHjuZAdS8/ubNh3DpDu9PXz9B1wFy2P94iJUrycdEu7ZPC+Yhr0RR20erg
+        mU0Rrx7BFCspWQcJt/ce1e2+mofN5QnlQfiD5zvAecgwnbC18I7yt1LZSqF9UOCgnt9091qUIypBO
+        KqRLxP7Q21GIbWDVBj/VeIdjCuNuFQ8AHfrTbrFYiguBmv2xKU1wkFoDA1zBT5ZzQIy7fC7IggLdQ
+        6q27uwvAZFklafc9/rIw6nirCYmPKby2ZAWlvtMnUQTq7XT7NtDBlxOgq6S3Lg6NYoZxhUexyLgje
+        lhf7gEzrw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i6GeN-00050e-JA; Fri, 06 Sep 2019 15:59:51 +0000
+Date:   Fri, 6 Sep 2019 08:59:51 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc:     Kirill Shutemov <kirill@shutemov.name>,
+        Song Liu <songliubraving@fb.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Johannes Weiner <jweiner@fb.com>
+Subject: Re: [PATCH 4/3] Prepare transhuge pages properly
+Message-ID: <20190906155951.GZ29434@bombadil.infradead.org>
+References: <20190905182348.5319-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190905182348.5319-1-willy@infradead.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
 
-please pull these late configfs fixe from Al that fix pretty nasty
-removal vs attribute access races.
+Bill pointed out I'd forgotten to call prep_transhuge_page().  I'll
+fold this into some of the other commits, but this is what I'm thinking
+of doing in case anyone has a better idea:
 
-The following changes since commit 089cf7f6ecb266b6a4164919a2e69bd2f938374a:
+Basically, I prefer being able to do this:
 
-  Linux 5.3-rc7 (2019-09-02 09:57:40 -0700)
+-	return alloc_pages(gfp, order);
++	return prep_transhuge_page(alloc_pages(gfp, order));
 
-are available in the Git repository at:
+to this:
 
-  git://git.infradead.org/users/hch/configfs.git tags/configfs-for-5.3
++	struct page *page;
+-	return alloc_pages(gfp, order);
++	page = alloc_pages(gfp, order);
++	if (page && (gfp & __GFP_COMP))
++		prep_transhuge_page(page);
++	return page;
 
-for you to fetch changes up to b0841eefd9693827afb9888235e26ddd098f9cef:
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 45ede62aa85b..159e63438806 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -153,7 +153,7 @@ extern unsigned long thp_get_unmapped_area(struct file *filp,
+ 		unsigned long addr, unsigned long len, unsigned long pgoff,
+ 		unsigned long flags);
+ 
+-extern void prep_transhuge_page(struct page *page);
++extern struct page *prep_transhuge_page(struct page *page);
+ extern void free_transhuge_page(struct page *page);
+ 
+ bool can_split_huge_page(struct page *page, int *pextra_pins);
+@@ -294,7 +294,10 @@ static inline bool transhuge_vma_suitable(struct vm_area_struct *vma,
+ 	return false;
+ }
+ 
+-static inline void prep_transhuge_page(struct page *page) {}
++static inline struct page *prep_transhuge_page(struct page *page)
++{
++	return page;
++}
+ 
+ #define transparent_hugepage_flags 0UL
+ 
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 72101811524c..8b9d672d868c 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -215,7 +215,7 @@ struct page *__page_cache_alloc_order(gfp_t gfp, unsigned int order)
+ {
+ 	if (order > 0)
+ 		gfp |= __GFP_COMP;
+-	return alloc_pages(gfp, order);
++	return prep_transhuge_page(alloc_pages(gfp, order));
+ }
+ #endif
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index a7fa3a50f750..c2b11799b968 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -986,11 +986,12 @@ struct page *__page_cache_alloc_order(gfp_t gfp, unsigned int order)
+ 			cpuset_mems_cookie = read_mems_allowed_begin();
+ 			n = cpuset_mem_spread_node();
+ 			page = __alloc_pages_node(n, gfp, order);
++			prep_transhuge_page(page);
+ 		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
+ 
+ 		return page;
+ 	}
+-	return alloc_pages(gfp, order);
++	return prep_transhuge_page(alloc_pages(gfp, order));
+ }
+ EXPORT_SYMBOL(__page_cache_alloc_order);
+ #endif
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 483b07b2d6ae..3961af907dd7 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -502,15 +502,20 @@ static inline struct list_head *page_deferred_list(struct page *page)
+ 	return &page[2].deferred_list;
+ }
+ 
+-void prep_transhuge_page(struct page *page)
++struct page *prep_transhuge_page(struct page *page)
+ {
++	if (!page || compound_order(page) == 0)
++		return page;
+ 	/*
+-	 * we use page->mapping and page->indexlru in second tail page
++	 * we use page->mapping and page->index in second tail page
+ 	 * as list_head: assuming THP order >= 2
+ 	 */
++	BUG_ON(compound_order(page) == 1);
+ 
+ 	INIT_LIST_HEAD(page_deferred_list(page));
+ 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
++
++	return page;
+ }
+ 
+ static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
 
-  configfs: provide exclusion between IO and removals (2019-09-04 22:33:51 +0200)
-
-----------------------------------------------------------------
-configfs fixes for 5.3
-
- - fix removal vs attribute read/write races (Al Viro)
-
-----------------------------------------------------------------
-Al Viro (4):
-      configfs: stash the data we need into configfs_buffer at open time
-      configfs_register_group() shouldn't be (and isn't) called in rmdirable parts
-      configfs: new object reprsenting tree fragments
-      configfs: provide exclusion between IO and removals
-
- fs/configfs/configfs_internal.h |  15 ++-
- fs/configfs/dir.c               | 137 +++++++++++++++-----
- fs/configfs/file.c              | 280 ++++++++++++++++++++--------------------
- 3 files changed, 257 insertions(+), 175 deletions(-)
