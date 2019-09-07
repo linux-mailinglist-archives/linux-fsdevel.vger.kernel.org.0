@@ -2,126 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A512AC72D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2019 17:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F35AC7DF
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Sep 2019 19:06:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394688AbfIGPHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Sep 2019 11:07:39 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50710 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732540AbfIGPHi (ORCPT
+        id S2395097AbfIGRGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Sep 2019 13:06:14 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46883 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389011AbfIGRGO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Sep 2019 11:07:38 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1i6cJK-0003cK-H1; Sat, 07 Sep 2019 15:07:34 +0000
-Date:   Sat, 7 Sep 2019 16:07:34 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>
-Subject: Re: [PATCH v3] ceph: Convert ceph to use the new mount API
-Message-ID: <20190907150734.GB1131@ZenIV.linux.org.uk>
-References: <20190906101618.8939-1-jlayton@kernel.org>
- <CAOi1vP-3aHy8yerpMkmA80WF1=e4umg_zCt8Dvc+X6V8-Dg+Qw@mail.gmail.com>
- <7a72bf67b17f78398604270a2cbfe5d145686377.camel@kernel.org>
+        Sat, 7 Sep 2019 13:06:14 -0400
+Received: by mail-lf1-f68.google.com with SMTP id t8so7418217lfc.13
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Sep 2019 10:06:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VaxRwZcXIqBCeM77ijL8A1h5NduVbQyHYByckmz1gJk=;
+        b=Ldlyq4Px8HcWw652TFUFBz92WQlbW6hSwxMlCjQQ7ArJ4KZCkRlTmS1rpYbWoVnDTP
+         m2fPZeqordNjkxzXe2jf1KmkqKcGf1nJr407YEJX5jdvDfinEa81A2+g7kiafJJQtJkb
+         2rcL8ecVWF8zjmoPoJgLSziuzeA0NFXkftsDk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VaxRwZcXIqBCeM77ijL8A1h5NduVbQyHYByckmz1gJk=;
+        b=eFK7577g5SAOCd/3z7Y+Ip9L6Y039GAgOsrpXHqrig7cDWEtsdtvHfvFnI705miotx
+         Y9V4W33ve0IT+LfXhXq5/38JB04c5GNNLiniuFjH4oujfW+IR/isiU50JwnKv/lV8lAD
+         KXh64310KBE1hz+bSdJtwGyz0gz4mUs8t34kW9guRDNPs2upo4sMSI9DOUpetMadRh7Q
+         Qr2CzkWVStcCsHXBSuAi9MuweR/AR0MNVxBRoCqOWkvmAqdQE1pm6jMovQMZ/Sf7uudi
+         mCjaOiTeH2cQRkMWaOk/tJLpKB+FZs9H/6XJZhUpCtbPpXLIeI1yM1P2NDY29w5QpKeZ
+         Gydg==
+X-Gm-Message-State: APjAAAWv8dAtCSNrCFv5LM2WNKB7y+ysuQcPKkRtYnjoMofKxpo2j6HC
+        T+Uh0sD4oPQ4LS8CR9qvcLRcrGkIFSs=
+X-Google-Smtp-Source: APXvYqyywCFX+zRCkQ9bU+IlF/DGep2AgHRReFcm8TPi4ADH0FycY2P3PN3mddWVcVqVDJhKM7ahng==
+X-Received: by 2002:ac2:4289:: with SMTP id m9mr9447003lfh.139.1567875972288;
+        Sat, 07 Sep 2019 10:06:12 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id v10sm1547159ljc.64.2019.09.07.10.06.11
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Sep 2019 10:06:12 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id x80so7460037lff.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Sep 2019 10:06:11 -0700 (PDT)
+X-Received: by 2002:a19:f204:: with SMTP id q4mr5583225lfh.29.1567875518853;
+ Sat, 07 Sep 2019 09:58:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a72bf67b17f78398604270a2cbfe5d145686377.camel@kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-12-cyphar@cyphar.com>
+ <7236f382d72130f2afbbe8940e72cc67e5c6dce0.camel@kernel.org>
+In-Reply-To: <7236f382d72130f2afbbe8940e72cc67e5c6dce0.camel@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 7 Sep 2019 09:58:23 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whZx97Nm-gUK0ppofj2RA2LLz2vmaDUTKSSV-+yYB9q_Q@mail.gmail.com>
+Message-ID: <CAHk-=whZx97Nm-gUK0ppofj2RA2LLz2vmaDUTKSSV-+yYB9q_Q@mail.gmail.com>
+Subject: Re: [PATCH v12 11/12] open: openat2(2) syscall
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 04:10:24PM -0400, Jeff Layton wrote:
-> > >         case Opt_queue_depth:
-> > > -               if (intval < 1) {
-> > > -                       pr_err("queue_depth out of range\n");
-> > > -                       return -EINVAL;
-> > > -               }
-> > > -               pctx->opts->queue_depth = intval;
-> > > +               if (result.uint_32 < 1)
-> > > +                       goto out_of_range;
-> > > +               opts->queue_depth = result.uint_32;
+On Sat, Sep 7, 2019 at 5:40 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> After thinking about this a bit, I wonder if we might be better served
+> with a new set of OA2_* flags instead of repurposing the O_* flags?
 
-FWIW, I wonder if something like fsparam_int_range() would be
-useful, both here and in other places.
+I'd hate to have yet _another_ set of translation functions, and
+another chance of people just getting it wrong either in user space or
+the kernel.
 
-NOTE: this is not going to happen until we get rid of trying to
-enumerate those "types"; enum fs_parameter_type as it is now
-is an invitation for trouble.
+So no. Let's not make another set of flags that has no sane way to
+have type-safety to avoid more confusion.
 
-What I want to get at is a situation when fs_parameter_spec
-"type" is a *method*, not an enumerator.  I'm not entirely
-sure what would the right calling conventions be, though.
+The new flags that _only_ work with openat2() might be named with a
+prefix/suffix to mark that, but I'm not sure it's a huge deal.
 
-But fs_parse() switch is not sustainable - we can't keep
-it long-term.  A really straigtforward approach would be
-something along the lines of
-
-bool is_string_param(const struct fs_parameter_spec *p,
-	            struct fs_parameter *param)
-{
-	if (param->type != fs_value_is_string)
-		return false;
-	if (param->string)
-		return true;
-	return p->flags & fs_param_v_optional;
-}
-
-int fs_param_is_string(struct fs_context *fc,
-		    const struct fs_parameter_spec *p,
-	            struct fs_parameter *param,
-		    struct fs_parse_result *result)
-{
-	if (is_string_param(p, param))
-		return 0;
-	return fs_param_bad(fc, param);
-}
-
-int fs_param_is_s32(struct fs_context *fc,
-		    const struct fs_parameter_spec *p,
-	            struct fs_parameter *param,
-		    struct fs_parse_result *result)
-{
-	if (is_string_param(p, param)) {
-		const char *s = param->string;
-		result->int_32 = 0;
-		if (!s || kstrtoint(s, 0, &result->int_32) == 0)
-			return 0;
-	}
-	return fs_param_bad(fc, param);
-}
-
-int fs_param_is_blob(struct fs_context *fc,
-		    const struct fs_parameter_spec *p,
-	            struct fs_parameter *param,
-		    struct fs_parse_result *result)
-{
-	return param->type == fs_value_is_blob ? 0 : fs_param_bad(fc, param);
-}
-
-int fs_param_is_fd(struct fs_context *fc,
-		    const struct fs_parameter_spec *p,
-	            struct fs_parameter *param,
-		    struct fs_parse_result *result)
-{
-	if (param->type == fs_value_is_file) {
-		result->uint_32 = param->dirfd;
-                if (result->uint_32 <= INT_MAX)
-			return 0;
-	} else if (is_string_param(p, param)) {
-		const char *s = param->string;
-
-		if (s && kstrtouint(param->string, 0, &result->uint_32) == 0 &&
-                    result->uint_32 <= INT_MAX)
-			return 0;
-        }
-	return fs_param_bad(fc, param);
-}
-
-etc., but error reporting is clumsy that way ;-/
+                 Linus
