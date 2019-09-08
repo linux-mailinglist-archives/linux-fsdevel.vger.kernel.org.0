@@ -2,64 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9E8FAD0DE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Sep 2019 23:46:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91EB6AD0E1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Sep 2019 23:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730851AbfIHVqK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Sep 2019 17:46:10 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45980 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730816AbfIHVqK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Sep 2019 17:46:10 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1i750T-00022V-AW; Sun, 08 Sep 2019 21:46:01 +0000
-Date:   Sun, 8 Sep 2019 22:46:01 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, lkp@01.org
-Subject: Re: [vfs]  8bb3c61baf:  vm-scalability.median -23.7% regression
-Message-ID: <20190908214601.GC1131@ZenIV.linux.org.uk>
-References: <20190903084122.GH15734@shao2-debian>
+        id S1730928AbfIHVs0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Sep 2019 17:48:26 -0400
+Received: from a3.inai.de ([88.198.85.195]:42176 "EHLO a3.inai.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730816AbfIHVs0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Sep 2019 17:48:26 -0400
+Received: by a3.inai.de (Postfix, from userid 65534)
+        id 7116B2A7D4AF; Sun,  8 Sep 2019 23:48:22 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on a3.inai.de
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.0 required=5.0 tests=AWL,BAYES_00
+        autolearn=unavailable autolearn_force=no version=3.4.2
+Received: from a4.inai.de (a4.inai.de [IPv6:2a01:4f8:222:6c9::f8])
+        by a3.inai.de (Postfix) with ESMTP id ECD7D3BB6504;
+        Sun,  8 Sep 2019 23:48:21 +0200 (CEST)
+From:   Jan Engelhardt <jengelh@inai.de>
+To:     hsiangkao@aol.com
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH erofs-utils v2] build: cure compiler warnings
+Date:   Sun,  8 Sep 2019 23:48:21 +0200
+Message-Id: <20190908214821.32265-1-jengelh@inai.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903084122.GH15734@shao2-debian>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 04:41:22PM +0800, kernel test robot wrote:
-> Greeting,
-> 
-> FYI, we noticed a -23.7% regression of vm-scalability.median due to commit:
-> 
-> 
-> commit: 8bb3c61bafa8c1cd222ada602bb94ff23119e738 ("vfs: Convert ramfs, shmem, tmpfs, devtmpfs, rootfs to use the new mount API")
-> https://kernel.googlesource.com/pub/scm/linux/kernel/git/viro/vfs.git work.mount
-> 
-> in testcase: vm-scalability
-> on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 128G memory
-> with following parameters:
-> 
-> 	runtime: 300s
-> 	size: 16G
-> 	test: shm-pread-rand
-> 	cpufreq_governor: performance
-> 	ucode: 0xb000036
+On i586 I observe:
 
-That thing loses size=... option.  Both size= and nr_blocks= affect the
-same thing (->max_blocks), but the parser keeps track of the options
-it has seen and applying the parsed data to superblock checks only
-whether nr_blocks= had been there.  IOW, size= gets parsed, but the
-result goes nowhere.
+In file included from inode.c:16:
+inode.c: In function 'erofs_mkfs_build_tree':
+../include/erofs/print.h:27:21: error: format '%lu' expects argument of type
+'long unsigned int', but argument 7 has type 'erofs_nid_t' {aka 'long long unsigned int'} [-Werror=format=]
+   27 | #define pr_fmt(fmt) "EROFS: " FUNC_LINE_FMT fmt "\n"
+../include/erofs/print.h:43:4: note: in expansion of macro 'pr_fmt'
+   43 |    pr_fmt(fmt),    \
+inode.c:792:3: note: in expansion of macro 'erofs_info'
+  792 |   erofs_info("add file %s/%s (nid %lu, type %d)",
+inode.c:792:37: note: format string is defined here
+  792 |   erofs_info("add file %s/%s (nid %lu, type %d)",
+---
+ lib/compress.c | 4 ++--
+ lib/inode.c    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-I'm not sure whether it's better to fix the patch up or redo it from
-scratch - it needs to be carved up anyway and it's highly non-transparent,
-so I'm probably going to replace the damn thing entirely with something
-that would be easier to follow.
+diff --git a/lib/compress.c b/lib/compress.c
+index a977c87..cadf598 100644
+--- a/lib/compress.c
++++ b/lib/compress.c
+@@ -457,8 +457,8 @@ int erofs_write_compressed_file(struct erofs_inode *inode)
+ 	ret = erofs_bh_balloon(bh, blknr_to_addr(compressed_blocks));
+ 	DBG_BUGON(ret);
+ 
+-	erofs_info("compressed %s (%lu bytes) into %u blocks",
+-		   inode->i_srcpath, inode->i_size, compressed_blocks);
++	erofs_info("compressed %s (%llu bytes) into %u blocks",
++		   inode->i_srcpath, (unsigned long long)inode->i_size, compressed_blocks);
+ 
+ 	/*
+ 	 * TODO: need to move erofs_bdrop to erofs_write_tail_end
+diff --git a/lib/inode.c b/lib/inode.c
+index 141a300..db9ad99 100644
+--- a/lib/inode.c
++++ b/lib/inode.c
+@@ -789,8 +789,8 @@ fail:
+ 
+ 		d->type = erofs_type_by_mode[d->inode->i_mode >> S_SHIFT];
+ 		erofs_d_invalidate(d);
+-		erofs_info("add file %s/%s (nid %lu, type %d)",
+-			   dir->i_srcpath, d->name, d->nid, d->type);
++		erofs_info("add file %s/%s (nid %llu, type %d)",
++			   dir->i_srcpath, d->name, (unsigned long long)d->nid, d->type);
+ 	}
+ 	erofs_write_dir_file(dir);
+ 	erofs_write_tail_end(dir);
+-- 
+2.23.0
+
