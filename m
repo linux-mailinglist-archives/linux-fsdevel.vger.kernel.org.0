@@ -2,142 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22B89AD359
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 09:00:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E45C8AD421
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 09:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbfIIHAp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Sep 2019 03:00:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33154 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726823AbfIIHAp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Sep 2019 03:00:45 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2599C10F1FC3;
-        Mon,  9 Sep 2019 07:00:44 +0000 (UTC)
-Received: from localhost (ovpn-116-146.ams2.redhat.com [10.36.116.146])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F19060923;
-        Mon,  9 Sep 2019 07:00:40 +0000 (UTC)
-Date:   Mon, 9 Sep 2019 09:00:39 +0200
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-Cc:     virtio-fs@redhat.com, Miklos Szeredi <mszeredi@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] init/do_mounts.c: add virtiofs root fs support
-Message-ID: <20190909070039.GB13708@stefanha-x1.localdomain>
-References: <20190906100324.8492-1-stefanha@redhat.com>
- <CAFLxGvw-n2VYcYR9kei7Hu2RBhCG9PeWuW7Z+SaiyDQVBRiugw@mail.gmail.com>
+        id S2388383AbfIIHsu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Sep 2019 03:48:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54630 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388282AbfIIHst (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Sep 2019 03:48:49 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x897lQdO064479
+        for <linux-fsdevel@vger.kernel.org>; Mon, 9 Sep 2019 03:48:47 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uwgtuvrg4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Sep 2019 03:48:47 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Mon, 9 Sep 2019 08:48:45 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 9 Sep 2019 08:48:42 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x897mglB24444938
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 9 Sep 2019 07:48:42 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 051A242045;
+        Mon,  9 Sep 2019 07:48:42 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 04FE642042;
+        Mon,  9 Sep 2019 07:48:40 +0000 (GMT)
+Received: from [9.199.158.183] (unknown [9.199.158.183])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Sep 2019 07:48:39 +0000 (GMT)
+Subject: Re: [PATCH v2 1/6] ext4: introduce direct IO read path using iomap
+ infrastructure
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>, tytso@mit.edu,
+        jack@suse.cz, adilger.kernel@dilger.ca
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
+References: <cover.1567978633.git.mbobrowski@mbobrowski.org>
+ <75a6ead09a10e362526a849af482510a0090f82a.1567978633.git.mbobrowski@mbobrowski.org>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Mon, 9 Sep 2019 13:18:39 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
-Content-Disposition: inline
-In-Reply-To: <CAFLxGvw-n2VYcYR9kei7Hu2RBhCG9PeWuW7Z+SaiyDQVBRiugw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Mon, 09 Sep 2019 07:00:44 +0000 (UTC)
+In-Reply-To: <75a6ead09a10e362526a849af482510a0090f82a.1567978633.git.mbobrowski@mbobrowski.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19090907-0012-0000-0000-00000348A7F0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090907-0013-0000-0000-0000218306FF
+Message-Id: <20190909074840.04FE642042@d06av24.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-09_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909090086
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---5/uDoXvLw7AC5HRs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 06, 2019 at 09:16:04PM +0200, Richard Weinberger wrote:
-> On Fri, Sep 6, 2019 at 1:15 PM Stefan Hajnoczi <stefanha@redhat.com> wrot=
-e:
-> >
-> > Make it possible to boot directly from a virtiofs file system with tag
-> > 'myfs' using the following kernel parameters:
-> >
-> >   rootfstype=3Dvirtiofs root=3Dmyfs rw
-> >
-> > Booting directly from virtiofs makes it possible to use a directory on
-> > the host as the root file system.  This is convenient for testing and
-> > situations where manipulating disk image files is cumbersome.
-> >
-> > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-> > ---
-> > This patch is based on linux-next (next-20190904) but should apply
-> > cleanly to other virtiofs trees.
-> >
-> >  init/do_mounts.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/init/do_mounts.c b/init/do_mounts.c
-> > index 9634ecf3743d..030be2f1999a 100644
-> > --- a/init/do_mounts.c
-> > +++ b/init/do_mounts.c
-> > @@ -554,6 +554,16 @@ void __init mount_root(void)
-> >                         change_floppy("root floppy");
-> >         }
-> >  #endif
-> > +#ifdef CONFIG_VIRTIO_FS
-> > +       if (root_fs_names && !strcmp(root_fs_names, "virtiofs")) {
-> > +               if (!do_mount_root(root_device_name, "virtiofs",
-> > +                                  root_mountflags, root_mount_data))
-> > +                       return;
-> > +
-> > +               panic("VFS: Unable to mount root fs \"%s\" from virtiof=
-s",
-> > +                     root_device_name);
-> > +       }
-> > +#endif
->=20
-> I think you don't need this, you can abuse a hack for mtd/ubi in
-> prepare_namespace().
-> At least for 9p it works well:
-> qemu-system-x86_64 -m 4G -M pc,accel=3Dkvm -nographic -kernel
-> arch/x86/boot/bzImage -append "rootfstype=3D9p
-> rootflags=3Dtrans=3Dvirtio,version=3D9p2000.L root=3Dmtdfake console=3Dtt=
-yS0 ro
-> init=3D/bin/sh" -virtfs
-> local,id=3Drootfs,path=3D/,security_model=3Dpassthrough,mount_tag=3Dmtdfa=
-ke
+On 9/9/19 4:48 AM, Matthew Bobrowski wrote:
+> This patch introduces a new direct IO read path that makes use of the
+> iomap infrastructure.
+> 
+> The new function ext4_dio_read_iter() is responsible for calling into
+> the iomap infrastructure via iomap_dio_rw(). If the inode in question
+> does not pass preliminary checks in ext4_dio_checks(), then we simply
+> fallback to buffered IO and take that path to fulfil the request. It's
+> imperative that we drop the IOCB_DIRECT flag from iocb->ki_flags in
+> order to prevent generic_file_read_iter() from trying to take the
+> direct IO code path again.
+> 
+> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
 
-That is worse because:
-1. The file system must be named "mtd*" or "ubi*".
-2. When mounting fails you get confusing error messages about block
-   devices and partitions.  These do not apply to virtio-fs or
-   virtio-9p.
+Looks good to me.
 
-> If this works too for virtiofs I suggest to cleanup the hack and
-> generalize it. B-)
+Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-Why mtd and ubi block devices even have a special case?  Maybe this code
-was added because ROOT_DEV =3D name_to_dev_t(root_device_name) doesn't
-work for "mtd:partition" device names so the regular CONFIG_BLOCK code
-path doesn't work for these devices.
+> ---
+>   fs/ext4/file.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++----
+>   1 file changed, 54 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 70b0438dbc94..e52e3928dc25 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -34,6 +34,53 @@
+>   #include "xattr.h"
+>   #include "acl.h"
+> 
+> +static bool ext4_dio_checks(struct inode *inode)
+> +{
+> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
+> +	if (IS_ENCRYPTED(inode))
+> +		return false;
+> +#endif
+> +	if (ext4_should_journal_data(inode))
+> +		return false;
+> +	if (ext4_has_inline_data(inode))
+> +		return false;
+> +	return true;
+> +}
+> +
+> +static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +	ssize_t ret;
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +
+> +	/*
+> +	 * Get exclusion from truncate and other inode operations.
+> +	 */
+> +	if (!inode_trylock_shared(inode)) {
+> +		if (iocb->ki_flags & IOCB_NOWAIT)
+> +			return -EAGAIN;
+> +		inode_lock_shared(inode);
+> +	}
+> +
+> +	if (!ext4_dio_checks(inode)) {
+> +		inode_unlock_shared(inode);
+> +		/*
+> +		 * Fallback to buffered IO if the operation being
+> +		 * performed on the inode is not supported by direct
+> +		 * IO. The IOCB_DIRECT flag flags needs to be cleared
+> +		 * here to ensure that the direct IO code path within
+> +		 * generic_file_read_iter() is not taken again.
+> +		 */
+> +		iocb->ki_flags &= ~IOCB_DIRECT;
+> +		return generic_file_read_iter(iocb, to);
+> +	}
+> +
+> +	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL);
+> +	inode_unlock_shared(inode);
+> +
+> +	file_accessed(iocb->ki_filp);
+> +	return ret;
+> +}
+> +
+>   #ifdef CONFIG_FS_DAX
+>   static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   {
+> @@ -64,16 +111,19 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> 
+>   static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   {
+> -	if (unlikely(ext4_forced_shutdown(EXT4_SB(file_inode(iocb->ki_filp)->i_sb))))
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +
+> +	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+>   		return -EIO;
+> 
+>   	if (!iov_iter_count(to))
+>   		return 0; /* skip atime */
+> 
+> -#ifdef CONFIG_FS_DAX
+> -	if (IS_DAX(file_inode(iocb->ki_filp)))
+> +	if (IS_DAX(inode))
+>   		return ext4_dax_read_iter(iocb, to);
+> -#endif
+> +
+> +	if (iocb->ki_flags & IOCB_DIRECT)
+> +		return ext4_dio_read_iter(iocb, to);
+>   	return generic_file_read_iter(iocb, to);
+>   }
+> 
 
-Given the ordering/fallback logic in prepare_namespace()/mount_root() I
-don't feel comfortable changing other code paths.  It's likely to break
-something.
-
-If you or others have a concrete suggestion for how to generalize this
-I'm happy to try implementing it.
-
-Stefan
-
---5/uDoXvLw7AC5HRs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl11+JcACgkQnKSrs4Gr
-c8jD+ggAtec2VK6HTVZXWnVz7jhRkR+8bfbgzrlDBG3uGx9qQjlWFeFJyfMW2a5p
-wyITms/GEETqo9W3n7oEOIlGhU8O+A1W265yc46JS9jEHai2Kx128I0ZnWp/3ncd
-/irYhXPNNDG8dScLruAzltY9XkiMvAUFMbTwx4PRuZZTV60EQtKDoZ2wJar9y4uD
-rGVNJqTaF3mLcGZdw/0w3nRKtR6XhX+O29OP4D/o7tt9FWnffh00adB9OQDUyXf5
-DkwHtrWdiLxiOAsSCZklA9Ps39U7LfCmnja2IUkYJdDyfmKsYMOj3bTxf79VCBOC
-Z0lm/US2an7287f+Y7/ReC6vG2uKbg==
-=zPN2
------END PGP SIGNATURE-----
-
---5/uDoXvLw7AC5HRs--
