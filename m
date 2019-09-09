@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB57CAD6AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 12:23:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D50D7AD6C2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 12:25:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390636AbfIIKXv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Sep 2019 06:23:51 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54305 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390548AbfIIKXt (ORCPT
+        id S2390812AbfIIKYY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Sep 2019 06:24:24 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39835 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390597AbfIIKXt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 9 Sep 2019 06:23:49 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p7so1582559wmp.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Sep 2019 03:23:47 -0700 (PDT)
+Received: by mail-wm1-f68.google.com with SMTP id q12so13994093wmj.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Sep 2019 03:23:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=IA0pHM62rBt/shfTkMZDw95CUns+TQYkKXXhJayt/9U=;
-        b=U0XMlxSQHq3X/3eDTFp9gMAg0RdWOTmIkI/8SejEwVjgRQkVN+mKfrmUO+6NK/B19i
-         J69SZuDgx6wSWiNJhyc+jxxJEjQODQtB3ii8qA590akliD2WOFuq8riSf4PUfQ1u9Wf7
-         HS8bUT+5T+5sgYfQjU/Nu0NUXkiPluWQZmVPxBfmlLGgEQGKoDx+XP8/rpRjdOoUQAXx
-         RUAUlmzy+KiDwBC3+RmSfExy8zDPCh320PC2BcR3iO0d+DSrkCR+Oc9s8IjP0SRHFW/b
-         Ivu2JW+UQMoQ2lhqXigxazO1duoF/4UIYCn4Oz8AuedOqrEd4r2+vw/AQajRaKAGjjrM
-         KOTg==
+        bh=STLctuURefaE8eq55GBboHVj7+QXpVRUnAJsIE8QlMY=;
+        b=XMwbu7B5OAgAIWw6N2LtryeCTvQ6z3+05hNQ741oPpGzrgd7tXuAkkU5zdc3X/eqlD
+         yiG4Gmi4sTjgvThu5RQsAALJWUCRUekt+KXZnGUx3ELzgvvgcr2QaY/r7DGaasyT2tDw
+         5qTGdnitBh3WFpeDyGDVP8LHsDpqHI+/GRyiiFZq0Li1sjubvjRX5RiioqxW1bJiEnXH
+         Uy0OVpQKqUjqjQ31Me19gCjqn13KYbhrB1YPo2wHuo24N28g+cKTvYI7Zc1vvUGsAWmu
+         QF1hzkYFCwmTBiO9omikKuQXD539nG96dOaFw4+JkHg//ePtrRAiF98KfEWUyoFnOKaG
+         KmLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IA0pHM62rBt/shfTkMZDw95CUns+TQYkKXXhJayt/9U=;
-        b=l7UAQXbHKmWCRNMfYw5C5awh1QjX4z5t7gkGJiu8f+zkYNBjqxvZNzk7Vyq+XFX35k
-         W4JhleAupghxzWVIqPgrznTHq4+d6vJsciBAApHAjU8NDsKh7JwGygXSWeeVcyU/fuHM
-         hZuZ0cqqn6D8iS9mYqhM0/wZyOvYbiq0J+461fh1K75CFu2ydFd36eAIB0NCnclf6Rdi
-         DXFxG7JVMxWLf/i35UWyrLZms/aSVnMJ3UQSw2OCIpeUsa5yRbnIpvEh1zQzdsuFvABr
-         NWndhY/rWBFMRNmPFNwpu5WK/P4UvhTUcuzrtKaCkGXnybX+2ZBp6Ak4sSPfF6Setku0
-         Zp1A==
-X-Gm-Message-State: APjAAAWCX5pAuo3t8D5cXti4wxpmMu3ls1QO7kDYRcRlCeqZcmGLZhtf
-        qYAPn/w8jRZhqrTVsQoVlhTIcA==
-X-Google-Smtp-Source: APXvYqxO92spFZfDerxwHiQLtm1hbtX83culFxinsCcT06VZq/PB8u2x8luUXD3yumaETBFthgzPsg==
-X-Received: by 2002:a1c:a558:: with SMTP id o85mr18092823wme.30.1568024626269;
-        Mon, 09 Sep 2019 03:23:46 -0700 (PDT)
+        bh=STLctuURefaE8eq55GBboHVj7+QXpVRUnAJsIE8QlMY=;
+        b=fP3JCmgwXxunDjvlubbnJ9kCbcQC1IvMWQJmePHloymGXVlQOr3QY6C3mH2zZHSTfN
+         lB+6Cby8a0lXUgk8HLrKh8LJ6wzz9pDbb5QzOOQanAJzuOHDx97GyvPCI6NxqEmPCPC5
+         AcSBG2/4VDfNRhgYqsvLdREjPHVUrGK3Y2vPwkYPhnKifqPjB+wdkRjlFhSDAGocoybG
+         koNqHfIZ83ecl4kxzhxPdJe+EjjFYiFbTz4vW216PelH0hMa5caq0Ml5jH90SlFmx4mA
+         bfPyuX00rRfOvNQP1E8rQtiz39ZwLuZNphwcJiAO6e0Awd3D2On7uwqtuEQFSYRtXKgy
+         tUaw==
+X-Gm-Message-State: APjAAAXohVens11n4jafNkvT0xqu5+tPCSOKrNXagq7IqOJPv9qTBOyI
+        S/2cD2Dw4DVTLLeLf/F+Ing6SA==
+X-Google-Smtp-Source: APXvYqwlnYxK/Ion+EpCVZ4VcHAZvyCrtmY/DDiUgd2oheMGu7g2FrmmWJ0F4QyACrXJgUyTC44ndA==
+X-Received: by 2002:a7b:c651:: with SMTP id q17mr17777639wmk.13.1568024627727;
+        Mon, 09 Sep 2019 03:23:47 -0700 (PDT)
 Received: from Mindolluin.localdomain ([148.69.85.38])
-        by smtp.gmail.com with ESMTPSA id d14sm1800008wrj.27.2019.09.09.03.23.45
+        by smtp.gmail.com with ESMTPSA id d14sm1800008wrj.27.2019.09.09.03.23.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 03:23:45 -0700 (PDT)
+        Mon, 09 Sep 2019 03:23:47 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -60,9 +60,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/9] restart_block: Prevent userspace set part of the block
-Date:   Mon,  9 Sep 2019 11:23:33 +0100
-Message-Id: <20190909102340.8592-3-dima@arista.com>
+Subject: [PATCH 3/9] select: Convert __esimate_accuracy() to ktime_t
+Date:   Mon,  9 Sep 2019 11:23:34 +0100
+Message-Id: <20190909102340.8592-4-dima@arista.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190909102340.8592-1-dima@arista.com>
 References: <20190909102340.8592-1-dima@arista.com>
@@ -73,159 +73,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Parameters for nanosleep() could be chosen the way to make
-hrtimer_nanosleep() fail. In that case changes to restarter_block bring
-it into inconsistent state. Luckily, it won't corrupt anything critical
-for poll() or futex(). But as it's not evident that userspace may do
-tricks in the union changing restart_block for other @fs(s) - than
-further changes in the code may create a potential local vulnerability.
+__estimate_accuracy() divides 64-bit integers twice which is suboptimal.
+Converting to ktime_t not only avoids that, but also simplifies the
+logic on some extent.
 
-I.e., if userspace could do tricks with poll() or futex() than
-corruption to @clockid or @type would trigger BUG() in timer code.
+The long-term goal is to convert poll() to leave timeout value in
+ktime_t inside restart_block as it's the only user that leaves it in
+timespec. That's a preparation ground for introducing a new ptrace()
+request that will dump timeout for interrupted syscall.
 
-Set @fn every time restart_block is changed, preventing surprises.
-Also, add a comment for any new restart_block user.
+Furthermore, do_select() and do_poll() actually both need time in
+ktime_t for poll_schedule_timeout(), so there is this hack that converts
+time on the first loop. It's not only a "hack", but also it's done every
+time poll() syscall is restarted. After conversion it'll be removed.
+
+While at it, rename parameters "slack" and "timeout" which describe
+their purpose better.
 
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- include/linux/restart_block.h  | 4 ++++
- kernel/time/hrtimer.c          | 8 +++++---
- kernel/time/posix-cpu-timers.c | 6 +++---
- kernel/time/posix-stubs.c      | 8 +++++---
- kernel/time/posix-timers.c     | 8 +++++---
- 5 files changed, 22 insertions(+), 12 deletions(-)
+ fs/select.c | 33 +++++++++++++--------------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/restart_block.h b/include/linux/restart_block.h
-index e5078cae5567..e66e982105f4 100644
---- a/include/linux/restart_block.h
-+++ b/include/linux/restart_block.h
-@@ -21,6 +21,10 @@ enum timespec_type {
+diff --git a/fs/select.c b/fs/select.c
+index 53a0c149f528..12cdefd3be2d 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -36,7 +36,7 @@
+ 
  
  /*
-  * System call restart block.
-+ *
-+ * Safety rule: if you change anything inside @restart_block,
-+ * set @fn to keep the structure in consistent state and prevent
-+ * userspace tricks in the union.
-  */
- struct restart_block {
- 	long (*fn)(struct restart_block *);
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 5ee77f1a8a92..4ba2b50d068f 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1762,8 +1762,9 @@ SYSCALL_DEFINE2(nanosleep, struct __kernel_timespec __user *, rqtp,
- 	if (!timespec64_valid(&tu))
- 		return -EINVAL;
+- * Estimate expected accuracy in ns from a timeval.
++ * Estimate expected accuracy in ns.
+  *
+  * After quite a bit of churning around, we've settled on
+  * a simple thing of taking 0.1% of the timeout as the
+@@ -49,22 +49,17 @@
  
--	current->restart_block.nanosleep.type = rmtp ? TT_NATIVE : TT_NONE;
--	current->restart_block.nanosleep.rmtp = rmtp;
-+	current->restart_block.fn		= do_no_restart_syscall;
-+	current->restart_block.nanosleep.type	= rmtp ? TT_NATIVE : TT_NONE;
-+	current->restart_block.nanosleep.rmtp	= rmtp;
- 	return hrtimer_nanosleep(&tu, HRTIMER_MODE_REL, CLOCK_MONOTONIC);
- }
+ #define MAX_SLACK	(100 * NSEC_PER_MSEC)
  
-@@ -1782,7 +1783,8 @@ SYSCALL_DEFINE2(nanosleep_time32, struct old_timespec32 __user *, rqtp,
- 	if (!timespec64_valid(&tu))
- 		return -EINVAL;
- 
--	current->restart_block.nanosleep.type = rmtp ? TT_COMPAT : TT_NONE;
-+	current->restart_block.fn		= do_no_restart_syscall;
-+	current->restart_block.nanosleep.type	= rmtp ? TT_COMPAT : TT_NONE;
- 	current->restart_block.nanosleep.compat_rmtp = rmtp;
- 	return hrtimer_nanosleep(&tu, HRTIMER_MODE_REL, CLOCK_MONOTONIC);
- }
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 0a426f4e3125..b4dddf74dd15 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -1243,6 +1243,8 @@ void set_process_cpu_timer(struct task_struct *tsk, unsigned int clock_idx,
- 	tick_dep_set_signal(tsk->signal, TICK_DEP_BIT_POSIX_TIMER);
- }
- 
-+static long posix_cpu_nsleep_restart(struct restart_block *restart_block);
-+
- static int do_cpu_nanosleep(const clockid_t which_clock, int flags,
- 			    const struct timespec64 *rqtp)
+-static long __estimate_accuracy(struct timespec64 *tv)
++static long __estimate_accuracy(ktime_t slack)
  {
-@@ -1330,6 +1332,7 @@ static int do_cpu_nanosleep(const clockid_t which_clock, int flags,
- 		 * Report back to the user the time still remaining.
- 		 */
- 		restart = &current->restart_block;
-+		restart->fn = posix_cpu_nsleep_restart;
- 		restart->nanosleep.expires = expires;
- 		if (restart->nanosleep.type != TT_NONE)
- 			error = nanosleep_copyout(restart, &it.it_value);
-@@ -1338,8 +1341,6 @@ static int do_cpu_nanosleep(const clockid_t which_clock, int flags,
- 	return error;
- }
+-	long slack;
+ 	int divfactor = 1000;
  
--static long posix_cpu_nsleep_restart(struct restart_block *restart_block);
+-	if (tv->tv_sec < 0)
++	if (slack < 0)
+ 		return 0;
+ 
+ 	if (task_nice(current) > 0)
+ 		divfactor = divfactor / 5;
+ 
+-	if (tv->tv_sec > MAX_SLACK / (NSEC_PER_SEC/divfactor))
+-		return MAX_SLACK;
 -
- static int posix_cpu_nsleep(const clockid_t which_clock, int flags,
- 			    const struct timespec64 *rqtp)
- {
-@@ -1361,7 +1362,6 @@ static int posix_cpu_nsleep(const clockid_t which_clock, int flags,
- 		if (flags & TIMER_ABSTIME)
- 			return -ERESTARTNOHAND;
+-	slack = tv->tv_nsec / divfactor;
+-	slack += tv->tv_sec * (NSEC_PER_SEC/divfactor);
++	slack = ktime_divns(slack, divfactor);
  
--		restart_block->fn = posix_cpu_nsleep_restart;
- 		restart_block->nanosleep.clockid = which_clock;
- 	}
- 	return error;
-diff --git a/kernel/time/posix-stubs.c b/kernel/time/posix-stubs.c
-index 67df65f887ac..d73039a9ca8f 100644
---- a/kernel/time/posix-stubs.c
-+++ b/kernel/time/posix-stubs.c
-@@ -142,8 +142,9 @@ SYSCALL_DEFINE4(clock_nanosleep, const clockid_t, which_clock, int, flags,
- 		return -EINVAL;
- 	if (flags & TIMER_ABSTIME)
- 		rmtp = NULL;
--	current->restart_block.nanosleep.type = rmtp ? TT_NATIVE : TT_NONE;
--	current->restart_block.nanosleep.rmtp = rmtp;
-+	current->restart_block.fn		= do_no_restart_syscall;
-+	current->restart_block.nanosleep.type	= rmtp ? TT_NATIVE : TT_NONE;
-+	current->restart_block.nanosleep.rmtp	= rmtp;
- 	return hrtimer_nanosleep(&t, flags & TIMER_ABSTIME ?
- 				 HRTIMER_MODE_ABS : HRTIMER_MODE_REL,
- 				 which_clock);
-@@ -228,7 +229,8 @@ SYSCALL_DEFINE4(clock_nanosleep_time32, clockid_t, which_clock, int, flags,
- 		return -EINVAL;
- 	if (flags & TIMER_ABSTIME)
- 		rmtp = NULL;
--	current->restart_block.nanosleep.type = rmtp ? TT_COMPAT : TT_NONE;
-+	current->restart_block.fn		= do_no_restart_syscall;
-+	current->restart_block.nanosleep.type	= rmtp ? TT_COMPAT : TT_NONE;
- 	current->restart_block.nanosleep.compat_rmtp = rmtp;
- 	return hrtimer_nanosleep(&t, flags & TIMER_ABSTIME ?
- 				 HRTIMER_MODE_ABS : HRTIMER_MODE_REL,
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index d7f2d91acdac..0ca0bfc20aff 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -1189,8 +1189,9 @@ SYSCALL_DEFINE4(clock_nanosleep, const clockid_t, which_clock, int, flags,
- 		return -EINVAL;
- 	if (flags & TIMER_ABSTIME)
- 		rmtp = NULL;
--	current->restart_block.nanosleep.type = rmtp ? TT_NATIVE : TT_NONE;
--	current->restart_block.nanosleep.rmtp = rmtp;
-+	current->restart_block.fn		= do_no_restart_syscall;
-+	current->restart_block.nanosleep.type	= rmtp ? TT_NATIVE : TT_NONE;
-+	current->restart_block.nanosleep.rmtp	= rmtp;
- 
- 	return kc->nsleep(which_clock, flags, &t);
+ 	if (slack > MAX_SLACK)
+ 		return MAX_SLACK;
+@@ -72,27 +67,25 @@ static long __estimate_accuracy(struct timespec64 *tv)
+ 	return slack;
  }
-@@ -1216,7 +1217,8 @@ SYSCALL_DEFINE4(clock_nanosleep_time32, clockid_t, which_clock, int, flags,
- 		return -EINVAL;
- 	if (flags & TIMER_ABSTIME)
- 		rmtp = NULL;
--	current->restart_block.nanosleep.type = rmtp ? TT_COMPAT : TT_NONE;
-+	current->restart_block.fn		= do_no_restart_syscall;
-+	current->restart_block.nanosleep.type	= rmtp ? TT_COMPAT : TT_NONE;
- 	current->restart_block.nanosleep.compat_rmtp = rmtp;
  
- 	return kc->nsleep(which_clock, flags, &t);
+-u64 select_estimate_accuracy(struct timespec64 *tv)
++u64 select_estimate_accuracy(struct timespec64 *timeout)
+ {
+-	u64 ret;
+-	struct timespec64 now;
++	ktime_t now, slack;
+ 
+ 	/*
+ 	 * Realtime tasks get a slack of 0 for obvious reasons.
+ 	 */
+-
+ 	if (rt_task(current))
+ 		return 0;
+ 
+-	ktime_get_ts64(&now);
+-	now = timespec64_sub(*tv, now);
+-	ret = __estimate_accuracy(&now);
+-	if (ret < current->timer_slack_ns)
+-		return current->timer_slack_ns;
+-	return ret;
+-}
++	now = ktime_get();
++	slack = now - timespec64_to_ktime(*timeout);
+ 
++	slack = __estimate_accuracy(slack);
++	if (slack < current->timer_slack_ns)
++		return current->timer_slack_ns;
+ 
++	return slack;
++}
+ 
+ struct poll_table_page {
+ 	struct poll_table_page * next;
 -- 
 2.23.0
 
