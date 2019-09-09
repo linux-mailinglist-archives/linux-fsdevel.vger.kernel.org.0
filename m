@@ -2,594 +2,896 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B825AD5DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 11:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FCDAAD671
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 12:10:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389985AbfIIJgv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Sep 2019 05:36:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57536 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389977AbfIIJgv (ORCPT
+        id S1729586AbfIIKKK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Sep 2019 06:10:10 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37008 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728554AbfIIKKJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Sep 2019 05:36:51 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x899Vtum117034
-        for <linux-fsdevel@vger.kernel.org>; Mon, 9 Sep 2019 05:36:49 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uv7c2q1r7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Sep 2019 05:36:48 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Mon, 9 Sep 2019 10:36:45 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 9 Sep 2019 10:36:40 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x899adWe28049788
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 9 Sep 2019 09:36:39 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6A63342057;
-        Mon,  9 Sep 2019 09:36:39 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 174F642049;
-        Mon,  9 Sep 2019 09:36:36 +0000 (GMT)
-Received: from [9.199.158.183] (unknown [9.199.158.183])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  9 Sep 2019 09:36:35 +0000 (GMT)
-Subject: Re: [PATCH v2 6/6] ext4: cleanup legacy buffer_head direct IO code
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>, tytso@mit.edu,
-        jack@suse.cz, adilger.kernel@dilger.ca
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
-References: <cover.1567978633.git.mbobrowski@mbobrowski.org>
- <8c22105d832117969690af05d13782e69fb7619a.1567978633.git.mbobrowski@mbobrowski.org>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Mon, 9 Sep 2019 15:06:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 9 Sep 2019 06:10:09 -0400
+Received: by mail-io1-f66.google.com with SMTP id r4so27314568iop.4;
+        Mon, 09 Sep 2019 03:10:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Xfyt8Pznx2esfkTRUqu6qEHV8F5Trhbre+tt9PecdMw=;
+        b=nXGXkxnlUyKemf3CVBUHzKTUsrP/W3OaZJfcrIFaeql3vsUlbJJPmVuMHl5/1J7HJJ
+         ayZkXSbx+MZwFPFqhRugGcto3PFiQBf5BmN2o/QT1QAVsRjgaKdEE3ihZyF33KqBzcub
+         /73RH7UuQAH0MDTB89SybTAyRhj5roc3HFrYevVxzas7bDZDvfUYOVrxxJ2YVLADN8T8
+         2LhUmRsgKbuHM5pl+98Nd++97/MT/u/l4eyhQpIfZ7EPUgUgDCbajHx0Agl9a2mQi4KW
+         wlwARCrDpmohR7yY4Gl+GZx0X54lfMZK6Gqpk6tqjfEXQXc9VKwSWyK6zVUuuDx1kUYw
+         JBdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xfyt8Pznx2esfkTRUqu6qEHV8F5Trhbre+tt9PecdMw=;
+        b=kbHp/9EQxVRz8xqWDbWdSiVA2jBAP5MJPk8fCG9l+ps2sLMwO1GrFiD0an5bp7OwMn
+         B/v31Ch/jtYPEu+tpY2vfjBCBO5z162eOq/7LC8vCQHS7cw53M2F5Vk6CWkrPFy4Up0f
+         g1+wEFRUBhVOTfkAbZfj31zx+NcfK5cr1zbC1ztmyNEH6YJtyu/KQJtwCqa0XrPFO+x5
+         meSa7e0Oe7T8/EAJ2sAa9FDPx7Q015iHYwC+ZBAPLBHjI+i2AlJmeuanISPL8rAiqV1h
+         /0fb30GzAYBXohagLpdTnhRD8XdKDoSATMMR9vtfMBV6vPAsjeNbWfgg13ik6PcQNYZi
+         FOTQ==
+X-Gm-Message-State: APjAAAV7GraupHSM6ErnvXBsgut1SHUZp8gM32RnJheW0ZtW54JGnu8q
+        5tvwKaxC7irooLS/uCVcx5fz709xelQprPPZi2q0sUvM
+X-Google-Smtp-Source: APXvYqzVwfvpPr/EC3C92K/12R9IAoREb5ej3P4/TLdSWXOVDFmw8NxiwciF7GprVagcTQyEvQ4yD4Iw2o72VMRFcys=
+X-Received: by 2002:a02:3786:: with SMTP id r128mr1968894jar.76.1568023807337;
+ Mon, 09 Sep 2019 03:10:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8c22105d832117969690af05d13782e69fb7619a.1567978633.git.mbobrowski@mbobrowski.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19090909-0016-0000-0000-000002A8B328
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19090909-0017-0000-0000-0000330933AE
-Message-Id: <20190909093636.174F642049@d06av24.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909090100
+References: <20190906101618.8939-1-jlayton@kernel.org> <CAOi1vP-3aHy8yerpMkmA80WF1=e4umg_zCt8Dvc+X6V8-Dg+Qw@mail.gmail.com>
+ <7a72bf67b17f78398604270a2cbfe5d145686377.camel@kernel.org>
+In-Reply-To: <7a72bf67b17f78398604270a2cbfe5d145686377.camel@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 9 Sep 2019 12:10:00 +0200
+Message-ID: <CAOi1vP-in4EDcNEcONfqAXHN+7bMBQ8oevOT2hRFW1-qJ1BNDg@mail.gmail.com>
+Subject: Re: [PATCH v3] ceph: Convert ceph to use the new mount API
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Sep 6, 2019 at 10:10 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Fri, 2019-09-06 at 17:00 +0200, Ilya Dryomov wrote:
+> > On Fri, Sep 6, 2019 at 12:16 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > > From: David Howells <dhowells@redhat.com>
+> > >
+> > > Convert the ceph filesystem to the new internal mount API as the old
+> > > one will be obsoleted and removed.  This allows greater flexibility in
+> > > communication of mount parameters between userspace, the VFS and the
+> > > filesystem.
+> > >
+> > > See Documentation/filesystems/mount_api.txt for more information.
+> > >
+> > > Signed-off-by: David Howells <dhowells@redhat.com>
+> > > Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+> > > cc: Ilya Dryomov <idryomov@gmail.com>
+> > > cc: Sage Weil <sage@redhat.com>
+> > > cc: ceph-devel@vger.kernel.org
+> > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  drivers/block/rbd.c          | 344 +++++++++---------
+> > >  fs/ceph/cache.c              |  10 +-
+> > >  fs/ceph/cache.h              |   5 +-
+> > >  fs/ceph/super.c              | 687 +++++++++++++++++------------------
+> > >  fs/ceph/super.h              |   1 -
+> > >  include/linux/ceph/libceph.h |  17 +-
+> > >  net/ceph/ceph_common.c       | 410 +++++++++------------
+> > >  7 files changed, 718 insertions(+), 756 deletions(-)
+> > >
+> > > v3: fix string handling bugs for key-only rbd options
+> > >
+> > > v2: fix several string parsing bugs in rbd_add_parse_args and rbd_parse_monolithic
+> > >     prefix rbd log message with "rbd:"
+> > >     drop unneeded #undef from ceph_debug.h
+> > >     drop unrelated comment fixes in fs/fs_*.c
+> > >     rebase onto current ceph/testing branch
+> > >
+> > > Ilya, hopefully third time is the charm. This fixes rbd key-only option
+> > > parsing for me.
+> >
+> > Nope, this is still buggy.  Attempting to map a non-existing image
+> > seems to be corrupting memory.  "sudo rbd map foobar" in a loop quickly
+> > leads to random GP faults.
+> >
+> > > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> > > index c3df76a862d2..8a7f996e228f 100644
+> > > --- a/drivers/block/rbd.c
+> > > +++ b/drivers/block/rbd.c
+> > > @@ -34,7 +34,7 @@
+> > >  #include <linux/ceph/cls_lock_client.h>
+> > >  #include <linux/ceph/striper.h>
+> > >  #include <linux/ceph/decode.h>
+> > > -#include <linux/parser.h>
+> > > +#include <linux/fs_parser.h>
+> > >  #include <linux/bsearch.h>
+> > >
+> > >  #include <linux/kernel.h>
+> > > @@ -823,34 +823,12 @@ enum {
+> > >         Opt_queue_depth,
+> > >         Opt_alloc_size,
+> > >         Opt_lock_timeout,
+> > > -       Opt_last_int,
+> > > -       /* int args above */
+> > >         Opt_pool_ns,
+> > > -       Opt_last_string,
+> > > -       /* string args above */
+> > >         Opt_read_only,
+> > >         Opt_read_write,
+> > >         Opt_lock_on_read,
+> > >         Opt_exclusive,
+> > >         Opt_notrim,
+> > > -       Opt_err
+> > > -};
+> > > -
+> > > -static match_table_t rbd_opts_tokens = {
+> > > -       {Opt_queue_depth, "queue_depth=%d"},
+> > > -       {Opt_alloc_size, "alloc_size=%d"},
+> > > -       {Opt_lock_timeout, "lock_timeout=%d"},
+> > > -       /* int args above */
+> > > -       {Opt_pool_ns, "_pool_ns=%s"},
+> > > -       /* string args above */
+> > > -       {Opt_read_only, "read_only"},
+> > > -       {Opt_read_only, "ro"},          /* Alternate spelling */
+> > > -       {Opt_read_write, "read_write"},
+> > > -       {Opt_read_write, "rw"},         /* Alternate spelling */
+> > > -       {Opt_lock_on_read, "lock_on_read"},
+> > > -       {Opt_exclusive, "exclusive"},
+> > > -       {Opt_notrim, "notrim"},
+> > > -       {Opt_err, NULL}
+> > >  };
+> > >
+> > >  struct rbd_options {
+> > > @@ -871,85 +849,86 @@ struct rbd_options {
+> > >  #define RBD_EXCLUSIVE_DEFAULT  false
+> > >  #define RBD_TRIM_DEFAULT       true
+> > >
+> > > -struct parse_rbd_opts_ctx {
+> > > -       struct rbd_spec         *spec;
+> > > -       struct rbd_options      *opts;
+> > > +static const struct fs_parameter_spec rbd_param_specs[] = {
+> > > +       fsparam_u32     ("alloc_size",                  Opt_alloc_size),
+> > > +       fsparam_flag    ("exclusive",                   Opt_exclusive),
+> > > +       fsparam_flag    ("lock_on_read",                Opt_lock_on_read),
+> > > +       fsparam_u32     ("lock_timeout",                Opt_lock_timeout),
+> > > +       fsparam_flag    ("notrim",                      Opt_notrim),
+> > > +       fsparam_string  ("_pool_ns",                    Opt_pool_ns),
+> > > +       fsparam_u32     ("queue_depth",                 Opt_queue_depth),
+> > > +       fsparam_flag    ("ro",                          Opt_read_only),
+> > > +       fsparam_flag    ("rw",                          Opt_read_write),
+> >
+> > The existing code recognizes both ro and read_only, and both rw and
+> > read_write.  The new code only recognizes ro and rw.  I don't think
+> > anybody uses read_only and read_write, but they are trivial to keep
+> > and certainly should not have been dropped without a note.
+> >
+> > I'm still getting errno = 519 on an unknown option (random junk or
+> > read_only/read_write because they are no longer known).  The existing
+> > code returns EINVAL for this case.
+> >
+> > > +       {}
+> > > +};
+> > > +
+> > > +static const struct fs_parameter_description rbd_parameters = {
+> > > +       .name           = "rbd",
+> > > +       .specs          = rbd_param_specs,
+> > >  };
+> > >
+> > > -static int parse_rbd_opts_token(char *c, void *private)
+> > > +static int rbd_parse_param(struct ceph_config_context *ctx, struct fs_parameter *param)
+> > >  {
+> > > -       struct parse_rbd_opts_ctx *pctx = private;
+> > > -       substring_t argstr[MAX_OPT_ARGS];
+> > > -       int token, intval, ret;
+> > > +       struct rbd_options *opts = ctx->rbd_opts;
+> > > +       struct rbd_spec *spec = ctx->rbd_spec;
+> > > +       struct fs_parse_result result;
+> > > +       int ret, opt;
+> > >
+> > > -       token = match_token(c, rbd_opts_tokens, argstr);
+> > > -       if (token < Opt_last_int) {
+> > > -               ret = match_int(&argstr[0], &intval);
+> > > -               if (ret < 0) {
+> > > -                       pr_err("bad option arg (not int) at '%s'\n", c);
+> > > -                       return ret;
+> > > -               }
+> > > -               dout("got int token %d val %d\n", token, intval);
+> > > -       } else if (token > Opt_last_int && token < Opt_last_string) {
+> > > -               dout("got string token %d val %s\n", token, argstr[0].from);
+> > > -       } else {
+> > > -               dout("got token %d\n", token);
+> > > -       }
+> > > +       ret = ceph_parse_option(ctx->opt, NULL, param);
+> > > +       if (ret != -ENOPARAM)
+> > > +               return ret;
+> > >
+> > > -       switch (token) {
+> > > +       opt = fs_parse(NULL, &rbd_parameters, param, &result);
+> > > +       if (opt < 0)
+> > > +               return opt;
+> > > +
+> > > +       switch (opt) {
+> > >         case Opt_queue_depth:
+> > > -               if (intval < 1) {
+> > > -                       pr_err("queue_depth out of range\n");
+> > > -                       return -EINVAL;
+> > > -               }
+> > > -               pctx->opts->queue_depth = intval;
+> > > +               if (result.uint_32 < 1)
+> > > +                       goto out_of_range;
+> > > +               opts->queue_depth = result.uint_32;
+> > >                 break;
+> > >         case Opt_alloc_size:
+> > > -               if (intval < SECTOR_SIZE) {
+> > > -                       pr_err("alloc_size out of range\n");
+> > > -                       return -EINVAL;
+> > > -               }
+> > > -               if (!is_power_of_2(intval)) {
+> > > -                       pr_err("alloc_size must be a power of 2\n");
+> > > -                       return -EINVAL;
+> > > -               }
+> > > -               pctx->opts->alloc_size = intval;
+> > > +               if (result.uint_32 < SECTOR_SIZE)
+> > > +                       goto out_of_range;
+> > > +               if (!is_power_of_2(result.uint_32))
+> > > +                       return invalf(NULL, "alloc_size must be a power of 2\n");
+> > > +               opts->alloc_size = result.uint_32;
+> > >                 break;
+> > >         case Opt_lock_timeout:
+> > >                 /* 0 is "wait forever" (i.e. infinite timeout) */
+> > > -               if (intval < 0 || intval > INT_MAX / 1000) {
+> > > -                       pr_err("lock_timeout out of range\n");
+> > > -                       return -EINVAL;
+> > > -               }
+> > > -               pctx->opts->lock_timeout = msecs_to_jiffies(intval * 1000);
+> > > +               if (result.uint_32 > INT_MAX / 1000)
+> > > +                       goto out_of_range;
+> > > +               opts->lock_timeout = msecs_to_jiffies(result.uint_32 * 1000);
+> > >                 break;
+> > >         case Opt_pool_ns:
+> > > -               kfree(pctx->spec->pool_ns);
+> > > -               pctx->spec->pool_ns = match_strdup(argstr);
+> > > -               if (!pctx->spec->pool_ns)
+> > > -                       return -ENOMEM;
+> > > +               kfree(spec->pool_ns);
+> > > +               spec->pool_ns = param->string;
+> > > +               param->string = NULL;
+> > >                 break;
+> > >         case Opt_read_only:
+> > > -               pctx->opts->read_only = true;
+> > > +               opts->read_only = true;
+> > >                 break;
+> > >         case Opt_read_write:
+> > > -               pctx->opts->read_only = false;
+> > > +               opts->read_only = false;
+> > >                 break;
+> > >         case Opt_lock_on_read:
+> > > -               pctx->opts->lock_on_read = true;
+> > > +               opts->lock_on_read = true;
+> > >                 break;
+> > >         case Opt_exclusive:
+> > > -               pctx->opts->exclusive = true;
+> > > +               opts->exclusive = true;
+> > >                 break;
+> > >         case Opt_notrim:
+> > > -               pctx->opts->trim = false;
+> > > +               opts->trim = false;
+> > >                 break;
+> > >         default:
+> > > -               /* libceph prints "bad option" msg */
+> > >                 return -EINVAL;
+> > >         }
+> > >
+> > >         return 0;
+> > > +
+> > > +out_of_range:
+> > > +       return invalf(NULL, "rbd: %s out of range", param->key);
+> > >  }
+> > >
+> > >  static char* obj_op_name(enum obj_operation_type op_type)
+> > > @@ -6438,22 +6417,85 @@ static inline size_t next_token(const char **buf)
+> > >   *
+> > >   * Note: uses GFP_KERNEL for allocation.
+> > >   */
+> > > -static inline char *dup_token(const char **buf, size_t *lenp)
+> > > +static inline char *dup_token(const char **buf)
+> > >  {
+> > >         char *dup;
+> > >         size_t len;
+> > >
+> > >         len = next_token(buf);
+> > > -       dup = kmemdup(*buf, len + 1, GFP_KERNEL);
+> > > -       if (!dup)
+> > > -               return NULL;
+> > > -       *(dup + len) = '\0';
+> > > -       *buf += len;
+> > > +       dup = kmemdup_nul(*buf, len, GFP_KERNEL);
+> > > +       if (dup)
+> > > +               *buf += len;
+> > > +       return dup;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Parse the parameter string.
+> > > + */
+> > > +static int rbd_parse_monolithic(struct ceph_config_context *ctx, size_t len,
+> > > +                               const char *data)
+> > > +{
+> > > +       const char *sep, *key, *eq, *value;
+> > > +       char key_buf[32];
+> > > +       size_t size, klen;
+> > > +       int ret = 0;
+> > >
+> > > -       if (lenp)
+> > > -               *lenp = len;
+> > > +       struct fs_parameter param = {
+> > > +               .key    = key_buf,
+> > > +               .type   = fs_value_is_string,
+> > > +       };
+> > >
+> > > -       return dup;
+> > > +       do {
+> > > +               key = data;
+> > > +               sep = strchr(data, ',');
+> > > +               if (sep) {
+> > > +                       data = sep + 1;
+> > > +                       size = sep - key;
+> > > +                       len -= size + 1;
+> > > +               } else {
+> > > +                       data = NULL;
+> > > +                       size = len;
+> > > +                       len -= size;
+> > > +               }
+> > > +
+> > > +               if (!size)
+> > > +                       continue;
+> > > +
+> > > +               eq = memchr(key, '=', size);
+> > > +               if (eq) {
+> > > +                       klen = eq - key;
+> > > +                       if (klen == 0)
+> > > +                               return invalf(NULL, "Invalid option \"\"");
+> > > +                       value = eq + 1;
+> > > +                       param.size = size - klen - 1;
+> > > +               } else {
+> > > +                       klen = size;
+> > > +                       value = NULL;
+> > > +                       param.size = 0;
+> > > +               }
+> > > +
+> > > +               if (klen >= sizeof(key_buf))
+> > > +                       return invalf(NULL, "Unknown option %*.*s",
+> > > +                                     (int)klen, (int)klen, key);
+> > > +               memcpy(key_buf, key, klen);
+> > > +               key_buf[klen] = 0;
+> > > +
+> > > +               if (param.size > 0) {
+> > > +                       param.string = kmemdup_nul(value, param.size,
+> > > +                                                  GFP_KERNEL);
+> > > +                       if (!param.string)
+> > > +                               return -ENOMEM;
+> > > +               } else {
+> > > +                       param.string = NULL;
+> > > +               }
+> > > +
+> > > +               ret = rbd_parse_param(ctx, &param);
+> > > +               kfree(param.string);
+> > > +               if (ret < 0)
+> > > +                       break;
+> > > +       } while (data);
+> > > +
+> > > +       return ret;
+> > >  }
+> > >
+> > >  /*
+> > > @@ -6497,18 +6539,11 @@ static inline char *dup_token(const char **buf, size_t *lenp)
+> > >   *      created.  The image head is used if no snapshot id is
+> > >   *      provided.  Snapshot mappings are always read-only.
+> > >   */
+> > > -static int rbd_add_parse_args(const char *buf,
+> > > -                               struct ceph_options **ceph_opts,
+> > > -                               struct rbd_options **opts,
+> > > -                               struct rbd_spec **rbd_spec)
+> > > +static int rbd_add_parse_args(const char *buf, struct ceph_config_context *ctx)
+> > >  {
+> > > -       size_t len;
+> > > -       char *options;
+> > > -       const char *mon_addrs;
+> > > +       const char *options, *mon_addrs;
+> > > +       size_t len, options_len, mon_addrs_size;
+> > >         char *snap_name;
+> > > -       size_t mon_addrs_size;
+> > > -       struct parse_rbd_opts_ctx pctx = { 0 };
+> > > -       struct ceph_options *copts;
+> > >         int ret;
+> > >
+> > >         /* The first four tokens are required */
+> > > @@ -6519,36 +6554,35 @@ static int rbd_add_parse_args(const char *buf,
+> > >                 return -EINVAL;
+> > >         }
+> > >         mon_addrs = buf;
+> > > -       mon_addrs_size = len + 1;
+> > > +       mon_addrs_size = len;
+> > >         buf += len;
+> > >
+> > > -       ret = -EINVAL;
+> > > -       options = dup_token(&buf, NULL);
+> > > -       if (!options)
+> > > -               return -ENOMEM;
+> > > -       if (!*options) {
+> > > +       options_len = next_token(&buf);
+> > > +       if (options_len == 0) {
+> > >                 rbd_warn(NULL, "no options provided");
+> > > -               goto out_err;
+> > > +               return -EINVAL;
+> > >         }
+> > > +       options = buf;
+> > > +       buf += options_len;
+> > >
+> > > -       pctx.spec = rbd_spec_alloc();
+> > > -       if (!pctx.spec)
+> > > -               goto out_mem;
+> > > +       ctx->rbd_spec = rbd_spec_alloc();
+> > > +       if (!ctx->rbd_spec)
+> > > +               return -ENOMEM;
+> > >
+> > > -       pctx.spec->pool_name = dup_token(&buf, NULL);
+> > > -       if (!pctx.spec->pool_name)
+> > > -               goto out_mem;
+> > > -       if (!*pctx.spec->pool_name) {
+> > > +       ctx->rbd_spec->pool_name = dup_token(&buf);
+> > > +       if (!ctx->rbd_spec->pool_name)
+> > > +               return -ENOMEM;
+> > > +       if (!*ctx->rbd_spec->pool_name) {
+> > >                 rbd_warn(NULL, "no pool name provided");
+> > > -               goto out_err;
+> > > +               return -EINVAL;
+> > >         }
+> > >
+> > > -       pctx.spec->image_name = dup_token(&buf, NULL);
+> > > -       if (!pctx.spec->image_name)
+> > > -               goto out_mem;
+> > > -       if (!*pctx.spec->image_name) {
+> > > +       ctx->rbd_spec->image_name = dup_token(&buf);
+> > > +       if (!ctx->rbd_spec->image_name)
+> > > +               return -ENOMEM;
+> > > +       if (!*ctx->rbd_spec->image_name) {
+> > >                 rbd_warn(NULL, "no image name provided");
+> > > -               goto out_err;
+> > > +               return -EINVAL;
+> > >         }
+> > >
+> > >         /*
+> > > @@ -6560,51 +6594,37 @@ static int rbd_add_parse_args(const char *buf,
+> > >                 buf = RBD_SNAP_HEAD_NAME; /* No snapshot supplied */
+> > >                 len = sizeof (RBD_SNAP_HEAD_NAME) - 1;
+> > >         } else if (len > RBD_MAX_SNAP_NAME_LEN) {
+> > > -               ret = -ENAMETOOLONG;
+> > > -               goto out_err;
+> > > +               return -ENAMETOOLONG;
+> > >         }
+> > > -       snap_name = kmemdup(buf, len + 1, GFP_KERNEL);
+> > > +
+> > > +       snap_name = kmemdup_nul(buf, len, GFP_KERNEL);
+> > >         if (!snap_name)
+> > > -               goto out_mem;
+> > > -       *(snap_name + len) = '\0';
+> > > -       pctx.spec->snap_name = snap_name;
+> > > +               return -ENOMEM;
+> > > +       ctx->rbd_spec->snap_name = snap_name;
+> > >
+> > >         /* Initialize all rbd options to the defaults */
+> > >
+> > > -       pctx.opts = kzalloc(sizeof(*pctx.opts), GFP_KERNEL);
+> > > -       if (!pctx.opts)
+> > > -               goto out_mem;
+> > > -
+> > > -       pctx.opts->read_only = RBD_READ_ONLY_DEFAULT;
+> > > -       pctx.opts->queue_depth = RBD_QUEUE_DEPTH_DEFAULT;
+> > > -       pctx.opts->alloc_size = RBD_ALLOC_SIZE_DEFAULT;
+> > > -       pctx.opts->lock_timeout = RBD_LOCK_TIMEOUT_DEFAULT;
+> > > -       pctx.opts->lock_on_read = RBD_LOCK_ON_READ_DEFAULT;
+> > > -       pctx.opts->exclusive = RBD_EXCLUSIVE_DEFAULT;
+> > > -       pctx.opts->trim = RBD_TRIM_DEFAULT;
+> > > -
+> > > -       copts = ceph_parse_options(options, mon_addrs,
+> > > -                                  mon_addrs + mon_addrs_size - 1,
+> > > -                                  parse_rbd_opts_token, &pctx);
+> > > -       if (IS_ERR(copts)) {
+> > > -               ret = PTR_ERR(copts);
+> > > -               goto out_err;
+> > > -       }
+> > > -       kfree(options);
+> > > +       ctx->rbd_opts = kzalloc(sizeof(*ctx->rbd_opts), GFP_KERNEL);
+> > > +       if (!ctx->rbd_opts)
+> > > +               return -ENOMEM;
+> > >
+> > > -       *ceph_opts = copts;
+> > > -       *opts = pctx.opts;
+> > > -       *rbd_spec = pctx.spec;
+> > > +       ctx->rbd_opts->read_only = RBD_READ_ONLY_DEFAULT;
+> > > +       ctx->rbd_opts->queue_depth = RBD_QUEUE_DEPTH_DEFAULT;
+> > > +       ctx->rbd_opts->alloc_size = RBD_ALLOC_SIZE_DEFAULT;
+> > > +       ctx->rbd_opts->lock_timeout = RBD_LOCK_TIMEOUT_DEFAULT;
+> > > +       ctx->rbd_opts->lock_on_read = RBD_LOCK_ON_READ_DEFAULT;
+> > > +       ctx->rbd_opts->exclusive = RBD_EXCLUSIVE_DEFAULT;
+> > > +       ctx->rbd_opts->trim = RBD_TRIM_DEFAULT;
+> > >
+> > > -       return 0;
+> > > -out_mem:
+> > > -       ret = -ENOMEM;
+> > > -out_err:
+> > > -       kfree(pctx.opts);
+> > > -       rbd_spec_put(pctx.spec);
+> > > -       kfree(options);
+> > > +       ctx->opt = ceph_alloc_options();
+> > > +       if (!ctx->opt)
+> > > +               return -ENOMEM;
+> > >
+> > > -       return ret;
+> > > +       ret = ceph_parse_server_specs(ctx->opt, NULL, mon_addrs, mon_addrs_size);
+> > > +       if (ret < 0)
+> > > +               return ret;
+> > > +
+> > > +       return rbd_parse_monolithic(ctx, options_len, options);
+> > >  }
+> > >
+> > >  static void rbd_dev_image_unlock(struct rbd_device *rbd_dev)
+> > > @@ -7037,10 +7057,8 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+> > >                           const char *buf,
+> > >                           size_t count)
+> > >  {
+> > > +       struct ceph_config_context ctx = {};
+> > >         struct rbd_device *rbd_dev = NULL;
+> > > -       struct ceph_options *ceph_opts = NULL;
+> > > -       struct rbd_options *rbd_opts = NULL;
+> > > -       struct rbd_spec *spec = NULL;
+> > >         struct rbd_client *rbdc;
+> > >         int rc;
+> > >
+> > > @@ -7048,33 +7066,34 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+> > >                 return -ENODEV;
+> > >
+> > >         /* parse add command */
+> > > -       rc = rbd_add_parse_args(buf, &ceph_opts, &rbd_opts, &spec);
+> > > +       rc = rbd_add_parse_args(buf, &ctx);
+> > >         if (rc < 0)
+> > >                 goto out;
+> > >
+> > > -       rbdc = rbd_get_client(ceph_opts);
+> > > +       rbdc = rbd_get_client(ctx.opt);
+> > >         if (IS_ERR(rbdc)) {
+> > >                 rc = PTR_ERR(rbdc);
+> > >                 goto err_out_args;
+> > >         }
+> > >
+> > >         /* pick the pool */
+> > > -       rc = ceph_pg_poolid_by_name(rbdc->client->osdc.osdmap, spec->pool_name);
+> > > +       rc = ceph_pg_poolid_by_name(rbdc->client->osdc.osdmap,
+> > > +                                   ctx.rbd_spec->pool_name);
+> > >         if (rc < 0) {
+> > >                 if (rc == -ENOENT)
+> > > -                       pr_info("pool %s does not exist\n", spec->pool_name);
+> > > +                       pr_info("pool %s does not exist\n", ctx.rbd_spec->pool_name);
+> > >                 goto err_out_client;
+> > >         }
+> > > -       spec->pool_id = (u64)rc;
+> > > +       ctx.rbd_spec->pool_id = (u64)rc;
+> > >
+> > > -       rbd_dev = rbd_dev_create(rbdc, spec, rbd_opts);
+> > > +       rbd_dev = rbd_dev_create(rbdc, ctx.rbd_spec, ctx.rbd_opts);
+> > >         if (!rbd_dev) {
+> > >                 rc = -ENOMEM;
+> > >                 goto err_out_client;
+> > >         }
+> > >         rbdc = NULL;            /* rbd_dev now owns this */
+> > > -       spec = NULL;            /* rbd_dev now owns this */
+> > > -       rbd_opts = NULL;        /* rbd_dev now owns this */
+> > > +       ctx.rbd_spec = NULL;    /* rbd_dev now owns this */
+> > > +       ctx.rbd_opts = NULL;    /* rbd_dev now owns this */
+> > >
+> > >         rbd_dev->config_info = kstrdup(buf, GFP_KERNEL);
+> > >         if (!rbd_dev->config_info) {
+> > > @@ -7139,8 +7158,9 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+> > >  err_out_client:
+> > >         rbd_put_client(rbdc);
+> > >  err_out_args:
+> > > -       rbd_spec_put(spec);
+> > > -       kfree(rbd_opts);
+> > > +       rbd_spec_put(ctx.rbd_spec);
+> > > +       kfree(ctx.rbd_opts);
+> > > +       ceph_destroy_options(ctx.opt);
+> > >         goto out;
+> > >  }
+> > >
+> > > diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+> > > index b2ec29eeb4c4..20ce51d16f60 100644
+> > > --- a/fs/ceph/cache.c
+> > > +++ b/fs/ceph/cache.c
+> > > @@ -7,7 +7,7 @@
+> > >   */
+> > >
+> > >  #include <linux/ceph/ceph_debug.h>
+> > > -
+> > > +#include <linux/fs_context.h>
+> > >  #include "super.h"
+> > >  #include "cache.h"
+> > >
+> > > @@ -49,7 +49,7 @@ void ceph_fscache_unregister(void)
+> > >         fscache_unregister_netfs(&ceph_cache_netfs);
+> > >  }
+> > >
+> > > -int ceph_fscache_register_fs(struct ceph_fs_client* fsc)
+> > > +int ceph_fscache_register_fs(struct fs_context *fc, struct ceph_fs_client* fsc)
+> > >  {
+> > >         const struct ceph_fsid *fsid = &fsc->client->fsid;
+> > >         const char *fscache_uniq = fsc->mount_options->fscache_uniq;
+> > > @@ -66,8 +66,8 @@ int ceph_fscache_register_fs(struct ceph_fs_client* fsc)
+> > >                 if (uniq_len && memcmp(ent->uniquifier, fscache_uniq, uniq_len))
+> > >                         continue;
+> > >
+> > > -               pr_err("fscache cookie already registered for fsid %pU\n", fsid);
+> > > -               pr_err("  use fsc=%%s mount option to specify a uniquifier\n");
+> > > +               errorf(fc, "fscache cookie already registered for fsid %pU\n", fsid);
+> > > +               errorf(fc, "  use fsc=%%s mount option to specify a uniquifier\n");
+> > >                 err = -EBUSY;
+> > >                 goto out_unlock;
+> > >         }
+> > > @@ -95,7 +95,7 @@ int ceph_fscache_register_fs(struct ceph_fs_client* fsc)
+> > >                 list_add_tail(&ent->list, &ceph_fscache_list);
+> > >         } else {
+> > >                 kfree(ent);
+> > > -               pr_err("unable to register fscache cookie for fsid %pU\n",
+> > > +               errorf(fc, "unable to register fscache cookie for fsid %pU\n",
+> > >                        fsid);
+> > >                 /* all other fs ignore this error */
+> > >         }
+> > > diff --git a/fs/ceph/cache.h b/fs/ceph/cache.h
+> > > index e486fac3434d..f72328fd357b 100644
+> > > --- a/fs/ceph/cache.h
+> > > +++ b/fs/ceph/cache.h
+> > > @@ -16,7 +16,7 @@ extern struct fscache_netfs ceph_cache_netfs;
+> > >  int ceph_fscache_register(void);
+> > >  void ceph_fscache_unregister(void);
+> > >
+> > > -int ceph_fscache_register_fs(struct ceph_fs_client* fsc);
+> > > +int ceph_fscache_register_fs(struct fs_context *fc, struct ceph_fs_client* fsc);
+> > >  void ceph_fscache_unregister_fs(struct ceph_fs_client* fsc);
+> > >
+> > >  void ceph_fscache_register_inode_cookie(struct inode *inode);
+> > > @@ -88,7 +88,8 @@ static inline void ceph_fscache_unregister(void)
+> > >  {
+> > >  }
+> > >
+> > > -static inline int ceph_fscache_register_fs(struct ceph_fs_client* fsc)
+> > > +static inline int ceph_fscache_register_fs(struct fs_context *fc,
+> > > +                                          struct ceph_fs_client *fsc)
+> > >  {
+> > >         return 0;
+> > >  }
+> > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > > index 03b63b1cd32c..5ccaec686eda 100644
+> > > --- a/fs/ceph/super.c
+> > > +++ b/fs/ceph/super.c
+> > > @@ -9,7 +9,8 @@
+> > >  #include <linux/in6.h>
+> > >  #include <linux/module.h>
+> > >  #include <linux/mount.h>
+> > > -#include <linux/parser.h>
+> > > +#include <linux/fs_context.h>
+> > > +#include <linux/fs_parser.h>
+> > >  #include <linux/sched.h>
+> > >  #include <linux/seq_file.h>
+> > >  #include <linux/slab.h>
+> > > @@ -138,276 +139,305 @@ enum {
+> > >         Opt_readdir_max_entries,
+> > >         Opt_readdir_max_bytes,
+> > >         Opt_congestion_kb,
+> > > -       Opt_last_int,
+> > > -       /* int args above */
+> > >         Opt_snapdirname,
+> > >         Opt_mds_namespace,
+> > > -       Opt_fscache_uniq,
+> > >         Opt_recover_session,
+> > > -       Opt_last_string,
+> > > -       /* string args above */
+> > >         Opt_dirstat,
+> > > -       Opt_nodirstat,
+> > >         Opt_rbytes,
+> > > -       Opt_norbytes,
+> > >         Opt_asyncreaddir,
+> > > -       Opt_noasyncreaddir,
+> > >         Opt_dcache,
+> > > -       Opt_nodcache,
+> > >         Opt_ino32,
+> > > -       Opt_noino32,
+> > >         Opt_fscache,
+> > > -       Opt_nofscache,
+> > >         Opt_poolperm,
+> > > -       Opt_nopoolperm,
+> > >         Opt_require_active_mds,
+> > > -       Opt_norequire_active_mds,
+> > > -#ifdef CONFIG_CEPH_FS_POSIX_ACL
+> > >         Opt_acl,
+> > > -#endif
+> > > -       Opt_noacl,
+> > >         Opt_quotadf,
+> > > -       Opt_noquotadf,
+> > >         Opt_copyfrom,
+> > > -       Opt_nocopyfrom,
+> > > +       Opt_source,
+> > >  };
+> > >
+> > > -static match_table_t fsopt_tokens = {
+> > > -       {Opt_wsize, "wsize=%d"},
+> > > -       {Opt_rsize, "rsize=%d"},
+> > > -       {Opt_rasize, "rasize=%d"},
+> > > -       {Opt_caps_wanted_delay_min, "caps_wanted_delay_min=%d"},
+> > > -       {Opt_caps_wanted_delay_max, "caps_wanted_delay_max=%d"},
+> > > -       {Opt_caps_max, "caps_max=%d"},
+> > > -       {Opt_readdir_max_entries, "readdir_max_entries=%d"},
+> > > -       {Opt_readdir_max_bytes, "readdir_max_bytes=%d"},
+> > > -       {Opt_congestion_kb, "write_congestion_kb=%d"},
+> > > -       /* int args above */
+> > > -       {Opt_snapdirname, "snapdirname=%s"},
+> > > -       {Opt_mds_namespace, "mds_namespace=%s"},
+> > > -       {Opt_recover_session, "recover_session=%s"},
+> > > -       {Opt_fscache_uniq, "fsc=%s"},
+> > > -       /* string args above */
+> > > -       {Opt_dirstat, "dirstat"},
+> > > -       {Opt_nodirstat, "nodirstat"},
+> > > -       {Opt_rbytes, "rbytes"},
+> > > -       {Opt_norbytes, "norbytes"},
+> > > -       {Opt_asyncreaddir, "asyncreaddir"},
+> > > -       {Opt_noasyncreaddir, "noasyncreaddir"},
+> > > -       {Opt_dcache, "dcache"},
+> > > -       {Opt_nodcache, "nodcache"},
+> > > -       {Opt_ino32, "ino32"},
+> > > -       {Opt_noino32, "noino32"},
+> > > -       {Opt_fscache, "fsc"},
+> > > -       {Opt_nofscache, "nofsc"},
+> > > -       {Opt_poolperm, "poolperm"},
+> > > -       {Opt_nopoolperm, "nopoolperm"},
+> > > -       {Opt_require_active_mds, "require_active_mds"},
+> > > -       {Opt_norequire_active_mds, "norequire_active_mds"},
+> > > -#ifdef CONFIG_CEPH_FS_POSIX_ACL
+> > > -       {Opt_acl, "acl"},
+> > > -#endif
+> > > -       {Opt_noacl, "noacl"},
+> > > -       {Opt_quotadf, "quotadf"},
+> > > -       {Opt_noquotadf, "noquotadf"},
+> > > -       {Opt_copyfrom, "copyfrom"},
+> > > -       {Opt_nocopyfrom, "nocopyfrom"},
+> > > -       {-1, NULL}
+> > > +enum ceph_recover_session_mode {
+> > > +       ceph_recover_session_no,
+> > > +       ceph_recover_session_clean
+> > > +};
+> > > +
+> > > +static const struct fs_parameter_enum ceph_param_enums[] = {
+> > > +       { Opt_recover_session,  "no",           ceph_recover_session_no },
+> > > +       { Opt_recover_session,  "clean",        ceph_recover_session_clean },
+> > > +       {}
+> > >  };
+> > >
+> > > -static int parse_fsopt_token(char *c, void *private)
+> > > +static const struct fs_parameter_spec ceph_param_specs[] = {
+> > > +       fsparam_flag_no ("acl",                         Opt_acl),
+> > > +       fsparam_flag_no ("asyncreaddir",                Opt_asyncreaddir),
+> > > +       fsparam_u32     ("caps_max",                    Opt_caps_max),
+> > > +       fsparam_u32     ("caps_wanted_delay_max",       Opt_caps_wanted_delay_max),
+> > > +       fsparam_u32     ("caps_wanted_delay_min",       Opt_caps_wanted_delay_min),
+> > > +       fsparam_s32     ("write_congestion_kb",         Opt_congestion_kb),
+> >
+> > I wonder why this is s32, while all other integer parameters are now
+> > u32.  Anything less than 1024 is invalid here...
+> >
+>
+> Most of the destination fields are signed ints. We probably need to do
+> an end-to-end type sanity cleanup in these fields. For now, I'm inclined
+> to leave this as-is and fix it up in a later patch, unless there is any
+> obvious breakage here.
 
+Fine with me.
 
-On 9/9/19 4:50 AM, Matthew Bobrowski wrote:
-> Remove buffer_head direct IO code that is now redundant as a result of
-> porting across the read/write paths to use iomap infrastructure.
-> 
-> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+>
+> > > +       fsparam_flag_no ("copyfrom",                    Opt_copyfrom),
+> > > +       fsparam_flag_no ("dcache",                      Opt_dcache),
+> > > +       fsparam_flag_no ("dirstat",                     Opt_dirstat),
+> > > +       __fsparam       (fs_param_is_string, "fsc",     Opt_fscache,
+> > > +                        fs_param_neg_with_no | fs_param_v_optional),
+> > > +       fsparam_flag_no ("ino32",                       Opt_ino32),
+> > > +       fsparam_string  ("mds_namespace",               Opt_mds_namespace),
+> > > +       fsparam_flag_no ("poolperm",                    Opt_poolperm),
+> > > +       fsparam_flag_no ("quotadf",                     Opt_quotadf),
+> > > +       fsparam_u32     ("rasize",                      Opt_rasize),
+> > > +       fsparam_flag_no ("rbytes",                      Opt_rbytes),
+> > > +       fsparam_s32     ("readdir_max_bytes",           Opt_readdir_max_bytes),
+> >
+> > Ditto, either 0 or >= PAGE_SIZE.
+> >
+> > > +       fsparam_s32     ("readdir_max_entries",         Opt_readdir_max_entries),
+> >
+> > Ditto, >= 1.
+>
+> Ilya and I got most of the oopses banged out today, and I fixed up a few
+> of the other things he noticed. Here's a delta on top of the last patch:
+>
+> ------------------------8<-----------------------------
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 8a7f996e228f..8c77c4da8727 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -857,6 +857,8 @@ static const struct fs_parameter_spec rbd_param_specs[] = {
+>         fsparam_flag    ("notrim",                      Opt_notrim),
+>         fsparam_string  ("_pool_ns",                    Opt_pool_ns),
+>         fsparam_u32     ("queue_depth",                 Opt_queue_depth),
+> +       fsparam_flag    ("read_only",                   Opt_read_only),
+> +       fsparam_flag    ("read_write",                  Opt_read_write),
+>         fsparam_flag    ("ro",                          Opt_read_only),
+>         fsparam_flag    ("rw",                          Opt_read_write),
+>         {}
+> @@ -880,7 +882,7 @@ static int rbd_parse_param(struct ceph_config_context *ctx, struct fs_parameter
+>
+>         opt = fs_parse(NULL, &rbd_parameters, param, &result);
+>         if (opt < 0)
+> -               return opt;
+> +               return opt == -ENOPARAM ? -EINVAL : opt;
+>
+>         switch (opt) {
+>         case Opt_queue_depth:
+> @@ -980,11 +982,13 @@ static void rbd_put_client(struct rbd_client *rbdc)
+>   * not exist create it.  Either way, ceph_opts is consumed by this
+>   * function.
+>   */
+> -static struct rbd_client *rbd_get_client(struct ceph_options *ceph_opts)
+> +static struct rbd_client *rbd_get_client(struct ceph_config_context *ctx)
+>  {
+>         struct rbd_client *rbdc;
+> +       struct ceph_options *ceph_opts = ctx->opt;
+>         int ret;
+>
+> +       ctx->opt = NULL;
+>         mutex_lock(&client_mutex);
+>         rbdc = rbd_client_find(ceph_opts);
+>         if (rbdc) {
+> @@ -7070,7 +7074,7 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+>         if (rc < 0)
+>                 goto out;
+>
+> -       rbdc = rbd_get_client(ctx.opt);
+> +       rbdc = rbd_get_client(&ctx);
+>         if (IS_ERR(rbdc)) {
+>                 rc = PTR_ERR(rbdc);
+>                 goto err_out_args;
+> ------------------------8<-----------------------------
+>
+> Al has dropped this patch from his linux-next branch as well, so we
+> probably should merge this (and really, most of ceph/testing) into the
+> ceph-client/master branch soon so it gets picked up there.
 
-Looks good to me.
+Most of it is there already, only a couple of recent cleanups and the
+session hang fix is missing.
 
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+>
+> I'm going to take a crack at breaking this up into separate patches too,
+> if only for better bisectability. It may not be simple though.
 
-> ---
->   fs/ext4/ext4.h    |   3 -
->   fs/ext4/extents.c |  11 +-
->   fs/ext4/file.c    |   7 -
->   fs/ext4/inode.c   | 398 +---------------------------------------------
->   4 files changed, 5 insertions(+), 414 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index bf660aa7a9e0..2ab91815f52d 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1555,7 +1555,6 @@ enum {
->   	EXT4_STATE_NO_EXPAND,		/* No space for expansion */
->   	EXT4_STATE_DA_ALLOC_CLOSE,	/* Alloc DA blks on close */
->   	EXT4_STATE_EXT_MIGRATE,		/* Inode is migrating */
-> -	EXT4_STATE_DIO_UNWRITTEN,	/* need convert on dio done*/
->   	EXT4_STATE_NEWENTRY,		/* File just added to dir */
->   	EXT4_STATE_MAY_INLINE_DATA,	/* may have in-inode data */
->   	EXT4_STATE_EXT_PRECACHED,	/* extents have been precached */
-> @@ -2522,8 +2521,6 @@ int ext4_get_block_unwritten(struct inode *inode, sector_t iblock,
->   			     struct buffer_head *bh_result, int create);
->   int ext4_get_block(struct inode *inode, sector_t iblock,
->   		   struct buffer_head *bh_result, int create);
-> -int ext4_dio_get_block(struct inode *inode, sector_t iblock,
-> -		       struct buffer_head *bh_result, int create);
->   int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
->   			   struct buffer_head *bh, int create);
->   int ext4_walk_page_buffers(handle_t *handle,
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 92266a2da7d6..a869e206bd81 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -1753,16 +1753,9 @@ ext4_can_extents_be_merged(struct inode *inode, struct ext4_extent *ex1,
->   	 */
->   	if (ext1_ee_len + ext2_ee_len > EXT_INIT_MAX_LEN)
->   		return 0;
-> -	/*
-> -	 * The check for IO to unwritten extent is somewhat racy as we
-> -	 * increment i_unwritten / set EXT4_STATE_DIO_UNWRITTEN only after
-> -	 * dropping i_data_sem. But reserved blocks should save us in that
-> -	 * case.
-> -	 */
-> +
->   	if (ext4_ext_is_unwritten(ex1) &&
-> -	    (ext4_test_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN) ||
-> -	     atomic_read(&EXT4_I(inode)->i_unwritten) ||
-> -	     (ext1_ee_len + ext2_ee_len > EXT_UNWRITTEN_MAX_LEN)))
-> +	    (ext1_ee_len + ext2_ee_len > EXT_UNWRITTEN_MAX_LEN))
->   		return 0;
->   #ifdef AGGRESSIVE_TEST
->   	if (ext1_ee_len >= 4)
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index bf22425a6a6f..d4b9a82aed6c 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -155,13 +155,6 @@ static int ext4_release_file(struct inode *inode, struct file *filp)
->   	return 0;
->   }
-> 
-> -static void ext4_unwritten_wait(struct inode *inode)
-> -{
-> -	wait_queue_head_t *wq = ext4_ioend_wq(inode);
-> -
-> -	wait_event(*wq, (atomic_read(&EXT4_I(inode)->i_unwritten) == 0));
-> -}
-> -
->   /*
->    * This tests whether the IO in question is block-aligned or not.
->    * Ext4 utilizes unwritten extents when hole-filling during direct IO, and they
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index f52ad3065236..a4f0749527c7 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -826,136 +826,6 @@ int ext4_get_block_unwritten(struct inode *inode, sector_t iblock,
->   /* Maximum number of blocks we map for direct IO at once. */
->   #define DIO_MAX_BLOCKS 4096
-> 
-> -/*
-> - * Get blocks function for the cases that need to start a transaction -
-> - * generally difference cases of direct IO and DAX IO. It also handles retries
-> - * in case of ENOSPC.
-> - */
-> -static int ext4_get_block_trans(struct inode *inode, sector_t iblock,
-> -				struct buffer_head *bh_result, int flags)
-> -{
-> -	int dio_credits;
-> -	handle_t *handle;
-> -	int retries = 0;
-> -	int ret;
-> -
-> -	/* Trim mapping request to maximum we can map at once for DIO */
-> -	if (bh_result->b_size >> inode->i_blkbits > DIO_MAX_BLOCKS)
-> -		bh_result->b_size = DIO_MAX_BLOCKS << inode->i_blkbits;
-> -	dio_credits = ext4_chunk_trans_blocks(inode,
-> -				      bh_result->b_size >> inode->i_blkbits);
-> -retry:
-> -	handle = ext4_journal_start(inode, EXT4_HT_MAP_BLOCKS, dio_credits);
-> -	if (IS_ERR(handle))
-> -		return PTR_ERR(handle);
-> -
-> -	ret = _ext4_get_block(inode, iblock, bh_result, flags);
-> -	ext4_journal_stop(handle);
-> -
-> -	if (ret == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
-> -		goto retry;
-> -	return ret;
-> -}
-> -
-> -/* Get block function for DIO reads and writes to inodes without extents */
-> -int ext4_dio_get_block(struct inode *inode, sector_t iblock,
-> -		       struct buffer_head *bh, int create)
-> -{
-> -	/* We don't expect handle for direct IO */
-> -	WARN_ON_ONCE(ext4_journal_current_handle());
-> -
-> -	if (!create)
-> -		return _ext4_get_block(inode, iblock, bh, 0);
-> -	return ext4_get_block_trans(inode, iblock, bh, EXT4_GET_BLOCKS_CREATE);
-> -}
-> -
-> -/*
-> - * Get block function for AIO DIO writes when we create unwritten extent if
-> - * blocks are not allocated yet. The extent will be converted to written
-> - * after IO is complete.
-> - */
-> -static int ext4_dio_get_block_unwritten_async(struct inode *inode,
-> -		sector_t iblock, struct buffer_head *bh_result,	int create)
-> -{
-> -	int ret;
-> -
-> -	/* We don't expect handle for direct IO */
-> -	WARN_ON_ONCE(ext4_journal_current_handle());
-> -
-> -	ret = ext4_get_block_trans(inode, iblock, bh_result,
-> -				   EXT4_GET_BLOCKS_IO_CREATE_EXT);
-> -
-> -	/*
-> -	 * When doing DIO using unwritten extents, we need io_end to convert
-> -	 * unwritten extents to written on IO completion. We allocate io_end
-> -	 * once we spot unwritten extent and store it in b_private. Generic
-> -	 * DIO code keeps b_private set and furthermore passes the value to
-> -	 * our completion callback in 'private' argument.
-> -	 */
-> -	if (!ret && buffer_unwritten(bh_result)) {
-> -		if (!bh_result->b_private) {
-> -			ext4_io_end_t *io_end;
-> -
-> -			io_end = ext4_init_io_end(inode, GFP_KERNEL);
-> -			if (!io_end)
-> -				return -ENOMEM;
-> -			bh_result->b_private = io_end;
-> -			ext4_set_io_unwritten_flag(inode, io_end);
-> -		}
-> -		set_buffer_defer_completion(bh_result);
-> -	}
-> -
-> -	return ret;
-> -}
-> -
-> -/*
-> - * Get block function for non-AIO DIO writes when we create unwritten extent if
-> - * blocks are not allocated yet. The extent will be converted to written
-> - * after IO is complete by ext4_direct_IO_write().
-> - */
-> -static int ext4_dio_get_block_unwritten_sync(struct inode *inode,
-> -		sector_t iblock, struct buffer_head *bh_result,	int create)
-> -{
-> -	int ret;
-> -
-> -	/* We don't expect handle for direct IO */
-> -	WARN_ON_ONCE(ext4_journal_current_handle());
-> -
-> -	ret = ext4_get_block_trans(inode, iblock, bh_result,
-> -				   EXT4_GET_BLOCKS_IO_CREATE_EXT);
-> -
-> -	/*
-> -	 * Mark inode as having pending DIO writes to unwritten extents.
-> -	 * ext4_direct_IO_write() checks this flag and converts extents to
-> -	 * written.
-> -	 */
-> -	if (!ret && buffer_unwritten(bh_result))
-> -		ext4_set_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN);
-> -
-> -	return ret;
-> -}
-> -
-> -static int ext4_dio_get_block_overwrite(struct inode *inode, sector_t iblock,
-> -		   struct buffer_head *bh_result, int create)
-> -{
-> -	int ret;
-> -
-> -	ext4_debug("ext4_dio_get_block_overwrite: inode %lu, create flag %d\n",
-> -		   inode->i_ino, create);
-> -	/* We don't expect handle for direct IO */
-> -	WARN_ON_ONCE(ext4_journal_current_handle());
-> -
-> -	ret = _ext4_get_block(inode, iblock, bh_result, 0);
-> -	/*
-> -	 * Blocks should have been preallocated! ext4_file_write_iter() checks
-> -	 * that.
-> -	 */
-> -	WARN_ON_ONCE(!buffer_mapped(bh_result) || buffer_unwritten(bh_result));
-> -
-> -	return ret;
-> -}
-> -
-> -
->   /*
->    * `handle' can be NULL if create is zero
->    */
-> @@ -3653,268 +3523,6 @@ const struct iomap_ops ext4_iomap_ops = {
->   	.iomap_end		= ext4_iomap_end,
->   };
-> 
-> -static int ext4_end_io_dio(struct kiocb *iocb, loff_t offset,
-> -			    ssize_t size, void *private)
-> -{
-> -        ext4_io_end_t *io_end = private;
-> -
-> -	/* if not async direct IO just return */
-> -	if (!io_end)
-> -		return 0;
-> -
-> -	ext_debug("ext4_end_io_dio(): io_end 0x%p "
-> -		  "for inode %lu, iocb 0x%p, offset %llu, size %zd\n",
-> -		  io_end, io_end->inode->i_ino, iocb, offset, size);
-> -
-> -	/*
-> -	 * Error during AIO DIO. We cannot convert unwritten extents as the
-> -	 * data was not written. Just clear the unwritten flag and drop io_end.
-> -	 */
-> -	if (size <= 0) {
-> -		ext4_clear_io_unwritten_flag(io_end);
-> -		size = 0;
-> -	}
-> -	io_end->offset = offset;
-> -	io_end->size = size;
-> -	ext4_put_io_end(io_end);
-> -
-> -	return 0;
-> -}
-> -
-> -/*
-> - * Handling of direct IO writes.
-> - *
-> - * For ext4 extent files, ext4 will do direct-io write even to holes,
-> - * preallocated extents, and those write extend the file, no need to
-> - * fall back to buffered IO.
-> - *
-> - * For holes, we fallocate those blocks, mark them as unwritten
-> - * If those blocks were preallocated, we mark sure they are split, but
-> - * still keep the range to write as unwritten.
-> - *
-> - * The unwritten extents will be converted to written when DIO is completed.
-> - * For async direct IO, since the IO may still pending when return, we
-> - * set up an end_io call back function, which will do the conversion
-> - * when async direct IO completed.
-> - *
-> - * If the O_DIRECT write will extend the file then add this inode to the
-> - * orphan list.  So recovery will truncate it back to the original size
-> - * if the machine crashes during the write.
-> - *
-> - */
-> -static ssize_t ext4_direct_IO_write(struct kiocb *iocb, struct iov_iter *iter)
-> -{
-> -	struct file *file = iocb->ki_filp;
-> -	struct inode *inode = file->f_mapping->host;
-> -	struct ext4_inode_info *ei = EXT4_I(inode);
-> -	ssize_t ret;
-> -	loff_t offset = iocb->ki_pos;
-> -	size_t count = iov_iter_count(iter);
-> -	int overwrite = 0;
-> -	get_block_t *get_block_func = NULL;
-> -	int dio_flags = 0;
-> -	loff_t final_size = offset + count;
-> -	int orphan = 0;
-> -	handle_t *handle;
-> -
-> -	if (final_size > inode->i_size || final_size > ei->i_disksize) {
-> -		/* Credits for sb + inode write */
-> -		handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
-> -		if (IS_ERR(handle)) {
-> -			ret = PTR_ERR(handle);
-> -			goto out;
-> -		}
-> -		ret = ext4_orphan_add(handle, inode);
-> -		if (ret) {
-> -			ext4_journal_stop(handle);
-> -			goto out;
-> -		}
-> -		orphan = 1;
-> -		ext4_update_i_disksize(inode, inode->i_size);
-> -		ext4_journal_stop(handle);
-> -	}
-> -
-> -	BUG_ON(iocb->private == NULL);
-> -
-> -	/*
-> -	 * Make all waiters for direct IO properly wait also for extent
-> -	 * conversion. This also disallows race between truncate() and
-> -	 * overwrite DIO as i_dio_count needs to be incremented under i_mutex.
-> -	 */
-> -	inode_dio_begin(inode);
-> -
-> -	/* If we do a overwrite dio, i_mutex locking can be released */
-> -	overwrite = *((int *)iocb->private);
-> -
-> -	if (overwrite)
-> -		inode_unlock(inode);
-> -
-> -	/*
-> -	 * For extent mapped files we could direct write to holes and fallocate.
-> -	 *
-> -	 * Allocated blocks to fill the hole are marked as unwritten to prevent
-> -	 * parallel buffered read to expose the stale data before DIO complete
-> -	 * the data IO.
-> -	 *
-> -	 * As to previously fallocated extents, ext4 get_block will just simply
-> -	 * mark the buffer mapped but still keep the extents unwritten.
-> -	 *
-> -	 * For non AIO case, we will convert those unwritten extents to written
-> -	 * after return back from blockdev_direct_IO. That way we save us from
-> -	 * allocating io_end structure and also the overhead of offloading
-> -	 * the extent convertion to a workqueue.
-> -	 *
-> -	 * For async DIO, the conversion needs to be deferred when the
-> -	 * IO is completed. The ext4 end_io callback function will be
-> -	 * called to take care of the conversion work.  Here for async
-> -	 * case, we allocate an io_end structure to hook to the iocb.
-> -	 */
-> -	iocb->private = NULL;
-> -	if (overwrite)
-> -		get_block_func = ext4_dio_get_block_overwrite;
-> -	else if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS) ||
-> -		   round_down(offset, i_blocksize(inode)) >= inode->i_size) {
-> -		get_block_func = ext4_dio_get_block;
-> -		dio_flags = DIO_LOCKING | DIO_SKIP_HOLES;
-> -	} else if (is_sync_kiocb(iocb)) {
-> -		get_block_func = ext4_dio_get_block_unwritten_sync;
-> -		dio_flags = DIO_LOCKING;
-> -	} else {
-> -		get_block_func = ext4_dio_get_block_unwritten_async;
-> -		dio_flags = DIO_LOCKING;
-> -	}
-> -	ret = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev, iter,
-> -				   get_block_func, ext4_end_io_dio, NULL,
-> -				   dio_flags);
-> -
-> -	if (ret > 0 && !overwrite && ext4_test_inode_state(inode,
-> -						EXT4_STATE_DIO_UNWRITTEN)) {
-> -		int err;
-> -		/*
-> -		 * for non AIO case, since the IO is already
-> -		 * completed, we could do the conversion right here
-> -		 */
-> -		err = ext4_convert_unwritten_extents(NULL, inode,
-> -						     offset, ret);
-> -		if (err < 0)
-> -			ret = err;
-> -		ext4_clear_inode_state(inode, EXT4_STATE_DIO_UNWRITTEN);
-> -	}
-> -
-> -	inode_dio_end(inode);
-> -	/* take i_mutex locking again if we do a ovewrite dio */
-> -	if (overwrite)
-> -		inode_lock(inode);
-> -
-> -	if (ret < 0 && final_size > inode->i_size)
-> -		ext4_truncate_failed_write(inode);
-> -
-> -	/* Handle extending of i_size after direct IO write */
-> -	if (orphan) {
-> -		int err;
-> -
-> -		/* Credits for sb + inode write */
-> -		handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
-> -		if (IS_ERR(handle)) {
-> -			/*
-> -			 * We wrote the data but cannot extend
-> -			 * i_size. Bail out. In async io case, we do
-> -			 * not return error here because we have
-> -			 * already submmitted the corresponding
-> -			 * bio. Returning error here makes the caller
-> -			 * think that this IO is done and failed
-> -			 * resulting in race with bio's completion
-> -			 * handler.
-> -			 */
-> -			if (!ret)
-> -				ret = PTR_ERR(handle);
-> -			if (inode->i_nlink)
-> -				ext4_orphan_del(NULL, inode);
-> -
-> -			goto out;
-> -		}
-> -		if (inode->i_nlink)
-> -			ext4_orphan_del(handle, inode);
-> -		if (ret > 0) {
-> -			loff_t end = offset + ret;
-> -			if (end > inode->i_size || end > ei->i_disksize) {
-> -				ext4_update_i_disksize(inode, end);
-> -				if (end > inode->i_size)
-> -					i_size_write(inode, end);
-> -				/*
-> -				 * We're going to return a positive `ret'
-> -				 * here due to non-zero-length I/O, so there's
-> -				 * no way of reporting error returns from
-> -				 * ext4_mark_inode_dirty() to userspace.  So
-> -				 * ignore it.
-> -				 */
-> -				ext4_mark_inode_dirty(handle, inode);
-> -			}
-> -		}
-> -		err = ext4_journal_stop(handle);
-> -		if (ret == 0)
-> -			ret = err;
-> -	}
-> -out:
-> -	return ret;
-> -}
-> -
-> -static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter)
-> -{
-> -	struct address_space *mapping = iocb->ki_filp->f_mapping;
-> -	struct inode *inode = mapping->host;
-> -	size_t count = iov_iter_count(iter);
-> -	ssize_t ret;
-> -
-> -	/*
-> -	 * Shared inode_lock is enough for us - it protects against concurrent
-> -	 * writes & truncates and since we take care of writing back page cache,
-> -	 * we are protected against page writeback as well.
-> -	 */
-> -	inode_lock_shared(inode);
-> -	ret = filemap_write_and_wait_range(mapping, iocb->ki_pos,
-> -					   iocb->ki_pos + count - 1);
-> -	if (ret)
-> -		goto out_unlock;
-> -	ret = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev,
-> -				   iter, ext4_dio_get_block, NULL, NULL, 0);
-> -out_unlock:
-> -	inode_unlock_shared(inode);
-> -	return ret;
-> -}
-> -
-> -static ssize_t ext4_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-> -{
-> -	struct file *file = iocb->ki_filp;
-> -	struct inode *inode = file->f_mapping->host;
-> -	size_t count = iov_iter_count(iter);
-> -	loff_t offset = iocb->ki_pos;
-> -	ssize_t ret;
-> -
-> -#ifdef CONFIG_FS_ENCRYPTION
-> -	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
-> -		return 0;
-> -#endif
-> -
-> -	/*
-> -	 * If we are doing data journalling we don't support O_DIRECT
-> -	 */
-> -	if (ext4_should_journal_data(inode))
-> -		return 0;
-> -
-> -	/* Let buffer I/O handle the inline data case. */
-> -	if (ext4_has_inline_data(inode))
-> -		return 0;
-> -
-> -	trace_ext4_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
-> -	if (iov_iter_rw(iter) == READ)
-> -		ret = ext4_direct_IO_read(iocb, iter);
-> -	else
-> -		ret = ext4_direct_IO_write(iocb, iter);
-> -	trace_ext4_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), ret);
-> -	return ret;
-> -}
-> -
->   /*
->    * Pages can be marked dirty completely asynchronously from ext4's journalling
->    * activity.  By filemap_sync_pte(), try_to_unmap_one(), etc.  We cannot do
-> @@ -3952,7 +3560,7 @@ static const struct address_space_operations ext4_aops = {
->   	.bmap			= ext4_bmap,
->   	.invalidatepage		= ext4_invalidatepage,
->   	.releasepage		= ext4_releasepage,
-> -	.direct_IO		= ext4_direct_IO,
-> +	.direct_IO		= noop_direct_IO,
->   	.migratepage		= buffer_migrate_page,
->   	.is_partially_uptodate  = block_is_partially_uptodate,
->   	.error_remove_page	= generic_error_remove_page,
-> @@ -3969,7 +3577,7 @@ static const struct address_space_operations ext4_journalled_aops = {
->   	.bmap			= ext4_bmap,
->   	.invalidatepage		= ext4_journalled_invalidatepage,
->   	.releasepage		= ext4_releasepage,
-> -	.direct_IO		= ext4_direct_IO,
-> +	.direct_IO		= noop_direct_IO,
->   	.is_partially_uptodate  = block_is_partially_uptodate,
->   	.error_remove_page	= generic_error_remove_page,
->   };
-> @@ -3985,7 +3593,7 @@ static const struct address_space_operations ext4_da_aops = {
->   	.bmap			= ext4_bmap,
->   	.invalidatepage		= ext4_da_invalidatepage,
->   	.releasepage		= ext4_releasepage,
-> -	.direct_IO		= ext4_direct_IO,
-> +	.direct_IO		= noop_direct_IO,
->   	.migratepage		= buffer_migrate_page,
->   	.is_partially_uptodate  = block_is_partially_uptodate,
->   	.error_remove_page	= generic_error_remove_page,
-> 
+I'm not sure it's worth it, honestly.  I'll split ceph_config_context,
+do some more testing and add the result to linux-next this week.
 
+Thanks,
+
+                Ilya
