@@ -2,93 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F6CAD8A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 14:14:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AD22AD8FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 14:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387536AbfIIMOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Sep 2019 08:14:41 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46502 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387486AbfIIMOl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Sep 2019 08:14:41 -0400
-Received: by mail-lj1-f195.google.com with SMTP id e17so12434369ljf.13;
-        Mon, 09 Sep 2019 05:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pFxxPSGzQ82HZys0kjMWLu4nLMt5F1OM+dYrK3t5KUE=;
-        b=cT6yqph1WHqVo4BHlHeHqAFIMjTp3Acp1uVHcbqgwoGOlIqlovKxe503zA/8WoErXn
-         BsWhEeubNs5SBKrX8zemTpTQpyKf8aURKe0eusDLzbJEENZEzm6PLiW7MfyRmJb9iEGy
-         Leso6x2MVJCDmsDCySr6Fk9QaENJKtSycGQWa6kfr8C39QyA5ldbGwlHBTOR1tDsdWd0
-         P+rXYyvw3PbqWdOBOoxAr1hANjCQCVJnAL9q9WHrrS84jvSXz6kkIRt4UvcNpYSV9ZbK
-         aCTAcUs1drW3WqJy+mZdDwDKVRS/0p0q7xHOxWc3NbKica2BqUH7trc0iekrUEknEvsu
-         32eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pFxxPSGzQ82HZys0kjMWLu4nLMt5F1OM+dYrK3t5KUE=;
-        b=ebvpi8iS2U9OPqTuy1658fqExJz46P7FRqMjOHKiTjEpvOxJbEsbSBFhSWTNUOEeTa
-         1w/ioCNKiv66eCPb8VOh2rE/mkf4zhCBBrBCaGmQ1mlz4sH6LvHQjF/uoeXH9IfVAAhc
-         9lPu/VAR3Gnctm39x55b/ZxjSuVgNq9iVzmn3ZuX77x4iwnO3/gSRhdz1Ikhl7ZNikvd
-         qekbf1HR606CB7mwBUg0XV0xD4tP8jDW9OKSm5r59iAbRAhDeBgefCK/Wlsi5l698mxG
-         sWfM5tsq8KFT4mUhH/BX7xgHv9/MvTr8hc+mqmrsMMaO/eX3TGe69acZwCj/gCfP0QJ5
-         4fhA==
-X-Gm-Message-State: APjAAAUaI656Bdci6pHZJdLM59Wacb3vrCmg+3Reycl6gJWm3jrq6Stg
-        M1N8hhB0Ux5QNG11zm5eY88=
-X-Google-Smtp-Source: APXvYqwVLHKAjKXgmeV9NavO0mi2f/oJuinAaLJ4bnqdtte2ZZ4wLTD/k1MwfPEpTbw4bERFkaDxrg==
-X-Received: by 2002:a2e:9dd5:: with SMTP id x21mr15547930ljj.182.1568031278902;
-        Mon, 09 Sep 2019 05:14:38 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id k28sm3212244lfj.33.2019.09.09.05.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 05:14:37 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id D81D7460667; Mon,  9 Sep 2019 15:14:36 +0300 (MSK)
-Date:   Mon, 9 Sep 2019 15:14:36 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Dmitry Safonov <0x7f454c46@gmail.com>
-Cc:     Dmitry Safonov <dima@arista.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrei Vagin <avagin@openvz.org>,
+        id S1726873AbfIIM2T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Sep 2019 08:28:19 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:38106 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726377AbfIIM2T (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Sep 2019 08:28:19 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id E3311A1563;
+        Mon,  9 Sep 2019 14:28:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id P6hzAd9wlhqS; Mon,  9 Sep 2019 14:28:10 +0200 (CEST)
+Date:   Mon, 9 Sep 2019 22:28:02 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>
+Cc:     James Morris <jmorris@namei.org>, Jeff Layton <jlayton@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/9] select: Micro-optimise __estimate_accuracy()
-Message-ID: <20190909121436.GC1508@uranus>
-References: <20190909102340.8592-1-dima@arista.com>
- <20190909102340.8592-5-dima@arista.com>
- <20190909111812.GB1508@uranus>
- <CAJwJo6YX2qQit9aTbMhg8L5+JE1EsLzKyNt0a3X97zvJ-O9dNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
+ sys_open()
+Message-ID: <20190909122802.imfx6wp4zeroktuz@yavin>
+References: <20190906152455.22757-2-mic@digikod.net>
+ <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
+ <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
+ <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
+ <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr>
+ <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org>
+ <alpine.LRH.2.21.1909061202070.18660@namei.org>
+ <49e98ece-e85f-3006-159b-2e04ba67019e@ssi.gouv.fr>
+ <alpine.LRH.2.21.1909090309260.27895@namei.org>
+ <073cb831-7c6b-1882-9b7d-eb810a2ef955@ssi.gouv.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="no5u7udk75jfhvvn"
 Content-Disposition: inline
-In-Reply-To: <CAJwJo6YX2qQit9aTbMhg8L5+JE1EsLzKyNt0a3X97zvJ-O9dNQ@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <073cb831-7c6b-1882-9b7d-eb810a2ef955@ssi.gouv.fr>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 12:50:27PM +0100, Dmitry Safonov wrote:
-> Hi Cyrill,
-> 
-> On Mon, 9 Sep 2019 at 12:18, Cyrill Gorcunov <gorcunov@gmail.com> wrote:
-> > Compiler precompute constants so it doesn't do division here.
-> > But I didn't read the series yet so I might be missing
-> > something obvious.
-> 
-> Heh, like a division is in ktime_divns()?
 
-Ah, you meant the ktime_divns you've dropped out. I thought
-you were talking about the constant value we've had here before
-your patch. Seems I didn't got the changelog right. Anyway
-need to take more precise look on the series. Hopefully soon.
+--no5u7udk75jfhvvn
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2019-09-09, Micka=EBl Sala=FCn <mickael.salaun@ssi.gouv.fr> wrote:
+> On 09/09/2019 12:12, James Morris wrote:
+> > On Mon, 9 Sep 2019, Micka=EBl Sala=FCn wrote:
+> >> As I said, O_MAYEXEC should be ignored if it is not supported by the
+> >> kernel, which perfectly fit with the current open(2) flags behavior, a=
+nd
+> >> should also behave the same with openat2(2).
+> >
+> > The problem here is programs which are already using the value of
+> > O_MAYEXEC, which will break.  Hence, openat2(2).
+>=20
+> Well, it still depends on the sysctl, which doesn't enforce anything by
+> default, hence doesn't break existing behavior, and this unused flags
+> could be fixed/removed or reported by sysadmins or distro developers.
+
+Okay, but then this means that new programs which really want to enforce
+O_MAYEXEC (and know that they really do want this feature) won't be able
+to unless an admin has set the relevant sysctl. Not to mention that the
+old-kernel fallback will not cover the "it's disabled by the sysctl"
+case -- so the fallback handling would need to be:
+
+    int fd =3D open("foo", O_MAYEXEC|O_RDONLY);
+    if (!(fcntl(fd, F_GETFL) & O_MAYEXEC))
+        fallback();
+    if (!sysctl_feature_is_enabled)
+        fallback();
+
+However, there is still a race here -- if an administrator enables
+O_MAYEXEC after the program gets the fd, then you still won't hit the
+fallback (and you can't tell that O_MAYEXEC checks weren't done).
+
+You could fix the issue with the sysctl by clearing O_MAYEXEC from
+f_flags if the sysctl is disabled. You could also avoid some of the
+problems with it being a global setting by making it a prctl(2) which
+processes can opt-in to (though this has its own major problems).
+
+Sorry, but I'm just really not a fan of this.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--no5u7udk75jfhvvn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXZFTwAKCRCdlLljIbnQ
+EtYQAP92uUzYfjG2cN2Nhj9vRhmas2XNnL0JbyC5U6zyFRSNVgEAwyjwWaK6kTQb
+EJallcqZNlIhaATVDcNFHXkpq0QtTQ0=
+=Hxqm
+-----END PGP SIGNATURE-----
+
+--no5u7udk75jfhvvn--
