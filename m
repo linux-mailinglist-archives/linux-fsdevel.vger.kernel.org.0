@@ -2,258 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EECF5AD6B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 12:24:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0441AAD74F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 12:54:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390738AbfIIKYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Sep 2019 06:24:01 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55852 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390692AbfIIKX7 (ORCPT
+        id S2388680AbfIIKyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Sep 2019 06:54:20 -0400
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:53148 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728358AbfIIKyU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:23:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g207so13145029wmg.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Sep 2019 03:23:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3oTy+lkWbkFFfNbPOS2AOFsjB8RXGgtp9fv0BAsW7sw=;
-        b=KWVXJKkgFOQhTfLznVaJozh5R/o/MAC5kqv+Qml3IcuGyQxjB7qRq685l5cBV05Ipo
-         sgDx5/qcqGjKuGr9VE0lmZRjo/HjTZbkkbXFm/HX027RXGgT8qgkUTjbTsrWFaU78863
-         wzESbRXN+09ou7ZrrCkHTB5+c4ETLx6aCyp21N8Pjc66pFQFBWAMgaiwDL3tp77qaRTC
-         LYyBTNH8KtaVoQ83sVMzOlD8AG50aQKGghkExi80zGT8ETXPvABPF/W2N78ihbUogsQy
-         WLTY1RGj/p6SaQ17it8EMedrfkaaf3HfqKRE7kznmLO5rNb9bMj7AYrYWpRKlNzPSiQM
-         +LqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3oTy+lkWbkFFfNbPOS2AOFsjB8RXGgtp9fv0BAsW7sw=;
-        b=VqSalPB0k2rtHnp7vgstI36Ui0WZZ7GBcWidC/sdLETKT4U8MDkeUccm1ztLUfC1ss
-         W3iEVKnGYq6gEuB4Rt7JPA4A4i9NRQZncvcAzUrgLeMglqOyLDblEVXxL+a73MRouQ8c
-         /LaJtGZ1DknV17edhOQAVCVO/AOHMIIjk9/KSfW6B+FJTIdNIBndAGB04lbQeJG5TCsv
-         ea28Tz5dOVsA2XyhkrnZnIEllTIIwhD6j5we5RYq2lEsVrxgMWbMisbeeQ/3z0CdVAHF
-         rBTLpSCoufXVQEDgbWJLbMsI1A37528lXSWUxRdnWvG6Izg6IASQ2SjFjMoSyIOkBTzS
-         lmgQ==
-X-Gm-Message-State: APjAAAU9tvdv1Bvh2WlS/qbWkk3OQ2t5TE88VJsWeXdYhz6r/rFUmics
-        zhVvVClLW1EcbdZzdKwo4JM1EQ==
-X-Google-Smtp-Source: APXvYqwkEm9NakHd5yjJLZAfHiHfqUsqd4ZN6ARrN70g1pNUadQK+lUNEg6XugNBQoIbW5DPuRGGdw==
-X-Received: by 2002:a1c:1aca:: with SMTP id a193mr19207427wma.120.1568024636323;
-        Mon, 09 Sep 2019 03:23:56 -0700 (PDT)
-Received: from Mindolluin.localdomain ([148.69.85.38])
-        by smtp.gmail.com with ESMTPSA id d14sm1800008wrj.27.2019.09.09.03.23.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 03:23:55 -0700 (PDT)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrei Vagin <avagin@openvz.org>,
+        Mon, 9 Sep 2019 06:54:20 -0400
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 68FEDD00069;
+        Mon,  9 Sep 2019 12:54:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1568026458;
+        bh=lsE8Nf8H8eP9Ra9FaOYEExhywlR7G0uudTTjxz1hvFc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=bsPrfe3facITGSy7DMYPy8YYzwh1VjblL+C13Jn98z/Ykyq4WF4HusFGQluS1lRBd
+         QYYlffK04WUyhAEq8eXB0G3SbxesMMAAm5maeRLiYC+OGgwGm/UFnzGlEJmS5yTjgv
+         eDWHr12JCE7LIy1AnpTqixcRdqDzgwzq7JGzTrSFVJXeir6LdPgy/jMps6OeNW1+Ba
+         aChlFqI2Rwdfl7KYY82HfNbR9YLCc/r3WdWUMbTIopvQs4RYI2ecpdxUeyJYeoZrak
+         hYdIFTmBcuxxlC16cK/J4YqCEyLJQ1AbFThzUt7fkCISGm2XqYe9FM8OenXBMO8HEi
+         fKi53bdY2BZXA==
+Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
+ sys_open()
+To:     James Morris <jmorris@namei.org>
+CC:     Jeff Layton <jlayton@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andy Lutomirski <luto@kernel.org>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 9/9] restart_block: Make common timeout
-Date:   Mon,  9 Sep 2019 11:23:40 +0100
-Message-Id: <20190909102340.8592-10-dima@arista.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190909102340.8592-1-dima@arista.com>
-References: <20190909102340.8592-1-dima@arista.com>
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20190906152455.22757-1-mic@digikod.net>
+ <20190906152455.22757-2-mic@digikod.net>
+ <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
+ <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
+ <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
+ <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr>
+ <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org>
+ <alpine.LRH.2.21.1909061202070.18660@namei.org>
+ <49e98ece-e85f-3006-159b-2e04ba67019e@ssi.gouv.fr>
+ <alpine.LRH.2.21.1909090309260.27895@namei.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <073cb831-7c6b-1882-9b7d-eb810a2ef955@ssi.gouv.fr>
+Date:   Mon, 9 Sep 2019 12:54:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LRH.2.21.1909090309260.27895@namei.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order to provide a unified API to get the leftover of timeout,
-the timeout for different users of restart_block can be joined.
-All preparations done, so move timeout out of union and convert
-the users.
 
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- fs/select.c                    | 10 +++++-----
- include/linux/restart_block.h  |  4 +---
- kernel/futex.c                 | 14 +++++++-------
- kernel/time/alarmtimer.c       |  6 +++---
- kernel/time/hrtimer.c          |  6 +++---
- kernel/time/posix-cpu-timers.c |  6 +++---
- 6 files changed, 22 insertions(+), 24 deletions(-)
+On 09/09/2019 12:12, James Morris wrote:
+> On Mon, 9 Sep 2019, Micka=C3=ABl Sala=C3=BCn wrote:
+>
+>>
+>> On 06/09/2019 21:03, James Morris wrote:
+>>> On Fri, 6 Sep 2019, Jeff Layton wrote:
+>>>
+>>>> The fact that open and openat didn't vet unknown flags is really a bug=
+.
+>>>>
+>>>> Too late to fix it now, of course, and as Aleksa points out, we've
+>>>> worked around that in the past. Now though, we have a new openat2
+>>>> syscall on the horizon. There's little need to continue these sorts of
+>>>> hacks.
+>>>>
+>>>> New open flags really have no place in the old syscalls, IMO.
+>>>
+>>> Agree here. It's unfortunate but a reality and Linus will reject any su=
+ch
+>>> changes which break existing userspace.
+>>
+>> Do you mean that adding new flags to open(2) is not possible?
+>>
+>> Does it means that unspecified behaviors are definitely part of the
+>> Linux specification and can't be fixed?
+>
+> This is my understanding.
+>
+>>
+>> As I said, O_MAYEXEC should be ignored if it is not supported by the
+>> kernel, which perfectly fit with the current open(2) flags behavior, and
+>> should also behave the same with openat2(2).
+>
+> The problem here is programs which are already using the value of
+> O_MAYEXEC, which will break.  Hence, openat2(2).
 
-diff --git a/fs/select.c b/fs/select.c
-index ff2b9c4865cd..9ab6fc6fb7c5 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -1001,7 +1001,7 @@ static long do_restart_poll(struct restart_block *restart_block)
- {
- 	struct pollfd __user *ufds = restart_block->poll.ufds;
- 	int nfds = restart_block->poll.nfds;
--	ktime_t timeout = restart_block->poll.timeout;
-+	ktime_t timeout = restart_block->timeout;
- 	int ret;
- 
- 	ret = do_sys_poll(ufds, nfds, timeout);
-@@ -1030,10 +1030,10 @@ SYSCALL_DEFINE3(poll, struct pollfd __user *, ufds, unsigned int, nfds,
- 		struct restart_block *restart_block;
- 
- 		restart_block = &current->restart_block;
--		restart_block->fn		= do_restart_poll;
--		restart_block->poll.ufds	= ufds;
--		restart_block->poll.nfds	= nfds;
--		restart_block->poll.timeout	= timeout;
-+		restart_block->fn	 = do_restart_poll;
-+		restart_block->poll.ufds = ufds;
-+		restart_block->poll.nfds = nfds;
-+		restart_block->timeout	 = timeout;
- 
- 		ret = -ERESTART_RESTARTBLOCK;
- 	}
-diff --git a/include/linux/restart_block.h b/include/linux/restart_block.h
-index 63d647b65395..02f90ab00a2d 100644
---- a/include/linux/restart_block.h
-+++ b/include/linux/restart_block.h
-@@ -27,6 +27,7 @@ enum timespec_type {
-  * userspace tricks in the union.
-  */
- struct restart_block {
-+	s64 timeout;
- 	long (*fn)(struct restart_block *);
- 	union {
- 		/* For futex_wait and futex_wait_requeue_pi */
-@@ -35,7 +36,6 @@ struct restart_block {
- 			u32 val;
- 			u32 flags;
- 			u32 bitset;
--			u64 time;
- 		} futex;
- 		/* For nanosleep */
- 		struct {
-@@ -45,11 +45,9 @@ struct restart_block {
- 				struct __kernel_timespec __user *rmtp;
- 				struct old_timespec32 __user *compat_rmtp;
- 			};
--			u64 expires;
- 		} nanosleep;
- 		/* For poll */
- 		struct {
--			u64 timeout;
- 			struct pollfd __user *ufds;
- 			int nfds;
- 		} poll;
-diff --git a/kernel/futex.c b/kernel/futex.c
-index 6d50728ef2e7..0738167e4911 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -2755,12 +2755,12 @@ static int futex_wait(u32 __user *uaddr, unsigned int flags, u32 val,
- 		goto out;
- 
- 	restart = &current->restart_block;
--	restart->fn = futex_wait_restart;
--	restart->futex.uaddr = uaddr;
--	restart->futex.val = val;
--	restart->futex.time = *abs_time;
--	restart->futex.bitset = bitset;
--	restart->futex.flags = flags | FLAGS_HAS_TIMEOUT;
-+	restart->fn		= futex_wait_restart;
-+	restart->futex.uaddr	= uaddr;
-+	restart->futex.val	= val;
-+	restart->timeout	= *abs_time;
-+	restart->futex.bitset	= bitset;
-+	restart->futex.flags	= flags | FLAGS_HAS_TIMEOUT;
- 
- 	ret = -ERESTART_RESTARTBLOCK;
- 
-@@ -2779,7 +2779,7 @@ static long futex_wait_restart(struct restart_block *restart)
- 	ktime_t t, *tp = NULL;
- 
- 	if (restart->futex.flags & FLAGS_HAS_TIMEOUT) {
--		t = restart->futex.time;
-+		t = restart->timeout;
- 		tp = &t;
- 	}
- 	restart->fn = do_no_restart_syscall;
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 57518efc3810..148b187c371e 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -763,7 +763,7 @@ alarm_init_on_stack(struct alarm *alarm, enum alarmtimer_type type,
- static long __sched alarm_timer_nsleep_restart(struct restart_block *restart)
- {
- 	enum  alarmtimer_type type = restart->nanosleep.clockid;
--	ktime_t exp = restart->nanosleep.expires;
-+	ktime_t exp = restart->timeout;
- 	struct alarm alarm;
- 
- 	alarm_init_on_stack(&alarm, type, alarmtimer_nsleep_wakeup);
-@@ -816,9 +816,9 @@ static int alarm_timer_nsleep(const clockid_t which_clock, int flags,
- 	if (flags == TIMER_ABSTIME)
- 		return -ERESTARTNOHAND;
- 
--	restart->fn = alarm_timer_nsleep_restart;
-+	restart->fn		   = alarm_timer_nsleep_restart;
- 	restart->nanosleep.clockid = type;
--	restart->nanosleep.expires = exp;
-+	restart->timeout	   = exp;
- 	return ret;
- }
- 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 4ba2b50d068f..18d4b0cc919c 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1709,7 +1709,7 @@ static long __sched hrtimer_nanosleep_restart(struct restart_block *restart)
- 
- 	hrtimer_init_on_stack(&t.timer, restart->nanosleep.clockid,
- 				HRTIMER_MODE_ABS);
--	hrtimer_set_expires_tv64(&t.timer, restart->nanosleep.expires);
-+	hrtimer_set_expires_tv64(&t.timer, restart->timeout);
- 
- 	ret = do_nanosleep(&t, HRTIMER_MODE_ABS);
- 	destroy_hrtimer_on_stack(&t.timer);
-@@ -1741,9 +1741,9 @@ long hrtimer_nanosleep(const struct timespec64 *rqtp,
- 	}
- 
- 	restart = &current->restart_block;
--	restart->fn = hrtimer_nanosleep_restart;
-+	restart->fn		   = hrtimer_nanosleep_restart;
- 	restart->nanosleep.clockid = t.timer.base->clockid;
--	restart->nanosleep.expires = hrtimer_get_expires_tv64(&t.timer);
-+	restart->timeout	   = hrtimer_get_expires_tv64(&t.timer);
- out:
- 	destroy_hrtimer_on_stack(&t.timer);
- 	return ret;
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index b4dddf74dd15..691de00107c2 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -1332,8 +1332,8 @@ static int do_cpu_nanosleep(const clockid_t which_clock, int flags,
- 		 * Report back to the user the time still remaining.
- 		 */
- 		restart = &current->restart_block;
--		restart->fn = posix_cpu_nsleep_restart;
--		restart->nanosleep.expires = expires;
-+		restart->fn	 = posix_cpu_nsleep_restart;
-+		restart->timeout = expires;
- 		if (restart->nanosleep.type != TT_NONE)
- 			error = nanosleep_copyout(restart, &it.it_value);
- 	}
-@@ -1372,7 +1372,7 @@ static long posix_cpu_nsleep_restart(struct restart_block *restart_block)
- 	clockid_t which_clock = restart_block->nanosleep.clockid;
- 	struct timespec64 t;
- 
--	t = ns_to_timespec64(restart_block->nanosleep.expires);
-+	t = ns_to_timespec64(restart_block->timeout);
- 
- 	return do_cpu_nanosleep(which_clock, TIMER_ABSTIME, &t);
- }
--- 
-2.23.0
+Well, it still depends on the sysctl, which doesn't enforce anything by
+default, hence doesn't break existing behavior, and this unused flags
+could be fixed/removed or reported by sysadmins or distro developers.
 
+
+--
+Micka=C3=ABl Sala=C3=BCn
+
+Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
+es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
+=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
+nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
+=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
+tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
+acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
+eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
+t de d=C3=A9truire le message. The personal data collected and processed du=
+ring this exchange aims solely at completing a business relationship and is=
+ limited to the necessary duration of that relationship. If you wish to use=
+ your rights of consultation, rectification and deletion of your data, plea=
+se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
+n error, we thank you for informing the sender and destroying the message.
