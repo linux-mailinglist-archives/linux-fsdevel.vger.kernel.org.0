@@ -2,98 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8EE6AD15F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 02:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E44ADAD16C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 02:42:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731773AbfIIAR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Sep 2019 20:17:58 -0400
-Received: from namei.org ([65.99.196.166]:43320 "EHLO namei.org"
+        id S1731892AbfIIAmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Sep 2019 20:42:12 -0400
+Received: from mga06.intel.com ([134.134.136.31]:20874 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731443AbfIIAR6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Sep 2019 20:17:58 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x890GNJt027077;
-        Mon, 9 Sep 2019 00:16:24 GMT
-Date:   Sun, 8 Sep 2019 17:16:23 -0700 (PDT)
-From:   James Morris <jmorris@namei.org>
-To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        id S1731753AbfIIAmM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Sep 2019 20:42:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Sep 2019 17:42:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,483,1559545200"; 
+   d="scan'208";a="186351311"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
+  by orsmga003.jf.intel.com with ESMTP; 08 Sep 2019 17:42:09 -0700
+Subject: Re: [kbuild-all] [PATCH 3/3] mm: Allow find_get_page to be used for
+ large pages
+To:     Matthew Wilcox <willy@infradead.org>,
+        kbuild test robot <lkp@intel.com>
+Cc:     Song Liu <songliubraving@fb.com>, Johannes Weiner <jweiner@fb.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        linux-mm@kvack.org, kbuild-all@01.org,
         linux-fsdevel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 0/5] Add support for O_MAYEXEC
-In-Reply-To: <20190906152455.22757-1-mic@digikod.net>
-Message-ID: <alpine.LRH.2.21.1909081622240.20426@namei.org>
-References: <20190906152455.22757-1-mic@digikod.net>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Kirill Shutemov <kirill@shutemov.name>
+References: <20190905182348.5319-4-willy@infradead.org>
+ <201909060632.Sn0F0fP6%lkp@intel.com>
+ <20190905221232.GU29434@bombadil.infradead.org>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <4b8c3a4d-5a16-6214-eb34-e7a5b36aeb71@intel.com>
+Date:   Mon, 9 Sep 2019 08:42:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="1665246916-1947903910-1567986261=:20426"
-Content-ID: <alpine.LRH.2.21.1909081645470.20426@namei.org>
+In-Reply-To: <20190905221232.GU29434@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---1665246916-1947903910-1567986261=:20426
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.LRH.2.21.1909081645471.20426@namei.org>
-
-On Fri, 6 Sep 2019, Mickaël Salaün wrote:
-
-> Furthermore, the security policy can also be delegated to an LSM, either
-> a MAC system or an integrity system.  For instance, the new kernel
-> MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
-> integrity gap by bringing the ability to check the use of scripts [2].
-
-To clarify, scripts are already covered by IMA if they're executed 
-directly, and the gap is when invoking a script as a parameter to the 
-interpreter (and for any sourced files). In that case only the interpreter 
-is measured/appraised, unless there's a rule also covering the script 
-file(s).
-
-See:
-https://en.opensuse.org/SDB:Ima_evm#script-behaviour
-
-In theory you could probably also close the gap by modifying the 
-interpreters to check for the execute bit on any file opened for 
-interpretation (as earlier suggested by Steve Grubb), and then you could 
-have IMA measure/appraise all files with +x.  I suspect this could get 
-messy in terms of unwanted files being included, and the MAY_OPENEXEC flag 
-has cleaner semantics.
 
 
+On 9/6/19 6:12 AM, Matthew Wilcox wrote:
+> On Fri, Sep 06, 2019 at 06:04:05AM +0800, kbuild test robot wrote:
+>> Hi Matthew,
+>>
+>> Thank you for the patch! Yet something to improve:
+>>
+>> [auto build test ERROR on linus/master]
+>> [cannot apply to v5.3-rc7 next-20190904]
+>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> It looks like you're not applying these to the -mm tree?  I thought that
+> was included in -next.
 
--- 
-James Morris
-<jmorris@namei.org>
---1665246916-1947903910-1567986261=:20426--
+Hi,
+
+Sorry for the inconvenience, we'll look into it. and 0day-CI introduced 
+'--base' option to record base tree info in format-patch.
+could you kindly add it to help robot to base on the right tree? please 
+see https://stackoverflow.com/a/37406982
+
+Best Regards,
+Rong Chen
+
+>
+>
+> _______________________________________________
+> kbuild-all mailing list
+> kbuild-all@lists.01.org
+> https://lists.01.org/mailman/listinfo/kbuild-all
+
