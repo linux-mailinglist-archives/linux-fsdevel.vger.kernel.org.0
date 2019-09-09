@@ -2,443 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AC56AD225
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 05:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F27C3AD26E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 05:57:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387450AbfIIDRr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Sep 2019 23:17:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387412AbfIIDRr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Sep 2019 23:17:47 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A46F321928;
-        Mon,  9 Sep 2019 03:17:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567999065;
-        bh=HeegLhVpHQJVH6Wy5ltekoH4qKCVWi+C6bI9yDujWw0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HF3coFdLG423FuMiz2UFTTK0kforNs75JUhp7E+MLh4WL4a8wNxdIqT5Rz1javPEE
-         n3X+5G4so1RAHvSjJaM9ALk+SnsQ3zZpTQKyd1xBd9VsF1CtXIDTN/BPAlTBaGQv+a
-         ZokHfHiSlOR8lSiZSZ78pj0u3uaI3eL0mrmb8iJ4=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Cc:     linux-aio@kvack.org, Benjamin LaHaise <bcrl@kvack.org>,
-        syzkaller-bugs@googlegroups.com, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2] fuse: fix deadlock with aio poll and fuse_iqueue::waitq.lock
-Date:   Sun,  8 Sep 2019 20:15:18 -0700
-Message-Id: <20190909031518.2834-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <CAJfpegvdh53VSQ9okuUTS3jQFjkbcwPdJFmUorE0nseeFRPaoA@mail.gmail.com>
-References: <CAJfpegvdh53VSQ9okuUTS3jQFjkbcwPdJFmUorE0nseeFRPaoA@mail.gmail.com>
+        id S2388058AbfIID5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Sep 2019 23:57:02 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50934 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387978AbfIID5B (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Sep 2019 23:57:01 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1i7AnN-0002nw-PW; Mon, 09 Sep 2019 03:56:53 +0000
+Date:   Mon, 9 Sep 2019 04:56:53 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, lkp@01.org
+Subject: Re: [vfs]  8bb3c61baf:  vm-scalability.median -23.7% regression
+Message-ID: <20190909035653.GF1131@ZenIV.linux.org.uk>
+References: <20190903084122.GH15734@shao2-debian>
+ <20190908214601.GC1131@ZenIV.linux.org.uk>
+ <20190908234722.GE1131@ZenIV.linux.org.uk>
+ <alpine.LSU.2.11.1909081953360.1134@eggly.anvils>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.11.1909081953360.1134@eggly.anvils>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Sun, Sep 08, 2019 at 08:10:17PM -0700, Hugh Dickins wrote:
 
-When IOCB_CMD_POLL is used on the FUSE device, aio_poll() disables IRQs
-and takes kioctx::ctx_lock, then fuse_iqueue::waitq.lock.
+Hmm...  FWIW, I'd ended up redoing most of the thing, with
+hopefully sane carve-up.  Differences:
+	* we really care only about three things having
+been set - ->max_blocks, ->max_inodes and ->huge.  This
+__set_bit() hack is cute, but asking for trouble (and getting
+it).  Explicit ctx->seen & SHMEM_SEEN_BLOCKS, etc. is
+cleaner.
+	*
+>  const struct fs_parameter_description shmem_fs_parameters = {
+> -	.name		= "shmem",
+> +	.name		= "tmpfs",
+>  	.specs		= shmem_param_specs,
+>  	.enums		= shmem_param_enums,
+>  };
 
-This may have to wait for fuse_iqueue::waitq.lock to be released by one
-of many places that take it with IRQs enabled.  Since the IRQ handler
-may take kioctx::ctx_lock, lockdep reports that a deadlock is possible.
+	Missed that one, will fold.
 
-Fix it by protecting the state of struct fuse_iqueue with a separate
-spinlock, and only accessing fuse_iqueue::waitq using the versions of
-the waitqueue functions which do IRQ-safe locking internally.
+	*
+> @@ -3448,9 +3446,9 @@ static void shmem_apply_options(struct s
 
-Reproducer:
+	The whole "apply" thing is useless - in remount we
+need to copy max_inode/max_blocks/huge/mpol under the lock after
+checks, and we can do that manually just fine.  Other options
+(uid/gid/mode) get ignored.  There very little overlap
+with fill_super case, really.
 
-	#include <fcntl.h>
-	#include <stdio.h>
-	#include <sys/mount.h>
-	#include <sys/stat.h>
-	#include <sys/syscall.h>
-	#include <unistd.h>
-	#include <linux/aio_abi.h>
+> -		old = sbinfo->mpol;
+> -		sbinfo->mpol = ctx->mpol;
+> +		/*
+> +		 * Update sbinfo->mpol now while stat_lock is held.
+> +		 * Leave shmem_free_fc() to free the old mpol if any.
+> +		 */
+> +		swap(sbinfo->mpol, ctx->mpol);
 
-	int main()
-	{
-		char opts[128];
-		int fd = open("/dev/fuse", O_RDWR);
-		aio_context_t ctx = 0;
-		struct iocb cb = { .aio_lio_opcode = IOCB_CMD_POLL, .aio_fildes = fd };
-		struct iocb *cbp = &cb;
+Umm...  Missed that use-after-free due to destructor, TBH (in
+remount, that is).  Fixed (in a slightly different way).
 
-		sprintf(opts, "fd=%d,rootmode=040000,user_id=0,group_id=0", fd);
-		mkdir("mnt", 0700);
-		mount("foo",  "mnt", "fuse", 0, opts);
-		syscall(__NR_io_setup, 1, &ctx);
-		syscall(__NR_io_submit, ctx, 1, &cbp);
-	}
+>  		}
+>  		if (*rest)
+> -			return invalf(fc, "shmem: Invalid size");
+> +			goto bad_value;
+>  		ctx->max_blocks = DIV_ROUND_UP(size, PAGE_SIZE);
+>  		break;
 
-Beginning of lockdep output:
+FWIW, I had those with s/shmem/tmpfs/, no problem with merging like
+that.  Will fold.
 
-	=====================================================
-	WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
-	5.3.0-rc5 #9 Not tainted
-	-----------------------------------------------------
-	syz_fuse/135 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-	000000003590ceda (&fiq->waitq){+.+.}, at: spin_lock include/linux/spinlock.h:338 [inline]
-	000000003590ceda (&fiq->waitq){+.+.}, at: aio_poll fs/aio.c:1751 [inline]
-	000000003590ceda (&fiq->waitq){+.+.}, at: __io_submit_one.constprop.0+0x203/0x5b0 fs/aio.c:1825
+[snip]
+>  	case Opt_huge:
+> -#ifdef CONFIG_TRANSPARENT_HUGE_PAGECACHE
+> -		if (!has_transparent_hugepage() &&
+> -		    result.uint_32 != SHMEM_HUGE_NEVER)
+> -			return invalf(fc, "shmem: Huge pages disabled");
+> -
+>  		ctx->huge = result.uint_32;
+> +		if (ctx->huge != SHMEM_HUGE_NEVER &&
+> +		    !(IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE) &&
+> +		      has_transparent_hugepage()))
+> +			goto unsupported_parameter;
+>  		break;
+> -#else
+> -		return invalf(fc, "shmem: huge= option disabled");
+> -#endif
+> -
+> -	case Opt_mpol: {
+> -#ifdef CONFIG_NUMA
+> -		struct mempolicy *mpol;
+> -		if (mpol_parse_str(param->string, &mpol))
+> -			return invalf(fc, "shmem: Invalid mpol=");
+> -		mpol_put(ctx->mpol);
+> -		ctx->mpol = mpol;
+> -#endif
+> -		break;
+> -	}
 
-	and this task is already holding:
-	0000000075037284 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq include/linux/spinlock.h:363 [inline]
-	0000000075037284 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll fs/aio.c:1749 [inline]
-	0000000075037284 (&(&ctx->ctx_lock)->rlock){..-.}, at: __io_submit_one.constprop.0+0x1f4/0x5b0 fs/aio.c:1825
-	which would create a new lock dependency:
-	 (&(&ctx->ctx_lock)->rlock){..-.} -> (&fiq->waitq){+.+.}
+OK...
 
-	but this new dependency connects a SOFTIRQ-irq-safe lock:
-	 (&(&ctx->ctx_lock)->rlock){..-.}
+> +	case Opt_mpol:
+> +		if (IS_ENABLED(CONFIG_NUMA)) {
+> +			struct mempolicy *mpol;
+> +			if (mpol_parse_str(param->string, &mpol))
+> +				goto bad_value;
+> +			mpol_put(ctx->mpol);
+> +			ctx->mpol = mpol;
+> +			break;
+> +		}
+> +		goto unsupported_parameter;
 
-	[...]
+Slightly different here - I'd done that bit as
+                mpol_put(ctx->mpol);
+                ctx->mpol = NULL;
+                if (mpol_parse_str(param->string, &ctx->mpol))
+                        return invalf (goto bad_value now)
+		
 
-Reported-by: syzbot+af05535bb79520f95431@syzkaller.appspotmail.com
-Reported-by: syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com
-Fixes: bfe4037e722e ("aio: implement IOCB_CMD_POLL")
-Cc: <stable@vger.kernel.org> # v4.19+
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/fuse/dev.c    | 93 +++++++++++++++++++++++++-----------------------
- fs/fuse/fuse_i.h |  3 ++
- fs/fuse/inode.c  |  1 +
- 3 files changed, 52 insertions(+), 45 deletions(-)
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index ea8237513dfa..186468fba82e 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -377,7 +377,7 @@ static void queue_request(struct fuse_iqueue *fiq, struct fuse_req *req)
- 	req->in.h.len = sizeof(struct fuse_in_header) +
- 		len_args(req->in.numargs, (struct fuse_arg *) req->in.args);
- 	list_add_tail(&req->list, &fiq->pending);
--	wake_up_locked(&fiq->waitq);
-+	wake_up(&fiq->waitq);
- 	kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
- }
- 
-@@ -389,16 +389,16 @@ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
- 	forget->forget_one.nodeid = nodeid;
- 	forget->forget_one.nlookup = nlookup;
- 
--	spin_lock(&fiq->waitq.lock);
-+	spin_lock(&fiq->lock);
- 	if (fiq->connected) {
- 		fiq->forget_list_tail->next = forget;
- 		fiq->forget_list_tail = forget;
--		wake_up_locked(&fiq->waitq);
-+		wake_up(&fiq->waitq);
- 		kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
- 	} else {
- 		kfree(forget);
- 	}
--	spin_unlock(&fiq->waitq.lock);
-+	spin_unlock(&fiq->lock);
- }
- 
- static void flush_bg_queue(struct fuse_conn *fc)
-@@ -412,10 +412,10 @@ static void flush_bg_queue(struct fuse_conn *fc)
- 		req = list_first_entry(&fc->bg_queue, struct fuse_req, list);
- 		list_del(&req->list);
- 		fc->active_background++;
--		spin_lock(&fiq->waitq.lock);
-+		spin_lock(&fiq->lock);
- 		req->in.h.unique = fuse_get_unique(fiq);
- 		queue_request(fiq, req);
--		spin_unlock(&fiq->waitq.lock);
-+		spin_unlock(&fiq->lock);
- 	}
- }
- 
-@@ -439,9 +439,9 @@ static void request_end(struct fuse_conn *fc, struct fuse_req *req)
- 	 * smp_mb() from queue_interrupt().
- 	 */
- 	if (!list_empty(&req->intr_entry)) {
--		spin_lock(&fiq->waitq.lock);
-+		spin_lock(&fiq->lock);
- 		list_del_init(&req->intr_entry);
--		spin_unlock(&fiq->waitq.lock);
-+		spin_unlock(&fiq->lock);
- 	}
- 	WARN_ON(test_bit(FR_PENDING, &req->flags));
- 	WARN_ON(test_bit(FR_SENT, &req->flags));
-@@ -483,10 +483,10 @@ static void request_end(struct fuse_conn *fc, struct fuse_req *req)
- 
- static int queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
- {
--	spin_lock(&fiq->waitq.lock);
-+	spin_lock(&fiq->lock);
- 	/* Check for we've sent request to interrupt this req */
- 	if (unlikely(!test_bit(FR_INTERRUPTED, &req->flags))) {
--		spin_unlock(&fiq->waitq.lock);
-+		spin_unlock(&fiq->lock);
- 		return -EINVAL;
- 	}
- 
-@@ -499,13 +499,13 @@ static int queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
- 		smp_mb();
- 		if (test_bit(FR_FINISHED, &req->flags)) {
- 			list_del_init(&req->intr_entry);
--			spin_unlock(&fiq->waitq.lock);
-+			spin_unlock(&fiq->lock);
- 			return 0;
- 		}
--		wake_up_locked(&fiq->waitq);
-+		wake_up(&fiq->waitq);
- 		kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
- 	}
--	spin_unlock(&fiq->waitq.lock);
-+	spin_unlock(&fiq->lock);
- 	return 0;
- }
- 
-@@ -535,16 +535,16 @@ static void request_wait_answer(struct fuse_conn *fc, struct fuse_req *req)
- 		if (!err)
- 			return;
- 
--		spin_lock(&fiq->waitq.lock);
-+		spin_lock(&fiq->lock);
- 		/* Request is not yet in userspace, bail out */
- 		if (test_bit(FR_PENDING, &req->flags)) {
- 			list_del(&req->list);
--			spin_unlock(&fiq->waitq.lock);
-+			spin_unlock(&fiq->lock);
- 			__fuse_put_request(req);
- 			req->out.h.error = -EINTR;
- 			return;
- 		}
--		spin_unlock(&fiq->waitq.lock);
-+		spin_unlock(&fiq->lock);
- 	}
- 
- 	/*
-@@ -559,9 +559,9 @@ static void __fuse_request_send(struct fuse_conn *fc, struct fuse_req *req)
- 	struct fuse_iqueue *fiq = &fc->iq;
- 
- 	BUG_ON(test_bit(FR_BACKGROUND, &req->flags));
--	spin_lock(&fiq->waitq.lock);
-+	spin_lock(&fiq->lock);
- 	if (!fiq->connected) {
--		spin_unlock(&fiq->waitq.lock);
-+		spin_unlock(&fiq->lock);
- 		req->out.h.error = -ENOTCONN;
- 	} else {
- 		req->in.h.unique = fuse_get_unique(fiq);
-@@ -569,7 +569,7 @@ static void __fuse_request_send(struct fuse_conn *fc, struct fuse_req *req)
- 		/* acquire extra reference, since request is still needed
- 		   after request_end() */
- 		__fuse_get_request(req);
--		spin_unlock(&fiq->waitq.lock);
-+		spin_unlock(&fiq->lock);
- 
- 		request_wait_answer(fc, req);
- 		/* Pairs with smp_wmb() in request_end() */
-@@ -700,12 +700,12 @@ static int fuse_request_send_notify_reply(struct fuse_conn *fc,
- 
- 	__clear_bit(FR_ISREPLY, &req->flags);
- 	req->in.h.unique = unique;
--	spin_lock(&fiq->waitq.lock);
-+	spin_lock(&fiq->lock);
- 	if (fiq->connected) {
- 		queue_request(fiq, req);
- 		err = 0;
- 	}
--	spin_unlock(&fiq->waitq.lock);
-+	spin_unlock(&fiq->lock);
- 
- 	return err;
- }
-@@ -1149,12 +1149,12 @@ static int request_pending(struct fuse_iqueue *fiq)
-  * Unlike other requests this is assembled on demand, without a need
-  * to allocate a separate fuse_req structure.
-  *
-- * Called with fiq->waitq.lock held, releases it
-+ * Called with fiq->lock held, releases it
-  */
- static int fuse_read_interrupt(struct fuse_iqueue *fiq,
- 			       struct fuse_copy_state *cs,
- 			       size_t nbytes, struct fuse_req *req)
--__releases(fiq->waitq.lock)
-+__releases(fiq->lock)
- {
- 	struct fuse_in_header ih;
- 	struct fuse_interrupt_in arg;
-@@ -1169,7 +1169,7 @@ __releases(fiq->waitq.lock)
- 	ih.unique = (req->in.h.unique | FUSE_INT_REQ_BIT);
- 	arg.unique = req->in.h.unique;
- 
--	spin_unlock(&fiq->waitq.lock);
-+	spin_unlock(&fiq->lock);
- 	if (nbytes < reqsize)
- 		return -EINVAL;
- 
-@@ -1206,7 +1206,7 @@ static struct fuse_forget_link *dequeue_forget(struct fuse_iqueue *fiq,
- static int fuse_read_single_forget(struct fuse_iqueue *fiq,
- 				   struct fuse_copy_state *cs,
- 				   size_t nbytes)
--__releases(fiq->waitq.lock)
-+__releases(fiq->lock)
- {
- 	int err;
- 	struct fuse_forget_link *forget = dequeue_forget(fiq, 1, NULL);
-@@ -1220,7 +1220,7 @@ __releases(fiq->waitq.lock)
- 		.len = sizeof(ih) + sizeof(arg),
- 	};
- 
--	spin_unlock(&fiq->waitq.lock);
-+	spin_unlock(&fiq->lock);
- 	kfree(forget);
- 	if (nbytes < ih.len)
- 		return -EINVAL;
-@@ -1238,7 +1238,7 @@ __releases(fiq->waitq.lock)
- 
- static int fuse_read_batch_forget(struct fuse_iqueue *fiq,
- 				   struct fuse_copy_state *cs, size_t nbytes)
--__releases(fiq->waitq.lock)
-+__releases(fiq->lock)
- {
- 	int err;
- 	unsigned max_forgets;
-@@ -1252,13 +1252,13 @@ __releases(fiq->waitq.lock)
- 	};
- 
- 	if (nbytes < ih.len) {
--		spin_unlock(&fiq->waitq.lock);
-+		spin_unlock(&fiq->lock);
- 		return -EINVAL;
- 	}
- 
- 	max_forgets = (nbytes - ih.len) / sizeof(struct fuse_forget_one);
- 	head = dequeue_forget(fiq, max_forgets, &count);
--	spin_unlock(&fiq->waitq.lock);
-+	spin_unlock(&fiq->lock);
- 
- 	arg.count = count;
- 	ih.len += count * sizeof(struct fuse_forget_one);
-@@ -1288,7 +1288,7 @@ __releases(fiq->waitq.lock)
- static int fuse_read_forget(struct fuse_conn *fc, struct fuse_iqueue *fiq,
- 			    struct fuse_copy_state *cs,
- 			    size_t nbytes)
--__releases(fiq->waitq.lock)
-+__releases(fiq->lock)
- {
- 	if (fc->minor < 16 || fiq->forget_list_head.next->next == NULL)
- 		return fuse_read_single_forget(fiq, cs, nbytes);
-@@ -1318,16 +1318,19 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
- 	unsigned int hash;
- 
-  restart:
--	spin_lock(&fiq->waitq.lock);
--	err = -EAGAIN;
--	if ((file->f_flags & O_NONBLOCK) && fiq->connected &&
--	    !request_pending(fiq))
--		goto err_unlock;
-+	for (;;) {
-+		spin_lock(&fiq->lock);
-+		if (!fiq->connected || request_pending(fiq))
-+			break;
-+		spin_unlock(&fiq->lock);
- 
--	err = wait_event_interruptible_exclusive_locked(fiq->waitq,
-+		if (file->f_flags & O_NONBLOCK)
-+			return -EAGAIN;
-+		err = wait_event_interruptible_exclusive(fiq->waitq,
- 				!fiq->connected || request_pending(fiq));
--	if (err)
--		goto err_unlock;
-+		if (err)
-+			return err;
-+	}
- 
- 	if (!fiq->connected) {
- 		err = fc->aborted ? -ECONNABORTED : -ENODEV;
-@@ -1351,7 +1354,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
- 	req = list_entry(fiq->pending.next, struct fuse_req, list);
- 	clear_bit(FR_PENDING, &req->flags);
- 	list_del_init(&req->list);
--	spin_unlock(&fiq->waitq.lock);
-+	spin_unlock(&fiq->lock);
- 
- 	in = &req->in;
- 	reqsize = in->h.len;
-@@ -1409,7 +1412,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
- 	return err;
- 
-  err_unlock:
--	spin_unlock(&fiq->waitq.lock);
-+	spin_unlock(&fiq->lock);
- 	return err;
- }
- 
-@@ -2121,12 +2124,12 @@ static __poll_t fuse_dev_poll(struct file *file, poll_table *wait)
- 	fiq = &fud->fc->iq;
- 	poll_wait(file, &fiq->waitq, wait);
- 
--	spin_lock(&fiq->waitq.lock);
-+	spin_lock(&fiq->lock);
- 	if (!fiq->connected)
- 		mask = EPOLLERR;
- 	else if (request_pending(fiq))
- 		mask |= EPOLLIN | EPOLLRDNORM;
--	spin_unlock(&fiq->waitq.lock);
-+	spin_unlock(&fiq->lock);
- 
- 	return mask;
- }
-@@ -2221,15 +2224,15 @@ void fuse_abort_conn(struct fuse_conn *fc)
- 		flush_bg_queue(fc);
- 		spin_unlock(&fc->bg_lock);
- 
--		spin_lock(&fiq->waitq.lock);
-+		spin_lock(&fiq->lock);
- 		fiq->connected = 0;
- 		list_for_each_entry(req, &fiq->pending, list)
- 			clear_bit(FR_PENDING, &req->flags);
- 		list_splice_tail_init(&fiq->pending, &to_end);
- 		while (forget_pending(fiq))
- 			kfree(dequeue_forget(fiq, 1, NULL));
--		wake_up_all_locked(&fiq->waitq);
--		spin_unlock(&fiq->waitq.lock);
-+		wake_up_all(&fiq->waitq);
-+		spin_unlock(&fiq->lock);
- 		kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
- 		end_polls(fc);
- 		wake_up_all(&fc->blocked_waitq);
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 24dbca777775..89bdc41e0d86 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -450,6 +450,9 @@ struct fuse_iqueue {
- 	/** Connection established */
- 	unsigned connected;
- 
-+	/** Lock protecting accesses to members of this structure */
-+	spinlock_t lock;
-+
- 	/** Readers of the connection are waiting on this */
- 	wait_queue_head_t waitq;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 4bb885b0f032..987877860c01 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -582,6 +582,7 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
- static void fuse_iqueue_init(struct fuse_iqueue *fiq)
- {
- 	memset(fiq, 0, sizeof(struct fuse_iqueue));
-+	spin_lock_init(&fiq->lock);
- 	init_waitqueue_head(&fiq->waitq);
- 	INIT_LIST_HEAD(&fiq->pending);
- 	INIT_LIST_HEAD(&fiq->interrupts);
--- 
-2.23.0
+> +unsupported_parameter:
+> +	return invalf(fc, "tmpfs: Unsupported parameter '%s'", param->key);
+> +bad_value:
+> +	return invalf(fc, "tmpfs: Bad value for '%s'", param->key);
 
+
+> -			return invalf(fc, "shmem: Can't retroactively limit nr_blocks");
+> +			return invalf(fc, "tmpfs: Cannot retroactively limit size");
+>  		}
+>  		if (percpu_counter_compare(&sbinfo->used_blocks, ctx->max_blocks) > 0) {
+>  			spin_unlock(&sbinfo->stat_lock);
+> -			return invalf(fc, "shmem: Too few blocks for current use");
+> +			return invalf(fc, "tmpfs: Too small a size for current use");
+>  		}
+>  	}
+>  
+> @@ -3587,11 +3591,11 @@ static int shmem_reconfigure(struct fs_c
+>  	if (test_bit(Opt_nr_inodes, &ctx->changes)) {
+>  		if (ctx->max_inodes && !sbinfo->max_inodes) {
+>  			spin_unlock(&sbinfo->stat_lock);
+> -			return invalf(fc, "shmem: Can't retroactively limit nr_inodes");
+> +			return invalf(fc, "tmpfs: Cannot retroactively limit inodes");
+>  		}
+>  		if (ctx->max_inodes < inodes_in_use) {
+>  			spin_unlock(&sbinfo->stat_lock);
+> -			return invalf(fc, "shmem: Too few inodes for current use");
+> +			return invalf(fc, "tmpfs: Too few inodes for current use");
+>  		}
+>  	}
+
+s/Can't/Cannot/ and s/few blocks/small a size/?  No problem, except that I'd done
+			err = "Too few inodes for current use";
+			goto out;
+...
+out:
+        return invalf(fc, "tmpfs: %s", err);
+
+
+Anyway, see vfs.git#uncertain.shmem for what I've got with those folded in.
+Do you see any problems with that one?  That's the last 5 commits in there...
