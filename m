@@ -2,155 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA3F1AD855
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 13:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F6CAD8A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 14:14:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404506AbfIILy4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Sep 2019 07:54:56 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:34966 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730901AbfIILy4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Sep 2019 07:54:56 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id BAB3BA01CD;
-        Mon,  9 Sep 2019 13:54:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id v88C_yIZE0OA; Mon,  9 Sep 2019 13:54:46 +0200 (CEST)
-Date:   Mon, 9 Sep 2019 21:54:37 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>
-Cc:     James Morris <jmorris@namei.org>, Jeff Layton <jlayton@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        id S2387536AbfIIMOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Sep 2019 08:14:41 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46502 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387486AbfIIMOl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Sep 2019 08:14:41 -0400
+Received: by mail-lj1-f195.google.com with SMTP id e17so12434369ljf.13;
+        Mon, 09 Sep 2019 05:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pFxxPSGzQ82HZys0kjMWLu4nLMt5F1OM+dYrK3t5KUE=;
+        b=cT6yqph1WHqVo4BHlHeHqAFIMjTp3Acp1uVHcbqgwoGOlIqlovKxe503zA/8WoErXn
+         BsWhEeubNs5SBKrX8zemTpTQpyKf8aURKe0eusDLzbJEENZEzm6PLiW7MfyRmJb9iEGy
+         Leso6x2MVJCDmsDCySr6Fk9QaENJKtSycGQWa6kfr8C39QyA5ldbGwlHBTOR1tDsdWd0
+         P+rXYyvw3PbqWdOBOoxAr1hANjCQCVJnAL9q9WHrrS84jvSXz6kkIRt4UvcNpYSV9ZbK
+         aCTAcUs1drW3WqJy+mZdDwDKVRS/0p0q7xHOxWc3NbKica2BqUH7trc0iekrUEknEvsu
+         32eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pFxxPSGzQ82HZys0kjMWLu4nLMt5F1OM+dYrK3t5KUE=;
+        b=ebvpi8iS2U9OPqTuy1658fqExJz46P7FRqMjOHKiTjEpvOxJbEsbSBFhSWTNUOEeTa
+         1w/ioCNKiv66eCPb8VOh2rE/mkf4zhCBBrBCaGmQ1mlz4sH6LvHQjF/uoeXH9IfVAAhc
+         9lPu/VAR3Gnctm39x55b/ZxjSuVgNq9iVzmn3ZuX77x4iwnO3/gSRhdz1Ikhl7ZNikvd
+         qekbf1HR606CB7mwBUg0XV0xD4tP8jDW9OKSm5r59iAbRAhDeBgefCK/Wlsi5l698mxG
+         sWfM5tsq8KFT4mUhH/BX7xgHv9/MvTr8hc+mqmrsMMaO/eX3TGe69acZwCj/gCfP0QJ5
+         4fhA==
+X-Gm-Message-State: APjAAAUaI656Bdci6pHZJdLM59Wacb3vrCmg+3Reycl6gJWm3jrq6Stg
+        M1N8hhB0Ux5QNG11zm5eY88=
+X-Google-Smtp-Source: APXvYqwVLHKAjKXgmeV9NavO0mi2f/oJuinAaLJ4bnqdtte2ZZ4wLTD/k1MwfPEpTbw4bERFkaDxrg==
+X-Received: by 2002:a2e:9dd5:: with SMTP id x21mr15547930ljj.182.1568031278902;
+        Mon, 09 Sep 2019 05:14:38 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id k28sm3212244lfj.33.2019.09.09.05.14.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2019 05:14:37 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id D81D7460667; Mon,  9 Sep 2019 15:14:36 +0300 (MSK)
+Date:   Mon, 9 Sep 2019 15:14:36 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Dmitry Safonov <0x7f454c46@gmail.com>
+Cc:     Dmitry Safonov <dima@arista.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrei Vagin <avagin@openvz.org>,
         Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-Message-ID: <20190909115437.jwpyslcdhhvzo7g5@yavin>
-References: <20190906152455.22757-1-mic@digikod.net>
- <20190906152455.22757-2-mic@digikod.net>
- <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
- <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
- <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
- <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr>
- <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org>
- <alpine.LRH.2.21.1909061202070.18660@namei.org>
- <49e98ece-e85f-3006-159b-2e04ba67019e@ssi.gouv.fr>
+Subject: Re: [PATCH 4/9] select: Micro-optimise __estimate_accuracy()
+Message-ID: <20190909121436.GC1508@uranus>
+References: <20190909102340.8592-1-dima@arista.com>
+ <20190909102340.8592-5-dima@arista.com>
+ <20190909111812.GB1508@uranus>
+ <CAJwJo6YX2qQit9aTbMhg8L5+JE1EsLzKyNt0a3X97zvJ-O9dNQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ez37ojmvznisdz5u"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <49e98ece-e85f-3006-159b-2e04ba67019e@ssi.gouv.fr>
+In-Reply-To: <CAJwJo6YX2qQit9aTbMhg8L5+JE1EsLzKyNt0a3X97zvJ-O9dNQ@mail.gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Sep 09, 2019 at 12:50:27PM +0100, Dmitry Safonov wrote:
+> Hi Cyrill,
+> 
+> On Mon, 9 Sep 2019 at 12:18, Cyrill Gorcunov <gorcunov@gmail.com> wrote:
+> > Compiler precompute constants so it doesn't do division here.
+> > But I didn't read the series yet so I might be missing
+> > something obvious.
+> 
+> Heh, like a division is in ktime_divns()?
 
---ez37ojmvznisdz5u
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2019-09-09, Micka=EBl Sala=FCn <mickael.salaun@ssi.gouv.fr> wrote:
-> On 06/09/2019 21:03, James Morris wrote:
-> > On Fri, 6 Sep 2019, Jeff Layton wrote:
-> >
-> >> The fact that open and openat didn't vet unknown flags is really a bug.
-> >>
-> >> Too late to fix it now, of course, and as Aleksa points out, we've
-> >> worked around that in the past. Now though, we have a new openat2
-> >> syscall on the horizon. There's little need to continue these sorts of
-> >> hacks.
-> >>
-> >> New open flags really have no place in the old syscalls, IMO.
-> >
-> > Agree here. It's unfortunate but a reality and Linus will reject any su=
-ch
-> > changes which break existing userspace.
->=20
-> Do you mean that adding new flags to open(2) is not possible?
-
-It is possible, as long as there is no case where a program that works
-today (and passes garbage to the unused bits in flags) works with the
-change.
-
-O_TMPFILE was okay because it's actually two flags (one is O_DIRECTORY)
-and no working program does file IO to a directory (there are also some
-other tricky things done there, I'll admit I don't fully understand it).
-
-O_EMPTYPATH works because it's a no-op with non-empty path strings, and
-empty path strings have always given an error (so no working program
-does it today).
-
-However, O_MAYEXEC will result in programs that pass garbage bits to
-potentially get -EACCES that worked previously.
-
-> As I said, O_MAYEXEC should be ignored if it is not supported by the
-> kernel, which perfectly fit with the current open(2) flags behavior, and
-> should also behave the same with openat2(2).
-
-NACK on having that behaviour with openat2(2). -EINVAL on unknown flags
-is how all other syscalls work (any new syscall proposed today that
-didn't do that would be rightly rejected), and is a quirk of open(2)
-which unfortunately cannot be fixed. The fact that *every new O_ flag
-needs to work around this problem* should be an indication that this
-interface mis-design should not be allowed to infect any more syscalls.
-
-Note that this point is regardless of the fact that O_MAYEXEC is a
-*security* flag -- if userspace wants to have a secure fallback on
-old kernels (which is "the right thing" to do) they would have to do
-more work than necessary. And programs that don't care don't have to do
-anything special.
-
-However with -EINVAL, the programs doing "the right thing" get an easy
--EINVAL check. And programs that don't care can just un-set O_MAYEXEC
-and retry. You should be forced to deal with the case where a flag is
-not supported -- and this is doubly true of security flags!
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---ez37ojmvznisdz5u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXY9egAKCRCdlLljIbnQ
-EjqNAQDvCWENjLmSU64mc7qWEe/HYDu0pcFBvD0dJVUnIZyr0QD/dtKaeEjccIWh
-RCZTPOrv97U5RjHt3IPWeWSeHVLCcAo=
-=tOAG
------END PGP SIGNATURE-----
-
---ez37ojmvznisdz5u--
+Ah, you meant the ktime_divns you've dropped out. I thought
+you were talking about the constant value we've had here before
+your patch. Seems I didn't got the changelog right. Anyway
+need to take more precise look on the series. Hopefully soon.
