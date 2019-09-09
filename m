@@ -2,76 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D657ADBF9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 17:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64744ADC2F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Sep 2019 17:35:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfIIPRG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Sep 2019 11:17:06 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2195 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731749AbfIIPRG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Sep 2019 11:17:06 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id DE71CFAAD1B231270E59;
-        Mon,  9 Sep 2019 23:10:38 +0800 (CST)
-Received: from [127.0.0.1] (10.184.213.217) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Mon, 9 Sep 2019
- 23:10:31 +0800
-Subject: Re: Possible FS race condition between iterate_dir and
- d_alloc_parallel
-To:     Al Viro <viro@zeniv.linux.org.uk>
-CC:     <jack@suse.cz>, <akpm@linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, <renxudong1@huawei.com>,
-        Hou Tao <houtao1@huawei.com>
-References: <fd00be2c-257a-8e1f-eb1e-943a40c71c9a@huawei.com>
- <20190903154007.GJ1131@ZenIV.linux.org.uk>
- <20190903154114.GK1131@ZenIV.linux.org.uk>
- <b5876e84-853c-e1f6-4fef-83d3d45e1767@huawei.com>
- <afdfa1f4-c954-486b-1eb2-efea6fcc2e65@huawei.com>
- <20190909145910.GG1131@ZenIV.linux.org.uk>
-From:   "zhengbin (A)" <zhengbin13@huawei.com>
-Message-ID: <14888449-3300-756c-2029-8e494b59348b@huawei.com>
-Date:   Mon, 9 Sep 2019 23:10:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S2388396AbfIIPfr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Sep 2019 11:35:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:31638 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728698AbfIIPfr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Sep 2019 11:35:47 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 066883090FEE;
+        Mon,  9 Sep 2019 15:35:47 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4FC6A5D6B2;
+        Mon,  9 Sep 2019 15:35:38 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id CA111220292; Mon,  9 Sep 2019 11:35:37 -0400 (EDT)
+Date:   Mon, 9 Sep 2019 11:35:37 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     piaojun <piaojun@huawei.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, miklos@szeredi.hu,
+        mst@redhat.com, linux-kernel@vger.kernel.org, virtio-fs@redhat.com
+Subject: Re: [Virtio-fs] [PATCH 15/18] virtiofs: Make virtio_fs object
+ refcounted
+Message-ID: <20190909153537.GA25501@redhat.com>
+References: <20190905194859.16219-1-vgoyal@redhat.com>
+ <20190905194859.16219-16-vgoyal@redhat.com>
+ <a8ddb168-5fdb-b35a-5357-3c75e0226049@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190909145910.GG1131@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.184.213.217]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8ddb168-5fdb-b35a-5357-3c75e0226049@huawei.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 09 Sep 2019 15:35:47 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/9/9 22:59, Al Viro wrote:
+On Sun, Sep 08, 2019 at 07:10:03PM +0800, piaojun wrote:
+> 
+> 
+> On 2019/9/6 3:48, Vivek Goyal wrote:
+> > This object is used both by fuse_connection as well virt device. So make
+> > this object reference counted and that makes it easy to define life cycle
+> > of the object.
+> > 
+> > Now deivce can be removed while filesystem is still mounted. This will
+> > cleanup all the virtqueues but virtio_fs object will still be around and
+> > will be cleaned when filesystem is unmounted and sb/fc drops its reference.
+> > 
+> > Removing a device also stops all virt queues and any new reuqest gets
+> > error -ENOTCONN. All existing in flight requests are drained before
+> > ->remove returns.
+> > 
+> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > ---
+> >  fs/fuse/virtio_fs.c | 52 +++++++++++++++++++++++++++++++++++++--------
+> >  1 file changed, 43 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> > index 01bbf2c0e144..29ec2f5bbbe2 100644
+> > --- a/fs/fuse/virtio_fs.c
+> > +++ b/fs/fuse/virtio_fs.c
+> > @@ -37,6 +37,7 @@ struct virtio_fs_vq {
+> >  
+> >  /* A virtio-fs device instance */
+> >  struct virtio_fs {
+> > +	struct kref refcount;
+> >  	struct list_head list;    /* on virtio_fs_instances */
+> >  	char *tag;
+> >  	struct virtio_fs_vq *vqs;
+> > @@ -63,6 +64,27 @@ static inline struct fuse_pqueue *vq_to_fpq(struct virtqueue *vq)
+> >  	return &vq_to_fsvq(vq)->fud->pq;
+> >  }
+> >  
+> > +static void release_virtiofs_obj(struct kref *ref)
+> > +{
+> > +	struct virtio_fs *vfs = container_of(ref, struct virtio_fs, refcount);
+> > +
+> > +	kfree(vfs->vqs);
+> > +	kfree(vfs);
+> > +}
+> > +
+> > +static void virtio_fs_put(struct virtio_fs *fs)
+> > +{
+> > +	mutex_lock(&virtio_fs_mutex);
+> > +	kref_put(&fs->refcount, release_virtiofs_obj);
+> > +	mutex_unlock(&virtio_fs_mutex);
+> > +}
+> > +
+> > +static void virtio_fs_put(struct fuse_iqueue *fiq)
+> > +{
+> > +	struct virtio_fs *vfs = fiq->priv;
+> > +	virtiofs_put(vfs);
+> > +}
+> 
+> It's a little confusing that virtiofs_put() looks like virtiofs_put(),
+> and could we use __virtio_fs_put to replace virtio_fs_put?
 
-> On Mon, Sep 09, 2019 at 10:10:00PM +0800, zhengbin (A) wrote:
->
-> Hmm...  So your theory is that what you are seeing is the insertion
-> into the list done by list_add() exposing an earlier ->next pointer
-> to those who might be doing lockless walk through the list.
-> Potentially up to the last barrier done before the list_add()...
->
->> We can solute it in 2 ways:
->>
->> 1. add a smp_wmb between __d_alloc and list_add(&dentry->d_child, &parent->d_subdirs)
->> 2. revert commit ebaaa80e8f20 ("lockless next_positive()")
-> I want to take another look at the ->d_subdirs/->d_child readers...
-> I agree that the above sounds plausible, but I really want to be
-> sure about the exclusion we have for those accesses.
->
-> I'm not sure that smp_wmb() alone would suffice, BTW - the reader side
-> loop would need to be careful as well.
->
-> Which architecture it was, again?  arm64?
+Fixed this in follow up patch I posted.
 
-arm64
+https://www.redhat.com/archives/virtio-fs/2019-September/msg00091.html
 
->
-> .
->
-
+Vivek
