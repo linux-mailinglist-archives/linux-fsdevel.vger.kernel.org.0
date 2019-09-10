@@ -2,95 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CEE4AE3B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2019 08:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 465BBAE3D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2019 08:35:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390922AbfIJG16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Sep 2019 02:27:58 -0400
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:33175 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730335AbfIJG16 (ORCPT
+        id S2393497AbfIJGfm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Sep 2019 02:35:42 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34009 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729627AbfIJGfl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Sep 2019 02:27:58 -0400
-Received: by mail-ot1-f41.google.com with SMTP id g25so15467797otl.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Sep 2019 23:27:57 -0700 (PDT)
+        Tue, 10 Sep 2019 02:35:41 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a11so7851369wrx.1;
+        Mon, 09 Sep 2019 23:35:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=VjaVCvw7Es75Y87+TuInwO6wTJKd4OwHl3OoUN4X21M=;
-        b=bTH63OdzbSyyfI3d3StOzzqmtb8AS1gEb5tEBg2YYe6kYDPWrrnohRw63Mv+AtEFPC
-         eWNn1hnQMGWcD0GEOas6omOi5qouS2jNfDof/HckHf5JLRnmWPAwc388uCLFLM9dfg0Z
-         llevmXvb0BEBOQlCbvsjl5BXxCyjHnTz48VK+mBewdU9j3H+/XnF3Bk09dYGl6HDXlef
-         8u+z1a7c+bXliR0jZL30DYnFg1jPYy8B1rPnH+Dw/peMdjW576iR82HAgFKWA4Ns0bqL
-         fh2Uau3mMqTelW1lljFchIkflqhhm+Ox+mJZopP4Y/OokuzULyG94TsqWJfseQeocDuj
-         qhoQ==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9uC8BSyBqqvpBHr+UBJrMjpTjeLS9eaSkiimfXBOGmI=;
+        b=RT2CZzYflWq0hJIviZ1qNiz7T8GR4+WUrisMZXe3m9cauTkqIyyVGGFPULrde7A02W
+         tj7FplDkEllE02owPbUYDzEtapP1C48use/4kFc7fZZmFt/DdDZTI55D8qvOaO2r24Ne
+         q4FNPrvlkjfx+lYW3lSYcZ69k2e463dcG9Y4rn+PPa/Glpr++eDfgJ8gFO5kdGQ+ZZAk
+         nXhnUxrt/DhKZTkCCWYef7FPywkEzNn0z8LUShNXRMIkZZwOG/G3kJoXGIwG7zGeC0aS
+         TI+DZ2QVgsA7VVK9EZCvbN7bPdpk9PkNXAPdUVWeWNcFfO4yiY8K5tj2pJUrGvJYeUSW
+         9/rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=VjaVCvw7Es75Y87+TuInwO6wTJKd4OwHl3OoUN4X21M=;
-        b=HfpFnIa85DtdN5Ue/NxHeRsb+3sXuACit2rQU9C2m/fSUTlLw4p6GyyVSmDPvk+uBF
-         QHXn6AD6IGRsKovZyIfArqy7k4Iy3IAdYNoq3h70ZcZ0zZI0/Vb54+4CiqKN5YW9UNDu
-         6pSVhfmIF9u/eBt17q96U3JoCSm3fF5WUuKo2Xctr6/JnSvb7pNesMznxGkEwpOk0tzR
-         phVp+YZblMbgrUWgMC/W0wCftBggVGomQczpcl7g8u58cfMn13ccXLJZUyQw3o1VKsAp
-         EsUN5J8HvSYBbp8nViVhemoS38v5Pz019Z/1PHnHUIF62NREbpNvEv7a34kJrqKbBZCl
-         FQUg==
-X-Gm-Message-State: APjAAAUdiBwJ/8i0x2MLqZZwZx721y6DZK8Q/TrlQ1sPyHi6OYm/ROr+
-        DRNftey75WU2caG5UF42puiSbQ==
-X-Google-Smtp-Source: APXvYqyr/5ZSWwhxcxVoEpZMzkdjrJd95+TstKsGF8R+eAlLsTaGkBCm/1mlMp5lP9ovy746SFUEIQ==
-X-Received: by 2002:a05:6830:184:: with SMTP id q4mr20085871ota.128.1568096876476;
-        Mon, 09 Sep 2019 23:27:56 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id e7sm3507003otp.64.2019.09.09.23.27.54
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Sep 2019 23:27:55 -0700 (PDT)
-Date:   Mon, 9 Sep 2019 23:27:15 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Al Viro <viro@zeniv.linux.org.uk>
-cc:     Hugh Dickins <hughd@google.com>,
-        kernel test robot <rong.a.chen@intel.com>,
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9uC8BSyBqqvpBHr+UBJrMjpTjeLS9eaSkiimfXBOGmI=;
+        b=OGIIu7kQiC9NfKryZfiQuYrZPpsBPFxbvEH8fwEKiZuuqtgtF7jXfIN29NnGbc7fId
+         rvFMXp1KemiGvI8uDGKpmB7TKTpH09ZSH+pP6wff/kjUKi7y/gzYWD37MGi08QJKXSU5
+         qIzIK/9psV/Dmfg+9g4+w5obNvUboDNYacCXAulcDEnDDCAlCvNGVCW+/KRRgW+yYKgs
+         bJbBptmLeUkrnIBvsbU7dGCeqeZV5c2GnIcnxDregkX0MA47Sf4/LsthdFQLCntmSSpS
+         lDqB3Sg9s1mVKXpH8rGLDUn39r1sa8uWlauqHahO9JXETkbxQ2gJO9wOvf2hvpR7bsNy
+         0bJQ==
+X-Gm-Message-State: APjAAAVO1jrEEqNqZtkwzYjI7tJkcM927HxyjlUx7zJFLbv3jtpt93vv
+        vOFlChZAgfWDE3vxlNeRRCw=
+X-Google-Smtp-Source: APXvYqw8XHm4leFwnC6sWR8BjhyMsv0e/YjeclMhzrktUUdT/wG1WxzN3IHekSLZEGkf3MnHklk0qA==
+X-Received: by 2002:a5d:6b0f:: with SMTP id v15mr22340960wrw.19.1568097336267;
+        Mon, 09 Sep 2019 23:35:36 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id u22sm32329249wru.72.2019.09.09.23.35.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2019 23:35:35 -0700 (PDT)
+Date:   Tue, 10 Sep 2019 08:35:32 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Jeff Layton <jlayton@kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, lkp@01.org
-Subject: Re: [vfs]  8bb3c61baf:  vm-scalability.median -23.7% regression
-In-Reply-To: <20190909035653.GF1131@ZenIV.linux.org.uk>
-Message-ID: <alpine.LSU.2.11.1909092301120.1267@eggly.anvils>
-References: <20190903084122.GH15734@shao2-debian> <20190908214601.GC1131@ZenIV.linux.org.uk> <20190908234722.GE1131@ZenIV.linux.org.uk> <alpine.LSU.2.11.1909081953360.1134@eggly.anvils> <20190909035653.GF1131@ZenIV.linux.org.uk>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 11/12] open: openat2(2) syscall
+Message-ID: <20190910063532.GB1579@gmail.com>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-12-cyphar@cyphar.com>
+ <7236f382d72130f2afbbe8940e72cc67e5c6dce0.camel@kernel.org>
+ <CAHk-=whZx97Nm-gUK0ppofj2RA2LLz2vmaDUTKSSV-+yYB9q_Q@mail.gmail.com>
+ <C81D6D29-F6BF-48E6-A15E-3ABCB2C992E5@amacapital.net>
+ <CAHk-=whe90Ec_RRrMRLE0=bJOHNS9YmVwcytVxmrfK3oCuZF6A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whe90Ec_RRrMRLE0=bJOHNS9YmVwcytVxmrfK3oCuZF6A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 9 Sep 2019, Al Viro wrote:
+
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Sat, Sep 7, 2019 at 10:42 AM Andy Lutomirski <luto@amacapital.net> wrote:
+> >
+> > Linus, you rejected resolveat() because you wanted a *nice* API
 > 
-> Anyway, see vfs.git#uncertain.shmem for what I've got with those folded in.
-> Do you see any problems with that one?  That's the last 5 commits in there...
+> No. I rejected resoveat() because it was a completely broken garbage
+> API that couldn't do even basic stuff right (like O_CREAT).
+> 
+> We have a ton of flag space in the new openat2() model, we might as
+> well leave the old flags alone that people are (a) used to and (b) we
+> have code to support _anyway_.
+> 
+> Making up a new flag namespace is only going to cause us - and users -
+> more work, and more confusion. For no actual advantage. It's not going
+> to be "cleaner". It's just going to be worse.
 
-It's mostly fine, I've no problem with going your way instead of what
-we had in mmotm; but I have seen some problems with it, and had been
-intending to send you a fixup patch tonight (shmem_reconfigure() missing
-unlock on error is the main problem, but there are other fixes needed).
+I suspect there is a "add a clean new flags namespace" analogy to the 
+classic "add a clean new standard" XKCD:
 
-But I'm growing tired. I've a feeling my "swap" of the mpols, instead
-of immediate mpol_put(), was necessary to protect against a race with
-shmem_get_sbmpol(), but I'm not clear-headed enough to trust myself on
-that now.  And I've a mystery to solve, that shmem_reconfigure() gets
-stuck into showing the wrong error message.
+	https://xkcd.com/927/
 
-Tomorrow....
+Thanks,
 
-Oh, and my first attempt to build and boot that series over 5.3-rc5
-wouldn't boot. Luckily there was a tell-tale "i915" in the stacktrace,
-which reminded me of the drivers/gpu/drm/i915/gem/i915_gemfs.c fix
-we discussed earlier in the cycle.  That is of course in linux-next
-by now, but I wonder if your branch ought to contain a duplicate of
-that fix, so that people with i915 doing bisections on 5.4-rc do not
-fall into an unbootable hole between vfs and gpu merges.
-
-Hugh
+	Ingo
