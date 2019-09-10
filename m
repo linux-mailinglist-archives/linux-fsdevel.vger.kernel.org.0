@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF14BAEEE5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2019 17:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB611AEEEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Sep 2019 17:50:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731260AbfIJPt4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Sep 2019 11:49:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727024AbfIJPtz (ORCPT
+        id S2394003AbfIJPt7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Sep 2019 11:49:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40820 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727024AbfIJPt7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Sep 2019 11:49:55 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8AFlhmP095873;
-        Tue, 10 Sep 2019 11:49:43 -0400
+        Tue, 10 Sep 2019 11:49:59 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8AFlg4n081823;
+        Tue, 10 Sep 2019 11:49:51 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uxe2b9vvk-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uxduk2ar6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Sep 2019 11:49:43 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8AFmn9m106442;
-        Tue, 10 Sep 2019 11:49:42 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uxe2b9vv1-1
+        Tue, 10 Sep 2019 11:49:50 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8AFlu4i083490;
+        Tue, 10 Sep 2019 11:49:50 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uxduk2aqb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Sep 2019 11:49:42 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8AFjOrQ009923;
-        Tue, 10 Sep 2019 15:49:41 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma04dal.us.ibm.com with ESMTP id 2uv4672waf-1
+        Tue, 10 Sep 2019 11:49:50 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8AFjNUO011679;
+        Tue, 10 Sep 2019 15:49:49 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma02dal.us.ibm.com with ESMTP id 2uv467aw1x-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Sep 2019 15:49:41 +0000
+        Tue, 10 Sep 2019 15:49:49 +0000
 Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8AFneaW53084670
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8AFnmfi20709780
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Sep 2019 15:49:40 GMT
+        Tue, 10 Sep 2019 15:49:48 GMT
 Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 70313112065;
-        Tue, 10 Sep 2019 15:49:40 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 539DF112067;
+        Tue, 10 Sep 2019 15:49:48 +0000 (GMT)
 Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 61AEB112062;
-        Tue, 10 Sep 2019 15:49:37 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0F117112062;
+        Tue, 10 Sep 2019 15:49:45 +0000 (GMT)
 Received: from localhost.localdomain.com (unknown [9.102.1.89])
         by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 10 Sep 2019 15:49:37 +0000 (GMT)
+        Tue, 10 Sep 2019 15:49:44 +0000 (GMT)
 From:   Chandan Rajendra <chandan@linux.ibm.com>
 To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-fscrypt@vger.kernel.org
 Cc:     Chandan Rajendra <chandan@linux.ibm.com>, tytso@mit.edu,
         adilger.kernel@dilger.ca, ebiggers@kernel.org, hch@infradead.org,
         chandanrlinux@gmail.com
-Subject: [PATCH RESEND V5 1/7] buffer_head: Introduce BH_Read_Cb flag
-Date:   Tue, 10 Sep 2019 21:21:09 +0530
-Message-Id: <20190910155115.28550-2-chandan@linux.ibm.com>
+Subject: [PATCH RESEND V5 3/7] fs/mpage.c: Integrate read callbacks
+Date:   Tue, 10 Sep 2019 21:21:11 +0530
+Message-Id: <20190910155115.28550-4-chandan@linux.ibm.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190910155115.28550-1-chandan@linux.ibm.com>
 References: <20190910155115.28550-1-chandan@linux.ibm.com>
@@ -73,64 +73,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Decryption of file content encrypted using fscrypt relies on
-bio->bi_private holding a pointer to an encryption context
-i.e. Decryption operation is not performed for bios having a NULL value
-at bio->bi_private.
-
-The same logic cannot be used on buffer heads because,
-1. In Btrfs, write_dev_supers() sets bh->b_private to 'struct
-   btrfs_device' pointer and submits the buffer head for a write
-   operation.
-   1. In btrfs/146 test, the write operation fails and hence the
-      endio function clears the BH_Uptodate flag.
-   2. A read operation initiated later will submit the buffer head to
-      the block layer. During endio processing, bh_>b_private would have a
-      non-NULL value.
-
-2. Another instance is when an Ext4 metadata block with BH_Uptodate set and
-   also part of the in-memory JBD list undergoes the following,
-   1. A sync() syscall is invoked by the userspace and the write
-      operation on the metadata block is initiated.
-   2. Due to an I/O failure, the BH_Uptodate flag is cleared by
-      end_buffer_async_write(). The bh->b_private member would be
-      pointing to a journal head structure.
-   3. In such a case, a read operation invoked on the block mapped by the
-      buffer head will initiate a read from the disk since the buffer head is
-      missing the BH_Uptodate flag.
-   4. After the read I/O request is submitted, end_buffer_async_read()
-      will find a non-NULL value at bh->b_private.
-   This scenario was observed when executing generic/475 test case.
-
-Hence this commit introduces a new buffer head flag to reliably check for
-decryption of a buffer head's contents after the block has been read
-from the disk.
+This commit adds code to make do_mpage_readpage() to be "read callbacks"
+aware i.e. for files requiring decryption, do_mpage_readpage() now
+sets up the read callbacks state machine when allocating a bio and later
+starts execution of the state machine after file data is read from the
+underlying disk.
 
 Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
 ---
- include/linux/buffer_head.h | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/mpage.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 7b73ef7f902d..08f217ba8114 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -38,6 +38,7 @@ enum bh_state_bits {
- 	BH_Meta,	/* Buffer contains metadata */
- 	BH_Prio,	/* Buffer should be submitted with REQ_PRIO */
- 	BH_Defer_Completion, /* Defer AIO completion to workqueue */
-+	BH_Read_Cb,	     /* Block's contents needs to be decrypted */
+diff --git a/fs/mpage.c b/fs/mpage.c
+index 3f19da75178b..65e7165644e2 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -30,6 +30,7 @@
+ #include <linux/backing-dev.h>
+ #include <linux/pagevec.h>
+ #include <linux/cleancache.h>
++#include <linux/read_callbacks.h>
+ #include "internal.h"
  
- 	BH_PrivateStart,/* not a state bit, but the first bit available
- 			 * for private allocation by other entities
-@@ -134,6 +135,7 @@ BUFFER_FNS(Unwritten, unwritten)
- BUFFER_FNS(Meta, meta)
- BUFFER_FNS(Prio, prio)
- BUFFER_FNS(Defer_Completion, defer_completion)
-+BUFFER_FNS(Read_Cb, read_cb)
+ /*
+@@ -44,7 +45,7 @@
+  * status of that page is hard.  See end_buffer_async_read() for the details.
+  * There is no point in duplicating all that complexity.
+  */
+-static void mpage_end_io(struct bio *bio)
++static void end_bio(struct bio *bio)
+ {
+ 	struct bio_vec *bv;
+ 	int i;
+@@ -52,13 +53,24 @@ static void mpage_end_io(struct bio *bio)
  
- #define bh_offset(bh)		((unsigned long)(bh)->b_data & ~PAGE_MASK)
+ 	bio_for_each_segment_all(bv, bio, i, iter_all) {
+ 		struct page *page = bv->bv_page;
+-		page_endio(page, bio_op(bio),
+-			   blk_status_to_errno(bio->bi_status));
++		int err;
++
++		err = blk_status_to_errno(bio->bi_status);
++
++		if (!err && read_callbacks_failed(page))
++			err = -EIO;
++
++		page_endio(page, bio_op(bio), err);
+ 	}
  
+ 	bio_put(bio);
+ }
+ 
++static void mpage_end_io(struct bio *bio)
++{
++	read_callbacks_endio_bio(bio, end_bio);
++}
++
+ static struct bio *mpage_bio_submit(int op, int op_flags, struct bio *bio)
+ {
+ 	bio->bi_end_io = mpage_end_io;
+@@ -310,6 +322,12 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 					gfp);
+ 		if (args->bio == NULL)
+ 			goto confused;
++
++		if (read_callbacks_setup_bio(inode, args->bio)) {
++			bio_put(args->bio);
++			args->bio = NULL;
++			goto confused;
++		}
+ 	}
+ 
+ 	length = first_hole << blkbits;
 -- 
 2.19.1
 
