@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D5D9B0154
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 18:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0365B015E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 18:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbfIKQRp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 12:17:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:3650 "EHLO mx1.redhat.com"
+        id S1729378AbfIKQSC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 12:18:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53542 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728986AbfIKQQX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1728976AbfIKQQX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 11 Sep 2019 12:16:23 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 38931308219E;
+        by mx1.redhat.com (Postfix) with ESMTPS id 203708980F2;
         Wed, 11 Sep 2019 16:16:23 +0000 (UTC)
 Received: from coeurl.usersys.redhat.com (ovpn-122-52.rdu2.redhat.com [10.10.122.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0949A450E;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 053415DC18;
         Wed, 11 Sep 2019 16:16:23 +0000 (UTC)
 Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
-        id 33CA420C2F; Wed, 11 Sep 2019 12:16:22 -0400 (EDT)
+        id 3913E20C3B; Wed, 11 Sep 2019 12:16:22 -0400 (EDT)
 From:   Scott Mayhew <smayhew@redhat.com>
 To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
 Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
         linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/26] nfs: merge xdev and remote file_system_type
-Date:   Wed, 11 Sep 2019 12:16:05 -0400
-Message-Id: <20190911161621.19832-11-smayhew@redhat.com>
+Subject: [PATCH v3 11/26] nfs: unexport nfs_fs_mount_common()
+Date:   Wed, 11 Sep 2019 12:16:06 -0400
+Message-Id: <20190911161621.19832-12-smayhew@redhat.com>
 In-Reply-To: <20190911161621.19832-1-smayhew@redhat.com>
 References: <20190911161621.19832-1-smayhew@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 11 Sep 2019 16:16:23 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Wed, 11 Sep 2019 16:16:23 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -40,139 +40,61 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-they are identical now...
+Make it static, even.  And remove a stale extern of (long-gone)
+nfs_xdev_mount_common() from internal.h, while we are at it.
 
 Reviewed-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/nfs/internal.h  |  2 +-
- fs/nfs/namespace.c |  2 +-
- fs/nfs/nfs4super.c | 22 +---------------------
- fs/nfs/super.c     | 14 ++++++++------
- 4 files changed, 11 insertions(+), 29 deletions(-)
+ fs/nfs/internal.h | 3 ---
+ fs/nfs/super.c    | 5 +++--
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 3334d0f3ecf9..ac3478827a83 100644
+index ac3478827a83..207d1574e246 100644
 --- a/fs/nfs/internal.h
 +++ b/fs/nfs/internal.h
-@@ -396,7 +396,7 @@ extern int nfs_wait_atomic_killable(atomic_t *p, unsigned int mode);
- /* super.c */
- extern const struct super_operations nfs_sops;
- extern struct file_system_type nfs_fs_type;
--extern struct file_system_type nfs_xdev_fs_type;
-+extern struct file_system_type nfs_prepared_fs_type;
- #if IS_ENABLED(CONFIG_NFS_V4)
- extern struct file_system_type nfs4_referral_fs_type;
- #endif
-diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
-index 0d0587ed7d94..970f92a860ed 100644
---- a/fs/nfs/namespace.c
-+++ b/fs/nfs/namespace.c
-@@ -254,7 +254,7 @@ struct vfsmount *nfs_do_submount(struct dentry *dentry, struct nfs_fh *fh,
- 	if (IS_ERR(devname))
- 		mnt = ERR_CAST(devname);
- 	else
--		mnt = vfs_submount(dentry, &nfs_xdev_fs_type, devname, &mount_info);
-+		mnt = vfs_submount(dentry, &nfs_prepared_fs_type, devname, &mount_info);
- 
- 	if (mount_info.server)
- 		nfs_free_server(mount_info.server);
-diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
-index 83bca2ea566c..5bca30f704e4 100644
---- a/fs/nfs/nfs4super.c
-+++ b/fs/nfs/nfs4super.c
-@@ -18,19 +18,9 @@
- 
- static int nfs4_write_inode(struct inode *inode, struct writeback_control *wbc);
- static void nfs4_evict_inode(struct inode *inode);
--static struct dentry *nfs4_remote_mount(struct file_system_type *fs_type,
--	int flags, const char *dev_name, void *raw_data);
- static struct dentry *nfs4_referral_mount(struct file_system_type *fs_type,
- 	int flags, const char *dev_name, void *raw_data);
- 
--static struct file_system_type nfs4_remote_fs_type = {
--	.owner		= THIS_MODULE,
--	.name		= "nfs4",
--	.mount		= nfs4_remote_mount,
--	.kill_sb	= nfs_kill_super,
--	.fs_flags	= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
--};
--
- struct file_system_type nfs4_referral_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "nfs4",
-@@ -91,16 +81,6 @@ static void nfs4_evict_inode(struct inode *inode)
- 	nfs_clear_inode(inode);
- }
- 
--/*
-- * Get the superblock for the NFS4 root partition
-- */
--static struct dentry *
--nfs4_remote_mount(struct file_system_type *fs_type, int flags,
--		  const char *dev_name, void *info)
--{
--	return nfs_fs_mount_common(flags, dev_name, info);
--}
--
- struct nfs_referral_count {
- 	struct list_head list;
- 	const struct task_struct *task;
-@@ -194,7 +174,7 @@ static struct dentry *do_nfs4_mount(struct nfs_server *server, int flags,
- 	else
- 		snprintf(root_devname, len, "%s:/", hostname);
- 	info->server = server;
--	root_mnt = vfs_kern_mount(&nfs4_remote_fs_type, flags, root_devname, info);
-+	root_mnt = vfs_kern_mount(&nfs_prepared_fs_type, flags, root_devname, info);
- 	if (info->server)
- 		nfs_free_server(info->server);
- 	info->server = NULL;
+@@ -404,10 +404,7 @@ bool nfs_auth_info_match(const struct nfs_auth_info *, rpc_authflavor_t);
+ struct dentry *nfs_try_mount(int, const char *, struct nfs_mount_info *);
+ int nfs_set_sb_security(struct super_block *, struct dentry *, struct nfs_mount_info *);
+ int nfs_clone_sb_security(struct super_block *, struct dentry *, struct nfs_mount_info *);
+-struct dentry *nfs_fs_mount_common(int, const char *, struct nfs_mount_info *);
+ struct dentry *nfs_fs_mount(struct file_system_type *, int, const char *, void *);
+-struct dentry * nfs_xdev_mount_common(struct file_system_type *, int,
+-		const char *, struct nfs_mount_info *);
+ void nfs_kill_super(struct super_block *);
+ void nfs_fill_super(struct super_block *, struct nfs_mount_info *);
+ void nfs_clone_super(struct super_block *, struct nfs_mount_info *);
 diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index ca6295945880..d80992d2b6fe 100644
+index d80992d2b6fe..c3ee83c17f07 100644
 --- a/fs/nfs/super.c
 +++ b/fs/nfs/super.c
-@@ -293,7 +293,7 @@ static match_table_t nfs_vers_tokens = {
- 	{ Opt_vers_err, NULL }
- };
- 
--static struct dentry *nfs_xdev_mount(struct file_system_type *fs_type,
-+static struct dentry *nfs_prepared_mount(struct file_system_type *fs_type,
- 		int flags, const char *dev_name, void *raw_data);
- 
- struct file_system_type nfs_fs_type = {
-@@ -306,13 +306,14 @@ struct file_system_type nfs_fs_type = {
- MODULE_ALIAS_FS("nfs");
- EXPORT_SYMBOL_GPL(nfs_fs_type);
- 
--struct file_system_type nfs_xdev_fs_type = {
-+struct file_system_type nfs_prepared_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "nfs",
--	.mount		= nfs_xdev_mount,
-+	.mount		= nfs_prepared_mount,
- 	.kill_sb	= nfs_kill_super,
- 	.fs_flags	= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
- };
-+EXPORT_SYMBOL_GPL(nfs_prepared_fs_type);
- 
- const struct super_operations nfs_sops = {
- 	.alloc_inode	= nfs_alloc_inode,
-@@ -2766,11 +2767,12 @@ void nfs_kill_super(struct super_block *s)
- EXPORT_SYMBOL_GPL(nfs_kill_super);
- 
- /*
-- * Clone an NFS2/3/4 server record on xdev traversal (FSID-change)
-+ * Internal use only: mount_info is already set up by caller.
-+ * Used for mountpoint crossings and for nfs4 root.
-  */
- static struct dentry *
--nfs_xdev_mount(struct file_system_type *fs_type, int flags,
--		const char *dev_name, void *raw_data)
-+nfs_prepared_mount(struct file_system_type *fs_type, int flags,
-+		   const char *dev_name, void *raw_data)
- {
- 	return nfs_fs_mount_common(flags, dev_name, raw_data);
+@@ -1893,6 +1893,8 @@ static struct nfs_server *nfs_try_mount_request(struct nfs_mount_info *mount_inf
+ 	return nfs_mod->rpc_ops->create_server(mount_info, nfs_mod);
  }
+ 
++static struct dentry *nfs_fs_mount_common(int, const char *, struct nfs_mount_info *);
++
+ struct dentry *nfs_try_mount(int flags, const char *dev_name,
+ 			     struct nfs_mount_info *mount_info)
+ {
+@@ -2623,7 +2625,7 @@ int nfs_clone_sb_security(struct super_block *s, struct dentry *mntroot,
+ }
+ EXPORT_SYMBOL_GPL(nfs_clone_sb_security);
+ 
+-struct dentry *nfs_fs_mount_common(int flags, const char *dev_name,
++static struct dentry *nfs_fs_mount_common(int flags, const char *dev_name,
+ 				   struct nfs_mount_info *mount_info)
+ {
+ 	struct super_block *s;
+@@ -2705,7 +2707,6 @@ struct dentry *nfs_fs_mount_common(int flags, const char *dev_name,
+ 	deactivate_locked_super(s);
+ 	goto out;
+ }
+-EXPORT_SYMBOL_GPL(nfs_fs_mount_common);
+ 
+ struct dentry *nfs_fs_mount(struct file_system_type *fs_type,
+ 	int flags, const char *dev_name, void *raw_data)
 -- 
 2.17.2
 
