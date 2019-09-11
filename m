@@ -2,83 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36E11AFC79
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 14:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EEB0AFC7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 14:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfIKMZK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 08:25:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55562 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726954AbfIKMZK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Sep 2019 08:25:10 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2B8423060399;
-        Wed, 11 Sep 2019 12:25:10 +0000 (UTC)
-Received: from localhost (ovpn-116-185.ams2.redhat.com [10.36.116.185])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C55A71001959;
-        Wed, 11 Sep 2019 12:25:04 +0000 (UTC)
-Date:   Wed, 11 Sep 2019 14:24:58 +0200
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v5 0/4] virtio-fs: shared file system for virtual machines
-Message-ID: <20190911122458.GA8859@stefanha-x1.localdomain>
-References: <20190910151206.4671-1-mszeredi@redhat.com>
+        id S1727926AbfIKMZP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 08:25:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33254 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727899AbfIKMZP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Sep 2019 08:25:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A8E69AD44;
+        Wed, 11 Sep 2019 12:25:13 +0000 (UTC)
+Date:   Wed, 11 Sep 2019 07:25:11 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Andres Freund <andres@anarazel.de>, linux-fsdevel@vger.kernel.org,
+        jack@suse.com, hch@infradead.org
+Subject: Re: Odd locking pattern introduced as part of "nowait aio support"
+Message-ID: <20190911122511.tygfujqgjtshkzym@fiona>
+References: <20190910223327.mnegfoggopwqqy33@alap3.anarazel.de>
+ <20190911040420.GB27547@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190910151206.4671-1-mszeredi@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 11 Sep 2019 12:25:10 +0000 (UTC)
+In-Reply-To: <20190911040420.GB27547@dread.disaster.area>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 14:04 11/09, Dave Chinner wrote:
+> On Tue, Sep 10, 2019 at 03:33:27PM -0700, Andres Freund wrote:
+> > Hi,
+> > 
+> > Especially with buffered io it's fairly easy to hit contention on the
+> > inode lock, during writes. With something like io_uring, it's even
+> > easier, because it currently (but see [1]) farms out buffered writes to
+> > workers, which then can easily contend on the inode lock, even if only
+> > one process submits writes.  But I've seen it in plenty other cases too.
+> > 
+> > Looking at the code I noticed that several parts of the "nowait aio
+> > support" (cf 728fbc0e10b7f3) series introduced code like:
+> > 
+> > static ssize_t
+> > ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > {
+> > ...
+> > 	if (!inode_trylock(inode)) {
+> > 		if (iocb->ki_flags & IOCB_NOWAIT)
+> > 			return -EAGAIN;
+> > 		inode_lock(inode);
+> > 	}
+> 
+> The ext4 code is just buggy here - we don't support RWF_NOWAIT on
+> buffered writes. Buffered reads, and dio/dax reads and writes, yes,
+> but not buffered writes because they are almost guaranteed to block
+> somewhere. See xfs_file_buffered_aio_write():
+> 
+> 	if (iocb->ki_flags & IOCB_NOWAIT)
+> 		return -EOPNOTSUPP;
+> 
+> generic_write_checks() will also reject IOCB_NOWAIT on buffered
+> writes, so that code in ext4 is likely in the wrong place...
 
---AhhlLboLdkugWU4S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, but inode_trylock is checking if we can get inode sem immidiately,
+and if not bail, instead of waiting for the sem, as opposed to rejecting
+bufferd I/O nowait writes.
 
-On Tue, Sep 10, 2019 at 05:12:02PM +0200, Miklos Szeredi wrote:
-> Git tree for this version is available here:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#virtiofs-=
-v5
->=20
-> Only post patches that actually add virtiofs (virtiofs-v5-base..virtiofs-=
-v5).
->=20
-> I've folded the series from Vivek and fixed a couple of TODO comments
-> myself.  AFAICS two issues remain that need to be resolved in the short
-> term, one way or the other: freeze/restore and full virtqueue.
+generic_write_checks() has the checks which disallows nowait without direct
+writes, so we can do away with those checks in ext4_file_write_iter().
+However, the return code in generic_write_checks() is -EINVAL and
+-ENOTSUPP in ext4_file_write_iter(). Removing the check in write_iter()
+will change the error code to -EINVAL from -EOPNOTSUPP.
 
-Thank you!  I am investigating freeze/restore.
 
-Stefan
-
---AhhlLboLdkugWU4S
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1455oACgkQnKSrs4Gr
-c8hWrggArzr0OOPSTmdQ2dbddY7tmvuQTZgyaLYh1W0gffJZH8gkHIH2rod4htHq
-AWYZ7UxNWmHEdY4JHvMZCuxHMT8NScXWjGrkYbyE9amgj0b7PjtgRMiTJDFp2AMf
-pr5rza+XUKxkeoVjdSHMThZEGXWn2PP3zEA/IftMSyL7XEHSVS47NRFTFScGDDwW
-HpuWwzul31EFYU6ciPAGbAYPOcvDZCZv51ViJdnCcUMnzP3JMpdYyQy/2pcTauzm
-1cvyoMStnkMl3uqTswNRCwRFGU5YVqjnxAWg6Gyqu4TyEa5hp96f97XKcFZRbBjv
-LFwvgwMzPdO3dZqn3kBILCi/ZSR6MA==
-=TbXq
------END PGP SIGNATURE-----
-
---AhhlLboLdkugWU4S--
+-- 
+Goldwyn
