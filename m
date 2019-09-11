@@ -2,113 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2589B0225
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 18:54:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94ADEB0258
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 19:03:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbfIKQxq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 12:53:46 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48026 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729028AbfIKQxp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:53:45 -0400
-Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1i85s8-00013U-0b; Wed, 11 Sep 2019 10:53:37 -0600
-To:     Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Stephen Bates <sbates@raithlin.com>, Jens Axboe <axboe@fb.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20190828215429.4572-1-logang@deltatee.com>
- <20190828215429.4572-14-logang@deltatee.com>
- <92d61426-65a2-827c-936b-55f12f3d6afb@grimberg.me>
- <ca4ebcd9-fa5d-5ddf-c2a7-70318410dd97@deltatee.com>
- <7954e8a4-6026-2210-7192-94a4e483facf@grimberg.me>
- <b23c72b2-c9db-cb8e-5519-63eb195b7fd4@deltatee.com>
- <ca811aea-c4ae-10ee-15a5-2332d5a9e29a@grimberg.me>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <19da6ca1-3cde-3f29-59ee-923c562e6487@deltatee.com>
-Date:   Wed, 11 Sep 2019 10:53:30 -0600
+        id S1729452AbfIKRDx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 13:03:53 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:35828 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728937AbfIKRDx (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Sep 2019 13:03:53 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8BH0Ggv100146;
+        Wed, 11 Sep 2019 17:03:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=tjDusgHWwwcPuTZyb2yaXH/a3BzidRe9zFpLRpAYF4g=;
+ b=rahUj/tGvPrsXSREtfv19e5V4S+Aat3lWreLhWdAQ9x7+xLkfXGW4KF3+clgs2tdXqxW
+ 7ENlChx6ATWdWvhKqJJDXFe79tbQ9ja9/KN50pDbtsoDgkIC9sWcgi/NGDpy+ogROC9H
+ 2RMalKU6L3BcXF6TydcEKfB6sLDGAwU5iVAn5lvB2A8NGtQGjFrBhII6Vb+zax6sufO9
+ V0leGK7NozKN8/zrqWZtytnCcuIKfNQc+I2m1AgRuolpDr7y/mu7/A1WaIZQaCgTAIEn
+ lpGfhs5nspoPn6OfmijX1Usx3VYGUHvtWPt0DdkTOgqlv+W9mBNzq1Q8anqqvdK53kRz oQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2uw1jybfmx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 17:03:20 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8BH3AIP145409;
+        Wed, 11 Sep 2019 17:03:20 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2uxk0terde-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 17:03:20 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8BH3Iu2004387;
+        Wed, 11 Sep 2019 17:03:18 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Sep 2019 10:03:17 -0700
+Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
+ PMD
+To:     Waiman Long <longman@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
+References: <20190911150537.19527-1-longman@redhat.com>
+ <20190911150537.19527-6-longman@redhat.com>
+ <20190911151451.GH29434@bombadil.infradead.org>
+ <19d9ea18-bd20-e02f-c1de-70e7322f5f22@redhat.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <40a511a4-5771-f9a9-40b6-64e39478bbcb@oracle.com>
+Date:   Wed, 11 Sep 2019 10:03:16 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <ca811aea-c4ae-10ee-15a5-2332d5a9e29a@grimberg.me>
+In-Reply-To: <19d9ea18-bd20-e02f-c1de-70e7322f5f22@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.73.163.230
-X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, kbusch@kernel.org, axboe@fb.com, sbates@raithlin.com, Chaitanya.Kulkarni@wdc.com, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v8 13/13] nvmet-passthru: support block accounting
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909110158
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909110158
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2019-09-09 5:15 p.m., Sagi Grimberg wrote:
+On 9/11/19 8:44 AM, Waiman Long wrote:
+> On 9/11/19 4:14 PM, Matthew Wilcox wrote:
+>> On Wed, Sep 11, 2019 at 04:05:37PM +0100, Waiman Long wrote:
+>>> When allocating a large amount of static hugepages (~500-1500GB) on a
+>>> system with large number of CPUs (4, 8 or even 16 sockets), performance
+>>> degradation (random multi-second delays) was observed when thousands
+>>> of processes are trying to fault in the data into the huge pages. The
+>>> likelihood of the delay increases with the number of sockets and hence
+>>> the CPUs a system has.  This only happens in the initial setup phase
+>>> and will be gone after all the necessary data are faulted in.
+>> Can;t the application just specify MAP_POPULATE?
 > 
->>>>>> Support block disk accounting by setting the RQF_IO_STAT flag
->>>>>> and gendisk in the request.
->>>>>>
->>>>>> After this change, IO counts will be reflected correctly in
->>>>>> /proc/diskstats for drives being used by passthru.
->>>>>>
->>>>>> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
->>>>>> ---
->>>>>>     drivers/nvme/target/io-cmd-passthru.c | 5 ++++-
->>>>>>     1 file changed, 4 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/nvme/target/io-cmd-passthru.c
->>>>>> b/drivers/nvme/target/io-cmd-passthru.c
->>>>>> index 7557927a3451..63f12750a80d 100644
->>>>>> --- a/drivers/nvme/target/io-cmd-passthru.c
->>>>>> +++ b/drivers/nvme/target/io-cmd-passthru.c
->>>>>> @@ -410,6 +410,9 @@ static struct request
->>>>>> *nvmet_passthru_blk_make_request(struct nvmet_req *req,
->>>>>>         if (unlikely(IS_ERR(rq)))
->>>>>>             return rq;
->>>>>>     +    if (blk_queue_io_stat(q) && cmd->common.opcode !=
->>>>>> nvme_cmd_flush)
->>>>>> +        rq->rq_flags |= RQF_IO_STAT;
->>>>
->>>> Thanks for the review!
->>>>
->>>>> Does flush has data bytes in the request? Why the special casing?
->>>>
->>>> Well it was special cased in the vanilla blk account flow... But I
->>>> think
->>>> it's required to be special cased so the IO and in_flight counts don't
->>>> count flushes (as they do not for regular block device traffic).
->>>
->>> I think that the accounting exclude I/O that is yielded from the flush
->>> sequence. Don't think its relevant here...
->>
->> What? Per blk_account_io_done(), RQF_FLUSH_SEQ will not be set by us for
->> passthru commands and I don't think it's appropriate to do so. Thus, if
->> we set RQF_IO_STAT for passthru flush commands, they will be counted
->> which we do not want.
-> 
-> Have you considered to have nvmet_passthru_blk_make_request set RQF_FUA
-> for nvme_cmd_flush? this way blk_insert_flush will be called and
-> RQF_FLUSH_SEQ will be set and you don't need to worry about this
-> special casing...
+> Originally, I thought that this happened in the startup phase when the
+> pages were faulted in. The problem persists after steady state had been
+> reached though. Every time you have a new user process created, it will
+> have its own page table.
 
-Well, I haven't done that mostly because I'm not sure of all the side
-effects of doing so. However, I've tried it and everything seems to
-still work, so I'll make that change for v9 which I'll probably send out
-after the merge window.
+This is still at fault time.  Although, for the particular application it
+may be after the 'startup phase'.
 
-Logan
+>                          It is the sharing of the of huge page shared
+> memory that is causing problem. Of course, it depends on how the
+> application is written.
+
+It may be the case that some applications would find the delays acceptable
+for the benefit of shared pmds once they reach steady state.  As you say, of
+course this depends on how the application is written.
+
+I know that Oracle DB would not like it if PMD sharing is disabled for them.
+Based on what I know of their model, all processes which share PMDs perform
+faults (write or read) during the startup phase.  This is in environments as
+big or bigger than you describe above.  I have never looked at/for delays in
+these environments around pmd sharing (page faults), but that does not mean
+they do not exist.  I will try to get the DB group to give me access to one
+of their large environments for analysis.
+
+We may want to consider making the timeout value and disable threshold user
+configurable.
+-- 
+Mike Kravetz
