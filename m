@@ -2,204 +2,579 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5C42B00B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 18:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4571B010D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 18:15:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbfIKQBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 12:01:46 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33365 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728412AbfIKQBq (ORCPT
+        id S1728898AbfIKQPU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 12:15:20 -0400
+Received: from cloud1-vm154.de-nserver.de ([178.250.10.56]:15931 "EHLO
+        cloud1-vm154.de-nserver.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728825AbfIKQPU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:01:46 -0400
-Received: by mail-qt1-f196.google.com with SMTP id r5so25909156qtd.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2019 09:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=SzFYnOnqYRRD6oxfohm7GaTRApau1VSO8et7sdvAxw4=;
-        b=fP8AO1YEJfmo1iSSlsVCCw128xF/ewA8VemLrD++gV3EuoRdYfWj5LGmMLdu19lK4s
-         9zlJY92ZHUnz8AH9KmdUzzjMuRJkhMtseQEihRbLApkujfj9Oacj8sSEv0S9bp5m5L2P
-         0s0HfThhl6kHvvwdsCAzApVOD5G+ChCuptHjBZjkPs/npao4zDC+Uk+EQGQ7BXiP8NFk
-         zZuMrvwi5ek2GUs/E7YBQJsP8kx9aDaANfBUgpE23o4kmuy2S/lBVl52ydKaTkzFcbvk
-         cnNRSTf2/N88bVMUqK/e3TinHy4A7UR1PGtMx2yWphZeeekzfos9ZbSMyrUX84rCLBNX
-         16rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=SzFYnOnqYRRD6oxfohm7GaTRApau1VSO8et7sdvAxw4=;
-        b=ErsqlTMUuvMgvasXPHM5maosGEezPSNIZcPEWZSkEjI+9ydjjjcuF9cu37//s5KbJ6
-         j7TZmJV1FZNU4J+DLwQyzJkOAbElJEbyF2Nwf/2YXsCc/xO+TAmqI4KOdYQi8sxC7I2G
-         9zKwVRqe02LrOjT4tjxsL7QTj6aMINp9gbmv7FZYcwPjJ7dxBmB7UKO8RcHtojFNHI9b
-         K4UZhwVIaAtoCq64WhZuVrFr5eAk9Q/9i4K3ODFcdRKHKXrj3ZeVePQFE/HNsYBGnD22
-         MEBywJo+hZUXSck5gEzAURfnxoJbXhtKLBrjE06zcqLt4gxUYIhaTvXU3Ca0eKBKONk3
-         sQXg==
-X-Gm-Message-State: APjAAAVc9HJTYabL6li5IMMmmCqTEJ6BVWtP/YNASOzJ4aaUOhOrbUSr
-        u+dRO4KM5PKx7KCxGQCwk707Fg==
-X-Google-Smtp-Source: APXvYqyPRa3MTbsa/Kmfswg0Bvkx67oWrfiDmXUWdRKwYuZ+uMqrlFSoglXlepuG5gVaVEYCQcG8yg==
-X-Received: by 2002:ac8:546:: with SMTP id c6mr11563196qth.151.1568217704576;
-        Wed, 11 Sep 2019 09:01:44 -0700 (PDT)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id l22sm8529363qtp.8.2019.09.11.09.01.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Sep 2019 09:01:44 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
- PMD
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <20190911150537.19527-6-longman@redhat.com>
-Date:   Wed, 11 Sep 2019 12:01:42 -0400
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B97932F4-7A2D-4265-9BB2-BF6E19B45DB7@lca.pw>
-References: <20190911150537.19527-1-longman@redhat.com>
- <20190911150537.19527-6-longman@redhat.com>
-To:     Waiman Long <longman@redhat.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        Wed, 11 Sep 2019 12:15:20 -0400
+Received: (qmail 30510 invoked from network); 11 Sep 2019 18:15:13 +0200
+X-Fcrdns: No
+Received: from phoffice.de-nserver.de (HELO [10.242.2.3]) (185.39.223.5)
+  (smtp-auth username hostmaster@profihost.com, mechanism plain)
+  by cloud1-vm154.de-nserver.de (qpsmtpd/0.92) with (ECDHE-RSA-AES256-GCM-SHA384 encrypted) ESMTPSA; Wed, 11 Sep 2019 18:15:13 +0200
+Subject: Re: 5.3-rc-8 hung task in IO (was: Re: lot of MemAvailable but
+ falling cache and raising PSI)
+To:     Filipe Manana <fdmanana@kernel.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>, l.roehrs@profihost.ag,
+        cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+References: <132e1fd0-c392-c158-8f3a-20e340e542f0@profihost.ag>
+ <20190910090241.GM2063@dhcp22.suse.cz>
+ <743a047e-a46f-32fa-1fe4-a9bd8f09ed87@profihost.ag>
+ <20190910110741.GR2063@dhcp22.suse.cz>
+ <364d4c2e-9c9a-d8b3-43a8-aa17cccae9c7@profihost.ag>
+ <20190910125756.GB2063@dhcp22.suse.cz>
+ <d7448f13-899a-5805-bd36-8922fa17b8a9@profihost.ag>
+ <b1fe902f-fce6-1aa9-f371-ceffdad85968@profihost.ag>
+ <20190910132418.GC2063@dhcp22.suse.cz>
+ <d07620d9-4967-40fe-fa0f-be51f2459dc5@profihost.ag>
+ <20190911070951.GL4023@dhcp22.suse.cz>
+ <CAL3q7H5GZPoXTBqGtU8g9cEuxjbn4F0E80cZ9SW_GOyFSiTeoQ@mail.gmail.com>
+ <6F49D228-4B9B-409E-9D9D-6D24F80CED8C@profihost.ag>
+ <CAL3q7H7hOOHwgDraF9F_EQwtoEAph4E5yYh_Wpuv02DZGmQzdw@mail.gmail.com>
+From:   Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
+Message-ID: <17089f14-a54c-0d0d-77b2-5b083fbb32a8@profihost.ag>
+Date:   Wed, 11 Sep 2019 18:15:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAL3q7H7hOOHwgDraF9F_EQwtoEAph4E5yYh_Wpuv02DZGmQzdw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
+X-User-Auth: Auth by hostmaster@profihost.com through 185.39.223.5
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Am 11.09.19 um 17:56 schrieb Filipe Manana:
+> On Wed, Sep 11, 2019 at 4:39 PM Stefan Priebe - Profihost AG
+> <s.priebe@profihost.ag> wrote:
+>>
+>> Thanks! Is this the same as for the 5.3-rc8 I tested? Stacktrace looked different to me.
+> 
+> I don't know, I can't see that backtrace. The thread was split and
+> I've only seen the one sent to the btrfs list.
 
+Hi,
 
-> On Sep 11, 2019, at 11:05 AM, Waiman Long <longman@redhat.com> wrote:
->=20
-> When allocating a large amount of static hugepages (~500-1500GB) on a
-> system with large number of CPUs (4, 8 or even 16 sockets), =
-performance
-> degradation (random multi-second delays) was observed when thousands
-> of processes are trying to fault in the data into the huge pages. The
-> likelihood of the delay increases with the number of sockets and hence
-> the CPUs a system has.  This only happens in the initial setup phase
-> and will be gone after all the necessary data are faulted in.
->=20
-> These random delays, however, are deemed unacceptable. The cause of
-> that delay is the long wait time in acquiring the mmap_sem when trying
-> to share the huge PMDs.
->=20
-> To remove the unacceptable delays, we have to limit the amount of wait
-> time on the mmap_sem. So the new down_write_timedlock() function is
-> used to acquire the write lock on the mmap_sem with a timeout value of
-> 10ms which should not cause a perceivable delay. If timeout happens,
-> the task will abandon its effort to share the PMD and allocate its own
-> copy instead.
->=20
-> When too many timeouts happens (threshold currently set at 256), the
-> system may be too large for PMD sharing to be useful without undue =
-delay.
-> So the sharing will be disabled in this case.
->=20
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
-> include/linux/fs.h |  7 +++++++
-> mm/hugetlb.c       | 24 +++++++++++++++++++++---
-> 2 files changed, 28 insertions(+), 3 deletions(-)
->=20
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 997a530ff4e9..e9d3ad465a6b 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -40,6 +40,7 @@
-> #include <linux/fs_types.h>
-> #include <linux/build_bug.h>
-> #include <linux/stddef.h>
-> +#include <linux/ktime.h>
->=20
-> #include <asm/byteorder.h>
-> #include <uapi/linux/fs.h>
-> @@ -519,6 +520,12 @@ static inline void i_mmap_lock_write(struct =
-address_space *mapping)
-> 	down_write(&mapping->i_mmap_rwsem);
-> }
->=20
-> +static inline bool i_mmap_timedlock_write(struct address_space =
-*mapping,
-> +					 ktime_t timeout)
-> +{
-> +	return down_write_timedlock(&mapping->i_mmap_rwsem, timeout);
-> +}
-> +
-> static inline void i_mmap_unlock_write(struct address_space *mapping)
-> {
-> 	up_write(&mapping->i_mmap_rwsem);
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 6d7296dd11b8..445af661ae29 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -4750,6 +4750,8 @@ void adjust_range_if_pmd_sharing_possible(struct =
-vm_area_struct *vma,
-> 	}
-> }
->=20
-> +#define PMD_SHARE_DISABLE_THRESHOLD	(1 << 8)
-> +
-> /*
->  * Search for a shareable pmd page for hugetlb. In any case calls =
-pmd_alloc()
->  * and returns the corresponding pte. While this is not necessary for =
-the
-> @@ -4770,11 +4772,24 @@ pte_t *huge_pmd_share(struct mm_struct *mm, =
-unsigned long addr, pud_t *pud)
-> 	pte_t *spte =3D NULL;
-> 	pte_t *pte;
-> 	spinlock_t *ptl;
-> +	static atomic_t timeout_cnt;
->=20
-> -	if (!vma_shareable(vma, addr))
-> -		return (pte_t *)pmd_alloc(mm, pud, addr);
-> +	/*
-> +	 * Don't share if it is not sharable or locking attempt timed =
-out
-> +	 * after 10ms. After 256 timeouts, PMD sharing will be =
-permanently
-> +	 * disabled as it is just too slow.
+strange.
 
-It looks like this kind of policy interacts with kernel debug options =
-like KASAN (which is going to slow the system down
-anyway) could introduce tricky issues due to different timings on a =
-debug kernel.
+This is the 5.3-rc8 stacktrace:
+https://lore.kernel.org/linux-mm/d07620d9-4967-40fe-fa0f-be51f2459dc5@profihost.ag/
 
-> +	 */
-> +	if (!vma_shareable(vma, addr) ||
-> +	   (atomic_read(&timeout_cnt) >=3D PMD_SHARE_DISABLE_THRESHOLD))
-> +		goto out_no_share;
-> +
-> +	if (!i_mmap_timedlock_write(mapping, ms_to_ktime(10))) {
-> +		if (atomic_inc_return(&timeout_cnt) =3D=3D
-> +		    PMD_SHARE_DISABLE_THRESHOLD)
-> +			pr_info("Hugetlbfs PMD sharing disabled because =
-of timeouts!\n");
-> +		goto out_no_share;
-> +	}
->=20
-> -	i_mmap_lock_write(mapping);
-> 	vma_interval_tree_foreach(svma, &mapping->i_mmap, idx, idx) {
-> 		if (svma =3D=3D vma)
-> 			continue;
-> @@ -4806,6 +4821,9 @@ pte_t *huge_pmd_share(struct mm_struct *mm, =
-unsigned long addr, pud_t *pud)
-> 	pte =3D (pte_t *)pmd_alloc(mm, pud, addr);
-> 	i_mmap_unlock_write(mapping);
-> 	return pte;
-> +
-> +out_no_share:
-> +	return (pte_t *)pmd_alloc(mm, pud, addr);
-> }
->=20
-> /*
-> --=20
-> 2.18.1
->=20
->=20
+and this the 5.2.14:
+https://lore.kernel.org/linux-mm/289fbe71-0472-520f-64e2-b6d07ced5436@profihost.ag/
 
+Greets,
+Stefan
+
+>>
+>> Stefan
+>>
+>>> Am 11.09.2019 um 16:56 schrieb Filipe Manana <fdmanana@kernel.org>:
+>>>
+>>>> On Wed, Sep 11, 2019 at 8:10 AM Michal Hocko <mhocko@kernel.org> wrote:
+>>>>
+>>>> This smells like IO/Btrfs issue to me. Cc some more people.
+>>>>
+>>>>> On Wed 11-09-19 08:12:28, Stefan Priebe - Profihost AG wrote:
+>>>>> [...]
+>>>>> Sadly i'm running into issues with btrfs on 5.3-rc8 - the rsync process
+>>>>> on backup disk completely hangs / is blocked at 100% i/o:
+>>>>> [54739.065906] INFO: task rsync:9830 blocked for more than 120 seconds.
+>>>>> [54739.066973]       Not tainted 5.3.0-rc8 #1
+>>>>> [54739.067988] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [54739.069065] rsync           D    0  9830   9829 0x00004002
+>>>>> [54739.070146] Call Trace:
+>>>>> [54739.071183]  ? __schedule+0x3cf/0x680
+>>>>> [54739.072202]  ? bit_wait+0x50/0x50
+>>>>> [54739.073196]  schedule+0x39/0xa0
+>>>>> [54739.074213]  io_schedule+0x12/0x40
+>>>>> [54739.075219]  bit_wait_io+0xd/0x50
+>>>>> [54739.076227]  __wait_on_bit+0x66/0x90
+>>>>> [54739.077239]  ? bit_wait+0x50/0x50
+>>>>> [54739.078273]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [54739.078741]  ? init_wait_var_entry+0x40/0x40
+>>>>> [54739.079162]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [54739.079557]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [54739.079956]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [54739.080357]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [54739.080748]  do_writepages+0x1a/0x60
+>>>>> [54739.081140]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [54739.081558]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [54739.081985]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [54739.082412]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [54739.082847]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [54739.083280]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [54739.083725]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [54739.084170]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [54739.084608]  ? retarget_shared_pending+0x70/0x70
+>>>>> [54739.085049]  do_fsync+0x38/0x60
+>>>>> [54739.085494]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [54739.085944]  do_syscall_64+0x55/0x1a0
+>>>>> [54739.086395]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [54739.086850] RIP: 0033:0x7f1db3fc85f0
+>>>>> [54739.087310] Code: Bad RIP value.
+>>>
+>>> It's a regression introduced in 5.2
+>>> Fix just sent: https://lore.kernel.org/linux-btrfs/20190911145542.1125-1-fdmanana@kernel.org/T/#u
+>>>
+>>> Thanks.
+>>>
+>>>>> [54739.087772] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [54739.088249] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [54739.088733] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [54739.089234] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [54739.089722] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [54739.090205] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>> [54859.899715] INFO: task rsync:9830 blocked for more than 241 seconds.
+>>>>> [54859.900863]       Not tainted 5.3.0-rc8 #1
+>>>>> [54859.901885] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [54859.902909] rsync           D    0  9830   9829 0x00004002
+>>>>> [54859.903930] Call Trace:
+>>>>> [54859.904888]  ? __schedule+0x3cf/0x680
+>>>>> [54859.905831]  ? bit_wait+0x50/0x50
+>>>>> [54859.906751]  schedule+0x39/0xa0
+>>>>> [54859.907653]  io_schedule+0x12/0x40
+>>>>> [54859.908535]  bit_wait_io+0xd/0x50
+>>>>> [54859.909441]  __wait_on_bit+0x66/0x90
+>>>>> [54859.910306]  ? bit_wait+0x50/0x50
+>>>>> [54859.911177]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [54859.912043]  ? init_wait_var_entry+0x40/0x40
+>>>>> [54859.912727]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [54859.913113]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [54859.913501]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [54859.913894]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [54859.914276]  do_writepages+0x1a/0x60
+>>>>> [54859.914656]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [54859.915052]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [54859.915449]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [54859.915855]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [54859.916256]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [54859.916658]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [54859.917078]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [54859.917497]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [54859.917903]  ? retarget_shared_pending+0x70/0x70
+>>>>> [54859.918307]  do_fsync+0x38/0x60
+>>>>> [54859.918707]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [54859.919106]  do_syscall_64+0x55/0x1a0
+>>>>> [54859.919482]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [54859.919866] RIP: 0033:0x7f1db3fc85f0
+>>>>> [54859.920243] Code: Bad RIP value.
+>>>>> [54859.920614] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [54859.920997] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [54859.921383] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [54859.921773] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [54859.922165] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [54859.922551] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>> [54980.733463] INFO: task rsync:9830 blocked for more than 362 seconds.
+>>>>> [54980.734061]       Not tainted 5.3.0-rc8 #1
+>>>>> [54980.734619] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [54980.735209] rsync           D    0  9830   9829 0x00004002
+>>>>> [54980.735802] Call Trace:
+>>>>> [54980.736473]  ? __schedule+0x3cf/0x680
+>>>>> [54980.737054]  ? bit_wait+0x50/0x50
+>>>>> [54980.737664]  schedule+0x39/0xa0
+>>>>> [54980.738243]  io_schedule+0x12/0x40
+>>>>> [54980.738712]  bit_wait_io+0xd/0x50
+>>>>> [54980.739171]  __wait_on_bit+0x66/0x90
+>>>>> [54980.739623]  ? bit_wait+0x50/0x50
+>>>>> [54980.740073]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [54980.740548]  ? init_wait_var_entry+0x40/0x40
+>>>>> [54980.741033]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [54980.741579]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [54980.742076]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [54980.742560]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [54980.743045]  do_writepages+0x1a/0x60
+>>>>> [54980.743516]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [54980.744019]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [54980.744513]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [54980.745026]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [54980.745563]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [54980.746073]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [54980.746575]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [54980.747074]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [54980.747575]  ? retarget_shared_pending+0x70/0x70
+>>>>> [54980.748059]  do_fsync+0x38/0x60
+>>>>> [54980.748539]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [54980.749012]  do_syscall_64+0x55/0x1a0
+>>>>> [54980.749512]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [54980.749995] RIP: 0033:0x7f1db3fc85f0
+>>>>> [54980.750368] Code: Bad RIP value.
+>>>>> [54980.750735] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [54980.751117] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [54980.751505] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [54980.751895] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [54980.752291] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [54980.752680] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>> [55101.567251] INFO: task rsync:9830 blocked for more than 483 seconds.
+>>>>> [55101.567775]       Not tainted 5.3.0-rc8 #1
+>>>>> [55101.568218] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [55101.568649] rsync           D    0  9830   9829 0x00004002
+>>>>> [55101.569101] Call Trace:
+>>>>> [55101.569609]  ? __schedule+0x3cf/0x680
+>>>>> [55101.570052]  ? bit_wait+0x50/0x50
+>>>>> [55101.570504]  schedule+0x39/0xa0
+>>>>> [55101.570938]  io_schedule+0x12/0x40
+>>>>> [55101.571404]  bit_wait_io+0xd/0x50
+>>>>> [55101.571934]  __wait_on_bit+0x66/0x90
+>>>>> [55101.572601]  ? bit_wait+0x50/0x50
+>>>>> [55101.573235]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [55101.573599]  ? init_wait_var_entry+0x40/0x40
+>>>>> [55101.574008]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [55101.574394]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [55101.574783]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [55101.575184]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [55101.575580]  do_writepages+0x1a/0x60
+>>>>> [55101.575959]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [55101.576351]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [55101.576746]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [55101.577144]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [55101.577543]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55101.577939]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55101.578343]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [55101.578746]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [55101.579139]  ? retarget_shared_pending+0x70/0x70
+>>>>> [55101.579543]  do_fsync+0x38/0x60
+>>>>> [55101.579928]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [55101.580312]  do_syscall_64+0x55/0x1a0
+>>>>> [55101.580706]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [55101.581086] RIP: 0033:0x7f1db3fc85f0
+>>>>> [55101.581463] Code: Bad RIP value.
+>>>>> [55101.581834] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [55101.582219] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [55101.582607] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [55101.582998] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [55101.583397] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [55101.583784] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>> [55222.405056] INFO: task rsync:9830 blocked for more than 604 seconds.
+>>>>> [55222.405773]       Not tainted 5.3.0-rc8 #1
+>>>>> [55222.406456] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [55222.407158] rsync           D    0  9830   9829 0x00004002
+>>>>> [55222.407776] Call Trace:
+>>>>> [55222.408450]  ? __schedule+0x3cf/0x680
+>>>>> [55222.409206]  ? bit_wait+0x50/0x50
+>>>>> [55222.409942]  schedule+0x39/0xa0
+>>>>> [55222.410658]  io_schedule+0x12/0x40
+>>>>> [55222.411346]  bit_wait_io+0xd/0x50
+>>>>> [55222.411946]  __wait_on_bit+0x66/0x90
+>>>>> [55222.412572]  ? bit_wait+0x50/0x50
+>>>>> [55222.413249]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [55222.413944]  ? init_wait_var_entry+0x40/0x40
+>>>>> [55222.414675]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [55222.415362]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [55222.416085]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [55222.416796]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [55222.417505]  do_writepages+0x1a/0x60
+>>>>> [55222.418243]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [55222.418969]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [55222.419713]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [55222.420453]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [55222.421206]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55222.421925]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55222.422656]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [55222.423400]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [55222.424140]  ? retarget_shared_pending+0x70/0x70
+>>>>> [55222.424861]  do_fsync+0x38/0x60
+>>>>> [55222.425581]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [55222.426308]  do_syscall_64+0x55/0x1a0
+>>>>> [55222.427025]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [55222.427732] RIP: 0033:0x7f1db3fc85f0
+>>>>> [55222.428396] Code: Bad RIP value.
+>>>>> [55222.429087] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [55222.429757] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [55222.430451] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [55222.431159] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [55222.431856] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [55222.432544] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>> [55343.234863] INFO: task rsync:9830 blocked for more than 724 seconds.
+>>>>> [55343.235887]       Not tainted 5.3.0-rc8 #1
+>>>>> [55343.236611] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [55343.237213] rsync           D    0  9830   9829 0x00004002
+>>>>> [55343.237766] Call Trace:
+>>>>> [55343.238353]  ? __schedule+0x3cf/0x680
+>>>>> [55343.238971]  ? bit_wait+0x50/0x50
+>>>>> [55343.239592]  schedule+0x39/0xa0
+>>>>> [55343.240173]  io_schedule+0x12/0x40
+>>>>> [55343.240721]  bit_wait_io+0xd/0x50
+>>>>> [55343.241266]  __wait_on_bit+0x66/0x90
+>>>>> [55343.241835]  ? bit_wait+0x50/0x50
+>>>>> [55343.242418]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [55343.242938]  ? init_wait_var_entry+0x40/0x40
+>>>>> [55343.243496]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [55343.244090]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [55343.244720]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [55343.245296]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [55343.245843]  do_writepages+0x1a/0x60
+>>>>> [55343.246407]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [55343.247014]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [55343.247631]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [55343.248186]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [55343.248743]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55343.249326]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55343.249931]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [55343.250562]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [55343.251139]  ? retarget_shared_pending+0x70/0x70
+>>>>> [55343.251628]  do_fsync+0x38/0x60
+>>>>> [55343.252208]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [55343.252702]  do_syscall_64+0x55/0x1a0
+>>>>> [55343.253212]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [55343.253798] RIP: 0033:0x7f1db3fc85f0
+>>>>> [55343.254294] Code: Bad RIP value.
+>>>>> [55343.254821] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [55343.255404] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [55343.255989] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [55343.256521] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [55343.257073] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [55343.257649] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>> [55464.068704] INFO: task rsync:9830 blocked for more than 845 seconds.
+>>>>> [55464.069701]       Not tainted 5.3.0-rc8 #1
+>>>>> [55464.070655] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [55464.071637] rsync           D    0  9830   9829 0x00004002
+>>>>> [55464.072637] Call Trace:
+>>>>> [55464.073623]  ? __schedule+0x3cf/0x680
+>>>>> [55464.074604]  ? bit_wait+0x50/0x50
+>>>>> [55464.075577]  schedule+0x39/0xa0
+>>>>> [55464.076531]  io_schedule+0x12/0x40
+>>>>> [55464.077480]  bit_wait_io+0xd/0x50
+>>>>> [55464.078400]  __wait_on_bit+0x66/0x90
+>>>>> [55464.079300]  ? bit_wait+0x50/0x50
+>>>>> [55464.080184]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [55464.081107]  ? init_wait_var_entry+0x40/0x40
+>>>>> [55464.082047]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [55464.083001]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [55464.083963]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [55464.084944]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [55464.085456]  do_writepages+0x1a/0x60
+>>>>> [55464.085840]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [55464.086231]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [55464.086625]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [55464.087019]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [55464.087417]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55464.087814]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55464.088219]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [55464.088652]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [55464.089043]  ? retarget_shared_pending+0x70/0x70
+>>>>> [55464.089429]  do_fsync+0x38/0x60
+>>>>> [55464.089811]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [55464.090190]  do_syscall_64+0x55/0x1a0
+>>>>> [55464.090568]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [55464.090944] RIP: 0033:0x7f1db3fc85f0
+>>>>> [55464.091321] Code: Bad RIP value.
+>>>>> [55464.091693] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [55464.092078] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [55464.092467] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [55464.092863] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [55464.093254] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [55464.093643] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>> [55584.902564] INFO: task rsync:9830 blocked for more than 966 seconds.
+>>>>> [55584.903748]       Not tainted 5.3.0-rc8 #1
+>>>>> [55584.904868] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [55584.906023] rsync           D    0  9830   9829 0x00004002
+>>>>> [55584.907207] Call Trace:
+>>>>> [55584.908355]  ? __schedule+0x3cf/0x680
+>>>>> [55584.909507]  ? bit_wait+0x50/0x50
+>>>>> [55584.910682]  schedule+0x39/0xa0
+>>>>> [55584.911230]  io_schedule+0x12/0x40
+>>>>> [55584.911666]  bit_wait_io+0xd/0x50
+>>>>> [55584.912092]  __wait_on_bit+0x66/0x90
+>>>>> [55584.912510]  ? bit_wait+0x50/0x50
+>>>>> [55584.912924]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [55584.913343]  ? init_wait_var_entry+0x40/0x40
+>>>>> [55584.913795]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [55584.914242]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [55584.914698]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [55584.915152]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [55584.915588]  do_writepages+0x1a/0x60
+>>>>> [55584.916022]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [55584.916474]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [55584.916928]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [55584.917386]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [55584.917844]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55584.918300]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55584.918772]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [55584.919233]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [55584.919679]  ? retarget_shared_pending+0x70/0x70
+>>>>> [55584.920122]  do_fsync+0x38/0x60
+>>>>> [55584.920559]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [55584.920996]  do_syscall_64+0x55/0x1a0
+>>>>> [55584.921429]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [55584.921865] RIP: 0033:0x7f1db3fc85f0
+>>>>> [55584.922298] Code: Bad RIP value.
+>>>>> [55584.922734] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [55584.923174] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [55584.923568] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [55584.923982] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [55584.924378] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [55584.924774] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>> [55705.736285] INFO: task rsync:9830 blocked for more than 1087 seconds.
+>>>>> [55705.736999]       Not tainted 5.3.0-rc8 #1
+>>>>> [55705.737694] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [55705.738411] rsync           D    0  9830   9829 0x00004002
+>>>>> [55705.739072] Call Trace:
+>>>>> [55705.739455]  ? __schedule+0x3cf/0x680
+>>>>> [55705.739837]  ? bit_wait+0x50/0x50
+>>>>> [55705.740215]  schedule+0x39/0xa0
+>>>>> [55705.740610]  io_schedule+0x12/0x40
+>>>>> [55705.741243]  bit_wait_io+0xd/0x50
+>>>>> [55705.741897]  __wait_on_bit+0x66/0x90
+>>>>> [55705.742524]  ? bit_wait+0x50/0x50
+>>>>> [55705.743131]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [55705.743750]  ? init_wait_var_entry+0x40/0x40
+>>>>> [55705.744128]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [55705.744766]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [55705.745440]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [55705.746118]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [55705.746753]  do_writepages+0x1a/0x60
+>>>>> [55705.747411]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [55705.748106]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [55705.748807]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [55705.749495]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [55705.750190]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55705.750890]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55705.751580]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [55705.752293]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [55705.752981]  ? retarget_shared_pending+0x70/0x70
+>>>>> [55705.753686]  do_fsync+0x38/0x60
+>>>>> [55705.754340]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [55705.755012]  do_syscall_64+0x55/0x1a0
+>>>>> [55705.755678]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [55705.756375] RIP: 0033:0x7f1db3fc85f0
+>>>>> [55705.757042] Code: Bad RIP value.
+>>>>> [55705.757690] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [55705.758300] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [55705.758678] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [55705.759107] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [55705.759785] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [55705.760471] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>> [55826.570182] INFO: task rsync:9830 blocked for more than 1208 seconds.
+>>>>> [55826.571349]       Not tainted 5.3.0-rc8 #1
+>>>>> [55826.572469] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>>>> disables this message.
+>>>>> [55826.573618] rsync           D    0  9830   9829 0x00004002
+>>>>> [55826.574790] Call Trace:
+>>>>> [55826.575932]  ? __schedule+0x3cf/0x680
+>>>>> [55826.577079]  ? bit_wait+0x50/0x50
+>>>>> [55826.578233]  schedule+0x39/0xa0
+>>>>> [55826.579350]  io_schedule+0x12/0x40
+>>>>> [55826.580451]  bit_wait_io+0xd/0x50
+>>>>> [55826.581527]  __wait_on_bit+0x66/0x90
+>>>>> [55826.582596]  ? bit_wait+0x50/0x50
+>>>>> [55826.583178]  out_of_line_wait_on_bit+0x8b/0xb0
+>>>>> [55826.583550]  ? init_wait_var_entry+0x40/0x40
+>>>>> [55826.583953]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
+>>>>> [55826.584356]  btree_write_cache_pages+0x17d/0x350 [btrfs]
+>>>>> [55826.584755]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
+>>>>> [55826.585155]  ? merge_state.part.47+0x3f/0x160 [btrfs]
+>>>>> [55826.585547]  do_writepages+0x1a/0x60
+>>>>> [55826.585937]  __filemap_fdatawrite_range+0xc8/0x100
+>>>>> [55826.586352]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
+>>>>> [55826.586761]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
+>>>>> [55826.587171]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
+>>>>> [55826.587581]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55826.587990]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
+>>>>> [55826.588406]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
+>>>>> [55826.588818]  btrfs_sync_file+0x395/0x3e0 [btrfs]
+>>>>> [55826.589219]  ? retarget_shared_pending+0x70/0x70
+>>>>> [55826.589617]  do_fsync+0x38/0x60
+>>>>> [55826.590011]  __x64_sys_fdatasync+0x13/0x20
+>>>>> [55826.590411]  do_syscall_64+0x55/0x1a0
+>>>>> [55826.590798]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> [55826.591185] RIP: 0033:0x7f1db3fc85f0
+>>>>> [55826.591572] Code: Bad RIP value.
+>>>>> [55826.591952] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
+>>>>> 000000000000004b
+>>>>> [55826.592347] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+>>>>> 00007f1db3fc85f0
+>>>>> [55826.592743] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
+>>>>> 0000000000000001
+>>>>> [55826.593143] RBP: 0000000000000001 R08: 0000000000000000 R09:
+>>>>> 0000000081c492ca
+>>>>> [55826.593543] R10: 0000000000000008 R11: 0000000000000246 R12:
+>>>>> 0000000000000028
+>>>>> [55826.593941] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
+>>>>> 0000000000000000
+>>>>>
+>>>>>
+>>>>> Greets,
+>>>>> Stefan
+>>>>
+>>>> --
+>>>> Michal Hocko
+>>>> SUSE Labs
+>>
