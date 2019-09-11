@@ -2,183 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D0DBAF920
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 11:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D182AFA26
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 12:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbfIKJjc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 05:39:32 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:43853 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726657AbfIKJjb (ORCPT
+        id S1726842AbfIKKPg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 06:15:36 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34225 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfIKKPf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Sep 2019 05:39:31 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 80E0B614;
-        Wed, 11 Sep 2019 05:39:29 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 11 Sep 2019 05:39:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=mvzKeifSnTSILTn0qraq+rN4Cry
-        GTOsIEYJQEQ6OnYg=; b=mtiyobYXM4j9EFSIKWpelWpgZOm+amyEdDeS0EUXrQI
-        Dr0Gjx7szmVtnduulUVe3O6G9B/UhKhaeTGAU24JR8WcsrwcdUfodTMHaj+pj++b
-        JxqwoCNsMr4xy3pxI6ewV6CcL2UbOFSEBRgxQv90tZqs6Bqln4/D7Zl8jXpyjki3
-        iZIaoGsBbkcWJbdo/wlOnO+k2OrkprPrRM6TZqlqvKNeUrC0X4GIV7fwr0LYlkrB
-        eybjaBdLKN4LXUJQY6nhVPvF0cP0VOACC1LgVeII6B0YqSvVFgwsfqvh0Vy1/Hr+
-        qiTFfwY4QjLy3hkLKplwva/42/wK9CCTaZ2r/cLROTA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=mvzKei
-        fSnTSILTn0qraq+rN4CryGTOsIEYJQEQ6OnYg=; b=k5SckXFxB6PoUTEitBhdke
-        SomEjIEWYKhC9eJGnnHcLsihzDA6TTEPgFNZxqdrbW0LQ7g5IJVRoLT0nHfSMunH
-        YHB0yZzjViLeZXMx7HVyNyK3QD0LvjInmNX0KJ0Y1MjRL5HBkNu0sd28Kwq3aJC6
-        ReUfbuvPshNdoCpzAeh7zV/O61lWLHUtx1Jw+7NKlda7PE/brwHXFG4jUooiHJAm
-        wGaBut55D2tCZ/ky0okQNzJZXVSDO/ENtn4Edn+rrxQLp8miV4T8a0xqvLOtsuc3
-        0Q9IRtnvSHs106V5mK+ujB3P2U0jwcs4EiKqX/T8Bv1yC3VpqLr0f4AEHLqoDj4g
-        ==
-X-ME-Sender: <xms:0MB4XcggKqjOEYVJZd9qevP_wUbxPncN_tBAWi6-Fg0PqZClExk1ww>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrtddvgddujecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
-    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecukfhppeduge
-    ekrdeiledrkeehrdefkeenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegr
-    nhgrrhgriigvlhdruggvnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:0MB4XRpJpoY7c-KRT-ghH_eG4kEn_6fgDEkd0OK8br23501TAjiBSw>
-    <xmx:0MB4XVGmwottXAZ-O2b07rrASsS8h2xpuOWgU6TE044_p6rIXVcopA>
-    <xmx:0MB4XZPdbMNAKKH1rn1JYLUGjXKSbhslMId2-QvU1f7ug0CD0uthzQ>
-    <xmx:0cB4XfDWFcyGBy2d-xOSQdZbxxMjaKqwUXHgqpQHGNcAAkWhylQ-MA>
-Received: from intern.anarazel.de (unknown [148.69.85.38])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2563CD60062;
-        Wed, 11 Sep 2019 05:39:28 -0400 (EDT)
-Date:   Wed, 11 Sep 2019 02:39:26 -0700
-From:   Andres Freund <andres@anarazel.de>
-To:     Dave Chinner <david@fromorbit.com>, David Sterba <dsterba@suse.com>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel@vger.kernel.org, jack@suse.com, hch@infradead.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: Odd locking pattern introduced as part of "nowait aio support"
-Message-ID: <20190911093926.pfkkx25mffzeuo32@alap3.anarazel.de>
-References: <20190910223327.mnegfoggopwqqy33@alap3.anarazel.de>
- <20190911040420.GB27547@dread.disaster.area>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190911040420.GB27547@dread.disaster.area>
+        Wed, 11 Sep 2019 06:15:35 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n9so11310412pgc.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2019 03:15:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Ry6ajNyh/0breEuSmOCiSm0eNBsSiDuEaP8SmdpUUzc=;
+        b=Oukg04IOcUy2wnwFY26GN4KWkFD+d0n5/lB3hX8vPM/LTjYeErPlk9SVO9i9YGwVHb
+         tW4B7stJ8XVsWrgUDGJhftn7xcjWR9No9P4kUinMD48icVHrrZglDlV8gGhlqtFuXZ8w
+         zjv2kvKAMQ7mJNLMa3a68ihmBI91DfK5KNsSayyrI8LoxVaNt1R7e+Ox5ZZPFIXbuUbS
+         FUXTePhLlHbC6CtQNFHcXzvTpcln7NqXKHrIaRj8NndiNYTgsBjixI+XnmjEXurVs38j
+         CaQgFqZTq3njSRiyoMC0nKbnWrysK4tYLrQOkoo1dA9qPTUSolTPgDiIEV+Zm+2PS4fF
+         YImA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ry6ajNyh/0breEuSmOCiSm0eNBsSiDuEaP8SmdpUUzc=;
+        b=gZb9/T7BSNIn8jcXHvyW+05If6HdRCPjWrZhTMbagaVC9cTz1Vpr1ZJcrFc3JA/QJH
+         eZuOcNUfqMb4gCKkWXTXf503IWaiOxVvq2V47WvDVNYVxi3hQLvhe9dvN6QFMKfzk8Iv
+         nEKvcMei/PRXtD1GMplXWDua1iaAmxlv8Ev9Yn58kXhMrcj3wYW2SILAcZ0MjVo8ghVK
+         sq7UlWGjZGn8woutmBgjyvSvkOT+iSfnK/Im36e3dFO9sPJGFZSQlZ4FenSUMyV6DGn+
+         IhplF/ILb9nHh9NIQ1AkWjfxQskVW15hGaTVxLg6Q7uETB2JVTuK7oAS8Vnp+ZaSZ/pn
+         AbLg==
+X-Gm-Message-State: APjAAAWKEK59ENkCUsI+AoexReNPWn+1PvGFvuElUKIbEPKF/dVjE4+C
+        kgJOcPQOQc6irgQVgsCmO43IDysT8kQgWA==
+X-Google-Smtp-Source: APXvYqwDZ7D+ztZV+TWyz7L4vdxY16DmjH+mf9ujAX3+LAOrqPN/CaCnpN7Z49J1EFuMGYfVUHTjqQ==
+X-Received: by 2002:a17:90a:1502:: with SMTP id l2mr4601245pja.140.1568196934856;
+        Wed, 11 Sep 2019 03:15:34 -0700 (PDT)
+Received: from india11.lab ([205.234.21.5])
+        by smtp.gmail.com with ESMTPSA id v10sm2098913pjk.23.2019.09.11.03.15.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 11 Sep 2019 03:15:34 -0700 (PDT)
+From:   Chakra Divi <chakragithub@gmail.com>
+To:     linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Chakra Divi <chakragithub@gmail.com>
+Subject: [PATCH] fuse:send filep uid as part of fuse write req
+Date:   Wed, 11 Sep 2019 10:15:17 +0000
+Message-Id: <1568196917-25674-1-git-send-email-chakragithub@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+In current code in fuse write request current_fsuid is sent,
+however this creates an issue in sudo execution context.
+Changes to consider uid and gid from file struture pointer
+that is created as part of open file instead of current_fsuid,gid
 
-On 2019-09-11 14:04:20 +1000, Dave Chinner wrote:
-> On Tue, Sep 10, 2019 at 03:33:27PM -0700, Andres Freund wrote:
-> > Hi,
-> > 
-> > Especially with buffered io it's fairly easy to hit contention on the
-> > inode lock, during writes. With something like io_uring, it's even
-> > easier, because it currently (but see [1]) farms out buffered writes to
-> > workers, which then can easily contend on the inode lock, even if only
-> > one process submits writes.  But I've seen it in plenty other cases too.
-> > 
-> > Looking at the code I noticed that several parts of the "nowait aio
-> > support" (cf 728fbc0e10b7f3) series introduced code like:
-> > 
-> > static ssize_t
-> > ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> > {
-> > ...
-> > 	if (!inode_trylock(inode)) {
-> > 		if (iocb->ki_flags & IOCB_NOWAIT)
-> > 			return -EAGAIN;
-> > 		inode_lock(inode);
-> > 	}
-> 
-> The ext4 code is just buggy here - we don't support RWF_NOWAIT on
-> buffered writes.
+Steps to reproduce the issue:
+1) create user1 and user2
+2) create a file1 with user1 on fusemount
+3) change the file1 permissions to 600
+4) execute the following command
+user1@linux# sudo -u user2 whoami >> /fusemnt/file1
+Here write fails with permission denied error
 
-But both buffered and non-buffered writes go through
-ext4_file_write_iter(). And there's a preceding check, at least these
-days, preventing IOCB_NOWAIT to apply to buffered writes:
+on nfs and ext4 - above use case is working, but on fuse
+its failing
 
-	if (!o_direct && (iocb->ki_flags & IOCB_NOWAIT))
-		return -EOPNOTSUPP;
+Signed-off-by: Chakra Divi <chakragithub@gmail.com>
+---
+ fs/fuse/file.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 5ae2828..e1d223c 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1134,6 +1134,7 @@ static ssize_t fuse_perform_write(struct kiocb *iocb,
+ 	struct inode *inode = mapping->host;
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
++	struct file *file = iocb->ki_filp;
+ 	int err = 0;
+ 	ssize_t res = 0;
+ 
+@@ -1150,6 +1151,9 @@ static ssize_t fuse_perform_write(struct kiocb *iocb,
+ 		if (IS_ERR(req)) {
+ 			err = PTR_ERR(req);
+ 			break;
++		} else {
++			req->in.h.uid = file->f_cred->uid.val;
++			req->in.h.gid = file->f_cred->gid.val;
+ 		}
+ 
+ 		count = fuse_fill_write_pages(req, mapping, ii, pos);
+-- 
+2.7.4
 
-I do really wish buffered NOWAIT was supported... The overhead of having
-to do async buffered writes through the workqueue in io_uring, even if
-an already existing page is targeted, is quite noticable. Even if it
-failed with EAGAIN as soon as the buffered write's target isn't in the
-page cache, it'd be worthwhile.
-
-
-> > isn't trylocking and then locking in a blocking fashion an inefficient
-> > pattern? I.e. I think this should be
-> > 
-> > 	if (iocb->ki_flags & IOCB_NOWAIT) {
-> > 		if (!inode_trylock(inode))
-> > 			return -EAGAIN;
-> > 	}
-> >         else
-> >         	inode_lock(inode);
-> 
-> Yes, you are right.
-> 
-> History: commit 91f9943e1c7b ("fs: support RWF_NOWAIT
-> for buffered reads") which introduced the first locking pattern
-> you describe in XFS.
-
-Seems, as part of the nowait work, the pattern was introduced in ext4,
-xfs and btrfs. And fixed in xfs.
-
-
-> That was followed soon after by:
-> 
-> commit 942491c9e6d631c012f3c4ea8e7777b0b02edeab
-> Author: Christoph Hellwig <hch@lst.de>
-> Date:   Mon Oct 23 18:31:50 2017 -0700
-> 
->     xfs: fix AIM7 regression
->     
->     Apparently our current rwsem code doesn't like doing the trylock, then
->     lock for real scheme.  So change our read/write methods to just do the
->     trylock for the RWF_NOWAIT case.  This fixes a ~25% regression in
->     AIM7.
->     
->     Fixes: 91f9943e ("fs: support RWF_NOWAIT for buffered reads")
->     Reported-by: kernel test robot <xiaolong.ye@intel.com>
->     Signed-off-by: Christoph Hellwig <hch@lst.de>
->     Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
->     Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> 
-> Which changed all the trylock/eagain/lock patterns to the second
-> form you quote. None of the other filesystems had AIM7 regressions
-> reported against them, so nobody changed them....
-
-:(
-
-
-> > Obviously this isn't going to improve scalability to a very significant
-> > degree. But not unnecessarily doing two atomic ops on a contended lock
-> > can't hurt scalability either. Also, the current code just seems
-> > confusing.
-> > 
-> > Am I missing something?
-> 
-> Just that the sort of performance regression testing that uncovers
-> this sort of thing isn't widely done, and most filesystems are
-> concurrency limited in some way before they hit inode lock
-> scalability issues. Hence filesystem concurrency foccussed
-> benchmarks that could uncover it (like aim7) won't because the inode
-> locks don't end up stressed enough to make a difference to
-> benchmark performance.
-
-Ok.  Goldwyn, do you want to write a patch, or do you want me to write
-one up?
-
-
-Greetings,
-
-Andres Freund
