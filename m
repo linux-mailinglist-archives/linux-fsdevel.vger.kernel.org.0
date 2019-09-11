@@ -2,531 +2,549 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A06B8AF66E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 09:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC00AF772
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 10:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfIKHJ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 03:09:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50660 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726761AbfIKHJ6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Sep 2019 03:09:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 82E37AC19;
-        Wed, 11 Sep 2019 07:09:52 +0000 (UTC)
-Date:   Wed, 11 Sep 2019 09:09:51 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>, l.roehrs@profihost.ag,
-        cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Subject: 5.3-rc-8 hung task in IO (was: Re: lot of MemAvailable but falling
- cache and raising PSI)
-Message-ID: <20190911070951.GL4023@dhcp22.suse.cz>
-References: <132e1fd0-c392-c158-8f3a-20e340e542f0@profihost.ag>
- <20190910090241.GM2063@dhcp22.suse.cz>
- <743a047e-a46f-32fa-1fe4-a9bd8f09ed87@profihost.ag>
- <20190910110741.GR2063@dhcp22.suse.cz>
- <364d4c2e-9c9a-d8b3-43a8-aa17cccae9c7@profihost.ag>
- <20190910125756.GB2063@dhcp22.suse.cz>
- <d7448f13-899a-5805-bd36-8922fa17b8a9@profihost.ag>
- <b1fe902f-fce6-1aa9-f371-ceffdad85968@profihost.ag>
- <20190910132418.GC2063@dhcp22.suse.cz>
- <d07620d9-4967-40fe-fa0f-be51f2459dc5@profihost.ag>
+        id S1727158AbfIKIJM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 04:09:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13300 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727151AbfIKIJL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Sep 2019 04:09:11 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8B88ISl070251
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2019 04:09:10 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uxc00dgfq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Sep 2019 04:09:08 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Wed, 11 Sep 2019 09:09:00 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Sep 2019 09:08:56 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8B88VDt38207962
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 08:08:31 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9E57D4C040;
+        Wed, 11 Sep 2019 08:08:55 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 43B954C04E;
+        Wed, 11 Sep 2019 08:08:53 +0000 (GMT)
+Received: from [9.199.159.54] (unknown [9.199.159.54])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Sep 2019 08:08:53 +0000 (GMT)
+Subject: Re: [PATCH v2 5/6] ext4: introduce direct IO write path using iomap
+ infrastructure
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>, tytso@mit.edu,
+        jack@suse.cz, adilger.kernel@dilger.ca
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
+References: <cover.1567978633.git.mbobrowski@mbobrowski.org>
+ <7c2f0ee02b2659d5a45f3e30dbee66b443b5ea0a.1567978633.git.mbobrowski@mbobrowski.org>
+ <20190909092617.07ECB42041@d06av24.portsmouth.uk.ibm.com>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Wed, 11 Sep 2019 13:38:52 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d07620d9-4967-40fe-fa0f-be51f2459dc5@profihost.ag>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190909092617.07ECB42041@d06av24.portsmouth.uk.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19091108-0020-0000-0000-0000036AEBCD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19091108-0021-0000-0000-000021C076D0
+Message-Id: <20190911080853.43B954C04E@d06av22.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-11_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909110076
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This smells like IO/Btrfs issue to me. Cc some more people.
+Hello,
 
-On Wed 11-09-19 08:12:28, Stefan Priebe - Profihost AG wrote:
-[...]
-> Sadly i'm running into issues with btrfs on 5.3-rc8 - the rsync process
-> on backup disk completely hangs / is blocked at 100% i/o:
-> [54739.065906] INFO: task rsync:9830 blocked for more than 120 seconds.
-> [54739.066973]       Not tainted 5.3.0-rc8 #1
-> [54739.067988] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [54739.069065] rsync           D    0  9830   9829 0x00004002
-> [54739.070146] Call Trace:
-> [54739.071183]  ? __schedule+0x3cf/0x680
-> [54739.072202]  ? bit_wait+0x50/0x50
-> [54739.073196]  schedule+0x39/0xa0
-> [54739.074213]  io_schedule+0x12/0x40
-> [54739.075219]  bit_wait_io+0xd/0x50
-> [54739.076227]  __wait_on_bit+0x66/0x90
-> [54739.077239]  ? bit_wait+0x50/0x50
-> [54739.078273]  out_of_line_wait_on_bit+0x8b/0xb0
-> [54739.078741]  ? init_wait_var_entry+0x40/0x40
-> [54739.079162]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [54739.079557]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [54739.079956]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [54739.080357]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [54739.080748]  do_writepages+0x1a/0x60
-> [54739.081140]  __filemap_fdatawrite_range+0xc8/0x100
-> [54739.081558]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [54739.081985]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [54739.082412]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [54739.082847]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [54739.083280]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [54739.083725]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [54739.084170]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [54739.084608]  ? retarget_shared_pending+0x70/0x70
-> [54739.085049]  do_fsync+0x38/0x60
-> [54739.085494]  __x64_sys_fdatasync+0x13/0x20
-> [54739.085944]  do_syscall_64+0x55/0x1a0
-> [54739.086395]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [54739.086850] RIP: 0033:0x7f1db3fc85f0
-> [54739.087310] Code: Bad RIP value.
-> [54739.087772] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [54739.088249] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [54739.088733] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [54739.089234] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [54739.089722] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [54739.090205] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
-> [54859.899715] INFO: task rsync:9830 blocked for more than 241 seconds.
-> [54859.900863]       Not tainted 5.3.0-rc8 #1
-> [54859.901885] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [54859.902909] rsync           D    0  9830   9829 0x00004002
-> [54859.903930] Call Trace:
-> [54859.904888]  ? __schedule+0x3cf/0x680
-> [54859.905831]  ? bit_wait+0x50/0x50
-> [54859.906751]  schedule+0x39/0xa0
-> [54859.907653]  io_schedule+0x12/0x40
-> [54859.908535]  bit_wait_io+0xd/0x50
-> [54859.909441]  __wait_on_bit+0x66/0x90
-> [54859.910306]  ? bit_wait+0x50/0x50
-> [54859.911177]  out_of_line_wait_on_bit+0x8b/0xb0
-> [54859.912043]  ? init_wait_var_entry+0x40/0x40
-> [54859.912727]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [54859.913113]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [54859.913501]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [54859.913894]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [54859.914276]  do_writepages+0x1a/0x60
-> [54859.914656]  __filemap_fdatawrite_range+0xc8/0x100
-> [54859.915052]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [54859.915449]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [54859.915855]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [54859.916256]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [54859.916658]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [54859.917078]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [54859.917497]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [54859.917903]  ? retarget_shared_pending+0x70/0x70
-> [54859.918307]  do_fsync+0x38/0x60
-> [54859.918707]  __x64_sys_fdatasync+0x13/0x20
-> [54859.919106]  do_syscall_64+0x55/0x1a0
-> [54859.919482]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [54859.919866] RIP: 0033:0x7f1db3fc85f0
-> [54859.920243] Code: Bad RIP value.
-> [54859.920614] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [54859.920997] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [54859.921383] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [54859.921773] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [54859.922165] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [54859.922551] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
-> [54980.733463] INFO: task rsync:9830 blocked for more than 362 seconds.
-> [54980.734061]       Not tainted 5.3.0-rc8 #1
-> [54980.734619] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [54980.735209] rsync           D    0  9830   9829 0x00004002
-> [54980.735802] Call Trace:
-> [54980.736473]  ? __schedule+0x3cf/0x680
-> [54980.737054]  ? bit_wait+0x50/0x50
-> [54980.737664]  schedule+0x39/0xa0
-> [54980.738243]  io_schedule+0x12/0x40
-> [54980.738712]  bit_wait_io+0xd/0x50
-> [54980.739171]  __wait_on_bit+0x66/0x90
-> [54980.739623]  ? bit_wait+0x50/0x50
-> [54980.740073]  out_of_line_wait_on_bit+0x8b/0xb0
-> [54980.740548]  ? init_wait_var_entry+0x40/0x40
-> [54980.741033]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [54980.741579]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [54980.742076]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [54980.742560]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [54980.743045]  do_writepages+0x1a/0x60
-> [54980.743516]  __filemap_fdatawrite_range+0xc8/0x100
-> [54980.744019]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [54980.744513]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [54980.745026]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [54980.745563]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [54980.746073]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [54980.746575]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [54980.747074]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [54980.747575]  ? retarget_shared_pending+0x70/0x70
-> [54980.748059]  do_fsync+0x38/0x60
-> [54980.748539]  __x64_sys_fdatasync+0x13/0x20
-> [54980.749012]  do_syscall_64+0x55/0x1a0
-> [54980.749512]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [54980.749995] RIP: 0033:0x7f1db3fc85f0
-> [54980.750368] Code: Bad RIP value.
-> [54980.750735] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [54980.751117] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [54980.751505] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [54980.751895] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [54980.752291] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [54980.752680] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
-> [55101.567251] INFO: task rsync:9830 blocked for more than 483 seconds.
-> [55101.567775]       Not tainted 5.3.0-rc8 #1
-> [55101.568218] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [55101.568649] rsync           D    0  9830   9829 0x00004002
-> [55101.569101] Call Trace:
-> [55101.569609]  ? __schedule+0x3cf/0x680
-> [55101.570052]  ? bit_wait+0x50/0x50
-> [55101.570504]  schedule+0x39/0xa0
-> [55101.570938]  io_schedule+0x12/0x40
-> [55101.571404]  bit_wait_io+0xd/0x50
-> [55101.571934]  __wait_on_bit+0x66/0x90
-> [55101.572601]  ? bit_wait+0x50/0x50
-> [55101.573235]  out_of_line_wait_on_bit+0x8b/0xb0
-> [55101.573599]  ? init_wait_var_entry+0x40/0x40
-> [55101.574008]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [55101.574394]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [55101.574783]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [55101.575184]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [55101.575580]  do_writepages+0x1a/0x60
-> [55101.575959]  __filemap_fdatawrite_range+0xc8/0x100
-> [55101.576351]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [55101.576746]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [55101.577144]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [55101.577543]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55101.577939]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55101.578343]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [55101.578746]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [55101.579139]  ? retarget_shared_pending+0x70/0x70
-> [55101.579543]  do_fsync+0x38/0x60
-> [55101.579928]  __x64_sys_fdatasync+0x13/0x20
-> [55101.580312]  do_syscall_64+0x55/0x1a0
-> [55101.580706]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [55101.581086] RIP: 0033:0x7f1db3fc85f0
-> [55101.581463] Code: Bad RIP value.
-> [55101.581834] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [55101.582219] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [55101.582607] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [55101.582998] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [55101.583397] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [55101.583784] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
-> [55222.405056] INFO: task rsync:9830 blocked for more than 604 seconds.
-> [55222.405773]       Not tainted 5.3.0-rc8 #1
-> [55222.406456] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [55222.407158] rsync           D    0  9830   9829 0x00004002
-> [55222.407776] Call Trace:
-> [55222.408450]  ? __schedule+0x3cf/0x680
-> [55222.409206]  ? bit_wait+0x50/0x50
-> [55222.409942]  schedule+0x39/0xa0
-> [55222.410658]  io_schedule+0x12/0x40
-> [55222.411346]  bit_wait_io+0xd/0x50
-> [55222.411946]  __wait_on_bit+0x66/0x90
-> [55222.412572]  ? bit_wait+0x50/0x50
-> [55222.413249]  out_of_line_wait_on_bit+0x8b/0xb0
-> [55222.413944]  ? init_wait_var_entry+0x40/0x40
-> [55222.414675]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [55222.415362]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [55222.416085]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [55222.416796]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [55222.417505]  do_writepages+0x1a/0x60
-> [55222.418243]  __filemap_fdatawrite_range+0xc8/0x100
-> [55222.418969]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [55222.419713]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [55222.420453]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [55222.421206]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55222.421925]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55222.422656]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [55222.423400]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [55222.424140]  ? retarget_shared_pending+0x70/0x70
-> [55222.424861]  do_fsync+0x38/0x60
-> [55222.425581]  __x64_sys_fdatasync+0x13/0x20
-> [55222.426308]  do_syscall_64+0x55/0x1a0
-> [55222.427025]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [55222.427732] RIP: 0033:0x7f1db3fc85f0
-> [55222.428396] Code: Bad RIP value.
-> [55222.429087] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [55222.429757] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [55222.430451] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [55222.431159] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [55222.431856] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [55222.432544] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
-> [55343.234863] INFO: task rsync:9830 blocked for more than 724 seconds.
-> [55343.235887]       Not tainted 5.3.0-rc8 #1
-> [55343.236611] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [55343.237213] rsync           D    0  9830   9829 0x00004002
-> [55343.237766] Call Trace:
-> [55343.238353]  ? __schedule+0x3cf/0x680
-> [55343.238971]  ? bit_wait+0x50/0x50
-> [55343.239592]  schedule+0x39/0xa0
-> [55343.240173]  io_schedule+0x12/0x40
-> [55343.240721]  bit_wait_io+0xd/0x50
-> [55343.241266]  __wait_on_bit+0x66/0x90
-> [55343.241835]  ? bit_wait+0x50/0x50
-> [55343.242418]  out_of_line_wait_on_bit+0x8b/0xb0
-> [55343.242938]  ? init_wait_var_entry+0x40/0x40
-> [55343.243496]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [55343.244090]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [55343.244720]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [55343.245296]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [55343.245843]  do_writepages+0x1a/0x60
-> [55343.246407]  __filemap_fdatawrite_range+0xc8/0x100
-> [55343.247014]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [55343.247631]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [55343.248186]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [55343.248743]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55343.249326]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55343.249931]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [55343.250562]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [55343.251139]  ? retarget_shared_pending+0x70/0x70
-> [55343.251628]  do_fsync+0x38/0x60
-> [55343.252208]  __x64_sys_fdatasync+0x13/0x20
-> [55343.252702]  do_syscall_64+0x55/0x1a0
-> [55343.253212]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [55343.253798] RIP: 0033:0x7f1db3fc85f0
-> [55343.254294] Code: Bad RIP value.
-> [55343.254821] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [55343.255404] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [55343.255989] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [55343.256521] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [55343.257073] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [55343.257649] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
-> [55464.068704] INFO: task rsync:9830 blocked for more than 845 seconds.
-> [55464.069701]       Not tainted 5.3.0-rc8 #1
-> [55464.070655] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [55464.071637] rsync           D    0  9830   9829 0x00004002
-> [55464.072637] Call Trace:
-> [55464.073623]  ? __schedule+0x3cf/0x680
-> [55464.074604]  ? bit_wait+0x50/0x50
-> [55464.075577]  schedule+0x39/0xa0
-> [55464.076531]  io_schedule+0x12/0x40
-> [55464.077480]  bit_wait_io+0xd/0x50
-> [55464.078400]  __wait_on_bit+0x66/0x90
-> [55464.079300]  ? bit_wait+0x50/0x50
-> [55464.080184]  out_of_line_wait_on_bit+0x8b/0xb0
-> [55464.081107]  ? init_wait_var_entry+0x40/0x40
-> [55464.082047]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [55464.083001]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [55464.083963]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [55464.084944]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [55464.085456]  do_writepages+0x1a/0x60
-> [55464.085840]  __filemap_fdatawrite_range+0xc8/0x100
-> [55464.086231]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [55464.086625]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [55464.087019]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [55464.087417]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55464.087814]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55464.088219]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [55464.088652]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [55464.089043]  ? retarget_shared_pending+0x70/0x70
-> [55464.089429]  do_fsync+0x38/0x60
-> [55464.089811]  __x64_sys_fdatasync+0x13/0x20
-> [55464.090190]  do_syscall_64+0x55/0x1a0
-> [55464.090568]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [55464.090944] RIP: 0033:0x7f1db3fc85f0
-> [55464.091321] Code: Bad RIP value.
-> [55464.091693] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [55464.092078] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [55464.092467] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [55464.092863] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [55464.093254] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [55464.093643] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
-> [55584.902564] INFO: task rsync:9830 blocked for more than 966 seconds.
-> [55584.903748]       Not tainted 5.3.0-rc8 #1
-> [55584.904868] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [55584.906023] rsync           D    0  9830   9829 0x00004002
-> [55584.907207] Call Trace:
-> [55584.908355]  ? __schedule+0x3cf/0x680
-> [55584.909507]  ? bit_wait+0x50/0x50
-> [55584.910682]  schedule+0x39/0xa0
-> [55584.911230]  io_schedule+0x12/0x40
-> [55584.911666]  bit_wait_io+0xd/0x50
-> [55584.912092]  __wait_on_bit+0x66/0x90
-> [55584.912510]  ? bit_wait+0x50/0x50
-> [55584.912924]  out_of_line_wait_on_bit+0x8b/0xb0
-> [55584.913343]  ? init_wait_var_entry+0x40/0x40
-> [55584.913795]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [55584.914242]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [55584.914698]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [55584.915152]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [55584.915588]  do_writepages+0x1a/0x60
-> [55584.916022]  __filemap_fdatawrite_range+0xc8/0x100
-> [55584.916474]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [55584.916928]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [55584.917386]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [55584.917844]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55584.918300]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55584.918772]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [55584.919233]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [55584.919679]  ? retarget_shared_pending+0x70/0x70
-> [55584.920122]  do_fsync+0x38/0x60
-> [55584.920559]  __x64_sys_fdatasync+0x13/0x20
-> [55584.920996]  do_syscall_64+0x55/0x1a0
-> [55584.921429]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [55584.921865] RIP: 0033:0x7f1db3fc85f0
-> [55584.922298] Code: Bad RIP value.
-> [55584.922734] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [55584.923174] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [55584.923568] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [55584.923982] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [55584.924378] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [55584.924774] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
-> [55705.736285] INFO: task rsync:9830 blocked for more than 1087 seconds.
-> [55705.736999]       Not tainted 5.3.0-rc8 #1
-> [55705.737694] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [55705.738411] rsync           D    0  9830   9829 0x00004002
-> [55705.739072] Call Trace:
-> [55705.739455]  ? __schedule+0x3cf/0x680
-> [55705.739837]  ? bit_wait+0x50/0x50
-> [55705.740215]  schedule+0x39/0xa0
-> [55705.740610]  io_schedule+0x12/0x40
-> [55705.741243]  bit_wait_io+0xd/0x50
-> [55705.741897]  __wait_on_bit+0x66/0x90
-> [55705.742524]  ? bit_wait+0x50/0x50
-> [55705.743131]  out_of_line_wait_on_bit+0x8b/0xb0
-> [55705.743750]  ? init_wait_var_entry+0x40/0x40
-> [55705.744128]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [55705.744766]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [55705.745440]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [55705.746118]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [55705.746753]  do_writepages+0x1a/0x60
-> [55705.747411]  __filemap_fdatawrite_range+0xc8/0x100
-> [55705.748106]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [55705.748807]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [55705.749495]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [55705.750190]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55705.750890]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55705.751580]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [55705.752293]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [55705.752981]  ? retarget_shared_pending+0x70/0x70
-> [55705.753686]  do_fsync+0x38/0x60
-> [55705.754340]  __x64_sys_fdatasync+0x13/0x20
-> [55705.755012]  do_syscall_64+0x55/0x1a0
-> [55705.755678]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [55705.756375] RIP: 0033:0x7f1db3fc85f0
-> [55705.757042] Code: Bad RIP value.
-> [55705.757690] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [55705.758300] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [55705.758678] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [55705.759107] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [55705.759785] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [55705.760471] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
-> [55826.570182] INFO: task rsync:9830 blocked for more than 1208 seconds.
-> [55826.571349]       Not tainted 5.3.0-rc8 #1
-> [55826.572469] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [55826.573618] rsync           D    0  9830   9829 0x00004002
-> [55826.574790] Call Trace:
-> [55826.575932]  ? __schedule+0x3cf/0x680
-> [55826.577079]  ? bit_wait+0x50/0x50
-> [55826.578233]  schedule+0x39/0xa0
-> [55826.579350]  io_schedule+0x12/0x40
-> [55826.580451]  bit_wait_io+0xd/0x50
-> [55826.581527]  __wait_on_bit+0x66/0x90
-> [55826.582596]  ? bit_wait+0x50/0x50
-> [55826.583178]  out_of_line_wait_on_bit+0x8b/0xb0
-> [55826.583550]  ? init_wait_var_entry+0x40/0x40
-> [55826.583953]  lock_extent_buffer_for_io+0x10b/0x2c0 [btrfs]
-> [55826.584356]  btree_write_cache_pages+0x17d/0x350 [btrfs]
-> [55826.584755]  ? btrfs_set_token_32+0x72/0x130 [btrfs]
-> [55826.585155]  ? merge_state.part.47+0x3f/0x160 [btrfs]
-> [55826.585547]  do_writepages+0x1a/0x60
-> [55826.585937]  __filemap_fdatawrite_range+0xc8/0x100
-> [55826.586352]  ? convert_extent_bit+0x2e8/0x580 [btrfs]
-> [55826.586761]  btrfs_write_marked_extents+0x141/0x160 [btrfs]
-> [55826.587171]  btrfs_write_and_wait_transaction.isra.26+0x58/0xb0 [btrfs]
-> [55826.587581]  ? btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55826.587990]  btrfs_commit_transaction+0x752/0x9d0 [btrfs]
-> [55826.588406]  ? btrfs_log_dentry_safe+0x54/0x70 [btrfs]
-> [55826.588818]  btrfs_sync_file+0x395/0x3e0 [btrfs]
-> [55826.589219]  ? retarget_shared_pending+0x70/0x70
-> [55826.589617]  do_fsync+0x38/0x60
-> [55826.590011]  __x64_sys_fdatasync+0x13/0x20
-> [55826.590411]  do_syscall_64+0x55/0x1a0
-> [55826.590798]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [55826.591185] RIP: 0033:0x7f1db3fc85f0
-> [55826.591572] Code: Bad RIP value.
-> [55826.591952] RSP: 002b:00007ffe6f827db8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000004b
-> [55826.592347] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
-> 00007f1db3fc85f0
-> [55826.592743] RDX: 00007f1db4aa6060 RSI: 0000000000000003 RDI:
-> 0000000000000001
-> [55826.593143] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000081c492ca
-> [55826.593543] R10: 0000000000000008 R11: 0000000000000246 R12:
-> 0000000000000028
-> [55826.593941] R13: 00007ffe6f827e40 R14: 0000000000000000 R15:
-> 0000000000000000
+Few more small things noted.
+Please check once.
+
+On 9/9/19 2:56 PM, Ritesh Harjani wrote:
 > 
 > 
-> Greets,
-> Stefan
+> On 9/9/19 4:49 AM, Matthew Bobrowski wrote:
+>> This patch introduces a new direct IO write code path implementation
+>> that makes use of the iomap infrastructure.
+>>
+>> All direct IO write operations are now passed from the ->write_iter()
+>> callback to the new function ext4_dio_write_iter(). This function is
+>> responsible for calling into iomap infrastructure via
+>> iomap_dio_rw(). Snippets of the direct IO code from within
+>> ext4_file_write_iter(), such as checking whether the IO request is
+>> unaligned asynchronous IO, or whether it will ber overwriting
+>> allocated and initialized blocks has been moved out and into
+>> ext4_dio_write_iter().
+>>
+>> The block mapping flags that are passed to ext4_map_blocks() from
+>> within ext4_dio_get_block() and friends have effectively been taken
+>> out and introduced within the ext4_iomap_begin(). If ext4_map_blocks()
+>> happens to have instantiated blocks beyond the i_size, then we attempt
+>> to place the inode onto the orphan list. Despite being able to perform
+>> i_size extension checking earlier on in the direct IO code path, it
+>> makes most sense to perform this bit post successful block allocation.
+>>
+>> The ->end_io() callback ext4_dio_write_end_io() is responsible for
+>> removing the inode from the orphan list and determining if we should
+>> truncate a failed write in the case of an error. We also convert a
+>> range of unwritten extents to written if IOMAP_DIO_UNWRITTEN is set
+>> and perform the necessary i_size/i_disksize extension if the
+>> iocb->ki_pos + dio->size > i_size_read(inode).
+>>
+>> In the instance of a short write, we fallback to buffered IO and
+>> complete whatever is left the 'iter'. Any blocks that may have been
+>> allocated in preparation for direct IO will be reused by buffered IO,
+>> so there's no issue with leaving allocated blocks beyond EOF.
+>>
+>> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> 
+> Sorry some minor simplification comments. Forgot to respond in previous 
+> email.
+> 
+> Otherwise looks good.
+> 
+> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> 
+> 
+> 
+>> ---
+>>   fs/ext4/file.c  | 219 +++++++++++++++++++++++++++++++++---------------
+>>   fs/ext4/inode.c |  57 ++++++++++---
+>>   2 files changed, 198 insertions(+), 78 deletions(-)
+>>
+>> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+>> index 8e586198f6e6..bf22425a6a6f 100644
+>> --- a/fs/ext4/file.c
+>> +++ b/fs/ext4/file.c
+>> @@ -29,6 +29,7 @@
+>>   #include <linux/pagevec.h>
+>>   #include <linux/uio.h>
+>>   #include <linux/mman.h>
+>> +#include <linux/backing-dev.h>
+>>   #include "ext4.h"
+>>   #include "ext4_jbd2.h"
+>>   #include "xattr.h"
+>> @@ -217,6 +218,14 @@ static ssize_t ext4_write_checks(struct kiocb 
+>> *iocb, struct iov_iter *from)
+>>       if (ret <= 0)
+>>           return ret;
+>>
+>> +    ret = file_remove_privs(iocb->ki_filp);
+>> +    if (ret)
+>> +        return 0;
+>> +
+>> +    ret = file_update_time(iocb->ki_filp);
+>> +    if (ret)
+>> +        return 0;
+>> +
+>>       if (unlikely(IS_IMMUTABLE(inode)))
+>>           return -EPERM;
 
--- 
-Michal Hocko
-SUSE Labs
+Maybe we can move this up. If file is IMMUTABLE no point in
+calling for above actions (file_remove_privs/file_updatetime).
+
+also why not use file_modified() API which does the same.
+
+>>
+>> @@ -234,6 +243,34 @@ static ssize_t ext4_write_checks(struct kiocb 
+>> *iocb, struct iov_iter *from)
+>>       return iov_iter_count(from);
+>>   }
+>>
+>> +static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
+>> +                    struct iov_iter *from)
+>> +{
+>> +    ssize_t ret;
+>> +    struct inode *inode = file_inode(iocb->ki_filp);
+>> +
+>> +    if (iocb->ki_flags & IOCB_NOWAIT)
+>> +        return -EOPNOTSUPP;
+>> +
+>> +    if (!inode_trylock(inode))
+>> +        inode_lock(inode);
+
+Is it really needed to check for trylock first?
+we can directly call for inode_lock() here.
+
+
+>> +
+>> +    ret = ext4_write_checks(iocb, from);
+>> +    if (ret <= 0)
+>> +        goto out;
+>> +
+>> +    current->backing_dev_info = inode_to_bdi(inode);
+>> +    ret = generic_perform_write(iocb->ki_filp, from, iocb->ki_pos);
+>> +    current->backing_dev_info = NULL;
+>> +out:
+>> +    inode_unlock(inode);
+>> +    if (likely(ret > 0)) {
+>> +        iocb->ki_pos += ret;
+>> +        ret = generic_write_sync(iocb, ret);
+>> +    }
+>> +    return ret;
+>> +}
+>> +
+>>   static int ext4_handle_inode_extension(struct inode *inode, loff_t 
+>> offset,
+>>                          ssize_t len, size_t count)
+>>   {
+>> @@ -311,6 +348,118 @@ static int 
+>> ext4_handle_failed_inode_extension(struct inode *inode, loff_t size)
+>>       return ret;
+>>   }
+>>
+>> +/*
+>> + * For a write that extends the inode size, ext4_dio_write_iter() will
+>> + * wait for the write to complete. Consequently, operations performed
+>> + * within this function are still covered by the inode_lock().
+>> + */
+> Maybe add a comment that on success this returns 0.
+> 
+>> +static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size, 
+>> int error,
+>> +                 unsigned int flags)
+>> +{
+>> +    int ret = 0;
+> No need to initialize ret.
+> 
+> 
+>> +    loff_t offset = iocb->ki_pos;
+>> +    struct inode *inode = file_inode(iocb->ki_filp);
+>> +
+>> +    if (error) {
+>> +        ret = ext4_handle_failed_inode_extension(inode, offset + size);
+>> +        return ret ? ret : error;
+>> +    }
+>> +
+>> +    if (flags & IOMAP_DIO_UNWRITTEN) {
+>> +        ret = ext4_convert_unwritten_extents(NULL, inode,
+>> +                             offset, size);
+>> +        if (ret)
+>> +            return ret;
+>> +    }
+>> +
+>> +    if (offset + size > i_size_read(inode)) {
+>> +        ret = ext4_handle_inode_extension(inode, offset, size, 0);
+>> +        if (ret)
+>> +            return ret;
+>> +    }
+>> +    return ret;
+> Directly return 0, since if it falls here it mans it is a success case.
+> You are anyway returning error from above error paths.
+> 
+>> +}
+>> +
+>> +static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct 
+>> iov_iter *from)
+>> +{
+>> +    ssize_t ret;
+>> +    loff_t offset = iocb->ki_pos;
+>> +    size_t count = iov_iter_count(from);
+>> +    struct inode *inode = file_inode(iocb->ki_filp);
+>> +    bool extend = false, overwrite = false, unaligned_aio = false;
+>> +
+>> +    if (!inode_trylock(inode)) {
+>> +        if (iocb->ki_flags & IOCB_NOWAIT)
+>> +            return -EAGAIN;
+>> +        inode_lock(inode);
+>> +    }
+>> +
+>> +    if (!ext4_dio_checks(inode)) {
+>> +        inode_unlock(inode);
+>> +        /*
+>> +         * Fallback to buffered IO if the operation on the
+>> +         * inode is not supported by direct IO.
+>> +         */
+>> +        return ext4_buffered_write_iter(iocb, from);
+>> +    }
+>> +
+>> +    ret = ext4_write_checks(iocb, from);
+This can modify the count in iov_iter *from.
+
+>> +    if (ret <= 0) {
+>> +        inode_unlock(inode);
+>> +        return ret;
+>> +    }
+let's recalculate count = iov_iter_count(from);
+
+>> +
+>> +    /*
+>> +     * Unaligned direct AIO must be serialized among each other as
+>> +     * the zeroing of partial blocks of two competing unaligned
+>> +     * AIOs can result in data corruption.
+>> +     */
+>> +    if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS) &&
+>> +        !is_sync_kiocb(iocb) && ext4_unaligned_aio(inode, from, 
+>> offset)) {
+>> +        unaligned_aio = true;
+>> +        inode_dio_wait(inode);
+>> +    }
+>> +
+>> +    /*
+>> +     * Determine whether the IO operation will overwrite allocated
+>> +     * and initialized blocks. If so, check to see whether it is
+>> +     * possible to take the dioread_nolock path.
+>> +     */
+>> +    if (!unaligned_aio && ext4_overwrite_io(inode, offset, count) &&count here could be the old one.
+
+
+>> +        ext4_should_dioread_nolock(inode)) {
+>> +        overwrite = true;
+>> +        downgrade_write(&inode->i_rwsem);
+>> +    }
+>> +
+>> +    if (offset + count > i_size_read(inode) ||
+>> +        offset + count > EXT4_I(inode)->i_disksize) {
+ditto.
+
+>> +        ext4_update_i_disksize(inode, inode->i_size);
+>> +        extend = true;
+>> +    }
+>> +
+>> +    ret = iomap_dio_rw(iocb, from, &ext4_iomap_ops, 
+>> ext4_dio_write_end_io);
+>> +
+>> +    /*
+>> +     * Unaligned direct AIO must be the only IO in flight or else
+>> +     * any overlapping aligned IO after unaligned IO might result
+>> +     * in data corruption. We also need to wait here in the case
+>> +     * where the inode is being extended so that inode extension
+>> +     * routines in ext4_dio_write_end_io() are covered by the
+>> +     * inode_lock().
+>> +     */
+>> +    if (ret == -EIOCBQUEUED && (unaligned_aio || extend))
+>> +        inode_dio_wait(inode);
+>> +
+>> +    if (overwrite)
+>> +        inode_unlock_shared(inode);
+>> +    else
+>> +        inode_unlock(inode);
+>> +
+>> +    if (ret >= 0 && iov_iter_count(from))
+>> +        return ext4_buffered_write_iter(iocb, from);
+>> +    return ret;
+>> +}
+>> +
+>>   #ifdef CONFIG_FS_DAX
+>>   static ssize_t
+>>   ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>> @@ -325,15 +474,10 @@ ext4_dax_write_iter(struct kiocb *iocb, struct 
+>> iov_iter *from)
+>>               return -EAGAIN;
+>>           inode_lock(inode);
+>>       }
+>> +
+>>       ret = ext4_write_checks(iocb, from);
+>>       if (ret <= 0)
+>>           goto out;
+>> -    ret = file_remove_privs(iocb->ki_filp);
+>> -    if (ret)
+>> -        goto out;
+>> -    ret = file_update_time(iocb->ki_filp);
+>> -    if (ret)
+>> -        goto out;
+>>
+>>       offset = iocb->ki_pos;
+>>       ret = dax_iomap_rw(iocb, from, &ext4_iomap_ops);
+>> @@ -359,73 +503,16 @@ static ssize_t
+>>   ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>   {
+>>       struct inode *inode = file_inode(iocb->ki_filp);
+>> -    int o_direct = iocb->ki_flags & IOCB_DIRECT;
+>> -    int unaligned_aio = 0;
+>> -    int overwrite = 0;
+>> -    ssize_t ret;
+>>
+>>       if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+>>           return -EIO;
+>>
+>> -#ifdef CONFIG_FS_DAX
+>>       if (IS_DAX(inode))
+>>           return ext4_dax_write_iter(iocb, from);
+>> -#endif
+>> -    if (!o_direct && (iocb->ki_flags & IOCB_NOWAIT))
+>> -        return -EOPNOTSUPP;
+>>
+>> -    if (!inode_trylock(inode)) {
+>> -        if (iocb->ki_flags & IOCB_NOWAIT)
+>> -            return -EAGAIN;
+>> -        inode_lock(inode);
+>> -    }
+>> -
+>> -    ret = ext4_write_checks(iocb, from);
+>> -    if (ret <= 0)
+>> -        goto out;
+>> -
+>> -    /*
+>> -     * Unaligned direct AIO must be serialized among each other as 
+>> zeroing
+>> -     * of partial blocks of two competing unaligned AIOs can result 
+>> in data
+>> -     * corruption.
+>> -     */
+>> -    if (o_direct && ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS) &&
+>> -        !is_sync_kiocb(iocb) &&
+>> -        ext4_unaligned_aio(inode, from, iocb->ki_pos)) {
+>> -        unaligned_aio = 1;
+>> -        ext4_unwritten_wait(inode);
+>> -    }
+>> -
+>> -    iocb->private = &overwrite;
+>> -    /* Check whether we do a DIO overwrite or not */
+>> -    if (o_direct && !unaligned_aio) {
+>> -        if (ext4_overwrite_io(inode, iocb->ki_pos, 
+>> iov_iter_count(from))) {
+>> -            if (ext4_should_dioread_nolock(inode))
+>> -                overwrite = 1;
+>> -        } else if (iocb->ki_flags & IOCB_NOWAIT) {
+>> -            ret = -EAGAIN;
+>> -            goto out;
+>> -        }
+>> -    }
+>> -
+>> -    ret = __generic_file_write_iter(iocb, from);
+>> -    /*
+>> -     * Unaligned direct AIO must be the only IO in flight. Otherwise
+>> -     * overlapping aligned IO after unaligned might result in data
+>> -     * corruption.
+>> -     */
+>> -    if (ret == -EIOCBQUEUED && unaligned_aio)
+>> -        ext4_unwritten_wait(inode);
+>> -    inode_unlock(inode);
+>> -
+>> -    if (ret > 0)
+>> -        ret = generic_write_sync(iocb, ret);
+>> -
+>> -    return ret;
+>> -
+>> -out:
+>> -    inode_unlock(inode);
+>> -    return ret;
+>> +    if (iocb->ki_flags & IOCB_DIRECT)
+>> +        return ext4_dio_write_iter(iocb, from);
+>> +    return ext4_buffered_write_iter(iocb, from);
+>>   }
+>>
+>>   #ifdef CONFIG_FS_DAX
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index efb184928e51..f52ad3065236 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -3513,11 +3513,13 @@ static int ext4_iomap_begin(struct inode 
+>> *inode, loff_t offset, loff_t length,
+>>               }
+>>           }
+>>       } else if (flags & IOMAP_WRITE) {
+>> -        int dio_credits;
+>>           handle_t *handle;
+>> -        int retries = 0;
+>> +        int dio_credits, retries = 0, m_flags = 0;
+>>
+>> -        /* Trim mapping request to maximum we can map at once for DIO */
+>> +        /*
+>> +         * Trim mapping request to maximum we can map at once
+>> +         * for DIO.
+>> +         */
+>>           if (map.m_len > DIO_MAX_BLOCKS)
+>>               map.m_len = DIO_MAX_BLOCKS;
+>>           dio_credits = ext4_chunk_trans_blocks(inode, map.m_len);
+>> @@ -3533,8 +3535,30 @@ static int ext4_iomap_begin(struct inode 
+>> *inode, loff_t offset, loff_t length,
+>>           if (IS_ERR(handle))
+>>               return PTR_ERR(handle);
+>>
+>> -        ret = ext4_map_blocks(handle, inode, &map,
+>> -                      EXT4_GET_BLOCKS_CREATE_ZERO);
+>> +        /*
+>> +         * DAX and direct IO are the only two operations that
+>> +         * are currently supported with IOMAP_WRITE.
+>> +         */
+>> +        WARN_ON(!IS_DAX(inode) && !(flags & IOMAP_DIRECT));
+>> +        if (IS_DAX(inode))
+>> +            m_flags = EXT4_GET_BLOCKS_CREATE_ZERO;
+>> +        else if (round_down(offset, i_blocksize(inode)) >=
+>> +             i_size_read(inode))
+>> +            m_flags = EXT4_GET_BLOCKS_CREATE;
+>> +        else if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+>> +            m_flags = EXT4_GET_BLOCKS_IO_CREATE_EXT;
+>> +
+>> +        ret = ext4_map_blocks(handle, inode, &map, m_flags);
+>> +
+>> +        /*
+>> +         * We cannot fill holes in indirect tree based inodes
+>> +         * as that could expose stale data in the case of a
+>> +         * crash. Use the magic error code to fallback to
+>> +         * buffered IO.
+>> +         */
+> 
+> I like this comment ;)
+> Help others to understand what is really going on here.
+> 
+>> +        if (!m_flags && !ret)
+>> +            ret = -ENOTBLK;
+>> +
+>>           if (ret < 0) {
+>>               ext4_journal_stop(handle);
+>>               if (ret == -ENOSPC &&
+>> @@ -3544,13 +3568,14 @@ static int ext4_iomap_begin(struct inode 
+>> *inode, loff_t offset, loff_t length,
+>>           }
+>>
+>>           /*
+>> -         * If we added blocks beyond i_size, we need to make sure they
+>> -         * will get truncated if we crash before updating i_size in
+>> -         * ext4_iomap_end(). For faults we don't need to do that (and
+>> -         * even cannot because for orphan list operations inode_lock is
+>> -         * required) - if we happen to instantiate block beyond i_size,
+>> -         * it is because we race with truncate which has already added
+>> -         * the inode to the orphan list.
+>> +         * If we added blocks beyond i_size, we need to make
+>> +         * sure they will get truncated if we crash before
+>> +         * updating the i_size. For faults we don't need to do
+>> +         * that (and even cannot because for orphan list
+>> +         * operations inode_lock is required) - if we happen
+>> +         * to instantiate block beyond i_size, it is because
+>> +         * we race with truncate which has already added the
+>> +         * inode to the orphan list.
+>>            */
+>>           if (!(flags & IOMAP_FAULT) && first_block + map.m_len >
+>>               (i_size_read(inode) + (1 << blkbits) - 1) >> blkbits) {
+>> @@ -3612,6 +3637,14 @@ static int ext4_iomap_begin(struct inode 
+>> *inode, loff_t offset, loff_t length,
+>>   static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t 
+>> length,
+>>                 ssize_t written, unsigned flags, struct iomap *iomap)
+>>   {
+>> +    /*
+>> +     * Check to see whether an error occurred while writing data
+>> +     * out to allocated blocks. If so, return the magic error code
+>> +     * so that we fallback to buffered IO and reuse the blocks
+>> +     * that were allocated in preparation for the direct IO write.
+>> +     */
+>> +    if (flags & IOMAP_DIRECT && written == 0)
+>> +        return -ENOTBLK;
+>>       return 0;
+>>   }
+>>
+> 
+
