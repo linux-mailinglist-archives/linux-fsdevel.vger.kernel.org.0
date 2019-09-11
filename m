@@ -2,161 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9444FAF8EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 11:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D0DBAF920
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 11:39:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfIKJbU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 05:31:20 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44902 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727459AbfIKJbU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Sep 2019 05:31:20 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D33D74B9B6EAD744FAE6;
-        Wed, 11 Sep 2019 17:31:18 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Sep 2019
- 17:31:12 +0800
-From:   zhengbin <zhengbin13@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <jack@suse.cz>,
-        <akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>
-CC:     <yi.zhang@huawei.com>, <houtao1@huawei.com>,
-        <renxudong1@huawei.com>
-Subject: [PATCH] Revert "lockless next_positive()"
-Date:   Wed, 11 Sep 2019 17:37:57 +0800
-Message-ID: <1568194677-127378-1-git-send-email-zhengbin13@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727488AbfIKJjc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 05:39:32 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:43853 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726657AbfIKJjb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Sep 2019 05:39:31 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 80E0B614;
+        Wed, 11 Sep 2019 05:39:29 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 11 Sep 2019 05:39:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=mvzKeifSnTSILTn0qraq+rN4Cry
+        GTOsIEYJQEQ6OnYg=; b=mtiyobYXM4j9EFSIKWpelWpgZOm+amyEdDeS0EUXrQI
+        Dr0Gjx7szmVtnduulUVe3O6G9B/UhKhaeTGAU24JR8WcsrwcdUfodTMHaj+pj++b
+        JxqwoCNsMr4xy3pxI6ewV6CcL2UbOFSEBRgxQv90tZqs6Bqln4/D7Zl8jXpyjki3
+        iZIaoGsBbkcWJbdo/wlOnO+k2OrkprPrRM6TZqlqvKNeUrC0X4GIV7fwr0LYlkrB
+        eybjaBdLKN4LXUJQY6nhVPvF0cP0VOACC1LgVeII6B0YqSvVFgwsfqvh0Vy1/Hr+
+        qiTFfwY4QjLy3hkLKplwva/42/wK9CCTaZ2r/cLROTA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=mvzKei
+        fSnTSILTn0qraq+rN4CryGTOsIEYJQEQ6OnYg=; b=k5SckXFxB6PoUTEitBhdke
+        SomEjIEWYKhC9eJGnnHcLsihzDA6TTEPgFNZxqdrbW0LQ7g5IJVRoLT0nHfSMunH
+        YHB0yZzjViLeZXMx7HVyNyK3QD0LvjInmNX0KJ0Y1MjRL5HBkNu0sd28Kwq3aJC6
+        ReUfbuvPshNdoCpzAeh7zV/O61lWLHUtx1Jw+7NKlda7PE/brwHXFG4jUooiHJAm
+        wGaBut55D2tCZ/ky0okQNzJZXVSDO/ENtn4Edn+rrxQLp8miV4T8a0xqvLOtsuc3
+        0Q9IRtnvSHs106V5mK+ujB3P2U0jwcs4EiKqX/T8Bv1yC3VpqLr0f4AEHLqoDj4g
+        ==
+X-ME-Sender: <xms:0MB4XcggKqjOEYVJZd9qevP_wUbxPncN_tBAWi6-Fg0PqZClExk1ww>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrtddvgddujecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
+    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecukfhppeduge
+    ekrdeiledrkeehrdefkeenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegr
+    nhgrrhgriigvlhdruggvnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:0MB4XRpJpoY7c-KRT-ghH_eG4kEn_6fgDEkd0OK8br23501TAjiBSw>
+    <xmx:0MB4XVGmwottXAZ-O2b07rrASsS8h2xpuOWgU6TE044_p6rIXVcopA>
+    <xmx:0MB4XZPdbMNAKKH1rn1JYLUGjXKSbhslMId2-QvU1f7ug0CD0uthzQ>
+    <xmx:0cB4XfDWFcyGBy2d-xOSQdZbxxMjaKqwUXHgqpQHGNcAAkWhylQ-MA>
+Received: from intern.anarazel.de (unknown [148.69.85.38])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2563CD60062;
+        Wed, 11 Sep 2019 05:39:28 -0400 (EDT)
+Date:   Wed, 11 Sep 2019 02:39:26 -0700
+From:   Andres Freund <andres@anarazel.de>
+To:     Dave Chinner <david@fromorbit.com>, David Sterba <dsterba@suse.com>
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, jack@suse.com, hch@infradead.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: Odd locking pattern introduced as part of "nowait aio support"
+Message-ID: <20190911093926.pfkkx25mffzeuo32@alap3.anarazel.de>
+References: <20190910223327.mnegfoggopwqqy33@alap3.anarazel.de>
+ <20190911040420.GB27547@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911040420.GB27547@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ This reverts commit ebaaa80e8f20 ("lockless next_positive()"),
-To avoid the following oops. Of course, we can still find a
-better way, I suggest revert this first. ]
+Hi,
 
-Use a script to test kernel(arm64) in the following steps:
-(filesystem is tmpfs, dirA already have 10 files, dirB
-have 12 files)
-1. keep open filenotexist(O_RDWR) in dirA
-2. keep open filenotexist(O_RDWR) in dirB
-3. keep ls dirB
+On 2019-09-11 14:04:20 +1000, Dave Chinner wrote:
+> On Tue, Sep 10, 2019 at 03:33:27PM -0700, Andres Freund wrote:
+> > Hi,
+> > 
+> > Especially with buffered io it's fairly easy to hit contention on the
+> > inode lock, during writes. With something like io_uring, it's even
+> > easier, because it currently (but see [1]) farms out buffered writes to
+> > workers, which then can easily contend on the inode lock, even if only
+> > one process submits writes.  But I've seen it in plenty other cases too.
+> > 
+> > Looking at the code I noticed that several parts of the "nowait aio
+> > support" (cf 728fbc0e10b7f3) series introduced code like:
+> > 
+> > static ssize_t
+> > ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > {
+> > ...
+> > 	if (!inode_trylock(inode)) {
+> > 		if (iocb->ki_flags & IOCB_NOWAIT)
+> > 			return -EAGAIN;
+> > 		inode_lock(inode);
+> > 	}
+> 
+> The ext4 code is just buggy here - we don't support RWF_NOWAIT on
+> buffered writes.
 
-After 10 minutes, there will be an oops:
-Unable to handle kernel paging request at virtual address 00000000003564ad
-Process ls (pid: 142652, stack limit = 0x0000000055c452f6)
-Call trace:
- dcache_readdir+0xf8/0x1b0
- iterate_dir+0x8c/0x1a8
- ksys_getdents64+0xa4/0x190
- __arm64_sys_getdents64+0x28/0x38
- el0_svc_common+0x78/0x130
- el0_svc_handler+0x38/0x78
- el0_svc+0x8/0xc
+But both buffered and non-buffered writes go through
+ext4_file_write_iter(). And there's a preceding check, at least these
+days, preventing IOCB_NOWAIT to apply to buffered writes:
 
-The reason is as follows:
-1. dirA create new dentryA(dentryA->next = fileA1), and will delete it
-lookup_open
-  d_alloc_parallel
-    d_alloc
-    dput -->prev allocated dentry has been added to dentry_hashtable
+	if (!o_direct && (iocb->ki_flags & IOCB_NOWAIT))
+		return -EOPNOTSUPP;
 
-dput remove dentryA from dirA, dentryA->next is still fileA1.
 
-2. dirB create new dentry(use dentryA), and add it to dirB
-d_alloc -->This will need dirB shared lock
-   __d_alloc
-     INIT_LIST_HEAD(&dentry->d_child)
-   spin_lock(&parent->d_lock)
-   list_add(&dentry->d_child, &parent->d_subdirs)
+I do really wish buffered NOWAIT was supported... The overhead of having
+to do async buffered writes through the workqueue in io_uring, even if
+an already existing page is targeted, is quite noticable. Even if it
+failed with EAGAIN as soon as the buffered write's target isn't in the
+page cache, it'd be worthwhile.
 
-3. At the same time, ls dirB -->This will need dirB shared lock
-dcache_readdir
-  p = &dentry->d_subdirs
-  next_positive
-    p = from->next
 
-Although d_alloc has spin_lock, next_positive does not have it since
-commit ebaaa80e8f20 ("lockless next_positive()").
+> > isn't trylocking and then locking in a blocking fashion an inefficient
+> > pattern? I.e. I think this should be
+> > 
+> > 	if (iocb->ki_flags & IOCB_NOWAIT) {
+> > 		if (!inode_trylock(inode))
+> > 			return -EAGAIN;
+> > 	}
+> >         else
+> >         	inode_lock(inode);
+> 
+> Yes, you are right.
+> 
+> History: commit 91f9943e1c7b ("fs: support RWF_NOWAIT
+> for buffered reads") which introduced the first locking pattern
+> you describe in XFS.
 
-In arm64, CPU may run out of order. Maybe set parent->d_subdirs->next
-first, while dentry->d_child.next is still uninitialized.
+Seems, as part of the nowait work, the pattern was introduced in ext4,
+xfs and btrfs. And fixed in xfs.
 
-dentryA->next is still fileA1, So ls dirB will goto fileA1 which
-belongs to dirA, thus oops happens.
 
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
----
- fs/libfs.c | 32 +++++---------------------------
- 1 file changed, 5 insertions(+), 27 deletions(-)
+> That was followed soon after by:
+> 
+> commit 942491c9e6d631c012f3c4ea8e7777b0b02edeab
+> Author: Christoph Hellwig <hch@lst.de>
+> Date:   Mon Oct 23 18:31:50 2017 -0700
+> 
+>     xfs: fix AIM7 regression
+>     
+>     Apparently our current rwsem code doesn't like doing the trylock, then
+>     lock for real scheme.  So change our read/write methods to just do the
+>     trylock for the RWF_NOWAIT case.  This fixes a ~25% regression in
+>     AIM7.
+>     
+>     Fixes: 91f9943e ("fs: support RWF_NOWAIT for buffered reads")
+>     Reported-by: kernel test robot <xiaolong.ye@intel.com>
+>     Signed-off-by: Christoph Hellwig <hch@lst.de>
+>     Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+>     Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> Which changed all the trylock/eagain/lock patterns to the second
+> form you quote. None of the other filesystems had AIM7 regressions
+> reported against them, so nobody changed them....
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index c9b2850..3287996 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -93,53 +93,31 @@ static struct dentry *next_positive(struct dentry *parent,
- 				    struct list_head *from,
- 				    int count)
- {
--	unsigned *seq = &parent->d_inode->i_dir_seq, n;
--	struct dentry *res;
-+	struct dentry *res = NULL;
- 	struct list_head *p;
--	bool skipped;
--	int i;
+:(
 
--retry:
--	i = count;
--	skipped = false;
--	n = smp_load_acquire(seq) & ~1;
--	res = NULL;
--	rcu_read_lock();
-+	spin_lock(&parent->d_lock);
- 	for (p = from->next; p != &parent->d_subdirs; p = p->next) {
- 		struct dentry *d = list_entry(p, struct dentry, d_child);
--		if (!simple_positive(d)) {
--			skipped = true;
--		} else if (!--i) {
-+		if (simple_positive(d) && !--count) {
- 			res = d;
- 			break;
- 		}
- 	}
--	rcu_read_unlock();
--	if (skipped) {
--		smp_rmb();
--		if (unlikely(*seq != n))
--			goto retry;
--	}
-+	spin_unlock(&parent->d_lock);
- 	return res;
- }
 
- static void move_cursor(struct dentry *cursor, struct list_head *after)
- {
- 	struct dentry *parent = cursor->d_parent;
--	unsigned n, *seq = &parent->d_inode->i_dir_seq;
-+
- 	spin_lock(&parent->d_lock);
--	for (;;) {
--		n = *seq;
--		if (!(n & 1) && cmpxchg(seq, n, n + 1) == n)
--			break;
--		cpu_relax();
--	}
- 	__list_del(cursor->d_child.prev, cursor->d_child.next);
- 	if (after)
- 		list_add(&cursor->d_child, after);
- 	else
- 		list_add_tail(&cursor->d_child, &parent->d_subdirs);
--	smp_store_release(seq, n + 2);
- 	spin_unlock(&parent->d_lock);
- }
+> > Obviously this isn't going to improve scalability to a very significant
+> > degree. But not unnecessarily doing two atomic ops on a contended lock
+> > can't hurt scalability either. Also, the current code just seems
+> > confusing.
+> > 
+> > Am I missing something?
+> 
+> Just that the sort of performance regression testing that uncovers
+> this sort of thing isn't widely done, and most filesystems are
+> concurrency limited in some way before they hit inode lock
+> scalability issues. Hence filesystem concurrency foccussed
+> benchmarks that could uncover it (like aim7) won't because the inode
+> locks don't end up stressed enough to make a difference to
+> benchmark performance.
 
---
-2.7.4
+Ok.  Goldwyn, do you want to write a patch, or do you want me to write
+one up?
 
+
+Greetings,
+
+Andres Freund
