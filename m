@@ -2,77 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5C9BB01ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 18:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2589B0225
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 18:54:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbfIKQpb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 12:45:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34460 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728896AbfIKQpb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:45:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2F975AF89;
-        Wed, 11 Sep 2019 16:45:30 +0000 (UTC)
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        hch@infradead.org, andres@anarazel.de, david@fromorbit.com,
-        riteshh@linux.ibm.com, linux-f2fs-devel@lists.sourceforge.net,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 3/3] f2fs: fix inode rwsem regression
-Date:   Wed, 11 Sep 2019 11:45:17 -0500
-Message-Id: <20190911164517.16130-4-rgoldwyn@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190911164517.16130-1-rgoldwyn@suse.de>
-References: <20190911093926.pfkkx25mffzeuo32@alap3.anarazel.de>
- <20190911164517.16130-1-rgoldwyn@suse.de>
+        id S1729281AbfIKQxq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 12:53:46 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:48026 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729028AbfIKQxp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:53:45 -0400
+Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1i85s8-00013U-0b; Wed, 11 Sep 2019 10:53:37 -0600
+To:     Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Stephen Bates <sbates@raithlin.com>, Jens Axboe <axboe@fb.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <20190828215429.4572-1-logang@deltatee.com>
+ <20190828215429.4572-14-logang@deltatee.com>
+ <92d61426-65a2-827c-936b-55f12f3d6afb@grimberg.me>
+ <ca4ebcd9-fa5d-5ddf-c2a7-70318410dd97@deltatee.com>
+ <7954e8a4-6026-2210-7192-94a4e483facf@grimberg.me>
+ <b23c72b2-c9db-cb8e-5519-63eb195b7fd4@deltatee.com>
+ <ca811aea-c4ae-10ee-15a5-2332d5a9e29a@grimberg.me>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <19da6ca1-3cde-3f29-59ee-923c562e6487@deltatee.com>
+Date:   Wed, 11 Sep 2019 10:53:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <ca811aea-c4ae-10ee-15a5-2332d5a9e29a@grimberg.me>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 70.73.163.230
+X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, kbusch@kernel.org, axboe@fb.com, sbates@raithlin.com, Chaitanya.Kulkarni@wdc.com, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v8 13/13] nvmet-passthru: support block accounting
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-This is similar to 942491c9e6d6 ("xfs: fix AIM7 regression")
-Apparently our current rwsem code doesn't like doing the trylock, then
-lock for real scheme.  So change our read/write methods to just do the
-trylock for the RWF_NOWAIT case.
 
-We don't need a check for IOCB_NOWAIT and !direct-IO because it
-is checked in generic_write_checks().
+On 2019-09-09 5:15 p.m., Sagi Grimberg wrote:
+> 
+>>>>>> Support block disk accounting by setting the RQF_IO_STAT flag
+>>>>>> and gendisk in the request.
+>>>>>>
+>>>>>> After this change, IO counts will be reflected correctly in
+>>>>>> /proc/diskstats for drives being used by passthru.
+>>>>>>
+>>>>>> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+>>>>>> ---
+>>>>>>     drivers/nvme/target/io-cmd-passthru.c | 5 ++++-
+>>>>>>     1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/nvme/target/io-cmd-passthru.c
+>>>>>> b/drivers/nvme/target/io-cmd-passthru.c
+>>>>>> index 7557927a3451..63f12750a80d 100644
+>>>>>> --- a/drivers/nvme/target/io-cmd-passthru.c
+>>>>>> +++ b/drivers/nvme/target/io-cmd-passthru.c
+>>>>>> @@ -410,6 +410,9 @@ static struct request
+>>>>>> *nvmet_passthru_blk_make_request(struct nvmet_req *req,
+>>>>>>         if (unlikely(IS_ERR(rq)))
+>>>>>>             return rq;
+>>>>>>     +    if (blk_queue_io_stat(q) && cmd->common.opcode !=
+>>>>>> nvme_cmd_flush)
+>>>>>> +        rq->rq_flags |= RQF_IO_STAT;
+>>>>
+>>>> Thanks for the review!
+>>>>
+>>>>> Does flush has data bytes in the request? Why the special casing?
+>>>>
+>>>> Well it was special cased in the vanilla blk account flow... But I
+>>>> think
+>>>> it's required to be special cased so the IO and in_flight counts don't
+>>>> count flushes (as they do not for regular block device traffic).
+>>>
+>>> I think that the accounting exclude I/O that is yielded from the flush
+>>> sequence. Don't think its relevant here...
+>>
+>> What? Per blk_account_io_done(), RQF_FLUSH_SEQ will not be set by us for
+>> passthru commands and I don't think it's appropriate to do so. Thus, if
+>> we set RQF_IO_STAT for passthru flush commands, they will be counted
+>> which we do not want.
+> 
+> Have you considered to have nvmet_passthru_blk_make_request set RQF_FUA
+> for nvme_cmd_flush? this way blk_insert_flush will be called and
+> RQF_FLUSH_SEQ will be set and you don't need to worry about this
+> special casing...
 
-Fixes: b91050a80cec ("f2fs: add nowait aio support")
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
----
- fs/f2fs/file.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+Well, I haven't done that mostly because I'm not sure of all the side
+effects of doing so. However, I've tried it and everything seems to
+still work, so I'll make that change for v9 which I'll probably send out
+after the merge window.
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 3e58a6f697dd..c6f3ef815c05 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3134,16 +3134,12 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		goto out;
- 	}
- 
--	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT)) {
--		ret = -EINVAL;
--		goto out;
--	}
--
--	if (!inode_trylock(inode)) {
--		if (iocb->ki_flags & IOCB_NOWAIT) {
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!inode_trylock(inode)) {
- 			ret = -EAGAIN;
- 			goto out;
- 		}
-+	} else {
- 		inode_lock(inode);
- 	}
- 
--- 
-2.16.4
-
+Logan
