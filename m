@@ -2,33 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50128B04B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 21:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 492BBB0503
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 22:51:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730427AbfIKT5u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 15:57:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54668 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728244AbfIKT5u (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Sep 2019 15:57:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9jE3mtkHHko+7r8PMAvmKkCu21SGOTAKiQ2sFX5q1e8=; b=YuuZ1SR9/A3UTMvsgjSd5CDmd
-        Bht4qf7T7gzPP6ceP3qR0rUCabFLX3Ofmr1X48wwNvc7OioQfaRQY15yoV7wM8Md+Lttifi18jP4N
-        2zoqeakteIneE6RomJ18Svhc3HMcSNpA9808NWbTJed7wGaWgOW4NIpEuLgedepcI9h5LOFReSKD8
-        3JDMy6OdPsmFtRfTBIR+HfAyJMgJ+Jnj8cBaaEyynEzWbevqJ6Z1x/AzF0dzQP9Uw1L3uZzKSJVM/
-        TwSAA+eEApViP9KU8PZo0eQ0O/NEK3imDNt2fcN+0/CxKA18HaTn+i8NqOpUxE/Zb8FY+MwvYdPuH
-        GiGSo8+Vg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1i88kL-0007F3-I8; Wed, 11 Sep 2019 19:57:45 +0000
-Date:   Wed, 11 Sep 2019 12:57:45 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Waiman Long <longman@redhat.com>
+        id S1729513AbfIKUvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 16:51:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49166 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729327AbfIKUvE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Sep 2019 16:51:04 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6274930821BF;
+        Wed, 11 Sep 2019 20:51:04 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-121-77.rdu2.redhat.com [10.10.121.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D11845D6A5;
+        Wed, 11 Sep 2019 20:51:01 +0000 (UTC)
+Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
+ PMD
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -36,34 +29,40 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Mike Kravetz <mike.kravetz@oracle.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
- PMD
-Message-ID: <20190911195745.GI29434@bombadil.infradead.org>
 References: <20190911150537.19527-1-longman@redhat.com>
  <20190911150537.19527-6-longman@redhat.com>
+ <20190911195745.GI29434@bombadil.infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <11361434-ca3d-78ae-e825-8521ee3bfbe6@redhat.com>
+Date:   Wed, 11 Sep 2019 21:51:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190911150537.19527-6-longman@redhat.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190911195745.GI29434@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 11 Sep 2019 20:51:04 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 04:05:37PM +0100, Waiman Long wrote:
-> To remove the unacceptable delays, we have to limit the amount of wait
-> time on the mmap_sem. So the new down_write_timedlock() function is
-> used to acquire the write lock on the mmap_sem with a timeout value of
-> 10ms which should not cause a perceivable delay. If timeout happens,
-> the task will abandon its effort to share the PMD and allocate its own
-> copy instead.
+On 9/11/19 8:57 PM, Matthew Wilcox wrote:
+> On Wed, Sep 11, 2019 at 04:05:37PM +0100, Waiman Long wrote:
+>> To remove the unacceptable delays, we have to limit the amount of wait
+>> time on the mmap_sem. So the new down_write_timedlock() function is
+>> used to acquire the write lock on the mmap_sem with a timeout value of
+>> 10ms which should not cause a perceivable delay. If timeout happens,
+>> the task will abandon its effort to share the PMD and allocate its own
+>> copy instead.
+> If you do a v2, this is *NOT* the mmap_sem.  It's the i_mmap_rwsem
+> which protects a very different data structure from the mmap_sem.
+>
+Thanks for reminder. I should have read the code more carefully.
 
-If you do a v2, this is *NOT* the mmap_sem.  It's the i_mmap_rwsem
-which protects a very different data structure from the mmap_sem.
+Cheers,
+Longman
 
-> +static inline bool i_mmap_timedlock_write(struct address_space *mapping,
-> +					 ktime_t timeout)
-> +{
-> +	return down_write_timedlock(&mapping->i_mmap_rwsem, timeout);
-> +}
