@@ -2,97 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C75B0273
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 19:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC2B8B0286
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Sep 2019 19:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbfIKRPb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Sep 2019 13:15:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33248 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729380AbfIKRPb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Sep 2019 13:15:31 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 783A81DB0;
-        Wed, 11 Sep 2019 17:15:30 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-123-234.rdu2.redhat.com [10.10.123.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CEEB060872;
-        Wed, 11 Sep 2019 17:15:27 +0000 (UTC)
-Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
- PMD
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
-References: <20190911150537.19527-1-longman@redhat.com>
- <20190911150537.19527-6-longman@redhat.com>
- <20190911151451.GH29434@bombadil.infradead.org>
- <19d9ea18-bd20-e02f-c1de-70e7322f5f22@redhat.com>
- <40a511a4-5771-f9a9-40b6-64e39478bbcb@oracle.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <5229662c-d709-7aca-be4c-53dea1a49fda@redhat.com>
-Date:   Wed, 11 Sep 2019 18:15:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729529AbfIKRVM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Sep 2019 13:21:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54032 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729130AbfIKRVM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Sep 2019 13:21:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B2109AF57;
+        Wed, 11 Sep 2019 17:21:10 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id B3C66DA7D9; Wed, 11 Sep 2019 19:21:33 +0200 (CEST)
+Date:   Wed, 11 Sep 2019 19:21:33 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, hch@infradead.org, andres@anarazel.de,
+        david@fromorbit.com, riteshh@linux.ibm.com,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 1/3] btrfs: fix inode rwsem regression
+Message-ID: <20190911172133.GJ2850@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, hch@infradead.org, andres@anarazel.de,
+        david@fromorbit.com, riteshh@linux.ibm.com,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+References: <20190911164517.16130-1-rgoldwyn@suse.de>
+ <20190911164517.16130-2-rgoldwyn@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <40a511a4-5771-f9a9-40b6-64e39478bbcb@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Wed, 11 Sep 2019 17:15:30 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911164517.16130-2-rgoldwyn@suse.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/11/19 6:03 PM, Mike Kravetz wrote:
-> On 9/11/19 8:44 AM, Waiman Long wrote:
->> On 9/11/19 4:14 PM, Matthew Wilcox wrote:
->>> On Wed, Sep 11, 2019 at 04:05:37PM +0100, Waiman Long wrote:
->>>> When allocating a large amount of static hugepages (~500-1500GB) on a
->>>> system with large number of CPUs (4, 8 or even 16 sockets), performance
->>>> degradation (random multi-second delays) was observed when thousands
->>>> of processes are trying to fault in the data into the huge pages. The
->>>> likelihood of the delay increases with the number of sockets and hence
->>>> the CPUs a system has.  This only happens in the initial setup phase
->>>> and will be gone after all the necessary data are faulted in.
->>> Can;t the application just specify MAP_POPULATE?
->> Originally, I thought that this happened in the startup phase when the
->> pages were faulted in. The problem persists after steady state had been
->> reached though. Every time you have a new user process created, it will
->> have its own page table.
-> This is still at fault time.  Although, for the particular application it
-> may be after the 'startup phase'.
->
->>                          It is the sharing of the of huge page shared
->> memory that is causing problem. Of course, it depends on how the
->> application is written.
-> It may be the case that some applications would find the delays acceptable
-> for the benefit of shared pmds once they reach steady state.  As you say, of
-> course this depends on how the application is written.
->
-> I know that Oracle DB would not like it if PMD sharing is disabled for them.
-> Based on what I know of their model, all processes which share PMDs perform
-> faults (write or read) during the startup phase.  This is in environments as
-> big or bigger than you describe above.  I have never looked at/for delays in
-> these environments around pmd sharing (page faults), but that does not mean
-> they do not exist.  I will try to get the DB group to give me access to one
-> of their large environments for analysis.
->
-> We may want to consider making the timeout value and disable threshold user
-> configurable.
+On Wed, Sep 11, 2019 at 11:45:15AM -0500, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> 
+> This is similar to 942491c9e6d6 ("xfs: fix AIM7 regression")
+> Apparently our current rwsem code doesn't like doing the trylock, then
+> lock for real scheme.  So change our read/write methods to just do the
+> trylock for the RWF_NOWAIT case.
+> 
+> Fixes: edf064e7c6fe ("btrfs: nowait aio support")
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-Making it configurable is certainly doable. They can be sysctl
-parameters so that the users can reenable PMD sharing by making those
-parameters larger.
-
-Cheers,
-Longman
-
+The subject seems to be a bit confusing so I'll update it, otherwise
+patch added to devel queue, thanks.
