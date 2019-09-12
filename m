@@ -2,155 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45D73B0AB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 10:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A70F6B0AE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 11:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730434AbfILIws (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 04:52:48 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51344 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730403AbfILIwr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 04:52:47 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8C8k218137845
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2019 04:52:46 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uyh7yueqm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2019 04:52:46 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Thu, 12 Sep 2019 09:52:44 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Sep 2019 09:52:40 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8C8qEv915204728
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Sep 2019 08:52:14 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 519A242047;
-        Thu, 12 Sep 2019 08:52:39 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7C51642042;
-        Thu, 12 Sep 2019 08:52:36 +0000 (GMT)
-Received: from [9.199.159.54] (unknown [9.199.159.54])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Sep 2019 08:52:36 +0000 (GMT)
-Subject: Re: [PATCH 2/3] ext4: fix inode rwsem regression
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-fsdevel@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        hch@infradead.org, andres@anarazel.de, david@fromorbit.com,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        aneesh.kumar@linux.ibm.com
-References: <20190911093926.pfkkx25mffzeuo32@alap3.anarazel.de>
- <20190911164517.16130-1-rgoldwyn@suse.de>
- <20190911164517.16130-3-rgoldwyn@suse.de>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Thu, 12 Sep 2019 14:22:35 +0530
+        id S1730470AbfILJGY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 05:06:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40360 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730327AbfILJGY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Sep 2019 05:06:24 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 882FB18C4272;
+        Thu, 12 Sep 2019 09:06:23 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-120-238.rdu2.redhat.com [10.10.120.238])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B31CA600C4;
+        Thu, 12 Sep 2019 09:06:18 +0000 (UTC)
+Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
+ PMD
+To:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
+References: <20190911150537.19527-1-longman@redhat.com>
+ <20190911150537.19527-6-longman@redhat.com>
+ <ae7edcb8-74e5-037c-17e7-01b3cf9320af@oracle.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <b7d7d109-03cf-d750-3a56-a95837998372@redhat.com>
+Date:   Thu, 12 Sep 2019 10:06:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190911164517.16130-3-rgoldwyn@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <ae7edcb8-74e5-037c-17e7-01b3cf9320af@oracle.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091208-0012-0000-0000-0000034A5978
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091208-0013-0000-0000-00002184C50C
-Message-Id: <20190912085236.7C51642042@d06av24.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909120092
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Thu, 12 Sep 2019 09:06:23 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cc'd Matthew as well.
+On 9/12/19 4:26 AM, Mike Kravetz wrote:
+> On 9/11/19 8:05 AM, Waiman Long wrote:
+>> When allocating a large amount of static hugepages (~500-1500GB) on a
+>> system with large number of CPUs (4, 8 or even 16 sockets), performance
+>> degradation (random multi-second delays) was observed when thousands
+>> of processes are trying to fault in the data into the huge pages. The
+>> likelihood of the delay increases with the number of sockets and hence
+>> the CPUs a system has.  This only happens in the initial setup phase
+>> and will be gone after all the necessary data are faulted in.
+>>
+>> These random delays, however, are deemed unacceptable. The cause of
+>> that delay is the long wait time in acquiring the mmap_sem when trying
+>> to share the huge PMDs.
+>>
+>> To remove the unacceptable delays, we have to limit the amount of wait
+>> time on the mmap_sem. So the new down_write_timedlock() function is
+>> used to acquire the write lock on the mmap_sem with a timeout value of
+>> 10ms which should not cause a perceivable delay. If timeout happens,
+>> the task will abandon its effort to share the PMD and allocate its own
+>> copy instead.
+>>
+> <snip>
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index 6d7296dd11b8..445af661ae29 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -4750,6 +4750,8 @@ void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
+>>  	}
+>>  }
+>>  
+>> +#define PMD_SHARE_DISABLE_THRESHOLD	(1 << 8)
+>> +
+>>  /*
+>>   * Search for a shareable pmd page for hugetlb. In any case calls pmd_alloc()
+>>   * and returns the corresponding pte. While this is not necessary for the
+>> @@ -4770,11 +4772,24 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud)
+>>  	pte_t *spte = NULL;
+>>  	pte_t *pte;
+>>  	spinlock_t *ptl;
+>> +	static atomic_t timeout_cnt;
+>>  
+>> -	if (!vma_shareable(vma, addr))
+>> -		return (pte_t *)pmd_alloc(mm, pud, addr);
+>> +	/*
+>> +	 * Don't share if it is not sharable or locking attempt timed out
+>> +	 * after 10ms. After 256 timeouts, PMD sharing will be permanently
+>> +	 * disabled as it is just too slow.
+>> +	 */
+>> +	if (!vma_shareable(vma, addr) ||
+>> +	   (atomic_read(&timeout_cnt) >= PMD_SHARE_DISABLE_THRESHOLD))
+>> +		goto out_no_share;
+>> +
+>> +	if (!i_mmap_timedlock_write(mapping, ms_to_ktime(10))) {
+>> +		if (atomic_inc_return(&timeout_cnt) ==
+>> +		    PMD_SHARE_DISABLE_THRESHOLD)
+>> +			pr_info("Hugetlbfs PMD sharing disabled because of timeouts!\n");
+>> +		goto out_no_share;
+>> +	}
+>>  
+>> -	i_mmap_lock_write(mapping);
+> All this got me wondering if we really need to take i_mmap_rwsem in write
+> mode here.  We are not changing the tree, only traversing it looking for
+> a suitable vma.
+>
+> Unless I am missing something, the hugetlb code only ever takes the semaphore
+> in write mode; never read.  Could this have been the result of changing the
+> tree semaphore to read/write?  Instead of analyzing all the code, the easiest
+> and safest thing would have been to take all accesses in write mode.
+>
+> I can investigate more, but wanted to ask the question in case someone already
+> knows.
+>
+> At one time, I thought it was safe to acquire the semaphore in read mode for
+> huge_pmd_share, but write mode for huge_pmd_unshare.  See commit b43a99900559.
+> This was reverted along with another patch for other reasons.
+>
+> If we change change from write to read mode, this may have significant impact
+> on the stalls.
 
-On 9/11/19 10:15 PM, Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> This is similar to 942491c9e6d6 ("xfs: fix AIM7 regression")
-> Apparently our current rwsem code doesn't like doing the trylock, then
-> lock for real scheme.  So change our read/write methods to just do the
-> trylock for the RWF_NOWAIT case.
-> 
-> Fixes: 728fbc0e10b7 ("ext4: nowait aio support")
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+If we can take the rwsem in read mode, that should solve the problem
+AFAICS. As I don't have a full understanding of the history of that
+code, I didn't try to do that in my patch.
 
-This patch will conflict with recent iomap patch series.
-So if this is getting queued up before, so iomap patch series will
-need to rebase and factor these changes in the new APIs.
-
-Otherwise looks good to me!
-
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-
-
-> ---
->   fs/ext4/file.c | 17 +++++++++++------
->   1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 70b0438dbc94..d5b2d0cc325d 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -40,11 +40,13 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
->   	struct inode *inode = file_inode(iocb->ki_filp);
->   	ssize_t ret;
->   
-> -	if (!inode_trylock_shared(inode)) {
-> -		if (iocb->ki_flags & IOCB_NOWAIT)
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!inode_trylock_shared(inode))
->   			return -EAGAIN;
-> +	} else {
->   		inode_lock_shared(inode);
->   	}
-> +
->   	/*
->   	 * Recheck under inode lock - at this point we are sure it cannot
->   	 * change anymore
-> @@ -190,11 +192,13 @@ ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
->   	struct inode *inode = file_inode(iocb->ki_filp);
->   	ssize_t ret;
->   
-> -	if (!inode_trylock(inode)) {
-> -		if (iocb->ki_flags & IOCB_NOWAIT)
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!inode_trylock(inode))
->   			return -EAGAIN;
-> +	} else {
->   		inode_lock(inode);
->   	}
-> +
->   	ret = ext4_write_checks(iocb, from);
->   	if (ret <= 0)
->   		goto out;
-> @@ -233,9 +237,10 @@ ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->   	if (!o_direct && (iocb->ki_flags & IOCB_NOWAIT))
->   		return -EOPNOTSUPP;
->   
-> -	if (!inode_trylock(inode)) {
-> -		if (iocb->ki_flags & IOCB_NOWAIT)
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!inode_trylock(inode))
->   			return -EAGAIN;
-> +	} else {
->   		inode_lock(inode);
->   	}
->   
-> 
+Cheers,
+Longman
 
