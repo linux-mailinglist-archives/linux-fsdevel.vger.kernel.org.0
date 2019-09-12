@@ -2,93 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53ED8B0984
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 09:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25CF6B098F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 09:35:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbfILHcM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 03:32:12 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46262 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfILHcM (ORCPT
+        id S1729934AbfILHfF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 03:35:05 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37595 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbfILHfE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 03:32:12 -0400
-Received: by mail-io1-f68.google.com with SMTP id d17so30317774ios.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2019 00:32:11 -0700 (PDT)
+        Thu, 12 Sep 2019 03:35:04 -0400
+Received: by mail-io1-f66.google.com with SMTP id r4so52220968iop.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2019 00:35:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zL9levB8lFuZ1DGW4jo3XGnWPG/tv2565iTsfF4DA7I=;
-        b=IscHHB2OAm/uAe4mcsSW58kB7QhJwwHFHuB0Aq8bLR4mPg84nca7xRBeq2oONfkBGz
-         2l4J9BXwV86rz/UbsRzjBopdbNertMf7Z0wjaWAaEy5Sgvyg6sYCEjcV1dzNX6Azizw+
-         7DUd3jIZJQxjfIm6d9JLdxGrkhA4cwQR/gL/4=
+        bh=3yy/eB93u3i9oFcrYya+qHvoEWOjOqMkA6Rb+MDstxQ=;
+        b=K05sx5cBxhYiaLy2Alt2mn8Mrq+JJD8WgnnBD5NOn12SAe96tzwo5Znel55J8i+iXI
+         qiTaXW3iH1cACv8m9V2QYoHIzAG+piVKMYQ1R0IpmwBM6/DfomHsYEmLe3u/cFh7QJNA
+         wlnzdFAGWW99YORzPMbLex+anPI5d6C2iZqj0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zL9levB8lFuZ1DGW4jo3XGnWPG/tv2565iTsfF4DA7I=;
-        b=gjvQ+ydob8KikWvDYqlTSBLz1ZtBABNVTXMJp79Jbz3FW5JocHlWzD5TenUuWtJ+/V
-         dfRNBsolpubznbUiS2QH45ltotjpUvgzo1HLmDdZ+sXZfRNQ0LZumvNTMlukiu5XaJOT
-         VR+jdpGDULZOq3tGS47/B3laD1rHR6yZlBBaIuOhZ5GTEHHcu09bgEkKegQAlKayvDpy
-         q8mTVBNv9tO0c+b4zv41kUyaBkk5/ATvghUYOEfW04ILeyfylQdxnYmQQftCMW+25l8c
-         kebsX5HMmd+BZKtMvtPYjaIw7R2WRGrc8ifRnEaoSa/NMZQIem7x4J3Zbon1XkReCRJU
-         zrDw==
-X-Gm-Message-State: APjAAAVKq1zDF1fUgvp/RlWAuv9e5JZW05gN68i+XNJjMovkDHewL+vR
-        XhJw56MFZNb/ejwEHmjVp3IKfBMlcrn6rwTAv+UYqA==
-X-Google-Smtp-Source: APXvYqwnvHRA+wVFM3ppHtZ/JOGX6430u6JIuJdiOHb3e3CdtB05Vy/IcDbz+i85Aq9Cp7N7vnhffuZWK1V26vvXJI4=
-X-Received: by 2002:a6b:bec6:: with SMTP id o189mr2602814iof.62.1568273531464;
- Thu, 12 Sep 2019 00:32:11 -0700 (PDT)
+        bh=3yy/eB93u3i9oFcrYya+qHvoEWOjOqMkA6Rb+MDstxQ=;
+        b=mYCj1NqcUt4VxOfPm3fHHTY7cKSe31BwlilPP7Y+2dgAXyuf28zo9l7FRUV1d+i+MX
+         fEthaKiUVqOPE2fXF8FpOBc9uOLcsw3bD51tHRgxUVBzZ8S+DgEVYL0s5rsKHrSNWW3C
+         9rmLSiUo0j92Zbe42+mdOUs19sCYtDGPQC/nPG4SVXUomtW9u6VEewgTTnVltUmDWI/6
+         xSBOxxYUHGzjO8LnqWDPkkPRpWuMew3zOdz3VL7mCmX8k+XHgYq0VDoq5zojwADkpO1u
+         we+wnHVC6InyU8V3A5KuQgl2aCCJqNCMjb8Q3gSQv/hiraX7tb0gtXzdmti0WsYCPPbo
+         FI9A==
+X-Gm-Message-State: APjAAAVKvy51DvKkDSYZwii/QwWjtCaSbS9/MqEGC/YmUmyQHRikamcE
+        loXHIwdaDMwRtiSe6o0e585CPuM4lufdFEbx/pGN6g==
+X-Google-Smtp-Source: APXvYqwDgZMkrPkxnR7Kpp3wOz1MBiRabFbv3J14u1Gj0YLn1LeCU7PJj52biEq7IGB5upsfDYmTD5hxdyd3zlFT4qQ=
+X-Received: by 2002:a05:6638:405:: with SMTP id q5mr40270933jap.78.1568273702977;
+ Thu, 12 Sep 2019 00:35:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <1568196917-25674-1-git-send-email-chakragithub@gmail.com>
- <CAJfpegtDZ2ShAwkJ4hbj=sGM96QumWzzg8WsX42=AY2117p3+w@mail.gmail.com> <CAH7=fot46GSdanJg9P2rRKrxWnpZq7+vW2CVhtZvGzKTzk__nA@mail.gmail.com>
-In-Reply-To: <CAH7=fot46GSdanJg9P2rRKrxWnpZq7+vW2CVhtZvGzKTzk__nA@mail.gmail.com>
+References: <20190910151206.4671-1-mszeredi@redhat.com> <20190911145247.GA7271@redhat.com>
+In-Reply-To: <20190911145247.GA7271@redhat.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 12 Sep 2019 09:32:00 +0200
-Message-ID: <CAJfpeguLbiJt0L5cZjZTkXcGMHHviSdQV=yEei6FgRi23DBTMQ@mail.gmail.com>
-Subject: Re: [PATCH] fuse:send filep uid as part of fuse write req
-To:     Chakra Divi <chakragithub@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org
+Date:   Thu, 12 Sep 2019 09:34:52 +0200
+Message-ID: <CAJfpegtmvi7pkiJe+1cHMbkx2rJEi7LOAaBMEyC0DaNm7uW3bQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/4] virtio-fs: shared file system for virtual machines
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 6:59 AM Chakra Divi <chakragithub@gmail.com> wrote:
+On Wed, Sep 11, 2019 at 4:53 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Tue, Sep 10, 2019 at 05:12:02PM +0200, Miklos Szeredi wrote:
+> > Git tree for this version is available here:
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#virtiofs-v5
+> >
+> > Only post patches that actually add virtiofs (virtiofs-v5-base..virtiofs-v5).
+> >
+> > I've folded the series from Vivek and fixed a couple of TODO comments
+> > myself.  AFAICS two issues remain that need to be resolved in the short
+> > term, one way or the other: freeze/restore and full virtqueue.
 >
 > Hi Miklos,
 >
-> On Wed, Sep 11, 2019 at 5:05 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->>
->> On Wed, Sep 11, 2019 at 12:15 PM Chakra Divi <chakragithub@gmail.com> wrote:
->> >
->> > In current code in fuse write request current_fsuid is sent,
->> > however this creates an issue in sudo execution context.
->> > Changes to consider uid and gid from file struture pointer
->> > that is created as part of open file instead of current_fsuid,gid
->> >
->> > Steps to reproduce the issue:
->> > 1) create user1 and user2
->> > 2) create a file1 with user1 on fusemount
->> > 3) change the file1 permissions to 600
->> > 4) execute the following command
->> > user1@linux# sudo -u user2 whoami >> /fusemnt/file1
->> > Here write fails with permission denied error
->>
->> Not sure what's the issue here.  If filesystem wants to check open
->> creds, it should do so with the creds sent at open.
->>
->> Does that solve your problem?
->>
+> We are already handling full virtqueue by waiting a bit and retrying.
+> I think TODO in virtio_fs_enqueue_req() is stale. Caller already
+> handles virtqueue full situation by retrying.
+
+Ah.
+
 >
-> Are you saying that our filesystem should store the credentials in open call,  ignore the credentials in write request and use open credentials instead
+> Havind said that, this could be improved by using some sort of wait
+> queue or completion privimitve.
 
-Yes.  And even that would be dubious in case of mmap-ed writes or with
-FUSE_WRITEBACK_CACHE because the information about which open file
-instance received the modification is lost.
-
-So generally credential checking on writeback is useless.  Not sure
-what NFS does, because there's no way to get around those rules.
+Yeah, the request queuing can be cleaned up in several ways.  But I
+think that we might postpone that till after merging with mainline.
 
 Thanks,
 Miklos
