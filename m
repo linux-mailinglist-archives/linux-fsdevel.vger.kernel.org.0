@@ -2,87 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D5E3B13BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A02EDB1378
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 19:26:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387680AbfILR3R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 13:29:17 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:44728 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387674AbfILR3Q (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 13:29:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1568309355; x=1599845355;
-  h=message-id:in-reply-to:references:from:date:subject:to:
-   mime-version;
-  bh=g/CRhjkDMfnehkMmWaT1SBtBLAOyR4ClP1RfGHlt7BE=;
-  b=fnoIrMmXFOZZDRQf4I2tyoanm0zGcvgYL3jp7v9XkZD+tF7zJ5SPX4vK
-   qnAIYkV81UtptZkt/aSAUyl7ZCfHlf5GpaTWqrKZEpo2GFNtWpU+sAwKM
-   GaJoD5aCQNGu3ZpLjB5dLk91Tad8aqZYLJZRT7kVoc9zibJN9j0+E4PzU
-   Q=;
-X-IronPort-AV: E=Sophos;i="5.64,497,1559520000"; 
-   d="scan'208";a="750440831"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1e-27fb8269.us-east-1.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 12 Sep 2019 17:29:11 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-27fb8269.us-east-1.amazon.com (Postfix) with ESMTPS id A003CA2617;
-        Thu, 12 Sep 2019 17:29:10 +0000 (UTC)
-Received: from EX13D12UEA003.ant.amazon.com (10.43.61.184) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
- EX13D12UEA003.ant.amazon.com (10.43.61.184) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 12 Sep 2019 17:28:52 +0000
-Received: from kaos-source-ops-60003.pdx1.corp.amazon.com (10.36.133.164) by
- mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 12 Sep 2019 17:28:52 +0000
-Received: by kaos-source-ops-60003.pdx1.corp.amazon.com (Postfix, from userid 6262777)
-        id E77E2C0525; Thu, 12 Sep 2019 17:28:49 +0000 (UTC)
-Message-ID: <46d6a4ceafd045be525e669aade649bc81c5894b.1568309119.git.fllinden@amazon.com>
-In-Reply-To: <cover.1568309119.git.fllinden@amazon.com>
-References: <cover.1568309119.git.fllinden@amazon.com>
-From:   Frank van der Linden <fllinden@amazon.com>
-Date:   Mon, 2 Sep 2019 23:17:12 +0000
-Subject: [RFC PATCH 35/35] nfsd: add NFSD_V4_XATTR config option
-To:     <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+        id S2387453AbfILR03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 13:26:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53388 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387432AbfILR03 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Sep 2019 13:26:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 61455B713;
+        Thu, 12 Sep 2019 17:26:25 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     Michal Suchanek <msuchanek@suse.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Breno Leitao <leitao@debian.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joel Stanley <joel@jms.id.au>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Russell Currey <ruscur@russell.cc>,
+        Diana Craciun <diana.craciun@nxp.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        David Hildenbrand <david@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v8 0/7] Disable compat cruft on ppc64le v8
+Date:   Thu, 12 Sep 2019 19:26:02 +0200
+Message-Id: <cover.1568306311.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With everything in place, add the NFSD_V4_XATTR config option to enable
-user extended attribute support.
+Less code means less bugs so add a knob to skip the compat stuff.
 
-Signed-off-by: Frank van der Linden <fllinden@amazon.com>
----
- fs/nfsd/Kconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+This is tested on ppc64le top of
 
-diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
-index d25f6bbe7006..a42d7c8bdb03 100644
---- a/fs/nfsd/Kconfig
-+++ b/fs/nfsd/Kconfig
-@@ -145,6 +145,16 @@ config NFSD_V4_SECURITY_LABEL
- 	If you do not wish to enable fine-grained security labels SELinux or
- 	Smack policies on NFSv4 files, say N.
- 
-+config NFSD_V4_XATTR
-+	bool "NFSv4.2 server extended attribute support (RFC8276)"
-+	depends on NFSD_V4
-+	help
-+
-+	This option enables extended attributed support, as defined
-+	by RFC8726, for the kernel NFS server. This is not to be
-+	confused with the "named attributers" extension. It supports
-+	the xattr user namespace only, by design.
-+
- config NFSD_FAULT_INJECTION
- 	bool "NFS server manual fault injection"
- 	depends on NFSD_V4 && DEBUG_KERNEL && DEBUG_FS
+https://patchwork.ozlabs.org/patch/1153850/
+https://patchwork.ozlabs.org/patch/1158412/
+
+Changes in v2: saner CONFIG_COMPAT ifdefs
+Changes in v3:
+ - change llseek to 32bit instead of builing it unconditionally in fs
+ - clanup the makefile conditionals
+ - remove some ifdefs or convert to IS_DEFINED where possible
+Changes in v4:
+ - cleanup is_32bit_task and current_is_64bit
+ - more makefile cleanup
+Changes in v5:
+ - more current_is_64bit cleanup
+ - split off callchain.c 32bit and 64bit parts
+Changes in v6:
+ - cleanup makefile after split
+ - consolidate read_user_stack_32
+ - fix some checkpatch warnings
+Changes in v7:
+ - add back __ARCH_WANT_SYS_LLSEEK to fix build with llseek
+ - remove leftover hunk
+ - add review tags
+Changes in v8:
+ - consolidate valid_user_sp to fix it in the split callchain.c
+ - fix build errors/warnings with PPC64 !COMPAT and PPC32
+
+Michal Suchanek (7):
+  powerpc: Add back __ARCH_WANT_SYS_LLSEEK macro
+  powerpc: move common register copy functions from signal_32.c to
+    signal.c
+  powerpc/perf: consolidate read_user_stack_32
+  powerpc/perf: consolidate valid_user_sp
+  powerpc/64: make buildable without CONFIG_COMPAT
+  powerpc/64: Make COMPAT user-selectable disabled on littleendian by
+    default.
+  powerpc/perf: split callchain.c by bitness
+
+ arch/powerpc/Kconfig                   |   5 +-
+ arch/powerpc/include/asm/thread_info.h |   4 +-
+ arch/powerpc/include/asm/unistd.h      |   1 +
+ arch/powerpc/kernel/Makefile           |   7 +-
+ arch/powerpc/kernel/entry_64.S         |   2 +
+ arch/powerpc/kernel/signal.c           | 144 +++++++++-
+ arch/powerpc/kernel/signal_32.c        | 140 ---------
+ arch/powerpc/kernel/syscall_64.c       |   6 +-
+ arch/powerpc/kernel/vdso.c             |   3 +-
+ arch/powerpc/perf/Makefile             |   5 +-
+ arch/powerpc/perf/callchain.c          | 377 +------------------------
+ arch/powerpc/perf/callchain.h          |  25 ++
+ arch/powerpc/perf/callchain_32.c       | 197 +++++++++++++
+ arch/powerpc/perf/callchain_64.c       | 178 ++++++++++++
+ fs/read_write.c                        |   3 +-
+ 15 files changed, 566 insertions(+), 531 deletions(-)
+ create mode 100644 arch/powerpc/perf/callchain.h
+ create mode 100644 arch/powerpc/perf/callchain_32.c
+ create mode 100644 arch/powerpc/perf/callchain_64.c
+
 -- 
-2.17.2
+2.23.0
 
