@@ -2,136 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A70F6B0AE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 11:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE894B0B52
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 11:26:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730470AbfILJGY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 05:06:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40360 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730327AbfILJGY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 05:06:24 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 882FB18C4272;
-        Thu, 12 Sep 2019 09:06:23 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-120-238.rdu2.redhat.com [10.10.120.238])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B31CA600C4;
-        Thu, 12 Sep 2019 09:06:18 +0000 (UTC)
-Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
- PMD
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
-References: <20190911150537.19527-1-longman@redhat.com>
- <20190911150537.19527-6-longman@redhat.com>
- <ae7edcb8-74e5-037c-17e7-01b3cf9320af@oracle.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <b7d7d109-03cf-d750-3a56-a95837998372@redhat.com>
-Date:   Thu, 12 Sep 2019 10:06:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1730764AbfILJ0W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 05:26:22 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33231 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730337AbfILJ0W (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Sep 2019 05:26:22 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n190so13181694pgn.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2019 02:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dt0j6/Dbs+dwW1SIPthaW+qziOAlFsuqXt20b4c12nE=;
+        b=12hCQat9jUcgSa47++/HQI/Kl7LxMpOdcs5vqzMW95pKZMUHEhyw9ZMTKknS+6Z2Rx
+         K9qJNKmsGVjwgxprs5gDVl8K+aUT2VnsLU60nF0AzZqv5zXtsCwN++iPfEVHgWC+J7j+
+         dzo27W3kuN+k10OHxZQp4JFaIL0RYtJn0rAoEKVV3Tjp/yso+xeP3PIyvRGhxb2KSfST
+         ffoFGuMIjtreThdQ+W41KGD+0jkLetWQM+B1FTVLAr6v++nXXRuC0Pw6a6KKqO9IL1Es
+         KlgfJcVrWGFzhtJHgrA+FEtA/80mCRFIS7z+ma8tpq3q4vca8MZ/qHfHgMp7DzPy84Ad
+         FAkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dt0j6/Dbs+dwW1SIPthaW+qziOAlFsuqXt20b4c12nE=;
+        b=PsE/KmMoT7AB0PSwvEeTlDeJyxghYDCN5YceFEwxXB2sILLxFhnb6S9RkhChbDMj+S
+         3zazqj7HImXgYgADMY3puL+2Xpyq+ao/xAdA+MOwNt92Z1meYKzsy/5x9oQhOhAxoxA2
+         TWEtS6IK9rew/zsln24YwX3MrrYmk1+4h3LxS6/50Mf0srUftgo8ub/KmY7Xos4iimnC
+         NJd8LXRvocUzjyRaI3vBXbaKIiTdm/2Mn4u+q5bItlKsV/Xnzx5URb+QT2fpn4KVa0K8
+         pYMXuZ/Jnovf0UH+IOAkJ3md62BP7mgGt9rRb3tARbclafgrKL8i+sPi73Vdbf9gqQFl
+         x2lQ==
+X-Gm-Message-State: APjAAAVoADlN9xaPieHIEmWrSIFPOxmatsWTg2sXqPNXNEKndiWahmfP
+        Sbfe2D4dXdCSVhf5HQnRIpeM
+X-Google-Smtp-Source: APXvYqwyIDlF1caDTpNVqUKoLG7l8JslVWsCl4azAP5rgYV6Wp1tuclPnO2lsBQan2QfColr2D8A2g==
+X-Received: by 2002:a63:211c:: with SMTP id h28mr36886434pgh.438.1568280381146;
+        Thu, 12 Sep 2019 02:26:21 -0700 (PDT)
+Received: from bobrowski ([110.232.114.101])
+        by smtp.gmail.com with ESMTPSA id c62sm29491396pfa.92.2019.09.12.02.26.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2019 02:26:20 -0700 (PDT)
+Date:   Thu, 12 Sep 2019 19:26:14 +1000
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, hch@infradead.org, andres@anarazel.de,
+        david@fromorbit.com, linux-f2fs-devel@lists.sourceforge.net,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        aneesh.kumar@linux.ibm.com
+Subject: Re: [PATCH 2/3] ext4: fix inode rwsem regression
+Message-ID: <20190912092614.GB9747@bobrowski>
+References: <20190911093926.pfkkx25mffzeuo32@alap3.anarazel.de>
+ <20190911164517.16130-1-rgoldwyn@suse.de>
+ <20190911164517.16130-3-rgoldwyn@suse.de>
+ <20190912085236.7C51642042@d06av24.portsmouth.uk.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <ae7edcb8-74e5-037c-17e7-01b3cf9320af@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Thu, 12 Sep 2019 09:06:23 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190912085236.7C51642042@d06av24.portsmouth.uk.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/12/19 4:26 AM, Mike Kravetz wrote:
-> On 9/11/19 8:05 AM, Waiman Long wrote:
->> When allocating a large amount of static hugepages (~500-1500GB) on a
->> system with large number of CPUs (4, 8 or even 16 sockets), performance
->> degradation (random multi-second delays) was observed when thousands
->> of processes are trying to fault in the data into the huge pages. The
->> likelihood of the delay increases with the number of sockets and hence
->> the CPUs a system has.  This only happens in the initial setup phase
->> and will be gone after all the necessary data are faulted in.
->>
->> These random delays, however, are deemed unacceptable. The cause of
->> that delay is the long wait time in acquiring the mmap_sem when trying
->> to share the huge PMDs.
->>
->> To remove the unacceptable delays, we have to limit the amount of wait
->> time on the mmap_sem. So the new down_write_timedlock() function is
->> used to acquire the write lock on the mmap_sem with a timeout value of
->> 10ms which should not cause a perceivable delay. If timeout happens,
->> the task will abandon its effort to share the PMD and allocate its own
->> copy instead.
->>
-> <snip>
->> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->> index 6d7296dd11b8..445af661ae29 100644
->> --- a/mm/hugetlb.c
->> +++ b/mm/hugetlb.c
->> @@ -4750,6 +4750,8 @@ void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
->>  	}
->>  }
->>  
->> +#define PMD_SHARE_DISABLE_THRESHOLD	(1 << 8)
->> +
->>  /*
->>   * Search for a shareable pmd page for hugetlb. In any case calls pmd_alloc()
->>   * and returns the corresponding pte. While this is not necessary for the
->> @@ -4770,11 +4772,24 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud)
->>  	pte_t *spte = NULL;
->>  	pte_t *pte;
->>  	spinlock_t *ptl;
->> +	static atomic_t timeout_cnt;
->>  
->> -	if (!vma_shareable(vma, addr))
->> -		return (pte_t *)pmd_alloc(mm, pud, addr);
->> +	/*
->> +	 * Don't share if it is not sharable or locking attempt timed out
->> +	 * after 10ms. After 256 timeouts, PMD sharing will be permanently
->> +	 * disabled as it is just too slow.
->> +	 */
->> +	if (!vma_shareable(vma, addr) ||
->> +	   (atomic_read(&timeout_cnt) >= PMD_SHARE_DISABLE_THRESHOLD))
->> +		goto out_no_share;
->> +
->> +	if (!i_mmap_timedlock_write(mapping, ms_to_ktime(10))) {
->> +		if (atomic_inc_return(&timeout_cnt) ==
->> +		    PMD_SHARE_DISABLE_THRESHOLD)
->> +			pr_info("Hugetlbfs PMD sharing disabled because of timeouts!\n");
->> +		goto out_no_share;
->> +	}
->>  
->> -	i_mmap_lock_write(mapping);
-> All this got me wondering if we really need to take i_mmap_rwsem in write
-> mode here.  We are not changing the tree, only traversing it looking for
-> a suitable vma.
->
-> Unless I am missing something, the hugetlb code only ever takes the semaphore
-> in write mode; never read.  Could this have been the result of changing the
-> tree semaphore to read/write?  Instead of analyzing all the code, the easiest
-> and safest thing would have been to take all accesses in write mode.
->
-> I can investigate more, but wanted to ask the question in case someone already
-> knows.
->
-> At one time, I thought it was safe to acquire the semaphore in read mode for
-> huge_pmd_share, but write mode for huge_pmd_unshare.  See commit b43a99900559.
-> This was reverted along with another patch for other reasons.
->
-> If we change change from write to read mode, this may have significant impact
-> on the stalls.
+On Thu, Sep 12, 2019 at 02:22:35PM +0530, Ritesh Harjani wrote:
+> cc'd Matthew as well.
+> 
+> > This is similar to 942491c9e6d6 ("xfs: fix AIM7 regression")
+> > Apparently our current rwsem code doesn't like doing the trylock, then
+> > lock for real scheme.  So change our read/write methods to just do the
+> > trylock for the RWF_NOWAIT case.
+> > 
+> > Fixes: 728fbc0e10b7 ("ext4: nowait aio support")
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> 
+> This patch will conflict with recent iomap patch series.
+> So if this is getting queued up before, so iomap patch series will
+> need to rebase and factor these changes in the new APIs.
 
-If we can take the rwsem in read mode, that should solve the problem
-AFAICS. As I don't have a full understanding of the history of that
-code, I didn't try to do that in my patch.
+Noted. I've been keeping my eye on this thread, so I'm aware of this.
 
-Cheers,
-Longman
-
+--<M>--
