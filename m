@@ -2,119 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1555B0D7B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 13:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 414C1B0D7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Sep 2019 13:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731317AbfILLDj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Sep 2019 07:03:39 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46888 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731211AbfILLDj (ORCPT
+        id S1731211AbfILLDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Sep 2019 07:03:51 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33028 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730268AbfILLDv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Sep 2019 07:03:39 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q5so15763196pfg.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2019 04:03:36 -0700 (PDT)
+        Thu, 12 Sep 2019 07:03:51 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q10so15792285pfl.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Sep 2019 04:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=6TdpHGRMo/9QGFFi43irhTk/FFMkZ5MctGN+Nor7bUo=;
-        b=e1ZsZIQKwY04TZyCyLF3+eKdqL7zUB44U/DjsjtqLdpGeQZpMXkNYhq4tEu53pbWja
-         kcnWDtijf9xsDUsHu2fEyJUp4RtOPkJKcsIBZm+3F+drHu2zZdAYO4AGPgq+5LxcT6/Z
-         Humd2JXqYUlmyA8DTIX9vQLaQR0ZuxIxsDsglIrAO4M/GvgrVlJM+BI3+njZKeOul5ey
-         ZqRMAIvN3JlL4XIYDwYxNdkpR2AiIs5mgbx8EE55odTiXuaUUZT9iUpPdpGuOswppxkM
-         QIgO57DSW59CR4jTS1hYBQzGSKj6VT8tNSk1cgI+NGLIi7+2uLFXLODIwuvGxYGjTAkq
-         VRRA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gWhEv95xTEIL42qPF3+CSeyG/Xs7G/CybwgHcd2mrXY=;
+        b=Vsnv9GpP/UwFIuF1xKQ1ymfWv4uzJy++3sv+5fdk76QqcRzf9lyyN6naP60MS7Bsuo
+         qANymsS6MIzGRxEsVIzIZYhj9h1hwplWnVrxDyN5m5Zwd+0ksXYwlydloFFbK2Mkm3SZ
+         xwTtkUApbqn/nkubInIphQb1goysnPXrkeWScszARjIf4vUHVIJfMPCfbRnEhvCFP6UM
+         QidOAQJgxDipAwRqwINCbG8y4d34iQ+8wD5hVQaz+IQxpxf6Hx/Oqwg5lWUch1vPX8Fs
+         XuSQ1FZIalNZcE+XjZioGEH+X9ZdHIe6WY/3C3sNk49A2uraGYFOtAm2b7H6Wdlv2ieL
+         hvSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=6TdpHGRMo/9QGFFi43irhTk/FFMkZ5MctGN+Nor7bUo=;
-        b=Vy+/U0YnlmGi7Oxfb8i9AUYYYDXmACFpAuXGxwrCeCGBprHSk/KNRwTNg3Eh+9Ak0P
-         DaX9xZhKJ5G9PRQTvMlzl4ufF5sC/TWdAWJJNYbgqgkbZxNKZ2qH1ZwOxmE1wkzxZxyy
-         r+aWfq/eGkTRoQI5wxnoD8ZMVnd1FRcm8p5DGAyDz1J9C5kONF4Axz9hkqn6aKN8MjoD
-         tb04MDgYuffQnes26UIvzBFmrNOeWceNTZeZYvpJm4QJ25PvtztGuSotRaqoA1BD6lti
-         0jZjNjEb1f+MeCSsMTOPe7s4doKmeHrYGQvBB1y1lzIObU48UFCj0AAvbDedA2pwlXmD
-         tYLg==
-X-Gm-Message-State: APjAAAXn2URXl8JZqJzIEwMayGHi6NFqI021L/+GTbB01xWFRk04Fki5
-        v/Yl30scJLAzs3Z3vOJWdHL5
-X-Google-Smtp-Source: APXvYqxMi/6AwAWIBbV3Fk+7VAehvArZGxks4tfVfWiG90d8S7WeSaYnEa0sztMwIwxAYvqzUV7e+A==
-X-Received: by 2002:a63:c246:: with SMTP id l6mr37856485pgg.210.1568286215350;
-        Thu, 12 Sep 2019 04:03:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gWhEv95xTEIL42qPF3+CSeyG/Xs7G/CybwgHcd2mrXY=;
+        b=QhzeGBHqRXNXYgllxwPLvkgCO0GcUaAuqbJ2XkZmP8wIIR2wkfjXt1XIKytCYbVVcC
+         Mlaug1E/0P7m2uSEPuoT5Pqof42n2zzF4byc/Nad+iy206LSUOlDqJeCGnsKJK4mTakI
+         PC/zlU3GGVZ0JMeT0s1nB0sYZEP9XIy5WBu070LkB+bJZPnNlbh3RbdyW/FrZRMPHOaH
+         /GfOfqmx5AMPUAAbEKwPbtDsLQFQ4dGzGPKW/aR/G5STF06OSqO4r2yy+H4+9J/LRb6r
+         +Lb2Z59CIh6s5tXUFukYnP1V/sfOoFEKiGG1yUCGP/H6fla5/clHGvCBq3T0/ItINskp
+         1uOw==
+X-Gm-Message-State: APjAAAUSVq1kmXrhhCiNgrkLB/Oh+PWydi8GcMKlrD6TzDBqoz8cCTKN
+        7w9vFl0bqIZnGUnyOekVaIID
+X-Google-Smtp-Source: APXvYqykU0mNgWLqAuP8phxMNxNkCBH3W2aeVGPttM6WmZ4Nl3WnKNHLPADJRMDRTPoNGP8s5YETyw==
+X-Received: by 2002:a63:d64f:: with SMTP id d15mr38390739pgj.345.1568286230822;
+        Thu, 12 Sep 2019 04:03:50 -0700 (PDT)
 Received: from poseidon.bobrowski.net ([114.78.226.167])
-        by smtp.gmail.com with ESMTPSA id u65sm27618703pfu.104.2019.09.12.04.03.31
+        by smtp.gmail.com with ESMTPSA id c125sm31171591pfa.107.2019.09.12.04.03.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2019 04:03:34 -0700 (PDT)
-Date:   Thu, 12 Sep 2019 21:03:28 +1000
+        Thu, 12 Sep 2019 04:03:50 -0700 (PDT)
+Date:   Thu, 12 Sep 2019 21:03:44 +1000
 From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
 To:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca
 Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
-Subject: [PATCH v3 0/6] ext4: port direct IO to iomap infrastructure
-Message-ID: <cover.1568282664.git.mbobrowski@mbobrowski.org>
+Subject: [PATCH v3 1/6] ext4: introduce direct IO read path using iomap
+ infrastructure
+Message-ID: <532d8deae8e522a27539470457eec6b1a5683127.1568282664.git.mbobrowski@mbobrowski.org>
+References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1568282664.git.mbobrowski@mbobrowski.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch series ports the ext4 direct IO paths to make use of the
-iomap infrastructure. The legacy buffer_head based direct IO paths
-have subsequently been removed as they're now no longer in use. The
-result of this change is that the direct IO implementation is much   
-cleaner and keeps the code isolated from the buffer_head internals. In
-addition to this, a slight performance boost could be expected while 
-using O_SYNC | O_DIRECT IO.
+This patch introduces a new direct IO read path that makes use of the
+iomap infrastructure.
 
-The changes have been tested using xfstests in both DAX and non-DAX
-modes using various filesystem configurations i.e. 4k, dioread_nolock.
+The new function ext4_dio_read_iter() is responsible for calling into
+the iomap infrastructure via iomap_dio_rw(). If the inode in question
+does not pass preliminary checks in ext4_dio_checks(), then we simply
+fallback to buffered IO and take that path to fulfil the request. It's
+imperative that we drop the IOCB_DIRECT flag from iocb->ki_flags in
+order to prevent generic_file_read_iter() from trying to take the
+direct IO code path again.
 
-Changes since v2:
+Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+---
+ fs/ext4/file.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 54 insertions(+), 4 deletions(-)
 
-  - Simplified ext4_write_checks() by using file_modified() as oppose
-    to calling file_remove_privs() and file_update_time() explicitly.
-
-  - Other minor cleanups that have been suggested by Ritesh Harjani in
-    the previous round of feedback.
-
-In the original patch series, there was a relatively lengthy
-discussion around the merging of unwritten extents. The buffer_head
-direct IO implementation made use of inode and end_io flags to track
-whether an unwritten extent is eligible to be merged, or not. We don't
-make use of these flags in the new direct IO iomap implementation,
-effectively making the extent merging checks that make use these flags
-redundant. However, it appears that even if additional merges and
-splits are performed, it isn't deemed problematic as such and that's
-due to the way that the filesystem now accommdates for unexpected
-extent splits. The only real concern is the potential wasted
-performance due to the unnecessary merge and split performed under
-specific workloads. The full discussion that goes through these
-details starts from here:
-https://www.spinics.net/lists/linux-ext4/msg67173.html.
-
-Thank you to all that took the time to review and provide constructive
-feedback for previous patch series, highly appreciated.
-
-Matthew Bobrowski (6):
-  ext4: introduce direct IO read path using iomap infrastructure
-  ext4: move inode extension/truncate code out from ext4_iomap_end()
-  iomap: split size and error for iomap_dio_rw ->end_io
-  ext4: reorder map.m_flags checks in ext4_iomap_begin()
-  ext4: introduce direct IO write path using iomap infrastructure
-  ext4: cleanup legacy buffer_head direct IO code
-
- fs/ext4/ext4.h        |   3 -
- fs/ext4/extents.c     |  11 +-
- fs/ext4/file.c        | 364 +++++++++++++++++++++++------
- fs/ext4/inode.c       | 516 +++++-------------------------------------
- fs/iomap/direct-io.c  |   9 +-
- fs/xfs/xfs_file.c     |   8 +-
- include/linux/iomap.h |   4 +-
- 7 files changed, 363 insertions(+), 552 deletions(-)
-
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 70b0438dbc94..e52e3928dc25 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -34,6 +34,53 @@
+ #include "xattr.h"
+ #include "acl.h"
+ 
++static bool ext4_dio_checks(struct inode *inode)
++{
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
++	if (IS_ENCRYPTED(inode))
++		return false;
++#endif
++	if (ext4_should_journal_data(inode))
++		return false;
++	if (ext4_has_inline_data(inode))
++		return false;
++	return true;
++}
++
++static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	ssize_t ret;
++	struct inode *inode = file_inode(iocb->ki_filp);
++
++	/*
++	 * Get exclusion from truncate and other inode operations.
++	 */
++	if (!inode_trylock_shared(inode)) {
++		if (iocb->ki_flags & IOCB_NOWAIT)
++			return -EAGAIN;
++		inode_lock_shared(inode);
++	}
++
++	if (!ext4_dio_checks(inode)) {
++		inode_unlock_shared(inode);
++		/*
++		 * Fallback to buffered IO if the operation being
++		 * performed on the inode is not supported by direct
++		 * IO. The IOCB_DIRECT flag flags needs to be cleared
++		 * here to ensure that the direct IO code path within
++		 * generic_file_read_iter() is not taken again.
++		 */
++		iocb->ki_flags &= ~IOCB_DIRECT;
++		return generic_file_read_iter(iocb, to);
++	}
++
++	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL);
++	inode_unlock_shared(inode);
++
++	file_accessed(iocb->ki_filp);
++	return ret;
++}
++
+ #ifdef CONFIG_FS_DAX
+ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+@@ -64,16 +111,19 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 
+ static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+-	if (unlikely(ext4_forced_shutdown(EXT4_SB(file_inode(iocb->ki_filp)->i_sb))))
++	struct inode *inode = file_inode(iocb->ki_filp);
++
++	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+ 		return -EIO;
+ 
+ 	if (!iov_iter_count(to))
+ 		return 0; /* skip atime */
+ 
+-#ifdef CONFIG_FS_DAX
+-	if (IS_DAX(file_inode(iocb->ki_filp)))
++	if (IS_DAX(inode))
+ 		return ext4_dax_read_iter(iocb, to);
+-#endif
++
++	if (iocb->ki_flags & IOCB_DIRECT)
++		return ext4_dio_read_iter(iocb, to);
+ 	return generic_file_read_iter(iocb, to);
+ }
+ 
 -- 
 2.20.1
 
