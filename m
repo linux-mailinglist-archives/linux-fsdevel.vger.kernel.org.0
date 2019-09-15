@@ -2,128 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0612FB2D99
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2019 03:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F6A4B305B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2019 15:54:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfIOBmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Sep 2019 21:42:03 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39854 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbfIOBmC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Sep 2019 21:42:02 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j16so30514638ljg.6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Sep 2019 18:42:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RGa+AWlAyDqoBCMbLegT75YFVGOcflpwqeENTJ+dosM=;
-        b=TPhNmomCtklLH7dWD2YFBRhvpO07mGfy2r1h8kgNMMU7hbUy4GAQZkx28yzzlONVlG
-         lQRXnoNgHKz24InPhF5OP9waeXo2aBWrwj7uUN3BrfkAvEJnAi7wSwTEqMtqRaPfvVsb
-         vKg7Wf8VqO8sYVAsTq8VaZ09oB9b5tnC7c148=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RGa+AWlAyDqoBCMbLegT75YFVGOcflpwqeENTJ+dosM=;
-        b=hsRPDzGxdBc8XNgzXLF8VL8xBChNsyIznAZRZoC1r/Jsnp+Spb+XpurEzybon16piS
-         A2RTt1gBR/EwZjzc4fdjfeEFWnlJX+O0rbS2i4G6syTJrAPVWLDpnHWadbczhjm8h/2z
-         yG8XcMx33q8RBAAbbYxcF4zATs6ERlLdR2YswT+kwW+DRPk6EH3+7OwkeQJmKUBi82e5
-         lYfEhHF8X8cRjlBerEpoWWBVQREGn7sgtYa1AAtZxosBD6ISIzcXjWHdOeheC7oByyUj
-         Gg7n55yQPpVrZgcNVZqAcn4KGz07Xh/m7twU1lRQ0QaP9B+S5OiV+MwjR1ZbHdlsdDdd
-         1G7g==
-X-Gm-Message-State: APjAAAVgHna73MiG5pO5jsze4YzUhLR4ANEaBn7qYxqiW7W0vNjv491H
-        YDCK2QO3iV5tQzf0Exdkw7siqQrvD5k=
-X-Google-Smtp-Source: APXvYqxmCDyQCO7HjsCvWzDiW59oQ92hf0IASfOlc8D+t1mn/3TXvX1fPdtctAmZaLj6zrEyF1Hvog==
-X-Received: by 2002:a2e:9c16:: with SMTP id s22mr25923145lji.70.1568511719127;
-        Sat, 14 Sep 2019 18:41:59 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id r16sm7892649lfi.77.2019.09.14.18.41.57
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Sep 2019 18:41:58 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id c22so2675211ljj.4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Sep 2019 18:41:57 -0700 (PDT)
-X-Received: by 2002:a2e:814d:: with SMTP id t13mr34688450ljg.72.1568511717567;
- Sat, 14 Sep 2019 18:41:57 -0700 (PDT)
+        id S1728618AbfIONyO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Sep 2019 09:54:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726024AbfIONyO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 15 Sep 2019 09:54:14 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93D66214C6;
+        Sun, 15 Sep 2019 13:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568555653;
+        bh=TTUvGOD0UCo60psVmhopm9Jg7Es3S99N+IPaJwsltd4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KHc0lMPRfRStYGmvkeGU+eB74IQ8Tsvmad8+ieeCxRY6R9w9bFic71B3b3DelmXmC
+         wwWnyfmwO1eBN2bAh+KIwYlA2uMIbW8oAmpZ575CCz6DtwK0MjLlBz/9iSlgKJPAy1
+         yAHsaT1JRYkngxgtt87RK/h2LkcIQj6iveffNxuQ=
+Date:   Sun, 15 Sep 2019 15:54:09 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Park Ju Hyung <qkrwngud825@gmail.com>
+Cc:     alexander.levin@microsoft.com, devel@driverdev.osuosl.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        valdis.kletnieks@vt.edu
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to
+Message-ID: <20190915135409.GA553917@kroah.com>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190914133951.16501-1-qkrwngud825@gmail.com>
 MIME-Version: 1.0
-References: <20190909145910.GG1131@ZenIV.linux.org.uk> <14888449-3300-756c-2029-8e494b59348b@huawei.com>
- <7e32cda5-dc89-719d-9651-cf2bd06ae728@huawei.com> <20190910215357.GH1131@ZenIV.linux.org.uk>
- <20190914161622.GS1131@ZenIV.linux.org.uk> <CAHk-=whpKgNTxjrenAed2sNkegrpCCPkV77_pWKbqo+c7apCOw@mail.gmail.com>
- <20190914170146.GT1131@ZenIV.linux.org.uk> <CAHk-=wiPv+yo86GpA+Gd_et0KS2Cydk4gSbEj3p4S4tEb1roKw@mail.gmail.com>
- <20190914200412.GU1131@ZenIV.linux.org.uk> <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
- <20190915005046.GV1131@ZenIV.linux.org.uk>
-In-Reply-To: <20190915005046.GV1131@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 14 Sep 2019 18:41:41 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
-Message-ID: <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
-Subject: Re: [PATCH] Re: Possible FS race condition between iterate_dir and d_alloc_parallel
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "zhengbin (A)" <zhengbin13@huawei.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, renxudong1@huawei.com,
-        Hou Tao <houtao1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190914133951.16501-1-qkrwngud825@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 14, 2019 at 5:51 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> d_subdirs/d_child become an hlist_head/hlist_node list; no cursors
-> in there at any time.
+On Sat, Sep 14, 2019 at 10:39:51PM +0900, Park Ju Hyung wrote:
+> Hi.
+> 
+> I just noticed that this exfat-staging drivers are based on the old 
+> Samsung's 1.x exFAT drivers.
+> 
+> I've been working to get the newer Samsung's driver(now named "sdFAT") 
+> to fit better for general Linux users, and I believe it can provide a 
+> better base for the community to work on(and hopefully complies better 
+> to the mainline coding standard).
+> 
+> GitHub link
+> https://github.com/arter97/exfat-linux
+> 
+> I also included some rudimentary benchmark results.
+> 
+> I encourage mainline developers to explore this driver base and see if 
+> it's worth to switch, since it's the early days of exfat-staging.
 
-Hmm. I like this.
+Note, this just showed up publically on August 12, where were you with
+all of this new code before then?  :)
 
-I wonder if we could do that change independently first, and actually
-shrink the dentry (or, more likely, just make the inline name longer).
+> To others watching this thread:
+> It's more than likely that you can start using exFAT reliably right 
+> away by following the link above. It's tested on all major LTS kernels 
+> ranging from 3.4 to 4.19 and the ones Canonical uses for Ubuntu: 3.4, 
+> 3.10, 3.18, 4.1, 4.4, 4.9, 4.14, 4.19 and 4.15, 5.0, 5.2, and 5.3-rc.
 
-I don't think that dcache_readdir() is actually stopping us from doing
-that right now. Yes, we do that
+For the in-kernel code, we would have to rip out all of the work you did
+for all older kernels, so that's a non-starter right there.
 
-    list_add_tail(&cursor->d_child, &parent->d_subdirs);
+As for what codebase to work off of, I don't want to say it is too late,
+but really, this shows up from nowhere and we had to pick something so
+we found the best we could at that point in time.
 
-for the end case, but as mentioned, we could replace that with an EOF
-flag, couldn't we?
+Is there anything specific in the codebase you have now, that is lacking
+in the in-kernel code?  Old-kernel-support doesn't count here, as we
+don't care about that as it is not applicable.  But functionality does
+matter, what has been added here that we can make use of?
 
-Btw, if you do this change, we should take the opportunity to rename
-those confusingly named things. "d_subdirs" are our children - which
-aren't necessarily directories, and "d_child" are the nodes in there.
+And do you have any "real" development history to look at instead of the
+"one giant commit" of the initial code drop?  That is where we could
+actually learn what has changed over time.  Your repo as-is shows none
+of the interesting bits :(
 
-Your change would make that clearer wrt typing (good), but we could
-make the naming clearer too (better).
+thanks,
 
-So maybe rename "d_subdirs -> d_children" and "d_child -> d_sibling"
-or something at the same time?
-
-Wouldn't that clarify usage, particularly together with the
-hlist_head/hlist_node typing?
-
-Most of the users would have to change due to the type change anyway,
-so changing the names shouldn't make the diff any worse, and might
-make the diff easier to generate (simply because you can *grep* for
-the places that need changing).
-
-I wonder why we have that naming to begin with, but it's so old that I
-can't remember the reason for that confusing naming. If there ever was
-any, outside of "bad thinking".
-
-> d_cursors is a new hlist_head, anchoring the set of cursor that
-> point to this sucker.  The list is protected by ->d_lock of
-> that dentry.
->
-> d_cursors being non-empty contributes 1 to d_count.
-
-My first reaction is that this sound clever, but in a good way (ie not
-"too subtle" clever, but simply a clever way to avoid bloating the
-dentry).
-
-But I'd like to see the patch (and hear that it works) before I'd say
-that it's the right thing to do. Maybe there's some reason why the
-above would be problematic.
-
-            Linus
+greg kh
