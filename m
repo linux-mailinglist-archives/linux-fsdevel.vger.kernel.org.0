@@ -2,205 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DCCCB2D7C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2019 02:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0612FB2D99
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2019 03:42:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfIOAvJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Sep 2019 20:51:09 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:34680 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfIOAvI (ORCPT
+        id S1727188AbfIOBmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Sep 2019 21:42:03 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39854 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfIOBmC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Sep 2019 20:51:08 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1i9IkY-0004gl-7T; Sun, 15 Sep 2019 00:50:51 +0000
-Date:   Sun, 15 Sep 2019 01:50:46 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Sat, 14 Sep 2019 21:42:02 -0400
+Received: by mail-lj1-f194.google.com with SMTP id j16so30514638ljg.6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Sep 2019 18:42:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RGa+AWlAyDqoBCMbLegT75YFVGOcflpwqeENTJ+dosM=;
+        b=TPhNmomCtklLH7dWD2YFBRhvpO07mGfy2r1h8kgNMMU7hbUy4GAQZkx28yzzlONVlG
+         lQRXnoNgHKz24InPhF5OP9waeXo2aBWrwj7uUN3BrfkAvEJnAi7wSwTEqMtqRaPfvVsb
+         vKg7Wf8VqO8sYVAsTq8VaZ09oB9b5tnC7c148=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RGa+AWlAyDqoBCMbLegT75YFVGOcflpwqeENTJ+dosM=;
+        b=hsRPDzGxdBc8XNgzXLF8VL8xBChNsyIznAZRZoC1r/Jsnp+Spb+XpurEzybon16piS
+         A2RTt1gBR/EwZjzc4fdjfeEFWnlJX+O0rbS2i4G6syTJrAPVWLDpnHWadbczhjm8h/2z
+         yG8XcMx33q8RBAAbbYxcF4zATs6ERlLdR2YswT+kwW+DRPk6EH3+7OwkeQJmKUBi82e5
+         lYfEhHF8X8cRjlBerEpoWWBVQREGn7sgtYa1AAtZxosBD6ISIzcXjWHdOeheC7oByyUj
+         Gg7n55yQPpVrZgcNVZqAcn4KGz07Xh/m7twU1lRQ0QaP9B+S5OiV+MwjR1ZbHdlsdDdd
+         1G7g==
+X-Gm-Message-State: APjAAAVgHna73MiG5pO5jsze4YzUhLR4ANEaBn7qYxqiW7W0vNjv491H
+        YDCK2QO3iV5tQzf0Exdkw7siqQrvD5k=
+X-Google-Smtp-Source: APXvYqxmCDyQCO7HjsCvWzDiW59oQ92hf0IASfOlc8D+t1mn/3TXvX1fPdtctAmZaLj6zrEyF1Hvog==
+X-Received: by 2002:a2e:9c16:: with SMTP id s22mr25923145lji.70.1568511719127;
+        Sat, 14 Sep 2019 18:41:59 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id r16sm7892649lfi.77.2019.09.14.18.41.57
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Sep 2019 18:41:58 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id c22so2675211ljj.4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Sep 2019 18:41:57 -0700 (PDT)
+X-Received: by 2002:a2e:814d:: with SMTP id t13mr34688450ljg.72.1568511717567;
+ Sat, 14 Sep 2019 18:41:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190909145910.GG1131@ZenIV.linux.org.uk> <14888449-3300-756c-2029-8e494b59348b@huawei.com>
+ <7e32cda5-dc89-719d-9651-cf2bd06ae728@huawei.com> <20190910215357.GH1131@ZenIV.linux.org.uk>
+ <20190914161622.GS1131@ZenIV.linux.org.uk> <CAHk-=whpKgNTxjrenAed2sNkegrpCCPkV77_pWKbqo+c7apCOw@mail.gmail.com>
+ <20190914170146.GT1131@ZenIV.linux.org.uk> <CAHk-=wiPv+yo86GpA+Gd_et0KS2Cydk4gSbEj3p4S4tEb1roKw@mail.gmail.com>
+ <20190914200412.GU1131@ZenIV.linux.org.uk> <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
+ <20190915005046.GV1131@ZenIV.linux.org.uk>
+In-Reply-To: <20190915005046.GV1131@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 14 Sep 2019 18:41:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
+Message-ID: <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
+Subject: Re: [PATCH] Re: Possible FS race condition between iterate_dir and d_alloc_parallel
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     "zhengbin (A)" <zhengbin13@huawei.com>, Jan Kara <jack@suse.cz>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         "zhangyi (F)" <yi.zhang@huawei.com>, renxudong1@huawei.com,
         Hou Tao <houtao1@huawei.com>
-Subject: Re: [PATCH] Re: Possible FS race condition between iterate_dir and
- d_alloc_parallel
-Message-ID: <20190915005046.GV1131@ZenIV.linux.org.uk>
-References: <20190909145910.GG1131@ZenIV.linux.org.uk>
- <14888449-3300-756c-2029-8e494b59348b@huawei.com>
- <7e32cda5-dc89-719d-9651-cf2bd06ae728@huawei.com>
- <20190910215357.GH1131@ZenIV.linux.org.uk>
- <20190914161622.GS1131@ZenIV.linux.org.uk>
- <CAHk-=whpKgNTxjrenAed2sNkegrpCCPkV77_pWKbqo+c7apCOw@mail.gmail.com>
- <20190914170146.GT1131@ZenIV.linux.org.uk>
- <CAHk-=wiPv+yo86GpA+Gd_et0KS2Cydk4gSbEj3p4S4tEb1roKw@mail.gmail.com>
- <20190914200412.GU1131@ZenIV.linux.org.uk>
- <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 14, 2019 at 03:57:15PM -0700, Linus Torvalds wrote:
+On Sat, Sep 14, 2019 at 5:51 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> d_subdirs/d_child become an hlist_head/hlist_node list; no cursors
+> in there at any time.
 
-> But it is also possible that we could avoid some of that O(n**2)
-> behavior by simply not adding the corsor to the end of the dentry
-> child list at all. Right now your patch *always* sets the cursor at a
-> valid point - even if it's at the end of the directory. But we could
-> skip the "end of the directory" case entirely and just set a flag in
-> the file for "at eof" instead.
+Hmm. I like this.
 
-Yeah.
+I wonder if we could do that change independently first, and actually
+shrink the dentry (or, more likely, just make the inline name longer).
 
-> That way the cursor at least wouldn't exist for the common cases when
-> we return to user space (at the beginning of the readdir and at the
-> end). Which might make the cursors simply not be quite as common, even
-> when you have a _lot_ of concurrent readdir() users.
-> 
-> There may be other similar things we could do to minimize the pressure
-> on the parent dentry lock. For example, maybe we could insert a cursor
-> only _between_ readdir() calls, but then in the readdir() loop itself,
-> we know we hold the inode lock shared for the directory, so during
-> _that_ loop we can use the existing positive dentries that we keep a
-> refcount to as cursors.
-> 
-> Because if the only reason to not use existing dentry pointers as
-> cursors is the concurrent rename() issue, then _that_ is certainly
-> something that the parent inode shared lock should protect against,
-> even if the child dentry list can change in other ways).
-> 
-> So if the main 'reaim' problem was that the dentry child list itself
-> grew due to the cursor pressure (and that is likely) and that in turn
-> then caused the O(n**2) bad locking behavior due to having to walk
-> much longer dentry child chains, then I suspect that we can do a few
-> tweaks to simply not make that happen in practice.
-> 
-> Yes, I realize that I'm handwaving a bit on the two above suggestions,
-> but don't you think that sounds doable?
+I don't think that dcache_readdir() is actually stopping us from doing
+that right now. Yes, we do that
 
-I think I have a stronger solution.  It includes the "cursors past
-the EOF are marked", but that's not all.
+    list_add_tail(&cursor->d_child, &parent->d_subdirs);
 
-Look: the obvious problem with adding an hlist of cursors anchored in
-dentry is that we don't want to blow dentry size.  OK, but... we have
-d_subdirs/d_child.  And the same crawl through the tree has shown
-exactly one place where we do anything to the end of the list - right
-in dcache_readdir().  So we could bloody well turn that thing into
-hlist.  Voila - a pointer saved.
+for the end case, but as mentioned, we could replace that with an EOF
+flag, couldn't we?
 
-So, fuck using struct dentry for cursors.  What we need in there
-is
-	* pointer to struct dentry we would be about to read
-	* hlist_node linking them together
-	* indicator of pointing before / after the entire directory
-contents.
-	* some way to get to dentry of directory and/or struct file.
-Which can be done in much smaller space than struct dentry; details
-of representation really don't matter.
+Btw, if you do this change, we should take the opportunity to rename
+those confusingly named things. "d_subdirs" are our children - which
+aren't necessarily directories, and "d_child" are the nodes in there.
 
-d_subdirs/d_child become an hlist_head/hlist_node list; no cursors
-in there at any time.
+Your change would make that clearer wrt typing (good), but we could
+make the naming clearer too (better).
 
-d_cursors is a new hlist_head, anchoring the set of cursor that
-point to this sucker.  The list is protected by ->d_lock of
-that dentry.
+So maybe rename "d_subdirs -> d_children" and "d_child -> d_sibling"
+or something at the same time?
 
-d_cursors being non-empty contributes 1 to d_count.
+Wouldn't that clarify usage, particularly together with the
+hlist_head/hlist_node typing?
 
-dcache_readdir()/dcache_dir_lseek() have exclusion with simple_rename()
-on parent's inode.  On per-cursor basis they have exclusion with
-each other (already; ->f_lock_pos).
+Most of the users would have to change due to the type change anyway,
+so changing the names shouldn't make the diff any worse, and might
+make the diff easier to generate (simply because you can *grep* for
+the places that need changing).
 
-dcache_dir_close() locks directory shared, giving it exclusion with
-simple_rename(); per-cursor exclusion is, of course, already there.
-Under that rwsem it removes the cursor from the hlist it's on (if
-any), using ->d_lock of whatever it's point on for protection.
-If that was the last cursor in hlist, drop the target after removal.
-In any case, cursor gets freed.
+I wonder why we have that naming to begin with, but it's so old that I
+can't remember the reason for that confusing naming. If there ever was
+any, outside of "bad thinking".
 
-In simple_rename():
-	if there are cursors
-		grab the next sibling (if any)
-		take ->d_lock on source
-		rip the list out of it
-		drop ->d_lock on source
-		if there's no sibling
-			go through the list
-				point cursors post-EOF, dissolving hlist
-		else
-			go through the list
-				point cursors to the sibling
-				find the last element of the list, while we are at it
-			if the sibling's list hadn't been empty to start with
-				drop our reference to sibling
-			take ->d_lock on the sibling
-			splice the list in
-			drop ->d_lock on sibling
-		drop the reference to source (from now-empty ->d_cursors)
-Note that it's O(1) under any ->d_lock and O(cursors moved) without
-holding any ->d_lock.
+> d_cursors is a new hlist_head, anchoring the set of cursor that
+> point to this sucker.  The list is protected by ->d_lock of
+> that dentry.
+>
+> d_cursors being non-empty contributes 1 to d_count.
 
-walk_cursor(cursor, count):
-	while count && cursor is not post-EOF
-		drop_old = NULL
-		if cursor points to anything
-			take ->d_lock on the target
-			remove cursor from hlist
-			if target's ->d_cursor is now empty
-				drop_old = target
-			drop ->d_lock on the target
-			p = target's ->d_child
-		else
-			p = parent's ->d_subdirs
-		take ->d_lock on directory
-		drop_new = NULL
-		eof = true
-		for d in list, starting after p
-			if d is positive && !--count || need_resched
-				eof = false
-				drop_new = dget(d)
-				point cursor to d
-				take ->d_lock on d
-				if its ->d_cursors is empty
-					drop_new = NULL
-				insert cursor into its ->d_cursors
-				drop ->d_lock on d
-				break
-		drop ->d_lock on directory
-		dput(drop_new)
-		dput(drop_old)
-		if eof
-			mark cursor post-EOF
-		else if count
-			cond_resched()
+My first reaction is that this sound clever, but in a good way (ie not
+"too subtle" clever, but simply a clever way to avoid bloating the
+dentry).
 
-dcache_dir_lseek(), "changing position" case:
-	walk_cursor(cursor, where)
+But I'd like to see the patch (and hear that it works) before I'd say
+that it's the right thing to do. Maybe there's some reason why the
+above would be problematic.
 
-dcache_readdir() loop:
-	while cursor not post-EOF
-		if dir_emit the cursor's target fails
-			break
-		walk_cursor(cursor, 1)
-		ctx->pos++
-
-dentry_unlink(): none of the cursor shit in the list, TYVM, and we can't
-be called with cursors attached - d_count would've been positive.
-
-
-What it should, AFAICS, give:
-	* no loops under ->d_lock in dentry_unlist()
-	* no cursors polluting the lists
-	* dentry size unchanged
-	* cursors considerably smaller than now
-	* no looping for hell knows how long under ->d_lock
-And it might be possible to be clever enough to get lockless walk_cursor()
-(lockless in terms of directory ->d_lock, that is), but even without that
-this scheme looks interesting, IMO.
-
-I haven't even started trying to implement that, so I might very well have
-missed obvious problems.  Comments?
+            Linus
