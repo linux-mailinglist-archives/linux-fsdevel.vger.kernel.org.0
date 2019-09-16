@@ -2,84 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1801B3C97
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 16:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D12CBB3D86
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 17:19:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388661AbfIPOdH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 10:33:07 -0400
-Received: from mail-lj1-f181.google.com ([209.85.208.181]:43165 "EHLO
-        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727934AbfIPOdH (ORCPT
+        id S2388992AbfIPPTu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 11:19:50 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36112 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730733AbfIPPTr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 10:33:07 -0400
-Received: by mail-lj1-f181.google.com with SMTP id d5so116709lja.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2019 07:33:04 -0700 (PDT)
+        Mon, 16 Sep 2019 11:19:47 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y19so39340719wrd.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2019 08:19:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=CBA02vsKz3X4vPhHfot7VoCaRBHle23OIMDmGoJFyFU=;
-        b=pplGOA8so8eGCdQAqfORSyxuzrMHamhwyhCR3XRnRlwNE+d6WoWhuzLqu/igMmXatX
-         Gdp/C1s4135ew1RthGHDFJibIR4jwvsuVEPkvuojdnwnfQtWABpEVdBWGEqNJoHJtSGO
-         AiFNB0X3xTzDRZ27jM3irsQe5vYUvsxwWdInkP+fAq2sR+JkcyQ3rfsEWmc1encJIUrh
-         +caaDELUkQHxuUS6Cg+8H/gnaG/WJEuwMEI3KvsQED2maw3xnxfry8mx4l+OfN4LzQpd
-         azJH4SxY8NW1WDsA2Q5JDV1G/4Jpq6DDSrSy8F124fETuHixkpWcrg8lp4rqz2PSWigb
-         AUmQ==
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AaDpJ2vFVH83bqcz70+BN9/ikwFwkcl+68V0vnu32lQ=;
+        b=lBi2qmPR3YES68If3/adPkQIQ1BvZGlcZ9ftg7/zrakEm2T6M+YWTCnQ4+0MqCFJWA
+         1Zq9OqRYPyeV7NS7JhErH//fGFRtETc1wK4x3/ihhEqHA5kcAtpN649X3XOZm1Eo+k+M
+         Y3ganHO7a104Jc8akm+55uO9fKd3foAowbeHAaJk7WPVmr5sLzhpfAsTf6Ikqi/5CGoG
+         h3PMosW4sXU3XLmZZUbXIMglt0OQouB/Q8pExcofCZu4Cn7tvo8CzA11nJKHfCLTbTA8
+         rW0D98rCrcSah6WybDuXOhQf2u0bh+XacntV+lHMwEaUciLtrrtkHjjlGSSYXDxwFbAz
+         fQqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=CBA02vsKz3X4vPhHfot7VoCaRBHle23OIMDmGoJFyFU=;
-        b=SEAYa7hjEvIYhGhFGfaGSrdAJ9jty1KNtfOinJ0C2tTBxyTndWkqkS9DlntwpRKg3B
-         5FD8EVqWzLWtCgd+Om6ZqGANRyzZ/peKim/iZYTJKO1fxGRqq54hs5rMoUo1eMcKJhej
-         mRwNDtUVOovmR8bK7AHXydOqNlLy+QcMFsJu12R1+bj373iVuWAyuKgh6GLv/kjrOmsE
-         5Nj1N8c0/mvACOrlSsSFv6oYqbYWJv6KjHsamIZ6WITj0F7mRBVy8izaQdMaItPJCEPr
-         Z+x2w1UKLQSVQCZZZelokGiBt+gqyDRYW/hvqnZKM6NcV5njqmY/fxhAyzt6Xw4epIMv
-         B28g==
-X-Gm-Message-State: APjAAAUMWSlXGcUu8D3s/FeY7k+RghOrirBn/7uOoL9CbAEdrMkPfuCj
-        ED2jYqhk10eRTcKGrAYM6fnAGhlarSURBfzmxfLxZA==
-X-Google-Smtp-Source: APXvYqwdFbLlpXJvdT0XGCSCI1fgVhZfMyOmuGgO1meJ19XDA3TiBG8Lrire62D6nNhp5IY7aakEhW3uNovSPpUlMSY=
-X-Received: by 2002:a2e:9e57:: with SMTP id g23mr23014397ljk.89.1568644383422;
- Mon, 16 Sep 2019 07:33:03 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AaDpJ2vFVH83bqcz70+BN9/ikwFwkcl+68V0vnu32lQ=;
+        b=mpsALLFV+3d0SBbSM5qdas6S5l72Y+cy7893BKpmikVIJEE6KNeqjMLTZaAUnnjoDY
+         DgGuwj/3ijglipTAh16UlMvxJuUTQytx6jalH8XWtUV8bv/xPlvJRtGGrXofhMmSNrqB
+         NLVx/2oHyPZ6XaBbTas6GtQorGroIrhwnJsd3FayioJlpk246MlAZ+CzioKWIiFkNMY0
+         Mtwkg4pdz0xhRIZwpuIXk62SIzdT48Jxa+ti444zFzxcw3Hz/19SzVilfTiSfrS1EYbb
+         JLaUpZ54h5W5Y2FSJZZaQqJHYTiZEWyX104fBGN1gcE8gEqIKdZHJ2YkvBlG0X5JkTOJ
+         icqg==
+X-Gm-Message-State: APjAAAWn62vyHyLYOT9dIYH+4MwR3pczjr2eHejo3wQICVjNKKq8Tg4M
+        xCRmfepxFOyNnkBnOSb/b4q9cg==
+X-Google-Smtp-Source: APXvYqwXYe4XoLQ4PTqw4QLTNqut8cuXqzbSkP8URRc18n5I92+rKVcKz7/zv4OrJheUEWRrgiDrsg==
+X-Received: by 2002:a5d:4146:: with SMTP id c6mr233450wrq.205.1568647184551;
+        Mon, 16 Sep 2019 08:19:44 -0700 (PDT)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id f18sm14362721wrv.38.2019.09.16.08.19.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2019 08:19:43 -0700 (PDT)
+Subject: Re: [PATCH 8/9] select/restart_block: Convert poll's timeout to u64
+To:     David Laight <David.Laight@ACULAB.COM>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20190909102340.8592-1-dima@arista.com>
+ <20190909102340.8592-9-dima@arista.com>
+ <fd8bfb2bed23492cb5e6c43b10be6125@AcuMS.aculab.com>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <eacd2de1-5dfb-79f5-5706-9dd01fb23425@arista.com>
+Date:   Mon, 16 Sep 2019 16:19:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:a19:e00f:0:0:0:0:0 with HTTP; Mon, 16 Sep 2019 07:33:02
- -0700 (PDT)
-From:   Daegyu Han <hdg9400@gmail.com>
-Date:   Mon, 16 Sep 2019 23:33:02 +0900
-Message-ID: <CAARcW+r3EvFktaw-PfxN_V-EjtU6BvT7wxNvUtFiwHOdbNn2iA@mail.gmail.com>
-Subject: Sharing ext4 on target storage to multiple initiators using NVMeoF
-To:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <fd8bfb2bed23492cb5e6c43b10be6125@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi linux file system experts,
+On 9/9/19 2:07 PM, David Laight wrote:
+> From: Dmitry Safonov
+>> Sent: 09 September 2019 11:24
+>>
+>> All preparations have been done - now poll() can set u64 timeout in
+>> restart_block. It allows to do the next step - unifying all timeouts in
+>> restart_block and provide ptrace() API to read it.
+>>
+>> Signed-off-by: Dmitry Safonov <dima@arista.com>
+>> ---
+>>  fs/select.c                   | 27 +++++++--------------------
+>>  include/linux/restart_block.h |  4 +---
+>>  2 files changed, 8 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/fs/select.c b/fs/select.c
+>> index 4af88feaa2fe..ff2b9c4865cd 100644
+>> --- a/fs/select.c
+>> +++ b/fs/select.c
+> ...
+>> @@ -1037,16 +1030,10 @@ SYSCALL_DEFINE3(poll, struct pollfd __user *, ufds, unsigned int, nfds,
+>>  		struct restart_block *restart_block;
+>>
+>>  		restart_block = &current->restart_block;
+>> -		restart_block->fn = do_restart_poll;
+>> -		restart_block->poll.ufds = ufds;
+>> -		restart_block->poll.nfds = nfds;
+>> -
+>> -		if (timeout_msecs >= 0) {
+>> -			restart_block->poll.tv_sec = end_time.tv_sec;
+>> -			restart_block->poll.tv_nsec = end_time.tv_nsec;
+>> -			restart_block->poll.has_timeout = 1;
+>> -		} else
+>> -			restart_block->poll.has_timeout = 0;
+>> +		restart_block->fn		= do_restart_poll;
+>> +		restart_block->poll.ufds	= ufds;
+>> +		restart_block->poll.nfds	= nfds;
+>> +		restart_block->poll.timeout	= timeout;
+> 
+> What is all that whitespace for?
 
-I want to share ext4 on the storage server to multiple initiators(node
-A,B) using NVMeoF.
-Node A will write file to ext4 on the storage server, and I will mount
-read-only option on Node B.
+Aligned them with tabs just to make it look better.
+I've no hard feelings about this - I can do it with spaces or drop the
+align at all.
 
-Actually, the reason I do this is for a prototype test.
-
-I can't see the file's dentry and inode written in Node A on Node B
-unless remount(umount and then mount) it.
-
-Why is that?
-
-I think if there is file system cache(dentry, inode) on Node B, then
-disk IO will occur to read the data written by Node A.
-
-Curiously, drop cache on Node B and do blockdev --flushbufs, then I
-can access the file written by Node A.
-
-I checked the kernel code and found that flushbufs incurs
-sync_filesystem() which flushes the superblock and all dirty file
-system caches.
-
-Should the superblock data structure be flushed (updated) when
-accessing the disk inode?
-
-I wonder why this happens.
-
-Regards,
+Thanks,
+          Dmitry
