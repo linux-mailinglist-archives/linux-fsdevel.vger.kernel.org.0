@@ -2,93 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3D6FB391B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 13:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1807B39D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 14:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfIPLJ3 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 07:09:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35640 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725850AbfIPLJ3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 07:09:29 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50DBD30832E1;
-        Mon, 16 Sep 2019 11:09:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-125-72.rdu2.redhat.com [10.10.125.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DC2C460BFB;
-        Mon, 16 Sep 2019 11:09:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, yuehaibing@huawei.com,
-        marc.dionne@auristor.com, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL afs: Development for 5.4
+        id S1731640AbfIPMAi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 08:00:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41570 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731582AbfIPMAi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Sep 2019 08:00:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8H/tUs6jexV1FmhlZe3t10kL60wffM6RtCn29gBNiRM=; b=hA0FGePG9IUbxZYSxbb5hQV8f
+        rqpJpElyjXJjIu6XUz4ev/W93AtWAbBFev95HuRcTu0e5tN2TnTmpnY/MZVr1oUPaPD4N2kJHNx7x
+        yr8p7YTOOIgJSJP0XaixoVJTHqnDOvQT6cL1nRQ7lq6uGFtig1oCyAQz2OVUeIYg5jRcD0sxabKBo
+        9iS1RUQwXxbodveiS4t/RITCaCdBiLQx+s5EcZBTLELktEQs8fqQLBsteKOpfz8gl84nNTZtVNxOY
+        JA9h3qTpeH8wZWnNMY0k64Dc65o3PKkEkiwjTyNbGcI8SYfNdTI9ACglUDsCS7vg8M09uWS93skkR
+        JcG2EOs+g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1i9pgG-0002cK-48; Mon, 16 Sep 2019 12:00:32 +0000
+Date:   Mon, 16 Sep 2019 05:00:32 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
+Subject: Re: [PATCH v3 1/6] ext4: introduce direct IO read path using iomap
+ infrastructure
+Message-ID: <20190916120032.GA4005@infradead.org>
+References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
+ <532d8deae8e522a27539470457eec6b1a5683127.1568282664.git.mbobrowski@mbobrowski.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16146.1568632167.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Mon, 16 Sep 2019 12:09:27 +0100
-Message-ID: <16147.1568632167@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 16 Sep 2019 11:09:29 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <532d8deae8e522a27539470457eec6b1a5683127.1568282664.git.mbobrowski@mbobrowski.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Thu, Sep 12, 2019 at 09:03:44PM +1000, Matthew Bobrowski wrote:
+> +static bool ext4_dio_checks(struct inode *inode)
+> +{
+> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
+> +	if (IS_ENCRYPTED(inode))
+> +		return false;
+> +#endif
+> +	if (ext4_should_journal_data(inode))
+> +		return false;
+> +	if (ext4_has_inline_data(inode))
+> +		return false;
+> +	return true;
 
-Here's a set of patches for AFS.  The first three are trivial, deleting
-unused symbols and rolling out a wrapper function.
+Shouldn't this function be called ext4_dio_supported or similar?
 
-The fourth and fifth patches make use of the previously added RCU-safe
-request_key facility to allow afs_permission() and afs_d_revalidate() to
-attempt to operate without dropping out of RCU-mode pathwalk.  Under
-certain conditions, such as conflict with another client, we still have to
-drop out anyway, take a lock and consult the server.
+Also bonus points of adding a patch that defines a IS_ENCRYPTED stub
+for !CONFIG_FS_ENCRYPTION to make this a little cleaner.
 
-David
----
-The following changes since commit f16180739cd18a39a1a45516ac0e65d18a9f100e:
-
-  Merge remote-tracking branch 'net/master' into afs-next (2019-09-02 11:43:44 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-next-20190915
-
-for you to fetch changes up to a0753c29004f4983e303abce019f29e183b1ee48:
-
-  afs: Support RCU pathwalk (2019-09-02 11:43:54 +0100)
-
-----------------------------------------------------------------
-AFS development
-
-Tested-by: Marc Dionne <marc.dionne@auristor.com>
-
-----------------------------------------------------------------
-David Howells (3):
-      afs: Use afs_extract_discard() rather than iov_iter_discard()
-      afs: Provide an RCU-capable key lookup
-      afs: Support RCU pathwalk
-
-YueHaibing (2):
-      afs: remove unused variable 'afs_voltypes'
-      afs: remove unused variable 'afs_zero_fid'
-
- fs/afs/dir.c        |  54 +++++++++++++++++++++++++-
- fs/afs/fsclient.c   |   6 +--
- fs/afs/internal.h   |   1 +
- fs/afs/security.c   | 108 +++++++++++++++++++++++++++++++++++++++++++---------
- fs/afs/volume.c     |   2 -
- fs/afs/yfsclient.c  |   6 +--
- include/linux/key.h |  14 ++++++-
- 7 files changed, 162 insertions(+), 29 deletions(-)
-
+Also the iomap direct I/O code supports inline data, so the above
+might not be required (at least with small updates elsewhere).
