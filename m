@@ -2,101 +2,555 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49D46B3AFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 15:07:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6FEEB3B12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 15:15:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733012AbfIPNHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 09:07:43 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33524 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732852AbfIPNHn (ORCPT
+        id S1732992AbfIPNPF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 09:15:05 -0400
+Received: from correo.registraduria.gov.co ([201.232.123.13]:59532 "EHLO
+        registraduria.gov.co" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728042AbfIPNPF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:07:43 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q10so22989056pfl.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2019 06:07:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XBRZTGkG6F9z2g/QPkwkH5mhWZBFzDCgMo6crL6U7yo=;
-        b=ppo40voW+CoG9AVCAvDvAuDz2DDa2y31W/V6ZXaazTbrmlCci50pwAGGz/1Kv2EBdd
-         sbDDvK7gLTkE1JMJUbGJAP0o+o9wBYx8SyOqB6fwXzFuCGLSsf11FdOzY3gYrwGHtMaB
-         iIOFPQkebw1ade/WtANUphIS49oJ6omKLLCOMB0K4QhxiD2BzZaJKKIW3t+bZNKCF/EE
-         axRVY9ZqRLm4rmTAFwzkYVv661DTlqPTasO+XKuJSPvVDWu1ul1F2OU1fg1nhT33OSyD
-         aAS+Ej8aYxZIec5oyRejwFD2Nbfa8YGLrJLfYlEHXforlICwrl5ynMR62rm18txGimfG
-         Z0jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XBRZTGkG6F9z2g/QPkwkH5mhWZBFzDCgMo6crL6U7yo=;
-        b=gp2/HpDHhmcHRtIvblqDOqdK1v471XSzDTay/JsjH/Qo26CwMCwJ0eo3ut5iYa3Cv0
-         i32cV5gq/SyEhmVenx1v4Q+zCypW5OK7QCtJn9eDb/0ZjgFSL30PNdnAPzyB6FWV3Lqa
-         /3eEn/eVFMgMGZEJxe4BiAMpvk542FOpA01yJREVzW34bshYwBcbWMkqhL6NpCSGKNVW
-         vRp4EKBAHs7/149DzRVoTYYHQLhSp6oQ02NOP3n9S/hF35xXQF5/M+OndlVrvSx/O6CO
-         7x4SkEODhdT5UJhmm0/4+9w9TQs7k/POD0YJr+SIc99SpUGdbuXDDz2RQV6LXK8NC9bs
-         v+lg==
-X-Gm-Message-State: APjAAAXK9RckYzJPSDM/c6tqJnERbkJJSvyQENT73Q/QSGY1b2VGxZ6r
-        IyhTax7MWQFYQOKU25qrCKOZ
-X-Google-Smtp-Source: APXvYqw7/18KjBp2QVB/2yBpM1+xOVaUae3H+kQAuJaCI8c36c2en+/CjhlXyAgQeWl/jervkWnoHA==
-X-Received: by 2002:a17:90a:d356:: with SMTP id i22mr19690052pjx.24.1568639261615;
-        Mon, 16 Sep 2019 06:07:41 -0700 (PDT)
-Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id e10sm59500188pfh.77.2019.09.16.06.07.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 06:07:40 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 23:07:35 +1000
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, darrick.wong@oracle.com
-Subject: Re: [PATCH v3 1/6] ext4: introduce direct IO read path using iomap
- infrastructure
-Message-ID: <20190916130735.GD4024@bobrowski>
-References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
- <532d8deae8e522a27539470457eec6b1a5683127.1568282664.git.mbobrowski@mbobrowski.org>
- <20190916120032.GA4005@infradead.org>
+        Mon, 16 Sep 2019 09:15:05 -0400
+X-Greylist: delayed 915 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Sep 2019 09:15:05 EDT
+DKIM-Signature: v=1; a=rsa-sha256; d=registraduria.gov.co; s=registraduria.gov.co; c=relaxed/simple;
+        q=dns/txt; i=@registraduria.gov.co; t=1568638632; x=1571230632;
+        h=From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=KvFaQjy6O7n1myS076/dDSqoTFY5YkAG9QOAmI7oOqE=;
+        b=BqgtUcCxcOoqoUlJKopVIxMPRlXyvuJmyVEeClYOG7GJmq++0JNwOazopUvLS52D
+        seCEMamIz14LX2fgQqVm04+5OPx/FUyqfQXY7hF1sZgQmJbUbA4BBCNh8p2uycOk
+        bbMvYoR3JIRjC0EzvAWNrXUdh/phYorFgqreGNjIUsQ=;
+X-AuditID: c0a8e818-52fff7000001bab9-53-5d7f86a8cbee
+Received: from RNEC-MSG-00.registraduria.gov.co (Unknown_Domain [172.20.60.177])
+        by registraduria.gov.co (Symantec Messaging Gateway) with SMTP id 64.37.47801.8A68F7D5; Mon, 16 Sep 2019 07:57:12 -0500 (-05)
+Received: from RNEC-MSG-00.registraduria.gov.co (172.20.60.177) by
+ RNEC-MSG-00.registraduria.gov.co (172.20.60.177) with Microsoft SMTP Server
+ (TLS) id 15.0.1395.4; Mon, 16 Sep 2019 07:58:31 -0500
+Received: from RNEC-MSG-00.registraduria.gov.co ([fe80::2c92:7fcd:a2d3:3ac5])
+ by RNEC-MSG-00.registraduria.gov.co ([fe80::2c92:7fcd:a2d3:3ac5%20]) with
+ mapi id 15.00.1395.000; Mon, 16 Sep 2019 07:58:31 -0500
+From:   Registraduria Municipal Caramanta - Antioquia 
+        <CaramantaAntioquia@registraduria.gov.co>
+To:     "NO-REPLY@MICROSOFT.NET" <NO-REPLY@MICROSOFT.NET>
+Subject: =?iso-8859-1?Q?Se_non_verifichi_il_tuo_account_entro_le_prossime_24_ore,_?=
+ =?iso-8859-1?Q?il_tuo_account_verr=E0_sospeso.?=
+Thread-Topic: =?iso-8859-1?Q?Se_non_verifichi_il_tuo_account_entro_le_prossime_24_ore,_?=
+ =?iso-8859-1?Q?il_tuo_account_verr=E0_sospeso.?=
+Thread-Index: AQHVbIxGwrV5varixU6kFz/B17jUgg==
+Date:   Mon, 16 Sep 2019 12:58:30 +0000
+Message-ID: <1568667559759.4076@registraduria.gov.co>
+Accept-Language: es-ES, en-US
+Content-Language: es-ES
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [192.168.5.43]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190916120032.GA4005@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Brightmail-Tracker: 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
+        EF0HAAA=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 05:00:32AM -0700, Christoph Hellwig wrote:
-> On Thu, Sep 12, 2019 at 09:03:44PM +1000, Matthew Bobrowski wrote:
-> > +static bool ext4_dio_checks(struct inode *inode)
-> > +{
-> > +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> > +	if (IS_ENCRYPTED(inode))
-> > +		return false;
-> > +#endif
-> > +	if (ext4_should_journal_data(inode))
-> > +		return false;
-> > +	if (ext4_has_inline_data(inode))
-> > +		return false;
-> > +	return true;
-> 
-> Shouldn't this function be called ext4_dio_supported or similar?
 
-Yeah, let's run with your suggestion. I think 'ext4_dio_supported' reads far
-better than what I've named this helper.
- 
-> Also bonus points of adding a patch that defines a IS_ENCRYPTED stub
-> for !CONFIG_FS_ENCRYPTION to make this a little cleaner.
 
-I like this idea and I will try to do this.
 
-> Also the iomap direct I/O code supports inline data, so the above
-> might not be required (at least with small updates elsewhere).
 
-I did see this, but to be perfectly honest I haven't looked at what needs to
-be done on the ext4 side of things to get it all plumbed up and working. I
-wanted to get clear of these main bits and revisit after the fact within a
-separate patch series.
 
---<M>--
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Aggiorna il tuo account
+
+Il nostro record indica che il tuo account non =E8 stato aggiornato, il che=
+ potrebbe comportare la chiusura del tuo account. Se non aggiorni il tuo ac=
+count, non sarai pi=F9 in grado di inviare e ricevere e-mail e ti verr=E0 n=
+egato l'accesso a molte delle nostre ultime conversazioni, contatti e alleg=
+ati migliorati.
+
+Prenditi un minuto per aggiornare il tuo account per un'esperienza di maili=
+ng pi=F9 rapida e completa.
+
+Fai cl<http://hfnfgewf.000webhostapp.com/>ic qui per aggiornare il tuo <htt=
+p://jhgewads.000webhostapp.com/> account?
+
+Nota: il mancato aggiornamento della propria casella di posta comporter=E0 =
+la cancellazione permanente del proprio account.
+
+Grazie molto,
+Il team di sicurezza
+
+Copyright =A9 2019 Webmail .Inc. Tutti i diritti riservati.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+?
+
+
+
+Confidencialidad: La informaci=F3n contenida en este mensaje de e-mail y su=
+s anexos, es confidencial y est=E1 reservada para el destinatario =FAnicame=
+nte. Si usted no es el destinatario o un empleado o agente responsable de e=
+nviar este mensaje al destinatario final, se le notifica que no est=E1 auto=
+rizado para revisar, retransmitir, imprimir, copiar, usar o distribuir este=
+ e-mail o sus anexos. Si usted ha recibido este e-mail por error, por favor=
+ comun=EDquelo inmediatamente v=EDa e-mail al remitente y tenga la amabilid=
+ad de borrarlo de su computadora o cualquier otro banco de datos. Muchas gr=
+acias.
+
+Confidentiality Notice: The information contained in this email message, in=
+cluding any attachment, is confidential and is intended only for the person=
+ or entity to which it is addressed. If you are neither the intended recipi=
+ent nor the employee or agent responsible for delivering this message to th=
+e intended recipient, you are hereby notified that you may not review, retr=
+ansmit, convert to hard copy, copy, use or distribute this email message or=
+ any attachments to it. If you have received this email in error, please co=
+ntact the sender immediately and delete this message from any computer or o=
+ther data bank. Thank you.
