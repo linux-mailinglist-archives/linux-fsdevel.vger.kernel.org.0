@@ -2,114 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82A4BB38A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 12:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3D6FB391B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 13:09:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfIPKuu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 06:50:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34854 "EHLO mail.kernel.org"
+        id S1727256AbfIPLJ3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 07:09:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35640 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726059AbfIPKuu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 06:50:50 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725850AbfIPLJ3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Sep 2019 07:09:29 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 263FE2067D;
-        Mon, 16 Sep 2019 10:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568631049;
-        bh=U82Tr8FbEpQ0OJbT7LiytXXfUulzIz1X0TDl8YNIEFo=;
-        h=Subject:From:To:Cc:Date:From;
-        b=gZQZ1UxGxemHcxzW4lTiVFDyiN1pDQzvh1P/DPEfwPGRSm7br5Yg+7s/t3gflhhIU
-         EYlot5c3IXiT8ZF2AdZgqoEiicgcM5NxM2hVQcp7o/IkuLQiW2YBSUFZ2I7lzi2FQ0
-         W/qUlSj2a2qV56RhQaJjGw37D626oEC1P1iLRlEQ=
-Message-ID: <f3b4a58a47b4eb3346581f541348a1fc18aabdce.camel@kernel.org>
-Subject: [GIT PULL] file locking changes for v5.4
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Bruce Fields <bfields@fieldses.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Mon, 16 Sep 2019 06:50:40 -0400
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-MnDTmiEyDIGT695orHds"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        by mx1.redhat.com (Postfix) with ESMTPS id 50DBD30832E1;
+        Mon, 16 Sep 2019 11:09:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-125-72.rdu2.redhat.com [10.10.125.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DC2C460BFB;
+        Mon, 16 Sep 2019 11:09:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, yuehaibing@huawei.com,
+        marc.dionne@auristor.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL afs: Development for 5.4
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <16146.1568632167.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Mon, 16 Sep 2019 12:09:27 +0100
+Message-ID: <16147.1568632167@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 16 Sep 2019 11:09:29 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Linus,
 
---=-MnDTmiEyDIGT695orHds
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Here's a set of patches for AFS.  The first three are trivial, deleting
+unused symbols and rolling out a wrapper function.
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b=
-:
+The fourth and fifth patches make use of the previously added RCU-safe
+request_key facility to allow afs_permission() and afs_d_revalidate() to
+attempt to operate without dropping out of RCU-mode pathwalk.  Under
+certain conditions, such as conflict with another client, we still have to
+drop out anyway, take a lock and consult the server.
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+David
+---
+The following changes since commit f16180739cd18a39a1a45516ac0e65d18a9f100e:
+
+  Merge remote-tracking branch 'net/master' into afs-next (2019-09-02 11:43:44 +0100)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/file=
-lock-v5.4-1
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-next-20190915
 
-for you to fetch changes up to cfddf9f4c9f038c91c6c61d5cf3a161731b5c418:
+for you to fetch changes up to a0753c29004f4983e303abce019f29e183b1ee48:
 
-  locks: fix a memory leak bug in __break_lease() (2019-08-20 05:48:52 -040=
-0)
+  afs: Support RCU pathwalk (2019-09-02 11:43:54 +0100)
 
 ----------------------------------------------------------------
+AFS development
 
-Hi Linus,
-
-Just a couple of minor bugfixes, a revision to a tracepoint to account
-for some earlier changes to the internals, and a patch to add a pr_warn
-message when someone tries to mount a filesystem with '-o mand' on a
-kernel that has that support disabled.
+Tested-by: Marc Dionne <marc.dionne@auristor.com>
 
 ----------------------------------------------------------------
-Jeff Layton (2):
-      locks: revise generic_add_lease tracepoint
-      locks: print a warning when mount fails due to lack of "mand" support
+David Howells (3):
+      afs: Use afs_extract_discard() rather than iov_iter_discard()
+      afs: Provide an RCU-capable key lookup
+      afs: Support RCU pathwalk
 
-Pavel Begunkov (1):
-      locks: Fix procfs output for file leases
+YueHaibing (2):
+      afs: remove unused variable 'afs_voltypes'
+      afs: remove unused variable 'afs_zero_fid'
 
-Wenwen Wang (1):
-      locks: fix a memory leak bug in __break_lease()
-
- Documentation/filesystems/mandatory-locking.txt | 10 ++++++++++
- fs/locks.c                                      | 11 ++++++-----
- fs/namespace.c                                  | 11 ++++++++---
- include/trace/events/filelock.h                 | 14 +++++++-------
- 4 files changed, 31 insertions(+), 15 deletions(-)
-
-
---=-MnDTmiEyDIGT695orHds
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQJHBAABCAAxFiEES8DXskRxsqGE6vXTAA5oQRlWghUFAl1/aQATHGpsYXl0b25A
-a2VybmVsLm9yZwAKCRAADmhBGVaCFfKxEAC2xqzxj143HDWQqM3HbwDc6n7vMBFx
-d1kSFgQUoHSH5waAZ7to4AD1IPPk9aWQ6NQAWBLRHZ2/bfvkKtws9smoEKASgpVq
-P2xWuiylcgglxFsIyQutO53qS6l1m5E9+F8Zf0lq+n5JHqqhNTvXmNp8XNxiilv/
-dK12vy6XTXHeB3Hv2BPvvUMDrlwGWlQASIk1lyBUQ94RuLjGNaV93hL32YeGpEE0
-GaYooBHhH4+yOsZuWZpaiLmLSjncE7fLo2HUB5x6AKjEc1c1j8HbW88ckM51Umd8
-fH0efyyO3sZ31n/0Bs73ZQPhQCKtbEDD2YIrvqsqVnp3NLPnMe2t8wZbWX9dxKWG
-zGcJz03QAp4wwExL0F4OsqpbC6uFhJJqzdYuuPs+5kQFSW8chlcsXcKba6efFgPg
-EYNjKC4KhcKLJetegzFXsxpwjyAxjFHFisgdZAfPAYdtiymZ735JwVbJqE/BCzOW
-eRCOoT9PS5vEqxwPVpL+gc7VJDeWAluYXkASyuQj2G3QCM7pTidmjd6ybytroyup
-qV/9Ak4pBG4namBjJZ4STb/i84k9F1UOzKedUphqNmO2vuoSKv4WgnuoVoZCBaRE
-m2Tl2fdeKl1PPQjQH/WQZJR7imM4l1nBgHeTM1B7A0Lv542jgdI8FoWjeMFi2PIu
-kcGBj+HPhtlxKQ==
-=XdCd
------END PGP SIGNATURE-----
-
---=-MnDTmiEyDIGT695orHds--
+ fs/afs/dir.c        |  54 +++++++++++++++++++++++++-
+ fs/afs/fsclient.c   |   6 +--
+ fs/afs/internal.h   |   1 +
+ fs/afs/security.c   | 108 +++++++++++++++++++++++++++++++++++++++++++---------
+ fs/afs/volume.c     |   2 -
+ fs/afs/yfsclient.c  |   6 +--
+ include/linux/key.h |  14 ++++++-
+ 7 files changed, 162 insertions(+), 29 deletions(-)
 
