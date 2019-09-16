@@ -2,181 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40008B3455
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 07:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07BD7B34A2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 08:16:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbfIPFU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 01:20:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726128AbfIPFU4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 01:20:56 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7A222067B;
-        Mon, 16 Sep 2019 05:20:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568611255;
-        bh=0Zp0/Naz0WUbXJutjSKemevgHRocsO7EMFcWzb2dl1Y=;
-        h=Date:From:To:Cc:Subject:From;
-        b=awni9dksgHmJx9gTvqey0ukMhUw0fPydoBJv1SubKwoyxuqe/OomgiDpv4zwSvTWq
-         6IrShbxft+Mr7JZGQUrgh1plwzdI2vlB6mlsPM2p3hP/7vnJMyzgYN+WqvIrmSoljM
-         YtEjpk63iNa20lYgzpkEpwq/Bpbx8ft2uu4xPGEg=
-Date:   Sun, 15 Sep 2019 22:20:53 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] fs-verity for 5.4
-Message-ID: <20190916052053.GB8269@sol.localdomain>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
+        id S1729229AbfIPGQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 02:16:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:58262 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbfIPGQ4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Sep 2019 02:16:56 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8G68Zbo192214;
+        Mon, 16 Sep 2019 06:16:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=CtWrTL0K6xN/JkonUsZEyZ20Ju4VQZE9wyDzSkQvLZ0=;
+ b=EU/k4kkex7ckgIxckUEnMImdZWwBOgjB5oLB9IdltnLI4Drj/yXlGpKiEO2mYZAXjyd6
+ cAg2dvO9HPQMv42KYZOVlbSpPQtTg378CJCFrf76N1vViVzgeKNceQLc69merzi+zSB6
+ doFYDleRlvRUmkyX42WL7sErlZdLI9C24r+mZo5evL38qmWHpyHsWHRYvgungyJWlTZp
+ 9BdccL6rj4CMEcKfkFsgg/8wYo7ZIrrpJHeNxjmvRVjA2vdTv2L0u7T+7HQ6p+0CkTUZ
+ T56xqahP1F5Rqd6RzU9ARJtlvPZaXEmZOzDNZDk4llkALwALEgd4tuGPndbYjzJGyNvs iQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2v0ruqd7qg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Sep 2019 06:16:37 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8G69TNN013659;
+        Mon, 16 Sep 2019 06:16:37 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2v0qhnw3h4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Sep 2019 06:16:37 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8G6GaLJ016047;
+        Mon, 16 Sep 2019 06:16:36 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 15 Sep 2019 23:16:35 -0700
+Date:   Mon, 16 Sep 2019 09:16:30 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@01.org, David Howells <dhowells@redhat.com>
+Cc:     kbuild-all@01.org, linux-fsdevel@vger.kernel.org
+Subject: [vfs:uncertain.shmem 18/18] mm/shmem.c:3577 shmem_reconfigure()
+ warn: inconsistent returns 'spin_lock:&sbinfo->stat_lock'.
+Message-ID: <20190916061630.GX20699@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9381 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909160067
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9381 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909160067
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
+tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/viro/vfs.git uncertain.shmem
+head:   dc28c12a0e98f33ed0923135cfb5136caaa2e92d
+commit: dc28c12a0e98f33ed0923135cfb5136caaa2e92d [18/18] vfs: Convert ramfs, shmem, tmpfs, devtmpfs, rootfs to use the new mount API
 
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-are available in the Git repository at:
+smatch warnings:
+mm/shmem.c:3577 shmem_reconfigure() warn: inconsistent returns 'spin_lock:&sbinfo->stat_lock'.
+  Locked on:   line 3577
+  Unlocked on: line 3575
 
-  git://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fsverity-for-linus
+git remote add vfs https://kernel.googlesource.com/pub/scm/linux/kernel/git/viro/vfs.git
+git remote update vfs
+git checkout dc28c12a0e98f33ed0923135cfb5136caaa2e92d
+vim +3577 mm/shmem.c
 
-for you to fetch changes up to 95ae251fe82838b85c6d37e5a1775006e2a42ae0:
+dc28c12a0e98f3 David Howells    2019-03-25  3526  static int shmem_reconfigure(struct fs_context *fc)
+^1da177e4c3f41 Linus Torvalds   2005-04-16  3527  {
+dc28c12a0e98f3 David Howells    2019-03-25  3528  	struct shmem_options *ctx = fc->fs_private;
+dc28c12a0e98f3 David Howells    2019-03-25  3529  	struct shmem_sb_info *sbinfo = SHMEM_SB(fc->root->d_sb);
+0edd73b33426df Hugh Dickins     2005-06-21  3530  	unsigned long inodes;
+dc28c12a0e98f3 David Howells    2019-03-25  3531  	const char *err;
+^1da177e4c3f41 Linus Torvalds   2005-04-16  3532  
+0edd73b33426df Hugh Dickins     2005-06-21  3533  	spin_lock(&sbinfo->stat_lock);
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  f2fs: add fs-verity support (2019-08-12 19:33:51 -0700)
+0edd73b33426df Hugh Dickins     2005-06-21  3534  	inodes = sbinfo->max_inodes - sbinfo->free_inodes;
+dc28c12a0e98f3 David Howells    2019-03-25  3535  	if (ctx->seen & SHMEM_SEEN_BLOCKS) {
+1054087b0658a7 Al Viro          2019-09-08  3536  		if (percpu_counter_compare(&sbinfo->used_blocks,
+dc28c12a0e98f3 David Howells    2019-03-25  3537  					   ctx->blocks) > 0) {
+dc28c12a0e98f3 David Howells    2019-03-25  3538  			err = "Too small a size for current use";
+0edd73b33426df Hugh Dickins     2005-06-21  3539  			goto out;
+                                                                        ^^^^^^^^^
 
-----------------------------------------------------------------
-Hi Linus,
+dc28c12a0e98f3 David Howells    2019-03-25  3540  		}
+dc28c12a0e98f3 David Howells    2019-03-25  3541  		if (ctx->blocks && !sbinfo->max_blocks) {
+dc28c12a0e98f3 David Howells    2019-03-25  3542  			err = "Cannot retroactively limit nr_blocks";
+1054087b0658a7 Al Viro          2019-09-08  3543  			goto out;
+1054087b0658a7 Al Viro          2019-09-08  3544  		}
+dc28c12a0e98f3 David Howells    2019-03-25  3545  	}
+dc28c12a0e98f3 David Howells    2019-03-25  3546  	if (ctx->seen & SHMEM_SEEN_INODES) {
+dc28c12a0e98f3 David Howells    2019-03-25  3547  		if (ctx->inodes < inodes) {
+dc28c12a0e98f3 David Howells    2019-03-25  3548  			err = "Too few inodes for current use";
+0edd73b33426df Hugh Dickins     2005-06-21  3549  			goto out;
+dc28c12a0e98f3 David Howells    2019-03-25  3550  		}
+dc28c12a0e98f3 David Howells    2019-03-25  3551  		if (ctx->inodes && !sbinfo->max_inodes) {
+dc28c12a0e98f3 David Howells    2019-03-25  3552  			err = "Cannot retroactively limit nr_inodes";
+1054087b0658a7 Al Viro          2019-09-08  3553  			goto out;
+1054087b0658a7 Al Viro          2019-09-08  3554  		}
+dc28c12a0e98f3 David Howells    2019-03-25  3555  	}
+0edd73b33426df Hugh Dickins     2005-06-21  3556  
+dc28c12a0e98f3 David Howells    2019-03-25  3557  	if (ctx->seen & SHMEM_SEEN_HUGE)
+dc28c12a0e98f3 David Howells    2019-03-25  3558  		sbinfo->huge = ctx->huge;
+dc28c12a0e98f3 David Howells    2019-03-25  3559  	if (ctx->seen & SHMEM_SEEN_BLOCKS)
+dc28c12a0e98f3 David Howells    2019-03-25  3560  		sbinfo->max_blocks  = ctx->blocks;
+dc28c12a0e98f3 David Howells    2019-03-25  3561  	if (ctx->seen & SHMEM_SEEN_INODES) {
+dc28c12a0e98f3 David Howells    2019-03-25  3562  		sbinfo->max_inodes  = ctx->inodes;
+dc28c12a0e98f3 David Howells    2019-03-25  3563  		sbinfo->free_inodes = ctx->inodes - inodes;
+1054087b0658a7 Al Viro          2019-09-08  3564  	}
+71fe804b6d56d6 Lee Schermerhorn 2008-04-28  3565  
+5f00110f7273f9 Greg Thelen      2013-02-22  3566  	/*
+5f00110f7273f9 Greg Thelen      2013-02-22  3567  	 * Preserve previous mempolicy unless mpol remount option was specified.
+5f00110f7273f9 Greg Thelen      2013-02-22  3568  	 */
+dc28c12a0e98f3 David Howells    2019-03-25  3569  	if (ctx->mpol) {
+71fe804b6d56d6 Lee Schermerhorn 2008-04-28  3570  		mpol_put(sbinfo->mpol);
+dc28c12a0e98f3 David Howells    2019-03-25  3571  		sbinfo->mpol = ctx->mpol;	/* transfers initial ref */
+dc28c12a0e98f3 David Howells    2019-03-25  3572  		ctx->mpol = NULL;
+5f00110f7273f9 Greg Thelen      2013-02-22  3573  	}
+0edd73b33426df Hugh Dickins     2005-06-21  3574  	spin_unlock(&sbinfo->stat_lock);
+dc28c12a0e98f3 David Howells    2019-03-25  3575  	return 0;
+dc28c12a0e98f3 David Howells    2019-03-25  3576  out:
+dc28c12a0e98f3 David Howells    2019-03-25 @3577  	return invalf(fc, "tmpfs: %s", err);
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Need to unlock before returning.
 
-Please consider pulling fs-verity for 5.4.
+^1da177e4c3f41 Linus Torvalds   2005-04-16  3578  }
+680d794babebc7 Andrew Morton    2008-02-08  3579  
 
-fs-verity is a filesystem feature that provides Merkle tree based
-hashing (similar to dm-verity) for individual readonly files, mainly for
-the purpose of efficient authenticity verification.
-
-This pull request includes:
-
-(a) The fs/verity/ support layer and documentation.
-
-(b) fs-verity support for ext4 and f2fs.
-
-Compared to the original fs-verity patchset from last year, the UAPI to
-enable fs-verity on a file has been greatly simplified.  Lots of other
-things were cleaned up too.
-
-fs-verity is planned to be used by two different projects on Android;
-most of the userspace code is in place already.  Another userspace tool
-("fsverity-utils"), and xfstests, are also available.  e2fsprogs and
-f2fs-tools already have fs-verity support.  Other people have shown
-interest in using fs-verity too.
-
-I've tested this on ext4 and f2fs with xfstests, both the existing tests
-and the new fs-verity tests.  This has also been in linux-next since
-July 30 with no reported issues except a couple minor ones I found
-myself and folded in fixes for.
-
-Ted and I will be co-maintaining fs-verity.
-
-
-There will be some fairly straightforward merge conflicts with the ext4
-and f2fs trees.  I've tested the resolution of these in linux-next.
-
-This will also "silently" conflict (compiler warning only) with the key
-ACLs patchset, if you merge it again this cycle.  The resolution is to
-translate the key permissions to an ACL in fs/verity/signature.c.  I
-suggest using the resolution in linux-next, which I've tested.  This
-resolution avoids making any behavior changes; note that some of the old
-permissions map to multiple new permissions.
-
-----------------------------------------------------------------
-Eric Biggers (17):
-      fs-verity: add a documentation file
-      fs-verity: add MAINTAINERS file entry
-      fs-verity: add UAPI header
-      fs: uapi: define verity bit for FS_IOC_GETFLAGS
-      fs-verity: add Kconfig and the helper functions for hashing
-      fs-verity: add inode and superblock fields
-      fs-verity: add the hook for file ->open()
-      fs-verity: add the hook for file ->setattr()
-      fs-verity: add data verification hooks for ->readpages()
-      fs-verity: implement FS_IOC_ENABLE_VERITY ioctl
-      fs-verity: implement FS_IOC_MEASURE_VERITY ioctl
-      fs-verity: add SHA-512 support
-      fs-verity: support builtin file signatures
-      ext4: add basic fs-verity support
-      ext4: add fs-verity read support
-      ext4: update on-disk format documentation for fs-verity
-      f2fs: add fs-verity support
-
- Documentation/filesystems/ext4/inodes.rst   |   6 +-
- Documentation/filesystems/ext4/overview.rst |   1 +
- Documentation/filesystems/ext4/super.rst    |   2 +
- Documentation/filesystems/ext4/verity.rst   |  41 ++
- Documentation/filesystems/fsverity.rst      | 726 ++++++++++++++++++++++++++++
- Documentation/filesystems/index.rst         |   1 +
- Documentation/ioctl/ioctl-number.rst        |   1 +
- MAINTAINERS                                 |  12 +
- fs/Kconfig                                  |   2 +
- fs/Makefile                                 |   1 +
- fs/ext4/Makefile                            |   1 +
- fs/ext4/ext4.h                              |  23 +-
- fs/ext4/file.c                              |   4 +
- fs/ext4/inode.c                             |  55 ++-
- fs/ext4/ioctl.c                             |  13 +
- fs/ext4/readpage.c                          | 211 ++++++--
- fs/ext4/super.c                             |  18 +-
- fs/ext4/sysfs.c                             |   6 +
- fs/ext4/verity.c                            | 367 ++++++++++++++
- fs/f2fs/Makefile                            |   1 +
- fs/f2fs/data.c                              |  75 ++-
- fs/f2fs/f2fs.h                              |  20 +-
- fs/f2fs/file.c                              |  43 +-
- fs/f2fs/inode.c                             |   5 +-
- fs/f2fs/super.c                             |   3 +
- fs/f2fs/sysfs.c                             |  11 +
- fs/f2fs/verity.c                            | 247 ++++++++++
- fs/f2fs/xattr.h                             |   2 +
- fs/verity/Kconfig                           |  55 +++
- fs/verity/Makefile                          |  10 +
- fs/verity/enable.c                          | 377 +++++++++++++++
- fs/verity/fsverity_private.h                | 185 +++++++
- fs/verity/hash_algs.c                       | 280 +++++++++++
- fs/verity/init.c                            |  61 +++
- fs/verity/measure.c                         |  57 +++
- fs/verity/open.c                            | 356 ++++++++++++++
- fs/verity/signature.c                       | 157 ++++++
- fs/verity/verify.c                          | 281 +++++++++++
- include/linux/fs.h                          |  11 +
- include/linux/fsverity.h                    | 211 ++++++++
- include/uapi/linux/fs.h                     |   1 +
- include/uapi/linux/fsverity.h               |  40 ++
- 42 files changed, 3910 insertions(+), 70 deletions(-)
- create mode 100644 Documentation/filesystems/ext4/verity.rst
- create mode 100644 Documentation/filesystems/fsverity.rst
- create mode 100644 fs/ext4/verity.c
- create mode 100644 fs/f2fs/verity.c
- create mode 100644 fs/verity/Kconfig
- create mode 100644 fs/verity/Makefile
- create mode 100644 fs/verity/enable.c
- create mode 100644 fs/verity/fsverity_private.h
- create mode 100644 fs/verity/hash_algs.c
- create mode 100644 fs/verity/init.c
- create mode 100644 fs/verity/measure.c
- create mode 100644 fs/verity/open.c
- create mode 100644 fs/verity/signature.c
- create mode 100644 fs/verity/verify.c
- create mode 100644 include/linux/fsverity.h
- create mode 100644 include/uapi/linux/fsverity.h
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
