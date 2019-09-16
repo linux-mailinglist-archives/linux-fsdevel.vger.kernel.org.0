@@ -2,123 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA70CB3E48
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 17:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A1F5B3E75
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 18:11:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731827AbfIPP7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 11:59:16 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:51580 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbfIPP7Q (ORCPT
+        id S1727054AbfIPQLH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 12:11:07 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:59781 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726282AbfIPQLH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 11:59:16 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8GFrZTM133541;
-        Mon, 16 Sep 2019 15:58:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=V1gPbP6UbJ4PMEyB24aM+fGZ+fgZF2bnAVOvShOZrpQ=;
- b=sCj2wf7DESace9qHuTtWkdVU4P2pJm8K8evCb4GvzKgHrCXegaVXsJ+EYBJbywTgGqvJ
- BpJJMXOmZ3uRowerlHR8TjwuuNEFxI7JzeMft4hJM8NZJZyZDKEUa6mpK/+zJgazGpC2
- PNGgHPsgcSdvH6hWZ5xcD+8HKyeQMHl4EklGWCMn72IkkPXQlbEIqeUkqenN1na2f8zh
- iN0A0lHlRtjlmapFyuPhHvTOXh2fJ4zl6IOqG1dvflByaY0n/UZ0xXdIsboC66N0XwUC
- nG+u/v6/kvftwZDQdntJKuKYjlZ3y5Jp+E6/Kc6QIm60DZ9TjgxfInqDrGPYexoO1SW4 XA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2v0ruqgfeu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Sep 2019 15:58:53 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8GFwKFw101029;
-        Mon, 16 Sep 2019 15:58:53 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2v0nb4x04q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Sep 2019 15:58:53 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8GFwnGP006266;
-        Mon, 16 Sep 2019 15:58:51 GMT
-Received: from localhost (/10.159.225.108)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 16 Sep 2019 08:58:49 -0700
-Date:   Mon, 16 Sep 2019 08:58:48 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        adilger@dilger.ca, jaegeuk@kernel.org, miklos@szeredi.hu,
-        rpeterso@redhat.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 8/9] Use FIEMAP for FIBMAP calls
-Message-ID: <20190916155848.GW2229799@magnolia>
-References: <20190808082744.31405-1-cmaiolino@redhat.com>
- <20190808082744.31405-9-cmaiolino@redhat.com>
- <20190814111837.GE1885@lst.de>
- <20190820130117.gcemlpfrkqlpaaiz@pegasus.maiolino.io>
- <20190829071555.GF11909@lst.de>
- <20190910122833.jsii3us7rhwc5l2p@pegasus.maiolino.io>
+        Mon, 16 Sep 2019 12:11:07 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x8GGAtcM010807
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Sep 2019 12:10:56 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 18DBD420811; Mon, 16 Sep 2019 12:10:55 -0400 (EDT)
+Date:   Mon, 16 Sep 2019 12:10:55 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        linux-integrity@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Theodore Y. Ts'o" <tytso@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: IMA on remote file systems
+Message-ID: <20190916161054.GB4553@mit.edu>
+References: <C867A0BA-1ACF-4600-8179-3E15A098846C@oracle.com>
+ <FA4C0F15-EE0A-4231-8415-A035C1CF3E32@oracle.com>
+ <1568583730.5055.36.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190910122833.jsii3us7rhwc5l2p@pegasus.maiolino.io>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9382 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909160164
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9382 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909160163
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1568583730.5055.36.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 02:28:35PM +0200, Carlos Maiolino wrote:
-> Hey, thanks for the info.
-> 
-> Although..
-> 
-> On Thu, Aug 29, 2019 at 09:15:55AM +0200, Christoph Hellwig wrote:
-> > On Tue, Aug 20, 2019 at 03:01:18PM +0200, Carlos Maiolino wrote:
-> > > On Wed, Aug 14, 2019 at 01:18:37PM +0200, Christoph Hellwig wrote:
-> > > > The whole FIEMAP_KERNEL_FIBMAP thing looks very counter productive.
-> > > > bmap() should be able to make the right decision based on the passed
-> > > > in flags, no need to have a fake FIEMAP flag for that.
+On Sun, Sep 15, 2019 at 05:42:10PM -0400, Mimi Zohar wrote:
+> > > My thought was to use an ephemeral Merkle tree for NFS (and
+> > > possibly other remote filesystems, like FUSE, until these
+> > > filesystems support durable per-file Merkle trees). A tree would
+> > > be constructed when the client measures a file, but it would not
+> > > saved to the filesystem. Instead of a hash of the file's contents,
+> > > the tree's root signature is stored as the IMA metadata.
 > > > 
-> > > Using the FIEMAP_KERNEL_FIBMAP flag, is a way to tell filesystems from where the
-> > > request came from, so filesystems can handle it differently. For example, we
-> > > can't allow in XFS a FIBMAP request on a COW/RTIME inode, and we use the FIBMAP
-> > > flag in such situations.
-> > 
-> > But the whole point is that the file system should not have to know
-> > this.  It is not the file systems business in any way to now where the
-> > call came from.  The file system just needs to provide enough information
-> > so that the caller can make informed decisions.
-> > 
-> > And in this case that means if any of FIEMAP_EXTENT_DELALLOC,
-> > FIEMAP_EXTENT_ENCODED, FIEMAP_EXTENT_DATA_ENCRYPTED,
-> > FIEMAP_EXTENT_NOT_ALIGNED, FIEMAP_EXTENT_DATA_INLINE,
-> > FIEMAP_EXTENT_DATA_TAIL, FIEMAP_EXTENT_UNWRITTEN or
-> > FIEMAP_EXTENT_SHARED is present the caller should fail the
-> > bmap request.
-> 
-> This seems doable, yes, but... Doing that essentially will make some
-> filesystems, like BTRFS, to suddenly start to support fibmap, this was another
-> reason why we opted in the first place to let filesystems know whom the caller
-> was.
-> 
-> We could maybe add a new FIEMAP_EXTENT_* flag in the future to, let's say,
-> specify a specific block may be split between more than one device, but, well.
-> It's an idea, but it won't change the fact BTRFS for example will suddenly start
-> to support FIBMAP.
+> > > Once a Merkle tree is available, it can be used in exactly the
+> > > same way that a durable Merkle tree would, to verify the integrity
+> > > of individual pages as they are used, evicted, and then read back
+> > > from the server.
+> > > 
+> > > If the client needs to evict part or all of an ephemeral tree, it
+> > > can subsequently be reconstructed by measuring the file again and
+> > > verifying its root signature against the stored IMA metadata.
 
-...or burn another superblock sb_flag on "this fs supports FIBMAP";
-have the in-kernel bmap() function bail out if it isn't set; and only
-set it for the filesystems that used to supply ->bmap?
+Where would the client store the ephemeral tree?  If you're thinking
+about storing in memory, calculating the emphemeral tree would require
+dragging the entire file across the network, which is going to be just
+as bad as using IMA --- plus the CPU cost of calculating the Merkle
+tree, and the memory cost of storing the ephemeral Merkle tree.
 
---D
+I suspect that for most clients, it wouldn't be worth it unless the
+client can store the ephemeral tree *somewhere* on the client's local
+persistent storage, or maybe if it could store the Merkle tree on the
+NFS server (maybe via an xattr which contains the pathname to the
+Merkle tree relative to the NFS mount point?).
 
-> -- 
-> Carlos
+> > > So the only difference here is that the latency-to-first-byte
+> > > benefit of a durable Merkle tree would be absent.
+
+What problem are you most interested in solving?  And what cost do you
+think the user will be willing to pay in order to solve that problem?
+
+> I like the idea, but there are a couple of things that need to happen
+> first.  Both fs-verity and IMA appended signatures need to be
+> upstreamed.
+
+Eric has sent the pull request fs-verity today.
+
+>  The IMA appended signature support simplifies
+> ima_appraise_measurement(), paving the way for adding IMA support for
+> other types of signature verification.  How IMA will support fs-verity 
+> signatures still needs to be defined.  That discussion will hopefully
+> include NFS support.
+
+As far as using the Merkle tree root hash for the IMA measurement,
+what sort of policy should be used for determining when the Merkle
+tree root hash should be used in preference to reading and checksuming
+the whole file when it is first opened?  It could be as simple as, "if
+this is a fs-verity, use the fs-verity Merkle root".  Is that OK?
+
+     	  	     	     	       	      - Ted
