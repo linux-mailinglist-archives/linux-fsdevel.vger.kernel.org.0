@@ -2,40 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2B7B32DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 03:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 829A3B3384
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 04:53:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728988AbfIPBQb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Sep 2019 21:16:31 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41104 "EHLO huawei.com"
+        id S1727561AbfIPCxK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Sep 2019 22:53:10 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50734 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728981AbfIPBQb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Sep 2019 21:16:31 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 909C6D44EE01C4B61374;
-        Mon, 16 Sep 2019 09:16:29 +0800 (CST)
+        id S1727510AbfIPCxK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 15 Sep 2019 22:53:10 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9047EFAC9337E64CF0B9;
+        Mon, 16 Sep 2019 10:53:08 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 16 Sep
- 2019 09:16:28 +0800
-Subject: Re: [PATCH 3/3] f2fs: fix inode rwsem regression
-To:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-        <linux-btrfs@vger.kernel.org>, <hch@infradead.org>,
-        <andres@anarazel.de>, <david@fromorbit.com>,
-        <riteshh@linux.ibm.com>, <linux-f2fs-devel@lists.sourceforge.net>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-References: <20190911093926.pfkkx25mffzeuo32@alap3.anarazel.de>
- <20190911164517.16130-1-rgoldwyn@suse.de>
- <20190911164517.16130-4-rgoldwyn@suse.de>
- <20190913194641.GA72768@jaegeuk-macbookpro.roam.corp.google.com>
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 16 Sep
+ 2019 10:53:07 +0800
+Subject: Re: [PATCH] quota: fix wrong condition in is_quota_modification()
+To:     Jan Kara <jack@suse.cz>
+CC:     Jan Kara <jack@suse.com>, <chao@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190911093650.35329-1-yuchao0@huawei.com>
+ <20190912100610.GA14773@quack2.suse.cz>
 From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <624dcdc9-db6b-d6dd-6df4-b175c1455dc7@huawei.com>
-Date:   Mon, 16 Sep 2019 09:16:17 +0800
+Message-ID: <ce4fe030-7ad4-134d-e0c4-77dc2c618b15@huawei.com>
+Date:   Mon, 16 Sep 2019 10:53:08 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190913194641.GA72768@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20190912100610.GA14773@quack2.suse.cz>
 Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -46,58 +40,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/9/14 3:46, Jaegeuk Kim wrote:
-> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=ebef4d7eda0d06a6ab6dc0f9e9f848276e605962
+On 2019/9/12 18:06, Jan Kara wrote:
+> On Wed 11-09-19 17:36:50, Chao Yu wrote:
+>> Quoted from
+>> commit 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
+>>
+>> " At LSF we decided that if we truncate up from isize we shouldn't trim
+>>   fallocated blocks that were fallocated with KEEP_SIZE and are past the
+>>  new i_size.  This patch fixes ext4 to do this. "
+>>
+>> And generic/092 of fstest have covered this case for long time, however
+>> is_quota_modification() didn't adjust based on that rule, so that in
+>> below condition, we will lose to quota block change:
+>> - fallocate blocks beyond EOF
+>> - remount
+>> - truncate(file_path, file_size)
+>>
+>> Fix it.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  include/linux/quotaops.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
+>> index dc905a4ff8d7..bd30acad3a7f 100644
+>> --- a/include/linux/quotaops.h
+>> +++ b/include/linux/quotaops.h
+>> @@ -22,7 +22,7 @@ static inline struct quota_info *sb_dqopt(struct super_block *sb)
+>>  /* i_mutex must being held */
+>>  static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
+>>  {
+>> -	return (ia->ia_valid & ATTR_SIZE && ia->ia_size != inode->i_size) ||
+>> +	return (ia->ia_valid & ATTR_SIZE && ia->ia_size <= inode->i_size) ||
+>>  		(ia->ia_valid & ATTR_UID && !uid_eq(ia->ia_uid, inode->i_uid)) ||
+>>  		(ia->ia_valid & ATTR_GID && !gid_eq(ia->ia_gid, inode->i_gid));
+>>  }
+> 
+> OK, but your change makes i_size extension not to be quota modification
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+I just try to adapt below rules covered with generic/092, which restrict to not
+trim preallocate blocks beyond i_size, in that case, filesystem won't change
+i_blocks.
+
+1) truncate(i_size) will trim all blocks past i_size.
+2) truncate(x) where x > i_size will not trim all blocks past i_size.
+
+However, I'm okay with your change, because there could be filesystems won't
+follow above rule.
 
 Thanks,
 
+> which is IMO wrong. So I think the condition should just be:
 > 
-> Merged. Thanks,
+> 	return (ia->ia_valid & ATTR_SIZE) || ...
 > 
-> On 09/11, Goldwyn Rodrigues wrote:
->> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
->>
->> This is similar to 942491c9e6d6 ("xfs: fix AIM7 regression")
->> Apparently our current rwsem code doesn't like doing the trylock, then
->> lock for real scheme.  So change our read/write methods to just do the
->> trylock for the RWF_NOWAIT case.
->>
->> We don't need a check for IOCB_NOWAIT and !direct-IO because it
->> is checked in generic_write_checks().
->>
->> Fixes: b91050a80cec ("f2fs: add nowait aio support")
->> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
->> ---
->>  fs/f2fs/file.c | 10 +++-------
->>  1 file changed, 3 insertions(+), 7 deletions(-)
->>
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index 3e58a6f697dd..c6f3ef815c05 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -3134,16 +3134,12 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->>  		goto out;
->>  	}
->>  
->> -	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT)) {
->> -		ret = -EINVAL;
->> -		goto out;
->> -	}
->> -
->> -	if (!inode_trylock(inode)) {
->> -		if (iocb->ki_flags & IOCB_NOWAIT) {
->> +	if (iocb->ki_flags & IOCB_NOWAIT) {
->> +		if (!inode_trylock(inode)) {
->>  			ret = -EAGAIN;
->>  			goto out;
->>  		}
->> +	} else {
->>  		inode_lock(inode);
->>  	}
->>  
->> -- 
->> 2.16.4
-> .
+> I'll fix the patch up and pull it into my tree.
+> 
+> 									Honza
 > 
