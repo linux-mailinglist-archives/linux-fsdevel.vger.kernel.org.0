@@ -2,138 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6A2AB4398
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 23:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D35FB4413
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 00:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732031AbfIPVyM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 17:54:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730463AbfIPVyM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 17:54:12 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5A51214AF;
-        Mon, 16 Sep 2019 21:54:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568670851;
-        bh=6j5WhVgjInJOr0ho8fpMq2MPbXYIDm0KWcjNsMe56Cg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=T4sE6H/P5KnK5jTkaOmVDS0J25KJkjgHKka5z0moMcxu7bmMFURyH3Pc+Rx+IlxOl
-         isV/eexTtij0TLGUtnU2+YkuvBZOCPySqVw6mYW9rxIeItgJET18j2dexIMzzb7tHP
-         s1LBT0+sYzDKAr1kGUA4lnHWHshwPGm+72xOc0p8=
-Message-ID: <f31f5497156456e838280b32cf5a11e6c889ccdb.camel@kernel.org>
-Subject: Re: [PATCH 1/1] vfs: Really check for inode ptr in lookup_fast
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>, viro@zeniv.linux.org.uk
-Cc:     hsiangkao@aol.com, linux-fsdevel@vger.kernel.org,
-        aneesh.kumar@linux.ibm.com, wugyuan@cn.ibm.com
-Date:   Mon, 16 Sep 2019 17:54:09 -0400
-In-Reply-To: <20190906135621.16410-1-riteshh@linux.ibm.com>
-References: <20190906135621.16410-1-riteshh@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S2387573AbfIPWhw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 18:37:52 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35671 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733128AbfIPWhv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Sep 2019 18:37:51 -0400
+Received: by mail-pg1-f193.google.com with SMTP id a24so815141pgj.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2019 15:37:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=59X5RvHm807OLFbm3taZna4w+6L5coMBB4Ni//2NeKI=;
+        b=C80DicDCYT7rIcDYOHOGrrJk3NvfyZfExEswz6GbI2lAEjINTbwPDtebRCvZFSnMW9
+         9w8vIF/xVyR16X1mX7uz9+pP+nI4VHxGrgxY8M0dUcCO9yp3Tnkg9Gb2sx8r6Z3Z1KVh
+         gKQTpNpmFERkJwtqz7IHImJWQVEtvVdagn6Mf3XYzhWWE4k67g8p49N8/CvI6oAuSfM4
+         oUHTY/I5JWpm0HJTmnOui5/ef/qLmKYL8MWVF62Gbbs0yiyy8tasexPK0JI/Un8KvJj8
+         FelXqV94iaGUw/sZHScuzvDcv4qWPGJkvVmW3PJYVxChiskv+pzi9i5kWlKIyFK7cjwE
+         U/Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=59X5RvHm807OLFbm3taZna4w+6L5coMBB4Ni//2NeKI=;
+        b=b317coulk9xOnrFyDhiGA0I4kaX+CDMY5hVDKI62w/O8auoaqrdS0wQ5uHRg5I84E9
+         Il7vvvPP8VwGnr0FzQKAgAVCdvgcaRdtJNRxkx7a8C1rx/PyLzqM55KKLjrBCiOriuMO
+         qlO0q5gS28C8jD4AUFBJiAzttX/s2nKFcDhBSUvJXY6jdwv+/nebKBlTEZa5AHFQ9hHy
+         SsDFnLuvuKAI+UgBkUPx6xjIfrbHWZCJDVb0M0YR6Fx4+ttW/hRnYTrZjDRBaNyWVqAz
+         fIkw199ALrf1nOqC+aP3vPBwpEmjzOShpf/mnf97qiA6RbmFEpBL27tFSukXdNFQVk/8
+         WCKA==
+X-Gm-Message-State: APjAAAWLxboRzZaEriy4njT3gg3NTSPCGiyBuvPGAagsCQN9g6u0oRPo
+        oBaraAzWKWIUesMBASujKMI0
+X-Google-Smtp-Source: APXvYqw201emQOCzAUYbBBuxD2MbgCxcjbSVpKAy7S6p1X+7ll9pov8i2Lw4qCsPmWAubk01ux60tw==
+X-Received: by 2002:a63:1c09:: with SMTP id c9mr25644pgc.347.1568673469085;
+        Mon, 16 Sep 2019 15:37:49 -0700 (PDT)
+Received: from bobrowski ([110.232.114.101])
+        by smtp.gmail.com with ESMTPSA id b10sm125472pfo.123.2019.09.16.15.37.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 15:37:48 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 08:37:41 +1000
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, darrick.wong@oracle.com
+Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
+ infrastructure
+Message-ID: <20190916223741.GA5936@bobrowski>
+References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
+ <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
+ <20190916121248.GD4005@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190916121248.GD4005@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2019-09-06 at 19:26 +0530, Ritesh Harjani wrote:
-> d_is_negative can race with d_instantiate_new()
-> -> __d_set_inode_and_type().
-> For e.g. in use cases where Thread-1 is creating
-> symlink (doing d_instantiate_new()) & Thread-2 is doing
-> cat of that symlink while doing lookup_fast (via REF-walk-
-> one such case is, when ->permission returns -ECHILD).
+On Mon, Sep 16, 2019 at 05:12:48AM -0700, Christoph Hellwig wrote:
+> On Thu, Sep 12, 2019 at 09:04:46PM +1000, Matthew Bobrowski wrote:
+> > @@ -213,12 +214,16 @@ static ssize_t ext4_write_checks(struct kiocb *iocb, struct iov_iter *from)
+> >  	struct inode *inode = file_inode(iocb->ki_filp);
+> >  	ssize_t ret;
+> >  
+> > +	if (unlikely(IS_IMMUTABLE(inode)))
+> > +		return -EPERM;
+> > +
+> >  	ret = generic_write_checks(iocb, from);
+> >  	if (ret <= 0)
+> >  		return ret;
+> >  
+> > -	if (unlikely(IS_IMMUTABLE(inode)))
+> > -		return -EPERM;
+> > +	ret = file_modified(iocb->ki_filp);
+> > +	if (ret)
+> > +		return 0;
+> >  
+> >  	/*
+> >  	 * If we have encountered a bitmap-format file, the size limit
 > 
-> During this race if __d_set_and_inode_type() does out-of-order
-> execution and set the dentry->d_flags before setting
-> dentry->inode, then it can result into following kernel panic.
-> 
-> This change fixes the issue by directly checking for inode.
-> 
-> E.g. kernel panic, since inode was NULL.
-> trailing_symlink() -> may_follow_link() -> inode->i_uid.
-> Issue signature:-
->   [NIP  : trailing_symlink+80]
->   [LR   : trailing_symlink+1092]
->   #4 [c00000198069bb70] trailing_symlink at c0000000004bae60  (unreliable)
->   #5 [c00000198069bc00] path_openat at c0000000004bdd14
->   #6 [c00000198069bc90] do_filp_open at c0000000004c0274
->   #7 [c00000198069bdb0] do_sys_open at c00000000049b248
->   #8 [c00000198069be30] system_call at c00000000000b388
-> 
-> Sequence of events:-
-> Thread-2(Comm: ln) 	       Thread-1(Comm: cat)
-> 
-> 	                dentry = __d_lookup() //nonRCU
-> 
-> __d_set_and_inode_type() (Out-of-order execution)
->     flags = READ_ONCE(dentry->d_flags);
->     flags &= ~(DCACHE_ENTRY_TYPE | DCACHE_FALLTHRU);
->     flags |= type_flags;
->     WRITE_ONCE(dentry->d_flags, flags);
-> 
-> 	                if (unlikely(d_is_negative()) // fails
-> 	                       {}
-> 	                // since d_flags is already updated in
-> 	                // Thread-2 in parallel but inode
-> 	                // not yet set.
-> 	                // d_is_negative returns false
-> 
-> 	                *inode = d_backing_inode(path->dentry);
-> 	                // means inode is still NULL
-> 
->     dentry->d_inode = inode;
-> 
-> 	                trailing_symlink()
-> 	                    may_follow_link()
-> 	                        inode = nd->link_inode;
-> 	                        // nd->link_inode = NULL
-> 	                        //Then it crashes while
-> 	                        //doing inode->i_uid
-> 
-> Reported-by: Guang Yuan Wu <wugyuan@cn.ibm.com>
-> Tested-by: Guang Yuan Wu <wugyuan@cn.ibm.com>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
->  fs/namei.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 209c51a5226c..b5867fe988e0 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1623,7 +1623,21 @@ static int lookup_fast(struct nameidata *nd,
->  		dput(dentry);
->  		return status;
->  	}
-> -	if (unlikely(d_is_negative(dentry))) {
-> +
-> +	/*
-> +	 * Caution: d_is_negative() can race with
-> +	 * __d_set_inode_and_type().
-> +	 * For e.g. in use cases where Thread-1 is creating
-> +	 * symlink (doing d_instantiate_new()) & Thread-2 is doing
-> +	 * cat of that symlink and falling here (via Ref-walk) while
-> +	 * doing lookup_fast (one such case is when ->permission
-> +	 * returns -ECHILD).
-> +	 * Now if __d_set_inode_and_type() does out-of-order execution
-> +	 * i.e. it first sets the dentry->d_flags & then dentry->inode
-> +	 * then it can result into inode being NULL, causing panic later.
-> +	 * Hence directly check if inode is NULL here.
-> +	 */
-> +	if (unlikely(d_really_is_negative(dentry))) {
->  		dput(dentry);
->  		return -ENOENT;
->  	}
+> Independent of the error return issue you probably want to split
+> modifying ext4_write_checks into a separate preparation patch.
 
-Looks reasonable to me. The only alternative I see is to put the
-barriers back in there (which still might not be a bad idea), but this
-should at least address this race.
+Providing that there's no objections to introducing a possible performance
+change with this separate preparation patch (overhead of calling
+file_remove_privs/file_update_time twice), then I have no issues in doing so.
 
-Acked-by: Jeff Layton <jlayton@kernel.org>
+> > +/*
+> > + * For a write that extends the inode size, ext4_dio_write_iter() will
+> > + * wait for the write to complete. Consequently, operations performed
+> > + * within this function are still covered by the inode_lock(). On
+> > + * success, this function returns 0.
+> > + */
+> > +static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size, int error,
+> > +				 unsigned int flags)
+> > +{
+> > +	int ret;
+> > +	loff_t offset = iocb->ki_pos;
+> > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > +
+> > +	if (error) {
+> > +		ret = ext4_handle_failed_inode_extension(inode, offset + size);
+> > +		return ret ? ret : error;
+> > +	}
+> 
+> Just a personal opinion, but I find the use of the ternary operator
+> here a little weird.
+> 
+> A plain old:
+> 
+> 	ret = ext4_handle_failed_inode_extension(inode, offset + size);
+> 	if (ret)
+> 		return ret;
+> 	return error;
+> 
+> flow much easier.
 
+Agree, much cleaner.
+ 
+> > +	if (!inode_trylock(inode)) {
+> > +		if (iocb->ki_flags & IOCB_NOWAIT)
+> > +			return -EAGAIN;
+> > +		inode_lock(inode);
+> > +	}
+> > +
+> > +	if (!ext4_dio_checks(inode)) {
+> > +		inode_unlock(inode);
+> > +		/*
+> > +		 * Fallback to buffered IO if the operation on the
+> > +		 * inode is not supported by direct IO.
+> > +		 */
+> > +		return ext4_buffered_write_iter(iocb, from);
+> 
+> I think you want to lift the locking into the caller of this function
+> so that you don't have to unlock and relock for the buffered write
+> fallback.
+
+I don't exactly know what you really mean by "lift the locking into the caller
+of this function". I'm interpreting that as moving the inode_unlock()
+operation into ext4_buffered_write_iter(), but I can't see how that would be
+any different from doing it directly here? Wouldn't this also run the risk of
+the locks becoming unbalanced as we'd need to add checks around whether the
+resource is being contended? Maybe I'm misunderstanding something here...
+
+> > +	if (offset + count > i_size_read(inode) ||
+> > +	    offset + count > EXT4_I(inode)->i_disksize) {
+> > +		ext4_update_i_disksize(inode, inode->i_size);
+> > +		extend = true;
+> 
+> Doesn't the ext4_update_i_disksize need to be under an open journal
+> handle?
+
+After all, it is a metadata update, which should go through an open journal
+handle.
+
+Thank you for the review Christoph!
+
+--<M>--
