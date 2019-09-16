@@ -2,59 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C1F7B3FB2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 19:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22805B3FB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 19:45:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388069AbfIPRnK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 13:43:10 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:57466 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfIPRnJ (ORCPT
+        id S2388147AbfIPRpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 13:45:08 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40204 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726957AbfIPRpI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 13:43:09 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8GHdK3e032548;
-        Mon, 16 Sep 2019 17:42:42 GMT
+        Mon, 16 Sep 2019 13:45:08 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8GHdEos190908;
+        Mon, 16 Sep 2019 17:44:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2019-08-05;
- bh=be5lHUY3oMjgPjNyxpXBb5ZBb0pqJIvx8b9KYRbecBw=;
- b=h2pKkXrJjq9NlBDtXkZlazi1nfrlKYXQnR1lk8lVRV9/dI1RiH2SZIznRpMvPIy6hGag
- VRysFTlexuOhW1rC8MWJZ2HDgnwRc2LYcHNka/2JWNjOr8pRkd7ARPFPnpI9MvCmoeyR
- +qYWIs4SXGOCXuPV+9iytAB4NdbXe0zsuiJ1OHgU0W1zBBhUgxg8vyyDEE344+kRh/j0
- yQkWe7zIEqipFA/PN9wgsW3MIwI9E0mKIEPPAs/tlmzvrnMmPAMOiIxuYjxCtq8iVZtQ
- a3Vt1O9YxpxCPWC4PMCkQFzLnBVvcydxr/hTz1oVqEFFhftBGfmTDKkJ9TH/l8xbAVWO 1A== 
+ bh=trF3Tc61sb61Fe9aZtkAQNDa8vu6HYzzBS1piTnsgw0=;
+ b=RTNYEx4kW1kY3lyduYyvTeZWyCrau7rkqTXhT2tixdapDJp7+vOX3GJ2Rat1A5jJTYyw
+ iJpkQHDwaHe41PWkeHNRfzyzH+xDCNHjH7f207M0RO6oLSP64Y1ZdvA0h7T2X7G7LIf6
+ FTPE0kjkmvAMoJsYObYyfNEJkAOUKEJ/2CCnxIRDIVD7SfkUfcaM+Brg6wsOC5R5uyym
+ XJ1JaYmfI/SrKqOVlwBcRsIXrpkBvo+O9L05/WO6nfBRrBiZIR61oB1cDtt50ioIbXVf
+ rjgX9NsmdbXjEeDeiae54PKjUGZ7nmvyZO10DPJyMU9wFRFH7YYCSKU+IEJYMH1olSLg pA== 
 Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2v0ruqh1wh-1
+        by aserp2120.oracle.com with ESMTP id 2v0r5p93mn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Sep 2019 17:42:42 +0000
+        Mon, 16 Sep 2019 17:44:54 +0000
 Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8GHd1ek195331;
-        Mon, 16 Sep 2019 17:42:41 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2v0nb53and-1
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8GHd4bA195501;
+        Mon, 16 Sep 2019 17:44:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2v0nb53cvk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Sep 2019 17:42:41 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8GHgecS003348;
-        Mon, 16 Sep 2019 17:42:40 GMT
+        Mon, 16 Sep 2019 17:44:52 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8GHiq95019920;
+        Mon, 16 Sep 2019 17:44:52 GMT
 Received: from localhost (/10.159.225.108)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 16 Sep 2019 10:42:40 -0700
-Date:   Mon, 16 Sep 2019 10:42:39 -0700
+        with ESMTP ; Mon, 16 Sep 2019 10:44:51 -0700
+Date:   Mon, 16 Sep 2019 10:44:50 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     Carlos Maiolino <cmaiolino@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de, adilger@dilger.ca,
         linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 5/9] fs: Move start and length fiemap fields into
- fiemap_extent_info
-Message-ID: <20190916174239.GB2229799@magnolia>
+Subject: Re: [PATCH 8/9] Use FIEMAP for FIBMAP calls
+Message-ID: <20190916174450.GC2229799@magnolia>
 References: <20190911134315.27380-1-cmaiolino@redhat.com>
- <20190911134315.27380-6-cmaiolino@redhat.com>
+ <20190911134315.27380-9-cmaiolino@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190911134315.27380-6-cmaiolino@redhat.com>
+In-Reply-To: <20190911134315.27380-9-cmaiolino@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9382 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
@@ -72,542 +71,259 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 03:43:11PM +0200, Carlos Maiolino wrote:
-> As the overall goal to deprecate fibmap, Christoph suggested a rework of
-> the ->fiemap API, in a way we could pass to it a callback to fill the
-> fiemap structure (one of these callbacks being fiemap_fill_next_extent).
+On Wed, Sep 11, 2019 at 03:43:14PM +0200, Carlos Maiolino wrote:
+> Enables the usage of FIEMAP ioctl infrastructure to handle FIBMAP calls.
+> From now on, ->bmap() methods can start to be removed from filesystems
+> which already provides ->fiemap().
 > 
-> To avoid the need to add several fields into the ->fiemap method, aggregate
-> everything into a single data structure, and pass it along.
+> This adds a new helper - bmap_fiemap() - which is used to fill in the
+> fiemap request, call into the underlying filesystem, check the flags
+> set in the extent requested.
 > 
-> This patch isn't suppose to add any functional change, only to update
-> filesystems providing ->fiemap() method.
+> Add a new fiemap fill extent callback to handle the in-kernel only
+> fiemap_extent structure used for FIBMAP.
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
 > ---
+> 
+> With the removal of FIEMAP_KERNEL_FIBMAP flag in this version, we hide
+> from the filesystem whether the call is coming from FIEMAP, or FIBMAP.
+> 
+> In this way, filesystems that previously did not support FIBMAP (but
+> supports FIEMAP), may start to support it. It *may* be an issue for
+> filesystems like btrfs, where we can't say for sure on which device the
+> requested block resides in. But well, this is also true for FIEMAP
+> requests.
+> At a first glance, I didn't see any harm in having FIBMAP enabled in
+> btrfs, my first worry was about bootloaders trying to use it, but I
+> don't think it will change much in practice.
+> 
 > Changelog:
 > 
 > 	V6:
-> 		- Update cifs_fiemap to comply to the new ->fiemap()
-> 		  interface
+> 		- Fix sparse warning on fiemal_fill_kernel_extent:
 > 			Reported-by: kbuild test robot <lkp@intel.com>
-> 		- Fix ext4 conflict with the new EXT4_IOC_GET_ES_CACHE
-> 		  ioctl
+> 		- Fix conflict in ext4
+> 		- Remove the FIEMAP_KERNEL_FIBMAP flag and let the
+> 		  caller decide whether to reply user's FIBMAP call
+> 		  based on the FIEMAP flags returned by the filesystem,
+> 		  suggested by Christoph.
+> 
 > 	V5:
-> 		- Add comments to fi_start and fi_len fields of
-> 		  fiemap_extent_info
-> 		- Fix xfs_vn_fiemap indentation
+> 		- Properly rebase against 5.3
+> 		- Fix xfs coding style
+> 		- Use xfs_is_cow_inode() check in xfs_vn_fiemap.
+> 			- It needs xfs_reflink.h, but maybe it's better to move
+> 			  static calls into xfs_inode.h
+> 		- Fix small conflict due indentation update in xfs_vn_fiemap
+> 	V4:
+> 		- Fix if conditional in bmap()
+> 		- Add filesystem-specific modifications
+> 	V3:
+> 		- Add FIEMAP_EXTENT_SHARED to the list of invalid extents in
+> 		  bmap_fiemap()
+> 		- Rename fi_extents_start to fi_cb_data
+> 		- Use if conditional instead of ternary operator
+> 		- Make fiemap_fill_* callbacks static (which required the
+> 		  removal of some macros
+> 		- Set FIEMAP_FLAG_SYNC when calling in ->fiemap method from
+> 		  fibmap
+> 		- Add FIEMAP_KERNEL_FIBMAP flag, to identify the usage of fiemap
+> 		  infrastructure for fibmap calls, defined in fs.h so it's not
+> 		  exported to userspace.
+> 		- Update fiemap_check_flags() to understand FIEMAP_KERNEL_FIBMAP
+> 		- Update filesystems supporting both FIBMAP and FIEMAP, which
+> 		  need extra checks on FIBMAP calls
 > 
->  fs/bad_inode.c        |  3 +--
->  fs/btrfs/inode.c      |  5 +++--
->  fs/cifs/cifsfs.h      |  3 +--
->  fs/cifs/inode.c       |  5 +++--
->  fs/ext2/ext2.h        |  3 +--
->  fs/ext2/inode.c       |  6 ++----
->  fs/ext4/ext4.h        |  6 ++----
->  fs/ext4/extents.c     | 18 +++++++-----------
->  fs/ext4/ioctl.c       |  4 +++-
->  fs/f2fs/data.c        |  5 +++--
->  fs/f2fs/f2fs.h        |  3 +--
->  fs/gfs2/inode.c       |  5 +++--
->  fs/hpfs/file.c        |  4 ++--
->  fs/ioctl.c            | 16 ++++++++++------
->  fs/nilfs2/inode.c     |  5 +++--
->  fs/nilfs2/nilfs.h     |  3 +--
->  fs/ocfs2/extent_map.c |  5 +++--
->  fs/ocfs2/extent_map.h |  3 +--
->  fs/overlayfs/inode.c  |  5 ++---
->  fs/xfs/xfs_iops.c     | 10 +++++-----
->  include/linux/fs.h    | 23 +++++++++++++----------
->  21 files changed, 70 insertions(+), 70 deletions(-)
+> 	V2:
+> 		- Now based on the updated fiemap_extent_info,
+> 		- move the fiemap call itself to a new helper
 > 
-> diff --git a/fs/bad_inode.c b/fs/bad_inode.c
-> index 8035d2a44561..21dfaf876814 100644
-> --- a/fs/bad_inode.c
-> +++ b/fs/bad_inode.c
-> @@ -120,8 +120,7 @@ static struct posix_acl *bad_inode_get_acl(struct inode *inode, int type)
+>  fs/inode.c            | 84 +++++++++++++++++++++++++++++++++++++++++--
+>  fs/ioctl.c            | 21 +++++------
+>  fs/ocfs2/extent_map.c |  1 +
+>  3 files changed, 94 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 0a20aaa572f2..ab33d16bc29d 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1591,6 +1591,81 @@ void iput(struct inode *inode)
 >  }
+>  EXPORT_SYMBOL(iput);
 >  
->  static int bad_inode_fiemap(struct inode *inode,
-> -			    struct fiemap_extent_info *fieinfo, u64 start,
-> -			    u64 len)
-> +			    struct fiemap_extent_info *fieinfo)
+> +static int fiemap_fill_kernel_extent(struct fiemap_extent_info *fieinfo,
+> +			u64 logical, u64 phys, u64 len, u32 flags)
+> +{
+> +	struct fiemap_extent *extent = fieinfo->fi_cb_data;
+> +
+> +	/* only count the extents */
+> +	if (!fieinfo->fi_cb_data) {
+> +		fieinfo->fi_extents_mapped++;
+> +		goto out;
+> +	}
+> +
+> +	if (fieinfo->fi_extents_mapped >= fieinfo->fi_extents_max)
+> +		return 1;
+> +
+> +	if (flags & FIEMAP_EXTENT_DELALLOC)
+> +		flags |= FIEMAP_EXTENT_UNKNOWN;
+> +	if (flags & FIEMAP_EXTENT_DATA_ENCRYPTED)
+> +		flags |= FIEMAP_EXTENT_ENCODED;
+> +	if (flags & (FIEMAP_EXTENT_DATA_TAIL | FIEMAP_EXTENT_DATA_INLINE))
+> +		flags |= FIEMAP_EXTENT_NOT_ALIGNED;
+> +
+> +	extent->fe_logical = logical;
+> +	extent->fe_physical = phys;
+> +	extent->fe_length = len;
+> +	extent->fe_flags = flags;
+> +
+> +	fieinfo->fi_extents_mapped++;
+> +
+> +	if (fieinfo->fi_extents_mapped == fieinfo->fi_extents_max)
+> +		return 1;
+> +
+> +out:
+> +	if (flags & FIEMAP_EXTENT_LAST)
+> +		return 1;
+> +	return 0;
+> +}
+> +
+> +#define FIBMAP_INCOMPAT_FLAGS \
+> +	(FIEMAP_EXTENT_UNKNOWN | FIEMAP_EXTENT_DELALLOC | \
+> +	 FIEMAP_EXTENT_ENCODED | FIEMAP_EXTENT_DATA_ENCRYPTED | \
+> +	 FIEMAP_EXTENT_NOT_ALIGNED | FIEMAP_EXTENT_DATA_INLINE | \
+> +	 FIEMAP_EXTENT_DATA_TAIL | FIEMAP_EXTENT_UNWRITTEN | \
+> +	 FIEMAP_EXTENT_SHARED)
+> +
+> +static int bmap_fiemap(struct inode *inode, sector_t *block)
+> +{
+> +	struct fiemap_extent_info fieinfo = { 0, };
+> +	struct fiemap_extent fextent;
+> +	u64 start = *block << inode->i_blkbits;
+> +	int error = -EINVAL;
+> +
+> +	fextent.fe_logical = 0;
+> +	fextent.fe_physical = 0;
+> +	fieinfo.fi_extents_max = 1;
+> +	fieinfo.fi_extents_mapped = 0;
+> +	fieinfo.fi_cb_data = &fextent;
+> +	fieinfo.fi_start = start;
+> +	fieinfo.fi_len = 1 << inode->i_blkbits;
+> +	fieinfo.fi_cb = fiemap_fill_kernel_extent;
+> +	fieinfo.fi_flags = FIEMAP_FLAG_SYNC;
+> +
+> +	error = inode->i_op->fiemap(inode, &fieinfo);
+> +
+
+Unnecessary blank line?
+
+> +	if (error)
+> +		return error;
+> +
+> +	if (fextent.fe_flags & FIBMAP_INCOMPAT_FLAGS)
+> +		return -EINVAL;
+> +
+> +	*block = (fextent.fe_physical +
+> +		  (start - fextent.fe_logical)) >> inode->i_blkbits;
+> +
+> +	return error;
+> +}
+> +
+>  /**
+>   *	bmap	- find a block number in a file
+>   *	@inode:  inode owning the block number being requested
+> @@ -1607,10 +1682,15 @@ EXPORT_SYMBOL(iput);
+>   */
+>  int bmap(struct inode *inode, sector_t *block)
 >  {
->  	return -EIO;
+> -	if (!inode->i_mapping->a_ops->bmap)
+> +	if (inode->i_op->fiemap)
+> +		return bmap_fiemap(inode, block);
+> +
+> +	if (inode->i_mapping->a_ops->bmap)
+> +		*block = inode->i_mapping->a_ops->bmap(inode->i_mapping,
+> +						       *block);
+> +	else
+>  		return -EINVAL;
+>  
+> -	*block = inode->i_mapping->a_ops->bmap(inode->i_mapping, *block);
+>  	return 0;
 >  }
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index ef9310553a73..3d42f07c31b0 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -8762,9 +8762,10 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  
->  #define BTRFS_FIEMAP_FLAGS	(FIEMAP_FLAG_SYNC)
->  
-> -static int btrfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		__u64 start, __u64 len)
-> +static int btrfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
->  {
-> +	u64	start = fieinfo->fi_start;
-> +	u64	len = fieinfo->fi_len;
->  	int	ret;
->  
->  	ret = fiemap_check_flags(fieinfo, BTRFS_FIEMAP_FLAGS);
-> diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h
-> index 99caf77df4a2..ca4c9443cd4e 100644
-> --- a/fs/cifs/cifsfs.h
-> +++ b/fs/cifs/cifsfs.h
-> @@ -84,8 +84,7 @@ extern int cifs_revalidate_mapping(struct inode *inode);
->  extern int cifs_zap_mapping(struct inode *inode);
->  extern int cifs_getattr(const struct path *, struct kstat *, u32, unsigned int);
->  extern int cifs_setattr(struct dentry *, struct iattr *);
-> -extern int cifs_fiemap(struct inode *, struct fiemap_extent_info *, u64 start,
-> -		       u64 len);
-> +extern int cifs_fiemap(struct inode *, struct fiemap_extent_info *);
->  
->  extern const struct inode_operations cifs_file_inode_ops;
->  extern const struct inode_operations cifs_symlink_inode_ops;
-> diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-> index 26cdfbf1e164..ad5731c5a7d3 100644
-> --- a/fs/cifs/inode.c
-> +++ b/fs/cifs/inode.c
-> @@ -2123,14 +2123,15 @@ int cifs_getattr(const struct path *path, struct kstat *stat,
->  	return rc;
->  }
->  
-> -int cifs_fiemap(struct inode *inode, struct fiemap_extent_info *fei, u64 start,
-> -		u64 len)
-> +int cifs_fiemap(struct inode *inode, struct fiemap_extent_info *fei)
->  {
->  	struct cifsInodeInfo *cifs_i = CIFS_I(inode);
->  	struct cifs_sb_info *cifs_sb = CIFS_SB(cifs_i->vfs_inode.i_sb);
->  	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
->  	struct TCP_Server_Info *server = tcon->ses->server;
->  	struct cifsFileInfo *cfile;
-> +	u64 start = fei->fi_start;
-> +	u64 len = fei->fi_len;
->  	int rc;
->  
->  	/*
-> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-> index 10ab238de9a6..284df1af9474 100644
-> --- a/fs/ext2/ext2.h
-> +++ b/fs/ext2/ext2.h
-> @@ -760,8 +760,7 @@ extern int ext2_get_block(struct inode *, sector_t, struct buffer_head *, int);
->  extern int ext2_setattr (struct dentry *, struct iattr *);
->  extern int ext2_getattr (const struct path *, struct kstat *, u32, unsigned int);
->  extern void ext2_set_inode_flags(struct inode *inode);
-> -extern int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		       u64 start, u64 len);
-> +extern int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo);
->  
->  /* ioctl.c */
->  extern long ext2_ioctl(struct file *, unsigned int, unsigned long);
-> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-> index 7004ce581a32..6956df98dd53 100644
-> --- a/fs/ext2/inode.c
-> +++ b/fs/ext2/inode.c
-> @@ -857,11 +857,9 @@ const struct iomap_ops ext2_iomap_ops = {
->  const struct iomap_ops ext2_iomap_ops;
->  #endif /* CONFIG_FS_DAX */
->  
-> -int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		u64 start, u64 len)
-> +int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
->  {
-> -	return generic_block_fiemap(inode, fieinfo, start, len,
-> -				    ext2_get_block);
-> +	return generic_block_fiemap(inode, fieinfo, ext2_get_block);
->  }
->  
->  static int ext2_writepage(struct page *page, struct writeback_control *wbc)
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 99a10f3ec440..be0aa671d701 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3285,11 +3285,9 @@ extern struct ext4_ext_path *ext4_find_extent(struct inode *, ext4_lblk_t,
->  extern void ext4_ext_drop_refs(struct ext4_ext_path *);
->  extern int ext4_ext_check_inode(struct inode *inode);
->  extern ext4_lblk_t ext4_ext_next_allocated_block(struct ext4_ext_path *path);
-> -extern int ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -			__u64 start, __u64 len);
->  extern int ext4_get_es_cache(struct inode *inode,
-> -			     struct fiemap_extent_info *fieinfo,
-> -			     __u64 start, __u64 len);
-> +			     struct fiemap_extent_info *fieinfo);
-> +extern int ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo);
->  extern int ext4_ext_precache(struct inode *inode);
->  extern int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len);
->  extern int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len);
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index fb0f99dc8c22..7e399fcb90e3 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -5101,11 +5101,12 @@ static int ext4_xattr_fiemap(struct inode *inode,
->  
->  static int _ext4_fiemap(struct inode *inode,
->  			struct fiemap_extent_info *fieinfo,
-> -			__u64 start, __u64 len,
->  			int (*fill)(struct inode *, ext4_lblk_t,
->  				    ext4_lblk_t,
->  				    struct fiemap_extent_info *))
->  {
-> +	u64 start = fieinfo->fi_start;
-> +	u64 len = fieinfo->fi_len;
->  	ext4_lblk_t start_blk;
->  	u32 ext4_fiemap_flags = FIEMAP_FLAG_SYNC|FIEMAP_FLAG_XATTR;
->  
-> @@ -5131,8 +5132,7 @@ static int _ext4_fiemap(struct inode *inode,
->  	/* fallback to generic here if not in extents fmt */
->  	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) &&
->  	    fill == ext4_fill_fiemap_extents)
-> -		return generic_block_fiemap(inode, fieinfo, start, len,
-> -			ext4_get_block);
-> +		return generic_block_fiemap(inode, fieinfo, ext4_get_block);
->  
->  	if (fill == ext4_fill_es_cache_info)
->  		ext4_fiemap_flags &= FIEMAP_FLAG_XATTR;
-> @@ -5160,15 +5160,12 @@ static int _ext4_fiemap(struct inode *inode,
+>  EXPORT_SYMBOL(bmap);
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index d72696c222de..fbfd631ba3cb 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -77,11 +77,8 @@ static int ioctl_fibmap(struct file *filp, int __user *p)
 >  	return error;
 >  }
 >  
-> -int ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		__u64 start, __u64 len)
-> +int ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
+> -#define SET_UNKNOWN_FLAGS	(FIEMAP_EXTENT_DELALLOC)
+> -#define SET_NO_UNMOUNTED_IO_FLAGS	(FIEMAP_EXTENT_DATA_ENCRYPTED)
+> -#define SET_NOT_ALIGNED_FLAGS	(FIEMAP_EXTENT_DATA_TAIL|FIEMAP_EXTENT_DATA_INLINE)
+> -int fiemap_fill_user_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+> -			    u64 phys, u64 len, u32 flags)
+> +static int fiemap_fill_user_extent(struct fiemap_extent_info *fieinfo,
+> +			u64 logical, u64 phys, u64 len, u32 flags)
 >  {
-> -	return _ext4_fiemap(inode, fieinfo, start, len,
-> -			    ext4_fill_fiemap_extents);
-> +	return _ext4_fiemap(inode, fieinfo, ext4_fill_fiemap_extents);
->  }
->  
-> -int ext4_get_es_cache(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		      __u64 start, __u64 len)
-> +int ext4_get_es_cache(struct inode *inode, struct fiemap_extent_info *fieinfo)
->  {
->  	if (ext4_has_inline_data(inode)) {
->  		int has_inline;
-> @@ -5180,8 +5177,7 @@ int ext4_get_es_cache(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  			return 0;
+>  	struct fiemap_extent extent;
+>  	struct fiemap_extent __user *dest = fieinfo->fi_cb_data;
+> @@ -89,17 +86,17 @@ int fiemap_fill_user_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+>  	/* only count the extents */
+>  	if (fieinfo->fi_extents_max == 0) {
+>  		fieinfo->fi_extents_mapped++;
+> -		return (flags & FIEMAP_EXTENT_LAST) ? 1 : 0;
+> +		goto out;
 >  	}
 >  
-> -	return _ext4_fiemap(inode, fieinfo, start, len,
-> -			    ext4_fill_es_cache_info);
-> +	return _ext4_fiemap(inode, fieinfo, ext4_fill_es_cache_info);
+>  	if (fieinfo->fi_extents_mapped >= fieinfo->fi_extents_max)
+>  		return 1;
+>  
+> -	if (flags & SET_UNKNOWN_FLAGS)
+> +	if (flags & FIEMAP_EXTENT_DELALLOC)
+>  		flags |= FIEMAP_EXTENT_UNKNOWN;
+> -	if (flags & SET_NO_UNMOUNTED_IO_FLAGS)
+> +	if (flags & FIEMAP_EXTENT_DATA_ENCRYPTED)
+>  		flags |= FIEMAP_EXTENT_ENCODED;
+> -	if (flags & SET_NOT_ALIGNED_FLAGS)
+> +	if (flags & (FIEMAP_EXTENT_DATA_TAIL | FIEMAP_EXTENT_DATA_INLINE))
+>  		flags |= FIEMAP_EXTENT_NOT_ALIGNED;
+>  
+>  	memset(&extent, 0, sizeof(extent));
+> @@ -115,7 +112,11 @@ int fiemap_fill_user_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+>  	fieinfo->fi_extents_mapped++;
+>  	if (fieinfo->fi_extents_mapped == fieinfo->fi_extents_max)
+>  		return 1;
+> -	return (flags & FIEMAP_EXTENT_LAST) ? 1 : 0;
+> +
+> +out:
+> +	if (flags & FIEMAP_EXTENT_LAST)
+> +		return 1;
+> +	return 0;
 >  }
 >  
->  
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index e0a5d8d7c1b4..546a26a2c800 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -795,6 +795,8 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
->  	fieinfo.fi_flags = fiemap.fm_flags;
->  	fieinfo.fi_extents_max = fiemap.fm_extent_count;
->  	fieinfo.fi_extents_start = ufiemap->fm_extents;
-> +	fieinfo.fi_start = fiemap.fm_start;
-> +	fieinfo.fi_len = len;
->  
->  	if (fiemap.fm_extent_count != 0 &&
->  	    !access_ok(fieinfo.fi_extents_start,
-> @@ -804,7 +806,7 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
->  	if (fieinfo.fi_flags & FIEMAP_FLAG_SYNC)
->  		filemap_write_and_wait(inode->i_mapping);
->  
-> -	error = ext4_get_es_cache(inode, &fieinfo, fiemap.fm_start, len);
-> +	error = ext4_get_es_cache(inode, &fieinfo);
->  	fiemap.fm_flags = fieinfo.fi_flags;
->  	fiemap.fm_mapped_extents = fieinfo.fi_extents_mapped;
->  	if (copy_to_user(ufiemap, &fiemap, sizeof(fiemap)))
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 49ff6d2239c3..af2312858069 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1543,9 +1543,10 @@ static int f2fs_xattr_fiemap(struct inode *inode,
->  	return (err < 0 ? err : 0);
->  }
->  
-> -int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		u64 start, u64 len)
-> +int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
->  {
-> +	u64 start = fieinfo->fi_start;
-> +	u64 len = fieinfo->fi_len;
->  	struct buffer_head map_bh;
->  	sector_t start_blk, last_blk;
->  	pgoff_t next_pgofs;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 7af36369dd94..42c27e1b5730 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3217,8 +3217,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio);
->  void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock);
->  int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  			int create, int flag);
-> -int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -			u64 start, u64 len);
-> +int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo);
->  bool f2fs_should_update_inplace(struct inode *inode, struct f2fs_io_info *fio);
->  bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio);
->  void f2fs_invalidate_page(struct page *page, unsigned int offset,
-> diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-> index e1e18fb587eb..a02a52cbbec4 100644
-> --- a/fs/gfs2/inode.c
-> +++ b/fs/gfs2/inode.c
-> @@ -2026,9 +2026,10 @@ static int gfs2_getattr(const struct path *path, struct kstat *stat,
->  	return 0;
->  }
->  
-> -static int gfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		       u64 start, u64 len)
-> +static int gfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
->  {
-> +	u64 start = fieinfo->fi_start;
-> +	u64 len = fieinfo->fi_len;
->  	struct gfs2_inode *ip = GFS2_I(inode);
->  	struct gfs2_holder gh;
->  	int ret;
-> diff --git a/fs/hpfs/file.c b/fs/hpfs/file.c
-> index 1ecec124e76f..0eece4ae1f11 100644
-> --- a/fs/hpfs/file.c
-> +++ b/fs/hpfs/file.c
-> @@ -190,9 +190,9 @@ static sector_t _hpfs_bmap(struct address_space *mapping, sector_t block)
->  	return generic_block_bmap(mapping, block, hpfs_get_block);
->  }
->  
-> -static int hpfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo, u64 start, u64 len)
-> +static int hpfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
->  {
-> -	return generic_block_fiemap(inode, fieinfo, start, len, hpfs_get_block);
-> +	return generic_block_fiemap(inode, fieinfo, hpfs_get_block);
->  }
->  
->  const struct address_space_operations hpfs_aops = {
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 6b589c873bc2..ad8edcb10dc9 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -210,6 +210,8 @@ static int ioctl_fiemap(struct file *filp, unsigned long arg)
->  	fieinfo.fi_flags = fiemap.fm_flags;
->  	fieinfo.fi_extents_max = fiemap.fm_extent_count;
->  	fieinfo.fi_extents_start = ufiemap->fm_extents;
-> +	fieinfo.fi_start = fiemap.fm_start;
-> +	fieinfo.fi_len = len;
->  
->  	if (fiemap.fm_extent_count != 0 &&
->  	    !access_ok(fieinfo.fi_extents_start,
-> @@ -219,7 +221,7 @@ static int ioctl_fiemap(struct file *filp, unsigned long arg)
->  	if (fieinfo.fi_flags & FIEMAP_FLAG_SYNC)
->  		filemap_write_and_wait(inode->i_mapping);
->  
-> -	error = inode->i_op->fiemap(inode, &fieinfo, fiemap.fm_start, len);
-> +	error = inode->i_op->fiemap(inode, &fieinfo);
->  	fiemap.fm_flags = fieinfo.fi_flags;
->  	fiemap.fm_mapped_extents = fieinfo.fi_extents_mapped;
->  	if (copy_to_user(ufiemap, &fiemap, sizeof(fiemap)))
-> @@ -296,9 +298,11 @@ static inline loff_t blk_to_logical(struct inode *inode, sector_t blk)
->   */
->  
->  int __generic_block_fiemap(struct inode *inode,
-> -			   struct fiemap_extent_info *fieinfo, loff_t start,
-> -			   loff_t len, get_block_t *get_block)
-> +			   struct fiemap_extent_info *fieinfo,
-> +			   get_block_t *get_block)
->  {
-> +	loff_t start = fieinfo->fi_start;
-> +	loff_t len = fieinfo->fi_len;
->  	struct buffer_head map_bh;
->  	sector_t start_blk, last_blk;
->  	loff_t isize = i_size_read(inode);
-> @@ -455,12 +459,12 @@ EXPORT_SYMBOL(__generic_block_fiemap);
->   */
->  
->  int generic_block_fiemap(struct inode *inode,
-> -			 struct fiemap_extent_info *fieinfo, u64 start,
-> -			 u64 len, get_block_t *get_block)
-> +			 struct fiemap_extent_info *fieinfo,
-> +			 get_block_t *get_block)
->  {
->  	int ret;
->  	inode_lock(inode);
-> -	ret = __generic_block_fiemap(inode, fieinfo, start, len, get_block);
-> +	ret = __generic_block_fiemap(inode, fieinfo, get_block);
->  	inode_unlock(inode);
->  	return ret;
->  }
-> diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-> index 671085512e0f..1f37d086371c 100644
-> --- a/fs/nilfs2/inode.c
-> +++ b/fs/nilfs2/inode.c
-> @@ -992,9 +992,10 @@ void nilfs_dirty_inode(struct inode *inode, int flags)
->  	nilfs_transaction_commit(inode->i_sb); /* never fails */
->  }
->  
-> -int nilfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		 __u64 start, __u64 len)
-> +int nilfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
->  {
-> +	u64 start = fieinfo->fi_start;
-> +	u64 len = fieinfo->fi_len;
->  	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
->  	__u64 logical = 0, phys = 0, size = 0;
->  	__u32 flags = 0;
-> diff --git a/fs/nilfs2/nilfs.h b/fs/nilfs2/nilfs.h
-> index 42395ba52da6..f74b64a76c52 100644
-> --- a/fs/nilfs2/nilfs.h
-> +++ b/fs/nilfs2/nilfs.h
-> @@ -275,8 +275,7 @@ extern int nilfs_inode_dirty(struct inode *);
->  int nilfs_set_file_dirty(struct inode *inode, unsigned int nr_dirty);
->  extern int __nilfs_mark_inode_dirty(struct inode *, int);
->  extern void nilfs_dirty_inode(struct inode *, int flags);
-> -int nilfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		 __u64 start, __u64 len);
-> +int nilfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo);
->  static inline int nilfs_mark_inode_dirty(struct inode *inode)
->  {
->  	return __nilfs_mark_inode_dirty(inode, I_DIRTY);
+>  /**
 > diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
-> index e66a249fe07c..1a5b6af62ee0 100644
+> index 1a5b6af62ee0..0dd838615d14 100644
 > --- a/fs/ocfs2/extent_map.c
 > +++ b/fs/ocfs2/extent_map.c
-> @@ -736,8 +736,7 @@ static int ocfs2_fiemap_inline(struct inode *inode, struct buffer_head *di_bh,
->  
->  #define OCFS2_FIEMAP_FLAGS	(FIEMAP_FLAG_SYNC)
->  
-> -int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		 u64 map_start, u64 map_len)
-> +int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
->  {
->  	int ret, is_last;
->  	u32 mapping_end, cpos;
-> @@ -746,6 +745,8 @@ int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+> @@ -743,6 +743,7 @@ int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
+>  	unsigned int hole_size;
+>  	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
 >  	u64 len_bytes, phys_bytes, virt_bytes;
->  	struct buffer_head *di_bh = NULL;
->  	struct ocfs2_extent_rec rec;
-> +	u64 map_start = fieinfo->fi_start;
-> +	u64 map_len = fieinfo->fi_len;
->  
->  	ret = fiemap_check_flags(fieinfo, OCFS2_FIEMAP_FLAGS);
->  	if (ret)
-> diff --git a/fs/ocfs2/extent_map.h b/fs/ocfs2/extent_map.h
-> index e5464f6cee8a..be3724b67d7e 100644
-> --- a/fs/ocfs2/extent_map.h
-> +++ b/fs/ocfs2/extent_map.h
-> @@ -37,8 +37,7 @@ int ocfs2_get_clusters(struct inode *inode, u32 v_cluster, u32 *p_cluster,
->  int ocfs2_extent_map_get_blocks(struct inode *inode, u64 v_blkno, u64 *p_blkno,
->  				u64 *ret_count, unsigned int *extent_flags);
->  
-> -int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		 u64 map_start, u64 map_len);
-> +int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo);
->  
->  int ocfs2_overwrite_io(struct inode *inode, struct buffer_head *di_bh,
->  		       u64 map_start, u64 map_len);
-> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-> index 7663aeb85fa3..6fd54fb23275 100644
-> --- a/fs/overlayfs/inode.c
-> +++ b/fs/overlayfs/inode.c
-> @@ -453,8 +453,7 @@ int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags)
->  	return 0;
->  }
->  
-> -static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> -		      u64 start, u64 len)
-> +static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo)
->  {
->  	int err;
->  	struct inode *realinode = ovl_inode_real(inode);
-> @@ -468,7 +467,7 @@ static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  	if (fieinfo->fi_flags & FIEMAP_FLAG_SYNC)
->  		filemap_write_and_wait(realinode->i_mapping);
->  
-> -	err = realinode->i_op->fiemap(realinode, fieinfo, start, len);
-> +	err = realinode->i_op->fiemap(realinode, fieinfo);
->  	revert_creds(old_cred);
->  
->  	return err;
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index fe285d123d69..8d14d733a0e6 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -1100,12 +1100,12 @@ xfs_vn_update_time(
->  
->  STATIC int
->  xfs_vn_fiemap(
-> -	struct inode		*inode,
-> -	struct fiemap_extent_info *fieinfo,
-> -	u64			start,
-> -	u64			length)
-> +	struct inode			*inode,
-> +	struct fiemap_extent_info	*fieinfo)
->  {
-> -	int			error;
-> +	u64				start = fieinfo->fi_start;
-> +	u64				length = fieinfo->fi_len;
-> +	int				error;
->  
->  	xfs_ilock(XFS_I(inode), XFS_IOLOCK_SHARED);
->  	if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR) {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f1fbd8298ca4..2c0438de4982 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1737,11 +1737,16 @@ extern bool may_open_dev(const struct path *path);
->   * VFS FS_IOC_FIEMAP helper definitions.
->   */
->  struct fiemap_extent_info {
-> -	unsigned int fi_flags;		/* Flags as passed from user */
-> -	unsigned int fi_extents_mapped;	/* Number of mapped extents */
-> -	unsigned int fi_extents_max;	/* Size of fiemap_extent array */
-> -	struct fiemap_extent __user *fi_extents_start; /* Start of
-> -							fiemap_extent array */
-> +	unsigned int	fi_flags;		/* Flags as passed from user */
-> +	u64		fi_start;		/* Logical offset at which
-> +						   start mapping */
-> +	u64		fi_len;			/* Logical length of mapping the
-> +						   caller cares about */
-> +	unsigned int	fi_extents_mapped;	/* Number of mapped extents */
-> +	unsigned int	fi_extents_max;		/* Size of fiemap_extent array */
-> +	struct		fiemap_extent __user *fi_extents_start;	/* Start of
-> +								   fiemap_extent
-> +								   array */
+> +
 
-I might've just put the comments above rather than squash them into the
-right side of the tty, but eh.  If you end up resending this series then
-I'd want that fixed up, but for now:
+Unnecessary code change...
 
+With that fixed up, I'd say:
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
-:)
 
 --D
 
->  };
->  int fiemap_fill_next_extent(struct fiemap_extent_info *info, u64 logical,
->  			    u64 phys, u64 len, u32 flags);
-> @@ -1873,8 +1878,7 @@ struct inode_operations {
->  	int (*setattr) (struct dentry *, struct iattr *);
->  	int (*getattr) (const struct path *, struct kstat *, u32, unsigned int);
->  	ssize_t (*listxattr) (struct dentry *, char *, size_t);
-> -	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start,
-> -		      u64 len);
-> +	int (*fiemap)(struct inode *, struct fiemap_extent_info *);
->  	int (*update_time)(struct inode *, struct timespec64 *, int);
->  	int (*atomic_open)(struct inode *, struct dentry *,
->  			   struct file *, unsigned open_flag,
-> @@ -3268,11 +3272,10 @@ extern int vfs_readlink(struct dentry *, char __user *, int);
->  
->  extern int __generic_block_fiemap(struct inode *inode,
->  				  struct fiemap_extent_info *fieinfo,
-> -				  loff_t start, loff_t len,
->  				  get_block_t *get_block);
->  extern int generic_block_fiemap(struct inode *inode,
-> -				struct fiemap_extent_info *fieinfo, u64 start,
-> -				u64 len, get_block_t *get_block);
-> +				struct fiemap_extent_info *fieinfo,
-> +				get_block_t *get_block);
->  
->  extern struct file_system_type *get_filesystem(struct file_system_type *fs);
->  extern void put_filesystem(struct file_system_type *fs);
+>  	struct buffer_head *di_bh = NULL;
+>  	struct ocfs2_extent_rec rec;
+>  	u64 map_start = fieinfo->fi_start;
 > -- 
 > 2.20.1
 > 
