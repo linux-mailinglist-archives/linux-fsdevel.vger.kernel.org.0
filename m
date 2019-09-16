@@ -2,168 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D35FB4413
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 00:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21ED0B44BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 01:57:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387573AbfIPWhw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 18:37:52 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35671 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733128AbfIPWhv (ORCPT
+        id S1729187AbfIPX4z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 19:56:55 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:33051 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728891AbfIPX4y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 18:37:51 -0400
-Received: by mail-pg1-f193.google.com with SMTP id a24so815141pgj.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2019 15:37:49 -0700 (PDT)
+        Mon, 16 Sep 2019 19:56:54 -0400
+Received: by mail-pg1-f201.google.com with SMTP id a13so828582pgw.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2019 16:56:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=59X5RvHm807OLFbm3taZna4w+6L5coMBB4Ni//2NeKI=;
-        b=C80DicDCYT7rIcDYOHOGrrJk3NvfyZfExEswz6GbI2lAEjINTbwPDtebRCvZFSnMW9
-         9w8vIF/xVyR16X1mX7uz9+pP+nI4VHxGrgxY8M0dUcCO9yp3Tnkg9Gb2sx8r6Z3Z1KVh
-         gKQTpNpmFERkJwtqz7IHImJWQVEtvVdagn6Mf3XYzhWWE4k67g8p49N8/CvI6oAuSfM4
-         oUHTY/I5JWpm0HJTmnOui5/ef/qLmKYL8MWVF62Gbbs0yiyy8tasexPK0JI/Un8KvJj8
-         FelXqV94iaGUw/sZHScuzvDcv4qWPGJkvVmW3PJYVxChiskv+pzi9i5kWlKIyFK7cjwE
-         U/Fg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Nv3cd1IYe218SOJZ3rC1Ee+aio0oZ4eC7xZJKuNaKOc=;
+        b=e9oyZttDjlw6tCTjIe9uniqS4kOdfIabqbhx1chZejA60M5S0NDjV/PsGhbqgYK7ef
+         GAb7Lcq3xoymFXFpjBooWkO09+zmZAckg3+B3WBtTOJ0d0FtLICRIWKxD1VgUWPm6n+S
+         eD5y9Ikk6kYgR7JrBVRjRPaQaWncrXsx/5ea4BzV8zEyprpxiExn0bfMdmhiQUPQrke6
+         tcUz5kFzHuFVaKcq8rButlqvmJgi3v2ZloJdouSkRQMlF7lLww2PfeueFbsSoj5h978F
+         UHoCywQaikvMielqyOYIQ7NlEFhdEH1Cjtk0Nhvj/ZMjMAlJ0yxuOkPKlYKCpHNW9qFb
+         njZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=59X5RvHm807OLFbm3taZna4w+6L5coMBB4Ni//2NeKI=;
-        b=b317coulk9xOnrFyDhiGA0I4kaX+CDMY5hVDKI62w/O8auoaqrdS0wQ5uHRg5I84E9
-         Il7vvvPP8VwGnr0FzQKAgAVCdvgcaRdtJNRxkx7a8C1rx/PyLzqM55KKLjrBCiOriuMO
-         qlO0q5gS28C8jD4AUFBJiAzttX/s2nKFcDhBSUvJXY6jdwv+/nebKBlTEZa5AHFQ9hHy
-         SsDFnLuvuKAI+UgBkUPx6xjIfrbHWZCJDVb0M0YR6Fx4+ttW/hRnYTrZjDRBaNyWVqAz
-         fIkw199ALrf1nOqC+aP3vPBwpEmjzOShpf/mnf97qiA6RbmFEpBL27tFSukXdNFQVk/8
-         WCKA==
-X-Gm-Message-State: APjAAAWLxboRzZaEriy4njT3gg3NTSPCGiyBuvPGAagsCQN9g6u0oRPo
-        oBaraAzWKWIUesMBASujKMI0
-X-Google-Smtp-Source: APXvYqw201emQOCzAUYbBBuxD2MbgCxcjbSVpKAy7S6p1X+7ll9pov8i2Lw4qCsPmWAubk01ux60tw==
-X-Received: by 2002:a63:1c09:: with SMTP id c9mr25644pgc.347.1568673469085;
-        Mon, 16 Sep 2019 15:37:49 -0700 (PDT)
-Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id b10sm125472pfo.123.2019.09.16.15.37.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 15:37:48 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 08:37:41 +1000
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, darrick.wong@oracle.com
-Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
- infrastructure
-Message-ID: <20190916223741.GA5936@bobrowski>
-References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
- <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
- <20190916121248.GD4005@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190916121248.GD4005@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Nv3cd1IYe218SOJZ3rC1Ee+aio0oZ4eC7xZJKuNaKOc=;
+        b=Um4CJmn5ui0JBO1Mn6xdG+Lf6Z77wfhXcjOxRtfWLmj5f2GxhqNhV2YLgRZf7jdwIh
+         X6dG06zvIUV1rbc4oTTZCCJqcsFDftxPDG8PGZhZ1G+gQeIBgnsvXPhP9AxccWva2t8u
+         hPguRXGYARRR5ewJWhLZb9HNvOFiye89ecnhzHOdwXSSxJP5joMJ32k1Meuu87sXOEmU
+         8FxQvlJrmjkiIVQ3mpSpfoGiWVC5URAcIuLG2Ch6nhyeDqNeQT3dbKJhnP2lp8Y4VRRH
+         2VlH262p0SXRKJvtYK5x+9NJNttIe1lTkM1UHHjPVEd0NKyIXqDltcrvYaYe0SmaldyB
+         EGxg==
+X-Gm-Message-State: APjAAAUqJelqK9+ef8wDaO1KaaiE0gpD2Ccd7HHTJ5x28qyRuwpU/v6x
+        5h0c/vjvtwPlOGJ4HNc9B3GRZEe3hXI=
+X-Google-Smtp-Source: APXvYqz+hphq3WGD6WehGtvk6AFKKPR4czIFl0zAfO/NuPMCoLT4QWM5pH4oEkWl3FGInOapFrpl6SFIi4s=
+X-Received: by 2002:a63:d608:: with SMTP id q8mr722520pgg.422.1568678212226;
+ Mon, 16 Sep 2019 16:56:52 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 16:56:41 -0700
+Message-Id: <20190916235642.167583-1-khazhy@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
+Subject: [PATCH v3 1/2] fuse: on 64-bit store time in d_fsdata directly
+From:   Khazhismel Kumykov <khazhy@google.com>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shakeelb@google.com, Khazhismel Kumykov <khazhy@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 05:12:48AM -0700, Christoph Hellwig wrote:
-> On Thu, Sep 12, 2019 at 09:04:46PM +1000, Matthew Bobrowski wrote:
-> > @@ -213,12 +214,16 @@ static ssize_t ext4_write_checks(struct kiocb *iocb, struct iov_iter *from)
-> >  	struct inode *inode = file_inode(iocb->ki_filp);
-> >  	ssize_t ret;
-> >  
-> > +	if (unlikely(IS_IMMUTABLE(inode)))
-> > +		return -EPERM;
-> > +
-> >  	ret = generic_write_checks(iocb, from);
-> >  	if (ret <= 0)
-> >  		return ret;
-> >  
-> > -	if (unlikely(IS_IMMUTABLE(inode)))
-> > -		return -EPERM;
-> > +	ret = file_modified(iocb->ki_filp);
-> > +	if (ret)
-> > +		return 0;
-> >  
-> >  	/*
-> >  	 * If we have encountered a bitmap-format file, the size limit
-> 
-> Independent of the error return issue you probably want to split
-> modifying ext4_write_checks into a separate preparation patch.
+Implements the optimization noted in f75fdf22b0a8 ("fuse: don't use
+->d_time"), as the additional memory can be significant. (In particular,
+on SLAB configurations this 8-byte alloc becomes 32 bytes). Per-dentry,
+this can consume significant memory.
 
-Providing that there's no objections to introducing a possible performance
-change with this separate preparation patch (overhead of calling
-file_remove_privs/file_update_time twice), then I have no issues in doing so.
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+---
+v3:
+ reapplied on fuse/for-next, droping the fuse_request_alloc refactor
+ it was already done :) (and account new per-file alloc)
 
-> > +/*
-> > + * For a write that extends the inode size, ext4_dio_write_iter() will
-> > + * wait for the write to complete. Consequently, operations performed
-> > + * within this function are still covered by the inode_lock(). On
-> > + * success, this function returns 0.
-> > + */
-> > +static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size, int error,
-> > +				 unsigned int flags)
-> > +{
-> > +	int ret;
-> > +	loff_t offset = iocb->ki_pos;
-> > +	struct inode *inode = file_inode(iocb->ki_filp);
-> > +
-> > +	if (error) {
-> > +		ret = ext4_handle_failed_inode_extension(inode, offset + size);
-> > +		return ret ? ret : error;
-> > +	}
-> 
-> Just a personal opinion, but I find the use of the ternary operator
-> here a little weird.
-> 
-> A plain old:
-> 
-> 	ret = ext4_handle_failed_inode_extension(inode, offset + size);
-> 	if (ret)
-> 		return ret;
-> 	return error;
-> 
-> flow much easier.
+ fs/fuse/dir.c | 36 ++++++++++++++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 6 deletions(-)
 
-Agree, much cleaner.
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index ba0a175d7578..58557d4817e9 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -24,11 +24,34 @@ static void fuse_advise_use_readdirplus(struct inode *dir)
+ 	set_bit(FUSE_I_ADVISE_RDPLUS, &fi->state);
+ }
  
-> > +	if (!inode_trylock(inode)) {
-> > +		if (iocb->ki_flags & IOCB_NOWAIT)
-> > +			return -EAGAIN;
-> > +		inode_lock(inode);
-> > +	}
-> > +
-> > +	if (!ext4_dio_checks(inode)) {
-> > +		inode_unlock(inode);
-> > +		/*
-> > +		 * Fallback to buffered IO if the operation on the
-> > +		 * inode is not supported by direct IO.
-> > +		 */
-> > +		return ext4_buffered_write_iter(iocb, from);
-> 
-> I think you want to lift the locking into the caller of this function
-> so that you don't have to unlock and relock for the buffered write
-> fallback.
++#if BITS_PER_LONG >= 64
++static inline void __fuse_dentry_settime(struct dentry *entry, u64 time)
++{
++	entry->d_fsdata = (void *) time;
++}
++
++static inline u64 fuse_dentry_time(const struct dentry *entry)
++{
++	return (u64)entry->d_fsdata;
++}
++
++#else
+ union fuse_dentry {
+ 	u64 time;
+ 	struct rcu_head rcu;
+ };
+ 
++static inline void __fuse_dentry_settime(struct dentry *dentry, u64 time)
++{
++	((union fuse_dentry *) dentry->d_fsdata)->time = time;
++}
++
++static inline u64 fuse_dentry_time(const struct dentry *entry)
++{
++	return ((union fuse_dentry *) entry->d_fsdata)->time;
++}
++#endif
++
+ static void fuse_dentry_settime(struct dentry *dentry, u64 time)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
+@@ -47,12 +70,7 @@ static void fuse_dentry_settime(struct dentry *dentry, u64 time)
+ 		spin_unlock(&dentry->d_lock);
+ 	}
+ 
+-	((union fuse_dentry *) dentry->d_fsdata)->time = time;
+-}
+-
+-static inline u64 fuse_dentry_time(const struct dentry *entry)
+-{
+-	return ((union fuse_dentry *) entry->d_fsdata)->time;
++	__fuse_dentry_settime(dentry, time);
+ }
+ 
+ /*
+@@ -258,6 +276,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+ 	goto out;
+ }
+ 
++#if BITS_PER_LONG < 64
+ static int fuse_dentry_init(struct dentry *dentry)
+ {
+ 	dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry), GFP_KERNEL);
+@@ -270,6 +289,7 @@ static void fuse_dentry_release(struct dentry *dentry)
+ 
+ 	kfree_rcu(fd, rcu);
+ }
++#endif
+ 
+ static int fuse_dentry_delete(const struct dentry *dentry)
+ {
+@@ -279,13 +299,17 @@ static int fuse_dentry_delete(const struct dentry *dentry)
+ const struct dentry_operations fuse_dentry_operations = {
+ 	.d_revalidate	= fuse_dentry_revalidate,
+ 	.d_delete	= fuse_dentry_delete,
++#if BITS_PER_LONG < 64
+ 	.d_init		= fuse_dentry_init,
+ 	.d_release	= fuse_dentry_release,
++#endif
+ };
+ 
+ const struct dentry_operations fuse_root_dentry_operations = {
++#if BITS_PER_LONG < 64
+ 	.d_init		= fuse_dentry_init,
+ 	.d_release	= fuse_dentry_release,
++#endif
+ };
+ 
+ int fuse_valid_type(int m)
+-- 
+2.23.0.237.gc6a4ce50a0-goog
 
-I don't exactly know what you really mean by "lift the locking into the caller
-of this function". I'm interpreting that as moving the inode_unlock()
-operation into ext4_buffered_write_iter(), but I can't see how that would be
-any different from doing it directly here? Wouldn't this also run the risk of
-the locks becoming unbalanced as we'd need to add checks around whether the
-resource is being contended? Maybe I'm misunderstanding something here...
-
-> > +	if (offset + count > i_size_read(inode) ||
-> > +	    offset + count > EXT4_I(inode)->i_disksize) {
-> > +		ext4_update_i_disksize(inode, inode->i_size);
-> > +		extend = true;
-> 
-> Doesn't the ext4_update_i_disksize need to be under an open journal
-> handle?
-
-After all, it is a metadata update, which should go through an open journal
-handle.
-
-Thank you for the review Christoph!
-
---<M>--
