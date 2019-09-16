@@ -2,128 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A5A5B324C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Sep 2019 23:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D2B7B32DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Sep 2019 03:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726321AbfIOVmS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Sep 2019 17:42:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39434 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726139AbfIOVmS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Sep 2019 17:42:18 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8FLfsO3027159
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Sep 2019 17:42:16 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v1dk51bfr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Sep 2019 17:42:16 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 15 Sep 2019 22:42:14 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 15 Sep 2019 22:42:12 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8FLgBG538666264
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 15 Sep 2019 21:42:11 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8B33B5204E;
-        Sun, 15 Sep 2019 21:42:11 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.212.53])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9FA285204F;
-        Sun, 15 Sep 2019 21:42:10 +0000 (GMT)
-Subject: Re: IMA on remote file systems
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Chuck Lever <chuck.lever@oracle.com>,
-        linux-integrity@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Michael Halcrow <mhalcrow@google.com>,
-        "Theodore Y. Ts'o" <tytso@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Eric Biggers <ebiggers@google.com>
-Date:   Sun, 15 Sep 2019 17:42:10 -0400
-In-Reply-To: <FA4C0F15-EE0A-4231-8415-A035C1CF3E32@oracle.com>
-References: <C867A0BA-1ACF-4600-8179-3E15A098846C@oracle.com>
-         <FA4C0F15-EE0A-4231-8415-A035C1CF3E32@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091521-0016-0000-0000-000002AC29C1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091521-0017-0000-0000-0000330CC502
-Message-Id: <1568583730.5055.36.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-15_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909150236
+        id S1728988AbfIPBQb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Sep 2019 21:16:31 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:41104 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728981AbfIPBQb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 15 Sep 2019 21:16:31 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 909C6D44EE01C4B61374;
+        Mon, 16 Sep 2019 09:16:29 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 16 Sep
+ 2019 09:16:28 +0800
+Subject: Re: [PATCH 3/3] f2fs: fix inode rwsem regression
+To:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        <linux-btrfs@vger.kernel.org>, <hch@infradead.org>,
+        <andres@anarazel.de>, <david@fromorbit.com>,
+        <riteshh@linux.ibm.com>, <linux-f2fs-devel@lists.sourceforge.net>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+References: <20190911093926.pfkkx25mffzeuo32@alap3.anarazel.de>
+ <20190911164517.16130-1-rgoldwyn@suse.de>
+ <20190911164517.16130-4-rgoldwyn@suse.de>
+ <20190913194641.GA72768@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <624dcdc9-db6b-d6dd-6df4-b175c1455dc7@huawei.com>
+Date:   Mon, 16 Sep 2019 09:16:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190913194641.GA72768@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2019-09-13 at 10:50 -0400, Chuck Lever wrote:
-> Resending ...
+On 2019/9/14 3:46, Jaegeuk Kim wrote:
+> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=ebef4d7eda0d06a6ab6dc0f9e9f848276e605962
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
 > 
-> > On Aug 28, 2019, at 1:36 PM, Chuck Lever <chuck.lever@oracle.com> wrote:
-> > 
-> > Last week I presented at the Linux Security Summit on a proposal
-> > for handling IMA metadata on NFS files. My proposal enables storage
-> > of per-file IMA metadata via the NFSv4 protocol. I have a prototype
-> > and an IETF nfsv4 Working Group document that specifies a small
-> > protocol extension.
-> > 
-> > After the presentation, Mimi Zohar pointed out that although the
-> > proposal extends protection from an NFS file server to time-of-
-> > measurement on an NFS client, there is still a protection gap between
-> > time-of-measurement and time-of-use on that client.
-> > 
-> > I would like to find a way to extend IMA protection all the way
-> > to time-of-use on NFS clients. The consensus is that a per-file
-> > Merkle tree would be the most desirable approach, as that is the
-> > same mechanism used for fs-verity protection.
-> > 
-> > For a few important reasons, it will be challenging to plumb
-> > support for durable Merkle trees into NFS, although that is an
-> > eventual goal.
-> > 
-> > My thought was to use an ephemeral Merkle tree for NFS (and
-> > possibly other remote filesystems, like FUSE, until these
-> > filesystems support durable per-file Merkle trees). A tree would
-> > be constructed when the client measures a file, but it would not
-> > saved to the filesystem. Instead of a hash of the file's contents,
-> > the tree's root signature is stored as the IMA metadata.
-> > 
-> > Once a Merkle tree is available, it can be used in exactly the
-> > same way that a durable Merkle tree would, to verify the integrity
-> > of individual pages as they are used, evicted, and then read back
-> > from the server.
-> > 
-> > If the client needs to evict part or all of an ephemeral tree, it
-> > can subsequently be reconstructed by measuring the file again and
-> > verifying its root signature against the stored IMA metadata.
-> > 
-> > So the only difference here is that the latency-to-first-byte
-> > benefit of a durable Merkle tree would be absent.
-> > 
-> > I'm interested in any thoughts or opinions about this approach.
-
-I like the idea, but there are a couple of things that need to happen
-first.  Both fs-verity and IMA appended signatures need to be
-upstreamed.  The IMA appended signature support simplifies
-ima_appraise_measurement(), paving the way for adding IMA support for
-other types of signature verification.  How IMA will support fs-verity 
-signatures still needs to be defined.  That discussion will hopefully
-include NFS support.
-
-Mimi
-
+> Merged. Thanks,
+> 
+> On 09/11, Goldwyn Rodrigues wrote:
+>> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+>>
+>> This is similar to 942491c9e6d6 ("xfs: fix AIM7 regression")
+>> Apparently our current rwsem code doesn't like doing the trylock, then
+>> lock for real scheme.  So change our read/write methods to just do the
+>> trylock for the RWF_NOWAIT case.
+>>
+>> We don't need a check for IOCB_NOWAIT and !direct-IO because it
+>> is checked in generic_write_checks().
+>>
+>> Fixes: b91050a80cec ("f2fs: add nowait aio support")
+>> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+>> ---
+>>  fs/f2fs/file.c | 10 +++-------
+>>  1 file changed, 3 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 3e58a6f697dd..c6f3ef815c05 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -3134,16 +3134,12 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>  		goto out;
+>>  	}
+>>  
+>> -	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT)) {
+>> -		ret = -EINVAL;
+>> -		goto out;
+>> -	}
+>> -
+>> -	if (!inode_trylock(inode)) {
+>> -		if (iocb->ki_flags & IOCB_NOWAIT) {
+>> +	if (iocb->ki_flags & IOCB_NOWAIT) {
+>> +		if (!inode_trylock(inode)) {
+>>  			ret = -EAGAIN;
+>>  			goto out;
+>>  		}
+>> +	} else {
+>>  		inode_lock(inode);
+>>  	}
+>>  
+>> -- 
+>> 2.16.4
+> .
+> 
