@@ -2,94 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89C64B4A0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 11:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE144B4B3E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 11:52:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbfIQJGU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Sep 2019 05:06:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43552 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbfIQJGU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:06:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=twoRXxt7dNIPASh5zYTUvqumsB7Y4/vYcfmEMBY5b/Y=; b=EFw2mcqCBpl+FNFW2rFXoDtRa
-        A7E04nrSFQ0FkXaEQ2I4mpW25wvT519zJGp3WUMz+z/hfW0mwHU5QW+dtb6OXbd3HSzR2ldi1Jvc4
-        v4tgZd8CnrjK4uNWYOzhsuZ6ng+YzpNvv7LikCQwL7JD82RcVFMJjRNAk6tZr1OpC4XlA5QUqysxP
-        ta9yDstNwFNxIxv2KRISRp0qz371IwzALzqbVm84a1wJqkwxCOrsQPsvozdsKYAqO44WPxtsTUpJU
-        vU8z1PO8j8ZoGuX5p5cj4zx2CUFGnwVU8rdTSR/5gfRUu+REskuWxXtd2I+qxPWH707sJOhIS37wK
-        HjpLTFZNA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iA9R7-0002Uq-SG; Tue, 17 Sep 2019 09:06:14 +0000
-Date:   Tue, 17 Sep 2019 02:06:13 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, tytso@mit.edu, jack@suse.cz,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
-        darrick.wong@oracle.com
-Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
- infrastructure
-Message-ID: <20190917090613.GC29487@infradead.org>
-References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
- <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
- <20190916121248.GD4005@infradead.org>
- <20190916223741.GA5936@bobrowski>
+        id S1726244AbfIQJwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Sep 2019 05:52:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51574 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725847AbfIQJwW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Sep 2019 05:52:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 44616AC63;
+        Tue, 17 Sep 2019 09:52:21 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id C7E45DA889; Tue, 17 Sep 2019 11:52:41 +0200 (CEST)
+Date:   Tue, 17 Sep 2019 11:52:41 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     David Sterba <dsterba@suse.com>, emamd001@umn.edu, kjlu@umn.edu,
+        smccaman@umn.edu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/affs: release memory if affs_init_bitmap fails
+Message-ID: <20190917095241.GP2850@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        David Sterba <dsterba@suse.com>, emamd001@umn.edu, kjlu@umn.edu,
+        smccaman@umn.edu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190917041346.4802-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190916223741.GA5936@bobrowski>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190917041346.4802-1-navid.emamdoost@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 08:37:41AM +1000, Matthew Bobrowski wrote:
-> > Independent of the error return issue you probably want to split
-> > modifying ext4_write_checks into a separate preparation patch.
+On Mon, Sep 16, 2019 at 11:13:42PM -0500, Navid Emamdoost wrote:
+> In affs_init_bitmap, on error handling path we may release the allocated
+> memory.
+
+Yes the memory should be released but not all paths that lead to the
+label 'out' are actually errors:
+
+288                 if (affs_checksum_block(sb, bh)) {
+289                         pr_warn("Bitmap %u invalid - mounting %s read only.\n",
+290                                 bm->bm_key, sb->s_id);
+291                         *flags |= SB_RDONLY;
+292                         goto out;
+293                 }
+
+ie. the return value 'res' is still 0, and the filesystem is mounted
+read-only.
+
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> ---
+>  fs/affs/bitmap.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Providing that there's no objections to introducing a possible performance
-> change with this separate preparation patch (overhead of calling
-> file_remove_privs/file_update_time twice), then I have no issues in doing so.
+> diff --git a/fs/affs/bitmap.c b/fs/affs/bitmap.c
+> index 5ba9ef2742f6..745ed2cc4b51 100644
+> --- a/fs/affs/bitmap.c
+> +++ b/fs/affs/bitmap.c
+> @@ -347,6 +347,7 @@ int affs_init_bitmap(struct super_block *sb, int *flags)
+>  out:
+>  	affs_brelse(bh);
+>  	affs_brelse(bmap_bh);
+> +	kfree(sbi->s_bitmap);
 
-Well, we should avoid calling it twice.  But what caught my eye is that
-the buffered I/O path also called this function, so we are changing it as
-well here.  If that actually is safe (I didn't review these bits carefully
-and don't know ext4 that well) the overall refactoring of the write
-flow might belong into a separate prep patch (that is not relying
-on ->direct_IO, the checks changes, etc).
+The sbi->s_bitmap would be freed but at umount time it will
+be freed again.
 
-> > > +	if (!inode_trylock(inode)) {
-> > > +		if (iocb->ki_flags & IOCB_NOWAIT)
-> > > +			return -EAGAIN;
-> > > +		inode_lock(inode);
-> > > +	}
-> > > +
-> > > +	if (!ext4_dio_checks(inode)) {
-> > > +		inode_unlock(inode);
-> > > +		/*
-> > > +		 * Fallback to buffered IO if the operation on the
-> > > +		 * inode is not supported by direct IO.
-> > > +		 */
-> > > +		return ext4_buffered_write_iter(iocb, from);
-> > 
-> > I think you want to lift the locking into the caller of this function
-> > so that you don't have to unlock and relock for the buffered write
-> > fallback.
+>  	return res;
+>  }
+>  
+> -- 
+> 2.17.1
 > 
-> I don't exactly know what you really mean by "lift the locking into the caller
-> of this function". I'm interpreting that as moving the inode_unlock()
-> operation into ext4_buffered_write_iter(), but I can't see how that would be
-> any different from doing it directly here? Wouldn't this also run the risk of
-> the locks becoming unbalanced as we'd need to add checks around whether the
-> resource is being contended? Maybe I'm misunderstanding something here...
-
-With that I mean to acquire the inode lock in ext4_file_write_iter
-instead of the low-level buffered I/O or direct I/O routines.
+> 
