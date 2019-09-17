@@ -2,99 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA581B4FAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 15:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD3DB50FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 17:06:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbfIQNvm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Sep 2019 09:51:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43330 "EHLO mx1.redhat.com"
+        id S1728968AbfIQPGK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Sep 2019 11:06:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbfIQNvi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Sep 2019 09:51:38 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727962AbfIQPGK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Sep 2019 11:06:10 -0400
+Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3987951EE6;
-        Tue, 17 Sep 2019 13:51:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-125-72.rdu2.redhat.com [10.10.125.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AE825D6B2;
-        Tue, 17 Sep 2019 13:51:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190915145905.hd5xkc7uzulqhtzr@willie-the-truck>
-References: <20190915145905.hd5xkc7uzulqhtzr@willie-the-truck> <25289.1568379639@warthog.procyon.org.uk>
-To:     Will Deacon <will@kernel.org>
-Cc:     dhowells@redhat.com, torvalds@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        peterz@infradead.org
-Subject: Re: [RFC][PATCH] pipe: Convert ring to head/tail
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BA7D20665;
+        Tue, 17 Sep 2019 15:06:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568732769;
+        bh=SDG5YpF85LDl7cxtILkzcLro5V+SIvuaeeWO/xetNPc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=L4MGQ8vdegQAMJWZvefCan9LNmZ58YKbkSOalMHxvO0HWyV0pmFh1Ux7JqwFOW68O
+         mCGBhYjjy1+ryMK52xSHfJQua12b18hMCxbKZNbPuOyslbAj0VL4Avpn+vFS73QMQF
+         zChusAZY9pyCaARcI1IJL6QMmjaAJ3A8JgTG6/KI=
+Date:   Tue, 17 Sep 2019 08:06:09 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        hch@infradead.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>
+Subject: [GIT PULL] vfs: prohibit writes to active swap devices
+Message-ID: <20190917150608.GT2229799@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <28446.1568728295.1@warthog.procyon.org.uk>
-Date:   Tue, 17 Sep 2019 14:51:35 +0100
-Message-ID: <28447.1568728295@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 17 Sep 2019 13:51:38 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Will Deacon <will@kernel.org> wrote:
+Hi Linus,
 
-> > +		/* Barrier: head belongs to the write side, so order reading
-> > +		 * the data after reading the head pointer.
-> > +		 */
-> > +		unsigned int head = READ_ONCE(pipe->head);
-> 
-> Hmm, I don't understand this. Since READ_ONCE() doesn't imply a barrier,
-> how are you enforcing the read-read ordering in the CPU?
+Please pull this short series that prevents writes to active swap files
+and swap devices.  There's no non-malicious use case for allowing
+userspace to scribble on storage that the kernel thinks it owns.
 
-It does imply a barrier: smp_read_barrier_depends().  I believe that's
+The branch merges cleanly against this morning's HEAD and survived an
+overnight run of xfstests.  The merge was completely straightforward, so
+please let me know if you run into anything weird.
 
-> What is the purpose of saying "This may need to insert a barrier"? Can this
-> function be overridden or something?
+--D
 
-I mean it's arch-dependent whether READ_ONCE() inserts a barrier or not.
+The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
 
-> Saying that "This inserts a barrier" feels misleading, because READ_ONCE()
-> doesn't do that.
+  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
 
-Yes it does - on the Alpha:
+are available in the Git repository at:
 
-[arch/alpha/include/asm/barrier.h]
-#define read_barrier_depends() __asm__ __volatile__("mb": : :"memory")
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/vfs-5.4-merge-1
 
-[include/asm-generic/barrier.h]
-#ifndef __smp_read_barrier_depends
-#define __smp_read_barrier_depends()	read_barrier_depends()
-#endif
-...
-#ifndef smp_read_barrier_depends
-#define smp_read_barrier_depends()	__smp_read_barrier_depends()
-#endif
+for you to fetch changes up to dc617f29dbe5ef0c8ced65ce62c464af1daaab3d:
 
-[include/linux/compiler.h]
-#define __READ_ONCE(x, check)						\
-({									\
-	union { typeof(x) __val; char __c[1]; } __u;			\
-	if (check)							\
-		__read_once_size(&(x), __u.__c, sizeof(x));		\
-	else								\
-		__read_once_size_nocheck(&(x), __u.__c, sizeof(x));	\
-	smp_read_barrier_depends(); /* Enforce dependency ordering from x */ \
-	__u.__val;							\
-})
-#define READ_ONCE(x) __READ_ONCE(x, 1)
+  vfs: don't allow writes to swap files (2019-08-20 07:55:16 -0700)
 
-See:
+----------------------------------------------------------------
+Changes for 5.4:
+- Prohibit writing to active swap files and swap partitions.
 
-    commit 76ebbe78f7390aee075a7f3768af197ded1bdfbb
-    Author: Will Deacon <will.deacon@arm.com>
-    Date:   Tue Oct 24 11:22:47 2017 +0100
-    locking/barriers: Add implicit smp_read_barrier_depends() to READ_ONCE()
+----------------------------------------------------------------
+Darrick J. Wong (2):
+      mm: set S_SWAPFILE on blockdev swap devices
+      vfs: don't allow writes to swap files
 
-David
+ fs/block_dev.c     |  3 +++
+ include/linux/fs.h | 11 +++++++++++
+ mm/filemap.c       |  3 +++
+ mm/memory.c        |  4 ++++
+ mm/mmap.c          |  8 ++++++--
+ mm/swapfile.c      | 41 +++++++++++++++++++++++++----------------
+ 6 files changed, 52 insertions(+), 18 deletions(-)
