@@ -2,134 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88E03B4BA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 12:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 831A7B4CEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 13:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfIQKMb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Sep 2019 06:12:31 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41814 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727240AbfIQKMb (ORCPT
+        id S1726760AbfIQLbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Sep 2019 07:31:14 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45388 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfIQLbO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Sep 2019 06:12:31 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8HA5aD0060246
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2019 06:12:29 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2v2vx7stbw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2019 06:12:29 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Tue, 17 Sep 2019 11:12:27 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 17 Sep 2019 11:12:22 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8HACLFJ19136644
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Sep 2019 10:12:21 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B04C55205A;
-        Tue, 17 Sep 2019 10:12:21 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.31.57])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3568352052;
-        Tue, 17 Sep 2019 10:12:20 +0000 (GMT)
+        Tue, 17 Sep 2019 07:31:14 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 4so1847233pgm.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2019 04:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=haHTGffRW5vANHA+WJrpU6ZKkWIFsJTyKM4HQ48Fqjw=;
+        b=PDWr0cB7F7xLSAU12jIL5a86NRbxRJxAmhopvAfaaybXfe7oaJkct5DXzdg1AiQpOI
+         fHfpc6PK5Fw2/YAndeXRsbP5t66Ip2pWV6tnCcI0amJRBKmLdTYqOUyLYw0mcFV2A883
+         zIqpOFWf9yek6jEOCb0EU/B2oVLLnFVUV60OjAie7OFYqKz2PZHS/oXXYAxSxSKpReCI
+         5dnC8h/cu9wLrTJaSapbYy5KwCsHZBJuiliu8yTkjZCnW7ipuiTEQXJM7wzKpspYXEc6
+         IrsTuhg1nB0zwQ1Px1p+RCsK9RWPv181MvYf/c1BNUyVAEN5cplWQdOF2IDRmZMgHL1u
+         Cwaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=haHTGffRW5vANHA+WJrpU6ZKkWIFsJTyKM4HQ48Fqjw=;
+        b=KMM17ZGLJJDEqqYn9JFrsw7y7M6PY5ULQzUxItdBo4Kxy0k6zhnnvxkU0/l4VTBN48
+         5aOlB5px3BYV1tbAWYMvEjBn8s7rTAKlVoCL42o+pAAdtWgSIKtZezrg6TNSf5uru+sS
+         ZaSqKd1xyFi/B0r1MBOWuDunnmolEzQT/SsV6NFmZ/YSJpabaCpv760P+Pk/R33v2ccZ
+         5AVkhEEae4JJGNYns7/7JpKfoFmicii03udcGS4pGHVHfNZr3mS3+NxXrZnQovd34ReW
+         9kLwgjSuSV3HJQKsWS+lrXy75dVZm4tyqis+bPFCOXBJnvzT4QyzzWWzb6WrUhNGHHmf
+         J1Sg==
+X-Gm-Message-State: APjAAAV00/uLgaOX8ExsyBoDaQbR2xWND5vGglKE1eVz9XZ2rO2h072s
+        iNI1cz9gzTN/4eBHC4EA7cTj
+X-Google-Smtp-Source: APXvYqzOsnXyMzVzJPL/ZiEDQGH3p2QIv1+lzH89Vs5iszm0w2T1uEdH1we+JzsYoSrLGpLjy5rLEA==
+X-Received: by 2002:a17:90a:37d1:: with SMTP id v75mr4472866pjb.33.1568719868394;
+        Tue, 17 Sep 2019 04:31:08 -0700 (PDT)
+Received: from bobrowski ([110.232.114.101])
+        by smtp.gmail.com with ESMTPSA id d20sm4411809pfq.88.2019.09.17.04.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2019 04:31:07 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 21:31:01 +1000
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, darrick.wong@oracle.com
 Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
  infrastructure
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>, tytso@mit.edu,
-        jack@suse.cz, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
-        darrick.wong@oracle.com
+Message-ID: <20190917113101.GA17286@bobrowski>
 References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
  <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
- <20190916121248.GD4005@infradead.org> <20190916223741.GA5936@bobrowski>
- <20190917090016.266CB520A1@d06av21.portsmouth.uk.ibm.com>
- <20190917090233.GB29487@infradead.org>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Tue, 17 Sep 2019 15:42:19 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ <20190916121248.GD4005@infradead.org>
+ <20190916223741.GA5936@bobrowski>
+ <20190917090613.GC29487@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20190917090233.GB29487@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091710-0008-0000-0000-000003176F8B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091710-0009-0000-0000-00004A35ECD0
-Message-Id: <20190917101220.3568352052@d06av21.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-17_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=686 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909170103
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190917090613.GC29487@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 9/17/19 2:32 PM, Christoph Hellwig wrote:
-> On Tue, Sep 17, 2019 at 02:30:15PM +0530, Ritesh Harjani wrote:
->> So if we have a delayed buffered write to a file,
->> in that case we first only update inode->i_size and update
->> i_disksize at writeback time
->> (i.e. during block allocation).
->> In that case when we call for ext4_dio_write_iter
->> since offset + len > i_disksize, we call for ext4_update_i_disksize().
->>
->> Now if writeback for some reason failed. And the system crashes, during the
->> DIO writes, after the blocks are allocated. Then during reboot we may have
->> an inconsistent inode, since we did not add the inode into the
->> orphan list before we updated the inode->i_disksize. And journal replay
->> may not succeed.
->>
->> 1. Can above actually happen? I am still not able to figure out the
->>     race/inconsistency completely.
->> 2. Can you please help explain under what other cases
->>     it was necessary to call ext4_update_i_disksize() in DIO write paths?
->> 3. When will i_disksize be out-of-sync with i_size during DIO writes?
+On Tue, Sep 17, 2019 at 02:06:13AM -0700, Christoph Hellwig wrote:
+> On Tue, Sep 17, 2019 at 08:37:41AM +1000, Matthew Bobrowski wrote:
+> > > Independent of the error return issue you probably want to split
+> > > modifying ext4_write_checks into a separate preparation patch.
+> > 
+> > Providing that there's no objections to introducing a possible performance
+> > change with this separate preparation patch (overhead of calling
+> > file_remove_privs/file_update_time twice), then I have no issues in doing so.
 > 
-> None of the above seems new in this patchset, does it?  That being said
+> Well, we should avoid calling it twice.  But what caught my eye is that
+> the buffered I/O path also called this function, so we are changing it as
+> well here.  If that actually is safe (I didn't review these bits carefully
+> and don't know ext4 that well) the overall refactoring of the write
+> flow might belong into a separate prep patch (that is not relying
+> on ->direct_IO, the checks changes, etc).
 
+Yeah, I see what you're saying. From memory, in order to get this right, there
+was a whole bunch of additional changes that needed to be done that would
+effectively be removed in a subsequent patch. But, let me revisit this again
+and see what I can do.
 
-In original code before updating i_disksize in ext4_direct_IO_write,
-we used to add the inode into the orphan list (which will mark the iloc
-dirty and also update the ondisk inode size). Only then we update the 
-i_disksize to inode->i_size (which still I don't understand the
-reason to put inside open journal handle).
-
-So in case if the crash happens, then in the recovery, we can replay the
-journal and we truncate any extra blocks beyond i_size.
-(ext4_orphan_cleanup()).
-
-
-In new iomap implementation (i.e. this patchset), we are doing this in
-reverse.
-
-We first call for ext4_update_i_disksize() in ext4_dio_write_iter(),
-and then in ext4_iomap_begin() after ext4_map_blocks(),
-we add the inode to orphan list, which I am not really sure whether it 
-is really consistent with on disk size??
-
-
-
-> I found the early size update odd.  XFS updates the on-disk size only
-> at I/O completion time to deal with various races including the
-> potential exposure of stale data.
+> > > > +	if (!inode_trylock(inode)) {
+> > > > +		if (iocb->ki_flags & IOCB_NOWAIT)
+> > > > +			return -EAGAIN;
+> > > > +		inode_lock(inode);
+> > > > +	}
+> > > > +
+> > > > +	if (!ext4_dio_checks(inode)) {
+> > > > +		inode_unlock(inode);
+> > > > +		/*
+> > > > +		 * Fallback to buffered IO if the operation on the
+> > > > +		 * inode is not supported by direct IO.
+> > > > +		 */
+> > > > +		return ext4_buffered_write_iter(iocb, from);
+> > > 
+> > > I think you want to lift the locking into the caller of this function
+> > > so that you don't have to unlock and relock for the buffered write
+> > > fallback.
+> > 
+> > I don't exactly know what you really mean by "lift the locking into the caller
+> > of this function". I'm interpreting that as moving the inode_unlock()
+> > operation into ext4_buffered_write_iter(), but I can't see how that would be
+> > any different from doing it directly here? Wouldn't this also run the risk of
+> > the locks becoming unbalanced as we'd need to add checks around whether the
+> > resource is being contended? Maybe I'm misunderstanding something here...
 > 
+> With that I mean to acquire the inode lock in ext4_file_write_iter
+> instead of the low-level buffered I/O or direct I/O routines.
 
-Yes, can't really say why it is the case in ext4.
-That's mostly what I wanted to understand from previous queries.
+Oh, I didn't think of that! But yes, that would in fact be nice and I cannot
+see why we shouldn't be doing that at this point. It also helps with reducing
+all the code duplication going on in the low-level buffered, direct, dax I/O
+routines.
 
-
--ritesh
-
+--<M>--
