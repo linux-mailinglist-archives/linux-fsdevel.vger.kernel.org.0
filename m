@@ -2,49 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8EE6B47A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 08:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED5B3B487C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 09:46:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404337AbfIQGsN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Sep 2019 02:48:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38598 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404329AbfIQGsM (ORCPT
+        id S2404465AbfIQHqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Sep 2019 03:46:32 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42172 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727635AbfIQHqb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Sep 2019 02:48:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BeT2ja43daJNhcItoLBOrJ1UxylrPoP4JZsmFl5TXyo=; b=PH6EzH2A/K/viqVCbFNUsMoy8
-        itxuz1Q4mSozOKn+LNc6x1zFPI7SI8aQBN2debOKDvUBC601HH68nP4BF2IEJTCD7ZToyk/81SRml
-        FUp4olRM5V9p9ETE+FtbKfK4/8MyBqwAYr2bR++u/QIbUu1gKMnIiQhEgaVMQ0ORkwwCSi36jb7eO
-        plhK0IduNnR9B4Rv35kKcLx3vBD1LRqNdtg09/yP2Zj0JPlQx5scvl7oadc0lyJYNx5+HTTgij4lL
-        sLENDLonN54TTjd0noMtzOxmZE27e9+7klG9Em5uRPvdvNCQOrHGi/n+L948SjerbM81cD11oBhpG
-        TE9WpVh1Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iA7HX-0000U8-P8; Tue, 17 Sep 2019 06:48:11 +0000
-Date:   Mon, 16 Sep 2019 23:48:11 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Daegyu Han <hdg9400@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: Sharing ext4 on target storage to multiple initiators using
- NVMeoF
-Message-ID: <20190917064811.GA25933@infradead.org>
-References: <CAARcW+r3EvFktaw-PfxN_V-EjtU6BvT7wxNvUtFiwHOdbNn2iA@mail.gmail.com>
+        Tue, 17 Sep 2019 03:46:31 -0400
+Received: by mail-io1-f66.google.com with SMTP id n197so5269857iod.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2019 00:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r390VayBj/3xi39RJHDAEzLS1ApSogHRMpyEDeFIW8U=;
+        b=d69BRr0xyCV3c6m95lJoLGl50d5Ex2yqBOKw46rMtzmuV+Rwa2hW6rI6MP3zGZWCPJ
+         PqIuE8ISWyF/nAilyQbnrrZCdoF2Wp/tzdsqdPKrpeMPGuLtcmuDTUONwR1pCJh5iggB
+         P4e+ZNnTSwRYWzLJdcoe3g7iiH8ekCwtPMrto=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r390VayBj/3xi39RJHDAEzLS1ApSogHRMpyEDeFIW8U=;
+        b=dar8p8RCZK5u9zmWFThvLkEyJdCTXa/9IPsjBWg7DA5xVxDZaRkflE+b5J72GTIpAV
+         p5ob0TjR+7m1i2vrCgxTuv+OKLgePTEVGGo3gTD0mLBBU5UivFnsnoRMoQTJIDcvrM3A
+         rasXuC0R4cgt6ooTPKJZEq7Cdk/YGw9aIQXUOIuS4gNZfb8VP3hpeLxeMiJgmWrfN2CY
+         7fo4dPARvZOiYTws4j3Jcpbv4jWQZl56JsZOvaEhlQQpDaG+ImXyb7kMPnLjQBoZPzKx
+         D/RsE/llYriRUk2+2N+0sPaUgYeLiq0vwkzS9JBHGovyNlMDlywSm2jGv/BLxaPU4g/D
+         VSog==
+X-Gm-Message-State: APjAAAWi9ZLj8vGlbgPOlf8qW5Q0L8Ann2i70ho+/8SykIrzI0x7q9YK
+        +RFj7xbqMG8ctoeAyt3c0R9POTy3T1qBQBrA13YsaVpc
+X-Google-Smtp-Source: APXvYqzThDNp3uLhZD6yQ/WCujicMU9B0P8cMPS1zdRMUKzEUMRMi+zP6x28grxRopNvWCakybIIt5ptAYCVqLRZcYg=
+X-Received: by 2002:a02:b388:: with SMTP id p8mr2684640jan.77.1568706390957;
+ Tue, 17 Sep 2019 00:46:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAARcW+r3EvFktaw-PfxN_V-EjtU6BvT7wxNvUtFiwHOdbNn2iA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190916235642.167583-1-khazhy@google.com>
+In-Reply-To: <20190916235642.167583-1-khazhy@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 17 Sep 2019 09:46:19 +0200
+Message-ID: <CAJfpeguRPTRyb9eaEsKXmv2xsfJfy4vrNp05RNiL8AuqbDwkcg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] fuse: on 64-bit store time in d_fsdata directly
+To:     Khazhismel Kumykov <khazhy@google.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shakeel B <shakeelb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-You might want to look into the pnfs block layout instead to do this
-safely.  It is supported with XFS out of the box, but adding ext4
-support shouldn't be all that hard.
+On Tue, Sep 17, 2019 at 1:56 AM Khazhismel Kumykov <khazhy@google.com> wrote:
+>
+> Implements the optimization noted in f75fdf22b0a8 ("fuse: don't use
+> ->d_time"), as the additional memory can be significant. (In particular,
+> on SLAB configurations this 8-byte alloc becomes 32 bytes). Per-dentry,
+> this can consume significant memory.
+
+Applied, thanks.
+
+Miklos
