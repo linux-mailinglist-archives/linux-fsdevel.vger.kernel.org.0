@@ -2,116 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A080B4DED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 14:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C15B9B4E69
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 14:49:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbfIQMjJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Sep 2019 08:39:09 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45346 "EHLO
+        id S1727698AbfIQMtG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Sep 2019 08:49:06 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38663 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbfIQMjJ (ORCPT
+        with ESMTP id S1727927AbfIQMtG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Sep 2019 08:39:09 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y72so2081652pfb.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2019 05:39:09 -0700 (PDT)
+        Tue, 17 Sep 2019 08:49:06 -0400
+Received: by mail-pf1-f196.google.com with SMTP id h195so2116837pfe.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2019 05:49:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=OTvLvWZQKYamARFFGSiOc5HaM2nlxTYOTsAuTJxrrZs=;
-        b=ciD6VU9yB23JT/INsw0iZBKrcCvl4Dhneq7SKh0gol9MakWQxeEtxuLaARa/b/TRvZ
-         W85vqr3GqAujOQ9vB9o2sxjiyEfp1l3GZ3a+7MIlEGRzaRRXK0w1ZGEQLc2iQ/rMGcrl
-         i/AeSvz4KkpdR3CyEN/fVlZ4I4h/kRJrlVzdilVlupwyA1BSVzqDav4VIa+i6GnevFUX
-         kkMw44kDLSsGB79HdHYR7mH8enAE3X7GUC8g/JA+bP+1D0C+x5UqRL8ufkTtrLMcY0dG
-         RAFK27B/7zODPALJLjGWPi3Qw5kKJGs6x6Q8JGEXG4weltt/7kG/Q4kfwNYh1qRkrzdx
-         Z5nQ==
+        bh=ivL+7BxcvNPtsk87vtiqzEY0l9qsqqcgA3nEl+3vuKc=;
+        b=MLg7c27exZe1UjrUa6DYN1rLT97yfjGvUXfO7L+VKEKh+DxvKdk2FI1gPYWVY5Z5gq
+         uQwrHq1jvjcMi/mdR5+TTkx0LjrVSFQJFfhRDjCDCaYq7pg/7GIhYnQBRpOs+tsW5JCe
+         YWDIBkI7sk//I4vfAaPRYQUyJQ8prpfqhTz9d1DgAex4Pc+2gJku+NeLp8OoCOAcTna6
+         3uA+jyMuvxrlA2gi+vLYEupDPT3wfZD2bJ9xP8Q0W2oj2f2uMDP8xqxijguaOfe9GoGD
+         epusYE4BT2/BO+nzpJLnMfOp/4aHHwYJfnvyadp0LFzQAxTffqkA6kx7J7X441TlZC/9
+         w7CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OTvLvWZQKYamARFFGSiOc5HaM2nlxTYOTsAuTJxrrZs=;
-        b=k5floRm1bxb85cpbgHVBc3eDqbNN0t0TSSiFABNaQzlr0dRhmXiHXY8l9LsawHQNgv
-         4y6Wy56Fs3rfvOdfRq8+vBIvLUWB6ksx9KWemT1yt5dM2dMqqBTxi8XfXpK6XtGZpg+a
-         qDH0cyjNp6Uuks6nsCUwUlA7emplLQEwNTFa1Jr2O0GbNlNLs3517Zdxw5mJ20rC6NS4
-         Li1ylfGtgRsM0y1VBsfLxrEHKWnbQ7H/9izGZwdAQN6nxtYjVmL4lH9YMDs8tzKo8ZfC
-         DlyPH3XvgeWcWuF39y51/v8Oge5w5VuZ+HFSDNMtniPKVAIxC74PfjYeZmMNl0jx+nb4
-         kE1w==
-X-Gm-Message-State: APjAAAWgOOCIhqU3h63Amg8kYQJ/Cu9b8DTMzJb+Yq1KUg4ENqdeqRyv
-        8VHUE4lRmVytSPMlxn0lOXFw
-X-Google-Smtp-Source: APXvYqxHGql6gtXiSLgnubOsn1tuxwk2FA+6A4sN+VnBtelTx82oAS/kvGo08+sSLohyfTC2EAHG7g==
-X-Received: by 2002:a62:7a12:: with SMTP id v18mr4037934pfc.205.1568723948525;
-        Tue, 17 Sep 2019 05:39:08 -0700 (PDT)
+        bh=ivL+7BxcvNPtsk87vtiqzEY0l9qsqqcgA3nEl+3vuKc=;
+        b=qY641gm/ABipv+8oa4fyHUnehJxHct02sFeNsgI7mgN9/SXDkL2A9p5Aai3HY2JCOV
+         Oj+HOL7NkYUiIvsTHbApugB2chlH/iv6PkKQaxQqibPrlXty4Ue5T+xpW7Hu3Rj40IxR
+         XaJe8LXtGX7NpOlDXPpVVmeq9cueaicabvm+d2E4Q4Dsh9JEMdxC9eVP/yNaha9q3kko
+         VXIR5rHR59F8gOs/Q7jOAzPKBWStz+ZGwyXLhQf3+/RELZqGAS3FCwsHEq7HAXuEdFop
+         IhyGjcc9HAjKjeDEAY7h2KQ1dm6Xbprl6cJ9f5L/DJg7GRMm8oZRCX5cOeC0di6YFNsF
+         LcTg==
+X-Gm-Message-State: APjAAAWa1PAg3zOx3LA9Jd7arakixkBh9vROFf1+WdvypqHZKPchA5kS
+        q/0itNvsXyEqYRnWNDV4DvUJ
+X-Google-Smtp-Source: APXvYqxWo7NntCCLvNAO1Yv9/nxQJN1IjFhK6qfvfttgzSoQEuPawMMLzQGuquVSUSrQBVryhtdkdQ==
+X-Received: by 2002:a62:8c97:: with SMTP id m145mr3881290pfd.241.1568724545799;
+        Tue, 17 Sep 2019 05:49:05 -0700 (PDT)
 Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id 2sm2758518pfa.43.2019.09.17.05.39.04
+        by smtp.gmail.com with ESMTPSA id s1sm7905549pjs.31.2019.09.17.05.49.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 05:39:07 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 22:39:01 +1000
+        Tue, 17 Sep 2019 05:49:05 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 22:48:59 +1000
 From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
 To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, tytso@mit.edu,
-        jack@suse.cz, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
-        darrick.wong@oracle.com
-Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
- infrastructure
-Message-ID: <20190917123901.GB17286@bobrowski>
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, darrick.wong@oracle.com
+Subject: Re: [PATCH v3 4/6] ext4: reorder map.m_flags checks in
+ ext4_iomap_begin()
+Message-ID: <20190917124859.GC17286@bobrowski>
 References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
- <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
- <20190916121248.GD4005@infradead.org>
- <20190916223741.GA5936@bobrowski>
- <20190917090016.266CB520A1@d06av21.portsmouth.uk.ibm.com>
- <20190917090233.GB29487@infradead.org>
+ <8aa099e66ece73578f32cbbc411b6f3e52d53e52.1568282664.git.mbobrowski@mbobrowski.org>
+ <20190916120533.GB4005@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190917090233.GB29487@infradead.org>
+In-Reply-To: <20190916120533.GB4005@infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 02:02:33AM -0700, Christoph Hellwig wrote:
-> On Tue, Sep 17, 2019 at 02:30:15PM +0530, Ritesh Harjani wrote:
-> > So if we have a delayed buffered write to a file,
-> > in that case we first only update inode->i_size and update
-> > i_disksize at writeback time
-> > (i.e. during block allocation).
-> > In that case when we call for ext4_dio_write_iter
-> > since offset + len > i_disksize, we call for ext4_update_i_disksize().
-> > 
-> > Now if writeback for some reason failed. And the system crashes, during the
-> > DIO writes, after the blocks are allocated. Then during reboot we may have
-> > an inconsistent inode, since we did not add the inode into the
-> > orphan list before we updated the inode->i_disksize. And journal replay
-> > may not succeed.
-> > 
-> > 1. Can above actually happen? I am still not able to figure out the
-> >    race/inconsistency completely.
-> > 2. Can you please help explain under what other cases
-> >    it was necessary to call ext4_update_i_disksize() in DIO write paths?
-> > 3. When will i_disksize be out-of-sync with i_size during DIO writes?
+On Mon, Sep 16, 2019 at 05:05:33AM -0700, Christoph Hellwig wrote:
+> On Thu, Sep 12, 2019 at 09:04:30PM +1000, Matthew Bobrowski wrote:
+> > @@ -3581,10 +3581,21 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+> >  		iomap->type = delalloc ? IOMAP_DELALLOC : IOMAP_HOLE;
+> >  		iomap->addr = IOMAP_NULL_ADDR;
+> >  	} else {
+> > -		if (map.m_flags & EXT4_MAP_MAPPED) {
+> > -			iomap->type = IOMAP_MAPPED;
+> > -		} else if (map.m_flags & EXT4_MAP_UNWRITTEN) {
+> > +		/*
+> > +		 * Flags passed to ext4_map_blocks() for direct IO
+> > +		 * writes can result in m_flags having both
+> > +		 * EXT4_MAP_MAPPED and EXT4_MAP_UNWRITTEN bits set. In
+> > +		 * order for allocated unwritten extents to be
+> > +		 * converted to written extents in the end_io handler
+> > +		 * correctly, we need to ensure that the iomap->type
+> > +		 * is also set appropriately in that case. Thus, we
+> > +		 * need to check whether EXT4_MAP_UNWRITTEN is set
+> > +		 * first.
+> > +		 */
+> > +		if (map.m_flags & EXT4_MAP_UNWRITTEN) {
+> >  			iomap->type = IOMAP_UNWRITTEN;
+> > +		} else if (map.m_flags & EXT4_MAP_MAPPED) {
+> > +			iomap->type = IOMAP_MAPPED;
 > 
-> None of the above seems new in this patchset, does it?
+> I think much of this would benefit a lot from just being split up.
+> I hacked up a patch last week that split the ext4 direct I/O code
+> a bit, but this is completely untested and needs further splitup,
+> but maybe you can take it as an inspiration for your series?
 
-That's correct.
+Nice, I really like this! :-)
 
-*Ritesh - FWIW, I think you'll find the answers to your questions above by
- referring to the following commits:
+The ext4_iomap_begin() callback is kind of already getting larger than it
+should have to be and I can only see it growing moving forward, so why not
+split it up now.
 
- 1) 73fdad00b208b
- 2) 45d8ec4d9fd54
+> E.g. at least one helper for filling out the iomap from the ext4
+> map data, and one for the seek unwritten extent reporting.  The
+> split of the overall iomap ops seemed useful to me, but might not
+> be as important with the other cleanups:
 
-If you drop the check (offset + count > EXT4_I(inode)->i_disksize) and the
-call to ext4_update_i_disksize(), under some workloads i.e. "generic/475"
-you'll generally end up with metadata corruption.
-
-> That being said I found the early size update odd. XFS updates the on-disk
-> size only at I/O completion time to deal with various races including the
-> potential exposure of stale data.
-
-Indeed a little odd. But, I think delalloc/writeback implementation is
-possibly to blame here (based on what's detailed in 45d8ec4d9fd54)? Ideally, I
-had the same approach as XFS in mind, but I couldn't do it.
+Yeah, I think I'll leave the iomap operations as they are for now. Something
+to definitely consider at a later point though.
 
 --<M>--
