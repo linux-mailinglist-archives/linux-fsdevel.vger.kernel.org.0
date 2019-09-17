@@ -2,301 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B67BB5797
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 23:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E36ABB57C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 23:49:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbfIQVa5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Sep 2019 17:30:57 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33415 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728035AbfIQVav (ORCPT
+        id S1726233AbfIQVsv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Sep 2019 17:48:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35270 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfIQVsv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Sep 2019 17:30:51 -0400
-Received: by mail-oi1-f194.google.com with SMTP id e18so4238683oii.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Sep 2019 14:30:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ESCnXX2tcIZXxoYYdwBnYQ13kyLGDQXAfzDyU1IsljM=;
-        b=jUgafeXoQWRROVQcTu6YfyeHgWxQgQnh4jo0vXJb9gmwfB60c9yL42Xud+pRnhazvu
-         I55/SWoMFVopXjb7HLBe3ZwDp8YJ8AIZ8yE+MZ1ol1jCwWnIpfYZUGgVJMSnV8dTUt6g
-         Fj+f3RqGjAClmuMaYSKTGHkK+kbzWWV2PGu8pnhEDzRe1H1j/2nUdgWnUmqKQJs9XJhD
-         bcgWdPhYUHXwS43uDaRjRrlqwvcEMFzpAIgQXR+SQCsx7w3nXgWKc6kAeP7uC4P5GOpV
-         geTEa7Nd78q01D+rHdE0lfUUKO0VvNzXAoY9/ESlMRu9nFZIkRllJNqARaqGkFjsJcK8
-         RCrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ESCnXX2tcIZXxoYYdwBnYQ13kyLGDQXAfzDyU1IsljM=;
-        b=YNoN3KnsXcXwgRFmB8ccmVFM2CmWlM+Ln9EvA/tBWUq9r9aWoCMbC56RvSl3EYr1io
-         5q63hfEnHGVZsGayVoOMMrzNntm3JBk4LN6UymhE50Dhuy1Wx8Mc3SfUIfJDOXevKZXu
-         7zLvrhS6PLJ3pCCzeb4mI+4AJr+3cetPjjBtas1dKp2dyKadLdJfMzbvIpmX/Q2xIsk8
-         SUi+nmER7/nwIXISovooa486mDiJryw4gSwsPZ4LfvlVJwXAIhm0GSqFjZxz+K9cfrbX
-         rqNvJfQEQLeUWUq25DFh0CXkPsCr4eDDlZZY+jy7VN38Sa+oZua+A/UrSU2HFB7Ww1D4
-         +jCg==
-X-Gm-Message-State: APjAAAUV6Wl6MAt5EM4SRUd2bm4zBV+8676bipprMFU3hx9eDc8fLIiQ
-        jqwL87Gth+7KbBuuNuiZ7OZQo9shMwtiZQ5CV9cAkQ==
-X-Google-Smtp-Source: APXvYqwxm+0NJ68SJt1aKiZMUXpTcHLshnMGNY9q+/BgS9qyQqvS1IrxODCZyEWbmarv3+IaDknKyiL8F7FGSmCNufY=
-X-Received: by 2002:aca:ed52:: with SMTP id l79mr129659oih.47.1568755849487;
- Tue, 17 Sep 2019 14:30:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-6-cyphar@cyphar.com>
-In-Reply-To: <20190904201933.10736-6-cyphar@cyphar.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 17 Sep 2019 23:30:23 +0200
-Message-ID: <CAG48ez1_64249RdX6Nj_32YS+jhuXZBAd_ZL9ozggbSQy+cc-A@mail.gmail.com>
-Subject: Re: [PATCH v12 05/12] namei: obey trailing magic-link DAC permissions
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-alpha@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Sep 2019 17:48:51 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3DA1361213; Tue, 17 Sep 2019 21:48:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568756931;
+        bh=X3NzP2/OYfzCgk/ZWQD94QYMs+1Ua5L9ueXra2kQULY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=khpfHqSaFrHXavw8/J+fb+ITv0RESQd6ED4bU3KDprajNO7Oj1vnw/wD9hIOr5zxi
+         64r+VrjPpvX1FPA5JIxcJocHDc0OrKqshyM0jgK9mKpy3RuVFXUiLVPrKuUHWzAUDt
+         ts0jjHHZDcK89yTOAYpr8Mh9F0ZC9vTkEPGpOJEg=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3B8E3602F2;
+        Tue, 17 Sep 2019 21:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568756930;
+        bh=X3NzP2/OYfzCgk/ZWQD94QYMs+1Ua5L9ueXra2kQULY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kHu0LIZD5zPhs2oNSz7DbpAMoX25nskyMUXcyYDKnfzR+1LL5ck9jd5bdIro7EJnx
+         oDVP/ORHzdU87q3Dru7c7rcka2raGkjEN9x7Z6KCjnSVir/RzKJzePPt/N5Xttp5M5
+         FC6CXQhSm0fYkCw3mnq3gvLqnot1AtVKy1B0y1TY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B8E3602F2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     freedreno@lists.freedesktop.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] idr: Prevent unintended underflow for the idr index
+Date:   Tue, 17 Sep 2019 15:48:42 -0600
+Message-Id: <1568756922-2829-1-git-send-email-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 10:21 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> The ability for userspace to "re-open" file descriptors through
-> /proc/self/fd has been a very useful tool for all sorts of usecases
-> (container runtimes are one common example). However, the current
-> interface for doing this has resulted in some pretty subtle security
-> holes. Userspace can re-open a file descriptor with more permissions
-> than the original, which can result in cases such as /proc/$pid/exe
-> being re-opened O_RDWR at a later date even though (by definition)
-> /proc/$pid/exe cannot be opened for writing. When combined with O_PATH
-> the results can get even more confusing.
-[...]
-> Instead we have to restrict it in such a way that it doesn't break
-> (good) users but does block potential attackers. The solution applied in
-> this patch is to restrict *re-opening* (not resolution through)
-> magic-links by requiring that mode of the link be obeyed. Normal
-> symlinks have modes of a+rwx but magic-links have other modes. These
-> magic-link modes were historically ignored during path resolution, but
-> they've now been re-purposed for more useful ends.
+It is possible for unaware callers of several idr functions to accidentally
+underflow the index by specifying a id that is less than the idr base.
 
-Thanks for dealing with this issue!
+Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+---
 
-[...]
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 209c51a5226c..54d57dad0f91 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -872,7 +872,7 @@ void nd_jump_link(struct path *path)
->
->         nd->path = *path;
->         nd->inode = nd->path.dentry->d_inode;
-> -       nd->flags |= LOOKUP_JUMPED;
-> +       nd->flags |= LOOKUP_JUMPED | LOOKUP_MAGICLINK_JUMPED;
->  }
-[...]
-> +static int trailing_magiclink(struct nameidata *nd, int acc_mode,
-> +                             fmode_t *opath_mask)
-> +{
-> +       struct inode *inode = nd->link_inode;
-> +       fmode_t upgrade_mask = 0;
-> +
-> +       /* Was the trailing_symlink() a magic-link? */
-> +       if (!(nd->flags & LOOKUP_MAGICLINK_JUMPED))
-> +               return 0;
-> +
-> +       /*
-> +        * Figure out the upgrade-mask of the link_inode. Since these aren't
-> +        * strictly POSIX semantics we don't do an acl_permission_check() here,
-> +        * so we only care that at least one bit is set for each upgrade-mode.
-> +        */
-> +       if (inode->i_mode & S_IRUGO)
-> +               upgrade_mask |= FMODE_PATH_READ;
-> +       if (inode->i_mode & S_IWUGO)
-> +               upgrade_mask |= FMODE_PATH_WRITE;
-> +       /* Restrict the O_PATH upgrade-mask of the caller. */
-> +       if (opath_mask)
-> +               *opath_mask &= upgrade_mask;
-> +       return may_open_magiclink(upgrade_mask, acc_mode);
->  }
+ lib/idr.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-This looks racy because entries in the file descriptor table can be
-switched out as long as task->files->file_lock isn't held. Unless I'm
-missing something, something like the following (untested) would
-bypass this restriction:
-
-int readonly_fd = ...; /* some read-only fd we want to reopen as writable */
-int writable_fd = open("/dev/null", O_RDWR);
-int flippy_fd = dup(writable_fd);
-char flippy_fd_path[100];
-sprintf(flippy_fd_path, "/proc/%d/fd/%d", getpid(), flippy_fd);
-if (fork() == 0) {
-  while (1) {
-    int reopened_fd = open(flippy_fd_path, O_RDWR);
-    if (reopened_fd == -1) continue;
-    char reopened_fd_path[100];
-    sprintf(reopened_fd_path, "/proc/self/fd/%d", reopened_fd);
-    char reopened_fd_target[1000];
-    int target_len = readlink(reopened_fd_path, reopened_fd_target,
-sizeof(reopened_fd_target)-1);
-    reopened_fd_target[target_len] = 0;
-    if (strcmp(reopened_fd_target, "/dev/null"))
-      printf("managed to reopen as writable\n");
-    close(reopened_fd);
-  }
-} else {
-  while (1) {
-    dup2(readonly_fd, flippy_fd);
-    dup2(writable_fd, flippy_fd);
-  }
-}
-
-Perhaps you could change nd_jump_link() to "void nd_jump_link(struct
-path *path, umode_t link_mode)", and let proc_pid_get_link() pass the
-link_mode through from an out-argument of .proc_get_link()? Then
-proc_fd_link() could grab the proper mode in a race-free manner. And
-nd_jump_link() could stash the mode in the nameidata.
-
-A sketch of how I imagine that:
-===============================
-diff --git a/fs/namei.c b/fs/namei.c
-index 6b936038319b..14c6790203c7 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -506,6 +506,7 @@ struct nameidata {
-        struct inode    *link_inode;
-        unsigned        root_seq;
-        int             dfd;
-+       umode_t         last_link_mode;
- } __randomize_layout;
-
- static void set_nameidata(struct nameidata *p, int dfd, struct filename *name)
-@@ -890,7 +891,7 @@ static int nd_jump_root(struct nameidata *nd)
-  * Helper to directly jump to a known parsed path from ->get_link,
-  * caller must have taken a reference to path beforehand.
+diff --git a/lib/idr.c b/lib/idr.c
+index 66a3748..d9e180c 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -151,6 +151,9 @@ EXPORT_SYMBOL(idr_alloc_cyclic);
   */
--void nd_jump_link(struct path *path)
-+void nd_jump_link(struct path *path, umode_t link_mode)
+ void *idr_remove(struct idr *idr, unsigned long id)
  {
-        struct nameidata *nd = current->nameidata;
-        path_put(&nd->path);
-@@ -898,6 +899,7 @@ void nd_jump_link(struct path *path)
-        nd->path = *path;
-        nd->inode = nd->path.dentry->d_inode;
-        nd->flags |= LOOKUP_JUMPED | LOOKUP_MAGICLINK_JUMPED;
-+       nd->last_link_mode = link_mode;
++	if (id < idr->idr_base)
++		return NULL;
++
+ 	return radix_tree_delete_item(&idr->idr_rt, id - idr->idr_base, NULL);
  }
-
- static inline void put_link(struct nameidata *nd)
-@@ -3654,9 +3656,9 @@ static int trailing_magiclink(struct nameidata
-*nd, int acc_mode,
-         * strictly POSIX semantics we don't do an acl_permission_check() here,
-         * so we only care that at least one bit is set for each upgrade-mode.
-         */
--       if (inode->i_mode & S_IRUGO)
-+       if (nd->last_link_mode & S_IRUGO)
-                upgrade_mask |= FMODE_PATH_READ;
--       if (inode->i_mode & S_IWUGO)
-+       if (nd->last_link_mode & S_IWUGO)
-                upgrade_mask |= FMODE_PATH_WRITE;
-        /* Restrict the O_PATH upgrade-mask of the caller. */
-        if (opath_mask)
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 297242174402..af0218447571 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1614,6 +1614,7 @@ static const char *proc_pid_get_link(struct
-dentry *dentry,
+ EXPORT_SYMBOL_GPL(idr_remove);
+@@ -171,6 +174,9 @@ EXPORT_SYMBOL_GPL(idr_remove);
+  */
+ void *idr_find(const struct idr *idr, unsigned long id)
  {
-        struct path path;
-        int error = -EACCES;
-+       umode_t link_mode;
++	if (id < idr->idr_base)
++		return NULL;
++
+ 	return radix_tree_lookup(&idr->idr_rt, id - idr->idr_base);
+ }
+ EXPORT_SYMBOL_GPL(idr_find);
+@@ -302,6 +308,9 @@ void *idr_replace(struct idr *idr, void *ptr, unsigned long id)
+ 	void __rcu **slot = NULL;
+ 	void *entry;
+ 
++	if (id < idr->idr_base)
++		return ERR_PTR(-ENOENT);
++
+ 	id -= idr->idr_base;
+ 
+ 	entry = __radix_tree_lookup(&idr->idr_rt, id, &node, &slot);
+-- 
+2.7.4
 
-        if (!dentry)
-                return ERR_PTR(-ECHILD);
-@@ -1622,11 +1623,11 @@ static const char *proc_pid_get_link(struct
-dentry *dentry,
-        if (!proc_fd_access_allowed(inode))
-                goto out;
-
--       error = PROC_I(inode)->op.proc_get_link(dentry, &path);
-+       error = PROC_I(inode)->op.proc_get_link(dentry, &path, &link_mode);
-        if (error)
-                goto out;
-
--       nd_jump_link(&path);
-+       nd_jump_link(&path, link_mode);
-        return NULL;
- out:
-        return ERR_PTR(error);
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 9b7d8becb002..9c1d247177b1 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -163,7 +163,8 @@ static const struct dentry_operations
-tid_fd_dentry_operations = {
-        .d_delete       = pid_delete_dentry,
- };
-
--static int proc_fd_link(struct dentry *dentry, struct path *path)
-+static int proc_fd_link(struct dentry *dentry, struct path *path,
-+                       umode_t *link_mode)
- {
-        struct files_struct *files = NULL;
-        struct task_struct *task;
-@@ -184,6 +185,7 @@ static int proc_fd_link(struct dentry *dentry,
-struct path *path)
-                if (fd_file) {
-                        *path = fd_file->f_path;
-                        path_get(&fd_file->f_path);
-+                       *link_mode = /* something based on fd_file->f_mode */;
-                        ret = 0;
-                }
-                spin_unlock(&files->file_lock);
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index cd0c8d5ce9a1..a090fff984ed 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -74,7 +74,7 @@ extern struct kmem_cache *proc_dir_entry_cache;
- void pde_free(struct proc_dir_entry *pde);
-
- union proc_op {
--       int (*proc_get_link)(struct dentry *, struct path *);
-+       int (*proc_get_link)(struct dentry *, struct path *, umode_t *);
-        int (*proc_show)(struct seq_file *m,
-                struct pid_namespace *ns, struct pid *pid,
-                struct task_struct *task);
-===============================
