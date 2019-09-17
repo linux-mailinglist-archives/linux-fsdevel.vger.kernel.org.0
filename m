@@ -2,100 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 139CEB4E8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 14:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14D39B4EFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 15:17:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726131AbfIQMya (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Sep 2019 08:54:30 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:53039 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725901AbfIQMy3 (ORCPT
+        id S1726230AbfIQNRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Sep 2019 09:17:40 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44758 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbfIQNRk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Sep 2019 08:54:29 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x8HCsNLH023664
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Sep 2019 08:54:24 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 20CBE420811; Tue, 17 Sep 2019 08:54:23 -0400 (EDT)
-Date:   Tue, 17 Sep 2019 08:54:23 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Daegyu Han <hdg9400@gmail.com>
-Cc:     Eric Sandeen <sandeen@sandeen.net>, linux-fsdevel@vger.kernel.org
-Subject: Re: Sharing ext4 on target storage to multiple initiators using
- NVMeoF
-Message-ID: <20190917125423.GE6762@mit.edu>
-References: <CAARcW+r3EvFktaw-PfxN_V-EjtU6BvT7wxNvUtFiwHOdbNn2iA@mail.gmail.com>
- <bfa92367-f96a-8a4e-71c7-885956e10d0e@sandeen.net>
- <CAARcW+pLLABT9sq5LHykKmrcNjct8h64_6ePKeVGsOzeLgG8Tg@mail.gmail.com>
+        Tue, 17 Sep 2019 09:17:40 -0400
+Received: by mail-io1-f68.google.com with SMTP id j4so7381464iog.11;
+        Tue, 17 Sep 2019 06:17:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Jl0HYi/wSybOikBVzFsvD7tD+oFHCUuqw+qUrn2WMwI=;
+        b=jDuZ+02TICPZFr93IFgRPFO9FRoS7D1srTuINYcAWSSa6AylQVCvRk4ofdIJwxgzcF
+         2dL5IxXJ934mfRi9TMcrLRIVY4Dc1eRnrEL3nzPEskTjskcFgUKc0AZZBY/v45zxswGd
+         FLQ3AKzR3meQqY+Qjby3AWUR8uClRwA8Ps4xciE2Qvh9FU0LRU1skyL8dy0V1T6dB03M
+         gMwSf9jORmQ/xWF9ThzH3mKzwcZSOw4CX37BHeP5O3OyfQ/8OOvKLb+U3iW1Sb4/5cq7
+         zfWCTG48rIC1fggtMYu4zsS33t7si18KEjKYTj85fyoQXSQBE1VMleNXRJawIZx0iObS
+         PrjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Jl0HYi/wSybOikBVzFsvD7tD+oFHCUuqw+qUrn2WMwI=;
+        b=YI4gX3FiiNuMmmn5Q/Pvv67rlvNISIMvL1DKpwjvHEhF/EMuqgTEHa6P5fj96mI9bc
+         /cpHA64R0nEO4XhntzMpv3uIEh0hLUiWrGkvWsMmuLAdZvUEJlW3ukzC/GsG8/WJcdw/
+         VWqHsiXUdrn6YEVjJiX4EIdaP6eQ1bvkJ5gVzKxODDWYqjLww+yka+33qqjFJruj7Pm3
+         hZKpHvgnsf9OEpbV67ZxW6vdm4jkvGLHfy4WyXmNoTZLczcIN0BiiJrHmWMwUcZlHq3J
+         xawyeVFWm4M29MkTBlo1gjU4+AHvsbZbYn7feHBTqLAsEsEb38MQ23iky9i2VJlFIyrY
+         6crw==
+X-Gm-Message-State: APjAAAX6RQPaHmsR3C8qE93Xt6EI2dOAu97pXNsjx5w4fhhiev7lv0Rp
+        1g6gwHKqKHMqUwN+xG22wR1zhr7W4B67y/tSan4=
+X-Google-Smtp-Source: APXvYqyMH+XWckXQN9LtfWzHROcgWFxQ4magzkelq68Ejdb8+xSy6hCaDyMp5JKC2oJTPLab0VoLHvbUO+5y4CQSOKc=
+X-Received: by 2002:a5e:9314:: with SMTP id k20mr3389799iom.245.1568726256781;
+ Tue, 17 Sep 2019 06:17:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAARcW+pLLABT9sq5LHykKmrcNjct8h64_6ePKeVGsOzeLgG8Tg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190829161155.GA5360@magnolia> <20190830210603.GB5340@magnolia> <20190905034244.GL5340@magnolia>
+In-Reply-To: <20190905034244.GL5340@magnolia>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Tue, 17 Sep 2019 15:17:22 +0200
+Message-ID: <CAHpGcM+iYfqniKugC-enWnx+S3KT=8-YtY9RRcr4bVhG8GtkOA@mail.gmail.com>
+Subject: Re: [PATCH v2] splice: only read in as much information as there is
+ pipe buffer space
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 09:44:00AM +0900, Daegyu Han wrote:
-> It started with my curiosity.
-> I know this is not the right way to use a local filesystem and someone
-> would feel weird.
-> I just wanted to organize the situation and experiment like that.
-> 
-> I thought it would work if I flushed Node B's cached file system
-> metadata with the drop cache, but I didn't.
-> 
-> I've googled for something other than the mount and unmount process,
-> and I saw a StackOverflow article telling file systems to sync via
-> blockdev --flushbufs.
-> 
-> So I do the blockdev --flushbufs after the drop cache.
-> However, I still do not know why I can read the data stored in the
-> shared storage via Node B.
+Am Do., 5. Sept. 2019 um 05:42 Uhr schrieb Darrick J. Wong
+<darrick.wong@oracle.com>:
+> On Fri, Aug 30, 2019 at 02:06:03PM -0700, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <darrick.wong@oracle.com>
+> >
+> > Andreas Gr=C3=BCnbacher reports that on the two filesystems that suppor=
+t
+> > iomap directio, it's possible for splice() to return -EAGAIN (instead o=
+f
+> > a short splice) if the pipe being written to has less space available i=
+n
+> > its pipe buffers than the length supplied by the calling process.
+> >
+> > Months ago we fixed splice_direct_to_actor to clamp the length of the
+> > read request to the size of the splice pipe.  Do the same to do_splice.
+> >
+> > Fixes: 17614445576b6 ("splice: don't read more than available pipe spac=
+e")
+> > Reported-by: Andreas Gr=C3=BCnbacher <andreas.gruenbacher@gmail.com>
+> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > ---
+> > v2: tidy up the other call site per Andreas' request
+>
+> Ping?  Anyone want to add a RVB to this?
 
-There are many problems, but the primary one is that Node B has
-caches.  If it has a cached version of the inode table block, why
-should it reread it after Node A has modified it?  Also, the VFS also
-has negative dentry caches.  This is very important for search path
-performance.  Consider for example the compiler which may need to look
-in many directories for a particular header file.  If the C program has:
+You can add the following:
 
-#include "amazing.h"
+Reviewed-by: Andreas Gr=C3=BCnbacher <agruenba@redhat.com>
+Tested-by: Andreas Gr=C3=BCnbacher <agruenba@redhat.com>
 
-The C compiler may need to look in a dozen or more directories trying
-to find the header file amazing.h.  And each successive C compiler
-process will need to keep looking in all of those same directories.
-So the kernel will keep a "negative cache", so if
-/usr/include/amazing.h doesn't exist, it won't ask the file system
-when the 2nd, 3rd, 4th, 5th, ... compiler process tries to open
-/usr/include/amazing.h.
+And could you please update the email address in the reported-by tag as wel=
+l?
 
-You can disable all of the caches, but that makes the file system
-terribly, terribly slow.  What network file systems will do is they
-have schemes whereby they can safely cache, since the network file
-system protocol has a way that the client can be told that their
-cached information must be reread.  Local disk file systems don't have
-anything like this.
+Is this going to go in via the xfs tree?
 
-There are shared-disk file systems that are designed for
-multi-initiator setups.  Examples of this include gfs and ocfs2 in
-Linux.  You will find that they often trade performance for
-scalability to support multiple initiators.
-
-You can use ext4 for fallback schemes, where the primary server has
-exclusive access to the disk, and when the primary dies, the fallback
-server can take over.  The ext4 multi-mount protection scheme is
-designed for those sorts of use cases, and it's used by Lustre
-servers.  But only one system is actively reading or writing to the
-disk at a time, and the fallback server has to replay the journal, and
-assure that primary server won't "come back to life".  Those are
-sometimes called STONITH schemes ("shoot the other node in the head"),
-and might involve network controlled power strips, etc.
-
-Regards,
-
-						- Ted
+Thanks,
+Andreas
