@@ -2,126 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62764B46DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 07:31:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B825B46F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 07:47:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390897AbfIQFbl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Sep 2019 01:31:41 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35694 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730407AbfIQFbl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Sep 2019 01:31:41 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 205so1447946pfw.2;
-        Mon, 16 Sep 2019 22:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EQ0acRLPRiNkuyWsFFHOV/6xwzk+wEWY0J/gcpntvHs=;
-        b=TeorArZ8kq/CR+J83TcgIcoMMXb0AYK6talNwdUHRJVyf9VikpQmWsGf7w3UTHfQny
-         pDINeP/EhlRnYY9sMv2fum/y2ArzqdmeDG6hxpTklbaUPRN7YV9s+U7mOiT0H/fgCQDm
-         KIxM9/+sDhNZpzPWn/c7afHOZPoV/5MgIDG31sTYYhJmzI7Ej8GSRGomCI5/6RQ9WiLr
-         Nvki95KG/xig1NrsLMbSId2FLFpvMbvTlBNBD0ED8BG2PooD4xBLZK9Rg5ULlGRAP60L
-         zaD45mDMcL2jwgoEcrUVWYTZN+cQdMEJJTuMS/Vxl5SJayjoOQjwbgRoHqPhCPuFKmUG
-         psIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EQ0acRLPRiNkuyWsFFHOV/6xwzk+wEWY0J/gcpntvHs=;
-        b=bYTbXkAVcTlUyrnVw48jr5PLgn2vg7fWtCJaZ2eG4uSOvBKq9bMjFRQaxqU07lAAiL
-         LO1zry62i0NRnsz9BQf22Qy//+pNcAtiUWiB3F2XBYAXGou8OtiAHaIU8/ra9ks1glk5
-         won0V/76sKyidPgozkkr9ZcjxaehB8hg/psTfLhaWJ8UxF6zNrv7fWpcwp413DmNa0iN
-         LPnBspzA9uu9VhoA7XLjmnevS0GAzZ/DP2T31klgJFwgJLAaRPA3buYwPaIfbXEch3N/
-         hQH7pLFYIZ4xBwR3fpBIikt/EUjeDu7kplzMjSuJn1fm+5ud8pxy1GONzzhDryshZZbE
-         fd1g==
-X-Gm-Message-State: APjAAAX2M8FB4Ht/N7c1XZEMOrB2CI0DAgMsPmwDxJUvhvSTGFnKGBdZ
-        tMJ8bo/FhKFJTZ2DaE0IpMg=
-X-Google-Smtp-Source: APXvYqxR+x7zzJVajUqecslzP05unUQObpLjtCGBNhxJZNrfm+ZY01XHEVbEv4NirSM8n8X1LdMWug==
-X-Received: by 2002:aa7:8f08:: with SMTP id x8mr2368896pfr.48.1568698300250;
-        Mon, 16 Sep 2019 22:31:40 -0700 (PDT)
-Received: from arter97-x1.inha.ac.kr ([165.246.242.140])
-        by smtp.gmail.com with ESMTPSA id h2sm964076pfq.108.2019.09.16.22.31.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 22:31:39 -0700 (PDT)
-From:   Park Ju Hyung <qkrwngud825@gmail.com>
-To:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
-        namjae.jeon@samsung.com
-Cc:     alexander.levin@microsoft.com, devel@driverdev.osuosl.org,
-        linkinjeon@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sergey.senozhatsky@gmail.com
+        id S1726977AbfIQFra (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Sep 2019 01:47:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725922AbfIQFr3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Sep 2019 01:47:29 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77F6521670;
+        Tue, 17 Sep 2019 05:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568699249;
+        bh=AVcvkAscp3almTt+ZEb5Om2XnT1GXYzgOvOjeTLhP5Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=v9wfoakWHsdeotJc5pXYISTjrwqZexbCiTIuhdOrQtvMNg4XTUMr/k3LcnJeVOupj
+         Sv6ly9dTXs3uYL37+wVwcYdQj+o+SXRS+8t82/j2zAdCGkTYbpp8qg7anTE1ivyEMr
+         pRnEYQ/X09TIK+rzlkpGmQhl0VCYl0XrXoscPzgs=
+Date:   Tue, 17 Sep 2019 07:47:26 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Park Ju Hyung <qkrwngud825@gmail.com>
+Cc:     valdis.kletnieks@vt.edu, namjae.jeon@samsung.com,
+        devel@driverdev.osuosl.org, linkinjeon@gmail.com,
+        linux-kernel@vger.kernel.org, alexander.levin@microsoft.com,
+        sergey.senozhatsky@gmail.com, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to
-Date:   Tue, 17 Sep 2019 14:31:34 +0900
-Message-Id: <20190917053134.27926-1-qkrwngud825@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <8998.1568693976@turing-police>
+Message-ID: <20190917054726.GA2058532@kroah.com>
 References: <8998.1568693976@turing-police>
+ <20190917053134.27926-1-qkrwngud825@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190917053134.27926-1-qkrwngud825@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 17 Sep 2019 00:19:36 -0400, "Valdis Klētnieks" said:
-> I'm working off a somewhat cleaned up copy of Samsung's original driver,
-> because that's what I had knowledge of.  If the sdfat driver is closer to being
-> mergeable, I'd not object if that got merged instead.
+On Tue, Sep 17, 2019 at 02:31:34PM +0900, Park Ju Hyung wrote:
+> On Tue, 17 Sep 2019 00:19:36 -0400, "Valdis Klētnieks" said:
+> > I'm working off a somewhat cleaned up copy of Samsung's original driver,
+> > because that's what I had knowledge of.  If the sdfat driver is closer to being
+> > mergeable, I'd not object if that got merged instead.
+> 
+> Greg, as Valdis mentioned here, the staging tree driver is just another exFAT fork
+> from Samsung.
+> What's the point of using a much older driver?
 
-Greg, as Valdis mentioned here, the staging tree driver is just another exFAT fork
-from Samsung.
-What's the point of using a much older driver?
+It's the fact that it actually was in a form that could be merged, no
+one has done that with the sdfat code :)
 
-sdFAT is clearly more matured and been put into more recent production softwares.
-And as I wrote in previous email, it does include some real fixes.
+> sdFAT is clearly more matured and been put into more recent production softwares.
+> And as I wrote in previous email, it does include some real fixes.
 
-As Namjae said too, Samsung would be more interested in merging sdFAT to upstream.
-If we diverge, Samsung will have less reasons to contribute their patches to upstream.
+What fixes?  That's what I'm asking here.
 
-Also, I think it makes much more sense to make Samsung the maintainer of this driver
-(if they're willing to put in the manpower to do so). Asking them would be the first
-step in doing so.
+How do we "know" that this is better than what we currently have today?
+We don't, so it's a bit hard to tell someone, "delete the work you did
+and replace it with this other random chunk of code, causing you a bunch
+more work in the process for no specific reason other than it looks
+'newer'." :(
 
-> But here's the problem... Samsung has their internal sdfat code, Park Yu Hyung
-> has what appears to be a fork of that code from some point (and it's unclear ,
-> and it's unclear which one has had more bugfixes and cleanups to get it to
-> somewhere near mainline mergeable.
+> As Namjae said too, Samsung would be more interested in merging sdFAT to upstream.
+> If we diverge, Samsung will have less reasons to contribute their patches to upstream.
 
-I made it extremely clear on where I took the code.
+Are they going to do this if we do take the sdfat code?  If so, great,
+but I need to get someone to agree that this will happen.
 
-The initial commit: "sdfat: import from G973FXXU3ASG8" states which kernel source
-I used.
+> Also, I think it makes much more sense to make Samsung the maintainer of this driver
+> (if they're willing to put in the manpower to do so). Asking them would be the first
+> step in doing so.
 
-You can simply search "G973FXXU3ASG8" on http://opensource.samsung.com and download
-the source code. It'll match exactly with my initial commit.
+They are more than willing to start contributing and being a
+co-maintainer of it, it needs all the help it can get.
 
-My repository is basically rename + clean-up + older kernel compat.
+But "someone" from samsung, or anywhere else, has to be willing to step
+up here and do this work.  Without that happening, I don't see a reason
+to change at this point in time.
 
-I think we can all agree that using the sdFAT naming on non-Android is very
-misleading, which is why I renamed it to exFAT.
+Rembember, kernel development happens because people do the work, which
+Valdis did, and continues to do.  Throwing that away because of the
+thought that someone else might do some work in the future is not how we
+work.
 
-sdFAT includes support for fat16/32, and as also mentioned in
-https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/commit/?h=staging-next&id=58985a9d2d03e977db93bf574a16162766a318fe
-this isn't desirable, especially in mainline.
-I cleaned it up and removed some other Samsung's code that relies on proprietary
-userspace tools such as defrag.
+I recommend looking at what we have in the tree now, and seeing what is
+missing compared to "sdfat".  I know a lot of places in the exfat code
+that needs to be fixed up, odds are they are the same stuff that needs
+to be resolved in sdfat as well.
 
-I believe my repository is in the cleanest state for getting merged to mainline,
-compared to other drivers avilable out there.
+thanks,
 
-If we happen to pick it to mainline, I think it'll also be quite trivial for Samsung
-to pick mainline patches back to their sdFAT drivers used in Galaxy devices.
-
-> Can you provide a pointer to what Samsung is *currently* using? We probably
-> need to stop and actually look at the code bases and see what's in the best
-> shape currently.
-
-Namjae could probably elaborate here, but if I were to guess, there wasn't a
-noticeable difference in recent sdFAT releases. Even the lastest Note10 kernel only
-had some uevent changes.
-
-I think the current latest public source's driver is the best one available.
-
-Thanks.
+greg k-h
