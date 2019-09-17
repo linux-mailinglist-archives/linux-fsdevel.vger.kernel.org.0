@@ -2,123 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C399B44BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 01:57:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73433B44EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Sep 2019 02:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbfIPX44 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Sep 2019 19:56:56 -0400
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:51303 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728891AbfIPX44 (ORCPT
+        id S1732642AbfIQAoD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Sep 2019 20:44:03 -0400
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:41025 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729818AbfIQAoD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Sep 2019 19:56:56 -0400
-Received: by mail-qt1-f202.google.com with SMTP id e13so1450911qto.18
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2019 16:56:56 -0700 (PDT)
+        Mon, 16 Sep 2019 20:44:03 -0400
+Received: by mail-lj1-f170.google.com with SMTP id f5so1657132ljg.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Sep 2019 17:44:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=bJmZANwzCFV2Iqz4LhMyBOSdTmADhZHqEPwCse8wah0=;
-        b=sUGJYOj1o9xCwXnv4wc+rHf8HlX3D1AlYIvZvyfihO9GHGvXi79ynXEVh/2RhqczAz
-         W+684pXzoiyFxTsRk9OmIKGhzVP04cxmhPod4hK6vh/4Y6ekcZzsm0U+/20KsWPN+XE7
-         /fXzxWAz8FiAfivCllUrUfspG4b1EtSjjNZ+pYwcsJLvU4Vip/1+kehaDdo13Zyjiqut
-         aaK9e8E8fR3smRXhz9TtmNYk9W9VrGnNqpOjZPlcM2GH1ylMQYyzoxrB0lGaWQ8fwGSu
-         UiEMQZh272qaXObuaGLMxfyS3y1staHLcfHBXQYkTatdxKpnVEdSJijAeHe8G9DZw6bN
-         JK0A==
+        bh=CmepM7tyQZLkqWxX8WjGWF6487Y7gA06HRFKZw4di9c=;
+        b=Z7LC7EB/yDzgFtDgxXqzybdaPs1rNG8sXOa8dHtngNYNASYRduTiAQWsDt0czYUlzR
+         ZK1R0hWOSbijKQk3rth+OdlHrWiXk4s5uIyundZ51cOusZr/9Xyi8+vOAJpqSA+DOvZW
+         ig22vd3LygvxiMI8DA1kTLgWIutt81GT4dE6EghRPodILycsLaZPQu6gK1mqHvLkNlyk
+         e46KLQf+mLMbn+WunGRF8jPbaMPdkWNd0a00u9fsC/DByD42PxAK9POGfIhSGCb1iu50
+         SKL3o8ZLiffn6jHdD48yR9Q3J+Ky2hnCR70th9S/MSgR9e22fd6lV+ytSerrttAXj+QP
+         zAdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=bJmZANwzCFV2Iqz4LhMyBOSdTmADhZHqEPwCse8wah0=;
-        b=SSaJfWLwJkpK6kvMS4XV91P6Hxa9FuclyF1QSZnZKn7DNXcine3HhTy52jZVLw35eo
-         mFcxDHxMyGpKVqz/N3G3biow/h0JD69+qkPohPqzd0w0MyDRxwW1Z5ZoJ9CjA6hqL8Aq
-         9YeLu2VY7CatC5DCLHRbjGV9jE0SnhExadQSE2hA26+AMOgXlwjTXKDdYRAYW+BvcAJc
-         hdkJPViVem4+vamyFjULWzczB+G3FOxh7m2W1UWsMVhNZroltg75o7qhb6uncsHubdKG
-         Q6o+T32UIgKgaacuSKCTZYQGw1tsjcmidm+vpGnbtJHhT2aZ3NZmyk+9ZcoMwPvd0772
-         wRJg==
-X-Gm-Message-State: APjAAAWbRE0yRFd7yCgbu6OXPnfhihN/LfR1o7vlfdmBKR2sFIqYmcYl
-        2Ucvh30KH6LzO2BClET8iD80bCzfNrU=
-X-Google-Smtp-Source: APXvYqwcRpAFsOLDZFs5gKrwwLxNf7Ug2TgXqFTU+omF07IxxIzz4SMFzPqGErLVhC+LGxmgdbZpsHquImU=
-X-Received: by 2002:aed:3c52:: with SMTP id u18mr1080316qte.194.1568678215490;
- Mon, 16 Sep 2019 16:56:55 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 16:56:42 -0700
-In-Reply-To: <20190916235642.167583-1-khazhy@google.com>
-Message-Id: <20190916235642.167583-2-khazhy@google.com>
-Mime-Version: 1.0
-References: <20190916235642.167583-1-khazhy@google.com>
-X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
-Subject: [PATCH v3 2/2] fuse: kmemcg account fs data
-From:   Khazhismel Kumykov <khazhy@google.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shakeelb@google.com, Khazhismel Kumykov <khazhy@google.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=CmepM7tyQZLkqWxX8WjGWF6487Y7gA06HRFKZw4di9c=;
+        b=gMxnRzHM2JKDgALxRHFtT/o80hMRaZqQlK9MdEdcCcZ5oyFIugn4aDC9TxG5zOMBeJ
+         akV7GEOQa9VabAg5w62E+mAf9zcuKxW9FQvbK+87ggC3kKgrs4qB3y5xjJtRQztfRZXY
+         yJjCGQUS394k/Xily2SuqKHUCXDaDFjedWcu3M/Uek2fdinx8zmYTPJS7dEvlDspAHnG
+         ZPx5spJ8eOyurv6+hzefmpCfHheaw+r7eNAUGASaElYz5ecJ3qT4urRR0fzm/zDoBMHL
+         EzxoW667bfLj4VHYX+wFBywqMKCOzY31FOq6Ytg3BxjFRVtpqcwgdEvbtCWTK3CZ+VXi
+         9hXQ==
+X-Gm-Message-State: APjAAAXdMdYpZwImzHIFE8pX289y84U1mnTssrcuEdeXs6+C83OhQ2Ke
+        LG1paWckWLhzjMQ8/U4iiLjjgt+wV+W6GCX8tPhxkA==
+X-Google-Smtp-Source: APXvYqzUYF2ihRaBnVvfQlUORvkVbh1ugM2QqnaPhxQbrCPhS3VlliVQ6thpuRVctu3V2kIMmFWb9Ob5RRLdvVfBHyo=
+X-Received: by 2002:a2e:9981:: with SMTP id w1mr271802lji.155.1568681041286;
+ Mon, 16 Sep 2019 17:44:01 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:e00f:0:0:0:0:0 with HTTP; Mon, 16 Sep 2019 17:44:00
+ -0700 (PDT)
+In-Reply-To: <bfa92367-f96a-8a4e-71c7-885956e10d0e@sandeen.net>
+References: <CAARcW+r3EvFktaw-PfxN_V-EjtU6BvT7wxNvUtFiwHOdbNn2iA@mail.gmail.com>
+ <bfa92367-f96a-8a4e-71c7-885956e10d0e@sandeen.net>
+From:   Daegyu Han <hdg9400@gmail.com>
+Date:   Tue, 17 Sep 2019 09:44:00 +0900
+Message-ID: <CAARcW+pLLABT9sq5LHykKmrcNjct8h64_6ePKeVGsOzeLgG8Tg@mail.gmail.com>
+Subject: Re: Sharing ext4 on target storage to multiple initiators using NVMeoF
+To:     Eric Sandeen <sandeen@sandeen.net>
+Cc:     linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-account per-file, dentry, and inode data
+It started with my curiosity.
+I know this is not the right way to use a local filesystem and someone
+would feel weird.
+I just wanted to organize the situation and experiment like that.
 
-blockdev/superblock and temporary per-request data was left alone, as
-this usually isn't accounted
+I thought it would work if I flushed Node B's cached file system
+metadata with the drop cache, but I didn't.
 
-Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
----
- fs/fuse/dir.c   | 3 ++-
- fs/fuse/file.c  | 5 +++--
- fs/fuse/inode.c | 3 ++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+I've googled for something other than the mount and unmount process,
+and I saw a StackOverflow article telling file systems to sync via
+blockdev --flushbufs.
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 58557d4817e9..d572c900bb0f 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -279,7 +279,8 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
- #if BITS_PER_LONG < 64
- static int fuse_dentry_init(struct dentry *dentry)
- {
--	dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry), GFP_KERNEL);
-+	dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry),
-+				   GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
- 
- 	return dentry->d_fsdata ? 0 : -ENOMEM;
- }
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index a2ea347c4d2c..862aff3665b5 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -63,12 +63,13 @@ struct fuse_file *fuse_file_alloc(struct fuse_conn *fc)
- {
- 	struct fuse_file *ff;
- 
--	ff = kzalloc(sizeof(struct fuse_file), GFP_KERNEL);
-+	ff = kzalloc(sizeof(struct fuse_file), GFP_KERNEL_ACCOUNT);
- 	if (unlikely(!ff))
- 		return NULL;
- 
- 	ff->fc = fc;
--	ff->release_args = kzalloc(sizeof(*ff->release_args), GFP_KERNEL);
-+	ff->release_args = kzalloc(sizeof(*ff->release_args),
-+				   GFP_KERNEL_ACCOUNT);
- 	if (!ff->release_args) {
- 		kfree(ff);
- 		return NULL;
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 3d598a5bb5b5..6cb445bed89d 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -66,7 +66,8 @@ static struct file_system_type fuseblk_fs_type;
- 
- struct fuse_forget_link *fuse_alloc_forget(void)
- {
--	return kzalloc(sizeof(struct fuse_forget_link), GFP_KERNEL);
-+	return kzalloc(sizeof(struct fuse_forget_link),
-+		       GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
- }
- 
- static struct inode *fuse_alloc_inode(struct super_block *sb)
--- 
-2.23.0.237.gc6a4ce50a0-goog
+So I do the blockdev --flushbufs after the drop cache.
+However, I still do not know why I can read the data stored in the
+shared storage via Node B.
 
+Thank you,
+
+2019-09-17 4:23 GMT+09:00, Eric Sandeen <sandeen@sandeen.net>:
+>
+>
+> On 9/16/19 9:33 AM, Daegyu Han wrote:
+>> Hi linux file system experts,
+>>
+>> I want to share ext4 on the storage server to multiple initiators(node
+>> A,B) using NVMeoF.
+>> Node A will write file to ext4 on the storage server, and I will mount
+>> read-only option on Node B.
+>>
+>> Actually, the reason I do this is for a prototype test.
+>>
+>> I can't see the file's dentry and inode written in Node A on Node B
+>> unless remount(umount and then mount) it.
+>>
+>> Why is that?
+>
+> Caching, metadata journaling, etc.
+>
+> What you are trying to do will not work.
+>
+>> I think if there is file system cache(dentry, inode) on Node B, then
+>> disk IO will occur to read the data written by Node A.
+>
+> why would it?  there is no coordination between the nodes.  ext4 is
+> not a clustered filesystem.
+>
+>> Curiously, drop cache on Node B and do blockdev --flushbufs, then I
+>> can access the file written by Node A.
+>>
+>> I checked the kernel code and found that flushbufs incurs
+>> sync_filesystem() which flushes the superblock and all dirty file
+>> system caches.
+>>
+>> Should the superblock data structure be flushed (updated) when
+>> accessing the disk inode?
+>
+> It has nothing to do w/ the superblock.
+>
+>> I wonder why this happens.
+>
+> ext4 cannot be used for what you're trying to do.
+>
+> -Eric
+>
