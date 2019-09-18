@@ -2,185 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8C4EB6508
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 15:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CBF8B6728
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 17:32:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729967AbfIRNvX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 09:51:23 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:21992 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbfIRNvV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 09:51:21 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        id S1729997AbfIRPcw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 11:32:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34820 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfIRPcw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Sep 2019 11:32:52 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1153B611BE; Wed, 18 Sep 2019 15:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568820771;
+        bh=TNmAPCB7e2qEqf6X6jXwm3UGb2yqNQTB+ZXg9tdTpQ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OpcRnCZTCW6E4/7RqkverZwxbwC+kRsF1qSbrSw1RD+WyM+CbiBtNIOXl2/W5zXZF
+         jmFKPyA79C0l+w6zXXmy4VzHZ9bpAPdsindefawaxQYadfzqWbUPAIfaOEcgBQemsK
+         ihUXknr5Lw/NRp9zhrdnrciufcF6j4pMcYaQeA2g=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 4C49450BA7;
-        Wed, 18 Sep 2019 15:51:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id LF0_75sV9oFp; Wed, 18 Sep 2019 15:51:08 +0200 (CEST)
-Date:   Wed, 18 Sep 2019 15:51:00 +0200
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-alpha@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        sparclinux@vger.kernel.org
-Subject: Re: [PATCH v12 05/12] namei: obey trailing magic-link DAC permissions
-Message-ID: <20190918135100.sdxdmdluq6wlwryv@yavin.microfocus.com>
-References: <20190904201933.10736-1-cyphar@cyphar.com>
- <20190904201933.10736-6-cyphar@cyphar.com>
- <CAG48ez1_64249RdX6Nj_32YS+jhuXZBAd_ZL9ozggbSQy+cc-A@mail.gmail.com>
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 11D456034D;
+        Wed, 18 Sep 2019 15:32:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568820770;
+        bh=TNmAPCB7e2qEqf6X6jXwm3UGb2yqNQTB+ZXg9tdTpQ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EA/X6sJt/OwsZs68vHUGHAlVHrrFC1qbanywuabEu6rk/6VZRkIkegBN+AhImTk3z
+         /Yl/GAiL6XrIQhn3wa9+BHtW39EGDE2MASsOjlzYtvQJLMhzmjXpbo74EY4rIUpPsl
+         76sHfF/0JMocsmg6t9j8PrvYOfwA0AQ245+Pmt1c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11D456034D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Wed, 18 Sep 2019 09:32:48 -0600
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] idr: Prevent unintended underflow for the idr index
+Message-ID: <20190918153248.GC25762@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
+        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1568756922-2829-1-git-send-email-jcrouse@codeaurora.org>
+ <20190918115058.GB9880@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gouyu6bptahztw3s"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez1_64249RdX6Nj_32YS+jhuXZBAd_ZL9ozggbSQy+cc-A@mail.gmail.com>
+In-Reply-To: <20190918115058.GB9880@bombadil.infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---gouyu6bptahztw3s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2019-09-17, Jann Horn <jannh@google.com> wrote:
-> On Wed, Sep 4, 2019 at 10:21 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > The ability for userspace to "re-open" file descriptors through
-> > /proc/self/fd has been a very useful tool for all sorts of usecases
-> > (container runtimes are one common example). However, the current
-> > interface for doing this has resulted in some pretty subtle security
-> > holes. Userspace can re-open a file descriptor with more permissions
-> > than the original, which can result in cases such as /proc/$pid/exe
-> > being re-opened O_RDWR at a later date even though (by definition)
-> > /proc/$pid/exe cannot be opened for writing. When combined with O_PATH
-> > the results can get even more confusing.
-> [...]
-> > Instead we have to restrict it in such a way that it doesn't break
-> > (good) users but does block potential attackers. The solution applied in
-> > this patch is to restrict *re-opening* (not resolution through)
-> > magic-links by requiring that mode of the link be obeyed. Normal
-> > symlinks have modes of a+rwx but magic-links have other modes. These
-> > magic-link modes were historically ignored during path resolution, but
-> > they've now been re-purposed for more useful ends.
->=20
-> Thanks for dealing with this issue!
->=20
-> [...]
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 209c51a5226c..54d57dad0f91 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -872,7 +872,7 @@ void nd_jump_link(struct path *path)
-> >
-> >         nd->path =3D *path;
-> >         nd->inode =3D nd->path.dentry->d_inode;
-> > -       nd->flags |=3D LOOKUP_JUMPED;
-> > +       nd->flags |=3D LOOKUP_JUMPED | LOOKUP_MAGICLINK_JUMPED;
-> >  }
-> [...]
-> > +static int trailing_magiclink(struct nameidata *nd, int acc_mode,
-> > +                             fmode_t *opath_mask)
-> > +{
-> > +       struct inode *inode =3D nd->link_inode;
-> > +       fmode_t upgrade_mask =3D 0;
+On Wed, Sep 18, 2019 at 04:50:58AM -0700, Matthew Wilcox wrote:
+> On Tue, Sep 17, 2019 at 03:48:42PM -0600, Jordan Crouse wrote:
+> > It is possible for unaware callers of several idr functions to accidentally
+> > underflow the index by specifying a id that is less than the idr base.
+> 
+> Hi Jordan.  Thanks for the patch, but this seems like a distinction
+> without a difference.
+> 
+> >  void *idr_remove(struct idr *idr, unsigned long id)
+> >  {
+> > +	if (id < idr->idr_base)
+> > +		return NULL;
 > > +
-> > +       /* Was the trailing_symlink() a magic-link? */
-> > +       if (!(nd->flags & LOOKUP_MAGICLINK_JUMPED))
-> > +               return 0;
+> >  	return radix_tree_delete_item(&idr->idr_rt, id - idr->idr_base, NULL);
+> 
+> If this underflows, we'll try to delete an index which doesn't exist,
+> which will return NULL.
+> 
+> >  void *idr_find(const struct idr *idr, unsigned long id)
+> >  {
+> > +	if (id < idr->idr_base)
+> > +		return NULL;
 > > +
-> > +       /*
-> > +        * Figure out the upgrade-mask of the link_inode. Since these a=
-ren't
-> > +        * strictly POSIX semantics we don't do an acl_permission_check=
-() here,
-> > +        * so we only care that at least one bit is set for each upgrad=
-e-mode.
-> > +        */
-> > +       if (inode->i_mode & S_IRUGO)
-> > +               upgrade_mask |=3D FMODE_PATH_READ;
-> > +       if (inode->i_mode & S_IWUGO)
-> > +               upgrade_mask |=3D FMODE_PATH_WRITE;
-> > +       /* Restrict the O_PATH upgrade-mask of the caller. */
-> > +       if (opath_mask)
-> > +               *opath_mask &=3D upgrade_mask;
-> > +       return may_open_magiclink(upgrade_mask, acc_mode);
-> >  }
->=20
-> This looks racy because entries in the file descriptor table can be
-> switched out as long as task->files->file_lock isn't held. Unless I'm
-> missing something, something like the following (untested) would
-> bypass this restriction:
+> >  	return radix_tree_lookup(&idr->idr_rt, id - idr->idr_base);
+> 
+> If this underflows, we'll look up an entry which doesn't exist, which
+> will return NULL.
+> 
+> > @@ -302,6 +308,9 @@ void *idr_replace(struct idr *idr, void *ptr, unsigned long id)
+> >  	void __rcu **slot = NULL;
+> >  	void *entry;
+> >  
+> > +	if (id < idr->idr_base)
+> > +		return ERR_PTR(-ENOENT);
+> > +
+> >  	id -= idr->idr_base;
+> >  
+> >  	entry = __radix_tree_lookup(&idr->idr_rt, id, &node, &slot);
+> 
+> ... just outside the context is this line:
+>         if (!slot || radix_tree_tag_get(&idr->idr_rt, id, IDR_FREE))
+>                 return ERR_PTR(-ENOENT);
+> 
+> Looking up an index which doesn't exist gets you a NULL slot, so you get
+> -ENOENT anyway.
+> 
+> I did think about these possibilities when I was writing the code and
+> convinced myself I didn't need them.  If you have an example of a case
+> where I got thast wrong, I'd love to see it.
+> 
+> More generally, the IDR is deprecated; I'm trying to convert users to
+> the XArray.  If you're adding a new user, can you use the XArray API
+> instead?
 
-You're absolutely right -- good catch!
+Thanks for the explanation. I happened to walk by while code inspecting an
+existing out-of-tree user and thought there might be a small hole to fill
+but I agree it is unlikely that the underflow is likely to be a valid id.
 
-> Perhaps you could change nd_jump_link() to "void nd_jump_link(struct
-> path *path, umode_t link_mode)", and let proc_pid_get_link() pass the
-> link_mode through from an out-argument of .proc_get_link()? Then
-> proc_fd_link() could grab the proper mode in a race-free manner. And
-> nd_jump_link() could stash the mode in the nameidata.
-
-This indeed does appear to be the simplest solution -- I'm currently
-testing a variation of the patch you proposed (with a few extra bits to
-deal with nd_jump_link and proc_get_link being used elsewhere).
-
-I'll include this change (assuming it fixes the flaw you found) in the
-v13 series I'll send around next week. Thanks, Jann!
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---gouyu6bptahztw3s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXYI2QQAKCRCdlLljIbnQ
-EmFyAQDaPj8ZCZBcO2zL0gyE8hzxrvDfq7RVsdmeagxmIbg+wQD+JIZBdpjvnXYQ
-ZNsb7Dh/C5zkird/0LE1VGr7KfjKnQU=
-=4db+
------END PGP SIGNATURE-----
-
---gouyu6bptahztw3s--
+Jordan
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
