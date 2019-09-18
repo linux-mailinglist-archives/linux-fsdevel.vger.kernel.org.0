@@ -2,83 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF17B6D16
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 21:58:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E35A8B6D37
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 22:04:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389107AbfIRT6b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 15:58:31 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:51523 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389099AbfIRT6b (ORCPT
+        id S2389946AbfIRUEl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 16:04:41 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36937 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389939AbfIRUEl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 15:58:31 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MhDN4-1hfDDh3bTG-00eJBE; Wed, 18 Sep 2019 21:58:24 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Kirill Smelkov <kirr@nexedi.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fuse: unexport fuse_put_request
-Date:   Wed, 18 Sep 2019 21:58:16 +0200
-Message-Id: <20190918195822.2172687-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Wed, 18 Sep 2019 16:04:41 -0400
+Received: by mail-lj1-f193.google.com with SMTP id l21so1210986lje.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 13:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=01Y6x1zvemzBJQWLxE4DBoZbhxORfd/lyc86dODNTds=;
+        b=TgS0uVH24w0R1Fkx0c26UZGHv0NIDmFwVNEVRMK1sKN+11sFoguy/eWP2GRt5ktatK
+         UA1N2CCdZVRk0AzXAIkyAiGcU+CQMl7qwnLRwXX/dvh+2CuQv3QJ6XM8shRLCQNTFIMt
+         V4BgdJc75+s4V8iriJV0BM7ZT7q18LRacAIfg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=01Y6x1zvemzBJQWLxE4DBoZbhxORfd/lyc86dODNTds=;
+        b=CZpa6osI2DrYFOyMyAX+DIBoRjRnR/zK3ZqPq8M3X2VeCSEN3wA34InVxY/lYO6UbD
+         aFMZUKdAdP8YWRdIIcKTBjveuIOpRF/M8XuEWnGRrz963lzKbt3Tl0UUHxLjDZOaQfRO
+         WezLEyeBPwFta5WQZF/9zQiX0DB/LOiR/edL1NKrhKCH+OnDTKbKlIN+A2vvpguVNz69
+         9gKOunaPAdRxgd20CYtaF+0kLvMRGy3LggokgB75eaxUF8jXXTiVzt2elpobB0Or1Gdc
+         dqpoByKj4tf2oUwJ153Q6t9duegYMoaAfgHVLzYytlCWuEPvkLEyjXy+XRsEiKl0FtGw
+         S2Og==
+X-Gm-Message-State: APjAAAVuK10MSPCJ2+obeCpa3gGElWO47w4RmN1KF0ZFBv45XNi8aYqF
+        Sa9b+xCc22Mt585NvGbSsLxGqxvn06w=
+X-Google-Smtp-Source: APXvYqxnibegphiA7vnkf+ARBkHzjHxkOdEhJBx4sbY3Z3ETgxlVyZEL/DKTBVKLibVTw5V01s32bQ==
+X-Received: by 2002:a2e:90c6:: with SMTP id o6mr3284902ljg.144.1568837079016;
+        Wed, 18 Sep 2019 13:04:39 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id k16sm1218060lje.56.2019.09.18.13.04.37
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2019 13:04:37 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id m13so1150499ljj.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 13:04:37 -0700 (PDT)
+X-Received: by 2002:a2e:8943:: with SMTP id b3mr3228332ljk.165.1568837077303;
+ Wed, 18 Sep 2019 13:04:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:aZxKUK3JTH0fyFK7KFMxUFxerV6cXmaaVj60LXyUF7W4ep0GFSP
- i0cIPYK+C0J3asHoHzYYJNXzp8uN4MjZ6jSdpaBjh6NQxwhppJRR9y/QotpsjVXoXUjoHCZ
- OGsiWOue3oRHdc32GJ/105e+IOXqA1d/ehm0TPDAgNctUPDUcqRfbNfm9QNIbYLN73JbINN
- X4DqxBYlhm+wnO/a1Fzhg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Nvmg6C1/Dmw=:UaquQwaWhHljTnDxMH2bQQ
- ddus6SBgYP+7dEgDcDrqK/z7n0mklCmoG1CrHi3AU0lBSdLwbfdXiJ8tbPG6NJ3Y2JvOkxFNr
- FEm+IdPDbTKCmZRuKHFBu/qg8HOn09nVO3DS0SYxBk7BJj2uaresnbXCSYe2FhL+p8banqWxP
- +PFNo2PKcMjDfQAHEEzQBOaQSU6RvghXSKVmxjPqXqr09Ut3fVgKZSVTsm75Gs3eROYYDH47r
- SDVxycHQXJ3v08JPrDJg21iPXVBkabQiRzvhl3g6mRRLiZ2VEnA/LiE6uoWMZscZZ67DUPmMJ
- 5/1Zhx4GUsWUnw9yxkJgcLlj0/1WNSXQ+ZlkBf+968EIk3ucOIRcak6DnIX5iGd0K4nNveu4e
- ZIwGzH4z+t3v5cqBk3O+XW6qt5dxqUNgA67NUuZqEb2j/xhOAkXaVUQgGQS63SIC0s5CWV6gF
- Q+oaNSDPIGj8qA6a/fbrAACW3Lv7HebRF/f4O2gutaPMPPJrywnOgj9ExdTxVEOn0vjnCRD/O
- DREmOdntCF5Zt9hulgHtpCLvarTcg8koeYR8Qpn3ACd12ss3+xDAekLTRqY9/i4H7inZjodkG
- T4jvfFERJJryL7g2ocCdAM9iYXxZJFFv8J2kjsEuaKimax0b6hjzvV65koWgLTZaVWkeuPahV
- nPJtSJ8BzKq+tAtXqkHyZB5NxI3AhfilDiH8BI34UcchhtFy0bRYRBoPKZke+KXmDqd9BpLQl
- XMStkwyivCMjcy3pK/vkYK2VO1aJw86Z1sBfh3drz6VpHuYp59pBvDDJ/3BTqyjdIA9Fbjxlt
- dDVSG8mHpY1lJWGP2dJZcmYiqb2DZNDGbX9hmbZapcJiHC1FwAikf92FMFBTSbnvTqpQUGUcX
- DciNlhDXVwfmUD3fk0HA==
+References: <20190917013548.GD1131@ZenIV.linux.org.uk>
+In-Reply-To: <20190917013548.GD1131@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 18 Sep 2019 13:04:21 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgKEdDnCBE40D-S=ZdekJjhU_WJAjnXq3LCGZLgE5SU_w@mail.gmail.com>
+Message-ID: <CAHk-=wgKEdDnCBE40D-S=ZdekJjhU_WJAjnXq3LCGZLgE5SU_w@mail.gmail.com>
+Subject: Re: [git pull] vfs.git #work.namei
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This function has been made static, which now causes
-a compile-time warning:
+On Mon, Sep 16, 2019 at 6:35 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         pathwalk-related stuff
 
-WARNING: "fuse_put_request" [vmlinux] is a static EXPORT_SYMBOL_GPL
+That could have done with a few more words of explanation.
 
-Remove the unneeded export.
+I added "Audit-related cleanups, misc simplifications, and easier to
+follow nd->root refcounts"
 
-Fixes: 66abc3599c3c ("fuse: unexport request ops")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/fuse/dev.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 46d68d439c41..e367c639bb2b 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -175,7 +175,6 @@ static void fuse_put_request(struct fuse_conn *fc, struct fuse_req *req)
- 		fuse_request_free(req);
- 	}
- }
--EXPORT_SYMBOL_GPL(fuse_put_request);
- 
- unsigned int fuse_len_args(unsigned int numargs, struct fuse_arg *args)
- {
--- 
-2.20.0
-
+            Linus
