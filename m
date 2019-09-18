@@ -2,128 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CBF8B6728
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 17:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC69AB6732
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 17:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbfIRPcw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 11:32:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34820 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbfIRPcw (ORCPT
+        id S2387502AbfIRPfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 11:35:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59200 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729873AbfIRPfS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 11:32:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1153B611BE; Wed, 18 Sep 2019 15:32:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568820771;
-        bh=TNmAPCB7e2qEqf6X6jXwm3UGb2yqNQTB+ZXg9tdTpQ4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OpcRnCZTCW6E4/7RqkverZwxbwC+kRsF1qSbrSw1RD+WyM+CbiBtNIOXl2/W5zXZF
-         jmFKPyA79C0l+w6zXXmy4VzHZ9bpAPdsindefawaxQYadfzqWbUPAIfaOEcgBQemsK
-         ihUXknr5Lw/NRp9zhrdnrciufcF6j4pMcYaQeA2g=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 11D456034D;
-        Wed, 18 Sep 2019 15:32:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568820770;
-        bh=TNmAPCB7e2qEqf6X6jXwm3UGb2yqNQTB+ZXg9tdTpQ4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EA/X6sJt/OwsZs68vHUGHAlVHrrFC1qbanywuabEu6rk/6VZRkIkegBN+AhImTk3z
-         /Yl/GAiL6XrIQhn3wa9+BHtW39EGDE2MASsOjlzYtvQJLMhzmjXpbo74EY4rIUpPsl
-         76sHfF/0JMocsmg6t9j8PrvYOfwA0AQ245+Pmt1c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11D456034D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Wed, 18 Sep 2019 09:32:48 -0600
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] idr: Prevent unintended underflow for the idr index
-Message-ID: <20190918153248.GC25762@jcrouse1-lnx.qualcomm.com>
-Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
-        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1568756922-2829-1-git-send-email-jcrouse@codeaurora.org>
- <20190918115058.GB9880@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190918115058.GB9880@bombadil.infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 18 Sep 2019 11:35:18 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8IFWEuf092920
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 11:35:17 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v3pcrthga-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 11:35:16 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <maier@linux.ibm.com>;
+        Wed, 18 Sep 2019 16:35:14 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Sep 2019 16:35:08 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8IFZ7e259703518
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Sep 2019 15:35:07 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EAD8E5205A;
+        Wed, 18 Sep 2019 15:35:06 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 458B352063;
+        Wed, 18 Sep 2019 15:35:06 +0000 (GMT)
+From:   Steffen Maier <maier@linux.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Doug Gilbert <dgilbert@interlog.com>
+Cc:     linux-scsi@vger.kernel.org, linux-s390@vger.kernel.org,
+        Benjamin Block <bblock@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Steffen Maier <maier@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Omar Sandoval <osandov@fb.com>, linux-block@vger.kernel.org,
+        linux-next@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        dm-devel@redhat.com
+Subject: [PATCH] compat_ioctl: fix reimplemented SG_IO handling causing -EINVAL from sg_io()
+Date:   Wed, 18 Sep 2019 17:34:45 +0200
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 19091815-0020-0000-0000-0000036E9CA7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19091815-0021-0000-0000-000021C4468C
+Message-Id: <20190918153445.1241-1-maier@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-18_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909180152
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 04:50:58AM -0700, Matthew Wilcox wrote:
-> On Tue, Sep 17, 2019 at 03:48:42PM -0600, Jordan Crouse wrote:
-> > It is possible for unaware callers of several idr functions to accidentally
-> > underflow the index by specifying a id that is less than the idr base.
-> 
-> Hi Jordan.  Thanks for the patch, but this seems like a distinction
-> without a difference.
-> 
-> >  void *idr_remove(struct idr *idr, unsigned long id)
-> >  {
-> > +	if (id < idr->idr_base)
-> > +		return NULL;
-> > +
-> >  	return radix_tree_delete_item(&idr->idr_rt, id - idr->idr_base, NULL);
-> 
-> If this underflows, we'll try to delete an index which doesn't exist,
-> which will return NULL.
-> 
-> >  void *idr_find(const struct idr *idr, unsigned long id)
-> >  {
-> > +	if (id < idr->idr_base)
-> > +		return NULL;
-> > +
-> >  	return radix_tree_lookup(&idr->idr_rt, id - idr->idr_base);
-> 
-> If this underflows, we'll look up an entry which doesn't exist, which
-> will return NULL.
-> 
-> > @@ -302,6 +308,9 @@ void *idr_replace(struct idr *idr, void *ptr, unsigned long id)
-> >  	void __rcu **slot = NULL;
-> >  	void *entry;
-> >  
-> > +	if (id < idr->idr_base)
-> > +		return ERR_PTR(-ENOENT);
-> > +
-> >  	id -= idr->idr_base;
-> >  
-> >  	entry = __radix_tree_lookup(&idr->idr_rt, id, &node, &slot);
-> 
-> ... just outside the context is this line:
->         if (!slot || radix_tree_tag_get(&idr->idr_rt, id, IDR_FREE))
->                 return ERR_PTR(-ENOENT);
-> 
-> Looking up an index which doesn't exist gets you a NULL slot, so you get
-> -ENOENT anyway.
-> 
-> I did think about these possibilities when I was writing the code and
-> convinced myself I didn't need them.  If you have an example of a case
-> where I got thast wrong, I'd love to see it.
-> 
-> More generally, the IDR is deprecated; I'm trying to convert users to
-> the XArray.  If you're adding a new user, can you use the XArray API
-> instead?
+scsi_cmd_ioctl() had hdr as on stack auto variable and called
+copy_{from,to}_user with the address operator &hdr and sizeof(hdr).
 
-Thanks for the explanation. I happened to walk by while code inspecting an
-existing out-of-tree user and thought there might be a small hole to fill
-but I agree it is unlikely that the underflow is likely to be a valid id.
+After the refactoring, {get,put}_sg_io_hdr() takes a pointer &hdr.
+So the copy_{from,to}_user within the new helper functions should
+just take the given pointer argument hdr and sizeof(*hdr).
 
-Jordan
+I saw -EINVAL from sg_io() done by /usr/lib/udev/scsi_id which could
+in turn no longer whitelist SCSI disks for devicemapper multipath.
+
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Fixes: 4f45155c29fd ("compat_ioctl: reimplement SG_IO handling")
+---
+
+Arnd, I'm not sure about the sizeof(hdr32) change in the compat part in
+put_sg_io_hdr().
+
+This is for next, probably via Arnd's y2038/y2038,
+and it fixes next-20190917 for me regarding SCSI generic.
+
+ block/scsi_ioctl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/block/scsi_ioctl.c b/block/scsi_ioctl.c
+index cbeb629ee917..650bade5ea5a 100644
+--- a/block/scsi_ioctl.c
++++ b/block/scsi_ioctl.c
+@@ -607,14 +607,14 @@ int put_sg_io_hdr(const struct sg_io_hdr *hdr, void __user *argp)
+ 			.info		 = hdr->info,
+ 		};
+ 
+-		if (copy_to_user(argp, &hdr32, sizeof(hdr)))
++		if (copy_to_user(argp, &hdr32, sizeof(hdr32)))
+ 			return -EFAULT;
+ 
+ 		return 0;
+ 	}
+ #endif
+ 
+-	if (copy_to_user(argp, &hdr, sizeof(hdr)))
++	if (copy_to_user(argp, hdr, sizeof(*hdr)))
+ 		return -EFAULT;
+ 
+ 	return 0;
+@@ -659,7 +659,7 @@ int get_sg_io_hdr(struct sg_io_hdr *hdr, const void __user *argp)
+ 	}
+ #endif
+ 
+-	if (copy_from_user(&hdr, argp, sizeof(hdr)))
++	if (copy_from_user(hdr, argp, sizeof(*hdr)))
+ 		return -EFAULT;
+ 
+ 	return 0;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
+
