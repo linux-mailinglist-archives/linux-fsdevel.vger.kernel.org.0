@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A82CB6ED7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 23:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD822B6EDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 23:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732243AbfIRVaK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 17:30:10 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47926 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727737AbfIRVaJ (ORCPT
+        id S1732257AbfIRVbU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 17:31:20 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54960 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727737AbfIRVbU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 17:30:09 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ILF9jB080762;
-        Wed, 18 Sep 2019 21:29:58 GMT
+        Wed, 18 Sep 2019 17:31:20 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ILG1kE067512;
+        Wed, 18 Sep 2019 21:31:11 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2019-08-05;
- bh=1VHwLShzu/WQrTQ00kOzSWt5/ak691jXQCt3nHzKI4s=;
- b=jmBCctYwrZHz6Zzy4bopT8jvvqZaJYFF3c0PRQdpYeNb6ySX8E3xgnl7Ltie+hyVPrXT
- HriT+TgHMVKeXLCXIwurwezWBI8nIwe8xuv0BTWV2ThW4dGZsugjZR7dDNsdIXMimjo2
- zX3JH0Ju7m9DagaGRwG6ayi0XLCzBMkDcg28accHahmzDrE+MvupERlcnsqfK/iRm1Ar
- xE9jO+xRhqOj6LizyOV3DvCQ3pQO2xgPbZva/4pBD34RItisl/QN7G6jJxmLEY9RW7xM
- PiGASH3RvsFH3ESHHhEptdVBJigxAysnxHgajKjmIy5asgmV/DbVf4zZI/lPuqTdSj3o WA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2v3vb501qt-1
+ bh=cepEtUTTs2FluRenGgDKla4FhOIsiV7PRcyw0cSLR7E=;
+ b=Q1tYMv4ht5W765mUvQCF4+C7054/xWVW3v+D8hzQgzmsVvzIYHcwKN6STChraq2mH1dl
+ GEAyeYHOqc3qSaGEjRvQKWBZh7oDL20kpcURkPfRVYbf0dxzgzah8stStqtdVfb+VmLV
+ 7/dssIxCDErqcg4254VekZBBCSfCJR0hL1tFQ6bn7l6anNDWNZTw0pJ5u750FO4PcGY+
+ lLREITpgF7hCTMPHQQhdGEl+ipGLY0m/Hdw67Itfj08WzPmvr/YlpsoqSh+BwdTZuHFD
+ SjbkG5GK/PFVEwD5QHNC+D4tqRe2Jz9gKNCbUVOyBz2TuZKJbrwNCwI3z7mS2uMMfuvk LA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2v3vb4r1u9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 21:29:58 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ILEvlm195916;
-        Wed, 18 Sep 2019 21:29:58 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2v3vb40r69-54
+        Wed, 18 Sep 2019 21:31:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ILGFkj032297;
+        Wed, 18 Sep 2019 21:31:10 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2v3vbqrfec-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 21:29:58 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8ILEese004299;
-        Wed, 18 Sep 2019 21:14:40 GMT
+        Wed, 18 Sep 2019 21:31:10 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8ILV9RR001551;
+        Wed, 18 Sep 2019 21:31:09 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 18 Sep 2019 14:14:40 -0700
-Date:   Wed, 18 Sep 2019 14:14:39 -0700
+        with ESMTP ; Wed, 18 Sep 2019 14:31:09 -0700
+Date:   Wed, 18 Sep 2019 14:31:08 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de,
         linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/5] fs: Introduce i_blocks_per_page
-Message-ID: <20190918211439.GB2229799@magnolia>
+Subject: Re: [PATCH v2 4/5] xfs: Support large pages
+Message-ID: <20190918213108.GE2229799@magnolia>
 References: <20190821003039.12555-1-willy@infradead.org>
- <20190821003039.12555-2-willy@infradead.org>
+ <20190821003039.12555-5-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190821003039.12555-2-willy@infradead.org>
+In-Reply-To: <20190821003039.12555-5-willy@infradead.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
@@ -71,127 +71,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 05:30:35PM -0700, Matthew Wilcox wrote:
+On Tue, Aug 20, 2019 at 05:30:38PM -0700, Matthew Wilcox wrote:
 > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> This helper is useful for both large pages in the page cache and for
-> supporting block size larger than page size.  Convert some example
-> users (we have a few different ways of writing this idiom).
+> Mostly this is just checking the page size of each page instead of
+> assuming PAGE_SIZE.  Clean up the logic in writepage a little.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Seems pretty straightforward, modulo whatever's going on with the kbuild
-robot complaint (is there something wrong, or is it just that obnoxious
-header check thing?)
+Looks ok, let's see what happens when I get back to the "make xfs use
+iomap writeback" series...
 
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
 --D
 
 > ---
->  fs/iomap/buffered-io.c  |  4 ++--
->  fs/jfs/jfs_metapage.c   |  2 +-
->  fs/xfs/xfs_aops.c       |  8 ++++----
->  include/linux/pagemap.h | 13 +++++++++++++
->  4 files changed, 20 insertions(+), 7 deletions(-)
+>  fs/xfs/xfs_aops.c | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index e25901ae3ff4..0e76a4b6d98a 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -24,7 +24,7 @@ iomap_page_create(struct inode *inode, struct page *page)
->  {
->  	struct iomap_page *iop = to_iomap_page(page);
->  
-> -	if (iop || i_blocksize(inode) == PAGE_SIZE)
-> +	if (iop || i_blocks_per_page(inode, page) <= 1)
->  		return iop;
->  
->  	iop = kmalloc(sizeof(*iop), GFP_NOFS | __GFP_NOFAIL);
-> @@ -128,7 +128,7 @@ iomap_set_range_uptodate(struct page *page, unsigned off, unsigned len)
->  	bool uptodate = true;
->  
->  	if (iop) {
-> -		for (i = 0; i < PAGE_SIZE / i_blocksize(inode); i++) {
-> +		for (i = 0; i < i_blocks_per_page(inode, page); i++) {
->  			if (i >= first && i <= last)
->  				set_bit(i, iop->uptodate);
->  			else if (!test_bit(i, iop->uptodate))
-> diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-> index a2f5338a5ea1..176580f54af9 100644
-> --- a/fs/jfs/jfs_metapage.c
-> +++ b/fs/jfs/jfs_metapage.c
-> @@ -473,7 +473,7 @@ static int metapage_readpage(struct file *fp, struct page *page)
->  	struct inode *inode = page->mapping->host;
->  	struct bio *bio = NULL;
->  	int block_offset;
-> -	int blocks_per_page = PAGE_SIZE >> inode->i_blkbits;
-> +	int blocks_per_page = i_blocks_per_page(inode, page);
->  	sector_t page_start;	/* address of page in fs blocks */
->  	sector_t pblock;
->  	int xlen;
 > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index f16d5f196c6b..102cfd8a97d6 100644
+> index 102cfd8a97d6..1a26e9ca626b 100644
 > --- a/fs/xfs/xfs_aops.c
 > +++ b/fs/xfs/xfs_aops.c
-> @@ -68,7 +68,7 @@ xfs_finish_page_writeback(
->  		mapping_set_error(inode->i_mapping, -EIO);
->  	}
+> @@ -765,7 +765,7 @@ xfs_add_to_ioend(
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	struct block_device	*bdev = xfs_find_bdev_for_inode(inode);
+>  	unsigned		len = i_blocksize(inode);
+> -	unsigned		poff = offset & (PAGE_SIZE - 1);
+> +	unsigned		poff = offset & (page_size(page) - 1);
+>  	bool			merged, same_page = false;
+>  	sector_t		sector;
 >  
-> -	ASSERT(iop || i_blocksize(inode) == PAGE_SIZE);
-> +	ASSERT(iop || i_blocks_per_page(inode, bvec->bv_page) <= 1);
->  	ASSERT(!iop || atomic_read(&iop->write_count) > 0);
->  
->  	if (!iop || atomic_dec_and_test(&iop->write_count))
-> @@ -839,7 +839,7 @@ xfs_aops_discard_page(
->  			page, ip->i_ino, offset);
->  
->  	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
-> -			PAGE_SIZE / i_blocksize(inode));
-> +			i_blocks_per_page(inode, page));
+> @@ -843,7 +843,7 @@ xfs_aops_discard_page(
 >  	if (error && !XFS_FORCED_SHUTDOWN(mp))
 >  		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
 >  out_invalidate:
-> @@ -877,7 +877,7 @@ xfs_writepage_map(
->  	uint64_t		file_offset;	/* file offset of page */
->  	int			error = 0, count = 0, i;
->  
-> -	ASSERT(iop || i_blocksize(inode) == PAGE_SIZE);
-> +	ASSERT(iop || i_blocks_per_page(inode, page) <= 1);
->  	ASSERT(!iop || atomic_read(&iop->write_count) == 0);
->  
->  	/*
-> @@ -886,7 +886,7 @@ xfs_writepage_map(
->  	 * one.
->  	 */
->  	for (i = 0, file_offset = page_offset(page);
-> -	     i < (PAGE_SIZE >> inode->i_blkbits) && file_offset < end_offset;
-> +	     i < i_blocks_per_page(inode, page) && file_offset < end_offset;
->  	     i++, file_offset += len) {
->  		if (iop && !test_bit(i, iop->uptodate))
->  			continue;
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index cf837d313b96..2728f20fbc49 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -644,4 +644,17 @@ static inline unsigned long dir_pages(struct inode *inode)
->  			       PAGE_SHIFT;
+> -	xfs_vm_invalidatepage(page, 0, PAGE_SIZE);
+> +	xfs_vm_invalidatepage(page, 0, page_size(page));
 >  }
 >  
-> +/**
-> + * i_blocks_per_page - How many blocks fit in this page.
-> + * @inode: The inode which contains the blocks.
-> + * @page: The (potentially large) page.
-> + *
-> + * Context: Any context.
-> + * Return: The number of filesystem blocks covered by this page.
-> + */
-> +static inline
-> +unsigned int i_blocks_per_page(struct inode *inode, struct page *page)
-> +{
-> +	return page_size(page) >> inode->i_blkbits;
-> +}
->  #endif /* _LINUX_PAGEMAP_H */
+>  /*
+> @@ -984,8 +984,7 @@ xfs_do_writepage(
+>  	struct xfs_writepage_ctx *wpc = data;
+>  	struct inode		*inode = page->mapping->host;
+>  	loff_t			offset;
+> -	uint64_t              end_offset;
+> -	pgoff_t                 end_index;
+> +	uint64_t		end_offset;
+>  
+>  	trace_xfs_writepage(inode, page, 0, 0);
+>  
+> @@ -1024,10 +1023,9 @@ xfs_do_writepage(
+>  	 * ---------------------------------^------------------|
+>  	 */
+>  	offset = i_size_read(inode);
+> -	end_index = offset >> PAGE_SHIFT;
+> -	if (page->index < end_index)
+> -		end_offset = (xfs_off_t)(page->index + 1) << PAGE_SHIFT;
+> -	else {
+> +	end_offset = file_offset_of_next_page(page);
+> +
+> +	if (end_offset > offset) {
+>  		/*
+>  		 * Check whether the page to write out is beyond or straddles
+>  		 * i_size or not.
+> @@ -1039,7 +1037,8 @@ xfs_do_writepage(
+>  		 * |				    |      Straddles     |
+>  		 * ---------------------------------^-----------|--------|
+>  		 */
+> -		unsigned offset_into_page = offset & (PAGE_SIZE - 1);
+> +		unsigned offset_into_page = offset_in_this_page(page, offset);
+> +		pgoff_t end_index = offset >> PAGE_SHIFT;
+>  
+>  		/*
+>  		 * Skip the page if it is fully outside i_size, e.g. due to a
+> @@ -1070,7 +1069,7 @@ xfs_do_writepage(
+>  		 * memory is zeroed when mapped, and writes to that region are
+>  		 * not written out to the file."
+>  		 */
+> -		zero_user_segment(page, offset_into_page, PAGE_SIZE);
+> +		zero_user_segment(page, offset_into_page, page_size(page));
+>  
+>  		/* Adjust the end_offset to the end of file */
+>  		end_offset = offset;
 > -- 
 > 2.23.0.rc1
 > 
