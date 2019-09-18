@@ -2,197 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 892A8B6760
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 17:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D943B67BC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 18:07:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731744AbfIRPqh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 11:46:37 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:18286 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726676AbfIRPqg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 11:46:36 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id A4F6050D4B;
-        Wed, 18 Sep 2019 17:46:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id ZgCJrYNr5TyO; Wed, 18 Sep 2019 17:46:22 +0200 (CEST)
-Date:   Wed, 18 Sep 2019 17:46:15 +0200
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-alpha@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        sparclinux@vger.kernel.org
-Subject: Re: [PATCH v12 05/12] namei: obey trailing magic-link DAC permissions
-Message-ID: <20190918154615.suruy5v5xjftfwyl@yavin.microfocus.com>
-References: <20190904201933.10736-1-cyphar@cyphar.com>
- <20190904201933.10736-6-cyphar@cyphar.com>
- <CAG48ez1_64249RdX6Nj_32YS+jhuXZBAd_ZL9ozggbSQy+cc-A@mail.gmail.com>
- <20190918135100.sdxdmdluq6wlwryv@yavin.microfocus.com>
+        id S1731876AbfIRQHZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 12:07:25 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57812 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbfIRQHY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Sep 2019 12:07:24 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8IFxtmx154960;
+        Wed, 18 Sep 2019 16:07:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=rdHGkEXVnsLqXXMuOn321K1NAe6rVR7Cugi8O0TDiAQ=;
+ b=RvTMIJ0Wh6JBKNQIEMUS8XyEt8widyel6SVg0Rd6vGlf50mhCXj20uqTXlG7uVIjgO79
+ TohdWwkUn+yjUKKKtEF87oeChpe+2wRhQIge+iHcgoHqobZCv2FZdJEGvXnpTNXeXI9Z
+ PN7maeTCNrRubFs7pHlRQ6jgw+n2IUs/CpPP13rKMijtvQnVxYN7tghBc7oQBHKE17DK
+ pVd6alL8n4z0un1Ofv/6onjUD7Lc3uFS2cz4wNuGKGS34pV2sMCtaadY+nujU9gn8cd1
+ neR5xkMtXF2RmoMFyCfrgaxzDqcguTGHaa9c5q5ZzXfmJZRg58PyHwIgjbSpVBKLQYLK dQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2v385e4y5m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Sep 2019 16:07:15 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8IFwfQu058733;
+        Wed, 18 Sep 2019 16:07:15 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2v37m9v52c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Sep 2019 16:07:15 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8IG7E9Z010968;
+        Wed, 18 Sep 2019 16:07:14 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Sep 2019 09:07:14 -0700
+Date:   Wed, 18 Sep 2019 09:07:12 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        Amir Goldstein <amir73il@gmail.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3/3] xfs: Fix stale data exposure when readahead races
+ with hole punch
+Message-ID: <20190918160712.GV2229799@magnolia>
+References: <20190829131034.10563-1-jack@suse.cz>
+ <20190829131034.10563-4-jack@suse.cz>
+ <20190829155204.GD5354@magnolia>
+ <20190830152449.GA25069@quack2.suse.cz>
+ <20190918123123.GC31891@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="blplt4ksioniygek"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190918135100.sdxdmdluq6wlwryv@yavin.microfocus.com>
+In-Reply-To: <20190918123123.GC31891@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909180154
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909180154
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Sep 18, 2019 at 02:31:24PM +0200, Jan Kara wrote:
+> On Fri 30-08-19 17:24:49, Jan Kara wrote:
+> > On Thu 29-08-19 08:52:04, Darrick J. Wong wrote:
+> > > On Thu, Aug 29, 2019 at 03:10:34PM +0200, Jan Kara wrote:
+> > > > Hole puching currently evicts pages from page cache and then goes on to
+> > > > remove blocks from the inode. This happens under both XFS_IOLOCK_EXCL
+> > > > and XFS_MMAPLOCK_EXCL which provides appropriate serialization with
+> > > > racing reads or page faults. However there is currently nothing that
+> > > > prevents readahead triggered by fadvise() or madvise() from racing with
+> > > > the hole punch and instantiating page cache page after hole punching has
+> > > > evicted page cache in xfs_flush_unmap_range() but before it has removed
+> > > > blocks from the inode. This page cache page will be mapping soon to be
+> > > > freed block and that can lead to returning stale data to userspace or
+> > > > even filesystem corruption.
+> > > > 
+> > > > Fix the problem by protecting handling of readahead requests by
+> > > > XFS_IOLOCK_SHARED similarly as we protect reads.
+> > > > 
+> > > > CC: stable@vger.kernel.org
+> > > > Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
+> > > > Reported-by: Amir Goldstein <amir73il@gmail.com>
+> > > > Signed-off-by: Jan Kara <jack@suse.cz>
+> > > 
+> > > Is there a test on xfstests to demonstrate this race?
+> > 
+> > No, but I can try to create one.
+> 
+> I was experimenting with this but I could not reproduce the issue in my
+> test VM without inserting artificial delay at appropriate place... So I
+> don't think there's much point in the fstest for this.
 
---blplt4ksioniygek
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+<shrug> We've added debugging knobs to XFS that inject delays to
+demonstrate race conditions that are hard to reproduce, but OTOH it's
+more fun to have a generic/ test that you can use to convince the other
+fs maintainers to take your patches. :)
 
-On 2019-09-18, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2019-09-17, Jann Horn <jannh@google.com> wrote:
-> > On Wed, Sep 4, 2019 at 10:21 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > > The ability for userspace to "re-open" file descriptors through
-> > > /proc/self/fd has been a very useful tool for all sorts of usecases
-> > > (container runtimes are one common example). However, the current
-> > > interface for doing this has resulted in some pretty subtle security
-> > > holes. Userspace can re-open a file descriptor with more permissions
-> > > than the original, which can result in cases such as /proc/$pid/exe
-> > > being re-opened O_RDWR at a later date even though (by definition)
-> > > /proc/$pid/exe cannot be opened for writing. When combined with O_PATH
-> > > the results can get even more confusing.
-> > [...]
-> > > Instead we have to restrict it in such a way that it doesn't break
-> > > (good) users but does block potential attackers. The solution applied=
- in
-> > > this patch is to restrict *re-opening* (not resolution through)
-> > > magic-links by requiring that mode of the link be obeyed. Normal
-> > > symlinks have modes of a+rwx but magic-links have other modes. These
-> > > magic-link modes were historically ignored during path resolution, but
-> > > they've now been re-purposed for more useful ends.
-> >=20
-> > Thanks for dealing with this issue!
-> >=20
-> > [...]
-> > > diff --git a/fs/namei.c b/fs/namei.c
-> > > index 209c51a5226c..54d57dad0f91 100644
-> > > --- a/fs/namei.c
-> > > +++ b/fs/namei.c
-> > > @@ -872,7 +872,7 @@ void nd_jump_link(struct path *path)
-> > >
-> > >         nd->path =3D *path;
-> > >         nd->inode =3D nd->path.dentry->d_inode;
-> > > -       nd->flags |=3D LOOKUP_JUMPED;
-> > > +       nd->flags |=3D LOOKUP_JUMPED | LOOKUP_MAGICLINK_JUMPED;
-> > >  }
-> > [...]
-> > > +static int trailing_magiclink(struct nameidata *nd, int acc_mode,
-> > > +                             fmode_t *opath_mask)
-> > > +{
-> > > +       struct inode *inode =3D nd->link_inode;
-> > > +       fmode_t upgrade_mask =3D 0;
-> > > +
-> > > +       /* Was the trailing_symlink() a magic-link? */
-> > > +       if (!(nd->flags & LOOKUP_MAGICLINK_JUMPED))
-> > > +               return 0;
-> > > +
-> > > +       /*
-> > > +        * Figure out the upgrade-mask of the link_inode. Since these=
- aren't
-> > > +        * strictly POSIX semantics we don't do an acl_permission_che=
-ck() here,
-> > > +        * so we only care that at least one bit is set for each upgr=
-ade-mode.
-> > > +        */
-> > > +       if (inode->i_mode & S_IRUGO)
-> > > +               upgrade_mask |=3D FMODE_PATH_READ;
-> > > +       if (inode->i_mode & S_IWUGO)
-> > > +               upgrade_mask |=3D FMODE_PATH_WRITE;
-> > > +       /* Restrict the O_PATH upgrade-mask of the caller. */
-> > > +       if (opath_mask)
-> > > +               *opath_mask &=3D upgrade_mask;
-> > > +       return may_open_magiclink(upgrade_mask, acc_mode);
-> > >  }
-> >=20
-> > This looks racy because entries in the file descriptor table can be
-> > switched out as long as task->files->file_lock isn't held. Unless I'm
-> > missing something, something like the following (untested) would
-> > bypass this restriction:
->=20
-> You're absolutely right -- good catch!
->=20
-> > Perhaps you could change nd_jump_link() to "void nd_jump_link(struct
-> > path *path, umode_t link_mode)", and let proc_pid_get_link() pass the
-> > link_mode through from an out-argument of .proc_get_link()? Then
-> > proc_fd_link() could grab the proper mode in a race-free manner. And
-> > nd_jump_link() could stash the mode in the nameidata.
->=20
-> This indeed does appear to be the simplest solution -- I'm currently
-> testing a variation of the patch you proposed (with a few extra bits to
-> deal with nd_jump_link and proc_get_link being used elsewhere).
->=20
-> I'll include this change (assuming it fixes the flaw you found) in the
-> v13 series I'll send around next week. Thanks, Jann!
+--D
 
-In case you're interested -- I've also included a selftest based on this
-attack in my series (though it uses CLONE_FILES so that we could also
-test O_EMPTYPATH, which wasn't affected because it didn't go through
-procfs and thus couldn't hit the "outdated inode->i_mode" problem).
-
-The attack script succeeds around 20% of the time on the original
-patchset, and with the updated patchset it doesn't succeed in several
-hundred thousand attempts (which I've repeated a few times).
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---blplt4ksioniygek
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXYJRRAAKCRCdlLljIbnQ
-Ep3WAP0cvG8YTD9aS1zuiIbFfMQLKt1nuxBciHwn7LaCHk9Z0QEAtNdPaxztVO/p
-utsBd24Q6vZYzx6vj8OnW5nGpjaLpQA=
-=rL8c
------END PGP SIGNATURE-----
-
---blplt4ksioniygek--
+> 								Honza
+> 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
