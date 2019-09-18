@@ -2,77 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8DAFB6340
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 14:31:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9AEB6345
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 14:32:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729502AbfIRMbQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 08:31:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36768 "EHLO mx1.suse.de"
+        id S1730588AbfIRMcF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 08:32:05 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2673 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725902AbfIRMbP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 08:31:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ED106AD2B;
-        Wed, 18 Sep 2019 12:31:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 07F751E4201; Wed, 18 Sep 2019 14:31:24 +0200 (CEST)
-Date:   Wed, 18 Sep 2019 14:31:24 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, Amir Goldstein <amir73il@gmail.com>,
-        Boaz Harrosh <boaz@plexistor.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3/3] xfs: Fix stale data exposure when readahead races
- with hole punch
-Message-ID: <20190918123123.GC31891@quack2.suse.cz>
-References: <20190829131034.10563-1-jack@suse.cz>
- <20190829131034.10563-4-jack@suse.cz>
- <20190829155204.GD5354@magnolia>
- <20190830152449.GA25069@quack2.suse.cz>
+        id S1725902AbfIRMcF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Sep 2019 08:32:05 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9643E23F11B82F483979;
+        Wed, 18 Sep 2019 20:31:56 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 18 Sep 2019
+ 20:31:47 +0800
+From:   sunqiuyang <sunqiuyang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>, <jaegeuk@kernel.org>,
+        <yuchao0@huawei.com>
+CC:     <sunqiuyang@huawei.com>
+Subject: [PATCH 1/1] f2fs: update multi-dev metadata in resize_fs
+Date:   Wed, 18 Sep 2019 20:51:58 +0800
+Message-ID: <20190918125158.12126-1-sunqiuyang@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190830152449.GA25069@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 30-08-19 17:24:49, Jan Kara wrote:
-> On Thu 29-08-19 08:52:04, Darrick J. Wong wrote:
-> > On Thu, Aug 29, 2019 at 03:10:34PM +0200, Jan Kara wrote:
-> > > Hole puching currently evicts pages from page cache and then goes on to
-> > > remove blocks from the inode. This happens under both XFS_IOLOCK_EXCL
-> > > and XFS_MMAPLOCK_EXCL which provides appropriate serialization with
-> > > racing reads or page faults. However there is currently nothing that
-> > > prevents readahead triggered by fadvise() or madvise() from racing with
-> > > the hole punch and instantiating page cache page after hole punching has
-> > > evicted page cache in xfs_flush_unmap_range() but before it has removed
-> > > blocks from the inode. This page cache page will be mapping soon to be
-> > > freed block and that can lead to returning stale data to userspace or
-> > > even filesystem corruption.
-> > > 
-> > > Fix the problem by protecting handling of readahead requests by
-> > > XFS_IOLOCK_SHARED similarly as we protect reads.
-> > > 
-> > > CC: stable@vger.kernel.org
-> > > Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
-> > > Reported-by: Amir Goldstein <amir73il@gmail.com>
-> > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > 
-> > Is there a test on xfstests to demonstrate this race?
-> 
-> No, but I can try to create one.
+From: Qiuyang Sun <sunqiuyang@huawei.com>
 
-I was experimenting with this but I could not reproduce the issue in my
-test VM without inserting artificial delay at appropriate place... So I
-don't think there's much point in the fstest for this.
+Multi-device metadata should be updated in resize_fs as well.
 
-								Honza
+Also, we check that the new FS size still reaches the last device.
 
+Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+---
+ fs/f2fs/gc.c | 32 ++++++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 5877bd7..a2b8cbe 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1431,26 +1431,46 @@ static void update_sb_metadata(struct f2fs_sb_info *sbi, int secs)
+ 	int segment_count_main = le32_to_cpu(raw_sb->segment_count_main);
+ 	long long block_count = le64_to_cpu(raw_sb->block_count);
+ 	int segs = secs * sbi->segs_per_sec;
++	int ndevs = sbi->s_ndevs;
+ 
+ 	raw_sb->section_count = cpu_to_le32(section_count + secs);
+ 	raw_sb->segment_count = cpu_to_le32(segment_count + segs);
+ 	raw_sb->segment_count_main = cpu_to_le32(segment_count_main + segs);
+ 	raw_sb->block_count = cpu_to_le64(block_count +
+ 					(long long)segs * sbi->blocks_per_seg);
++	if (ndevs > 1) {
++		int dev_segs =
++			le32_to_cpu(raw_sb->devs[ndevs - 1].total_segments);
++
++		raw_sb->devs[ndevs - 1].total_segments =
++						cpu_to_le32(dev_segs + segs);
++	}
+ }
+ 
+ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
+ {
+ 	int segs = secs * sbi->segs_per_sec;
++	long long blks = (long long)segs * sbi->blocks_per_seg;
+ 	long long user_block_count =
+ 				le64_to_cpu(F2FS_CKPT(sbi)->user_block_count);
++	int ndevs = sbi->s_ndevs;
+ 
+ 	SM_I(sbi)->segment_count = (int)SM_I(sbi)->segment_count + segs;
+ 	MAIN_SEGS(sbi) = (int)MAIN_SEGS(sbi) + segs;
+ 	FREE_I(sbi)->free_sections = (int)FREE_I(sbi)->free_sections + secs;
+ 	FREE_I(sbi)->free_segments = (int)FREE_I(sbi)->free_segments + segs;
+-	F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(user_block_count +
+-					(long long)segs * sbi->blocks_per_seg);
++	F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(user_block_count + blks);
++
++	if (ndevs > 1) {
++		FDEV(ndevs - 1).total_segments =
++				(int)FDEV(ndevs - 1).total_segments + segs;
++		FDEV(ndevs - 1).end_blk =
++				(long long)FDEV(ndevs - 1).end_blk + blks;
++#ifdef CONFIG_BLK_DEV_ZONED
++		FDEV(ndevs - 1).nr_blkz = (int)FDEV(ndevs - 1).nr_blkz +
++					(int)(blks >> sbi->log_blocks_per_blkz);
++#endif
++	}
+ }
+ 
+ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+@@ -1465,6 +1485,14 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+ 	if (block_count > old_block_count)
+ 		return -EINVAL;
+ 
++	if (sbi->s_ndevs > 1) {
++		__u64 last_segs = FDEV(sbi->s_ndevs - 1).total_segments;
++
++		if (block_count + last_segs * sbi->blocks_per_seg <=
++								old_block_count)
++			return -EINVAL;
++	}
++
+ 	/* new fs size should align to section size */
+ 	div_u64_rem(block_count, BLKS_PER_SEC(sbi), &rem);
+ 	if (rem)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+1.8.3.1
+
