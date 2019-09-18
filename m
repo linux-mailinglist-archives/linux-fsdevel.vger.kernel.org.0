@@ -2,83 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA302B6A6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 20:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E820B6CEA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 21:49:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388412AbfIRSWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 14:22:20 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45771 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388409AbfIRSWT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 14:22:19 -0400
-Received: by mail-io1-f66.google.com with SMTP id f12so1356206iog.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 11:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xrWrP6LppcfpzzkLfQpAbWDzJ4JoIoBDTe7nuYc1/2s=;
-        b=aAZFU9OkAaH528RJZNBBCcNOrWve2s1cRZncvoNJ3N9Od8IfptE/DzqBGiJ6NCRMHV
-         xfN6ge8T5o+E4twP0kpzOsVesGsH24f3OImqTx9SMVzalvC7lXhp5pCe+Rv7neE1BWRM
-         DHXsKcTsN2Fj8gONQITZ4oSZAt1nVUz4gLJ7I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xrWrP6LppcfpzzkLfQpAbWDzJ4JoIoBDTe7nuYc1/2s=;
-        b=I9QaYilcCrW+HTpoyy1i41ubsS6otYasBhYUVaJQGmbn8NlInHyl0SY7d3G7UwV0qa
-         //rizCtYP5FWf54EuVFzTndh85FlABRj+pKU5FgkyG9jiUCrGaC6fErShmBiL9Em2/1x
-         X252VYKIXjQ6EAiZCP9Lm11qdfqmR1Aryd7zvZ9Eho43Kt9llNBlX3rjPx69c+nccObL
-         T6orZD62verL2m0Hsgx2iXpxRrdLnurPdhxV6WWyTEE9WBg9dmnVOQUKB4ZDAJWaV5le
-         7iHjGxgCyvzYoxFoPk7/3HQMprHfraiFWA+J7EbjgKUHOmz1SV2DlFnL9OxmOqTbK2kE
-         /8HA==
-X-Gm-Message-State: APjAAAWuGEimCgsJ+29YrGBZ4IRU2tAMdOuTRFZnGcJA0aMO7FsYAl50
-        l2Bcoev1XVVtICiVvQ0EcYoDqt0JUfa3115lSupBh8nO
-X-Google-Smtp-Source: APXvYqzl6sY7kahrt8zQTpnaGKy6Iq1dMXSfSuFPW5/OYjlThDXZxIdSoT7yLyBdSCuzs9znZyGCAn/SXP/rANTy2+U=
-X-Received: by 2002:a02:9f02:: with SMTP id z2mr6234916jal.78.1568830937842;
- Wed, 18 Sep 2019 11:22:17 -0700 (PDT)
+        id S1731791AbfIRTtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 15:49:52 -0400
+Received: from fieldses.org ([173.255.197.46]:50470 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731779AbfIRTtv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Sep 2019 15:49:51 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id C6CE11504; Wed, 18 Sep 2019 15:49:50 -0400 (EDT)
+Date:   Wed, 18 Sep 2019 15:49:50 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     NeilBrown <neilb@suse.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
+        <andreas.gruenbacher@gmail.com>,
+        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Lange <lange@informatik.uni-koeln.de>
+Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
+Message-ID: <20190918194950.GD4652@fieldses.org>
+References: <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com>
+ <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
+ <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com>
+ <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com>
+ <20161206185806.GC31197@fieldses.org>
+ <87bm0l4nra.fsf@notabene.neil.brown.name>
+ <20190503153531.GJ12608@fieldses.org>
+ <87woj3157p.fsf@notabene.neil.brown.name>
+ <20190510200941.GB5349@fieldses.org>
+ <20190918090731.GB19549@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-References: <20190917114457.886-1-stefanha@redhat.com> <20190918164832.GH2947@work-vm>
-In-Reply-To: <20190918164832.GH2947@work-vm>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 18 Sep 2019 20:22:06 +0200
-Message-ID: <CAJfpeguDfn=3fnYoAj78H7fEvZ1bSt0dtEQ9J1Gk3mJDVA-YxQ@mail.gmail.com>
-Subject: Re: [PATCH] virtio-fs: rename num_queues to num_request_queues
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190918090731.GB19549@miu.piliscsaba.redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 6:48 PM Dr. David Alan Gilbert
-<dgilbert@redhat.com> wrote:
->
-> * Stefan Hajnoczi (stefanha@redhat.com) wrote:
-> > The final version of the virtio-fs device specification renamed the
-> > num_queues field to num_request_queues.  The semantics are unchanged but
-> > this name is clearer.
-> >
-> > Use the new name in the code.
-> >
-> > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
->
-> Consistent with the latest version that's just passed the voting;
-> (see
-> https://lists.oasis-open.org/archives/virtio-dev/201908/msg00113.html )
-> so:
->
->
-> Reviewed-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
->
-> > ---
-> > Feel free to squash this patch.
+On Wed, Sep 18, 2019 at 11:07:31AM +0200, Miklos Szeredi wrote:
+> On Fri, May 10, 2019 at 04:09:41PM -0400, J. Bruce Fields wrote:
+> > On Tue, May 07, 2019 at 10:24:58AM +1000, NeilBrown wrote:
+> > > Interesting perspective .... though doesn't NFSv4 explicitly allow
+> > > client-side ACL enforcement in the case of delegations?
+> > 
+> > Not really.  What you're probably thinking of is the single ACE that the
+> > server can return on granting a delegation, that tells the client it can
+> > skip the ACCESS check for users matching that ACE.  It's unclear how
+> > useful that is.  It's currently unused by the Linux client and server.
+> > 
+> > > Not sure how relevant that is....
+> > > 
+> > > It seems to me we have two options:
+> > >  1/ declare the NFSv4 doesn't work as a lower layer for overlayfs and
+> > >     recommend people use NFSv3, or
+> > >  2/ Modify overlayfs to work with NFSv4 by ignoring nfsv4 ACLs either
+> > >  2a/ always - and ignore all other acls and probably all system. xattrs,
+> > >  or
+> > >  2b/ based on a mount option that might be
+> > >       2bi/ general "noacl" or might be
+> > >       2bii/ explicit "noxattr=system.nfs4acl"
+> > >  
+> > > I think that continuing to discuss the miniature of the options isn't
+> > > going to help.  No solution is perfect - we just need to clearly
+> > > document the implications of whatever we come up with.
+> > > 
+> > > I lean towards 2a, but I be happy with with any '2' and '1' won't kill
+> > > me.
+> > 
+> > I guess I'd also lean towards 2a.
+> > 
+> > I don't think it applies to posix acls, as overlayfs is capable of
+> > copying those up and evaluating them on its own.
+> 
+> POSIX acls are evaluated and copied up.
+> 
+> I guess same goes for "security.*" attributes, that are evaluated on MAC checks.
+> 
+> I think it would be safe to ignore failure to copy up anything else.  That seems
+> a bit saner than just blacklisting nfs4_acl...
+> 
+> Something like the following untested patch.
 
-Thanks, folded this one as well.
+It seems at least simple to implement and explain.
 
-Miklos
+>  fs/overlayfs/copy_up.c |   16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -36,6 +36,13 @@ static int ovl_ccup_get(char *buf, const
+>  module_param_call(check_copy_up, ovl_ccup_set, ovl_ccup_get, NULL, 0644);
+>  MODULE_PARM_DESC(check_copy_up, "Obsolete; does nothing");
+>  
+> +static bool ovl_must_copy_xattr(const char *name)
+> +{
+> +	return !strcmp(name, XATTR_POSIX_ACL_ACCESS) ||
+> +	       !strcmp(name, XATTR_POSIX_ACL_DEFAULT) ||
+> +	       !strncmp(name, XATTR_SECURITY_PREFIX, XATTR_SECURITY_PREFIX_LEN);
+> +}
+> +
+>  int ovl_copy_xattr(struct dentry *old, struct dentry *new)
+>  {
+>  	ssize_t list_size, size, value_size = 0;
+> @@ -107,8 +114,13 @@ int ovl_copy_xattr(struct dentry *old, s
+>  			continue; /* Discard */
+>  		}
+>  		error = vfs_setxattr(new, name, value, size, 0);
+> -		if (error)
+> -			break;
+> +		if (error) {
+
+Can we check for EOPNOTSUPP instead of any error?
+
+Maybe we're copying up a user xattr to a filesystem that's perfectly
+capable of supporting those.  And maybe there's a disk error or we run
+out of disk space or something.  Then I'd rather get EIO or ENOSPC than
+silently fail to copy some xattrs.
+
+--b.
+
+> +			if (ovl_must_copy_xattr(name))
+> +				break;
+> +
+> +			/* Ignore failure to copy unknown xattrs */
+> +			error = 0;
+> +		}
+>  	}
+>  	kfree(value);
+>  out:
