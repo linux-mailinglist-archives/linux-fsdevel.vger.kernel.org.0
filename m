@@ -2,131 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0BD5B6EEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 23:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77414B6F4D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 00:17:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387993AbfIRVcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 17:32:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55844 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387451AbfIRVcd (ORCPT
+        id S2388432AbfIRWRV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 18:17:21 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:33364 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388415AbfIRWRV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 17:32:33 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ILFhMv067452;
-        Wed, 18 Sep 2019 21:32:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=ydH1j+B0xRX/SyIsv01NtDcbV5mWghGk55r8xlV3jfk=;
- b=SMwcRfBYTin9EkIMiakRaKvNbt2UtbqLVWLDhkyt7TI0c0Hk7U1+Wvgljevi8GbKC+7U
- NT8pHcrfWkCjCyPHRAMaO0eF4OdOMEEfzvzx4pmGaxZVif+R4sVAtDXbBGZTwr8MNsKo
- W5p/jDvp2HAqhddgAYyWWuccs6tm1J+5C2OrlN8m8oQ2RlmQdJfKavC5lvef//cSaW+u
- +wCNffqOExhpO7ZreCvOZyuraXPimIgN1Os10O1R3Tr1RURmkk94p40X+Pjf3TBuApNr
- Vti+dr7XZJ92Wht7HB0vmShvG6utD0DoYtTLmobZm3OgRLFMqnf09mBLcFURcIKWKMPU Qw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2v3vb4r1y6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 21:32:24 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ILFHdQ071228;
-        Wed, 18 Sep 2019 21:32:23 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2v3vb8rw1w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 21:32:23 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8ILWMEB002379;
-        Wed, 18 Sep 2019 21:32:22 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 18 Sep 2019 14:32:22 -0700
-Date:   Wed, 18 Sep 2019 14:32:21 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 5/5] xfs: Pass a page to xfs_finish_page_writeback
-Message-ID: <20190918213221.GF2229799@magnolia>
-References: <20190821003039.12555-1-willy@infradead.org>
- <20190821003039.12555-6-willy@infradead.org>
+        Wed, 18 Sep 2019 18:17:21 -0400
+Received: by mail-ua1-f67.google.com with SMTP id u31so430198uah.0;
+        Wed, 18 Sep 2019 15:17:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fvyK6cOQSVAg+pYnospWHicPx4sekfGX7Yi8JoZJ894=;
+        b=RQqY6qxStYD6GrM+3jvoM7UqPq/BBlPGOnsRl8/61T8a4RBMc166iouDxrMerp5XJq
+         yp9im9pXXkI0a5IeS1reX/+bPGNUHz5jyYNW1ORYOhKcvAd6kb2oXTWCpOPREuUlqzr4
+         Gds9kNT0NxZ4U9njJUGxd4U7HFL1yxOWD9nbkSpJKNk5GIyjVVN2FQR81CrRh9lzDroH
+         aPPA+0XrG4kCcNZ+cgwl3HFVlZZW28ItUHhbSbDUP3XD58dBmuKo07uctb1NhwQdyzlR
+         15egksXX+lF/OLrytz2U/Dkkgrj7NVYhHxdgfFo6nK+eCMLpMvT5I2eMpXxzNqzocIOP
+         Pvcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fvyK6cOQSVAg+pYnospWHicPx4sekfGX7Yi8JoZJ894=;
+        b=ac3J64tFeMtrlOGqcqC2ikdIvXLco0VBRmug6Vl5EUY1cwo+9cOC167uievoBInOCK
+         QuCcSzGnSztFNRupe2kjboYqO9dDN/0I4gN8r95xqgfaBATO3Y37lK/tcQL10ssJicnl
+         9J+FWwf82DszUe145KpugWXZZRO+IFSzQsWpEn7yUec4XxzxT12LLIaqAVPKKTnJbzn1
+         tUNJM3S1kWPIr7nOAk1J3dA+FstYN9XWi8+/UrdLKg0nZLewyd0CnLL+2f0h2eV/sp/P
+         RFSgWpwihnUVlCudwmw16dxQBV0kjv/hnqXqV9pg5Dsdticc9e7o6BFQDYD4+g2Uv6Y6
+         oRhg==
+X-Gm-Message-State: APjAAAVtc3vIWFXI8MhGjvXrK3TRyiZhVssLhX804hbfhxNSiM98Sm1v
+        RuAl6frahIeZ9FAy6NOTOghMxRAeCBRCTS99Tec=
+X-Google-Smtp-Source: APXvYqxr6YANlJ2C8oJKmxha7piyJuTYMt0okrOTrbCDI/e1c9lkVDzuxCa2GvYTvrdzw+znKPnsKc9jWeGrUTmw3V4=
+X-Received: by 2002:ab0:7816:: with SMTP id x22mr3891970uaq.97.1568845040262;
+ Wed, 18 Sep 2019 15:17:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821003039.12555-6-willy@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909180182
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909180182
+References: <20190918195920.25210-1-qkrwngud825@gmail.com> <201909190546.Al3zu1Yd%lkp@intel.com>
+In-Reply-To: <201909190546.Al3zu1Yd%lkp@intel.com>
+From:   Ju Hyung Park <qkrwngud825@gmail.com>
+Date:   Thu, 19 Sep 2019 07:17:09 +0900
+Message-ID: <CAD14+f2b=eTOZqhfa-KGp+w8i1GfGhpzY9yWKWvh+wRRp9BUDw@mail.gmail.com>
+Subject: Re: [PATCH] staging: exfat: rebase to sdFAT v2.2.0
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Greg KH <gregkh@linuxfoundation.org>,
+        alexander.levin@microsoft.com,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        sergey.senozhatsky@gmail.com, sj1557.seo@samsung.com,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        devel@driverdev.osuosl.org, linkinjeon@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 05:30:39PM -0700, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> The only part of the bvec we were accessing was the bv_page, so just
-> pass that instead of the whole bvec.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Welp, looks like I didn't test debug configs properly.
 
-Seems fine but same caveats about tree churn as the previous patch.
+Allow me 1-2 days to work on fixing it for v2.
 
---D
+Thanks in advance.
 
+On Thu, Sep 19, 2019 at 6:31 AM kbuild test robot <lkp@intel.com> wrote:
+>
+> Hi Park,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on linus/master]
+> [cannot apply to v5.3 next-20190917]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Park-Ju-Hyung/staging-exfat-rebase-to-sdFAT-v2-2-0/20190919-040526
+> config: x86_64-allyesconfig (attached as .config)
+> compiler: gcc-7 (Debian 7.4.0-13) 7.4.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64
+>
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/staging/exfat/super.c: In function 'exfat_debug_kill_sb':
+> >> drivers/staging/exfat/super.c:3079:4: error: implicit declaration of function 'exfat_cache_release'; did you mean 'exfat_dcache_release'? [-Werror=implicit-function-declaration]
+>        exfat_cache_release(sb);
+>        ^~~~~~~~~~~~~~~~~~~
+>        exfat_dcache_release
+>    cc1: some warnings being treated as errors
+> --
+>    drivers/staging/exfat/misc.c: In function 'exfat_uevent_ro_remount':
+> >> drivers/staging/exfat/misc.c:57:2: error: implicit declaration of function 'ST_LOG'; did you mean 'DT_REG'? [-Werror=implicit-function-declaration]
+>      ST_LOG("[EXFAT](%s[%d:%d]): Uevent triggered\n",
+>      ^~~~~~
+>      DT_REG
+>    cc1: some warnings being treated as errors
+>
+> vim +3079 drivers/staging/exfat/super.c
+>
+>   3063
+>   3064  #ifdef CONFIG_EXFAT_DBG_IOCTL
+>   3065  static void exfat_debug_kill_sb(struct super_block *sb)
+>   3066  {
+>   3067          struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>   3068          struct block_device *bdev = sb->s_bdev;
+>   3069
+>   3070          long flags;
+>   3071
+>   3072          if (sbi) {
+>   3073                  flags = sbi->debug_flags;
+>   3074
+>   3075                  if (flags & EXFAT_DEBUGFLAGS_INVALID_UMOUNT) {
+>   3076                          /* invalidate_bdev drops all device cache include dirty.
+>   3077                           * we use this to simulate device removal
+>   3078                           */
+> > 3079                          exfat_cache_release(sb);
+>   3080                          invalidate_bdev(bdev);
+>   3081                  }
+>   3082          }
+>   3083
+>   3084          kill_block_super(sb);
+>   3085  }
+>   3086  #endif /* CONFIG_EXFAT_DBG_IOCTL */
+>   3087
+>
 > ---
->  fs/xfs/xfs_aops.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 1a26e9ca626b..edcb4797fcc2 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -58,21 +58,21 @@ xfs_find_daxdev_for_inode(
->  static void
->  xfs_finish_page_writeback(
->  	struct inode		*inode,
-> -	struct bio_vec	*bvec,
-> +	struct page		*page,
->  	int			error)
->  {
-> -	struct iomap_page	*iop = to_iomap_page(bvec->bv_page);
-> +	struct iomap_page	*iop = to_iomap_page(page);
->  
->  	if (error) {
-> -		SetPageError(bvec->bv_page);
-> +		SetPageError(page);
->  		mapping_set_error(inode->i_mapping, -EIO);
->  	}
->  
-> -	ASSERT(iop || i_blocks_per_page(inode, bvec->bv_page) <= 1);
-> +	ASSERT(iop || i_blocks_per_page(inode, page) <= 1);
->  	ASSERT(!iop || atomic_read(&iop->write_count) > 0);
->  
->  	if (!iop || atomic_dec_and_test(&iop->write_count))
-> -		end_page_writeback(bvec->bv_page);
-> +		end_page_writeback(page);
->  }
->  
->  /*
-> @@ -106,7 +106,7 @@ xfs_destroy_ioend(
->  
->  		/* walk each page on bio, ending page IO on them */
->  		bio_for_each_segment_all(bvec, bio, iter_all)
-> -			xfs_finish_page_writeback(inode, bvec, error);
-> +			xfs_finish_page_writeback(inode, bvec->bv_page, error);
->  		bio_put(bio);
->  	}
->  
-> -- 
-> 2.23.0.rc1
-> 
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
