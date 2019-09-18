@@ -2,68 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 800E1B6FC8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 01:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3361B6FCB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 01:49:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbfIRXsh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 19:48:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60858 "EHLO
+        id S1730199AbfIRXtZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 19:49:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60878 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727273AbfIRXsh (ORCPT
+        with ESMTP id S1727000AbfIRXtZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 19:48:37 -0400
+        Wed, 18 Sep 2019 19:49:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=c/M6xmbjhA5kdZWFA1C98tnb2ENEAojyudEyYzGg0Jk=; b=rp5ONWHRQI3PtnhNOgVuIzbZp
-        euFJ5EGOoMuY2lvGJU2OscwO2sDRQwbBC6t2+r2287NuXvZkU8Te9J3JogkP6qDLWAiYMLbuekp7+
-        TctU1H1qORa00nVptiF7wnWrX6QeVaFFiwI4oi8npc54JoDkVVtol5PG6Z79Uc7041CM8f4FJP35x
-        7yHNulGa+6wRbBXlM1rv116+i8ahT96bi8cAIKWq+lrtCaIu+Af0OvArFiu4q9bXSCzoxV7YecIVc
-        vBgVGmll1xlZhLUH2nTQQhQSv83ydkXpMFWxg3IykFPnDb+X0+fyZXX7FhxXrnYvL3jeAEmHaLvw4
-        fXzeHN1fA==;
+         bh=9B/jgHS7PD/DOi2AjcR19b+jtGzxXg3UqwFXdzQJuJ8=; b=RTaqfzBph/Z2r/rLphAOle23G
+        lBBoCZ650sphFB2nq53YzVYS6suvjOIXb/E7nQWwuYJMk9lZOvQPEPUrX3xrLXHY4ZACCUtEiEhHw
+        l9vJpF5r066Ojn5AZ5o3Ze5fsnGR6HCjgqCGSVYNchu+tlw8GH+OLnFdgdvfSdJC/0qT1TGI7pIwq
+        MxUzTt/PfDpu8QqsHzMZWhueJ0mYoRq4Xy0s20ok1MPmn93vOjrtZh85pgn/84dFRM5BGhfNMCjfR
+        eVlXrt51wfwnVUNlK7DEsKGgozND1UN1+dhy6KjDenYue5RC7iWLowhkRonYKJhR98jMVqmI3i5kL
+        qAGVf4obA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iAjga-00082Q-A3; Wed, 18 Sep 2019 23:48:36 +0000
-Date:   Wed, 18 Sep 2019 16:48:36 -0700
+        id 1iAjhM-00084W-UO; Wed, 18 Sep 2019 23:49:24 +0000
+Date:   Wed, 18 Sep 2019 16:49:24 -0700
 From:   Matthew Wilcox <willy@infradead.org>
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     linux-fsdevel@vger.kernel.org, hch@lst.de,
         linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/5] fs: Introduce i_blocks_per_page
-Message-ID: <20190918234836.GD9880@bombadil.infradead.org>
+Subject: Re: [PATCH v2 2/5] mm: Add file_offset_of_ helpers
+Message-ID: <20190918234924.GE9880@bombadil.infradead.org>
 References: <20190821003039.12555-1-willy@infradead.org>
- <20190821003039.12555-2-willy@infradead.org>
- <20190918211439.GB2229799@magnolia>
+ <20190821003039.12555-3-willy@infradead.org>
+ <20190918211755.GC2229799@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190918211439.GB2229799@magnolia>
+In-Reply-To: <20190918211755.GC2229799@magnolia>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 02:14:39PM -0700, Darrick J. Wong wrote:
-> On Tue, Aug 20, 2019 at 05:30:35PM -0700, Matthew Wilcox wrote:
+On Wed, Sep 18, 2019 at 02:17:55PM -0700, Darrick J. Wong wrote:
+> On Tue, Aug 20, 2019 at 05:30:36PM -0700, Matthew Wilcox wrote:
 > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > > 
-> > This helper is useful for both large pages in the page cache and for
-> > supporting block size larger than page size.  Convert some example
-> > users (we have a few different ways of writing this idiom).
+> > The page_offset function is badly named for people reading the functions
+> > which call it.  The natural meaning of a function with this name would
+> > be 'offset within a page', not 'page offset in bytes within a file'.
+> > Dave Chinner suggests file_offset_of_page() as a replacement function
+> > name and I'm also adding file_offset_of_next_page() as a helper for the
+> > large page work.  Also add kernel-doc for these functions so they show
+> > up in the kernel API book.
 > > 
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > page_offset() is retained as a compatibility define for now.
 > 
-> Seems pretty straightforward, modulo whatever's going on with the kbuild
-> robot complaint (is there something wrong, or is it just that obnoxious
-> header check thing?)
+> No SOB?
+> 
+> Looks fine to me, and I appreciate the much less confusing name.  I was
+> hoping for a page_offset conversion for fs/iomap/ (and not a treewide
+> change because yuck), but I guess that can be done if and when this
+> lands.
 
-It doesn't apply patches on top of the -mm tree for some reason.  So
-it has no idea about the page_size() macro that's sitting in -mm at the
-moment.
-
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
-Thanks.
+Sure, I'll do that once everything else has landed.
