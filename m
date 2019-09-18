@@ -2,97 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5018BB627C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 13:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DAFB6340
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 14:31:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbfIRLvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 07:51:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46736 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbfIRLu7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 07:50:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xT04o0lekJxd/aozlQYGw0ZS4okGFGfqXe4QEtUwyYo=; b=q9flpAHDMXxzFuObshYoFv4be
-        l4DeXx4V8SrvfAc4numF8OpmqDp8v7qs+KxtSzngtECLx7U1LbsccCx+stgKPiidKUkh54hSVNnr0
-        9Sj0Kbpjdp6hILG+2b3vsUeWSmP6INfGpznkdo17UcauUjA5G6ZYhPEVWlO5OwzPplm6UxATM5806
-        fMgdqYjfDD7B6c3iRlBTuG2grXovldmp3e9CYL8jKxXlQqerays6DtzrsOslskJ9wtK1Tu6PuxjRB
-        m6r4X9EIVY71cnXLrYRwW1A/RcqY0hbyAEt1G7rAIbmfIhPsUmksvnKYZLxGveFJ9l4RYTugEyTIW
-        TEr30NsMQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iAYU6-0000jz-Q9; Wed, 18 Sep 2019 11:50:58 +0000
-Date:   Wed, 18 Sep 2019 04:50:58 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jordan Crouse <jcrouse@codeaurora.org>
-Cc:     freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] idr: Prevent unintended underflow for the idr index
-Message-ID: <20190918115058.GB9880@bombadil.infradead.org>
-References: <1568756922-2829-1-git-send-email-jcrouse@codeaurora.org>
+        id S1729502AbfIRMbQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 08:31:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36768 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725902AbfIRMbP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Sep 2019 08:31:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ED106AD2B;
+        Wed, 18 Sep 2019 12:31:13 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 07F751E4201; Wed, 18 Sep 2019 14:31:24 +0200 (CEST)
+Date:   Wed, 18 Sep 2019 14:31:24 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, Amir Goldstein <amir73il@gmail.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3/3] xfs: Fix stale data exposure when readahead races
+ with hole punch
+Message-ID: <20190918123123.GC31891@quack2.suse.cz>
+References: <20190829131034.10563-1-jack@suse.cz>
+ <20190829131034.10563-4-jack@suse.cz>
+ <20190829155204.GD5354@magnolia>
+ <20190830152449.GA25069@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1568756922-2829-1-git-send-email-jcrouse@codeaurora.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190830152449.GA25069@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 03:48:42PM -0600, Jordan Crouse wrote:
-> It is possible for unaware callers of several idr functions to accidentally
-> underflow the index by specifying a id that is less than the idr base.
+On Fri 30-08-19 17:24:49, Jan Kara wrote:
+> On Thu 29-08-19 08:52:04, Darrick J. Wong wrote:
+> > On Thu, Aug 29, 2019 at 03:10:34PM +0200, Jan Kara wrote:
+> > > Hole puching currently evicts pages from page cache and then goes on to
+> > > remove blocks from the inode. This happens under both XFS_IOLOCK_EXCL
+> > > and XFS_MMAPLOCK_EXCL which provides appropriate serialization with
+> > > racing reads or page faults. However there is currently nothing that
+> > > prevents readahead triggered by fadvise() or madvise() from racing with
+> > > the hole punch and instantiating page cache page after hole punching has
+> > > evicted page cache in xfs_flush_unmap_range() but before it has removed
+> > > blocks from the inode. This page cache page will be mapping soon to be
+> > > freed block and that can lead to returning stale data to userspace or
+> > > even filesystem corruption.
+> > > 
+> > > Fix the problem by protecting handling of readahead requests by
+> > > XFS_IOLOCK_SHARED similarly as we protect reads.
+> > > 
+> > > CC: stable@vger.kernel.org
+> > > Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
+> > > Reported-by: Amir Goldstein <amir73il@gmail.com>
+> > > Signed-off-by: Jan Kara <jack@suse.cz>
+> > 
+> > Is there a test on xfstests to demonstrate this race?
+> 
+> No, but I can try to create one.
 
-Hi Jordan.  Thanks for the patch, but this seems like a distinction
-without a difference.
+I was experimenting with this but I could not reproduce the issue in my
+test VM without inserting artificial delay at appropriate place... So I
+don't think there's much point in the fstest for this.
 
->  void *idr_remove(struct idr *idr, unsigned long id)
->  {
-> +	if (id < idr->idr_base)
-> +		return NULL;
-> +
->  	return radix_tree_delete_item(&idr->idr_rt, id - idr->idr_base, NULL);
+								Honza
 
-If this underflows, we'll try to delete an index which doesn't exist,
-which will return NULL.
-
->  void *idr_find(const struct idr *idr, unsigned long id)
->  {
-> +	if (id < idr->idr_base)
-> +		return NULL;
-> +
->  	return radix_tree_lookup(&idr->idr_rt, id - idr->idr_base);
-
-If this underflows, we'll look up an entry which doesn't exist, which
-will return NULL.
-
-> @@ -302,6 +308,9 @@ void *idr_replace(struct idr *idr, void *ptr, unsigned long id)
->  	void __rcu **slot = NULL;
->  	void *entry;
->  
-> +	if (id < idr->idr_base)
-> +		return ERR_PTR(-ENOENT);
-> +
->  	id -= idr->idr_base;
->  
->  	entry = __radix_tree_lookup(&idr->idr_rt, id, &node, &slot);
-
-... just outside the context is this line:
-        if (!slot || radix_tree_tag_get(&idr->idr_rt, id, IDR_FREE))
-                return ERR_PTR(-ENOENT);
-
-Looking up an index which doesn't exist gets you a NULL slot, so you get
--ENOENT anyway.
-
-I did think about these possibilities when I was writing the code and
-convinced myself I didn't need them.  If you have an example of a case
-where I got thast wrong, I'd love to see it.
-
-More generally, the IDR is deprecated; I'm trying to convert users to
-the XArray.  If you're adding a new user, can you use the XArray API
-instead?
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
