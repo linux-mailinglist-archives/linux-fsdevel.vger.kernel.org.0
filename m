@@ -2,115 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D37BBB6874
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 18:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10233B6876
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 18:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387732AbfIRQsl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 12:48:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59392 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387709AbfIRQsl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 12:48:41 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6904A18C4275
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 16:48:41 +0000 (UTC)
-Received: from work-vm (unknown [10.36.118.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 505C619C70;
-        Wed, 18 Sep 2019 16:48:34 +0000 (UTC)
-Date:   Wed, 18 Sep 2019 17:48:32 +0100
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, vgoyal@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] virtio-fs: rename num_queues to num_request_queues
-Message-ID: <20190918164832.GH2947@work-vm>
-References: <20190917114457.886-1-stefanha@redhat.com>
+        id S2387776AbfIRQs6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 12:48:58 -0400
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:46053 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387709AbfIRQs6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Sep 2019 12:48:58 -0400
+Received: by mail-lf1-f43.google.com with SMTP id r134so154404lff.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 09:48:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=86ZUn97/3KZwNNgVgFqkj5nnsJKKhe/XOuAYAPGVnyg=;
+        b=CyLWlrJoS3bO7FoH77HyM4XEqzmX9zqgMXKEBMrGTDXCSDubDkAV6dEVe9f+9NU6ps
+         TjIQho7CvgDPZyQ2qs0MfWbp+zWKGSXvdZ4IBJgiegj5BiaixElPEV/qUQVMRqfs505T
+         j+1vHPZbB2Dvu8j2pvIkSc4y42bGPAM9/jxKQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=86ZUn97/3KZwNNgVgFqkj5nnsJKKhe/XOuAYAPGVnyg=;
+        b=ja6zWNxqjgoePF2ooLk1fEzJsIGEz+Mq88W4uQPhHU3kWxe+y1A7MSMsGzj+enZLLg
+         +33U+neGbHS4MytpqcQuDgxxLFMBHp94GrWuKu4yFUg26/cna/inCRkHMg296Op2cYNv
+         tZUhPd3Ah5rQB1r9M2PDYz1cXOK73mhA7j+N91fvxqkD2FUUDmxOr5FixW8GQasCUWpg
+         p0a/gkFQ0qYAB2OC+A9JpEOV7A/ZCWDJFMeEvRwpiBTwSdmaZmmXjVuKnevmUvz+MgpC
+         23N+Pm+RHrRlcyKyHU24o53qQiAnfvwMKXqzcW+ou1uUimFW/AuS8DNUvt4Yryb2ig3z
+         9zjA==
+X-Gm-Message-State: APjAAAWhUxPSCWLWl+65nYbRakLLJYOTnFmF8A3yfXC3lhEkIaWozuzb
+        9t5qzmSqzRNN4Wt34aaH4ui1EnyQUYY=
+X-Google-Smtp-Source: APXvYqwjhPNsZSuvEDOijs4ywUMbdpntrw7GCxiyGkLtDSVOS1xAdILzP8a8PXUkMQZPucq/SmJpnA==
+X-Received: by 2002:ac2:483a:: with SMTP id 26mr2559042lft.188.1568825335142;
+        Wed, 18 Sep 2019 09:48:55 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id z9sm1129849ljn.78.2019.09.18.09.48.53
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2019 09:48:54 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id y23so629570ljn.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 09:48:53 -0700 (PDT)
+X-Received: by 2002:a2e:8789:: with SMTP id n9mr2848073lji.52.1568825333672;
+ Wed, 18 Sep 2019 09:48:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917114457.886-1-stefanha@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Wed, 18 Sep 2019 16:48:41 +0000 (UTC)
+References: <20190915145905.hd5xkc7uzulqhtzr@willie-the-truck>
+ <25289.1568379639@warthog.procyon.org.uk> <28447.1568728295@warthog.procyon.org.uk>
+ <20190917170716.ud457wladfhhjd6h@willie-the-truck> <15228.1568821380@warthog.procyon.org.uk>
+In-Reply-To: <15228.1568821380@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 18 Sep 2019 09:48:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj85tOp8WjcUp6gwstp4Cg2WT=p209S=fOzpWAgqqQPKg@mail.gmail.com>
+Message-ID: <CAHk-=wj85tOp8WjcUp6gwstp4Cg2WT=p209S=fOzpWAgqqQPKg@mail.gmail.com>
+Subject: Re: Do we need to correct barriering in circular-buffers.rst?
+To:     David Howells <dhowells@redhat.com>
+Cc:     Will Deacon <will@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Stefan Hajnoczi (stefanha@redhat.com) wrote:
-> The final version of the virtio-fs device specification renamed the
-> num_queues field to num_request_queues.  The semantics are unchanged but
-> this name is clearer.
-> 
-> Use the new name in the code.
-> 
-> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+On Wed, Sep 18, 2019 at 8:43 AM David Howells <dhowells@redhat.com> wrote:
+>
+> It mandates using smp_store_release() to update buffer->head in the producer
+> and buffer->tail in the consumer - but these need pairing with memory barriers
+> used when reading buffer->head and buffer->tail on the other side.
 
-Consistent with the latest version that's just passed the voting;
-(see
-https://lists.oasis-open.org/archives/virtio-dev/201908/msg00113.html )
-so:
+No, the rule with smp_store_release() should be that it's paired with
+"smp_load_acquire()". No other barriers needed.
 
+If you do that
 
-Reviewed-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+   thread #1            thread #2
 
-> ---
-> Feel free to squash this patch.
-> ---
->  include/uapi/linux/virtio_fs.h |  2 +-
->  fs/fuse/virtio_fs.c            | 12 ++++++------
->  2 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/uapi/linux/virtio_fs.h b/include/uapi/linux/virtio_fs.h
-> index b5e99c217c86..b02eb2ac3d99 100644
-> --- a/include/uapi/linux/virtio_fs.h
-> +++ b/include/uapi/linux/virtio_fs.h
-> @@ -13,7 +13,7 @@ struct virtio_fs_config {
->  	__u8 tag[36];
->  
->  	/* Number of request queues */
-> -	__u32 num_queues;
-> +	__u32 num_request_queues;
->  } __attribute__((packed));
->  
->  #endif /* _UAPI_LINUX_VIRTIO_FS_H */
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 392b9e7d9ddf..ccfa4f741f7f 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -43,8 +43,8 @@ struct virtio_fs {
->  	struct list_head list;    /* on virtio_fs_instances */
->  	char *tag;
->  	struct virtio_fs_vq *vqs;
-> -	unsigned int nvqs;            /* number of virtqueues */
-> -	unsigned int num_queues;      /* number of request queues */
-> +	unsigned int nvqs;               /* number of virtqueues */
-> +	unsigned int num_request_queues; /* number of request queues */
->  };
->  
->  struct virtio_fs_forget {
-> @@ -477,12 +477,12 @@ static int virtio_fs_setup_vqs(struct virtio_device *vdev,
->  	unsigned int i;
->  	int ret = 0;
->  
-> -	virtio_cread(vdev, struct virtio_fs_config, num_queues,
-> -		     &fs->num_queues);
-> -	if (fs->num_queues == 0)
-> +	virtio_cread(vdev, struct virtio_fs_config, num_request_queues,
-> +		     &fs->num_request_queues);
-> +	if (fs->num_request_queues == 0)
->  		return -EINVAL;
->  
-> -	fs->nvqs = 1 + fs->num_queues;
-> +	fs->nvqs = 1 + fs->num_request_queues;
->  	fs->vqs = kcalloc(fs->nvqs, sizeof(fs->vqs[VQ_HIPRIO]), GFP_KERNEL);
->  	if (!fs->vqs)
->  		return -ENOMEM;
-> -- 
-> 2.21.0
-> 
---
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+   ... add data to queue ..
+   smp_store_release(x)
+
+                        smp_load_acquire(x)
+                        ... read data from queue ..
+
+then you should need no other barriers.
+
+But yes, store_release(x) should always pair with the load_acquire(x),
+and the guarantee is that if the load_acquire reads the value that the
+store_release stored, then all subsequent reads in thread #2 will see
+all preceding writes in thread #1.
+
+That's the optimal locking for a simple queue with a reader and a
+writer and no other locking needed between the two.
+
+HOWEVER.
+
+I think this is all entirely pointless wrt the pipe buffer use. You
+don't have a simple queue. You have multiple writers, and you have
+multiple readers. As a result, you need real locking.
+
+So don't do the barriers. If you do the barriers, you're almost
+certainly doing something buggy. You don't have the simple "consumer
+-> producer" thing. Or rather, you don't _only_ have that thing.
+
+A reader "produces" a new tail as far as the writer is concerned (so
+the reader that has consumed an entry does a smp_store_release(tail)
+-> smp_load_acquire(tail) on the writer side when the writer looks for
+a new entry it can fill).
+
+BUT! A writer also needs to make sure it's the *only* writer for that
+new entry, and similarly a reader that is about to consume an entry
+needs to make sure it's the only reader of that entry. So it is *not*
+that kind of simple hand-off situation at all.
+
+End result: use a lock. Seriously. Anything else is going to be buggy,
+or going to be incredibly subtle.
+
+Don't do those barriers. They are wrong. Barriers simply do not
+protect against two concurrent readers, or two concurrent writers.
+Barriers are useless.
+
+Now, it's possible that barriers together with very clever atomics
+could do a lockless model, but then all the cleverness is going to be
+in the lockless part of the code, not the barriers. So even if we
+eventually do a lockless model, it's completely wrong to do the
+barriers first.
+
+And no, lockless isn't as simple as "readers can do a
+atomic_add_return_relaxed() to consume an entry, and writers can do a
+atomic_cmpxchg() to produce one".
+
+I think the only possible lockless model is that readers have some
+exclusion against other readers (so now you have only one reader at a
+time), and then you fundamentally know that a reader can update the
+tail pointer without worrying about any races (because a reader will
+never race against another reader, and a writer will only ever _read_
+the tail pointer). So then - once you have reader-reader exclusion,
+the _tail_ update is simple:
+
+    smp_store_release(old_tail+1, &tail);
+
+because while there are multiple writers, the reader doesn't care (the
+above, btw, assumes that head/tail themselves aren't doing the "&
+bufsize" thing, and that that is done at use time - that also makes it
+easy to see the difference between empty and full).
+
+But this still requires that lock around all readers. And we have
+that: the pipe mutex.
+
+But writers have the same issue, and we don't want to use the pipe
+mutex for writer exclusion, since we want to allow atomic writers.
+
+So writers do have to have a lock, or they need to do something clever
+with a reservation system that uses cmpxchg. Honestly, just do the
+lock.
+
+The way this should be done:
+
+ 1) do the head/tail conversion using the EXISTING locking. We have
+the pipe_mutex, and it serializes everybody right now, and it makes
+any barriers or atomics pointless. Just covert to a sane and simple
+head/tail model.
+
+    NO BARRIERS!
+
+*after* you've done this, do the next phase:
+
+ 2) convert the writers to use an irq-safe spinlock, and either make
+the readers look at it too, or do the above smp_store_release() for
+the final tail update (and the writers need to use a
+smp_load_acquire() to look at the tail, despite their lock).
+
+    NO BARRIERS (well, outside the tail thing above).
+
+and *after* you've done #2, you can now do writes from atomic context.
+
+At that point you are done. Consider youself happy, but also allow for
+the possibility that some day you'll see lock contention with lots of
+writers, and that *maybe* some day (unlikely) you'd want to look at
+doing
+
+ 3) see if you can make the writers do some clever lockless reservation model.
+
+But that #3 really should be considered a "we are pretty sure it's
+possible in theory, but it's questinably useful, and hopefully we'll
+never even need to consider it".
+
+                Linus
