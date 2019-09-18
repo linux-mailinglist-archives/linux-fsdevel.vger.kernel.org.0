@@ -2,160 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B6D4B5FD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 11:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88D8AB6017
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Sep 2019 11:27:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfIRJHi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 05:07:38 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50426 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728385AbfIRJHi (ORCPT
+        id S1727336AbfIRJ1T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 05:27:19 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52220 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726676AbfIRJ1T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 05:07:38 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 5so1644268wmg.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 02:07:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6G/whdxwOVG2qxmcsy9XC+pDIIKNhBXnDvwIF4K/VBs=;
-        b=kfWr8gWBYBcBGgcxeOud4gsGHHoCDZ+e2gVUoUqlrkYqpWgQKaJ78hHgXC3ilzVr0O
-         +8pkEG8kqn4PpvoHDlJhIdgZOtD96xrMJPf5rxoAvthocW4621d3D9Qh5trYnLS5SZ1C
-         BN08nY19kls8ugqtZhrEwO8LpHQ8mUyG2tZWI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6G/whdxwOVG2qxmcsy9XC+pDIIKNhBXnDvwIF4K/VBs=;
-        b=EEUTxcA4UhJA00OuZqyw25dnxySq2E3QTyXE8JG2q02ZLpUmtzRrEfxzXTMPi0dzBW
-         rpLmM2D232wxY/aDBgtRCM7bormjpatubxQti1y104MNnzNB0+3FErw9E7ib2hxJT8IT
-         2SPlMs/4wiKl7kJU7qZjksKDGtScLZUPQeGoSVovgJ/ubstKJbX17pS4xkUMiNlgpasj
-         EwkFLRBB1zKs9UkyYrGrrJfNCKuxbvyQ/VDDQBdZLTDbyeFbuBvJOWTqIUQy0Ur/gS0O
-         xEaWpizJvr2BQrEJyzBMr9W5LFXKh3f4aJ6/JWRqs3MZCrqU5m707nHknhUaxuqXJbc+
-         dd9A==
-X-Gm-Message-State: APjAAAVlvoigH7JadEBxiTPku4SVRD4FVARHOkOajklqw47gejoxToSK
-        sCgEwJ+9e+hqxW2LOUNRgfLVcQ==
-X-Google-Smtp-Source: APXvYqxcHp0ur5Smn0yHXP17FwVKc+WjZmFyaf7NbEJ/4W74qLgNfNcp6RlqK0gpGfLkmsfzOB/N8g==
-X-Received: by 2002:a7b:c1cc:: with SMTP id a12mr1816647wmj.73.1568797655318;
-        Wed, 18 Sep 2019 02:07:35 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id q124sm2478546wma.5.2019.09.18.02.07.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2019 02:07:34 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 11:07:31 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     NeilBrown <neilb@suse.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
-        <andreas.gruenbacher@gmail.com>,
-        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Lange <lange@informatik.uni-koeln.de>
-Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
-Message-ID: <20190918090731.GB19549@miu.piliscsaba.redhat.com>
-References: <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de>
- <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com>
- <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
- <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com>
- <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com>
- <20161206185806.GC31197@fieldses.org>
- <87bm0l4nra.fsf@notabene.neil.brown.name>
- <20190503153531.GJ12608@fieldses.org>
- <87woj3157p.fsf@notabene.neil.brown.name>
- <20190510200941.GB5349@fieldses.org>
+        Wed, 18 Sep 2019 05:27:19 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8I98uK0036001;
+        Wed, 18 Sep 2019 09:27:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=5W1fcvEd99/AIOIxEczHb9EgxxrI9ZKCVn9mLpgE1DY=;
+ b=lMkuL9E22/fDHGZGYGdq4UeC5SmsvGJPm1jemC461wOrRlCJRuuu/+/JcgNExra+s8Mf
+ Z/tF3XlJX6OyYs2M7n7ZaUo2Z5fZgUgou5AYx75K0JBluBD3nmV1ot/5EEKrIUJV6esR
+ dD/0NnDsuB6Duc2+tQrLR79ZpIcpuENYTvDGuvJfYFVWswA5ALy/O9+jdGXfFzRo2raa
+ 4tv4hudsFVUcsQd47Wwf0ZX90JmZXCOtKpR/pWEp8zA2e/CqqoT0piBKKTps2IMbCvRA
+ wjd4xIIL6HUeWEKOxR3ffNdvNazYCzbbkwvM2MM9y6mi9ZLva+mZ8s9zuW1GvvLMWWw1 fA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2v385dtj58-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Sep 2019 09:27:09 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8I994QC176154;
+        Wed, 18 Sep 2019 09:25:08 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2v37mm8fts-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Sep 2019 09:25:08 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8I9P56v026455;
+        Wed, 18 Sep 2019 09:25:05 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Sep 2019 02:25:04 -0700
+Date:   Wed, 18 Sep 2019 12:24:06 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ju Hyung Park <qkrwngud825@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
+        linkinjeon@gmail.com, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-kernel@vger.kernel.org, alexander.levin@microsoft.com,
+        sergey.senozhatsky@gmail.com, linux-fsdevel@vger.kernel.org,
+        sj1557.seo@samsung.com
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to
+Message-ID: <20190918092405.GC2959@kadam>
+References: <8998.1568693976@turing-police>
+ <20190917053134.27926-1-qkrwngud825@gmail.com>
+ <20190917054726.GA2058532@kroah.com>
+ <CGME20190917060433epcas2p4b12d7581d0ac5477d8f26ec74e634f0a@epcas2p4.samsung.com>
+ <CAD14+f1adJPRTvk8awgPJwCoHXSngqoKcAze1xbHVVvrhSMGrQ@mail.gmail.com>
+ <004401d56dc9$b00fd7a0$102f86e0$@samsung.com>
+ <20190918061605.GA1832786@kroah.com>
+ <20190918063304.GA8354@jagdpanzerIV>
+ <20190918082658.GA1861850@kroah.com>
+ <CAD14+f24gujg3S41ARYn3CvfCq9_v+M2kot=RR3u7sNsBGte0Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190510200941.GB5349@fieldses.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAD14+f24gujg3S41ARYn3CvfCq9_v+M2kot=RR3u7sNsBGte0Q@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9383 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909180094
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9383 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909180094
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 10, 2019 at 04:09:41PM -0400, J. Bruce Fields wrote:
-> On Tue, May 07, 2019 at 10:24:58AM +1000, NeilBrown wrote:
-> > Interesting perspective .... though doesn't NFSv4 explicitly allow
-> > client-side ACL enforcement in the case of delegations?
+On Wed, Sep 18, 2019 at 06:01:09PM +0900, Ju Hyung Park wrote:
+> On Wed, Sep 18, 2019 at 5:33 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > He did?  I do not see a patch anywhere, what is the message-id of it?
 > 
-> Not really.  What you're probably thinking of is the single ACE that the
-> server can return on granting a delegation, that tells the client it can
-> skip the ACCESS check for users matching that ACE.  It's unclear how
-> useful that is.  It's currently unused by the Linux client and server.
-> 
-> > Not sure how relevant that is....
-> > 
-> > It seems to me we have two options:
-> >  1/ declare the NFSv4 doesn't work as a lower layer for overlayfs and
-> >     recommend people use NFSv3, or
-> >  2/ Modify overlayfs to work with NFSv4 by ignoring nfsv4 ACLs either
-> >  2a/ always - and ignore all other acls and probably all system. xattrs,
-> >  or
-> >  2b/ based on a mount option that might be
-> >       2bi/ general "noacl" or might be
-> >       2bii/ explicit "noxattr=system.nfs4acl"
-> >  
-> > I think that continuing to discuss the miniature of the options isn't
-> > going to help.  No solution is perfect - we just need to clearly
-> > document the implications of whatever we come up with.
-> > 
-> > I lean towards 2a, but I be happy with with any '2' and '1' won't kill
-> > me.
-> 
-> I guess I'd also lean towards 2a.
-> 
-> I don't think it applies to posix acls, as overlayfs is capable of
-> copying those up and evaluating them on its own.
+> I'm just repeating myself at this point, but again, I'm more than
+> willing to work on a patch.
+> I just want to make it clear on how should I.
 
-POSIX acls are evaluated and copied up.
+Put it in drivers/staging/sdfat/.
 
-I guess same goes for "security.*" attributes, that are evaluated on MAC checks.
+But really we want someone from Samsung to say that they will treat
+the staging version as upstream.  It doesn't work when people apply
+fixes to their version and a year later back port the fixes into
+staging.  The staging tree is going to have tons and tons of white space
+fixes so backports are a pain.  All development needs to be upstream
+first where the staging driver is upstream.  Otherwise we should just
+wait for Samsung to get it read to be merged in fs/ and not through the
+staging tree.
 
-I think it would be safe to ignore failure to copy up anything else.  That seems
-a bit saner than just blacklisting nfs4_acl...
+regards,
+dan carpenter
 
-Something like the following untested patch.
 
-Thanks,
-Miklos
-
----
- fs/overlayfs/copy_up.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -36,6 +36,13 @@ static int ovl_ccup_get(char *buf, const
- module_param_call(check_copy_up, ovl_ccup_set, ovl_ccup_get, NULL, 0644);
- MODULE_PARM_DESC(check_copy_up, "Obsolete; does nothing");
- 
-+static bool ovl_must_copy_xattr(const char *name)
-+{
-+	return !strcmp(name, XATTR_POSIX_ACL_ACCESS) ||
-+	       !strcmp(name, XATTR_POSIX_ACL_DEFAULT) ||
-+	       !strncmp(name, XATTR_SECURITY_PREFIX, XATTR_SECURITY_PREFIX_LEN);
-+}
-+
- int ovl_copy_xattr(struct dentry *old, struct dentry *new)
- {
- 	ssize_t list_size, size, value_size = 0;
-@@ -107,8 +114,13 @@ int ovl_copy_xattr(struct dentry *old, s
- 			continue; /* Discard */
- 		}
- 		error = vfs_setxattr(new, name, value, size, 0);
--		if (error)
--			break;
-+		if (error) {
-+			if (ovl_must_copy_xattr(name))
-+				break;
-+
-+			/* Ignore failure to copy unknown xattrs */
-+			error = 0;
-+		}
- 	}
- 	kfree(value);
- out:
