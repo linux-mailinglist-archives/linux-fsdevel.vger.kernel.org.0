@@ -2,137 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE721B70F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 03:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DCB6B711A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 03:31:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388044AbfISB1m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 21:27:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50522 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387591AbfISB1m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 21:27:42 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 066FE3084295;
-        Thu, 19 Sep 2019 01:27:42 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 31F5B6B49C;
-        Thu, 19 Sep 2019 01:27:33 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
-Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
-        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
-        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, dwalsh@redhat.com, mpatel@redhat.com,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak90 V7 21/21] audit: add proc interface for capcontid
-Date:   Wed, 18 Sep 2019 21:22:38 -0400
-Message-Id: <67a482f9dcde6362bbca2a2facb24a3d68e0c07a.1568834525.git.rgb@redhat.com>
-In-Reply-To: <cover.1568834524.git.rgb@redhat.com>
-References: <cover.1568834524.git.rgb@redhat.com>
-In-Reply-To: <cover.1568834524.git.rgb@redhat.com>
-References: <cover.1568834524.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 19 Sep 2019 01:27:42 +0000 (UTC)
+        id S2387500AbfISBbv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 21:31:51 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40054 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387438AbfISBbv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Sep 2019 21:31:51 -0400
+Received: by mail-lf1-f68.google.com with SMTP id d17so1056417lfa.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 18:31:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uJ4ydVPnUk1MpO9iHZC8eadZdfXIfU9vawn2F3Ib1fo=;
+        b=A0YUpl9WGKzUNGpQlDZCnUNq6eUYinpLyOjjYEWw9qMpylivgUSR6LUyPDngKcRQfO
+         CG9fCIJMna6iMWF1LQ7ztmKybh1kW4q5WyqsVkqC2UC0ZmH4W8gyqqZ+vDToxilfbXhs
+         SCFR9Wb1ioaYc1GAqKixI4+MGwt/qdu3yOajg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uJ4ydVPnUk1MpO9iHZC8eadZdfXIfU9vawn2F3Ib1fo=;
+        b=NpywjWDGCFbAPmyGPUtMZC0yrC3FeCwDwJg2+saJMioFJyf58+Ay1wtdOJz4klc6ou
+         CHYgXFSxETmwyastDpMB0VcUYzVYPm3yAaHBOS28aWSYLluGBTNzcPg8WcyGTEmgDNw2
+         NmzRAXOReVHGQouS8svzLFle5u9fDlF2k60rAOJ9FRBa8LBbYCAJhXcG+dJ2BuUwZGM7
+         kMN7K+JnbIsACQfbEKPyM3mEZvn3XCH8/ftAztds5/B5btBwViGijrN8pJIvDpLn/C4C
+         8+vw0eHgNtZZlxxO6yH5xjdHi9nV3AkYW+mky0noX7YZGQrJ1fz1eMKbqadqav8qn+qv
+         B5xg==
+X-Gm-Message-State: APjAAAXQ2lcBtid+sKBrecKkAelBIpZ3W4Tjih8iLTwdzlgwTb6PBo9x
+        aGs2ciIlT7Msh6XKfoQ6VW6yByC1WbU=
+X-Google-Smtp-Source: APXvYqwcMbgrKvLuThZw332jLCaF5d7SFfU4mPnA/mlAl3D3serIwUW7+GdKjXBVParjSCFgJvuGRg==
+X-Received: by 2002:ac2:558e:: with SMTP id v14mr3464097lfg.161.1568856707923;
+        Wed, 18 Sep 2019 18:31:47 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id m14sm1308135ljj.37.2019.09.18.18.31.46
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2019 18:31:46 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id w67so1071274lff.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 18:31:46 -0700 (PDT)
+X-Received: by 2002:a19:f204:: with SMTP id q4mr3489622lfh.29.1568856706072;
+ Wed, 18 Sep 2019 18:31:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190917152140.GU2229799@magnolia>
+In-Reply-To: <20190917152140.GU2229799@magnolia>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 18 Sep 2019 18:31:29 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj9Zjb=NENJ6SViNiYiYi4LFX9WYqskZh4E_OzjijK1VA@mail.gmail.com>
+Message-ID: <CAHk-=wj9Zjb=NENJ6SViNiYiYi4LFX9WYqskZh4E_OzjijK1VA@mail.gmail.com>
+Subject: Re: [GIT PULL] iomap: new code for 5.4
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        cluster-devel <cluster-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a /proc interface to capcontid for testing purposes.  This isn't
-intended to be merged upstream.  Container orchestrators/engines are
-expected to link to libaudit to use the functions audit_set_capcontid()
-and audit_get_capcontid.
+On Tue, Sep 17, 2019 at 8:21 AM Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> Please pull this series containing all the new iomap code for 5.4.
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- fs/proc/base.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+So looking at the non-iomap parts of it, I react to the new "list_pop() code.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 26091800180c..283ef8e006e7 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1360,6 +1360,59 @@ static ssize_t proc_contid_write(struct file *file, const char __user *buf,
- 	.write		= proc_contid_write,
- 	.llseek		= generic_file_llseek,
- };
-+
-+static ssize_t proc_capcontid_read(struct file *file, char __user *buf,
-+				  size_t count, loff_t *ppos)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct task_struct *task = get_proc_task(inode);
-+	ssize_t length;
-+	char tmpbuf[TMPBUFLEN];
-+
-+	if (!task)
-+		return -ESRCH;
-+	/* if we don't have caps, reject */
-+	if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
-+		return -EPERM;
-+	length = scnprintf(tmpbuf, TMPBUFLEN, "%u", audit_get_capcontid(task));
-+	put_task_struct(task);
-+	return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
-+}
-+
-+static ssize_t proc_capcontid_write(struct file *file, const char __user *buf,
-+				   size_t count, loff_t *ppos)
-+{
-+	struct inode *inode = file_inode(file);
-+	u32 capcontid;
-+	int rv;
-+	struct task_struct *task = get_proc_task(inode);
-+
-+	if (!task)
-+		return -ESRCH;
-+	if (*ppos != 0) {
-+		/* No partial writes. */
-+		put_task_struct(task);
-+		return -EINVAL;
-+	}
-+
-+	rv = kstrtou32_from_user(buf, count, 10, &capcontid);
-+	if (rv < 0) {
-+		put_task_struct(task);
-+		return rv;
-+	}
-+
-+	rv = audit_set_capcontid(task, capcontid);
-+	put_task_struct(task);
-+	if (rv < 0)
-+		return rv;
-+	return count;
-+}
-+
-+static const struct file_operations proc_capcontid_operations = {
-+	.read		= proc_capcontid_read,
-+	.write		= proc_capcontid_write,
-+	.llseek		= generic_file_llseek,
-+};
- #endif
- 
- #ifdef CONFIG_FAULT_INJECTION
-@@ -3121,6 +3174,7 @@ static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
- 	REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
- 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
- 	REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-+	REG("audit_capcontainerid", S_IWUSR|S_IRUSR|S_IRUSR, proc_capcontid_operations),
- #endif
- #ifdef CONFIG_FAULT_INJECTION
- 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-@@ -3522,6 +3576,7 @@ static int proc_tid_comm_permission(struct inode *inode, int mask)
- 	REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
- 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
- 	REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-+	REG("audit_capcontainerid", S_IWUSR|S_IRUSR|S_IRUSR, proc_capcontid_operations),
- #endif
- #ifdef CONFIG_FAULT_INJECTION
- 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
--- 
-1.8.3.1
+In particular, this:
 
+        struct list_head *pos = READ_ONCE(list->next);
+
+is crazy to begin with..
+
+It seems to have come from "list_empty()", but the difference is that
+it actually makes sense to check for emptiness of a list outside
+whatever lock that protects the list. It can be one of those very
+useful optimizations where you don't even bother taking the lock if
+you can optimistically check that the list is empty.
+
+But the same is _not_ true of an operation like "list_pop()". By
+definition, the list you pop something off has to be stable, so the
+READ_ONCE() makes no sense here.
+
+Anyway, if that was the only issue, I wouldn't care. But looking
+closer, the whole thing is just completely wrong.
+
+All the users seem to do some version of this:
+
+        struct list_head tmp;
+
+        list_replace_init(&ioend->io_list, &tmp);
+        iomap_finish_ioend(ioend, error);
+        while ((ioend = list_pop_entry(&tmp, struct iomap_ioend, io_list)))
+                iomap_finish_ioend(ioend, error);
+
+which is completely wrong and pointless.
+
+Why would anybody use that odd "list_pop()" thing in a loop, when what
+it really seems to just want is that bog-standard
+"list_for_each_entry_safe()"
+
+        struct list_head tmp;
+        struct iomap_ioend *next;
+
+        list_replace_init(&ioend->io_list, &tmp);
+        iomap_finish_ioend(ioend, error);
+        list_for_each_entry_safe(struct iomap_ioend, next, &tmp, io_list)
+                iomap_finish_ioend(ioend, error);
+
+which is not only the common pattern, it's more efficient and doesn't
+pointlessly re-write the list for each entry, it just walks it (and
+the "_safe()" part is because it looks up the next entry early, so
+that the entry that it's walking can be deleted).
+
+So I pulled it. But then after looking at it, I unpulled it again
+because I don't want to see this kind of insanity in one of THE MOST
+CORE header files we have in the whole kernel.
+
+If xfs and iomap want to think they are "popping" a list, they can do
+so. In the privacy of your own home, you can do stupid and pointless
+things.
+
+But no, we don't pollute core kernel code with those stupid and
+pointless things.
+
+              Linus
