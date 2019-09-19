@@ -2,115 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34D12B7F15
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 18:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCD6AB7F85
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 19:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404349AbfISQaA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Sep 2019 12:30:00 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41595 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387693AbfISQ37 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Sep 2019 12:29:59 -0400
-Received: by mail-lj1-f196.google.com with SMTP id f5so4232379ljg.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2019 09:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yOeYjhY2TaFJW9wyBh4aTYbME8oCFKdq0q4U7z5/glg=;
-        b=fANktzJy2S3Kc/Mm9Tv5QoHvYpucXsOuKEmCGX95UhOvTtrVw5xZLOL8D7SbT7J7zp
-         q+wtuj988DKgYQxlWbNSygEa2IyFNISOALjUyMsG5jZ8BlpqlP7BCkXN9vlUCPzen3oH
-         MZUBRP7j1WuGyLw3Kl49isvHiIAcdB2Y/jIdE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yOeYjhY2TaFJW9wyBh4aTYbME8oCFKdq0q4U7z5/glg=;
-        b=BkzE/Iez2Ai/D2d7otfchCvT/gVk3ql55ptNkLRgddG3dRZ1nWtuzKGMmmX575J6yw
-         JHWQ/n2Rfg6yjtcPLeod2dm3E6vhjhqbfpFbv5q6mfh2gWXncgdkHwThzEvFDMl/t/cw
-         RVGoLUAfClTLqLvUoBd0oRgosUpu9F5O0VqDOkqn7lEZwC8ccxWfZZ/ZyxFbIyd9nK2u
-         qTbmNnRZWQiLPazfeQdN6lQ8wC+Os/aBFHCRTtwaWvTTIcVh1+uiQ8XEuXrpDbiMXsZK
-         SulMfZKZce6JvT6tiwRIu2bOt+BV1KRS6aFMFTSNrIB6SZSwLVrDnT6/EKr4iwys2FOD
-         jZnQ==
-X-Gm-Message-State: APjAAAXcBrgtt5TU78ety84Vp0yuuKnYxxyMykfHFPzlX8qq+b1baZ0m
-        VLIf58OVcttlCd6X2/yCF/sfnJo5png=
-X-Google-Smtp-Source: APXvYqziCVHgk9Xvv4xU6KySYpfYwucdlOJ/1D9lYCNXLXi9sFE0008yLvt+oPT4IylbfQWn2K7LEQ==
-X-Received: by 2002:a2e:9059:: with SMTP id n25mr1584467ljg.134.1568910596792;
-        Thu, 19 Sep 2019 09:29:56 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id b67sm1786868ljf.5.2019.09.19.09.29.55
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2019 09:29:55 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id 7so4233355ljw.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2019 09:29:55 -0700 (PDT)
-X-Received: by 2002:a2e:9854:: with SMTP id e20mr6081705ljj.72.1568910595160;
- Thu, 19 Sep 2019 09:29:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com>
- <16147.1568632167@warthog.procyon.org.uk> <28368.1568875207@warthog.procyon.org.uk>
- <16257.1568886562@warthog.procyon.org.uk>
-In-Reply-To: <16257.1568886562@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 19 Sep 2019 09:29:38 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgmbGSxdJDMjtGNqFs+r0Z62xv_i_5TBRPECuqXN-ax9g@mail.gmail.com>
-Message-ID: <CAHk-=wgmbGSxdJDMjtGNqFs+r0Z62xv_i_5TBRPECuqXN-ax9g@mail.gmail.com>
-Subject: Re: [GIT PULL afs: Development for 5.4
-To:     David Howells <dhowells@redhat.com>
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org,
+        id S2389412AbfISRBw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Sep 2019 13:01:52 -0400
+Received: from verein.lst.de ([213.95.11.211]:42775 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731729AbfISRBw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Sep 2019 13:01:52 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 80CD768B20; Thu, 19 Sep 2019 19:01:48 +0200 (CEST)
+Date:   Thu, 19 Sep 2019 19:01:48 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        cluster-devel <cluster-devel@redhat.com>
+Subject: Re: [GIT PULL] iomap: new code for 5.4
+Message-ID: <20190919170148.GA8908@lst.de>
+References: <20190917152140.GU2229799@magnolia> <CAHk-=wj9Zjb=NENJ6SViNiYiYi4LFX9WYqskZh4E_OzjijK1VA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj9Zjb=NENJ6SViNiYiYi4LFX9WYqskZh4E_OzjijK1VA@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 2:49 AM David Howells <dhowells@redhat.com> wrote:
->
-> Actually, waiting for all outstanding fixes to get merged and then rebasing
-> might not be the right thing here.  The problem is that there are fixes in
-> both trees: afs fixes go directly into yours whereas rxrpc fixes go via
-> networking and I would prefer to base my patches on both of them for testing
-> purposes.  What's the preferred method for dealing with that?  Base on a merge
-> of the lastest of those fixes in each tree?
+On Wed, Sep 18, 2019 at 06:31:29PM -0700, Linus Torvalds wrote:
+> It seems to have come from "list_empty()", but the difference is that
+> it actually makes sense to check for emptiness of a list outside
+> whatever lock that protects the list. It can be one of those very
+> useful optimizations where you don't even bother taking the lock if
+> you can optimistically check that the list is empty.
+> 
+> But the same is _not_ true of an operation like "list_pop()". By
+> definition, the list you pop something off has to be stable, so the
+> READ_ONCE() makes no sense here.
 
-If you absolutely *have* to have something from another development
-tree, that's generally a sign that something is screwed up with the
-model in the first place, but when it happens,  you should make sure
-that you have a stable point in that development tree.
+Indeed.
 
-You might ask the upstream developer (ie Davem, in the case of the
-network tree) what would be a good point, for example. Don't just pick
-a random "tree of the day".
+> Anyway, if that was the only issue, I wouldn't care. But looking
+> closer, the whole thing is just completely wrong.
+> 
+> All the users seem to do some version of this:
+> 
+>         struct list_head tmp;
+> 
+>         list_replace_init(&ioend->io_list, &tmp);
+>         iomap_finish_ioend(ioend, error);
+>         while ((ioend = list_pop_entry(&tmp, struct iomap_ioend, io_list)))
+>                 iomap_finish_ioend(ioend, error);
+> 
+> which is completely wrong and pointless.
+> 
+> Why would anybody use that odd "list_pop()" thing in a loop, when what
+> it really seems to just want is that bog-standard
+> "list_for_each_entry_safe()"
+> 
+>         struct list_head tmp;
+>         struct iomap_ioend *next;
+> 
+>         list_replace_init(&ioend->io_list, &tmp);
+>         iomap_finish_ioend(ioend, error);
+>         list_for_each_entry_safe(struct iomap_ioend, next, &tmp, io_list)
+>                 iomap_finish_ioend(ioend, error);
+> 
+> which is not only the common pattern, it's more efficient and doesn't
+> pointlessly re-write the list for each entry, it just walks it (and
+> the "_safe()" part is because it looks up the next entry early, so
+> that the entry that it's walking can be deleted).
 
-The same very much goes for my tree, btw. You should simply never just
-pick a random tree of the day as your base for work if you start with
-my tree. That's true whether you do a merge or just start new
-development on top of some point, or anything else, for that matter.
+That might be true for the current two cases that operate on a temporary
+local list, but in general we have lots of cases where we operate on
+lists that are not just local and where have to delete all the entries.
 
-Generally, you should never merge other peoples code without having
-them _tell_ you that some particular point is a good thing to merge.
-Releases are obviously implicitly such points, but generally
-cross-tree merges need communication (a pull request to upstream is
-the obvious such communication, but not necessarily the only one:
-we've had cross-tree development that has involved separate branches
-and just various synchronization emails between the two groups).
-
-Looking at rxrpc in particular - if that is what you were waiting for
-- it looks more like you should just had an rxrpc branch, and asked
-David to pull it for the 5.4 merge window. Then you could have used
-that branch itself, as a starting point, perhaps. Or - better yet,
-perhaps - merged it into your development tree based on a good AFS
-starting point, with a *big* merge message explaining what you are
-merging and why.
-
-Right now there is a merge with absolutely no explanation for why the
-merge exists at all, and with some very non-obvious bases that really
-look like they are just random points of development for both me and
-for Davem.
-
-              Linus
+Sure, we could somehow let them dangle and then just do a INIT_LIST_HEAD
+on the list later, but that is just asking for trouble down the road
+when people actually use list_empty in the functions called in the loop.
