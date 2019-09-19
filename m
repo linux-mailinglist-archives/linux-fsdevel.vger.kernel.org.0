@@ -2,142 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 563F3B7E4F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 17:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37D3FB7E72
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 17:44:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389859AbfISPha (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Sep 2019 11:37:30 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:36876 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389840AbfISPh3 (ORCPT
+        id S2389444AbfISPok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Sep 2019 11:44:40 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33933 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731833AbfISPoj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Sep 2019 11:37:29 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8JFYNm7169221;
-        Thu, 19 Sep 2019 15:37:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=obEEcpkxDZO71S8QQtANUQvd5KQ7MwnRCTs6RGHNVmc=;
- b=NcRipYIdMiKA8lxT6p+v77B/Noi+X5FraDPe44Pb9OoyVnXYca90Rxswm17heSCeezfP
- c/cUL9zye8uaHNYaYHyAK3+YLzZfRQY635lUSQCXIMLJDpxglWIkzkemUUkkMmO0JQIn
- DITtnjNS1wpmypisLta91k2GH3+i2ZOXUAVQ1+WbFGy4Sf0dNjoJHXZqKS5h2tLxDJFU
- pgWvyaX+azU+ezLpi/pd52cpgxLd4xqpdnORwnoWU1ZauQjECBstI19guv+Lof07Xvhc
- HOQHNoK3XR6J/mT4WsnD1konFm5niEgZkw5FPWi+W9iGEu1fL3cwnem2yFGAba70tq08 yQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2v3vb54vwt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Sep 2019 15:37:09 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8JFCgkT006634;
-        Thu, 19 Sep 2019 15:37:08 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2v3vbsar8a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Sep 2019 15:37:08 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8JFb612008663;
-        Thu, 19 Sep 2019 15:37:06 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Sep 2019 15:37:06 +0000
-Date:   Thu, 19 Sep 2019 08:37:04 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-Subject: [ANNOUNCE] xfs-linux: iomap-5.4-merge rebased to 1b4fdf4f30db
-Message-ID: <20190919153704.GK2229799@magnolia>
+        Thu, 19 Sep 2019 11:44:39 -0400
+Received: by mail-oi1-f195.google.com with SMTP id 83so3164934oii.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2019 08:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3kvUqBQcNxOCOxtVti+j2jNfpMFcmJ7YDRZiAB8fMVI=;
+        b=JSdHATBDkNlBCb3LfzQMqdXakwlYFtjrEhvg2kKmGXw6Gi0+1srQ/hFoLVw0d/mlM3
+         Srx5r89gSVRcr8Z9Tqrt47fQs+rJwHij6Wa71toTKoYRDOJDcoMEQYKOaOp2RuulvACb
+         +hJuWp4xgKtUl4OEx2HsOKDbDu03fFQKrfCtzjwKv7lqO67RG5ryfCkKpb6d39C6vdrl
+         CeGfuiEtTf/WimxAa6RtxOSCsRA6rJdIOWsl2qCfuQKCg9L0klMMSZ5y96ty+QK5isk2
+         MV1QugKveHnGabKKa0FUl2HCXCk+faxEpcWUpIxx/l2Ri8OWCBsBfISiTDaFEkg+Xtl7
+         8rwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3kvUqBQcNxOCOxtVti+j2jNfpMFcmJ7YDRZiAB8fMVI=;
+        b=X+UeDc8nN/Nbz0E0wh3UaViN/tPIDPrd0ygK2DXCqPTgrW/TocTFF4tOXlEHQ8pqr9
+         L4xY3xXh8zXV90IRMXu1t10kcIY6CxQJ2qnLvkm2fT4kH8TMP1ea7JLO4yDZugfGHUrO
+         9P4AmjJubBV9FDNp/XgUrYHVnyYLU3OohaigSb8+bUIdWlQQz8dw1W+Qo/UKmlB5JYWr
+         D2R9FIkCsPrQE1PUE9jr+vWLvYQzIpSr02JBSIWxmFjBPlUZKls683e5RV6/+IJqn1ku
+         bj720YCqxM8wyX8wH78cPQEtLQVniBPlXdGVo4smjRa7KnVpSfSW+rJzpxusGm1TEJ0A
+         pduA==
+X-Gm-Message-State: APjAAAUDW6uPBijtL2at6ksEaYlgyFnw35ItIwt9GTF9FQJLDqzTs9rQ
+        VEE3dQsqwPnYi8zSIOygalB3xE0TMi70UkHwLmfUGw==
+X-Google-Smtp-Source: APXvYqwv7Y0THRPcopDsfzOxxFMqSN/REmKRj1pP4r6UrP+tTi/DK5t8aZIsyIOfIes38bfT67t9gmY/s7r1oFMhkdg=
+X-Received: by 2002:aca:4406:: with SMTP id r6mr2849941oia.175.1568907878436;
+ Thu, 19 Sep 2019 08:44:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909190143
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909190144
+References: <cover.1568875700.git.osandov@fb.com> <230a76e65372a8fb3ec62ce167d9322e5e342810.1568875700.git.osandov@fb.com>
+In-Reply-To: <230a76e65372a8fb3ec62ce167d9322e5e342810.1568875700.git.osandov@fb.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 19 Sep 2019 17:44:12 +0200
+Message-ID: <CAG48ez2GKv15Uj6Wzv0sG5v2bXyrSaCtRTw5Ok_ovja_CiO_fQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] fs: add RWF_ENCODED for writing compressed data
+To:     Omar Sandoval <osandov@osandov.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On Thu, Sep 19, 2019 at 8:54 AM Omar Sandoval <osandov@osandov.com> wrote:
+> Btrfs can transparently compress data written by the user. However, we'd
+> like to add an interface to write pre-compressed data directly to the
+> filesystem. This adds support for so-called "encoded writes" via
+> pwritev2().
+>
+> A new RWF_ENCODED flags indicates that a write is "encoded". If this
+> flag is set, iov[0].iov_base points to a struct encoded_iov which
+> contains metadata about the write: namely, the compression algorithm and
+> the unencoded (i.e., decompressed) length of the extent. iov[0].iov_len
+> must be set to sizeof(struct encoded_iov), which can be used to extend
+> the interface in the future. The remaining iovecs contain the encoded
+> extent.
+>
+> A similar interface for reading encoded data can be added to preadv2()
+> in the future.
+>
+> Filesystems must indicate that they support encoded writes by setting
+> FMODE_ENCODED_IO in ->file_open().
+[...]
+> +int import_encoded_write(struct kiocb *iocb, struct encoded_iov *encoded,
+> +                        struct iov_iter *from)
+> +{
+> +       if (iov_iter_single_seg_count(from) != sizeof(*encoded))
+> +               return -EINVAL;
+> +       if (copy_from_iter(encoded, sizeof(*encoded), from) != sizeof(*encoded))
+> +               return -EFAULT;
+> +       if (encoded->compression == ENCODED_IOV_COMPRESSION_NONE &&
+> +           encoded->encryption == ENCODED_IOV_ENCRYPTION_NONE) {
+> +               iocb->ki_flags &= ~IOCB_ENCODED;
+> +               return 0;
+> +       }
+> +       if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
+> +           encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
+> +               return -EINVAL;
+> +       if (!capable(CAP_SYS_ADMIN))
+> +               return -EPERM;
 
-The iomap-5.4-merge branch of the xfs-linux repository at:
-
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
-
-has just been updated.  This is a rebase to remove the list_pop bits
-that killed the previous pull request.  I removed patches 1 and 9 from
-the branch and made the following modifications to patch #2:
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 051b8ec326ba..558d09bc5024 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1156,10 +1156,11 @@ void
- iomap_finish_ioends(struct iomap_ioend *ioend, int error)
- {
- 	struct list_head tmp;
-+	struct iomap_ioend *next;
- 
- 	list_replace_init(&ioend->io_list, &tmp);
- 	iomap_finish_ioend(ioend, error);
--	while ((ioend = list_pop_entry(&tmp, struct iomap_ioend, io_list)))
-+	list_for_each_entry_safe(ioend, next, &tmp, io_list)
- 		iomap_finish_ioend(ioend, error);
- }
- EXPORT_SYMBOL_GPL(iomap_finish_ioends);
-
-I'm not thrilled to be rebasing a work branch in the middle of the merge
-window, but I think the changes are simple enough that we might be able
-to try again next week.  Damien, if you have the time can you please
-rebase zonefs atop this and make sure buffered writing to a conventional
-zone still works?  It should, since the _finish_ioends loop is identical
-between iomap and xfs.
-
-The new head of the iomap-5.4-merge branch is commit:
-
-1b4fdf4f30db iomap: move the iomap_dio_rw ->end_io callback into a structure
-
-New Commits:
-
-Andreas Gruenbacher (1):
-      [be942954d7ad] iomap: Fix trivial typo
-
-Christoph Hellwig (7):
-      [9544e58e466f] iomap: copy the xfs writeback code to iomap.c
-      [668931192d9d] iomap: add tracing for the address space operations
-      [ca6de3a5b6f4] iomap: warn on inline maps in iomap_writepage_map
-      [4df389276768] xfs: set IOMAP_F_NEW more carefully
-      [5f1f62a3f64c] iomap: zero newly allocated mapped blocks
-      [0b98e70d9586] xfs: initialize iomap->flags in xfs_bmbt_to_iomap
-      [1b4fdf4f30db] iomap: move the iomap_dio_rw ->end_io callback into a structure
-
-Matthew Bobrowski (1):
-      [da078883a85d] iomap: split size and error for iomap_dio_rw ->end_io
-
-Randy Dunlap (1):
-      [239b92845737] tracing: fix iomap.h build warnings
-
-
-Code Diffstat:
-
- fs/iomap/buffered-io.c       | 576 ++++++++++++++++++++++++++++++++++++++++++-
- fs/iomap/direct-io.c         |  24 +-
- fs/xfs/xfs_file.c            |  14 +-
- fs/xfs/xfs_iomap.c           |  35 ++-
- fs/xfs/xfs_iomap.h           |   2 +-
- fs/xfs/xfs_pnfs.c            |   2 +-
- include/linux/iomap.h        |  53 +++-
- include/trace/events/iomap.h |  87 +++++++
- 8 files changed, 754 insertions(+), 39 deletions(-)
- create mode 100644 include/trace/events/iomap.h
+How does this capable() check interact with io_uring? Without having
+looked at this in detail, I suspect that when an encoded write is
+requested through io_uring, the capable() check might be executed on
+something like a workqueue worker thread, which is probably running
+with a full capability set.
