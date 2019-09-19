@@ -2,102 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51DACB802B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 19:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36495B818C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 21:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389705AbfISRl5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Sep 2019 13:41:57 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39787 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390909AbfISRlz (ORCPT
+        id S2392402AbfISTkh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Sep 2019 15:40:37 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:34556 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389763AbfISTkg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Sep 2019 13:41:55 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y3so3074560ljj.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2019 10:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=FiZz07Z/205AAVNujcqJzuj2VRlA1gVyITjZ2X3S9P0=;
-        b=LUgHYlFO2ivHWXkjIMWHXKro3f62RmlbsjtZDM3aN1lBnbF/0enyMjBYRqw1bvQU+o
-         WjuX6sn56vnQRYqFCSVxl5+izbPmn5JthFgQ1CVdOhSEm0KaDtohrjU8sSopQtoAQ4n6
-         i+xMWyf0WARK8PenV7l026IzYlve6DXyQGV3s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FiZz07Z/205AAVNujcqJzuj2VRlA1gVyITjZ2X3S9P0=;
-        b=dytWKFibYFxl6ScpicbfIBQ860JcGgc8uhtRzGH5cWKThNnlSJEPGK9YR5OB83i7oZ
-         PdaHuGxpP0mqHLskdIi5VgLcsyu0B7DUZa90BzXcR2BTc1V4DBAymFKTh6jHeB+uRmlo
-         BgeN022wz3Sd0tsFH8fTXDHb6RMHooo2M6PniilRW7s1b/Rhk2bk3RYwOsqHhsyrquoM
-         APcnGaxrJ1+GFXgHpc95U5S5VkoRMz76DnbvBxyBp2GlG9j3jKc0N3K6hnYBJ5m+f7UI
-         ZezRm0ksJyc6CnxqS9CfRtWEp8OfE37ixGs95WZDtltojpXsSJLZfnQvulNVyetI1U9Y
-         wsCA==
-X-Gm-Message-State: APjAAAXFi6Lqz/XA6X2ROokoirMnbbZinNMMW8xn1jRBZDZTyF+pbbC7
-        XiB55s1trYvAWCopoLVhYcSCbH5MrKY=
-X-Google-Smtp-Source: APXvYqxry87741ZmKOwoEGbFKeT1v2dXj2Cqs2qeHIHytXBZ/AytSJ0ujlD+DH2YXz5jZ2JhSIMeww==
-X-Received: by 2002:a2e:9e8f:: with SMTP id f15mr1042793ljk.212.1568914911939;
-        Thu, 19 Sep 2019 10:41:51 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id i17sm1700629lfj.35.2019.09.19.10.41.50
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2019 10:41:50 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id r134so2974114lff.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2019 10:41:50 -0700 (PDT)
-X-Received: by 2002:ac2:50cb:: with SMTP id h11mr5665094lfm.170.1568914909864;
- Thu, 19 Sep 2019 10:41:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190917152140.GU2229799@magnolia> <CAHk-=wj9Zjb=NENJ6SViNiYiYi4LFX9WYqskZh4E_OzjijK1VA@mail.gmail.com>
- <20190919034502.GJ2229799@magnolia> <CAHk-=wgFRM=z6WS-QLThxL2T1AaoCQeZSoHzj8ak35uSePQVbA@mail.gmail.com>
- <20190919170711.GA9065@lst.de>
-In-Reply-To: <20190919170711.GA9065@lst.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 19 Sep 2019 10:41:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgK7+TtDRbSAmcM5ihBDxF4eCg7zAXDkrNm7DOg+RtzyA@mail.gmail.com>
-Message-ID: <CAHk-=wgK7+TtDRbSAmcM5ihBDxF4eCg7zAXDkrNm7DOg+RtzyA@mail.gmail.com>
-Subject: Re: [GIT PULL] iomap: new code for 5.4
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
+        Thu, 19 Sep 2019 15:40:36 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8JJdtZ1129699;
+        Thu, 19 Sep 2019 19:40:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=eoBFyeHnqRPVXd6r1Kl8LOxweom0QXkdhaTP9ZYMu/4=;
+ b=jQ9sq3FXVe/QF3ey7wddzaWO2rjQI3OOaEJn1n9iEIk4Nk60GK4zLHqOg09kTCUaMSc4
+ Zpjzl2++hHsDV1+VDCMu7vqjOLb/VivHta71zXVaPQiKFbodK3ol85llwBkhYZ8ZmN3H
+ 7NB2QzuHSjek3iRj87a7ajqFUbjLr6RoVJ16DzcmS8yAFiEXmFfIMHtDvlrR5pYiZKKX
+ h1msXSS6t0Rz1mWZPlJtvEzJLl2QkeE/iWVowIFmZknCD25U2amE/4CDE/U0lj3+sqFc
+ h+0CzcXPW/OqYeYDi7U6OKfTa2+PUsjXP34vpUtYmeTZdvxsR6KpxREBxwrkoSgkg3DG wQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2v3vb4p6cm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Sep 2019 19:40:14 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8JJci4t168492;
+        Thu, 19 Sep 2019 19:40:14 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2v3vbb5bfc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Sep 2019 19:40:13 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8JJeCQc002801;
+        Thu, 19 Sep 2019 19:40:12 GMT
+Received: from localhost (/10.145.179.91)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Sep 2019 12:40:12 -0700
+Date:   Thu, 19 Sep 2019 12:40:11 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        xfs <linux-xfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        cluster-devel <cluster-devel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: Re: [ANNOUNCE] xfs-linux: iomap-5.4-merge rebased to 1b4fdf4f30db
+Message-ID: <20190919194011.GN2229799@magnolia>
+References: <20190919153704.GK2229799@magnolia>
+ <BYAPR04MB581608DF1FDE1FDC24BD94C6E7890@BYAPR04MB5816.namprd04.prod.outlook.com>
+ <20190919170804.GB1646@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190919170804.GB1646@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909190165
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909190165
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 10:07 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> I personally surived with it, but really hated writing the open coded
-> list_for_each_entry + list_del or while list_first_entry_or_null +
-> =E2=94=90ist_del when I could have a nice primitive for it.  I finally de=
-cided
-> to just add that helper..
+On Thu, Sep 19, 2019 at 10:08:04AM -0700, Christoph Hellwig wrote:
+> On Thu, Sep 19, 2019 at 04:19:37PM +0000, Damien Le Moal wrote:
+> > OK. Will do, but traveling this week so I will not be able to test until next week.
+> 
+> Which suggests zonefs won't make it for 5.4, right?  At that point
+> I wonder if we should defer the whole generic iomap writeback thing
+> to 5.5 entirely.  The whole idea of having two copies of the code always
+> scared me, even more so given that 5.4 is slated to be a long term
+> stable release.
+> 
+> So maybe just do the trivial typo + end_io cleanups for Linus this
+> merge window?
 
-You realize that the list helper is even mis-named?
+I for one don't mind pulling back to just these three patches:
 
-Generally a "pop()" should pop the last entry, not the first one. Or
-course, which one is last and which one is first is entirely up to you
-since you can add at the tail or the beginning. So even the name is
-ambiguous.
+iomap: Fix trivial typo
+iomap: split size and error for iomap_dio_rw ->end_io
+iomap: move the iomap_dio_rw ->end_io callback into a structure
 
-So I really think the whole thing was badly implemented (and yes, part
-of that was the whole implementation thing).
+But frankly, do we even need the two directio patches?  IIRC Matthew
+Bobrowski wanted them for the ext4 directio port, but seeing as Ted
+isn't submitting that for 5.4 and gfs2 doesn't supply a directio endio
+handler, maybe I should just send the trivial typo fix and that's it?
 
-Doing list_del() by hand also means that you can actually decide if
-you want list_del_init() or not. So it's
+I hate playing into this "It's an LTS but Greg won't admit it" BS but
+I'm gonna do it anyway -- for any release that's been declared to be an
+LTS release, we have no business pushing new functionality (especially
+if it isn't going to be used by anyone) at all.  It would have been
+helpful to have had such a declaration as a solid reason to push back
+against riskier additions, like I did for the last couple of LTSes.
 
-But again - keep that helper if you want it. Just don't put a badly
-implemented and badly named "helper" it in a global header file that
-_everybody_ has to look at.
+(And since I didn't have such a tool, I was willing to push the
+writeback bits anyway for the sake of zonefs since it would have been
+the only user, but seeing as Linus rejected zonefs for lack of
+discussion, I think that (the directio api change; iomap writeback; and
+zonefs) is just going to have to wait for 5.5.)
 
-                   Linus
+<frustrated>
+
+--D
