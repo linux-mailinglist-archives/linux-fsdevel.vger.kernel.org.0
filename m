@@ -2,65 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B11F3B8314
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 23:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4942EB8322
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 23:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732891AbfISVDe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Sep 2019 17:03:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49126 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730064AbfISVDe (ORCPT
+        id S1733002AbfISVKd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Sep 2019 17:10:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51684 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732968AbfISVKd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Sep 2019 17:03:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vr+IkYd0U4HZmwFAcpIRMbJ8jy/FCkzgcVYdBFXXhcA=; b=cPTd4V0KHEXTJHZIfFEwYMO+6
-        8kCqHaF3ohVIeKOoqySoYiVvEGk2P5difLXB8utE222C1Au9hWTeFxcjdKZI35c8Q78/TIIIleeiq
-        PgSZqGcbqViFyu1cv1UGwycM+BAVu4r5tjJDn9GRyTUSQ9m1VWJiIVZA/BDI4ox3KT8RxYZrT3qFx
-        aUoWxrwn4CfG18yi4dbLXxqzRMPUsXX72DZue6iRV29k+QJQy5Gf0wX5bxrD3gGJsMv0Nc0Nono26
-        KVM0HlE8nyuefPbBWIsOI8HLqehRkGBhqASSvVF3Ac1DWSvQk1cSC+Nc65ZS1S/my5N6OGtjexlp5
-        9L3C9156w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iB3aJ-00009b-RT; Thu, 19 Sep 2019 21:03:27 +0000
-Date:   Thu, 19 Sep 2019 14:03:27 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: Re: [ANNOUNCE] xfs-linux: iomap-5.4-merge rebased to 1b4fdf4f30db
-Message-ID: <20190919210327.GA500@infradead.org>
-References: <20190919153704.GK2229799@magnolia>
- <BYAPR04MB581608DF1FDE1FDC24BD94C6E7890@BYAPR04MB5816.namprd04.prod.outlook.com>
- <20190919170804.GB1646@infradead.org>
- <20190919194011.GN2229799@magnolia>
+        Thu, 19 Sep 2019 17:10:33 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8JL8v1o045702;
+        Thu, 19 Sep 2019 21:10:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=OGR/I9WESsuN9yWQ4O+Q+JeJro/YOmh4dCPBKi2YaII=;
+ b=O/uuFLrhZ2Q9y8HDQqakHYzyD+MsMAWkA5IysYUJh+ZaOZ4S1e4XUHuD2euzfn37fN1E
+ MCLDuN01BSD1357zgU84C552TXULfA10BnsGHTyA56mMpmPvcT1Wk9RnZVtUu4Cwsz4Z
+ pV6akRzgRUP5lLNhI5oZfjYcl3v9uZ8Kuq4I9seex9nfmEhFR+d/zYkSgxE8yIoiJ7Q9
+ muf+LRdcqIjfaZqgB1mjqmQ3/pVAJl4RigmEPOz5Q6FmY50vo5FWJraZbI/OUwX9qDo/
+ MJEns8bz0eGD7Aa8va712HbTfrWyT0Vyb9DaafgRrvG2LrJXP1iiMTfutEOkGxw8jVh/ 2w== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2v3vb4xmc1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Sep 2019 21:10:18 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8JL8tMP023121;
+        Thu, 19 Sep 2019 21:10:17 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2v3vbguxbu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Sep 2019 21:10:17 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8JLAEZP003095;
+        Thu, 19 Sep 2019 21:10:15 GMT
+Received: from localhost (/10.145.179.91)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Sep 2019 14:10:14 -0700
+Date:   Thu, 19 Sep 2019 14:10:13 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     syzbot <syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com>,
+        agruenba@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: INFO: task hung in pipe_write (2)
+Message-ID: <20190919211013.GN5340@magnolia>
+References: <000000000000ac6a360592eb26c1@google.com>
+ <d9a957b3-9f0a-20b5-588a-64ca4722d433@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190919194011.GN2229799@magnolia>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d9a957b3-9f0a-20b5-588a-64ca4722d433@rasmusvillemoes.dk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909190176
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909190176
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 12:40:11PM -0700, Darrick J. Wong wrote:
-> iomap: Fix trivial typo
-> iomap: split size and error for iomap_dio_rw ->end_io
-> iomap: move the iomap_dio_rw ->end_io callback into a structure
+On Thu, Sep 19, 2019 at 10:55:44PM +0200, Rasmus Villemoes wrote:
+> On 19/09/2019 19.19, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following crash on:
+> > 
+> > HEAD commit:    288b9117 Add linux-next specific files for 20190918
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=17e86645600000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=f6126e51304ef1c3
+> > dashboard link:
+> > https://syzkaller.appspot.com/bug?extid=3c01db6025f26530cf8d
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11855769600000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=143580a1600000
+> > 
+> > The bug was bisected to:
+> > 
+> > commit cfb864757d8690631aadf1c4b80022c18ae865b3
+> > Author: Darrick J. Wong <darrick.wong@oracle.com>
+> > Date:   Tue Sep 17 16:05:22 2019 +0000
+> > 
+> >     splice: only read in as much information as there is pipe buffer space
 > 
-> But frankly, do we even need the two directio patches?  IIRC Matthew
-> Bobrowski wanted them for the ext4 directio port, but seeing as Ted
-> isn't submitting that for 5.4 and gfs2 doesn't supply a directio endio
-> handler, maybe I should just send the trivial typo fix and that's it?
+> The middle hunk (the one before splice_pipe_to_pipe()) accesses
+> opipe->{buffers, nrbufs}, but opipe is not locked at that point. So
+> maybe we end up passing len==0, which seems (once there's room in opipe)
+> it would put a zero-length pipe_buffer in opipe - and that probably
+> violates an invariant somewhere.
+>
+> But does the splice_pipe_to_pipe() case even need that extra logic?
+> Doesn't it handle short writes correctly already?
 
-You can decide as the maintainer.  I'm always happy to get simple
-patchws with API changes like the end_io off to Linus as quick as
-possible, though.
+Yep.  I missed the part where splice_pipe_to_pipe is already perfectly
+capable of detecting insufficient space in opipe and kicking opipe's
+readers to clear out the buffer.  So that hunk isn't needed, and now I'm
+wondering how in the other clause we return 0 from wait_for_space yet
+still don't have buffer space...
+
+Oh well, back to the drawing board.  Good catch, though now it's become
+painfully clear that xfstests lacks rigorous testing of splice()...
+
+--D
+
+> Rasmus
