@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A04EB7005
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 02:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEE48B7017
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 02:25:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbfISAXO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Sep 2019 20:23:14 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38165 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfISAXO (ORCPT
+        id S2387614AbfISAZM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Sep 2019 20:25:12 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43771 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387605AbfISAZM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Sep 2019 20:23:14 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y23so1725460ljn.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 17:23:13 -0700 (PDT)
+        Wed, 18 Sep 2019 20:25:12 -0400
+Received: by mail-lf1-f65.google.com with SMTP id u3so957238lfl.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 17:25:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xCq/TbFsgyz/f5qDMbrPu7H+lk7tDCVio2gz6Xsr1jk=;
-        b=MjWYHCf0lYOJu/QH9oUEwcZ4Xj+0pYEV8kGM+muk3l+vc2eBgT0GnILRm6E3K4upAv
-         5wJi52x8CcGq4MaaKRKZbiGJU7VX9PpS0ne8bpsgPDNKYXV2yG3+G+2sYqoKkGTFDQaT
-         0DBmxCjXSSuy8q0/7sfftCtDXqZMtkWb+bWtg=
+        bh=dBc/eYJTOLPPQiZ5t0llKwVn5FhzICC4mWTmMrXjDEU=;
+        b=WIbuDCmG9hzDesKroizOBqRXGwONhNP4QrBll03slXqZ8b1BB3vzPCdVc22psjVksw
+         jQmVL7xCO/XlhDKxOO0QWvn92j6bBHADgUhpwQrr60PpwgBbzneGC/apON1Wc9JDdf/B
+         qoPD6tb+dylFDQ1HADe1c0C8c5aPCYN+8e5og=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xCq/TbFsgyz/f5qDMbrPu7H+lk7tDCVio2gz6Xsr1jk=;
-        b=RpWeXqgQ9twI0q3UJswpFPmvvpRePFuJuuqeArURQjuq4VTJoDx0lkU11zz3PCyeVK
-         4bzlVwAnH1qt0kUmfyGEsZhB0N6dKv5qHFhlXiiGA4Bx1oX7TQGfIcdhfN7ZTs6NzFPP
-         K9nHAseKxCPmtfFDYj17MRcsNaz1FOkDuxu3sJhCpq/Kv4jJK6hzCVO527a/9YBh2u8t
-         iVtwxW3uMWUkoxzebQYg/behy2ih3T6uBTYIbPUpG2lLhv7Rmewm/Db7V5z3thEQBNSQ
-         banGPJ/APMRij5nB2TiOIYBfwAmgBQq1VnpjIFerOmdGsXSQMX4L+luVWk5ODFjlnzJW
-         o3nA==
-X-Gm-Message-State: APjAAAXaj2pa3J4QiFmTuMkjjvBI9P7gZn16vLVTlkMhuHc6YNWjn57r
-        /B5j8h9HomFi98dX8oy6wp5LLDfzLmI=
-X-Google-Smtp-Source: APXvYqwjXU19AUebU2Qim+EZueA75797/9AQkoTFkiFNmWdkbYZ74dCPUmgY6a3IO65/lm93pu0MCQ==
-X-Received: by 2002:a2e:934f:: with SMTP id m15mr3738756ljh.101.1568852592003;
-        Wed, 18 Sep 2019 17:23:12 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id y22sm1241592lfb.75.2019.09.18.17.23.10
+        bh=dBc/eYJTOLPPQiZ5t0llKwVn5FhzICC4mWTmMrXjDEU=;
+        b=qEyRiOxyKiLT+Vmy82Hr6M5XsAGlRGsL4rlDHizp1cYXSeg3kH14sm9Mm2VwsP+L16
+         EiXeK7Q2W9oswxfpi9Eg8SdsLv6xCpQeiAbmkBW/J3PLMzSSm6sFRUmWS8P5p0TbxoQw
+         w1M0ooLm/k5hiv9jXNLrAnp7EPwv2iYbUd+PNtXZP35TX00OeW4kLIgPLWSbrhqE780m
+         dsVTpcPstUT3ADPGhRlTCn+Q4dlPpCuF0tOFbcH7eDx+FlS8P40KySmaF8+dWafibBVp
+         IFFEXnf/FNIYKQWvrp9WHoyZ8CW5rYLNNiK4SUkyH5HyXvpJvE2E4uL57f7xzzdssRE0
+         SeEg==
+X-Gm-Message-State: APjAAAX3+wWKIgwGXVq7UgpzL7FFnacnMf96WdvG1gNTsi59ufPN2A/N
+        kU9vTGFAJL2ZRu2apViJGsYmXFCs0fU=
+X-Google-Smtp-Source: APXvYqw0Z9sMoIMtSxkvStzpK23kuNGPBQfUEDr3UK7RwZbFpU4hs5jm5jjJQnUO2Jd7g6YCu/nRIg==
+X-Received: by 2002:ac2:5965:: with SMTP id h5mr3383115lfp.129.1568852709254;
+        Wed, 18 Sep 2019 17:25:09 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id h7sm1297668ljc.39.2019.09.18.17.25.08
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2019 17:23:11 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id e17so1665466ljf.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 17:23:10 -0700 (PDT)
-X-Received: by 2002:a2e:9854:: with SMTP id e20mr3795217ljj.72.1568852590551;
- Wed, 18 Sep 2019 17:23:10 -0700 (PDT)
+        Wed, 18 Sep 2019 17:25:08 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id a22so1772137ljd.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 17:25:08 -0700 (PDT)
+X-Received: by 2002:a2e:2c02:: with SMTP id s2mr3846937ljs.156.1568852707845;
+ Wed, 18 Sep 2019 17:25:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <16147.1568632167@warthog.procyon.org.uk>
-In-Reply-To: <16147.1568632167@warthog.procyon.org.uk>
+References: <16147.1568632167@warthog.procyon.org.uk> <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 18 Sep 2019 17:22:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com>
-Message-ID: <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com>
+Date:   Wed, 18 Sep 2019 17:24:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiOw-YDpctcdTwsObUuwSv4+SC+O68kitxzPX-4nW74Kg@mail.gmail.com>
+Message-ID: <CAHk-=wiOw-YDpctcdTwsObUuwSv4+SC+O68kitxzPX-4nW74Kg@mail.gmail.com>
 Subject: Re: [GIT PULL afs: Development for 5.4
 To:     David Howells <dhowells@redhat.com>
 Cc:     YueHaibing <yuehaibing@huawei.com>,
@@ -67,34 +67,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 4:09 AM David Howells <dhowells@redhat.com> wrote:
+On Wed, Sep 18, 2019 at 5:22 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Here's a set of patches for AFS.  The first three are trivial, deleting
-> unused symbols and rolling out a wrapper function.
+> Commit messages need to explain the commit. The same is even more true
+> of merges!
 
-Pulled.
+Side note: that wasn't actually the only problem with that merge.
 
-However, I was close to unpulling it again. It has a merge commit with
-this merge message:
+The other problem was that neither of the merge bases made any sense
+what-so-ever. Neither parent was any kind of "this is a good starting
+point" for anything. You literally merged two random trees.
 
-    Merge remote-tracking branch 'net/master' into afs-next
+So even an explanation isn't really sufficient. You need to start
+looking at what you're doing, not doing random crazy stuff.
 
-and that simply is not acceptable.
-
-Commit messages need to explain the commit. The same is even more true
-of merges!
-
-In a regular commit, you can at least look at the patch and say "ok,
-that  change is obvious and self-explanatory".
-
-In a merge commit, the _only_ explanation you have is basically the
-commit message, and when the commit message is garbage, the merge is
-garbage.
-
-If you can't explain why you are doing a merge, then you shouldn't do
-the merge. It's that simple.
-
-And if you can't be bothered to write the explanation down, I'm not
-sure I can be bothered to then pull the end result.
-
-             Linus
+                Linus
