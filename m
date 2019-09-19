@@ -2,98 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAFF1B82FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 22:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B11F3B8314
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 23:03:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732788AbfISUzs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Sep 2019 16:55:48 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39972 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732700AbfISUzs (ORCPT
+        id S1732891AbfISVDe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Sep 2019 17:03:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49126 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730064AbfISVDe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Sep 2019 16:55:48 -0400
-Received: by mail-ed1-f66.google.com with SMTP id v38so4419551edm.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Sep 2019 13:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=oOsPY7dzPYXiWz16EZVCaTHv03LDObuM8JWwXte1DFk=;
-        b=I+iiAiaIIT1nzYGWMnmtIf3Q6k+Hv0VaD1K0im3yX9TzkVKsN7MjqK0bhtqBQoluxh
-         zPtgCkfNEGABORe8XY+4RWdDCfjGP4b5ZINwVGwiyiM7uKbYzfGbtmNpS2Az7ucR658B
-         SZSdFTywaXV9o0GkxZjdWIXycr76F2bwWxO48=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oOsPY7dzPYXiWz16EZVCaTHv03LDObuM8JWwXte1DFk=;
-        b=TFfTW9FR5g+x4+zhjlw+SqB9ssG5BKuUXAimPtgUvLbLn+ax8Q1msiRVybJKT67/FZ
-         9ZzyrPYnBQfvfUQzmfG28Gmx7dQWbBC/YFzh1sI8uU0gSOFaZUF/QH8kilXB0BFpZKNb
-         leqwclvVbz7A+zUEieG5h/yi7ZPtalcGeMxzDipvZhW+CW/fXdzDhJWT9EPcr16s5MSh
-         qiuN2qyBAkqS/rXNdAXXRVhk816bwQUIcJYvo6ZwOjt1dFNkGEHK3dgLDK2u7HEgOoiW
-         3Obghm0thfME+RAydmIi1Rm109wcyj4kuSjqLioqREFHzGtUoPPozOHGkFSSl1oXjnyz
-         DUwA==
-X-Gm-Message-State: APjAAAUpp0/ZDXqnAWQFq/HIt6FWQkUDm1Ia/k+yo4TPULsSi3jLQ1tL
-        5Ot4180mtEnd57wb6i/NmYwing==
-X-Google-Smtp-Source: APXvYqwn4goKlaLZbVdpBFd3OXJN7wo8pexhHo9njJlkZ1lxazLRn6VzU0ezwxdUc5CFnrtbuRI6vQ==
-X-Received: by 2002:a17:906:944b:: with SMTP id z11mr15601123ejx.46.1568926546319;
-        Thu, 19 Sep 2019 13:55:46 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
-        by smtp.gmail.com with ESMTPSA id fx25sm1148608ejb.19.2019.09.19.13.55.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Sep 2019 13:55:45 -0700 (PDT)
-Subject: Re: INFO: task hung in pipe_write (2)
-To:     syzbot <syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com>,
-        agruenba@redhat.com, darrick.wong@oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <000000000000ac6a360592eb26c1@google.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <d9a957b3-9f0a-20b5-588a-64ca4722d433@rasmusvillemoes.dk>
-Date:   Thu, 19 Sep 2019 22:55:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 19 Sep 2019 17:03:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vr+IkYd0U4HZmwFAcpIRMbJ8jy/FCkzgcVYdBFXXhcA=; b=cPTd4V0KHEXTJHZIfFEwYMO+6
+        8kCqHaF3ohVIeKOoqySoYiVvEGk2P5difLXB8utE222C1Au9hWTeFxcjdKZI35c8Q78/TIIIleeiq
+        PgSZqGcbqViFyu1cv1UGwycM+BAVu4r5tjJDn9GRyTUSQ9m1VWJiIVZA/BDI4ox3KT8RxYZrT3qFx
+        aUoWxrwn4CfG18yi4dbLXxqzRMPUsXX72DZue6iRV29k+QJQy5Gf0wX5bxrD3gGJsMv0Nc0Nono26
+        KVM0HlE8nyuefPbBWIsOI8HLqehRkGBhqASSvVF3Ac1DWSvQk1cSC+Nc65ZS1S/my5N6OGtjexlp5
+        9L3C9156w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iB3aJ-00009b-RT; Thu, 19 Sep 2019 21:03:27 +0000
+Date:   Thu, 19 Sep 2019 14:03:27 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: Re: [ANNOUNCE] xfs-linux: iomap-5.4-merge rebased to 1b4fdf4f30db
+Message-ID: <20190919210327.GA500@infradead.org>
+References: <20190919153704.GK2229799@magnolia>
+ <BYAPR04MB581608DF1FDE1FDC24BD94C6E7890@BYAPR04MB5816.namprd04.prod.outlook.com>
+ <20190919170804.GB1646@infradead.org>
+ <20190919194011.GN2229799@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <000000000000ac6a360592eb26c1@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190919194011.GN2229799@magnolia>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19/09/2019 19.19, syzbot wrote:
-> Hello,
+On Thu, Sep 19, 2019 at 12:40:11PM -0700, Darrick J. Wong wrote:
+> iomap: Fix trivial typo
+> iomap: split size and error for iomap_dio_rw ->end_io
+> iomap: move the iomap_dio_rw ->end_io callback into a structure
 > 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    288b9117 Add linux-next specific files for 20190918
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17e86645600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f6126e51304ef1c3
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3c01db6025f26530cf8d
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11855769600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=143580a1600000
-> 
-> The bug was bisected to:
-> 
-> commit cfb864757d8690631aadf1c4b80022c18ae865b3
-> Author: Darrick J. Wong <darrick.wong@oracle.com>
-> Date:   Tue Sep 17 16:05:22 2019 +0000
-> 
->     splice: only read in as much information as there is pipe buffer space
+> But frankly, do we even need the two directio patches?  IIRC Matthew
+> Bobrowski wanted them for the ext4 directio port, but seeing as Ted
+> isn't submitting that for 5.4 and gfs2 doesn't supply a directio endio
+> handler, maybe I should just send the trivial typo fix and that's it?
 
-The middle hunk (the one before splice_pipe_to_pipe()) accesses
-opipe->{buffers, nrbufs}, but opipe is not locked at that point. So
-maybe we end up passing len==0, which seems (once there's room in opipe)
-it would put a zero-length pipe_buffer in opipe - and that probably
-violates an invariant somewhere.
-
-But does the splice_pipe_to_pipe() case even need that extra logic?
-Doesn't it handle short writes correctly already?
-
-Rasmus
+You can decide as the maintainer.  I'm always happy to get simple
+patchws with API changes like the end_io off to Linus as quick as
+possible, though.
