@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6808B7388
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 08:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97CFCB738C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Sep 2019 08:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731779AbfISGyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1731775AbfISGyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 19 Sep 2019 02:54:03 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35245 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731678AbfISGyA (ORCPT
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38805 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731729AbfISGyC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Sep 2019 02:54:00 -0400
-Received: by mail-pg1-f193.google.com with SMTP id a24so1326917pgj.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 23:53:59 -0700 (PDT)
+        Thu, 19 Sep 2019 02:54:02 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x10so1315134pgi.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Sep 2019 23:54:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=00UZVoEv9bMl6aYlPWI0DyKDEJNPNHi4/CNs6Ie54Iw=;
-        b=jrDnJVlChxNgOovPZcZTUsHWYfXlWCjHGvjJK4lsiHGbS582w5nb21G8Lj/RsXM5DF
-         3ZA/cg0QfZUQRSk6cSXQ+A994hu9jxdV7GF1eLg8Tn7L/A/W8qxdvC7epzprdqndcw4f
-         MV1QZumgTcP0zZUsw5wDi1/9Os+VEJH++Xx9hOPjMvkRgQ6j074GsdTziwAJaHmyQaHT
-         m24j6c9QBSJJ/n6+9EMz8f/KCCdXFIzDNeREWRQtV54h4hEWRH7kSd+89qK/PMibLVhp
-         l/Yhn4g+xbPK2f659MkOScmWDMynVOqlHvA6ce5bR5V/MfmEFt9XHW5K6+zaf1ByFAf2
-         Dilg==
+        bh=vmmeXOFMjmtVR+ofTV6FGFcBSfcsBshhknOcil6Q22M=;
+        b=NtP2vGVUS812YTRTnZvnsBL3l9jU4MVH5km/3lM7U9ro6dp0uHQamS4K8YdmCv+VWQ
+         LiKoDLC9IXo+9mGiGM/h/z0ahJSjxF9gGhlxQ0t0vKOzNBYIoDiPSpJNegF6J6hCa6x8
+         ozFgEN6H1X3+mbJDWHOydxjbIeys/3SjaQRx/jektt1+s2FCJb4mf/rpBPKeHFzopjzo
+         5suzKbPaWiuYCWsoZYUByRawxfuBZw/kehhkEkNWufDYb0D27hUDNGfahkjAjTChcNIZ
+         RPjNbCNSVHImAcjiNWI8TGlKOhgyXl9Ty/jULNe7SmQ9EzvQmKZ5wq3sTmSw5dD2EaFR
+         XmzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=00UZVoEv9bMl6aYlPWI0DyKDEJNPNHi4/CNs6Ie54Iw=;
-        b=gc+JUXeSZm0rJiuYNzV5v7ikOyZ9dmQ4p1Jq48/iDox61zmbNCUqTeXsmZvFQjLtR7
-         JEJzJVevaqkpVBYt9ZqovsWqQhWmkLofgTS1Q5/gw5WaRz77q9Bn9EckIyaV7zuRql40
-         6KjZ5f4PYi472+K5FW2mqfQf70+037MdylfctavL7HM0oSjQrQPJwmbwSvWRNZT3196+
-         6KutGCq1PdCqe1eawU878B97MZImnxEWtqCZWAVnU3Wxz3TTlfAE3RjzVu2ak6naEx1/
-         luXC4deOhp4wsQ8YUlyjQeXWOJ5YYF/ImQegrTAG0jhcoEaKcQo2EIReseJGKxnouzPq
-         i68w==
-X-Gm-Message-State: APjAAAWWmauQa69i3IuM6OK4rcO6lV31e4Vtf2DpbYi3aX/CjdVpREbY
-        tEUG8++9CJ1Nn7vg2SjYNq9eB3KbXs4=
-X-Google-Smtp-Source: APXvYqx4CQDWTu6IBH8idJ/Kx2FSEYv3+0fN7niSp62t8HohH8Zq8q9LiVigCuhZYFvjqOtbl8eO7g==
-X-Received: by 2002:a62:ac02:: with SMTP id v2mr8319240pfe.109.1568876038608;
-        Wed, 18 Sep 2019 23:53:58 -0700 (PDT)
+        bh=vmmeXOFMjmtVR+ofTV6FGFcBSfcsBshhknOcil6Q22M=;
+        b=WwclmjhmDFyeu1iLDZXI6n0y20ouQzkWJRhwY0nirXOqXfGs/KoBuBqUFwzvYPph7s
+         txAMRRLIDXBPNaCHZDxUt2zfOKWr6EYAgpTUIeJJFilZ/jU579N72Zo/LVBet9UcIZyW
+         w2URbKrDIbGY4+/bMeEmEs0GuKsgRfKbrkLQZgY/fU+WSrcoMFBq1mYPzmz2JKuS9wV4
+         Sn0zO5ER/ARh96swFYz+yewu3tBtvL6EwJCyCs5NquL1CnlSfEFr+nQzCqQ8A/hQtPi4
+         pmabhj182lLlNxPFHJUMAzuHYBPbrimkAdQKQlJadWh64n9Cz7ij+o588dnsdlJeSwnz
+         E+jA==
+X-Gm-Message-State: APjAAAVWpFe3zP1yZavXfdNBhmQRzG2GCq3tYfWqf5UEVrRkcUkoo2nz
+        mXCQpt5/xOI8aDpY/fl7vBR8FdoeFzU=
+X-Google-Smtp-Source: APXvYqxcTCmuzotU2S6eWw6jgBXbl9Zv9xYlLE5xs4vgVK8+iSQp02KLOvFY7vQauMkgTyXUhfOdHw==
+X-Received: by 2002:a63:ff4a:: with SMTP id s10mr7673395pgk.166.1568876039726;
+        Wed, 18 Sep 2019 23:53:59 -0700 (PDT)
 Received: from vader.thefacebook.com ([2620:10d:c090:180::332b])
-        by smtp.gmail.com with ESMTPSA id m24sm6623615pgj.71.2019.09.18.23.53.57
+        by smtp.gmail.com with ESMTPSA id m24sm6623615pgj.71.2019.09.18.23.53.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2019 23:53:58 -0700 (PDT)
+        Wed, 18 Sep 2019 23:53:59 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
 Cc:     Dave Chinner <david@fromorbit.com>, linux-api@vger.kernel.org,
         kernel-team@fb.com
-Subject: [PATCH] readv.2: Document new RWF_ENCODED flag to pwritev2()
-Date:   Wed, 18 Sep 2019 23:53:45 -0700
-Message-Id: <5026db117fb57fa480706a7a77460e4288e69180.1568875837.git.osandov@fb.com>
+Subject: [RFC PATCH 2/3] fs: add RWF_ENCODED for writing compressed data
+Date:   Wed, 18 Sep 2019 23:53:46 -0700
+Message-Id: <230a76e65372a8fb3ec62ce167d9322e5e342810.1568875700.git.osandov@fb.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1568875700.git.osandov@fb.com>
 References: <cover.1568875700.git.osandov@fb.com>
@@ -64,194 +64,228 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
+Btrfs can transparently compress data written by the user. However, we'd
+like to add an interface to write pre-compressed data directly to the
+filesystem. This adds support for so-called "encoded writes" via
+pwritev2().
+
+A new RWF_ENCODED flags indicates that a write is "encoded". If this
+flag is set, iov[0].iov_base points to a struct encoded_iov which
+contains metadata about the write: namely, the compression algorithm and
+the unencoded (i.e., decompressed) length of the extent. iov[0].iov_len
+must be set to sizeof(struct encoded_iov), which can be used to extend
+the interface in the future. The remaining iovecs contain the encoded
+extent.
+
+A similar interface for reading encoded data can be added to preadv2()
+in the future.
+
+Filesystems must indicate that they support encoded writes by setting
+FMODE_ENCODED_IO in ->file_open().
+
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- man2/readv.2 | 156 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 156 insertions(+)
+ include/linux/fs.h      | 13 +++++++
+ include/uapi/linux/fs.h | 24 ++++++++++++-
+ mm/filemap.c            | 75 ++++++++++++++++++++++++++++++++++-------
+ 3 files changed, 99 insertions(+), 13 deletions(-)
 
-diff --git a/man2/readv.2 b/man2/readv.2
-index af27aa63e..7d32b3bd2 100644
---- a/man2/readv.2
-+++ b/man2/readv.2
-@@ -265,6 +265,135 @@ the data is always appended to the end of the file.
- However, if the
- .I offset
- argument is \-1, the current file offset is updated.
-+.TP
-+.BR RWF_ENCODED " (since Linux 5.5)"
-+Read or write encoded (e.g., compressed) data.
-+.I iov[0].iov_base
-+points to an
-+.I
-+encoded_iov
-+structure, defined in
-+.I <linux/fs.h>
-+as:
-+.IP
-+.in +4n
-+.EX
-+struct encoded_iov {
-+    __u64 unencoded_len;
-+    __u32 compression;
-+    __u32 encryption;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 75c4b7680385..ae3ac0312674 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -175,6 +175,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File does not contribute to nr_files count */
+ #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
+ 
++/* File supports encoded IO */
++#define FMODE_ENCODED_IO	((__force fmode_t)0x40000000)
++
+ /*
+  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+  * that indicates that they should check the contents of the iovec are
+@@ -314,6 +317,7 @@ enum rw_hint {
+ #define IOCB_SYNC		(1 << 5)
+ #define IOCB_WRITE		(1 << 6)
+ #define IOCB_NOWAIT		(1 << 7)
++#define IOCB_ENCODED		(1 << 8)
+ 
+ struct kiocb {
+ 	struct file		*ki_filp;
+@@ -3046,6 +3050,10 @@ extern int sb_min_blocksize(struct super_block *, int);
+ extern int generic_file_mmap(struct file *, struct vm_area_struct *);
+ extern int generic_file_readonly_mmap(struct file *, struct vm_area_struct *);
+ extern ssize_t generic_write_checks(struct kiocb *, struct iov_iter *);
++struct encoded_iov;
++extern int generic_encoded_write_checks(struct kiocb *, struct encoded_iov *);
++extern int import_encoded_write(struct kiocb *, struct encoded_iov *,
++				struct iov_iter *);
+ extern int generic_remap_checks(struct file *file_in, loff_t pos_in,
+ 				struct file *file_out, loff_t pos_out,
+ 				loff_t *count, unsigned int remap_flags);
+@@ -3364,6 +3372,11 @@ static inline int kiocb_set_rw_flags(int rw, struct kiocb *ki, rwf_t flags)
+ 			return -EOPNOTSUPP;
+ 		ki->ki_flags |= IOCB_NOWAIT;
+ 	}
++	if (flags & RWF_ENCODED) {
++		if (rw != WRITE || !(ki->ki_filp->f_mode & FMODE_ENCODED_IO))
++			return -EOPNOTSUPP;
++		ki->ki_flags |= IOCB_ENCODED;
++	}
+ 	if (flags & RWF_HIPRI)
+ 		ki->ki_flags |= IOCB_HIPRI;
+ 	if (flags & RWF_DSYNC)
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index aad225b05be7..b775d9aea978 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -283,6 +283,25 @@ struct fsxattr {
+ 
+ typedef int __bitwise __kernel_rwf_t;
+ 
++enum {
++	ENCODED_IOV_COMPRESSION_NONE,
++	ENCODED_IOV_COMPRESSION_ZLIB,
++	ENCODED_IOV_COMPRESSION_LZO,
++	ENCODED_IOV_COMPRESSION_ZSTD,
++	ENCODED_IOV_COMPRESSION_TYPES = ENCODED_IOV_COMPRESSION_ZSTD,
 +};
-+.EE
-+.in
-+.IP
-+.I iov[0].iov_len
-+must be set to
-+.IR "sizeof(struct\ encoded_iov)" .
-+.IP
-+.I compression
-+is one of
-+.B ENCODED_IOV_COMPRESSION_NONE
-+(zero),
-+.BR ENCODED_IOV_COMPRESSION_ZLIB ,
-+.BR ENCODED_IOV_COMPRESSION_LZO ,
-+or
-+.BR ENCODED_IOV_COMPRESSION_ZSTD .
-+.I encryption
-+is currently always
-+.B ENCODED_IOV_ENCRYPTION_NONE
-+(zero).
-+.I unencoded_len
-+is the length of the unencoded (i.e., decrypted and decompressed) data.
-+If
-+.I offset
-+is -1, then the current file offset is incremented by the unencoded length.
-+.IP
-+For
-+.BR pwritev2 (),
-+the remaining buffers in the
-+.I iov
-+array should point to the encoded data;
-+.I unencoded_len
-+should be set to the logical length of the data in the file; and
-+.I compression
-+and
-+.I encryption
-+should be set to indicate the encoding.
-+The calling process must have the
-+.B CAP_SYS_ADMIN
-+capability.
-+If
-+.I compression
-+is
-+.B ENCODED_IOV_COMPRESSION_NONE
-+and
-+.I encryption
-+is
-+.BR ENCODED_IOV_ENCRYPTION_NONE ,
-+then
-+.I unencoded_len
-+is ignored and the write behaves as if the
-+.B RWF_ENCODED
-+flag was not specified.
-+.IP
-+As of Linux 5.5, this flag is only implemented for
-+.BR pwritev2 (),
-+and only on Btrfs with the following requirements:
-+.RS
-+.IP \(bu 3
-+.I offset
-+(or the current file offset if
-+.I offset
-+is -1) must be aligned to the sector size of the filesystem.
-+.IP \(bu
-+.I unencoded_len
-+and the length of the encoded data must each be no more than 128 KiB.
-+This limit may increase in the future.
-+.IP \(bu
-+.I unencoded_len
-+must be non-zero.
-+.IP \(bu
-+.I unencoded_len
-+must be aligned to the sector size of the filesystem,
-+unless the data ends at or beyond the current end of the file.
-+.IP \(bu
-+If
-+.I compression
-+is not
-+.BR ENCODED_IOV_COMPRESSION_NONE ,
-+then the length of the encoded data rounded up to the nearest sector must be less than
-+.IR unencoded_len .
-+.IP \(bu
-+If
-+.I compression
-+is
-+.BR ENCODED_IOV_COMPRESSION_ZLIB ,
-+then the encoded data must be a single zlib stream.
-+.IP \(bu
-+If
-+.I compression
-+is
-+.BR ENCODED_IOV_COMPRESSION_LZO ,
-+then the encoded data must be be compressed page by page with LZO1X
-+and wrapped in the format described in the Linux kernel source file
-+.IR fs/btrfs/lzo.c .
-+.IP \(bu
-+If
-+.I compression
-+is
-+.BR ENCODED_IOV_COMPRESSION_ZSTD ,
-+then the encoded data must be a single zstd stream,
-+and the
-+.I windowLog
-+compression parameter must be no more than 17.
-+.RE
-+.IP
-+Note that the encoded data is not validated when it is written.
-+If it is not valid (e.g., it cannot be decompressed,
-+or its decompressed length does not match
-+.IR unencoded_len ),
-+then a subsequent read may result in an error or return truncated data.
-+.\" TODO: how should this interact with O_DIRECT?
- .SH RETURN VALUE
- On success,
- .BR readv (),
-@@ -284,6 +413,13 @@ than requested (see
- and
- .BR write (2)).
- .PP
-+If
-+.B
-+RWF_ENCODED
-+was specified in
-+.IR flags ,
-+then the return value is the unencoded number of bytes.
-+.PP
- On error, \-1 is returned, and \fIerrno\fP is set appropriately.
- .SH ERRORS
- The errors are as given for
-@@ -312,8 +448,28 @@ The vector count,
- .IR iovcnt ,
- is less than zero or greater than the permitted maximum.
- .TP
-+.B EINVAL
-+.B RWF_ENCODED
-+is specified in
-+.I flags
-+and the alignment and/or size requirements are not met.
-+.TP
- .B EOPNOTSUPP
- An unknown flag is specified in \fIflags\fP.
-+.TP
-+.B EOPNOTSUPP
-+.B RWF_ENCODED
-+is specified in
-+.I flags
-+and the filesystem does not implement encoded I/O.
-+.TP
-+.B EPERM
-+.B RWF_ENCODED
-+is specified in
-+.I flags
-+and the calling process does not have the
-+.B CAP_SYS_ADMIN
-+capability.
- .SH VERSIONS
- .BR preadv ()
- and
++
++enum {
++	ENCODED_IOV_ENCRYPTION_NONE,
++	ENCODED_IOV_ENCRYPTION_TYPES = ENCODED_IOV_ENCRYPTION_NONE,
++};
++
++struct encoded_iov {
++	__u64 unencoded_len;
++	__u32 compression;
++	__u32 encryption;
++};
++
+ /* high priority request, poll if possible */
+ #define RWF_HIPRI	((__force __kernel_rwf_t)0x00000001)
+ 
+@@ -298,8 +317,11 @@ typedef int __bitwise __kernel_rwf_t;
+ /* per-IO O_APPEND */
+ #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
+ 
++/* encoded (e.g., compressed or encrypted) IO */
++#define RWF_ENCODED	((__force __kernel_rwf_t)0x00000020)
++
+ /* mask of flags supported by the kernel */
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+-			 RWF_APPEND)
++			 RWF_APPEND | RWF_ENCODED)
+ 
+ #endif /* _UAPI_LINUX_FS_H */
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 40667c2f3383..3d2555364432 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2974,24 +2974,16 @@ static int generic_write_check_limits(struct file *file, loff_t pos,
+ 	return 0;
+ }
+ 
+-/*
+- * Performs necessary checks before doing a write
+- *
+- * Can adjust writing position or amount of bytes to write.
+- * Returns appropriate error code that caller should return or
+- * zero in case that write should be allowed.
+- */
+-inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
++static int generic_write_checks_common(struct kiocb *iocb, loff_t *count)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file->f_mapping->host;
+-	loff_t count;
+ 	int ret;
+ 
+ 	if (IS_SWAPFILE(inode))
+ 		return -ETXTBSY;
+ 
+-	if (!iov_iter_count(from))
++	if (!*count)
+ 		return 0;
+ 
+ 	/* FIXME: this is for backwards compatibility with 2.4 */
+@@ -3001,8 +2993,21 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
+ 		return -EINVAL;
+ 
+-	count = iov_iter_count(from);
+-	ret = generic_write_check_limits(file, iocb->ki_pos, &count);
++	return generic_write_check_limits(iocb->ki_filp, iocb->ki_pos, count);
++}
++
++/*
++ * Performs necessary checks before doing a write
++ *
++ * Can adjust writing position or amount of bytes to write.
++ * Returns a negative errno or the new number of bytes to write.
++ */
++inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
++{
++	loff_t count = iov_iter_count(from);
++	int ret;
++
++	ret = generic_write_checks_common(iocb, &count);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -3011,6 +3016,52 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ }
+ EXPORT_SYMBOL(generic_write_checks);
+ 
++int generic_encoded_write_checks(struct kiocb *iocb,
++				 struct encoded_iov *encoded)
++{
++	loff_t count = encoded->unencoded_len;
++	int ret;
++
++	ret = generic_write_checks_common(iocb, &count);
++	if (ret)
++		return ret;
++
++	if (count != encoded->unencoded_len) {
++		/*
++		 * The write got truncated by generic_write_checks(). We can't
++		 * do a partial encoded write.
++		 */
++		return -EFBIG;
++	}
++	return 0;
++}
++EXPORT_SYMBOL(generic_encoded_write_checks);
++
++/*
++ * If no encoding is set, this clears IOCB_ENCODED and the write should be
++ * treated as a normal write.
++ */
++int import_encoded_write(struct kiocb *iocb, struct encoded_iov *encoded,
++			 struct iov_iter *from)
++{
++	if (iov_iter_single_seg_count(from) != sizeof(*encoded))
++		return -EINVAL;
++	if (copy_from_iter(encoded, sizeof(*encoded), from) != sizeof(*encoded))
++		return -EFAULT;
++	if (encoded->compression == ENCODED_IOV_COMPRESSION_NONE &&
++	    encoded->encryption == ENCODED_IOV_ENCRYPTION_NONE) {
++		iocb->ki_flags &= ~IOCB_ENCODED;
++		return 0;
++	}
++	if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
++	    encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
++		return -EINVAL;
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++	return 0;
++}
++EXPORT_SYMBOL(import_encoded_write);
++
+ /*
+  * Performs necessary checks before doing a clone.
+  *
 -- 
 2.23.0
 
