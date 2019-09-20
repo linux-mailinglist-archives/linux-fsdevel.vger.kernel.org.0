@@ -2,75 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70DAAB933F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2019 16:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C16B94B2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Sep 2019 17:58:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392979AbfITOiq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Sep 2019 10:38:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60170 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2392975AbfITOiq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:38:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 37BE6AD12;
-        Fri, 20 Sep 2019 14:38:44 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 0191F1E3C02; Fri, 20 Sep 2019 16:38:55 +0200 (CEST)
-Date:   Fri, 20 Sep 2019 16:38:55 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RFC PATCH 1/3] fs: pass READ/WRITE to kiocb_set_rw_flags()
-Message-ID: <20190920143855.GD25765@quack2.suse.cz>
-References: <cover.1568875700.git.osandov@fb.com>
- <d23a40f0ad3fa0631fe6189b94811be473e7cc4a.1568875700.git.osandov@fb.com>
+        id S1727512AbfITP6l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Sep 2019 11:58:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:25168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726828AbfITP6l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Sep 2019 11:58:41 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1263F308FBFC;
+        Fri, 20 Sep 2019 15:58:41 +0000 (UTC)
+Received: from asgard.redhat.com (ovpn-112-68.ams2.redhat.com [10.36.112.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C33F51001B12;
+        Fri, 20 Sep 2019 15:58:36 +0000 (UTC)
+Date:   Fri, 20 Sep 2019 17:58:13 +0200
+From:   Eugene Syromiatnikov <esyr@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Shaohua Li <shli@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-raid@vger.kernel.org,
+        Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 0/3] Fix typo in RWH_WRITE_LIFE_NOT_SET constant name
+Message-ID: <cover.1568994791.git.esyr@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d23a40f0ad3fa0631fe6189b94811be473e7cc4a.1568875700.git.osandov@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 20 Sep 2019 15:58:41 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 18-09-19 23:53:44, Omar Sandoval wrote:
-> From: Omar Sandoval <osandov@fb.com>
-> 
-> A following change will want to check whether an IO is a read or write
-> in kiocb_set_rw_flags(). Additionally, aio and io_uring currently set
-> the IOCB_WRITE flag on a kiocb right before calling call_write_iter(),
-> but we can move that into the common code.
-> 
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
-...
-> index ffe35d97afcb..75c4b7680385 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3351,8 +3351,11 @@ static inline int iocb_flags(struct file *file)
->  	return res;
->  }
->  
-> -static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
-> +static inline int kiocb_set_rw_flags(int rw, struct kiocb *ki, rwf_t flags)
->  {
-> +	if (rw == WRITE)
-> +		ki->ki_flags |= IOCB_WRITE;
-> +
->  	if (unlikely(flags & ~RWF_SUPPORTED))
->  		return -EOPNOTSUPP;
+Hello.
 
-I'd find it more natural if the destination argument (i.e., kiocb) stayed
-to be the first argument of the function. Otherwise the patch looks good to
-me.
+This is a small fix of a typo (or, more specifically, some remnant of
+the old patch version spelling) in RWH_WRITE_LIFE_NOT_SET constant,
+which is named as RWF_WRITE_LIFE_NOT_SET currently.  Since the name
+with "H" is used in man page and everywhere else, it's probably worth
+to make the name used in the fcntl.h UAPI header in line with it.
+The two follow-up patches update usage sites of this constant in kernel
+to use the new spelling.
 
-								Honza
+The old name is retained as it is part of UAPI now.
+
+Changes since v2[1]:
+ * Updated RWF_WRITE_LIFE_NOT_SET constant usage
+   in drivers/md/raid5-ppl.c:ppl_init_log().
+
+Changes since v1[2]:
+ * Changed format of the commit ID in the commit message of the first patch.
+ * Removed bogus Signed-off-by that snuck into the resend of the series.
+
+[1] https://lkml.org/lkml/2018/10/30/34
+[2] https://lkml.org/lkml/2018/10/26/88
+
+Eugene Syromiatnikov (3):
+  fcntl: fix typo in RWH_WRITE_LIFE_NOT_SET r/w hint name
+  drivers/md/raid5.c: use the new spelling of RWH_WRITE_LIFE_NOT_SET
+  drivers/md/raid5-ppl.c: use the new spelling of RWH_WRITE_LIFE_NOT_SET
+
+ drivers/md/raid5-ppl.c           | 2 +-
+ drivers/md/raid5.c               | 4 ++--
+ fs/fcntl.c                       | 2 +-
+ include/uapi/linux/fcntl.h       | 9 ++++++++-
+ tools/include/uapi/linux/fcntl.h | 9 ++++++++-
+ 5 files changed, 20 insertions(+), 6 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.1.4
+
