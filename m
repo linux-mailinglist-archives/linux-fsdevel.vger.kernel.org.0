@@ -2,114 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E059B9F31
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2019 19:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A12FDB9FC2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2019 23:11:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731191AbfIURij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Sep 2019 13:38:39 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42143 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731181AbfIURii (ORCPT
+        id S1726075AbfIUVLO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Sep 2019 17:11:14 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38953 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbfIUVLO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Sep 2019 13:38:38 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c195so7188819lfg.9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2019 10:38:37 -0700 (PDT)
+        Sat, 21 Sep 2019 17:11:14 -0400
+Received: by mail-lf1-f65.google.com with SMTP id 72so7397928lfh.6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2019 14:11:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9uzXWOnb3Pc5Qsb1LE5MUvC1fVGZwEM0q61PiSxnxLU=;
-        b=VU396UY8L/Spo6Oc4Q07B48YPPQ3eOQEIGPyhhH4QrFNUbqtdGILMLZTV08RFVO32A
-         A6SwxESY8rNKzloxo4+kIVeBAqaF1MLVGnwEusFTKFQMoh7j8gaJd9rQED6q16xeVcqm
-         JJtrc32B22MCxS28WGdsD4JlZKB20RdbZcWaw=
+        bh=VikouSUKYvwFg2+XEm8bvkjMMwZXxxDQFHovYtl61ic=;
+        b=PnY4kn5XmbgED9iceT6TSWjBnG9pXS5XREES+T0YGoH5www99WGfRxB4nKs6lXcUSL
+         rM4FUCx5sr3nPGdmvXUd5YMoxETp+TJ4hnz253/POayI8dnDDSV9ZtG3icE4pKpN2N4X
+         qxlGkQAbcb6qZ8YfgAt3Qce29gfJEnad0gqkg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9uzXWOnb3Pc5Qsb1LE5MUvC1fVGZwEM0q61PiSxnxLU=;
-        b=o9RULAHaCfjfIjckh6y844SgzrqrkAeeorK8Imb8jozxsVu9Gi/wkYqp+HEdvrLe38
-         MDy0QZIdraIn4QxV0Lp6YZg8872kIrv2aE7gaX4jWB1NprFVuI2JkACv9XrBwBBvTPs4
-         e1MWilhRFBFEnqktoKULIUwxOEMT6RlJljclMsNI7ii/pbQKXunsPEsWVA40vnxu/rIN
-         qUmWvX1b/Q5327TcBlsoUniqka/3YzwlSHiTZgSYPNePmEoaPJvlY/Q/TiaKZaFEBphk
-         Uto5vDbZNR1w1tG12bEu2FvU4SRbviZ1+AATLOtPe7OOS/ouX/m/ytfo2HQQIE8Pp+g/
-         9c2A==
-X-Gm-Message-State: APjAAAXUffYtjICU+Mw+YsitktecmCW6OvyM7E+ioDNDrpexkZ3ji75d
-        tPIo6mEduict/96JxZyl/r9ihTEgbEg=
-X-Google-Smtp-Source: APXvYqxW9lK1ewAWb5LiJ61KDGCqW27xCutnJRXf0RUCtQL8vSEVW+htjHrcgofi168zB/rAmLW/yQ==
-X-Received: by 2002:ac2:5463:: with SMTP id e3mr11796376lfn.117.1569087516523;
-        Sat, 21 Sep 2019 10:38:36 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id h9sm1204800lfp.40.2019.09.21.10.38.34
+        bh=VikouSUKYvwFg2+XEm8bvkjMMwZXxxDQFHovYtl61ic=;
+        b=oJPTaazRkfPtrJk4rl9H7DBFuztOLuzpFxDQc2Q/TKvH+HRcJf0LqqSUs4Oz1SqALN
+         spJKewJfhKggTBWBiEAYwDFK28ubGedC1WV+4doFDE7ep0XdAZmZ1kvLRrw0wDoVhhGr
+         XREzeAOYjcHc4PDaL6ioKHe9tnWgSsJNdB7D0kLXO7tocNA6iN1pDtfJZfV7+AKH6WiT
+         GQ0ByVS21pxI+YIioZsuom+JkAj2u3olnw6Q21p2x9YTkBMUZQyGS3mzwBy0zTVC34KN
+         V/oDwGnAraGqzmXwxb4RHLbv0eJUF3cHCS3EKEgthJwy76PdqhRt/7FKcn00aXnmtmpY
+         s65Q==
+X-Gm-Message-State: APjAAAWbUnxiu3rWqOV12fwwK+zX16qtE5iGZpVh7JpV2GEotObJJuzA
+        5QURJIdnwoWUpJWj1u/WU6vBU3sErsA=
+X-Google-Smtp-Source: APXvYqyaq2d0bR8VFdXGzV6qri9SwbUCIZXpnCBH6NBHI9rLa+z/u381bHvlfvsyBhBPtNDVuWNTiw==
+X-Received: by 2002:ac2:4853:: with SMTP id 19mr11861519lfy.69.1569100270377;
+        Sat, 21 Sep 2019 14:11:10 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id q13sm1244465lfk.51.2019.09.21.14.11.08
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Sep 2019 10:38:35 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id j19so8478570lja.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2019 10:38:34 -0700 (PDT)
-X-Received: by 2002:a2e:8789:: with SMTP id n9mr12554952lji.52.1569087514698;
- Sat, 21 Sep 2019 10:38:34 -0700 (PDT)
+        Sat, 21 Sep 2019 14:11:08 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id v24so10221218ljj.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2019 14:11:08 -0700 (PDT)
+X-Received: by 2002:a2e:9854:: with SMTP id e20mr13128116ljj.72.1569100268485;
+ Sat, 21 Sep 2019 14:11:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190914170146.GT1131@ZenIV.linux.org.uk> <CAHk-=wiPv+yo86GpA+Gd_et0KS2Cydk4gSbEj3p4S4tEb1roKw@mail.gmail.com>
- <20190914200412.GU1131@ZenIV.linux.org.uk> <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
- <20190915005046.GV1131@ZenIV.linux.org.uk> <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
- <20190915160236.GW1131@ZenIV.linux.org.uk> <CAHk-=whjNE+_oSBP_o_9mquUKsJn4gomL2f0MM79gxk_SkYLRw@mail.gmail.com>
- <20190921140731.GQ1131@ZenIV.linux.org.uk> <CAHk-=wgrfvGOdgCQARA5Jwt7TbdM7MG8AUMyz_+GCdBZ7_x21w@mail.gmail.com>
- <20190921171858.GA29065@ZenIV.linux.org.uk>
-In-Reply-To: <20190921171858.GA29065@ZenIV.linux.org.uk>
+References: <20190920110017.GA25765@quack2.suse.cz>
+In-Reply-To: <20190920110017.GA25765@quack2.suse.cz>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 21 Sep 2019 10:38:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg0A7jd9bvm1gN8yykWDL1SBbUVwGdH3rSuHBShamEmuw@mail.gmail.com>
-Message-ID: <CAHk-=wg0A7jd9bvm1gN8yykWDL1SBbUVwGdH3rSuHBShamEmuw@mail.gmail.com>
-Subject: Re: [PATCH] Re: Possible FS race condition between iterate_dir and d_alloc_parallel
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "zhengbin (A)" <zhengbin13@huawei.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, renxudong1@huawei.com,
-        Hou Tao <houtao1@huawei.com>
+Date:   Sat, 21 Sep 2019 14:10:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgr6kuKo76xcaUa-TSw83N+nbHJn9AkVJ9Zzv8b0feHQg@mail.gmail.com>
+Message-ID: <CAHk-=wgr6kuKo76xcaUa-TSw83N+nbHJn9AkVJ9Zzv8b0feHQg@mail.gmail.com>
+Subject: Re: [GIT PULL] fanotify cleanup for v5.4-rc1
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 21, 2019 at 10:19 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Fri, Sep 20, 2019 at 4:00 AM Jan Kara <jack@suse.cz> wrote:
 >
-> BTW, how much is the cost of smp_store_release() affected by a recent
-> smp_store_release() on the same CPU?
+>   could you please pull from
 
-Depends on the architecture.
+Pulled and then unpulled.
 
-On x86, smp_store_release() is free - all stores are releases.
+This is a prime example of a "cleanup" that should never ever be done,
+and a compiler warning that is a disgrace and shouldn't happen.
 
-(Well, there's the cost of the compiler barrier and the fact that gcc
-generates horrid code for volatiles, but that's it).
+This code:
 
-On modern arm64 it should be fairly cheap. A store-release is just
-about the cheapest barrier you can find.
+        WARN_ON_ONCE(len < 0 || len >= FANOTIFY_EVENT_ALIGN);
 
-On ppc, it's an lwsync, which is again the cheapest barrier there is,
-and is usually just a few cycles. Although on older powerpc I think it
-becomes a 'sync' which is fairly expensive.
+is obvious and makes sense. It clearly and unambiguously checks that
+'len' is in the specified range.
 
-Other architectures are a mix of the above. It's usually not all that
-expensive, but ..
+In contrast, this code:
 
-> IOW, if we have
->         smp_store_release(p, v1);
->         <some assignments into the same cacheline>
->         r = *q;                 // different cacheline
->         smp_store_release(q, v2);
-> how much overhead will the second smp_store_release() give?
+        WARN_ON_ONCE(len >= FANOTIFY_EVENT_ALIGN);
 
-It really should only order the store queue, and make sure that
-earlier reads have completed by the time the store queue entry drains.
+quite naturally will make a human wonder "what about negative values".
 
-Which sounds like a big deal, but since you have to be all kinds of
-silly to delay reads past later writes (reads are latency-important,
-buffered writes are not), that really isn't a performance issue.
+Yes, it turns out that "len" is unsigned.  That isn't actually
+immediately obvious to a human, since the declaration of 'len' is 20+
+lines earlier (and even then the type doesn't say "unsigned", although
+a lot of people do recognize "size_t" as such).
 
-Except some architectures are stupid and lack the proper barrier
-model, and then it can be a full memory barrier. But honestly, I don't
-think we have any architecture where we really care.
+In fact,  maybe some day the type will change, and the careful range
+checking means that the code continues to work correctly.
 
-               Linus
+The fact that "len" is unsigned _is_ obvious to the compiler, which
+just means that now that compiler can ignore the "< 0" thing and
+optimize it away. Great.
+
+But that doesn't make the compiler warning valid, and it doesn't make
+the patch any better.
+
+When it comes to actual code quality, the version that checks against
+zero is the better version.
+
+Please stop using -Wtype-limits with compilers that are too stupid to
+understand that range checking with the type range is sane.
+
+Compilers that think that warning for the above kind of thing is ok
+are inexcusable garbage.
+
+And compiler writers who think that the warning is a good thing can't
+see the forest for the trees. They are too hung up on a detail to see
+the big picture.
+
+Why/how was this found in the first place? We don't enable type-limit
+checking by default.
+
+We may have to add an explicit
+
+   ccflags-y += $(call cc-disable-warning, type-limits)
+
+if these kinds of patches continue to happen, which would be sad.
+There are _valid_ type limits.
+
+But this kind of range-based check is not a valid thing to warn about,
+and we shouldn't make the kernel source code worse just because the
+compiler is doing garbage things.
+
+              Linus
