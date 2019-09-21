@@ -2,106 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0748B9F26
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2019 19:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E059B9F31
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Sep 2019 19:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbfIURTE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Sep 2019 13:19:04 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:57240 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfIURTE (ORCPT
+        id S1731191AbfIURij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Sep 2019 13:38:39 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42143 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731181AbfIURii (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Sep 2019 13:19:04 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iBj2A-0008W4-GE; Sat, 21 Sep 2019 17:18:58 +0000
-Date:   Sat, 21 Sep 2019 18:18:58 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Sat, 21 Sep 2019 13:38:38 -0400
+Received: by mail-lf1-f68.google.com with SMTP id c195so7188819lfg.9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2019 10:38:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9uzXWOnb3Pc5Qsb1LE5MUvC1fVGZwEM0q61PiSxnxLU=;
+        b=VU396UY8L/Spo6Oc4Q07B48YPPQ3eOQEIGPyhhH4QrFNUbqtdGILMLZTV08RFVO32A
+         A6SwxESY8rNKzloxo4+kIVeBAqaF1MLVGnwEusFTKFQMoh7j8gaJd9rQED6q16xeVcqm
+         JJtrc32B22MCxS28WGdsD4JlZKB20RdbZcWaw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9uzXWOnb3Pc5Qsb1LE5MUvC1fVGZwEM0q61PiSxnxLU=;
+        b=o9RULAHaCfjfIjckh6y844SgzrqrkAeeorK8Imb8jozxsVu9Gi/wkYqp+HEdvrLe38
+         MDy0QZIdraIn4QxV0Lp6YZg8872kIrv2aE7gaX4jWB1NprFVuI2JkACv9XrBwBBvTPs4
+         e1MWilhRFBFEnqktoKULIUwxOEMT6RlJljclMsNI7ii/pbQKXunsPEsWVA40vnxu/rIN
+         qUmWvX1b/Q5327TcBlsoUniqka/3YzwlSHiTZgSYPNePmEoaPJvlY/Q/TiaKZaFEBphk
+         Uto5vDbZNR1w1tG12bEu2FvU4SRbviZ1+AATLOtPe7OOS/ouX/m/ytfo2HQQIE8Pp+g/
+         9c2A==
+X-Gm-Message-State: APjAAAXUffYtjICU+Mw+YsitktecmCW6OvyM7E+ioDNDrpexkZ3ji75d
+        tPIo6mEduict/96JxZyl/r9ihTEgbEg=
+X-Google-Smtp-Source: APXvYqxW9lK1ewAWb5LiJ61KDGCqW27xCutnJRXf0RUCtQL8vSEVW+htjHrcgofi168zB/rAmLW/yQ==
+X-Received: by 2002:ac2:5463:: with SMTP id e3mr11796376lfn.117.1569087516523;
+        Sat, 21 Sep 2019 10:38:36 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id h9sm1204800lfp.40.2019.09.21.10.38.34
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Sep 2019 10:38:35 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id j19so8478570lja.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Sep 2019 10:38:34 -0700 (PDT)
+X-Received: by 2002:a2e:8789:: with SMTP id n9mr12554952lji.52.1569087514698;
+ Sat, 21 Sep 2019 10:38:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190914170146.GT1131@ZenIV.linux.org.uk> <CAHk-=wiPv+yo86GpA+Gd_et0KS2Cydk4gSbEj3p4S4tEb1roKw@mail.gmail.com>
+ <20190914200412.GU1131@ZenIV.linux.org.uk> <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
+ <20190915005046.GV1131@ZenIV.linux.org.uk> <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
+ <20190915160236.GW1131@ZenIV.linux.org.uk> <CAHk-=whjNE+_oSBP_o_9mquUKsJn4gomL2f0MM79gxk_SkYLRw@mail.gmail.com>
+ <20190921140731.GQ1131@ZenIV.linux.org.uk> <CAHk-=wgrfvGOdgCQARA5Jwt7TbdM7MG8AUMyz_+GCdBZ7_x21w@mail.gmail.com>
+ <20190921171858.GA29065@ZenIV.linux.org.uk>
+In-Reply-To: <20190921171858.GA29065@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 21 Sep 2019 10:38:18 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg0A7jd9bvm1gN8yykWDL1SBbUVwGdH3rSuHBShamEmuw@mail.gmail.com>
+Message-ID: <CAHk-=wg0A7jd9bvm1gN8yykWDL1SBbUVwGdH3rSuHBShamEmuw@mail.gmail.com>
+Subject: Re: [PATCH] Re: Possible FS race condition between iterate_dir and d_alloc_parallel
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     "zhengbin (A)" <zhengbin13@huawei.com>, Jan Kara <jack@suse.cz>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         "zhangyi (F)" <yi.zhang@huawei.com>, renxudong1@huawei.com,
         Hou Tao <houtao1@huawei.com>
-Subject: Re: [PATCH] Re: Possible FS race condition between iterate_dir and
- d_alloc_parallel
-Message-ID: <20190921171858.GA29065@ZenIV.linux.org.uk>
-References: <20190914170146.GT1131@ZenIV.linux.org.uk>
- <CAHk-=wiPv+yo86GpA+Gd_et0KS2Cydk4gSbEj3p4S4tEb1roKw@mail.gmail.com>
- <20190914200412.GU1131@ZenIV.linux.org.uk>
- <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
- <20190915005046.GV1131@ZenIV.linux.org.uk>
- <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
- <20190915160236.GW1131@ZenIV.linux.org.uk>
- <CAHk-=whjNE+_oSBP_o_9mquUKsJn4gomL2f0MM79gxk_SkYLRw@mail.gmail.com>
- <20190921140731.GQ1131@ZenIV.linux.org.uk>
- <CAHk-=wgrfvGOdgCQARA5Jwt7TbdM7MG8AUMyz_+GCdBZ7_x21w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgrfvGOdgCQARA5Jwt7TbdM7MG8AUMyz_+GCdBZ7_x21w@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 21, 2019 at 09:21:46AM -0700, Linus Torvalds wrote:
-> On Sat, Sep 21, 2019 at 7:07 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > FWIW, #next.dcache has the straight conversion to hlist.  It definitely
-> > wants at least nfsd, er... misconception dealt with, though: list_head
-> > or hlist, this
-> 
-> Well, yeah. But is there really any downside except for the warning?
-> 
-> Looks like the code should just do
-> 
->                 if (!simple_positive(dentry))
->                         continue;
-> 
-> and just ignore non-positive dentries - whether cursors or negative
-> ones (which may not happen, but still).
+On Sat, Sep 21, 2019 at 10:19 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> BTW, how much is the cost of smp_store_release() affected by a recent
+> smp_store_release() on the same CPU?
 
-FWIW, I really want to do a unified helper for "rm -rf from kernel"
-kind of thing.  We have too many places trying to do that and buggering
-it up in all kinds of ways.  This is one of those places; I agree
-that the first step is to get rid of that WARN_ONCE, and it's the
-right thing to do so that two series would be independent, but it
-will need attention afterwards.
+Depends on the architecture.
 
-> > No "take cursors out of the list" parts yet.
-> 
-> Looking at the commits, that "take it off the list" one seems very
-> nice on its own. It actually seems to simplify the logic regardless of
-> the whole "don't need to add it to the end"..
-> 
-> Only this:
-> 
->     if (next)
->         list_move_tail(&cursor->d_child, &next->d_child);
->     else
->         list_del_init(&cursor->d_child);
-> 
-> is a slight complication, and honestly, I think that should just have
-> its own helper function there ("dcache_update_cursor(cursor, next)" or
-> something).
+On x86, smp_store_release() is free - all stores are releases.
 
-I want to see what will fall out of switching cursors to separate
-type - the set of primitives, calling conventions for those, etc.
-will become more clear once I have something to tweak.  And I would
-rather use here the calling conventions identical to the final ones...
- 
-> That helper function would end up meaning one less change in the hlist
-> conversion too.
-> 
-> The hlist conversion looks straightforward except for the list_move()
-> conversions that I didn't then look at more to make sure that they are
-> identical, but the ones I looked at looked sane.
+(Well, there's the cost of the compiler barrier and the fact that gcc
+generates horrid code for volatiles, but that's it).
 
-BTW, how much is the cost of smp_store_release() affected by a recent
-smp_store_release() on the same CPU?  IOW, if we have
-	smp_store_release(p, v1);
-	<some assignments into the same cacheline>
-	r = *q;			// different cacheline
-	smp_store_release(q, v2);
-how much overhead will the second smp_store_release() give?
+On modern arm64 it should be fairly cheap. A store-release is just
+about the cheapest barrier you can find.
+
+On ppc, it's an lwsync, which is again the cheapest barrier there is,
+and is usually just a few cycles. Although on older powerpc I think it
+becomes a 'sync' which is fairly expensive.
+
+Other architectures are a mix of the above. It's usually not all that
+expensive, but ..
+
+> IOW, if we have
+>         smp_store_release(p, v1);
+>         <some assignments into the same cacheline>
+>         r = *q;                 // different cacheline
+>         smp_store_release(q, v2);
+> how much overhead will the second smp_store_release() give?
+
+It really should only order the store queue, and make sure that
+earlier reads have completed by the time the store queue entry drains.
+
+Which sounds like a big deal, but since you have to be all kinds of
+silly to delay reads past later writes (reads are latency-important,
+buffered writes are not), that really isn't a performance issue.
+
+Except some architectures are stupid and lack the proper barrier
+model, and then it can be a full memory barrier. But honestly, I don't
+think we have any architecture where we really care.
+
+               Linus
