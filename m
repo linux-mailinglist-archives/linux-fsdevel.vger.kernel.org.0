@@ -2,112 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6427CBB71C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 16:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E184BB733
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 16:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440080AbfIWOti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Sep 2019 10:49:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42270 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438376AbfIWOti (ORCPT
+        id S2440131AbfIWOwu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Sep 2019 10:52:50 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:45458 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2440127AbfIWOwu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 10:49:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=V2TL1OkDh2oEnzgGPwW5rtpt6oXK+wm5wbqIRlf2l1M=; b=fBUGYc37z1z4Dwgz8h7k1qSR0
-        U+bUQeuZqrp4+f7NFKghpdFDI+GyU72GyNbolbLg/ujP/Zs5Pb38MtGSQUn9FspPZdAPUKiG7HbsM
-        /R5VkMEPorraJItOpntT35WuLltovyfHS8qPGMk4HdvsDOe9t5Ry24DMm3abqd64L/3xopQQNfAY1
-        +Ey9BBsSbEdCESaZZ0cAUxRg8GLitzEereuD83WHln6ObRBTesfn8VcYW39tCygANQCIHitaF0YyY
-        G7V5DFn7EpxWIVKsSUYsa32XkQjBhj7pWmLVZ724qlmn2gi5FFqGAxkrR2s2Q7vuOls/LapBjd+Ys
-        anbHzSNZw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCPef-0001SS-Ly; Mon, 23 Sep 2019 14:49:33 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2DE9F303DFD;
-        Mon, 23 Sep 2019 16:48:46 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 547962B08BBAE; Mon, 23 Sep 2019 16:49:31 +0200 (CEST)
-Date:   Mon, 23 Sep 2019 16:49:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Do we need to correct barriering in circular-buffers.rst?
-Message-ID: <20190923144931.GC2369@hirez.programming.kicks-ass.net>
-References: <CAHk-=wj85tOp8WjcUp6gwstp4Cg2WT=p209S=fOzpWAgqqQPKg@mail.gmail.com>
- <20190915145905.hd5xkc7uzulqhtzr@willie-the-truck>
- <25289.1568379639@warthog.procyon.org.uk>
- <28447.1568728295@warthog.procyon.org.uk>
- <20190917170716.ud457wladfhhjd6h@willie-the-truck>
- <15228.1568821380@warthog.procyon.org.uk>
- <5385.1568901546@warthog.procyon.org.uk>
+        Mon, 23 Sep 2019 10:52:50 -0400
+Received: by mail-qk1-f193.google.com with SMTP id z67so15646533qkb.12;
+        Mon, 23 Sep 2019 07:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Cihsrcy+ZQVZz5JC0vGFiq3Z/PSPrpGVXhPvhqb+rOY=;
+        b=f5PeulYORxhz3WOQ1pPfWQefeKSMX3DPFUhK6IX+3ZFGl5J4YZs+OspShWQzSTKSva
+         iMCdV8LoKrybDSHIBYC3Rfql3TW5h7dtClAKrcf1+r1YFgdmM0IFmundcDdlaQYW09JR
+         EfnmvcJCzdsdjBdbl5HsRYQffRHm86zVj/QIDDNc32WrkBax+kAk0j2ZBqfADL0CoxHl
+         b45EfOJnUZKMZ9yNtraikYrWb8G12pXoUiUZ9FfYIDeDXtStUF9BTGl4gfSIqG0x1/od
+         q9T2f9Gf4zu60KYNVq7TTAPX40S27yxar+7oXy1wO86A9nyO0PSPXfdJMU1eRHxs6pU2
+         SOAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Cihsrcy+ZQVZz5JC0vGFiq3Z/PSPrpGVXhPvhqb+rOY=;
+        b=SL334DyJHU56M6dDhWbQPXcwgiEa4DYnriMhu0RzXAUbSaaEaTfgvEdQiCRG7H4/tL
+         ZUxm1+zOaP2e3vf1brRD/IsshaXPAR6D0D9Vp3wE0ZVwIbQNZEcr1GIoiIY3NE9m50ru
+         +3EXdTw+BbpW4zP2iyYbtJBo2aIP45KBD9D1HynuVk0w9bKCDx1UnYMNj2nsjgI/8DW/
+         q7Zb2E4LC0cSAkyZ7E+03cjDgIOlGylGOSYJuGHCA3RCVhH4MryoYuYyqiwhQJf5QXw1
+         gxC2SLj9cmJ9iTbjZ/dOsKOFs7qHxoP1LVDRgteXMMjuVh6LRaTBi6KLHJhsy4dC6LcB
+         GmBw==
+X-Gm-Message-State: APjAAAXW1d1gQtgk87GeAfg2ytNp6hEvwwm2T2FRivreFcM/b3pXc5IB
+        LhgFzC2jNxKKtlIlndP+9nI=
+X-Google-Smtp-Source: APXvYqy7dWYRYJUZoj7yaS2c2MFY0Vo92w266qDfaXXxHEbj9rKr3hlKotaEugAkVtOD0VsMg19YpQ==
+X-Received: by 2002:a37:6fc1:: with SMTP id k184mr153829qkc.237.1569250368172;
+        Mon, 23 Sep 2019 07:52:48 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:83ca])
+        by smtp.gmail.com with ESMTPSA id u39sm6397581qtj.34.2019.09.23.07.52.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Sep 2019 07:52:46 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 07:52:42 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] mm: implement write-behind policy for sequential file
+ writes
+Message-ID: <20190923145242.GF2233839@devbig004.ftw2.facebook.com>
+References: <156896493723.4334.13340481207144634918.stgit@buzz>
+ <875f3b55-4fe1-e2c3-5bee-ca79e4668e72@yandex-team.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5385.1568901546@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <875f3b55-4fe1-e2c3-5bee-ca79e4668e72@yandex-team.ru>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 02:59:06PM +0100, David Howells wrote:
+Hello, Konstantin.
 
-> But I don't agree with this.  You're missing half the barriers.  There should
-> be *four* barriers.  The document mandates only 3 barriers, and uses
-> READ_ONCE() where the fourth should be, i.e.:
-> 
->    thread #1            thread #2
-> 
->                         smp_load_acquire(head)
->                         ... read data from queue ..
->                         smp_store_release(tail)
-> 
->    READ_ONCE(tail)
->    ... add data to queue ..
->    smp_store_release(head)
-> 
+On Fri, Sep 20, 2019 at 10:39:33AM +0300, Konstantin Khlebnikov wrote:
+> With vm.dirty_write_behind 1 or 2 files are written even faster and
 
-Notably your READ_ONCE() pseudo code is lacking a conditional;
-kernel/events/ring_buffer.c writes it like so:
+Is the faster speed reproducible?  I don't quite understand why this
+would be.
 
- *   kernel                             user
- *
- *   if (LOAD ->data_tail) {            LOAD ->data_head
- *                      (A)             smp_rmb()       (C)
- *      STORE $data                     LOAD $data
- *      smp_wmb()       (B)             smp_mb()        (D)
- *      STORE ->data_head               STORE ->data_tail
- *   }
- *
- * Where A pairs with D, and B pairs with C.
- *
- * In our case (A) is a control dependency that separates the load of
- * the ->data_tail and the stores of $data. In case ->data_tail
- * indicates there is no room in the buffer to store $data we do not.
- *
- * D needs to be a full barrier since it separates the data READ
- * from the tail WRITE.
- *
- * For B a WMB is sufficient since it separates two WRITEs, and for C
- * an RMB is sufficient since it separates two READs.
+> during copying amount of dirty memory always stays around at 16MiB.
 
-Where 'kernel' is the producer and 'user' is the consumer. This was
-written before load-acquire and store-release came about (I _think_),
-and I've so far resisted updating B to store-release because smp_wmb()
-is actually cheaper than store-release on a number of architectures
-(notably ARM).
+The following is the test part of a slightly modified version of your
+test script which should run fine on any modern systems.
 
-C ought to be a load-aquire, and D really should be a store-release, but
-I don't think the perf userspace has that (or uses C11).
+  for mode in 0 1; do
+	  if [ $mode == 0 ]; then
+		  prefix=''
+	  else
+		  prefix='systemd-run --user --scope -p MemoryMax=64M'
+	  fi
+
+	  echo COPY
+	  time $prefix cp -r dummy copy
+
+	  grep Dirty /proc/meminfo
+
+	  echo SYNC
+	  time sync
+
+	  rm -fr copy
+  done
+
+and the result looks like the following.
+
+  $ ./test-writebehind.sh
+  SIZE
+  3.3G    dummy
+  COPY
+
+  real    0m2.859s
+  user    0m0.015s
+  sys     0m2.843s
+  Dirty:           3416780 kB
+  SYNC
+
+  real    0m34.008s
+  user    0m0.000s
+  sys     0m0.008s
+  COPY
+  Running scope as unit: run-r69dca5326a9a435d80e036435ff9e1da.scope
+
+  real    0m32.267s
+  user    0m0.032s
+  sys     0m4.186s
+  Dirty:             14304 kB
+  SYNC
+
+  real    0m1.783s
+  user    0m0.000s
+  sys     0m0.006s
+
+This is how we are solving the massive dirtier problem.  It's easy,
+works pretty well and can easily be tailored to the specific
+requirements.
+
+Generic write-behind would definitely have other benefits and also a
+bunch of regression possibilities.  I'm not trying to say that
+write-behind isn't a good idea but it'd be useful to consider that a
+good portion of the benefits can already be obtained fairly easily.
+
+Thanks.
+
+-- 
+tejun
