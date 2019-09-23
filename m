@@ -2,224 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97549BBAED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 20:06:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA859BBB44
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 20:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440306AbfIWSGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Sep 2019 14:06:33 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38621 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394234AbfIWSGd (ORCPT
+        id S1732997AbfIWS0O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Sep 2019 14:26:14 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:56536 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732996AbfIWS0N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 14:06:33 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w10so6837578plq.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2019 11:06:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nhneKc2j612Q2N+13gaGbKUVRsMhSSxGH7dWRfDGMkM=;
-        b=T1+NUcrIy3lmkEWKUYoZizpT4pz7k1bgugAw5x236rFYSY4jiXwwGSkW/t3eTOgxZZ
-         BdFUIyPtNrmuOnFW8pMCBh0TOJ0ymwQs3hrr2tpjSwDy/Jn7hGK64HYhWlOR+Pme/Rjs
-         q1skpdHUJIQUzoH1STCk8Qg+RNLa+nlemSvf5GuWwDF1JHGzH7MzOgvgGfuUDt1Yjlx+
-         jLfCXyd8JabRhAP+sdDZJeube1e/2Pp2+w4UQdEthm0TnALHcGP03fa6VfY8gUFfbf65
-         93WWIiL7H75Fl011ZWNdHPF+hL1hlBHne2JyK6E63p3OCh/BSVxvl8asUe8na9vlCXYJ
-         Puqg==
+        Mon, 23 Sep 2019 14:26:13 -0400
+Received: by mail-io1-f72.google.com with SMTP id a22so20816616ioq.23
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2019 11:26:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nhneKc2j612Q2N+13gaGbKUVRsMhSSxGH7dWRfDGMkM=;
-        b=oFeiJytK1evM3ofQVSwzyDtxDG2NKBOZ855Arh7K4XC7iHiCf7Y4vv8Qvf3WMUFmWa
-         vbHiH7SlYUwKwDTaR2UdKOj0yLwWgrtJjj+v1oc+sZpb/wfuKpASOzTvO7A1q/7C3kUi
-         Pr3R+Bgq9+Y+1ZQ2FbdxnUKQiACpVwAy5JPym3aBgXO6QjajGyO8IfldusiJ/hJ+KsVa
-         wi8R6agVu7BcIh6e4tKkjK2LOWqncht1NyjKmKmusjGp6++dHDvy/6D27n/hQgdRDx5D
-         mI8FCH+7dJ2RTfp8P+dfQgOBnYTLXqlGQCxYVmH1vPpvgZr7Bb1Z1cQ102tj14ghTKYO
-         Doqw==
-X-Gm-Message-State: APjAAAWVzNzlDo5LgZX7sm6UMctxQPak5YO+x4z5wiZii1OzV3z29ci4
-        I9KUXaZvWxnvbfZ+JWM8MzcC470nJP/wL+JmcOYW3g==
-X-Google-Smtp-Source: APXvYqwfsjyOL3n2LFVEPJm/qlWBl4UOe3/cXY8+uFis2YYWhVkjpN1GVmQ/ETS5lMq5TdaURd2f4h4p74UheIpwH8I=
-X-Received: by 2002:a17:902:ff0e:: with SMTP id f14mr1025347plj.325.1569261990405;
- Mon, 23 Sep 2019 11:06:30 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Wp+WOxmIS7xEA02hFIkA48OyPRBkMcKVWO+Q59/ep3w=;
+        b=EG37y1l9Gerg7pCzeEcLK8BvyokBdeW5dM4pkjXpu1pibDtgiTldJqnFUIGOri6sWz
+         pqVYyee6kX71idW4Espij4Mc2sUNP3NFaY/oOdrCPOcl0KVq1C6wUXWM+updWfcahoSe
+         IlZ+JkUMSn9YMiq+Z+6YW3gZ4qRmkR13EArc2bKWfYULb+2MiHdsCjMWAKZhkj8TTgRR
+         A8rCvGLM05+u6y/eVoOtE+j8A7+g4TdJIVJEQRRZS+0VQR/0ff7uT/i/+938sMWgcUNZ
+         5c8zEX38F+bo/uHEkK/ix3CFcU0BIVaDJDXJaXJ2slDmTxE6P8VXdXmKuP3CHQhIKlf1
+         78Uw==
+X-Gm-Message-State: APjAAAXVrRbKNN3boe44oJnuZI5DTjPVXs1zxP6pHV3qNpSCxlYjMtCe
+        AKotJFWUwugLsyFvH3yyRevZ13Cvq5qReNFkAFw61YkPi9Cy
+X-Google-Smtp-Source: APXvYqxXKvyI6gkF2fxEbgVSBMSnm/K5sNn1xNC4xSjPHJP1Zu+7ehuPVelloZn8PCtalDMPhbxYLmpW2im/PNrqrRraa3dXqS0B
 MIME-Version: 1.0
-References: <20190923090249.127984-1-brendanhiggins@google.com>
- <20190923090249.127984-16-brendanhiggins@google.com> <d87eba35-ae09-0c53-bbbe-51ee9dc9531f@infradead.org>
-In-Reply-To: <d87eba35-ae09-0c53-bbbe-51ee9dc9531f@infradead.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 23 Sep 2019 11:06:19 -0700
-Message-ID: <CAFd5g45y-NWzbn8E8hUg=n4U5E+N6_4D8eCXhQ74Y0N4zqVW=w@mail.gmail.com>
-Subject: Re: [PATCH v18 15/19] Documentation: kunit: add documentation for KUnit
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Felix Guo <felixguoxiuping@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a5e:8c17:: with SMTP id n23mr818164ioj.46.1569263171386;
+ Mon, 23 Sep 2019 11:26:11 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 11:26:11 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e3c7de05933c8d39@google.com>
+Subject: general protection fault in finish_writeback_work
+From:   syzbot <syzbot+828abc56e48ada4b0195@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 8:48 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 9/23/19 2:02 AM, Brendan Higgins wrote:
-> > Add documentation for KUnit, the Linux kernel unit testing framework.
-> > - Add intro and usage guide for KUnit
-> > - Add API reference
-> >
-> > Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > Cc: Jonathan Corbet <corbet@lwn.net>
-> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> > ---
-> >  Documentation/dev-tools/index.rst           |   1 +
-> >  Documentation/dev-tools/kunit/api/index.rst |  16 +
-> >  Documentation/dev-tools/kunit/api/test.rst  |  11 +
-> >  Documentation/dev-tools/kunit/faq.rst       |  62 +++
-> >  Documentation/dev-tools/kunit/index.rst     |  79 +++
-> >  Documentation/dev-tools/kunit/start.rst     | 180 ++++++
-> >  Documentation/dev-tools/kunit/usage.rst     | 576 ++++++++++++++++++++
-> >  7 files changed, 925 insertions(+)
-> >  create mode 100644 Documentation/dev-tools/kunit/api/index.rst
-> >  create mode 100644 Documentation/dev-tools/kunit/api/test.rst
-> >  create mode 100644 Documentation/dev-tools/kunit/faq.rst
-> >  create mode 100644 Documentation/dev-tools/kunit/index.rst
-> >  create mode 100644 Documentation/dev-tools/kunit/start.rst
-> >  create mode 100644 Documentation/dev-tools/kunit/usage.rst
->
->
-> > diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
-> > new file mode 100644
-> > index 000000000000..6dc229e46bb3
-> > --- /dev/null
-> > +++ b/Documentation/dev-tools/kunit/start.rst
-> > @@ -0,0 +1,180 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +===============
-> > +Getting Started
-> > +===============
-> > +
-> > +Installing dependencies
-> > +=======================
-> > +KUnit has the same dependencies as the Linux kernel. As long as you can build
-> > +the kernel, you can run KUnit.
-> > +
-> > +KUnit Wrapper
-> > +=============
-> > +Included with KUnit is a simple Python wrapper that helps format the output to
-> > +easily use and read KUnit output. It handles building and running the kernel, as
-> > +well as formatting the output.
-> > +
-> > +The wrapper can be run with:
-> > +
-> > +.. code-block:: bash
-> > +
-> > +   ./tools/testing/kunit/kunit.py run
-> > +
-> > +Creating a kunitconfig
-> > +======================
-> > +The Python script is a thin wrapper around Kbuild as such, it needs to be
->
->                                        around Kbuild. As such,
+Hello,
 
-Thanks for pointing this out.
+syzbot found the following crash on:
 
->
-> > +configured with a ``kunitconfig`` file. This file essentially contains the
-> > +regular Kernel config, with the specific test targets as well.
-> > +
-> > +.. code-block:: bash
-> > +
-> > +     git clone -b master https://kunit.googlesource.com/kunitconfig $PATH_TO_KUNITCONFIG_REPO
-> > +     cd $PATH_TO_LINUX_REPO
-> > +     ln -s $PATH_TO_KUNIT_CONFIG_REPO/kunitconfig kunitconfig
-> > +
-> > +You may want to add kunitconfig to your local gitignore.
-> > +
-> > +Verifying KUnit Works
-> > +---------------------
-> > +
-> > +To make sure that everything is set up correctly, simply invoke the Python
-> > +wrapper from your kernel repo:
-> > +
-> > +.. code-block:: bash
-> > +
-> > +     ./tools/testing/kunit/kunit.py
-> > +
-> > +.. note::
-> > +   You may want to run ``make mrproper`` first.
->
-> I normally use O=builddir when building kernels.
-> Does this support using O=builddir ?
+HEAD commit:    24ccb0ab qede: qede_fp: simplify a bit 'qede_rx_build_skb()'
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a5b229600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dfcf592db22b9132
+dashboard link: https://syzkaller.appspot.com/bug?extid=828abc56e48ada4b0195
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Yep, it supports specifying a separate build directory.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> > +
-> > +If everything worked correctly, you should see the following:
-> > +
-> > +.. code-block:: bash
-> > +
-> > +     Generating .config ...
-> > +     Building KUnit Kernel ...
-> > +     Starting KUnit Kernel ...
-> > +
-> > +followed by a list of tests that are run. All of them should be passing.
-> > +
-> > +.. note::
-> > +   Because it is building a lot of sources for the first time, the ``Building
-> > +   kunit kernel`` step may take a while.
-> > +
-> > +Writing your first test
-> > +=======================
->
-> [snip]
->
-> > diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
-> > new file mode 100644
-> > index 000000000000..c6e69634e274
-> > --- /dev/null
-> > +++ b/Documentation/dev-tools/kunit/usage.rst
->
-> TBD...
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+828abc56e48ada4b0195@syzkaller.appspotmail.com
 
-What did you mean by this comment?
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 8777 Comm: kworker/u4:5 Not tainted 5.3.0+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: writeback wb_workfn (flush-8:0)
+RIP: 0010:__lock_acquire+0x1265/0x4e70 kernel/locking/lockdep.c:3828
+Code: 00 0f 85 0e 26 00 00 48 81 c4 e8 00 00 00 5b 41 5c 41 5d 41 5e 41 5f  
+5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f  
+85 dd 2a 00 00 49 81 3e a0 25 06 8a 0f 84 4e ee ff
+RSP: 0018:ffff88806930f938 EFLAGS: 00010007
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 03fffe22022b47e2 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: ffff88806930fa48 R08: 0000000000000001 R09: 0000000000000001
+R10: fffffbfff138cf90 R11: ffff8880693002c0 R12: 1ffff110115a3f15
+R13: 0000000000000000 R14: 1ffff110115a3f15 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2136820ea0 CR3: 000000008ab86000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:159
+  __wake_up_common_lock+0xc8/0x150 kernel/sched/wait.c:122
+  __wake_up+0xe/0x10 kernel/sched/wait.c:142
+  finish_writeback_work.isra.0+0xf6/0x120 fs/fs-writeback.c:168
+  wb_do_writeback fs/fs-writeback.c:2030 [inline]
+  wb_workfn+0x34f/0x11e0 fs/fs-writeback.c:2070
+  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Modules linked in:
+---[ end trace b7a1091622454beb ]---
+RIP: 0010:__lock_acquire+0x1265/0x4e70 kernel/locking/lockdep.c:3828
+Code: 00 0f 85 0e 26 00 00 48 81 c4 e8 00 00 00 5b 41 5c 41 5d 41 5e 41 5f  
+5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f  
+85 dd 2a 00 00 49 81 3e a0 25 06 8a 0f 84 4e ee ff
+RSP: 0018:ffff88806930f938 EFLAGS: 00010007
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 03fffe22022b47e2 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: ffff88806930fa48 R08: 0000000000000001 R09: 0000000000000001
+R10: fffffbfff138cf90 R11: ffff8880693002c0 R12: 1ffff110115a3f15
+R13: 0000000000000000 R14: 1ffff110115a3f15 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2136820ea0 CR3: 000000008ab86000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Cheers
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
