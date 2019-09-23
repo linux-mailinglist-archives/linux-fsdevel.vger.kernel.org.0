@@ -2,109 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96FB2BBDF2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 23:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9478BBBE36
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 00:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503131AbfIWVbL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Sep 2019 17:31:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58418 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729120AbfIWVbK (ORCPT
+        id S2390307AbfIWV76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Sep 2019 17:59:58 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44496 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388410AbfIWV75 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 17:31:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=O4AJzqwx8UNRh0+dCT8Ph5aKpjRexgGPb//cNFsda+Y=; b=RsebLDQx/T22kd9NN7O9OTg5V
-        3+HWJNeFeZV/brf5F4kVky0J3WD+Z+J5wsncdtuiDeJ+I8f7U2CGR85reETvmwKxf5biit/usSFwR
-        3cftnFOqk8YwTtJFcihOFpkCr1jCDWydkdIIBYrKxjyBx2d/G8rpQuaa8QU4v4cPfVfqn19BeZQ5g
-        fSFL5NQWTeG0vsDULREYmkyX7fRbz7/KMJepTGQnSicewM6G9fyfXHKlb0mKqJ9X3DgwMnDHkXoUl
-        F+E8CXXrYh6HFgMbuPhRs1smdzdW8pn/gcbnOYVKmIlZ5b95l20n2HvhukC3CB2lp3GnAEnMttbsH
-        CxzckVOxw==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCVuZ-0003lg-TH; Mon, 23 Sep 2019 21:30:23 +0000
-Subject: Re: [PATCH v18 15/19] Documentation: kunit: add documentation for
- KUnit
-To:     shuah <shuah@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Felix Guo <felixguoxiuping@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20190923090249.127984-1-brendanhiggins@google.com>
- <20190923090249.127984-16-brendanhiggins@google.com>
- <d87eba35-ae09-0c53-bbbe-51ee9dc9531f@infradead.org>
- <CAFd5g45y-NWzbn8E8hUg=n4U5E+N6_4D8eCXhQ74Y0N4zqVW=w@mail.gmail.com>
- <d7a61045-8fe6-a104-ece9-67b69c379425@infradead.org>
- <d5dc04ab-9be5-b258-c302-29f8045d6aaa@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <437bc2d1-f26b-0f04-324f-cbdca989e42c@infradead.org>
-Date:   Mon, 23 Sep 2019 14:30:21 -0700
+        Mon, 23 Sep 2019 17:59:57 -0400
+Received: by mail-io1-f66.google.com with SMTP id j4so37295780iog.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2019 14:59:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n7phuFKGA4FlxWZYRGlFKfu1KHwnx61oBgNVW4Uvweo=;
+        b=KqMWhiWqmcd1UyoGAQ0d3fPT6fnQuHYCwaqjXNS4q0DIaHqAm8pS+q3sFkYo8cJ759
+         b2jpxGqIUI0cGCaYy39i9o41jmXAOdzH53TMp0qa2CNdDX3J3I2BRcHDA5k5aFBLpFem
+         ms4Q2AJZgoeGhpk70tS/2n2dmpo0W/ppvU3GI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n7phuFKGA4FlxWZYRGlFKfu1KHwnx61oBgNVW4Uvweo=;
+        b=A6EUCdVdBpg33vUisHGbMnXZAZSPnuB21ojZFWBpahHKVUv+dXNxrGJdGjiCc7qs4d
+         yJjRLq0ioVfvOPRB2abP/n3Q6NyW8AAeY4gOFqlCSB8Y/3PC9id51UOJ3nk8CcaNCRhX
+         93zyxxJDaxaKGa9+YbXe8h2Cku+iXrOox/cGSjF43VWZ1E5KMt5Vh+aGuQdqJgl+Qh8B
+         iqKuzSfYQsgpj8q8DrYFeW73WtctQGGf8iQcTkmZDkhSFQp3ZhNZOhT59Sz8Ug1rUsVy
+         3kEvy4fkruwnELDkf4pm3ye/xBOyjiJJ8IoiAw21VoaU2o2sPFSEgC7klc/eyGBxTSBg
+         T3hg==
+X-Gm-Message-State: APjAAAWC46ZOrkvMkdCEF8nSObj9e49W/XYAG8q7y2IeAzj+pnZMLB+i
+        VmuwX/UGE60cq8Yqmv8Qo3yCpA==
+X-Google-Smtp-Source: APXvYqx6octkk8njUJTDWMtObJZST5Zf6eKG0O/ZVPY4DzMxP393WbttHPpRyIFAWVw7IMmtoHepaQ==
+X-Received: by 2002:a02:3e8a:: with SMTP id s132mr2046268jas.66.1569275997087;
+        Mon, 23 Sep 2019 14:59:57 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id f5sm11560011ioh.87.2019.09.23.14.59.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Sep 2019 14:59:56 -0700 (PDT)
+Subject: Re: Fwd: [PATCH] fs: direct-io: Fixed a Documentation build warn
+To:     Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "skh >> Shuah Khan" <skhan@linuxfoundation.org>
+References: <20190923123701.GA9627@madhuparna-HP-Notebook>
+ <CAF65HP3W3OM-Euc28fpZc_EPcG9KzEt8==UOC0fgS8ODoWRXiA@mail.gmail.com>
+ <CAF65HP0CViR_Dw=xEhSAY++o=UUxtDAv2ZkAHjVkmOMiNTEeBA@mail.gmail.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <c811c429-3ad5-8601-318a-850a26a46531@linuxfoundation.org>
+Date:   Mon, 23 Sep 2019 15:59:55 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <d5dc04ab-9be5-b258-c302-29f8045d6aaa@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAF65HP0CViR_Dw=xEhSAY++o=UUxtDAv2ZkAHjVkmOMiNTEeBA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/23/19 2:18 PM, shuah wrote:
+On 9/23/19 3:03 PM, Madhuparna Bhowmik wrote:
+> Fixed Excess function parameters warning.
+> warning: Excess function parameter 'offset' description in
+> 'dio_complete'.
+> Removed the description of the local variable offset from the
+> description for arguments of a function and added it with the
+> declaration of the variable.
 
-> I would like to apply the series very soon so it gets some soak time
-> after this move in linux-next and it can still make the rc1.
-> 
-> Since there changes can be addressed after rc1, I would like to not
-> require Brendan to do another version before I apply.
-> 
-> Hope you are okay with that Randy!
-> 
-> thanks,
-> -- Shuah
+Change the commit log to say: Fixes instead of Fixed and Removes
+instead of Removed.
 
-Sure, no problem, go for it .
+Also I think what you mean to say is that the this patch removes
+offset which isn't an argument to the function from the function
+header. Can you rephrase the commit log.
 
--- 
-~Randy
+> 
+> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com 
+> <mailto:madhuparnabhowmik04@gmail.com>>
+
+Why is this a Fwd::
+
+> ---
+>   fs/direct-io.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/direct-io.c b/fs/direct-io.c
+> index ae196784f487..a9cb770f0bc1 100644
+> --- a/fs/direct-io.c
+> +++ b/fs/direct-io.c
+> @@ -243,7 +243,6 @@ void dio_warn_stale_pagecache(struct file *filp)
+> 
+>   /**
+>    * dio_complete() - called when all DIO BIO I/O has been completed
+> - * @offset: the byte offset in the file of the completed operation
+>    *
+>    * This drops i_dio_count, lets interested parties know that a DIO 
+> operation
+>    * has completed, and calculates the resulting return code for the 
+> operation.
+> @@ -255,6 +254,7 @@ void dio_warn_stale_pagecache(struct file *filp)
+>    */
+>   static ssize_t dio_complete(struct dio *dio, ssize_t ret, unsigned int 
+> flags)
+>   {
+> +       /* offset: the byte offset in the file of the completed operation */
+>          loff_t offset = dio->iocb->ki_pos;
+>          ssize_t transferred = 0;
+>          int err;
+> -- 
+> 2.17.1
+> 
+> ᐧ
+> ᐧ
+
+thanks,
+-- Shuah
