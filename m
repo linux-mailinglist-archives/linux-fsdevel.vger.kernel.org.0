@@ -2,280 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC1B6BBD94
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 23:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3026BBDB6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 23:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388809AbfIWVJ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Sep 2019 17:09:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50222 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388750AbfIWVJ7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 17:09:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7B26AAC69;
-        Mon, 23 Sep 2019 21:09:56 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 281871E4669; Mon, 23 Sep 2019 23:10:11 +0200 (CEST)
-Date:   Mon, 23 Sep 2019 23:10:11 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
-Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
- infrastructure
-Message-ID: <20190923211011.GH20367@quack2.suse.cz>
-References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
- <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
+        id S2502964AbfIWVSu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Sep 2019 17:18:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387437AbfIWVSu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Sep 2019 17:18:50 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEFE921655;
+        Mon, 23 Sep 2019 21:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569273528;
+        bh=uZGy9vlY/pn+dPb1iZcKXB9oWJ1CxU/IxDEL/lnY++Y=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SGo9W/cpUNl7KLgBfpJognPZxmFKKR4dEP6cA4jJHfYUQWpe3l2mgKE4k6iQx35cy
+         ofpQ0Ztxh76B0jNkARdk9GCqGBkkj5Tzt6rUZCw261tq2nb9i+caRKzISInhCp2Dgx
+         eN+urP1l4CUPMZHARnlboLegMC/L9Vk8rfBD2WVE=
+Subject: Re: [PATCH v18 15/19] Documentation: kunit: add documentation for
+ KUnit
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Brendan Higgins <brendanhiggins@google.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Felix Guo <felixguoxiuping@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, shuah <shuah@kernel.org>
+References: <20190923090249.127984-1-brendanhiggins@google.com>
+ <20190923090249.127984-16-brendanhiggins@google.com>
+ <d87eba35-ae09-0c53-bbbe-51ee9dc9531f@infradead.org>
+ <CAFd5g45y-NWzbn8E8hUg=n4U5E+N6_4D8eCXhQ74Y0N4zqVW=w@mail.gmail.com>
+ <d7a61045-8fe6-a104-ece9-67b69c379425@infradead.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <d5dc04ab-9be5-b258-c302-29f8045d6aaa@kernel.org>
+Date:   Mon, 23 Sep 2019 15:18:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d7a61045-8fe6-a104-ece9-67b69c379425@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I'll try to comment just on top of refactoring Christoph has suggested...
+On 9/23/19 1:49 PM, Randy Dunlap wrote:
+> On 9/23/19 11:06 AM, Brendan Higgins wrote:
+>> On Mon, Sep 23, 2019 at 8:48 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>>>
+>>> On 9/23/19 2:02 AM, Brendan Higgins wrote:
+>>>> Add documentation for KUnit, the Linux kernel unit testing framework.
+>>>> - Add intro and usage guide for KUnit
+>>>> - Add API reference
+>>>>
+>>>> Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
+>>>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+>>>> Cc: Jonathan Corbet <corbet@lwn.net>
+>>>> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+>>>> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>>>> ---
+>>>>   Documentation/dev-tools/index.rst           |   1 +
+>>>>   Documentation/dev-tools/kunit/api/index.rst |  16 +
+>>>>   Documentation/dev-tools/kunit/api/test.rst  |  11 +
+>>>>   Documentation/dev-tools/kunit/faq.rst       |  62 +++
+>>>>   Documentation/dev-tools/kunit/index.rst     |  79 +++
+>>>>   Documentation/dev-tools/kunit/start.rst     | 180 ++++++
+>>>>   Documentation/dev-tools/kunit/usage.rst     | 576 ++++++++++++++++++++
+>>>>   7 files changed, 925 insertions(+)
+>>>>   create mode 100644 Documentation/dev-tools/kunit/api/index.rst
+>>>>   create mode 100644 Documentation/dev-tools/kunit/api/test.rst
+>>>>   create mode 100644 Documentation/dev-tools/kunit/faq.rst
+>>>>   create mode 100644 Documentation/dev-tools/kunit/index.rst
+>>>>   create mode 100644 Documentation/dev-tools/kunit/start.rst
+>>>>   create mode 100644 Documentation/dev-tools/kunit/usage.rst
+>>>
+>>>
+>>>> diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
+>>>> new file mode 100644
+>>>> index 000000000000..6dc229e46bb3
+>>>> --- /dev/null
+>>>> +++ b/Documentation/dev-tools/kunit/start.rst
+>>>> @@ -0,0 +1,180 @@
+>>>> +.. SPDX-License-Identifier: GPL-2.0
+>>>> +
+>>>> +===============
+>>>> +Getting Started
+>>>> +===============
+>>>> +
+>>>> +Installing dependencies
+>>>> +=======================
+>>>> +KUnit has the same dependencies as the Linux kernel. As long as you can build
+>>>> +the kernel, you can run KUnit.
+>>>> +
+>>>> +KUnit Wrapper
+>>>> +=============
+>>>> +Included with KUnit is a simple Python wrapper that helps format the output to
+>>>> +easily use and read KUnit output. It handles building and running the kernel, as
+>>>> +well as formatting the output.
+>>>> +
+>>>> +The wrapper can be run with:
+>>>> +
+>>>> +.. code-block:: bash
+>>>> +
+>>>> +   ./tools/testing/kunit/kunit.py run
+>>>> +
+>>>> +Creating a kunitconfig
+>>>> +======================
+>>>> +The Python script is a thin wrapper around Kbuild as such, it needs to be
+>>>
+>>>                                         around Kbuild. As such,
+>>
+>> Thanks for pointing this out.
+>>
+>>>
+>>>> +configured with a ``kunitconfig`` file. This file essentially contains the
+>>>> +regular Kernel config, with the specific test targets as well.
+>>>> +
+>>>> +.. code-block:: bash
+>>>> +
+>>>> +     git clone -b master https://kunit.googlesource.com/kunitconfig $PATH_TO_KUNITCONFIG_REPO
+>>>> +     cd $PATH_TO_LINUX_REPO
+>>>> +     ln -s $PATH_TO_KUNIT_CONFIG_REPO/kunitconfig kunitconfig
+>>>> +
+>>>> +You may want to add kunitconfig to your local gitignore.
+>>>> +
+>>>> +Verifying KUnit Works
+>>>> +---------------------
+>>>> +
+>>>> +To make sure that everything is set up correctly, simply invoke the Python
+>>>> +wrapper from your kernel repo:
+>>>> +
+>>>> +.. code-block:: bash
+>>>> +
+>>>> +     ./tools/testing/kunit/kunit.py
+>>>> +
+>>>> +.. note::
+>>>> +   You may want to run ``make mrproper`` first.
+>>>
+>>> I normally use O=builddir when building kernels.
+>>> Does this support using O=builddir ?
+>>
+>> Yep, it supports specifying a separate build directory.
+>>
+>>>> +
+>>>> +If everything worked correctly, you should see the following:
+>>>> +
+>>>> +.. code-block:: bash
+>>>> +
+>>>> +     Generating .config ...
+>>>> +     Building KUnit Kernel ...
+>>>> +     Starting KUnit Kernel ...
+>>>> +
+>>>> +followed by a list of tests that are run. All of them should be passing.
+>>>> +
+>>>> +.. note::
+>>>> +   Because it is building a lot of sources for the first time, the ``Building
+>>>> +   kunit kernel`` step may take a while.
+>>>> +
+>>>> +Writing your first test
+>>>> +=======================
+>>>
+>>> [snip]
+>>>
+>>>> diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
+>>>> new file mode 100644
+>>>> index 000000000000..c6e69634e274
+>>>> --- /dev/null
+>>>> +++ b/Documentation/dev-tools/kunit/usage.rst
+>>>
+>>> TBD...
+>>
+>> What did you mean by this comment?
+> 
+> I plan to review usage.rst soon... (To Be Done :)
+> 
 
-On Thu 12-09-19 21:04:46, Matthew Bobrowski wrote:
-> @@ -310,6 +341,120 @@ static int ext4_handle_failed_inode_extension(struct inode *inode, loff_t size)
->  	return 0;
->  }
->  
-> +/*
-> + * For a write that extends the inode size, ext4_dio_write_iter() will
-> + * wait for the write to complete. Consequently, operations performed
-> + * within this function are still covered by the inode_lock(). On
-> + * success, this function returns 0.
-> + */
-> +static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size, int error,
-> +				 unsigned int flags)
-> +{
-> +	int ret;
-> +	loff_t offset = iocb->ki_pos;
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +
-> +	if (error) {
-> +		ret = ext4_handle_failed_inode_extension(inode, offset + size);
-> +		return ret ? ret : error;
-> +	}
-> +
-> +	if (flags & IOMAP_DIO_UNWRITTEN) {
-> +		ret = ext4_convert_unwritten_extents(NULL, inode,
-> +						     offset, size);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (offset + size > i_size_read(inode)) {
-> +		ret = ext4_handle_inode_extension(inode, offset, size, 0);
-> +		if (ret)
-> +			return ret;
-> +	}
+I would like to apply the series very soon so it gets some soak time
+after this move in linux-next and it can still make the rc1.
 
-With the suggestions I made to your patch 3/6 this could be simplified to:
+Since there changes can be addressed after rc1, I would like to not
+require Brendan to do another version before I apply.
 
-	if (!error && flags & IOMAP_DIO_UNWRITTEN) {
-		error = ext4_convert_unwritten_extents(NULL, inode, offset,
-						       size);
-	}
-	return ext4_handle_inode_extension(inode, offset, error ? : size, size);
+Hope you are okay with that Randy!
 
-
-Note the change that when ext4_convert_unwritten_extents() fails (although
-this should not really happen unless there's some corruption going on), we
-do properly truncate possible extents beyond i_size.
-
-> +static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	ssize_t ret;
-> +	size_t count;
-> +	loff_t offset = iocb->ki_pos;
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +	bool extend = false, overwrite = false, unaligned_aio = false;
-> +
-> +	if (!inode_trylock(inode)) {
-> +		if (iocb->ki_flags & IOCB_NOWAIT)
-> +			return -EAGAIN;
-> +		inode_lock(inode);
-> +	}
-> +
-> +	if (!ext4_dio_checks(inode)) {
-> +		inode_unlock(inode);
-> +		/*
-> +		 * Fallback to buffered IO if the operation on the
-> +		 * inode is not supported by direct IO.
-> +		 */
-> +		return ext4_buffered_write_iter(iocb, from);
-> +	}
-> +
-> +	ret = ext4_write_checks(iocb, from);
-> +	if (ret <= 0) {
-> +		inode_unlock(inode);
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Unaligned direct AIO must be serialized among each other as
-> +	 * the zeroing of partial blocks of two competing unaligned
-> +	 * AIOs can result in data corruption.
-> +	 */
-> +	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS) &&
-> +	    !is_sync_kiocb(iocb) && ext4_unaligned_aio(inode, from, offset)) {
-> +		unaligned_aio = true;
-> +		inode_dio_wait(inode);
-> +	}
-> +
-> +	/*
-> +	 * Determine whether the IO operation will overwrite allocated
-> +	 * and initialized blocks. If so, check to see whether it is
-> +	 * possible to take the dioread_nolock path.
-> +	 */
-> +	count = iov_iter_count(from);
-> +	if (!unaligned_aio && ext4_overwrite_io(inode, offset, count) &&
-> +	    ext4_should_dioread_nolock(inode)) {
-> +		overwrite = true;
-> +		downgrade_write(&inode->i_rwsem);
-> +	}
-> +
-> +	if (offset + count > i_size_read(inode) ||
-> +	    offset + count > EXT4_I(inode)->i_disksize) {
-> +		ext4_update_i_disksize(inode, inode->i_size);
-> +		extend = true;
-> +	}
-
-This call to ext4_update_i_disksize() is definitely wrong. If nothing else,
-you need to also have transaction started and call ext4_mark_inode_dirty()
-to actually journal the change of i_disksize (ext4_update_i_disksize()
-updates only the in-memory copy of the entry). Also the direct IO code
-needs to add the inode to the orphan list so that in case of crash, blocks
-allocated beyond EOF get truncated on next mount. That is the whole point
-of this excercise with i_disksize after all.
-
-But I'm wondering if i_disksize update is needed. Truncate cannot be in
-progress (we hold i_rwsem) and dirty pages will be flushed by
-iomap_dio_rw() before we start to allocate any blocks. So it should be
-enough to have here:
-
-	if (offset + count > i_size_read(inode)) {
-		/*
-		 * Add inode to orphan list so that blocks allocated beyond
-		 * EOF get properly truncated in case of crash.
-		 */
-		start transaction handle
-		add inode to orphan list
-		stop transaction handle
-	}
-
-And just leave i_disksize at whatever it currently is.
-
-> +
-> +	ret = iomap_dio_rw(iocb, from, &ext4_iomap_ops, ext4_dio_write_end_io);
-> +
-> +	/*
-> +	 * Unaligned direct AIO must be the only IO in flight or else
-> +	 * any overlapping aligned IO after unaligned IO might result
-> +	 * in data corruption. We also need to wait here in the case
-> +	 * where the inode is being extended so that inode extension
-> +	 * routines in ext4_dio_write_end_io() are covered by the
-> +	 * inode_lock().
-> +	 */
-> +	if (ret == -EIOCBQUEUED && (unaligned_aio || extend))
-> +		inode_dio_wait(inode);
-> +
-> +	if (overwrite)
-> +		inode_unlock_shared(inode);
-> +	else
-> +		inode_unlock(inode);
-> +
-> +	if (ret >= 0 && iov_iter_count(from))
-> +		return ext4_buffered_write_iter(iocb, from);
-> +	return ret;
-> +}
-> +
-...
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index efb184928e51..f52ad3065236 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3513,11 +3513,13 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  			}
->  		}
->  	} else if (flags & IOMAP_WRITE) {
-> -		int dio_credits;
->  		handle_t *handle;
-> -		int retries = 0;
-> +		int dio_credits, retries = 0, m_flags = 0;
->  
-> -		/* Trim mapping request to maximum we can map at once for DIO */
-> +		/*
-> +		 * Trim mapping request to maximum we can map at once
-> +		 * for DIO.
-> +		 */
->  		if (map.m_len > DIO_MAX_BLOCKS)
->  			map.m_len = DIO_MAX_BLOCKS;
->  		dio_credits = ext4_chunk_trans_blocks(inode, map.m_len);
-> @@ -3533,8 +3535,30 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  		if (IS_ERR(handle))
->  			return PTR_ERR(handle);
->  
-> -		ret = ext4_map_blocks(handle, inode, &map,
-> -				      EXT4_GET_BLOCKS_CREATE_ZERO);
-> +		/*
-> +		 * DAX and direct IO are the only two operations that
-> +		 * are currently supported with IOMAP_WRITE.
-> +		 */
-> +		WARN_ON(!IS_DAX(inode) && !(flags & IOMAP_DIRECT));
-> +		if (IS_DAX(inode))
-> +			m_flags = EXT4_GET_BLOCKS_CREATE_ZERO;
-> +		else if (round_down(offset, i_blocksize(inode)) >=
-> +			 i_size_read(inode))
-> +			m_flags = EXT4_GET_BLOCKS_CREATE;
-> +		else if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-> +			m_flags = EXT4_GET_BLOCKS_IO_CREATE_EXT;
-> +
-> +		ret = ext4_map_blocks(handle, inode, &map, m_flags);
-> +
-> +		/*
-> +		 * We cannot fill holes in indirect tree based inodes
-> +		 * as that could expose stale data in the case of a
-> +		 * crash. Use the magic error code to fallback to
-> +		 * buffered IO.
-> +		 */
-> +		if (!m_flags && !ret)
-> +			ret = -ENOTBLK;
-> +
->  		if (ret < 0) {
->  			ext4_journal_stop(handle);
->  			if (ret == -ENOSPC &&
-> @@ -3544,13 +3568,14 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  		}
->  
->  		/*
-> -		 * If we added blocks beyond i_size, we need to make sure they
-> -		 * will get truncated if we crash before updating i_size in
-> -		 * ext4_iomap_end(). For faults we don't need to do that (and
-> -		 * even cannot because for orphan list operations inode_lock is
-> -		 * required) - if we happen to instantiate block beyond i_size,
-> -		 * it is because we race with truncate which has already added
-> -		 * the inode to the orphan list.
-> +		 * If we added blocks beyond i_size, we need to make
-> +		 * sure they will get truncated if we crash before
-> +		 * updating the i_size. For faults we don't need to do
-> +		 * that (and even cannot because for orphan list
-> +		 * operations inode_lock is required) - if we happen
-> +		 * to instantiate block beyond i_size, it is because
-> +		 * we race with truncate which has already added the
-> +		 * inode to the orphan list.
->  		 */
-
-Just a nit but it would be nice to use full width of 80 columns when
-formatting comments so that they don't get unnecessarily long.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+thanks,
+-- Shuah
