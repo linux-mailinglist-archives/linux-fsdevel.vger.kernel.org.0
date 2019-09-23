@@ -2,62 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1BEFBAD9D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 07:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A7B8BADC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 08:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391935AbfIWFxm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Sep 2019 01:53:42 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2706 "EHLO huawei.com"
+        id S2393080AbfIWG0p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Sep 2019 02:26:45 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2766 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387519AbfIWFxm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 01:53:42 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1AFA97CF542F51D455A4;
-        Mon, 23 Sep 2019 13:53:40 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Mon, 23 Sep 2019
- 13:53:30 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <miklos@szeredi.hu>, <mszeredi@redhat.com>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] fuse: Make fuse_args_to_req static
-Date:   Mon, 23 Sep 2019 13:52:31 +0800
-Message-ID: <20190923055231.19728-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2387519AbfIWG0p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Sep 2019 02:26:45 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5298B51A67B9CB383767;
+        Mon, 23 Sep 2019 14:26:43 +0800 (CST)
+Received: from [127.0.0.1] (10.184.213.217) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Mon, 23 Sep 2019
+ 14:26:40 +0800
+Subject: Re: [PATCH] fuse: fix memleak in cuse_channel_open
+To:     <mszeredi@redhat.com>, <ashish.samant@oracle.com>,
+        <miklos@szeredi.hu>, <linux-fsdevel@vger.kernel.org>
+References: <1565769549-127890-1-git-send-email-zhengbin13@huawei.com>
+From:   "zhengbin (A)" <zhengbin13@huawei.com>
+Message-ID: <ac291692-c851-1c39-8ce3-cbf91327e8a4@huawei.com>
+Date:   Mon, 23 Sep 2019 14:26:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
+In-Reply-To: <1565769549-127890-1-git-send-email-zhengbin13@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.184.213.217]
 X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix sparse warning:
+ping
 
-fs/fuse/dev.c:468:6: warning: symbol 'fuse_args_to_req' was not declared. Should it be static?
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/fuse/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 46d68d4..7844d35 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -465,7 +465,7 @@ static void fuse_force_creds(struct fuse_conn *fc, struct fuse_req *req)
- 	req->in.h.pid = pid_nr_ns(task_pid(current), fc->pid_ns);
- }
- 
--void fuse_args_to_req(struct fuse_req *req, struct fuse_args *args)
-+static void fuse_args_to_req(struct fuse_req *req, struct fuse_args *args)
- {
- 	req->in.h.opcode = args->opcode;
- 	req->in.h.nodeid = args->nodeid;
--- 
-2.7.4
-
+On 2019/8/14 15:59, zhengbin wrote:
+> If cuse_send_init fails, need to fuse_conn_put cc->fc.
+>
+> cuse_channel_open->fuse_conn_init->refcount_set(&fc->count, 1)
+>                  ->fuse_dev_alloc->fuse_conn_get
+>                  ->fuse_dev_free->fuse_conn_put
+>
+> Fixes: cc080e9e9be1 ("fuse: introduce per-instance fuse_dev structure")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: zhengbin <zhengbin13@huawei.com>
+> ---
+>  fs/fuse/cuse.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+> index bab7a0d..f3b7208 100644
+> --- a/fs/fuse/cuse.c
+> +++ b/fs/fuse/cuse.c
+> @@ -519,6 +519,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+>  	rc = cuse_send_init(cc);
+>  	if (rc) {
+>  		fuse_dev_free(fud);
+> +		fuse_conn_put(&cc->fc);
+>  		return rc;
+>  	}
+>  	file->private_data = fud;
+> --
+> 2.7.4
+>
+>
+> .
+>
 
