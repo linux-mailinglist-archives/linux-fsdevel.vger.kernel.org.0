@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EAF7BB02E
+	by mail.lfdr.de (Postfix) with ESMTP id 2BD81BB02B
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 11:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437428AbfIWJDD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2437899AbfIWJDD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 23 Sep 2019 05:03:03 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:47386 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731533AbfIWJC7 (ORCPT
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:41479 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437126AbfIWJDD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 05:02:59 -0400
-Received: by mail-pg1-f202.google.com with SMTP id b12so8895784pgm.14
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2019 02:02:58 -0700 (PDT)
+        Mon, 23 Sep 2019 05:03:03 -0400
+Received: by mail-pf1-f202.google.com with SMTP id c24so166146pfi.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Sep 2019 02:03:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=RnaiknukMn81GdTXdyUJzTMO7hw1RYid2iNxb8PtJPc=;
-        b=HmyrSFYThZyil8oXcuRROZa0VhrbXIvFfTYZTqxhQBTlaWa7Ug07OR7kcRfmTsXTZw
-         xh76zmBKrLHEeh/nwrfaSptgUvPotJ+V7ieLFeEM7JYTa9ESttd6izi4jVs7dGUnQTj0
-         uRzv8Z5qBobZm1vR2Ofr/95gM4c1p8zfCvJJUwuQAK5H+3B1RyUbKmPtWFUdjeNQ/xGz
-         LX7MyDMxCuRbRvoHlLF5oY8PNLag+Cagz4SPz07iTSXAvLYz8lb0tBEqqIz2jr4ZK1KC
-         8U0phI53+XR2S+tauWp957i2bUgtTCThDraGBZwW4NVGVwyIxoWQRT4VaAhtZCd+LrPp
-         AXzw==
+        bh=Y0xYR4PS86ooH7AKhBWD3EqeH7toUpR236CnccW5V4s=;
+        b=VvwMLKE6G1zaJ04PLur9JkYbVisJuTINbc/DHhm4KYbI45SW+yaF50pq/2iQqotMXy
+         pNmeX0AAslEDhYgRYm0wMcw6kCvyCltEdoeWkzTqnzKYIbzd3liBFsU6yUBavz9JRQft
+         NjZJXOgEGkvYb9C+8xppW+bAJpQ+BlUYUXQ+FDBrTgjTkgG4fHjYQt7NXcIqjfy8hMIq
+         I7o1UScL/H3tVWztkGl++NVI+4BR88bOn6XKk2sayFYwn+7uinjZP7aVAUYeN2kN8LpY
+         qZZK+Zpvjd/zJD8SrgfOQFHyJS61LZ98NgYRC69U8qx/rfAE8et/RHvbBRAkbzc7Zxis
+         TBgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=RnaiknukMn81GdTXdyUJzTMO7hw1RYid2iNxb8PtJPc=;
-        b=BHJU1P3NjJd5K6jC5B0/+JLYeaifq/1eXAEmi8CjR1xXQEFYA9LNDPVHTVT25hxsfA
-         UAT5G5saPmwDKMJIKbijhXIi1SshQv5W7UlkwuOk6HpxIJ+F3lLISiQPEp+E0hbBchfY
-         SBsvfP25hX6izX86OGfDk/jZMKYv5M32GOw0JVMtM43Hco7bn8dfdQnnWXU1WcgrWPu8
-         ZpjXFAC8J/avJ3WB+LHKa/LkNt4JEOubrWP1D6l+HJ4uvGyI4bxpKehaqTSqNR0l8LEz
-         Iw2Y8fV4Z8TQfxbWNPe35VlmfF8dOX4pBQ/n+c1LiYDesF90mIPc8+ss5FbnEgtCVdxp
-         IdSg==
-X-Gm-Message-State: APjAAAUJr3Xr+7AdHDsa6xt+Z14/3rC+riujFqYikzEnCIqLaw02Z98a
-        oEijrq1U22haSr/dkG5BnnNQs+fzoi1E2W/O2b4mdA==
-X-Google-Smtp-Source: APXvYqwEHnr6Gadc+8qVqNyG/MK28TblGnL0JV8EwWy2W+J1pstPlCF4Xfq6ZVnfpa/Y5ZEilFu5PrZBbwCKhE9yqwtY2w==
-X-Received: by 2002:a63:f342:: with SMTP id t2mr9198199pgj.194.1569229377795;
- Mon, 23 Sep 2019 02:02:57 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 02:02:31 -0700
+        bh=Y0xYR4PS86ooH7AKhBWD3EqeH7toUpR236CnccW5V4s=;
+        b=bnLuRLGg3e4jA0OlzIqDh1dK2vdEOZUPDq/MnlUJP3lfa22OsmKuV05wWlkIkBlxyz
+         HkHHpuQrrcu7tWm/TA66eOXanytu1pPxrC9xT3tBS3BigsaicDsONpxOQAmMuwneUHu4
+         OtG2WU59gQhrD8x7O/MYI8TeAggMxbmUc+VNJ7/0x3ybrTNVtCskMI/CV6tGnQGJ50Lo
+         qm/L22dJU8Cw5JkGJcHyaHL4o8oA8+KGPC3sVdFfiG804X6ze3wUC8me6cPg6AbPMfro
+         JXjKT6ZPl+UpB4i4vxNaCA6Y9hJYaEsPvIGimZM/dFUvT2R1PMELnK5WLggZPlAQhUyl
+         W2kA==
+X-Gm-Message-State: APjAAAVuJplRR6/jp7ddcJkEE5bGIjjX89u1bddOxBBLc+mj7vnjr1jV
+        s06iGGQPT1ONAvOLbURMPrkrrlpivE6Cm/+fstPUQA==
+X-Google-Smtp-Source: APXvYqyphZ2c5TL8furEo/u2q2XWdIdLbG7CqU4NZLnsoi0zVU8KhQyJWoT3rVfA/7AUysLERHdhO9MOGZvTMr7MiC0wWw==
+X-Received: by 2002:a63:d05:: with SMTP id c5mr1960342pgl.182.1569229380324;
+ Mon, 23 Sep 2019 02:03:00 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 02:02:32 -0700
 In-Reply-To: <20190923090249.127984-1-brendanhiggins@google.com>
-Message-Id: <20190923090249.127984-2-brendanhiggins@google.com>
+Message-Id: <20190923090249.127984-3-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20190923090249.127984-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.23.0.351.gc4317032e6-goog
-Subject: [PATCH v18 01/19] kunit: test: add KUnit test runner core
+Subject: [PATCH v18 02/19] kunit: test: add test resource management API
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
         jpoimboe@redhat.com, keescook@google.com,
@@ -73,448 +73,424 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add core facilities for defining unit tests; this provides a common way
-to define test cases, functions that execute code which is under test
-and determine whether the code under test behaves as expected; this also
-provides a way to group together related test cases in test suites (here
-we call them test_modules).
-
-Just define test cases and how to execute them for now; setting
-expectations on code will be defined later.
+Create a common API for test managed resources like memory and test
+objects. A lot of times a test will want to set up infrastructure to be
+used in test cases; this could be anything from just wanting to allocate
+some memory to setting up a driver stack; this defines facilities for
+creating "test resources" which are managed by the test infrastructure
+and are automatically cleaned up at the conclusion of the test.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
- include/kunit/test.h | 188 ++++++++++++++++++++++++++++++++++++++++++
- lib/kunit/Kconfig    |  13 +++
- lib/kunit/Makefile   |   1 +
- lib/kunit/test.c     | 191 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 393 insertions(+)
- create mode 100644 include/kunit/test.h
- create mode 100644 lib/kunit/Kconfig
- create mode 100644 lib/kunit/Makefile
- create mode 100644 lib/kunit/test.c
+ include/kunit/test.h | 187 +++++++++++++++++++++++++++++++++++++++++++
+ lib/kunit/test.c     | 163 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 350 insertions(+)
 
 diff --git a/include/kunit/test.h b/include/kunit/test.h
-new file mode 100644
-index 000000000000..e30d1bf2fb68
---- /dev/null
+index e30d1bf2fb68..6781c756f11b 100644
+--- a/include/kunit/test.h
 +++ b/include/kunit/test.h
-@@ -0,0 +1,188 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Base unit test (KUnit) API.
-+ *
-+ * Copyright (C) 2019, Google LLC.
-+ * Author: Brendan Higgins <brendanhiggins@google.com>
-+ */
+@@ -9,8 +9,72 @@
+ #ifndef _KUNIT_TEST_H
+ #define _KUNIT_TEST_H
+ 
++#include <linux/slab.h>
+ #include <linux/types.h>
+ 
++struct kunit_resource;
 +
-+#ifndef _KUNIT_TEST_H
-+#define _KUNIT_TEST_H
-+
-+#include <linux/types.h>
-+
-+struct kunit;
++typedef int (*kunit_resource_init_t)(struct kunit_resource *, void *);
++typedef void (*kunit_resource_free_t)(struct kunit_resource *);
 +
 +/**
-+ * struct kunit_case - represents an individual test case.
++ * struct kunit_resource - represents a *test managed resource*
++ * @allocation: for the user to store arbitrary data.
++ * @free: a user supplied function to free the resource. Populated by
++ * kunit_alloc_resource().
 + *
-+ * @run_case: the function representing the actual test case.
-+ * @name:     the name of the test case.
-+ *
-+ * A test case is a function with the signature,
-+ * ``void (*)(struct kunit *)`` that makes expectations (see
-+ * KUNIT_EXPECT_TRUE()) about code under test. Each test case is associated
-+ * with a &struct kunit_suite and will be run after the suite's init
-+ * function and followed by the suite's exit function.
-+ *
-+ * A test case should be static and should only be created with the
-+ * KUNIT_CASE() macro; additionally, every array of test cases should be
-+ * terminated with an empty test case.
++ * Represents a *test managed resource*, a resource which will automatically be
++ * cleaned up at the end of a test case.
 + *
 + * Example:
 + *
 + * .. code-block:: c
 + *
-+ *	void add_test_basic(struct kunit *test)
-+ *	{
-+ *		KUNIT_EXPECT_EQ(test, 1, add(1, 0));
-+ *		KUNIT_EXPECT_EQ(test, 2, add(1, 1));
-+ *		KUNIT_EXPECT_EQ(test, 0, add(-1, 1));
-+ *		KUNIT_EXPECT_EQ(test, INT_MAX, add(0, INT_MAX));
-+ *		KUNIT_EXPECT_EQ(test, -1, add(INT_MAX, INT_MIN));
-+ *	}
-+ *
-+ *	static struct kunit_case example_test_cases[] = {
-+ *		KUNIT_CASE(add_test_basic),
-+ *		{}
++ *	struct kunit_kmalloc_params {
++ *		size_t size;
++ *		gfp_t gfp;
 + *	};
 + *
++ *	static int kunit_kmalloc_init(struct kunit_resource *res, void *context)
++ *	{
++ *		struct kunit_kmalloc_params *params = context;
++ *		res->allocation = kmalloc(params->size, params->gfp);
++ *
++ *		if (!res->allocation)
++ *			return -ENOMEM;
++ *
++ *		return 0;
++ *	}
++ *
++ *	static void kunit_kmalloc_free(struct kunit_resource *res)
++ *	{
++ *		kfree(res->allocation);
++ *	}
++ *
++ *	void *kunit_kmalloc(struct kunit *test, size_t size, gfp_t gfp)
++ *	{
++ *		struct kunit_kmalloc_params params;
++ *		struct kunit_resource *res;
++ *
++ *		params.size = size;
++ *		params.gfp = gfp;
++ *
++ *		res = kunit_alloc_resource(test, kunit_kmalloc_init,
++ *			kunit_kmalloc_free, &params);
++ *		if (res)
++ *			return res->allocation;
++ *
++ *		return NULL;
++ *	}
 + */
-+struct kunit_case {
-+	void (*run_case)(struct kunit *test);
-+	const char *name;
++struct kunit_resource {
++	void *allocation;
++	kunit_resource_free_t free;
 +
 +	/* private: internal use only. */
-+	bool success;
++	struct list_head node;
 +};
 +
-+/**
-+ * KUNIT_CASE - A helper for creating a &struct kunit_case
-+ *
-+ * @test_name: a reference to a test case function.
-+ *
-+ * Takes a symbol for a function representing a test case and creates a
-+ * &struct kunit_case object from it. See the documentation for
-+ * &struct kunit_case for an example on how to use it.
-+ */
-+#define KUNIT_CASE(test_name) { .run_case = test_name, .name = #test_name }
-+
-+/**
-+ * struct kunit_suite - describes a related collection of &struct kunit_case
-+ *
-+ * @name:	the name of the test. Purely informational.
-+ * @init:	called before every test case.
-+ * @exit:	called after every test case.
-+ * @test_cases:	a null terminated array of test cases.
-+ *
-+ * A kunit_suite is a collection of related &struct kunit_case s, such that
-+ * @init is called before every test case and @exit is called after every
-+ * test case, similar to the notion of a *test fixture* or a *test class*
-+ * in other unit testing frameworks like JUnit or Googletest.
-+ *
-+ * Every &struct kunit_case must be associated with a kunit_suite for KUnit
-+ * to run it.
-+ */
-+struct kunit_suite {
-+	const char name[256];
-+	int (*init)(struct kunit *test);
-+	void (*exit)(struct kunit *test);
-+	struct kunit_case *test_cases;
-+};
-+
-+/**
-+ * struct kunit - represents a running instance of a test.
-+ *
-+ * @priv: for user to store arbitrary data. Commonly used to pass data
-+ *	  created in the init function (see &struct kunit_suite).
-+ *
-+ * Used to store information about the current context under which the test
-+ * is running. Most of this data is private and should only be accessed
-+ * indirectly via public functions; the one exception is @priv which can be
-+ * used by the test writer to store arbitrary data.
-+ */
-+struct kunit {
-+	void *priv;
-+
-+	/* private: internal use only. */
-+	const char *name; /* Read only after initialization! */
+ struct kunit;
+ 
+ /**
+@@ -114,6 +178,13 @@ struct kunit {
+ 	 * with the test case have terminated.
+ 	 */
+ 	bool success; /* Read only after test_case finishes! */
++	spinlock_t lock; /* Guards all mutable test state. */
 +	/*
-+	 * success starts as true, and may only be set to false during a
-+	 * test case; thus, it is safe to update this across multiple
-+	 * threads using WRITE_ONCE; however, as a consequence, it may only
-+	 * be read after the test case finishes once all threads associated
-+	 * with the test case have terminated.
++	 * Because resources is a list that may be updated multiple times (with
++	 * new resources) from any thread associated with a test case, we must
++	 * protect it with some type of lock.
 +	 */
-+	bool success; /* Read only after test_case finishes! */
-+};
-+
-+void kunit_init_test(struct kunit *test, const char *name);
-+
-+int kunit_run_tests(struct kunit_suite *suite);
-+
-+/**
-+ * kunit_test_suite() - used to register a &struct kunit_suite with KUnit.
-+ *
-+ * @suite: a statically allocated &struct kunit_suite.
-+ *
-+ * Registers @suite with the test framework. See &struct kunit_suite for
-+ * more information.
-+ *
-+ * NOTE: Currently KUnit tests are all run as late_initcalls; this means
-+ * that they cannot test anything where tests must run at a different init
-+ * phase. One significant restriction resulting from this is that KUnit
-+ * cannot reliably test anything that is initialize in the late_init phase;
-+ * another is that KUnit is useless to test things that need to be run in
-+ * an earlier init phase.
-+ *
-+ * TODO(brendanhiggins@google.com): Don't run all KUnit tests as
-+ * late_initcalls.  I have some future work planned to dispatch all KUnit
-+ * tests from the same place, and at the very least to do so after
-+ * everything else is definitely initialized.
-+ */
-+#define kunit_test_suite(suite)						       \
-+	static int kunit_suite_init##suite(void)			       \
-+	{								       \
-+		return kunit_run_tests(&suite);				       \
-+	}								       \
-+	late_initcall(kunit_suite_init##suite)
-+
-+void __printf(3, 4) kunit_printk(const char *level,
-+				 const struct kunit *test,
-+				 const char *fmt, ...);
-+
-+/**
-+ * kunit_info() - Prints an INFO level message associated with @test.
-+ *
-+ * @test: The test context object.
-+ * @fmt:  A printk() style format string.
-+ *
-+ * Prints an info level message associated with the test suite being run.
-+ * Takes a variable number of format parameters just like printk().
-+ */
-+#define kunit_info(test, fmt, ...) \
-+	kunit_printk(KERN_INFO, test, fmt, ##__VA_ARGS__)
-+
-+/**
-+ * kunit_warn() - Prints a WARN level message associated with @test.
-+ *
-+ * @test: The test context object.
-+ * @fmt:  A printk() style format string.
-+ *
-+ * Prints a warning level message.
-+ */
-+#define kunit_warn(test, fmt, ...) \
-+	kunit_printk(KERN_WARNING, test, fmt, ##__VA_ARGS__)
-+
-+/**
-+ * kunit_err() - Prints an ERROR level message associated with @test.
-+ *
-+ * @test: The test context object.
-+ * @fmt:  A printk() style format string.
-+ *
-+ * Prints an error level message.
-+ */
-+#define kunit_err(test, fmt, ...) \
-+	kunit_printk(KERN_ERR, test, fmt, ##__VA_ARGS__)
-+
-+#endif /* _KUNIT_TEST_H */
-diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
-new file mode 100644
-index 000000000000..666b9cb67a74
---- /dev/null
-+++ b/lib/kunit/Kconfig
-@@ -0,0 +1,13 @@
-+#
-+# KUnit base configuration
-+#
-+
-+menuconfig KUNIT
-+	bool "KUnit - Enable support for unit tests"
-+	help
-+	  Enables support for kernel unit tests (KUnit), a lightweight unit
-+	  testing and mocking framework for the Linux kernel. These tests are
-+	  able to be run locally on a developer's workstation without a VM or
-+	  special hardware when using UML. Can also be used on most other
-+	  architectures. For more information, please see
-+	  Documentation/dev-tools/kunit/.
-diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
-new file mode 100644
-index 000000000000..5efdc4dea2c0
---- /dev/null
-+++ b/lib/kunit/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_KUNIT) +=			test.o
-diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-new file mode 100644
-index 000000000000..d3dda359f99b
---- /dev/null
-+++ b/lib/kunit/test.c
-@@ -0,0 +1,191 @@
-+// SPDX-License-Identifier: GPL-2.0
++	struct list_head resources; /* Protected by lock. */
+ };
+ 
+ void kunit_init_test(struct kunit *test, const char *name);
+@@ -147,6 +218,122 @@ int kunit_run_tests(struct kunit_suite *suite);
+ 	}								       \
+ 	late_initcall(kunit_suite_init##suite)
+ 
 +/*
-+ * Base unit test (KUnit) API.
-+ *
-+ * Copyright (C) 2019, Google LLC.
-+ * Author: Brendan Higgins <brendanhiggins@google.com>
++ * Like kunit_alloc_resource() below, but returns the struct kunit_resource
++ * object that contains the allocation. This is mostly for testing purposes.
 + */
++struct kunit_resource *kunit_alloc_and_get_resource(struct kunit *test,
++						    kunit_resource_init_t init,
++						    kunit_resource_free_t free,
++						    gfp_t internal_gfp,
++						    void *context);
 +
-+#include <kunit/test.h>
-+#include <linux/kernel.h>
-+
-+static void kunit_set_failure(struct kunit *test)
++/**
++ * kunit_alloc_resource() - Allocates a *test managed resource*.
++ * @test: The test context object.
++ * @init: a user supplied function to initialize the resource.
++ * @free: a user supplied function to free the resource.
++ * @internal_gfp: gfp to use for internal allocations, if unsure, use GFP_KERNEL
++ * @context: for the user to pass in arbitrary data to the init function.
++ *
++ * Allocates a *test managed resource*, a resource which will automatically be
++ * cleaned up at the end of a test case. See &struct kunit_resource for an
++ * example.
++ *
++ * NOTE: KUnit needs to allocate memory for each kunit_resource object. You must
++ * specify an @internal_gfp that is compatible with the use context of your
++ * resource.
++ */
++static inline void *kunit_alloc_resource(struct kunit *test,
++					 kunit_resource_init_t init,
++					 kunit_resource_free_t free,
++					 gfp_t internal_gfp,
++					 void *context)
 +{
-+	WRITE_ONCE(test->success, false);
++	struct kunit_resource *res;
++
++	res = kunit_alloc_and_get_resource(test, init, free, internal_gfp,
++					   context);
++
++	if (res)
++		return res->allocation;
++
++	return NULL;
 +}
 +
-+static int kunit_vprintk_emit(int level, const char *fmt, va_list args)
++typedef bool (*kunit_resource_match_t)(struct kunit *test,
++				       const void *res,
++				       void *match_data);
++
++/**
++ * kunit_resource_instance_match() - Match a resource with the same instance.
++ * @test: Test case to which the resource belongs.
++ * @res: The data stored in kunit_resource->allocation.
++ * @match_data: The resource pointer to match against.
++ *
++ * An instance of kunit_resource_match_t that matches a resource whose
++ * allocation matches @match_data.
++ */
++static inline bool kunit_resource_instance_match(struct kunit *test,
++						 const void *res,
++						 void *match_data)
 +{
-+	return vprintk_emit(0, level, NULL, 0, fmt, args);
++	return res == match_data;
 +}
 +
-+static int kunit_printk_emit(int level, const char *fmt, ...)
++/**
++ * kunit_resource_destroy() - Find a kunit_resource and destroy it.
++ * @test: Test case to which the resource belongs.
++ * @match: Match function. Returns whether a given resource matches @match_data.
++ * @free: Must match free on the kunit_resource to free.
++ * @match_data: Data passed into @match.
++ *
++ * Free the latest kunit_resource of @test for which @free matches the
++ * kunit_resource_free_t associated with the resource and for which @match
++ * returns true.
++ *
++ * RETURNS:
++ * 0 if kunit_resource is found and freed, -ENOENT if not found.
++ */
++int kunit_resource_destroy(struct kunit *test,
++			   kunit_resource_match_t match,
++			   kunit_resource_free_t free,
++			   void *match_data);
++
++/**
++ * kunit_kmalloc() - Like kmalloc() except the allocation is *test managed*.
++ * @test: The test context object.
++ * @size: The size in bytes of the desired memory.
++ * @gfp: flags passed to underlying kmalloc().
++ *
++ * Just like `kmalloc(...)`, except the allocation is managed by the test case
++ * and is automatically cleaned up after the test case concludes. See &struct
++ * kunit_resource for more information.
++ */
++void *kunit_kmalloc(struct kunit *test, size_t size, gfp_t gfp);
++
++/**
++ * kunit_kfree() - Like kfree except for allocations managed by KUnit.
++ * @test: The test case to which the resource belongs.
++ * @ptr: The memory allocation to free.
++ */
++void kunit_kfree(struct kunit *test, const void *ptr);
++
++/**
++ * kunit_kzalloc() - Just like kunit_kmalloc(), but zeroes the allocation.
++ * @test: The test context object.
++ * @size: The size in bytes of the desired memory.
++ * @gfp: flags passed to underlying kmalloc().
++ *
++ * See kzalloc() and kunit_kmalloc() for more information.
++ */
++static inline void *kunit_kzalloc(struct kunit *test, size_t size, gfp_t gfp)
 +{
-+	va_list args;
++	return kunit_kmalloc(test, size, gfp | __GFP_ZERO);
++}
++
++void kunit_cleanup(struct kunit *test);
++
+ void __printf(3, 4) kunit_printk(const char *level,
+ 				 const struct kunit *test,
+ 				 const char *fmt, ...);
+diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+index d3dda359f99b..68b1037ab74d 100644
+--- a/lib/kunit/test.c
++++ b/lib/kunit/test.c
+@@ -122,6 +122,8 @@ static void kunit_print_test_case_ok_not_ok(struct kunit_case *test_case,
+ 
+ void kunit_init_test(struct kunit *test, const char *name)
+ {
++	spin_lock_init(&test->lock);
++	INIT_LIST_HEAD(&test->resources);
+ 	test->name = name;
+ 	test->success = true;
+ }
+@@ -153,6 +155,8 @@ static void kunit_run_case(struct kunit_suite *suite,
+ 	if (suite->exit)
+ 		suite->exit(&test);
+ 
++	kunit_cleanup(&test);
++
+ 	test_case->success = test.success;
+ }
+ 
+@@ -173,6 +177,165 @@ int kunit_run_tests(struct kunit_suite *suite)
+ 	return 0;
+ }
+ 
++struct kunit_resource *kunit_alloc_and_get_resource(struct kunit *test,
++						    kunit_resource_init_t init,
++						    kunit_resource_free_t free,
++						    gfp_t internal_gfp,
++						    void *context)
++{
++	struct kunit_resource *res;
 +	int ret;
 +
-+	va_start(args, fmt);
-+	ret = kunit_vprintk_emit(level, fmt, args);
-+	va_end(args);
++	res = kzalloc(sizeof(*res), internal_gfp);
++	if (!res)
++		return NULL;
 +
-+	return ret;
++	ret = init(res, context);
++	if (ret)
++		return NULL;
++
++	res->free = free;
++	spin_lock(&test->lock);
++	list_add_tail(&res->node, &test->resources);
++	spin_unlock(&test->lock);
++
++	return res;
 +}
 +
-+static void kunit_vprintk(const struct kunit *test,
-+			  const char *level,
-+			  struct va_format *vaf)
++static void kunit_resource_free(struct kunit *test, struct kunit_resource *res)
 +{
-+	kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
++	res->free(res);
++	kfree(res);
 +}
 +
-+static void kunit_print_tap_version(void)
++static struct kunit_resource *kunit_resource_find(struct kunit *test,
++						  kunit_resource_match_t match,
++						  kunit_resource_free_t free,
++						  void *match_data)
 +{
-+	static bool kunit_has_printed_tap_version;
++	struct kunit_resource *resource;
 +
-+	if (!kunit_has_printed_tap_version) {
-+		kunit_printk_emit(LOGLEVEL_INFO, "TAP version 14\n");
-+		kunit_has_printed_tap_version = true;
-+	}
-+}
++	lockdep_assert_held(&test->lock);
 +
-+static size_t kunit_test_cases_len(struct kunit_case *test_cases)
-+{
-+	struct kunit_case *test_case;
-+	size_t len = 0;
-+
-+	for (test_case = test_cases; test_case->run_case; test_case++)
-+		len++;
-+
-+	return len;
-+}
-+
-+static void kunit_print_subtest_start(struct kunit_suite *suite)
-+{
-+	kunit_print_tap_version();
-+	kunit_printk_emit(LOGLEVEL_INFO, "\t# Subtest: %s\n", suite->name);
-+	kunit_printk_emit(LOGLEVEL_INFO,
-+			  "\t1..%zd\n",
-+			  kunit_test_cases_len(suite->test_cases));
-+}
-+
-+static void kunit_print_ok_not_ok(bool should_indent,
-+				  bool is_ok,
-+				  size_t test_number,
-+				  const char *description)
-+{
-+	const char *indent, *ok_not_ok;
-+
-+	if (should_indent)
-+		indent = "\t";
-+	else
-+		indent = "";
-+
-+	if (is_ok)
-+		ok_not_ok = "ok";
-+	else
-+		ok_not_ok = "not ok";
-+
-+	kunit_printk_emit(LOGLEVEL_INFO,
-+			  "%s%s %zd - %s\n",
-+			  indent, ok_not_ok, test_number, description);
-+}
-+
-+static bool kunit_suite_has_succeeded(struct kunit_suite *suite)
-+{
-+	const struct kunit_case *test_case;
-+
-+	for (test_case = suite->test_cases; test_case->run_case; test_case++)
-+		if (!test_case->success)
-+			return false;
-+
-+	return true;
-+}
-+
-+static void kunit_print_subtest_end(struct kunit_suite *suite)
-+{
-+	static size_t kunit_suite_counter = 1;
-+
-+	kunit_print_ok_not_ok(false,
-+			      kunit_suite_has_succeeded(suite),
-+			      kunit_suite_counter++,
-+			      suite->name);
-+}
-+
-+static void kunit_print_test_case_ok_not_ok(struct kunit_case *test_case,
-+					    size_t test_number)
-+{
-+	kunit_print_ok_not_ok(true,
-+			      test_case->success,
-+			      test_number,
-+			      test_case->name);
-+}
-+
-+void kunit_init_test(struct kunit *test, const char *name)
-+{
-+	test->name = name;
-+	test->success = true;
-+}
-+
-+/*
-+ * Performs all logic to run a test case.
-+ */
-+static void kunit_run_case(struct kunit_suite *suite,
-+			   struct kunit_case *test_case)
-+{
-+	struct kunit test;
-+
-+	kunit_init_test(&test, test_case->name);
-+
-+	if (suite->init) {
-+		int ret;
-+
-+		ret = suite->init(&test);
-+		if (ret) {
-+			kunit_err(&test, "failed to initialize: %d\n", ret);
-+			kunit_set_failure(&test);
-+			test_case->success = test.success;
-+			return;
-+		}
++	list_for_each_entry_reverse(resource, &test->resources, node) {
++		if (resource->free != free)
++			continue;
++		if (match(test, resource->allocation, match_data))
++			return resource;
 +	}
 +
-+	test_case->run_case(&test);
-+
-+	if (suite->exit)
-+		suite->exit(&test);
-+
-+	test_case->success = test.success;
++	return NULL;
 +}
 +
-+int kunit_run_tests(struct kunit_suite *suite)
++static struct kunit_resource *kunit_resource_remove(
++		struct kunit *test,
++		kunit_resource_match_t match,
++		kunit_resource_free_t free,
++		void *match_data)
 +{
-+	struct kunit_case *test_case;
-+	size_t test_case_count = 1;
++	struct kunit_resource *resource;
 +
-+	kunit_print_subtest_start(suite);
++	spin_lock(&test->lock);
++	resource = kunit_resource_find(test, match, free, match_data);
++	if (resource)
++		list_del(&resource->node);
++	spin_unlock(&test->lock);
 +
-+	for (test_case = suite->test_cases; test_case->run_case; test_case++) {
-+		kunit_run_case(suite, test_case);
-+		kunit_print_test_case_ok_not_ok(test_case, test_case_count++);
-+	}
++	return resource;
++}
 +
-+	kunit_print_subtest_end(suite);
++int kunit_resource_destroy(struct kunit *test,
++			   kunit_resource_match_t match,
++			   kunit_resource_free_t free,
++			   void *match_data)
++{
++	struct kunit_resource *resource;
++
++	resource = kunit_resource_remove(test, match, free, match_data);
++
++	if (!resource)
++		return -ENOENT;
++
++	kunit_resource_free(test, resource);
++	return 0;
++}
++
++struct kunit_kmalloc_params {
++	size_t size;
++	gfp_t gfp;
++};
++
++static int kunit_kmalloc_init(struct kunit_resource *res, void *context)
++{
++	struct kunit_kmalloc_params *params = context;
++
++	res->allocation = kmalloc(params->size, params->gfp);
++	if (!res->allocation)
++		return -ENOMEM;
 +
 +	return 0;
 +}
 +
-+void kunit_printk(const char *level,
-+		  const struct kunit *test,
-+		  const char *fmt, ...)
++static void kunit_kmalloc_free(struct kunit_resource *res)
 +{
-+	struct va_format vaf;
-+	va_list args;
-+
-+	va_start(args, fmt);
-+
-+	vaf.fmt = fmt;
-+	vaf.va = &args;
-+
-+	kunit_vprintk(test, level, &vaf);
-+
-+	va_end(args);
++	kfree(res->allocation);
 +}
++
++void *kunit_kmalloc(struct kunit *test, size_t size, gfp_t gfp)
++{
++	struct kunit_kmalloc_params params = {
++		.size = size,
++		.gfp = gfp
++	};
++
++	return kunit_alloc_resource(test,
++				    kunit_kmalloc_init,
++				    kunit_kmalloc_free,
++				    gfp,
++				    &params);
++}
++
++void kunit_kfree(struct kunit *test, const void *ptr)
++{
++	int rc;
++
++	rc = kunit_resource_destroy(test,
++				    kunit_resource_instance_match,
++				    kunit_kmalloc_free,
++				    (void *)ptr);
++
++	WARN_ON(rc);
++}
++
++void kunit_cleanup(struct kunit *test)
++{
++	struct kunit_resource *resource;
++
++	/*
++	 * test->resources is a stack - each allocation must be freed in the
++	 * reverse order from which it was added since one resource may depend
++	 * on another for its entire lifetime.
++	 * Also, we cannot use the normal list_for_each constructs, even the
++	 * safe ones because *arbitrary* nodes may be deleted when
++	 * kunit_resource_free is called; the list_for_each_safe variants only
++	 * protect against the current node being deleted, not the next.
++	 */
++	while (true) {
++		spin_lock(&test->lock);
++		if (list_empty(&test->resources)) {
++			spin_unlock(&test->lock);
++			break;
++		}
++		resource = list_last_entry(&test->resources,
++					   struct kunit_resource,
++					   node);
++		list_del(&resource->node);
++		spin_unlock(&test->lock);
++
++		kunit_resource_free(test, resource);
++	}
++}
++
+ void kunit_printk(const char *level,
+ 		  const struct kunit *test,
+ 		  const char *fmt, ...)
 -- 
 2.23.0.351.gc4317032e6-goog
 
