@@ -2,188 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F18FBB862
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 17:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5262ABB85F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Sep 2019 17:48:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732730AbfIWPse (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Sep 2019 11:48:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38498 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728551AbfIWPse (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 11:48:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=M6naaO3eN2JtKgsodjGmbFEb7omduasR6eHtDOBj/YU=; b=WDxDdSVtxB4MQheuYDglZVo77
-        ITnMkIz7R+0s/TcK9u0iB564ZvSW2OG/lJv1lRwdjnxBatB+wSX35svuC1yd5Ea1AxQ52gRn6cmF2
-        /83K/HFVn4+skc/Wt6uGE+DwUbc77iTcslmEjK/CRAvgV+6YQUkzJbtlBrr5Q+8JJKlmrTyBq44/u
-        TJiHeSIwQ3VM6J44S1d1yNryMKLsQ8iZf1OrD6FnYs6OHkND8aMMMkrLPNGm6nhYxiQsA6gnvmund
-        vT7S7hcNSvEXvCDhPF31ee1v2WxWOnkGIihjEU+7pqNLhV5/Kty9KSYUOFACXDa3f7vCTTX3UOnh6
-        bZwx9NxQw==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCQZ9-00063q-MO; Mon, 23 Sep 2019 15:47:55 +0000
-Subject: Re: [PATCH v18 15/19] Documentation: kunit: add documentation for
- KUnit
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
-        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com,
-        torvalds@linux-foundation.org,
-        Felix Guo <felixguoxiuping@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20190923090249.127984-1-brendanhiggins@google.com>
- <20190923090249.127984-16-brendanhiggins@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d87eba35-ae09-0c53-bbbe-51ee9dc9531f@infradead.org>
-Date:   Mon, 23 Sep 2019 08:47:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190923090249.127984-16-brendanhiggins@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728693AbfIWPsQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Sep 2019 11:48:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42664 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728551AbfIWPsQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Sep 2019 11:48:16 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96D62205F4;
+        Mon, 23 Sep 2019 15:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569253695;
+        bh=wzG2zl1ghSK1OwbPID3sQYVBbITXZvGHKVGtVFvr5hg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YIgQhg9rE+wtbnOrvjqg+Opx16xDRVZIbV3M5VveMd6+oKZU7f7RfoCuDqUMmrvSl
+         ynrLk3mRd9maPLBGNkxetKAgTFDA0dYyR326dK+AFH22SMEkQwSv1VyM4svaFUs6hS
+         1c4aEQxwi6iChTzbwrwWGpff9iXvBMFkv9slm3PQ=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Evgeniy Dushistov <dushistov@mail.ru>,
+        Jiri Kosina <trivial@kernel.org>,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH trivial] fs: Fix Kconfig indentation
+Date:   Mon, 23 Sep 2019 17:48:04 +0200
+Message-Id: <20190923154804.6696-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/23/19 2:02 AM, Brendan Higgins wrote:
-> Add documentation for KUnit, the Linux kernel unit testing framework.
-> - Add intro and usage guide for KUnit
-> - Add API reference
-> 
-> Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  Documentation/dev-tools/index.rst           |   1 +
->  Documentation/dev-tools/kunit/api/index.rst |  16 +
->  Documentation/dev-tools/kunit/api/test.rst  |  11 +
->  Documentation/dev-tools/kunit/faq.rst       |  62 +++
->  Documentation/dev-tools/kunit/index.rst     |  79 +++
->  Documentation/dev-tools/kunit/start.rst     | 180 ++++++
->  Documentation/dev-tools/kunit/usage.rst     | 576 ++++++++++++++++++++
->  7 files changed, 925 insertions(+)
->  create mode 100644 Documentation/dev-tools/kunit/api/index.rst
->  create mode 100644 Documentation/dev-tools/kunit/api/test.rst
->  create mode 100644 Documentation/dev-tools/kunit/faq.rst
->  create mode 100644 Documentation/dev-tools/kunit/index.rst
->  create mode 100644 Documentation/dev-tools/kunit/start.rst
->  create mode 100644 Documentation/dev-tools/kunit/usage.rst
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+    $ sed -e 's/^        /\t/' -i */Kconfig
 
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ fs/9p/Kconfig     | 20 ++++++++++----------
+ fs/Kconfig        |  4 ++--
+ fs/Kconfig.binfmt |  4 ++--
+ fs/fuse/Kconfig   |  4 ++--
+ fs/nfs/Kconfig    |  6 +++---
+ fs/proc/Kconfig   |  8 ++++----
+ fs/qnx6/Kconfig   |  2 +-
+ fs/ufs/Kconfig    |  4 ++--
+ 8 files changed, 26 insertions(+), 26 deletions(-)
 
-> diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
-> new file mode 100644
-> index 000000000000..6dc229e46bb3
-> --- /dev/null
-> +++ b/Documentation/dev-tools/kunit/start.rst
-> @@ -0,0 +1,180 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===============
-> +Getting Started
-> +===============
-> +
-> +Installing dependencies
-> +=======================
-> +KUnit has the same dependencies as the Linux kernel. As long as you can build
-> +the kernel, you can run KUnit.
-> +
-> +KUnit Wrapper
-> +=============
-> +Included with KUnit is a simple Python wrapper that helps format the output to
-> +easily use and read KUnit output. It handles building and running the kernel, as
-> +well as formatting the output.
-> +
-> +The wrapper can be run with:
-> +
-> +.. code-block:: bash
-> +
-> +   ./tools/testing/kunit/kunit.py run
-> +
-> +Creating a kunitconfig
-> +======================
-> +The Python script is a thin wrapper around Kbuild as such, it needs to be
-
-                                       around Kbuild. As such,
-
-> +configured with a ``kunitconfig`` file. This file essentially contains the
-> +regular Kernel config, with the specific test targets as well.
-> +
-> +.. code-block:: bash
-> +
-> +	git clone -b master https://kunit.googlesource.com/kunitconfig $PATH_TO_KUNITCONFIG_REPO
-> +	cd $PATH_TO_LINUX_REPO
-> +	ln -s $PATH_TO_KUNIT_CONFIG_REPO/kunitconfig kunitconfig
-> +
-> +You may want to add kunitconfig to your local gitignore.
-> +
-> +Verifying KUnit Works
-> +---------------------
-> +
-> +To make sure that everything is set up correctly, simply invoke the Python
-> +wrapper from your kernel repo:
-> +
-> +.. code-block:: bash
-> +
-> +	./tools/testing/kunit/kunit.py
-> +
-> +.. note::
-> +   You may want to run ``make mrproper`` first.
-
-I normally use O=builddir when building kernels.
-Does this support using O=builddir ?
-
-> +
-> +If everything worked correctly, you should see the following:
-> +
-> +.. code-block:: bash
-> +
-> +	Generating .config ...
-> +	Building KUnit Kernel ...
-> +	Starting KUnit Kernel ...
-> +
-> +followed by a list of tests that are run. All of them should be passing.
-> +
-> +.. note::
-> +   Because it is building a lot of sources for the first time, the ``Building
-> +   kunit kernel`` step may take a while.
-> +
-> +Writing your first test
-> +=======================
-
-[snip]
-
-> diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
-> new file mode 100644
-> index 000000000000..c6e69634e274
-> --- /dev/null
-> +++ b/Documentation/dev-tools/kunit/usage.rst
-
-TBD...
-
-
+diff --git a/fs/9p/Kconfig b/fs/9p/Kconfig
+index ac2ec4543fe1..09fd4a185fd2 100644
+--- a/fs/9p/Kconfig
++++ b/fs/9p/Kconfig
+@@ -32,13 +32,13 @@ endif
+ 
+ 
+ config 9P_FS_SECURITY
+-        bool "9P Security Labels"
+-        depends on 9P_FS
+-        help
+-          Security labels support alternative access control models
+-          implemented by security modules like SELinux.  This option
+-          enables an extended attribute handler for file security
+-          labels in the 9P filesystem.
+-
+-          If you are not using a security module that requires using
+-          extended attributes for file security labels, say N.
++	bool "9P Security Labels"
++	depends on 9P_FS
++	help
++	  Security labels support alternative access control models
++	  implemented by security modules like SELinux.  This option
++	  enables an extended attribute handler for file security
++	  labels in the 9P filesystem.
++
++	  If you are not using a security module that requires using
++	  extended attributes for file security labels, say N.
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 2501e6f1f965..e65289487732 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -97,8 +97,8 @@ config FILE_LOCKING
+ 	default y
+ 	help
+ 	  This option enables standard file locking support, required
+-          for filesystems like NFS and for the flock() system
+-          call. Disabling this option saves about 11k.
++	  for filesystems like NFS and for the flock() system
++	  call. Disabling this option saves about 11k.
+ 
+ config MANDATORY_FILE_LOCKING
+ 	bool "Enable Mandatory file locking"
+diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
+index 62dc4f577ba1..8d0d16b90039 100644
+--- a/fs/Kconfig.binfmt
++++ b/fs/Kconfig.binfmt
+@@ -191,9 +191,9 @@ config BINFMT_MISC
+ 	  <file:Documentation/admin-guide/binfmt-misc.rst> to learn how to use this
+ 	  feature, <file:Documentation/admin-guide/java.rst> for information about how
+ 	  to include Java support. and <file:Documentation/admin-guide/mono.rst> for
+-          information about how to include Mono-based .NET support.
++	  information about how to include Mono-based .NET support.
+ 
+-          To use binfmt_misc, you will need to mount it:
++	  To use binfmt_misc, you will need to mount it:
+ 		mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+ 
+ 	  You may say M here for module support and later load the module when
+diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+index 0635cba19971..eb2a585572dc 100644
+--- a/fs/fuse/Kconfig
++++ b/fs/fuse/Kconfig
+@@ -34,7 +34,7 @@ config VIRTIO_FS
+ 	select VIRTIO
+ 	help
+ 	  The Virtio Filesystem allows guests to mount file systems from the
+-          host.
++	  host.
+ 
+ 	  If you want to share files between guests or with the host, answer Y
+-          or M.
++	  or M.
+diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
+index 295a7a21b774..3edf122b8044 100644
+--- a/fs/nfs/Kconfig
++++ b/fs/nfs/Kconfig
+@@ -147,10 +147,10 @@ config NFS_V4_1_MIGRATION
+ 	default n
+ 	help
+ 	  This option makes the NFS client advertise to NFSv4.1 servers that
+-          it can support NFSv4 migration.
++	  it can support NFSv4 migration.
+ 
+-          The NFSv4.1 pieces of the Linux NFSv4 migration implementation are
+-          still experimental.  If you are not an NFSv4 developer, say N here.
++	  The NFSv4.1 pieces of the Linux NFSv4 migration implementation are
++	  still experimental.  If you are not an NFSv4 developer, say N here.
+ 
+ config NFS_V4_SECURITY_LABEL
+ 	bool
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index cb5629bd5fff..af2c0af60269 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -42,8 +42,8 @@ config PROC_VMCORE
+ 	bool "/proc/vmcore support"
+ 	depends on PROC_FS && CRASH_DUMP
+ 	default y
+-        help
+-        Exports the dump image of crashed kernel in ELF format.
++	help
++	Exports the dump image of crashed kernel in ELF format.
+ 
+ config PROC_VMCORE_DEVICE_DUMP
+ 	bool "Device Hardware/Firmware Log Collection"
+@@ -72,7 +72,7 @@ config PROC_SYSCTL
+ 	  a recompile of the kernel or reboot of the system.  The primary
+ 	  interface is through /proc/sys.  If you say Y here a tree of
+ 	  modifiable sysctl entries will be generated beneath the
+-          /proc/sys directory. They are explained in the files
++	  /proc/sys directory. They are explained in the files
+ 	  in <file:Documentation/admin-guide/sysctl/>.  Note that enabling this
+ 	  option will enlarge the kernel by at least 8 KB.
+ 
+@@ -88,7 +88,7 @@ config PROC_PAGE_MONITOR
+ 	  Various /proc files exist to monitor process memory utilization:
+ 	  /proc/pid/smaps, /proc/pid/clear_refs, /proc/pid/pagemap,
+ 	  /proc/kpagecount, and /proc/kpageflags. Disabling these
+-          interfaces will reduce the size of the kernel by approximately 4kb.
++	  interfaces will reduce the size of the kernel by approximately 4kb.
+ 
+ config PROC_CHILDREN
+ 	bool "Include /proc/<pid>/task/<tid>/children file"
+diff --git a/fs/qnx6/Kconfig b/fs/qnx6/Kconfig
+index 6a9d6bce1586..5ef679e51ba1 100644
+--- a/fs/qnx6/Kconfig
++++ b/fs/qnx6/Kconfig
+@@ -7,7 +7,7 @@ config QNX6FS_FS
+ 	  QNX 6 (also called QNX RTP).
+ 	  Further information is available at <http://www.qnx.com/>.
+ 	  Say Y if you intend to mount QNX hard disks or floppies formatted
+-          with a mkqnx6fs.
++	  with a mkqnx6fs.
+ 	  However, keep in mind that this currently is a readonly driver!
+ 
+ 	  To compile this file system support as a module, choose M here: the
+diff --git a/fs/ufs/Kconfig b/fs/ufs/Kconfig
+index 6d30adb6b890..f1f725c5a28c 100644
+--- a/fs/ufs/Kconfig
++++ b/fs/ufs/Kconfig
+@@ -11,8 +11,8 @@ config UFS_FS
+ 	  experimental "UFS file system write support", below. Please read the
+ 	  file <file:Documentation/admin-guide/ufs.rst> for more information.
+ 
+-          The recently released UFS2 variant (used in FreeBSD 5.x) is
+-          READ-ONLY supported.
++	  The recently released UFS2 variant (used in FreeBSD 5.x) is
++	  READ-ONLY supported.
+ 
+ 	  Note that this option is generally not needed for floppies, since a
+ 	  good portable way to transport files and directories between unixes
 -- 
-~Randy
+2.17.1
+
