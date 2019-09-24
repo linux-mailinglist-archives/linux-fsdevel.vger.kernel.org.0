@@ -2,137 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFC74BD33B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 22:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 044C3BD345
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 22:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731493AbfIXUCK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Sep 2019 16:02:10 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41951 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbfIXUCJ (ORCPT
+        id S1731789AbfIXUFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Sep 2019 16:05:22 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34122 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727602AbfIXUFV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Sep 2019 16:02:09 -0400
-Received: by mail-ot1-f68.google.com with SMTP id g13so2634138otp.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2019 13:02:09 -0700 (PDT)
+        Tue, 24 Sep 2019 16:05:21 -0400
+Received: by mail-io1-f66.google.com with SMTP id q1so7631195ion.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2019 13:05:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F9abJ/1xoSxpgTwp+8HM2HUU0djE7WmuKLE9JBXrrZg=;
-        b=tnF7bloc9weToXfl0j8qBvkiONR1e24XaVsByBxtm7vFIaj64Tgo06gjAhfgegfdK1
-         zvnKsU/N6UUViGtxk3cdwSLa9EuP+rSS80XCHwWWpxnyYSeKmEXlV/4H1dfPLMrkiJ/m
-         X9qgrqUhim7sHmqqNhIguJxj9cuBm8zSsfmy03kwtrEIT34i7kXXzRZXW44zqpuIFIQN
-         jtglwIqZBrTZpndC43ho6Hk3zSV8IdCHQ5Z2Uv7IlEkMcp6rEmlEIojyuEZJLXHNAnfZ
-         FV5wIZ0jiQBcSF02MLgrpULBumwYM7+PX240/Lm0yxcKfPiimMe4yyAU0IqqPUoMMTCf
-         easQ==
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tzqNMqA07jBcBpcqIcid0j0G7N4xLkFUhmGjg7IIOuU=;
+        b=DCyKK193tOOwAbtGLptlJdOOKYY/0pAfa4quNNXrWUvG3TJ7wXw/pThGwGpG+9QiwN
+         FazKM7SpbmIueD8YLUzNgzzgixAWUC4leRTPUG/z7IwX9zqjQydBTyOUnRi/xqLq7O0X
+         vwnBLD/ePKlVhAXYcazuiJhoHAT+eKbgJPEi0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F9abJ/1xoSxpgTwp+8HM2HUU0djE7WmuKLE9JBXrrZg=;
-        b=k+nXzJ5dsaYJVkDbW9dghI49Ke9mZ8avEi1sTW3auw5zHN0vL053ptOqpgGjYOB0Vf
-         5ibneWHj2RSSkzbr7YDZGBDgVNwO1A8pt/PwaAD+N5RjsnEISHYwB5843xmOSwulqL+p
-         VlMKfx+3uch65kFL+YTptTJkEKPVXOvPFxjTNXMWuEXD1WGqFPkdNISCLJX5W3tGcSJy
-         PyB7twIa1GkHk8R590zMXhCXLOhDZQX6seQqUmDqJhdEYOj6MCqTAVS8ouodiItub/DY
-         2XfIRBuBLQVOBFnscpvA1uIhiSqSuZ23wMO/4RJsrYYSq9qnnQBSqOJNNLylRIKpXpid
-         FkJg==
-X-Gm-Message-State: APjAAAXhChi+tbtPRtYs3lIF9EqoNwWlpoEC9wgVw/rmV0MZxH7mpd8S
-        ykHuq2A401yWEGTz/S2DtYI8ZUMOG+I12knIyLH7PA==
-X-Google-Smtp-Source: APXvYqzIUkFuP6L7NYPYMHrWVgtDQx1+8kwkK4qepjNPppu/5vycU49HkcYIljgKmIht1SEUi3auP0WGnP6hKm7fLnM=
-X-Received: by 2002:a9d:7251:: with SMTP id a17mr3645461otk.110.1569355328313;
- Tue, 24 Sep 2019 13:02:08 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tzqNMqA07jBcBpcqIcid0j0G7N4xLkFUhmGjg7IIOuU=;
+        b=C0mOi4Nkp1FQ0P/x1Wz9CppWSft87dnNLYtmgUMR8/LcHZ2BmY6tlbpIsWCfPjmZPm
+         YMZiZPHkUo8lami8nNZiTN45oP6+jbSZ10zw+8JPl5pjimAEbki9hHgQ+YOcq9AreN99
+         XC1IJk9nYBJrdSctoyfmf3bWgvJvgShXcuQOcjFhX9mxzCPs4oj0Bj/r1OIIVTGSkKvp
+         8ONy4p4UOgx/+N6JKuEeb1bRo36fDRgDhb2tCrLIJqMki7xbAKJ67gmw5kJBNv8FyieQ
+         QIlfImkJfKSnhkzdwM4vmy4WDSTNJ8iXJPMJ8cXLhVUrkmRdji/FFGCxM1N+Ap7lg67m
+         W21w==
+X-Gm-Message-State: APjAAAU0C4n6W3UJzIZYWRft3pIgb8W3KZN2fhDCJL6lQJlE/JRslnvP
+        l7/hgRak99hpjt5CoAGlRKniCQ==
+X-Google-Smtp-Source: APXvYqxALuZ+2sOPVcl1PCpmgHoIsSghK1bXD0k9qNItmHh8nea4aKSF+aMNcivHLWvltHMCZ47cgQ==
+X-Received: by 2002:a5d:89da:: with SMTP id a26mr4311422iot.61.1569355520865;
+        Tue, 24 Sep 2019 13:05:20 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id k66sm4656319iof.25.2019.09.24.13.05.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Sep 2019 13:05:20 -0700 (PDT)
+Subject: Re: [PATCH] selftests: proc: Fix _GNU_SOURCE redefined build warns
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     shuah@kernel.org, akpm@linux-foundation.org,
+        sabyasachi.linux@gmail.com, jrdr.linux@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        "skh >> Shuah Khan" <skhan@linuxfoundation.org>
+References: <20190924181910.23588-1-skhan@linuxfoundation.org>
+ <20190924181910.23588-2-skhan@linuxfoundation.org>
+ <20190924195253.GA2633@avx2>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <f6c20b9b-4984-f865-3698-70b61bcd4be0@linuxfoundation.org>
+Date:   Tue, 24 Sep 2019 14:05:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <cover.1568875700.git.osandov@fb.com> <230a76e65372a8fb3ec62ce167d9322e5e342810.1568875700.git.osandov@fb.com>
- <CAG48ez2GKv15Uj6Wzv0sG5v2bXyrSaCtRTw5Ok_ovja_CiO_fQ@mail.gmail.com>
- <20190924171513.GA39872@vader> <20190924193513.GA45540@vader>
-In-Reply-To: <20190924193513.GA45540@vader>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 24 Sep 2019 22:01:41 +0200
-Message-ID: <CAG48ez1NQBNR1XeVQYGoopEk=g_KedUr+7jxLQTaO+V8JCeweQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] fs: add RWF_ENCODED for writing compressed data
-To:     Omar Sandoval <osandov@osandov.com>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190924195253.GA2633@avx2>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 9:35 PM Omar Sandoval <osandov@osandov.com> wrote:
-> On Tue, Sep 24, 2019 at 10:15:13AM -0700, Omar Sandoval wrote:
-> > On Thu, Sep 19, 2019 at 05:44:12PM +0200, Jann Horn wrote:
-> > > On Thu, Sep 19, 2019 at 8:54 AM Omar Sandoval <osandov@osandov.com> wrote:
-> > > > Btrfs can transparently compress data written by the user. However, we'd
-> > > > like to add an interface to write pre-compressed data directly to the
-> > > > filesystem. This adds support for so-called "encoded writes" via
-> > > > pwritev2().
-> > > >
-> > > > A new RWF_ENCODED flags indicates that a write is "encoded". If this
-> > > > flag is set, iov[0].iov_base points to a struct encoded_iov which
-> > > > contains metadata about the write: namely, the compression algorithm and
-> > > > the unencoded (i.e., decompressed) length of the extent. iov[0].iov_len
-> > > > must be set to sizeof(struct encoded_iov), which can be used to extend
-> > > > the interface in the future. The remaining iovecs contain the encoded
-> > > > extent.
-> > > >
-> > > > A similar interface for reading encoded data can be added to preadv2()
-> > > > in the future.
-> > > >
-> > > > Filesystems must indicate that they support encoded writes by setting
-> > > > FMODE_ENCODED_IO in ->file_open().
-> > > [...]
-> > > > +int import_encoded_write(struct kiocb *iocb, struct encoded_iov *encoded,
-> > > > +                        struct iov_iter *from)
-> > > > +{
-> > > > +       if (iov_iter_single_seg_count(from) != sizeof(*encoded))
-> > > > +               return -EINVAL;
-> > > > +       if (copy_from_iter(encoded, sizeof(*encoded), from) != sizeof(*encoded))
-> > > > +               return -EFAULT;
-> > > > +       if (encoded->compression == ENCODED_IOV_COMPRESSION_NONE &&
-> > > > +           encoded->encryption == ENCODED_IOV_ENCRYPTION_NONE) {
-> > > > +               iocb->ki_flags &= ~IOCB_ENCODED;
-> > > > +               return 0;
-> > > > +       }
-> > > > +       if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
-> > > > +           encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
-> > > > +               return -EINVAL;
-> > > > +       if (!capable(CAP_SYS_ADMIN))
-> > > > +               return -EPERM;
-> > >
-> > > How does this capable() check interact with io_uring? Without having
-> > > looked at this in detail, I suspect that when an encoded write is
-> > > requested through io_uring, the capable() check might be executed on
-> > > something like a workqueue worker thread, which is probably running
-> > > with a full capability set.
-> >
-> > I discussed this more with Jens. You're right, per-IO permission checks
-> > aren't going to work. In fully-polled mode, we never get an opportunity
-> > to check capabilities in right context. So, this will probably require a
-> > new open flag.
->
-> Actually, file_ns_capable() accomplishes the same thing without a new
-> open flag. Changing the capable() check to file_ns_capable() in
-> init_user_ns should be enough.
+On 9/24/19 1:52 PM, Alexey Dobriyan wrote:
+> On Tue, Sep 24, 2019 at 12:19:10PM -0600, Shuah Khan wrote:
+>> Fix the following _GNU_SOURCE redefined build warns:
+>>
+>> proc-loadavg-001.c:17: warning: "_GNU_SOURCE" redefined
+>> proc-self-syscall.c:16: warning: "_GNU_SOURCE" redefined
+>> proc-uptime-002.c:18: warning: "_GNU_SOURCE" redefined
+> 
+>> +#ifndef _GNU_SOURCE
+>>   #define _GNU_SOURCE
+>> +#endif
+> 
+> Why are you doing this.
+> 
+> There are 140 redefinitions of _GNU_SOURCE
+> 
 
-+Aleksa for openat2() and open() space
 
-Mmh... but if the file descriptor has been passed through a privilege
-boundary, it isn't really clear whether the original opener of the
-file intended for this to be possible. For example, if (as a
-hypothetical example) the init process opens a service's logfile with
-root privileges, then passes the file descriptor to that logfile to
-the service on execve(), that doesn't mean that the service should be
-able to perform compressed writes into that file, I think.
+Is there something wrong with getting rid of this warning?
 
-I think that an open flag (as you already suggested) or an fcntl()
-operation would do the job; but AFAIK the open() flag space has run
-out, so if you hook it up that way, I think you might have to wait for
-Aleksa Sarai to get something like his sys_openat2() suggestion
-(https://lore.kernel.org/lkml/20190904201933.10736-12-cyphar@cyphar.com/)
-merged?
+thanks,
+-- Shuah
