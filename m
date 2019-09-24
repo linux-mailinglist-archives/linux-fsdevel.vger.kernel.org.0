@@ -2,152 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0887DBD262
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 21:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CECDABD2BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 21:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441838AbfIXTI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Sep 2019 15:08:26 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35581 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405389AbfIXTI0 (ORCPT
+        id S2436966AbfIXTfR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Sep 2019 15:35:17 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38599 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730542AbfIXTfR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Sep 2019 15:08:26 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m7so3065121lji.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2019 12:08:24 -0700 (PDT)
+        Tue, 24 Sep 2019 15:35:17 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x10so1851259pgi.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2019 12:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8uj1Y9j5QWqL4P9NRMcUrWkMG7q2mqy5Dd8EdClY1dI=;
-        b=KeNNjs2YCmvvqn9Okqghy7piNALz7QVTpDoyirLKb2vv3A9ZuN0VtUsI1Ci+kH11dV
-         nPDKfZBN4OO7RvDf0UjlqePtCVjunFycfJIX0aRPfBS1B5KizhKrukK72fkQ+rJiQZx8
-         qWou7b+Jp5S+Onyl6WMDXnD9Sw0vZRzIn4dqQ=
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3f66Rj6t9yfmXpUykMropMdqjP5kdr+L5bVpyG392ls=;
+        b=MQ055M4OlnDEj799heTXTwZC1I2f0SHMqCrNU5V0DSu7gpbnMHxOXv1wwE4sSSXwaN
+         tGkc2Swd7BHhjID9Cka6h7rnj4GDQNzYJ7WS4oSFNNBihZRnCsUiZPhD9PzoKyH56MhA
+         T8a2oPqRmA2wDe98R6sg4c4PAAGaPSo4q478QqZK7GLAbps8l1b9J4ji0J7MOKXfQaRD
+         qQb0VC1pzjCfGvOkx+VlixaJjgA7PAG/09tkB6zIgAqKjHO18TuVFrYHWk3zgXW3P6Sd
+         6yD+JyzZ0po+ePjPH8odkzH9bbvsKDL6hymdVsHe4Vsu/0FAJN/Ko+GG2HNfeVwqizT+
+         +leQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8uj1Y9j5QWqL4P9NRMcUrWkMG7q2mqy5Dd8EdClY1dI=;
-        b=sPyrTi3GCH0In8cOf80CR02In3V8Ui1ghikyZmJ8jW/3DYa6ve/7gxxblNVorzQTOY
-         8vT06vSguVyUO7QrmDkj/O8zVKKedw/p+dsScvLDwf5kl5AGKqIPnBtj8XeGknPCrdHH
-         C4hyOJ8R2QJQje7clKwDQ2BrdWS+YBClvhzWZFdrratDE7FsSnrDsfBAUQ+7YkYtcnDk
-         BpGeInj54aQTDdJJTW1oz/mhGASwFyW8VUOEFSiExGLGKzm0tC3/tFuPR0IJlXY53mFP
-         uDeWqV70S3+cALi3/ri/HOLNsrbaUjtwAufTfay5Qc7AviXon/GbmxUurGCMDMoXffrH
-         lLWg==
-X-Gm-Message-State: APjAAAWY/3bXgpb3DgCblQmcZ3kGCGtOXLWfVbM09t36xoKzGBr6QPfY
-        Q7S87h2nSfz4g1c3k9HhNwz/whg+nbk=
-X-Google-Smtp-Source: APXvYqx/eDthsPp6yxalhbDvNSnXqzMxIvZZPxWWq/us3rBhyx2lJuMN6aaM3+uxQH7PCtAXnb57FQ==
-X-Received: by 2002:a2e:9241:: with SMTP id v1mr3091769ljg.148.1569352102920;
-        Tue, 24 Sep 2019 12:08:22 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id h12sm660771ljg.24.2019.09.24.12.08.21
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2019 12:08:21 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id j19so3062045lja.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2019 12:08:21 -0700 (PDT)
-X-Received: by 2002:a2e:5b9a:: with SMTP id m26mr2982371lje.90.1569352100677;
- Tue, 24 Sep 2019 12:08:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <156896493723.4334.13340481207144634918.stgit@buzz>
- <875f3b55-4fe1-e2c3-5bee-ca79e4668e72@yandex-team.ru> <20190923145242.GF2233839@devbig004.ftw2.facebook.com>
- <ed5d930c-88c6-c8e4-4a6c-529701caa993@yandex-team.ru> <20190924073940.GM6636@dread.disaster.area>
-In-Reply-To: <20190924073940.GM6636@dread.disaster.area>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 24 Sep 2019 12:08:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whf2BQ8xqVBF8YuxRznByrP-oTgcHSY9DgDnrFTxpsrVA@mail.gmail.com>
-Message-ID: <CAHk-=whf2BQ8xqVBF8YuxRznByrP-oTgcHSY9DgDnrFTxpsrVA@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: implement write-behind policy for sequential file writes
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Tejun Heo <tj@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3f66Rj6t9yfmXpUykMropMdqjP5kdr+L5bVpyG392ls=;
+        b=oYoRP8PGCL3m8Md7mqw5wK61lg292OkmOQwJyAuwEgIyrzMp+wocMDvIpqSdgOr8YS
+         y7yJma8dbhrjrRfX64kXNVLL/E+iMAlIxP3kZyOK5w92B+EzMyz1+sTzL7BHtw01sDG4
+         UCcW+8uEoJ66w2dal9zdV4rKla6c3EB6BZYoo5KR7+KEWchDL/qDxZTJ6G653+dMbz3I
+         BLWNDiHqhdqlmGfdu0B9DN+jxUaN1YPNEll/GFTMZ2bWOrR2H5awH1qApOKPkumd7tsh
+         GNm9/7hu+t+vrzks0Wr5s6kCIKxhJYoOu3on5i7faK4gdHwY5BfRh4cglGgQ0kPv8tbG
+         MoDw==
+X-Gm-Message-State: APjAAAU9JzTU6xCXKvt2lH3GeepTpKjUTwbaUdbuZTfjXWzSrLhkTHnK
+        CBpN/4wIBvsdIJqngnB6Bd0XHe2TVMI=
+X-Google-Smtp-Source: APXvYqxIwMr4QmyPQYW76tCt8RGLj4PVLGtrh11MlsIv0OIUIKz+wghKlzvnoSEpvnnnvaVK3PHx+g==
+X-Received: by 2002:a63:1749:: with SMTP id 9mr4498860pgx.387.1569353714555;
+        Tue, 24 Sep 2019 12:35:14 -0700 (PDT)
+Received: from vader ([2620:10d:c090:200::3:f972])
+        by smtp.gmail.com with ESMTPSA id fa24sm735498pjb.13.2019.09.24.12.35.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2019 12:35:13 -0700 (PDT)
+Date:   Tue, 24 Sep 2019 12:35:13 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-btrfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [RFC PATCH 2/3] fs: add RWF_ENCODED for writing compressed data
+Message-ID: <20190924193513.GA45540@vader>
+References: <cover.1568875700.git.osandov@fb.com>
+ <230a76e65372a8fb3ec62ce167d9322e5e342810.1568875700.git.osandov@fb.com>
+ <CAG48ez2GKv15Uj6Wzv0sG5v2bXyrSaCtRTw5Ok_ovja_CiO_fQ@mail.gmail.com>
+ <20190924171513.GA39872@vader>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190924171513.GA39872@vader>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 12:39 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> Stupid question: how is this any different to simply winding down
-> our dirty writeback and throttling thresholds like so:
->
-> # echo $((100 * 1000 * 1000)) > /proc/sys/vm/dirty_background_bytes
+On Tue, Sep 24, 2019 at 10:15:13AM -0700, Omar Sandoval wrote:
+> On Thu, Sep 19, 2019 at 05:44:12PM +0200, Jann Horn wrote:
+> > On Thu, Sep 19, 2019 at 8:54 AM Omar Sandoval <osandov@osandov.com> wrote:
+> > > Btrfs can transparently compress data written by the user. However, we'd
+> > > like to add an interface to write pre-compressed data directly to the
+> > > filesystem. This adds support for so-called "encoded writes" via
+> > > pwritev2().
+> > >
+> > > A new RWF_ENCODED flags indicates that a write is "encoded". If this
+> > > flag is set, iov[0].iov_base points to a struct encoded_iov which
+> > > contains metadata about the write: namely, the compression algorithm and
+> > > the unencoded (i.e., decompressed) length of the extent. iov[0].iov_len
+> > > must be set to sizeof(struct encoded_iov), which can be used to extend
+> > > the interface in the future. The remaining iovecs contain the encoded
+> > > extent.
+> > >
+> > > A similar interface for reading encoded data can be added to preadv2()
+> > > in the future.
+> > >
+> > > Filesystems must indicate that they support encoded writes by setting
+> > > FMODE_ENCODED_IO in ->file_open().
+> > [...]
+> > > +int import_encoded_write(struct kiocb *iocb, struct encoded_iov *encoded,
+> > > +                        struct iov_iter *from)
+> > > +{
+> > > +       if (iov_iter_single_seg_count(from) != sizeof(*encoded))
+> > > +               return -EINVAL;
+> > > +       if (copy_from_iter(encoded, sizeof(*encoded), from) != sizeof(*encoded))
+> > > +               return -EFAULT;
+> > > +       if (encoded->compression == ENCODED_IOV_COMPRESSION_NONE &&
+> > > +           encoded->encryption == ENCODED_IOV_ENCRYPTION_NONE) {
+> > > +               iocb->ki_flags &= ~IOCB_ENCODED;
+> > > +               return 0;
+> > > +       }
+> > > +       if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
+> > > +           encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
+> > > +               return -EINVAL;
+> > > +       if (!capable(CAP_SYS_ADMIN))
+> > > +               return -EPERM;
+> > 
+> > How does this capable() check interact with io_uring? Without having
+> > looked at this in detail, I suspect that when an encoded write is
+> > requested through io_uring, the capable() check might be executed on
+> > something like a workqueue worker thread, which is probably running
+> > with a full capability set.
+> 
+> I discussed this more with Jens. You're right, per-IO permission checks
+> aren't going to work. In fully-polled mode, we never get an opportunity
+> to check capabilities in right context. So, this will probably require a
+> new open flag.
 
-Our dirty_background stuff is very questionable, but it exists (and
-has those insane defaults) because of various legacy reasons.
-
-But it probably _shouldn't_ exist any more (except perhaps as a
-last-ditch hard limit), and I don't think it really ends up being the
-primary throttling any more in many cases.
-
-It used to make sense to make it a "percentage of memory" back when we
-were talking old machines with 8MB of RAM, and having an appreciable
-percentage of memory dirty was "normal".
-
-And we've kept that model and not touched it, because some benchmarks
-really want enormous amounts of dirty data (particularly various dirty
-shared mappings).
-
-But out default really is fairly crazy and questionable. 10% of memory
-being dirty may be ok when you have a small amount of memory, but it's
-rather less sane if you have gigs and gigs of RAM.
-
-Of course, SSD's made it work slightly better again, but our
-"dirty_background" stuff really is legacy and not very good.
-
-The whole dirty limit when seen as percentage of memory (which is our
-default) is particularly questionable, but even when seen as total
-bytes is bad.
-
-If you have slow filesystems (say, FAT on a USB stick), the limit
-should be very different from a fast one (eg XFS on a RAID of proper
-SSDs).
-
-So the limit really needs be per-bdi, not some global ratio or bytes.
-
-As a result we've grown various _other_ heuristics over time, and the
-simplistic dirty_background stuff is only a very small part of the
-picture these days.
-
-To the point of almost being irrelevant in many situations, I suspect.
-
-> to start background writeback when there's 100MB of dirty pages in
-> memory, and then:
->
-> # echo $((200 * 1000 * 1000)) > /proc/sys/vm/dirty_bytes
-
-The thing is, that also accounts for dirty shared mmap pages. And it
-really will kill some benchmarks that people take very very seriously.
-
-And 200MB is peanuts when you're doing a benchmark on some studly
-machine that has a million iops per second, and 200MB of dirty data is
-nothing.
-
-Yet it's probably much too big when you're on a workstation that still
-has rotational media.
-
-And the whole memcg code obviously makes this even more complicated.
-
-Anyway, the end result of all this is that we have that
-balance_dirty_pages() that is pretty darn complex and I suspect very
-few people understand everything that goes on in that function.
-
-So I think that the point of any write-behind logic would be to avoid
-triggering the global limits as much as humanly possible - not just
-getting the simple cases to write things out more quickly, but to
-remove the complex global limit questions from (one) common and fairly
-simple case.
-
-Now, whether write-behind really _does_ help that, or whether it's
-just yet another tweak and complication, I can't actually say. But I
-don't think 'dirty_background_bytes' is really an argument against
-write-behind, it's just one knob on the very complex dirty handling we
-have.
-
-            Linus
+Actually, file_ns_capable() accomplishes the same thing without a new
+open flag. Changing the capable() check to file_ns_capable() in
+init_user_ns should be enough.
