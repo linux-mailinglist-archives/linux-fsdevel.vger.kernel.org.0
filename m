@@ -2,55 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24CE5BC45F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 11:00:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDF57BC4DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 11:29:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387445AbfIXJAX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Sep 2019 05:00:23 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:41214 "EHLO
-        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729588AbfIXJAW (ORCPT
+        id S2504232AbfIXJ3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Sep 2019 05:29:39 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:56414 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2504186AbfIXJ3i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Sep 2019 05:00:22 -0400
-Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id CD2CF2E1318;
-        Tue, 24 Sep 2019 12:00:18 +0300 (MSK)
-Received: from sas2-62907d92d1d8.qloud-c.yandex.net (sas2-62907d92d1d8.qloud-c.yandex.net [2a02:6b8:c08:b895:0:640:6290:7d92])
-        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id kRCekL2Kks-0HLSQhvt;
-        Tue, 24 Sep 2019 12:00:18 +0300
+        Tue, 24 Sep 2019 05:29:38 -0400
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 157712E0AFF;
+        Tue, 24 Sep 2019 12:29:36 +0300 (MSK)
+Received: from vla5-2bf13a090f43.qloud-c.yandex.net (vla5-2bf13a090f43.qloud-c.yandex.net [2a02:6b8:c18:3411:0:640:2bf1:3a09])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id QkwcPN4QKg-TZfSidj7;
+        Tue, 24 Sep 2019 12:29:36 +0300
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1569315618; bh=XWcumQ6LEVVd+nqcjbDRZkT8POGeVs8ZdFkLhiZbTSI=;
+        t=1569317376; bh=YKkn4HVvP/+S323ny4wtqnadzUN5R/l/3Q2qi4I+C20=;
         h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=hMBfVPo+LVt6lT9a9TMgtbPb13atRa5vC0BbTPaJPzZQEvlN5VYzXH8xP62mYkBVm
-         3bkgWYVMffqI4hoMwA+tbFvjJyemGfPUDhrdVumO9hCFnEtAaeRf8GYdTe59TMEC15
-         0u/G5ED+L8iRCekkV4E5ujHsjZrWLjLibN01StJo=
-Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+        b=sFEY7awdEgAKvKAPX0qms5EE4rM19nmu3enZSr/t/63SKXi9HMwNLdgBSZ8KwOqXg
+         D5i6QuSwldSgtTjOcisJ0R2KTibZ+JyE01OrUCapm8OxcESAwyMOAfNoodsokaw2P6
+         cMpXcarS4KylAWkIXppr9gv/FKtG45Hp63c8iOP4=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
 Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:3d4d:a9cb:ef29:4bb1])
-        by sas2-62907d92d1d8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id XQYXi9VcIO-0HH8Sl58;
-        Tue, 24 Sep 2019 12:00:17 +0300
+        by vla5-2bf13a090f43.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id xBph0X0UAr-TZIeLosP;
+        Tue, 24 Sep 2019 12:29:35 +0300
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (Client certificate not present)
 Subject: Re: [PATCH v2] mm: implement write-behind policy for sequential file
  writes
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Jens Axboe <axboe@kernel.dk>, Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>,
         Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>
 References: <156896493723.4334.13340481207144634918.stgit@buzz>
- <875f3b55-4fe1-e2c3-5bee-ca79e4668e72@yandex-team.ru>
- <20190923145242.GF2233839@devbig004.ftw2.facebook.com>
- <ed5d930c-88c6-c8e4-4a6c-529701caa993@yandex-team.ru>
- <20190924073940.GM6636@dread.disaster.area>
+ <CAHk-=whmCZvYcR10Pe9fEy912fc8xywbiP9mn054Jg_9+0TqCg@mail.gmail.com>
 From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <edafed8a-5269-1e54-fe31-7ba87393eb34@yandex-team.ru>
-Date:   Tue, 24 Sep 2019 12:00:17 +0300
+Message-ID: <f9fdb72f-f0a1-8c28-f287-be6946980160@yandex-team.ru>
+Date:   Tue, 24 Sep 2019 12:29:34 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190924073940.GM6636@dread.disaster.area>
+In-Reply-To: <CAHk-=whmCZvYcR10Pe9fEy912fc8xywbiP9mn054Jg_9+0TqCg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
@@ -59,54 +57,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 24/09/2019 10.39, Dave Chinner wrote:
-> On Mon, Sep 23, 2019 at 06:06:46PM +0300, Konstantin Khlebnikov wrote:
->> On 23/09/2019 17.52, Tejun Heo wrote:
->>> Hello, Konstantin.
->>>
->>> On Fri, Sep 20, 2019 at 10:39:33AM +0300, Konstantin Khlebnikov wrote:
->>>> With vm.dirty_write_behind 1 or 2 files are written even faster and
->>>
->>> Is the faster speed reproducible?  I don't quite understand why this
->>> would be.
+On 21/09/2019 02.05, Linus Torvalds wrote:
+> On Fri, Sep 20, 2019 at 12:35 AM Konstantin Khlebnikov
+> <khlebnikov@yandex-team.ru> wrote:
 >>
->> Writing to disk simply starts earlier.
+>> This patch implements write-behind policy which tracks sequential writes
+>> and starts background writeback when file have enough dirty pages.
 > 
-> Stupid question: how is this any different to simply winding down
-> our dirty writeback and throttling thresholds like so:
+> Apart from a spelling error ("contigious"), my only reaction is that
+> I've wanted this for the multi-file writes, not just for single big
+> files.
 > 
-> # echo $((100 * 1000 * 1000)) > /proc/sys/vm/dirty_background_bytes
+> Yes, single big files may be a simpler and perhaps the "10% effort for
+> 90% of the gain", and thus the right thing to do, but I do wonder if
+> you've looked at simply extending it to cover multiple files when
+> people copy a whole directory (or unpack a tar-file, or similar).
 > 
-> to start background writeback when there's 100MB of dirty pages in
-> memory, and then:
+> Now, I hear you say "those are so small these days that it doesn't
+> matter". And maybe you're right. But partiocularly for slow media,
+> triggering good streaming write behavior has been a problem in the
+> past.
 > 
-> # echo $((200 * 1000 * 1000)) > /proc/sys/vm/dirty_bytes
-> 
-> So that writers are directly throttled at 200MB of dirty pages in
-> memory?
-> 
-> This effectively gives us global writebehind behaviour with a
-> 100-200MB cache write burst for initial writes.
+> So I'm wondering whether the "writebehind" state should perhaps be
+> considered be a process state, rather than "struct file" state, and
+> also start triggering for writing smaller files.
 
-Global limits affect all dirty pages including memory-mapped and
-randomly touched. Write-behind aims only into sequential streams.
+It's simple to extend existing state with per-task counter of sequential
+writes to detect patterns like unpacking tarball with small files.
+After reaching some threshold write-behind could flush files in at close.
 
-> 
-> ANd, really such strict writebehind behaviour is going to cause all
-> sorts of unintended problesm with filesystems because there will be
-> adverse interactions with delayed allocation. We need a substantial
-> amount of dirty data to be cached for writeback for fragmentation
-> minimisation algorithms to be able to do their job....
+But in this case it's hard to wait previous writes to limit amount of
+requests and pages in writeback for each stream.
 
-I think most sequentially written files never change after close.
-Except of knowing final size of huge files (>16Mb in my patch)
-there should be no difference for delayed allocation.
-
-Probably write behind could provide hint about streaming pattern:
-pass something like "MSG_MORE" into writeback call.
+Theoretically we could build chain of inodes for delaying and batching.
 
 > 
-> Cheers,
+> Maybe this was already discussed and people decided that the big-file
+> case was so much easier that it wasn't worth worrying about
+> writebehind for multiple files.
 > 
-> Dave.
+>              Linus
 > 
