@@ -2,300 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4692EBC9C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 16:06:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EEABBC9EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 16:13:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728195AbfIXOGq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Sep 2019 10:06:46 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34637 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbfIXOGq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Sep 2019 10:06:46 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j19so2041990lja.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2019 07:06:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hev-cc.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sX5WmxWuYSr8VxjzZegQNHZ2LJD3f554QY+Bp7zkDPE=;
-        b=Hx0p2HYidAd2vAhjqYOsgnLCNoABmYq3zDKpK7dKXKLEqPJMX0RvqiuAr9lmd4ju/b
-         R/S0i74w2SouChlmtlBdK6yln1NWZYZNf/H57APKwf2ktK/F1fA6cxRXKQCwYgURxkCD
-         wBXKLq1pAxWwOdTw7sGDkgyK4MPxXbjj82JjTohTICgCFu14T9dyoOzjKC824h6FrwDA
-         k0zjfqFtJtDpyAl7EFwK1BEprsxQpNVJPxeZp+NHwf5XO9/3aOJj42xzn0B9gkL/n3tH
-         c36VcIcRD4yNoH/X2nOhWUorg3wdG2MrgpdIlE70NBNcXByLi7+YR8X2E0EF9PeIydaO
-         +vEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sX5WmxWuYSr8VxjzZegQNHZ2LJD3f554QY+Bp7zkDPE=;
-        b=ZwX3wqjIpFQdI4chpGgR/0vfqNiz6OezH9YB8k+mw1x3y2uAY4R15lEf9XROYDA7QG
-         LXYjMpJgxhqXhuLwJq0UNd64+7BWIhsDZfz9uvZaGWuo0aBQhpaqtBqlc94k9PZeZPa5
-         dR3LECVJp41Vsr+Mlqm0ksphNScmmAMv8g8w5mHjbGKQ5vBICNqZJlJ77egnIzz9YIKe
-         xf2CmbxkypbOFS1TORPeaxBuM8sEw1ZUthmBPH7GpeAiaXkapccxA6P9o+14HVuxLV9I
-         BRhYWimDYIv07Pd8ybeKhduCzJPPOIdx/n8taLqHrZ0bX0T0nNrLo1hhkR/07JvvWZ3F
-         fFoQ==
-X-Gm-Message-State: APjAAAXceIrjhuCqqigrh2J3KnAUfWD22VNNZKSQCgyOtToJZLLyNpWa
-        d9PeSB5wqaQ07ck2uL3DVAmYUlAx1JSkQWZQeKBZn++j6EYimu2w
-X-Google-Smtp-Source: APXvYqxE7+vhGhLmlVWrIdPnXCmun+j/ZX4HxoKuexkjddXTCzriCinXX+Ut1bU999e68LrKw00XZzat/96dHKwDOMY=
-X-Received: by 2002:a2e:91d0:: with SMTP id u16mr2106230ljg.164.1569334003454;
- Tue, 24 Sep 2019 07:06:43 -0700 (PDT)
+        id S2441262AbfIXONJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Sep 2019 10:13:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59920 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2441260AbfIXONJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 24 Sep 2019 10:13:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 73ADBACD9;
+        Tue, 24 Sep 2019 14:13:06 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 6EA5D1E4427; Tue, 24 Sep 2019 16:13:21 +0200 (CEST)
+Date:   Tue, 24 Sep 2019 16:13:21 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     Jan Kara <jack@suse.cz>, tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
+Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
+ infrastructure
+Message-ID: <20190924141321.GC11819@quack2.suse.cz>
+References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
+ <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
+ <20190923211011.GH20367@quack2.suse.cz>
+ <20190924102926.GC17526@bobrowski>
 MIME-Version: 1.0
-References: <20190919092413.11141-1-r@hev.cc> <4379abe0-9f81-21b6-11ae-6eb3db79eeff@akamai.com>
- <5042e1e0-f49a-74c8-61f8-6903288110ac@akamai.com>
-In-Reply-To: <5042e1e0-f49a-74c8-61f8-6903288110ac@akamai.com>
-From:   Heiher <r@hev.cc>
-Date:   Tue, 24 Sep 2019 22:06:32 +0800
-Message-ID: <CAHirt9i42K37J9n8smaudJyigRAiiDhzZBuW+gbyLXHVq98yqQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2] fs/epoll: Remove unnecessary wakeups of nested
- epoll that in ET mode
-To:     Jason Baron <jbaron@akamai.com>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Eric Wong <e@80x24.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190924102926.GC17526@bobrowski>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue 24-09-19 20:29:26, Matthew Bobrowski wrote:
+> On Mon, Sep 23, 2019 at 11:10:11PM +0200, Jan Kara wrote:
+> > On Thu 12-09-19 21:04:46, Matthew Bobrowski wrote:
+> > > +static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > > +{
+> > > +	ssize_t ret;
+> > > +	size_t count;
+> > > +	loff_t offset = iocb->ki_pos;
+> > > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > > +	bool extend = false, overwrite = false, unaligned_aio = false;
+> > > +
+> > > +	if (!inode_trylock(inode)) {
+> > > +		if (iocb->ki_flags & IOCB_NOWAIT)
+> > > +			return -EAGAIN;
+> > > +		inode_lock(inode);
+> > > +	}
+> > > +
+> > > +	if (!ext4_dio_checks(inode)) {
+> > > +		inode_unlock(inode);
+> > > +		/*
+> > > +		 * Fallback to buffered IO if the operation on the
+> > > +		 * inode is not supported by direct IO.
+> > > +		 */
+> > > +		return ext4_buffered_write_iter(iocb, from);
+> > > +	}
+> > > +
+> > > +	ret = ext4_write_checks(iocb, from);
+> > > +	if (ret <= 0) {
+> > > +		inode_unlock(inode);
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * Unaligned direct AIO must be serialized among each other as
+> > > +	 * the zeroing of partial blocks of two competing unaligned
+> > > +	 * AIOs can result in data corruption.
+> > > +	 */
+> > > +	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS) &&
+> > > +	    !is_sync_kiocb(iocb) && ext4_unaligned_aio(inode, from, offset)) {
+> > > +		unaligned_aio = true;
+> > > +		inode_dio_wait(inode);
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * Determine whether the IO operation will overwrite allocated
+> > > +	 * and initialized blocks. If so, check to see whether it is
+> > > +	 * possible to take the dioread_nolock path.
+> > > +	 */
+> > > +	count = iov_iter_count(from);
+> > > +	if (!unaligned_aio && ext4_overwrite_io(inode, offset, count) &&
+> > > +	    ext4_should_dioread_nolock(inode)) {
+> > > +		overwrite = true;
+> > > +		downgrade_write(&inode->i_rwsem);
+> > > +	}
+> > > +
+> > > +	if (offset + count > i_size_read(inode) ||
+> > > +	    offset + count > EXT4_I(inode)->i_disksize) {
+> > > +		ext4_update_i_disksize(inode, inode->i_size);
+> > > +		extend = true;
+> > > +	}
+> > 
+> > This call to ext4_update_i_disksize() is definitely wrong. If nothing else,
+> > you need to also have transaction started and call ext4_mark_inode_dirty()
+> > to actually journal the change of i_disksize (ext4_update_i_disksize()
+> > updates only the in-memory copy of the entry). Also the direct IO code
+> > needs to add the inode to the orphan list so that in case of crash, blocks
+> > allocated beyond EOF get truncated on next mount. That is the whole point
+> > of this excercise with i_disksize after all.
+> > 
+> > But I'm wondering if i_disksize update is needed. Truncate cannot be in
+> > progress (we hold i_rwsem) and dirty pages will be flushed by
+> > iomap_dio_rw() before we start to allocate any blocks. So it should be
+> > enough to have here:
+> 
+> Well, I initially thought the same, however doing some research shows that we
+> have the following edge case:
+>      - 45d8ec4d9fd54
+>      and
+>      - 73fdad00b208b
+> 
+> In fact you can reproduce the exact same i_size corruption issue by running
+> the generic/475 xfstests mutitple times, as articulated within
+> 45d8ec4d9fd54. So with that, I'm kind of confused and thinking that there may
+> be a problem that resides elsewhere that may need addressing?
 
-On Mon, Sep 23, 2019 at 11:34 PM Jason Baron <jbaron@akamai.com> wrote:
->
->
->
-> On 9/20/19 12:00 PM, Jason Baron wrote:
-> > On 9/19/19 5:24 AM, hev wrote:
-> >> From: Heiher <r@hev.cc>
-> >>
-> >> Take the case where we have:
-> >>
-> >>         t0
-> >>          | (ew)
-> >>         e0
-> >>          | (et)
-> >>         e1
-> >>          | (lt)
-> >>         s0
-> >>
-> >> t0: thread 0
-> >> e0: epoll fd 0
-> >> e1: epoll fd 1
-> >> s0: socket fd 0
-> >> ew: epoll_wait
-> >> et: edge-trigger
-> >> lt: level-trigger
-> >>
-> >> When s0 fires an event, e1 catches the event, and then e0 catches an event from
-> >> e1. After this, There is a thread t0 do epoll_wait() many times on e0, it should
-> >> only get one event in total, because e1 is a dded to e0 in edge-triggered mode.
-> >>
-> >> This patch only allows the wakeup(&ep->poll_wait) in ep_scan_ready_list under
-> >> two conditions:
-> >>
-> >>  1. depth == 0.
-> >>  2. There have event is added to ep->ovflist during processing.
-> >>
-> >> Test code:
-> >>  #include <unistd.h>
-> >>  #include <sys/epoll.h>
-> >>  #include <sys/socket.h>
-> >>
-> >>  int main(int argc, char *argv[])
-> >>  {
-> >>      int sfd[2];
-> >>      int efd[2];
-> >>      struct epoll_event e;
-> >>
-> >>      if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
-> >>              goto out;
-> >>
-> >>      efd[0] = epoll_create(1);
-> >>      if (efd[0] < 0)
-> >>              goto out;
-> >>
-> >>      efd[1] = epoll_create(1);
-> >>      if (efd[1] < 0)
-> >>              goto out;
-> >>
-> >>      e.events = EPOLLIN;
-> >>      if (epoll_ctl(efd[1], EPOLL_CTL_ADD, sfd[0], &e) < 0)
-> >>              goto out;
-> >>
-> >>      e.events = EPOLLIN | EPOLLET;
-> >>      if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
-> >>              goto out;
-> >>
-> >>      if (write(sfd[1], "w", 1) != 1)
-> >>              goto out;
-> >>
-> >>      if (epoll_wait(efd[0], &e, 1, 0) != 1)
-> >>              goto out;
-> >>
-> >>      if (epoll_wait(efd[0], &e, 1, 0) != 0)
-> >>              goto out;
-> >>
-> >>      close(efd[0]);
-> >>      close(efd[1]);
-> >>      close(sfd[0]);
-> >>      close(sfd[1]);
-> >>
-> >>      return 0;
-> >>
-> >>  out:
-> >>      return -1;
-> >>  }
-> >>
-> >> More tests:
-> >>  https://github.com/heiher/epoll-wakeup
-> >>
-> >> Cc: Al Viro <viro@ZenIV.linux.org.uk>
-> >> Cc: Andrew Morton <akpm@linux-foundation.org>
-> >> Cc: Davide Libenzi <davidel@xmailserver.org>
-> >> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> >> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-> >> Cc: Eric Wong <e@80x24.org>
-> >> Cc: Jason Baron <jbaron@akamai.com>
-> >> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> >> Cc: Roman Penyaev <rpenyaev@suse.de>
-> >> Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>
-> >> Cc: linux-kernel@vger.kernel.org
-> >> Cc: linux-fsdevel@vger.kernel.org
-> >> Signed-off-by: hev <r@hev.cc>
-> >> ---
-> >>  fs/eventpoll.c | 5 ++++-
-> >>  1 file changed, 4 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> >> index c4159bcc05d9..fa71468dbd51 100644
-> >> --- a/fs/eventpoll.c
-> >> +++ b/fs/eventpoll.c
-> >> @@ -685,6 +685,9 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
-> >>      if (!ep_locked)
-> >>              mutex_lock_nested(&ep->mtx, depth);
-> >>
-> >> +    if (!depth || list_empty_careful(&ep->rdllist))
-> >> +            pwake++;
-> >> +
-> >>      /*
-> >>       * Steal the ready list, and re-init the original one to the
-> >>       * empty list. Also, set ep->ovflist to NULL so that events
-> >> @@ -755,7 +758,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
-> >>              mutex_unlock(&ep->mtx);
-> >>
-> >>      /* We have to call this outside the lock */
-> >> -    if (pwake)
-> >> +    if (pwake == 2)
-> >>              ep_poll_safewake(&ep->poll_wait);
-> >>
-> >>      return res;
-> >>
-> >
-> >
-> > Hi,
-> >
-> > I was thinking more like the following. I tried it using your test-suite
-> > and it seems to work. What do you think?
-> >
-> > Thanks,
-> >
-> > -Jason
-> >
-> >
-> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > index d7f1f50..662136b 100644
-> > --- a/fs/eventpoll.c
-> > +++ b/fs/eventpoll.c
-> > @@ -712,6 +712,15 @@ static __poll_t ep_scan_ready_list(struct eventpoll
-> > *ep,
-> >         for (nepi = READ_ONCE(ep->ovflist); (epi = nepi) != NULL;
-> >              nepi = epi->next, epi->next = EP_UNACTIVE_PTR) {
-> >                 /*
-> > +                * We only need to wakeup nested epoll fds if
-> > +                * if something has been queued to the overflow list,
-> > +                * since the ep_poll() traverses the rdllist during
-> > +                * recursive poll and thus events on the overflow list
-> > +                * may not be visible yet.
-> > +                */
-> > +               if (!pwake)
-> > +                       pwake++;
-> > +               /*
-> >                  * We need to check if the item is already in the list.
-> >                  * During the "sproc" callback execution time, items are
-> >                  * queued into ->ovflist but the "txlist" might already
-> > @@ -755,7 +764,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
-> >                 mutex_unlock(&ep->mtx);
-> >
-> >         /* We have to call this outside the lock */
-> > -       if (pwake)
-> > +       if (pwake == 2)
-> >                 ep_poll_safewake(&ep->poll_wait);
-> >
-> >         return res;
-> >
-> >
->
->
-> Also, probably better to not have that 'if' in the loop, so how about
-> the following?
+Right, I forgot about the special case explained in 45d8ec4d9fd54 where
+there's unwritted delalloc write beyond range where DIO write happens.
 
-Hmm. I think this is more accurate.
-Thank you.
+> > 	if (offset + count > i_size_read(inode)) {
+> > 		/*
+> > 		 * Add inode to orphan list so that blocks allocated beyond
+> > 		 * EOF get properly truncated in case of crash.
+> > 		 */
+> > 		start transaction handle
+> > 		add inode to orphan list
+> > 		stop transaction handle
+> > 	}
+> > 
+> > And just leave i_disksize at whatever it currently is.
+> 
+> I originally had the code which added the inode to the orphan list here, but
+> then I thought to myself that it'd make more sense to actually do this step
+> closer to the point where we've managed to successfully allocate the required
+> blocks for the write. This prevents the need to spray orphan list clean up
+> code all over the place just to cover the case that a write which had intended
+> to extend the inode beyond i_size had failed prematurely (i.e. before block
+> allocation). So, hence the reason why I thought having it in
+> ext4_iomap_begin() would make more sense, because at that point in the write
+> path, there is enough/or more assurance to make the call around whether we
+> will in fact be able to perform the write which will be extending beyond
+> i_size, or not and consequently whether the inode should be placed onto the
+> orphan list?
+> 
+> Ideally I'd like to turn this statement into:
+> 
+> 	if (offset + count > i_size_read(inode))
+> 	        extend = true;
+> 
+> Maybe I'm missing something here and there's actually a really good reason for
+> doing this nice and early? What are your thoughts about what I've mentioned
+> above?
 
->
->
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index d7f1f50..ed0d8da 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -704,12 +704,21 @@ static __poll_t ep_scan_ready_list(struct
-> eventpoll *ep,
->         res = (*sproc)(ep, &txlist, priv);
->
->         write_lock_irq(&ep->lock);
-> +       nepi = READ_ONCE(ep->ovflist);
-> +       /*
-> +        * We only need to wakeup nested epoll fds if something has been
-> queued
-> +        * to the overflow list, since the ep_poll() traverses the rdllist
-> +        * during recursive poll and thus events on the overflow list
-> may not be
-> +        * visible yet.
-> +        */
-> +       if (nepi != NULL)
-> +               pwake++;
->         /*
->          * During the time we spent inside the "sproc" callback, some
->          * other events might have been queued by the poll callback.
->          * We re-insert them inside the main ready-list here.
->          */
-> -       for (nepi = READ_ONCE(ep->ovflist); (epi = nepi) != NULL;
-> +       for (; (epi = nepi) != NULL;
->              nepi = epi->next, epi->next = EP_UNACTIVE_PTR) {
->                 /*
->                  * We need to check if the item is already in the list.
-> @@ -755,7 +764,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
->                 mutex_unlock(&ep->mtx);
->
->         /* We have to call this outside the lock */
-> -       if (pwake)
-> +       if (pwake == 2)
->                 ep_poll_safewake(&ep->poll_wait);
->
->         return res;
->
+Well, the slight trouble with adding inode to orphan list in
+ext4_iomap_begin() is that then it is somewhat difficult to tell whether
+you need to remove it when IO is done because there's no way how to
+propagate that information from ext4_iomap_begin() and checking against
+i_disksize is unreliable because it can change (due to writeback of
+delalloc pages) while direct IO is running. But I think we can overcome
+that by splitting our end_io functions to two - ext4_dio_write_end_io() and
+ext4_dio_extend_write_end_io(). So:
 
+	WARN_ON_ONCE(i_size_read(inode) < EXT4_I(inode)->i_disksize);
+	/*
+	 * Need to check against i_disksize as there may be dellalloc writes
+	 * pending.
+	 */
+ 	if (offset + count > EXT4_I(inode)->i_disksize)
+		extend = true;
 
+	...
+	iomap_dio_rw(...,
+		extend ? ext4_dio_extend_write_end_io : ext4_dio_write_end_io);
+
+and ext4_dio_write_end_io() will just take care of conversion of unwritten
+extents on successful IO completion, while ext4_dio_extend_write_end_io()
+will take care of all the complex stuff with orphan handling, extension
+of inode size, and truncation of blocks beyond EOF - and it can do that
+because it is guaranteed to run under the protection of i_rwsem held in
+ext4_dio_write_iter().
+
+Alternatively, we could also just pass NULL instead of
+ext4_dio_extend_write_end_io() and just do all the work explicitely in
+ext4_dio_write_iter() in the 'extend' case. That might be actually the most
+transparent option...
+
+But at this point there are so many suggestions in flight that I need to
+see current state of the code again to be able to tell anything useful :).
+
+								Honza
 -- 
-Best regards!
-Hev
-https://hev.cc
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
