@@ -2,234 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62411BBF7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 02:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1BFBC06B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 04:52:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503246AbfIXAwm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Sep 2019 20:52:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49670 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392180AbfIXAwm (ORCPT
+        id S2404531AbfIXCwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Sep 2019 22:52:23 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41660 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728992AbfIXCwX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 20:52:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jh2HpGC5bGaRmxvM2gOqp+wVb3QEYlE1PNWZkFQUHFE=; b=oEYDBQJd0G/4BY0pCNUO+Lv9r
-        SqJaqivdZfguVcMkF6Y2uZ9VZXSqFwWxAS1hwrPFws9ouIBwFs5XWJmHMhgeyw6W/4vZ/ql81m4jh
-        nT+Wk4ZCGSEEbxJ8okLALAofdkVzWZZ+tRRh2oumeDlAPhpYYo8GD0r6X4ouXOWR6iHqDbaP0bGtE
-        L5GfQXZmvOdaB9HbMgRdH18QAKRnVfBVyyqUW/FSrT0L/cN0HN2iJbX8MzV+j3CIFl9EyeT2m6PlN
-        peTnf4da6+6XPCugTap6mPKGe6caLFDpbjnaUxgSlpo6zp4aakMicOtwx41xxvl2ITgiQaFASk5qs
-        dSlYgx8qg==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCZ3R-00047x-0N; Tue, 24 Sep 2019 00:51:45 +0000
-Subject: Re: [PATCH v18 15/19] Documentation: kunit: add documentation for
- KUnit
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
-        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com,
-        torvalds@linux-foundation.org,
-        Felix Guo <felixguoxiuping@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20190923090249.127984-1-brendanhiggins@google.com>
- <20190923090249.127984-16-brendanhiggins@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9cd80aa2-fc8d-1fed-838b-cf4951692b6d@infradead.org>
-Date:   Mon, 23 Sep 2019 17:51:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 23 Sep 2019 22:52:23 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCaw3-000329-O6; Tue, 24 Sep 2019 02:52:15 +0000
+Date:   Tue, 24 Sep 2019 03:52:15 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "zhengbin (A)" <zhengbin13@huawei.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "zhangyi (F)" <yi.zhang@huawei.com>, renxudong1@huawei.com,
+        Hou Tao <houtao1@huawei.com>, linux-btrfs@vger.kernel.org,
+        "Yan, Zheng" <zyan@redhat.com>, linux-cifs@vger.kernel.org,
+        Steve French <sfrench@us.ibm.com>
+Subject: Re: [PATCH] Re: Possible FS race condition between iterate_dir and
+ d_alloc_parallel
+Message-ID: <20190924025215.GA9941@ZenIV.linux.org.uk>
+References: <CAHk-=whpKgNTxjrenAed2sNkegrpCCPkV77_pWKbqo+c7apCOw@mail.gmail.com>
+ <20190914170146.GT1131@ZenIV.linux.org.uk>
+ <CAHk-=wiPv+yo86GpA+Gd_et0KS2Cydk4gSbEj3p4S4tEb1roKw@mail.gmail.com>
+ <20190914200412.GU1131@ZenIV.linux.org.uk>
+ <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
+ <20190915005046.GV1131@ZenIV.linux.org.uk>
+ <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
+ <20190915160236.GW1131@ZenIV.linux.org.uk>
+ <CAHk-=whjNE+_oSBP_o_9mquUKsJn4gomL2f0MM79gxk_SkYLRw@mail.gmail.com>
+ <20190921140731.GQ1131@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20190923090249.127984-16-brendanhiggins@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190921140731.GQ1131@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/23/19 2:02 AM, Brendan Higgins wrote:
+[btrfs and cifs folks Cc'd]
 
-> diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
-> new file mode 100644
-> index 000000000000..c6e69634e274
-> --- /dev/null
-> +++ b/Documentation/dev-tools/kunit/usage.rst
-> @@ -0,0 +1,576 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===========
-> +Using KUnit
-> +===========
-> +
-> +The purpose of this document is to describe what KUnit is, how it works, how it
-> +is intended to be used, and all the concepts and terminology that are needed to
-> +understand it. This guide assumes a working knowledge of the Linux kernel and
-> +some basic knowledge of testing.
-> +
-> +For a high level introduction to KUnit, including setting up KUnit for your
-> +project, see :doc:`start`.
-> +
-> +Organization of this document
-> +=============================
-> +
-> +This document is organized into two main sections: Testing and Isolating
-> +Behavior. The first covers what a unit test is and how to use KUnit to write
+On Sat, Sep 21, 2019 at 03:07:31PM +0100, Al Viro wrote:
 
-                              what unit tests are
-would agree with the following "them."
+> No "take cursors out of the list" parts yet.
 
-> +them. The second covers how to use KUnit to isolate code and make it possible
-> +to unit test code that was otherwise un-unit-testable.
-> +
-> +Testing
-> +=======
-> +
+Argh...  The things turned interesting.  The tricky part is
+where do we handle switching cursors away from something
+that gets moved.
 
-[snip]
+What I hoped for was "just do it in simple_rename()".  Which is
+almost OK; there are 3 problematic cases.  One is shmem -
+there we have a special ->rename(), which handles things
+like RENAME_EXCHANGE et.al.  Fair enough - some of that
+might've been moved into simple_rename(), but some (whiteouts)
+won't be that easy.  Fair enough - we can make kicking the
+cursors outs a helper called by simple_rename() and by that.
+Exchange case is going to cause a bit of headache (the
+pathological case is when the entries being exchanged are
+next to each other in the same directory), but it's not
+that bad.
 
+Two other cases, though, might be serious trouble.  Those are
+btrfs new_simple_dir() and this in cifs_root_iget():
+        if (rc && tcon->pipe) {
+                cifs_dbg(FYI, "ipc connection - fake read inode\n");
+                spin_lock(&inode->i_lock);
+                inode->i_mode |= S_IFDIR;
+                set_nlink(inode, 2);
+                inode->i_op = &cifs_ipc_inode_ops;
+                inode->i_fop = &simple_dir_operations;
+                inode->i_uid = cifs_sb->mnt_uid;
+                inode->i_gid = cifs_sb->mnt_gid;
+                spin_unlock(&inode->i_lock);
+	}
+The trouble is, it looks like d_splice_alias() from a lookup elsewhere
+might find an alias of some subdirectory in those.  And in that case
+we'll end up with a child of those (dcache_readdir-using) directories
+being ripped out and moved elsewhere.  With no calls of ->rename() in
+sight, of course, *AND* with only shared lock on the parent.  The
+last part is really nasty.  And not just for hanging cursors off the
+dentries they point to - it's a problem for dcache_readdir() itself
+even in the mainline and with all the lockless crap reverted.
 
-> +
-> +Test Suites
-> +~~~~~~~~~~~
-> +
-> +Now obviously one unit test isn't very helpful; the power comes from having
-> +many test cases covering all of your behaviors. Consequently it is common to
+We pass next->d_name.name to dir_emit() (i.e. potentially to
+copy_to_user()).  And we have no warranty that it's not a long
+(== separately allocated) name, that will be freed while
+copy_to_user() is in progress.  Sure, it'll get an RCU delay
+before freeing, but that doesn't help us at all.
 
-                   covering all of a unit's behaviors.
-
-> +have many *similar* tests; in order to reduce duplication in these closely
-> +related tests most unit testing frameworks provide the concept of a *test
-> +suite*, in KUnit we call it a *test suite*; all it is is just a collection of
-
-                                             . This is just a collection of
-
-> +test cases for a unit of code with a set up function that gets invoked before
-> +every test cases and then a tear down function that gets invoked after every
-
-   every test case
-
-> +test case completes.
-> +
-> +Example:
-> +
-> +.. code-block:: c
-> +
-> +	static struct kunit_case example_test_cases[] = {
-> +		KUNIT_CASE(example_test_foo),
-> +		KUNIT_CASE(example_test_bar),
-> +		KUNIT_CASE(example_test_baz),
-> +		{}
-> +	};
-> +
-> +	static struct kunit_suite example_test_suite = {
-> +		.name = "example",
-> +		.init = example_test_init,
-> +		.exit = example_test_exit,
-> +		.test_cases = example_test_cases,
-> +	};
-> +	kunit_test_suite(example_test_suite);
-> +
-> +In the above example the test suite, ``example_test_suite``, would run the test
-> +cases ``example_test_foo``, ``example_test_bar``, and ``example_test_baz``,
-> +each would have ``example_test_init`` called immediately before it and would
-> +have ``example_test_exit`` called immediately after it.
-> +``kunit_test_suite(example_test_suite)`` registers the test suite with the
-> +KUnit test framework.
-> +
-> +.. note::
-> +   A test case will only be run if it is associated with a test suite.
-> +
-> +For a more information on these types of things see the :doc:`api/test`.
-
-   For more
-
-> +
-> +Isolating Behavior
-> +==================
-> +
-
-[snip]
-
-> +
-> +.. _kunit-on-non-uml:
-> +
-> +KUnit on non-UML architectures
-> +==============================
-> +
-> +By default KUnit uses UML as a way to provide dependencies for code under test.
-> +Under most circumstances KUnit's usage of UML should be treated as an
-> +implementation detail of how KUnit works under the hood. Nevertheless, there
-> +are instances where being able to run architecture specific code, or test
-
-                           I would drop the comma above.
-
-> +against real hardware is desirable. For these reasons KUnit supports running on
-> +other architectures.
-> +
-> +Running existing KUnit tests on non-UML architectures
-> +-----------------------------------------------------
-> +
-
-[snip]
-
-> +Writing new tests for other architectures
-> +-----------------------------------------
-> +
-> +The first thing you must do is ask yourself whether it is necessary to write a
-> +KUnit test for a specific architecture, and then whether it is necessary to
-> +write that test for a particular piece of hardware. In general, writing a test
-> +that depends on having access to a particular piece of hardware or software (not
-> +included in the Linux source repo) should be avoided at all costs.
-> +
-> +Even if you only ever plan on running your KUnit test on your hardware
-> +configuration, other people may want to run your tests and may not have access
-> +to your hardware. If you write your test to run on UML, then anyone can run your
-> +tests without knowing anything about your particular setup, and you can still
-> +run your tests on your hardware setup just by compiling for your architecture.
-> +
-> +.. important::
-> +   Always prefer tests that run on UML to tests that only run under a particular
-> +   architecture, and always prefer tests that run under QEMU or another easy
-> +   (and monitarily free) to obtain software environment to a specific piece of
-
-           monetarily
-
-> +   hardware.
-> +
-> +Nevertheless, there are still valid reasons to write an architecture or hardware
-> +specific test: for example, you might want to test some code that really belongs
-> +in ``arch/some-arch/*``. Even so, try your best to write the test so that it
-> +does not depend on physical hardware: if some of your test cases don't need the
-> +hardware, only require the hardware for tests that actually need it.
-> +
-> +Now that you have narrowed down exactly what bits are hardware specific, the
-> +actual procedure for writing and running the tests is pretty much the same as
-> +writing normal KUnit tests. One special caveat is that you have to reset
-> +hardware state in between test cases; if this is not possible, you may only be
-> +able to run one test case per invocation.
-> +
-> +.. TODO(brendanhiggins@google.com): Add an actual example of an architecture
-> +   dependent KUnit test.
-
-
--- 
-~Randy
+I'm not familiar with those areas in btrfs or cifs; could somebody
+explain what's going on there and can we indeed end up finding aliases
+to those suckers?
