@@ -2,246 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57DE8BBE72
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 00:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62411BBF7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 02:52:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503278AbfIWW0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Sep 2019 18:26:30 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:39888 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2503270AbfIWW0a (ORCPT
+        id S2503246AbfIXAwm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Sep 2019 20:52:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49670 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392180AbfIXAwm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 18:26:30 -0400
-Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 5E45736296B;
-        Tue, 24 Sep 2019 08:26:21 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iCWmi-0005IP-CL; Tue, 24 Sep 2019 08:26:20 +1000
-Date:   Tue, 24 Sep 2019 08:26:20 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-mm@kvack.org, Jeff Layton <jlayton@kernel.org>,
-        Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: Lease semantic proposal
-Message-ID: <20190923222620.GC16973@dread.disaster.area>
-References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
+        Mon, 23 Sep 2019 20:52:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jh2HpGC5bGaRmxvM2gOqp+wVb3QEYlE1PNWZkFQUHFE=; b=oEYDBQJd0G/4BY0pCNUO+Lv9r
+        SqJaqivdZfguVcMkF6Y2uZ9VZXSqFwWxAS1hwrPFws9ouIBwFs5XWJmHMhgeyw6W/4vZ/ql81m4jh
+        nT+Wk4ZCGSEEbxJ8okLALAofdkVzWZZ+tRRh2oumeDlAPhpYYo8GD0r6X4ouXOWR6iHqDbaP0bGtE
+        L5GfQXZmvOdaB9HbMgRdH18QAKRnVfBVyyqUW/FSrT0L/cN0HN2iJbX8MzV+j3CIFl9EyeT2m6PlN
+        peTnf4da6+6XPCugTap6mPKGe6caLFDpbjnaUxgSlpo6zp4aakMicOtwx41xxvl2ITgiQaFASk5qs
+        dSlYgx8qg==;
+Received: from [2601:1c0:6280:3f0::9a1f]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCZ3R-00047x-0N; Tue, 24 Sep 2019 00:51:45 +0000
+Subject: Re: [PATCH v18 15/19] Documentation: kunit: add documentation for
+ KUnit
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
+        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
+        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com,
+        torvalds@linux-foundation.org,
+        Felix Guo <felixguoxiuping@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <20190923090249.127984-1-brendanhiggins@google.com>
+ <20190923090249.127984-16-brendanhiggins@google.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9cd80aa2-fc8d-1fed-838b-cf4951692b6d@infradead.org>
+Date:   Mon, 23 Sep 2019 17:51:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
-        a=D19gQVrFAAAA:8 a=OLL_FvSJAAAA:8 a=gQGbs8_HAAAA:8 a=7-415B0cAAAA:8
-        a=cV8XMCNRulwGmHMGVcAA:9 a=CjuIK1q_8ugA:10 a=Z1lksQSvXmgA:10
-        a=oDE_HKQWQKsA:10 a=W4TVW4IDbPiebHqcZpNg:22 a=oIrB72frpwYPwTMnlWqB:22
-        a=1pMqk7AwgTXjlBDkgM7h:22 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20190923090249.127984-16-brendanhiggins@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 12:08:53PM -0700, Ira Weiny wrote:
-> 
-> Since the last RFC patch set[1] much of the discussion of supporting RDMA with
-> FS DAX has been around the semantics of the lease mechanism.[2]  Within that
-> thread it was suggested I try and write some documentation and/or tests for the
-> new mechanism being proposed.  I have created a foundation to test lease
-> functionality within xfstests.[3] This should be close to being accepted.
-> Before writing additional lease tests, or changing lots of kernel code, this
-> email presents documentation for the new proposed "layout lease" semantic.
-> 
-> At Linux Plumbers[4] just over a week ago, I presented the current state of the
-> patch set and the outstanding issues.  Based on the discussion there, well as
-> follow up emails, I propose the following addition to the fcntl() man page.
-> 
-> Thank you,
-> Ira
-> 
-> [1] https://lkml.org/lkml/2019/8/9/1043
-> [2] https://lkml.org/lkml/2019/8/9/1062
-> [3] https://www.spinics.net/lists/fstests/msg12620.html
-> [4] https://linuxplumbersconf.org/event/4/contributions/368/
-> 
-> 
-> <fcntl man page addition>
-> Layout Leases
-> -------------
-> 
-> Layout (F_LAYOUT) leases are special leases which can be used to control and/or
-> be informed about the manipulation of the underlying layout of a file.
-> 
-> A layout is defined as the logical file block -> physical file block mapping
-> including the file size and sharing of physical blocks among files.  Note that
-> the unwritten state of a block is not considered part of file layout.
+On 9/23/19 2:02 AM, Brendan Higgins wrote:
 
-Why even mention "unwritten" state if it's not considered something
-that the layout lease treats differently?
+> diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
+> new file mode 100644
+> index 000000000000..c6e69634e274
+> --- /dev/null
+> +++ b/Documentation/dev-tools/kunit/usage.rst
+> @@ -0,0 +1,576 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +===========
+> +Using KUnit
+> +===========
+> +
+> +The purpose of this document is to describe what KUnit is, how it works, how it
+> +is intended to be used, and all the concepts and terminology that are needed to
+> +understand it. This guide assumes a working knowledge of the Linux kernel and
+> +some basic knowledge of testing.
+> +
+> +For a high level introduction to KUnit, including setting up KUnit for your
+> +project, see :doc:`start`.
+> +
+> +Organization of this document
+> +=============================
+> +
+> +This document is organized into two main sections: Testing and Isolating
+> +Behavior. The first covers what a unit test is and how to use KUnit to write
 
-i.e. Unwritten extents are a filesystem implementation detail that
-is not exposed to userspace by anything other than FIEMAP. If they
-have no impact on layout lease behaviour, then why raise it as
-something the user needs to know about?
+                              what unit tests are
+would agree with the following "them."
 
-> **Read layout lease F_RDLCK | F_LAYOUT**
-> 
-> Read layout leases can be used to be informed of layout changes by the
-> system or other users.  This lease is similar to the standard read (F_RDLCK)
-> lease in that any attempt to change the _layout_ of the file will be reported to
-> the process through the lease break process. 
+> +them. The second covers how to use KUnit to isolate code and make it possible
+> +to unit test code that was otherwise un-unit-testable.
+> +
+> +Testing
+> +=======
+> +
 
-Similar in what way? The standard F_RDLCK lease triggers on open or
-truncate - a layout lease does nothing of the sort.
+[snip]
 
-> But this lease is different
-> because the file can be opened for write and data can be read and/or written to
-> the file as long as the underlying layout of the file does not change.
 
-So a F_RDLCK|F_LAYOUT can be taken on a O_WRONLY fd, unlike a
-F_RDLCK which can only be taken on O_RDONLY fd.
+> +
+> +Test Suites
+> +~~~~~~~~~~~
+> +
+> +Now obviously one unit test isn't very helpful; the power comes from having
+> +many test cases covering all of your behaviors. Consequently it is common to
 
-I think these semantics are sufficiently different to F_RDLCK they
-need to be explicitly documented, because I see problems here.
+                   covering all of a unit's behaviors.
 
-> Therefore, the lease is not broken if the file is simply open for write, but
-> _may_ be broken if an operation such as, truncate(), fallocate() or write()
-> results in changing the underlying layout.
+> +have many *similar* tests; in order to reduce duplication in these closely
+> +related tests most unit testing frameworks provide the concept of a *test
+> +suite*, in KUnit we call it a *test suite*; all it is is just a collection of
 
-As will mmap(), any number of XFS and ext4 ioctls, etc. 
+                                             . This is just a collection of
 
-So this really needs to say "_will_ be broken if *any* modification to
-the file _might_ need to change the underlying physical layout".
+> +test cases for a unit of code with a set up function that gets invoked before
+> +every test cases and then a tear down function that gets invoked after every
 
-Now, the big question: what happens to a process with a
-F_RDLCK|F_LAYOUT lease held does a write that triggers a layout
-change? What happens then?
+   every test case
 
-Also, have you noticed that XFS will unconditionally break layouts on
-write() because it /might/ need to change the layout? i.e. the
-BREAK_WRITE case in xfs_file_aio_write_checks()? This is needed for
-correctly supporting pNFS layout coherency against local IO. i.e.
-local write() breaks layouts held by NFS server to get the
-delegation recalled.
+> +test case completes.
+> +
+> +Example:
+> +
+> +.. code-block:: c
+> +
+> +	static struct kunit_case example_test_cases[] = {
+> +		KUNIT_CASE(example_test_foo),
+> +		KUNIT_CASE(example_test_bar),
+> +		KUNIT_CASE(example_test_baz),
+> +		{}
+> +	};
+> +
+> +	static struct kunit_suite example_test_suite = {
+> +		.name = "example",
+> +		.init = example_test_init,
+> +		.exit = example_test_exit,
+> +		.test_cases = example_test_cases,
+> +	};
+> +	kunit_test_suite(example_test_suite);
+> +
+> +In the above example the test suite, ``example_test_suite``, would run the test
+> +cases ``example_test_foo``, ``example_test_bar``, and ``example_test_baz``,
+> +each would have ``example_test_init`` called immediately before it and would
+> +have ``example_test_exit`` called immediately after it.
+> +``kunit_test_suite(example_test_suite)`` registers the test suite with the
+> +KUnit test framework.
+> +
+> +.. note::
+> +   A test case will only be run if it is associated with a test suite.
+> +
+> +For a more information on these types of things see the :doc:`api/test`.
 
-So by the above definition of F_RDLCK|F_LAYOUT behaviour, a holder
-of such a lease doing a write() to that file would trigger a lease
-break of their own lease as the filesystem has notified the lease
-layer that there is a layout change about to happen. What's expected
-to happen here?
+   For more
 
-Hence, AFIACT, the above definition of a F_RDLCK|F_LAYOUT lease
-doesn't appear to be compatible with the semantics required by
-existing users of layout leases.
+> +
+> +Isolating Behavior
+> +==================
+> +
 
-> **Write layout lease (F_WRLCK | F_LAYOUT)**
-> 
-> Write Layout leases can be used to break read layout leases to indicate that
-> the process intends to change the underlying layout lease of the file.
+[snip]
 
-Any write() can change the layout of the file, and userspace cannot
-tell in advance whether that will occur (neither can the
-filesystem), so it seems to me that any application that needs to
-write data is going to have to use F_WRLCK|F_LAYOUT.
+> +
+> +.. _kunit-on-non-uml:
+> +
+> +KUnit on non-UML architectures
+> +==============================
+> +
+> +By default KUnit uses UML as a way to provide dependencies for code under test.
+> +Under most circumstances KUnit's usage of UML should be treated as an
+> +implementation detail of how KUnit works under the hood. Nevertheless, there
+> +are instances where being able to run architecture specific code, or test
 
-> A process which has taken a write layout lease has exclusive ownership of the
-> file layout and can modify that layout as long as the lease is held.
+                           I would drop the comma above.
 
-Which further implies single writer semantics and leases are
-associated with a single open fd. Single writers are something we
-are always trying to avoid in XFS.
+> +against real hardware is desirable. For these reasons KUnit supports running on
+> +other architectures.
+> +
+> +Running existing KUnit tests on non-UML architectures
+> +-----------------------------------------------------
+> +
 
-> Operations which change the layout are allowed by that process.  But operations
-> from other file descriptors which attempt to change the layout will break the
-> lease through the standard lease break process.
+[snip]
 
-If the F_WRLCK|F_LAYOUT lease is exclusive, who is actually able to
-modify the layout?  Are you talking about processes that don't
-actually hold leases modifying the layout? i.e. what are the
-constraints on "exclusive access" here - is F_WRLCK|F_LAYOUT is
-only exclusive when every modification is co-operating and taking
-the appropriate layout lease for every access to the file that is
-made?
+> +Writing new tests for other architectures
+> +-----------------------------------------
+> +
+> +The first thing you must do is ask yourself whether it is necessary to write a
+> +KUnit test for a specific architecture, and then whether it is necessary to
+> +write that test for a particular piece of hardware. In general, writing a test
+> +that depends on having access to a particular piece of hardware or software (not
+> +included in the Linux source repo) should be avoided at all costs.
+> +
+> +Even if you only ever plan on running your KUnit test on your hardware
+> +configuration, other people may want to run your tests and may not have access
+> +to your hardware. If you write your test to run on UML, then anyone can run your
+> +tests without knowing anything about your particular setup, and you can still
+> +run your tests on your hardware setup just by compiling for your architecture.
+> +
+> +.. important::
+> +   Always prefer tests that run on UML to tests that only run under a particular
+> +   architecture, and always prefer tests that run under QEMU or another easy
+> +   (and monitarily free) to obtain software environment to a specific piece of
 
-If that's the case, what happens when someone fails to get a read
-lock and decides "I can break write locks just by using ftruncate()
-to the same size without a layout lease". Or fallocate() to
-preallocate space that is already allocated. Or many other things I
-can think of.
+           monetarily
 
-IOWs, this seems to me like a very fragile sort of construct that is
-open to abuse and that will lead to everyone using F_UNBREAK, which
-is highly unfriendly to everyone else...
+> +   hardware.
+> +
+> +Nevertheless, there are still valid reasons to write an architecture or hardware
+> +specific test: for example, you might want to test some code that really belongs
+> +in ``arch/some-arch/*``. Even so, try your best to write the test so that it
+> +does not depend on physical hardware: if some of your test cases don't need the
+> +hardware, only require the hardware for tests that actually need it.
+> +
+> +Now that you have narrowed down exactly what bits are hardware specific, the
+> +actual procedure for writing and running the tests is pretty much the same as
+> +writing normal KUnit tests. One special caveat is that you have to reset
+> +hardware state in between test cases; if this is not possible, you may only be
+> +able to run one test case per invocation.
+> +
+> +.. TODO(brendanhiggins@google.com): Add an actual example of an architecture
+> +   dependent KUnit test.
 
-> The F_LAYOUT flag is used to
-> indicate a difference between a regular F_WRLCK and F_WRLCK with F_LAYOUT.  In
-> the F_LAYOUT case opens for write do not break the lease.  But some operations,
-> if they change the underlying layout, may.
-> 
-> The distinction between read layout leases and write layout leases is that
-> write layout leases can change the layout without breaking the lease within the
-> owning process.  This is useful to guarantee a layout prior to specifying the
-> unbreakable flag described below.
 
-Ok, so now you really are saying that F_RDLCK leases can only be
-used on O_RDONLY file descriptors because any modification under a
-F_RDLCK|LAYOUT will trigger a layout break.
-
-> **Unbreakable Layout Leases (F_UNBREAK)**
-> 
-> In order to support pinning of file pages by direct user space users an
-> unbreakable flag (F_UNBREAK) can be used to modify the read and write layout
-> lease.  When specified, F_UNBREAK indicates that any user attempting to break
-> the lease will fail with ETXTBUSY rather than follow the normal breaking
-> procedure.
-> 
-> Both read and write layout leases can have the unbreakable flag (F_UNBREAK)
-> specified.  The difference between an unbreakable read layout lease and an
-> unbreakable write layout lease are that an unbreakable read layout lease is
-> _not_ exclusive. 
-
-Oh, this doesn't work at all. Now we get write()s to F_RDLCK leases
-that can't break the leases and so all writes, even to processes
-that own RDLCK|UNBREAK, will fail with ETXTBSY.
-
-> This means that once a layout is established on a file,
-> multiple unbreakable read layout leases can be taken by multiple processes and
-> used to pin the underlying pages of that file.
-
-Ok, so what happens when someone now takes a
-F_WRLOCK|F_LAYOUT|F_UNBREAK? Is that supposed to break
-F_RDLCK|F_LAYOUT|F_UNBREAK, as the wording about F_WRLCK behaviour
-implies it should?
-
-> Care must therefore be taken to ensure that the layout of the file is as the
-> user wants prior to using the unbreakable read layout lease.  A safe mechanism
-> to do this would be to take a write layout lease and use fallocate() to set the
-> layout of the file.  The layout lease can then be "downgraded" to unbreakable
-> read layout as long as no other user broke the write layout lease.
-
-What are the semantics of this "downgrade" behaviour you speak of? :)
-
-My thoughts are:
-	- RDLCK can only be used for O_RDONLY because write()
-	  requires breaking of leases
-	- WRLCK is open to abuse simply by not using a layout lease
-	  to do a "no change" layout modification
-	- RDLCK|F_UNBREAK is entirely unusable
-	- WRLCK|F_UNBREAK will be what every application uses
-	  because everything else either doesn't work or is too easy
-	  to abuse.
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+~Randy
