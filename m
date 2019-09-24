@@ -2,33 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1B53BD37A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 22:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 608C4BD3AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 22:38:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404598AbfIXUWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Sep 2019 16:22:37 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39027 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392177AbfIXUWh (ORCPT
+        id S2441981AbfIXUib (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Sep 2019 16:38:31 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46261 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2441977AbfIXUia (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Sep 2019 16:22:37 -0400
-Received: from lmontsouris-656-1-55-152.w80-15.abo.wanadoo.fr ([80.15.152.152] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iCrKQ-0001E2-Pq; Tue, 24 Sep 2019 20:22:31 +0000
-Date:   Tue, 24 Sep 2019 22:22:29 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
+        Tue, 24 Sep 2019 16:38:30 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q5so2009553pfg.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2019 13:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XXpB+n/Qq9mbpz8JXknmFvdDRIH2ZnerYAdSnNglnD8=;
+        b=Gd5fC4ze5JKmHWdFj3mKAMzd1akYwuSIF1UCnUdjRSganaQLFo1YVQf71WGQojfnTS
+         FCtix9g9Xcit4JYPaddfFeeTSBEeZqAx4ZMNthWgfDjM6bi9TclET/34PwAV95PtuSV6
+         0OAHi/xAMztLd/HSi5RhwrwwbmBfbpLrMD4XLhRIHrA6lZypfdw2wrp7Q8eOmoXDC+ME
+         il9DsTt5y3gu8lqarWuxrtEv4fAcPkqCP5IkAcbhio/mzUAkcnhLSAdwYooW4IMvpwuE
+         unu16lT0Mgm/hqEVNXhtvLT2H4SEMK/JZBpZRu5fzwlyXffojnts7md67sPN7UgdIe5v
+         wrSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XXpB+n/Qq9mbpz8JXknmFvdDRIH2ZnerYAdSnNglnD8=;
+        b=i6gWP4ZrWm+aN294ytkcHTgqqL0q3/KIawc36I3TCxd/n6A90isTcC3N9CR9kP8+UL
+         /nB8coVSG6DadpV2rwLuyqjooCC1t8a8VYlSyqk0U1FNkiQRbmrW8mCnuE2da485nDe4
+         a/Jw4hOe2yNqwFerj0sYpCpEda7GCqYe1vtSpR7OLnvskwW5aPuoyLAJzCh5YpyH2Ik9
+         xpOdyVbln0fjbL4RTY/maeSKLPrOHrUglXi+/gBOg1eecMqHn8Wag4tBWk2in7OgGWKi
+         KrhPSEnYomvLJTFPMBOUaQAkGitb+dwcNHyi7bNUxBsbF5Ows2eE/7hY/jJ8X+9FCeTm
+         X03g==
+X-Gm-Message-State: APjAAAX4lBBtI06sPAjtwgS21oKeKLckrYj0oHxaFZwfcRHugENPmRT/
+        Xe39nivFDGGDApCCd5BUHo2TAA==
+X-Google-Smtp-Source: APXvYqzCH5xnEzpQvW+6HYgcR0Hnm409iWIA7nsnBfvYyPFk3aNTXpcTCq9Nh30S0XuXtOFujIrV1w==
+X-Received: by 2002:a65:530c:: with SMTP id m12mr4977050pgq.309.1569357509244;
+        Tue, 24 Sep 2019 13:38:29 -0700 (PDT)
+Received: from vader ([2620:10d:c090:200::3:f972])
+        by smtp.gmail.com with ESMTPSA id 22sm3106844pfj.139.2019.09.24.13.38.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2019 13:38:28 -0700 (PDT)
+Date:   Tue, 24 Sep 2019 13:38:27 -0700
+From:   Omar Sandoval <osandov@osandov.com>
 To:     Jann Horn <jannh@google.com>
-Cc:     Omar Sandoval <osandov@osandov.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jens Axboe <axboe@kernel.dk>,
+Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-btrfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
         Linux API <linux-api@vger.kernel.org>,
         Kernel Team <kernel-team@fb.com>,
         Andy Lutomirski <luto@kernel.org>
 Subject: Re: [RFC PATCH 2/3] fs: add RWF_ENCODED for writing compressed data
-Message-ID: <20190924202229.mjvjigpnrskjtk5n@wittgenstein>
+Message-ID: <20190924203827.GA46556@vader>
 References: <cover.1568875700.git.osandov@fb.com>
  <230a76e65372a8fb3ec62ce167d9322e5e342810.1568875700.git.osandov@fb.com>
  <CAG48ez2GKv15Uj6Wzv0sG5v2bXyrSaCtRTw5Ok_ovja_CiO_fQ@mail.gmail.com>
@@ -36,10 +63,10 @@ References: <cover.1568875700.git.osandov@fb.com>
  <20190924193513.GA45540@vader>
  <CAG48ez1NQBNR1XeVQYGoopEk=g_KedUr+7jxLQTaO+V8JCeweQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <CAG48ez1NQBNR1XeVQYGoopEk=g_KedUr+7jxLQTaO+V8JCeweQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -112,11 +139,17 @@ On Tue, Sep 24, 2019 at 10:01:41PM +0200, Jann Horn wrote:
 > the service on execve(), that doesn't mean that the service should be
 > able to perform compressed writes into that file, I think.
 
-I think we should even generalize this: for most new properties a given
-file descriptor can carry we would want it to be explicitly enabled such
-that passing the fd around amounts to passing that property around. At
-least as soon as we consider it to be associated with some privilege
-boundary. I don't think we have done this generally. But I would very
-much support moving to such a model.
+Ahh, you're right.
 
-Christian
+> I think that an open flag (as you already suggested) or an fcntl()
+> operation would do the job; but AFAIK the open() flag space has run
+> out, so if you hook it up that way, I think you might have to wait for
+> Aleksa Sarai to get something like his sys_openat2() suggestion
+> (https://lore.kernel.org/lkml/20190904201933.10736-12-cyphar@cyphar.com/)
+> merged?
+
+If I counted correctly, there's still space for a new O_ flag. One of
+the problems that Aleksa is solving is that unknown O_ flags are
+silently ignored, which isn't an issue for an O_ENCODED flag. If the
+kernel doesn't support it, it won't support RWF_ENCODED, either, so
+you'll get EOPNOTSUPP from pwritev2(). So, open flag it is...
