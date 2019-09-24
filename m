@@ -2,101 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE1BFBC06B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 04:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D440EBC2CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Sep 2019 09:39:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404531AbfIXCwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Sep 2019 22:52:23 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41660 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728992AbfIXCwX (ORCPT
+        id S2440590AbfIXHjv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Sep 2019 03:39:51 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41414 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2438384AbfIXHjv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Sep 2019 22:52:23 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCaw3-000329-O6; Tue, 24 Sep 2019 02:52:15 +0000
-Date:   Tue, 24 Sep 2019 03:52:15 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "zhengbin (A)" <zhengbin13@huawei.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, renxudong1@huawei.com,
-        Hou Tao <houtao1@huawei.com>, linux-btrfs@vger.kernel.org,
-        "Yan, Zheng" <zyan@redhat.com>, linux-cifs@vger.kernel.org,
-        Steve French <sfrench@us.ibm.com>
-Subject: Re: [PATCH] Re: Possible FS race condition between iterate_dir and
- d_alloc_parallel
-Message-ID: <20190924025215.GA9941@ZenIV.linux.org.uk>
-References: <CAHk-=whpKgNTxjrenAed2sNkegrpCCPkV77_pWKbqo+c7apCOw@mail.gmail.com>
- <20190914170146.GT1131@ZenIV.linux.org.uk>
- <CAHk-=wiPv+yo86GpA+Gd_et0KS2Cydk4gSbEj3p4S4tEb1roKw@mail.gmail.com>
- <20190914200412.GU1131@ZenIV.linux.org.uk>
- <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
- <20190915005046.GV1131@ZenIV.linux.org.uk>
- <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
- <20190915160236.GW1131@ZenIV.linux.org.uk>
- <CAHk-=whjNE+_oSBP_o_9mquUKsJn4gomL2f0MM79gxk_SkYLRw@mail.gmail.com>
- <20190921140731.GQ1131@ZenIV.linux.org.uk>
+        Tue, 24 Sep 2019 03:39:51 -0400
+Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A37D343D63A;
+        Tue, 24 Sep 2019 17:39:41 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iCfQC-0000C1-Fo; Tue, 24 Sep 2019 17:39:40 +1000
+Date:   Tue, 24 Sep 2019 17:39:40 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] mm: implement write-behind policy for sequential file
+ writes
+Message-ID: <20190924073940.GM6636@dread.disaster.area>
+References: <156896493723.4334.13340481207144634918.stgit@buzz>
+ <875f3b55-4fe1-e2c3-5bee-ca79e4668e72@yandex-team.ru>
+ <20190923145242.GF2233839@devbig004.ftw2.facebook.com>
+ <ed5d930c-88c6-c8e4-4a6c-529701caa993@yandex-team.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190921140731.GQ1131@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <ed5d930c-88c6-c8e4-4a6c-529701caa993@yandex-team.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
+        a=7-415B0cAAAA:8 a=wSS0DcxVZBN270Py4OYA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[btrfs and cifs folks Cc'd]
+On Mon, Sep 23, 2019 at 06:06:46PM +0300, Konstantin Khlebnikov wrote:
+> On 23/09/2019 17.52, Tejun Heo wrote:
+> > Hello, Konstantin.
+> > 
+> > On Fri, Sep 20, 2019 at 10:39:33AM +0300, Konstantin Khlebnikov wrote:
+> > > With vm.dirty_write_behind 1 or 2 files are written even faster and
+> > 
+> > Is the faster speed reproducible?  I don't quite understand why this
+> > would be.
+> 
+> Writing to disk simply starts earlier.
 
-On Sat, Sep 21, 2019 at 03:07:31PM +0100, Al Viro wrote:
+Stupid question: how is this any different to simply winding down
+our dirty writeback and throttling thresholds like so:
 
-> No "take cursors out of the list" parts yet.
+# echo $((100 * 1000 * 1000)) > /proc/sys/vm/dirty_background_bytes
 
-Argh...  The things turned interesting.  The tricky part is
-where do we handle switching cursors away from something
-that gets moved.
+to start background writeback when there's 100MB of dirty pages in
+memory, and then:
 
-What I hoped for was "just do it in simple_rename()".  Which is
-almost OK; there are 3 problematic cases.  One is shmem -
-there we have a special ->rename(), which handles things
-like RENAME_EXCHANGE et.al.  Fair enough - some of that
-might've been moved into simple_rename(), but some (whiteouts)
-won't be that easy.  Fair enough - we can make kicking the
-cursors outs a helper called by simple_rename() and by that.
-Exchange case is going to cause a bit of headache (the
-pathological case is when the entries being exchanged are
-next to each other in the same directory), but it's not
-that bad.
+# echo $((200 * 1000 * 1000)) > /proc/sys/vm/dirty_bytes
 
-Two other cases, though, might be serious trouble.  Those are
-btrfs new_simple_dir() and this in cifs_root_iget():
-        if (rc && tcon->pipe) {
-                cifs_dbg(FYI, "ipc connection - fake read inode\n");
-                spin_lock(&inode->i_lock);
-                inode->i_mode |= S_IFDIR;
-                set_nlink(inode, 2);
-                inode->i_op = &cifs_ipc_inode_ops;
-                inode->i_fop = &simple_dir_operations;
-                inode->i_uid = cifs_sb->mnt_uid;
-                inode->i_gid = cifs_sb->mnt_gid;
-                spin_unlock(&inode->i_lock);
-	}
-The trouble is, it looks like d_splice_alias() from a lookup elsewhere
-might find an alias of some subdirectory in those.  And in that case
-we'll end up with a child of those (dcache_readdir-using) directories
-being ripped out and moved elsewhere.  With no calls of ->rename() in
-sight, of course, *AND* with only shared lock on the parent.  The
-last part is really nasty.  And not just for hanging cursors off the
-dentries they point to - it's a problem for dcache_readdir() itself
-even in the mainline and with all the lockless crap reverted.
+So that writers are directly throttled at 200MB of dirty pages in
+memory?
 
-We pass next->d_name.name to dir_emit() (i.e. potentially to
-copy_to_user()).  And we have no warranty that it's not a long
-(== separately allocated) name, that will be freed while
-copy_to_user() is in progress.  Sure, it'll get an RCU delay
-before freeing, but that doesn't help us at all.
+This effectively gives us global writebehind behaviour with a
+100-200MB cache write burst for initial writes.
 
-I'm not familiar with those areas in btrfs or cifs; could somebody
-explain what's going on there and can we indeed end up finding aliases
-to those suckers?
+ANd, really such strict writebehind behaviour is going to cause all
+sorts of unintended problesm with filesystems because there will be
+adverse interactions with delayed allocation. We need a substantial
+amount of dirty data to be cached for writeback for fragmentation
+minimisation algorithms to be able to do their job....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
