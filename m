@@ -2,144 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E002ABD975
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 10:00:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F129BBD9A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 10:15:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442682AbfIYIAl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 04:00:41 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:57379 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2442663AbfIYIAl (ORCPT
+        id S2437609AbfIYIPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 04:15:35 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:54580 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2437303AbfIYIPf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:00:41 -0400
-Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 7FE0E43E145;
-        Wed, 25 Sep 2019 18:00:36 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iD2Dy-0000zC-Ou; Wed, 25 Sep 2019 18:00:34 +1000
-Date:   Wed, 25 Sep 2019 18:00:34 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>
+        Wed, 25 Sep 2019 04:15:35 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id B38152E14FF;
+        Wed, 25 Sep 2019 11:15:31 +0300 (MSK)
+Received: from myt4-4db2488e778a.qloud-c.yandex.net (myt4-4db2488e778a.qloud-c.yandex.net [2a02:6b8:c00:884:0:640:4db2:488e])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id PLUDrWnc5m-FU2CcNFu;
+        Wed, 25 Sep 2019 11:15:31 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1569399331; bh=HF6YUnXbxku3Mhtk3A5NH7rcf030Ym9OwhuMB5F9CyI=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=y/ntVFSQHlcgQ8zEapV79qFKiGZ+Jy6AHoiw9NXCPRGwQHb9EzewdMzr1WYCCkICD
+         HZpjFFFbNUDZeJ/gWjf3UZk35n4F+xSYtJFiWnvFdD3qDwL0a8UZdp62LTskjVAAp8
+         ZlFX7DlZJz9fH8S5PRLvDE0B86JRY4hDZNUmCFSY=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:3d4d:a9cb:ef29:4bb1])
+        by myt4-4db2488e778a.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id rDiuIcqJka-FUIKcAUR;
+        Wed, 25 Sep 2019 11:15:30 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
 Subject: Re: [PATCH v2] mm: implement write-behind policy for sequential file
  writes
-Message-ID: <20190925080034.GD804@dread.disaster.area>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 References: <156896493723.4334.13340481207144634918.stgit@buzz>
  <875f3b55-4fe1-e2c3-5bee-ca79e4668e72@yandex-team.ru>
  <20190923145242.GF2233839@devbig004.ftw2.facebook.com>
  <ed5d930c-88c6-c8e4-4a6c-529701caa993@yandex-team.ru>
  <20190924073940.GM6636@dread.disaster.area>
- <CAHk-=whf2BQ8xqVBF8YuxRznByrP-oTgcHSY9DgDnrFTxpsrVA@mail.gmail.com>
+ <edafed8a-5269-1e54-fe31-7ba87393eb34@yandex-team.ru>
+ <20190925071854.GC804@dread.disaster.area>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <aeede806-db6b-3e94-3fed-60af5481e0d3@yandex-team.ru>
+Date:   Wed, 25 Sep 2019 11:15:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whf2BQ8xqVBF8YuxRznByrP-oTgcHSY9DgDnrFTxpsrVA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
-        a=7-415B0cAAAA:8 a=714uhUuBiEYtG38rzikA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20190925071854.GC804@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 12:08:04PM -0700, Linus Torvalds wrote:
-> On Tue, Sep 24, 2019 at 12:39 AM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > Stupid question: how is this any different to simply winding down
-> > our dirty writeback and throttling thresholds like so:
-> >
-> > # echo $((100 * 1000 * 1000)) > /proc/sys/vm/dirty_background_bytes
+On 25/09/2019 10.18, Dave Chinner wrote:
+> On Tue, Sep 24, 2019 at 12:00:17PM +0300, Konstantin Khlebnikov wrote:
+>> On 24/09/2019 10.39, Dave Chinner wrote:
+>>> On Mon, Sep 23, 2019 at 06:06:46PM +0300, Konstantin Khlebnikov wrote:
+>>>> On 23/09/2019 17.52, Tejun Heo wrote:
+>>>>> Hello, Konstantin.
+>>>>>
+>>>>> On Fri, Sep 20, 2019 at 10:39:33AM +0300, Konstantin Khlebnikov wrote:
+>>>>>> With vm.dirty_write_behind 1 or 2 files are written even faster and
+>>>>>
+>>>>> Is the faster speed reproducible?  I don't quite understand why this
+>>>>> would be.
+>>>>
+>>>> Writing to disk simply starts earlier.
+>>>
+>>> Stupid question: how is this any different to simply winding down
+>>> our dirty writeback and throttling thresholds like so:
+>>>
+>>> # echo $((100 * 1000 * 1000)) > /proc/sys/vm/dirty_background_bytes
+>>>
+>>> to start background writeback when there's 100MB of dirty pages in
+>>> memory, and then:
+>>>
+>>> # echo $((200 * 1000 * 1000)) > /proc/sys/vm/dirty_bytes
+>>>
+>>> So that writers are directly throttled at 200MB of dirty pages in
+>>> memory?
+>>>
+>>> This effectively gives us global writebehind behaviour with a
+>>> 100-200MB cache write burst for initial writes.
+>>
+>> Global limits affect all dirty pages including memory-mapped and
+>> randomly touched. Write-behind aims only into sequential streams.
 > 
-> Our dirty_background stuff is very questionable, but it exists (and
-> has those insane defaults) because of various legacy reasons.
+> There are  apps that do sequential writes via mmap()d files.
+> They should do writebehind too, yes?
 
-That's not what I was asking about.  The context is in the previous
-lines you didn't quote:
+I see no reason for that. This is different scenario.
 
-> > > > Is the faster speed reproducible?  I don't quite understand why this
-> > > > would be.
-> > >
-> > > Writing to disk simply starts earlier.
-> >
-> > Stupid question: how is this any different to simply winding down
-> > our dirty writeback and throttling thresholds like so:
+Mmap have no clear signal about "end of write", only page fault at
+beginning. Theoretically we could implement similar sliding window and
+start writeback on consequent page faults.
 
-i.e. I'm asking about the reasons for the performance differential
-not asking for an explanation of what writebehind is. If the
-performance differential really is caused by writeback starting
-sooner, then winding down dirty_background_bytes should produce
-exactly the same performance because it will start writeback -much
-faster-.
+But applications who use memory mapped files probably knows better what
+to do with this data. I prefer to leave them alone for now.
 
-If it doesn't, then the assertion that the difference is caused by
-earlier writeout is questionable and the code may not actually be
-doing what is claimed....
-
-Basically, I'm asking for proof that the explanation is correct.
-
-> > to start background writeback when there's 100MB of dirty pages in
-> > memory, and then:
-> >
-> > # echo $((200 * 1000 * 1000)) > /proc/sys/vm/dirty_bytes
 > 
-> The thing is, that also accounts for dirty shared mmap pages. And it
-> really will kill some benchmarks that people take very very seriously.
+>>> ANd, really such strict writebehind behaviour is going to cause all
+>>> sorts of unintended problesm with filesystems because there will be
+>>> adverse interactions with delayed allocation. We need a substantial
+>>> amount of dirty data to be cached for writeback for fragmentation
+>>> minimisation algorithms to be able to do their job....
+>>
+>> I think most sequentially written files never change after close.
+> 
+> There are lots of apps that write zeros to initialise and allocate
+> space, then go write real data to them. Database WAL files are
+> commonly initialised like this...
 
-Yes, I know that. I'm not suggesting that we do this,
+Those zeros are just bunch of dirty pages which have to be written.
+Sync and memory pressure will do that, why write-behind don't have to?
 
-[snip]
+> 
+>> Except of knowing final size of huge files (>16Mb in my patch)
+>> there should be no difference for delayed allocation.
+> 
+> There is, because you throttle the writes down such that there is
+> only 16MB of dirty data in memory. Hence filesystems will only
+> typically allocate in 16MB chunks as that's all the delalloc range
+> spans.
+> 
+> I'm not so concerned for XFS here, because our speculative
+> preallocation will handle this just fine, but for ext4 and btrfs
+> it's going to interleave the allocate of concurrent streaming writes
+> and fragment the crap out of the files.
+> 
+> In general, the smaller you make the individual file writeback
+> window, the worse the fragmentation problems gets....
 
-> Anyway, the end result of all this is that we have that
-> balance_dirty_pages() that is pretty darn complex and I suspect very
-> few people understand everything that goes on in that function.
+AFAIR ext4 already preallocates extent beyond EOF too.
 
-I'd agree with you there - most of the ground work for the
-balance_dirty_pages IO throttling feedback loop was all based on
-concepts I developed to solve dirty page writeback thrashing
-problems on Irix back in 2003.  The code we have in Linux was
-written by Fenguang Wu with help for a lot of people, but the
-underlying concepts of delegating IO to dedicated writeback threads
-that calculate and track page cleaning rates (BDI writeback rates)
-and then throttling incoming page dirtying rate to the page cleaning
-rate all came out of my head....
+But this must be carefully tested for all modern fs for sure.
 
-So, much as it may surprise you, I am one of the few people who do
-actually understand how that whole complex mass of accounting and
-feedback is supposed to work. :)
+> 
+>> Probably write behind could provide hint about streaming pattern:
+>> pass something like "MSG_MORE" into writeback call.
+> 
+> How does that help when we've only got dirty data and block
+> reservations up to EOF which is no more than 16MB away?
 
-> Now, whether write-behind really _does_ help that, or whether it's
-> just yet another tweak and complication, I can't actually say.
+Block allocator should interpret this flags as "more data are
+expected" and preallocate extent bigger than data and beyond EOF.
 
-Neither can I at this point - I lack the data and that's why I was
-asking if there was a perf difference with the existing limits wound
-right down. Knowing whether the performance difference is simply a
-result of starting writeback IO sooner tells me an awful lot about
-what other behaviour is happening as a result of the changes in this
-patch.
-
-> But I
-> don't think 'dirty_background_bytes' is really an argument against
-> write-behind, it's just one knob on the very complex dirty handling we
-> have.
-
-Never said it was - just trying to determine if a one line
-explanation is true or not.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> 
+> Cheers,
+> 
+> Dave.
+> 
