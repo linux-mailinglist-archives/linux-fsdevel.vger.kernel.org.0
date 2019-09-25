@@ -2,106 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D134EBDE20
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 14:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC33BDE5B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 14:54:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730403AbfIYMev (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 08:34:51 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:38341 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfIYMev (ORCPT
+        id S2405804AbfIYMyg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 08:54:36 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:52301 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2405798AbfIYMyg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 08:34:51 -0400
-Received: by mail-yw1-f67.google.com with SMTP id s6so1940366ywe.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 05:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nrDaOsnIr2WTgFcvWtP3ueOOhuV3aDBDyKo7k1Ld0+Y=;
-        b=ILpLnBl94KFyFjsuCaVJl6rs5DplLsyA3lQOChFyUhZIgk2E88cPXuR44AbY7QZma9
-         5AvyPaG7Ou0GxjnbYQWXGeUQwvjqbWB8/9MCH3iotl/C8S49f7tq2u7/zxaUFGft9YiA
-         8fP9UgtWGL+ao8lKPGOX+2HU1oDacaBJ6WQYIksXk+dEi3UHeDRk5IDn9nAAwI48SLkc
-         oK9//1FVisF2R+KUsbwBJNT4tqthi0eV/xFnO5DVIMOlJXESabSgbyT5ljGHnDmTIgJD
-         SR2SAM7INdm44+ebPpfi4O6AhhWcdDKb5kaDMrP9SXkns/UFrgdImRUNvtjWwrh2GvIM
-         DlXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nrDaOsnIr2WTgFcvWtP3ueOOhuV3aDBDyKo7k1Ld0+Y=;
-        b=WIjGpRqNDEjP2aS5APZWKqOdvekqA23hEPFyR59yOk8S9u4xfCx3AmC45s9LmG32Ne
-         4YJIxKPqvwkstlVfQgdTTC6V749TGwrCWQrdF5Iu+MbsyDglb+w/6IkPHmggaFcXV4yK
-         V/vXFxGsR5pwtV6pIhFXl5Q6V5xJ1sT8X82VwKNkqb4aVG34t/G2iACSaNjGvXpYgvDD
-         M2/wNhJmoisnaV9abmTeGGdAqwPNa+ol1A+k9PFEreoDht5pQKuzAYZsmZ3EZWm2blNI
-         YDNlmVtfiw7/EPx+9p92IroHtHg1aXxVOGdAGxi38FF4AWooQpr7Vuknrd0X4AKpmWH0
-         WETQ==
-X-Gm-Message-State: APjAAAWEK20HSI9hJnRXS3VSz5Jee4Y0URcFZHS+MYC8JmqRDwb4YcWP
-        ZssiAJ2XFydDrN+Lhf/uM+VCG+RGxyrJWYxdTZw=
-X-Google-Smtp-Source: APXvYqxQaDhrcDrqgag2aWccr0ImywM+X9F85z/QuOJyYWsXUEZkaVjFmZwD7KJFcPOasDABoVAG5q7tZMdnHpHaOa8=
-X-Received: by 2002:a81:7743:: with SMTP id s64mr5620241ywc.183.1569414890271;
- Wed, 25 Sep 2019 05:34:50 -0700 (PDT)
+        Wed, 25 Sep 2019 08:54:36 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x8PCsAFi024978
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 25 Sep 2019 08:54:17 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id D5A834200BF; Wed, 25 Sep 2019 08:54:09 -0400 (EDT)
+Date:   Wed, 25 Sep 2019 08:54:09 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] mm: implement write-behind policy for sequential file
+ writes
+Message-ID: <20190925125409.GD18094@mit.edu>
+References: <156896493723.4334.13340481207144634918.stgit@buzz>
+ <875f3b55-4fe1-e2c3-5bee-ca79e4668e72@yandex-team.ru>
+ <20190923145242.GF2233839@devbig004.ftw2.facebook.com>
+ <ed5d930c-88c6-c8e4-4a6c-529701caa993@yandex-team.ru>
+ <20190924073940.GM6636@dread.disaster.area>
+ <edafed8a-5269-1e54-fe31-7ba87393eb34@yandex-team.ru>
+ <20190925071854.GC804@dread.disaster.area>
 MIME-Version: 1.0
-References: <20190914170146.GT1131@ZenIV.linux.org.uk> <CAHk-=wiPv+yo86GpA+Gd_et0KS2Cydk4gSbEj3p4S4tEb1roKw@mail.gmail.com>
- <20190914200412.GU1131@ZenIV.linux.org.uk> <CAHk-=whpoQ_hX2KeqjQs3DeX6Wb4Tmb8BkHa5zr-Xu=S55+ORg@mail.gmail.com>
- <20190915005046.GV1131@ZenIV.linux.org.uk> <CAHk-=wjcZBB2GpGP-cxXppzW=M0EuFnSLoTXHyqJ4BtffYrCXw@mail.gmail.com>
- <20190915160236.GW1131@ZenIV.linux.org.uk> <CAHk-=whjNE+_oSBP_o_9mquUKsJn4gomL2f0MM79gxk_SkYLRw@mail.gmail.com>
- <20190921140731.GQ1131@ZenIV.linux.org.uk> <CAOQ4uxh-FH7JZP9fVqHXYJkbLA+NK6fX7HQex-XwY0Sha-R_kw@mail.gmail.com>
- <20190925122206.GJ26530@ZenIV.linux.org.uk>
-In-Reply-To: <20190925122206.GJ26530@ZenIV.linux.org.uk>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 25 Sep 2019 15:34:38 +0300
-Message-ID: <CAOQ4uxgeDkTjQNtOjSEVknNAG6W6sXXOFqzns90uKmMBGEP2EA@mail.gmail.com>
-Subject: Re: [PATCH] Re: Possible FS race condition between iterate_dir and d_alloc_parallel
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "zhengbin (A)" <zhengbin13@huawei.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, renxudong1@huawei.com,
-        Hou Tao <houtao1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925071854.GC804@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 3:22 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Sep 25, 2019 at 02:59:47PM +0300, Amir Goldstein wrote:
-> > On Mon, Sep 23, 2019 at 5:34 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > FWIW, #next.dcache has the straight conversion to hlist.
-> >
-> > Note that this:
-> > @@ -108,8 +108,8 @@ struct dentry {
-> >                 struct list_head d_lru;         /* LRU list */
-> >                 wait_queue_head_t *d_wait;      /* in-lookup ones only */
-> >         };
-> > -       struct list_head d_child;       /* child of parent list */
-> > -       struct list_head d_subdirs;     /* our children */
-> > +       struct hlist_node d_sibling;    /* child of parent list */
-> > +       struct hlist_head d_children;   /* our children */
-> >
-> > Changes the 'standard' struct dentry size from 192 to 184.
-> >
-> > Does that matter for cache line alignment?
-> >
-> > Should struct dentry be ____cacheline_aligned?
->
-> *shrug*
->
-> DNAME_INLINE_LEN would need to be adjusted;
+On Wed, Sep 25, 2019 at 05:18:54PM +1000, Dave Chinner wrote:
+> > > ANd, really such strict writebehind behaviour is going to cause all
+> > > sorts of unintended problesm with filesystems because there will be
+> > > adverse interactions with delayed allocation. We need a substantial
+> > > amount of dirty data to be cached for writeback for fragmentation
+> > > minimisation algorithms to be able to do their job....
+> > 
+> > I think most sequentially written files never change after close.
+> 
+> There are lots of apps that write zeros to initialise and allocate
+> space, then go write real data to them. Database WAL files are
+> commonly initialised like this...
 
-OK. But increasing DNAME_INLINE_LEN will move d_fsdata
-across cache line.
-Not sure if that matters, but it seems to be documented as
-part of the group of struct members touched by Ref lookup.
-It was intentionally moved by commit
-44a7d7a878c9 fs: cache optimise dentry and inode for rcu-walk
+Fortunately, most of the time Enterprise Database files which are
+initialized with a fd which is then kept open.  And it's only a single
+file.  So that's a hueristic that's not too bad to handle so long as
+it's only triggered when there are no open file descriptors on said
+inode.  If something is still keeping the file open, then we do need
+to be very careful about writebehind.
 
-Anyway, if you end up adding another hlist_head that won't be a
-problem.
+That behind said, with databases, they are goind to be calling
+fdatasync(2) and fsync(2) all the time, so it's unlikely writebehind
+is goint to be that much of an issue, so long as the max writebehind
+knob isn't set too insanely low.  It's been over ten years since I
+last looked at this, and so things may have very likely changed, but
+one enterprise database I looked at would fallocate 32M, and then
+write 32M of zeros to make sure blocks were marked as initialized, so
+that further random writes wouldn't cause metadata updates.
 
-Thanks,
-Amir.
+Now, there *are* applications which log to files via append, and in
+the worst case, they don't actually keep a fd open.  Examples of this
+would include scripts that call logger(1) very often.  But in general,
+taking into account whether or not there is still a fd holding the
+inode open to influence how aggressively we do writeback does make
+sense.
+
+Finally, we should remember that this will impact battery life on
+laptops.  Perhaps not so much now that most laptops have SSD's instead
+of HDD's, but aggressive writebehind does certainly have tradeoffs,
+and what makes sense for a NVMe attached SSD is going to be very
+different for a $2 USB thumb drive picked up at the checkout aisle of
+Staples....
+
+						- Ted
