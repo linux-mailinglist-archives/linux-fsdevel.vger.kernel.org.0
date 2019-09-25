@@ -2,85 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21B3DBD9F5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 10:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9433CBD9F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 10:37:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442793AbfIYIgH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 04:36:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47878 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437903AbfIYIgH (ORCPT
+        id S2436849AbfIYIg4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 04:36:56 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:53890 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404845AbfIYIg4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:36:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qY25nh7ft7xVLg9CJpkhKTMkEGk7+Lk26TG1nt2SkhY=; b=VoBkfX9U18C/zs886+AEon/jz
-        P8rwaJyJUSaktSTe86iBPd0eBgthTknvrTbwTpUBOuWHhmEZqmAITl1A0E7pa7U5ttEI5mrWcs9o4
-        p4+fDC/V3M2a7wy9dKkPgP+TnuzpeTYzt/qzNSUXjyw6yW/81muGQ5GjgXgcZhJl5NxibaKkmzPui
-        Gzbv1UPwm2+G48V6a/5upaH/pv1sR3cER+i16a7znZ9Xqj2BQPIf7FboFrBLfcaS1vBBQvX0pQf7E
-        jXk2p5sUusUWVcfBJ91JEh92ht0Wz8O9LH/eQ6ciz2xzpX9IXOUs7BnDAB5+pXhClmFrsi0CMhyhv
-        QqT4AlKXw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iD2mF-0006SO-Rx; Wed, 25 Sep 2019 08:36:00 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 18B5D305E1F;
-        Wed, 25 Sep 2019 10:35:11 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D7818203E4FB5; Wed, 25 Sep 2019 10:35:57 +0200 (CEST)
-Date:   Wed, 25 Sep 2019 10:35:57 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [PATCH 0/5] hugetlbfs: Disable PMD sharing for large systems
-Message-ID: <20190925083557.GA4553@hirez.programming.kicks-ass.net>
-References: <20190911150537.19527-1-longman@redhat.com>
- <20190913015043.GF27547@dread.disaster.area>
+        Wed, 25 Sep 2019 04:36:56 -0400
+Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 6DA7A36382D;
+        Wed, 25 Sep 2019 18:36:51 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iD2n4-0001BZ-Nt; Wed, 25 Sep 2019 18:36:50 +1000
+Date:   Wed, 25 Sep 2019 18:36:50 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/15] fs: Introduce i_blocks_per_page
+Message-ID: <20190925083650.GE804@dread.disaster.area>
+References: <20190925005214.27240-1-willy@infradead.org>
+ <20190925005214.27240-3-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190913015043.GF27547@dread.disaster.area>
+In-Reply-To: <20190925005214.27240-3-willy@infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
+        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=cFTJNmiEAYDDdQa2eyoA:9
+        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 11:50:43AM +1000, Dave Chinner wrote:
-> On Wed, Sep 11, 2019 at 04:05:32PM +0100, Waiman Long wrote:
-> > A customer with large SMP systems (up to 16 sockets) with application
-> > that uses large amount of static hugepages (~500-1500GB) are experiencing
-> > random multisecond delays. These delays was caused by the long time it
-> > took to scan the VMA interval tree with mmap_sem held.
-> > 
-> > To fix this problem while perserving existing behavior as much as
-> > possible, we need to allow timeout in down_write() and disabling PMD
-> > sharing when it is taking too long to do so. Since a transaction can
-> > involving touching multiple huge pages, timing out for each of the huge
-> > page interactions does not completely solve the problem. So a threshold
-> > is set to completely disable PMD sharing if too many timeouts happen.
-> > 
-> > The first 4 patches of this 5-patch series adds a new
-> > down_write_timedlock() API which accepts a timeout argument and return
-> > true is locking is successful or false otherwise. It works more or less
-> > than a down_write_trylock() but the calling thread may sleep.
+On Tue, Sep 24, 2019 at 05:52:01PM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Just on general principle, this is a non-starter. If a lock is being
-> held too long, then whatever the lock is protecting needs fixing.
-> Adding timeouts to locks and sysctls to tune them is not a viable
-> solution to address latencies caused by algorithm scalability
-> issues.
+> This helper is useful for both large pages in the page cache and for
+> supporting block size larger than page size.  Convert some example
+> users (we have a few different ways of writing this idiom).
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-I'm very much agreeing here. Lock functions with timeouts are a sign of
-horrific design.
+I'm actually working on abstrcting this code from both block size
+and page size via the helpers below. We ahve need to support block
+size > page size, and so that requires touching a bunch of all the
+same code as this patchset. I'm currently trying to combine your
+last patch set with my patchset so I can easily test allocating 64k
+page cache pages on a 64k block size filesystem on a 4k page size
+machine with XFS....
+
+/*
+ * Return the chunk size we should use for page cache based operations.
+ * This supports both large block sizes and variable page sizes based on the
+ * restriction that order-n blocks and page cache pages are order-n file offset
+ * aligned.
+ *
+ * This will return the inode block size for block size < page_size(page),
+ * otherwise it will return page_size(page).
+ */
+static inline unsigned
+iomap_chunk_size(struct inode *inode, struct page *page)
+{
+        return min_t(unsigned, page_size(page), i_blocksize(inode));
+}
+
+static inline unsigned
+iomap_chunk_bits(struct inode *inode, struct page *page)
+{
+        return min_t(unsigned, page_shift(page), inode->i_blkbits);
+}
+
+static inline unsigned
+iomap_chunks_per_page(struct inode *inode, struct page *page)
+{
+        return page_size(page) >> inode->i_blkbits;
+}
+
+Basically, the process is to convert the iomap code over to
+iterating "chunks" rather than blocks or pages, and then allocate
+a struct iomap_page according to the difference between page and
+block size....
+
+> ---
+>  fs/iomap/buffered-io.c  |  4 ++--
+>  fs/jfs/jfs_metapage.c   |  2 +-
+>  fs/xfs/xfs_aops.c       |  8 ++++----
+>  include/linux/pagemap.h | 13 +++++++++++++
+>  4 files changed, 20 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e25901ae3ff4..0e76a4b6d98a 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -24,7 +24,7 @@ iomap_page_create(struct inode *inode, struct page *page)
+>  {
+>  	struct iomap_page *iop = to_iomap_page(page);
+>  
+> -	if (iop || i_blocksize(inode) == PAGE_SIZE)
+> +	if (iop || i_blocks_per_page(inode, page) <= 1)
+>  		return iop;
+
+That also means checks like these become:
+
+	if (iop || iomap_chunks_per_page(inode, page) <= 1)
+
+as a single file can now have multiple pages per block, a page per
+block and multiple blocks per page as the page size changes...
+
+I'd like to only have to make one pass over this code to abstract
+out page and block sizes, so I'm guessing we'll need to do some
+co-ordination here....
+
+> @@ -636,4 +636,17 @@ static inline unsigned long dir_pages(struct inode *inode)
+>  			       PAGE_SHIFT;
+>  }
+>  
+> +/**
+> + * i_blocks_per_page - How many blocks fit in this page.
+> + * @inode: The inode which contains the blocks.
+> + * @page: The (potentially large) page.
+> + *
+> + * Context: Any context.
+> + * Return: The number of filesystem blocks covered by this page.
+> + */
+> +static inline
+> +unsigned int i_blocks_per_page(struct inode *inode, struct page *page)
+> +{
+> +	return page_size(page) >> inode->i_blkbits;
+> +}
+>  #endif /* _LINUX_PAGEMAP_H */
+
+It also means that we largely don't need to touch mm headers as
+all the helpers end up being iomap specific and private...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
