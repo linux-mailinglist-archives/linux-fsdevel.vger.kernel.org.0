@@ -2,202 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B5DBD638
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 03:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D1E0BD79C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 07:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633691AbfIYB4X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Sep 2019 21:56:23 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42024 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2633689AbfIYB4X (ORCPT
+        id S2392905AbfIYFJI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 01:09:08 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:49798 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392749AbfIYFJI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Sep 2019 21:56:23 -0400
-Received: by mail-oi1-f195.google.com with SMTP id i185so3477294oif.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2019 18:56:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hev-cc.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XF6jmOvtyrBMaqdt7hPfORfmiOBGH0e252B9Q5r9KVc=;
-        b=sn99UHj6vmUiCfF9Qt2YuozEa4TDgMGJD/uVFjfTtYh4ZBdfL+L3vsmeWsIyb0s/Zk
-         Fol14MrBW5JV9dZoUnG9YTyoj336NdpOjNiZ7wHC7B1QUWn++yotMppCp6AWKoE916/W
-         mmJHjzktF6EdtXLr/Mlm8iBJ4rnweuQcgISHw6UfuucYKLhwF2KQAi/6e4qDOVnWLW5y
-         6iyyVyot/AsDAl0rNPuMXe395vmBETZnnMu0dsM0DvDI2wnlg84IlRLkLvje45q8FA5X
-         TpcM2ecwMpX/fE3CLVZUTGw8miu8l+zU6PcIoa4jikL9XMmSmMCE2QdzQJR8jpnQl+rl
-         3eeQ==
+        Wed, 25 Sep 2019 01:09:08 -0400
+Received: by mail-io1-f72.google.com with SMTP id e14so7189080iot.16
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Sep 2019 22:09:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XF6jmOvtyrBMaqdt7hPfORfmiOBGH0e252B9Q5r9KVc=;
-        b=FxDuNWIfZzu9sFp6hgy+onuQ389LmNCSNrywfXccsodB63GuTrmaSfvut4vvPFjiim
-         wZu5BB0KFaThOMPqxGmecm3D17JJCvpB/BKCuO9ufc5GYp5q4mexR+1UYNvnAEMTsncL
-         4P3twg5tMRkcqrqi2+H3tVzrE+pYTPT7jCXUuH0RZwsT32skZ/oT2z9bbpRFw2Sq6oF8
-         0L7l3tScbfM0MGakbqAUmWg4/U4lYsLK2QcQfyQSUwdSpSQy0n+fqHdjDD7UIdivjHr6
-         5o08sgukJaLRFROPtdEXXWeWc2Uzvvw3QMZZdWzOhyZ97v384BaMjzZ+/R9OunXD4HJH
-         FRoQ==
-X-Gm-Message-State: APjAAAXx7qNroulbtO8AZvXuu9hr1MOy6grft3ceIV8oDY4BzddN/ALt
-        7CZOMnrrdbqYq9zNsbPKUtiQ17/FdSPOt9drLU4=
-X-Google-Smtp-Source: APXvYqwGBbXTEYK5C2Hbguwh+VdqRHGF60tBAQvGahQtP0nrTkCZgjD6jITalyFPVcrsj+IFq2iRNA==
-X-Received: by 2002:a05:6808:302:: with SMTP id i2mr2804825oie.176.1569376581500;
-        Tue, 24 Sep 2019 18:56:21 -0700 (PDT)
-Received: from hev-sbc.hz.ali.com ([47.89.83.40])
-        by smtp.gmail.com with ESMTPSA id d69sm1190658oig.32.2019.09.24.18.56.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2019 18:56:20 -0700 (PDT)
-From:   hev <r@hev.cc>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Heiher <r@hev.cc>, Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Eric Wong <e@80x24.org>, Jason Baron <jbaron@akamai.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND v4] fs/epoll: Remove unnecessary wakeups of nested epoll that in ET mode
-Date:   Wed, 25 Sep 2019 09:56:03 +0800
-Message-Id: <20190925015603.10939-1-r@hev.cc>
-X-Mailer: git-send-email 2.23.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=BIbTCCCavfBu7vSAONti3XrFYv20buWCS4jbSRUec3o=;
+        b=O7i38jQwwZ6ZYnVIV5qHfka+61RIMaXqyY8CRS6sudNkhUiJu0HSkUmMlnmm1xpRSp
+         kCNlR3oQ6mAbmLykpjciy8LXxBwJp0h2sBF9QcYZwkEdyOHZshiplfmtsp10wwews0qm
+         pRHJ/CJAKb7+2qDEyVKuomNz0+34X7U/oFfYtM00U4HD1SmOjRUR/uEjnud+d5e35vnE
+         NRkQ+y58r5Vngu04H/yOlZMDTwr98MYRJkWVqSCHUCyBJkl4+oYLXoMMdlvpTtiq37wi
+         6PGIHNqcw/E4ymDCR0WcZPdv+5D4vKXTfucYvKjUDeQYNcF707Rdiv5jWroijCmveFvo
+         v0QQ==
+X-Gm-Message-State: APjAAAXbxdFXNxwTiZMMcRJNM/ViTXawdf3i9fvUALHkYD0JVcukkIqv
+        /jZ3JDmOUJ/iNBsiySkSuj2mgBQGQxa8V3F+e4AASctQF9vj
+X-Google-Smtp-Source: APXvYqyzEWR89LxNgxDoF47i1h/7OJTIpGxPi8I2h9ZqeeslrJ/DgF3mMDQXP9CPOgEjdSccRU2WxAuIOtsv9bM4SM9zUTMPZd9M
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:8e57:: with SMTP id q84mr7080450iod.41.1569388147132;
+ Tue, 24 Sep 2019 22:09:07 -0700 (PDT)
+Date:   Tue, 24 Sep 2019 22:09:07 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000067302059359a78e@google.com>
+Subject: INFO: trying to register non-static key in finish_writeback_work
+From:   syzbot <syzbot+21875b598ddcdc309b28@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Heiher <r@hev.cc>
+Hello,
 
-Take the case where we have:
+syzbot found the following crash on:
 
-        t0
-         | (ew)
-        e0
-         | (et)
-        e1
-         | (lt)
-        s0
+HEAD commit:    b41dae06 Merge tag 'xfs-5.4-merge-7' of git://git.kernel.o..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d19a7e600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dfcf592db22b9132
+dashboard link: https://syzkaller.appspot.com/bug?extid=21875b598ddcdc309b28
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15fcf1a1600000
 
-t0: thread 0
-e0: epoll fd 0
-e1: epoll fd 1
-s0: socket fd 0
-ew: epoll_wait
-et: edge-trigger
-lt: level-trigger
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+21875b598ddcdc309b28@syzkaller.appspotmail.com
 
-We only need to wakeup nested epoll fds if something has been queued to the
-overflow list, since the ep_poll() traverses the rdllist during recursive poll
-and thus events on the overflow list may not be visible yet.
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+turning off the locking correctness validator.
+CPU: 0 PID: 2603 Comm: kworker/u4:4 Not tainted 5.3.0+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: writeback wb_workfn (flush-8:0)
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  assign_lock_key kernel/locking/lockdep.c:881 [inline]
+  register_lock_class+0x179e/0x1850 kernel/locking/lockdep.c:1190
+  __lock_acquire+0xf4/0x4e70 kernel/locking/lockdep.c:3837
+  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:159
+  __wake_up_common_lock+0xc8/0x150 kernel/sched/wait.c:122
+  __wake_up+0xe/0x10 kernel/sched/wait.c:142
+  finish_writeback_work.isra.0+0xf6/0x120 fs/fs-writeback.c:168
+  wb_do_writeback fs/fs-writeback.c:2030 [inline]
+  wb_workfn+0x34f/0x11e0 fs/fs-writeback.c:2070
+  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 2603 Comm: kworker/u4:4 Not tainted 5.3.0+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: writeback wb_workfn (flush-8:0)
+RIP: 0010:__wake_up_common+0xdf/0x610 kernel/sched/wait.c:86
+Code: 05 00 00 4c 8b 43 38 49 83 e8 18 49 8d 78 18 48 39 7d d0 0f 84 64 02  
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 0b 05 00 00 49 8b 40 18 89 55 b0 31 db 49 bc 00
+RSP: 0018:ffff8880a1dc7a90 EFLAGS: 00010046
+RAX: dffffc0000000000 RBX: ffff888079642000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 1ffffffff138d60e RDI: 0000000000000000
+RBP: ffff8880a1dc7ae8 R08: ffffffffffffffe8 R09: ffff8880a1dc7b38
+R10: ffffed10143b8f4b R11: 0000000000000003 R12: 0000000000000000
+R13: 0000000000000286 R14: 0000000000000000 R15: 0000000000000003
+FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2e620020 CR3: 00000000a3f3e000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __wake_up_common_lock+0xea/0x150 kernel/sched/wait.c:123
+  __wake_up+0xe/0x10 kernel/sched/wait.c:142
+  finish_writeback_work.isra.0+0xf6/0x120 fs/fs-writeback.c:168
+  wb_do_writeback fs/fs-writeback.c:2030 [inline]
+  wb_workfn+0x34f/0x11e0 fs/fs-writeback.c:2070
+  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Modules linked in:
+---[ end trace a54dff274d7cf269 ]---
+RIP: 0010:__wake_up_common+0xdf/0x610 kernel/sched/wait.c:86
+Code: 05 00 00 4c 8b 43 38 49 83 e8 18 49 8d 78 18 48 39 7d d0 0f 84 64 02  
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 0b 05 00 00 49 8b 40 18 89 55 b0 31 db 49 bc 00
+RSP: 0018:ffff8880a1dc7a90 EFLAGS: 00010046
+RAX: dffffc0000000000 RBX: ffff888079642000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 1ffffffff138d60e RDI: 0000000000000000
+RBP: ffff8880a1dc7ae8 R08: ffffffffffffffe8 R09: ffff8880a1dc7b38
+R10: ffffed10143b8f4b R11: 0000000000000003 R12: 0000000000000000
+R13: 0000000000000286 R14: 0000000000000000 R15: 0000000000000003
+FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2e620020 CR3: 00000000a3f3e000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Test code:
- #include <unistd.h>
- #include <sys/epoll.h>
- #include <sys/socket.h>
 
- int main(int argc, char *argv[])
- {
- 	int sfd[2];
- 	int efd[2];
- 	struct epoll_event e;
-
- 	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
- 		goto out;
-
- 	efd[0] = epoll_create(1);
- 	if (efd[0] < 0)
- 		goto out;
-
- 	efd[1] = epoll_create(1);
- 	if (efd[1] < 0)
- 		goto out;
-
- 	e.events = EPOLLIN;
- 	if (epoll_ctl(efd[1], EPOLL_CTL_ADD, sfd[0], &e) < 0)
- 		goto out;
-
- 	e.events = EPOLLIN | EPOLLET;
- 	if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
- 		goto out;
-
- 	if (write(sfd[1], "w", 1) != 1)
- 		goto out;
-
- 	if (epoll_wait(efd[0], &e, 1, 0) != 1)
- 		goto out;
-
- 	if (epoll_wait(efd[0], &e, 1, 0) != 0)
- 		goto out;
-
- 	close(efd[0]);
- 	close(efd[1]);
- 	close(sfd[0]);
- 	close(sfd[1]);
-
- 	return 0;
-
- out:
- 	return -1;
- }
-
-More tests:
- https://github.com/heiher/epoll-wakeup
-
-Cc: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Davide Libenzi <davidel@xmailserver.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Eric Wong <e@80x24.org>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Roman Penyaev <rpenyaev@suse.de>
-Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: hev <r@hev.cc>
 ---
- fs/eventpoll.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index c4159bcc05d9..a0c07f6653c6 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -704,12 +704,21 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
- 	res = (*sproc)(ep, &txlist, priv);
- 
- 	write_lock_irq(&ep->lock);
-+	nepi = READ_ONCE(ep->ovflist);
-+	/*
-+	 * We only need to wakeup nested epoll fds if something has been queued
-+	 * to the overflow list, since the ep_poll() traverses the rdllist
-+	 * during recursive poll and thus events on the overflow list may not be
-+	 * visible yet.
-+	 */
-+	if (nepi != NULL)
-+		pwake++;
- 	/*
- 	 * During the time we spent inside the "sproc" callback, some
- 	 * other events might have been queued by the poll callback.
- 	 * We re-insert them inside the main ready-list here.
- 	 */
--	for (nepi = READ_ONCE(ep->ovflist); (epi = nepi) != NULL;
-+	for (; (epi = nepi) != NULL;
- 	     nepi = epi->next, epi->next = EP_UNACTIVE_PTR) {
- 		/*
- 		 * We need to check if the item is already in the list.
-@@ -755,7 +764,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
- 		mutex_unlock(&ep->mtx);
- 
- 	/* We have to call this outside the lock */
--	if (pwake)
-+	if (pwake == 2)
- 		ep_poll_safewake(&ep->poll_wait);
- 
- 	return res;
--- 
-2.23.0
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
