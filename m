@@ -2,80 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FC2EBE87C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 00:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EEA9BE882
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 00:52:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729874AbfIYWwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 18:52:06 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:45929 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729604AbfIYWwG (ORCPT
+        id S1729943AbfIYWww (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 18:52:52 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:56809 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729604AbfIYWww (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 18:52:06 -0400
-Received: by mail-qk1-f195.google.com with SMTP id z67so167131qkb.12;
-        Wed, 25 Sep 2019 15:52:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=hG7SOKz8MptTnrQvudDejoJqBWoC1kIuXyUc2ynrKEk=;
-        b=hVyZutPx4fToHseEJGWiYk6Zw0UTkw2TRa7mx4CbiE5Glb04+9EPpvMZj8sShIuHY2
-         CggxBBqjNVGEdeX45OeY9zst6MSlQsPA5wJmNRMkD4W+Fa6CVgBXVU+bSHeT85S8/MWG
-         rkCUuLoHb94sZB58qIk6uoZAdMth0g/6D++RPPzBmnlLlcbjnaNkTYir2wZEKPRkNaIm
-         LFkjo1PeU+7dpoGUVacv1Wpz48W7toIosHQmTvOsOsuzT23FAPUp8J4u2SB4WNlQdy/K
-         EZCHotEuENbyfbd1jpvISTKpbmTRSWcj8BAZEQmXUnDbym6vHucjpqD/NBwMImlhZBAI
-         nrBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=hG7SOKz8MptTnrQvudDejoJqBWoC1kIuXyUc2ynrKEk=;
-        b=TNCReg1v8W422/Fe5l6ZU1CqI+RzQonbn9PeQaHlqnOE+44ejIFpQ4Zf2Svg0Edzsr
-         q1RCzMyRCAYHUEjfs1526lYrovTr6TvHAtZMee9ql6wCej5C8P6kYbuPYgH36iXt1vkl
-         Yn6OLxkJiJblXp4gwGsFq3iBjrT7ulDLwW1nbtxa3wVcvWwiNCwtmexD+84SwWcZSq3J
-         1k0x7h7YIkhiFo0v1A/QYeUxkOJpQxc9T+1t8WWC95Fcw/7PHeg5v0GhGFU/gWCAJngc
-         RGwE2MMNs6NVr3wfJAaW8y3bt85nVib7IulPGwXOxo6k8YJ2OgJ3SzIEMBLLu9gZTbvy
-         YVwg==
-X-Gm-Message-State: APjAAAX1HxzozpvyQsnep09vH4EugETPHr7OO0/3qQbsshvuPABH5TJP
-        suqD8YRZd03LizR/BWY5xQsQII6iNBg3NK4TO6mw3vTB
-X-Google-Smtp-Source: APXvYqxVXs1ZfbJU+FoZjOcEMrSTttWKrOEV9XXx5bCQ3hemdKq2MTCX4OFrCSCY2jLSFuo62HJHEtCqp/bUayED1XY=
-X-Received: by 2002:a37:a205:: with SMTP id l5mr361422qke.488.1569451925129;
- Wed, 25 Sep 2019 15:52:05 -0700 (PDT)
+        Wed, 25 Sep 2019 18:52:52 -0400
+Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id A96B2362AFF;
+        Thu, 26 Sep 2019 08:52:44 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iDG9L-0006ca-Lw; Thu, 26 Sep 2019 08:52:43 +1000
+Date:   Thu, 26 Sep 2019 08:52:43 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Colin Walters <walters@verbum.org>
+Cc:     Jann Horn <jannh@google.com>, Omar Sandoval <osandov@osandov.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [RFC PATCH 2/3] fs: add RWF_ENCODED for writing compressed data
+Message-ID: <20190925225243.GF804@dread.disaster.area>
+References: <cover.1568875700.git.osandov@fb.com>
+ <230a76e65372a8fb3ec62ce167d9322e5e342810.1568875700.git.osandov@fb.com>
+ <CAG48ez2GKv15Uj6Wzv0sG5v2bXyrSaCtRTw5Ok_ovja_CiO_fQ@mail.gmail.com>
+ <20190924171513.GA39872@vader>
+ <20190924193513.GA45540@vader>
+ <CAG48ez1NQBNR1XeVQYGoopEk=g_KedUr+7jxLQTaO+V8JCeweQ@mail.gmail.com>
+ <20190925071129.GB804@dread.disaster.area>
+ <60c48ac5-b215-44e1-a628-6145d84a4ce3@www.fastmail.com>
 MIME-Version: 1.0
-From:   Jianshen Liu <ljishen@gmail.com>
-Date:   Wed, 25 Sep 2019 15:51:27 -0700
-Message-ID: <CAMgD0BoT82ApOQ=Fk6o5KYMsC=z7M88zkNCw9XuMtB0y-xaAmw@mail.gmail.com>
-Subject: Question: Modifying kernel to handle all I/O requests without page cache
-To:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60c48ac5-b215-44e1-a628-6145d84a4ce3@www.fastmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
+        a=7-415B0cAAAA:8 a=ao4zJSXK-2lq-feLaEsA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Sep 25, 2019 at 08:07:12AM -0400, Colin Walters wrote:
+> 
+> 
+> On Wed, Sep 25, 2019, at 3:11 AM, Dave Chinner wrote:
+> >
+> > We're talking about user data read/write access here, not some
+> > special security capability. Access to the data has already been
+> > permission checked, so why should the format that the data is
+> > supplied to the kernel in suddenly require new privilege checks?
+> 
+> What happens with BTRFS today if userspace provides invalid compressed
+> data via this interface?
 
-I am working on a project trying to evaluate the performance of a
-workload running on a storage device. I don't want the benchmark
-result depends on a specific platform (e.g., a platform with X GiB of
-physical memory). Because it prevents people from reproducing the same
-result on a different platform configuration. Think about you are
-benchmarking a read-heavy workload, with data caching enabled you may
-end up with just testing the performance of the system memory.
+Then the filesystem returns EIO or ENODATA on read because it can't
+decompress it.
 
-Currently, I'm thinking how to eliminate the cache effects created by
-the page cache. Direct I/O is a good option for testing with a single
-application but is not good for testing with unknown
-applications/workloads. Therefore, it is not feasible to ask people to
-modify the application source code before running the benchmark.
+User can read it back in compressed format (i.e. same way they wrote
+it), try to fix it themselves.
 
-Making changes within the kernel may only be the option because it is
-transparent to all user-space applications. The problem is I don't
-know how to modify the kernel so that it does not use the page cache
-for any IOs to a specific storage device. I have tried to append a
-fadvise64() call with POSIX_FADV_DONTNEED to the end of each
-read/write system calls. The performance of this approach is far from
-using Direct I/O. It is also unable to eliminate the caching effects
-under concurrent I/Os. I'm looking for any advice here to point me an
-efficient way to remove the cache effects from the page cache.
+> Does that show up as filesystem corruption later?
 
-Thanks,
-Jianshen
+Nope. Just bad user data.
+
+> If the data is verified at write time, wouldn't that be losing most of the speed advantages of providing pre-compressed data?
+
+It's a direct IO interface. User writes garbage, then they get
+garbage back. The user can still retreive the compressed data
+directly, so the data is not lost....
+
+> Ability for a user to cause fsck errors later would be a new thing
+> that would argue for a privilege check I think.
+
+fsck doesn't validate the correctness of user data - it validates
+the filesystem structure is consistent. i.e. user data in unreadable
+format != corrupt filesystem structure.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
