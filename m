@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79A81BD5E6
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7B3BD5E5
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 02:54:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411291AbfIYAwa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Sep 2019 20:52:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56924 "EHLO
+        id S2411276AbfIYAwZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Sep 2019 20:52:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56910 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2411284AbfIYAw1 (ORCPT
+        with ESMTP id S2411271AbfIYAwY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Sep 2019 20:52:27 -0400
+        Tue, 24 Sep 2019 20:52:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=cFah0KKXQyC1uWypSS4R6u3pxcVf3XmfQzNfxpF7ksY=; b=Y7odDPcVVmdoYj0pm9p8PjLP3t
-        ap/2uYnhzNSTPQ0UsA7u/qoy71/BdWDnRbwRs9All7mfgg78WzhP7/tPnanfMIYrfaIEDnYNDkhYw
-        eRyYtI9B5iAXvn/e1XMeqprHuDgj0hWf+cBcNxBov9zvMCyPQL5cJSCJ26cDJ0i689lIzfg15k9sb
-        r6SszJGTw0EJLyY2vpMu6lw0n182VL7uK1eCRU0dVZ4NqP02lAr3VHuY78Nryh1ejXt5w8c5nJoaa
-        WMyRjIGNmvYGX5wFgsQdA32lhiKtz2GJV30EsZNGQnXWIXz3AnTPwoK0bXGTIEHXqcJJsKkOZv+3O
-        3MAVTtCQ==;
+        bh=NExg9D+3Wa1fP9cAWyjnC7ZkvWAvXtW4PTf8NgFY27g=; b=suSAuWrP7cezUqpexhdh3X0z5y
+        6NfZdi50ztEisvpucYDUd8qslBQOK3CD6GRgm+x6K58lGz0PeZGxnmTHEX8GjdeiMReZOwB2tUvRD
+        Ew63ydItKTG+uFzaJHLbLjIMuwD9cRlJ2fySGe4+u4RjeUxIxuIxu+LI3ShyZHjB+GomS6ZVduzGK
+        xJ69gFGUxCtMNnt08HEHqOvKbSH+2Moaf/jZfQ0e5ELf6Uxce85lsSaTXOrXsXyL/zyOnAAOt4juK
+        8vWodAioL6Ilx6s4i1jwAgrpZNaiqjOyGbD4+EeQcPerWqpglu+A04YHWqDz0duVCXYxNzdQK6PJ+
+        VhX6mFDw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCvXV-00076W-EK; Wed, 25 Sep 2019 00:52:17 +0000
+        id 1iCvXV-00076b-Fc; Wed, 25 Sep 2019 00:52:17 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 05/15] xfs: Support large pages
-Date:   Tue, 24 Sep 2019 17:52:04 -0700
-Message-Id: <20190925005214.27240-6-willy@infradead.org>
+Subject: [PATCH 06/15] xfs: Pass a page to xfs_finish_page_writeback
+Date:   Tue, 24 Sep 2019 17:52:05 -0700
+Message-Id: <20190925005214.27240-7-willy@infradead.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190925005214.27240-1-willy@infradead.org>
 References: <20190925005214.27240-1-willy@infradead.org>
@@ -45,79 +45,54 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Mostly this is just checking the page size of each page instead of
-assuming PAGE_SIZE.  Clean up the logic in writepage a little.
+The only part of the bvec we were accessing was the bv_page, so just
+pass that instead of the whole bvec.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/xfs/xfs_aops.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ fs/xfs/xfs_aops.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 102cfd8a97d6..1a26e9ca626b 100644
+index 1a26e9ca626b..edcb4797fcc2 100644
 --- a/fs/xfs/xfs_aops.c
 +++ b/fs/xfs/xfs_aops.c
-@@ -765,7 +765,7 @@ xfs_add_to_ioend(
- 	struct xfs_mount	*mp = ip->i_mount;
- 	struct block_device	*bdev = xfs_find_bdev_for_inode(inode);
- 	unsigned		len = i_blocksize(inode);
--	unsigned		poff = offset & (PAGE_SIZE - 1);
-+	unsigned		poff = offset & (page_size(page) - 1);
- 	bool			merged, same_page = false;
- 	sector_t		sector;
+@@ -58,21 +58,21 @@ xfs_find_daxdev_for_inode(
+ static void
+ xfs_finish_page_writeback(
+ 	struct inode		*inode,
+-	struct bio_vec	*bvec,
++	struct page		*page,
+ 	int			error)
+ {
+-	struct iomap_page	*iop = to_iomap_page(bvec->bv_page);
++	struct iomap_page	*iop = to_iomap_page(page);
  
-@@ -843,7 +843,7 @@ xfs_aops_discard_page(
- 	if (error && !XFS_FORCED_SHUTDOWN(mp))
- 		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
- out_invalidate:
--	xfs_vm_invalidatepage(page, 0, PAGE_SIZE);
-+	xfs_vm_invalidatepage(page, 0, page_size(page));
+ 	if (error) {
+-		SetPageError(bvec->bv_page);
++		SetPageError(page);
+ 		mapping_set_error(inode->i_mapping, -EIO);
+ 	}
+ 
+-	ASSERT(iop || i_blocks_per_page(inode, bvec->bv_page) <= 1);
++	ASSERT(iop || i_blocks_per_page(inode, page) <= 1);
+ 	ASSERT(!iop || atomic_read(&iop->write_count) > 0);
+ 
+ 	if (!iop || atomic_dec_and_test(&iop->write_count))
+-		end_page_writeback(bvec->bv_page);
++		end_page_writeback(page);
  }
  
  /*
-@@ -984,8 +984,7 @@ xfs_do_writepage(
- 	struct xfs_writepage_ctx *wpc = data;
- 	struct inode		*inode = page->mapping->host;
- 	loff_t			offset;
--	uint64_t              end_offset;
--	pgoff_t                 end_index;
-+	uint64_t		end_offset;
+@@ -106,7 +106,7 @@ xfs_destroy_ioend(
  
- 	trace_xfs_writepage(inode, page, 0, 0);
+ 		/* walk each page on bio, ending page IO on them */
+ 		bio_for_each_segment_all(bvec, bio, iter_all)
+-			xfs_finish_page_writeback(inode, bvec, error);
++			xfs_finish_page_writeback(inode, bvec->bv_page, error);
+ 		bio_put(bio);
+ 	}
  
-@@ -1024,10 +1023,9 @@ xfs_do_writepage(
- 	 * ---------------------------------^------------------|
- 	 */
- 	offset = i_size_read(inode);
--	end_index = offset >> PAGE_SHIFT;
--	if (page->index < end_index)
--		end_offset = (xfs_off_t)(page->index + 1) << PAGE_SHIFT;
--	else {
-+	end_offset = file_offset_of_next_page(page);
-+
-+	if (end_offset > offset) {
- 		/*
- 		 * Check whether the page to write out is beyond or straddles
- 		 * i_size or not.
-@@ -1039,7 +1037,8 @@ xfs_do_writepage(
- 		 * |				    |      Straddles     |
- 		 * ---------------------------------^-----------|--------|
- 		 */
--		unsigned offset_into_page = offset & (PAGE_SIZE - 1);
-+		unsigned offset_into_page = offset_in_this_page(page, offset);
-+		pgoff_t end_index = offset >> PAGE_SHIFT;
- 
- 		/*
- 		 * Skip the page if it is fully outside i_size, e.g. due to a
-@@ -1070,7 +1069,7 @@ xfs_do_writepage(
- 		 * memory is zeroed when mapped, and writes to that region are
- 		 * not written out to the file."
- 		 */
--		zero_user_segment(page, offset_into_page, PAGE_SIZE);
-+		zero_user_segment(page, offset_into_page, page_size(page));
- 
- 		/* Adjust the end_offset to the end of file */
- 		end_offset = offset;
 -- 
 2.23.0
 
