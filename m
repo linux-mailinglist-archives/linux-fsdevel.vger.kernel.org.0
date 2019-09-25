@@ -2,200 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D019BE583
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 21:20:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 323BDBE616
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 22:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408633AbfIYTUY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 15:20:24 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40870 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbfIYTUX (ORCPT
+        id S2389165AbfIYUGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 16:06:55 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37723 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727743AbfIYUGz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 15:20:23 -0400
-Received: by mail-wm1-f65.google.com with SMTP id b24so6169285wmj.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 12:20:22 -0700 (PDT)
+        Wed, 25 Sep 2019 16:06:55 -0400
+Received: by mail-pl1-f193.google.com with SMTP id u20so75798plq.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 13:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=xzswSRe2eIn8wG2R2FPqQj3Cz1yjMoHYy61Ft4UumsA=;
-        b=hZTy8fml4waPu6HvzX9qzprBk1rFdXqPmj7RPWeDA8sZ+QYVspnCu71wKx7dTy4t3h
-         GNXeAY0C2owYA6SRw+NE7yhgvIkYoQjYq6BXSXF9zcB4mUabU2QVtc66w6C1EO0ZzEde
-         R2ysSCegV6oI+ar2yDiH3HWWq2c48fxjLeLGRKn4W4uJMRQAebRUE7R8hE+Mtr/FpooL
-         lx2n8keayHoy0LXq/K7QjqDOUTJbc5tKk0UEIPmXCNOPZYD1yrvuSTnTmSaR+iJ8dDMN
-         SeQ+5OgG50xle5Uw1YcoztKfG7FHW99ZPZWxLNVhQx5neTtkM7cJ7Ex6Nfy2p3Qmq0cd
-         V4DQ==
+        bh=nZZy1Tmz/s7X5733+dB0Xgf1jqMh390pv2qPQtsdqc0=;
+        b=pIDhA0jg5h6EmUTZagDcIKhZS+7W5BaA1xihxMvmLNXwc1BmZ6Qoi+rIsdsxN+/Pag
+         S9i2chjl2/MtZwN9GLzfd2wpB+5Xcof0SVQvErJtoM49o3rt8XoS1QnaHjHMiczGit4v
+         nmaF1UH1zu0JL1crn4k1IlprBAAYp4QYoTwydUR8WazbFp0EEfjCIiBt9JCuTVGn/5+2
+         jyZjU+gOV0q1Kf9/ukIEfPBW9JZkU9XJQJV8i33gous4qH0D4I8cmrn8uQPLNA6dDGv9
+         H+QPgdrCu/MkMB4zXRo+EapL+i9vJCWm3DZbOP/7bQYwgEMbunou2WC3+GzcN0qEUZPa
+         bx5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=xzswSRe2eIn8wG2R2FPqQj3Cz1yjMoHYy61Ft4UumsA=;
-        b=PANAObRC4KBN/y+3J8n6FFzDtB1bhUGJjNjd+wYSpwLWh7ka2S+Udjd7UZSZILUz5d
-         m7ErFKzKKEGcl8Wz/C5rWUjQ2VmuTaMgcx0LuCAc0bj618cZ/uQ41kirg0W+IQ7+ODAE
-         J6Ak5a7BZhxUMwpEtLuguyXUMCiMGt+Ugv7wS14oOMXEgKbQlMedCuh2PWhsekWsRPCo
-         6RzxBeQVRC3NgH3ymFvQs1K0RK4XTFzblfB6WD2glQq9sIti0O4uP7Rz+Jh7l5n+7IUL
-         3HqPHxrQeuhZPbkX8cirzowxsbfjrmk+gbO08hwZP6+WaKXUpw9ehHu2ZyFDEhPgSBTc
-         1VNg==
-X-Gm-Message-State: APjAAAXCtlhKa7VEaymfyeDBJElgChXZ+5Rida9A4lWHL+dWOc5ptXOm
-        EO+hNhM+TiZDrFzs9c8HDw==
-X-Google-Smtp-Source: APXvYqw1Rj+nf010MtNey3wjAA5DXA8bSWz3SCOOZhiWSr+w5QmRl2WpZ0ZpmyN8TNI5VfALo7qPMw==
-X-Received: by 2002:a1c:bc46:: with SMTP id m67mr9199461wmf.126.1569439221708;
-        Wed, 25 Sep 2019 12:20:21 -0700 (PDT)
-Received: from avx2 ([46.53.249.15])
-        by smtp.gmail.com with ESMTPSA id g185sm8371304wme.10.2019.09.25.12.20.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Sep 2019 12:20:19 -0700 (PDT)
-Date:   Wed, 25 Sep 2019 22:20:17 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     yangerkun <yangerkun@huawei.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        zhengbin13@huawei.com, yi.zhang@huawei.com, houtao1@huawei.com
-Subject: Re: [PATCH V2] proc: fix ubsan warning in mem_lseek
-Message-ID: <20190925192017.GA30690@avx2>
-References: <20190902065706.60754-1-yangerkun@huawei.com>
- <7452f3d2-1fcf-2627-cbee-b9a920c17fcb@huawei.com>
- <a984e257-7b4c-3cb0-d28a-e9db553865e8@huawei.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=nZZy1Tmz/s7X5733+dB0Xgf1jqMh390pv2qPQtsdqc0=;
+        b=J2azq0sq6q5E0VKM3CeOyumFET7itqoMbgBwM2HFBNUU+mX9schRSuArhJMLbS7H+T
+         Hw/cc0qAwmYEjsQWQ9WHZ6Nncqy1lbGZQrpeQBpQf2EkN59wCQJ7846dw5iaQNE83fx2
+         5YrP0AnA93FcEFUfYl3RE/QipE2HDoTDp5Ica1j0PWdH+XAo1T1NhGZqs2I8D5sMW1j4
+         En6M8rsUA3GhrVNLI2gBCf8r9WvnfY5mPRKm2p2B1/38Yol+eMAp5jSUbomvgaDks+qT
+         GR4UiPL5WYePeNVs4j7RPqGPoDynJX+UkqZCFsp8yAIB9boPaG3UxxSlsEodSLUMYKIJ
+         Ya/g==
+X-Gm-Message-State: APjAAAVVTixYGg5JgEYT2A9j/iEiwWfkCtnb+cBapVFnrGwQBKGJDopp
+        0UVqybdX13WjZl1Cr/0psE4/Z3rY9t0=
+X-Google-Smtp-Source: APXvYqypiO9lHojJWgIFz7XYYkqtrLdJum1ZZEqf84cYBAzSUuKEBHW/kctFlMpFONGKvLCyCFms0Q==
+X-Received: by 2002:a17:902:a704:: with SMTP id w4mr10825882plq.177.1569442013889;
+        Wed, 25 Sep 2019 13:06:53 -0700 (PDT)
+Received: from madhuparna-HP-Notebook ([42.109.145.108])
+        by smtp.gmail.com with ESMTPSA id e1sm363241pgd.21.2019.09.25.13.06.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Sep 2019 13:06:53 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 01:36:18 +0530
+From:   Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+To:     linux-kernel-mentees@lists.linuxfoundation.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: direct-io: Fixed a Documentation build warn
+Message-ID: <20190925200614.GA30749@madhuparna-HP-Notebook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a984e257-7b4c-3cb0-d28a-e9db553865e8@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 02:09:38PM +0800, yangerkun wrote:
-> Ping again...
-> 
-> On 2019/9/6 13:48, yangerkun wrote:
-> > Ping.
-> >
-> > On 2019/9/2 14:57, yangerkun wrote:
-> >> UBSAN has reported a overflow with mem_lseek. And it's fine with
-> >> mem_open set file mode with FMODE_UNSIGNED_OFFSET(memory_lseek).
-> >> However, another file use mem_lseek do lseek can have not
-> >> FMODE_UNSIGNED_OFFSET(proc_kpagecount_operations/proc_pagemap_operations), 
+This patch fixes the warning: Excess function parameter 'offset'
+description in 'dio_complete'.
+Removes offset from the list of arguments in the function
+header as it not an argument to the function.
 
-Why those files can't have FMODE_UNSIGNED_OFFSET?
-All files have unsigned offsets by definition, it is just lseek(SEEK_SET)
-reusing signed type is silly.
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+---
+ fs/direct-io.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> >> fix it by checking overflow and FMODE_UNSIGNED_OFFSET.
-> >>
-> >> ==================================================================
-> >> UBSAN: Undefined behaviour in ../fs/proc/base.c:941:15
-> >> signed integer overflow:
-> >> 4611686018427387904 + 4611686018427387904 cannot be represented in 
-> >> type 'long long int'
-> >> CPU: 4 PID: 4762 Comm: syz-executor.1 Not tainted 4.4.189 #3
-> >> Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-> >> Call trace:
-> >> [<ffffff90080a5f28>] dump_backtrace+0x0/0x590 
-> >> arch/arm64/kernel/traps.c:91
-> >> [<ffffff90080a64f0>] show_stack+0x38/0x60 arch/arm64/kernel/traps.c:234
-> >> [<ffffff9008986a34>] __dump_stack lib/dump_stack.c:15 [inline]
-> >> [<ffffff9008986a34>] dump_stack+0x128/0x184 lib/dump_stack.c:51
-> >> [<ffffff9008a2d120>] ubsan_epilogue+0x34/0x9c lib/ubsan.c:166
-> >> [<ffffff9008a2d8b8>] handle_overflow+0x228/0x280 lib/ubsan.c:197
-> >> [<ffffff9008a2da2c>] __ubsan_handle_add_overflow+0x4c/0x68 
-> >> lib/ubsan.c:204
-> >> [<ffffff900862b9f4>] mem_lseek+0x12c/0x130 fs/proc/base.c:941
-> >> [<ffffff90084ef78c>] vfs_llseek fs/read_write.c:260 [inline]
-> >> [<ffffff90084ef78c>] SYSC_lseek fs/read_write.c:285 [inline]
-> >> [<ffffff90084ef78c>] SyS_lseek+0x164/0x1f0 fs/read_write.c:276
-> >> [<ffffff9008093c80>] el0_svc_naked+0x30/0x34
-> >> ==================================================================
-> >>
-> >> Signed-off-by: yangerkun <yangerkun@huawei.com>
-> >> ---
-> >>   fs/proc/base.c     | 32 ++++++++++++++++++++++++--------
-> >>   fs/read_write.c    |  5 -----
-> >>   include/linux/fs.h |  5 +++++
-> >>   3 files changed, 29 insertions(+), 13 deletions(-)
-> >>
-> >> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> >> index ebea950..a6c701b 100644
-> >> --- a/fs/proc/base.c
-> >> +++ b/fs/proc/base.c
-> >> @@ -882,18 +882,34 @@ static ssize_t mem_write(struct file *file, 
-> >> const char __user *buf,
-> >>     loff_t mem_lseek(struct file *file, loff_t offset, int orig)
-> >>   {
-> >> +    loff_t ret = 0;
-> >> +
-> >> +    spin_lock(&file->f_lock);
-> >>       switch (orig) {
-> >> -    case 0:
-> >> -        file->f_pos = offset;
-> >> -        break;
-> >> -    case 1:
-> >> -        file->f_pos += offset;
-> >> +    case SEEK_CUR:
-> >> +        offset += file->f_pos;
-> >> +        /* fall through */
-> >> +    case SEEK_SET:
-> >> +        /* to avoid userland mistaking f_pos=-9 as -EBADF=-9 */
-> >> +        if ((unsigned long long)offset >= -MAX_ERRNO)
-> >> +            ret = -EOVERFLOW;
-> >>           break;
-> >>       default:
-> >> -        return -EINVAL;
-> >> +        ret = -EINVAL;
-> >> +    }
-> >> +
-> >> +    if (!ret) {
-> >> +        if (offset < 0 && !(unsigned_offsets(file))) {
-> >> +            ret = -EINVAL;
-> >> +        } else {
-> >> +            file->f_pos = offset;
-> >> +            ret = file->f_pos;
-> >> +            force_successful_syscall_return();
-> >> +        }
-> >>       }
-> >> -    force_successful_syscall_return();
-> >> -    return file->f_pos;
-> >> +
-> >> +    spin_unlock(&file->f_lock);
-> >> +    return ret;
-> >>   }
-> >>     static int mem_release(struct inode *inode, struct file *file)
-> >> diff --git a/fs/read_write.c b/fs/read_write.c
-> >> index 5bbf587..961966e 100644
-> >> --- a/fs/read_write.c
-> >> +++ b/fs/read_write.c
-> >> @@ -34,11 +34,6 @@ const struct file_operations generic_ro_fops = {
-> >>     EXPORT_SYMBOL(generic_ro_fops);
-> >>   -static inline bool unsigned_offsets(struct file *file)
-> >> -{
-> >> -    return file->f_mode & FMODE_UNSIGNED_OFFSET;
-> >> -}
-> >> -
-> >>   /**
-> >>    * vfs_setpos - update the file offset for lseek
-> >>    * @file:    file structure in question
-> >> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> >> index 997a530..e5edbc9 100644
-> >> --- a/include/linux/fs.h
-> >> +++ b/include/linux/fs.h
-> >> @@ -3074,6 +3074,11 @@ extern void
-> >>   file_ra_state_init(struct file_ra_state *ra, struct address_space 
-> >> *mapping);
-> >>   extern loff_t noop_llseek(struct file *file, loff_t offset, int 
-> >> whence);
-> >>   extern loff_t no_llseek(struct file *file, loff_t offset, int whence);
-> >> +static inline bool unsigned_offsets(struct file *file)
-> >> +{
-> >> +    return file->f_mode & FMODE_UNSIGNED_OFFSET;
-> >> +}
-> >> +
-> >>   extern loff_t vfs_setpos(struct file *file, loff_t offset, loff_t 
-> >> maxsize);
-> >>   extern loff_t generic_file_llseek(struct file *file, loff_t offset, 
-> >> int whence);
-> >>   extern loff_t generic_file_llseek_size(struct file *file, loff_t 
-> >> offset,
-> 
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index ae196784f487..636a61036ffe 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -243,7 +243,6 @@ void dio_warn_stale_pagecache(struct file *filp)
+ 
+ /**
+  * dio_complete() - called when all DIO BIO I/O has been completed
+- * @offset: the byte offset in the file of the completed operation
+  *
+  * This drops i_dio_count, lets interested parties know that a DIO operation
+  * has completed, and calculates the resulting return code for the operation.
+-- 
+2.17.1
+
