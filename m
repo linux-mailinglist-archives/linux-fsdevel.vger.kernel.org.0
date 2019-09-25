@@ -2,209 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29121BDA05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 10:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 251D2BDAEA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 11:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438957AbfIYIkT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 04:40:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40616 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2406899AbfIYIkT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:40:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B6A4FAF9C;
-        Wed, 25 Sep 2019 08:40:15 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5DD041E481F; Wed, 25 Sep 2019 10:40:31 +0200 (CEST)
-Date:   Wed, 25 Sep 2019 10:40:31 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     Jan Kara <jack@suse.cz>, tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
-Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
- infrastructure
-Message-ID: <20190925084031.GA23277@quack2.suse.cz>
-References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
- <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
- <20190923211011.GH20367@quack2.suse.cz>
- <20190924102926.GC17526@bobrowski>
- <20190924141321.GC11819@quack2.suse.cz>
- <20190925071429.GA27699@bobrowski>
+        id S1729962AbfIYJ1A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 05:27:00 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40795 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729909AbfIYJ0t (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Sep 2019 05:26:49 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l3so5797234wru.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 02:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=DSd1v0HUw/UkMj7k6RRXoGkCzVR4BXBAWnDfAwYmXTo=;
+        b=BQn/6cK6ycjR1V9lYtL8otDKbL5qaW0Y9AhJ4HBz/L/YEzooTUo/n7ETXJ8Y3pQojL
+         KHyRKp9/6iFOAJsWJ0NC/9hoTBqcuSxBnjTofRCf7zQx/h/oRo8h98ushpqf4A+VK0qu
+         1UcTHC9XXBXQam0x/RY5FSRET2U0eE1mZZ5+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=DSd1v0HUw/UkMj7k6RRXoGkCzVR4BXBAWnDfAwYmXTo=;
+        b=tvamvBwHRDWwalH+fL8LF0WoTCqDcCAti2TsGU9WsMO4RbEBQ3bAjxliUPr1E+lc+r
+         4HOwxAsqwkIXrILa6MqOwLiXw71/LRfBEoRxY2gPAXgeXKatm9PCrSukvr1gFOeXT4Bd
+         7Dicf/SPPpRq3I2pyVwyNd1M5Fx1tz5jLGZRUnhG2OVq3I79Tb9jBsLitpgvbmePKCEy
+         PeOQlS/jNqrMUHHKfMPPIBMxnR1moSgdSebNEBhYmauTFwhqWE46XV3nd/Y+f+8mjEfy
+         t1gBk15bCfiO8LjP9huhzWZGdJ5IOA9Y0cnB3nQgh2eYUBntS281v8RBMC4W0lNdN93u
+         HvoQ==
+X-Gm-Message-State: APjAAAWu5tWvuGvfc5VV3pB80W4Acp0FkvYJ/UHnW+uoWQ404SLzL4xJ
+        IIX7t/oml204zg0YKf3d4LHpdA==
+X-Google-Smtp-Source: APXvYqzJkKHFS0F5JWCrfcZ655cyXDynPdpniWimRDtHR8R6YIcvoP24OOgWxQPBEkqn/bcZ7qHKJw==
+X-Received: by 2002:adf:f78a:: with SMTP id q10mr8648154wrp.276.1569403607010;
+        Wed, 25 Sep 2019 02:26:47 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (84-236-74-228.pool.digikabel.hu. [84.236.74.228])
+        by smtp.gmail.com with ESMTPSA id r20sm7436015wrg.61.2019.09.25.02.26.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 02:26:46 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 11:26:39 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse update for 5.4
+Message-ID: <20190925092639.GA1904@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190925071429.GA27699@bobrowski>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 25-09-19 17:14:29, Matthew Bobrowski wrote:
-> On Tue, Sep 24, 2019 at 04:13:21PM +0200, Jan Kara wrote:
-> > On Tue 24-09-19 20:29:26, Matthew Bobrowski wrote:
-> > > On Mon, Sep 23, 2019 at 11:10:11PM +0200, Jan Kara wrote:
-> > > > On Thu 12-09-19 21:04:46, Matthew Bobrowski wrote:
-> > > > > +	if (offset + count > i_size_read(inode) ||
-> > > > > +	    offset + count > EXT4_I(inode)->i_disksize) {
-> > > > > +		ext4_update_i_disksize(inode, inode->i_size);
-> > > > > +		extend = true;
-> > > > > +	}
-> > > > 
-> > > > This call to ext4_update_i_disksize() is definitely wrong. If nothing else,
-> > > > you need to also have transaction started and call ext4_mark_inode_dirty()
-> > > > to actually journal the change of i_disksize (ext4_update_i_disksize()
-> > > > updates only the in-memory copy of the entry). Also the direct IO code
-> > > > needs to add the inode to the orphan list so that in case of crash, blocks
-> > > > allocated beyond EOF get truncated on next mount. That is the whole point
-> > > > of this excercise with i_disksize after all.
-> > > > 
-> > > > But I'm wondering if i_disksize update is needed. Truncate cannot be in
-> > > > progress (we hold i_rwsem) and dirty pages will be flushed by
-> > > > iomap_dio_rw() before we start to allocate any blocks. So it should be
-> > > > enough to have here:
-> > > 
-> > > Well, I initially thought the same, however doing some research shows that we
-> > > have the following edge case:
-> > >      - 45d8ec4d9fd54
-> > >      and
-> > >      - 73fdad00b208b
-> > > 
-> > > In fact you can reproduce the exact same i_size corruption issue by running
-> > > the generic/475 xfstests mutitple times, as articulated within
-> > > 45d8ec4d9fd54. So with that, I'm kind of confused and thinking that there may
-> > > be a problem that resides elsewhere that may need addressing?
-> > 
-> > Right, I forgot about the special case explained in 45d8ec4d9fd54 where
-> > there's unwritted delalloc write beyond range where DIO write happens.
-> > 
-> > > > 	if (offset + count > i_size_read(inode)) {
-> > > > 		/*
-> > > > 		 * Add inode to orphan list so that blocks allocated beyond
-> > > > 		 * EOF get properly truncated in case of crash.
-> > > > 		 */
-> > > > 		start transaction handle
-> > > > 		add inode to orphan list
-> > > > 		stop transaction handle
-> > > > 	}
-> > > > 
-> > > > And just leave i_disksize at whatever it currently is.
-> > > 
-> > > I originally had the code which added the inode to the orphan list here, but
-> > > then I thought to myself that it'd make more sense to actually do this step
-> > > closer to the point where we've managed to successfully allocate the required
-> > > blocks for the write. This prevents the need to spray orphan list clean up
-> > > code all over the place just to cover the case that a write which had intended
-> > > to extend the inode beyond i_size had failed prematurely (i.e. before block
-> > > allocation). So, hence the reason why I thought having it in
-> > > ext4_iomap_begin() would make more sense, because at that point in the write
-> > > path, there is enough/or more assurance to make the call around whether we
-> > > will in fact be able to perform the write which will be extending beyond
-> > > i_size, or not and consequently whether the inode should be placed onto the
-> > > orphan list?
-> > > 
-> > > Ideally I'd like to turn this statement into:
-> > > 
-> > > 	if (offset + count > i_size_read(inode))
-> > > 	        extend = true;
-> > > 
-> > > Maybe I'm missing something here and there's actually a really good reason for
-> > > doing this nice and early? What are your thoughts about what I've mentioned
-> > > above?
-> > 
-> > Well, the slight trouble with adding inode to orphan list in
-> > ext4_iomap_begin() is that then it is somewhat difficult to tell whether
-> > you need to remove it when IO is done because there's no way how to
-> > propagate that information from ext4_iomap_begin() and checking against
-> > i_disksize is unreliable because it can change (due to writeback of
-> > delalloc pages) while direct IO is running. But I think we can overcome
-> > that by splitting our end_io functions to two - ext4_dio_write_end_io() and
-> > ext4_dio_extend_write_end_io(). So:
-> > 
-> > 	WARN_ON_ONCE(i_size_read(inode) < EXT4_I(inode)->i_disksize);
-> > 	/*
-> > 	 * Need to check against i_disksize as there may be dellalloc writes
-> > 	 * pending.
-> > 	 */
-> >  	if (offset + count > EXT4_I(inode)->i_disksize)
-> > 		extend = true;
-> 
-> Hm... I'm not entirely convinced that EXT4_I(inode)->i_disksize is what we
-> should be using to determine whether an extension will be performed or
-> not? Because, my understanding is that i_size is what holds the actual value
-> of what the file size is expected to be and hence the reason why we previously
-> updated the i_disksize to i_size using ext4_update_i_disksize().
+Hi Linus,
 
-So i_size is how inode size actually appears to user. i_disksize is what
-inode size really is on disk. And because of orphan handling and similar
-stuff requiring i_rwsem protection, we need to use the slow path waiting
-for DIO to complete whenever the direct IO is beyond the on-disk version of
-inode size. Possibly there are other places in DIO path that need to use
-i_disksize instead of i_size as well - I'll check that once I see new
-version of your patches.
+Please pull from:
 
-> Also, there are cases where offset + count > EXT4_I(inode)->i_disksize,
-> however offset + count < i_size_read(inode). So in that case we may take an
-> incorrect path somewhere i.e. below where extend clause is true. Also, I feel
-> as though we should try stick to using one value as the reference to determine
-> whether we're performing an extension and not use i_disksize here and then
-> i_size over there kind of thing as that leads to unnecessary confusion?
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-5.4
 
-Well, when DIO extends past i_disksize, it needs to add inode to orphan
-list, call truncate in case of failed write, etc. So extension of
-i_disksize is what actually matters. I was speaking in the past about
-i_size because I thought i_size == i_disksize for the cases we care for but
-as you properly pointed out that isn't necessarily the case.
+ - Continue separating the transport (user/kernel communication) and the
+   filesystem layers of fuse.  Getting rid of most layering violations will
+   allow for easier cleanup and optimization later on.
 
-> > 	...
-> > 	iomap_dio_rw(...,
-> > 		extend ? ext4_dio_extend_write_end_io : ext4_dio_write_end_io);
-> > 
-> > and ext4_dio_write_end_io() will just take care of conversion of unwritten
-> > extents on successful IO completion, while ext4_dio_extend_write_end_io()
-> > will take care of all the complex stuff with orphan handling, extension
-> > of inode size, and truncation of blocks beyond EOF - and it can do that
-> > because it is guaranteed to run under the protection of i_rwsem held in
-> > ext4_dio_write_iter().
-> > 
-> > Alternatively, we could also just pass NULL instead of
-> > ext4_dio_extend_write_end_io() and just do all the work explicitely in
-> > ext4_dio_write_iter() in the 'extend' case. That might be actually the most
-> > transparent option...
-> 
-> Well, with the changes to ext4_handle_inode_extension() conditions that you
-> recommended in patch 2/6, then I can't see why we'd need two separate
-> ->end_io() handlers as we'd just abort early if we're not extending?
+ - Prepare for the addition of the virtio-fs filesystem.  The actual
+   filesystem will be introduced by a separate pull request.
 
-The problem is that the condition I've suggested for patch 2/6 will be
-actually racy if we use i_disksize for comparison. Consider the following
-situation:
+ - Convert to new mount API.
 
-CPU1					CPU2
-fd1 = open("file");			fd2 = open("file", O_DIRECT);
-/* Delalloc write */
-pwrite(fd1, buf, 4096, 16384);
-					/* O_DIRECT write */
-					pwrite(fd2, buf, 4096, 4096)
-					  i_disksize == 0 so we have to add
-					  inode to orphan list
-					    submit DIO
-writeback happens, i_disksize extended
-to 20480.
-					    DIO completes ->
-					    ext4_dio_write_end_io() - sees
-					    big i_disksize so does not
-					    touch orphan list and inode is
-					    wrongly left there.
+ - Various fixes, optimizations and cleanups.
 
+Thanks,
+Miklos
 
-And we cannot remove inode unconditionally from the orphan list in
-ext4_dio_write_end_io() as when DIO starts already below i_disksize,
-ext4_dio_write_end_io() may get called without i_rwsem protection.
+---
+Arnd Bergmann (1):
+      fuse: unexport fuse_put_request
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+David Howells (2):
+      fuse: convert to use the new mount API
+      vfs: subtype handling moved to fuse
+
+Eric Biggers (1):
+      fuse: fix deadlock with aio poll and fuse_iqueue::waitq.lock
+
+Khazhismel Kumykov (2):
+      fuse: on 64-bit store time in d_fsdata directly
+      fuse: kmemcg account fs data
+
+Kirill Smelkov (1):
+      fuse: require /dev/fuse reads to have enough buffer capacity (take 2)
+
+Maxim Patlasov (1):
+      fuse: cleanup fuse_wait_on_page_writeback
+
+Michael S. Tsirkin (1):
+      fuse: reserve byteswapped init opcodes
+
+Miklos Szeredi (33):
+      cuse: fix broken release
+      fuse: flatten 'struct fuse_args'
+      fuse: rearrange and resize fuse_args fields
+      fuse: simplify 'nofail' request
+      fuse: convert flush to simple api
+      fuse: add noreply to fuse_args
+      fuse: convert fuse_force_forget() to simple api
+      fuse: add nocreds to fuse_args
+      fuse: convert destroy to simple api
+      fuse: add pages to fuse_args
+      fuse: convert readlink to simple api
+      fuse: move page alloc
+      fuse: convert ioctl to simple api
+      fuse: fuse_short_read(): don't take fuse_req as argument
+      fuse: covert readpage to simple api
+      fuse: convert sync write to simple api
+      fuse: add simple background helper
+      fuse: convert direct_io to simple api
+      fuse: convert readpages to simple api
+      fuse: convert readdir to simple api
+      fuse: convert writepages to simple api
+      fuse: convert init to simple api
+      cuse: convert init to simple api
+      fuse: convert release to simple api
+      fuse: convert retrieve to simple api
+      fuse: unexport request ops
+      fuse: simplify request allocation
+      fuse: clean up fuse_req
+      fuse: stop copying args to fuse_req
+      fuse: stop copying pages to fuse_req
+      fuse: fix request limit
+      fuse: delete dentry if timeout is zero
+      fuse: dissociate DESTROY from fuseblk
+
+Stefan Hajnoczi (5):
+      fuse: export fuse_end_request()
+      fuse: export fuse_len_args()
+      fuse: export fuse_get_unique()
+      fuse: extract fuse_fill_super_common()
+      fuse: add fuse_iqueue_ops callbacks
+
+Tejun Heo (1):
+      fuse: fix beyond-end-of-page access in fuse_parse_cache()
+
+Vasily Averin (1):
+      fuse: fix missing unlock_page in fuse_writepage()
+
+Vivek Goyal (4):
+      fuse: export fuse_send_init_request()
+      fuse: export fuse_dequeue_forget() function
+      fuse: separate fuse device allocation and installation in fuse_conn
+      fuse: allow skipping control interface and forced unmount
+
+YueHaibing (1):
+      fuse: Make fuse_args_to_req static
+
+zhengbin (1):
+      fuse: fix memleak in cuse_channel_open
+
+---
+ fs/fs_context.c            |   14 -
+ fs/fuse/cuse.c             |  101 ++--
+ fs/fuse/dev.c              |  654 ++++++++++-------------
+ fs/fuse/dir.c              |  283 +++++-----
+ fs/fuse/file.c             | 1227 ++++++++++++++++++++++++--------------------
+ fs/fuse/fuse_i.h           |  350 ++++++-------
+ fs/fuse/inode.c            |  553 +++++++++++---------
+ fs/fuse/readdir.c          |   72 ++-
+ fs/fuse/xattr.c            |   76 +--
+ fs/namespace.c             |    2 -
+ fs/proc_namespace.c        |    2 +-
+ fs/super.c                 |    5 -
+ include/linux/fs_context.h |    1 -
+ include/uapi/linux/fuse.h  |    4 +
+ 14 files changed, 1730 insertions(+), 1614 deletions(-)
