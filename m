@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F7B3BD5E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 02:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84BEBBD5DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 02:53:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411276AbfIYAwZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Sep 2019 20:52:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56910 "EHLO
+        id S2633479AbfIYAxG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Sep 2019 20:53:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56952 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2411271AbfIYAwY (ORCPT
+        with ESMTP id S2411298AbfIYAwd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Sep 2019 20:52:24 -0400
+        Tue, 24 Sep 2019 20:52:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=NExg9D+3Wa1fP9cAWyjnC7ZkvWAvXtW4PTf8NgFY27g=; b=suSAuWrP7cezUqpexhdh3X0z5y
-        6NfZdi50ztEisvpucYDUd8qslBQOK3CD6GRgm+x6K58lGz0PeZGxnmTHEX8GjdeiMReZOwB2tUvRD
-        Ew63ydItKTG+uFzaJHLbLjIMuwD9cRlJ2fySGe4+u4RjeUxIxuIxu+LI3ShyZHjB+GomS6ZVduzGK
-        xJ69gFGUxCtMNnt08HEHqOvKbSH+2Moaf/jZfQ0e5ELf6Uxce85lsSaTXOrXsXyL/zyOnAAOt4juK
-        8vWodAioL6Ilx6s4i1jwAgrpZNaiqjOyGbD4+EeQcPerWqpglu+A04YHWqDz0duVCXYxNzdQK6PJ+
-        VhX6mFDw==;
+        bh=Y1NQt4anQEfBjooPzpptnZgqbwsCqUUifwKGuz058Us=; b=Ri0Wt1OFlgSu5WqI76Qo7Dl3PA
+        z/6CoduVoj4eqcbssamNy4bItMsi2FmnNE73+TMXyxGFkSsgJbsM4w40M7Js3TSPsWObahgOTg9lQ
+        b05c4+Nd8s5Us4TcGl88hCHlhigXp/0ZMhbxt5I2plWxdZBYf7fbVAvxx8qgvPH5CHRJoRqOw49jD
+        liwU5sBhX1zd41WD0zvIZ4KKGnbzgRif6SlIwP3GfVozKLYsyA8OYyX5o7XgCMAJfN2daJOOOfMUA
+        JSCi7ZXFc7Q3/yGTDESyNR5Fk7YdwFB6tegDEi88Ti7VR6Dgo9+3f3kD+JoaVVCvHltzYM4ij6mbH
+        4EDfUNzw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCvXV-00076b-Fc; Wed, 25 Sep 2019 00:52:17 +0000
+        id 1iCvXV-00076f-Gq; Wed, 25 Sep 2019 00:52:17 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 06/15] xfs: Pass a page to xfs_finish_page_writeback
-Date:   Tue, 24 Sep 2019 17:52:05 -0700
-Message-Id: <20190925005214.27240-7-willy@infradead.org>
+Subject: [PATCH 07/15] mm: Make prep_transhuge_page tail-callable
+Date:   Tue, 24 Sep 2019 17:52:06 -0700
+Message-Id: <20190925005214.27240-8-willy@infradead.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190925005214.27240-1-willy@infradead.org>
 References: <20190925005214.27240-1-willy@infradead.org>
@@ -45,54 +45,72 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-The only part of the bvec we were accessing was the bv_page, so just
-pass that instead of the whole bvec.
+By permitting NULL or order-0 pages as an argument, and returning the
+argument, callers can write:
+
+	return prep_transhuge_page(alloc_pages(...));
+
+instead of assigning the result to a temporary variable and conditionally
+passing that to prep_transhuge_page().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/xfs/xfs_aops.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ include/linux/huge_mm.h | 7 +++++--
+ mm/huge_memory.c        | 9 +++++++--
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 1a26e9ca626b..edcb4797fcc2 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -58,21 +58,21 @@ xfs_find_daxdev_for_inode(
- static void
- xfs_finish_page_writeback(
- 	struct inode		*inode,
--	struct bio_vec	*bvec,
-+	struct page		*page,
- 	int			error)
- {
--	struct iomap_page	*iop = to_iomap_page(bvec->bv_page);
-+	struct iomap_page	*iop = to_iomap_page(page);
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 61c9ffd89b05..779e83800a77 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -153,7 +153,7 @@ extern unsigned long thp_get_unmapped_area(struct file *filp,
+ 		unsigned long addr, unsigned long len, unsigned long pgoff,
+ 		unsigned long flags);
  
- 	if (error) {
--		SetPageError(bvec->bv_page);
-+		SetPageError(page);
- 		mapping_set_error(inode->i_mapping, -EIO);
- 	}
+-extern void prep_transhuge_page(struct page *page);
++extern struct page *prep_transhuge_page(struct page *page);
+ extern void free_transhuge_page(struct page *page);
  
--	ASSERT(iop || i_blocks_per_page(inode, bvec->bv_page) <= 1);
-+	ASSERT(iop || i_blocks_per_page(inode, page) <= 1);
- 	ASSERT(!iop || atomic_read(&iop->write_count) > 0);
- 
- 	if (!iop || atomic_dec_and_test(&iop->write_count))
--		end_page_writeback(bvec->bv_page);
-+		end_page_writeback(page);
+ bool can_split_huge_page(struct page *page, int *pextra_pins);
+@@ -303,7 +303,10 @@ static inline bool transhuge_vma_suitable(struct vm_area_struct *vma,
+ 	return false;
  }
  
- /*
-@@ -106,7 +106,7 @@ xfs_destroy_ioend(
+-static inline void prep_transhuge_page(struct page *page) {}
++static inline struct page *prep_transhuge_page(struct page *page)
++{
++	return page;
++}
  
- 		/* walk each page on bio, ending page IO on them */
- 		bio_for_each_segment_all(bvec, bio, iter_all)
--			xfs_finish_page_writeback(inode, bvec, error);
-+			xfs_finish_page_writeback(inode, bvec->bv_page, error);
- 		bio_put(bio);
- 	}
+ #define transparent_hugepage_flags 0UL
  
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 73fc517c08d2..cbe7d0619439 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -516,15 +516,20 @@ static inline struct deferred_split *get_deferred_split_queue(struct page *page)
+ }
+ #endif
+ 
+-void prep_transhuge_page(struct page *page)
++struct page *prep_transhuge_page(struct page *page)
+ {
++	if (!page || compound_order(page) == 0)
++		return page;
+ 	/*
+-	 * we use page->mapping and page->indexlru in second tail page
++	 * we use page->mapping and page->index in second tail page
+ 	 * as list_head: assuming THP order >= 2
+ 	 */
++	BUG_ON(compound_order(page) == 1);
+ 
+ 	INIT_LIST_HEAD(page_deferred_list(page));
+ 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
++
++	return page;
+ }
+ 
+ static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
 -- 
 2.23.0
 
