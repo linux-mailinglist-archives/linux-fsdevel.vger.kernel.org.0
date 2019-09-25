@@ -2,199 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 474F9BD8DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 09:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E851EBD8E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 09:17:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405084AbfIYHOh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 03:14:37 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44642 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbfIYHOh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:14:37 -0400
-Received: by mail-pl1-f194.google.com with SMTP id q15so2009501pll.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 00:14:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HpeYc7akNM3A5zHh7LxzKwzKtROxQYfdMS+gGrf544c=;
-        b=F8nvNdNtXXUJO1WsRlMJb9YPQauuYTeQUi1fnaQrHvNUregudk4s/IpuYS2tA/KC01
-         M8yi33ZOoNtSe5V1XtF/9b7jVKv9aM0i3keoBWTmEvUem3pRHYnNfYtj+og+RH7cvgtv
-         IMnl0XX5ZH1ejKuqHCbZkXFlCB5WBQCJDqKBPT5ADCT3H5FY77lM6a3eGiWfOuu7UTzS
-         y64c9t8DvQS7twmgZDa9G7Xy5tQmwx8PKt2GinArYs5CD8Y6kXEP1v7HmQL5hbCxW91g
-         xw92bz8UMlgFNGBKnDOuVapveMz/cZks1Gu6SsRb4ufgqfO/D9tQjk1MqkP2KXA0vbs7
-         sS8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HpeYc7akNM3A5zHh7LxzKwzKtROxQYfdMS+gGrf544c=;
-        b=c8g2Yd2mpC6HsJxUkHpEP3b4KHz4g/g2hCn9NePFT9RvSJgU2IxF9BAIVIP6DUgwvt
-         ors5fSfLUKkd4OquTZLH+PQwQEDxwHo2PZ38p0ijbGRWW+Ytxb0Qs6k2YQ4R52BckQoR
-         583VDRtwfbE0vEORjJ5S4/uerWAngmXTue4QknNqmwsPWNjMeR3Ol3bHbjRV4k37neRV
-         N+E2TjJwUwbyjnz8iDM/sGWmnoiFs3accq9vz0l7+EECrAn8Y1OjOzl8YGK9e2XMwwhI
-         qB1P9D1+9SADaCX0+viNw7xhbMe/4vozWYQx4Lu4usesTvz3inWj/rIA9UgiZX6mBbCI
-         /aLw==
-X-Gm-Message-State: APjAAAVMpu8Wl6J2pwTByN40kqakCVWAiiUq1znCo3Ib7Q32tsSApUae
-        KjyDcMQDXlK4/t7WOErUvOId
-X-Google-Smtp-Source: APXvYqxNDkSAa6bm6uE/99RM1TsL2oTQEGEUaK3fM4YCqcpJVo+iiVNBlXitaxc+FAS5zBK0jKQCJA==
-X-Received: by 2002:a17:902:ab89:: with SMTP id f9mr7405788plr.295.1569395675980;
-        Wed, 25 Sep 2019 00:14:35 -0700 (PDT)
-Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id d1sm8598495pfc.98.2019.09.25.00.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 00:14:35 -0700 (PDT)
-Date:   Wed, 25 Sep 2019 17:14:29 +1000
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
-Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
- infrastructure
-Message-ID: <20190925071429.GA27699@bobrowski>
-References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
- <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
- <20190923211011.GH20367@quack2.suse.cz>
- <20190924102926.GC17526@bobrowski>
- <20190924141321.GC11819@quack2.suse.cz>
+        id S2442338AbfIYHRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 03:17:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58042 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2437028AbfIYHRw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:17:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3D10CB641;
+        Wed, 25 Sep 2019 07:17:49 +0000 (UTC)
+Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
+ kmalloc(power-of-two)
+To:     Andrew Morton <akpm@linux-foundation.org>, cl@linux.com
+Cc:     David Sterba <dsterba@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-btrfs@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+References: <20190826111627.7505-1-vbabka@suse.cz>
+ <20190826111627.7505-3-vbabka@suse.cz>
+ <df8d1cf4-ff8f-1ee1-12fb-cfec39131b32@suse.cz>
+ <20190923171710.GN2751@twin.jikos.cz>
+ <alpine.DEB.2.21.1909242048020.17661@www.lameter.com>
+ <20190924165425.a79a2dafbaf37828a931df2b@linux-foundation.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <34a45e87-5bad-5f01-7dcb-8a3f6cf37281@suse.cz>
+Date:   Wed, 25 Sep 2019 09:17:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190924141321.GC11819@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190924165425.a79a2dafbaf37828a931df2b@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 04:13:21PM +0200, Jan Kara wrote:
-> On Tue 24-09-19 20:29:26, Matthew Bobrowski wrote:
-> > On Mon, Sep 23, 2019 at 11:10:11PM +0200, Jan Kara wrote:
-> > > On Thu 12-09-19 21:04:46, Matthew Bobrowski wrote:
-> > > > +	if (offset + count > i_size_read(inode) ||
-> > > > +	    offset + count > EXT4_I(inode)->i_disksize) {
-> > > > +		ext4_update_i_disksize(inode, inode->i_size);
-> > > > +		extend = true;
-> > > > +	}
-> > > 
-> > > This call to ext4_update_i_disksize() is definitely wrong. If nothing else,
-> > > you need to also have transaction started and call ext4_mark_inode_dirty()
-> > > to actually journal the change of i_disksize (ext4_update_i_disksize()
-> > > updates only the in-memory copy of the entry). Also the direct IO code
-> > > needs to add the inode to the orphan list so that in case of crash, blocks
-> > > allocated beyond EOF get truncated on next mount. That is the whole point
-> > > of this excercise with i_disksize after all.
-> > > 
-> > > But I'm wondering if i_disksize update is needed. Truncate cannot be in
-> > > progress (we hold i_rwsem) and dirty pages will be flushed by
-> > > iomap_dio_rw() before we start to allocate any blocks. So it should be
-> > > enough to have here:
-> > 
-> > Well, I initially thought the same, however doing some research shows that we
-> > have the following edge case:
-> >      - 45d8ec4d9fd54
-> >      and
-> >      - 73fdad00b208b
-> > 
-> > In fact you can reproduce the exact same i_size corruption issue by running
-> > the generic/475 xfstests mutitple times, as articulated within
-> > 45d8ec4d9fd54. So with that, I'm kind of confused and thinking that there may
-> > be a problem that resides elsewhere that may need addressing?
+On 9/25/19 1:54 AM, Andrew Morton wrote:
+> On Tue, 24 Sep 2019 20:52:52 +0000 (UTC) cl@linux.com wrote:
 > 
-> Right, I forgot about the special case explained in 45d8ec4d9fd54 where
-> there's unwritted delalloc write beyond range where DIO write happens.
+>> On Mon, 23 Sep 2019, David Sterba wrote:
+>>
+>>> As a user of the allocator interface in filesystem, I'd like to see a
+>>> more generic way to address the alignment guarantees so we don't have to
+>>> apply workarounds like 3acd48507dc43eeeb each time we find that we
+>>> missed something. (Where 'missed' might be another sort of weird memory
+>>> corruption hard to trigger.)
+>>
+>> The alignment guarantees are clearly documented and objects are misaligned
+>> in debugging kernels.
+>>
+>> Looking at 3acd48507dc43eeeb:Looks like no one tested that patch with a
+>> debug kernel or full debugging on until it hit mainline. Not good.
+>>
+>> The consequence for the lack of proper testing is to make the production
+>> kernel contain the debug measures?
 > 
-> > > 	if (offset + count > i_size_read(inode)) {
-> > > 		/*
-> > > 		 * Add inode to orphan list so that blocks allocated beyond
-> > > 		 * EOF get properly truncated in case of crash.
-> > > 		 */
-> > > 		start transaction handle
-> > > 		add inode to orphan list
-> > > 		stop transaction handle
-> > > 	}
-> > > 
-> > > And just leave i_disksize at whatever it currently is.
-> > 
-> > I originally had the code which added the inode to the orphan list here, but
-> > then I thought to myself that it'd make more sense to actually do this step
-> > closer to the point where we've managed to successfully allocate the required
-> > blocks for the write. This prevents the need to spray orphan list clean up
-> > code all over the place just to cover the case that a write which had intended
-> > to extend the inode beyond i_size had failed prematurely (i.e. before block
-> > allocation). So, hence the reason why I thought having it in
-> > ext4_iomap_begin() would make more sense, because at that point in the write
-> > path, there is enough/or more assurance to make the call around whether we
-> > will in fact be able to perform the write which will be extending beyond
-> > i_size, or not and consequently whether the inode should be placed onto the
-> > orphan list?
-> > 
-> > Ideally I'd like to turn this statement into:
-> > 
-> > 	if (offset + count > i_size_read(inode))
-> > 	        extend = true;
-> > 
-> > Maybe I'm missing something here and there's actually a really good reason for
-> > doing this nice and early? What are your thoughts about what I've mentioned
-> > above?
+> This isn't a debug measure - it's making the interface do that which
+> people evidently expect it to do.  Minor point.
+
+Yes, detecting issues due to misalignment is one thing, but then there
+are the workarounds necessary to achieve it (for multiple sizes, so no
+single kmem_cache_create(..., alignment)), as XFS folks demonstrated.
+
+> I agree it's a bit regrettable to do this but it does appear that the
+> change will make the kernel overall a better place given the reality of
+> kernel development.
+
+Thanks.
+
+> Given this, have you reviewed the patch for overall implementation
+> correctness?
 > 
-> Well, the slight trouble with adding inode to orphan list in
-> ext4_iomap_begin() is that then it is somewhat difficult to tell whether
-> you need to remove it when IO is done because there's no way how to
-> propagate that information from ext4_iomap_begin() and checking against
-> i_disksize is unreliable because it can change (due to writeback of
-> delalloc pages) while direct IO is running. But I think we can overcome
-> that by splitting our end_io functions to two - ext4_dio_write_end_io() and
-> ext4_dio_extend_write_end_io(). So:
-> 
-> 	WARN_ON_ONCE(i_size_read(inode) < EXT4_I(inode)->i_disksize);
-> 	/*
-> 	 * Need to check against i_disksize as there may be dellalloc writes
-> 	 * pending.
-> 	 */
->  	if (offset + count > EXT4_I(inode)->i_disksize)
-> 		extend = true;
+> I'm wondering if we can avoid at least some of the patch's overhead if
+> slab debugging is disabled - the allocators are already returning
+> suitably aligned memory, so why add the new code in that case?
 
-Hm... I'm not entirely convinced that EXT4_I(inode)->i_disksize is what we
-should be using to determine whether an extension will be performed or
-not? Because, my understanding is that i_size is what holds the actual value
-of what the file size is expected to be and hence the reason why we previously
-updated the i_disksize to i_size using ext4_update_i_disksize().
-
-Also, there are cases where offset + count > EXT4_I(inode)->i_disksize,
-however offset + count < i_size_read(inode). So in that case we may take an
-incorrect path somewhere i.e. below where extend clause is true. Also, I feel
-as though we should try stick to using one value as the reference to determine
-whether we're performing an extension and not use i_disksize here and then
-i_size over there kind of thing as that leads to unnecessary confusion?
-
-> 	...
-> 	iomap_dio_rw(...,
-> 		extend ? ext4_dio_extend_write_end_io : ext4_dio_write_end_io);
-> 
-> and ext4_dio_write_end_io() will just take care of conversion of unwritten
-> extents on successful IO completion, while ext4_dio_extend_write_end_io()
-> will take care of all the complex stuff with orphan handling, extension
-> of inode size, and truncation of blocks beyond EOF - and it can do that
-> because it is guaranteed to run under the protection of i_rwsem held in
-> ext4_dio_write_iter().
-> 
-> Alternatively, we could also just pass NULL instead of
-> ext4_dio_extend_write_end_io() and just do all the work explicitely in
-> ext4_dio_write_iter() in the 'extend' case. That might be actually the most
-> transparent option...
-
-Well, with the changes to ext4_handle_inode_extension() conditions that you
-recommended in patch 2/6, then I can't see why we'd need two separate
-->end_io() handlers as we'd just abort early if we're not extending?
-
-> But at this point there are so many suggestions in flight that I need to
-> see current state of the code again to be able to tell anything useful :).
-
-Heh, true. I will post through an updated patch series taking into account
-most of the recommendations put forward for this series version and then we
-can have a discussion based on that. :)
-
---<M>--
+Most of the new code is for SLOB, which has no debugging and yet
+misaligns. For SLUB and SLAB, it's just passing alignment argument to
+kmem_cache_create() for kmalloc caches, which means just extra few
+instructions during boot, and no extra code during kmalloc/kfree itself.
