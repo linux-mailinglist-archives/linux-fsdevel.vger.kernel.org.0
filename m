@@ -2,151 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC507BD8CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 09:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 474F9BD8DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Sep 2019 09:14:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442524AbfIYHLj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 03:11:39 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50015 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2442450AbfIYHLi (ORCPT
+        id S2405084AbfIYHOh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 03:14:37 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44642 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbfIYHOh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:11:38 -0400
-Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 0F58E43E145;
-        Wed, 25 Sep 2019 17:11:31 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iD1ST-0000d6-DP; Wed, 25 Sep 2019 17:11:29 +1000
-Date:   Wed, 25 Sep 2019 17:11:29 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Omar Sandoval <osandov@osandov.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [RFC PATCH 2/3] fs: add RWF_ENCODED for writing compressed data
-Message-ID: <20190925071129.GB804@dread.disaster.area>
-References: <cover.1568875700.git.osandov@fb.com>
- <230a76e65372a8fb3ec62ce167d9322e5e342810.1568875700.git.osandov@fb.com>
- <CAG48ez2GKv15Uj6Wzv0sG5v2bXyrSaCtRTw5Ok_ovja_CiO_fQ@mail.gmail.com>
- <20190924171513.GA39872@vader>
- <20190924193513.GA45540@vader>
- <CAG48ez1NQBNR1XeVQYGoopEk=g_KedUr+7jxLQTaO+V8JCeweQ@mail.gmail.com>
+        Wed, 25 Sep 2019 03:14:37 -0400
+Received: by mail-pl1-f194.google.com with SMTP id q15so2009501pll.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 00:14:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HpeYc7akNM3A5zHh7LxzKwzKtROxQYfdMS+gGrf544c=;
+        b=F8nvNdNtXXUJO1WsRlMJb9YPQauuYTeQUi1fnaQrHvNUregudk4s/IpuYS2tA/KC01
+         M8yi33ZOoNtSe5V1XtF/9b7jVKv9aM0i3keoBWTmEvUem3pRHYnNfYtj+og+RH7cvgtv
+         IMnl0XX5ZH1ejKuqHCbZkXFlCB5WBQCJDqKBPT5ADCT3H5FY77lM6a3eGiWfOuu7UTzS
+         y64c9t8DvQS7twmgZDa9G7Xy5tQmwx8PKt2GinArYs5CD8Y6kXEP1v7HmQL5hbCxW91g
+         xw92bz8UMlgFNGBKnDOuVapveMz/cZks1Gu6SsRb4ufgqfO/D9tQjk1MqkP2KXA0vbs7
+         sS8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HpeYc7akNM3A5zHh7LxzKwzKtROxQYfdMS+gGrf544c=;
+        b=c8g2Yd2mpC6HsJxUkHpEP3b4KHz4g/g2hCn9NePFT9RvSJgU2IxF9BAIVIP6DUgwvt
+         ors5fSfLUKkd4OquTZLH+PQwQEDxwHo2PZ38p0ijbGRWW+Ytxb0Qs6k2YQ4R52BckQoR
+         583VDRtwfbE0vEORjJ5S4/uerWAngmXTue4QknNqmwsPWNjMeR3Ol3bHbjRV4k37neRV
+         N+E2TjJwUwbyjnz8iDM/sGWmnoiFs3accq9vz0l7+EECrAn8Y1OjOzl8YGK9e2XMwwhI
+         qB1P9D1+9SADaCX0+viNw7xhbMe/4vozWYQx4Lu4usesTvz3inWj/rIA9UgiZX6mBbCI
+         /aLw==
+X-Gm-Message-State: APjAAAVMpu8Wl6J2pwTByN40kqakCVWAiiUq1znCo3Ib7Q32tsSApUae
+        KjyDcMQDXlK4/t7WOErUvOId
+X-Google-Smtp-Source: APXvYqxNDkSAa6bm6uE/99RM1TsL2oTQEGEUaK3fM4YCqcpJVo+iiVNBlXitaxc+FAS5zBK0jKQCJA==
+X-Received: by 2002:a17:902:ab89:: with SMTP id f9mr7405788plr.295.1569395675980;
+        Wed, 25 Sep 2019 00:14:35 -0700 (PDT)
+Received: from bobrowski ([110.232.114.101])
+        by smtp.gmail.com with ESMTPSA id d1sm8598495pfc.98.2019.09.25.00.14.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 00:14:35 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 17:14:29 +1000
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com
+Subject: Re: [PATCH v3 5/6] ext4: introduce direct IO write path using iomap
+ infrastructure
+Message-ID: <20190925071429.GA27699@bobrowski>
+References: <cover.1568282664.git.mbobrowski@mbobrowski.org>
+ <db33705f9ba35ccbe20fc19b8ecbbf2078beff08.1568282664.git.mbobrowski@mbobrowski.org>
+ <20190923211011.GH20367@quack2.suse.cz>
+ <20190924102926.GC17526@bobrowski>
+ <20190924141321.GC11819@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez1NQBNR1XeVQYGoopEk=g_KedUr+7jxLQTaO+V8JCeweQ@mail.gmail.com>
+In-Reply-To: <20190924141321.GC11819@quack2.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
-        a=-uoBkjAQAAAA:8 a=7-415B0cAAAA:8 a=4zo7HAFyputdoMmBiIYA:9
-        a=CjuIK1q_8ugA:10 a=y0wLjPFBLyexm0soFTcm:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 10:01:41PM +0200, Jann Horn wrote:
-> On Tue, Sep 24, 2019 at 9:35 PM Omar Sandoval <osandov@osandov.com> wrote:
-> > On Tue, Sep 24, 2019 at 10:15:13AM -0700, Omar Sandoval wrote:
-> > > On Thu, Sep 19, 2019 at 05:44:12PM +0200, Jann Horn wrote:
-> > > > On Thu, Sep 19, 2019 at 8:54 AM Omar Sandoval <osandov@osandov.com> wrote:
-> > > > > Btrfs can transparently compress data written by the user. However, we'd
-> > > > > like to add an interface to write pre-compressed data directly to the
-> > > > > filesystem. This adds support for so-called "encoded writes" via
-> > > > > pwritev2().
-> > > > >
-> > > > > A new RWF_ENCODED flags indicates that a write is "encoded". If this
-> > > > > flag is set, iov[0].iov_base points to a struct encoded_iov which
-> > > > > contains metadata about the write: namely, the compression algorithm and
-> > > > > the unencoded (i.e., decompressed) length of the extent. iov[0].iov_len
-> > > > > must be set to sizeof(struct encoded_iov), which can be used to extend
-> > > > > the interface in the future. The remaining iovecs contain the encoded
-> > > > > extent.
-> > > > >
-> > > > > A similar interface for reading encoded data can be added to preadv2()
-> > > > > in the future.
-> > > > >
-> > > > > Filesystems must indicate that they support encoded writes by setting
-> > > > > FMODE_ENCODED_IO in ->file_open().
-> > > > [...]
-> > > > > +int import_encoded_write(struct kiocb *iocb, struct encoded_iov *encoded,
-> > > > > +                        struct iov_iter *from)
-> > > > > +{
-> > > > > +       if (iov_iter_single_seg_count(from) != sizeof(*encoded))
-> > > > > +               return -EINVAL;
-> > > > > +       if (copy_from_iter(encoded, sizeof(*encoded), from) != sizeof(*encoded))
-> > > > > +               return -EFAULT;
-> > > > > +       if (encoded->compression == ENCODED_IOV_COMPRESSION_NONE &&
-> > > > > +           encoded->encryption == ENCODED_IOV_ENCRYPTION_NONE) {
-> > > > > +               iocb->ki_flags &= ~IOCB_ENCODED;
-> > > > > +               return 0;
-> > > > > +       }
-> > > > > +       if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
-> > > > > +           encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
-> > > > > +               return -EINVAL;
-> > > > > +       if (!capable(CAP_SYS_ADMIN))
-> > > > > +               return -EPERM;
-> > > >
-> > > > How does this capable() check interact with io_uring? Without having
-> > > > looked at this in detail, I suspect that when an encoded write is
-> > > > requested through io_uring, the capable() check might be executed on
-> > > > something like a workqueue worker thread, which is probably running
-> > > > with a full capability set.
-> > >
-> > > I discussed this more with Jens. You're right, per-IO permission checks
-> > > aren't going to work. In fully-polled mode, we never get an opportunity
-> > > to check capabilities in right context. So, this will probably require a
-> > > new open flag.
-> >
-> > Actually, file_ns_capable() accomplishes the same thing without a new
-> > open flag. Changing the capable() check to file_ns_capable() in
-> > init_user_ns should be enough.
+On Tue, Sep 24, 2019 at 04:13:21PM +0200, Jan Kara wrote:
+> On Tue 24-09-19 20:29:26, Matthew Bobrowski wrote:
+> > On Mon, Sep 23, 2019 at 11:10:11PM +0200, Jan Kara wrote:
+> > > On Thu 12-09-19 21:04:46, Matthew Bobrowski wrote:
+> > > > +	if (offset + count > i_size_read(inode) ||
+> > > > +	    offset + count > EXT4_I(inode)->i_disksize) {
+> > > > +		ext4_update_i_disksize(inode, inode->i_size);
+> > > > +		extend = true;
+> > > > +	}
+> > > 
+> > > This call to ext4_update_i_disksize() is definitely wrong. If nothing else,
+> > > you need to also have transaction started and call ext4_mark_inode_dirty()
+> > > to actually journal the change of i_disksize (ext4_update_i_disksize()
+> > > updates only the in-memory copy of the entry). Also the direct IO code
+> > > needs to add the inode to the orphan list so that in case of crash, blocks
+> > > allocated beyond EOF get truncated on next mount. That is the whole point
+> > > of this excercise with i_disksize after all.
+> > > 
+> > > But I'm wondering if i_disksize update is needed. Truncate cannot be in
+> > > progress (we hold i_rwsem) and dirty pages will be flushed by
+> > > iomap_dio_rw() before we start to allocate any blocks. So it should be
+> > > enough to have here:
+> > 
+> > Well, I initially thought the same, however doing some research shows that we
+> > have the following edge case:
+> >      - 45d8ec4d9fd54
+> >      and
+> >      - 73fdad00b208b
+> > 
+> > In fact you can reproduce the exact same i_size corruption issue by running
+> > the generic/475 xfstests mutitple times, as articulated within
+> > 45d8ec4d9fd54. So with that, I'm kind of confused and thinking that there may
+> > be a problem that resides elsewhere that may need addressing?
 > 
-> +Aleksa for openat2() and open() space
+> Right, I forgot about the special case explained in 45d8ec4d9fd54 where
+> there's unwritted delalloc write beyond range where DIO write happens.
 > 
-> Mmh... but if the file descriptor has been passed through a privilege
-> boundary, it isn't really clear whether the original opener of the
-> file intended for this to be possible. For example, if (as a
-> hypothetical example) the init process opens a service's logfile with
-> root privileges, then passes the file descriptor to that logfile to
-> the service on execve(), that doesn't mean that the service should be
-> able to perform compressed writes into that file, I think.
+> > > 	if (offset + count > i_size_read(inode)) {
+> > > 		/*
+> > > 		 * Add inode to orphan list so that blocks allocated beyond
+> > > 		 * EOF get properly truncated in case of crash.
+> > > 		 */
+> > > 		start transaction handle
+> > > 		add inode to orphan list
+> > > 		stop transaction handle
+> > > 	}
+> > > 
+> > > And just leave i_disksize at whatever it currently is.
+> > 
+> > I originally had the code which added the inode to the orphan list here, but
+> > then I thought to myself that it'd make more sense to actually do this step
+> > closer to the point where we've managed to successfully allocate the required
+> > blocks for the write. This prevents the need to spray orphan list clean up
+> > code all over the place just to cover the case that a write which had intended
+> > to extend the inode beyond i_size had failed prematurely (i.e. before block
+> > allocation). So, hence the reason why I thought having it in
+> > ext4_iomap_begin() would make more sense, because at that point in the write
+> > path, there is enough/or more assurance to make the call around whether we
+> > will in fact be able to perform the write which will be extending beyond
+> > i_size, or not and consequently whether the inode should be placed onto the
+> > orphan list?
+> > 
+> > Ideally I'd like to turn this statement into:
+> > 
+> > 	if (offset + count > i_size_read(inode))
+> > 	        extend = true;
+> > 
+> > Maybe I'm missing something here and there's actually a really good reason for
+> > doing this nice and early? What are your thoughts about what I've mentioned
+> > above?
+> 
+> Well, the slight trouble with adding inode to orphan list in
+> ext4_iomap_begin() is that then it is somewhat difficult to tell whether
+> you need to remove it when IO is done because there's no way how to
+> propagate that information from ext4_iomap_begin() and checking against
+> i_disksize is unreliable because it can change (due to writeback of
+> delalloc pages) while direct IO is running. But I think we can overcome
+> that by splitting our end_io functions to two - ext4_dio_write_end_io() and
+> ext4_dio_extend_write_end_io(). So:
+> 
+> 	WARN_ON_ONCE(i_size_read(inode) < EXT4_I(inode)->i_disksize);
+> 	/*
+> 	 * Need to check against i_disksize as there may be dellalloc writes
+> 	 * pending.
+> 	 */
+>  	if (offset + count > EXT4_I(inode)->i_disksize)
+> 		extend = true;
 
-Where's the privilege boundary that is being crossed?
+Hm... I'm not entirely convinced that EXT4_I(inode)->i_disksize is what we
+should be using to determine whether an extension will be performed or
+not? Because, my understanding is that i_size is what holds the actual value
+of what the file size is expected to be and hence the reason why we previously
+updated the i_disksize to i_size using ext4_update_i_disksize().
 
-We're talking about user data read/write access here, not some
-special security capability. Access to the data has already been
-permission checked, so why should the format that the data is
-supplied to the kernel in suddenly require new privilege checks?
+Also, there are cases where offset + count > EXT4_I(inode)->i_disksize,
+however offset + count < i_size_read(inode). So in that case we may take an
+incorrect path somewhere i.e. below where extend clause is true. Also, I feel
+as though we should try stick to using one value as the reference to determine
+whether we're performing an extension and not use i_disksize here and then
+i_size over there kind of thing as that leads to unnecessary confusion?
 
-i.e. writing encoded data to a file requires exactly the same
-access permissions as writing cleartext data to the file. The only
-extra information here is whether the _filesystem_ supports encoded
-data, and that doesn't change regardless of what the open file gets
-passed to. Hence the capability is either there or it isn't, it
-doesn't transform not matter what privilege boundary the file is
-passed across. Similarly, we have permission to access the data
-or we don't through the struct file, it doesn't transform either.
+> 	...
+> 	iomap_dio_rw(...,
+> 		extend ? ext4_dio_extend_write_end_io : ext4_dio_write_end_io);
+> 
+> and ext4_dio_write_end_io() will just take care of conversion of unwritten
+> extents on successful IO completion, while ext4_dio_extend_write_end_io()
+> will take care of all the complex stuff with orphan handling, extension
+> of inode size, and truncation of blocks beyond EOF - and it can do that
+> because it is guaranteed to run under the protection of i_rwsem held in
+> ext4_dio_write_iter().
+> 
+> Alternatively, we could also just pass NULL instead of
+> ext4_dio_extend_write_end_io() and just do all the work explicitely in
+> ext4_dio_write_iter() in the 'extend' case. That might be actually the most
+> transparent option...
 
-Hence I don't see why CAP_SYS_ADMIN or any special permissions are
-needed for an application with access permissions to file data to
-use these RWF_ENCODED IO interfaces. I am inclined to think the
-permission check here is wrong and should be dropped, and then all
-these issues go away.
+Well, with the changes to ext4_handle_inode_extension() conditions that you
+recommended in patch 2/6, then I can't see why we'd need two separate
+->end_io() handlers as we'd just abort early if we're not extending?
 
-Yes, the app that is going to use this needs root perms because it
-accesses all data in the fs (it's a backup app!), but that doesn't
-mean you can only use RWF_ENCODED if you have root perms.
+> But at this point there are so many suggestions in flight that I need to
+> see current state of the code again to be able to tell anything useful :).
 
-Cheers,
+Heh, true. I will post through an updated patch series taking into account
+most of the recommendations put forward for this series version and then we
+can have a discussion based on that. :)
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--<M>--
