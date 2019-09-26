@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 462DDBEA7E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 04:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8440DBEA7F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 04:14:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732926AbfIZCOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 22:14:21 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40331 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbfIZCOV (ORCPT
+        id S1732991AbfIZCOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 22:14:39 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39299 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfIZCOi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 22:14:21 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l3so779473wru.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 19:14:16 -0700 (PDT)
+        Wed, 25 Sep 2019 22:14:38 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v17so726792wml.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 19:14:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=plexistor-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+hqcdSN3xgTXB6x9H16TTTMzbxMwFL5/B9R8HZl9eHk=;
-        b=uyM5RQpIv3+C4GXta56FdRjN7PYEIyAVbM8uGC0cI0WqxVv4zrrgncL2IcFpuApT6b
-         jU3pPTX2JBh2NncG76DBMou5fizbdN70TuJ7UPgHZnEoi+w/PP7dfv3I43h1K4BZnKNG
-         phcLko0Uxe8Q6jM8yx7Ktyhle9GMhAqmgip6JCB0q8ILQPabag3teMcqYiBoWaO3Yod0
-         paW8BDamBX3yX1/krjZJ2tneo0U/gnbsE4r+ZlwtBH1CQ2fPQJyUARZb25kXf7URUxSA
-         h74ZNu2SZEMiAfp/y6S8Pe2MpYiSXleJBYvIk35nXvdmng+BysPsYTNigWE0OIGmYdbc
-         +P4g==
+        bh=FObWE5VRR+Dl4IRubx6Y55penA+25nkCNNLebYYfrMM=;
+        b=qI+zIDMl1B7VejU+i8Uv0c+EfpbvNL5PuiFXUem6PvI5pfetdbCqNr2cKiH4BbZEvG
+         ErvyMVPUIoXLprjVFzMdXMmyViRSkNH0Mw4SCMd0D6dxzBwZESCG8KDmoP4L23QZmXG5
+         TwlRLo5ms4kPumfLdQpSiOPSv4vi3acTQNztObBFmqMqvEPDvU7K/8FuaIKN3+LDiUQN
+         Fg/94SQDpBwuPZCzmfW6inviSx03lOpLCudr8x6PgTg0MoW/M0eOsOMDMGbJR7Y9jBLs
+         4521AeQgOuHYgjFstPCczQaxKFZhGhoFEKQGhtxhSAqpBlhdqBBJCt9gho5E7RV3T40U
+         SSQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+hqcdSN3xgTXB6x9H16TTTMzbxMwFL5/B9R8HZl9eHk=;
-        b=jtm/MNuqCkfFnev2Jx871+819gtJLYjiRG7paXx7yZpJvQBV0utXaD1vACdktFDOOc
-         fHvfYvpENKIUemomtN7++QaD1zRirOGlA8Xkk37zMAgQ3rvpm60PRu/mX1siBPNe2gqM
-         smFiBo1X/8zJqRUDTs5HQ1MGleoWIl5OYAX5X/dS0bT1AtIzEpJ2t4lBEPSNquJZqyBD
-         Cqgq++Yl84gXc4o5ZcTMslMAuA3nqm95i+0to6u66F1h+p38aKsJdsmDjKCxzCwSZi3v
-         fj8Xu9F6sQ4MFUusIeV6AAuo1vk1g31yXCcI2enPJovlrLjgH6KuMPWOV2ruCUpVOnNi
-         Vebg==
-X-Gm-Message-State: APjAAAUR9aOXcnGhqU40njZUl1yJ9hedVZPiRRedn3seR5ROUUy+2kFg
-        gLII5Dzew92uVFZ4jf2C8oMP6QGH86E=
-X-Google-Smtp-Source: APXvYqxVh9+PAWWOX0NGy9p1D2bDWP6sNtHVttc/ScMtJEd/tY8gAV2R1JBCqh8kQcgphz3heL+ZrA==
-X-Received: by 2002:a5d:6a06:: with SMTP id m6mr855323wru.190.1569464054936;
-        Wed, 25 Sep 2019 19:14:14 -0700 (PDT)
+        bh=FObWE5VRR+Dl4IRubx6Y55penA+25nkCNNLebYYfrMM=;
+        b=jYkqtgtzLOOjf4iU5GTt6j7bsOmIs78ieksDdMwFJsq70oEP2KJpkOBbRnU1uC48YK
+         PDYz81GUFxyy1lXjRT6tuxq/q9x1KFLEB7ap2011tI/iwSzmT3M1z5v573GcTQ12UmWh
+         RwptFOemIbrrSBAZigIPB8Tc8eieXrrLUqwcRn6p9AJADqp4vb7EuywflHyjat2BaXyK
+         AUq4tIlG+aGaossY4haalKzfn/uhSLdqkOiHtbCYEoZO1XTeZUpF6+kSUjSlKNYdL6St
+         j9KvGmJoIPFHb0QLt1L7lfhwaSZm+KHU/IF10NeVVSZJP1lMgRNXZQUprL4cteyGVD5G
+         tI5A==
+X-Gm-Message-State: APjAAAVx3NH9zkjZgl/iL3Q4SUMTZj96pWOuVfF9/TKJUw3vx4++anvw
+        +olwI0qoXbBPDst+9ngLvY3SvqLrnNo=
+X-Google-Smtp-Source: APXvYqw41ptEGAeJYblHUGCWvf86EHIJjOqjTrQ7XtakC0M4XIn9VZBcpSTcWZUztcwac+pQLSCN0g==
+X-Received: by 2002:a7b:c188:: with SMTP id y8mr876544wmi.51.1569464074728;
+        Wed, 25 Sep 2019 19:14:34 -0700 (PDT)
 Received: from Bfire.plexistor.com ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id o19sm968751wro.50.2019.09.25.19.14.13
+        by smtp.googlemail.com with ESMTPSA id o19sm968751wro.50.2019.09.25.19.14.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 19:14:14 -0700 (PDT)
+        Wed, 25 Sep 2019 19:14:34 -0700 (PDT)
 From:   Boaz Harrosh <boaz@plexistor.com>
 X-Google-Original-From: Boaz Harrosh <boazh@netapp.com>
 To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -56,9 +56,9 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Sagi Manole <sagim@netapp.com>,
         Matthew Wilcox <willy@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 13/16] zuf: More file operation
-Date:   Thu, 26 Sep 2019 05:07:22 +0300
-Message-Id: <20190926020725.19601-14-boazh@netapp.com>
+Subject: [PATCH 14/16] zuf: ioctl implementation
+Date:   Thu, 26 Sep 2019 05:07:23 +0300
+Message-Id: <20190926020725.19601-15-boazh@netapp.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190926020725.19601-1-boazh@netapp.com>
 References: <20190926020725.19601-1-boazh@netapp.com>
@@ -69,985 +69,474 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add more file/inode operation:
+* support for some generic IOCTLs:
+  FS_IOC_GETFLAGS, FS_IOC_SETFLAGS, FS_IOC_GETVERSION, FS_IOC_SETVERSION
 
-vector			function		operation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.llseek			zuf_llseek		ZUFS_OP_LLSEEK
+* Simple support for zusFS defined IOCTLs
+  We only support flat structures
+  (no emmbedded pointers within the IOCTL structures)
+  We try to deduce the size of the IOCTL from the _IOC_SIZE(cmd)
+  If zusFS needs a bigger copy it will send a retry with the
+  new size. So bad defined IOCTLs always do 2 trips to userland
 
-.fallocate		zuf_fallocate		ZUFS_OP_FALLOCATE
-.copy_file_range	zuf_copy_file_range	ZUFS_OP_COPY
-.remap_file_range	zuf_clone_file_range	ZUFS_OP_CLONE
-.fadvise		zuf_fadvise		(multiple see rw.c)
-.fiemap			zuf_fiemap		ZUFS_OP_FIEMAP
-
-See more comments in source code.
+* zusFS may also retry if it wants an fs_freeze to implement
+  its IOCTL (TODO keep a map)
 
 [v2]
-  SQUASHME zuf: fadvise fix up missing operations
-
-  Mainly there was a bug found by Vlad, that POSIX_FADV_RANDOM was
-  missing and therefor was returning and error and some tests were
-  failing.
-  But while at it actually implement all the missing advise. Just
-  punch into file->ra the proper flags.
-  FIXME:  There is a pending patch by Jan to export generic_fadvise
-	  for now duplicate what we need inline.
-
-[v3]
-  zuf: lock two zii fix
-
-[v4]
-  zuf: Reduce stack usage (fiemap)
-  Same as for IO use the big_alloc to prevent compilation warning
+  zuf: Reduce stack usage (ioctl)
+  Same as for IO use big_alloc for buffers too big for on the stack
 
 Signed-off-by: Boaz Harrosh <boazh@netapp.com>
 ---
- fs/zuf/_extern.h  |   3 +
- fs/zuf/file.c     | 650 +++++++++++++++++++++++++++++++++++++++++++++-
- fs/zuf/rw.c       |  92 +++++++
- fs/zuf/zuf-core.c |   5 +
- fs/zuf/zus_api.h  |  83 ++++++
- 5 files changed, 832 insertions(+), 1 deletion(-)
+ fs/zuf/Makefile    |   1 +
+ fs/zuf/_extern.h   |   6 +
+ fs/zuf/directory.c |   4 +
+ fs/zuf/file.c      |   4 +
+ fs/zuf/ioctl.c     | 309 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/zuf-core.c  |   1 +
+ fs/zuf/zus_api.h   |  37 ++++++
+ 7 files changed, 362 insertions(+)
+ create mode 100644 fs/zuf/ioctl.c
 
+diff --git a/fs/zuf/Makefile b/fs/zuf/Makefile
+index 02df1374a946..d3257bfc69ba 100644
+--- a/fs/zuf/Makefile
++++ b/fs/zuf/Makefile
+@@ -17,6 +17,7 @@ zuf-y += md.o t1.o t2.o
+ zuf-y += zuf-core.o zuf-root.o
+ 
+ # Main FS
++zuf-y += ioctl.o
+ zuf-y += rw.o mmap.o
+ zuf-y += super.o inode.o directory.o namei.o file.o symlink.o
+ zuf-y += module.o
 diff --git a/fs/zuf/_extern.h b/fs/zuf/_extern.h
-index cafda97c973c..2c7456724ef6 100644
+index 2c7456724ef6..04e0515469e7 100644
 --- a/fs/zuf/_extern.h
 +++ b/fs/zuf/_extern.h
-@@ -110,6 +110,9 @@ int _zufs_IO_get_multy(struct zuf_sb_info *sbi, struct inode *inode,
- void _zufs_IO_put_multy(struct zuf_sb_info *sbi, struct inode *inode,
- 			struct _io_gb_multy *io_gb);
- int zuf_rw_fallocate(struct inode *inode, uint mode, loff_t offset, loff_t len);
-+int zuf_rw_fadvise(struct super_block *sb, struct file *file,
-+		   loff_t offset, loff_t len, int advise, bool rand);
+@@ -126,6 +126,12 @@ int zuf_file_mmap(struct file *file, struct vm_area_struct *vma);
+ /* t1.c */
+ int zuf_pmem_mmap(struct file *file, struct vm_area_struct *vma);
+ 
++/* ioctl.c */
++long zuf_ioctl(struct file *filp, uint cmd, ulong arg);
++#ifdef CONFIG_COMPAT
++long zuf_compat_ioctl(struct file *file, uint cmd, ulong arg);
++#endif
 +
- int zuf_iom_execute_sync(struct super_block *sb, struct inode *inode,
- 			 __u64 *iom_e, uint iom_n);
- int zuf_iom_execute_async(struct super_block *sb, struct zus_iomap_build *iomb,
+ /*
+  * Inode and files operations
+  */
+diff --git a/fs/zuf/directory.c b/fs/zuf/directory.c
+index 7417aeb77773..612b6e410615 100644
+--- a/fs/zuf/directory.c
++++ b/fs/zuf/directory.c
+@@ -164,4 +164,8 @@ const struct file_operations zuf_dir_operations = {
+ 	.read		= generic_read_dir,
+ 	.iterate_shared	= zuf_readdir,
+ 	.fsync		= noop_fsync,
++	.unlocked_ioctl = zuf_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= zuf_compat_ioctl,
++#endif
+ };
 diff --git a/fs/zuf/file.c b/fs/zuf/file.c
-index 7fcaf085bf8e..1c51529694e7 100644
+index 1c51529694e7..e0bd60e095e7 100644
 --- a/fs/zuf/file.c
 +++ b/fs/zuf/file.c
-@@ -15,12 +15,158 @@
- 
- #include <linux/fs.h>
- #include <linux/uio.h>
-+#include <linux/falloc.h>
-+#include <linux/fadvise.h>
-+#include <linux/sched/signal.h>
- 
- #include "zuf.h"
- 
- long __zuf_fallocate(struct inode *inode, int mode, loff_t offset, loff_t len)
- {
--	return -ENOTSUPP;
-+	struct zuf_inode_info *zii = ZUII(inode);
-+	bool need_len_check, need_unmap;
-+	loff_t unmap_len = 0; /* 0 means all file */
-+	loff_t new_size = len + offset;
-+	loff_t i_size = i_size_read(inode);
-+	int err = 0;
-+
-+	zuf_dbg_vfs("[%ld] mode=0x%x offset=0x%llx len=0x%llx\n",
-+		     inode->i_ino, mode, offset, len);
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+	if (IS_SWAPFILE(inode))
-+		return -ETXTBSY;
-+
-+	/* These are all the FL flags we know how to handle on the  kernel side
-+	 * a zusFS that does not support one of these can just return
-+	 * EOPNOTSUPP.
-+	 */
-+	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
-+		     FALLOC_FL_NO_HIDE_STALE | FALLOC_FL_COLLAPSE_RANGE |
-+		     FALLOC_FL_ZERO_RANGE | FALLOC_FL_INSERT_RANGE |
-+		     FALLOC_FL_UNSHARE_RANGE | ZUFS_FL_TRUNCATE)){
-+		zuf_dbg_err("Unsupported mode(0x%x)\n", mode);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (mode & FALLOC_FL_PUNCH_HOLE) {
-+		need_len_check = false;
-+		need_unmap = true;
-+		unmap_len = len;
-+	} else if (mode & ZUFS_FL_TRUNCATE) {
-+		need_len_check = true;
-+		new_size = offset;
-+		need_unmap = true;
-+	} else if (mode & FALLOC_FL_COLLAPSE_RANGE) {
-+		need_len_check = false;
-+		need_unmap = true;
-+	} else if (mode & FALLOC_FL_INSERT_RANGE) {
-+		need_len_check = true;
-+		new_size = i_size + len;
-+		need_unmap = true;
-+	} else if (mode & FALLOC_FL_ZERO_RANGE) {
-+		need_len_check = !(mode & FALLOC_FL_KEEP_SIZE);
-+		need_unmap = true;
-+	} else {
-+		/* FALLOC_FL_UNSHARE_RANGE same as regular */
-+		need_len_check = !(mode & FALLOC_FL_KEEP_SIZE);
-+		need_unmap = false;
-+	}
-+
-+	if (need_len_check && (new_size > i_size)) {
-+		err = inode_newsize_ok(inode, new_size);
-+		if (unlikely(err)) {
-+			zuf_dbg_err("inode_newsize_ok(0x%llx) => %d\n",
-+				    new_size, err);
-+			goto out;
-+		}
-+	}
-+
-+	if (need_unmap) {
-+		zufc_goose_all_zts(ZUF_ROOT(SBI(inode->i_sb)), inode);
-+		unmap_mapping_range(inode->i_mapping, offset, unmap_len, 1);
-+	}
-+
-+	zus_inode_cmtime_now(inode, zii->zi);
-+
-+	err = zuf_rw_fallocate(inode, mode, offset, len);
-+
-+	/* Even if we had an error these might have changed */
-+	i_size_write(inode, le64_to_cpu(zii->zi->i_size));
-+	inode->i_blocks = le64_to_cpu(zii->zi->i_blocks);
-+
-+out:
-+	return err;
-+}
-+
-+static long zuf_fallocate(struct file *file, int mode, loff_t offset,
-+			  loff_t len)
-+{
-+	struct inode *inode = file->f_inode;
-+	struct zuf_inode_info *zii = ZUII(inode);
-+	int err;
-+
-+	zuf_w_lock(zii);
-+
-+	err = __zuf_fallocate(inode, mode, offset, len);
-+
-+	zuf_w_unlock(zii);
-+	return err;
-+}
-+
-+static loff_t zuf_llseek(struct file *file, loff_t offset, int whence)
-+{
-+	struct inode *inode = file->f_path.dentry->d_inode;
-+	struct zuf_inode_info *zii = ZUII(inode);
-+	struct zufs_ioc_seek ioc_seek = {
-+		.hdr.in_len = sizeof(ioc_seek),
-+		.hdr.out_len = sizeof(ioc_seek),
-+		.hdr.operation = ZUFS_OP_LLSEEK,
-+		.zus_ii = zii->zus_ii,
-+		.offset_in = offset,
-+		.whence = whence,
-+	};
-+	int err = 0;
-+
-+	zuf_dbg_vfs("[%ld] offset=0x%llx whence=%d\n",
-+		     inode->i_ino, offset, whence);
-+
-+	if (whence != SEEK_DATA && whence != SEEK_HOLE)
-+		return generic_file_llseek(file, offset, whence);
-+
-+	zuf_r_lock(zii);
-+
-+	if ((offset < 0 && !(file->f_mode & FMODE_UNSIGNED_OFFSET)) ||
-+	    offset > inode->i_sb->s_maxbytes) {
-+		err = -EINVAL;
-+		goto out;
-+	} else if (inode->i_size <= offset) {
-+		err = -ENXIO;
-+		goto out;
-+	} else if (!inode->i_blocks) {
-+		if (whence == SEEK_HOLE)
-+			ioc_seek.offset_out = i_size_read(inode);
-+		else
-+			err = -ENXIO;
-+		goto out;
-+	}
-+
-+	err = zufc_dispatch(ZUF_ROOT(SBI(inode->i_sb)), &ioc_seek.hdr, NULL, 0);
-+	if (unlikely(err)) {
-+		zuf_dbg_err("zufc_dispatch failed => %d\n", err);
-+		goto out;
-+	}
-+
-+	if (ioc_seek.offset_out != file->f_pos) {
-+		file->f_pos = ioc_seek.offset_out;
-+		file->f_version = 0;
-+	}
-+
-+out:
-+	zuf_r_unlock(zii);
-+
-+	return err ?: ioc_seek.offset_out;
- }
- 
- /* This function is called by both msync() and fsync(). */
-@@ -87,6 +233,481 @@ static int zuf_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 	return zuf_isync(file_inode(file), start, end, datasync);
- }
- 
-+/* This callback is called when a file is closed */
-+static int zuf_flush(struct file *file, fl_owner_t id)
-+{
-+	zuf_dbg_vfs("[%ld]\n", file->f_inode->i_ino);
-+	return 0;
-+}
-+
-+static int zuf_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-+		      u64 offset, u64 length)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	struct zuf_inode_info *zii = ZUII(inode);
-+	struct zufs_ioc_fiemap ioc_fiemap = {
-+		.hdr.operation = ZUFS_OP_FIEMAP,
-+		.hdr.in_len = sizeof(ioc_fiemap),
-+		.hdr.out_len = sizeof(ioc_fiemap),
-+		.zus_ii = zii->zus_ii,
-+		.start = offset,
-+		.length = length,
-+		.flags = fieinfo->fi_flags,
-+	};
-+	long on_stack[ZUF_MAX_STACK(160) / sizeof(long)];
-+	struct page **pages = NULL;
-+	enum big_alloc_type bat = 0;
-+	uint nump = 0, extents_max = 0;
-+	int i, err;
-+
-+	zuf_dbg_vfs("[%ld] offset=0x%llx len=0x%llx extents_max=%u flags=0x%x\n",
-+		    inode->i_ino, offset, length, fieinfo->fi_extents_max,
-+		    fieinfo->fi_flags);
-+
-+	/* TODO: Have support for FIEMAP_FLAG_XATTR */
-+	err = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC);
-+	if (unlikely(err))
-+		return err;
-+
-+	if (likely(fieinfo->fi_extents_max)) {
-+		ulong start = (ulong)fieinfo->fi_extents_start;
-+		ulong len = fieinfo->fi_extents_max *
-+						sizeof(struct fiemap_extent);
-+		ulong offset = start & (PAGE_SIZE - 1);
-+		ulong end_offset = (offset + len) & (PAGE_SIZE - 1);
-+		ulong __len;
-+		uint nump_r;
-+
-+		nump = md_o2p_up(offset + len);
-+		if (ZUS_API_MAP_MAX_PAGES < nump)
-+			nump = ZUS_API_MAP_MAX_PAGES;
-+
-+		__len = nump * PAGE_SIZE - offset;
-+		if (end_offset)
-+			__len -= (PAGE_SIZE - end_offset);
-+
-+		extents_max = __len / sizeof(struct fiemap_extent);
-+
-+		ioc_fiemap.hdr.len = extents_max * sizeof(struct fiemap_extent);
-+		ioc_fiemap.hdr.offset = offset;
-+
-+		pages = big_alloc(nump * sizeof(*pages), sizeof(on_stack),
-+				  on_stack, GFP_KERNEL, &bat);
-+		if (unlikely(!pages))
-+			return -ENOMEM;
-+
-+		nump_r = get_user_pages_fast(start, nump, WRITE, pages);
-+		if (unlikely(nump != nump_r)) {
-+			err = -EFAULT;
-+			goto free;
-+		}
-+	}
-+	ioc_fiemap.extents_max = extents_max;
-+
-+	zuf_r_lock(zii);
-+
-+	err = zufc_dispatch(ZUF_ROOT(SBI(sb)), &ioc_fiemap.hdr, pages, nump);
-+	if (unlikely(err)) {
-+		zuf_dbg_err("zufs_dispatch failed => %d\n", err);
-+		goto out;
-+	}
-+
-+	fieinfo->fi_extents_mapped = ioc_fiemap.extents_mapped;
-+	if (unlikely(extents_max &&
-+		     (extents_max < ioc_fiemap.extents_mapped))) {
-+		zuf_err("extents_max=%d extents_mapped=%d\n", extents_max,
-+			ioc_fiemap.extents_mapped);
-+		err = -EINVAL;
-+	}
-+
-+out:
-+	zuf_r_unlock(zii);
-+
-+	for (i = 0; i < nump; ++i)
-+		put_page(pages[i]);
-+free:
-+	big_free(pages, bat);
-+
-+	return err;
-+}
-+
-+/* ~~~~~ clone/copy range ~~~~~ */
-+
-+/*
-+ * Copy/paste from Kernel mm/filemap.c::generic_remap_checks
-+ * FIXME: make it EXPORT_GPL
-+ */
-+static int _access_check_limits(struct file *file, loff_t pos,
-+				       loff_t *count)
-+{
-+	struct inode *inode = file->f_mapping->host;
-+	loff_t max_size = inode->i_sb->s_maxbytes;
-+
-+	if (!(file->f_flags & O_LARGEFILE))
-+		max_size = MAX_NON_LFS;
-+
-+	if (unlikely(pos >= max_size))
-+		return -EFBIG;
-+	*count = min(*count, max_size - pos);
-+	return 0;
-+}
-+
-+static int _write_check_limits(struct file *file, loff_t pos,
-+				      loff_t *count)
-+{
-+
-+	loff_t limit = rlimit(RLIMIT_FSIZE);
-+
-+	if (limit != RLIM_INFINITY) {
-+		if (pos >= limit) {
-+			send_sig(SIGXFSZ, current, 0);
-+			return -EFBIG;
-+		}
-+		*count = min(*count, limit - pos);
-+	}
-+
-+	return _access_check_limits(file, pos, count);
-+}
-+
-+static int _remap_checks(struct file *file_in, loff_t pos_in,
-+			 struct file *file_out, loff_t pos_out,
-+			 loff_t *req_count, unsigned int remap_flags)
-+{
-+	struct inode *inode_in = file_in->f_mapping->host;
-+	struct inode *inode_out = file_out->f_mapping->host;
-+	uint64_t count = *req_count;
-+	uint64_t bcount;
-+	loff_t size_in, size_out;
-+	loff_t bs = inode_out->i_sb->s_blocksize;
-+	int ret;
-+
-+	/* The start of both ranges must be aligned to an fs block. */
-+	if (!IS_ALIGNED(pos_in, bs) || !IS_ALIGNED(pos_out, bs))
-+		return -EINVAL;
-+
-+	/* Ensure offsets don't wrap. */
-+	if (pos_in + count < pos_in || pos_out + count < pos_out)
-+		return -EINVAL;
-+
-+	size_in = i_size_read(inode_in);
-+	size_out = i_size_read(inode_out);
-+
-+	/* Dedupe requires both ranges to be within EOF. */
-+	if ((remap_flags & REMAP_FILE_DEDUP) &&
-+	    (pos_in >= size_in || pos_in + count > size_in ||
-+	     pos_out >= size_out || pos_out + count > size_out))
-+		return -EINVAL;
-+
-+	/* Ensure the infile range is within the infile. */
-+	if (pos_in >= size_in)
-+		return -EINVAL;
-+	count = min(count, size_in - (uint64_t)pos_in);
-+
-+	ret = _access_check_limits(file_in, pos_in, &count);
-+	if (ret)
-+		return ret;
-+
-+	ret = _write_check_limits(file_out, pos_out, &count);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * If the user wanted us to link to the infile's EOF, round up to the
-+	 * next block boundary for this check.
-+	 *
-+	 * Otherwise, make sure the count is also block-aligned, having
-+	 * already confirmed the starting offsets' block alignment.
-+	 */
-+	if (pos_in + count == size_in) {
-+		bcount = ALIGN(size_in, bs) - pos_in;
-+	} else {
-+		if (!IS_ALIGNED(count, bs))
-+			count = ALIGN_DOWN(count, bs);
-+		bcount = count;
-+	}
-+
-+	/* Don't allow overlapped cloning within the same file. */
-+	if (inode_in == inode_out &&
-+	    pos_out + bcount > pos_in &&
-+	    pos_out < pos_in + bcount)
-+		return -EINVAL;
-+
-+	/*
-+	 * We shortened the request but the caller can't deal with that, so
-+	 * bounce the request back to userspace.
-+	 */
-+	if (*req_count != count && !(remap_flags & REMAP_FILE_CAN_SHORTEN))
-+		return -EINVAL;
-+
-+	*req_count = count;
-+	return 0;
-+}
-+
-+/*
-+ * Copy/paste from generic_remap_file_range_prep(). We cannot call
-+ * generic_remap_file_range_prep because it calles fsync twice and we do not
-+ * want to go to the Server so many times.
-+ * So below is just the checks.
-+ * FIXME: Send a patch upstream to split the generic_remap_file_range_prep
-+ * or receive a flag if to do the syncs
-+ *
-+ * Check that the two inodes are eligible for cloning, the ranges make
-+ * sense.
-+ *
-+ * If there's an error, then the usual negative error code is returned.
-+ * Otherwise returns 0 with *len set to the request length.
-+ */
-+static int _remap_file_range_prep(struct file *file_in, loff_t pos_in,
-+				  struct file *file_out, loff_t pos_out,
-+				  loff_t *len, unsigned int remap_flags)
-+{
-+	struct inode *inode_in = file_inode(file_in);
-+	struct inode *inode_out = file_inode(file_out);
-+	int ret;
-+
-+	/* Don't touch certain kinds of inodes */
-+	if (IS_IMMUTABLE(inode_out))
-+		return -EPERM;
-+
-+	if (IS_SWAPFILE(inode_in) || IS_SWAPFILE(inode_out))
-+		return -ETXTBSY;
-+
-+	/* Don't reflink dirs, pipes, sockets... */
-+	if (S_ISDIR(inode_in->i_mode) || S_ISDIR(inode_out->i_mode))
-+		return -EISDIR;
-+	if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
-+		return -EINVAL;
-+
-+	/* Zero length dedupe exits immediately; reflink goes to EOF. */
-+	if (*len == 0) {
-+		loff_t isize = i_size_read(inode_in);
-+
-+		if ((remap_flags & REMAP_FILE_DEDUP) || pos_in == isize)
-+			return 0;
-+		if (pos_in > isize)
-+			return -EINVAL;
-+		*len = isize - pos_in;
-+		if (*len == 0)
-+			return 0;
-+	}
-+
-+	/* Check that we don't violate system file offset limits. */
-+	ret = _remap_checks(file_in, pos_in, file_out, pos_out, len,
-+			    remap_flags);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * REMAP_FILE_DEDUP see if extents are the same.
-+	 */
-+	if (remap_flags & REMAP_FILE_DEDUP)
-+		ret = zuf_rw_file_range_compare(inode_in, pos_in,
-+						inode_out, pos_out, *len);
-+
-+	return ret;
-+}
-+
-+static void _lock_two_ziis(struct zuf_inode_info *zii1,
-+			   struct zuf_inode_info *zii2)
-+{
-+	if (zii1 > zii2)
-+		swap(zii1, zii2);
-+
-+	zuf_w_lock(zii1);
-+	if (zii1 != zii2)
-+		zuf_w_lock_nested(zii2);
-+}
-+
-+static void _unlock_two_ziis(struct zuf_inode_info *zii1,
-+		      struct zuf_inode_info *zii2)
-+{
-+	if (zii1 > zii2)
-+		swap(zii1, zii2);
-+
-+	if (zii1 != zii2)
-+		zuf_w_unlock(zii2);
-+	zuf_w_unlock(zii1);
-+}
-+
-+static int _clone_file_range(struct inode *src_inode, loff_t pos_in,
-+			     struct file *file_out,
-+			     struct inode *dst_inode, loff_t pos_out,
-+			     u64 len, u64 len_up, int operation)
-+{
-+	struct zuf_inode_info *src_zii = ZUII(src_inode);
-+	struct zuf_inode_info *dst_zii = ZUII(dst_inode);
-+	struct zus_inode *dst_zi = dst_zii->zi;
-+	struct super_block *sb = src_inode->i_sb;
-+	struct zufs_ioc_clone ioc_clone = {
-+		.hdr.in_len = sizeof(ioc_clone),
-+		.hdr.out_len = sizeof(ioc_clone),
-+		.hdr.operation = operation,
-+		.src_zus_ii = src_zii->zus_ii,
-+		.dst_zus_ii = dst_zii->zus_ii,
-+		.pos_in = pos_in,
-+		.pos_out = pos_out,
-+		.len = len,
-+		.len_up = len_up,
-+	};
-+	int err;
-+
-+	/* NOTE: len==0 means to-end-of-file which is what we want */
-+	unmap_mapping_range(src_inode->i_mapping, pos_in,  len, 0);
-+	unmap_mapping_range(dst_inode->i_mapping, pos_out, len, 0);
-+
-+	zufc_goose_all_zts(ZUF_ROOT(SBI(dst_inode->i_sb)), dst_inode);
-+
-+	if ((len_up == 0) && (pos_in || pos_out)) {
-+		zuf_err("Boaz Smoking 0x%llx 0x%llx 0x%llx\n",
-+			pos_in, pos_out, len);
-+		/* Bad caller */
-+		return -EINVAL;
-+	}
-+
-+	err = zufc_dispatch(ZUF_ROOT(SBI(sb)), &ioc_clone.hdr, NULL, 0);
-+	if (unlikely(err && err != -EINTR)) {
-+		zuf_dbg_err("failed to clone %ld -> %ld ; err=%d\n",
-+			 src_inode->i_ino, dst_inode->i_ino, err);
-+		return err;
-+	}
-+
-+	dst_inode->i_blocks = le64_to_cpu(dst_zi->i_blocks);
-+	i_size_write(dst_inode, dst_zi->i_size);
-+
-+	return err;
-+}
-+
-+/* FIXME: Old checks are not needed. I keep them to make sure they
-+ * are not complaining. Will remove _zuf_old_checks SOON
-+ */
-+static int _zuf_old_checks(struct super_block *sb,
-+			   struct inode *src_inode, loff_t pos_in,
-+			   struct inode *dst_inode, loff_t pos_out, loff_t len)
-+{
-+	if (src_inode == dst_inode) {
-+		if (pos_in == pos_out) {
-+			zuf_warn("[%ld] Clone nothing!!\n",
-+				    src_inode->i_ino);
-+			return 0;
-+		}
-+		if (pos_in < pos_out) {
-+			if (pos_in + len > pos_out) {
-+				zuf_warn("[%ld] overlapping pos_in < pos_out?? => EINVAL\n",
-+					 src_inode->i_ino);
-+				return -EINVAL;
-+			}
-+		} else {
-+			if (pos_out + len > pos_in) {
-+				zuf_warn("[%ld] overlapping pos_out < pos_in?? => EINVAL\n",
-+					 src_inode->i_ino);
-+				return -EINVAL;
-+			}
-+		}
-+	}
-+
-+	if ((pos_in & (sb->s_blocksize - 1)) ||
-+	    (pos_out & (sb->s_blocksize - 1))) {
-+		zuf_err("[%ld] Not aligned len=0x%llx pos_in=0x%llx "
-+			"pos_out=0x%llx src-size=0x%llx dst-size=0x%llx\n",
-+			 src_inode->i_ino, len, pos_in, pos_out,
-+			 i_size_read(src_inode), i_size_read(dst_inode));
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static loff_t zuf_clone_file_range(struct file *file_in, loff_t pos_in,
-+				struct file *file_out, loff_t pos_out,
-+				loff_t len, uint remap_flags)
-+{
-+	struct inode *src_inode = file_inode(file_in);
-+	struct inode *dst_inode = file_inode(file_out);
-+	struct zuf_inode_info *src_zii = ZUII(src_inode);
-+	struct zuf_inode_info *dst_zii = ZUII(dst_inode);
-+	ulong src_size = i_size_read(src_inode);
-+	ulong dst_size = i_size_read(dst_inode);
-+	struct super_block *sb = src_inode->i_sb;
-+	ulong len_up;
-+	int err;
-+
-+	zuf_dbg_vfs("IN: [%ld]{0x%llx} => [%ld]{0x%llx} length=0x%llx flags=0x%x\n",
-+		    src_inode->i_ino, pos_in, dst_inode->i_ino, pos_out, len,
-+		    remap_flags);
-+
-+	if (remap_flags & ~(REMAP_FILE_CAN_SHORTEN | REMAP_FILE_DEDUP)) {
-+		/* New flags we do not know */
-+		zuf_dbg_err("[%ld] Unknown remap_flags(0x%x)\n",
-+			    src_inode->i_ino, remap_flags);
-+		return -EINVAL;
-+	}
-+
-+	if ((pos_in + len > sb->s_maxbytes) || (pos_out + len > sb->s_maxbytes))
-+		return -EINVAL;
-+
-+	_lock_two_ziis(src_zii, dst_zii);
-+
-+	err = _remap_file_range_prep(file_in, pos_in, file_out, pos_out, &len,
-+				     remap_flags);
-+	if (err < 0 || len == 0)
-+		goto out;
-+	err = _zuf_old_checks(sb, src_inode, pos_in, dst_inode, pos_out, len);
-+	if (unlikely(err))
-+		goto out;
-+
-+	err = file_remove_privs(file_out);
-+	if (unlikely(err))
-+		goto out;
-+
-+	if (!(remap_flags & REMAP_FILE_DEDUP))
-+		zus_inode_cmtime_now(dst_inode, dst_zii->zi);
-+
-+	/* See about all-file-clone optimization */
-+	len_up = len;
-+	if (!pos_in && !pos_out && (src_size <= pos_in + len) &&
-+	    (dst_size <= src_size)) {
-+		len_up = 0;
-+	} else if (len & (sb->s_blocksize - 1)) {
-+		/* un-aligned len, see if it is beyond EOF */
-+		if ((src_size > pos_in  + len) ||
-+		    (dst_size > pos_out + len)) {
-+			zuf_err("[%ld][%ld] Not aligned len=0x%llx pos_in=0x%llx "
-+				"pos_out=0x%llx src-size=0x%lx dst-size=0x%lx\n",
-+				src_inode->i_ino, dst_inode->i_ino, len,
-+				pos_in, pos_out, src_size, dst_size);
-+			err = -EINVAL;
-+			goto out;
-+		}
-+		len_up = md_p2o(md_o2p_up(len));
-+	}
-+
-+	err = _clone_file_range(src_inode, pos_in, file_out, dst_inode, pos_out,
-+				len, len_up, ZUFS_OP_CLONE);
-+	if (unlikely(err))
-+		zuf_dbg_err("_clone_file_range failed => %d\n", err);
-+
-+out:
-+	_unlock_two_ziis(src_zii, dst_zii);
-+	return err ? err : len;
-+}
-+
-+static ssize_t zuf_copy_file_range(struct file *file_in, loff_t pos_in,
-+				   struct file *file_out, loff_t pos_out,
-+				   size_t len, uint flags)
-+{
-+	struct inode *src_inode = file_inode(file_in);
-+	struct inode *dst_inode = file_inode(file_out);
-+	ssize_t ret;
-+
-+	zuf_dbg_vfs("ino-in=%ld ino-out=%ld pos_in=0x%llx pos_out=0x%llx length=0x%lx\n",
-+		    src_inode->i_ino, dst_inode->i_ino, pos_in, pos_out, len);
-+
-+	ret = zuf_clone_file_range(file_in, pos_in, file_out, pos_out, len,
-+				   REMAP_FILE_ADVISORY);
-+
-+	return ret ?: len;
-+}
-+
- static ssize_t zuf_read_iter(struct kiocb *kiocb, struct iov_iter *ii)
- {
- 	struct inode *inode = file_inode(kiocb->ki_filp);
-@@ -155,16 +776,43 @@ static ssize_t zuf_write_iter(struct kiocb *kiocb, struct iov_iter *ii)
- 	return ret;
- }
- 
-+static int zuf_fadvise(struct file *file, loff_t offset, loff_t len,
-+		       int advise)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct zuf_inode_info *zii = ZUII(inode);
-+	int err;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+
-+	zuf_r_lock(zii);
-+
-+	err = zuf_rw_fadvise(inode->i_sb, file, offset, len, advise,
-+			     file->f_mode & FMODE_RANDOM);
-+
-+	zuf_r_unlock(zii);
-+
-+	return err;
-+}
-+
- const struct file_operations zuf_file_operations = {
- 	.open			= generic_file_open,
- 	.read_iter		= zuf_read_iter,
- 	.write_iter		= zuf_write_iter,
- 	.mmap			= zuf_file_mmap,
- 	.fsync			= zuf_fsync,
-+	.llseek			= zuf_llseek,
-+	.flush			= zuf_flush,
-+	.fallocate		= zuf_fallocate,
-+	.copy_file_range	= zuf_copy_file_range,
-+	.remap_file_range	= zuf_clone_file_range,
-+	.fadvise		= zuf_fadvise,
+@@ -808,6 +808,10 @@ const struct file_operations zuf_file_operations = {
+ 	.copy_file_range	= zuf_copy_file_range,
+ 	.remap_file_range	= zuf_clone_file_range,
+ 	.fadvise		= zuf_fadvise,
++	.unlocked_ioctl		= zuf_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl		= zuf_compat_ioctl,
++#endif
  };
  
  const struct inode_operations zuf_file_inode_operations = {
- 	.setattr	= zuf_setattr,
- 	.getattr	= zuf_getattr,
- 	.update_time	= zuf_update_time,
-+	.fiemap		= zuf_fiemap,
- };
-diff --git a/fs/zuf/rw.c b/fs/zuf/rw.c
-index 48f584e71a03..60b7a3e07e17 100644
---- a/fs/zuf/rw.c
-+++ b/fs/zuf/rw.c
-@@ -664,6 +664,98 @@ ssize_t zuf_rw_write_iter(struct super_block *sb, struct inode *inode,
- 			ii, kiocb, kiocb_ra(kiocb), ZUFS_OP_WRITE, rw);
- }
- 
-+static int _fadv_willneed(struct super_block *sb, struct inode *inode,
-+			  loff_t offset, loff_t len, bool rand)
+diff --git a/fs/zuf/ioctl.c b/fs/zuf/ioctl.c
+new file mode 100644
+index 000000000000..77b8d7627a74
+--- /dev/null
++++ b/fs/zuf/ioctl.c
+@@ -0,0 +1,309 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Ioctl operations.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
++
++#include <linux/capability.h>
++#include <linux/compat.h>
++
++#include "zuf.h"
++
++#define ZUFS_SUPPORTED_FS_FLAGS (FS_SYNC_FL | FS_APPEND_FL | FS_IMMUTABLE_FL | \
++				 FS_NOATIME_FL | FS_DIRTY_FL)
++
++noinline
++static int _ioctl_dispatch(struct inode *inode, uint cmd, ulong arg,
++			   void *on_stack, uint max_stack)
 +{
-+	struct zufs_ioc_IO io = {};
-+	struct __zufs_ra ra = {
-+		.start = md_o2p(offset),
-+		.ra_pages = md_o2p_up(len),
-+		.prev_pos = offset - 1,
-+	};
++	enum big_alloc_type bat;
++	struct zufs_ioc_ioctl *ioc_ioctl;
++	size_t ioc_size = _IOC_SIZE(cmd);
++	void __user *parg = (void __user *)arg;
++	struct timespec64 time = current_time(inode);
++	size_t size;
++	bool retry = false;
 +	int err;
++	bool freeze = false;
 +
-+	io.ra.start = ra.start;
-+	io.ra.ra_pages = ra.ra_pages;
-+	io.ra.prev_pos = ra.prev_pos;
-+	io.rw = rand ? ZUFS_RW_RAND : 0;
++realloc:
++	size = sizeof(*ioc_ioctl) + ioc_size;
 +
-+	err = _IO_dispatch(SBI(sb), &io, ZUII(inode), ZUFS_OP_PRE_READ, 0,
-+			   NULL, 0, offset, 0);
++	zuf_dbg_vfs("[%ld] cmd=0x%x arg=0x%lx size=0x%zx cap_admin=%u IOC(%d, %d, %zd)\n",
++		    inode->i_ino, cmd, arg, size, capable(CAP_SYS_ADMIN),
++		    _IOC_TYPE(cmd), _IOC_NR(cmd), ioc_size);
++
++	ioc_ioctl = big_alloc(size, max_stack, on_stack, GFP_KERNEL, &bat);
++	if (unlikely(!ioc_ioctl))
++		return -ENOMEM;
++
++	memset(ioc_ioctl, 0, sizeof(*ioc_ioctl));
++	ioc_ioctl->hdr.in_len = size;
++	ioc_ioctl->hdr.out_start = offsetof(struct zufs_ioc_ioctl, out_start);
++	ioc_ioctl->hdr.out_max = size;
++	ioc_ioctl->hdr.out_len = 0;
++	ioc_ioctl->hdr.operation = ZUFS_OP_IOCTL;
++	ioc_ioctl->zus_ii = ZUII(inode)->zus_ii;
++	ioc_ioctl->cmd = cmd;
++	ioc_ioctl->kflags = capable(CAP_SYS_ADMIN) ? ZUFS_IOC_CAP_ADMIN : 0;
++	timespec_to_mt(&ioc_ioctl->time, &time);
++
++dispatch:
++	if (arg && ioc_size) {
++		if (copy_from_user(ioc_ioctl->arg, parg, ioc_size)) {
++			err = -EFAULT;
++			goto out;
++		}
++	}
++
++	err = zufc_dispatch(ZUF_ROOT(SBI(inode->i_sb)), &ioc_ioctl->hdr,
++			    NULL, 0);
++
++	if (unlikely(err == -EZUFS_RETRY)) {
++		if (unlikely(retry)) {
++			zuf_err("Server => EZUFS_RETRY again uflags=%d\n",
++				ioc_ioctl->uflags);
++			err = -EBUSY;
++			goto out;
++		}
++		retry = true;
++		switch (ioc_ioctl->uflags) {
++		case ZUFS_IOC_REALLOC:
++			ioc_size = ioc_ioctl->new_size - sizeof(*ioc_ioctl);
++			big_free(ioc_ioctl, bat);
++			goto realloc;
++		case ZUFS_IOC_FREEZE_REQ:
++			err = freeze_super(inode->i_sb);
++			if (unlikely(err)) {
++				zuf_warn("unable to freeze fs err=%d\n", err);
++				goto out;
++			}
++			freeze = true;
++			ioc_ioctl->kflags |= ZUFS_IOC_FSFROZEN;
++			goto dispatch;
++		default:
++			zuf_err("unkonwn ZUFS retry type uflags=%d\n",
++				ioc_ioctl->uflags);
++			err = -EINVAL;
++			goto out;
++		}
++	}
++
++	if (unlikely(err)) {
++		zuf_dbg_err("zufc_dispatch failed => %d IOC(%d, %d, %zd)\n",
++			    err, _IOC_TYPE(cmd), _IOC_NR(cmd), ioc_size);
++		goto out;
++	}
++
++	if (ioc_ioctl->hdr.out_len) {
++		if (copy_to_user(parg, ioc_ioctl->arg,
++		    ioc_ioctl->hdr.out_len)) {
++			err = -EFAULT;
++			goto out;
++		}
++	}
++
++out:
++	if (freeze) {
++		int thaw_err = thaw_super(inode->i_sb);
++
++		if (unlikely(thaw_err))
++			zuf_err("post ioctl thaw file system failure err = %d\n",
++				 thaw_err);
++	}
++
++	big_free(ioc_ioctl, bat);
++
 +	return err;
 +}
 +
-+static int _fadv_dontneed(struct super_block *sb, struct inode *inode,
-+			  loff_t offset, loff_t len)
++static uint _translate_to_ioc_flags(struct zus_inode *zi)
 +{
-+	struct zufs_ioc_sync ioc_range = {
-+		.hdr.in_len = sizeof(ioc_range),
-+		.hdr.operation = ZUFS_OP_SYNC,
++	uint zi_flags = le16_to_cpu(zi->i_flags);
++	uint ioc_flags = 0;
++
++	if (zi_flags & S_SYNC)
++		ioc_flags |= FS_SYNC_FL;
++	if (zi_flags & S_APPEND)
++		ioc_flags |= FS_APPEND_FL;
++	if (zi_flags & S_IMMUTABLE)
++		ioc_flags |= FS_IMMUTABLE_FL;
++	if (zi_flags & S_NOATIME)
++		ioc_flags |= FS_NOATIME_FL;
++	if (zi_flags & S_DIRSYNC)
++		ioc_flags |= FS_DIRSYNC_FL;
++
++	return ioc_flags;
++}
++
++static int _ioc_getflags(struct inode *inode, uint __user *parg)
++{
++	struct zus_inode *zi = zus_zi(inode);
++	uint flags = _translate_to_ioc_flags(zi);
++
++	return put_user(flags, parg);
++}
++
++static void _translate_to_zi_flags(struct zus_inode *zi, unsigned int flags)
++{
++	uint zi_flags = le16_to_cpu(zi->i_flags);
++
++	zi_flags &=
++		~(S_SYNC | S_APPEND | S_IMMUTABLE | S_NOATIME | S_DIRSYNC);
++
++	if (flags & FS_SYNC_FL)
++		zi_flags |= S_SYNC;
++	if (flags & FS_APPEND_FL)
++		zi_flags |= S_APPEND;
++	if (flags & FS_IMMUTABLE_FL)
++		zi_flags |= S_IMMUTABLE;
++	if (flags & FS_NOATIME_FL)
++		zi_flags |= S_NOATIME;
++	if (flags & FS_DIRSYNC_FL)
++		zi_flags |= S_DIRSYNC;
++
++	zi->i_flags = cpu_to_le16(zi_flags);
++}
++
++/* use statx ioc to flush zi changes to fs */
++static int __ioc_dispatch_zi_update(struct inode *inode, uint flags)
++{
++	struct zufs_ioc_attr ioc_attr = {
++		.hdr.in_len = sizeof(ioc_attr),
++		.hdr.out_len = sizeof(ioc_attr),
++		.hdr.operation = ZUFS_OP_SETATTR,
 +		.zus_ii = ZUII(inode)->zus_ii,
-+		.offset = offset,
-+		.length = len,
-+		.flags = ZUFS_SF_DONTNEED,
++		.zuf_attr = flags,
 +	};
++	int err;
 +
-+	return zufc_dispatch(ZUF_ROOT(SBI(sb)), &ioc_range.hdr, NULL, 0);
++	err = zufc_dispatch(ZUF_ROOT(SBI(inode->i_sb)), &ioc_attr.hdr, NULL, 0);
++	if (unlikely(err && err != -EINTR))
++		zuf_err("zufc_dispatch failed => %d\n", err);
++
++	return err;
 +}
 +
-+/* FIXME: There is a pending patch from Jan Karta to export generic_fadvise.
-+ * until then duplicate here what we need
-+ */
-+#include <linux/backing-dev.h>
-+
-+static int _generic_fadvise(struct file *file, loff_t offset, loff_t len,
-+			    int advise)
++static int _ioc_setflags(struct inode *inode, uint __user *parg)
 +{
-+	struct backing_dev_info *bdi = inode_to_bdi(file_inode(file));
++	struct zus_inode *zi = zus_zi(inode);
++	uint flags, oldflags;
++	int err;
 +
-+	switch (advise) {
-+	case POSIX_FADV_NORMAL:
-+		file->f_ra.ra_pages = bdi->ra_pages;
-+		spin_lock(&file->f_lock);
-+		file->f_mode &= ~FMODE_RANDOM;
-+		spin_unlock(&file->f_lock);
-+		break;
-+	case POSIX_FADV_RANDOM:
-+		spin_lock(&file->f_lock);
-+		file->f_mode |= FMODE_RANDOM;
-+		spin_unlock(&file->f_lock);
-+		break;
-+	case POSIX_FADV_SEQUENTIAL:
-+		file->f_ra.ra_pages = bdi->ra_pages * 2;
-+		spin_lock(&file->f_lock);
-+		file->f_mode &= ~FMODE_RANDOM;
-+		spin_unlock(&file->f_lock);
-+		break;
-+	case POSIX_FADV_NOREUSE:
-+		break;
++	if (!inode_owner_or_capable(inode))
++		return -EPERM;
++
++	if (get_user(flags, parg))
++		return -EFAULT;
++
++	if (flags & ~ZUFS_SUPPORTED_FS_FLAGS)
++		return -EOPNOTSUPP;
++
++	if (zi->i_flags & ZUFS_S_IMMUTABLE)
++		return -EPERM;
++
++	inode_lock(inode);
++
++	oldflags = le32_to_cpu(zi->i_flags);
++
++	if ((flags ^ oldflags) &
++		(FS_APPEND_FL | FS_IMMUTABLE_FL)) {
++		if (!capable(CAP_LINUX_IMMUTABLE)) {
++			inode_unlock(inode);
++			return -EPERM;
++		}
 +	}
 +
-+	return 0;
++	if (!S_ISDIR(inode->i_mode))
++		flags &= ~FS_DIRSYNC_FL;
++
++	flags = flags & FS_FL_USER_MODIFIABLE;
++	flags |= oldflags & ~FS_FL_USER_MODIFIABLE;
++	inode->i_ctime = current_time(inode);
++	timespec_to_mt(&zi->i_ctime, &inode->i_ctime);
++	_translate_to_zi_flags(zi, flags);
++	zuf_set_inode_flags(inode, zi);
++
++	err = __ioc_dispatch_zi_update(inode, ZUFS_STATX_FLAGS | STATX_CTIME);
++
++	inode_unlock(inode);
++	return err;
 +}
 +
-+int zuf_rw_fadvise(struct super_block *sb, struct file *file,
-+		   loff_t offset, loff_t len, int advise, bool rand)
++static int _ioc_setversion(struct inode *inode, uint __user *parg)
 +{
-+	switch (advise) {
-+	case POSIX_FADV_WILLNEED:
-+		return _fadv_willneed(sb, file_inode(file), offset, len, rand);
-+	case POSIX_FADV_DONTNEED:
-+		return _fadv_dontneed(sb, file_inode(file), offset, len);
++	struct zus_inode *zi = zus_zi(inode);
++	__u32 generation;
++	int err;
 +
-+	case POSIX_FADV_SEQUENTIAL:
-+	case POSIX_FADV_NORMAL:
-+	case POSIX_FADV_RANDOM:
-+	case POSIX_FADV_NOREUSE:
-+		return _generic_fadvise(file, offset, len, advise);
++	if (!inode_owner_or_capable(inode))
++		return -EPERM;
++
++	if (get_user(generation, parg))
++		return -EFAULT;
++
++	inode_lock(inode);
++
++	inode->i_ctime = current_time(inode);
++	inode->i_generation = generation;
++	timespec_to_mt(&zi->i_ctime, &inode->i_ctime);
++	zi->i_generation = cpu_to_le32(inode->i_generation);
++
++	err = __ioc_dispatch_zi_update(inode, ZUFS_STATX_VERSION | STATX_CTIME);
++
++	inode_unlock(inode);
++	return err;
++}
++
++long zuf_ioctl(struct file *filp, unsigned int cmd, ulong arg)
++{
++	void __user *parg = (void __user *)arg;
++	char on_stack[ZUF_MAX_STACK(8)];
++
++	switch (cmd) {
++	case FS_IOC_GETFLAGS:
++		return _ioc_getflags(filp->f_inode, parg);
++	case FS_IOC_SETFLAGS:
++		return _ioc_setflags(filp->f_inode, parg);
++	case FS_IOC_GETVERSION:
++		return put_user(filp->f_inode->i_generation, (int __user *)arg);
++	case FS_IOC_SETVERSION:
++		return _ioc_setversion(filp->f_inode, parg);
 +	default:
-+		zuf_warn("Unknown advise %d\n", advise);
-+		return -EINVAL;
++		return _ioctl_dispatch(filp->f_inode, cmd, arg, on_stack,
++				       sizeof(on_stack));
 +	}
-+	return -EINVAL;
 +}
 +
- /* ~~~~ iom_dec.c ~~~ */
- /* for now here (at rw.c) looks logical */
- 
++#ifdef CONFIG_COMPAT
++long zuf_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	switch (cmd) {
++	case FS_IOC32_GETFLAGS:
++		cmd = FS_IOC_GETFLAGS;
++		break;
++	case FS_IOC32_SETFLAGS:
++		cmd = FS_IOC_SETFLAGS;
++		break;
++	case FS_IOC32_GETVERSION:
++		cmd = FS_IOC_GETVERSION;
++		break;
++	case FS_IOC32_SETVERSION:
++		cmd = FS_IOC_SETVERSION;
++		break;
++	default:
++		return -ENOIOCTLCMD;
++	}
++	return zuf_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
++
 diff --git a/fs/zuf/zuf-core.c b/fs/zuf/zuf-core.c
-index cb4a4def646f..4284d2298906 100644
+index 4284d2298906..9b8fe3bff0cd 100644
 --- a/fs/zuf/zuf-core.c
 +++ b/fs/zuf/zuf-core.c
-@@ -95,6 +95,8 @@ const char *zuf_op_name(enum e_zufs_operation op)
- 		CASE_ENUM_NAME(ZUFS_OP_REMOVE_DENTRY);
- 		CASE_ENUM_NAME(ZUFS_OP_RENAME);
- 		CASE_ENUM_NAME(ZUFS_OP_READDIR);
-+		CASE_ENUM_NAME(ZUFS_OP_CLONE);
-+		CASE_ENUM_NAME(ZUFS_OP_COPY);
- 
- 		CASE_ENUM_NAME(ZUFS_OP_READ);
- 		CASE_ENUM_NAME(ZUFS_OP_PRE_READ);
-@@ -102,6 +104,9 @@ const char *zuf_op_name(enum e_zufs_operation op)
- 		CASE_ENUM_NAME(ZUFS_OP_MMAP_CLOSE);
- 		CASE_ENUM_NAME(ZUFS_OP_SETATTR);
+@@ -106,6 +106,7 @@ const char *zuf_op_name(enum e_zufs_operation op)
  		CASE_ENUM_NAME(ZUFS_OP_SYNC);
-+		CASE_ENUM_NAME(ZUFS_OP_FALLOCATE);
-+		CASE_ENUM_NAME(ZUFS_OP_LLSEEK);
-+		CASE_ENUM_NAME(ZUFS_OP_FIEMAP);
+ 		CASE_ENUM_NAME(ZUFS_OP_FALLOCATE);
+ 		CASE_ENUM_NAME(ZUFS_OP_LLSEEK);
++		CASE_ENUM_NAME(ZUFS_OP_IOCTL);
+ 		CASE_ENUM_NAME(ZUFS_OP_FIEMAP);
  
  		CASE_ENUM_NAME(ZUFS_OP_GET_MULTY);
- 		CASE_ENUM_NAME(ZUFS_OP_PUT_MULTY);
 diff --git a/fs/zuf/zus_api.h b/fs/zuf/zus_api.h
-index e70bd8b7ff69..c8bcb6006fab 100644
+index c8bcb6006fab..4ebb067c0719 100644
 --- a/fs/zuf/zus_api.h
 +++ b/fs/zuf/zus_api.h
-@@ -455,6 +455,8 @@ enum e_zufs_operation {
- 	ZUFS_OP_REMOVE_DENTRY	= 9,
- 	ZUFS_OP_RENAME		= 10,
- 	ZUFS_OP_READDIR		= 11,
-+	ZUFS_OP_CLONE		= 12,
-+	ZUFS_OP_COPY		= 13,
- 
- 	ZUFS_OP_READ		= 14,
- 	ZUFS_OP_PRE_READ	= 15,
-@@ -463,6 +465,8 @@ enum e_zufs_operation {
- 	ZUFS_OP_SETATTR		= 19,
+@@ -466,6 +466,7 @@ enum e_zufs_operation {
  	ZUFS_OP_SYNC		= 20,
  	ZUFS_OP_FALLOCATE	= 21,
-+	ZUFS_OP_LLSEEK		= 22,
-+	ZUFS_OP_FIEMAP		= 28,
+ 	ZUFS_OP_LLSEEK		= 22,
++	ZUFS_OP_IOCTL		= 23,
+ 	ZUFS_OP_FIEMAP		= 28,
  
  	ZUFS_OP_GET_MULTY	= 29,
- 	ZUFS_OP_PUT_MULTY	= 30,
-@@ -680,6 +684,85 @@ struct zufs_ioc_sync {
- 	__u64 write_unmapped;
+@@ -708,6 +709,42 @@ struct zufs_ioc_seek {
+ 	__u64 offset_out;
  };
  
-+/* ZUFS_OP_CLONE */
-+struct zufs_ioc_clone {
-+	struct zufs_ioc_hdr hdr;
-+	/* IN */
-+	struct zus_inode_info *src_zus_ii;
-+	struct zus_inode_info *dst_zus_ii;
-+	__u64 pos_in, pos_out;
-+	__u64 len;
-+	__u64 len_up;
++/* ZUFS_OP_IOCTL */
++/* Flags for zufs_ioc_ioctl->kflags */
++enum e_ZUFS_IOCTL_KFLAGS {
++	ZUFS_IOC_FSFROZEN	= 0x1,	/* Tell Server we froze the FS	  */
++	ZUFS_IOC_CAP_ADMIN	= 0x2,	/* The ioctl caller had CAP_ADMIN */
 +};
 +
-+/* ZUFS_OP_LLSEEK */
-+struct zufs_ioc_seek {
++/* received for zus on zufs_ioc_ioctl->uflags */
++enum e_ZUFS_IOCTL_UFLAGS {
++	ZUFS_IOC_REALLOC	= 0x1,	/*_IOC_SIZE(cmd) was not it and Server
++					 * needs a deeper copy
++					 */
++	ZUFS_IOC_FREEZE_REQ	= 0x2,	/* Server needs a freeze and a recall */
++};
++
++struct zufs_ioc_ioctl {
 +	struct zufs_ioc_hdr hdr;
 +	/* IN */
 +	struct zus_inode_info *zus_ii;
-+	__u64 offset_in;
-+	__u32 whence;
-+	__u32 pad;
++	__u64 time;
++	__u32 cmd;
++	__u32 kflags; /* zuf/kernel state and flags*/
 +
 +	/* OUT */
-+	__u64 offset_out;
++	/* This is just a zero-size marker for the start of output */
++	char out_start[0];
++	union {
++		struct { /* If return was -EZUFS_RETRY */
++			__u32 uflags; /* flags returned from zus */
++			__u32 new_size;
++		};
++
++		char arg[0];
++	};
 +};
 +
-+/* ZUFS_OP_FIEMAP */
-+struct zufs_ioc_fiemap {
-+	struct zufs_ioc_hdr hdr;
-+
-+	/* IN */
-+	struct zus_inode_info *zus_ii;
-+	__u64	start;
-+	__u64	length;
-+	__u32	flags;
-+	__u32	extents_max;
-+
-+	/* OUT */
-+	__u32	extents_mapped;
-+	__u32	pad;
-+
-+} __packed;
-+
-+struct zufs_fiemap_extent_info {
-+	struct fiemap_extent *fi_extents_start;
-+	__u32 fi_flags;
-+	__u32 fi_extents_mapped;
-+	__u32 fi_extents_max;
-+	__u32 __pad;
-+};
-+
-+static inline
-+int zufs_fiemap_fill_next_extent(struct zufs_fiemap_extent_info *fieinfo,
-+				 __u64 logical, __u64 phys,
-+				 __u64 len, __u32 flags)
-+{
-+	struct fiemap_extent *dest = fieinfo->fi_extents_start;
-+
-+	if (fieinfo->fi_extents_max == 0) {
-+		fieinfo->fi_extents_mapped++;
-+		return (flags & FIEMAP_EXTENT_LAST) ? 1 : 0;
-+	}
-+
-+	if (fieinfo->fi_extents_mapped >= fieinfo->fi_extents_max)
-+		return 1;
-+
-+	dest += fieinfo->fi_extents_mapped;
-+	dest->fe_logical = logical;
-+	dest->fe_physical = phys;
-+	dest->fe_length = len;
-+	dest->fe_flags = flags;
-+
-+	fieinfo->fi_extents_mapped++;
-+	if (fieinfo->fi_extents_mapped == fieinfo->fi_extents_max)
-+		return 1;
-+
-+	return (flags & FIEMAP_EXTENT_LAST) ? 1 : 0;
-+}
-+
-+
-+
- /* ~~~~ io_map structures && IOCTL(s) ~~~~ */
- /*
-  * These set of structures and helpers are used in return of zufs_ioc_IO and
+ /* ZUFS_OP_FIEMAP */
+ struct zufs_ioc_fiemap {
+ 	struct zufs_ioc_hdr hdr;
 -- 
 2.21.0
 
