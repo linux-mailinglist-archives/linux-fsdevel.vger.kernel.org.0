@@ -2,70 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDD47BF2EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 14:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E765BF350
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 14:48:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbfIZM0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Sep 2019 08:26:35 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42580 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfIZM0e (ORCPT
+        id S1726209AbfIZMsT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Sep 2019 08:48:19 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37970 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfIZMsT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:26:34 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n14so2229331wrw.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2019 05:26:33 -0700 (PDT)
+        Thu, 26 Sep 2019 08:48:19 -0400
+Received: by mail-ed1-f66.google.com with SMTP id l21so1876936edr.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2019 05:48:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=p32y5pL62PU7Yf9iy/plIVHUc6YiHXgm7LNnsJBfWag=;
-        b=QOUNhFqApk0JZioGtQSmqcw6DrLAybbq5zyIfy4vZUVbIk0srAk//b2mD0SDPpM8uJ
-         891LzBY3eRJHYK4y5wWOZeWbZqRs20mepTSFNoIae3EMzwh4/3LdP/SEcrGfU6sAQb/8
-         0L5o4W5RCKH/MeSm2qXQXeKbS6FjhFCheOaLlXJkI3KPTYzsagKWNhqO0Y/9VnQDIGOu
-         8X+NXogpXrd2GPzJWHPCdqHKrug9a73PnieO6i8eo/Z66MaWiwCwvxuj0bZQq2R1J0Ag
-         8OJF4cvEQGNIbJyh06yT4xAWUQMM/rej6F3HP8azXufHyMzuY7mbvOGC3E+3IP/FKxkb
-         QoVA==
+        bh=2VnRhKwH3b0fhHEO74HP3xgpX73GansXAOq8z6A9H18=;
+        b=fEPLxIgBFxs7CUZNOVvWNDz/tvzzu14guUuPM4VTtRcfOArY0I0sz3Yb5nWsUplYc2
+         OnojhKubNYaHltvC0QZ2eBnUZRq8uC1pHsO2ayO+tA2FtTElDJtAmsLP5bBSQXgHiIri
+         ZmnSwP30sHkGyPPXtAgC1PRi3fMP9EdQTtGqkQftR0N2LnpL4mOscIuuAKp7uiZxRb9S
+         H3MZsXBxVYNJvyUfTQeZBaEmPXIsZ6FvFtWvhh0m+UGgxKEmgXtw47A70flTiCI/MFwa
+         Vu4zSfLcBWar+7ybQkiA1iEEiH/QFDQT18M7QnZyNP/nC6CyM1P4P4xGAb/+u6dtSraF
+         zwdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=p32y5pL62PU7Yf9iy/plIVHUc6YiHXgm7LNnsJBfWag=;
-        b=jXJW5R3m+JeFeUZK1hHRlqppD7R97tgqZ4jFNl2gbnNvfH+d4LGUB8A+cRRd6qoXbI
-         97tDI+CEKc5b+MP4h+xLjpilaPOxywYfrHbL9jWLHl4+BMvueE7PPemdDMGto5T+hQxB
-         +uw580ut6Skhc26L4iyMxjT53wtNCKFmr0qrPJpmrvHFMbzFJ3w02UvIdIc1m3lmQexC
-         XzexfgpX8xKW0AAVffwg4RYgoZXijC7jedqpgVuuN0MdxdRcnwWrp69yCk0SSKiHAO+H
-         MIlCTuSCptaf2nXDaES0eigqfMaJEUD5C+IKx4kLH6qtKOCHLQEP+x0CC6hXPvho2b+u
-         bcvw==
-X-Gm-Message-State: APjAAAVbw1uuTil1iDWqh+ZE0Yd+Lrb3yuQN0d3gm+z3E2scLNFn4521
-        0Sp8Gu6WE+RxKmvk/kwImXxI+Q==
-X-Google-Smtp-Source: APXvYqzBATD7joVjL92vZMpqjqZNavOQPERuLrMeZb/ll/M9FujdM09hbbVOjMLwThqwb9vquE5C1g==
-X-Received: by 2002:a05:6000:108c:: with SMTP id y12mr1628248wrw.238.1569500792496;
-        Thu, 26 Sep 2019 05:26:32 -0700 (PDT)
-Received: from [192.168.1.145] ([65.39.69.237])
-        by smtp.gmail.com with ESMTPSA id e17sm1932014wma.15.2019.09.26.05.26.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Sep 2019 05:26:31 -0700 (PDT)
-Subject: Re: [PATCH][next] io_uring: ensure variable ret is initialized to
- zero
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190926095012.31826-1-colin.king@canonical.com>
- <3aa821ea-3041-fb56-2458-ec643963c511@kernel.dk>
- <20190926113329.GE27389@kadam>
- <04262621-68fd-a4bb-ab0c-83954c03fbb0@kernel.dk>
- <2de0eb45-3abc-3ccd-f3d3-346d899ba50d@rasmusvillemoes.dk>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b9754557-38a5-052b-f42d-6ba9d7acfed2@kernel.dk>
-Date:   Thu, 26 Sep 2019 14:26:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        bh=2VnRhKwH3b0fhHEO74HP3xgpX73GansXAOq8z6A9H18=;
+        b=VkoK96vT6w+4aCPdd2DIDXk8+Z+sFuEbmWffeEMwiMbXd8NJmwQAU5mK5q4nAZj6sw
+         NF07q2akHYz1KR/MeUTAXiY/UeP0qGh5dgBTO5XpwrumOmqvaRVr4B3whOrNe/5P2Lh3
+         H2FMj+R/jJUlr1cSn34mTwpLBSkvyUahoF8GaatStlBYkmhqiFGwB4gMWtHThL0Hb7Je
+         dh5+SCwy1UsQvnT3H1NTJhUOiyOigYIaaKqFIAyBfpQeEJ7KFCDwXjeFlfq18/jxmOWa
+         +b5q4wbQKdYuJC02qijWYTN/oiZaAymNR/fJei53mRXTN2TdBYfmQvLpz90I8BhY0r2X
+         uvCQ==
+X-Gm-Message-State: APjAAAUl8JUfA9hNFwBjwS10yPIITO9VK+Sp68U8zMCb0Em0OYu3iIjm
+        gSRb3bIgIDVejS5iqv6aOug=
+X-Google-Smtp-Source: APXvYqzNbyT4AabjsgXf9dtPGsx1Hdb0UnOddg7oPj20icWFD8ASUmpX4t3cjqQFzuAanLYp3wrvSQ==
+X-Received: by 2002:a50:918d:: with SMTP id g13mr3410845eda.64.1569502095856;
+        Thu, 26 Sep 2019 05:48:15 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.210.43])
+        by smtp.gmail.com with ESMTPSA id g8sm453971edm.82.2019.09.26.05.48.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2019 05:48:15 -0700 (PDT)
+Subject: Re: [PATCHSET v02 00/16] zuf: ZUFS Zero-copy User-mode FileSystem
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Boaz Harrosh <boaz@plexistor.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matt Benjamin <mbenjami@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Sagi Manole <sagim@netapp.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20190926020725.19601-1-boazh@netapp.com>
+ <CAJfpeguWh5HYcYsgjZ0J2UWUnw88jCURWSpxEjCT2ayubB9Z3A@mail.gmail.com>
+From:   Boaz Harrosh <openosd@gmail.com>
+Message-ID: <e66f4a0a-c88f-67a8-a785-d618aa79be44@gmail.com>
+Date:   Thu, 26 Sep 2019 15:48:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-In-Reply-To: <2de0eb45-3abc-3ccd-f3d3-346d899ba50d@rasmusvillemoes.dk>
+In-Reply-To: <CAJfpeguWh5HYcYsgjZ0J2UWUnw88jCURWSpxEjCT2ayubB9Z3A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,47 +75,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/26/19 2:14 PM, Rasmus Villemoes wrote:
-> On 26/09/2019 13.42, Jens Axboe wrote:
->> On 9/26/19 1:33 PM, Dan Carpenter wrote:
->>> On Thu, Sep 26, 2019 at 11:56:30AM +0200, Jens Axboe wrote:
->>>> On 9/26/19 11:50 AM, Colin King wrote:
->>>>> From: Colin Ian King <colin.king@canonical.com>
->>>>>
->>>>> In the case where sig is NULL the error variable ret is not initialized
->>>>> and may contain a garbage value on the final checks to see if ret is
->>>>> -ERESTARTSYS.  Best to initialize ret to zero before the do loop to
->>>>> ensure the ret does not accidentially contain -ERESTARTSYS before the
->>>>> loop.
->>>>
->>>> Oops, weird it didn't complain. I've folded in this fix, as that commit
->>>> isn't upstream yet. Thanks!
->>>
->>> There is a bug in GCC where at certain optimization levels, instead of
->>> complaining, it initializes it to zero.
->>
->> That's awfully nice of it ;-)
->>
->> Tried with -O0 and still didn't complain for me.
->>
->> $ gcc --version
->> gcc (Ubuntu 9.1.0-2ubuntu2~18.04) 9.1.0
->>
->> Tried gcc 5/6/7/8 as well. Might have to go look at what code it's
->> generating.
->>
+On 26/09/2019 10:11, Miklos Szeredi wrote:
+> On Thu, Sep 26, 2019 at 4:08 AM Boaz Harrosh <boaz@plexistor.com> wrote:
 > 
-> I think it's essentially the same as
-> https://lore.kernel.org/lkml/CAHk-=whP-9yPAWuJDwA6+rQ-9owuYZgmrMA9AqO3EGJVefe8vg@mail.gmail.com/
-> (thread "tmpfs: fix uninitialized return value in shmem_link").
+> Just a heads up, that I have achieved similar results with a prototype
+> using the unmodified fuse protocol.  This prototype was built with
+> ideas taken from zufs (percpu/lockless, mmaped dev, single syscall per
+> op).
 
-I think you're right, it's the same pattern. If I kill the:
+>  I found a big scheduler scalability bottleneck that is caused by
+> update of mm->cpu_bitmap at context switch.   This can be worked
+> around by using shared memory instead of shared page tables, which is
+> a bit of a pain, but it does prove the point.  Thought about fixing
+> the cpu_bitmap cacheline pingpong, but didn't really get anywhere.
+> 
 
-if (ret)
-	return ret;
+I'm not sure what is the scalability bottleneck you are seeing above.
+With zufs I have a very good scalability, almost flat up to the
+number of CPUs, and/or the limit of the memory bandwith if I'm accessing
+pmem.
 
-inside the if (sig) branch, then gcc does show the warning as it should.
+I do have a bad scalability bottleneck if I use mmap of pages caused
+by the call to zap_vma_ptes. Which is why I invented the NIO way.
+(Inspired by you)
 
--- 
-Jens Axboe
+Once you send me the git URL I will have a look in the code and see if
+I can find any differences.
 
+That said I do believe that a new Scheduler object that completely
+bypasses the scheduler and just relinquishes its time slice to the
+switched to thread, will cut off another 0.5u from the single thread
+latency. (5th patch talks about that)
+
+> Are you interested in comparing zufs with the scalable fuse prototype?
+>  If so, I'll push the code into a public repo with some instructions,
+> 
+> Thanks,
+> Miklos
+> 
+
+Miklos would you please have some bandwith to review my code? it would
+make me very happy and calm. Your input is very valuable to me.
+
+Thanks
+Boaz
