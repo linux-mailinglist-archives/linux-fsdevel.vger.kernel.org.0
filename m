@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 490EFBEA76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 04:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA1ABEA78
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 04:13:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730783AbfIZCNA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 22:13:00 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55775 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbfIZCNA (ORCPT
+        id S1731942AbfIZCNO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 22:13:14 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35334 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfIZCNO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 22:13:00 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a6so727690wma.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 19:12:58 -0700 (PDT)
+        Wed, 25 Sep 2019 22:13:14 -0400
+Received: by mail-wm1-f66.google.com with SMTP id y21so751225wmi.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 19:13:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=plexistor-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gL69fGNCem1/GDwiWl3Bh15i2ZHAFAibXRT8WHa+3DA=;
-        b=SaCiK8CJKwJfym6+RjbqmVt8/fOAlEPicc8c6NV4rPtZQDWA9MpE0qjamlMWqK6LxM
-         SibfFtFc+nHc6En9A4YeTmYZaw7v84JYBSa7WcRNiOXqZ/oLklt/AQ1xtg1sQNZaJ1iK
-         w7o9Rn1UOODlTJOEA5sxWOpO7OjeYENwl9zqIlRnDZQAMRl4F5gAyQm1r/lq1WrdGixV
-         08JNDKFSY2UwyV3cK/qG4UHYFRcluDjQdg8Pktzl4nTVh22uJyzrH9NxyHAq+7FeP8jE
-         O6O6MAgT2zazr6Tjprue+NWvqf9xBb8BPiaoYZ2HXS0KvLo6XVVcHPV3g2XILOYtvXfZ
-         fQxg==
+        bh=zh5jmyO5F3BUfYYd+HMTYNsKgvdRPm7apGOLmwRTjl4=;
+        b=wtHeHlGYON58k0yQ7ju5K+mtZHXj30PbcpZIb6Uzix/WdCt0VohiK7nOLWeCLl7vmr
+         UQE+DAKjzws4v1bhn0WRBcGA3dkDfuEtk7YpRve+LfWfwvrdH3ZgnThfw0QmMy+YwUcb
+         IErZBuwMCfjPJv/zqiyMHNAHWtJrsdkvC2guA1QWb7D2u0dOWqIAA4OCh1ttWBZ+wOHk
+         wNYMpiDibwGIzXhInMspOORC/DKfP6cSzUxGG+QdpHg1qYfH0L/WsyBra28T068YybgZ
+         0B1XgTCUOx7qC3fbc+wKEQctLec3yYeLCLGncBEzQRGKR02/7ueRTg5mKJLoRuedLb9U
+         /TzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gL69fGNCem1/GDwiWl3Bh15i2ZHAFAibXRT8WHa+3DA=;
-        b=Jr2UjLP0WQtKUfGDP7SBA5STO8Tvt0EuhPPaT1UqimwGwi6gibvQHLzom/50yMYg+t
-         cQNd8x5JHVI8SQp5F8Ig0TkJkQc3Rxe764cL75VqsJow3CwFvoENSS3EC0NKhiLwtOe3
-         fxlytt/Lv9+32cYawTpQtfG4Ngh2JUS98o0YE3k7j09YRtBslj8828sUlouVo3dmMV17
-         wjOMW9mWUpkRkKwTcA67KEvRgGJ3wIoLnd59PGCDh6W4qEnPf7T+7CS0Qfh52Qjdw7u3
-         XfVUakRfaqFnYPYgLCIJqw9V5oUIZhnN41hoifQPwrIuTw1ckQa3S2spL3X12tY/BM1M
-         9sSw==
-X-Gm-Message-State: APjAAAV4xwO/CRs69zs9AqjGxtSWj5R5Us/wXwp3KhZBkamEcoCXr6h6
-        DawviEXC2otEJa+4eQQiQpgT+L0/DdE=
-X-Google-Smtp-Source: APXvYqyazCuEy3nZx32jTIrwkoaa6vpUdM/YqPAsUh5uuCYgRqNZd7Tq29TbvgyOqVEilhy0y9XGqQ==
-X-Received: by 2002:a05:600c:24ce:: with SMTP id 14mr789418wmu.71.1569463977540;
-        Wed, 25 Sep 2019 19:12:57 -0700 (PDT)
+        bh=zh5jmyO5F3BUfYYd+HMTYNsKgvdRPm7apGOLmwRTjl4=;
+        b=E5SxPSjOcoZQjoQOCiLYVrSFJAZPIkRFQu1+u8FVpP3FUdwYVD0g4zkaceE/9SDNPM
+         LgEo7t86quyXXxZ1a6jh/XEOmMZANtCj/78Kv3O+OEQ244DyyXXfp2ZQ3N8oYo+9RFY+
+         gh3N3vw913g03QjWsYaM4/mi/8jXFIoge51+2CU35HfRDRxw5HdkcAS7kpex0XEOb0dk
+         hd9BUUsZr+2GNjnCSSY5LpsjlnqHg81liVbi1BJSAMdfNlw5RVbNO51utqEZkPPj/9Le
+         SYl/SE4zMIZHuuzepLgBJO2JS4thvXupSNyWIrky9ydace4qu7O0SGDlCdoZGMwfyrrB
+         bTEA==
+X-Gm-Message-State: APjAAAXbF8TX5JDrVMLmyMgYe7uL349hT9IV7sB1AHU/ivTEFgmT5VAV
+        55/wJBEyUHJ0Q88jk4XpDFdv0QBrN7g=
+X-Google-Smtp-Source: APXvYqw2tKcpaTG4RbA5+4VSzIb3zCc/yvQJp5kJ5ofm5jLgOtRUXM7ql3rrieiHTW1FrsmGBN5D3w==
+X-Received: by 2002:a1c:9d15:: with SMTP id g21mr865378wme.96.1569463991342;
+        Wed, 25 Sep 2019 19:13:11 -0700 (PDT)
 Received: from Bfire.plexistor.com ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id o19sm968751wro.50.2019.09.25.19.12.55
+        by smtp.googlemail.com with ESMTPSA id o19sm968751wro.50.2019.09.25.19.13.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 19:12:57 -0700 (PDT)
+        Wed, 25 Sep 2019 19:13:10 -0700 (PDT)
 From:   Boaz Harrosh <boaz@plexistor.com>
 X-Google-Original-From: Boaz Harrosh <boazh@netapp.com>
 To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -56,9 +56,9 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Sagi Manole <sagim@netapp.com>,
         Matthew Wilcox <willy@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 09/16] zuf: readdir operation
-Date:   Thu, 26 Sep 2019 05:07:18 +0300
-Message-Id: <20190926020725.19601-10-boazh@netapp.com>
+Subject: [PATCH 10/16] zuf: symlink
+Date:   Thu, 26 Sep 2019 05:07:19 +0300
+Message-Id: <20190926020725.19601-11-boazh@netapp.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190926020725.19601-1-boazh@netapp.com>
 References: <20190926020725.19601-1-boazh@netapp.com>
@@ -69,232 +69,209 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implements the file_operations->iterate_shared via info
-returned from Server.
+The symlink support is all hidden within the creation/open
+of the inode.
 
-Establish protocol with Server for readdir.
+As part of ZUFS_OP_NEW_INODE we also send the requested
+content of the symlink for storage.
 
-The Server fills a zuf allocated buffer (up to 4M at a time)
-which will contain a zufs encoded dir entries. It will then
-call the proper emit vector to fill the caller buffer.
-The buffer is passed to Server not as part of the zufs_ioc_readdir
-struct but maps this buffer directly into Server space via the
-zt_map_pages facility.
-
-[v2]
-  Fix the gcc warning:
-    directory.c:86:1: warning: the frame size of 8576 bytes is
-		  larger than 8192 bytes
-  Fix it by allocating the pages array, which was on stack
-  as part of the allocation we already do for the readdir buffer
-  Reported-by: kbuild test robot <lkp@intel.com>
+On an open of an existing symlink the link information
+is returned within the zufs_inode structure via a zufs_dpp_t
+pointer. (See Documentation about zufs_dpp_t pointers)
 
 Signed-off-by: Boaz Harrosh <boazh@netapp.com>
 ---
- fs/zuf/directory.c | 69 +++++++++++++++++++++++++++++++++++-
- fs/zuf/zuf-core.c  |  2 ++
- fs/zuf/zus_api.h   | 88 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 158 insertions(+), 1 deletion(-)
+ fs/zuf/Makefile  |  2 +-
+ fs/zuf/_extern.h |  7 +++++
+ fs/zuf/inode.c   |  7 +++++
+ fs/zuf/namei.c   | 27 ++++++++++++++++++
+ fs/zuf/symlink.c | 73 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 115 insertions(+), 1 deletion(-)
+ create mode 100644 fs/zuf/symlink.c
 
-diff --git a/fs/zuf/directory.c b/fs/zuf/directory.c
-index 5624e05f96e5..7417aeb77773 100644
---- a/fs/zuf/directory.c
-+++ b/fs/zuf/directory.c
-@@ -19,7 +19,74 @@
+diff --git a/fs/zuf/Makefile b/fs/zuf/Makefile
+index 2bfed45723e3..04c31b7bb9ff 100644
+--- a/fs/zuf/Makefile
++++ b/fs/zuf/Makefile
+@@ -17,5 +17,5 @@ zuf-y += md.o t1.o t2.o
+ zuf-y += zuf-core.o zuf-root.o
  
- static int zuf_readdir(struct file *file, struct dir_context *ctx)
- {
--	return -ENOTSUPP;
-+	struct inode *inode = file_inode(file);
-+	struct super_block *sb = inode->i_sb;
-+	loff_t i_size = i_size_read(inode);
-+	struct zufs_ioc_readdir ioc_readdir = {
-+		.hdr.in_len = sizeof(ioc_readdir),
-+		.hdr.out_len = sizeof(ioc_readdir),
-+		.hdr.operation = ZUFS_OP_READDIR,
-+		.dir_ii = ZUII(inode)->zus_ii,
-+	};
-+	struct zufs_readdir_iter rdi;
-+	struct page **pages;
-+	struct zufs_dir_entry *zde;
-+	void *addr, *__a;
-+	uint nump, i;
-+	int err;
+ # Main FS
+-zuf-y += super.o inode.o directory.o namei.o file.o
++zuf-y += super.o inode.o directory.o namei.o file.o symlink.o
+ zuf-y += module.o
+diff --git a/fs/zuf/_extern.h b/fs/zuf/_extern.h
+index 50887792bf42..95413f65c47f 100644
+--- a/fs/zuf/_extern.h
++++ b/fs/zuf/_extern.h
+@@ -88,6 +88,10 @@ void zuf_set_inode_flags(struct inode *inode, struct zus_inode *zi);
+ int zuf_add_dentry(struct inode *dir, struct qstr *str, struct inode *inode);
+ int zuf_remove_dentry(struct inode *dir, struct qstr *str, struct inode *inode);
+ 
++/* symlink.c */
++uint zuf_prepare_symname(struct zufs_ioc_new_inode *ioc_new_inode,
++			const char *symname, ulong len, struct page *pages[2]);
 +
-+	if (ctx->pos && i_size <= ctx->pos)
-+		return 0;
-+	if (!i_size)
-+		i_size = PAGE_SIZE; /* Just for the . && .. */
-+	if (i_size - ctx->pos < PAGE_SIZE)
-+		ioc_readdir.hdr.len = PAGE_SIZE;
-+	else
-+		ioc_readdir.hdr.len = min_t(loff_t, i_size - ctx->pos,
-+					    ZUS_API_MAP_MAX_SIZE);
-+	nump = md_o2p_up(ioc_readdir.hdr.len);
-+	/* Allocating both readdir buffer and the pages-array.
-+	 * Pages array is at end
-+	 */
-+	addr = vzalloc(md_p2o(nump) + nump * sizeof(*pages));
-+	if (unlikely(!addr))
-+		return -ENOMEM;
+ /* t1.c */
+ int zuf_pmem_mmap(struct file *file, struct vm_area_struct *vma);
+ 
+@@ -109,4 +113,7 @@ extern const struct inode_operations zuf_special_inode_operations;
+ /* dir.c */
+ extern const struct file_operations zuf_dir_operations;
+ 
++/* symlink.c */
++extern const struct inode_operations zuf_symlink_inode_operations;
 +
-+	WARN_ON((ulong)addr & (PAGE_SIZE - 1));
-+
-+	pages = addr + md_p2o(nump);
-+	__a = addr;
-+	for (i = 0; i < nump; ++i) {
-+		pages[i] = vmalloc_to_page(__a);
-+		__a += PAGE_SIZE;
-+	}
-+
-+more:
-+	ioc_readdir.pos = ctx->pos;
-+
-+	err = zufc_dispatch(ZUF_ROOT(SBI(sb)), &ioc_readdir.hdr, pages, nump);
-+	if (unlikely(err && err != -EINTR)) {
-+		zuf_err_dispatch(sb, "zufc_dispatch failed => %d\n", err);
-+		goto out;
-+	}
-+
-+	zufs_readdir_iter_init(&rdi, &ioc_readdir, addr);
-+	while ((zde = zufs_next_zde(&rdi)) != NULL) {
-+		zuf_dbg_verbose("%s pos=0x%lx\n",
-+				zde->zstr.name, (ulong)zde->pos);
-+		ctx->pos = zde->pos;
-+		if (!dir_emit(ctx, zde->zstr.name, zde->zstr.len, zde->ino,
-+			      zde->type))
-+			goto out;
-+	}
-+	ctx->pos = ioc_readdir.pos;
-+	if (ioc_readdir.more) {
-+		zuf_dbg_err("more\n");
-+		goto more;
-+	}
-+out:
-+	vfree(addr);
-+	return err;
+ #endif	/*ndef __ZUF_EXTERN_H__*/
+diff --git a/fs/zuf/inode.c b/fs/zuf/inode.c
+index 88cb1937c223..bf3f8b27f918 100644
+--- a/fs/zuf/inode.c
++++ b/fs/zuf/inode.c
+@@ -83,6 +83,9 @@ static void _set_inode_from_zi(struct inode *inode, struct zus_inode *zi)
+ 		inode->i_op = &zuf_dir_inode_operations;
+ 		inode->i_fop = &zuf_dir_operations;
+ 		break;
++	case S_IFLNK:
++		inode->i_op = &zuf_symlink_inode_operations;
++		break;
+ 	case S_IFBLK:
+ 	case S_IFCHR:
+ 	case S_IFIFO:
+@@ -348,6 +351,10 @@ struct inode *zuf_new_inode(struct inode *dir, umode_t mode,
+ 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+ 	    S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+ 		init_special_inode(inode, mode, rdev_or_isize);
++	} else if (symname) {
++		inode->i_size = rdev_or_isize;
++		nump = zuf_prepare_symname(&ioc_new_inode, symname,
++					   rdev_or_isize, pages);
+ 	}
+ 
+ 	err = _set_zi_from_inode(dir, &ioc_new_inode.zi, inode);
+diff --git a/fs/zuf/namei.c b/fs/zuf/namei.c
+index 299134ca7c07..e78aa04f10d5 100644
+--- a/fs/zuf/namei.c
++++ b/fs/zuf/namei.c
+@@ -164,6 +164,32 @@ static int zuf_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	return 0;
  }
  
- /*
-diff --git a/fs/zuf/zuf-core.c b/fs/zuf/zuf-core.c
-index 48dd7b665064..c0049c1d5ba3 100644
---- a/fs/zuf/zuf-core.c
-+++ b/fs/zuf/zuf-core.c
-@@ -74,6 +74,8 @@ const char *zuf_op_name(enum e_zufs_operation op)
- 		CASE_ENUM_NAME(ZUFS_OP_ADD_DENTRY);
- 		CASE_ENUM_NAME(ZUFS_OP_REMOVE_DENTRY);
- 		CASE_ENUM_NAME(ZUFS_OP_RENAME);
-+		CASE_ENUM_NAME(ZUFS_OP_READDIR);
-+
- 		CASE_ENUM_NAME(ZUFS_OP_SETATTR);
- 	case ZUFS_OP_MAX_OPT:
- 	default:
-diff --git a/fs/zuf/zus_api.h b/fs/zuf/zus_api.h
-index 9b9e97fe844e..2bdf047282e8 100644
---- a/fs/zuf/zus_api.h
-+++ b/fs/zuf/zus_api.h
-@@ -454,6 +454,7 @@ enum e_zufs_operation {
- 	ZUFS_OP_ADD_DENTRY	= 8,
- 	ZUFS_OP_REMOVE_DENTRY	= 9,
- 	ZUFS_OP_RENAME		= 10,
-+	ZUFS_OP_READDIR		= 11,
- 
- 	ZUFS_OP_SETATTR		= 19,
- 
-@@ -549,6 +550,93 @@ struct zufs_ioc_rename {
- 	__u64 flags;
- };
- 
-+/* ZUFS_OP_READDIR */
-+struct zufs_ioc_readdir {
-+	struct zufs_ioc_hdr hdr;
-+	/* IN */
-+	struct zus_inode_info *dir_ii;
-+	__u64 pos;
-+
-+	/* OUT */
-+	__u8	more;
-+};
-+
-+struct zufs_dir_entry {
-+	__le64 ino;
-+	struct {
-+		unsigned	type	: 8;
-+		ulong		pos	: 56;
-+	};
-+	struct zufs_str zstr;
-+};
-+
-+struct zufs_readdir_iter {
-+	void *__zde, *last;
-+	struct zufs_ioc_readdir *ioc_readdir;
-+};
-+
-+enum {E_ZDE_HDR_SIZE =
-+	offsetof(struct zufs_dir_entry, zstr) + offsetof(struct zufs_str, name),
-+};
-+
-+#ifndef __cplusplus
-+static inline void zufs_readdir_iter_init(struct zufs_readdir_iter *rdi,
-+					  struct zufs_ioc_readdir *ioc_readdir,
-+					  void *app_ptr)
++static int zuf_symlink(struct inode *dir, struct dentry *dentry,
++		       const char *symname)
 +{
-+	rdi->__zde = app_ptr;
-+	rdi->last = app_ptr + ioc_readdir->hdr.len;
-+	rdi->ioc_readdir = ioc_readdir;
-+	ioc_readdir->more = false;
++	struct inode *inode;
++	ulong len;
++
++	zuf_dbg_vfs("[%ld] de->name=%s symname=%s\n",
++			dir->i_ino, dentry->d_name.name, symname);
++
++	len = strlen(symname);
++	if (len + 1 > ZUFS_MAX_SYMLINK)
++		return -ENAMETOOLONG;
++
++	inode = zuf_new_inode(dir, S_IFLNK|S_IRWXUGO, &dentry->d_name,
++			       symname, len, false);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++
++	inode->i_op = &zuf_symlink_inode_operations;
++	inode->i_mapping->a_ops = &zuf_aops;
++
++	_instantiate_unlock(dentry, inode);
++
++	return 0;
 +}
 +
-+static inline uint zufs_dir_entry_len(__u8 name_len)
+ static int zuf_link(struct dentry *dest_dentry, struct inode *dir,
+ 		    struct dentry *dentry)
+ {
+@@ -385,6 +411,7 @@ const struct inode_operations zuf_dir_inode_operations = {
+ 	.lookup		= zuf_lookup,
+ 	.link		= zuf_link,
+ 	.unlink		= zuf_unlink,
++	.symlink	= zuf_symlink,
+ 	.mkdir		= zuf_mkdir,
+ 	.rmdir		= zuf_rmdir,
+ 	.mknod		= zuf_mknod,
+diff --git a/fs/zuf/symlink.c b/fs/zuf/symlink.c
+new file mode 100644
+index 000000000000..1446bdf60cb9
+--- /dev/null
++++ b/fs/zuf/symlink.c
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Symlink operations
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
++
++#include "zuf.h"
++
++/* Can never fail all checks already made before.
++ * Returns: The number of pages stored @pages
++ */
++uint zuf_prepare_symname(struct zufs_ioc_new_inode *ioc_new_inode,
++			 const char *symname, ulong len,
++			 struct page *pages[2])
 +{
-+	return ALIGN(E_ZDE_HDR_SIZE + name_len, sizeof(__u64));
-+}
++	uint nump;
 +
-+static inline
-+struct zufs_dir_entry *zufs_next_zde(struct zufs_readdir_iter *rdi)
-+{
-+	struct zufs_dir_entry *zde = rdi->__zde;
-+	uint len;
-+
-+	if (rdi->last <= rdi->__zde + E_ZDE_HDR_SIZE)
-+		return NULL;
-+	if (zde->zstr.len == 0)
-+		return NULL;
-+	len = zufs_dir_entry_len(zde->zstr.len);
-+	if (rdi->last <= rdi->__zde + len)
-+		return NULL;
-+
-+	rdi->__zde += len;
-+	return zde;
-+}
-+
-+static inline bool zufs_zde_emit(struct zufs_readdir_iter *rdi, __u64 ino,
-+				 __u8 type, __u64 pos, const char *name,
-+				 __u8 len)
-+{
-+	struct zufs_dir_entry *zde = rdi->__zde;
-+
-+	if (rdi->last <= rdi->__zde + zufs_dir_entry_len(len)) {
-+		rdi->ioc_readdir->more = true;
-+		return false;
++	ioc_new_inode->zi.i_size = cpu_to_le64(len);
++	if (len < sizeof(ioc_new_inode->zi.i_symlink)) {
++		memcpy(&ioc_new_inode->zi.i_symlink, symname, len);
++		return 0;
 +	}
 +
-+	rdi->ioc_readdir->more = 0;
-+	zde->ino = ino;
-+	zde->type = type;
-+	/*ASSERT(0 == (pos && (1 << 56 - 1)));*/
-+	zde->pos = pos;
-+	strncpy(zde->zstr.name, name, len);
-+	zde->zstr.len = len;
-+	zufs_next_zde(rdi);
++	pages[0] = virt_to_page(symname);
++	nump = 1;
 +
-+	return true;
++	ioc_new_inode->hdr.len = len;
++	ioc_new_inode->hdr.offset = (ulong)symname & (PAGE_SIZE - 1);
++
++	if (PAGE_SIZE < ioc_new_inode->hdr.offset + len) {
++		pages[1] = virt_to_page(symname + PAGE_SIZE);
++		++nump;
++	}
++
++	return nump;
 +}
-+#endif /* ndef __cplusplus */
 +
- /* ZUFS_OP_SETATTR */
- struct zufs_ioc_attr {
- 	struct zufs_ioc_hdr hdr;
++/*
++ * In case of short symlink, we serve it directly from zi; otherwise, read
++ * symlink value directly from pmem using dpp mapping.
++ */
++static const char *zuf_get_link(struct dentry *dentry, struct inode *inode,
++				struct delayed_call *notused)
++{
++	const char *link;
++	struct zuf_inode_info *zii = ZUII(inode);
++
++	if (inode->i_size < sizeof(zii->zi->i_symlink))
++		return zii->zi->i_symlink;
++
++	link = zuf_dpp_t_addr(inode->i_sb, le64_to_cpu(zii->zi->i_sym_dpp));
++	if (!link) {
++		zuf_err("bad symlink: i_sym_dpp=0x%llx\n", zii->zi->i_sym_dpp);
++		return ERR_PTR(-EIO);
++	}
++	return link;
++}
++
++const struct inode_operations zuf_symlink_inode_operations = {
++	.get_link	= zuf_get_link,
++	.update_time	= zuf_update_time,
++	.setattr	= zuf_setattr,
++	.getattr	= zuf_getattr,
++};
 -- 
 2.21.0
 
