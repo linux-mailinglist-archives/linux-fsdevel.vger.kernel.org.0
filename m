@@ -2,187 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02F70BE9B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 02:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 554D3BE9F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 03:11:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391071AbfIZAhE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 20:37:04 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44151 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391043AbfIZAhB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 20:37:01 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q21so595984pfn.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 17:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uOStsxQqfO06OYtHmn1zyVyHteg7NOzz5rqwNkTb9ow=;
-        b=JiqmtcSBsaozI32UI7NC2RmIz4mXNttFMZqTO2p33b8Dk5Mrifi/nUziyw4zDzpSXj
-         JHHJFWSwQUoRhjJMrkVdiaZUpWFLTqVwCka11YtGWdEOlVEQvPXU7/E1Xa9xow91cYpE
-         KlWhW0X+kM6JXN3Z9MyYyk2t1MFAbH9PwIuSYGV9gDxS0fX52PcwH4E5ysH5/p5LgdlB
-         SzAP0yFOxveNcN0RHdOhbjpB5wEjcKOyYngPNzvK9dC/+aN7wUMdxcDWLkr8UBLJispg
-         gRPj/giSgVsvvMux8DlWDbC6WDUFTRY7XZjUTI2pG4WihGnjdhptil70Fh7DnUjEHWHI
-         vhNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uOStsxQqfO06OYtHmn1zyVyHteg7NOzz5rqwNkTb9ow=;
-        b=MEZqLhJenHcdhKvsrFlhvNXQzBVlOp/cK4VVZMK4eCyB6sboXLboBIYbbeiR43hbRM
-         TwJjleNJ4LIZMU4T01Kl6GoMAjAyvU1QWgLQ+qFeoQgpfAx+1NYTz2cnqYT9i66E5Qv/
-         hZpD6bPDEHZ6iMB6HrEVwDfjcQHLlPs8AP8guTrbYclrcipNK1rT8SfYCSju5pDLQnxA
-         jdcg3yeegLwz++vOpUR5FRbKfN+ZILmDv8JYMneNLTJj7VCnFwUxVxTPqyLsPMCz8opg
-         xtUVvttwykOjAyWHdVWuJmjp0XRgs0OmtZIfPtpia+3Vq2QW8meRc6HQnNkhcuNqkghD
-         US0A==
-X-Gm-Message-State: APjAAAUyGYua0/jQtdA7thMDeYnENXLU6BGEkepQUhDfrXQK69EcdlOB
-        FXwSYwJpdSgL62ar3Wz4Dcz+Dg==
-X-Google-Smtp-Source: APXvYqxFO4le1GcOPrqGJrQOBTZwee7HUoRxS+iDZqfwUACSVSFP0Fg5NHCc+2VkbGcDU5NxqFCbfQ==
-X-Received: by 2002:a17:90a:6c90:: with SMTP id y16mr570103pjj.58.1569458219611;
-        Wed, 25 Sep 2019 17:36:59 -0700 (PDT)
-Received: from vader ([2607:fb90:8361:57cc:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id x23sm166889pfq.140.2019.09.25.17.36.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 17:36:58 -0700 (PDT)
-Date:   Wed, 25 Sep 2019 17:36:56 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jann Horn <jannh@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [RFC PATCH 2/3] fs: add RWF_ENCODED for writing compressed data
-Message-ID: <20190926003656.GA10413@vader>
-References: <cover.1568875700.git.osandov@fb.com>
- <230a76e65372a8fb3ec62ce167d9322e5e342810.1568875700.git.osandov@fb.com>
- <CAG48ez2GKv15Uj6Wzv0sG5v2bXyrSaCtRTw5Ok_ovja_CiO_fQ@mail.gmail.com>
- <20190924171513.GA39872@vader>
- <20190924193513.GA45540@vader>
- <CAG48ez1NQBNR1XeVQYGoopEk=g_KedUr+7jxLQTaO+V8JCeweQ@mail.gmail.com>
- <20190925071129.GB804@dread.disaster.area>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190925071129.GB804@dread.disaster.area>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1729635AbfIZBLm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 21:11:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729619AbfIZBLm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Sep 2019 21:11:42 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4373222BF;
+        Thu, 26 Sep 2019 01:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569460301;
+        bh=VfbUgy7HR441Vzwxtjp+G0PyKooJ4CSM0JV6dgtmCJI=;
+        h=Date:From:To:Subject:From;
+        b=KQSFEKefRqO+zHelNgPBwo9X8pSbB+8a2iLW8ymOJM6xbXihFCOTALAmeFRBAXPtx
+         /Vnlvu4nxak0vvsZRfVAzHHbPKs11zs5wwjQGpqrHTUrviChZsvKYTqHwb6fTt6QA1
+         gFSkjvKPnuIE+cFOE5upH7LYkNgmrJSuG4ozmv/I=
+Date:   Wed, 25 Sep 2019 18:11:40 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2019-09-25-18-10 uploaded
+Message-ID: <20190926011140.kBbRLJHpJ%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 05:11:29PM +1000, Dave Chinner wrote:
-> On Tue, Sep 24, 2019 at 10:01:41PM +0200, Jann Horn wrote:
-> > On Tue, Sep 24, 2019 at 9:35 PM Omar Sandoval <osandov@osandov.com> wrote:
-> > > On Tue, Sep 24, 2019 at 10:15:13AM -0700, Omar Sandoval wrote:
-> > > > On Thu, Sep 19, 2019 at 05:44:12PM +0200, Jann Horn wrote:
-> > > > > On Thu, Sep 19, 2019 at 8:54 AM Omar Sandoval <osandov@osandov.com> wrote:
-> > > > > > Btrfs can transparently compress data written by the user. However, we'd
-> > > > > > like to add an interface to write pre-compressed data directly to the
-> > > > > > filesystem. This adds support for so-called "encoded writes" via
-> > > > > > pwritev2().
-> > > > > >
-> > > > > > A new RWF_ENCODED flags indicates that a write is "encoded". If this
-> > > > > > flag is set, iov[0].iov_base points to a struct encoded_iov which
-> > > > > > contains metadata about the write: namely, the compression algorithm and
-> > > > > > the unencoded (i.e., decompressed) length of the extent. iov[0].iov_len
-> > > > > > must be set to sizeof(struct encoded_iov), which can be used to extend
-> > > > > > the interface in the future. The remaining iovecs contain the encoded
-> > > > > > extent.
-> > > > > >
-> > > > > > A similar interface for reading encoded data can be added to preadv2()
-> > > > > > in the future.
-> > > > > >
-> > > > > > Filesystems must indicate that they support encoded writes by setting
-> > > > > > FMODE_ENCODED_IO in ->file_open().
-> > > > > [...]
-> > > > > > +int import_encoded_write(struct kiocb *iocb, struct encoded_iov *encoded,
-> > > > > > +                        struct iov_iter *from)
-> > > > > > +{
-> > > > > > +       if (iov_iter_single_seg_count(from) != sizeof(*encoded))
-> > > > > > +               return -EINVAL;
-> > > > > > +       if (copy_from_iter(encoded, sizeof(*encoded), from) != sizeof(*encoded))
-> > > > > > +               return -EFAULT;
-> > > > > > +       if (encoded->compression == ENCODED_IOV_COMPRESSION_NONE &&
-> > > > > > +           encoded->encryption == ENCODED_IOV_ENCRYPTION_NONE) {
-> > > > > > +               iocb->ki_flags &= ~IOCB_ENCODED;
-> > > > > > +               return 0;
-> > > > > > +       }
-> > > > > > +       if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
-> > > > > > +           encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
-> > > > > > +               return -EINVAL;
-> > > > > > +       if (!capable(CAP_SYS_ADMIN))
-> > > > > > +               return -EPERM;
-> > > > >
-> > > > > How does this capable() check interact with io_uring? Without having
-> > > > > looked at this in detail, I suspect that when an encoded write is
-> > > > > requested through io_uring, the capable() check might be executed on
-> > > > > something like a workqueue worker thread, which is probably running
-> > > > > with a full capability set.
-> > > >
-> > > > I discussed this more with Jens. You're right, per-IO permission checks
-> > > > aren't going to work. In fully-polled mode, we never get an opportunity
-> > > > to check capabilities in right context. So, this will probably require a
-> > > > new open flag.
-> > >
-> > > Actually, file_ns_capable() accomplishes the same thing without a new
-> > > open flag. Changing the capable() check to file_ns_capable() in
-> > > init_user_ns should be enough.
-> > 
-> > +Aleksa for openat2() and open() space
-> > 
-> > Mmh... but if the file descriptor has been passed through a privilege
-> > boundary, it isn't really clear whether the original opener of the
-> > file intended for this to be possible. For example, if (as a
-> > hypothetical example) the init process opens a service's logfile with
-> > root privileges, then passes the file descriptor to that logfile to
-> > the service on execve(), that doesn't mean that the service should be
-> > able to perform compressed writes into that file, I think.
-> 
-> Where's the privilege boundary that is being crossed?
-> 
-> We're talking about user data read/write access here, not some
-> special security capability. Access to the data has already been
-> permission checked, so why should the format that the data is
-> supplied to the kernel in suddenly require new privilege checks?
-> 
-> i.e. writing encoded data to a file requires exactly the same
-> access permissions as writing cleartext data to the file. The only
-> extra information here is whether the _filesystem_ supports encoded
-> data, and that doesn't change regardless of what the open file gets
-> passed to. Hence the capability is either there or it isn't, it
-> doesn't transform not matter what privilege boundary the file is
-> passed across. Similarly, we have permission to access the data
-> or we don't through the struct file, it doesn't transform either.
-> 
-> Hence I don't see why CAP_SYS_ADMIN or any special permissions are
-> needed for an application with access permissions to file data to
-> use these RWF_ENCODED IO interfaces. I am inclined to think the
-> permission check here is wrong and should be dropped, and then all
-> these issues go away.
-> 
-> Yes, the app that is going to use this needs root perms because it
-> accesses all data in the fs (it's a backup app!), but that doesn't
-> mean you can only use RWF_ENCODED if you have root perms.
+The mm-of-the-moment snapshot 2019-09-25-18-10 has been uploaded to
 
-For RWF_ENCODED writes, the risk here is that we'd be adding a way for
-an unprivileged process to feed arbitrary data to zlib/lzo/zstd in the
-kernel. From what I could find, this is a new attack surface for
-unprivileged processes, and based on the search results for
-"$compression_algorithm CVE", there are real bugs here.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-For RWF_ENCODED reads, there's another potential issue that occurred to
-me. There are a few operations for which we may need to chop up a
-compressed extent: hole punch, truncate, reflink, and dedupe. Rather
-than recompressing the data, Btrfs keeps the whole extent on disk and
-updates the file metadata to refer to a piece of the extent. If we want
-to support RWF_ENCODED reads for such extents (and I think we do), then
-we need to return the entire original extent along with that metadata.
-For an unprivileged reader, there's a security issue that we may be
-returning data that the reader wasn't supposed to see. (A privileged
-reader can go and read the block device anyways.)
+mmotm-readme.txt says
 
-So, in my opinion, both reads and writes should require privilege just
-to be on the safe side.
+README for mm-of-the-moment:
+
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 5.3:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* memcg-kmem-do-not-fail-__gfp_nofail-charges.patch
+* linux-coffh-add-include-guard.patch
+* include-proper-prototypes-for-kernel-elfcorec.patch
+* rbtree-sync-up-the-tools-copy-of-the-code-with-the-main-one.patch
+* augmented-rbtree-add-comments-for-rb_declare_callbacks-macro.patch
+* augmented-rbtree-add-new-rb_declare_callbacks_max-macro.patch
+* augmented-rbtree-rework-the-rb_declare_callbacks-macro-definition.patch
+* kernel-doc-core-api-include-stringh-into-core-api.patch
+* writeback-fix-wstringop-truncation-warnings.patch
+* strscpy-reject-buffer-sizes-larger-than-int_max.patch
+* lib-generic-radix-treec-make-2-functions-static-inline.patch
+* lib-extablec-add-missing-prototypes.patch
+* lib-hexdump-make-print_hex_dump_bytes-a-nop-on-debug-builds.patch
+* checkpatch-dont-interpret-stack-dumps-as-commit-ids.patch
+* checkpatch-improve-spdx-license-checking.patch
+* checkpatchpl-warn-on-invalid-commit-id.patch
+* checkpatch-exclude-sizeof-sub-expressions-from-macro_arg_reuse.patch
+* checkpatch-prefer-__section-over-__attribute__section.patch
+* checkpatch-allow-consecutive-close-braces.patch
+* checkpatch-remove-obsolete-period-from-ambiguous-sha1-query.patch
+* checkpatch-make-git-output-use-language=en_usutf8.patch
+* fs-reiserfs-remove-unnecessary-check-of-bh-in-remove_from_transaction.patch
+* fs-reiserfs-journalc-remove-set-but-not-used-variables.patch
+* fs-reiserfs-streec-remove-set-but-not-used-variables.patch
+* fs-reiserfs-lbalancec-remove-set-but-not-used-variables.patch
+* fs-reiserfs-objectidc-remove-set-but-not-used-variables.patch
+* fs-reiserfs-printsc-remove-set-but-not-used-variables.patch
+* fs-reiserfs-fix_nodec-remove-set-but-not-used-variables.patch
+* fs-reiserfs-do_balanc-remove-set-but-not-used-variables.patch
+* reiserfs-remove-set-but-not-used-variable-in-journalc.patch
+* reiserfs-remove-set-but-not-used-variable-in-do_balanc.patch
+* fat-delete-an-unnecessary-check-before-brelse.patch
+* fork-improve-error-message-for-corrupted-page-tables.patch
+* cpumask-nicer-for_each_cpumask_and-signature.patch
+* kexec-bail-out-upon-sigkill-when-allocating-memory.patch
+* kexec-restore-arch_kexec_kernel_image_probe-declaration.patch
+* uaccess-add-missing-__must_check-attributes.patch
+* compiler-enable-config_optimize_inlining-forcibly.patch
+* kgdb-dont-use-a-notifier-to-enter-kgdb-at-panic-call-directly.patch
+* scripts-gdb-handle-split-debug.patch
+* bug-refactor-away-warn_slowpath_fmt_taint.patch
+* bug-rename-__warn_printf_taint-to-__warn_printf.patch
+* bug-consolidate-warn_slowpath_fmt-usage.patch
+* bug-lift-cut-here-out-of-__warn.patch
+* bug-clean-up-helper-macros-to-remove-__warn_taint.patch
+* bug-consolidate-__warn_flags-usage.patch
+* bug-move-warn_on-cut-here-into-exception-handler.patch
+* ipc-mqueuec-delete-an-unnecessary-check-before-the-macro-call-dev_kfree_skb.patch
+* ipc-mqueue-improve-exception-handling-in-do_mq_notify.patch
+* ipc-sem-convert-to-use-built-in-rcu-list-checking.patch
+* lib-lzo-fix-alignment-bug-in-lzo-rle.patch
+* lib-untag-user-pointers-in-strn_user.patch
+* mm-untag-user-pointers-passed-to-memory-syscalls.patch
+* mm-untag-user-pointers-in-mm-gupc.patch
+* mm-untag-user-pointers-in-get_vaddr_frames.patch
+* fs-namespace-untag-user-pointers-in-copy_mount_options.patch
+* userfaultfd-untag-user-pointers.patch
+* drm-amdgpu-untag-user-pointers.patch
+* drm-radeon-untag-user-pointers-in-radeon_gem_userptr_ioctl.patch
+* media-v4l2-core-untag-user-pointers-in-videobuf_dma_contig_user_get.patch
+* tee-shm-untag-user-pointers-in-tee_shm_register.patch
+* vfio-type1-untag-user-pointers-in-vaddr_get_pfn.patch
+* mm-untag-user-pointers-in-mmap-munmap-mremap-brk.patch
+* mm-introduce-madv_cold.patch
+* mm-change-pageref_reclaim_clean-with-page_refreclaim.patch
+* mm-introduce-madv_pageout.patch
+* mm-factor-out-common-parts-between-madv_cold-and-madv_pageout.patch
+* hexagon-drop-empty-and-unused-free_initrd_mem.patch
+* checkpatch-check-for-nested-unlikely-calls.patch
+* xen-events-remove-unlikely-from-warn-condition.patch
+* fs-remove-unlikely-from-warn_on-condition.patch
+* wimax-i2400m-remove-unlikely-from-warn-condition.patch
+* xfs-remove-unlikely-from-warn_on-condition.patch
+* ib-hfi1-remove-unlikely-from-is_err-condition.patch
+* ntfs-remove-unlikely-from-is_err-conditions.patch
+* mm-treewide-clarify-pgtable_page_ctordtor-naming.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* mm-memremap-drop-unused-section_size-and-section_mask.patch
+* writeback-fix-use-after-free-in-finish_writeback_work.patch
+* mm-fix-wmissing-prototypes-warnings.patch
+* memcg-only-record-foreign-writebacks-with-dirty-pages-when-memcg-is-not-disabled.patch
+* kernel-sysctlc-do-not-override-max_threads-provided-by-userspace.patch
+* ocfs2-clear-zero-in-unaligned-direct-io.patch
+* ocfs2-clear-zero-in-unaligned-direct-io-checkpatch-fixes.patch
+* fs-ocfs2-fix-possible-null-pointer-dereferences-in-ocfs2_xa_prepare_entry.patch
+* fs-ocfs2-fix-possible-null-pointer-dereferences-in-ocfs2_xa_prepare_entry-fix.patch
+* fs-ocfs2-fix-a-possible-null-pointer-dereference-in-ocfs2_write_end_nolock.patch
+* fs-ocfs2-fix-a-possible-null-pointer-dereference-in-ocfs2_info_scan_inode_alloc.patch
+* ramfs-support-o_tmpfile.patch
+  mm.patch
+* mm-slb-improve-memory-accounting.patch
+* mm-slb-guarantee-natural-alignment-for-kmallocpower-of-two.patch
+* mm-slb-guarantee-natural-alignment-for-kmallocpower-of-two-fix.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-hotplug-reorder-memblock_-calls-in-try_remove_memory.patch
+* memory_hotplug-add-a-bounds-check-to-check_hotplug_memory_range.patch
+* mm-add-a-bounds-check-in-devm_memremap_pages.patch
+* mm-oom-avoid-printk-iteration-under-rcu.patch
+* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
+* mm-proportional-memorylowmin-reclaim.patch
+* mm-make-memoryemin-the-baseline-for-utilisation-determination.patch
+* mm-make-memoryemin-the-baseline-for-utilisation-determination-fix.patch
+* mm-vmscan-remove-unused-lru_pages-argument.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* hung_task-allow-printing-warnings-every-check-interval.patch
+* lib-genallocc-export-symbol-addr_in_gen_pool.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
+* string-add-stracpy-and-stracpy_pad-mechanisms.patch
+* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
+* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
+* fat-add-nobarrier-to-workaround-the-strange-behavior-of-device.patch
+* aio-simplify-read_events.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+  linux-next.patch
+  linux-next-git-rejects.patch
+  diff-sucks.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
