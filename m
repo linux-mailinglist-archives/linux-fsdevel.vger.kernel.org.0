@@ -2,68 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D92BF1E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 13:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 408FDBF1E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 13:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725975AbfIZLla (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Sep 2019 07:41:30 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41571 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbfIZLl3 (ORCPT
+        id S1726248AbfIZLmO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Sep 2019 07:42:14 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55369 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfIZLmN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Sep 2019 07:41:29 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h7so2070838wrw.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2019 04:41:28 -0700 (PDT)
+        Thu, 26 Sep 2019 07:42:13 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a6so2355835wma.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2019 04:42:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aH00KjkFtisP2+KHORZWfwfMApazoNp+1TkXkeu+hi0=;
-        b=vGEkSnzXCyU/D87koYKKrS3HnZIWqOggNMHLWp1w4tq/9QLhiDcyMsHKOFWD9K95UM
-         ZZXVJ3e0QiFTpC3c9B+JtHFlhT9eT0ukMDbCEZsS7Eakpg3mQgY+Mkjb8ERmy4JlJZc9
-         CFyjuwRI2zbemFjWoYCv6ZQsuMoZQ0WPa6CUQUFwR1tTiAy9uO3V63Yfox8XGR7SV3Fv
-         yUdon+s4NQteM1qMtxGMv/L5nOqALf7nPZM8ho/x/KF/qyRGsHoDCpmX0TPZ8L8zyXx1
-         s9jJ7ZAjrY2RQGQa5O2UC2Y80REjxL9tpZ5VPIErKF9tiPVJvzxOLqHC48id4jmGP3XP
-         ufig==
+        bh=xonFLYW+K9R2/V+E4nxIJtaZUYsUbdcdHfLF2kKtcoo=;
+        b=Ps5n17nT4qWciZsC9oJ6IGnJHFHbWG4ZlXnBU/vo5CoFtTTcFz1daOUpKD/ipU4JTw
+         ihs76iwMZ80RxUQMFVHFi5rvs5M1rcujs9NFUDyQiF6XVkF7SXmgG5B5WQ8wviB0n/0h
+         viAE+GuDsrSXXAsyoxOa/u6wTXedWKEzGWG5iTpCje/HyXMDQP1QKsdJjeT8SaTNVvM9
+         i5p1PVAP4pUIcDVmmC2qPUG+ZcG/GbmHpma7NTM9SxfdP5B5FUU7xlF/mHrARsTiCPop
+         zVz4CSRj4Q1mP/877rHOBVyN5jMUa4ylMJrwXwyxxRAIiR9nZ+CFHeifrJsIveeE+ygL
+         45Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=aH00KjkFtisP2+KHORZWfwfMApazoNp+1TkXkeu+hi0=;
-        b=hI2K7trFiqlnQHrkC03nC0nkUvCOMCIIRBCfLFfHS2RQm0QmYT3vL0vk9d9ruQGyER
-         1hk9ZkU0yTSDvQ1ROc3OQD8rj4Z9hiUN4AZmQ5KL21HfLyrNterZf3+uZWNkTmapcwy3
-         vDzOg0b49B4xI/Rvwfj0ggUtOEZYiEemHSkizPMQUsCnOfHGbxTz0uJrVxyVy6YjwaDq
-         rq15tulXNyPIVlMCjzvp6UMaBEkUCIcC6XVfLdGajc5t4bjF1HBEHYJZYwbxZnLM7x0T
-         aNsIdmNIrchkVZcRbDuAfxwWNO9pLFLAIUrsd2ysspoHYuUpmJmaZnXt81vF6mZzoWW8
-         5mwg==
-X-Gm-Message-State: APjAAAXG+NbLzsVSBZVOxbi0pQ6CI2YxLBoASBBoLsHFem3W6LW6cVyE
-        pM5HP1SglTk1uxTcixWkprA+CQ==
-X-Google-Smtp-Source: APXvYqz6n8KwfpMMrvWKcsyIo7AUy/VslRwhZ/Ar4jO7dYJZFLC3uidU/IzD2gFeFhSRpufia65QFA==
-X-Received: by 2002:adf:fc05:: with SMTP id i5mr2716499wrr.134.1569498087677;
-        Thu, 26 Sep 2019 04:41:27 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id j26sm5804168wrd.2.2019.09.26.04.41.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2019 04:41:27 -0700 (PDT)
-Subject: Re: [PATCHSET v02 00/16] zuf: ZUFS Zero-copy User-mode FileSystem
-From:   Boaz Harrosh <boaz@plexistor.com>
-To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Matt Benjamin <mbenjami@redhat.com>
-Cc:     Anna Schumaker <Anna.Schumaker@netapp.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Sagi Manole <sagim@netapp.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20190926020725.19601-1-boazh@netapp.com>
-Message-ID: <aca0d951-1540-9fda-5a66-a59df9140997@plexistor.com>
-Date:   Thu, 26 Sep 2019 14:41:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        bh=xonFLYW+K9R2/V+E4nxIJtaZUYsUbdcdHfLF2kKtcoo=;
+        b=ZO5usb1F1q72aP2bD3ye6wWkO3hIFtckl1mQxWa9jHSQxMuKg+aiFWUL7PeibWkZwQ
+         5os3dKV/HcEUtPvLOje2iywNfYGQRqqdxxaROTdFRO+yvrzy224xI9DhtXuqekIqBdNF
+         UoRiGamTzD0J5luI8nSPpyw9gUAfkVClbjzVfKgzZcVf9Iq9gNsiXSNTg9neCrwVUD8k
+         ZOODrGhSYGqW6baDHsSy5VavkE41nwkBbkTZUzuAsAj/KRFngflFingbG+l0xUOUXKhw
+         /1Q3Z++gpI1IqsocR/QNh28n1zad56nYDLW+1/7FHPPNohtWka8dfBiQ/hFzpe/u9M4H
+         Nihg==
+X-Gm-Message-State: APjAAAVNJUeXT0kN3W6/Xz8ZbuBkFqoTWs3EgeGNJ2ZVVyeiFfJ3tHTu
+        pzzX2Hs2gOwh6P2E3iKmR9FGSg==
+X-Google-Smtp-Source: APXvYqxnyNJu0dpuhkbD8V2MUn3DG+U46V6RIU4ma0y5/B8D4fyvBCvbpFOmizCk0WSq3Se6YEHEdw==
+X-Received: by 2002:a1c:1981:: with SMTP id 123mr2593496wmz.88.1569498129864;
+        Thu, 26 Sep 2019 04:42:09 -0700 (PDT)
+Received: from [192.168.1.145] ([65.39.69.237])
+        by smtp.gmail.com with ESMTPSA id s12sm5719744wra.82.2019.09.26.04.42.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Sep 2019 04:42:09 -0700 (PDT)
+Subject: Re: [PATCH][next] io_uring: ensure variable ret is initialized to
+ zero
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190926095012.31826-1-colin.king@canonical.com>
+ <3aa821ea-3041-fb56-2458-ec643963c511@kernel.dk>
+ <20190926113329.GE27389@kadam>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <04262621-68fd-a4bb-ab0c-83954c03fbb0@kernel.dk>
+Date:   Thu, 26 Sep 2019 13:42:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190926020725.19601-1-boazh@netapp.com>
+In-Reply-To: <20190926113329.GE27389@kadam>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -72,34 +71,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 26/09/2019 05:40, Matt Benjamin wrote:
-> per discussion 2 weeks ago--is there a git repo or something that I can clone?
+On 9/26/19 1:33 PM, Dan Carpenter wrote:
+> On Thu, Sep 26, 2019 at 11:56:30AM +0200, Jens Axboe wrote:
+>> On 9/26/19 11:50 AM, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> In the case where sig is NULL the error variable ret is not initialized
+>>> and may contain a garbage value on the final checks to see if ret is
+>>> -ERESTARTSYS.  Best to initialize ret to zero before the do loop to
+>>> ensure the ret does not accidentially contain -ERESTARTSYS before the
+>>> loop.
+>>
+>> Oops, weird it didn't complain. I've folded in this fix, as that commit
+>> isn't upstream yet. Thanks!
 > 
-> Matt
-> 
+> There is a bug in GCC where at certain optimization levels, instead of
+> complaining, it initializes it to zero.
 
-Please look in the cover letter there is a git tree address to clone
-here:
+That's awfully nice of it ;-)
 
-[v02]
-   The patches submitted are at:
-	git https://github.com/NetApp/zufs-zuf upstream-v02
+Tried with -O0 and still didn't complain for me.
 
-Also the same for zus Server in user-mode + infra:
-	git https://github.com/NetApp/zufs-zus upstream
+$ gcc --version
+gcc (Ubuntu 9.1.0-2ubuntu2~18.04) 9.1.0
 
+Tried gcc 5/6/7/8 as well. Might have to go look at what code it's
+generating.
 
-Please look in the 3rd patch:
-	[PATCH 03/16] zuf: Preliminary Documentation
-
-There are instructions what to clone how to compile and install
-and how to use the scripts in do-zu to run a system.
-I would love a good review for this documentation as well 
-I'm sure its wrong and missing. I use it for so long I'm already
-blind to it.
-
-Please bug me day and night with any question
-
-Thanks
-Boaz
+-- 
+Jens Axboe
 
