@@ -2,102 +2,257 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69F4BF71E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 18:50:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45B87BF748
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 19:01:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfIZQut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Sep 2019 12:50:49 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:39149 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfIZQut (ORCPT
+        id S1727550AbfIZRBe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Sep 2019 13:01:34 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51683 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727539AbfIZRBd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Sep 2019 12:50:49 -0400
-Received: by mail-yw1-f65.google.com with SMTP id n11so954868ywn.6;
-        Thu, 26 Sep 2019 09:50:48 -0700 (PDT)
+        Thu, 26 Sep 2019 13:01:33 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 7so3621120wme.1;
+        Thu, 26 Sep 2019 10:01:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TI6RC3Inct0631A1o1WOoOjfgl/ixIhrcQv5jgmCiq4=;
-        b=Y2kjBKQAVG7dYE9BZ0V3kBWqC7j0vBLWeTwoAcDdyq2fJHFOw2ajdO4CqMUsv9+L2P
-         10ZKZlGLxzGpERbL3sDKqS7wx4bLmsOAOPgC+9xwVdgu4iIR0Q/hvMOSKqx4VJCfR8Y1
-         u/jUzT5yOvok+Xq2jHcWqX2wzh4JrShTP670YW6fyzriBw0jXFO2PFa0ZxqLZpuUZv4q
-         VhpnprD0icnPHTT9Cm5U0vwITZqLoVkpJ1wGdxVxydtejORVH+wv3JNkgWDLt79+N0kD
-         Yp8KDsWyeCSCutqhtZkPrcggd6E1adj3D1b1IXbpXT8oWDKZVZIPoAORlUbMwnlMF90e
-         Pz7A==
+        h=from:to:cc:subject:date:message-id;
+        bh=pW/uWGaE7bNMEfsOi4tJVr90SEqgSV1Za5MlIXTYbVY=;
+        b=khzuJx2CmcKxY0oDA1ja5glKR9v2zqGQhA5lZ3LZMziW5D28nWQoq4J3XHh2jIm7Co
+         d3X73Jb/rsuRyQclBnOziWZXm8bneFMB53z8TzTTWoKRSP0dlBynWHkP4g+jZLXTu+ev
+         XpjoVNc6HnbWqXLY24BOiyyVvCYClUseSHwyl2Wgv5lIzvMwll3zahWmNrcZnSQxKGMf
+         TjX/v9SgXZK/hgPKXIophZPSlmuV49Gn/y8bizpZC0rUte0HcBaaIIeYNZ5YBAYwBVMW
+         0Xl5VaEccfM4raNfU38J6A7OPcBqjihmfF2VuG4FcxtB0jpM7xHizQ+br1Oc0TX/Ogu2
+         Kqzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TI6RC3Inct0631A1o1WOoOjfgl/ixIhrcQv5jgmCiq4=;
-        b=oaa68IYVkMaa24zqyOikUNwUZtu6Pfl0TTP3m4lL8ZsmvXVRrcKT99CsXWIR57mBJe
-         kHbW0EeaL+fFFwUSjPCrTM3+9/gsAsKCacSawstDsk49eyH0Yw4rnmpKf2Qg148W4a3D
-         xCkxjLjUqUtAIEuKro903ls61IacgpY9wXS3h0UwXbidOBrSE0Vl3zsAK5OE4uGep+Ug
-         96Lee1Gg5A7NQVTfFp1lEdAv4W269N40hFI7pryeEcHaKU5KEO75enAP5JdZYmRz8e33
-         NbTsidYvaUSJ/jKtwnV42bIFA6LC4tY1hv3pYjKfATzH9vB4gOsZfGIZK+ZUINoP43PZ
-         irBw==
-X-Gm-Message-State: APjAAAVOOJ/L1FywwvVUBMsTty/CRySqqkgPNQykSSx0vAtKbjOR70HV
-        FS552nNk98qwQD1sQb0Bq3y2LNEL96C9De5zago=
-X-Google-Smtp-Source: APXvYqwg/xY2N8drh8fC+vtaaiTMEFh4yHbgklJlsq/NLjm9JK2ZFceRxoGZZm0zLIoKmjIdEEbDC3Cum4tPBwO3Ako=
-X-Received: by 2002:a81:6c8:: with SMTP id 191mr3323748ywg.181.1569516648028;
- Thu, 26 Sep 2019 09:50:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190926155608.GC23296@dell5510> <20190926160432.GC9916@magnolia>
- <20190926161906.GD23296@dell5510> <CAOQ4uxixSy7Wp7yWYOMpp8R5tFXD2SWR9t3koYO4jBE-Wnt8sQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxixSy7Wp7yWYOMpp8R5tFXD2SWR9t3koYO4jBE-Wnt8sQ@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pW/uWGaE7bNMEfsOi4tJVr90SEqgSV1Za5MlIXTYbVY=;
+        b=jBl/OIuk/4omDpFr4fQYADjG6iFUHh9xElEQZb0TqHmokwBKs6HoBn++1ivBdS3ax3
+         Qq63gIG0udDjvysQ/F1YReW5EKdtNqcPzV+Y9nrkPRqOn5RW1MbsrXRMvMshFkc2boRN
+         MJ9IqTYVwHEqgN4BQu9KeerwrxUxI755Vbg+gQK4QabbwwJbDxjqI8IfBKNTRHEcaCHK
+         f3DBnB35vpkBc87bYTEca4ID1a4davhZeWvRb2Ee1ZG8Iu8tj10ihwWYg55kQHunGmv9
+         dXzNOOUdbd9AqKtFvYQVSABdX2Bmn5sPMiMrWNsUQYQUOjted0RWt8evbsVjcc3ddnEU
+         DRRw==
+X-Gm-Message-State: APjAAAUp95xpeomvswX1spxUKD/9/fUiqK6pmNmQX8J8BAMuZYWJjITT
+        H5qgVRqU7KKNqM78mlIhk2Y=
+X-Google-Smtp-Source: APXvYqzXQpsb2NY5D4I5jEPzskqvHAftDGctxyewMKth9Dkb4G3ViHHVUjWQdbubYWF4LCoRSqgT0w==
+X-Received: by 2002:a7b:cd99:: with SMTP id y25mr3501859wmj.152.1569517290843;
+        Thu, 26 Sep 2019 10:01:30 -0700 (PDT)
+Received: from localhost.localdomain ([5.102.239.49])
+        by smtp.gmail.com with ESMTPSA id t203sm5155459wmf.42.2019.09.26.10.01.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2019 10:01:30 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 26 Sep 2019 19:50:36 +0300
-Message-ID: <CAOQ4uxhpiLyhJ4Tu75V3yC7zjU5THw86V6FCbUC7bHC8RsyAEA@mail.gmail.com>
-Subject: Re: copy_file_range() errno changes introduced in v5.3-rc1
-To:     Petr Vorel <pvorel@suse.cz>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Cyril Hrubis <chrubis@suse.cz>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LTP List <ltp@lists.linux.it>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Michael Kerrisk <mtk.manpages@gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>
+Subject: [PATCH] copy_file_range.2: kernel v5.3 updates
+Date:   Thu, 26 Sep 2019 20:01:19 +0300
+Message-Id: <20190926170119.10284-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 7:33 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Thu, Sep 26, 2019 at 7:19 PM Petr Vorel <pvorel@suse.cz> wrote:
-> >
-> > Hi Darrick,
-> >
-> > > On Thu, Sep 26, 2019 at 05:56:08PM +0200, Petr Vorel wrote:
-> > > > Hi Amir,
-> >
-> > > > I'm going to fix LTP test copy_file_range02 before upcoming LTP release.
-> > > > There are some returning errno changes introduced in v5.3-rc1, part of commit 40f06c799539
-> > > > ("Merge tag 'copy-file-range-fixes-1' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux").
-> > > > These changes looks pretty obvious as wanted, but can you please confirm it they were intentional?
-> >
-> > > > * 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") started to return -EXDEV.
->
-> Started to return EXDEV?? quite the opposite.
-> But LTP tests where already adapted to that behavior AFAICT:
-> 15cac7b46 syscalls/copy_file_range01: add cross-device test
->
->
-> > > > * 96e6e8f4a68d ("vfs: add missing checks to copy_file_range") started to return -EPERM, -ETXTBSY, -EOVERFLOW.
-> >
-> > > I'm not Amir, but by my recollection, yes, those are intentional. :)
-> > Thanks for a quick confirmation.
-> >
->
-> Which reminds me - I forgot to send the man pages patch out to maintainer:
-> https://lore.kernel.org/linux-fsdevel/20190529174318.22424-15-amir73il@gmail.com/
->
-> At least according to man page -EACCES is also possible.
->
+Update with all the missing errors the syscall can return, the
+behaviour the syscall should have w.r.t. to copies within single
+files, etc.
 
-But it looks like man page update is wrong.
-I'll fix it and post.
+[Amir] updates for final released version.
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+
+Hi Michael,
+
+Following update reflects the changes that went into v5.3.
+This man page update was initially authored by Dave Chinner and I updated it
+to reflect the changed that finally went in.
+
+Most of the changes are introduced by commits:
+
+* 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") - stop
+returning -EXDEV for the common case.
+
+* 96e6e8f4a68d ("vfs: add missing checks to copy_file_range") started to return
+-EPERM, -ETXTBSY, -EOVERFLOW and short read instead of EINVAL when
+offset+length exceeds input file size.
 
 Thanks,
 Amir.
+
+ man2/copy_file_range.2 | 89 ++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 76 insertions(+), 13 deletions(-)
+
+diff --git a/man2/copy_file_range.2 b/man2/copy_file_range.2
+index 2438b63c8..05429b3c9 100644
+--- a/man2/copy_file_range.2
++++ b/man2/copy_file_range.2
+@@ -42,9 +42,9 @@ without the additional cost of transferring data from the kernel to user space
+ and then back into the kernel.
+ It copies up to
+ .I len
+-bytes of data from file descriptor
++bytes of data from the source file descriptor
+ .I fd_in
+-to file descriptor
++to the target file descriptor
+ .IR fd_out ,
+ overwriting any data that exists within the requested range of the target file.
+ .PP
+@@ -74,6 +74,12 @@ is not changed, but
+ .I off_in
+ is adjusted appropriately.
+ .PP
++.I fd_in
++and
++.I fd_out
++can refer to the same file.
++If they refer to the same file, then the source and target ranges are not
++allowed to overlap.
+ .PP
+ The
+ .I flags
+@@ -84,6 +90,11 @@ Upon successful completion,
+ .BR copy_file_range ()
+ will return the number of bytes copied between files.
+ This could be less than the length originally requested.
++If the file offset of
++.I fd_in
++is at or past the end of file, no bytes are copied, and
++.BR copy_file_range ()
++returns zero.
+ .PP
+ On error,
+ .BR copy_file_range ()
+@@ -93,12 +104,16 @@ is set to indicate the error.
+ .SH ERRORS
+ .TP
+ .B EBADF
+-One or more file descriptors are not valid; or
++One or more file descriptors are not valid.
++.TP
++.B EBADF
+ .I fd_in
+ is not open for reading; or
+ .I fd_out
+-is not open for writing; or
+-the
++is not open for writing.
++.TP
++.B EBADF
++The
+ .B O_APPEND
+ flag is set for the open file description (see
+ .BR open (2))
+@@ -106,24 +121,52 @@ referred to by the file descriptor
+ .IR fd_out .
+ .TP
+ .B EFBIG
+-An attempt was made to write a file that exceeds the implementation-defined
+-maximum file size or the process's file size limit,
+-or to write at a position past the maximum allowed offset.
++An attempt was made to write at a position past the maximum file offset the
++kernel supports.
++.TP
++.B EFBIG
++An attempt was made to write a range that exceeds the allowed maximum file size.
++The maximum file size differs between filesystem implementations and can be
++different from the maximum allowed file offset.
++.TP
++.B EFBIG
++An attempt was made to write beyond the process's file size resource limit.
++This may also result in the process receiving a
++.I SIGXFSZ
++signal.
+ .TP
+ .B EINVAL
+-Requested range extends beyond the end of the source file; or the
++The
+ .I flags
+ argument is not 0.
+ .TP
+-.B EIO
+-A low-level I/O error occurred while copying.
++.B EINVAL
++.I fd_in
++and
++.I fd_out
++refer to the same file and the source and target ranges overlap.
++.TP
++.B EINVAL
++Either
++.I fd_in
++or
++.I fd_out
++is not a regular file.
+ .TP
+ .B EISDIR
++Either
+ .I fd_in
+ or
+ .I fd_out
+ refers to a directory.
+ .TP
++.B EOVERFLOW
++The requested source or destination range is too large to represent in the
++specified data types.
++.TP
++.B EIO
++A low-level I/O error occurred while copying.
++.TP
+ .B ENOMEM
+ Out of memory.
+ .TP
+@@ -133,13 +176,33 @@ There is not enough space on the target filesystem to complete the copy.
+ .B EXDEV
+ The files referred to by
+ .IR file_in " and " file_out
+-are not on the same mounted filesystem.
++are not on the same mounted filesystem (pre Linux 5.3).
++.TP
++.B TXTBSY
++Either
++.I fd_in
++or
++.I fd_out
++refers to an active swap file.
++.TP
++.B EPERM
++.I fd_out
++refers to an immutable file.
++.TP
+ .SH VERSIONS
+ The
+ .BR copy_file_range ()
+ system call first appeared in Linux 4.5, but glibc 2.27 provides a user-space
+ emulation when it is not available.
+ .\" https://sourceware.org/git/?p=glibc.git;a=commit;f=posix/unistd.h;h=bad7a0c81f501fbbcc79af9eaa4b8254441c4a1f
++.PP
++A major rework of the kernel implementation occurred in 5.3.
++Areas of the API that weren't clearly defined were clarified and the API bounds
++are much more strictly checked than on earlier kernels.
++Applications should target the behaviour and requirements of 5.3 kernels.
++.PP
++First support for cross-filesystem copies was introduced in Linux 5.3.
++Older kernels will return -EXDEV when cross-filesystem copies are attempted.
+ .SH CONFORMING TO
+ The
+ .BR copy_file_range ()
+@@ -224,7 +287,7 @@ main(int argc, char **argv)
+         }
+ 
+         len \-= ret;
+-    } while (len > 0);
++    } while (len > 0 && ret > 0);
+ 
+     close(fd_in);
+     close(fd_out);
+-- 
+2.17.1
+
