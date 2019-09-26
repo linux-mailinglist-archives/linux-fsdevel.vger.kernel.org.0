@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4786BBEA66
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 04:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E1D7BEA6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 04:10:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbfIZCJm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 22:09:42 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42836 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfIZCJm (ORCPT
+        id S1729443AbfIZCKJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 22:10:09 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43867 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfIZCKJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 22:09:42 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n14so483502wrw.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 19:09:38 -0700 (PDT)
+        Wed, 25 Sep 2019 22:10:09 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q17so480695wrx.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 19:10:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=plexistor-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WkyYrt+XBJI7/yD/HW/nuhIiQzz4/kyO8hMVvs+5cqc=;
-        b=vtMO3hNCVOM23gvyiySrzahCdrJ5FYxzqNsyxr6W6k4uP9v2A19gWUnk5cmOsVwlQ6
-         GyCarn0PATz5Lo3gEKf3XrRy9If9Sd190Ood/XctLwVu5gtkxXwnnBEjF7Qx4RlyDC+4
-         FcBO+YzXQeJ8swdiaaCr+hK9L3CYoD2KONGPBONAk+/Wu0wiyhppazI7Xobel+WGB/w+
-         orCOcK1sD0yE6uPN1mmdHryoSjYYPgCypZS9Yu+qBA6CwyOdTRlk818y+UPSk0Avts92
-         063hZ6R850+xGfJP8T7kT2yGGMor+lf2OLwHXRNYp5ShLHOZdhw9DEIEdXDrcHo9ncFk
-         zIHg==
+        bh=IGlN+heuyTZ+mY6VztfGn4UabzYzGl/zkHtT6rP7TzI=;
+        b=jx9E7DGFNiOvZGgMp0oAfuSA9agiLMJS/iqPQWmyxBo1PJ/M2eF1zjVes5QBo33x+6
+         z4HQmpKxK8MoxE6ruCzpZqZ9t4DWGmyZ6F19rfkMCAvWd0v0JE/n4+yDEWydX/xMalX8
+         s1gwjBQZHzkinUwcfZd00j9OT0l68VYNHf++6u9FsIXiJ6z3/MzDPYPQahgQEe1LFqWA
+         YVFiv0+edk/5DZlq/OabVOENsTXyGVTTwu4omOAZcQgXGvuH0ffkuZorU8dj5tcv+h1Q
+         gCDJY3gmlGoBO1hNeDLDL1lje1Ia+kg6hnGHcS6hD8kXg6lQeq0PTGS9v6D6famw/D4j
+         TjYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WkyYrt+XBJI7/yD/HW/nuhIiQzz4/kyO8hMVvs+5cqc=;
-        b=EDOlqG3sOHxnmmIMdY8xhkfXCCX8NHgNPcCYLpEJzI//Zpi3CAWR8GZkedWucHKvTF
-         orUI536ob0hulKWmTO+2Om9OPi6WfkzVlkpJSkJ0h6I4zZvQlEUQ9X6nBKku75EpGHkh
-         iu1UXm6O5ylRhL1uyiyca1DKj8okbMLHJHTiL2GefbGGqQdWi34jrfc3YvO3OqoPglgv
-         xWgKX2XzQYbyjdLorblHb1uQTewbJb74He5hw1oGBSgYLGk3b0uCVG5t59o+4PACMIU7
-         BwUEo4eBCdQ0i/8slDF81YLo00POpuhQRExcVx/mAn2hMed2B8x3xhHIpyLav0lZhvau
-         U+kw==
-X-Gm-Message-State: APjAAAXeLo9Zp2FdNCeS5yLhbRiMDaT1Vp+Zm4rD73hWcCsRnBzOnuhi
-        DzPiEimq/cI7oKzWChhEVRzrJ4icabU=
-X-Google-Smtp-Source: APXvYqxvrrG0JBRVAsetI++p1tMlFnhzq1Z5lItzsoCaWYVsxWk4xZ5vqqm0BSndI4UckCIaOVg21A==
-X-Received: by 2002:adf:dc41:: with SMTP id m1mr828753wrj.46.1569463777686;
-        Wed, 25 Sep 2019 19:09:37 -0700 (PDT)
+        bh=IGlN+heuyTZ+mY6VztfGn4UabzYzGl/zkHtT6rP7TzI=;
+        b=CrKpLP7DoI4IAy9dB3pT5LSmHTeSLiGXNV+Fk3aCAOEeaaiZ87VKz5qFxjfRHZ93yo
+         4DYh3+TlNfSYn/C71fU2G/+xO4AzYqheOh1/VWPUs5Hb3fP2fi/NfqpbqvtTBa8SDF8t
+         u1WDODaHbGJTQEX5w3WtA/ZsveXqMFf8KZ/f6Zi61vaWGDs+tXTAnhcX986DLG7o+RDs
+         xQc1m6KaL1uYhhF00mvMv1hYWSFcGmb5J3u4txGguevTfDdBw+2bLleBHoGxgIC8OqhU
+         ZgYMuXSYf0PVyX7PggxhP/TWgJFt7T9KawuMcVBeJNPkGpdAmOMJvw3AovbfOaqoOy+R
+         4cDw==
+X-Gm-Message-State: APjAAAXS6vOFYeltzsSvtRfp5+6ZuIW5wx08b5FH0VZ+fR7JTWyWyWLF
+        AgUoQFQGik1gecFPQ7b4GQRPXReyGE0=
+X-Google-Smtp-Source: APXvYqwj8f1IHdifiiaFuKPEatnSCR7Xi+WTvnZ/Adiuyh8puGX3sY2lBqWW7L3cwGMmG0zBdFKdEw==
+X-Received: by 2002:a5d:51d2:: with SMTP id n18mr872226wrv.10.1569463806948;
+        Wed, 25 Sep 2019 19:10:06 -0700 (PDT)
 Received: from Bfire.plexistor.com ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id o19sm968751wro.50.2019.09.25.19.09.36
+        by smtp.googlemail.com with ESMTPSA id o19sm968751wro.50.2019.09.25.19.10.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 19:09:37 -0700 (PDT)
+        Wed, 25 Sep 2019 19:10:06 -0700 (PDT)
 From:   Boaz Harrosh <boaz@plexistor.com>
 X-Google-Original-From: Boaz Harrosh <boazh@netapp.com>
 To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -56,9 +56,9 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Sagi Manole <sagim@netapp.com>,
         Matthew Wilcox <willy@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 01/16] fs: Add the ZUF filesystem to the build + License
-Date:   Thu, 26 Sep 2019 05:07:10 +0300
-Message-Id: <20190926020725.19601-2-boazh@netapp.com>
+Subject: [PATCH 02/16] MAINTAINERS: Add the ZUFS maintainership
+Date:   Thu, 26 Sep 2019 05:07:11 +0300
+Message-Id: <20190926020725.19601-3-boazh@netapp.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190926020725.19601-1-boazh@netapp.com>
 References: <20190926020725.19601-1-boazh@netapp.com>
@@ -69,264 +69,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds the ZUF filesystem-in-user_mode module to the
-fs/ build system.
+ZUFS sitting in the fs/zuf/ directory is maintained
+by Netapp. (I added my email)
 
-Also added:
-	* fs/zuf/Kconfig
-	* fs/zuf/module.c - This file contains the LICENCE
-			    of zuf code base
-	* fs/zuf/Makefile - Rather empty Makefile with only
-			    module.c above
-
-I add the fs/zuf/Makefile to demonstrate that at every
-patch-set stage code still compiles and there are no external
-references outside of the code already submitted.
-
-Off course only at the very last patch we have a working ZUF feeder
-
-[LICENCE]
-
-  zuf.ko is a GPLv2 licensed project.
-
-  However the ZUS user mode Server is a BSD-3-Clause licensed
-  project.
-  Therefor you will see that:
-	zus_api.h
-	md_def.h
-	md.h
-	t2.h
-  Are common files with the ZUS project. And are separately dual
-  Licensed as:
-	GPL-2.0 WITH Linux-syscall-note or BSD-3-Clause.
-
-  Any code contributor to these headers should note that her/his code to
-  these files only, is dual licensed.
-
-  This is for the obvious reasons as these headers define the API between
-  Kernel and the user-mode Server.
+I keep this as separate patch as this file might be
+a source of conflicts
 
 Signed-off-by: Boaz Harrosh <boazh@netapp.com>
 ---
- fs/Kconfig       |  1 +
- fs/Makefile      |  1 +
- fs/zuf/Kconfig   | 24 ++++++++++++
- fs/zuf/Makefile  | 14 +++++++
- fs/zuf/module.c  | 28 ++++++++++++++
- fs/zuf/zus_api.h | 96 ++++++++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 164 insertions(+)
- create mode 100644 fs/zuf/Kconfig
- create mode 100644 fs/zuf/Makefile
- create mode 100644 fs/zuf/module.c
- create mode 100644 fs/zuf/zus_api.h
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index bfb1c6095c7a..452244733bb5 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -261,6 +261,7 @@ source "fs/romfs/Kconfig"
- source "fs/pstore/Kconfig"
- source "fs/sysv/Kconfig"
- source "fs/ufs/Kconfig"
-+source "fs/zuf/Kconfig"
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a50e97a63bc8..8703871c1505 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17867,6 +17867,12 @@ L:	linux-mm@kvack.org
+ S:	Maintained
+ F:	mm/zswap.c
  
- endif # MISC_FILESYSTEMS
- 
-diff --git a/fs/Makefile b/fs/Makefile
-index d60089fd689b..178e27ddd605 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -130,3 +130,4 @@ obj-$(CONFIG_F2FS_FS)		+= f2fs/
- obj-$(CONFIG_CEPH_FS)		+= ceph/
- obj-$(CONFIG_PSTORE)		+= pstore/
- obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
-+obj-$(CONFIG_ZUFS_FS)		+= zuf/
-diff --git a/fs/zuf/Kconfig b/fs/zuf/Kconfig
-new file mode 100644
-index 000000000000..58288f4245c2
---- /dev/null
-+++ b/fs/zuf/Kconfig
-@@ -0,0 +1,24 @@
-+config ZUFS_FS
-+	tristate "ZUF - Zero-copy User-mode Feeder"
-+	depends on BLOCK
-+	depends on ZONE_DEVICE
-+	select CRC16
-+	select MEMCG
-+	help
-+	   ZUFS Kernel part.
-+	   To enable say Y here.
++ZUFS ZERO COPY USER-MODE FILESYSTEM
++M:	Boaz Harrosh <boazh@netapp.com>
++L:	linux-fsdevel@vger.kernel.org
++S:	Maintained
++F:	fs/zuf/
 +
-+	   To compile this as a module,  choose M here: the module will be
-+	   called zuf.ko
-+
-+config ZUF_DEBUG
-+	bool "ZUF: enable debug subsystems use"
-+	depends on ZUFS_FS
-+	default n
-+	help
-+	  INTERNAL QA USE ONLY!!! DO NOT USE!!!
-+	  Please leave as N here
-+
-+	  This option adds some extra code that helps
-+	  in QA testing of the code. It may slow the
-+	  operation and produce bigger code
-diff --git a/fs/zuf/Makefile b/fs/zuf/Makefile
-new file mode 100644
-index 000000000000..452cec55f34d
---- /dev/null
-+++ b/fs/zuf/Makefile
-@@ -0,0 +1,14 @@
-+#
-+# ZUF: Zero-copy User-mode Feeder
-+#
-+# Copyright (c) 2018 NetApp Inc. All rights reserved.
-+#
-+# ZUFS-License: GPL-2.0. See module.c for LICENSE details.
-+#
-+# Makefile for the Linux zufs Kernel Feeder.
-+#
-+
-+obj-$(CONFIG_ZUFS_FS) += zuf.o
-+
-+# Main FS
-+zuf-y += module.o
-diff --git a/fs/zuf/module.c b/fs/zuf/module.c
-new file mode 100644
-index 000000000000..523633c1bf9d
---- /dev/null
-+++ b/fs/zuf/module.c
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * zuf - Zero-copy User-mode Feeder
-+ *
-+ * Copyright (c) 2018 NetApp Inc. All rights reserved.
-+ *
-+ * This program is free software; you may redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
-+ */
-+#include <linux/module.h>
-+
-+#include "zus_api.h"
-+
-+MODULE_AUTHOR("Boaz Harrosh <boazh@netapp.com>");
-+MODULE_AUTHOR("Sagi Manole <sagim@netapp.com>");
-+MODULE_DESCRIPTION("Zero-copy User-mode Feeder");
-+MODULE_LICENSE("GPL");
-+MODULE_VERSION(__stringify(ZUFS_MAJOR_VERSION) "."
-+		__stringify(ZUFS_MINOR_VERSION));
-diff --git a/fs/zuf/zus_api.h b/fs/zuf/zus_api.h
-new file mode 100644
-index 000000000000..069153fc0b96
---- /dev/null
-+++ b/fs/zuf/zus_api.h
-@@ -0,0 +1,96 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note or BSD-3-Clause */
-+/*
-+ * zufs_api.h:
-+ *	ZUFS (Zero-copy User-mode File System) is:
-+ *		zuf (Zero-copy User-mode Feeder (Kernel)) +
-+ *		zus (Zero-copy User-mode Server (daemon))
-+ *
-+ *	This file defines the API between the open source FS
-+ *	Server, and the Kernel module,
-+ *
-+ * Copyright (c) 2018 NetApp Inc. All rights reserved.
-+ *
-+ * Authors:
-+ *	Boaz Harrosh <boazh@netapp.com>
-+ *	Sagi Manole <sagim@netapp.com>"
-+ */
-+#ifndef _LINUX_ZUFS_API_H
-+#define _LINUX_ZUFS_API_H
-+
-+#include <linux/types.h>
-+#include <linux/uuid.h>
-+#include <linux/fiemap.h>
-+#include <stddef.h>
-+
-+#ifdef __cplusplus
-+#define NAMELESS(X) X
-+#else
-+#define NAMELESS(X)
-+#endif
-+
-+/*
-+ * Version rules:
-+ *   This is the zus-to-zuf API version. And not the Filesystem
-+ * on disk structures versions. These are left to the FS-plugging
-+ * to supply and check.
-+ * Specifically any of the API structures and constants found in this
-+ * file.
-+ * If the changes are made in a way backward compatible with old
-+ * user-space, MINOR is incremented. Else MAJOR is incremented.
-+ *
-+ * It is up to the Server to decides if it wants to run with this
-+ * Kernel or not. Version is only passively reported.
-+ */
-+#define ZUFS_MINORS_PER_MAJOR	1024
-+#define ZUFS_MAJOR_VERSION 1
-+#define ZUFS_MINOR_VERSION 0
-+
-+/* Kernel versus User space compatibility definitions */
-+#ifdef __KERNEL__
-+
-+#include <linux/statfs.h>
-+
-+#else /* ! __KERNEL__ */
-+
-+/* verify statfs64 definition is included */
-+#if !defined(__USE_LARGEFILE64) && defined(_SYS_STATFS_H)
-+#error "include to 'sys/statfs.h' must appear after 'zus_api.h'"
-+#else
-+#define __USE_LARGEFILE64 1
-+#endif
-+
-+#include <sys/statfs.h>
-+
-+#include <string.h>
-+
-+#define u8 uint8_t
-+#define umode_t uint16_t
-+
-+#define PAGE_SHIFT     12
-+#define PAGE_SIZE      (1 << PAGE_SHIFT)
-+
-+#ifndef ALIGN
-+#define ALIGN(x, a)		ALIGN_MASK(x, (typeof(x))(a) - 1)
-+#define ALIGN_MASK(x, mask)	(((x) + (mask)) & ~(mask))
-+#endif
-+
-+#ifndef likely
-+#define likely(x_)	__builtin_expect(!!(x_), 1)
-+#define unlikely(x_)	__builtin_expect(!!(x_), 0)
-+#endif
-+
-+#ifndef BIT
-+#define BIT(b)  (1UL << (b))
-+#endif
-+
-+/* RHEL/CentOS7 are missing these */
-+#ifndef FALLOC_FL_UNSHARE_RANGE
-+#define FALLOC_FL_UNSHARE_RANGE         0x40
-+#endif
-+#ifndef FALLOC_FL_INSERT_RANGE
-+#define FALLOC_FL_INSERT_RANGE		0x20
-+#endif
-+
-+#endif /*  ndef __KERNEL__ */
-+
-+#endif /* _LINUX_ZUFS_API_H */
+ THE REST
+ M:	Linus Torvalds <torvalds@linux-foundation.org>
+ L:	linux-kernel@vger.kernel.org
 -- 
 2.21.0
 
