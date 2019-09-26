@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48703BEA6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 04:11:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8DBDBEA70
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 04:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730204AbfIZCLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Sep 2019 22:11:18 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35157 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbfIZCLS (ORCPT
+        id S1730422AbfIZCLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Sep 2019 22:11:40 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38440 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfIZCLj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Sep 2019 22:11:18 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y21so748340wmi.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 19:11:11 -0700 (PDT)
+        Wed, 25 Sep 2019 22:11:39 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w12so95089wro.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Sep 2019 19:11:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=plexistor-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sxjAHwEwDNiMy6S90d8rh9EFaxyVFbJePkiNhcl+5HA=;
-        b=BcPswcjb50Br5OlfxRdtNpv1QIQkjG8k/U2/vFNClUe8uBOGIKJ3QtPK4Fm8gGfYrT
-         RYcGPL6GbFACaD51AcAMXRxoFrp4y7n+m+9/7unvkbiy+XF1AY3gNw+zeOfs7hqzOLvA
-         rJTPzGP+Im4WnEZEG3oHP4xfFIp24B3GNJEQ+rLHayEEtqkSrzFcBYrbRGqh76bI4wvz
-         M698wm0plKVBbrLMAJIgbwV24o3Vn/COpDaf/Y4ZprHweDYIZqR2LRV0PCZYqvQsmMeF
-         eZuw7fHDlA+N6TE7KSjxNx7KRUQ1k/LzM5JmZr+geHeZxmHUU8FfKQqAzKSg+XLWrKTD
-         yxKw==
+        bh=c+ZMflCdXo/wIeIAHEahAcbTD+ADZkOHlrg8XyOnJUI=;
+        b=wkVnK7r6Oq2ILMUirlrSYXq93As/H8GLvqume8FULdJjOK0RpZ9McaJhKfM6fQWB5+
+         NVwlXtSkaCSoncdxQd7A9nPfDN3+uFQEvlsQVAtSdEg8h782Ezut3BCjZLU2K577DOhv
+         CU6EUCOTZNgHKX+OkZ7ol0rmrP+O66RUx5Yj47Q3rTIgL2Usmhuw2FPTL6f7r4fZ2c/K
+         2zSAQ1O8DzGIUewFie+NPW0f6YqmVj7goYnuMty5AincP+mP51NZ15sAPBvzBdPn+aF4
+         gG+S5Xjmwq6OxpRtUtezeqSK27BLvQb+kRzy5vsLEcDjgRcE70viqmwT19RpsQ8VYqDD
+         UvxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sxjAHwEwDNiMy6S90d8rh9EFaxyVFbJePkiNhcl+5HA=;
-        b=WvWxx5h8e/FlmeTMaS12NOB9+lablxKd7ZK14cDHFYlPyU5Xs3iduKutk3LuGL3XEV
-         d9ayrrYCbR/pwwoWyPb6/09/zdQ6Pi/g8L+Sd66tL8EgMZFHIUE0kYgkcWHX92iNclUa
-         1KA3yVIp5jfOCj36kIglQ0A+fdxkjux9zaw8yKsyJmZqrGMIBYHCbOyjhekiV72jrZas
-         tnHqAk2wnxQXZhNgSWOd+h3VxLLBB1p/Z5dn3FSDJYXTblTvGnNGRlF6a/5ArTdvYff2
-         3v/Iy5aZKCF+49GO5nVDzMEngoWcYEixHCiYbxn988D3IMUv9f4sMeeJQB1OgnYwDClO
-         /L+A==
-X-Gm-Message-State: APjAAAXyLxOuahbC3kn5y4gfw1xI/lvKdmslwbh2NZmOMSQ3RWWdpSXg
-        3bxeLE/W7L/9sF6+eGn+vGvcZkBGEGw=
-X-Google-Smtp-Source: APXvYqxe6j+4b9YOfwL+Z4H9JU30CYWk5BSM9HhRP1bGflgwGLUodxRhuis21LYKPbFa+WQettV13A==
-X-Received: by 2002:a05:600c:20c4:: with SMTP id y4mr720309wmm.87.1569463869811;
-        Wed, 25 Sep 2019 19:11:09 -0700 (PDT)
+        bh=c+ZMflCdXo/wIeIAHEahAcbTD+ADZkOHlrg8XyOnJUI=;
+        b=JQ9BCtFcHraEE8btixVArp/ayoIAMjNC2EPbGWoYYtyiahWd1+Nj4T0HuCX7G65U7h
+         enPdJNofSJMhV31yz52OnMyMogJABiXDRetw8rX1pa8rZbeSdCH1eaK4Vk7fLiYYb23C
+         9/97idygeAIvEl9cLhDKSEIrbqxCwWRIw2IkhkuKcAy92JuPpAJUSAbVRL39cvknveSx
+         hoL3SXVEswdsGz/cR8XsY/ji7QvMBUxYh8ucuczyFLOkZ7c83PdtJoniOG/SKf/HSDHk
+         vMHLWBHUYcNL4AFD9KVL5JGuVCY1HY53yQaNfg3Fdy9T+0AZwXh2tDsdKUcsWnBkcE8+
+         8SUA==
+X-Gm-Message-State: APjAAAWxoOjifbFURKNoKGxdgXjoZaDi7PvGlliLowkf1cZn9nkCSNKl
+        SbK+z5w/1I0MytrYJpMy2y6If6ZX3ow=
+X-Google-Smtp-Source: APXvYqxFY4o9MyKRcdffMUi/xO21AiPr2+/hBAgvNGvU2D0J7UGqB56myTJsC5oftOucwdeAhpSvnQ==
+X-Received: by 2002:adf:f00b:: with SMTP id j11mr795764wro.298.1569463891831;
+        Wed, 25 Sep 2019 19:11:31 -0700 (PDT)
 Received: from Bfire.plexistor.com ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id o19sm968751wro.50.2019.09.25.19.11.07
+        by smtp.googlemail.com with ESMTPSA id o19sm968751wro.50.2019.09.25.19.11.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 19:11:08 -0700 (PDT)
+        Wed, 25 Sep 2019 19:11:30 -0700 (PDT)
 From:   Boaz Harrosh <boaz@plexistor.com>
 X-Google-Original-From: Boaz Harrosh <boazh@netapp.com>
 To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -56,9 +56,9 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Sagi Manole <sagim@netapp.com>,
         Matthew Wilcox <willy@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 05/16] zuf: zuf-core The ZTs
-Date:   Thu, 26 Sep 2019 05:07:14 +0300
-Message-Id: <20190926020725.19601-6-boazh@netapp.com>
+Subject: [PATCH 06/16] zuf: Multy Devices
+Date:   Thu, 26 Sep 2019 05:07:15 +0300
+Message-Id: <20190926020725.19601-7-boazh@netapp.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190926020725.19601-1-boazh@netapp.com>
 References: <20190926020725.19601-1-boazh@netapp.com>
@@ -69,92 +69,1367 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-zuf-core establishes the communication channels with the ZUS
-User Mode Server.
+ZUFS supports Multiple block devices per super_block.
+This here is the devices handling code. At the output
+a single multi_devices (md.h) object is associated with the
+mounting super_block.
 
-In this patch we have the core communication mechanics.
-Which is the Novelty of this project.
-(See previous submitted documentation for more info)
+There are three mode of operations:
+* mount with out a device (mount -t FOO none /somepath)
 
-Users will come later in the patchset
+* A single device - The FS stated register_fs_info->dt_offset==-1
+  No checks are made by Kernel, the single bdev is registered with
+  Kernel's mount_bdev. It is up to the zusFS to check validity
 
-NOTE: The use of the file relay.h. defines an object "relay".
- "Relay" here is in the sense of a relay-race where runners
- pass the baton from runner to runner.
- Also here it is when thread of an Application passes execution
- to the Server thread and back.
- TODO: In future we might define a new scheduler object that
-       will do the same but without passing through the scheduler
-       at all but relinquishing the reminder of its time slice
-       to the next thread. Maybe we can cut another 1/2 a micro
-       off the latency of an IOP (By avoiding locks and atomics)
+* Multy devices - The FS stated register_fs_info->dt_offset==X
 
-[v2 for Linux v5.3]
-  lin-jump5.3: task_struct cpus_allowed => cpus_mask
+  This mode is the main of this patch.
+  A single device is given on the mount command line. At
+  register_fs_info->dt_offset of this device we look for a
+  zufs_dev_table structure. After all the checks we look there
+  at the device list and open all devices. Any one of the devices may
+  be given on command line. But they will always be opened in
+  DT(Device Table) order. The Device table has the notion of two types
+  of bdevs:
+  T1 devices - are pmem devices capable of direct_access
+  T2 devices - are none direct_access devices
+
+  All t1 devices are presented as one linear array. in DT order
+  In t1.c we mmap this space for the server to directly access
+  pmem. (In the proper persistent way)
+
+  [We do not support any direct_access device, we only support
+   pmem(s) where the all device can be addressed by a single
+   physical/virtual address. This is checked before mount]
+
+   The T2 devices are also grabbed and owned by the super_block
+   A later API will enable the Server to write or transfer buffers
+   from T1 to T2 in a very efficient manner. Also presented as a
+   single linear array in DT order.
+
+   Both kind of devices are NUMA aware and the NUMA info is presented
+   to the zusFS for optimal allocation and access.
+
+[v2]
+  The new gcc compiler does not like that the case /* fall through */
+  comments comes with other text. So split the comment to two lines
+  to silence the compiler.
+
+[v3]
+  Do not use __packed on interface structures
 
 Signed-off-by: Boaz Harrosh <boazh@netapp.com>
 ---
- fs/zuf/_extern.h  |   16 +
- fs/zuf/_pr.h      |    5 +
- fs/zuf/relay.h    |  104 +++++
- fs/zuf/zuf-core.c | 1077 ++++++++++++++++++++++++++++++++++++++++++++-
- fs/zuf/zuf.h      |   41 ++
- fs/zuf/zus_api.h  |  291 ++++++++++++
- 6 files changed, 1533 insertions(+), 1 deletion(-)
- create mode 100644 fs/zuf/relay.h
+ fs/zuf/Makefile   |   3 +
+ fs/zuf/_extern.h  |   6 +
+ fs/zuf/md.c       | 742 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/zuf/md.h       | 332 +++++++++++++++++++++
+ fs/zuf/md_def.h   | 141 +++++++++
+ fs/zuf/super.c    |   6 +
+ fs/zuf/t1.c       | 136 +++++++++
+ fs/zuf/t2.c       | 356 ++++++++++++++++++++++
+ fs/zuf/t2.h       |  68 +++++
+ fs/zuf/zuf-core.c |  76 +++++
+ fs/zuf/zuf.h      |  54 ++++
+ fs/zuf/zus_api.h  |  15 +
+ 12 files changed, 1935 insertions(+)
+ create mode 100644 fs/zuf/md.c
+ create mode 100644 fs/zuf/md.h
+ create mode 100644 fs/zuf/md_def.h
+ create mode 100644 fs/zuf/t1.c
+ create mode 100644 fs/zuf/t2.c
+ create mode 100644 fs/zuf/t2.h
 
+diff --git a/fs/zuf/Makefile b/fs/zuf/Makefile
+index b08c08e73faa..a247bd85d9aa 100644
+--- a/fs/zuf/Makefile
++++ b/fs/zuf/Makefile
+@@ -10,6 +10,9 @@
+ 
+ obj-$(CONFIG_ZUFS_FS) += zuf.o
+ 
++# Infrastructure
++zuf-y += md.o t1.o t2.o
++
+ # ZUF core
+ zuf-y += zuf-core.o zuf-root.o
+ 
 diff --git a/fs/zuf/_extern.h b/fs/zuf/_extern.h
-index 0e8aa52f1259..1f786fc24b85 100644
+index 1f786fc24b85..a5929d3d165c 100644
 --- a/fs/zuf/_extern.h
 +++ b/fs/zuf/_extern.h
-@@ -27,6 +27,22 @@ void zufc_zts_fini(struct zuf_root_info *zri);
- long zufc_ioctl(struct file *filp, unsigned int cmd, ulong arg);
- int zufc_release(struct inode *inode, struct file *file);
- int zufc_mmap(struct file *file, struct vm_area_struct *vma);
-+const char *zuf_op_name(enum e_zufs_operation op);
-+
-+int zufc_dispatch_mount(struct zuf_root_info *zri, struct zus_fs_info *zus_zfi,
-+			enum e_mount_operation operation,
-+			struct zufs_ioc_mount *zim);
-+
-+int __zufc_dispatch(struct zuf_root_info *zri, struct zuf_dispatch_op *zdo);
-+static inline
-+int zufc_dispatch(struct zuf_root_info *zri, struct zufs_ioc_hdr *hdr,
-+		  struct page **pages, uint nump)
-+{
-+	struct zuf_dispatch_op zdo;
-+
-+	zuf_dispatch_init(&zdo, hdr, pages, nump);
-+	return __zufc_dispatch(zri, &zdo);
-+}
+@@ -54,4 +54,10 @@ void zuf_destroy_inodecache(void);
+ struct dentry *zuf_mount(struct file_system_type *fs_type, int flags,
+ 			 const char *dev_name, void *data);
  
- /* zuf-root.c */
- int zufr_register_fs(struct super_block *sb, struct zufs_ioc_register_fs *rfs);
-diff --git a/fs/zuf/_pr.h b/fs/zuf/_pr.h
-index 51924b6bd2a5..2cdb0806687b 100644
---- a/fs/zuf/_pr.h
-+++ b/fs/zuf/_pr.h
-@@ -34,6 +34,11 @@
- 	} while (0)
- #define zuf_info(s, args ...)          pr_info("~info~ " s, ## args)
- 
-+#define zuf_err_dispatch(sb, s, args ...) \
-+	do { if (zuf_fst(sb)->zri->state != ZUF_ROOT_SERVER_FAILED) \
-+		pr_err("[%s:%d] " s, __func__, __LINE__, ## args); \
-+	} while (0)
++struct super_block *zuf_sb_from_id(struct zuf_root_info *zri, __u64 sb_id,
++				   struct zus_sb_info *zus_sbi);
 +
- #define zuf_chan_debug(c, s, args...)	pr_debug(c " [%s:%d] " s, __func__, \
- 							__LINE__, ## args)
- 
-diff --git a/fs/zuf/relay.h b/fs/zuf/relay.h
++/* t1.c */
++int zuf_pmem_mmap(struct file *file, struct vm_area_struct *vma);
++
+ #endif	/*ndef __ZUF_EXTERN_H__*/
+diff --git a/fs/zuf/md.c b/fs/zuf/md.c
 new file mode 100644
-index 000000000000..4cf642e177cd
+index 000000000000..c4778b4fdff8
 --- /dev/null
-+++ b/fs/zuf/relay.h
-@@ -0,0 +1,104 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/fs/zuf/md.c
+@@ -0,0 +1,742 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Relay scheduler-object Header file.
++ * Multi-Device operations.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
++
++#include <linux/blkdev.h>
++#include <linux/pfn_t.h>
++#include <linux/crc16.h>
++#include <linux/uuid.h>
++
++#include <linux/gcd.h>
++
++#include "_pr.h"
++#include "md.h"
++#include "t2.h"
++
++const fmode_t _g_mode = FMODE_READ | FMODE_WRITE | FMODE_EXCL;
++
++static int _bdev_get_by_path(const char *path, struct block_device **bdev,
++			     void *holder)
++{
++	*bdev = blkdev_get_by_path(path, _g_mode, holder);
++	if (IS_ERR(*bdev)) {
++		int err = PTR_ERR(*bdev);
++		*bdev = NULL;
++		return err;
++	}
++	return 0;
++}
++
++static void _bdev_put(struct block_device **bdev)
++{
++	if (*bdev) {
++		blkdev_put(*bdev, _g_mode);
++		*bdev = NULL;
++	}
++}
++
++/* convert uuid to a /dev/ path */
++static char *_uuid_path(uuid_le *uuid, char path[PATH_UUID])
++{
++	sprintf(path, "/dev/disk/by-uuid/%pUb", uuid);
++	return path;
++}
++
++static int _bdev_get_by_uuid(struct block_device **bdev, uuid_le *uuid,
++			       void *holder, bool silent)
++{
++	char path[PATH_UUID];
++	int err;
++
++	_uuid_path(uuid, path);
++	err = _bdev_get_by_path(path, bdev, holder);
++	if (unlikely(err))
++		md_err_cnd(silent, "failed to get device path=%s =>%d\n",
++			   path, err);
++
++	return err;
++}
++
++short md_calc_csum(struct md_dev_table *mdt)
++{
++	uint n = MDT_STATIC_SIZE(mdt) - sizeof(mdt->s_sum);
++
++	return crc16(~0, (__u8 *)&mdt->s_version, n);
++}
++
++/* ~~~~~~~ mdt related functions ~~~~~~~ */
++
++int md_t2_mdt_read(struct multi_devices *md, int index,
++		   struct md_dev_table *mdt)
++{
++	int err = t2_readpage(md, index, virt_to_page(mdt));
++
++	if (err)
++		md_dbg_verbose("!!! t2_readpage err=%d\n", err);
++
++	return err;
++}
++
++static int _t2_mdt_read(struct block_device *bdev, struct md_dev_table *mdt)
++{
++	int err;
++	/* t2 interface works for all block devices */
++	struct multi_devices *md;
++	struct md_dev_info *mdi;
++
++	md = kzalloc(sizeof(*md), GFP_KERNEL);
++	if (unlikely(!md))
++		return -ENOMEM;
++
++	md->t2_count = 1;
++	md->devs[0].bdev = bdev;
++	mdi = &md->devs[0];
++	md->t2a.map = &mdi;
++	md->t2a.bn_gcd = 1; /*Does not matter only must not be zero */
++
++	err = md_t2_mdt_read(md, 0, mdt);
++
++	kfree(md);
++	return err;
++}
++
++int md_t2_mdt_write(struct multi_devices *md, struct md_dev_table *mdt)
++{
++	int i, err = 0;
++
++	for (i = 0; i < md->t2_count; ++i) {
++		ulong bn = md_o2p(md_t2_dev(md, i)->offset);
++
++		mdt->s_dev_list.id_index = mdt->s_dev_list.t1_count + i;
++		mdt->s_sum = cpu_to_le16(md_calc_csum(mdt));
++
++		err = t2_writepage(md, bn, virt_to_page(mdt));
++		if (err)
++			md_dbg_verbose("!!! t2_writepage err=%d\n", err);
++	}
++
++	return err;
++}
++
++static bool _csum_mismatch(struct md_dev_table *mdt, int silent)
++{
++	ushort crc = md_calc_csum(mdt);
++
++	if (mdt->s_sum == cpu_to_le16(crc))
++		return false;
++
++	md_warn_cnd(silent, "expected(0x%x) != s_sum(0x%x)\n",
++		      cpu_to_le16(crc), mdt->s_sum);
++	return true;
++}
++
++static bool _uuid_le_equal(uuid_le *uuid1, uuid_le *uuid2)
++{
++	return (memcmp(uuid1, uuid2, sizeof(uuid_le)) == 0);
++}
++
++static bool _mdt_compare_uuids(struct md_dev_table *mdt,
++			       struct md_dev_table *main_mdt, int silent)
++{
++	int i, dev_count;
++
++	if (!_uuid_le_equal(&mdt->s_uuid, &main_mdt->s_uuid)) {
++		md_warn_cnd(silent, "mdt uuid (%pUb != %pUb) mismatch\n",
++			      &mdt->s_uuid, &main_mdt->s_uuid);
++		return false;
++	}
++
++	dev_count = mdt->s_dev_list.t1_count + mdt->s_dev_list.t2_count +
++		    mdt->s_dev_list.rmem_count;
++	for (i = 0; i < dev_count; ++i) {
++		struct md_dev_id *dev_id1 = &mdt->s_dev_list.dev_ids[i];
++		struct md_dev_id *dev_id2 = &main_mdt->s_dev_list.dev_ids[i];
++
++		if (!_uuid_le_equal(&dev_id1->uuid, &dev_id2->uuid)) {
++			md_warn_cnd(silent,
++				    "mdt dev %d uuid (%pUb != %pUb) mismatch\n",
++				    i, &dev_id1->uuid, &dev_id2->uuid);
++			return false;
++		}
++
++		if (dev_id1->blocks != dev_id2->blocks) {
++			md_warn_cnd(silent,
++				    "mdt dev %d blocks (0x%llx != 0x%llx) mismatch\n",
++				    i, le64_to_cpu(dev_id1->blocks),
++				    le64_to_cpu(dev_id2->blocks));
++			return false;
++		}
++	}
++
++	return true;
++}
++
++bool md_mdt_check(struct md_dev_table *mdt,
++		  struct md_dev_table *main_mdt, struct block_device *bdev,
++		  struct mdt_check *mc)
++{
++	struct md_dev_id *dev_id;
++	ulong bdev_size, super_size;
++
++	BUILD_BUG_ON(MDT_STATIC_SIZE(mdt) & (SMP_CACHE_BYTES - 1));
++
++	/* Do sanity checks on the superblock */
++	if (le32_to_cpu(mdt->s_magic) != mc->magic) {
++		md_warn_cnd(mc->silent,
++			     "Magic error in super block: please run fsck\n");
++		return false;
++	}
++
++	if ((mc->major_ver != mdt_major_version(mdt)) ||
++	    (mc->minor_ver < mdt_minor_version(mdt))) {
++		md_warn_cnd(mc->silent,
++			     "mkfs-mount versions mismatch! %d.%d != %d.%d\n",
++			     mdt_major_version(mdt), mdt_minor_version(mdt),
++			     mc->major_ver, mc->minor_ver);
++		return false;
++	}
++
++	if (_csum_mismatch(mdt, mc->silent)) {
++		md_warn_cnd(mc->silent,
++			    "crc16 error in super block: please run fsck\n");
++		return false;
++	}
++
++	if (main_mdt) {
++		if (mdt->s_dev_list.t1_count != main_mdt->s_dev_list.t1_count) {
++			md_warn_cnd(mc->silent, "mdt t1 count mismatch\n");
++			return false;
++		}
++
++		if (mdt->s_dev_list.t2_count != main_mdt->s_dev_list.t2_count) {
++			md_warn_cnd(mc->silent, "mdt t2 count mismatch\n");
++			return false;
++		}
++
++		if (mdt->s_dev_list.rmem_count !=
++		    main_mdt->s_dev_list.rmem_count) {
++			md_warn_cnd(mc->silent,
++				    "mdt rmem dev count mismatch\n");
++			return false;
++		}
++
++		if (!_mdt_compare_uuids(mdt, main_mdt, mc->silent))
++			return false;
++	}
++
++	/* check alignment */
++	dev_id = &mdt->s_dev_list.dev_ids[mdt->s_dev_list.id_index];
++	super_size = md_p2o(__dev_id_blocks(dev_id));
++	if (unlikely(!super_size || super_size & mc->alloc_mask)) {
++		md_warn_cnd(mc->silent, "super_size(0x%lx) ! 2_M aligned\n",
++			      super_size);
++		return false;
++	}
++
++	if (!bdev)
++		return true;
++
++	/* check t1 device size */
++	bdev_size = i_size_read(bdev->bd_inode);
++	if (unlikely(super_size > bdev_size)) {
++		md_warn_cnd(mc->silent,
++			    "bdev_size(0x%lx) too small expected 0x%lx\n",
++			    bdev_size, super_size);
++		return false;
++	} else if (unlikely(super_size < bdev_size)) {
++		md_dbg_err("Note mdt->size=(0x%lx) < bdev_size(0x%lx)\n",
++			      super_size, bdev_size);
++	}
++
++	return true;
++}
++
++int md_set_sb(struct multi_devices *md, struct block_device *s_bdev,
++	      void *sb, int silent)
++{
++	struct md_dev_info *main_mdi = md_dev_info(md, md->dev_index);
++	int i;
++
++	main_mdi->bdev = s_bdev;
++
++	for (i = 0; i < md->t1_count + md->t2_count; ++i) {
++		struct md_dev_info *mdi;
++
++		if (i == md->dev_index)
++			continue;
++
++		mdi = md_dev_info(md, i);
++		if (mdi->bdev->bd_super && (mdi->bdev->bd_super != sb)) {
++			md_warn_cnd(silent,
++				"!!! %s already mounted on a different FS => -EBUSY\n",
++				_bdev_name(mdi->bdev));
++			return -EBUSY;
++		}
++
++		mdi->bdev->bd_super = sb;
++	}
++
++	return 0;
++}
++
++void md_fini(struct multi_devices *md, bool put_all)
++{
++	struct md_dev_info *main_mdi;
++	int i;
++
++	if (unlikely(!md))
++		return;
++
++	main_mdi = md_dev_info(md, md->dev_index);
++	kfree(md->t2a.map);
++	kfree(md->t1a.map);
++
++	for (i = 0; i < md->t1_count + md->t2_count; ++i) {
++		struct md_dev_info *mdi = md_dev_info(md, i);
++
++		if (i < md->t1_count)
++			md_t1_info_fini(mdi);
++		if (!mdi->bdev || i == md->dev_index)
++			continue;
++		mdi->bdev->bd_super = NULL;
++		_bdev_put(&mdi->bdev);
++	}
++
++	if (put_all)
++		_bdev_put(&main_mdi->bdev);
++	else
++		/* Main dev is GET && PUT by VFS. Only stop pointing to it */
++		main_mdi->bdev = NULL;
++
++	kfree(md);
++}
++
++
++/* ~~~~~~~ Pre-mount operations ~~~~~~~ */
++
++static int _get_device(struct block_device **bdev, const char *dev_name,
++		       uuid_le *uuid, void *holder, int silent,
++		       bool *bind_mount)
++{
++	int err;
++
++	if (dev_name)
++		err = _bdev_get_by_path(dev_name, bdev, holder);
++	else
++		err = _bdev_get_by_uuid(bdev, uuid, holder, silent);
++
++	if (unlikely(err)) {
++		md_err_cnd(silent,
++			"failed to get device dev_name=%s uuid=%pUb err=%d\n",
++			dev_name, uuid, err);
++		return err;
++	}
++
++	if (bind_mount &&  (*bdev)->bd_super &&
++			   (*bdev)->bd_super->s_bdev == *bdev)
++		*bind_mount = true;
++
++	return 0;
++}
++
++static int _init_dev_info(struct md_dev_info *mdi, struct md_dev_id *id,
++			  int index, u64 offset,
++			  struct md_dev_table *main_mdt,
++			  struct mdt_check *mc, bool t1_dev,
++			  int silent)
++{
++	struct md_dev_table *mdt = NULL;
++	bool mdt_alloc = false;
++	int err = 0;
++
++	if (mdi->bdev == NULL) {
++		err = _get_device(&mdi->bdev, NULL, &id->uuid, mc->holder,
++				  silent, NULL);
++		if (unlikely(err))
++			return err;
++	}
++
++	mdi->offset = offset;
++	mdi->size = md_p2o(__dev_id_blocks(id));
++	mdi->index = index;
++
++	if (t1_dev) {
++		struct page *dev_page;
++		int end_of_dev_nid;
++
++		err = md_t1_info_init(mdi, silent);
++		if (unlikely(err))
++			return err;
++
++		if ((ulong)mdi->t1i.virt_addr & mc->alloc_mask) {
++			md_warn_cnd(silent, "!!! unaligned device %s\n",
++				      _bdev_name(mdi->bdev));
++			return -EINVAL;
++		}
++
++		if (!__pfn_to_section(mdi->t1i.phys_pfn)) {
++			md_err_cnd(silent, "Intel does not like pages...\n");
++			return -EINVAL;
++		}
++
++		mdt = mdi->t1i.virt_addr;
++
++		mdi->t1i.pgmap = virt_to_page(mdt)->pgmap;
++		dev_page = pfn_to_page(mdi->t1i.phys_pfn);
++		mdi->nid = page_to_nid(dev_page);
++		end_of_dev_nid = page_to_nid(dev_page + md_o2p(mdi->size - 1));
++
++		if (mdi->nid != end_of_dev_nid)
++			md_warn("pmem crosses NUMA boundaries");
++	} else {
++		mdt = (void *)__get_free_page(GFP_KERNEL);
++		if (unlikely(!mdt)) {
++			md_dbg_err("!!! failed to alloc page\n");
++			return -ENOMEM;
++		}
++
++		mdt_alloc = true;
++		err = _t2_mdt_read(mdi->bdev, mdt);
++		if (unlikely(err)) {
++			md_err_cnd(silent, "failed to read mdt from t2 => %d\n",
++				   err);
++			goto out;
++		}
++		mdi->nid = __dev_id_nid(id);
++	}
++
++	if (!md_mdt_check(mdt, main_mdt, mdi->bdev, mc)) {
++		md_err_cnd(silent, "device %s failed integrity check\n",
++			     _bdev_name(mdi->bdev));
++		err = -EINVAL;
++		goto out;
++	}
++
++	return 0;
++
++out:
++	if (mdt_alloc)
++		free_page((ulong)mdt);
++	return err;
++}
++
++static int _map_setup(struct multi_devices *md, ulong blocks, int dev_start,
++		      struct md_dev_larray *larray)
++{
++	ulong map_size, bn_end;
++	int i, dev_index = dev_start;
++
++	map_size = blocks / larray->bn_gcd;
++	larray->map = kcalloc(map_size, sizeof(*larray->map), GFP_KERNEL);
++	if (!larray->map) {
++		md_dbg_err("failed to allocate dev map\n");
++		return -ENOMEM;
++	}
++
++	bn_end = md_o2p(md->devs[dev_index].size);
++	for (i = 0; i < map_size; ++i) {
++		if ((i * larray->bn_gcd) >= bn_end)
++			bn_end += md_o2p(md->devs[++dev_index].size);
++		larray->map[i] = &md->devs[dev_index];
++	}
++
++	return 0;
++}
++
++static int _md_init(struct multi_devices *md, struct mdt_check *mc,
++		    struct md_dev_list *dev_list, int silent)
++{
++	struct md_dev_table *main_mdt = NULL;
++	u64 total_size = 0;
++	int i, err;
++
++	for (i = 0; i < md->t1_count; ++i) {
++		struct md_dev_info *mdi = md_t1_dev(md, i);
++		struct md_dev_table *dev_mdt;
++
++		err = _init_dev_info(mdi, &dev_list->dev_ids[i], i, total_size,
++				     main_mdt, mc, true, silent);
++		if (unlikely(err))
++			return err;
++
++		/* apparently gcd(0,X)=X which is nice */
++		md->t1a.bn_gcd = gcd(md->t1a.bn_gcd, md_o2p(mdi->size));
++		total_size += mdi->size;
++
++		dev_mdt = md_t1_addr(md, i);
++		if (!main_mdt)
++			main_mdt = dev_mdt;
++
++		if (mdt_test_option(dev_mdt, MDT_F_SHADOW))
++			memcpy(mdi->t1i.virt_addr,
++			       mdi->t1i.virt_addr + mdi->size, mdi->size);
++
++		md_dbg_verbose("dev=%d %pUb %s v=%p pfn=%lu off=%lu size=%lu\n",
++				 i, &dev_list->dev_ids[i].uuid,
++				 _bdev_name(mdi->bdev), dev_mdt,
++				 mdi->t1i.phys_pfn, mdi->offset, mdi->size);
++	}
++
++	md->t1_blocks = le64_to_cpu(main_mdt->s_t1_blocks);
++	if (unlikely(md->t1_blocks != md_o2p(total_size))) {
++		md_err_cnd(silent,
++			"FS corrupted md->t1_blocks(0x%lx) != total_size(0x%llx)\n",
++			md->t1_blocks, total_size);
++		return -EIO;
++	}
++
++	err = _map_setup(md, le64_to_cpu(main_mdt->s_t1_blocks), 0, &md->t1a);
++	if (unlikely(err))
++		return err;
++
++	md_dbg_verbose("t1 devices=%d total_size=0x%llx segment_map=0x%lx\n",
++			 md->t1_count, total_size,
++			 md_o2p(total_size) / md->t1a.bn_gcd);
++
++	if (md->t2_count == 0)
++		return 0;
++
++	/* Done with t1. Counting t2s */
++	total_size = 0;
++	for (i = 0; i < md->t2_count; ++i) {
++		struct md_dev_info *mdi = md_t2_dev(md, i);
++
++		err = _init_dev_info(mdi, &dev_list->dev_ids[md->t1_count + i],
++				     md->t1_count + i, total_size, main_mdt,
++				     mc, false, silent);
++		if (unlikely(err))
++			return err;
++
++		/* apparently gcd(0,X)=X which is nice */
++		md->t2a.bn_gcd = gcd(md->t2a.bn_gcd, md_o2p(mdi->size));
++		total_size += mdi->size;
++
++		md_dbg_verbose("dev=%d %s off=%lu size=%lu\n", i,
++				 _bdev_name(mdi->bdev), mdi->offset, mdi->size);
++	}
++
++	md->t2_blocks = le64_to_cpu(main_mdt->s_t2_blocks);
++	if (unlikely(md->t2_blocks != md_o2p(total_size))) {
++		md_err_cnd(silent,
++			"FS corrupted md->t2_blocks(0x%lx) != total_size(0x%llx)\n",
++			md->t2_blocks, total_size);
++		return -EIO;
++	}
++
++	err = _map_setup(md, le64_to_cpu(main_mdt->s_t2_blocks), md->t1_count,
++			 &md->t2a);
++	if (unlikely(err))
++		return err;
++
++	md_dbg_verbose("t2 devices=%d total_size=%llu segment_map=%lu\n",
++			 md->t2_count, total_size,
++			 md_o2p(total_size) / md->t2a.bn_gcd);
++
++	return 0;
++}
++
++static int _load_dev_list(struct md_dev_list *dev_list, struct mdt_check *mc,
++			  struct block_device *bdev, const char *dev_name,
++			  int silent)
++{
++	struct md_dev_table *mdt;
++	int err;
++
++	mdt = (void *)__get_free_page(GFP_KERNEL);
++	if (unlikely(!mdt)) {
++		md_dbg_err("!!! failed to alloc page\n");
++		return -ENOMEM;
++	}
++
++	err = _t2_mdt_read(bdev, mdt);
++	if (unlikely(err)) {
++		md_err_cnd(silent, "failed to read super block from %s => %d\n",
++			     dev_name, err);
++		goto out;
++	}
++
++	if (!md_mdt_check(mdt, NULL, bdev, mc)) {
++		md_err_cnd(silent, "bad mdt in %s\n", dev_name);
++		err = -EINVAL;
++		goto out;
++	}
++
++	*dev_list = mdt->s_dev_list;
++
++out:
++	free_page((ulong)mdt);
++	return err;
++}
++
++/* md_init - allocates and initializes ready to go multi_devices object
++ *
++ * The rule is that if md_init returns error caller must call md_fini always
++ */
++int md_init(struct multi_devices **ret_md, const char *dev_name,
++	    struct mdt_check *mc, char path[PATH_UUID],	const char **dev_path)
++{
++	struct md_dev_list *dev_list;
++	struct block_device *bdev;
++	struct multi_devices *md;
++	short id_index;
++	bool bind_mount = false;
++	int err;
++
++	md = kzalloc(sizeof(*md), GFP_KERNEL);
++	*ret_md = md;
++	if (unlikely(!md))
++		return -ENOMEM;
++
++	dev_list = kmalloc(sizeof(*dev_list), GFP_KERNEL);
++	if (unlikely(!dev_list))
++		return -ENOMEM;
++
++	err = _get_device(&bdev, dev_name, NULL, mc->holder, mc->silent,
++			  &bind_mount);
++	if (unlikely(err))
++		goto out2;
++
++	err = _load_dev_list(dev_list, mc, bdev, dev_name, mc->silent);
++	if (unlikely(err)) {
++		_bdev_put(&bdev);
++		goto out2;
++	}
++
++	id_index = le16_to_cpu(dev_list->id_index);
++	if (bind_mount) {
++		_bdev_put(&bdev);
++		md->dev_index = id_index;
++		goto out;
++	}
++
++	md->t1_count = le16_to_cpu(dev_list->t1_count);
++	md->t2_count = le16_to_cpu(dev_list->t2_count);
++	md->devs[id_index].bdev = bdev;
++
++	if ((id_index != 0)) {
++		err = _get_device(&md_t1_dev(md, 0)->bdev, NULL,
++				  &dev_list->dev_ids[0].uuid, mc->holder,
++				  mc->silent, &bind_mount);
++		if (unlikely(err))
++			goto out2;
++
++		if (bind_mount)
++			goto out;
++	}
++
++	if (md->t2_count) {
++		int t2_index = md->t1_count;
++
++		/* t2 is the primary device if given in mount, or the first
++		 * mount specified it as primary device
++		 */
++		if (id_index != md->t1_count) {
++			err = _get_device(&md_t2_dev(md, 0)->bdev, NULL,
++					  &dev_list->dev_ids[t2_index].uuid,
++					  mc->holder, mc->silent, &bind_mount);
++			if (unlikely(err))
++				goto out2;
++
++			if (bind_mount)
++				md->dev_index = t2_index;
++		}
++
++		if (t2_index <= id_index)
++			md->dev_index = t2_index;
++	}
++
++out:
++	if (md->dev_index != id_index)
++		*dev_path = _uuid_path(&dev_list->dev_ids[md->dev_index].uuid,
++				       path);
++	else
++		*dev_path = dev_name;
++
++	if (!bind_mount) {
++		err = _md_init(md, mc, dev_list, mc->silent);
++		if (unlikely(err))
++			goto out2;
++		if (!(mc->private_mnt))
++			_bdev_put(&md_dev_info(md, md->dev_index)->bdev);
++	} else {
++		md_fini(md, true);
++	}
++
++out2:
++	kfree(dev_list);
++
++	return err;
++}
++
++/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ * PORTING SECTION:
++ * Below are members that are done differently in different Linux versions.
++ * So keep separate from code
++ */
++static int _check_da_ret(struct md_dev_info *mdi, long avail, bool silent)
++{
++	if (unlikely(avail < (long)mdi->size)) {
++		if (0 < avail) {
++			md_warn_cnd(silent,
++				"Unsupported DAX device %s (range mismatch) => 0x%lx < 0x%lx\n",
++				_bdev_name(mdi->bdev), avail, mdi->size);
++			return -ERANGE;
++		}
++		md_warn_cnd(silent, "!!! %s direct_access return => %ld\n",
++			    _bdev_name(mdi->bdev), avail);
++		return avail;
++	}
++	return 0;
++}
++
++#include <linux/dax.h>
++
++int md_t1_info_init(struct md_dev_info *mdi, bool silent)
++{
++	pfn_t a_pfn_t;
++	void *addr;
++	long nrpages, avail, pgoff;
++	int id;
++
++	mdi->t1i.dax_dev = fs_dax_get_by_bdev(mdi->bdev);
++	if (unlikely(!mdi->t1i.dax_dev))
++		return -EOPNOTSUPP;
++
++	id = dax_read_lock();
++
++	bdev_dax_pgoff(mdi->bdev, 0, PAGE_SIZE, &pgoff);
++	nrpages = dax_direct_access(mdi->t1i.dax_dev, pgoff, md_o2p(mdi->size),
++				    &addr, &a_pfn_t);
++	dax_read_unlock(id);
++	if (unlikely(nrpages <= 0)) {
++		if (!nrpages)
++			nrpages = -ERANGE;
++		avail = nrpages;
++	} else {
++		avail = md_p2o(nrpages);
++	}
++
++	mdi->t1i.virt_addr = addr;
++	mdi->t1i.phys_pfn = pfn_t_to_pfn(a_pfn_t);
++
++	md_dbg_verbose("0x%lx 0x%lx pgoff=0x%lx\n",
++			 (ulong)mdi->t1i.virt_addr, mdi->t1i.phys_pfn, pgoff);
++
++	return _check_da_ret(mdi, avail, silent);
++}
++
++void md_t1_info_fini(struct md_dev_info *mdi)
++{
++	fs_put_dax(mdi->t1i.dax_dev);
++	mdi->t1i.dax_dev = NULL;
++	mdi->t1i.virt_addr = NULL;
++}
+diff --git a/fs/zuf/md.h b/fs/zuf/md.h
+new file mode 100644
+index 000000000000..15ba7d646544
+--- /dev/null
++++ b/fs/zuf/md.h
+@@ -0,0 +1,332 @@
++/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
++/*
++ * Multi-Device operations.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
++
++#ifndef __MD_H__
++#define __MD_H__
++
++#include <linux/types.h>
++
++#include "md_def.h"
++
++#ifndef __KERNEL__
++struct page;
++struct block_device;
++#else
++#	include <linux/blkdev.h>
++#endif /* ndef __KERNEL__ */
++
++struct md_t1_info {
++	void *virt_addr;
++#ifdef __KERNEL__
++	ulong phys_pfn;
++	struct dax_device *dax_dev;
++	struct dev_pagemap *pgmap;
++#endif /*def __KERNEL__*/
++};
++
++struct md_t2_info {
++#ifndef __KERNEL__
++	bool err_read_reported;
++	bool err_write_reported;
++#endif
++};
++
++struct md_dev_info {
++	struct block_device *bdev;
++	ulong size;
++	ulong offset;
++	union {
++		struct md_t1_info	t1i;
++		struct md_t2_info	t2i;
++	};
++	int index;
++	int nid;
++};
++
++struct md_dev_larray {
++	ulong bn_gcd;
++	struct md_dev_info **map;
++};
++
++#ifndef __KERNEL__
++struct fba {
++	int fd; void *ptr;
++	size_t size;
++	void *orig_ptr;
++};
++#endif /*! __KERNEL__*/
++
++struct zus_sb_info;
++struct multi_devices {
++	int dev_index;
++	int t1_count;
++	int t2_count;
++	struct md_dev_info devs[MD_DEV_MAX];
++	struct md_dev_larray t1a;
++	struct md_dev_larray t2a;
++#ifndef __KERNEL__
++	struct zufs_ioc_pmem pmem_info; /* As received from Kernel */
++
++	void *p_pmem_addr;
++	int fd;
++	uint user_page_size;
++	struct fba pages;
++	struct zus_sb_info *sbi;
++#else
++	ulong t1_blocks;
++	ulong t2_blocks;
++#endif /*! __KERNEL__*/
++};
++
++enum md_init_flags {
++	MD_I_F_PRIVATE		= (1UL << 0),
++};
++
++static inline __u64 md_p2o(ulong bn)
++{
++	return (__u64)bn << PAGE_SHIFT;
++}
++
++static inline ulong md_o2p(__u64 offset)
++{
++	return offset >> PAGE_SHIFT;
++}
++
++static inline ulong md_o2p_up(__u64 offset)
++{
++	return md_o2p(offset + PAGE_SIZE - 1);
++}
++
++static inline struct md_dev_info *md_t1_dev(struct multi_devices *md, int i)
++{
++	return &md->devs[i];
++}
++
++static inline struct md_dev_info *md_t2_dev(struct multi_devices *md, int i)
++{
++	return &md->devs[md->t1_count + i];
++}
++
++static inline struct md_dev_info *md_dev_info(struct multi_devices *md, int i)
++{
++	return &md->devs[i];
++}
++
++static inline void *md_t1_addr(struct multi_devices *md, int i)
++{
++	struct md_dev_info *mdi = md_t1_dev(md, i);
++
++	return mdi->t1i.virt_addr;
++}
++
++static inline ulong md_t1_blocks(struct multi_devices *md)
++{
++#ifdef __KERNEL__
++	return md->t1_blocks;
++#else
++	return md->pmem_info.mdt.s_t1_blocks;
++#endif
++}
++
++static inline ulong md_t2_blocks(struct multi_devices *md)
++{
++#ifdef __KERNEL__
++	return md->t2_blocks;
++#else
++	return md->pmem_info.mdt.s_t2_blocks;
++#endif
++}
++
++static inline struct md_dev_table *md_zdt(struct multi_devices *md)
++{
++	return md_t1_addr(md, 0);
++}
++
++static inline struct md_dev_info *md_bn_t1_dev(struct multi_devices *md,
++						 ulong bn)
++{
++	return md->t1a.map[bn / md->t1a.bn_gcd];
++}
++
++static inline uuid_le *md_main_uuid(struct multi_devices *md)
++{
++	return &md_zdt(md)->s_dev_list.dev_ids[md->dev_index].uuid;
++}
++
++#ifdef __KERNEL__
++static inline ulong md_pfn(struct multi_devices *md, ulong block)
++{
++	struct md_dev_info *mdi;
++	bool add_pfn = false;
++	ulong base_pfn;
++
++	if (unlikely(md_t1_blocks(md) <= block)) {
++		if (WARN_ON(!mdt_test_option(md_zdt(md), MDT_F_SHADOW)))
++			return 0;
++		block -= md_t1_blocks(md);
++		add_pfn = true;
++	}
++
++	mdi = md_bn_t1_dev(md, block);
++	if (add_pfn)
++		base_pfn = mdi->t1i.phys_pfn + md_o2p(mdi->size);
++	else
++		base_pfn = mdi->t1i.phys_pfn;
++	return base_pfn + (block - md_o2p(mdi->offset));
++}
++#endif /* def __KERNEL__ */
++
++static inline void *md_addr(struct multi_devices *md, ulong offset)
++{
++#ifdef __KERNEL__
++	struct md_dev_info *mdi = md_bn_t1_dev(md, md_o2p(offset));
++
++	return offset ? mdi->t1i.virt_addr + (offset - mdi->offset) : NULL;
++#else
++	return offset ? md->p_pmem_addr + offset : NULL;
++#endif
++}
++
++static inline void *md_baddr(struct multi_devices *md, ulong bn)
++{
++	return md_addr(md, md_p2o(bn));
++}
++
++static inline struct md_dev_info *md_bn_t2_dev(struct multi_devices *md,
++					       ulong bn)
++{
++	return md->t2a.map[bn / md->t2a.bn_gcd];
++}
++
++static inline int md_t2_bn_nid(struct multi_devices *md, ulong bn)
++{
++	struct md_dev_info *mdi = md_bn_t2_dev(md, bn);
++
++	return mdi->nid;
++}
++
++static inline ulong md_t2_local_bn(struct multi_devices *md, ulong bn)
++{
++#ifdef __KERNEL__
++	struct md_dev_info *mdi = md_bn_t2_dev(md, bn);
++
++	return bn - md_o2p(mdi->offset);
++#else
++	return bn; /* In zus we just let Kernel worry about it */
++#endif
++}
++
++static inline ulong md_t2_gcd(struct multi_devices *md)
++{
++	return md->t2a.bn_gcd;
++}
++
++static inline void *md_addr_verify(struct multi_devices *md, ulong offset)
++{
++	if (unlikely(offset > md_p2o(md_t1_blocks(md)))) {
++		md_dbg_err("offset=0x%lx > max=0x%llx\n",
++			    offset, md_p2o(md_t1_blocks(md)));
++		return NULL;
++	}
++
++	return md_addr(md, offset);
++}
++
++static inline struct page *md_bn_to_page(struct multi_devices *md, ulong bn)
++{
++#ifdef __KERNEL__
++	return pfn_to_page(md_pfn(md, bn));
++#else
++	return md->pages.ptr + bn * md->user_page_size;
++#endif
++}
++
++static inline ulong md_addr_to_offset(struct multi_devices *md, void *addr)
++{
++#ifdef __KERNEL__
++	/* TODO: Keep the device index in page-flags we need to fix the
++	 * page-ref right? for now with pages untouched we need this loop
++	 */
++	int dev_index;
++
++	for (dev_index = 0; dev_index < md->t1_count; ++dev_index) {
++		struct md_dev_info *mdi = md_t1_dev(md, dev_index);
++
++		if ((mdi->t1i.virt_addr <= addr) &&
++		    (addr < (mdi->t1i.virt_addr + mdi->size)))
++			return mdi->offset + (addr - mdi->t1i.virt_addr);
++	}
++
++	return 0;
++#else /* !__KERNEL__ */
++	return addr - md->p_pmem_addr;
++#endif
++}
++
++static inline ulong md_addr_to_bn(struct multi_devices *md, void *addr)
++{
++	return md_o2p(md_addr_to_offset(md, addr));
++}
++
++static inline ulong md_page_to_bn(struct multi_devices *md, struct page *page)
++{
++#ifdef __KERNEL__
++	return md_addr_to_bn(md, page_address(page));
++#else
++	ulong bytes = (void *)page - md->pages.ptr;
++
++	return bytes / md->user_page_size;
++#endif
++}
++
++#ifdef __KERNEL__
++/* TODO: Change API to take mdi and also support in um */
++static inline const char *_bdev_name(struct block_device *bdev)
++{
++	return dev_name(&bdev->bd_part->__dev);
++}
++#endif /*def __KERNEL__*/
++
++struct mdt_check {
++	ulong alloc_mask;
++	uint major_ver;
++	uint minor_ver;
++	__u32  magic;
++
++	void *holder;
++	bool silent;
++	bool private_mnt;
++};
++
++/* md.c */
++bool md_mdt_check(struct md_dev_table *mdt, struct md_dev_table *main_mdt,
++		  struct block_device *bdev, struct mdt_check *mc);
++int md_t2_mdt_read(struct multi_devices *md, int dev_index,
++		   struct md_dev_table *mdt);
++int md_t2_mdt_write(struct multi_devices *md, struct md_dev_table *mdt);
++short md_calc_csum(struct md_dev_table *mdt);
++void md_fini(struct multi_devices *md, bool put_all);
++
++#ifdef __KERNEL__
++/* length of uuid dev path /dev/disk/by-uuid/<uuid> */
++#define PATH_UUID	64
++int md_init(struct multi_devices **md, const char *dev_name,
++	    struct mdt_check *mc, char path[PATH_UUID], const char **dp);
++int md_set_sb(struct multi_devices *md, struct block_device *s_bdev, void *sb,
++	      int silent);
++int md_t1_info_init(struct md_dev_info *mdi, bool silent);
++void md_t1_info_fini(struct md_dev_info *mdi);
++
++#else /* libzus */
++int md_init_from_pmem_info(struct multi_devices *md);
++#endif
++
++#endif
+diff --git a/fs/zuf/md_def.h b/fs/zuf/md_def.h
+new file mode 100644
+index 000000000000..72eda8516754
+--- /dev/null
++++ b/fs/zuf/md_def.h
+@@ -0,0 +1,141 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note or BSD-3-Clause */
++/*
++ * Multi-Device operations.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ *	Sagi Manole <sagim@netapp.com>"
++ */
++#ifndef _LINUX_MD_DEF_H
++#define _LINUX_MD_DEF_H
++
++#include <linux/types.h>
++#include <linux/uuid.h>
++
++#ifndef __KERNEL__
++
++#include <stdint.h>
++#include <endian.h>
++#include <stdbool.h>
++#include <stdlib.h>
++
++#ifndef le16_to_cpu
++
++#define le16_to_cpu(x)	((__u16)le16toh(x))
++#define le32_to_cpu(x)	((__u32)le32toh(x))
++#define le64_to_cpu(x)	((__u64)le64toh(x))
++#define cpu_to_le16(x)	((__le16)htole16(x))
++#define cpu_to_le32(x)	((__le32)htole32(x))
++#define cpu_to_le64(x)	((__le64)htole64(x))
++
++#endif
++
++#ifndef __aligned
++#define	__aligned(x)			__attribute__((aligned(x)))
++#endif
++
++#endif /*  ndef __KERNEL__ */
++
++#define MDT_SIZE 4096
++
++#define MD_DEV_NUMA_SHIFT		60
++#define MD_DEV_BLOCKS_MASK		0x0FFFFFFFFFFFFFFF
++
++struct md_dev_id {
++	uuid_le	uuid;
++	__le64	blocks;
++} __aligned(8);
++
++static inline __u64 __dev_id_blocks(struct md_dev_id *dev)
++{
++	return le64_to_cpu(dev->blocks) & MD_DEV_BLOCKS_MASK;
++}
++
++static inline void __dev_id_blocks_set(struct md_dev_id *dev, __u64 blocks)
++{
++	dev->blocks &= ~MD_DEV_BLOCKS_MASK;
++	dev->blocks |= blocks;
++}
++
++static inline int __dev_id_nid(struct md_dev_id *dev)
++{
++	return (int)(le64_to_cpu(dev->blocks) >> MD_DEV_NUMA_SHIFT);
++}
++
++static inline void __dev_id_nid_set(struct md_dev_id *dev, int nid)
++{
++	dev->blocks &= MD_DEV_BLOCKS_MASK;
++	dev->blocks |= (__le64)nid << MD_DEV_NUMA_SHIFT;
++}
++
++/* 64 is the nicest number to still fit when the ZDT is 2048 and 6 bits can
++ * fit in page struct for address to block translation.
++ */
++#define MD_DEV_MAX   64
++
++struct md_dev_list {
++	__le16		   id_index;	/* index of current dev in list */
++	__le16		   t1_count;	/* # of t1 devs */
++	__le16		   t2_count;	/* # of t2 devs (after t1_count) */
++	__le16		   rmem_count;	/* align to 64 bit */
++	struct md_dev_id dev_ids[MD_DEV_MAX];
++} __aligned(64);
++
++/*
++ * Structure of the on disk multy device table
++ * NOTE: md_dev_table is always of size MDT_SIZE. These below are the
++ *   currently defined/used members in this version.
++ *   TODO: remove the s_ from all the fields
++ */
++struct md_dev_table {
++	/* static fields. they never change after file system creation.
++	 * checksum only validates up to s_start_dynamic field below
++	 */
++	__le16		s_sum;              /* checksum of this sb */
++	__le16		s_version;          /* zdt-version */
++	__le32		s_magic;            /* magic signature */
++	uuid_le		s_uuid;		    /* 128-bit uuid */
++	__le64		s_flags;
++	__le64		s_t1_blocks;
++	__le64		s_t2_blocks;
++
++	struct md_dev_list s_dev_list;
++
++	char		s_start_dynamic[0];
++
++	/* all the dynamic fields should go here */
++	__le64		s_mtime;		/* mount time */
++	__le64		s_wtime;		/* write time */
++};
++
++/* device table s_flags */
++enum enum_mdt_flags {
++	MDT_F_SHADOW		= (1UL << 0),	/* simulate cpu cache */
++	MDT_F_POSIXACL		= (1UL << 1),	/* enable acls */
++
++	MDT_F_USER_START	= 8,	/* first 8 bit reserved for mdt */
++};
++
++static inline bool mdt_test_option(struct md_dev_table *mdt,
++				   enum enum_mdt_flags flag)
++{
++	return (mdt->s_flags & flag) != 0;
++}
++
++#define MD_MINORS_PER_MAJOR	1024
++
++static inline int mdt_major_version(struct md_dev_table *mdt)
++{
++	return le16_to_cpu(mdt->s_version) / MD_MINORS_PER_MAJOR;
++}
++
++static inline int mdt_minor_version(struct md_dev_table *mdt)
++{
++	return le16_to_cpu(mdt->s_version) % MD_MINORS_PER_MAJOR;
++}
++
++#define MDT_STATIC_SIZE(mdt) ((__u64)&mdt->s_start_dynamic - (__u64)mdt)
++
++#endif /* _LINUX_MD_DEF_H */
+diff --git a/fs/zuf/super.c b/fs/zuf/super.c
+index f7f7798425a9..2248ee74e4c2 100644
+--- a/fs/zuf/super.c
++++ b/fs/zuf/super.c
+@@ -20,6 +20,12 @@
+ 
+ static struct kmem_cache *zuf_inode_cachep;
+ 
++struct super_block *zuf_sb_from_id(struct zuf_root_info *zri, __u64 sb_id,
++				   struct zus_sb_info *zus_sbi)
++{
++	return NULL;
++}
++
+ static void _init_once(void *foo)
+ {
+ 	struct zuf_inode_info *zii = foo;
+diff --git a/fs/zuf/t1.c b/fs/zuf/t1.c
+new file mode 100644
+index 000000000000..46ea7f6181fc
+--- /dev/null
++++ b/fs/zuf/t1.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Just the special mmap of the all t1 array to the ZUS Server
 + *
 + * Copyright (c) 2018 NetApp Inc. All rights reserved.
 + *
@@ -164,1580 +1439,777 @@ index 000000000000..4cf642e177cd
 + *	Boaz Harrosh <boazh@netapp.com>
 + */
 +
-+#ifndef __RELAY_H__
-+#define __RELAY_H__
++#include <linux/mm.h>
++#include <linux/fs.h>
++#include <linux/pfn_t.h>
++#include <asm/pgtable.h>
 +
-+/* ~~~~ Relay ~~~~ */
-+struct relay {
-+	wait_queue_head_t fss_wq;
-+	bool fss_wakeup;
-+	bool fss_waiting;
++#include "_pr.h"
++#include "zuf.h"
 +
-+	wait_queue_head_t app_wq;
-+	bool app_wakeup;
-+	bool app_waiting;
-+
-+	cpumask_t cpus_allowed;
-+};
-+
-+static inline void relay_init(struct relay *relay)
-+{
-+	init_waitqueue_head(&relay->fss_wq);
-+	init_waitqueue_head(&relay->app_wq);
-+}
-+
-+static inline bool relay_is_app_waiting(struct relay *relay)
-+{
-+	return relay->app_waiting;
-+}
-+
-+static inline void relay_app_wakeup(struct relay *relay)
-+{
-+	relay->app_waiting = false;
-+
-+	relay->app_wakeup = true;
-+	wake_up(&relay->app_wq);
-+}
-+
-+static inline int __relay_fss_wait(struct relay *relay, bool keep_locked)
-+{
-+	relay->fss_waiting = !keep_locked;
-+	relay->fss_wakeup = false;
-+	return  wait_event_interruptible(relay->fss_wq, relay->fss_wakeup);
-+}
-+
-+static inline int relay_fss_wait(struct relay *relay)
-+{
-+	return __relay_fss_wait(relay, false);
-+}
-+
-+static inline bool relay_is_fss_waiting_grab(struct relay *relay)
-+{
-+	if (relay->fss_waiting) {
-+		relay->fss_waiting = false;
-+		return true;
-+	}
-+	return false;
-+}
-+
-+static inline void relay_fss_wakeup(struct relay *relay)
-+{
-+	relay->fss_wakeup = true;
-+	wake_up(&relay->fss_wq);
-+}
-+
-+static inline int relay_fss_wakeup_app_wait(struct relay *relay)
-+{
-+	relay->app_waiting = true;
-+
-+	relay_fss_wakeup(relay);
-+
-+	relay->app_wakeup = false;
-+
-+	return wait_event_interruptible(relay->app_wq, relay->app_wakeup);
-+}
-+
-+static inline
-+void relay_fss_wakeup_app_wait_spin(struct relay *relay, spinlock_t *spinlock)
-+{
-+	relay->app_waiting = true;
-+
-+	relay_fss_wakeup(relay);
-+
-+	relay->app_wakeup = false;
-+	spin_unlock(spinlock);
-+
-+	wait_event(relay->app_wq, relay->app_wakeup);
-+}
-+
-+static inline void relay_fss_wakeup_app_wait_cont(struct relay *relay)
-+{
-+	wait_event(relay->app_wq, relay->app_wakeup);
-+}
-+
-+#endif /* ifndef __RELAY_H__ */
-diff --git a/fs/zuf/zuf-core.c b/fs/zuf/zuf-core.c
-index c9bb31f75bed..60f0d3ffe562 100644
---- a/fs/zuf/zuf-core.c
-+++ b/fs/zuf/zuf-core.c
-@@ -18,23 +18,884 @@
- #include <linux/delay.h>
- #include <linux/pfn_t.h>
- #include <linux/sched/signal.h>
-+#include <linux/uaccess.h>
-+#include <linux/kref.h>
- 
- #include "zuf.h"
-+#include "relay.h"
-+
-+enum { INITIAL_ZT_CHANNELS = 3 };
-+
-+struct zufc_thread {
-+	struct zuf_special_file hdr;
-+	struct relay relay;
-+	struct vm_area_struct *vma;
-+	int no;
-+	int chan;
-+
-+	/* Kernel side allocated IOCTL buffer */
-+	struct vm_area_struct *opt_buff_vma;
-+	void *opt_buff;
-+	ulong max_zt_command;
-+
-+	/* Next operation*/
-+	struct zuf_dispatch_op *zdo;
-+};
-+
-+struct zuf_threads_pool {
-+	struct __mount_thread_info {
-+		struct zuf_special_file zsf;
-+		spinlock_t lock;
-+		struct relay relay;
-+		struct zufs_ioc_mount *zim;
-+	} mount;
-+
-+	uint _max_zts;
-+	uint _max_channels;
-+	 /* array of pcp_arrays */
-+	struct zufc_thread *_all_zt[ZUFS_MAX_ZT_CHANNELS];
-+};
-+
-+/* ~~~~ some helpers ~~~~ */
-+const char *zuf_op_name(enum e_zufs_operation op)
-+{
-+#define CASE_ENUM_NAME(e) case e: return #e
-+	switch  (op) {
-+		CASE_ENUM_NAME(ZUFS_OP_NULL);
-+		CASE_ENUM_NAME(ZUFS_OP_BREAK);
-+	case ZUFS_OP_MAX_OPT:
-+	default:
-+		return "UNKNOWN";
-+	}
-+}
-+
-+static inline ulong _zt_pr_no(struct zufc_thread *zt)
-+{
-+	/* So in hex it will be channel as first nibble and cpu as 3rd and on */
-+	return ((ulong)zt->no << 8) | zt->chan;
-+}
-+
-+static struct zufc_thread *_zt_from_cpu(struct zuf_root_info *zri,
-+					int cpu, uint chan)
-+{
-+	return per_cpu_ptr(zri->_ztp->_all_zt[chan], cpu);
-+}
-+
-+static struct zufc_thread *_zt_from_f_private(struct file *file)
++/* ~~~ Functions for mmap a t1-array and page faults ~~~ */
++static struct zuf_pmem_file *_pmem_from_f_private(struct file *file)
 +{
 +	struct zuf_special_file *zsf = file->private_data;
 +
-+	WARN_ON(zsf->type != zlfs_e_zt);
-+	return container_of(zsf, struct zufc_thread, hdr);
++	WARN_ON(zsf->type != zlfs_e_pmem);
++	return container_of(zsf, struct zuf_pmem_file, hdr);
 +}
 +
-+/* ~~~~ init/ fini ~~~~ */
-+static int _alloc_zts_channel(struct zuf_root_info *zri, int channel)
++static vm_fault_t t1_fault(struct vm_fault *vmf, enum page_entry_size pe_size)
 +{
-+	zri->_ztp->_all_zt[channel] = alloc_percpu_gfp(struct zufc_thread,
-+						       GFP_KERNEL | __GFP_ZERO);
-+	if (unlikely(!zri->_ztp->_all_zt[channel])) {
-+		zuf_err("!!! alloc_percpu channel=%d failed\n", channel);
-+		return -ENOMEM;
++	struct vm_area_struct *vma = vmf->vma;
++	struct inode *inode = vma->vm_file->f_mapping->host;
++	ulong addr = vmf->address;
++	struct zuf_pmem_file *z_pmem;
++	pgoff_t size;
++	ulong bn;
++	pfn_t pfnt;
++	ulong pfn = 0;
++	vm_fault_t flt;
++
++	zuf_dbg_t1("[%ld] vm_start=0x%lx vm_end=0x%lx VA=0x%lx "
++		    "pgoff=0x%lx vmf_flags=0x%x cow_page=%p page=%p pe_size=%d\n",
++		    inode->i_ino, vma->vm_start, vma->vm_end, addr, vmf->pgoff,
++		    vmf->flags, vmf->cow_page, vmf->page, pe_size);
++
++	if (unlikely(vmf->page)) {
++		zuf_err("[%ld] vm_start=0x%lx vm_end=0x%lx VA=0x%lx "
++			"pgoff=0x%lx vmf_flags=0x%x page=%p cow_page=%p\n",
++			inode->i_ino, vma->vm_start, vma->vm_end, addr,
++			vmf->pgoff, vmf->flags, vmf->page, vmf->cow_page);
++		return VM_FAULT_SIGBUS;
 +	}
++
++	size = md_o2p_up(i_size_read(inode));
++	if (unlikely(vmf->pgoff >= size)) {
++		ulong pgoff = vma->vm_pgoff + md_o2p(addr - vma->vm_start);
++
++		zuf_err("[%ld] pgoff(0x%lx)(0x%lx) >= size(0x%lx) => SIGBUS\n",
++			 inode->i_ino, vmf->pgoff, pgoff, size);
++
++		return VM_FAULT_SIGBUS;
++	}
++
++	if (vmf->cow_page)
++		/* HOWTO: prevent private mmaps */
++		return VM_FAULT_SIGBUS;
++
++	z_pmem = _pmem_from_f_private(vma->vm_file);
++
++	switch (pe_size) {
++	case PE_SIZE_PTE:
++		zuf_err("[%ld] PTE fault not expected pgoff=0x%lx addr=0x%lx\n",
++			inode->i_ino, vmf->pgoff, addr);
++		/* Always PMD insert 2M chunks */
++		/* fall through */
++	case PE_SIZE_PMD:
++		bn = linear_page_index(vma, addr & PMD_MASK);
++		pfn = md_pfn(z_pmem->md, bn);
++		pfnt = phys_to_pfn_t(PFN_PHYS(pfn), PFN_MAP | PFN_DEV);
++		flt = vmf_insert_pfn_pmd(vmf, pfnt, true);
++		zuf_dbg_t1("[%ld] PMD pfn-0x%lx addr=0x%lx bn=0x%lx pgoff=0x%lx => %d\n",
++			inode->i_ino, pfn, addr, bn, vmf->pgoff, flt);
++		break;
++	default:
++		/* FIXME: Easily support PE_SIZE_PUD Just needs to align to
++		 * PUD_MASK at zufr_get_unmapped_area(). But this is hard today
++		 * because of the 2M nvdimm lib takes for its page flag
++		 * information with NFIT. (That need not be there in any which
++		 * case.)
++		 * Which means zufr_get_unmapped_area needs to return
++		 * a align1G+2M address start. and first 1G is map PMD size.
++		 * Very ugly, sigh.
++		 * One thing I do not understand why when the vma->vm_start is
++		 * not PUD aligned and faults requests index zero. Then system
++		 * asks for PE_SIZE_PUD anyway. say my 0 index is 1G aligned
++		 * vmf_insert_pfn_pud() will always fail because the aligned
++		 * vm_addr is outside the vma.
++		 */
++		flt = VM_FAULT_FALLBACK;
++		zuf_dbg_t1("[%ld] default? pgoff=0x%lx addr=0x%lx pe_size=0x%x => %d\n",
++			   inode->i_ino, vmf->pgoff, addr, pe_size, flt);
++	}
++
++	return flt;
++}
++
++static vm_fault_t t1_fault_pte(struct vm_fault *vmf)
++{
++	return t1_fault(vmf, PE_SIZE_PTE);
++}
++
++static const struct vm_operations_struct t1_vm_ops = {
++	.huge_fault	= t1_fault,
++	.fault		= t1_fault_pte,
++};
++
++int zuf_pmem_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	struct zuf_special_file *zsf = file->private_data;
++
++	if (!zsf || zsf->type != zlfs_e_pmem)
++		return -EPERM;
++
++	vma->vm_flags |= VM_HUGEPAGE;
++	vma->vm_ops = &t1_vm_ops;
++
++	zuf_dbg_vfs("[%ld] start=0x%lx end=0x%lx flags=0x%lx page_prot=0x%lx\n",
++		     file->f_mapping->host->i_ino, vma->vm_start, vma->vm_end,
++		     vma->vm_flags, pgprot_val(vma->vm_page_prot));
++
 +	return 0;
 +}
- 
- int zufc_zts_init(struct zuf_root_info *zri)
- {
-+	int c;
 +
-+	zri->_ztp = kcalloc(1, sizeof(struct zuf_threads_pool), GFP_KERNEL);
-+	if (unlikely(!zri->_ztp))
-+		return -ENOMEM;
+diff --git a/fs/zuf/t2.c b/fs/zuf/t2.c
+new file mode 100644
+index 000000000000..d293ce0ac249
+--- /dev/null
++++ b/fs/zuf/t2.c
+@@ -0,0 +1,356 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Tier-2 operations.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * ZUFS-License: GPL-2.0. See module.c for LICENSE details.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ */
 +
-+	spin_lock_init(&zri->_ztp->mount.lock);
-+	relay_init(&zri->_ztp->mount.relay);
 +
-+	zri->_ztp->_max_zts = num_possible_cpus();
-+	zri->_ztp->_max_channels = INITIAL_ZT_CHANNELS;
++#include <linux/bitops.h>
++#include <linux/bio.h>
 +
-+	for (c = 0; c < INITIAL_ZT_CHANNELS; ++c) {
-+		int err = _alloc_zts_channel(zri, c);
++#include "zuf.h"
 +
-+		if (unlikely(err))
-+			return err;
-+	}
++#define t2_warn zuf_warn
 +
- 	return 0;
- }
- 
- void zufc_zts_fini(struct zuf_root_info *zri)
- {
-+	int c;
++static const char *_pr_rw(int rw)
++{
++	return (rw & WRITE) ? "WRITE" : "READ";
++}
++#define t2_tis_dbg(tis, fmt, args ...) \
++	zuf_dbg_t2("%s: r=%d f=0x%lx " fmt, _pr_rw(tis->rw_flags),	       \
++		    atomic_read(&tis->refcount), tis->rw_flags, ##args)
 +
-+	/* Always safe/must call zufc_zts_fini */
-+	if (!zri->_ztp)
-+		return;
++#define t2_tis_dbg_rw(tis, fmt, args ...) \
++	zuf_dbg_t2_rw("%s<%p>: r=%d f=0x%lx " fmt, _pr_rw(tis->rw_flags),     \
++		    tis->priv, atomic_read(&tis->refcount), tis->rw_flags,\
++		    ##args)
 +
-+	for (c = 0; c < zri->_ztp->_max_channels; ++c) {
-+		if (zri->_ztp->_all_zt[c])
-+			free_percpu(zri->_ztp->_all_zt[c]);
-+	}
-+	kfree(zri->_ztp);
-+	zri->_ztp = NULL;
++/* ~~~~~~~~~~~~ Async read/write ~~~~~~~~~~ */
++void t2_io_begin(struct multi_devices *md, int rw, t2_io_done_fn done,
++		 void *priv, uint n_vects, struct t2_io_state *tis)
++{
++	atomic_set(&tis->refcount, 1);
++	tis->md = md;
++	tis->done = done;
++	tis->priv = priv;
++	tis->n_vects = min(n_vects ? n_vects : 1, (uint)BIO_MAX_PAGES);
++	tis->rw_flags = rw;
++	tis->last_t2 = -1;
++	tis->cur_bio = NULL;
++	tis->index = ~0;
++	bio_list_init(&tis->delayed_bios);
++	tis->err = 0;
++	blk_start_plug(&tis->plug);
++	t2_tis_dbg_rw(tis, "done=%pS n_vects=%d\n", done, n_vects);
 +}
 +
-+/* ~~~~ mounting ~~~~*/
-+int __zufc_dispatch_mount(struct zuf_root_info *zri,
-+			  enum e_mount_operation operation,
-+			  struct zufs_ioc_mount *zim)
++static void _tis_put(struct t2_io_state *tis)
 +{
-+	struct __mount_thread_info *zmt = &zri->_ztp->mount;
++	t2_tis_dbg_rw(tis, "done=%pS\n", tis->done);
 +
-+	zim->hdr.operation = operation;
-+	for (;;) {
-+		bool fss_waiting;
-+
-+		spin_lock(&zmt->lock);
-+
-+		if (unlikely(!zmt->zsf.file)) {
-+			spin_unlock(&zmt->lock);
-+			zuf_err("Server not up\n");
-+			zim->hdr.err = -EIO;
-+			return zim->hdr.err;
-+		}
-+
-+		fss_waiting = relay_is_fss_waiting_grab(&zmt->relay);
-+		if (fss_waiting)
-+			break;
-+		/* in case of break above spin_unlock is done inside
-+		 * relay_fss_wakeup_app_wait
-+		 */
-+
-+		spin_unlock(&zmt->lock);
-+
-+		/* It is OK to wait if user storms mounts */
-+		zuf_dbg_verbose("waiting\n");
-+		msleep(100);
-+	}
-+
-+	zmt->zim = zim;
-+	relay_fss_wakeup_app_wait_spin(&zmt->relay, &zmt->lock);
-+
-+	if (zim->hdr.err > 0) {
-+		zuf_err("[%s] Bad Server RC not negative => %d\n",
-+			zuf_op_name(zim->hdr.operation), zim->hdr.err);
-+		zim->hdr.err = -EBADRQC;
-+	}
-+	return zim->hdr.err;
++	if (test_bit(B_TIS_FREE_AFTER_WAIT, &tis->rw_flags))
++		wake_up_var(&tis->refcount);
++	else if (tis->done)
++		/* last - done may free the tis */
++		tis->done(tis, NULL, true);
 +}
 +
-+int zufc_dispatch_mount(struct zuf_root_info *zri, struct zus_fs_info *zus_zfi,
-+			enum e_mount_operation operation,
-+			struct zufs_ioc_mount *zim)
++static inline void tis_get(struct t2_io_state *tis)
 +{
-+	zim->hdr.out_len = sizeof(*zim);
-+	zim->hdr.in_len = sizeof(*zim);
-+	if (operation == ZUFS_M_MOUNT || operation == ZUFS_M_REMOUNT)
-+		zim->hdr.in_len += zim->zmi.po.mount_options_len;
-+	zim->zmi.zus_zfi = zus_zfi;
-+	zim->zmi.num_cpu = zri->_ztp->_max_zts;
-+	zim->zmi.num_channels = zri->_ztp->_max_channels;
-+
-+	return __zufc_dispatch_mount(zri, operation, zim);
++	atomic_inc(&tis->refcount);
 +}
 +
-+static int _zu_mount(struct file *file, void *parg)
++static inline int tis_put(struct t2_io_state *tis)
 +{
-+	struct super_block *sb = file->f_inode->i_sb;
-+	struct zuf_root_info *zri = ZRI(sb);
-+	struct __mount_thread_info *zmt = &zri->_ztp->mount;
-+	bool waiting_for_reply;
-+	struct zufs_ioc_mount *zim;
-+	ulong cp_ret;
-+	int err;
-+
-+	spin_lock(&zmt->lock);
-+
-+	if (unlikely(!file->private_data)) {
-+		/* First time register this file as the mount-thread owner */
-+		zmt->zsf.type = zlfs_e_mout_thread;
-+		zmt->zsf.file = file;
-+		file->private_data = &zmt->zsf;
-+		zri->state = ZUF_ROOT_MOUNT_READY;
-+	} else if (unlikely(file->private_data != zmt)) {
-+		spin_unlock(&zmt->lock);
-+		zuf_err("Say what?? %p != %p\n",
-+			file->private_data, zmt);
-+		return -EIO;
-+	}
-+
-+	zim = zmt->zim;
-+	zmt->zim = NULL;
-+	waiting_for_reply = zim && relay_is_app_waiting(&zmt->relay);
-+
-+	spin_unlock(&zmt->lock);
-+
-+	if (waiting_for_reply) {
-+		cp_ret = copy_from_user(zim, parg, zim->hdr.out_len);
-+		if (unlikely(cp_ret)) {
-+			zuf_err("copy_from_user => %ld\n", cp_ret);
-+			 zim->hdr.err = -EFAULT;
-+		}
-+
-+		relay_app_wakeup(&zmt->relay);
-+	}
-+
-+	/* This gets to sleep until a mount comes */
-+	err = relay_fss_wait(&zmt->relay);
-+	if (unlikely(err || !zmt->zim)) {
-+		struct zufs_ioc_hdr *hdr = parg;
-+
-+		/* Released by _zu_break INTER or crash */
-+		zuf_dbg_zus("_zu_break? %p => %d\n", zmt->zim, err);
-+		put_user(ZUFS_OP_BREAK, &hdr->operation);
-+		put_user(EIO, &hdr->err);
-+		return err;
-+	}
-+
-+	zim = zmt->zim;
-+	cp_ret = copy_to_user(parg, zim, zim->hdr.in_len);
-+	if (unlikely(cp_ret)) {
-+		err = -EFAULT;
-+		zuf_err("copy_to_user =>%ld\n", cp_ret);
-+	}
-+	return err;
-+}
-+
-+static void zufc_mounter_release(struct file *file)
-+{
-+	struct zuf_root_info *zri = ZRI(file->f_inode->i_sb);
-+	struct __mount_thread_info *zmt = &zri->_ztp->mount;
-+
-+	zuf_dbg_zus("closed fu=%d au=%d fw=%d aw=%d\n",
-+		  zmt->relay.fss_wakeup, zmt->relay.app_wakeup,
-+		  zmt->relay.fss_waiting, zmt->relay.app_waiting);
-+
-+	spin_lock(&zmt->lock);
-+	zmt->zsf.file = NULL;
-+	if (relay_is_app_waiting(&zmt->relay)) {
-+		zri->state = ZUF_ROOT_SERVER_FAILED;
-+		zuf_err("server emergency exit while IO\n");
-+		if (zmt->zim)
-+			zmt->zim->hdr.err = -EIO;
-+		spin_unlock(&zmt->lock);
-+
-+		relay_app_wakeup(&zmt->relay);
-+		msleep(1000); /* crap */
-+	} else {
-+		if (zmt->zim)
-+			zmt->zim->hdr.err = 0;
-+		spin_unlock(&zmt->lock);
-+	}
-+}
-+
-+/* ~~~~ ZU_IOC_NUMA_MAP ~~~~ */
-+static int _zu_numa_map(struct file *file, void *parg)
-+{
-+	struct zufs_ioc_numa_map *numa_map;
-+	int n_nodes = num_possible_nodes();
-+	uint *nodes_cpu_count;
-+	uint max_cpu_per_node = 0;
-+	uint alloc_size;
-+	int cpu, i, err;
-+
-+	alloc_size = sizeof(*numa_map) +
-+			(n_nodes * sizeof(numa_map->cpu_set_per_node[0]));
-+
-+	if ((n_nodes > 255) || (alloc_size > PAGE_SIZE)) {
-+		zuf_warn("!!!unexpected big machine with %d nodes alloc_size=0x%x\n",
-+			  n_nodes, alloc_size);
-+		return -ENOTSUPP;
-+	}
-+
-+	nodes_cpu_count = kcalloc(n_nodes, sizeof(uint), GFP_KERNEL);
-+	if (unlikely(!nodes_cpu_count))
-+		return -ENOMEM;
-+
-+	numa_map = kzalloc(alloc_size, GFP_KERNEL);
-+	if (unlikely(!numa_map)) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	numa_map->possible_nodes	= num_possible_nodes();
-+	numa_map->possible_cpus		= num_possible_cpus();
-+
-+	numa_map->online_nodes		= num_online_nodes();
-+	numa_map->online_cpus		= num_online_cpus();
-+
-+	for_each_online_cpu(cpu)
-+		set_bit(cpu, numa_map->cpu_set_per_node[cpu_to_node(cpu)].bits);
-+
-+	for_each_cpu(cpu, cpu_online_mask) {
-+		uint ctn  = cpu_to_node(cpu);
-+		uint ncc = ++nodes_cpu_count[ctn];
-+
-+		max_cpu_per_node = max(max_cpu_per_node, ncc);
-+	}
-+
-+	for (i = 1; i < n_nodes; ++i) {
-+		if (nodes_cpu_count[i] &&
-+		    (nodes_cpu_count[i] != nodes_cpu_count[0])) {
-+			zuf_info("@[%d]=%d Unbalanced CPU sockets @[0]=%d\n",
-+				  i, nodes_cpu_count[i], nodes_cpu_count[0]);
-+			numa_map->nodes_not_symmetrical = true;
-+			break;
-+		}
-+	}
-+
-+	numa_map->max_cpu_per_node = max_cpu_per_node;
-+
-+	zuf_dbg_verbose(
-+		"possible_nodes=%d possible_cpus=%d online_nodes=%d online_cpus=%d\n",
-+		numa_map->possible_nodes, numa_map->possible_cpus,
-+		numa_map->online_nodes, numa_map->online_cpus);
-+
-+	err = copy_to_user(parg, numa_map, alloc_size);
-+	kfree(numa_map);
-+out:
-+	kfree(nodes_cpu_count);
-+	return err;
-+}
-+
-+static void _prep_header_size_op(struct zufs_ioc_hdr *hdr,
-+				 enum e_zufs_operation op, int err)
-+{
-+	memset(hdr, 0, sizeof(*hdr));
-+	hdr->operation = op;
-+	hdr->in_len = sizeof(*hdr);
-+	hdr->err = err;
-+}
-+
-+/* ~~~~~ ZT thread operations ~~~~~ */
-+
-+static int _zu_init(struct file *file, void *parg)
-+{
-+	struct zufc_thread *zt;
-+	int cpu = smp_processor_id();
-+	struct zufs_ioc_init zi_init;
-+	int err;
-+
-+	err = copy_from_user(&zi_init, parg, sizeof(zi_init));
-+	if (unlikely(err)) {
-+		zuf_err("=>%d\n", err);
-+		return err;
-+	}
-+	if (unlikely(zi_init.channel_no >= ZUFS_MAX_ZT_CHANNELS)) {
-+		zuf_err("[%d] channel_no=%d\n", cpu, zi_init.channel_no);
-+		return -EINVAL;
-+	}
-+
-+	zuf_dbg_zus("[%d] channel=%d\n", cpu, zi_init.channel_no);
-+
-+	zt = _zt_from_cpu(ZRI(file->f_inode->i_sb), cpu, zi_init.channel_no);
-+	if (unlikely(!zt)) {
-+		zi_init.hdr.err = -ERANGE;
-+		zuf_err("_zt_from_cpu(%d, %d) => %d\n",
-+			cpu, zi_init.channel_no, err);
-+		goto out;
-+	}
-+
-+	if (unlikely(zt->hdr.file)) {
-+		zi_init.hdr.err = -EINVAL;
-+		zuf_err("[%d] !!! thread already set\n", cpu);
-+		goto out;
-+	}
-+
-+	relay_init(&zt->relay);
-+	zt->hdr.type = zlfs_e_zt;
-+	zt->hdr.file = file;
-+	zt->no = cpu;
-+	zt->chan = zi_init.channel_no;
-+
-+	zt->max_zt_command = zi_init.max_command;
-+	zt->opt_buff = vmalloc(zi_init.max_command);
-+	if (unlikely(!zt->opt_buff)) {
-+		zi_init.hdr.err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	file->private_data = &zt->hdr;
-+out:
-+	err = copy_to_user(parg, &zi_init, sizeof(zi_init));
-+	if (err)
-+		zuf_err("=>%d\n", err);
-+	return err;
-+}
-+
-+/* Caller checks that file->private_data != NULL */
-+static void zufc_zt_release(struct file *file)
-+{
-+	struct zuf_root_info *zri = ZRI(file->f_inode->i_sb);
-+	struct zufc_thread *zt = _zt_from_f_private(file);
-+
-+	if (unlikely(zt->hdr.file != file))
-+		zuf_err("What happened zt->file(%p) != file(%p)\n",
-+			zt->hdr.file, file);
-+
-+	zuf_dbg_zus("[%d] closed fu=%d au=%d fw=%d aw=%d\n",
-+		  zt->no, zt->relay.fss_wakeup, zt->relay.app_wakeup,
-+		  zt->relay.fss_waiting, zt->relay.app_waiting);
-+
-+	if (relay_is_app_waiting(&zt->relay)) {
-+		zuf_err("server emergency exit while IO\n");
-+
-+		/* NOTE: Do not call _unmap_pages the vma is gone */
-+		zt->hdr.file = NULL;
-+
-+		zri->state = ZUF_ROOT_SERVER_FAILED;
-+
-+		relay_app_wakeup(&zt->relay);
-+		msleep(1000); /* crap */
-+	}
-+
-+	vfree(zt->opt_buff);
-+	memset(zt, 0, sizeof(*zt));
-+}
-+
-+static int _map_pages(struct zufc_thread *zt, struct page **pages, uint nump,
-+		      bool map_readonly)
-+{
-+	int p, err;
-+
-+	if (!(zt->vma && pages && nump))
-+		return 0;
-+
-+	for (p = 0; p < nump; ++p) {
-+		ulong zt_addr = zt->vma->vm_start + p * PAGE_SIZE;
-+		ulong pfn = page_to_pfn(pages[p]);
-+		pfn_t pfnt = phys_to_pfn_t(PFN_PHYS(pfn), PFN_MAP | PFN_DEV);
-+		vm_fault_t flt;
-+
-+		if (map_readonly)
-+			flt = vmf_insert_mixed(zt->vma, zt_addr, pfnt);
-+		else
-+			flt = vmf_insert_mixed_mkwrite(zt->vma, zt_addr, pfnt);
-+		err = zuf_flt_to_err(flt);
-+		if (unlikely(err)) {
-+			zuf_err("zuf: remap_pfn_range => %d p=0x%x start=0x%lx\n",
-+				 err, p, zt->vma->vm_start);
-+			return err;
-+		}
++	if (atomic_dec_and_test(&tis->refcount)) {
++		_tis_put(tis);
++		return 1;
 +	}
 +	return 0;
 +}
 +
-+static void _unmap_pages(struct zufc_thread *zt, struct page **pages, uint nump)
++static int _status_to_errno(blk_status_t status)
 +{
-+	if (!(zt->vma && zt->zdo && pages && nump))
++	return blk_status_to_errno(status);
++}
++
++void t2_io_done(struct t2_io_state *tis, struct bio *bio, bool last)
++{
++	struct bio_vec *bv;
++	struct bvec_iter_all i;
++
++	if (!bio)
 +		return;
 +
-+	zt->zdo->pages = NULL;
-+	zt->zdo->nump = 0;
-+
-+	zap_vma_ptes(zt->vma, zt->vma->vm_start, nump * PAGE_SIZE);
++	bio_for_each_segment_all(bv, bio, i)
++		put_page(bv->bv_page);
 +}
 +
-+static int _copy_outputs(struct zufc_thread *zt, void *arg)
++static void _tis_bio_done(struct bio *bio)
 +{
-+	struct zufs_ioc_hdr *hdr = zt->zdo->hdr;
-+	struct zufs_ioc_hdr *user_hdr = zt->opt_buff;
++	struct t2_io_state *tis = bio->bi_private;
 +
-+	if (zt->opt_buff_vma->vm_start != (ulong)arg) {
-+		zuf_err("malicious Server\n");
-+		return -EINVAL;
++	t2_tis_dbg(tis, "done=%pS err=%d\n", tis->done, bio->bi_status);
++
++	if (unlikely(bio->bi_status)) {
++		zuf_dbg_err("%s: err=%d last-err=%d\n",
++			     _pr_rw(tis->rw_flags), bio->bi_status, tis->err);
++		/* Store the last one */
++		tis->err = _status_to_errno(bio->bi_status);
 +	}
 +
-+	/* Update on the user out_len and return-code */
-+	hdr->err = user_hdr->err;
-+	hdr->out_len = user_hdr->out_len;
-+
-+	if (!hdr->out_len)
-+		return 0;
-+
-+	if ((hdr->err == -EZUFS_RETRY && zt->zdo->oh) ||
-+	    (hdr->out_max < hdr->out_len)) {
-+		if (WARN_ON(!zt->zdo->oh)) {
-+			zuf_err("Trouble op(%s) out_max=%d out_len=%d\n",
-+				zuf_op_name(hdr->operation),
-+				hdr->out_max, hdr->out_len);
-+			return -EFAULT;
-+		}
-+		zuf_dbg_zus("[%s] %d %d => %d\n",
-+			    zuf_op_name(hdr->operation),
-+			    hdr->out_max, hdr->out_len, hdr->err);
-+		return zt->zdo->oh(zt->zdo, zt->opt_buff, zt->max_zt_command);
-+	} else {
-+		void *rply = (void *)hdr + hdr->out_start;
-+		void *from = zt->opt_buff + hdr->out_start;
-+
-+		memcpy(rply, from, hdr->out_len);
-+		return 0;
-+	}
-+}
-+
-+static int _zu_wait(struct file *file, void *parg)
-+{
-+	struct zufc_thread *zt;
-+	bool __chan_is_locked = false;
-+	int err;
-+
-+	zt = _zt_from_f_private(file);
-+	if (unlikely(!zt)) {
-+		zuf_err("Unexpected ZT state\n");
-+		err = -ERANGE;
-+		goto err;
-+	}
-+
-+	if (!zt->hdr.file || file != zt->hdr.file) {
-+		zuf_err("fatal\n");
-+		err = -E2BIG;
-+		goto err;
-+	}
-+	if (unlikely((ulong)parg != zt->opt_buff_vma->vm_start)) {
-+		zuf_err("fatal 2\n");
-+		err = -EINVAL;
-+		goto err;
-+	}
-+
-+	if (relay_is_app_waiting(&zt->relay)) {
-+		if (unlikely(!zt->zdo)) {
-+			zuf_err("User has gone...\n");
-+			err = -E2BIG;
-+			goto err;
-+		}
-+
-+		/* overflow_handler might decide to execute the parg here at
-+		 * zus context and return to server.
-+		 * If it also has an error to report to zus it will set
-+		 * zdo->hdr->err. EZUS_RETRY_DONE is when that happens.
-+		 * In this case pages stay mapped in zt->vma.
-+		 */
-+		err = _copy_outputs(zt, parg);
-+		if (err == EZUF_RETRY_DONE) {
-+			put_user(zt->zdo->hdr->err, (int *)parg);
-+			return 0;
-+		}
-+
-+		_unmap_pages(zt, zt->zdo->pages, zt->zdo->nump);
-+
-+		zt->zdo = NULL;
-+		if (unlikely(err)) /* _copy_outputs returned an err */
-+			goto err;
-+
-+		relay_app_wakeup(&zt->relay);
-+	}
-+
-+	err = __relay_fss_wait(&zt->relay, __chan_is_locked);
-+	if (err)
-+		zuf_dbg_err("[%d] relay error: %d\n", zt->no, err);
-+
-+	if (zt->zdo &&  zt->zdo->hdr &&
-+	    zt->zdo->hdr->operation != ZUFS_OP_BREAK &&
-+	    zt->zdo->hdr->operation < ZUFS_OP_MAX_OPT) {
-+		/* call map here at the zuf thread so we need no locks
-+		 * TODO: Currently only ZUFS_OP_WRITE protects user-buffers
-+		 * we should have a bit set in zt->zdo->hdr set per operation.
-+		 * TODO: Why this does not work?
-+		 */
-+		_map_pages(zt, zt->zdo->pages, zt->zdo->nump, 0);
-+	} else {
-+		/* This Means we were released by _zu_break */
-+		zuf_dbg_zus("_zu_break? => %d\n", err);
-+		_prep_header_size_op(zt->opt_buff, ZUFS_OP_BREAK, err);
-+	}
-+
-+	return err;
-+
-+err:
-+	put_user(err, (int *)parg);
-+	return err;
-+}
-+
-+static int _try_grab_zt_channel(struct zuf_root_info *zri, int cpu,
-+				 struct zufc_thread **ztp)
-+{
-+	struct zufc_thread *zt;
-+	int c;
-+
-+	for (c = 0; ; ++c) {
-+		zt = _zt_from_cpu(zri, cpu, c);
-+		if (unlikely(!zt || !zt->hdr.file))
-+			break;
-+
-+		if (relay_is_fss_waiting_grab(&zt->relay)) {
-+			*ztp = zt;
-+			return true;
-+		}
-+	}
-+
-+	*ztp = _zt_from_cpu(zri, cpu, 0);
-+	return false;
-+}
-+
-+#ifdef CONFIG_ZUF_DEBUG
-+#define DEBUG_CPU_SWITCH(cpu)		\
-+	do {					\
-+		int cpu2 = smp_processor_id();	\
-+		if (cpu2 != cpu)		\
-+			zuf_warn("App switched cpu1=%u cpu2=%u\n", \
-+				 cpu, cpu2);	\
-+	} while (0)
-+
-+static
-+int _r_zufs_dispatch(struct zuf_root_info *zri, struct zuf_dispatch_op *zdo)
-+
-+#else /* !CONFIG_ZUF_DEBUG */
-+#define DEBUG_CPU_SWITCH(cpu)
-+
-+int __zufc_dispatch(struct zuf_root_info *zri, struct zuf_dispatch_op *zdo)
-+#endif /* CONFIG_ZUF_DEBUG */
-+{
-+	struct task_struct *app = get_current();
-+	struct zufs_ioc_hdr *hdr = zdo->hdr;
-+	int cpu;
-+	struct zufc_thread *zt;
-+
-+	if (unlikely(zri->state == ZUF_ROOT_SERVER_FAILED))
-+		return -EIO;
-+
-+	if (unlikely(hdr->out_len && !hdr->out_max)) {
-+		/* TODO: Complain here and let caller code do this proper */
-+		hdr->out_max = hdr->out_len;
-+	}
-+
-+	if (unlikely(zdo->__locked_zt)) {
-+		zt = zdo->__locked_zt;
-+		zdo->__locked_zt = NULL;
-+
-+		cpu = get_cpu();
-+		/* FIXME: Very Pedantic need it stay */
-+		if (unlikely((zt->zdo != zdo) || cpu != zt->no)) {
-+			zuf_warn("[%ld] __locked_zt but zdo(%p != %p) || cpu(%d != %d)\n",
-+				 _zt_pr_no(zt), zt->zdo, zdo, cpu, zt->no);
-+			put_cpu();
-+			goto channel_busy;
-+		}
-+		goto has_channel;
-+	}
-+channel_busy:
-+	cpu = get_cpu();
-+
-+	if (!_try_grab_zt_channel(zri, cpu, &zt)) {
-+		put_cpu();
-+
-+		/* If channel was grabbed then maybe a break_all is in progress
-+		 * on a different CPU make sure zt->file on this core is
-+		 * updated
-+		 */
-+		mb();
-+		if (unlikely(!zt->hdr.file)) {
-+			zuf_err("[%d] !zt->file\n", cpu);
-+			return -EIO;
-+		}
-+		zuf_dbg_err("[%d] can this be\n", cpu);
-+		/* FIXME: Do something much smarter */
-+		msleep(10);
-+		if (signal_pending(get_current())) {
-+			zuf_dbg_err("[%d] => EINTR\n", cpu);
-+			return -EINTR;
-+		}
-+		goto channel_busy;
-+	}
-+
-+	/* lock app to this cpu while waiting */
-+	cpumask_copy(&zt->relay.cpus_allowed, &app->cpus_mask);
-+	cpumask_copy(&app->cpus_mask,  cpumask_of(smp_processor_id()));
-+
-+	zt->zdo = zdo;
-+
-+has_channel:
-+	if (zdo->dh)
-+		zdo->dh(zdo, zt, zt->opt_buff);
++	if (tis->done)
++		tis->done(tis, bio, false);
 +	else
-+		memcpy(zt->opt_buff, zt->zdo->hdr, zt->zdo->hdr->in_len);
++		t2_io_done(tis, bio, false);
 +
-+	put_cpu();
-+
-+	if (relay_fss_wakeup_app_wait(&zt->relay) == -ERESTARTSYS) {
-+		struct zufs_ioc_hdr *opt_hdr = zt->opt_buff;
-+
-+		opt_hdr->flags |= ZUFS_H_INTR;
-+
-+		relay_fss_wakeup_app_wait_cont(&zt->relay);
-+	}
-+
-+	/* __locked_zt must be kept on same cpu */
-+	if (!zdo->__locked_zt)
-+		/* restore cpu affinity after wakeup */
-+		cpumask_copy(&app->cpus_mask, &zt->relay.cpus_allowed);
-+
-+	DEBUG_CPU_SWITCH(cpu);
-+
-+	return zt->hdr.file ? hdr->err : -EIO;
++	bio_put(bio);
++	tis_put(tis);
 +}
 +
-+#ifdef CONFIG_ZUF_DEBUG
-+#define MAX_ZT_SEC 7
-+int __zufc_dispatch(struct zuf_root_info *zri, struct zuf_dispatch_op *zdo)
++static bool _tis_delay(struct t2_io_state *tis)
 +{
-+	u64 t1, t2;
-+	int err;
-+
-+	t1 = ktime_get_ns();
-+	err = _r_zufs_dispatch(zri, zdo);
-+	t2 = ktime_get_ns();
-+
-+	if ((t2 - t1) > MAX_ZT_SEC * NSEC_PER_SEC)
-+		zuf_err("zufc_dispatch(%s, [0x%x-0x%x]) took %lld sec\n",
-+			zuf_op_name(zdo->hdr->operation), zdo->hdr->offset,
-+			zdo->hdr->len,
-+			(t2 - t1) / NSEC_PER_SEC);
-+
-+	return err;
-+}
-+#endif /* def CONFIG_ZUF_DEBUG */
-+
-+/* ~~~ iomap_exec && exec_buffer allocation ~~~ */
-+
-+struct zu_exec_buff {
-+	struct zuf_special_file hdr;
-+	struct vm_area_struct *vma;
-+	void *opt_buff;
-+	ulong alloc_size;
-+};
-+
-+/* Do some common checks and conversions */
-+static inline struct zu_exec_buff *_ebuff_from_file(struct file *file)
-+{
-+	struct zu_exec_buff *ebuff = file->private_data;
-+
-+	if (WARN_ON_ONCE(ebuff->hdr.type != zlfs_e_dpp_buff)) {
-+		zuf_err("Must call ZU_IOC_ALLOC_BUFFER first\n");
-+		return NULL;
-+	}
-+
-+	if (WARN_ON_ONCE(ebuff->hdr.file != file))
-+		return NULL;
-+
-+	return ebuff;
++	return 0 != (tis->rw_flags & TIS_DELAY_SUBMIT);
 +}
 +
-+static int _zu_ebuff_alloc(struct file *file, void *arg)
++#define bio_list_for_each_safe(bio, btmp, bl)				\
++	for (bio = (bl)->head,	btmp = bio ? bio->bi_next : NULL;	\
++	     bio; bio = btmp,	btmp = bio ? bio->bi_next : NULL)
++
++static void _tis_submit_bio(struct t2_io_state *tis, bool flush, bool done)
 +{
-+	struct zufs_ioc_alloc_buffer ioc_alloc;
-+	struct zu_exec_buff *ebuff;
-+	int err;
++	if (flush || done) {
++		if (_tis_delay(tis)) {
++			struct bio *btmp, *bio;
 +
-+	err = copy_from_user(&ioc_alloc, arg, sizeof(ioc_alloc));
-+	if (unlikely(err)) {
-+		zuf_err("=>%d\n", err);
-+		return err;
++			bio_list_for_each_safe(bio, btmp, &tis->delayed_bios) {
++				bio->bi_next = NULL;
++				if (bio->bi_iter.bi_sector == -1) {
++					t2_warn("!!!!!!!!!!!!!\n");
++					bio_put(bio);
++					continue;
++				}
++				t2_tis_dbg(tis, "submit bio[%d] max_v=%d\n",
++					    bio->bi_vcnt, tis->n_vects);
++				submit_bio(bio);
++			}
++			bio_list_init(&tis->delayed_bios);
++		}
++
++		if (!tis->cur_bio)
++			return;
++
++		if (tis->cur_bio->bi_iter.bi_sector != -1) {
++			t2_tis_dbg(tis, "submit bio[%d] max_v=%d\n",
++				    tis->cur_bio->bi_vcnt, tis->n_vects);
++			submit_bio(tis->cur_bio);
++			tis->cur_bio = NULL;
++			tis->index = ~0;
++		} else if (done) {
++			t2_tis_dbg(tis, "put cur_bio=%p\n", tis->cur_bio);
++			bio_put(tis->cur_bio);
++			WARN_ON(tis_put(tis));
++		}
++	} else if (tis->cur_bio && (tis->cur_bio->bi_iter.bi_sector != -1)) {
++		/* Not flushing regular progress */
++		if (_tis_delay(tis)) {
++			t2_tis_dbg(tis, "list_add cur_bio=%p\n", tis->cur_bio);
++			bio_list_add(&tis->delayed_bios, tis->cur_bio);
++		} else {
++			t2_tis_dbg(tis, "submit bio[%d] max_v=%d\n",
++				    tis->cur_bio->bi_vcnt, tis->n_vects);
++			submit_bio(tis->cur_bio);
++		}
++		tis->cur_bio = NULL;
++		tis->index = ~0;
++	}
++}
++
++/* tis->cur_bio MUST be NULL, checked by caller */
++static void _tis_alloc(struct t2_io_state *tis, struct md_dev_info *mdi,
++		       gfp_t gfp)
++{
++	struct bio *bio = bio_alloc(gfp, tis->n_vects);
++	int bio_op;
++
++	if (unlikely(!bio)) {
++		if (!_tis_delay(tis))
++			t2_warn("!!! failed to alloc bio");
++		tis->err = -ENOMEM;
++		return;
 +	}
 +
-+	if (ioc_alloc.init_size > ioc_alloc.max_size)
-+		return -EINVAL;
-+
-+	/* TODO: Easily Support growing */
-+	/* TODO: Support global pools, also easy */
-+	if (ioc_alloc.pool_no || ioc_alloc.init_size != ioc_alloc.max_size)
-+		return -ENOTSUPP;
-+
-+	ebuff = kzalloc(sizeof(*ebuff), GFP_KERNEL);
-+	if (unlikely(!ebuff))
-+		return -ENOMEM;
-+
-+	ebuff->hdr.type = zlfs_e_dpp_buff;
-+	ebuff->hdr.file = file;
-+	i_size_write(file->f_inode, ioc_alloc.max_size);
-+	ebuff->alloc_size =  ioc_alloc.init_size;
-+	ebuff->opt_buff = vmalloc(ioc_alloc.init_size);
-+	if (unlikely(!ebuff->opt_buff)) {
-+		kfree(ebuff);
-+		return -ENOMEM;
++	if (WARN_ON(!tis || !tis->md)) {
++		tis->err = -ENOMEM;
++		return;
 +	}
 +
-+	file->private_data = &ebuff->hdr;
++	/* FIXME: bio_set_op_attrs macro has a BUG which does not allow this
++	 * question inline.
++	 */
++	bio_op = (tis->rw_flags & WRITE) ? REQ_OP_WRITE : REQ_OP_READ;
++	bio_set_op_attrs(bio, bio_op, 0);
++
++	bio->bi_iter.bi_sector = -1;
++	bio->bi_end_io = _tis_bio_done;
++	bio->bi_private = tis;
++
++	if (mdi) {
++		bio_set_dev(bio, mdi->bdev);
++		tis->index = mdi->index;
++	} else {
++		tis->index = ~0;
++	}
++	tis->last_t2 = -1;
++	tis->cur_bio = bio;
++	tis_get(tis);
++	t2_tis_dbg(tis, "New bio n_vects=%d\n", tis->n_vects);
++}
++
++int t2_io_prealloc(struct t2_io_state *tis, uint n_vects)
++{
++	tis->err = 0; /* reset any -ENOMEM from a previous t2_io_add */
++
++	_tis_submit_bio(tis, true, false);
++	tis->n_vects = min(n_vects ? n_vects : 1, (uint)BIO_MAX_PAGES);
++
++	t2_tis_dbg(tis, "n_vects=%d cur_bio=%p\n", tis->n_vects, tis->cur_bio);
++
++	if (!tis->cur_bio)
++		_tis_alloc(tis, NULL, GFP_NOFS);
++	return tis->err;
++}
++
++int t2_io_add(struct t2_io_state *tis, ulong t2, struct page *page)
++{
++	struct md_dev_info *mdi;
++	ulong local_t2;
++	int ret;
++
++	if (t2 > md_t2_blocks(tis->md)) {
++		zuf_err("bad t2 (0x%lx) offset\n", t2);
++		return -EFAULT;
++	}
++	get_page(page);
++
++	mdi = md_bn_t2_dev(tis->md, t2);
++	WARN_ON(!mdi);
++
++	if (unlikely(!mdi->bdev)) {
++		zuf_err("mdi->bdev == NULL!! t2=0x%lx\n", t2);
++		return -EFAULT;
++	}
++
++	local_t2 = md_t2_local_bn(tis->md, t2);
++	if (((local_t2 != (tis->last_t2 + 1)) && (tis->last_t2 != -1)) ||
++	   ((0 < tis->index) && (tis->index != mdi->index)))
++		_tis_submit_bio(tis, false, false);
++
++start:
++	if (!tis->cur_bio) {
++		_tis_alloc(tis, mdi, _tis_delay(tis) ? GFP_ATOMIC : GFP_NOFS);
++		if (unlikely(tis->err)) {
++			put_page(page);
++			return tis->err;
++		}
++	} else if (tis->index == ~0) {
++		/* the bio was allocated during t2_io_prealloc */
++		tis->index = mdi->index;
++		bio_set_dev(tis->cur_bio, mdi->bdev);
++	}
++
++	if (tis->last_t2 == -1)
++		tis->cur_bio->bi_iter.bi_sector =
++						local_t2 * T2_SECTORS_PER_PAGE;
++
++	ret = bio_add_page(tis->cur_bio, page, PAGE_SIZE, 0);
++	if (unlikely(ret != PAGE_SIZE)) {
++		t2_tis_dbg(tis, "bio_add_page=>%d bi_vcnt=%d n_vects=%d\n",
++			   ret, tis->cur_bio->bi_vcnt, tis->n_vects);
++		_tis_submit_bio(tis, false, false);
++		goto start; /* device does not support tis->n_vects */
++	}
++
++	if ((tis->cur_bio->bi_vcnt == tis->n_vects) && (tis->n_vects != 1))
++		_tis_submit_bio(tis, false, false);
++
++	t2_tis_dbg(tis, "t2=0x%lx last_t2=0x%lx local_t2=0x%lx t1=0x%lx\n",
++		   t2, tis->last_t2, local_t2, md_page_to_bn(tis->md, page));
++
++	tis->last_t2 = local_t2;
 +	return 0;
 +}
 +
-+static void zufc_ebuff_release(struct file *file)
++int t2_io_end(struct t2_io_state *tis, bool wait)
 +{
-+	struct zu_exec_buff *ebuff = _ebuff_from_file(file);
++	if (unlikely(!tis || !tis->md))
++		return 0; /* never initialized nothing to do */
 +
-+	if (unlikely(!ebuff))
-+		return;
++	t2_tis_dbg_rw(tis, "wait=%d\n", wait);
 +
-+	vfree(ebuff->opt_buff);
-+	ebuff->hdr.type = 0;
-+	ebuff->hdr.file = NULL; /* for none-dbg Kernels && use-after-free */
-+	kfree(ebuff);
-+}
++	_tis_submit_bio(tis, true, true);
++	blk_finish_plug(&tis->plug);
 +
-+/* ~~~~ ioctl & release handlers ~~~~ */
-+static int _zu_register_fs(struct file *file, void *parg)
-+{
-+	struct zufs_ioc_register_fs rfs;
-+	int err;
++	if (wait)
++		set_bit(B_TIS_FREE_AFTER_WAIT, &tis->rw_flags);
++	tis_put(tis);
 +
-+	err = copy_from_user(&rfs, parg, sizeof(rfs));
-+	if (unlikely(err)) {
-+		zuf_err("=>%d\n", err);
-+		return err;
++	if (wait) {
++		wait_var_event(&tis->refcount, !atomic_read(&tis->refcount));
++		if (tis->done)
++			tis->done(tis, NULL, true);
 +	}
 +
-+	err = zufr_register_fs(file->f_inode->i_sb, &rfs);
++	return tis->err;
++}
++
++/* ~~~~~~~ Sync read/write ~~~~~~~ TODO: Remove soon */
++static int _sync_io_page(struct multi_devices *md, int rw, ulong bn,
++			 struct page *page)
++{
++	struct t2_io_state tis;
++	int err;
++
++	t2_io_begin(md, rw, NULL, NULL, 1, &tis);
++
++	t2_tis_dbg((&tis), "bn=0x%lx p-i=0x%lx\n", bn, page->index);
++
++	err = t2_io_add(&tis, bn, page);
++	if (unlikely(err))
++		return err;
++
++	err = submit_bio_wait(tis.cur_bio);
++	if (unlikely(err)) {
++		SetPageError(page);
++		/*
++		 * We failed to write the page out to tier-2.
++		 * Print a dire warning that things will go BAD (tm)
++		 * very quickly.
++		 */
++		zuf_err("io-error bn=0x%lx => %d\n", bn, err);
++	}
++
++	/* Same as t2_io_end+_tis_bio_done but without the kref stuff */
++	blk_finish_plug(&tis.plug);
++	put_page(page);
++	if (likely(tis.cur_bio))
++		bio_put(tis.cur_bio);
++
++	return err;
++}
++
++int t2_writepage(struct multi_devices *md, ulong bn, struct page *page)
++{
++	return _sync_io_page(md, WRITE, bn, page);
++}
++
++int t2_readpage(struct multi_devices *md, ulong bn, struct page *page)
++{
++	return _sync_io_page(md, READ, bn, page);
++}
+diff --git a/fs/zuf/t2.h b/fs/zuf/t2.h
+new file mode 100644
+index 000000000000..cbd23dd409eb
+--- /dev/null
++++ b/fs/zuf/t2.h
+@@ -0,0 +1,68 @@
++/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
++/*
++ * Tier-2 Header file.
++ *
++ * Copyright (c) 2018 NetApp Inc. All rights reserved.
++ *
++ * Authors:
++ *	Boaz Harrosh <boazh@netapp.com>
++ */
++
++#ifndef __T2_H__
++#define __T2_H__
++
++#include <linux/blkdev.h>
++#include <linux/fs.h>
++#include <linux/bio.h>
++#include <linux/kref.h>
++#include "md.h"
++
++#define T2_SECTORS_PER_PAGE	(PAGE_SIZE / 512)
++
++/* t2.c */
++
++/* Sync read/write */
++int t2_writepage(struct multi_devices *md, ulong bn, struct page *page);
++int t2_readpage(struct multi_devices *md, ulong bn, struct page *page);
++
++/* Async read/write */
++struct t2_io_state;
++typedef void (*t2_io_done_fn)(struct t2_io_state *tis, struct bio *bio,
++			      bool last);
++
++struct t2_io_state {
++	atomic_t refcount; /* counts in-flight bios */
++	struct blk_plug plug;
++
++	struct multi_devices	*md;
++	int		index;
++	t2_io_done_fn	done;
++	void		*priv;
++
++	uint		n_vects;
++	ulong		rw_flags;
++	ulong		last_t2;
++	struct bio	*cur_bio;
++	struct bio_list	delayed_bios;
++	int		err;
++};
++
++/* For rw_flags above */
++/* From Kernel: WRITE		(1U << 0) */
++#define TIS_DELAY_SUBMIT	(1U << 2)
++enum {B_TIS_FREE_AFTER_WAIT = 3};
++#define TIS_FREE_AFTER_WAIT	(1U << B_TIS_FREE_AFTER_WAIT)
++#define TIS_USER_DEF_FIRST	(1U << 8)
++
++void t2_io_begin(struct multi_devices *md, int rw, t2_io_done_fn done,
++		 void *priv, uint n_vects, struct t2_io_state *tis);
++int t2_io_prealloc(struct t2_io_state *tis, uint n_vects);
++int t2_io_add(struct t2_io_state *tis, ulong t2, struct page *page);
++int t2_io_end(struct t2_io_state *tis, bool wait);
++
++/* This is done by default if t2_io_done_fn above is NULL
++ * Can also be chain-called by users.
++ */
++void t2_io_done(struct t2_io_state *tis, struct bio *bio, bool last);
++
++#endif /*def __T2_H__*/
+diff --git a/fs/zuf/zuf-core.c b/fs/zuf/zuf-core.c
+index 60f0d3ffe562..cc49cfa95244 100644
+--- a/fs/zuf/zuf-core.c
++++ b/fs/zuf/zuf-core.c
+@@ -359,6 +359,78 @@ static int _zu_numa_map(struct file *file, void *parg)
+ 	return err;
+ }
+ 
++/* ~~~~ PMEM GRAB ~~~~ */
++/*FIXME: At pmem the struct md_dev_list for t1(s) is not properly set
++ * For now we do not fix it and re-write the mdt. So just fix the one
++ * we are about to send to Server
++ */
++static void _fix_numa_ids(struct multi_devices *md, struct md_dev_list *mdl)
++{
++	int i;
++
++	for (i = 0; i < md->t1_count; ++i)
++		if (md->devs[i].nid != __dev_id_nid(&mdl->dev_ids[i]))
++			__dev_id_nid_set(&mdl->dev_ids[i], md->devs[i].nid);
++}
++
++static int _zu_grab_pmem(struct file *file, void *parg)
++{
++	struct zuf_root_info *zri = ZRI(file->f_inode->i_sb);
++	struct zufs_ioc_pmem __user *arg_pmem = parg;
++	struct zufs_ioc_pmem *zi_pmem = kzalloc(sizeof(*zi_pmem), GFP_KERNEL);
++	struct super_block *sb;
++	struct zuf_sb_info *sbi;
++	size_t pmem_size;
++	int err;
++
++	if (unlikely(!zi_pmem))
++		return -ENOMEM;
++
++	err = get_user(zi_pmem->sb_id, &arg_pmem->sb_id);
++	if (err) {
++		zuf_err("\n");
++		goto out;
++	}
++
++	sb = zuf_sb_from_id(zri, zi_pmem->sb_id, NULL);
++	if (unlikely(!sb)) {
++		err = -ENODEV;
++		zuf_err("!!! pmem_kern_id=%llu not found\n", zi_pmem->sb_id);
++		goto out;
++	}
++	sbi = SBI(sb);
++
++	if (sbi->pmem.hdr.file) {
++		zuf_err("[%llu] pmem already taken\n", zi_pmem->sb_id);
++		err = -EIO;
++		goto out;
++	}
++
++	memcpy(&zi_pmem->mdt, md_zdt(sbi->md), sizeof(zi_pmem->mdt));
++	zi_pmem->dev_index = sbi->md->dev_index;
++	_fix_numa_ids(sbi->md, &zi_pmem->mdt.s_dev_list);
++
++	pmem_size = md_p2o(md_t1_blocks(sbi->md));
++	if (mdt_test_option(md_zdt(sbi->md), MDT_F_SHADOW))
++		pmem_size += pmem_size;
++	i_size_write(file->f_inode, pmem_size);
++	sbi->pmem.hdr.type = zlfs_e_pmem;
++	sbi->pmem.hdr.file = file;
++	sbi->pmem.md = sbi->md; /* FIXME: Use container_of in t1.c */
++	file->private_data = &sbi->pmem.hdr;
++	zuf_dbg_core("pmem %llu i_size=0x%llx GRABED %s\n",
++		     zi_pmem->sb_id, i_size_read(file->f_inode),
++		     _bdev_name(md_t1_dev(sbi->md, 0)->bdev));
++
++out:
++	zi_pmem->hdr.err = err;
++	err = copy_to_user(parg, zi_pmem, sizeof(*zi_pmem));
 +	if (err)
 +		zuf_err("=>%d\n", err);
-+	err = put_user(err, (int *)parg);
++	kfree(zi_pmem);
 +	return err;
 +}
 +
-+static int _zu_break(struct file *filp, void *parg)
-+{
-+	struct zuf_root_info *zri = ZRI(filp->f_inode->i_sb);
-+	int i, c;
-+
-+	zuf_dbg_core("enter\n");
-+	mb(); /* TODO how to schedule on all CPU's */
-+
-+	for (i = 0; i < zri->_ztp->_max_zts; ++i) {
-+		if (unlikely(!cpu_active(i)))
-+			continue;
-+		for (c = 0; c < zri->_ztp->_max_channels; ++c) {
-+			struct zufc_thread *zt = _zt_from_cpu(zri, i, c);
-+
-+			if (unlikely(!(zt && zt->hdr.file)))
-+				continue;
-+			relay_fss_wakeup(&zt->relay);
-+		}
-+	}
-+
-+	if (zri->_ztp->mount.zsf.file)
-+		relay_fss_wakeup(&zri->_ztp->mount.relay);
-+
-+	zuf_dbg_core("exit\n");
-+	return 0;
- }
- 
- long zufc_ioctl(struct file *file, unsigned int cmd, ulong arg)
+ static void _prep_header_size_op(struct zufs_ioc_hdr *hdr,
+ 				 enum e_zufs_operation op, int err)
  {
-+	void __user *parg = (void __user *)arg;
-+
- 	switch (cmd) {
-+	case ZU_IOC_REGISTER_FS:
-+		return _zu_register_fs(file, parg);
-+	case ZU_IOC_MOUNT:
-+		return _zu_mount(file, parg);
-+	case ZU_IOC_NUMA_MAP:
-+		return _zu_numa_map(file, parg);
-+	case ZU_IOC_INIT_THREAD:
-+		return _zu_init(file, parg);
-+	case ZU_IOC_WAIT_OPT:
-+		return _zu_wait(file, parg);
-+	case ZU_IOC_ALLOC_BUFFER:
-+		return _zu_ebuff_alloc(file, parg);
-+	case ZU_IOC_BREAK_ALL:
-+		return _zu_break(file, parg);
- 	default:
--		zuf_err("%d\n", cmd);
-+		zuf_err("%d %ld\n", cmd, ZU_IOC_WAIT_OPT);
- 		return -ENOTTY;
- 	}
- }
-@@ -47,11 +908,221 @@ int zufc_release(struct inode *inode, struct file *file)
- 		return 0;
- 
+@@ -886,6 +958,8 @@ long zufc_ioctl(struct file *file, unsigned int cmd, ulong arg)
+ 		return _zu_mount(file, parg);
+ 	case ZU_IOC_NUMA_MAP:
+ 		return _zu_numa_map(file, parg);
++	case ZU_IOC_GRAB_PMEM:
++		return _zu_grab_pmem(file, parg);
+ 	case ZU_IOC_INIT_THREAD:
+ 		return _zu_init(file, parg);
+ 	case ZU_IOC_WAIT_OPT:
+@@ -1135,6 +1209,8 @@ int zufc_mmap(struct file *file, struct vm_area_struct *vma)
  	switch (zsf->type) {
-+	case zlfs_e_zt:
-+		zufc_zt_release(file);
-+		return 0;
-+	case zlfs_e_mout_thread:
-+		zufc_mounter_release(file);
-+		return 0;
+ 	case zlfs_e_zt:
+ 		return zufc_zt_mmap(file, vma);
 +	case zlfs_e_pmem:
-+		/* NOTHING to clean for pmem file yet */
-+		/* zuf_pmem_release(file);*/
-+		return 0;
-+	case zlfs_e_dpp_buff:
-+		zufc_ebuff_release(file);
-+		return 0;
++		return zuf_pmem_mmap(file, vma);
+ 	case zlfs_e_dpp_buff:
+ 		return zufc_ebuff_mmap(file, vma);
  	default:
- 		return 0;
- 	}
- }
- 
-+/* ~~~~  mmap area of app buffers into server ~~~~ */
-+
-+static vm_fault_t zuf_zt_fault(struct vm_fault *vmf)
-+{
-+	zuf_err("should not fault pgoff=0x%lx\n", vmf->pgoff);
-+	return VM_FAULT_SIGBUS;
-+}
-+
-+static const struct vm_operations_struct zuf_vm_ops = {
-+	.fault		= zuf_zt_fault,
-+};
-+
-+static int _zufc_zt_mmap(struct file *file, struct vm_area_struct *vma,
-+			 struct zufc_thread *zt)
-+{
-+	/* VM_PFNMAP for zap_vma_ptes() Careful! */
-+	vma->vm_flags |= VM_PFNMAP;
-+	vma->vm_ops = &zuf_vm_ops;
-+
-+	zt->vma = vma;
-+
-+	zuf_dbg_core(
-+		"[0x%lx] start=0x%lx end=0x%lx flags=0x%lx file-start=0x%lx\n",
-+		_zt_pr_no(zt), vma->vm_start, vma->vm_end, vma->vm_flags,
-+		vma->vm_pgoff);
-+
-+	return 0;
-+}
-+
-+/* ~~~~  mmap the Kernel allocated IOCTL buffer per ZT ~~~~ */
-+static int _opt_buff_mmap(struct vm_area_struct *vma, void *opt_buff,
-+			  ulong opt_size)
-+{
-+	ulong offset;
-+
-+	if (!opt_buff)
-+		return -ENOMEM;
-+
-+	for (offset = 0; offset < opt_size; offset += PAGE_SIZE) {
-+		ulong addr = vma->vm_start + offset;
-+		ulong pfn = vmalloc_to_pfn(opt_buff +  offset);
-+		pfn_t pfnt = phys_to_pfn_t(PFN_PHYS(pfn), PFN_MAP | PFN_DEV);
-+		int err;
-+
-+		zuf_dbg_verbose("[0x%lx] pfn-0x%lx addr=0x%lx buff=0x%lx\n",
-+				offset, pfn, addr, (ulong)opt_buff + offset);
-+
-+		err = zuf_flt_to_err(vmf_insert_mixed_mkwrite(vma, addr, pfnt));
-+		if (unlikely(err)) {
-+			zuf_err("zuf: zuf_insert_mixed_mkwrite => %d offset=0x%lx addr=0x%lx\n",
-+				 err, offset, addr);
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static vm_fault_t zuf_obuff_fault(struct vm_fault *vmf)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct zufc_thread *zt = _zt_from_f_private(vma->vm_file);
-+	long offset = (vmf->pgoff << PAGE_SHIFT) - ZUS_API_MAP_MAX_SIZE;
-+	int err;
-+
-+	zuf_dbg_core(
-+		"[0x%lx] start=0x%lx end=0x%lx file-start=0x%lx offset=0x%lx\n",
-+		_zt_pr_no(zt), vma->vm_start, vma->vm_end, vma->vm_pgoff,
-+		offset);
-+
-+	/* if Server overruns its buffer crash it dead */
-+	if (unlikely((offset < 0) || (zt->max_zt_command < offset))) {
-+		zuf_err("[0x%lx] start=0x%lx end=0x%lx file-start=0x%lx offset=0x%lx\n",
-+			_zt_pr_no(zt), vma->vm_start,
-+			vma->vm_end, vma->vm_pgoff, offset);
-+		return VM_FAULT_SIGBUS;
-+	}
-+
-+	/* We never released a zus-core.c that does not fault the
-+	 * first page first. I want to see if this happens
-+	 */
-+	if (unlikely(offset))
-+		zuf_warn("Suspicious server activity\n");
-+
-+	/* This faults only once at very first access */
-+	err = _opt_buff_mmap(vma, zt->opt_buff, zt->max_zt_command);
-+	if (unlikely(err))
-+		return VM_FAULT_SIGBUS;
-+
-+	return VM_FAULT_NOPAGE;
-+}
-+
-+static const struct vm_operations_struct zuf_obuff_ops = {
-+	.fault		= zuf_obuff_fault,
-+};
-+
-+static int _zufc_obuff_mmap(struct file *file, struct vm_area_struct *vma,
-+			    struct zufc_thread *zt)
-+{
-+	vma->vm_flags |= VM_PFNMAP;
-+	vma->vm_ops = &zuf_obuff_ops;
-+
-+	zt->opt_buff_vma = vma;
-+
-+	zuf_dbg_core(
-+		"[0x%lx] start=0x%lx end=0x%lx flags=0x%lx file-start=0x%lx\n",
-+		_zt_pr_no(zt), vma->vm_start, vma->vm_end, vma->vm_flags,
-+		vma->vm_pgoff);
-+
-+	return 0;
-+}
-+
-+/* ~~~ */
-+
-+static int zufc_zt_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	struct zufc_thread *zt = _zt_from_f_private(file);
-+
-+	/* We have two areas of mmap in this special file.
-+	 * 0 to ZUS_API_MAP_MAX_SIZE:
-+	 *	The first part where app pages are mapped
-+	 *	into server per operation.
-+	 * ZUS_API_MAP_MAX_SIZE of size zuf_root_info->max_zt_command
-+	 *	Is where we map the per ZT ioctl-buffer, later passed
-+	 *	to the zus_ioc_wait IOCTL call
-+	 */
-+	if (vma->vm_pgoff == ZUS_API_MAP_MAX_SIZE / PAGE_SIZE)
-+		return _zufc_obuff_mmap(file, vma, zt);
-+
-+	/* zuf ZT API is very particular about where in its
-+	 * special file we communicate
-+	 */
-+	if (unlikely(vma->vm_pgoff))
-+		return -EINVAL;
-+
-+	return _zufc_zt_mmap(file, vma, zt);
-+}
-+
-+/* ~~~~ Implementation of the ZU_IOC_ALLOC_BUFFER mmap facility ~~~~ */
-+
-+static vm_fault_t zuf_ebuff_fault(struct vm_fault *vmf)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct zu_exec_buff *ebuff = _ebuff_from_file(vma->vm_file);
-+	long offset = (vmf->pgoff << PAGE_SHIFT);
-+	int err;
-+
-+	zuf_dbg_core("start=0x%lx end=0x%lx file-start=0x%lx file-off=0x%lx\n",
-+		     vma->vm_start, vma->vm_end, vma->vm_pgoff, offset);
-+
-+	if (unlikely(!ebuff))
-+		return VM_FAULT_SIGBUS;
-+
-+	/* if Server overruns its buffer crash it dead */
-+	if (unlikely((offset < 0) || (ebuff->alloc_size < offset))) {
-+		zuf_err("start=0x%lx end=0x%lx file-start=0x%lx file-off=0x%lx\n",
-+			vma->vm_start, vma->vm_end, vma->vm_pgoff,
-+			offset);
-+		return VM_FAULT_SIGBUS;
-+	}
-+
-+	/* We never released a zus-core.c that does not fault the
-+	 * first page first. I want to see if this happens
-+	 */
-+	if (unlikely(offset))
-+		zuf_warn("Suspicious server activity\n");
-+
-+	/* This faults only once at very first access */
-+	err = _opt_buff_mmap(vma, ebuff->opt_buff, ebuff->alloc_size);
-+	if (unlikely(err))
-+		return VM_FAULT_SIGBUS;
-+
-+	return VM_FAULT_NOPAGE;
-+}
-+
-+static const struct vm_operations_struct zuf_ebuff_ops = {
-+	.fault		= zuf_ebuff_fault,
-+};
-+
-+static int zufc_ebuff_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	struct zu_exec_buff *ebuff = _ebuff_from_file(vma->vm_file);
-+
-+	if (unlikely(!ebuff))
-+		return -EINVAL;
-+
-+	vma->vm_flags |= VM_PFNMAP;
-+	vma->vm_ops = &zuf_ebuff_ops;
-+
-+	ebuff->vma = vma;
-+
-+	zuf_dbg_core("start=0x%lx end=0x%lx flags=0x%lx file-start=0x%lx\n",
-+		      vma->vm_start, vma->vm_end, vma->vm_flags, vma->vm_pgoff);
-+
-+	return 0;
-+}
-+
- int zufc_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct zuf_special_file *zsf = file->private_data;
-@@ -62,6 +1133,10 @@ int zufc_mmap(struct file *file, struct vm_area_struct *vma)
- 	}
- 
- 	switch (zsf->type) {
-+	case zlfs_e_zt:
-+		return zufc_zt_mmap(file, vma);
-+	case zlfs_e_dpp_buff:
-+		return zufc_ebuff_mmap(file, vma);
- 	default:
- 		zuf_err("type=%d\n", zsf->type);
- 		return -ENOTTY;
 diff --git a/fs/zuf/zuf.h b/fs/zuf/zuf.h
-index 919b84f7478f..05ec08d17d69 100644
+index 05ec08d17d69..d0cb762f50ec 100644
 --- a/fs/zuf/zuf.h
 +++ b/fs/zuf/zuf.h
-@@ -110,6 +110,47 @@ static inline struct zuf_inode_info *ZUII(struct inode *inode)
+@@ -28,6 +28,8 @@
+ #include "zus_api.h"
+ 
+ #include "_pr.h"
++#include "md.h"
++#include "t2.h"
+ 
+ enum zlfs_e_special_file {
+ 	zlfs_e_zt = 1,
+@@ -98,6 +100,13 @@ static inline void zuf_add_fs_type(struct zuf_root_info *zri,
+ 	list_add(&zft->list, &zri->fst_list);
+ }
+ 
++/* t1.c special file to mmap our pmem */
++struct zuf_pmem_file {
++	struct zuf_special_file hdr;
++	struct multi_devices *md;
++};
++
++
+ /*
+  * ZUF per-inode data in memory
+  */
+@@ -110,6 +119,51 @@ static inline struct zuf_inode_info *ZUII(struct inode *inode)
  	return container_of(inode, struct zuf_inode_info, vfs_inode);
  }
  
-+struct zuf_dispatch_op;
-+typedef int (*overflow_handler)(struct zuf_dispatch_op *zdo, void *parg,
-+				ulong zt_max_bytes);
-+typedef void (*dispatch_handler)(struct zuf_dispatch_op *zdo, void *pzt,
-+				void *parg);
-+struct zuf_dispatch_op {
-+	struct zufs_ioc_hdr *hdr;
-+	union {
-+		struct page **pages;
-+		ulong *bns;
-+	};
-+	uint nump;
-+	overflow_handler oh;
-+	dispatch_handler dh;
++/*
++ * ZUF super-block data in memory
++ */
++struct zuf_sb_info {
 +	struct super_block *sb;
-+	struct inode *inode;
++	struct multi_devices *md;
++	struct zuf_pmem_file pmem;
 +
-+	/* Don't touch zuf-core only!!! */
-+	struct zufc_thread *__locked_zt;
++	/* zus cookie*/
++	struct zus_sb_info *zus_sbi;
++
++	/* Mount options */
++	unsigned long	s_mount_opt;
++	ulong		fs_caps;
++	char		*pmount_dev; /* for private mount */
++
++	spinlock_t		s_mmap_dirty_lock;
++	struct list_head	s_mmap_dirty;
 +};
 +
-+static inline void
-+zuf_dispatch_init(struct zuf_dispatch_op *zdo, struct zufs_ioc_hdr *hdr,
-+		 struct page **pages, uint nump)
++static inline struct zuf_sb_info *SBI(struct super_block *sb)
 +{
-+	memset(zdo, 0, sizeof(*zdo));
-+	zdo->hdr = hdr;
-+	zdo->pages = pages; zdo->nump = nump;
++	return sb->s_fs_info;
 +}
 +
-+static inline int zuf_flt_to_err(vm_fault_t flt)
++static inline struct zuf_fs_type *ZUF_FST(struct file_system_type *fs_type)
 +{
-+	if (likely(flt == VM_FAULT_NOPAGE))
-+		return 0;
-+
-+	if (flt == VM_FAULT_OOM)
-+		return -ENOMEM;
-+
-+	return -EACCES;
++	return container_of(fs_type, struct zuf_fs_type, vfs_fst);
 +}
 +
- /* Keep this include last thing in file */
- #include "_extern.h"
- 
++static inline struct zuf_fs_type *zuf_fst(struct super_block *sb)
++{
++	return ZUF_FST(sb->s_type);
++}
++
++static inline struct zuf_root_info *ZUF_ROOT(struct zuf_sb_info *sbi)
++{
++	return zuf_fst(sbi->sb)->zri;
++}
++
++static inline bool zuf_rdonly(struct super_block *sb)
++{
++	return sb_rdonly(sb);
++}
++
+ struct zuf_dispatch_op;
+ typedef int (*overflow_handler)(struct zuf_dispatch_op *zdo, void *parg,
+ 				ulong zt_max_bytes);
 diff --git a/fs/zuf/zus_api.h b/fs/zuf/zus_api.h
-index f293e03460be..6b1fbaf24222 100644
+index 6b1fbaf24222..4292a4fa5f1a 100644
 --- a/fs/zuf/zus_api.h
 +++ b/fs/zuf/zus_api.h
-@@ -93,6 +93,123 @@
+@@ -22,6 +22,8 @@
+ #include <linux/fiemap.h>
+ #include <stddef.h>
  
- #endif /*  ndef __KERNEL__ */
- 
-+/* first available error code after include/linux/errno.h */
-+#define EZUFS_RETRY	531
++#include "md_def.h"
 +
-+/* The below is private to zuf Kernel only. Is not exposed to VFS nor zus
-+ * (defined here to allocate the constant)
-+ */
-+#define EZUF_RETRY_DONE 540
-+
-+/* TODO: Someone forgot i_flags & i_version for STATX_ attrs should send a patch
-+ * to add them
-+ */
-+#define ZUFS_STATX_FLAGS	0x20000000U
-+#define ZUFS_STATX_VERSION	0x40000000U
-+
-+/*
-+ * Maximal count of links to a file
-+ */
-+#define ZUFS_LINK_MAX          32000
-+#define ZUFS_MAX_SYMLINK	PAGE_SIZE
-+#define ZUFS_NAME_LEN		255
-+#define ZUFS_READAHEAD_PAGES	8
-+
-+/* All device sizes offsets must align on 2M */
-+#define ZUFS_ALLOC_MASK		(1024 * 1024 * 2 - 1)
-+
-+/**
-+ * zufs dual port memory
-+ * This is a special type of offset to either memory or persistent-memory,
-+ * that is designed to be used in the interface mechanism between userspace
-+ * and kernel, and can be accessed by both.
-+ * 3 first bits denote a mem-pool:
-+ * 0   - pmem pool
-+ * 1-6 - established shared pool by a call to zufs_ioc_create_mempool (below)
-+ * 7   - offset into app memory
-+ */
-+typedef __u64 __bitwise zu_dpp_t;
-+
-+static inline uint zu_dpp_t_pool(zu_dpp_t t)
-+{
-+	return t & 0x7;
-+}
-+
-+static inline ulong zu_dpp_t_val(zu_dpp_t t)
-+{
-+	return t & ~0x7;
-+}
-+
-+static inline zu_dpp_t zu_enc_dpp_t(ulong v, uint pool)
-+{
-+	return v | pool;
-+}
-+
-+static inline ulong zu_dpp_t_bn(zu_dpp_t t)
-+{
-+	return t >> 3;
-+}
-+
-+static inline zu_dpp_t zu_enc_dpp_t_bn(ulong v, uint pool)
-+{
-+	return zu_enc_dpp_t(v << 3, pool);
-+}
-+
-+/*
-+ * Structure of a ZUS inode.
-+ * This is all the inode fields
-+ */
-+
-+/* See VFS inode flags at fs.h. As ZUFS support flags up to the 7th bit, we
-+ * use higher bits for ZUFS specific flags
-+ */
-+#define ZUFS_S_IMMUTABLE 04000
-+
-+/* zus_inode size */
-+#define ZUFS_INODE_SIZE 128    /* must be power of two */
-+
-+struct zus_inode {
-+	__le16	i_flags;	/* Inode flags */
-+	__le16	i_mode;		/* File mode */
-+	__le32	i_nlink;	/* Links count */
-+	__le64	i_size;		/* Size of data in bytes */
-+/* 16*/	struct __zi_on_disk_desc {
-+		__le64	a[2];
-+	}	i_on_disk;	/* FS-specific on disc placement */
-+/* 32*/	__le64	i_blocks;
-+	__le64	i_mtime;	/* Inode/data Modification time */
-+	__le64	i_ctime;	/* Inode/data Changed time */
-+	__le64	i_atime;	/* Data Access time */
-+/* 64 - cache-line boundary */
-+	__le64	i_ino;		/* Inode number */
-+	__le32	i_uid;		/* Owner Uid */
-+	__le32	i_gid;		/* Group Id */
-+	__le64	i_xattr;	/* FS-specific Extended attribute block */
-+	__le64	i_generation;	/* File version (for NFS) */
-+/* 96*/	union NAMELESS(_I_U) {
-+		__le32	i_rdev;		/* special-inode major/minor etc ...*/
-+		u8	i_symlink[32];	/* if i_size < sizeof(i_symlink) */
-+		__le64	i_sym_dpp;	/* Link location if long symlink */
-+		struct  _zu_dir {
-+			__le64	dir_root;
-+			__le64  parent;
-+		}	i_dir;
-+	};
-+	/* Total ZUFS_INODE_SIZE bytes always */
-+};
-+
-+/* ~~~~~ ZUFS API ioctl commands ~~~~~ */
-+enum {
-+	ZUS_API_MAP_MAX_PAGES	= 1024,
-+	ZUS_API_MAP_MAX_SIZE	= ZUS_API_MAP_MAX_PAGES * PAGE_SIZE,
-+};
-+
-+/* These go on zufs_ioc_hdr->flags */
-+enum e_zufs_hdr_flags {
-+	ZUFS_H_INTR		= (1 << 0),
-+	ZUFS_H_HAS_PIGY_PUT	= (1 << 1),
-+};
-+
- struct zufs_ioc_hdr {
- 	__s32 err;	/* IN/OUT must be first */
- 	__u16 in_len;	/* How much to be copied *to* zus */
-@@ -129,4 +246,178 @@ struct zufs_ioc_register_fs {
+ #ifdef __cplusplus
+ #define NAMELESS(X) X
+ #else
+@@ -355,6 +357,19 @@ struct zufs_ioc_numa_map {
  };
- #define ZU_IOC_REGISTER_FS	_IOWR('Z', 10, struct zufs_ioc_register_fs)
+ #define ZU_IOC_NUMA_MAP	_IOWR('Z', 13, struct zufs_ioc_numa_map)
  
-+/* A cookie from user-mode returned by mount */
-+struct zus_sb_info;
-+
-+/* zus cookie per inode */
-+struct zus_inode_info;
-+
-+enum ZUFS_M_FLAGS {
-+	ZUFS_M_PEDANTIC		= 0x00000001,
-+	ZUFS_M_EPHEMERAL	= 0x00000002,
-+	ZUFS_M_SILENT		= 0x00000004,
-+	ZUFS_M_PRIVATE		= 0x00000008,
-+};
-+
-+struct zufs_parse_options {
-+	__u64 mount_flags;
-+	__u32 pedantic;
-+	__u32 mount_options_len;
-+	char mount_options[0];
-+};
-+
-+/* These go on  zufs_ioc_mount->hdr->operation */
-+enum e_mount_operation {
-+	ZUFS_M_MOUNT	= 1,
-+	ZUFS_M_UMOUNT,
-+	ZUFS_M_REMOUNT,
-+	ZUFS_M_DDBG_RD,
-+	ZUFS_M_DDBG_WR,
-+};
-+
-+/* For zufs_mount_info->remount_flags */
-+enum e_remount_flags {
-+	ZUFS_REM_WAS_RO		= 0x00000001,
-+	ZUFS_REM_WILL_RO	= 0x00000002,
-+};
-+
-+/* FS specific capabilities @zufs_mount_info->fs_caps */
-+enum {
-+	ZUFS_FSC_ACL_ON		= 0x0001,
-+	ZUFS_FSC_NIO_READS	= 0x0002,
-+	ZUFS_FSC_NIO_WRITES	= 0x0004,
-+};
-+
-+struct zufs_mount_info {
-+	/* IN */
-+	struct zus_fs_info *zus_zfi;
-+	__u64	remount_flags;
-+	__u64	sb_id;
-+	__u16	num_cpu;
-+	__u16	num_channels;
-+	__u32	__pad;
-+
-+	/* OUT */
-+	struct zus_sb_info *zus_sbi;
-+	/* mount is also iget of root */
-+	struct zus_inode_info *zus_ii;
-+	zu_dpp_t _zi;
-+
-+	/* FS specific info */
-+	__u32 fs_caps;
-+	__u32 s_blocksize_bits;
-+
-+	/* IN - mount options, var len must be last */
-+	struct zufs_parse_options po;
-+};
-+
-+struct zufs_ddbg_info {
-+	__u64 id; /* IN where to start from, OUT last ID */
-+	/* IN size of buffer, OUT size of dynamic debug message */
-+	__u64 len;
-+	char msg[0];
-+};
-+
-+/* mount / umount */
-+struct  zufs_ioc_mount {
-+	struct zufs_ioc_hdr hdr;
-+	union {
-+		struct zufs_mount_info zmi;
-+		struct zufs_ddbg_info zdi;
-+	};
-+};
-+#define ZU_IOC_MOUNT		_IOWR('Z', 11, struct zufs_ioc_mount)
-+
-+/* pmem  */
-+struct zufs_cpu_set {
-+	ulong bits[16];
-+};
-+
-+struct zufs_ioc_numa_map {
++struct zufs_ioc_pmem {
 +	/* Set by zus */
 +	struct zufs_ioc_hdr hdr;
++	__u64 sb_id;
 +
-+	__u32	possible_nodes;
-+	__u32	possible_cpus;
-+	__u32	online_nodes;
-+	__u32	online_cpus;
-+
-+	__u32	max_cpu_per_node;
-+
-+	/* This indicates that NOT all nodes have @max_cpu_per_node cpus */
-+	bool	nodes_not_symmetrical;
-+	__u8	__pad[19]; /* align cpu_set_per_node to next cache-line */
-+
-+	/* Variable size must keep last
-+	 * size @possible_nodes
-+	 */
-+	struct zufs_cpu_set cpu_set_per_node[];
++	/* Returned to zus */
++	struct md_dev_table mdt;
++	__u32 dev_index;
++	__u32 ___pad;
 +};
-+#define ZU_IOC_NUMA_MAP	_IOWR('Z', 13, struct zufs_ioc_numa_map)
++/* GRAB is never ungrabed umount or file close cleans it all */
++#define ZU_IOC_GRAB_PMEM	_IOWR('Z', 14, struct zufs_ioc_pmem)
 +
-+/* ZT init */
-+enum { ZUFS_MAX_ZT_CHANNELS = 4 };
-+
-+struct zufs_ioc_init {
-+	struct zufs_ioc_hdr hdr;
-+	__u32 channel_no;
-+	__u32 max_command;
-+};
-+#define ZU_IOC_INIT_THREAD	_IOWR('Z', 15, struct zufs_ioc_init)
-+
-+/* break_all (Server telling kernel to clean) */
-+struct zufs_ioc_break_all {
-+	struct zufs_ioc_hdr hdr;
-+};
-+#define ZU_IOC_BREAK_ALL	_IOWR('Z', 16, struct zufs_ioc_break_all)
-+
-+/* Allocate a special_file that will be a dual-port communication buffer with
-+ * user mode.
-+ * Server will access the buffer via the mmap of this file.
-+ * Kernel will access the file via the valloc() pointer
-+ *
-+ * Some IOCTLs below demand use of this kind of buffer for communication
-+ * TODO:
-+ * pool_no is if we want to associate this buffer onto the 6 possible
-+ * mem-pools per zuf_sbi. So anywhere we have a zu_dpp_t it will mean
-+ * access from this pool.
-+ * If pool_no is zero then it is private to only this file. In this case
-+ * sb_id && zus_sbi are ignored / not needed.
-+ */
-+struct zufs_ioc_alloc_buffer {
-+	struct zufs_ioc_hdr hdr;
-+	/* The ID of the super block received in mount */
-+	__u64	sb_id;
-+	/* We verify the sb_id validity against zus_sbi */
-+	struct zus_sb_info *zus_sbi;
-+	/* max size of buffer allowed (size of mmap) */
-+	__u32 max_size;
-+	/* allocate this much on initial call and set into vma */
-+	__u32 init_size;
-+
-+	/* TODO: These below are now set to ZERO. Need implementation */
-+	__u16 pool_no;
-+	__u16 flags;
-+	__u32 reserved;
-+};
-+#define ZU_IOC_ALLOC_BUFFER	_IOWR('Z', 17, struct zufs_ioc_init)
-+
-+/* ~~~  zufs_ioc_wait_operation ~~~ */
-+struct zufs_ioc_wait_operation {
-+	struct zufs_ioc_hdr hdr;
-+	/* maximum size is governed by zufs_ioc_init->max_command */
-+	char opt_buff[];
-+};
-+#define ZU_IOC_WAIT_OPT		_IOWR('Z', 18, struct zufs_ioc_wait_operation)
-+
-+/* These are the possible operations sent from Kernel to the Server in the
-+ * return of the ZU_IOC_WAIT_OPT.
-+ */
-+enum e_zufs_operation {
-+	ZUFS_OP_NULL		= 0,
-+	ZUFS_OP_BREAK		= 1,	/* Kernel telling Server to exit */
-+
-+	ZUFS_OP_MAX_OPT,
-+};
-+
- #endif /* _LINUX_ZUFS_API_H */
+ /* ZT init */
+ enum { ZUFS_MAX_ZT_CHANNELS = 4 };
+ 
 -- 
 2.21.0
 
