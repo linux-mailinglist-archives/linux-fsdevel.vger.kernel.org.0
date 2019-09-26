@@ -2,119 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74495BEDA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 10:43:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B03BEE53
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 11:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729746AbfIZIno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Sep 2019 04:43:44 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52214 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbfIZIno (ORCPT
+        id S1727518AbfIZJVU convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Sep 2019 05:21:20 -0400
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25461 "EHLO
+        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726030AbfIZJVU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Sep 2019 04:43:44 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 7so1700672wme.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2019 01:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=cN2NPqRYs3tBNQa1c8AtsjOKLzDwXPQVX4d3Hltt1+M=;
-        b=j1zcQmac4gVMNI5y1iyw2avduzgCw5EpSxbraalEUWvBwKV+rqhtheOK2isBX31L40
-         z3skdraT7Ulhpo8dxbJnjsiUfFvDmTNQs+SWUBsrTVN5bhatfVTs5OTzdUNo6nGiWPPk
-         1V1R+vl2ZU3rYSnNu1OIsqlg+m/FQ5Kr9v7Bk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=cN2NPqRYs3tBNQa1c8AtsjOKLzDwXPQVX4d3Hltt1+M=;
-        b=VYR/L1+pNmOmKgAHM2vxGsZcFH/qmSqYag0YyWmdqCJUugsRyo7mUQ3DG3vlE/ArRa
-         sNdhYIWqdMA1TmNweHWBuWfxKy4ybPoRz4KDvjxeOoCxDkC0Totp7BxkGnvulcLNs1fK
-         gZKq0sllTBeh6K2oPfoyloW6kb6DBXO2RbIf8ydShoaqya7gsyCzKNWK1CoiE7NeRhjA
-         7xG4hGp9OU9FuO1fa/9Qu4xKc+tbIEjBbER3XYnWfSpjjzdI0e0skXO1mFRr2lCQt2vR
-         KjEmwCKzbvEGtpGE007Idfneg4f8TCOMa4ETC5Ow43BNS91v7NBwVQXhoGPAGqpsKzPO
-         gunQ==
-X-Gm-Message-State: APjAAAU3urcoZA59ObLHiy3DAZ+tKPQNlLo+KZaivG18oG3xhOmvcKjJ
-        aQcZCBc12kBDHfnMD9qW4Na1Lw==
-X-Google-Smtp-Source: APXvYqxK6uPnV3U+YMRKjGqkiV6ZOkb2t9eNU9MnqnqVduBXtSHl4BFMknRHhIHP2oH1lp3kpoYcDQ==
-X-Received: by 2002:a7b:cb8b:: with SMTP id m11mr2021577wmi.145.1569487422931;
-        Thu, 26 Sep 2019 01:43:42 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (84-236-74-228.pool.digikabel.hu. [84.236.74.228])
-        by smtp.gmail.com with ESMTPSA id s1sm3391619wrg.80.2019.09.26.01.43.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 01:43:42 -0700 (PDT)
-Date:   Thu, 26 Sep 2019 10:43:40 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: [GIT PULL] add virtio-fs
-Message-ID: <20190926084340.GB1904@miu.piliscsaba.redhat.com>
+        Thu, 26 Sep 2019 05:21:20 -0400
+X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Sep 2019 05:21:19 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1569488751; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=j9hJPeSEFOyEzZdx7YMosQVOurAlCYD5ZpqOQbxNSatNGiXhe+7gC8mco6BggGYZqleTmOBPVRML+8cqzW7YgUVhp8cVOh5qerNhvmb9G7uBgadHjagx944d5y+DmQ8Pe5oCBcGLUuzu+QXaoie+u5aw7kCHMaOmC6UTLQ+CRp8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1569488751; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=kUYFipe9t17hI+mhfvxZ6NTVPVX2Qy1+eViJ87bmXuU=; 
+        b=KaCpt1Fq+PwOa/4Xjar6EN6ih7jOJCh/X89jq1nYPChinvjkFK+BxBFIwBpaCtzaYmVZeXYl4985/G2kgMqiUUOI2w/IEUbj4T6q5WSJpGus2KDbaO+XhELVpyeTIfGbYc4V4qDtEQdcWGUT+XidQnriCjvIdzEEiy5GRV5UiAk=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=zoho.com.cn;
+        spf=pass  smtp.mailfrom=cgxu519@zoho.com.cn;
+        dmarc=pass header.from=<cgxu519@zoho.com.cn> header.from=<cgxu519@zoho.com.cn>
+Received: from localhost.localdomain (218.18.229.179 [218.18.229.179]) by mx.zoho.com.cn
+        with SMTPS id 1569488749870923.5349215485212; Thu, 26 Sep 2019 17:05:49 +0800 (CST)
+From:   Chengguang Xu <cgxu519@zoho.com.cn>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, Chengguang Xu <cgxu519@zoho.com.cn>
+Message-ID: <20190926090535.3470-1-cgxu519@zoho.com.cn>
+Subject: [PATCH] dcookies.c: code cleanup for hash_bits calculation in dcookie_init()
+Date:   Thu, 26 Sep 2019 17:05:35 +0800
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8BIT
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+Code cleanup for hash_bits calculation by calling
+ilog2() in dcookie_init().
 
-Please pull from:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/virtio-fs-5.4
-
-[There's a trivial merge conflict under Documentation/]
-
-Virtio-fs allows exporting directory trees on the host and mounting them in
-guest(s).
-
-This isn't actually a new filesystem, but a glue layer between the fuse
-filesystem and a virtio based back-end.
-
-It's similar in functionality to the existing virtio-9p solution, but
-significantly faster in benchmarks and has better POSIX compliance.
-Further permformance improvements can be achieved by sharing the page cache
-between host and guest, allowing for faster I/O and reduced memory use.
-
-Kata Containers have been including the out-of-tree virtio-fs (with the
-shared page cache patches as well) since version 1.7 as an experimental
-feature.  They have been active in development and plan to switch from
-virtio-9p to virtio-fs as their default solution.  There has been interest
-from other sources as well.
-
-The userspace infrastructure is slated to be merged into qemu once the
-kernel part hits mainline.
-
-This was developed by Vivek Goyal, Dave Gilbert and Stefan Hajnoczi.
-
-Thanks,
-Miklos
-
+Signed-off-by: Chengguang Xu <cgxu519@zoho.com.cn>
 ---
-Dr. David Alan Gilbert (1):
-      fuse: reserve values for mapping protocol
+ fs/dcookies.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Stefan Hajnoczi (2):
-      virtio-fs: add Documentation/filesystems/virtiofs.rst
-      virtio-fs: add virtiofs filesystem
+diff --git a/fs/dcookies.c b/fs/dcookies.c
+index 6eeb61100a09..4c3253926b55 100644
+--- a/fs/dcookies.c
++++ b/fs/dcookies.c
+@@ -245,11 +245,7 @@ static int dcookie_init(void)
+ 	 * a power-of-two.
+ 	 */
+ 	hash_size = PAGE_SIZE / sizeof(struct list_head);
+-	hash_bits = 0;
+-	do {
+-		hash_bits++;
+-	} while ((hash_size >> hash_bits) != 0);
+-	hash_bits--;
++	hash_bits = ilog2(hash_size);
+ 
+ 	/*
+ 	 * Re-calculate the actual number of entries and the mask
+-- 
+2.20.1
 
----
- Documentation/filesystems/index.rst    |   10 +
- Documentation/filesystems/virtiofs.rst |   60 ++
- MAINTAINERS                            |   12 +
- fs/fuse/Kconfig                        |   11 +
- fs/fuse/Makefile                       |    1 +
- fs/fuse/fuse_i.h                       |    9 +
- fs/fuse/inode.c                        |    4 +
- fs/fuse/virtio_fs.c                    | 1195 ++++++++++++++++++++++++++++++++
- include/uapi/linux/fuse.h              |    8 +-
- include/uapi/linux/virtio_fs.h         |   19 +
- include/uapi/linux/virtio_ids.h        |    1 +
- 11 files changed, 1329 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/filesystems/virtiofs.rst
- create mode 100644 fs/fuse/virtio_fs.c
- create mode 100644 include/uapi/linux/virtio_fs.h
+
+
