@@ -2,89 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A37FBF458
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 15:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A638BF482
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 15:55:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbfIZNtL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Sep 2019 09:49:11 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46819 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbfIZNtL (ORCPT
+        id S1727065AbfIZNz2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Sep 2019 09:55:28 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33519 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbfIZNz1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Sep 2019 09:49:11 -0400
-Received: by mail-io1-f65.google.com with SMTP id c6so6566719ioo.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2019 06:49:10 -0700 (PDT)
+        Thu, 26 Sep 2019 09:55:27 -0400
+Received: by mail-ed1-f68.google.com with SMTP id c4so2137212edl.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2019 06:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jtl2zyxtlXZuy7RvH3QWuxbUWBhaFjPFStjZLvJQGrk=;
-        b=DknNLd45XASfoxO4Ux1JkUwRyOD9cDS0bG2idl3BMjWoGDUuq6RHjKgl+b+3+8JT/t
-         CCUdHpyhRKyoT7ja+jMqNPc1T5II8nPs4dKdLaInOCPrjoVQJAYm9wNRcSe3y7GWbgnV
-         b1MHsWQ/3NQa1HhXuO13O8w8kVPU8+7eAZOPA=
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aOr0iyfBLl80umcRhExqHZHW4urAI30wkAKXPx7sd8s=;
+        b=byj3666jUomIxQfVgejvo9qb9jGyy7ag0vbTbVW71SegiKooHWd3O/zR9mU4jnpKRq
+         bfOavtCnWSSNGyUXeiUwmCDfS6pewUtqXrgAb29RPcOQV44Q+7nTWMvi2Qai5qKFX8gZ
+         0tVLgaeBW3mCWMCnH/z/g0dZEalHgm9Gf+TA5USpCcAJqP9BGnH9Wg2kEkzlJFyhyXHN
+         eR22wGokBq86OaykauTi3oZw/WmqYf7zfUyhxk3Yq8a3rw9cYcQnotYj3MWUlv9EYVB1
+         MhFXn3/H+1CY66b1QwIXAt02H42lnbbT7g4p2yI8zYAXD4+Vzad797Aq01FUSoUyjeLi
+         qbZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jtl2zyxtlXZuy7RvH3QWuxbUWBhaFjPFStjZLvJQGrk=;
-        b=YRh/fQoe9Rcveww5F7rgDyZYzkeD/sM/WSDrq6a0SVr011R0O9CEx7cQs8RgOmwR3m
-         b4q7AESbPcexED1yZAWglolzWj2uU5uITLN3EpQed8ykzx1tAAl4v42RPgx6uHb3CK+9
-         B2CDzuz5d5E6MkHufHXdufHFy2ZN6mlsqLa+9N9HwDPmuTGrpcvctlD6uN7w9jrfNTwk
-         eY8AJxb29Kk5uosBmLl385P1yaYDoaZGCNRezDkA6dvem1Zf/cr5U1C00Tw1vZtrL4v9
-         3WzmvlLadFz9C1RW31wt6je37lOuD55/rbffnoHFh8UsRJRAE5KQH7DP3Mzee6k9IlxX
-         FHSQ==
-X-Gm-Message-State: APjAAAXXQ6dIa8kTjaJipzrSn8/M4hTdWamfIK/ZLfL+O9ua1S1udEms
-        i5D2/FqfPTkeZ9+yBivYOTqiHUGMl7nbYgcuiV4O9g==
-X-Google-Smtp-Source: APXvYqzCHPmQ8dEj63wpRIzUS09qNxccMSYkmYaPtSm1ncTKoz58AeDbzrz7cD88jFPL9iu1YKYjPUc8Ogk+W5bkiIU=
-X-Received: by 2002:a6b:3b94:: with SMTP id i142mr3275670ioa.212.1569505750220;
- Thu, 26 Sep 2019 06:49:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aOr0iyfBLl80umcRhExqHZHW4urAI30wkAKXPx7sd8s=;
+        b=mBevTta52Qt378DZDv6vWVxYfpBsYkaCt3pCy/mIyq6HR/P8qSTiLhfe5SBNAd3P/z
+         9QfX13Yzp1KrB5DlhofqK/aIA/QlKRNHAVYzW8gVx9JWzeqFDkqLUu+cr1w4yhtFS9yl
+         itxMVgHDqQZRDtbUUkb2FkaXE0BYXYt4uMSba4Xll1bzmvAB719y5vhcrLo/smdykgBh
+         ggzvLKT1BBEr7jJGctCQGxHx+4o+z9p/v9tUrgZCtgVun2JfLvpom42lDdnPaVWmC3cY
+         wroNE3t948WUWPmflStRqzFgcUWTKVMgvSEeN8xws8BEzxTgxltx/9bgcwxV7kkbbHQK
+         wDYQ==
+X-Gm-Message-State: APjAAAWfimHNn8+t4/LGib08gtjz16Ab+Mj6do08O8K9Wnm99j1ErJBS
+        rgZ5m0Wig/4Yfm/2n+bUV4l2SQ==
+X-Google-Smtp-Source: APXvYqwRM3uOue8sdkJXKA0j0BlH3YC2gCanRwb3iFVBEmOi2tgQReY6Xpln4M8dnVP9lPsAWlOk+A==
+X-Received: by 2002:a50:eb93:: with SMTP id y19mr3762407edr.94.1569506125053;
+        Thu, 26 Sep 2019 06:55:25 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id m18sm250017ejq.72.2019.09.26.06.55.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Sep 2019 06:55:24 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 68168101CFB; Thu, 26 Sep 2019 16:55:27 +0300 (+03)
+Date:   Thu, 26 Sep 2019 16:55:27 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/15] mm: Use vm_fault error code directly
+Message-ID: <20190926135527.htzehar7j5uv6nsu@box>
+References: <20190925005214.27240-1-willy@infradead.org>
+ <20190925005214.27240-2-willy@infradead.org>
 MIME-Version: 1.0
-References: <20190926020725.19601-1-boazh@netapp.com> <CAJfpeguWh5HYcYsgjZ0J2UWUnw88jCURWSpxEjCT2ayubB9Z3A@mail.gmail.com>
- <e66f4a0a-c88f-67a8-a785-d618aa79be44@gmail.com>
-In-Reply-To: <e66f4a0a-c88f-67a8-a785-d618aa79be44@gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 26 Sep 2019 15:48:59 +0200
-Message-ID: <CAJfpegswpiuwHaAgo1kY2PWutjFtA_h-N_bMSaKA2MEsXkFXfA@mail.gmail.com>
-Subject: Re: [PATCHSET v02 00/16] zuf: ZUFS Zero-copy User-mode FileSystem
-To:     Boaz Harrosh <openosd@gmail.com>
-Cc:     Boaz Harrosh <boaz@plexistor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matt Benjamin <mbenjami@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Sagi Manole <sagim@netapp.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925005214.27240-2-willy@infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 2:48 PM Boaz Harrosh <openosd@gmail.com> wrote:
->
-> On 26/09/2019 10:11, Miklos Szeredi wrote:
+On Tue, Sep 24, 2019 at 05:52:00PM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> Use VM_FAULT_OOM instead of indirecting through vmf_error(-ENOMEM).
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-> >  I found a big scheduler scalability bottleneck that is caused by
-> > update of mm->cpu_bitmap at context switch.   This can be worked
-> > around by using shared memory instead of shared page tables, which is
-> > a bit of a pain, but it does prove the point.  Thought about fixing
-> > the cpu_bitmap cacheline pingpong, but didn't really get anywhere.
-> >
->
-> I'm not sure what is the scalability bottleneck you are seeing above.
-> With zufs I have a very good scalability, almost flat up to the
-> number of CPUs, and/or the limit of the memory bandwith if I'm accessing
-> pmem.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-This was *really* noticable with NUMA and many cpus (>64).
-
-> Miklos would you please have some bandwith to review my code? it would
-> make me very happy and calm. Your input is very valuable to me.
-
-Sure, will look at the patches.
-
-Thanks,
-Miklos
+-- 
+ Kirill A. Shutemov
