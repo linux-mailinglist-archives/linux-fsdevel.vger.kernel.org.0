@@ -2,178 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 038FDBECB3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 09:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74495BEDA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Sep 2019 10:43:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730840AbfIZHlZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Sep 2019 03:41:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37704 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730721AbfIZHlZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Sep 2019 03:41:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 40E17B028;
-        Thu, 26 Sep 2019 07:41:21 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
- kmalloc(power-of-two)
-To:     Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Sterba <dsterba@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-btrfs@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <20190826111627.7505-1-vbabka@suse.cz>
- <20190826111627.7505-3-vbabka@suse.cz>
- <df8d1cf4-ff8f-1ee1-12fb-cfec39131b32@suse.cz>
- <20190923171710.GN2751@twin.jikos.cz>
- <alpine.DEB.2.21.1909242048020.17661@www.lameter.com>
- <20190924165425.a79a2dafbaf37828a931df2b@linux-foundation.org>
- <alpine.DEB.2.21.1909260005060.1508@www.lameter.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <6a28a096-0e65-c7ea-9ca9-f72d68948e10@suse.cz>
-Date:   Thu, 26 Sep 2019 09:41:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S1729746AbfIZIno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Sep 2019 04:43:44 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52214 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbfIZIno (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Sep 2019 04:43:44 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 7so1700672wme.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Sep 2019 01:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=cN2NPqRYs3tBNQa1c8AtsjOKLzDwXPQVX4d3Hltt1+M=;
+        b=j1zcQmac4gVMNI5y1iyw2avduzgCw5EpSxbraalEUWvBwKV+rqhtheOK2isBX31L40
+         z3skdraT7Ulhpo8dxbJnjsiUfFvDmTNQs+SWUBsrTVN5bhatfVTs5OTzdUNo6nGiWPPk
+         1V1R+vl2ZU3rYSnNu1OIsqlg+m/FQ5Kr9v7Bk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=cN2NPqRYs3tBNQa1c8AtsjOKLzDwXPQVX4d3Hltt1+M=;
+        b=VYR/L1+pNmOmKgAHM2vxGsZcFH/qmSqYag0YyWmdqCJUugsRyo7mUQ3DG3vlE/ArRa
+         sNdhYIWqdMA1TmNweHWBuWfxKy4ybPoRz4KDvjxeOoCxDkC0Totp7BxkGnvulcLNs1fK
+         gZKq0sllTBeh6K2oPfoyloW6kb6DBXO2RbIf8ydShoaqya7gsyCzKNWK1CoiE7NeRhjA
+         7xG4hGp9OU9FuO1fa/9Qu4xKc+tbIEjBbER3XYnWfSpjjzdI0e0skXO1mFRr2lCQt2vR
+         KjEmwCKzbvEGtpGE007Idfneg4f8TCOMa4ETC5Ow43BNS91v7NBwVQXhoGPAGqpsKzPO
+         gunQ==
+X-Gm-Message-State: APjAAAU3urcoZA59ObLHiy3DAZ+tKPQNlLo+KZaivG18oG3xhOmvcKjJ
+        aQcZCBc12kBDHfnMD9qW4Na1Lw==
+X-Google-Smtp-Source: APXvYqxK6uPnV3U+YMRKjGqkiV6ZOkb2t9eNU9MnqnqVduBXtSHl4BFMknRHhIHP2oH1lp3kpoYcDQ==
+X-Received: by 2002:a7b:cb8b:: with SMTP id m11mr2021577wmi.145.1569487422931;
+        Thu, 26 Sep 2019 01:43:42 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (84-236-74-228.pool.digikabel.hu. [84.236.74.228])
+        by smtp.gmail.com with ESMTPSA id s1sm3391619wrg.80.2019.09.26.01.43.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2019 01:43:42 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 10:43:40 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>
+Subject: [GIT PULL] add virtio-fs
+Message-ID: <20190926084340.GB1904@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1909260005060.1508@www.lameter.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/26/19 2:14 AM, Christopher Lameter wrote:
-> On Tue, 24 Sep 2019, Andrew Morton wrote:
-> 
->> I agree it's a bit regrettable to do this but it does appear that the
->> change will make the kernel overall a better place given the reality of
->> kernel development.
-> 
-> No it wont.
-> 
-> - It will only work for special cases like the kmalloc array
-> without extras like metadata at the end of objects.
+Hi Linus,
 
-I don't understand what you mean here? The kmalloc caches are special
-because they don't have metadata at the end of objects? Others do?
+Please pull from:
 
-> - It will be an inconsistency in the alignments provided by the allocator.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/virtio-fs-5.4
 
-I don't see a scenario where this will cause a kmalloc user problems.
-Can you describe a scenario where a kmalloc users would have some
-assumptions about alignment, but due to this change, those assumptions
-will be incorrect, and how exactly would it break their code?
+[There's a trivial merge conflict under Documentation/]
 
-> - It will cause us in the future to constantly consider these exceptional
-> alignments in the maintenance of the allocators.
+Virtio-fs allows exporting directory trees on the host and mounting them in
+guest(s).
 
-Caches can be already created with explicit alignment. This patch just
-means there are more of them.
+This isn't actually a new filesystem, but a glue layer between the fuse
+filesystem and a virtio based back-end.
 
-> - These alignments are only needed in exceptional cases but with the patch
-> we will provide the alignment by default even if the allocating subsystem
-> does not need it.
+It's similar in functionality to the existing virtio-9p solution, but
+significantly faster in benchmarks and has better POSIX compliance.
+Further permformance improvements can be achieved by sharing the page cache
+between host and guest, allowing for faster I/O and reduced memory use.
 
-True. This is where we have to make the decision whether to make things
-simpler for those that don't realize they need the alignment, and
-whether that's worth the cost. We have evidence of those cases, and the
-cost is currently zero in the common cases (SLAB, SLUB without debug
-runtime-enabled).
+Kata Containers have been including the out-of-tree virtio-fs (with the
+shared page cache patches as well) since version 1.7 as an experimental
+feature.  They have been active in development and plan to switch from
+virtio-9p to virtio-fs as their default solution.  There has been interest
+from other sources as well.
 
-> - We have mechanisms to detect alignment problems using debug kernels and
-> debug options that have been available for years. These were not used for
-> testing in these cases it seems before the patches hit mainline. Once in
-> mainly someone ran a debug kernel and found the issue.
+The userspace infrastructure is slated to be merged into qemu once the
+kernel part hits mainline.
 
-Debugging options are useful if you know there's a bug and you want to
-find it. AFAIK the various bots/CIs that do e.g. randconfig, or enable
-debug options explicitly, run those kernels in a VM, so I guess that's
-why potential breakage due to alignment can lurk in a hw-specific driver.
+This was developed by Vivek Goyal, Dave Gilbert and Stefan Hajnoczi.
 
->> Given this, have you reviewed the patch for overall implementation
->> correctness?
-> 
-> Yes, the patch is fine.
-> 
->> I'm wondering if we can avoid at least some of the patch's overhead if
->> slab debugging is disabled - the allocators are already returning
->> suitably aligned memory, so why add the new code in that case?
-> 
-> As far as I know this patch is not needed given that we have had the
-> standards for alignments for a long time now.
-> 
-> Why would the allocators provide specially aligned memory just based on
-> the size of an object? This is weird and unexpected behavior.
+Thanks,
+Miklos
 
-For some, it's expected.
+---
+Dr. David Alan Gilbert (1):
+      fuse: reserve values for mapping protocol
+
+Stefan Hajnoczi (2):
+      virtio-fs: add Documentation/filesystems/virtiofs.rst
+      virtio-fs: add virtiofs filesystem
+
+---
+ Documentation/filesystems/index.rst    |   10 +
+ Documentation/filesystems/virtiofs.rst |   60 ++
+ MAINTAINERS                            |   12 +
+ fs/fuse/Kconfig                        |   11 +
+ fs/fuse/Makefile                       |    1 +
+ fs/fuse/fuse_i.h                       |    9 +
+ fs/fuse/inode.c                        |    4 +
+ fs/fuse/virtio_fs.c                    | 1195 ++++++++++++++++++++++++++++++++
+ include/uapi/linux/fuse.h              |    8 +-
+ include/uapi/linux/virtio_fs.h         |   19 +
+ include/uapi/linux/virtio_ids.h        |    1 +
+ 11 files changed, 1329 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/filesystems/virtiofs.rst
+ create mode 100644 fs/fuse/virtio_fs.c
+ create mode 100644 include/uapi/linux/virtio_fs.h
