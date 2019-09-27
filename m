@@ -2,127 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71620C05BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2019 14:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 691A8C0908
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2019 17:57:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfI0MwD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Sep 2019 08:52:03 -0400
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:43340 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfI0MwC (ORCPT
+        id S1727472AbfI0P5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Sep 2019 11:57:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51922 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbfI0P5o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Sep 2019 08:52:02 -0400
-Received: from cpe-2606-a000-111b-43ee-0-0-0-115f.dyn6.twc.com ([2606:a000:111b:43ee::115f] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1iDpiu-0003PC-9y; Fri, 27 Sep 2019 08:51:55 -0400
-Date:   Fri, 27 Sep 2019 08:51:42 -0400
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
-        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
-        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
-        dwalsh@redhat.com, mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V7 06/21] audit: contid limit of 32k imposed to
- avoid DoS
-Message-ID: <20190927125142.GA25764@hmswarspite.think-freely.org>
-References: <cover.1568834524.git.rgb@redhat.com>
- <230e91cd3e50a3d8015daac135c24c4c58cf0a21.1568834524.git.rgb@redhat.com>
+        Fri, 27 Sep 2019 11:57:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=F6O5Uosygu6We4yGr3RWbNboX83MuqSZ1AiJfQK03qY=; b=UZ8b+2aqVNM89GvnyWobFt5RX
+        aWEPvZpN1Xf9PluwsG5iY/EalMwqfbXccqU70nmw75AsOxXdnEOoB7SYfAdGWZjGPeJzt7MUCpnmW
+        CUfiVz2PgNJpFIehIoDPZBHS8HFywrtQIgpzm2ovlvik4wBvtHWfZt2YbrWMpvbf5QM9riZtaCjQC
+        35zNaOUJHmrC6CLDNj8yE7ZWMIU8qWPy0IAC5x8lABP/7fQBm5JjHyTGo4GzXgabkwGQocofNW5IE
+        EerkWpkaTvsLkSaAAGw++XQQGbh4rEfAtKb0GpisJtCiFICp1ns9UA7KSKxWWG19DN6WBCUNdo0GA
+        iVnW6hIrA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iDscf-0004Uu-EC; Fri, 27 Sep 2019 15:57:38 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C70529801D6; Fri, 27 Sep 2019 17:57:30 +0200 (CEST)
+Date:   Fri, 27 Sep 2019 17:57:30 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <parri.andrea@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        jose.marchesi@oracle.com
+Subject: Re: Do we need to correct barriering in circular-buffers.rst?
+Message-ID: <20190927155730.GA11194@worktop.programming.kicks-ass.net>
+References: <CAHk-=wj85tOp8WjcUp6gwstp4Cg2WT=p209S=fOzpWAgqqQPKg@mail.gmail.com>
+ <20190915145905.hd5xkc7uzulqhtzr@willie-the-truck>
+ <25289.1568379639@warthog.procyon.org.uk>
+ <28447.1568728295@warthog.procyon.org.uk>
+ <20190917170716.ud457wladfhhjd6h@willie-the-truck>
+ <15228.1568821380@warthog.procyon.org.uk>
+ <5385.1568901546@warthog.procyon.org.uk>
+ <20190923144931.GC2369@hirez.programming.kicks-ass.net>
+ <20190927095107.GA13098@andrea>
+ <20190927124929.GB4643@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <230e91cd3e50a3d8015daac135c24c4c58cf0a21.1568834524.git.rgb@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Spam-Score: -2.9 (--)
-X-Spam-Status: No
+In-Reply-To: <20190927124929.GB4643@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 09:22:23PM -0400, Richard Guy Briggs wrote:
-> Set an arbitrary limit on the number of audit container identifiers to
-> limit abuse.
+On Fri, Sep 27, 2019 at 02:49:29PM +0200, Peter Zijlstra wrote:
+> On Fri, Sep 27, 2019 at 11:51:07AM +0200, Andrea Parri wrote:
 > 
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  kernel/audit.c | 8 ++++++++
->  kernel/audit.h | 4 ++++
->  2 files changed, 12 insertions(+)
+> > For the record, the LKMM doesn't currently model "order" derived from
+> > control dependencies to a _plain_ access (even if the plain access is
+> > a write): in particular, the following is racy (as far as the current
+> > LKMM is concerned):
+> > 
+> > C rb
+> > 
+> > { }
+> > 
+> > P0(int *tail, int *data, int *head)
+> > {
+> > 	if (READ_ONCE(*tail)) {
+> > 		*data = 1;
+> > 		smp_wmb();
+> > 		WRITE_ONCE(*head, 1);
+> > 	}
+> > }
+> > 
+> > P1(int *tail, int *data, int *head)
+> > {
+> > 	int r0;
+> > 	int r1;
+> > 
+> > 	r0 = READ_ONCE(*head);
+> > 	smp_rmb();
+> > 	r1 = *data;
+> > 	smp_mb();
+> > 	WRITE_ONCE(*tail, 1);
+> > }
+> > 
+> > Replacing the plain "*data = 1" with "WRITE_ONCE(*data, 1)" (or doing
+> > s/READ_ONCE(*tail)/smp_load_acquire(tail)) suffices to avoid the race.
+> > Maybe I'm short of imagination this morning...  but I can't currently
+> > see how the compiler could "break" the above scenario.
 > 
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 53d13d638c63..329916534dd2 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -139,6 +139,7 @@ struct audit_net {
->  struct list_head audit_inode_hash[AUDIT_INODE_BUCKETS];
->  /* Hash for contid-based rules */
->  struct list_head audit_contid_hash[AUDIT_CONTID_BUCKETS];
-> +int audit_contid_count = 0;
->  
->  static struct kmem_cache *audit_buffer_cache;
->  
-> @@ -2384,6 +2385,7 @@ void audit_cont_put(struct audit_cont *cont)
->  		put_task_struct(cont->owner);
->  		list_del_rcu(&cont->list);
->  		kfree_rcu(cont, rcu);
-> +		audit_contid_count--;
->  	}
->  }
->  
-> @@ -2456,6 +2458,11 @@ int audit_set_contid(struct task_struct *task, u64 contid)
->  					goto conterror;
->  				}
->  			}
-> +		/* Set max contids */
-> +		if (audit_contid_count > AUDIT_CONTID_COUNT) {
-> +			rc = -ENOSPC;
-> +			goto conterror;
-> +		}
-You should check for audit_contid_count == AUDIT_CONTID_COUNT here, no?
-or at least >=, since you increment it below.  Otherwise its possible
-that you will exceed it by one in the full condition.
+> The compiler; if sufficiently smart; is 'allowed' to change P0 into
+> something terrible like:
+> 
+> 	*data = 1;
+> 	if (*tail) {
+> 		smp_wmb();
+> 		*head = 1;
+> 	} else
+> 		*data = 0;
+> 
+> 
+> (assuming it knows *data was 0 from a prior store or something)
+> 
+> Using WRITE_ONCE() defeats this because volatile indicates external
+> visibility.
 
->  		if (!newcont) {
->  			newcont = kmalloc(sizeof(struct audit_cont), GFP_ATOMIC);
->  			if (newcont) {
-> @@ -2465,6 +2472,7 @@ int audit_set_contid(struct task_struct *task, u64 contid)
->  				newcont->owner = current;
->  				refcount_set(&newcont->refcount, 1);
->  				list_add_rcu(&newcont->list, &audit_contid_hash[h]);
-> +				audit_contid_count++;
->  			} else {
->  				rc = -ENOMEM;
->  				goto conterror;
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index 162de8366b32..543f1334ba47 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -219,6 +219,10 @@ static inline int audit_hash_contid(u64 contid)
->  	return (contid & (AUDIT_CONTID_BUCKETS-1));
->  }
->  
-> +extern int audit_contid_count;
-> +
-> +#define AUDIT_CONTID_COUNT	1 << 16
-> +
-Just to ask the question, since it wasn't clear in the changelog, what
-abuse are you avoiding here?  Ostensibly you should be able to create as
-many container ids as you have space for, and the simple creation of
-container ids doesn't seem like the resource strain I would be concerned
-about here, given that an orchestrator can still create as many
-containers as the system will otherwise allow, which will consume
-significantly more ram/disk/etc.
+The much simpler solution might be writing it like:
 
->  /* Indicates that audit should log the full pathname. */
->  #define AUDIT_NAME_FULL -1
->  
-> -- 
-> 1.8.3.1
-> 
-> 
+	if (READ_ONCE(*tail) {
+		barrier();
+		*data = 1;
+		smp_wmb();
+		WRITE_ONCE(*head, 1);
+	}
+
+which I don't think the compiler is allowed to mess up.
