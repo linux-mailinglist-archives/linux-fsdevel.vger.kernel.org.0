@@ -2,141 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 413AFC03B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2019 12:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4EFC05B7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Sep 2019 14:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbfI0KwB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Sep 2019 06:52:01 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44793 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725890AbfI0KwA (ORCPT
+        id S1727140AbfI0Mtp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Sep 2019 08:49:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55706 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbfI0Mto (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Sep 2019 06:52:00 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7AE672216E;
-        Fri, 27 Sep 2019 06:51:59 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Fri, 27 Sep 2019 06:51:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
-        YufqVygReVMnC7P9cwXPmzEcJ9xlx5PgCOb+cwF6Hcs=; b=bYFVNvQ4Yki3DcR0
-        xqXi1V/h/HuE0NWrPbD7aq45Vdrvulm94fp814sajoLhZq49zGPqcpohUYFO1BiJ
-        wV7SSn/UgjD/nJC4muIZjpFEoXuWxIuTKF16LA5Na89XvGsVHNCd5onvnn1qe8Yg
-        Tp6Tj9mYFLwjDXYmtz99JrCnF82b82LIU3DODjwOz+TtdyAWJjaNnema1DxYp4si
-        s+bOuxYzsI4ABAdl9T4sLTIEnbNF2tVGEDufVRp/hSZzbJR8ZLpaxowHKKACZrGg
-        N7NpthVsPEcBRhiSLAjxo3+BMGOaSIOt/brKeBPYNPyAbWTLlAKI5rbYXoU3cqDe
-        +f1kaw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=YufqVygReVMnC7P9cwXPmzEcJ9xlx5PgCOb+cwF6H
-        cs=; b=MmUmINK2jm4uT3+9juBh60VC/LrdOEIEUyiWpAlKsWTzYxJUAzp4J5Rtk
-        ygfvjVG5PuqNrDPYQPA+Xlf6KZariD/MJAlxhwU+DlilC1zQjOfZGQ1vfFmYUbYI
-        UfzfJ7KmmSMLb6PChMd9OsLZSuZ3EoVTd+dkfRWFswG9LtbA1IPPFqduhXKUWr43
-        G+AFXhKgqzhkmQtei7hW+Q37BrhP74kj1+grWCIJrd0VvV3h3a9jOIu5LHM9Sjoh
-        5Q4tADZ7uMI9U2YzGdOpdiHfBAM3be3RrqywFpa17bCFQkh6VIFzfb8zar4k5Moy
-        E0ZDFXLgED82blqyOENIGVwOxPGdA==
-X-ME-Sender: <xms:zumNXUfHsaG-53-pYdR_wrEjY8ZWHEMdUAIQ92NOIQs2paMSj87KxA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrfeeigdefvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuffhomhgrihhnpehkvghrnh
-    gvlhdrohhrghenucfkphepuddukedrvddtledrudeikedrvdeinecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvthenucevlhhushhtvghrufhiii
-    gvpedt
-X-ME-Proxy: <xmx:zumNXa6KvkfE87FyOPQWw2GApVaIMrs3HWNZOsvhgB-5F88zk89sYA>
-    <xmx:zumNXdZCkrSlX1zgr6eiy4g4aR3VfYle3PKwCIVAE91F3a7ArLSR2A>
-    <xmx:zumNXdvlTa5tsfZBchr7OciUTeuiPX_-5F1OIF3B2S8yAQKMIyluOA>
-    <xmx:z-mNXXVBkeZxuUS1156zkzOxOqGeHX74OOu1p7dlnjh_8DWFlrL6Hw>
-Received: from mickey.themaw.net (unknown [118.209.168.26])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D5D32D6005D;
-        Fri, 27 Sep 2019 06:51:56 -0400 (EDT)
-Message-ID: <b2443a28939d6fe79ec9aa9d983f516c8269448a.camel@themaw.net>
-Subject: Re: [RFC] Don't propagate automount
-From:   Ian Kent <raven@themaw.net>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, viro@zeniv.linux.org.uk
-Cc:     autofs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Fri, 27 Sep 2019 18:51:52 +0800
-In-Reply-To: <7f31f0c2bf214334a8f7e855044c88a50e006f05.camel@themaw.net>
-References: <20190926195234.bipqpw5sbk5ojcna@fiona>
-         <3468a81a09d13602c67007759593ddf450f8132c.camel@themaw.net>
-         <e5fbf32668aea1b8143d15ff47bd1e4309d03b17.camel@themaw.net>
-         <d163042ab8fffd975a6d460488f1539c5f619eaa.camel@themaw.net>
-         <7f31f0c2bf214334a8f7e855044c88a50e006f05.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        Fri, 27 Sep 2019 08:49:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rvlIy3RLIJZPQNk2Zr5B3uFv1m1PNMIJ4Fy2wsXUVfY=; b=prY2xvdZ/jaRLk08/tjfYYcwH
+        LNqHwXmfPN4T10bYx2KwdEjOyCk+5o9QpFRj/QuZzn0gMCUUZ2XAv9kjr4sQflL5T3LUvbwRv22aq
+        /EPqVpb2it6Bd+nNGM+u9cuehf3mWcmTR5P2DI3mtsvnL9/PoyVqZmi9BAy6lUcm51DAPVsoYs8A8
+        W7W+UVI7DJQkSHiMw18zJA/rEKJHG2V5uSWX7iV0QOExY6C3Rpscs8QAYire2UdWejd1ZusJOUeFl
+        7uwiY5O2mDtUpNJ/tx/dXiIBr/T4iFCn7RCxXvq0MDYTXXGVrN9StWvUQmq9WCknZ5WkY0ajYmwAf
+        yvVA+cEAQ==;
+Received: from [188.205.208.251] (helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iDpgj-0003FH-Ki; Fri, 27 Sep 2019 12:49:33 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CF6C19801D6; Fri, 27 Sep 2019 14:49:29 +0200 (CEST)
+Date:   Fri, 27 Sep 2019 14:49:29 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <parri.andrea@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        jose.marchesi@oracle.com
+Subject: Re: Do we need to correct barriering in circular-buffers.rst?
+Message-ID: <20190927124929.GB4643@worktop.programming.kicks-ass.net>
+References: <CAHk-=wj85tOp8WjcUp6gwstp4Cg2WT=p209S=fOzpWAgqqQPKg@mail.gmail.com>
+ <20190915145905.hd5xkc7uzulqhtzr@willie-the-truck>
+ <25289.1568379639@warthog.procyon.org.uk>
+ <28447.1568728295@warthog.procyon.org.uk>
+ <20190917170716.ud457wladfhhjd6h@willie-the-truck>
+ <15228.1568821380@warthog.procyon.org.uk>
+ <5385.1568901546@warthog.procyon.org.uk>
+ <20190923144931.GC2369@hirez.programming.kicks-ass.net>
+ <20190927095107.GA13098@andrea>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190927095107.GA13098@andrea>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2019-09-27 at 15:41 +0800, Ian Kent wrote:
+On Fri, Sep 27, 2019 at 11:51:07AM +0200, Andrea Parri wrote:
+
+> For the record, the LKMM doesn't currently model "order" derived from
+> control dependencies to a _plain_ access (even if the plain access is
+> a write): in particular, the following is racy (as far as the current
+> LKMM is concerned):
 > 
-> > > I initially thought this was the result of a "fix" in the mount
-> > > propagation code but it occurred to me that propagation is meant
-> > > to occur between mount trees not within them so this might be a
-> > > bug.
-> > > 
-> > > I probably should have worked out exactly what upstream kernel
-> > > this started happening in and then done a bisect and tried to
-> > > work out if the change was doing what it was supposed to.
-> > > 
-> > > Anyway, I'll need to do that now for us to discuss this sensibly.
-> > > 
-> > > > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > > > 
-> > > > > diff --git a/fs/pnode.c b/fs/pnode.c
-> > > > > index 49f6d7ff2139..b960805d7954 100644
-> > > > > --- a/fs/pnode.c
-> > > > > +++ b/fs/pnode.c
-> > > > > @@ -292,6 +292,9 @@ int propagate_mnt(struct mount *dest_mnt,
-> > > > > struct
-> > > > > mountpoint *dest_mp,
-> > > > >  	struct mount *m, *n;
-> > > > >  	int ret = 0;
-> > > > >  
-> > > > > +	if (source_mnt->mnt_mountpoint->d_flags &
-> > > > > DCACHE_NEED_AUTOMOUNT)
-> > > > > +		return 0;
-> > > > > +
-> > > > 
-> > > > Possible problem with this is it will probably prevent mount
-> > > > propagation in both directions which will break stuff.
-> > > > 
-> > > > I had originally assumed the problem was mount propagation
-> > > > back to the parent mount but now I'm not sure that this is
-> > > > actually what is meant to happen.
+> C rb
+> 
+> { }
+> 
+> P0(int *tail, int *data, int *head)
+> {
+> 	if (READ_ONCE(*tail)) {
+> 		*data = 1;
+> 		smp_wmb();
+> 		WRITE_ONCE(*head, 1);
+> 	}
+> }
+> 
+> P1(int *tail, int *data, int *head)
+> {
+> 	int r0;
+> 	int r1;
+> 
+> 	r0 = READ_ONCE(*head);
+> 	smp_rmb();
+> 	r1 = *data;
+> 	smp_mb();
+> 	WRITE_ONCE(*tail, 1);
+> }
+> 
+> Replacing the plain "*data = 1" with "WRITE_ONCE(*data, 1)" (or doing
+> s/READ_ONCE(*tail)/smp_load_acquire(tail)) suffices to avoid the race.
+> Maybe I'm short of imagination this morning...  but I can't currently
+> see how the compiler could "break" the above scenario.
 
-Goldwyn,
+The compiler; if sufficiently smart; is 'allowed' to change P0 into
+something terrible like:
 
-TBH I'm already a bit over this particularly since it's a
-solved problem from my POV.
+	*data = 1;
+	if (*tail) {
+		smp_wmb();
+		*head = 1;
+	} else
+		*data = 0;
 
-I've gone back as far as Fedora 20 and 3.11.10-301.fc20 also
-behaves like this.
 
-Unless someone says this behaviour is not the way kernel
-mount propagation should behave I'm not going to spend
-more time on it.
+(assuming it knows *data was 0 from a prior store or something)
 
-The ability to use either "slave" or "private" autofs pseudo
-mount options in master map mount entries that are susceptible
-to this mount propagation behaviour was included in autofs-5.1.5
-and the patches used are present on kernel.org if you need to
-back port them to an earlier release.
+Using WRITE_ONCE() defeats this because volatile indicates external
+visibility.
 
-https://mirrors.edge.kernel.org/pub/linux/daemons/autofs/v5/patches-5.1.5/autofs-5.1.4-set-bind-mount-as-propagation-slave.patch
+> I also didn't spend much time thinking about it.  memory-barriers.txt
+> has a section "CONTROL DEPENDENCIES" dedicated to "alerting developers
+> using control dependencies for ordering".  That's quite a long section
+> (and probably still incomplete); the last paragraph summarizes:  ;-)
 
-https://mirrors.edge.kernel.org/pub/linux/daemons/autofs/v5/patches-5.1.5/autofs-5.1.4-add-master-map-pseudo-options-for-mount-propagation.patch
+Barring LTO the above works for perf because of inter-translation-unit
+function calls, which imply a compiler barrier.
 
-It shouldn't be too difficult to back port them but they might
-have other patch dependencies. I will help with that if you
-need it.
+Now, when the compiler inlines, it looses that sync point (and thereby
+subtlely changes semantics from the non-inline variant). I suspect LTO
+does the same and can cause subtle breakage through this transformation.
 
-Ian
+> (*) Compilers do not understand control dependencies.  It is therefore
+>     your job to ensure that they do not break your code.
 
+It is one the list of things I want to talk about when I finally get
+relevant GCC and LLVM people in the same room ;-)
+
+Ideally the compiler can be taught to recognise conditionals dependent
+on 'volatile' loads and disallow problematic transformations around
+them.
+
+I've added Nick (clang) and Jose (GCC) on Cc, hopefully they can help
+find the right people for us.
