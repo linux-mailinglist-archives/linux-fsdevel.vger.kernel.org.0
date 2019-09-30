@@ -2,90 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B291C21FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2019 15:32:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25843C22BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2019 16:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730923AbfI3NcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Sep 2019 09:32:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52226 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728214AbfI3NcI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:32:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jwTg4fslkkXzfCclLjZOgIaOdnKQRQ6WQVeTB5C7GPs=; b=GTsAp7UQvIcIvL7TkWfOBSdUl
-        M6EGMhlYfNT8cjQLHe/X55q53qvVOm4qHmblR+q079BsjQ5IJL6GR7NCHXZopzNuDhg6Olt9GWJZf
-        TuWtjBJdrVKCPCz5dV157Ng6PX7X3d2OWKAE5dWwmbqm+fPiwDYPLZRIsGT9W7P5WF0RA/+YKwg1V
-        ZOHTI5PeaKSpRxD64+n/Vso0SEIefZGFuhgMefh1Jc8e4GkOyMi2owWOVqPMkF1L4tFxZx/S6CMm1
-        CGRE7n3xBfoaoO/5xJs2pNSfHxGZzfESSdFdPlS3AMKKj3NdKP8XJoGmGlhxMVZVMbWyoc+BXXz04
-        KjNnO/TQQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iEvmW-0007wp-1A; Mon, 30 Sep 2019 13:32:04 +0000
-Date:   Mon, 30 Sep 2019 06:32:03 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Sterba <dsterba@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-btrfs@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
- kmalloc(power-of-two)
-Message-ID: <20190930133203.GA26804@bombadil.infradead.org>
-References: <20190826111627.7505-1-vbabka@suse.cz>
- <20190826111627.7505-3-vbabka@suse.cz>
- <df8d1cf4-ff8f-1ee1-12fb-cfec39131b32@suse.cz>
- <20190923171710.GN2751@twin.jikos.cz>
- <alpine.DEB.2.21.1909242048020.17661@www.lameter.com>
- <20190924165425.a79a2dafbaf37828a931df2b@linux-foundation.org>
- <alpine.DEB.2.21.1909260005060.1508@www.lameter.com>
- <6a28a096-0e65-c7ea-9ca9-f72d68948e10@suse.cz>
- <alpine.DEB.2.21.1909272251190.21341@www.lameter.com>
+        id S1731446AbfI3OIj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Sep 2019 10:08:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730266AbfI3OIj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Sep 2019 10:08:39 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2220216F4;
+        Mon, 30 Sep 2019 14:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569852517;
+        bh=kJDFBY2wP/d0mmh5tm8pzMVU9gXTMQMN67O+To4duB0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WFs2pEicOoD0eFbTMEmox3Zj14a+LOh1AES0AAwN8AK3RjFftj8O5SVgRQe4T6FuB
+         myb9GKVnlj7vJH9XgCKRlmpt/h3TbOR1ZjLW4s7pGSHVDyjy6ojrXQqcdNq66ZYdcc
+         d7NU//lUG06xyR7eJ4Xs+2AZeIvF7ZeSgAdF0B7U=
+Date:   Mon, 30 Sep 2019 08:08:15 +0200
+From:   'Greg KH' <gregkh@linuxfoundation.org>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     'Dan Carpenter' <dan.carpenter@oracle.com>,
+        devel@driverdev.osuosl.org, linkinjeon@gmail.com,
+        'Valdis Kletnieks' <valdis.kletnieks@vt.edu>,
+        'Sergey Senozhatsky' <sergey.senozhatsky.work@gmail.com>,
+        'Ju Hyung Park' <qkrwngud825@gmail.com>,
+        linux-kernel@vger.kernel.org, alexander.levin@microsoft.com,
+        sergey.senozhatsky@gmail.com, linux-fsdevel@vger.kernel.org,
+        sj1557.seo@samsung.com
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to
+Message-ID: <20190930060815.GA2029292@kroah.com>
+References: <20190917054726.GA2058532@kroah.com>
+ <CGME20190917060433epcas2p4b12d7581d0ac5477d8f26ec74e634f0a@epcas2p4.samsung.com>
+ <CAD14+f1adJPRTvk8awgPJwCoHXSngqoKcAze1xbHVVvrhSMGrQ@mail.gmail.com>
+ <004401d56dc9$b00fd7a0$102f86e0$@samsung.com>
+ <20190918061605.GA1832786@kroah.com>
+ <20190918063304.GA8354@jagdpanzerIV>
+ <20190918082658.GA1861850@kroah.com>
+ <CAD14+f24gujg3S41ARYn3CvfCq9_v+M2kot=RR3u7sNsBGte0Q@mail.gmail.com>
+ <20190918092405.GC2959@kadam>
+ <042701d57747$0e200320$2a600960$@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1909272251190.21341@www.lameter.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <042701d57747$0e200320$2a600960$@samsung.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 28, 2019 at 01:12:49AM +0000, Christopher Lameter wrote:
-> However, the layout may be different due to another allocator that prefers
-> to arrange things differently (SLOB puts multiple objects of different
-> types in the same page to save memory), if we need to add data to these
-> objects (debugging info, new metadata about the object, maybe the memcg
-> pointer, maybe other things that may come up), or other innovative
-> approaches (such as putting data of different kmem caches that are
-> commonly used together in the same page to improve locality).
+On Mon, Sep 30, 2019 at 01:25:13PM +0900, Namjae Jeon wrote:
+> 
+> > [..]
+> > > Put it in drivers/staging/sdfat/.
+> > >
+> > > But really we want someone from Samsung to say that they will treat
+> > > the staging version as upstream.  It doesn't work when people apply
+> > > fixes to their version and a year later back port the fixes into
+> > > staging.  The staging tree is going to have tons and tons of white space
+> > > fixes so backports are a pain.  All development needs to be upstream
+> > > first where the staging driver is upstream.  Otherwise we should just
+> > > wait for Samsung to get it read to be merged in fs/ and not through the
+> > > staging tree.
+> > Quite frankly,
+> > This whole thing came as a huge-huge surprise to us, we did not initiate
+> > upstreaming of exfat/sdfat code and, as of this moment, I'm not exactly
+> > sure that we are prepared for any immediate radical changes to our internal
+> > development process which people all of a sudden want from us. I need to
+> > discuss with related people on internal thread.
+> > please wait a while:)
+> We decide to contribute sdfat directly and treat upstream exfat.
+> Perhaps more time is needed for patch preparation(exfat rename + vfat removal
+> + clean-up) and internal processes. After contributing sdfat v2.2.0 as the base,
+> We will also provide change-set of sdfat v2.3.0 later.
 
-If we ever do start putting objects of different sizes that are commonly
-allocated together in the same page (eg inodes & dentries), then those
-aren't going to be random kmalloc() allocation; they're going to be
-special kmem caches that can specify "I don't care about alignment".
+That's wonderful to hear!  If you need help getting patches into
+mergable shape, just let us know.
 
-Also, we haven't done that.  We've had a slab allocator for twenty years,
-and nobody's tried to do that.  Maybe the co-allocation would be a net
-loss (I suspect).  Or the gain is too small for the added complexity.
-Whatever way, this is a strawman.
+thanks,
 
-> The cost is an unnecessary petrification of the data layout of the memory
-> allocators.
-
-Yes, it is.  And it's a cost I'm willing to pay in order to get the
-guarantee of alignment.
-
+greg k-h
