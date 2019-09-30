@@ -2,151 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B65C1E04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2019 11:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B61ACC1E0D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2019 11:34:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730426AbfI3Jch (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Sep 2019 05:32:37 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41725 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730394AbfI3Jch (ORCPT
+        id S1729590AbfI3JeR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Sep 2019 05:34:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53182 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727885AbfI3JeR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Sep 2019 05:32:37 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f20so7958472edv.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Sep 2019 02:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/NIG45wRzSSQZGZMC2ZYbWOSNJZUGz087s/DaB8OSlU=;
-        b=x91S8slwG0o9H8Ulvo2sIbq8o59knZIf5NKCDlSMrONoWMIkHRJFQmayDWhMzHjPwS
-         rb3qQNPx5vp56bIvPxjd/PDq9+78jmT6MgTXCEMOpxq7+NJM4baRY5tKffN9KkztKMd9
-         L4lQcDIzDwXISgWsyiY9uZxBX10dEAh6nFoWIlqh+C5Y6u3mi8B15R+BjUT+Nfyp4FHi
-         XwTgQ8n+n+YjUL7iuMoGHMeGb5w24b37TEdprFIu6/74B4KXUn4mhbdMr5nssCpt0/58
-         wKJ3gV2suDmr/gxwUYuFakGfgmjvaEoq664xxE/Sk+ujLtQpggzHh78ZiRo754VitCUp
-         gOFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/NIG45wRzSSQZGZMC2ZYbWOSNJZUGz087s/DaB8OSlU=;
-        b=AI3foAnQe8eFjdl4g8C8NYbMjtRS9ovWai9VfsClG3lhurnXertg5XiA2Nv3fZkoyP
-         YJ4n5T7Zfcr23OonztnHvNQoLcQJDOKupAwXucAJCJ02Qkfb9AlCRh+dd7Ye/9tJ7Ibk
-         385ePTfT+03iKv3YrfC3RxbkTaY5BV0jAToLnYPpXG7OkDjwF7kic9wQDi0giJUgCC/g
-         u1h4M4Frz+IAN9BVwJzH1YZ61AS6ZLgzKPtsbuNkNiTZZnzu4NyqWVmIbaF0jdtfn3Gz
-         zEaAseni0n6tAQkOSnzKCsxUy8vv+CmOUWapxTFDYkU4mB39QdcKJ8cNO5RJyipgTyqe
-         gQVQ==
-X-Gm-Message-State: APjAAAVCq0jVGb+CHsjGTe52EljyYOq7sOCVFcF62PO2l6QxxTgdNJhY
-        67lXiDlB2pMczfOjunVDWTDQKw==
-X-Google-Smtp-Source: APXvYqxYESSztSbQdFehvlYRwQ7ZtyQatlQP7EBvkF43mdhJrM5sORhaK1vk4DnKcR72sGXiIkij2w==
-X-Received: by 2002:a50:886d:: with SMTP id c42mr18545157edc.24.1569835955026;
-        Mon, 30 Sep 2019 02:32:35 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id bq13sm1395366ejb.25.2019.09.30.02.32.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Sep 2019 02:32:34 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 2E70010204E; Mon, 30 Sep 2019 12:32:33 +0300 (+03)
-Date:   Mon, 30 Sep 2019 12:32:33 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-btrfs@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
- kmalloc(power-of-two)
-Message-ID: <20190930093233.jlypzgmkf4pplgso@box.shutemov.name>
-References: <20190826111627.7505-1-vbabka@suse.cz>
- <20190826111627.7505-3-vbabka@suse.cz>
- <df8d1cf4-ff8f-1ee1-12fb-cfec39131b32@suse.cz>
- <20190930092334.GA25306@dhcp22.suse.cz>
+        Mon, 30 Sep 2019 05:34:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HJX9OsF7nCzAZY7WIWxxCUDlfYelrriJNJXBjDq+X1M=; b=vvfopPJjdaD8Bmrwikclthc06
+        4UBM7BsH8BFKrpARFNc4w8yKOIiW8zmh2YC2Atp7ZS/nZZkdV/sxbIWFNnn/X0bFqLz2BQbP+NTyL
+        El+ZC0stZ7pdBB0KSi9EYrQJe9TerTDiOfmUBsHY9KOo2QHEWIccOsHS3+NM7O6Qn3n542UVxAIP0
+        UtuZudVVT3fIVVxuJL8b1Nd2nc9eKuftSq6+KzlNov1CuNzZSIVcsvQEVZ/xqvEJY4QLFexPxuHhs
+        UpgkdvqFGyY4WKg6a2id/kb/KxAd/ydZbDxRhG1m6EzFOWusy8T8gVmQDNpwJGvLZwF5F5Bwmm9yl
+        t+q+ri8NA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iEs42-0006sd-Da; Mon, 30 Sep 2019 09:33:54 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 81E37305BD3;
+        Mon, 30 Sep 2019 11:33:04 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5097E2652FF85; Mon, 30 Sep 2019 11:33:52 +0200 (CEST)
+Date:   Mon, 30 Sep 2019 11:33:52 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Andrea Parri <parri.andrea@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        jose.marchesi@oracle.com
+Subject: Re: Do we need to correct barriering in circular-buffers.rst?
+Message-ID: <20190930093352.GM4553@hirez.programming.kicks-ass.net>
+References: <20190915145905.hd5xkc7uzulqhtzr@willie-the-truck>
+ <25289.1568379639@warthog.procyon.org.uk>
+ <28447.1568728295@warthog.procyon.org.uk>
+ <20190917170716.ud457wladfhhjd6h@willie-the-truck>
+ <15228.1568821380@warthog.procyon.org.uk>
+ <5385.1568901546@warthog.procyon.org.uk>
+ <20190923144931.GC2369@hirez.programming.kicks-ass.net>
+ <20190927095107.GA13098@andrea>
+ <20190927124929.GB4643@worktop.programming.kicks-ass.net>
+ <CAKwvOd=pZYiozmGv+DVpzJ1u9_0k4CXb3M1EAcu22DQF+bW0fA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190930092334.GA25306@dhcp22.suse.cz>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAKwvOd=pZYiozmGv+DVpzJ1u9_0k4CXb3M1EAcu22DQF+bW0fA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 11:23:34AM +0200, Michal Hocko wrote:
-> On Mon 23-09-19 18:36:32, Vlastimil Babka wrote:
-> > On 8/26/19 1:16 PM, Vlastimil Babka wrote:
-> > > In most configurations, kmalloc() happens to return naturally aligned (i.e.
-> > > aligned to the block size itself) blocks for power of two sizes. That means
-> > > some kmalloc() users might unknowingly rely on that alignment, until stuff
-> > > breaks when the kernel is built with e.g.  CONFIG_SLUB_DEBUG or CONFIG_SLOB,
-> > > and blocks stop being aligned. Then developers have to devise workaround such
-> > > as own kmem caches with specified alignment [1], which is not always practical,
-> > > as recently evidenced in [2].
-> > > 
-> > > The topic has been discussed at LSF/MM 2019 [3]. Adding a 'kmalloc_aligned()'
-> > > variant would not help with code unknowingly relying on the implicit alignment.
-> > > For slab implementations it would either require creating more kmalloc caches,
-> > > or allocate a larger size and only give back part of it. That would be
-> > > wasteful, especially with a generic alignment parameter (in contrast with a
-> > > fixed alignment to size).
-> > > 
-> > > Ideally we should provide to mm users what they need without difficult
-> > > workarounds or own reimplementations, so let's make the kmalloc() alignment to
-> > > size explicitly guaranteed for power-of-two sizes under all configurations.
-> > > What this means for the three available allocators?
-> > > 
-> > > * SLAB object layout happens to be mostly unchanged by the patch. The
-> > >   implicitly provided alignment could be compromised with CONFIG_DEBUG_SLAB due
-> > >   to redzoning, however SLAB disables redzoning for caches with alignment
-> > >   larger than unsigned long long. Practically on at least x86 this includes
-> > >   kmalloc caches as they use cache line alignment, which is larger than that.
-> > >   Still, this patch ensures alignment on all arches and cache sizes.
-> > > 
-> > > * SLUB layout is also unchanged unless redzoning is enabled through
-> > >   CONFIG_SLUB_DEBUG and boot parameter for the particular kmalloc cache. With
-> > >   this patch, explicit alignment is guaranteed with redzoning as well. This
-> > >   will result in more memory being wasted, but that should be acceptable in a
-> > >   debugging scenario.
-> > > 
-> > > * SLOB has no implicit alignment so this patch adds it explicitly for
-> > >   kmalloc(). The potential downside is increased fragmentation. While
-> > >   pathological allocation scenarios are certainly possible, in my testing,
-> > >   after booting a x86_64 kernel+userspace with virtme, around 16MB memory
-> > >   was consumed by slab pages both before and after the patch, with difference
-> > >   in the noise.
-> > > 
-> > > [1] https://lore.kernel.org/linux-btrfs/c3157c8e8e0e7588312b40c853f65c02fe6c957a.1566399731.git.christophe.leroy@c-s.fr/
-> > > [2] https://lore.kernel.org/linux-fsdevel/20190225040904.5557-1-ming.lei@redhat.com/
-> > > [3] https://lwn.net/Articles/787740/
-> > > 
-> > > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > 
-> > So if anyone thinks this is a good idea, please express it (preferably
-> > in a formal way such as Acked-by), otherwise it seems the patch will be
-> > dropped (due to a private NACK, apparently).
-> 
-> Sigh.
-> 
-> An existing code to workaround the lack of alignment guarantee just show
-> that this is necessary. And there wasn't any real technical argument
-> against except for a highly theoretical optimizations/new allocator that
-> would be tight by the guarantee.
-> 
-> Therefore
-> Acked-by: Michal Hocko <mhocko@suse.com>
+On Fri, Sep 27, 2019 at 01:43:18PM -0700, Nick Desaulniers wrote:
+> On Fri, Sep 27, 2019 at 5:49 AM Peter Zijlstra <peterz@infradead.org> wrote:
 
-Agreed.
+> Oh, in that case I'm less sure (I still don't think so, but I would
+> love to be proven wrong, preferably with a godbolt link).  I think the
+> best would be to share a godbolt.org link to a case that's clearly
+> broken, or cite the relevant part of the ISO C standard (which itself
+> leaves room for interpretation), otherwise the discussion is too
+> hypothetical.  Those two things are single-handedly the best way to
+> communicate with compiler folks.
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Ah, I'm not sure current compilers will get it wrong -- and I'm trying
+to be preemptive here. I'm looking for a guarantee that compilers will
+recognise and respect control depenencies.
 
--- 
- Kirill A. Shutemov
+The C language spec does not recognise the construct at _all_ and I'd be
+fine with it being behind some optional compiler knob.
+
+So far we're mostly very careful when using it, recognising that
+compilers can screw us over because they have no clue.
+
+> > Using WRITE_ONCE() defeats this because volatile indicates external
+> > visibility.
+> 
+> Could data be declared as a pointer to volatile qualified int?
+
+It's not actually 'int' data, mostly its a void* and we use memcpy().
+
+> > Barring LTO the above works for perf because of inter-translation-unit
+> > function calls, which imply a compiler barrier.
+
+Having looked at it again, I think we're good and have sufficient
+barrier() in there to not rely on function calls being a sync point.
+
+> > Now, when the compiler inlines, it looses that sync point (and thereby
+> > subtlely changes semantics from the non-inline variant). I suspect LTO
+> > does the same and can cause subtle breakage through this transformation.
+> 
+> Do you have a bug report or godbolt link for the above?  I trust that
+> you're familiar enough with the issue to be able to quickly reproduce
+> it?  These descriptions of problems are difficult for me to picture in
+> code or generated code, and when I try to read through
+> memory-barriers.txt my eyes start to glaze over (then something else
+> catches fire and I have to go put that out).  Having a concise test
+> case I think would better illustrate potential issues with LTO that
+> we'd then be able to focus on trying to fix/support.
+> 
+> We definitely have heavy hitting language lawyers and our LTO folks
+> are super sharp; I just don't have the necessary compiler experience
+> just yet to be as helpful in these discussions as we need but I'm
+> happy to bring them cases that don't work for the kernel and drive
+> their resolution.
+
+Like said; I've not seen it go wrong -- but it is one of the things I'm
+always paranoid about with LTO.
+
+Furthermore, if it were to go wrong, it'd be a very subtle data race and
+finding it would be super hard and painful. Which is again why I would
+love to get compiler folks on board to actually support control
+dependencies in some way.
+
+Like I said before, something like: "disallowing store hoists over control
+flow depending on a volatile load" would be sufficient I think.
+
+Yes this is outside of ISO/C, but it is something that is really
+important to us because, as said above, getting it wrong would be
+*SUPER* painful.
+
+So basically I'm asking for a language extension I suppose; a new
+guarantee from the compiler's memory model that does not exist _at_all_
+in the spec, one that we're actively using.
+
+And I'm hoping that getting the compilers to (optionally) support this
+is easier than waiting another few decades until Paul McKenney has
+wrestled the C committee into sanity and only then (maybe) getting it.
+Look at the horrible mess vs data dependencies and consume ordering
+(another fun thing we're actively using lots that the compilers are
+still struggling with).
