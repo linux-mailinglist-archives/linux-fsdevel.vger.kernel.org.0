@@ -2,97 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4B5C27A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2019 23:02:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63492C27A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2019 23:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbfI3VB0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Sep 2019 17:01:26 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43216 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbfI3VB0 (ORCPT
+        id S1731313AbfI3VCI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Sep 2019 17:02:08 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34516 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726504AbfI3VCI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:01:26 -0400
-Received: by mail-io1-f66.google.com with SMTP id v2so41985394iob.10;
-        Mon, 30 Sep 2019 14:01:26 -0700 (PDT)
+        Mon, 30 Sep 2019 17:02:08 -0400
+Received: by mail-io1-f68.google.com with SMTP id q1so42146530ion.1;
+        Mon, 30 Sep 2019 14:02:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CEUArm6gWibtMVWUMfUQg1zTk+VJsqkWb8i0x1lr37I=;
-        b=iwsVE4VD78l6Fnw0gClX+7nvq5/Bzwjph4155ZqyLgN4jqzX1ORSCaLTJ0NGyKZAna
-         /BGgTc8VwMNIaM9Aw72biO9dCIFORmK5E6cWM5FumLUpa/Pjlw70c+UC3iO7MSc5yFAn
-         d6ipZaZqB5W0JnAvBsj097K+oNLKIynYKApiiHksaEOKsB7A0Lgu0xkz5zObgNQal8Iv
-         0h0YUm6Ad6EX0+72mkNw9VmmyuOgFEsX1gJ42KSEHUNh7LabGLgaSno2Ryo3RR/DOMLr
-         7pGtqS/yj1Hcw2V/DaNtmf6PRFxsiUE1J+qdm6Ql0svB1GLiG9AcAQHa0tp05O70P9kD
-         vO3A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=QID0cXkDC0BLzvC7FuY4xqFhqxUaDG93KA1HjGWVRXo=;
+        b=ntj8348gujOTmuFADRO1GV31lND4EsLCcz7M/3IOCfDQ2Rsd7yd9l3ft9xUJYv2+Os
+         SUDiAaUmZl2mQ3Sf2OfxfDaH5FpBtALUTi8Ach7ECOhSpArMITikuaG1ePWPKXRiaW0E
+         ggGt6uuTp4AR637HvRe5HXgz4q6MVm4EJU4B9mYzatq0zk5ZxkCjsPiNm7pPsE7783Mw
+         +VdofVnoj0VhUt4Qf2M2QUIxJs5Za/KRy03sz6wNRLjBjdYrfVWbLOTP/7vt2Z6ubvOX
+         QR00ulbLQA8Hq1h9LbevAc+jNVa5UhM8RZKOrufNEUWZJnWvLO5I9WE/VKXaPba3fWE2
+         6GXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=CEUArm6gWibtMVWUMfUQg1zTk+VJsqkWb8i0x1lr37I=;
-        b=bIxXsd0+lizNCgM2LRw+GlStzSsMygArmwNkUokvRn1koMveRYjQPmyWsCevVK49Y0
-         Ekv70oeELMsFCrMjBqZLzMccgH1tQEd3TVyWSA3PwBmHNYb7/hxZQc0e7tpIuagtEQe2
-         gLKd/+Y3jwj+NM0h35hQj1DlKiPV7JTnuYco3sqBxVGFqdX4Y4EGG3ychHUEzJKj4v9l
-         6vnN9xAxPa3wZCo0bcTQpNQxQA/mie3SFUQeSygvMOek5qnNvlAlVbFfhF6o8k/h5qFl
-         r25SvDKnLLer/BW4zLZXtxKKLYP2o1tblhaC6KNEguSUEv923x8Awgh6AS9anX/6yMfK
-         MD6Q==
-X-Gm-Message-State: APjAAAWRelaZ+oH0RkeHyGOxqI37L/17Oid7QLexJ4mqk8s6nyuub3ds
-        VLU8BkBPKDgE7l21qpwEwN4=
-X-Google-Smtp-Source: APXvYqwGKvKPipBsipTjqYnbO0ZYDc+fU6ZsBhKsdyPYo5t6z2MnUinh4EbcZUdRgFrOXQ9W2hBq/Q==
-X-Received: by 2002:a92:d5c5:: with SMTP id d5mr20928394ilq.63.1569877285716;
-        Mon, 30 Sep 2019 14:01:25 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id c8sm6063991ile.9.2019.09.30.14.01.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 14:01:24 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QID0cXkDC0BLzvC7FuY4xqFhqxUaDG93KA1HjGWVRXo=;
+        b=cAuTBclivpd4Xp6ioB9RD5FFOUTTf/qgmE4jE4dDqOJ2DcoB5ZQ3ki5YKYWRwDWo3k
+         CU4azPBYHQ5YID1iRP2mlDOrpidTo+MI+vnYVL2VpfgCaxqX/uk/+NTpJoOSN7zgzyKY
+         TRzrjVnhF6BQ3CAkc4vz+0QH8xdltMoaurvm8TMonMDnw/QX+NghuuPI0BSGDquM9kmc
+         8Xg3ftFyQqKNtFo7M6wihD/s/+6s4oWtGAfYoo1h6joNG+iNtHUtsDtw8eJfEhvZH93w
+         KYYiBFhWrGJD3LYN2wa6HdTMuJCXJ06REJtPMk59n1WkckitVR71tkFGoLQAvTJujh+m
+         AJoA==
+X-Gm-Message-State: APjAAAXr/mK0OPkp0W3MwgHKMGRTaHwc1Gp180zjsklGz9pM0DiFyoeK
+        IPWusKWGtov/2513AjXm1Neh3xA+uS/14tm+R04=
+X-Google-Smtp-Source: APXvYqzS0f8N/FieGtG3rTSPNh7QsFdEKePLZRUnyEQsF7wLUfUQlddL2fv5FSx+xQeb0uvdhImlu+/YmpGMfh4eHgM=
+X-Received: by 2002:a6b:c9d7:: with SMTP id z206mr6395754iof.172.1569877326927;
+ Mon, 30 Sep 2019 14:02:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190930032200.30474-1-navid.emamdoost@gmail.com> <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de>
+In-Reply-To: <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de>
 From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     Markus.Elfring@web.de
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        David Sterba <dsterba@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Date:   Mon, 30 Sep 2019 16:01:55 -0500
+Message-ID: <CAEkB2EQwfCZk9e=MKx-U0g_e9Dgjr_RV0n6JrVaxwUP5Z=cY+w@mail.gmail.com>
+Subject: Re: [PATCH] fs: affs: fix a memory leak in affs_remount
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Sterba <dsterba@suse.com>,
         Deepa Dinamani <deepa.kernel@gmail.com>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] fs: affs: fix a memory leak in affs_remount
-Date:   Mon, 30 Sep 2019 16:01:10 -0500
-Message-Id: <20190930210114.6557-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de>
-References: <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de>
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In affs_remount if data is provided it is duplicated into new_opts.
-The allocated memory for new_opts is only released if pare_options fail.
-The release for new_opts is added.
+Fixed the issues in v2.
 
-Fixes: c8f33d0bec99 ("affs: kstrdup() memory handling")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
-Changes in v2:
-	-- fix a type in title, and add fixes tag
----
- fs/affs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks,
+Navid.
 
-diff --git a/fs/affs/super.c b/fs/affs/super.c
-index cc463ae47c12..1d38fdbc5148 100644
---- a/fs/affs/super.c
-+++ b/fs/affs/super.c
-@@ -598,6 +598,8 @@ affs_remount(struct super_block *sb, int *flags, char *data)
- 	memcpy(sbi->s_volume, volume, 32);
- 	spin_unlock(&sbi->symlink_lock);
- 
-+	kfree(new_opts);
-+
- 	if ((bool)(*flags & SB_RDONLY) == sb_rdonly(sb))
- 		return 0;
- 
--- 
-2.17.1
+On Mon, Sep 30, 2019 at 1:03 AM Markus Elfring <Markus.Elfring@web.de> wrot=
+e:
+>
+> * Please avoid typos in the commit message.
+>
+> * I would prefer an other wording for the change description.
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?id=3D97f9a3c4eee55b0178b518ae=
+7114a6a53372913d#n151
+>
+>
+> > But this is not actually used later!
+>
+> Can this information trigger the deletion of questionable source code
+> instead of adding a missing function call =E2=80=9Ckfree(new_opts)=E2=80=
+=9D?
+>
+>
+> How do you think about to add the tag =E2=80=9CFixes=E2=80=9D?
+>
+> Regards,
+> Markus
 
+
+
+--=20
+Navid.
