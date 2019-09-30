@@ -2,109 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DC30C272A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2019 22:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64D4FC273C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Sep 2019 22:50:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729686AbfI3Urz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Sep 2019 16:47:55 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:39139 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbfI3Urz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:47:55 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MBUZr-1iQpiz3595-00D3fn; Mon, 30 Sep 2019 22:21:02 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        =?UTF-8?q?Stefan=20B=C3=BChler?= <source@stbuehler.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Jackie Liu <liuyun01@kylinos.cn>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hristo Venev <hristo@venev.name>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring: use __kernel_timespec in timeout ABI
-Date:   Mon, 30 Sep 2019 22:20:39 +0200
-Message-Id: <20190930202055.1748710-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1731540AbfI3Utx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Sep 2019 16:49:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729459AbfI3Utx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:49:53 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 979BF3084244;
+        Mon, 30 Sep 2019 20:49:52 +0000 (UTC)
+Received: from max.com (ovpn-204-59.brq.redhat.com [10.40.204.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ACAF45C224;
+        Mon, 30 Sep 2019 20:49:48 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>
+Subject: Re: [PATCH 15/15] gfs2: use iomap for buffered I/O in ordered and writeback mode
+Date:   Mon, 30 Sep 2019 22:49:45 +0200
+Message-Id: <20190930204945.30780-1-agruenba@redhat.com>
+In-Reply-To: <20190806053031.GD13409@lst.de>
+References: <20190701215439.19162-1-hch@lst.de> <20190701215439.19162-16-hch@lst.de> <CAHc6FU4wtDwLv_TU6xydtO2h8P8jE1ddPjVqs8=NDFFDNEpiLA@mail.gmail.com> <20190806053031.GD13409@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:mlQX66YyJ89UsdNDcTaUDMkvDllD+MCdC0jwrPAhCDuUuJh0vOk
- zZ1jwySfQ09oEHruJb93xi023HsV+efktaoKqvpmHhP68Y4byhgRSjNpgjGQ3pvTTAS7rFA
- 09K8xy6PviTkfJyCKQI2+MF+0GZfaZPB8iiYdBkkw2ex2b4niBs+M6FIX3/0Hs4nPJ2Ci+M
- QEWGo3Z0tATHhXTDBD6Rg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:NV7gpjrMSJA=:okYpni+B9mopWZLlHONDJp
- xR8Uqy/ksQ9sz7P/lCZkqV1RHmQLWxi3Zcs9hP7G23NVdti21bzURdIU8KTe8KorJ2ZE52kzA
- JUY4ayZuWOuSN7SGagfzyLt2BJzmrmf/061UoiEHcSTXXZc8d3jsNnx1elf6C7BBJ6ufxKa+7
- NGYghSmO7UImkraFvg4CGdj8OK+Gh+82IZhA60bkWtkwNjFgdEJHbvFGGH7JLYUFth9c7+sxx
- vIb7BtF+63ZinJM6CA02I1FB/BAWQ8cLxI/F6iF5Un4JPbU5306X8Xb0OyVAkRdW52z2jUwsV
- FoqciNCWCdpZgxclQ4RczL+bc0/UkJxzU0kXQX9stuMQvMoSnDVLPGoismnyM5ukkA2dqPgCK
- j0fk85HX4KT1XeREo9XqHJrPPPE5XsIlETM58guXXs7H6MOmJFepI4ouGc/CeCybxqQSJeo0r
- iHrmwdqsvXNCSoyfRKxU+MTNY0P7xASYwJVNF2XRlcQ/BV9dgDjzZs+DRVwcBFwnwuHyIwO3P
- bP46smitC23t94UHyI7EehWvWuzx6mwwhySFEkX5onBqTcveJ2NyIkgpeTzQ8u4qHu6SSuSES
- pxQLbTHA+RgF2m6mB5C0EFqCvAmtdF3qlwudBVIABDFAKnSQZ/N2Di0ufu2/aH2RffXW2Yhc2
- BeYzdWjHiLQ9BoEPmet/gFeqOPy9L2R0OxZ5ZSD7ICczYGaCZ60Emlm9iZXebCTZVUVwJgHgD
- kpv9hy/fIGz4pByWEspBJQPhyg+6nRjSCy5lUcp7S1hv2DD5M/1vUHnwY9HPN+PvKEbQM7cnX
- SXzxqb7MJoSDoOzR0TSTBVMQTcIwZJDTdVt8NzikvdQiyqkcIuxI0UytpsnLgVY1yM/GzlS1B
- s6w+hxhaCHK4Aws2hZrA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 30 Sep 2019 20:49:52 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All system calls use struct __kernel_timespec instead of the old struct
-timespec, but this one was just added with the old-style ABI. Change it
-now to enforce the use of __kernel_timespec, avoiding ABI confusion and
-the need for compat handlers on 32-bit architectures.
+Hi Christoph,
 
-Any user space caller will have to use __kernel_timespec now, but this
-is unambiguous and works for any C library regardless of the time_t
-definition. A nicer way to specify the timeout would have been a less
-ambiguous 64-bit nanosecond value, but I suppose it's too late now to
-change that as this would impact both 32-bit and 64-bit users.
+On Tue, Aug 6, 2019 at 7:30 AM Christoph Hellwig <hch@lst.de> wrote:
+> On Mon, Aug 05, 2019 at 02:27:21PM +0200, Andreas Gruenbacher wrote:
+> > Christoph,
+> >
+> > thanks again for this patch and the rest of the patch queue. There's
+> > one minor bug here (see below). With that and the gfs2_walk_metadata
+> > fix I've just posted to cluster-devel, this is now all working nicely.
+>
+> Skipping through the full quote this was a missing set_page_dirty,
+> right?  Looks fine to me and sorry for messing this up.
 
-Fixes: 5262f567987d ("io_uring: IORING_OP_TIMEOUT support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+here are the changes we currently need on top of what you've posted on
+July 1.  On top of the page dirtying which you patch accidentally
+dropped in gfs2_unstuffer_page, there are two places in which we also
+need to call iomap_page_create to attach an iomap_page structure to the
+pages.
+
+The first place is in gfs2_unstuffer_page, which converts an inline
+(stuffed) file into a regular file.  This is implemented in a filesystem
+specific way, and I don't think there is any point in trying to make
+this more generic.
+
+The second place is in gfs2_page_mkwrite.  This function should
+eventually be changed to call iomap_page_mkwrite instead, but we can
+just fix it as below just to get this working.
+
+Currently, iomap_page_create is a static function in
+fs/iomap/buffered-io.c, so we need to export it before these changes
+will work.
+
+I'm still trying to track down consistency problems with a 1k blocksize
+in xfstests generic/263 and generic/300, and that is with the mmap
+locking issue fixed that Dave Chinner has pointed out [*].  This problem
+existed even before your changes, so your changes seem to be working
+correctly.
+
+Thanks again,
+Andreas
+
+[*] https://lore.kernel.org/linux-fsdevel/20190906205241.2292-1-agruenba@redhat.com/
+
 ---
- fs/io_uring.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/gfs2/bmap.c | 2 ++
+ fs/gfs2/file.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index aa8ac557493c..8a0381f1a43b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1892,15 +1892,15 @@ static int io_timeout(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	unsigned count, req_dist, tail_index;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct list_head *entry;
--	struct timespec ts;
-+	struct timespec64 ts;
+diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+index bf5c494d25ef..48b458c49fa1 100644
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -93,6 +93,8 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, struct buffer_head *dibh,
+ 		set_buffer_uptodate(bh);
+ 		gfs2_trans_add_data(ip->i_gl, bh);
+ 	} else {
++		iomap_page_create(inode, page);
++		set_page_dirty(page);
+ 		gfs2_ordered_add_inode(ip);
+ 	}
  
- 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 	if (sqe->flags || sqe->ioprio || sqe->buf_index || sqe->timeout_flags ||
- 	    sqe->len != 1)
- 		return -EINVAL;
--	if (copy_from_user(&ts, (void __user *) (unsigned long) sqe->addr,
--	    sizeof(ts)))
-+
-+	if (get_timespec64(&ts, u64_to_user_ptr(sqe->addr)))
- 		return -EFAULT;
- 
- 	/*
-@@ -1934,7 +1934,7 @@ static int io_timeout(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	hrtimer_init(&req->timeout.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	req->timeout.timer.function = io_timeout_fn;
--	hrtimer_start(&req->timeout.timer, timespec_to_ktime(ts),
-+	hrtimer_start(&req->timeout.timer, timespec64_to_ktime(ts),
- 			HRTIMER_MODE_REL);
- 	return 0;
- }
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index 997b326247e2..30fd180e199d 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -516,6 +516,8 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
+ out_uninit:
+ 	gfs2_holder_uninit(&gh);
+ 	if (ret == 0) {
++		if (!gfs2_is_jdata(ip))
++			iomap_page_create(inode, page);
+ 		set_page_dirty(page);
+ 		wait_for_stable_page(page);
+ 	}
 -- 
-2.20.0
+2.20.1
 
