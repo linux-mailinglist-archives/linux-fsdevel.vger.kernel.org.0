@@ -2,149 +2,291 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA56C2EE0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 10:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE91C2FB8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 11:12:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733043AbfJAIbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Oct 2019 04:31:33 -0400
-Received: from mout.web.de ([212.227.15.14]:34595 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732738AbfJAIbd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Oct 2019 04:31:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1569918655;
-        bh=uEaNgF8/W7jxLx+nK9u6Zze2gr1PDsS2bf27/yBG1Sc=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=NfQaBzr27iw1hVAN6LWU3e6seLXMxrYMdxx06XrpDMycIIhUWNCiJ5jEzJrUhpvhm
-         gNTpbSgFnO4VxW7DZ+w5LVEqjsGUP0KcSJigjfzASy5W28g+EA3z917lkx46GD37lg
-         11x29/moBUKCKp+mruHl6JDjIFy3kAit4+rwIM74=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.188.160]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MWinD-1ichZk0Ckd-00XsqN; Tue, 01
- Oct 2019 10:30:55 +0200
-Subject: Re: [PATCH v2] fs: affs: fix a memory leak in affs_remount
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     Navid Emamdoost <emamd001@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        David Sterba <dsterba@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de>
- <20190930210114.6557-1-navid.emamdoost@gmail.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <44ad775e-3b6f-4cbc-ba6f-455ff7191c58@web.de>
-Date:   Tue, 1 Oct 2019 10:30:44 +0200
+        id S1733164AbfJAJK1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Oct 2019 05:10:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52500 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728892AbfJAJK1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Oct 2019 05:10:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8C112AC31;
+        Tue,  1 Oct 2019 09:10:23 +0000 (UTC)
+Subject: Re: [bug, 5.2.16] kswapd/compaction null pointer crash [was Re:
+ xfs_inode not reclaimed/memory leak on 5.2.16]
+To:     Dave Chinner <david@fromorbit.com>,
+        Florian Weimer <fw@deneb.enyo.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Mel Gorman <mgorman@techsingularity.net>
+References: <87pnji8cpw.fsf@mid.deneb.enyo.de>
+ <20190930085406.GP16973@dread.disaster.area>
+ <87o8z1fvqu.fsf@mid.deneb.enyo.de>
+ <20190930211727.GQ16973@dread.disaster.area>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <96023250-6168-3806-320a-a3468f1cd8c9@suse.cz>
+Date:   Tue, 1 Oct 2019 11:10:22 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-In-Reply-To: <20190930210114.6557-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190930211727.GQ16973@dread.disaster.area>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Wgp6OF25pMnaIJ2HzGdp+iMn7T62koCOIPUQQ4mgspfLpattIdf
- dvBhg34g/CCTYonReyj/vUPr5QsTGHAr28Qhv7YJpWfKiSGsUjK5/xO/kUdWD0nhPdelg4u
- qfSLVdKUKtRKqvzrnC+w9oYuq/tp3l9/+5idWhiATI6GVjPvHONY/3dyM761BZ+tmY2OHRT
- 25lEorDZWe5JgAWHdjNag==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:i5REQtY1IqM=:+y3FNtSz9fF2Qbte4Q5YF/
- sp9mEllSZbzqjDCht7CkpWkWA8cGTeb6IHxHIXMzV9LocEMcgjEzhoAdwT14CfIfhsP8wb5Nd
- 4p/7bB4DvATP2yBQYE5xEX7Po4m5S24dKZKcHHfTBEAGdLJ0MeA8+vqeQtOk1HVH1V+sSehNY
- o5yIBbRzu2PnzxlQV/4Zyvyh1AVwSXhoYx71yCCjrap10yNtGtcpspVdsxmTEjZk8wk4Hsany
- xqRzJO8jJL/lw+j1ry6fWxHobfaehEuu/yVu8vJmphypV0ZR5HtmltqUg2vslRDjNshoOLQY+
- 1rl7lfyR+CsYlCiQE+rDiA4jKw/JEg5EiuxKdv8BWxIKOjFrRQT7XzIfkRWNnUeLHqiyAovmL
- i4BCPRQTC2EB0sJNCTMp2w7vNMwFsiI9IdjixWPZ0y21Ay1hcxJ8juR580QsSYuDOZfRLUSXi
- D9n2ozQTDPGwK09vFbfUI8EQG76IOVJnFrTa86FriMcpQ+a3W+H0I5fFbXD6HDpDhWc/BAhU3
- cDuuTXS0C9Fsn2fEjISal/Oy+7aXf+MOcp+ipkzdL9+s2RAVOIh6q5OyjHXQur5Ys2R6py/aj
- gq0hbLv1HFhIM6gWkjlHKcvkuvhK76DXD6xJ1QVVZ/HwA8JfMLGVP7l5ArtC6LNzDKb/qH/M8
- iWKESgv9a2CQnwKlUd1zXLlNYtq/ZOuQExqFngxXYfcUVgrT411nUZKUpIwQXp01qkK7D5l+E
- fgVvLC0viUQ2Mn/aZ0LzPlp/QiVAqv52/zFGFmGWhIHyi75w3V1Jw1vX5aHwTrxUawkzP098w
- t1YdgVvKpScTciG4wPyPmCnRelISjj46XZrbvBsVazCfuLDTzbLZnSkiQALCf2UhkD6zqnH0x
- 3W6p1jQC4S4fw52FGBkW35maGYYWSqnOWMLrRcrgZQbLzwfDtjo5kI34jACsSdIQYfjdXrXvi
- fLwrpLOeO1yGsNEz+pBKpHJfZAnANKKcHfun6gDJC/quZ0YY8iUZvhOM33lZH0DX8p9afZMu1
- 7wcaAt8wPGrxafsYMucL8k5PG7pihlP9PmJHLCBU5oqbrll+ujU7SgHP42EbyVAPhRrDAOiz7
- tcYgJNR4sb/ChR5yBlq6GFUfuINxLE6B4ejhCf4EbhD9vAIaz0LKJS80BkwI/+XEm382HKSEU
- QH4CLHkS69uNp/R5LIhgQ8Y4JHks72Olk0zrk4zB9OqibOAUOXOzWAiEEH1apfkrKhZ9DC856
- LU6vNinBik0leBYN/pn+mve4nl2TeGu8iO8O3DsY8Bbm+MBgjvEJ30dbCsS0=
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> The allocated memory for new_opts is only released if pare_options fail.
+On 9/30/19 11:17 PM, Dave Chinner wrote:
+> On Mon, Sep 30, 2019 at 09:07:53PM +0200, Florian Weimer wrote:
+>> * Dave Chinner:
+>>
+>>> On Mon, Sep 30, 2019 at 09:28:27AM +0200, Florian Weimer wrote:
+>>>> Simply running “du -hc” on a large directory tree causes du to be
+>>>> killed because of kernel paging request failure in the XFS code.
+>>>
+>>> dmesg output? if the system was still running, then you might be
+>>> able to pull the trace from syslog. But we can't do much without
+>>> knowing what the actual failure was....
+>>
+>> Huh.  I actually have something in syslog:
+>>
+>> [ 4001.238411] BUG: kernel NULL pointer dereference, address: 0000000000000000
+>> [ 4001.238415] #PF: supervisor read access in kernel mode
+>> [ 4001.238417] #PF: error_code(0x0000) - not-present page
+>> [ 4001.238418] PGD 0 P4D 0 
+>> [ 4001.238420] Oops: 0000 [#1] SMP PTI
+>> [ 4001.238423] CPU: 3 PID: 143 Comm: kswapd0 Tainted: G          I       5.2.16fw+ #1
+>> [ 4001.238424] Hardware name: System manufacturer System Product Name/P6X58D-E, BIOS 0701    05/10/2011
+>> [ 4001.238430] RIP: 0010:__reset_isolation_pfn+0x27f/0x3c0
+> 
+> That's memory compaction code it's crashed in.
+> 
+>> [ 4001.238432] Code: 44 c6 48 8b 00 a8 10 74 bc 49 8b 16 48 89 d0 48 c1 ea 35 48 8b 14 d7 48 c1 e8 2d 48 85 d2 74 0a 0f b6 c0 48 c1 e0 04 48 01 c2 <48> 8b 02 4c 89 f2 41 b8 01 00 00 00 31 f6 b9 03 00 00 00 4c 89 f7
 
-Can the following wording be nicer?
+Tried to decode it, but couldn't match it to source code, my version of
+compiled code is too different. Would it be possible to either send
+mm/compaction.o from the matching build, or output of 'objdump -d -l'
+for the __reset_isolation_pfn function?
 
-  The allocated memory for the buffer =E2=80=9Cnew_opts=E2=80=9D will be r=
-eleased
-  only if a call of the function =E2=80=9Cparse_options=E2=80=9D failed.
+>> [ 4001.238433] RSP: 0018:ffffc900003e7de0 EFLAGS: 00010246
+>> [ 4001.238435] RAX: 0000000000057285 RBX: 0000000000108000 RCX: 0000000000000000
+>> [ 4001.238437] RDX: 0000000000000000 RSI: 0000000000000210 RDI: ffff88833fffa000
+>> [ 4001.238438] RBP: ffffc900003e7e18 R08: 0000000000000004 R09: ffff888335000000
+>> [ 4001.238439] R10: ffff88833fff9000 R11: 0000000000000000 R12: 0000000000000000
+>> [ 4001.238440] R13: 0000000000000000 R14: ffff8883389c01c0 R15: 0000000000000001
+>> [ 4001.238442] FS:  0000000000000000(0000) GS:ffff888333cc0000(0000) knlGS:0000000000000000
+>> [ 4001.238444] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [ 4001.238445] CR2: 0000000000000000 CR3: 000000000200a003 CR4: 00000000000206e0
+>> [ 4001.238446] Call Trace:
+>> [ 4001.238450]  __reset_isolation_suitable+0x9b/0x120
+>> [ 4001.238453]  reset_isolation_suitable+0x3b/0x40
+>> [ 4001.238456]  kswapd+0x98/0x300
+>> [ 4001.238460]  ? wait_woken+0x80/0x80
+>> [ 4001.238463]  kthread+0x114/0x130
+>> [ 4001.238465]  ? balance_pgdat+0x450/0x450
+>> [ 4001.238467]  ? kthread_park+0x80/0x80
+>> [ 4001.238470]  ret_from_fork+0x1f/0x30
+> 
+> Ok, so the memory compaction code has had a null pointer dereference
+> which has killed kswapd. memory reclaim is going to have serious
+> problems from this point on as kswapd does most of the reclaim.
+> 
+> I have no idea why this might have happened - are they any other
+> unexpected events or clues in the syslog that might point to a
+> memory corruption or some sign of badness before this crash?
+> 
+>> [ 4001.238472] Modules linked in: nfnetlink 8021q garp stp llc fuse ipt_REJECT nf_reject_ipv4 xt_tcpudp ip6table_filter xt_state xt_conntrack iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_filter tun ip6_tables binfmt_misc mxm_wmi evdev snd_hda_codec_hdmi coretemp snd_hda_intel kvm_intel snd_hda_codec serio_raw kvm snd_hwdep irqbypass snd_hda_core pcspkr snd_pcm snd_timer snd soundcore sg i7core_edac asus_atk0110 wmi button loop ip_tables x_tables raid10 raid456 async_raid6_recov async_memcpy async_pq raid6_pq async_xor xor async_tx raid1 raid0 multipath linear md_mod hid_generic usbhid hid crc32c_intel psmouse sr_mod cdrom radeon e1000e ptp xhci_pci pps_core uhci_hcd ehci_pci xhci_hcd ehci_hcd sky2 usbcore ttm usb_common sd_mod
+>> [ 4001.238509] CR2: 0000000000000000
+>> [ 4001.238511] ---[ end trace 3cdcc14b40255fe6 ]---
+>> [ 4001.238514] RIP: 0010:__reset_isolation_pfn+0x27f/0x3c0
+>> [ 4001.238516] Code: 44 c6 48 8b 00 a8 10 74 bc 49 8b 16 48 89 d0 48 c1 ea 35 48 8b 14 d7 48 c1 e8 2d 48 85 d2 74 0a 0f b6 c0 48 c1 e0 04 48 01 c2 <48> 8b 02 4c 89 f2 41 b8 01 00 00 00 31 f6 b9 03 00 00 00 4c 89 f7
+>> [ 4001.238518] RSP: 0018:ffffc900003e7de0 EFLAGS: 00010246
+>> [ 4001.238519] RAX: 0000000000057285 RBX: 0000000000108000 RCX: 0000000000000000
+>> [ 4001.238521] RDX: 0000000000000000 RSI: 0000000000000210 RDI: ffff88833fffa000
+>> [ 4001.238522] RBP: ffffc900003e7e18 R08: 0000000000000004 R09: ffff888335000000
+>> [ 4001.238523] R10: ffff88833fff9000 R11: 0000000000000000 R12: 0000000000000000
+>> [ 4001.238524] R13: 0000000000000000 R14: ffff8883389c01c0 R15: 0000000000000001
+>> [ 4001.238526] FS:  0000000000000000(0000) GS:ffff888333cc0000(0000) knlGS:0000000000000000
+>> [ 4001.238528] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [ 4001.238529] CR2: 0000000000000000 CR3: 000000000200a003 CR4: 00000000000206e0
+>> [ 4001.709169] BUG: unable to handle page fault for address: ffffc900003e7ec8
+>> [ 4001.709172] #PF: supervisor read access in kernel mode
+>> [ 4001.709173] #PF: error_code(0x0000) - not-present page
+>> [ 4001.709174] PGD 33201a067 P4D 33201a067 PUD 33201b067 PMD 3322af067 PTE 0
+>> [ 4001.709177] Oops: 0000 [#2] SMP PTI
+>> [ 4001.709179] CPU: 1 PID: 10507 Comm: du Tainted: G      D   I       5.2.16fw+ #1
+>> [ 4001.709180] Hardware name: System manufacturer System Product Name/P6X58D-E, BIOS 0701    05/10/2011
+>> [ 4001.709184] RIP: 0010:__wake_up_common+0x3c/0x130
+> 
+> Then half a second later, the du process has crashed in
+> __wake_up_common (core scheduler code)....
+> 
+>> [ 4001.709186] Code: 85 c9 74 0a 41 f6 01 04 0f 85 9f 00 00 00 48 8b 47 08 48 8d 5f 08 48 83 e8 18 48 8d 78 18 48 39 fb 0f 84 ca 00 00 00 89 75 d4 <48> 8b 70 18 4d 89 cd 45 31 e4 4c 89 45 c8 89 4d d0 89 55 c4 4c 8d
+>> [ 4001.709187] RSP: 0018:ffffc900043db5e0 EFLAGS: 00010012
+>> [ 4001.709188] RAX: ffffc900003e7eb0 RBX: ffffffff82066f00 RCX: 0000000000000000
+>> [ 4001.709189] RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffffc900003e7ec8
+>> [ 4001.709190] RBP: ffffc900043db620 R08: 0000000000000000 R09: ffffc900043db638
+>> [ 4001.709191] R10: 0000000000000002 R11: 0000000000000000 R12: 0000000000000001
+>> [ 4001.709192] R13: 0000000000000286 R14: 0000000000000000 R15: 0000000000000000
+>> [ 4001.709193] FS:  00007f0090d20540(0000) GS:ffff888333c40000(0000) knlGS:0000000000000000
+>> [ 4001.709194] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [ 4001.709195] CR2: ffffc900003e7ec8 CR3: 00000002b85dc004 CR4: 00000000000206e0
+>> [ 4001.709195] Call Trace:
+>> [ 4001.709198]  __wake_up_common_lock+0x6c/0x90
+>> [ 4001.709200]  __wake_up+0xe/0x10
+>> [ 4001.709203]  wakeup_kswapd+0xf4/0x120
+> 
+> ...trying to wake up kswapd. This may have crashed because the
+> kswapd task has been killed and it hasn't been removed from
+> the wait list and so there's a dead/freed task being woken.
+> Regardless, this looks like a follow-on issue, not a root cause.
+> 
+>> [ 4001.709206]  get_page_from_freelist+0x52e/0xc80
+>> [ 4001.709208]  __alloc_pages_nodemask+0xf0/0xcc0
+>> [ 4001.709209]  ? get_page_from_freelist+0xa8d/0xc80
+>> [ 4001.709212]  ? radix_tree_lookup+0xd/0x10
+>> [ 4001.709215]  ? kmem_cache_alloc+0x80/0xa0
+>> [ 4001.709217]  xfs_buf_allocate_memory+0x20e/0x320
+>> [ 4001.709219]  xfs_buf_get_map+0xe8/0x190
+>> [ 4001.709220]  xfs_buf_read_map+0x25/0x100
+>> [ 4001.709223]  xfs_trans_read_buf_map+0xb2/0x1f0
+>> [ 4001.709225]  xfs_imap_to_bp+0x53/0xa0
+>> [ 4001.709226]  xfs_iread+0x76/0x1b0
+>> [ 4001.709229]  xfs_iget+0x1e5/0x700
+>> [ 4001.709231]  xfs_lookup+0x63/0x90
+>> [ 4001.709232]  xfs_vn_lookup+0x47/0x80
+> 
+> The XFS part of this is that it triggers the memory allocation that
+> trips over the bad kswapd state, nothing else.
+> 
+> IOWs, this doesn't look like an XFS problem at all, but more likely
+> something going wrong with memory compaction or memory reclaim, so
+> I'd suggest linux-mm@kvack.org [cc'd] is the first port of call for
+> further triage.
+> 
+>> [ 4001.709235]  __lookup_slow+0x7f/0x120
+>> [ 4001.709236]  lookup_slow+0x35/0x50
+>> [ 4001.709238]  walk_component+0x193/0x2a0
+>> [ 4001.709239]  ? path_init+0x112/0x2f0
+>> [ 4001.709240]  path_lookupat.isra.16+0x5c/0x200
+>> [ 4001.709242]  filename_lookup.part.27+0x88/0x100
+>> [ 4001.709243]  ? xfs_ilock+0x39/0x90
+>> [ 4001.709245]  ? __check_object_size+0xf6/0x187
+>> [ 4001.709248]  ? strncpy_from_user+0x56/0x1c0
+>> [ 4001.709249]  user_path_at_empty+0x39/0x40
+>> [ 4001.709250]  vfs_statx+0x62/0xb0
+>> [ 4001.709252]  __se_sys_newfstatat+0x26/0x50
+>> [ 4001.709254]  __x64_sys_newfstatat+0x19/0x20
+>> [ 4001.709255]  do_syscall_64+0x4b/0x260
+>> [ 4001.709257]  ? page_fault+0x8/0x30
+>> [ 4001.709259]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [ 4001.709261] RIP: 0033:0x7f0090c47e49
+>> [ 4001.709262] Code: 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 0f 1f 40 00 89 f0 48 89 d6 83 ff 01 77 36 89 c7 45 89 c2 48 89 ca b8 06 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 07 c3 66 0f 1f 44 00 00 48 8b 15 11 10 0d 00
+>> [ 4001.709263] RSP: 002b:00007fffee0929e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+>> [ 4001.709264] RAX: ffffffffffffffda RBX: 00005635d95cfe00 RCX: 00007f0090c47e49
+>> [ 4001.709265] RDX: 00005635d95cfe78 RSI: 00005635d95cff08 RDI: 0000000000000004
+>> [ 4001.709266] RBP: 00005635d95cfe78 R08: 0000000000000100 R09: 0000000000000001
+>> [ 4001.709267] R10: 0000000000000100 R11: 0000000000000246 R12: 00005635d8c1e5c0
+>> [ 4001.709268] R13: 00005635d95cfe00 R14: 00005635d8c1e650 R15: 000000000000000b
+>> [ 4001.709269] Modules linked in: nfnetlink 8021q garp stp llc fuse ipt_REJECT nf_reject_ipv4 xt_tcpudp ip6table_filter xt_state xt_conntrack iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_filter tun ip6_tables binfmt_misc mxm_wmi evdev snd_hda_codec_hdmi coretemp snd_hda_intel kvm_intel snd_hda_codec serio_raw kvm snd_hwdep irqbypass snd_hda_core pcspkr snd_pcm snd_timer snd soundcore sg i7core_edac asus_atk0110 wmi button loop ip_tables x_tables raid10 raid456 async_raid6_recov async_memcpy async_pq raid6_pq async_xor xor async_tx raid1 raid0 multipath linear md_mod hid_generic usbhid hid crc32c_intel psmouse sr_mod cdrom radeon e1000e ptp xhci_pci pps_core uhci_hcd ehci_pci xhci_hcd ehci_hcd sky2 usbcore ttm usb_common sd_mod
+>> [ 4001.709293] CR2: ffffc900003e7ec8
+>> [ 4001.709295] ---[ end trace 3cdcc14b40255fe7 ]---
+>> [ 4001.709297] RIP: 0010:__reset_isolation_pfn+0x27f/0x3c0
+>> [ 4001.709299] Code: 44 c6 48 8b 00 a8 10 74 bc 49 8b 16 48 89 d0 48 c1 ea 35 48 8b 14 d7 48 c1 e8 2d 48 85 d2 74 0a 0f b6 c0 48 c1 e0 04 48 01 c2 <48> 8b 02 4c 89 f2 41 b8 01 00 00 00 31 f6 b9 03 00 00 00 4c 89 f7
+>> [ 4001.709299] RSP: 0018:ffffc900003e7de0 EFLAGS: 00010246
+>> [ 4001.709300] RAX: 0000000000057285 RBX: 0000000000108000 RCX: 0000000000000000
+>> [ 4001.709301] RDX: 0000000000000000 RSI: 0000000000000210 RDI: ffff88833fffa000
+>> [ 4001.709302] RBP: ffffc900003e7e18 R08: 0000000000000004 R09: ffff888335000000
+>> [ 4001.709303] R10: ffff88833fff9000 R11: 0000000000000000 R12: 0000000000000000
+>> [ 4001.709304] R13: 0000000000000000 R14: ffff8883389c01c0 R15: 0000000000000001
+>> [ 4001.709305] FS:  00007f0090d20540(0000) GS:ffff888333c40000(0000) knlGS:0000000000000000
+>> [ 4001.709306] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [ 4001.709307] CR2: ffffc900003e7ec8 CR3: 00000002b85dc004 CR4: 00000000000206e0
+>>
+>> So XFS wasn't *that* unhappy if it could still write to the file
+>> system.
+> 
+> RIght, as long as it doesn't trip over any of the leaked state (e.g.
+> locks) from the du process that was killed, it'll keep going as long
+> as direct memory reclaim can keep reclaiming memory.
+> 
+>>
+>>> FWIW, one of my regular test workloads is iterating a directory tree
+>>> with 50 million inodes in several different ways to stress reclaim
+>>> algorithms in ways that users do. I haven't seen issues with that
+>>> test for a while, so it's not an obvious problem whatever you came
+>>> across.
+>>
+>> Right, I should have tried to reproduce it first.  I actually can't.
+> 
+> Not surprising, it has the smell of "random crash" to it.
+> 
+> Cheers,
+> 
+> Dave.
+> 
 
-
-> The release for new_opts is added.
-
-* How do you think about the change possibility to delete questionable
-  source code here?
-
-* Would you like to complete the data processing for corresponding options
-  any more?
-
-
-> 	-- fix a type in title, =E2=80=A6
-
-Please avoid typos also in your version comments.
-
-
-> ---
-
-I suggest to replace this second delimiter by a blank line.
-
-Regards,
-Markus
