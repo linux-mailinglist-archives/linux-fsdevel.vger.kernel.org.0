@@ -2,126 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46B74C423F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 23:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E9DCC442C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2019 01:13:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbfJAVB7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Oct 2019 17:01:59 -0400
-Received: from mga06.intel.com ([134.134.136.31]:60837 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726973AbfJAVB6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:01:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 14:01:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,572,1559545200"; 
-   d="scan'208";a="343108957"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga004.jf.intel.com with ESMTP; 01 Oct 2019 14:01:57 -0700
-Date:   Tue, 1 Oct 2019 14:01:57 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-mm@kvack.org, Jeff Layton <jlayton@kernel.org>,
-        Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: Lease semantic proposal
-Message-ID: <20191001210156.GB5500@iweiny-DESK2.sc.intel.com>
-References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
- <20190923222620.GC16973@dread.disaster.area>
- <20190925234602.GB12748@iweiny-DESK2.sc.intel.com>
- <20190930084233.GO16973@dread.disaster.area>
+        id S1728892AbfJAXNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Oct 2019 19:13:06 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39753 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfJAXNG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Oct 2019 19:13:06 -0400
+Received: by mail-qk1-f196.google.com with SMTP id 4so13021850qki.6;
+        Tue, 01 Oct 2019 16:13:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9ILA22R+FzAOleL+j0MeMARy0l6+g6H9hVfWW1tX4jE=;
+        b=vQiZmVfaJdfSh01WnpPmrO3ZzAZWT569tlLyWt6abiOLUTpkRl0Z4lKkINtwXAacRo
+         ii0e39RXHCH1BodaZQ+SPTVyWbd5FP66oiaqTr8aq8aD+MuhurzjFIf2R3uZaOcm/QbF
+         WCYVQPuhUYsPIX/AmmCjDYCaPW5Kg+eH1Xxowaqko6Dg7WVo1l2ZHZqQ9saCpKGeYut/
+         jCI+LP5W6PRNcU3Orit1siH90oBE3po/tX+oSqIPEL1SMIHh/qjlW02d05nSmsnxhb9v
+         vJ/+GGkkQOvg59kKAPWyzgyvDO83ZI8rz0NQEhszenwsOv0aMDQQ/HggYCW7VuBZc2qM
+         44EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9ILA22R+FzAOleL+j0MeMARy0l6+g6H9hVfWW1tX4jE=;
+        b=M9Le4Shj8wSuId31KyDSfmH2wHHLjdlP4WFhv/ebFxQCHDCD774xWw0uH4U5f+/BUP
+         17Lo5m2jUrzAlEzWnDGATtX27mVQ7WPp40sc6PG7mFryRklOw9G4+bgVnaUBFBzuDq2d
+         o567/DM83Q9QQvIMYZ5SMXHtnrJ3WYVRAVKB936OtoEy/bz4tUtMAGY2HGumjfzhMnMC
+         Ke2z++SSTtY+6g4JzcOCJR5oKO+crpG0M9tJFHy7yL3oyPImAzoUnduRbjkCPU9Veu/i
+         03QP2B7CTrgQHGgyybAfpBft4sFWczoBbwxAGPwOD8mcvwZW3pRTEBKqshI5IbKlI0rJ
+         LKuQ==
+X-Gm-Message-State: APjAAAVfpLvdYcdoIviPjJ1G+/40bLGxrhUsTiZFJuiE/WSwEve8kRkX
+        zfAj8BVp+X3iefbr2EVOOqKKy62+3A7uzTg8/lU=
+X-Google-Smtp-Source: APXvYqzFXNFI+cFNgRHC/Q6m+0b30EcRiOsi7zFCHkbZ4Zpo8M60YLKQI0GwEbgrpmLgpRkqA2cEg7ngWYJAPIyVhnQ=
+X-Received: by 2002:a05:620a:49b:: with SMTP id 27mr681985qkr.89.1569971585019;
+ Tue, 01 Oct 2019 16:13:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190930084233.GO16973@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <cover.1568994791.git.esyr@redhat.com>
+In-Reply-To: <cover.1568994791.git.esyr@redhat.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Tue, 1 Oct 2019 16:12:53 -0700
+Message-ID: <CAPhsuW5CvJNRP5OO_M6XVd9q0x-CH9eADWR5oqdJP20eFScCFw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] Fix typo in RWH_WRITE_LIFE_NOT_SET constant name
+To:     Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Shaohua Li <shli@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-raid <linux-raid@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 06:42:33PM +1000, Dave Chinner wrote:
-> On Wed, Sep 25, 2019 at 04:46:03PM -0700, Ira Weiny wrote:
-> > On Tue, Sep 24, 2019 at 08:26:20AM +1000, Dave Chinner wrote:
-> > > Hence, AFIACT, the above definition of a F_RDLCK|F_LAYOUT lease
-> > > doesn't appear to be compatible with the semantics required by
-> > > existing users of layout leases.
-> > 
-> > I disagree.  Other than the addition of F_UNBREAK, I think this is consistent
-> > with what is currently implemented.  Also, by exporting all this to user space
-> > we can now write tests for it independent of the RDMA pinning.
-> 
-> The current usage of F_RDLCK | F_LAYOUT by the pNFS code allows
-> layout changes to occur to the file while the layout lease is held.
-
-This was not my understanding.
-
-> IOWs, your definition of F_RDLCK | F_LAYOUT not being allowed
-> to change the is in direct contradition to existing users.
-> 
-> I've said this several times over the past few months now: shared
-> layout leases must allow layout modifications to be made.
-
-I don't understand what the point of having a layout lease is then?
-
+On Fri, Sep 20, 2019 at 8:58 AM Eugene Syromiatnikov <esyr@redhat.com> wrote:
 >
-> Only
-> allowing an exclusive layout lease to modify the layout rules out
-> many potential use cases for direct data placement and p2p DMA
-> applications,
+> Hello.
+>
+> This is a small fix of a typo (or, more specifically, some remnant of
+> the old patch version spelling) in RWH_WRITE_LIFE_NOT_SET constant,
+> which is named as RWF_WRITE_LIFE_NOT_SET currently.  Since the name
+> with "H" is used in man page and everywhere else, it's probably worth
+> to make the name used in the fcntl.h UAPI header in line with it.
+> The two follow-up patches update usage sites of this constant in kernel
+> to use the new spelling.
+>
+> The old name is retained as it is part of UAPI now.
+>
+> Changes since v2[1]:
+>  * Updated RWF_WRITE_LIFE_NOT_SET constant usage
+>    in drivers/md/raid5-ppl.c:ppl_init_log().
+>
+> Changes since v1[2]:
+>  * Changed format of the commit ID in the commit message of the first patch.
+>  * Removed bogus Signed-off-by that snuck into the resend of the series.
 
-How?  I think that having a typical design pattern of multiple readers
-and only a single writer would actually make all these use cases easier.
+Applied to md-next.
 
-> not to mention conflicts with the existing pNFS usage.
-
-I apologize for not understanding this.  My reading of the code is that layout
-changes require the read layout to be broken prior to proceeding.
-
-The break layout code does this by creating a F_WRLCK of type FL_LAYOUT which
-conflicts with the F_RDLCK of type FL_LAYOUT...
-
-int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
-{
-...
-        struct file_lock *new_fl, *fl, *tmp;
-...
-
-        new_fl = lease_alloc(NULL, want_write ? F_WRLCK : F_RDLCK, 0);
-        if (IS_ERR(new_fl))
-                return PTR_ERR(new_fl);
-        new_fl->fl_flags = type;
-...
-        list_for_each_entry_safe(fl, tmp, &ctx->flc_lease, fl_list) {
-                if (!leases_conflict(fl, new_fl))
-                        continue;
-...
-}
-
-type == FL_LAYOUT from the call here.
-
-static inline int break_layout(struct inode *inode, bool wait)
-{
-        smp_mb();
-        if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
-                return __break_lease(inode,
-                                wait ? O_WRONLY : O_WRONLY | O_NONBLOCK,
-                                FL_LAYOUT);
-        return 0;
-}       
-
-Also, I don't see any code which limits the number of read layout holders which
-can be present and all of them will be revoked by the above code.
-
-What am I missing?
-
-Ira
-
+Thanks,
+Song
