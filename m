@@ -2,87 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F39AC3A24
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 18:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D71C3BAA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 18:46:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389894AbfJAQOt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Oct 2019 12:14:49 -0400
-Received: from mail-lj1-f178.google.com ([209.85.208.178]:39283 "EHLO
-        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731663AbfJAQOt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:14:49 -0400
-Received: by mail-lj1-f178.google.com with SMTP id y3so14013202ljj.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Oct 2019 09:14:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=yDvojJDXIxy3QO5S8Y3gcgPCyfj7/QuWW9tp7qGw8GE=;
-        b=l3fXBnnqj4iA/v0nlYfc28y1/3fgN6UZ6+5B7dl6d9l2S0ySU5MS+BKaBuX28kAKTB
-         8X3UZqHlvEhrCr3rLAN7u0Qg7SvxXvGaHM3A0qgokIEyKihmVHSHPbgcScrHJFyH3zjh
-         bFvqkEedAp8mZja9qk/Sa3iPBZANLVo1utohsQSYO14MugRPM4XOlXpZHUIGg4poXhMN
-         UxFP4l6iDHvjOk3xx2Caa2x26P0tfxlV7S7het/3APVusFC7HEkJML3DfqM4LCfJjfQE
-         mrQV884OtDAiLCNBSGO+BGScGEWfFweB3aqNJAv9eeCO7qEFXK3BOQP8WWiwrVVPd8ju
-         poAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=yDvojJDXIxy3QO5S8Y3gcgPCyfj7/QuWW9tp7qGw8GE=;
-        b=lkX5zzXAqpRI+SmE7FHwE7hixtEpIVJr8iBT3W6zuZoqC80ovJG/JIyWRv/wEalthZ
-         /uizKk78aBqQPR6yH4jOLLd9nYap+WeH8Mc7YWkaB64Di94SScchtCoBiZctE4dgIyuG
-         MeRF3FAOQvHY6dikpP3TvhNP7tdaCc4JNEdDEZdl97a8yOGoKwCJ1OanUJI5kZ4z6sfw
-         q3Mx/1qINQqZ4A5xw9IkwhEUyt5YOErRZcUbSTC1/zqud2J2MDSQfQi2MG9NoeNszhkL
-         OxZKde16HdzDrMtJEjZRyCntX7j4HEPQye9YUxwzRNQf50oHTTsa19K8mdeLf2s08QRA
-         GRqg==
-X-Gm-Message-State: APjAAAXHYIplfGdeJpucqgFymAFqXwefhiO87rHfPDjhhtvIdJoDmDsF
-        VVTiYUKH0xmn/yVSOXDyLW/aLb1+3Zra4KZ57AdMIQ==
-X-Google-Smtp-Source: APXvYqxyT6CymBW0fuxAKQZQMdDE/RvOuFp/Ng1zxh9dkMvgDBw0AI2Tn6dMhW6cqgMf87QxKUAvhznBMWtMPvHhvaU=
-X-Received: by 2002:a2e:7f07:: with SMTP id a7mr718564ljd.173.1569946486543;
- Tue, 01 Oct 2019 09:14:46 -0700 (PDT)
+        id S1726448AbfJAQqO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Oct 2019 12:46:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388573AbfJAQps (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:45:48 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12A0821906;
+        Tue,  1 Oct 2019 16:45:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569948347;
+        bh=x5Dh/lsFvWpy8PJRDAS+pIIwjaN0mNYgFOUG/aDqDhc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=q2cTu5SuYIAKzOAp0dqvI98dEOmkAXynOHF3GqkZW65TdX6njZ6MhKFMEMZpJcLBT
+         MjXPYLdb0Wvso6IY69MuUBJanMk8b4uy+b79zqvY108S3Dkbzq9yKLBl5D+eb4vgQP
+         +oSPMZOOAsS7jmtXuY2VwsiphNnhGcqi0eXkP2XE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 11/15] fuse: fix memleak in cuse_channel_open
+Date:   Tue,  1 Oct 2019 12:45:29 -0400
+Message-Id: <20191001164533.16915-11-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191001164533.16915-1-sashal@kernel.org>
+References: <20191001164533.16915-1-sashal@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a19:e00f:0:0:0:0:0 with HTTP; Tue, 1 Oct 2019 09:14:45 -0700 (PDT)
-From:   Daegyu Han <hdg9400@gmail.com>
-Date:   Wed, 2 Oct 2019 01:14:45 +0900
-Message-ID: <CAARcW+ob5=DGWAGZ=eoUTNGsYNnYez44nxSiYFrFwwuYFGyWeQ@mail.gmail.com>
-Subject: How can I completely evict(remove) the inode data from memory and
- access the disk next time?
-To:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi linux file system expert,
+From: zhengbin <zhengbin13@huawei.com>
 
-I've asked again the general question about Linux file systems.
+[ Upstream commit 9ad09b1976c562061636ff1e01bfc3a57aebe56b ]
 
-For example, if there is a file a.txt in the path /foo/ bar,
-what should I do to completely evict(remove) the inode of bar
-directory from memory and read the inode via disk access?
+If cuse_send_init fails, need to fuse_conn_put cc->fc.
 
-A few weeks ago. I asked a question about dentry and Ted told me that
-there is a negative dentry on Linux.
+cuse_channel_open->fuse_conn_init->refcount_set(&fc->count, 1)
+                 ->fuse_dev_alloc->fuse_conn_get
+                 ->fuse_dev_free->fuse_conn_put
 
-I tried to completely evict(remove) the dentry cache using FS API in
-include/fs.h and dcache.h, and also evict the inode from memory, but I
-failed.
+Fixes: cc080e9e9be1 ("fuse: introduce per-instance fuse_dev structure")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/fuse/cuse.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The FS API I used is:
-dput() // to drop usage count and remove from dentry cache
-iput() // to drop usage count and remove from inode cache.
+diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+index c5b6b71654893..d9aba97007267 100644
+--- a/fs/fuse/cuse.c
++++ b/fs/fuse/cuse.c
+@@ -513,6 +513,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+ 	rc = cuse_send_init(cc);
+ 	if (rc) {
+ 		fuse_dev_free(fud);
++		fuse_conn_put(&cc->fc);
+ 		return rc;
+ 	}
+ 	file->private_data = fud;
+-- 
+2.20.1
 
-To be honest, I'm confused about which API to cope with my question.
-
-As far as I know, even though metadata is released from the file
-system cache, it is managed as an LRU list.
-
-I also saw some code related to CPU cacheline.
-When I look at the superblock structure, there are also inodes, dcache
-lists, and LRUs.
-
-How can I completely evict the inode from memory and make disk access
-as mentioned above?
-
-Thank you in advance.
-Daegyu
