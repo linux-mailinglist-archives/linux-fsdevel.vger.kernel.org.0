@@ -2,217 +2,280 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0DADC3FA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 20:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC25C40B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 21:10:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731777AbfJASRD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Oct 2019 14:17:03 -0400
-Received: from mga01.intel.com ([192.55.52.88]:25442 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726873AbfJASRC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Oct 2019 14:17:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 11:17:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="181776328"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga007.jf.intel.com with ESMTP; 01 Oct 2019 11:17:00 -0700
-Date:   Tue, 1 Oct 2019 11:17:00 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
-        Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: Lease semantic proposal
-Message-ID: <20191001181659.GA5500@iweiny-DESK2.sc.intel.com>
-References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
- <5d5a93637934867e1b3352763da8e3d9f9e6d683.camel@kernel.org>
+        id S1726839AbfJATJW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Oct 2019 15:09:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54880 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726626AbfJATJW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Oct 2019 15:09:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 56ADDAEA1;
+        Tue,  1 Oct 2019 19:09:19 +0000 (UTC)
+Date:   Tue, 1 Oct 2019 14:09:16 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Ian Kent <raven@themaw.net>
+Cc:     viro@zeniv.linux.org.uk, autofs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] Don't propagate automount
+Message-ID: <20191001190916.fxko7vjcjsgzy6a2@fiona>
+References: <20190926195234.bipqpw5sbk5ojcna@fiona>
+ <3468a81a09d13602c67007759593ddf450f8132c.camel@themaw.net>
+ <e5fbf32668aea1b8143d15ff47bd1e4309d03b17.camel@themaw.net>
+ <d163042ab8fffd975a6d460488f1539c5f619eaa.camel@themaw.net>
+ <7f31f0c2bf214334a8f7e855044c88a50e006f05.camel@themaw.net>
+ <b2443a28939d6fe79ec9aa9d983f516c8269448a.camel@themaw.net>
+ <20190927161643.ehahioerrlgehhud@fiona>
+ <f0849206eff7179c825061f4b96d56c106c4eb66.camel@themaw.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d5a93637934867e1b3352763da8e3d9f9e6d683.camel@kernel.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <f0849206eff7179c825061f4b96d56c106c4eb66.camel@themaw.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 04:17:59PM -0400, Jeff Layton wrote:
-> On Mon, 2019-09-23 at 12:08 -0700, Ira Weiny wrote:
-> > Since the last RFC patch set[1] much of the discussion of supporting RDMA with
-> > FS DAX has been around the semantics of the lease mechanism.[2]  Within that
-> > thread it was suggested I try and write some documentation and/or tests for the
-> > new mechanism being proposed.  I have created a foundation to test lease
-> > functionality within xfstests.[3] This should be close to being accepted.
-> > Before writing additional lease tests, or changing lots of kernel code, this
-> > email presents documentation for the new proposed "layout lease" semantic.
+Hi Ian,
+
+Sorry for the late reply, I had to setup and environment for your
+specific case and it took time.
+
+On  9:47 28/09, Ian Kent wrote:
+> On Fri, 2019-09-27 at 11:16 -0500, Goldwyn Rodrigues wrote:
+> > On 18:51 27/09, Ian Kent wrote:
+> > > On Fri, 2019-09-27 at 15:41 +0800, Ian Kent wrote:
+> > > > > > I initially thought this was the result of a "fix" in the
+> > > > > > mount
+> > > > > > propagation code but it occurred to me that propagation is
+> > > > > > meant
+> > > > > > to occur between mount trees not within them so this might be
+> > > > > > a
+> > > > > > bug.
+> > > > > > 
+> > > > > > I probably should have worked out exactly what upstream
+> > > > > > kernel
+> > > > > > this started happening in and then done a bisect and tried to
+> > > > > > work out if the change was doing what it was supposed to.
+> > > > > > 
+> > > > > > Anyway, I'll need to do that now for us to discuss this
+> > > > > > sensibly.
+> > > > > > 
+> > > > > > > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > > > > > > > 
+> > > > > > > > diff --git a/fs/pnode.c b/fs/pnode.c
+> > > > > > > > index 49f6d7ff2139..b960805d7954 100644
+> > > > > > > > --- a/fs/pnode.c
+> > > > > > > > +++ b/fs/pnode.c
+> > > > > > > > @@ -292,6 +292,9 @@ int propagate_mnt(struct mount
+> > > > > > > > *dest_mnt,
+> > > > > > > > struct
+> > > > > > > > mountpoint *dest_mp,
+> > > > > > > >  	struct mount *m, *n;
+> > > > > > > >  	int ret = 0;
+> > > > > > > >  
+> > > > > > > > +	if (source_mnt->mnt_mountpoint->d_flags &
+> > > > > > > > DCACHE_NEED_AUTOMOUNT)
+> > > > > > > > +		return 0;
+> > > > > > > > +
+> > > > > > > 
+> > > > > > > Possible problem with this is it will probably prevent
+> > > > > > > mount
+> > > > > > > propagation in both directions which will break stuff.
 > > 
-> > At Linux Plumbers[4] just over a week ago, I presented the current state of the
-> > patch set and the outstanding issues.  Based on the discussion there, well as
-> > follow up emails, I propose the following addition to the fcntl() man page.
-> > 
-> > Thank you,
-> > Ira
-> > 
-> > [1] https://lkml.org/lkml/2019/8/9/1043
-> > [2] https://lkml.org/lkml/2019/8/9/1062
-> > [3] https://www.spinics.net/lists/fstests/msg12620.html
-> > [4] https://linuxplumbersconf.org/event/4/contributions/368/
-> > 
-> > 
+> > No, I am specifically checking when the source has a automount flag
+> > set.
+> > It will block only one way. I checked it with an example.
 > 
-> Thank you so much for doing this, Ira. This allows us to debate the
-> user-visible behavior semantics without getting bogged down in the
-> implementation details. More comments below:
-
-Thanks.  Sorry for the delay in response.  Turns out this email was in my
-spam...  :-/  I'll need to work out why.
-
+> I don't understand how this check can selectively block propagation?
 > 
-> > <fcntl man page addition>
-> > Layout Leases
-> > -------------
-> > 
-> > Layout (F_LAYOUT) leases are special leases which can be used to control and/or
-> > be informed about the manipulation of the underlying layout of a file.
-> > 
-> > A layout is defined as the logical file block -> physical file block mapping
-> > including the file size and sharing of physical blocks among files.  Note that
-> > the unwritten state of a block is not considered part of file layout.
-> > 
-> > **Read layout lease F_RDLCK | F_LAYOUT**
-> > 
-> > Read layout leases can be used to be informed of layout changes by the
-> > system or other users.  This lease is similar to the standard read (F_RDLCK)
-> > lease in that any attempt to change the _layout_ of the file will be reported to
-> > the process through the lease break process.  But this lease is different
-> > because the file can be opened for write and data can be read and/or written to
-> > the file as long as the underlying layout of the file does not change.
-> > Therefore, the lease is not broken if the file is simply open for write, but
-> > _may_ be broken if an operation such as, truncate(), fallocate() or write()
-> > results in changing the underlying layout.
-> > 
-> > **Write layout lease (F_WRLCK | F_LAYOUT)**
-> > 
-> > Write Layout leases can be used to break read layout leases to indicate that
-> > the process intends to change the underlying layout lease of the file.
-> > 
-> > A process which has taken a write layout lease has exclusive ownership of the
-> > file layout and can modify that layout as long as the lease is held.
-> > Operations which change the layout are allowed by that process.  But operations
-> > from other file descriptors which attempt to change the layout will break the
-> > lease through the standard lease break process.  The F_LAYOUT flag is used to
-> > indicate a difference between a regular F_WRLCK and F_WRLCK with F_LAYOUT.  In
-> > the F_LAYOUT case opens for write do not break the lease.  But some operations,
-> > if they change the underlying layout, may.
-> > 
-> > The distinction between read layout leases and write layout leases is that
-> > write layout leases can change the layout without breaking the lease within the
-> > owning process.  This is useful to guarantee a layout prior to specifying the
-> > unbreakable flag described below.
-> > 
-> > 
+> If you have say:
+> test    /       :/exports \
+>         /tmp    :/exports/tmp \
+>         /lib    :/exports/lib
 > 
-> The above sounds totally reasonable. You're essentially exposing the
-> behavior of nfsd's layout leases to userland. To be clear, will F_LAYOUT
-> leases work the same way as "normal" leases, wrt signals and timeouts?
-
-That was my intention, yes.
-
+> and
+> /bind	/etc/auto.exports
 > 
-> I do wonder if we're better off not trying to "or" in flags for this,
-> and instead have a separate set of commands (maybe F_RDLAYOUT,
-> F_WRLAYOUT, F_UNLAYOUT). Maybe I'm just bikeshedding though -- I don't
-> feel terribly strongly about it.
-
-I'm leaning that was as well.  To make these even more distinct from
-F_SETLEASE.
-
+> in /etc/auto.master
 > 
-> Also, at least in NFSv4, layouts are handed out for a particular byte
-> range in a file. Should we consider doing this with an API that allows
-> for that in the future? Is this something that would be desirable for
-> your RDMA+DAX use-cases?
-
-I don't see this.  I've thought it would be a nice thing to have but I don't
-know of any hard use case.  But first I'd like to understand how this works for
-NFS.
-
+> and you use say:
 > 
-> We could add a new F_SETLEASE variant that takes a struct with a byte
-> range (something like struct flock).
+> docker run -it --rm -v /bind:/bind:slave fedora-autofs:v1 bash
+> 
+> your saying the above will not propagate those offset trigger mounts
+> to the parent above the /bind/test mount but will propagate them to
+> the container?
 
-I think this would be another reason to introduce F_[RD|WR|UN]LAYOUT as a
-command.  Perhaps supporting smaller byte ranges could be added later?
+Yes, It works for me. I could not find the fedora-autofs, but used
+fedora image. Check both cases. The first one (vanilla) is my modified
+kernel with the patch I mentioned.
+
+[root@fedora30 ~]# cat /etc/auto.master
+/bind   /etc/auto.exports 
+
+Note, there is no options. I added -bind in the config you provided.
+
+[root@fedora30 ~]# cat /etc/auto.exports 
+test -bind   /       :/exports \
+        /tmp    :/exports/tmp \
+        /lib    :/exports/lib
+
+[root@fedora30 ~]# uname -a
+Linux fedora30 5.3.1vanilla+ #9 SMP Tue Oct 1 11:11:11 CDT 2019 x86_64 x86_64 x86_64 GNU/Linux
+[root@fedora30 ~]# docker run -it --rm -v /bind:/bind:slave fedora bash
+[root@cf881c09f90a /]# ls /bind
+[root@cf881c09f90a /]# ls /bind/test
+lib  tmp
+[root@cf881c09f90a /]# ls /bind/test/lib
+lib-file
+
+However, on existing fedora 30 kernel..
+
+[root@fedora30 ~]# uname -a
+Linux fedora30 5.2.17-200.fc30.x86_64 #1 SMP Mon Sep 23 13:42:32 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+[root@fedora30 ~]# docker run -it --rm -v /bind:/bind:slave fedora bash
+[root@0a1d4f3dc475 /]# ls /bind
+[root@0a1d4f3dc475 /]# ls /bind/test
+lib  tmp
+[root@0a1d4f3dc475 /]# ls /bind/test/lib
+<hangs>
+
 
 > 
-> > **Unbreakable Layout Leases (F_UNBREAK)**
+> It looks like that check is all or nothing to me?
+> Can you explain a bit more.
+> 
 > > 
-> > In order to support pinning of file pages by direct user space users an
-> > unbreakable flag (F_UNBREAK) can be used to modify the read and write layout
-> > lease.  When specified, F_UNBREAK indicates that any user attempting to break
-> > the lease will fail with ETXTBUSY rather than follow the normal breaking
-> > procedure.
+> > > > > > > I had originally assumed the problem was mount propagation
+> > > > > > > back to the parent mount but now I'm not sure that this is
+> > > > > > > actually what is meant to happen.
+> > > 
+> > > Goldwyn,
+> > > 
+> > > TBH I'm already a bit over this particularly since it's a
+> > > solved problem from my POV.
+> > > 
+> > > I've gone back as far as Fedora 20 and 3.11.10-301.fc20 also
+> > > behaves like this.
 > > 
-> > Both read and write layout leases can have the unbreakable flag (F_UNBREAK)
-> > specified.  The difference between an unbreakable read layout lease and an
-> > unbreakable write layout lease are that an unbreakable read layout lease is
-> > _not_ exclusive.  This means that once a layout is established on a file,
-> > multiple unbreakable read layout leases can be taken by multiple processes and
-> > used to pin the underlying pages of that file.
+> > The problem started with the root directory being mounted as
+> > shared.
+> 
+> The change where systemd set the root file system propagation
+> shared was certainly an autofs pain point (for more than just
+> this case too) but I was so sure that wasn't when this started
+> happening.
+> 
+> But ok, I could be mistaken, and you seem to be sure about.
+
+Well, it might as well be with the propagation code. I am not sure
+what introduced this.
+
+> 
 > > 
-> > Care must therefore be taken to ensure that the layout of the file is as the
-> > user wants prior to using the unbreakable read layout lease.  A safe mechanism
-> > to do this would be to take a write layout lease and use fallocate() to set the
-> > layout of the file.  The layout lease can then be "downgraded" to unbreakable
-> > read layout as long as no other user broke the write layout lease.
+> > > Unless someone says this behaviour is not the way kernel
+> > > mount propagation should behave I'm not going to spend
+> > > more time on it.
+> > > 
+> > > The ability to use either "slave" or "private" autofs pseudo
+> > > mount options in master map mount entries that are susceptible
+> > > to this mount propagation behaviour was included in autofs-5.1.5
+> > > and the patches used are present on kernel.org if you need to
+> > > back port them to an earlier release.
 > > 
+> > What about "shared" pseudo mount option? The point is the default
+> > shared option with automount is broken, and should not be exposed
+> > at all.
 > 
-> Will userland require any special privileges in order to set an
-> F_UNBREAK lease? This seems like something that could be used for DoS. I
-> assume that these will never time out.
-
-Dan and I discussed this some more and yes I think the uid of the process needs
-to be the owner of the file.  I think that is a reasonable mechanism.
-
+> What about shared mounts?
 > 
-> How will we deal with the case where something is is squatting on an
-> F_UNBREAK lease and isn't letting it go?
+> I don't know of a case where propagation shared is actually needed.
+> If you know of one please describe it.
 
-That is a good question.  I had not considered someone taking the UNBREAK
-without pinning the file.
+No, I don't have a use case for shared mounts. I am merely trying to
+emphasize the default option (which behaves as shared) is broken.
 
 > 
-> Leases are technically "owned" by the file description -- we can't
-> necessarily trace it back to a single task in a threaded program. The
-> kernel task that set the lease may have exited by the time we go
-> looking.
+> The most common case is "slave" and the "private" option was only
+> included because it might be needed if people are using isolated
+> environments but TBH I'm not at all sure it could actually be used
+> for that case.
 > 
-> Will we be content trying to determine this using /proc/locks+lsof, etc,
-> or will we need something better?
+> IIUC the change to the propagation of the root file system was
+> done to help with containers but turned out not to do what was
+> needed and was never reverted. So the propagation shared change
+> probably should have been propagation slave or not changed at
+> all.
 
-I think using /proc/locks is our best bet.  Similar to my intention to report
-files being pinned.[1]
-
-In fact should we consider files with F_UNBREAK leases "pinned" and just report
-them there?
-
-Ira
-
-[1] https://lkml.org/lkml/2019/8/9/1043
+I agree. I am also worried of the swelling /proc/mounts because
+of this.
 
 > 
-> > </fcntl man page addition>
+> > 
+> > > https://mirrors.edge.kernel.org/pub/linux/daemons/autofs/v5/patches-5.1.5/autofs-5.1.4-set-bind-mount-as-propagation-slave.patch
+> > > 
+> > > https://mirrors.edge.kernel.org/pub/linux/daemons/autofs/v5/patches-5.1.5/autofs-5.1.4-add-master-map-pseudo-options-for-mount-propagation.patch
+> > > 
+> > > It shouldn't be too difficult to back port them but they might
+> > > have other patch dependencies. I will help with that if you
+> > > need it.
+> > 
+> > My problem is not with the patch and the "private" or "slave" flag,
+> > but
+> > with the absence of it. We have the patch you mention in our repos.
 > 
-> -- 
-> Jeff Layton <jlayton@kernel.org>
+> Ha, play on words, "absence of it" and "we have it in our repos"
+
+I meant, Absence of "private" or "slave" flags.
+
 > 
+> Don't you mean the problem is that mount propagation isn't
+> set correctly automatically by automount.
+> 
+> > 
+> > I am assuming that users are stupid and they will miss putting the
+> > flags
+> > in the auto.master file and wonder why when they try to access the
+> > directories
+> > the process hangs. In all, any user configuration should not hang the
+> > kernel.
+> 
+> I thought about that when I was working on those patches but,
+> at the time, I didn't think the propagation problem had started
+> when the root file system was set propagation shared at boot.
+> 
+> I still think changing the kernel propagation isn't the right
+> way to resolve it.
+> 
+> But I would be willing to add a configuration option to autofs
+> that when set would use propagation slave for all bind mounts
+> without the need to modify the master map. Given how long the
+> problem has been around I'm also tempted to make it default
+> to enabled.
+> 
+> I'm not sure yet what that would mean for the existing mount
+> options "shared" and "private" other than them possibly being
+> needed if the option is disabled, even with this I'm still not
+> sure a "shared" option is useful.
+> 
+> Isn't this automation your main concern?
+> 
+
+My main concerns is a user space configuration should not hang
+the process.
+
+This is a problem for people upgrading their kernel/systemd
+and finding their processes hanging.
+
+I am fine with making the change in user space automount daemon keeping
+slave mounts as default, but then you would leave out a small security
+window where users can hang the accessing process by modifying/replacing
+automount.
+
+-- 
+Goldwyn
