@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E42C3C47
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 18:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD4E9C3C22
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 18:50:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733088AbfJAQnw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Oct 2019 12:43:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56024 "EHLO mail.kernel.org"
+        id S2388914AbfJAQtp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Oct 2019 12:49:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733060AbfJAQnu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:43:50 -0400
+        id S1726813AbfJAQos (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:44:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EF4621855;
-        Tue,  1 Oct 2019 16:43:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0DB720B7C;
+        Tue,  1 Oct 2019 16:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948229;
-        bh=rl7ZIeGi2KWZp1Bkg/Y0Ga7FW5CfX8TJo1HQJxkG2+Q=;
+        s=default; t=1569948287;
+        bh=dlc0JlRrIOsnSsI/+Cz3XpuH095SGIxEnhFSsQV/UwY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fF6/HnCMAeVlm8/nUh3lmFhi6IAc0aOZcoFV6GvDk9mEmt3I5/x4+i3EKoU/IWUy9
-         o4dv+it5AdmIbtc1ophOcIJlOV5kZRt3gizkIfTZ6NXr6dM0iHjSRrM52hhpMTfpu9
-         x+pLvy0S7e9vnL75pg1uHcmUbcRl1cQaT4rmLU/o=
+        b=1x2NLKDdLADFk93yLCsGh9sJp+6pf2vHQ5H/wJGk7O/rFxH+4/LYtwdWl/R1YLXeE
+         IbKlxLnlRagwruSS6ofdOA0MfjhI4xH00lJzKdOYF0aKzpmk3jvWXcQRNUFKuNeLSH
+         7gc29VY4lRclmQvNSiCHYOuTwyTzRIlIgD0YMHEc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 27/43] fuse: fix memleak in cuse_channel_open
-Date:   Tue,  1 Oct 2019 12:42:55 -0400
-Message-Id: <20191001164311.15993-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 19/29] fuse: fix memleak in cuse_channel_open
+Date:   Tue,  1 Oct 2019 12:44:13 -0400
+Message-Id: <20191001164423.16406-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001164311.15993-1-sashal@kernel.org>
-References: <20191001164311.15993-1-sashal@kernel.org>
+In-Reply-To: <20191001164423.16406-1-sashal@kernel.org>
+References: <20191001164423.16406-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -63,10 +63,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
-index 8f68181256c00..f057c213c453a 100644
+index e9e97803442a6..55db06c7c587e 100644
 --- a/fs/fuse/cuse.c
 +++ b/fs/fuse/cuse.c
-@@ -518,6 +518,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+@@ -513,6 +513,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
  	rc = cuse_send_init(cc);
  	if (rc) {
  		fuse_dev_free(fud);
