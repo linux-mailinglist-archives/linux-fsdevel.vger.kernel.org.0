@@ -2,34 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC5AC3D34
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 18:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7013EC3CF4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Oct 2019 18:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731202AbfJAQlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Oct 2019 12:41:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53278 "EHLO mail.kernel.org"
+        id S1731844AbfJAQmS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Oct 2019 12:42:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731168AbfJAQlj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:41:39 -0400
+        id S1731834AbfJAQmS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:42:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1188E2190F;
-        Tue,  1 Oct 2019 16:41:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0640120B7C;
+        Tue,  1 Oct 2019 16:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948098;
-        bh=RZ+WOcSOBvQdQXPYEN1ohKIQpxofeW8IA32kr+1bOQc=;
+        s=default; t=1569948137;
+        bh=Vw4I1uOKtDXm4m/EQIyjHXit44q63Ut92gP2vIDrNS0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1TgcFVG5MLZnMMVQpLNF+ZKATvqkfm10J7MG6fJ8HIgL04UT0jK20zjh2UMNYGn+3
-         R9tVQ++8hgCY5bhCkNtbFHzjywmZHzfQLhfqj1ke/juJyBCV4z+3otpxvbz/GhFNZn
-         kfsjftS+2N2gJga0LkpYkeRf1mYnaq/Mq+0QvEF8=
+        b=BSaLzsLQ/15Tbz1sUSPIMZFzs9oNth0moX56AbUB2PLQ+68Jpu2g2yCxKVQsNjzCh
+         sX98pDoX37sZJfr4UjkI6JfNgt53Bdst30vMbEyYrhT/E+0/eRf58MeJBUPeawxZ67
+         hjV80g7+dM1tSPIgimuZLi4k5G1k7GdOZKgUQCk8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 10/63] fuse: fix request limit
-Date:   Tue,  1 Oct 2019 12:40:32 -0400
-Message-Id: <20191001164125.15398-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 37/63] fuse: fix memleak in cuse_channel_open
+Date:   Tue,  1 Oct 2019 12:40:59 -0400
+Message-Id: <20191001164125.15398-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
 References: <20191001164125.15398-1-sashal@kernel.org>
@@ -42,46 +43,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: zhengbin <zhengbin13@huawei.com>
 
-[ Upstream commit f22f812d5ce75a18b56073a7a63862e6ea764070 ]
+[ Upstream commit 9ad09b1976c562061636ff1e01bfc3a57aebe56b ]
 
-The size of struct fuse_req was reduced from 392B to 144B on a non-debug
-config, thus the sanitize_global_limit() helper was setting a larger
-default limit.  This doesn't really reflect reduction in the memory used by
-requests, since the fields removed from fuse_req were added to fuse_args
-derived structs; e.g. sizeof(struct fuse_writepages_args) is 248B, thus
-resulting in slightly more memory being used for writepage requests
-overalll (due to using 256B slabs).
+If cuse_send_init fails, need to fuse_conn_put cc->fc.
 
-Make the calculatation ignore the size of fuse_req and use the old 392B
-value.
+cuse_channel_open->fuse_conn_init->refcount_set(&fc->count, 1)
+                 ->fuse_dev_alloc->fuse_conn_get
+                 ->fuse_dev_free->fuse_conn_put
 
+Fixes: cc080e9e9be1 ("fuse: introduce per-instance fuse_dev structure")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/inode.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/fuse/cuse.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 4bb885b0f0322..04b10b3b8741b 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -822,9 +822,12 @@ static const struct super_operations fuse_super_operations = {
- 
- static void sanitize_global_limit(unsigned *limit)
- {
-+	/*
-+	 * The default maximum number of async requests is calculated to consume
-+	 * 1/2^13 of the total memory, assuming 392 bytes per request.
-+	 */
- 	if (*limit == 0)
--		*limit = ((totalram_pages() << PAGE_SHIFT) >> 13) /
--			 sizeof(struct fuse_req);
-+		*limit = ((totalram_pages() << PAGE_SHIFT) >> 13) / 392;
- 
- 	if (*limit >= 1 << 16)
- 		*limit = (1 << 16) - 1;
+diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+index bab7a0db81dd4..f3b7208846506 100644
+--- a/fs/fuse/cuse.c
++++ b/fs/fuse/cuse.c
+@@ -519,6 +519,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+ 	rc = cuse_send_init(cc);
+ 	if (rc) {
+ 		fuse_dev_free(fud);
++		fuse_conn_put(&cc->fc);
+ 		return rc;
+ 	}
+ 	file->private_data = fud;
 -- 
 2.20.1
 
