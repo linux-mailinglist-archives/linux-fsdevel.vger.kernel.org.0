@@ -2,106 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D315DC8B8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2019 16:43:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC3EC8D05
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2019 17:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbfJBOmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Oct 2019 10:42:49 -0400
-Received: from mail-oi1-f177.google.com ([209.85.167.177]:46202 "EHLO
-        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfJBOmt (ORCPT
+        id S1727797AbfJBPjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Oct 2019 11:39:18 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50252 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbfJBPjS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:42:49 -0400
-Received: by mail-oi1-f177.google.com with SMTP id k25so17799957oiw.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Oct 2019 07:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WJkfTYs+RJHqlRCG5+voZIWghaTW3DWy3TWxalsTTLU=;
-        b=lQDQkuJCFLd7G8d59mOU5kHY+A5GTiAgSmhuWBNxxAD3ODBoKoIBBmMTZ72HOEnWEX
-         c1vCstn1WWXctPQ+7JPiD3KoP1xLI1WUzdl19UwGvdI7mNqKm5Scq/cftYfT9CGwLKhh
-         ds6c9IffC+I1wwSmkmcVPcE3n9K8UoeDmjbdSh98Dl8evMrdEVdVU9nAfNGdpNT/5FAc
-         cC5TdU5N1B71Sk8TX5jlgzQIsH61ZZCc1T4NBvKP68bTrZkz2+uJN053caU7SRKWSbKD
-         UDydA7c9MnCuL+rtHV5brlPPpHTNJWDBuhSDLWajcGbYHP4csuqF0VUssT5a3Wc0mwvv
-         OJTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WJkfTYs+RJHqlRCG5+voZIWghaTW3DWy3TWxalsTTLU=;
-        b=GNBgwuMkHFFIGwr2bZ3PY5J/dgNSutMuEUGvXUjHk7Ir6+cVELJb3SybWNIOK+DZph
-         t8OL2HqeJNlEynD3i757EUNbb29zL7cALTdUzvaBjEekgBovHfmlVYsthHfEE32U9bcz
-         VCzMe2ETWsanLwEafYxvcR3VKvs6+jBbnelY5qYFhG0hguZouiMUd7wPCfJMvoKon9MP
-         jDGj7vOYSiwHXIAJwhDGWtQm6J04OTaPlth0YpZ4Dh02BLBscMumZNIWiGtOgM4YJwRs
-         OtErWbuNDMbdiP2fB4GNW+wrXbvBLzocwfiYZXdzuPR2b5PK8ItGhNkUDZRXhHqxGC/w
-         DoGg==
-X-Gm-Message-State: APjAAAWmiY29PlmHfYeXhOErKOLMqM9DGGufS4SG0SCKJSgxrYHzTDrB
-        NlAEyhBR7Zt3Qt670U13/zaSvRy1hyoCPfKLr5V6OLUpE5M=
-X-Google-Smtp-Source: APXvYqwGLKMXrmuqZlm/q58CUBATQWQ1RRCtp9kdJuZKvkODbhXJP5sYjiq8r5Adf/3nNta6b74v/4/xQ4BCESYBGJ4=
-X-Received: by 2002:aca:5856:: with SMTP id m83mr2949665oib.90.1570027368346;
- Wed, 02 Oct 2019 07:42:48 -0700 (PDT)
+        Wed, 2 Oct 2019 11:39:18 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92FNpcl152678;
+        Wed, 2 Oct 2019 15:38:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=VfRxfeWs1nJoNP3kT5ZXTpLac0Gq+oyCCllmNnro7IA=;
+ b=XLgkpgrp66zXs8MNybhkD0sanL46h2WsbqHpz64XXAmEaCi3pvJi04j7EV5ZWNl2qapC
+ AhoP6UKmR3OcC/8YIpuObL9XQZH1ig3acJjidJ0DTPEnjzC1qqsg8yrhMTKrPhzWLhkx
+ MiPNkhQORVMkhi/rBnlH5uceWbZAcpgZSQ9y58N2jP61Zx2DzAfx8X4tcQfDWSoHc3BZ
+ 2zt+JHlaZlw5dBBEtNTn2qUpIxTh2HmPy9uRoXppWiXi8/+p+1+ATsmWDS/EO+L2/AUE
+ vrf8n/OhyG7THPcwdsOol9FuYpbIoojUBqiyqQNpRAAhEm8GhUgZzLGHQ/WE9lecqLyB 7g== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2v9xxuwuxy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 15:38:53 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92FNjnN073831;
+        Wed, 2 Oct 2019 15:38:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2vc9dkref5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 15:38:52 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x92Fcpw4000547;
+        Wed, 2 Oct 2019 15:38:51 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Oct 2019 08:38:51 -0700
+Date:   Wed, 2 Oct 2019 08:38:50 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/11] xfs: remove the readpage / readpages tracing code
+Message-ID: <20191002153850.GH13108@magnolia>
+References: <20191001071152.24403-1-hch@lst.de>
+ <20191001071152.24403-7-hch@lst.de>
 MIME-Version: 1.0
-Received: by 2002:a4a:17c2:0:0:0:0:0 with HTTP; Wed, 2 Oct 2019 07:42:47 -0700 (PDT)
-In-Reply-To: <20191002124651.GC13880@mit.edu>
-References: <CA+i3KrYpvd4X7uD_GMAp8UZMbR_DhmWvgzw2bHuSQ7iBvpsJQg@mail.gmail.com>
- <20191002124651.GC13880@mit.edu>
-From:   Daegyu Han <dgswsk@gmail.com>
-Date:   Wed, 2 Oct 2019 23:42:47 +0900
-Message-ID: <CA+i3KrYvp1pXbpCb_WJDCRx0COU2KCFT_Nfsgcn1mLGrVzErvA@mail.gmail.com>
-Subject: Re: How can I completely evict(remove) the inode from memory and
- access the disk next time?
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191001071152.24403-7-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910020140
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910020140
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thank you for your consideration.
+On Tue, Oct 01, 2019 at 09:11:47AM +0200, Christoph Hellwig wrote:
+> The actual iomap implementations now have equivalent trace points.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Okay, I will check ocfs2 out.
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-By the way, is there any possibility to implement this functionality
-in the vfs layer?
+--D
 
-I looked at the dcache.c, inode.c, and mm/vmscan.c code and looked at
-several functions,
-and as you said, they seem to have way complex logic.
-
-The logic I thought was to release the desired dentry, dentry_kill()
-the negative dentry, and break the inodes of the file that had that
-dentry.
-
-Can you tell me the detailed logic of the dentry and inode caches that
-I'm curious about?
-If not, can you give me a reference paper or book?
-
-Best regards,
-Daegyu
-
-2019-10-02 21:46 GMT+09:00, Theodore Y. Ts'o <tytso@mit.edu>:
-> On Wed, Oct 02, 2019 at 05:30:21PM +0900, Daegyu Han wrote:
->> Hi linux file system experts,
->>
->> I'm so sorry that I've asked again the general question about Linux
->> file systems.
->>
->> For example, if there is a file a.txt in the path /foo/ bar,
->> what should I do to completely evict(remove) the inode of bar
->> directory from memory and read the inode via disk access?
->
-> There is no API to do this from userspace.  The only way to do this is
-> to unmount the entire file system.
->
-> From the kernel, it's *way* more complicated than this.  Making a
-> shared-disk file system requires a lot more changes to the kernel
-> code.  You might want to take a look at ocfs2.  This was a file system
-> that started using the ext3 file system code, and **extensive**
-> kernel-level code changes were made to make it be a shared-disk file
-> system.
->
-> 						- Ted
-> 						
->
+> ---
+>  fs/xfs/xfs_aops.c  |  2 --
+>  fs/xfs/xfs_trace.h | 26 --------------------------
+>  2 files changed, 28 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index f16d5f196c6b..b6101673c8fb 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -1160,7 +1160,6 @@ xfs_vm_readpage(
+>  	struct file		*unused,
+>  	struct page		*page)
+>  {
+> -	trace_xfs_vm_readpage(page->mapping->host, 1);
+>  	return iomap_readpage(page, &xfs_iomap_ops);
+>  }
+>  
+> @@ -1171,7 +1170,6 @@ xfs_vm_readpages(
+>  	struct list_head	*pages,
+>  	unsigned		nr_pages)
+>  {
+> -	trace_xfs_vm_readpages(mapping->host, nr_pages);
+>  	return iomap_readpages(mapping, pages, nr_pages, &xfs_iomap_ops);
+>  }
+>  
+> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+> index eaae275ed430..eae4b29c174e 100644
+> --- a/fs/xfs/xfs_trace.h
+> +++ b/fs/xfs/xfs_trace.h
+> @@ -1197,32 +1197,6 @@ DEFINE_PAGE_EVENT(xfs_writepage);
+>  DEFINE_PAGE_EVENT(xfs_releasepage);
+>  DEFINE_PAGE_EVENT(xfs_invalidatepage);
+>  
+> -DECLARE_EVENT_CLASS(xfs_readpage_class,
+> -	TP_PROTO(struct inode *inode, int nr_pages),
+> -	TP_ARGS(inode, nr_pages),
+> -	TP_STRUCT__entry(
+> -		__field(dev_t, dev)
+> -		__field(xfs_ino_t, ino)
+> -		__field(int, nr_pages)
+> -	),
+> -	TP_fast_assign(
+> -		__entry->dev = inode->i_sb->s_dev;
+> -		__entry->ino = inode->i_ino;
+> -		__entry->nr_pages = nr_pages;
+> -	),
+> -	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
+> -		  MAJOR(__entry->dev), MINOR(__entry->dev),
+> -		  __entry->ino,
+> -		  __entry->nr_pages)
+> -)
+> -
+> -#define DEFINE_READPAGE_EVENT(name)		\
+> -DEFINE_EVENT(xfs_readpage_class, name,	\
+> -	TP_PROTO(struct inode *inode, int nr_pages), \
+> -	TP_ARGS(inode, nr_pages))
+> -DEFINE_READPAGE_EVENT(xfs_vm_readpage);
+> -DEFINE_READPAGE_EVENT(xfs_vm_readpages);
+> -
+>  DECLARE_EVENT_CLASS(xfs_imap_class,
+>  	TP_PROTO(struct xfs_inode *ip, xfs_off_t offset, ssize_t count,
+>  		 int whichfork, struct xfs_bmbt_irec *irec),
+> -- 
+> 2.20.1
+> 
