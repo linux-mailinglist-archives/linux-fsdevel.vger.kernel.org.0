@@ -2,149 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EC3EC8D05
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2019 17:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 165B7C8F0C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2019 18:55:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbfJBPjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Oct 2019 11:39:18 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50252 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbfJBPjS (ORCPT
+        id S1726798AbfJBQzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Oct 2019 12:55:22 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41461 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfJBQzW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Oct 2019 11:39:18 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92FNpcl152678;
-        Wed, 2 Oct 2019 15:38:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=VfRxfeWs1nJoNP3kT5ZXTpLac0Gq+oyCCllmNnro7IA=;
- b=XLgkpgrp66zXs8MNybhkD0sanL46h2WsbqHpz64XXAmEaCi3pvJi04j7EV5ZWNl2qapC
- AhoP6UKmR3OcC/8YIpuObL9XQZH1ig3acJjidJ0DTPEnjzC1qqsg8yrhMTKrPhzWLhkx
- MiPNkhQORVMkhi/rBnlH5uceWbZAcpgZSQ9y58N2jP61Zx2DzAfx8X4tcQfDWSoHc3BZ
- 2zt+JHlaZlw5dBBEtNTn2qUpIxTh2HmPy9uRoXppWiXi8/+p+1+ATsmWDS/EO+L2/AUE
- vrf8n/OhyG7THPcwdsOol9FuYpbIoojUBqiyqQNpRAAhEm8GhUgZzLGHQ/WE9lecqLyB 7g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2v9xxuwuxy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Oct 2019 15:38:53 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92FNjnN073831;
-        Wed, 2 Oct 2019 15:38:53 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2vc9dkref5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Oct 2019 15:38:52 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x92Fcpw4000547;
-        Wed, 2 Oct 2019 15:38:51 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 02 Oct 2019 08:38:51 -0700
-Date:   Wed, 2 Oct 2019 08:38:50 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/11] xfs: remove the readpage / readpages tracing code
-Message-ID: <20191002153850.GH13108@magnolia>
-References: <20191001071152.24403-1-hch@lst.de>
- <20191001071152.24403-7-hch@lst.de>
+        Wed, 2 Oct 2019 12:55:22 -0400
+Received: by mail-qk1-f194.google.com with SMTP id p10so15708872qkg.8;
+        Wed, 02 Oct 2019 09:55:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iwP070FtmeuK+3N75GeFgnRVrcbqBEsCTG6FQeHO1Dc=;
+        b=sc5MKpK0FOi6wTaqxv0zmq/glDWjP01Ln7lGfhEjL/hAy0nOY7RJSJO9+Opy9fBM3V
+         BsjFfT0FR1QRuq67piWtm/1Yq/6K5cVrkQZGE92EcBHsj/y53WMixNIMaE18jXEuhF3I
+         aUTIzBsjBIiegFbGWfcuQJyJ9q4fjnnYJcuOcMzKv3pLpRIZyvTORxCSxO/GOQL2f02C
+         2DaCbjFvNKWCj5on8F+jf+EJGQ/ql7vh3ewEXnQmVP4QBrdbNAnbknCUx7AdioHcGm+m
+         5Y08bIb+XVtB6omolG5PRQqK6+5XA4ZnRG2/nOoSyKo4qGfRpIr5ZfQCjfMSZrN0n2h2
+         k1+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iwP070FtmeuK+3N75GeFgnRVrcbqBEsCTG6FQeHO1Dc=;
+        b=TqNTWnXnWgcEmx6Jlq+VCQTWuxmgbWis9+XSNgfMWz8vw8ykKJC58WScQ040Jo2M/d
+         ghNb3KbX52n24QtYtPmZL/xSYwHPUsvfwkhunuf+VH+ksj2DNwtTy2/QRB+o2E9dazFs
+         9uGRDqrJcmXWu44ydJ7hsw+hcZYWSzIQIDBnMIYVqmYw3L6aXGohIxtS+Mh8z8R8bZlw
+         lJLsELoTB+gIA/rEJDDDTc7uQK9K7kE3AxH9Jw6RPcwCBhP66+9vi/UpQVZqzvD/XrmO
+         RqORwhkRQSqIp6aSrwVPBrtnF/bCh84EC+fDt210Pix6nGI5C+b0Ods26GkaEj9ZCnc4
+         GDMQ==
+X-Gm-Message-State: APjAAAX8hkn/B2cRHKlD/a0ywR59Q3gE1RZB3apnRV0rlgKFeWOeTu73
+        BrW0DeIQ1BbKcgvqiAaWqIDgo3bhGOvZqSRRgrQ=
+X-Google-Smtp-Source: APXvYqznJfvsAqic7Yte0Cfh1sZVR0edCsCDW5/5o6K1NNRJiOV9X7R2gWkisKyDfH5T0CNTlj8XPfGp1ZnIWK0TLV4=
+X-Received: by 2002:a05:620a:113a:: with SMTP id p26mr4871408qkk.353.1570035319775;
+ Wed, 02 Oct 2019 09:55:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001071152.24403-7-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910020140
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910020140
+References: <cover.1568994791.git.esyr@redhat.com> <CAPhsuW5CvJNRP5OO_M6XVd9q0x-CH9eADWR5oqdJP20eFScCFw@mail.gmail.com>
+ <87d4b42f-7aa2-5372-27e4-a28e4c724f37@kernel.dk>
+In-Reply-To: <87d4b42f-7aa2-5372-27e4-a28e4c724f37@kernel.dk>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Wed, 2 Oct 2019 09:55:08 -0700
+Message-ID: <CAPhsuW68rK3zGF3A8HnwArh7bs+-AAvZBtVkt4gcxPnFCGxwAQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] Fix typo in RWH_WRITE_LIFE_NOT_SET constant name
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Eugene Syromiatnikov <esyr@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Shaohua Li <shli@kernel.org>,
+        linux-raid <linux-raid@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 09:11:47AM +0200, Christoph Hellwig wrote:
-> The actual iomap implementations now have equivalent trace points.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Tue, Oct 1, 2019 at 5:55 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 10/1/19 5:12 PM, Song Liu wrote:
+> > On Fri, Sep 20, 2019 at 8:58 AM Eugene Syromiatnikov <esyr@redhat.com> wrote:
+> >>
+> >> Hello.
+> >>
+> >> This is a small fix of a typo (or, more specifically, some remnant of
+> >> the old patch version spelling) in RWH_WRITE_LIFE_NOT_SET constant,
+> >> which is named as RWF_WRITE_LIFE_NOT_SET currently.  Since the name
+> >> with "H" is used in man page and everywhere else, it's probably worth
+> >> to make the name used in the fcntl.h UAPI header in line with it.
+> >> The two follow-up patches update usage sites of this constant in kernel
+> >> to use the new spelling.
+> >>
+> >> The old name is retained as it is part of UAPI now.
+> >>
+> >> Changes since v2[1]:
+> >>   * Updated RWF_WRITE_LIFE_NOT_SET constant usage
+> >>     in drivers/md/raid5-ppl.c:ppl_init_log().
+> >>
+> >> Changes since v1[2]:
+> >>   * Changed format of the commit ID in the commit message of the first patch.
+> >>   * Removed bogus Signed-off-by that snuck into the resend of the series.
+> >
+> > Applied to md-next.
+>
+> I think the core fs change should core in through a core tree, then
+> the md bits can go in at will after that.
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Good point. I guess I will wait until it shows up in for-5.5/block?
 
---D
-
-> ---
->  fs/xfs/xfs_aops.c  |  2 --
->  fs/xfs/xfs_trace.h | 26 --------------------------
->  2 files changed, 28 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index f16d5f196c6b..b6101673c8fb 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -1160,7 +1160,6 @@ xfs_vm_readpage(
->  	struct file		*unused,
->  	struct page		*page)
->  {
-> -	trace_xfs_vm_readpage(page->mapping->host, 1);
->  	return iomap_readpage(page, &xfs_iomap_ops);
->  }
->  
-> @@ -1171,7 +1170,6 @@ xfs_vm_readpages(
->  	struct list_head	*pages,
->  	unsigned		nr_pages)
->  {
-> -	trace_xfs_vm_readpages(mapping->host, nr_pages);
->  	return iomap_readpages(mapping, pages, nr_pages, &xfs_iomap_ops);
->  }
->  
-> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-> index eaae275ed430..eae4b29c174e 100644
-> --- a/fs/xfs/xfs_trace.h
-> +++ b/fs/xfs/xfs_trace.h
-> @@ -1197,32 +1197,6 @@ DEFINE_PAGE_EVENT(xfs_writepage);
->  DEFINE_PAGE_EVENT(xfs_releasepage);
->  DEFINE_PAGE_EVENT(xfs_invalidatepage);
->  
-> -DECLARE_EVENT_CLASS(xfs_readpage_class,
-> -	TP_PROTO(struct inode *inode, int nr_pages),
-> -	TP_ARGS(inode, nr_pages),
-> -	TP_STRUCT__entry(
-> -		__field(dev_t, dev)
-> -		__field(xfs_ino_t, ino)
-> -		__field(int, nr_pages)
-> -	),
-> -	TP_fast_assign(
-> -		__entry->dev = inode->i_sb->s_dev;
-> -		__entry->ino = inode->i_ino;
-> -		__entry->nr_pages = nr_pages;
-> -	),
-> -	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
-> -		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> -		  __entry->ino,
-> -		  __entry->nr_pages)
-> -)
-> -
-> -#define DEFINE_READPAGE_EVENT(name)		\
-> -DEFINE_EVENT(xfs_readpage_class, name,	\
-> -	TP_PROTO(struct inode *inode, int nr_pages), \
-> -	TP_ARGS(inode, nr_pages))
-> -DEFINE_READPAGE_EVENT(xfs_vm_readpage);
-> -DEFINE_READPAGE_EVENT(xfs_vm_readpages);
-> -
->  DECLARE_EVENT_CLASS(xfs_imap_class,
->  	TP_PROTO(struct xfs_inode *ip, xfs_off_t offset, ssize_t count,
->  		 int whichfork, struct xfs_bmbt_irec *irec),
-> -- 
-> 2.20.1
-> 
+Song
