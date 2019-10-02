@@ -2,71 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB3DC9287
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2019 21:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 398ECC9289
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Oct 2019 21:40:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728985AbfJBTiu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Oct 2019 15:38:50 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:46314 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfJBTiu (ORCPT
+        id S1726377AbfJBTkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Oct 2019 15:40:00 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47490 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726087AbfJBTkA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:38:50 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iFkSW-0000sh-9p; Wed, 02 Oct 2019 19:38:48 +0000
-Date:   Wed, 2 Oct 2019 20:38:48 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
+        Wed, 2 Oct 2019 15:40:00 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x92Jdspm012448
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 2 Oct 2019 15:39:55 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id F245942088C; Wed,  2 Oct 2019 15:39:53 -0400 (EDT)
+Date:   Wed, 2 Oct 2019 15:39:53 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
 To:     Daegyu Han <dgswsk@gmail.com>
 Cc:     linux-fsdevel@vger.kernel.org
 Subject: Re: How can I completely evict(remove) the inode from memory and
  access the disk next time?
-Message-ID: <20191002193848.GE26530@ZenIV.linux.org.uk>
+Message-ID: <20191002193953.GA777@mit.edu>
 References: <CA+i3KrYpvd4X7uD_GMAp8UZMbR_DhmWvgzw2bHuSQ7iBvpsJQg@mail.gmail.com>
+ <20191002124651.GC13880@mit.edu>
+ <CA+i3KrYvp1pXbpCb_WJDCRx0COU2KCFT_Nfsgcn1mLGrVzErvA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+i3KrYpvd4X7uD_GMAp8UZMbR_DhmWvgzw2bHuSQ7iBvpsJQg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CA+i3KrYvp1pXbpCb_WJDCRx0COU2KCFT_Nfsgcn1mLGrVzErvA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 05:30:21PM +0900, Daegyu Han wrote:
-> Hi linux file system experts,
+On Wed, Oct 02, 2019 at 11:42:47PM +0900, Daegyu Han wrote:
+> Thank you for your consideration.
 > 
-> I'm so sorry that I've asked again the general question about Linux
-> file systems.
+> Okay, I will check ocfs2 out.
 > 
-> For example, if there is a file a.txt in the path /foo/ bar,
-> what should I do to completely evict(remove) the inode of bar
-> directory from memory and read the inode via disk access?
+> By the way, is there any possibility to implement this functionality
+> in the vfs layer?
 > 
-> A few weeks ago. I asked a question about dentry and Ted told me that
-> there is a negative dentry on Linux.
+> I looked at the dcache.c, inode.c, and mm/vmscan.c code and looked at
+> several functions,
+> and as you said, they seem to have way complex logic.
 > 
-> I tried to completely evict(remove) the dentry cache using FS API in
-> include/fs.h and dcache.h, and also evict the inode from memory, but I
-> failed.
-> 
-> The FS API I used is:
-> dput() // to drop usage count and remove from dentry cache
-> iput() // to drop usage count and remove from inode cache.
-> 
-> To be honest, I'm confused about which API to cope with my question.
-> 
-> As far as I know, even though metadata is released from the file
-> system cache, it is managed as an LRU list.
-> 
-> I also saw some code related to CPU cacheline.
-> When I look at the superblock structure, there are also inodes, dcache
-> lists, and LRUs.
-> 
-> How can I completely evict the inode from memory and make disk access
-> as mentioned above?
+> The logic I thought was to release the desired dentry, dentry_kill()
+> the negative dentry, and break the inodes of the file that had that
+> dentry.
 
-In general you simply can't.  Not if there is anyone who'd opened the file
-in question.  As long as the sucker is opened, struct inode *WILL* remain
-in memory.
+The short version is that objects have dependencies on other objects.
+For example, a file descriptor object has a reference to the dentry of
+the file which is open.  A file dentry or directory dentry object
+references its parent directory's dentry object, etc.  You can not
+evict an object when other objects have references on it --- otherwise
+those references become dangling pointers, Which Would Be Bad.
 
-What are you trying to achieve?
+There are solutions for remote file systems (network, clustered, and
+shared disk file systems).  So the VFS layer can support these file
+systems quite well.  Look at ceph, nfs, ofs2, and gfs for examples for
+that.  But it's *complicated* because doing it in a way which is
+highly performant, both for remote file systems, and as well as
+supporting high-performance local disk file systems, is a lot more
+than your very simple-minded, "just kill the dentry/inode structures
+and reread them from disk".
+
+Are you trying to do this for a university class project or some such?
+If so, we're not here to do your homework for you.  If you want a
+practical solution, please use an existing shared-disk or networked
+file system.
+
+Best regards,
+
+					- Ted
