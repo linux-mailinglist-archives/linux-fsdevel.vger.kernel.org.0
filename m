@@ -2,151 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 752EFCA048
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 16:27:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1C57CA081
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 16:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730207AbfJCO1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Oct 2019 10:27:18 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43126 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbfJCO1S (ORCPT
+        id S1730186AbfJCOk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Oct 2019 10:40:57 -0400
+Received: from sonic312-23.consmr.mail.gq1.yahoo.com ([98.137.69.204]:42005
+        "EHLO sonic312-23.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730134AbfJCOk5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Oct 2019 10:27:18 -0400
-Received: by mail-qk1-f196.google.com with SMTP id h126so2513239qke.10;
-        Thu, 03 Oct 2019 07:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=QoMfXeCBE2+e9NZxnjQG1SWoCD2staT4ZlOGYZkaxM4=;
-        b=V/ZZwApsQXkPKcYVsPp7lYdZdi8cvMG6jQ8XQetrU9Fq9JcaIIT9bRD+QTBBaUDgSu
-         JfWMPYIAYfgAbejz1js+pgC8JGVrFdrWlksiYLLv2YqMArXBKQlLWBDEeF1AuXh+v1yU
-         EeFDcX2TlJ2ZStwoYZecfp4bjbFB7fqXFbbIvBYge6ehthduNDZvyoTcDiBIXg8lHJUh
-         ERYZh++Cwnw7HbRVMFzsmMqQefKCrhd1eIo0QRIl3wrytXGlV+iwMAIEVPmAc9D9Cx+2
-         1csBowm+1F+TlBAqxsylxbqXVz0r1F+YiyzifhOJ0rM//SvS6ydRyT54B+5iIBVGF1lC
-         GfUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=QoMfXeCBE2+e9NZxnjQG1SWoCD2staT4ZlOGYZkaxM4=;
-        b=raQBFbOM2BKhuqopFfPqYgk5n25VlnquBZqXJvG194B4NRkfU3Nx7W3UnbDG+To5wd
-         gIfRufieTfY3UXqNNt6z41L06hRUDb7tIu5MhhWEM/R639YUDuilhsXfmVunqCnkwslh
-         6sAbWUq5Y+CxrmfpQUCazRe5fL52CniZHIrRL0GI9A3kgruF7NPfVKUOhD4HedVu6N90
-         2MLmwrUJHEeHy2uyW9SXHAgGLNRjNrUueqPoR9zutHEHyqAcW8cbhN379pABM8AzHSSk
-         idK/cpa51raEk0zyw7AkrrGgaV4imbqpqJL5s7A2V+4Nr9jjOKbCD5xcQBldJvYSPwnQ
-         zgOQ==
-X-Gm-Message-State: APjAAAUC8hB/BtTIKUwN+zkhY1nBTT2T2zKCPjNzY4WcOCajZ69q1Sbk
-        noyuU5NXfruN1z7lsclCTtI8/u6tJGw=
-X-Google-Smtp-Source: APXvYqwOxKIiaAX2C3B3METaTMp0USKJlj4RW8SRT/uLyS+USZQGJDU/pkgesWJYHyaOCXFekbPhSw==
-X-Received: by 2002:ae9:f50a:: with SMTP id o10mr1978279qkg.372.1570112835413;
-        Thu, 03 Oct 2019 07:27:15 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::3:9f72])
-        by smtp.gmail.com with ESMTPSA id d23sm1588317qkc.127.2019.10.03.07.27.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Oct 2019 07:27:14 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 07:27:13 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@fb.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] btrfs: Avoid getting stuck during cyclic writebacks
-Message-ID: <20191003142713.GA2622251@devbig004.ftw2.facebook.com>
+        Thu, 3 Oct 2019 10:40:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1570113655; bh=XH+kkcZacDLyMt//7aPVeZ/RoAwlnvE5gDCu5nQvVyU=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=tug04+yNVYvcTNcf6/BMloUpe5zpy+A168yqZIoZ9e+oVRRaoaVKQqLU1Erwiqb5APIscD+ZRiXBE+AVapeem2Imp4W4xEqfKHEtz/iZC1jUbGIWqJqy6VHt1Yvmr80CfyjHtDwcb2t7o3eHOqYN3w6H9eHQjLfTKC2K+aUB6AL/SU5gbGrd56rnn6JRzjKVnSHMCrl4DtmkkXCbgQAGAUryrhZW2AJ3OaFf1jSiGdjPC3meauPCBW1efZh/6s77cuCxDIT6ZJEevFmJ4dL65bbixc7P4KLwjpnlUGDFTxEvjq819TQBWx12fzigXigvUHIk6ZGDKk0+v+MVuGbbPg==
+X-YMail-OSG: DWxdwR4VM1laI_T7nnMyT6T4RY4Mj0UrmF1wpwElB0BN2SSzSpB1sYZGRZnJN2c
+ YM_ax138Y_IIgz915r9.RzQ1y2dvGaDZ.I_gGZCb08C9XKiewFI_iPFh1WtgmdnjIcMoUi02Idk2
+ DRMOglBwrZhxZsC8jxIlY5O2IDZgtmKMQQyoL7sXpChjW8PwZH_yThj7XDFQN2.0efFr5Vr7W5gl
+ KgBNZ56OY7e2ayKGtWHLSJuffpqALOJ0SibjfoF6Cj86so3yfJ1xffGDKtA9gCyDJrNCmpvpXaJT
+ 3s6H8H.FDeSt8f.dajG8U9w8mkvK_uwGA700_MfepZ.eRn4BZkXCD2MIm2XVpyZffxBkCYj_bfaq
+ AJr0FmFEBc5KBH8vDe1bTn.iW7lGJty6N9zM4WrjdfmXq9WbpQH1Y_HpU_rvon.9o37q0DB4EfO7
+ X8YwkzQeRDxniL2y4KEOPLINvgoAywA1aMy6IGrBe_L_S7STFB3hOggFtvrHXYd4VmdmSyYt4y8n
+ T_hOAHdttrpjYLJu8CSUUHWTHmm1HeP.HhJYmLTx2DUup7QDWrN427wKOF6Q3z1ilsb3GXgkZ7kH
+ f_th6gwH7_c9E3jZLKiqKTwOwti61rjRlPFeyBO.YnN2kJVqP6354o_bce2WT345VgL6QLW56SkO
+ pWv6QQMCFdVkpkVlK63ePK.ets2cjnnsImmt.kSFcJQJ7YTXKRQ.2RIRy0LZVXs2scO1lf4Nd4E4
+ 4qlqvwpe5mUYv2Tut1QvrvjE92WN753LY7U22zNgaEadHp9DZ0fuRk.usP2lDsJtP._QNGKbp2dZ
+ HajiktEa6nR_OISchFSdnckPDz1mRlhWtRMtkCmm2lW7cGuiPgRq0v6qxKdPNeH5jWuaJ6crS0pk
+ ChYVnj25iYKo5FQe.ye8MH.j475fQ86jhb.8BqGQbEZmbcdQXLfqc2ZWR2sWwUvmDGRFb_rV8qDV
+ zclZ16mBOzwtYO7_UStIpowX6HH23HgkiF1I110gCdM05zUbteogqlanAbeUq6rfmUh0lRKYJlD_
+ AfgPv1P2O4hrxin1qNgpT2I0r646hqrsvQikXGLE6YcR2Bv8b5D.OmQrJ1yW11MziClDCXtFOs5t
+ umMP2j7d2zqJDXHGmW.Xi1aXACBI3oVtiel0h0koL1sJ64E4fVlP.u74aAc9FPqNLfl88OFnzQEM
+ fyq6bbPG_AuNL624eUw16gXbfzx3jTHSPF665UHHlC7kGmTN.L.hEhwCnJz0phGlrU5R6zqzkbKU
+ Ar4bDAGOdnTySFwz9SHHXj7pwoRc1mMsG8r8pBfLMuzY7X5qohfa5yxFUhqtrlh69RAVEE4xQ8tE
+ 0iNbzBLd9_pk-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 3 Oct 2019 14:40:55 +0000
+Received: by smtp412.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d6c8f9c467bddad41b91e82a5a197155;
+          Thu, 03 Oct 2019 14:40:53 +0000 (UTC)
+Date:   Thu, 3 Oct 2019 22:40:46 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Chris Mason <clm@fb.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        xfs <linux-xfs@vger.kernel.org>, "tj@kernel.org" <tj@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [5.4-rc1, regression] wb_workfn wakeup oops (was Re: frequent
+ 5.4-rc1 crash?)
+Message-ID: <20191003144041.GA2012@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20191003015247.GI13108@magnolia>
+ <20191003064022.GX16973@dread.disaster.area>
+ <20191003084149.GA16347@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <41B90CA7-E093-48FA-BDFD-73BE7EB81FB6@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <41B90CA7-E093-48FA-BDFD-73BE7EB81FB6@fb.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-During a cyclic writeback, extent_write_cache_pages() uses done_index
-to update the writeback_index after the current run is over.  However,
-instead of current index + 1, it gets to to the current index itself.
+Hi Chris,
 
-Unfortunately, this, combined with returning on EOF instead of looping
-back, can lead to the following pathlogical behavior.
+On Thu, Oct 03, 2019 at 02:01:13PM +0000, Chris Mason wrote:
+> 
+> 
+> On 3 Oct 2019, at 4:41, Gao Xiang wrote:
+> 
+> > Hi,
+> >
+> > On Thu, Oct 03, 2019 at 04:40:22PM +1000, Dave Chinner wrote:
+> >> [cc linux-fsdevel, linux-block, tejun ]
+> >>
+> >> On Wed, Oct 02, 2019 at 06:52:47PM -0700, Darrick J. Wong wrote:
+> >>> Hi everyone,
+> >>>
+> >>> Does anyone /else/ see this crash in generic/299 on a V4 filesystem 
+> >>> (tho
+> >>> afaict V5 configs crash too) and a 5.4-rc1 kernel?  It seems to pop 
+> >>> up
+> >>> on generic/299 though only 80% of the time.
+> >>>
+> >
+> > Just a quick glance, I guess there could is a race between (complete 
+> > guess):
+> >
+> >
+> >  160 static void finish_writeback_work(struct bdi_writeback *wb,
+> >  161                                   struct wb_writeback_work *work)
+> >  162 {
+> >  163         struct wb_completion *done = work->done;
+> >  164
+> >  165         if (work->auto_free)
+> >  166                 kfree(work);
+> >  167         if (done && atomic_dec_and_test(&done->cnt))
+> >
+> >  ^^^ here
+> >
+> >  168                 wake_up_all(done->waitq);
+> >  169 }
+> >
+> > since new wake_up_all(done->waitq); is completely on-stack,
+> >  	if (done && atomic_dec_and_test(&done->cnt))
+> > -		wake_up_all(&wb->bdi->wb_waitq);
+> > +		wake_up_all(done->waitq);
+> >  }
+> >
+> > which could cause use after free if on-stack wb_completion is gone...
+> > (however previous wb->bdi is solid since it is not on-stack)
+> >
+> > see generic on-stack completion which takes a wait_queue spin_lock 
+> > between
+> > test and wake_up...
+> >
+> > If I am wrong, ignore me, hmm...
+> 
+> It's a good guess ;)  Jens should have this queued up already:
+> 
+> https://lkml.org/lkml/2019/9/23/972
 
-1. There is a single file which has accumulated enough dirty pages to
-   trigger balance_dirty_pages() and the writer appending to the file
-   with a series of short writes.
+Oh, I didn't notice that, it's great to be already resolved. :)
 
-2. bdp kicks in, wakes up background writeback and sleeps.
+It was not fully guess though, we once had a some similar
+pattern at the very early stage last year (a given IO balance
+counter, wait_queue. but completion is too heavy), which resolved
+in commit 848bd9acdcd0 last year. Therefore I'm experienced
+with such cases.
 
-3. Writeback kicks in and the cursor is on the last page of the dirty
-   file.  Writeback is started or skipped if already in progress.  As
-   it's EOF, extent_write_cache_pages() returns and the cursor is set
-   to done_index which is pointing to the last page.
+Just saw mailing list regularly and be of some help here...
+Sorry about the noise...
 
-4. Writeback is done.  Nothing happens till bdp finishes, at which
-   point we go back to #1.
+Thanks,
+Gao Xiang
 
-This can almost completely stall out writing back of the file and keep
-the system over dirty threshold for a long time which can mess up the
-whole system.  We encountered this issue in production with a package
-handling application which can reliably reproduce the issue when
-running under tight memory limits.
-
-Reading the comment in the error handling section, this seems to be to
-avoid accidentally skipping a page in case the write attempt on the
-page doesn't succeed.  However, this concern seems bogus.
-
-On each page, the code either:
-
-* Skips and moves onto the next page.
-
-* Fails issue and sets done_index to index + 1.
-
-* Successfully issues and continue to the next page if budget allows
-  and not EOF.
-
-IOW, as long as it's not EOF and there's budget, the code never
-retries writing back the same page.  Only when a page happens to be
-the last page of a particular run, we end up retrying the page, which
-can't possibly guarantee anything data integrity related.  Besides,
-cyclic writes are only used for non-syncing writebacks meaning that
-there's no data integrity implication to begin with.
-
-Fix it by always setting done_index past the current page being
-processed.
-
-Note that this problem exists in other writepages too.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: stable@vger.kernel.org
----
- fs/btrfs/extent_io.c |   12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index cceaf05aada2..4905f48587df 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4121,7 +4121,7 @@ static int extent_write_cache_pages(struct address_space *mapping,
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
- 
--			done_index = page->index;
-+			done_index = page->index + 1;
- 			/*
- 			 * At this point we hold neither the i_pages lock nor
- 			 * the page lock: the page may be truncated or
-@@ -4156,16 +4156,6 @@ static int extent_write_cache_pages(struct address_space *mapping,
- 
- 			ret = __extent_writepage(page, wbc, epd);
- 			if (ret < 0) {
--				/*
--				 * done_index is set past this page,
--				 * so media errors will not choke
--				 * background writeout for the entire
--				 * file. This has consequences for
--				 * range_cyclic semantics (ie. it may
--				 * not be suitable for data integrity
--				 * writeout).
--				 */
--				done_index = page->index + 1;
- 				done = 1;
- 				break;
- 			}
+> 
+> -chris
