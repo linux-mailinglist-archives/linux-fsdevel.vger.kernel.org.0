@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0901EC9D68
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 13:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40DA6C9D6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 13:34:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730070AbfJCLdx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Oct 2019 07:33:53 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37535 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730051AbfJCLdx (ORCPT
+        id S1730209AbfJCLeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Oct 2019 07:34:08 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35858 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730136AbfJCLeI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:33:53 -0400
-Received: by mail-pg1-f195.google.com with SMTP id c17so1610751pgg.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2019 04:33:52 -0700 (PDT)
+        Thu, 3 Oct 2019 07:34:08 -0400
+Received: by mail-pl1-f194.google.com with SMTP id j11so1391389plk.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2019 04:34:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=6AOkLlwuybn5QUKCBXJB6MO5HcsFkduQo3SQQbLA8/A=;
-        b=YYwtUYEwJ86x9rDamH/d1OfHLVxi3Z+5XGejkvJM4xPQII3wODn6442r7KqaA43TsX
-         9Ls/GVSO+6XaXL3NrnJIah7rMDEtzFnXgTCgnlxds14J44K2a2XisleKq49LhVpxPgcV
-         tpTaAj91HjM+sAkxhDWy1dPNZxM/Ywezqvn0P00gXvc5T+FohlEmrKL9k/UtKAO135CQ
-         3k7JsUf6LBEwLdGhjGNJKTCWX9SIEODFs0BADYANUpU+umFaDcDt6KqLWUkurMRegynM
-         pa3Uqs8Tei+4fhymk13omxfQOxuZUen6HzudZ0JP97xERzPVxAbJh0xuossBVhcmvbd7
-         V8lw==
+        bh=M87IY+2KVSkzSC9nEbKGMnVlb0Np+3Hd+IxPBaWE+Zg=;
+        b=sUMHGC5AT9lFKBhMdmRLRp7wEd3e4u+/zZBmXi2lFCshYiT0gisuTE8eqkUy6gcX/I
+         jqA/UNRoqmREpUogZ18WisZ7bFnQGE1qFtxg7rn59xhjqgfb27cZTqDOwPxdRgv0jDqC
+         At0YRNUbyOKuWsQ5/VH0WuHyS56xvqghqBg3WmwaAhOCS7LOuuFU5z94kBgys5BOtpko
+         E51PLVTEe8ZN708Kyn4U3UK6gr9CcmturIr93KgkLIe7SfPLeDRmczYpTCxjjs76uuj6
+         9yUQ1j5VGEIcQI3XxoWgTYEy6ZKEEJKCWH2+HkAo6HZmGwoyBuRLbPJLM7vNCGyG8bWP
+         KoQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6AOkLlwuybn5QUKCBXJB6MO5HcsFkduQo3SQQbLA8/A=;
-        b=L7/jqNGT7+u9dQ1U0RZ2O0m8qHNPF2ABpHjQQtQ+Xm5ZktoDDXEnC972O9pPWlMf6y
-         Bf0gF98AyZLUEeOWBFVRGunnAhph7RJqhLe6yqyilWzvkEKDoSy1Si/W5GQ0l3+T9qt9
-         ivzBaipxU6PvAi6qP9zJRc582+Tc16xSt0O8GuGITmARRD/wqsc5ctxxoN0LOEM3cFYx
-         CCAWSOKqLKLixL8PiUQsNzsCTAYLkqep6xAd6WPOQjniYG5P1TWOWZUVj6wtt3MUWi3G
-         ztIH9bYHyOqH5F84B9VKmz5fPC8j/JYZ7Rg8PU4mp48VQIpW2JY9rw2l6KiLI0ZitbwA
-         VpcA==
-X-Gm-Message-State: APjAAAVTA5s9bnGQghghgvO5LyhVLBsuoD2H7zimraezKeg2URX7XdrQ
-        35PqMDQ/uZO9IrByVRJI+Rl4
-X-Google-Smtp-Source: APXvYqzRWK4OgVuq2ai7BmvLfyxp7k+r3mMQTbLftGqsz9Ks8JO0vsWniMJl7FTCUaCwx1gckmm+3A==
-X-Received: by 2002:a62:e21a:: with SMTP id a26mr10664076pfi.80.1570102431656;
-        Thu, 03 Oct 2019 04:33:51 -0700 (PDT)
+        bh=M87IY+2KVSkzSC9nEbKGMnVlb0Np+3Hd+IxPBaWE+Zg=;
+        b=rwo00a2LNE602wJcR1QhmONaC9+5fITa38k01L2wWgVDT1qTZ564+I+vgCQmYDh4P9
+         Zu3C8isD1U3MOKRt87SBjloMRRFDIyy27mEGjW++FQsLFM6jfJYwuPbOJkoCPGvf4cBG
+         RQPkHzb0tWahYdS4huAb3YFVWHK/0jaP/6ryfc4xlKTnIooW70CWGh/di30F3Siu8OgT
+         15kRW4mp8lpl8HUlCrssPn7wPcZaewYJRll1lo13zIAhtWXvt+D5MtNAD66nvDu2OUe8
+         bKe3TmmbgavriwkGjLJ9pm6y2F6vJG+9yefGzsehmtmxDw3gnoJTIDo1NKesuz0JjraI
+         /fFQ==
+X-Gm-Message-State: APjAAAVj1QFV0eUvqhv6kD84IjMeHC0EXSGVWyjRU+MuvlHeYAlHrWiI
+        juXTtFa5icxOYDyPyHDhFpLF
+X-Google-Smtp-Source: APXvYqx1zsMfZIWzud9Eq2w4T82QSZG8ZWV0cWl8HgHKmfvhN20VfB+cGpng4gaUyVHLC5zaXSs6gw==
+X-Received: by 2002:a17:902:ac8a:: with SMTP id h10mr9106187plr.170.1570102447340;
+        Thu, 03 Oct 2019 04:34:07 -0700 (PDT)
 Received: from poseidon.bobrowski.net ([114.78.226.167])
-        by smtp.gmail.com with ESMTPSA id g12sm3020757pfb.97.2019.10.03.04.33.48
+        by smtp.gmail.com with ESMTPSA id q14sm5855223pgf.74.2019.10.03.04.34.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 04:33:51 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 21:33:45 +1000
+        Thu, 03 Oct 2019 04:34:06 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 21:34:00 +1000
 From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
 To:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca
 Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
-Subject: [PATCH v4 3/8] ext4: introduce new callback for IOMAP_REPORT
- operations
-Message-ID: <cb2dcb6970da1b53bdf85583f13ba2aaf1684e96.1570100361.git.mbobrowski@mbobrowski.org>
+Subject: [PATCH v4 4/8] ext4: introduce direct I/O read path using iomap
+ infrastructure
+Message-ID: <df2b8a10641ec8a0509f137dcc2db1d3cc6087f1.1570100361.git.mbobrowski@mbobrowski.org>
 References: <cover.1570100361.git.mbobrowski@mbobrowski.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -64,214 +64,163 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As part of ext4_iomap_begin() cleanups and port across direct I/O path
-to make use of iomap infrastructure, we split IOMAP_REPORT operations
-into a separate ->iomap_begin() handler.
+This patch introduces a new direct I/O read path that makes use of the
+iomap infrastructure.
+
+The new function ext4_dio_read_iter() is responsible for calling into
+the iomap infrastructure via iomap_dio_rw(). If the read operation
+being performed on the inode does not pass the preliminary checks
+performed within ext4_dio_supported(), then we simply fallback to
+buffered I/O in order to fulfil the request.
+
+Existing direct I/O read buffer_head code has been removed as it's now
+redundant.
 
 Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
 ---
- fs/ext4/ext4.h  |   1 +
- fs/ext4/file.c  |   6 ++-
- fs/ext4/inode.c | 129 ++++++++++++++++++++++++++++--------------------
- 3 files changed, 80 insertions(+), 56 deletions(-)
+ fs/ext4/file.c  | 58 +++++++++++++++++++++++++++++++++++++++++++++----
+ fs/ext4/inode.c | 32 +--------------------------
+ 2 files changed, 55 insertions(+), 35 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 03db3e71676c..d0d88f411a44 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3379,6 +3379,7 @@ static inline void ext4_clear_io_unwritten_flag(ext4_io_end_t *io_end)
- }
- 
- extern const struct iomap_ops ext4_iomap_ops;
-+extern const struct iomap_ops ext4_iomap_report_ops;
- 
- static inline int ext4_buffer_uptodate(struct buffer_head *bh)
- {
 diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 8d2bbcc2d813..ab75aee3e687 100644
+index ab75aee3e687..69ac042fb74b 100644
 --- a/fs/ext4/file.c
 +++ b/fs/ext4/file.c
-@@ -494,12 +494,14 @@ loff_t ext4_llseek(struct file *file, loff_t offset, int whence)
- 						maxbytes, i_size_read(inode));
- 	case SEEK_HOLE:
- 		inode_lock_shared(inode);
--		offset = iomap_seek_hole(inode, offset, &ext4_iomap_ops);
-+		offset = iomap_seek_hole(inode, offset,
-+					 &ext4_iomap_report_ops);
- 		inode_unlock_shared(inode);
- 		break;
- 	case SEEK_DATA:
- 		inode_lock_shared(inode);
--		offset = iomap_seek_data(inode, offset, &ext4_iomap_ops);
-+		offset = iomap_seek_data(inode, offset,
-+					 &ext4_iomap_report_ops);
- 		inode_unlock_shared(inode);
- 		break;
- 	}
+@@ -34,6 +34,53 @@
+ #include "xattr.h"
+ #include "acl.h"
+ 
++static bool ext4_dio_supported(struct inode *inode)
++{
++	if (IS_ENABLED(CONFIG_FS_ENCRYPTION) && IS_ENCRYPTED(inode))
++		return false;
++	if (fsverity_active(inode))
++		return false;
++	if (ext4_should_journal_data(inode))
++		return false;
++	if (ext4_has_inline_data(inode))
++		return false;
++	return true;
++}
++
++static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	ssize_t ret;
++	struct inode *inode = file_inode(iocb->ki_filp);
++
++	/*
++	 * Get exclusion from truncate and other inode operations.
++	 */
++	if (!inode_trylock_shared(inode)) {
++		if (iocb->ki_flags & IOCB_NOWAIT)
++			return -EAGAIN;
++		inode_lock_shared(inode);
++	}
++
++	if (!ext4_dio_supported(inode)) {
++		inode_unlock_shared(inode);
++		/*
++		 * Fallback to buffered I/O if the operation being
++		 * performed on the inode is not supported by direct
++		 * I/O. The IOCB_DIRECT flag needs to be cleared here
++		 * in order to ensure that the direct I/O path withiin
++		 * generic_file_read_iter() is not taken.
++		 */
++		iocb->ki_flags &= ~IOCB_DIRECT;
++		return generic_file_read_iter(iocb, to);
++	}
++
++	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL);
++	inode_unlock_shared(inode);
++
++	file_accessed(iocb->ki_filp);
++	return ret;
++}
++
+ #ifdef CONFIG_FS_DAX
+ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+@@ -64,16 +111,19 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 
+ static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+-	if (unlikely(ext4_forced_shutdown(EXT4_SB(file_inode(iocb->ki_filp)->i_sb))))
++	struct inode *inode = file_inode(iocb->ki_filp);
++
++	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+ 		return -EIO;
+ 
+ 	if (!iov_iter_count(to))
+ 		return 0; /* skip atime */
+ 
+-#ifdef CONFIG_FS_DAX
+-	if (IS_DAX(file_inode(iocb->ki_filp)))
++	if (IS_DAX(inode))
+ 		return ext4_dax_read_iter(iocb, to);
+-#endif
++
++	if (iocb->ki_flags & IOCB_DIRECT)
++		return ext4_dio_read_iter(iocb, to);
+ 	return generic_file_read_iter(iocb, to);
+ }
+ 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index caeb3dec0dec..1dace576b8bd 100644
+index 1dace576b8bd..159ffb92f82d 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -3439,6 +3439,72 @@ static int ext4_set_iomap(struct inode *inode, struct iomap *iomap, u16 type,
- 	return 0;
- }
- 
-+static u16 ext4_iomap_check_delalloc(struct inode *inode,
-+				     struct ext4_map_blocks *map)
-+{
-+	struct extent_status es;
-+	ext4_lblk_t end = map->m_lblk + map->m_len - 1;
-+
-+	ext4_es_find_extent_range(inode, &ext4_es_is_delayed, map->m_lblk,
-+				  end, &es);
-+
-+	/* Entire range is a hole */
-+	if (!es.es_len || es.es_lblk > end)
-+		return IOMAP_HOLE;
-+	if (es.es_lblk <= map->m_lblk) {
-+		ext4_lblk_t offset = 0;
-+
-+		if (es.es_lblk < map->m_lblk)
-+			offset = map->m_lblk - es.es_lblk;
-+		map->m_lblk = es.es_lblk + offset;
-+		map->m_len = es.es_len - offset;
-+		return IOMAP_DELALLOC;
-+	}
-+
-+	/* Range starts with a hole */
-+	map->m_len = es.es_lblk - map->m_lblk;
-+	return IOMAP_HOLE;
-+}
-+
-+static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
-+				   loff_t length, unsigned flags,
-+				   struct iomap *iomap)
-+{
-+	int ret;
-+	u16 type = 0;
-+	struct ext4_map_blocks map;
-+	u8 blkbits = inode->i_blkbits;
-+	unsigned long first_block, last_block;
-+
-+	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
-+		return -EINVAL;
-+	first_block = offset >> blkbits;
-+	last_block = min_t(loff_t, (offset + length - 1) >> blkbits,
-+			   EXT4_MAX_LOGICAL_BLOCK);
-+
-+	if (ext4_has_inline_data(inode)) {
-+		ret = ext4_inline_data_iomap(inode, iomap);
-+		if (ret != -EAGAIN) {
-+			if (ret == 0 && offset >= iomap->length)
-+				ret = -ENOENT;
-+			return ret;
-+		}
-+	}
-+
-+	map.m_lblk = first_block;
-+	map.m_len = last_block = first_block + 1;
-+	ret = ext4_map_blocks(NULL, inode, &map, 0);
-+	if (ret < 0)
-+		return ret;
-+	if (ret == 0)
-+		type = ext4_iomap_check_delalloc(inode, &map);
-+	return ext4_set_iomap(inode, iomap, type, first_block, &map);
-+}
-+
-+const struct iomap_ops ext4_iomap_report_ops = {
-+	.iomap_begin = ext4_iomap_begin_report,
-+};
-+
- static int ext4_iomap_alloc(struct inode *inode,
- 			    unsigned flags,
- 			    unsigned long first_block,
-@@ -3498,12 +3564,10 @@ static int ext4_iomap_alloc(struct inode *inode,
- static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 			    unsigned flags, struct iomap *iomap)
+@@ -863,9 +863,6 @@ int ext4_dio_get_block(struct inode *inode, sector_t iblock,
  {
--	u16 type = 0;
--	unsigned int blkbits = inode->i_blkbits;
--	unsigned long first_block, last_block;
--	struct ext4_map_blocks map;
--	bool delalloc = false;
- 	int ret;
-+	struct ext4_map_blocks map;
-+	u8 blkbits = inode->i_blkbits;
-+	unsigned long first_block, last_block;
- 
- 	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
- 		return -EINVAL;
-@@ -3511,64 +3575,21 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	last_block = min_t(loff_t, (offset + length - 1) >> blkbits,
- 			   EXT4_MAX_LOGICAL_BLOCK);
- 
--	if (flags & IOMAP_REPORT) {
--		if (ext4_has_inline_data(inode)) {
--			ret = ext4_inline_data_iomap(inode, iomap);
--			if (ret != -EAGAIN) {
--				if (ret == 0 && offset >= iomap->length)
--					ret = -ENOENT;
--				return ret;
--			}
--		}
--	} else {
--		if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
--			return -ERANGE;
--	}
-+	if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
-+		return -ERANGE;
- 
- 	map.m_lblk = first_block;
- 	map.m_len = last_block - first_block + 1;
- 
--	if (flags & IOMAP_REPORT) {
--		ret = ext4_map_blocks(NULL, inode, &map, 0);
--		if (ret < 0)
--			return ret;
+ 	/* We don't expect handle for direct IO */
+ 	WARN_ON_ONCE(ext4_journal_current_handle());
 -
--		if (ret == 0) {
--			ext4_lblk_t end = map.m_lblk + map.m_len - 1;
--			struct extent_status es;
--
--			ext4_es_find_extent_range(inode, &ext4_es_is_delayed,
--						  map.m_lblk, end, &es);
--
--			if (!es.es_len || es.es_lblk > end) {
--				/* entire range is a hole */
--			} else if (es.es_lblk > map.m_lblk) {
--				/* range starts with a hole */
--				map.m_len = es.es_lblk - map.m_lblk;
--			} else {
--				ext4_lblk_t offs = 0;
--
--				if (es.es_lblk < map.m_lblk)
--					offs = map.m_lblk - es.es_lblk;
--				map.m_lblk = es.es_lblk + offs;
--				map.m_len = es.es_len - offs;
--				delalloc = true;
--			}
--		}
--	} else if (flags & IOMAP_WRITE) {
-+	if (flags & IOMAP_WRITE)
- 		ret = ext4_iomap_alloc(inode, flags, first_block, &map);
--	} else {
-+	else
- 		ret = ext4_map_blocks(NULL, inode, &map, 0);
--		if (ret < 0)
--			return ret;
--	}
- 
- 	if (ret < 0)
- 		return ret;
--
--	if (!ret)
--		type = delalloc ? IOMAP_DELALLOC : IOMAP_HOLE;
--	return ext4_set_iomap(inode, iomap, type, first_block, &map);
-+	return ext4_set_iomap(inode, iomap, ret ? 0 : IOMAP_HOLE, first_block,
-+			      &map);
+-	if (!create)
+-		return _ext4_get_block(inode, iblock, bh, 0);
+ 	return ext4_get_block_trans(inode, iblock, bh, EXT4_GET_BLOCKS_CREATE);
  }
  
- static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+@@ -3855,30 +3852,6 @@ static ssize_t ext4_direct_IO_write(struct kiocb *iocb, struct iov_iter *iter)
+ 	return ret;
+ }
+ 
+-static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter)
+-{
+-	struct address_space *mapping = iocb->ki_filp->f_mapping;
+-	struct inode *inode = mapping->host;
+-	size_t count = iov_iter_count(iter);
+-	ssize_t ret;
+-
+-	/*
+-	 * Shared inode_lock is enough for us - it protects against concurrent
+-	 * writes & truncates and since we take care of writing back page cache,
+-	 * we are protected against page writeback as well.
+-	 */
+-	inode_lock_shared(inode);
+-	ret = filemap_write_and_wait_range(mapping, iocb->ki_pos,
+-					   iocb->ki_pos + count - 1);
+-	if (ret)
+-		goto out_unlock;
+-	ret = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev,
+-				   iter, ext4_dio_get_block, NULL, NULL, 0);
+-out_unlock:
+-	inode_unlock_shared(inode);
+-	return ret;
+-}
+-
+ static ssize_t ext4_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct file *file = iocb->ki_filp;
+@@ -3905,10 +3878,7 @@ static ssize_t ext4_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		return 0;
+ 
+ 	trace_ext4_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+-	if (iov_iter_rw(iter) == READ)
+-		ret = ext4_direct_IO_read(iocb, iter);
+-	else
+-		ret = ext4_direct_IO_write(iocb, iter);
++	ret = ext4_direct_IO_write(iocb, iter);
+ 	trace_ext4_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), ret);
+ 	return ret;
+ }
 -- 
 2.20.1
 
