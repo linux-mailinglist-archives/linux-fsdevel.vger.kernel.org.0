@@ -2,98 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8F7DC9A57
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 11:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A612C9D5A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 13:33:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728839AbfJCJAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Oct 2019 05:00:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50004 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727611AbfJCJAv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Oct 2019 05:00:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 60B8DB144;
-        Thu,  3 Oct 2019 09:00:49 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 534081E4810; Thu,  3 Oct 2019 11:01:10 +0200 (CEST)
-Date:   Thu, 3 Oct 2019 11:01:10 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: Lease semantic proposal
-Message-ID: <20191003090110.GC17911@quack2.suse.cz>
-References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
- <5d5a93637934867e1b3352763da8e3d9f9e6d683.camel@kernel.org>
- <20191001181659.GA5500@iweiny-DESK2.sc.intel.com>
+        id S1730157AbfJCLc5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Oct 2019 07:32:57 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33586 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730132AbfJCLc4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Oct 2019 07:32:56 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q10so1609671pfl.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Oct 2019 04:32:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Jm85ztTw6loR+224Tv9cB/n0utlhi6GT8VW3M5n6AjE=;
+        b=oVR6bnX98C4ThAwx5Lbs+x477cjllNQuTDTk1YD8TtAL+MhxFl+LwHhpdHrA+GTxqs
+         dIE5trm/6OHEvaNOKdjJEcY3YMPLTEvt1X4n7aBcq0U7dpJ+ImQbZpe8tUBPwoJb9qkq
+         DNHc/nqZAmP3ICy7hjjQh0ZjVNiS34DgaYJGDVaje2ahjKeHhFQ+Y8EDBzVr6+352I6O
+         q/hg/ZnZ9tV6Y9Owpg5WdhZzH7wORjtY8/gSV2WtfSa03E4GdAvvpU0a31qZ7bY14Xi0
+         dAIhSALgm+QRH1qrbZ8PVhUxVlQ6fAJFzY+amq6f9/xFaoah02rT/VIJyS6OyYIoEj0E
+         wQQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Jm85ztTw6loR+224Tv9cB/n0utlhi6GT8VW3M5n6AjE=;
+        b=AYdFeXp27y51kO93QIDWDBtIgGrmCviyIgAi175rqKDea+ESn9eco/6OFuHgsPoUzk
+         JdP1C3YwQHWFgyjkrtXhpTXEsgPZ0nWzDWZjw6eC/j8WInj9+UHiTdsRkJ20re6LiAbI
+         KYM8xyhixAiZzo9RTHyKgWbQuA2fjPSs/Dkp0EupwWWJijobw8wTENOnjNEvvkolRjly
+         oM1UWWtWNtFT98GHevVSORrwUkUUq7W7VsRC+wUSuSIQDDo2WywRNkNfUsk0LuXbmMTL
+         oJrmD5EtP1YxFdk9BP+edYp/gnyqiY0NyTCkLj3Ur5dv8vsQNEpq2Lafk3zoHTzQAzCe
+         /FaQ==
+X-Gm-Message-State: APjAAAXMoMixMa0fbwryv5TzSU/Yv/b3I1df1VYjmSE7ksOhw/DxtTzF
+        KOXsBeXWvpJeVHqEk6t6MND9
+X-Google-Smtp-Source: APXvYqyD54ONlQLVF1ccr3hbQp3x5ECfWVqd9JkpwYA/z0HUvSCWEijRVg+kaXN8su+WmPLQ6bcabg==
+X-Received: by 2002:a65:6858:: with SMTP id q24mr8995208pgt.236.1570102375382;
+        Thu, 03 Oct 2019 04:32:55 -0700 (PDT)
+Received: from poseidon.bobrowski.net ([114.78.226.167])
+        by smtp.gmail.com with ESMTPSA id j128sm3345936pfg.51.2019.10.03.04.32.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2019 04:32:54 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 21:32:48 +1000
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
+Subject: [PATCH v4 0/8] ext4: port direct I/O to iomap infrastructure
+Message-ID: <cover.1570100361.git.mbobrowski@mbobrowski.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191001181659.GA5500@iweiny-DESK2.sc.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 01-10-19 11:17:00, Ira Weiny wrote:
-> On Mon, Sep 23, 2019 at 04:17:59PM -0400, Jeff Layton wrote:
-> > On Mon, 2019-09-23 at 12:08 -0700, Ira Weiny wrote:
-> > 
-> > Will userland require any special privileges in order to set an
-> > F_UNBREAK lease? This seems like something that could be used for DoS. I
-> > assume that these will never time out.
-> 
-> Dan and I discussed this some more and yes I think the uid of the process needs
-> to be the owner of the file.  I think that is a reasonable mechanism.
+This patch series ports the ext4 direct I/O paths over to the iomap
+infrastructure. The legacy buffer_head based direct I/O paths have
+subsequently been removed as they're no longer in use. The result of
+this change is that ext4 now uses the newer iomap framework for direct
+I/O operations, which results in an overall cleaner implementation and
+keeps the code isolated from buffer_head internals. In addition to
+this, a slight performance boost may be expected while using O_SYNC |
+O_DIRECT I/O.
 
-Honestly, I'm not convinced anything more than open-for-write should be
-required. Sure unbreakable lease may result in failing truncate and other
-ops but as we discussed at LFS/MM, this is not hugely different from
-executing a file resulting in ETXTBUSY for any truncate attempt (even from
-root). So sufficiently priviledged user has to be able to easily find which
-process(es) owns the lease so that he can kill it / take other
-administrative action to release the lease. But that's about it.
- 
-> > How will we deal with the case where something is is squatting on an
-> > F_UNBREAK lease and isn't letting it go?
-> 
-> That is a good question.  I had not considered someone taking the UNBREAK
-> without pinning the file.
+The changes within this patch series have been tested via xfstests in
+both DAX and non-DAX modes using the various filesystem configuration
+options i.e. 4k, dioread_nolock, etc.
 
-IMHO the same answer as above - sufficiently priviledged user should be
-able to easily find the process holding the lease and kill it. Given the
-lease owner has to have write access to the file, he better should be from
-the same "security domain"...
+Changes since v3:
 
-> > Leases are technically "owned" by the file description -- we can't
-> > necessarily trace it back to a single task in a threaded program. The
-> > kernel task that set the lease may have exited by the time we go
-> > looking.
-> > 
-> > Will we be content trying to determine this using /proc/locks+lsof, etc,
-> > or will we need something better?
-> 
-> I think using /proc/locks is our best bet.  Similar to my intention to report
-> files being pinned.[1]
-> 
-> In fact should we consider files with F_UNBREAK leases "pinned" and just report
-> them there?
+ - Introduced a couple preparation patches around refactoring the ext4
+   iomap code. This involved splitting chunks of the existing
+   ->iomap_begin() callback into separate helpers.
 
-As Jeff wrote later, /proc/locks is not enough. You need PID(s) which have
-access to the lease and hold it alive. Your /proc/<pid>/ files you had in your
-patches should do that, shouldn't they? Maybe they were not tied to the
-right structure... They really need to be tied to the existence of a lease.
+ - Moved out the orphan handling code into a higher level caller. It
+   used to be within ext4_iomap_begin(), but is now within
+   ext4_dio_write_iter() and similarily ext4_dax_write_iter().
 
-								Honza
+ - Renamed the helper function from ext4_dio_checks() to
+   ext4_dio_supported(). Overall, it just reads better when using this
+   helper throughout the code.
+
+ - Cleaned up the ->end_io() handler. This was a result of refactoring
+   ext4_handle_inode_extension() and allowing it to perform clean up
+   routines for extension cases rather than calling
+   ext4_handle_failed_inode_extension() explicitly.
+
+ - Added a couple comments here and there to bits of logic that aren't
+   immediately obvious.
+
+ - Rather than having the clean up code in a separate patch at the end
+   of the series, I've incorporated the clean up into the patches
+   directly.
+
+Thank you to all that took the time to review the patch series and
+provide very valuable feedback. This includes Jan Kara, Christoph
+Hellwig, Ritesh Harjani, and anybody else that I may have missed.
+
+Matthew Bobrowski (8):
+  ext4: move out iomap field population into separate helper
+  ext4: move out IOMAP_WRITE path into separate helper
+  ext4: introduce new callback for IOMAP_REPORT operations
+  ext4: introduce direct I/O read path using iomap infrastructure
+  ext4: move inode extension/truncate code out from ->iomap_end()
+    callback
+  ext4: move inode extension checks out from ext4_iomap_alloc()
+  ext4: reorder map.m_flags checks in ext4_set_iomap()
+  ext4: introduce direct I/O write path using iomap infrastructure
+
+ fs/ext4/ext4.h    |   4 +-
+ fs/ext4/extents.c |  11 +-
+ fs/ext4/file.c    | 387 ++++++++++++++++++++-----
+ fs/ext4/inode.c   | 709 +++++++++++-----------------------------------
+ 4 files changed, 484 insertions(+), 627 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.20.1
+
