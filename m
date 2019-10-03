@@ -2,215 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEB66C9A19
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 10:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CEB0C9A2F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 10:43:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbfJCImI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Oct 2019 04:42:08 -0400
-Received: from sonic307-54.consmr.mail.gq1.yahoo.com ([98.137.64.30]:35675
-        "EHLO sonic307-54.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727611AbfJCImH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Oct 2019 04:42:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1570092126; bh=+l97VRrhRplz3WPVA62rE6r7T/d7eMY8BbmJ9IMlzDI=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=n07VKpK91XVoAQLpu70dN6E/3ZAi6nJDYU0XJPrvReuB6E1w2+IuODaItbB5WzKkiC0NPpzD0aAF/eBU2WFylyGId3/x9ZMX1+nEQz1iU+Ri/nIyqEw7nKn2/+FJAWh+M/A/Bl3jljGFgr8meVB42k1ev+o9npdDTE0bV2YDHzxnkMoI6aJml/ZQPyA345NgE56C88HJbjov/jlN1DBKHVJUKhNVvAWlam5UeaKafY6T1oZBRb9DZtlLWp5FSwrR+KfgiNUdQGDaMEKjw4QcmQeZnRE/q2Wl8TN3+ZmCO//4rUT+lNLiXV3FboSYl8i4Uw240AobryFHe4sbOKa5SA==
-X-YMail-OSG: rE2El2kVM1nBU7jln96weUtdKJNN1N_ufONQQGV6h21bA0kO1CIuhTxlk4DSmRO
- XDfVIy.IvWdwsGG1EVlbuEIXFa3Z7lA352SR4Yszwt7rXyrrijqvImnr2NB7vVBkHzztfCv_hfCC
- .u_opDLm8dPuvTPwRAP7mtwClMgvzlgJcEujR.1CAHDibZ9OpcLbU__HWjv32V5AP.f_D7lafK9q
- hSntjZ396C1eCoekfrUVvRVuQXNeowN6JSgBFmbxNMY2egnWku4YtW4kHwZ70oFo6UQJ9H5Zqbkb
- sc98AewJN8JRuu0k56.lGS3Aj39YExtREy9_QmSn0f1K5oSf5_WLmyyx1cvMzGrgNPrGur8sLUOX
- 3ShtLzYZfP0qAEK2.lQy_kkryfI6U2iw3ChPD9.e4kcH7lVbvJH0ovs4IFYl_jnrkzHrWAniySAI
- uaLe0FUlFNOl46vchE336eLPN9Y4LLnCWp2RaEjo4UZQDuLgpFzCRJ4c5DZI7hzOLqhVIjhsUpOO
- xtA8eh64.pvAIIQDNJMWGLsM1k24k8THdTVFZWG_AdI85uD0FFRP9xvwsQqTbXHdRPfczSURgPMn
- PEyYb41FMUmfNhZFinL9BLEvesJNgk7G8pN8BI80QtdYHNYdksHtjvOU6QBCNjZgpsR2oZb69c7z
- Hkqy0sKo7YgEAEmtibrZWvVadyFxECY1yPS_9wPzn8rBoW6wQ4hOOJyVF_.IYuD3VMoQlPCc1Fch
- _YkJpl3rA2JcLF_SMkDVK5oGjG00jj_xuaW6dFd37gQ7mdFCXDmuKwIsLxb62x9rab6leMvAwO.F
- WLv0x0W6I0PB3KEkZl0LYHo1kl60gSX.vlQfT43lVPcBYRVf0Ak9lDjiirhm7vJjVVKv5KhAYB1N
- 4HwYEQYerVIJsaolTjD7N9_jY5PJnedfm3b9mrZpNI7MnC.B1T6xwnoYIKI.Bo5Ut1tS7tThzqjd
- uZtfcRnx2EYj6bI2bZEb8V8TFkL6g1pF058DAZJ_TrT7t030ghSGKo2aZL37RD82h.8kM6Ja82P7
- zHGTRjjR_7NJIXf8U.F2OnZargiIVCN9w7xmwZ8MvukbprAuqWtDiiImO9H_RHK8kP5d2ZKWrY.Q
- thPri2Ft6DUwx89.utu2.kNpkTBDsMcrGBIOc4aSjQjd15.uWZ8orgaoJWRgyrEFYerLa_a916jM
- VO8U1hQuciqJgATZ.bTRfF6pqDobtnKRWVpNHyFK6028SmEbOuy3hXDXUNhJPAK6ZWkrMK2jDuDC
- 52w2fPDPsONY8zVVdd4akAkOZHWUeIjmu3uwAlpWxXJjxALy8qTZJp0sV1mWa2e4osxozIcAAXEP
- HE4c.U255Prw-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.gq1.yahoo.com with HTTP; Thu, 3 Oct 2019 08:42:06 +0000
-Received: by smtp418.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID e3a63142e283715db337cb657bb84418;
-          Thu, 03 Oct 2019 08:42:02 +0000 (UTC)
-Date:   Thu, 3 Oct 2019 16:41:56 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        xfs <linux-xfs@vger.kernel.org>, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [5.4-rc1, regression] wb_workfn wakeup oops (was Re: frequent
- 5.4-rc1 crash?)
-Message-ID: <20191003084149.GA16347@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20191003015247.GI13108@magnolia>
- <20191003064022.GX16973@dread.disaster.area>
+        id S1728967AbfJCInn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Oct 2019 04:43:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41002 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727912AbfJCInm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Oct 2019 04:43:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 094CDB144;
+        Thu,  3 Oct 2019 08:43:39 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3588D1E4810; Thu,  3 Oct 2019 10:43:59 +0200 (CEST)
+Date:   Thu, 3 Oct 2019 10:43:59 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Ira Weiny <ira.weiny@intel.com>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: Lease semantic proposal
+Message-ID: <20191003084359.GB17911@quack2.suse.cz>
+References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
+ <5d5a93637934867e1b3352763da8e3d9f9e6d683.camel@kernel.org>
+ <20191001181659.GA5500@iweiny-DESK2.sc.intel.com>
+ <2b42cf4ae669cedd061c937103674babad758712.camel@kernel.org>
+ <20191002192711.GA21386@fieldses.org>
+ <df9022f0f5d18d71f37ed494a05eaa4509cf0a68.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191003064022.GX16973@dread.disaster.area>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <df9022f0f5d18d71f37ed494a05eaa4509cf0a68.camel@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-On Thu, Oct 03, 2019 at 04:40:22PM +1000, Dave Chinner wrote:
-> [cc linux-fsdevel, linux-block, tejun ]
-> 
-> On Wed, Oct 02, 2019 at 06:52:47PM -0700, Darrick J. Wong wrote:
-> > Hi everyone,
+On Wed 02-10-19 16:35:55, Jeff Layton wrote:
+> On Wed, 2019-10-02 at 15:27 -0400, J. Bruce Fields wrote:
+> > On Wed, Oct 02, 2019 at 08:28:40AM -0400, Jeff Layton wrote:
+> > > On Tue, 2019-10-01 at 11:17 -0700, Ira Weiny wrote:
+> > > > On Mon, Sep 23, 2019 at 04:17:59PM -0400, Jeff Layton wrote:
+> > > > > On Mon, 2019-09-23 at 12:08 -0700, Ira Weiny wrote:
+> > > > > > Since the last RFC patch set[1] much of the discussion of supporting RDMA with
+> > > > > > FS DAX has been around the semantics of the lease mechanism.[2]  Within that
+> > > > > > thread it was suggested I try and write some documentation and/or tests for the
+> > > > > > new mechanism being proposed.  I have created a foundation to test lease
+> > > > > > functionality within xfstests.[3] This should be close to being accepted.
+> > > > > > Before writing additional lease tests, or changing lots of kernel code, this
+> > > > > > email presents documentation for the new proposed "layout lease" semantic.
+> > > > > > 
+> > > > > > At Linux Plumbers[4] just over a week ago, I presented the current state of the
+> > > > > > patch set and the outstanding issues.  Based on the discussion there, well as
+> > > > > > follow up emails, I propose the following addition to the fcntl() man page.
+> > > > > > 
+> > > > > > Thank you,
+> > > > > > Ira
+> > > > > > 
+> > > > > > [1] https://lkml.org/lkml/2019/8/9/1043
+> > > > > > [2] https://lkml.org/lkml/2019/8/9/1062
+> > > > > > [3] https://www.spinics.net/lists/fstests/msg12620.html
+> > > > > > [4] https://linuxplumbersconf.org/event/4/contributions/368/
+> > > > > > 
+> > > > > > 
+> > > > > 
+> > > > > Thank you so much for doing this, Ira. This allows us to debate the
+> > > > > user-visible behavior semantics without getting bogged down in the
+> > > > > implementation details. More comments below:
+> > > > 
+> > > > Thanks.  Sorry for the delay in response.  Turns out this email was in my
+> > > > spam...  :-/  I'll need to work out why.
+> > > > 
+> > > > > > <fcntl man page addition>
+> > > > > > Layout Leases
+> > > > > > -------------
+> > > > > > 
+> > > > > > Layout (F_LAYOUT) leases are special leases which can be used to control and/or
+> > > > > > be informed about the manipulation of the underlying layout of a file.
+> > > > > > 
+> > > > > > A layout is defined as the logical file block -> physical file block mapping
+> > > > > > including the file size and sharing of physical blocks among files.  Note that
+> > > > > > the unwritten state of a block is not considered part of file layout.
+> > > > > > 
+> > > > > > **Read layout lease F_RDLCK | F_LAYOUT**
+> > > > > > 
+> > > > > > Read layout leases can be used to be informed of layout changes by the
+> > > > > > system or other users.  This lease is similar to the standard read (F_RDLCK)
+> > > > > > lease in that any attempt to change the _layout_ of the file will be reported to
+> > > > > > the process through the lease break process.  But this lease is different
+> > > > > > because the file can be opened for write and data can be read and/or written to
+> > > > > > the file as long as the underlying layout of the file does not change.
+> > > > > > Therefore, the lease is not broken if the file is simply open for write, but
+> > > > > > _may_ be broken if an operation such as, truncate(), fallocate() or write()
+> > > > > > results in changing the underlying layout.
+> > > > > > 
+> > > > > > **Write layout lease (F_WRLCK | F_LAYOUT)**
+> > > > > > 
+> > > > > > Write Layout leases can be used to break read layout leases to indicate that
+> > > > > > the process intends to change the underlying layout lease of the file.
+> > > > > > 
+> > > > > > A process which has taken a write layout lease has exclusive ownership of the
+> > > > > > file layout and can modify that layout as long as the lease is held.
+> > > > > > Operations which change the layout are allowed by that process.  But operations
+> > > > > > from other file descriptors which attempt to change the layout will break the
+> > > > > > lease through the standard lease break process.  The F_LAYOUT flag is used to
+> > > > > > indicate a difference between a regular F_WRLCK and F_WRLCK with F_LAYOUT.  In
+> > > > > > the F_LAYOUT case opens for write do not break the lease.  But some operations,
+> > > > > > if they change the underlying layout, may.
+> > > > > > 
+> > > > > > The distinction between read layout leases and write layout leases is that
+> > > > > > write layout leases can change the layout without breaking the lease within the
+> > > > > > owning process.  This is useful to guarantee a layout prior to specifying the
+> > > > > > unbreakable flag described below.
+> > > > > > 
+> > > > > > 
+> > > > > 
+> > > > > The above sounds totally reasonable. You're essentially exposing the
+> > > > > behavior of nfsd's layout leases to userland. To be clear, will F_LAYOUT
+> > > > > leases work the same way as "normal" leases, wrt signals and timeouts?
+> > > > 
+> > > > That was my intention, yes.
+> > > > 
+> > > > > I do wonder if we're better off not trying to "or" in flags for this,
+> > > > > and instead have a separate set of commands (maybe F_RDLAYOUT,
+> > > > > F_WRLAYOUT, F_UNLAYOUT). Maybe I'm just bikeshedding though -- I don't
+> > > > > feel terribly strongly about it.
+> > > > 
+> > > > I'm leaning that was as well.  To make these even more distinct from
+> > > > F_SETLEASE.
+> > > > 
+> > > > > Also, at least in NFSv4, layouts are handed out for a particular byte
+> > > > > range in a file. Should we consider doing this with an API that allows
+> > > > > for that in the future? Is this something that would be desirable for
+> > > > > your RDMA+DAX use-cases?
+> > > > 
+> > > > I don't see this.  I've thought it would be a nice thing to have but I don't
+> > > > know of any hard use case.  But first I'd like to understand how this works for
+> > > > NFS.
+> > > > 
+> > > 
+> > > The NFSv4.1 spec allows the client to request the layouts for a
+> > > particular range in the file:
+> > > 
+> > > https://tools.ietf.org/html/rfc5661#page-538
+> > > 
+> > > The knfsd only hands out whole-file layouts at present. Eventually we
+> > > may want to make better use of segmented layouts, at which point we'd
+> > > need something like a byte-range lease.
+> > > 
+> > > > > We could add a new F_SETLEASE variant that takes a struct with a byte
+> > > > > range (something like struct flock).
+> > > > 
+> > > > I think this would be another reason to introduce F_[RD|WR|UN]LAYOUT as a
+> > > > command.  Perhaps supporting smaller byte ranges could be added later?
+> > > > 
+> > > 
+> > > I'd definitely not multiplex this over F_SETLEASE. An F_SETLAYOUT cmd
+> > > would probably be sufficient, and maybe just reuse
+> > > F_RDLCK/F_WRLCK/F_UNLCK for the iomode?
+> > > 
+> > > For the byte ranges, the catch there is that extending the userland
+> > > interface for that later will be difficult.
 > > 
-> > Does anyone /else/ see this crash in generic/299 on a V4 filesystem (tho
-> > afaict V5 configs crash too) and a 5.4-rc1 kernel?  It seems to pop up
-> > on generic/299 though only 80% of the time.
+> > Why would it be difficult?
 > > 
-> > --D
+> 
+> Legacy userland code that wanted to use byte range enabled layouts would
+> have to be rebuilt to take advantage of them. If we require a range from
+> the get-go, then they will get the benefit of them once they're
+> available.
+
+I don't think this is true. Because current implementation of locking the
+whole file may hide implementation bugs in userspace. So the new
+range lock handling may break userspace and history shows such
+problems with APIs are actually rather common. So I think switching to
+range locking *must* be conscious decision of the application and as
+such having separate API for that is the most natural thing to do.
+
+> > > What I'd probably suggest
+> > > (and what would jive with the way pNFS works) would be to go ahead and
+> > > add an offset and length to the arguments and result (maybe also
+> > > whence?).
 > > 
-> > [ 1806.186197] run fstests generic/299 at 2019-10-02 18:15:30
-> > [ 1808.279874] XFS (sdb): Mounting V4 Filesystem
-> > [ 1808.283519] XFS (sdb): Ending clean mount
-> > [ 1808.284530] XFS (sdb): Quotacheck needed: Please wait.
-> > [ 1808.317062] XFS (sdb): Quotacheck: Done.
-> > [ 1808.319821] Mounted xfs file system at /opt supports timestamps until 2038 (0x7fffffff)
-> > [ 1886.218794] BUG: kernel NULL pointer dereference, address: 0000000000000018
-> > [ 1886.219787] #PF: supervisor read access in kernel mode
-> > [ 1886.220638] #PF: error_code(0x0000) - not-present page
-> > [ 1886.221496] PGD 0 P4D 0 
-> > [ 1886.221970] Oops: 0000 [#1] PREEMPT SMP
-> > [ 1886.222596] CPU: 2 PID: 227320 Comm: kworker/u10:2 Tainted: G        W         5.4.0-rc1-djw #rc1
-> > [ 1886.224016] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.10.2-1ubuntu1 04/01/2014
-> > [ 1886.225261] Workqueue: writeback wb_workfn (flush-8:16)
-> > [ 1886.225926] RIP: 0010:__lock_acquire+0x4c3/0x1490
-> > [ 1886.226595] Code: 00 00 00 48 8b 74 24 48 65 48 33 34 25 28 00 00 00 8b 44 24 04 0f 85 a1 0f 00 00 48 83 c4 50 5b 5d 41 5c 41 5d 41 5e 41 5f c3 <48> 81 3f 20 66 6d 82 41 ba 00 00 00 00 45 0f 45 d0 83 fe 01 0f 87
-> > [ 1886.229146] RSP: 0000:ffffc900052c3bc0 EFLAGS: 00010002
-> > [ 1886.230008] RAX: 0000000000000000 RBX: 0000000000000018 RCX: 0000000000000000
-> > [ 1886.231238] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000018
-> > [ 1886.236382] RBP: ffff888077f80000 R08: 0000000000000001 R09: 0000000000000001
-> > [ 1886.241630] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
-> > [ 1886.243530] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000018
-> > [ 1886.244669] FS:  0000000000000000(0000) GS:ffff88807e000000(0000) knlGS:0000000000000000
-> > [ 1886.245941] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [ 1886.246913] CR2: 0000000000000018 CR3: 0000000072f7b003 CR4: 00000000001606a0
-> > [ 1886.247834] Call Trace:
-> > [ 1886.248217]  ? mark_held_locks+0x47/0x70
-> > [ 1886.248810]  ? trace_hardirqs_on_thunk+0x1a/0x20
-> > [ 1886.249445]  lock_acquire+0x90/0x180
-> > [ 1886.249876]  ? __wake_up_common_lock+0x62/0xc0
-> > [ 1886.250577]  _raw_spin_lock_irqsave+0x3e/0x80
-> > [ 1886.251327]  ? __wake_up_common_lock+0x62/0xc0
-> > [ 1886.252538]  __wake_up_common_lock+0x62/0xc0
-> > [ 1886.257318]  wb_workfn+0x10e/0x610
-> > [ 1886.260171]  ? __lock_acquire+0x268/0x1490
-> > [ 1886.266124]  ? process_one_work+0x1da/0x5d0
-> > [ 1886.266941]  process_one_work+0x25b/0x5d0
-> > [ 1886.267759]  worker_thread+0x3d/0x3a0
-> > [ 1886.268497]  ? process_one_work+0x5d0/0x5d0
-> > [ 1886.269285]  kthread+0x121/0x140
-> > [ 1886.269808]  ? kthread_park+0x80/0x80
-> > [ 1886.270317]  ret_from_fork+0x3a/0x50
-> > [ 1886.270811] Modules linked in: xfs libcrc32c dm_flakey ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 ip_set_hash_ip ip_set_hash_net xt_tcpudp bfq xt_set ip_set_hash_mac ip_set nfnetlink ip6table_filter ip6_tables iptable_filter sch_fq_codel ip_tables x_tables nfsv4 af_packet [last unloaded: scsi_debug]
-> > [ 1886.274144] Dumping ftrace buffer:
-> > [ 1886.274637]    (ftrace buffer empty)
-> > [ 1886.275129] CR2: 0000000000000018
-> > [ 1886.275567] ---[ end trace 20db199015efe614 ]---
-> > [ 1886.278601] RIP: 0010:__lock_acquire+0x4c3/0x1490
-> > [ 1886.283408] Code: 00 00 00 48 8b 74 24 48 65 48 33 34 25 28 00 00 00 8b 44 24 04 0f 85 a1 0f 00 00 48 83 c4 50 5b 5d 41 5c 41 5d 41 5e 41 5f c3 <48> 81 3f 20 66 6d 82 41 ba 00 00 00 00 45 0f 45 d0 83 fe 01 0f 87
-> > 
-
-Just a quick glance, I guess there could is a race between (complete guess):
-
-
- 160 static void finish_writeback_work(struct bdi_writeback *wb,
- 161                                   struct wb_writeback_work *work)
- 162 {
- 163         struct wb_completion *done = work->done;
- 164 
- 165         if (work->auto_free)
- 166                 kfree(work);
- 167         if (done && atomic_dec_and_test(&done->cnt))
-
- ^^^ here
-
- 168                 wake_up_all(done->waitq);
- 169 }
-
-since new wake_up_all(done->waitq); is completely on-stack,
- 	if (done && atomic_dec_and_test(&done->cnt))
--		wake_up_all(&wb->bdi->wb_waitq);
-+		wake_up_all(done->waitq);
- }
-
-which could cause use after free if on-stack wb_completion is gone...
-(however previous wb->bdi is solid since it is not on-stack)
-
-see generic on-stack completion which takes a wait_queue spin_lock between
-test and wake_up...
-
-If I am wrong, ignore me, hmm...
-
-Thanks,
-Gao Xiang
-
+> > Why not add new commands with range arguments later if it turns out to
+> > be necessary?
 > 
-> generic/270 w/ xfs-dax on pmem triggers it within 3 runs every time
-> here. Bisect points to this commit:
+> We could do that. It'd be a little ugly, IMO, simply because then we'd
+> end up with two interfaces that do almost the exact same thing.
 > 
-> $ git bisect bad
-> 5b9cce4c7eb0696558dfd4946074ae1fb9d8f05d is the first bad commit
-> commit 5b9cce4c7eb0696558dfd4946074ae1fb9d8f05d
-> Author: Tejun Heo <tj@kernel.org>
-> Date:   Mon Aug 26 09:06:52 2019 -0700
+> Should byte-range layouts at that point conflict with non-byte range
+> layouts, or should they be in different "spaces" (a'la POSIX and flock
+> locks)? When it's all one interface, those sorts of questions sort of
+> answer themselves. When they aren't we'll have to document them clearly
+> and I think the result will be more confusing for userland programmers.
 > 
->     writeback: Generalize and expose wb_completion
->     
->     wb_completion is used to track writeback completions.  We want to use
->     it from memcg side for foreign inode flushes.  This patch updates it
->     to remember the target waitq instead of assuming bdi->wb_waitq and
->     expose it outside of fs-writeback.c.
->     
->     Reviewed-by: Jan Kara <jack@suse.cz>
->     Signed-off-by: Tejun Heo <tj@kernel.org>
->     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> If you felt strongly about leaving those out for now, you could just do
+> something similar to what Aleksa is planning for openat2 -- have a
+> struct pointer and length as arguments for this cmd, and only have a
+> single iomode member in there for now.
 > 
->  fs/fs-writeback.c                | 47 ++++++++++++----------------------------
->  include/linux/backing-dev-defs.h | 20 +++++++++++++++++
->  include/linux/backing-dev.h      |  2 ++
->  3 files changed, 36 insertions(+), 33 deletions(-)
-> 
-> 
-> $ git bisect log
-> git bisect start
-> # bad: [3a8e9ac89e6a5106cfb6b85d4c9cf9bfa3519bc7] writeback: add tracepoints for cgroup foreign writebacks
-> git bisect bad 3a8e9ac89e6a5106cfb6b85d4c9cf9bfa3519bc7
-> # good: [b8e24a9300b0836a9d39f6b20746766b3b81f1bd] block: annotate refault stalls from IO submission
-> git bisect good b8e24a9300b0836a9d39f6b20746766b3b81f1bd
-> # bad: [ed288dc0d4aa29f65bd25b31b5cb866aa5664ff9] writeback: Separate out wb_get_lookup() from wb_get_create()
-> git bisect bad ed288dc0d4aa29f65bd25b31b5cb866aa5664ff9
-> # good: [320ea869a12cec206756207c6ca5f817ec45c7f2] block: improve the gap check in __bio_add_pc_page
-> git bisect good 320ea869a12cec206756207c6ca5f817ec45c7f2
-> # good: [7ea88e229e9df18ecd624b0d39f3dba87432ba33] null_blk: create a helper for mem-backed ops
-> git bisect good 7ea88e229e9df18ecd624b0d39f3dba87432ba33
-> # good: [38b4e09fbccab6457536563823222921c49601bb] null_blk: fix inline misuse
-> git bisect good 38b4e09fbccab6457536563823222921c49601bb
-> # bad: [34f8fe501f0624de115d087680c84000b5d9abc9] bdi: Add bdi->id
-> git bisect bad 34f8fe501f0624de115d087680c84000b5d9abc9
-> # bad: [5b9cce4c7eb0696558dfd4946074ae1fb9d8f05d] writeback: Generalize and expose wb_completion
-> git bisect bad 5b9cce4c7eb0696558dfd4946074ae1fb9d8f05d
-> # first bad commit: [5b9cce4c7eb0696558dfd4946074ae1fb9d8f05d] writeback: Generalize and expose wb_completio
-> $
-> 
-> Not obvious to me what is wrong with that commit right now, but the
-> bisect is solid. Kinda surprised to see such significant
-> fs-writeback changes in 5.4, though, because there was nothing sent
-> to the -fsdevel list for review in the last dev cycle.
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> The kernel would have to know how to deal with "legacy" and byte-range-
+> enabled variants if we ever extend it, but that's not too hard to
+> handle.
+
+Yeah, so we can discuss how to make possible future extension towards
+range locking the least confusing to userspace. E.g. we can just put the
+ranges in the API and require that start is always 0 and end is always
+ULONG_MAX or whatever. But switching to smaller ranges must be the decision
+in the application after the kernel supports it.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
