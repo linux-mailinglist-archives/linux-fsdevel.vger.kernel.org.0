@@ -2,115 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B903CAA73
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 19:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83A5FCADD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Oct 2019 20:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404364AbfJCRF0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Oct 2019 13:05:26 -0400
-Received: from mga18.intel.com ([134.134.136.126]:14911 "EHLO mga18.intel.com"
+        id S1733199AbfJCSJC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Oct 2019 14:09:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33766 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393369AbfJCRFZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:05:25 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 10:05:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
-   d="scan'208";a="392014697"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Oct 2019 10:05:23 -0700
-Date:   Thu, 3 Oct 2019 10:05:23 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: Lease semantic proposal
-Message-ID: <20191003170523.GC31174@iweiny-DESK2.sc.intel.com>
-References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
- <5d5a93637934867e1b3352763da8e3d9f9e6d683.camel@kernel.org>
- <20191001181659.GA5500@iweiny-DESK2.sc.intel.com>
- <20191003090110.GC17911@quack2.suse.cz>
+        id S1729906AbfJCSJB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Oct 2019 14:09:01 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1C59F315C00D;
+        Thu,  3 Oct 2019 18:09:01 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-108.ams2.redhat.com [10.36.116.108])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 834885D6A9;
+        Thu,  3 Oct 2019 18:08:59 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v15 0/1] fs: Add VirtualBox guest shared folder (vboxsf) support
+Date:   Thu,  3 Oct 2019 20:08:57 +0200
+Message-Id: <20191003180858.497928-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003090110.GC17911@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 03 Oct 2019 18:09:01 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 11:01:10AM +0200, Jan Kara wrote:
-> On Tue 01-10-19 11:17:00, Ira Weiny wrote:
-> > On Mon, Sep 23, 2019 at 04:17:59PM -0400, Jeff Layton wrote:
-> > > On Mon, 2019-09-23 at 12:08 -0700, Ira Weiny wrote:
-> > > 
-> > > Will userland require any special privileges in order to set an
-> > > F_UNBREAK lease? This seems like something that could be used for DoS. I
-> > > assume that these will never time out.
-> > 
-> > Dan and I discussed this some more and yes I think the uid of the process needs
-> > to be the owner of the file.  I think that is a reasonable mechanism.
-> 
-> Honestly, I'm not convinced anything more than open-for-write should be
-> required. Sure unbreakable lease may result in failing truncate and other
-> ops but as we discussed at LFS/MM, this is not hugely different from
-> executing a file resulting in ETXTBUSY for any truncate attempt (even from
-> root). So sufficiently priviledged user has to be able to easily find which
-> process(es) owns the lease so that he can kill it / take other
-> administrative action to release the lease. But that's about it.
+Hi Andrew,
 
-Well that was kind of what I was thinking.  However I wanted to be careful
-about requiring write permission when doing a F_RDLCK.  I think that it has to
-be clearly documented _why_ write permission is required.
+Can you take this patch upstream please? It has seen several revisions on
+the fsdevel list, but the fsdevel people are to busy to pick it up so
+I hope you can pick it up?
 
->  
-> > > How will we deal with the case where something is is squatting on an
-> > > F_UNBREAK lease and isn't letting it go?
-> > 
-> > That is a good question.  I had not considered someone taking the UNBREAK
-> > without pinning the file.
-> 
-> IMHO the same answer as above - sufficiently priviledged user should be
-> able to easily find the process holding the lease and kill it. Given the
-> lease owner has to have write access to the file, he better should be from
-> the same "security domain"...
-> 
-> > > Leases are technically "owned" by the file description -- we can't
-> > > necessarily trace it back to a single task in a threaded program. The
-> > > kernel task that set the lease may have exited by the time we go
-> > > looking.
-> > > 
-> > > Will we be content trying to determine this using /proc/locks+lsof, etc,
-> > > or will we need something better?
-> > 
-> > I think using /proc/locks is our best bet.  Similar to my intention to report
-> > files being pinned.[1]
-> > 
-> > In fact should we consider files with F_UNBREAK leases "pinned" and just report
-> > them there?
-> 
-> As Jeff wrote later, /proc/locks is not enough. You need PID(s) which have
-> access to the lease and hold it alive. Your /proc/<pid>/ files you had in your
-> patches should do that, shouldn't they? Maybe they were not tied to the
-> right structure... They really need to be tied to the existence of a lease.
+Previous versions of this patch have been reviewed by Al Viro, David Howells
+and Christoph Hellwig (all in the Cc) and I believe that the current
+version addresses all their review remarks.
 
-Yes, sorry.  I misspoke above.
+I've also discussed what to do with this path with Greg KH and he has
+agreed to take this upstream through staging if you will not take it,
+but that is a bit silly because staging is for code which still needs
+to be cleaned up and AFAICT this code is ready for mainline.
 
-Right now /proc/<pid>/file_pins indicates that the file is pinned by GUP.  I
-think it may be reasonable to extend that to any file which has F_UNBREAK
-specified.  'file_pins' may be the wrong name when we include F_UNBREAK'ed
-leased files, so I will think on the name.  But I think this is possible and
-desired.
+Regards,
 
-Ira
+Hans
+
+
+Changelog:
+
+Changes in v15:
+- Rebase on top of 5.4-rc1
+
+Changes in v14
+- Add a commment explaining possible read cache strategies and which one
+  has been chosen
+- Change pagecache-invalidation on open (inode_revalidate) to use
+  invalidate_inode_pages2() so that mmap-ed pages are dropped from
+  the cache too
+- Add a comment to vboxsf_file_release explaining why the
+  filemap_write_and_wait() call is done there
+- Some minor code tweaks
+
+Changes in v13
+- Add SPDX tag to Makefile, use foo-y := to set objectfile list
+- Drop kerneldoc headers stating the obvious from vfs callbacks,
+  to avoid them going stale
+- Replace sf_ prefix of functions and data-types with vboxsf_
+- Use more normal naming scheme for sbi and private inode data:
+    struct vboxsf_sbi *sbi = VBOXSF_SBI(inode->i_sb);
+    struct vboxsf_inode *sf_i = VBOXSF_I(inode);
+- Refactor directory reading code
+- Use goto based unwinding instead of nested if-s in a number of places
+- Consolidate dir unlink and rmdir inode_operations into a single function
+- Use the page-cache for regular reads/writes too
+- Directly set super_operations.free_inode to what used to be our
+  vboxsf_i_callback, instead of setting super_operations.destroy_inode
+  to a function which just does: call_rcu(&inode->i_rcu, vboxsf_i_callback);
+- Use spinlock_irqsafe for ino_idr_lock
+  vboxsf_free_inode may be called from a RCU callback, and thus from
+  softirq context, so we need to use spinlock_irqsafe vboxsf_new_inode.
+  On alloc_inode failure vboxsf_free_inode may be called from process
+  context, so it too needs to use spinlock_irqsafe.
+
+Changes in v12:
+- Move make_kuid / make_kgid calls to option parsing time and add
+  uid_valid / gid_valid checks.
+- In init_fs_context call current_uid_gid() to init uid and gid
+- Validate dmode, fmode, dmask and fmask options during option parsing
+- Use correct types for various mount option variables (kuid_t, kgid_t, umode_t)
+- Some small coding-style tweaks
+
+Changes in v11:
+- Convert to the new Documentation/filesystems/mount_api.txt mount API
+- Fixed all the function kerneldoc comments to have things in the proper order
+- Change type of d_type variable passed as type to dir_emit from int to
+  unsigned int
+- Replaced the fake-ino overflow test with the one suggested by David Howells
+- Fixed various coding style issues
+
+Changes in v10:
+-Code-style fixes and remove some unneeded checks as suggested by Al Viro
+-Stop handle reuse between sf_create_aux and sf_reg_open, the code for this
+ was racy and the re-use meant the O_APPEND was not passed to the host for
+ newly created files with O_APPEND set
+-Use idr to generate unique inode number, modelled after the kernfs code
+-Only read and write the contents of the passed in offset pointer once in
+ sf_reg_write
+-Keep a list of refcounted open handles in the inode, so that writepage can
+ get a writeable handle this way. This replaces the old very racy code which
+ was just storing a pointer to the last opened struct file inside the inode.
+ This is modelled after how the cifs and fuse code do this
+
+Changes in v9:
+-Change license from GPL-2.0 or CDDL-1.0 to MIT, following upstream's
+ license change from: https://www.virtualbox.org/changeset/72627/vbox
+ I've gotten permission by email from VirtualBox upstream to retro-actively
+ apply the license-change to my "fork" of the vboxsf code
+-Fix not being able to mount any shared-folders when built with gcc9
+-Adjust for recent vboxguest changes
+-Fix potential buffer overrun in vboxsf_nlscpy
+-Fix build errors in some configs, caught by buildbot
+-Fix 3 sparse warnings
+-Some changes from upstream VirtualBox svn:
+ -Use 0x786f4256 /* 'VBox' little endian */ as super-magic matching upstream
+ -Implement AT_STATX_SYNC_TYPE support
+ -Properly return -EPERM when symlink creation is not supported
+
+Changes in v8:
+-Fix broken error-handling / oops when the vboxsf_map_folder() call fails
+-Fix umount using umount.nfs to umount vboxsf mounts
+-Prefixed the modules init and exit function names with vboxsf_
+-Delay connecting to the vbox hypervisor until the first mount, this fixes
+ vboxsf not working when it is builtin (in which case it may be initialized
+ before the vboxguest driver has bound to the guest communication PCI device)
+-Fix sf_write_end return value, return the number of bytes written or 0 on error:
+ https://github.com/jwrdegoede/vboxsf/issues/2
+-Use an ida id in the name passed to super_setup_bdi_name so that the same
+ shared-folder can be mounted twice without causing a
+ "sysfs: cannot create duplicate filename" error
+ https://github.com/jwrdegoede/vboxsf/issues/3
+
+Changes in v7:
+-Do not propagate sgid / suid bits between guest-host, note hosts with
+ VirtualBox version 5.2.6 or newer will filter these out regardless of what
+ we do
+-Better error messages when we cannot connect to the VirtualBox guest PCI
+ device, which may e.g. happen when trying to use vboxsf outside a vbox vm
+
+Changes in v6:
+-Address: https://www.virtualbox.org/ticket/819 which really is multiple bugs:
+ 1) Fix MAP_SHARED not being supported
+ 2) Fix changes done through regular read/write on the guest side not being
+    seen by guest apps using mmap() access
+ 3) Fix any changes done on the host side not being seen by guest apps using
+    mmap() access
+
+Changes in v5:
+-Honor CONFIG_NLS_DEFAULT (reported-by michael.thayer@oracle.com)
+
+Changes in v4:
+-Drop "name=..." mount option, instead use the dev_name argument to the
+ mount syscall, to keep compatibility with existing fstab entries
+-Fix "nls=%" match_table_t entry to "nls=%s"
+
+Changes in v3:
+-Use text only mount options, instead of a custom data struct
+-Stop caching full path in inode data, if parents gets renamed it will change
+-Fixed negative dentries handling
+-Dropped the force_reread flag for dirs, not sure what it was actually for
+ but it is no good, doing a re-read on unlink of a file will lead to
+ another file being skipped if the caller has already iterated over the
+ entry for the unlinked file.
+-Use file_inode(), file_dentry() and d_inode() helpers
+-Prefix any non object-private symbols with vboxsf_ so as to not pollute
+ the global namespace when builtin
+-Add MAINTAINERS entry
+-Misc. cleanups
+
+Changes in v2:
+-Removed various unused wrapper functions
+-Don't use i_private, instead defined alloc_inode and destroy_inode
+ methods and use container_of.
+-Drop obsolete comment referencing people to
+ http://www.atnf.csiro.au/people/rgooch/linux/vfs.txt
+-move the single symlink op of from lnkops.c to file.c
+-Use SPDX license headers
+-Replace SHFLROOT / SHFLHANDLE defines with normal types
+-Removed unnecessary S_ISREG checks
+-Got rid of bounce_buffer in regops, instead add a "user" flag to
+ vboxsf_read / vboxsf_write, re-using the existing __user address support
+ in the vboxguest module
+-Make vboxsf_wrappers return regular linux errno values
+-Use i_size_write to update size on writing
+-Convert doxygen style comments to kerneldoc style comments
 
