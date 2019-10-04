@@ -2,97 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4F47CC433
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2019 22:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54B67CC4EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2019 23:40:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731140AbfJDUa0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Oct 2019 16:30:26 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33410 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730947AbfJDUa0 (ORCPT
+        id S1729195AbfJDVk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Oct 2019 17:40:26 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:34283 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726827AbfJDVkZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Oct 2019 16:30:26 -0400
-Received: by mail-qk1-f196.google.com with SMTP id x134so7052559qkb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Oct 2019 13:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=cOBD1sA2P34UL4w4Lma3JYhrDm5zd76HSZlaAP9VmpQ=;
-        b=PH8inHgg12/uPJ/GSIw2pZM6RJ1Kk/++NoPuqVZ3Shl2jSYiszqhhnuU1MSkv9dL5e
-         LcdGv1pgoEn903AnEkKH27WCCVXebFdarYUeKKl4PQlDlhpAl2BemC4WDxkovs9AQCw9
-         FRDi3AKShu/ZhVLG2iFI+C28kfU42TstbjU0cKxUSx6Z+gbsqfJGK2RTZQnmKN5dkKCy
-         UjDQJ717crJ73n2i+xoASLm0s2s2EXqSTl8+qXjIm3rT7Fn65NDEmHoJIkdgFoEeBb+o
-         dpEOi52Ts9rQwpXmLh4s6D7tvAH0oMCQYy6YhveYuYy3/T+bB8GGUAJIoGgVHMICAAJF
-         baVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cOBD1sA2P34UL4w4Lma3JYhrDm5zd76HSZlaAP9VmpQ=;
-        b=cY7RFL4zr9wGSE0RZQUaRmii4BVrtPNZTpcZRcdKD8lS19BUt8KhazEQB0pcxoXXkl
-         A7qqYRvc87l1kT8TDK1WgF0/qGe4gzMs4xqc4UIWS7GN5vbtZLV1Nv5gsv1rmHvS0IbY
-         oNgCl4nmKypwMuY6RyJLC0Y+/Xm9/RcRDApqB6AO3Kka/w7gIHKe32qBwDrwVCNG+PSq
-         vi9ppmdu++Hnd6w+QO+quelQ5ClhJ6jfoBXdGhQyFjY/+WnL7UtSUYdWUrdFd5DZ7KqL
-         ZwtTICzF5Bn01EjTn1GR9upCDkTK4B33Bbcm4W1hxgo0QHkzraSWEsxTnL2WjnEakMRJ
-         6Uew==
-X-Gm-Message-State: APjAAAWeGUQAX5cTdWl5F+Fb1rEisS/MlKVLP7i26t1AhbYkvrDs0P+M
-        LET7y7zV/O9v8sUTA1SsaA==
-X-Google-Smtp-Source: APXvYqyW4hvOtv91ntzicbohI8iZUgh/DVbpjF0vd0SIu3840ByBb3mg/i6Lg6Xrgpxwf+72fBRi8w==
-X-Received: by 2002:a05:620a:140b:: with SMTP id d11mr12174746qkj.22.1570221024113;
-        Fri, 04 Oct 2019 13:30:24 -0700 (PDT)
-Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id x12sm4838503qtb.32.2019.10.04.13.30.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 13:30:22 -0700 (PDT)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] virtio_fs: Fix file_system_type.name to virtio_fs
-Date:   Fri,  4 Oct 2019 16:29:21 -0400
-Message-Id: <20191004202921.21590-1-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 4 Oct 2019 17:40:25 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x94LcCr9027392
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 4 Oct 2019 17:38:15 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 9FA7C42088C; Fri,  4 Oct 2019 17:38:12 -0400 (EDT)
+Date:   Fri, 4 Oct 2019 17:38:12 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
+        shuah@kernel.org, yamada.masahiro@socionext.com,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
+        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
+        wfg@linux.intel.com, torvalds@linux-foundation.org
+Subject: Re: [PATCH v18 00/19] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+Message-ID: <20191004213812.GA24644@mit.edu>
+References: <20190923090249.127984-1-brendanhiggins@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190923090249.127984-1-brendanhiggins@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+On Mon, Sep 23, 2019 at 02:02:30AM -0700, Brendan Higgins wrote:
+> ## TL;DR
+> 
+> This revision addresses comments from Linus[1] and Randy[2], by moving
+> top level `kunit/` directory to `lib/kunit/` and likewise moves top
+> level Kconfig entry under lib/Kconfig.debug, so the KUnit submenu now
+> shows up under the "Kernel Hacking" menu.
 
-On 5.4.0-rc1 kernel, following warning happens when virtio_fs is tried
-to mount as "virtio_fs".
+This question is primarily directed at Shuah and Linus....
 
-  ------------[ cut here ]------------
-  request_module fs-virtio_fs succeeded, but still no fs?
-  WARNING: CPU: 1 PID: 1234 at fs/filesystems.c:274 get_fs_type+0x12c/0x138
-  Modules linked in: ... virtio_fs fuse virtio_net net_failover ...
-  CPU: 1 PID: 1234 Comm: mount Not tainted 5.4.0-rc1 #1
+What's the current status of the kunit series now that Brendan has
+moved it out of the top-level kunit directory as Linus has requested?
 
-That's because the file_system_type.name is "virtiofs", but the
-module name is "virtio_fs".
+There doesn't appear to have been many comments or changes since since
+September 23rd, and I was very much hoping they could land before
+-rc2, since I've been hoping to add unit tests for ext4.
 
-Set the file_system_type.name to "virtio_fs".
+Is kunit likely to be able to be landed in Linus's tree during this
+development cycle?
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
----
- fs/fuse/virtio_fs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Many thanks!
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 6af3f131e..f72803120 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -1158,7 +1158,7 @@ static int virtio_fs_init_fs_context(struct fs_context *fsc)
- 
- static struct file_system_type virtio_fs_type = {
- 	.owner		= THIS_MODULE,
--	.name		= "virtiofs",
-+	.name		= "virtio_fs",
- 	.init_fs_context = virtio_fs_init_fs_context,
- 	.kill_sb	= virtio_kill_sb,
- };
--- 
-2.18.1
-
+					- Ted
