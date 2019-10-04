@@ -2,77 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F46FCC3AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2019 21:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4F47CC433
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Oct 2019 22:30:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729634AbfJDTjN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Oct 2019 15:39:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36256 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbfJDTjN (ORCPT
+        id S1731140AbfJDUa0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Oct 2019 16:30:26 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33410 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730947AbfJDUa0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Oct 2019 15:39:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Dh6mxesa35qmVcJTZmiFw6dhEr9tO5B4IZfYPNiUpao=; b=ad3GJvszIb6b9FflfqMXULYkw
-        E5JOdU7XF2SecosMbmOk8xCCOzS15A09lBRxi0UcSiu16qKuCDnzY1eXwaTrB/6oH/uTfSfG152Kp
-        sXJwbgMShnInObtdWqPjgutj+FQ58bGUJIxNt1z0YpEQT2rWeeB0Z85s1MRiOPDGoDskGXUl1/Mdz
-        G0TIKEc46kuQasDEv83v+M7kT1sCT5/FVbuNwqN2VBf8qYcVcXLlOLH9j9Ya52jO3DPxNchG8KBiZ
-        E9hhKKNjoNKrY3R1kfVBAFeJkPPadPDflhgxAj6qeYgDq8IT9Jvkaxre2VLJqRCMZTKC4pthIFRH4
-        InXprJIjA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iGTQ0-0007ms-OK; Fri, 04 Oct 2019 19:39:12 +0000
-Date:   Fri, 4 Oct 2019 12:39:12 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/15] mm: Add file_offset_of_ helpers
-Message-ID: <20191004193912.GP32665@bombadil.infradead.org>
-References: <20190925005214.27240-1-willy@infradead.org>
- <20190925005214.27240-4-willy@infradead.org>
- <20190926140211.rm4b6yn2i5rlyvop@box>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190926140211.rm4b6yn2i5rlyvop@box>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Fri, 4 Oct 2019 16:30:26 -0400
+Received: by mail-qk1-f196.google.com with SMTP id x134so7052559qkb.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Oct 2019 13:30:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=cOBD1sA2P34UL4w4Lma3JYhrDm5zd76HSZlaAP9VmpQ=;
+        b=PH8inHgg12/uPJ/GSIw2pZM6RJ1Kk/++NoPuqVZ3Shl2jSYiszqhhnuU1MSkv9dL5e
+         LcdGv1pgoEn903AnEkKH27WCCVXebFdarYUeKKl4PQlDlhpAl2BemC4WDxkovs9AQCw9
+         FRDi3AKShu/ZhVLG2iFI+C28kfU42TstbjU0cKxUSx6Z+gbsqfJGK2RTZQnmKN5dkKCy
+         UjDQJ717crJ73n2i+xoASLm0s2s2EXqSTl8+qXjIm3rT7Fn65NDEmHoJIkdgFoEeBb+o
+         dpEOi52Ts9rQwpXmLh4s6D7tvAH0oMCQYy6YhveYuYy3/T+bB8GGUAJIoGgVHMICAAJF
+         baVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cOBD1sA2P34UL4w4Lma3JYhrDm5zd76HSZlaAP9VmpQ=;
+        b=cY7RFL4zr9wGSE0RZQUaRmii4BVrtPNZTpcZRcdKD8lS19BUt8KhazEQB0pcxoXXkl
+         A7qqYRvc87l1kT8TDK1WgF0/qGe4gzMs4xqc4UIWS7GN5vbtZLV1Nv5gsv1rmHvS0IbY
+         oNgCl4nmKypwMuY6RyJLC0Y+/Xm9/RcRDApqB6AO3Kka/w7gIHKe32qBwDrwVCNG+PSq
+         vi9ppmdu++Hnd6w+QO+quelQ5ClhJ6jfoBXdGhQyFjY/+WnL7UtSUYdWUrdFd5DZ7KqL
+         ZwtTICzF5Bn01EjTn1GR9upCDkTK4B33Bbcm4W1hxgo0QHkzraSWEsxTnL2WjnEakMRJ
+         6Uew==
+X-Gm-Message-State: APjAAAWeGUQAX5cTdWl5F+Fb1rEisS/MlKVLP7i26t1AhbYkvrDs0P+M
+        LET7y7zV/O9v8sUTA1SsaA==
+X-Google-Smtp-Source: APXvYqyW4hvOtv91ntzicbohI8iZUgh/DVbpjF0vd0SIu3840ByBb3mg/i6Lg6Xrgpxwf+72fBRi8w==
+X-Received: by 2002:a05:620a:140b:: with SMTP id d11mr12174746qkj.22.1570221024113;
+        Fri, 04 Oct 2019 13:30:24 -0700 (PDT)
+Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id x12sm4838503qtb.32.2019.10.04.13.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2019 13:30:22 -0700 (PDT)
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] virtio_fs: Fix file_system_type.name to virtio_fs
+Date:   Fri,  4 Oct 2019 16:29:21 -0400
+Message-Id: <20191004202921.21590-1-msys.mizuma@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 05:02:11PM +0300, Kirill A. Shutemov wrote:
-> On Tue, Sep 24, 2019 at 05:52:02PM -0700, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > 
-> > The page_offset function is badly named for people reading the functions
-> > which call it.  The natural meaning of a function with this name would
-> > be 'offset within a page', not 'page offset in bytes within a file'.
-> > Dave Chinner suggests file_offset_of_page() as a replacement function
-> > name and I'm also adding file_offset_of_next_page() as a helper for the
-> > large page work.  Also add kernel-doc for these functions so they show
-> > up in the kernel API book.
-> > 
-> > page_offset() is retained as a compatibility define for now.
-> 
-> This should be trivial for coccinelle, right?
+From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-Yes, should be.  I'd prefer not to do conversions for now to minimise
-conflicts when rebasing.
+On 5.4.0-rc1 kernel, following warning happens when virtio_fs is tried
+to mount as "virtio_fs".
 
-> > +static inline loff_t file_offset_of_next_page(struct page *page)
-> > +{
-> > +	return ((loff_t)page->index + compound_nr(page)) << PAGE_SHIFT;
-> 
-> Wouldn't it be more readable as
-> 
-> 	return file_offset_of_page(page) + page_size(page);
-> 
-> ?
+  ------------[ cut here ]------------
+  request_module fs-virtio_fs succeeded, but still no fs?
+  WARNING: CPU: 1 PID: 1234 at fs/filesystems.c:274 get_fs_type+0x12c/0x138
+  Modules linked in: ... virtio_fs fuse virtio_net net_failover ...
+  CPU: 1 PID: 1234 Comm: mount Not tainted 5.4.0-rc1 #1
 
-Good idea.  I'll fix that up.
+That's because the file_system_type.name is "virtiofs", but the
+module name is "virtio_fs".
+
+Set the file_system_type.name to "virtio_fs".
+
+Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+---
+ fs/fuse/virtio_fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 6af3f131e..f72803120 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -1158,7 +1158,7 @@ static int virtio_fs_init_fs_context(struct fs_context *fsc)
+ 
+ static struct file_system_type virtio_fs_type = {
+ 	.owner		= THIS_MODULE,
+-	.name		= "virtiofs",
++	.name		= "virtio_fs",
+ 	.init_fs_context = virtio_fs_init_fs_context,
+ 	.kill_sb	= virtio_kill_sb,
+ };
+-- 
+2.18.1
+
