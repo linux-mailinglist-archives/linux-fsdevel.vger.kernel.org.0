@@ -2,91 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E87CC6AA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2019 01:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40BA4CC6AE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Oct 2019 01:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731702AbfJDXr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Oct 2019 19:47:58 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35853 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731606AbfJDXr6 (ORCPT
+        id S1731745AbfJDXta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Oct 2019 19:49:30 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:52150 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbfJDXt3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Oct 2019 19:47:58 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h2so7531325edn.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Oct 2019 16:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=iie7RdretcNOVCrxGCld/hubIoD9vvtdOTDz4FnA2dA=;
-        b=oc+9qR+g1eb8AusmeETg+hxNkM4av/nlQqeoA/r10WqbNdvaWmgYdlL+vgffIwpUav
-         ZmEHklwVDPPpz7VG1iApD2RV6aMl4GnMcu8iOA9fcjg7XC13XWQHCnrmMrflr3aRHcxn
-         OUVvFzf1YqSVetu85aFudr/m9RrnBF0PDgqTxJk7Gn1sz7rCddkWUG0JFrsmSQNQ3I2i
-         5Frkwkw/1IaGB4Vzlb/hdVx2+N2NrWmyL4XcvJh613ppRohfJfophVs5eelYLUMICDBw
-         vDSKetrzpWC9pnQ9OVrqzdMKrm4BgBAhuhjoDHNcOwIzEKXqKBNjJDGd3aVFCOd7iJfg
-         7gag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=iie7RdretcNOVCrxGCld/hubIoD9vvtdOTDz4FnA2dA=;
-        b=Ras3ZhAmlH0kZEbmADU9+iQV5L+Ppw5wUneWnPddci1pkhu0yhhI3BkJrbQGwlLAJW
-         lGeSb+hjL2Ir8WLdB83QQGPhlZumzY/EqpUIimnSB2PnxGhJcQDa6frAz9whCelkB8Qg
-         v3EyGfMPYUK2K5XJvTxQmMiGo7/xYT+jtu5u4dskhMchwg0Sl16fO09wqVrfCJ65UvUM
-         bf6aqdD+E4X9pr5x4oEG18sFMDXg/2WmbCjWRRYcLxeHpTUrVMgmNHArDGyBY7WIYeqU
-         EI79ajUO96MoZUkJSVYrBm4X81ZbmiJcQYChkB4TcknMyVsyY//zcnKZ/AmwqsUZgB9z
-         F19g==
-X-Gm-Message-State: APjAAAXjiGzXQfTQekhcBkeFkwAWPYzTbhQz0MlZJVaeMMvBJp8gAwXz
-        jznIEEU+FMoEnBKz686tCl/52Zo=
-X-Google-Smtp-Source: APXvYqykrz4mpeaperO7K2jPAOR9caTvNx7prj64NpW7y5Sy6bGRg0W3nHeAndunVpEx8p0Ll/5yPA==
-X-Received: by 2002:a17:906:d97a:: with SMTP id rp26mr15026088ejb.251.1570232875442;
-        Fri, 04 Oct 2019 16:47:55 -0700 (PDT)
-Received: from avx2 ([46.53.250.131])
-        by smtp.gmail.com with ESMTPSA id f6sm1447871edr.12.2019.10.04.16.47.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Oct 2019 16:47:54 -0700 (PDT)
-Date:   Sat, 5 Oct 2019 02:47:53 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH] proc: shuffle "struct pde_opener"
-Message-ID: <20191004234753.GB30246@avx2>
+        Fri, 4 Oct 2019 19:49:29 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x94NnDxe082716;
+        Fri, 4 Oct 2019 23:49:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=IcxXMeovERE0d70ewlhS0me9elSk50c+EiDcdQEsB8E=;
+ b=UFDvUKKRkuhWrJdCMXE0opaFFhYzsoakE15EWja2D7rQaVjQXzMn3TgStnG3gs5yupVZ
+ V+ptuBGlfiSba0HxNW9BovLKZTHMQHQ5svqgLONpiwR843K+geAOhfGswFDsGHJPO6tW
+ X9u3KAjXx6ERJ63i5TXS0ISm4FpDTamtbN6YeMtgpITvApxBrSNPRT+Z7+ZLBgscfDUn
+ wSBlAAKKHa6mXCnyo/JgF9V5TwaKTQ8Xw0+VDbV1v/fmO0lbjrPsVJHeoE/EQPNmpO2D
+ dKlGsBnEO8tTDR4tTeJNcDckdd2WrSucc+1LRpQizQ+n3EHGqjUohTbQJGryv5+J3grf Ew== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2va05sebfn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 04 Oct 2019 23:49:13 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x94Nm7JA158232;
+        Fri, 4 Oct 2019 23:49:10 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2vef24kaxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 04 Oct 2019 23:49:09 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x94Nn2TR008367;
+        Fri, 4 Oct 2019 23:49:02 GMT
+Received: from localhost (/10.159.134.51)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 04 Oct 2019 16:49:02 -0700
+Date:   Fri, 4 Oct 2019 16:49:01 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] iomap: add tracing for the readpage / readpages
+Message-ID: <20191004234901.GP13108@magnolia>
+References: <20191001071152.24403-1-hch@lst.de>
+ <20191001071152.24403-2-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191001071152.24403-2-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9400 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910040201
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9400 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910040201
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-List iteration takes more code than anything else which means embedded
-list_head should be the first element of the structure.
+On Tue, Oct 01, 2019 at 09:11:42AM +0200, Christoph Hellwig wrote:
+> Lift the xfs code for tracing address space operations to the iomap
+> layer.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/buffered-io.c       |  7 +++++++
+>  include/trace/events/iomap.h | 27 +++++++++++++++++++++++++++
+>  2 files changed, 34 insertions(+)
+>  create mode 100644 include/trace/events/iomap.h
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e25901ae3ff4..099daf0c09b8 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -19,6 +19,9 @@
+>  
+>  #include "../internal.h"
+>  
+> +#define CREATE_TRACE_POINTS
+> +#include <trace/events/iomap.h>
+> +
+>  static struct iomap_page *
+>  iomap_page_create(struct inode *inode, struct page *page)
+>  {
+> @@ -293,6 +296,8 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
+>  	unsigned poff;
+>  	loff_t ret;
+>  
+> +	trace_iomap_readpage(page->mapping->host, 1);
+> +
+>  	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
+>  		ret = iomap_apply(inode, page_offset(page) + poff,
+>  				PAGE_SIZE - poff, 0, ops, &ctx,
+> @@ -389,6 +394,8 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+>  	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
+>  	loff_t length = last - pos + PAGE_SIZE, ret = 0;
+>  
+> +	trace_iomap_readpages(mapping->host, nr_pages);
+> +
+>  	while (length > 0) {
+>  		ret = iomap_apply(mapping->host, pos, length, 0, ops,
+>  				&ctx, iomap_readpages_actor);
+> diff --git a/include/trace/events/iomap.h b/include/trace/events/iomap.h
+> new file mode 100644
+> index 000000000000..7d2fe2c773f3
+> --- /dev/null
+> +++ b/include/trace/events/iomap.h
 
-Space savings:
+...and I guess while we're bikeshedding over tracepoints, why not put
+this in fs/iomap/trace.h ?  Do you anticipate anyone outside of iomap
+needing to access the tracepoint declarations?
 
-	add/remove: 0/0 grow/shrink: 0/4 up/down: 0/-18 (-18)
-	Function                                     old     new   delta
-	close_pdeo                                   228     227      -1
-	proc_reg_release                              86      82      -4
-	proc_entry_rundown                           143     139      -4
-	proc_reg_open                                298     289      -9
+--D
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- fs/proc/internal.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -197,8 +197,8 @@ extern ssize_t proc_simple_write(struct file *, const char __user *, size_t, lof
-  * inode.c
-  */
- struct pde_opener {
--	struct file *file;
- 	struct list_head lh;
-+	struct file *file;
- 	bool closing;
- 	struct completion *c;
- } __randomize_layout;
+> @@ -0,0 +1,27 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2009-2019, Christoph Hellwig
+> + * All Rights Reserved.
+> + *
+> + * NOTE: none of these tracepoints shall be consider a stable kernel ABI
+> + * as they can change at any time.
+> + */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM iomap
+> +
+> +#if !defined(_TRACE_IOMAP_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_IOMAP_H
+> +
+> +#include <linux/tracepoint.h>
+> +
+> +#define DEFINE_READPAGE_EVENT(name)		\
+> +DEFINE_EVENT(iomap_readpage_class, name,	\
+> +	TP_PROTO(struct inode *inode, int nr_pages), \
+> +	TP_ARGS(inode, nr_pages))
+> +DEFINE_READPAGE_EVENT(iomap_readpage);
+> +DEFINE_READPAGE_EVENT(iomap_readpages);
+> +
+> +#endif /* _TRACE_IOMAP_H */
+> +
+> +/* This part must be outside protection */
+> +#include <trace/define_trace.h>
+> -- 
+> 2.20.1
+> 
