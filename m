@@ -2,198 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2863ACD972
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 00:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEDD0CD978
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 00:30:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfJFWUu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Oct 2019 18:20:50 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36169 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbfJFWUu (ORCPT
+        id S1726202AbfJFWax (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Oct 2019 18:30:53 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:39430 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfJFWax (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Oct 2019 18:20:50 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y22so7406293pfr.3;
-        Sun, 06 Oct 2019 15:20:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=jcRRPxaW1qQLSX9slpTLl4HUR4af87iVZFvEhxXf1Vo=;
-        b=W7OWzX/mR4CG1Xf/SkUUhb2WPp2GbWrd667rXAwND0HSvtafV/o6/vWD2XiMnE6h1e
-         anCsWo30ASov5nLol/awtncrwcgdOrJgcZlKryEpHXpndSCXTC2/nmuxTStmuwPObLBq
-         3RI1kSLiM5udSLIwzwxSn1Wq+7eziUMNPAHUgmHMGNPYRGNPenxfMOI3Q71gAEug2n4b
-         Jn/YattDcFHUBKSsYIc6pRT6w9XdVy1XGVjqDW0wsPzcshKs18uyTHK0fyavVbCCB7ps
-         gxTSzfO7QkK+NmEho+IAIIJwk3LRINifD/PXosXmn7WzgwEvsJRZJK68LOxlObqtQnF5
-         COHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=jcRRPxaW1qQLSX9slpTLl4HUR4af87iVZFvEhxXf1Vo=;
-        b=BeEM2o36Sw6PjP+ELbPiqY+ls3LI2laZEjqZPVajXgLD4Cy+gwPVekb1PHVH4fcH88
-         lUKtU0FuJekFGIcyodd9rtjKvrYcybo+sEyYyljlCdAJISvJ7THfDD1zFuHYfeVFL7bS
-         R9NMLytIZFRcbP0t4OQeuj+0Qwpz28kTKIEkLRZgXaNj9gQQ948rAD4qwgWpzhEEHRnd
-         ZwjmlSdds7/I2urIRSJBqcswiWhhdAs49u7ETxIe2OAFRabP1lSsO3CD+CNXugaP1gue
-         tett3Uv1O70TpYaJTZFtCOkeLLgdBwCtAK2112ruEKCvIitb1wa8mitqHL85phz8P9Dh
-         YmZQ==
-X-Gm-Message-State: APjAAAXnGHMsEZ74Z8CZnvQJVxvN1xLEc6/k+itUiLLf04dRq1ks/v3I
-        7BrG7OpTI3fBeHv+ifExuCI=
-X-Google-Smtp-Source: APXvYqyDkQZsa8wKaO5oRGIWg8PFdgwvz7fgKuf3wGn33bwDEmwwdSeXoYnZshN0IqxGuW1dFDbV1Q==
-X-Received: by 2002:a17:90a:7105:: with SMTP id h5mr30134328pjk.107.1570400449271;
-        Sun, 06 Oct 2019 15:20:49 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m12sm16150172pff.66.2019.10.06.15.20.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 06 Oct 2019 15:20:48 -0700 (PDT)
-Date:   Sun, 6 Oct 2019 15:20:46 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-Message-ID: <20191006222046.GA18027@roeck-us.net>
+        Sun, 6 Oct 2019 18:30:53 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x96MUiNB161920;
+        Sun, 6 Oct 2019 22:30:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=oM/GyR1hBOmIFzMny+xn2QzNNTjQso5onJlUAmvUFbA=;
+ b=F9V8lkjOHar+9wUdyh7qXMborr2AvHGeXZEmlRwjOvPpK+KQDqpvZhP0P5MZ+VGdhe7z
+ eoMfg5vVGgKYklRVTm5rc6+wp+fG8cM1ytPZFZiJCXFRTirhsHDfWZxm3b3TOR1W0Aun
+ lM2MKTfhP+Pz3f+7CYkBaKX36bX9plbrytwxLJ3sTex6f2eN2EwRCeX1SelffxLnWLFa
+ Bv5GhomOVPksYeK42nGWoMcqcqkOP0q539T0nPhd0RjqkfOr0vkADlbD1pjyYXSQg/3m
+ W5ZmiWCoyKjR709vpPfAhR9PiItdgp3gHhaZedCcFLWRQSwKE8EgjaQnxow44/KD24gg vw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2vek4q3w48-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 06 Oct 2019 22:30:44 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x96MRod0091857;
+        Sun, 6 Oct 2019 22:30:44 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2vf5aju13f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 06 Oct 2019 22:30:43 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x96MUeZU017103;
+        Sun, 6 Oct 2019 22:30:40 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 06 Oct 2019 15:30:39 -0700
+Date:   Sun, 6 Oct 2019 15:30:41 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Chris Mason <clm@fb.com>, Gao Xiang <hsiangkao@aol.com>,
+        Dave Chinner <david@fromorbit.com>,
+        xfs <linux-xfs@vger.kernel.org>, "tj@kernel.org" <tj@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [5.4-rc1, regression] wb_workfn wakeup oops (was Re: frequent
+ 5.4-rc1 crash?)
+Message-ID: <20191006223041.GQ13108@magnolia>
+References: <20191003015247.GI13108@magnolia>
+ <20191003064022.GX16973@dread.disaster.area>
+ <20191003084149.GA16347@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <41B90CA7-E093-48FA-BDFD-73BE7EB81FB6@fb.com>
+ <32f7c7d8-59d8-7657-4dcc-3741355bf63a@kernel.dk>
+ <20191003183746.GK13108@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20191003183746.GK13108@magnolia>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9402 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910060231
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9402 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910060231
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 21, 2016 at 09:59:07PM -0700, Linus Torvalds wrote:
-> We really should avoid the "__{get,put}_user()" functions entirely,
-> because they can easily be mis-used and the original intent of being
-> used for simple direct user accesses no longer holds in a post-SMAP/PAN
-> world.
+On Thu, Oct 03, 2019 at 11:37:46AM -0700, Darrick J. Wong wrote:
+> On Thu, Oct 03, 2019 at 08:05:42AM -0600, Jens Axboe wrote:
+> > On 10/3/19 8:01 AM, Chris Mason wrote:
+> > > 
+> > > 
+> > > On 3 Oct 2019, at 4:41, Gao Xiang wrote:
+> > > 
+> > >> Hi,
+> > >>
+> > >> On Thu, Oct 03, 2019 at 04:40:22PM +1000, Dave Chinner wrote:
+> > >>> [cc linux-fsdevel, linux-block, tejun ]
+> > >>>
+> > >>> On Wed, Oct 02, 2019 at 06:52:47PM -0700, Darrick J. Wong wrote:
+> > >>>> Hi everyone,
+> > >>>>
+> > >>>> Does anyone /else/ see this crash in generic/299 on a V4 filesystem
+> > >>>> (tho
+> > >>>> afaict V5 configs crash too) and a 5.4-rc1 kernel?  It seems to pop
+> > >>>> up
+> > >>>> on generic/299 though only 80% of the time.
+> > >>>>
+> > >>
+> > >> Just a quick glance, I guess there could is a race between (complete
+> > >> guess):
+> > >>
+> > >>
+> > >>   160 static void finish_writeback_work(struct bdi_writeback *wb,
+> > >>   161                                   struct wb_writeback_work *work)
+> > >>   162 {
+> > >>   163         struct wb_completion *done = work->done;
+> > >>   164
+> > >>   165         if (work->auto_free)
+> > >>   166                 kfree(work);
+> > >>   167         if (done && atomic_dec_and_test(&done->cnt))
+> > >>
+> > >>   ^^^ here
+> > >>
+> > >>   168                 wake_up_all(done->waitq);
+> > >>   169 }
+> > >>
+> > >> since new wake_up_all(done->waitq); is completely on-stack,
+> > >>   	if (done && atomic_dec_and_test(&done->cnt))
+> > >> -		wake_up_all(&wb->bdi->wb_waitq);
+> > >> +		wake_up_all(done->waitq);
+> > >>   }
+> > >>
+> > >> which could cause use after free if on-stack wb_completion is gone...
+> > >> (however previous wb->bdi is solid since it is not on-stack)
+> > >>
+> > >> see generic on-stack completion which takes a wait_queue spin_lock
+> > >> between
+> > >> test and wake_up...
+> > >>
+> > >> If I am wrong, ignore me, hmm...
+> > > 
+> > > It's a good guess ;)  Jens should have this queued up already:
+> > > 
+> > > https://lkml.org/lkml/2019/9/23/972
+> > 
+> > Yes indeed, it'll go out today or tomorrow for -rc2.
 > 
-> Manually optimizing away the user access range check makes no sense any
-> more, when the range check is generally much cheaper than the "enable
-> user accesses" code that the __{get,put}_user() functions still need.
+> The patch fixes the problems I've been seeing, so:
+> Tested-by: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> So instead of __put_user(), use the unsafe_put_user() interface with
-> user_access_{begin,end}() that really does generate better code these
-> days, and which is generally a nicer interface.  Under some loads, the
-> multiple user writes that filldir() does are actually quite noticeable.
+> Thank you for taking care of this. :)
+
+Hmm, I don't see this patch in -rc2; did it not go out in time, or were
+there further complications?
+
+--D
+
+> --D
 > 
-> This also makes the dirent name copy use unsafe_put_user() with a couple
-> of macros.  We do not want to make function calls with SMAP/PAN
-> disabled, and the code this generates is quite good when the
-> architecture uses "asm goto" for unsafe_put_user() like x86 does.
-> 
-> Note that this doesn't bother with the legacy cases.  Nobody should use
-> them anyway, so performance doesn't really matter there.
-> 
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-Linus,
-
-this patch causes all my sparc64 emulations to stall during boot. It causes
-all alpha emulations to crash with [1a] and [1b] when booting from a virtual
-disk, and one of the xtensa emulations to crash with [2].
-
-Reverting this patch fixes the problem.
-
-Guenter
-
----
-[1a]
-
-Unable to handle kernel paging request at virtual address 0000000000000004
-rcS(47): Oops -1
-pc = [<0000000000000004>]  ra = [<fffffc00004512e4>]  ps = 0000    Not tainted
-pc is at 0x4
-ra is at filldir64+0x64/0x320
-v0 = 0000000000000000  t0 = 0000000000000000  t1 = 0000000120117e8b
-t2 = 646e617275303253  t3 = 646e617275300000  t4 = 0000000000007fe8
-t5 = 0000000120117e78  t6 = 0000000000000000  t7 = fffffc0007ec8000
-s0 = fffffc0007dbca56  s1 = 000000000000000a  s2 = 0000000000000020
-s3 = fffffc0007ecbec8  s4 = 0000000000000008  s5 = 0000000000000021
-s6 = 1cd2631fe897bf5a
-a0 = fffffc0007dbca56  a1 = 2f2f2f2f2f2f2f2f  a2 = 000000000000000a
-a3 = 1cd2631fe897bf5a  a4 = 0000000000000021  a5 = 0000000000000008
-t8 = 0000000000000020  t9 = 0000000000000000  t10= fffffc0007dbca60
-t11= 0000000000000001  pv = fffffc0000b9a810  at = 0000000000000001
-gp = fffffc0000f03930  sp = (____ptrval____)
-Disabling lock debugging due to kernel taint
-Trace:
-[<fffffc00004e7a08>] call_filldir+0xe8/0x1b0
-[<fffffc00004e8684>] ext4_readdir+0x924/0xa70
-[<fffffc0000ba3088>] _raw_spin_unlock+0x18/0x30
-[<fffffc00003f751c>] __handle_mm_fault+0x9fc/0xc30
-[<fffffc0000450c68>] iterate_dir+0x198/0x240
-[<fffffc0000450b2c>] iterate_dir+0x5c/0x240
-[<fffffc00004518b8>] ksys_getdents64+0xa8/0x160
-[<fffffc0000451990>] sys_getdents64+0x20/0x40
-[<fffffc0000451280>] filldir64+0x0/0x320
-[<fffffc0000311634>] entSys+0xa4/0xc0
-
----
-[1b]
-
-Unable to handle kernel paging request at virtual address 0000000000000004
-reboot(50): Oops -1
-pc = [<0000000000000004>]  ra = [<fffffc00004512e4>]  ps = 0000    Tainted: G      D
-pc is at 0x4
-ra is at filldir64+0x64/0x320
-v0 = 0000000000000000  t0 = 0000000067736d6b  t1 = 000000012011445b
-t2 = 0000000000000000  t3 = 0000000000000000  t4 = 0000000000007ef8
-t5 = 0000000120114448  t6 = 0000000000000000  t7 = fffffc0007eec000
-s0 = fffffc000792b5c3  s1 = 0000000000000004  s2 = 0000000000000018
-s3 = fffffc0007eefec8  s4 = 0000000000000008  s5 = 00000000f00000a3
-s6 = 000000000000000b
-a0 = fffffc000792b5c3  a1 = 2f2f2f2f2f2f2f2f  a2 = 0000000000000004
-a3 = 000000000000000b  a4 = 00000000f00000a3  a5 = 0000000000000008
-t8 = 0000000000000018  t9 = 0000000000000000  t10= 0000000022e1d02a
-t11= 000000011f8fd3b8  pv = fffffc0000b9a810  at = 0000000022e1ccf8
-gp = fffffc0000f03930  sp = (____ptrval____)
-Trace:
-[<fffffc00004ccba0>] proc_readdir_de+0x170/0x300
-[<fffffc0000451280>] filldir64+0x0/0x320
-[<fffffc00004c565c>] proc_root_readdir+0x3c/0x80
-[<fffffc0000450c68>] iterate_dir+0x198/0x240
-[<fffffc00004518b8>] ksys_getdents64+0xa8/0x160
-[<fffffc0000451990>] sys_getdents64+0x20/0x40
-[<fffffc0000451280>] filldir64+0x0/0x320
-[<fffffc0000311634>] entSys+0xa4/0xc0
-
----
-[2]
-
-Unable to handle kernel paging request at virtual address 0000000000000004
-reboot(50): Oops -1
-pc = [<0000000000000004>]  ra = [<fffffc00004512e4>]  ps = 0000    Tainted: G      D
-pc is at 0x4
-ra is at filldir64+0x64/0x320
-v0 = 0000000000000000  t0 = 0000000067736d6b  t1 = 000000012011445b
-t2 = 0000000000000000  t3 = 0000000000000000  t4 = 0000000000007ef8
-t5 = 0000000120114448  t6 = 0000000000000000  t7 = fffffc0007eec000
-s0 = fffffc000792b5c3  s1 = 0000000000000004  s2 = 0000000000000018
-s3 = fffffc0007eefec8  s4 = 0000000000000008  s5 = 00000000f00000a3
-s6 = 000000000000000b
-a0 = fffffc000792b5c3  a1 = 2f2f2f2f2f2f2f2f  a2 = 0000000000000004
-a3 = 000000000000000b  a4 = 00000000f00000a3  a5 = 0000000000000008
-t8 = 0000000000000018  t9 = 0000000000000000  t10= 0000000022e1d02a
-t11= 000000011fd6f3b8  pv = fffffc0000b9a810  at = 0000000022e1ccf8
-gp = fffffc0000f03930  sp = (____ptrval____)
-Trace:
-[<fffffc00004ccba0>] proc_readdir_de+0x170/0x300
-[<fffffc0000451280>] filldir64+0x0/0x320
-[<fffffc00004c565c>] proc_root_readdir+0x3c/0x80
-[<fffffc0000450c68>] iterate_dir+0x198/0x240
-[<fffffc00004518b8>] ksys_getdents64+0xa8/0x160
-[<fffffc0000451990>] sys_getdents64+0x20/0x40
-[<fffffc0000451280>] filldir64+0x0/0x320
-[<fffffc0000311634>] entSys+0xa4/0xc0
-
-Code:
- 00000000
- 00063301
- 000007a3
- 00001111
- 00003f64
-
-Segmentation fault
-
+> > -- 
+> > Jens Axboe
+> > 
