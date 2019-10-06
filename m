@@ -2,30 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A099CD3BB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2019 18:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 263EBCD3C9
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Oct 2019 19:18:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfJFQ4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Oct 2019 12:56:49 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:48794 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726443AbfJFQ4t (ORCPT
+        id S1726516AbfJFRSe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Oct 2019 13:18:34 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44929 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726508AbfJFRSd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Oct 2019 12:56:49 -0400
-Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x96GsaNE023214
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 6 Oct 2019 12:54:38 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id A922942088C; Sun,  6 Oct 2019 12:54:36 -0400 (EDT)
-Date:   Sun, 6 Oct 2019 12:54:36 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     shuah <shuah@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
+        Sun, 6 Oct 2019 13:18:33 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m13so11183951ljj.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2019 10:18:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nqhtcbRfDvEQJJkAJFzv4RBTuiXKftvmCXLEi1f3srQ=;
+        b=RFX9iEr5oOWgtzp3IBXT04OndQR1DU0EDSHmP2z8P81qc5WnlH3q3z+H6Fn+Q2bRDQ
+         H0mj8t0g+mmdm8jwf4l9ysW9y9jx14fPTmNboT3xsSFw9Hg+XXFMXj7P26RjheVyaX4i
+         ysqZhaJqY2V93IZXO8nKnxagXIV7guXuOEkKQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nqhtcbRfDvEQJJkAJFzv4RBTuiXKftvmCXLEi1f3srQ=;
+        b=jydFp/i394OYU8F6+6N2lADHEoiZiCYIsd2BqofhsZs5g6f6JcY8dcKISGmdSC/tUs
+         dUDLv2mOqrAYBfPUSMtxK+/XeYbCAOKuJSmirs8Xz6el2NgYs63cAlux0qk++FoOmwUF
+         /fZGuNkDz8M1eUjcPj07LqS/vlPq9xloqs5G6hO4K8nP11N7a/X/uZfuMLvUU6LtMD4V
+         Hp6HFERUuHEXnkwonwIzsea9Tf1KI5t9durOBc+8snShTxoUnAHErl7hSsoq7ms1GouE
+         jWERQVehJIfUSDfEZtdirROHJp4MeqZEssgJqv4RLv1pJdp3tJCo53OSuGwmGNKrydeZ
+         yr0A==
+X-Gm-Message-State: APjAAAXWxS1n42lVd6kl9UTI6q+L+ni26Eujgu3GcuXATGS1Q8+8wJW+
+        aSd4LtXe9Bke5rofuFS02j4zkH3UwVE=
+X-Google-Smtp-Source: APXvYqy+NLaHkEZn5SkzcF++qMKJnqsq5Y+Lyf1p63BM482KgHW/slp3xU5XwVikF46stmCu2TA67w==
+X-Received: by 2002:a2e:a17b:: with SMTP id u27mr15015994ljl.65.1570382310354;
+        Sun, 06 Oct 2019 10:18:30 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id f6sm2311495lfl.78.2019.10.06.10.18.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2019 10:18:27 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id y127so7662605lfc.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2019 10:18:27 -0700 (PDT)
+X-Received: by 2002:a19:741a:: with SMTP id v26mr14509292lfe.79.1570382307072;
+ Sun, 06 Oct 2019 10:18:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHk-=whX-JbpM2Sc85epng_GAgGGzxRAJ2SSKkMf9N1Lsqe+OA@mail.gmail.com>
+ <56e2e1a7-f8fe-765b-8452-1710b41895bf@kernel.org> <20191004222714.GA107737@google.com>
+ <ad800337-1ae2-49d2-e715-aa1974e28a10@kernel.org> <20191004232955.GC12012@mit.edu>
+ <CAFd5g456rBSp177EkYAwsF+KZ0rxJa90mzUpW2M3R7tWbMAh9Q@mail.gmail.com>
+ <63e59b0b-b51e-01f4-6359-a134a1f903fd@kernel.org> <CAFd5g47wji3T9RFmqBwt+jPY0tb83y46oj_ttOq=rTX_N1Ggyg@mail.gmail.com>
+ <544bdfcb-fb35-5008-ec94-8d404a08fd14@kernel.org> <CAFd5g467PkfELixpU0JbaepEAAD_ugAA340-uORngC-eXsQQ-g@mail.gmail.com>
+ <20191006165436.GA29585@mit.edu>
+In-Reply-To: <20191006165436.GA29585@mit.edu>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 6 Oct 2019 10:18:11 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjcJxypxUOSF-jc=SQKT1CrOoTMyT7soYzbvK3965JmCA@mail.gmail.com>
+Message-ID: <CAHk-=wjcJxypxUOSF-jc=SQKT1CrOoTMyT7soYzbvK3965JmCA@mail.gmail.com>
+Subject: Re: [PATCH v18 00/19] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        shuah <shuah@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Kees Cook <keescook@google.com>,
@@ -61,78 +100,29 @@ Cc:     shuah <shuah@kernel.org>,
         Richard Weinberger <richard@nod.at>,
         David Rientjes <rientjes@google.com>,
         Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Subject: Re: [PATCH v18 00/19] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-Message-ID: <20191006165436.GA29585@mit.edu>
-References: <CAHk-=whX-JbpM2Sc85epng_GAgGGzxRAJ2SSKkMf9N1Lsqe+OA@mail.gmail.com>
- <56e2e1a7-f8fe-765b-8452-1710b41895bf@kernel.org>
- <20191004222714.GA107737@google.com>
- <ad800337-1ae2-49d2-e715-aa1974e28a10@kernel.org>
- <20191004232955.GC12012@mit.edu>
- <CAFd5g456rBSp177EkYAwsF+KZ0rxJa90mzUpW2M3R7tWbMAh9Q@mail.gmail.com>
- <63e59b0b-b51e-01f4-6359-a134a1f903fd@kernel.org>
- <CAFd5g47wji3T9RFmqBwt+jPY0tb83y46oj_ttOq=rTX_N1Ggyg@mail.gmail.com>
- <544bdfcb-fb35-5008-ec94-8d404a08fd14@kernel.org>
- <CAFd5g467PkfELixpU0JbaepEAAD_ugAA340-uORngC-eXsQQ-g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFd5g467PkfELixpU0JbaepEAAD_ugAA340-uORngC-eXsQQ-g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 06:18:04PM -0700, Brendan Higgins wrote:
-> > Let's talk about current state. Right now kunit is in linux-next and
-> > we want to add a few more tests. We will have to coordinate the effort.
-> > Once kunit get into mainline, then the need for this coordination goes
-> > down.
-> 
-> Sure, I was just thinking that getting other people to write the tests
-> would be better. Since not only is it then useful to someone else, it
-> provides the best possible exercise of KUnit.
+On Sun, Oct 6, 2019 at 9:55 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> Well, one thing we *can* do is if (a) if we can create a kselftest
+> branch which we know is stable and won't change, and (b) we can get
+> assurances that Linus *will* accept that branch during the next merge
+> window, those subsystems which want to use kself test can simply pull
+> it into their tree.
 
-Well, one thing we *can* do is if (a) if we can create a kselftest
-branch which we know is stable and won't change, and (b) we can get
-assurances that Linus *will* accept that branch during the next merge
-window, those subsystems which want to use kself test can simply pull
-it into their tree.
+Yes.
 
-We've done this before in the file system world, when there has been
-some common set of changes needed to improve, say, Direct I/O, where
-the changes are put into a standalone branch, say, in the xfs tree,
-and those file systems which need it as a building block can pull it
-into their tree, and then add the changes needed to use those changes
-into their file system git tree.  These changes are generally not
-terribly controversial, and we've not had to worry about people want
-to bikeshed the changes.
+At the same time, I don't think it needs to be even that fancy. Even
+if it's not a stable branch that gets shared between different
+developers, it would be good to just have people do a "let's try this"
+throw-away branch to use the kunit functionality and verify that
+"yeah, this is fairly convenient for ext4".
 
-There is a risk with doing this of course, which is that if the branch
-*is* controversial, or gets bike-shedded for some reason, then Linus
-gets upset and any branches which depended on said branch will get
-rejected at the next merge window.  Which is the requirement for (a)
-and (b) above.  Presumably, the fact that people were unwilling to let
-Kunit land during this merge window might will *because* we think more
-changes might be pending?
+It doesn't have to be merged in that form, but just confirmation that
+the infrastructure is helpful before it gets merged would be good.
 
-The other thing I suppose I can do is to let the ext4 kunit tests land
-in ext4 tree, but with the necessary #ifdef's around things like
-"#include <kunit/test.h>" so that the build won't blow up w/o kunit
-changes being in the tree that I'm building.  It means I won't be able
-to run the tests without creating a test integration branch and
-merging in kunit by hand, which will super-annoying, of course.  And
-if some of the bike-shedding is in Kunit's interfaces, then that
-becomes problematic as well, since any tests that are in ext4.git tree
-might change if people want to rename Kunit's publically exported
-functions (for example).
-
-> Hey Ted, do you know if that ext4 timestamp test can go in through
-> linux-kselftest? It seemed fairly self-contained. Or is that what you
-> were saying wouldn't work for you?
-
-Well, I was hoping that we might start creating more tests beyond just
-the ext4 timestamp tests....
-
-						- Ted
+               Linus
