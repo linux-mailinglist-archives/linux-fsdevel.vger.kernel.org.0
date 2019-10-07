@@ -2,141 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 680F8CE633
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 16:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D1B3CE753
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 17:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbfJGO5l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 10:57:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727490AbfJGO5l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:57:41 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E805206C2;
-        Mon,  7 Oct 2019 14:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570460259;
-        bh=M/mh7ZDKuNzaoClSYB7rLWBjChHoOPyPKzoupCtmj/s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OknCZl7G7XB2x/+wPMOTWsiPriTJeKEbR+zS47+ClfRbCU63jUlK1d+xBxWuJuzCB
-         c521NSoNfrmZ7l21+c+4hgme2giarn46R0KzyXhix6klLtQym1/TJUpxv1eArw06l2
-         ryeCnoXId3pvz7NjvXBDnl/VEqPPEm1JHVs1Iizw=
-Subject: Re: [PATCH v18 00/19] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>, wfg@linux.intel.com,
-        shuah <shuah@kernel.org>
-References: <CAHk-=whX-JbpM2Sc85epng_GAgGGzxRAJ2SSKkMf9N1Lsqe+OA@mail.gmail.com>
- <56e2e1a7-f8fe-765b-8452-1710b41895bf@kernel.org>
- <20191004222714.GA107737@google.com>
- <ad800337-1ae2-49d2-e715-aa1974e28a10@kernel.org>
- <20191004232955.GC12012@mit.edu>
- <CAFd5g456rBSp177EkYAwsF+KZ0rxJa90mzUpW2M3R7tWbMAh9Q@mail.gmail.com>
- <63e59b0b-b51e-01f4-6359-a134a1f903fd@kernel.org>
- <CAFd5g47wji3T9RFmqBwt+jPY0tb83y46oj_ttOq=rTX_N1Ggyg@mail.gmail.com>
- <544bdfcb-fb35-5008-ec94-8d404a08fd14@kernel.org>
- <CAFd5g467PkfELixpU0JbaepEAAD_ugAA340-uORngC-eXsQQ-g@mail.gmail.com>
- <20191006165436.GA29585@mit.edu>
- <CAHk-=wjcJxypxUOSF-jc=SQKT1CrOoTMyT7soYzbvK3965JmCA@mail.gmail.com>
- <20191007104048.66ae7e59@gandalf.local.home>
-From:   shuah <shuah@kernel.org>
-Message-ID: <176fa69d-1767-ea9b-476d-c685c2a68d46@kernel.org>
-Date:   Mon, 7 Oct 2019 08:57:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727935AbfJGPYY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 11:24:24 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47622 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfJGPYY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Oct 2019 11:24:24 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x97FO48h154592;
+        Mon, 7 Oct 2019 15:24:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=+ws5Izj8hyAfCOW5xTuTHXPZXfrQQB1vmYoFwB5WMj8=;
+ b=M2EbXHqUEkl9jgn3JwAPS1SD7e/XilSJr7Nw44zgVKVV5qkVDRfB2FFMhWfNWMms12dQ
+ alb54vyWE/cT9Sq/dcwHxXlC86yZpf9GP9dqr/NtW/tIiBJFjBrBnY1vIXF+ycztFnM2
+ ZSKoXPudZ6F7YAk4HdJUzQKcgQGBAgOFM8NQO4DeOH0sYLXNAXuys72/FGOR+az9+kNK
+ C1u2FBc80uJ1DnNc8FLhxaCjXUtNdoOkXlWm7kgu4eMc1Pj/w0VkxXcygWWYzVNnlQoW
+ J+S6HG1xeipsV+EqF0mXSV3zSyaT/nIaBsLUMDBNT3PK0Ox7A8yzn7eVSwRFzZbszBZA Fw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2vektr7a84-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Oct 2019 15:24:04 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x97FNvJj021334;
+        Mon, 7 Oct 2019 15:24:04 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2vg20402ku-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Oct 2019 15:24:02 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x97FNgPF020858;
+        Mon, 7 Oct 2019 15:23:42 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 07 Oct 2019 08:23:41 -0700
+Date:   Mon, 7 Oct 2019 08:23:36 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] iomap: add tracing for the readpage / readpages
+Message-ID: <20191007152336.GS13108@magnolia>
+References: <20191006154608.24738-1-hch@lst.de>
+ <20191006154608.24738-2-hch@lst.de>
+ <20191006224324.GR13108@magnolia>
+ <20191007054838.GA15655@lst.de>
+ <20191007061705.GA20377@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20191007104048.66ae7e59@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007061705.GA20377@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910070152
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910070151
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/7/19 8:40 AM, Steven Rostedt wrote:
-> On Sun, 6 Oct 2019 10:18:11 -0700
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Mon, Oct 07, 2019 at 08:17:05AM +0200, Christoph Hellwig wrote:
+> On Mon, Oct 07, 2019 at 07:48:38AM +0200, Christoph Hellwig wrote:
+> > On Sun, Oct 06, 2019 at 03:43:24PM -0700, Darrick J. Wong wrote:
+> > > > +iomap-y				+= trace.o \
+> > > 
+> > > I think this patch is missing fs/iomap/trace.c ?
+> > 
+> > It does.  The file is in my tree, but I never did a git-add for it..
 > 
->> On Sun, Oct 6, 2019 at 9:55 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->>>
->>> Well, one thing we *can* do is if (a) if we can create a kselftest
->>> branch which we know is stable and won't change, and (b) we can get
->>> assurances that Linus *will* accept that branch during the next merge
->>> window, those subsystems which want to use kself test can simply pull
->>> it into their tree.
->>
->> Yes.
->>
->> At the same time, I don't think it needs to be even that fancy. Even
->> if it's not a stable branch that gets shared between different
->> developers, it would be good to just have people do a "let's try this"
->> throw-away branch to use the kunit functionality and verify that
->> "yeah, this is fairly convenient for ext4".
->>
->> It doesn't have to be merged in that form, but just confirmation that
->> the infrastructure is helpful before it gets merged would be good.
+> A branch with the file is here:
 > 
-> Can't you just create an ext4 branch that has the kselftest-next branch
-> in it, that you build upon. And push that after the kunit test is
-> merged?
+>    git://git.infradead.org/users/hch/xfs.git iomap-writepage.7
 > 
-> In the past I've had to rely on other branches in next, and would just
-> hold two branches myself. One with everything not dependent on the other
-> developer's branch, and one with the work that was. At the merge
-> window, I would either merge the two or just send two pull requests
-> with the two branches.
+> Gitweb:
 > 
+>     http://git.infradead.org/users/hch/xfs.git/shortlog/refs/heads/iomap-writepage.7
+> 
+> I'll wait a bit until I resend to see if people find other issues.
 
-I do something similar when I am working on top of a branch that isn't
-already in the mainline. In any case, repeating myself
+I didn't see any, at least not in a quick overnight fstests run.
 
-Let's work on top of - it is rebased to 5.4-rc1 and ready for use.
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=test
-
-Let's use that for kunit work for 5.5. I won't add any kselftest patches
-to it and keep it dedicated for kunit work. When tests are ready for
-upstream, I can keep adding them to this branch.
-
-thanks,
--- Shuah
+--D
