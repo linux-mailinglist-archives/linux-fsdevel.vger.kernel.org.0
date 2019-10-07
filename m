@@ -2,121 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE20CE542
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 16:31:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EECFCCE57E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 16:41:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbfJGObI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 10:31:08 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:54479 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727745AbfJGObI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:31:08 -0400
-Received: by mail-io1-f71.google.com with SMTP id w8so26904223iod.21
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 07:31:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=7BY87Ia9AapGjwjMXbsBZnoMaLjgwwjSG2VntvLmU4c=;
-        b=B3IH4aVuJzn4kEPOV1OWOivUT+3vkBmIop6+67DDwOvaJH5YQDEJEXVoyWGyr8JJFt
-         Ud+mp2YBkUcfFjrVSOyMrEZ9GfLoDXgCD0/NgAwe2TCIs1i6onZ7WKv9Ir/+4J4dFf3W
-         OqkNuqs2jvLC1ceck6yMmQaFWs/bFOHhP247rkDdqSj+hJPdBS4lD1PY/mljnsU/hJjc
-         3puYtarfJk6+rRGllQo5E7EAjX9GZGkYqdUEOohtsFBNW0wbNbJ/DHlCzDmNug7i8MKf
-         plReoShzvuzP+K2fbZYHxtAsmxP7+Ku2FRfaircVTM3AVXTZCGDLnWtok+2aJNIir1Lr
-         NtyA==
-X-Gm-Message-State: APjAAAX8u0/1ws2+clcUhotQjrblgpuy1j5J2XlrW0xgCz/Uyn8SIVdW
-        aEBfKHGFGa8jcGT3A21l+ZxKG7M6oLVHF2jHjTpt/tpyA2Qq
-X-Google-Smtp-Source: APXvYqwHM30N8tl1H9tiWFEkk5uQF9JjeMTKqdai85oDJLXRimIYKTBAZ9aPa3GdJ+Ja7qB/Sbi3nEzbTc+XziR64uB+U2mBU037
+        id S1727830AbfJGOky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 10:40:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54458 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727324AbfJGOky (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Oct 2019 10:40:54 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F3372084D;
+        Mon,  7 Oct 2019 14:40:50 +0000 (UTC)
+Date:   Mon, 7 Oct 2019 10:40:48 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        shuah <shuah@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>, wfg@linux.intel.com
+Subject: Re: [PATCH v18 00/19] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+Message-ID: <20191007104048.66ae7e59@gandalf.local.home>
+In-Reply-To: <CAHk-=wjcJxypxUOSF-jc=SQKT1CrOoTMyT7soYzbvK3965JmCA@mail.gmail.com>
+References: <CAHk-=whX-JbpM2Sc85epng_GAgGGzxRAJ2SSKkMf9N1Lsqe+OA@mail.gmail.com>
+        <56e2e1a7-f8fe-765b-8452-1710b41895bf@kernel.org>
+        <20191004222714.GA107737@google.com>
+        <ad800337-1ae2-49d2-e715-aa1974e28a10@kernel.org>
+        <20191004232955.GC12012@mit.edu>
+        <CAFd5g456rBSp177EkYAwsF+KZ0rxJa90mzUpW2M3R7tWbMAh9Q@mail.gmail.com>
+        <63e59b0b-b51e-01f4-6359-a134a1f903fd@kernel.org>
+        <CAFd5g47wji3T9RFmqBwt+jPY0tb83y46oj_ttOq=rTX_N1Ggyg@mail.gmail.com>
+        <544bdfcb-fb35-5008-ec94-8d404a08fd14@kernel.org>
+        <CAFd5g467PkfELixpU0JbaepEAAD_ugAA340-uORngC-eXsQQ-g@mail.gmail.com>
+        <20191006165436.GA29585@mit.edu>
+        <CAHk-=wjcJxypxUOSF-jc=SQKT1CrOoTMyT7soYzbvK3965JmCA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Received: by 2002:a92:d14b:: with SMTP id t11mr28007911ilg.126.1570458667508;
- Mon, 07 Oct 2019 07:31:07 -0700 (PDT)
-Date:   Mon, 07 Oct 2019 07:31:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000002edb7059452e7fb@google.com>
-Subject: WARNING in verify_dirent_name
-From:   syzbot <syzbot+76e3977ad1b8cc4d113a@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sun, 6 Oct 2019 10:18:11 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-syzbot found the following crash on:
+> On Sun, Oct 6, 2019 at 9:55 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> >
+> > Well, one thing we *can* do is if (a) if we can create a kselftest
+> > branch which we know is stable and won't change, and (b) we can get
+> > assurances that Linus *will* accept that branch during the next merge
+> > window, those subsystems which want to use kself test can simply pull
+> > it into their tree.  
+> 
+> Yes.
+> 
+> At the same time, I don't think it needs to be even that fancy. Even
+> if it's not a stable branch that gets shared between different
+> developers, it would be good to just have people do a "let's try this"
+> throw-away branch to use the kunit functionality and verify that
+> "yeah, this is fairly convenient for ext4".
+> 
+> It doesn't have to be merged in that form, but just confirmation that
+> the infrastructure is helpful before it gets merged would be good.
 
-HEAD commit:    43b815c6 Merge tag 'armsoc-fixes' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12165d0b600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1ec3be9936e004f6
-dashboard link: https://syzkaller.appspot.com/bug?extid=76e3977ad1b8cc4d113a
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Can't you just create an ext4 branch that has the kselftest-next branch
+in it, that you build upon. And push that after the kunit test is
+merged?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+In the past I've had to rely on other branches in next, and would just
+hold two branches myself. One with everything not dependent on the other
+developer's branch, and one with the work that was. At the merge
+window, I would either merge the two or just send two pull requests
+with the two branches.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+76e3977ad1b8cc4d113a@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 25558 at fs/readdir.c:150 verify_dirent_name+0x67/0x80  
-fs/readdir.c:150
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 25558 Comm: syz-executor.2 Not tainted 5.4.0-rc1+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2dc/0x755 kernel/panic.c:220
-  __warn.cold+0x2f/0x3c kernel/panic.c:581
-  report_bug+0x289/0x300 lib/bug.c:195
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:verify_dirent_name+0x67/0x80 fs/readdir.c:150
-Code: 19 b6 ff 44 89 e0 5b 41 5c 5d c3 e8 43 19 b6 ff 0f 0b e8 3c 19 b6 ff  
-41 bc fb ff ff ff 5b 44 89 e0 41 5c 5d c3 e8 29 19 b6 ff <0f> 0b 41 bc fb  
-ff ff ff eb ca 0f 1f 44 00 00 66 2e 0f 1f 84 00 00
-RSP: 0018:ffff88808db87ad0 EFLAGS: 00010212
-RAX: 0000000000040000 RBX: 000000000000000c RCX: ffffc900143e7000
-RDX: 0000000000004d26 RSI: ffffffff81bcf9b7 RDI: ffff88808db87cd3
-RBP: ffff88808db87ae0 R08: ffff88808f5c41c0 R09: 0000000000000004
-R10: fffffbfff120d9b8 R11: ffffffff8906cdc3 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000004 R15: ffff88808db87e50
-  filldir64+0x40/0x670 fs/readdir.c:356
-  dir_emit include/linux/fs.h:3542 [inline]
-  __fat_readdir+0xd9e/0x1cb0 fs/fat/dir.c:677
-  fat_readdir+0x44/0x60 fs/fat/dir.c:704
-  iterate_dir+0x47f/0x5e0 fs/readdir.c:105
-  ksys_getdents64+0x1ce/0x320 fs/readdir.c:412
-  __do_sys_getdents64 fs/readdir.c:431 [inline]
-  __se_sys_getdents64 fs/readdir.c:428 [inline]
-  __x64_sys_getdents64+0x73/0xb0 fs/readdir.c:428
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459a59
-Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fc825c13c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459a59
-RDX: 0000000000001000 RSI: 00000000200005c0 RDI: 0000000000000007
-RBP: 000000000075c070 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc825c146d4
-R13: 00000000004c0533 R14: 00000000004d2c58 R15: 00000000ffffffff
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- Steve
