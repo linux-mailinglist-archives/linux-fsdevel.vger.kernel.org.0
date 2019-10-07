@@ -2,194 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99342CDA01
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 02:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 588E2CDA16
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 03:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfJGAvI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Oct 2019 20:51:08 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:56513 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726661AbfJGAvI (ORCPT
+        id S1726822AbfJGBRX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Oct 2019 21:17:23 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43345 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbfJGBRW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Oct 2019 20:51:08 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id A352E20DC2;
-        Sun,  6 Oct 2019 20:51:06 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Sun, 06 Oct 2019 20:51:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:content-type:mime-version
-        :content-transfer-encoding; s=fm1; bh=AUCWi7dg8CtTdu5/plLNnp01CE
-        E4wJlXKJek4yB9CPI=; b=3HG4LrcTHN9Rt/xJv6OQOYG4uykAeci7ZaesvYVqtA
-        98SCnmKSFkIbvAvi5v8alch9hVABsNEtXKfagZipFoAX0JZr9F9sSKbGmv8DXSI1
-        IQB47gas/pvfledWYBMybbOYsgz6Ndvqu7RhnC+AUnFvKhSqSCw4TM9xwW/Y+y1Q
-        jFngz5AnMcvweIye+bF9HukBtI5ItKLd0npPgcvt6YJZm3ajXmT/JfNpcBfTYkSF
-        nE20fjgqeIoe8rvLZfzypeeAbPiIJGV6xNa4g76JCLMm9489sUQUtbkVPwyiUuD6
-        jW2Wp5tvWmeOWEVUsTXEku1IEBjTT1nmKfmqrpCBE6Lg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=AUCWi7
-        dg8CtTdu5/plLNnp01CEE4wJlXKJek4yB9CPI=; b=B1vpEkXfw6jp1jIhBihmsn
-        me06S9umVe0fiZYflrjG6CUdp3dzeZTS3DSaRbELikITq/w9eK7F0OcND0osxXmq
-        Le+7ICBdK+ZdevvU/o3/HvjyaB/xRxTgp6ge5Px03SqZh/O1Sv/doZXTFekc0Gbn
-        oUCl6TNpGgnYvVxsm84pQ7Hse1bqFCdEe+av6uPODpAIhzqnglgQzDxntJrVnpZQ
-        G50+JJIOM0LQI8M9uBFFL8OZpXREktXPNPUzbl21lDWmFSzXf2R/mm6oBdwYMGS2
-        Jqdm1timoX5QWzEoKg7XI99uo0jvXqnuckC+mTlS4iFVG6Gszzmm33zxkd6ePYHA
-        ==
-X-ME-Sender: <xms:-YuaXRdrZJ1Zb5cJZxFTeHSMQmwChPDyGgeeJFqpxhKmmZ3RqDyaFQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrheeigdegudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhepkffuhffvffgtfggggfesthejredttd
-    erjeenucfhrhhomhepkfgrnhcumfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvght
-    qeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduudekrddvtdelrdduke
-    efrdejudenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhn
-    vghtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:-ouaXTc4UYhOy_DMBme8dTXijB5zTjTrQ84A7iGsGqDONF9P9NMfdQ>
-    <xmx:-ouaXVhGdUmzTaS08x2SX7Ck7y3vRKRxDxjCYXa8CBFQiG3vg186wA>
-    <xmx:-ouaXfQMQdw9KnQctQja8oMpj3k0yzpEcIo89gpjEgoDRbwOuNcNHw>
-    <xmx:-ouaXco0bU1zHip3hDK6BK7KcXBrX7YqjNVAfyCt-891n-M1X4aoFw>
-Received: from mickey.themaw.net (unknown [118.209.183.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 66832D6005B;
-        Sun,  6 Oct 2019 20:51:04 -0400 (EDT)
-Message-ID: <199d4dd82398c5a2cc915525024a122ed73a6637.camel@themaw.net>
-Subject: [ANNOUNCE] autofs 5.1.6 release
-From:   Ian Kent <raven@themaw.net>
-To:     autofs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 07 Oct 2019 08:51:00 +0800
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        Sun, 6 Oct 2019 21:17:22 -0400
+Received: by mail-lj1-f193.google.com with SMTP id n14so11766834ljj.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2019 18:17:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GPEu43x9a4PkvKn0Oyshu4QOaWijlTG7bfT8Hr7fHfs=;
+        b=f6Ncrhe7S7dXzO+O2ayfO34RS2WQe42zqTeE1J9e5gyPVQI7WmKX4jrNVerl3l/Jql
+         KdRAZUJMD4rgRQmFIkC5TcRf0QJ+PyiPmL9JxsEADXqN8Qjfw2t5YT83/NWGujsIGsO0
+         MVzA0b891YKEEXwYA+lM6t+Kg+idL/2VltwOk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GPEu43x9a4PkvKn0Oyshu4QOaWijlTG7bfT8Hr7fHfs=;
+        b=PPsKV7KT0HazfIgNIXWjQFhjOzz9JomN9xF3i6+ALDG6wJ3uKDgXES2H4QnW9NxMJc
+         FBEfbqbKwNyd82GQfrU/MV2XeDFZRy/PXw4TA0cNND7dKLjwHfaOge6irLDGI4QpOpoz
+         FcqedhEAmYgwHnj/uBJha/M/5OtmVwVusfwc3bn37l/M1n29uFQAlYaRgDYRIRtSsrP/
+         xv6yjKZBFjgeUyhP7Pj+M8aT1VygNB9qP6yD8bm82GV52Nb5lR4Qjn5PzgYtl/Mfp4Ar
+         aR5foXZHRa9gPDrNYI4EtGsoHq4c4Pin5NnSq+pB2rOEOmzzL/YOfLM3Jc+UjQBkGTIx
+         upBQ==
+X-Gm-Message-State: APjAAAVY+3ndYgo9CyBhCr/utOo2q8lXWmCo7uy0f6Kegaek0tMjlDA+
+        pxvKVhF/Xob8IGA83TayY9Z0Uxn8sJ4=
+X-Google-Smtp-Source: APXvYqw/JzYR3GiS/YUiYPNPrjxiuefUDI5l/rstskpVl+aN0vtOPuCdBcqLG/+9fnGIxXBrjlmgbw==
+X-Received: by 2002:a2e:2416:: with SMTP id k22mr16709097ljk.216.1570411040009;
+        Sun, 06 Oct 2019 18:17:20 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id z14sm2764463ljz.10.2019.10.06.18.17.18
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2019 18:17:19 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 72so8020307lfh.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Oct 2019 18:17:18 -0700 (PDT)
+X-Received: by 2002:a19:2489:: with SMTP id k131mr14719103lfk.52.1570411038329;
+ Sun, 06 Oct 2019 18:17:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191006222046.GA18027@roeck-us.net> <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
+ <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com> <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net>
+In-Reply-To: <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 6 Oct 2019 18:17:02 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
+Message-ID: <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+On Sun, Oct 6, 2019 at 5:04 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> All my alpha, sparc64, and xtensa tests pass with the attached patch
+> applied on top of v5.4-rc2. I didn't test any others.
 
-It's time for a release, autofs-5.1.6.
+Okay... I really wish my guess had been wrong.
 
-This is an important release because it marks the beginning of
-work to be done torward resolving the very long standing problem
-of using very large direct mount maps in autofs, along with the
-needed mitigatigation of the effects of those large mount tables
-in user space.
+Because fixing filldir64 isn't the problem. I can come up with
+multiple ways to avoid the unaligned issues if that was the problem.
 
-The first thing that needs to be done is for autofs to get back
-to what is was before the symlinking of the mount table to the
-proc file system. From experience having a large number of (largely
-not useful) autofs mount entries showing up in the mount table
-makes system administation frustrating and is quite annoying.
+But it does look to me like the fundamental problem is that unaligned
+__put_user() calls might just be broken on alpha (and likely sparc
+too). Because that looks to be the only difference between the
+__copy_to_user() approach and using unsafe_put_user() in a loop.
 
-To do this I'm using the same approach used in other SysV autofs
-implementations of providing an autofs pseudo mount option "ignore"
-that can be used by user space as a hint to ignore these mount
-entries.
+Now, I should have handled unaligned things differently in the first
+place, and in that sense I think commit 9f79b78ef744 ("Convert
+filldir[64]() from __put_user() to unsafe_put_user()") really is
+non-optimal on architectures with alignment issues.
 
-This will require fairly straight forward changes to glibc and
-libmount at least. The glibc change has been accepted and I plan
-on submitting a change for libmount when I get a chance.
+And I'll fix it.
 
-A configuration option, use_ignore_mount_option, has been added
-to autofs that is initially disabled to allow people to enable it
-when they are confident that there won't be unexpected problems.
+But at the same time, the fact that "non-optimal" turns into "doesn't
+work" is a fairly nasty issue.
 
-The side effects of very large mount tables in user space is
-somewhat difficult to mitigate.
+> I'll (try to) send you some disassembly next.
 
-First, to acheive this autofs needs to not use the system mount
-table for expiration "at all". Not using the mount table for expires
-has proven very difficult to do and initial attempts resulted in
-changes that didn't fit in well at all.
+Thanks, verified.
 
-The changes to clean up the mount table listing amounted to making
-autofs use it's own genmntent(3) implementation (borrowed from glibc)
-but quite a bit of that change was re-factoring toward eliminating
-the need to use the mount table during expires. I had trouble getting
-that to work, let alone stable, but the approach will fit in well
-with the current design so it's progress.
+The "ra is at filldir64+0x64/0x320" is indeed right at the return
+point of the "jsr verify_dirent_name".
 
-Then there's the affect of very large mount tables on other user
-space applications.
+But the problem isn't there - that's just left-over state. I'm pretty
+sure that function worked fine, and returned.
 
-For example, under rapid mount activity we see several user space
-process, systemd, udisk2, et. al., growing to consume all available
-CPU and a couple of others performing poorly simply because the
-mount table is large.
+The problem is that "pc is at 0x4" and the page fault that then
+happens at that address as a result.
 
-I had planned on using the fsinfo() system call being proposed by
-David Howells for initial mount handing improvements in libmount,
-and later David's related kernel notifications proposal for further
-libmount mount table handling improvements but those propsals have
-seen some challenges being accepted so we will have to wait and see
-how things go before working out how to acheive this rather difficult
-goal.
+And that seems to be due to this:
 
-So there's a long way to go but progress is bieng made!
+ 8c0:   00 00 29 2c     ldq_u   t0,0(s0)
+ 8c4:   07 00 89 2c     ldq_u   t3,7(s0)
+ 8c8:   03 04 e7 47     mov     t6,t2
+ 8cc:   c1 06 29 48     extql   t0,s0,t0
+ 8d0:   44 0f 89 48     extqh   t3,s0,t3
+ 8d4:   01 04 24 44     or      t0,t3,t0
+ 8d8:   00 00 22 b4     stq     t0,0(t1)
 
-Additionally there are a number of bug fixes and other minor
-improvements.
+that's the "get_unaligned((type *)src)" (the first six instructions)
+followed by the "unsafe_put_user()" done with a single "stq". That's
+the guts of the unsafe_copy_loop() as part of
+unsafe_copy_dirent_name()
 
-autofs
-======
+And what I think happens is that it is writing to user memory that is
 
-The package can be found at:
-https://www.kernel.org/pub/linux/daemons/autofs/v5/
+ (a) unaligned
 
-It is autofs-5.1.6.tar.[gz|xz]
+ (b) not currently mapped in user space
 
-No source rpm is there as it can be produced by using:
+so then the do_entUna() function tries to handle the unaligned trap,
+but then it takes an exception while doing that (due to the unmapped
+page), and then something in that nested exception mess causes it to
+mess up badly and corrupt the register contents on stack, and it
+returns with garbage in 'pc', and then you finally die with that
 
-rpmbuild -ts autofs-5.1.6.tar.gz
+   Unable to handle kernel paging request at virtual address 0000000000000004
+   pc is at 0x4
 
-and the binary rpm by using:
+thing.
 
-rpmbuild -tb autofs-5.1.6.tar.gz
+And yes, I'll fix that name copy loop in filldir to align the
+destination first, *but* if I'm right, it means that something like
+this should also likely cause issues:
 
-Here are the entries from the CHANGELOG which outline the updates:
+  #define _GNU_SOURCE
+  #include <unistd.h>
+  #include <sys/mman.h>
 
-07/10/2019 autofs-5.1.6
-- support strictexpire mount option.
-- fix hesiod string check in master_parse().
-- add NULL check for get_addr_string() return.
-- use malloc(3) in spawn.c.
-- add mount_verbose configuration option.
-- optionally log mount requestor process info.
-- log mount call arguments if mount_verbose is set.
-- Fix NFS mount from IPv6 addresses.
-- make expire remaining log level debug.
-- allow period following macro in selector value.
-- fix macro expansion in selector values.
-- fix typing errors.
-- Explain /etc/auto.master.d usage.
-- plus map includes are only allowed in file sources.
-- Update README.
-- fix additional typing errors.
-- update autofs(8) offset map entry update description.
-- increase group buffer size geometrically.
-- also use strictexpire for offsets.
-- remove unused function has_fstab_option().
-- remove unused function reverse_mnt_list().
-- remove a couple of old debug messages.
-- fix amd entry memory leak.
-- fix unlink_mount_tree() not umounting mounts.
-- use ignore option for offset mounts as well.
-- add config option for "ignore" mount option
-- use bit flags for autofs mount types in mnt_list.
-- use mp instead of path in mnt_list entries.
-- always use PROC_MOUNTS to make mount lists.
-- add glibc getmntent_r().
-- use local getmntent_r in table_is_mounted().
-- refactor unlink_active_mounts() in direct.c.
-- don't use tree_is_mounted() for mounted checks.
-- use single unlink_umount_tree() for both direct and indirect mounts.
-- move unlink_mount_tree() to lib/mounts.c.
-- use local_getmntent_r() for unlink_mount_tree().
-- use local getmntent_r() in get_mnt_list().
-- use local getmntent_r() in tree_make_mnt_list().
-- fix missing initialization of autofs_point flags.
+  int main(int argc, char **argv)
+  {
+        void *mymap;
+        uid_t *bad_ptr = (void *) 0x01;
 
-Ian
+        /* Create unpopulated memory area */
+        mymap = mmap(NULL, 16384, PROT_READ | PROT_WRITE, MAP_PRIVATE
+| MAP_ANONYMOUS, -1, 0);
 
+        /* Unaligned uidpointer in that memory area */
+        bad_ptr = mymap+1;
+
+        /* Make the kernel do put_user() on it */
+        return getresuid(bad_ptr, bad_ptr+1, bad_ptr+2);
+  }
+
+because that simple user mode program should cause that same "page
+fault on unaligned put_user()" behavior as far as I can tell.
+
+Mind humoring me and trying that on your alpha machine (or emulator,
+or whatever)?
+
+               Linus
