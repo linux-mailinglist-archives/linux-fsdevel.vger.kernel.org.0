@@ -2,67 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E145CEB85
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 20:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D2CECEB8C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 20:13:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbfJGSL3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 14:11:29 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36735 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbfJGSL3 (ORCPT
+        id S1729356AbfJGSNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 14:13:49 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42265 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728459AbfJGSNs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:11:29 -0400
-Received: by mail-lf1-f67.google.com with SMTP id x80so9967042lff.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 11:11:27 -0700 (PDT)
+        Mon, 7 Oct 2019 14:13:48 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y23so14700694lje.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 11:13:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=sSXG+xP1mD1UZGXg2TTq5r4dUsztpjrAAtm+apLCkB0=;
-        b=T9+n4Uy8+vBXnVgYXqxACSICel9I1qrO3WM1rG9o1zxB4y8+nglyP7so9RqnUS9cQ8
-         DPynUXscIFi1WYKoG9zr1emFzkpLyTp2BRuohwDJ1ouK6+mq/bC+2eV4h1P0P5G2vHiB
-         f45dnjMv5AzSxoSBKOdXSpYYKUfiyQB6mH0fg=
+        bh=yMlh6GXN6QbpwC889qdv/mL2tKRwyhPfZJiqASBvKqo=;
+        b=h8vVKPc80ltfyFjjkk1eX3SsLDZsWpHSGP70shQML8lM+pQi5PD43ZLbNhTvHnnieH
+         3Pdsvi7u5yvEvu0mkBG36/MC6h2vZ5j/Ramv3pLra1nTcYqBd177SsSNYgfSw50OivjV
+         toQ4l5QhAqNdBrZzz/KNR6RQik0WFppq5OXBQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=sSXG+xP1mD1UZGXg2TTq5r4dUsztpjrAAtm+apLCkB0=;
-        b=GjMyCEwl8EFlrREHmJ2iP8YwNR/ujZy3jijakLQlAYJeOHhtx2GwSx4sQjNx2DK5R3
-         3XSwqqqTGzjreIR2dB3VPogqAtb8DtRieffC9W0NlEzYdcCL4Je2l1Q5+VTAcXwC9Sfp
-         gUwJVIHvwz3eujwJm+XqIU8ZftbZ4qYIGPGSgTvtrYJEIiRRUHFqWvDYuoNuR2Oz5szr
-         oBMpeTziWM93cfkGYsHk0WaAwD3ELXJDDa6KTUBJjViXdyplh/7fTxIEFrkxqRKxTkJB
-         V0VQ3FawjoFya5IIKS/w0JQSZbXaPJ9N99p8i/dr1X1Q6INC5nlUMyxoIPHPPlJw+cTs
-         Bs1Q==
-X-Gm-Message-State: APjAAAU06O8Z+gkAUUC9+F41j75daT5zYTUNVMKL+p7csK/PzvIiKiI6
-        uONrf04yjhjCS09NWWZlsVMJhjJ8Dyc=
-X-Google-Smtp-Source: APXvYqz+iEPYRml7J1K24ZyUPUMUwGIUIr+RNEqc84u4JiLJKJQymL9QhI8PZuuOuvAo/gc6mcjU5g==
-X-Received: by 2002:a19:c709:: with SMTP id x9mr17893590lff.20.1570471886533;
-        Mon, 07 Oct 2019 11:11:26 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id y26sm4034037ljj.90.2019.10.07.11.11.25
+        bh=yMlh6GXN6QbpwC889qdv/mL2tKRwyhPfZJiqASBvKqo=;
+        b=uP9nETuZLYKoD4/K8XPbV7FRvY4XIWyASTla7mrZMU8yZxQXSAZCgzBLLQg3xKvTzn
+         qfcK271sT5T1v3peO4p4/CJ4mJZgCzREd7P7Xxeailkb4br+qnE9q/6MAu7Moc+IzdXZ
+         tzPVMdL6ZbZxLTorZUb4a+L4+lQn5QeiXQaY4rbOua+G84tX4m5/4pXr0wHjp8FtOvte
+         nledLeqcaiVUU3U05DZnNJAh728tN22D9OxUxSHS3MkrFfpxsRWQZJLxu0sVgC0WuQd2
+         u1Pz/F8vpwHUEVeEoWwySD8J9qeIb+MHpCINMfH6s+ZiDErZFUkZZhiAGxcC7EDxzkG8
+         ZP4g==
+X-Gm-Message-State: APjAAAUXwhgBG1dIFaQR62OkEJdmz9Ypn8FgcmmkTWyknytxPsoOz/4P
+        lCxzJz9OESCnoc2Ri6y06TYsLGWeoW0=
+X-Google-Smtp-Source: APXvYqx4fQ5r9MtyjwY2bgOP0j34BAUImDzuqkZRoIs/WFutEXzI5rYtGup7b+w6Pr6SNgTubnCZew==
+X-Received: by 2002:a2e:9d44:: with SMTP id y4mr19788209ljj.115.1570472024381;
+        Mon, 07 Oct 2019 11:13:44 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id n17sm3241811ljc.44.2019.10.07.11.13.43
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2019 11:11:25 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id n14so14672983ljj.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 11:11:25 -0700 (PDT)
-X-Received: by 2002:a2e:9556:: with SMTP id t22mr19099733ljh.97.1570471885049;
- Mon, 07 Oct 2019 11:11:25 -0700 (PDT)
+        Mon, 07 Oct 2019 11:13:43 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id w67so9971525lff.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 11:13:43 -0700 (PDT)
+X-Received: by 2002:a19:f204:: with SMTP id q4mr17404487lfh.29.1570472023078;
+ Mon, 07 Oct 2019 11:13:43 -0700 (PDT)
 MIME-Version: 1.0
 References: <20191006222046.GA18027@roeck-us.net> <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
  <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
  <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net> <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
  <20191007012437.GK26530@ZenIV.linux.org.uk> <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
  <20191007025046.GL26530@ZenIV.linux.org.uk> <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
- <c58c2a8a5366409abd4169d10a58196a@AcuMS.aculab.com>
-In-Reply-To: <c58c2a8a5366409abd4169d10a58196a@AcuMS.aculab.com>
+ <20191007173432.GM26530@ZenIV.linux.org.uk>
+In-Reply-To: <20191007173432.GM26530@ZenIV.linux.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 7 Oct 2019 11:11:09 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjF2fkhuN8N-MnTwvzNig83XdQK50nir8oieF7jV6Om=A@mail.gmail.com>
-Message-ID: <CAHk-=wjF2fkhuN8N-MnTwvzNig83XdQK50nir8oieF7jV6Om=A@mail.gmail.com>
+Date:   Mon, 7 Oct 2019 11:13:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgSzPwzX0cHgTZ9SQrd8XWQcMnLkBCo_-710pLTEBFGYQ@mail.gmail.com>
+Message-ID: <CAHk-=wgSzPwzX0cHgTZ9SQrd8XWQcMnLkBCo_-710pLTEBFGYQ@mail.gmail.com>
 Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -71,33 +70,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 7, 2019 at 8:40 AM David Laight <David.Laight@aculab.com> wrote:
+On Mon, Oct 7, 2019 at 10:34 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> You don't really want an extra access_ok() for every 'word' of a copy.
+> Tangentially related: copy_regster_to_user() and copy_regset_from_user().
 
-Yes you do.
+Not a worry. It's not performance-critical code, and if it ever is, it
+needs to be rewritten anyway.
 
-> Some copies have to be done a word at a time.
 
-Completely immaterial. If you can't see the access_ok() close to the
-__get/put_user(), you have a bug.
+> The former variant tends to lead to few calls
+> of __copy_{to,from}_user(); the latter...  On x86 it ends up doing
+> this:
 
-Plus the access_ok() is cheap. The real cost is the STAC/CLAC.
+Just replace the __put_user() with a put_user() and be done with it.
+That code isn't acceptable, and if somebody ever complains about
+performance it's not the lack of __put_user that is the problem.
 
-So stop with the access_ok() "optimizations". They are broken garbage.
-
-Really.
-
-I've been very close to just removing __get_user/__put_user several
-times, exactly because people do completely the wrong thing with them
-- not speeding code up, but making it unsafe and buggy.
-
-The new "user_access_begin/end()" model is much better, but it also
-has actual STATIC checking that there are no function calls etc inside
-th4e region, so it forces you to do the loop properly and tightly, and
-not the incorrect "I checked the range somewhere else, now I'm doing
-an unsafe copy".
-
-And it actually speeds things up, unlike the access_ok() games.
-
-               Linus
+           Linus
