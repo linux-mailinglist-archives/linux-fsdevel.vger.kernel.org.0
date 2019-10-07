@@ -2,140 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 595DFCDA6F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 04:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87CEFCDA7A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 04:51:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfJGCaU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Oct 2019 22:30:20 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40522 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbfJGCaT (ORCPT
+        id S1726908AbfJGCut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Oct 2019 22:50:49 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60916 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbfJGCut (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Oct 2019 22:30:19 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x127so7648667pfb.7;
-        Sun, 06 Oct 2019 19:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YGjpu8ryTJmj9+qQvcdT72pgFzxKNn0JDKrBtisM5Yo=;
-        b=dfQJ/qOrpDnZcEkCQnkZza2iEKQq9j26rxpgPi5Ms2YaSGclYVATq7qVZvZ9mK4M/s
-         jwaff2DO3dPC2NKOuspZnmf8Rzqe7dRydjTjmP8TkkCVKmXA2A4ZCwIyL9Jw27jeEtkM
-         kfn85HRuV3+rQv6db4WTfUQgn+hLWHuA8SMIPMeyj4iuL6g8SQGEE2UVouf3c6BDhbPT
-         hijlOqP+LA8gGIoj1nsqrc06cN+jxWHrOlcKH5ZZis1HkO4E+B+cx9PUS+WaY00dfwt4
-         c75h2VTP5lkjg6lZn0C99yAf33tOkVfqhM3PRyIiP6nroDltewe0lvOdIdjGiaG8sfHC
-         nJhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YGjpu8ryTJmj9+qQvcdT72pgFzxKNn0JDKrBtisM5Yo=;
-        b=TpxPKkTSLQjCZuUYAhoXF/JfVjRj7yy1fo4S7rlVm11rZDr9nxz/CRJ4TJ3lotpqZR
-         Z9QOTPYmKHwz+77NOt4N6j2uRNK5w1GdSYZijd1oRDIdy3Wedz8Jf2gRYCn2roornNZ5
-         dgNIlbWFRYB/x+bKJCCgdFN1PyZycWs5g6BXcwSfEKQf4+Lm8sXOziC3Jh+hzwJWa4L4
-         r8OKT/Tyieu/vwRfsp11+Sl2De9jMD2JlhTo4c3aFlbuaCi9ENv6vEjOO9nf9b6DlCc2
-         M76ZfNZTOhWjynaGKR5L2o0g+PNvKlvlRCmk2eXyTr39JoKHRYAlK9BHoDStu0QikgNy
-         5e1A==
-X-Gm-Message-State: APjAAAXzra5/OYXLnMWJq5OG3fA4lQ4VZPew298dUonYxZ5QO2LwhEe6
-        bcu6DH0cwVIwlWusGTCKrKpGu7s/
-X-Google-Smtp-Source: APXvYqxYHjYhp+FPiyT9juSRuUmfuBocFjOXnRXj15b5Xc2xqXMD5kIt3az+stvbSstLH06yMvcqqA==
-X-Received: by 2002:a63:1e16:: with SMTP id e22mr28381741pge.413.1570415418760;
-        Sun, 06 Oct 2019 19:30:18 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id p189sm15158676pfp.163.2019.10.06.19.30.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Oct 2019 19:30:17 -0700 (PDT)
+        Sun, 6 Oct 2019 22:50:49 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHJ6k-0006NC-GN; Mon, 07 Oct 2019 02:50:46 +0000
+Date:   Mon, 7 Oct 2019 03:50:46 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
  unsafe_put_user()
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Message-ID: <20191007025046.GL26530@ZenIV.linux.org.uk>
 References: <20191006222046.GA18027@roeck-us.net>
  <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
  <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
  <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net>
  <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <c3e9ec03-5eb5-75bb-98da-63eaa9246cff@roeck-us.net>
-Date:   Sun, 6 Oct 2019 19:30:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ <20191007012437.GK26530@ZenIV.linux.org.uk>
+ <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/6/19 6:17 PM, Linus Torvalds wrote:
-> On Sun, Oct 6, 2019 at 5:04 PM Guenter Roeck <linux@roeck-us.net> wrote:
-[ ... ]
-> And yes, I'll fix that name copy loop in filldir to align the
-> destination first, *but* if I'm right, it means that something like
-> this should also likely cause issues:
+On Sun, Oct 06, 2019 at 07:06:19PM -0700, Linus Torvalds wrote:
+> On Sun, Oct 6, 2019 at 6:24 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > Ugh...  I wonder if it would be better to lift STAC/CLAC out of
+> > raw_copy_to_user(), rather than trying to reinvent its guts
+> > in readdir.c...
 > 
->    #define _GNU_SOURCE
->    #include <unistd.h>
->    #include <sys/mman.h>
+> Yeah, I suspect that's the best option.
 > 
->    int main(int argc, char **argv)
->    {
->          void *mymap;
->          uid_t *bad_ptr = (void *) 0x01;
+> Do something like
 > 
->          /* Create unpopulated memory area */
->          mymap = mmap(NULL, 16384, PROT_READ | PROT_WRITE, MAP_PRIVATE
-> | MAP_ANONYMOUS, -1, 0);
+>  - lift STAC/CLAC out of raw_copy_to_user
 > 
->          /* Unaligned uidpointer in that memory area */
->          bad_ptr = mymap+1;
+>  - rename it to unsafe_copy_to_user
 > 
->          /* Make the kernel do put_user() on it */
->          return getresuid(bad_ptr, bad_ptr+1, bad_ptr+2);
->    }
+>  - create a new raw_copy_to_user that is just unsafe_copy_to_user()
+> with the STAC/CLAC around it.
 > 
-> because that simple user mode program should cause that same "page
-> fault on unaligned put_user()" behavior as far as I can tell.
+> and the end result would actually be cleanert than what we have now
+> (which duplicates that STAC/CLAC for each size case etc).
 > 
-> Mind humoring me and trying that on your alpha machine (or emulator,
-> or whatever)?
+> And then for the "architecture doesn't have user_access_begin/end()"
+> fallback case, we just do
 > 
+>    #define unsafe_copy_to_user raw_copy_to_user
 
-Here you are. This is with v5.4-rc2 and your previous patch applied
-on top.
+Callers of raw_copy_to_user():
+arch/hexagon/mm/uaccess.c:27:           uncleared = raw_copy_to_user(dest, &empty_zero_page, PAGE_SIZE);
+arch/hexagon/mm/uaccess.c:34:           count = raw_copy_to_user(dest, &empty_zero_page, count);
+arch/powerpc/kvm/book3s_64_mmu_radix.c:68:              ret = raw_copy_to_user(to, from, n);
+arch/s390/include/asm/uaccess.h:150:    size = raw_copy_to_user(ptr, x, size);
+include/asm-generic/uaccess.h:145:      return unlikely(raw_copy_to_user(ptr, x, size)) ? -EFAULT : 0;
+include/linux/uaccess.h:93:     return raw_copy_to_user(to, from, n);
+include/linux/uaccess.h:102:    return raw_copy_to_user(to, from, n);
+include/linux/uaccess.h:131:            n = raw_copy_to_user(to, from, n);
+lib/iov_iter.c:142:             n = raw_copy_to_user(to, from, n);
+lib/usercopy.c:28:              n = raw_copy_to_user(to, from, n);
 
-/ # ./mmtest
-Unable to handle kernel paging request at virtual address 0000000000000004
-mmtest(75): Oops -1
-pc = [<0000000000000004>]  ra = [<fffffc0000311584>]  ps = 0000    Not tainted
-pc is at 0x4
-ra is at entSys+0xa4/0xc0
-v0 = fffffffffffffff2  t0 = 0000000000000000  t1 = 0000000000000000
-t2 = 0000000000000000  t3 = 0000000000000000  t4 = 0000000000000000
-t5 = 000000000000fffe  t6 = 0000000000000000  t7 = fffffc0007edc000
-s0 = 0000000000000000  s1 = 00000001200006f0  s2 = 00000001200df19f
-s3 = 00000001200ea0b9  s4 = 0000000120114630  s5 = 00000001201145d8
-s6 = 000000011f955c50
-a0 = 000002000002c001  a1 = 000002000002c005  a2 = 000002000002c009
-a3 = 0000000000000000  a4 = ffffffffffffffff  a5 = 0000000000000000
-t8 = 0000000000000000  t9 = fffffc0000000000  t10= 0000000000000000
-t11= 000000011f955788  pv = fffffc0000349450  at = 00000000f8db54d3
-gp = fffffc0000f2a160  sp = 00000000ab237c72
-Disabling lock debugging due to kernel taint
-Trace:
 
-Code:
-  00000000
-  00063301
-  000007b6
-  00001111
-  00003f8d
+Out of those, only __copy_to_user_inatomic(), __copy_to_user(),
+_copy_to_user() and iov_iter.c:copyout() can be called on
+any architecture.
 
-Segmentation fault
+The last two should just do user_access_begin()/user_access_end()
+instead of access_ok().  __copy_to_user_inatomic() has very few callers as well:
 
-Guenter
+arch/mips/kernel/unaligned.c:1307:                      res = __copy_to_user_inatomic(addr, fpr, sizeof(*fpr));
+drivers/gpu/drm/i915/i915_gem.c:345:    unwritten = __copy_to_user_inatomic(user_data,
+lib/test_kasan.c:471:   unused = __copy_to_user_inatomic(usermem, kmem, size + 1);
+mm/maccess.c:98:        ret = __copy_to_user_inatomic((__force void __user *)dst, src, size);
+
+So few, in fact, that I wonder if we want to keep it at all; the only
+thing stopping me from "let's remove it" is that I don't understand
+the i915 side of things.  Where does it do an equivalent of access_ok()?
+
+And mm/maccess.c one is __probe_kernel_write(), so presumably we don't
+want stac/clac there at all...
+
+So do we want to bother with separation between raw_copy_to_user() and
+unsafe_copy_to_user()?  After all, __copy_to_user() also has only few
+callers, most of them in arch/*
+
+I'll take a look into that tomorrow - half-asleep right now...
