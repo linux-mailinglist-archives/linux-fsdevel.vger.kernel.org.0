@@ -2,86 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D881CDF04
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 12:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C853CCDFB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 12:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfJGKQV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 06:16:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58894 "EHLO mx1.suse.de"
+        id S1727561AbfJGKyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 06:54:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52556 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727755AbfJGKQV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 06:16:21 -0400
+        id S1727317AbfJGKyg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Oct 2019 06:54:36 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 688B2B206;
-        Mon,  7 Oct 2019 10:16:18 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E6A461E4813; Fri,  4 Oct 2019 09:51:00 +0200 (CEST)
-Date:   Fri, 4 Oct 2019 09:51:00 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: Lease semantic proposal
-Message-ID: <20191004075100.GA12412@quack2.suse.cz>
-References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
- <20190923222620.GC16973@dread.disaster.area>
- <20190925234602.GB12748@iweiny-DESK2.sc.intel.com>
- <20190930084233.GO16973@dread.disaster.area>
+        by mx1.suse.de (Postfix) with ESMTP id A8ACEAD79;
+        Mon,  7 Oct 2019 10:54:33 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190930084233.GO16973@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 07 Oct 2019 12:54:32 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Jason Baron <jbaron@akamai.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, hev <r@hev.cc>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Eric Wong <e@80x24.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sridhar Samudrala <sridhar.samudrala@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v4] fs/epoll: Remove unnecessary wakeups of nested
+ epoll that in ET mode
+In-Reply-To: <9ca02c9b-85b7-dced-9c82-1fc453c49b8a@akamai.com>
+References: <20190925015603.10939-1-r@hev.cc>
+ <20190927192915.6ec24ad706258de99470a96e@linux-foundation.org>
+ <c0a96dd89d0a361d8061b8c356b57ed2@suse.de>
+ <9ca02c9b-85b7-dced-9c82-1fc453c49b8a@akamai.com>
+Message-ID: <9a82925ff7dfc314d36b3d36e54316a8@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 30-09-19 18:42:33, Dave Chinner wrote:
-> On Wed, Sep 25, 2019 at 04:46:03PM -0700, Ira Weiny wrote:
-> > On Tue, Sep 24, 2019 at 08:26:20AM +1000, Dave Chinner wrote:
-> > > Hence, AFIACT, the above definition of a F_RDLCK|F_LAYOUT lease
-> > > doesn't appear to be compatible with the semantics required by
-> > > existing users of layout leases.
-> > 
-> > I disagree.  Other than the addition of F_UNBREAK, I think this is consistent
-> > with what is currently implemented.  Also, by exporting all this to user space
-> > we can now write tests for it independent of the RDMA pinning.
+On 2019-10-03 18:13, Jason Baron wrote:
+> On 9/30/19 7:55 AM, Roman Penyaev wrote:
+>> On 2019-09-28 04:29, Andrew Morton wrote:
+>>> On Wed, 25 Sep 2019 09:56:03 +0800 hev <r@hev.cc> wrote:
+>>> 
+>>>> From: Heiher <r@hev.cc>
+>>>> 
+>>>> Take the case where we have:
+>>>> 
+>>>>         t0
+>>>>          | (ew)
+>>>>         e0
+>>>>          | (et)
+>>>>         e1
+>>>>          | (lt)
+>>>>         s0
+>>>> 
+>>>> t0: thread 0
+>>>> e0: epoll fd 0
+>>>> e1: epoll fd 1
+>>>> s0: socket fd 0
+>>>> ew: epoll_wait
+>>>> et: edge-trigger
+>>>> lt: level-trigger
+>>>> 
+>>>> We only need to wakeup nested epoll fds if something has been queued
+>>>> to the
+>>>> overflow list, since the ep_poll() traverses the rdllist during
+>>>> recursive poll
+>>>> and thus events on the overflow list may not be visible yet.
+>>>> 
+>>>> Test code:
+>>> 
+>>> Look sane to me.  Do you have any performance testing results which
+>>> show a benefit?
+>>> 
+>>> epoll maintainership isn't exactly a hive of activity nowadays :(
+>>> Roman, would you please have time to review this?
+>> 
+>> So here is my observation: current patch does not fix the described
+>> problem (double wakeup) for the case, when new event comes exactly
+>> to the ->ovflist.  According to the patch this is the desired 
+>> intention:
+>> 
+>>    /*
+>>     * We only need to wakeup nested epoll fds if something has been 
+>> queued
+>>     * to the overflow list, since the ep_poll() traverses the rdllist
+>>     * during recursive poll and thus events on the overflow list may 
+>> not be
+>>     * visible yet.
+>>     */
+>>     if (nepi != NULL)
+>>        pwake++;
+>> 
+>>     ....
+>> 
+>>     if (pwake == 2)
+>>        ep_poll_safewake(&ep->poll_wait);
+>> 
+>> 
+>> but this actually means that we repeat the same behavior (double 
+>> wakeup)
+>> but only for the case, when event comes to the ->ovflist.
+>> 
+>> How to reproduce? Can be easily done (ok, not so easy but it is 
+>> possible
+>> to try): to the given userspace test we need to add one more socket 
+>> and
+>> immediately fire the event:
+>> 
+>>     e.events = EPOLLIN;
+>>     if (epoll_ctl(efd[1], EPOLL_CTL_ADD, s2fd[0], &e) < 0)
+>>        goto out;
+>> 
+>>     /*
+>>      * Signal any fd to let epoll_wait() to call ep_scan_ready_list()
+>>      * in order to "catch" it there and add new event to ->ovflist.
+>>      */
+>>      if (write(s2fd[1], "w", 1) != 1)
+>>         goto out;
+>> 
+>> That is done in order to let the following epoll_wait() call to invoke
+>> ep_scan_ready_list(), where we can "catch" and insert new event 
+>> exactly
+>> to the ->ovflist. In order to insert event exactly in the correct list
+>> I introduce artificial delay.
+>> 
+>> Modified test and kernel patch is below.  Here is the output of the
+>> testing tool with some debug lines from kernel:
+>> 
+>>   # ~/devel/test/edge-bug
+>>   [   59.263178] ### sleep 2
+>>   >> write to sock
+>>   [   61.318243] ### done sleep
+>>   [   61.318991] !!!!!!!!!!! ep_poll_safewake(&ep->poll_wait);
+>> events_in_rdllist=1, events_in_ovflist=1
+>>   [   61.321204] ### sleep 2
+>>   [   63.398325] ### done sleep
+>>   error: What?! Again?!
+>> 
+>> First epoll_wait() call (ep_scan_ready_list()) observes 2 events
+>> (see "!!!!!!!!!!! ep_poll_safewake" output line), exactly what we
+>> wanted to achieve, so eventually ep_poll_safewake() is called again
+>> which leads to double wakeup.
+>> 
+>> In my opinion current patch as it is should be dropped, it does not
+>> fix the described problem but just hides it.
+>> 
+>> --
+
+Hi Jason,
+
 > 
-> The current usage of F_RDLCK | F_LAYOUT by the pNFS code allows
-> layout changes to occur to the file while the layout lease is held.
+> Yes, there are 2 wakeups in the test case you describe, but if the
+> second event (write to s1fd) gets queued after the first call to
+> epoll_wait(), we are going to get 2 wakeups anyways.
 
-I remember you saying that in the past conversations. But I agree with Ira
-that I don't see where in the code this would be implemented. AFAICS
-break_layout() called from xfs_break_leased_layouts() simply breaks all the
-leases with F_LAYOUT set attached to the inode... Now I'm not any expert on
-file leases but what am I missing?
+Yes, exactly, for this reason I print out the number of events observed
+on first wait, there should be 1 (rdllist) and 1 (ovflist), otherwise
+this is another case, when second event comes exactly after first
+wait, which is legitimate wakeup.
 
-> IOWs, your definition of F_RDLCK | F_LAYOUT not being allowed
-> to change the is in direct contradition to existing users.
+> So yes, there may
+> be a slightly bigger window with this patch for 2 wakeups, but its 
+> small
+> and I tried to be conservative with the patch - I'd rather get an
+> occasional 2nd wakeup then miss one. Trying to debug missing wakeups
+> isn't always fun...
 > 
-> I've said this several times over the past few months now: shared
-> layout leases must allow layout modifications to be made. Only
-> allowing an exclusive layout lease to modify the layout rules out
-> many potential use cases for direct data placement and p2p DMA
-> applications, not to mention conflicts with the existing pNFS usage.
-> Layout leases need to support more than just RDMA, and tailoring the
-> API to exactly the immediate needs of RDMA is just going to make it
-> useless for anything else.
+> That said, the reason for propagating events that end up on the 
+> overflow
+> list was to prevent the race of the wakee not seeing events because 
+> they
+> were still on the overflow list. In the testcase, imagine if there was 
+> a
+> thread doing epoll_wait() on efd[0], and then a write happends on s1fd.
+> I thought it was possible then that a 2nd thread doing epoll_wait() on
+> efd[1], wakes up, checks efd[0] and sees no events because they are
+> still potentially on the overflow list. However, I think that case is
+> not possible because the thread doing epoll_wait() on efd[0] is going 
+> to
+> have the ep->mtx, and thus when the thread wakes up on efd[1], its 
+> going
+> to have to be ordered because its also grabbing the ep->mtx associated
+> with efd[0].
+> 
+> So I think its safe to do the following if we want to go further than
+> the proposed patch, which is what you suggested earlier in the thread
+> (minus keeping the wakeup on ep->wq).
 
-I agree we should not tailor the layout lease definition to just RDMA
-usecase. But let's talk about the semantics once our confusion about how
-pNFS currently uses layout leases is clear out.
+Then I do not understand why we need to keep ep->wq wakeup?
+@wq and @poll_wait are almost the same with only one difference:
+@wq is used when you sleep on it inside epoll_wait() and the other
+is used when you nest epoll fd inside epoll fd.  Either you wake
+both up either you don't this at all.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+ep_poll_callback() does wakeup explicitly, ep_insert() and ep_modify()
+do wakeup explicitly, so what are the cases when we need to do wakeups
+from ep_scan_ready_list()?
+
+I would still remove the whole branch:
+
+
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -671,7 +671,6 @@ static __poll_t ep_scan_ready_list(struct eventpoll 
+*ep,
+                               void *priv, int depth, bool ep_locked)
+  {
+         __poll_t res;
+-       int pwake = 0;
+         struct epitem *epi, *nepi;
+         LIST_HEAD(txlist);
+
+@@ -738,26 +737,11 @@ static __poll_t ep_scan_ready_list(struct 
+eventpoll *ep,
+          */
+         list_splice(&txlist, &ep->rdllist);
+         __pm_relax(ep->ws);
+-
+-       if (!list_empty(&ep->rdllist)) {
+-               /*
+-                * Wake up (if active) both the eventpoll wait list and
+-                * the ->poll() wait list (delayed after we release the 
+lock).
+-                */
+-               if (waitqueue_active(&ep->wq))
+-                       wake_up(&ep->wq);
+-               if (waitqueue_active(&ep->poll_wait))
+-                       pwake++;
+-       }
+         write_unlock_irq(&ep->lock);
+
+         if (!ep_locked)
+                 mutex_unlock(&ep->mtx);
+
+-       /* We have to call this outside the lock */
+-       if (pwake)
+-               ep_poll_safewake(&ep->poll_wait);
+-
+         return res;
+  }
+
+--
+Roman
+
+
+
