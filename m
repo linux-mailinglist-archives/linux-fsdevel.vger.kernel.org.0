@@ -2,77 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7D9DCE7F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 17:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 654A0CE8F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 18:19:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbfJGPk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 11:40:26 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:54342 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728288AbfJGPkZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:40:25 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-223-2sMXyru-MEeYMtfSCrrM3w-1; Mon, 07 Oct 2019 16:40:21 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 7 Oct 2019 16:40:21 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 7 Oct 2019 16:40:21 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-CC:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-Thread-Topic: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-Thread-Index: AQHVfL0BUpJ/upywWEKRtOjvaDvCEKdPT9ew
-Date:   Mon, 7 Oct 2019 15:40:21 +0000
-Message-ID: <c58c2a8a5366409abd4169d10a58196a@AcuMS.aculab.com>
-References: <20191006222046.GA18027@roeck-us.net>
- <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
- <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
- <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net>
- <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
- <20191007012437.GK26530@ZenIV.linux.org.uk>
- <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
- <20191007025046.GL26530@ZenIV.linux.org.uk>
- <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1728436AbfJGQTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 12:19:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45452 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727801AbfJGQTb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Oct 2019 12:19:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 069EDAD3E;
+        Mon,  7 Oct 2019 16:19:29 +0000 (UTC)
+Date:   Mon, 7 Oct 2019 18:19:26 +0200
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com, tj@kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] cgroup, blkcg: prevent dirty inodes to pin dying memory
+ cgroups
+Message-ID: <20191007161925.GA23403@blackbody.suse.cz>
+References: <20191004221104.646711-1-guro@fb.com>
 MIME-Version: 1.0
-X-MC-Unique: 2sMXyru-MEeYMtfSCrrM3w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
+Content-Disposition: inline
+In-Reply-To: <20191004221104.646711-1-guro@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBGcm9tOiBMaW51cyBUb3J2YWxkcw0KPiBTZW50OiAwNyBPY3RvYmVyIDIwMTkgMDQ6MTINCi4u
-Lg0KPiBJbiB0aGlzIGNhc2UsIEkgdGhpbmsgaXQncyBkb25lIGEgZmV3IGNhbGxlcnMgdXAgaW4g
-aTkxNV9nZW1fcHJlYWRfaW9jdGwoKToNCj4gDQo+ICAgICAgICAgaWYgKCFhY2Nlc3Nfb2sodTY0
-X3RvX3VzZXJfcHRyKGFyZ3MtPmRhdGFfcHRyKSwNCj4gICAgICAgICAgICAgICAgICAgICAgICBh
-cmdzLT5zaXplKSkNCj4gICAgICAgICAgICAgICAgIHJldHVybiAtRUZBVUxUOw0KPiANCj4gYnV0
-IGhvbmVzdGx5LCB0cnlpbmcgdG8gb3B0aW1pemUgYXdheSBhbm90aGVyICJhY2Nlc3Nfb2soKSIg
-aXMganVzdA0KPiBub3Qgd29ydGggaXQuIEknZCByYXRoZXIgaGF2ZSBhbiBleHRyYSBvbmUgdGhh
-biBtaXNzIG9uZS4NCg0KWW91IGRvbid0IHJlYWxseSB3YW50IGFuIGV4dHJhIGFjY2Vzc19vaygp
-IGZvciBldmVyeSAnd29yZCcgb2YgYSBjb3B5Lg0KU29tZSBjb3BpZXMgaGF2ZSB0byBiZSBkb25l
-IGEgd29yZCBhdCBhIHRpbWUuDQoNCkFuZCB0aGUgY2hlY2tzIHNvbWVvbmUgYWRkZWQgdG8gY29w
-eV90by9mcm9tX3VzZXIoKSB0byBkZXRlY3Qga2VybmVsDQpidWZmZXIgb3ZlcnJ1bnMgbXVzdCBr
-aWxsIHBlcmZvcm1hbmNlIHdoZW4gdGhlIGJ1ZmZlcnMgYXJlIHdheSBkb3duIHRoZSBzdGFjaw0K
-b3IgaW4ga21hbGxvYygpZWQgc3BhY2UuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJl
-c3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsx
-IDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Oct 04, 2019 at 03:11:04PM -0700, Roman Gushchin <guro@fb.com> wrote:
+> An inode which is getting dirty for the first time is associated
+> with the wb structure (look at __inode_attach_wb()). It can later
+> be switched to another wb under some conditions (e.g. some other
+> cgroup is writing a lot of data to the same inode), but generally
+> stays associated up to the end of life of the inode structure.
+What about dissociating the wb structure from the charged cgroup after
+the particular writeback finished? (I understand from your description
+that wb structure outlives the dirtier and is kept due to other inode
+(read) users, not sure if that's correct assumption.)
+
+Michal
+
+--VS++wcV0S1rZb1Fb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl2bZYYACgkQia1+riC5
+qSgwXw/+Jt1YK9cwMYaKpGSYTvnZ7Gfx4QQ08b3nHeqwiAdaYqDv4KpZHcEBL4bY
+XRyuxPlOHGhhAaZm+OvpR1Daix3FGb1LIaHwnagJ/6Uwu8lOoJXaKMmOh/GNLtgS
+7jtLPWL/S9mSvvUlzNCzTZG0AFgvS2VdUYVb7oDRaDZs8eIffRulCIu5B2aDwvKo
+2WWM8TAP2/ftiK8RUxOitGAi2upzk72dD2bg+7H0ffQL0wvCTCNEWAw5LUCL4cJF
++tpJPWkMAObCgGVfUNUx0KQaba0raoX1XM6W+eWWQVEzdTaR04MT7Y40qodSZDM1
+ub7r6RGNAGitKQgoGKH5EE2rLhMcn4NP3qpNzkKAbaM+mV4+XcJEq6SnvwJwNtLW
+xQFKWKQZqV049kLct3O+c1JpKGuZCKkXrc1+iYw4cIXwkfScyKQuPTBvavGZNpyJ
+g+VDOsHUFI7FwYUPfL+HdtMTVdR2kTiFF3COLzhlSdH7L9DcFr4Usa8Q4BHZqL6G
+d84ZbQmBAztcQYO3Br547otZ8zdEEeBkkbyzhYzEc7lpQxI6CYTavIwR05EnHecI
+gzulHK2aLikIpgokf3k4QcF7BbVblqyIdPIES3ZDR0MWSiWE+boHXYdO8JhK1AAw
+GXPuJQH7ibuUCHPu3+iZ/jlubKFvs4h4IBKIpqgbV17iKvpdwJQ=
+=PXQV
+-----END PGP SIGNATURE-----
+
+--VS++wcV0S1rZb1Fb--
