@@ -2,32 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 629DACE390
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 15:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39083CE464
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 15:57:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbfJGN2W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 09:28:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39098 "EHLO mx1.suse.de"
+        id S1728162AbfJGN4q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 09:56:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54754 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727838AbfJGN2V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:28:21 -0400
+        id S1727324AbfJGN4p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Oct 2019 09:56:45 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 71A85AC90;
-        Mon,  7 Oct 2019 13:28:18 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id DBBB3AE12;
+        Mon,  7 Oct 2019 13:56:42 +0000 (UTC)
 Subject: Re: [bug, 5.2.16] kswapd/compaction null pointer crash [was Re:
  xfs_inode not reclaimed/memory leak on 5.2.16]
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Florian Weimer <fw@deneb.enyo.de>,
         Mel Gorman <mgorman@techsingularity.net>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 References: <87pnji8cpw.fsf@mid.deneb.enyo.de>
  <20190930085406.GP16973@dread.disaster.area>
  <87o8z1fvqu.fsf@mid.deneb.enyo.de>
  <20190930211727.GQ16973@dread.disaster.area>
  <96023250-6168-3806-320a-a3468f1cd8c9@suse.cz>
  <87lfu4i79z.fsf@mid.deneb.enyo.de>
-From:   Vlastimil Babka <vbabka@suse.cz>
+ <2af04718-d5cb-1bb1-a789-be017f2e2df0@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
  mQINBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
  KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
@@ -88,89 +89,58 @@ Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
  5ZFJyfGsOiNUcMoO/17FO4EBxSDP3FDLllpuzlFD7SXkfJaMWYmXIlO0jLzdfwfcnDzBbPwO
  hBM8hvtsyq8lq8vJOxv6XD6xcTtj5Az8t2JjdUX6SF9hxJpwhBU0wrCoGDkWp4Bbv6jnF7zP
  Nzftr4l8RuJoywDIiJpdaNpSlXKpj/K6KrnyAI/joYc7
-Message-ID: <2af04718-d5cb-1bb1-a789-be017f2e2df0@suse.cz>
-Date:   Mon, 7 Oct 2019 15:28:17 +0200
+Message-ID: <1f0f2849-d90e-6563-0034-07ba80f8ba2f@suse.cz>
+Date:   Mon, 7 Oct 2019 15:56:41 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.0
 MIME-Version: 1.0
-In-Reply-To: <87lfu4i79z.fsf@mid.deneb.enyo.de>
+In-Reply-To: <2af04718-d5cb-1bb1-a789-be017f2e2df0@suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/1/19 9:40 PM, Florian Weimer wrote:
-> * Vlastimil Babka:
-> 
->> On 9/30/19 11:17 PM, Dave Chinner wrote:
->>> On Mon, Sep 30, 2019 at 09:07:53PM +0200, Florian Weimer wrote:
->>>> * Dave Chinner:
->>>>
->>>>> On Mon, Sep 30, 2019 at 09:28:27AM +0200, Florian Weimer wrote:
->>>>>> Simply running “du -hc” on a large directory tree causes du to be
->>>>>> killed because of kernel paging request failure in the XFS code.
->>>>>
->>>>> dmesg output? if the system was still running, then you might be
->>>>> able to pull the trace from syslog. But we can't do much without
->>>>> knowing what the actual failure was....
->>>>
->>>> Huh.  I actually have something in syslog:
->>>>
->>>> [ 4001.238411] BUG: kernel NULL pointer dereference, address:
->>>> 0000000000000000
->>>> [ 4001.238415] #PF: supervisor read access in kernel mode
->>>> [ 4001.238417] #PF: error_code(0x0000) - not-present page
->>>> [ 4001.238418] PGD 0 P4D 0 
->>>> [ 4001.238420] Oops: 0000 [#1] SMP PTI
->>>> [ 4001.238423] CPU: 3 PID: 143 Comm: kswapd0 Tainted: G I 5.2.16fw+
->>>> #1
->>>> [ 4001.238424] Hardware name: System manufacturer System Product
->>>> Name/P6X58D-E, BIOS 0701 05/10/2011
->>>> [ 4001.238430] RIP: 0010:__reset_isolation_pfn+0x27f/0x3c0
->>>
->>> That's memory compaction code it's crashed in.
->>>
->>>> [ 4001.238432] Code: 44 c6 48 8b 00 a8 10 74 bc 49 8b 16 48 89 d0
->>>> 48 c1 ea 35 48 8b 14 d7 48 c1 e8 2d 48 85 d2 74 0a 0f b6 c0 48 c1
->>>> e0 04 48 01 c2 <48> 8b 02 4c 89 f2 41 b8 01 00 00 00 31 f6 b9 03 00
->>>> 00 00 4c 89 f7
+On 10/7/19 3:28 PM, Vlastimil Babka wrote:
+> On 10/1/19 9:40 PM, Florian Weimer wrote:
+>> * Vlastimil Babka:
 >>
->> Tried to decode it, but couldn't match it to source code, my version of
->> compiled code is too different. Would it be possible to either send
->> mm/compaction.o from the matching build, or output of 'objdump -d -l'
->> for the __reset_isolation_pfn function?
+>>
+>> See below.  I don't have debuginfo for this build, and the binary does
+>> not reproduce for some reason.  Due to the heavy inlining, it might be
+>> quite hard to figure out what's going on.
 > 
-> See below.  I don't have debuginfo for this build, and the binary does
-> not reproduce for some reason.  Due to the heavy inlining, it might be
-> quite hard to figure out what's going on.
+> Thanks, but I'm still not able to "decompile" that in my head.
 
-Thanks, but I'm still not able to "decompile" that in my head.
+While staring at the code, I think I found two probably unrelated bugs.
+One is that pfn and page might be desynced when zone starts in the middle
+of pageblock, as the max() is only applied to page and not pfn. But that
+only effectively affects the later pfn_valid_within() checks, which should
+be always true on x86.
 
-> I've switched to kernel builds with debuginfo from now on.  I'm
-> surprised that it's not the default.
+The second is that "end of pageblock online and valid" should refer to
+the last pfn of pageblock, not first pfn of next pageblocks. Otherwise we
+might return false needlessly. Mel, what do you think?
 
-Let's see if you can reproduce it with that.
-
-However, I've noticed at least something weird:
-
->      37e:	49 8b 16             	mov    (%r14),%rdx
->      381:	48 89 d0             	mov    %rdx,%rax
->      384:	48 c1 ea 35          	shr    $0x35,%rdx
->      388:	48 8b 14 d7          	mov    (%rdi,%rdx,8),%rdx
->      38c:	48 c1 e8 2d          	shr    $0x2d,%rax
->      390:	48 85 d2             	test   %rdx,%rdx
->      393:	74 0a                	je     39f <__reset_isolation_pfn+0x27f>
-
-IIUC, this will jump to 39f when rdx is zero.
-
->      395:	0f b6 c0             	movzbl %al,%eax
->      398:	48 c1 e0 04          	shl    $0x4,%rax
->      39c:	48 01 c2             	add    %rax,%rdx
->      39f:	48 8b 02             	mov    (%rdx),%rax
-
-And this is where we crash because rdx is zero. So the test+branch might
-have sent us directly here to crash. Sounds like an inverted condition
-somewhere? Or possibly a result of optimizations.
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -270,14 +270,15 @@ __reset_isolation_pfn(struct zone *zone, unsigned long pfn, bool check_source,
+ 
+        /* Ensure the start of the pageblock or zone is online and valid */
+        block_pfn = pageblock_start_pfn(pfn);
+-       block_page = pfn_to_online_page(max(block_pfn, zone->zone_start_pfn));
++       block_pfn = max(block_pfn, zone->zone_start_pfn);
++       block_page = pfn_to_online_page(block_pfn);
+        if (block_page) {
+                page = block_page;
+                pfn = block_pfn;
+        }
+ 
+        /* Ensure the end of the pageblock or zone is online and valid */
+-       block_pfn += pageblock_nr_pages;
++       block_pfn = pageblock_end_pfn(pfn) - 1;
+        block_pfn = min(block_pfn, zone_end_pfn(zone) - 1);
+        end_page = pfn_to_online_page(block_pfn);
+        if (!end_page)
