@@ -2,424 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA88BCEC19
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 20:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AD98CEC72
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 21:07:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbfJGSoe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 14:44:34 -0400
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:55120 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728187AbfJGSoe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:44:34 -0400
-Received: from pps.filterd (m0122330.ppops.net [127.0.0.1])
-        by mx0b-00190b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x97IffHx013853;
-        Mon, 7 Oct 2019 19:44:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=jan2016.eng;
- bh=FCX+uAASP1/oXVLDsHJBiUXMrjY8Na1tFbvXbs60Szk=;
- b=QDnyGDs3Ew4z0V5JkQfpkS2UmjjNiQDH1wxEn8075dX8H2XLF5TUTIWEXhqlc6NXvuXY
- 0qyM1RzbefSf8oL/UiD3nfGqJVmIeLQcfz24izaCN6gMZA1ki/mxIe60Xav5ICwKCiqK
- ntfYm8/EYbsbscbPqx5dT9pkCfxm2cQG5Z9GQjDLrKifKTZICHNAU+9UmUdZdUEw59Fs
- zJE3s/F4vnk3qSNIQG0wFUjyOsLhTkGt3SBs3T1XcCZi8na3+VQWqxksNoshCafmEras
- E+Ir6wilNnaN/NeFbV1oLcsI1SRJrg3YUGMpyJTOSUdQeiYLQ6YmlNGCBoY8zotGi+Ut aw== 
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
-        by mx0b-00190b01.pphosted.com with ESMTP id 2vejtv2gt8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Oct 2019 19:44:19 +0100
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-        by prod-mail-ppoint1.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x97IWVR4026465;
-        Mon, 7 Oct 2019 14:44:18 -0400
-Received: from prod-mail-relay10.akamai.com ([172.27.118.251])
-        by prod-mail-ppoint1.akamai.com with ESMTP id 2vepgx0wvj-1;
-        Mon, 07 Oct 2019 14:44:18 -0400
-Received: from [172.29.170.83] (bos-lpjec.kendall.corp.akamai.com [172.29.170.83])
-        by prod-mail-relay10.akamai.com (Postfix) with ESMTP id 957431FCAA;
-        Mon,  7 Oct 2019 18:44:18 +0000 (GMT)
-Subject: Re: [PATCH RESEND v4] fs/epoll: Remove unnecessary wakeups of nested
- epoll that in ET mode
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, hev <r@hev.cc>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Eric Wong <e@80x24.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20190925015603.10939-1-r@hev.cc>
- <20190927192915.6ec24ad706258de99470a96e@linux-foundation.org>
- <c0a96dd89d0a361d8061b8c356b57ed2@suse.de>
- <9ca02c9b-85b7-dced-9c82-1fc453c49b8a@akamai.com>
- <9a82925ff7dfc314d36b3d36e54316a8@suse.de>
- <9ceee722-d2a8-b182-c95a-e7a873b08ca1@akamai.com>
- <cda953c3fec34fe14b231c30c75e57a1@suse.de>
-From:   Jason Baron <jbaron@akamai.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jbaron@akamai.com; prefer-encrypt=mutual; keydata=
- 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
- JeQ7iQ==
-Message-ID: <56b7c2c2-debc-4e62-904e-f2f1c2e65293@akamai.com>
-Date:   Mon, 7 Oct 2019 14:43:52 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728632AbfJGTHw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 15:07:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728187AbfJGTHw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Oct 2019 15:07:52 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC8B2206C2;
+        Mon,  7 Oct 2019 19:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570475271;
+        bh=1d9hqI3IklouHPR1dXFdr/dQUb8bSDddpHAyOJnKXzY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=sSCk8niSRCGVtk0J795EZwnjtInzPeorf3roXvwowDk49e70dHkEU9skeZ7Yz5iAg
+         yW9/DmjD3b8ZObW0rqhTDh/D8xlNxBdTzQ5kAftLt9m5JWfAdHxj6iRta80gLmNBr6
+         sEgOnQnTJQmnLPCfjM1pITtr3tJpe0x04ePqJg5s=
+Date:   Mon, 7 Oct 2019 12:07:49 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     syzbot <syzbot+3031f712c7ad5dd4d926@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: WARNING in filldir64
+Message-ID: <20191007190747.GA16653@gmail.com>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+        syzbot <syzbot+3031f712c7ad5dd4d926@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 MIME-Version: 1.0
-In-Reply-To: <cda953c3fec34fe14b231c30c75e57a1@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-07_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910070162
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-07_03:2019-10-07,2019-10-07 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 suspectscore=0
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910070163
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000006b7bfb059452e314@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+[+Linus]
 
-
-On 10/7/19 2:30 PM, Roman Penyaev wrote:
-> On 2019-10-07 18:42, Jason Baron wrote:
->> On 10/7/19 6:54 AM, Roman Penyaev wrote:
->>> On 2019-10-03 18:13, Jason Baron wrote:
->>>> On 9/30/19 7:55 AM, Roman Penyaev wrote:
->>>>> On 2019-09-28 04:29, Andrew Morton wrote:
->>>>>> On Wed, 25 Sep 2019 09:56:03 +0800 hev <r@hev.cc> wrote:
->>>>>>
->>>>>>> From: Heiher <r@hev.cc>
->>>>>>>
->>>>>>> Take the case where we have:
->>>>>>>
->>>>>>>         t0
->>>>>>>          | (ew)
->>>>>>>         e0
->>>>>>>          | (et)
->>>>>>>         e1
->>>>>>>          | (lt)
->>>>>>>         s0
->>>>>>>
->>>>>>> t0: thread 0
->>>>>>> e0: epoll fd 0
->>>>>>> e1: epoll fd 1
->>>>>>> s0: socket fd 0
->>>>>>> ew: epoll_wait
->>>>>>> et: edge-trigger
->>>>>>> lt: level-trigger
->>>>>>>
->>>>>>> We only need to wakeup nested epoll fds if something has been queued
->>>>>>> to the
->>>>>>> overflow list, since the ep_poll() traverses the rdllist during
->>>>>>> recursive poll
->>>>>>> and thus events on the overflow list may not be visible yet.
->>>>>>>
->>>>>>> Test code:
->>>>>>
->>>>>> Look sane to me.  Do you have any performance testing results which
->>>>>> show a benefit?
->>>>>>
->>>>>> epoll maintainership isn't exactly a hive of activity nowadays :(
->>>>>> Roman, would you please have time to review this?
->>>>>
->>>>> So here is my observation: current patch does not fix the described
->>>>> problem (double wakeup) for the case, when new event comes exactly
->>>>> to the ->ovflist.  According to the patch this is the desired
->>>>> intention:
->>>>>
->>>>>    /*
->>>>>     * We only need to wakeup nested epoll fds if something has been
->>>>> queued
->>>>>     * to the overflow list, since the ep_poll() traverses the rdllist
->>>>>     * during recursive poll and thus events on the overflow list may
->>>>> not be
->>>>>     * visible yet.
->>>>>     */
->>>>>     if (nepi != NULL)
->>>>>        pwake++;
->>>>>
->>>>>     ....
->>>>>
->>>>>     if (pwake == 2)
->>>>>        ep_poll_safewake(&ep->poll_wait);
->>>>>
->>>>>
->>>>> but this actually means that we repeat the same behavior (double
->>>>> wakeup)
->>>>> but only for the case, when event comes to the ->ovflist.
->>>>>
->>>>> How to reproduce? Can be easily done (ok, not so easy but it is
->>>>> possible
->>>>> to try): to the given userspace test we need to add one more socket
->>>>> and
->>>>> immediately fire the event:
->>>>>
->>>>>     e.events = EPOLLIN;
->>>>>     if (epoll_ctl(efd[1], EPOLL_CTL_ADD, s2fd[0], &e) < 0)
->>>>>        goto out;
->>>>>
->>>>>     /*
->>>>>      * Signal any fd to let epoll_wait() to call ep_scan_ready_list()
->>>>>      * in order to "catch" it there and add new event to ->ovflist.
->>>>>      */
->>>>>      if (write(s2fd[1], "w", 1) != 1)
->>>>>         goto out;
->>>>>
->>>>> That is done in order to let the following epoll_wait() call to invoke
->>>>> ep_scan_ready_list(), where we can "catch" and insert new event
->>>>> exactly
->>>>> to the ->ovflist. In order to insert event exactly in the correct list
->>>>> I introduce artificial delay.
->>>>>
->>>>> Modified test and kernel patch is below.  Here is the output of the
->>>>> testing tool with some debug lines from kernel:
->>>>>
->>>>>   # ~/devel/test/edge-bug
->>>>>   [   59.263178] ### sleep 2
->>>>>   >> write to sock
->>>>>   [   61.318243] ### done sleep
->>>>>   [   61.318991] !!!!!!!!!!! ep_poll_safewake(&ep->poll_wait);
->>>>> events_in_rdllist=1, events_in_ovflist=1
->>>>>   [   61.321204] ### sleep 2
->>>>>   [   63.398325] ### done sleep
->>>>>   error: What?! Again?!
->>>>>
->>>>> First epoll_wait() call (ep_scan_ready_list()) observes 2 events
->>>>> (see "!!!!!!!!!!! ep_poll_safewake" output line), exactly what we
->>>>> wanted to achieve, so eventually ep_poll_safewake() is called again
->>>>> which leads to double wakeup.
->>>>>
->>>>> In my opinion current patch as it is should be dropped, it does not
->>>>> fix the described problem but just hides it.
->>>>>
->>>>> -- 
->>>
->>> Hi Jason,
->>>
->>>>
->>>> Yes, there are 2 wakeups in the test case you describe, but if the
->>>> second event (write to s1fd) gets queued after the first call to
->>>> epoll_wait(), we are going to get 2 wakeups anyways.
->>>
->>> Yes, exactly, for this reason I print out the number of events observed
->>> on first wait, there should be 1 (rdllist) and 1 (ovflist), otherwise
->>> this is another case, when second event comes exactly after first
->>> wait, which is legitimate wakeup.
->>>
->>>> So yes, there may
->>>> be a slightly bigger window with this patch for 2 wakeups, but its
->>>> small
->>>> and I tried to be conservative with the patch - I'd rather get an
->>>> occasional 2nd wakeup then miss one. Trying to debug missing wakeups
->>>> isn't always fun...
->>>>
->>>> That said, the reason for propagating events that end up on the
->>>> overflow
->>>> list was to prevent the race of the wakee not seeing events because
->>>> they
->>>> were still on the overflow list. In the testcase, imagine if there
->>>> was a
->>>> thread doing epoll_wait() on efd[0], and then a write happends on s1fd.
->>>> I thought it was possible then that a 2nd thread doing epoll_wait() on
->>>> efd[1], wakes up, checks efd[0] and sees no events because they are
->>>> still potentially on the overflow list. However, I think that case is
->>>> not possible because the thread doing epoll_wait() on efd[0] is
->>>> going to
->>>> have the ep->mtx, and thus when the thread wakes up on efd[1], its
->>>> going
->>>> to have to be ordered because its also grabbing the ep->mtx associated
->>>> with efd[0].
->>>>
->>>> So I think its safe to do the following if we want to go further than
->>>> the proposed patch, which is what you suggested earlier in the thread
->>>> (minus keeping the wakeup on ep->wq).
->>>
->>> Then I do not understand why we need to keep ep->wq wakeup?
->>> @wq and @poll_wait are almost the same with only one difference:
->>> @wq is used when you sleep on it inside epoll_wait() and the other
->>> is used when you nest epoll fd inside epoll fd.  Either you wake
->>> both up either you don't this at all.
->>>
->>> ep_poll_callback() does wakeup explicitly, ep_insert() and ep_modify()
->>> do wakeup explicitly, so what are the cases when we need to do wakeups
->>> from ep_scan_ready_list()?
->>
->> Hi Roman,
->>
->> So the reason I was saying not to drop the ep->wq wakeup was that I was
->> thinking about a usecase where you have multi-threads say thread A and
->> thread B which are doing epoll_wait() on the same epfd. Now, the threads
->> both call epoll_wait() and are added as exclusive to ep->wq. Now a bunch
->> of events happen and thread A is woken up. However, thread A may only
->> process a subset of the events due to its 'maxevents' parameter. In that
->> case, I was thinking that the wakeup on ep->wq might be helpful, because
->> in the absence of subsequent events, thread B can now start processing
->> the rest, instead of waiting for the next event to be queued.
->>
->> However, I was thinking about the state of things before:
->> 86c0517 fs/epoll: deal with wait_queue only once
->>
->> Before that patch, thread A would have been removed from eq->wq before
->> the wakeup call, thus waking up thread B. However, now that thread A
->> stays on the queue during the call to ep_send_events(), I believe the
->> wakeup would only target thread A, which doesn't help since its already
->> checking for events. So given the state of things I think you are right
->> in that its not needed. However, I wonder if not removing from the
->> ep->wq affects the multi-threaded case I described. Its been around
->> since 5.0, so probably not, but it would be a more subtle performance
->> difference.
+On Mon, Oct 07, 2019 at 07:30:07AM -0700, syzbot wrote:
+> Hello,
 > 
-> Now I understand what you mean. You want to prevent "idling" of events,
-> while thread A is busy with the small portion of events (portion is equal
-> to maxevents).  On next iteration thread A will pick up the rest, no
-> doubts,
-> but would be nice to give a chance to thread B immediately to deal with the
-> rest.  Ok, makes sense.
-
-Exactly, I don't believe its racy as is - but it seems like it would be
-good to wakeup other threads that may be waiting. That said, this logic
-was removed as I pointed out. So I'm not sure we need to tie this change
-to the current one - but it may be a nice addition.
-
+> syzbot found the following crash on:
 > 
-> But what if to make this wakeup explicit if we have more events to process?
-> (nothing is tested, just a guess)
+> HEAD commit:    43b815c6 Merge tag 'armsoc-fixes' of git://git.kernel.org/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10721dfb600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fb0b431ccdf08c1c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3031f712c7ad5dd4d926
+> compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> 80fee25776c2fb61e74c1ecb1a523375c2500b69)
 > 
-> @@ -255,6 +255,7 @@ struct ep_pqueue {
->  struct ep_send_events_data {
->         int maxevents;
->         struct epoll_event __user *events;
-> +       bool have_more;
->         int res;
->  };
-> @@ -1783,14 +1768,17 @@ static __poll_t ep_send_events_proc(struct
-> eventpoll *ep, struct list_head *head
->  }
+> Unfortunately, I don't have any reproducer for this crash yet.
 > 
->  static int ep_send_events(struct eventpoll *ep,
-> -                         struct epoll_event __user *events, int maxevents)
-> +                         struct epoll_event __user *events, int maxevents,
-> +                         bool *have_more)
->  {
-> -       struct ep_send_events_data esed;
-> -
-> -       esed.maxevents = maxevents;
-> -       esed.events = events;
-> +       struct ep_send_events_data esed = {
-> +               .maxevents = maxevents,
-> +               .events = events,
-> +       };
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+3031f712c7ad5dd4d926@syzkaller.appspotmail.com
 > 
->         ep_scan_ready_list(ep, ep_send_events_proc, &esed, 0, false);
-> +       *have_more = esed.have_more;
-> +
->         return esed.res;
->  }
-> 
-> @@ -1827,7 +1815,7 @@ static int ep_poll(struct eventpoll *ep, struct
-> epoll_event __user *events,
->  {
->         int res = 0, eavail, timed_out = 0;
->         u64 slack = 0;
-> -       bool waiter = false;
-> +       bool waiter = false, have_more;
->         wait_queue_entry_t wait;
->         ktime_t expires, *to = NULL;
-> 
-> @@ -1927,7 +1915,8 @@ static int ep_poll(struct eventpoll *ep, struct
-> epoll_event __user *events,
->          * more luck.
->          */
->         if (!res && eavail &&
-> -           !(res = ep_send_events(ep, events, maxevents)) && !timed_out)
-> +           !(res = ep_send_events(ep, events, maxevents, &have_more)) &&
-> +           !timed_out)
->                 goto fetch_events;
-> 
->         if (waiter) {
-> @@ -1935,6 +1924,12 @@ static int ep_poll(struct eventpoll *ep, struct
-> epoll_event __user *events,
->                 __remove_wait_queue(&ep->wq, &wait);
->                 spin_unlock_irq(&ep->wq.lock);
->         }
-> +       /*
-> +        * We were not able to process all the events, so immediately
-> +        * wakeup other waiter.
-> +        */
-> +       if (res > 0 && have_more && waitqueue_active(&ep->wq))
-> +               wake_up(&ep->wq);
-> 
->         return res;
->  }
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 10405 at fs/readdir.c:150 verify_dirent_name
+> fs/readdir.c:150 [inline]
+> WARNING: CPU: 1 PID: 10405 at fs/readdir.c:150 filldir64+0x524/0x620
+> fs/readdir.c:356
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 1 PID: 10405 Comm: syz-executor.2 Not tainted 5.4.0-rc1+ #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
+>  panic+0x25c/0x799 kernel/panic.c:220
+>  __warn+0x20e/0x210 kernel/panic.c:581
+>  report_bug+0x1b6/0x2f0 lib/bug.c:195
+>  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+>  do_error_trap+0xd7/0x440 arch/x86/kernel/traps.c:272
+>  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:291
+>  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+> RIP: 0010:verify_dirent_name fs/readdir.c:150 [inline]
+> RIP: 0010:filldir64+0x524/0x620 fs/readdir.c:356
+> Code: 00 00 c7 03 f2 ff ff ff b8 f2 ff ff ff 48 83 c4 60 5b 41 5c 41 5d 41
+> 5e 41 5f 5d c3 e8 55 2c b9 ff 0f 0b eb 07 e8 4c 2c b9 ff <0f> 0b 49 83 c6 24
+> 4c 89 f0 48 c1 e8 03 42 8a 04 20 84 c0 0f 85 b6
+> RSP: 0018:ffff8880a3dc7b88 EFLAGS: 00010283
+> RAX: ffffffff81ba0624 RBX: 000000000000000c RCX: 0000000000040000
+> RDX: ffffc9000a588000 RSI: 00000000000021f1 RDI: 00000000000021f2
+> RBP: ffff8880a3dc7c10 R08: ffffffff81ba0134 R09: 0000000000000004
+> R10: fffffbfff1120afb R11: 0000000000000000 R12: dffffc0000000000
+> R13: ffff8880a3dc7d30 R14: ffff8880a3dc7e88 R15: 000000000000000c
+>  dir_emit include/linux/fs.h:3542 [inline]
+>  __fat_readdir+0x1320/0x1a50 fs/fat/dir.c:677
+>  fat_readdir+0x46/0x50 fs/fat/dir.c:704
+>  iterate_dir+0x2a4/0x520 fs/readdir.c:107
+>  ksys_getdents64+0x1ea/0x3f0 fs/readdir.c:412
+>  __do_sys_getdents64 fs/readdir.c:431 [inline]
+>  __se_sys_getdents64 fs/readdir.c:428 [inline]
+>  __x64_sys_getdents64+0x7a/0x90 fs/readdir.c:428
+>  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x459a59
+> Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f943ff4bc78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459a59
+> RDX: 0000000000001000 RSI: 00000000200005c0 RDI: 0000000000000005
+> RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f943ff4c6d4
+> R13: 00000000004c0533 R14: 00000000004d2c58 R15: 00000000ffffffff
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
 > 
 > 
 
-Ok, yeah I like making it explicit. Looks like you are missing the
-changes to ep_scan_ready_list(), but I think the general approach makes
-sense. Although I really didn't have a test case that motivated this -
-its just was sort of noting this change in behavior while reviewing the
-current change.
+This WARN_ON was added by:
 
-> PS. So what we decide with the original patch?  Remove the whole branch?
-> 
+	commit 8a23eb804ca4f2be909e372cf5a9e7b30ae476cd
+	Author: Linus Torvalds <torvalds@linux-foundation.org>
+	Date:   Sat Oct 5 11:32:52 2019 -0700
 
-For fwiw, I'm ok removing the whole branch as you proposed. And I think
-the above change can go in separately (if we decide we want it). I don't
-think they need to be tied together. I also want to make sure this
-change gets a full linux-next cycle, so I think it should target 5.5 at
-this point.
+	    Make filldir[64]() verify the directory entry filename is valid
 
-Thanks,
+Seems this indicates a corrupt filesystem rather than a kernel bug, so using
+WARN_ON is not appropriate.  It should either use pr_warn_once(), or be silent.
 
--Jason
-
+- Eric
