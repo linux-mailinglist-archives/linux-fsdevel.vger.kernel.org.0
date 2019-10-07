@@ -2,123 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF059CE163
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 14:17:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56A8ECE277
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 15:00:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbfJGMQ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 08:16:59 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35667 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727511AbfJGMQ7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:16:59 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c3so5314162plo.2;
-        Mon, 07 Oct 2019 05:16:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5on/5THDGr0FTVE93D1DksMY2m/icc8L62Rjb72VT6M=;
-        b=ZHHtrWMrMw1ZM3ClD+XwTg1ixkQcdoOd24VVzmMIjMZ0iwW7DrW2BTBj8ZlfuFgNDI
-         65KhfgT00GZWTvwZQmZVZEWePaBc2VGvNh65GNvN0gk/jAEewqx2AQVspN3WZUwRIPtF
-         GQFPBFlSCxfGodFzEaRjgBwWz2ZiP+WkwzREZbqZhS1iyqW/XhwNJ1EM9s5VzB2/EwfE
-         SQAYjaOqWWm95m0kTsRdK8mcEq+6APz2TPBGgQ7ESqo2I6qZNTSdVXkvYoXlPqh8hGeG
-         sLOSoovB5+Y/glJ0nyVxyNWwdK4H6ChhuwjBSgB/vA/cllGDVTYbnKiqgUPNau/YJdK7
-         BjEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5on/5THDGr0FTVE93D1DksMY2m/icc8L62Rjb72VT6M=;
-        b=SqExMujSd+mZeYlfpdgmJUTZ6DnPiSo2IU+x5lc1o14t4yAZEsQzyw/wC6/DkakdMW
-         Dvc1ib4lNM9BcqmVmh7Pud4UlA107xGG0xi09gRN6E8/Jae8kly4goKuPgc6LAanoawn
-         ym2F6PF1SSwM21LTvZLj32HX+HidwfkfO3PxffOC4HW0QqTeJbeA4f2AXVagwBImdRhg
-         9gYJ8/0P26CYYRY5AWf7LfnVK6kbnvnyC+GSoJLIoxWOueYileBMrCRc3QAH7HfYhb5l
-         6Ajc8mRt3baOjBj8AbSeoUHbO1m2AQjBWHeVC+YK+gm1okPgHdVt8P0I3KkgHGb2THXB
-         WHmQ==
-X-Gm-Message-State: APjAAAUwRGdRcNwaeAnTcgn9lbL8Zocg9sIzDVuzsBnJGKx052lHVwqB
-        MiXtfhl9a8+mdcxo2czoAsXWhfTu
-X-Google-Smtp-Source: APXvYqzbRj0lokpGHCLI0hUfbbSCF50ahzf0bAwozYzufUwgWGJzpn8g17fJMtAMIiQ6oFcSF4sRdw==
-X-Received: by 2002:a17:902:b94b:: with SMTP id h11mr27691653pls.164.1570450618400;
-        Mon, 07 Oct 2019 05:16:58 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 62sm15774756pfg.164.2019.10.07.05.16.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2019 05:16:57 -0700 (PDT)
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-References: <20191006222046.GA18027@roeck-us.net>
- <CAMo8BfJHcLQ_TuacCwdhQYB-nhpdBrCq5EuB=E7SafP15=kd3A@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <d6726d0f-3412-b5e9-fbd1-2dae302f0ef3@roeck-us.net>
-Date:   Mon, 7 Oct 2019 05:16:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727688AbfJGNAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 09:00:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55870 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727514AbfJGNAF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Oct 2019 09:00:05 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8CA1318C8911;
+        Mon,  7 Oct 2019 13:00:04 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1CBF55D9CC;
+        Mon,  7 Oct 2019 13:00:02 +0000 (UTC)
+Date:   Mon, 7 Oct 2019 09:00:00 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] iomap: add tracing for the readpage / readpages
+Message-ID: <20191007130000.GG22140@bfoster>
+References: <20191006154608.24738-1-hch@lst.de>
+ <20191006154608.24738-2-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <CAMo8BfJHcLQ_TuacCwdhQYB-nhpdBrCq5EuB=E7SafP15=kd3A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191006154608.24738-2-hch@lst.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.70]); Mon, 07 Oct 2019 13:00:04 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Max,
+On Sun, Oct 06, 2019 at 05:45:58PM +0200, Christoph Hellwig wrote:
+> Lift the xfs code for tracing address space operations to the iomap
+> layer.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-On 10/6/19 9:04 PM, Max Filippov wrote:
-> On Sun, Oct 6, 2019 at 3:25 PM Guenter Roeck <linux@roeck-us.net> wrote:
->> this patch causes all my sparc64 emulations to stall during boot. It causes
->> all alpha emulations to crash with [1a] and [1b] when booting from a virtual
->> disk, and one of the xtensa emulations to crash with [2].
-> 
-> [...]
-> 
->> [2]
->>
->> Unable to handle kernel paging request at virtual address 0000000000000004
->> reboot(50): Oops -1
->> pc = [<0000000000000004>]  ra = [<fffffc00004512e4>]  ps = 0000    Tainted: G      D
->> pc is at 0x4
->> ra is at filldir64+0x64/0x320
->> v0 = 0000000000000000  t0 = 0000000067736d6b  t1 = 000000012011445b
->> t2 = 0000000000000000  t3 = 0000000000000000  t4 = 0000000000007ef8
->> t5 = 0000000120114448  t6 = 0000000000000000  t7 = fffffc0007eec000
->> s0 = fffffc000792b5c3  s1 = 0000000000000004  s2 = 0000000000000018
->> s3 = fffffc0007eefec8  s4 = 0000000000000008  s5 = 00000000f00000a3
->> s6 = 000000000000000b
->> a0 = fffffc000792b5c3  a1 = 2f2f2f2f2f2f2f2f  a2 = 0000000000000004
->> a3 = 000000000000000b  a4 = 00000000f00000a3  a5 = 0000000000000008
->> t8 = 0000000000000018  t9 = 0000000000000000  t10= 0000000022e1d02a
->> t11= 000000011fd6f3b8  pv = fffffc0000b9a810  at = 0000000022e1ccf8
->> gp = fffffc0000f03930  sp = (____ptrval____)
->> Trace:
->> [<fffffc00004ccba0>] proc_readdir_de+0x170/0x300
->> [<fffffc0000451280>] filldir64+0x0/0x320
->> [<fffffc00004c565c>] proc_root_readdir+0x3c/0x80
->> [<fffffc0000450c68>] iterate_dir+0x198/0x240
->> [<fffffc00004518b8>] ksys_getdents64+0xa8/0x160
->> [<fffffc0000451990>] sys_getdents64+0x20/0x40
->> [<fffffc0000451280>] filldir64+0x0/0x320
->> [<fffffc0000311634>] entSys+0xa4/0xc0
-> 
-> This doesn't look like a dump from xtensa core.
-> v5.4-rc2 kernel doesn't crash for me on xtensa, but the userspace
-> doesn't work well, because all directories appear to be empty.
-> 
-> __put_user/__get_user don't do unaligned access on xtensa,
-> they check address alignment and return -EFAULT if it's bad.
-> 
-You are right, sorry; I must have mixed that up. xtensa doesn't crash.
-The boot stalls, similar to sparc64. This is only seen with my nommu
-test (de212:kc705-nommu:nommu_kc705_defconfig). xtensa mmu tests are fine,
-at least for me, but then I only run tests with initrd (which for some
-reason doesn't crash on alpha either).
+For the v7 version:
 
-Guenter
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+
+>  fs/iomap/Makefile      | 16 ++++++++------
+>  fs/iomap/buffered-io.c |  5 +++++
+>  fs/iomap/trace.h       | 49 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 63 insertions(+), 7 deletions(-)
+>  create mode 100644 fs/iomap/trace.h
+> 
+> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
+> index 93cd11938bf5..eef2722d93a1 100644
+> --- a/fs/iomap/Makefile
+> +++ b/fs/iomap/Makefile
+> @@ -3,13 +3,15 @@
+>  # Copyright (c) 2019 Oracle.
+>  # All Rights Reserved.
+>  #
+> -obj-$(CONFIG_FS_IOMAP)		+= iomap.o
+>  
+> -iomap-y				+= \
+> -					apply.o \
+> -					buffered-io.o \
+> -					direct-io.o \
+> -					fiemap.o \
+> -					seek.o
+> +ccflags-y += -I $(srctree)/$(src)		# needed for trace events
+> +
+> +obj-$(CONFIG_FS_IOMAP)		+= iomap.o
+>  
+> +iomap-y				+= trace.o \
+> +				   apply.o \
+> +				   buffered-io.o \
+> +				   direct-io.o \
+> +				   fiemap.o \
+> +				   seek.o
+>  iomap-$(CONFIG_SWAP)		+= swapfile.o
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e25901ae3ff4..fb209272765c 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/bio.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/migrate.h>
+> +#include "trace.h"
+>  
+>  #include "../internal.h"
+>  
+> @@ -293,6 +294,8 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
+>  	unsigned poff;
+>  	loff_t ret;
+>  
+> +	trace_iomap_readpage(page->mapping->host, 1);
+> +
+>  	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
+>  		ret = iomap_apply(inode, page_offset(page) + poff,
+>  				PAGE_SIZE - poff, 0, ops, &ctx,
+> @@ -389,6 +392,8 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+>  	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
+>  	loff_t length = last - pos + PAGE_SIZE, ret = 0;
+>  
+> +	trace_iomap_readpages(mapping->host, nr_pages);
+> +
+>  	while (length > 0) {
+>  		ret = iomap_apply(mapping->host, pos, length, 0, ops,
+>  				&ctx, iomap_readpages_actor);
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> new file mode 100644
+> index 000000000000..7798aeda7fb9
+> --- /dev/null
+> +++ b/fs/iomap/trace.h
+> @@ -0,0 +1,49 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2009-2019, Christoph Hellwig
+> + *
+> + * NOTE: none of these tracepoints shall be consider a stable kernel ABI
+> + * as they can change at any time.
+> + */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM iomap
+> +
+> +#if !defined(_IOMAP_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _IOMAP_TRACE_H
+> +
+> +#include <linux/tracepoint.h>
+> +
+> +struct inode;
+> +
+> +DECLARE_EVENT_CLASS(iomap_readpage_class,
+> +	TP_PROTO(struct inode *inode, int nr_pages),
+> +	TP_ARGS(inode, nr_pages),
+> +	TP_STRUCT__entry(
+> +		__field(dev_t, dev)
+> +		__field(u64, ino)
+> +		__field(int, nr_pages)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->dev = inode->i_sb->s_dev;
+> +		__entry->ino = inode->i_ino;
+> +		__entry->nr_pages = nr_pages;
+> +	),
+> +	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
+> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
+> +		  __entry->ino,
+> +		  __entry->nr_pages)
+> +)
+> +
+> +#define DEFINE_READPAGE_EVENT(name)		\
+> +DEFINE_EVENT(iomap_readpage_class, name,	\
+> +	TP_PROTO(struct inode *inode, int nr_pages), \
+> +	TP_ARGS(inode, nr_pages))
+> +DEFINE_READPAGE_EVENT(iomap_readpage);
+> +DEFINE_READPAGE_EVENT(iomap_readpages);
+> +
+> +#endif /* _IOMAP_TRACE_H */
+> +
+> +#undef TRACE_INCLUDE_PATH
+> +#define TRACE_INCLUDE_PATH .
+> +#define TRACE_INCLUDE_FILE trace
+> +#include <trace/define_trace.h>
+> -- 
+> 2.20.1
+> 
