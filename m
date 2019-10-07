@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB20CE53F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 16:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABE20CE542
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 16:31:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbfJGOaI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 10:30:08 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:38836 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbfJGOaI (ORCPT
+        id S1728395AbfJGObI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 10:31:08 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:54479 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727745AbfJGObI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:30:08 -0400
-Received: by mail-io1-f70.google.com with SMTP id e6so27058549iog.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 07:30:07 -0700 (PDT)
+        Mon, 7 Oct 2019 10:31:08 -0400
+Received: by mail-io1-f71.google.com with SMTP id w8so26904223iod.21
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 07:31:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=sPnceGy4KIQEpbbOvELtAtUJXVUVS43coZhCQeMu3P0=;
-        b=V2pZxRmjRj4j1LY3MNUMn2i6Dr0p8Unm0yFruc9LE+NwoQGvmkaGNyFX8CEnJ5CK7T
-         kTsmaHtvRn4pi+96pR443iC0srvwqiNBBO/dsH79Rt19dq3NuKs/UafCt0qkgz5Es2y3
-         IQA1I+6cem9nX+IB7fomMiZndrtZ/n4A2w+bbO6nY2AFhVSH+OcpI4nbFBwuK1M/wMod
-         y/kawdpSm95tzKOeepxiuABawNcPRo53lj27DCatXVgReOObtjPAM7mm4cF7WUAe8BAM
-         XA7G0PcR+gQ2TIg4mQEyJhni8MBK6WMilSv1Za7nzwDmLOzq8JY2feWI51ExrMdkYr1s
-         UQdA==
-X-Gm-Message-State: APjAAAW1GmnmRimtba2ubFqyr4nCIpPxA97vkOYnC4xG7aAZaJqXRdD8
-        aq+9d+0edRG3x5/+XQzGP2fLf840cfDsQcvrB3RW+wNsezLy
-X-Google-Smtp-Source: APXvYqw6bMONiAXK3jAD+QHsaAQGL2DxyMV4QlaIUZAMVOoWVo3N+LG+gJwsA2BOPRhEraq3wKaxRgYZGqLSK6QLGem4nlaDNB6t
+        bh=7BY87Ia9AapGjwjMXbsBZnoMaLjgwwjSG2VntvLmU4c=;
+        b=B3IH4aVuJzn4kEPOV1OWOivUT+3vkBmIop6+67DDwOvaJH5YQDEJEXVoyWGyr8JJFt
+         Ud+mp2YBkUcfFjrVSOyMrEZ9GfLoDXgCD0/NgAwe2TCIs1i6onZ7WKv9Ir/+4J4dFf3W
+         OqkNuqs2jvLC1ceck6yMmQaFWs/bFOHhP247rkDdqSj+hJPdBS4lD1PY/mljnsU/hJjc
+         3puYtarfJk6+rRGllQo5E7EAjX9GZGkYqdUEOohtsFBNW0wbNbJ/DHlCzDmNug7i8MKf
+         plReoShzvuzP+K2fbZYHxtAsmxP7+Ku2FRfaircVTM3AVXTZCGDLnWtok+2aJNIir1Lr
+         NtyA==
+X-Gm-Message-State: APjAAAX8u0/1ws2+clcUhotQjrblgpuy1j5J2XlrW0xgCz/Uyn8SIVdW
+        aEBfKHGFGa8jcGT3A21l+ZxKG7M6oLVHF2jHjTpt/tpyA2Qq
+X-Google-Smtp-Source: APXvYqwHM30N8tl1H9tiWFEkk5uQF9JjeMTKqdai85oDJLXRimIYKTBAZ9aPa3GdJ+Ja7qB/Sbi3nEzbTc+XziR64uB+U2mBU037
 MIME-Version: 1.0
-X-Received: by 2002:a5e:a818:: with SMTP id c24mr12978584ioa.230.1570458607252;
- Mon, 07 Oct 2019 07:30:07 -0700 (PDT)
-Date:   Mon, 07 Oct 2019 07:30:07 -0700
+X-Received: by 2002:a92:d14b:: with SMTP id t11mr28007911ilg.126.1570458667508;
+ Mon, 07 Oct 2019 07:31:07 -0700 (PDT)
+Date:   Mon, 07 Oct 2019 07:31:07 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006b7bfb059452e314@google.com>
-Subject: WARNING in filldir64
-From:   syzbot <syzbot+3031f712c7ad5dd4d926@syzkaller.appspotmail.com>
+Message-ID: <00000000000002edb7059452e7fb@google.com>
+Subject: WARNING in verify_dirent_name
+From:   syzbot <syzbot+76e3977ad1b8cc4d113a@syzkaller.appspotmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
@@ -50,66 +50,64 @@ syzbot found the following crash on:
 
 HEAD commit:    43b815c6 Merge tag 'armsoc-fixes' of git://git.kernel.org/..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10721dfb600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fb0b431ccdf08c1c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3031f712c7ad5dd4d926
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
+console output: https://syzkaller.appspot.com/x/log.txt?x=12165d0b600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1ec3be9936e004f6
+dashboard link: https://syzkaller.appspot.com/bug?extid=76e3977ad1b8cc4d113a
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3031f712c7ad5dd4d926@syzkaller.appspotmail.com
+Reported-by: syzbot+76e3977ad1b8cc4d113a@syzkaller.appspotmail.com
 
 ------------[ cut here ]------------
-WARNING: CPU: 1 PID: 10405 at fs/readdir.c:150 verify_dirent_name  
-fs/readdir.c:150 [inline]
-WARNING: CPU: 1 PID: 10405 at fs/readdir.c:150 filldir64+0x524/0x620  
-fs/readdir.c:356
+WARNING: CPU: 1 PID: 25558 at fs/readdir.c:150 verify_dirent_name+0x67/0x80  
+fs/readdir.c:150
 Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 10405 Comm: syz-executor.2 Not tainted 5.4.0-rc1+ #0
+CPU: 1 PID: 25558 Comm: syz-executor.2 Not tainted 5.4.0-rc1+ #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
-  panic+0x25c/0x799 kernel/panic.c:220
-  __warn+0x20e/0x210 kernel/panic.c:581
-  report_bug+0x1b6/0x2f0 lib/bug.c:195
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2dc/0x755 kernel/panic.c:220
+  __warn.cold+0x2f/0x3c kernel/panic.c:581
+  report_bug+0x289/0x300 lib/bug.c:195
   fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  do_error_trap+0xd7/0x440 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:291
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
   invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:verify_dirent_name fs/readdir.c:150 [inline]
-RIP: 0010:filldir64+0x524/0x620 fs/readdir.c:356
-Code: 00 00 c7 03 f2 ff ff ff b8 f2 ff ff ff 48 83 c4 60 5b 41 5c 41 5d 41  
-5e 41 5f 5d c3 e8 55 2c b9 ff 0f 0b eb 07 e8 4c 2c b9 ff <0f> 0b 49 83 c6  
-24 4c 89 f0 48 c1 e8 03 42 8a 04 20 84 c0 0f 85 b6
-RSP: 0018:ffff8880a3dc7b88 EFLAGS: 00010283
-RAX: ffffffff81ba0624 RBX: 000000000000000c RCX: 0000000000040000
-RDX: ffffc9000a588000 RSI: 00000000000021f1 RDI: 00000000000021f2
-RBP: ffff8880a3dc7c10 R08: ffffffff81ba0134 R09: 0000000000000004
-R10: fffffbfff1120afb R11: 0000000000000000 R12: dffffc0000000000
-R13: ffff8880a3dc7d30 R14: ffff8880a3dc7e88 R15: 000000000000000c
+RIP: 0010:verify_dirent_name+0x67/0x80 fs/readdir.c:150
+Code: 19 b6 ff 44 89 e0 5b 41 5c 5d c3 e8 43 19 b6 ff 0f 0b e8 3c 19 b6 ff  
+41 bc fb ff ff ff 5b 44 89 e0 41 5c 5d c3 e8 29 19 b6 ff <0f> 0b 41 bc fb  
+ff ff ff eb ca 0f 1f 44 00 00 66 2e 0f 1f 84 00 00
+RSP: 0018:ffff88808db87ad0 EFLAGS: 00010212
+RAX: 0000000000040000 RBX: 000000000000000c RCX: ffffc900143e7000
+RDX: 0000000000004d26 RSI: ffffffff81bcf9b7 RDI: ffff88808db87cd3
+RBP: ffff88808db87ae0 R08: ffff88808f5c41c0 R09: 0000000000000004
+R10: fffffbfff120d9b8 R11: ffffffff8906cdc3 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000004 R15: ffff88808db87e50
+  filldir64+0x40/0x670 fs/readdir.c:356
   dir_emit include/linux/fs.h:3542 [inline]
-  __fat_readdir+0x1320/0x1a50 fs/fat/dir.c:677
-  fat_readdir+0x46/0x50 fs/fat/dir.c:704
-  iterate_dir+0x2a4/0x520 fs/readdir.c:107
-  ksys_getdents64+0x1ea/0x3f0 fs/readdir.c:412
+  __fat_readdir+0xd9e/0x1cb0 fs/fat/dir.c:677
+  fat_readdir+0x44/0x60 fs/fat/dir.c:704
+  iterate_dir+0x47f/0x5e0 fs/readdir.c:105
+  ksys_getdents64+0x1ce/0x320 fs/readdir.c:412
   __do_sys_getdents64 fs/readdir.c:431 [inline]
   __se_sys_getdents64 fs/readdir.c:428 [inline]
-  __x64_sys_getdents64+0x7a/0x90 fs/readdir.c:428
-  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:290
+  __x64_sys_getdents64+0x73/0xb0 fs/readdir.c:428
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 RIP: 0033:0x459a59
 Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f943ff4bc78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RSP: 002b:00007fc825c13c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
 RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459a59
-RDX: 0000000000001000 RSI: 00000000200005c0 RDI: 0000000000000005
-RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f943ff4c6d4
+RDX: 0000000000001000 RSI: 00000000200005c0 RDI: 0000000000000007
+RBP: 000000000075c070 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc825c146d4
 R13: 00000000004c0533 R14: 00000000004d2c58 R15: 00000000ffffffff
 Kernel Offset: disabled
 Rebooting in 86400 seconds..
