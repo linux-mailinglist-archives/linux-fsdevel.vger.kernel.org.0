@@ -2,127 +2,343 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D76DCEBBF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 20:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B4DCEBEE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Oct 2019 20:31:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbfJGS0z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 14:26:55 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38103 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbfJGS0z (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:26:55 -0400
-Received: by mail-lj1-f196.google.com with SMTP id b20so14767752ljj.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 11:26:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J7Vyfz7UunT8KOMcxUj/KmQkAWydtzjl94OFb9852io=;
-        b=ZUn2yZzwcywqCxfn/AooAu387VR/0wKoIuT2JKs4AdSOiBNTdCv38NkIJUhxDyBMvm
-         CxtfD2syu3hHc4adBEBg4Ms4tb9HKuwIqUen1FqsmJsnDmMRUSO48rcpHdmThYY1FDYF
-         3ZvrBHe0Vp5A5d6MZRxEURRDKHOtBXvn6vAcA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J7Vyfz7UunT8KOMcxUj/KmQkAWydtzjl94OFb9852io=;
-        b=ojBXwKkCDjHMYVgqnFfEjWKZyRBQgP/oe6dMjc0OVtAiXzJMB2An5Gf0ByFEyiy+wO
-         G2BbEjyBozNs57CLSf761Fx3KrspEAm3k7T4Ex3y8m0VGTvKlZqiF1YxIGPblKGtfe4W
-         caFtwAr/hYJ3dyPFbNFRjgp30AHI3rE+ZAvhjdO6N4gUC9E4x3arcH25JxtU8vhQ3TjZ
-         opT5XMR3dHjKryIf/SbpkzPD5SdoRKWKsWynZ3njmSTZMLA6E0pIXquQywCrGKWnw/ia
-         njiX8tF5f29W8W35WVVww5rTHqAX1eG6rxdWxT8Fdvf4n+0ubedq5B32e2cqjjlFut8x
-         nupg==
-X-Gm-Message-State: APjAAAVRfMcKz5w64KQDsaANNmOn0xr1rN/HxndvB9/WbYrLg8Zui6wp
-        uq2Y/mAnpQ13N+sR0qQKqJJR6VNn1OU=
-X-Google-Smtp-Source: APXvYqzW2qtp7ZC4IuOAPHM2Kb0CUfJgSjgl84VVo0rczCS3oR2IiBxDHRDkTV7zj1KMV9pPT2nB0w==
-X-Received: by 2002:a2e:b607:: with SMTP id r7mr19563272ljn.100.1570472812897;
-        Mon, 07 Oct 2019 11:26:52 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id t16sm2858209lfp.38.2019.10.07.11.26.52
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2019 11:26:52 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id y127so10017124lfc.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 11:26:52 -0700 (PDT)
-X-Received: by 2002:a19:741a:: with SMTP id v26mr17755031lfe.79.1570472811673;
- Mon, 07 Oct 2019 11:26:51 -0700 (PDT)
+        id S1728364AbfJGSbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 14:31:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55048 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728031AbfJGSbG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Oct 2019 14:31:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 929B4B035;
+        Mon,  7 Oct 2019 18:31:00 +0000 (UTC)
 MIME-Version: 1.0
-References: <20191006222046.GA18027@roeck-us.net> <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
- <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
- <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net> <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
- <20191007012437.GK26530@ZenIV.linux.org.uk> <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
- <20191007025046.GL26530@ZenIV.linux.org.uk> <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 7 Oct 2019 11:26:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com>
-Message-ID: <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com>
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 07 Oct 2019 20:30:59 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Jason Baron <jbaron@akamai.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, hev <r@hev.cc>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Eric Wong <e@80x24.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sridhar Samudrala <sridhar.samudrala@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v4] fs/epoll: Remove unnecessary wakeups of nested
+ epoll that in ET mode
+In-Reply-To: <9ceee722-d2a8-b182-c95a-e7a873b08ca1@akamai.com>
+References: <20190925015603.10939-1-r@hev.cc>
+ <20190927192915.6ec24ad706258de99470a96e@linux-foundation.org>
+ <c0a96dd89d0a361d8061b8c356b57ed2@suse.de>
+ <9ca02c9b-85b7-dced-9c82-1fc453c49b8a@akamai.com>
+ <9a82925ff7dfc314d36b3d36e54316a8@suse.de>
+ <9ceee722-d2a8-b182-c95a-e7a873b08ca1@akamai.com>
+Message-ID: <cda953c3fec34fe14b231c30c75e57a1@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Oct 6, 2019 at 8:11 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> >
-> > The last two should just do user_access_begin()/user_access_end()
-> > instead of access_ok().  __copy_to_user_inatomic() has very few callers as well:
->
-> Yeah, good points.
+On 2019-10-07 18:42, Jason Baron wrote:
+> On 10/7/19 6:54 AM, Roman Penyaev wrote:
+>> On 2019-10-03 18:13, Jason Baron wrote:
+>>> On 9/30/19 7:55 AM, Roman Penyaev wrote:
+>>>> On 2019-09-28 04:29, Andrew Morton wrote:
+>>>>> On Wed, 25 Sep 2019 09:56:03 +0800 hev <r@hev.cc> wrote:
+>>>>> 
+>>>>>> From: Heiher <r@hev.cc>
+>>>>>> 
+>>>>>> Take the case where we have:
+>>>>>> 
+>>>>>>         t0
+>>>>>>          | (ew)
+>>>>>>         e0
+>>>>>>          | (et)
+>>>>>>         e1
+>>>>>>          | (lt)
+>>>>>>         s0
+>>>>>> 
+>>>>>> t0: thread 0
+>>>>>> e0: epoll fd 0
+>>>>>> e1: epoll fd 1
+>>>>>> s0: socket fd 0
+>>>>>> ew: epoll_wait
+>>>>>> et: edge-trigger
+>>>>>> lt: level-trigger
+>>>>>> 
+>>>>>> We only need to wakeup nested epoll fds if something has been 
+>>>>>> queued
+>>>>>> to the
+>>>>>> overflow list, since the ep_poll() traverses the rdllist during
+>>>>>> recursive poll
+>>>>>> and thus events on the overflow list may not be visible yet.
+>>>>>> 
+>>>>>> Test code:
+>>>>> 
+>>>>> Look sane to me.  Do you have any performance testing results which
+>>>>> show a benefit?
+>>>>> 
+>>>>> epoll maintainership isn't exactly a hive of activity nowadays :(
+>>>>> Roman, would you please have time to review this?
+>>>> 
+>>>> So here is my observation: current patch does not fix the described
+>>>> problem (double wakeup) for the case, when new event comes exactly
+>>>> to the ->ovflist.  According to the patch this is the desired 
+>>>> intention:
+>>>> 
+>>>>    /*
+>>>>     * We only need to wakeup nested epoll fds if something has been
+>>>> queued
+>>>>     * to the overflow list, since the ep_poll() traverses the 
+>>>> rdllist
+>>>>     * during recursive poll and thus events on the overflow list may
+>>>> not be
+>>>>     * visible yet.
+>>>>     */
+>>>>     if (nepi != NULL)
+>>>>        pwake++;
+>>>> 
+>>>>     ....
+>>>> 
+>>>>     if (pwake == 2)
+>>>>        ep_poll_safewake(&ep->poll_wait);
+>>>> 
+>>>> 
+>>>> but this actually means that we repeat the same behavior (double 
+>>>> wakeup)
+>>>> but only for the case, when event comes to the ->ovflist.
+>>>> 
+>>>> How to reproduce? Can be easily done (ok, not so easy but it is 
+>>>> possible
+>>>> to try): to the given userspace test we need to add one more socket 
+>>>> and
+>>>> immediately fire the event:
+>>>> 
+>>>>     e.events = EPOLLIN;
+>>>>     if (epoll_ctl(efd[1], EPOLL_CTL_ADD, s2fd[0], &e) < 0)
+>>>>        goto out;
+>>>> 
+>>>>     /*
+>>>>      * Signal any fd to let epoll_wait() to call 
+>>>> ep_scan_ready_list()
+>>>>      * in order to "catch" it there and add new event to ->ovflist.
+>>>>      */
+>>>>      if (write(s2fd[1], "w", 1) != 1)
+>>>>         goto out;
+>>>> 
+>>>> That is done in order to let the following epoll_wait() call to 
+>>>> invoke
+>>>> ep_scan_ready_list(), where we can "catch" and insert new event 
+>>>> exactly
+>>>> to the ->ovflist. In order to insert event exactly in the correct 
+>>>> list
+>>>> I introduce artificial delay.
+>>>> 
+>>>> Modified test and kernel patch is below.  Here is the output of the
+>>>> testing tool with some debug lines from kernel:
+>>>> 
+>>>>   # ~/devel/test/edge-bug
+>>>>   [   59.263178] ### sleep 2
+>>>>   >> write to sock
+>>>>   [   61.318243] ### done sleep
+>>>>   [   61.318991] !!!!!!!!!!! ep_poll_safewake(&ep->poll_wait);
+>>>> events_in_rdllist=1, events_in_ovflist=1
+>>>>   [   61.321204] ### sleep 2
+>>>>   [   63.398325] ### done sleep
+>>>>   error: What?! Again?!
+>>>> 
+>>>> First epoll_wait() call (ep_scan_ready_list()) observes 2 events
+>>>> (see "!!!!!!!!!!! ep_poll_safewake" output line), exactly what we
+>>>> wanted to achieve, so eventually ep_poll_safewake() is called again
+>>>> which leads to double wakeup.
+>>>> 
+>>>> In my opinion current patch as it is should be dropped, it does not
+>>>> fix the described problem but just hides it.
+>>>> 
+>>>> --
+>> 
+>> Hi Jason,
+>> 
+>>> 
+>>> Yes, there are 2 wakeups in the test case you describe, but if the
+>>> second event (write to s1fd) gets queued after the first call to
+>>> epoll_wait(), we are going to get 2 wakeups anyways.
+>> 
+>> Yes, exactly, for this reason I print out the number of events 
+>> observed
+>> on first wait, there should be 1 (rdllist) and 1 (ovflist), otherwise
+>> this is another case, when second event comes exactly after first
+>> wait, which is legitimate wakeup.
+>> 
+>>> So yes, there may
+>>> be a slightly bigger window with this patch for 2 wakeups, but its 
+>>> small
+>>> and I tried to be conservative with the patch - I'd rather get an
+>>> occasional 2nd wakeup then miss one. Trying to debug missing wakeups
+>>> isn't always fun...
+>>> 
+>>> That said, the reason for propagating events that end up on the 
+>>> overflow
+>>> list was to prevent the race of the wakee not seeing events because 
+>>> they
+>>> were still on the overflow list. In the testcase, imagine if there 
+>>> was a
+>>> thread doing epoll_wait() on efd[0], and then a write happends on 
+>>> s1fd.
+>>> I thought it was possible then that a 2nd thread doing epoll_wait() 
+>>> on
+>>> efd[1], wakes up, checks efd[0] and sees no events because they are
+>>> still potentially on the overflow list. However, I think that case is
+>>> not possible because the thread doing epoll_wait() on efd[0] is going 
+>>> to
+>>> have the ep->mtx, and thus when the thread wakes up on efd[1], its 
+>>> going
+>>> to have to be ordered because its also grabbing the ep->mtx 
+>>> associated
+>>> with efd[0].
+>>> 
+>>> So I think its safe to do the following if we want to go further than
+>>> the proposed patch, which is what you suggested earlier in the thread
+>>> (minus keeping the wakeup on ep->wq).
+>> 
+>> Then I do not understand why we need to keep ep->wq wakeup?
+>> @wq and @poll_wait are almost the same with only one difference:
+>> @wq is used when you sleep on it inside epoll_wait() and the other
+>> is used when you nest epoll fd inside epoll fd.  Either you wake
+>> both up either you don't this at all.
+>> 
+>> ep_poll_callback() does wakeup explicitly, ep_insert() and ep_modify()
+>> do wakeup explicitly, so what are the cases when we need to do wakeups
+>> from ep_scan_ready_list()?
+> 
+> Hi Roman,
+> 
+> So the reason I was saying not to drop the ep->wq wakeup was that I was
+> thinking about a usecase where you have multi-threads say thread A and
+> thread B which are doing epoll_wait() on the same epfd. Now, the 
+> threads
+> both call epoll_wait() and are added as exclusive to ep->wq. Now a 
+> bunch
+> of events happen and thread A is woken up. However, thread A may only
+> process a subset of the events due to its 'maxevents' parameter. In 
+> that
+> case, I was thinking that the wakeup on ep->wq might be helpful, 
+> because
+> in the absence of subsequent events, thread B can now start processing
+> the rest, instead of waiting for the next event to be queued.
+> 
+> However, I was thinking about the state of things before:
+> 86c0517 fs/epoll: deal with wait_queue only once
+> 
+> Before that patch, thread A would have been removed from eq->wq before
+> the wakeup call, thus waking up thread B. However, now that thread A
+> stays on the queue during the call to ep_send_events(), I believe the
+> wakeup would only target thread A, which doesn't help since its already
+> checking for events. So given the state of things I think you are right
+> in that its not needed. However, I wonder if not removing from the
+> ep->wq affects the multi-threaded case I described. Its been around
+> since 5.0, so probably not, but it would be a more subtle performance
+> difference.
 
-Looking at it some more this morning, I think it's actually pretty painful.
+Now I understand what you mean. You want to prevent "idling" of events,
+while thread A is busy with the small portion of events (portion is 
+equal
+to maxevents).  On next iteration thread A will pick up the rest, no 
+doubts,
+but would be nice to give a chance to thread B immediately to deal with 
+the
+rest.  Ok, makes sense.
 
-The good news is that right now x86 is the only architecture that does
-that user_access_begin(), so we don't need to worry about anything
-else. Apparently the ARM people haven't had enough performance
-problems with the PAN bit for them to care.
+But what if to make this wakeup explicit if we have more events to 
+process?
+(nothing is tested, just a guess)
 
-We can have a fallback wrapper for unsafe_copy_to_user() for other
-architectures that just does the __copy_to_user().
+@@ -255,6 +255,7 @@ struct ep_pqueue {
+  struct ep_send_events_data {
+         int maxevents;
+         struct epoll_event __user *events;
++       bool have_more;
+         int res;
+  };
+@@ -1783,14 +1768,17 @@ static __poll_t ep_send_events_proc(struct 
+eventpoll *ep, struct list_head *head
+  }
 
-But on x86, if we move the STAC/CLAC out of the low-level copy
-routines and into the callers, we'll have a _lot_ of churn. I thought
-it would be mostly a "teach objtool" thing, but we have lots of
-different versions of it. Not just the 32-bit vs 64-bit, it's embedded
-in all the low-level asm implementations.
+  static int ep_send_events(struct eventpoll *ep,
+-                         struct epoll_event __user *events, int 
+maxevents)
++                         struct epoll_event __user *events, int 
+maxevents,
++                         bool *have_more)
+  {
+-       struct ep_send_events_data esed;
+-
+-       esed.maxevents = maxevents;
+-       esed.events = events;
++       struct ep_send_events_data esed = {
++               .maxevents = maxevents,
++               .events = events,
++       };
 
-And we don't want the regular "copy_to/from_user()" to then have to
-add the STAC/CLAC at the call-site. So then we'd want to un-inline
-copy_to_user() entirely.
+         ep_scan_ready_list(ep, ep_send_events_proc, &esed, 0, false);
++       *have_more = esed.have_more;
++
+         return esed.res;
+  }
 
-Which all sounds like a really good idea, don't get me wrong. I think
-we inline it way too aggressively now. But it'sa  _big_ job.
+@@ -1827,7 +1815,7 @@ static int ep_poll(struct eventpoll *ep, struct 
+epoll_event __user *events,
+  {
+         int res = 0, eavail, timed_out = 0;
+         u64 slack = 0;
+-       bool waiter = false;
++       bool waiter = false, have_more;
+         wait_queue_entry_t wait;
+         ktime_t expires, *to = NULL;
 
-So we probably _should_
+@@ -1927,7 +1915,8 @@ static int ep_poll(struct eventpoll *ep, struct 
+epoll_event __user *events,
+          * more luck.
+          */
+         if (!res && eavail &&
+-           !(res = ep_send_events(ep, events, maxevents)) && 
+!timed_out)
++           !(res = ep_send_events(ep, events, maxevents, &have_more)) 
+&&
++           !timed_out)
+                 goto fetch_events;
 
- - remove INLINE_COPY_TO/FROM_USER
+         if (waiter) {
+@@ -1935,6 +1924,12 @@ static int ep_poll(struct eventpoll *ep, struct 
+epoll_event __user *events,
+                 __remove_wait_queue(&ep->wq, &wait);
+                 spin_unlock_irq(&ep->wq.lock);
+         }
++       /*
++        * We were not able to process all the events, so immediately
++        * wakeup other waiter.
++        */
++       if (res > 0 && have_more && waitqueue_active(&ep->wq))
++               wake_up(&ep->wq);
 
- - remove all the "small constant size special cases".
+         return res;
+  }
 
- - make "raw_copy_to/from_user()" have the "unsafe" semantics and make
-the out-of-line copy in lib/usercopy.c be the only real interface
 
- - get rid of a _lot_ of oddities
+PS. So what we decide with the original patch?  Remove the whole branch?
 
-but looking at just how much churn this is, I suspect that for 5.4
-it's a bit late to do quite that much cleanup.
+--
+Roman
 
-I hope you prove me wrong. But I'll look at a smaller change to just
-make x86 use the current special copy loop (as
-"unsafe_copy_to_user()") and have everybody else do the trivial
-wrapper.
 
-Because we definitely should do that cleanup (it also fixes the whole
-"atomic copy in kernel space" issue that you pointed to that doesn't
-actually want STAC/CLAC at all), but it just looks fairly massive to
-me.
 
-            Linus
+
