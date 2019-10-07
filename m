@@ -2,172 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5B7223C226
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 01:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3339723C25D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 01:52:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725904AbgHDXUN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 19:20:13 -0400
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:36902 "EHLO
-        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725300AbgHDXUM (ORCPT
+        id S1727850AbgHDXwa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 19:52:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59272 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbgHDXw2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 19:20:12 -0400
-Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id E31251A94C8;
-        Wed,  5 Aug 2020 09:20:07 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1k36E1-0000HB-FZ; Wed, 05 Aug 2020 09:20:05 +1000
-Date:   Wed, 5 Aug 2020 09:20:05 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     hch@infradead.org, darrick.wong@oracle.com, mhocko@kernel.org,
-        willy@infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Yafang Shao <shaoyafang@didiglobal.com>
-Subject: Re: [PATCH v4 1/2] xfs: avoid double restore PF_MEMALLOC_NOFS if
- transaction reservation fails
-Message-ID: <20200804232005.GD2114@dread.disaster.area>
-References: <20200801154632.866356-1-laoar.shao@gmail.com>
- <20200801154632.866356-2-laoar.shao@gmail.com>
+        Tue, 4 Aug 2020 19:52:28 -0400
+X-Greylist: delayed 86248 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 04 Aug 2020 16:52:27 PDT
+Received: from dockerbox (unknown [IPv6:2001:4800:7817:101:be76:4eff:fe04:a215])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BC72FC061756;
+        Tue,  4 Aug 2020 16:52:27 -0700 (PDT)
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        by dockerbox (Postfix) with SMTP id 6F4DA5EC5A;
+        Mon,  7 Oct 2019 19:30:12 -0500 (CDT)
+Received: from [32.188.209.113] by 127.0.0.1 with SMTP; Mon, 07 Oct 2019 18:22:17 -0600
+Message-ID: <80v-q$4-o4pqyq0@6eeih174.p55>
+From:   "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
+Reply-To: "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
+To:     linkos@binet.lv
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Mon, 07 Oct 19 18:22:17 GMT
+X-Mailer: Microsoft Outlook Express 5.00.2615.200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200801154632.866356-2-laoar.shao@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QKgWuTDL c=1 sm=1 tr=0
-        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
-        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=DyMV3BnNAAAA:8 a=7-415B0cAAAA:8
-        a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=sepEaALGW5-UqJ5a4w0A:9
-        a=CjuIK1q_8ugA:10 a=9s3JYx_stmTtqx6mgxhK:22 a=biEYGPWJfzWAr4FL6Ov7:22
-        a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
+Content-Type: multipart/alternative;
+        boundary="_.A4476ECDD73A3"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 01, 2020 at 11:46:31AM -0400, Yafang Shao wrote:
-> From: Yafang Shao <shaoyafang@didiglobal.com>
-> 
-> In xfs_trans_alloc(), if xfs_trans_reserve() fails, it will call
-> xfs_trans_cancel(), in which it will restore the flag PF_MEMALLOC_NOFS.
-> However this flags has been restored in xfs_trans_reserve(). Although
-> this behavior doesn't introduce any obvious issue, we'd better improve it.
-.....
 
-> 
-> Signed-off-by: Yafang Shao <shaoyafang@didiglobal.com>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> ---
->  fs/xfs/xfs_trans.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-> index 3c94e5ff4316..9ff41970d0c7 100644
-> --- a/fs/xfs/xfs_trans.c
-> +++ b/fs/xfs/xfs_trans.c
-> @@ -162,10 +162,9 @@ xfs_trans_reserve(
->  	 */
->  	if (blocks > 0) {
->  		error = xfs_mod_fdblocks(mp, -((int64_t)blocks), rsvd);
-> -		if (error != 0) {
-> -			current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-> +		if (error != 0)
->  			return -ENOSPC;
-> -		}
-> +
->  		tp->t_blk_res += blocks;
->  	}
->  
-> @@ -240,8 +239,6 @@ xfs_trans_reserve(
->  		tp->t_blk_res = 0;
->  	}
->  
-> -	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-> -
->  	return error;
->  }
+--_.A4476ECDD73A3
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-So you fix it here....
+Greetings
 
->  
-> @@ -972,6 +969,7 @@ xfs_trans_roll(
->  	struct xfs_trans	**tpp)
->  {
->  	struct xfs_trans	*trans = *tpp;
-> +	struct xfs_trans        *tp;
->  	struct xfs_trans_res	tres;
->  	int			error;
->  
-> @@ -1005,5 +1003,10 @@ xfs_trans_roll(
->  	 * the prior and the next transactions.
->  	 */
->  	tres.tr_logflags = XFS_TRANS_PERM_LOG_RES;
-> -	return xfs_trans_reserve(*tpp, &tres, 0, 0);
-> +	tp = *tpp;
-> +	error = xfs_trans_reserve(tp, &tres, 0, 0);
-> +	if (error)
-> +		current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-> +
-> +	return error;
->  }
+My name is Barrister Hans Erich.
 
-.... but then introduce the exact same issue here. i.e. when
-xfs_trans_roll() fails, the caller will call xfs_trans_cancel() on
-the returned transaction....
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
 
-Realistically, I think this is kinda missing the overall intent of
-rolling transactions. The issue here is that when we commit a
-transaction, we unconditionally clear the PF_MEMALLOC_NOFS flag via
-__xfs_trans_commit() just before freeing the transaction despite the
-fact the long running rolling transaction has not yet completed.
+Your full names --------
 
-This means that when we roll a transactions, we are bouncing the
-NOFS state unnecessarily like so:
 
-t0		t1		t2
-alloc
- reserve
-  NOFS
-roll
-		alloc
-commit
-clear NOFS
-		reserve
-		  NOFS
-		roll
-				alloc
-		commit
-		clear NOFS
-				reserve
-				  NOFS
-				.....
+Your urgent response will be appreciated
 
-right until the last commit of the sequence. IOWs, we are repeatedly
-setting and clearing NOFS even though we actually only need to set
-it at the t0 and clear it on the final commit or cancel.
+Thank you and God bless you.
 
-Hence I think that __xfs_trans_commit() should probably only clear
-NOFS on successful commit if @regrant is false (i.e. not called from
-xfs_trans_roll()) and the setting of NOFS should be removed from
-xfs_trans_reserve() and moved up into the initial xfs_trans_alloc()
-before xfs_trans_reserve() is called.
+Barrister Hans Erich
 
-This way the calls to either xfs_trans_commit() or
-xfs_trans_cancel() will clear the NOFS state as they indicate that
-we are exiting transaction context completely....
+Yours sincerely,
+Barrister Hans Erich
+CONTACT: hanserich9helmut@gmail.com
 
-Also, please convert these to memalloc_nofs_save()/restore() calls
-as that is the way we are supposed to mark these regions now.
+--_.A4476ECDD73A3--
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
