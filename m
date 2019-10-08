@@ -2,84 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EDA9CF16D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 05:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ABDBCF176
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 06:06:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729896AbfJHDyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 23:54:04 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:44235 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729772AbfJHDyD (ORCPT
+        id S1727187AbfJHEGi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 00:06:38 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:53857 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725858AbfJHEGi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 23:54:03 -0400
+        Tue, 8 Oct 2019 00:06:38 -0400
 Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id E622F363F0F;
-        Tue,  8 Oct 2019 14:53:59 +1100 (AEDT)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 90A4543E409;
+        Tue,  8 Oct 2019 15:06:31 +1100 (AEDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.2)
         (envelope-from <david@fromorbit.com>)
-        id 1iHgZS-0003vt-H7; Tue, 08 Oct 2019 14:53:58 +1100
-Date:   Tue, 8 Oct 2019 14:53:58 +1100
+        id 1iHglb-00045v-1P; Tue, 08 Oct 2019 15:06:31 +1100
+Date:   Tue, 8 Oct 2019 15:06:31 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/15] fs: Introduce i_blocks_per_page
-Message-ID: <20191008035358.GW804@dread.disaster.area>
-References: <20190925005214.27240-1-willy@infradead.org>
- <20190925005214.27240-3-willy@infradead.org>
- <20190925083650.GE804@dread.disaster.area>
- <20191004192812.GK32665@bombadil.infradead.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com, tj@kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] cgroup, blkcg: prevent dirty inodes to pin dying memory
+ cgroups
+Message-ID: <20191008040630.GA15134@dread.disaster.area>
+References: <20191004221104.646711-1-guro@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191004192812.GK32665@bombadil.infradead.org>
+In-Reply-To: <20191004221104.646711-1-guro@fb.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
         a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=7-415B0cAAAA:8 a=Ezv6lXj58yBfwjVs_tMA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+        a=FOH2dFAWAAAA:8 a=7-415B0cAAAA:8 a=tDm895Og1OPoIn_jjw4A:9
+        a=IdxF-Tp9X7UopkWZ:21 a=VORt4evX2LhOaXV9:21 a=CjuIK1q_8ugA:10
+        a=i3VuKzQdj-NEYjvDI-p3:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 12:28:12PM -0700, Matthew Wilcox wrote:
-> On Wed, Sep 25, 2019 at 06:36:50PM +1000, Dave Chinner wrote:
-> > I'm actually working on abstrcting this code from both block size
-> > and page size via the helpers below. We ahve need to support block
-> > size > page size, and so that requires touching a bunch of all the
-> > same code as this patchset. I'm currently trying to combine your
-> > last patch set with my patchset so I can easily test allocating 64k
-> > page cache pages on a 64k block size filesystem on a 4k page size
-> > machine with XFS....
+On Fri, Oct 04, 2019 at 03:11:04PM -0700, Roman Gushchin wrote:
+> This is a RFC patch, which is not intended to be merged as is,
+> but hopefully will start a discussion which can result in a good
+> solution for the described problem.
 > 
-> This all makes sense ...
+> --
 > 
-> > > -	if (iop || i_blocksize(inode) == PAGE_SIZE)
-> > > +	if (iop || i_blocks_per_page(inode, page) <= 1)
-> > >  		return iop;
-> > 
-> > That also means checks like these become:
-> > 
-> > 	if (iop || iomap_chunks_per_page(inode, page) <= 1)
-> > 
-> > as a single file can now have multiple pages per block, a page per
-> > block and multiple blocks per page as the page size changes...
-> > 
-> > I'd like to only have to make one pass over this code to abstract
-> > out page and block sizes, so I'm guessing we'll need to do some
-> > co-ordination here....
+> We've noticed that the number of dying cgroups on our production hosts
+> tends to grow with the uptime. This time it's caused by the writeback
+> code.
 > 
-> Yup.  I'm happy if you want to send your patches out; I'll keep going
-> with the patches I have for the moment, and we'll figure out how to
-> merge the two series in a way that makes sense.
+> An inode which is getting dirty for the first time is associated
+> with the wb structure (look at __inode_attach_wb()). It can later
+> be switched to another wb under some conditions (e.g. some other
+> cgroup is writing a lot of data to the same inode), but generally
+> stays associated up to the end of life of the inode structure.
+> 
+> The problem is that the wb structure holds a reference to the original
+> memory cgroup. So if the inode was dirty once, it has a good chance
+> to pin down the original memory cgroup.
+> 
+> An example from the real life: some service runs periodically and
+> updates rpm packages. Each time in a new memory cgroup. Installed
+> .so files are heavily used by other cgroups, so corresponding inodes
+> tend to stay alive for a long. So do pinned memory cgroups.
+> In production I've seen many hosts with 1-2 thousands of dying
+> cgroups.
+> 
+> This is not the first problem with the dying memory cgroups. As
+> always, the problem is with their relative size: memory cgroups
+> are large objects, easily 100x-1000x larger that inodes. So keeping
+> a couple of thousands of dying cgroups in memory without a good reason
+> (what we easily do with inodes) is quite costly (and is measured
+> in tens and hundreds of Mb).
+> 
+> One possible approach to this problem is to switch inodes associated
+> with dying wbs to the root wb. Switching is a best effort operation
+> which can fail silently, so unfortunately we can't run once over a
+> list of associated inodes (even if we'd have such a list). So we
+> really have to scan all inodes.
+> 
+> In the proposed patch I schedule a work on each memory cgroup
+> deletion, which is probably too often. Alternatively, we can do it
+> periodically under some conditions (e.g. the number of dying memory
+> cgroups is larger than X). So it's basically a gc run.
+> 
+> I wonder if there are any better ideas?
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> ---
+>  fs/fs-writeback.c | 29 +++++++++++++++++++++++++++++
+>  mm/memcontrol.c   |  5 +++++
+>  2 files changed, 34 insertions(+)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 542b02d170f8..4bbc9a200b2c 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -545,6 +545,35 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+>  	up_read(&bdi->wb_switch_rwsem);
+>  }
+>  
+> +static void reparent_dirty_inodes_one_sb(struct super_block *sb, void *arg)
+> +{
+> +	struct inode *inode, *next;
+> +
+> +	spin_lock(&sb->s_inode_list_lock);
+> +	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
+> +		spin_lock(&inode->i_lock);
+> +		if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
+> +			spin_unlock(&inode->i_lock);
+> +			continue;
+> +		}
+> +
+> +		if (inode->i_wb && wb_dying(inode->i_wb)) {
+> +			spin_unlock(&inode->i_lock);
+> +			inode_switch_wbs(inode, root_mem_cgroup->css.id);
+> +			continue;
+> +		}
+> +
+> +		spin_unlock(&inode->i_lock);
+> +	}
+> +	spin_unlock(&sb->s_inode_list_lock);
 
-I'm waiting for the xfs -> iomap writeback changes to land in a
-stable branch so I don't have to do things twice in slightly
-different ways in the patchset. Once we get that in an iomap-next
-branch I'll rebase my patches on top of it and go from there...
+No idea what the best solution is, but I think this is fundamentally
+unworkable. It's not uncommon to have a hundred million cached
+inodes these days, often on a single filesystem. Anything that
+requires a brute-force system wide inode scan, especially without
+conditional reschedule points, is largely a non-starter.
+
+Also, inode_switch_wbs() is not guaranteed to move the inode to the
+destination wb.  There can only be WB_FRN_MAX_IN_FLIGHT (1024)
+switches in flight at once and switches are run via RCU callbacks,
+so I suspect that using inode_switch_wbs() for bulk re-assignment is
+going to be a lot more complex than just finding inodes to call
+inode_switch_wbs() on....
 
 Cheers,
 
