@@ -2,73 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF3C0D0234
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 22:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2487D0297
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 23:00:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730916AbfJHUgM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 16:36:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52962 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727835AbfJHUgM (ORCPT
+        id S1730987AbfJHVAa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 17:00:30 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33099 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730674AbfJHVAa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 16:36:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZlXOPDGdWnZCwluNug0aJjYzAAN0QvHnKg8apMogRTM=; b=qe0vhPeTm79VWLdgH1qc7EyET
-        QeoJeGO+azpsOEToTKQ765YKA9PRyC1FLbVcW1iKm3HLABHpMNgCxnWUf4qHnw7yX9PRy/NTm5IXW
-        L2tyDC+QHicCpOov5Fa+0mkJGPpAavmFEjZ0IXBjC7MkcBjakXNlc1L18bxfwfaiGaa7OXPB7xwqg
-        I4bQgshhhydsVMDfu06dkErEAK+0m8rfIp3FhB/FS2zMjWdMgyuP+/ckQGrPnuJkHdsGvuseH/u4R
-        XHZZzwEa829ON0UgF28nua88UanfMfdAvMS/jnpTSgzOYV6q9f/qOm1QhqGR7ECKSdqZhRk8gD+Da
-        GC+ldgoYQ==;
-Received: from [2601:1c0:6280:3f0::9ef4]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHwDJ-00023z-7M; Tue, 08 Oct 2019 20:36:10 +0000
-To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] fs: fs-writeback.c: fix kernel-doc warning
-Message-ID: <756645ac-0ce8-d47e-d30a-04d9e4923a4f@infradead.org>
-Date:   Tue, 8 Oct 2019 13:36:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Tue, 8 Oct 2019 17:00:30 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i76so3807340pgc.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Oct 2019 14:00:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yVnzPJdyV7FO5xyMUaSFRF4krY7Ebw999D+CIkWoW0w=;
+        b=UpvrHmSJ/o+tlZQnZJuF15+KjkFId+6b4Q2KvX1rKHIIDaaANFqOMHtMh9wUwoJJA4
+         l5sHvJXl36ZzYlT0XHBRM84LqagMRcmhB+hZChxp4EJAfSlMxl4+UANL7820E8TBKDuA
+         /gcNgOFC7PJ/K+H8YuEBHNQFHccLAeMflbfMB9dgdEs5UZn2LbKBI18s231W2zzfI1Wg
+         LqGxONrJ1xKwgmNi6R0r4jRN9I2de0NJZUB1mEMjAWbs3Zn4jRcVQsid59hpsFazzZBV
+         2DsbQ2BuBJQyPSJ0odZeb1CuMnND0nHWCDJFjSdqqC34D7YNlimqBfCWJzmEsNFpFInE
+         N7LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yVnzPJdyV7FO5xyMUaSFRF4krY7Ebw999D+CIkWoW0w=;
+        b=s60BajaUosTjD08EbNxADycyO0mK5UmfVNXRCL+FShG693vpXGYkDv/yV7VHXd6vk/
+         NtLl5ezStcwUDFJC76HwG3Fh4Jo34A4zSPVthrWG0aREp78etBuROsPPiHjGWf1RqKrZ
+         hUk0MKdyVfpqIbdZJ0PI8aFwTELd2wWK7A68ZjBJx8/ZP+oDz7f4QnKGN1mC0V+U+I+W
+         kSRdYeASxHHllsM0xcD5diUpd7faJeFgrsJqHbDVTHItLrwmcEPekmy56a8khjv7h5m5
+         tF1NR7LtYxz53BxTTFFQMuwqCDsjFPWm2eBL1h9DBHd5H205B/Bchcd17e2Jdn7Dl/BN
+         GJyQ==
+X-Gm-Message-State: APjAAAXaXE+8rgfj3sgOILOcX3kHeBOBEUhxSnIZUj/mKSMz3nsDu8CL
+        RhPm9KZSL88JKR8HiQox02LgOg==
+X-Google-Smtp-Source: APXvYqwyxzllxF/LoBLa/x1iOZGL35rS0gTiTaUEVADayCbzUtTbP0axdqTlfofHfTzaGT8lgKDz/A==
+X-Received: by 2002:a17:90a:6509:: with SMTP id i9mr6821226pjj.82.1570568428738;
+        Tue, 08 Oct 2019 14:00:28 -0700 (PDT)
+Received: from google.com ([2620:15c:2cb:1:e90c:8e54:c2b4:29e7])
+        by smtp.gmail.com with ESMTPSA id q15sm90399pgl.12.2019.10.08.14.00.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2019 14:00:27 -0700 (PDT)
+Date:   Tue, 8 Oct 2019 14:00:22 -0700
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     Alan Maguire <alan.maguire@oracle.com>
+Cc:     linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org,
+        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, schowdary@nvidia.com,
+        urezki@gmail.com, andriy.shevchenko@linux.intel.com,
+        changbin.du@intel.com, kunit-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 linux-kselftest-test 0/3] kunit: support building
+ core/tests as modules
+Message-ID: <20191008210022.GA186342@google.com>
+References: <1570546546-549-1-git-send-email-alan.maguire@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570546546-549-1-git-send-email-alan.maguire@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Tue, Oct 08, 2019 at 03:55:43PM +0100, Alan Maguire wrote:
+> The current kunit execution model is to provide base kunit functionality
+> and tests built-in to the kernel.  The aim of this series is to allow
+> building kunit itself and tests as modules.  This in turn allows a
 
-Fix kernel-doc warning in fs/fs-writeback.c:
+Cool! I had plans for supporting this eventually, so I am more than
+happy to accept support for this!
 
-../fs/fs-writeback.c:913: warning: Excess function parameter 'nr_pages' description in 'cgroup_writeback_by_id'
+> simple form of selective execution; load the module you wish to test.
+> In doing so, kunit itself (if also built as a module) will be loaded as
+> an implicit dependency.
 
-Fixes: d62241c7a406 ("writeback, memcg: Implement cgroup_writeback_by_id()")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>
----
- fs/fs-writeback.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Seems like a reasonable initial approach. I had some plans for a
+centralized test executor, but I don't think that this should be a
+problem.
 
---- linux-next-20191008.orig/fs/fs-writeback.c
-+++ linux-next-20191008/fs/fs-writeback.c
-@@ -905,7 +905,7 @@ restart:
-  * cgroup_writeback_by_id - initiate cgroup writeback from bdi and memcg IDs
-  * @bdi_id: target bdi id
-  * @memcg_id: target memcg css id
-- * @nr_pages: number of pages to write, 0 for best-effort dirty flushing
-+ * @nr: number of pages to write, 0 for best-effort dirty flushing
-  * @reason: reason why some writeback work initiated
-  * @done: target wb_completion
-  *
+> Because this requires a core API modification - if a module delivers
+> multiple suites, they must be declared with the kunit_test_suites()
+> macro - we're proposing this patch as a candidate to be applied to the
+> test tree before too many kunit consumers appear.  We attempt to deal
+> with existing consumers in patch 1.
 
+Makese sense.
