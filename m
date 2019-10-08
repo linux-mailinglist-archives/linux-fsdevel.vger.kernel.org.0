@@ -2,100 +2,281 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 085C1CF82D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 13:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D5F8CF908
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 13:58:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730591AbfJHLaP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 07:30:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40466 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729876AbfJHLaP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:30:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 36A1FAE35;
-        Tue,  8 Oct 2019 11:30:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 6E84A1E4827; Tue,  8 Oct 2019 13:30:12 +0200 (CEST)
-Date:   Tue, 8 Oct 2019 13:30:12 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
-Subject: Re: [PATCH v4 7/8] ext4: reorder map.m_flags checks in
- ext4_set_iomap()
-Message-ID: <20191008113012.GJ5078@quack2.suse.cz>
-References: <cover.1570100361.git.mbobrowski@mbobrowski.org>
- <3551610e53aa1984210a4de04ad6e1a89f5bf0a3.1570100361.git.mbobrowski@mbobrowski.org>
+        id S1730618AbfJHL63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 07:58:29 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56195 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730371AbfJHL62 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Oct 2019 07:58:28 -0400
+X-Originating-IP: 81.185.168.180
+Received: from [192.168.43.237] (180.168.185.81.rev.sfr.net [81.185.168.180])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 2154FC0014;
+        Tue,  8 Oct 2019 11:58:18 +0000 (UTC)
+Subject: Re: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
+To:     Atish Patra <Atish.Patra@wdc.com>
+Cc:     "ralf@linux-mips.org" <ralf@linux-mips.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "paul.burton@mips.com" <paul.burton@mips.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "hch@lst.de" <hch@lst.de>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "jhogan@kernel.org" <jhogan@kernel.org>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190808061756.19712-1-alex@ghiti.fr>
+ <20190808061756.19712-15-alex@ghiti.fr>
+ <208433f810b5b07b1e679d7eedb028697dff851b.camel@wdc.com>
+ <60b52f20-a2c7-dee9-7cf3-a727f07400b9@ghiti.fr>
+ <daeb33415751ef16a717f6ff6a29486110c503d7.camel@wdc.com>
+From:   Alex Ghiti <alex@ghiti.fr>
+Message-ID: <9e9a3fea-d8a3-ae62-317a-740773f0725c@ghiti.fr>
+Date:   Tue, 8 Oct 2019 07:58:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3551610e53aa1984210a4de04ad6e1a89f5bf0a3.1570100361.git.mbobrowski@mbobrowski.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <daeb33415751ef16a717f6ff6a29486110c503d7.camel@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: sv-FI
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 03-10-19 21:34:51, Matthew Bobrowski wrote:
-> For iomap direct IO write code path changes, we need to accommodate
-> for the case where the block mapping flags passed to ext4_map_blocks()
-> will result in m_flags having both EXT4_MAP_MAPPED and
-> EXT4_MAP_UNWRITTEN bits set. In order for the allocated unwritten
-> extents to be converted properly in the end_io handler, iomap->type
-> must be set to IOMAP_UNWRITTEN, so we need to reshuffle the
-> conditional statement in order to achieve this.
-> 
-> This change is a no-op for DAX code path as the block mapping flag
-> passed to ext4_map_blocks() when IS_DAX(inode) never results in
-> EXT4_MAP_MAPPED and EXT4_MAP_UNWRITTEN being set at once.
-> 
-> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+On 10/7/19 8:46 PM, Atish Patra wrote:
+> On Mon, 2019-10-07 at 05:11 -0400, Alex Ghiti wrote:
+>> On 10/4/19 10:12 PM, Atish Patra wrote:
+>>> On Thu, 2019-08-08 at 02:17 -0400, Alexandre Ghiti wrote:
+>>>> In order to avoid wasting user address space by using bottom-up
+>>>> mmap
+>>>> allocation scheme, prefer top-down scheme when possible.
+>>>>
+>>>> Before:
+>>>> root@qemuriscv64:~# cat /proc/self/maps
+>>>> 00010000-00016000 r-xp 00000000 fe:00
+>>>> 6389       /bin/cat.coreutils
+>>>> 00016000-00017000 r--p 00005000 fe:00
+>>>> 6389       /bin/cat.coreutils
+>>>> 00017000-00018000 rw-p 00006000 fe:00
+>>>> 6389       /bin/cat.coreutils
+>>>> 00018000-00039000 rw-p 00000000 00:00 0          [heap]
+>>>> 1555556000-155556d000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
+>>>> 155556d000-155556e000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
+>>>> 155556e000-155556f000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
+>>>> 155556f000-1555570000 rw-p 00000000 00:00 0
+>>>> 1555570000-1555572000 r-xp 00000000 00:00 0      [vdso]
+>>>> 1555574000-1555576000 rw-p 00000000 00:00 0
+>>>> 1555576000-1555674000 r-xp 00000000 fe:00 7187   /lib/libc-
+>>>> 2.28.so
+>>>> 1555674000-1555678000 r--p 000fd000 fe:00 7187   /lib/libc-
+>>>> 2.28.so
+>>>> 1555678000-155567a000 rw-p 00101000 fe:00 7187   /lib/libc-
+>>>> 2.28.so
+>>>> 155567a000-15556a0000 rw-p 00000000 00:00 0
+>>>> 3fffb90000-3fffbb1000 rw-p 00000000 00:00 0      [stack]
+>>>>
+>>>> After:
+>>>> root@qemuriscv64:~# cat /proc/self/maps
+>>>> 00010000-00016000 r-xp 00000000 fe:00
+>>>> 6389       /bin/cat.coreutils
+>>>> 00016000-00017000 r--p 00005000 fe:00
+>>>> 6389       /bin/cat.coreutils
+>>>> 00017000-00018000 rw-p 00006000 fe:00
+>>>> 6389       /bin/cat.coreutils
+>>>> 2de81000-2dea2000 rw-p 00000000 00:00 0          [heap]
+>>>> 3ff7eb6000-3ff7ed8000 rw-p 00000000 00:00 0
+>>>> 3ff7ed8000-3ff7fd6000 r-xp 00000000 fe:00 7187   /lib/libc-
+>>>> 2.28.so
+>>>> 3ff7fd6000-3ff7fda000 r--p 000fd000 fe:00 7187   /lib/libc-
+>>>> 2.28.so
+>>>> 3ff7fda000-3ff7fdc000 rw-p 00101000 fe:00 7187   /lib/libc-
+>>>> 2.28.so
+>>>> 3ff7fdc000-3ff7fe2000 rw-p 00000000 00:00 0
+>>>> 3ff7fe4000-3ff7fe6000 r-xp 00000000 00:00 0      [vdso]
+>>>> 3ff7fe6000-3ff7ffd000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
+>>>> 3ff7ffd000-3ff7ffe000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
+>>>> 3ff7ffe000-3ff7fff000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
+>>>> 3ff7fff000-3ff8000000 rw-p 00000000 00:00 0
+>>>> 3fff888000-3fff8a9000 rw-p 00000000 00:00 0      [stack]
+>>>>
+>>>> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+>>>> Acked-by: Paul Walmsley <paul.walmsley@sifive.com>
+>>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>>>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>>>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+>>>> ---
+>>>>    arch/riscv/Kconfig | 12 ++++++++++++
+>>>>    1 file changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>>>> index 59a4727ecd6c..87dc5370becb 100644
+>>>> --- a/arch/riscv/Kconfig
+>>>> +++ b/arch/riscv/Kconfig
+>>>> @@ -54,6 +54,18 @@ config RISCV
+>>>>    	select EDAC_SUPPORT
+>>>>    	select ARCH_HAS_GIGANTIC_PAGE
+>>>>    	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
+>>>> +	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
+>>>> +	select HAVE_ARCH_MMAP_RND_BITS
+>>>> +
+>>>> +config ARCH_MMAP_RND_BITS_MIN
+>>>> +	default 18 if 6legacy_va_layout4BIT
+>>>> +	default 8
+>>>> +
+>>>> +# max bits determined by the following formula:
+>>>> +#  VA_BITS - PAGE_SHIFT - 3
+>>>> +config ARCH_MMAP_RND_BITS_MAX
+>>>> +	default 24 if 64BIT # SV39 based
+>>>> +	default 17
+>>>>    
+>>>>    config MMU
+>>>>    	def_bool y
+>>> With this patch, I am not able to boot a Fedora Linux(a Gnome
+>>> desktop
+>>> image) on RISC-V hardware (Unleashed + Microsemi Expansion board).
+>>> The
+>>> booting gets stuck right after systemd starts.
+>>>
+>>> https://paste.fedoraproject.org/paste/TOrUMqqKH-pGFX7CnfajDg
+>>>
+>>> Reverting just this patch allow to boot Fedora successfully on
+>>> specific
+>>> RISC-V hardware. I have not root caused the issue but it looks like
+>>> it
+>>> might have messed userpsace mapping.
+>> It might have messed userspace mapping but not enough to make
+>> userspace
+>> completely broken
+>> as systemd does some things. I would try to boot in legacy layout:
+>> if
+>> you can try to set sysctl legacy_va_layout
+>> at boottime, it will map userspace as it was before (bottom-up). If
+>> that
+>> does not work, the problem could
+>> be the randomization that is activated by default now.
+> Randomization may not be the issue. I just removed
+> ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT from the config and that seems to
+> work. Here is the bottom-up layout with randomization on.
 
-The patch looks good to me. You can add:
+Oups, sorry for my previous answer, I missed yours that landed in 
+another folder.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Removing ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT also removes randomization
+as this config selects ARCH_HAS_ELF_RANDOMIZE.
+You could remove ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT and selects by hand
+ARCH_HAS_ELF_RANDOMIZE but you would have to implement arch_mmap_rnd and
+arch_randomize_brk (elf-randomize.h).
 
-Just those 72 columns limited comment lines... ;)
+The simplest would be to boot in legacy layout: I did not find a way to 
+set this in kernel
+command line, but you can by modifying it directly in the code:
 
-								Honza
+https://elixir.bootlin.com/linux/v5.4-rc2/source/kernel/sysctl.c#L269
 
-> ---
->  fs/ext4/inode.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index e133dda55063..63ad23ae05b8 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3420,10 +3420,20 @@ static int ext4_set_iomap(struct inode *inode, struct iomap *iomap, u16 type,
->  		iomap->type = type;
->  		iomap->addr = IOMAP_NULL_ADDR;
->  	} else {
-> -		if (map->m_flags & EXT4_MAP_MAPPED) {
-> -			iomap->type = IOMAP_MAPPED;
-> -		} else if (map->m_flags & EXT4_MAP_UNWRITTEN) {
-> +		/*
-> +		 * Flags passed to ext4_map_blocks() for direct I/O
-> +		 * writes can result in map->m_flags having both
-> +		 * EXT4_MAP_MAPPED and EXT4_MAP_UNWRITTEN bits set. In
-> +		 * order for allocated extents to be converted to
-> +		 * written extents in the ->end_io handler correctly,
-> +		 * we need to ensure that the iomap->type is set
-> +		 * approprately. Thus, we need to check whether
-> +		 * EXT4_MAP_UNWRITTEN is set first.
-> +		 */
-> +		if (map->m_flags & EXT4_MAP_UNWRITTEN) {
->  			iomap->type = IOMAP_UNWRITTEN;
-> +		} else if (map->m_flags & EXT4_MAP_MAPPED) {
-> +			iomap->type = IOMAP_MAPPED;
->  		} else {
->  			WARN_ON_ONCE(1);
->  			return -EIO;
-> -- 
-> 2.20.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> [root@fedora-riscv ~]# cat /proc/self/maps
+> 1555556000-1555570000 r-xp 00000000 103:01
+> 280098                        /usr/lib64/ld-2.28.so
+> 1555570000-1555571000 r--p 00019000 103:01
+> 280098                        /usr/lib64/ld-2.28.so
+> 1555571000-1555572000 rw-p 0001a000 103:01
+> 280098                        /usr/lib64/ld-2.28.so
+> 1555572000-1555573000 rw-p 00000000 00:00 0
+> 1555573000-1555575000 r-xp 00000000 00:00
+> 0                              [vdso]
+> 1555575000-1555576000 r--p 00000000 103:01
+> 50936                         /usr/lib/locale/en_US.utf8/LC_IDENTIFICAT
+> ION
+> 1555576000-155557d000 r--s 00000000 103:01
+> 280826                        /usr/lib64/gconv/gconv-modules.cache
+> 155557d000-155557e000 r--p 00000000 103:01
+> 50937                         /usr/lib/locale/en_US.utf8/LC_MEASUREMENT
+> 155557e000-155557f000 r--p 00000000 103:01
+> 50939                         /usr/lib/locale/en_US.utf8/LC_TELEPHONE
+> 155557f000-1555580000 r--p 00000000 103:01
+> 3706                          /usr/lib/locale/en_US.utf8/LC_ADDRESS
+> 1555580000-1555581000 r--p 00000000 103:01
+> 50944                         /usr/lib/locale/en_US.utf8/LC_NAME
+> 1555581000-1555582000 r--p 00000000 103:01
+> 3775                          /usr/lib/locale/en_US.utf8/LC_PAPER
+> 1555582000-1555583000 r--p 00000000 103:01
+> 3758                          /usr/lib/locale/en_US.utf8/LC_MESSAGES/SY
+> S_LC_MESSAGES
+> 1555583000-1555584000 r--p 00000000 103:01
+> 50938                         /usr/lib/locale/en_US.utf8/LC_MONETARY
+> 1555584000-1555585000 r--p 00000000 103:01
+> 50940                         /usr/lib/locale/en_US.utf8/LC_TIME
+> 1555585000-1555586000 r--p 00000000 103:01
+> 50945                         /usr/lib/locale/en_US.utf8/LC_NUMERIC
+> 1555590000-1555592000 rw-p 00000000 00:00 0
+> 1555592000-15556b1000 r-xp 00000000 103:01
+> 280105                        /usr/lib64/libc-2.28.so
+> 15556b1000-15556b5000 r--p 0011e000 103:01
+> 280105                        /usr/lib64/libc-2.28.so
+> 15556b5000-15556b7000 rw-p 00122000 103:01
+> 280105                        /usr/lib64/libc-2.28.so
+> 15556b7000-15556bb000 rw-p 00000000 00:00 0
+> 15556bb000-1555933000 r--p 00000000 103:01
+> 3755                          /usr/lib/locale/en_US.utf8/LC_COLLATE
+> 1555933000-1555986000 r--p 00000000 103:01
+> 50942                         /usr/lib/locale/en_US.utf8/LC_CTYPE
+> 1555986000-15559a8000 rw-p 00000000 00:00 0
+> 2aaaaaa000-2aaaab1000 r-xp 00000000 103:01
+> 283975                        /usr/bin/cat
+> 2aaaab1000-2aaaab2000 r--p 00006000 103:01
+> 283975                        /usr/bin/cat
+> 2aaaab2000-2aaaab3000 rw-p 00007000 103:01
+> 283975                        /usr/bin/cat
+> 2aaaab3000-2aaaad4000 rw-p 00000000 00:00
+> 0                              [heap]
+> 3fffc97000-3fffcb8000 rw-p 00000000 00:00
+> 0                              [stack]
+>
+>
+>> Anyway, it's weird since userspace should not depend on how the
+>> mapping is.
+>>
+>> If you can identify the program that stalls, that would be fantastic
+>> :)
+>>
+> It stucks while booting. So I am not sure how to figure out which
+> program stalls. It is difficult to figure out from boot log as it
+> stucks at different places but soon after systemd starts.
+
+If you can attach the running kernel, I would use vmlinux-gdb.py commands
+to figure out which processes are running (lx-ps command in particular could
+give us a hint). You can also add traces directly in the kernel and 
+either use
+lx-dmesg command to print them from gdb or use your standard serial output:
+I would then print task_struct->comm at context switch to see which process
+is stuck.
+To use the python script, you need to recompile with DEBUG_INFO and
+GDB_SCRIPTS enabled.
+
+FYI, I have just booted a custom buildroot image based on kernel 5.4-rc2.
+
+Let me know if I can do anything.
+
+Alex
+
+>> As the code is common to mips and arm now and I did not hear from
+>> them,
+>> I imagine the problem comes
+>> from us.
+>>
+>> Alex
