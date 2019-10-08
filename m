@@ -2,149 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ABDBCF176
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 06:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 408AFCF17E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 06:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfJHEGi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 00:06:38 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:53857 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725858AbfJHEGi (ORCPT
+        id S1729997AbfJHEJi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 00:09:38 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45398 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfJHEJg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 00:06:38 -0400
-Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 90A4543E409;
-        Tue,  8 Oct 2019 15:06:31 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iHglb-00045v-1P; Tue, 08 Oct 2019 15:06:31 +1100
-Date:   Tue, 8 Oct 2019 15:06:31 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com, tj@kernel.org,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] cgroup, blkcg: prevent dirty inodes to pin dying memory
- cgroups
-Message-ID: <20191008040630.GA15134@dread.disaster.area>
-References: <20191004221104.646711-1-guro@fb.com>
+        Tue, 8 Oct 2019 00:09:36 -0400
+Received: by mail-lj1-f194.google.com with SMTP id q64so15936976ljb.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 21:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bnKFcjxBKN6Qpqxh5XkObDMG8fH2wT4HUjifdtCIY7U=;
+        b=LCTCldBdoohmi8kv7PcXweH6uWk7dC5wCVDPU9bVrAuYhDOtJV9+8ZUI3ZUecmGXb8
+         63QN/52Kf/NOj4RH1TMXblY6soPXq/L0PBd6sRBHAJAl8T1SAHO0vB0b1ljtolfq8auX
+         ZtLweTHsVLVOlJLg/B4F8wbqExDFYmMKBwmPU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bnKFcjxBKN6Qpqxh5XkObDMG8fH2wT4HUjifdtCIY7U=;
+        b=tnMXD4qV06nwrowK7hFuKgkkBHmHecDUIg5Be58lZyTtalIVoiLlopcsokg/EkgAo4
+         N1kftaoG4F35zjUr905eLYJgh7XWRnUbUQVq3Wf9QxT8tYUrRD6oxpd05iDSYTACiUL0
+         8HeV/P49px/aACk9GVHE9NZLbtCd1bJDjKI6zYIvpYpHTeESTVe3Jltm9/6mymuj5KPc
+         lgLsZ46kJdOpN/oRxwTC6Qq8XqKA0bzFSWsvjLQn1oehzFTQ3cdhJdjeW/Zx0o1LMQAU
+         +spmCx2oQj+PJjWf06qO05PpnZwCwRGS94tF1gMUyMiW3uz+CTr0kHVKl8AoqFhivOpt
+         GaSg==
+X-Gm-Message-State: APjAAAWv8kYKif9K1Xum5ZIgv17rUmqjvNQ0ZdhTYdJst/hMSJm9GH/w
+        Gd0j9cifTnZ+2YR2lW1OKeUID0vofzw=
+X-Google-Smtp-Source: APXvYqzMu52R7y7A+Uny/0UylQCJ51pbfeIeMpQopZeDuL95k8LhxsOcWHzmt5jfGN5qZnrJL8KzqA==
+X-Received: by 2002:a2e:9e8b:: with SMTP id f11mr16303679ljk.153.1570507772508;
+        Mon, 07 Oct 2019 21:09:32 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id v1sm3234976lfa.87.2019.10.07.21.09.30
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2019 21:09:31 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id b20so15953371ljj.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 21:09:30 -0700 (PDT)
+X-Received: by 2002:a2e:86d5:: with SMTP id n21mr20643986ljj.1.1570507770530;
+ Mon, 07 Oct 2019 21:09:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191004221104.646711-1-guro@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=FOH2dFAWAAAA:8 a=7-415B0cAAAA:8 a=tDm895Og1OPoIn_jjw4A:9
-        a=IdxF-Tp9X7UopkWZ:21 a=VORt4evX2LhOaXV9:21 a=CjuIK1q_8ugA:10
-        a=i3VuKzQdj-NEYjvDI-p3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20191006222046.GA18027@roeck-us.net> <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
+ <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
+ <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net> <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
+ <20191007012437.GK26530@ZenIV.linux.org.uk> <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
+ <20191007025046.GL26530@ZenIV.linux.org.uk> <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
+ <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com> <20191008032912.GQ26530@ZenIV.linux.org.uk>
+In-Reply-To: <20191008032912.GQ26530@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 7 Oct 2019 21:09:14 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiAyZmsEp6oQQgHiuaDU0bLj=OVHSGV_OfvHRSXNPYABw@mail.gmail.com>
+Message-ID: <CAHk-=wiAyZmsEp6oQQgHiuaDU0bLj=OVHSGV_OfvHRSXNPYABw@mail.gmail.com>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000c7beeb05945e55b8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 03:11:04PM -0700, Roman Gushchin wrote:
-> This is a RFC patch, which is not intended to be merged as is,
-> but hopefully will start a discussion which can result in a good
-> solution for the described problem.
-> 
-> --
-> 
-> We've noticed that the number of dying cgroups on our production hosts
-> tends to grow with the uptime. This time it's caused by the writeback
-> code.
-> 
-> An inode which is getting dirty for the first time is associated
-> with the wb structure (look at __inode_attach_wb()). It can later
-> be switched to another wb under some conditions (e.g. some other
-> cgroup is writing a lot of data to the same inode), but generally
-> stays associated up to the end of life of the inode structure.
-> 
-> The problem is that the wb structure holds a reference to the original
-> memory cgroup. So if the inode was dirty once, it has a good chance
-> to pin down the original memory cgroup.
-> 
-> An example from the real life: some service runs periodically and
-> updates rpm packages. Each time in a new memory cgroup. Installed
-> .so files are heavily used by other cgroups, so corresponding inodes
-> tend to stay alive for a long. So do pinned memory cgroups.
-> In production I've seen many hosts with 1-2 thousands of dying
-> cgroups.
-> 
-> This is not the first problem with the dying memory cgroups. As
-> always, the problem is with their relative size: memory cgroups
-> are large objects, easily 100x-1000x larger that inodes. So keeping
-> a couple of thousands of dying cgroups in memory without a good reason
-> (what we easily do with inodes) is quite costly (and is measured
-> in tens and hundreds of Mb).
-> 
-> One possible approach to this problem is to switch inodes associated
-> with dying wbs to the root wb. Switching is a best effort operation
-> which can fail silently, so unfortunately we can't run once over a
-> list of associated inodes (even if we'd have such a list). So we
-> really have to scan all inodes.
-> 
-> In the proposed patch I schedule a work on each memory cgroup
-> deletion, which is probably too often. Alternatively, we can do it
-> periodically under some conditions (e.g. the number of dying memory
-> cgroups is larger than X). So it's basically a gc run.
-> 
-> I wonder if there are any better ideas?
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> ---
->  fs/fs-writeback.c | 29 +++++++++++++++++++++++++++++
->  mm/memcontrol.c   |  5 +++++
->  2 files changed, 34 insertions(+)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 542b02d170f8..4bbc9a200b2c 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -545,6 +545,35 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
->  	up_read(&bdi->wb_switch_rwsem);
->  }
->  
-> +static void reparent_dirty_inodes_one_sb(struct super_block *sb, void *arg)
-> +{
-> +	struct inode *inode, *next;
-> +
-> +	spin_lock(&sb->s_inode_list_lock);
-> +	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
-> +		spin_lock(&inode->i_lock);
-> +		if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
-> +			spin_unlock(&inode->i_lock);
-> +			continue;
-> +		}
-> +
-> +		if (inode->i_wb && wb_dying(inode->i_wb)) {
-> +			spin_unlock(&inode->i_lock);
-> +			inode_switch_wbs(inode, root_mem_cgroup->css.id);
-> +			continue;
-> +		}
-> +
-> +		spin_unlock(&inode->i_lock);
-> +	}
-> +	spin_unlock(&sb->s_inode_list_lock);
+--000000000000c7beeb05945e55b8
+Content-Type: text/plain; charset="UTF-8"
 
-No idea what the best solution is, but I think this is fundamentally
-unworkable. It's not uncommon to have a hundred million cached
-inodes these days, often on a single filesystem. Anything that
-requires a brute-force system wide inode scan, especially without
-conditional reschedule points, is largely a non-starter.
+On Mon, Oct 7, 2019 at 8:29 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> For x86?  Sure, why not...  Note, BTW, that for short constant-sized
+> copies we *do* STAC/CLAC at the call site - see those
+>                 __uaccess_begin_nospec();
+> in raw_copy_{from,to}_user() in the switches...
 
-Also, inode_switch_wbs() is not guaranteed to move the inode to the
-destination wb.  There can only be WB_FRN_MAX_IN_FLIGHT (1024)
-switches in flight at once and switches are run via RCU callbacks,
-so I suspect that using inode_switch_wbs() for bulk re-assignment is
-going to be a lot more complex than just finding inodes to call
-inode_switch_wbs() on....
+Yeah, an that code almost never actually triggers in practice. The
+code is pointless and dead.
 
-Cheers,
+The thing is, it's only ever used for the double undescore versions,
+and the ones that do have have it are almost never constant sizes in
+the first place.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+And yes, there's like a couple of cases in the whole kernel.
+
+Just remove those constant size cases. They are pointless and just
+complicate our headers and slow down the compile for no good reason.
+
+Try the attached patch, and then count the number of "rorx"
+instructions in the kernel. Hint: not many. On my personal config,
+this triggers 15 times in the whole kernel build (not counting
+modules).
+
+It's not worth it. The "speedup" from using __copy_{to,from}_user()
+with the fancy inlining is negligible. All the cost is in the
+STAC/CLAC anyway, the code might as well be deleted.
+
+> 1) cross-architecture user_access_begin_dont_use(): on everything
+> except x86 it's empty, on x86 - __uaccess_begin_nospec().
+
+No, just do a proper range check, and use user_access_begin()
+
+Stop trying to optimize that range check away. It's a couple of fast
+instructions.
+
+The only ones who don't want the range check are the actual kernel
+copy ones, but they don't want the user_access_begin() either.
+
+> void *copy_mount_options(const void __user * data)
+> {
+>         unsigned offs, size;
+>         char *copy;
+>
+>         if (!data)
+>                 return NULL;
+>
+>         copy = kmalloc(PAGE_SIZE, GFP_KERNEL);
+>         if (!copy)
+>                 return ERR_PTR(-ENOMEM);
+>
+>         offs = (unsigned long)untagged_addr(data) & (PAGE_SIZE - 1);
+>
+>         if (copy_from_user(copy, data, PAGE_SIZE - offs)) {
+>                 kfree(copy);
+>                 return ERR_PTR(-EFAULT);
+>         }
+>         if (offs) {
+>                 if (copy_from_user(copy, data + PAGE_SIZE - offs, offs))
+>                         memset(copy + PAGE_SIZE - offs, 0, offs);
+>         }
+>         return copy;
+> }
+>
+> on the theory that any fault halfway through a page means a race with
+> munmap/mprotect/etc. and we can just pretend we'd lost the race entirely.
+> And to hell with exact_copy_from_user(), byte-by-byte copying, etc.
+
+Looks reasonable.
+
+              Linus
+
+--000000000000c7beeb05945e55b8
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k1hbrkuh0>
+X-Attachment-Id: f_k1hbrkuh0
+
+ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3NfNjQuaCBiL2FyY2gveDg2
+L2luY2x1ZGUvYXNtL3VhY2Nlc3NfNjQuaAppbmRleCA1Y2QxY2FhOGJjNjUuLmRiNThjNDQzNmNl
+MyAxMDA2NDQKLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzc182NC5oCisrKyBiL2Fy
+Y2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3NfNjQuaApAQCAtNjIsNiArNjIsOCBAQCBjb3B5X3Rv
+X3VzZXJfbWNzYWZlKHZvaWQgKnRvLCBjb25zdCB2b2lkICpmcm9tLCB1bnNpZ25lZCBsZW4pCiAJ
+cmV0dXJuIHJldDsKIH0KIAorI2RlZmluZSBtYXJrZXIoeCkgYXNtIHZvbGF0aWxlKCJyb3J4ICQi
+ICN4ICIsJXJheCwlcmR4IikKKwogc3RhdGljIF9fYWx3YXlzX2lubGluZSBfX211c3RfY2hlY2sg
+dW5zaWduZWQgbG9uZwogcmF3X2NvcHlfZnJvbV91c2VyKHZvaWQgKmRzdCwgY29uc3Qgdm9pZCBf
+X3VzZXIgKnNyYywgdW5zaWduZWQgbG9uZyBzaXplKQogewpAQCAtNzIsMzAgKzc0LDM1IEBAIHJh
+d19jb3B5X2Zyb21fdXNlcih2b2lkICpkc3QsIGNvbnN0IHZvaWQgX191c2VyICpzcmMsIHVuc2ln
+bmVkIGxvbmcgc2l6ZSkKIAlzd2l0Y2ggKHNpemUpIHsKIAljYXNlIDE6CiAJCV9fdWFjY2Vzc19i
+ZWdpbl9ub3NwZWMoKTsKKwkJbWFya2VyKDEpOwogCQlfX2dldF91c2VyX2FzbV9ub3plcm8oKih1
+OCAqKWRzdCwgKHU4IF9fdXNlciAqKXNyYywKIAkJCSAgICAgIHJldCwgImIiLCAiYiIsICI9cSIs
+IDEpOwogCQlfX3VhY2Nlc3NfZW5kKCk7CiAJCXJldHVybiByZXQ7CiAJY2FzZSAyOgogCQlfX3Vh
+Y2Nlc3NfYmVnaW5fbm9zcGVjKCk7CisJCW1hcmtlcigyKTsKIAkJX19nZXRfdXNlcl9hc21fbm96
+ZXJvKCoodTE2ICopZHN0LCAodTE2IF9fdXNlciAqKXNyYywKIAkJCSAgICAgIHJldCwgInciLCAi
+dyIsICI9ciIsIDIpOwogCQlfX3VhY2Nlc3NfZW5kKCk7CiAJCXJldHVybiByZXQ7CiAJY2FzZSA0
+OgogCQlfX3VhY2Nlc3NfYmVnaW5fbm9zcGVjKCk7CisJCW1hcmtlcig0KTsKIAkJX19nZXRfdXNl
+cl9hc21fbm96ZXJvKCoodTMyICopZHN0LCAodTMyIF9fdXNlciAqKXNyYywKIAkJCSAgICAgIHJl
+dCwgImwiLCAiayIsICI9ciIsIDQpOwogCQlfX3VhY2Nlc3NfZW5kKCk7CiAJCXJldHVybiByZXQ7
+CiAJY2FzZSA4OgogCQlfX3VhY2Nlc3NfYmVnaW5fbm9zcGVjKCk7CisJCW1hcmtlcig4KTsKIAkJ
+X19nZXRfdXNlcl9hc21fbm96ZXJvKCoodTY0ICopZHN0LCAodTY0IF9fdXNlciAqKXNyYywKIAkJ
+CSAgICAgIHJldCwgInEiLCAiIiwgIj1yIiwgOCk7CiAJCV9fdWFjY2Vzc19lbmQoKTsKIAkJcmV0
+dXJuIHJldDsKIAljYXNlIDEwOgogCQlfX3VhY2Nlc3NfYmVnaW5fbm9zcGVjKCk7CisJCW1hcmtl
+cigxMCk7CiAJCV9fZ2V0X3VzZXJfYXNtX25vemVybygqKHU2NCAqKWRzdCwgKHU2NCBfX3VzZXIg
+KilzcmMsCiAJCQkgICAgICAgcmV0LCAicSIsICIiLCAiPXIiLCAxMCk7CiAJCWlmIChsaWtlbHko
+IXJldCkpCkBAIC0xMDYsNiArMTEzLDcgQEAgcmF3X2NvcHlfZnJvbV91c2VyKHZvaWQgKmRzdCwg
+Y29uc3Qgdm9pZCBfX3VzZXIgKnNyYywgdW5zaWduZWQgbG9uZyBzaXplKQogCQlyZXR1cm4gcmV0
+OwogCWNhc2UgMTY6CiAJCV9fdWFjY2Vzc19iZWdpbl9ub3NwZWMoKTsKKwkJbWFya2VyKDE2KTsK
+IAkJX19nZXRfdXNlcl9hc21fbm96ZXJvKCoodTY0ICopZHN0LCAodTY0IF9fdXNlciAqKXNyYywK
+IAkJCSAgICAgICByZXQsICJxIiwgIiIsICI9ciIsIDE2KTsKIAkJaWYgKGxpa2VseSghcmV0KSkK
+QEAgLTEyOSwzMCArMTM3LDM1IEBAIHJhd19jb3B5X3RvX3VzZXIodm9pZCBfX3VzZXIgKmRzdCwg
+Y29uc3Qgdm9pZCAqc3JjLCB1bnNpZ25lZCBsb25nIHNpemUpCiAJc3dpdGNoIChzaXplKSB7CiAJ
+Y2FzZSAxOgogCQlfX3VhY2Nlc3NfYmVnaW4oKTsKKwkJbWFya2VyKDUxKTsKIAkJX19wdXRfdXNl
+cl9hc20oKih1OCAqKXNyYywgKHU4IF9fdXNlciAqKWRzdCwKIAkJCSAgICAgIHJldCwgImIiLCAi
+YiIsICJpcSIsIDEpOwogCQlfX3VhY2Nlc3NfZW5kKCk7CiAJCXJldHVybiByZXQ7CiAJY2FzZSAy
+OgogCQlfX3VhY2Nlc3NfYmVnaW4oKTsKKwkJbWFya2VyKDUyKTsKIAkJX19wdXRfdXNlcl9hc20o
+Kih1MTYgKilzcmMsICh1MTYgX191c2VyICopZHN0LAogCQkJICAgICAgcmV0LCAidyIsICJ3Iiwg
+ImlyIiwgMik7CiAJCV9fdWFjY2Vzc19lbmQoKTsKIAkJcmV0dXJuIHJldDsKIAljYXNlIDQ6CiAJ
+CV9fdWFjY2Vzc19iZWdpbigpOworCQltYXJrZXIoNTQpOwogCQlfX3B1dF91c2VyX2FzbSgqKHUz
+MiAqKXNyYywgKHUzMiBfX3VzZXIgKilkc3QsCiAJCQkgICAgICByZXQsICJsIiwgImsiLCAiaXIi
+LCA0KTsKIAkJX191YWNjZXNzX2VuZCgpOwogCQlyZXR1cm4gcmV0OwogCWNhc2UgODoKIAkJX191
+YWNjZXNzX2JlZ2luKCk7CisJCW1hcmtlcig1OCk7CiAJCV9fcHV0X3VzZXJfYXNtKCoodTY0ICop
+c3JjLCAodTY0IF9fdXNlciAqKWRzdCwKIAkJCSAgICAgIHJldCwgInEiLCAiIiwgImVyIiwgOCk7
+CiAJCV9fdWFjY2Vzc19lbmQoKTsKIAkJcmV0dXJuIHJldDsKIAljYXNlIDEwOgogCQlfX3VhY2Nl
+c3NfYmVnaW4oKTsKKwkJbWFya2VyKDYwKTsKIAkJX19wdXRfdXNlcl9hc20oKih1NjQgKilzcmMs
+ICh1NjQgX191c2VyICopZHN0LAogCQkJICAgICAgIHJldCwgInEiLCAiIiwgImVyIiwgMTApOwog
+CQlpZiAobGlrZWx5KCFyZXQpKSB7CkBAIC0xNjQsNiArMTc3LDcgQEAgcmF3X2NvcHlfdG9fdXNl
+cih2b2lkIF9fdXNlciAqZHN0LCBjb25zdCB2b2lkICpzcmMsIHVuc2lnbmVkIGxvbmcgc2l6ZSkK
+IAkJcmV0dXJuIHJldDsKIAljYXNlIDE2OgogCQlfX3VhY2Nlc3NfYmVnaW4oKTsKKwkJbWFya2Vy
+KDY2KTsKIAkJX19wdXRfdXNlcl9hc20oKih1NjQgKilzcmMsICh1NjQgX191c2VyICopZHN0LAog
+CQkJICAgICAgIHJldCwgInEiLCAiIiwgImVyIiwgMTYpOwogCQlpZiAobGlrZWx5KCFyZXQpKSB7
+Cg==
+--000000000000c7beeb05945e55b8--
