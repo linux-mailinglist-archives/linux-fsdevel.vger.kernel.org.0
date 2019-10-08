@@ -2,66 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79B37CFB13
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 15:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE97CFC4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 16:23:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731030AbfJHNOU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 09:14:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730332AbfJHNOU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 09:14:20 -0400
-Received: from localhost (unknown [89.205.136.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1974206BB;
-        Tue,  8 Oct 2019 13:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570540459;
-        bh=+u+cQxm8JdKrCxdpcSAMzhnyHTqxMj49DMlRcdTVypE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r7IdQRdCuoVQPBLHBE/wFlWAXSiz3PulERsfbY7K3SllRrGQrk5I0PPHrlqgzVCM2
-         qnW9f8bri5cmEQaGA8jU368KV87F3NM3zEqungOR2miW1fAcLoEKSPLJXk4jLD4/UQ
-         9XtLQsSWfHA/y9ijL+KvAf5w9uYmMdlv78MwvD3M=
-Date:   Tue, 8 Oct 2019 15:14:16 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-Message-ID: <20191008131416.GA2860109@kroah.com>
-References: <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net>
- <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
- <20191007012437.GK26530@ZenIV.linux.org.uk>
- <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
- <20191007025046.GL26530@ZenIV.linux.org.uk>
- <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
- <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com>
- <20191008032912.GQ26530@ZenIV.linux.org.uk>
- <CAHk-=wiAyZmsEp6oQQgHiuaDU0bLj=OVHSGV_OfvHRSXNPYABw@mail.gmail.com>
- <20191008045712.GR26530@ZenIV.linux.org.uk>
+        id S1726068AbfJHOXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 10:23:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59186 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725839AbfJHOXL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Oct 2019 10:23:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E3BB1B199;
+        Tue,  8 Oct 2019 14:23:08 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 22C2DDA7FB; Tue,  8 Oct 2019 16:23:22 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 16:23:22 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: Avoid getting stuck during cyclic writebacks
+Message-ID: <20191008142322.GP2751@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Tejun Heo <tj@kernel.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org
+References: <20191003142713.GA2622251@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191008045712.GR26530@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191003142713.GA2622251@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 05:57:12AM +0100, Al Viro wrote:
+On Thu, Oct 03, 2019 at 07:27:13AM -0700, Tejun Heo wrote:
+> During a cyclic writeback, extent_write_cache_pages() uses done_index
+> to update the writeback_index after the current run is over.  However,
+> instead of current index + 1, it gets to to the current index itself.
 > 
-> 	OK...  BTW, do you agree that the use of access_ok() in
-> drivers/tty/n_hdlc.c:n_hdlc_tty_read() is wrong?  It's used as an early
-> cutoff, so we don't bother waiting if user has passed an obviously bogus
-> address.  copy_to_user() is used for actual copying there...
+> Unfortunately, this, combined with returning on EOF instead of looping
+> back, can lead to the following pathlogical behavior.
 
-Yes, it's wrong, and not needed.  I'll go rip it out unless you want to?
+Tricky stuff.
 
-thanks,
+> 1. There is a single file which has accumulated enough dirty pages to
+>    trigger balance_dirty_pages() and the writer appending to the file
+>    with a series of short writes.
+> 
+> 2. bdp kicks in, wakes up background writeback and sleeps.
 
-greg k-h
+What does 'bdp' refer to?
+
+> 3. Writeback kicks in and the cursor is on the last page of the dirty
+>    file.  Writeback is started or skipped if already in progress.  As
+>    it's EOF, extent_write_cache_pages() returns and the cursor is set
+>    to done_index which is pointing to the last page.
+> 
+> 4. Writeback is done.  Nothing happens till bdp finishes, at which
+>    point we go back to #1.
+> 
+> This can almost completely stall out writing back of the file and keep
+> the system over dirty threshold for a long time which can mess up the
+> whole system.  We encountered this issue in production with a package
+> handling application which can reliably reproduce the issue when
+> running under tight memory limits.
+> 
+> Reading the comment in the error handling section, this seems to be to
+> avoid accidentally skipping a page in case the write attempt on the
+> page doesn't succeed.  However, this concern seems bogus.
+> 
+> On each page, the code either:
+> 
+> * Skips and moves onto the next page.
+> 
+> * Fails issue and sets done_index to index + 1.
+> 
+> * Successfully issues and continue to the next page if budget allows
+>   and not EOF.
+> 
+> IOW, as long as it's not EOF and there's budget, the code never
+> retries writing back the same page.  Only when a page happens to be
+> the last page of a particular run, we end up retrying the page, which
+> can't possibly guarantee anything data integrity related.  Besides,
+> cyclic writes are only used for non-syncing writebacks meaning that
+> there's no data integrity implication to begin with.
+
+The code was added in a91326679f2a0a4c239 ("Btrfs: make
+mapping->writeback_index point to the last written page") after a user
+report in https://www.spinics.net/lists/linux-btrfs/msg52628.html , slow
+appends that caused fragmentation
+
+What you describe as the cause is similar, but you're partially
+reverting the fix that was supposed to fix it. As there's more code
+added by the original patch, the revert won't probably bring back the
+bug.
+
+The whole function and states are hard to follow, I agree with your
+reasoning about the check being bogus and overall I'd rather see fewer
+special cases in the function.
+
+Also the removed comment mentions media errors but this was not the
+problem for the original report and is not a common scenario either. So
+as long as the fallback in such case is sane (ie. set done = 1 and
+exit), I don't see futher problems.
+
+> Fix it by always setting done_index past the current page being
+> processed.
+> 
+> Note that this problem exists in other writepages too.
+
+I can see that write_cache_pages does the same done_index updates.  So
+it makes sense that the page walking and writeback index tracking
+behaviour is consistent, unless extent_write_cache_pages has diverged
+too much.
+
+I'll add the patch to misc-next. Thanks.
