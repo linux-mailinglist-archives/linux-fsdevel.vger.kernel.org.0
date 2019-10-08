@@ -2,281 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D5F8CF908
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 13:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCD97CFA0E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 14:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730618AbfJHL63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 07:58:29 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56195 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730371AbfJHL62 (ORCPT
+        id S1731004AbfJHMi3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 08:38:29 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:56855 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730947AbfJHMi3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:58:28 -0400
-X-Originating-IP: 81.185.168.180
-Received: from [192.168.43.237] (180.168.185.81.rev.sfr.net [81.185.168.180])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 2154FC0014;
-        Tue,  8 Oct 2019 11:58:18 +0000 (UTC)
-Subject: Re: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
-To:     Atish Patra <Atish.Patra@wdc.com>
-Cc:     "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "hch@lst.de" <hch@lst.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190808061756.19712-1-alex@ghiti.fr>
- <20190808061756.19712-15-alex@ghiti.fr>
- <208433f810b5b07b1e679d7eedb028697dff851b.camel@wdc.com>
- <60b52f20-a2c7-dee9-7cf3-a727f07400b9@ghiti.fr>
- <daeb33415751ef16a717f6ff6a29486110c503d7.camel@wdc.com>
-From:   Alex Ghiti <alex@ghiti.fr>
-Message-ID: <9e9a3fea-d8a3-ae62-317a-740773f0725c@ghiti.fr>
-Date:   Tue, 8 Oct 2019 07:58:18 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 8 Oct 2019 08:38:29 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 8FA44343;
+        Tue,  8 Oct 2019 08:38:27 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Tue, 08 Oct 2019 08:38:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        hfkaSFdywXZXNThnIFaLIYh1wgQ+IY77hVCc8U/2iko=; b=dcSLJv/3VA6J/t3j
+        dRE7PZn+5QosM9qn3vbwavbEltn+Pxktj0JOJbA1q1ijfpuuYp7F9A+RXFpoKGTh
+        dG4XIr0EoplMJBJBc4xcBCsHks83b/8hEGWU5YWGKpWBJzgFc+1yG+VF5HUCs4ze
+        kXML6z8Mvr0WtPA0ie4ZjyH5ow8cQuU9kfAV098DDNVfU9qCpTKFY6DMSIjnAiPd
+        oWL2paDj+qafHWk/YjZPbuQS5v8xl0wL5zZaBFjr/edHfv4HokrHrPp8IMUo3FCk
+        5k1NK9et6g7z9Lf3LZVnmv1vhylaRBmMMMZp1iiNXBiiPCDU7pmdLdwsO5NoPfma
+        2Ks7bg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=hfkaSFdywXZXNThnIFaLIYh1wgQ+IY77hVCc8U/2i
+        ko=; b=cpDUhMAWc3do9ChTbAlDknIbRy5y0G2uUJe1BhPrwHJzep/0gavECKrJH
+        Ye7JS2u8CGgWRqSyJFlj0KNQgvGV0I7xhNIYGra7RwTq0KlNUStm0rgYzpNlP6/S
+        Ii5pUttlQGttaAiTQuiPJ+8TSoGk9o+rOUXsr86Q+51Uz2miAi6UyIoiDjVik5zx
+        BmH1XdZkPoYYOEoxQCr+zHbPYU2ORXCs0fQy1ecZVB224aY/1xIMtvjj8s3/eY/Q
+        IqRaGLPxcQflTdBZDVIrdN9qDJuvzY/Y4kt6/G/Ni+hhJEbu66SAXV18cFK/jUHP
+        SsX3ekL6Zc6YVg7kOS6MlIRhviDUQ==
+X-ME-Sender: <xms:QoOcXUHz6Dj4cnNEWWaDbIEXTspbkvdH2e_JzMbS3RG7aoVUhUahxg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrheelgdehiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuffhomhgrihhnpehrvgguhh
+    grthdrtghomhenucfkphepuddukedrvddtledrudekfedrjedunecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvthenucevlhhushhtvghrufhiii
+    gvpedt
+X-ME-Proxy: <xmx:QoOcXfndEyiSHABZe1XlgUkGpSqbRL5scHNGOlblHuwwhepIIsssLg>
+    <xmx:QoOcXbyX02io9azoPvjY9oVaybi4PiAH-afaN_nLH3rWGcvbBZM80A>
+    <xmx:QoOcXS_xckfx6vNmrJwPdx25C4p0_m1gqoEHScb5sUnOLmvHMM3O3w>
+    <xmx:Q4OcXQA3L3fgEmqQv4TII_nFtyztkhFfDoqmze-OOx90PpPu3tZUhQ>
+Received: from mickey.themaw.net (unknown [118.209.183.71])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CFBCF80063;
+        Tue,  8 Oct 2019 08:38:23 -0400 (EDT)
+Message-ID: <59784f8ac4d458a09d40706b554432b283083938.camel@themaw.net>
+Subject: Re: mount on tmpfs failing to parse context option
+From:   Ian Kent <raven@themaw.net>
+To:     Hugh Dickins <hughd@google.com>, Laura Abbott <labbott@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Date:   Tue, 08 Oct 2019 20:38:18 +0800
+In-Reply-To: <alpine.LSU.2.11.1910071655060.4431@eggly.anvils>
+References: <d5b67332-57b7-c19a-0462-f84d07ef1a16@redhat.com>
+         <d7f83334-d731-b892-ee49-1065d64a4887@redhat.com>
+         <alpine.LSU.2.11.1910071655060.4431@eggly.anvils>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <daeb33415751ef16a717f6ff6a29486110c503d7.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: sv-FI
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/7/19 8:46 PM, Atish Patra wrote:
-> On Mon, 2019-10-07 at 05:11 -0400, Alex Ghiti wrote:
->> On 10/4/19 10:12 PM, Atish Patra wrote:
->>> On Thu, 2019-08-08 at 02:17 -0400, Alexandre Ghiti wrote:
->>>> In order to avoid wasting user address space by using bottom-up
->>>> mmap
->>>> allocation scheme, prefer top-down scheme when possible.
->>>>
->>>> Before:
->>>> root@qemuriscv64:~# cat /proc/self/maps
->>>> 00010000-00016000 r-xp 00000000 fe:00
->>>> 6389       /bin/cat.coreutils
->>>> 00016000-00017000 r--p 00005000 fe:00
->>>> 6389       /bin/cat.coreutils
->>>> 00017000-00018000 rw-p 00006000 fe:00
->>>> 6389       /bin/cat.coreutils
->>>> 00018000-00039000 rw-p 00000000 00:00 0          [heap]
->>>> 1555556000-155556d000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
->>>> 155556d000-155556e000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
->>>> 155556e000-155556f000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
->>>> 155556f000-1555570000 rw-p 00000000 00:00 0
->>>> 1555570000-1555572000 r-xp 00000000 00:00 0      [vdso]
->>>> 1555574000-1555576000 rw-p 00000000 00:00 0
->>>> 1555576000-1555674000 r-xp 00000000 fe:00 7187   /lib/libc-
->>>> 2.28.so
->>>> 1555674000-1555678000 r--p 000fd000 fe:00 7187   /lib/libc-
->>>> 2.28.so
->>>> 1555678000-155567a000 rw-p 00101000 fe:00 7187   /lib/libc-
->>>> 2.28.so
->>>> 155567a000-15556a0000 rw-p 00000000 00:00 0
->>>> 3fffb90000-3fffbb1000 rw-p 00000000 00:00 0      [stack]
->>>>
->>>> After:
->>>> root@qemuriscv64:~# cat /proc/self/maps
->>>> 00010000-00016000 r-xp 00000000 fe:00
->>>> 6389       /bin/cat.coreutils
->>>> 00016000-00017000 r--p 00005000 fe:00
->>>> 6389       /bin/cat.coreutils
->>>> 00017000-00018000 rw-p 00006000 fe:00
->>>> 6389       /bin/cat.coreutils
->>>> 2de81000-2dea2000 rw-p 00000000 00:00 0          [heap]
->>>> 3ff7eb6000-3ff7ed8000 rw-p 00000000 00:00 0
->>>> 3ff7ed8000-3ff7fd6000 r-xp 00000000 fe:00 7187   /lib/libc-
->>>> 2.28.so
->>>> 3ff7fd6000-3ff7fda000 r--p 000fd000 fe:00 7187   /lib/libc-
->>>> 2.28.so
->>>> 3ff7fda000-3ff7fdc000 rw-p 00101000 fe:00 7187   /lib/libc-
->>>> 2.28.so
->>>> 3ff7fdc000-3ff7fe2000 rw-p 00000000 00:00 0
->>>> 3ff7fe4000-3ff7fe6000 r-xp 00000000 00:00 0      [vdso]
->>>> 3ff7fe6000-3ff7ffd000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
->>>> 3ff7ffd000-3ff7ffe000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
->>>> 3ff7ffe000-3ff7fff000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
->>>> 3ff7fff000-3ff8000000 rw-p 00000000 00:00 0
->>>> 3fff888000-3fff8a9000 rw-p 00000000 00:00 0      [stack]
->>>>
->>>> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
->>>> Acked-by: Paul Walmsley <paul.walmsley@sifive.com>
->>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
->>>> Reviewed-by: Kees Cook <keescook@chromium.org>
->>>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
->>>> ---
->>>>    arch/riscv/Kconfig | 12 ++++++++++++
->>>>    1 file changed, 12 insertions(+)
->>>>
->>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->>>> index 59a4727ecd6c..87dc5370becb 100644
->>>> --- a/arch/riscv/Kconfig
->>>> +++ b/arch/riscv/Kconfig
->>>> @@ -54,6 +54,18 @@ config RISCV
->>>>    	select EDAC_SUPPORT
->>>>    	select ARCH_HAS_GIGANTIC_PAGE
->>>>    	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
->>>> +	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
->>>> +	select HAVE_ARCH_MMAP_RND_BITS
->>>> +
->>>> +config ARCH_MMAP_RND_BITS_MIN
->>>> +	default 18 if 6legacy_va_layout4BIT
->>>> +	default 8
->>>> +
->>>> +# max bits determined by the following formula:
->>>> +#  VA_BITS - PAGE_SHIFT - 3
->>>> +config ARCH_MMAP_RND_BITS_MAX
->>>> +	default 24 if 64BIT # SV39 based
->>>> +	default 17
->>>>    
->>>>    config MMU
->>>>    	def_bool y
->>> With this patch, I am not able to boot a Fedora Linux(a Gnome
->>> desktop
->>> image) on RISC-V hardware (Unleashed + Microsemi Expansion board).
->>> The
->>> booting gets stuck right after systemd starts.
->>>
->>> https://paste.fedoraproject.org/paste/TOrUMqqKH-pGFX7CnfajDg
->>>
->>> Reverting just this patch allow to boot Fedora successfully on
->>> specific
->>> RISC-V hardware. I have not root caused the issue but it looks like
->>> it
->>> might have messed userpsace mapping.
->> It might have messed userspace mapping but not enough to make
->> userspace
->> completely broken
->> as systemd does some things. I would try to boot in legacy layout:
->> if
->> you can try to set sysctl legacy_va_layout
->> at boottime, it will map userspace as it was before (bottom-up). If
->> that
->> does not work, the problem could
->> be the randomization that is activated by default now.
-> Randomization may not be the issue. I just removed
-> ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT from the config and that seems to
-> work. Here is the bottom-up layout with randomization on.
+On Mon, 2019-10-07 at 17:50 -0700, Hugh Dickins wrote:
+> On Mon, 7 Oct 2019, Laura Abbott wrote:
+> > On 9/30/19 12:07 PM, Laura Abbott wrote:
+> > > Hi,
+> > > 
+> > > Fedora got a bug report 
+> https://bugzilla.redhat.com/show_bug.cgi?id=1757104
+> > > of a failure to parse options with the context mount option. From
+> the
+> > > reporter:
+> > > 
+> > > 
+> > > $ unshare -rm mount -t tmpfs tmpfs /tmp -o
+> > > 'context="system_u:object_r:container_file_t:s0:c475,c690"'
+> > > mount: /tmp: wrong fs type, bad option, bad superblock on tmpfs,
+> missing
+> > > codepage or helper program, or other error.
+> > > 
+> > > 
+> > > Sep 30 16:50:42 kernel: tmpfs: Unknown parameter 'c690"'
+> > > 
+> > > I haven't asked the reporter to bisect yet but I'm suspecting one
+> of the
+> > > conversion to the new mount API:
+> > > 
+> > > $ git log --oneline v5.3..origin/master mm/shmem.c
+> > > edf445ad7c8d Merge branch 'hugepage-fallbacks' (hugepatch patches
+> from
+> > > David Rientjes)
+> > > 19deb7695e07 Revert "Revert "Revert "mm, thp: consolidate THP gfp
+> handling
+> > > into alloc_hugepage_direct_gfpmask""
+> > > 28eb3c808719 shmem: fix obsolete comment in shmem_getpage_gfp()
+> > > 4101196b19d7 mm: page cache: store only head pages in i_pages
+> > > d8c6546b1aea mm: introduce compound_nr()
+> > > f32356261d44 vfs: Convert ramfs, shmem, tmpfs, devtmpfs, rootfs
+> to use the
+> > > new mount API
+> > > 626c3920aeb4 shmem_parse_one(): switch to use of fs_parse()
+> > > e04dc423ae2c shmem_parse_options(): take handling a single option
+> into a
+> > > helper
+> > > f6490b7fbb82 shmem_parse_options(): don't bother with mpol in
+> separate
+> > > variable
+> > > 0b5071dd323d shmem_parse_options(): use a separate structure to
+> keep the
+> > > results
+> > > 7e30d2a5eb0b make shmem_fill_super() static
+> > > 
+> > > 
+> > > I didn't find another report or a fix yet. Is it worth asking the
+> reporter
+> > > to bisect?
+> > > 
+> > > Thanks,
+> > > Laura
+> > 
+> > Ping again, I never heard anything back and I didn't see anything
+> come in
+> > with -rc2
+> 
+> Sorry for not responding sooner, Laura, I was travelling: and dearly
+> hoping that David or Al would take it.  I'm afraid this is rather
+> beyond
+> my capability (can I admit that it's the first time I even heard of
+> the
+> "context" mount option? and grepping for "context" has not yet shown
+> me
+> at what level it is handled; and I've no idea of what a valid
+> "context"
+> is for my own tmpfs mounts, to start playing around with its
+> parsing).
+> 
+> Yes, I think we can assume that this bug comes from f32356261d44
+> ("vfs:
+> Convert ramfs, shmem, tmpfs, devtmpfs, rootfs to use the new mount
+> API")
+> or one of shmem_parse ones associated with it; but I'm pretty sure
+> that
+> it's not worth troubling the reporter to bisect.  I expect David and
+> Al
+> are familiar with "context", and can go straight to where it's
+> handled,
+> and see what's up.
+> 
+> (tmpfs, very tiresomely, supports a NUMA "mpol" mount option which
+> can
+> have commas in it e.g "mpol=bind:0,2": which makes all its comma
+> parsing
+> awkward.  I assume that where the new mount API commits bend over to
+> accommodate that peculiarity, they end up mishandling the comma in
+> the context string above.)
+> 
+> And since we're on the subject of new mount API breakage in tmpfs,
+> I'll
+> take the liberty of repeating this different case, reported earlier
+> and
+> still broken in rc2: again something that I'd be hard-pressed to fix
+> myself, without endangering some other filesystem's mount parsing:-
+> 
+> My /etc/fstab has a line in for one of my test mounts:
+> tmpfs                /tlo                 tmpfs     
+> size=4G               0 0
+> and that "size=4G" is what causes the problem: because each time
+> shmem_parse_options(fc, data) is called for a remount, data (that is,
+> options) points to a string starting with "size=4G,", followed by
+> what's actually been asked for in the remount options.
+> 
+> So if I try
+> mount -o remount,size=0 /tlo
+> that succeeds, setting the filesystem size to 0 meaning unlimited.
+> So if then as a test I try
+> mount -o remount,size=1M /tlo
+> that correctly fails with "Cannot retroactively limit size".
+> But then when I try
+> mount -o remount,nr_inodes=0 /tlo
+> I again get "Cannot retroactively limit size",
+> when it should have succeeded (again, 0 here meaning unlimited).
+> 
+> That's because the options in shmem_parse_options() are
+> "size=4G,nr_inodes=0", which indeed looks like an attempt to
+> retroactively limit size; but the user never asked "size=4G" there.
 
-Oups, sorry for my previous answer, I missed yours that landed in 
-another folder.
+I believe that's mount(8) doing that.
+I don't think it's specific to the new mount api.
 
-Removing ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT also removes randomization
-as this config selects ARCH_HAS_ELF_RANDOMIZE.
-You could remove ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT and selects by hand
-ARCH_HAS_ELF_RANDOMIZE but you would have to implement arch_mmap_rnd and
-arch_randomize_brk (elf-randomize.h).
+AFAIK it's not new but it does mean the that things that come
+through that have been found in mtab by mount(8) need to be
+checked against the current value before failing or ignored if
+changing them is not allowed.
 
-The simplest would be to boot in legacy layout: I did not find a way to 
-set this in kernel
-command line, but you can by modifying it directly in the code:
+I wonder if the problem has been present for quite a while but
+gone unnoticed perhaps.
 
-https://elixir.bootlin.com/linux/v5.4-rc2/source/kernel/sysctl.c#L269
+IIUC the order should always be command line options last and it
+must be that way to honour the last specified option takes
+precedence convention.
 
-> [root@fedora-riscv ~]# cat /proc/self/maps
-> 1555556000-1555570000 r-xp 00000000 103:01
-> 280098                        /usr/lib64/ld-2.28.so
-> 1555570000-1555571000 r--p 00019000 103:01
-> 280098                        /usr/lib64/ld-2.28.so
-> 1555571000-1555572000 rw-p 0001a000 103:01
-> 280098                        /usr/lib64/ld-2.28.so
-> 1555572000-1555573000 rw-p 00000000 00:00 0
-> 1555573000-1555575000 r-xp 00000000 00:00
-> 0                              [vdso]
-> 1555575000-1555576000 r--p 00000000 103:01
-> 50936                         /usr/lib/locale/en_US.utf8/LC_IDENTIFICAT
-> ION
-> 1555576000-155557d000 r--s 00000000 103:01
-> 280826                        /usr/lib64/gconv/gconv-modules.cache
-> 155557d000-155557e000 r--p 00000000 103:01
-> 50937                         /usr/lib/locale/en_US.utf8/LC_MEASUREMENT
-> 155557e000-155557f000 r--p 00000000 103:01
-> 50939                         /usr/lib/locale/en_US.utf8/LC_TELEPHONE
-> 155557f000-1555580000 r--p 00000000 103:01
-> 3706                          /usr/lib/locale/en_US.utf8/LC_ADDRESS
-> 1555580000-1555581000 r--p 00000000 103:01
-> 50944                         /usr/lib/locale/en_US.utf8/LC_NAME
-> 1555581000-1555582000 r--p 00000000 103:01
-> 3775                          /usr/lib/locale/en_US.utf8/LC_PAPER
-> 1555582000-1555583000 r--p 00000000 103:01
-> 3758                          /usr/lib/locale/en_US.utf8/LC_MESSAGES/SY
-> S_LC_MESSAGES
-> 1555583000-1555584000 r--p 00000000 103:01
-> 50938                         /usr/lib/locale/en_US.utf8/LC_MONETARY
-> 1555584000-1555585000 r--p 00000000 103:01
-> 50940                         /usr/lib/locale/en_US.utf8/LC_TIME
-> 1555585000-1555586000 r--p 00000000 103:01
-> 50945                         /usr/lib/locale/en_US.utf8/LC_NUMERIC
-> 1555590000-1555592000 rw-p 00000000 00:00 0
-> 1555592000-15556b1000 r-xp 00000000 103:01
-> 280105                        /usr/lib64/libc-2.28.so
-> 15556b1000-15556b5000 r--p 0011e000 103:01
-> 280105                        /usr/lib64/libc-2.28.so
-> 15556b5000-15556b7000 rw-p 00122000 103:01
-> 280105                        /usr/lib64/libc-2.28.so
-> 15556b7000-15556bb000 rw-p 00000000 00:00 0
-> 15556bb000-1555933000 r--p 00000000 103:01
-> 3755                          /usr/lib/locale/en_US.utf8/LC_COLLATE
-> 1555933000-1555986000 r--p 00000000 103:01
-> 50942                         /usr/lib/locale/en_US.utf8/LC_CTYPE
-> 1555986000-15559a8000 rw-p 00000000 00:00 0
-> 2aaaaaa000-2aaaab1000 r-xp 00000000 103:01
-> 283975                        /usr/bin/cat
-> 2aaaab1000-2aaaab2000 r--p 00006000 103:01
-> 283975                        /usr/bin/cat
-> 2aaaab2000-2aaaab3000 rw-p 00007000 103:01
-> 283975                        /usr/bin/cat
-> 2aaaab3000-2aaaad4000 rw-p 00000000 00:00
-> 0                              [heap]
-> 3fffc97000-3fffcb8000 rw-p 00000000 00:00
-> 0                              [stack]
->
->
->> Anyway, it's weird since userspace should not depend on how the
->> mapping is.
->>
->> If you can identify the program that stalls, that would be fantastic
->> :)
->>
-> It stucks while booting. So I am not sure how to figure out which
-> program stalls. It is difficult to figure out from boot log as it
-> stucks at different places but soon after systemd starts.
+I thought this was well known, but maybe I'm wrong ... and TBH
+I wasn't aware of it until recently myself.
 
-If you can attach the running kernel, I would use vmlinux-gdb.py commands
-to figure out which processes are running (lx-ps command in particular could
-give us a hint). You can also add traces directly in the kernel and 
-either use
-lx-dmesg command to print them from gdb or use your standard serial output:
-I would then print task_struct->comm at context switch to see which process
-is stuck.
-To use the python script, you need to recompile with DEBUG_INFO and
-GDB_SCRIPTS enabled.
+> 
+> Hugh
 
-FYI, I have just booted a custom buildroot image based on kernel 5.4-rc2.
-
-Let me know if I can do anything.
-
-Alex
-
->> As the code is common to mips and arm now and I did not hear from
->> them,
->> I imagine the problem comes
->> from us.
->>
->> Alex
