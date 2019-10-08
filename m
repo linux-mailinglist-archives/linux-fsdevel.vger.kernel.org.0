@@ -2,132 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F22ECF40A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 09:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4160FCF40F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 09:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbfJHHhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 03:37:15 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:56771 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730367AbfJHHhO (ORCPT
+        id S1730239AbfJHHiv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 03:38:51 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:32880 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729740AbfJHHiv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 03:37:14 -0400
-Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id E108143E00B;
-        Tue,  8 Oct 2019 18:37:10 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iHk3Q-0005PG-T7; Tue, 08 Oct 2019 18:37:08 +1100
-Date:   Tue, 8 Oct 2019 18:37:08 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/11] iomap: copy the xfs writeback code to iomap.c
-Message-ID: <20191008073708.GG16973@dread.disaster.area>
-References: <20191006154608.24738-1-hch@lst.de>
- <20191006154608.24738-3-hch@lst.de>
- <20191007214353.GZ16973@dread.disaster.area>
- <20191008063436.GA30465@lst.de>
+        Tue, 8 Oct 2019 03:38:51 -0400
+Received: by mail-qk1-f196.google.com with SMTP id x134so15729298qkb.0;
+        Tue, 08 Oct 2019 00:38:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bbd4LwTe2nWyrbyUcSTPuXGgKbWXcMoJfVlsDK0/Jr0=;
+        b=Z1Ij7QRNg4zLVC35kvIKtGkNYSV/s8iqVlzbAK39GeCzlQiOXci6EibabfemuxseHf
+         wcKtjFaXpb8JJaPv+ly9Ihu4G+YJs1mAGSmkLrjeZZL3eyxWLQ2SV8KSbb0Tc1IhxqdJ
+         SSnUsnov9cQu076XyR98/FHObi3heTsm8iMftoBR+7mW2CvPXQcDaAtSKiACH27L1Gt2
+         0FxcdovCxwuX+1Iquk5CgyvO8N2sqdS9pzlC70J8CghMrddc1PkDxdMf3QadXo0Dodyg
+         GzDAoIII0EwxrVyCEQ6+/+k/tYLWZKPK0GIyHTpwgZ132CERnRGMtY2uXPJcBXFMVDkA
+         yAhw==
+X-Gm-Message-State: APjAAAWbOhyRuGfZhdykUQhKx9hwQyKFvSc15VaavV/5VzSPhuPaG/I7
+        +i/D+L2euI7d0JHiO5uuBrF6IRUp4xhQAIK/8KV2elPE
+X-Google-Smtp-Source: APXvYqzcf+5doqvGjsXoxwiYZc2Sqxk+klm8vj61NWmH76ms0Hh79Gy5LC/8cZSjDzvTebNc9s0wYAimZ+IphWx8mVo=
+X-Received: by 2002:ae9:f503:: with SMTP id o3mr27266851qkg.3.1570520329521;
+ Tue, 08 Oct 2019 00:38:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008063436.GA30465@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=7-415B0cAAAA:8 a=C152E18BS4FYMT0GleMA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20190814204259.120942-1-arnd@arndb.de> <20190814204259.120942-6-arnd@arndb.de>
+ <20191007232832.GA26929@roeck-us.net>
+In-Reply-To: <20191007232832.GA26929@roeck-us.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 8 Oct 2019 09:38:33 +0200
+Message-ID: <CAK8P3a3bDnHRexRP7xntE_r=E4TfdnYqzAF_wrHwA35KjtGsfA@mail.gmail.com>
+Subject: Re: [PATCH v5 05/18] watchdog: cpwd: use generic compat_ptr_ioctl
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 08:34:36AM +0200, Christoph Hellwig wrote:
-> On Tue, Oct 08, 2019 at 08:43:53AM +1100, Dave Chinner wrote:
-> > > +static int
-> > > +iomap_ioend_compare(void *priv, struct list_head *a, struct list_head *b)
-> > > +{
-> > > +	struct iomap_ioend *ia, *ib;
-> > > +
-> > > +	ia = container_of(a, struct iomap_ioend, io_list);
-> > > +	ib = container_of(b, struct iomap_ioend, io_list);
-> > > +	if (ia->io_offset < ib->io_offset)
-> > > +		return -1;
-> > > +	else if (ia->io_offset > ib->io_offset)
-> > > +		return 1;
-> > > +	return 0;
-> > 
-> > No need for the else here.
-> 
-> That is usually my comment :)  But in this case it is just copied over
-> code, so I didn't want to do cosmetic changes.
+On Tue, Oct 8, 2019 at 1:30 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Wed, Aug 14, 2019 at 10:42:32PM +0200, Arnd Bergmann wrote:
+> > The cpwd_compat_ioctl() contains a bogus mutex that dates
+> > back to a leftover BKL instance.
+> >
+> > Simplify the implementation by using the new compat_ptr_ioctl()
+> > helper function that will do the right thing for all calls
+> > here.
+> >
+> > Note that WIOCSTART/WIOCSTOP don't take any arguments, so
+> > the compat_ptr() conversion is not needed here, but it also
+> > doesn't hurt.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+>
+> This patch made it into the kernel, but the infrastructure didn't make it.
+> Do we need to revert it ?
 
-*nod*
+Sorry I had not realized that this patch got queued in the watchdog tree
+and relied on the other patches. I ended up not sending the series after
+a runtime regression in another driver, combined with the series not
+having spent much time in linux-next before the merge window.
 
-> > > +	/*
-> > > +	 * Given that we do not allow direct reclaim to call us, we should
-> > > +	 * never be called while in a filesystem transaction.
-> > > +	 */
-> > > +	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
-> > > +		goto redirty;
-> > 
-> > Is this true for all expected callers of these functions rather than
-> > just XFS? i.e. PF_MEMALLOC_NOFS is used by transactions in XFS to
-> > prevent transaction context recursion, but other filesystems do not
-> > do this..
-> > 
-> > FWIW, I can also see that this is going to cause us problems if high
-> > level code starts using memalloc_nofs_save() and then calling
-> > filemap_datawrite() and friends...
-> 
-> We have the check for direct reclaim just above, so any file system
-> using this iomap code will not allow direct reclaim.  Which I think is
-> a very good idea given that direct reclaim through the file system is
-> a very bad idea.
+I've sent a fixup patch now that will make it do the right thing
+regardless of my series, please apply that for v5.4.
 
-*nod*
-
-> That leaves with only the filemap_datawrite case, which so far is
-> theoretical.  If that ever becomes a think it is very obvious and we
-> can just remove the debug check.
-
-I expect it will be a thing sooner rather than later...
-
-> > > +iomap_writepage(struct page *page, struct writeback_control *wbc,
-> > > +		struct iomap_writepage_ctx *wpc,
-> > > +		const struct iomap_writeback_ops *ops)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	wpc->ops = ops;
-> > > +	ret = iomap_do_writepage(page, wbc, wpc);
-> > > +	if (!wpc->ioend)
-> > > +		return ret;
-> > > +	return iomap_submit_ioend(wpc, wpc->ioend, ret);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(iomap_writepage);
-> > 
-> > Can we kill ->writepage for iomap users, please? After all, we don't
-> > mostly don't allow memory reclaim to do writeback of dirty pages,
-> > and that's the only caller of ->writepage.
-> 
-> I'd rather not do this as part of this move.  But if you could expedite
-> your patch to kill ->writepage from the large block size support patch
-> and submit it ASAP on top of this series I would be very much in favor.
-
-Ok, looks like the usual of more follow up patches on top of these.
-I'm kinda waiting for these to land before porting the large block
-size stuff on top of it...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+        Arnd
