@@ -2,93 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60095CFD4B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 17:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8971CFD5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 17:17:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfJHPNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 11:13:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49264 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfJHPNe (ORCPT
+        id S1727059AbfJHPQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 11:16:20 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:36682 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbfJHPQU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:13:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=n9gVsTQoLIpJ4eS0KFKk7R+iymLPEUHSXXL/0IdbObc=; b=JMGKonHEQVur9Sq5Sq3k8dN0T
-        4OZshzWN36oTT4jtZaLlzV/GCokyKEms2KFYrc+jovUii/X/qutVCYI9TCGqoVcbmHltEpx25jFwf
-        WOsmnpxwUhQjo7Dc6eBZvpD75ip9wtVO38IaV6ZgSQ4oB2w5pya/5oNiD6qb5bI893I6VEv6XfyHU
-        m6S+fl02cMDKxr4tTUHseDUqr+KBThNTJS3WuR652bjq7xR9OKGpne9wfZhORWGsy6uCfGqB9qMdL
-        CumHGiUbd8NOp6WBBx4+LQEtxDSVQctNKdBj7CBH7fiEXh83pGw6gRcyHR0wDoi6R+7PRKL0LC5Tr
-        mtHMWbXFw==;
-Received: from [2601:1c0:6280:3f0::9ef4]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHrB7-0004kH-41; Tue, 08 Oct 2019 15:13:33 +0000
-Subject: Re: [PATCH v2 linux-kselftest-test 2/3] kunit: allow kunit to be
- loaded as a module
-To:     Alan Maguire <alan.maguire@oracle.com>,
+        Tue, 8 Oct 2019 11:16:20 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98FCpaM126200;
+        Tue, 8 Oct 2019 15:15:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : in-reply-to : message-id : references : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=G3hEXpcqfex8tKkgNX8GKdCKE+z2Dp/2HG2CbwOSfg0=;
+ b=Y/UWuuHgnhvwYn3IWR4zKaD1rSQ/rjm71tVZQVCqYNZFNBNGrbgZVRCsTXxHEVR8yLOZ
+ 9aY11pb4lr+XCfrd8bN+lEIEX3L+ygZfdyZPCQFyyzYEZ9FPeYfpToKXs6VTE7yC7Nd/
+ rFvt5K+lc0lSwAFSTBLtUF3tA/md7ZwZ6LIGXM1V9F5/znaFpzOBZGuL1XT0mD3efiBX
+ 5mazH27pI22iMWTifvxp5IJChrmIpXVCb/w0IhRF3xqbK8sW0GmDs40PPOz9e762czG+
+ 9tbefRrROSNUIVjhut6bj5p9qiHMbhdcTM7TM8WA/NrK+5i8RwCn7HNTAJ5P7XhAkMpZ JA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2vejkue1p7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Oct 2019 15:15:33 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x98FFIKj143243;
+        Tue, 8 Oct 2019 15:15:32 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2vg206hdkc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Oct 2019 15:15:32 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x98FFJa2016720;
+        Tue, 8 Oct 2019 15:15:19 GMT
+Received: from dhcp-10-175-191-48.vpn.oracle.com (/10.175.191.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 08 Oct 2019 15:15:18 +0000
+Date:   Tue, 8 Oct 2019 16:15:09 +0100 (BST)
+From:   Alan Maguire <alan.maguire@oracle.com>
+X-X-Sender: alan@dhcp-10-175-191-48.vpn.oracle.com
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc:     Alan Maguire <alan.maguire@oracle.com>,
         linux-kselftest@vger.kernel.org, brendanhiggins@google.com,
-        skhan@linuxfoundation.org
-Cc:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        skhan@linuxfoundation.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
         akpm@linux-foundation.org, yamada.masahiro@socionext.com,
         catalin.marinas@arm.com, joe.lawrence@redhat.com,
         penguin-kernel@i-love.sakura.ne.jp, schowdary@nvidia.com,
-        urezki@gmail.com, andriy.shevchenko@linux.intel.com,
-        changbin.du@intel.com, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Knut Omang <knut.omang@oracle.com>
-References: <1570546546-549-1-git-send-email-alan.maguire@oracle.com>
- <1570546546-549-3-git-send-email-alan.maguire@oracle.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <3459e950-d8f0-edd1-2f23-ec9f520058f5@infradead.org>
-Date:   Tue, 8 Oct 2019 08:13:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        urezki@gmail.com, changbin.du@intel.com,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Knut Omang <knut.omang@oracle.com>,
+        rdunlap@infradead.org
+Subject: Re: [PATCH linux-kselftest-test 2/3] kunit: allow kunit to be loaded
+ as a module
+In-Reply-To: <20191008145552.GS32742@smile.fi.intel.com>
+Message-ID: <alpine.LRH.2.20.1910081611050.839@dhcp-10-175-191-48.vpn.oracle.com>
+References: <1570545832-32326-1-git-send-email-alan.maguire@oracle.com> <1570545832-32326-3-git-send-email-alan.maguire@oracle.com> <20191008145552.GS32742@smile.fi.intel.com>
+User-Agent: Alpine 2.20 (LRH 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <1570546546-549-3-git-send-email-alan.maguire@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9404 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910080135
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910080135
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/8/19 7:55 AM, Alan Maguire wrote:
-> Making kunit itself buildable as a module allows for "always-on"
-> kunit configuration; specifying CONFIG_KUNIT=m means the module
-> is built but only used when loaded.  Kunit test modules will load
-> kunit.ko as an implicit dependency, so simply running
-> "modprobe my-kunit-tests" will load the tests along with the kunit
-> module and run them.
+On Tue, 8 Oct 2019, Andy Shevchenko wrote:
+
+> On Tue, Oct 08, 2019 at 03:43:51PM +0100, Alan Maguire wrote:
+> > Making kunit itself buildable as a module allows for "always-on"
+> > kunit configuration; specifying CONFIG_KUNIT=m means the module
+> > is built but only used when loaded.  Kunit test modules will load
+> > kunit.ko as an implicit dependency, so simply running
+> > "modprobe my-kunit-tests" will load the tests along with the kunit
+> > module and run them.
 > 
-> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-> Signed-off-by: Knut Omang <knut.omang@oracle.com>
+> > +#ifdef MODULE
 > 
-> ---
->  lib/kunit/Kconfig  | 2 +-
->  lib/kunit/Makefile | 4 +++-
->  lib/kunit/test.c   | 4 ++++
->  3 files changed, 8 insertions(+), 2 deletions(-)
+> > +#endif /* MODULE */
+> 
+> This is strange. Why do you need ifdef?
+>
 
-> diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-> index e7896f1..6024627 100644
-> --- a/lib/kunit/test.c
-> +++ b/lib/kunit/test.c
-> @@ -484,3 +484,7 @@ void kunit_cleanup(struct kunit *test)
->  	}
->  }
->  EXPORT_SYMBOL_GPL(kunit_cleanup);
-> +
-> +#ifdef MODULE
-> +MODULE_LICENSE("GPL");
-> +#endif /* MODULE */
+Ah, this was an incorrect assumption on my part; I thought that
+declaring a module license for built-in code might trigger a warning 
+during build. I'll remove the #ifdef MODULE around licenses in v3 (v2 has 
+already gone out as I mistakenly initially sent the wrong version of the 
+patches). I've verified that removing it triggers no warnings.
 
-That ifdef/endif should not be necessary.
-Did you try a modular build without them?
+Thanks to you and Randy for spotting this!
 
--- 
-~Randy
+Alan
+
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
+> 
