@@ -2,274 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F35B8CEFF9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 02:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D073CF009
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 02:50:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbfJHAqK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Oct 2019 20:46:10 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:31157 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729285AbfJHAqK (ORCPT
+        id S1729768AbfJHAuu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Oct 2019 20:50:50 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39570 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729710AbfJHAuu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Oct 2019 20:46:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1570495571; x=1602031571;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=+iibpsbzKo+2uP86ePikwjKxFNw8o16gqfIuNejW31U=;
-  b=qkn2wgFytHsZuJXkbMqffQ0lDSGZulgaCa6WTWCBwpDpBLzG5yjZYmeE
-   THMuxRbgzrCt88pNdjejklPUFfBiTB83iBWMhuYvtJijvgygIddf4fPsP
-   h8z/MXsWWfFVh6qHGlSnsdiETGWsdHVQQUcoeUwMRvvTzVpJ7MHEq2mjV
-   NBotKf66FKz7XQdVKsN4Bq7+OmyZpuz8U0HmP9mXeFFeKpXDm6a4yZPn8
-   KyDNmz7rhpu5QbJE+pnE8XwMO0cRzwrHfyA1ZVktvy9YEpNvkNHsDclo6
-   WeBMHJGmPjmruRPHNanMREafaIAu+GOkYvqgu6CiRoCn1ljUOs4OmPl9s
-   w==;
-IronPort-SDR: VgLNUBIqb1xhnoecXmVta8eV5eziSES1BIgRoJOIWXENAaW6UKBroYjmWVicg8QJEbHmtlp1Gg
- 21bEd+hNlItCofaINvE/IZW6emId3NsXZTwccGO+Gsqgez3zUFEnOWPOGuoZCYYB9K85JNt/i2
- naYACaR4XOdQAoUu5KyWuLzUgbwveuQYebzgbwAoeg+2/p0LYagfTmuGPCmluE3P2X41WVLM9Z
- gG7ZcCu9T7Tmc39GRpnnX9B2hCeniHRjMYbyybNfdxep9AIi/5apvxk12VyeMruuhqaJW/Jlun
- 6h8=
-X-IronPort-AV: E=Sophos;i="5.67,269,1566835200"; 
-   d="scan'208";a="120744742"
-Received: from mail-by2nam03lp2055.outbound.protection.outlook.com (HELO NAM03-BY2-obe.outbound.protection.outlook.com) ([104.47.42.55])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Oct 2019 08:46:07 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L4g6BJ8rix5iROPyuih+Mf0dj3W6XjRKuxXLhkv+QkHiuZqPzkNgT4fc0kgmeq5/cE5TJqHcYFxd8LmAGbfL471yEjc8tmqoYgKDxUY86Ayn8VJmwl/JnV+kqp2GucH7IvzI0+6LsPk7UdDgBsyaF+crXKfD9pPVcb3EDQmayyAZZLTf0jLiFM9DSv+krZF1xvLjsoLAvghVAhIWO8pYVzEYiJL1ulzsXsdArg8PY8Mq8/ddl1cOKJFAARiROHT7j8OMnODznd35pqMZ1VXyubEkRQitLjNQxS25TCfry1fwWfEeqaGYWX20mxrqrtOfJfIMPxf41Zwvk4MZxS7fYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+iibpsbzKo+2uP86ePikwjKxFNw8o16gqfIuNejW31U=;
- b=YIkv8ljStxf8HPA65QLgU+lqXVNh442WriXMvd8wwxN1wu26yikURwvfse1xOqV1d5E0zH8TlPjr1uAJP5o/uzUizAl7KZGEys2tEwaUUxd1Mcs5VC0BmWKKZVBWsrpiBlIgLp6L9WHv1WO/AvBVQDhLGtqiON2COyYKgSUOwWkbO4jRwMgMqRqrSMPqEx4DN2BxaunfKzy0b2B4hthf+hL4DpPt/1JOYpe3K8M1NiLUenlHnHrhbcu3Kwl8ePlaOvvyxhz2EQbqSBqco2u1XdsUyzfpELo8sX7Wq+iMNs/f8mguCdEetx2sTgcqYKCMBnOK7I774W1OGQPyfH2fhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Mon, 7 Oct 2019 20:50:50 -0400
+Received: by mail-pl1-f194.google.com with SMTP id s17so7677478plp.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Oct 2019 17:50:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+iibpsbzKo+2uP86ePikwjKxFNw8o16gqfIuNejW31U=;
- b=WhL5BZaowaPyvlQgg4im8RLXt/xst9R3rq9slHNnAw3SrxYQed+7Rv/EFWoSe3ep6yPdkuG0o1G2eQlHK+FxbqxKC71Ujy9BNClgF82E0uRAPvUKeO8iiUJU2jYJ3bgxKxf7RtKdSUo1Oqrp4IvcNtyAdq4Pyd8w2aOVIl8lDAA=
-Received: from BYAPR04MB3990.namprd04.prod.outlook.com (52.135.215.29) by
- BYAPR04MB4389.namprd04.prod.outlook.com (20.176.248.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.24; Tue, 8 Oct 2019 00:46:05 +0000
-Received: from BYAPR04MB3990.namprd04.prod.outlook.com
- ([fe80::51dd:7de9:c4a1:f9f3]) by BYAPR04MB3990.namprd04.prod.outlook.com
- ([fe80::51dd:7de9:c4a1:f9f3%3]) with mapi id 15.20.2327.023; Tue, 8 Oct 2019
- 00:46:05 +0000
-From:   Atish Patra <Atish.Patra@wdc.com>
-To:     "alex@ghiti.fr" <alex@ghiti.fr>
-CC:     "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "hch@lst.de" <hch@lst.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
-Thread-Topic: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
-Thread-Index: AQHVTbNRR2y1x3jR5Uinm4nvlyFP7KdLqT4AgAOZyQCAAQUZAA==
-Date:   Tue, 8 Oct 2019 00:46:05 +0000
-Message-ID: <daeb33415751ef16a717f6ff6a29486110c503d7.camel@wdc.com>
-References: <20190808061756.19712-1-alex@ghiti.fr>
-         <20190808061756.19712-15-alex@ghiti.fr>
-         <208433f810b5b07b1e679d7eedb028697dff851b.camel@wdc.com>
-         <60b52f20-a2c7-dee9-7cf3-a727f07400b9@ghiti.fr>
-In-Reply-To: <60b52f20-a2c7-dee9-7cf3-a727f07400b9@ghiti.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Atish.Patra@wdc.com; 
-x-originating-ip: [199.255.44.250]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 22aa01cd-a6df-4c36-cac6-08d74b88e69a
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: BYAPR04MB4389:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <BYAPR04MB43897DD2483DCF55A88B1230FA9A0@BYAPR04MB4389.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 01842C458A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(346002)(39860400002)(136003)(396003)(366004)(52314003)(189003)(199004)(478600001)(86362001)(11346002)(19627235002)(6116002)(5660300002)(3846002)(14444005)(446003)(256004)(66556008)(64756008)(66476007)(66946007)(66446008)(71190400001)(71200400001)(6916009)(76116006)(2906002)(54906003)(8676002)(81156014)(1730700003)(81166006)(7736002)(316002)(305945005)(7416002)(2501003)(476003)(53546011)(2616005)(99286004)(76176011)(6486002)(66066001)(6512007)(6306002)(26005)(186003)(14454004)(118296001)(5640700003)(102836004)(25786009)(4326008)(6506007)(36756003)(966005)(6246003)(6436002)(486006)(8936002)(229853002)(2351001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4389;H:BYAPR04MB3990.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: jQcka4iBDzbX8dXjAW6AzZxiJWHkKHluYUhqthlX6xNyBZ4nsGej5/zxxxjAOeVmihL5UzyvUP11HMqMJSvBDywu4YXXH9ULqoNh+tN80hIXy3ybaTZNEdjueAAHKtbaL/eMkrU0oSJvbYa2zOTyYiEoCv8ppU9q05Ec9F5o9GC900Piwf5ZMO1Tk1Eiyz3NUD1WX5n2G3/LWjo4+Y/TeGx1vfKcAiOaZftxcefPsR69ZWSLfEH+7NHjCqhgTTsdTmfh5dzwfbMyx+fGjHU08xnBjemznc+v6BAOplptNa8glJJHK09Z2yLK8qq8TMYM6WtfhGvXw/i0bRrKr+Be956c1xJzb/gZp06FH9Eve7y4arcTlYyNGk8T0SVh2+tQb/FQsqcCEhcv5P8G9RXBTNRXHcS+F0GwnEK3s9TY9qIWFeuiWCcGtcQ0X24IWyYkKpkB9PbLs6+3F+ufoj7z2g==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BEE24D9872879F46A08910C44A14742A@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=axeGqpfr6+WBOJhK9o80hxtWSzlwNphv8qzRJ2eavqQ=;
+        b=qVmPJN76V7+IyYv7ojUmBLD30Dm2ha0LRJQd6sJpxtBmoUhbUJR6rhRwoW+qo1SQNW
+         HemeuvA6y3d2XEOQV7rqf8Kq3UjftHoWArb7rENjbAkM0JI2Whde7+U/piSSkoJ09i24
+         UZMy7sigYFhmCfHkBIAdKEmi4WwtdpfZRx6VygLJQYvD1vdXZJQmvxl+4YhoMJLq8Edp
+         WUdYqpDf6KnhjTOEE8IlcG2hc7/5IPmcqI+CLjXE1sT37Oq/H4rVvQ7JC9bVkkz7L9dP
+         u711EW+OYDgdsMXAui2gSEKSxs1sjK8amOQv9z2m9rSq5Ww+fKbf5PHhD5brBDWwY6w+
+         yCCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=axeGqpfr6+WBOJhK9o80hxtWSzlwNphv8qzRJ2eavqQ=;
+        b=qCrl+D+A0UtpEZL2ZYboX+FIdc9PeeggtTyOyLWvRyoewW5yeN4T5s5VrubHweLC+k
+         QGgONXqW/vpJmpNLvUdrZJD6sR7toZ1BA2En/RTKdvnGoCjSQEI2TrhXGEpHqKdZh9mv
+         36FM6COsC6el5bL7WYUIagV4IWbnREACjpygrsCDgscTBjA3oV69eHTAHGYJ+5QbOmLz
+         NzkHSH4V4IFnEXsTaHLg8K1/DitCWv7FN9IvVctyc9ks2GOLvSD5py0zFV6rhYzASx3d
+         uD7e+ZHrDqIQjDTUgXE7T7OgQ/9if2wRP918NQlW2Dtu0tKlpYEr2k7TuDZLbOuZtZhg
+         Zz7Q==
+X-Gm-Message-State: APjAAAUuFLLHJcsNTOkvkpw81ElI+PteGUqJE8zGHLOjOvXd8Hi6v/0D
+        h1983scIyqzgobmZfTE55cJtMA==
+X-Google-Smtp-Source: APXvYqyWK6wIFQTZoeOQY+viUZxjZToqVGdL8HVPYQTIrKN/LxfR5KtyDW1lfIqPOFd+SsAV8GkQAg==
+X-Received: by 2002:a17:902:524:: with SMTP id 33mr32812268plf.123.1570495848323;
+        Mon, 07 Oct 2019 17:50:48 -0700 (PDT)
+Received: from [100.112.81.222] ([104.133.9.110])
+        by smtp.gmail.com with ESMTPSA id d76sm16582383pfd.185.2019.10.07.17.50.46
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 07 Oct 2019 17:50:47 -0700 (PDT)
+Date:   Mon, 7 Oct 2019 17:50:31 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Laura Abbott <labbott@redhat.com>
+cc:     David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Hugh Dickins <hughd@google.com>, Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: mount on tmpfs failing to parse context option
+In-Reply-To: <d7f83334-d731-b892-ee49-1065d64a4887@redhat.com>
+Message-ID: <alpine.LSU.2.11.1910071655060.4431@eggly.anvils>
+References: <d5b67332-57b7-c19a-0462-f84d07ef1a16@redhat.com> <d7f83334-d731-b892-ee49-1065d64a4887@redhat.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22aa01cd-a6df-4c36-cac6-08d74b88e69a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2019 00:46:05.0995
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: idp60l09im0u3iGmpbbAMBhVJOfuH3loaNVqujes97ceFsT7+kGzt6vAa75qNMcdKy+4a5JVGFVyBSyBmwelEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4389
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTEwLTA3IGF0IDA1OjExIC0wNDAwLCBBbGV4IEdoaXRpIHdyb3RlOg0KPiBP
-biAxMC80LzE5IDEwOjEyIFBNLCBBdGlzaCBQYXRyYSB3cm90ZToNCj4gPiBPbiBUaHUsIDIwMTkt
-MDgtMDggYXQgMDI6MTcgLTA0MDAsIEFsZXhhbmRyZSBHaGl0aSB3cm90ZToNCj4gPiA+IEluIG9y
-ZGVyIHRvIGF2b2lkIHdhc3RpbmcgdXNlciBhZGRyZXNzIHNwYWNlIGJ5IHVzaW5nIGJvdHRvbS11
-cA0KPiA+ID4gbW1hcA0KPiA+ID4gYWxsb2NhdGlvbiBzY2hlbWUsIHByZWZlciB0b3AtZG93biBz
-Y2hlbWUgd2hlbiBwb3NzaWJsZS4NCj4gPiA+IA0KPiA+ID4gQmVmb3JlOg0KPiA+ID4gcm9vdEBx
-ZW11cmlzY3Y2NDp+IyBjYXQgL3Byb2Mvc2VsZi9tYXBzDQo+ID4gPiAwMDAxMDAwMC0wMDAxNjAw
-MCByLXhwIDAwMDAwMDAwIGZlOjAwDQo+ID4gPiA2Mzg5ICAgICAgIC9iaW4vY2F0LmNvcmV1dGls
-cw0KPiA+ID4gMDAwMTYwMDAtMDAwMTcwMDAgci0tcCAwMDAwNTAwMCBmZTowMA0KPiA+ID4gNjM4
-OSAgICAgICAvYmluL2NhdC5jb3JldXRpbHMNCj4gPiA+IDAwMDE3MDAwLTAwMDE4MDAwIHJ3LXAg
-MDAwMDYwMDAgZmU6MDANCj4gPiA+IDYzODkgICAgICAgL2Jpbi9jYXQuY29yZXV0aWxzDQo+ID4g
-PiAwMDAxODAwMC0wMDAzOTAwMCBydy1wIDAwMDAwMDAwIDAwOjAwIDAgICAgICAgICAgW2hlYXBd
-DQo+ID4gPiAxNTU1NTU2MDAwLTE1NTU1NmQwMDAgci14cCAwMDAwMDAwMCBmZTowMCA3MTkzICAg
-L2xpYi9sZC0yLjI4LnNvDQo+ID4gPiAxNTU1NTZkMDAwLTE1NTU1NmUwMDAgci0tcCAwMDAxNjAw
-MCBmZTowMCA3MTkzICAgL2xpYi9sZC0yLjI4LnNvDQo+ID4gPiAxNTU1NTZlMDAwLTE1NTU1NmYw
-MDAgcnctcCAwMDAxNzAwMCBmZTowMCA3MTkzICAgL2xpYi9sZC0yLjI4LnNvDQo+ID4gPiAxNTU1
-NTZmMDAwLTE1NTU1NzAwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAwDQo+ID4gPiAxNTU1NTcwMDAw
-LTE1NTU1NzIwMDAgci14cCAwMDAwMDAwMCAwMDowMCAwICAgICAgW3Zkc29dDQo+ID4gPiAxNTU1
-NTc0MDAwLTE1NTU1NzYwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAwDQo+ID4gPiAxNTU1NTc2MDAw
-LTE1NTU2NzQwMDAgci14cCAwMDAwMDAwMCBmZTowMCA3MTg3ICAgL2xpYi9saWJjLQ0KPiA+ID4g
-Mi4yOC5zbw0KPiA+ID4gMTU1NTY3NDAwMC0xNTU1Njc4MDAwIHItLXAgMDAwZmQwMDAgZmU6MDAg
-NzE4NyAgIC9saWIvbGliYy0NCj4gPiA+IDIuMjguc28NCj4gPiA+IDE1NTU2NzgwMDAtMTU1NTY3
-YTAwMCBydy1wIDAwMTAxMDAwIGZlOjAwIDcxODcgICAvbGliL2xpYmMtDQo+ID4gPiAyLjI4LnNv
-DQo+ID4gPiAxNTU1NjdhMDAwLTE1NTU2YTAwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAwDQo+ID4g
-PiAzZmZmYjkwMDAwLTNmZmZiYjEwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAwICAgICAgW3N0YWNr
-XQ0KPiA+ID4gDQo+ID4gPiBBZnRlcjoNCj4gPiA+IHJvb3RAcWVtdXJpc2N2NjQ6fiMgY2F0IC9w
-cm9jL3NlbGYvbWFwcw0KPiA+ID4gMDAwMTAwMDAtMDAwMTYwMDAgci14cCAwMDAwMDAwMCBmZTow
-MA0KPiA+ID4gNjM4OSAgICAgICAvYmluL2NhdC5jb3JldXRpbHMNCj4gPiA+IDAwMDE2MDAwLTAw
-MDE3MDAwIHItLXAgMDAwMDUwMDAgZmU6MDANCj4gPiA+IDYzODkgICAgICAgL2Jpbi9jYXQuY29y
-ZXV0aWxzDQo+ID4gPiAwMDAxNzAwMC0wMDAxODAwMCBydy1wIDAwMDA2MDAwIGZlOjAwDQo+ID4g
-PiA2Mzg5ICAgICAgIC9iaW4vY2F0LmNvcmV1dGlscw0KPiA+ID4gMmRlODEwMDAtMmRlYTIwMDAg
-cnctcCAwMDAwMDAwMCAwMDowMCAwICAgICAgICAgIFtoZWFwXQ0KPiA+ID4gM2ZmN2ViNjAwMC0z
-ZmY3ZWQ4MDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDAgMA0KPiA+ID4gM2ZmN2VkODAwMC0zZmY3ZmQ2
-MDAwIHIteHAgMDAwMDAwMDAgZmU6MDAgNzE4NyAgIC9saWIvbGliYy0NCj4gPiA+IDIuMjguc28N
-Cj4gPiA+IDNmZjdmZDYwMDAtM2ZmN2ZkYTAwMCByLS1wIDAwMGZkMDAwIGZlOjAwIDcxODcgICAv
-bGliL2xpYmMtDQo+ID4gPiAyLjI4LnNvDQo+ID4gPiAzZmY3ZmRhMDAwLTNmZjdmZGMwMDAgcnct
-cCAwMDEwMTAwMCBmZTowMCA3MTg3ICAgL2xpYi9saWJjLQ0KPiA+ID4gMi4yOC5zbw0KPiA+ID4g
-M2ZmN2ZkYzAwMC0zZmY3ZmUyMDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDAgMA0KPiA+ID4gM2ZmN2Zl
-NDAwMC0zZmY3ZmU2MDAwIHIteHAgMDAwMDAwMDAgMDA6MDAgMCAgICAgIFt2ZHNvXQ0KPiA+ID4g
-M2ZmN2ZlNjAwMC0zZmY3ZmZkMDAwIHIteHAgMDAwMDAwMDAgZmU6MDAgNzE5MyAgIC9saWIvbGQt
-Mi4yOC5zbw0KPiA+ID4gM2ZmN2ZmZDAwMC0zZmY3ZmZlMDAwIHItLXAgMDAwMTYwMDAgZmU6MDAg
-NzE5MyAgIC9saWIvbGQtMi4yOC5zbw0KPiA+ID4gM2ZmN2ZmZTAwMC0zZmY3ZmZmMDAwIHJ3LXAg
-MDAwMTcwMDAgZmU6MDAgNzE5MyAgIC9saWIvbGQtMi4yOC5zbw0KPiA+ID4gM2ZmN2ZmZjAwMC0z
-ZmY4MDAwMDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDAgMA0KPiA+ID4gM2ZmZjg4ODAwMC0zZmZmOGE5
-MDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDAgMCAgICAgIFtzdGFja10NCj4gPiA+IA0KPiA+ID4gU2ln
-bmVkLW9mZi1ieTogQWxleGFuZHJlIEdoaXRpIDxhbGV4QGdoaXRpLmZyPg0KPiA+ID4gQWNrZWQt
-Ynk6IFBhdWwgV2FsbXNsZXkgPHBhdWwud2FsbXNsZXlAc2lmaXZlLmNvbT4NCj4gPiA+IFJldmll
-d2VkLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4NCj4gPiA+IFJldmlld2VkLWJ5
-OiBLZWVzIENvb2sgPGtlZXNjb29rQGNocm9taXVtLm9yZz4NCj4gPiA+IFJldmlld2VkLWJ5OiBM
-dWlzIENoYW1iZXJsYWluIDxtY2dyb2ZAa2VybmVsLm9yZz4NCj4gPiA+IC0tLQ0KPiA+ID4gICBh
-cmNoL3Jpc2N2L0tjb25maWcgfCAxMiArKysrKysrKysrKysNCj4gPiA+ICAgMSBmaWxlIGNoYW5n
-ZWQsIDEyIGluc2VydGlvbnMoKykNCj4gPiA+IA0KPiA+ID4gZGlmZiAtLWdpdCBhL2FyY2gvcmlz
-Y3YvS2NvbmZpZyBiL2FyY2gvcmlzY3YvS2NvbmZpZw0KPiA+ID4gaW5kZXggNTlhNDcyN2VjZDZj
-Li44N2RjNTM3MGJlY2IgMTAwNjQ0DQo+ID4gPiAtLS0gYS9hcmNoL3Jpc2N2L0tjb25maWcNCj4g
-PiA+ICsrKyBiL2FyY2gvcmlzY3YvS2NvbmZpZw0KPiA+ID4gQEAgLTU0LDYgKzU0LDE4IEBAIGNv
-bmZpZyBSSVNDVg0KPiA+ID4gICAJc2VsZWN0IEVEQUNfU1VQUE9SVA0KPiA+ID4gICAJc2VsZWN0
-IEFSQ0hfSEFTX0dJR0FOVElDX1BBR0UNCj4gPiA+ICAgCXNlbGVjdCBBUkNIX1dBTlRfSFVHRV9Q
-TURfU0hBUkUgaWYgNjRCSVQNCj4gPiA+ICsJc2VsZWN0IEFSQ0hfV0FOVF9ERUZBVUxUX1RPUERP
-V05fTU1BUF9MQVlPVVQgaWYgTU1VDQo+ID4gPiArCXNlbGVjdCBIQVZFX0FSQ0hfTU1BUF9STkRf
-QklUUw0KPiA+ID4gKw0KPiA+ID4gK2NvbmZpZyBBUkNIX01NQVBfUk5EX0JJVFNfTUlODQo+ID4g
-PiArCWRlZmF1bHQgMTggaWYgNmxlZ2FjeV92YV9sYXlvdXQ0QklUDQo+ID4gPiArCWRlZmF1bHQg
-OA0KPiA+ID4gKw0KPiA+ID4gKyMgbWF4IGJpdHMgZGV0ZXJtaW5lZCBieSB0aGUgZm9sbG93aW5n
-IGZvcm11bGE6DQo+ID4gPiArIyAgVkFfQklUUyAtIFBBR0VfU0hJRlQgLSAzDQo+ID4gPiArY29u
-ZmlnIEFSQ0hfTU1BUF9STkRfQklUU19NQVgNCj4gPiA+ICsJZGVmYXVsdCAyNCBpZiA2NEJJVCAj
-IFNWMzkgYmFzZWQNCj4gPiA+ICsJZGVmYXVsdCAxNw0KPiA+ID4gICANCj4gPiA+ICAgY29uZmln
-IE1NVQ0KPiA+ID4gICAJZGVmX2Jvb2wgeQ0KPiA+IFdpdGggdGhpcyBwYXRjaCwgSSBhbSBub3Qg
-YWJsZSB0byBib290IGEgRmVkb3JhIExpbnV4KGEgR25vbWUNCj4gPiBkZXNrdG9wDQo+ID4gaW1h
-Z2UpIG9uIFJJU0MtViBoYXJkd2FyZSAoVW5sZWFzaGVkICsgTWljcm9zZW1pIEV4cGFuc2lvbiBi
-b2FyZCkuDQo+ID4gVGhlDQo+ID4gYm9vdGluZyBnZXRzIHN0dWNrIHJpZ2h0IGFmdGVyIHN5c3Rl
-bWQgc3RhcnRzLg0KPiA+IA0KPiA+IGh0dHBzOi8vcGFzdGUuZmVkb3JhcHJvamVjdC5vcmcvcGFz
-dGUvVE9yVU1xcUtILXBHRlg3Q25mYWpEZw0KPiA+IA0KPiA+IFJldmVydGluZyBqdXN0IHRoaXMg
-cGF0Y2ggYWxsb3cgdG8gYm9vdCBGZWRvcmEgc3VjY2Vzc2Z1bGx5IG9uDQo+ID4gc3BlY2lmaWMN
-Cj4gPiBSSVNDLVYgaGFyZHdhcmUuIEkgaGF2ZSBub3Qgcm9vdCBjYXVzZWQgdGhlIGlzc3VlIGJ1
-dCBpdCBsb29rcyBsaWtlDQo+ID4gaXQNCj4gPiBtaWdodCBoYXZlIG1lc3NlZCB1c2VycHNhY2Ug
-bWFwcGluZy4NCj4gDQo+IEl0IG1pZ2h0IGhhdmUgbWVzc2VkIHVzZXJzcGFjZSBtYXBwaW5nIGJ1
-dCBub3QgZW5vdWdoIHRvIG1ha2UNCj4gdXNlcnNwYWNlIA0KPiBjb21wbGV0ZWx5IGJyb2tlbg0K
-PiBhcyBzeXN0ZW1kIGRvZXMgc29tZSB0aGluZ3MuIEkgd291bGQgdHJ5IHRvIGJvb3QgaW4gbGVn
-YWN5IGxheW91dDoNCj4gaWYgDQo+IHlvdSBjYW4gdHJ5IHRvIHNldCBzeXNjdGwgbGVnYWN5X3Zh
-X2xheW91dA0KPiBhdCBib290dGltZSwgaXQgd2lsbCBtYXAgdXNlcnNwYWNlIGFzIGl0IHdhcyBi
-ZWZvcmUgKGJvdHRvbS11cCkuIElmDQo+IHRoYXQgDQo+IGRvZXMgbm90IHdvcmssIHRoZSBwcm9i
-bGVtIGNvdWxkDQo+IGJlIHRoZSByYW5kb21pemF0aW9uIHRoYXQgaXMgYWN0aXZhdGVkIGJ5IGRl
-ZmF1bHQgbm93Lg0KDQpSYW5kb21pemF0aW9uIG1heSBub3QgYmUgdGhlIGlzc3VlLiBJIGp1c3Qg
-cmVtb3ZlZA0KQVJDSF9XQU5UX0RFRkFVTFRfVE9QRE9XTl9NTUFQX0xBWU9VVCBmcm9tIHRoZSBj
-b25maWcgYW5kIHRoYXQgc2VlbXMgdG8NCndvcmsuIEhlcmUgaXMgdGhlIGJvdHRvbS11cCBsYXlv
-dXQgd2l0aCByYW5kb21pemF0aW9uIG9uLg0KDQpbcm9vdEBmZWRvcmEtcmlzY3Ygfl0jIGNhdCAv
-cHJvYy9zZWxmL21hcHMgDQoxNTU1NTU2MDAwLTE1NTU1NzAwMDAgci14cCAwMDAwMDAwMCAxMDM6
-MDENCjI4MDA5OCAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliNjQvbGQtMi4yOC5zbw0K
-MTU1NTU3MDAwMC0xNTU1NTcxMDAwIHItLXAgMDAwMTkwMDAgMTAzOjAxDQoyODAwOTggICAgICAg
-ICAgICAgICAgICAgICAgICAvdXNyL2xpYjY0L2xkLTIuMjguc28NCjE1NTU1NzEwMDAtMTU1NTU3
-MjAwMCBydy1wIDAwMDFhMDAwIDEwMzowMQ0KMjgwMDk4ICAgICAgICAgICAgICAgICAgICAgICAg
-L3Vzci9saWI2NC9sZC0yLjI4LnNvDQoxNTU1NTcyMDAwLTE1NTU1NzMwMDAgcnctcCAwMDAwMDAw
-MCAwMDowMCAwIA0KMTU1NTU3MzAwMC0xNTU1NTc1MDAwIHIteHAgMDAwMDAwMDAgMDA6MDANCjAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBbdmRzb10NCjE1NTU1NzUwMDAtMTU1NTU3NjAw
-MCByLS1wIDAwMDAwMDAwIDEwMzowMQ0KNTA5MzYgICAgICAgICAgICAgICAgICAgICAgICAgL3Vz
-ci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfSURFTlRJRklDQVQNCklPTg0KMTU1NTU3NjAwMC0x
-NTU1NTdkMDAwIHItLXMgMDAwMDAwMDAgMTAzOjAxDQoyODA4MjYgICAgICAgICAgICAgICAgICAg
-ICAgICAvdXNyL2xpYjY0L2djb252L2djb252LW1vZHVsZXMuY2FjaGUNCjE1NTU1N2QwMDAtMTU1
-NTU3ZTAwMCByLS1wIDAwMDAwMDAwIDEwMzowMQ0KNTA5MzcgICAgICAgICAgICAgICAgICAgICAg
-ICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfTUVBU1VSRU1FTlQNCjE1NTU1N2UwMDAt
-MTU1NTU3ZjAwMCByLS1wIDAwMDAwMDAwIDEwMzowMQ0KNTA5MzkgICAgICAgICAgICAgICAgICAg
-ICAgICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfVEVMRVBIT05FDQoxNTU1NTdmMDAw
-LTE1NTU1ODAwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCjM3MDYgICAgICAgICAgICAgICAgICAg
-ICAgICAgIC91c3IvbGliL2xvY2FsZS9lbl9VUy51dGY4L0xDX0FERFJFU1MNCjE1NTU1ODAwMDAt
-MTU1NTU4MTAwMCByLS1wIDAwMDAwMDAwIDEwMzowMQ0KNTA5NDQgICAgICAgICAgICAgICAgICAg
-ICAgICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfTkFNRQ0KMTU1NTU4MTAwMC0xNTU1
-NTgyMDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQozNzc1ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAvdXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19QQVBFUg0KMTU1NTU4MjAwMC0xNTU1NTgz
-MDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQozNzU4ICAgICAgICAgICAgICAgICAgICAgICAgICAv
-dXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19NRVNTQUdFUy9TWQ0KU19MQ19NRVNTQUdFUw0K
-MTU1NTU4MzAwMC0xNTU1NTg0MDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQo1MDkzOCAgICAgICAg
-ICAgICAgICAgICAgICAgICAvdXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19NT05FVEFSWQ0K
-MTU1NTU4NDAwMC0xNTU1NTg1MDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQo1MDk0MCAgICAgICAg
-ICAgICAgICAgICAgICAgICAvdXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19USU1FDQoxNTU1
-NTg1MDAwLTE1NTU1ODYwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCjUwOTQ1ICAgICAgICAgICAg
-ICAgICAgICAgICAgIC91c3IvbGliL2xvY2FsZS9lbl9VUy51dGY4L0xDX05VTUVSSUMNCjE1NTU1
-OTAwMDAtMTU1NTU5MjAwMCBydy1wIDAwMDAwMDAwIDAwOjAwIDAgDQoxNTU1NTkyMDAwLTE1NTU2
-YjEwMDAgci14cCAwMDAwMDAwMCAxMDM6MDENCjI4MDEwNSAgICAgICAgICAgICAgICAgICAgICAg
-IC91c3IvbGliNjQvbGliYy0yLjI4LnNvDQoxNTU1NmIxMDAwLTE1NTU2YjUwMDAgci0tcCAwMDEx
-ZTAwMCAxMDM6MDENCjI4MDEwNSAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliNjQvbGli
-Yy0yLjI4LnNvDQoxNTU1NmI1MDAwLTE1NTU2YjcwMDAgcnctcCAwMDEyMjAwMCAxMDM6MDENCjI4
-MDEwNSAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliNjQvbGliYy0yLjI4LnNvDQoxNTU1
-NmI3MDAwLTE1NTU2YmIwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAwIA0KMTU1NTZiYjAwMC0xNTU1
-OTMzMDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQozNzU1ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAvdXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19DT0xMQVRFDQoxNTU1OTMzMDAwLTE1NTU5
-ODYwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCjUwOTQyICAgICAgICAgICAgICAgICAgICAgICAg
-IC91c3IvbGliL2xvY2FsZS9lbl9VUy51dGY4L0xDX0NUWVBFDQoxNTU1OTg2MDAwLTE1NTU5YTgw
-MDAgcnctcCAwMDAwMDAwMCAwMDowMCAwIA0KMmFhYWFhYTAwMC0yYWFhYWIxMDAwIHIteHAgMDAw
-MDAwMDAgMTAzOjAxDQoyODM5NzUgICAgICAgICAgICAgICAgICAgICAgICAvdXNyL2Jpbi9jYXQN
-CjJhYWFhYjEwMDAtMmFhYWFiMjAwMCByLS1wIDAwMDA2MDAwIDEwMzowMQ0KMjgzOTc1ICAgICAg
-ICAgICAgICAgICAgICAgICAgL3Vzci9iaW4vY2F0DQoyYWFhYWIyMDAwLTJhYWFhYjMwMDAgcnct
-cCAwMDAwNzAwMCAxMDM6MDENCjI4Mzk3NSAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvYmlu
-L2NhdA0KMmFhYWFiMzAwMC0yYWFhYWQ0MDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDANCjAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBbaGVhcF0NCjNmZmZjOTcwMDAtM2ZmZmNiODAwMCBydy1w
-IDAwMDAwMDAwIDAwOjAwDQowICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgW3N0YWNrXQ0K
-DQoNCj4gQW55d2F5LCBpdCdzIHdlaXJkIHNpbmNlIHVzZXJzcGFjZSBzaG91bGQgbm90IGRlcGVu
-ZCBvbiBob3cgdGhlDQo+IG1hcHBpbmcgaXMuDQo+IA0KPiBJZiB5b3UgY2FuIGlkZW50aWZ5IHRo
-ZSBwcm9ncmFtIHRoYXQgc3RhbGxzLCB0aGF0IHdvdWxkIGJlIGZhbnRhc3RpYw0KPiA6KQ0KPiAN
-Cg0KSXQgc3R1Y2tzIHdoaWxlIGJvb3RpbmcuIFNvIEkgYW0gbm90IHN1cmUgaG93IHRvIGZpZ3Vy
-ZSBvdXQgd2hpY2gNCnByb2dyYW0gc3RhbGxzLiBJdCBpcyBkaWZmaWN1bHQgdG8gZmlndXJlIG91
-dCBmcm9tIGJvb3QgbG9nIGFzIGl0DQpzdHVja3MgYXQgZGlmZmVyZW50IHBsYWNlcyBidXQgc29v
-biBhZnRlciBzeXN0ZW1kIHN0YXJ0cy4NCg0KPiBBcyB0aGUgY29kZSBpcyBjb21tb24gdG8gbWlw
-cyBhbmQgYXJtIG5vdyBhbmQgSSBkaWQgbm90IGhlYXIgZnJvbQ0KPiB0aGVtLCANCj4gSSBpbWFn
-aW5lIHRoZSBwcm9ibGVtIGNvbWVzDQo+IGZyb20gdXMuDQo+IA0KPiBBbGV4DQoNCi0tIA0KUmVn
-YXJkcywNCkF0aXNoDQo=
+On Mon, 7 Oct 2019, Laura Abbott wrote:
+> On 9/30/19 12:07 PM, Laura Abbott wrote:
+> > Hi,
+> > 
+> > Fedora got a bug report https://bugzilla.redhat.com/show_bug.cgi?id=1757104
+> > of a failure to parse options with the context mount option. From the
+> > reporter:
+> > 
+> > 
+> > $ unshare -rm mount -t tmpfs tmpfs /tmp -o
+> > 'context="system_u:object_r:container_file_t:s0:c475,c690"'
+> > mount: /tmp: wrong fs type, bad option, bad superblock on tmpfs, missing
+> > codepage or helper program, or other error.
+> > 
+> > 
+> > Sep 30 16:50:42 kernel: tmpfs: Unknown parameter 'c690"'
+> > 
+> > I haven't asked the reporter to bisect yet but I'm suspecting one of the
+> > conversion to the new mount API:
+> > 
+> > $ git log --oneline v5.3..origin/master mm/shmem.c
+> > edf445ad7c8d Merge branch 'hugepage-fallbacks' (hugepatch patches from
+> > David Rientjes)
+> > 19deb7695e07 Revert "Revert "Revert "mm, thp: consolidate THP gfp handling
+> > into alloc_hugepage_direct_gfpmask""
+> > 28eb3c808719 shmem: fix obsolete comment in shmem_getpage_gfp()
+> > 4101196b19d7 mm: page cache: store only head pages in i_pages
+> > d8c6546b1aea mm: introduce compound_nr()
+> > f32356261d44 vfs: Convert ramfs, shmem, tmpfs, devtmpfs, rootfs to use the
+> > new mount API
+> > 626c3920aeb4 shmem_parse_one(): switch to use of fs_parse()
+> > e04dc423ae2c shmem_parse_options(): take handling a single option into a
+> > helper
+> > f6490b7fbb82 shmem_parse_options(): don't bother with mpol in separate
+> > variable
+> > 0b5071dd323d shmem_parse_options(): use a separate structure to keep the
+> > results
+> > 7e30d2a5eb0b make shmem_fill_super() static
+> > 
+> > 
+> > I didn't find another report or a fix yet. Is it worth asking the reporter
+> > to bisect?
+> > 
+> > Thanks,
+> > Laura
+> 
+> Ping again, I never heard anything back and I didn't see anything come in
+> with -rc2
+
+Sorry for not responding sooner, Laura, I was travelling: and dearly
+hoping that David or Al would take it.  I'm afraid this is rather beyond
+my capability (can I admit that it's the first time I even heard of the
+"context" mount option? and grepping for "context" has not yet shown me
+at what level it is handled; and I've no idea of what a valid "context"
+is for my own tmpfs mounts, to start playing around with its parsing).
+
+Yes, I think we can assume that this bug comes from f32356261d44 ("vfs:
+Convert ramfs, shmem, tmpfs, devtmpfs, rootfs to use the new mount API")
+or one of shmem_parse ones associated with it; but I'm pretty sure that
+it's not worth troubling the reporter to bisect.  I expect David and Al
+are familiar with "context", and can go straight to where it's handled,
+and see what's up.
+
+(tmpfs, very tiresomely, supports a NUMA "mpol" mount option which can
+have commas in it e.g "mpol=bind:0,2": which makes all its comma parsing
+awkward.  I assume that where the new mount API commits bend over to
+accommodate that peculiarity, they end up mishandling the comma in
+the context string above.)
+
+And since we're on the subject of new mount API breakage in tmpfs, I'll
+take the liberty of repeating this different case, reported earlier and
+still broken in rc2: again something that I'd be hard-pressed to fix
+myself, without endangering some other filesystem's mount parsing:-
+
+My /etc/fstab has a line in for one of my test mounts:
+tmpfs                /tlo                 tmpfs      size=4G               0 0
+and that "size=4G" is what causes the problem: because each time
+shmem_parse_options(fc, data) is called for a remount, data (that is,
+options) points to a string starting with "size=4G,", followed by
+what's actually been asked for in the remount options.
+
+So if I try
+mount -o remount,size=0 /tlo
+that succeeds, setting the filesystem size to 0 meaning unlimited.
+So if then as a test I try
+mount -o remount,size=1M /tlo
+that correctly fails with "Cannot retroactively limit size".
+But then when I try
+mount -o remount,nr_inodes=0 /tlo
+I again get "Cannot retroactively limit size",
+when it should have succeeded (again, 0 here meaning unlimited).
+
+That's because the options in shmem_parse_options() are
+"size=4G,nr_inodes=0", which indeed looks like an attempt to
+retroactively limit size; but the user never asked "size=4G" there.
+
+Hugh
