@@ -2,131 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B925CFE5A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 18:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96BAECFEF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 18:33:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbfJHQB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 12:01:56 -0400
-Received: from outbound-smtp24.blacknight.com ([81.17.249.192]:46147 "EHLO
-        outbound-smtp24.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726336AbfJHQBz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 12:01:55 -0400
-X-Greylist: delayed 593 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Oct 2019 12:01:53 EDT
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp24.blacknight.com (Postfix) with ESMTPS id EA601B887E
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Oct 2019 16:51:58 +0100 (IST)
-Received: (qmail 5557 invoked from network); 8 Oct 2019 15:51:58 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 8 Oct 2019 15:51:58 -0000
-Date:   Tue, 8 Oct 2019 16:51:56 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mm, compaction: fix wrong pfn handling in
- __reset_isolation_pfn()
-Message-ID: <20191008155156.GD3321@techsingularity.net>
-References: <20191008152915.24704-1-vbabka@suse.cz>
+        id S1728874AbfJHQdU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 12:33:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58628 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725966AbfJHQdU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Oct 2019 12:33:20 -0400
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 828338665A
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Oct 2019 16:33:19 +0000 (UTC)
+Received: by mail-qk1-f197.google.com with SMTP id q80so19120609qke.22
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Oct 2019 09:33:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0emuj7ckCeOi2ShbRboaosDgyEFD8QY/GtdLIcv15Yo=;
+        b=WTtKkSCVRdOWCTy6cocmhGzKrt/VJ2ZxYhnNNzw9bd5yEIhwj9YFqInwJRhoIVY49X
+         u4KDRnXyzapQZIxklZVCR2gfM3P4BNB7MMmuThKOc0xCf6i6SP6bPoPMMBwCa4zLaMhU
+         JQg2jDsFsjjt9vrBz4UJWTsVnpye7HHQ7Kk4QlXjXQ3ONuepSJpEyAa/tBiE5nkVfpAN
+         1OsG8/Zy6KRJyKim0QdQM+FjcPnPESKJt77BLXp4Pl5b0O9aeYeejaDChxod1rPB17z9
+         bRzRhzFJrwjWpOmp0/cAI8Mm5ah0nnp2nNLZXvJwshPybNRFEGmv+s41nSDFID3HqyzT
+         DekQ==
+X-Gm-Message-State: APjAAAUPhv1woCj46vxH9cp3ze/C/7mRWi4+UOKsOxziTE22qdwWF1pF
+        erC1v/Bp6ve/PV6Gqj/51/3p1yTM6JJ5zSO5XCZgRRT8ISNKDGhXlitjjY7037Wqui0QM4fa8dz
+        cK415+Noyarb31dYpDRP2TovgeA==
+X-Received: by 2002:ac8:2966:: with SMTP id z35mr37722112qtz.348.1570552397038;
+        Tue, 08 Oct 2019 09:33:17 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqygwcCLbNfX37PFFgvJBMHiAJ+4DIe1+sjK4nzF87cpY0peuIfCoM/lAQubKQGhuVDDY9RmBw==
+X-Received: by 2002:ac8:2966:: with SMTP id z35mr37722061qtz.348.1570552396613;
+        Tue, 08 Oct 2019 09:33:16 -0700 (PDT)
+Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id n192sm8999408qke.9.2019.10.08.09.33.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2019 09:33:15 -0700 (PDT)
+Subject: Re: mount on tmpfs failing to parse context option
+To:     Al Viro <viro@zeniv.linux.org.uk>, Hugh Dickins <hughd@google.com>
+Cc:     David Howells <dhowells@redhat.com>, Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+References: <d5b67332-57b7-c19a-0462-f84d07ef1a16@redhat.com>
+ <d7f83334-d731-b892-ee49-1065d64a4887@redhat.com>
+ <alpine.LSU.2.11.1910071655060.4431@eggly.anvils>
+ <20191008012622.GP26530@ZenIV.linux.org.uk>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <9349bbbe-31fe-2b0a-001d-2e22ee20c12f@redhat.com>
+Date:   Tue, 8 Oct 2019 12:33:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20191008152915.24704-1-vbabka@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191008012622.GP26530@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 05:29:15PM +0200, Vlastimil Babka wrote:
-> Florian and Dave reported [1] a NULL pointer dereference in
-> __reset_isolation_pfn(). While the exact cause is unclear, staring at the code
-> revealed two bugs, which might be related.
+On 10/7/19 9:26 PM, Al Viro wrote:
+> On Mon, Oct 07, 2019 at 05:50:31PM -0700, Hugh Dickins wrote:
+> 
+> [sorry for being MIA - had been sick through the last week, just digging
+> myself from under piles of mail; my apologies]
+> 
+>> (tmpfs, very tiresomely, supports a NUMA "mpol" mount option which can
+>> have commas in it e.g "mpol=bind:0,2": which makes all its comma parsing
+>> awkward.  I assume that where the new mount API commits bend over to
+>> accommodate that peculiarity, they end up mishandling the comma in
+>> the context string above.)
+> 
+> 	Dumber than that, I'm afraid.  mpol is the reason for having
+> ->parse_monolithic() in the first place, all right, but the problem is
+> simply the lack of security_sb_eat_lsm_opts() call in it.
+> 
+> 	Could you check if the following fixes that one?
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 0f7fd4a85db6..8dcc8d04cbaf 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -3482,6 +3482,12 @@ static int shmem_parse_options(struct fs_context *fc, void *data)
+>   {
+>   	char *options = data;
+>   
+> +	if (options) {
+> +		int err = security_sb_eat_lsm_opts(options, &fc->security);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+>   	while (options != NULL) {
+>   		char *this_char = options;
+>   		for (;;) {
 > 
 
-I think the fix is a good fit. Even if the problem still occurs, it
-eliminates an important possibility.
+Yes the reporter says that works.
 
-> One bug is that if zone starts in the middle of pageblock, block_page might
-> correspond to different pfn than block_pfn, and then the pfn_valid_within()
-> checks will check different pfn's than those accessed via struct page. This
-> might result in acessing an unitialized page in CONFIG_HOLES_IN_ZONE configs.
-> 
-
-s/acessing/accessing/
-
-Aside from HOLES_IN_ZONE, the patch addresses an issue if the start
-of the zone is not pageblock-aligned. While this is common, it's not
-guaranteed. I don't think this needs to be clarified in the changelog as
-your example is valid. I'm commenting in case someone decides not to try
-the patch because they feel HOLES_IN_ZONE is required.
-
-> The other bug is that end_page refers to the first page of next pageblock and
-> not last page of current pageblock. The online and valid check is then wrong
-> and with sections, the while (page < end_page) loop might wander off actual
-> struct page arrays.
-> 
-> [1] https://lore.kernel.org/linux-xfs/87o8z1fvqu.fsf@mid.deneb.enyo.de/
-> 
-> Reported-by: Florian Weimer <fw@deneb.enyo.de>
-> Reported-by: Dave Chinner <david@fromorbit.com>
-> Fixes: 6b0868c820ff ("mm/compaction.c: correct zone boundary handling when resetting pageblock skip hints")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-
-Just one minor irrelevant note below.
-
-> ---
->  mm/compaction.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index ce08b39d85d4..672d3c78c6ab 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -270,14 +270,15 @@ __reset_isolation_pfn(struct zone *zone, unsigned long pfn, bool check_source,
->  
->  	/* Ensure the start of the pageblock or zone is online and valid */
->  	block_pfn = pageblock_start_pfn(pfn);
-> -	block_page = pfn_to_online_page(max(block_pfn, zone->zone_start_pfn));
-> +	block_pfn = max(block_pfn, zone->zone_start_pfn);
-> +	block_page = pfn_to_online_page(block_pfn);
->  	if (block_page) {
->  		page = block_page;
->  		pfn = block_pfn;
->  	}
->  
->  	/* Ensure the end of the pageblock or zone is online and valid */
-> -	block_pfn += pageblock_nr_pages;
-> +	block_pfn = pageblock_end_pfn(pfn) - 1;
->  	block_pfn = min(block_pfn, zone_end_pfn(zone) - 1);
->  	end_page = pfn_to_online_page(block_pfn);
->  	if (!end_page)
-
-This is fine and is definetly fixing a potential issue.
-
-> @@ -303,7 +304,7 @@ __reset_isolation_pfn(struct zone *zone, unsigned long pfn, bool check_source,
->  
->  		page += (1 << PAGE_ALLOC_COSTLY_ORDER);
->  		pfn += (1 << PAGE_ALLOC_COSTLY_ORDER);
-> -	} while (page < end_page);
-> +	} while (page <= end_page);
->  
->  	return false;
->  }
-
-I think this is also ok as it's appropriate for PFN walkers in general of
-this style. However, I think it's unlikely to fix anything given that we
-are walking in steps of (1 << PAGE_ALLOC_COSTLY_ORDER) and the final page
-is not necessarily aligned on that boundary. Still, it's an improvement.
-
-Thanks
-
--- 
-Mel Gorman
-SUSE Labs
+Thanks,
+Laura
