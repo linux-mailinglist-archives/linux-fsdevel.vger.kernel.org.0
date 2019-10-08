@@ -2,95 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF127CF6A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 12:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E555CF701
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 12:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730590AbfJHJ62 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 05:58:28 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:20879 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730442AbfJHJ61 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 05:58:27 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-21-VWCztQ1aNFyz46d4CGNx0w-1; Tue, 08 Oct 2019 10:58:24 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 8 Oct 2019 10:58:24 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 8 Oct 2019 10:58:24 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-Thread-Topic: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-Thread-Index: AQHVfL0BUpJ/upywWEKRtOjvaDvCEKdPT9ewgAAbG4CAAQw74A==
-Date:   Tue, 8 Oct 2019 09:58:24 +0000
-Message-ID: <18992f7f25b44f2898812ffc203c4b35@AcuMS.aculab.com>
-References: <20191006222046.GA18027@roeck-us.net>
- <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
- <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
- <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net>
- <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
- <20191007012437.GK26530@ZenIV.linux.org.uk>
- <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
- <20191007025046.GL26530@ZenIV.linux.org.uk>
- <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
- <c58c2a8a5366409abd4169d10a58196a@AcuMS.aculab.com>
- <CAHk-=wjF2fkhuN8N-MnTwvzNig83XdQK50nir8oieF7jV6Om=A@mail.gmail.com>
-In-Reply-To: <CAHk-=wjF2fkhuN8N-MnTwvzNig83XdQK50nir8oieF7jV6Om=A@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1730274AbfJHK1M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 06:27:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36718 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729958AbfJHK1M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Oct 2019 06:27:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8F8A8ADFE;
+        Tue,  8 Oct 2019 10:27:10 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id B8ABD1E4827; Tue,  8 Oct 2019 12:27:09 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 12:27:09 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
+Subject: Re: [PATCH v4 1/8] ext4: move out iomap field population into
+ separate helper
+Message-ID: <20191008102709.GD5078@quack2.suse.cz>
+References: <cover.1570100361.git.mbobrowski@mbobrowski.org>
+ <8b4499e47bea3841194850e1b3eeb924d87e69a5.1570100361.git.mbobrowski@mbobrowski.org>
 MIME-Version: 1.0
-X-MC-Unique: VWCztQ1aNFyz46d4CGNx0w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8b4499e47bea3841194850e1b3eeb924d87e69a5.1570100361.git.mbobrowski@mbobrowski.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMgPHRvcnZhbGRzQGxpbnV4LWZvdW5kYXRpb24ub3JnPg0KPiBT
-ZW50OiAwNyBPY3RvYmVyIDIwMTkgMTk6MTENCi4uLg0KPiBJJ3ZlIGJlZW4gdmVyeSBjbG9zZSB0
-byBqdXN0IHJlbW92aW5nIF9fZ2V0X3VzZXIvX19wdXRfdXNlciBzZXZlcmFsDQo+IHRpbWVzLCBl
-eGFjdGx5IGJlY2F1c2UgcGVvcGxlIGRvIGNvbXBsZXRlbHkgdGhlIHdyb25nIHRoaW5nIHdpdGgg
-dGhlbQ0KPiAtIG5vdCBzcGVlZGluZyBjb2RlIHVwLCBidXQgbWFraW5nIGl0IHVuc2FmZSBhbmQg
-YnVnZ3kuDQoNClRoZXkgY291bGQgZG8gdGhlIHZlcnkgc2ltcGxlIGNoZWNrIHRoYXQgJ3VzZXJf
-cHRyK3NpemUgPCBrZXJuZWxfYmFzZScNCnJhdGhlciB0aGFuIHRoZSBmdWxsIHdpbmRvdyBjaGVj
-ayB1bmRlciB0aGUgYXNzdW1wdGlvbiB0aGF0IGFjY2Vzc19vaygpDQpoYXMgYmVlbiBjYWxsZWQg
-YW5kIHRoYXQgdGhlIGxpa2VseSBlcnJvcnMgYXJlIGp1c3Qgb3ZlcnJ1bnMuDQoNCj4gVGhlIG5l
-dyAidXNlcl9hY2Nlc3NfYmVnaW4vZW5kKCkiIG1vZGVsIGlzIG11Y2ggYmV0dGVyLCBidXQgaXQg
-YWxzbw0KPiBoYXMgYWN0dWFsIFNUQVRJQyBjaGVja2luZyB0aGF0IHRoZXJlIGFyZSBubyBmdW5j
-dGlvbiBjYWxscyBldGMgaW5zaWRlDQo+IHRoZSByZWdpb24sIHNvIGl0IGZvcmNlcyB5b3UgdG8g
-ZG8gdGhlIGxvb3AgcHJvcGVybHkgYW5kIHRpZ2h0bHksIGFuZA0KPiBub3QgdGhlIGluY29ycmVj
-dCAiSSBjaGVja2VkIHRoZSByYW5nZSBzb21ld2hlcmUgZWxzZSwgbm93IEknbSBkb2luZw0KPiBh
-biB1bnNhZmUgY29weSIuDQo+IA0KPiBBbmQgaXQgYWN0dWFsbHkgc3BlZWRzIHRoaW5ncyB1cCwg
-dW5saWtlIHRoZSBhY2Nlc3Nfb2soKSBnYW1lcy4NCg0KSSd2ZSBjb2RlIHRoYXQgZG9lczoNCglp
-ZiAoIWFjY2Vzc19vayguLi4pKQ0KCQlyZXR1cm4gLUVGQVVMVDsNCgkuLi4NCglmb3IgKC4uLikg
-ew0KCQlpZiAoX19nZXRfdXNlcih0bXBfdTY0LCB1c2VyX3B0cisrKSkNCgkJCXJldHVybiAtRUZB
-VUxUOw0KCQl3cml0ZXEodG1wX3U2NCwgaW9fcHRyKyspOw0KCX0NCihBbHRob3VnaCB0aGUgY29k
-ZSBpcyBtb3JlIGNvbXBsZXggYmVjYXVzZSBub3QgYWxsIHRyYW5zZmVycyBhcmUgbXVsdGlwbGVz
-IG9mIDggYnl0ZXMuKQ0KDQpXaXRoIHVzZXJfYWNjZXNzX2JlZ2luL2VuZCgpIEknZCBwcm9iYWJs
-eSB3YW50IHRvIHB1dCB0aGUgY29weSBsb29wDQppbnNpZGUgYSBmdW5jdGlvbiAod2hpY2ggd2ls
-bCBwcm9iYWJseSBnZXQgaW5saW5lZCkgdG8gYXZvaWQgY29udm9sdXRlZA0KZXJyb3IgcHJvY2Vz
-c2luZy4NClNvIHlvdSBlbmQgdXAgd2l0aDoNCglpZiAoIXVzZXJfYWNjZXNzX29rKCkpDQoJCXJl
-dHVybiBfRUZBVUxUOw0KCXVzZXJfYWNjZXNzX2JlZ2luKCk7DQoJcnZhbCA9IGRvX2NvcHlfY29k
-ZSguLi4pOw0KCXVzZXJfYWNjZXNzX2VuZCgpOw0KCXJldHVybiBydmFsOw0KV2hpY2gsIGF0IHRo
-ZSBzb3VyY2UgbGV2ZWwgKGF0IGxlYXN0KSBicmVha3MgeW91ciAnbm8gZnVuY3Rpb24gY2FsbHMn
-IHJ1bGUuDQpUaGUgd3JpdGVxKCkgbWlnaHQgYWxzbyBicmVhayBpdCBhcyB3ZWxsLg0KDQoJRGF2
-aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50
-IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTcz
-ODYgKFdhbGVzKQ0K
+On Thu 03-10-19 21:33:09, Matthew Bobrowski wrote:
+> Separate the iomap field population chunk into a separate simple
+> helper routine. This helps reducing the overall clutter within the
+> ext4_iomap_begin() callback, especially as we move across more code to
+> make use of iomap infrastructure.
+> 
+> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> ---
+>  fs/ext4/inode.c | 65 ++++++++++++++++++++++++++++---------------------
+>  1 file changed, 37 insertions(+), 28 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 516faa280ced..1ccdc14c4d69 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3406,10 +3406,43 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
+>  	return inode->i_state & I_DIRTY_DATASYNC;
+>  }
+>  
+> +static int ext4_set_iomap(struct inode *inode, struct iomap *iomap, u16 type,
+> +			  unsigned long first_block, struct ext4_map_blocks *map)
+> +{
+> +	u8 blkbits = inode->i_blkbits;
+> +
+> +	iomap->flags = 0;
+> +	if (ext4_inode_datasync_dirty(inode))
+> +		iomap->flags |= IOMAP_F_DIRTY;
+> +	iomap->bdev = inode->i_sb->s_bdev;
+> +	iomap->dax_dev = EXT4_SB(inode->i_sb)->s_daxdev;
+> +	iomap->offset = (u64) first_block << blkbits;
+> +	iomap->length = (u64) map->m_len << blkbits;
+> +
+> +	if (type) {
+> +		iomap->type = type;
+> +		iomap->addr = IOMAP_NULL_ADDR;
+> +	} else {
+> +		if (map->m_flags & EXT4_MAP_MAPPED) {
+> +			iomap->type = IOMAP_MAPPED;
+> +		} else if (map->m_flags & EXT4_MAP_UNWRITTEN) {
+> +			iomap->type = IOMAP_UNWRITTEN;
+> +		} else {
+> +			WARN_ON_ONCE(1);
+> +			return -EIO;
+> +		}
+> +		iomap->addr = (u64) map->m_pblk << blkbits;
+> +	}
 
+Looking at this function now, the 'type' argument looks a bit weird. Can we
+perhaps just remove the 'type' argument and change the above to:
+
+	if (map->m_flags & (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)) {
+		if (map->m_flags & EXT4_MAP_MAPPED)
+			iomap->type = IOMAP_MAPPED;
+		else if (map->m_flags & EXT4_MAP_UNWRITTEN)
+			iomap->type = IOMAP_UNWRITTEN;
+		iomap->addr = (u64) map->m_pblk << blkbits;
+	} else {
+		iomap->type = IOMAP_HOLE;
+		iomap->addr = IOMAP_NULL_ADDR;
+	}
+
+And then in ext4_iomap_begin() we overwrite the type to:
+
+	if (delalloc && iomap->type == IOMAP_HOLE)
+		iomap->type = IOMAP_DELALLOC;
+
+That would IMO make ext4_set_iomap() arguments harder to get wrong.
+
+								Honza
+
+> +
+> +	if (map->m_flags & EXT4_MAP_NEW)
+> +		iomap->flags |= IOMAP_F_NEW;
+> +	return 0;
+> +}
+> +
+>  static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  			    unsigned flags, struct iomap *iomap)
+>  {
+> -	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> +	u16 type = 0;
+>  	unsigned int blkbits = inode->i_blkbits;
+>  	unsigned long first_block, last_block;
+>  	struct ext4_map_blocks map;
+> @@ -3523,33 +3556,9 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  			return ret;
+>  	}
+>  
+> -	iomap->flags = 0;
+> -	if (ext4_inode_datasync_dirty(inode))
+> -		iomap->flags |= IOMAP_F_DIRTY;
+> -	iomap->bdev = inode->i_sb->s_bdev;
+> -	iomap->dax_dev = sbi->s_daxdev;
+> -	iomap->offset = (u64)first_block << blkbits;
+> -	iomap->length = (u64)map.m_len << blkbits;
+> -
+> -	if (ret == 0) {
+> -		iomap->type = delalloc ? IOMAP_DELALLOC : IOMAP_HOLE;
+> -		iomap->addr = IOMAP_NULL_ADDR;
+> -	} else {
+> -		if (map.m_flags & EXT4_MAP_MAPPED) {
+> -			iomap->type = IOMAP_MAPPED;
+> -		} else if (map.m_flags & EXT4_MAP_UNWRITTEN) {
+> -			iomap->type = IOMAP_UNWRITTEN;
+> -		} else {
+> -			WARN_ON_ONCE(1);
+> -			return -EIO;
+> -		}
+> -		iomap->addr = (u64)map.m_pblk << blkbits;
+> -	}
+> -
+> -	if (map.m_flags & EXT4_MAP_NEW)
+> -		iomap->flags |= IOMAP_F_NEW;
+> -
+> -	return 0;
+> +	if (!ret)
+> +		type = delalloc ? IOMAP_DELALLOC : IOMAP_HOLE;
+> +	return ext4_set_iomap(inode, iomap, type, first_block, &map);
+>  }
+>  
+>  static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+> -- 
+> 2.20.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
