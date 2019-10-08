@@ -2,73 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9F22CF2BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 08:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 044D8CF2CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 08:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbfJHG2g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 02:28:36 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44815 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729693AbfJHG2g (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 02:28:36 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 21so13096639otj.11;
-        Mon, 07 Oct 2019 23:28:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LYZSphNTeqhGx1wU9vMRSNJrOLEx7UXZMZ12vmh3wm8=;
-        b=uj6SDTlK8cKX8nozCfpgsQeL+VRlbSl6Od3sF3Aj+tyeqechUXUmO63d5Rp72fhNtV
-         GETjjUt2qNEFbpuLpS3YNf+Jtx850W0ozxRkEiRWwn+Gwi6vpAYVJqem+X/T77vv32O4
-         GM+2DaHJauqFa9ZSK9nrlQ+rcMc3ZLok6zIjnHHPCv5dX0CAznswJRXlA90UiT/AJaqc
-         /aXDgr+XkasW5FvqAFczNmD7jcERn+1t9dT8fT5xEFymlwhf4rvhPMyBHAClERPvX5ne
-         p9CvNdM0tvulT6LsJdwZGhkjcKodS4B1yHbXuV0hwVYzPan2TXkWh2XvWOz+HSbo3NPz
-         j7cg==
-X-Gm-Message-State: APjAAAWxD3O8P5ZXTh+IgshMRfESYfaxCP/RX7R9oDt7f0fyjAIARvsB
-        hcA/AkwHixt/CUp5KF8Ls4yR6hVY30XdLfM/BBU=
-X-Google-Smtp-Source: APXvYqxVLswEPn/oyYvCjTJTFOl48PKBdRScaCvnZJwIslE71ycPY3pxxK8E0BKUHrdOdU1dlTpX+laB88khU1jtNvI=
-X-Received: by 2002:a9d:404d:: with SMTP id o13mr14677186oti.39.1570516115037;
- Mon, 07 Oct 2019 23:28:35 -0700 (PDT)
+        id S1730080AbfJHGek (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 02:34:40 -0400
+Received: from verein.lst.de ([213.95.11.211]:44049 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729740AbfJHGek (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Oct 2019 02:34:40 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id B73F668B20; Tue,  8 Oct 2019 08:34:36 +0200 (CEST)
+Date:   Tue, 8 Oct 2019 08:34:36 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/11] iomap: copy the xfs writeback code to iomap.c
+Message-ID: <20191008063436.GA30465@lst.de>
+References: <20191006154608.24738-1-hch@lst.de> <20191006154608.24738-3-hch@lst.de> <20191007214353.GZ16973@dread.disaster.area>
 MIME-Version: 1.0
-References: <20191006222046.GA18027@roeck-us.net> <CAHk-=wgvz6k88hxY_G3=itbQ-iVz7Hc9fbF3kZ_nePA7XgvDTg@mail.gmail.com>
- <fa7c91aa-ed82-acd4-8835-d2580ee8232c@roeck-us.net>
-In-Reply-To: <fa7c91aa-ed82-acd4-8835-d2580ee8232c@roeck-us.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Oct 2019 08:28:23 +0200
-Message-ID: <CAMuHMdXN5hL+BvnJDG86RnH4nv0yz+nxJ+Uc7-2V8jQ+dJ5tkA@mail.gmail.com>
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Cree <mcree@orcon.net.nz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007214353.GZ16973@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 8, 2019 at 1:30 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> m68k:
->
-> c2p_iplan2.c:(.text+0x98): undefined reference to `c2p_unsupported'
->
-> I don't know the status.
+On Tue, Oct 08, 2019 at 08:43:53AM +1100, Dave Chinner wrote:
+> > +static int
+> > +iomap_ioend_compare(void *priv, struct list_head *a, struct list_head *b)
+> > +{
+> > +	struct iomap_ioend *ia, *ib;
+> > +
+> > +	ia = container_of(a, struct iomap_ioend, io_list);
+> > +	ib = container_of(b, struct iomap_ioend, io_list);
+> > +	if (ia->io_offset < ib->io_offset)
+> > +		return -1;
+> > +	else if (ia->io_offset > ib->io_offset)
+> > +		return 1;
+> > +	return 0;
+> 
+> No need for the else here.
 
-Fall-out from the (non)inline optimization.  Patch available:
-https://lore.kernel.org/lkml/20190927094708.11563-1-geert@linux-m68k.org/
+That is usually my comment :)  But in this case it is just copied over
+code, so I didn't want to do cosmetic changes.
 
-Gr{oetje,eeting}s,
+> > +	/*
+> > +	 * Given that we do not allow direct reclaim to call us, we should
+> > +	 * never be called while in a filesystem transaction.
+> > +	 */
+> > +	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
+> > +		goto redirty;
+> 
+> Is this true for all expected callers of these functions rather than
+> just XFS? i.e. PF_MEMALLOC_NOFS is used by transactions in XFS to
+> prevent transaction context recursion, but other filesystems do not
+> do this..
+> 
+> FWIW, I can also see that this is going to cause us problems if high
+> level code starts using memalloc_nofs_save() and then calling
+> filemap_datawrite() and friends...
 
-                        Geert
+We have the check for direct reclaim just above, so any file system
+using this iomap code will not allow direct reclaim.  Which I think is
+a very good idea given that direct reclaim through the file system is
+a very bad idea.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+That leaves with only the filemap_datawrite case, which so far is
+theoretical.  If that ever becomes a think it is very obvious and we
+can just remove the debug check.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> > +iomap_writepage(struct page *page, struct writeback_control *wbc,
+> > +		struct iomap_writepage_ctx *wpc,
+> > +		const struct iomap_writeback_ops *ops)
+> > +{
+> > +	int ret;
+> > +
+> > +	wpc->ops = ops;
+> > +	ret = iomap_do_writepage(page, wbc, wpc);
+> > +	if (!wpc->ioend)
+> > +		return ret;
+> > +	return iomap_submit_ioend(wpc, wpc->ioend, ret);
+> > +}
+> > +EXPORT_SYMBOL_GPL(iomap_writepage);
+> 
+> Can we kill ->writepage for iomap users, please? After all, we don't
+> mostly don't allow memory reclaim to do writeback of dirty pages,
+> and that's the only caller of ->writepage.
+
+I'd rather not do this as part of this move.  But if you could expedite
+your patch to kill ->writepage from the large block size support patch
+and submit it ASAP on top of this series I would be very much in favor.
