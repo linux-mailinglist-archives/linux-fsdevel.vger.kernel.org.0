@@ -2,99 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C7BDCF32C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 09:05:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D3BFCF348
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Oct 2019 09:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730103AbfJHHEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 03:04:55 -0400
-Received: from mga12.intel.com ([192.55.52.136]:1926 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729740AbfJHHEy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 03:04:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2019 00:04:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
-   d="scan'208";a="277017670"
-Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
-  by orsmga001.jf.intel.com with ESMTP; 08 Oct 2019 00:04:51 -0700
-Subject: Re: [PATCH] proc:fix confusing macro arg name
-To:     linmiaohe <linmiaohe@huawei.com>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "cyphar@cyphar.com" <cyphar@cyphar.com>,
-        "christian@brauner.io" <christian@brauner.io>
-Cc:     Mingfangsen <mingfangsen@huawei.com>,
-        "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <165631b964b644dfa933653def533e41@huawei.com>
-From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
-Message-ID: <56474105-0df0-975b-a347-711c1c6422f2@linux.intel.com>
-Date:   Tue, 8 Oct 2019 15:04:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        id S1730212AbfJHHPc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 03:15:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53390 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730057AbfJHHPc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Oct 2019 03:15:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=B+KZ2CWthn3qi8frDFdu82EATrRyublF5XnZOEvZyjo=; b=Qy8OitjIKa6k/e9/4wWp8KmWL
+        HXQD07MhpTIakI1wWi/RVv57dM1RooZS6Q58D1huHDafGEUTI+2Ynys1y1F1+ra1kpj8BOkemZntG
+        BIJJvCkOLGsN/+T4MrATcqRRwCABS9c8sDOorIncqsBabG1vBH8X2ModVI/jo61h6CUf+ZEiCD/f2
+        Pb0OOPt1Es6DbGe3WlZQ2PfuqsAOM8JIL1gCXGCI4T0Xu+aD15ODxkc0MCpgmOoHtNjf/02Q4ik22
+        hbXD2MPZydnDyWfCdSxuAsRrcEjcvwW5mMJt2foQrQ76sWNeOS7ghNVZA1eZ3aLgKD5igBvqfIavo
+        IhIsIbu+g==;
+Received: from [2001:4bb8:188:141c:c70:4a89:bc61:2] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHjiV-0005KI-CH; Tue, 08 Oct 2019 07:15:31 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: iomap and xfs COW cleanups v2
+Date:   Tue,  8 Oct 2019 09:15:07 +0200
+Message-Id: <20191008071527.29304-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <165631b964b644dfa933653def533e41@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/10/8 14:44, linmiaohe wrote:
-> Add suitable additional cc's as Andrew Morton suggested.
-> Get cc list from get_maintainer script:
-> [root@localhost mm]# ./scripts/get_maintainer.pl 0001-proc-fix-confusing-macro-arg-name.patch 
-> Alexey Dobriyan <adobriyan@gmail.com> (reviewer:PROC FILESYSTEM)
-> linux-kernel@vger.kernel.org (open list:PROC FILESYSTEM)
-> linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM)
-> 
-> ------------------------------------------------------
-> From: Miaohe Lin <linmiaohe@huawei.com>
-> Subject: fix confusing macro arg name
-> 
-> state_size and ops are in the wrong position, fix it.
-> 
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
+Hi all,
 
-Good catch!
+this series started out based on a review of the btrfs iomap series
+from Goldwyn.  I've taken his main srcmap patch and modified it a bit
+based on my experience of converting xfs over to use the feature.
+That led to comments that the xfs code is a mess, so I resurrected
+an old series to clean that up and merged it in.  That series also
+happens to massively clean up the unshare path in the iomap and xfs
+code as well.  The series is on top of the move of the xfs writeback
+code to iomap.
 
-This is interesting, I saw this interface has 50+ callers,
-How did they work before? ;)
-
-Thanks,
--Aubrey
-
-> 
->  include/linux/proc_fs.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h index a705aa2d03f9..0640be56dcbd 100644
-> --- a/include/linux/proc_fs.h
-> +++ b/include/linux/proc_fs.h
-> @@ -58,8 +58,8 @@ extern int remove_proc_subtree(const char *, struct proc_dir_entry *);  struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
->  		struct proc_dir_entry *parent, const struct seq_operations *ops,
->  		unsigned int state_size, void *data);
-> -#define proc_create_net(name, mode, parent, state_size, ops) \
-> -	proc_create_net_data(name, mode, parent, state_size, ops, NULL)
-> +#define proc_create_net(name, mode, parent, ops, state_size) \
-> +	proc_create_net_data(name, mode, parent, ops, state_size, NULL)
->  struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
->  		struct proc_dir_entry *parent,
->  		int (*show)(struct seq_file *, void *), void *data);
-> --
-> 2.21.GIT
-> 
-> 
-
+Changes since v1:
+ - renumber IOMAP_HOLE to 0 and avoid the reserved 0 value
+ - fix minor typos and update comments
