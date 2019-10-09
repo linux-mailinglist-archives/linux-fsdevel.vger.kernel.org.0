@@ -2,71 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F80DD19B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 22:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE3BAD1A13
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 22:51:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731134AbfJIUlc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 16:41:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46524 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728804AbfJIUlc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 16:41:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 75C46B14E;
-        Wed,  9 Oct 2019 20:41:30 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 222231E4236; Wed,  9 Oct 2019 22:41:30 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, darrick.wong@oracle.com,
-        <linux-xfs@vger.kernel.org>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 2/2] xfs: Use iomap_dio_rw_wait()
-Date:   Wed,  9 Oct 2019 22:41:26 +0200
-Message-Id: <20191009204130.15974-2-jack@suse.cz>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191009202736.19227-1-jack@suse.cz>
-References: <20191009202736.19227-1-jack@suse.cz>
+        id S1731878AbfJIUvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 16:51:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37254 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729535AbfJIUvB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 16:51:01 -0400
+Received: from localhost (unknown [167.220.2.234])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA02C218AC;
+        Wed,  9 Oct 2019 20:51:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570654260;
+        bh=h5UFSrQbxwQ1jaUrIAHWi1a2T2kESQj+kWn/elifWyI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XQuqQ6Z1qEUd6UB14Af4XMrwnjZf7DdyoQWxIwFF92Q2siHiJodulbfuvdzL3NDSQ
+         I2hcwXyTNmAYvGuCeA7X+g5F4eJeT1igxgitz4B0HNL6pJNSYnVxut1HeDv+fSeTG1
+         +D4WRc3anrDkvyc7JJyZXfwSVzUXX8iN6Ewe/HhI=
+Date:   Wed, 9 Oct 2019 16:51:00 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 4.19 26/26] Make filldir[64]() verify the
+ directory entry filename is valid
+Message-ID: <20191009205100.GV1396@sasha-vm>
+References: <20191009170558.32517-1-sashal@kernel.org>
+ <20191009170558.32517-26-sashal@kernel.org>
+ <CAHk-=wiVe+nxotYXExXRxhvCSTCqyRuZUto6UrvR2oHfeGrJ+g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiVe+nxotYXExXRxhvCSTCqyRuZUto6UrvR2oHfeGrJ+g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use iomap_dio_rw() to wait for unaligned direct IO instead of opencoding
-the wait.
+On Wed, Oct 09, 2019 at 10:56:56AM -0700, Linus Torvalds wrote:
+>On Wed, Oct 9, 2019 at 10:24 AM Sasha Levin <sashal@kernel.org> wrote:
+>>
+>> From: Linus Torvalds <torvalds@linux-foundation.org>
+>>
+>> [ Upstream commit 8a23eb804ca4f2be909e372cf5a9e7b30ae476cd ]
+>
+>I didn't mark this for stable because I expect things to still change
+>- particularly the WARN_ON_ONCE() should be removed before final 5.4,
+>I just wanted to see if anybody could trigger it with testing etc.
+>
+>(At least syzbot did trigger it).
+>
+>If you do want to take it, take it without the WARN_ON_ONCE() calls
+>and note that in the commit message..
 
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/xfs/xfs_file.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+I'll take both when you send a patch to remove it.
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 7d0dc21c14ca..f35cea628bed 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -547,16 +547,12 @@ xfs_file_dio_aio_write(
- 	}
- 
- 	trace_xfs_file_direct_write(ip, count, iocb->ki_pos);
--	ret = iomap_dio_rw(iocb, from, &xfs_iomap_ops, &xfs_dio_write_ops,
--			   false);
--
- 	/*
--	 * If unaligned, this is the only IO in-flight. If it has not yet
--	 * completed, wait on it before we release the iolock to prevent
--	 * subsequent overlapping IO.
-+	 * If unaligned, this is the only IO in-flight. Wait on it before we
-+	 * release the iolock to prevent subsequent overlapping IO.
- 	 */
--	if (ret == -EIOCBQUEUED && unaligned_io)
--		inode_dio_wait(inode);
-+	ret = iomap_dio_rw(iocb, from, &xfs_iomap_ops, &xfs_dio_write_ops,
-+			   unaligned_io);
- out:
- 	xfs_iunlock(ip, iolock);
- 
--- 
-2.16.4
-
+--
+Thanks,
+Sasha
