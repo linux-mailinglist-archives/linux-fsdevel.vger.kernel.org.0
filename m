@@ -2,140 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8AC5D0A66
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 10:57:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0615AD0A8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 11:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbfJII5c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 04:57:32 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44566 "EHLO
+        id S1725935AbfJIJJN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 05:09:13 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38714 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfJII5b (ORCPT
+        with ESMTP id S1726211AbfJIJJN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 04:57:31 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q21so1173771pfn.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2019 01:57:31 -0700 (PDT)
+        Wed, 9 Oct 2019 05:09:13 -0400
+Received: by mail-pf1-f195.google.com with SMTP id h195so1212412pfe.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2019 02:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=9EKULkn0mMwEe4Xx6ZVvq+TugGXBB8oK4uiG0s1p/NI=;
-        b=iV/y0sojSBbChVlBZiLZch0TQLGFeLZ1nu3NDlbuIbs5aYWTMkfWFUqzBp8Tma+obr
-         Is6rLOQD3jnGUv29097G5YiGuvel4JJOR4wOcn9rDFOngO02hrwdHiJgJTVuXqt6flI6
-         Fklg3F0ZXFnukjOYuXk+m1fjLnmarbRzM5RQOChZjcRwQMBz+uccs3lFpKm5kcrOTCNe
-         jydDAWVhEyhRv52UOoBFkrlggyukF6ngDvK+HHwdLyj1WbfQAl4B2h3QpWWsDrWXB5c0
-         oMZVCwbdg2p3NPuwWNYJuk5A4EjwXDyLSFdayh52lfvZn7fNT252hsoC4wUaOBy9THMc
-         gsQg==
+        bh=/2CUrXw7XGcGK4lh6prcL9SsnSHFpgYxj56Dh9K0z+g=;
+        b=qCYCgUqetwF0SaHfnB1vasHMYkLC2n0nF+iuzl7nP6WZcd/sRP0FWYG4d3LUbuJ4Gh
+         l+Uthr0kJKlB8T7mDR3AfIqORDufvpWnOIBFbdLU3F6TlyE3YwGquBOhNXwk3Mwk31Yk
+         h17oiAr2enqom3iFXzs+pbP6ePknl391r+tPSc4XSvGsVg4hSPcDWBqdMOHYNK2QTw5I
+         0hZszJUXWGr9G5GmmLWnmSis67Pfk43SLhKT68I+cbH+LePVNgcw5GNZ8ELkksIA9ZKK
+         gprGvIFF7ybVMXVSerZzm6cqhOF0SClEvgsp/cViUATnhoROzJXzyaOnxknHyZc2HF6E
+         2vww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9EKULkn0mMwEe4Xx6ZVvq+TugGXBB8oK4uiG0s1p/NI=;
-        b=CBaFdDZAV7fw1SwU+/Y3mZ0PNGQgKc6VRnqJHvMUaI1Hm5lDKMtWNFafkRQILWm13A
-         8SG1+DyLxVArVOXbJKXGAfjRYdXt9md65B5Xuz3QPf3oFM1bRAvMuqbgGInKcHBjenqU
-         CdDn4yo9BzqUPBTn3a70abHTAwcxcedV35CuBBVxbBGeXO87c58uu1ZYPi84hBMEM/Ol
-         7utb8ck8lv/cobvjSrBNJsF1LJ1vtC8AiMDMK8+5jWOc7d8SlaBoYeR8xe3JcDgMfZ2s
-         S+x5q9thF17gFhmnIIiKuSbnJjGBArjeXL63LAheZ+goYt9HZg3ywsU1/trFCBc9jkO8
-         IN4A==
-X-Gm-Message-State: APjAAAUaYkdjIqgokziEhf1589jsFawKtvi7qiMpx8osvm+zrzur/VkN
-        wWKvArsn/USo6Ocm5MwHNsDqfAt4pJ5Q
-X-Google-Smtp-Source: APXvYqwFaNgdeN87wdDlj053TR5ornG+FmdCq+/xm2yIr3VIXxSxcR+6uMSMh5GilJECsdaaw5Ao1A==
-X-Received: by 2002:a17:90a:8002:: with SMTP id b2mr431206pjn.39.1570611450353;
-        Wed, 09 Oct 2019 01:57:30 -0700 (PDT)
+        bh=/2CUrXw7XGcGK4lh6prcL9SsnSHFpgYxj56Dh9K0z+g=;
+        b=uLQGjRaGxTZx8iemrFqFPVu1WinckRTe8bfMobLAHnQdRjuGb6Cjz/ZRqLROzkDYNb
+         uA0dQRtFuLBz5fqL1vf1LF36YZyLjeMHV72t8C57YOZveUwNjPHQuk4RMQ/VZRTBWRe1
+         RKElzdpKP+PxRmshh3XgnWH9eoYxNPL0djmFfRVvAOkb3qEYVlq4O1+Yp4LLwNOzWZIj
+         8AzB/uNVzqvOTu1n+9hh35pr+M+UECNd9NSZ7G1+S4nvkS9Le8lcYUTIulXGig5l4Cxb
+         7+FDXMrEIck39DiKIaLNeWZPIuNrbezYhS6LgIRmuHVCaaOf2uscI5Qe7KXzlqGvoQKR
+         H8Hw==
+X-Gm-Message-State: APjAAAUnZ87PMs4V/muiMn63JjSsRv09Ly5M2febIH1Xb9+6TfkUw0VH
+        RthT8CHGddPWEX6hO9mtH8vE
+X-Google-Smtp-Source: APXvYqyLxk5NmxLppMjRU0bokVzTSlBropM0ly7tfd0bvTL2+Oh1J2ffLSfZ3jt6Zsye2nNtmhyR1Q==
+X-Received: by 2002:a17:90a:b38c:: with SMTP id e12mr2855688pjr.114.1570612152588;
+        Wed, 09 Oct 2019 02:09:12 -0700 (PDT)
 Received: from poseidon.bobrowski.net ([114.78.226.167])
-        by smtp.gmail.com with ESMTPSA id g19sm1714151pgm.63.2019.10.09.01.57.26
+        by smtp.gmail.com with ESMTPSA id b14sm1792133pfi.95.2019.10.09.02.09.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 01:57:29 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 19:57:23 +1100
+        Wed, 09 Oct 2019 02:09:11 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 20:09:05 +1100
 From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, tytso@mit.edu, jack@suse.cz,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
+        darrick.wong@oracle.com
 Subject: Re: [PATCH v4 1/8] ext4: move out iomap field population into
  separate helper
-Message-ID: <20191009085721.GA1534@poseidon.bobrowski.net>
+Message-ID: <20191009090903.GA2125@poseidon.bobrowski.net>
 References: <cover.1570100361.git.mbobrowski@mbobrowski.org>
  <8b4499e47bea3841194850e1b3eeb924d87e69a5.1570100361.git.mbobrowski@mbobrowski.org>
- <20191008102709.GD5078@quack2.suse.cz>
+ <20191009060255.8055742049@d06av24.portsmouth.uk.ibm.com>
+ <20191009070745.GA32281@infradead.org>
+ <20191009075018.8BA0A4203F@d06av24.portsmouth.uk.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191008102709.GD5078@quack2.suse.cz>
+In-Reply-To: <20191009075018.8BA0A4203F@d06av24.portsmouth.uk.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 12:27:09PM +0200, Jan Kara wrote:
-> On Thu 03-10-19 21:33:09, Matthew Bobrowski wrote:
-> > +static int ext4_set_iomap(struct inode *inode, struct iomap *iomap, u16 type,
-> > +			  unsigned long first_block, struct ext4_map_blocks *map)
-> > +{
-> > +	u8 blkbits = inode->i_blkbits;
-> > +
-> > +	iomap->flags = 0;
-> > +	if (ext4_inode_datasync_dirty(inode))
-> > +		iomap->flags |= IOMAP_F_DIRTY;
-> > +	iomap->bdev = inode->i_sb->s_bdev;
-> > +	iomap->dax_dev = EXT4_SB(inode->i_sb)->s_daxdev;
-> > +	iomap->offset = (u64) first_block << blkbits;
-> > +	iomap->length = (u64) map->m_len << blkbits;
-> > +
-> > +	if (type) {
-> > +		iomap->type = type;
-> > +		iomap->addr = IOMAP_NULL_ADDR;
-> > +	} else {
-> > +		if (map->m_flags & EXT4_MAP_MAPPED) {
-> > +			iomap->type = IOMAP_MAPPED;
-> > +		} else if (map->m_flags & EXT4_MAP_UNWRITTEN) {
-> > +			iomap->type = IOMAP_UNWRITTEN;
-> > +		} else {
-> > +			WARN_ON_ONCE(1);
-> > +			return -EIO;
-> > +		}
-> > +		iomap->addr = (u64) map->m_pblk << blkbits;
-> > +	}
+On Wed, Oct 09, 2019 at 01:20:17PM +0530, Ritesh Harjani wrote:
+> On 10/9/19 12:37 PM, Christoph Hellwig wrote:
+> > On Wed, Oct 09, 2019 at 11:32:54AM +0530, Ritesh Harjani wrote:
+> > > We can also get rid of "first_block" argument here.
+> > 
+> > That would just duplicate filling it out in all callers, so why?
+> > 
 > 
-> Looking at this function now, the 'type' argument looks a bit weird. Can we
-> perhaps just remove the 'type' argument and change the above to:
+> What I meant is "first_block" is same as map->m_lblk.
+> (unless ext4_map_blocks can change map->m_lblk, which AFAICT, it should
+> not).
+> So why pass an extra argument when we are already passing 'map'
+> structure.
+> So we can fill iomap->offset using map->m_lblk in ext4_set_iomap()
+> function.
 
-We can, but refer to the point below.
- 
-> 	if (map->m_flags & (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)) {
-> 		if (map->m_flags & EXT4_MAP_MAPPED)
-> 			iomap->type = IOMAP_MAPPED;
-> 		else if (map->m_flags & EXT4_MAP_UNWRITTEN)
-> 			iomap->type = IOMAP_UNWRITTEN;
-> 		iomap->addr = (u64) map->m_pblk << blkbits;
-> 	} else {
-> 		iomap->type = IOMAP_HOLE;
-> 		iomap->addr = IOMAP_NULL_ADDR;
-> 	}
-> 
-> And then in ext4_iomap_begin() we overwrite the type to:
-> 
-> 	if (delalloc && iomap->type == IOMAP_HOLE)
-> 		iomap->type = IOMAP_DELALLOC;
-> 
-> That would IMO make ext4_set_iomap() arguments harder to get wrong.
-
-I was thinking about this while doing a bunch of other things at work
-today. I'm kind of aligned with what Christoph mentioned around
-possibly duplicating some of the post 'iomap->type' setting from both
-current and any future ext4_set_iomap() callers. In addition to this,
-my thought was that if we're populating the iomap structure with
-values respectively, then it would make most sense to encapsulate
-those routines, if possible, within the ext4_set_iomap() as that's the
-sole purpose of the function.
-
-However, no real strong objections for dropping 'type', but I just
-wanted to share my thoughts.
-
-Also, yes, we probably can drop 'first_block' from the list of
-arguments here as we can derive that from 'map' and set 'iomap->type'
-accordingly...
+What you're saying makes sense Ritesh and I will update it as such. I
+believe what Christoph was actually referring to was what I explained
+to Jan to the email that I just sent out. This was around the possible
+code duplication and having some iomap value setting related logic
+outside ext4_set_iomap(), when in fact there's no real reason why it
+can't be inside.
 
 --<M>--
-
 
