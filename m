@@ -2,72 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A98AD105C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 15:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C505AD1064
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 15:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731339AbfJINkQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 09:40:16 -0400
-Received: from mout02.posteo.de ([185.67.36.66]:53005 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731259AbfJINkO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 09:40:14 -0400
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id CB6E12400FF
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2019 15:32:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1570627927; bh=qi8nNlBgU2FQhwXxuF04700QnQlYmpHyq5Gu24vhgcE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qPNPV9WOJZcKbIeZwjcrEHyDl5hiHaEPK7LmelSLdFAUa13lBwB1ioyl5tlbA1JOd
-         rdGODtzDRnnyDDVX3dt491MSWopYKs5DUmCVHMoW4Rf5Cg+B4r7eqWpTy5lLRilkW+
-         caiTmPF3WuW6Jfj6r02TCg/w7Y+ZNpZfVH7ZSJxnc6qVB2lNCja89f8BpLYOjw3jKh
-         ZxX3JRwbgmYKi5jJlbi/t8RZ8TfjEAnIPCdkIp9Kn4ajBezuiQc61b4AsojgF+w62w
-         Bvj6KkahxMdfohCMONCmt1/Nxe0tCnue5p1AchMI8QXu4+DBmUZ5tkjmyhqVzlY5At
-         yAPJGvXi6zR1Q==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 46pFWC3vj7z9rxM;
-        Wed,  9 Oct 2019 15:32:07 +0200 (CEST)
-From:   philipp.ammann@posteo.de
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Andreas Schneider <asn@cryptomilk.org>
-Subject: [PATCH 6/6] Add device ejected to mount options
-Date:   Wed,  9 Oct 2019 15:31:57 +0200
-Message-Id: <20191009133157.14028-7-philipp.ammann@posteo.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191009133157.14028-1-philipp.ammann@posteo.de>
-References: <20191009133157.14028-1-philipp.ammann@posteo.de>
+        id S1731405AbfJINl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 09:41:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58886 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731243AbfJINl0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 09:41:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 15A07B186;
+        Wed,  9 Oct 2019 13:41:24 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 727191E4851; Wed,  9 Oct 2019 15:41:23 +0200 (CEST)
+Date:   Wed, 9 Oct 2019 15:41:23 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
+        darrick.wong@oracle.com
+Subject: Re: [PATCH v4 8/8] ext4: introduce direct I/O write path using iomap
+ infrastructure
+Message-ID: <20191009134123.GE5050@quack2.suse.cz>
+References: <cover.1570100361.git.mbobrowski@mbobrowski.org>
+ <9ef408b4079d438c0e6071b862c56fc8b65c3451.1570100361.git.mbobrowski@mbobrowski.org>
+ <20191008151238.GK5078@quack2.suse.cz>
+ <20191009071145.GB32281@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009071145.GB32281@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Andreas Schneider <asn@cryptomilk.org>
+On Wed 09-10-19 00:11:45, Christoph Hellwig wrote:
+> On Tue, Oct 08, 2019 at 05:12:38PM +0200, Jan Kara wrote:
+> > Seeing how difficult it is when a filesystem wants to complete the iocb
+> > synchronously (regardless whether it is async or sync) and have all the
+> > information in one place for further processing, I think it would be the
+> > easiest to provide iomap_dio_rw_wait() that forces waiting for the iocb to
+> > complete *and* returns the appropriate return value instead of pretty
+> > useless EIOCBQUEUED. It is actually pretty trivial (patch attached). With
+> > this we can then just call iomap_dio_rw_sync() for the inode extension case
+> > with ->end_io doing just the unwritten extent processing and then call
+> > ext4_handle_inode_extension() from ext4_direct_write_iter() where we would
+> > have all the information we need.
+> > 
+> > Christoph, Darrick, what do you think about extending iomap like in the
+> > attached patch (plus sample use in XFS)?
+> 
+> I vaguely remember suggesting something like this but Brian or Dave
+> convinced me it wasn't a good idea.  This will require a trip to the
+> xfs or fsdevel archives from when the inode_dio_wait was added in XFS.
 
-Signed-off-by: Andreas Schneider <asn@cryptomilk.org>
+I think you refer to this [1] message from Brian:
+
+It's not quite that simple..
+
+FWIW, the discussion (between Dave and I) for how best to solve this
+started offline prior to sending the patch and pretty much started with
+the idea of changing the async I/O to sync as you suggest here. I backed
+off from that because it's too subtle given the semantics between the
+higher level aio code and lower level dio code for async I/O. By that I
+mean either can be responsible for calling the ->ki_complete() callback
+in the iocb on I/O completion.
+
+IOW, if we receive an async direct I/O, clear ->ki_complete() as you
+describe above and submit it, the dio code will wait on I/O and return
+the size of the I/O on successful completion. It will not have called
+->ki_complete(), however. Rather, the >0 return value indicates that
+aio_rw_done() must call ->ki_complete() after xfs_file_write_iter()
+returns, but we would have already cleared the function pointer.
+
+I think it is technically possible to use this technique by clearing and
+restoring ->ki_complete(), but in general we've visited this "change the
+I/O type" approach twice now and we've (collectively) got it wrong both
+times (the first error in thinking was that XFS would need to call
+->ki_complete()). IMO, this demonstrates that it's not worth the
+complexity to insert ourselves into this dependency chain when we can
+accomplish the same thing with a simple dio wait call.
+
 ---
- drivers/staging/exfat/exfat_super.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index e8e481a5ddc9..d97616351159 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -3541,6 +3541,7 @@ static int exfat_show_options(struct seq_file *m, struct dentry *root)
- {
- 	struct exfat_sb_info *sbi = EXFAT_SB(root->d_sb);
- 	struct exfat_mount_options *opts = &sbi->options;
-+	FS_INFO_T *p_fs = &(sbi->fs_info);
- 
- 	if (__kuid_val(opts->fs_uid))
- 		seq_printf(m, ",uid=%u", __kuid_val(opts->fs_uid));
-@@ -3565,6 +3566,8 @@ static int exfat_show_options(struct seq_file *m, struct dentry *root)
- 	if (opts->discard)
- 		seq_puts(m, ",discard");
- #endif
-+	if (p_fs->dev_ejected)
-+		seq_puts(m, ",ejected");
- 	return 0;
- }
- 
+Which is fair enough. I've been looking at the same and arrived at similar
+conclusion ;) (BTW, funnily enough ocfs2 seems to do this dance with
+clearing and restoring ki_complete). But what I propose is something
+different - just wait for IO in iomap_dio_rw() which avoids the need to
+clear & restore ->ki_complete() while at the same time while providing
+fully-sync IO experience to the caller. So Brians objection doesn't apply
+here.
+
+> But if we decide it actully works this time around please don't add the
+> __ variant but just add the parameter to iomap_dio_rw directly.
+
+Yeah, I was undecided on this one as well. Will change this and post the
+patches to fsdevel & xfs lists.
+
+								Honza
+
+[1] https://lore.kernel.org/linux-xfs/20190325135124.GD52167@bfoster/
 -- 
-2.21.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
