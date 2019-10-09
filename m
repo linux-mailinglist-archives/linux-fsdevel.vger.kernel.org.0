@@ -2,74 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4052CD1027
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 15:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCCE9D105A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 15:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731229AbfJIN3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 09:29:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48596 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731083AbfJIN3y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 09:29:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5A22DAC6E;
-        Wed,  9 Oct 2019 13:29:52 +0000 (UTC)
-Date:   Wed, 9 Oct 2019 15:29:50 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Qian Cai <cai@lca.pw>, Alexey Dobriyan <adobriyan@gmail.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1] mm: Fix access of uninitialized memmaps in
- fs/proc/page.c
-Message-ID: <20191009132950.GB6681@dhcp22.suse.cz>
-References: <20191009091205.11753-1-david@redhat.com>
- <20191009093756.GV6681@dhcp22.suse.cz>
- <67aeaacc-d850-5c81-bd17-e95c7f7f75df@redhat.com>
- <20191009112424.GY6681@dhcp22.suse.cz>
- <a9659e39-3516-13c8-b9ab-d42bdaf4a488@redhat.com>
- <20191009132256.GZ6681@dhcp22.suse.cz>
- <8f0542f4-92c6-d450-7343-62bf9f08d5ed@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f0542f4-92c6-d450-7343-62bf9f08d5ed@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731330AbfJINkO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 09:40:14 -0400
+Received: from mout02.posteo.de ([185.67.36.66]:40583 "EHLO mout02.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731240AbfJINkN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 09:40:13 -0400
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id E55C12400FB
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2019 15:32:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1570627926; bh=s4wxqYVwGcjKOcKs6F737yArXcYvbBoMUYysMg1+JXc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=n9ia5HKZGXePVzlEZ4nHJfyqGHsouSryzGgLc6EkQ0XAyeySI5KYYOYDV4+Ucthi5
+         1QH7XXPNztMkV90J6FV2P25/3TSpTkI50M1h9EdsgfNWOS9ijGps1ToqVeqPO2oWfO
+         9IcBSUqfu7URUXxphhUbQZJPLHlOFpSJEdfNFBBFnlTyY26xHyjAVS5lRGMATAy9xZ
+         oSN7P62Rk89TStsBLM7Da/xkWwaRHby53aQzwL/dV+RO0BA5UjJO4V3SDc/PFaVaWG
+         9dY0xarrMnjcLq/V3IIBupUHqhoPUkgYtq6BSvAApVUGBelFUqdvkBSX6nsV9bjZtp
+         9YSbf3sEikjPA==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 46pFW95DkDz9rxN;
+        Wed,  9 Oct 2019 15:32:05 +0200 (CEST)
+From:   philipp.ammann@posteo.de
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Philipp Ammann <philipp.ammann@posteo.de>
+Subject: [PATCH 0/6] Various exfat fixes
+Date:   Wed,  9 Oct 2019 15:31:51 +0200
+Message-Id: <20191009133157.14028-1-philipp.ammann@posteo.de>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 09-10-19 15:24:05, David Hildenbrand wrote:
-> On 09.10.19 15:22, Michal Hocko wrote:
-> > On Wed 09-10-19 14:58:24, David Hildenbrand wrote:
-> > [...]
-> >> I would be fine with this, but it means that - for now - the three
-> >> /proc/ files won't be able to deal with ZONE_DEVICE memory.
-> > 
-> > Thanks for the clarification. Is this an actual problem though? Do we
-> > have any consumers of the functionality?
-> > 
-> 
-> I don't know, that's why I was being careful in not changing its behavior.
+From: Philipp Ammann <philipp.ammann@posteo.de>
 
-Can we simply go with pfn_to_online_page. I would be quite surprised if
-anybody was really examining zone device memory ranges as they are
-static IIUC. If there is some usecase I am pretty sure we will learn
-that and can address it accordingly.
+These patches are not mine; they are pulled from Github:
+
+  https://github.com/dorimanx/exfat-nofuse/pull/124
+
+Supposedly they're from Samsung.
+
+I've been running them on 4.19 for about over a year without issues.
+
+I know the commit messages are not exactly stellar. Please excuse my
+not improving them, but I'm no filesystem guy.
+
+Cheers
+  Philipp
+
+Andreas Schneider (6):
+  Return a valid count in count_used_clusters()
+  Add missing fs_error() in sector functions
+  Check that the new path while moving a file is not too long
+  Add the exfat version to the module info
+  Sync blocks on remount
+  Add device ejected to mount options
+
+ drivers/staging/exfat/exfat_core.c  | 19 +++++++++++++++----
+ drivers/staging/exfat/exfat_super.c |  9 +++++++++
+ 2 files changed, 24 insertions(+), 4 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.21.0
+
