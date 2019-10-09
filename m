@@ -2,66 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03288D1B88
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2019 00:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA9DED1C5A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2019 01:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731150AbfJIWSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 18:18:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730675AbfJIWSb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 18:18:31 -0400
-Received: from washi1.fujisawa.hgst.com (unknown [199.255.47.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9EAB206BB;
-        Wed,  9 Oct 2019 22:18:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570659511;
-        bh=Z8opOSsiiw6yi2V6o/VkdYx7/ZpiJj4Zuueg28GFZeg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YRNllptcmVIvwmzccQrTA6O74wQUuBcbg5Ai42vUf1gYunJt7APnYaj2z/LEx+S/Y
-         rGmYKw1yv0uzptGkgxQnFk44EfFaOX3ILHTY/TOiz0UZmeTifFAgptYzGRLKwRgQgJ
-         ZwtMmo9coQUWEz5OsQ51E85otiNnf1pQJUOXt9oY=
-Date:   Thu, 10 Oct 2019 07:18:27 +0900
-From:   Keith Busch <kbusch@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>
-Subject: Re: [PATCH v9 04/12] nvmet: make nvmet_copy_ns_identifier()
- non-static
-Message-ID: <20191009221827.GE3009@washi1.fujisawa.hgst.com>
-References: <20191009192530.13079-1-logang@deltatee.com>
- <20191009192530.13079-5-logang@deltatee.com>
+        id S1732088AbfJIXCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 19:02:32 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:32940 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730815AbfJIXCc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 19:02:32 -0400
+Received: from dread.disaster.area (pa49-195-199-207.pa.nsw.optusnet.com.au [49.195.199.207])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id AF593363877;
+        Thu, 10 Oct 2019 10:02:29 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iIKyR-0006cx-LW; Thu, 10 Oct 2019 10:02:27 +1100
+Date:   Thu, 10 Oct 2019 10:02:27 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Subject: Re: [PATCH 0/2] iomap: Waiting for IO in iomap_dio_rw()
+Message-ID: <20191009230227.GH16973@dread.disaster.area>
+References: <20191009202736.19227-1-jack@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191009192530.13079-5-logang@deltatee.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191009202736.19227-1-jack@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=U3CgBz6+VuTzJ8lMfNbwVQ==:117 a=U3CgBz6+VuTzJ8lMfNbwVQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=7-415B0cAAAA:8 a=Nb0Mfos4mOhxgEr3ClsA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 01:25:21PM -0600, Logan Gunthorpe wrote:
-> This function will be needed by the upcoming passthru code.
+On Wed, Oct 09, 2019 at 10:41:24PM +0200, Jan Kara wrote:
+> Hello,
 > 
-> Passthru will need an emulated version of identify_desclist which
-> copies the eui64, uuid and nguid from the passed-thru controller into
-> the request SGL.
+> when doing the ext4 conversion of direct IO code to iomap, we found it very
+> difficult to handle inode extension with what iomap code currently provides.
+> Ext4 wants to do inode extension as sync IO (so that the whole duration of
+> IO is protected by inode->i_rwsem), also we need to truncate blocks beyond
+> end of file in case of error or short write. Now in ->end_io handler we don't
+> have the information how long originally the write was (to judge whether we
+> may have allocated more blocks than we actually used) and in ->write_iter
+> we don't know whether / how much of the IO actually succeeded in case of AIO.
 > 
-> [chaitanya.kulkarni@wdc.com: this was factored out of a patch
->  originally authored by Chaitanya]
-> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-> ---
+> Thinking about it for some time I think iomap code makes it unnecessarily
+> complex for the filesystem in case it decides it doesn't want to perform AIO
+> and wants to fall back to good old synchronous IO. In such case it is much
+> easier for the filesystem if it just gets normal error return from
+> iomap_dio_rw() and not just -EIOCBQUEUED.
 
-Looks fine
+Yeah, that'd be nice. :)
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+> The first patch in the series adds argument to iomap_dio_rw() to wait for IO
+> completion (internally iomap_dio_rw() already supports this!) and the second
+> patch converts XFS waiting for unaligned DIO write to this new API.
+> 
+> What do people think?
+
+I've just caught up on the ext4 iomap dio thread where this came up,
+so I have some idea of what is going on now :)
+
+My main issue is that I don't like the idea of a "force_wait"
+parameter to iomap_dio_rw() that overrides what the kiocb says to
+do inside iomap_dio_rw(). It just seems ... clunky.
+
+I'd much prefer that the entire sync/async IO decision is done in
+one spot, and the result of that is passed into iomap_dio_rw(). i.e.
+the caller always determines the behaviour.
+
+That would mean the callers need to do something like this by
+default:
+
+	ret = iomap_dio_rw(iocb, iter, ops, dops, is_sync_kiocb(iocb));
+
+And filesystems like XFS will need to do:
+
+	ret = iomap_dio_rw(iocb, iter, ops, dops,
+			is_sync_kiocb(iocb) || unaligned);
+
+and ext4 will calculate the parameter in whatever way it needs to.
+
+In fact, it may be that a wrapper function is better for existing
+callers:
+
+static inline ssize_t iomap_dio_rw()
+{
+	return iomap_dio_rw_wait(iocb, iter, ops, dops, is_sync_kiocb(iocb));
+}
+
+And XFS/ext4 writes call iomap_dio_rw_wait() directly. That way we
+don't need to change the read code at all...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
