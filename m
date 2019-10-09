@@ -2,273 +2,301 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67174D06D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 07:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24C23D06FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 08:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730653AbfJIFTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 01:19:17 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:63654 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730649AbfJIFTR (ORCPT
+        id S1727572AbfJIGAd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 02:00:33 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2790 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727363AbfJIGAd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 01:19:17 -0400
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x995FcfO008160;
-        Tue, 8 Oct 2019 22:19:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=Qvk7/kiHugxaXCF3moYlR7jWpV4dBIDbl/FaH5cs6wU=;
- b=mASdQYvDpsBJJWYG7A86d64S0ORtGz80aO+R5ZukFaHF6KDVh66GHbzI25J08bZ7b7Ny
- j9rkrmJVHBj2Rs+eJQLZz7LcOHCtROylZ6b8dQtTwuQpnrhSeidmVvX7Ro4e8N8V8cYI
- ybIxBI+TbM9jtpXFPWkADm02N+AK3r6GePc= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2vh1ukt006-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 08 Oct 2019 22:19:09 -0700
-Received: from ash-exhub202.TheFacebook.com (2620:10d:c0a8:83::6) by
- ash-exhub104.TheFacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 8 Oct 2019 22:19:08 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.36.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Tue, 8 Oct 2019 22:19:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aRvzgZfvgz0BB2p7Ab+8sJzr4+9vINaRqiLtpCnDbKr6jigBnAGcHM/nJ7d8K6byj4KsY7609Zb7uRDKvzWuauZ1hiaNJnLmBtm9b7KfPYykcJpNlNRdh+v37/4jGrbv0TvmLNJdwWOLUYibp/Qyy6PhQ5EBYs6zAW1jH3/sgwANatvCSDT/XS2DtmCrrQQF0sgkyBboxwzKUzNU9ocjUDZmO09BzX/SsBk/zVG5/zzNp5PEootXiGzcLqRnPTSk3G5BL0WzvPKImqMWSS6i9kG6CWodz+swieG+1AHS1VE/X0zxDcskhjew/grHkIhUSRFg6LXHbh0ez4KcvSw67A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qvk7/kiHugxaXCF3moYlR7jWpV4dBIDbl/FaH5cs6wU=;
- b=EuuhGZF++7WLmn7QmmXjKS1JkORTKGZjlBXfol8fMW//AKT0o0qXmSewJssRz4j3EzC+6YP995mfxzLCV3gvmLFb9cYtTxk3TJkGh1y1kuKGQg7tWl1QjnM1gVUeOUmIt0+wgOh3KSX+iiOt0dTQm0jC4i1VViDhyvYMbAXUfI7Hr2IDHJEJhx4Qc1Hn8MPPIvIbFaG1GUajKKVloq8tc1jNIbqjSw1ChLYIA9DEn8XbqezugzKxgUshuD8W1niwd9/RnJxiF/uSbOPaweaU38LMRhzF76MdTAZgvBmAHTMQl+xQ2shs5uOzPwSSYSS9fwskVk/1CNRDC+62ZPPV+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qvk7/kiHugxaXCF3moYlR7jWpV4dBIDbl/FaH5cs6wU=;
- b=AVMloKaTQ0F4M08h6cgUF+KdF1KsqjSAJXtDI9hBpHUO2HDSAFLHyVARAqtWAVY7iPdU+MjbthUky+N8KNqRIXCXcLh3VU2UOp8UoW4s51gSYgmMX/v4CyzXJgtd++5nEGuPIfED1opvSSZuA/CmkQky9M70PzuOQ5lEQ2FGL74=
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com (20.179.137.220) by
- BN8PR15MB2657.namprd15.prod.outlook.com (20.179.138.84) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.24; Wed, 9 Oct 2019 05:19:07 +0000
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::dde5:821f:4571:dea4]) by BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::dde5:821f:4571:dea4%5]) with mapi id 15.20.2327.026; Wed, 9 Oct 2019
- 05:19:07 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Jan Kara <jack@suse.cz>
-CC:     Dave Chinner <david@fromorbit.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "tj@kernel.org" <tj@kernel.org>
-Subject: Re: [PATCH] cgroup, blkcg: prevent dirty inodes to pin dying memory
- cgroups
-Thread-Topic: [PATCH] cgroup, blkcg: prevent dirty inodes to pin dying memory
- cgroups
-Thread-Index: AQHVewChQOAw+GKbfEyRn45Yoe7HH6dQJYaAgAAZ0ACAAC0xgIABX5cA
-Date:   Wed, 9 Oct 2019 05:19:06 +0000
-Message-ID: <20191009051902.GA17538@castle.dhcp.thefacebook.com>
-References: <20191004221104.646711-1-guro@fb.com>
- <20191008040630.GA15134@dread.disaster.area>
- <20191008053854.GA14951@castle.dhcp.thefacebook.com>
- <20191008082039.GA5078@quack2.suse.cz>
-In-Reply-To: <20191008082039.GA5078@quack2.suse.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR08CA0050.namprd08.prod.outlook.com
- (2603:10b6:a03:117::27) To BN8PR15MB2626.namprd15.prod.outlook.com
- (2603:10b6:408:c7::28)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::65f4]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8b810993-6044-42f7-432d-08d74c783525
-x-ms-traffictypediagnostic: BN8PR15MB2657:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN8PR15MB2657CA14A80395FAE2052459BE950@BN8PR15MB2657.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 018577E36E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(39860400002)(376002)(366004)(396003)(54094003)(189003)(199004)(46003)(6916009)(11346002)(446003)(486006)(86362001)(476003)(256004)(305945005)(478600001)(1076003)(5024004)(7736002)(14444005)(33656002)(186003)(25786009)(5660300002)(8936002)(66446008)(64756008)(229853002)(52116002)(2906002)(66556008)(71200400001)(71190400001)(81166006)(81156014)(8676002)(76176011)(6246003)(4326008)(6116002)(66476007)(6436002)(6486002)(102836004)(9686003)(6512007)(99286004)(66946007)(316002)(54906003)(14454004)(6506007)(386003)(14143004);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR15MB2657;H:BN8PR15MB2626.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: JMZRQNHQMI6IeaOY2V8+YYiH8v8CcjD+YW+GgrizyvAoM+qwti2c1lgZ7tV0lNu6l2affaepnSQeaLrL/08o8AcbqzmoAgQYtNjHYkLWyea8ttG6CtxvtIOCb12vmwvtDGfS8pXiAkp6svv3y03Z+dbL0ZnQfSUtoYtLCYUKUIFfBUxWP/OSiq1VkLIB4dUFSpqSaUc3cDUnF+JanAYMg6SgOwpxwPiTCfQ9jrCUHAE2YLiX1YZwKeM5AUs66gTdvn4LZI7z/O9h+Uc0O4QprGhUrz4MJkYSnIKg+MTO9HhURuzUtHGR4umbPk1K52ZBlhNhh/IS4kafPK9BtCQIS8f5NgOV80ksL6PjsmQG2pArF0LfWEJ1Z5sKHpjv0Rtn26ocbsoxFNjNMRxcq2nrKXlVG4Ichec4FN/RRUsbzxc=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <85D99F0BD27E2F44B467D32596D4AE96@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 9 Oct 2019 02:00:33 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x995vXNQ140235
+        for <linux-fsdevel@vger.kernel.org>; Wed, 9 Oct 2019 02:00:32 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vh7t0ukm0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2019 02:00:31 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Wed, 9 Oct 2019 07:00:29 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Oct 2019 07:00:26 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9960P1B54919206
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 9 Oct 2019 06:00:25 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7662A42054;
+        Wed,  9 Oct 2019 06:00:25 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4878542049;
+        Wed,  9 Oct 2019 06:00:22 +0000 (GMT)
+Received: from [9.199.159.72] (unknown [9.199.159.72])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Oct 2019 06:00:22 +0000 (GMT)
+Subject: Re: [PATCH v4 3/8] ext4: introduce new callback for IOMAP_REPORT
+ operations
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>, tytso@mit.edu,
+        jack@suse.cz, adilger.kernel@dilger.ca
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com,
+        riteshh@linux.ibm.com
+References: <cover.1570100361.git.mbobrowski@mbobrowski.org>
+ <cb2dcb6970da1b53bdf85583f13ba2aaf1684e96.1570100361.git.mbobrowski@mbobrowski.org>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Wed, 9 Oct 2019 11:30:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b810993-6044-42f7-432d-08d74c783525
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2019 05:19:07.0393
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 99vXsraEXtZY3CvBrcWbqKU+ZjqNGuNPk3f7sC55vUlGCf1ONMFusVuo0tcng/7y
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR15MB2657
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-09_02:2019-10-08,2019-10-09 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 phishscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0
- bulkscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910090047
-X-FB-Internal: deliver
+In-Reply-To: <cb2dcb6970da1b53bdf85583f13ba2aaf1684e96.1570100361.git.mbobrowski@mbobrowski.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19100906-0028-0000-0000-000003A8555B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19100906-0029-0000-0000-0000246A585A
+Message-Id: <20191009060022.4878542049@d06av24.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-09_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910090055
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 10:20:39AM +0200, Jan Kara wrote:
-> On Tue 08-10-19 05:38:59, Roman Gushchin wrote:
-> > On Tue, Oct 08, 2019 at 03:06:31PM +1100, Dave Chinner wrote:
-> > > On Fri, Oct 04, 2019 at 03:11:04PM -0700, Roman Gushchin wrote:
-> > > > This is a RFC patch, which is not intended to be merged as is,
-> > > > but hopefully will start a discussion which can result in a good
-> > > > solution for the described problem.
-> > > >=20
-> > > > --
-> > > >=20
-> > > > We've noticed that the number of dying cgroups on our production ho=
-sts
-> > > > tends to grow with the uptime. This time it's caused by the writeba=
-ck
-> > > > code.
-> > > >=20
-> > > > An inode which is getting dirty for the first time is associated
-> > > > with the wb structure (look at __inode_attach_wb()). It can later
-> > > > be switched to another wb under some conditions (e.g. some other
-> > > > cgroup is writing a lot of data to the same inode), but generally
-> > > > stays associated up to the end of life of the inode structure.
-> > > >=20
-> > > > The problem is that the wb structure holds a reference to the origi=
-nal
-> > > > memory cgroup. So if the inode was dirty once, it has a good chance
-> > > > to pin down the original memory cgroup.
-> > > >=20
-> > > > An example from the real life: some service runs periodically and
-> > > > updates rpm packages. Each time in a new memory cgroup. Installed
-> > > > .so files are heavily used by other cgroups, so corresponding inode=
-s
-> > > > tend to stay alive for a long. So do pinned memory cgroups.
-> > > > In production I've seen many hosts with 1-2 thousands of dying
-> > > > cgroups.
-> > > >=20
-> > > > This is not the first problem with the dying memory cgroups. As
-> > > > always, the problem is with their relative size: memory cgroups
-> > > > are large objects, easily 100x-1000x larger that inodes. So keeping
-> > > > a couple of thousands of dying cgroups in memory without a good rea=
-son
-> > > > (what we easily do with inodes) is quite costly (and is measured
-> > > > in tens and hundreds of Mb).
-> > > >=20
-> > > > One possible approach to this problem is to switch inodes associate=
-d
-> > > > with dying wbs to the root wb. Switching is a best effort operation
-> > > > which can fail silently, so unfortunately we can't run once over a
-> > > > list of associated inodes (even if we'd have such a list). So we
-> > > > really have to scan all inodes.
-> > > >=20
-> > > > In the proposed patch I schedule a work on each memory cgroup
-> > > > deletion, which is probably too often. Alternatively, we can do it
-> > > > periodically under some conditions (e.g. the number of dying memory
-> > > > cgroups is larger than X). So it's basically a gc run.
-> > > >=20
-> > > > I wonder if there are any better ideas?
-> > > >=20
-> > > > Signed-off-by: Roman Gushchin <guro@fb.com>
-> > > > ---
-> > > >  fs/fs-writeback.c | 29 +++++++++++++++++++++++++++++
-> > > >  mm/memcontrol.c   |  5 +++++
-> > > >  2 files changed, 34 insertions(+)
-> > > >=20
-> > > > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > > > index 542b02d170f8..4bbc9a200b2c 100644
-> > > > --- a/fs/fs-writeback.c
-> > > > +++ b/fs/fs-writeback.c
-> > > > @@ -545,6 +545,35 @@ static void inode_switch_wbs(struct inode *ino=
-de, int new_wb_id)
-> > > >  	up_read(&bdi->wb_switch_rwsem);
-> > > >  }
-> > > > =20
-> > > > +static void reparent_dirty_inodes_one_sb(struct super_block *sb, v=
-oid *arg)
-> > > > +{
-> > > > +	struct inode *inode, *next;
-> > > > +
-> > > > +	spin_lock(&sb->s_inode_list_lock);
-> > > > +	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
-> > > > +		spin_lock(&inode->i_lock);
-> > > > +		if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
-> > > > +			spin_unlock(&inode->i_lock);
-> > > > +			continue;
-> > > > +		}
-> > > > +
-> > > > +		if (inode->i_wb && wb_dying(inode->i_wb)) {
-> > > > +			spin_unlock(&inode->i_lock);
-> > > > +			inode_switch_wbs(inode, root_mem_cgroup->css.id);
-> > > > +			continue;
-> > > > +		}
-> > > > +
-> > > > +		spin_unlock(&inode->i_lock);
-> > > > +	}
-> > > > +	spin_unlock(&sb->s_inode_list_lock);
-> > >=20
-> > > No idea what the best solution is, but I think this is fundamentally
-> > > unworkable. It's not uncommon to have a hundred million cached
-> > > inodes these days, often on a single filesystem. Anything that
-> > > requires a brute-force system wide inode scan, especially without
-> > > conditional reschedule points, is largely a non-starter.
-> > >=20
-> > > Also, inode_switch_wbs() is not guaranteed to move the inode to the
-> > > destination wb.  There can only be WB_FRN_MAX_IN_FLIGHT (1024)
-> > > switches in flight at once and switches are run via RCU callbacks,
-> > > so I suspect that using inode_switch_wbs() for bulk re-assignment is
-> > > going to be a lot more complex than just finding inodes to call
-> > > inode_switch_wbs() on....
-> >=20
-> > We can schedule it only if the number of dying cgroups exceeds a certai=
-n
-> > number (like 100), which will make it relatively rare event. Maybe we c=
-an
-> > add some other conditions, e.g. count the number of inodes associated w=
-ith
-> > a wb and skip scanning if it's zero.
-> >=20
-> > Alternatively the wb structure can keep the list of associated inodes,
-> > and scan only them, but then it's not trivial to implement without
-> > additional complication of already quite complex locking scheme.
-> > And because inode_switch_wbs() can fail, we can't guarantee that a sing=
-le
-> > pass over such a list will be enough. That means the we need to schedul=
-e
-> > scans periodically until all inodes will be switched.
-> >=20
-> > So I really don't know which option is better, but at the same time
-> > doing nothing isn't the option too. Somehow the problem should be solve=
-d.
->=20
-> I agree with Dave that scanning all inodes in the system can get really
-> expensive quickly. So what I rather think we could do is create another '=
-IO
-> list' (linked by inode->i_io_list) where we would put inodes that referen=
-ce
-> the wb but are not in any other IO list of the wb. And then we would
-> switch inodes on this list when the wb is dying... One would have to be
-> somewhat careful with properly draining this list since new inodes can be
-> added to it while we work on it but otherwise I don't see any complicatio=
-n
-> with this.
 
-Good idea!
 
-I've mastered something like this, will test it for a day or two and post h=
-ere.
+On 10/3/19 5:03 PM, Matthew Bobrowski wrote:
+> As part of ext4_iomap_begin() cleanups and port across direct I/O path
+> to make use of iomap infrastructure, we split IOMAP_REPORT operations
+> into a separate ->iomap_begin() handler.
+> 
+> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> ---
+>   fs/ext4/ext4.h  |   1 +
+>   fs/ext4/file.c  |   6 ++-
+>   fs/ext4/inode.c | 129 ++++++++++++++++++++++++++++--------------------
+>   3 files changed, 80 insertions(+), 56 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 03db3e71676c..d0d88f411a44 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3379,6 +3379,7 @@ static inline void ext4_clear_io_unwritten_flag(ext4_io_end_t *io_end)
+>   }
+> 
+>   extern const struct iomap_ops ext4_iomap_ops;
+> +extern const struct iomap_ops ext4_iomap_report_ops;
+> 
+>   static inline int ext4_buffer_uptodate(struct buffer_head *bh)
+>   {
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 8d2bbcc2d813..ab75aee3e687 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -494,12 +494,14 @@ loff_t ext4_llseek(struct file *file, loff_t offset, int whence)
+>   						maxbytes, i_size_read(inode));
+>   	case SEEK_HOLE:
+>   		inode_lock_shared(inode);
+> -		offset = iomap_seek_hole(inode, offset, &ext4_iomap_ops);
+> +		offset = iomap_seek_hole(inode, offset,
+> +					 &ext4_iomap_report_ops);
+>   		inode_unlock_shared(inode);
+>   		break;
+>   	case SEEK_DATA:
+>   		inode_lock_shared(inode);
+> -		offset = iomap_seek_data(inode, offset, &ext4_iomap_ops);
+> +		offset = iomap_seek_data(inode, offset,
+> +					 &ext4_iomap_report_ops);
+>   		inode_unlock_shared(inode);
+>   		break;
+>   	}
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index caeb3dec0dec..1dace576b8bd 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3439,6 +3439,72 @@ static int ext4_set_iomap(struct inode *inode, struct iomap *iomap, u16 type,
+>   	return 0;
+>   }
+> 
+> +static u16 ext4_iomap_check_delalloc(struct inode *inode,
+> +				     struct ext4_map_blocks *map)
+> +{
+> +	struct extent_status es;
+> +	ext4_lblk_t end = map->m_lblk + map->m_len - 1;
+> +
+> +	ext4_es_find_extent_range(inode, &ext4_es_is_delayed, map->m_lblk,
+> +				  end, &es);
+> +
+> +	/* Entire range is a hole */
+> +	if (!es.es_len || es.es_lblk > end)
+> +		return IOMAP_HOLE;
+> +	if (es.es_lblk <= map->m_lblk) {
+> +		ext4_lblk_t offset = 0;
+> +
+> +		if (es.es_lblk < map->m_lblk)
+> +			offset = map->m_lblk - es.es_lblk;
+> +		map->m_lblk = es.es_lblk + offset;
+This looks redundant no? map->m_lblk never changes actually.
+So this is not needed here.
 
-Thank you!
+
+> +		map->m_len = es.es_len - offset;
+> +		return IOMAP_DELALLOC;
+> +	}
+> +
+> +	/* Range starts with a hole */
+> +	map->m_len = es.es_lblk - map->m_lblk;
+> +	return IOMAP_HOLE;
+> +}
+> +
+> +static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
+> +				   loff_t length, unsigned flags,
+> +				   struct iomap *iomap)
+> +{
+> +	int ret;
+> +	u16 type = 0;
+> +	struct ext4_map_blocks map;
+> +	u8 blkbits = inode->i_blkbits;
+> +	unsigned long first_block, last_block;
+> +
+> +	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
+> +		return -EINVAL;
+> +	first_block = offset >> blkbits;
+> +	last_block = min_t(loff_t, (offset + length - 1) >> blkbits,
+> +			   EXT4_MAX_LOGICAL_BLOCK);
+> +
+> +	if (ext4_has_inline_data(inode)) {
+> +		ret = ext4_inline_data_iomap(inode, iomap);
+> +		if (ret != -EAGAIN) {
+> +			if (ret == 0 && offset >= iomap->length)
+> +				ret = -ENOENT;
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	map.m_lblk = first_block;
+> +	map.m_len = last_block = first_block + 1;
+> +	ret = ext4_map_blocks(NULL, inode, &map, 0);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (ret == 0)
+> +		type = ext4_iomap_check_delalloc(inode, &map);
+> +	return ext4_set_iomap(inode, iomap, type, first_block, &map);
+We don't need to send first_block here. Since map->m_lblk
+is same as first_block.
+Also with Jan comment, we don't even need 'type' parameter.
+Then we should be able to rename the function
+ext4_set_iomap ==> ext4_map_to_iomap. This better reflects what it is
+doing. Thoughts?
+
+
+> +}
+> +
+> +const struct iomap_ops ext4_iomap_report_ops = {
+> +	.iomap_begin = ext4_iomap_begin_report,
+> +};
+> +
+>   static int ext4_iomap_alloc(struct inode *inode,
+>   			    unsigned flags,
+>   			    unsigned long first_block,
+> @@ -3498,12 +3564,10 @@ static int ext4_iomap_alloc(struct inode *inode,
+>   static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   			    unsigned flags, struct iomap *iomap)
+>   {
+> -	u16 type = 0;
+> -	unsigned int blkbits = inode->i_blkbits;
+> -	unsigned long first_block, last_block;
+> -	struct ext4_map_blocks map;
+> -	bool delalloc = false;
+>   	int ret;
+> +	struct ext4_map_blocks map;
+> +	u8 blkbits = inode->i_blkbits;
+> +	unsigned long first_block, last_block;
+> 
+>   	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
+>   		return -EINVAL;
+> @@ -3511,64 +3575,21 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   	last_block = min_t(loff_t, (offset + length - 1) >> blkbits,
+>   			   EXT4_MAX_LOGICAL_BLOCK);
+> 
+> -	if (flags & IOMAP_REPORT) {
+> -		if (ext4_has_inline_data(inode)) {
+> -			ret = ext4_inline_data_iomap(inode, iomap);
+> -			if (ret != -EAGAIN) {
+> -				if (ret == 0 && offset >= iomap->length)
+> -					ret = -ENOENT;
+> -				return ret;
+> -			}
+> -		}
+> -	} else {
+> -		if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
+> -			return -ERANGE;
+> -	}
+> +	if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
+> +		return -ERANGE;
+> 
+>   	map.m_lblk = first_block;
+>   	map.m_len = last_block - first_block + 1;
+> 
+> -	if (flags & IOMAP_REPORT) {
+> -		ret = ext4_map_blocks(NULL, inode, &map, 0);
+> -		if (ret < 0)
+> -			return ret;
+> -
+> -		if (ret == 0) {
+> -			ext4_lblk_t end = map.m_lblk + map.m_len - 1;
+> -			struct extent_status es;
+> -
+> -			ext4_es_find_extent_range(inode, &ext4_es_is_delayed,
+> -						  map.m_lblk, end, &es);
+> -
+> -			if (!es.es_len || es.es_lblk > end) {
+> -				/* entire range is a hole */
+> -			} else if (es.es_lblk > map.m_lblk) {
+> -				/* range starts with a hole */
+> -				map.m_len = es.es_lblk - map.m_lblk;
+> -			} else {
+> -				ext4_lblk_t offs = 0;
+> -
+> -				if (es.es_lblk < map.m_lblk)
+> -					offs = map.m_lblk - es.es_lblk;
+> -				map.m_lblk = es.es_lblk + offs;
+> -				map.m_len = es.es_len - offs;
+> -				delalloc = true;
+> -			}
+> -		}
+> -	} else if (flags & IOMAP_WRITE) {
+> +	if (flags & IOMAP_WRITE)
+>   		ret = ext4_iomap_alloc(inode, flags, first_block, &map);
+> -	} else {
+> +	else
+>   		ret = ext4_map_blocks(NULL, inode, &map, 0);
+> -		if (ret < 0)
+> -			return ret;
+> -	}
+> 
+>   	if (ret < 0)
+>   		return ret;
+> -
+> -	if (!ret)
+> -		type = delalloc ? IOMAP_DELALLOC : IOMAP_HOLE;
+> -	return ext4_set_iomap(inode, iomap, type, first_block, &map);
+> +	return ext4_set_iomap(inode, iomap, ret ? 0 : IOMAP_HOLE, first_block,
+> +			      &map);
+>   }
+> 
+>   static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+> 
+
