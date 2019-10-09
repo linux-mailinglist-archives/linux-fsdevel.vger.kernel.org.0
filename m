@@ -2,152 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E551D1860
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 21:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A8DFD1836
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 21:12:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731769AbfJITN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 15:13:26 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:45249 "EHLO
+        id S1732092AbfJITLd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 15:11:33 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:45423 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732004AbfJITL0 (ORCPT
+        with ESMTP id S1732066AbfJITLd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:11:26 -0400
+        Wed, 9 Oct 2019 15:11:33 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MF3Y8-1iKR6136kK-00FVc7; Wed, 09 Oct 2019 21:11:21 +0200
+ 1MXotA-1ib0Xm0A5U-00Y8QV; Wed, 09 Oct 2019 21:11:22 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
         linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        netdev@vger.kernel.org, linux-ppp@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v6 40/43] compat_ioctl: ppp: move simple commands into ppp_generic.c
-Date:   Wed,  9 Oct 2019 21:10:41 +0200
-Message-Id: <20191009191044.308087-41-arnd@arndb.de>
+        linux-scsi@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH v6 41/43] compat_ioctl: move SG_GET_REQUEST_TABLE handling
+Date:   Wed,  9 Oct 2019 21:10:42 +0200
+Message-Id: <20191009191044.308087-42-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191009190853.245077-1-arnd@arndb.de>
 References: <20191009190853.245077-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:GXKtyh7vsF4FiTtWLqzwMcIgXtk7RdFF+r5QNo7+0Nai2sQ9ZhK
- i9SPNDUUDqHigBCgTOYByVDXaADBCY/hfUWfQhV7WNKnbp8kRzv8dfcdVmE7KnqpMWsUZIH
- K3ikAZd0KxhjAEJ+tl/PIU48VlX9i8BvVvO8G30rqK5OnH2DKFaZ12/MqG5+Q+rZ+XXTNGu
- ZIArRzmduuzDYGKk1acEQ==
+X-Provags-ID: V03:K1:p7Tc//BuR7qdz2xwgrqekZl/T08X8CkoWdOtYvxnp+Bnzgn9Uj7
+ sAo1jJmlSHjzs5xbyAt88mQJgrMQQkQlwzqT+rSKafIvWdfeMntJkYSBMs+BkJy82ISeh0H
+ cIsrVtG2023QK4n/BOJ/SXqjlr6TRtcLNDDt5CVctNJTL0LmzQ9SRSfu7eEaTflg8MfvlnX
+ T4k+u6NPrU4atJQvOg9Mw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3LrnoRLdkyI=:MmdFQK6DFWyq3jJb8N7RUn
- IL12ltoI2RKH1Z7YqWoUeNsmeAMI9FDC/Uz17lQPjNA1ZEjhhqaTQzP7NHuD0MreGbUhtvqSL
- En1x8SnofFrD3GHk0fVJKFM3fLj0mGZpj0AhhD5M8C4ZvfWmDXbVavPYoisq4mzZEl2BNOamg
- 7IWHFsuiVDocZEu4YTjNLM0xMGV4MnHrmXnfLiyWjDpoQjPqRoPMB4ndrUN13tIsom2GKDc/w
- cKX1YU2W/UsTHrPdnz4ogyT5r5NTUFq+LNOECzfqX/cqw8ILrB0Y0InFFgQXCuy/U/ZJJgQpx
- SFtqgdWeCtlY4uxb7T+vJgrvH/QQcp7Q8pbFeN9Lai/QSWsM8KgIKn9F/4uf2d9iT3kbQ55VR
- PZ3wWqRCyCHCh00d0ZzrUfZ8jRM00jaxwy6tUDjfIghLQ8Qtqc8VLsUyP27YwXpqfJjWJBaNE
- JyfSe2zvAjXtf274fiEEoUGfggeodfq2pbe6xylyPZhhBhrITJhDWGxQIoDKCp9b79blI6/TI
- 74Noka0qP0upaDaemC8U8f3kGDkpQA/eIZnqpRcc8ScBrd/vZswIdZYCF0JLlBfD4zCZDr2HW
- lgQsa3gMghBFFqxXhOUGBuoqqw1raOWU81Bg1zGdE+nBVFi3e5awK2n8Sz/L1gK4EwYn7DWNq
- RO+6ZzYjwS6UwsrEnZNMyuR2cNaab3A6CyDon9W3whXkKuHq7ZIma079IboVuPB38PWU5kPHw
- jlCpJ8un80WGpqU2t/mPiMcGISukA4qb3BzoJYrzDFKpVz9jn7IoQcDT9OUUG7HpVMZIhb2wX
- zwwZKHMbKwwB77X8PSGHiQVX44xYXSAR26wsIdUa4Vwxy1C8F7sW3gVnzBg1VPahqoHia+xK3
- b8BRFozz+zjiahuPb+2Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:d4mN/yyRcj8=:TTGVKCdrOl6cbcoLsASAxH
+ kEVn9N9blBIh/ydPtDoiNrGXUt0w+lsODlOQ4ZbQ10H7P0nGg5FB8Ix2gqOzHwQPg5XjYvA0M
+ OxUWCMQuGZ6e2hiDbTK7u6VvVLryKAbvKE5d7HfNePfwIi8nwwKUCwZ5VZBU8H8J8kRfqLb5B
+ q6Lbp46cimVpv3E83rzt/wq0YxKERx4nGqHZ1YpBztjPBuAGLuh11mdTZTnnKeeHi09MrubPl
+ 9BL7+y6WbEyCuWOHIxmPrHHGkpe4pvuIL26//2Nbi7D3u511PEMowfGuDFBF0xqAvd1zHAL4i
+ unBTi8+fTlnq3kzqbdrn2V5N2uhMinIrDNqv6hmm5kpxLozsE9OJu91n5xzye5CSUNNIScPeX
+ Hw++dibuo02BNKb493CplF4yRZlxIGW7cpMJxg2OF+bxEq0NVQ21cgJ4yGzwIj08KZPJ8wUGn
+ VG70GU21vGUva1yJrY8e1cz8PQLg009xUSWHOPqI64FN6UBDzmvxZzImnnDEfVnXvFGX4ra+D
+ eEnrakXeTjJbmSQ1javGLTQICDgHjcFEjfO3cOAKfWNzdxmfEQSXfhvz1OaiOvQ2lbClhvRmG
+ DWB/VWNLLLv7qrljQFMCAZzIQSS2Pq+4qPOHSVOV/dnLtEf4QFpH8wGkUynZy+8LxgyYPHZas
+ opv6lbCaVeqYW7YYNkEf80JuxWQMyxLCoRcy13mlz00Uu3AASfuSMJ/xLwo7yIUnofnmDdZHO
+ eeVfsGhwQu4mMURh1fQxLhwxr4YApqOLakENRSJXlo++sCJmCqokyXVMJy8PquYBhWcG5TP5L
+ +mHLDB6hbb8JrMiieemRSJKIszB2z6RZcNLbSnNDoMKohPz5vcXywWsR3BtSOKUiWWhv6LLRI
+ eslWOrwcydSqNlIZ4EkA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All ppp commands that are not already handled in ppp_compat_ioctl()
-are compatible, so they can now handled by calling the native
-ppp_ioctl() directly.
+SG_GET_REQUEST_TABLE is now the last ioctl command that needs a conversion
+handler. This is only used in a single file, so the implementation should
+be there.
 
-Without CONFIG_BLOCK, the generic compat_ioctl table is now empty,
-so add a check to avoid a build failure in the looking function for
-that configuration.
+I'm trying to simplify it in the process, to get rid of
+the compat_alloc_user_space() and extra copy, by adding a
+put_compat_request_table() function instead, which copies the data in
+the right format to user space.
 
-Cc: netdev@vger.kernel.org
-Cc: linux-ppp@vger.kernel.org
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: "David S. Miller" <davem@davemloft.net>
+Cc: linux-scsi@vger.kernel.org
+Cc: Doug Gilbert <dgilbert@interlog.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/ppp/ppp_generic.c |  4 ++++
- fs/compat_ioctl.c             | 36 ++++-------------------------------
- 2 files changed, 8 insertions(+), 32 deletions(-)
+ drivers/scsi/sg.c | 40 ++++++++++++++++++++++++++++-----
+ fs/compat_ioctl.c | 57 +----------------------------------------------
+ 2 files changed, 36 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index ce4dd45c541d..267fe2c58087 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -903,6 +903,10 @@ static long ppp_compat_ioctl(struct file *file, unsigned int cmd, unsigned long
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index 8ae096af2667..9e4ef22b3579 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -889,6 +889,33 @@ sg_fill_request_table(Sg_fd *sfp, sg_req_info_t *rinfo)
  	}
- 	mutex_unlock(&ppp_mutex);
- 
-+	/* all other commands have compatible arguments */
-+	if (err == -ENOIOCTLCMD)
-+		err = ppp_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
-+
- 	return err;
  }
- #endif
+ 
++#ifdef CONFIG_COMPAT
++struct compat_sg_req_info { /* used by SG_GET_REQUEST_TABLE ioctl() */
++	char req_state;
++	char orphan;
++	char sg_io_owned;
++	char problem;
++	int pack_id;
++	compat_uptr_t usr_ptr;
++	unsigned int duration;
++	int unused;
++};
++
++static int put_compat_request_table(struct compat_sg_req_info __user *o,
++				    struct sg_req_info *rinfo)
++{
++	int i;
++	for (i = 0; i < SG_MAX_QUEUE; i++) {
++		if (copy_to_user(o + i, rinfo + i, offsetof(sg_req_info_t, usr_ptr)) ||
++		    put_user((uintptr_t)rinfo[i].usr_ptr, &o[i].usr_ptr) ||
++		    put_user(rinfo[i].duration, &o[i].duration) ||
++		    put_user(rinfo[i].unused, &o[i].unused))
++			return -EFAULT;
++	}
++	return 0;
++}
++#endif
++
+ static long
+ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ {
+@@ -1069,9 +1096,7 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 		val = (sdp->device ? 1 : 0);
+ 		return put_user(val, ip);
+ 	case SG_GET_REQUEST_TABLE:
+-		if (!access_ok(p, SZ_SG_REQ_INFO * SG_MAX_QUEUE))
+-			return -EFAULT;
+-		else {
++		{
+ 			sg_req_info_t *rinfo;
+ 
+ 			rinfo = kcalloc(SG_MAX_QUEUE, SZ_SG_REQ_INFO,
+@@ -1081,8 +1106,13 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 			read_lock_irqsave(&sfp->rq_list_lock, iflags);
+ 			sg_fill_request_table(sfp, rinfo);
+ 			read_unlock_irqrestore(&sfp->rq_list_lock, iflags);
+-			result = __copy_to_user(p, rinfo,
+-						SZ_SG_REQ_INFO * SG_MAX_QUEUE);
++	#ifdef CONFIG_COMPAT
++			if (in_compat_syscall())
++				result = put_compat_request_table(p, rinfo);
++			else
++	#endif
++				result = copy_to_user(p, rinfo,
++						      SZ_SG_REQ_INFO * SG_MAX_QUEUE);
+ 			result = result ? -EFAULT : 0;
+ 			kfree(rinfo);
+ 			return result;
 diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 5e59101ef981..3cf8b6d113c3 100644
+index 3cf8b6d113c3..9ae90d728c0f 100644
 --- a/fs/compat_ioctl.c
 +++ b/fs/compat_ioctl.c
-@@ -144,38 +144,6 @@ COMPATIBLE_IOCTL(SG_GET_REQUEST_TABLE)
- COMPATIBLE_IOCTL(SG_SET_KEEP_ORPHAN)
- COMPATIBLE_IOCTL(SG_GET_KEEP_ORPHAN)
- #endif
--/* PPP stuff */
--COMPATIBLE_IOCTL(PPPIOCGFLAGS)
--COMPATIBLE_IOCTL(PPPIOCSFLAGS)
--COMPATIBLE_IOCTL(PPPIOCGASYNCMAP)
--COMPATIBLE_IOCTL(PPPIOCSASYNCMAP)
--COMPATIBLE_IOCTL(PPPIOCGUNIT)
--COMPATIBLE_IOCTL(PPPIOCGRASYNCMAP)
--COMPATIBLE_IOCTL(PPPIOCSRASYNCMAP)
--COMPATIBLE_IOCTL(PPPIOCGMRU)
--COMPATIBLE_IOCTL(PPPIOCSMRU)
--COMPATIBLE_IOCTL(PPPIOCSMAXCID)
--COMPATIBLE_IOCTL(PPPIOCGXASYNCMAP)
--COMPATIBLE_IOCTL(PPPIOCSXASYNCMAP)
--COMPATIBLE_IOCTL(PPPIOCXFERUNIT)
--/* PPPIOCSCOMPRESS is translated */
--COMPATIBLE_IOCTL(PPPIOCGNPMODE)
--COMPATIBLE_IOCTL(PPPIOCSNPMODE)
--COMPATIBLE_IOCTL(PPPIOCGDEBUG)
--COMPATIBLE_IOCTL(PPPIOCSDEBUG)
--/* PPPIOCSPASS is translated */
--/* PPPIOCSACTIVE is translated */
--COMPATIBLE_IOCTL(PPPIOCGIDLE32)
--COMPATIBLE_IOCTL(PPPIOCGIDLE64)
--COMPATIBLE_IOCTL(PPPIOCNEWUNIT)
--COMPATIBLE_IOCTL(PPPIOCATTACH)
--COMPATIBLE_IOCTL(PPPIOCDETACH)
--COMPATIBLE_IOCTL(PPPIOCSMRRU)
--COMPATIBLE_IOCTL(PPPIOCCONNECT)
--COMPATIBLE_IOCTL(PPPIOCDISCONN)
--COMPATIBLE_IOCTL(PPPIOCATTCHAN)
--COMPATIBLE_IOCTL(PPPIOCGCHAN)
--COMPATIBLE_IOCTL(PPPIOCGL2TPSTATS)
- };
+@@ -52,53 +52,6 @@
  
+ #include <linux/sort.h>
+ 
+-#ifdef CONFIG_BLOCK
+-static int do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+-{
+-	int err;
+-
+-	err = security_file_ioctl(file, cmd, arg);
+-	if (err)
+-		return err;
+-
+-	return vfs_ioctl(file, cmd, arg);
+-}
+-
+-struct compat_sg_req_info { /* used by SG_GET_REQUEST_TABLE ioctl() */
+-	char req_state;
+-	char orphan;
+-	char sg_io_owned;
+-	char problem;
+-	int pack_id;
+-	compat_uptr_t usr_ptr;
+-	unsigned int duration;
+-	int unused;
+-};
+-
+-static int sg_grt_trans(struct file *file,
+-		unsigned int cmd, struct compat_sg_req_info __user *o)
+-{
+-	int err, i;
+-	sg_req_info_t __user *r;
+-	r = compat_alloc_user_space(sizeof(sg_req_info_t)*SG_MAX_QUEUE);
+-	err = do_ioctl(file, cmd, (unsigned long)r);
+-	if (err < 0)
+-		return err;
+-	for (i = 0; i < SG_MAX_QUEUE; i++) {
+-		void __user *ptr;
+-		int d;
+-
+-		if (copy_in_user(o + i, r + i, offsetof(sg_req_info_t, usr_ptr)) ||
+-		    get_user(ptr, &r[i].usr_ptr) ||
+-		    get_user(d, &r[i].duration) ||
+-		    put_user((u32)(unsigned long)(ptr), &o[i].usr_ptr) ||
+-		    put_user(d, &o[i].duration))
+-			return -EFAULT;
+-	}
+-	return err;
+-}
+-#endif /* CONFIG_BLOCK */
+-
  /*
-@@ -202,6 +170,7 @@ static long do_ioctl_trans(unsigned int cmd,
- 
- static int compat_ioctl_check_table(unsigned int xcmd)
+  * simple reversible transform to make our table more evenly
+  * distributed after sorting.
+@@ -121,6 +74,7 @@ COMPATIBLE_IOCTL(SCSI_IOCTL_GET_PCI)
+ #ifdef CONFIG_BLOCK
+ /* SG stuff */
+ COMPATIBLE_IOCTL(SG_IO)
++COMPATIBLE_IOCTL(SG_GET_REQUEST_TABLE)
+ COMPATIBLE_IOCTL(SG_SET_TIMEOUT)
+ COMPATIBLE_IOCTL(SG_GET_TIMEOUT)
+ COMPATIBLE_IOCTL(SG_EMULATED_HOST)
+@@ -156,15 +110,6 @@ COMPATIBLE_IOCTL(SG_GET_KEEP_ORPHAN)
+ static long do_ioctl_trans(unsigned int cmd,
+ 		 unsigned long arg, struct file *file)
  {
-+#ifdef CONFIG_BLOCK
- 	int i;
- 	const int max = ARRAY_SIZE(ioctl_pointer) - 1;
- 
-@@ -220,6 +189,9 @@ static int compat_ioctl_check_table(unsigned int xcmd)
- 		i--;
- 
- 	return ioctl_pointer[i] == xcmd;
-+#else
-+	return 0;
-+#endif
+-#ifdef CONFIG_BLOCK
+-	void __user *argp = compat_ptr(arg);
+-
+-	switch (cmd) {
+-	case SG_GET_REQUEST_TABLE:
+-		return sg_grt_trans(file, cmd, argp);
+-	}
+-#endif
+-
+ 	return -ENOIOCTLCMD;
  }
  
- COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
 -- 
 2.20.0
 
