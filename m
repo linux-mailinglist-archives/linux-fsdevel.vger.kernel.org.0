@@ -2,111 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA9DED1C5A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2019 01:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 982A7D1C87
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Oct 2019 01:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732088AbfJIXCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 19:02:32 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:32940 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730815AbfJIXCc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 19:02:32 -0400
-Received: from dread.disaster.area (pa49-195-199-207.pa.nsw.optusnet.com.au [49.195.199.207])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id AF593363877;
-        Thu, 10 Oct 2019 10:02:29 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iIKyR-0006cx-LW; Thu, 10 Oct 2019 10:02:27 +1100
-Date:   Thu, 10 Oct 2019 10:02:27 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, darrick.wong@oracle.com,
-        linux-xfs@vger.kernel.org,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [PATCH 0/2] iomap: Waiting for IO in iomap_dio_rw()
-Message-ID: <20191009230227.GH16973@dread.disaster.area>
-References: <20191009202736.19227-1-jack@suse.cz>
+        id S1732140AbfJIXND (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 19:13:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731542AbfJIXND (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 19:13:03 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5ECAE206BB;
+        Wed,  9 Oct 2019 23:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570662782;
+        bh=oCRn3JjATva9R6bAW/lMjEkdJaPC+cn6csIMs4uFiPw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YxgfdepboPDcp50suajDKZE/jFrWOWYBnGVR4FSn2qQjsRNg+b9CmsuTOAsRCHJjB
+         BwW76CsJVUUb3/Ec8lupsntFXyszdN5pHcf3HMVZKuC5aqbYfaOy7yS73Pu8Rg8lnQ
+         VsQDblnJTIxudsD45Dh4kH8dRJnckGlSDiDGAamU=
+Date:   Wed, 9 Oct 2019 16:13:00 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@lists.codethink.co.uk,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/namespace: make to_mnt_ns static
+Message-ID: <20191009231259.GA125579@gmail.com>
+Mail-Followup-To: Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@lists.codethink.co.uk,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191009145211.16614-1-ben.dooks@codethink.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191009202736.19227-1-jack@suse.cz>
+In-Reply-To: <20191009145211.16614-1-ben.dooks@codethink.co.uk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=U3CgBz6+VuTzJ8lMfNbwVQ==:117 a=U3CgBz6+VuTzJ8lMfNbwVQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=7-415B0cAAAA:8 a=Nb0Mfos4mOhxgEr3ClsA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 10:41:24PM +0200, Jan Kara wrote:
-> Hello,
+On Wed, Oct 09, 2019 at 03:52:11PM +0100, Ben Dooks wrote:
+> The to_mnt_ns() is not exported outside the file so
+> make it static to fix the following sparse warning:
 > 
-> when doing the ext4 conversion of direct IO code to iomap, we found it very
-> difficult to handle inode extension with what iomap code currently provides.
-> Ext4 wants to do inode extension as sync IO (so that the whole duration of
-> IO is protected by inode->i_rwsem), also we need to truncate blocks beyond
-> end of file in case of error or short write. Now in ->end_io handler we don't
-> have the information how long originally the write was (to judge whether we
-> may have allocated more blocks than we actually used) and in ->write_iter
-> we don't know whether / how much of the IO actually succeeded in case of AIO.
+> fs/namespace.c:1731:22: warning: symbol 'to_mnt_ns' was not declared. Should it be static?
 > 
-> Thinking about it for some time I think iomap code makes it unnecessarily
-> complex for the filesystem in case it decides it doesn't want to perform AIO
-> and wants to fall back to good old synchronous IO. In such case it is much
-> easier for the filesystem if it just gets normal error return from
-> iomap_dio_rw() and not just -EIOCBQUEUED.
-
-Yeah, that'd be nice. :)
-
-> The first patch in the series adds argument to iomap_dio_rw() to wait for IO
-> completion (internally iomap_dio_rw() already supports this!) and the second
-> patch converts XFS waiting for unaligned DIO write to this new API.
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  fs/namespace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> What do people think?
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index fe0e9e1410fe..b87b127fdce4 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1728,7 +1728,7 @@ static bool is_mnt_ns_file(struct dentry *dentry)
+>  	       dentry->d_fsdata == &mntns_operations;
+>  }
+>  
+> -struct mnt_namespace *to_mnt_ns(struct ns_common *ns)
+> +static struct mnt_namespace *to_mnt_ns(struct ns_common *ns)
+>  {
+>  	return container_of(ns, struct mnt_namespace, ns);
+>  }
+> -- 
+> 2.23.0
+> 
 
-I've just caught up on the ext4 iomap dio thread where this came up,
-so I have some idea of what is going on now :)
+Al, this patch has been sent to you 11 times by 8 different people over 2 years:
 
-My main issue is that I don't like the idea of a "force_wait"
-parameter to iomap_dio_rw() that overrides what the kiocb says to
-do inside iomap_dio_rw(). It just seems ... clunky.
+https://lore.kernel.org/linux-fsdevel/20191009145211.16614-1-ben.dooks@codethink.co.uk/
+https://lore.kernel.org/linux-fsdevel/20190822154014.14401-1-ebiggers@kernel.org/
+https://lore.kernel.org/linux-fsdevel/20190529212108.164246-1-ebiggers@kernel.org/
+https://lore.kernel.org/linux-fsdevel/20190414191913.GA11798@bharath12345-Inspiron-5559/
+https://lore.kernel.org/linux-fsdevel/20190319151756.96768-1-maowenan@huawei.com/
+https://lore.kernel.org/linux-fsdevel/20190110204147.120073-1-ebiggers@kernel.org/
+https://lore.kernel.org/linux-fsdevel/20181115000930.47611-1-ebiggers@kernel.org/
+https://lore.kernel.org/linux-fsdevel/20180630120447.17861-1-colin.king@canonical.com/
+https://lore.kernel.org/linux-fsdevel/20170111104846.26220-1-tklauser@distanz.ch/
+https://lore.kernel.org/linux-fsdevel/20181207204318.1920-1-malat@debian.org/
+https://lore.kernel.org/linux-fsdevel/a2cc7bd9cd4cd5be54303090c7ba6654d7b04b4f.1443364195.git.geliangtang@163.com/
 
-I'd much prefer that the entire sync/async IO decision is done in
-one spot, and the result of that is passed into iomap_dio_rw(). i.e.
-the caller always determines the behaviour.
+No response from you to any of them.  I guess this means you're just not taking
+these types of obvious cleanups?  Should people be sending them to Andrew Morton
+instead?
 
-That would mean the callers need to do something like this by
-default:
-
-	ret = iomap_dio_rw(iocb, iter, ops, dops, is_sync_kiocb(iocb));
-
-And filesystems like XFS will need to do:
-
-	ret = iomap_dio_rw(iocb, iter, ops, dops,
-			is_sync_kiocb(iocb) || unaligned);
-
-and ext4 will calculate the parameter in whatever way it needs to.
-
-In fact, it may be that a wrapper function is better for existing
-callers:
-
-static inline ssize_t iomap_dio_rw()
-{
-	return iomap_dio_rw_wait(iocb, iter, ops, dops, is_sync_kiocb(iocb));
-}
-
-And XFS/ext4 writes call iomap_dio_rw_wait() directly. That way we
-don't need to change the read code at all...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+- Eric
