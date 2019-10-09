@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99551D18CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 21:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C822D18C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 21:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732154AbfJIT0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 15:26:06 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:37676 "EHLO ale.deltatee.com"
+        id S1732087AbfJITZv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 15:25:51 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:37744 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732002AbfJITZp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:25:45 -0400
+        id S1732050AbfJITZt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 15:25:49 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1iIHaa-0002g5-6m; Wed, 09 Oct 2019 13:25:44 -0600
+        id 1iIHaa-0002g6-6k; Wed, 09 Oct 2019 13:25:47 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1iIHaY-0003Q7-Gc; Wed, 09 Oct 2019 13:25:34 -0600
+        id 1iIHaY-0003QA-Kg; Wed, 09 Oct 2019 13:25:34 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
@@ -29,8 +29,8 @@ Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
         Stephen Bates <sbates@raithlin.com>,
         Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed,  9 Oct 2019 13:25:22 -0600
-Message-Id: <20191009192530.13079-6-logang@deltatee.com>
+Date:   Wed,  9 Oct 2019 13:25:23 -0600
+Message-Id: <20191009192530.13079-7-logang@deltatee.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191009192530.13079-1-logang@deltatee.com>
 References: <20191009192530.13079-1-logang@deltatee.com>
@@ -44,7 +44,7 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
         GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
         autolearn_force=no version=3.4.2
-Subject: [PATCH v9 05/12] Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com> [logang@deltatee.com: fixed some of the wording in the help message] Signed-off-by: Logan Gunthorpe <logang@deltatee.com> Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
+Subject: [PATCH v9 05/12] nvmet-passthru: add passthru code to process commands
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -53,8 +53,6 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-
-nvmet-passthru: add passthru code to process commands
 
 Add passthru command handling capability for the NVMeOF target and
 export passthru APIs which are used to integrate passthru
