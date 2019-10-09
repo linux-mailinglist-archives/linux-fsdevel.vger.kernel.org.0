@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B99BD15DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 19:26:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7662D15C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 19:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732475AbfJIR0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 13:26:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49818 "EHLO mail.kernel.org"
+        id S1732543AbfJIRZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 13:25:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731943AbfJIRYu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:24:50 -0400
+        id S1732534AbfJIRZA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:25:00 -0400
 Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1280321924;
-        Wed,  9 Oct 2019 17:24:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 989CA2196E;
+        Wed,  9 Oct 2019 17:24:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641889;
-        bh=qw/Hh/viI8zLm97HmYceatOgllpM0Vmxf3+LvtIL3h0=;
+        s=default; t=1570641898;
+        bh=R3kC4bpe5gkE7DfaKQbGxOTN+3veWg1wgjMHDOChSUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p+QlcPsfSPq754e8jzMyOA9VTBYrut3Ey+0OXUpAJFUhWqrc5w4O0+Z4fDM+gCA+7
-         Nv7RqyNKwE63DHopSjfMaVRWToaKLWTKjtzaiU6oBegN/WMrfYm15KFnrjpjndxPKq
-         go5RAuj41fgXpeG+Dg4aC+PqUVj2uZbY0rYXykZ0=
+        b=Oa7mL3ym1PF5dfzKrChKqgHR1si6bt/AL0s5t2/YhscXsCPyKw8+ojwL19WqmWj8Z
+         A/qnGS4HwgJFKI3VLcXnAhgqpABB6xpzKhntFwFbdVek1D3qtzbFjVJUdUgFqt1JFb
+         uDb5ax8m6g60n5xpnq7QFBSxONF4ffN0imxG5//E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -30,12 +30,12 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Jann Horn <jannh@google.com>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 13/13] Make filldir[64]() verify the directory entry filename is valid
-Date:   Wed,  9 Oct 2019 13:06:32 -0400
-Message-Id: <20191009170635.536-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 11/11] Make filldir[64]() verify the directory entry filename is valid
+Date:   Wed,  9 Oct 2019 13:06:45 -0400
+Message-Id: <20191009170646.696-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191009170635.536-1-sashal@kernel.org>
-References: <20191009170635.536-1-sashal@kernel.org>
+In-Reply-To: <20191009170646.696-1-sashal@kernel.org>
+References: <20191009170646.696-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -118,10 +118,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 40 insertions(+)
 
 diff --git a/fs/readdir.c b/fs/readdir.c
-index 9d0212c374d6d..ace19d956818f 100644
+index ced679179cac0..4c6ffe3bdfc71 100644
 --- a/fs/readdir.c
 +++ b/fs/readdir.c
-@@ -63,6 +63,40 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
+@@ -50,6 +50,40 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
  }
  EXPORT_SYMBOL(iterate_dir);
  
@@ -162,7 +162,7 @@ index 9d0212c374d6d..ace19d956818f 100644
  /*
   * Traditional linux readdir() handling..
   *
-@@ -172,6 +206,9 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
+@@ -159,6 +193,9 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
  	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
  		sizeof(long));
  
@@ -172,7 +172,7 @@ index 9d0212c374d6d..ace19d956818f 100644
  	buf->error = -EINVAL;	/* only used if we fail.. */
  	if (reclen > buf->count)
  		return -EINVAL;
-@@ -258,6 +295,9 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+@@ -243,6 +280,9 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
  	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
  		sizeof(u64));
  
