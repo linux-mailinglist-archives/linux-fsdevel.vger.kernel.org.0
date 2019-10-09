@@ -2,58 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E87F9D0E26
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 14:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0156D0E60
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 14:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730696AbfJIMCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 08:02:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727286AbfJIMCX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 08:02:23 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D58E987630;
-        Wed,  9 Oct 2019 12:02:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-125-72.rdu2.redhat.com [10.10.125.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EC5DF19C69;
-        Wed,  9 Oct 2019 12:02:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <515a67cd-f847-8885-da30-1eab3931f1fb@gmail.com>
-References: <515a67cd-f847-8885-da30-1eab3931f1fb@gmail.com> <153126269451.14533.13592791373864325188.stgit@warthog.procyon.org.uk> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <15519.1531263314@warthog.procyon.org.uk>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-man@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [MANPAGE PATCH] Add manpage for fsinfo(2)
+        id S1730606AbfJIMI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 08:08:26 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33033 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729566AbfJIMI0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 08:08:26 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i76so1303801pgc.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2019 05:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=s1BWwoGjmwO49xL/8yuSea//sNNjGxnZWDCNi/EPKNE=;
+        b=YmdITmbreviovSJyRzR+plEZVGUq/kjsdsI4WZN6Of6Np+kirXx36tzuphI05HKCwi
+         UR9EJJFjvACIOUzCaR129hEWk+amPAYIz4BnS0rJcJ/RgitTslLYvPkNEHZAtrSYws61
+         ks+OKjJo+/8/d4bR3O/iQLto4d1aYEaecFIwdTO6KVd21CupSpepBFei64nNTrdtOwwH
+         +2zjRQkg2SmgBsst7POeWvY2Rxn+izWEeLqnb5KnxAHciemr0bEKTXlai55uiVJlLRpb
+         TbaQsIpmmiLs8aqqmC4ROTwwNO3gxGveNZZtoQ0/AYe6WKRqTF1JRQ2Uxeph8g8HXwTS
+         SIDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=s1BWwoGjmwO49xL/8yuSea//sNNjGxnZWDCNi/EPKNE=;
+        b=I7+PRThlS6OMZgm6+KHYeaN1hoXl7n5nS6yIk2bZnC6rKda4VUxsQD3TgwIQi2j0xO
+         xFU9Czw80o8/+tSnxUj6Z6FcemrxZGbOYJ/yVz1UDEjXdo/BWUPVWH/rgRnvzPmoEVt4
+         hfh+w3QsdAHri/emjk5rnv4sYdQVOr2LxgF+xuk6Qly2MUxOqnLWDiTDKitMkOz0fbSv
+         rR9yK/ujCZRnRvIA/N/4dq/jGntLLodTABFJ0NYNKLzVq+UNf+1C1Ppcf4DbF0/Otnl5
+         LB8vhzuhc9G1eKWblVcpzVYpE2uCrs6DHBTLeHdHFCbFFlI7q3zUBmycK0QII8t3OGW9
+         RNFw==
+X-Gm-Message-State: APjAAAV7qv91w69wdwACTmZ7mO8APvSRjS0IlWv/eCUONmDAZWybYpD8
+        zYvajm4p98orm+j2lfwiZ+FuHnmt5OqF
+X-Google-Smtp-Source: APXvYqzuhuqQkShha9mtAmxxW8JgGsg3xjVouw9b/I1du0sMK1AdK/Fq4hfPqO2vPNEaMg23+tYsjA==
+X-Received: by 2002:a63:c509:: with SMTP id f9mr3897327pgd.79.1570622905002;
+        Wed, 09 Oct 2019 05:08:25 -0700 (PDT)
+Received: from poseidon.bobrowski.net ([114.78.226.167])
+        by smtp.gmail.com with ESMTPSA id k124sm2122953pgc.6.2019.10.09.05.08.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 05:08:24 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 23:08:18 +1100
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
+Subject: Re: [PATCH v4 3/8] ext4: introduce new callback for IOMAP_REPORT
+ operations
+Message-ID: <20191009120816.GH14749@poseidon.bobrowski.net>
+References: <cover.1570100361.git.mbobrowski@mbobrowski.org>
+ <cb2dcb6970da1b53bdf85583f13ba2aaf1684e96.1570100361.git.mbobrowski@mbobrowski.org>
+ <20191009060022.4878542049@d06av24.portsmouth.uk.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17942.1570622540.1@warthog.procyon.org.uk>
-Date:   Wed, 09 Oct 2019 13:02:20 +0100
-Message-ID: <17943.1570622540@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 09 Oct 2019 12:02:23 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009060022.4878542049@d06av24.portsmouth.uk.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
+On Wed, Oct 09, 2019 at 11:30:21AM +0530, Ritesh Harjani wrote:
+> > +static u16 ext4_iomap_check_delalloc(struct inode *inode,
+> > +				     struct ext4_map_blocks *map)
+> > +{
+> > +	struct extent_status es;
+> > +	ext4_lblk_t end = map->m_lblk + map->m_len - 1;
+> > +
+> > +	ext4_es_find_extent_range(inode, &ext4_es_is_delayed, map->m_lblk,
+> > +				  end, &es);
+> > +
+> > +	/* Entire range is a hole */
+> > +	if (!es.es_len || es.es_lblk > end)
+> > +		return IOMAP_HOLE;
+> > +	if (es.es_lblk <= map->m_lblk) {
+> > +		ext4_lblk_t offset = 0;
+> > +
+> > +		if (es.es_lblk < map->m_lblk)
+> > +			offset = map->m_lblk - es.es_lblk;
+> > +		map->m_lblk = es.es_lblk + offset;
+> This looks redundant no? map->m_lblk never changes actually.
+> So this is not needed here.
 
-> There is no fsinfo(2) in the system call in the kernel currently.
-> Will that call still be added,
+Well, it depends if map->m_lblk == es.es_lblk + offset prior to the
+assignment? If that's always true, then sure, it'd be redundant. But
+honestly, I don't know what the downstream effect would be if this was
+removed. I'd have to look at the code, perform some tests, and figure
+it out.
 
-Hopefully, but I'm not sure it'll be ready by the next merge window.
+> > +	map.m_lblk = first_block;
+> > +	map.m_len = last_block = first_block + 1;
+> > +	ret = ext4_map_blocks(NULL, inode, &map, 0);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +	if (ret == 0)
+> > +		type = ext4_iomap_check_delalloc(inode, &map);
+> > +	return ext4_set_iomap(inode, iomap, type, first_block, &map);
+> We don't need to send first_block here. Since map->m_lblk
+> is same as first_block.
+> Also with Jan comment, we don't even need 'type' parameter.
+> Then we should be able to rename the function
+> ext4_set_iomap ==> ext4_map_to_iomap. This better reflects what it is
+> doing. Thoughts?
 
-> or was it replaced by fsconfig(2),
+Depends on what we conclude in 1/8. :)
 
-They're different things and not interchangeable.
+I'm for removing 'first_block', but still not convinced removing
+'type' is heading down the right track if I were to forward think a
+little.
 
-David
+--<M>--
+
