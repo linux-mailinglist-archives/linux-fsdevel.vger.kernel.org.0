@@ -2,86 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F8F6D0AD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 11:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E36D0AEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 11:21:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730339AbfJIJSj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 05:18:39 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42750 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729817AbfJIJSj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 05:18:39 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z12so1007450pgp.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2019 02:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dIMjgz2wkdOJUmFipmSdwtOA8NXSDN4ksobQ1Cu2hUA=;
-        b=QH1PLZwggPZx3KtHORU9BFAiQwvFEibddbWy92hdfzkazAoK0ZRupqHaNi8+5J36OJ
-         zP6038H7xR7gzG+jDff1hyaTp1CfcrtC+tsqwU7G0ifDfhuxrQguMX5vTqFwStKCeBiq
-         NEyXvdnNeCOHyirKwJW1TZmZtt/wOeTngrkeCjHi5/xtBgwFjj6pwGptTzNKpd0/CLOt
-         EmRbcL+dBJzZDfWeH8ki/Tw+8z6UN1/mJIAvc4YHJERfcLGIJwbzALFAZe3VH+S3Zq4X
-         ENC1o4zhJM2+RRQqWQwm7eyb/0ZRCeUnusjirW/3aMTvwiFwuP6zXbnRlIFaGzN1/nae
-         b8dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dIMjgz2wkdOJUmFipmSdwtOA8NXSDN4ksobQ1Cu2hUA=;
-        b=eGCxFRcphpM3xsZZauaQaugwT+L803xKuLhCMmmeySuuXrSZeH2xDnGX7Kn7nVTZFI
-         FVUjrVsyq1fajBqu/6wuArpGmbFRp0hhbZBRqmoEcgyXZYA7iwGiZHcUB04yEtTjZZ7J
-         eZrKaaeOj6ZQgY+8eYCz8l9c5xLpSmr2b1yv7aPjJX3ry7Lq30OfdRF1pftDsgobZkvU
-         WFQBERmCAUnP+grg5wfracYMG6QdS8b2j/zCifw6KqXr3qcdBtonSnZXYAiC8BbC16tw
-         Fkk8lGAUDhdJQ5bz8BpOifbR2o4jrzCJYLSEmeGleIOykerBImp1CPDywaliOkCgB/ie
-         +5nw==
-X-Gm-Message-State: APjAAAXnMkcYOsQ6a9ssjCIMOxXZzMWuQ5mGKKBu9eqsVC7lbG9tADrx
-        a8IzG2GkIqO/S0JZQmbC81LL
-X-Google-Smtp-Source: APXvYqwmoyEVscGNMXHMxoyorGGNSGPQexKQNKFX+pBChZ4yWHcpoI8Ert7PG67/T1PhyKZrreUROw==
-X-Received: by 2002:a62:283:: with SMTP id 125mr2684628pfc.137.1570612718047;
-        Wed, 09 Oct 2019 02:18:38 -0700 (PDT)
-Received: from poseidon.bobrowski.net ([114.78.226.167])
-        by smtp.gmail.com with ESMTPSA id h8sm2027979pfo.64.2019.10.09.02.18.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 02:18:37 -0700 (PDT)
-Date:   Wed, 9 Oct 2019 20:18:31 +1100
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
-Subject: Re: [PATCH v4 2/8] ext4: move out IOMAP_WRITE path into separate
- helper
-Message-ID: <20191009091830.GC2125@poseidon.bobrowski.net>
-References: <cover.1570100361.git.mbobrowski@mbobrowski.org>
- <99b317af0f20a170fba2e70695d7cca1597fb19a.1570100361.git.mbobrowski@mbobrowski.org>
- <20191008103137.GE5078@quack2.suse.cz>
+        id S1727769AbfJIJVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 05:21:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60082 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725935AbfJIJVL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 05:21:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 47633AD00;
+        Wed,  9 Oct 2019 09:21:08 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008103137.GE5078@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 09 Oct 2019 11:21:07 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     hev <r@hev.cc>
+Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Eric Wong <e@80x24.org>, Jason Baron <jbaron@akamai.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sridhar Samudrala <sridhar.samudrala@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v5] fs/epoll: Remove unnecessary wakeups of nested
+ epoll
+In-Reply-To: <20191009060516.3577-1-r@hev.cc>
+References: <20191009060516.3577-1-r@hev.cc>
+Message-ID: <0911c1130bb79fd8c8e266bc7701b251@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 12:31:37PM +0200, Jan Kara wrote:
-> On Thu 03-10-19 21:33:29, Matthew Bobrowski wrote:
-> > In preparation for porting across the direct I/O path to iomap, split
-> > out the IOMAP_WRITE logic into a separate helper. This way, we don't
-> > need to clutter the ext4_iomap_begin() callback.
-> > 
-> > Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+On 2019-10-09 08:05, hev wrote:
+> From: Heiher <r@hev.cc>
 > 
-> The patch looks good to me. You can add:
+> Take the case where we have:
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+>         t0
+>          | (ew)
+>         e0
+>          | (et)
+>         e1
+>          | (lt)
+>         s0
 > 
-> Just please reformat the comments to use full 80 column lines. Your Emacs
-> still doesn't seem to get it :)
+> t0: thread 0
+> e0: epoll fd 0
+> e1: epoll fd 1
+> s0: socket fd 0
+> ew: epoll_wait
+> et: edge-trigger
+> lt: level-trigger
+> 
+> We remove unnecessary wakeups to prevent the nested epoll that working 
+> in edge-
+> triggered mode to waking up continuously.
+> 
+> Test code:
+>  #include <unistd.h>
+>  #include <sys/epoll.h>
+>  #include <sys/socket.h>
+> 
+>  int main(int argc, char *argv[])
+>  {
+>  	int sfd[2];
+>  	int efd[2];
+>  	struct epoll_event e;
+> 
+>  	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
+>  		goto out;
+> 
+>  	efd[0] = epoll_create(1);
+>  	if (efd[0] < 0)
+>  		goto out;
+> 
+>  	efd[1] = epoll_create(1);
+>  	if (efd[1] < 0)
+>  		goto out;
+> 
+>  	e.events = EPOLLIN;
+>  	if (epoll_ctl(efd[1], EPOLL_CTL_ADD, sfd[0], &e) < 0)
+>  		goto out;
+> 
+>  	e.events = EPOLLIN | EPOLLET;
+>  	if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
+>  		goto out;
+> 
+>  	if (write(sfd[1], "w", 1) != 1)
+>  		goto out;
+> 
+>  	if (epoll_wait(efd[0], &e, 1, 0) != 1)
+>  		goto out;
+> 
+>  	if (epoll_wait(efd[0], &e, 1, 0) != 0)
+>  		goto out;
+> 
+>  	close(efd[0]);
+>  	close(efd[1]);
+>  	close(sfd[0]);
+>  	close(sfd[1]);
+> 
+>  	return 0;
+> 
+>  out:
+>  	return -1;
+>  }
+> 
+> More tests:
+>  https://github.com/heiher/epoll-wakeup
+> 
+> Cc: Al Viro <viro@ZenIV.linux.org.uk>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Davide Libenzi <davidel@xmailserver.org>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Eric Wong <e@80x24.org>
+> Cc: Jason Baron <jbaron@akamai.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Roman Penyaev <rpenyaev@suse.de>
+> Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: hev <r@hev.cc>
+> ---
+>  fs/eventpoll.c | 16 ----------------
+>  1 file changed, 16 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index c4159bcc05d9..75fccae100b5 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -671,7 +671,6 @@ static __poll_t ep_scan_ready_list(struct eventpoll 
+> *ep,
+>  			      void *priv, int depth, bool ep_locked)
+>  {
+>  	__poll_t res;
+> -	int pwake = 0;
+>  	struct epitem *epi, *nepi;
+>  	LIST_HEAD(txlist);
+> 
+> @@ -738,26 +737,11 @@ static __poll_t ep_scan_ready_list(struct 
+> eventpoll *ep,
+>  	 */
+>  	list_splice(&txlist, &ep->rdllist);
+>  	__pm_relax(ep->ws);
+> -
+> -	if (!list_empty(&ep->rdllist)) {
+> -		/*
+> -		 * Wake up (if active) both the eventpoll wait list and
+> -		 * the ->poll() wait list (delayed after we release the lock).
+> -		 */
+> -		if (waitqueue_active(&ep->wq))
+> -			wake_up(&ep->wq);
+> -		if (waitqueue_active(&ep->poll_wait))
+> -			pwake++;
+> -	}
+>  	write_unlock_irq(&ep->lock);
+> 
+>  	if (!ep_locked)
+>  		mutex_unlock(&ep->mtx);
+> 
+> -	/* We have to call this outside the lock */
+> -	if (pwake)
+> -		ep_poll_safewake(&ep->poll_wait);
+> -
+>  	return res;
+>  }
 
-*nod* :)
+This looks good to me.  Heiher, mind to make kselftest out of your test 
+suite?
 
---<M>--
+Reviewed-by: Roman Penyaev <rpenyaev@suse.de>
+
+--
+Roman
+
+
+
