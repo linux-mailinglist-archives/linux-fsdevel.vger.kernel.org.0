@@ -2,164 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71F69D187C
+	by mail.lfdr.de (Postfix) with ESMTP id 06D5AD187B
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 21:14:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731850AbfJITLQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 15:11:16 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:45889 "EHLO
+        id S1731821AbfJITLP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 15:11:15 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:38647 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731144AbfJITLO (ORCPT
+        with ESMTP id S1731771AbfJITLO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 9 Oct 2019 15:11:14 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mzyi6-1hupE6357e-00wzdx; Wed, 09 Oct 2019 21:11:12 +0200
+ 1MiJIk-1hd9qo47VO-00fSl7; Wed, 09 Oct 2019 21:11:13 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
         linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org,
-        isdn4linux@listserv.isdn4linux.de
-Subject: [PATCH v6 16/43] compat_ioctl: move isdn/capi ioctl translation into driver
-Date:   Wed,  9 Oct 2019 21:10:16 +0200
-Message-Id: <20191009191044.308087-16-arnd@arndb.de>
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH v6 17/43] compat_ioctl: move rfcomm handlers into driver
+Date:   Wed,  9 Oct 2019 21:10:17 +0200
+Message-Id: <20191009191044.308087-17-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191009190853.245077-1-arnd@arndb.de>
 References: <20191009190853.245077-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:3PgdTLn3Isb1E8QdaS6ssQ4smTcDkiVZALshacjmZB+AtPbu7Xq
- +7o5fh40aOG53PwqC68L1xQv4R2rrEcItv3d09B+15mWfs5dq4Tnu4b8BuUmfRm6UOVmtZd
- zpvGOs+siVVcUrX1Q5s/nr5A9T4WhMwaKm/3W3e/li5neiNanzGsyRWZwZ9MgEx1znyplrR
- z2rwUeFAJ5Ft6735YtEjg==
+X-Provags-ID: V03:K1:6o+fXd+jknkQ9Kt+dvDcH2dQqv7QFvYbBe3gxSyUw1PSROtnjoC
+ 7emE8+IitiN6xjQXFyhJvQU8e1C2V+fxOFrCYIjgXTdqqHASt08GP0Z1d5xH9MzPLbtu66P
+ J9oEstuey1r2im/khtnqN9ZUzi0/bdwd6fjul/INAkUaVFJARkaZ6IBSzGf5Q1Pru86T3TC
+ RUO7i6kp1LdP3l2dPUNFA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hRo8ARl3Sq8=:RxMdqFFZ5hfQWKhBpuqbgd
- VS0ufeKpg2n65gq107Tujsiiq+j0BdkpZ1R4QKawR0mc5fAuY4/lBYRLNImDpCjMevgpRCMhS
- G+IWYfPMqCzyHXrQgLga8GTWM4/Po7Y7g0TRBTXe2vAC75g2YRgEGafbq7pPLnVrwpBHuDnKE
- hYqyjFb6eMjZstGJaHM+tbsu/QZHUp+gzLmvB3hbOb4Gt3tLwKWyaxJUxJfwl0jPz1Eq2svQr
- 5ylyHlpXJhYZjR4dGwBSOa/MP/aORnAVTAvkgegWEnGuDWCmzpiw9kKM3laiA1Z14aKmbe2pI
- DEc6POaYmrmL6VvCpSxUne1lQPdReizm5P3e52Vw2DNbQAkoG6dsj5x5cNWqmVyFas5TbQ8ay
- zvflQxV28Zo3vv5oom91yCx6kBhGNmsLeI/4GWRM+V7Vq+6Hkh7ZR/IMaR71BoH9Mv4yule5F
- OWym6mvP3Rn1qvAONZ3687WR8lb5vtbRq/M/zGS87JoV3dzUACYtw1VnLsmi/wmJW0cGhds6K
- qHzVxrBqquqPb6hpqU1+y0XUTkYjiL7QGeYnRwSTXYEuNF2c73ytZSBEK3xTnkBimnzI0QS34
- twk72LmazvX8sXsXA+PVkFaXABTgjMzMQuiR37IiPVYC1RkysRc1Tj6uatBg436LsDo61CWTP
- BHTQDUsSH76HOsy2WpWeuMpABGuc8yAWabElkrVTAbGFXyZijT6cXb/i69ProMiSWhwKi1m2v
- cVBieHv8EWbJhV0V//EUVyF02xmhqzHOVJ3Ou6Z3eGtBeYHIvxN8PaQODJPhzzftQh+buHYpf
- KNhSm/38Ro+OTlOUHCLCk38lUx+vQSgTFhrUake83fButfk9TTsrL2/tYHCFmJ3/18ZBN7oe6
- FvDmcjfQbzxT2tWV1cgg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TfUEyc2+NPc=:HQ0oFvhTGn1RZEKc3Ghs8F
+ mZuFQC5DGwW0zJ1yLyyIvNeHvHuFx2WYnZpYMUgR75C8zilFGgZTc4FT5B6U4YrtxF94LBsT1
+ aFMmGPdcXt3X3Aa3biEa6q2oPA+4wDN+MLN/zPKC3nFn3fip0Y8Ph9g6D+O4LLGBpgPmBOQai
+ L313sbBBBn8EOvb9RlOjvEr0BvXcNml2Udlk1AZ0uMGYovu1N/CrBckv/sNivfiofL7H+n6OL
+ 5lPE/xH8R4808YhlRKFaObMEh7wUTg1X0m0VgvitGjs+vFHoqHpN0EkjVJF5mGEsdHsPSCIhZ
+ Zvk8BvJDJJDvoNqa6XQyxJgiicAHJmt6WogcBOLTkKkfYiBx7vFVcI3OalPhRXlz9skpAyosl
+ aol1tZ9f05XoxVAZSnA4S/wsNUlVhl9dvb3AAt/U1MaJ/wiIvB/YnHdgIVcRNuZ1y1Dgegx/E
+ 3/kLeXDYe+WOmNrgbmQejT1UE0eiMez6lxw+Z3n7huo5J2ceBwVLX8Q1z01DCfbRK1utQAOLJ
+ QzJtytYoLkP8jVy0gIiZVyeaC6Ls73n9P7B0k/2i2aZ0zPruP52dMpl3d7jrxoNEG09l7k4cE
+ ICvpgihvMHXrUVrfYGnn7WV+0KxeLDFBeobqJ59+jkBO2qc4MyZ2ca7nCYLsIGI+NcINZ3IO7
+ 8as8Yb2CgQBuqBm3B/qFhfjL7wrryfshgIMCxyI9eWyV0bHZEDC+S7Qtrr0T51BE+q2saKwmw
+ JkbP3mfikcWSzZ5f27InGlbpd+5I8g9LLtKFRMpD3PR4Nt2Np/9m9DIE1f9Xr1/gSZarciwhE
+ 9I94MxMItu1Wl/uS3Uu3Uygx/LjFAFM3nWx2mamLAUG0Bx2iYbWpCa8qU3NQ/gSDMdGSGchra
+ KsI1SHv+a3ZDDUWuGHLw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Neither the old isdn4linux interface nor the newer mISDN stack
-ever had working 32-bit compat mode as far as I can tell.
+All these ioctl commands are compatible, so we can handle
+them with a trivial wrapper in rfcomm/sock.c and remove
+the listing in fs/compat_ioctl.c.
 
-However, the CAPI stack has some ioctl commands that are
-correctly listed in fs/compat_ioctl.c.
-
-We can trivially move all of those into the corresponding
-file that implement the native handlers by adding a compat_ioctl
-redirect to that.
-
-I did notice that treating CAPI_MANUFACTURER_CMD() as compatible
-is broken, so I'm also adding a handler for that, realizing that
-in all likelyhood, nobody is ever going to call it.
-
-Cc: Karsten Keil <isdn@linux-pingi.de>
-Cc: netdev@vger.kernel.org
-Cc: isdn4linux@listserv.isdn4linux.de
+Acked-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/isdn/capi/capi.c | 31 +++++++++++++++++++++++++++++++
- fs/compat_ioctl.c        | 17 -----------------
- 2 files changed, 31 insertions(+), 17 deletions(-)
+ fs/compat_ioctl.c           |  6 ------
+ net/bluetooth/rfcomm/sock.c | 14 ++++++++++++--
+ 2 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/isdn/capi/capi.c b/drivers/isdn/capi/capi.c
-index c92b405b7646..efce7532513c 100644
---- a/drivers/isdn/capi/capi.c
-+++ b/drivers/isdn/capi/capi.c
-@@ -950,6 +950,34 @@ capi_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	return ret;
- }
- 
-+#ifdef CONFIG_COMPAT
-+static long
-+capi_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	int ret;
-+
-+	if (cmd == CAPI_MANUFACTURER_CMD) {
-+		struct {
-+			unsigned long cmd;
-+			compat_uptr_t data;
-+		} mcmd32;
-+
-+		if (!capable(CAP_SYS_ADMIN))
-+			return -EPERM;
-+		if (copy_from_user(&mcmd32, compat_ptr(arg), sizeof(mcmd32)))
-+			return -EFAULT;
-+
-+		mutex_lock(&capi_mutex);
-+		ret = capi20_manufacturer(mcmd32.cmd, compat_ptr(mcmd32.data));
-+		mutex_unlock(&capi_mutex);
-+
-+		return ret;
-+	}
-+
-+	return capi_unlocked_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
-+}
-+#endif
-+
- static int capi_open(struct inode *inode, struct file *file)
- {
- 	struct capidev *cdev;
-@@ -996,6 +1024,9 @@ static const struct file_operations capi_fops =
- 	.write		= capi_write,
- 	.poll		= capi_poll,
- 	.unlocked_ioctl	= capi_unlocked_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl	= capi_compat_ioctl,
-+#endif
- 	.open		= capi_open,
- 	.release	= capi_release,
- };
 diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index a4e8fb7da968..f3b4179d6dff 100644
+index f3b4179d6dff..8dbef92b10fd 100644
 --- a/fs/compat_ioctl.c
 +++ b/fs/compat_ioctl.c
-@@ -44,9 +44,6 @@
- #include <net/bluetooth/hci_sock.h>
- #include <net/bluetooth/rfcomm.h>
+@@ -42,7 +42,6 @@
  
--#include <linux/capi.h>
--#include <linux/gigaset_dev.h>
--
+ #include <net/bluetooth/bluetooth.h>
+ #include <net/bluetooth/hci_sock.h>
+-#include <net/bluetooth/rfcomm.h>
+ 
  #ifdef CONFIG_BLOCK
  #include <linux/cdrom.h>
- #include <linux/fd.h>
-@@ -681,20 +678,6 @@ COMPATIBLE_IOCTL(RFCOMMRELEASEDEV)
- COMPATIBLE_IOCTL(RFCOMMGETDEVLIST)
- COMPATIBLE_IOCTL(RFCOMMGETDEVINFO)
- COMPATIBLE_IOCTL(RFCOMMSTEALDLC)
--/* CAPI */
--COMPATIBLE_IOCTL(CAPI_REGISTER)
--COMPATIBLE_IOCTL(CAPI_GET_MANUFACTURER)
--COMPATIBLE_IOCTL(CAPI_GET_VERSION)
--COMPATIBLE_IOCTL(CAPI_GET_SERIAL)
--COMPATIBLE_IOCTL(CAPI_GET_PROFILE)
--COMPATIBLE_IOCTL(CAPI_MANUFACTURER_CMD)
--COMPATIBLE_IOCTL(CAPI_GET_ERRCODE)
--COMPATIBLE_IOCTL(CAPI_INSTALLED)
--COMPATIBLE_IOCTL(CAPI_GET_FLAGS)
--COMPATIBLE_IOCTL(CAPI_SET_FLAGS)
--COMPATIBLE_IOCTL(CAPI_CLR_FLAGS)
--COMPATIBLE_IOCTL(CAPI_NCCI_OPENCOUNT)
--COMPATIBLE_IOCTL(CAPI_NCCI_GETUNIT)
+@@ -673,11 +672,6 @@ COMPATIBLE_IOCTL(HCIUARTGETPROTO)
+ COMPATIBLE_IOCTL(HCIUARTGETDEVICE)
+ COMPATIBLE_IOCTL(HCIUARTSETFLAGS)
+ COMPATIBLE_IOCTL(HCIUARTGETFLAGS)
+-COMPATIBLE_IOCTL(RFCOMMCREATEDEV)
+-COMPATIBLE_IOCTL(RFCOMMRELEASEDEV)
+-COMPATIBLE_IOCTL(RFCOMMGETDEVLIST)
+-COMPATIBLE_IOCTL(RFCOMMGETDEVINFO)
+-COMPATIBLE_IOCTL(RFCOMMSTEALDLC)
  /* Misc. */
  COMPATIBLE_IOCTL(PCIIOC_CONTROLLER)
  COMPATIBLE_IOCTL(PCIIOC_MMAP_IS_IO)
+diff --git a/net/bluetooth/rfcomm/sock.c b/net/bluetooth/rfcomm/sock.c
+index 90bb53aa4bee..b4eaf21360ef 100644
+--- a/net/bluetooth/rfcomm/sock.c
++++ b/net/bluetooth/rfcomm/sock.c
+@@ -24,7 +24,7 @@
+ /*
+  * RFCOMM sockets.
+  */
+-
++#include <linux/compat.h>
+ #include <linux/export.h>
+ #include <linux/debugfs.h>
+ #include <linux/sched/signal.h>
+@@ -909,6 +909,13 @@ static int rfcomm_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned lon
+ 	return err;
+ }
+ 
++#ifdef CONFIG_COMPAT
++static int rfcomm_sock_compat_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
++{
++	return rfcomm_sock_ioctl(sock, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
++
+ static int rfcomm_sock_shutdown(struct socket *sock, int how)
+ {
+ 	struct sock *sk = sock->sk;
+@@ -1042,7 +1049,10 @@ static const struct proto_ops rfcomm_sock_ops = {
+ 	.gettstamp	= sock_gettstamp,
+ 	.poll		= bt_sock_poll,
+ 	.socketpair	= sock_no_socketpair,
+-	.mmap		= sock_no_mmap
++	.mmap		= sock_no_mmap,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= rfcomm_sock_compat_ioctl,
++#endif
+ };
+ 
+ static const struct net_proto_family rfcomm_sock_family_ops = {
 -- 
 2.20.0
 
