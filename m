@@ -2,75 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70F70D1701
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 19:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65E10D1732
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 19:57:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731932AbfJIRpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 13:45:45 -0400
-Received: from mout02.posteo.de ([185.67.36.66]:43923 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730256AbfJIRpp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:45:45 -0400
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 98ED82400FC
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Oct 2019 19:45:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1570643142; bh=+uRbnUgYwcwwURmsSaZ0MP0p0roiK0PTgjhoSU3rLOE=;
-        h=Subject:To:Cc:From:Date:From;
-        b=kZFfrumak9gujpYsfe9XtPIjfJAmNJDKEHDvD3hyW1QLzGKkrnrrgGrfRbGLDWnk4
-         W/ptXMm+y9C4TdPSpaMWg9uc71+0lXBQ2VeRerWy7ZdDO5PmPWJ71nJ0UDSKAGMifn
-         uaU0fJb2zZRqidcdb3H0xAG92q4Utq4a/ajgCOXbzls5FSHJskCxvqMx6EBoyBhJMX
-         fzHcrTpuGmtPXfBjKu7hoXFFIY4NV5auypvPar9BpO9X4KbJF6/I6nB3ZtSNxfUUem
-         04xPtegvFVgLJh4wfVcmwRsQine8jDCMrZ0VzBwk+rFWm+aLchdJU+54DUp4VlQyWL
-         P3GnTgG0NwhmQ==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 46pM7l64mpz9rxM;
-        Wed,  9 Oct 2019 19:45:39 +0200 (CEST)
-Subject: Re: [PATCH 3/6] Check that the new path while moving a file is not
- too long
-To:     Gao Xiang <hsiangkao@aol.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>
-References: <20191009133157.14028-1-philipp.ammann@posteo.de>
- <20191009133157.14028-4-philipp.ammann@posteo.de>
- <20191009150034.GA31739@hsiangkao-HP-ZHAN-66-Pro-G1>
-From:   Philipp Ammann <philipp.ammann@posteo.de>
-Message-ID: <99efdcb3-c5dc-bb2b-647b-9e27c3c59f4c@posteo.de>
-Date:   Wed, 9 Oct 2019 19:45:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731263AbfJIR5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 13:57:17 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39047 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728804AbfJIR5R (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 13:57:17 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y3so3416730ljj.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2019 10:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o8boM57nsIRzYbBpN0Z2Y51IdQe2gX/7UPNvVMmUq/U=;
+        b=h0bAzS/dV9bQ6OnmXiwCK9ZIyyBp1EgxxpfnZdS3eiJkJ4Cjz7v9qeZ5N91ha6cYYN
+         sdAGRVz3vOBIiPXxDatCim0mPu9JCDWAHWzCx9srQuMd9i2Of+bFJ7pwT0s3HSW9A+uI
+         g3PA1uiN+F7kYnzzhfntyPIl5pCuME5B6pPLI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o8boM57nsIRzYbBpN0Z2Y51IdQe2gX/7UPNvVMmUq/U=;
+        b=jWozWD8JMqYqDLTnTs9ZaWef/5eQjkGyWRC5kcT2usDRIrskTkZrTsDGZBFzPjFlkm
+         Ks0ZjGW0pj1A7V/nARQPuhfcOS0cFAlbXceVWxTgXDxCpG+KOCpJ436LY/LjhYTTEnwm
+         Nz71F6TrHYYwPPp/P+D/HlyzBA1PL2fhxGCDVozaKzxAaLDAF90VPoEmLK7UBLp/bddS
+         ydmbE2gr+nyXicDYwOUhQoD+xAKnyIlQgPSNcoOd+LPdm3ynB3lsomBi6h7LVU/NiDXT
+         TVDhb7RKcoHBsxBqG9sCx1s26/BKmiH1HvaUYXEelbfMo6VpOfCx+CYymaO5tZNLmsr0
+         yKrA==
+X-Gm-Message-State: APjAAAV7aIa+aHdC6nhB24O2+stnbCWKFDIJj3xE8p9BAxyYS5R0GKot
+        3WcT80fzUnJyah6/yUTi7eCrEB0c50I=
+X-Google-Smtp-Source: APXvYqyoajdIABNaVw+GmIF9j25HkGEiaP6r1Alt63tBJURPjIqi+xxB2gWPUcKVb2PnsGOg6xsxcQ==
+X-Received: by 2002:a2e:3016:: with SMTP id w22mr3253387ljw.117.1570643834845;
+        Wed, 09 Oct 2019 10:57:14 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id m18sm619986lfb.73.2019.10.09.10.57.13
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2019 10:57:13 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id m13so3381332ljj.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Oct 2019 10:57:13 -0700 (PDT)
+X-Received: by 2002:a2e:9848:: with SMTP id e8mr3209250ljj.148.1570643832712;
+ Wed, 09 Oct 2019 10:57:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191009150034.GA31739@hsiangkao-HP-ZHAN-66-Pro-G1>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20191009170558.32517-1-sashal@kernel.org> <20191009170558.32517-26-sashal@kernel.org>
+In-Reply-To: <20191009170558.32517-26-sashal@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 9 Oct 2019 10:56:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiVe+nxotYXExXRxhvCSTCqyRuZUto6UrvR2oHfeGrJ+g@mail.gmail.com>
+Message-ID: <CAHk-=wiVe+nxotYXExXRxhvCSTCqyRuZUto6UrvR2oHfeGrJ+g@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.19 26/26] Make filldir[64]() verify the
+ directory entry filename is valid
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am 09.10.19 um 17:25 schrieb Gao Xiang:
-> Maybe sort out what original problem here is better and
-> not blindly get patches from random github repos...
+On Wed, Oct 9, 2019 at 10:24 AM Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: Linus Torvalds <torvalds@linux-foundation.org>
+>
+> [ Upstream commit 8a23eb804ca4f2be909e372cf5a9e7b30ae476cd ]
 
-That's kinda hard to do given that Samsung doesn't provide a history of 
-the code...and my lack of knowledge of FS drivers ;-)
-I just posted Bugfixes that probably originated from Samsung and somehow 
-haven't made it in the initial mainline exfat commit.
+I didn't mark this for stable because I expect things to still change
+- particularly the WARN_ON_ONCE() should be removed before final 5.4,
+I just wanted to see if anybody could trigger it with testing etc.
 
-Do you know where the code originally came from?
+(At least syzbot did trigger it).
 
-Regards
-Philipp
+If you do want to take it, take it without the WARN_ON_ONCE() calls
+and note that in the commit message..
 
-> 
-> Thanks,
-> Gao Xiang
-> 
->>   	ret = resolve_path(new_parent_inode, new_path, &newdir, &uni_name);
->>   	if (ret)
->>   		goto out2;
->> -- 
->> 2.21.0
->>
-> 
+           Linus
