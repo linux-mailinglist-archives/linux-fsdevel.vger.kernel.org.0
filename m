@@ -2,327 +2,364 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA78CD0566
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 04:07:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E13D05FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 05:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfJICHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Oct 2019 22:07:39 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:40593 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbfJICHj (ORCPT
+        id S1730627AbfJIDVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Oct 2019 23:21:46 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:47365 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730555AbfJIDVm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Oct 2019 22:07:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1570586859; x=1602122859;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=J13AgpN1xVBDLgm7Hl/VUoPQhKCzV6Aue5QPxRqh5sw=;
-  b=hqV2UzJgWM+odWb80bWissC9cGatqSRqE3yNtFB6UVF+SV9yqtyiYHOL
-   64ubeHxqdLpPjnB4tFcu8uptq6zMqOXxLSR7UPiwAQ2WtbRD5IN0vzXI9
-   baR4HAdxomexfcek1Saq2ZfyEoucpR2g6ik4GrCWwn8YfEbl/rHHdSO8a
-   06QqT3DgOEvRWkyFEnqLbKhdT3EsaorXhDPBkZpWKqn57mP1Q/OYxeerY
-   C0w+9j/AVTgCFu4HJlvxyFex+qFdw+2J/aQUPZW2FEmRpCZKc/UiSgelH
-   OtNhJNKzmw+DP2320jKvLw9xenHiwO5RPEpUfLGBQ8BGoYHTLzwPYjPjK
-   w==;
-IronPort-SDR: l2OcCE+XwKM2Vh/HbzQqsAo+4ru/gL7bof61tf/upCToO52EKaXDoh1qiemKQMGIKbxaHgphvB
- aeq7C6rpiSE5Uqiw01JilgvcnNYLF7SgC465sA/EM5ylf9KilzvW0fCVU8BQMPAtCkoS8d7IQB
- BPLUhna3Zt+TcgeY8nM3U72uUt9qhbZMbHKKM2ItjYZ18E8FeJ+dSKLqnG8Otc5aaDZcy7nc4r
- RhW9krc7IQG6cLZEUo8pDoZjwkFbwGbZ0c3DDJLvLExm5P8+i2YVeyJp573qKbBCuqxFmw+pbp
- jD8=
-X-IronPort-AV: E=Sophos;i="5.67,273,1566835200"; 
-   d="scan'208";a="121687209"
-Received: from mail-by2nam05lp2051.outbound.protection.outlook.com (HELO NAM05-BY2-obe.outbound.protection.outlook.com) ([104.47.50.51])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Oct 2019 10:07:38 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MpqU8U2iU6MtMbpbFxUAUsal/Jzet9RhpFtEQwa3IZjUuumAFsUMOWbyMLTvgLBdx30ZQi7D+sGRO/qEiid21VLkbNLshLGY7SEmwNyTeChyIu8bh64/e2jdiIXgWRmB+x38U8YnpcbCDiW5Ayk5/cexOD8fPl+Z8rzQJSYv90HiVDlB2Q2FOC2R1M3JthqDjMkSpwwGLmtHQtjcv/W2SwljcHW6MfvOLhMCRWvdIi1UHrPC3KqrXOnH7Kf10X6gE4A/E0ciEPIUDVSox2m0t2Ba5vliZwxsE7haQzXx1xtXdz0X8eUge6p0rBXSmYmhK8XwBORbqhzA1a8CDyKbQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J13AgpN1xVBDLgm7Hl/VUoPQhKCzV6Aue5QPxRqh5sw=;
- b=DFuJTjsR+rhLOPVwrCKJnhFsBzEfhPFD1GPu3apY9tYjsUTyit7k+V1FcO2VKpLQRgybToAGaiSnT1gZBOtCIcFEwukNvjgxBuMotTDkp3Qx+gkcIpJ2LFOvy/LGZvHTRdA7AzhRJ1+xNWAJmM+phMsT+HET7cLCerQ1Ze3AyQUXpReC4ACIhb1TgwVul5tqL2EZ4IOjuCaH+TqvjkjTFoBFBzWc8Uwe/o1yDZzjfYEVGOG/UQqvl1K2Em0wwdcEYopM1Li4mWnGnos7WKm9rmyxsnIi4QAAa7lNsySJHZ80u+XEqlOj6dmwRsyz2b1Kj2UNm5f1mRN2swHt7itlxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J13AgpN1xVBDLgm7Hl/VUoPQhKCzV6Aue5QPxRqh5sw=;
- b=F7j+4s+2rGltSmrZRDwAfdiNmnAU3rmj85WZI2XXIibDROW74Oq12Q3JeiG9JmccCInFuHJ+MQ05dQZd2A+gpOpZrSMo/yp3fxBBonWpZGJO05IHu72Cb3jsdxDVskb5laH68b/7JEmha0hhZmjoFzd9EYC5ueYVvKBSnGyna+Q=
-Received: from BYAPR04MB3990.namprd04.prod.outlook.com (52.135.215.29) by
- BYAPR04MB4439.namprd04.prod.outlook.com (20.176.249.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.16; Wed, 9 Oct 2019 02:07:36 +0000
-Received: from BYAPR04MB3990.namprd04.prod.outlook.com
- ([fe80::51dd:7de9:c4a1:f9f3]) by BYAPR04MB3990.namprd04.prod.outlook.com
- ([fe80::51dd:7de9:c4a1:f9f3%3]) with mapi id 15.20.2327.023; Wed, 9 Oct 2019
- 02:07:36 +0000
-From:   Atish Patra <Atish.Patra@wdc.com>
-To:     "alex@ghiti.fr" <alex@ghiti.fr>
-CC:     "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "hch@lst.de" <hch@lst.de>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
-Thread-Topic: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
-Thread-Index: AQHVTbNRR2y1x3jR5Uinm4nvlyFP7KdLqT4AgAOZyQCAAQUZAIAAu9IAgADtSYA=
-Date:   Wed, 9 Oct 2019 02:07:36 +0000
-Message-ID: <d9bc696aa9d1e306e4cff04a2926b0faa2dc5587.camel@wdc.com>
-References: <20190808061756.19712-1-alex@ghiti.fr>
-         <20190808061756.19712-15-alex@ghiti.fr>
-         <208433f810b5b07b1e679d7eedb028697dff851b.camel@wdc.com>
-         <60b52f20-a2c7-dee9-7cf3-a727f07400b9@ghiti.fr>
-         <daeb33415751ef16a717f6ff6a29486110c503d7.camel@wdc.com>
-         <9e9a3fea-d8a3-ae62-317a-740773f0725c@ghiti.fr>
-In-Reply-To: <9e9a3fea-d8a3-ae62-317a-740773f0725c@ghiti.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Atish.Patra@wdc.com; 
-x-originating-ip: [199.255.44.250]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: de50d0c6-a896-46a7-c1cc-08d74c5d7447
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: BYAPR04MB4439:
-x-ms-exchange-purlcount: 2
-x-microsoft-antispam-prvs: <BYAPR04MB44394A028A5EEC7A432BFE69FA950@BYAPR04MB4439.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 018577E36E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(346002)(376002)(366004)(39860400002)(396003)(52314003)(199004)(189003)(6436002)(71190400001)(71200400001)(6246003)(4326008)(2351001)(86362001)(81166006)(81156014)(1730700003)(8676002)(54906003)(6512007)(8936002)(5640700003)(6486002)(229853002)(66066001)(316002)(3846002)(36756003)(6116002)(486006)(476003)(2616005)(66946007)(66476007)(66556008)(64756008)(25786009)(2501003)(11346002)(966005)(446003)(76116006)(5660300002)(6506007)(66446008)(14454004)(5024004)(99286004)(6306002)(256004)(76176011)(14444005)(478600001)(19627235002)(53546011)(6916009)(118296001)(186003)(2906002)(102836004)(26005)(7736002)(305945005)(7416002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4439;H:BYAPR04MB3990.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Q0IcDNHQdKqvW9nUVZb2i7xTP98LU5yhrqmakKILqdzqmj4uWeiqA1c4gJsLofcdMK24efmlvaYLMwj4rtKHkFdGLt0HfIM+JFiRftIZml618vIN3bp1ORZBm7fethS/zhmUneMMEv7jsmArwmsWNnCuciQHWAFlBveGMXw88SNZSjIUsk/7kR9sQvXxI9ABkKwaemQm2gisCXQH4I6PnXY1ymPzrGDuNxzS6CbzCUeyAOiYPm66RItGTC4myPG55/gw0U6iJyhBCG/tkf7FLJvTGXn+z8K8h41mW1vL1ghFtksIq68JFhJ7Y9Ooxu8rKde/8zerc2muao5T5csBn52lEM1ElU4X10OplS4HqcjcdmSNQ+wLhAnvrAZEmPionPrKpvwfCa0CSGMxTc3fVDElf3ehBQpexa4HTnGMcencT+3Yi82n1eiV54quZONPS7rhuascybKBJd/wAChKfA==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <76C760FDEAAE154FBEDE2E971E6354A2@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 8 Oct 2019 23:21:42 -0400
+Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3F9B743EC2D;
+        Wed,  9 Oct 2019 14:21:27 +1100 (AEDT)
+Received: from discord.disaster.area ([192.168.253.110])
+        by dread.disaster.area with esmtp (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iI2XW-0006B1-KZ; Wed, 09 Oct 2019 14:21:26 +1100
+Received: from dave by discord.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1iI2XW-00038u-Gh; Wed, 09 Oct 2019 14:21:26 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH V2 00/26] mm, xfs: non-blocking inode reclaim
+Date:   Wed,  9 Oct 2019 14:20:58 +1100
+Message-Id: <20191009032124.10541-1-david@fromorbit.com>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de50d0c6-a896-46a7-c1cc-08d74c5d7447
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2019 02:07:36.1294
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ai5CPpLYWqhy7+bUXhWbsRMWNkbn+1wXT2geeFnWnDgqQ2JezhBkdQA3bs0BWFIPS6DnnhBmo3HXbZnPa9FL4g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4439
+Content-Transfer-Encoding: 8bit
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
+        a=XobE76Q3jBoA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=sqMGF3jvcCa2L6b3jykA:9 a=_feknGxYtQO_6_7X:21 a=ZM5fkm-pDuIZzAoa:21
+        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTEwLTA4IGF0IDA3OjU4IC0wNDAwLCBBbGV4IEdoaXRpIHdyb3RlOg0KPiBP
-biAxMC83LzE5IDg6NDYgUE0sIEF0aXNoIFBhdHJhIHdyb3RlOg0KPiA+IE9uIE1vbiwgMjAxOS0x
-MC0wNyBhdCAwNToxMSAtMDQwMCwgQWxleCBHaGl0aSB3cm90ZToNCj4gPiA+IE9uIDEwLzQvMTkg
-MTA6MTIgUE0sIEF0aXNoIFBhdHJhIHdyb3RlOg0KPiA+ID4gPiBPbiBUaHUsIDIwMTktMDgtMDgg
-YXQgMDI6MTcgLTA0MDAsIEFsZXhhbmRyZSBHaGl0aSB3cm90ZToNCj4gPiA+ID4gPiBJbiBvcmRl
-ciB0byBhdm9pZCB3YXN0aW5nIHVzZXIgYWRkcmVzcyBzcGFjZSBieSB1c2luZyBib3R0b20tDQo+
-ID4gPiA+ID4gdXANCj4gPiA+ID4gPiBtbWFwDQo+ID4gPiA+ID4gYWxsb2NhdGlvbiBzY2hlbWUs
-IHByZWZlciB0b3AtZG93biBzY2hlbWUgd2hlbiBwb3NzaWJsZS4NCj4gPiA+ID4gPiANCj4gPiA+
-ID4gPiBCZWZvcmU6DQo+ID4gPiA+ID4gcm9vdEBxZW11cmlzY3Y2NDp+IyBjYXQgL3Byb2Mvc2Vs
-Zi9tYXBzDQo+ID4gPiA+ID4gMDAwMTAwMDAtMDAwMTYwMDAgci14cCAwMDAwMDAwMCBmZTowMA0K
-PiA+ID4gPiA+IDYzODkgICAgICAgL2Jpbi9jYXQuY29yZXV0aWxzDQo+ID4gPiA+ID4gMDAwMTYw
-MDAtMDAwMTcwMDAgci0tcCAwMDAwNTAwMCBmZTowMA0KPiA+ID4gPiA+IDYzODkgICAgICAgL2Jp
-bi9jYXQuY29yZXV0aWxzDQo+ID4gPiA+ID4gMDAwMTcwMDAtMDAwMTgwMDAgcnctcCAwMDAwNjAw
-MCBmZTowMA0KPiA+ID4gPiA+IDYzODkgICAgICAgL2Jpbi9jYXQuY29yZXV0aWxzDQo+ID4gPiA+
-ID4gMDAwMTgwMDAtMDAwMzkwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAwICAgICAgICAgIFtoZWFw
-XQ0KPiA+ID4gPiA+IDE1NTU1NTYwMDAtMTU1NTU2ZDAwMCByLXhwIDAwMDAwMDAwIGZlOjAwIDcx
-OTMgICAvbGliL2xkLQ0KPiA+ID4gPiA+IDIuMjguc28NCj4gPiA+ID4gPiAxNTU1NTZkMDAwLTE1
-NTU1NmUwMDAgci0tcCAwMDAxNjAwMCBmZTowMCA3MTkzICAgL2xpYi9sZC0NCj4gPiA+ID4gPiAy
-LjI4LnNvDQo+ID4gPiA+ID4gMTU1NTU2ZTAwMC0xNTU1NTZmMDAwIHJ3LXAgMDAwMTcwMDAgZmU6
-MDAgNzE5MyAgIC9saWIvbGQtDQo+ID4gPiA+ID4gMi4yOC5zbw0KPiA+ID4gPiA+IDE1NTU1NmYw
-MDAtMTU1NTU3MDAwMCBydy1wIDAwMDAwMDAwIDAwOjAwIDANCj4gPiA+ID4gPiAxNTU1NTcwMDAw
-LTE1NTU1NzIwMDAgci14cCAwMDAwMDAwMCAwMDowMCAwICAgICAgW3Zkc29dDQo+ID4gPiA+ID4g
-MTU1NTU3NDAwMC0xNTU1NTc2MDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDAgMA0KPiA+ID4gPiA+IDE1
-NTU1NzYwMDAtMTU1NTY3NDAwMCByLXhwIDAwMDAwMDAwIGZlOjAwIDcxODcgICAvbGliL2xpYmMt
-DQo+ID4gPiA+ID4gMi4yOC5zbw0KPiA+ID4gPiA+IDE1NTU2NzQwMDAtMTU1NTY3ODAwMCByLS1w
-IDAwMGZkMDAwIGZlOjAwIDcxODcgICAvbGliL2xpYmMtDQo+ID4gPiA+ID4gMi4yOC5zbw0KPiA+
-ID4gPiA+IDE1NTU2NzgwMDAtMTU1NTY3YTAwMCBydy1wIDAwMTAxMDAwIGZlOjAwIDcxODcgICAv
-bGliL2xpYmMtDQo+ID4gPiA+ID4gMi4yOC5zbw0KPiA+ID4gPiA+IDE1NTU2N2EwMDAtMTU1NTZh
-MDAwMCBydy1wIDAwMDAwMDAwIDAwOjAwIDANCj4gPiA+ID4gPiAzZmZmYjkwMDAwLTNmZmZiYjEw
-MDAgcnctcCAwMDAwMDAwMCAwMDowMCAwICAgICAgW3N0YWNrXQ0KPiA+ID4gPiA+IA0KPiA+ID4g
-PiA+IEFmdGVyOg0KPiA+ID4gPiA+IHJvb3RAcWVtdXJpc2N2NjQ6fiMgY2F0IC9wcm9jL3NlbGYv
-bWFwcw0KPiA+ID4gPiA+IDAwMDEwMDAwLTAwMDE2MDAwIHIteHAgMDAwMDAwMDAgZmU6MDANCj4g
-PiA+ID4gPiA2Mzg5ICAgICAgIC9iaW4vY2F0LmNvcmV1dGlscw0KPiA+ID4gPiA+IDAwMDE2MDAw
-LTAwMDE3MDAwIHItLXAgMDAwMDUwMDAgZmU6MDANCj4gPiA+ID4gPiA2Mzg5ICAgICAgIC9iaW4v
-Y2F0LmNvcmV1dGlscw0KPiA+ID4gPiA+IDAwMDE3MDAwLTAwMDE4MDAwIHJ3LXAgMDAwMDYwMDAg
-ZmU6MDANCj4gPiA+ID4gPiA2Mzg5ICAgICAgIC9iaW4vY2F0LmNvcmV1dGlscw0KPiA+ID4gPiA+
-IDJkZTgxMDAwLTJkZWEyMDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDAgMCAgICAgICAgICBbaGVhcF0N
-Cj4gPiA+ID4gPiAzZmY3ZWI2MDAwLTNmZjdlZDgwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAwDQo+
-ID4gPiA+ID4gM2ZmN2VkODAwMC0zZmY3ZmQ2MDAwIHIteHAgMDAwMDAwMDAgZmU6MDAgNzE4NyAg
-IC9saWIvbGliYy0NCj4gPiA+ID4gPiAyLjI4LnNvDQo+ID4gPiA+ID4gM2ZmN2ZkNjAwMC0zZmY3
-ZmRhMDAwIHItLXAgMDAwZmQwMDAgZmU6MDAgNzE4NyAgIC9saWIvbGliYy0NCj4gPiA+ID4gPiAy
-LjI4LnNvDQo+ID4gPiA+ID4gM2ZmN2ZkYTAwMC0zZmY3ZmRjMDAwIHJ3LXAgMDAxMDEwMDAgZmU6
-MDAgNzE4NyAgIC9saWIvbGliYy0NCj4gPiA+ID4gPiAyLjI4LnNvDQo+ID4gPiA+ID4gM2ZmN2Zk
-YzAwMC0zZmY3ZmUyMDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDAgMA0KPiA+ID4gPiA+IDNmZjdmZTQw
-MDAtM2ZmN2ZlNjAwMCByLXhwIDAwMDAwMDAwIDAwOjAwIDAgICAgICBbdmRzb10NCj4gPiA+ID4g
-PiAzZmY3ZmU2MDAwLTNmZjdmZmQwMDAgci14cCAwMDAwMDAwMCBmZTowMCA3MTkzICAgL2xpYi9s
-ZC0NCj4gPiA+ID4gPiAyLjI4LnNvDQo+ID4gPiA+ID4gM2ZmN2ZmZDAwMC0zZmY3ZmZlMDAwIHIt
-LXAgMDAwMTYwMDAgZmU6MDAgNzE5MyAgIC9saWIvbGQtDQo+ID4gPiA+ID4gMi4yOC5zbw0KPiA+
-ID4gPiA+IDNmZjdmZmUwMDAtM2ZmN2ZmZjAwMCBydy1wIDAwMDE3MDAwIGZlOjAwIDcxOTMgICAv
-bGliL2xkLQ0KPiA+ID4gPiA+IDIuMjguc28NCj4gPiA+ID4gPiAzZmY3ZmZmMDAwLTNmZjgwMDAw
-MDAgcnctcCAwMDAwMDAwMCAwMDowMCAwDQo+ID4gPiA+ID4gM2ZmZjg4ODAwMC0zZmZmOGE5MDAw
-IHJ3LXAgMDAwMDAwMDAgMDA6MDAgMCAgICAgIFtzdGFja10NCj4gPiA+ID4gPiANCj4gPiA+ID4g
-PiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcmUgR2hpdGkgPGFsZXhAZ2hpdGkuZnI+DQo+ID4gPiA+
-ID4gQWNrZWQtYnk6IFBhdWwgV2FsbXNsZXkgPHBhdWwud2FsbXNsZXlAc2lmaXZlLmNvbT4NCj4g
-PiA+ID4gPiBSZXZpZXdlZC1ieTogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+DQo+ID4g
-PiA+ID4gUmV2aWV3ZWQtYnk6IEtlZXMgQ29vayA8a2Vlc2Nvb2tAY2hyb21pdW0ub3JnPg0KPiA+
-ID4gPiA+IFJldmlld2VkLWJ5OiBMdWlzIENoYW1iZXJsYWluIDxtY2dyb2ZAa2VybmVsLm9yZz4N
-Cj4gPiA+ID4gPiAtLS0NCj4gPiA+ID4gPiAgICBhcmNoL3Jpc2N2L0tjb25maWcgfCAxMiArKysr
-KysrKysrKysNCj4gPiA+ID4gPiAgICAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKQ0K
-PiA+ID4gPiA+IA0KPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9hcmNoL3Jpc2N2L0tjb25maWcgYi9h
-cmNoL3Jpc2N2L0tjb25maWcNCj4gPiA+ID4gPiBpbmRleCA1OWE0NzI3ZWNkNmMuLjg3ZGM1Mzcw
-YmVjYiAxMDA2NDQNCj4gPiA+ID4gPiAtLS0gYS9hcmNoL3Jpc2N2L0tjb25maWcNCj4gPiA+ID4g
-PiArKysgYi9hcmNoL3Jpc2N2L0tjb25maWcNCj4gPiA+ID4gPiBAQCAtNTQsNiArNTQsMTggQEAg
-Y29uZmlnIFJJU0NWDQo+ID4gPiA+ID4gICAgCXNlbGVjdCBFREFDX1NVUFBPUlQNCj4gPiA+ID4g
-PiAgICAJc2VsZWN0IEFSQ0hfSEFTX0dJR0FOVElDX1BBR0UNCj4gPiA+ID4gPiAgICAJc2VsZWN0
-IEFSQ0hfV0FOVF9IVUdFX1BNRF9TSEFSRSBpZiA2NEJJVA0KPiA+ID4gPiA+ICsJc2VsZWN0IEFS
-Q0hfV0FOVF9ERUZBVUxUX1RPUERPV05fTU1BUF9MQVlPVVQgaWYgTU1VDQo+ID4gPiA+ID4gKwlz
-ZWxlY3QgSEFWRV9BUkNIX01NQVBfUk5EX0JJVFMNCj4gPiA+ID4gPiArDQo+ID4gPiA+ID4gK2Nv
-bmZpZyBBUkNIX01NQVBfUk5EX0JJVFNfTUlODQo+ID4gPiA+ID4gKwlkZWZhdWx0IDE4IGlmIDZs
-ZWdhY3lfdmFfbGF5b3V0NEJJVA0KPiA+ID4gPiA+ICsJZGVmYXVsdCA4DQo+ID4gPiA+ID4gKw0K
-PiA+ID4gPiA+ICsjIG1heCBiaXRzIGRldGVybWluZWQgYnkgdGhlIGZvbGxvd2luZyBmb3JtdWxh
-Og0KPiA+ID4gPiA+ICsjICBWQV9CSVRTIC0gUEFHRV9TSElGVCAtIDMNCj4gPiA+ID4gPiArY29u
-ZmlnIEFSQ0hfTU1BUF9STkRfQklUU19NQVgNCj4gPiA+ID4gPiArCWRlZmF1bHQgMjQgaWYgNjRC
-SVQgIyBTVjM5IGJhc2VkDQo+ID4gPiA+ID4gKwlkZWZhdWx0IDE3DQo+ID4gPiA+ID4gICAgDQo+
-ID4gPiA+ID4gICAgY29uZmlnIE1NVQ0KPiA+ID4gPiA+ICAgIAlkZWZfYm9vbCB5DQo+ID4gPiA+
-IFdpdGggdGhpcyBwYXRjaCwgSSBhbSBub3QgYWJsZSB0byBib290IGEgRmVkb3JhIExpbnV4KGEg
-R25vbWUNCj4gPiA+ID4gZGVza3RvcA0KPiA+ID4gPiBpbWFnZSkgb24gUklTQy1WIGhhcmR3YXJl
-IChVbmxlYXNoZWQgKyBNaWNyb3NlbWkgRXhwYW5zaW9uDQo+ID4gPiA+IGJvYXJkKS4NCj4gPiA+
-ID4gVGhlDQo+ID4gPiA+IGJvb3RpbmcgZ2V0cyBzdHVjayByaWdodCBhZnRlciBzeXN0ZW1kIHN0
-YXJ0cy4NCj4gPiA+ID4gDQo+ID4gPiA+IGh0dHBzOi8vcGFzdGUuZmVkb3JhcHJvamVjdC5vcmcv
-cGFzdGUvVE9yVU1xcUtILXBHRlg3Q25mYWpEZw0KPiA+ID4gPiANCj4gPiA+ID4gUmV2ZXJ0aW5n
-IGp1c3QgdGhpcyBwYXRjaCBhbGxvdyB0byBib290IEZlZG9yYSBzdWNjZXNzZnVsbHkgb24NCj4g
-PiA+ID4gc3BlY2lmaWMNCj4gPiA+ID4gUklTQy1WIGhhcmR3YXJlLiBJIGhhdmUgbm90IHJvb3Qg
-Y2F1c2VkIHRoZSBpc3N1ZSBidXQgaXQgbG9va3MNCj4gPiA+ID4gbGlrZQ0KPiA+ID4gPiBpdA0K
-PiA+ID4gPiBtaWdodCBoYXZlIG1lc3NlZCB1c2VycHNhY2UgbWFwcGluZy4NCj4gPiA+IEl0IG1p
-Z2h0IGhhdmUgbWVzc2VkIHVzZXJzcGFjZSBtYXBwaW5nIGJ1dCBub3QgZW5vdWdoIHRvIG1ha2UN
-Cj4gPiA+IHVzZXJzcGFjZQ0KPiA+ID4gY29tcGxldGVseSBicm9rZW4NCj4gPiA+IGFzIHN5c3Rl
-bWQgZG9lcyBzb21lIHRoaW5ncy4gSSB3b3VsZCB0cnkgdG8gYm9vdCBpbiBsZWdhY3kNCj4gPiA+
-IGxheW91dDoNCj4gPiA+IGlmDQo+ID4gPiB5b3UgY2FuIHRyeSB0byBzZXQgc3lzY3RsIGxlZ2Fj
-eV92YV9sYXlvdXQNCj4gPiA+IGF0IGJvb3R0aW1lLCBpdCB3aWxsIG1hcCB1c2Vyc3BhY2UgYXMg
-aXQgd2FzIGJlZm9yZSAoYm90dG9tLXVwKS4NCj4gPiA+IElmDQo+ID4gPiB0aGF0DQo+ID4gPiBk
-b2VzIG5vdCB3b3JrLCB0aGUgcHJvYmxlbSBjb3VsZA0KPiA+ID4gYmUgdGhlIHJhbmRvbWl6YXRp
-b24gdGhhdCBpcyBhY3RpdmF0ZWQgYnkgZGVmYXVsdCBub3cuDQo+ID4gUmFuZG9taXphdGlvbiBt
-YXkgbm90IGJlIHRoZSBpc3N1ZS4gSSBqdXN0IHJlbW92ZWQNCj4gPiBBUkNIX1dBTlRfREVGQVVM
-VF9UT1BET1dOX01NQVBfTEFZT1VUIGZyb20gdGhlIGNvbmZpZyBhbmQgdGhhdA0KPiA+IHNlZW1z
-IHRvDQo+ID4gd29yay4gSGVyZSBpcyB0aGUgYm90dG9tLXVwIGxheW91dCB3aXRoIHJhbmRvbWl6
-YXRpb24gb24uDQo+IA0KPiBPdXBzLCBzb3JyeSBmb3IgbXkgcHJldmlvdXMgYW5zd2VyLCBJIG1p
-c3NlZCB5b3VycyB0aGF0IGxhbmRlZCBpbiANCj4gYW5vdGhlciBmb2xkZXIuDQo+IA0KPiBSZW1v
-dmluZyBBUkNIX1dBTlRfREVGQVVMVF9UT1BET1dOX01NQVBfTEFZT1VUIGFsc28gcmVtb3Zlcw0K
-PiByYW5kb21pemF0aW9uDQo+IGFzIHRoaXMgY29uZmlnIHNlbGVjdHMgQVJDSF9IQVNfRUxGX1JB
-TkRPTUlaRS4NCj4gWW91IGNvdWxkIHJlbW92ZSBBUkNIX1dBTlRfREVGQVVMVF9UT1BET1dOX01N
-QVBfTEFZT1VUIGFuZCBzZWxlY3RzIGJ5DQo+IGhhbmQNCj4gQVJDSF9IQVNfRUxGX1JBTkRPTUla
-RSBidXQgeW91IHdvdWxkIGhhdmUgdG8gaW1wbGVtZW50IGFyY2hfbW1hcF9ybmQNCj4gYW5kDQo+
-IGFyY2hfcmFuZG9taXplX2JyayAoZWxmLXJhbmRvbWl6ZS5oKS4NCj4gDQoNCkFoaCBva2F5Lg0K
-DQo+IFRoZSBzaW1wbGVzdCB3b3VsZCBiZSB0byBib290IGluIGxlZ2FjeSBsYXlvdXQ6IEkgZGlk
-IG5vdCBmaW5kIGEgd2F5DQo+IHRvIA0KPiBzZXQgdGhpcyBpbiBrZXJuZWwNCj4gY29tbWFuZCBs
-aW5lLCBidXQgeW91IGNhbiBieSBtb2RpZnlpbmcgaXQgZGlyZWN0bHkgaW4gdGhlIGNvZGU6DQo+
-IA0KPiBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92NS40LXJjMi9zb3VyY2Uva2Vy
-bmVsL3N5c2N0bC5jI0wyNjkNCj4gDQoNClNldHRpbmcgdGhpcyB0byAxIHdvcmtzLiANCg0KPiA+
-IFtyb290QGZlZG9yYS1yaXNjdiB+XSMgY2F0IC9wcm9jL3NlbGYvbWFwcw0KPiA+IDE1NTU1NTYw
-MDAtMTU1NTU3MDAwMCByLXhwIDAwMDAwMDAwIDEwMzowMQ0KPiA+IDI4MDA5OCAgICAgICAgICAg
-ICAgICAgICAgICAgIC91c3IvbGliNjQvbGQtMi4yOC5zbw0KPiA+IDE1NTU1NzAwMDAtMTU1NTU3
-MTAwMCByLS1wIDAwMDE5MDAwIDEwMzowMQ0KPiA+IDI4MDA5OCAgICAgICAgICAgICAgICAgICAg
-ICAgIC91c3IvbGliNjQvbGQtMi4yOC5zbw0KPiA+IDE1NTU1NzEwMDAtMTU1NTU3MjAwMCBydy1w
-IDAwMDFhMDAwIDEwMzowMQ0KPiA+IDI4MDA5OCAgICAgICAgICAgICAgICAgICAgICAgIC91c3Iv
-bGliNjQvbGQtMi4yOC5zbw0KPiA+IDE1NTU1NzIwMDAtMTU1NTU3MzAwMCBydy1wIDAwMDAwMDAw
-IDAwOjAwIDANCj4gPiAxNTU1NTczMDAwLTE1NTU1NzUwMDAgci14cCAwMDAwMDAwMCAwMDowMA0K
-PiA+IDAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBbdmRzb10NCj4gPiAxNTU1NTc1MDAw
-LTE1NTU1NzYwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCj4gPiA1MDkzNiAgICAgICAgICAgICAg
-ICAgICAgICAgICAvdXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19JREVOVElGDQo+ID4gSUNB
-VA0KPiA+IElPTg0KPiA+IDE1NTU1NzYwMDAtMTU1NTU3ZDAwMCByLS1zIDAwMDAwMDAwIDEwMzow
-MQ0KPiA+IDI4MDgyNiAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliNjQvZ2NvbnYvZ2Nv
-bnYtbW9kdWxlcy5jYWNoZQ0KPiA+IDE1NTU1N2QwMDAtMTU1NTU3ZTAwMCByLS1wIDAwMDAwMDAw
-IDEwMzowMQ0KPiA+IDUwOTM3ICAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliL2xvY2Fs
-ZS9lbl9VUy51dGY4L0xDX01FQVNVUkUNCj4gPiBNRU5UDQo+ID4gMTU1NTU3ZTAwMC0xNTU1NTdm
-MDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQo+ID4gNTA5MzkgICAgICAgICAgICAgICAgICAgICAg
-ICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfVEVMRVBITw0KPiA+IE5FDQo+ID4gMTU1
-NTU3ZjAwMC0xNTU1NTgwMDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQo+ID4gMzcwNiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfQUREUkVTUw0K
-PiA+IDE1NTU1ODAwMDAtMTU1NTU4MTAwMCByLS1wIDAwMDAwMDAwIDEwMzowMQ0KPiA+IDUwOTQ0
-ICAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliL2xvY2FsZS9lbl9VUy51dGY4L0xDX05B
-TUUNCj4gPiAxNTU1NTgxMDAwLTE1NTU1ODIwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCj4gPiAz
-Nzc1ICAgICAgICAgICAgICAgICAgICAgICAgICAvdXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9M
-Q19QQVBFUg0KPiA+IDE1NTU1ODIwMDAtMTU1NTU4MzAwMCByLS1wIDAwMDAwMDAwIDEwMzowMQ0K
-PiA+IDM3NTggICAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliL2xvY2FsZS9lbl9VUy51
-dGY4L0xDX01FU1NBR0UNCj4gPiBTL1NZDQo+ID4gU19MQ19NRVNTQUdFUw0KPiA+IDE1NTU1ODMw
-MDAtMTU1NTU4NDAwMCByLS1wIDAwMDAwMDAwIDEwMzowMQ0KPiA+IDUwOTM4ICAgICAgICAgICAg
-ICAgICAgICAgICAgIC91c3IvbGliL2xvY2FsZS9lbl9VUy51dGY4L0xDX01PTkVUQVINCj4gPiBZ
-DQo+ID4gMTU1NTU4NDAwMC0xNTU1NTg1MDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQo+ID4gNTA5
-NDAgICAgICAgICAgICAgICAgICAgICAgICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENf
-VElNRQ0KPiA+IDE1NTU1ODUwMDAtMTU1NTU4NjAwMCByLS1wIDAwMDAwMDAwIDEwMzowMQ0KPiA+
-IDUwOTQ1ICAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliL2xvY2FsZS9lbl9VUy51dGY4
-L0xDX05VTUVSSUMNCj4gPiAxNTU1NTkwMDAwLTE1NTU1OTIwMDAgcnctcCAwMDAwMDAwMCAwMDow
-MCAwDQo+ID4gMTU1NTU5MjAwMC0xNTU1NmIxMDAwIHIteHAgMDAwMDAwMDAgMTAzOjAxDQo+ID4g
-MjgwMTA1ICAgICAgICAgICAgICAgICAgICAgICAgL3Vzci9saWI2NC9saWJjLTIuMjguc28NCj4g
-PiAxNTU1NmIxMDAwLTE1NTU2YjUwMDAgci0tcCAwMDExZTAwMCAxMDM6MDENCj4gPiAyODAxMDUg
-ICAgICAgICAgICAgICAgICAgICAgICAvdXNyL2xpYjY0L2xpYmMtMi4yOC5zbw0KPiA+IDE1NTU2
-YjUwMDAtMTU1NTZiNzAwMCBydy1wIDAwMTIyMDAwIDEwMzowMQ0KPiA+IDI4MDEwNSAgICAgICAg
-ICAgICAgICAgICAgICAgIC91c3IvbGliNjQvbGliYy0yLjI4LnNvDQo+ID4gMTU1NTZiNzAwMC0x
-NTU1NmJiMDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDAgMA0KPiA+IDE1NTU2YmIwMDAtMTU1NTkzMzAw
-MCByLS1wIDAwMDAwMDAwIDEwMzowMQ0KPiA+IDM3NTUgICAgICAgICAgICAgICAgICAgICAgICAg
-IC91c3IvbGliL2xvY2FsZS9lbl9VUy51dGY4L0xDX0NPTExBVEUNCj4gPiAxNTU1OTMzMDAwLTE1
-NTU5ODYwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCj4gPiA1MDk0MiAgICAgICAgICAgICAgICAg
-ICAgICAgICAvdXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19DVFlQRQ0KPiA+IDE1NTU5ODYw
-MDAtMTU1NTlhODAwMCBydy1wIDAwMDAwMDAwIDAwOjAwIDANCj4gPiAyYWFhYWFhMDAwLTJhYWFh
-YjEwMDAgci14cCAwMDAwMDAwMCAxMDM6MDENCj4gPiAyODM5NzUgICAgICAgICAgICAgICAgICAg
-ICAgICAvdXNyL2Jpbi9jYXQNCj4gPiAyYWFhYWIxMDAwLTJhYWFhYjIwMDAgci0tcCAwMDAwNjAw
-MCAxMDM6MDENCj4gPiAyODM5NzUgICAgICAgICAgICAgICAgICAgICAgICAvdXNyL2Jpbi9jYXQN
-Cj4gPiAyYWFhYWIyMDAwLTJhYWFhYjMwMDAgcnctcCAwMDAwNzAwMCAxMDM6MDENCj4gPiAyODM5
-NzUgICAgICAgICAgICAgICAgICAgICAgICAvdXNyL2Jpbi9jYXQNCj4gPiAyYWFhYWIzMDAwLTJh
-YWFhZDQwMDAgcnctcCAwMDAwMDAwMCAwMDowMA0KPiA+IDAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBbaGVhcF0NCj4gPiAzZmZmYzk3MDAwLTNmZmZjYjgwMDAgcnctcCAwMDAwMDAwMCAw
-MDowMA0KPiA+IDAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBbc3RhY2tdDQo+ID4gDQo+
-ID4gDQo+ID4gPiBBbnl3YXksIGl0J3Mgd2VpcmQgc2luY2UgdXNlcnNwYWNlIHNob3VsZCBub3Qg
-ZGVwZW5kIG9uIGhvdyB0aGUNCj4gPiA+IG1hcHBpbmcgaXMuDQo+ID4gPiANCj4gPiA+IElmIHlv
-dSBjYW4gaWRlbnRpZnkgdGhlIHByb2dyYW0gdGhhdCBzdGFsbHMsIHRoYXQgd291bGQgYmUNCj4g
-PiA+IGZhbnRhc3RpYw0KPiA+ID4gOikNCj4gPiA+IA0KPiA+IEl0IHN0dWNrcyB3aGlsZSBib290
-aW5nLiBTbyBJIGFtIG5vdCBzdXJlIGhvdyB0byBmaWd1cmUgb3V0IHdoaWNoDQo+ID4gcHJvZ3Jh
-bSBzdGFsbHMuIEl0IGlzIGRpZmZpY3VsdCB0byBmaWd1cmUgb3V0IGZyb20gYm9vdCBsb2cgYXMg
-aXQNCj4gPiBzdHVja3MgYXQgZGlmZmVyZW50IHBsYWNlcyBidXQgc29vbiBhZnRlciBzeXN0ZW1k
-IHN0YXJ0cy4NCj4gDQo+IElmIHlvdSBjYW4gYXR0YWNoIHRoZSBydW5uaW5nIGtlcm5lbCwgSSB3
-b3VsZCB1c2Ugdm1saW51eC1nZGIucHkNCj4gY29tbWFuZHMNCj4gdG8gZmlndXJlIG91dCB3aGlj
-aCBwcm9jZXNzZXMgYXJlIHJ1bm5pbmcgKGx4LXBzIGNvbW1hbmQgaW4NCj4gcGFydGljdWxhciBj
-b3VsZA0KPiBnaXZlIHVzIGEgaGludCkuIFlvdSBjYW4gYWxzbyBhZGQgdHJhY2VzIGRpcmVjdGx5
-IGluIHRoZSBrZXJuZWwgYW5kIA0KPiBlaXRoZXIgdXNlDQo+IGx4LWRtZXNnIGNvbW1hbmQgdG8g
-cHJpbnQgdGhlbSBmcm9tIGdkYiBvciB1c2UgeW91ciBzdGFuZGFyZCBzZXJpYWwNCj4gb3V0cHV0
-Og0KPiBJIHdvdWxkIHRoZW4gcHJpbnQgdGFza19zdHJ1Y3QtPmNvbW0gYXQgY29udGV4dCBzd2l0
-Y2ggdG8gc2VlIHdoaWNoDQo+IHByb2Nlc3MNCj4gaXMgc3R1Y2suDQo+IFRvIHVzZSB0aGUgcHl0
-aG9uIHNjcmlwdCwgeW91IG5lZWQgdG8gcmVjb21waWxlIHdpdGggREVCVUdfSU5GTyBhbmQNCj4g
-R0RCX1NDUklQVFMgZW5hYmxlZC4NCj4gDQo+IEZZSSwgSSBoYXZlIGp1c3QgYm9vdGVkIGEgY3Vz
-dG9tIGJ1aWxkcm9vdCBpbWFnZSBiYXNlZCBvbiBrZXJuZWwgNS40LQ0KPiByYzIuDQo+IA0KDQp2
-bWxpbnV4LWdkYi5weSB3b3JrcyBvbmx5IGlmIHlvdSBhcmUgcnVubmluZyBpbiBRZW11IG9yIGhh
-dmUgYSBKVEFHLg0KUmlnaHQgPyANCg0KSSBhbSBzZWVpbmcgdGhpcyBpc3N1ZSBvbmx5IG9uIEhp
-Rml2ZSBVbmxlYXNoZWQgKyBNaWNyb3NlbWkgRXhwYW5zaW9uDQpib2FyZCB3aXRoIEZlZG9yYSBH
-bm9tZSBkZXNrdG9wIGltYWdlLiBJIGNhbiBldmVuIGJvb3QgYSBGZWRvcmENCmRldmVsb3BlciBp
-bWFnZSBvbiBzYW1lIGhhcmR3YXJlIGFuZCBhIGJ1c3lib3ggaW1hZ2UgaW4gVW5sZWFzaGVkDQp3
-aXRob3V0IGFueSBpc3N1ZXMuIEJ1dCB0aGUgaXNzdWUgaXMgbm90IHNwZWNpZmljIHRvIGZlZG9y
-YSBhcyB3ZSBzZWUNCnRoZSBzYW1lIGlzc3VlIGluIE9wZW5FbWJlZGRlZCBkaXNrIGltYWdlIGFz
-IHdlbGwgKEhpRml2ZSBVbmxlYXNoZWQgKw0KTWljcm9zZW1pIEV4cGFuc2lvbiBib2FyZCkuIA0K
-DQpNYXkgYmUgaXQgZ2V0cyB0cmlnZ2VyZCBvbmx5IGlmIGJpZ2dlciB1c2Vyc3BhY2UgPw0KDQoN
-Cj4gTGV0IG1lIGtub3cgaWYgSSBjYW4gZG8gYW55dGhpbmcuDQo+IA0KPiBBbGV4DQo+IA0KPiA+
-ID4gQXMgdGhlIGNvZGUgaXMgY29tbW9uIHRvIG1pcHMgYW5kIGFybSBub3cgYW5kIEkgZGlkIG5v
-dCBoZWFyIGZyb20NCj4gPiA+IHRoZW0sDQo+ID4gPiBJIGltYWdpbmUgdGhlIHByb2JsZW0gY29t
-ZXMNCj4gPiA+IGZyb20gdXMuDQo+ID4gPiANCj4gPiA+IEFsZXgNCg0KLS0gDQpSZWdhcmRzLA0K
-QXRpc2gNCg==
+Hi folks,
+
+This is the second version of the RFC I originally posted here:
+
+https://lore.kernel.org/linux-xfs/20190801021752.4986-1-david@fromorbit.com/
+
+The original description of the patchset is below, the issues and
+approach to solving them has not changed. THere is some
+restructuring of the patch set - the first few patches are all the
+XFS fixes that can be merged regardless of the rest of the patchset,
+but the non-blocking reclaim is somewhat dependent of them for
+correct behaviour. The second set of patches are the shrinker
+infrastructure changes needed for the shrinkers to feed back
+reclaim progress to the main reclaim instructure and act on the
+feedback. The last set of patches are the XFS changes needed to
+convert inode reclaim over to a non-blocking, IO-less algorithm.
+
+Version 2:
+
+- added current_reclaim_account_pages() wrapper for reclaim_state updates
+- moved xfs_buf page free accounting to the page freeing code rather than
+  the reclaim loop that drops the LRU buffer reference.
+- increased log CIL flush limit by 2x
+- moved xfs_buf GFP_NOFS reclaim changes to correct patch
+- renamed sc->will_defer to sc->defer_work
+- used min() in do_shrink_slab() appropriately
+- converted xfs_trans_ail_update_bulk() to use new xfs_ail_update_finish()
+  function (fixes missing wakeups w/ xfs_ail_push_sync())
+- fixed CIL size limit calculation units - was calculating min size in sectors
+  rather than bytes. Fixes performance degradation w/ patch series.
+- dropped shadow buffer freeing - Brain pointed out it wasn't doing exactly what
+  I thought it was, and the memory saving were from the massively undersized
+  CIL limits, not early freeing of the shadow buffers. Needs rethinking.
+- fixed stray NULLCOMMITLSN in comments
+- pinned items don't track the commit LSN, just the CIL sequence number so we
+  can't use that to push the AIL.
+- removed stale tracing debug from AIL push code.
+- fixes to memory reclaim shrinker accounting in 5.3-rc3 result in direct
+  reclaim backoff working a whole lot better, such that it's no long necessary
+  for the XFS inode shrinker to wait for IO to complete. Changed the LRU reclaim
+  logic to simply push on the AIL if dirty inodes are hit, but never wait on
+  them. See the following commits for details of the shrinker
+  accounting changes:
+
+  0308f7cf19c9 ("mm/vmscan.c: calculate reclaimed slab caches in all reclaim paths")
+  e5ca8071fe65 ("mm/vmscan.c: add a new member reclaim_state in struct shrink_control")
+
+- Added a patch to convert xfs_reclaim_inodes() to use xfs_ail_push_all() which
+  gets rid of the last user of xfs_ail_push_sync(). This allows it to be removed
+  as "temporary infrastructure for the series" rather than having to be fixed up
+  and made robust. The optimisations and factoring it drove are retained, as
+  they are still a net improvement overall.
+- fixed atomic_long vs atomic64 issues with shrinker deferral rework.
+- don't drop ag reclaim cursor locking any more, it gets removed when all the
+  old reclaim code is removed.
+- added patch to change inode reclaim vs unreferenced XFS indoe lookup done by
+  inode write clustering and inode cluster freeing. This gets rid of the need
+  to cycle the ILOCK before running call_rcu() to queue the inode to be freed
+  when the current RCU grace period expires. In doing so, the last major
+  blocking point in XFS inode reclaim is removed.
+
+Comments, thoughts, testing all welcome....
+
+Cheers,
+
+Dave.
+
+---
+Diffstat:
+
+ drivers/staging/android/ashmem.c |   8 +-
+ fs/gfs2/glock.c                  |   5 +-
+ fs/gfs2/quota.c                  |   6 +-
+ fs/inode.c                       |   3 +-
+ fs/nfs/dir.c                     |   6 +-
+ fs/super.c                       |   6 +-
+ fs/xfs/xfs_buf.c                 |   4 +-
+ fs/xfs/xfs_icache.c              | 628 +++++++++++----------------------------
+ fs/xfs/xfs_icache.h              |  20 +-
+ fs/xfs/xfs_inode.c               | 131 ++++----
+ fs/xfs/xfs_inode.h               |   8 +
+ fs/xfs/xfs_inode_item.c          |  28 +-
+ fs/xfs/xfs_log.c                 |  10 +-
+ fs/xfs/xfs_log_cil.c             |  37 ++-
+ fs/xfs/xfs_log_priv.h            |  53 +++-
+ fs/xfs/xfs_mount.c               |  10 +-
+ fs/xfs/xfs_mount.h               |   6 +-
+ fs/xfs/xfs_qm.c                  |  11 +-
+ fs/xfs/xfs_super.c               |  94 ++++--
+ fs/xfs/xfs_trace.h               |   1 +
+ fs/xfs/xfs_trans_ail.c           |  88 ++++--
+ fs/xfs/xfs_trans_priv.h          |   6 +-
+ include/linux/shrinker.h         |   9 +-
+ include/linux/swap.h             |  23 +-
+ include/trace/events/vmscan.h    |  69 ++---
+ mm/slab.c                        |   3 +-
+ mm/slob.c                        |   4 +-
+ mm/slub.c                        |   3 +-
+ mm/vmscan.c                      | 231 +++++++++-----
+ net/sunrpc/auth.c                |   5 +-
+ 30 files changed, 741 insertions(+), 775 deletions(-)
+
+---
+[Original V1 patchset description]
+
+We've had a problem with inode reclaim for a long time - XFS is
+capable of caching tens of millions of inodes with ease and dirtying
+hundreds of thousands of those cached inodes every second. It is
+also capable of reclaiming more than half a million clean inodes per
+second per reclaim thread.
+
+The result of this is that when there is a significant change in
+sustained memory pressure on a system ith a large inode cache,
+memory reclaim rapdily frees all the clean inodes, but cannot make
+progress on reclaiming dirty inodes because they are rate limited
+by IO.
+
+However, the shrinker infrastructure in the kernel has no way to
+feed back rate limiting to the core memory reclaim algorithms.  In
+fact there are no feedback mechanisms at all, and so when reclaim
+has freed all the clean inodes and starts hitting dirty inodes, the
+filesystem has no way of telling reclaim that the inode reclaim rate
+has dropped from 500k/s to 500/s.
+
+The result is that reclaim continues to try to free memory, and
+because it makes no progress freeing inodes, it puts much more
+pressure on the page LRUs and frees pages. When it runs out of
+pages, it starts swapping, and when it runs out of swap or can't get
+a page for swap-in it starts going on an OOM kill rampage.
+
+That does nothing to "fix" the shortage of memory caused by the
+slowness of dirty inode reclaim - if memory demand continues we just
+keep hitting the OOM killer until either something critical is
+killed or memory demand eases.
+
+For a long time, XFS has avoided the insane spiral of shouty
+OOM-killer rage death by cleaning inodes directly in the shrinker.
+This has the effect of throttling memory reclaim to the rate at
+which dirty inodes can be cleaned, and so when we get into the state
+when memory reclaim is dependent on inode reclaim making progress
+we don't ever allow LRU reclaim to run so far ahead of inode reclaim
+that it winds up reclaim priority and runs out of LRU pages to
+reclaim and/or swap.
+
+This has a downside, though. When there is a large amount of clean
+page cache and a small amount of inode cache that is dirty (e.g.
+lots of file data pressure and/or application memory demand) the
+inode reclaim shrinkers can run out of clean inodes to reclaim and
+start blocking on inode writeback. This can result in long reclaim
+latencies even though there is lots of memory that can be
+immediately reclaimed from the page cache.
+
+There are other issues, too. We have to block kswapd, too, because
+it will continue running until watermarks are satisfied, and that
+is largely the vector for shouty swappy death if it doesn't back
+off before priority windup from lack of progress occurs. Blocking
+kswapd then affects direct reclaim function, which often backs off
+expecting kswapd to make progress in the mean time. But if kswapd
+is not making progress, direct reclaim ends up in priority windup
+from lack of progress, too. This is especially prevalent in
+workloads that have a high percentage of GFP_NOFS allocations (e.g.
+filesystem modification workloads).
+
+The shrinkers have another problem w/ GFP_NOFS reclaim: the work
+that is deferred because the shrinker cannot make progress gets
+lumped on the first reclaim context that can do that work. That
+means a direct reclaimer might get lumped with scanning millions of
+objects during low priority scanning when it should only be scanning
+a couple of thousand objects. This can result in highly
+unpredictable and extremely long direct reclaim delays.
+
+This is most definitely sub-optimal, but it's better than random
+and/or premature OOM killer invocation under trivial workloads and
+lots of reclaimable memory still being available.
+
+This patch set aims to fix all these problems. The memory reclaim
+and shrinker changes involve:
+
+- a substantial rework of how the shrinker defers work, moving all
+  the deferred work to kswapd to remove all the unpredictability
+  from direct reclaim.  Direct reclaim will only do the work the
+  direct reclaim context determines is necesary.
+
+- deferred work is capped, and the amount of deferred work kswapd
+  will do in each scan is increased linearly w.r.t. increasing
+  reclaim priority. Hence when we are desparate for memory, kswapd
+  will be running all the deferred work as quickly as possible.
+
+- The amount of deferred work and the amount of scanning that is
+  done by the shrinkers is now tracked in the struct reclaim_state.
+  This allows shrink_node() to see how much work is being done in
+  comparison to both the LRU scanning and how much is being deferred
+  to kswapd. This allows direct reclaim to back off when too much
+  work is being deferred and hence allow kswapd to make progress on
+  the deferred work while it waits.
+
+- A "need backoff" flag has been added to the struct reclaim_state.
+  This allows individual shrinkers to indicate to kswapd that they
+  need some time to finish work before being scanned again. This is
+  basically for the same case as kswapd backs off from LRU scanning.
+
+  i.e. the LRU scanning has run into the tail of the LRU and is
+  finding dirty objects that require IO to complete before reclaim
+  can make further progress. This is exactly the same problem we
+  have with inode reclaim in XFS, and it is this mechanism that
+  enables us to move to IO-less inode reclaim.
+
+The XFS changes are all over the place, and address both the reclaim
+blocking problems and all the other related issues I found while
+working on this patchest. These involve:
+
+- fixing IO priority inversion problems between metadata
+  writeback (inodes!) and log IO caused by the block layer write
+  throttling (more on this later).
+
+- some slab caches weren't marked as reclaimable, so were
+  incorrectly accounted. Also account for the pages xfs_buf reclaim
+  releases.
+
+- reduced the delayed logging dirty item aggregation size (the CIL).
+  This defines the minimum amount of memory XFS can operate in when
+  there is heavy modifications in progress.
+
+- reduced the memory footprint of the CIL when repeated
+  modifications to objects occur.
+
+- Added a mechanism to push the AIL to a specific LSN (metadata
+  modification epoch) and wait for it. This forms the basis for
+  direct inode reclaim deferring IO and waiting for some progress
+  without issuing IO iteslf.
+
+- reworked inode reclaim to use a list_lru to track inodes in
+  reclaim rather than a radix tree tag in the inode cache. We
+  iterated the radix tree for reclaim because it resulted in optimal
+  IO patterns from multiple concurrent reclaimers, but we dont' have
+  to care about that any more because all IO comes from the AIL now.
+
+  This gives us try LRU reclaim, and it allows us to effectively
+  determine when we've run out of clean inodes to easily reclaim and
+  provide that feedback to the higher levels via the "need backoff"
+  flag.
+
+- direct reclaim is non-blocking while scanning, but at the end of a
+  scan it will still block waiting for IO, but only for /some/
+  progress to be made and not specific individual IOs.
+
+- kswapd based reclaim is fully non-blocking.
+
+The result is that there is now enough feedback from the shrinkers
+into the main memory reclaim loop for it to back off in the
+situations where back-off is required to avoid OOM killer
+invocation, despite XFS now largely doing non-blocking reclaim.
+
+Testing involves at 16p/16GB machine running a fsmark workload that
+creates sustained heavy dirty inode cache pressure, then
+progressively locking 2GB of memory at time to squeeze the workload
+into less and less memory. A vanilla kernel runs well up to 12GB
+squeezed, but at 14GB squeezed performance goes to hell. With just
+the hacky "don't block kswapd by removing SYNC_WAIT" patch that
+people seem to like, OOM kills start when squeezed to 12GB. With
+that extended to direct reclaim, OOM kills start with squeezed to
+just 8GB. With the full patchset, it runs similar to a vanilla
+kernel up to 12GB squeezed, and vastly out-performs the vanilla
+kernel with 14GB squeezed. Performance only drops ~20% with a 14GB
+squeeze, whereas the vanilla kernel sees up to a 90% drop in
+performance.
+
+I also run testing with simoop, a simulated workload that Chris
+Mason put together to demonstrate the long tail latency and
+allocation stall problems the blocking in inode reclaim was causing.
+The vanilla kernel averaged ~5 stalls/s over a test period of 10
+hours, this patch series resulted in:
+
+alloc stall rate = 0.00/sec (avg: 0.04) (p50: 0.04) (p95: 0.16) (p99: 0.32)
+
+stalls almost going away entirely.
+
+So the signs are there that this is a workable solution to the
+problems caused by blocking inode reclaim without re-introducing the
+the Death-by-OOM-killer issues the blocking avoids.
+
+Please note that I haven't full gone non-blocking on direct reclaim
+for a couple of reasons:
+
+1. congestion_wait() and wait_iff_congested() are completely broken.
+The blkmq change-over ripped out all the block layer congestion
+reporting in 5.0 and didn't replace it with anything, so unless you
+are operating on an NFS client, Ceph, FUSE or a DVD, congestion
+checks and backoff aren't actually doing what they are supposed to.
+i.e. wait_iff_congested() never blocks, and congestion_wait() always
+sleeps for it's full timeout.
+
+IOWs, the whole bdi-based IO congestion feedback mechanism no longer
+functions as intended, and so I'm betting a lot of the memory
+reclaim heuristics no longer function as they were intended to...
+
+2. The block layer write throttle is full of priority inversions.
+Apart from the log IO one I fixed in this series, I noticed that
+swap in/out has a major problem. I lost count of the number of OOM
+kills that occurred from the swap in path when there were several
+processes blocked in wbt_wait() in the block layer in the swap out
+path. i.e. if swap out had been making progress, swap in would not
+have oom killed. Hence I found it still necessary to throttle direct
+reclaim back in the shrinker as there wasn't a realiable way to get
+the core reclaim code to throttle effectively.
+
+FWIW, from the swap in/out perspective, this whole inversion problem
+is made worse by #1: the congestion_wait/wait_iff_congested
+interfaces being broken. Direct reclaim uses wait_iff_congested() to
+back off if kswapd has indicated that the node is congested
+(PGDAT_CONGESTED) and reclaim is struggling to make progress.
+However, this backoff never actually happens now and hence direct
+reclaim barrels into the swap code as hard as it can and blocks in
+wbt_wait() waiting behind other swap IO instead of backing off and
+waiting for some IO to complete and then retrying it's allocation....
+
+So maybe if we fix the bdi congestion interfaces so they work again
+we can get rid of the waiting in direct reclaim, but right now I
+don't see any other choice....
+
+
