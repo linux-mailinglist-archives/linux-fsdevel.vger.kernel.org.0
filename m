@@ -2,117 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3278CD180F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 21:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE4D4D1864
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 21:14:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732055AbfJITLa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 15:11:30 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:44457 "EHLO
+        id S1731885AbfJITNj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 15:13:39 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:59653 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732017AbfJITL2 (ORCPT
+        with ESMTP id S1731968AbfJITLW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 15:11:28 -0400
+        Wed, 9 Oct 2019 15:11:22 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M9FSx-1iCUjn0qkZ-006OvI; Wed, 09 Oct 2019 21:11:20 +0200
+ 1N5VXu-1i2Ujq2Hqk-016vHR; Wed, 09 Oct 2019 21:11:20 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
         linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v6 35/43] compat_ioctl: move SIOCOUTQ out of compat_ioctl.c
-Date:   Wed,  9 Oct 2019 21:10:36 +0200
-Message-Id: <20191009191044.308087-36-arnd@arndb.de>
+        Paul Mackerras <paulus@samba.org>
+Subject: [PATCH v6 36/43] tty: handle compat PPP ioctls
+Date:   Wed,  9 Oct 2019 21:10:37 +0200
+Message-Id: <20191009191044.308087-37-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191009190853.245077-1-arnd@arndb.de>
 References: <20191009190853.245077-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Gs7WDz3cO6L34SuxnoUE0cPkG0RD46UJTcOdAtxxQ1wu2AcocIH
- MLlyJRAJ8Q6F2FRZDhUczb7xeo7VKSoS7S+r2JbhUK30znZWrAwlwhfU4RweQnK7sx89S/8
- s9RgheEsez9Uomff7IBT9Sltreuq64VyHWryfBMeRfUyAETmwTP08msug+UQKLwvT+1trrR
- Sv2dxjAVq0UUbeHAemB7A==
+X-Provags-ID: V03:K1:43BP+32+2SiwTrW6MHUM/okhpG3+oHxC7RcOSEJIqMvz5OLkUqt
+ 4/etTty+G8dCqllqFpFIPxLDCLHphxe0yjLccmA9PMIloSi4DvuMfEWE+N9gX0loKtl12KN
+ e2rIOaV9KpRmAdGGcnVEWrBiQ0lG5bqZodCI5jWL9IINqIFdiDQmwA7Ho6rWDHEHg3gBxjT
+ M+ZwTu5E43IV5LS9jLXww==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HtEfBJfsbxY=:E7oDDRVKYPFRpr3roXuDJ9
- 2a2dn8t9obGYSTPEUnz0t2K7GmIT/1+xA4ovsqk8Kur9QPB3c2IahhiyJmSHQFl4cZeSQryh1
- AqIQTSi1rtujSBNrlmRp25g3/c5MpZn/qJd/Qonjsru6QuxeC1LLH0STtADZWKJZZ1Q9bAE95
- RyKLn27ZRIaGPKzydfxflDf7+3EsMKNPB3UhsQn6vFpePJRnECESmuJa+f9xYFNHFpU9uwYZi
- 8k3POEKOCWbpWR7zINsvobTBZyqqKLDMpzlwVMPvftpTSw4BSRgCuATpj91oot5bPoKx0dVlI
- sOi67TGH6EqbrjBpIdl1HouxucUq9EuTT/5Hg6ohtbixGME8ADJR/Csf1eotQ2+xegqcY0MtE
- yOGlP3sSO+h/kSukU4ciwdDF6FEHJaFfp8i+ZWFhL824kNU52oi3hdvGjfAF1WWmSsPVA88Xc
- C/tJxGlyCGVHHbNeSzlVCR5xR8QLmke8AJOl9ahbVfSzjO1uFyjkCPngHAolmpzo/f36GFNpq
- 859XoS3QmUTOTZelYbFxGHLIsWA9bv/VNdg0cPP9wMW2Mg/hciK9h/86S9IaNBMOtyoR5g5yT
- PiCQwLHwcO/BycittMlz18e/6U1WgGzo6/SC542+TCVdLdXDv3G/9zXq/8p5fZ/ITYV1mWWZn
- Ct1DOaLHindVluRUugzQATVjV+lZGY+SGzzTFJaKmIRwtxzHu1kQKPXWuE/FjTSkzj0hcNhFk
- DE/WbvWIp6lSX+XlJ72O7pZFCjLwn2fZJQuayRTVm4Ijs/pEb6NqkyK2XbPfJZV29hXL/m9cx
- iOt3ysUxL08uOJqtj170VNDhNlkArXK02ON+8NeK+ohY/C7n7W2zmowIUXxtdUmuAZWU7vLC5
- 2dE4A/lwcI0iwAAG5Ssg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gtDDUaRl35U=:cNNhWfh43v/g15sk9Sw8Jk
+ qJ0JStosDeWOibvIqepXRzxCr/5DpPxW6r8CBD7JouAQn+zp7ipRB3BJ8bLu4dsRzmWoZ/Vsc
+ ujtTtGIT5tCt16EADFOYAfScuXBkuSEKcFjvqKA0C3uGZVGM7oMOcEps/gZY2Zhhqd/DoyvZJ
+ s6c1tiQWYNTIj5JFmAUEg3kM1Gt7WkPhAqtVtvjVvyZJNQU7fM6zAixHnhYtLqUyoxcv4HJWS
+ l20OpT3/OiJEepE0Zv5vRmJ+G48YWNoxc/8VkSqZCFFu6Ndx2X6rQLcyUIeDjdkwr6P9NDcXu
+ 0rVwnfVceb6M4rf0IiBruPUe4rhoyrq8QZja9QUzRbSpLyTVXb9x6BnF1Mpq32KF9eflgs20P
+ Nv9vCc3vmvuqXHcq4MnNx5h3gORAAA+vfNZI5BM0vK+qR7jajhGc92ONFasYswahZ+Bt7jUzT
+ wPHAfQStt6mek+qiSDGtlXtmByOlRsTP7/a07aaaNiGp0W3XXzM3w1UoLaV4lNJrE6O1Um9zx
+ hJEs6cclD5D653vrsjCLHKYGUb2NgMMKLpRCYPltRj3OoGNH4w6VPrlMNbTmQ6rCQxUpBlU0c
+ 76dZWRV42PYz85hj+HO740aHQBt4WscIPmXyr8DKP08ZNuWsATyo3vMjyL4QzSNUZmsPHIBBd
+ MSMZlrF0kcudKDKGpoPDit5D8JA8niV2asWhDYJYSndCB+z5hH1vgCX4aBJruEaKNo74v35FF
+ nYHF74YeFzDORpXF7RvyyfSt3gZ/mD18cz5GmKLZ2raM4USL9uDjjc1UlNaBamGmArU/7usuN
+ DSSq36+6+sF+mDfCZtG+WOnnrIXO63z3M/lsxwSk8cyyzcIAHFvV5qnrySF1Cz6XpSxuy7YIc
+ JUA7GVYrBlSzgov2GTAw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All users of this call are in socket or tty code, so handling
-it there means we can avoid the table entry in fs/compat_ioctl.c.
+Multiple tty devices are have tty devices that handle the
+PPPIOCGUNIT and PPPIOCGCHAN ioctls. To avoid adding a compat_ioctl
+handler to each of those, add it directly in tty_compat_ioctl
+so we can remove the calls from fs/compat_ioctl.c.
 
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Paul Mackerras <paulus@samba.org>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/tty/tty_io.c | 1 +
- fs/compat_ioctl.c    | 2 --
- net/socket.c         | 2 ++
- 3 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/tty_io.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 802c1210558f..c09691b20a25 100644
+index c09691b20a25..a81807b394d1 100644
 --- a/drivers/tty/tty_io.c
 +++ b/drivers/tty/tty_io.c
-@@ -2755,6 +2755,7 @@ static long tty_compat_ioctl(struct file *file, unsigned int cmd,
- 	int retval = -ENOIOCTLCMD;
- 
- 	switch (cmd) {
-+	case TIOCOUTQ:
- 	case TIOCSTI:
- 	case TIOCGWINSZ:
- 	case TIOCSWINSZ:
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index f279e77df256..d537888f3660 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -198,8 +198,6 @@ static int ppp_scompress(struct file *file, unsigned int cmd,
- 
- #define COMPATIBLE_IOCTL(cmd) XFORM((u32)cmd),
- static unsigned int ioctl_pointer[] = {
--/* Little t */
--COMPATIBLE_IOCTL(TIOCOUTQ)
- #ifdef CONFIG_BLOCK
- /* Big S */
- COMPATIBLE_IOCTL(SCSI_IOCTL_GET_IDLUN)
-diff --git a/net/socket.c b/net/socket.c
-index a60f48ab2130..371999a024fa 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -100,6 +100,7 @@
- #include <linux/if_tun.h>
- #include <linux/ipv6_route.h>
- #include <linux/route.h>
-+#include <linux/termios.h>
- #include <linux/sockios.h>
- #include <net/busy_poll.h>
- #include <linux/errqueue.h>
-@@ -3452,6 +3453,7 @@ static int compat_sock_ioctl_trans(struct file *file, struct socket *sock,
- 	case SIOCSARP:
- 	case SIOCGARP:
- 	case SIOCDARP:
-+	case SIOCOUTQ:
- 	case SIOCOUTQNSD:
- 	case SIOCATMARK:
- 		return sock_do_ioctl(net, sock, cmd, arg);
+@@ -87,6 +87,7 @@
+ #include <linux/string.h>
+ #include <linux/slab.h>
+ #include <linux/poll.h>
++#include <linux/ppp-ioctl.h>
+ #include <linux/proc_fs.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+@@ -2811,6 +2812,9 @@ static long tty_compat_ioctl(struct file *file, unsigned int cmd,
+ #endif
+ 	case TIOCGSOFTCAR:
+ 	case TIOCSSOFTCAR:
++
++	case PPPIOCGCHAN:
++	case PPPIOCGUNIT:
+ 		return tty_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
+ 	case TIOCCONS:
+ 	case TIOCEXCL:
 -- 
 2.20.0
 
