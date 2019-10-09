@@ -2,72 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA6D6D07EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 09:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A36BD082C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Oct 2019 09:19:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbfJIHLr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Oct 2019 03:11:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55448 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfJIHLr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Oct 2019 03:11:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6+sFNh9sdecUMLKw+OaXj40ADI+ElyZNUMxdlvfGrTE=; b=KcTxP8V34WjBLbWUB5h2X2Xi6
-        Dpqz31GU+u5ifbnFp6jrnxDiFo4wBcvdywV+QbolbN4eWxk9FPseLHMmbdBifRQ8cfCGzNxx9TcsM
-        QuzVr/6YaV7YFF3kmwH5lTotDszmsdVBKIKWr71SXbHMcgWigL8gM5d0iwlVHmcOIPHaA7JP4865j
-        6+zr21e72dtuw7BuabX6uVibCREjSUAeKVKVgROgiNC2rDqcvzrjxjHgbwyaC0LOouYrWJ3kVwbU4
-        1PuiJzz24QYnBXaqpdh1MpuMUMhDi8DneFPjsleCrOBoZYFSzulclGKsfxMlpNZTEIXBQkzKFvbdB
-        LRlwz8bVA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iI68P-0002Xs-3v; Wed, 09 Oct 2019 07:11:45 +0000
-Date:   Wed, 9 Oct 2019 00:11:45 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        david@fromorbit.com, darrick.wong@oracle.com
-Subject: Re: [PATCH v4 8/8] ext4: introduce direct I/O write path using iomap
- infrastructure
-Message-ID: <20191009071145.GB32281@infradead.org>
-References: <cover.1570100361.git.mbobrowski@mbobrowski.org>
- <9ef408b4079d438c0e6071b862c56fc8b65c3451.1570100361.git.mbobrowski@mbobrowski.org>
- <20191008151238.GK5078@quack2.suse.cz>
+        id S1726579AbfJIHTm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Oct 2019 03:19:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725440AbfJIHTm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Oct 2019 03:19:42 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E323D21835;
+        Wed,  9 Oct 2019 07:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570605582;
+        bh=98OfNYTmd0ZJ5b8/Q20kF+ue5inCBGi/sdE7mC+Z6QY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hfnB75/bX831YM/IPk/sTW4JoHaL+a43/uazEHpZWKRC7EA5iMrR/NcEmkMlCnfpW
+         ME4DFV34DcPxwanPZMsM77nLjrQcY67uSTeIhT8j2XPS/JF/hf1N328nKaMZeEj8Jz
+         IUxCzqZJcn5FniBnva4q1B8d5LBLTKgyv1nphhHE=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: [PATCH] fs/namespace.c: fix use-after-free of mount in mnt_warn_timestamp_expiry()
+Date:   Wed,  9 Oct 2019 00:18:50 -0700
+Message-Id: <20191009071850.258463-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <000000000000805e5505945a234b@google.com>
+References: <000000000000805e5505945a234b@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008151238.GK5078@quack2.suse.cz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 05:12:38PM +0200, Jan Kara wrote:
-> Seeing how difficult it is when a filesystem wants to complete the iocb
-> synchronously (regardless whether it is async or sync) and have all the
-> information in one place for further processing, I think it would be the
-> easiest to provide iomap_dio_rw_wait() that forces waiting for the iocb to
-> complete *and* returns the appropriate return value instead of pretty
-> useless EIOCBQUEUED. It is actually pretty trivial (patch attached). With
-> this we can then just call iomap_dio_rw_sync() for the inode extension case
-> with ->end_io doing just the unwritten extent processing and then call
-> ext4_handle_inode_extension() from ext4_direct_write_iter() where we would
-> have all the information we need.
-> 
-> Christoph, Darrick, what do you think about extending iomap like in the
-> attached patch (plus sample use in XFS)?
+From: Eric Biggers <ebiggers@google.com>
 
-I vaguely remember suggesting something like this but Brian or Dave
-convinced me it wasn't a good idea.  This will require a trip to the
-xfs or fsdevel archives from when the inode_dio_wait was added in XFS.
+After do_add_mount() returns success, the caller doesn't hold a
+reference to the 'struct mount' anymore.  So it's invalid to access it
+in mnt_warn_timestamp_expiry().
 
-But if we decide it actully works this time around please don't add the
-__ variant but just add the parameter to iomap_dio_rw directly.
+Fix it by instead passing the super_block and the mnt_flags.  It's safe
+to access the super_block because it's pinned by fs_context::root.
+
+Reported-by: syzbot+da4f525235510683d855@syzkaller.appspotmail.com
+Fixes: f8b92ba67c5d ("mount: Add mount warning for impending timestamp expiry")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/namespace.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index fe0e9e1410fe..7ef8edaaed69 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2466,12 +2466,11 @@ static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
+ 	unlock_mount_hash();
+ }
+ 
+-static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *mnt)
++static void mnt_warn_timestamp_expiry(struct path *mountpoint,
++				      struct super_block *sb, int mnt_flags)
+ {
+-	struct super_block *sb = mnt->mnt_sb;
+-
+-	if (!__mnt_is_readonly(mnt) &&
+-	   (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
++	if (!(mnt_flags & MNT_READONLY) && !sb_rdonly(sb) &&
++	    (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
+ 		char *buf = (char *)__get_free_page(GFP_KERNEL);
+ 		char *mntpath = buf ? d_path(mountpoint, buf, PAGE_SIZE) : ERR_PTR(-ENOMEM);
+ 		struct tm tm;
+@@ -2512,7 +2511,7 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+ 		set_mount_attributes(mnt, mnt_flags);
+ 	up_write(&sb->s_umount);
+ 
+-	mnt_warn_timestamp_expiry(path, &mnt->mnt);
++	mnt_warn_timestamp_expiry(path, sb, mnt_flags);
+ 
+ 	return ret;
+ }
+@@ -2555,7 +2554,7 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
+ 		up_write(&sb->s_umount);
+ 	}
+ 
+-	mnt_warn_timestamp_expiry(path, &mnt->mnt);
++	mnt_warn_timestamp_expiry(path, sb, mnt_flags);
+ 
+ 	put_fs_context(fc);
+ 	return err;
+@@ -2770,7 +2769,7 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
+ 		return error;
+ 	}
+ 
+-	mnt_warn_timestamp_expiry(mountpoint, mnt);
++	mnt_warn_timestamp_expiry(mountpoint, sb, mnt_flags);
+ 
+ 	return error;
+ }
+-- 
+2.23.0
+
