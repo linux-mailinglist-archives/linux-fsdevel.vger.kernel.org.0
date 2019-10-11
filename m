@@ -2,132 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA969D34B2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 01:56:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11599D354F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 02:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbfJJX4k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Oct 2019 19:56:40 -0400
-Received: from smtprelay0058.hostedemail.com ([216.40.44.58]:36546 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725951AbfJJX4k (ORCPT
+        id S1727504AbfJKALI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Oct 2019 20:11:08 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43330 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727478AbfJKALI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Oct 2019 19:56:40 -0400
-X-Greylist: delayed 368 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Oct 2019 19:56:39 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave05.hostedemail.com (Postfix) with ESMTP id E09A118041742;
-        Thu, 10 Oct 2019 23:50:31 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 4DA0E181D3377;
-        Thu, 10 Oct 2019 23:50:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:2898:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3868:3871:4321:4605:5007:6117:7576:7875:9391:10004:10400:11026:11232:11233:11473:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13439:14096:14097:14181:14659:14721:21080:21451:21505:21627:21740:21972:30054:30064:30070:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: dock63_3e5b57d448e10
-X-Filterd-Recvd-Size: 3509
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 10 Oct 2019 23:50:28 +0000 (UTC)
-Message-ID: <2231d5f0a82f880e6706e2d0f070328a029c9b21.camel@perches.com>
-Subject: Re: [PATCH v2 3/4] treewide: Use sizeof_member() macro
-From:   Joe Perches <joe@perches.com>
-To:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Cc:     Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Thu, 10 Oct 2019 16:50:27 -0700
-In-Reply-To: <20191010232345.26594-4-keescook@chromium.org>
-References: <20191010232345.26594-1-keescook@chromium.org>
-         <20191010232345.26594-4-keescook@chromium.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Thu, 10 Oct 2019 20:11:08 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iIiWO-0000GI-J7; Fri, 11 Oct 2019 00:11:04 +0000
+Date:   Fri, 11 Oct 2019 01:11:04 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
+ unsafe_put_user()
+Message-ID: <20191011001104.GJ26530@ZenIV.linux.org.uk>
+References: <20191007012437.GK26530@ZenIV.linux.org.uk>
+ <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
+ <20191007025046.GL26530@ZenIV.linux.org.uk>
+ <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
+ <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com>
+ <20191008032912.GQ26530@ZenIV.linux.org.uk>
+ <CAHk-=wiAyZmsEp6oQQgHiuaDU0bLj=OVHSGV_OfvHRSXNPYABw@mail.gmail.com>
+ <CAHk-=wgOWxqwqCFuP_Bw=Hxxf9njeHJs0OLNGNc63peNd=kRqw@mail.gmail.com>
+ <20191010195504.GI26530@ZenIV.linux.org.uk>
+ <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2019-10-10 at 16:23 -0700, Kees Cook wrote:
-> From: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
+On Thu, Oct 10, 2019 at 03:12:49PM -0700, Linus Torvalds wrote:
+> On Thu, Oct 10, 2019 at 12:55 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > Anyway, another question you way: what do you think of try/catch approaches
+> > to __get_user() blocks, like e.g. restore_sigcontext() is doing?
 > 
-> Replace all the occurrences of FIELD_SIZEOF() and sizeof_field() with
-> sizeof_member() except at places where these are defined. Later patches
-> will remove the unused definitions.
+> I'd rather have them converted to our unsafe_get/put_user() instead.
 > 
-> This patch is generated using following script:
+> We don't generate great code for the "get" case (because of how gcc
+> doesn't allow us to mix "asm goto" and outputs), but I really despise
+> the x86-specific "{get,put}_user_ex()" machinery. It's not actually
+> doing a real try/catch at all, and will just keep taking faults if one
+> happens.
 > 
-> EXCLUDE_FILES="include/linux/stddef.h|include/linux/kernel.h"
-> 
-> git grep -l -e "\bFIELD_SIZEOF\b" -e "\bsizeof_field\b" | while read file;
-> do
-> 
-> 	if [[ "$file" =~ $EXCLUDE_FILES ]]; then
-> 		continue
-> 	fi
-> 	sed -i  -e 's/\bFIELD_SIZEOF\b/sizeof_member/g' \
-> 		-e 's/\bsizeof_field\b/sizeof_member/g' \
-> 		$file;
-> done
+> But I've not gotten around to rewriting those disgusting sequences to
+> the unsafe_get/put_user() model. I did look at it, and it requires
+> some changes exactly *because* the _ex() functions are broken and
+> continue, but also because the current code ends up also doing other
+> things inside the try/catch region that you're not supposed to do in a
+> user_access_begin/end() region .
 
-While the sed works, a cocci script would perhaps
-be better as multi line argument realignment would
-also occur.
+Hmm...  Which one was that?  AFAICS, we have
+	do_sys_vm86: only get_user_ex()
+	restore_sigcontext(): get_user_ex(), set_user_gs()
+	ia32_restore_sigcontext(): get_user_ex()
 
-$ cat sizeof_member.cocci
-@@
-@@
+So at least get_user_try/get_user_ex/get_user_catch should be killable.
+The other side...
+	save_v86_state(): put_user_ex()
+	setup_sigcontext(): put_user_ex()
+	__setup_rt_frame(): put_user_ex(), static_cpu_has()
+	another one in __setup_rt_frame(): put_user_ex()
+	x32_setup_rt_frame(): put_user_ex()
+	ia32_setup_sigcontext(): put_user_ex()
+	ia32_setup_frame(): put_user_ex()
+	another one in ia32_setup_frame(): put_user_ex(), static_cpu_has()
 
--	FIELD_SIZEOF
-+	sizeof_member
+IDGI...  Is static_cpu_has() not allowed in there?  Looks like it's all inlines
+and doesn't do any potentially risky memory accesses...  What am I missing?
 
-@@
-@@
+As for the try/catch model...  How about
+	if (!user_access_begin())
+		sod off
+	...
+	unsafe_get_user(..., l);
+	...
+	unsafe_get_user_nojump();
+	...
+	unsafe_get_user_nojump();
+	...
+	if (user_access_did_fail())
+		goto l;
 
--	sizeof_field
-+	sizeof_member
-$
+	user_access_end()
+	...
+	return 0;
+l:
+	...
+	user_access_end()
+	return -EFAULT;
 
-For instance, this sed produces:
-
-diff --git a/crypto/adiantum.c b/crypto/adiantum.c
-@@ -435,10 +435,10 @@ static int adiantum_init_tfm(struct crypto_skcipher *tfm)
- 
- 	BUILD_BUG_ON(offsetofend(struct adiantum_request_ctx, u) !=
- 		     sizeof(struct adiantum_request_ctx));
--	subreq_size = max(FIELD_SIZEOF(struct adiantum_request_ctx,
-+	subreq_size = max(sizeof_member(struct adiantum_request_ctx,
- 				       u.hash_desc) +
- 			  crypto_shash_descsize(hash),
--			  FIELD_SIZEOF(struct adiantum_request_ctx,
-+			  sizeof_member(struct adiantum_request_ctx,
- 				       u.streamcipher_req) +
- 			  crypto_skcipher_reqsize(streamcipher));
- 
-
-where the cocci script produces:
-
---- crypto/adiantum.c
-+++ /tmp/cocci-output-22881-d8186c-adiantum.c
-@@ -435,11 +435,11 @@ static int adiantum_init_tfm(struct cryp
- 
- 	BUILD_BUG_ON(offsetofend(struct adiantum_request_ctx, u) !=
- 		     sizeof(struct adiantum_request_ctx));
--	subreq_size = max(FIELD_SIZEOF(struct adiantum_request_ctx,
--				       u.hash_desc) +
-+	subreq_size = max(sizeof_member(struct adiantum_request_ctx,
-+					u.hash_desc) +
- 			  crypto_shash_descsize(hash),
--			  FIELD_SIZEOF(struct adiantum_request_ctx,
--				       u.streamcipher_req) +
-+			  sizeof_member(struct adiantum_request_ctx,
-+					u.streamcipher_req) +
- 			  crypto_skcipher_reqsize(streamcipher));
- 
- 	crypto_skcipher_set_reqsize(tfm,
-
-
+making it clear that we are delaying the check for failures until it's
+more convenient.  And *not* trying to trick C parser into enforcing
+anything - let objtool do it and to hell with do { and } while (0) in
+magic macros.  Could be mixed with the normal unsafe_..._user() without
+any problems, AFAICS...
