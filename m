@@ -2,94 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77E90D4145
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 15:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9265CD417F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 15:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbfJKNbY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Oct 2019 09:31:24 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41597 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727950AbfJKNbY (ORCPT
+        id S1728343AbfJKNjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Oct 2019 09:39:40 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42786 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbfJKNjk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Oct 2019 09:31:24 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t3so5806977pga.8;
-        Fri, 11 Oct 2019 06:31:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PoH5MwnZ8mABUE4xEY3uv3HD3AizjwGwq9FYbMsqiJI=;
-        b=Dd1ZRQUqxJbJ4XmorKsIkCtEacO2eN09lx8ajkjbqAfiJu29ijb20yUVFhLES2aTAC
-         4QL7Kndoe+PxN+LYdFsp2lGfyuVNxnUBXgGL/HFakv10SrqS3+YzRMMBGS/5AuM0qlDn
-         VwX4247mLRYbydvGYCP7gGBNU2Uu7H+peXDi/cJUx3mDSY340fLjw2+5GB8Wc28eCZrS
-         n8QyxrNZjj0KNuY4OPv/yTNr5LKizc2oz1sB5GJD9k262ioPMubB2zzLWSBYfH526Ws9
-         AO5vQdOSr9WbeYAmcunbARwBa9vpuV9n8vty5ILql8hK+8i5Xpwgcg7QhX6eYZNQRz83
-         4QFA==
-X-Gm-Message-State: APjAAAXticFZNFAla4guUMdajszLoyuuDSFyefuqrKwJeTlx08PUfEfJ
-        ZBOLRBXD44y6QqNk+1pUpKY=
-X-Google-Smtp-Source: APXvYqx8TVKU23vxfiCJYNLm8ZBGLiP4x+3bYJYdBArplQPvFpQtfe3pjF2ftceD826I4XWYVhs9MQ==
-X-Received: by 2002:a17:90a:9f94:: with SMTP id o20mr17787166pjp.76.1570800682200;
-        Fri, 11 Oct 2019 06:31:22 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id d4sm7744375pjs.9.2019.10.11.06.31.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2019 06:31:21 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 61BD5403EA; Fri, 11 Oct 2019 13:31:20 +0000 (UTC)
-Date:   Fri, 11 Oct 2019 13:31:20 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
-Message-ID: <20191011133120.GP16384@42.do-not-panic.com>
-References: <20190822192451.5983-1-scott.branden@broadcom.com>
- <20190822192451.5983-3-scott.branden@broadcom.com>
- <s5hef1crybq.wl-tiwai@suse.de>
- <10461fcf-9eca-32b6-0f9d-23c63b3f3442@broadcom.com>
- <s5hr258j6ln.wl-tiwai@suse.de>
- <93b8285a-e5eb-d4a4-545d-426bbbeb8008@broadcom.com>
- <s5ho90byhnv.wl-tiwai@suse.de>
- <b440f372-45be-c06c-94a1-44ae6b1e7eb8@broadcom.com>
- <s5hwoeyj3i5.wl-tiwai@suse.de>
+        Fri, 11 Oct 2019 09:39:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=fdMe6cL6Uk37LOFczS5vgqxs2TCG8T5VUGagwWOW2o0=; b=F4yA5MdUoG1tVIls/gBlimaPMp
+        WtDnwEIL7aV4Nd12pNip8rGAfAJDN1beLlinen3KE/SkqeiCNceOUaJ5I3ztinH0qKzMxxqxjhG+t
+        bba+/drYqY64YMPAutj20ik4URd3F5/bAMH9J29hbjYPUD7PB0RgexHUvxZdiqOLwYMvp82lz4GHq
+        VMlU3CDcsJM6Gemsn0ySieH+pcnQLVr6XOVUZtM1n7Bdg6I0XXFwZjhB8/NMmLVD27mr3yCCyvElj
+        OQPzT55mPghtUoLWJCR8IrsjIY/fp8xzGEsYnjdQkGfIPINLgF4w8d7do7AcQcBgDk85zAsbJxxxa
+        VzbsrJQA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iIv8i-00089i-Q5; Fri, 11 Oct 2019 13:39:28 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 919BA301224;
+        Fri, 11 Oct 2019 15:38:33 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 402A22023D649; Fri, 11 Oct 2019 15:39:26 +0200 (CEST)
+Date:   Fri, 11 Oct 2019 15:39:26 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH 25/26] xfs: rework unreferenced inode lookups
+Message-ID: <20191011133926.GY2328@hirez.programming.kicks-ass.net>
+References: <20191009032124.10541-1-david@fromorbit.com>
+ <20191009032124.10541-26-david@fromorbit.com>
+ <20191011125522.GA13167@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <s5hwoeyj3i5.wl-tiwai@suse.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191011125522.GA13167@infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 12:40:02PM +0200, Takashi Iwai wrote:
-> On Mon, 26 Aug 2019 19:24:22 +0200,
-> Scott Branden wrote:
-> > 
-> > I will admit I am not familiar with every subtlety of PCI
-> > accesses. Any comments to the Valkyrie driver in this patch series are
-> > appreciated.
-> > But not all drivers need to work on all architectures. I can add a
-> > depends on x86 64bit architectures to the driver to limit it to such.
+On Fri, Oct 11, 2019 at 05:55:22AM -0700, Christoph Hellwig wrote:
+> On Wed, Oct 09, 2019 at 02:21:23PM +1100, Dave Chinner wrote:
+
+> > @@ -131,6 +132,7 @@ xfs_inode_free(
+> >  	 * free state. The ip->i_flags_lock provides the barrier against lookup
+> >  	 * races.
+> >  	 */
+> > +	xfs_ilock(ip, XFS_ILOCK_EXCL);
 > 
-> But it's an individual board on PCIe, and should work no matter which
-> architecture is?  Or is this really exclusive to x86?
+> This introduceѕ a non-owner unlock of an exclusively held rwsem.  As-is
+> this will make lockdep very unhappy.  We have a non-owner unlock version
+> of up_read, but not of up_write currently.  I'm also not sure if those
+> are allowed from RCU callback, which IIRC can run from softirq context.
+> 
+> That being said this scheme of only unlocking the inode in the rcu free
+> callback makes totaly sense to me, so I wish we can accomodate it
+> somehow.
 
-Poke Scott.
-
-  Luis
+I'm thinking that, barring the little issue of not actually having the
+function, up_write_non_owner() should work from RCU callback context.
+That is, I don't see rwsem_wake() do anything not allowed there.
