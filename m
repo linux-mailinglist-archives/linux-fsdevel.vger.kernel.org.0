@@ -2,117 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 760D9D442D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 17:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECC61D4439
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 17:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfJKP3O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Oct 2019 11:29:14 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60202 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbfJKP3N (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Oct 2019 11:29:13 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9BFNgOr096818;
-        Fri, 11 Oct 2019 15:29:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=MsuotdAFaOMeEC/raKqstKTSiuaWwp2FNL9cMOEAuqw=;
- b=XGriVgZ0BExukqYJly8UItVCMa+wg20eMK+vZiGg8uywNRogAjO3nvsg7GuB7sDvmAN9
- LFU2iZ9eTN3ZHyRbXcRCsgNCO6FQGJHvz2PFSgpx3ynv/HRCGAfFM3L/3NZde8yX0V0f
- Lt/qmoQlb7GGzEJNdTjmbNU8SPwK8fyo9xt8RmsOw+Mr3+2WiWpjW6qVNFmqsSjYue3O
- yxEao3Y5xnQeeXx3431JymaQwkojwGneg9kQaSwLsRcUT/XcDIA+ksARMxMA/9R346wD
- GK4lb051c9JhPDk4E5hIc0rnQIZjr3mtlKVKbKYW3ApLfdkKpMTyi3q+G8a7i1PElrjr pw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2vejkv2g1s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Oct 2019 15:29:05 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9BFNYZB125338;
-        Fri, 11 Oct 2019 15:29:04 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2vj9qv40x7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Oct 2019 15:29:04 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9BFT3AB030582;
-        Fri, 11 Oct 2019 15:29:04 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 11 Oct 2019 08:29:03 -0700
-Date:   Fri, 11 Oct 2019 08:28:59 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [PATCH 2/2] xfs: Use iomap_dio_rw_wait()
-Message-ID: <20191011152859.GK13108@magnolia>
-References: <20191011125520.11697-1-jack@suse.cz>
- <20191011141433.18354-2-jack@suse.cz>
+        id S1727605AbfJKP3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Oct 2019 11:29:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34338 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726328AbfJKP3s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Oct 2019 11:29:48 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6624E30655F9;
+        Fri, 11 Oct 2019 15:29:48 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4A031100EBD3;
+        Fri, 11 Oct 2019 15:29:47 +0000 (UTC)
+Date:   Fri, 11 Oct 2019 11:29:45 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 16/26] xfs: synchronous AIL pushing
+Message-ID: <20191011152945.GH61257@bfoster>
+References: <20191009032124.10541-1-david@fromorbit.com>
+ <20191009032124.10541-17-david@fromorbit.com>
+ <20191011101825.GA29171@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191011141433.18354-2-jack@suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9406 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=975
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910110143
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9406 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910110143
+In-Reply-To: <20191011101825.GA29171@infradead.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 11 Oct 2019 15:29:48 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 04:14:32PM +0200, Jan Kara wrote:
-> Use iomap_dio_rw() to wait for unaligned direct IO instead of opencoding
-> the wait.
+On Fri, Oct 11, 2019 at 03:18:25AM -0700, Christoph Hellwig wrote:
+> On Wed, Oct 09, 2019 at 02:21:14PM +1100, Dave Chinner wrote:
+> > Factor the common AIL deletion code that does all the wakeups into a
+> > helper so we only have one copy of this somewhat tricky code to
+> > interface with all the wakeups necessary when the LSN of the log
+> > tail changes.
+> > 
+> > xfs_ail_push_sync() is temporary infrastructure to facilitate
+> > non-blocking, IO-less inode reclaim throttling that allows further
+> > structural changes to be made. Once those structural changes are
+> > made, the need for this function goes away and it is removed,
+> > leaving us with only the xfs_ail_update_finish() factoring when this
+> > is all done.
 > 
-> Signed-off-by: Jan Kara <jack@suse.cz>
-
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  fs/xfs/xfs_file.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+> The xfs_ail_update_finish work here is in an earlier patch, so the
+> changelog will need some updates.
 > 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 0739ba72a82e..c0620135a279 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -547,16 +547,12 @@ xfs_file_dio_aio_write(
->  	}
->  
->  	trace_xfs_file_direct_write(ip, count, iocb->ki_pos);
-> -	ret = iomap_dio_rw(iocb, from, &xfs_iomap_ops, &xfs_dio_write_ops,
-> -			   is_sync_kiocb(iocb));
-> -
->  	/*
-> -	 * If unaligned, this is the only IO in-flight. If it has not yet
-> -	 * completed, wait on it before we release the iolock to prevent
-> -	 * subsequent overlapping IO.
-> +	 * If unaligned, this is the only IO in-flight. Wait on it before we
-> +	 * release the iolock to prevent subsequent overlapping IO.
->  	 */
-> -	if (ret == -EIOCBQUEUED && unaligned_io)
-> -		inode_dio_wait(inode);
-> +	ret = iomap_dio_rw(iocb, from, &xfs_iomap_ops, &xfs_dio_write_ops,
-> +			   is_sync_kiocb(iocb) || unaligned_io);
->  out:
->  	xfs_iunlock(ip, iolock);
->  
-> -- 
-> 2.16.4
+> > +	spin_lock(&ailp->ail_lock);
+> > +	while ((lip = xfs_ail_min(ailp)) != NULL) {
+> > +		prepare_to_wait(&ailp->ail_push, &wait, TASK_UNINTERRUPTIBLE);
+> > +		if (XFS_FORCED_SHUTDOWN(ailp->ail_mount) ||
+> > +		    XFS_LSN_CMP(threshold_lsn, lip->li_lsn) <= 0)
+
+Wasn't this supposed to change to < 0? The rfc series had that logic,
+but it changed from <= to < later in the wrong patch.
+
+> > +			break;
+> > +		/* XXX: cmpxchg? */
+> > +		while (XFS_LSN_CMP(threshold_lsn, ailp->ail_target) > 0)
+> > +			xfs_trans_ail_copy_lsn(ailp, &ailp->ail_target, &threshold_lsn);
 > 
+> This code looks broken on 32-bit given that xfs_trans_ail_copy_lsn takes
+> the ail_lock there.  Just replacing the xfs_trans_ail_copy_lsn call with
+> a direct assignment would fix that, no need for cmpxchg either as far
+> as I can tell (and it would fix that too long line as well).
+> 
+> But a:
+> 
+> 		while (XFS_LSN_CMP(threshold_lsn, ailp->ail_target) > 0)
+> 			ailp->ail_target = threshold_lsn;
+> 
+> still looks odd, I think this should simply be an if. 
+> 
+> > +		wake_up_process(ailp->ail_task);
+> > +		spin_unlock(&ailp->ail_lock);
+> 
+> xfsaild will take ail_lock pretty quickly.  I think we should drop
+> the lock before waking it.
+
+Can't we replace this whole thing with something that repurposes
+xfs_ail_push_all_sync()? That only requires some tweaks to the existing
+function and the new _push_all_sync() wrapper ends up looking something
+like:
+
+	while ((threshold_lsn = xfs_ail_max_lsn(ailp)) != 0)
+		xfs_ail_push_sync(ailp, threshold_lsn);
+
+There's an extra lock cycle, but that's still only on tail updates. That
+doesn't seem unreasonable to me for the usage of _push_all_sync().
+
+Brian
