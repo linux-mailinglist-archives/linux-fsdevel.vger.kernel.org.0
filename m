@@ -2,174 +2,329 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEC94D3FC0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 14:40:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E2E7D4002
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 14:55:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbfJKMkq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Oct 2019 08:40:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46176 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727883AbfJKMkq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Oct 2019 08:40:46 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 79308C04D293;
-        Fri, 11 Oct 2019 12:40:45 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EDFB5600C4;
-        Fri, 11 Oct 2019 12:40:44 +0000 (UTC)
-Date:   Fri, 11 Oct 2019 08:40:43 -0400
-From:   Brian Foster <bfoster@redhat.com>
+        id S1728171AbfJKMzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Oct 2019 08:55:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35896 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728033AbfJKMzY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Oct 2019 08:55:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=cpBxXW6xyZSjbosFzqbOGcgYwTTIttJNqLRC6iC23gU=; b=OFvUkDnEXmsMbwN74++/biIkuT
+        EFA0r6RVaO3LhXwVVLvn8QmOSBauUblrQqyEZveW4y8BjSkuTf8ZzV4TD3cT/zYaUiRRLM4PhD8Bs
+        sZsT/TRK/ZiJZ2Pf7nEL++fVih0dlRP3/lNEX/bohotZ4F+i/4vnzVp/XW9aSbhLz2gH8y/Ca/iMV
+        rrUjQr0+dt1t7HBWdLgCGJk38OjxtfaqLF7uZhS0briRw5PzNw6BdK/dYqe9VGD04im/a/eTgvMX0
+        rSc6C/4Njv4FOd82K/OZjN7dN+4UcX4Yy5rlkpC8ogZrmPgle5ycw6fQ6my2CLSaIeANRoj/UIZdZ
+        mXVg/NvA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iIuS2-0008B4-L0; Fri, 11 Oct 2019 12:55:22 +0000
+Date:   Fri, 11 Oct 2019 05:55:22 -0700
+From:   Christoph Hellwig <hch@infradead.org>
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 07/26] xfs: tail updates only need to occur when LSN
- changes
-Message-ID: <20191011124043.GG61257@bfoster>
+        linux-fsdevel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH 25/26] xfs: rework unreferenced inode lookups
+Message-ID: <20191011125522.GA13167@infradead.org>
 References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-8-david@fromorbit.com>
+ <20191009032124.10541-26-david@fromorbit.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191009032124.10541-8-david@fromorbit.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191009032124.10541-26-david@fromorbit.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 11 Oct 2019 12:40:45 +0000 (UTC)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 02:21:05PM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> We currently wake anything waiting on the log tail to move whenever
-> the log item at the tail of the log is removed. Historically this
-> was fine behaviour because there were very few items at any given
-> LSN. But with delayed logging, there may be thousands of items at
-> any given LSN, and we can't move the tail until they are all gone.
-> 
-> Hence if we are removing them in near tail-first order, we might be
-> waking up processes waiting on the tail LSN to change (e.g. log
-> space waiters) repeatedly without them being able to make progress.
-> This also occurs with the new sync push waiters, and can result in
-> thousands of spurious wakeups every second when under heavy direct
-> reclaim pressure.
-> 
-> To fix this, check that the tail LSN has actually changed on the
-> AIL before triggering wakeups. This will reduce the number of
-> spurious wakeups when doing bulk AIL removal and make this code much
-> more efficient.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> ---
->  fs/xfs/xfs_inode_item.c | 18 ++++++++++----
->  fs/xfs/xfs_trans_ail.c  | 52 ++++++++++++++++++++++++++++-------------
->  fs/xfs/xfs_trans_priv.h |  4 ++--
->  3 files changed, 51 insertions(+), 23 deletions(-)
-> 
-...
-> diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
-> index 656819523bbd..685a21cd24c0 100644
-> --- a/fs/xfs/xfs_trans_ail.c
-> +++ b/fs/xfs/xfs_trans_ail.c
-...
-> @@ -745,9 +754,10 @@ xfs_trans_ail_update_bulk(
->  				continue;
+On Wed, Oct 09, 2019 at 02:21:23PM +1100, Dave Chinner wrote:
+> 	4. it xfs_ilock_nowait() fails until the rcu grace period
+
+Should this be:
+
+> 	4. if xfs_ilock_nowait() fails before the rcu grace period
+
+?
+
+> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>  	kmem_zone_free(xfs_inode_zone, ip);
+>  }
 >  
->  			trace_xfs_ail_move(lip, lip->li_lsn, lsn);
-> +			if (mlip == lip && !tail_lsn)
-> +				tail_lsn = lip->li_lsn;
+> @@ -131,6 +132,7 @@ xfs_inode_free(
+>  	 * free state. The ip->i_flags_lock provides the barrier against lookup
+>  	 * races.
+>  	 */
+> +	xfs_ilock(ip, XFS_ILOCK_EXCL);
+
+This introduceѕ a non-owner unlock of an exclusively held rwsem.  As-is
+this will make lockdep very unhappy.  We have a non-owner unlock version
+of up_read, but not of up_write currently.  I'm also not sure if those
+are allowed from RCU callback, which IIRC can run from softirq context.
+
+That being said this scheme of only unlocking the inode in the rcu free
+callback makes totaly sense to me, so I wish we can accomodate it
+somehow.
+
+> @@ -312,7 +327,8 @@ xfs_iget_cache_hit(
+>  			rcu_read_lock();
+>  			spin_lock(&ip->i_flags_lock);
+>  			wake = !!__xfs_iflags_test(ip, XFS_INEW);
+> -			ip->i_flags &= ~(XFS_INEW | XFS_IRECLAIM);
+> +			ip->i_flags &= ~XFS_INEW | XFS_IRECLAIM;
+
+This change looks wrong to me, or did I miss something?  We now
+clear all bits that are not XFS_I_NEW and XFS_IRECLAIM, which
+already is set in ~XFS_INEW.  So if that was the intent just:
+
+		ip->i_flags &= ~XFS_INEW;
+
+would do it.
+
+> + * This requires code that requires such pins to do the following under a single
+
+This adds an > 80 char line.  (there are a few more below.
+
+> +		/* push the AIL to clean dirty reclaimable inodes */
+> +		xfs_ail_push_all(mp->m_ail);
 > +
->  			xfs_ail_delete(ailp, lip);
-> -			if (mlip == lip)
-> -				mlip_changed = 1;
+> +		/* push the AIL to clean dirty reclaimable inodes */
+> +		xfs_ail_push_all(mp->m_ail);
+> +
 
-FWIW, I think this code could be simplified to just assign tail_lsn
-directly via the new helper and pass that value into
-xfs_ail_update_finish() below. I doubt filtering out that extra lsn
-comparison with the mlip check makes much difference when we're already
-doing a bulk insertion and referencing every lip along the way. That's
-just a nit though. Otherwise looks fine to me:
+This looks spurious vs the rest of the patch.
 
-Reviewed-by: Brian Foster <bfoster@redhat.com>
+> +			if (__xfs_iflags_test(ip, XFS_ISTALE)) {
+> +				spin_unlock(&ip->i_flags_lock);
+> +				if (ip != free_ip)
+>  					xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> -				}
+> +				rcu_read_unlock();
+> +				continue;
 
->  		} else {
->  			trace_xfs_ail_insert(lip, 0, lsn);
->  		}
-> @@ -758,15 +768,23 @@ xfs_trans_ail_update_bulk(
->  	if (!list_empty(&tmp))
->  		xfs_ail_splice(ailp, cur, &tmp, lsn);
->  
-> -	xfs_ail_update_finish(ailp, mlip_changed);
-> +	xfs_ail_update_finish(ailp, tail_lsn);
->  }
->  
-> -bool
-> +/*
-> + * Delete one log item from the AIL.
-> + *
-> + * If this item was at the tail of the AIL, return the LSN of the log item so
-> + * that we can use it to check if the LSN of the tail of the log has moved
-> + * when finishing up the AIL delete process in xfs_ail_update_finish().
-> + */
-> +xfs_lsn_t
->  xfs_ail_delete_one(
->  	struct xfs_ail		*ailp,
->  	struct xfs_log_item	*lip)
->  {
->  	struct xfs_log_item	*mlip = xfs_ail_min(ailp);
-> +	xfs_lsn_t		lsn = lip->li_lsn;
->  
->  	trace_xfs_ail_delete(lip, mlip->li_lsn, lip->li_lsn);
->  	xfs_ail_delete(ailp, lip);
-> @@ -774,7 +792,9 @@ xfs_ail_delete_one(
->  	clear_bit(XFS_LI_IN_AIL, &lip->li_flags);
->  	lip->li_lsn = 0;
->  
-> -	return mlip == lip;
-> +	if (mlip == lip)
-> +		return lsn;
-> +	return 0;
->  }
->  
->  /**
-> @@ -805,7 +825,7 @@ xfs_trans_ail_delete(
->  	int			shutdown_type)
->  {
->  	struct xfs_mount	*mp = ailp->ail_mount;
-> -	bool			need_update;
-> +	xfs_lsn_t		tail_lsn;
->  
->  	if (!test_bit(XFS_LI_IN_AIL, &lip->li_flags)) {
->  		spin_unlock(&ailp->ail_lock);
-> @@ -818,8 +838,8 @@ xfs_trans_ail_delete(
->  		return;
->  	}
->  
-> -	need_update = xfs_ail_delete_one(ailp, lip);
-> -	xfs_ail_update_finish(ailp, need_update);
-> +	tail_lsn = xfs_ail_delete_one(ailp, lip);
-> +	xfs_ail_update_finish(ailp, tail_lsn);
->  }
->  
->  int
-> diff --git a/fs/xfs/xfs_trans_priv.h b/fs/xfs/xfs_trans_priv.h
-> index 64ffa746730e..35655eac01a6 100644
-> --- a/fs/xfs/xfs_trans_priv.h
-> +++ b/fs/xfs/xfs_trans_priv.h
-> @@ -91,8 +91,8 @@ xfs_trans_ail_update(
->  	xfs_trans_ail_update_bulk(ailp, NULL, &lip, 1, lsn);
->  }
->  
-> -bool xfs_ail_delete_one(struct xfs_ail *ailp, struct xfs_log_item *lip);
-> -void xfs_ail_update_finish(struct xfs_ail *ailp, bool do_tail_update)
-> +xfs_lsn_t xfs_ail_delete_one(struct xfs_ail *ailp, struct xfs_log_item *lip);
-> +void xfs_ail_update_finish(struct xfs_ail *ailp, xfs_lsn_t old_lsn)
->  			__releases(ailp->ail_lock);
->  void xfs_trans_ail_delete(struct xfs_ail *ailp, struct xfs_log_item *lip,
->  		int shutdown_type);
-> -- 
-> 2.23.0.rc1
-> 
+This unlock out of order.  Should be harmless, but also pointless.
+
+I think this code would be a lot easier to understand if we fatored
+this inner loop into a new helper.  Untested patch that does, and
+also removes a no incorrect comment below:
+
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 1d7e3f575952..16d425174868 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -2510,6 +2510,93 @@ xfs_iunlink_remove(
+ 	return error;
+ }
+ 
++static void
++xfs_ifree_one_inode(
++	struct xfs_perag	*pag,
++	struct xfs_inode	*free_ip,
++	struct xfs_buf		*bp,
++	xfs_ino_t		ino)
++{
++	struct xfs_mount	*mp = free_ip->i_mount;
++	struct xfs_inode	*ip;
++	struct xfs_inode_log_item *iip;
++
++retry:
++	rcu_read_lock();
++	ip = radix_tree_lookup(&pag->pag_ici_root, XFS_INO_TO_AGINO(mp, ino));
++	if (!ip)
++		goto out_rcu_unlock;
++
++	/*
++	 * See xfs_dispose_inode() for an explanation of the tests here to avoid
++	 * inode reclaim races.
++	 */
++	spin_lock(&ip->i_flags_lock);
++	if (!ip->i_ino || __xfs_iflags_test(ip, XFS_IRECLAIM))
++		goto out_unlock_iflags;
++
++	/*
++	 * The inode isn't in reclaim, but it might be locked by someone else.
++	 * In that case, we retry the inode rather than skipping it completely.
++	 */
++	if (ip != free_ip && !xfs_ilock_nowait(ip, XFS_ILOCK_EXCL)) {
++		spin_unlock(&ip->i_flags_lock);
++		rcu_read_unlock();
++		delay(1);
++		goto retry;
++	}
++
++	/*
++	 * Inode is now pinned against reclaim until we unlock it, so now we can
++	 * do the work necessary to mark the inode stale and get it held until
++	 * the cluster freeing transaction is logged. If it's stale, then it has
++	 * already been attached to the buffer and we're done.
++	 */
++	if (__xfs_iflags_test(ip, XFS_ISTALE))
++		goto out_unlock_ilock;
++	__xfs_iflags_set(ip, XFS_ISTALE);
++	spin_unlock(&ip->i_flags_lock);
++	rcu_read_unlock();
++
++	/*
++	 * Flush lock will hold off inode reclaim until the buffer completion
++	 * routine runs the xfs_istale_done callback on the inode and unlocks
++	 * it.
++	 */
++	xfs_iflock(ip);
++
++	/*
++	 * We don't need to attach clean inodes or those only with unlogged
++	 * changes (which we throw away, anyway).
++	 */
++	iip = ip->i_itemp;
++	if (!iip || xfs_inode_clean(ip)) {
++		ASSERT(ip != free_ip);
++		xfs_ifunlock(ip);
++		goto done;
++	}
++
++	iip->ili_last_fields = iip->ili_fields;
++	iip->ili_fields = 0;
++	iip->ili_fsync_fields = 0;
++	iip->ili_logged = 1;
++	xfs_trans_ail_copy_lsn(mp->m_ail, &iip->ili_flush_lsn,
++				&iip->ili_item.li_lsn);
++
++	xfs_buf_attach_iodone(bp, xfs_istale_done, &iip->ili_item);
++done:
++	if (ip != free_ip)
++		xfs_iunlock(ip, XFS_ILOCK_EXCL);
++	return;
++out_unlock_ilock:
++	if (ip != free_ip)
++		xfs_iunlock(ip, XFS_ILOCK_EXCL);
++out_unlock_iflags:
++	spin_unlock(&ip->i_flags_lock);
++out_rcu_unlock:
++	rcu_read_unlock();
++}
++
+ /*
+  * A big issue when freeing the inode cluster is that we _cannot_ skip any
+  * inodes that are in memory - they all must be marked stale and attached to
+@@ -2527,7 +2614,6 @@ xfs_ifree_cluster(
+ 	int			ioffset;
+ 	xfs_daddr_t		blkno;
+ 	xfs_buf_t		*bp;
+-	xfs_inode_t		*ip;
+ 	xfs_inode_log_item_t	*iip;
+ 	struct xfs_log_item	*lip;
+ 	struct xfs_perag	*pag;
+@@ -2604,99 +2690,9 @@ xfs_ifree_cluster(
+ 		 * buffer and set it up for being staled on buffer IO
+ 		 * completion.  This is safe as we've locked out tail pushing
+ 		 * and flushing by locking the buffer.
+-		 *
+-		 * We have already marked every inode that was part of a
+-		 * transaction stale above, which means there is no point in
+-		 * even trying to lock them.
+ 		 */
+-		for (i = 0; i < igeo->inodes_per_cluster; i++) {
+-retry:
+-			rcu_read_lock();
+-			ip = radix_tree_lookup(&pag->pag_ici_root,
+-					XFS_INO_TO_AGINO(mp, (inum + i)));
+-
+-			/* Inode not in memory, nothing to do */
+-			if (!ip) {
+-				rcu_read_unlock();
+-				continue;
+-			}
+-
+-			/*
+-			 * See xfs_dispose_inode() for an explanation of the
+-			 * tests here to avoid inode reclaim races.
+-			 */
+-			spin_lock(&ip->i_flags_lock);
+-			if (!ip->i_ino ||
+-			    __xfs_iflags_test(ip, XFS_IRECLAIM)) {
+-				spin_unlock(&ip->i_flags_lock);
+-				rcu_read_unlock();
+-				continue;
+-			}
+-
+-			/*
+-			 * The inode isn't in reclaim, but it might be locked by
+-			 * someone else. In that case, we retry the inode rather
+-			 * than skipping it completely.
+-			 */
+-			if (ip != free_ip &&
+-			    !xfs_ilock_nowait(ip, XFS_ILOCK_EXCL)) {
+-				spin_unlock(&ip->i_flags_lock);
+-				rcu_read_unlock();
+-				delay(1);
+-				goto retry;
+-			}
+-
+-			/*
+-			 * Inode is now pinned against reclaim until we unlock
+-			 * it, so now we can do the work necessary to mark the
+-			 * inode stale and get it held until the cluster freeing
+-			 * transaction is logged. If it's stale, then it has
+-			 * already been attached to the buffer and we're done.
+-			 */
+-			if (__xfs_iflags_test(ip, XFS_ISTALE)) {
+-				spin_unlock(&ip->i_flags_lock);
+-				if (ip != free_ip)
+-					xfs_iunlock(ip, XFS_ILOCK_EXCL);
+-				rcu_read_unlock();
+-				continue;
+-			}
+-			__xfs_iflags_set(ip, XFS_ISTALE);
+-			spin_unlock(&ip->i_flags_lock);
+-			rcu_read_unlock();
+-
+-			/*
+-			 * Flush lock will hold off inode reclaim until the
+-			 * buffer completion routine runs the xfs_istale_done
+-			 * callback on the inode and unlocks it.
+-			 */
+-			xfs_iflock(ip);
+-
+-			/*
+-			 * we don't need to attach clean inodes or those only
+-			 * with unlogged changes (which we throw away, anyway).
+-			 */
+-			iip = ip->i_itemp;
+-			if (!iip || xfs_inode_clean(ip)) {
+-				ASSERT(ip != free_ip);
+-				xfs_ifunlock(ip);
+-				if (ip != free_ip)
+-					xfs_iunlock(ip, XFS_ILOCK_EXCL);
+-				continue;
+-			}
+-
+-			iip->ili_last_fields = iip->ili_fields;
+-			iip->ili_fields = 0;
+-			iip->ili_fsync_fields = 0;
+-			iip->ili_logged = 1;
+-			xfs_trans_ail_copy_lsn(mp->m_ail, &iip->ili_flush_lsn,
+-						&iip->ili_item.li_lsn);
+-
+-			xfs_buf_attach_iodone(bp, xfs_istale_done,
+-						  &iip->ili_item);
+-
+-			if (ip != free_ip)
+-				xfs_iunlock(ip, XFS_ILOCK_EXCL);
+-		}
++		for (i = 0; i < igeo->inodes_per_cluster; i++)
++			xfs_ifree_one_inode(pag, free_ip, bp, inum + i);
+ 
+ 		xfs_trans_stale_inode_buf(tp, bp);
+ 		xfs_trans_binval(tp, bp);
