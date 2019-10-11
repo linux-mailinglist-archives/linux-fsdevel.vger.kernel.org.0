@@ -2,143 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0772ED45B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 18:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF6DAD45EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 18:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbfJKQtk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Oct 2019 12:49:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42792 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726728AbfJKQtj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Oct 2019 12:49:39 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9F7FD30BCBA2;
-        Fri, 11 Oct 2019 16:49:39 +0000 (UTC)
-Received: from [IPv6:::1] (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5154D1001B33;
-        Fri, 11 Oct 2019 16:49:39 +0000 (UTC)
-To:     fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>
-From:   Eric Sandeen <sandeen@redhat.com>
-Subject: [PATCH] fs: avoid softlockups in s_inodes iterators
-Message-ID: <841d0e0f-f04c-9611-2eea-0bcc40e5b084@redhat.com>
-Date:   Fri, 11 Oct 2019 11:49:38 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        id S1728567AbfJKQ5P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Oct 2019 12:57:15 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:40571 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728545AbfJKQ5P (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Oct 2019 12:57:15 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iIyDz-0002Hw-TJ; Fri, 11 Oct 2019 17:57:07 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iIyDz-00044V-GU; Fri, 11 Oct 2019 17:57:07 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] nsfs: include internal.h for ns_dentry_operations
+Date:   Fri, 11 Oct 2019 17:57:05 +0100
+Message-Id: <20191011165706.15608-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 11 Oct 2019 16:49:39 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Anything that walks all inodes on sb->s_inodes list without rescheduling
-risks softlockups.
+Include "internal.h" for the ns_dentry_operations definiton.
+Fixes the following spare warning:
 
-Previous efforts were made in 2 functions, see:
+fs/nsfs.c:41:32: warning: symbol 'ns_dentry_operations' was not declared. Should it be static?
 
-c27d82f fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
-ac05fbb inode: don't softlockup when evicting inodes
-
-but there hasn't been an audit of all walkers, so do that now.  This
-also consistently moves the cond_resched() calls to the bottom of each
-loop.
-
-One remains: remove_dquot_ref(), because I'm not quite sure how to deal
-with that one w/o taking the i_lock.
-
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ fs/nsfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index d31b6c72b476..dc1a1d5d825b 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -35,11 +35,11 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- 		spin_unlock(&inode->i_lock);
- 		spin_unlock(&sb->s_inode_list_lock);
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index a0431642c6b5..ea384d0f225a 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -11,6 +11,8 @@
+ #include <linux/nsfs.h>
+ #include <linux/uaccess.h>
  
--		cond_resched();
- 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
- 		iput(toput_inode);
- 		toput_inode = inode;
- 
-+		cond_resched();
- 		spin_lock(&sb->s_inode_list_lock);
- 	}
- 	spin_unlock(&sb->s_inode_list_lock);
-diff --git a/fs/inode.c b/fs/inode.c
-index fef457a42882..b0c789bb3dba 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -676,6 +676,7 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
- 	struct inode *inode, *next;
- 	LIST_HEAD(dispose);
- 
-+again:
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
- 		spin_lock(&inode->i_lock);
-@@ -698,6 +699,13 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
- 		inode_lru_list_del(inode);
- 		spin_unlock(&inode->i_lock);
- 		list_add(&inode->i_lru, &dispose);
++#include "internal.h"
 +
-+		if (need_resched()) {
-+			spin_unlock(&sb->s_inode_list_lock);
-+			cond_resched();
-+			dispose_list(&dispose);
-+			goto again;
-+		}
- 	}
- 	spin_unlock(&sb->s_inode_list_lock);
+ static struct vfsmount *nsfs_mnt;
  
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 2ecef6155fc0..15f77cbbd188 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -67,22 +67,19 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
- 		spin_unlock(&inode->i_lock);
- 		spin_unlock(&sb->s_inode_list_lock);
- 
--		if (iput_inode)
--			iput(iput_inode);
--
-+		iput(iput_inode);
- 		/* for each watch, send FS_UNMOUNT and then remove it */
- 		fsnotify(inode, FS_UNMOUNT, inode, FSNOTIFY_EVENT_INODE, NULL, 0);
--
- 		fsnotify_inode_delete(inode);
- 
- 		iput_inode = inode;
- 
-+		cond_resched();
- 		spin_lock(&sb->s_inode_list_lock);
- 	}
- 	spin_unlock(&sb->s_inode_list_lock);
-+	iput(iput_inode);
- 
--	if (iput_inode)
--		iput(iput_inode);
- 	/* Wait for outstanding inode references from connectors */
- 	wait_var_event(&sb->s_fsnotify_inode_refs,
- 		       !atomic_long_read(&sb->s_fsnotify_inode_refs));
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 6e826b454082..4a085b3c7cac 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -985,6 +985,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
- 		 * later.
- 		 */
- 		old_inode = inode;
-+		cond_resched();
- 		spin_lock(&sb->s_inode_list_lock);
- 	}
- 	spin_unlock(&sb->s_inode_list_lock);
+ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+-- 
+2.23.0
 
