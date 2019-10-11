@@ -2,56 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA69BD4542
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 18:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DE7BD4578
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 18:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbfJKQVG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Oct 2019 12:21:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43248 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbfJKQVG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Oct 2019 12:21:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7yGSM9xcAHN/X9j3aG0KDWpux1hcEmDmeeJWRUqsfj4=; b=NwziWKENcP2LRKnIEMC6EIVkN
-        tBmo7CgwpISlk3y7dqAgpo1MH1c9ZI6TuTS+ywbjiqvqJUxTN9j/hivsEzT3rlfQYAHqbbhmwmyQi
-        R+GTqNY/4wpckACEibpyRj1N4t25yV4OqobDkjX3Lyi6i9FzqdKQcMOngFJ2pgwz/1OiCp2Kmdgq3
-        OegBr5YmsSuarU3hOvqTjIgxPk99fw81FY4XxtWB9on1zvNVVOZG/0JMwqQrB2rT0L+IOqrr+OtWk
-        FKEV+pPdb/GGZKePLhGKL1XmL6FZNzQEX2C4gKnOz1szteWsZzaspHVx/nsZNicAu1yacbGEqDXV9
-        jU8wii+Ag==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iIxf8-0005DY-1v; Fri, 11 Oct 2019 16:21:06 +0000
-Date:   Fri, 11 Oct 2019 09:21:05 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 14/26] mm: back off direct reclaim on excessive shrinker
- deferral
-Message-ID: <20191011162105.GU32665@bombadil.infradead.org>
-References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-15-david@fromorbit.com>
+        id S1728298AbfJKQbb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Oct 2019 12:31:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52652 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726331AbfJKQbb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Oct 2019 12:31:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 36077B258;
+        Fri, 11 Oct 2019 16:31:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 6482E1E4A86; Fri, 11 Oct 2019 18:31:27 +0200 (CEST)
+Date:   Fri, 11 Oct 2019 18:31:27 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Subject: Re: [PATCH 1/2] iomap: Allow forcing of waiting for running DIO in
+ iomap_dio_rw()
+Message-ID: <20191011163127.GA22122@quack2.suse.cz>
+References: <20191011125520.11697-1-jack@suse.cz>
+ <20191011141433.18354-1-jack@suse.cz>
+ <20191011152821.GJ13108@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191009032124.10541-15-david@fromorbit.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191011152821.GJ13108@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 02:21:12PM +1100, Dave Chinner wrote:
-> +			if ((reclaim_state->deferred_objects >
-> +					sc->nr_scanned - nr_scanned) &&
-> +			    (reclaim_state->deferred_objects >
-> +					reclaim_state->scanned_objects)) {
-> +				wait_iff_congested(BLK_RW_ASYNC, HZ/50);
+On Fri 11-10-19 08:28:21, Darrick J. Wong wrote:
+> On Fri, Oct 11, 2019 at 04:14:31PM +0200, Jan Kara wrote:
+> > Filesystems do not support doing IO as asynchronous in some cases. For
+> > example in case of unaligned writes or in case file size needs to be
+> > extended (e.g. for ext4). Instead of forcing filesystem to wait for AIO
+> > in such cases, add argument to iomap_dio_rw() which makes the function
+> > wait for IO completion. This also results in executing
+> > iomap_dio_complete() inline in iomap_dio_rw() providing its return value
+> > to the caller as for ordinary sync IO.
+> > 
+> > Signed-off-by: Jan Kara <jack@suse.cz>
 
-Unfortunately, Jens broke wait_iff_congested() recently, and doesn't plan
-to fix it.  We need to come up with another way to estimate congestion.
+...
+
+> > @@ -409,6 +409,9 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> >  	if (!count)
+> >  		return 0;
+> >  
+> > +	if (WARN_ON(is_sync_kiocb(iocb) && !wait_for_completion))
+> > +		return -EINVAL;
+> 
+> So far in iomap we've been returning EIO when someone internal screws
+> up, which (AFAICT) is the case here.
+
+Yes. Should I resend with -EIO or will you tweak that on commit?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
