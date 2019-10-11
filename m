@@ -2,78 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BDF1D475A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 20:18:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82900D47A3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 20:32:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbfJKSSc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Oct 2019 14:18:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60396 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728470AbfJKSSc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Oct 2019 14:18:32 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 420B77652B;
-        Fri, 11 Oct 2019 18:18:32 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 716455DA2C;
-        Fri, 11 Oct 2019 18:18:27 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E4256220B4B; Fri, 11 Oct 2019 14:18:26 -0400 (EDT)
-Date:   Fri, 11 Oct 2019 14:18:26 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Cc:     virtio-fs@redhat.com, msys.mizuma@gmail.com, stefanha@redhat.com
-Subject: [PATCH] virtio_fs: Change module name to virtiofs.ko
-Message-ID: <20191011181826.GA13861@redhat.com>
+        id S1728733AbfJKScx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Oct 2019 14:32:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46350 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728501AbfJKScx (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Oct 2019 14:32:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KuZJTKexqaq6N8+Arnw3Gzlw8FJrb4wzaEcsNhnrBek=; b=Mi8AOjGSSUR3IwzHRpYu3qJoy
+        bdnAOZQqFKxzKU4Jb796ruU+k/Y+EPHUMp3JS4Md3dOQa79JNPgmozBLtaTAh1WpsTcuVVMiDjZEs
+        W/yeqxja+GYVjBGBuBijkvyCBpoB5xBkvTBzpKqRxNs0bJWrvHwCx9wIbnqfY+xJaaHfBDyy6gAEN
+        QBG/25Tr0ikT+D1YuIRCSDE8fuc/GLpit/jMJpMg2lrBesohJO+VJVopOToosTueYmkDCswFQRHD+
+        oo1DLlj2QLO8oaNZx1Z0ZamZB/BnFffv67EqvzXj7EmrdzZSuH02WndLamotGhEtBs9F2He3XJN6t
+        9aDaTv5Gw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iIzif-0004v2-3V; Fri, 11 Oct 2019 18:32:53 +0000
+Date:   Fri, 11 Oct 2019 11:32:53 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Eric Sandeen <sandeen@redhat.com>
+Cc:     fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Josef Bacik <jbacik@fb.com>
+Subject: Re: [PATCH] fs: avoid softlockups in s_inodes iterators
+Message-ID: <20191011183253.GV32665@bombadil.infradead.org>
+References: <841d0e0f-f04c-9611-2eea-0bcc40e5b084@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <841d0e0f-f04c-9611-2eea-0bcc40e5b084@redhat.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 11 Oct 2019 18:18:32 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We have been calling it virtio_fs and even file name is virtio_fs.c. Module
-name is virtio_fs.ko but when registering file system user is supposed to
-specify filesystem type as "virtiofs".
+On Fri, Oct 11, 2019 at 11:49:38AM -0500, Eric Sandeen wrote:
+> @@ -698,6 +699,13 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+>  		inode_lru_list_del(inode);
+>  		spin_unlock(&inode->i_lock);
+>  		list_add(&inode->i_lru, &dispose);
+> +
+> +		if (need_resched()) {
+> +			spin_unlock(&sb->s_inode_list_lock);
+> +			cond_resched();
+> +			dispose_list(&dispose);
+> +			goto again;
+> +		}
+>  	}
+>  	spin_unlock(&sb->s_inode_list_lock);
+>  
 
-Masayoshi Mizuma reported that he specified filesytem type as "virtio_fs" and
-got this warning on console.
+Is this equivalent to:
 
-  ------------[ cut here ]------------
-  request_module fs-virtio_fs succeeded, but still no fs?
-  WARNING: CPU: 1 PID: 1234 at fs/filesystems.c:274 get_fs_type+0x12c/0x138
-  Modules linked in: ... virtio_fs fuse virtio_net net_failover ...
-  CPU: 1 PID: 1234 Comm: mount Not tainted 5.4.0-rc1 #1
++		cond_resched_lock(&sb->s_inode_list_lock));
 
-So looks like kernel could find the module virtio_fs.ko but could not find
-filesystem type after that.
+or is disposing of the list a crucial part here?
 
-It probably is better to rename module name to virtiofs.ko so that above
-warning goes away in case user ends up specifying wrong fs name.
-
-Reported-by: Masayoshi Mizuma <msys.mizuma@gmail.com>
-Suggested-by: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/fuse/Makefile |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-Index: rhvgoyal-linux/fs/fuse/Makefile
-===================================================================
---- rhvgoyal-linux.orig/fs/fuse/Makefile	2019-10-11 13:53:43.905757435 -0400
-+++ rhvgoyal-linux/fs/fuse/Makefile	2019-10-11 13:54:24.147757435 -0400
-@@ -5,6 +5,7 @@
- 
- obj-$(CONFIG_FUSE_FS) += fuse.o
- obj-$(CONFIG_CUSE) += cuse.o
--obj-$(CONFIG_VIRTIO_FS) += virtio_fs.o
-+obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
- 
- fuse-objs := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o
-+virtiofs-y += virtio_fs.o
