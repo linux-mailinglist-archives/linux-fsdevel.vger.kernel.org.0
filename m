@@ -2,66 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D4AFD4ADF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2019 01:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F69D4AF1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2019 01:27:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfJKXUh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Oct 2019 19:20:37 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:33931 "EHLO
+        id S1726865AbfJKX1V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Oct 2019 19:27:21 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:38426 "EHLO
         mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726345AbfJKXUh (ORCPT
+        by vger.kernel.org with ESMTP id S1726243AbfJKX1V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Oct 2019 19:20:37 -0400
+        Fri, 11 Oct 2019 19:27:21 -0400
 Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 1835C36268A;
-        Sat, 12 Oct 2019 10:20:33 +1100 (AEDT)
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9B3923638A4;
+        Sat, 12 Oct 2019 10:27:16 +1100 (AEDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.2)
         (envelope-from <david@fromorbit.com>)
-        id 1iJ4D3-0007jx-0D; Sat, 12 Oct 2019 10:20:33 +1100
-Date:   Sat, 12 Oct 2019 10:20:32 +1100
+        id 1iJ4JY-0007qb-4M; Sat, 12 Oct 2019 10:27:16 +1100
+Date:   Sat, 12 Oct 2019 10:27:16 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 14/26] mm: back off direct reclaim on excessive shrinker
- deferral
-Message-ID: <20191011232032.GN16973@dread.disaster.area>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 16/26] xfs: synchronous AIL pushing
+Message-ID: <20191011232716.GO16973@dread.disaster.area>
 References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-15-david@fromorbit.com>
- <20191011162105.GU32665@bombadil.infradead.org>
+ <20191009032124.10541-17-david@fromorbit.com>
+ <20191011101825.GA29171@infradead.org>
+ <20191011152945.GH61257@bfoster>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191011162105.GU32665@bombadil.infradead.org>
+In-Reply-To: <20191011152945.GH61257@bfoster>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Optus-CM-Score: 0
 X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
         a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=7-415B0cAAAA:8 a=JuDxSlhT3OO6blO4plAA:9 a=CjuIK1q_8ugA:10
+        a=7-415B0cAAAA:8 a=_AcuBihmRUaaDqdcFvEA:9 a=CjuIK1q_8ugA:10
         a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 09:21:05AM -0700, Matthew Wilcox wrote:
-> On Wed, Oct 09, 2019 at 02:21:12PM +1100, Dave Chinner wrote:
-> > +			if ((reclaim_state->deferred_objects >
-> > +					sc->nr_scanned - nr_scanned) &&
-> > +			    (reclaim_state->deferred_objects >
-> > +					reclaim_state->scanned_objects)) {
-> > +				wait_iff_congested(BLK_RW_ASYNC, HZ/50);
+On Fri, Oct 11, 2019 at 11:29:45AM -0400, Brian Foster wrote:
+> On Fri, Oct 11, 2019 at 03:18:25AM -0700, Christoph Hellwig wrote:
+> > On Wed, Oct 09, 2019 at 02:21:14PM +1100, Dave Chinner wrote:
+> > > Factor the common AIL deletion code that does all the wakeups into a
+> > > helper so we only have one copy of this somewhat tricky code to
+> > > interface with all the wakeups necessary when the LSN of the log
+> > > tail changes.
+> > > 
+> > > xfs_ail_push_sync() is temporary infrastructure to facilitate
+> > > non-blocking, IO-less inode reclaim throttling that allows further
+> > > structural changes to be made. Once those structural changes are
+> > > made, the need for this function goes away and it is removed,
+> > > leaving us with only the xfs_ail_update_finish() factoring when this
+> > > is all done.
+> > 
+> > The xfs_ail_update_finish work here is in an earlier patch, so the
+> > changelog will need some updates.
+> > 
+> > > +	spin_lock(&ailp->ail_lock);
+> > > +	while ((lip = xfs_ail_min(ailp)) != NULL) {
+> > > +		prepare_to_wait(&ailp->ail_push, &wait, TASK_UNINTERRUPTIBLE);
+> > > +		if (XFS_FORCED_SHUTDOWN(ailp->ail_mount) ||
+> > > +		    XFS_LSN_CMP(threshold_lsn, lip->li_lsn) <= 0)
 > 
-> Unfortunately, Jens broke wait_iff_congested() recently, and doesn't plan
-> to fix it.  We need to come up with another way to estimate congestion.
+> Wasn't this supposed to change to < 0? The rfc series had that logic,
+> but it changed from <= to < later in the wrong patch.
 
-I know, all the ways the block layer is broken are right there in
-the cover letter at the end of the v1 patchset description from
-more than 2 months ago.
+I probably forgot because this code gets removed at the end of the
+series. Hence I haven't cared about exact correctness of neatness
+as it's just temporary scaffolding to keep stuff from breaking
+horribly as the changeover to non-blocking algorithms is done.
 
-When people work out how to fix congestion detection and backoff
-again, this can be updated at the same time.
+It works well enough that I can't break it as it stands - I've
+tested each patch individually with both load and fstests, and so
+this code as it stands doesn't introduce any bisect landmines - it
+prevents a bunch of problems in OOM conditions by retaining the
+blocking behaviour of reclaim until we no longer need it...
+
+> > > +			break;
+> > > +		/* XXX: cmpxchg? */
+> > > +		while (XFS_LSN_CMP(threshold_lsn, ailp->ail_target) > 0)
+> > > +			xfs_trans_ail_copy_lsn(ailp, &ailp->ail_target, &threshold_lsn);
+> > 
+> > This code looks broken on 32-bit given that xfs_trans_ail_copy_lsn takes
+> > the ail_lock there.  Just replacing the xfs_trans_ail_copy_lsn call with
+> > a direct assignment would fix that, no need for cmpxchg either as far
+> > as I can tell (and it would fix that too long line as well).
+
+Oh, right. I'll fix that.
+
+> > still looks odd, I think this should simply be an if. 
+> > 
+> > > +		wake_up_process(ailp->ail_task);
+> > > +		spin_unlock(&ailp->ail_lock);
+> > 
+> > xfsaild will take ail_lock pretty quickly.  I think we should drop
+> > the lock before waking it.
+> 
+> Can't we replace this whole thing with something that repurposes
+> xfs_ail_push_all_sync()? That only requires some tweaks to the existing
+> function and the new _push_all_sync() wrapper ends up looking something
+> like:
+> 
+> 	while ((threshold_lsn = xfs_ail_max_lsn(ailp)) != 0)
+> 		xfs_ail_push_sync(ailp, threshold_lsn);
+> 
+> There's an extra lock cycle, but that's still only on tail updates. That
+> doesn't seem unreasonable to me for the usage of _push_all_sync().
+
+The whole thing goes away, so there is zero point in trying to
+optimise or perfect this code. It's temporary code, treat it as
+such.
 
 Cheers,
 
