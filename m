@@ -2,79 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9265CD417F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 15:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90E71D419C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 15:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbfJKNjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Oct 2019 09:39:40 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42786 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727950AbfJKNjk (ORCPT
+        id S1728446AbfJKNoX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Oct 2019 09:44:23 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43110 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727589AbfJKNoX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Oct 2019 09:39:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=fdMe6cL6Uk37LOFczS5vgqxs2TCG8T5VUGagwWOW2o0=; b=F4yA5MdUoG1tVIls/gBlimaPMp
-        WtDnwEIL7aV4Nd12pNip8rGAfAJDN1beLlinen3KE/SkqeiCNceOUaJ5I3ztinH0qKzMxxqxjhG+t
-        bba+/drYqY64YMPAutj20ik4URd3F5/bAMH9J29hbjYPUD7PB0RgexHUvxZdiqOLwYMvp82lz4GHq
-        VMlU3CDcsJM6Gemsn0ySieH+pcnQLVr6XOVUZtM1n7Bdg6I0XXFwZjhB8/NMmLVD27mr3yCCyvElj
-        OQPzT55mPghtUoLWJCR8IrsjIY/fp8xzGEsYnjdQkGfIPINLgF4w8d7do7AcQcBgDk85zAsbJxxxa
-        VzbsrJQA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iIv8i-00089i-Q5; Fri, 11 Oct 2019 13:39:28 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 919BA301224;
-        Fri, 11 Oct 2019 15:38:33 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 402A22023D649; Fri, 11 Oct 2019 15:39:26 +0200 (CEST)
-Date:   Fri, 11 Oct 2019 15:39:26 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH 25/26] xfs: rework unreferenced inode lookups
-Message-ID: <20191011133926.GY2328@hirez.programming.kicks-ass.net>
-References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-26-david@fromorbit.com>
- <20191011125522.GA13167@infradead.org>
+        Fri, 11 Oct 2019 09:44:23 -0400
+Received: by mail-qt1-f196.google.com with SMTP id t20so8564493qtr.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2019 06:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RP6aN65maxNeS61oYXW4aZX24s/7aD9eOwCLwc9qZ5s=;
+        b=AGIv2DkJ+VS+X5jYXLRNVnza6u+0s+sEwoYilZBapJqcjWMSnWuArLVMCmNnlGPG97
+         kEGjrMgHzCgNjEhjYJKRwWhNK57BAWJuwSsOcrxp63PrVzbhKn5+TLugDjz+fZ0gEhDd
+         hAm7fRMkl8k4oBbRxJCMD86OrMoLpOSmsRbb4/YgaCfx0/mewM9dMSkAtYAOvyF0gfPr
+         Evn0uJ8XkqDCeiIpVOprMk+jGhtbvwS+Vdg7s5/3YLNQDCSpOH8knQ1c+Sr1381eJ/0u
+         zUNbNlnKhkGhqZM2WDw1tZSGYaEID1QZenftpz4wznp29P7UoA94j3CWLD5HfA7HRH9+
+         DVdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RP6aN65maxNeS61oYXW4aZX24s/7aD9eOwCLwc9qZ5s=;
+        b=Aog+dnJQ6PkxBY7ocll8s06gSplXKbjDZQk/JGG8JIrmzpGUmdSnEQlCq/euM3lfxi
+         wES37pawkv7D/56Fa7P9vjVPuWosHN+Gap1yoVE41VyMHBF7DhbZYxS9G+zSD8TYJOaT
+         M/6X8VEAIIjdSMQZKK1GtXTIFGGCXKrd6cXz8RcfhFmmLrqnAOu+AzEHnlCOa2DMzIAF
+         6QrcbAshOEYaJ/hJjz7F0OmIiWZHOCbf4U1jbdJJ38ONTvLBOmuKplTyqw150f+UrAGy
+         Do32fhYuhVC6yT0HUeirsmip1Fu9ys5Y9aahppaCnA9MoyCW+GNgHrLep3sTiVlqemys
+         reYQ==
+X-Gm-Message-State: APjAAAW8ZxA/FQgNVrUyv4xl4dtXA5HcP8QydRAm/V1dnQ4wmdI9i6SD
+        ANHqTJPqZe2XdFYu96ZYI1b6nPw=
+X-Google-Smtp-Source: APXvYqx3a4mpw+2UEaQMKaJ1Zx5E8M6uKBsk3gSMUKOpMFowFr79Rh6eXWVjNdGZC0AnedgPpbO+Lw==
+X-Received: by 2002:ac8:7007:: with SMTP id x7mr16261008qtm.89.1570801462571;
+        Fri, 11 Oct 2019 06:44:22 -0700 (PDT)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id v23sm4491079qto.89.2019.10.11.06.44.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Oct 2019 06:44:22 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 09:44:16 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] virtio_fs: Fix file_system_type.name to virtio_fs
+Message-ID: <20191011134415.7s5efb57fyfzmzgs@gabell>
+References: <20191004202921.21590-1-msys.mizuma@gmail.com>
+ <20191011090208.GC2848@stefanha-x1.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191011125522.GA13167@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191011090208.GC2848@stefanha-x1.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 05:55:22AM -0700, Christoph Hellwig wrote:
-> On Wed, Oct 09, 2019 at 02:21:23PM +1100, Dave Chinner wrote:
+Hi Stefan,
 
-> > @@ -131,6 +132,7 @@ xfs_inode_free(
-> >  	 * free state. The ip->i_flags_lock provides the barrier against lookup
-> >  	 * races.
-> >  	 */
-> > +	xfs_ilock(ip, XFS_ILOCK_EXCL);
+On Fri, Oct 11, 2019 at 10:02:08AM +0100, Stefan Hajnoczi wrote:
+> On Fri, Oct 04, 2019 at 04:29:21PM -0400, Masayoshi Mizuma wrote:
+> > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > 
+> > On 5.4.0-rc1 kernel, following warning happens when virtio_fs is tried
+> > to mount as "virtio_fs".
+> > 
+> >   ------------[ cut here ]------------
+> >   request_module fs-virtio_fs succeeded, but still no fs?
+> >   WARNING: CPU: 1 PID: 1234 at fs/filesystems.c:274 get_fs_type+0x12c/0x138
+> >   Modules linked in: ... virtio_fs fuse virtio_net net_failover ...
+> >   CPU: 1 PID: 1234 Comm: mount Not tainted 5.4.0-rc1 #1
+> > 
+> > That's because the file_system_type.name is "virtiofs", but the
+> > module name is "virtio_fs".
+> > 
+> > Set the file_system_type.name to "virtio_fs".
 > 
-> This introduceѕ a non-owner unlock of an exclusively held rwsem.  As-is
-> this will make lockdep very unhappy.  We have a non-owner unlock version
-> of up_read, but not of up_write currently.  I'm also not sure if those
-> are allowed from RCU callback, which IIRC can run from softirq context.
+> The mount command-line should be mount -t virtiofs, not mount -t
+> virtio_fs.  Existing documentation on https://virtio-fs.gitlab.io/ still
+> says mount -t virtio_fs but this is outdated (sorry!).  I will update
+> the website and I don't think this patch needs to be merged.
 > 
-> That being said this scheme of only unlocking the inode in the rcu free
-> callback makes totaly sense to me, so I wish we can accomodate it
-> somehow.
+> We originally set the file_system_type.name to "virtio_fs" but Miklos
+> explained that other Linux file systems do not contain underscores in
+> their names.  The kernel module is called virtio_fs.ko and the code
+> internally uses "virtio_fs" as the prefix for function names, but from a
+> user point of the view the mount command-line must use "virtiofs".
+> 
+> Does this sound reasonable?
 
-I'm thinking that, barring the little issue of not actually having the
-function, up_write_non_owner() should work from RCU callback context.
-That is, I don't see rwsem_wake() do anything not allowed there.
+Yes, make sense to me, thanks!
+Do you have the plan to change the module name to virtiofs.ko?
+I suppose virtiofs.ko may be good enough to avoid the warning.
+
+Thanks!
+Masa
