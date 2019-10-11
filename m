@@ -2,260 +2,392 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 104B4D360E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 02:32:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F38BDD362A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 02:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfJKAbf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Oct 2019 20:31:35 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34044 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbfJKAbe (ORCPT
+        id S1727522AbfJKAit (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Oct 2019 20:38:49 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38744 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbfJKAit (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Oct 2019 20:31:34 -0400
-Received: by mail-lf1-f67.google.com with SMTP id r22so5736767lfm.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2019 17:31:33 -0700 (PDT)
+        Thu, 10 Oct 2019 20:38:49 -0400
+Received: by mail-lf1-f68.google.com with SMTP id u28so5734280lfc.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2019 17:38:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6KQIXJS5Udq31xzSnClQQSZeps+FhrzYgeAcUAUA6PU=;
-        b=JeuC2gx/w7gTNLQ92rY9af/8CotmQsFCuqZDiZ9wsZ4VAsaw/TD2OdFD3Vu+FohN4r
-         oeAkelE3JN/HqpmVpTh6dM1qyfOglJI4J2qyus/w1lucezztBOV+uSy8DP0pLac60lWo
-         8Oe65x/igi99IVKwWzf0erDJ3oOV6YoqbRV0Y=
+        bh=8R/eBx6NvZFxWNxVIYlfJkIW02oJ5zpbsmf6mm7nZ9s=;
+        b=PVIaSCVsKoCSioNO1daQB3ogqBQmVD3fhqQo4gIUtxKKoYuLTwFMbHK9RhP3eWO8EI
+         Sr27B+bTJnYiu57nb0HzGL8v5YSu8KyEgsQePndcV6s1X1xKoEpg2sEy65gP3Dzwrkmf
+         8lMEoOvvlOjP0p1jwOektA10DSHG+MEbsWZHevWEGU3+YsaFOxOmztILHH7KtAMVF137
+         7d0i2/TQUYZ4JzR8GQ3eYX3C/MfCuJm/SqpW2Mw2wFvfj9OtlsoHTvv49hgTnDyQZRwq
+         2KmtuIKbReoDsybnK+ymQGg8Zv7msFnsJkQRrurtEeLYeftHey/w7tDkvx3OBHDTLubQ
+         lgFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6KQIXJS5Udq31xzSnClQQSZeps+FhrzYgeAcUAUA6PU=;
-        b=i56C3q1HvRP8AQBgnOMvnF9jSRmIE7dw3YCRX0zEebqSmRuBj54z8Et8XaDDlIVTsU
-         RJEwQU3tggX1qfAvsr38nU04jJ0/t4eYGdhZNXjfO3EAgqYbVrH/pyXF2B8mNgCZ5RA2
-         cWKwJllI3NKlxoDCL3OINgEZ2IO0pRthS+30D1U5FXMiXBSJM87H3odmGCGCRPM30J2E
-         psMXKVD2n7emH3V3ON6ntK/jVldD/oMkhlWpINv1UqjjSvJ6PUAA4vwddr/sBoNIooWX
-         CRbHoU92lGIdIs5SuBYJjDj/JL0zS1xfd/0XiSrWgADYK9ffCRuA7EMvGhqu/YnySfcF
-         HKuQ==
-X-Gm-Message-State: APjAAAWvKeDwrJagpAtVMKDQiikg9MXfLEsbY0Ey1xD5ASlXNgJB1l3/
-        Ovsj4td5HNVlpw+y61XNTZAPaMXVFp8=
-X-Google-Smtp-Source: APXvYqz0Yy3gn6ZDEzz2bDPm7kayhnZjGO07b/LUIEJ83Kgmv93uePi8fsQ5klyNbRhrYgLWaWStaA==
-X-Received: by 2002:a05:6512:515:: with SMTP id o21mr7506651lfb.189.1570753891695;
-        Thu, 10 Oct 2019 17:31:31 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id a14sm1725034lfg.74.2019.10.10.17.31.30
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2019 17:31:30 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id q64so7995721ljb.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2019 17:31:30 -0700 (PDT)
-X-Received: by 2002:a2e:2b91:: with SMTP id r17mr7894454ljr.1.1570753889932;
- Thu, 10 Oct 2019 17:31:29 -0700 (PDT)
+        bh=8R/eBx6NvZFxWNxVIYlfJkIW02oJ5zpbsmf6mm7nZ9s=;
+        b=Ng7nPob8ua1OI/O0vMg5i5jF4YXpCX+Zr+JoHuvrUR0TJBmR3ENJBs3Ia8/gtOP4vu
+         /nsRE8fOs3vuYuoz1xRw4My+5i+6hyu2LgJAejtuEOx1T1IJieslmOQg7XyGzMWywOJQ
+         JX73aNtkasDf8onwjBWcgYSITGGcENobN1EOl+0fvyyb+MXw8/vVg8CkuzS+OAhLf61F
+         KWX+5C/cAAb1qBNpDAOJNFe2O7AW8FJRyd5HXU8YY60KWILwjxYNi39W6llX25c4BVht
+         XIolt2MMhHJKdZx405TcVcXFTNQnB2YWaSUoHe2KCsUgjzEeDSCfo1uNynq2Ap/vGHTT
+         Rrxg==
+X-Gm-Message-State: APjAAAXuvNVJmo+joJ+5a3xdsR5tMKA+SGnKe0jkFzsqdWsFHG6/p7GT
+        P15nyBSz4m3+NB0C64cBY15KJHb78HOXwBW46Jp5
+X-Google-Smtp-Source: APXvYqw0Yt32wE7spq2vSD4AfWdE6Sx9fE0xUf8vD/PbZQdv7a66StbcusgQqkSXaDuSAxoGBdQc3ElK5F9N13YICOc=
+X-Received: by 2002:ac2:51b6:: with SMTP id f22mr7271786lfk.175.1570754325948;
+ Thu, 10 Oct 2019 17:38:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191007012437.GK26530@ZenIV.linux.org.uk> <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
- <20191007025046.GL26530@ZenIV.linux.org.uk> <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
- <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com>
- <20191008032912.GQ26530@ZenIV.linux.org.uk> <CAHk-=wiAyZmsEp6oQQgHiuaDU0bLj=OVHSGV_OfvHRSXNPYABw@mail.gmail.com>
- <CAHk-=wgOWxqwqCFuP_Bw=Hxxf9njeHJs0OLNGNc63peNd=kRqw@mail.gmail.com>
- <20191010195504.GI26530@ZenIV.linux.org.uk> <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
- <20191011001104.GJ26530@ZenIV.linux.org.uk>
-In-Reply-To: <20191011001104.GJ26530@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 10 Oct 2019 17:31:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
-Message-ID: <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000a3dcf4059497a30d"
+References: <cover.1568834524.git.rgb@redhat.com> <6fb4e270bfafef3d0477a06b0365fdcc5a5305b5.1568834524.git.rgb@redhat.com>
+In-Reply-To: <6fb4e270bfafef3d0477a06b0365fdcc5a5305b5.1568834524.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 10 Oct 2019 20:38:34 -0400
+Message-ID: <CAHC9VhS2111YTQ_rbHKe6+n9coPNbcTJqf5wnBx9LYHSf69THA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V7 04/21] audit: convert to contid list to check
+ for orch/engine ownership
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000a3dcf4059497a30d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Oct 10, 2019 at 5:11 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Wed, Sep 18, 2019 at 9:24 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> Store the audit container identifier in a refcounted kernel object that
+> is added to the master list of audit container identifiers.  This will
+> allow multiple container orchestrators/engines to work on the same
+> machine without danger of inadvertantly re-using an existing identifier.
+> It will also allow an orchestrator to inject a process into an existing
+> container by checking if the original container owner is the one
+> injecting the task.  A hash table list is used to optimize searches.
 >
-> On Thu, Oct 10, 2019 at 03:12:49PM -0700, Linus Torvalds wrote:
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  include/linux/audit.h | 26 ++++++++++++++--
+>  kernel/audit.c        | 86 ++++++++++++++++++++++++++++++++++++++++++++++++---
+>  kernel/audit.h        |  8 +++++
+>  3 files changed, 112 insertions(+), 8 deletions(-)
+
+One general comment before we go off into the weeds on this ... I can
+understand why you wanted to keep this patch separate from the earlier
+patches, but as we get closer to having mergeable code this should get
+folded into the previous patches.  For example, there shouldn't be a
+change in audit_task_info where you change the contid field from a u64
+to struct pointer, it should be a struct pointer from the start.
+
+It's also disappointing that idr appears to only be for 32-bit ID
+values, if we had a 64-bit idr I think we could simplify this greatly.
+
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index f2e3b81f2942..e317807cdd3e 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -95,10 +95,18 @@ struct audit_ntp_data {
+>  struct audit_ntp_data {};
+>  #endif
 >
-> > But I've not gotten around to rewriting those disgusting sequences to
-> > the unsafe_get/put_user() model. I did look at it, and it requires
-> > some changes exactly *because* the _ex() functions are broken and
-> > continue, but also because the current code ends up also doing other
-> > things inside the try/catch region that you're not supposed to do in a
-> > user_access_begin/end() region .
+> +struct audit_cont {
+> +       struct list_head        list;
+> +       u64                     id;
+> +       struct task_struct      *owner;
+> +       refcount_t              refcount;
+> +       struct rcu_head         rcu;
+> +};
+
+It seems as though in most of the code you are using "contid", any
+reason why didn't stick with that naming scheme here, e.g. "struct
+audit_contid"?
+
+>  struct audit_task_info {
+>         kuid_t                  loginuid;
+>         unsigned int            sessionid;
+> -       u64                     contid;
+> +       struct audit_cont       *cont;
+
+Same, why not stick with "contid"?
+
+>  #ifdef CONFIG_AUDITSYSCALL
+>         struct audit_context    *ctx;
+>  #endif
+> @@ -203,11 +211,15 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
 >
-> Hmm...  Which one was that?  AFAICS, we have
->         do_sys_vm86: only get_user_ex()
->         restore_sigcontext(): get_user_ex(), set_user_gs()
->         ia32_restore_sigcontext(): get_user_ex()
+>  static inline u64 audit_get_contid(struct task_struct *tsk)
+>  {
+> -       if (!tsk->audit)
+> +       if (!tsk->audit || !tsk->audit->cont)
+>                 return AUDIT_CID_UNSET;
+> -       return tsk->audit->contid;
+> +       return tsk->audit->cont->id;
+>  }
 
-Try this patch.
+Assuming for a moment that we implement an audit_contid_get() (see
+Neil's comment as well as mine below), we probably need to name this
+something different so we don't all lose our minds when we read this
+code.  On the plus side we can probably preface it with an underscore
+since it is a static, in which case _audit_contid_get() might be okay,
+but I'm open to suggestions.
 
-It works fine (well, it worked fine the lastr time I tried this, I
-might have screwed something up just now: I re-created the patch since
-I hadn't saved it).
+> +extern struct audit_cont *audit_cont(struct task_struct *tsk);
+> +
+> +extern void audit_cont_put(struct audit_cont *cont);
 
-It's nice and clean, and does
+More of the "contid" vs "cont".
 
- 1 file changed, 9 insertions(+), 91 deletions(-)
+>  extern u32 audit_enabled;
+>
+>  extern int audit_signal_info(int sig, struct task_struct *t);
+> @@ -277,6 +289,14 @@ static inline u64 audit_get_contid(struct task_struct *tsk)
+>         return AUDIT_CID_UNSET;
+>  }
+>
+> +static inline struct audit_cont *audit_cont(struct task_struct *tsk)
+> +{
+> +       return NULL;
+> +}
+> +
+> +static inline void audit_cont_put(struct audit_cont *cont)
+> +{ }
+> +
+>  #define audit_enabled AUDIT_OFF
+>
+>  static inline int audit_signal_info(int sig, struct task_struct *t)
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index a36ea57cbb61..ea0899130cc1 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -137,6 +137,8 @@ struct audit_net {
+>
+>  /* Hash for inode-based rules */
+>  struct list_head audit_inode_hash[AUDIT_INODE_BUCKETS];
+> +/* Hash for contid-based rules */
+> +struct list_head audit_contid_hash[AUDIT_CONTID_BUCKETS];
+>
+>  static struct kmem_cache *audit_buffer_cache;
+>
+> @@ -204,6 +206,8 @@ struct audit_reply {
+>
+>  static struct kmem_cache *audit_task_cache;
+>
+> +static DEFINE_SPINLOCK(audit_contid_list_lock);
 
-by just deleting all the nasty *_ex() macros entirely, replacing them
-with unsafe_get/put_user() calls.
+Since it looks like this protectects audit_contid_hash, I think it
+would be better to move it up underneath audit_contid_hash.
 
-And now those try/catch regions actually work like try/catch regions,
-and a fault branches to the catch.
+>  void __init audit_task_init(void)
+>  {
+>         audit_task_cache = kmem_cache_create("audit_task",
+> @@ -231,7 +235,9 @@ int audit_alloc(struct task_struct *tsk)
+>         }
+>         info->loginuid = audit_get_loginuid(current);
+>         info->sessionid = audit_get_sessionid(current);
+> -       info->contid = audit_get_contid(current);
+> +       info->cont = audit_cont(current);
+> +       if (info->cont)
+> +               refcount_inc(&info->cont->refcount);
 
-BUT.
+See the other comments about a "get" function, but I think we need a
+RCU read lock around the above, no?
 
-It does change semantics, and you get warnings like
+>         tsk->audit = info;
+>
+>         ret = audit_alloc_syscall(tsk);
+> @@ -246,7 +252,7 @@ int audit_alloc(struct task_struct *tsk)
+>  struct audit_task_info init_struct_audit = {
+>         .loginuid = INVALID_UID,
+>         .sessionid = AUDIT_SID_UNSET,
+> -       .contid = AUDIT_CID_UNSET,
+> +       .cont = NULL,
 
-  arch/x86/ia32/ia32_signal.c: In function =E2=80=98ia32_restore_sigcontext=
-=E2=80=99:
-  arch/x86/ia32/ia32_signal.c:114:9: warning: =E2=80=98buf=E2=80=99 may be =
-used
-uninitialized in this function [-Wmaybe-uninitialized]
-    114 |  err |=3D fpu__restore_sig(buf, 1);
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~
-  arch/x86/ia32/ia32_signal.c:64:27: warning: =E2=80=98ds=E2=80=99 may be u=
-sed
-uninitialized in this function [-Wmaybe-uninitialized]
-     64 |  unsigned int pre =3D (seg) | 3;  \
-        |                           ^
-  arch/x86/ia32/ia32_signal.c:74:18: note: =E2=80=98ds=E2=80=99 was declare=
-d here
-...
-  arch/x86/kernel/signal.c: In function =E2=80=98restore_sigcontext=E2=80=
-=99:
-  arch/x86/kernel/signal.c:152:9: warning: =E2=80=98buf=E2=80=99 may be use=
-d
-uninitialized in this function [-Wmaybe-uninitialized]
-    152 |  err |=3D fpu__restore_sig(buf, IS_ENABLED(CONFIG_X86_32));
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+More "cont" vs "contid".
 
-because it's true: those things reall may not be initialized, because
-the catch thing could have jumped out.
+>  #ifdef CONFIG_AUDITSYSCALL
+>         .ctx = NULL,
+>  #endif
+> @@ -266,6 +272,9 @@ void audit_free(struct task_struct *tsk)
+>         /* Freeing the audit_task_info struct must be performed after
+>          * audit_log_exit() due to need for loginuid and sessionid.
+>          */
+> +       spin_lock(&audit_contid_list_lock);
+> +       audit_cont_put(tsk->audit->cont);
+> +       spin_unlock(&audit_contid_list_lock);
 
-So the code actually needs to properly return the error early, or
-initialize the segments that didn't get loaded to 0, or something.
+Perhaps this will make sense as I get further into the patchset, but
+why not move the spin lock operations into audit_[cont/contid]_put()?
 
-And when I posted that, Luto said "just get rid of the get_user_ex()
-entirely, instead of changing semantics of the existing ones to be
-sane.
+>         info = tsk->audit;
+>         tsk->audit = NULL;
+>         kmem_cache_free(audit_task_cache, info);
+> @@ -1657,6 +1666,9 @@ static int __init audit_init(void)
+>         for (i = 0; i < AUDIT_INODE_BUCKETS; i++)
+>                 INIT_LIST_HEAD(&audit_inode_hash[i]);
+>
+> +       for (i = 0; i < AUDIT_CONTID_BUCKETS; i++)
+> +               INIT_LIST_HEAD(&audit_contid_hash[i]);
+> +
+>         mutex_init(&audit_cmd_mutex.lock);
+>         audit_cmd_mutex.owner = NULL;
+>
+> @@ -2356,6 +2368,32 @@ int audit_signal_info(int sig, struct task_struct *t)
+>         return audit_signal_info_syscall(t);
+>  }
+>
+> +struct audit_cont *audit_cont(struct task_struct *tsk)
+> +{
+> +       if (!tsk->audit || !tsk->audit->cont)
+> +               return NULL;
+> +       return tsk->audit->cont;
+> +}
+> +
+> +/* audit_contid_list_lock must be held by caller */
+> +void audit_cont_put(struct audit_cont *cont)
+> +{
+> +       if (!cont)
+> +               return;
+> +       if (refcount_dec_and_test(&cont->refcount)) {
+> +               put_task_struct(cont->owner);
+> +               list_del_rcu(&cont->list);
+> +               kfree_rcu(cont, rcu);
+> +       }
+> +}
 
-Which is probably right. There aren't that many.
+I tend to agree with Neil's previous comment; if we've got a
+audit_[cont/contid]_put(), why not an audit_[cont/contid]_get()?
 
-I *thought* there were also cases of us doing some questionably things
-inside the get_user_try sections, but those seem to have gotten fixed
-already independently, so it's really just the "make try/catch really
-try/catch" change that needs some editing of our current broken stuff
-that depends on it not actually *catching* exceptions, but on just
-continuing on to the next one.
+> +static struct task_struct *audit_cont_owner(struct task_struct *tsk)
+> +{
+> +       if (tsk->audit && tsk->audit->cont)
+> +               return tsk->audit->cont->owner;
+> +       return NULL;
+> +}
 
-                Linus
+I'm not sure if this is possible (I haven't make my way through the
+entire patchset) and the function above isn't used in this patch (why
+is it here?), but it seems like it would be safer to convert this into
+an audit_contid_isowner() function that simply returns 1/0 depending
+on if the passed task_struct is the owner or not of a passed audit
+container ID value?
 
---000000000000a3dcf4059497a30d
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k1ldzs220>
-X-Attachment-Id: f_k1ldzs220
+>  /*
+>   * audit_set_contid - set current task's audit contid
+>   * @task: target task
+> @@ -2382,9 +2420,12 @@ int audit_set_contid(struct task_struct *task, u64 contid)
+>         }
+>         oldcontid = audit_get_contid(task);
+>         read_lock(&tasklist_lock);
+> -       /* Don't allow the audit containerid to be unset */
+> +       /* Don't allow the contid to be unset */
+>         if (!audit_contid_valid(contid))
+>                 rc = -EINVAL;
+> +       /* Don't allow the contid to be set to the same value again */
+> +       else if (contid == oldcontid) {
+> +               rc = -EADDRINUSE;
+>         /* if we don't have caps, reject */
+>         else if (!capable(CAP_AUDIT_CONTROL))
+>                 rc = -EPERM;
 
-IGFyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3MuaCB8IDEwMCArKysrLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwg
-OTEgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vz
-cy5oIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzcy5oCmluZGV4IDYxZDkzZjA2MmEzNi4u
-ZTg3ZDg5MTFkYzUzIDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS91YWNjZXNzLmgK
-KysrIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzcy5oCkBAIC0xOTMsMjMgKzE5MywxMiBA
-QCBfX3R5cGVvZl9fKF9fYnVpbHRpbl9jaG9vc2VfZXhwcihzaXplb2YoeCkgPiBzaXplb2YoMFVM
-KSwgMFVMTCwgMFVMKSkKIAkJICAgICA6IDogIkEiICh4KSwgInIiIChhZGRyKQkJCVwKIAkJICAg
-ICA6IDogbGFiZWwpCiAKLSNkZWZpbmUgX19wdXRfdXNlcl9hc21fZXhfdTY0KHgsIGFkZHIpCQkJ
-CQlcCi0JYXNtIHZvbGF0aWxlKCJcbiIJCQkJCQlcCi0JCSAgICAgIjE6CW1vdmwgJSVlYXgsMCgl
-MSlcbiIJCQlcCi0JCSAgICAgIjI6CW1vdmwgJSVlZHgsNCglMSlcbiIJCQlcCi0JCSAgICAgIjM6
-IgkJCQkJCVwKLQkJICAgICBfQVNNX0VYVEFCTEVfRVgoMWIsIDJiKQkJCQlcCi0JCSAgICAgX0FT
-TV9FWFRBQkxFX0VYKDJiLCAzYikJCQkJXAotCQkgICAgIDogOiAiQSIgKHgpLCAiciIgKGFkZHIp
-KQotCiAjZGVmaW5lIF9fcHV0X3VzZXJfeDgoeCwgcHRyLCBfX3JldF9wdSkJCQkJXAogCWFzbSB2
-b2xhdGlsZSgiY2FsbCBfX3B1dF91c2VyXzgiIDogIj1hIiAoX19yZXRfcHUpCVwKIAkJICAgICA6
-ICJBIiAoKHR5cGVvZigqKHB0cikpKSh4KSksICJjIiAocHRyKSA6ICJlYngiKQogI2Vsc2UKICNk
-ZWZpbmUgX19wdXRfdXNlcl9nb3RvX3U2NCh4LCBwdHIsIGxhYmVsKSBcCiAJX19wdXRfdXNlcl9n
-b3RvKHgsIHB0ciwgInEiLCAiIiwgImVyIiwgbGFiZWwpCi0jZGVmaW5lIF9fcHV0X3VzZXJfYXNt
-X2V4X3U2NCh4LCBhZGRyKQlcCi0JX19wdXRfdXNlcl9hc21fZXgoeCwgYWRkciwgInEiLCAiIiwg
-ImVyIikKICNkZWZpbmUgX19wdXRfdXNlcl94OCh4LCBwdHIsIF9fcmV0X3B1KSBfX3B1dF91c2Vy
-X3goOCwgeCwgcHRyLCBfX3JldF9wdSkKICNlbmRpZgogCkBAIC0yODksMzEgKzI3OCw2IEBAIGRv
-IHsJCQkJCQkJCQlcCiAJfQkJCQkJCQkJXAogfSB3aGlsZSAoMCkKIAotLyoKLSAqIFRoaXMgZG9l
-c24ndCBkbyBfX3VhY2Nlc3NfYmVnaW4vZW5kIC0gdGhlIGV4Y2VwdGlvbiBoYW5kbGluZwotICog
-YXJvdW5kIGl0IG11c3QgZG8gdGhhdC4KLSAqLwotI2RlZmluZSBfX3B1dF91c2VyX3NpemVfZXgo
-eCwgcHRyLCBzaXplKQkJCQlcCi1kbyB7CQkJCQkJCQkJXAotCV9fY2hrX3VzZXJfcHRyKHB0cik7
-CQkJCQkJXAotCXN3aXRjaCAoc2l6ZSkgewkJCQkJCQlcCi0JY2FzZSAxOgkJCQkJCQkJXAotCQlf
-X3B1dF91c2VyX2FzbV9leCh4LCBwdHIsICJiIiwgImIiLCAiaXEiKTsJCVwKLQkJYnJlYWs7CQkJ
-CQkJCVwKLQljYXNlIDI6CQkJCQkJCQlcCi0JCV9fcHV0X3VzZXJfYXNtX2V4KHgsIHB0ciwgInci
-LCAidyIsICJpciIpOwkJXAotCQlicmVhazsJCQkJCQkJXAotCWNhc2UgNDoJCQkJCQkJCVwKLQkJ
-X19wdXRfdXNlcl9hc21fZXgoeCwgcHRyLCAibCIsICJrIiwgImlyIik7CQlcCi0JCWJyZWFrOwkJ
-CQkJCQlcCi0JY2FzZSA4OgkJCQkJCQkJXAotCQlfX3B1dF91c2VyX2FzbV9leF91NjQoKF9fdHlw
-ZW9mX18oKnB0cikpKHgpLCBwdHIpOwlcCi0JCWJyZWFrOwkJCQkJCQlcCi0JZGVmYXVsdDoJCQkJ
-CQkJXAotCQlfX3B1dF91c2VyX2JhZCgpOwkJCQkJXAotCX0JCQkJCQkJCVwKLX0gd2hpbGUgKDAp
-Ci0KICNpZmRlZiBDT05GSUdfWDg2XzMyCiAjZGVmaW5lIF9fZ2V0X3VzZXJfYXNtX3U2NCh4LCBw
-dHIsIHJldHZhbCwgZXJycmV0KQkJCVwKICh7CQkJCQkJCQkJXApAQCAtMzM0LDEzICsyOTgsOSBA
-QCBkbyB7CQkJCQkJCQkJXAogCQkgICAgIDogIm0iIChfX20oX19wdHIpKSwgIm0iIF9fbSgoKHUz
-MiBfX3VzZXIgKikoX19wdHIpKSArIDEpLAlcCiAJCSAgICAgICAiaSIgKGVycnJldCksICIwIiAo
-cmV0dmFsKSk7CQkJXAogfSkKLQotI2RlZmluZSBfX2dldF91c2VyX2FzbV9leF91NjQoeCwgcHRy
-KQkJCSh4KSA9IF9fZ2V0X3VzZXJfYmFkKCkKICNlbHNlCiAjZGVmaW5lIF9fZ2V0X3VzZXJfYXNt
-X3U2NCh4LCBwdHIsIHJldHZhbCwgZXJycmV0KSBcCiAJIF9fZ2V0X3VzZXJfYXNtKHgsIHB0ciwg
-cmV0dmFsLCAicSIsICIiLCAiPXIiLCBlcnJyZXQpCi0jZGVmaW5lIF9fZ2V0X3VzZXJfYXNtX2V4
-X3U2NCh4LCBwdHIpIFwKLQkgX19nZXRfdXNlcl9hc21fZXgoeCwgcHRyLCAicSIsICIiLCAiPXIi
-KQogI2VuZGlmCiAKICNkZWZpbmUgX19nZXRfdXNlcl9zaXplKHgsIHB0ciwgc2l6ZSwgcmV0dmFs
-LCBlcnJyZXQpCQkJXApAQCAtMzkwLDQxICszNTAsNiBAQCBkbyB7CQkJCQkJCQkJXAogCQkgICAg
-IDogIj1yIiAoZXJyKSwgbHR5cGUoeCkJCQkJXAogCQkgICAgIDogIm0iIChfX20oYWRkcikpLCAi
-aSIgKGVycnJldCksICIwIiAoZXJyKSkKIAotLyoKLSAqIFRoaXMgZG9lc24ndCBkbyBfX3VhY2Nl
-c3NfYmVnaW4vZW5kIC0gdGhlIGV4Y2VwdGlvbiBoYW5kbGluZwotICogYXJvdW5kIGl0IG11c3Qg
-ZG8gdGhhdC4KLSAqLwotI2RlZmluZSBfX2dldF91c2VyX3NpemVfZXgoeCwgcHRyLCBzaXplKQkJ
-CQlcCi1kbyB7CQkJCQkJCQkJXAotCV9fY2hrX3VzZXJfcHRyKHB0cik7CQkJCQkJXAotCXN3aXRj
-aCAoc2l6ZSkgewkJCQkJCQlcCi0JY2FzZSAxOgkJCQkJCQkJXAotCQlfX2dldF91c2VyX2FzbV9l
-eCh4LCBwdHIsICJiIiwgImIiLCAiPXEiKTsJCVwKLQkJYnJlYWs7CQkJCQkJCVwKLQljYXNlIDI6
-CQkJCQkJCQlcCi0JCV9fZ2V0X3VzZXJfYXNtX2V4KHgsIHB0ciwgInciLCAidyIsICI9ciIpOwkJ
-XAotCQlicmVhazsJCQkJCQkJXAotCWNhc2UgNDoJCQkJCQkJCVwKLQkJX19nZXRfdXNlcl9hc21f
-ZXgoeCwgcHRyLCAibCIsICJrIiwgIj1yIik7CQlcCi0JCWJyZWFrOwkJCQkJCQlcCi0JY2FzZSA4
-OgkJCQkJCQkJXAotCQlfX2dldF91c2VyX2FzbV9leF91NjQoeCwgcHRyKTsJCQkJXAotCQlicmVh
-azsJCQkJCQkJXAotCWRlZmF1bHQ6CQkJCQkJCVwKLQkJKHgpID0gX19nZXRfdXNlcl9iYWQoKTsJ
-CQkJCVwKLQl9CQkJCQkJCQlcCi19IHdoaWxlICgwKQotCi0jZGVmaW5lIF9fZ2V0X3VzZXJfYXNt
-X2V4KHgsIGFkZHIsIGl0eXBlLCBydHlwZSwgbHR5cGUpCQkJXAotCWFzbSB2b2xhdGlsZSgiMToJ
-bW92Iml0eXBlIiAlMSwlInJ0eXBlIjBcbiIJCVwKLQkJICAgICAiMjpcbiIJCQkJCQlcCi0JCSAg
-ICAgIi5zZWN0aW9uIC5maXh1cCxcImF4XCJcbiIJCQkJXAotICAgICAgICAgICAgICAgICAgICAg
-IjM6eG9yIml0eXBlIiAlInJ0eXBlIjAsJSJydHlwZSIwXG4iCQlcCi0JCSAgICAgIiAgam1wIDJi
-XG4iCQkJCQlcCi0JCSAgICAgIi5wcmV2aW91c1xuIgkJCQkJXAotCQkgICAgIF9BU01fRVhUQUJM
-RV9FWCgxYiwgM2IpCQkJCVwKLQkJICAgICA6IGx0eXBlKHgpIDogIm0iIChfX20oYWRkcikpKQot
-CiAjZGVmaW5lIF9fcHV0X3VzZXJfbm9jaGVjayh4LCBwdHIsIHNpemUpCQkJXAogKHsJCQkJCQkJ
-CVwKIAlfX2xhYmVsX18gX19wdV9sYWJlbDsJCQkJCVwKQEAgLTQ4MCwyNyArNDA1LDI1IEBAIHN0
-cnVjdCBfX2xhcmdlX3N0cnVjdCB7IHVuc2lnbmVkIGxvbmcgYnVmWzEwMF07IH07CiAJcmV0dmFs
-ID0gX19wdXRfdXNlcl9mYWlsZWQoeCwgYWRkciwgaXR5cGUsIHJ0eXBlLCBsdHlwZSwgZXJycmV0
-KTsJXAogfSB3aGlsZSAoMCkKIAotI2RlZmluZSBfX3B1dF91c2VyX2FzbV9leCh4LCBhZGRyLCBp
-dHlwZSwgcnR5cGUsIGx0eXBlKQkJCVwKLQlhc20gdm9sYXRpbGUoIjE6CW1vdiJpdHlwZSIgJSJy
-dHlwZSIwLCUxXG4iCQlcCi0JCSAgICAgIjI6XG4iCQkJCQkJXAotCQkgICAgIF9BU01fRVhUQUJM
-RV9FWCgxYiwgMmIpCQkJCVwKLQkJICAgICA6IDogbHR5cGUoeCksICJtIiAoX19tKGFkZHIpKSkK
-LQogLyoKICAqIHVhY2Nlc3NfdHJ5IGFuZCBjYXRjaAogICovCiAjZGVmaW5lIHVhY2Nlc3NfdHJ5
-CWRvIHsJCQkJCQlcCi0JY3VycmVudC0+dGhyZWFkLnVhY2Nlc3NfZXJyID0gMDsJCQkJXAorCV9f
-bGFiZWxfXyBfX3VhY2Nlc3NfY2F0Y2hfZWZhdWx0OwkJCQlcCiAJX191YWNjZXNzX2JlZ2luKCk7
-CQkJCQkJXAogCWJhcnJpZXIoKTsKIAogI2RlZmluZSB1YWNjZXNzX3RyeV9ub3NwZWMgZG8gewkJ
-CQkJCVwKLQljdXJyZW50LT50aHJlYWQudWFjY2Vzc19lcnIgPSAwOwkJCQlcCisJX19sYWJlbF9f
-IF9fdWFjY2Vzc19jYXRjaF9lZmF1bHQ7CQkJCVwKIAlfX3VhY2Nlc3NfYmVnaW5fbm9zcGVjKCk7
-CQkJCQlcCiAKICNkZWZpbmUgdWFjY2Vzc19jYXRjaChlcnIpCQkJCQkJXAogCV9fdWFjY2Vzc19l
-bmQoKTsJCQkJCQlcCi0JKGVycikgfD0gKGN1cnJlbnQtPnRocmVhZC51YWNjZXNzX2VyciA/IC1F
-RkFVTFQgOiAwKTsJCVwKKwkoZXJyKSA9IDA7CQkJCQkJCVwKKwlicmVhazsJCQkJCQkJCVwKK19f
-dWFjY2Vzc19jYXRjaF9lZmF1bHQ6CQkJCQkJCVwKKwlfX3VhY2Nlc3NfZW5kKCk7CQkJCQkJXAor
-CShlcnIpID0gLUVGQVVMVDsJCQkJCQlcCiB9IHdoaWxlICgwKQogCiAvKioKQEAgLTU2MiwxNyAr
-NDg1LDEyIEBAIHN0cnVjdCBfX2xhcmdlX3N0cnVjdCB7IHVuc2lnbmVkIGxvbmcgYnVmWzEwMF07
-IH07CiAjZGVmaW5lIGdldF91c2VyX3RyeQkJdWFjY2Vzc190cnlfbm9zcGVjCiAjZGVmaW5lIGdl
-dF91c2VyX2NhdGNoKGVycikJdWFjY2Vzc19jYXRjaChlcnIpCiAKLSNkZWZpbmUgZ2V0X3VzZXJf
-ZXgoeCwgcHRyKQlkbyB7CQkJCQlcCi0JdW5zaWduZWQgbG9uZyBfX2d1ZV92YWw7CQkJCQlcCi0J
-X19nZXRfdXNlcl9zaXplX2V4KChfX2d1ZV92YWwpLCAocHRyKSwgKHNpemVvZigqKHB0cikpKSk7
-CVwKLQkoeCkgPSAoX19mb3JjZSBfX3R5cGVvZl9fKCoocHRyKSkpX19ndWVfdmFsOwkJCVwKLX0g
-d2hpbGUgKDApCisjZGVmaW5lIGdldF91c2VyX2V4KHgsIHB0cikJdW5zYWZlX2dldF91c2VyKHgs
-IHB0ciwgX191YWNjZXNzX2NhdGNoX2VmYXVsdCkKIAogI2RlZmluZSBwdXRfdXNlcl90cnkJCXVh
-Y2Nlc3NfdHJ5CiAjZGVmaW5lIHB1dF91c2VyX2NhdGNoKGVycikJdWFjY2Vzc19jYXRjaChlcnIp
-CiAKLSNkZWZpbmUgcHV0X3VzZXJfZXgoeCwgcHRyKQkJCQkJCVwKLQlfX3B1dF91c2VyX3NpemVf
-ZXgoKF9fdHlwZW9mX18oKihwdHIpKSkoeCksIChwdHIpLCBzaXplb2YoKihwdHIpKSkKKyNkZWZp
-bmUgcHV0X3VzZXJfZXgoeCwgcHRyKQl1bnNhZmVfcHV0X3VzZXIoeCwgcHRyLCBfX3VhY2Nlc3Nf
-Y2F0Y2hfZWZhdWx0KQogCiBleHRlcm4gdW5zaWduZWQgbG9uZwogY29weV9mcm9tX3VzZXJfbm1p
-KHZvaWQgKnRvLCBjb25zdCB2b2lkIF9fdXNlciAqZnJvbSwgdW5zaWduZWQgbG9uZyBuKTsK
---000000000000a3dcf4059497a30d--
+RCU read lock?  It's a bit dicey since I believe the tasklist_lock is
+going to provide us the safety we need, but if we are going to claim
+that the audit container ID list is protected by RCU we should
+probably use it.
+
+> @@ -2397,8 +2438,43 @@ int audit_set_contid(struct task_struct *task, u64 contid)
+>         else if (audit_contid_set(task))
+>                 rc = -ECHILD;
+>         read_unlock(&tasklist_lock);
+> -       if (!rc)
+> -               task->audit->contid = contid;
+> +       if (!rc) {
+> +               struct audit_cont *oldcont = audit_cont(task);
+
+Previously we held the tasklist_lock to protect the audit container ID
+associated with the struct, should we still be holding it here?
+
+Regardless, I worry that the lock dependencies between the
+tasklist_lock and the audit_contid_list_lock are going to be tricky.
+It might be nice to document the relationship in a comment up near
+where you declare audit_contid_list_lock.
+
+> +               struct audit_cont *cont = NULL;
+> +               struct audit_cont *newcont = NULL;
+> +               int h = audit_hash_contid(contid);
+> +
+> +               spin_lock(&audit_contid_list_lock);
+> +               list_for_each_entry_rcu(cont, &audit_contid_hash[h], list)
+> +                       if (cont->id == contid) {
+> +                               /* task injection to existing container */
+> +                               if (current == cont->owner) {
+
+I understand the desire to limit a given audit container ID to the
+orchestrator that created it, but are we certain that we can track
+audit container ID "ownership" via a single instance of a task_struct?
+ What happens when the orchestrator stops/restarts/crashes?  Do we
+even care?
+
+> +                                       refcount_inc(&cont->refcount);
+> +                                       newcont = cont;
+
+We can bail out of the loop here, yes?
+
+> +                               } else {
+> +                                       rc = -ENOTUNIQ;
+> +                                       goto conterror;
+> +                               }
+> +                       }
+> +               if (!newcont) {
+> +                       newcont = kmalloc(sizeof(struct audit_cont), GFP_ATOMIC);
+> +                       if (newcont) {
+> +                               INIT_LIST_HEAD(&newcont->list);
+> +                               newcont->id = contid;
+> +                               get_task_struct(current);
+> +                               newcont->owner = current;
+> +                               refcount_set(&newcont->refcount, 1);
+> +                               list_add_rcu(&newcont->list, &audit_contid_hash[h]);
+> +                       } else {
+> +                               rc = -ENOMEM;
+> +                               goto conterror;
+> +                       }
+> +               }
+> +               task->audit->cont = newcont;
+> +               audit_cont_put(oldcont);
+> +conterror:
+> +               spin_unlock(&audit_contid_list_lock);
+> +       }
+>         task_unlock(task);
+>
+>         if (!audit_enabled)
+> diff --git a/kernel/audit.h b/kernel/audit.h
+> index 16bd03b88e0d..e4a31aa92dfe 100644
+> --- a/kernel/audit.h
+> +++ b/kernel/audit.h
+> @@ -211,6 +211,14 @@ static inline int audit_hash_ino(u32 ino)
+>         return (ino & (AUDIT_INODE_BUCKETS-1));
+>  }
+>
+> +#define AUDIT_CONTID_BUCKETS   32
+> +extern struct list_head audit_contid_hash[AUDIT_CONTID_BUCKETS];
+> +
+> +static inline int audit_hash_contid(u64 contid)
+> +{
+> +       return (contid & (AUDIT_CONTID_BUCKETS-1));
+> +}
+> +
+>  /* Indicates that audit should log the full pathname. */
+>  #define AUDIT_NAME_FULL -1
+>
+
+--
+paul moore
+www.paul-moore.com
