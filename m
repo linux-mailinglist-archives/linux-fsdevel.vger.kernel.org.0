@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D596CD3640
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 02:39:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D68D364C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Oct 2019 02:40:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbfJKAjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Oct 2019 20:39:37 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35189 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727876AbfJKAjg (ORCPT
+        id S1727929AbfJKAju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Oct 2019 20:39:50 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43425 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727916AbfJKAjt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Oct 2019 20:39:36 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m7so8073843lji.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2019 17:39:33 -0700 (PDT)
+        Thu, 10 Oct 2019 20:39:49 -0400
+Received: by mail-lf1-f68.google.com with SMTP id u3so5721925lfl.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Oct 2019 17:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hNUOlKgtAsIE5sVaiGZXUcvdRA2PQ04IbA6oz24c6V8=;
-        b=iP81mvJ6NRHztHSh53vzlkBNXKSKrdUZFa4QghmB7J5WhFdcG7DP8odULQ1+LossNA
-         HyY0EtjSe+2D65p1cF1RolTRImCUmAhtf34UnnJiv5bb4byWcyiu0rvjrmfl2vbW40+K
-         uYDLMHcrUwNLTf4ZMgF+AbSbAFzYG0VlkyZVjWslSX3CfO8wHTZpCXr6615M3Yfpj4l0
-         8f2g26wlubWzyKR8Pe5U+v+67VdFF5Q1pQ0ct6gdTXUOBEg2ZBgOPL9yrMl6iozvVkf1
-         p+2xg2upTdzGk4pdFz6YYWPnDIYnEiY4bZ7ccwy25bJtoqymfHPpN9PGVFPFLhREQFOY
-         jCcQ==
+        bh=N487as+c+FNQH8UKaT6HaOwU2u0KpBH93Y19zrHfpEU=;
+        b=ufwcAAv+UFt3XUw6Rd8NAzS51flGDXx3ywuA5XIH5+S2oFoO1Eaf6UmFdjOUMI6gka
+         6yCyta6ksoQrqSOl/4+hkHsG2c7boYbSkNyYM6xN8dBIPbyC96ggLQiwD1//Cssn99Rv
+         66i8F1CDFiyrlz+9H6hdBO4lrbiRgJ+nzfIONCUyXnWD2+c1GE1f7j8L2AMRZBEfy9g5
+         ZZYXTCvADd7l7/9pzVM3B1yUR1VRIxbYY8Yzx/B6+8NzIhME/H8YnuE2Mh06ykvkFBst
+         ktCU1ig6EE3fVh6p9t8PnxmUOgUALw4WIVCUzgXCP7JYSSNw42EzsQ/ca4pdqBnSXpKU
+         7bVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hNUOlKgtAsIE5sVaiGZXUcvdRA2PQ04IbA6oz24c6V8=;
-        b=Joa7UFPdKdfhN+4c78YUkh64R66YFO0DEDe/o157YtUN8459IudUPNC3GzAIWJTZq8
-         l340IDJol869VpZ/sF3/vc4p0o63uNQ0rClPHiYyiHGKrr3k6G219VVfz3adfmlnf9DT
-         wbC3/nFoi4yJAWSK91Vwj1RZuKV1R+xzxqT7o3uNyEd2D2NyJ7s7DAN8BUBiveaN4Gl3
-         weWnsFkbenoB5wu0ijkYp4g3GR+8WgpZWNqsdCNSVMV9exZpmyI5kgDwgQyqOo/uUiMe
-         AT5jF6azKy9XgQkfZuAu/6UBYANmQX8CyeV4Ihn2YF9ocZmqW0jmL13eLariJIS3vBwQ
-         Zp9g==
-X-Gm-Message-State: APjAAAXGZGEkCoq7y0zH5rCPtpyqwvKDcxEPsGia8J9bo1zbzO8Hs5Ak
-        MLY49Y1IpGwqU/N5b5ZLcL71iRyfTVsAU2eLJRwj
-X-Google-Smtp-Source: APXvYqwpaPJtcZV1PwuU4AeNVWnL9+Nw3+LElDHT8e77zerC7lPTAOUcw5b4UEWy9HlrwEw0xG4KWIzRTp7isyiM8F8=
-X-Received: by 2002:a2e:6e18:: with SMTP id j24mr1202454ljc.57.1570754372500;
- Thu, 10 Oct 2019 17:39:32 -0700 (PDT)
+        bh=N487as+c+FNQH8UKaT6HaOwU2u0KpBH93Y19zrHfpEU=;
+        b=uQZ1zGIXWsQBOvhycOSY7nq0al9x9p0ZqYxsn/FC9+Sm4aBM6PmdrVi1H5M2TSePoN
+         AjGMzwqOVkHNIxXgMwKc38bUflnDZ8mnMeMlZUPzJJdwHBCjBaFRa/1gDV9os5v3lLVc
+         FIxfbOpjgMF4XnZht6up0pFM1nyu78R2+sMSaFkCWzP8JdwfPy/aDgfHKq5y6zApC4QD
+         d+l6oNaLNJ1GlWzcXsSRKOBT2w7+EwbrTUF0eaQ43MtsUZKikkysn3i/zWxliq4hHqXN
+         rpKWQeNAVR2B2x/bSOcewqg/3M/c8/PccSYu4gL+73MsmWDLuZcCbInEVv52fmQBahhy
+         9O8g==
+X-Gm-Message-State: APjAAAW51AiJoIMpJrKpS8TK5Bj4XLBl8jQtmo73QZ9ZY5wM3+h9MizS
+        VkLDZIkHZ6mzMYiSIFZkTOJpjuODuM+tuDyTwkWp
+X-Google-Smtp-Source: APXvYqyB4RJDQCQWsrtqXfnRzChlUNiZfRjoEHOyfVUdO0CSjjh+KCjiX6b5mwIZ8VzpJPbiupVbYYs83JZ7LdEfTCQ=
+X-Received: by 2002:a19:2394:: with SMTP id j142mr7362655lfj.13.1570754386530;
+ Thu, 10 Oct 2019 17:39:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1568834524.git.rgb@redhat.com> <0850eaa785e2ff30c8c4818fd53e9544b34ed884.1568834524.git.rgb@redhat.com>
-In-Reply-To: <0850eaa785e2ff30c8c4818fd53e9544b34ed884.1568834524.git.rgb@redhat.com>
+References: <cover.1568834524.git.rgb@redhat.com> <91315ac64b44bcad9dfc623fa7fefe67d7d2561b.1568834524.git.rgb@redhat.com>
+In-Reply-To: <91315ac64b44bcad9dfc623fa7fefe67d7d2561b.1568834524.git.rgb@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Oct 2019 20:39:21 -0400
-Message-ID: <CAHC9VhQoFFaQACbV4QHG_NPUCJu1+V=x3=i-yyGjbsYq8HuPtg@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V7 08/21] audit: add contid support for signalling
- the audit daemon
+Date:   Thu, 10 Oct 2019 20:39:35 -0400
+Message-ID: <CAHC9VhRgOTfZzzv+NxxH3D3FN-2A=cd2h1+oDc2cabLhzi4gfQ@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V7 12/21] audit: add support for containerid to
+ network namespaces
 To:     Richard Guy Briggs <rgb@redhat.com>
 Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
         Linux-Audit Mailing List <linux-audit@redhat.com>,
@@ -65,132 +65,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 9:25 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> Add audit container identifier support to the action of signalling the
-> audit daemon.
+On Wed, Sep 18, 2019 at 9:26 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> Audit events could happen in a network namespace outside of a task
+> context due to packets received from the net that trigger an auditing
+> rule prior to being associated with a running task.  The network
+> namespace could be in use by multiple containers by association to the
+> tasks in that network namespace.  We still want a way to attribute
+> these events to any potential containers.  Keep a list per network
+> namespace to track these audit container identifiiers.
 >
-> Since this would need to add an element to the audit_sig_info struct,
-> a new record type AUDIT_SIGNAL_INFO2 was created with a new
-> audit_sig_info2 struct.  Corresponding support is required in the
-> userspace code to reflect the new record request and reply type.
-> An older userspace won't break since it won't know to request this
-> record type.
+> Add/increment the audit container identifier on:
+> - initial setting of the audit container identifier via /proc
+> - clone/fork call that inherits an audit container identifier
+> - unshare call that inherits an audit container identifier
+> - setns call that inherits an audit container identifier
+> Delete/decrement the audit container identifier on:
+> - an inherited audit container identifier dropped when child set
+> - process exit
+> - unshare call that drops a net namespace
+> - setns call that drops a net namespace
 >
+> Please see the github audit kernel issue for contid net support:
+>   https://github.com/linux-audit/audit-kernel/issues/92
+> Please see the github audit testsuiite issue for the test case:
+>   https://github.com/linux-audit/audit-testsuite/issues/64
+> Please see the github audit wiki for the feature overview:
+>   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
 > ---
->  include/linux/audit.h       |  7 +++++++
->  include/uapi/linux/audit.h  |  1 +
->  kernel/audit.c              | 28 ++++++++++++++++++++++++++++
->  kernel/audit.h              |  1 +
->  security/selinux/nlmsgtab.c |  1 +
->  5 files changed, 38 insertions(+)
->
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 0c18d8e30620..7b640c4da4ee 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -23,6 +23,13 @@ struct audit_sig_info {
->         char            ctx[0];
->  };
->
-> +struct audit_sig_info2 {
-> +       uid_t           uid;
-> +       pid_t           pid;
-> +       u64             cid;
-> +       char            ctx[0];
-> +};
-> +
->  struct audit_buffer;
->  struct audit_context;
->  struct inode;
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 4ed080f28b47..693ec6e0288b 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -72,6 +72,7 @@
->  #define AUDIT_SET_FEATURE      1018    /* Turn an audit feature on or off */
->  #define AUDIT_GET_FEATURE      1019    /* Get which features are enabled */
->  #define AUDIT_CONTAINER_OP     1020    /* Define the container id and info */
-> +#define AUDIT_SIGNAL_INFO2     1021    /* Get info auditd signal sender */
->
->  #define AUDIT_FIRST_USER_MSG   1100    /* Userspace messages mostly uninteresting to kernel */
->  #define AUDIT_USER_AVC         1107    /* We filter this differently */
+>  include/linux/audit.h | 19 +++++++++++
+>  kernel/audit.c        | 87 +++++++++++++++++++++++++++++++++++++++++++++++++--
+>  kernel/nsproxy.c      |  4 +++
+>  3 files changed, 108 insertions(+), 2 deletions(-)
+
+...
+
 > diff --git a/kernel/audit.c b/kernel/audit.c
-> index adfb3e6a7f0c..df3db29f5a8a 100644
+> index 7cdb76b38966..e0c27bc39925 100644
 > --- a/kernel/audit.c
 > +++ b/kernel/audit.c
-> @@ -125,6 +125,7 @@ struct audit_net {
->  kuid_t         audit_sig_uid = INVALID_UID;
->  pid_t          audit_sig_pid = -1;
->  u32            audit_sig_sid = 0;
-> +u64            audit_sig_cid = AUDIT_CID_UNSET;
+> @@ -373,6 +381,75 @@ static struct sock *audit_get_sk(const struct net *net)
+>         return aunet->sk;
+>  }
 >
->  /* Records can be lost in several ways:
->     0) [suppressed in audit_alloc]
-> @@ -1094,6 +1095,7 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
->         case AUDIT_ADD_RULE:
->         case AUDIT_DEL_RULE:
->         case AUDIT_SIGNAL_INFO:
-> +       case AUDIT_SIGNAL_INFO2:
->         case AUDIT_TTY_GET:
->         case AUDIT_TTY_SET:
->         case AUDIT_TRIM:
-> @@ -1257,6 +1259,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
->         struct audit_buffer     *ab;
->         u16                     msg_type = nlh->nlmsg_type;
->         struct audit_sig_info   *sig_data;
-> +       struct audit_sig_info2  *sig_data2;
->         char                    *ctx = NULL;
->         u32                     len;
->
-> @@ -1516,6 +1519,30 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
->                                  sig_data, sizeof(*sig_data) + len);
->                 kfree(sig_data);
->                 break;
-> +       case AUDIT_SIGNAL_INFO2:
-> +               len = 0;
-> +               if (audit_sig_sid) {
-> +                       err = security_secid_to_secctx(audit_sig_sid, &ctx, &len);
-> +                       if (err)
-> +                               return err;
+> +void audit_netns_contid_add(struct net *net, u64 contid)
+> +{
+> +       struct audit_net *aunet;
+> +       struct list_head *contid_list;
+> +       struct audit_contid *cont;
+> +
+> +       if (!net)
+> +               return;
+> +       if (!audit_contid_valid(contid))
+> +               return;
+> +       aunet = net_generic(net, audit_net_id);
+> +       if (!aunet)
+> +               return;
+> +       contid_list = &aunet->contid_list;
+> +       spin_lock(&aunet->contid_list_lock);
+> +       list_for_each_entry_rcu(cont, contid_list, list)
+> +               if (cont->id == contid) {
+> +                       refcount_inc(&cont->refcount);
+> +                       goto out;
 > +               }
-> +               sig_data2 = kmalloc(sizeof(*sig_data2) + len, GFP_KERNEL);
-> +               if (!sig_data2) {
-> +                       if (audit_sig_sid)
-> +                               security_release_secctx(ctx, len);
-> +                       return -ENOMEM;
-> +               }
-> +               sig_data2->uid = from_kuid(&init_user_ns, audit_sig_uid);
-> +               sig_data2->pid = audit_sig_pid;
-> +               if (audit_sig_sid) {
-> +                       memcpy(sig_data2->ctx, ctx, len);
-> +                       security_release_secctx(ctx, len);
-> +               }
-> +               sig_data2->cid = audit_sig_cid;
-> +               audit_send_reply(skb, seq, AUDIT_SIGNAL_INFO2, 0, 0,
-> +                                sig_data2, sizeof(*sig_data2) + len);
-> +               kfree(sig_data2);
-> +               break;
->         case AUDIT_TTY_GET: {
->                 struct audit_tty_status s;
->                 unsigned int t;
-> @@ -2384,6 +2411,7 @@ int audit_signal_info(int sig, struct task_struct *t)
->                 else
->                         audit_sig_uid = uid;
->                 security_task_getsecid(current, &audit_sig_sid);
-> +               audit_sig_cid = audit_get_contid(current);
->         }
+> +       cont = kmalloc(sizeof(struct audit_contid), GFP_ATOMIC);
 
-I've been wondering something as I've been working my way through
-these patches and this patch seems like a good spot to discuss this
-... Now that we have the concept of an audit container ID "lifetime"
-in the kernel, when do we consider the ID gone?  Is it when the last
-process in the container exits, or is it when we generate the last
-audit record which could possibly contain the audit container ID?
-This patch would appear to support the former, but if we wanted the
-latter we would need to grab a reference to the audit container ID
-struct so it wouldn't "die" on us before we could emit the signal info
-record.
+ kmalloc(sizeof(*cont), GFP_ATOMIC)
+
+
+> +       if (cont) {
+> +               INIT_LIST_HEAD(&cont->list);
+> +               cont->id = contid;
+> +               refcount_set(&cont->refcount, 1);
+> +               list_add_rcu(&cont->list, contid_list);
+> +       }
+> +out:
+> +       spin_unlock(&aunet->contid_list_lock);
+> +}
 
 --
 paul moore
