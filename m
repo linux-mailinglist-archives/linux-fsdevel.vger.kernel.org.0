@@ -2,114 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F3BD4BEE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2019 03:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A45D4C6D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2019 05:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfJLBus (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Oct 2019 21:50:48 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35769 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbfJLBur (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Oct 2019 21:50:47 -0400
-Received: by mail-qt1-f193.google.com with SMTP id m15so16659503qtq.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Oct 2019 18:50:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+FrUC66hBMWPncut2Shl80U8fQ0hJ+GFsb37ZtZ2jlk=;
-        b=P5dSwqRHVOVUbA546m2ofsVN6fSI2g0WmfIfGEkQNMBQuur/5Iky9CPcvjtH72FjHH
-         6tgNQOLRJuj6jwfIJb2F1iDHzCIi2TJlF+hBVDknp6bKpWAtw7/IohK5zzRCOld7vM4S
-         sQpYrO7OLRAfpzecYK4lL/GYg6TJUE2Es5OsjHwxi+Q8DD/aR73iQBNCoC/IKWUxuqqA
-         mDI9r2FhdP4hp4MuDwizSNqOWSmkvYavH9vn6X0wd5tP/LU+AAQF8k5EU4CT9fd0yGbR
-         ZcmQ05IN/2RrWSeaU7YuDU54afvwWW5rO3WlZLnRiJQmw4AZbdXUq+p91Vvvx5LdjtY6
-         MD9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+FrUC66hBMWPncut2Shl80U8fQ0hJ+GFsb37ZtZ2jlk=;
-        b=UzvqNX/hm9HdQ42PRKMJA85LLefYp4rafrjI1UK5/9tJERTvUOzqF6DAA1NnFP+UsG
-         cjSdIty+wM94Hqx6PBSdNQpXYcVQCx6OfzVXOtKddkunE+wmXSykYxOMSQR3t56t6awl
-         avTlrGDGsWxR9jifbRstXE+eOKav5fX8Q799vt+Z6cjJtYLwBmUqsLtK5mSQ5hc9IkLK
-         jOFpjZ1ZgmW26xt/DdAxUm62i8uOvQAYiESlGmjAYr7kZcbvowi+vW/spj4Rezw3pbO1
-         ujfzm6fq4PL4m6GqHAf0V7a0XE7egbTgbXNekoPi2Ss6iAWa3v0RNKP8rAOigRwH5JsB
-         RrXg==
-X-Gm-Message-State: APjAAAVN48C498VNYh6IPjEU6W+fCxPZvyYNtmxXU6TJCkkIhzR5OCbJ
-        frUKCVik0QKtDRUFBD6u97tvHqE=
-X-Google-Smtp-Source: APXvYqy8S+Q9Z32qUy0GbnDVQmljDhZsShAGJEuZJb7mwpMEm/zGr0sD2GbCQdv18ry0o1g00Dzg+g==
-X-Received: by 2002:a05:6214:2ea:: with SMTP id h10mr195493qvu.113.1570845046865;
-        Fri, 11 Oct 2019 18:50:46 -0700 (PDT)
-Received: from gabell (209-6-122-159.s2973.c3-0.arl-cbr1.sbo-arl.ma.cable.rcncustomer.com. [209.6.122.159])
-        by smtp.gmail.com with ESMTPSA id v94sm4746773qtd.43.2019.10.11.18.50.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Oct 2019 18:50:46 -0700 (PDT)
-Date:   Fri, 11 Oct 2019 21:50:41 -0400
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, stefanha@redhat.com
-Subject: Re: [PATCH] virtio_fs: Change module name to virtiofs.ko
-Message-ID: <20191012015040.rqb6buo5snmxmq74@gabell>
-References: <20191011181826.GA13861@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011181826.GA13861@redhat.com>
-User-Agent: NeoMutt/20180716
+        id S1727721AbfJLDYJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Oct 2019 23:24:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726269AbfJLDYI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Oct 2019 23:24:08 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 849D22084C;
+        Sat, 12 Oct 2019 03:24:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570850645;
+        bh=VyiZJbLy7R/VLknrrQMbHc2kgHlA9/wQeAf6BpTnRHQ=;
+        h=Date:From:To:Subject:From;
+        b=ykqDEFAnqdpjZRVouI2CrtI86PNWunizUzK5TQ46ilWttuUOICLwzIBUMXzQha9xy
+         UMQuYBqbeOXiJMsnZkmCTq6mae2k3YAUnSr1TzCel7flI/QwuBECBs+tENMXx6odWo
+         JaWQ/VfDqRfsGH/bYR+vVnO8/77jMA+hw/WVkf5g=
+Date:   Fri, 11 Oct 2019 20:24:05 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2019-10-11-20-23 uploaded
+Message-ID: <20191012032405.EEq3FjPFz%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Vivek,
+The mm-of-the-moment snapshot 2019-10-11-20-23 has been uploaded to
 
-On Fri, Oct 11, 2019 at 02:18:26PM -0400, Vivek Goyal wrote:
-> We have been calling it virtio_fs and even file name is virtio_fs.c. Module
-> name is virtio_fs.ko but when registering file system user is supposed to
-> specify filesystem type as "virtiofs".
-> 
-> Masayoshi Mizuma reported that he specified filesytem type as "virtio_fs" and
-> got this warning on console.
-> 
->   ------------[ cut here ]------------
->   request_module fs-virtio_fs succeeded, but still no fs?
->   WARNING: CPU: 1 PID: 1234 at fs/filesystems.c:274 get_fs_type+0x12c/0x138
->   Modules linked in: ... virtio_fs fuse virtio_net net_failover ...
->   CPU: 1 PID: 1234 Comm: mount Not tainted 5.4.0-rc1 #1
-> 
-> So looks like kernel could find the module virtio_fs.ko but could not find
-> filesystem type after that.
-> 
-> It probably is better to rename module name to virtiofs.ko so that above
-> warning goes away in case user ends up specifying wrong fs name.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-The warning is gone after applied this patch, thanks!
-Please feel free to add:
+mmotm-readme.txt says
 
-    Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+README for mm-of-the-moment:
 
-- Masa
+http://www.ozlabs.org/~akpm/mmotm/
 
-> 
-> Reported-by: Masayoshi Mizuma <msys.mizuma@gmail.com>
-> Suggested-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/fuse/Makefile |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> Index: rhvgoyal-linux/fs/fuse/Makefile
-> ===================================================================
-> --- rhvgoyal-linux.orig/fs/fuse/Makefile	2019-10-11 13:53:43.905757435 -0400
-> +++ rhvgoyal-linux/fs/fuse/Makefile	2019-10-11 13:54:24.147757435 -0400
-> @@ -5,6 +5,7 @@
->  
->  obj-$(CONFIG_FUSE_FS) += fuse.o
->  obj-$(CONFIG_CUSE) += cuse.o
-> -obj-$(CONFIG_VIRTIO_FS) += virtio_fs.o
-> +obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
->  
->  fuse-objs := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o
-> +virtiofs-y += virtio_fs.o
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 5.4-rc2:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* mm-page_owner-fix-off-by-one-error-in-__set_page_owner_handle.patch
+* mm-page_owner-decouple-freeing-stack-trace-from-debug_pagealloc.patch
+* mm-page_owner-decouple-freeing-stack-trace-from-debug_pagealloc-v3.patch
+* mm-page_owner-rename-flag-indicating-that-page-is-allocated.patch
+* kmemleak-do-not-corrupt-the-object_list-during-clean-up.patch
+* mm-slub-fix-a-deadlock-in-show_slab_objects.patch
+* mm-slub-fix-a-deadlock-in-show_slab_objects-fix.patch
+* lib-generic-radix-treec-add-kmemleak-annotations.patch
+* mm-slub-init_on_free=1-should-wipe-freelist-ptr-for-bulk-allocations.patch
+* lib-test_meminit-add-a-kmem_cache_alloc_bulk-test.patch
+* mm-hugetlb-allow-hugepage-allocations-to-excessively-reclaim.patch
+* mm-compaction-fix-wrong-pfn-handling-in-__reset_isolation_pfn.patch
+* fs-fix-direct-ioc-kernel-doc-warning.patch
+* fs-fix-libfsc-kernel-doc-warning.patch
+* fs-fs-writebackc-fix-kernel-doc-warning.patch
+* bitmaph-fix-kernel-doc-warning-and-typo.patch
+* xarrayh-fix-kernel-doc-warning.patch
+* mm-slabc-fix-kernel-doc-warning-for-__ksize.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* drivers-base-memoryc-dont-access-uninitialized-memmaps-in-soft_offline_page_store.patch
+* mm-memory-failure-poison-read-receives-sigkill-instead-of-sigbus-if-mmaped-more-than-once.patch
+* mm-dont-access-uninitialized-memmaps-in-fs-proc-pagec.patch
+* mm-memory-failurec-dont-access-uninitialized-memmaps-in-memory_failure.patch
+* scripts-gdb-fix-lx-dmesg-when-config_printk_caller-is-set.patch
+* mm-page_owner-dont-access-uninitialized-memmaps-when-reading-proc-pagetypeinfo.patch
+* mm-memcg-slab-fix-panic-in-__free_slab-caused-by-premature-memcg-pointer-release.patch
+* resend-ocfs2-fix-error-handling-in-ocfs2_setattr.patch
+* ocfs2-protect-extent-tree-in-the-ocfs2_prepare_inode_for_write.patch
+* ocfs2-protect-extent-tree-in-the-ocfs2_prepare_inode_for_write-checkpatch-fixes.patch
+* ocfs2-remove-unused-function-ocfs2_prepare_inode_for_refcount.patch
+* ocfs2-fix-passing-zero-to-ptr_err-warning.patch
+* ramfs-support-o_tmpfile.patch
+  mm.patch
+* mm-slab-make-kmalloc_info-contain-all-types-of-names.patch
+* mm-slab-remove-unused-kmalloc_size.patch
+* mm-slab_common-use-enum-kmalloc_cache_type-to-iterate-over-kmalloc-caches.patch
+* mm-slub-print-the-offset-of-fault-addresses.patch
+* mm-update-comments-in-slubc.patch
+* mm-hugetlb-make-alloc_gigantic_page-available-for-general-use.patch
+* mm-debug-add-tests-validating-architecture-page-table-helpers.patch
+* mm-memcg-clean-up-reclaim-iter-array.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-drop-mmap_sem-before-calling-balance_dirty_pages-in-write-fault.patch
+* shmem-pin-the-file-in-shmem_fault-if-mmap_sem-is-dropped.patch
+* mm-emit-tracepoint-when-rss-changes.patch
+* mm-mmapc-remove-a-never-trigger-warning-in-__vma_adjust.patch
+* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
+* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region-checkpatch-fixes.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-swap-piggyback-lru_add_drain_all-calls.patch
+* mm-mmapc-prev-could-be-retrieved-from-vma-vm_prev.patch
+* mm-mmapc-__vma_unlink_prev-is-not-necessary-now.patch
+* mm-mmapc-extract-__vma_unlink_list-as-counter-part-for-__vma_link_list.patch
+* mm-mmapc-rb_parent-is-not-necessary-in-__vma_link_list.patch
+* mm-rmapc-dont-reuse-anon_vma-if-we-just-want-a-copy.patch
+* mm-rmapc-reuse-mergeable-anon_vma-as-parent-when-fork.patch
+* asm-generic-tlb-stub-out-pud_free_tlb-if-__pagetable_pud_folded.patch
+* asm-generic-tlb-stub-out-p4d_free_tlb-if-__pagetable_p4d_folded.patch
+* asm-generic-mm-stub-out-p4dd_clear_bad-if-__pagetable_p4ud_folded.patch
+* mm-memory-failurec-clean-up-around-tk-pre-allocation.patch
+* mm-hotplug-reorder-memblock_-calls-in-try_remove_memory.patch
+* memory_hotplug-add-a-bounds-check-to-__add_pages.patch
+* mm-memory_hotplug-export-generic_online_page.patch
+* hv_balloon-use-generic_online_page.patch
+* mm-memory_hotplug-remove-__online_page_free-and-__online_page_increment_counters.patch
+* mm-memunmap-dont-access-uninitialized-memmap-in-memunmap_pages.patch
+* mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
+* mm-memory_hotplug-dont-access-uninitialized-memmaps-in-shrink_pgdat_span.patch
+* mm-memory_hotplug-dont-access-uninitialized-memmaps-in-shrink_zone_span.patch
+* mm-memory_hotplug-shrink-zones-when-offlining-memory.patch
+* mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
+* mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
+* mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
+* mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
+* mm-memory_hotplug-cleanup-__remove_pages.patch
+* mm-vmalloc-remove-unnecessary-highmem_mask-from-parameter-of-gfpflags_allow_blocking.patch
+* mm-vmalloc-remove-preempt_disable-enable-when-do-preloading.patch
+* selftests-vm-add-fragment-config_test_vmalloc.patch
+* mm-vmscan-remove-unused-scan_control-parameter-from-pageout.patch
+* z3fold-add-inter-page-compaction.patch
+* z3fold-add-inter-page-compaction-fix.patch
+* mm-support-memblock-alloc-on-the-exact-node-for-sparse_buffer_init.patch
+* mm-oom-avoid-printk-iteration-under-rcu.patch
+* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
+* hugetlbfs-hugetlb_fault_mutex_hash-cleanup.patch
+* hugetlb-region_chg-provides-only-cache-entry.patch
+* hugetlb-remove-duplicated-code.patch
+* hugetlb-remove-duplicated-code-checkpatch-fixes.patch
+* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash.patch
+* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash-fix.patch
+* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash-fix-fix.patch
+* mm-hugetlb-avoid-looping-to-the-same-hugepage-if-pages-and-vmas.patch
+* mm-thp-do-not-queue-fully-unmapped-pages-for-deferred-split.patch
+* mm-thp-make-set_huge_zero_page-return-void.patch
+* mm-cmac-switch-to-bitmap_zalloc-for-cma-bitmap-allocation.patch
+* userfaultfd-use-vma_pagesize-for-all-huge-page-size-calculation.patch
+* userfaultfd-remove-unnecessary-warn_on-in-__mcopy_atomic_hugetlb.patch
+* userfaultfd-wrap-the-common-dst_vma-check-into-an-inlined-function.patch
+* uffd-wp-clear-vm_uffd_missing-or-vm_uffd_wp-during-userfaultfd_register.patch
+* mm-shmemc-make-array-values-static-const-makes-object-smaller.patch
+* mm-fix-struct-member-name-in-function-comments.patch
+* mm-fix-typo-in-the-comment-when-calling-function-__setpageuptodate.patch
+* mm-memory_hotplugc-remove-__online_page_set_limits.patch
+* mm-annotate-refault-stalls-from-swap_readpage.patch
+* mm-annotate-refault-stalls-from-swap_readpage-fix.patch
+* mm-vmscan-remove-unused-lru_pages-argument.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* proc-change-nlink-under-proc_subdir_lock.patch
+* proc-delete-useless-len-variable.patch
+* proc-shuffle-struct-pde_opener.patch
+* proc-fix-confusing-macro-arg-name.patch
+* sysctl-inline-braces-for-ctl_table-and-ctl_table_header.patch
+* gitattributes-use-dts-diff-driver-for-dts-files.patch
+* linux-build_bugh-change-type-to-int.patch
+* kernel-notifierc-intercepting-duplicate-registrations-to-avoid-infinite-loops.patch
+* kernel-notifierc-remove-notifier_chain_cond_register.patch
+* kernel-notifierc-remove-blocking_notifier_chain_cond_register.patch
+* hung_task-allow-printing-warnings-every-check-interval.patch
+* get_maintainer-add-signatures-from-fixes-badcommit-lines-in-commit-message.patch
+* string-add-stracpy-and-stracpy_pad-mechanisms.patch
+* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
+* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
+* checkpatch-improve-ignoring-camelcase-si-style-variants-like-ma.patch
+* epoll-simplify-ep_poll_safewake-for-config_debug_lock_alloc.patch
+* fs-epoll-remove-unnecessary-wakeups-of-nested-epoll.patch
+* selftests-add-epoll-selftests.patch
+* elf-delete-unused-interp_map_addr-argument.patch
+* elf-extract-elf_read-function.patch
+* uaccess-disallow-int_max-copy-sizes.patch
+* aio-simplify-read_events.patch
+* lib-ubsan-dont-seralize-ubsan-report.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+  linux-next.patch
+  linux-next-git-rejects.patch
+  diff-sucks.patch
+* samples-watch_queue-watch_test-fix-build.patch
+* drivers-block-null_blk_mainc-fix-layout.patch
+* drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* lib-list-test-add-a-test-for-the-list-doubly-linked-list.patch
+* lib-genallocc-export-symbol-addr_in_gen_pool.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
+* hacking-group-sysrq-kgdb-ubsan-into-generic-kernel-debugging-instruments.patch
+* hacking-create-submenu-for-arch-special-debugging-options.patch
+* hacking-group-kernel-data-structures-debugging-together.patch
+* hacking-move-kernel-testing-and-coverage-options-to-same-submenu.patch
+* hacking-move-oops-into-lockups-and-hangs.patch
+* hacking-move-sched_stack_end_check-after-debug_stack_usage.patch
+* hacking-create-a-submenu-for-scheduler-debugging-options.patch
+* hacking-move-debug_bugverbose-to-printk-and-dmesg-options.patch
+* hacking-move-debug_fs-to-generic-kernel-debugging-instruments.patch
+* bitops-introduce-the-for_each_set_clump8-macro.patch
+* lib-test_bitmapc-add-for_each_set_clump8-test-cases.patch
+* gpio-104-dio-48e-utilize-for_each_set_clump8-macro.patch
+* gpio-104-idi-48-utilize-for_each_set_clump8-macro.patch
+* gpio-gpio-mm-utilize-for_each_set_clump8-macro.patch
+* gpio-ws16c48-utilize-for_each_set_clump8-macro.patch
+* gpio-pci-idio-16-utilize-for_each_set_clump8-macro.patch
+* gpio-pcie-idio-24-utilize-for_each_set_clump8-macro.patch
+* gpio-uniphier-utilize-for_each_set_clump8-macro.patch
+* gpio-74x164-utilize-the-for_each_set_clump8-macro.patch
+* thermal-intel-intel_soc_dts_iosf-utilize-for_each_set_clump8-macro.patch
+* gpio-pisosr-utilize-the-for_each_set_clump8-macro.patch
+* gpio-max3191x-utilize-the-for_each_set_clump8-macro.patch
+* gpio-pca953x-utilize-the-for_each_set_clump8-macro.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
