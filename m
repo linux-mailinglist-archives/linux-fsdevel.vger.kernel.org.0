@@ -2,56 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53931D50CA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2019 18:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3470FD5285
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Oct 2019 22:51:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbfJLQBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Oct 2019 12:01:30 -0400
-Received: from nms02.ip-net.mgrs.ru ([178.237.242.9]:45450 "EHLO
-        nms02.ip-net.mgrs.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727115AbfJLP7a (ORCPT
+        id S1729486AbfJLUvk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Oct 2019 16:51:40 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:60883 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728579AbfJLUvk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Oct 2019 11:59:30 -0400
-Received: from User (localhost.localdomain [127.0.0.1])
-        by nms02.ip-net.mgrs.ru (Postfix) with SMTP id 562F84E11B6;
-        Sat, 12 Oct 2019 08:16:18 +0300 (MSK)
-Reply-To: <kepe19655@aol.com>
-From:   "Mr. Henk Boelens" <info@wholeearth.com>
-To:     henkboelens2016@contractor.net
-Subject: GOOD DAY?
-Date:   Fri, 11 Oct 2019 22:17:04 -0700
+        Sat, 12 Oct 2019 16:51:40 -0400
+Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D0669362E26;
+        Sun, 13 Oct 2019 07:51:36 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iJOMR-0007JM-WE; Sun, 13 Oct 2019 07:51:36 +1100
+Date:   Sun, 13 Oct 2019 07:51:35 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Wang Shilong <wangshilong1991@gmail.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Andreas Dilger <adilger@dilger.ca>, Li Xi <lixi@ddn.com>,
+        Wang Shilong <wshilong@ddn.com>
+Subject: Re: [Project Quota]file owner could change its project ID?
+Message-ID: <20191012205135.GS16973@dread.disaster.area>
+References: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-Id: <20191012051619.562F84E11B6@nms02.ip-net.mgrs.ru>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=7-415B0cAAAA:8 a=XQ-RyMWtx_6voXMgLtIA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Western Associate Bank
-Bank Address:Tower Building 83 Hull Road
-Oxwich Brussels Belgium
+On Sat, Oct 12, 2019 at 02:33:36PM +0800, Wang Shilong wrote:
+> Steps to reproduce:
+> [wangsl@localhost tmp]$ mkdir project
+> [wangsl@localhost tmp]$ lsattr -p project -d
+>     0 ------------------ project
+> [wangsl@localhost tmp]$ chattr -p 1 project
+> [wangsl@localhost tmp]$ lsattr -p -d project
+>     1 ------------------ project
+> [wangsl@localhost tmp]$ chattr -p 2 project
+> [wangsl@localhost tmp]$ lsattr -p -d project
+>     2 ------------------ project
+> [wangsl@localhost tmp]$ df -Th .
+> Filesystem     Type  Size  Used Avail Use% Mounted on
+> /dev/sda3      xfs    36G  4.1G   32G  12% /
+> [wangsl@localhost tmp]$ uname -r
+> 5.4.0-rc2+
+> 
+> As above you could see file owner could change project ID of file its self.
 
-Dear Friend
+Perfectly legal to do this. Working as designed, and intended.
+Project quotas have allowed this since they were introduced in the
+late 1980s on Irix...
 
-Please accept my apologies if this request does not meet your personal ethics as it is not intended to cause you any embarrassment in what ever form. I got your
-contact email address from the internet directory and decided to contact you for this transaction that is based on trust and your outstanding. I have an interesting business proposal for you that will be of immense benefit to both of us. Although this may be hard for you to believe because i know that there is absolutely going to be a great doubt and distrust in your heart in respect of this email as this might sound strange to you and coupled with the fact that, so many individuals have taken possession of the Internet to facilitate their nefarious deeds, thereby making it extremely difficult for genuine and legitimate persons to get attention and recognition. Please grant me the benefit of doubt and hear me out.
+> As my understanding, we could set project ID and inherit attribute to account
+> Directory usage, and implement a similar 'Directory Quota' based on this.
 
-My name is Henk Boelens . I work with Western Associate Bank here in Belgium as a branch bank manager. I discovered an abandoned sum of GBP 19,850,000.00 (Nineteen Million Eight Hundred And Fifty Thousand British Pounds) in an account that belongs to one of our foreign customers Late Dr. Erin Jacobson, an American citizen who unfortunately lost his life and his entire family in Montana plane crash on March 23, 2009, on their way to a group ski vacation. The choice of contacting you is aroused from the geographical nature of where you live, particularly due to the sensitivity of this transaction and the confidentiality herein. Now our bank has been waiting for any of the relatives to come up for the claim but nobody has done that. I personally tried to locate any member of his family but have been unsuccessful in locating the relatives for 7 years now, i have also checked the deposit documents and discovered that he did not declare any next of kin on the deposit.
+Yes, that is a -use- of project quotas, but not the -only- use.
+Users have always been allowed to select what project their files
+belong to - it's a method of accounting space even when users cannot
+access all of the project information.
 
-Now the Management of our bank as instructed me to look for the next of kin or they will convert the funds into the Government Treasury Account as unclaimed funds and the funds will be wasted. Therefore, I cannot claim these funds without presenting a foreigner to stand as next of kin. This is reason why I contacted you to seek your consent to present you as an next of kin so that the funds will be release to you, then we share it 55% for me and 45% for you because am not a
-greedy person and is deal between me and you.
+> But Directories could easily break this limit by change its file to
+> other project ID.
 
-I have employed the service of an Attorney who will secure all necessary legal documents that could be used to back up this claim. All the attorney need to do is to fill in your names to the documents and legalize it in the Court here to prove you as the legitimate next of kin to the late depositor Dr. Erin Jacobson then the bank will release the funds to you as the rightful beneficiary.
+Yes. But then users are using the project quotas as traditional
+project quotas, which is just fine. There are users out there that
+use this mix of behaviours - users have a default directory quota to
+limit unbound space usage of home directories, but for files that
+belong to a specific project they simply change the project ID and
+now the space in their home directory those project files take up is
+accounted to the project rather than the user.
 
-This is a fair deal without any risk attached either on your part or on my part as long as we comply with the laws governing the claiming of funds in our establishment. All I require is your honest co-operation to enable us see this deal through, and with my position in the bank as a bank manager, I will do every thing possible to protect your interest and to make sure everything workout successfully.
+> And we used vfs_ioc_fssetxattr_check() to only allow init userspace to
+> change project quota:
 
-If you are interested in this deal, kindly send me your complete information, your full names and address, Your Private telephone and Fax numbers, and Cell phone so that the attorney will start processing the necessary paperwork that would facilitate the release of the funds to you.
+Right, that's so directory quotas can be enforced for container
+use cases, preventing the users inside a container from modifying
+the project quota and escaping the space usage limit set for the
+container. This means project quotas are unavailable for use
+inside user namespaces as they are used for container resource usage
+limiting.
 
-Mr. Henk Boelens
+> Shall we have something like following to limit admin change for
+> Project state too?
+
+As per above, that will break many existing use cases for project
+quotas, so I don't think we will be doing that.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
