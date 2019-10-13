@@ -2,69 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 429BED54C2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2019 08:07:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B5ED54C9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2019 08:17:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbfJMGHS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Oct 2019 02:07:18 -0400
-Received: from mga18.intel.com ([134.134.136.126]:35966 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727738AbfJMGHS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Oct 2019 02:07:18 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2019 23:07:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,290,1566889200"; 
-   d="scan'208";a="185176274"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 12 Oct 2019 23:07:16 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iJX2B-0002nc-L4; Sun, 13 Oct 2019 14:07:15 +0800
-Date:   Sun, 13 Oct 2019 14:07:02 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     kbuild-all@lists.01.org, Andrew Morton <akpm@linux-foundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH] fs: vboxsf_parse_monolithic() can be static
-Message-ID: <20191013060702.ll5koqqba5bh4ujc@332d0cec05f4>
-References: <20191003180858.497928-2-hdegoede@redhat.com>
+        id S1728225AbfJMGRY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Oct 2019 02:17:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42240 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfJMGRY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 13 Oct 2019 02:17:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gHDvwzjyh2BcK8+v9tZOTrs2Kje82quoZLnRHBlDXkU=; b=hiDKVgsUJTt9/HS9pfII/xtxF
+        fxGAQgT84/R/BNoKl1dm12dqUnbSJlJkREH7N+VymmjqUAxkhEMiNLQTuKCaQg8BAYcQHkyFTXCGW
+        bgZrXRrsjX/IrJXKib/APthnGqPlf6AeJNf6bSdXCmwyqkunHiMirpQ3W/iqnZ36DtS5OuBRHfjw6
+        DtoKOlFNbYzzACAb1+Mq6EyVw9EQ/x0AMQjTqzj5LmZLdjDsvaEwJBFZbDgdTimnSZ8+1DtuKJiWc
+        unVbBy+Z+FU5lcM7lovuaycEFCMRyiiSdhHEWzAn6XN4NMP98tWqNe685Caizo2Qa88z7zm9Iiwuh
+        NNVvpI7sA==;
+Received: from [2601:1c0:6280:3f0::9ef4]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iJXBw-00013e-Fe; Sun, 13 Oct 2019 06:17:20 +0000
+Subject: Re: [PATCH] writeback: Fix a warning while "make xmldocs"
+To:     Masanari Iida <standby24x7@gmail.com>, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tj@kernel.org, axboe@kernel.dk
+References: <20191013040837.14766-1-standby24x7@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <fcb2c42a-9ee9-7f59-0543-eca6e188ac00@infradead.org>
+Date:   Sat, 12 Oct 2019 23:17:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003180858.497928-2-hdegoede@redhat.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191013040837.14766-1-standby24x7@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 10/12/19 9:08 PM, Masanari Iida wrote:
+> This patch fix following warning.
+> ./fs/fs-writeback.c:918: warning: Excess function parameter
+> 'nr_pages' description in 'cgroup_writeback_by_id'
+> 
+> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+> ---
+>  fs/fs-writeback.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index e88421d9a48d..8461a6322039 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -905,7 +905,7 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
+>   * cgroup_writeback_by_id - initiate cgroup writeback from bdi and memcg IDs
+>   * @bdi_id: target bdi id
+>   * @memcg_id: target memcg css id
+> - * @nr_pages: number of pages to write, 0 for best-effort dirty flushing
+> + * @nr: number of pages to write, 0 for best-effort dirty flushing
+>   * @reason: reason why some writeback work initiated
+>   * @done: target wb_completion
+>   *
+> 
 
-Fixes: 4de97a2666c6 ("fs: Add VirtualBox guest shared folder (vboxsf) support")
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
- super.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://lore.kernel.org/linux-fsdevel/756645ac-0ce8-d47e-d30a-04d9e4923a4f@infradead.org/
 
-diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-index f53d5ce823c48..65363c4d49e55 100644
---- a/fs/vboxsf/super.c
-+++ b/fs/vboxsf/super.c
-@@ -379,7 +379,7 @@ static int vboxsf_setup(void)
- 	return err;
- }
- 
--int vboxsf_parse_monolithic(struct fs_context *fc, void *data)
-+static int vboxsf_parse_monolithic(struct fs_context *fc, void *data)
- {
- 	char *options = data;
- 
+Andrew has already added this to his patches.
+
+-- 
+~Randy
