@@ -2,88 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16C9AD5417
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2019 06:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ECECD54C1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2019 08:07:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfJMEIn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Oct 2019 00:08:43 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42492 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbfJMEIm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Oct 2019 00:08:42 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f14so2982067pgi.9;
-        Sat, 12 Oct 2019 21:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=H9mpX1bbT835ApgtlCBm7T1WS7+wbTgLPpZogSEQonE=;
-        b=Q/dseJBnDi82NZ63Ja0ehvJCMufSWASfHKc1Uj/uZsCwEO9iJIu9wV40kSdNHWKih4
-         6Bqr+WY4GPEOHlTPifvI61e/tYjzRuqfCGil3hAi6suweb9/sJF7pdEymm9ujwWYGBEi
-         3Pja4TIRlN0XOGExJQCYTgQn+g72jGTco5b+XaW9QczLVh2JBM6HkPuH412NyNLKyP7Y
-         JYO5UK9b17mW8MFeT13VHahOixfsAM8Dz+Dqr7iMwQ/HoVw+oswhDzNYgB64y+rXAj9S
-         i8YEr5Y0xaW84L/woULLHxObjuJUlyDN1eJWGIa+S9ukEUx2qHFJgS9svzkB3Urf2qOa
-         xleA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=H9mpX1bbT835ApgtlCBm7T1WS7+wbTgLPpZogSEQonE=;
-        b=aveVvE76KDM1nfZKg4/NQeGEvokEE3YzwT2rnF2W+BGb7lPyUJBB2khFBy9nafbAVY
-         VZsnR+qh1EP8psd42gpIChkOr0/oH3oNItMxw46OO6FX2Jg78HI8GfV+LSbj5n+JZnZm
-         6BbiX9oXMFZKNofy1jr4puuZp4//NdaBZXxWVNfwWb0GtJnXsSicf6KB+xdFjBMZEPCA
-         LoYyhTC8s/XxXLKySH2/55mApZSzxycmiue1X2XWE/tF0FUhYVUo1TvJYKuSnJpHZ7QV
-         L5/Q3IUR7wQGLwK1PutsLAg7khn/A7EywjQC1iaD40O4Gt5/xYgVKlBXQUiyq/3Gfgf0
-         HuwA==
-X-Gm-Message-State: APjAAAWLdefe3/4xNm3oRn0/iMTjrFwBgD/1m9ur7nn0bD/IYsJ6yOB2
-        IzLccM2uSZHJdXozSP5MiXs=
-X-Google-Smtp-Source: APXvYqw36P3qXY4OCM2EqbsWH5VMrC9lRJWvs1Trc72yVwpEpOBRiqQocYUx2xB6KObg7n8x/MiVPQ==
-X-Received: by 2002:a63:5605:: with SMTP id k5mr3773333pgb.14.1570939722132;
-        Sat, 12 Oct 2019 21:08:42 -0700 (PDT)
-Received: from masabert (i118-21-156-233.s30.a048.ap.plala.or.jp. [118.21.156.233])
-        by smtp.gmail.com with ESMTPSA id m102sm11320831pje.5.2019.10.12.21.08.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Oct 2019 21:08:41 -0700 (PDT)
-Received: by masabert (Postfix, from userid 1000)
-        id D0074201218; Sun, 13 Oct 2019 13:08:38 +0900 (JST)
-From:   Masanari Iida <standby24x7@gmail.com>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tj@kernel.org, axboe@kernel.dk
-Cc:     Masanari Iida <standby24x7@gmail.com>
-Subject: [PATCH] writeback: Fix a warning while "make xmldocs"
-Date:   Sun, 13 Oct 2019 13:08:37 +0900
-Message-Id: <20191013040837.14766-1-standby24x7@gmail.com>
-X-Mailer: git-send-email 2.23.0.526.g70bf0b755af4
+        id S1728073AbfJMGHS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Oct 2019 02:07:18 -0400
+Received: from mga01.intel.com ([192.55.52.88]:59785 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727738AbfJMGHR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 13 Oct 2019 02:07:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2019 23:07:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,290,1566889200"; 
+   d="scan'208";a="207735160"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Oct 2019 23:07:15 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iJX2B-0002k6-1t; Sun, 13 Oct 2019 14:07:15 +0800
+Date:   Sun, 13 Oct 2019 14:06:51 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     kbuild-all@lists.01.org, Andrew Morton <akpm@linux-foundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v15] fs: Add VirtualBox guest shared folder (vboxsf)
+ support
+Message-ID: <201910131421.eglILsEP%lkp@intel.com>
+References: <20191003180858.497928-2-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191003180858.497928-2-hdegoede@redhat.com>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch fix following warning.
-./fs/fs-writeback.c:918: warning: Excess function parameter
-'nr_pages' description in 'cgroup_writeback_by_id'
+Hi Hans,
 
-Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on linus/master]
+[cannot apply to v5.4-rc2 next-20191011]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Hans-de-Goede/fs-Add-VirtualBox-guest-shared-folder-vboxsf-support/20191004-022414
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-43-g0ccb3b4-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> fs/vboxsf/super.c:382:5: sparse: sparse: symbol 'vboxsf_parse_monolithic' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
 ---
- fs/fs-writeback.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index e88421d9a48d..8461a6322039 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -905,7 +905,7 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
-  * cgroup_writeback_by_id - initiate cgroup writeback from bdi and memcg IDs
-  * @bdi_id: target bdi id
-  * @memcg_id: target memcg css id
-- * @nr_pages: number of pages to write, 0 for best-effort dirty flushing
-+ * @nr: number of pages to write, 0 for best-effort dirty flushing
-  * @reason: reason why some writeback work initiated
-  * @done: target wb_completion
-  *
--- 
-2.23.0.526.g70bf0b755af4
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
