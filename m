@@ -2,163 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DCBBD56D7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2019 18:41:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B073D5737
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2019 20:13:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729290AbfJMQlc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Oct 2019 12:41:32 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37364 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfJMQlc (ORCPT
+        id S1728968AbfJMSNi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Oct 2019 14:13:38 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:34088 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbfJMSNi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Oct 2019 12:41:32 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9DGdYc6031586;
-        Sun, 13 Oct 2019 16:41:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=OPvDoFNhpdDqTJICy1n9atZ2eTMPxQs1GILfHJKGOjY=;
- b=Gl3zj2kuuy5Snan7UUvoOusIEPlbZbnHN4J6nIoCQH9wLyTr5BfPOnYimAW0koKa54CU
- QwgV+4FlYu+YyNcNOatAt9LAS13hZGgqJB+9an4P9FFVNVkMPmQkZLlfofnjMuNP5vfV
- kFnLtf4IYg3i28FBmJqAfVEfjmjU9y5CmY8vX2+ex8qxwtDLbdvbSaQbtxOsaWwPNadX
- cIUWdWrWUEo8kBY7303fOV8dN26UNLb1wGssbWQjfSviYdrxZqJ8wVCRF7cWbAi+D7DQ
- OOhzP4kuEjMiq813yD7j7oxltkErHDRu1Krsu/uhKpRM4p2WDOBGFuumXPl7GrL2dEca iw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2vk6sq4gcu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 13 Oct 2019 16:41:28 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9DGcMdO072186;
-        Sun, 13 Oct 2019 16:41:27 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2vkr9ut2nj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 13 Oct 2019 16:41:27 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9DGfP4d012181;
-        Sun, 13 Oct 2019 16:41:26 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 13 Oct 2019 09:41:25 -0700
-Date:   Sun, 13 Oct 2019 09:41:24 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Wang Shilong <wangshilong1991@gmail.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Andreas Dilger <adilger@dilger.ca>, Li Xi <lixi@ddn.com>,
-        Wang Shilong <wshilong@ddn.com>
-Subject: Re: [Project Quota]file owner could change its project ID?
-Message-ID: <20191013164124.GR13108@magnolia>
-References: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
+        Sun, 13 Oct 2019 14:13:38 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iJiN3-0006Hg-Cd; Sun, 13 Oct 2019 18:13:33 +0000
+Date:   Sun, 13 Oct 2019 19:13:33 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
+ unsafe_put_user()
+Message-ID: <20191013181333.GK26530@ZenIV.linux.org.uk>
+References: <20191007025046.GL26530@ZenIV.linux.org.uk>
+ <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
+ <CAHk-=witTXMGsc9ZAK4hnKnd_O7u8b1eiou-6cfjt4aOcWvruQ@mail.gmail.com>
+ <20191008032912.GQ26530@ZenIV.linux.org.uk>
+ <CAHk-=wiAyZmsEp6oQQgHiuaDU0bLj=OVHSGV_OfvHRSXNPYABw@mail.gmail.com>
+ <CAHk-=wgOWxqwqCFuP_Bw=Hxxf9njeHJs0OLNGNc63peNd=kRqw@mail.gmail.com>
+ <20191010195504.GI26530@ZenIV.linux.org.uk>
+ <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
+ <20191011001104.GJ26530@ZenIV.linux.org.uk>
+ <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9409 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910130167
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9409 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910130167
+In-Reply-To: <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 02:33:36PM +0800, Wang Shilong wrote:
-> Steps to reproduce:
-> [wangsl@localhost tmp]$ mkdir project
-> [wangsl@localhost tmp]$ lsattr -p project -d
->     0 ------------------ project
-> [wangsl@localhost tmp]$ chattr -p 1 project
-> [wangsl@localhost tmp]$ lsattr -p -d project
->     1 ------------------ project
-> [wangsl@localhost tmp]$ chattr -p 2 project
-> [wangsl@localhost tmp]$ lsattr -p -d project
->     2 ------------------ project
-> [wangsl@localhost tmp]$ df -Th .
-> Filesystem     Type  Size  Used Avail Use% Mounted on
-> /dev/sda3      xfs    36G  4.1G   32G  12% /
-> [wangsl@localhost tmp]$ uname -r
-> 5.4.0-rc2+
-> 
-> As above you could see file owner could change project ID of file its self.
-> As my understanding, we could set project ID and inherit attribute to account
-> Directory usage, and implement a similar 'Directory Quota' based on this.
+On Thu, Oct 10, 2019 at 05:31:13PM -0700, Linus Torvalds wrote:
 
-So the problem here is that the admin sets up a project quota on a
-directory, then non-container users change the project id and thereby
-break quota enforcement?  Dave didn't sound at all enthusiastic, but I'm
-still wondering what exactly you're trying to prevent.
+> So the code actually needs to properly return the error early, or
+> initialize the segments that didn't get loaded to 0, or something.
+> 
+> And when I posted that, Luto said "just get rid of the get_user_ex()
+> entirely, instead of changing semantics of the existing ones to be
+> sane.
+> 
+> Which is probably right. There aren't that many.
+> 
+> I *thought* there were also cases of us doing some questionably things
+> inside the get_user_try sections, but those seem to have gotten fixed
+> already independently, so it's really just the "make try/catch really
+> try/catch" change that needs some editing of our current broken stuff
+> that depends on it not actually *catching* exceptions, but on just
+> continuing on to the next one.
 
-(Which is to say, maybe we introduce a mount option to prevent changing
-projid if project quota *enforcement* is enabled?)
+Umm...  TBH, I wonder if we would be better off if restore_sigcontext()
+(i.e. sigreturn()/rt_sigreturn()) would flat-out copy_from_user() the
+entire[*] struct sigcontext into a local variable and then copied fields
+to pt_regs...  The thing is small enough for not blowing the stack (256
+bytes max. and it's on a shallow stack) and big enough to make "fancy
+memcpy + let the compiler think how to combine in-kernel copies"
+potentially better than hardwired sequence of 64bit loads/stores...
 
---D
+[*] OK, sans ->reserved part in the very end on 64bit.  192 bytes to
+copy.
 
-> But Directories could easily break this limit by change its file to
-> other project ID.
-> 
-> And we used vfs_ioc_fssetxattr_check() to only allow init userspace to
-> change project quota:
-> 
->         /*
-> 
->          * Project Quota ID state is only allowed to change from within the init
-> 
->          * namespace. Enforce that restriction only if we are trying to change
-> 
->          * the quota ID state. Everything else is allowed in user namespaces.
-> 
->          */
-> 
->         if (current_user_ns() != &init_user_ns) {
-> 
->                 if (old_fa->fsx_projid != fa->fsx_projid)
-> 
->                         return -EINVAL;
-> 
->                 if ((old_fa->fsx_xflags ^ fa->fsx_xflags) &
-> 
->                                 FS_XFLAG_PROJINHERIT)
-> 
->                         return -EINVAL;
-> 
->         }
-> 
-> Shall we have something like following to limit admin change for
-> Project state too?
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> 
-> index fef457a42882..3e324931ee84 100644
-> 
-> --- a/fs/inode.c
-> 
-> +++ b/fs/inode.c
-> 
-> @@ -2273,7 +2273,7 @@ int vfs_ioc_fssetxattr_check(struct inode
-> *inode, const struct fsxattr *old_fa,
-> 
->          * namespace. Enforce that restriction only if we are trying to change
-> 
->          * the quota ID state. Everything else is allowed in user namespaces.
-> 
->          */
-> 
-> -       if (current_user_ns() != &init_user_ns) {
-> 
-> +       if (current_user_ns() != &init_user_ns || !capable(CAP_SYS_ADMIN)){
-> 
->                 if (old_fa->fsx_projid != fa->fsx_projid)
-> 
->                         return -EINVAL;
-> 
->                 if ((old_fa->fsx_xflags ^ fa->fsx_xflags) &
+Same for do_sys_vm86(), perhaps - we want regs/flags/cpu_type and
+screen_bitmap there, i.e. the beginning of struct vm86plus_struct
+and of struct vm86_struct...  24*32bit.  IOW, 96-byte memcpy +
+gcc-visible field-by-field copying vs. hardwired sequence of
+32bit loads (with some 16bit ones thrown in, for extra fun) and
+compiler told not to reorder anything.
+
+And these (32bit and 64bit restore_sigcontext() and do_sys_vm86())
+are the only get_user_ex() users anywhere...
