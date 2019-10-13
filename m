@@ -2,117 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF23AD53FB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2019 05:14:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C9AD5417
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2019 06:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbfJMDO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Oct 2019 23:14:57 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41907 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727492AbfJMDO5 (ORCPT
+        id S1726400AbfJMEIn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Oct 2019 00:08:43 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42492 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfJMEIm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Oct 2019 23:14:57 -0400
-Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 965C443E15C;
-        Sun, 13 Oct 2019 14:14:51 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iJULK-0001Bd-QX; Sun, 13 Oct 2019 14:14:50 +1100
-Date:   Sun, 13 Oct 2019 14:14:50 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/26] xfs: Improve metadata buffer reclaim accountability
-Message-ID: <20191013031450.GT16973@dread.disaster.area>
-References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-5-david@fromorbit.com>
- <20191011123939.GD61257@bfoster>
- <20191011231323.GK16973@dread.disaster.area>
- <20191012120558.GA3307@bfoster>
+        Sun, 13 Oct 2019 00:08:42 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f14so2982067pgi.9;
+        Sat, 12 Oct 2019 21:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H9mpX1bbT835ApgtlCBm7T1WS7+wbTgLPpZogSEQonE=;
+        b=Q/dseJBnDi82NZ63Ja0ehvJCMufSWASfHKc1Uj/uZsCwEO9iJIu9wV40kSdNHWKih4
+         6Bqr+WY4GPEOHlTPifvI61e/tYjzRuqfCGil3hAi6suweb9/sJF7pdEymm9ujwWYGBEi
+         3Pja4TIRlN0XOGExJQCYTgQn+g72jGTco5b+XaW9QczLVh2JBM6HkPuH412NyNLKyP7Y
+         JYO5UK9b17mW8MFeT13VHahOixfsAM8Dz+Dqr7iMwQ/HoVw+oswhDzNYgB64y+rXAj9S
+         i8YEr5Y0xaW84L/woULLHxObjuJUlyDN1eJWGIa+S9ukEUx2qHFJgS9svzkB3Urf2qOa
+         xleA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H9mpX1bbT835ApgtlCBm7T1WS7+wbTgLPpZogSEQonE=;
+        b=aveVvE76KDM1nfZKg4/NQeGEvokEE3YzwT2rnF2W+BGb7lPyUJBB2khFBy9nafbAVY
+         VZsnR+qh1EP8psd42gpIChkOr0/oH3oNItMxw46OO6FX2Jg78HI8GfV+LSbj5n+JZnZm
+         6BbiX9oXMFZKNofy1jr4puuZp4//NdaBZXxWVNfwWb0GtJnXsSicf6KB+xdFjBMZEPCA
+         LoYyhTC8s/XxXLKySH2/55mApZSzxycmiue1X2XWE/tF0FUhYVUo1TvJYKuSnJpHZ7QV
+         L5/Q3IUR7wQGLwK1PutsLAg7khn/A7EywjQC1iaD40O4Gt5/xYgVKlBXQUiyq/3Gfgf0
+         HuwA==
+X-Gm-Message-State: APjAAAWLdefe3/4xNm3oRn0/iMTjrFwBgD/1m9ur7nn0bD/IYsJ6yOB2
+        IzLccM2uSZHJdXozSP5MiXs=
+X-Google-Smtp-Source: APXvYqw36P3qXY4OCM2EqbsWH5VMrC9lRJWvs1Trc72yVwpEpOBRiqQocYUx2xB6KObg7n8x/MiVPQ==
+X-Received: by 2002:a63:5605:: with SMTP id k5mr3773333pgb.14.1570939722132;
+        Sat, 12 Oct 2019 21:08:42 -0700 (PDT)
+Received: from masabert (i118-21-156-233.s30.a048.ap.plala.or.jp. [118.21.156.233])
+        by smtp.gmail.com with ESMTPSA id m102sm11320831pje.5.2019.10.12.21.08.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 12 Oct 2019 21:08:41 -0700 (PDT)
+Received: by masabert (Postfix, from userid 1000)
+        id D0074201218; Sun, 13 Oct 2019 13:08:38 +0900 (JST)
+From:   Masanari Iida <standby24x7@gmail.com>
+To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tj@kernel.org, axboe@kernel.dk
+Cc:     Masanari Iida <standby24x7@gmail.com>
+Subject: [PATCH] writeback: Fix a warning while "make xmldocs"
+Date:   Sun, 13 Oct 2019 13:08:37 +0900
+Message-Id: <20191013040837.14766-1-standby24x7@gmail.com>
+X-Mailer: git-send-email 2.23.0.526.g70bf0b755af4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191012120558.GA3307@bfoster>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=E0tKC5H96g8Zf4X1ZPUA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 08:05:58AM -0400, Brian Foster wrote:
-> On Sat, Oct 12, 2019 at 10:13:23AM +1100, Dave Chinner wrote:
-> > On Fri, Oct 11, 2019 at 08:39:39AM -0400, Brian Foster wrote:
-> > > On Wed, Oct 09, 2019 at 02:21:02PM +1100, Dave Chinner wrote:
-> > > > From: Dave Chinner <dchinner@redhat.com>
-> > > > 
-> > > > The buffer cache shrinker frees more than just the xfs_buf slab
-> > > > objects - it also frees the pages attached to the buffers. Make sure
-> > > > the memory reclaim code accounts for this memory being freed
-> > > > correctly, similar to how the inode shrinker accounts for pages
-> > > > freed from the page cache due to mapping invalidation.
-> > > > 
-> > > > We also need to make sure that the mm subsystem knows these are
-> > > > reclaimable objects. We provide the memory reclaim subsystem with a
-> > > > a shrinker to reclaim xfs_bufs, so we should really mark the slab
-> > > > that way.
-> > > > 
-> > > > We also have a lot of xfs_bufs in a busy system, spread them around
-> > > > like we do inodes.
-> > > > 
-> > > > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > > > ---
-> > > 
-> > > Seems reasonable, but for inodes we also spread the ili zone. Should we
-> > > not be consistent with bli's as well?
-> > 
-> > bli's are reclaimed when the buffer is cleaned. ili's live for the
-> > live of the inode in cache. Hence bli's are short term allocations
-> > (much shorter than xfs_bufs they attach to) and are reclaimed much
-> > faster than inodes and their ilis. There's also a lot less blis than
-> > ili's, so the spread of their footprint across memory nodes doesn't
-> > matter that much. Local access for the memcpy during formatting is
-> > probably more important than spreading the memory usage of them
-> > these days, anyway.
-> > 
-> 
-> Yes, the buffer/inode lifecycle difference is why why I presume bli
-> zones are not ZONE_RECLAIM like ili zones.
+This patch fix following warning.
+./fs/fs-writeback.c:918: warning: Excess function parameter
+'nr_pages' description in 'cgroup_writeback_by_id'
 
-No, that is not the case. IO completion cleaning the buffer is what
-frees the bli. The ili can only be freed by reclaiming the inode, so
-it's memory that can only be returned to the free pool by running a
-shrinker. Hence ilis are ZONE_RECLAIM to account them as memory that
-can be reclaimed through shrinker invocation, while BLIs are not
-because memory reclaim can't directly cause them to be freed.
+Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+---
+ fs/fs-writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> This doesn't tell me anything about why buffers should be spread
-> around as such and buffer log items not, though..
-
-xfs_bufs are long lived, are global structures, and can accumulate
-in the millions if the workload requires it. IOWs, we should spread
-xfs_bufs for exactly the same reasons inodes are spread.
-
-As for BLIs, they are short term structures - a single xfs_buf might
-have thousands of different blis attached to it over it's life in
-the cache because the BLI is freed when the buffer is cleaned.
-
-We don't need to spread small short term structures around NUMA
-memory nodes because they don't present a long term memory imbalance
-vector. In general it is better to have them allocated local to the
-process that is using them where the memory access latency is
-lowest, knowing that they will be freed shortly and not contribute
-to long term memory usage.
-
-Cheers,
-
-Dave.
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index e88421d9a48d..8461a6322039 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -905,7 +905,7 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
+  * cgroup_writeback_by_id - initiate cgroup writeback from bdi and memcg IDs
+  * @bdi_id: target bdi id
+  * @memcg_id: target memcg css id
+- * @nr_pages: number of pages to write, 0 for best-effort dirty flushing
++ * @nr: number of pages to write, 0 for best-effort dirty flushing
+  * @reason: reason why some writeback work initiated
+  * @done: target wb_completion
+  *
 -- 
-Dave Chinner
-david@fromorbit.com
+2.23.0.526.g70bf0b755af4
+
