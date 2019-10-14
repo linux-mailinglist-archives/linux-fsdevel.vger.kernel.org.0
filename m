@@ -2,154 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5C3FD5975
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 04:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E34D599F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 04:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbfJNCEW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Oct 2019 22:04:22 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34792 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729659AbfJNCEW (ORCPT
+        id S1729843AbfJNCtL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Oct 2019 22:49:11 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:46422 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729776AbfJNCtK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Oct 2019 22:04:22 -0400
-Received: by mail-io1-f67.google.com with SMTP id q1so34703303ion.1;
-        Sun, 13 Oct 2019 19:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4iI1U5W50uucA2qCZykSDQfbSXg9H0XvV1EOgeR4Q54=;
-        b=tBk0SJJ7vXrv8bZK7w+nNlpDHB494vAF4ne+9m8ExOnWuXkfeLnYz+mdG12PEACUbj
-         SFcGM9jBX9hvLfLguE6FsLK0V4MhU/sc8ulSSqfeLLkiPq3Mh0E6SQCS64wpmen89qBX
-         xR+fTG13xlvClUFWHUgh/9R/uJrUYaW3ldIGkENE5s/8LUH5VupvQNqWaaJ6FOR3QWpt
-         PMFFWspQoS6ykMQV97xn544nghP/yXPEX6ZW2C8uPx2G9RALZ2wKzQ8lGx0nUrRYMPwa
-         almlZDFSnEPbeZmm++oaNq94QpOlupUPYCc81yBjj7SFPofWyiwUtusb6D8QSVOQim25
-         7wSw==
+        Sun, 13 Oct 2019 22:49:10 -0400
+Received: by mail-io1-f70.google.com with SMTP id t11so24616477ioc.13
+        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Oct 2019 19:49:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4iI1U5W50uucA2qCZykSDQfbSXg9H0XvV1EOgeR4Q54=;
-        b=TKFqlyX9KX8l0r1d9Z0v8EgZnrp+a6s+61xWjLrkNinNdzaN+sfucuRz5meoUnEqEX
-         XQsEZaEqdCSYMeFQ5sXm4cPB8ZeBTq7RrHSC4BXE1pga8AoGL2ZRJ4znsobZHh3YmjCA
-         dV2HvIyRkoXqi9JJYgRnYGhIejmwtyjhvNLina089Haos84l8/8KAcRsxR6i5elT7bS5
-         9WS8krsrN4XTPEt3PI+CT7IElVinGv04WHNvnRqARB6LzFanJyk484asyf8mhbL340Je
-         qufXmLSucn6ptGz9EsXrfFpIFcfzk6toW/xU7jzH9Ev/hTdvf8rYWdsMxNzUoSP4RhnB
-         KtHw==
-X-Gm-Message-State: APjAAAUboveMKvbcZ1kvofSmckPPtbbAvPKNqraZWqHmoQdoAzj7uuQD
-        zeLsPr2dsRVvQa8l/5G3aVBs9J0FQ0oUXeDVqtw=
-X-Google-Smtp-Source: APXvYqzCL+ZPCbb78l+cke7wD6MMCX5ftpHaUnOQxRSRLfL/0r+wfuIheNygiPX0GUJ9icOdgpxHkZlYy9ghZuNpixk=
-X-Received: by 2002:a02:bb0c:: with SMTP id y12mr22841824jan.96.1571018661298;
- Sun, 13 Oct 2019 19:04:21 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=9V4klit+hozv+mbRrTrN0UpLT9Ett4RqcQ2DA9o6Nvo=;
+        b=SiC6/TFcOC4e5J5sfclxH/KGzSngf5jD20Mkx33wHDDvPdD6rhEPtojLh8Drc8iOlH
+         xBY5iRp/X55D2nLoaP++fj6cnRnl+zFvYBwSu3sfveKOXlo0Bac2wFAB4syi/49zxa0x
+         7JqMsFiCQdXtmiJtJBngeNYf1qha4xE+D8/nBg08jpLbg58S0EXamt63UVTqa9mwNK3L
+         r2fz+uFYnkQ3z+U6lODpfMKjpx4397LjNNJjqWi1/GazHj8Jv/OGo3TuRL1ZI6F9FWDa
+         yhCl63ecbl8GslhhfvniuMOavF0f8wRkhiTbXDGPswe7EDvqEpWcYrdZWeGk2o82JLHB
+         vFpA==
+X-Gm-Message-State: APjAAAWEdwF6hKQXN5/do7X1CjSnUOOkDH+o9ef5DkgCdfRRX0ULNA19
+        2RvS1fKljec9gC0X439p9rznIOnj11FaW6DUhi0qOk6tNvhu
+X-Google-Smtp-Source: APXvYqz5uT/zj8pn24FxdfXVgsaToFpZju09zN4x5T7bBvOevF5cYViVd4CO+zGOaNNnkRSmA46DEeA2usVGaNUrbQMHcrFcwMcf
 MIME-Version: 1.0
-References: <000000000000805e5505945a234b@google.com> <20191009071850.258463-1-ebiggers@kernel.org>
-In-Reply-To: <20191009071850.258463-1-ebiggers@kernel.org>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Sun, 13 Oct 2019 19:04:10 -0700
-Message-ID: <CABeXuvomuEY7-8SJuRDh+MS+fSE9evMudFe6KEdP+y-0D89fJw@mail.gmail.com>
-Subject: Re: [PATCH] fs/namespace.c: fix use-after-free of mount in mnt_warn_timestamp_expiry()
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a5e:d718:: with SMTP id v24mr14423069iom.24.1571021348408;
+ Sun, 13 Oct 2019 19:49:08 -0700 (PDT)
+Date:   Sun, 13 Oct 2019 19:49:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006819150594d5e956@google.com>
+Subject: WARNING: refcount bug in sock_wfree (2)
+From:   syzbot <syzbot+c0ba5b9e742f049a2edf@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, davem@davemloft.net, hare@suse.com,
+        jmoyer@redhat.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for the fix.
+Hello,
 
-Would it be better to move the check and warning to a place where the
-access is still safe?
+syzbot found the following crash on:
 
--Deepa
+HEAD commit:    442630f6 Add linux-next specific files for 20191008
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=158fa6bf600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af1bfeef713eefdd
+dashboard link: https://syzkaller.appspot.com/bug?extid=c0ba5b9e742f049a2edf
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a861b3600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1769f48b600000
 
-> On Oct 9, 2019, at 12:19 AM, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> =EF=BB=BFFrom: Eric Biggers <ebiggers@google.com>
+The bug was bisected to:
+
+commit 6c080ff07363389cb4092193eb333639f0392b8c
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Thu Oct 3 14:11:03 2019 +0000
+
+     io_uring: allow sparse fixed file sets
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1344b993600000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=10c4b993600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1744b993600000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c0ba5b9e742f049a2edf@syzkaller.appspotmail.com
+Fixes: 6c080ff07363 ("io_uring: allow sparse fixed file sets")
+
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 0 PID: 8691 at lib/refcount.c:190  
+refcount_sub_and_test_checked lib/refcount.c:190 [inline]
+WARNING: CPU: 0 PID: 8691 at lib/refcount.c:190  
+refcount_sub_and_test_checked+0x1d0/0x200 lib/refcount.c:180
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 8691 Comm: syz-executor322 Not tainted 5.4.0-rc2-next-20191008  
+#0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2e3/0x75c kernel/panic.c:221
+  __warn.cold+0x2f/0x35 kernel/panic.c:582
+  report_bug+0x289/0x300 lib/bug.c:195
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  fixup_bug arch/x86/kernel/traps.c:169 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+RIP: 0010:refcount_sub_and_test_checked lib/refcount.c:190 [inline]
+RIP: 0010:refcount_sub_and_test_checked+0x1d0/0x200 lib/refcount.c:180
+Code: 1d b0 f0 7f 06 31 ff 89 de e8 6c d7 30 fe 84 db 75 94 e8 23 d6 30 fe  
+48 c7 c7 20 81 e6 87 c6 05 90 f0 7f 06 01 e8 e8 15 02 fe <0f> 0b e9 75 ff  
+ff ff e8 04 d6 30 fe e9 6e ff ff ff 48 89 df e8 e7
+RSP: 0018:ffff8880a8267a28 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815cb676 RDI: ffffed101504cf37
+RBP: ffff8880a8267ac0 R08: ffff888090e363c0 R09: fffffbfff14eeb42
+R10: fffffbfff14eeb41 R11: ffffffff8a775a0f R12: 00000000fffffd02
+R13: 0000000000000001 R14: ffff8880a8267a98 R15: 0000000000000001
+  sock_wfree+0x10c/0x190 net/core/sock.c:1958
+  unix_destruct_scm+0x115/0x170 net/unix/scm.c:149
+  io_destruct_skb+0x62/0x80 fs/io_uring.c:2995
+  skb_release_head_state+0xeb/0x260 net/core/skbuff.c:652
+  skb_release_all+0x16/0x60 net/core/skbuff.c:663
+  __kfree_skb net/core/skbuff.c:679 [inline]
+  kfree_skb net/core/skbuff.c:697 [inline]
+  kfree_skb+0x101/0x3c0 net/core/skbuff.c:691
+  __io_sqe_files_scm+0x429/0x640 fs/io_uring.c:3049
+  io_sqe_files_scm fs/io_uring.c:3071 [inline]
+  io_sqe_files_register fs/io_uring.c:3154 [inline]
+  __io_uring_register+0x1f69/0x2d70 fs/io_uring.c:4152
+  __do_sys_io_uring_register fs/io_uring.c:4204 [inline]
+  __se_sys_io_uring_register fs/io_uring.c:4186 [inline]
+  __x64_sys_io_uring_register+0x193/0x1f0 fs/io_uring.c:4186
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440279
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffeeedc31e8 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440279
+RDX: 0000000020000280 RSI: 0000000000000002 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000401b00
+R13: 0000000000401b90 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-On Wed, Oct 9, 2019 at 12:19 AM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> After do_add_mount() returns success, the caller doesn't hold a
-> reference to the 'struct mount' anymore.  So it's invalid to access it
-> in mnt_warn_timestamp_expiry().
->
-> Fix it by instead passing the super_block and the mnt_flags.  It's safe
-> to access the super_block because it's pinned by fs_context::root.
->
-> Reported-by: syzbot+da4f525235510683d855@syzkaller.appspotmail.com
-> Fixes: f8b92ba67c5d ("mount: Add mount warning for impending timestamp ex=
-piry")
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/namespace.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index fe0e9e1410fe..7ef8edaaed69 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2466,12 +2466,11 @@ static void set_mount_attributes(struct mount *mn=
-t, unsigned int mnt_flags)
->         unlock_mount_hash();
->  }
->
-> -static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vf=
-smount *mnt)
-> +static void mnt_warn_timestamp_expiry(struct path *mountpoint,
-> +                                     struct super_block *sb, int mnt_fla=
-gs)
->  {
-> -       struct super_block *sb =3D mnt->mnt_sb;
-> -
-> -       if (!__mnt_is_readonly(mnt) &&
-> -          (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_m=
-ax)) {
-> +       if (!(mnt_flags & MNT_READONLY) && !sb_rdonly(sb) &&
-> +           (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_=
-max)) {
->                 char *buf =3D (char *)__get_free_page(GFP_KERNEL);
->                 char *mntpath =3D buf ? d_path(mountpoint, buf, PAGE_SIZE=
-) : ERR_PTR(-ENOMEM);
->                 struct tm tm;
-> @@ -2512,7 +2511,7 @@ static int do_reconfigure_mnt(struct path *path, un=
-signed int mnt_flags)
->                 set_mount_attributes(mnt, mnt_flags);
->         up_write(&sb->s_umount);
->
-> -       mnt_warn_timestamp_expiry(path, &mnt->mnt);
-> +       mnt_warn_timestamp_expiry(path, sb, mnt_flags);
->
->         return ret;
->  }
-> @@ -2555,7 +2554,7 @@ static int do_remount(struct path *path, int ms_fla=
-gs, int sb_flags,
->                 up_write(&sb->s_umount);
->         }
->
-> -       mnt_warn_timestamp_expiry(path, &mnt->mnt);
-> +       mnt_warn_timestamp_expiry(path, sb, mnt_flags);
->
->         put_fs_context(fc);
->         return err;
-> @@ -2770,7 +2769,7 @@ static int do_new_mount_fc(struct fs_context *fc, s=
-truct path *mountpoint,
->                 return error;
->         }
->
-> -       mnt_warn_timestamp_expiry(mountpoint, mnt);
-> +       mnt_warn_timestamp_expiry(mountpoint, sb, mnt_flags);
->
->         return error;
->  }
-> --
-> 2.23.0
->
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
