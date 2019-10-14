@@ -2,93 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EA8AD5DE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 10:52:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FDFED5E9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 11:21:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbfJNIwa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Oct 2019 04:52:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44195 "EHLO
+        id S1730859AbfJNJU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Oct 2019 05:20:56 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45887 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729928AbfJNIwa (ORCPT
+        with ESMTP id S1730656AbfJNJU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Oct 2019 04:52:30 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e10so5707435pgd.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2019 01:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AIRc/FaicU56+x04UFR4BmB8mTK9vi0gG2txvtio5hg=;
-        b=Y7dz4/X3uD/Bsf+PUZqJID/CRfkxmefV8Jvbo4YXJHnBBUgbnxv1z9I0pWrrDQVX+Z
-         YdRDvhZDO7nm11/QfJNUAfxmMTcR8pl+u90KRhpmoSn4RBNzEftEjdV674SluUNl1eLP
-         h9LqX5KWqheV/mDihvcv5BijJtMrzjw7yDsoUj/1+TpMQ67vVhMWuc+62s9r5syUSE5o
-         szBw5K+7MITxEQfJ6R+pfn6fKHcLRVdxbufI7L/MMSXiAEO1XOZI3jVIAnbJJNQ4E78l
-         aWTc2Ld451dpaozwW53BpOOe/uM0aw9lhPF54X8YZPpIrX73/i6Qx82cRPuY0JrQW8Zr
-         Ix8Q==
+        Mon, 14 Oct 2019 05:20:56 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r1so8551413pgj.12;
+        Mon, 14 Oct 2019 02:20:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AIRc/FaicU56+x04UFR4BmB8mTK9vi0gG2txvtio5hg=;
-        b=oca9PePJfZptdJOsX7BfatEkRHM9w8e0w7sQe7z1uIYmTuklS2PLEcD8IE48utf5iP
-         G9k5YY8zJ7N5s0V9+Kfq2kt9ULsSM697KrIgUMDgE4zWdSHsi79G5zeeGSNcwTCzwXW+
-         vutmAH4YXNL/9E9znaTnY3jouKC4jTyUOFpWMXiPKEIYQJF7BQrk8An5i2UERY2J2roe
-         AzQrS+Suy7Ixga8TL7qIjJuOPYPwmQFeFsx1q7tttswOExzy6xqpqCqButiRz0uhl5lL
-         OaQ2v7ao9ktG9jhv3IpdKj/bUreoeYdGn5sf2ncTp4ttOvnG8RokgMB/K5Vwn3ElIjbL
-         WNhQ==
-X-Gm-Message-State: APjAAAXBReh22JVoW2XowvpL13GH/GRLGFnCclJEHjIzQaCW0ri+fXWr
-        Nkh1PCa96L4LQFDAh9BnHgD7SGmc5A==
-X-Google-Smtp-Source: APXvYqzlApQtLhGenT3SpvrnsKz2M9F77t4OCF7q9JWJcXGR5i9AyzEpxV2LYUqpIX6C+Sf5nubqnQ==
-X-Received: by 2002:a17:90a:b38c:: with SMTP id e12mr35243765pjr.114.1571043147713;
-        Mon, 14 Oct 2019 01:52:27 -0700 (PDT)
-Received: from athena.bobrowski.net ([120.18.82.202])
-        by smtp.gmail.com with ESMTPSA id k17sm10138089pgh.30.2019.10.14.01.52.24
+        bh=z80QF2P/utfSJTosq14dGOZH3U5rnspzRIHN6J5xfow=;
+        b=jorZTQXiOxg4InwNM34RTj+HGp8ns6ZEAQ8lIGJmTY1W7sK/dLdtN+/kHo9AWSzfxA
+         q6qkIqC2NaAszGLbX+Gas/r+otb34B3WbcYD8W2Z45EVlQNDcZn5p6RO/+HtoyR7rYnN
+         U9AEdq3o8YuHyEoaCXOF7HI8XgfgZdOdVOhSy6YCEykpxl8ayOWKflp61U+VdswHlTBc
+         TGg/3FVTotloiF4hPDyFakvWxmjU2+Nq93AAqN43l6xf6LeZlZdLWyy5mCmyKNcyvNqk
+         ww4VF5SOAjU89B0eOyG16Jn1A8QnIy/vkNAcNnj0U8ip6xZkKMPcWE9PnGP/6AzRCDr3
+         Roiw==
+X-Gm-Message-State: APjAAAUwCOybWzIXVT0IY7DHaZnmQgLbgXOlo1ix9ybwKH8+0XSRiRZk
+        iNLaP39/gvRnyF+YQwbmkWQ=
+X-Google-Smtp-Source: APXvYqzOPBH0WekcHZOXSoperMZAmy+14kCD91/1ZTagF7IA+gkuA3HNJe3CMO2I1E8cjDyeEkd/Uw==
+X-Received: by 2002:a17:90a:741:: with SMTP id s1mr35956209pje.113.1571044853994;
+        Mon, 14 Oct 2019 02:20:53 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id y2sm19146917pfe.126.2019.10.14.02.20.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 01:52:27 -0700 (PDT)
-Date:   Mon, 14 Oct 2019 19:52:18 +1100
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, darrick.wong@oracle.com,
-        linux-xfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 0/2 v3] iomap: Waiting for IO in iomap_dio_rw()
-Message-ID: <20191014085218.GA6102@athena.bobrowski.net>
-References: <20191014082418.13885-1-jack@suse.cz>
+        Mon, 14 Oct 2019 02:20:52 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id C92B94021A; Mon, 14 Oct 2019 09:20:51 +0000 (UTC)
+Date:   Mon, 14 Oct 2019 09:20:51 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Alan Maguire <alan.maguire@oracle.com>
+Cc:     linux-kselftest@vger.kernel.org, brendanhiggins@google.com,
+        skhan@linuxfoundation.org, keescook@chromium.org,
+        yzaikin@google.com, akpm@linux-foundation.org,
+        yamada.masahiro@socionext.com, catalin.marinas@arm.com,
+        joe.lawrence@redhat.com, penguin-kernel@i-love.sakura.ne.jp,
+        schowdary@nvidia.com, urezki@gmail.com,
+        andriy.shevchenko@linux.intel.com, changbin.du@intel.com,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 linux-kselftest-test 0/3] kunit: support building
+ core/tests as modules
+Message-ID: <20191014092051.GZ16384@42.do-not-panic.com>
+References: <1570546546-549-1-git-send-email-alan.maguire@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191014082418.13885-1-jack@suse.cz>
+In-Reply-To: <1570546546-549-1-git-send-email-alan.maguire@oracle.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 10:26:01AM +0200, Jan Kara wrote:
-> Original motivation:
+On Tue, Oct 08, 2019 at 03:55:43PM +0100, Alan Maguire wrote:
+> The current kunit execution model is to provide base kunit functionality
+> and tests built-in to the kernel.  The aim of this series is to allow
+> building kunit itself and tests as modules.  This in turn allows a
+> simple form of selective execution; load the module you wish to test.
+> In doing so, kunit itself (if also built as a module) will be loaded as
+> an implicit dependency.
 > 
-> when doing the ext4 conversion of direct IO code to iomap, we found it very
-> difficult to handle inode extension with what iomap code currently provides.
-> Ext4 wants to do inode extension as sync IO (so that the whole duration of
-> IO is protected by inode->i_rwsem), also we need to truncate blocks beyond
-> end of file in case of error or short write. Now in ->end_io handler we don't
-> have the information how long originally the write was (to judge whether we
-> may have allocated more blocks than we actually used) and in ->write_iter
-> we don't know whether / how much of the IO actually succeeded in case of AIO.
-> 
-> Thinking about it for some time I think iomap code makes it unnecessarily
-> complex for the filesystem in case it decides it doesn't want to perform AIO
-> and wants to fall back to good old synchronous IO. In such case it is much
-> easier for the filesystem if it just gets normal error return from
-> iomap_dio_rw() and not just -EIOCBQUEUED.
-> 
-> The first patch in the series adds argument to iomap_dio_rw() to wait for IO
-> completion (internally iomap_dio_rw() already supports this!) and the second
-> patch converts XFS waiting for unaligned DIO write to this new API.
+> Because this requires a core API modification - if a module delivers
+> multiple suites, they must be declared with the kunit_test_suites()
+> macro - we're proposing this patch as a candidate to be applied to the
+> test tree before too many kunit consumers appear.  We attempt to deal
+> with existing consumers in patch 1.
 
-Ah, wonderful, I was waiting for this to come through.
+This is neat and makes sense to me. However the ordering of the patches
+seems odd. If modules depend on kunit module, then shouldn't that go
+first? Ie, we want this to be bisectable in proper order.
 
-I'll rebase my EXT4 direct I/O port on top of these patches and apply
-the discussed changes. Any objections? :)
-
---<M>--
+  Luis
