@@ -2,115 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E032D6AE0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 22:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A577CD6B4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 23:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387505AbfJNUk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Oct 2019 16:40:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58940 "EHLO mx1.redhat.com"
+        id S1731967AbfJNVaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Oct 2019 17:30:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45846 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387476AbfJNUk5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Oct 2019 16:40:57 -0400
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com [209.85.210.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729900AbfJNVaY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Oct 2019 17:30:24 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 03473CFD4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2019 20:40:57 +0000 (UTC)
-Received: by mail-ot1-f72.google.com with SMTP id d15so8175784otc.18
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2019 13:40:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2SvMDPZOcKULNOK9bYvjjcU3cyL7Xy65q4lsrYxQ1w4=;
-        b=Q9AzaNaBqQgkJsxZ/EpUvNcPbu+grXq7B+C8bEItRZiqYWQLaWjddPLV/KRm0yHu1L
-         XjGM88y903tEYk5qab6+hFqqCr3twfNLn63WARGEyOK5WWLvfvoa13sZi6NA5A3mt/Zn
-         tAq5b9GjfRuaWeCHhWcHvmxQfAgDDS7dE6Pd7N3mZhiC6XDTTl3OKOc2kcJj4UFsY3Yg
-         d0v5+N78pMCXjrZw7qvjYdqU7UKXm+xKYcGvuvHaotftolF1Oj6iSBJusVmiyYKrEYWt
-         7q1/zwrBLp3x96QhgbzraYxq6qwIhXZLpljSMWAxa8McFHPrckkP2oP2+ibJc+9SJK0o
-         iA3w==
-X-Gm-Message-State: APjAAAVQZMvAtud9bKvIzt8gDbD3drJY8gwastyiNM2ZifMJgPTZttqZ
-        BzEDGMxykla43qe4OWBMnbZyBXgTh0MYl9w7au0towjjL3GydN/b24D/CVEM08RMOF8S10ThFif
-        knVSZ88k69rfQxcyMW0bP/jHRav56x+Uy+u0nF9ESDA==
-X-Received: by 2002:a05:6830:1544:: with SMTP id l4mr11555571otp.297.1571085656360;
-        Mon, 14 Oct 2019 13:40:56 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwS11yxA6JO2sXstwZ6AIazd1XnFwJycqEmuSjW8pnyFgmwB4IaS3Xbgj0YhLyyim/T+w7nl1W3FcG41CJtWfs=
-X-Received: by 2002:a05:6830:1544:: with SMTP id l4mr11555559otp.297.1571085656130;
- Mon, 14 Oct 2019 13:40:56 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id D68DC308FFB1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2019 21:30:24 +0000 (UTC)
+Received: from [IPv6:::1] (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AECD66012C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Oct 2019 21:30:24 +0000 (UTC)
+To:     fsdevel <linux-fsdevel@vger.kernel.org>
+From:   Eric Sandeen <sandeen@redhat.com>
+Subject: [PATCH V2] fs: avoid softlockups in s_inodes iterators
+Message-ID: <a26fae1d-a741-6eb1-b460-968a3b97e238@redhat.com>
+Date:   Mon, 14 Oct 2019 16:30:24 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.1.2
 MIME-Version: 1.0
-References: <000000000000ac6a360592eb26c1@google.com> <d9a957b3-9f0a-20b5-588a-64ca4722d433@rasmusvillemoes.dk>
- <20190919211013.GN5340@magnolia>
-In-Reply-To: <20190919211013.GN5340@magnolia>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Mon, 14 Oct 2019 22:40:44 +0200
-Message-ID: <CAHc6FU7drv7r7yu4BzTGKycnKi_wUDGsvND6XyhDLq7B=HCM8g@mail.gmail.com>
-Subject: Re: INFO: task hung in pipe_write (2)
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        syzbot <syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Bob Peterson <rpeterso@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 14 Oct 2019 21:30:24 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Darrick,
+Anything that walks all inodes on sb->s_inodes list without rescheduling
+risks softlockups.
 
-On Thu, Sep 19, 2019 at 11:10 PM Darrick J. Wong
-<darrick.wong@oracle.com> wrote:
-> On Thu, Sep 19, 2019 at 10:55:44PM +0200, Rasmus Villemoes wrote:
-> > On 19/09/2019 19.19, syzbot wrote:
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    288b9117 Add linux-next specific files for 20190918
-> > > git tree:       linux-next
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=17e86645600000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=f6126e51304ef1c3
-> > > dashboard link:
-> > > https://syzkaller.appspot.com/bug?extid=3c01db6025f26530cf8d
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11855769600000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=143580a1600000
-> > >
-> > > The bug was bisected to:
-> > >
-> > > commit cfb864757d8690631aadf1c4b80022c18ae865b3
-> > > Author: Darrick J. Wong <darrick.wong@oracle.com>
-> > > Date:   Tue Sep 17 16:05:22 2019 +0000
-> > >
-> > >     splice: only read in as much information as there is pipe buffer space
-> >
-> > The middle hunk (the one before splice_pipe_to_pipe()) accesses
-> > opipe->{buffers, nrbufs}, but opipe is not locked at that point. So
-> > maybe we end up passing len==0, which seems (once there's room in opipe)
-> > it would put a zero-length pipe_buffer in opipe - and that probably
-> > violates an invariant somewhere.
-> >
-> > But does the splice_pipe_to_pipe() case even need that extra logic?
-> > Doesn't it handle short writes correctly already?
->
-> Yep.  I missed the part where splice_pipe_to_pipe is already perfectly
-> capable of detecting insufficient space in opipe and kicking opipe's
-> readers to clear out the buffer.  So that hunk isn't needed, and now I'm
-> wondering how in the other clause we return 0 from wait_for_space yet
-> still don't have buffer space...
->
-> Oh well, back to the drawing board.  Good catch, though now it's become
-> painfully clear that xfstests lacks rigorous testing of splice()...
+Previous efforts were made in 2 functions, see:
 
-have you had any luck figuring out how to fix this? We're still
-suffering from the regression I've reported a while ago (*).
+c27d82f fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
+ac05fbb inode: don't softlockup when evicting inodes
 
-If not, I wonder if reverting commit 8f67b5adc030 would make sense for now.
+but there hasn't been an audit of all walkers, so do that now.  This
+also consistently moves the cond_resched() calls to the bottom of each
+loop in cases where it already exists.
 
-* https://lore.kernel.org/linux-fsdevel/CAHpGcM+WQYFHOOC8SzKq+=DuHVZ4fw4RHLTMUDN-o6GX3YtGvQ@mail.gmail.com/T/#u
+One loop remains: remove_dquot_ref(), because I'm not quite sure how
+to deal with that one w/o taking the i_lock.
 
-Thanks,
-Andreas
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+---
+
+V2: Drop unrelated iput cleanups in fsnotify
+
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index d31b6c72b476..dc1a1d5d825b 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -35,11 +35,11 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+  		spin_unlock(&inode->i_lock);
+  		spin_unlock(&sb->s_inode_list_lock);
+  
+-		cond_resched();
+  		invalidate_mapping_pages(inode->i_mapping, 0, -1);
+  		iput(toput_inode);
+  		toput_inode = inode;
+  
++		cond_resched();
+  		spin_lock(&sb->s_inode_list_lock);
+  	}
+  	spin_unlock(&sb->s_inode_list_lock);
+diff --git a/fs/inode.c b/fs/inode.c
+index fef457a42882..b0c789bb3dba 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -676,6 +676,7 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+  	struct inode *inode, *next;
+  	LIST_HEAD(dispose);
+  
++again:
+  	spin_lock(&sb->s_inode_list_lock);
+  	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
+  		spin_lock(&inode->i_lock);
+@@ -698,6 +699,13 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+  		inode_lru_list_del(inode);
+  		spin_unlock(&inode->i_lock);
+  		list_add(&inode->i_lru, &dispose);
++
++		if (need_resched()) {
++			spin_unlock(&sb->s_inode_list_lock);
++			cond_resched();
++			dispose_list(&dispose);
++			goto again;
++		}
+  	}
+  	spin_unlock(&sb->s_inode_list_lock);
+  
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 2ecef6155fc0..ac9eb273e28c 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -77,6 +77,7 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
+  
+  		iput_inode = inode;
+  
++		cond_resched();
+  		spin_lock(&sb->s_inode_list_lock);
+  	}
+  	spin_unlock(&sb->s_inode_list_lock);
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 6e826b454082..4a085b3c7cac 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -985,6 +985,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
+  		 * later.
+  		 */
+  		old_inode = inode;
++		cond_resched();
+  		spin_lock(&sb->s_inode_list_lock);
+  	}
+  	spin_unlock(&sb->s_inode_list_lock);
+
