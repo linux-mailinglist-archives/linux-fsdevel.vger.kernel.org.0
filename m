@@ -2,128 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C73BD61E9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 14:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EEF3D6353
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 15:06:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731190AbfJNMBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Oct 2019 08:01:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51370 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730300AbfJNMBz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Oct 2019 08:01:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B0D73BC1F;
-        Mon, 14 Oct 2019 12:01:52 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id C7FF3DA7E3; Mon, 14 Oct 2019 14:02:04 +0200 (CEST)
-Date:   Mon, 14 Oct 2019 14:02:04 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
-        viro@ZenIV.linux.org.uk, jack@suse.cz, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH] fs: use READ_ONCE/WRITE_ONCE with the i_size helpers
-Message-ID: <20191014120204.GO2751@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Josef Bacik <josef@toxicpanda.com>,
-        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
-        viro@ZenIV.linux.org.uk, jack@suse.cz, linux-btrfs@vger.kernel.org
-References: <20191011202050.8656-1-josef@toxicpanda.com>
+        id S1730917AbfJNNFN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Oct 2019 09:05:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53590 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730619AbfJNNFM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Oct 2019 09:05:12 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2DA5AC024B08;
+        Mon, 14 Oct 2019 13:05:12 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A1D0B608C2;
+        Mon, 14 Oct 2019 13:05:11 +0000 (UTC)
+Date:   Mon, 14 Oct 2019 09:05:09 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/26] xfs: Improve metadata buffer reclaim accountability
+Message-ID: <20191014130509.GA12380@bfoster>
+References: <20191009032124.10541-1-david@fromorbit.com>
+ <20191009032124.10541-5-david@fromorbit.com>
+ <20191011123939.GD61257@bfoster>
+ <20191011231323.GK16973@dread.disaster.area>
+ <20191012120558.GA3307@bfoster>
+ <20191013031450.GT16973@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191011202050.8656-1-josef@toxicpanda.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20191013031450.GT16973@dread.disaster.area>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 14 Oct 2019 13:05:12 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 04:20:50PM -0400, Josef Bacik wrote:
-> I spent the last few weeks running down a weird regression in btrfs we
-> were seeing in production.  It turned out to be introduced by
-> 62b37622718c, which took the following
+On Sun, Oct 13, 2019 at 02:14:50PM +1100, Dave Chinner wrote:
+> On Sat, Oct 12, 2019 at 08:05:58AM -0400, Brian Foster wrote:
+> > On Sat, Oct 12, 2019 at 10:13:23AM +1100, Dave Chinner wrote:
+> > > On Fri, Oct 11, 2019 at 08:39:39AM -0400, Brian Foster wrote:
+> > > > On Wed, Oct 09, 2019 at 02:21:02PM +1100, Dave Chinner wrote:
+> > > > > From: Dave Chinner <dchinner@redhat.com>
+> > > > > 
+> > > > > The buffer cache shrinker frees more than just the xfs_buf slab
+> > > > > objects - it also frees the pages attached to the buffers. Make sure
+> > > > > the memory reclaim code accounts for this memory being freed
+> > > > > correctly, similar to how the inode shrinker accounts for pages
+> > > > > freed from the page cache due to mapping invalidation.
+> > > > > 
+> > > > > We also need to make sure that the mm subsystem knows these are
+> > > > > reclaimable objects. We provide the memory reclaim subsystem with a
+> > > > > a shrinker to reclaim xfs_bufs, so we should really mark the slab
+> > > > > that way.
+> > > > > 
+> > > > > We also have a lot of xfs_bufs in a busy system, spread them around
+> > > > > like we do inodes.
+> > > > > 
+> > > > > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > > > > ---
+> > > > 
+> > > > Seems reasonable, but for inodes we also spread the ili zone. Should we
+> > > > not be consistent with bli's as well?
+> > > 
+> > > bli's are reclaimed when the buffer is cleaned. ili's live for the
+> > > live of the inode in cache. Hence bli's are short term allocations
+> > > (much shorter than xfs_bufs they attach to) and are reclaimed much
+> > > faster than inodes and their ilis. There's also a lot less blis than
+> > > ili's, so the spread of their footprint across memory nodes doesn't
+> > > matter that much. Local access for the memcpy during formatting is
+> > > probably more important than spreading the memory usage of them
+> > > these days, anyway.
+> > > 
+> > 
+> > Yes, the buffer/inode lifecycle difference is why why I presume bli
+> > zones are not ZONE_RECLAIM like ili zones.
 > 
-> loff_t isize = i_size_read(inode);
+> No, that is not the case. IO completion cleaning the buffer is what
+> frees the bli. The ili can only be freed by reclaiming the inode, so
+> it's memory that can only be returned to the free pool by running a
+> shrinker. Hence ilis are ZONE_RECLAIM to account them as memory that
+> can be reclaimed through shrinker invocation, while BLIs are not
+> because memory reclaim can't directly cause them to be freed.
 > 
-> actual_end = min_t(u64, isize, end + 1);
-> 
-> and turned it into
-> 
-> actual_end = min_t(u64, i_size_read(inode), end + 1);
-> 
-> The problem here is that the compiler is optimizing out the temporary
-> variables used in __cmp_once, so the resulting assembly looks like this
-> 
-> 498             actual_end = min_t(u64, i_size_read(inode), end + 1);
->    0xffffffff814b08c1 <+145>:   48 8b 44 24 28  mov    0x28(%rsp),%rax
->    0xffffffff814b08c6 <+150>:   48 39 45 50     cmp    %rax,0x50(%rbp)
->    0xffffffff814b08ca <+154>:   48 89 c6        mov    %rax,%rsi
->    0xffffffff814b08cd <+157>:   48 0f 46 75 50  cmovbe 0x50(%rbp),%rsi
-> 
-> as you can see we read the value of the inode to compare, and then we
-> read it a second time to assign it.
-> 
-> This code is simply an optimization, so there's no locking to keep
-> i_size from changing, however we really need min_t to actually return
-> the minimum value for these two values, which it is failing to do.
-> 
-> We've reverted that patch for now to fix the problem, but it's only a
-> matter of time before the compiler becomes smart enough to optimize out
-> the loff_t isize intermediate variable as well.
 
-The cleanup patch proably made it more likely but otherwise does not fix
-the problem so you got lucky with reverting it.
+That is pretty much what I said. I think we're in agreement.
 
-I'll repeat what I sent as reply to the btrfs patch https://patchwork.kernel.org/patch/11185435/ ,
-addin the temporary variable is still not entirely correct and depends
-on the compiler.
-
-This patch adding READ_ONCE to i_size_read is IMHO the only safe way, as
-the accessors are intended for unlocked use and for that
-READ_ONCE/WRITE_ONCE are a must, per LKMM (linux kernel memody model). I
-slightly wonder why this hasn't been so since long ago.
-
-> Instead we want to make it explicit that i_size_read() should only read
-> the value once.  This will keep this class of problem from happening in
-> the future, regardless of what the compiler chooses to do.  With this
-> change we get the following assembly generated for this code
+> > This doesn't tell me anything about why buffers should be spread
+> > around as such and buffer log items not, though..
 > 
-> 491             actual_end = min_t(u64, i_size_read(inode), end + 1);
->    0xffffffff8148f625 <+149>:   48 8b 44 24 20  mov    0x20(%rsp),%rax
+> xfs_bufs are long lived, are global structures, and can accumulate
+> in the millions if the workload requires it. IOWs, we should spread
+> xfs_bufs for exactly the same reasons inodes are spread.
 > 
-> ./include/linux/compiler.h:
-> 199             __READ_ONCE_SIZE;
->    0xffffffff8148f62a <+154>:   4c 8b 75 50     mov    0x50(%rbp),%r14
+> As for BLIs, they are short term structures - a single xfs_buf might
+> have thousands of different blis attached to it over it's life in
+> the cache because the BLI is freed when the buffer is cleaned.
 > 
-> fs/btrfs/inode.c:
-> 491             actual_end = min_t(u64, i_size_read(inode), end + 1);
->    0xffffffff8148f62e <+158>:   49 39 c6        cmp    %rax,%r14
->    0xffffffff8148f631 <+161>:   4c 0f 47 f0     cmova  %rax,%r14
-> 
-> and this works out properly, we only read the value once and so we won't
-> trip over this problem again.
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
-And CC: stable too.
+Short term relative to the ILI perhaps, but these are still memory
+allocations that outlive the allocating task returning to userspace, are
+reused (across tasks) commonly enough and have an I/O bound life cycle.
+That's also not considering page/slab buildup in the kmem cache beyond
+the lifetime of individual allocations..
 
-Reviewed-by: David Sterba <dsterba@suse.com>
-
-> ---
->  include/linux/fs.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> We don't need to spread small short term structures around NUMA
+> memory nodes because they don't present a long term memory imbalance
+> vector. In general it is better to have them allocated local to the
+> process that is using them where the memory access latency is
+> lowest, knowing that they will be freed shortly and not contribute
+> to long term memory usage.
 > 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e0d909d35763..0e3f887e2dc5 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -863,7 +863,7 @@ static inline loff_t i_size_read(const struct inode *inode)
->  	preempt_enable();
->  	return i_size;
->  #else
-> -	return inode->i_size;
-> +	return READ_ONCE(inode->i_size);
 
-Regarding the other ways to access i_size, preempt_enable() are compiler
-barriers, so this should be safe without explicit READ_ONCE.
+Hmm.. doesn't this all depend on enablement of a cgroup knob in the
+first place? It looks to me that this behavior is tied to a per-task
+state (not a per-mount or zone setting, which just allows such behavior
+on the zone) where the controller has explicitly requested us to not
+perform sustained allocations in the local node if possible. Instead,
+spread slab allocations around at the cost of bypassing this local
+allocation heuristic, presumably because $application wants prioritized
+access to that memory. What am I missing?
+
+BTW, it also looks like this is only relevant for slab. I don't see any
+references in slub (or slob), but I haven't dug too deeply..
+
+Brian
+
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
