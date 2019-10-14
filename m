@@ -2,205 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A28D5DC2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 10:44:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B8DED5DC8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 10:46:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730548AbfJNIoa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Oct 2019 04:44:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42544 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729234AbfJNIoa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Oct 2019 04:44:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 56FEFC0568FD;
-        Mon, 14 Oct 2019 08:44:29 +0000 (UTC)
-Received: from [10.36.117.10] (ovpn-117-10.ams2.redhat.com [10.36.117.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7EC645D6A3;
-        Mon, 14 Oct 2019 08:44:26 +0000 (UTC)
-Subject: Re: [PATCH v2 1/2] mm: Don't access uninitialized memmaps in
- fs/proc/page.c
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, Qian Cai <cai@lca.pw>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        Pankaj gupta <pagupta@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        id S1730566AbfJNIqE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Oct 2019 04:46:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42228 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730439AbfJNIqE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Oct 2019 04:46:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AS+vOpGBm4Y0V3guxdRRNronYLbqZeSo4UeGsyrmyY4=; b=ezhPnVWf9CcaO1Cx9AlYyxBFq
+        oTYZrWKtxLHXd4YuxOAYcgYUTsi4IssRCELmEOl5FsJdnivdLrLGjh9Gz/TB2q7KjeSG/f6Hwbyb9
+        uPUgTUzv/iinKHOSn0lQaG5K+foOWlhHqqcuR4lhsn/wd6pYwCyef2yj0IOZcc5FkfANY1S8xGyJI
+        aQlDL8W5OsWZK9Vy5D44EfR4NHx8erlSdnrHJQF6KVBqRC25OP8HBLyKMsYIZODFjRgrE12vSGHGc
+        SJkiHx6Tq6WHifjdn0sCVv7wwriMesfb9i7gVRUZ8v2fB4//DprtMEfdu3QAIdUtZj5kU6pQ0Zv0k
+        3mOJQWj1A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iJvzQ-0004Yp-2Y; Mon, 14 Oct 2019 08:46:04 +0000
+Date:   Mon, 14 Oct 2019 01:46:04 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-References: <20191009142435.3975-1-david@redhat.com>
- <20191009142435.3975-2-david@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <1a29b534-38de-6dbe-6e43-2b6ffef7c60b@redhat.com>
-Date:   Mon, 14 Oct 2019 10:44:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+Subject: Re: [PATCH 08/26] mm: directed shrinker work deferral
+Message-ID: <20191014084604.GA11758@infradead.org>
+References: <20191009032124.10541-1-david@fromorbit.com>
+ <20191009032124.10541-9-david@fromorbit.com>
 MIME-Version: 1.0
-In-Reply-To: <20191009142435.3975-2-david@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 14 Oct 2019 08:44:29 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191009032124.10541-9-david@fromorbit.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 09.10.19 16:24, David Hildenbrand wrote:
-> There are three places where we access uninitialized memmaps, namely:
-> - /proc/kpagecount
-> - /proc/kpageflags
-> - /proc/kpagecgroup
+On Wed, Oct 09, 2019 at 02:21:06PM +1100, Dave Chinner wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 > 
-> We have initialized memmaps either when the section is online or when
-> the page was initialized to the ZONE_DEVICE. Uninitialized memmaps contain
-> garbage and in the worst case trigger kernel BUGs, especially with
-> CONFIG_PAGE_POISONING.
+> Introduce a mechanism for ->count_objects() to indicate to the
+> shrinker infrastructure that the reclaim context will not allow
+> scanning work to be done and so the work it decides is necessary
+> needs to be deferred.
 > 
-> For example, not onlining a DIMM during boot and calling /proc/kpagecount
-> with CONFIG_PAGE_POISONING:
-> :/# cat /proc/kpagecount > tmp.test
-> [   95.600592] BUG: unable to handle page fault for address: fffffffffffffffe
-> [   95.601238] #PF: supervisor read access in kernel mode
-> [   95.601675] #PF: error_code(0x0000) - not-present page
-> [   95.602116] PGD 114616067 P4D 114616067 PUD 114618067 PMD 0
-> [   95.602596] Oops: 0000 [#1] SMP NOPTI
-> [   95.602920] CPU: 0 PID: 469 Comm: cat Not tainted 5.4.0-rc1-next-20191004+ #11
-> [   95.603547] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.4
-> [   95.604521] RIP: 0010:kpagecount_read+0xce/0x1e0
-> [   95.604917] Code: e8 09 83 e0 3f 48 0f a3 02 73 2d 4c 89 e7 48 c1 e7 06 48 03 3d ab 51 01 01 74 1d 48 8b 57 08 480
-> [   95.606450] RSP: 0018:ffffa14e409b7e78 EFLAGS: 00010202
-> [   95.606904] RAX: fffffffffffffffe RBX: 0000000000020000 RCX: 0000000000000000
-> [   95.607519] RDX: 0000000000000001 RSI: 00007f76b5595000 RDI: fffff35645000000
-> [   95.608128] RBP: 00007f76b5595000 R08: 0000000000000001 R09: 0000000000000000
-> [   95.608731] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000140000
-> [   95.609327] R13: 0000000000020000 R14: 00007f76b5595000 R15: ffffa14e409b7f08
-> [   95.609924] FS:  00007f76b577d580(0000) GS:ffff8f41bd400000(0000) knlGS:0000000000000000
-> [   95.610599] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   95.611083] CR2: fffffffffffffffe CR3: 0000000078960000 CR4: 00000000000006f0
-> [   95.611686] Call Trace:
-> [   95.611906]  proc_reg_read+0x3c/0x60
-> [   95.612228]  vfs_read+0xc5/0x180
-> [   95.612505]  ksys_read+0x68/0xe0
-> [   95.612785]  do_syscall_64+0x5c/0xa0
-> [   95.613092]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> For now, let's drop support for ZONE_DEVICE from the three pseudo files
-> in order to fix this. To distinguish offline memory (with garbage memmap)
-> from ZONE_DEVICE memory with properly initialized memmaps, we would have to
-> check get_dev_pagemap() and pfn_zone_device_reserved() right now. The usage
-> of both (especially, special casing devmem) is frowned upon and needs to
-> be reworked. The fundamental issue we have is:
-> 
-> 	if (pfn_to_online_page(pfn)) {
-> 		/* memmap initialized */
-> 	} else if (pfn_valid(pfn)) {
-> 		/*
-> 		 * ???
-> 		 * a) offline memory. memmap garbage.
-> 		 * b) devmem: memmap initialized to ZONE_DEVICE.
-> 		 * c) devmem: reserved for driver. memmap garbage.
-> 		 * (d) devmem: memmap currently initializing - garbage)
-> 		 */
-> 	}
-> 
-> We'll leave the pfn_zone_device_reserved() check in stable_page_flags()
-> in place as that function is also used from memory failure. We now
-> no longer dump information about pages that are not in use anymore -
-> offline.
-> 
-> Reported-by: Qian Cai <cai@lca.pw>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-> Cc: Pankaj gupta <pagupta@redhat.com>
-> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->   fs/proc/page.c | 28 ++++++++++++++++------------
->   1 file changed, 16 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/proc/page.c b/fs/proc/page.c
-> index decd3fe39674..e40dbfe1168e 100644
-> --- a/fs/proc/page.c
-> +++ b/fs/proc/page.c
-> @@ -42,10 +42,12 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
->   		return -EINVAL;
->   
->   	while (count > 0) {
-> -		if (pfn_valid(pfn))
-> -			ppage = pfn_to_page(pfn);
-> -		else
-> -			ppage = NULL;
-> +		/*
-> +		 * TODO: ZONE_DEVICE support requires to identify
-> +		 * memmaps that were actually initialized.
-> +		 */
-> +		ppage = pfn_to_online_page(pfn);
-> +
->   		if (!ppage || PageSlab(ppage) || page_has_type(ppage))
->   			pcount = 0;
->   		else
-> @@ -218,10 +220,11 @@ static ssize_t kpageflags_read(struct file *file, char __user *buf,
->   		return -EINVAL;
->   
->   	while (count > 0) {
-> -		if (pfn_valid(pfn))
-> -			ppage = pfn_to_page(pfn);
-> -		else
-> -			ppage = NULL;
-> +		/*
-> +		 * TODO: ZONE_DEVICE support requires to identify
-> +		 * memmaps that were actually initialized.
-> +		 */
-> +		ppage = pfn_to_online_page(pfn);
->   
->   		if (put_user(stable_page_flags(ppage), out)) {
->   			ret = -EFAULT;
-> @@ -263,10 +266,11 @@ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
->   		return -EINVAL;
->   
->   	while (count > 0) {
-> -		if (pfn_valid(pfn))
-> -			ppage = pfn_to_page(pfn);
-> -		else
-> -			ppage = NULL;
-> +		/*
-> +		 * TODO: ZONE_DEVICE support requires to identify
-> +		 * memmaps that were actually initialized.
-> +		 */
-> +		ppage = pfn_to_online_page(pfn);
->   
->   		if (ppage)
->   			ino = page_cgroup_ino(ppage);
-> 
+> This simplifies the code by separating out the accounting of
+> deferred work from the actual doing of the work, and allows better
+> decisions to be made by the shrinekr control logic on what action it
+> can take.
 
-@Andrew, can you add
-
-Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online") # visible after d0dc12e86b319
-
-And
-
-Cc: stable@vger.kernel.org # v4.13+
-
-Thanks!
-
--- 
-
-Thanks,
-
-David / dhildenb
+I hate all this boilerplate code in the scanners.  Can't we just add
+a a required_gfp_mask field to struct shrinker and lift the pattern
+to common code?
