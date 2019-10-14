@@ -2,70 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E51AAD585A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Oct 2019 23:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5C3FD5975
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Oct 2019 04:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729174AbfJMVmN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Oct 2019 17:42:13 -0400
-Received: from sonic315-21.consmr.mail.ne1.yahoo.com ([66.163.190.147]:43979
-        "EHLO sonic315-21.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727492AbfJMVmN (ORCPT
+        id S1729719AbfJNCEW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Oct 2019 22:04:22 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34792 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729659AbfJNCEW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Oct 2019 17:42:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1571002932; bh=AZDKeY/KduJkitky/ovq7oNAqmYov3JYHc+M1QmYqnU=; h=Date:From:Reply-To:Subject:From:Subject; b=WLqD/BceALicXFQ2HysQF+M/1T5kXG6DQkeO3gEWhZd9ATBJB4ste5QP6xbqGxCwD4k1BLIiAURoPaxn6zY+9kQSt6PvLwDSzlDg2R8QXr5Q06eA7scLQLOtSeGT7UsT66IqjLNmSWGkGcTNyFi8X6SFOZrlM5LGd/rYtcxOsUm23rRMuRbgwMJuusTAMlYSxojHho1RaqpVGDrHNSpv/PlQ4mkk1o97uE3PHnRJiIJNFZZIROhlJBr9KYwQxU46vJze+wxtj7zjLcArsB7JCSCEVFg5dadJbKTF6Xc1QgmnVhWibao52JIGbHoiucIuvIl2GG0WXq+teaC45SGF2Q==
-X-YMail-OSG: 9SN.jO4VM1m5UBqEhlFxOzSqph_GFnNCQteNFa5xKuNdyg7syt6rYQvFEp46mn7
- BHb1IIQ2eAXDxN66JKdSiPGOFJBSjVCt64qjSZcZM7xeMVacftlydN8Y3q6TX2SYJjG4jj5OGZIj
- BDGO6n3bZ5tofxetPHBUlG6qnagQBrMqqjDBGXal.1O.nDUREPNKLo.b1IaZix8k1MH4nrv_ABPV
- P3.oY41hAgfL3TmeICs4oDFu8CFA9WXuqfxn2eAPEyyfeLA.efQJx7hqhkVsYWwyXQhOSRwg6.Gi
- mOw5JPxqA21DSuVr2RjoiZuhvwSauIyhjskh0UtN0UEdUF78raZtDubJXPBGwUYepSYI_OHDnPsP
- pj3olL5dn1tKw7X4dZVYN_UeorMp62fEZ5DVsinrzXR9c7R5iNS1KeaU9sVsHxHQTE10s.xJydcU
- 3A6Y3W62mRdcYzMPqAGIaLR6JD8MkpWjwKlcIV_84lV4ZAliIBPmVIdYCD32q_fTHTiEoU72cG1n
- lH74WZFZpojxMKRGpoaBioEqULeL_yVjO56.CXdPb19zymHffYdxkSMFb1FNKr22k6AyHxS9lKOZ
- EA8iq3BVhP2hY_M95UpV19gZRM2hv6ddyFIB8G0FCRpwhE2OjS0YaQq1qrcssQyHSQyAgunUBkuq
- Jq.qntn.qJGIzVsxQmSPD2BtXBnPOAOS_OF3YEy0wtjE_gvVrqrywOneO7qnyRuZJDeng3m64UqO
- CxPzOfBAv4sqja1PvA4NoETwD0fLgtQjs53v9GSN4Y0W08rpTGdsB5pcsYvmb49Xh4PLEESXIbg8
- a0GdFpW3AncxGkvTO6ev720Hs5mbkYjzReaG2cP540s9ZHP4knd7QVbhdyXT87MYrqJbdDPVD8fV
- JEsJf4LcVaQaIbYgnY2lSQL6yxHZMeaFzRMbSGDpJ4.ooW6iI7E6YiiAyq5KxPQB4WhU7zZ0diF6
- E16G6hhR_a.GhsDzpDeWRD59hIwutrQoaMZu42QPKXvuSlXloARtIxCD.l.WrUUM4S88xlwnlwrz
- 3z2tr6PoaFwSHDtH_HDqHKnIQkXOv1Mt0nTBlQeyOWoEbS.2.hb9up1EWv3DtjQIFQiShXG55Shd
- ZdxmVu9EHHg7ejoHN2eKMsAf8EY2bJU9zvKs19kpNJL1ESFCPBCX3Y8S68J3FtJ0RMUlaTRNVje9
- TfJJP9TMX8lguLzgifqkcTMrcwVD3CZQ.VKNlg4xe9COsYZLnYr9C8yJ7z_mit8g8B7iQAOkbGi.
- wbY8Yn.iRqu6R3O3rkg1y_0VKj26jjyA7Ka5Om2IzaCHVNcaY.UQFrA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Sun, 13 Oct 2019 21:42:12 +0000
-Date:   Sun, 13 Oct 2019 21:42:11 +0000 (UTC)
-From:   Lipton Davied <barrsterliptondaveid@gmail.com>
-Reply-To: barrsterliptondaveid@gmail.com
-Message-ID: <1726240534.968324.1571002931214@mail.yahoo.com>
-Subject: HI
+        Sun, 13 Oct 2019 22:04:22 -0400
+Received: by mail-io1-f67.google.com with SMTP id q1so34703303ion.1;
+        Sun, 13 Oct 2019 19:04:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4iI1U5W50uucA2qCZykSDQfbSXg9H0XvV1EOgeR4Q54=;
+        b=tBk0SJJ7vXrv8bZK7w+nNlpDHB494vAF4ne+9m8ExOnWuXkfeLnYz+mdG12PEACUbj
+         SFcGM9jBX9hvLfLguE6FsLK0V4MhU/sc8ulSSqfeLLkiPq3Mh0E6SQCS64wpmen89qBX
+         xR+fTG13xlvClUFWHUgh/9R/uJrUYaW3ldIGkENE5s/8LUH5VupvQNqWaaJ6FOR3QWpt
+         PMFFWspQoS6ykMQV97xn544nghP/yXPEX6ZW2C8uPx2G9RALZ2wKzQ8lGx0nUrRYMPwa
+         almlZDFSnEPbeZmm++oaNq94QpOlupUPYCc81yBjj7SFPofWyiwUtusb6D8QSVOQim25
+         7wSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4iI1U5W50uucA2qCZykSDQfbSXg9H0XvV1EOgeR4Q54=;
+        b=TKFqlyX9KX8l0r1d9Z0v8EgZnrp+a6s+61xWjLrkNinNdzaN+sfucuRz5meoUnEqEX
+         XQsEZaEqdCSYMeFQ5sXm4cPB8ZeBTq7RrHSC4BXE1pga8AoGL2ZRJ4znsobZHh3YmjCA
+         dV2HvIyRkoXqi9JJYgRnYGhIejmwtyjhvNLina089Haos84l8/8KAcRsxR6i5elT7bS5
+         9WS8krsrN4XTPEt3PI+CT7IElVinGv04WHNvnRqARB6LzFanJyk484asyf8mhbL340Je
+         qufXmLSucn6ptGz9EsXrfFpIFcfzk6toW/xU7jzH9Ev/hTdvf8rYWdsMxNzUoSP4RhnB
+         KtHw==
+X-Gm-Message-State: APjAAAUboveMKvbcZ1kvofSmckPPtbbAvPKNqraZWqHmoQdoAzj7uuQD
+        zeLsPr2dsRVvQa8l/5G3aVBs9J0FQ0oUXeDVqtw=
+X-Google-Smtp-Source: APXvYqzCL+ZPCbb78l+cke7wD6MMCX5ftpHaUnOQxRSRLfL/0r+wfuIheNygiPX0GUJ9icOdgpxHkZlYy9ghZuNpixk=
+X-Received: by 2002:a02:bb0c:: with SMTP id y12mr22841824jan.96.1571018661298;
+ Sun, 13 Oct 2019 19:04:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <000000000000805e5505945a234b@google.com> <20191009071850.258463-1-ebiggers@kernel.org>
+In-Reply-To: <20191009071850.258463-1-ebiggers@kernel.org>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Sun, 13 Oct 2019 19:04:10 -0700
+Message-ID: <CABeXuvomuEY7-8SJuRDh+MS+fSE9evMudFe6KEdP+y-0D89fJw@mail.gmail.com>
+Subject: Re: [PATCH] fs/namespace.c: fix use-after-free of mount in mnt_warn_timestamp_expiry()
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Thanks for the fix.
+
+Would it be better to move the check and warning to a place where the
+access is still safe?
+
+-Deepa
+
+> On Oct 9, 2019, at 12:19 AM, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> =EF=BB=BFFrom: Eric Biggers <ebiggers@google.com>
 
 
-Lieber Freund
-
-
-Ich bin Herr Lipton, Rechtsberater. Ich m=C3=B6chte, dass Ihr Kontakt mir h=
-ilft, einen von meinem verstorbenen Kunden auf seinem Konto hinterlassenen =
-wertvollen Betrag (4,8 Mio. USD) wiederzugewinnen, bevor er von der Securit=
-y Finance-Firma, bei der der Betrag eingezahlt wurde, unbrauchbar beschlagn=
-ahmt oder ausgewertet wird.
-
-
-Ich bitte nur um ehrliche Zusammenarbeit, um diese Transaktion so schnell w=
-ie m=C3=B6glich zu sehen.
-
-
-Ich suche eine direkte Antwort auf weitere Klarstellungen.
-
-
-Gr=C3=BC=C3=9Fe
-
-
-Mr. Lipton Daveid (links)
+On Wed, Oct 9, 2019 at 12:19 AM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> After do_add_mount() returns success, the caller doesn't hold a
+> reference to the 'struct mount' anymore.  So it's invalid to access it
+> in mnt_warn_timestamp_expiry().
+>
+> Fix it by instead passing the super_block and the mnt_flags.  It's safe
+> to access the super_block because it's pinned by fs_context::root.
+>
+> Reported-by: syzbot+da4f525235510683d855@syzkaller.appspotmail.com
+> Fixes: f8b92ba67c5d ("mount: Add mount warning for impending timestamp ex=
+piry")
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/namespace.c | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index fe0e9e1410fe..7ef8edaaed69 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2466,12 +2466,11 @@ static void set_mount_attributes(struct mount *mn=
+t, unsigned int mnt_flags)
+>         unlock_mount_hash();
+>  }
+>
+> -static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vf=
+smount *mnt)
+> +static void mnt_warn_timestamp_expiry(struct path *mountpoint,
+> +                                     struct super_block *sb, int mnt_fla=
+gs)
+>  {
+> -       struct super_block *sb =3D mnt->mnt_sb;
+> -
+> -       if (!__mnt_is_readonly(mnt) &&
+> -          (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_m=
+ax)) {
+> +       if (!(mnt_flags & MNT_READONLY) && !sb_rdonly(sb) &&
+> +           (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_=
+max)) {
+>                 char *buf =3D (char *)__get_free_page(GFP_KERNEL);
+>                 char *mntpath =3D buf ? d_path(mountpoint, buf, PAGE_SIZE=
+) : ERR_PTR(-ENOMEM);
+>                 struct tm tm;
+> @@ -2512,7 +2511,7 @@ static int do_reconfigure_mnt(struct path *path, un=
+signed int mnt_flags)
+>                 set_mount_attributes(mnt, mnt_flags);
+>         up_write(&sb->s_umount);
+>
+> -       mnt_warn_timestamp_expiry(path, &mnt->mnt);
+> +       mnt_warn_timestamp_expiry(path, sb, mnt_flags);
+>
+>         return ret;
+>  }
+> @@ -2555,7 +2554,7 @@ static int do_remount(struct path *path, int ms_fla=
+gs, int sb_flags,
+>                 up_write(&sb->s_umount);
+>         }
+>
+> -       mnt_warn_timestamp_expiry(path, &mnt->mnt);
+> +       mnt_warn_timestamp_expiry(path, sb, mnt_flags);
+>
+>         put_fs_context(fc);
+>         return err;
+> @@ -2770,7 +2769,7 @@ static int do_new_mount_fc(struct fs_context *fc, s=
+truct path *mountpoint,
+>                 return error;
+>         }
+>
+> -       mnt_warn_timestamp_expiry(mountpoint, mnt);
+> +       mnt_warn_timestamp_expiry(mountpoint, sb, mnt_flags);
+>
+>         return error;
+>  }
+> --
+> 2.23.0
+>
