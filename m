@@ -2,619 +2,373 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8683CD6C00
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 01:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 959C6D6C73
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 02:31:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbfJNX13 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Oct 2019 19:27:29 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:38938 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbfJNX13 (ORCPT
+        id S1726989AbfJOAbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Oct 2019 20:31:44 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:13652 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbfJOAbn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Oct 2019 19:27:29 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9ENO8ut140044;
-        Mon, 14 Oct 2019 23:27:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=JcUwtd/0qbut4Lpaw6hvdWuCX9STYZs7tk/6dffAGiU=;
- b=LI5atSRSr342CVudRe20QBPqPyTTNRC/fnHhI6+iWXwb0uel/2s0t0/piQDzSFU2Ut0O
- hfD3kfpp4PtpLaD72f0485dpfPvXwjIQwNRVyfWijJraY+xhZ9uJPBNWUyG5uR+zIfHD
- yrUxhudmBfBMLscgWJkG/tsssXmnTIwNadgeXuktyw9uTM8wbZumLUaPu+h/vmkYKa5q
- OS+OCsd5WulzQiDM5IIyfYOo++8ZMyo4uDQNYes6Gn1tlbQpKnh2CrYlv5UDQKHqpbjR
- VMVUNqPp7PflIOGoMlzF9XTLwCmzfrmSYO1VxxC9TkLH9Te1A8gF5IJ6AI9nzJqitOrV VQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2vk7fr3xh2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Oct 2019 23:27:18 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9ENOENp117116;
-        Mon, 14 Oct 2019 23:27:17 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2vks07ppnd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Oct 2019 23:27:17 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9ENRBJU025154;
-        Mon, 14 Oct 2019 23:27:12 GMT
-Received: from localhost (/10.159.232.14)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 14 Oct 2019 23:27:10 +0000
-Date:   Mon, 14 Oct 2019 16:27:09 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 08/20] iomap: use a srcmap for a read-modify-write I/O
-Message-ID: <20191014232709.GB13108@magnolia>
-References: <20191008071527.29304-1-hch@lst.de>
- <20191008071527.29304-9-hch@lst.de>
+        Mon, 14 Oct 2019 20:31:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1571099502; x=1602635502;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=vGUAUiE6HWuzW05ag+uD2UDXYvceeHSfyWnl+vAUii4=;
+  b=cv0xD01ubxfTMjj10J8WQqwTWcYa8BIDXT/4z0hnqnugUqRTpd69GLd3
+   fwM3KGMjmzun9k36RtZhUjpmef3LPvFgMH9TFpYN7o/abInIhwr0f+Liq
+   ZsfdbtwT7twldZK7+oELW9HVpbn20FD0HYhKXMTQTgHLYNyMrIP3etU5J
+   CX3ZHthqyW2DgzDYc0USP+JsQgfoZysXuzD9Q6jyLRsge6qy7Fpu72dSw
+   bVsjNg4L5MVr+CmGxw8xaYKwRc1S1iMTar2MJGx5o9nYzL1h4MWd4rzH8
+   Q+h+I9pbppq2jCTFTr7mkh2kLCyqgaxylGEiChvkwDTp0M9GtJ25PQHls
+   w==;
+IronPort-SDR: EL3n9BzG789Qj1bCB4B+Ajiv0j75T5aIVfEjdsYGCkbyo/Oi2vTCZFpdGrduQFGnnGH6WZwxbZ
+ Zz/R5oKDVePf1iny5k4ZmNdavSoijb5oKBhMk9JLRdIGP97UjqLwWOLpl9HWooK1ieslSIA21N
+ kyYI6zn1UpcXI9WPZnN7wm4kSW/3j9hMJ1Q/1BAmrqmURLP9IfwsifAyhwvkFLgHkCTG1fH1r3
+ 70zs9IGZ9xR/tSHfSNLPzuPf+u5QbWF+NQRznDPt5MJvFqTVkraqLCZPRaoVhGpUYgwZ+5JmH2
+ iFA=
+X-IronPort-AV: E=Sophos;i="5.67,296,1566835200"; 
+   d="scan'208";a="227576049"
+Received: from mail-cys01nam02lp2059.outbound.protection.outlook.com (HELO NAM02-CY1-obe.outbound.protection.outlook.com) ([104.47.37.59])
+  by ob1.hgst.iphmx.com with ESMTP; 15 Oct 2019 08:31:38 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lEL3qjtrhNcDpqLYxd/THVrYF8ScE1wQ9yjDN5dWk/CQ1U9VRYFTe0eIfdh3BDvc6hTGDcasa27vSxNIRc4FoGoHkpvc2A9OUiweBiAMaQwE502qDZ3uktfDEfBbdfuck86DrGcXKHILPQFzKKuzCmmOOjBHBf7rYd1GZSzYXkiJ3LK+OsjnA54GHMKqhUlzyCtQss3r2tJ95xlajUeo5txleHhDiVjsE1kHrh3jSGdYjYlIC3ubWe9J2/PDcRLiebDyokctcAXUgIBSAoAZZtGXFM682kJMj7Geihwb++46FAx6CWm4CDDsbI76tsvQPFHH4UhA3gRSFk//PlpJ4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vGUAUiE6HWuzW05ag+uD2UDXYvceeHSfyWnl+vAUii4=;
+ b=UZYWzcm/ywUKFgZWKRK2Adjm24QtfVdWOI5tdf4V0oU//oCg8W97yGaK3rB65p7A4lBWvQieRQoclTR1E/7CtNFqQChc2HyH3zv61tRQnG9TlOEt8gxGDY6MiA+0YmVL3EhAmvWjSysJBsKvN9hWXzzotCvvMdF9kKYz6W4BVNOQd4WvheHgrpsXANbMRizeVBXoXDNCy+QJlVLOgPkEw9XEbRFmsrOjqllBn7CgBfDXCqbCoL9rzJuhgMJ99vbdwt4+LaDrB3MVQuur15Bp7IHQQhWULarZumUe4tTdFed/vsfdRUEwfBOcGAQ5hDGIy5KA5ZjHWSnedeNWMc+TBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vGUAUiE6HWuzW05ag+uD2UDXYvceeHSfyWnl+vAUii4=;
+ b=OSO+Zc4RUwdoiumO6CdeR+WWSH3cM5AlTEQC0G9lZCAaPf1R9kegFQTReGwkl06zKnXAHD7++W6xBWyU+7Z7A+d8+uQcDJMyZBiwH9GhjdqbAGOeLV5DiWvILlS5dgO27i/NOftmcF7FoNdklo6KAlfxhbMz5NRWxBNWNcolLFw=
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com (52.135.215.29) by
+ BYAPR04MB4981.namprd04.prod.outlook.com (52.135.233.216) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.21; Tue, 15 Oct 2019 00:31:37 +0000
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::51dd:7de9:c4a1:f9f3]) by BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::51dd:7de9:c4a1:f9f3%3]) with mapi id 15.20.2347.023; Tue, 15 Oct 2019
+ 00:31:37 +0000
+From:   Atish Patra <Atish.Patra@wdc.com>
+To:     "alex@ghiti.fr" <alex@ghiti.fr>
+CC:     "ralf@linux-mips.org" <ralf@linux-mips.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "paul.burton@mips.com" <paul.burton@mips.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "jhogan@kernel.org" <jhogan@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>
+Subject: Re: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
+Thread-Topic: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
+Thread-Index: AQHVTbNRR2y1x3jR5Uinm4nvlyFP7KdLqT4AgAOZyQCAAQUZAIAAu9IAgADtSYCAARUzgIAIPfkA
+Date:   Tue, 15 Oct 2019 00:31:37 +0000
+Message-ID: <d27c8eac16d1cc4d5ca139802b4d0cdd2dbbca11.camel@wdc.com>
+References: <20190808061756.19712-1-alex@ghiti.fr>
+         <20190808061756.19712-15-alex@ghiti.fr>
+         <208433f810b5b07b1e679d7eedb028697dff851b.camel@wdc.com>
+         <60b52f20-a2c7-dee9-7cf3-a727f07400b9@ghiti.fr>
+         <daeb33415751ef16a717f6ff6a29486110c503d7.camel@wdc.com>
+         <9e9a3fea-d8a3-ae62-317a-740773f0725c@ghiti.fr>
+         <d9bc696aa9d1e306e4cff04a2926b0faa2dc5587.camel@wdc.com>
+         <4192e5ef-2e9c-950c-1899-ee8ce9a05ec3@ghiti.fr>
+In-Reply-To: <4192e5ef-2e9c-950c-1899-ee8ce9a05ec3@ghiti.fr>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Atish.Patra@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 151b5772-8635-4938-ebbd-08d751070a40
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: BYAPR04MB4981:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <BYAPR04MB498189266DF51BCFEFBFFB68FA930@BYAPR04MB4981.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 01917B1794
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(39860400002)(376002)(136003)(346002)(366004)(189003)(199004)(52314003)(66066001)(478600001)(966005)(81156014)(8936002)(81166006)(5640700003)(25786009)(6436002)(6512007)(76176011)(14454004)(99286004)(8676002)(4326008)(6306002)(118296001)(6246003)(66946007)(1730700003)(66476007)(6916009)(64756008)(66556008)(2351001)(66446008)(7416002)(6486002)(76116006)(2906002)(3846002)(6116002)(229853002)(7736002)(2501003)(316002)(71190400001)(19627235002)(86362001)(305945005)(54906003)(2616005)(486006)(36756003)(186003)(446003)(11346002)(102836004)(30864003)(5024004)(14444005)(256004)(53546011)(71200400001)(476003)(26005)(6506007)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4981;H:BYAPR04MB3990.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: P106JlTSeFaU9XkPrWzyhDtAtfzb8pa/uhB7IoOvtbP22JTafFXPnP4vU/K4MOHqBrFwIqmnPmkEFe0NfG+lMNUs6cYxOfUwccXMb2vGP+799D6syCcTPNeeTR9/u4vU4emAlh5iH4Pf/HBNjKB+Y+MkOIljImxO/uC1DchYe03s/n4i4zs/tWI8R84d1B1+KEscdlMvXJmmBPUCwTyQj2FwLhsUTTqfD7I3za3SFGAe3fzVkODggOIXvkCO+CE94J1F/nUvbpEBV7PPwgFm4BnUd6geYZ2+CX9ebThMCVt/ividoq9Bcz58NvGuohVIsscC5cdyyD/U6vuY7HYs14VGkas+45eobosXdckXC+fp9G5FHqVmYFPiT4z6XEkW3vTPju2jgAiH82Mw7NAnCsbiSKTUMEVjQpil6sr5rgpX64Wxf9/rlWEb1+m90eD9Xs7uWCR6VcSrCVfvFqFADg==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DFD9BC418220F5459EDAAD8429D5F8D2@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191008071527.29304-9-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9410 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910140197
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9410 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910140197
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 151b5772-8635-4938-ebbd-08d751070a40
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2019 00:31:37.3672
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5Q18QHVEvQ42kpL2GIf6HGPia4hmeh4hYJI8KhDGsRg466fTa+zI9LY8eXkkHO76ICPN7wW7AFkRpmsN+NKVkw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4981
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 09:15:15AM +0200, Christoph Hellwig wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> The srcmap is used to identify where the read is to be performed from.
-> It is passed to ->iomap_begin, which can fill it in if we need to read
-> data for partially written blocks from a different location than the
-> write target.  The srcmap is only supported for buffered writes so far.
-> 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-
-Goldwyn,
-
-Since we've reworked your original patch quite extensively, could you
-please have a look at (and if you approve, add an Acked-by) this new(er)
-version so we can get this series moving for 5.5?
-
---D
-
-> [hch: merged two patches, removed the IOMAP_F_COW flag, use iomap as
->       srcmap if not set, adjust length down to srcmap end as well]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/dax.c               |  9 ++++--
->  fs/ext2/inode.c        |  2 +-
->  fs/ext4/inode.c        |  2 +-
->  fs/gfs2/bmap.c         |  3 +-
->  fs/iomap/apply.c       | 25 ++++++++++++----
->  fs/iomap/buffered-io.c | 65 +++++++++++++++++++++++-------------------
->  fs/iomap/direct-io.c   |  2 +-
->  fs/iomap/fiemap.c      |  4 +--
->  fs/iomap/seek.c        |  4 +--
->  fs/iomap/swapfile.c    |  3 +-
->  fs/xfs/xfs_iomap.c     |  9 ++++--
->  include/linux/iomap.h  |  5 ++--
->  12 files changed, 80 insertions(+), 53 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 6bf81f931de3..920105457c2c 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1090,7 +1090,7 @@ EXPORT_SYMBOL_GPL(__dax_zero_page_range);
->  
->  static loff_t
->  dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct block_device *bdev = iomap->bdev;
->  	struct dax_device *dax_dev = iomap->dax_dev;
-> @@ -1248,6 +1248,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	unsigned long vaddr = vmf->address;
->  	loff_t pos = (loff_t)vmf->pgoff << PAGE_SHIFT;
->  	struct iomap iomap = { 0 };
-> +	struct iomap srcmap = { .type = IOMAP_HOLE };
->  	unsigned flags = IOMAP_FAULT;
->  	int error, major = 0;
->  	bool write = vmf->flags & FAULT_FLAG_WRITE;
-> @@ -1292,7 +1293,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	 * the file system block size to be equal the page size, which means
->  	 * that we never have to deal with more than a single extent here.
->  	 */
-> -	error = ops->iomap_begin(inode, pos, PAGE_SIZE, flags, &iomap);
-> +	error = ops->iomap_begin(inode, pos, PAGE_SIZE, flags, &iomap, &srcmap);
->  	if (iomap_errp)
->  		*iomap_errp = error;
->  	if (error) {
-> @@ -1472,6 +1473,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	struct inode *inode = mapping->host;
->  	vm_fault_t result = VM_FAULT_FALLBACK;
->  	struct iomap iomap = { 0 };
-> +	struct iomap srcmap = { .type = IOMAP_HOLE };
->  	pgoff_t max_pgoff;
->  	void *entry;
->  	loff_t pos;
-> @@ -1546,7 +1548,8 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	 * to look up our filesystem block.
->  	 */
->  	pos = (loff_t)xas.xa_index << PAGE_SHIFT;
-> -	error = ops->iomap_begin(inode, pos, PMD_SIZE, iomap_flags, &iomap);
-> +	error = ops->iomap_begin(inode, pos, PMD_SIZE, iomap_flags, &iomap,
-> +			&srcmap);
->  	if (error)
->  		goto unlock_entry;
->  
-> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-> index 7004ce581a32..467c13ff6b40 100644
-> --- a/fs/ext2/inode.c
-> +++ b/fs/ext2/inode.c
-> @@ -801,7 +801,7 @@ int ext2_get_block(struct inode *inode, sector_t iblock,
->  
->  #ifdef CONFIG_FS_DAX
->  static int ext2_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-> -		unsigned flags, struct iomap *iomap)
-> +		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	unsigned int blkbits = inode->i_blkbits;
->  	unsigned long first_block = offset >> blkbits;
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 516faa280ced..abaaf7d96ca4 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3407,7 +3407,7 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
->  }
->  
->  static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-> -			    unsigned flags, struct iomap *iomap)
-> +		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->  	unsigned int blkbits = inode->i_blkbits;
-> diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-> index f63df54a08c6..516103248272 100644
-> --- a/fs/gfs2/bmap.c
-> +++ b/fs/gfs2/bmap.c
-> @@ -1149,7 +1149,8 @@ static inline bool gfs2_iomap_need_write_lock(unsigned flags)
->  }
->  
->  static int gfs2_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
-> -			    unsigned flags, struct iomap *iomap)
-> +			    unsigned flags, struct iomap *iomap,
-> +			    struct iomap *srcmap)
->  {
->  	struct gfs2_inode *ip = GFS2_I(inode);
->  	struct metapath mp = { .mp_aheight = 1, };
-> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
-> index 54c02aecf3cd..484dd8eda861 100644
-> --- a/fs/iomap/apply.c
-> +++ b/fs/iomap/apply.c
-> @@ -23,8 +23,10 @@ loff_t
->  iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->  		const struct iomap_ops *ops, void *data, iomap_actor_t actor)
->  {
-> -	struct iomap iomap = { 0 };
-> +	struct iomap iomap = { .type = IOMAP_HOLE };
-> +	struct iomap srcmap = { .type = IOMAP_HOLE };
->  	loff_t written = 0, ret;
-> +	u64 end;
->  
->  	/*
->  	 * Need to map a range from start position for length bytes. This can
-> @@ -38,7 +40,7 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->  	 * expose transient stale data. If the reserve fails, we can safely
->  	 * back out at this point as there is nothing to undo.
->  	 */
-> -	ret = ops->iomap_begin(inode, pos, length, flags, &iomap);
-> +	ret = ops->iomap_begin(inode, pos, length, flags, &iomap, &srcmap);
->  	if (ret)
->  		return ret;
->  	if (WARN_ON(iomap.offset > pos))
-> @@ -50,15 +52,26 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->  	 * Cut down the length to the one actually provided by the filesystem,
->  	 * as it might not be able to give us the whole size that we requested.
->  	 */
-> -	if (iomap.offset + iomap.length < pos + length)
-> -		length = iomap.offset + iomap.length - pos;
-> +	end = iomap.offset + iomap.length;
-> +	if (srcmap.type != IOMAP_HOLE)
-> +		end = min(end, srcmap.offset + srcmap.length);
-> +	if (pos + length > end)
-> +		length = end - pos;
->  
->  	/*
-> -	 * Now that we have guaranteed that the space allocation will succeed.
-> +	 * Now that we have guaranteed that the space allocation will succeed,
->  	 * we can do the copy-in page by page without having to worry about
->  	 * failures exposing transient data.
-> +	 *
-> +	 * To support COW operations, we read in data for partially blocks from
-> +	 * the srcmap if the file system filled it in.  In that case we the
-> +	 * length needs to be limited to the earlier of the ends of the iomaps.
-> +	 * If the file system did not provide a srcmap we pass in the normal
-> +	 * iomap into the actors so that they don't need to have special
-> +	 * handling for the two cases.
->  	 */
-> -	written = actor(inode, pos, length, data, &iomap);
-> +	written = actor(inode, pos, length, data, &iomap,
-> +			srcmap.type != IOMAP_HOLE ? &srcmap : &iomap);
->  
->  	/*
->  	 * Now the data has been copied, commit the range we've copied.  This
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index ac1bbed71a9b..eb2c6d73a837 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -234,7 +234,7 @@ static inline bool iomap_block_needs_zeroing(struct inode *inode,
->  
->  static loff_t
->  iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iomap_readpage_ctx *ctx = data;
->  	struct page *page = ctx->cur_page;
-> @@ -382,7 +382,7 @@ iomap_next_page(struct inode *inode, struct list_head *pages, loff_t pos,
->  
->  static loff_t
->  iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iomap_readpage_ctx *ctx = data;
->  	loff_t done, ret;
-> @@ -402,7 +402,7 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
->  			ctx->cur_page_in_bio = false;
->  		}
->  		ret = iomap_readpage_actor(inode, pos + done, length - done,
-> -				ctx, iomap);
-> +				ctx, iomap, srcmap);
->  	}
->  
->  	return done;
-> @@ -582,7 +582,7 @@ iomap_read_page_sync(loff_t block_start, struct page *page, unsigned poff,
->  
->  static int
->  __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
-> -		struct page *page, struct iomap *iomap)
-> +		struct page *page, struct iomap *srcmap)
->  {
->  	struct iomap_page *iop = iomap_page_create(inode, page);
->  	loff_t block_size = i_blocksize(inode);
-> @@ -605,7 +605,7 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
->  		    (to <= poff || to >= poff + plen))
->  			continue;
->  
-> -		if (iomap_block_needs_zeroing(inode, iomap, block_start)) {
-> +		if (iomap_block_needs_zeroing(inode, srcmap, block_start)) {
->  			if (WARN_ON_ONCE(flags & IOMAP_WRITE_F_UNSHARE))
->  				return -EIO;
->  			zero_user_segments(page, poff, from, to, poff + plen);
-> @@ -614,7 +614,7 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
->  		}
->  
->  		status = iomap_read_page_sync(block_start, page, poff, plen,
-> -				iomap);
-> +				srcmap);
->  		if (status)
->  			return status;
->  	} while ((block_start += plen) < block_end);
-> @@ -624,13 +624,15 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
->  
->  static int
->  iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
-> -		struct page **pagep, struct iomap *iomap)
-> +		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	const struct iomap_page_ops *page_ops = iomap->page_ops;
->  	struct page *page;
->  	int status = 0;
->  
->  	BUG_ON(pos + len > iomap->offset + iomap->length);
-> +	if (srcmap != iomap)
-> +		BUG_ON(pos + len > srcmap->offset + srcmap->length);
->  
->  	if (fatal_signal_pending(current))
->  		return -EINTR;
-> @@ -648,13 +650,13 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
->  		goto out_no_page;
->  	}
->  
-> -	if (iomap->type == IOMAP_INLINE)
-> -		iomap_read_inline_data(inode, page, iomap);
-> +	if (srcmap->type == IOMAP_INLINE)
-> +		iomap_read_inline_data(inode, page, srcmap);
->  	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
-> -		status = __block_write_begin_int(page, pos, len, NULL, iomap);
-> +		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
->  	else
->  		status = __iomap_write_begin(inode, pos, len, flags, page,
-> -				iomap);
-> +				srcmap);
->  
->  	if (unlikely(status))
->  		goto out_unlock;
-> @@ -740,16 +742,16 @@ iomap_write_end_inline(struct inode *inode, struct page *page,
->  }
->  
->  static int
-> -iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
-> -		unsigned copied, struct page *page, struct iomap *iomap)
-> +iomap_write_end(struct inode *inode, loff_t pos, unsigned len, unsigned copied,
-> +		struct page *page, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	const struct iomap_page_ops *page_ops = iomap->page_ops;
->  	loff_t old_size = inode->i_size;
->  	int ret;
->  
-> -	if (iomap->type == IOMAP_INLINE) {
-> +	if (srcmap->type == IOMAP_INLINE) {
->  		ret = iomap_write_end_inline(inode, page, iomap, pos, copied);
-> -	} else if (iomap->flags & IOMAP_F_BUFFER_HEAD) {
-> +	} else if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
->  		ret = block_write_end(NULL, inode->i_mapping, pos, len, copied,
->  				page, NULL);
->  	} else {
-> @@ -780,7 +782,7 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
->  
->  static loff_t
->  iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iov_iter *i = data;
->  	long status = 0;
-> @@ -814,7 +816,8 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  			break;
->  		}
->  
-> -		status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap);
-> +		status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap,
-> +				srcmap);
->  		if (unlikely(status))
->  			break;
->  
-> @@ -825,8 +828,8 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  
->  		flush_dcache_page(page);
->  
-> -		status = iomap_write_end(inode, pos, bytes, copied, page,
-> -				iomap);
-> +		status = iomap_write_end(inode, pos, bytes, copied, page, iomap,
-> +				srcmap);
->  		if (unlikely(status < 0))
->  			break;
->  		copied = status;
-> @@ -879,7 +882,7 @@ EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
->  
->  static loff_t
->  iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	long status = 0;
->  	ssize_t written = 0;
-> @@ -888,7 +891,7 @@ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  	if (!(iomap->flags & IOMAP_F_SHARED))
->  		return length;
->  	/* don't bother with holes or unwritten extents */
-> -	if (iomap->type == IOMAP_HOLE || iomap->type == IOMAP_UNWRITTEN)
-> +	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
->  		return length;
->  
->  	do {
-> @@ -897,11 +900,12 @@ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  		struct page *page;
->  
->  		status = iomap_write_begin(inode, pos, bytes,
-> -				IOMAP_WRITE_F_UNSHARE, &page, iomap);
-> +				IOMAP_WRITE_F_UNSHARE, &page, iomap, srcmap);
->  		if (unlikely(status))
->  			return status;
->  
-> -		status = iomap_write_end(inode, pos, bytes, bytes, page, iomap);
-> +		status = iomap_write_end(inode, pos, bytes, bytes, page, iomap,
-> +				srcmap);
->  		if (unlikely(status <= 0)) {
->  			if (WARN_ON_ONCE(status == 0))
->  				return -EIO;
-> @@ -940,19 +944,19 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
->  EXPORT_SYMBOL_GPL(iomap_file_unshare);
->  
->  static int iomap_zero(struct inode *inode, loff_t pos, unsigned offset,
-> -		unsigned bytes, struct iomap *iomap)
-> +		unsigned bytes, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct page *page;
->  	int status;
->  
-> -	status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap);
-> +	status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap, srcmap);
->  	if (status)
->  		return status;
->  
->  	zero_user(page, offset, bytes);
->  	mark_page_accessed(page);
->  
-> -	return iomap_write_end(inode, pos, bytes, bytes, page, iomap);
-> +	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
->  }
->  
->  static int iomap_dax_zero(loff_t pos, unsigned offset, unsigned bytes,
-> @@ -964,14 +968,14 @@ static int iomap_dax_zero(loff_t pos, unsigned offset, unsigned bytes,
->  
->  static loff_t
->  iomap_zero_range_actor(struct inode *inode, loff_t pos, loff_t count,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	bool *did_zero = data;
->  	loff_t written = 0;
->  	int status;
->  
->  	/* already zeroed?  we're done. */
-> -	if (iomap->type == IOMAP_HOLE || iomap->type == IOMAP_UNWRITTEN)
-> +	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
->  		return count;
->  
->  	do {
-> @@ -983,7 +987,8 @@ iomap_zero_range_actor(struct inode *inode, loff_t pos, loff_t count,
->  		if (IS_DAX(inode))
->  			status = iomap_dax_zero(pos, offset, bytes, iomap);
->  		else
-> -			status = iomap_zero(inode, pos, offset, bytes, iomap);
-> +			status = iomap_zero(inode, pos, offset, bytes, iomap,
-> +					srcmap);
->  		if (status < 0)
->  			return status;
->  
-> @@ -1033,7 +1038,7 @@ EXPORT_SYMBOL_GPL(iomap_truncate_page);
->  
->  static loff_t
->  iomap_page_mkwrite_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct page *page = data;
->  	int ret;
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 1fc28c2da279..e3ccbf7daaae 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -358,7 +358,7 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
->  
->  static loff_t
->  iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iomap_dio *dio = data;
->  
-> diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-> index f26fdd36e383..690ef2d7c6c8 100644
-> --- a/fs/iomap/fiemap.c
-> +++ b/fs/iomap/fiemap.c
-> @@ -44,7 +44,7 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
->  
->  static loff_t
->  iomap_fiemap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct fiemap_ctx *ctx = data;
->  	loff_t ret = length;
-> @@ -111,7 +111,7 @@ EXPORT_SYMBOL_GPL(iomap_fiemap);
->  
->  static loff_t
->  iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	sector_t *bno = data, addr;
->  
-> diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
-> index c04bad4b2b43..89f61d93c0bc 100644
-> --- a/fs/iomap/seek.c
-> +++ b/fs/iomap/seek.c
-> @@ -119,7 +119,7 @@ page_cache_seek_hole_data(struct inode *inode, loff_t offset, loff_t length,
->  
->  static loff_t
->  iomap_seek_hole_actor(struct inode *inode, loff_t offset, loff_t length,
-> -		      void *data, struct iomap *iomap)
-> +		      void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	switch (iomap->type) {
->  	case IOMAP_UNWRITTEN:
-> @@ -165,7 +165,7 @@ EXPORT_SYMBOL_GPL(iomap_seek_hole);
->  
->  static loff_t
->  iomap_seek_data_actor(struct inode *inode, loff_t offset, loff_t length,
-> -		      void *data, struct iomap *iomap)
-> +		      void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	switch (iomap->type) {
->  	case IOMAP_HOLE:
-> diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-> index 152a230f668d..a648dbf6991e 100644
-> --- a/fs/iomap/swapfile.c
-> +++ b/fs/iomap/swapfile.c
-> @@ -76,7 +76,8 @@ static int iomap_swapfile_add_extent(struct iomap_swapfile_info *isi)
->   * distinction between written and unwritten extents.
->   */
->  static loff_t iomap_swapfile_activate_actor(struct inode *inode, loff_t pos,
-> -		loff_t count, void *data, struct iomap *iomap)
-> +		loff_t count, void *data, struct iomap *iomap,
-> +		struct iomap *srcmap)
->  {
->  	struct iomap_swapfile_info *isi = data;
->  	int error;
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index c0a492353826..016adcd7dd66 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -928,7 +928,8 @@ xfs_file_iomap_begin(
->  	loff_t			offset,
->  	loff_t			length,
->  	unsigned		flags,
-> -	struct iomap		*iomap)
-> +	struct iomap		*iomap,
-> +	struct iomap		*srcmap)
->  {
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> @@ -1154,7 +1155,8 @@ xfs_seek_iomap_begin(
->  	loff_t			offset,
->  	loff_t			length,
->  	unsigned		flags,
-> -	struct iomap		*iomap)
-> +	struct iomap		*iomap,
-> +	struct iomap		*srcmap)
->  {
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> @@ -1240,7 +1242,8 @@ xfs_xattr_iomap_begin(
->  	loff_t			offset,
->  	loff_t			length,
->  	unsigned		flags,
-> -	struct iomap		*iomap)
-> +	struct iomap		*iomap,
-> +	struct iomap		*srcmap)
->  {
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 24c784e44274..37af5f9dc722 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -127,7 +127,8 @@ struct iomap_ops {
->  	 * The actual length is returned in iomap->length.
->  	 */
->  	int (*iomap_begin)(struct inode *inode, loff_t pos, loff_t length,
-> -			unsigned flags, struct iomap *iomap);
-> +			unsigned flags, struct iomap *iomap,
-> +			struct iomap *srcmap);
->  
->  	/*
->  	 * Commit and/or unreserve space previous allocated using iomap_begin.
-> @@ -143,7 +144,7 @@ struct iomap_ops {
->   * Main iomap iterator function.
->   */
->  typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
-> -		void *data, struct iomap *iomap);
-> +		void *data, struct iomap *iomap, struct iomap *srcmap);
->  
->  loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
->  		unsigned flags, const struct iomap_ops *ops, void *data,
-> -- 
-> 2.20.1
-> 
+T24gV2VkLCAyMDE5LTEwLTA5IGF0IDE0OjM5IC0wNDAwLCBBbGV4IEdoaXRpIHdyb3RlOg0KPiBP
+biAxMC84LzE5IDEwOjA3IFBNLCBBdGlzaCBQYXRyYSB3cm90ZToNCj4gPiBPbiBUdWUsIDIwMTkt
+MTAtMDggYXQgMDc6NTggLTA0MDAsIEFsZXggR2hpdGkgd3JvdGU6DQo+ID4gPiBPbiAxMC83LzE5
+IDg6NDYgUE0sIEF0aXNoIFBhdHJhIHdyb3RlOg0KPiA+ID4gPiBPbiBNb24sIDIwMTktMTAtMDcg
+YXQgMDU6MTEgLTA0MDAsIEFsZXggR2hpdGkgd3JvdGU6DQo+ID4gPiA+ID4gT24gMTAvNC8xOSAx
+MDoxMiBQTSwgQXRpc2ggUGF0cmEgd3JvdGU6DQo+ID4gPiA+ID4gPiBPbiBUaHUsIDIwMTktMDgt
+MDggYXQgMDI6MTcgLTA0MDAsIEFsZXhhbmRyZSBHaGl0aSB3cm90ZToNCj4gPiA+ID4gPiA+ID4g
+SW4gb3JkZXIgdG8gYXZvaWQgd2FzdGluZyB1c2VyIGFkZHJlc3Mgc3BhY2UgYnkgdXNpbmcNCj4g
+PiA+ID4gPiA+ID4gYm90dG9tLQ0KPiA+ID4gPiA+ID4gPiB1cA0KPiA+ID4gPiA+ID4gPiBtbWFw
+DQo+ID4gPiA+ID4gPiA+IGFsbG9jYXRpb24gc2NoZW1lLCBwcmVmZXIgdG9wLWRvd24gc2NoZW1l
+IHdoZW4gcG9zc2libGUuDQo+ID4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gPiBCZWZvcmU6DQo+
+ID4gPiA+ID4gPiA+IHJvb3RAcWVtdXJpc2N2NjQ6fiMgY2F0IC9wcm9jL3NlbGYvbWFwcw0KPiA+
+ID4gPiA+ID4gPiAwMDAxMDAwMC0wMDAxNjAwMCByLXhwIDAwMDAwMDAwIGZlOjAwDQo+ID4gPiA+
+ID4gPiA+IDYzODkgICAgICAgL2Jpbi9jYXQuY29yZXV0aWxzDQo+ID4gPiA+ID4gPiA+IDAwMDE2
+MDAwLTAwMDE3MDAwIHItLXAgMDAwMDUwMDAgZmU6MDANCj4gPiA+ID4gPiA+ID4gNjM4OSAgICAg
+ICAvYmluL2NhdC5jb3JldXRpbHMNCj4gPiA+ID4gPiA+ID4gMDAwMTcwMDAtMDAwMTgwMDAgcnct
+cCAwMDAwNjAwMCBmZTowMA0KPiA+ID4gPiA+ID4gPiA2Mzg5ICAgICAgIC9iaW4vY2F0LmNvcmV1
+dGlscw0KPiA+ID4gPiA+ID4gPiAwMDAxODAwMC0wMDAzOTAwMCBydy1wIDAwMDAwMDAwIDAwOjAw
+IDAgICAgICAgICAgW2hlYXBdDQo+ID4gPiA+ID4gPiA+IDE1NTU1NTYwMDAtMTU1NTU2ZDAwMCBy
+LXhwIDAwMDAwMDAwIGZlOjAwIDcxOTMgICAvbGliL2xkLQ0KPiA+ID4gPiA+ID4gPiAyLjI4LnNv
+DQo+ID4gPiA+ID4gPiA+IDE1NTU1NmQwMDAtMTU1NTU2ZTAwMCByLS1wIDAwMDE2MDAwIGZlOjAw
+IDcxOTMgICAvbGliL2xkLQ0KPiA+ID4gPiA+ID4gPiAyLjI4LnNvDQo+ID4gPiA+ID4gPiA+IDE1
+NTU1NmUwMDAtMTU1NTU2ZjAwMCBydy1wIDAwMDE3MDAwIGZlOjAwIDcxOTMgICAvbGliL2xkLQ0K
+PiA+ID4gPiA+ID4gPiAyLjI4LnNvDQo+ID4gPiA+ID4gPiA+IDE1NTU1NmYwMDAtMTU1NTU3MDAw
+MCBydy1wIDAwMDAwMDAwIDAwOjAwIDANCj4gPiA+ID4gPiA+ID4gMTU1NTU3MDAwMC0xNTU1NTcy
+MDAwIHIteHAgMDAwMDAwMDAgMDA6MDAgMCAgICAgIFt2ZHNvXQ0KPiA+ID4gPiA+ID4gPiAxNTU1
+NTc0MDAwLTE1NTU1NzYwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAwDQo+ID4gPiA+ID4gPiA+IDE1
+NTU1NzYwMDAtMTU1NTY3NDAwMCByLXhwIDAwMDAwMDAwIGZlOjAwDQo+ID4gPiA+ID4gPiA+IDcx
+ODcgICAvbGliL2xpYmMtDQo+ID4gPiA+ID4gPiA+IDIuMjguc28NCj4gPiA+ID4gPiA+ID4gMTU1
+NTY3NDAwMC0xNTU1Njc4MDAwIHItLXAgMDAwZmQwMDAgZmU6MDANCj4gPiA+ID4gPiA+ID4gNzE4
+NyAgIC9saWIvbGliYy0NCj4gPiA+ID4gPiA+ID4gMi4yOC5zbw0KPiA+ID4gPiA+ID4gPiAxNTU1
+Njc4MDAwLTE1NTU2N2EwMDAgcnctcCAwMDEwMTAwMCBmZTowMA0KPiA+ID4gPiA+ID4gPiA3MTg3
+ICAgL2xpYi9saWJjLQ0KPiA+ID4gPiA+ID4gPiAyLjI4LnNvDQo+ID4gPiA+ID4gPiA+IDE1NTU2
+N2EwMDAtMTU1NTZhMDAwMCBydy1wIDAwMDAwMDAwIDAwOjAwIDANCj4gPiA+ID4gPiA+ID4gM2Zm
+ZmI5MDAwMC0zZmZmYmIxMDAwIHJ3LXAgMDAwMDAwMDAgMDA6MDAgMCAgICAgIFtzdGFja10NCj4g
+PiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiA+IEFmdGVyOg0KPiA+ID4gPiA+ID4gPiByb290QHFl
+bXVyaXNjdjY0On4jIGNhdCAvcHJvYy9zZWxmL21hcHMNCj4gPiA+ID4gPiA+ID4gMDAwMTAwMDAt
+MDAwMTYwMDAgci14cCAwMDAwMDAwMCBmZTowMA0KPiA+ID4gPiA+ID4gPiA2Mzg5ICAgICAgIC9i
+aW4vY2F0LmNvcmV1dGlscw0KPiA+ID4gPiA+ID4gPiAwMDAxNjAwMC0wMDAxNzAwMCByLS1wIDAw
+MDA1MDAwIGZlOjAwDQo+ID4gPiA+ID4gPiA+IDYzODkgICAgICAgL2Jpbi9jYXQuY29yZXV0aWxz
+DQo+ID4gPiA+ID4gPiA+IDAwMDE3MDAwLTAwMDE4MDAwIHJ3LXAgMDAwMDYwMDAgZmU6MDANCj4g
+PiA+ID4gPiA+ID4gNjM4OSAgICAgICAvYmluL2NhdC5jb3JldXRpbHMNCj4gPiA+ID4gPiA+ID4g
+MmRlODEwMDAtMmRlYTIwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAwICAgICAgICAgIFtoZWFwXQ0K
+PiA+ID4gPiA+ID4gPiAzZmY3ZWI2MDAwLTNmZjdlZDgwMDAgcnctcCAwMDAwMDAwMCAwMDowMCAw
+DQo+ID4gPiA+ID4gPiA+IDNmZjdlZDgwMDAtM2ZmN2ZkNjAwMCByLXhwIDAwMDAwMDAwIGZlOjAw
+DQo+ID4gPiA+ID4gPiA+IDcxODcgICAvbGliL2xpYmMtDQo+ID4gPiA+ID4gPiA+IDIuMjguc28N
+Cj4gPiA+ID4gPiA+ID4gM2ZmN2ZkNjAwMC0zZmY3ZmRhMDAwIHItLXAgMDAwZmQwMDAgZmU6MDAN
+Cj4gPiA+ID4gPiA+ID4gNzE4NyAgIC9saWIvbGliYy0NCj4gPiA+ID4gPiA+ID4gMi4yOC5zbw0K
+PiA+ID4gPiA+ID4gPiAzZmY3ZmRhMDAwLTNmZjdmZGMwMDAgcnctcCAwMDEwMTAwMCBmZTowMA0K
+PiA+ID4gPiA+ID4gPiA3MTg3ICAgL2xpYi9saWJjLQ0KPiA+ID4gPiA+ID4gPiAyLjI4LnNvDQo+
+ID4gPiA+ID4gPiA+IDNmZjdmZGMwMDAtM2ZmN2ZlMjAwMCBydy1wIDAwMDAwMDAwIDAwOjAwIDAN
+Cj4gPiA+ID4gPiA+ID4gM2ZmN2ZlNDAwMC0zZmY3ZmU2MDAwIHIteHAgMDAwMDAwMDAgMDA6MDAg
+MCAgICAgIFt2ZHNvXQ0KPiA+ID4gPiA+ID4gPiAzZmY3ZmU2MDAwLTNmZjdmZmQwMDAgci14cCAw
+MDAwMDAwMCBmZTowMCA3MTkzICAgL2xpYi9sZC0NCj4gPiA+ID4gPiA+ID4gMi4yOC5zbw0KPiA+
+ID4gPiA+ID4gPiAzZmY3ZmZkMDAwLTNmZjdmZmUwMDAgci0tcCAwMDAxNjAwMCBmZTowMCA3MTkz
+ICAgL2xpYi9sZC0NCj4gPiA+ID4gPiA+ID4gMi4yOC5zbw0KPiA+ID4gPiA+ID4gPiAzZmY3ZmZl
+MDAwLTNmZjdmZmYwMDAgcnctcCAwMDAxNzAwMCBmZTowMCA3MTkzICAgL2xpYi9sZC0NCj4gPiA+
+ID4gPiA+ID4gMi4yOC5zbw0KPiA+ID4gPiA+ID4gPiAzZmY3ZmZmMDAwLTNmZjgwMDAwMDAgcnct
+cCAwMDAwMDAwMCAwMDowMCAwDQo+ID4gPiA+ID4gPiA+IDNmZmY4ODgwMDAtM2ZmZjhhOTAwMCBy
+dy1wIDAwMDAwMDAwIDAwOjAwIDAgICAgICBbc3RhY2tdDQo+ID4gPiA+ID4gPiA+IA0KPiA+ID4g
+PiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcmUgR2hpdGkgPGFsZXhAZ2hpdGkuZnI+DQo+
+ID4gPiA+ID4gPiA+IEFja2VkLWJ5OiBQYXVsIFdhbG1zbGV5IDxwYXVsLndhbG1zbGV5QHNpZml2
+ZS5jb20+DQo+ID4gPiA+ID4gPiA+IFJldmlld2VkLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNo
+QGxzdC5kZT4NCj4gPiA+ID4gPiA+ID4gUmV2aWV3ZWQtYnk6IEtlZXMgQ29vayA8a2Vlc2Nvb2tA
+Y2hyb21pdW0ub3JnPg0KPiA+ID4gPiA+ID4gPiBSZXZpZXdlZC1ieTogTHVpcyBDaGFtYmVybGFp
+biA8bWNncm9mQGtlcm5lbC5vcmc+DQo+ID4gPiA+ID4gPiA+IC0tLQ0KPiA+ID4gPiA+ID4gPiAg
+ICAgYXJjaC9yaXNjdi9LY29uZmlnIHwgMTIgKysrKysrKysrKysrDQo+ID4gPiA+ID4gPiA+ICAg
+ICAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gPiA+ID4gPiANCj4gPiA+
+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2FyY2gvcmlzY3YvS2NvbmZpZyBiL2FyY2gvcmlzY3YvS2Nv
+bmZpZw0KPiA+ID4gPiA+ID4gPiBpbmRleCA1OWE0NzI3ZWNkNmMuLjg3ZGM1MzcwYmVjYiAxMDA2
+NDQNCj4gPiA+ID4gPiA+ID4gLS0tIGEvYXJjaC9yaXNjdi9LY29uZmlnDQo+ID4gPiA+ID4gPiA+
+ICsrKyBiL2FyY2gvcmlzY3YvS2NvbmZpZw0KPiA+ID4gPiA+ID4gPiBAQCAtNTQsNiArNTQsMTgg
+QEAgY29uZmlnIFJJU0NWDQo+ID4gPiA+ID4gPiA+ICAgICAJc2VsZWN0IEVEQUNfU1VQUE9SVA0K
+PiA+ID4gPiA+ID4gPiAgICAgCXNlbGVjdCBBUkNIX0hBU19HSUdBTlRJQ19QQUdFDQo+ID4gPiA+
+ID4gPiA+ICAgICAJc2VsZWN0IEFSQ0hfV0FOVF9IVUdFX1BNRF9TSEFSRSBpZiA2NEJJVA0KPiA+
+ID4gPiA+ID4gPiArCXNlbGVjdCBBUkNIX1dBTlRfREVGQVVMVF9UT1BET1dOX01NQVBfTEFZT1VU
+IGlmIE1NVQ0KPiA+ID4gPiA+ID4gPiArCXNlbGVjdCBIQVZFX0FSQ0hfTU1BUF9STkRfQklUUw0K
+PiA+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiA+ICtjb25maWcgQVJDSF9NTUFQX1JORF9CSVRT
+X01JTg0KPiA+ID4gPiA+ID4gPiArCWRlZmF1bHQgMTggaWYgNmxlZ2FjeV92YV9sYXlvdXQ0QklU
+DQo+ID4gPiA+ID4gPiA+ICsJZGVmYXVsdCA4DQo+ID4gPiA+ID4gPiA+ICsNCj4gPiA+ID4gPiA+
+ID4gKyMgbWF4IGJpdHMgZGV0ZXJtaW5lZCBieSB0aGUgZm9sbG93aW5nIGZvcm11bGE6DQo+ID4g
+PiA+ID4gPiA+ICsjICBWQV9CSVRTIC0gUEFHRV9TSElGVCAtIDMNCj4gPiA+ID4gPiA+ID4gK2Nv
+bmZpZyBBUkNIX01NQVBfUk5EX0JJVFNfTUFYDQo+ID4gPiA+ID4gPiA+ICsJZGVmYXVsdCAyNCBp
+ZiA2NEJJVCAjIFNWMzkgYmFzZWQNCj4gPiA+ID4gPiA+ID4gKwlkZWZhdWx0IDE3DQo+ID4gPiA+
+ID4gPiA+ICAgICANCj4gPiA+ID4gPiA+ID4gICAgIGNvbmZpZyBNTVUNCj4gPiA+ID4gPiA+ID4g
+ICAgIAlkZWZfYm9vbCB5DQo+ID4gPiA+ID4gPiBXaXRoIHRoaXMgcGF0Y2gsIEkgYW0gbm90IGFi
+bGUgdG8gYm9vdCBhIEZlZG9yYSBMaW51eChhDQo+ID4gPiA+ID4gPiBHbm9tZQ0KPiA+ID4gPiA+
+ID4gZGVza3RvcA0KPiA+ID4gPiA+ID4gaW1hZ2UpIG9uIFJJU0MtViBoYXJkd2FyZSAoVW5sZWFz
+aGVkICsgTWljcm9zZW1pIEV4cGFuc2lvbg0KPiA+ID4gPiA+ID4gYm9hcmQpLg0KPiA+ID4gPiA+
+ID4gVGhlDQo+ID4gPiA+ID4gPiBib290aW5nIGdldHMgc3R1Y2sgcmlnaHQgYWZ0ZXIgc3lzdGVt
+ZCBzdGFydHMuDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IGh0dHBzOi8vcGFzdGUuZmVkb3Jh
+cHJvamVjdC5vcmcvcGFzdGUvVE9yVU1xcUtILXBHRlg3Q25mYWpEZw0KPiA+ID4gPiA+ID4gDQo+
+ID4gPiA+ID4gPiBSZXZlcnRpbmcganVzdCB0aGlzIHBhdGNoIGFsbG93IHRvIGJvb3QgRmVkb3Jh
+IHN1Y2Nlc3NmdWxseQ0KPiA+ID4gPiA+ID4gb24NCj4gPiA+ID4gPiA+IHNwZWNpZmljDQo+ID4g
+PiA+ID4gPiBSSVNDLVYgaGFyZHdhcmUuIEkgaGF2ZSBub3Qgcm9vdCBjYXVzZWQgdGhlIGlzc3Vl
+IGJ1dCBpdA0KPiA+ID4gPiA+ID4gbG9va3MNCj4gPiA+ID4gPiA+IGxpa2UNCj4gPiA+ID4gPiA+
+IGl0DQo+ID4gPiA+ID4gPiBtaWdodCBoYXZlIG1lc3NlZCB1c2VycHNhY2UgbWFwcGluZy4NCj4g
+PiA+ID4gPiBJdCBtaWdodCBoYXZlIG1lc3NlZCB1c2Vyc3BhY2UgbWFwcGluZyBidXQgbm90IGVu
+b3VnaCB0byBtYWtlDQo+ID4gPiA+ID4gdXNlcnNwYWNlDQo+ID4gPiA+ID4gY29tcGxldGVseSBi
+cm9rZW4NCj4gPiA+ID4gPiBhcyBzeXN0ZW1kIGRvZXMgc29tZSB0aGluZ3MuIEkgd291bGQgdHJ5
+IHRvIGJvb3QgaW4gbGVnYWN5DQo+ID4gPiA+ID4gbGF5b3V0Og0KPiA+ID4gPiA+IGlmDQo+ID4g
+PiA+ID4geW91IGNhbiB0cnkgdG8gc2V0IHN5c2N0bCBsZWdhY3lfdmFfbGF5b3V0DQo+ID4gPiA+
+ID4gYXQgYm9vdHRpbWUsIGl0IHdpbGwgbWFwIHVzZXJzcGFjZSBhcyBpdCB3YXMgYmVmb3JlIChi
+b3R0b20tDQo+ID4gPiA+ID4gdXApLg0KPiA+ID4gPiA+IElmDQo+ID4gPiA+ID4gdGhhdA0KPiA+
+ID4gPiA+IGRvZXMgbm90IHdvcmssIHRoZSBwcm9ibGVtIGNvdWxkDQo+ID4gPiA+ID4gYmUgdGhl
+IHJhbmRvbWl6YXRpb24gdGhhdCBpcyBhY3RpdmF0ZWQgYnkgZGVmYXVsdCBub3cuDQo+ID4gPiA+
+IFJhbmRvbWl6YXRpb24gbWF5IG5vdCBiZSB0aGUgaXNzdWUuIEkganVzdCByZW1vdmVkDQo+ID4g
+PiA+IEFSQ0hfV0FOVF9ERUZBVUxUX1RPUERPV05fTU1BUF9MQVlPVVQgZnJvbSB0aGUgY29uZmln
+IGFuZCB0aGF0DQo+ID4gPiA+IHNlZW1zIHRvDQo+ID4gPiA+IHdvcmsuIEhlcmUgaXMgdGhlIGJv
+dHRvbS11cCBsYXlvdXQgd2l0aCByYW5kb21pemF0aW9uIG9uLg0KPiA+ID4gT3Vwcywgc29ycnkg
+Zm9yIG15IHByZXZpb3VzIGFuc3dlciwgSSBtaXNzZWQgeW91cnMgdGhhdCBsYW5kZWQgaW4NCj4g
+PiA+IGFub3RoZXIgZm9sZGVyLg0KPiA+ID4gDQo+ID4gPiBSZW1vdmluZyBBUkNIX1dBTlRfREVG
+QVVMVF9UT1BET1dOX01NQVBfTEFZT1VUIGFsc28gcmVtb3Zlcw0KPiA+ID4gcmFuZG9taXphdGlv
+bg0KPiA+ID4gYXMgdGhpcyBjb25maWcgc2VsZWN0cyBBUkNIX0hBU19FTEZfUkFORE9NSVpFLg0K
+PiA+ID4gWW91IGNvdWxkIHJlbW92ZSBBUkNIX1dBTlRfREVGQVVMVF9UT1BET1dOX01NQVBfTEFZ
+T1VUIGFuZA0KPiA+ID4gc2VsZWN0cyBieQ0KPiA+ID4gaGFuZA0KPiA+ID4gQVJDSF9IQVNfRUxG
+X1JBTkRPTUlaRSBidXQgeW91IHdvdWxkIGhhdmUgdG8gaW1wbGVtZW50DQo+ID4gPiBhcmNoX21t
+YXBfcm5kDQo+ID4gPiBhbmQNCj4gPiA+IGFyY2hfcmFuZG9taXplX2JyayAoZWxmLXJhbmRvbWl6
+ZS5oKS4NCj4gPiA+IA0KPiA+IEFoaCBva2F5Lg0KPiA+IA0KPiA+ID4gVGhlIHNpbXBsZXN0IHdv
+dWxkIGJlIHRvIGJvb3QgaW4gbGVnYWN5IGxheW91dDogSSBkaWQgbm90IGZpbmQgYQ0KPiA+ID4g
+d2F5DQo+ID4gPiB0bw0KPiA+ID4gc2V0IHRoaXMgaW4ga2VybmVsDQo+ID4gPiBjb21tYW5kIGxp
+bmUsIGJ1dCB5b3UgY2FuIGJ5IG1vZGlmeWluZyBpdCBkaXJlY3RseSBpbiB0aGUgY29kZToNCj4g
+PiA+IA0KPiA+ID4gaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjUuNC1yYzIvc291
+cmNlL2tlcm5lbC9zeXNjdGwuYyNMMjY5DQo+ID4gPiANCj4gPiBTZXR0aW5nIHRoaXMgdG8gMSB3
+b3Jrcy4NCj4gPiANCj4gPiA+ID4gW3Jvb3RAZmVkb3JhLXJpc2N2IH5dIyBjYXQgL3Byb2Mvc2Vs
+Zi9tYXBzDQo+ID4gPiA+IDE1NTU1NTYwMDAtMTU1NTU3MDAwMCByLXhwIDAwMDAwMDAwIDEwMzow
+MQ0KPiA+ID4gPiAyODAwOTggICAgICAgICAgICAgICAgICAgICAgICAvdXNyL2xpYjY0L2xkLTIu
+Mjguc28NCj4gPiA+ID4gMTU1NTU3MDAwMC0xNTU1NTcxMDAwIHItLXAgMDAwMTkwMDAgMTAzOjAx
+DQo+ID4gPiA+IDI4MDA5OCAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliNjQvbGQtMi4y
+OC5zbw0KPiA+ID4gPiAxNTU1NTcxMDAwLTE1NTU1NzIwMDAgcnctcCAwMDAxYTAwMCAxMDM6MDEN
+Cj4gPiA+ID4gMjgwMDk4ICAgICAgICAgICAgICAgICAgICAgICAgL3Vzci9saWI2NC9sZC0yLjI4
+LnNvDQo+ID4gPiA+IDE1NTU1NzIwMDAtMTU1NTU3MzAwMCBydy1wIDAwMDAwMDAwIDAwOjAwIDAN
+Cj4gPiA+ID4gMTU1NTU3MzAwMC0xNTU1NTc1MDAwIHIteHAgMDAwMDAwMDAgMDA6MDANCj4gPiA+
+ID4gMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFt2ZHNvXQ0KPiA+ID4gPiAxNTU1NTc1
+MDAwLTE1NTU1NzYwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCj4gPiA+ID4gNTA5MzYgICAgICAg
+ICAgICAgICAgICAgICAgICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfSURFDQo+ID4g
+PiA+IE5USUYNCj4gPiA+ID4gSUNBVA0KPiA+ID4gPiBJT04NCj4gPiA+ID4gMTU1NTU3NjAwMC0x
+NTU1NTdkMDAwIHItLXMgMDAwMDAwMDAgMTAzOjAxDQo+ID4gPiA+IDI4MDgyNiAgICAgICAgICAg
+ICAgICAgICAgICAgIC91c3IvbGliNjQvZ2NvbnYvZ2NvbnYtDQo+ID4gPiA+IG1vZHVsZXMuY2Fj
+aGUNCj4gPiA+ID4gMTU1NTU3ZDAwMC0xNTU1NTdlMDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQo+
+ID4gPiA+IDUwOTM3ICAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliL2xvY2FsZS9lbl9V
+Uy51dGY4L0xDX01FQQ0KPiA+ID4gPiBTVVJFDQo+ID4gPiA+IE1FTlQNCj4gPiA+ID4gMTU1NTU3
+ZTAwMC0xNTU1NTdmMDAwIHItLXAgMDAwMDAwMDAgMTAzOjAxDQo+ID4gPiA+IDUwOTM5ICAgICAg
+ICAgICAgICAgICAgICAgICAgIC91c3IvbGliL2xvY2FsZS9lbl9VUy51dGY4L0xDX1RFTA0KPiA+
+ID4gPiBFUEhPDQo+ID4gPiA+IE5FDQo+ID4gPiA+IDE1NTU1N2YwMDAtMTU1NTU4MDAwMCByLS1w
+IDAwMDAwMDAwIDEwMzowMQ0KPiA+ID4gPiAzNzA2ICAgICAgICAgICAgICAgICAgICAgICAgICAv
+dXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19BREQNCj4gPiA+ID4gUkVTUw0KPiA+ID4gPiAx
+NTU1NTgwMDAwLTE1NTU1ODEwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCj4gPiA+ID4gNTA5NDQg
+ICAgICAgICAgICAgICAgICAgICAgICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfTkFN
+DQo+ID4gPiA+IEUNCj4gPiA+ID4gMTU1NTU4MTAwMC0xNTU1NTgyMDAwIHItLXAgMDAwMDAwMDAg
+MTAzOjAxDQo+ID4gPiA+IDM3NzUgICAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliL2xv
+Y2FsZS9lbl9VUy51dGY4L0xDX1BBUA0KPiA+ID4gPiBFUg0KPiA+ID4gPiAxNTU1NTgyMDAwLTE1
+NTU1ODMwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCj4gPiA+ID4gMzc1OCAgICAgICAgICAgICAg
+ICAgICAgICAgICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfTUVTDQo+ID4gPiA+IFNB
+R0UNCj4gPiA+ID4gUy9TWQ0KPiA+ID4gPiBTX0xDX01FU1NBR0VTDQo+ID4gPiA+IDE1NTU1ODMw
+MDAtMTU1NTU4NDAwMCByLS1wIDAwMDAwMDAwIDEwMzowMQ0KPiA+ID4gPiA1MDkzOCAgICAgICAg
+ICAgICAgICAgICAgICAgICAvdXNyL2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19NT04NCj4gPiA+
+ID4gRVRBUg0KPiA+ID4gPiBZDQo+ID4gPiA+IDE1NTU1ODQwMDAtMTU1NTU4NTAwMCByLS1wIDAw
+MDAwMDAwIDEwMzowMQ0KPiA+ID4gPiA1MDk0MCAgICAgICAgICAgICAgICAgICAgICAgICAvdXNy
+L2xpYi9sb2NhbGUvZW5fVVMudXRmOC9MQ19USU0NCj4gPiA+ID4gRQ0KPiA+ID4gPiAxNTU1NTg1
+MDAwLTE1NTU1ODYwMDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCj4gPiA+ID4gNTA5NDUgICAgICAg
+ICAgICAgICAgICAgICAgICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfTlVNDQo+ID4g
+PiA+IEVSSUMNCj4gPiA+ID4gMTU1NTU5MDAwMC0xNTU1NTkyMDAwIHJ3LXAgMDAwMDAwMDAgMDA6
+MDAgMA0KPiA+ID4gPiAxNTU1NTkyMDAwLTE1NTU2YjEwMDAgci14cCAwMDAwMDAwMCAxMDM6MDEN
+Cj4gPiA+ID4gMjgwMTA1ICAgICAgICAgICAgICAgICAgICAgICAgL3Vzci9saWI2NC9saWJjLTIu
+Mjguc28NCj4gPiA+ID4gMTU1NTZiMTAwMC0xNTU1NmI1MDAwIHItLXAgMDAxMWUwMDAgMTAzOjAx
+DQo+ID4gPiA+IDI4MDEwNSAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvbGliNjQvbGliYy0y
+LjI4LnNvDQo+ID4gPiA+IDE1NTU2YjUwMDAtMTU1NTZiNzAwMCBydy1wIDAwMTIyMDAwIDEwMzow
+MQ0KPiA+ID4gPiAyODAxMDUgICAgICAgICAgICAgICAgICAgICAgICAvdXNyL2xpYjY0L2xpYmMt
+Mi4yOC5zbw0KPiA+ID4gPiAxNTU1NmI3MDAwLTE1NTU2YmIwMDAgcnctcCAwMDAwMDAwMCAwMDow
+MCAwDQo+ID4gPiA+IDE1NTU2YmIwMDAtMTU1NTkzMzAwMCByLS1wIDAwMDAwMDAwIDEwMzowMQ0K
+PiA+ID4gPiAzNzU1ICAgICAgICAgICAgICAgICAgICAgICAgICAvdXNyL2xpYi9sb2NhbGUvZW5f
+VVMudXRmOC9MQ19DT0wNCj4gPiA+ID4gTEFURQ0KPiA+ID4gPiAxNTU1OTMzMDAwLTE1NTU5ODYw
+MDAgci0tcCAwMDAwMDAwMCAxMDM6MDENCj4gPiA+ID4gNTA5NDIgICAgICAgICAgICAgICAgICAg
+ICAgICAgL3Vzci9saWIvbG9jYWxlL2VuX1VTLnV0ZjgvTENfQ1RZDQo+ID4gPiA+IFBFDQo+ID4g
+PiA+IDE1NTU5ODYwMDAtMTU1NTlhODAwMCBydy1wIDAwMDAwMDAwIDAwOjAwIDANCj4gPiA+ID4g
+MmFhYWFhYTAwMC0yYWFhYWIxMDAwIHIteHAgMDAwMDAwMDAgMTAzOjAxDQo+ID4gPiA+IDI4Mzk3
+NSAgICAgICAgICAgICAgICAgICAgICAgIC91c3IvYmluL2NhdA0KPiA+ID4gPiAyYWFhYWIxMDAw
+LTJhYWFhYjIwMDAgci0tcCAwMDAwNjAwMCAxMDM6MDENCj4gPiA+ID4gMjgzOTc1ICAgICAgICAg
+ICAgICAgICAgICAgICAgL3Vzci9iaW4vY2F0DQo+ID4gPiA+IDJhYWFhYjIwMDAtMmFhYWFiMzAw
+MCBydy1wIDAwMDA3MDAwIDEwMzowMQ0KPiA+ID4gPiAyODM5NzUgICAgICAgICAgICAgICAgICAg
+ICAgICAvdXNyL2Jpbi9jYXQNCj4gPiA+ID4gMmFhYWFiMzAwMC0yYWFhYWQ0MDAwIHJ3LXAgMDAw
+MDAwMDAgMDA6MDANCj4gPiA+ID4gMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFtoZWFw
+XQ0KPiA+ID4gPiAzZmZmYzk3MDAwLTNmZmZjYjgwMDAgcnctcCAwMDAwMDAwMCAwMDowMA0KPiA+
+ID4gPiAwICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgW3N0YWNrXQ0KPiA+ID4gPiANCj4g
+PiA+ID4gDQo+ID4gPiA+ID4gQW55d2F5LCBpdCdzIHdlaXJkIHNpbmNlIHVzZXJzcGFjZSBzaG91
+bGQgbm90IGRlcGVuZCBvbiBob3cNCj4gPiA+ID4gPiB0aGUNCj4gPiA+ID4gPiBtYXBwaW5nIGlz
+Lg0KPiA+ID4gPiA+IA0KPiA+ID4gPiA+IElmIHlvdSBjYW4gaWRlbnRpZnkgdGhlIHByb2dyYW0g
+dGhhdCBzdGFsbHMsIHRoYXQgd291bGQgYmUNCj4gPiA+ID4gPiBmYW50YXN0aWMNCj4gPiA+ID4g
+PiA6KQ0KPiA+ID4gPiA+IA0KPiA+ID4gPiBJdCBzdHVja3Mgd2hpbGUgYm9vdGluZy4gU28gSSBh
+bSBub3Qgc3VyZSBob3cgdG8gZmlndXJlIG91dA0KPiA+ID4gPiB3aGljaA0KPiA+ID4gPiBwcm9n
+cmFtIHN0YWxscy4gSXQgaXMgZGlmZmljdWx0IHRvIGZpZ3VyZSBvdXQgZnJvbSBib290IGxvZyBh
+cw0KPiA+ID4gPiBpdA0KPiA+ID4gPiBzdHVja3MgYXQgZGlmZmVyZW50IHBsYWNlcyBidXQgc29v
+biBhZnRlciBzeXN0ZW1kIHN0YXJ0cy4NCj4gPiA+IElmIHlvdSBjYW4gYXR0YWNoIHRoZSBydW5u
+aW5nIGtlcm5lbCwgSSB3b3VsZCB1c2Ugdm1saW51eC1nZGIucHkNCj4gPiA+IGNvbW1hbmRzDQo+
+ID4gPiB0byBmaWd1cmUgb3V0IHdoaWNoIHByb2Nlc3NlcyBhcmUgcnVubmluZyAobHgtcHMgY29t
+bWFuZCBpbg0KPiA+ID4gcGFydGljdWxhciBjb3VsZA0KPiA+ID4gZ2l2ZSB1cyBhIGhpbnQpLiBZ
+b3UgY2FuIGFsc28gYWRkIHRyYWNlcyBkaXJlY3RseSBpbiB0aGUga2VybmVsDQo+ID4gPiBhbmQN
+Cj4gPiA+IGVpdGhlciB1c2UNCj4gPiA+IGx4LWRtZXNnIGNvbW1hbmQgdG8gcHJpbnQgdGhlbSBm
+cm9tIGdkYiBvciB1c2UgeW91ciBzdGFuZGFyZA0KPiA+ID4gc2VyaWFsDQo+ID4gPiBvdXRwdXQ6
+DQo+ID4gPiBJIHdvdWxkIHRoZW4gcHJpbnQgdGFza19zdHJ1Y3QtPmNvbW0gYXQgY29udGV4dCBz
+d2l0Y2ggdG8gc2VlDQo+ID4gPiB3aGljaA0KPiA+ID4gcHJvY2Vzcw0KPiA+ID4gaXMgc3R1Y2su
+DQo+ID4gPiBUbyB1c2UgdGhlIHB5dGhvbiBzY3JpcHQsIHlvdSBuZWVkIHRvIHJlY29tcGlsZSB3
+aXRoIERFQlVHX0lORk8NCj4gPiA+IGFuZA0KPiA+ID4gR0RCX1NDUklQVFMgZW5hYmxlZC4NCj4g
+PiA+IA0KPiA+ID4gRllJLCBJIGhhdmUganVzdCBib290ZWQgYSBjdXN0b20gYnVpbGRyb290IGlt
+YWdlIGJhc2VkIG9uIGtlcm5lbA0KPiA+ID4gNS40LQ0KPiA+ID4gcmMyLg0KPiA+ID4gDQo+ID4g
+dm1saW51eC1nZGIucHkgd29ya3Mgb25seSBpZiB5b3UgYXJlIHJ1bm5pbmcgaW4gUWVtdSBvciBo
+YXZlIGENCj4gPiBKVEFHLg0KPiA+IFJpZ2h0ID8NCj4gDQo+IFllcy4gRG9lcyB0aGUgcHJvYmxl
+bSBhcHBlYXIgb24gcWVtdSB0b28gPw0KPiANCg0KTm9wZS4NCg0KPiA+IEkgYW0gc2VlaW5nIHRo
+aXMgaXNzdWUgb25seSBvbiBIaUZpdmUgVW5sZWFzaGVkICsgTWljcm9zZW1pDQo+ID4gRXhwYW5z
+aW9uDQo+ID4gYm9hcmQgd2l0aCBGZWRvcmEgR25vbWUgZGVza3RvcCBpbWFnZS4gSSBjYW4gZXZl
+biBib290IGEgRmVkb3JhDQo+ID4gZGV2ZWxvcGVyIGltYWdlIG9uIHNhbWUgaGFyZHdhcmUgYW5k
+IGEgYnVzeWJveCBpbWFnZSBpbiBVbmxlYXNoZWQNCj4gPiB3aXRob3V0IGFueSBpc3N1ZXMuIEJ1
+dCB0aGUgaXNzdWUgaXMgbm90IHNwZWNpZmljIHRvIGZlZG9yYSBhcyB3ZQ0KPiA+IHNlZQ0KPiA+
+IHRoZSBzYW1lIGlzc3VlIGluIE9wZW5FbWJlZGRlZCBkaXNrIGltYWdlIGFzIHdlbGwgKEhpRml2
+ZSBVbmxlYXNoZWQNCj4gPiArDQo+ID4gTWljcm9zZW1pIEV4cGFuc2lvbiBib2FyZCkuDQo+ID4g
+DQo+ID4gTWF5IGJlIGl0IGdldHMgdHJpZ2dlcmQgb25seSBpZiBiaWdnZXIgdXNlcnNwYWNlID8N
+Cj4gDQo+IFRoZSBwdXJwb3NlIG9mIHRoaXMgcGF0Y2ggaXMsIG9uIHRoZSBjb250cmFyeSwgdG8g
+bm90IGxvc2UgYWRkcmVzcw0KPiBzcGFjZSBieQ0KPiBzZXR0aW5nIGFuIGFyYml0cmFyeSBzdGFy
+dGluZyBwb2ludCAoVEFTS19VTk1BUFBFRF9CQVNFKSBmb3IgbW1hcC4NCj4gDQo+IERvIHlvdSBh
+IGxpbmsgdG8gYW4gaW1hZ2UgdGhhdCBmYWlscyB0byBib290IGFuZCByZXByb2R1Y2UgdGhlDQo+
+IHByb2JsZW0gDQo+IG9uIFFlbXUgPw0KPiANCg0KTm9wZS4gVGhpcyBpcyBvbmx5IHJlcHJvZHVj
+aWJsZSBpbiBSSVNDLVYgRmVkb3JhIEdub21lIGRlc2t0b3AgaW1hZ2Ugb24NCmEgSGlGaXZlIFVu
+bGVhc2hlZCArIE1pY3Jvc2VtaSBFeHBhbnNpb24uIEp1c3QgdG8gY2xhcmlmeSwgdGhlcmUgaXMg
+bm8NCmlzc3VlIHdpdGggT3BlbkVtYmVkZGVkIGRpc2sgaW1hZ2UgcmVsYXRlZCB0byBtZW1vcnkg
+bGF5b3V0LiBJdCB3YXMgYQ0KdXNlcnNwYWNlIHRoaW5nLg0KDQpVbmZvcnVuYXRlbHksIGZlZG9y
+YSBidWlsZGVycyBkbyBub3QgYnVpbGQgZ25vbWUgaW1hZ2VzIG5vdyBhbmQgdGhlIG9uZQ0KSSBh
+bSB1c2luZyBpcyB2ZXJ5IG9sZCAofiAxIHllYXIpLiBJIHRoaW5rIEkgY2FuIGp1c3QgdXNlIHRo
+ZSBzeXNjdGwNCnBhcmFtZXRlciBmb3Igbm93IGluIG15IHRyZWUgYW5kIGxpdmUgd2l0aCBpdCB1
+bnRpbCB3ZSBoYXZlIEZlZG9yYSAzMQ0KaW1hZ2VzIGF2YWlsYWxlLiBXZSBjYW4gcmV2aXNpdCB0
+aGUgcHJvYmxlbSBhZnRlciB0aGF0LiBUaGFua3MgZm9yDQpzdWdnZXN0aW9ucy4NCg0KPiBJIGRv
+bid0IGhhdmUgbXVjaCBpZGVhIGhlcmUsIHRoZSBvbmx5IHRoaW5nIEkgY2FuIHRoaW5rIG9mIGlz
+DQo+IGZpbmRpbmcgDQo+IHRoZSBhcHBsaWNhdGlvbg0KPiB0aGF0IG1ha2VzIHRoZSBib290IHN0
+YWxsIGFuZCB1bmRlcnN0YW5kIHdoYXQgaXMgd3JvbmcuDQo+IA0KPiA+ID4gTGV0IG1lIGtub3cg
+aWYgSSBjYW4gZG8gYW55dGhpbmcuDQo+ID4gPiANCj4gPiA+IEFsZXgNCj4gPiA+IA0KPiA+ID4g
+PiA+IEFzIHRoZSBjb2RlIGlzIGNvbW1vbiB0byBtaXBzIGFuZCBhcm0gbm93IGFuZCBJIGRpZCBu
+b3QgaGVhcg0KPiA+ID4gPiA+IGZyb20NCj4gPiA+ID4gPiB0aGVtLA0KPiA+ID4gPiA+IEkgaW1h
+Z2luZSB0aGUgcHJvYmxlbSBjb21lcw0KPiA+ID4gPiA+IGZyb20gdXMuDQo+ID4gPiA+ID4gDQo+
+ID4gPiA+ID4gQWxleA0KDQotLSANClJlZ2FyZHMsDQpBdGlzaA0K
