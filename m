@@ -2,287 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AFF8D7E74
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 20:08:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 219A1D7E77
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 20:09:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389055AbfJOSIh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 14:08:37 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:38544 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfJOSIh (ORCPT
+        id S2389066AbfJOSIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 14:08:52 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37876 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfJOSIw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 14:08:37 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmZVC085408;
-        Tue, 15 Oct 2019 18:08:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=tffcv5R344QUSZsjEYxRMACURvQ25ud8isc745HmEUk=;
- b=iJuUfJFpOQECw4zViTjMbajpDf5ldW/jOzmcLO1jrmGIPHTWWbK+KGMhziBz4uKZ6gy+
- yvZqLwmHZKuqpwi6ZbHjSJX/hE+rlmHptl466dumCsG1FTvbkPW6+0Tsu/iIYdGlZmNl
- BOImKgTO7gBhHf9vnPRZ82zKGJ6zu3yqg69MvZEV6omibatSWf4BliU5bLZLxntjMl9Y
- JpY0CuPvAoGGnqldnOttqdxEcnifGJHHKkjWh7QYfdGJKQqU2R3+yQRwBf8/y6nnOn5+
- mL/cLSbCibRBIVNh/RdlKzkQToob79LHjTSwfVj7hLw3+tetKwn2fUOysIXImoeU56/D 0g== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2vk7fr9qjt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 18:08:18 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmLp8059866;
-        Tue, 15 Oct 2019 18:06:18 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2vnb0fm8uv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 18:06:17 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9FI6Fbc024969;
-        Tue, 15 Oct 2019 18:06:15 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Oct 2019 11:06:15 -0700
-Date:   Tue, 15 Oct 2019 11:06:13 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/12] iomap: lift the xfs readpage / readpages tracing
- to iomap
-Message-ID: <20191015180613.GT13108@magnolia>
-References: <20191015154345.13052-1-hch@lst.de>
- <20191015154345.13052-9-hch@lst.de>
+        Tue, 15 Oct 2019 14:08:52 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iKRFW-0000B2-Nm; Tue, 15 Oct 2019 18:08:46 +0000
+Date:   Tue, 15 Oct 2019 19:08:46 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
+ unsafe_put_user()
+Message-ID: <20191015180846.GA31707@ZenIV.linux.org.uk>
+References: <CAHk-=wgOWxqwqCFuP_Bw=Hxxf9njeHJs0OLNGNc63peNd=kRqw@mail.gmail.com>
+ <20191010195504.GI26530@ZenIV.linux.org.uk>
+ <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
+ <20191011001104.GJ26530@ZenIV.linux.org.uk>
+ <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
+ <20191013181333.GK26530@ZenIV.linux.org.uk>
+ <CAHk-=wgrWGyACBM8N8KP7Pu_2VopuzM4A12yQz6Eo=X2Jpwzcw@mail.gmail.com>
+ <20191013191050.GL26530@ZenIV.linux.org.uk>
+ <CAHk-=wjJNE9hOKuatqh6SFf4nd65LG4ZR3gQSgg+rjSpVxe89w@mail.gmail.com>
+ <20191013195949.GM26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191015154345.13052-9-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910150153
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910150153
+In-Reply-To: <20191013195949.GM26530@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 05:43:41PM +0200, Christoph Hellwig wrote:
-> Lift the xfs code for tracing address space operations to the iomap
-> layer.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+[futex folks and linux-arch Cc'd]
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+On Sun, Oct 13, 2019 at 08:59:49PM +0100, Al Viro wrote:
 
---D
+> Re plotting: how strongly would you object against passing the range to
+> user_access_end()?  Powerpc folks have a very close analogue of stac/clac,
+> currently buried inside their __get_user()/__put_user()/etc. - the same
+> places where x86 does, including futex.h and friends.
+> 
+> And there it's even costlier than on x86.  It would obviously be nice
+> to lift it at least out of unsafe_get_user()/unsafe_put_user() and
+> move into user_access_begin()/user_access_end(); unfortunately, in
+> one subarchitecture they really want it the range on the user_access_end()
+> side as well.  That's obviously not fatal (they can bloody well save those
+> into thread_info at user_access_begin()), but right now we have relatively
+> few user_access_end() callers, so the interface changes are still possible.
+> 
+> Other architectures with similar stuff are riscv (no arguments, same
+> as for stac/clac), arm (uaccess_save_and_enable() on the way in,
+> return value passed to uaccess_restore() on the way out) and s390
+> (similar to arm, but there it's needed only to deal with nesting,
+> and I'm not sure it actually can happen).
+> 
+> It would be nice to settle the API while there are not too many users
+> outside of arch/x86; changing it later will be a PITA and we definitely
+> have architectures that do potentially costly things around the userland
+> memory access; user_access_begin()/user_access_end() is in the right
+> place to try and see if they fit there...
 
-> ---
->  fs/iomap/Makefile      | 16 ++++++++------
->  fs/iomap/buffered-io.c |  5 +++++
->  fs/iomap/trace.c       | 12 +++++++++++
->  fs/iomap/trace.h       | 49 ++++++++++++++++++++++++++++++++++++++++++
->  fs/xfs/xfs_aops.c      |  2 --
->  fs/xfs/xfs_trace.h     | 26 ----------------------
->  6 files changed, 75 insertions(+), 35 deletions(-)
->  create mode 100644 fs/iomap/trace.c
->  create mode 100644 fs/iomap/trace.h
-> 
-> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
-> index 93cd11938bf5..eef2722d93a1 100644
-> --- a/fs/iomap/Makefile
-> +++ b/fs/iomap/Makefile
-> @@ -3,13 +3,15 @@
->  # Copyright (c) 2019 Oracle.
->  # All Rights Reserved.
->  #
-> -obj-$(CONFIG_FS_IOMAP)		+= iomap.o
->  
-> -iomap-y				+= \
-> -					apply.o \
-> -					buffered-io.o \
-> -					direct-io.o \
-> -					fiemap.o \
-> -					seek.o
-> +ccflags-y += -I $(srctree)/$(src)		# needed for trace events
-> +
-> +obj-$(CONFIG_FS_IOMAP)		+= iomap.o
->  
-> +iomap-y				+= trace.o \
-> +				   apply.o \
-> +				   buffered-io.o \
-> +				   direct-io.o \
-> +				   fiemap.o \
-> +				   seek.o
->  iomap-$(CONFIG_SWAP)		+= swapfile.o
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 181ee8477aad..d1620c3f2a4c 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -16,6 +16,7 @@
->  #include <linux/bio.h>
->  #include <linux/sched/signal.h>
->  #include <linux/migrate.h>
-> +#include "trace.h"
->  
->  #include "../internal.h"
->  
-> @@ -301,6 +302,8 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
->  	unsigned poff;
->  	loff_t ret;
->  
-> +	trace_iomap_readpage(page->mapping->host, 1);
-> +
->  	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
->  		ret = iomap_apply(inode, page_offset(page) + poff,
->  				PAGE_SIZE - poff, 0, ops, &ctx,
-> @@ -397,6 +400,8 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
->  	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
->  	loff_t length = last - pos + PAGE_SIZE, ret = 0;
->  
-> +	trace_iomap_readpages(mapping->host, nr_pages);
-> +
->  	while (length > 0) {
->  		ret = iomap_apply(mapping->host, pos, length, 0, ops,
->  				&ctx, iomap_readpages_actor);
-> diff --git a/fs/iomap/trace.c b/fs/iomap/trace.c
-> new file mode 100644
-> index 000000000000..63ce9f0ce4dc
-> --- /dev/null
-> +++ b/fs/iomap/trace.c
-> @@ -0,0 +1,12 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019, Christoph Hellwig
-> + */
-> +#include <linux/iomap.h>
-> +
-> +/*
-> + * We include this last to have the helpers above available for the trace
-> + * event implementations.
-> + */
-> +#define CREATE_TRACE_POINTS
-> +#include "trace.h"
-> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-> new file mode 100644
-> index 000000000000..3900de1d871d
-> --- /dev/null
-> +++ b/fs/iomap/trace.h
-> @@ -0,0 +1,49 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2009-2019, Christoph Hellwig
-> + *
-> + * NOTE: none of these tracepoints shall be consider a stable kernel ABI
-> + * as they can change at any time.
-> + */
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM iomap
-> +
-> +#if !defined(_IOMAP_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _IOMAP_TRACE_H
-> +
-> +#include <linux/tracepoint.h>
-> +
-> +struct inode;
-> +
-> +DECLARE_EVENT_CLASS(iomap_readpage_class,
-> +	TP_PROTO(struct inode *inode, int nr_pages),
-> +	TP_ARGS(inode, nr_pages),
-> +	TP_STRUCT__entry(
-> +		__field(dev_t, dev)
-> +		__field(u64, ino)
-> +		__field(int, nr_pages)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->dev = inode->i_sb->s_dev;
-> +		__entry->ino = inode->i_ino;
-> +		__entry->nr_pages = nr_pages;
-> +	),
-> +	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  __entry->ino,
-> +		  __entry->nr_pages)
-> +)
-> +
-> +#define DEFINE_READPAGE_EVENT(name)		\
-> +DEFINE_EVENT(iomap_readpage_class, name,	\
-> +	TP_PROTO(struct inode *inode, int nr_pages), \
-> +	TP_ARGS(inode, nr_pages))
-> +DEFINE_READPAGE_EVENT(iomap_readpage);
-> +DEFINE_READPAGE_EVENT(iomap_readpages);
-> +
-> +#endif /* _IOMAP_TRACE_H */
-> +
-> +#undef TRACE_INCLUDE_PATH
-> +#define TRACE_INCLUDE_PATH .
-> +#define TRACE_INCLUDE_FILE trace
-> +#include <trace/define_trace.h>
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 00fe40b35f72..e2033b070f4a 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -1184,7 +1184,6 @@ xfs_vm_readpage(
->  	struct file		*unused,
->  	struct page		*page)
->  {
-> -	trace_xfs_vm_readpage(page->mapping->host, 1);
->  	return iomap_readpage(page, &xfs_iomap_ops);
->  }
->  
-> @@ -1195,7 +1194,6 @@ xfs_vm_readpages(
->  	struct list_head	*pages,
->  	unsigned		nr_pages)
->  {
-> -	trace_xfs_vm_readpages(mapping->host, nr_pages);
->  	return iomap_readpages(mapping, pages, nr_pages, &xfs_iomap_ops);
->  }
->  
-> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-> index eaae275ed430..eae4b29c174e 100644
-> --- a/fs/xfs/xfs_trace.h
-> +++ b/fs/xfs/xfs_trace.h
-> @@ -1197,32 +1197,6 @@ DEFINE_PAGE_EVENT(xfs_writepage);
->  DEFINE_PAGE_EVENT(xfs_releasepage);
->  DEFINE_PAGE_EVENT(xfs_invalidatepage);
->  
-> -DECLARE_EVENT_CLASS(xfs_readpage_class,
-> -	TP_PROTO(struct inode *inode, int nr_pages),
-> -	TP_ARGS(inode, nr_pages),
-> -	TP_STRUCT__entry(
-> -		__field(dev_t, dev)
-> -		__field(xfs_ino_t, ino)
-> -		__field(int, nr_pages)
-> -	),
-> -	TP_fast_assign(
-> -		__entry->dev = inode->i_sb->s_dev;
-> -		__entry->ino = inode->i_ino;
-> -		__entry->nr_pages = nr_pages;
-> -	),
-> -	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
-> -		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> -		  __entry->ino,
-> -		  __entry->nr_pages)
-> -)
-> -
-> -#define DEFINE_READPAGE_EVENT(name)		\
-> -DEFINE_EVENT(xfs_readpage_class, name,	\
-> -	TP_PROTO(struct inode *inode, int nr_pages), \
-> -	TP_ARGS(inode, nr_pages))
-> -DEFINE_READPAGE_EVENT(xfs_vm_readpage);
-> -DEFINE_READPAGE_EVENT(xfs_vm_readpages);
-> -
->  DECLARE_EVENT_CLASS(xfs_imap_class,
->  	TP_PROTO(struct xfs_inode *ip, xfs_off_t offset, ssize_t count,
->  		 int whichfork, struct xfs_bmbt_irec *irec),
-> -- 
-> 2.20.1
-> 
+Another question: right now we have
+        if (!access_ok(uaddr, sizeof(u32)))
+                return -EFAULT;
+
+        ret = arch_futex_atomic_op_inuser(op, oparg, &oldval, uaddr);
+        if (ret)
+                return ret;
+in kernel/futex.c.  Would there be any objections to moving access_ok()
+inside the instances and moving pagefault_disable()/pagefault_enable() outside?
+
+Reasons:
+	* on x86 that would allow folding access_ok() with STAC into
+user_access_begin().  The same would be doable on other usual suspects
+(arm, arm64, ppc, riscv, s390), bringing access_ok() next to their
+STAC counterparts.
+	* pagefault_disable()/pagefault_enable() pair is universal on
+all architectures, really meant to by the nature of the beast and
+lifting it into kernel/futex.c would get the same situation as with
+futex_atomic_cmpxchg_inatomic().  Which also does access_ok() inside
+the primitive (also foldable into user_access_begin(), at that).
+	* access_ok() would be closer to actual memory access (and
+out of the generic code).
+
+Comments?
