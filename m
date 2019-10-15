@@ -2,96 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3162D80DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 22:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03DC0D8137
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 22:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfJOUSs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 16:18:48 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39488 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfJOUSs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 16:18:48 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iKTHJ-0003KI-98; Tue, 15 Oct 2019 20:18:45 +0000
-Date:   Tue, 15 Oct 2019 21:18:45 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
- unsafe_put_user()
-Message-ID: <20191015201845.GP26530@ZenIV.linux.org.uk>
-References: <20191011001104.GJ26530@ZenIV.linux.org.uk>
- <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
- <20191013181333.GK26530@ZenIV.linux.org.uk>
- <CAHk-=wgrWGyACBM8N8KP7Pu_2VopuzM4A12yQz6Eo=X2Jpwzcw@mail.gmail.com>
- <20191013191050.GL26530@ZenIV.linux.org.uk>
- <CAHk-=wjJNE9hOKuatqh6SFf4nd65LG4ZR3gQSgg+rjSpVxe89w@mail.gmail.com>
- <20191013195949.GM26530@ZenIV.linux.org.uk>
- <20191015180846.GA31707@ZenIV.linux.org.uk>
- <CAHk-=wjyiiYhAbzVDUW1F3j9CAcu8+ugSvGYwUivdBfKoeU6yA@mail.gmail.com>
- <20191015194012.GO26530@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191015194012.GO26530@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2388198AbfJOUn7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 16:43:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727673AbfJOUn7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 16:43:59 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7599320854;
+        Tue, 15 Oct 2019 20:43:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571172237;
+        bh=9Qj8AYZCrF57ox3fBSNqCP0O0J3goZvHpDiYb87LWFA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=uKCAx9yRrgOHGf17Ho7NijWIxSqW//fWkAaXM++2B9jn58qVFpRX7zcPFiLKUNm95
+         fFIDKKRdL4lJGfwTEffPuD/A6yyJtu9TlVr5pHzUOwKbFGx7jb6HWhNeutbLSkWRnS
+         g///Z862TTLWr7U4qJlq/nN5XcyZs3WYjWTkl3Fw=
+Date:   Tue, 15 Oct 2019 13:43:57 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v2] mm, swap: disallow swapon() on zoned block devices
+Message-Id: <20191015134357.042f39a02ae438d961aa2aca@linux-foundation.org>
+In-Reply-To: <20191015090641.GB7199@infradead.org>
+References: <20191015043827.160444-1-naohiro.aota@wdc.com>
+        <20191015085814.637837-1-naohiro.aota@wdc.com>
+        <20191015090641.GB7199@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 08:40:12PM +0100, Al Viro wrote:
-> or this
-> static void ntb_memcpy_tx(struct ntb_queue_entry *entry, void __iomem *offset)
-> {
-> #ifdef ARCH_HAS_NOCACHE_UACCESS
->         /*
->          * Using non-temporal mov to improve performance on non-cached
->          * writes, even though we aren't actually copying from user space.
->          */
->         __copy_from_user_inatomic_nocache(offset, entry->buf, entry->len);
-> #else   
->         memcpy_toio(offset, entry->buf, entry->len);
-> #endif
+On Tue, 15 Oct 2019 02:06:41 -0700 Christoph Hellwig <hch@infradead.org> wrote:
+
+> > +		/*
+> > +		 * Zoned block device contains zones that have
+> > +		 * sequential write only restriction. For the restriction,
+> > +		 * zoned block devices are not suitable for a swap device.
+> > +		 * Disallow them here.
+> > +		 */
+> > +		if (blk_queue_is_zoned(p->bdev->bd_queue))
 > 
->         /* Ensure that the data is fully copied out before setting the flags */
->         wmb();
-> 
->         ntb_tx_copy_callback(entry, NULL);
-> }
-> "user" part is bollocks in both cases; moreover, I really wonder about that
-> ifdef in ntb one - ARCH_HAS_NOCACHE_UACCESS is x86-only *at* *the* *moment*
-> and it just so happens that ..._toio() doesn't require anything special on
-> x86.  Have e.g. arm grow nocache stuff and the things will suddenly break,
-> won't they?
+> Please use up all 80 chars per line  Otherwise this looks fine:
 
-Incidentally, there are two callers of __copy_from_user_inatomic_nocache() in
-generic code:
-lib/iov_iter.c:792:             __copy_from_user_inatomic_nocache((to += v.iov_len) - v.iov_len,
-lib/iov_iter.c:849:             if (__copy_from_user_inatomic_nocache((to += v.iov_len) - v.iov_len,
+I redid the text a bit as well.
 
-Neither is done under under pagefault_disable(), AFAICS.  This one
-drivers/gpu/drm/qxl/qxl_ioctl.c:189:    unwritten = __copy_from_user_inatomic_nocache
-probably is - it has something called qxl_bo_kmap_atomic_page() called just prior,
-which would seem to imply kmap_atomic() somewhere in it.
-The same goes for
-drivers/gpu/drm/i915/i915_gem.c:500:    unwritten = __copy_from_user_inatomic_nocache((void __force *)vaddr + offset,
+--- a/mm/swapfile.c~mm-swap-disallow-swapon-on-zoned-block-devices-fix
++++ a/mm/swapfile.c
+@@ -2888,10 +2888,9 @@ static int claim_swapfile(struct swap_in
+ 		if (error < 0)
+ 			return error;
+ 		/*
+-		 * Zoned block device contains zones that have
+-		 * sequential write only restriction. For the restriction,
+-		 * zoned block devices are not suitable for a swap device.
+-		 * Disallow them here.
++		 * Zoned block devices contain zones that have a sequential
++		 * write only restriction.  Hence zoned block devices are not
++		 * suitable for swapping.  Disallow them here.
+ 		 */
+ 		if (blk_queue_is_zoned(p->bdev->bd_queue))
+ 			return -EINVAL;
+_
 
-So we have 5 callers anywhere.  Two are not "inatomic" in any sense; source is
-in userspace and we want nocache behaviour.  Two _are_ done into a page that
-had been fed through kmap_atomic(); the source is, again, in userland.  And
-the last one is complete BS - it wants memcpy_toio_nocache() and abuses this
-thing.
-
-Incidentally, in case of fault i915 caller ends up unmapping the page,
-mapping it non-atomic (with kmap?) and doing plain copy_from_user(),
-nocache be damned.  qxl, OTOH, whines and fails all the way to userland...
