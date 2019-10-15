@@ -2,84 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E125D73E8
+	by mail.lfdr.de (Postfix) with ESMTP id 7F8EDD73E9
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 12:51:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbfJOKu4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 06:50:56 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:42932 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfJOKu4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:50:56 -0400
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iKKPi-0007WH-T0; Tue, 15 Oct 2019 11:50:50 +0100
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1iKKPi-0008BP-Eu; Tue, 15 Oct 2019 11:50:50 +0100
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     linux-kernel@lists.codethink.co.uk
-Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/fnctl: fix missing __user in fcntl_rw_hint()
-Date:   Tue, 15 Oct 2019 11:50:49 +0100
-Message-Id: <20191015105049.31412-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.23.0
+        id S1731228AbfJOKvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 06:51:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39318 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727142AbfJOKu7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 06:50:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 19566B4B3;
+        Tue, 15 Oct 2019 10:50:57 +0000 (UTC)
+Date:   Tue, 15 Oct 2019 12:50:55 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Piotr Sarna <p.sarna@tlen.pl>
+Cc:     linux-kernel@vger.kernel.org, mike.kravetz@oracle.com,
+        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] hugetlbfs: add O_TMPFILE support
+Message-ID: <20191015105055.GA24932@dhcp22.suse.cz>
+References: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The fcntl_rw_hint() has a missing __user annotation in
-the code when assinging argp. Add this to fix the
-following sparse warnings:
+On Tue 15-10-19 11:01:12, Piotr Sarna wrote:
+> With hugetlbfs, a common pattern for mapping anonymous huge pages
+> is to create a temporary file first.
 
-fs/fcntl.c:280:22: warning: incorrect type in initializer (different address spaces)
-fs/fcntl.c:280:22:    expected unsigned long long [usertype] *argp
-fs/fcntl.c:280:22:    got unsigned long long [noderef] [usertype] <asn:1> *
-fs/fcntl.c:287:34: warning: incorrect type in argument 1 (different address spaces)
-fs/fcntl.c:287:34:    expected void [noderef] <asn:1> *to
-fs/fcntl.c:287:34:    got unsigned long long [usertype] *argp
-fs/fcntl.c:291:40: warning: incorrect type in argument 2 (different address spaces)
-fs/fcntl.c:291:40:    expected void const [noderef] <asn:1> *from
-fs/fcntl.c:291:40:    got unsigned long long [usertype] *argp
-fs/fcntl.c:303:34: warning: incorrect type in argument 1 (different address spaces)
-fs/fcntl.c:303:34:    expected void [noderef] <asn:1> *to
-fs/fcntl.c:303:34:    got unsigned long long [usertype] *argp
-fs/fcntl.c:307:40: warning: incorrect type in argument 2 (different address spaces)
-fs/fcntl.c:307:40:    expected void const [noderef] <asn:1> *from
-fs/fcntl.c:307:40:    got unsigned long long [usertype] *argp
+Really? I though that this is normally done by shmget(SHM_HUGETLB) or
+mmap(MAP_HUGETLB). Or maybe I misunderstood your definition on anonymous
+huge pages.
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- fs/fcntl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Currently libraries like
+> libhugetlbfs and seastar create these with a standard mkstemp+unlink
+> trick, but it would be more robust to be able to simply pass
+> the O_TMPFILE flag to open(). O_TMPFILE is already supported by several
+> file systems like ext4 and xfs. The implementation simply uses the existing
+> d_tmpfile utility function to instantiate the dcache entry for the file.
+> 
+> Tested manually by successfully creating a temporary file by opening
+> it with (O_TMPFILE|O_RDWR) on mounted hugetlbfs and successfully
+> mapping 2M huge pages with it. Without the patch, trying to open
+> a file with O_TMPFILE results in -ENOSUP.
+> 
+> Signed-off-by: Piotr Sarna <p.sarna@tlen.pl>
+> ---
+>  fs/hugetlbfs/inode.c | 25 ++++++++++++++++++++++---
+>  1 file changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index 1dcc57189382..277b7d231db8 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -815,8 +815,11 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
+>  /*
+>   * File creation. Allocate an inode, and we're done..
+>   */
+> -static int hugetlbfs_mknod(struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, dev_t dev)
+> +static int do_hugetlbfs_mknod(struct inode *dir,
+> +			struct dentry *dentry,
+> +			umode_t mode,
+> +			dev_t dev,
+> +			bool tmpfile)
+>  {
+>  	struct inode *inode;
+>  	int error = -ENOSPC;
+> @@ -824,13 +827,22 @@ static int hugetlbfs_mknod(struct inode *dir,
+>  	inode = hugetlbfs_get_inode(dir->i_sb, dir, mode, dev);
+>  	if (inode) {
+>  		dir->i_ctime = dir->i_mtime = current_time(dir);
+> -		d_instantiate(dentry, inode);
+> +		if (tmpfile)
+> +			d_tmpfile(dentry, inode);
+> +		else
+> +			d_instantiate(dentry, inode);
+>  		dget(dentry);	/* Extra count - pin the dentry in core */
+>  		error = 0;
+>  	}
+>  	return error;
+>  }
+>  
+> +static int hugetlbfs_mknod(struct inode *dir,
+> +			struct dentry *dentry, umode_t mode, dev_t dev)
+> +{
+> +	return do_hugetlbfs_mknod(dir, dentry, mode, dev, false);
+> +}
+> +
+>  static int hugetlbfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+>  {
+>  	int retval = hugetlbfs_mknod(dir, dentry, mode | S_IFDIR, 0);
+> @@ -844,6 +856,12 @@ static int hugetlbfs_create(struct inode *dir, struct dentry *dentry, umode_t mo
+>  	return hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0);
+>  }
+>  
+> +static int hugetlbfs_tmpfile(struct inode *dir,
+> +			struct dentry *dentry, umode_t mode)
+> +{
+> +	return do_hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0, true);
+> +}
+> +
+>  static int hugetlbfs_symlink(struct inode *dir,
+>  			struct dentry *dentry, const char *symname)
+>  {
+> @@ -1102,6 +1120,7 @@ static const struct inode_operations hugetlbfs_dir_inode_operations = {
+>  	.mknod		= hugetlbfs_mknod,
+>  	.rename		= simple_rename,
+>  	.setattr	= hugetlbfs_setattr,
+> +	.tmpfile	= hugetlbfs_tmpfile,
+>  };
+>  
+>  static const struct inode_operations hugetlbfs_inode_operations = {
+> -- 
+> 2.21.0
+> 
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 3d40771e8e7c..7ca7562f2b79 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -277,7 +277,7 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
- 			  unsigned long arg)
- {
- 	struct inode *inode = file_inode(file);
--	u64 *argp = (u64 __user *)arg;
-+	u64 __user *argp = (u64 __user *)arg;
- 	enum rw_hint hint;
- 	u64 h;
- 
 -- 
-2.23.0
-
+Michal Hocko
+SUSE Labs
