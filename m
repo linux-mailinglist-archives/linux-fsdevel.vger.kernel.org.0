@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 036F7D7E3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 19:56:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 158F0D7E45
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 19:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731694AbfJOR4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 13:56:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:53344 "EHLO
+        id S2388931AbfJOR6C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 13:58:02 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:55096 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730701AbfJOR4c (ORCPT
+        with ESMTP id S1726949AbfJOR6C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 13:56:32 -0400
+        Tue, 15 Oct 2019 13:58:02 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmZOO085401;
-        Tue, 15 Oct 2019 17:56:24 GMT
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmmvD085863;
+        Tue, 15 Oct 2019 17:57:47 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2019-08-05;
- bh=5QoM88iTQzcW8BmoHJkExlFI4kibYnBzZR5AFpXiIYA=;
- b=eU1SdRWnTTKaMolBAWg95n4y95Syn8nB0pk+U6fOAu8YH7xMf1fKR+oKazPP0lX4z3nV
- gmT9LA3gCVnrEaZ+ZPgTOn3yXRTn0WEe0LICOU5q7cqF8gCpRwOMfDwQKULSTSwqQmMk
- lnNNtsME3Daw8pUNetDpofaB0XAnKuBEaZgYjos8ga0qcfXocNrU69Igj18z4SvLiblG
- E/5E7o8V2MtWhYETqns2PeBKGoYyJPchuD/7Adqb9MB0UD53esQOOZN8TdGJIsLqZaMv
- 3lLCdZXc1e37NwpE2BaZD1PEXCOc674gYCar1W2/ANLUldWIXkcK7QbIUwVv7FjwTOPp RQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2vk7fr9n5d-1
+ bh=rxO3+TSJthRdBjXKYyxxhRfBoXlZQHmgoZIaCkSiVAA=;
+ b=XcPRNImi3V8QDFfz89S1AfxevDrRkADAPKapkuLhpoO/FKJPIi8nKVPy8hDIcsNTv7SR
+ 3EPZ2n/UwPZMyV0v3obdKOL8ulMiXv+7iyqv5GHvsUfb1SrVzMrVInyZsqDPvJ1P/rzW
+ 9F7l0jCnM2/nXvU1oRHuPggt6Cn62KDtJ/kH9pkGXCA8TJ9wzEfjU5c/BWEpmTRhr3Qq
+ RR94FF7oBIR1SJuVIk2UKlTeRfNbg+6E4ZCqQOiHPKA5+mzXIs7YF7FYTwQW8R++i3AT
+ iA68gdka54mmnHl/J+bts7IywVjaPv+fyJvNbLL7A4r4DkvxOXRLkYkAjyok0/YWVmwJ yw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2vk7fr9nfj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 17:56:24 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmHvT048939;
-        Tue, 15 Oct 2019 17:56:23 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2vnf7rnanp-1
+        Tue, 15 Oct 2019 17:57:47 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHlwVp088199;
+        Tue, 15 Oct 2019 17:57:47 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2vn8enn0jm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 17:56:23 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9FHuMS3002533;
-        Tue, 15 Oct 2019 17:56:22 GMT
+        Tue, 15 Oct 2019 17:57:47 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9FHvjjA010409;
+        Tue, 15 Oct 2019 17:57:45 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Oct 2019 17:56:21 +0000
-Date:   Tue, 15 Oct 2019 10:56:19 -0700
+        with ESMTP ; Tue, 15 Oct 2019 10:57:40 -0700
+Date:   Tue, 15 Oct 2019 10:57:36 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] xfs: refactor the ioend merging code
-Message-ID: <20191015175619.GN13108@magnolia>
+Subject: Re: [PATCH 12/12] iomap: cleanup iomap_ioend_compare
+Message-ID: <20191015175736.GO13108@magnolia>
 References: <20191015154345.13052-1-hch@lst.de>
- <20191015154345.13052-5-hch@lst.de>
+ <20191015154345.13052-13-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191015154345.13052-5-hch@lst.de>
+In-Reply-To: <20191015154345.13052-13-hch@lst.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
@@ -73,147 +73,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 05:43:37PM +0200, Christoph Hellwig wrote:
-> Introduce two nicely abstracted helper, which can be moved to the
-> iomap code later.  Also use list_pop_entry and list_first_entry_or_null
-> to simplify the code a bit.
+On Tue, Oct 15, 2019 at 05:43:45PM +0200, Christoph Hellwig wrote:
+> Move the initialization of ia and ib to the declaration line and remove
+> a superflous else.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-No we don't use these....     ^^^^^^^^^^^^^^
-
-Everything else looks ok.
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
 --D
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/xfs/xfs_aops.c | 73 +++++++++++++++++++++++++++--------------------
->  1 file changed, 42 insertions(+), 31 deletions(-)
+>  fs/iomap/buffered-io.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 91899de2be09..c29ef69d1e51 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -116,6 +116,22 @@ xfs_destroy_ioend(
->  	}
->  }
->  
-> +static void
-> +xfs_destroy_ioends(
-> +	struct xfs_ioend	*ioend,
-> +	int			error)
-> +{
-> +	struct list_head	tmp;
-> +
-> +	list_replace_init(&ioend->io_list, &tmp);
-> +	xfs_destroy_ioend(ioend, error);
-> +	while ((ioend = list_first_entry_or_null(&tmp, struct xfs_ioend,
-> +			io_list))) {
-> +		list_del_init(&ioend->io_list);
-> +		xfs_destroy_ioend(ioend, error);
-> +	}
-> +}
-> +
->  /*
->   * Fast and loose check if this write could update the on-disk inode size.
->   */
-> @@ -230,7 +246,6 @@ STATIC void
->  xfs_end_ioend(
->  	struct xfs_ioend	*ioend)
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index c57acc3d3120..0c7f185c8c52 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1226,13 +1226,12 @@ EXPORT_SYMBOL_GPL(iomap_ioend_try_merge);
+>  static int
+>  iomap_ioend_compare(void *priv, struct list_head *a, struct list_head *b)
 >  {
-> -	struct list_head	ioend_list;
->  	struct xfs_inode	*ip = XFS_I(ioend->io_inode);
->  	xfs_off_t		offset = ioend->io_offset;
->  	size_t			size = ioend->io_size;
-> @@ -275,16 +290,7 @@ xfs_end_ioend(
->  done:
->  	if (ioend->io_append_trans)
->  		error = xfs_setfilesize_ioend(ioend, error);
-> -	list_replace_init(&ioend->io_list, &ioend_list);
-> -	xfs_destroy_ioend(ioend, error);
-> -
-> -	while (!list_empty(&ioend_list)) {
-> -		ioend = list_first_entry(&ioend_list, struct xfs_ioend,
-> -				io_list);
-> -		list_del_init(&ioend->io_list);
-> -		xfs_destroy_ioend(ioend, error);
-> -	}
-> -
-> +	xfs_destroy_ioends(ioend, error);
->  	memalloc_nofs_restore(nofs_flag);
->  }
+> -	struct iomap_ioend *ia, *ib;
+> +	struct iomap_ioend *ia = container_of(a, struct iomap_ioend, io_list);
+> +	struct iomap_ioend *ib = container_of(b, struct iomap_ioend, io_list);
 >  
-> @@ -333,17 +339,18 @@ xfs_ioend_try_merge(
->  	struct xfs_ioend	*ioend,
->  	struct list_head	*more_ioends)
->  {
-> -	struct xfs_ioend	*next_ioend;
-> +	struct xfs_ioend	*next;
-> +
-> +	INIT_LIST_HEAD(&ioend->io_list);
->  
-> -	while (!list_empty(more_ioends)) {
-> -		next_ioend = list_first_entry(more_ioends, struct xfs_ioend,
-> -				io_list);
-> -		if (!xfs_ioend_can_merge(ioend, next_ioend))
-> +	while ((next = list_first_entry_or_null(more_ioends, struct xfs_ioend,
-> +			io_list))) {
-> +		if (!xfs_ioend_can_merge(ioend, next))
->  			break;
-> -		list_move_tail(&next_ioend->io_list, &ioend->io_list);
-> -		ioend->io_size += next_ioend->io_size;
-> -		if (next_ioend->io_append_trans)
-> -			xfs_ioend_merge_append_transactions(ioend, next_ioend);
-> +		list_move_tail(&next->io_list, &ioend->io_list);
-> +		ioend->io_size += next->io_size;
-> +		if (next->io_append_trans)
-> +			xfs_ioend_merge_append_transactions(ioend, next);
->  	}
->  }
->  
-> @@ -366,29 +373,33 @@ xfs_ioend_compare(
+> -	ia = container_of(a, struct iomap_ioend, io_list);
+> -	ib = container_of(b, struct iomap_ioend, io_list);
+>  	if (ia->io_offset < ib->io_offset)
+>  		return -1;
+> -	else if (ia->io_offset > ib->io_offset)
+> +	if (ia->io_offset > ib->io_offset)
+>  		return 1;
 >  	return 0;
->  }
->  
-> +static void
-> +xfs_sort_ioends(
-> +	struct list_head	*ioend_list)
-> +{
-> +	list_sort(NULL, ioend_list, xfs_ioend_compare);
-> +}
-> +
->  /* Finish all pending io completions. */
->  void
->  xfs_end_io(
->  	struct work_struct	*work)
->  {
-> -	struct xfs_inode	*ip;
-> +	struct xfs_inode	*ip =
-> +		container_of(work, struct xfs_inode, i_ioend_work);
->  	struct xfs_ioend	*ioend;
-> -	struct list_head	completion_list;
-> +	struct list_head	tmp;
->  	unsigned long		flags;
->  
-> -	ip = container_of(work, struct xfs_inode, i_ioend_work);
-> -
->  	spin_lock_irqsave(&ip->i_ioend_lock, flags);
-> -	list_replace_init(&ip->i_ioend_list, &completion_list);
-> +	list_replace_init(&ip->i_ioend_list, &tmp);
->  	spin_unlock_irqrestore(&ip->i_ioend_lock, flags);
->  
-> -	list_sort(NULL, &completion_list, xfs_ioend_compare);
-> -
-> -	while (!list_empty(&completion_list)) {
-> -		ioend = list_first_entry(&completion_list, struct xfs_ioend,
-> -				io_list);
-> +	xfs_sort_ioends(&tmp);
-> +	while ((ioend = list_first_entry_or_null(&tmp, struct xfs_ioend,
-> +			io_list))) {
->  		list_del_init(&ioend->io_list);
-> -		xfs_ioend_try_merge(ioend, &completion_list);
-> +		xfs_ioend_try_merge(ioend, &tmp);
->  		xfs_end_ioend(ioend);
->  	}
 >  }
 > -- 
 > 2.20.1
