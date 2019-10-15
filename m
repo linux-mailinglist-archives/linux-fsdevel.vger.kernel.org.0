@@ -2,82 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63853D71C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 11:06:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AFAD71D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 11:09:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbfJOJGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 05:06:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35726 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfJOJGn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 05:06:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ScswIQBKRvt0vRsU+j1tcLpW9Xtj3tO8tiUdFEtFncw=; b=mx7Pn28BaLko9nhuopP5CjmAZ
-        c0NR8SjdPO028AWHpFt8T20vSMOa59P08xerMLYBNlnq9YpxRJ+vmJAIfzjYkY2uuIeX2he2egxB2
-        noiYpHi8/QDXc6JcoyPP+pm0JUiGpDpliXqgnOY0HDZsJ3SYsjbcXWOHEEwbE7+OJ53Hu686pEMpj
-        43VaeVPWDQ06xDlYxVLIH04TtxFfz+D1vrntD1Hnz0UQPOEPiK9e1EzT4tsRZ2hAkZmM9FR5HjXwR
-        +USSticjJnYKBA4kzR61H5qkSmVHCBOqWXe2m3y+WKBxYHExW2GaA9xh4Xwyyqc6aqMfPuJDsDoqT
-        Zez0/lrzg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iKImv-0003Fs-9l; Tue, 15 Oct 2019 09:06:41 +0000
-Date:   Tue, 15 Oct 2019 02:06:41 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
+        id S1728957AbfJOJJi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 05:09:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42534 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726373AbfJOJJi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 05:09:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5937AB39B;
+        Tue, 15 Oct 2019 09:09:35 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 19D791E4A8A; Tue, 15 Oct 2019 11:09:33 +0200 (CEST)
+Date:   Tue, 15 Oct 2019 11:09:33 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Roman Gushchin <guro@fb.com>
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2] mm, swap: disallow swapon() on zoned block devices
-Message-ID: <20191015090641.GB7199@infradead.org>
-References: <20191015043827.160444-1-naohiro.aota@wdc.com>
- <20191015085814.637837-1-naohiro.aota@wdc.com>
+        linux-kernel@vger.kernel.org, kernel-team@fb.com, tj@kernel.org,
+        Jan Kara <jack@suse.cz>, Dennis Zhou <dennis@kernel.org>
+Subject: Re: [PATCH v2] cgroup, blkcg: prevent dirty inodes to pin dying
+ memory cgroups
+Message-ID: <20191015090933.GA21104@quack2.suse.cz>
+References: <20191010234036.2860655-1-guro@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191015085814.637837-1-naohiro.aota@wdc.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20191010234036.2860655-1-guro@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 05:58:14PM +0900, Naohiro Aota wrote:
-> A zoned block device consists of a number of zones. Zones are either
-> conventional and accepting random writes or sequential and requiring that
-> writes be issued in LBA order from each zone write pointer position. For
-> the write restriction, zoned block devices are not suitable for a swap
-> device. Disallow swapon on them.
+On Thu 10-10-19 16:40:36, Roman Gushchin wrote:
+> We've noticed that the number of dying cgroups on our production hosts
+> tends to grow with the uptime. This time it's caused by the writeback
+> code.
 > 
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> ---
-> v2: add comments according to Christoph's feedback, reformat chengelog.
-> ---
->  mm/swapfile.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> An inode which is getting dirty for the first time is associated
+> with the wb structure (look at __inode_attach_wb()). It can later
+> be switched to another wb under some conditions (e.g. some other
+> cgroup is writing a lot of data to the same inode), but generally
+> stays associated up to the end of life of the inode structure.
 > 
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index dab43523afdd..f2c4224d1f8a 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -2887,6 +2887,14 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
->  		error = set_blocksize(p->bdev, PAGE_SIZE);
->  		if (error < 0)
->  			return error;
-> +		/*
-> +		 * Zoned block device contains zones that have
-> +		 * sequential write only restriction. For the restriction,
-> +		 * zoned block devices are not suitable for a swap device.
-> +		 * Disallow them here.
-> +		 */
-> +		if (blk_queue_is_zoned(p->bdev->bd_queue))
+> The problem is that the wb structure holds a reference to the original
+> memory cgroup. So if an inode has been dirty once, it has a good chance
+> to pin down the original memory cgroup.
+> 
+> An example from the real life: some service runs periodically and
+> updates rpm packages. Each time in a new memory cgroup. Installed
+> .so files are heavily used by other cgroups, so corresponding inodes
+> tend to stay alive for a long. So do pinned memory cgroups.
+> In production I've seen many hosts with 1-2 thousands of dying
+> cgroups.
+> 
+> This is not the first problem with the dying memory cgroups. As
+> always, the problem is with their relative size: memory cgroups
+> are large objects, easily 100x-1000x larger that inodes. So keeping
+> a couple of thousands of dying cgroups in memory without a good reason
+> (what we easily do with inodes) is quite costly (and is measured
+> in tens and hundreds of Mb).
+> 
+> To solve this problem let's perform a periodic scan of inodes
+> attached to the dying wbs, and detach those of them, which are clean
+> and don't have an active io operation.
+> That will eventually release the wb structure and corresponding
+> memory cgroup.
+> 
+> To make this scanning effective, let's keep a list of attached
+> inodes. inode->i_io_list can be reused for this purpose.
+> 
+> The scan is performed from the cgroup offlining path. Dying wbs
+> are placed on the global list. On each cgroup removal we traverse
+> the whole list ignoring wbs with active io operations. That will
+> allow the majority of io operations to be finished after the
+> removal of the cgroup.
+> 
+> Big thanks to Jan Kara and Dennis Zhou for their ideas and
+> contribution to this patch.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> ---
+>  fs/fs-writeback.c                | 52 +++++++++++++++++++++++---
+>  include/linux/backing-dev-defs.h |  2 +
+>  include/linux/writeback.h        |  1 +
+>  mm/backing-dev.c                 | 63 ++++++++++++++++++++++++++++++--
+>  4 files changed, 108 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index e88421d9a48d..c792db951274 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -136,16 +136,21 @@ static bool inode_io_list_move_locked(struct inode *inode,
+>   * inode_io_list_del_locked - remove an inode from its bdi_writeback IO list
+>   * @inode: inode to be removed
+>   * @wb: bdi_writeback @inode is being removed from
+> + * @keep_attached: keep the inode on the list of inodes attached to wb
+>   *
+>   * Remove @inode which may be on one of @wb->b_{dirty|io|more_io} lists and
+>   * clear %WB_has_dirty_io if all are empty afterwards.
+>   */
+>  static void inode_io_list_del_locked(struct inode *inode,
+> -				     struct bdi_writeback *wb)
+> +				     struct bdi_writeback *wb,
+> +				     bool keep_attached)
+>  {
+>  	assert_spin_locked(&wb->list_lock);
+>  
+> -	list_del_init(&inode->i_io_list);
+> +	if (keep_attached)
+> +		list_move(&inode->i_io_list, &wb->b_attached);
+> +	else
+> +		list_del_init(&inode->i_io_list);
+>  	wb_io_lists_depopulated(wb);
+>  }
 
-Please use up all 80 chars per line  Otherwise this looks fine:
+Rather than adding this (somewhat ugly) bool argument to
+inode_io_list_del_locked() I'd teach inode_io_list_move_locked() about the
+new b_attached list and use that function where needed...
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> @@ -426,7 +431,7 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
+>  	if (!list_empty(&inode->i_io_list)) {
+>  		struct inode *pos;
+>  
+> -		inode_io_list_del_locked(inode, old_wb);
+> +		inode_io_list_del_locked(inode, old_wb, false);
+>  		inode->i_wb = new_wb;
+>  		list_for_each_entry(pos, &new_wb->b_dirty, i_io_list)
+>  			if (time_after_eq(inode->dirtied_when,
+
+This bit looks wrong. Not the change you made as such but the fact that you
+can now move inode from b_attached list of old wb to the dirty list of new
+wb.
+
+> @@ -544,6 +549,41 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+>  	kfree(isw);
+>  }
+>  
+> +/**
+> + * cleanup_offline_wb - detach attached clean inodes
+> + * @wb: target wb
+> + *
+> + * Clear the ->i_wb pointer of the attached inodes and drop
+> + * the corresponding wb reference. Skip inodes which are dirty,
+> + * freeing, switching or in the active writeback process.
+> + */
+> +void cleanup_offline_wb(struct bdi_writeback *wb)
+> +{
+> +	struct inode *inode, *tmp;
+> +	bool ret = true;
+> +
+> +	spin_lock(&wb->list_lock);
+> +	if (list_empty(&wb->b_attached))
+> +		goto unlock;
+
+What's the point of this check? list_for_each_entry_safe() below will just
+do the same...
+
+> +
+> +	list_for_each_entry_safe(inode, tmp, &wb->b_attached, i_io_list) {
+> +		if (!spin_trylock(&inode->i_lock))
+> +			continue;
+> +		xa_lock_irq(&inode->i_mapping->i_pages);
+> +		if (!(inode->i_state &
+> +		      (I_FREEING | I_CLEAR | I_SYNC | I_DIRTY | I_WB_SWITCH))) {
+> +			WARN_ON_ONCE(inode->i_wb != wb);
+> +			inode->i_wb = NULL;
+> +			wb_put(wb);
+
+Hum, currently the code assumes that once i_wb is set, it never becomes
+NULL again. In particular the inode e.g. in
+fs/fs-writeback.c:inode_congested() or generally unlocked_inode_to_wb_begin()
+users could get broken by this. The i_wb switching code is so complex
+exactly because of these interactions.
+
+Maybe you thought through the interactions and things are actually fine but
+if nothing else you'd need a big fat comment here explaining why this is
+fine and update inode_congested() comments etc.
+
+> +			list_del_init(&inode->i_io_list);
+> +		}
+> +		xa_unlock_irq(&inode->i_mapping->i_pages);
+> +		spin_unlock(&inode->i_lock);
+> +	}
+> +unlock:
+> +	spin_unlock(&wb->list_lock);
+> +}
+> +
+
+...
+
+> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+> index 4fc87dee005a..68b167fda259 100644
+> --- a/include/linux/backing-dev-defs.h
+> +++ b/include/linux/backing-dev-defs.h
+> @@ -137,6 +137,7 @@ struct bdi_writeback {
+>  	struct list_head b_io;		/* parked for writeback */
+>  	struct list_head b_more_io;	/* parked for more writeback */
+>  	struct list_head b_dirty_time;	/* time stamps are dirty */
+> +	struct list_head b_attached;	/* attached inodes */
+
+Maybe
+	/* clean inodes pointing to this wb through inode->i_wb */
+would be more explanatory?
+
+>  	spinlock_t list_lock;		/* protects the b_* lists */
+>  
+>  	struct percpu_counter stat[NR_WB_STAT_ITEMS];
+
+									Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
