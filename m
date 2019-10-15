@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C96BD7AA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 17:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07BDFD7A87
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 17:52:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbfJOP5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 11:57:25 -0400
-Received: from fallback23.m.smailru.net ([94.100.187.222]:50674 "EHLO
-        fallback23.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726231AbfJOP5Z (ORCPT
+        id S2387570AbfJOPwZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 11:52:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59326 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728624AbfJOPwZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:57:25 -0400
-X-Greylist: delayed 2699 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Oct 2019 11:57:24 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
-        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From; bh=ZGNcydH2VVTgL86RSkW3/aMFqYLrYooNNZxyvomWsew=;
-        b=R+jZ0ug2V4a5kROxbJgc5I90NFAYCNcM6uSw+Nb6mMZUGCgH7ZiD2UlUDtrECwKVNQeeXQ6TyV71DcFepjM1tHPK2jfy+Bhw93+s/JS8f0bcQoH049FliQFxo1m9KgFD114N+Gux+qYmJgJvO5WGh2TOzwOvCSKa7ypd6MG4GTM=;
-Received: from [10.161.121.62] (port=58732 helo=f491.i.mail.ru)
-        by fallback23.m.smailru.net with esmtp (envelope-from <pp_84@mail.ru>)
-        id 1iKOUo-0002J5-8X
-        for linux-fsdevel@vger.kernel.org; Tue, 15 Oct 2019 18:12:22 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
-        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From; bh=ZGNcydH2VVTgL86RSkW3/aMFqYLrYooNNZxyvomWsew=;
-        b=R+jZ0ug2V4a5kROxbJgc5I90NFAYCNcM6uSw+Nb6mMZUGCgH7ZiD2UlUDtrECwKVNQeeXQ6TyV71DcFepjM1tHPK2jfy+Bhw93+s/JS8f0bcQoH049FliQFxo1m9KgFD114N+Gux+qYmJgJvO5WGh2TOzwOvCSKa7ypd6MG4GTM=;
-Received: by f491.i.mail.ru with local (envelope-from <pp_84@mail.ru>)
-        id 1iKOUm-0004mJ-Dk
-        for linux-fsdevel@vger.kernel.org; Tue, 15 Oct 2019 18:12:20 +0300
-Received: by e.mail.ru with HTTP;
-        Tue, 15 Oct 2019 18:12:20 +0300
-From:   =?UTF-8?B?UGF2ZWwgVi4gUGFudGVsZWV2?= <pp_84@mail.ru>
-To:     linux-fsdevel@vger.kernel.org
-Subject: =?UTF-8?B?Y29weV9tb3VudF9vcHRpb25zKCkgcHJvYmxlbQ==?=
+        Tue, 15 Oct 2019 11:52:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wGs4rPfPy9vZBUIIyWospwNFjdTYCGPuvjv05Sr6wcs=; b=mI1Hg2GGevOaJcrCtNQ5hSJQM
+        u5448CKfxFVyOczflX9z07FwUZNalkHG5GLxN9hTF1AFswRx1SOOJC0RUS+SknltZWeOCiCkaGG31
+        HgBDnH0By9XsD5IZLGx7uNehkFAVo0Dg0mlpy11oQC11ZjKdplFjXAAfH7mwvnupUbmXKqi+3XVRb
+        6vUbwphgCbPEW+UFc5EptbJeaOT9CSPe5Li5FCT5z6WQztBAR0yvhCbK5v1eCT885ajS2FFzCL9x/
+        BDrZed28Z/+D7m83fLHmjiLH2ew2gviDPSy4oUU8Z4Ne4xyC/VT2cwzeUET0G7BOx7zTaQgxhMwxJ
+        Jm5FqLs0w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKP7Y-0004ZN-QE; Tue, 15 Oct 2019 15:52:24 +0000
+Date:   Tue, 15 Oct 2019 08:52:24 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Eric Sandeen <sandeen@redhat.com>
+Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>
+Subject: Re: iomap: use SECTOR_SIZE instead of 512 in iomap_page definition
+Message-ID: <20191015155224.GA16024@infradead.org>
+References: <123556d7-968c-70a6-1049-38b2f279f5a1@redhat.com>
 MIME-Version: 1.0
-X-Mailer: Mail.Ru Mailer 1.0
-Date:   Tue, 15 Oct 2019 18:12:20 +0300
-Reply-To: =?UTF-8?B?UGF2ZWwgVi4gUGFudGVsZWV2?= <pp_84@mail.ru>
-X-Priority: 3 (Normal)
-Message-ID: <1571152340.420155792@f491.i.mail.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-X-77F55803: 228A81D1C6436F277F9F52485CB584D7EA5C12FFEB6BB262FCDE748F898058739703797CC17C1F9C0DCC74F085AC0DF2DDDE7B70B5F5C79F
-X-7FA49CB5: 70AAF3C13DB7016878DA827A17800CE7A211AE61FACDB528D82A6BABE6F325ACA01ED31736435A1FBFD28B28ED4578739E625A9149C048EEAFB8AC9FC77E1A6582BFA309970D60C2B287FD4696A6DC2FA8DF7F3B2552694A4E2F5AFA99E116B42401471946AA11AFACC50219273B5BD813069B262EDDB3B78F08D7030A58E5AD6BA297DBC24807EAA9D420A4CFB5DD3ED699DE72564D062536CCA9098A2EFAD90726FE35F1F3DC8F8941B15DA834481FA18204E546F3947C1D471462564A2E19F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8B2EE5AD8F952D28FBA471835C12D1D977C4224003CC836476C0CAF46E325F83A522CA9DD8327EE4930A3850AC1BE2E73579E3C236D8F0F2C1D8835E6A3E4E8B4543847C11F186F3C5E7DDDDC251EA7DABCC89B49CDF41148F458B267F216095A92623479134186CDE6BA297DBC24807EABDAD6C7F3747799A
-X-Mailru-Sender: 7F4398F782B86872D2316CA97B01D5BF8EAC3947E6444A7E494301D5FB4ECDE4A64E7696BF8480CE705496FB85F3B934A2BFD6D8330F0C2D675DEADD4B019D5763CBD55F320F52C78CB7D1E64D4BCF9E0EFC3F408DF9CB1AEAB4BC95F72C04283CDA0F3B3F5B9367
-X-Mras: OK
-X-Spam: undefined
-X-77F55803: 5241C2F38277A35D7F9F52485CB584D7271FD7DF62800FDC2499D13046ABE3235CAC492229E8EC6D4DD6BBA01C94D949E3F78F08705949CF
-X-7FA49CB5: 0D63561A33F958A553DDDBDFBECACB0B36F1DE4BA63EA8DC909C9EA0F287853A8941B15DA834481FA18204E546F3947C1D471462564A2E19F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8B2EE5AD8F952D28FBA471835C12D1D977C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F9A3D58A9A349F5073B503F486389A921A5CC5B56E945C8DA
-X-Mras: OK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <123556d7-968c-70a6-1049-38b2f279f5a1@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGVsbG8sCsKgCmNvcHlfbW91bnRfb3B0aW9ucygpIGNoZWNrcyB0aGF0IGRhdGEgZG9lc24nIGNy
-b3NzIFRBU0tfU0laRSBib3VuZGFyeS4gSXQncyBub3QgY29ycmVjdC4gUmVhbGx5IGl0IHNob3Vs
-ZCBjaGVjayBVU0VSX0RTIGJvdWRhcnksIGJlY2F1c2Ugc29tZSBhcmNocyBoYXZlIFRBU0tfU0la
-RSBub3QgZXF1YWwgdG8gVVNFUl9EUy4gSW4gdGhpcyBjYXNlIChVU0VSX0RTICE9IFRBU0tfU0la
-RSkgZXhhY3RfY29weV9mcm9tX3VzZXIoKSB3aWxsIHN0b3Agb24gYWNjZXNzX29rKCkgY2hlY2ss
-IGlmIGRhdGEgY3Jvc3MgVVNFUl9EUywgYnV0IGRvZXNuJ3QgY3Jvc3MgVEFTS19TSVpFLgoKQmVz
-dCByZWdhcmRzLApQYXZlbCBWLiBQYW50ZWxlZXY=
+On Tue, Oct 15, 2019 at 10:39:36AM -0500, Eric Sandeen wrote:
+> iomap_page_create() initializes the uptodate bitmap using the SECTOR_SIZE
+> macro, so use that in the definition as well, for consistency and safety.
+> 
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
+> 
+> Last time there was a concern about pulling in blkdev.h just for this,
+> but that's already been done now, so try again.
+
+Note that the iomap writepage series, which is hopefully about to be
+merged moves this declaration around.
