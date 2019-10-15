@@ -2,80 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 014A5D7A2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 17:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C96BD7AA4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 17:57:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387734AbfJOPoa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 11:44:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48182 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387650AbfJOPoa (ORCPT
+        id S1731042AbfJOP5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 11:57:25 -0400
+Received: from fallback23.m.smailru.net ([94.100.187.222]:50674 "EHLO
+        fallback23.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726231AbfJOP5Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 11:44:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Mr41y1LsPmV/Aa5P6Nreo6G927X7sBwSFPq0Rl3lz2Y=; b=UQ7AFX3Fwrd+C2k1E/INz+eeqC
-        SevBl7fm5BPPKcpB9SjOtbKHDvCx4AYAu2DiRSMZN686KpRcUbbqKaGNWag8cP/55+ZY6wFLOAYSv
-        xsR0xy+2SKDs3lerkhEwIsMXy3CcV19q5I7FqKraykzYyO7wVycSFvpgvFpsaNDFUQ10CKsZ2v/Dj
-        yoNWg5475HBB83MN0id0CaJOmX1xsaYwrD8p0wOaXduQt21b8jPL5A1lw24paa1gjtwLbXmiVL4Az
-        MLMhndsLa/KqEPqIYA/uQmUw9ACwWSNBv4e6cEpYWOxuEOLYdwZ9EgcQwjjvpa6KRMgR9ZKV9skjj
-        /4UKFxWg==;
-Received: from [2001:4bb8:18c:d7b:c70:4a89:bc61:3] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iKOzq-00080n-8K; Tue, 15 Oct 2019 15:44:26 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 12/12] iomap: cleanup iomap_ioend_compare
-Date:   Tue, 15 Oct 2019 17:43:45 +0200
-Message-Id: <20191015154345.13052-13-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191015154345.13052-1-hch@lst.de>
-References: <20191015154345.13052-1-hch@lst.de>
+        Tue, 15 Oct 2019 11:57:25 -0400
+X-Greylist: delayed 2699 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Oct 2019 11:57:24 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
+        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From; bh=ZGNcydH2VVTgL86RSkW3/aMFqYLrYooNNZxyvomWsew=;
+        b=R+jZ0ug2V4a5kROxbJgc5I90NFAYCNcM6uSw+Nb6mMZUGCgH7ZiD2UlUDtrECwKVNQeeXQ6TyV71DcFepjM1tHPK2jfy+Bhw93+s/JS8f0bcQoH049FliQFxo1m9KgFD114N+Gux+qYmJgJvO5WGh2TOzwOvCSKa7ypd6MG4GTM=;
+Received: from [10.161.121.62] (port=58732 helo=f491.i.mail.ru)
+        by fallback23.m.smailru.net with esmtp (envelope-from <pp_84@mail.ru>)
+        id 1iKOUo-0002J5-8X
+        for linux-fsdevel@vger.kernel.org; Tue, 15 Oct 2019 18:12:22 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
+        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From; bh=ZGNcydH2VVTgL86RSkW3/aMFqYLrYooNNZxyvomWsew=;
+        b=R+jZ0ug2V4a5kROxbJgc5I90NFAYCNcM6uSw+Nb6mMZUGCgH7ZiD2UlUDtrECwKVNQeeXQ6TyV71DcFepjM1tHPK2jfy+Bhw93+s/JS8f0bcQoH049FliQFxo1m9KgFD114N+Gux+qYmJgJvO5WGh2TOzwOvCSKa7ypd6MG4GTM=;
+Received: by f491.i.mail.ru with local (envelope-from <pp_84@mail.ru>)
+        id 1iKOUm-0004mJ-Dk
+        for linux-fsdevel@vger.kernel.org; Tue, 15 Oct 2019 18:12:20 +0300
+Received: by e.mail.ru with HTTP;
+        Tue, 15 Oct 2019 18:12:20 +0300
+From:   =?UTF-8?B?UGF2ZWwgVi4gUGFudGVsZWV2?= <pp_84@mail.ru>
+To:     linux-fsdevel@vger.kernel.org
+Subject: =?UTF-8?B?Y29weV9tb3VudF9vcHRpb25zKCkgcHJvYmxlbQ==?=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Mailer: Mail.Ru Mailer 1.0
+Date:   Tue, 15 Oct 2019 18:12:20 +0300
+Reply-To: =?UTF-8?B?UGF2ZWwgVi4gUGFudGVsZWV2?= <pp_84@mail.ru>
+X-Priority: 3 (Normal)
+Message-ID: <1571152340.420155792@f491.i.mail.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+X-77F55803: 228A81D1C6436F277F9F52485CB584D7EA5C12FFEB6BB262FCDE748F898058739703797CC17C1F9C0DCC74F085AC0DF2DDDE7B70B5F5C79F
+X-7FA49CB5: 70AAF3C13DB7016878DA827A17800CE7A211AE61FACDB528D82A6BABE6F325ACA01ED31736435A1FBFD28B28ED4578739E625A9149C048EEAFB8AC9FC77E1A6582BFA309970D60C2B287FD4696A6DC2FA8DF7F3B2552694A4E2F5AFA99E116B42401471946AA11AFACC50219273B5BD813069B262EDDB3B78F08D7030A58E5AD6BA297DBC24807EAA9D420A4CFB5DD3ED699DE72564D062536CCA9098A2EFAD90726FE35F1F3DC8F8941B15DA834481FA18204E546F3947C1D471462564A2E19F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8B2EE5AD8F952D28FBA471835C12D1D977C4224003CC836476C0CAF46E325F83A522CA9DD8327EE4930A3850AC1BE2E73579E3C236D8F0F2C1D8835E6A3E4E8B4543847C11F186F3C5E7DDDDC251EA7DABCC89B49CDF41148F458B267F216095A92623479134186CDE6BA297DBC24807EABDAD6C7F3747799A
+X-Mailru-Sender: 7F4398F782B86872D2316CA97B01D5BF8EAC3947E6444A7E494301D5FB4ECDE4A64E7696BF8480CE705496FB85F3B934A2BFD6D8330F0C2D675DEADD4B019D5763CBD55F320F52C78CB7D1E64D4BCF9E0EFC3F408DF9CB1AEAB4BC95F72C04283CDA0F3B3F5B9367
+X-Mras: OK
+X-Spam: undefined
+X-77F55803: 5241C2F38277A35D7F9F52485CB584D7271FD7DF62800FDC2499D13046ABE3235CAC492229E8EC6D4DD6BBA01C94D949E3F78F08705949CF
+X-7FA49CB5: 0D63561A33F958A553DDDBDFBECACB0B36F1DE4BA63EA8DC909C9EA0F287853A8941B15DA834481FA18204E546F3947C1D471462564A2E19F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8B2EE5AD8F952D28FBA471835C12D1D977C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F9A3D58A9A349F5073B503F486389A921A5CC5B56E945C8DA
+X-Mras: OK
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move the initialization of ia and ib to the declaration line and remove
-a superflous else.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/buffered-io.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index c57acc3d3120..0c7f185c8c52 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1226,13 +1226,12 @@ EXPORT_SYMBOL_GPL(iomap_ioend_try_merge);
- static int
- iomap_ioend_compare(void *priv, struct list_head *a, struct list_head *b)
- {
--	struct iomap_ioend *ia, *ib;
-+	struct iomap_ioend *ia = container_of(a, struct iomap_ioend, io_list);
-+	struct iomap_ioend *ib = container_of(b, struct iomap_ioend, io_list);
- 
--	ia = container_of(a, struct iomap_ioend, io_list);
--	ib = container_of(b, struct iomap_ioend, io_list);
- 	if (ia->io_offset < ib->io_offset)
- 		return -1;
--	else if (ia->io_offset > ib->io_offset)
-+	if (ia->io_offset > ib->io_offset)
- 		return 1;
- 	return 0;
- }
--- 
-2.20.1
-
+SGVsbG8sCsKgCmNvcHlfbW91bnRfb3B0aW9ucygpIGNoZWNrcyB0aGF0IGRhdGEgZG9lc24nIGNy
+b3NzIFRBU0tfU0laRSBib3VuZGFyeS4gSXQncyBub3QgY29ycmVjdC4gUmVhbGx5IGl0IHNob3Vs
+ZCBjaGVjayBVU0VSX0RTIGJvdWRhcnksIGJlY2F1c2Ugc29tZSBhcmNocyBoYXZlIFRBU0tfU0la
+RSBub3QgZXF1YWwgdG8gVVNFUl9EUy4gSW4gdGhpcyBjYXNlIChVU0VSX0RTICE9IFRBU0tfU0la
+RSkgZXhhY3RfY29weV9mcm9tX3VzZXIoKSB3aWxsIHN0b3Agb24gYWNjZXNzX29rKCkgY2hlY2ss
+IGlmIGRhdGEgY3Jvc3MgVVNFUl9EUywgYnV0IGRvZXNuJ3QgY3Jvc3MgVEFTS19TSVpFLgoKQmVz
+dCByZWdhcmRzLApQYXZlbCBWLiBQYW50ZWxlZXY=
