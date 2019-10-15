@@ -2,179 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A9ACD7E13
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 19:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 036F7D7E3C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 19:56:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbfJORqu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 13:46:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50896 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727435AbfJORqt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 13:46:49 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2A32E30ADBBB;
-        Tue, 15 Oct 2019 17:46:49 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 748545D6A9;
-        Tue, 15 Oct 2019 17:46:41 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 2EDA12240F5; Tue, 15 Oct 2019 13:46:35 -0400 (EDT)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com
-Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, chirantan@chromium.org,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH 5/5] virtiofs: Retry request submission from worker context
-Date:   Tue, 15 Oct 2019 13:46:26 -0400
-Message-Id: <20191015174626.11593-6-vgoyal@redhat.com>
-In-Reply-To: <20191015174626.11593-1-vgoyal@redhat.com>
-References: <20191015174626.11593-1-vgoyal@redhat.com>
+        id S1731694AbfJOR4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 13:56:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:53344 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730701AbfJOR4c (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 13:56:32 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmZOO085401;
+        Tue, 15 Oct 2019 17:56:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=5QoM88iTQzcW8BmoHJkExlFI4kibYnBzZR5AFpXiIYA=;
+ b=eU1SdRWnTTKaMolBAWg95n4y95Syn8nB0pk+U6fOAu8YH7xMf1fKR+oKazPP0lX4z3nV
+ gmT9LA3gCVnrEaZ+ZPgTOn3yXRTn0WEe0LICOU5q7cqF8gCpRwOMfDwQKULSTSwqQmMk
+ lnNNtsME3Daw8pUNetDpofaB0XAnKuBEaZgYjos8ga0qcfXocNrU69Igj18z4SvLiblG
+ E/5E7o8V2MtWhYETqns2PeBKGoYyJPchuD/7Adqb9MB0UD53esQOOZN8TdGJIsLqZaMv
+ 3lLCdZXc1e37NwpE2BaZD1PEXCOc674gYCar1W2/ANLUldWIXkcK7QbIUwVv7FjwTOPp RQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2vk7fr9n5d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 17:56:24 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmHvT048939;
+        Tue, 15 Oct 2019 17:56:23 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2vnf7rnanp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Oct 2019 17:56:23 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9FHuMS3002533;
+        Tue, 15 Oct 2019 17:56:22 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 15 Oct 2019 17:56:21 +0000
+Date:   Tue, 15 Oct 2019 10:56:19 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/12] xfs: refactor the ioend merging code
+Message-ID: <20191015175619.GN13108@magnolia>
+References: <20191015154345.13052-1-hch@lst.de>
+ <20191015154345.13052-5-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 15 Oct 2019 17:46:49 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015154345.13052-5-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910150153
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910150153
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If regular request queue gets full, currently we sleep for a bit and
-retrying submission in submitter's context. This assumes submitter is
-not holding any spin lock. But this assumption is not true for background
-requests. For background requests, we are called with fc->bg_lock held.
+On Tue, Oct 15, 2019 at 05:43:37PM +0200, Christoph Hellwig wrote:
+> Introduce two nicely abstracted helper, which can be moved to the
+> iomap code later.  Also use list_pop_entry and list_first_entry_or_null
+> to simplify the code a bit.
 
-This can lead to deadlock where one thread is trying submission with
-fc->bg_lock held while request completion thread has called fuse_request_end()
-which tries to acquire fc->bg_lock and gets blocked. As request completion
-thread gets blocked, it does not make further progress and that means queue
-does not get empty and submitter can't submit more requests.
+No we don't use these....     ^^^^^^^^^^^^^^
 
-To solve this issue, retry submission with the help of a worker, instead of
-retrying in submitter's context. We already do this for hiprio/forget
-requests.
+Everything else looks ok.
 
-Reported-by: Chirantan Ekbote <chirantan@chromium.org>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/fuse/virtio_fs.c | 59 ++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 50 insertions(+), 9 deletions(-)
+--D
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 625de45fa471..58e568ef54ef 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -55,6 +55,9 @@ struct virtio_fs_forget {
- 	struct list_head list;
- };
- 
-+static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
-+				 struct fuse_req *req, bool in_flight);
-+
- static inline struct virtio_fs_vq *vq_to_fsvq(struct virtqueue *vq)
- {
- 	struct virtio_fs *fs = vq->vdev->priv;
-@@ -260,6 +263,7 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
- 	struct virtio_fs_vq *fsvq = container_of(work, struct virtio_fs_vq,
- 						 dispatch_work.work);
- 	struct fuse_conn *fc = fsvq->fud->fc;
-+	int ret;
- 
- 	pr_debug("virtio-fs: worker %s called.\n", __func__);
- 	while (1) {
-@@ -268,13 +272,43 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
- 					       list);
- 		if (!req) {
- 			spin_unlock(&fsvq->lock);
--			return;
-+			break;
- 		}
- 
- 		list_del_init(&req->list);
- 		spin_unlock(&fsvq->lock);
- 		fuse_request_end(fc, req);
- 	}
-+
-+	/* Dispatch pending requests */
-+	while (1) {
-+		spin_lock(&fsvq->lock);
-+		req = list_first_entry_or_null(&fsvq->queued_reqs,
-+					       struct fuse_req, list);
-+		if (!req) {
-+			spin_unlock(&fsvq->lock);
-+			return;
-+		}
-+		list_del_init(&req->list);
-+		spin_unlock(&fsvq->lock);
-+
-+		ret = virtio_fs_enqueue_req(fsvq, req, true);
-+		if (ret < 0) {
-+			if (ret == -ENOMEM || ret == -ENOSPC) {
-+				spin_lock(&fsvq->lock);
-+				list_add_tail(&req->list, &fsvq->queued_reqs);
-+				schedule_delayed_work(&fsvq->dispatch_work,
-+						      msecs_to_jiffies(1));
-+				spin_unlock(&fsvq->lock);
-+				return;
-+			}
-+			req->out.h.error = ret;
-+			dec_in_flight_req(fsvq);
-+			pr_err("virtio-fs: virtio_fs_enqueue_req() failed %d\n",
-+			       ret);
-+			fuse_request_end(fc, req);
-+		}
-+	}
- }
- 
- static void virtio_fs_hiprio_dispatch_work(struct work_struct *work)
-@@ -837,7 +871,7 @@ static unsigned int sg_init_fuse_args(struct scatterlist *sg,
- 
- /* Add a request to a virtqueue and kick the device */
- static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
--				 struct fuse_req *req)
-+				 struct fuse_req *req, bool in_flight)
- {
- 	/* requests need at least 4 elements */
- 	struct scatterlist *stack_sgs[6];
-@@ -917,7 +951,8 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 	/* matches barrier in request_wait_answer() */
- 	smp_mb__after_atomic();
- 
--	inc_in_flight_req(fsvq);
-+	if (!in_flight)
-+		inc_in_flight_req(fsvq);
- 	notify = virtqueue_kick_prepare(vq);
- 
- 	spin_unlock(&fsvq->lock);
-@@ -963,15 +998,21 @@ __releases(fiq->lock)
- 		 req->in.h.nodeid, req->in.h.len,
- 		 fuse_len_args(req->args->out_numargs, req->args->out_args));
- 
--retry:
- 	fsvq = &fs->vqs[queue_id];
--	ret = virtio_fs_enqueue_req(fsvq, req);
-+	ret = virtio_fs_enqueue_req(fsvq, req, false);
- 	if (ret < 0) {
- 		if (ret == -ENOMEM || ret == -ENOSPC) {
--			/* Virtqueue full. Retry submission */
--			/* TODO use completion instead of timeout */
--			usleep_range(20, 30);
--			goto retry;
-+			/*
-+			 * Virtqueue full. Retry submission from worker
-+			 * context as we might be holding fc->bg_lock.
-+			 */
-+			spin_lock(&fsvq->lock);
-+			list_add_tail(&req->list, &fsvq->queued_reqs);
-+			inc_in_flight_req(fsvq);
-+			schedule_delayed_work(&fsvq->dispatch_work,
-+						msecs_to_jiffies(1));
-+			spin_unlock(&fsvq->lock);
-+			return;
- 		}
- 		req->out.h.error = ret;
- 		pr_err("virtio-fs: virtio_fs_enqueue_req() failed %d\n", ret);
--- 
-2.20.1
-
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/xfs/xfs_aops.c | 73 +++++++++++++++++++++++++++--------------------
+>  1 file changed, 42 insertions(+), 31 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 91899de2be09..c29ef69d1e51 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -116,6 +116,22 @@ xfs_destroy_ioend(
+>  	}
+>  }
+>  
+> +static void
+> +xfs_destroy_ioends(
+> +	struct xfs_ioend	*ioend,
+> +	int			error)
+> +{
+> +	struct list_head	tmp;
+> +
+> +	list_replace_init(&ioend->io_list, &tmp);
+> +	xfs_destroy_ioend(ioend, error);
+> +	while ((ioend = list_first_entry_or_null(&tmp, struct xfs_ioend,
+> +			io_list))) {
+> +		list_del_init(&ioend->io_list);
+> +		xfs_destroy_ioend(ioend, error);
+> +	}
+> +}
+> +
+>  /*
+>   * Fast and loose check if this write could update the on-disk inode size.
+>   */
+> @@ -230,7 +246,6 @@ STATIC void
+>  xfs_end_ioend(
+>  	struct xfs_ioend	*ioend)
+>  {
+> -	struct list_head	ioend_list;
+>  	struct xfs_inode	*ip = XFS_I(ioend->io_inode);
+>  	xfs_off_t		offset = ioend->io_offset;
+>  	size_t			size = ioend->io_size;
+> @@ -275,16 +290,7 @@ xfs_end_ioend(
+>  done:
+>  	if (ioend->io_append_trans)
+>  		error = xfs_setfilesize_ioend(ioend, error);
+> -	list_replace_init(&ioend->io_list, &ioend_list);
+> -	xfs_destroy_ioend(ioend, error);
+> -
+> -	while (!list_empty(&ioend_list)) {
+> -		ioend = list_first_entry(&ioend_list, struct xfs_ioend,
+> -				io_list);
+> -		list_del_init(&ioend->io_list);
+> -		xfs_destroy_ioend(ioend, error);
+> -	}
+> -
+> +	xfs_destroy_ioends(ioend, error);
+>  	memalloc_nofs_restore(nofs_flag);
+>  }
+>  
+> @@ -333,17 +339,18 @@ xfs_ioend_try_merge(
+>  	struct xfs_ioend	*ioend,
+>  	struct list_head	*more_ioends)
+>  {
+> -	struct xfs_ioend	*next_ioend;
+> +	struct xfs_ioend	*next;
+> +
+> +	INIT_LIST_HEAD(&ioend->io_list);
+>  
+> -	while (!list_empty(more_ioends)) {
+> -		next_ioend = list_first_entry(more_ioends, struct xfs_ioend,
+> -				io_list);
+> -		if (!xfs_ioend_can_merge(ioend, next_ioend))
+> +	while ((next = list_first_entry_or_null(more_ioends, struct xfs_ioend,
+> +			io_list))) {
+> +		if (!xfs_ioend_can_merge(ioend, next))
+>  			break;
+> -		list_move_tail(&next_ioend->io_list, &ioend->io_list);
+> -		ioend->io_size += next_ioend->io_size;
+> -		if (next_ioend->io_append_trans)
+> -			xfs_ioend_merge_append_transactions(ioend, next_ioend);
+> +		list_move_tail(&next->io_list, &ioend->io_list);
+> +		ioend->io_size += next->io_size;
+> +		if (next->io_append_trans)
+> +			xfs_ioend_merge_append_transactions(ioend, next);
+>  	}
+>  }
+>  
+> @@ -366,29 +373,33 @@ xfs_ioend_compare(
+>  	return 0;
+>  }
+>  
+> +static void
+> +xfs_sort_ioends(
+> +	struct list_head	*ioend_list)
+> +{
+> +	list_sort(NULL, ioend_list, xfs_ioend_compare);
+> +}
+> +
+>  /* Finish all pending io completions. */
+>  void
+>  xfs_end_io(
+>  	struct work_struct	*work)
+>  {
+> -	struct xfs_inode	*ip;
+> +	struct xfs_inode	*ip =
+> +		container_of(work, struct xfs_inode, i_ioend_work);
+>  	struct xfs_ioend	*ioend;
+> -	struct list_head	completion_list;
+> +	struct list_head	tmp;
+>  	unsigned long		flags;
+>  
+> -	ip = container_of(work, struct xfs_inode, i_ioend_work);
+> -
+>  	spin_lock_irqsave(&ip->i_ioend_lock, flags);
+> -	list_replace_init(&ip->i_ioend_list, &completion_list);
+> +	list_replace_init(&ip->i_ioend_list, &tmp);
+>  	spin_unlock_irqrestore(&ip->i_ioend_lock, flags);
+>  
+> -	list_sort(NULL, &completion_list, xfs_ioend_compare);
+> -
+> -	while (!list_empty(&completion_list)) {
+> -		ioend = list_first_entry(&completion_list, struct xfs_ioend,
+> -				io_list);
+> +	xfs_sort_ioends(&tmp);
+> +	while ((ioend = list_first_entry_or_null(&tmp, struct xfs_ioend,
+> +			io_list))) {
+>  		list_del_init(&ioend->io_list);
+> -		xfs_ioend_try_merge(ioend, &completion_list);
+> +		xfs_ioend_try_merge(ioend, &tmp);
+>  		xfs_end_ioend(ioend);
+>  	}
+>  }
+> -- 
+> 2.20.1
+> 
