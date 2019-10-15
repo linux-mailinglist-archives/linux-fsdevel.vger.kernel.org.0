@@ -2,242 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1310D7401
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 12:57:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A7EDD7501
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 13:31:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731603AbfJOK5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 06:57:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50138 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726054AbfJOK5U (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:57:20 -0400
-Received: from paulmck-ThinkPad-P72 (unknown [76.14.14.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CBDC217F9;
-        Tue, 15 Oct 2019 10:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571137038;
-        bh=DOazOHrhGYjtGI/8yMNyg8pFGwNff+cPJ7RtuF6t/OE=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=rqLhKWnfSJARtfDtPPblsKgNaT72Z6D7E+ms1Uml6ipZCCwA7Ooy3fbtrHmRPIV0+
-         4+9rbRTY7TAQiZ9me3FbwCyTOoNXAZQcrDVbtM/llRDMs8vGItMXuPCHZakSvl6+OD
-         XXhg+zQAa7dD0//J6aH4UrwtJ7gVeMmSV5XHr4ic=
-Date:   Tue, 15 Oct 2019 03:57:16 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Lai Jiangshan <laijs@linux.alibaba.com>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        David Sterba <dsterba@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Marco Elver <elver@google.com>, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] rcu: make PREEMPT_RCU to be a decoration of TREE_RCU
-Message-ID: <20191015105716.GR2689@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191015020023.GO2689@paulmck-ThinkPad-P72>
- <20191015025559.829-1-laijs@linux.alibaba.com>
+        id S1728089AbfJOLbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 07:31:33 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:32890 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfJOLbc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 07:31:32 -0400
+Received: by mail-io1-f66.google.com with SMTP id z19so45133835ior.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2019 04:31:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=t+0aOq5/KJqa5A5mabjoe4CtVEBeOSUgcAKPvywC0uM=;
+        b=ixWxCYesyTSYCZ/PQSKwn9t/GvD0u42wkLjnvIdCzC3DLvoyvcBWZkznCqEVez+oeR
+         Gf9tPSuymQ43Vq52spUP9suh7jM0KVvrHx9HtTB+xvLxq8beOB6iYupuBmlRxIOXYSJJ
+         81uJhrqjBYAGxAsb80v6PWW3xhel9l3+Eq+zxqTJwosmUyLvuvI5NrYhyn8UJQvcLKPg
+         jpAVHtqK+MMCi5fLoPXf2hQxV3D4RTQRBK/8q0gsORArqiipEsvfppppsUNwPhWIKTcu
+         /MbNNYlMtTy0DCL24KVt7kyfPKV7InXPHRaENlwM0Arr4vLkZhwZvkl0ZtatuIP+g6GD
+         FLUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=t+0aOq5/KJqa5A5mabjoe4CtVEBeOSUgcAKPvywC0uM=;
+        b=DWTSa4jX94w+APzOE8Ogpzfl3oYVdJ6lTdqqYDVdxOGi6WppeSB9B/50QkhUJ4Ex+H
+         fqpCdvHo+8md48Yda76/MDLPbbpfEUN1aDwdJj+2Met1F3QpY6QjI7LarXlUMShTL0Wh
+         tdaXHcmVi3vwEo9shG7TQDmUwpelKKgP8czgAdApRp9DGRwXuXkil4Se8KssiEMcjW+i
+         tRr/t7L6T0SclvEXE/bPmovuL2oce+lEYkspubQAlcluxINqO3Eur+hgN/Oeze62BKrI
+         YNbVO81WSxIuSFc+nkh5v12Uxx5DYpQ56yKSHPOu7pjVx0j28hmamOt8erRSQq7tcNCy
+         HE9A==
+X-Gm-Message-State: APjAAAVrZmjZB1lJRK3znQJUlWJvnFw31fHnJYFOgLtWVj73A55CWllV
+        uoQ+wSkQngGRxSeprCrgtuSytF3sPPc9DWUbqGg=
+X-Google-Smtp-Source: APXvYqwpYGWlbFlfC5cc8hHmgOoAVvTHr+PV5XeIvGBklofpRDo+DDbgTwLrdTFd3TydNsMKnDtVvCi/4Up/5015hJs=
+X-Received: by 2002:a02:40c6:: with SMTP id n189mr42419103jaa.52.1571139091812;
+ Tue, 15 Oct 2019 04:31:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191015025559.829-1-laijs@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191014220940.GF13098@magnolia>
+In-Reply-To: <20191014220940.GF13098@magnolia>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Tue, 15 Oct 2019 13:31:20 +0200
+Message-ID: <CAHpGcMJB+ZaJ+dFDZ-VEuih8nGJXxGWUFEtjCX3mTWpb6Tfhew@mail.gmail.com>
+Subject: Re: [PATCH v3] splice: only read in as much information as there is
+ pipe buffer space
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Bob Peterson <rpeterso@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 02:55:57AM +0000, Lai Jiangshan wrote:
-> Currently PREEMPT_RCU and TREE_RCU are "contrary" configs
-> when they can't be both on. But PREEMPT_RCU is actually a kind
-> of TREE_RCU in the implementation. It seams to be appropriate
-> to make PREEMPT_RCU to be a decorative option of TREE_RCU.
-> 
-> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
-> Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
-> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org> 
+Hi Darrick,
 
-Applied for further review and testing, thank you both!
+Am Di., 15. Okt. 2019 um 07:33 Uhr schrieb Darrick J. Wong
+<darrick.wong@oracle.com>:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
+>
+> Andreas Gr=C3=BCnbacher reports that on the two filesystems that support
+> iomap directio, it's possible for splice() to return -EAGAIN (instead of
+> a short splice) if the pipe being written to has less space available in
+> its pipe buffers than the length supplied by the calling process.
+>
+> Months ago we fixed splice_direct_to_actor to clamp the length of the
+> read request to the size of the splice pipe.  Do the same to do_splice.
+>
+> Fixes: 17614445576b6 ("splice: don't read more than available pipe space"=
+)
+> Reported-by: syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com
+> Reported-by: Andreas Gr=C3=BCnbacher <andreas.gruenbacher@gmail.com>
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-							Thanx, Paul
+I've done some minimal testing on top of 5.4-rc3. This patch fixes the
+splice issue and also passes the syzbot reproducer. I'll add it to the
+set of patches I regularly run fstests on now, but we already know
+fstests doesn't cover splice in the greatest depth possible, so that's
+unlikely to reveal anything new.
+
+Thanks,
+Andreas
 
 > ---
-> Changed from v1:
-> 	Rebased on -rcu "dev" branch
->  include/linux/rcupdate.h   |  4 ++--
->  include/trace/events/rcu.h |  4 ++--
->  kernel/rcu/Kconfig         | 13 +++++++------
->  kernel/rcu/Makefile        |  1 -
->  kernel/rcu/rcu.h           |  2 +-
->  kernel/rcu/update.c        |  2 +-
->  kernel/sysctl.c            |  2 +-
->  7 files changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> index c6351314cbe6..4dcf46985922 100644
-> --- a/include/linux/rcupdate.h
-> +++ b/include/linux/rcupdate.h
-> @@ -167,7 +167,7 @@ do { \
->   * TREE_RCU and rcu_barrier_() primitives in TINY_RCU.
->   */
->  
-> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
-> +#if defined(CONFIG_TREE_RCU)
->  #include <linux/rcutree.h>
->  #elif defined(CONFIG_TINY_RCU)
->  #include <linux/rcutiny.h>
-> @@ -585,7 +585,7 @@ do {									      \
->   * read-side critical section that would block in a !PREEMPT kernel.
->   * But if you want the full story, read on!
->   *
-> - * In non-preemptible RCU implementations (TREE_RCU and TINY_RCU),
-> + * In non-preemptible RCU implementations (pure TREE_RCU and TINY_RCU),
->   * it is illegal to block while in an RCU read-side critical section.
->   * In preemptible RCU implementations (PREEMPT_RCU) in CONFIG_PREEMPTION
->   * kernel builds, RCU read-side critical sections may be preempted,
-> diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
-> index 35a384ec78b5..5e49b06e8104 100644
-> --- a/include/trace/events/rcu.h
-> +++ b/include/trace/events/rcu.h
-> @@ -41,7 +41,7 @@ TRACE_EVENT(rcu_utilization,
->  	TP_printk("%s", __entry->s)
->  );
->  
-> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
-> +#if defined(CONFIG_TREE_RCU)
->  
->  /*
->   * Tracepoint for grace-period events.  Takes a string identifying the
-> @@ -432,7 +432,7 @@ TRACE_EVENT_RCU(rcu_fqs,
->  		  __entry->cpu, __entry->qsevent)
->  );
->  
-> -#endif /* #if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU) */
-> +#endif /* #if defined(CONFIG_TREE_RCU) */
->  
->  /*
->   * Tracepoint for dyntick-idle entry/exit events.  These take a string
-> diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-> index 7644eda17d62..0303934e6ef0 100644
-> --- a/kernel/rcu/Kconfig
-> +++ b/kernel/rcu/Kconfig
-> @@ -7,7 +7,7 @@ menu "RCU Subsystem"
->  
->  config TREE_RCU
->  	bool
-> -	default y if !PREEMPTION && SMP
-> +	default y if SMP
->  	help
->  	  This option selects the RCU implementation that is
->  	  designed for very large SMP system with hundreds or
-> @@ -17,6 +17,7 @@ config TREE_RCU
->  config PREEMPT_RCU
->  	bool
->  	default y if PREEMPTION
-> +	select TREE_RCU
->  	help
->  	  This option selects the RCU implementation that is
->  	  designed for very large SMP systems with hundreds or
-> @@ -78,7 +79,7 @@ config TASKS_RCU
->  	  user-mode execution as quiescent states.
->  
->  config RCU_STALL_COMMON
-> -	def_bool ( TREE_RCU || PREEMPT_RCU )
-> +	def_bool TREE_RCU
->  	help
->  	  This option enables RCU CPU stall code that is common between
->  	  the TINY and TREE variants of RCU.  The purpose is to allow
-> @@ -86,13 +87,13 @@ config RCU_STALL_COMMON
->  	  making these warnings mandatory for the tree variants.
->  
->  config RCU_NEED_SEGCBLIST
-> -	def_bool ( TREE_RCU || PREEMPT_RCU || TREE_SRCU )
-> +	def_bool ( TREE_RCU || TREE_SRCU )
->  
->  config RCU_FANOUT
->  	int "Tree-based hierarchical RCU fanout value"
->  	range 2 64 if 64BIT
->  	range 2 32 if !64BIT
-> -	depends on (TREE_RCU || PREEMPT_RCU) && RCU_EXPERT
-> +	depends on TREE_RCU && RCU_EXPERT
->  	default 64 if 64BIT
->  	default 32 if !64BIT
->  	help
-> @@ -112,7 +113,7 @@ config RCU_FANOUT_LEAF
->  	int "Tree-based hierarchical RCU leaf-level fanout value"
->  	range 2 64 if 64BIT
->  	range 2 32 if !64BIT
-> -	depends on (TREE_RCU || PREEMPT_RCU) && RCU_EXPERT
-> +	depends on TREE_RCU && RCU_EXPERT
->  	default 16
->  	help
->  	  This option controls the leaf-level fanout of hierarchical
-> @@ -187,7 +188,7 @@ config RCU_BOOST_DELAY
->  
->  config RCU_NOCB_CPU
->  	bool "Offload RCU callback processing from boot-selected CPUs"
-> -	depends on TREE_RCU || PREEMPT_RCU
-> +	depends on TREE_RCU
->  	depends on RCU_EXPERT || NO_HZ_FULL
->  	default n
->  	help
-> diff --git a/kernel/rcu/Makefile b/kernel/rcu/Makefile
-> index 020e8b6a644b..82d5fba48b2f 100644
-> --- a/kernel/rcu/Makefile
-> +++ b/kernel/rcu/Makefile
-> @@ -9,6 +9,5 @@ obj-$(CONFIG_TINY_SRCU) += srcutiny.o
->  obj-$(CONFIG_RCU_TORTURE_TEST) += rcutorture.o
->  obj-$(CONFIG_RCU_PERF_TEST) += rcuperf.o
->  obj-$(CONFIG_TREE_RCU) += tree.o
-> -obj-$(CONFIG_PREEMPT_RCU) += tree.o
->  obj-$(CONFIG_TINY_RCU) += tiny.o
->  obj-$(CONFIG_RCU_NEED_SEGCBLIST) += rcu_segcblist.o
-> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-> index c30a1f7dbd15..a7ab2a023dd3 100644
-> --- a/kernel/rcu/rcu.h
-> +++ b/kernel/rcu/rcu.h
-> @@ -427,7 +427,7 @@ enum rcutorture_type {
->  	INVALID_RCU_FLAVOR
->  };
->  
-> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
-> +#if defined(CONFIG_TREE_RCU)
->  void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,
->  			    unsigned long *gp_seq);
->  void do_trace_rcu_torture_read(const char *rcutorturename,
-> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> index 196487762b96..2f529470cafa 100644
-> --- a/kernel/rcu/update.c
-> +++ b/kernel/rcu/update.c
-> @@ -437,7 +437,7 @@ struct debug_obj_descr rcuhead_debug_descr = {
->  EXPORT_SYMBOL_GPL(rcuhead_debug_descr);
->  #endif /* #ifdef CONFIG_DEBUG_OBJECTS_RCU_HEAD */
->  
-> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU) || defined(CONFIG_RCU_TRACE)
-> +#if defined(CONFIG_TREE_RCU) || defined(CONFIG_RCU_TRACE)
->  void do_trace_rcu_torture_read(const char *rcutorturename, struct rcu_head *rhp,
->  			       unsigned long secs,
->  			       unsigned long c_old, unsigned long c)
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 00fcea236eba..2ace158a4d72 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1268,7 +1268,7 @@ static struct ctl_table kern_table[] = {
->  		.proc_handler	= proc_do_static_key,
->  	},
->  #endif
-> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
-> +#if defined(CONFIG_TREE_RCU)
->  	{
->  		.procname	= "panic_on_rcu_stall",
->  		.data		= &sysctl_panic_on_rcu_stall,
-> -- 
-> 2.20.1
-> 
+>  fs/splice.c |   14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 98412721f056..e509239d7e06 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -945,12 +945,13 @@ ssize_t splice_direct_to_actor(struct file *in, str=
+uct splice_desc *sd,
+>         WARN_ON_ONCE(pipe->nrbufs !=3D 0);
+>
+>         while (len) {
+> +               unsigned int pipe_pages;
+>                 size_t read_len;
+>                 loff_t pos =3D sd->pos, prev_pos =3D pos;
+>
+>                 /* Don't try to read more the pipe has space for. */
+> -               read_len =3D min_t(size_t, len,
+> -                                (pipe->buffers - pipe->nrbufs) << PAGE_S=
+HIFT);
+> +               pipe_pages =3D pipe->buffers - pipe->nrbufs;
+> +               read_len =3D min(len, (size_t)pipe_pages << PAGE_SHIFT);
+>                 ret =3D do_splice_to(in, &pos, pipe, read_len, flags);
+>                 if (unlikely(ret <=3D 0))
+>                         goto out_release;
+> @@ -1180,8 +1181,15 @@ static long do_splice(struct file *in, loff_t __us=
+er *off_in,
+>
+>                 pipe_lock(opipe);
+>                 ret =3D wait_for_space(opipe, flags);
+> -               if (!ret)
+> +               if (!ret) {
+> +                       unsigned int pipe_pages;
+> +
+> +                       /* Don't try to read more the pipe has space for.=
+ */
+> +                       pipe_pages =3D opipe->buffers - opipe->nrbufs;
+> +                       len =3D min(len, (size_t)pipe_pages << PAGE_SHIFT=
+);
+> +
+>                         ret =3D do_splice_to(in, &offset, opipe, len, fla=
+gs);
+> +               }
+>                 pipe_unlock(opipe);
+>                 if (ret > 0)
+>                         wakeup_pipe_readers(opipe);
