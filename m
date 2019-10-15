@@ -2,93 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC29D6E4C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 06:38:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 840FCD7047
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 09:37:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbfJOEio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 00:38:44 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:44625 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbfJOEin (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 00:38:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1571114323; x=1602650323;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gDSqX501OhSu6g48JSoPoR2a3uxDz2ElT9166R/rHPM=;
-  b=TupAv1AppP4g4jbKNX5hPK44eVhbOUB9joUXOs3Ec443vcevqdnIsK08
-   nKalDhULf8/mAMh5+T8xq19I5qYAer4zct8q3OuV9BkowfJ3LNRQiND68
-   iasflBc66UmHL2wRZhjEwBLxNWZkC39v6KVJdyiZThmQdvLisUtVGOonT
-   drlvS/ijgzBhvDP8/5NDJBqhvh41bR2WSGdFp3ounN45N7UaGId5JoHUI
-   2jGK7PKraC5OMT5y/RrgDVXQz39rMEt8wwvJ9VgcxGojsnn7vKeDOc8LC
-   23VxRha9+aemc7vB1NuZYkyXeTLPbWt3ig46CfqanG0a352TqS2m/KT6y
-   w==;
-IronPort-SDR: GB9Ss6WaVoyV5R6AEkXHhFBrgaGzYnn7xkVGDRakccL2z9cOU6JYDeqszQ9A2OOcG3rkg5gdII
- RGhFQRi6JO2P5ehpfDqwhaCxI6PvsC9gUYCtoMkXYXbI5xRAyS4/X5+U95cUlYU7Z+xEKzQ71d
- Y4UWVMuY+DdXIrJAz+9lcxKidIQ/DlHhXJiRhn60ZL8r0BCTpiX6/b9+HAIpD2S+tfNz3MfTT1
- BpaBpXiVrxd2NEXN2sdxuuds+nhWSlPzK7bvKwsh4Yu8CZcu3mqdi5PMVL77J/R0OjBR8OdMJE
- al8=
-X-IronPort-AV: E=Sophos;i="5.67,297,1566835200"; 
-   d="scan'208";a="227591551"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Oct 2019 12:38:30 +0800
-IronPort-SDR: v25K94eaE3Rd4J97m6O1BmcjkFLwrUU3qvVpKFBaLk0Zz2rr0jfX/BSiMe4DV3twA+oZkXzcsX
- LT0GeI2ITnaIRBX9IUS2gxkYnKdNpxhNaaNxrlPp7Hl1W5T8bComaG7M3R70ULDhuxNqpF/s+5
- tt3auNf2W6F2x09uvXB5QAAmVnRBsED1/UCA6oyqh/qTBKBYVHfw+QZ9s2XnX1cLKYQ9c/pw4L
- 8Aff4rIwUz7WpEH7fSBeO5iWq7kGeFi1hovMVlUl9hcM1QtWtK8oBGrOC4VIG0F/wmtQvSy4Zi
- o95TgIiRo4HBYgFchj9PrE6H
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 21:34:20 -0700
-IronPort-SDR: UPN8Ssg25fhiIzxy+9ii1rkN3BxsQUiAyhRmmcuvGmruxDrp84oOI6HkHNrtP0frtOOQCxWhqH
- qPclCmfow5hbTFflQLX18xFlwbzGPK2sFrjQcs2oED2DR4ymAdbcTUZOXcwNsQtWgS7NgVmE1D
- x7EfqdKqTQI4ckLOlHqV7IgUgZ34UrjXyH++Ln5yugT/cdnHnjULcwQ3GcnUiZszFmJCxqbEJX
- b7WLFdSV5m/VYTjmHYkzBBD33WDn1oJcB4XiBN9GHM8GR18uQuM+D3gIu1F6ZPanAYHRw4OhIU
- 9EE=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 14 Oct 2019 21:38:30 -0700
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     linux-mm@kvack.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH] mm, swap: disallow swapon() on zoned block devices
-Date:   Tue, 15 Oct 2019 13:38:27 +0900
-Message-Id: <20191015043827.160444-1-naohiro.aota@wdc.com>
-X-Mailer: git-send-email 2.23.0
+        id S1726880AbfJOHhp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 03:37:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41112 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725890AbfJOHhp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 03:37:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DA59DB588;
+        Tue, 15 Oct 2019 07:37:41 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5E9A41E4A8A; Tue, 15 Oct 2019 09:37:40 +0200 (CEST)
+Date:   Tue, 15 Oct 2019 09:37:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Eric Sandeen <sandeen@redhat.com>
+Cc:     fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V2] fs: avoid softlockups in s_inodes iterators
+Message-ID: <20191015073740.GA21550@quack2.suse.cz>
+References: <a26fae1d-a741-6eb1-b460-968a3b97e238@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a26fae1d-a741-6eb1-b460-968a3b97e238@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A zoned block device consists of a number of zones. Zones are
-eitherconventional and accepting random writes or sequential and
-requiringthat writes be issued in LBA order from each zone write
-pointerposition. For the write restriction, zoned block devices are
-notsuitable for a swap device. Disallow swapon on them.
+On Mon 14-10-19 16:30:24, Eric Sandeen wrote:
+> Anything that walks all inodes on sb->s_inodes list without rescheduling
+> risks softlockups.
+> 
+> Previous efforts were made in 2 functions, see:
+> 
+> c27d82f fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
+> ac05fbb inode: don't softlockup when evicting inodes
+> 
+> but there hasn't been an audit of all walkers, so do that now.  This
+> also consistently moves the cond_resched() calls to the bottom of each
+> loop in cases where it already exists.
+> 
+> One loop remains: remove_dquot_ref(), because I'm not quite sure how
+> to deal with that one w/o taking the i_lock.
+> 
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
----
- mm/swapfile.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks Eric. The patch looks good to me. You can add:
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index dab43523afdd..a9da20739017 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2887,6 +2887,8 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
- 		error = set_blocksize(p->bdev, PAGE_SIZE);
- 		if (error < 0)
- 			return error;
-+		if (blk_queue_is_zoned(p->bdev->bd_queue))
-+			return -EINVAL;
- 		p->flags |= SWP_BLKDEV;
- 	} else if (S_ISREG(inode->i_mode)) {
- 		p->bdev = inode->i_sb->s_bdev;
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+BTW, I suppose you need to add Al to pickup the patch?
+
+								Honza
+
+> ---
+> 
+> V2: Drop unrelated iput cleanups in fsnotify
+> 
+> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+> index d31b6c72b476..dc1a1d5d825b 100644
+> --- a/fs/drop_caches.c
+> +++ b/fs/drop_caches.c
+> @@ -35,11 +35,11 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+>  		spin_unlock(&inode->i_lock);
+>  		spin_unlock(&sb->s_inode_list_lock);
+> -		cond_resched();
+>  		invalidate_mapping_pages(inode->i_mapping, 0, -1);
+>  		iput(toput_inode);
+>  		toput_inode = inode;
+> +		cond_resched();
+>  		spin_lock(&sb->s_inode_list_lock);
+>  	}
+>  	spin_unlock(&sb->s_inode_list_lock);
+> diff --git a/fs/inode.c b/fs/inode.c
+> index fef457a42882..b0c789bb3dba 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -676,6 +676,7 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+>  	struct inode *inode, *next;
+>  	LIST_HEAD(dispose);
+> +again:
+>  	spin_lock(&sb->s_inode_list_lock);
+>  	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
+>  		spin_lock(&inode->i_lock);
+> @@ -698,6 +699,13 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+>  		inode_lru_list_del(inode);
+>  		spin_unlock(&inode->i_lock);
+>  		list_add(&inode->i_lru, &dispose);
+> +
+> +		if (need_resched()) {
+> +			spin_unlock(&sb->s_inode_list_lock);
+> +			cond_resched();
+> +			dispose_list(&dispose);
+> +			goto again;
+> +		}
+>  	}
+>  	spin_unlock(&sb->s_inode_list_lock);
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 2ecef6155fc0..ac9eb273e28c 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -77,6 +77,7 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
+>  		iput_inode = inode;
+> +		cond_resched();
+>  		spin_lock(&sb->s_inode_list_lock);
+>  	}
+>  	spin_unlock(&sb->s_inode_list_lock);
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index 6e826b454082..4a085b3c7cac 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -985,6 +985,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
+>  		 * later.
+>  		 */
+>  		old_inode = inode;
+> +		cond_resched();
+>  		spin_lock(&sb->s_inode_list_lock);
+>  	}
+>  	spin_unlock(&sb->s_inode_list_lock);
+> 
 -- 
-2.23.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
