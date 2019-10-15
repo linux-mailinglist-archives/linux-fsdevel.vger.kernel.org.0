@@ -2,70 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7641D7E62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 20:05:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AFF8D7E74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 20:08:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731226AbfJOSFa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 14:05:30 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58044 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfJOSFa (ORCPT
+        id S2389055AbfJOSIh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 14:08:37 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38544 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfJOSIh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 14:05:30 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmZjA099337;
-        Tue, 15 Oct 2019 18:05:18 GMT
+        Tue, 15 Oct 2019 14:08:37 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmZVC085408;
+        Tue, 15 Oct 2019 18:08:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2019-08-05;
- bh=h/pDF50/xZASrhrF1O6hc1+y21gJKm84vSqY9+7tmaY=;
- b=DhtzFjYLry5GdvhS10jg/waTEXGMP9nYMbqylT0o9pRurOoRsfRq3CBZoDLLSxEWDZEi
- H09Yr5IrWQOtL4Ha24tPabPy9ysibUt6InHQitacVXlZGQ+3LQBZZN0DV9FALP9WvozT
- of78y19qcifDdC1qQ6+vo/xUajfCtXDtpIMHjyB7oceMtPaXzzB8enmGQ0bRDPGSuZh8
- E3/oItJU9/Bifnx2sZh+0inLEnr2yQdJUAOH+CYUxdOmpBayXVn3M5i9U1DnmNaBUFeR
- nO7HCvPMrozOU73Hbx3ckqSHDDZV7seQYtr0SRzd2bt8davPfKnpi2+uI096hNqPCCbW Pw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2vk68uhw1p-1
+ bh=tffcv5R344QUSZsjEYxRMACURvQ25ud8isc745HmEUk=;
+ b=iJuUfJFpOQECw4zViTjMbajpDf5ldW/jOzmcLO1jrmGIPHTWWbK+KGMhziBz4uKZ6gy+
+ yvZqLwmHZKuqpwi6ZbHjSJX/hE+rlmHptl466dumCsG1FTvbkPW6+0Tsu/iIYdGlZmNl
+ BOImKgTO7gBhHf9vnPRZ82zKGJ6zu3yqg69MvZEV6omibatSWf4BliU5bLZLxntjMl9Y
+ JpY0CuPvAoGGnqldnOttqdxEcnifGJHHKkjWh7QYfdGJKQqU2R3+yQRwBf8/y6nnOn5+
+ mL/cLSbCibRBIVNh/RdlKzkQToob79LHjTSwfVj7hLw3+tetKwn2fUOysIXImoeU56/D 0g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2vk7fr9qjt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 18:05:18 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmH2F048939;
-        Tue, 15 Oct 2019 18:05:17 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2vnf7rnvy6-1
+        Tue, 15 Oct 2019 18:08:18 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FHmLp8059866;
+        Tue, 15 Oct 2019 18:06:18 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2vnb0fm8uv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 18:05:17 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9FI5HQk008960;
-        Tue, 15 Oct 2019 18:05:17 GMT
+        Tue, 15 Oct 2019 18:06:17 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9FI6Fbc024969;
+        Tue, 15 Oct 2019 18:06:15 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Oct 2019 18:05:15 +0000
-Date:   Tue, 15 Oct 2019 11:05:14 -0700
+        with ESMTP ; Tue, 15 Oct 2019 11:06:15 -0700
+Date:   Tue, 15 Oct 2019 11:06:13 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/12] xfs: remove the fork fields in the writepage_ctx
- and ioend
-Message-ID: <20191015180514.GS13108@magnolia>
+Subject: Re: [PATCH 08/12] iomap: lift the xfs readpage / readpages tracing
+ to iomap
+Message-ID: <20191015180613.GT13108@magnolia>
 References: <20191015154345.13052-1-hch@lst.de>
- <20191015154345.13052-7-hch@lst.de>
+ <20191015154345.13052-9-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191015154345.13052-7-hch@lst.de>
+In-Reply-To: <20191015154345.13052-9-hch@lst.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1908290000 definitions=main-1910150153
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
  definitions=main-1910150153
@@ -74,9 +74,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 05:43:39PM +0200, Christoph Hellwig wrote:
-> In preparation for moving the writeback code to iomap.c, replace the
-> XFS-specific COW fork concept with the iomap IOMAP_F_SHARED flag.
+On Tue, Oct 15, 2019 at 05:43:41PM +0200, Christoph Hellwig wrote:
+> Lift the xfs code for tracing address space operations to the iomap
+> layer.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
@@ -86,248 +86,203 @@ Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 --D
 
 > ---
->  fs/xfs/xfs_aops.c | 71 ++++++++++++++++++++++++++++++-----------------
->  fs/xfs/xfs_aops.h |  2 +-
->  2 files changed, 46 insertions(+), 27 deletions(-)
+>  fs/iomap/Makefile      | 16 ++++++++------
+>  fs/iomap/buffered-io.c |  5 +++++
+>  fs/iomap/trace.c       | 12 +++++++++++
+>  fs/iomap/trace.h       | 49 ++++++++++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_aops.c      |  2 --
+>  fs/xfs/xfs_trace.h     | 26 ----------------------
+>  6 files changed, 75 insertions(+), 35 deletions(-)
+>  create mode 100644 fs/iomap/trace.c
+>  create mode 100644 fs/iomap/trace.h
 > 
+> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
+> index 93cd11938bf5..eef2722d93a1 100644
+> --- a/fs/iomap/Makefile
+> +++ b/fs/iomap/Makefile
+> @@ -3,13 +3,15 @@
+>  # Copyright (c) 2019 Oracle.
+>  # All Rights Reserved.
+>  #
+> -obj-$(CONFIG_FS_IOMAP)		+= iomap.o
+>  
+> -iomap-y				+= \
+> -					apply.o \
+> -					buffered-io.o \
+> -					direct-io.o \
+> -					fiemap.o \
+> -					seek.o
+> +ccflags-y += -I $(srctree)/$(src)		# needed for trace events
+> +
+> +obj-$(CONFIG_FS_IOMAP)		+= iomap.o
+>  
+> +iomap-y				+= trace.o \
+> +				   apply.o \
+> +				   buffered-io.o \
+> +				   direct-io.o \
+> +				   fiemap.o \
+> +				   seek.o
+>  iomap-$(CONFIG_SWAP)		+= swapfile.o
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 181ee8477aad..d1620c3f2a4c 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/bio.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/migrate.h>
+> +#include "trace.h"
+>  
+>  #include "../internal.h"
+>  
+> @@ -301,6 +302,8 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
+>  	unsigned poff;
+>  	loff_t ret;
+>  
+> +	trace_iomap_readpage(page->mapping->host, 1);
+> +
+>  	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
+>  		ret = iomap_apply(inode, page_offset(page) + poff,
+>  				PAGE_SIZE - poff, 0, ops, &ctx,
+> @@ -397,6 +400,8 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+>  	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
+>  	loff_t length = last - pos + PAGE_SIZE, ret = 0;
+>  
+> +	trace_iomap_readpages(mapping->host, nr_pages);
+> +
+>  	while (length > 0) {
+>  		ret = iomap_apply(mapping->host, pos, length, 0, ops,
+>  				&ctx, iomap_readpages_actor);
+> diff --git a/fs/iomap/trace.c b/fs/iomap/trace.c
+> new file mode 100644
+> index 000000000000..63ce9f0ce4dc
+> --- /dev/null
+> +++ b/fs/iomap/trace.c
+> @@ -0,0 +1,12 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2019, Christoph Hellwig
+> + */
+> +#include <linux/iomap.h>
+> +
+> +/*
+> + * We include this last to have the helpers above available for the trace
+> + * event implementations.
+> + */
+> +#define CREATE_TRACE_POINTS
+> +#include "trace.h"
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> new file mode 100644
+> index 000000000000..3900de1d871d
+> --- /dev/null
+> +++ b/fs/iomap/trace.h
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2009-2019, Christoph Hellwig
+> + *
+> + * NOTE: none of these tracepoints shall be consider a stable kernel ABI
+> + * as they can change at any time.
+> + */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM iomap
+> +
+> +#if !defined(_IOMAP_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _IOMAP_TRACE_H
+> +
+> +#include <linux/tracepoint.h>
+> +
+> +struct inode;
+> +
+> +DECLARE_EVENT_CLASS(iomap_readpage_class,
+> +	TP_PROTO(struct inode *inode, int nr_pages),
+> +	TP_ARGS(inode, nr_pages),
+> +	TP_STRUCT__entry(
+> +		__field(dev_t, dev)
+> +		__field(u64, ino)
+> +		__field(int, nr_pages)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->dev = inode->i_sb->s_dev;
+> +		__entry->ino = inode->i_ino;
+> +		__entry->nr_pages = nr_pages;
+> +	),
+> +	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
+> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
+> +		  __entry->ino,
+> +		  __entry->nr_pages)
+> +)
+> +
+> +#define DEFINE_READPAGE_EVENT(name)		\
+> +DEFINE_EVENT(iomap_readpage_class, name,	\
+> +	TP_PROTO(struct inode *inode, int nr_pages), \
+> +	TP_ARGS(inode, nr_pages))
+> +DEFINE_READPAGE_EVENT(iomap_readpage);
+> +DEFINE_READPAGE_EVENT(iomap_readpages);
+> +
+> +#endif /* _IOMAP_TRACE_H */
+> +
+> +#undef TRACE_INCLUDE_PATH
+> +#define TRACE_INCLUDE_PATH .
+> +#define TRACE_INCLUDE_FILE trace
+> +#include <trace/define_trace.h>
 > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index df5955388adc..00fe40b35f72 100644
+> index 00fe40b35f72..e2033b070f4a 100644
 > --- a/fs/xfs/xfs_aops.c
 > +++ b/fs/xfs/xfs_aops.c
-> @@ -23,7 +23,6 @@
->   */
->  struct xfs_writepage_ctx {
->  	struct iomap		iomap;
-> -	int			fork;
->  	unsigned int		data_seq;
->  	unsigned int		cow_seq;
->  	struct xfs_ioend	*ioend;
-> @@ -272,7 +271,7 @@ xfs_end_ioend(
->  	 */
->  	error = blk_status_to_errno(ioend->io_bio->bi_status);
->  	if (unlikely(error)) {
-> -		if (ioend->io_fork == XFS_COW_FORK)
-> +		if (ioend->io_flags & IOMAP_F_SHARED)
->  			xfs_reflink_cancel_cow_range(ip, offset, size, true);
->  		goto done;
->  	}
-> @@ -280,7 +279,7 @@ xfs_end_ioend(
->  	/*
->  	 * Success: commit the COW or unwritten blocks if needed.
->  	 */
-> -	if (ioend->io_fork == XFS_COW_FORK)
-> +	if (ioend->io_flags & IOMAP_F_SHARED)
->  		error = xfs_reflink_end_cow(ip, offset, size);
->  	else if (ioend->io_type == IOMAP_UNWRITTEN)
->  		error = xfs_iomap_write_unwritten(ip, offset, size, false);
-> @@ -304,7 +303,8 @@ xfs_ioend_can_merge(
+> @@ -1184,7 +1184,6 @@ xfs_vm_readpage(
+>  	struct file		*unused,
+>  	struct page		*page)
 >  {
->  	if (ioend->io_bio->bi_status != next->io_bio->bi_status)
->  		return false;
-> -	if ((ioend->io_fork == XFS_COW_FORK) ^ (next->io_fork == XFS_COW_FORK))
-> +	if ((ioend->io_flags & IOMAP_F_SHARED) ^
-> +	    (next->io_flags & IOMAP_F_SHARED))
->  		return false;
->  	if ((ioend->io_type == IOMAP_UNWRITTEN) ^
->  	    (next->io_type == IOMAP_UNWRITTEN))
-> @@ -404,6 +404,13 @@ xfs_end_io(
->  	}
+> -	trace_xfs_vm_readpage(page->mapping->host, 1);
+>  	return iomap_readpage(page, &xfs_iomap_ops);
 >  }
 >  
-> +static inline bool xfs_ioend_needs_workqueue(struct xfs_ioend *ioend)
-> +{
-> +	return ioend->io_private ||
-> +		ioend->io_type == IOMAP_UNWRITTEN ||
-> +		(ioend->io_flags & IOMAP_F_SHARED);
-> +}
-> +
->  STATIC void
->  xfs_end_bio(
->  	struct bio		*bio)
-> @@ -413,9 +420,7 @@ xfs_end_bio(
->  	struct xfs_mount	*mp = ip->i_mount;
->  	unsigned long		flags;
->  
-> -	if (ioend->io_fork == XFS_COW_FORK ||
-> -	    ioend->io_type == IOMAP_UNWRITTEN ||
-> -	    ioend->io_private) {
-> +	if (xfs_ioend_needs_workqueue(ioend)) {
->  		spin_lock_irqsave(&ip->i_ioend_lock, flags);
->  		if (list_empty(&ip->i_ioend_list))
->  			WARN_ON_ONCE(!queue_work(mp->m_unwritten_workqueue,
-> @@ -444,7 +449,7 @@ xfs_imap_valid(
->  	 * covers the offset. Be careful to check this first because the caller
->  	 * can revalidate a COW mapping without updating the data seqno.
->  	 */
-> -	if (wpc->fork == XFS_COW_FORK)
-> +	if (wpc->iomap.flags & IOMAP_F_SHARED)
->  		return true;
->  
->  	/*
-> @@ -474,6 +479,7 @@ static int
->  xfs_convert_blocks(
->  	struct xfs_writepage_ctx *wpc,
->  	struct xfs_inode	*ip,
-> +	int			whichfork,
->  	loff_t			offset)
+> @@ -1195,7 +1194,6 @@ xfs_vm_readpages(
+>  	struct list_head	*pages,
+>  	unsigned		nr_pages)
 >  {
->  	int			error;
-> @@ -485,8 +491,8 @@ xfs_convert_blocks(
->  	 * delalloc extent if free space is sufficiently fragmented.
->  	 */
->  	do {
-> -		error = xfs_bmapi_convert_delalloc(ip, wpc->fork, offset,
-> -				&wpc->iomap, wpc->fork == XFS_COW_FORK ?
-> +		error = xfs_bmapi_convert_delalloc(ip, whichfork, offset,
-> +				&wpc->iomap, whichfork == XFS_COW_FORK ?
->  					&wpc->cow_seq : &wpc->data_seq);
->  		if (error)
->  			return error;
-> @@ -507,6 +513,7 @@ xfs_map_blocks(
->  	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
->  	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, offset + count);
->  	xfs_fileoff_t		cow_fsb = NULLFILEOFF;
-> +	int			whichfork = XFS_DATA_FORK;
->  	struct xfs_bmbt_irec	imap;
->  	struct xfs_iext_cursor	icur;
->  	int			retries = 0;
-> @@ -555,7 +562,7 @@ xfs_map_blocks(
->  		wpc->cow_seq = READ_ONCE(ip->i_cowfp->if_seq);
->  		xfs_iunlock(ip, XFS_ILOCK_SHARED);
+> -	trace_xfs_vm_readpages(mapping->host, nr_pages);
+>  	return iomap_readpages(mapping, pages, nr_pages, &xfs_iomap_ops);
+>  }
 >  
-> -		wpc->fork = XFS_COW_FORK;
-> +		whichfork = XFS_COW_FORK;
->  		goto allocate_blocks;
->  	}
+> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+> index eaae275ed430..eae4b29c174e 100644
+> --- a/fs/xfs/xfs_trace.h
+> +++ b/fs/xfs/xfs_trace.h
+> @@ -1197,32 +1197,6 @@ DEFINE_PAGE_EVENT(xfs_writepage);
+>  DEFINE_PAGE_EVENT(xfs_releasepage);
+>  DEFINE_PAGE_EVENT(xfs_invalidatepage);
 >  
-> @@ -578,8 +585,6 @@ xfs_map_blocks(
->  	wpc->data_seq = READ_ONCE(ip->i_df.if_seq);
->  	xfs_iunlock(ip, XFS_ILOCK_SHARED);
->  
-> -	wpc->fork = XFS_DATA_FORK;
+> -DECLARE_EVENT_CLASS(xfs_readpage_class,
+> -	TP_PROTO(struct inode *inode, int nr_pages),
+> -	TP_ARGS(inode, nr_pages),
+> -	TP_STRUCT__entry(
+> -		__field(dev_t, dev)
+> -		__field(xfs_ino_t, ino)
+> -		__field(int, nr_pages)
+> -	),
+> -	TP_fast_assign(
+> -		__entry->dev = inode->i_sb->s_dev;
+> -		__entry->ino = inode->i_ino;
+> -		__entry->nr_pages = nr_pages;
+> -	),
+> -	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
+> -		  MAJOR(__entry->dev), MINOR(__entry->dev),
+> -		  __entry->ino,
+> -		  __entry->nr_pages)
+> -)
 > -
->  	/* landed in a hole or beyond EOF? */
->  	if (imap.br_startoff > offset_fsb) {
->  		imap.br_blockcount = imap.br_startoff - offset_fsb;
-> @@ -604,10 +609,10 @@ xfs_map_blocks(
->  		goto allocate_blocks;
->  
->  	xfs_bmbt_to_iomap(ip, &wpc->iomap, &imap, 0);
-> -	trace_xfs_map_blocks_found(ip, offset, count, wpc->fork, &imap);
-> +	trace_xfs_map_blocks_found(ip, offset, count, whichfork, &imap);
->  	return 0;
->  allocate_blocks:
-> -	error = xfs_convert_blocks(wpc, ip, offset);
-> +	error = xfs_convert_blocks(wpc, ip, whichfork, offset);
->  	if (error) {
->  		/*
->  		 * If we failed to find the extent in the COW fork we might have
-> @@ -616,7 +621,7 @@ xfs_map_blocks(
->  		 * the former case, but prevent additional retries to avoid
->  		 * looping forever for the latter case.
->  		 */
-> -		if (error == -EAGAIN && wpc->fork == XFS_COW_FORK && !retries++)
-> +		if (error == -EAGAIN && whichfork == XFS_COW_FORK && !retries++)
->  			goto retry;
->  		ASSERT(error != -EAGAIN);
->  		return error;
-> @@ -627,7 +632,7 @@ xfs_map_blocks(
->  	 * original delalloc one.  Trim the return extent to the next COW
->  	 * boundary again to force a re-lookup.
->  	 */
-> -	if (wpc->fork != XFS_COW_FORK && cow_fsb != NULLFILEOFF) {
-> +	if (whichfork != XFS_COW_FORK && cow_fsb != NULLFILEOFF) {
->  		loff_t		cow_offset = XFS_FSB_TO_B(mp, cow_fsb);
->  
->  		if (cow_offset < wpc->iomap.offset + wpc->iomap.length)
-> @@ -636,7 +641,7 @@ xfs_map_blocks(
->  
->  	ASSERT(wpc->iomap.offset <= offset);
->  	ASSERT(wpc->iomap.offset + wpc->iomap.length > offset);
-> -	trace_xfs_map_blocks_alloc(ip, offset, count, wpc->fork, &imap);
-> +	trace_xfs_map_blocks_alloc(ip, offset, count, whichfork, &imap);
->  	return 0;
->  }
->  
-> @@ -670,14 +675,14 @@ xfs_submit_ioend(
->  	nofs_flag = memalloc_nofs_save();
->  
->  	/* Convert CoW extents to regular */
-> -	if (!status && ioend->io_fork == XFS_COW_FORK) {
-> +	if (!status && (ioend->io_flags & IOMAP_F_SHARED)) {
->  		status = xfs_reflink_convert_cow(XFS_I(ioend->io_inode),
->  				ioend->io_offset, ioend->io_size);
->  	}
->  
->  	/* Reserve log space if we might write beyond the on-disk inode size. */
->  	if (!status &&
-> -	    (ioend->io_fork == XFS_COW_FORK ||
-> +	    ((ioend->io_flags & IOMAP_F_SHARED) ||
->  	     ioend->io_type != IOMAP_UNWRITTEN) &&
->  	    xfs_ioend_is_append(ioend) &&
->  	    !ioend->io_private)
-> @@ -724,8 +729,8 @@ xfs_alloc_ioend(
->  
->  	ioend = container_of(bio, struct xfs_ioend, io_inline_bio);
->  	INIT_LIST_HEAD(&ioend->io_list);
-> -	ioend->io_fork = wpc->fork;
->  	ioend->io_type = wpc->iomap.type;
-> +	ioend->io_flags = wpc->iomap.flags;
->  	ioend->io_inode = inode;
->  	ioend->io_size = 0;
->  	ioend->io_offset = offset;
-> @@ -759,6 +764,24 @@ xfs_chain_bio(
->  	return new;
->  }
->  
-> +static bool
-> +xfs_can_add_to_ioend(
-> +	struct xfs_writepage_ctx *wpc,
-> +	xfs_off_t		offset,
-> +	sector_t		sector)
-> +{
-> +	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
-> +	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
-> +		return false;
-> +	if (wpc->iomap.type != wpc->ioend->io_type)
-> +		return false;
-> +	if (offset != wpc->ioend->io_offset + wpc->ioend->io_size)
-> +		return false;
-> +	if (sector != bio_end_sector(wpc->ioend->io_bio))
-> +		return false;
-> +	return true;
-> +}
-> +
->  /*
->   * Test to see if we have an existing ioend structure that we could append to
->   * first, otherwise finish off the current ioend and start another.
-> @@ -778,11 +801,7 @@ xfs_add_to_ioend(
->  	unsigned		poff = offset & (PAGE_SIZE - 1);
->  	bool			merged, same_page = false;
->  
-> -	if (!wpc->ioend ||
-> -	    wpc->fork != wpc->ioend->io_fork ||
-> -	    wpc->iomap.type != wpc->ioend->io_type ||
-> -	    sector != bio_end_sector(wpc->ioend->io_bio) ||
-> -	    offset != wpc->ioend->io_offset + wpc->ioend->io_size) {
-> +	if (!wpc->ioend || !xfs_can_add_to_ioend(wpc, offset, sector)) {
->  		if (wpc->ioend)
->  			list_add(&wpc->ioend->io_list, iolist);
->  		wpc->ioend = xfs_alloc_ioend(inode, wpc, offset, sector, wbc);
-> diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
-> index 6a45d675dcba..4a0226cdad4f 100644
-> --- a/fs/xfs/xfs_aops.h
-> +++ b/fs/xfs/xfs_aops.h
-> @@ -13,8 +13,8 @@ extern struct bio_set xfs_ioend_bioset;
->   */
->  struct xfs_ioend {
->  	struct list_head	io_list;	/* next ioend in chain */
-> -	int			io_fork;	/* inode fork written back */
->  	u16			io_type;
-> +	u16			io_flags;	/* IOMAP_F_* */
->  	struct inode		*io_inode;	/* file being written to */
->  	size_t			io_size;	/* size of the extent */
->  	xfs_off_t		io_offset;	/* offset in the file */
+> -#define DEFINE_READPAGE_EVENT(name)		\
+> -DEFINE_EVENT(xfs_readpage_class, name,	\
+> -	TP_PROTO(struct inode *inode, int nr_pages), \
+> -	TP_ARGS(inode, nr_pages))
+> -DEFINE_READPAGE_EVENT(xfs_vm_readpage);
+> -DEFINE_READPAGE_EVENT(xfs_vm_readpages);
+> -
+>  DECLARE_EVENT_CLASS(xfs_imap_class,
+>  	TP_PROTO(struct xfs_inode *ip, xfs_off_t offset, ssize_t count,
+>  		 int whichfork, struct xfs_bmbt_irec *irec),
 > -- 
 > 2.20.1
 > 
