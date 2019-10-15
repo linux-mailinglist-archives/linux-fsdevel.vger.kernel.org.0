@@ -2,120 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3E32D71CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 11:08:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63853D71C9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 11:06:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfJOJIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 05:08:04 -0400
-Received: from mx-out.tlen.pl ([193.222.135.142]:33571 "EHLO mx-out.tlen.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbfJOJID (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 05:08:03 -0400
-X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Oct 2019 05:08:02 EDT
-Received: (wp-smtpd smtp.tlen.pl 11047 invoked from network); 15 Oct 2019 11:01:22 +0200
-Received: from unknown (HELO localhost.localdomain) (p.sarna@tlen.pl@[31.179.144.84])
-          (envelope-sender <p.sarna@tlen.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <linux-kernel@vger.kernel.org>; 15 Oct 2019 11:01:22 +0200
-From:   Piotr Sarna <p.sarna@tlen.pl>
-To:     linux-kernel@vger.kernel.org, mike.kravetz@oracle.com
-Cc:     Piotr Sarna <p.sarna@tlen.pl>, linux-mm@kvack.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] hugetlbfs: add O_TMPFILE support
-Date:   Tue, 15 Oct 2019 11:01:12 +0200
-Message-Id: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
-X-Mailer: git-send-email 2.21.0
+        id S1728707AbfJOJGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 05:06:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35726 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbfJOJGn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 05:06:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ScswIQBKRvt0vRsU+j1tcLpW9Xtj3tO8tiUdFEtFncw=; b=mx7Pn28BaLko9nhuopP5CjmAZ
+        c0NR8SjdPO028AWHpFt8T20vSMOa59P08xerMLYBNlnq9YpxRJ+vmJAIfzjYkY2uuIeX2he2egxB2
+        noiYpHi8/QDXc6JcoyPP+pm0JUiGpDpliXqgnOY0HDZsJ3SYsjbcXWOHEEwbE7+OJ53Hu686pEMpj
+        43VaeVPWDQ06xDlYxVLIH04TtxFfz+D1vrntD1Hnz0UQPOEPiK9e1EzT4tsRZ2hAkZmM9FR5HjXwR
+        +USSticjJnYKBA4kzR61H5qkSmVHCBOqWXe2m3y+WKBxYHExW2GaA9xh4Xwyyqc6aqMfPuJDsDoqT
+        Zez0/lrzg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKImv-0003Fs-9l; Tue, 15 Oct 2019 09:06:41 +0000
+Date:   Tue, 15 Oct 2019 02:06:41 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2] mm, swap: disallow swapon() on zoned block devices
+Message-ID: <20191015090641.GB7199@infradead.org>
+References: <20191015043827.160444-1-naohiro.aota@wdc.com>
+ <20191015085814.637837-1-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: e93136fb553552c8e020d3da8703060d
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000000 [sUP0]                               
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015085814.637837-1-naohiro.aota@wdc.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With hugetlbfs, a common pattern for mapping anonymous huge pages
-is to create a temporary file first. Currently libraries like
-libhugetlbfs and seastar create these with a standard mkstemp+unlink
-trick, but it would be more robust to be able to simply pass
-the O_TMPFILE flag to open(). O_TMPFILE is already supported by several
-file systems like ext4 and xfs. The implementation simply uses the existing
-d_tmpfile utility function to instantiate the dcache entry for the file.
+On Tue, Oct 15, 2019 at 05:58:14PM +0900, Naohiro Aota wrote:
+> A zoned block device consists of a number of zones. Zones are either
+> conventional and accepting random writes or sequential and requiring that
+> writes be issued in LBA order from each zone write pointer position. For
+> the write restriction, zoned block devices are not suitable for a swap
+> device. Disallow swapon on them.
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+> v2: add comments according to Christoph's feedback, reformat chengelog.
+> ---
+>  mm/swapfile.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index dab43523afdd..f2c4224d1f8a 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -2887,6 +2887,14 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
+>  		error = set_blocksize(p->bdev, PAGE_SIZE);
+>  		if (error < 0)
+>  			return error;
+> +		/*
+> +		 * Zoned block device contains zones that have
+> +		 * sequential write only restriction. For the restriction,
+> +		 * zoned block devices are not suitable for a swap device.
+> +		 * Disallow them here.
+> +		 */
+> +		if (blk_queue_is_zoned(p->bdev->bd_queue))
 
-Tested manually by successfully creating a temporary file by opening
-it with (O_TMPFILE|O_RDWR) on mounted hugetlbfs and successfully
-mapping 2M huge pages with it. Without the patch, trying to open
-a file with O_TMPFILE results in -ENOSUP.
+Please use up all 80 chars per line  Otherwise this looks fine:
 
-Signed-off-by: Piotr Sarna <p.sarna@tlen.pl>
----
- fs/hugetlbfs/inode.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 1dcc57189382..277b7d231db8 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -815,8 +815,11 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
- /*
-  * File creation. Allocate an inode, and we're done..
-  */
--static int hugetlbfs_mknod(struct inode *dir,
--			struct dentry *dentry, umode_t mode, dev_t dev)
-+static int do_hugetlbfs_mknod(struct inode *dir,
-+			struct dentry *dentry,
-+			umode_t mode,
-+			dev_t dev,
-+			bool tmpfile)
- {
- 	struct inode *inode;
- 	int error = -ENOSPC;
-@@ -824,13 +827,22 @@ static int hugetlbfs_mknod(struct inode *dir,
- 	inode = hugetlbfs_get_inode(dir->i_sb, dir, mode, dev);
- 	if (inode) {
- 		dir->i_ctime = dir->i_mtime = current_time(dir);
--		d_instantiate(dentry, inode);
-+		if (tmpfile)
-+			d_tmpfile(dentry, inode);
-+		else
-+			d_instantiate(dentry, inode);
- 		dget(dentry);	/* Extra count - pin the dentry in core */
- 		error = 0;
- 	}
- 	return error;
- }
- 
-+static int hugetlbfs_mknod(struct inode *dir,
-+			struct dentry *dentry, umode_t mode, dev_t dev)
-+{
-+	return do_hugetlbfs_mknod(dir, dentry, mode, dev, false);
-+}
-+
- static int hugetlbfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- {
- 	int retval = hugetlbfs_mknod(dir, dentry, mode | S_IFDIR, 0);
-@@ -844,6 +856,12 @@ static int hugetlbfs_create(struct inode *dir, struct dentry *dentry, umode_t mo
- 	return hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0);
- }
- 
-+static int hugetlbfs_tmpfile(struct inode *dir,
-+			struct dentry *dentry, umode_t mode)
-+{
-+	return do_hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0, true);
-+}
-+
- static int hugetlbfs_symlink(struct inode *dir,
- 			struct dentry *dentry, const char *symname)
- {
-@@ -1102,6 +1120,7 @@ static const struct inode_operations hugetlbfs_dir_inode_operations = {
- 	.mknod		= hugetlbfs_mknod,
- 	.rename		= simple_rename,
- 	.setattr	= hugetlbfs_setattr,
-+	.tmpfile	= hugetlbfs_tmpfile,
- };
- 
- static const struct inode_operations hugetlbfs_inode_operations = {
--- 
-2.21.0
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
