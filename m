@@ -2,179 +2,284 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7D3ED6D30
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 04:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A9C0D6D4D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 04:46:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfJOCUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Oct 2019 22:20:40 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35523 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfJOCUj (ORCPT
+        id S1727268AbfJOCp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Oct 2019 22:45:56 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:46659 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727243AbfJOCp4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Oct 2019 22:20:39 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 205so11454747pfw.2;
-        Mon, 14 Oct 2019 19:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8H4x/0PzSc+cFgDx1YZ5+BsoHRjAf/XAcn/2vvNKiII=;
-        b=dltxS1i19yhHH709eXXysC7QrJFjh2Ra7frwS53c0XKyRv95OMf9qIQd+7bqlNHGoJ
-         x+DF9gvatAOdsY6Vz414vk54AyAU2eQ0TD5eNQ4hWJYvBwo9Mal8FUWnXkoie8e2JxVb
-         MIkOVxxE9jhdAGZsbUXCIqnloynfoEuSOeWr43Rr2qE4TeaxWVrkYYCcySX5x058AC/C
-         BIdgJnOJ/plwzzw4OBia4mLfcA6oZt+B5FtinPCw5tkXEBb3P8xBVQwmkrEfuvioc5P4
-         paqo9h8erqF+ZMX5z2IUJpVCEVkmlQFC2VXoZHAP71gIvejmGAE1+SGFpX0i9Hlfd24d
-         RvJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8H4x/0PzSc+cFgDx1YZ5+BsoHRjAf/XAcn/2vvNKiII=;
-        b=MW1r49OXPwZivgC3ozns9xAW1rsUhjkKVgPp1wPrOfPQ3wZ3kyAkhobQes/mounXjf
-         pdFp6uF6OEAw4P1SZNNul3O7paRKySlAY2JkAO880LMRjfYsw5p8i9c7c/CufPR7PcLi
-         3eYrJhHve23TkrKOGD0OlY8qJx1f7pU6X1KdskowToRz+st0xfpnAVtInG+OqhnMeZDr
-         QHi7NlfyztBENpD328hyozDfUBnOuYgH2/E4/w9XthI4uLXZeLiDPBAEwjjXQL15A6lI
-         88iYrkJ8V5YhihwJXhTqjrksZEKk+zsItooH7j3k1IwEg6L0+1UQ3wMw6oLGuEE8wee6
-         2JlQ==
-X-Gm-Message-State: APjAAAWd5vfxRrRLSrsRxhq48J0FC4cVPH3Txh1p9bunPfEyDyCmTHl2
-        yLwvsMmpgeje0cQfH+ekxsbwuUw=
-X-Google-Smtp-Source: APXvYqzOXpShh56uDCVPgANcyM3B+A2AAhIkbDujovTmxMJALaZxxy0iXsrKcX4LEPjKigJevZPUYw==
-X-Received: by 2002:a17:90a:c094:: with SMTP id o20mr39731453pjs.37.1571106037499;
-        Mon, 14 Oct 2019 19:20:37 -0700 (PDT)
-Received: from mypc ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id m5sm18914736pgt.15.2019.10.14.19.20.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2019 19:20:36 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 10:20:26 +0800
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Eric Sandeen <sandeen@sandeen.net>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <esandeen@redhat.com>, Jan Kara <jack@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] xfs: introduce "metasync" api to sync metadata to fsblock
-Message-ID: <20191015022026.GC14327@mypc>
-References: <1570977420-3944-1-git-send-email-kernelfans@gmail.com>
- <20191013163417.GQ13108@magnolia>
- <20191014083315.GA10091@mypc>
- <20191014094311.GD5939@quack2.suse.cz>
- <d3ffa114-8b73-90dc-8ba6-3f44f47135d7@sandeen.net>
- <20191014200303.GF5939@quack2.suse.cz>
+        Mon, 14 Oct 2019 22:45:56 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0Tf5Xo3t_1571107548;
+Received: from C02XQCBJJG5H.local(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0Tf5Xo3t_1571107548)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 15 Oct 2019 10:45:49 +0800
+Subject: Re: [PATCH] rcu: make PREEMPT_RCU to be a decoration of TREE_RCU
+To:     paulmck@kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        David Sterba <dsterba@suse.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        rcu@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <20191013125959.3280-1-laijs@linux.alibaba.com>
+ <20191014184832.GA125935@google.com>
+ <20191015014650.GL2689@paulmck-ThinkPad-P72>
+ <CAJhGHyCMa7mU_K+-22MHGwJ+BfFun=2ndzehZCMoNrgYfBowaQ@mail.gmail.com>
+ <20191015020023.GO2689@paulmck-ThinkPad-P72>
+From:   Lai Jiangshan <laijs@linux.alibaba.com>
+Message-ID: <6bc1c7ef-5389-3a88-9ffe-c8c56e22a11a@linux.alibaba.com>
+Date:   Tue, 15 Oct 2019 10:45:48 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014200303.GF5939@quack2.suse.cz>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20191015020023.GO2689@paulmck-ThinkPad-P72>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 10:03:03PM +0200, Jan Kara wrote:
-> On Mon 14-10-19 08:23:39, Eric Sandeen wrote:
-> > On 10/14/19 4:43 AM, Jan Kara wrote:
-> > > On Mon 14-10-19 16:33:15, Pingfan Liu wrote:
-> > > > On Sun, Oct 13, 2019 at 09:34:17AM -0700, Darrick J. Wong wrote:
-> > > > > On Sun, Oct 13, 2019 at 10:37:00PM +0800, Pingfan Liu wrote:
-> > > > > > When using fadump (fireware assist dump) mode on powerpc, a mismatch
-> > > > > > between grub xfs driver and kernel xfs driver has been obsevered.  Note:
-> > > > > > fadump boots up in the following sequence: fireware -> grub reads kernel
-> > > > > > and initramfs -> kernel boots.
-> > > > > > 
-> > > > > > The process to reproduce this mismatch:
-> > > > > >    - On powerpc, boot kernel with fadump=on and edit /etc/kdump.conf.
-> > > > > >    - Replacing "path /var/crash" with "path /var/crashnew", then, "kdumpctl
-> > > > > >      restart" to rebuild the initramfs. Detail about the rebuilding looks
-> > > > > >      like: mkdumprd /boot/initramfs-`uname -r`.img.tmp;
-> > > > > >            mv /boot/initramfs-`uname -r`.img.tmp /boot/initramfs-`uname -r`.img
-> > > > > >            sync
-> > > > > >    - "echo c >/proc/sysrq-trigger".
-> > > > > > 
-> > > > > > The result:
-> > > > > > The dump image will not be saved under /var/crashnew/* as expected, but
-> > > > > > still saved under /var/crash.
-> > > > > > 
-> > > > > > The root cause:
-> > > > > > As Eric pointed out that on xfs, 'sync' ensures the consistency by writing
-> > > > > > back metadata to xlog, but not necessary to fsblock. This raises issue if
-> > > > > > grub can not replay the xlog before accessing the xfs files. Since the
-> > > > > > above dir entry of initramfs should be saved as inline data with xfs_inode,
-> > > > > > so xfs_fs_sync_fs() does not guarantee it written to fsblock.
-> > > > > > 
-> > > > > > umount can be used to write metadata fsblock, but the filesystem can not be
-> > > > > > umounted if still in use.
-> > > > > > 
-> > > > > > There are two ways to fix this mismatch, either grub or xfs. It may be
-> > > > > > easier to do this in xfs side by introducing an interface to flush metadata
-> > > > > > to fsblock explicitly.
-> > > > > > 
-> > > > > > With this patch, metadata can be written to fsblock by:
-> > > > > >    # update AIL
-> > > > > >    sync
-> > > > > >    # new introduced interface to flush metadata to fsblock
-> > > > > >    mount -o remount,metasync mountpoint
-> > > > > 
-> > > > > I think this ought to be an ioctl or some sort of generic call since the
-> > > > > jbd2 filesystems (ext3, ext4, ocfs2) suffer from the same "$BOOTLOADER
-> > > > > is too dumb to recover logs but still wants to write to the fs"
-> > > > > checkpointing problem.
-> > > > Yes, a syscall sounds more reasonable.
-> > > > > 
-> > > > > (Or maybe we should just put all that stuff in a vfat filesystem, I
-> > > > > don't know...)
-> > > > I think it is unavoidable to involve in each fs' implementation. What
-> > > > about introducing an interface sync_to_fsblock(struct super_block *sb) in
-> > > > the struct super_operations, then let each fs manage its own case?
-> > > 
-> > > Well, we already have a way to achieve what you need: fsfreeze.
-> > > Traditionally, that is guaranteed to put fs into a "clean" state very much
-> > > equivalent to the fs being unmounted and that seems to be what the
-> > > bootloader wants so that it can access the filesystem without worrying
-> > > about some recovery details. So do you see any problem with replacing
-> > > 'sync' in your example above with 'fsfreeze /boot && fsfreeze -u /boot'?
-> > > 
-> > > 								Honza
-> > 
-> > The problem with fsfreeze is that if the device you want to quiesce is, say,
-> > the root fs, freeze isn't really a good option.
-> 
-> I agree you need to be really careful not to deadlock against yourself in
-> that case. But this particular use actually has a chance to work.
-> 
-Yeah, normally there is a /boot partition in system, and if so, fsfreeze
-can work.
-> > But the other thing I want to highlight about this approach is that it does not
-> > solve the root problem: something is trying to read the block device without
-> > first replaying the log.
-> > 
-> > A call such as the proposal here is only going to leave consistent metadata at
-> > the time the call returns; at any time after that, all guarantees are off again,
-> > so the problem hasn't been solved.
-> 
-> Oh, absolutely agreed. I was also thinking about this before sending my
-> reply. Once you unfreeze, the log can start filling with changes and
-> there's no guarantee that e.g. inode does not move as part of these
-But just as fsync, we only guarantee the consistency before a sync. If
-the involved files change again, we need another sync.
-> changes. But to be fair, replaying the log isn't easy either, even more so
-> from a bootloader. You cannot write the changes from the log back into the
-> filesystem as e.g. in case of suspend-to-disk the resumed kernel gets
-> surprised and corrupts the fs under its hands (been there, tried that). So
-> you must keep changes only in memory and that's not really easy in the
-> constrained bootloader environment.
-Sigh, this is more complicated than I had thought. I guess it will be a
-long time to go with this bug, and use fsfreeze as a work around.
 
-Thanks and regards,
-	Pingfan
+
+On 2019/10/15 10:00 上午, Paul E. McKenney wrote:
+> On Tue, Oct 15, 2019 at 09:50:21AM +0800, Lai Jiangshan wrote:
+>> On Tue, Oct 15, 2019 at 9:46 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+>>>
+>>> On Mon, Oct 14, 2019 at 02:48:32PM -0400, Joel Fernandes wrote:
+>>>> On Sun, Oct 13, 2019 at 12:59:57PM +0000, Lai Jiangshan wrote:
+>>>>> Currently PREEMPT_RCU and TREE_RCU are "contrary" configs
+>>>>> when they can't be both on. But PREEMPT_RCU is actually a kind
+>>>>> of TREE_RCU in the implementation. It seams to be appropriate
+>>>>> to make PREEMPT_RCU to be a decorative option of TREE_RCU.
+>>>>>
+>>>>
+>>>> Looks like a nice simplification and so far I could not poke any holes in the
+>>>> code...
+>>>>
+>>>> I am in support of this patch for further review and testing. Thanks!
+>>>>
+>>>> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+>>>
+>>> Thank you both!
+>>>
+>>> Lai, what is this patch against?  It does not want to apply to the current
+>>> -rcu "dev" branch.
+>>
+>> Oh, sorry
+>>
+>> I wrongly made the change base on upstream.
+>> I will rebase later.
 > 
-> So I guess we are left with hacks that kind of mostly work and fsfreeze is
-> one of those. If you don't mess with the files after fsfreeze, you're
-> likely to find what you need even without replaying the log.
+> Very good, looking forward to this updated version.
 > 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> 							Thanx, Paul
+
+
+In my box, the patch can be applied to the -rcu "dev" well.
+And there is nothing strange after boot.
+
+Have I just made a mistake a again? In my box, the HEAD
+of -rcu "dev" is 9725023b ("torture: Handle jitter for CPUs that cannot 
+be offlined")
+
+Thanks
+Lai
+
+> 
+>> thanks
+>> Lai
+>>
+>>>
+>>>                                                          Thanx, Paul
+>>>
+>>>> thanks,
+>>>>
+>>>>   - Joel
+>>>>
+>>>>
+>>>>> Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
+>>>>> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+>>>>> ---
+>>>>>   include/linux/rcupdate.h   |  4 ++--
+>>>>>   include/trace/events/rcu.h |  4 ++--
+>>>>>   kernel/rcu/Kconfig         | 13 +++++++------
+>>>>>   kernel/rcu/Makefile        |  1 -
+>>>>>   kernel/rcu/rcu.h           |  2 +-
+>>>>>   kernel/rcu/update.c        |  2 +-
+>>>>>   kernel/sysctl.c            |  2 +-
+>>>>>   7 files changed, 14 insertions(+), 14 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+>>>>> index 75a2eded7aa2..1eee9f6c27f9 100644
+>>>>> --- a/include/linux/rcupdate.h
+>>>>> +++ b/include/linux/rcupdate.h
+>>>>> @@ -167,7 +167,7 @@ do { \
+>>>>>    * TREE_RCU and rcu_barrier_() primitives in TINY_RCU.
+>>>>>    */
+>>>>>
+>>>>> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+>>>>> +#if defined(CONFIG_TREE_RCU)
+>>>>>   #include <linux/rcutree.h>
+>>>>>   #elif defined(CONFIG_TINY_RCU)
+>>>>>   #include <linux/rcutiny.h>
+>>>>> @@ -583,7 +583,7 @@ do {                                                                          \
+>>>>>    * read-side critical section that would block in a !PREEMPT kernel.
+>>>>>    * But if you want the full story, read on!
+>>>>>    *
+>>>>> - * In non-preemptible RCU implementations (TREE_RCU and TINY_RCU),
+>>>>> + * In non-preemptible RCU implementations (pure TREE_RCU and TINY_RCU),
+>>>>>    * it is illegal to block while in an RCU read-side critical section.
+>>>>>    * In preemptible RCU implementations (PREEMPT_RCU) in CONFIG_PREEMPTION
+>>>>>    * kernel builds, RCU read-side critical sections may be preempted,
+>>>>> diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+>>>>> index 694bd040cf51..1ce15c5be4c8 100644
+>>>>> --- a/include/trace/events/rcu.h
+>>>>> +++ b/include/trace/events/rcu.h
+>>>>> @@ -41,7 +41,7 @@ TRACE_EVENT(rcu_utilization,
+>>>>>      TP_printk("%s", __entry->s)
+>>>>>   );
+>>>>>
+>>>>> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+>>>>> +#if defined(CONFIG_TREE_RCU)
+>>>>>
+>>>>>   /*
+>>>>>    * Tracepoint for grace-period events.  Takes a string identifying the
+>>>>> @@ -425,7 +425,7 @@ TRACE_EVENT_RCU(rcu_fqs,
+>>>>>                __entry->cpu, __entry->qsevent)
+>>>>>   );
+>>>>>
+>>>>> -#endif /* #if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU) */
+>>>>> +#endif /* #if defined(CONFIG_TREE_RCU) */
+>>>>>
+>>>>>   /*
+>>>>>    * Tracepoint for dyntick-idle entry/exit events.  These take a string
+>>>>> diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+>>>>> index 7644eda17d62..0303934e6ef0 100644
+>>>>> --- a/kernel/rcu/Kconfig
+>>>>> +++ b/kernel/rcu/Kconfig
+>>>>> @@ -7,7 +7,7 @@ menu "RCU Subsystem"
+>>>>>
+>>>>>   config TREE_RCU
+>>>>>      bool
+>>>>> -   default y if !PREEMPTION && SMP
+>>>>> +   default y if SMP
+>>>>>      help
+>>>>>        This option selects the RCU implementation that is
+>>>>>        designed for very large SMP system with hundreds or
+>>>>> @@ -17,6 +17,7 @@ config TREE_RCU
+>>>>>   config PREEMPT_RCU
+>>>>>      bool
+>>>>>      default y if PREEMPTION
+>>>>> +   select TREE_RCU
+>>>>>      help
+>>>>>        This option selects the RCU implementation that is
+>>>>>        designed for very large SMP systems with hundreds or
+>>>>> @@ -78,7 +79,7 @@ config TASKS_RCU
+>>>>>        user-mode execution as quiescent states.
+>>>>>
+>>>>>   config RCU_STALL_COMMON
+>>>>> -   def_bool ( TREE_RCU || PREEMPT_RCU )
+>>>>> +   def_bool TREE_RCU
+>>>>>      help
+>>>>>        This option enables RCU CPU stall code that is common between
+>>>>>        the TINY and TREE variants of RCU.  The purpose is to allow
+>>>>> @@ -86,13 +87,13 @@ config RCU_STALL_COMMON
+>>>>>        making these warnings mandatory for the tree variants.
+>>>>>
+>>>>>   config RCU_NEED_SEGCBLIST
+>>>>> -   def_bool ( TREE_RCU || PREEMPT_RCU || TREE_SRCU )
+>>>>> +   def_bool ( TREE_RCU || TREE_SRCU )
+>>>>>
+>>>>>   config RCU_FANOUT
+>>>>>      int "Tree-based hierarchical RCU fanout value"
+>>>>>      range 2 64 if 64BIT
+>>>>>      range 2 32 if !64BIT
+>>>>> -   depends on (TREE_RCU || PREEMPT_RCU) && RCU_EXPERT
+>>>>> +   depends on TREE_RCU && RCU_EXPERT
+>>>>>      default 64 if 64BIT
+>>>>>      default 32 if !64BIT
+>>>>>      help
+>>>>> @@ -112,7 +113,7 @@ config RCU_FANOUT_LEAF
+>>>>>      int "Tree-based hierarchical RCU leaf-level fanout value"
+>>>>>      range 2 64 if 64BIT
+>>>>>      range 2 32 if !64BIT
+>>>>> -   depends on (TREE_RCU || PREEMPT_RCU) && RCU_EXPERT
+>>>>> +   depends on TREE_RCU && RCU_EXPERT
+>>>>>      default 16
+>>>>>      help
+>>>>>        This option controls the leaf-level fanout of hierarchical
+>>>>> @@ -187,7 +188,7 @@ config RCU_BOOST_DELAY
+>>>>>
+>>>>>   config RCU_NOCB_CPU
+>>>>>      bool "Offload RCU callback processing from boot-selected CPUs"
+>>>>> -   depends on TREE_RCU || PREEMPT_RCU
+>>>>> +   depends on TREE_RCU
+>>>>>      depends on RCU_EXPERT || NO_HZ_FULL
+>>>>>      default n
+>>>>>      help
+>>>>> diff --git a/kernel/rcu/Makefile b/kernel/rcu/Makefile
+>>>>> index 020e8b6a644b..82d5fba48b2f 100644
+>>>>> --- a/kernel/rcu/Makefile
+>>>>> +++ b/kernel/rcu/Makefile
+>>>>> @@ -9,6 +9,5 @@ obj-$(CONFIG_TINY_SRCU) += srcutiny.o
+>>>>>   obj-$(CONFIG_RCU_TORTURE_TEST) += rcutorture.o
+>>>>>   obj-$(CONFIG_RCU_PERF_TEST) += rcuperf.o
+>>>>>   obj-$(CONFIG_TREE_RCU) += tree.o
+>>>>> -obj-$(CONFIG_PREEMPT_RCU) += tree.o
+>>>>>   obj-$(CONFIG_TINY_RCU) += tiny.o
+>>>>>   obj-$(CONFIG_RCU_NEED_SEGCBLIST) += rcu_segcblist.o
+>>>>> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+>>>>> index 8fd4f82c9b3d..4149ba76824f 100644
+>>>>> --- a/kernel/rcu/rcu.h
+>>>>> +++ b/kernel/rcu/rcu.h
+>>>>> @@ -452,7 +452,7 @@ enum rcutorture_type {
+>>>>>      INVALID_RCU_FLAVOR
+>>>>>   };
+>>>>>
+>>>>> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+>>>>> +#if defined(CONFIG_TREE_RCU)
+>>>>>   void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,
+>>>>>                          unsigned long *gp_seq);
+>>>>>   void rcutorture_record_progress(unsigned long vernum);
+>>>>> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+>>>>> index 1861103662db..34a7452b25fd 100644
+>>>>> --- a/kernel/rcu/update.c
+>>>>> +++ b/kernel/rcu/update.c
+>>>>> @@ -435,7 +435,7 @@ struct debug_obj_descr rcuhead_debug_descr = {
+>>>>>   EXPORT_SYMBOL_GPL(rcuhead_debug_descr);
+>>>>>   #endif /* #ifdef CONFIG_DEBUG_OBJECTS_RCU_HEAD */
+>>>>>
+>>>>> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU) || defined(CONFIG_RCU_TRACE)
+>>>>> +#if defined(CONFIG_TREE_RCU) || defined(CONFIG_RCU_TRACE)
+>>>>>   void do_trace_rcu_torture_read(const char *rcutorturename, struct rcu_head *rhp,
+>>>>>                             unsigned long secs,
+>>>>>                             unsigned long c_old, unsigned long c)
+>>>>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>>>>> index 00fcea236eba..2ace158a4d72 100644
+>>>>> --- a/kernel/sysctl.c
+>>>>> +++ b/kernel/sysctl.c
+>>>>> @@ -1268,7 +1268,7 @@ static struct ctl_table kern_table[] = {
+>>>>>              .proc_handler   = proc_do_static_key,
+>>>>>      },
+>>>>>   #endif
+>>>>> -#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+>>>>> +#if defined(CONFIG_TREE_RCU)
+>>>>>      {
+>>>>>              .procname       = "panic_on_rcu_stall",
+>>>>>              .data           = &sysctl_panic_on_rcu_stall,
+>>>>> --
+>>>>> 2.20.1
+>>>>>
