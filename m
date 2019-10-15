@@ -2,267 +2,228 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B76A6D6D58
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 04:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2B3D6D60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 04:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbfJOCyR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Oct 2019 22:54:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48716 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726248AbfJOCyR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Oct 2019 22:54:17 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2F4B20673;
-        Tue, 15 Oct 2019 02:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571108056;
-        bh=qKZ0ciuJU4z0155MQkJkQYkWFz4v7tp1GEy9wweUyq4=;
-        h=Date:From:To:Subject:From;
-        b=x32T9rD9UNOaIv8sAOaRL1L7qXgC01DucDgBIb6llsrE/OqW5yOfQewDJPC4kQbjz
-         ni21znOkIog8IaFAFbA0q2IuF+Pv9cDMrM62Np3CNUAkfZ0MNk3xrqjsj4r0Mu0hkJ
-         ZPTsiqL4sttVPRAqyxyImJ6tQ7eptYosyBkaqSTM=
-Date:   Mon, 14 Oct 2019 19:54:15 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2019-10-14-19-53 uploaded
-Message-ID: <20191015025415.n36TQo9wD%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S1727403AbfJOC4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Oct 2019 22:56:41 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:30024 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726248AbfJOC4k (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Oct 2019 22:56:40 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0Tf5XrNR_1571108166;
+Received: from localhost(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0Tf5XrNR_1571108166)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 15 Oct 2019 10:56:36 +0800
+From:   Lai Jiangshan <laijs@linux.alibaba.com>
+Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        David Sterba <dsterba@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Marco Elver <elver@google.com>, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] rcu: make PREEMPT_RCU to be a decoration of TREE_RCU
+Date:   Tue, 15 Oct 2019 02:55:57 +0000
+Message-Id: <20191015025559.829-1-laijs@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191015020023.GO2689@paulmck-ThinkPad-P72>
+References: <20191015020023.GO2689@paulmck-ThinkPad-P72>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2019-10-14-19-53 has been uploaded to
+Currently PREEMPT_RCU and TREE_RCU are "contrary" configs
+when they can't be both on. But PREEMPT_RCU is actually a kind
+of TREE_RCU in the implementation. It seams to be appropriate
+to make PREEMPT_RCU to be a decorative option of TREE_RCU.
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org> 
+---
+Changed from v1:
+	Rebased on -rcu "dev" branch
+ include/linux/rcupdate.h   |  4 ++--
+ include/trace/events/rcu.h |  4 ++--
+ kernel/rcu/Kconfig         | 13 +++++++------
+ kernel/rcu/Makefile        |  1 -
+ kernel/rcu/rcu.h           |  2 +-
+ kernel/rcu/update.c        |  2 +-
+ kernel/sysctl.c            |  2 +-
+ 7 files changed, 14 insertions(+), 14 deletions(-)
 
-mmotm-readme.txt says
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index c6351314cbe6..4dcf46985922 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -167,7 +167,7 @@ do { \
+  * TREE_RCU and rcu_barrier_() primitives in TINY_RCU.
+  */
+ 
+-#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
++#if defined(CONFIG_TREE_RCU)
+ #include <linux/rcutree.h>
+ #elif defined(CONFIG_TINY_RCU)
+ #include <linux/rcutiny.h>
+@@ -585,7 +585,7 @@ do {									      \
+  * read-side critical section that would block in a !PREEMPT kernel.
+  * But if you want the full story, read on!
+  *
+- * In non-preemptible RCU implementations (TREE_RCU and TINY_RCU),
++ * In non-preemptible RCU implementations (pure TREE_RCU and TINY_RCU),
+  * it is illegal to block while in an RCU read-side critical section.
+  * In preemptible RCU implementations (PREEMPT_RCU) in CONFIG_PREEMPTION
+  * kernel builds, RCU read-side critical sections may be preempted,
+diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+index 35a384ec78b5..5e49b06e8104 100644
+--- a/include/trace/events/rcu.h
++++ b/include/trace/events/rcu.h
+@@ -41,7 +41,7 @@ TRACE_EVENT(rcu_utilization,
+ 	TP_printk("%s", __entry->s)
+ );
+ 
+-#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
++#if defined(CONFIG_TREE_RCU)
+ 
+ /*
+  * Tracepoint for grace-period events.  Takes a string identifying the
+@@ -432,7 +432,7 @@ TRACE_EVENT_RCU(rcu_fqs,
+ 		  __entry->cpu, __entry->qsevent)
+ );
+ 
+-#endif /* #if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU) */
++#endif /* #if defined(CONFIG_TREE_RCU) */
+ 
+ /*
+  * Tracepoint for dyntick-idle entry/exit events.  These take a string
+diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+index 7644eda17d62..0303934e6ef0 100644
+--- a/kernel/rcu/Kconfig
++++ b/kernel/rcu/Kconfig
+@@ -7,7 +7,7 @@ menu "RCU Subsystem"
+ 
+ config TREE_RCU
+ 	bool
+-	default y if !PREEMPTION && SMP
++	default y if SMP
+ 	help
+ 	  This option selects the RCU implementation that is
+ 	  designed for very large SMP system with hundreds or
+@@ -17,6 +17,7 @@ config TREE_RCU
+ config PREEMPT_RCU
+ 	bool
+ 	default y if PREEMPTION
++	select TREE_RCU
+ 	help
+ 	  This option selects the RCU implementation that is
+ 	  designed for very large SMP systems with hundreds or
+@@ -78,7 +79,7 @@ config TASKS_RCU
+ 	  user-mode execution as quiescent states.
+ 
+ config RCU_STALL_COMMON
+-	def_bool ( TREE_RCU || PREEMPT_RCU )
++	def_bool TREE_RCU
+ 	help
+ 	  This option enables RCU CPU stall code that is common between
+ 	  the TINY and TREE variants of RCU.  The purpose is to allow
+@@ -86,13 +87,13 @@ config RCU_STALL_COMMON
+ 	  making these warnings mandatory for the tree variants.
+ 
+ config RCU_NEED_SEGCBLIST
+-	def_bool ( TREE_RCU || PREEMPT_RCU || TREE_SRCU )
++	def_bool ( TREE_RCU || TREE_SRCU )
+ 
+ config RCU_FANOUT
+ 	int "Tree-based hierarchical RCU fanout value"
+ 	range 2 64 if 64BIT
+ 	range 2 32 if !64BIT
+-	depends on (TREE_RCU || PREEMPT_RCU) && RCU_EXPERT
++	depends on TREE_RCU && RCU_EXPERT
+ 	default 64 if 64BIT
+ 	default 32 if !64BIT
+ 	help
+@@ -112,7 +113,7 @@ config RCU_FANOUT_LEAF
+ 	int "Tree-based hierarchical RCU leaf-level fanout value"
+ 	range 2 64 if 64BIT
+ 	range 2 32 if !64BIT
+-	depends on (TREE_RCU || PREEMPT_RCU) && RCU_EXPERT
++	depends on TREE_RCU && RCU_EXPERT
+ 	default 16
+ 	help
+ 	  This option controls the leaf-level fanout of hierarchical
+@@ -187,7 +188,7 @@ config RCU_BOOST_DELAY
+ 
+ config RCU_NOCB_CPU
+ 	bool "Offload RCU callback processing from boot-selected CPUs"
+-	depends on TREE_RCU || PREEMPT_RCU
++	depends on TREE_RCU
+ 	depends on RCU_EXPERT || NO_HZ_FULL
+ 	default n
+ 	help
+diff --git a/kernel/rcu/Makefile b/kernel/rcu/Makefile
+index 020e8b6a644b..82d5fba48b2f 100644
+--- a/kernel/rcu/Makefile
++++ b/kernel/rcu/Makefile
+@@ -9,6 +9,5 @@ obj-$(CONFIG_TINY_SRCU) += srcutiny.o
+ obj-$(CONFIG_RCU_TORTURE_TEST) += rcutorture.o
+ obj-$(CONFIG_RCU_PERF_TEST) += rcuperf.o
+ obj-$(CONFIG_TREE_RCU) += tree.o
+-obj-$(CONFIG_PREEMPT_RCU) += tree.o
+ obj-$(CONFIG_TINY_RCU) += tiny.o
+ obj-$(CONFIG_RCU_NEED_SEGCBLIST) += rcu_segcblist.o
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index c30a1f7dbd15..a7ab2a023dd3 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -427,7 +427,7 @@ enum rcutorture_type {
+ 	INVALID_RCU_FLAVOR
+ };
+ 
+-#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
++#if defined(CONFIG_TREE_RCU)
+ void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,
+ 			    unsigned long *gp_seq);
+ void do_trace_rcu_torture_read(const char *rcutorturename,
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 196487762b96..2f529470cafa 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -437,7 +437,7 @@ struct debug_obj_descr rcuhead_debug_descr = {
+ EXPORT_SYMBOL_GPL(rcuhead_debug_descr);
+ #endif /* #ifdef CONFIG_DEBUG_OBJECTS_RCU_HEAD */
+ 
+-#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU) || defined(CONFIG_RCU_TRACE)
++#if defined(CONFIG_TREE_RCU) || defined(CONFIG_RCU_TRACE)
+ void do_trace_rcu_torture_read(const char *rcutorturename, struct rcu_head *rhp,
+ 			       unsigned long secs,
+ 			       unsigned long c_old, unsigned long c)
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 00fcea236eba..2ace158a4d72 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1268,7 +1268,7 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_do_static_key,
+ 	},
+ #endif
+-#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
++#if defined(CONFIG_TREE_RCU)
+ 	{
+ 		.procname	= "panic_on_rcu_stall",
+ 		.data		= &sysctl_panic_on_rcu_stall,
+-- 
+2.20.1
 
-README for mm-of-the-moment:
-
-http://www.ozlabs.org/~akpm/mmotm/
-
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 5.4-rc3:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-page_owner-fix-off-by-one-error-in-__set_page_owner_handle.patch
-* mm-page_owner-decouple-freeing-stack-trace-from-debug_pagealloc.patch
-* mm-page_owner-rename-flag-indicating-that-page-is-allocated.patch
-* mm-slub-fix-a-deadlock-in-show_slab_objects.patch
-* lib-generic-radix-treec-add-kmemleak-annotations.patch
-* mm-slub-init_on_free=1-should-wipe-freelist-ptr-for-bulk-allocations.patch
-* lib-test_meminit-add-a-kmem_cache_alloc_bulk-test.patch
-* mm-hugetlb-allow-hugepage-allocations-to-excessively-reclaim.patch
-* mm-compaction-fix-wrong-pfn-handling-in-__reset_isolation_pfn.patch
-* fs-fix-direct-ioc-kernel-doc-warning.patch
-* fs-fix-libfsc-kernel-doc-warning.patch
-* fs-fs-writebackc-fix-kernel-doc-warning.patch
-* bitmaph-fix-kernel-doc-warning-and-typo.patch
-* xarrayh-fix-kernel-doc-warning.patch
-* mm-slabc-fix-kernel-doc-warning-for-__ksize.patch
-* mm-memory-failure-poison-read-receives-sigkill-instead-of-sigbus-if-mmaped-more-than-once.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* drivers-base-memoryc-dont-access-uninitialized-memmaps-in-soft_offline_page_store.patch
-* mm-dont-access-uninitialized-memmaps-in-fs-proc-pagec.patch
-* mm-memory-failurec-dont-access-uninitialized-memmaps-in-memory_failure.patch
-* scripts-gdb-fix-lx-dmesg-when-config_printk_caller-is-set.patch
-* mm-page_owner-dont-access-uninitialized-memmaps-when-reading-proc-pagetypeinfo.patch
-* mm-memory_hotplug-dont-access-uninitialized-memmaps-in-shrink_pgdat_span.patch
-* mm-memunmap-dont-access-uninitialized-memmap-in-memunmap_pages.patch
-* mm-memcg-slab-fix-panic-in-__free_slab-caused-by-premature-memcg-pointer-release.patch
-* resend-ocfs2-fix-error-handling-in-ocfs2_setattr.patch
-* mm-gup_benchmark-add-a-missing-w-to-getopt-string.patch
-* mm-gup-fix-a-misnamed-write-argument-and-a-related-bug.patch
-* mm-vmscan-get-number-of-pages-on-the-lru-list-in-memcgroup-base-on-lru_zone_size.patch
-* mm-memblock-do-not-enforce-current-limit-for-memblock_phys-family.patch
-* ocfs2-protect-extent-tree-in-the-ocfs2_prepare_inode_for_write.patch
-* ocfs2-protect-extent-tree-in-the-ocfs2_prepare_inode_for_write-checkpatch-fixes.patch
-* ocfs2-remove-unused-function-ocfs2_prepare_inode_for_refcount.patch
-* ocfs2-fix-passing-zero-to-ptr_err-warning.patch
-* ramfs-support-o_tmpfile.patch
-  mm.patch
-* mm-slab-make-kmalloc_info-contain-all-types-of-names.patch
-* mm-slab-remove-unused-kmalloc_size.patch
-* mm-slab_common-use-enum-kmalloc_cache_type-to-iterate-over-kmalloc-caches.patch
-* mm-slub-print-the-offset-of-fault-addresses.patch
-* mm-update-comments-in-slubc.patch
-* mm-hugetlb-make-alloc_gigantic_page-available-for-general-use.patch
-* mm-debug-add-tests-validating-architecture-page-table-helpers.patch
-* mm-debug-add-tests-validating-architecture-page-table-helpers-fix.patch
-* mm-memcg-clean-up-reclaim-iter-array.patch
-* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
-* mm-drop-mmap_sem-before-calling-balance_dirty_pages-in-write-fault.patch
-* shmem-pin-the-file-in-shmem_fault-if-mmap_sem-is-dropped.patch
-* mm-emit-tracepoint-when-rss-changes.patch
-* mm-mmapc-remove-a-never-trigger-warning-in-__vma_adjust.patch
-* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
-* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region-checkpatch-fixes.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* mm-swap-piggyback-lru_add_drain_all-calls.patch
-* mm-mmapc-prev-could-be-retrieved-from-vma-vm_prev.patch
-* mm-mmapc-__vma_unlink_prev-is-not-necessary-now.patch
-* mm-mmapc-extract-__vma_unlink_list-as-counter-part-for-__vma_link_list.patch
-* mm-mmapc-rb_parent-is-not-necessary-in-__vma_link_list.patch
-* mm-rmapc-dont-reuse-anon_vma-if-we-just-want-a-copy.patch
-* mm-rmapc-reuse-mergeable-anon_vma-as-parent-when-fork.patch
-* asm-generic-tlb-stub-out-pud_free_tlb-if-__pagetable_pud_folded.patch
-* asm-generic-tlb-stub-out-p4d_free_tlb-if-__pagetable_p4d_folded.patch
-* asm-generic-mm-stub-out-p4dd_clear_bad-if-__pagetable_p4ud_folded.patch
-* mm-memory-failurec-clean-up-around-tk-pre-allocation.patch
-* mm-hotplug-reorder-memblock_-calls-in-try_remove_memory.patch
-* memory_hotplug-add-a-bounds-check-to-__add_pages.patch
-* mm-memory_hotplug-export-generic_online_page.patch
-* hv_balloon-use-generic_online_page.patch
-* mm-memory_hotplug-remove-__online_page_free-and-__online_page_increment_counters.patch
-* mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
-* mm-memory_hotplug-dont-access-uninitialized-memmaps-in-shrink_zone_span.patch
-* mm-memory_hotplug-shrink-zones-when-offlining-memory.patch
-* mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
-* mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
-* mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
-* mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
-* mm-memory_hotplug-cleanup-__remove_pages.patch
-* mm-vmalloc-remove-unnecessary-highmem_mask-from-parameter-of-gfpflags_allow_blocking.patch
-* mm-vmalloc-remove-preempt_disable-enable-when-do-preloading.patch
-* selftests-vm-add-fragment-config_test_vmalloc.patch
-* mm-vmscan-remove-unused-scan_control-parameter-from-pageout.patch
-* z3fold-add-inter-page-compaction.patch
-* z3fold-add-inter-page-compaction-fix.patch
-* mm-support-memblock-alloc-on-the-exact-node-for-sparse_buffer_init.patch
-* mm-oom-avoid-printk-iteration-under-rcu.patch
-* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
-* hugetlbfs-hugetlb_fault_mutex_hash-cleanup.patch
-* hugetlb-region_chg-provides-only-cache-entry.patch
-* hugetlb-remove-duplicated-code.patch
-* hugetlb-remove-duplicated-code-checkpatch-fixes.patch
-* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash.patch
-* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash-fix.patch
-* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash-fix-fix.patch
-* mm-hugetlb-avoid-looping-to-the-same-hugepage-if-pages-and-vmas.patch
-* mm-thp-do-not-queue-fully-unmapped-pages-for-deferred-split.patch
-* mm-thp-make-set_huge_zero_page-return-void.patch
-* mm-cmac-switch-to-bitmap_zalloc-for-cma-bitmap-allocation.patch
-* userfaultfd-use-vma_pagesize-for-all-huge-page-size-calculation.patch
-* userfaultfd-remove-unnecessary-warn_on-in-__mcopy_atomic_hugetlb.patch
-* userfaultfd-wrap-the-common-dst_vma-check-into-an-inlined-function.patch
-* uffd-wp-clear-vm_uffd_missing-or-vm_uffd_wp-during-userfaultfd_register.patch
-* mm-shmemc-make-array-values-static-const-makes-object-smaller.patch
-* mm-fix-struct-member-name-in-function-comments.patch
-* mm-fix-typo-in-the-comment-when-calling-function-__setpageuptodate.patch
-* mm-memory_hotplugc-remove-__online_page_set_limits.patch
-* mm-annotate-refault-stalls-from-swap_readpage.patch
-* mm-annotate-refault-stalls-from-swap_readpage-fix.patch
-* mm-vmscan-remove-unused-lru_pages-argument.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* proc-change-nlink-under-proc_subdir_lock.patch
-* proc-delete-useless-len-variable.patch
-* proc-shuffle-struct-pde_opener.patch
-* proc-fix-confusing-macro-arg-name.patch
-* sysctl-inline-braces-for-ctl_table-and-ctl_table_header.patch
-* gitattributes-use-dts-diff-driver-for-dts-files.patch
-* linux-build_bugh-change-type-to-int.patch
-* kernel-notifierc-intercepting-duplicate-registrations-to-avoid-infinite-loops.patch
-* kernel-notifierc-remove-notifier_chain_cond_register.patch
-* kernel-notifierc-remove-blocking_notifier_chain_cond_register.patch
-* hung_task-allow-printing-warnings-every-check-interval.patch
-* get_maintainer-add-signatures-from-fixes-badcommit-lines-in-commit-message.patch
-* string-add-stracpy-and-stracpy_pad-mechanisms.patch
-* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
-* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
-* checkpatch-improve-ignoring-camelcase-si-style-variants-like-ma.patch
-* epoll-simplify-ep_poll_safewake-for-config_debug_lock_alloc.patch
-* fs-epoll-remove-unnecessary-wakeups-of-nested-epoll.patch
-* selftests-add-epoll-selftests.patch
-* elf-delete-unused-interp_map_addr-argument.patch
-* elf-extract-elf_read-function.patch
-* uaccess-disallow-int_max-copy-sizes.patch
-* aio-simplify-read_events.patch
-* lib-ubsan-dont-seralize-ubsan-report.patch
-* ipc-consolidate-all-xxxctl_down-functions.patch
-  linux-next.patch
-  diff-sucks.patch
-* drivers-block-null_blk_mainc-fix-layout.patch
-* drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
-* pinctrl-fix-pxa2xxc-build-warnings.patch
-* lib-list-test-add-a-test-for-the-list-doubly-linked-list.patch
-* lib-genallocc-export-symbol-addr_in_gen_pool.patch
-* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
-* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
-* hacking-group-sysrq-kgdb-ubsan-into-generic-kernel-debugging-instruments.patch
-* hacking-create-submenu-for-arch-special-debugging-options.patch
-* hacking-group-kernel-data-structures-debugging-together.patch
-* hacking-move-kernel-testing-and-coverage-options-to-same-submenu.patch
-* hacking-move-oops-into-lockups-and-hangs.patch
-* hacking-move-sched_stack_end_check-after-debug_stack_usage.patch
-* hacking-create-a-submenu-for-scheduler-debugging-options.patch
-* hacking-move-debug_bugverbose-to-printk-and-dmesg-options.patch
-* hacking-move-debug_fs-to-generic-kernel-debugging-instruments.patch
-* bitops-introduce-the-for_each_set_clump8-macro.patch
-* lib-test_bitmapc-add-for_each_set_clump8-test-cases.patch
-* gpio-104-dio-48e-utilize-for_each_set_clump8-macro.patch
-* gpio-104-idi-48-utilize-for_each_set_clump8-macro.patch
-* gpio-gpio-mm-utilize-for_each_set_clump8-macro.patch
-* gpio-ws16c48-utilize-for_each_set_clump8-macro.patch
-* gpio-pci-idio-16-utilize-for_each_set_clump8-macro.patch
-* gpio-pcie-idio-24-utilize-for_each_set_clump8-macro.patch
-* gpio-uniphier-utilize-for_each_set_clump8-macro.patch
-* gpio-74x164-utilize-the-for_each_set_clump8-macro.patch
-* thermal-intel-intel_soc_dts_iosf-utilize-for_each_set_clump8-macro.patch
-* gpio-pisosr-utilize-the-for_each_set_clump8-macro.patch
-* gpio-max3191x-utilize-the-for_each_set_clump8-macro.patch
-* gpio-pca953x-utilize-the-for_each_set_clump8-macro.patch
-* drivers-tty-serial-sh-scic-suppress-warning.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
