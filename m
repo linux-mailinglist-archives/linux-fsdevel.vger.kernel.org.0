@@ -2,59 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39086D8351
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 00:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD92D8356
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 00:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389131AbfJOWK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 18:10:29 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50614 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726231AbfJOWK2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 18:10:28 -0400
-Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 76A1243E690;
-        Wed, 16 Oct 2019 09:10:25 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iKV1N-00013I-1N; Wed, 16 Oct 2019 09:10:25 +1100
-Date:   Wed, 16 Oct 2019 09:10:25 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/12] iomap: cleanup iomap_ioend_compare
-Message-ID: <20191015221025.GF16973@dread.disaster.area>
-References: <20191015154345.13052-1-hch@lst.de>
- <20191015154345.13052-13-hch@lst.de>
+        id S2389189AbfJOWL2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 18:11:28 -0400
+Received: from namei.org ([65.99.196.166]:54374 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726231AbfJOWL2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 18:11:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x9FMB7We018105;
+        Tue, 15 Oct 2019 22:11:07 GMT
+Date:   Wed, 16 Oct 2019 09:11:07 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     David Howells <dhowells@redhat.com>
+cc:     torvalds@linux-foundation.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/21] pipe: Keyrings, Block and USB notifications
+In-Reply-To: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.LRH.2.21.1910160909230.11167@namei.org>
+References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191015154345.13052-13-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=JuDxSlhT3OO6blO4plAA:9
-        a=CjuIK1q_8ugA:10 a=DBeEp3iAzaEA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 05:43:45PM +0200, Christoph Hellwig wrote:
-> Move the initialization of ia and ib to the declaration line and remove
-> a superflous else.
+On Tue, 15 Oct 2019, David Howells wrote:
+
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Here's a set of patches to add a general notification queue concept and to
+> add event sources such as:
 
-nice little cleanup.
+On the next iteration, please include the rationale for this per your 
+previous posting: https://lkml.org/lkml/2019/9/5/857
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+
 -- 
-Dave Chinner
-david@fromorbit.com
+James Morris
+<jmorris@namei.org>
+
