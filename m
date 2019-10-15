@@ -2,131 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96AEAD7F7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 21:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B943D7FC0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 21:18:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731938AbfJOTAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 15:00:55 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46059 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727868AbfJOTAz (ORCPT
+        id S2389417AbfJOTSp convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 15:18:45 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45666 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389398AbfJOTSo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:00:55 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q64so21363094ljb.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2019 12:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MMAvaim9+S74+cLKGfKpPV0jt0ePKq4pl+dUnol7U2k=;
-        b=DhI3jZcx/uyOLfu8ny5Lt1siVQgFVsCm5kmsY6i2FCqBbzb8QH9PPyTN8DCmdhDr5S
-         A4G11LYL3O44P/4Ql7Jt/VeZd1nO1dKf4kVncZj73MdbJR4Dzd9pa/QE5Xu42b6DB/NB
-         KjEixpuat22YXDmNzVBhKNDv8Olnc7lfHEeOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MMAvaim9+S74+cLKGfKpPV0jt0ePKq4pl+dUnol7U2k=;
-        b=cA9m2IA2EzKsNBjOaFVTBLU0FqeyLR4tpWBeFLtIKXuCKXFw6M89xQ7kuJ9smuHscH
-         jGvG58aq2LTjNDieKs2l5Y/eDFSqX0WiX5fep09pZ6GUMyBLGOpMfOnmUjdGDgIkv2mr
-         qJhsbuWaS2YB11m269h+giIiFRggHIJx4v667CHNDANdFjHVuJan2wXo7QP775axWhyj
-         KLMIZ3wkd5wWWDae09F4BNGK5jTylN/GgYl6S3nSBeOnCHytVaBP+9wcJiX/CTmolio7
-         m2aqZ8ixB4yIMmm3vPqcGmpe2YnJsafKU8GidN0FcxSriLvYItJ45zOth7HTxU4wZ0hY
-         2wMw==
-X-Gm-Message-State: APjAAAVJw0R4Wy5beT7TNceuH8I/oCkZy4pneWPFq12kG11cbOE9JBU2
-        0o9r7/APkQKD+kGtrNYKzUOnde53Q7g=
-X-Google-Smtp-Source: APXvYqwdDr4fwXKyFS4Y2dWLJNLXQY0uSuF2EDlPZtQTmzbHGzoD72sJBlK+xpadZ48gxOUIgrhN7w==
-X-Received: by 2002:a2e:420a:: with SMTP id p10mr12865162lja.16.1571166052874;
-        Tue, 15 Oct 2019 12:00:52 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id i17sm5352048lfj.35.2019.10.15.12.00.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2019 12:00:51 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id l21so21413620lje.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Oct 2019 12:00:51 -0700 (PDT)
-X-Received: by 2002:a2e:545:: with SMTP id 66mr1159643ljf.133.1571166050946;
- Tue, 15 Oct 2019 12:00:50 -0700 (PDT)
+        Tue, 15 Oct 2019 15:18:44 -0400
+Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iKSLA-00067i-N4; Tue, 15 Oct 2019 21:18:40 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 23/34] fs: Use CONFIG_PREEMPTION
+Date:   Tue, 15 Oct 2019 21:18:10 +0200
+Message-Id: <20191015191821.11479-24-bigeasy@linutronix.de>
+In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
+References: <20191015191821.11479-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-References: <CAHk-=wgOWxqwqCFuP_Bw=Hxxf9njeHJs0OLNGNc63peNd=kRqw@mail.gmail.com>
- <20191010195504.GI26530@ZenIV.linux.org.uk> <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
- <20191011001104.GJ26530@ZenIV.linux.org.uk> <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
- <20191013181333.GK26530@ZenIV.linux.org.uk> <CAHk-=wgrWGyACBM8N8KP7Pu_2VopuzM4A12yQz6Eo=X2Jpwzcw@mail.gmail.com>
- <20191013191050.GL26530@ZenIV.linux.org.uk> <CAHk-=wjJNE9hOKuatqh6SFf4nd65LG4ZR3gQSgg+rjSpVxe89w@mail.gmail.com>
- <20191013195949.GM26530@ZenIV.linux.org.uk> <20191015180846.GA31707@ZenIV.linux.org.uk>
-In-Reply-To: <20191015180846.GA31707@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 15 Oct 2019 12:00:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjyiiYhAbzVDUW1F3j9CAcu8+ugSvGYwUivdBfKoeU6yA@mail.gmail.com>
-Message-ID: <CAHk-=wjyiiYhAbzVDUW1F3j9CAcu8+ugSvGYwUivdBfKoeU6yA@mail.gmail.com>
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 11:08 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Another question: right now we have
->         if (!access_ok(uaddr, sizeof(u32)))
->                 return -EFAULT;
->
->         ret = arch_futex_atomic_op_inuser(op, oparg, &oldval, uaddr);
->         if (ret)
->                 return ret;
-> in kernel/futex.c.  Would there be any objections to moving access_ok()
-> inside the instances and moving pagefault_disable()/pagefault_enable() outside?
+From: Thomas Gleixner <tglx@linutronix.de>
 
-I think we should remove all the "atomic" versions, and just make the
-rule be that if you want atomic, you surround it with
-pagefault_disable()/pagefault_enable().
+CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
+Both PREEMPT and PREEMPT_RT require the same functionality which today
+depends on CONFIG_PREEMPT.
 
-That covers not just the futex ops (where "atomic" is actually
-somewhat ambiguous - the ops themselves are atomic too, so the naming
-might stay, although arguably the "futex" part makes that pointless
-too), but also copy_to_user_inatomic() and the powerpc version of
-__get_user_inatomic().
+Switch the i_size() and part_nr_sects_…() code over to use
+CONFIG_PREEMPTION. Update the comment for fsstack_copy_inode_size() also
+to refer to CONFIG_PREEMPTION.
 
-So we'd aim to get rid of all the "inatomic" ones entirely.
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[bigeasy: +PREEMPT comments]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ fs/stack.c            | 6 +++---
+ include/linux/fs.h    | 4 ++--
+ include/linux/genhd.h | 6 +++---
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-Same ultimately probably goes for the NMI versions. We should just
-make it be a rule that we can use all of the user access functions
-with pagefault_{dis,en}able() around them, and they'll be "safe" to
-use in atomic context.
+diff --git a/fs/stack.c b/fs/stack.c
+index 4ef2c056269d5..c9830924eb125 100644
+--- a/fs/stack.c
++++ b/fs/stack.c
+@@ -23,7 +23,7 @@ void fsstack_copy_inode_size(struct inode *dst, struct inode *src)
+ 
+ 	/*
+ 	 * But on 32-bit, we ought to make an effort to keep the two halves of
+-	 * i_blocks in sync despite SMP or PREEMPT - though stat's
++	 * i_blocks in sync despite SMP or PREEMPTION - though stat's
+ 	 * generic_fillattr() doesn't bother, and we won't be applying quotas
+ 	 * (where i_blocks does become important) at the upper level.
+ 	 *
+@@ -38,14 +38,14 @@ void fsstack_copy_inode_size(struct inode *dst, struct inode *src)
+ 		spin_unlock(&src->i_lock);
+ 
+ 	/*
+-	 * If CONFIG_SMP or CONFIG_PREEMPT on 32-bit, it's vital for
++	 * If CONFIG_SMP or CONFIG_PREEMPTION on 32-bit, it's vital for
+ 	 * fsstack_copy_inode_size() to hold some lock around
+ 	 * i_size_write(), otherwise i_size_read() may spin forever (see
+ 	 * include/linux/fs.h).  We don't necessarily hold i_mutex when this
+ 	 * is called, so take i_lock for that case.
+ 	 *
+ 	 * And if on 32-bit, continue our effort to keep the two halves of
+-	 * i_blocks in sync despite SMP or PREEMPT: use i_lock  for that case
++	 * i_blocks in sync despite SMP or PREEMPTION: use i_lock for that case
+ 	 * too, and do both at once by combining the tests.
+ 	 *
+ 	 * There is none of this locking overhead in the 64-bit case.
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e0d909d357634..1941bfecf943a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -855,7 +855,7 @@ static inline loff_t i_size_read(const struct inode *inode)
+ 		i_size = inode->i_size;
+ 	} while (read_seqcount_retry(&inode->i_size_seqcount, seq));
+ 	return i_size;
+-#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
++#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
+ 	loff_t i_size;
+ 
+ 	preempt_disable();
+@@ -880,7 +880,7 @@ static inline void i_size_write(struct inode *inode, loff_t i_size)
+ 	inode->i_size = i_size;
+ 	write_seqcount_end(&inode->i_size_seqcount);
+ 	preempt_enable();
+-#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
++#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
+ 	preempt_disable();
+ 	inode->i_size = i_size;
+ 	preempt_enable();
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index 8b5330dd5ac09..c1583357e9cd4 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -717,7 +717,7 @@ static inline void hd_free_part(struct hd_struct *part)
+  * accessor function.
+  *
+  * Code written along the lines of i_size_read() and i_size_write().
+- * CONFIG_PREEMPT case optimizes the case of UP kernel with preemption
++ * CONFIG_PREEMPTION case optimizes the case of UP kernel with preemption
+  * on.
+  */
+ static inline sector_t part_nr_sects_read(struct hd_struct *part)
+@@ -730,7 +730,7 @@ static inline sector_t part_nr_sects_read(struct hd_struct *part)
+ 		nr_sects = part->nr_sects;
+ 	} while (read_seqcount_retry(&part->nr_sects_seq, seq));
+ 	return nr_sects;
+-#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
++#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
+ 	sector_t nr_sects;
+ 
+ 	preempt_disable();
+@@ -753,7 +753,7 @@ static inline void part_nr_sects_write(struct hd_struct *part, sector_t size)
+ 	write_seqcount_begin(&part->nr_sects_seq);
+ 	part->nr_sects = size;
+ 	write_seqcount_end(&part->nr_sects_seq);
+-#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
++#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
+ 	preempt_disable();
+ 	part->nr_sects = size;
+ 	preempt_enable();
+-- 
+2.23.0
 
-One issue with the NMI versions is that they actually want to avoid
-the current value of set_fs().  So copy_from_user_nmi() (at least on
-x86) is special in that it does
-
-        if (__range_not_ok(from, n, TASK_SIZE))
-                return n;
-
-instead of access_ok() because of that issue.
-
-NMI also has some other issues (nmi_uaccess_okay() on x86, at least),
-but those *probably* could be handled at page fault time instead.
-
-Anyway, NMI is so special that I'd suggest leaving it for later, but
-the non-NMI atomic accesses I would suggest you clean up at the same
-time.
-
-I think the *only* reason we have the "inatomic()" versions is that
-the regular ones do that "might_fault()" testing unconditionally, and
-might_fault() _used_ to be just a might_sleep() - so it's not about
-functionality per se, it's about "we have this sanity check that we
-need to undo".
-
-We've already made "might_fault()" look at pagefault_disabled(), so I
-think a lot of the reasons for inatomic are entirely historical.
-
-                Linus
