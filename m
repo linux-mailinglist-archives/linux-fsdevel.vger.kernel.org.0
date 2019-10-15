@@ -2,143 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B943D7FC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 21:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28996D8077
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Oct 2019 21:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389417AbfJOTSp convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 15:18:45 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45666 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389398AbfJOTSo (ORCPT
+        id S1732375AbfJOTkQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 15:40:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39076 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727856AbfJOTkQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:18:44 -0400
-Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1iKSLA-00067i-N4; Tue, 15 Oct 2019 21:18:40 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 23/34] fs: Use CONFIG_PREEMPTION
-Date:   Tue, 15 Oct 2019 21:18:10 +0200
-Message-Id: <20191015191821.11479-24-bigeasy@linutronix.de>
-In-Reply-To: <20191015191821.11479-1-bigeasy@linutronix.de>
-References: <20191015191821.11479-1-bigeasy@linutronix.de>
+        Tue, 15 Oct 2019 15:40:16 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iKSg0-0002Pi-T2; Tue, 15 Oct 2019 19:40:12 +0000
+Date:   Tue, 15 Oct 2019 20:40:12 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
+ unsafe_put_user()
+Message-ID: <20191015194012.GO26530@ZenIV.linux.org.uk>
+References: <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
+ <20191011001104.GJ26530@ZenIV.linux.org.uk>
+ <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
+ <20191013181333.GK26530@ZenIV.linux.org.uk>
+ <CAHk-=wgrWGyACBM8N8KP7Pu_2VopuzM4A12yQz6Eo=X2Jpwzcw@mail.gmail.com>
+ <20191013191050.GL26530@ZenIV.linux.org.uk>
+ <CAHk-=wjJNE9hOKuatqh6SFf4nd65LG4ZR3gQSgg+rjSpVxe89w@mail.gmail.com>
+ <20191013195949.GM26530@ZenIV.linux.org.uk>
+ <20191015180846.GA31707@ZenIV.linux.org.uk>
+ <CAHk-=wjyiiYhAbzVDUW1F3j9CAcu8+ugSvGYwUivdBfKoeU6yA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjyiiYhAbzVDUW1F3j9CAcu8+ugSvGYwUivdBfKoeU6yA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+On Tue, Oct 15, 2019 at 12:00:34PM -0700, Linus Torvalds wrote:
+> On Tue, Oct 15, 2019 at 11:08 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > Another question: right now we have
+> >         if (!access_ok(uaddr, sizeof(u32)))
+> >                 return -EFAULT;
+> >
+> >         ret = arch_futex_atomic_op_inuser(op, oparg, &oldval, uaddr);
+> >         if (ret)
+> >                 return ret;
+> > in kernel/futex.c.  Would there be any objections to moving access_ok()
+> > inside the instances and moving pagefault_disable()/pagefault_enable() outside?
+> 
+> I think we should remove all the "atomic" versions, and just make the
+> rule be that if you want atomic, you surround it with
+> pagefault_disable()/pagefault_enable().
 
-CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
-Both PREEMPT and PREEMPT_RT require the same functionality which today
-depends on CONFIG_PREEMPT.
+Umm...  I thought about that, but ended up with "it documents the intent" -
+pagefault_disable() might be implicit (e.g. done by kmap_atomic()) or
+several levels up the call chain.  Not sure.
 
-Switch the i_size() and part_nr_sects_…() code over to use
-CONFIG_PREEMPTION. Update the comment for fsstack_copy_inode_size() also
-to refer to CONFIG_PREEMPTION.
+> That covers not just the futex ops (where "atomic" is actually
+> somewhat ambiguous - the ops themselves are atomic too, so the naming
+> might stay, although arguably the "futex" part makes that pointless
+> too), but also copy_to_user_inatomic() and the powerpc version of
+> __get_user_inatomic().
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bigeasy: +PREEMPT comments]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- fs/stack.c            | 6 +++---
- include/linux/fs.h    | 4 ++--
- include/linux/genhd.h | 6 +++---
- 3 files changed, 8 insertions(+), 8 deletions(-)
+Eh?  copy_to_user_inatomic() doesn't exist; __copy_to_user_inatomic()
+does, but...
 
-diff --git a/fs/stack.c b/fs/stack.c
-index 4ef2c056269d5..c9830924eb125 100644
---- a/fs/stack.c
-+++ b/fs/stack.c
-@@ -23,7 +23,7 @@ void fsstack_copy_inode_size(struct inode *dst, struct inode *src)
- 
- 	/*
- 	 * But on 32-bit, we ought to make an effort to keep the two halves of
--	 * i_blocks in sync despite SMP or PREEMPT - though stat's
-+	 * i_blocks in sync despite SMP or PREEMPTION - though stat's
- 	 * generic_fillattr() doesn't bother, and we won't be applying quotas
- 	 * (where i_blocks does become important) at the upper level.
- 	 *
-@@ -38,14 +38,14 @@ void fsstack_copy_inode_size(struct inode *dst, struct inode *src)
- 		spin_unlock(&src->i_lock);
- 
- 	/*
--	 * If CONFIG_SMP or CONFIG_PREEMPT on 32-bit, it's vital for
-+	 * If CONFIG_SMP or CONFIG_PREEMPTION on 32-bit, it's vital for
- 	 * fsstack_copy_inode_size() to hold some lock around
- 	 * i_size_write(), otherwise i_size_read() may spin forever (see
- 	 * include/linux/fs.h).  We don't necessarily hold i_mutex when this
- 	 * is called, so take i_lock for that case.
- 	 *
- 	 * And if on 32-bit, continue our effort to keep the two halves of
--	 * i_blocks in sync despite SMP or PREEMPT: use i_lock  for that case
-+	 * i_blocks in sync despite SMP or PREEMPTION: use i_lock for that case
- 	 * too, and do both at once by combining the tests.
- 	 *
- 	 * There is none of this locking overhead in the 64-bit case.
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e0d909d357634..1941bfecf943a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -855,7 +855,7 @@ static inline loff_t i_size_read(const struct inode *inode)
- 		i_size = inode->i_size;
- 	} while (read_seqcount_retry(&inode->i_size_seqcount, seq));
- 	return i_size;
--#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
-+#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
- 	loff_t i_size;
- 
- 	preempt_disable();
-@@ -880,7 +880,7 @@ static inline void i_size_write(struct inode *inode, loff_t i_size)
- 	inode->i_size = i_size;
- 	write_seqcount_end(&inode->i_size_seqcount);
- 	preempt_enable();
--#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
-+#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
- 	preempt_disable();
- 	inode->i_size = i_size;
- 	preempt_enable();
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 8b5330dd5ac09..c1583357e9cd4 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -717,7 +717,7 @@ static inline void hd_free_part(struct hd_struct *part)
-  * accessor function.
-  *
-  * Code written along the lines of i_size_read() and i_size_write().
-- * CONFIG_PREEMPT case optimizes the case of UP kernel with preemption
-+ * CONFIG_PREEMPTION case optimizes the case of UP kernel with preemption
-  * on.
-  */
- static inline sector_t part_nr_sects_read(struct hd_struct *part)
-@@ -730,7 +730,7 @@ static inline sector_t part_nr_sects_read(struct hd_struct *part)
- 		nr_sects = part->nr_sects;
- 	} while (read_seqcount_retry(&part->nr_sects_seq, seq));
- 	return nr_sects;
--#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
-+#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
- 	sector_t nr_sects;
- 
- 	preempt_disable();
-@@ -753,7 +753,7 @@ static inline void part_nr_sects_write(struct hd_struct *part, sector_t size)
- 	write_seqcount_begin(&part->nr_sects_seq);
- 	part->nr_sects = size;
- 	write_seqcount_end(&part->nr_sects_seq);
--#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
-+#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
- 	preempt_disable();
- 	part->nr_sects = size;
- 	preempt_enable();
--- 
-2.23.0
+arch/mips/kernel/unaligned.c:1307:                      res = __copy_to_user_inatomic(addr, fpr, sizeof(*fpr));
+drivers/gpu/drm/i915/i915_gem.c:313:    unwritten = __copy_to_user_inatomic(user_data,
+lib/test_kasan.c:510:   unused = __copy_to_user_inatomic(usermem, kmem, size + 1);
+mm/maccess.c:98:        ret = __copy_to_user_inatomic((__force void __user *)dst, src, size);
 
+these are all callers it has left anywhere and I'm certainly going to kill it.
+Now, __copy_from_user_inatomic() has a lot more callers left...  Frankly,
+the messier part of API is the nocache side of things.  Consider e.g. this:
+/* platform specific: cacheless copy */
+static void cacheless_memcpy(void *dst, void *src, size_t n)
+{
+        /* 
+         * Use the only available X64 cacheless copy.  Add a __user cast
+         * to quiet sparse.  The src agument is already in the kernel so
+         * there are no security issues.  The extra fault recovery machinery
+         * is not invoked.
+         */
+        __copy_user_nocache(dst, (void __user *)src, n, 0);
+}
+or this
+static void ntb_memcpy_tx(struct ntb_queue_entry *entry, void __iomem *offset)
+{
+#ifdef ARCH_HAS_NOCACHE_UACCESS
+        /*
+         * Using non-temporal mov to improve performance on non-cached
+         * writes, even though we aren't actually copying from user space.
+         */
+        __copy_from_user_inatomic_nocache(offset, entry->buf, entry->len);
+#else   
+        memcpy_toio(offset, entry->buf, entry->len);
+#endif
+
+        /* Ensure that the data is fully copied out before setting the flags */
+        wmb();
+
+        ntb_tx_copy_callback(entry, NULL);
+}
+"user" part is bollocks in both cases; moreover, I really wonder about that
+ifdef in ntb one - ARCH_HAS_NOCACHE_UACCESS is x86-only *at* *the* *moment*
+and it just so happens that ..._toio() doesn't require anything special on
+x86.  Have e.g. arm grow nocache stuff and the things will suddenly break,
+won't they?
