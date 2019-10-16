@@ -2,114 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E4CBD85F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 04:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4FDAD863C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 05:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389722AbfJPCgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 22:36:11 -0400
-Received: from sandeen.net ([63.231.237.45]:42290 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389678AbfJPCgL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 22:36:11 -0400
-Received: from Liberator-6.local (c-174-53-190-166.hsd1.mn.comcast.net [174.53.190.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 3F06733FD;
-        Tue, 15 Oct 2019 21:35:32 -0500 (CDT)
-Subject: Re: [PATCH V2] fs: avoid softlockups in s_inodes iterators
-To:     Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@redhat.com>
-Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-References: <a26fae1d-a741-6eb1-b460-968a3b97e238@redhat.com>
- <20191015073740.GA21550@quack2.suse.cz>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- mQINBE6x99QBEADMR+yNFBc1Y5avoUhzI/sdR9ANwznsNpiCtZlaO4pIWvqQJCjBzp96cpCs
- nQZV32nqJBYnDpBDITBqTa/EF+IrHx8gKq8TaSBLHUq2ju2gJJLfBoL7V3807PQcI18YzkF+
- WL05ODFQ2cemDhx5uLghHEeOxuGj+1AI+kh/FCzMedHc6k87Yu2ZuaWF+Gh1W2ix6hikRJmQ
- vj5BEeAx7xKkyBhzdbNIbbjV/iGi9b26B/dNcyd5w2My2gxMtxaiP7q5b6GM2rsQklHP8FtW
- ZiYO7jsg/qIppR1C6Zr5jK1GQlMUIclYFeBbKggJ9mSwXJH7MIftilGQ8KDvNuV5AbkronGC
- sEEHj2khs7GfVv4pmUUHf1MRIvV0x3WJkpmhuZaYg8AdJlyGKgp+TQ7B+wCjNTdVqMI1vDk2
- BS6Rg851ay7AypbCPx2w4d8jIkQEgNjACHVDU89PNKAjScK1aTnW+HNUqg9BliCvuX5g4z2j
- gJBs57loTWAGe2Ve3cMy3VoQ40Wt3yKK0Eno8jfgzgb48wyycINZgnseMRhxc2c8hd51tftK
- LKhPj4c7uqjnBjrgOVaVBupGUmvLiePlnW56zJZ51BR5igWnILeOJ1ZIcf7KsaHyE6B1mG+X
- dmYtjDhjf3NAcoBWJuj8euxMB6TcQN2MrSXy5wSKaw40evooGwARAQABtCVFcmljIFIuIFNh
- bmRlZW4gPHNhbmRlZW5Ac2FuZGVlbi5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgAUCUzMzbAIZAQAKCRAgrhaS4T3e4Fr7D/wO+fenqVvHjq21SCjDCrt8HdVj
- aJ28B1SqSU2toxyg5I160GllAxEHpLFGdbFAhQfBtnmlY9eMjwmJb0sCIrkrB6XNPSPA/B2B
- UPISh0z2odJv35/euJF71qIFgWzp2czJHkHWwVZaZpMWWNvsLIroXoR+uA9c2V1hQFVAJZyk
- EE4xzfm1+oVtjIC12B9tTCuS00pY3AUy21yzNowT6SSk7HAzmtG/PJ/uSB5wEkwldB6jVs2A
- sjOg1wMwVvh/JHilsQg4HSmDfObmZj1d0RWlMWcUE7csRnCE0ZWBMp/ttTn+oosioGa09HAS
- 9jAnauznmYg43oQ5Akd8iQRxz5I58F/+JsdKvWiyrPDfYZtFS+UIgWD7x+mHBZ53Qjazszox
- gjwO9ehZpwUQxBm4I0lPDAKw3HJA+GwwiubTSlq5PS3P7QoCjaV8llH1bNFZMz2o8wPANiDx
- 5FHgpRVgwLHakoCU1Gc+LXHXBzDXt7Cj02WYHdFzMm2hXaslRdhNGowLo1SXZFXa41KGTlNe
- 4di53y9CK5ynV0z+YUa+5LR6RdHrHtgywdKnjeWdqhoVpsWIeORtwWGX8evNOiKJ7j0RsHha
- WrePTubr5nuYTDsQqgc2r4aBIOpeSRR2brlT/UE3wGgy9LY78L4EwPR0MzzecfE1Ws60iSqw
- Pu3vhb7h3bkCDQROsffUARAA0DrUifTrXQzqxO8aiQOC5p9Tz25Np/Tfpv1rofOwL8VPBMvJ
- X4P5l1V2yd70MZRUVgjmCydEyxLJ6G2YyHO2IZTEajUY0Up+b3ErOpLpZwhvgWatjifpj6bB
- SKuDXeThqFdkphF5kAmgfVAIkan5SxWK3+S0V2F/oxstIViBhMhDwI6XsRlnVBoLLYcEilxA
- 2FlRUS7MOZGmRJkRtdGD5koVZSM6xVZQSmfEBaYQ/WJBGJQdPy94nnlAVn3lH3+N7pXvNUuC
- GV+t4YUt3tLcRuIpYBCOWlc7bpgeCps5Xa0dIZgJ8Louu6OBJ5vVXjPxTlkFdT0S0/uerCG5
- 1u8p6sGRLnUeAUGkQfIUqGUjW2rHaXgWNvzOV6i3tf9YaiXKl3avFaNW1kKBs0T5M1cnlWZU
- Utl6k04lz5OjoNY9J/bGyV3DSlkblXRMK87iLYQSrcV6cFz9PRl4vW1LGff3xRQHngeN5fPx
- ze8X5NE3hb+SSwyMSEqJxhVTXJVfQWWW0dQxP7HNwqmOWYF/6m+1gK/Y2gY3jAQnsWTru4RV
- TZGnKwEPmOCpSUvsTRXsVHgsWJ70qd0yOSjWuiv4b8vmD3+QFgyvCBxPMdP3xsxN5etheLMO
- gRwWpLn6yNFq/xtgs+ECgG+gR78yXQyA7iCs5tFs2OrMqV5juSMGmn0kxJUAEQEAAYkCHwQY
- AQIACQUCTrH31AIbDAAKCRAgrhaS4T3e4BKwD/0ZOOmUNOZCSOLAMjZx3mtYtjYgfUNKi0ki
- YPveGoRWTqbis8UitPtNrG4XxgzLOijSdOEzQwkdOIp/QnZhGNssMejCnsluK0GQd+RkFVWN
- mcQT78hBeGcnEMAXZKq7bkIKzvc06GFmkMbX/gAl6DiNGv0UNAX+5FYh+ucCJZSyAp3sA+9/
- LKjxnTedX0aygXA6rkpX0Y0FvN/9dfm47+LGq7WAqBOyYTU3E6/+Z72bZoG/cG7ANLxcPool
- LOrU43oqFnD8QwcN56y4VfFj3/jDF2MX3xu4v2OjglVjMEYHTCxP3mpxesGHuqOit/FR+mF0
- MP9JGfj6x+bj/9JMBtCW1bY/aPeMdPGTJvXjGtOVYblGZrSjXRn5++Uuy36CvkcrjuziSDG+
- JEexGxczWwN4mrOQWhMT5Jyb+18CO+CWxJfHaYXiLEW7dI1AynL4jjn4W0MSiXpWDUw+fsBO
- Pk6ah10C4+R1Jc7dyUsKksMfvvhRX1hTIXhth85H16706bneTayZBhlZ/hK18uqTX+s0onG/
- m1F3vYvdlE4p2ts1mmixMF7KajN9/E5RQtiSArvKTbfsB6Two4MthIuLuf+M0mI4gPl9SPlf
- fWCYVPhaU9o83y1KFbD/+lh1pjP7bEu/YudBvz7F2Myjh4/9GUAijrCTNeDTDAgvIJDjXuLX pA==
-Message-ID: <c3c6a9df-c4f5-7692-d8c0-3f6605a74ef4@sandeen.net>
-Date:   Tue, 15 Oct 2019 21:36:08 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.1.2
+        id S2390835AbfJPDNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 23:13:04 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:37087 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727544AbfJPDNE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 23:13:04 -0400
+Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 4A37343E753;
+        Wed, 16 Oct 2019 14:13:00 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iKZkB-0002ry-6g; Wed, 16 Oct 2019 14:12:59 +1100
+Date:   Wed, 16 Oct 2019 14:12:59 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Bob Peterson <rpeterso@redhat.com>
+Subject: Re: [PATCH v3] splice: only read in as much information as there is
+ pipe buffer space
+Message-ID: <20191016031259.GH15134@dread.disaster.area>
+References: <20191014220940.GF13098@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20191015073740.GA21550@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191014220940.GF13098@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=8nJEP1OIZ-IA:10 a=XobE76Q3jBoA:10
+        a=yPCof4ZbAAAA:8 a=hSkVLCK3AAAA:8 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
+        a=TDX8A0Kee3vNHL822sIA:9 a=P0TfUWSjtx0ZhHvf:21 a=Tl8fea81EZ5SM3ls:21
+        a=wPNLvfGTeEIA:10 a=cQPPKAXgyycSBL8etih5:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/15/19 2:37 AM, Jan Kara wrote:
-> On Mon 14-10-19 16:30:24, Eric Sandeen wrote:
->> Anything that walks all inodes on sb->s_inodes list without rescheduling
->> risks softlockups.
->>
->> Previous efforts were made in 2 functions, see:
->>
->> c27d82f fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
->> ac05fbb inode: don't softlockup when evicting inodes
->>
->> but there hasn't been an audit of all walkers, so do that now.  This
->> also consistently moves the cond_resched() calls to the bottom of each
->> loop in cases where it already exists.
->>
->> One loop remains: remove_dquot_ref(), because I'm not quite sure how
->> to deal with that one w/o taking the i_lock.
->>
->> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+On Mon, Oct 14, 2019 at 03:09:40PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> Thanks Eric. The patch looks good to me. You can add:
+> Andreas Grünbacher reports that on the two filesystems that support
+> iomap directio, it's possible for splice() to return -EAGAIN (instead of
+> a short splice) if the pipe being written to has less space available in
+> its pipe buffers than the length supplied by the calling process.
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+> Months ago we fixed splice_direct_to_actor to clamp the length of the
+> read request to the size of the splice pipe.  Do the same to do_splice.
+> 
+> Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
+> Reported-by: syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com
+> Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> ---
+>  fs/splice.c |   14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 98412721f056..e509239d7e06 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -945,12 +945,13 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+>  	WARN_ON_ONCE(pipe->nrbufs != 0);
+>  
+>  	while (len) {
+> +		unsigned int pipe_pages;
 
-thanks
+define this as a size_t...
 
-> BTW, I suppose you need to add Al to pickup the patch?
+>  		size_t read_len;
+>  		loff_t pos = sd->pos, prev_pos = pos;
+>  
+>  		/* Don't try to read more the pipe has space for. */
+> -		read_len = min_t(size_t, len,
+> -				 (pipe->buffers - pipe->nrbufs) << PAGE_SHIFT);
+> +		pipe_pages = pipe->buffers - pipe->nrbufs;
+> +		read_len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
 
-Yeah (cc'd now)
+		read_len = min_t(size_t, len, pipe_pages << PAGER_SHIFT);
 
-But it was just pointed out to me that if/when the majority of inodes
-at umount time have i_count == 0, we'll never hit the resched in 
-fsnotify_unmount_inodes() and may still have an issue ...
+>  		ret = do_splice_to(in, &pos, pipe, read_len, flags);
+>  		if (unlikely(ret <= 0))
+>  			goto out_release;
+> @@ -1180,8 +1181,15 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+>  
+>  		pipe_lock(opipe);
+>  		ret = wait_for_space(opipe, flags);
+> -		if (!ret)
+> +		if (!ret) {
+> +			unsigned int pipe_pages;
+> +
+> +			/* Don't try to read more the pipe has space for. */
+> +			pipe_pages = opipe->buffers - opipe->nrbufs;
+> +			len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
 
--Eric
+And same here...
+
+Cheers,
+
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
