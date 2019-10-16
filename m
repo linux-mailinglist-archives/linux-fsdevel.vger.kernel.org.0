@@ -2,83 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFFB7D8519
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 02:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E4CBD85F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 04:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388576AbfJPAwf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 20:52:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32956 "EHLO mail.kernel.org"
+        id S2389722AbfJPCgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 22:36:11 -0400
+Received: from sandeen.net ([63.231.237.45]:42290 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbfJPAwe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 20:52:34 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2389678AbfJPCgL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 22:36:11 -0400
+Received: from Liberator-6.local (c-174-53-190-166.hsd1.mn.comcast.net [174.53.190.166])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDBB62067B;
-        Wed, 16 Oct 2019 00:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571187154;
-        bh=A/u6kf+idGmi0psouuwo2uYEmwrcJV3/rAZxg91qHqE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r19ysU3rAAeZjA20PGXZfcyCuNTanJ//ncuAzJyhWwBqaGSRbFW87Etnhh8gO5p44
-         2UlV1lUL06p7snIdPhtRNozDVafNOXaOyFxXmQrpz71aQVNJAsm0+N+Z0ihPQBLn7y
-         ekjRiYktKe+zcw1od2VAC5IRwSB1OUpLjQKSAPUo=
-Date:   Tue, 15 Oct 2019 17:52:32 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: fsmount: add missing mntget()
-Message-ID: <20191016005232.GA726@sol.localdomain>
-Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-References: <20190610183031.GE63833@gmail.com>
- <20190612184313.143456-1-ebiggers@kernel.org>
- <20190613084728.GA32129@miu.piliscsaba.redhat.com>
- <20190709230029.GO641@sol.localdomain>
- <20190710003113.GC17978@ZenIV.linux.org.uk>
+        by sandeen.net (Postfix) with ESMTPSA id 3F06733FD;
+        Tue, 15 Oct 2019 21:35:32 -0500 (CDT)
+Subject: Re: [PATCH V2] fs: avoid softlockups in s_inodes iterators
+To:     Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@redhat.com>
+Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+References: <a26fae1d-a741-6eb1-b460-968a3b97e238@redhat.com>
+ <20191015073740.GA21550@quack2.suse.cz>
+From:   Eric Sandeen <sandeen@sandeen.net>
+Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
+ 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 pA==
+Message-ID: <c3c6a9df-c4f5-7692-d8c0-3f6605a74ef4@sandeen.net>
+Date:   Tue, 15 Oct 2019 21:36:08 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190710003113.GC17978@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191015073740.GA21550@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 01:31:13AM +0100, Al Viro wrote:
-> On Tue, Jul 09, 2019 at 04:00:29PM -0700, Eric Biggers wrote:
+On 10/15/19 2:37 AM, Jan Kara wrote:
+> On Mon 14-10-19 16:30:24, Eric Sandeen wrote:
+>> Anything that walks all inodes on sb->s_inodes list without rescheduling
+>> risks softlockups.
+>>
+>> Previous efforts were made in 2 functions, see:
+>>
+>> c27d82f fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
+>> ac05fbb inode: don't softlockup when evicting inodes
+>>
+>> but there hasn't been an audit of all walkers, so do that now.  This
+>> also consistently moves the cond_resched() calls to the bottom of each
+>> loop in cases where it already exists.
+>>
+>> One loop remains: remove_dquot_ref(), because I'm not quite sure how
+>> to deal with that one w/o taking the i_lock.
+>>
+>> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 > 
-> > > index 49a058c73e4c..26f74e092bd9 100644
-> > > --- a/fs/pnode.h
-> > > +++ b/fs/pnode.h
-> > > @@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
-> > >  void propagate_mount_unlock(struct mount *);
-> > >  void mnt_release_group_id(struct mount *);
-> > >  int get_dominating_id(struct mount *mnt, const struct path *root);
-> > > -unsigned int mnt_get_count(struct mount *mnt);
-> > > +int mnt_get_count(struct mount *mnt);
-> > >  void mnt_set_mountpoint(struct mount *, struct mountpoint *,
-> > >  			struct mount *);
-> > >  void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
-> > 
-> > Miklos, are you planning to send this as a formal patch?
+> Thanks Eric. The patch looks good to me. You can add:
 > 
-> Hold it for a while, OK?  There's an unpleasant issue (a very long-standing
-> one) with boxen that have an obscene amount of RAM.  Some of the counters
-> involved will need to become long.  This is the coming cycle fodder (mounts
-> and inodes are relatively easy; it's dentry->d_count that brings arseloads
-> of fun) and I'd rather deal with that sanity check as part of the same series.
-> It's not forgotten...  Patch series re limiting the number of negative
-> dentries is also getting into the same mix.  Watch #work.dcache - what's
-> in there is basically prep work for the big pile for the next cycle; it'll
-> be interesting...
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Al, whatever happened to the refcounting patches you mentioned here?
+thanks
 
-- Eric
+> BTW, I suppose you need to add Al to pickup the patch?
+
+Yeah (cc'd now)
+
+But it was just pointed out to me that if/when the majority of inodes
+at umount time have i_count == 0, we'll never hit the resched in 
+fsnotify_unmount_inodes() and may still have an issue ...
+
+-Eric
