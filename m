@@ -2,110 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18748D980E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 19:00:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B73D3D981D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 19:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404756AbfJPRA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 13:00:26 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35185 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfJPRA0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 13:00:26 -0400
-Received: by mail-qt1-f193.google.com with SMTP id m15so37201632qtq.2;
-        Wed, 16 Oct 2019 10:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1ITMSYb2mpF3RaZgz9ExWMw4f2fxz+CBvsGA+3mZlnY=;
-        b=ijjVZXxvfuZw0TNdMfAxpyi2d8BL7/Z8qq/jxibkITdBmlt8llqyRR+Yf1H0Sua2oz
-         nxNsLpDDlKv59Ueffc82qHmOGkGfp6D2WKzqWu9lwt5Ata/yAcht7OfcU5iF6GIn2dKf
-         Z1xEWN4cSpvTDfpv6+WjtF7t3nU0yxRlI/CqXNDwUC7O+9/gRWkOfLwlNq7H1LbbF8sZ
-         XZeuAsQ/vVWJ62X28Vjk/96f+sGyNTGltBgxwjCEKaUeeIVdUeQb+DA70wdfRokLaVJq
-         4lFv+KWiy0I/nrW52cNOjNWNBM2D6UHoVuyH0ypctDTWrNbrU5efkRg/Rk9CuwtAP8qj
-         sAwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1ITMSYb2mpF3RaZgz9ExWMw4f2fxz+CBvsGA+3mZlnY=;
-        b=GR4Ys9fnkCh94U4Q7hfFRMgihO8SJ/55AEdndzZLOKaKGKdRTAt2ZpQOiXSL2wYzPp
-         ClqxbMHOoIkSY5j6BRnQ9qHCoc0PvVoeddCpo2HSc6V2oCIqyjIGFIMND4OV4Ud5Im56
-         dNwzenrvaMP4Efl1+Lpl4QP8QxzSNL8qqlx9Q1wzG6V+wAhuVKqca5t3fWTeWAJQgDbS
-         ifaVEeY6dymkGIvXfszraIzHVcNde0j2OuQYt7JrOnxUEhXAGakHAm41KVA4rOtU1Ft5
-         1N0cdffEQNUz5QdgT8P22/ojGX/+4YUwEe8TVL0vgNC5UGjay/q/v9ZWvpOsISWkjezS
-         1s+w==
-X-Gm-Message-State: APjAAAW8xIR9jFZQ2sS4qTOjBGGmmpRTrTtFBOQdopeyLjiLq/xBnkED
-        uS/8/eTnWaRUjCSiPQ0/fD5yi+QntDofy+B3mgs=
-X-Google-Smtp-Source: APXvYqyuL/2JXnrA0RyJL6yz67FJ8Lms7lPxW5N5SBM54W/lLa5IDZGtH0jjpkiAz30csKSYqVRDxFzRXZXUzmgAJNc=
-X-Received: by 2002:ac8:1a78:: with SMTP id q53mr45222642qtk.379.1571245225491;
- Wed, 16 Oct 2019 10:00:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1568994791.git.esyr@redhat.com> <CAPhsuW5CvJNRP5OO_M6XVd9q0x-CH9eADWR5oqdJP20eFScCFw@mail.gmail.com>
- <87d4b42f-7aa2-5372-27e4-a28e4c724f37@kernel.dk> <CAPhsuW68rK3zGF3A8HnwArh7bs+-AAvZBtVkt4gcxPnFCGxwAQ@mail.gmail.com>
-In-Reply-To: <CAPhsuW68rK3zGF3A8HnwArh7bs+-AAvZBtVkt4gcxPnFCGxwAQ@mail.gmail.com>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Wed, 16 Oct 2019 10:00:13 -0700
-Message-ID: <CAPhsuW6ZSbKLYPpUk3DT+HxTfcuOVPG64rQ057aoLGgrGSeGHA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] Fix typo in RWH_WRITE_LIFE_NOT_SET constant name
-To:     Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Eugene Syromiatnikov <esyr@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        id S2436491AbfJPRC1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 13:02:27 -0400
+Received: from mga05.intel.com ([192.55.52.43]:14328 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729913AbfJPRC0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Oct 2019 13:02:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2019 10:02:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,304,1566889200"; 
+   d="scan'208";a="199012720"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
+  by orsmga003.jf.intel.com with ESMTP; 16 Oct 2019 10:02:25 -0700
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Kan Liang <kan.liang@intel.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
+ <157117608708.15019.1998141309054662114.stgit@warthog.procyon.org.uk>
+ <CAHk-=whiz1sHXu8SVZKEC2dup=r5JMrftPtEt6ff9Ea8dyH8yQ@mail.gmail.com>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ l50q2K/r651xphs7CGEdKi1nU0YJVbQxJQ==
+Subject: Re: [RFC PATCH 02/21] Add a prelocked wake-up
+Message-ID: <533ca3c5-1592-e59b-eafe-bc4a352a442d@linux.intel.com>
+Date:   Wed, 16 Oct 2019 10:02:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=whiz1sHXu8SVZKEC2dup=r5JMrftPtEt6ff9Ea8dyH8yQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jeff and J. Bruce,
+On 10/15/19 3:14 PM, Linus Torvalds wrote:
+> On Tue, Oct 15, 2019 at 2:48 PM David Howells <dhowells@redhat.com> wrote:
+>>
+>> Add a wakeup call for a case whereby the caller already has the waitqueue
+>> spinlock held.
+> 
+> That naming is crazy.
+> 
+> We already have helper functions like this, and they are just called
+> "wake_up_locked()".
+> 
+> So the "prelocked" naming is just odd. Make it be
+> wake_up_interruptible_sync_poll_locked().
+> 
+> The helper function should likely be
+> 
+>   void __wake_up_locked_sync_key(struct wait_queue_head *wq_head,
+> unsigned int mode, void *key)
+>   {
+>         __wake_up_common(wq_head, mode, 1, WF_SYNC, key, NULL);
+>   }
+>   EXPORT_SYMBOL_GPL(__wake_up_locked_sync_key);
+> 
+> to match the other naming patterns there.
+> 
+> [ Unrelated ]
+> 
+> Looking at that mess of functions, I also wonder if we should try to
+> just remove the bookmark code again. It was cute, and it was useful,
+> but I think the problem with the page lock list may have been fixed by
+> commit 9a1ea439b16b ("mm: put_and_wait_on_page_locked() while page is
+> migrated") which avoids the retry condition with
+> migrate_page_move_mapping().
+> 
+> Tim/Kan? Do you have the problematic load still?
+> 
 
-On Wed, Oct 2, 2019 at 9:55 AM Song Liu <liu.song.a23@gmail.com> wrote:
->
-> On Tue, Oct 1, 2019 at 5:55 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >
-> > On 10/1/19 5:12 PM, Song Liu wrote:
-> > > On Fri, Sep 20, 2019 at 8:58 AM Eugene Syromiatnikov <esyr@redhat.com> wrote:
-> > >>
-> > >> Hello.
-> > >>
-> > >> This is a small fix of a typo (or, more specifically, some remnant of
-> > >> the old patch version spelling) in RWH_WRITE_LIFE_NOT_SET constant,
-> > >> which is named as RWF_WRITE_LIFE_NOT_SET currently.  Since the name
-> > >> with "H" is used in man page and everywhere else, it's probably worth
-> > >> to make the name used in the fcntl.h UAPI header in line with it.
-> > >> The two follow-up patches update usage sites of this constant in kernel
-> > >> to use the new spelling.
-> > >>
-> > >> The old name is retained as it is part of UAPI now.
-> > >>
-> > >> Changes since v2[1]:
-> > >>   * Updated RWF_WRITE_LIFE_NOT_SET constant usage
-> > >>     in drivers/md/raid5-ppl.c:ppl_init_log().
-> > >>
-> > >> Changes since v1[2]:
-> > >>   * Changed format of the commit ID in the commit message of the first patch.
-> > >>   * Removed bogus Signed-off-by that snuck into the resend of the series.
-> > >
-> > > Applied to md-next.
-> >
-> > I think the core fs change should core in through a core tree, then
-> > the md bits can go in at will after that.
+Unfortunately, we do not have ready access to that problematic load
+which was run by a customer on 8 socket system.  They were not
+willing to give the workload to us, and have not responded to my
+request to rerun their load with commit 9a1ea439b16b.
 
-As Jens suggested, we should route core fs patches through core tree. Could
-you please apply these patches? Since the change is small, probably you can
-also apply md patches?
+The commit greatly reduced migration failures with concurrent page faulting.
+And successful migrations could have prevented the big
+pile up of waiters faulting and waiting on the page, which was the
+problem the bookmark code was trying to solve.
 
-Thanks,
-Song
+So I also tend to think that the problem should have been resolved.
+But unfortunately I don't have a ready workload to confirm.
 
-PS: for the series:
+Tim
 
-Acked-by: Song Liu <songliubraving@fb.com>
