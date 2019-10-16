@@ -2,115 +2,332 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4FDAD863C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 05:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C20CD87C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 07:11:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390835AbfJPDNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 23:13:04 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:37087 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727544AbfJPDNE (ORCPT
+        id S1727356AbfJPFLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 01:11:40 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36230 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbfJPFLj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 23:13:04 -0400
-Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 4A37343E753;
-        Wed, 16 Oct 2019 14:13:00 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iKZkB-0002ry-6g; Wed, 16 Oct 2019 14:12:59 +1100
-Date:   Wed, 16 Oct 2019 14:12:59 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Wed, 16 Oct 2019 01:11:39 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9G59fHm193528;
+        Wed, 16 Oct 2019 05:11:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=vI/4DDbFA33hLIldCnexyySwLItEb5eMhy7SgeV0lPI=;
+ b=OKzu87WAwa8cIUe5YdBoqWO7r/nr2lZScliwfk4bn70KoJ87e3muWyrsGuc1HfjwzhyH
+ ek7CHhshko71np86bbZpK9d7ZavELm06E5KRVPMkGO3BLCg+6HNkXZoh8rphpjQi/urQ
+ +z/pioYNw84hEn0TwUFdG/MPlXGDYIzsWDXmSmtxAmQ+4Hm7MKhgGQY/D+8NdcMHGkQd
+ S6XH+O/CL/utTDojFCRzJhECkTgPGfDuS3hoq3JG7BUntTBAhIyKqmauByVc4aT8ss3Z
+ vr9UVveKajB+0LWtnD/0RgkZ0aQwEVpxmacQWTmAb5lJ+IeKpbx1jASmlubKPByWkPtc Ag== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2vk7frc20k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 05:11:21 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9G58Krv040195;
+        Wed, 16 Oct 2019 05:09:20 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2vnf7smpuu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Oct 2019 05:09:20 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9G59FWi010601;
+        Wed, 16 Oct 2019 05:09:16 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Oct 2019 05:09:15 +0000
+Date:   Tue, 15 Oct 2019 22:09:12 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [PATCH v3] splice: only read in as much information as there is
- pipe buffer space
-Message-ID: <20191016031259.GH15134@dread.disaster.area>
-References: <20191014220940.GF13098@magnolia>
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] iomap: lift the xfs writeback code to iomap
+Message-ID: <20191016050912.GW13108@magnolia>
+References: <20191015154345.13052-1-hch@lst.de>
+ <20191015154345.13052-10-hch@lst.de>
+ <20191015220721.GC16973@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191014220940.GF13098@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=8nJEP1OIZ-IA:10 a=XobE76Q3jBoA:10
-        a=yPCof4ZbAAAA:8 a=hSkVLCK3AAAA:8 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
-        a=TDX8A0Kee3vNHL822sIA:9 a=P0TfUWSjtx0ZhHvf:21 a=Tl8fea81EZ5SM3ls:21
-        a=wPNLvfGTeEIA:10 a=cQPPKAXgyycSBL8etih5:22 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20191015220721.GC16973@dread.disaster.area>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910160047
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910160047
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 03:09:40PM -0700, Darrick J. Wong wrote:
-> From: Darrick J. Wong <darrick.wong@oracle.com>
+On Wed, Oct 16, 2019 at 09:07:21AM +1100, Dave Chinner wrote:
+> On Tue, Oct 15, 2019 at 05:43:42PM +0200, Christoph Hellwig wrote:
+> > Take the xfs writeback code and move it to fs/iomap.  A new structure
+> > with three methods is added as the abstraction from the generic writeback
+> > code to the file system.  These methods are used to map blocks, submit an
+> > ioend, and cancel a page that encountered an error before it was added to
+> > an ioend.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  fs/iomap/buffered-io.c | 564 ++++++++++++++++++++++++++++++++++-
+> >  fs/iomap/trace.h       |  39 +++
+> >  fs/xfs/xfs_aops.c      | 662 ++++-------------------------------------
+> >  fs/xfs/xfs_aops.h      |  17 --
+> >  fs/xfs/xfs_super.c     |  11 +-
+> >  fs/xfs/xfs_trace.h     |  39 ---
+> >  include/linux/iomap.h  |  59 ++++
+> >  7 files changed, 722 insertions(+), 669 deletions(-)
+> .....
+> > @@ -468,6 +471,8 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
+> >  int
+> >  iomap_releasepage(struct page *page, gfp_t gfp_mask)
+> >  {
+> > +	trace_iomap_releasepage(page->mapping->host, page, 0, 0);
+> > +
+> >  	/*
+> >  	 * mm accommodates an old ext3 case where clean pages might not have had
+> >  	 * the dirty bit cleared. Thus, it can send actual dirty pages to
+> > @@ -483,6 +488,8 @@ EXPORT_SYMBOL_GPL(iomap_releasepage);
+> >  void
+> >  iomap_invalidatepage(struct page *page, unsigned int offset, unsigned int len)
+> >  {
+> > +	trace_iomap_invalidatepage(page->mapping->host, page, offset, len);
+> > +
 > 
-> Andreas Grünbacher reports that on the two filesystems that support
-> iomap directio, it's possible for splice() to return -EAGAIN (instead of
-> a short splice) if the pipe being written to has less space available in
-> its pipe buffers than the length supplied by the calling process.
+> These tracepoints should be split out into a separate patch like
+> the readpage(s) tracepoints. Maybe just lift all the non-writeback
+> ones in a single patch...
 > 
-> Months ago we fixed splice_direct_to_actor to clamp the length of the
-> read request to the size of the splice pipe.  Do the same to do_splice.
+> >  	/*
+> >  	 * If we are invalidating the entire page, clear the dirty state from it
+> >  	 * and release it to avoid unnecessary buildup of the LRU.
+> > @@ -1084,3 +1091,558 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+> >  	return block_page_mkwrite_return(ret);
+> >  }
+> >  EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
+> > +
+> > +static void
+> > +iomap_finish_page_writeback(struct inode *inode, struct bio_vec *bvec,
+> > +		int error)
+> > +{
+> > +	struct iomap_page *iop = to_iomap_page(bvec->bv_page);
+> > +
+> > +	if (error) {
+> > +		SetPageError(bvec->bv_page);
+> > +		mapping_set_error(inode->i_mapping, -EIO);
+> > +	}
+> > +
+> > +	WARN_ON_ONCE(i_blocksize(inode) < PAGE_SIZE && !iop);
+> > +	WARN_ON_ONCE(iop && atomic_read(&iop->write_count) <= 0);
+> > +
+> > +	if (!iop || atomic_dec_and_test(&iop->write_count))
+> > +		end_page_writeback(bvec->bv_page);
+> > +}
 > 
-> Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
-> Reported-by: syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com
-> Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> ---
->  fs/splice.c |   14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
+> Can we just pass the struct page into this function?
 > 
-> diff --git a/fs/splice.c b/fs/splice.c
-> index 98412721f056..e509239d7e06 100644
-> --- a/fs/splice.c
-> +++ b/fs/splice.c
-> @@ -945,12 +945,13 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
->  	WARN_ON_ONCE(pipe->nrbufs != 0);
->  
->  	while (len) {
-> +		unsigned int pipe_pages;
+> .....
+> 
+> > +/*
+> > + * Submit the bio for an ioend. We are passed an ioend with a bio attached to
+> > + * it, and we submit that bio. The ioend may be used for multiple bio
+> > + * submissions, so we only want to allocate an append transaction for the ioend
+> > + * once.  In the case of multiple bio submission, each bio will take an IO
+> 
+> This needs to be changed to describe what wpc->ops->submit_ioend()
+> is used for rather than what XFS might use this hook for.
+> 
+> > + * reference to the ioend to ensure that the ioend completion is only done once
+> > + * all bios have been submitted and the ioend is really done.
+> > + *
+> > + * If @error is non-zero, it means that we have a situation where some part of
+> > + * the submission process has failed after we have marked paged for writeback
+> > + * and unlocked them. In this situation, we need to fail the bio and ioend
+> > + * rather than submit it to IO. This typically only happens on a filesystem
+> > + * shutdown.
+> > + */
+> > +static int
+> > +iomap_submit_ioend(struct iomap_writepage_ctx *wpc, struct iomap_ioend *ioend,
+> > +		int error)
+> > +{
+> > +	ioend->io_bio->bi_private = ioend;
+> > +	ioend->io_bio->bi_end_io = iomap_writepage_end_bio;
+> > +
+> > +	if (wpc->ops->submit_ioend)
+> > +		error = wpc->ops->submit_ioend(ioend, error);
+> 
+> I'm not sure that "submit_ioend" is the best name for this method,
+> as it is a pre-bio-submission hook, not an actual IO submission
+> method. "prepare_ioend_for_submit" is more descriptive, but probably
+> too long. wpc->ops->prepare_submit(ioend, error) reads pretty well,
+> though...
 
-define this as a size_t...
+->prepare_submission() ?
 
->  		size_t read_len;
->  		loff_t pos = sd->pos, prev_pos = pos;
->  
->  		/* Don't try to read more the pipe has space for. */
-> -		read_len = min_t(size_t, len,
-> -				 (pipe->buffers - pipe->nrbufs) << PAGE_SHIFT);
-> +		pipe_pages = pipe->buffers - pipe->nrbufs;
-> +		read_len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
+--D
 
-		read_len = min_t(size_t, len, pipe_pages << PAGER_SHIFT);
-
->  		ret = do_splice_to(in, &pos, pipe, read_len, flags);
->  		if (unlikely(ret <= 0))
->  			goto out_release;
-> @@ -1180,8 +1181,15 @@ static long do_splice(struct file *in, loff_t __user *off_in,
->  
->  		pipe_lock(opipe);
->  		ret = wait_for_space(opipe, flags);
-> -		if (!ret)
-> +		if (!ret) {
-> +			unsigned int pipe_pages;
-> +
-> +			/* Don't try to read more the pipe has space for. */
-> +			pipe_pages = opipe->buffers - opipe->nrbufs;
-> +			len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
-
-And same here...
-
-Cheers,
-
-Dave.
-
--- 
-Dave Chinner
-david@fromorbit.com
+> > +	if (error) {
+> > +		/*
+> > +		 * If we are failing the IO now, just mark the ioend with an
+> > +		 * error and finish it.  This will run IO completion immediately
+> > +		 * as there is only one reference to the ioend at this point in
+> > +		 * time.
+> > +		 */
+> > +		ioend->io_bio->bi_status = errno_to_blk_status(error);
+> > +		bio_endio(ioend->io_bio);
+> > +		return error;
+> > +	}
+> > +
+> > +	submit_bio(ioend->io_bio);
+> > +	return 0;
+> > +}
+> 
+> .....
+> > +/*
+> > + * We implement an immediate ioend submission policy here to avoid needing to
+> > + * chain multiple ioends and hence nest mempool allocations which can violate
+> > + * forward progress guarantees we need to provide. The current ioend we are
+> > + * adding blocks to is cached on the writepage context, and if the new block
+> 
+> adding pages to ... , and if the new block mapping
+> 
+> > + * does not append to the cached ioend it will create a new ioend and cache that
+> > + * instead.
+> > + *
+> > + * If a new ioend is created and cached, the old ioend is returned and queued
+> > + * locally for submission once the entire page is processed or an error has been
+> > + * detected.  While ioends are submitted immediately after they are completed,
+> > + * batching optimisations are provided by higher level block plugging.
+> > + *
+> > + * At the end of a writeback pass, there will be a cached ioend remaining on the
+> > + * writepage context that the caller will need to submit.
+> > + */
+> > +static int
+> > +iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> > +		struct writeback_control *wbc, struct inode *inode,
+> > +		struct page *page, u64 end_offset)
+> > +{
+> > +	struct iomap_page *iop = to_iomap_page(page);
+> > +	struct iomap_ioend *ioend, *next;
+> > +	unsigned len = i_blocksize(inode);
+> > +	u64 file_offset; /* file offset of page */
+> > +	int error = 0, count = 0, i;
+> > +	LIST_HEAD(submit_list);
+> > +
+> > +	WARN_ON_ONCE(i_blocksize(inode) < PAGE_SIZE && !iop);
+> > +	WARN_ON_ONCE(iop && atomic_read(&iop->write_count) != 0);
+> > +
+> > +	/*
+> > +	 * Walk through the page to find areas to write back. If we run off the
+> > +	 * end of the current map or find the current map invalid, grab a new
+> > +	 * one.
+> > +	 */
+> > +	for (i = 0, file_offset = page_offset(page);
+> > +	     i < (PAGE_SIZE >> inode->i_blkbits) && file_offset < end_offset;
+> > +	     i++, file_offset += len) {
+> > +		if (iop && !test_bit(i, iop->uptodate))
+> > +			continue;
+> > +
+> > +		error = wpc->ops->map_blocks(wpc, inode, file_offset);
+> > +		if (error)
+> > +			break;
+> > +		if (wpc->iomap.type == IOMAP_HOLE)
+> > +			continue;
+> > +		iomap_add_to_ioend(inode, file_offset, page, iop, wpc, wbc,
+> > +				 &submit_list);
+> > +		count++;
+> > +	}
+> > +
+> > +	WARN_ON_ONCE(!wpc->ioend && !list_empty(&submit_list));
+> > +	WARN_ON_ONCE(!PageLocked(page));
+> > +	WARN_ON_ONCE(PageWriteback(page));
+> > +
+> > +	/*
+> > +	 * On error, we have to fail the ioend here because we may have set
+> > +	 * pages under writeback, we have to make sure we run IO completion to
+> > +	 * mark the error state of the IO appropriately, so we can't cancel the
+> > +	 * ioend directly here.
+> 
+> Few too many commas and run-ons here. Maybe reword it like this:
+> 
+> 	/*
+> 	 * We cannot cancel the ioend directly here if there is a submission
+> 	 * error. We may have already set pages under writeback and hence we
+> 	 * have to run IO completion to mark the error state of the pages under
+> 	 * writeback appropriately.
+> 
+> >
+> >
+> >				That means we have to mark this page as under
+> > +	 * writeback if we included any blocks from it in the ioend chain so
+> > +	 * that completion treats it correctly.
+> > +	 *
+> > +	 * If we didn't include the page in the ioend, the on error we can
+>                                                        then on error
+> 
+> > +	 * simply discard and unlock it as there are no other users of the page
+> > +	 * now.  The caller will still need to trigger submission of outstanding
+> > +	 * ioends on the writepage context so they are treated correctly on
+> > +	 * error.
+> > +	 */
+> 
+> .....
+> 
+> > +static int
+> > +iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
+> > +{
+> > +	struct iomap_writepage_ctx *wpc = data;
+> > +	struct inode *inode = page->mapping->host;
+> > +	pgoff_t end_index;
+> > +	u64 end_offset;
+> > +	loff_t offset;
+> > +
+> > +	trace_iomap_writepage(inode, page, 0, 0);
+> > +
+> > +	/*
+> > +	 * Refuse to write the page out if we are called from reclaim context.
+> > +	 *
+> > +	 * This avoids stack overflows when called from deeply used stacks in
+> > +	 * random callers for direct reclaim or memcg reclaim.  We explicitly
+> > +	 * allow reclaim from kswapd as the stack usage there is relatively low.
+> > +	 *
+> > +	 * This should never happen except in the case of a VM regression so
+> > +	 * warn about it.
+> > +	 */
+> > +	if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
+> > +			PF_MEMALLOC))
+> > +		goto redirty;
+> > +
+> > +	/*
+> > +	 * Given that we do not allow direct reclaim to call us, we should
+> > +	 * never be called while in a filesystem transaction.
+> > +	 */
+> 
+> 	   never be called in a recursive filesystem reclaim context.
+> 
+> > +	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
+> > +		goto redirty;
+> > +
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
