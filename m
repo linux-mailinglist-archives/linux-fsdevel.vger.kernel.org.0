@@ -2,157 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82EB1D9D8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 23:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ED20D9F45
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 00:23:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389216AbfJPVhK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 17:37:10 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:53180 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729033AbfJPVhK (ORCPT
+        id S2437611AbfJPVxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 17:53:54 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:35902 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389855AbfJPVxx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:37:10 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GLTb7f112184;
-        Wed, 16 Oct 2019 21:37:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=h0mQVvRLvQuNO3P9TCw3137fNadOQPjUeOAlM32MDP8=;
- b=dfusp1MLrRAtuM7nsuXIN3HzHxohQp9Kad6uGsN9aSLq//niP9kBtfJay7FBY7vSpWSL
- VEJa9IoSMNKgPSsPNm91VhKiwPab5kLpXEB4XFxiIWXrZcROJiBrPfWj11nM4uKKgtYJ
- qEau4vZnudVfWxwPfLXTP7AueROkg0zvYTljXRDm708KefZD/Zg6YF08DMutSTAubCVF
- mcdCuIoSiXItnFcHbrKQvkB5c1uSzDpPBaWW6BWnhIqaOrFQnDBjX/FFjK7XLi9Ywhxh
- LjxLr2r2ZWY+szFQKBbF2DdvUIIrStdJueywT80WTpqV4G0WoP2Lqm/1v+NOQHOEwkal pQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2vk7frhxtt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Oct 2019 21:37:04 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GLYPCt193677;
-        Wed, 16 Oct 2019 21:37:03 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2vp70nn4u7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Oct 2019 21:37:03 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9GLb1Zv024867;
-        Wed, 16 Oct 2019 21:37:01 GMT
-Received: from localhost (/10.145.178.76)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Oct 2019 21:37:00 +0000
-Date:   Wed, 16 Oct 2019 14:37:00 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Wang Shilong <wangshilong1991@gmail.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Andreas Dilger <adilger@dilger.ca>, Li Xi <lixi@ddn.com>,
-        Wang Shilong <wshilong@ddn.com>
-Subject: Re: [Project Quota]file owner could change its project ID?
-Message-ID: <20191016213700.GH13108@magnolia>
-References: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
- <20191013164124.GR13108@magnolia>
- <CAP9B-Q=SfhnA6iO7h1TWAoSOfZ+BvT7d8=OE4176FZ3GXiU-xw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP9B-Q=SfhnA6iO7h1TWAoSOfZ+BvT7d8=OE4176FZ3GXiU-xw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910160177
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910160177
+        Wed, 16 Oct 2019 17:53:53 -0400
+Received: from mr2.cc.vt.edu (mr2.cc.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x9GLrp6k014106
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2019 17:53:51 -0400
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x9GLrkWi007501
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2019 17:53:51 -0400
+Received: by mail-qk1-f197.google.com with SMTP id y189so76999qkb.14
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2019 14:53:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=gqUpgmdxzpasd7pMU+uxnneMl1+ktu9g6I4Qah8EhxI=;
+        b=gTP7aWJFBqTpskzWSMNZ+IZBfwTC6D+PQzXjinpdFXAqzXsygePAG9AN18J4VK0vzZ
+         +Qyqm+wsZECKBNBxOIKSmp5B6Es1sifZKaHyA9hSGNiU0pehBn9WcYuGWu3pleBuV98d
+         O2kTRC1TQK4fetk4MhFSqgTdaGVZ5EVmDDgSBm32rh35n0DkeWXyDMXVmoy+tr8xRNPN
+         y2ZIIhYhSDSvjD7Bt80xHvCvflh3QbNHadiZN6qW/wr49ZRQzRo5avzR/UfkZRcjSnuq
+         YNQaNQcCc5HVpeswnlDC6uYS42RZy29WAiB/6MBsq5NGcs9AwXWZ2zrO8Ebv3VNFFKXw
+         of/w==
+X-Gm-Message-State: APjAAAXrov8Mpd8Eh8mYThlsYQMGJ+JDAuamgR61JchQKaNw2BM4vtgD
+        sWlS0P6f5JFn0Z14IPbvHz8ep5y1zmMw0jzI51QjC+uPVrmpVVCV2TPl0dgJSmE+9eWhhmb2G38
+        deeKasDFdg+9vQIPGDRf42kw/+B3oxh/0s6YN
+X-Received: by 2002:ac8:24d4:: with SMTP id t20mr347279qtt.114.1571262826691;
+        Wed, 16 Oct 2019 14:53:46 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzpCWG1Ma5xOzqYk3ZIkraUe0CS6rlGbWN/U3tPDHeSWZQKr532KeiINo5Te24b9bVE4E5nZA==
+X-Received: by 2002:ac8:24d4:: with SMTP id t20mr347249qtt.114.1571262826283;
+        Wed, 16 Oct 2019 14:53:46 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4341::9ca])
+        by smtp.gmail.com with ESMTPSA id a9sm79794qkb.94.2019.10.16.14.53.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 14:53:44 -0700 (PDT)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+In-Reply-To: <20191016203317.GU31224@sasha-vm>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org> <20190829205631.uhz6jdboneej3j3c@pali> <184209.1567120696@turing-police> <20190829233506.GT5281@sasha-vm> <20190830075647.wvhrx4asnkrfkkwk@pali> <20191016140353.4hrncxa5wkx47oau@pali> <20191016143113.GS31224@sasha-vm> <20191016160349.pwghlg566hh2o7id@pali>
+ <20191016203317.GU31224@sasha-vm>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1571262823_33600P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 16 Oct 2019 17:53:43 -0400
+Message-ID: <207853.1571262823@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 07:51:15PM +0800, Wang Shilong wrote:
-> On Mon, Oct 14, 2019 at 12:41 AM Darrick J. Wong
-> <darrick.wong@oracle.com> wrote:
-> >
-> > On Sat, Oct 12, 2019 at 02:33:36PM +0800, Wang Shilong wrote:
-> > > Steps to reproduce:
-> > > [wangsl@localhost tmp]$ mkdir project
-> > > [wangsl@localhost tmp]$ lsattr -p project -d
-> > >     0 ------------------ project
-> > > [wangsl@localhost tmp]$ chattr -p 1 project
-> > > [wangsl@localhost tmp]$ lsattr -p -d project
-> > >     1 ------------------ project
-> > > [wangsl@localhost tmp]$ chattr -p 2 project
-> > > [wangsl@localhost tmp]$ lsattr -p -d project
-> > >     2 ------------------ project
-> > > [wangsl@localhost tmp]$ df -Th .
-> > > Filesystem     Type  Size  Used Avail Use% Mounted on
-> > > /dev/sda3      xfs    36G  4.1G   32G  12% /
-> > > [wangsl@localhost tmp]$ uname -r
-> > > 5.4.0-rc2+
-> > >
-> > > As above you could see file owner could change project ID of file its self.
-> > > As my understanding, we could set project ID and inherit attribute to account
-> > > Directory usage, and implement a similar 'Directory Quota' based on this.
-> >
-> > So the problem here is that the admin sets up a project quota on a
-> > directory, then non-container users change the project id and thereby
-> > break quota enforcement?  Dave didn't sound at all enthusiastic, but I'm
-> > still wondering what exactly you're trying to prevent.
-> 
-> Yup, we are trying to prevent no-root users to change their project ID.
-> As we want to implement 'Directory Quota':
-> 
-> If non-root users could change their project ID, they could always try
-> to change its project ID to steal space when EDQUOT returns.
-> 
-> Yup, if mount option could be introduced to make this case work,
-> that will be nice.
+--==_Exmh_1571262823_33600P
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Well then we had better discuss and write down the exact behaviors of
-this new directory quota feature and how it differs from ye olde project
-quota.  Here's the existing definition of project quotas in the
-xfs_quota manpage:
+On Wed, 16 Oct 2019 16:33:17 -0400, Sasha Levin said:
 
-       10.    XFS  supports  the notion of project quota, which can be
-              used to implement a form of directory tree  quota  (i.e.
-              to  restrict  a directory tree to only being able to use
-              up a component of the filesystems  available  space;  or
-              simply  to  keep  track  of the amount of space used, or
-              number of inodes, within the tree).
+> It looks like the reason this wasn't made public along with the exFAT
+> spec is that TexFAT is pretty much dead - it's old, there are no users
+> we are aware of, and digging it out of it's grave to make it public is
+> actually quite the headache.
 
-First, we probably ought to add the following to that definition to
-reflect a few pieces of current reality:
+Ahh.. For some reason I had convinced myself that base exfat implementati=
+ons
+used at least the 'keep a backup FAT' part of TexFAT, because on a teraby=
+te
+external USB drive, losing the FAT would be painful.  But if Windows 10 d=
+oesn't
+do that either, then it's no great sin for Linux to not do it (and may ca=
+use
+problems if Linux says =22currently using FAT 2=22, and the disk is next =
+used on a
+Windows 10 box that only looks at FAT 1....)
 
-"Processes running inside runtime environments using mapped user or
-group ids, such as container runtimes, are not allowed to change the
-project id and project id inheritance flag of inodes."
 
-What do you all think of this starting definition for directory quotas:
+--==_Exmh_1571262823_33600P
+Content-Type: application/pgp-signature
 
-       11.    XFS supports the similar notion of directory quota.  The
-	      key difference between project and directory quotas is the
-	      additional restriction that only a system administrator
-	      running outside of a mapped user or group id runtime
-	      environment (such as a container runtime) can change the
-	      project id and project id inheritenace flag.  This means
-	      that unprivileged users are never allowed to manage their
-              own directory quotas.
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
 
-We'd probably enable this with a new 'dirquota' mount option that is
-mutually exclusive with the old 'prjquota' option.
+iQIVAwUBXaeRZgdmEQWDXROgAQJPCA//crwtbuFdEHDJcuk9rjqzuC30MRUzo20V
+1S7m1bIEl21fh/qg/JhUagKwHZxImRyN3u5Jy+J5iiq3zpQzAIGxRhqYX3e+6ykB
+b+/DlAUjv0S8YNpqDpqsYaafnCOsc0omfbYNPfxFGZWOyJWdsP+II3DsxUGTKyui
+TaQXR9s0ErjATdZ0kWr72Ap5HcrQ4ixI+poANMobYyq/k9Pjw50oyGCvJR2ErZSw
+B9Sm246KwHBFzwSDXrxbLggNx5+uE0B7/nvMPYzSrBBeqmvDxTcOSAygfwQSK0UT
+FvLmHIJiGkYHpFIY7zwa0Fs55nexKj4Rz+Uy8e05aohAOBGOTV9QxkcCSJhIf/Zw
+h9KZ2tyMcsXsDOh/0lGR8DCGxCE6sqo3KK7kuxPnAzNTbh9wli98tX3sQacr0E4D
+HhUYTGfeOaP12qa3ije8SZRo1yqdxs3KIyQtRhNWWZaIYL84BtFo8G4d1RSts/AH
+t+rkhtsmEytHdFY32qYMkD2NSCU3FOaM90Zz/zWBr5rMIhiw1WIySVH6P1ZOr1U6
+C1+TtuMeV9g1SS80ik35GX4h5wYeEWXr/vrBD8mw2HSfj78lin2d0aLAxnaHEc+H
+wmfB72ECZ9Mq6SKblhcvRqhpNBHsX7WiLj1hVE8HSxufaEfT0A3Iz1Y8+oQKbX7I
+8etTqEg46ZI=
+=oSaw
+-----END PGP SIGNATURE-----
 
---D
-
-> 
-> 
-> >
-> > (Which is to say, maybe we introduce a mount option to prevent changing
-> > projid if project quota *enforcement* is enabled?)
-> >
-> > --D
-> >
+--==_Exmh_1571262823_33600P--
