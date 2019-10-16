@@ -2,106 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB3EBD901A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 13:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72A5ED905A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 14:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732704AbfJPLwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 07:52:39 -0400
-Received: from mail-wm1-f54.google.com ([209.85.128.54]:39554 "EHLO
-        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728515AbfJPLwJ (ORCPT
+        id S2388884AbfJPMGH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 08:06:07 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34825 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfJPMGH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:52:09 -0400
-Received: by mail-wm1-f54.google.com with SMTP id v17so2425604wml.4;
-        Wed, 16 Oct 2019 04:52:07 -0700 (PDT)
+        Wed, 16 Oct 2019 08:06:07 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p30so14186805pgl.2;
+        Wed, 16 Oct 2019 05:06:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iFLLQScTxl1Kxv46iUCfFAsgppvcBNhe7F96dYnGJQ4=;
-        b=M6eTKyA9F9F7Kqy+qseqIK+ejOB+jYYhW3znesf9bpLgfDbAv7iRDzuSiVE8G4kyLj
-         v2w4chGyfNM9SE7SYpZ1fMigJPR7Xgu6OmS/g/2/MRuIWA93cCPQHZ9sa3tfSFOMj2hG
-         R/cDGX3Me8iWggaGjAA5CXzSf5UyiioXmkzSN8J8gO8pQ554oUcVCeoPkEp3lXraR2Cz
-         A+Wp0vTJIQTd31oNYsnSfsRxeaD8FGvGzDkbMgKhpCKc2OvQ7vWs61wFrq95mBU45hwG
-         NBwgdVQLiTL8pL85a+DHDJ/KHTNvT45oAAzqR1oeSnlvxQbWCO4xqAJ1Do735N+ZzfOS
-         V8Eg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0jNaNShiI2I6Epz/fP6Kwqg1Cac8i8suAY9lIczv7Gs=;
+        b=DrMihC/YNPMZaZlwqdxITQYc4J2/0Y41fb755yLUcpMH8e81DF14Jjvgs5JSMyCJfZ
+         t/Ge37Fc9UX86EDpa+kVTwrF89emEkN+h/CEio6iV3YpHbHqVR4YK3tv4IkLUOvB5054
+         VVegltUoKMl005GZ+2trrMuhlFDj42n2i7bGNZdaXXqL/XfB5UXltIpDngfd+C1cTYpX
+         kS/yd+GQNMo7WpLnd4oED4/nQgPlm+leiwsz6r/2MGQjPq0/S2Im/XZHxaUVff0TmB43
+         9JH3r5x4AokS+InrGmnH9VkfKI/S8QHtHP4dbk2nCaku/OgDYAq8r8XGuw/EsBHvaWvg
+         YZqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iFLLQScTxl1Kxv46iUCfFAsgppvcBNhe7F96dYnGJQ4=;
-        b=kUu79M/0kc/eaEqTTu5eUglMD3k+o+IeT9PpKoqmOvdpdb9SEm+9ACc6v1vMWyPwcA
-         BYQEhVatbd5U4h+IdGvEqUIVLu722OZ5Frh89tNRH3RVM2FvPZkHtZHgYOzD9LJSluAX
-         rFDu1qagvicqk7jJMbCVB0SvXHUIVCMK1jmhz+fMdZCJc7ZqWLA1vJeZT853HMdTwU1G
-         eXeFJKDY+v+nAqy2EYyyT7MAuCWsCBmn3o4AVoYnsO5DSoTgIPMnAxB/LceP7fNV2eah
-         oZ542P1fdEjtae+LJ4AeyndBEYYIpGeO132ekvKrwW6l6RTjZI83KL9PXX/mm8G4ncli
-         7YcA==
-X-Gm-Message-State: APjAAAXetMA23ZdERVWeDUa9OHhEKecdf2sB41ilXisYyDLhSj9kOhtM
-        PBmufbO7SWGc+s5H3VhGEnEYqxqM9rLpz8nC9yKYxA==
-X-Google-Smtp-Source: APXvYqyGCy2L/z06xfei6Fna0oKHQhTYFAiCGiyEPAfHfJELDGnPW8qRSa/hGQAxI1aqKdjDgZ6hYXrWTCZmhhiOk7A=
-X-Received: by 2002:a1c:f00a:: with SMTP id a10mr3194598wmb.89.1571226726484;
- Wed, 16 Oct 2019 04:52:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0jNaNShiI2I6Epz/fP6Kwqg1Cac8i8suAY9lIczv7Gs=;
+        b=FW9D6lTjK4h7e4+dmZPW0tT1DaBWnqsFuDkalV6UiD1aoHj/M8TG/iyPFlcjAjRR/w
+         C2A9ZqpN4nvB/hFwWjuuhdblIOLCTTVf8EtFSUHBsof1hPhm5zUZ4QWSLRYoH4+nBoYz
+         P85ufJuRNh4233W10i7XhQmf9rPGKlD3+a8CU7pWOT274whaiHoU5nhxXzU71lW5hp38
+         GnD41wWzaSH6XHLffeph57NNSAT87oIw5mL+R+CWZK5ZC4f6nfHjfwdTo/nNB5uWvqc9
+         YYi7C5/Bv/ShJHbqbFQctXrK3jwPlBEEuEKWMY/Et0jxrTw+Ma5e3uBfDmhqDFaOb9G0
+         +aJA==
+X-Gm-Message-State: APjAAAVS81T16mkx5T30cht2x7Q92o4HePtvydXlB/edGktsFuaX6ckZ
+        zGEqjyH/eXEHyzcbVNPkzKoTg3B9RAw=
+X-Google-Smtp-Source: APXvYqzuqZOlKd8MJTLgI6hxhMNkC16AYYjpSnjEj2JcqRXEYCeN3WAeASnlXrXbLcsVCNaK1+K9iA==
+X-Received: by 2002:a62:7689:: with SMTP id r131mr29202492pfc.68.1571227565968;
+        Wed, 16 Oct 2019 05:06:05 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id y7sm27271266pfn.142.2019.10.16.05.06.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 05:06:05 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH 1/2] hfs: add a check for hfs_bnode_find
+Date:   Wed, 16 Oct 2019 20:05:56 +0800
+Message-Id: <20191016120556.32664-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
- <20191013164124.GR13108@magnolia>
-In-Reply-To: <20191013164124.GR13108@magnolia>
-From:   Wang Shilong <wangshilong1991@gmail.com>
-Date:   Wed, 16 Oct 2019 19:51:15 +0800
-Message-ID: <CAP9B-Q=SfhnA6iO7h1TWAoSOfZ+BvT7d8=OE4176FZ3GXiU-xw@mail.gmail.com>
-Subject: Re: [Project Quota]file owner could change its project ID?
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Andreas Dilger <adilger@dilger.ca>, Li Xi <lixi@ddn.com>,
-        Wang Shilong <wshilong@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 12:41 AM Darrick J. Wong
-<darrick.wong@oracle.com> wrote:
->
-> On Sat, Oct 12, 2019 at 02:33:36PM +0800, Wang Shilong wrote:
-> > Steps to reproduce:
-> > [wangsl@localhost tmp]$ mkdir project
-> > [wangsl@localhost tmp]$ lsattr -p project -d
-> >     0 ------------------ project
-> > [wangsl@localhost tmp]$ chattr -p 1 project
-> > [wangsl@localhost tmp]$ lsattr -p -d project
-> >     1 ------------------ project
-> > [wangsl@localhost tmp]$ chattr -p 2 project
-> > [wangsl@localhost tmp]$ lsattr -p -d project
-> >     2 ------------------ project
-> > [wangsl@localhost tmp]$ df -Th .
-> > Filesystem     Type  Size  Used Avail Use% Mounted on
-> > /dev/sda3      xfs    36G  4.1G   32G  12% /
-> > [wangsl@localhost tmp]$ uname -r
-> > 5.4.0-rc2+
-> >
-> > As above you could see file owner could change project ID of file its self.
-> > As my understanding, we could set project ID and inherit attribute to account
-> > Directory usage, and implement a similar 'Directory Quota' based on this.
->
-> So the problem here is that the admin sets up a project quota on a
-> directory, then non-container users change the project id and thereby
-> break quota enforcement?  Dave didn't sound at all enthusiastic, but I'm
-> still wondering what exactly you're trying to prevent.
+hfs_brec_update_parent misses a check for hfs_bnode_find and may miss
+the failure.
+Add a check for it like what is done in again.
 
-Yup, we are trying to prevent no-root users to change their project ID.
-As we want to implement 'Directory Quota':
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ fs/hfs/brec.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-If non-root users could change their project ID, they could always try
-to change its project ID to steal space when EDQUOT returns.
+diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
+index 896396554bcc..e6af05a4cd1b 100644
+--- a/fs/hfs/brec.c
++++ b/fs/hfs/brec.c
+@@ -430,6 +430,8 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
+ 			new_node->parent = tree->root;
+ 		}
+ 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
++		if (IS_ERR(fd->bnode))
++			return PTR_ERR(fd->bnode);
+ 		/* create index key and entry */
+ 		hfs_bnode_read_key(new_node, fd->search_key, 14);
+ 		cnid = cpu_to_be32(new_node->this);
+-- 
+2.20.1
 
-Yup, if mount option could be introduced to make this case work,
-that will be nice.
-
-
->
-> (Which is to say, maybe we introduce a mount option to prevent changing
-> projid if project quota *enforcement* is enabled?)
->
-> --D
->
