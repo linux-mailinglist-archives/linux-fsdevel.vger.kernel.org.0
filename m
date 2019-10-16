@@ -2,123 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89BC5D8C62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 11:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C77E8D8C6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 11:22:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbfJPJTz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 05:19:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46304 "EHLO mx1.suse.de"
+        id S2391928AbfJPJWi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 05:22:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49446 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726480AbfJPJTz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 05:19:55 -0400
+        id S1726480AbfJPJWi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Oct 2019 05:22:38 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 53F5BB213;
-        Wed, 16 Oct 2019 09:18:40 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 181F31E3BDE; Wed, 16 Oct 2019 11:18:40 +0200 (CEST)
-Date:   Wed, 16 Oct 2019 11:18:40 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Jan Kara <jack@suse.cz>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "tj@kernel.org" <tj@kernel.org>, Dennis Zhou <dennis@kernel.org>
-Subject: Re: [PATCH v2] cgroup, blkcg: prevent dirty inodes to pin dying
- memory cgroups
-Message-ID: <20191016091840.GC30337@quack2.suse.cz>
-References: <20191010234036.2860655-1-guro@fb.com>
- <20191015090933.GA21104@quack2.suse.cz>
- <20191015214041.GA24736@tower.DHCP.thefacebook.com>
+        by mx1.suse.de (Postfix) with ESMTP id 29D91B1D7;
+        Wed, 16 Oct 2019 09:22:36 +0000 (UTC)
+Subject: Re: [RFC PATCH v2 3/5] btrfs: generalize btrfs_lookup_bio_sums_dio()
+To:     Omar Sandoval <osandov@osandov.com>, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel-team@fb.com, Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org
+References: <cover.1571164762.git.osandov@fb.com>
+ <01fdb646d7572f7d0d123937835db5c605e25a5e.1571164762.git.osandov@fb.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ mQINBFiKBz4BEADNHZmqwhuN6EAzXj9SpPpH/nSSP8YgfwoOqwrP+JR4pIqRK0AWWeWCSwmZ
+ T7g+RbfPFlmQp+EwFWOtABXlKC54zgSf+uulGwx5JAUFVUIRBmnHOYi/lUiE0yhpnb1KCA7f
+ u/W+DkwGerXqhhe9TvQoGwgCKNfzFPZoM+gZrm+kWv03QLUCr210n4cwaCPJ0Nr9Z3c582xc
+ bCUVbsjt7BN0CFa2BByulrx5xD9sDAYIqfLCcZetAqsTRGxM7LD0kh5WlKzOeAXj5r8DOrU2
+ GdZS33uKZI/kZJZVytSmZpswDsKhnGzRN1BANGP8sC+WD4eRXajOmNh2HL4P+meO1TlM3GLl
+ EQd2shHFY0qjEo7wxKZI1RyZZ5AgJnSmehrPCyuIyVY210CbMaIKHUIsTqRgY5GaNME24w7h
+ TyyVCy2qAM8fLJ4Vw5bycM/u5xfWm7gyTb9V1TkZ3o1MTrEsrcqFiRrBY94Rs0oQkZvunqia
+ c+NprYSaOG1Cta14o94eMH271Kka/reEwSZkC7T+o9hZ4zi2CcLcY0DXj0qdId7vUKSJjEep
+ c++s8ncFekh1MPhkOgNj8pk17OAESanmDwksmzh1j12lgA5lTFPrJeRNu6/isC2zyZhTwMWs
+ k3LkcTa8ZXxh0RfWAqgx/ogKPk4ZxOXQEZetkEyTFghbRH2BIwARAQABtCNOaWtvbGF5IEJv
+ cmlzb3YgPG5ib3Jpc292QHN1c2UuY29tPokCOAQTAQIAIgUCWIo48QIbAwYLCQgHAwIGFQgC
+ CQoLBBYCAwECHgECF4AACgkQcb6CRuU/KFc0eg/9GLD3wTQz9iZHMFbjiqTCitD7B6dTLV1C
+ ddZVlC8Hm/TophPts1bWZORAmYIihHHI1EIF19+bfIr46pvfTu0yFrJDLOADMDH+Ufzsfy2v
+ HSqqWV/nOSWGXzh8bgg/ncLwrIdEwBQBN9SDS6aqsglagvwFD91UCg/TshLlRxD5BOnuzfzI
+ Leyx2c6YmH7Oa1R4MX9Jo79SaKwdHt2yRN3SochVtxCyafDlZsE/efp21pMiaK1HoCOZTBp5
+ VzrIP85GATh18pN7YR9CuPxxN0V6IzT7IlhS4Jgj0NXh6vi1DlmKspr+FOevu4RVXqqcNTSS
+ E2rycB2v6cttH21UUdu/0FtMBKh+rv8+yD49FxMYnTi1jwVzr208vDdRU2v7Ij/TxYt/v4O8
+ V+jNRKy5Fevca/1xroQBICXsNoFLr10X5IjmhAhqIH8Atpz/89ItS3+HWuE4BHB6RRLM0gy8
+ T7rN6ja+KegOGikp/VTwBlszhvfLhyoyjXI44Tf3oLSFM+8+qG3B7MNBHOt60CQlMkq0fGXd
+ mm4xENl/SSeHsiomdveeq7cNGpHi6i6ntZK33XJLwvyf00PD7tip/GUj0Dic/ZUsoPSTF/mG
+ EpuQiUZs8X2xjK/AS/l3wa4Kz2tlcOKSKpIpna7V1+CMNkNzaCOlbv7QwprAerKYywPCoOSC
+ 7P25Ag0EWIoHPgEQAMiUqvRBZNvPvki34O/dcTodvLSyOmK/MMBDrzN8Cnk302XfnGlW/YAQ
+ csMWISKKSpStc6tmD+2Y0z9WjyRqFr3EGfH1RXSv9Z1vmfPzU42jsdZn667UxrRcVQXUgoKg
+ QYx055Q2FdUeaZSaivoIBD9WtJq/66UPXRRr4H/+Y5FaUZx+gWNGmBT6a0S/GQnHb9g3nonD
+ jmDKGw+YO4P6aEMxyy3k9PstaoiyBXnzQASzdOi39BgWQuZfIQjN0aW+Dm8kOAfT5i/yk59h
+ VV6v3NLHBjHVw9kHli3jwvsizIX9X2W8tb1SefaVxqvqO1132AO8V9CbE1DcVT8fzICvGi42
+ FoV/k0QOGwq+LmLf0t04Q0csEl+h69ZcqeBSQcIMm/Ir+NorfCr6HjrB6lW7giBkQl6hhomn
+ l1mtDP6MTdbyYzEiBFcwQD4terc7S/8ELRRybWQHQp7sxQM/Lnuhs77MgY/e6c5AVWnMKd/z
+ MKm4ru7A8+8gdHeydrRQSWDaVbfy3Hup0Ia76J9FaolnjB8YLUOJPdhI2vbvNCQ2ipxw3Y3c
+ KhVIpGYqwdvFIiz0Fej7wnJICIrpJs/+XLQHyqcmERn3s/iWwBpeogrx2Lf8AGezqnv9woq7
+ OSoWlwXDJiUdaqPEB/HmGfqoRRN20jx+OOvuaBMPAPb+aKJyle8zABEBAAGJAh8EGAECAAkF
+ AliKBz4CGwwACgkQcb6CRuU/KFdacg/+M3V3Ti9JYZEiIyVhqs+yHb6NMI1R0kkAmzsGQ1jU
+ zSQUz9AVMR6T7v2fIETTT/f5Oout0+Hi9cY8uLpk8CWno9V9eR/B7Ifs2pAA8lh2nW43FFwp
+ IDiSuDbH6oTLmiGCB206IvSuaQCp1fed8U6yuqGFcnf0ZpJm/sILG2ECdFK9RYnMIaeqlNQm
+ iZicBY2lmlYFBEaMXHoy+K7nbOuizPWdUKoKHq+tmZ3iA+qL5s6Qlm4trH28/fPpFuOmgP8P
+ K+7LpYLNSl1oQUr+WlqilPAuLcCo5Vdl7M7VFLMq4xxY/dY99aZx0ZJQYFx0w/6UkbDdFLzN
+ upT7NIN68lZRucImffiWyN7CjH23X3Tni8bS9ubo7OON68NbPz1YIaYaHmnVQCjDyDXkQoKC
+ R82Vf9mf5slj0Vlpf+/Wpsv/TH8X32ajva37oEQTkWNMsDxyw3aPSps6MaMafcN7k60y2Wk/
+ TCiLsRHFfMHFY6/lq/c0ZdOsGjgpIK0G0z6et9YU6MaPuKwNY4kBdjPNBwHreucrQVUdqRRm
+ RcxmGC6ohvpqVGfhT48ZPZKZEWM+tZky0mO7bhZYxMXyVjBn4EoNTsXy1et9Y1dU3HVJ8fod
+ 5UqrNrzIQFbdeM0/JqSLrtlTcXKJ7cYFa9ZM2AP7UIN9n1UWxq+OPY9YMOewVfYtL8M=
+Message-ID: <aa49f032-f6be-8594-7c80-7101a0c6bcd0@suse.com>
+Date:   Wed, 16 Oct 2019 12:22:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191015214041.GA24736@tower.DHCP.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <01fdb646d7572f7d0d123937835db5c605e25a5e.1571164762.git.osandov@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 15-10-19 21:40:45, Roman Gushchin wrote:
-> On Tue, Oct 15, 2019 at 11:09:33AM +0200, Jan Kara wrote:
-> > On Thu 10-10-19 16:40:36, Roman Gushchin wrote:
-> > 
-> > > @@ -426,7 +431,7 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
-> > >  	if (!list_empty(&inode->i_io_list)) {
-> > >  		struct inode *pos;
-> > >  
-> > > -		inode_io_list_del_locked(inode, old_wb);
-> > > +		inode_io_list_del_locked(inode, old_wb, false);
-> > >  		inode->i_wb = new_wb;
-> > >  		list_for_each_entry(pos, &new_wb->b_dirty, i_io_list)
-> > >  			if (time_after_eq(inode->dirtied_when,
-> > 
-> > This bit looks wrong. Not the change you made as such but the fact that you
-> > can now move inode from b_attached list of old wb to the dirty list of new
-> > wb.
+
+
+On 15.10.19 г. 21:42 ч., Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
 > 
-> Hm, can you, please, elaborate a bit more why it's wrong?
-> The reference to the old_wb will be dropped by the switching code.
+> This isn't actually dio-specific; it just looks up the csums starting at
+> the given offset instead of using the page index. Rename it to
+> btrfs_lookup_bio_sums_at_offset() and add the dst parameter. We might
+> even want to expose __btrfs_lookup_bio_sums() as the public API instead
+> of having two trivial wrappers, but I'll leave that for another day.
 
-My point is that the code in full looks like:
+IMO exposing btrfs_lookup_bio_sums and adding proper kernel doc for its
+parameters is the correct way forward. Consider doing this if the
+general direction of this patchset is accepted and before sending the
+final revision.
 
-        if (!list_empty(&inode->i_io_list)) {
-                struct inode *pos;
 
-                inode_io_list_del_locked(inode, old_wb);
-                inode->i_wb = new_wb;
-                list_for_each_entry(pos, &new_wb->b_dirty, i_io_list)
-                        if (time_after_eq(inode->dirtied_when,
-                                          pos->dirtied_when))
-                                break;
-                inode_io_list_move_locked(inode, new_wb, pos->i_io_list.prev);
-        } else {
-
-So inode is always moved from some io list in old_wb to b_dirty list of
-new_wb. This is fine when it could be only on b_dirty, b_io, b_more_io lists
-of old_wb. But once you add b_attached list to the game, it is not correct
-anymore. You should not add clean inode to b_dirty list of new_wb.
-
-> > > +
-> > > +	list_for_each_entry_safe(inode, tmp, &wb->b_attached, i_io_list) {
-> > > +		if (!spin_trylock(&inode->i_lock))
-> > > +			continue;
-> > > +		xa_lock_irq(&inode->i_mapping->i_pages);
-> > > +		if (!(inode->i_state &
-> > > +		      (I_FREEING | I_CLEAR | I_SYNC | I_DIRTY | I_WB_SWITCH))) {
-> > > +			WARN_ON_ONCE(inode->i_wb != wb);
-> > > +			inode->i_wb = NULL;
-> > > +			wb_put(wb);
-> > 
-> > Hum, currently the code assumes that once i_wb is set, it never becomes
-> > NULL again. In particular the inode e.g. in
-> > fs/fs-writeback.c:inode_congested() or generally unlocked_inode_to_wb_begin()
-> > users could get broken by this. The i_wb switching code is so complex
-> > exactly because of these interactions.
-> > 
-> > Maybe you thought through the interactions and things are actually fine but
-> > if nothing else you'd need a big fat comment here explaining why this is
-> > fine and update inode_congested() comments etc.
-> 
-> Yeah, I thought that once inode is clean and not switching it's safe to clear
-> the i_wb pointer, but seems that it's not completely true.
->
-> One idea I have is to always release wbs using rcu delayed work, so that
-> it will be save to dereference i_wb pointer under rcu, if only it's not NULL
-> (the check has to be added). I'll try to implement this scheme, but if you
-> know in advance that it's not gonna work, please, let me know.
-
-I think I'd just drop inode_to_wb_is_valid() because once i_wb can change
-to NULL, that function is just pointless in that single callsite. Also we
-have to count with the fact that unlocked_inode_to_wb_begin() can return
-NULL and gracefully do as much as possible in that case for all the
-callers. And I agree that those occurences in mm/page-writeback.c should be
-blocked by inode being clean and you holding all those locks so you can
-warn if that happens I guess.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
