@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72A5ED905A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 14:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B736D905D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 14:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388884AbfJPMGH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 08:06:07 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34825 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfJPMGH (ORCPT
+        id S2389174AbfJPMGc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 08:06:32 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43840 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfJPMGc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:06:07 -0400
-Received: by mail-pg1-f195.google.com with SMTP id p30so14186805pgl.2;
-        Wed, 16 Oct 2019 05:06:06 -0700 (PDT)
+        Wed, 16 Oct 2019 08:06:32 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a2so14587638pfo.10;
+        Wed, 16 Oct 2019 05:06:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=0jNaNShiI2I6Epz/fP6Kwqg1Cac8i8suAY9lIczv7Gs=;
-        b=DrMihC/YNPMZaZlwqdxITQYc4J2/0Y41fb755yLUcpMH8e81DF14Jjvgs5JSMyCJfZ
-         t/Ge37Fc9UX86EDpa+kVTwrF89emEkN+h/CEio6iV3YpHbHqVR4YK3tv4IkLUOvB5054
-         VVegltUoKMl005GZ+2trrMuhlFDj42n2i7bGNZdaXXqL/XfB5UXltIpDngfd+C1cTYpX
-         kS/yd+GQNMo7WpLnd4oED4/nQgPlm+leiwsz6r/2MGQjPq0/S2Im/XZHxaUVff0TmB43
-         9JH3r5x4AokS+InrGmnH9VkfKI/S8QHtHP4dbk2nCaku/OgDYAq8r8XGuw/EsBHvaWvg
-         YZqw==
+        bh=E/ejZ8luhiq32Fwxo+jf6eQC8OVPoBMz2IzbQt/xaAA=;
+        b=SUCyKZEidz5mY5dNAF8kYaxNE0d953d/z5Y+P6bimQ1GUiJqMaucGYydUrqJfmfs9N
+         Dy0R2rENqFpCAmHrqlOV06LXIqjkeip2vBwW2L3ZUxJ442i9aF6LmOq1n/5r1kt2OptZ
+         HaTLaL3SQ6LxB3RRrMqLr6mJwuLnbvTuvH9tAO1fWsEjNAynuDt8zwLm0/g6ELSaMWiM
+         8+9KKwWptOEzJHZWd2nZWwpLRz2b7B5LSXeKczoPJbA9TOzMknzv4rbzjpS8ufge/qEO
+         KqKDkPmjNbc2o7RQqtziTF7n9cvFonRxUcvY+LFmCmgpfHv1IYmZk0qn4sPDO700rBvD
+         eFow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=0jNaNShiI2I6Epz/fP6Kwqg1Cac8i8suAY9lIczv7Gs=;
-        b=FW9D6lTjK4h7e4+dmZPW0tT1DaBWnqsFuDkalV6UiD1aoHj/M8TG/iyPFlcjAjRR/w
-         C2A9ZqpN4nvB/hFwWjuuhdblIOLCTTVf8EtFSUHBsof1hPhm5zUZ4QWSLRYoH4+nBoYz
-         P85ufJuRNh4233W10i7XhQmf9rPGKlD3+a8CU7pWOT274whaiHoU5nhxXzU71lW5hp38
-         GnD41wWzaSH6XHLffeph57NNSAT87oIw5mL+R+CWZK5ZC4f6nfHjfwdTo/nNB5uWvqc9
-         YYi7C5/Bv/ShJHbqbFQctXrK3jwPlBEEuEKWMY/Et0jxrTw+Ma5e3uBfDmhqDFaOb9G0
-         +aJA==
-X-Gm-Message-State: APjAAAVS81T16mkx5T30cht2x7Q92o4HePtvydXlB/edGktsFuaX6ckZ
-        zGEqjyH/eXEHyzcbVNPkzKoTg3B9RAw=
-X-Google-Smtp-Source: APXvYqzuqZOlKd8MJTLgI6hxhMNkC16AYYjpSnjEj2JcqRXEYCeN3WAeASnlXrXbLcsVCNaK1+K9iA==
-X-Received: by 2002:a62:7689:: with SMTP id r131mr29202492pfc.68.1571227565968;
-        Wed, 16 Oct 2019 05:06:05 -0700 (PDT)
+        bh=E/ejZ8luhiq32Fwxo+jf6eQC8OVPoBMz2IzbQt/xaAA=;
+        b=bL/tU69V9Kid/ZtTgYktJLh4VVA1JtaCpAyOkGX0bqkaEhw07wb3iNHDBqs2IaeSQJ
+         uUbeqAxuvog7iJejyEUIu7a82hTopoiM+hWgX/LzNar3mYn0MxX5JtR3zi0RmAeGBaDg
+         2lBe0YM9ljUiwWcdQcObAdsmlEjpFwxksgIrNWQiay6ed97kgaD4lcmFtDe2dJmMZ/Qh
+         g2k7cOhlmBzGvogFiLdMZPjSFE6iRB1pKJRyjpJqVFIRJCn6eSlrjVnJgzd4PVmDWsYJ
+         gLtI6AVyyQPWUp5BNH4W4CL+JCoOwwe5tKg3nhe75HVHiJ3xCxsl2WbAZlqxyzkIekwn
+         4EHg==
+X-Gm-Message-State: APjAAAWVy/omk41FG7uSumSPgq98U7+OjuHDMXVkyiRcl/CKVrG/RLt1
+        6iDqigkMr1MAoyWUUPBIIYmMzmzISPw=
+X-Google-Smtp-Source: APXvYqyoRxGa81TfoUX8kNLcYZPWvYryL8FQqh6aE4uFGKG1P0EYMxn6wAXx/g3JAdUHh5ZaAyoR2Q==
+X-Received: by 2002:a63:eb08:: with SMTP id t8mr6895885pgh.49.1571227590148;
+        Wed, 16 Oct 2019 05:06:30 -0700 (PDT)
 Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id y7sm27271266pfn.142.2019.10.16.05.06.02
+        by smtp.gmail.com with ESMTPSA id u7sm25259270pfn.61.2019.10.16.05.06.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 05:06:05 -0700 (PDT)
+        Wed, 16 Oct 2019 05:06:29 -0700 (PDT)
 From:   Chuhong Yuan <hslester96@gmail.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH 1/2] hfs: add a check for hfs_bnode_find
-Date:   Wed, 16 Oct 2019 20:05:56 +0800
-Message-Id: <20191016120556.32664-1-hslester96@gmail.com>
+Subject: [PATCH 2/2] hfsplus: add a check for hfs_bnode_find
+Date:   Wed, 16 Oct 2019 20:06:20 +0800
+Message-Id: <20191016120621.304-1-hslester96@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,14 +66,14 @@ Add a check for it like what is done in again.
 
 Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
- fs/hfs/brec.c | 2 ++
+ fs/hfsplus/brec.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
-index 896396554bcc..e6af05a4cd1b 100644
---- a/fs/hfs/brec.c
-+++ b/fs/hfs/brec.c
-@@ -430,6 +430,8 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
+diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
+index 1918544a7871..22bada8288c4 100644
+--- a/fs/hfsplus/brec.c
++++ b/fs/hfsplus/brec.c
+@@ -434,6 +434,8 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
  			new_node->parent = tree->root;
  		}
  		fd->bnode = hfs_bnode_find(tree, new_node->parent);
