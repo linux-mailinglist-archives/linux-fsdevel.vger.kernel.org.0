@@ -2,96 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC6F7D8484
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 01:37:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFFB7D8519
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 02:52:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbfJOXhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Oct 2019 19:37:11 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50968 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbfJOXhL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Oct 2019 19:37:11 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FNXj1H177247;
-        Tue, 15 Oct 2019 23:37:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=l6qEvTX6M+mfKCgCoH/LOx2QgImZNw52hr41fUw2/tU=;
- b=RVMdWhEGnH5CJpUeEBFLrKsasMS84UOfDzPqriI7qyRWMkdWU8TzVA4mRzSWxNdFmWjp
- sdu32BsBSrM5aI3gRyXSxdoAG8pCrF7SNH50hXd+MGa45WVvAAHEBc1MrpO7qhoybVOy
- LcCWeMDU6z8a4gwYiCFJyyzODDhh/k7gXa1qqTyWKcsCTRWxdcyMEcQlo//6A+NrdQkH
- uQm/UqDV5FenZenhJoRSBC0pDCCCVbXfFB/h2HDjeS1aJSzraQ6t6X3W6cRz8Tql7Vrn
- eihs8qa2Y1IF+FhIwRnXS3JhoO66vtmIITP8gkm0Pc1o4f8xjLuG0M83ak0WFrmVK/7X GQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2vk68ukb4e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 23:37:04 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9FNWwCl041669;
-        Tue, 15 Oct 2019 23:37:03 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2vn8ep8pam-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Oct 2019 23:37:03 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9FNb1jB002134;
-        Tue, 15 Oct 2019 23:37:02 GMT
-Received: from [192.168.1.222] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Oct 2019 23:37:01 +0000
-Subject: Re: [PATCH] hugetlbfs: add O_TMPFILE support
-To:     Michal Hocko <mhocko@kernel.org>, Piotr Sarna <p.sarna@tlen.pl>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-References: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
- <20191015105055.GA24932@dhcp22.suse.cz>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <766b4370-ba71-85a2-5a57-ca9ed7dc7870@oracle.com>
-Date:   Tue, 15 Oct 2019 16:37:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S2388576AbfJPAwf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Oct 2019 20:52:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbfJPAwe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Oct 2019 20:52:34 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDBB62067B;
+        Wed, 16 Oct 2019 00:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571187154;
+        bh=A/u6kf+idGmi0psouuwo2uYEmwrcJV3/rAZxg91qHqE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r19ysU3rAAeZjA20PGXZfcyCuNTanJ//ncuAzJyhWwBqaGSRbFW87Etnhh8gO5p44
+         2UlV1lUL06p7snIdPhtRNozDVafNOXaOyFxXmQrpz71aQVNJAsm0+N+Z0ihPQBLn7y
+         ekjRiYktKe+zcw1od2VAC5IRwSB1OUpLjQKSAPUo=
+Date:   Tue, 15 Oct 2019 17:52:32 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: fsmount: add missing mntget()
+Message-ID: <20191016005232.GA726@sol.localdomain>
+Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+References: <20190610183031.GE63833@gmail.com>
+ <20190612184313.143456-1-ebiggers@kernel.org>
+ <20190613084728.GA32129@miu.piliscsaba.redhat.com>
+ <20190709230029.GO641@sol.localdomain>
+ <20190710003113.GC17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20191015105055.GA24932@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910150200
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9411 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910150200
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710003113.GC17978@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/15/19 3:50 AM, Michal Hocko wrote:
-> On Tue 15-10-19 11:01:12, Piotr Sarna wrote:
->> With hugetlbfs, a common pattern for mapping anonymous huge pages
->> is to create a temporary file first.
+On Wed, Jul 10, 2019 at 01:31:13AM +0100, Al Viro wrote:
+> On Tue, Jul 09, 2019 at 04:00:29PM -0700, Eric Biggers wrote:
 > 
-> Really? I though that this is normally done by shmget(SHM_HUGETLB) or
-> mmap(MAP_HUGETLB). Or maybe I misunderstood your definition on anonymous
-> huge pages.
+> > > index 49a058c73e4c..26f74e092bd9 100644
+> > > --- a/fs/pnode.h
+> > > +++ b/fs/pnode.h
+> > > @@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
+> > >  void propagate_mount_unlock(struct mount *);
+> > >  void mnt_release_group_id(struct mount *);
+> > >  int get_dominating_id(struct mount *mnt, const struct path *root);
+> > > -unsigned int mnt_get_count(struct mount *mnt);
+> > > +int mnt_get_count(struct mount *mnt);
+> > >  void mnt_set_mountpoint(struct mount *, struct mountpoint *,
+> > >  			struct mount *);
+> > >  void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
+> > 
+> > Miklos, are you planning to send this as a formal patch?
 > 
->> Currently libraries like
->> libhugetlbfs and seastar create these with a standard mkstemp+unlink
->> trick,
+> Hold it for a while, OK?  There's an unpleasant issue (a very long-standing
+> one) with boxen that have an obscene amount of RAM.  Some of the counters
+> involved will need to become long.  This is the coming cycle fodder (mounts
+> and inodes are relatively easy; it's dentry->d_count that brings arseloads
+> of fun) and I'd rather deal with that sanity check as part of the same series.
+> It's not forgotten...  Patch series re limiting the number of negative
+> dentries is also getting into the same mix.  Watch #work.dcache - what's
+> in there is basically prep work for the big pile for the next cycle; it'll
+> be interesting...
 
-I would guess that much of libhugetlbfs was writen before MAP_HUGETLB
-was implemented.  So, that is why it does not make (more) use of that
-option.
+Al, whatever happened to the refcounting patches you mentioned here?
 
-The implementation looks to be straight forward.  However, I really do
-not want to add more functionality to hugetlbfs unless there is specific
-use case that needs it.
--- 
-Mike Kravetz
+- Eric
