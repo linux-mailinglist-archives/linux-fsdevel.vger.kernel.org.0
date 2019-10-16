@@ -2,86 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B736D905D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 14:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA0ED9070
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 14:08:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389174AbfJPMGc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 08:06:32 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43840 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfJPMGc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 08:06:32 -0400
-Received: by mail-pf1-f194.google.com with SMTP id a2so14587638pfo.10;
-        Wed, 16 Oct 2019 05:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E/ejZ8luhiq32Fwxo+jf6eQC8OVPoBMz2IzbQt/xaAA=;
-        b=SUCyKZEidz5mY5dNAF8kYaxNE0d953d/z5Y+P6bimQ1GUiJqMaucGYydUrqJfmfs9N
-         Dy0R2rENqFpCAmHrqlOV06LXIqjkeip2vBwW2L3ZUxJ442i9aF6LmOq1n/5r1kt2OptZ
-         HaTLaL3SQ6LxB3RRrMqLr6mJwuLnbvTuvH9tAO1fWsEjNAynuDt8zwLm0/g6ELSaMWiM
-         8+9KKwWptOEzJHZWd2nZWwpLRz2b7B5LSXeKczoPJbA9TOzMknzv4rbzjpS8ufge/qEO
-         KqKDkPmjNbc2o7RQqtziTF7n9cvFonRxUcvY+LFmCmgpfHv1IYmZk0qn4sPDO700rBvD
-         eFow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E/ejZ8luhiq32Fwxo+jf6eQC8OVPoBMz2IzbQt/xaAA=;
-        b=bL/tU69V9Kid/ZtTgYktJLh4VVA1JtaCpAyOkGX0bqkaEhw07wb3iNHDBqs2IaeSQJ
-         uUbeqAxuvog7iJejyEUIu7a82hTopoiM+hWgX/LzNar3mYn0MxX5JtR3zi0RmAeGBaDg
-         2lBe0YM9ljUiwWcdQcObAdsmlEjpFwxksgIrNWQiay6ed97kgaD4lcmFtDe2dJmMZ/Qh
-         g2k7cOhlmBzGvogFiLdMZPjSFE6iRB1pKJRyjpJqVFIRJCn6eSlrjVnJgzd4PVmDWsYJ
-         gLtI6AVyyQPWUp5BNH4W4CL+JCoOwwe5tKg3nhe75HVHiJ3xCxsl2WbAZlqxyzkIekwn
-         4EHg==
-X-Gm-Message-State: APjAAAWVy/omk41FG7uSumSPgq98U7+OjuHDMXVkyiRcl/CKVrG/RLt1
-        6iDqigkMr1MAoyWUUPBIIYmMzmzISPw=
-X-Google-Smtp-Source: APXvYqyoRxGa81TfoUX8kNLcYZPWvYryL8FQqh6aE4uFGKG1P0EYMxn6wAXx/g3JAdUHh5ZaAyoR2Q==
-X-Received: by 2002:a63:eb08:: with SMTP id t8mr6895885pgh.49.1571227590148;
-        Wed, 16 Oct 2019 05:06:30 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id u7sm25259270pfn.61.2019.10.16.05.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 05:06:29 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH 2/2] hfsplus: add a check for hfs_bnode_find
-Date:   Wed, 16 Oct 2019 20:06:20 +0800
-Message-Id: <20191016120621.304-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S2392819AbfJPMIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 08:08:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45436 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389612AbfJPMIR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Oct 2019 08:08:17 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2024987642;
+        Wed, 16 Oct 2019 12:08:17 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 00D6B19C68;
+        Wed, 16 Oct 2019 12:08:14 +0000 (UTC)
+Date:   Wed, 16 Oct 2019 08:08:13 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] iomap: lift the xfs writeback code to iomap
+Message-ID: <20191016120813.GA40434@bfoster>
+References: <20191015154345.13052-1-hch@lst.de>
+ <20191015154345.13052-10-hch@lst.de>
+ <20191015220721.GC16973@dread.disaster.area>
+ <20191016074836.GB23696@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016074836.GB23696@lst.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 16 Oct 2019 12:08:17 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hfs_brec_update_parent misses a check for hfs_bnode_find and may miss
-the failure.
-Add a check for it like what is done in again.
+On Wed, Oct 16, 2019 at 09:48:36AM +0200, Christoph Hellwig wrote:
+> On Wed, Oct 16, 2019 at 09:07:21AM +1100, Dave Chinner wrote:
+...
+> > > +/*
+> > > + * Submit the bio for an ioend. We are passed an ioend with a bio attached to
+> > > + * it, and we submit that bio. The ioend may be used for multiple bio
+> > > + * submissions, so we only want to allocate an append transaction for the ioend
+> > > + * once.  In the case of multiple bio submission, each bio will take an IO
+> > 
+> > This needs to be changed to describe what wpc->ops->submit_ioend()
+> > is used for rather than what XFS might use this hook for.
+> 
+> True.  The real documentation now is in the header near the ops defintion,
+> but I'll update this one to make more sense as well.
+> 
+> > > +static int
+> > > +iomap_submit_ioend(struct iomap_writepage_ctx *wpc, struct iomap_ioend *ioend,
+> > > +		int error)
+> > > +{
+> > > +	ioend->io_bio->bi_private = ioend;
+> > > +	ioend->io_bio->bi_end_io = iomap_writepage_end_bio;
+> > > +
+> > > +	if (wpc->ops->submit_ioend)
+> > > +		error = wpc->ops->submit_ioend(ioend, error);
+> > 
+> > I'm not sure that "submit_ioend" is the best name for this method,
+> > as it is a pre-bio-submission hook, not an actual IO submission
+> > method. "prepare_ioend_for_submit" is more descriptive, but probably
+> > too long. wpc->ops->prepare_submit(ioend, error) reads pretty well,
+> > though...
+> 
+> Not a huge fan of that name either, but Brian complained.  Let's hold
+> a popular vote for a name and see if we have a winner.
+> 
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- fs/hfsplus/brec.c | 2 ++
- 1 file changed, 2 insertions(+)
+Just to recall, I suggested something like ->pre_submit_ioend() back in
+v5. Short of that, I asked for extra comments to clearly document
+semantics which I believe Christoph added to the header, and I acked (it
+looks like the handful of R-B tags I sent were all dropped btw...? Have
+all of those patches changed?).
 
-diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-index 1918544a7871..22bada8288c4 100644
---- a/fs/hfsplus/brec.c
-+++ b/fs/hfsplus/brec.c
-@@ -434,6 +434,8 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
- 			new_node->parent = tree->root;
- 		}
- 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
-+		if (IS_ERR(fd->bnode))
-+			return PTR_ERR(fd->bnode);
- 		/* create index key and entry */
- 		hfs_bnode_read_key(new_node, fd->search_key, 14);
- 		cnid = cpu_to_be32(new_node->this);
--- 
-2.20.1
+To give my .02 on the naming thing, I care about functional clarity more
+than aesthetics. In that regard, ->submit_ioend() reads like a
+submission hook and thus sounds rather confusing to me when I don't see
+it actually submit anything. ->pre_submit_ioend(), ->prepare_ioend() or
+->prepare_submission() all clearly indicate semantics to me, so I'm good
+with any of those over ->submit_ioend(). :)
 
+Brian
+
+> As for the grammar comments - all this is copied over as-is.  I'll add
+> another patch to fix that up.
+> 
