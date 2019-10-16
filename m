@@ -2,102 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9BF9D89E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 09:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2BF5D89F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 09:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387743AbfJPHhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 03:37:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:25128 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387438AbfJPHhg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:37:36 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9G7bKsh095348
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2019 03:37:35 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vnvb1n4jw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2019 03:37:35 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Wed, 16 Oct 2019 08:37:33 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Oct 2019 08:37:30 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9G7bTdw11403350
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Oct 2019 07:37:29 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 180B0AE058;
-        Wed, 16 Oct 2019 07:37:29 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 664DAAE045;
-        Wed, 16 Oct 2019 07:37:26 +0000 (GMT)
-Received: from dhcp-9-199-158-105.in.ibm.com (unknown [9.199.158.105])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 16 Oct 2019 07:37:25 +0000 (GMT)
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     tytso@mit.edu, jack@suse.cz, linux-ext4@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, mbobrowski@mbobrowski.org,
-        riteshh@linux.ibm.com
-Subject: [RFC 5/5] ext4: Enable blocksize < pagesize for dioread_nolock
-Date:   Wed, 16 Oct 2019 13:07:11 +0530
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191016073711.4141-1-riteshh@linux.ibm.com>
-References: <20191016073711.4141-1-riteshh@linux.ibm.com>
+        id S1728419AbfJPHkM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 03:40:12 -0400
+Received: from tretyak2.mcst.ru ([212.5.119.215]:54300 "EHLO tretyak2.mcst.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728020AbfJPHkL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Oct 2019 03:40:11 -0400
+Received: from tretyak2.mcst.ru (localhost [127.0.0.1])
+        by tretyak2.mcst.ru (Postfix) with ESMTP id 8C0BC20927;
+        Wed, 16 Oct 2019 10:40:10 +0300 (MSK)
+Received: from frog.lab.sun.mcst.ru (frog.lab.sun.mcst.ru [172.16.4.50])
+        by tretyak2.mcst.ru (Postfix) with ESMTP id 708BD2002F;
+        Wed, 16 Oct 2019 10:40:00 +0300 (MSK)
+Received: from [192.168.1.7] (e2k7 [192.168.1.7])
+        by frog.lab.sun.mcst.ru (8.13.4/8.12.11) with ESMTP id x9G7dxwt031414;
+        Wed, 16 Oct 2019 10:40:00 +0300
+Subject: Re: copy_mount_options() problem
+To:     Al Viro <viro@zeniv.linux.org.uk>
+References: <5DA60B3E.5080303@mcst.ru>
+ <20191015184034.GN26530@ZenIV.linux.org.uk>
+ <20191015220307.GA21325@ZenIV.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org
+From:   "Pavel V. Panteleev" <panteleev_p@mcst.ru>
+Message-ID: <5DA6C94F.20502@mcst.ru>
+Date:   Wed, 16 Oct 2019 10:39:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Icedove/38.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19101607-0020-0000-0000-000003797C3F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19101607-0021-0000-0000-000021CF9E44
-Message-Id: <20191016073711.4141-6-riteshh@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-16_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=550 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910160071
+In-Reply-To: <20191015220307.GA21325@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=koi8-r; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus: Kaspersky Anti-Virus for Linux Mail Server 5.6.39/RELEASE,
+         bases: 20111107 #2745587, check: 20191016 notchecked
+X-AV-Checked: ClamAV using ClamSMTP
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All support is now added for blocksize < pagesize for dioread_nolock.
-This patch removes those checks which disables dioread_nolock
-feature for blocksize != pagesize.
+This works, thanks.
 
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
- fs/ext4/super.c | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index dd654e53ba3d..7796e2ffc294 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2105,16 +2105,6 @@ static int parse_options(char *options, struct super_block *sb,
- 		}
- 	}
- #endif
--	if (test_opt(sb, DIOREAD_NOLOCK)) {
--		int blocksize =
--			BLOCK_SIZE << le32_to_cpu(sbi->s_es->s_log_block_size);
--
--		if (blocksize < PAGE_SIZE) {
--			ext4_msg(sb, KERN_ERR, "can't mount with "
--				 "dioread_nolock if block size != PAGE_SIZE");
--			return 0;
--		}
--	}
- 	return 1;
- }
- 
--- 
-2.21.0
+On 16.10.2019 01:03, Al Viro wrote:
+> On Tue, Oct 15, 2019 at 07:40:34PM +0100, Al Viro wrote:
+>> On Tue, Oct 15, 2019 at 09:09:02PM +0300, Pavel V. Panteleev wrote:
+>>> Hello,
+>>>
+>>> copy_mount_options() checks that data doesn't cross TASK_SIZE boundary. It's
+>>> not correct. Really it should check USER_DS boudary, because some archs have
+>>> TASK_SIZE not equal to USER_DS. In this case (USER_DS != TASK_SIZE)
+>>> exact_copy_from_user() will stop on access_ok() check, if data cross
+>>> USER_DS, but doesn't cross TASK_SIZE.
+>> Details of the call chain, please.
+> FWIW, what I want to do with copy_mount_options() is this:
+> void *copy_mount_options(const void __user * data)
+> {
+> 	unsigned offs, size;
+> 	char *copy;
+>
+> 	if (!data)
+> 		return NULL;
+>
+> 	copy = kmalloc(PAGE_SIZE, GFP_KERNEL);
+> 	if (!copy)
+> 		return ERR_PTR(-ENOMEM);
+>
+> 	offs = (unsigned long)data & (PAGE_SIZE - 1);
+>
+> 	if (copy_from_user(copy, data, PAGE_SIZE - offs)) {
+> 		kfree(copy);
+> 		return ERR_PTR(-EFAULT);
+> 	}
+> 	if (offs) {
+> 		if (copy_from_user(copy, data + PAGE_SIZE - offs, offs))
+> 			memset(copy + PAGE_SIZE - offs, 0, offs);
+> 	}
+> 	return copy;
+> }
+>
+> which should get rid of any TASK_SIZE references whatsoever, but I really
+> wonder where have you run into the problem.
+>
+>
 
