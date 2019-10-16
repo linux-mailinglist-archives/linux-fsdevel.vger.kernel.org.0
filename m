@@ -2,49 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B22DFD8A8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 10:10:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCABAD8AFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 10:31:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404030AbfJPIKO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 04:10:14 -0400
-Received: from verein.lst.de ([213.95.11.211]:59621 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391446AbfJPIKN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 04:10:13 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6964768B20; Wed, 16 Oct 2019 10:10:09 +0200 (CEST)
-Date:   Wed, 16 Oct 2019 10:10:09 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/12] iomap: lift the xfs writeback code to iomap
-Message-ID: <20191016081009.GA24284@lst.de>
-References: <20191015154345.13052-1-hch@lst.de> <20191015154345.13052-10-hch@lst.de> <20191015220721.GC16973@dread.disaster.area>
+        id S1731149AbfJPIbK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 04:31:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39882 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726092AbfJPIbK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Oct 2019 04:31:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 99E11B600;
+        Wed, 16 Oct 2019 08:31:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4ED151E3BDE; Wed, 16 Oct 2019 10:31:08 +0200 (CEST)
+Date:   Wed, 16 Oct 2019 10:31:08 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
+        tytso@mit.edu, mbobrowski@mbobrowski.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 1/2] ext4: Move ext4 bmap to use iomap infrastructure.
+Message-ID: <20191016083108.GA30337@quack2.suse.cz>
+References: <20190820130634.25954-1-riteshh@linux.ibm.com>
+ <20190820130634.25954-2-riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191015220721.GC16973@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190820130634.25954-2-riteshh@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 09:07:21AM +1100, Dave Chinner wrote:
-> > +/*
-> > + * We implement an immediate ioend submission policy here to avoid needing to
-> > + * chain multiple ioends and hence nest mempool allocations which can violate
-> > + * forward progress guarantees we need to provide. The current ioend we are
-> > + * adding blocks to is cached on the writepage context, and if the new block
+On Tue 20-08-19 18:36:33, Ritesh Harjani wrote:
+> ext4_iomap_begin is already implemented which provides
+> ext4_map_blocks, so just move the API from
+> generic_block_bmap to iomap_bmap for iomap conversion.
 > 
-> adding pages to ... , and if the new block mapping
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-So reviewing this comment I disagree with the change.  We add on a per-
-block basis to the ioend, not a per-page one.  Similar for the second 
-one it is the block that needs to append (which is defined by the
-mapping, but still..).
+This seems to have fallen through the cracks. The patch looks OK, feel free
+to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+	
+								Honza
+
+> ---
+>  fs/ext4/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 420fe3deed39..d6a34214e9df 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3355,7 +3355,7 @@ static sector_t ext4_bmap(struct address_space *mapping, sector_t block)
+>  			return 0;
+>  	}
+>  
+> -	return generic_block_bmap(mapping, block, ext4_get_block);
+> +	return iomap_bmap(mapping, block, &ext4_iomap_ops);
+>  }
+>  
+>  static int ext4_readpage(struct file *file, struct page *page)
+> -- 
+> 2.21.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
