@@ -2,258 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3639AD8A20
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 09:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E94D8A2B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 09:48:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391281AbfJPHqT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 03:46:19 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43648 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391269AbfJPHqR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 03:46:17 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u3so16596211lfl.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Oct 2019 00:46:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QvRi7PNoggQszDfre8D+FBzcsSh0CBoNlDWz8tev6yQ=;
-        b=RU4N7tUwuMfI1VibR44SQ9yks8vKVb5eF1y46S/6t3LFTW4cFYnE80Pk+GUbw9adiY
-         7pkUda9TFfJCZh0Qnm9cHSUhUFa+fL1/80R0Qg8cq0fEMSiE/3ZYOfVy582xWOfe7GAx
-         BtuoalHwtq4x9rd3dhU0C8u0WLYIKTsURlQ7Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QvRi7PNoggQszDfre8D+FBzcsSh0CBoNlDWz8tev6yQ=;
-        b=sr4ESvuOyLkBeXv6Czgbfgwt89f5LF1sDzdBtPCvSjEABx1QcbCWDO3LRVusugiVw4
-         iFr53cJS1Nr30JVDn4lbrAGVkuO/ha4LX1a4TvrvB2jv9nK53stTEqATZF1orRkKl6rA
-         AnvR+3kRzPuDafb9PE5r3jDL8H0e3nrUeFxr+eThA5keykmyWWdV/Gh4wT+k7p5nJsGN
-         HQPXbdJkym7LALJBF0ZERZA4OIZ/eOmXaZwjq3Y7kNCN3X45enS8FSbRq5e66H2TZHCj
-         URHsq12LlaHW7337jnS3yYUNVQk7LQdVB/gkhLUHuC8sVIK4XoCkqgDMgsl+oyWUDSZZ
-         hMHg==
-X-Gm-Message-State: APjAAAXtAT9N4UurALBtV8QwETVLqx+MQuI+JxXNCcWyaxNmf56BmOut
-        AO2ipGJpQLx9Vti7t0vhYuiMVw==
-X-Google-Smtp-Source: APXvYqyBmqGfoeKFBJH4OrBLDBFGebGhLmDfJwIYHLGKut9DDipI1Qyw/3UVrk5mWZI3oDJFyaWWGQ==
-X-Received: by 2002:a19:6759:: with SMTP id e25mr3829669lfj.80.1571211973028;
-        Wed, 16 Oct 2019 00:46:13 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id q26sm5650578lfd.53.2019.10.16.00.46.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Oct 2019 00:46:12 -0700 (PDT)
-Subject: Re: [RFC PATCH 03/21] pipe: Use head and tail pointers for the ring,
- not cursor and length
-To:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        id S2391292AbfJPHsm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 03:48:42 -0400
+Received: from verein.lst.de ([213.95.11.211]:59511 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726872AbfJPHsl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Oct 2019 03:48:41 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 3189868B20; Wed, 16 Oct 2019 09:48:37 +0200 (CEST)
+Date:   Wed, 16 Oct 2019 09:48:36 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <157117606853.15019.15459271147790470307.stgit@warthog.procyon.org.uk>
- <157117609543.15019.17103851546424902507.stgit@warthog.procyon.org.uk>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <b8799179-d389-8005-4f6d-845febc3bb23@rasmusvillemoes.dk>
-Date:   Wed, 16 Oct 2019 09:46:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+Subject: Re: [PATCH 09/12] iomap: lift the xfs writeback code to iomap
+Message-ID: <20191016074836.GB23696@lst.de>
+References: <20191015154345.13052-1-hch@lst.de> <20191015154345.13052-10-hch@lst.de> <20191015220721.GC16973@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <157117609543.15019.17103851546424902507.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015220721.GC16973@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15/10/2019 23.48, David Howells wrote:
-> Convert pipes to use head and tail pointers for the buffer ring rather than
-> pointer and length as the latter requires two atomic ops to update (or a
-> combined op) whereas the former only requires one.
+On Wed, Oct 16, 2019 at 09:07:21AM +1100, Dave Chinner wrote:
+> > +	trace_iomap_releasepage(page->mapping->host, page, 0, 0);
+> > +
+> >  	/*
+> >  	 * mm accommodates an old ext3 case where clean pages might not have had
+> >  	 * the dirty bit cleared. Thus, it can send actual dirty pages to
+> > @@ -483,6 +488,8 @@ EXPORT_SYMBOL_GPL(iomap_releasepage);
+> >  void
+> >  iomap_invalidatepage(struct page *page, unsigned int offset, unsigned int len)
+> >  {
+> > +	trace_iomap_invalidatepage(page->mapping->host, page, offset, len);
+> > +
 > 
->  (1) The head pointer is the point at which production occurs and points to
->      the slot in which the next buffer will be placed.  This is equivalent
->      to pipe->curbuf + pipe->nrbufs.
+> These tracepoints should be split out into a separate patch like
+> the readpage(s) tracepoints. Maybe just lift all the non-writeback
+> ones in a single patch...
+
+I guess that makes sense.  Initially I didn't want to duplicate the
+trace definition as it is shared with the writeback tracepoints,
+but in the overall scheme of things that doesn't really matter.
+
+> > +iomap_finish_page_writeback(struct inode *inode, struct bio_vec *bvec,
+> > +		int error)
+> > +{
+> > +	struct iomap_page *iop = to_iomap_page(bvec->bv_page);
+> > +
+> > +	if (error) {
+> > +		SetPageError(bvec->bv_page);
+> > +		mapping_set_error(inode->i_mapping, -EIO);
+> > +	}
+> > +
+> > +	WARN_ON_ONCE(i_blocksize(inode) < PAGE_SIZE && !iop);
+> > +	WARN_ON_ONCE(iop && atomic_read(&iop->write_count) <= 0);
+> > +
+> > +	if (!iop || atomic_dec_and_test(&iop->write_count))
+> > +		end_page_writeback(bvec->bv_page);
+> > +}
 > 
->      The head pointer belongs to the write-side.
+> Can we just pass the struct page into this function?
+
+I'd rather not change calling conventions in code just moved over for
+no good reason.  That being said I agree with passing a page, so I'll
+just throw in a follow on patch like I did for iomap_ioend_compare
+cleanup.
+
 > 
->  (2) The tail pointer is the point at which consumption occurs.  It points
->      to the next slot to be consumed.  This is equivalent to pipe->curbuf.
+> .....
 > 
->      The tail pointer belongs to the read-side.
+> > +/*
+> > + * Submit the bio for an ioend. We are passed an ioend with a bio attached to
+> > + * it, and we submit that bio. The ioend may be used for multiple bio
+> > + * submissions, so we only want to allocate an append transaction for the ioend
+> > + * once.  In the case of multiple bio submission, each bio will take an IO
 > 
->  (3) head and tail are allowed to run to UINT_MAX and wrap naturally.  They
->      are only masked off when the array is being accessed, e.g.:
+> This needs to be changed to describe what wpc->ops->submit_ioend()
+> is used for rather than what XFS might use this hook for.
+
+True.  The real documentation now is in the header near the ops defintion,
+but I'll update this one to make more sense as well.
+
+> > +static int
+> > +iomap_submit_ioend(struct iomap_writepage_ctx *wpc, struct iomap_ioend *ioend,
+> > +		int error)
+> > +{
+> > +	ioend->io_bio->bi_private = ioend;
+> > +	ioend->io_bio->bi_end_io = iomap_writepage_end_bio;
+> > +
+> > +	if (wpc->ops->submit_ioend)
+> > +		error = wpc->ops->submit_ioend(ioend, error);
 > 
-> 	pipe->bufs[head & mask]
-> 
->      This means that it is not necessary to have a dead slot in the ring as
->      head == tail isn't ambiguous.
-> 
->  (4) The ring is empty if "head == tail".
-> 
->  (5) The occupancy of the ring is "head - tail".
-> 
->  (6) The number of free slots in the ring is "(tail + pipe->ring_size) -
->      head".
+> I'm not sure that "submit_ioend" is the best name for this method,
+> as it is a pre-bio-submission hook, not an actual IO submission
+> method. "prepare_ioend_for_submit" is more descriptive, but probably
+> too long. wpc->ops->prepare_submit(ioend, error) reads pretty well,
+> though...
 
-Seems an odd way of writing pipe->ring_size - (head - tail) ; i.e.
-obviously #free slots is #size minus #occupancy.
+Not a huge fan of that name either, but Brian complained.  Let's hold
+a popular vote for a name and see if we have a winner.
 
->  (7) The ring is full if "head >= (tail + pipe->ring_size)", which can also
->      be written as "head - tail >= pipe->ring_size".
->
+As for the grammar comments - all this is copied over as-is.  I'll add
+another patch to fix that up.
 
-No it cannot, it _must_ be written in the latter form. Assuming
-sizeof(int)==1 for simplicity, consider ring_size = 16, tail = 240.
-Regardless whether head is 240, 241, ..., 255, 0, tail + ring_size wraps
-to 0, so the former expression states the ring is full in all cases.
-
-Better spell out somewhere that while head and tail are free-running, at
-any point in time they satisfy the invariant head - tail <= pipe_size
-(and also 0 <= head - tail, but that's a tautology for unsigned
-ints...). Then it's a matter of taste if one wants to write "full" as
-head-tail == pipe_size or head-tail >= pipe_size.
-
-> Also split pipe->buffers into pipe->ring_size (which indicates the size of the
-> ring) and pipe->max_usage (which restricts the amount of ring that write() is
-> allowed to fill).  This allows for a pipe that is both writable by the kernel
-> notification facility and by userspace, allowing plenty of ring space for
-> notifications to be added whilst preventing userspace from being able to use
-> up too much buffer space.
-
-That seems like something that should be added in a separate patch -
-adding ->max_usage and switching appropriate users of ->ring_size over,
-so it's more clear where you're using one or the other.
-
-> @@ -1949,8 +1950,12 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->  
->  	pipe_lock(pipe);
->  
-> -	bufs = kvmalloc_array(pipe->nrbufs, sizeof(struct pipe_buffer),
-> -			      GFP_KERNEL);
-> +	head = pipe->head;
-> +	tail = pipe->tail;
-> +	mask = pipe->ring_size - 1;
-> +	count = head - tail;
-> +
-> +	bufs = kvmalloc_array(count, sizeof(struct pipe_buffer), GFP_KERNEL);
->  	if (!bufs) {
->  		pipe_unlock(pipe);
->  		return -ENOMEM;
-> @@ -1958,8 +1963,8 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->  
->  	nbuf = 0;
->  	rem = 0;
-> -	for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
-> -		rem += pipe->bufs[(pipe->curbuf + idx) & (pipe->buffers - 1)].len;
-> +	for (idx = tail; idx < head && rem < len; idx++)
-> +		rem += pipe->bufs[idx & mask].len;
->  
->  	ret = -EINVAL;
->  	if (rem < len)
-> @@ -1970,16 +1975,16 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->  		struct pipe_buffer *ibuf;
->  		struct pipe_buffer *obuf;
->  
-> -		BUG_ON(nbuf >= pipe->buffers);
-> -		BUG_ON(!pipe->nrbufs);
-> -		ibuf = &pipe->bufs[pipe->curbuf];
-> +		BUG_ON(nbuf >= pipe->ring_size);
-> +		BUG_ON(tail == head);
-> +		ibuf = &pipe->bufs[tail];
-
-I don't see where tail gets masked between tail = pipe->tail; above and
-here, but I may be missing it. In any case, how about seeding head and
-tail with something like 1<<20 when creating the pipe so bugs like that
-are hit more quickly.
-
-> @@ -515,17 +525,19 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
->  static long pipe_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  {
->  	struct pipe_inode_info *pipe = filp->private_data;
-> -	int count, buf, nrbufs;
-> +	int count, head, tail, mask;
->  
->  	switch (cmd) {
->  		case FIONREAD:
->  			__pipe_lock(pipe);
->  			count = 0;
-> -			buf = pipe->curbuf;
-> -			nrbufs = pipe->nrbufs;
-> -			while (--nrbufs >= 0) {
-> -				count += pipe->bufs[buf].len;
-> -				buf = (buf+1) & (pipe->buffers - 1);
-> +			head = pipe->head;
-> +			tail = pipe->tail;
-> +			mask = pipe->ring_size - 1;
-> +
-> +			while (tail < head) {
-> +				count += pipe->bufs[tail & mask].len;
-> +				tail++;
->  			}
-
-This is broken if head has wrapped but tail has not. It has to be "while
-(head - tail)" or perhaps just "while (tail != head)" or something along
-those lines.
-
-> @@ -1086,17 +1104,21 @@ static long pipe_set_size(struct pipe_inode_info *pipe, unsigned long arg)
->  	}
->  
->  	/*
-> -	 * We can shrink the pipe, if arg >= pipe->nrbufs. Since we don't
-> -	 * expect a lot of shrink+grow operations, just free and allocate
-> -	 * again like we would do for growing. If the pipe currently
-> +	 * We can shrink the pipe, if arg is greater than the ring occupancy.
-> +	 * Since we don't expect a lot of shrink+grow operations, just free and
-> +	 * allocate again like we would do for growing.  If the pipe currently
->  	 * contains more buffers than arg, then return busy.
->  	 */
-> -	if (nr_pages < pipe->nrbufs) {
-> +	mask = pipe->ring_size - 1;
-> +	head = pipe->head & mask;
-> +	tail = pipe->tail & mask;
-> +	n = pipe->head - pipe->tail;
-
-I think it's confusing to "premask" head and tail here. Can you either
-drop that (pipe_set_size should hardly be a hot path?), or perhaps call
-them something else to avoid a future reader seeing an unmasked
-bufs[head] and thinking that's a bug?
-
-> @@ -1254,9 +1290,10 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
->  		   struct page **pages, size_t maxsize, unsigned maxpages,
->  		   size_t *start)
->  {
-> +	unsigned int p_tail;
-> +	unsigned int i_head;
->  	unsigned npages;
->  	size_t capacity;
-> -	int idx;
->  
->  	if (!maxsize)
->  		return 0;
-> @@ -1264,12 +1301,15 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
->  	if (!sanity(i))
->  		return -EFAULT;
->  
-> -	data_start(i, &idx, start);
-> -	/* some of this one + all after this one */
-> -	npages = ((i->pipe->curbuf - idx - 1) & (i->pipe->buffers - 1)) + 1;
-> -	capacity = min(npages,maxpages) * PAGE_SIZE - *start;
-> +	data_start(i, &i_head, start);
-> +	p_tail = i->pipe->tail;
-> +	/* Amount of free space: some of this one + all after this one */
-> +	npages = (p_tail + i->pipe->ring_size) - i_head;
-
-Hm, it's not clear that this is equivalent to the old computation. Since
-it seems repeated in a few places, could it be factored to a little
-helper (before this patch) and the "some of this one + all after this
-one" comment perhaps expanded to explain what is going on?
-
-Rasmus
