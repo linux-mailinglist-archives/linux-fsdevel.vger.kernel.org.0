@@ -2,105 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D84B5D9BDF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 22:33:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14DAED9C6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 23:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437212AbfJPUdU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 16:33:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60666 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437191AbfJPUdU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 16:33:20 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E813A21835;
-        Wed, 16 Oct 2019 20:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571257999;
-        bh=sQAsOokFGnvVh7DS3xyle/w6+XO8DmU7j1JEW0OM9Fo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XzJv7/wfqu3xTvxwOOLAHx9YgE0jusDtYf8bb0I8IMrUHsMrMlj4Q7lpfLy+Wxjjp
-         F1Op02SgoaPr3iyJEAflgDFNGr9ja7Na9Nzm4hQfkhXgV6f7LpM4/1ekCf9Xm1Cd3i
-         8PeRy74qwWNd9UkMoQw3SLDSA3n2pLGjFzo4oQ8w=
-Date:   Wed, 16 Oct 2019 16:33:17 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20191016203317.GU31224@sasha-vm>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190829205631.uhz6jdboneej3j3c@pali>
- <184209.1567120696@turing-police>
- <20190829233506.GT5281@sasha-vm>
- <20190830075647.wvhrx4asnkrfkkwk@pali>
- <20191016140353.4hrncxa5wkx47oau@pali>
- <20191016143113.GS31224@sasha-vm>
- <20191016160349.pwghlg566hh2o7id@pali>
+        id S2394461AbfJPVWg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 17:22:36 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:33166 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2394411AbfJPVWf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Oct 2019 17:22:35 -0400
+Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3ED0643E8EA;
+        Thu, 17 Oct 2019 08:22:30 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iKqkX-0001LK-9m; Thu, 17 Oct 2019 08:22:29 +1100
+Date:   Thu, 17 Oct 2019 08:22:29 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Wang Shilong <wangshilong1991@gmail.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Andreas Dilger <adilger@dilger.ca>, Li Xi <lixi@ddn.com>,
+        Wang Shilong <wshilong@ddn.com>
+Subject: Re: [Project Quota]file owner could change its project ID?
+Message-ID: <20191016212229.GJ16973@dread.disaster.area>
+References: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
+ <20191013164124.GR13108@magnolia>
+ <CAP9B-Q=SfhnA6iO7h1TWAoSOfZ+BvT7d8=OE4176FZ3GXiU-xw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191016160349.pwghlg566hh2o7id@pali>
+In-Reply-To: <CAP9B-Q=SfhnA6iO7h1TWAoSOfZ+BvT7d8=OE4176FZ3GXiU-xw@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=yPCof4ZbAAAA:8 a=7-415B0cAAAA:8 a=QQG8O11YrPY9A1I9HsUA:9
+        a=wzy0uYdRrGvVSUI7:21 a=drtSVpqNNNfG8ioO:21 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 06:03:49PM +0200, Pali Rohár wrote:
->On Wednesday 16 October 2019 10:31:13 Sasha Levin wrote:
->> On Wed, Oct 16, 2019 at 04:03:53PM +0200, Pali Rohár wrote:
->> > On Friday 30 August 2019 09:56:47 Pali Rohár wrote:
->> > > On Thursday 29 August 2019 19:35:06 Sasha Levin wrote:
->> > > > With regards to missing specs/docs/whatever - our main concern with this
->> > > > release was that we want full interoperability, which is why the spec
->> > > > was made public as-is without modifications from what was used
->> > > > internally. There's no "secret sauce" that Microsoft is hiding here.
->> > >
->> > > Ok, if it was just drop of "current version" of documentation then it
->> > > makes sense.
->> > >
->> > > > How about we give this spec/code time to get soaked and reviewed for a
->> > > > bit, and if folks still feel (in a month or so?) that there are missing
->> > > > bits of information related to exfat, I'll be happy to go back and try
->> > > > to get them out as well.
->> >
->> > Hello Sasha!
->> >
->> > Now one month passed, so do you have some information when missing parts
->> > of documentation like TexFAT would be released to public?
->>
->> Sure, I'll see if I can get an approval to open it up.
->
->Ok!
->
->> Can I assume you will be implementing TexFAT support once the spec is
->> available?
->
->I cannot promise that I would implement something which I do not know
->how is working... It depends on how complicated TexFAT is and also how
->future exfat support in kernel would look like.
->
->But I'm interesting in implementing it.
+On Wed, Oct 16, 2019 at 07:51:15PM +0800, Wang Shilong wrote:
+> On Mon, Oct 14, 2019 at 12:41 AM Darrick J. Wong
+> <darrick.wong@oracle.com> wrote:
+> >
+> > On Sat, Oct 12, 2019 at 02:33:36PM +0800, Wang Shilong wrote:
+> > > Steps to reproduce:
+> > > [wangsl@localhost tmp]$ mkdir project
+> > > [wangsl@localhost tmp]$ lsattr -p project -d
+> > >     0 ------------------ project
+> > > [wangsl@localhost tmp]$ chattr -p 1 project
+> > > [wangsl@localhost tmp]$ lsattr -p -d project
+> > >     1 ------------------ project
+> > > [wangsl@localhost tmp]$ chattr -p 2 project
+> > > [wangsl@localhost tmp]$ lsattr -p -d project
+> > >     2 ------------------ project
+> > > [wangsl@localhost tmp]$ df -Th .
+> > > Filesystem     Type  Size  Used Avail Use% Mounted on
+> > > /dev/sda3      xfs    36G  4.1G   32G  12% /
+> > > [wangsl@localhost tmp]$ uname -r
+> > > 5.4.0-rc2+
+> > >
+> > > As above you could see file owner could change project ID of file its self.
+> > > As my understanding, we could set project ID and inherit attribute to account
+> > > Directory usage, and implement a similar 'Directory Quota' based on this.
+> >
+> > So the problem here is that the admin sets up a project quota on a
+> > directory, then non-container users change the project id and thereby
+> > break quota enforcement?  Dave didn't sound at all enthusiastic, but I'm
+> > still wondering what exactly you're trying to prevent.
+> 
+> Yup, we are trying to prevent no-root users to change their project ID.
+> As we want to implement 'Directory Quota':
 
-It looks like the reason this wasn't made public along with the exFAT
-spec is that TexFAT is pretty much dead - it's old, there are no users
-we are aware of, and digging it out of it's grave to make it public is
-actually quite the headache.
+You can already implement "Directory Quota" with project quotas.
 
-Is this something you actually have a need for? an entity that has a
-requirement for TexFAT? I'd would rather spend my time elsewhere than
-digging TexFAT out of it's grave.
+What you are asking for is a different implementation of "Directory
+Quota" to what we currently support.
 
-Is there anything else in the exFAT spec that is missing (and someone
-actually wants/uses)?
+> If non-root users could change their project ID, they could always try
+> to change its project ID to steal space when EDQUOT returns.
 
+Audit trail will tell you if users are doing this :P
+
+Basically,  what you want is a -strict- directory quota, where users
+are unable to select the quota ID the directory is placed under.
+i.e. it is entirely admin controlled, and users can't place
+different directories under different quota IDs.
+
+We can do this, but we need and explicit description of the
+behaviour your require, and how it differs from the existing
+"directory quota via project quotas" mechanism that people currently
+use. i.e. there are two very different use cases for "directory
+quotas" here, and users are going to need to know which one to
+select for their intended us. 
+
+> Yup, if mount option could be introduced to make this case work,
+> that will be nice.
+
+That's maybe ten  lines of code. I expect that the documentation of
+the use cases and the differences in behaviour between the two modes
+of behaviour will be a couple of hundred lines at least...
+
+Cheers,
+
+Dave.
 -- 
-Thanks,
-Sasha
+Dave Chinner
+david@fromorbit.com
