@@ -2,149 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF241D999B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 20:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9385D9BC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Oct 2019 22:25:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436640AbfJPSzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 14:55:03 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:35770 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731889AbfJPSzD (ORCPT
+        id S2437137AbfJPUZo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 16:25:44 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:55826 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437132AbfJPUZo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 14:55:03 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GIs1Pl164788;
-        Wed, 16 Oct 2019 18:54:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=dq5ydZCzDs0WCrN8sqLZk/vjjiqakB5YHpdgLM741oM=;
- b=UCAJVZO1xsJj1uTdkX+l9p4Zvppxcb/TlQEYYswhmtIbBR/cKlLB6XeWga1W+NwlYK5x
- mVqtpEa9nynwcPoznJfDig1bqAmUSs4TD7wcHtR7rsd4+joeGiHPizIyp8F4/mCa30Kn
- Pk2hLGFuzLSCuszZ3Um5a/rdtzBJicLnAZNBUTQgYdW6wwXrLofFgAF8sCCB/BnBz/BH
- +NnhjovrydPBEQtzAMJxfYkiY4yn96yYjWGWZt7ureJld1xxhNX2sDd+zfGOf8KZiiV7
- 5hXANABFU+WKM4PvrgDdVVwP2h5LzxeNVFgI340mVWChJCXOMfhXydtdREakWzquBL9o Dg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2vk6sqs6dt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Oct 2019 18:54:53 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9GIrxFq035798;
-        Wed, 16 Oct 2019 18:54:52 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2vnxvaany2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Oct 2019 18:54:52 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9GIsplH016809;
-        Wed, 16 Oct 2019 18:54:51 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Oct 2019 18:54:51 +0000
-Date:   Wed, 16 Oct 2019 11:54:49 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [PATCH v3] splice: only read in as much information as there is
- pipe buffer space
-Message-ID: <20191016185449.GI13098@magnolia>
-References: <20191014220940.GF13098@magnolia>
- <20191016031259.GH15134@dread.disaster.area>
+        Wed, 16 Oct 2019 16:25:44 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iKprY-0001x2-7E; Wed, 16 Oct 2019 20:25:40 +0000
+Date:   Wed, 16 Oct 2019 21:25:40 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to
+ unsafe_put_user()
+Message-ID: <20191016202540.GQ26530@ZenIV.linux.org.uk>
+References: <CAHk-=wiAyZmsEp6oQQgHiuaDU0bLj=OVHSGV_OfvHRSXNPYABw@mail.gmail.com>
+ <CAHk-=wgOWxqwqCFuP_Bw=Hxxf9njeHJs0OLNGNc63peNd=kRqw@mail.gmail.com>
+ <20191010195504.GI26530@ZenIV.linux.org.uk>
+ <CAHk-=wgWRQo0m7TUCK4T_J-3Vqte+p-FWzvT3CB1jJHgX-KctA@mail.gmail.com>
+ <20191011001104.GJ26530@ZenIV.linux.org.uk>
+ <CAHk-=wgg3jzkk-jObm1FLVYGS8JCTiKppEnA00_QX7Wsm5ieLQ@mail.gmail.com>
+ <20191013181333.GK26530@ZenIV.linux.org.uk>
+ <CAHk-=wgrWGyACBM8N8KP7Pu_2VopuzM4A12yQz6Eo=X2Jpwzcw@mail.gmail.com>
+ <20191013191050.GL26530@ZenIV.linux.org.uk>
+ <CAHk-=wjJNE9hOKuatqh6SFf4nd65LG4ZR3gQSgg+rjSpVxe89w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191016031259.GH15134@dread.disaster.area>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910160154
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9412 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910160154
+In-Reply-To: <CAHk-=wjJNE9hOKuatqh6SFf4nd65LG4ZR3gQSgg+rjSpVxe89w@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 02:12:59PM +1100, Dave Chinner wrote:
-> On Mon, Oct 14, 2019 at 03:09:40PM -0700, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > 
-> > Andreas Grünbacher reports that on the two filesystems that support
-> > iomap directio, it's possible for splice() to return -EAGAIN (instead of
-> > a short splice) if the pipe being written to has less space available in
-> > its pipe buffers than the length supplied by the calling process.
-> > 
-> > Months ago we fixed splice_direct_to_actor to clamp the length of the
-> > read request to the size of the splice pipe.  Do the same to do_splice.
-> > 
-> > Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
-> > Reported-by: syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com
-> > Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > ---
-> >  fs/splice.c |   14 +++++++++++---
-> >  1 file changed, 11 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/fs/splice.c b/fs/splice.c
-> > index 98412721f056..e509239d7e06 100644
-> > --- a/fs/splice.c
-> > +++ b/fs/splice.c
-> > @@ -945,12 +945,13 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
-> >  	WARN_ON_ONCE(pipe->nrbufs != 0);
-> >  
-> >  	while (len) {
-> > +		unsigned int pipe_pages;
+On Sun, Oct 13, 2019 at 12:22:38PM -0700, Linus Torvalds wrote:
+> On Sun, Oct 13, 2019 at 12:10 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > No arguments re put_user_ex side of things...  Below is a completely
+> > untested patch for get_user_ex elimination (it seems to build, but that's
+> > it); in any case, I would really like to see comments from x86 folks
+> > before it goes anywhere.
 > 
-> define this as a size_t...
+> Please don't do this:
 > 
-> >  		size_t read_len;
-> >  		loff_t pos = sd->pos, prev_pos = pos;
-> >  
-> >  		/* Don't try to read more the pipe has space for. */
-> > -		read_len = min_t(size_t, len,
-> > -				 (pipe->buffers - pipe->nrbufs) << PAGE_SHIFT);
-> > +		pipe_pages = pipe->buffers - pipe->nrbufs;
-> > +		read_len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
+> > +       if (unlikely(__copy_from_user(&sc, usc, sizeof(sc))))
+> > +               goto Efault;
 > 
-> 		read_len = min_t(size_t, len, pipe_pages << PAGER_SHIFT);
+> Why would you use __copy_from_user()? Just don't.
+> 
+> > +       if (unlikely(__copy_from_user(&v, user_vm86,
+> > +                       offsetof(struct vm86_struct, int_revectored))))
+> 
+> Same here.
+> 
+> There's no excuse for __copy_from_user().
 
-If we make pipe_pages have type size_t then we don't need min_t here,
-right?  Since len and read_len are already size_t.
+FWIW, callers of __copy_from_user() remaining in the generic code:
 
---D
+1) regset.h:user_regset_copyin().  Switch to copy_from_user(); the calling
+conventions of regset ->set() (as well as the method name) are atrocious,
+but there are too many instances to mix any work in that direction into
+this series.  Yes, nominally it's an inline, but IRL it's too large and
+has many callers in the same file(s), so any optimizations of inlining
+__copy_from_user() will be lost and there's more than enough work done
+there to make access_ok() a noise.  And in this case it doesn't pay
+to try and lift user_access_begin() into the callers - the work done
+between the calls is often too non-trivial to be done in such area.
+The same goes for other regset.h stuff; eventually we might want to
+try and come up with saner API, but that's a separate story.
 
-> >  		ret = do_splice_to(in, &pos, pipe, read_len, flags);
-> >  		if (unlikely(ret <= 0))
-> >  			goto out_release;
-> > @@ -1180,8 +1181,15 @@ static long do_splice(struct file *in, loff_t __user *off_in,
-> >  
-> >  		pipe_lock(opipe);
-> >  		ret = wait_for_space(opipe, flags);
-> > -		if (!ret)
-> > +		if (!ret) {
-> > +			unsigned int pipe_pages;
-> > +
-> > +			/* Don't try to read more the pipe has space for. */
-> > +			pipe_pages = opipe->buffers - opipe->nrbufs;
-> > +			len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
-> 
-> And same here...
-> 
-> Cheers,
-> 
-> Dave.
-> 
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+2) default csum_partial_copy_from_user().  What we need to do is
+turn it into default csum_and_copy_from_user().  This
+#ifndef _HAVE_ARCH_COPY_AND_CSUM_FROM_USER
+static inline
+__wsum csum_and_copy_from_user (const void __user *src, void *dst,
+                                      int len, __wsum sum, int *err_ptr)
+{
+        if (access_ok(src, len))
+                return csum_partial_copy_from_user(src, dst, len, sum, err_ptr);
+
+        if (len)
+                *err_ptr = -EFAULT;
+
+        return sum;
+}
+#endif
+in checksum.h is the only thing that calls that sucker and we can bloody
+well combine them and make the users of lib/checksum.h define
+_HAVE_ARCH_COPY_AND_CSUM_FROM_USER.  That puts us reasonably close
+to having _HAVE_ARCH_COPY_AND_CSUM_FROM_USER unconditional and in any
+case, __copy_from_user() in lib/checksum.h turns into copy_from_user().
+
+3) firewire ioctl_queue_iso().  Convert to copy_from_user(), lose the
+access_ok() before the loop.  Definitely not an unsafe_... situation
+(we call fw_iso_context_queue() after each chunk; _not_ something
+we want under user_access_begin()/user_access_end()) and it's really
+not worth trying to save on access_ok() checks there.
+
+4) pstore persistent_ram_update_user().  Obvious copy_from_user(); definitely
+lose access_ok() in the caller (persistent_ram_write_user()), along with
+the one in write_pmsg() (several calls back by the callchain).
+
+5) test_kasan: lose the function, lose the tests...
+
+6) drivers/scsi/sg.c nest: sg_read() ones are memdup_user() in disguise
+(i.e. fold with immediately preceding kmalloc()s).  sg_new_write() -
+fold with access_ok() into copy_from_user() (for both call sites).
+sg_write() - lose access_ok(), use copy_from_user() (both call sites)
+and get_user() (instead of the solitary __get_user() there).
+
+7) i915 ones are, frankly, terrifying.  Consider e.g. this one:
+                relocs = kvmalloc_array(size, 1, GFP_KERNEL);
+                if (!relocs) {
+                        err = -ENOMEM;
+                        goto err;
+                }
+
+                /* copy_from_user is limited to < 4GiB */
+                copied = 0;
+                do {
+                        unsigned int len =
+                                min_t(u64, BIT_ULL(31), size - copied);
+
+                        if (__copy_from_user((char *)relocs + copied,
+                                             (char __user *)urelocs + copied,
+                                             len))
+                                goto end;
+
+                        copied += len;
+                } while (copied < size);
+Is that for real?  Are they *really* trying to allocate and copy >2Gb of
+userland data?  That's eb_copy_relocations() and that crap is itself in
+a loop.  Sizes come from user-supplied data.  WTF?  It's some weird
+kmemdup lookalike and I'd rather heard from maintainers of that thing
+before doing anything with it.
+
+8) vhost_copy_from_user().  Need comments from mst - it's been a while since I crawled
+through that code and I'd need his ACK anyway.  The logics with positioning of
+access_ok() in there is non-trivial and I'm not sure how much of that serves
+as early input validation and how much can be taken out and replaced by use of
+place copy_from_user() and friends.
+
+9) KVM.  There I'm not sure that access_ok() would be the right thing to
+do.  kvm_is_error_hva() tends to serve as the range check in that and similar
+places; it's not the same situation as with NMI, but...
+
+And that's it - everything else is in arch/*.  Looking at arch/x86, we have
+	* insanity in math_emu (unchecked return value, for example)
+	* a bunch sigframe-related code.  Some want to use unsafe_...
+(or raw_...) variant, some should probably go for copy_from_user().
+FPU-related stuff is particularly interesting in that respect - there
+we have several inline functions nearby that contain nothing but
+stac + instruction + clac + exception handling.  And in quite a few
+cases it would've been cleaner to lift stac/clac into the callers, since
+they combine nicely.
+	* regset_tls_set(): use copy_from_user().
+	* one in kvm walk_addr_generic stuff.  If nothing else,
+that one smells like __get_user() - we seem to be copying a single
+PTE.  And again, it's using kvm_is_error_hva().
