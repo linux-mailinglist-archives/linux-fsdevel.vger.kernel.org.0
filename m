@@ -2,116 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60055DB8AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 22:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 729D1DB8C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 23:03:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437494AbfJQUwa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Oct 2019 16:52:30 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44395 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728420AbfJQUwa (ORCPT
+        id S2394663AbfJQVDR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Oct 2019 17:03:17 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46972 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729420AbfJQVDR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Oct 2019 16:52:30 -0400
-Received: by mail-qk1-f196.google.com with SMTP id u22so3202435qkk.11;
-        Thu, 17 Oct 2019 13:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=QMU67ashdr6NIXSp5sxb1ow30I7YwBEELAlQYgNywC8=;
-        b=nnuCi8MvIN5FvTlFJcLWAsFvANcNYqrJPttO3XVqBHrrL69Gu2F8yE7+WQRHAk8rod
-         PvQs3YROR8NvmAoVxhO+8idIM5Clyk/tHRc1nVqLP29U+yGPkY9zcKqZhzpdvQYaKUNs
-         xj5cDts6e1s5SfkrPZV+xtoV+inF3KSjhta23PmmVRJr8OfHHwbWH+O75h//rHKABOJC
-         +xC7K3z/W7FrK5arxzfX1AzC52uE1eG/9FEArV1SG0uNel5/w57wZV3f1czHKX4pONBX
-         rHGo2V+YRHQJRhaHqogzvdQcSHB/awWpP+2MgngHMA3q46emzr1yV8LZm2qaVkaU1kgS
-         /mpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=QMU67ashdr6NIXSp5sxb1ow30I7YwBEELAlQYgNywC8=;
-        b=aKVH1dpfU1n1IkXXQObEIgW4Ouzu5fmNQ8/RsCVbPDuaZD6RuQWUHpVKMxr5Tn5vr3
-         cQZWFlFlwr+4eIarwHBNMhUb/G0MvH/7X6u7Qe3kdV8+WitcAq4koKccYCOCpqdFw4ib
-         WSJMhhH3cuHkkjP0hMlnfUxTYppvsT3EgfgAXx3mWfJgQA3NzEtlRfDh9Mv5i+4grOkh
-         MA/t0zHX6PEW5Hnwai1ExGWZ8o0LrqQTAoXzYMF6o4sf5yTsopTE7JnK9lu5kil1/MnX
-         w9BCfIWBTuncVYn0mCZSCQgRlLLC6O5Bao0WjlzaFr/0725AnyPqCtNyxXpGE7Mn9uK9
-         4A4g==
-X-Gm-Message-State: APjAAAX3i2MOTVs4R7fQLTvfspNKw54BxKiLaWkdDxUCzyA/tktpAz27
-        7UtOBPFttusKVsmABG6AsIkXlQ4f
-X-Google-Smtp-Source: APXvYqzTVyquYc7fl8qSW3Vg5hnSpVIzpoyFXNkHrMBAWrxLDu6oiZgOHBKtEYq5r2MYx95Mfslhzg==
-X-Received: by 2002:a37:7b44:: with SMTP id w65mr5312578qkc.403.1571345547902;
-        Thu, 17 Oct 2019 13:52:27 -0700 (PDT)
-Received: from eaf ([181.47.179.0])
-        by smtp.gmail.com with ESMTPSA id e15sm24666qkm.130.2019.10.17.13.52.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 13:52:27 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 17:52:22 -0300
-From:   Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] hfsplus: add a check for hfs_bnode_find
-Message-ID: <20191017205222.GA2662@eaf>
-References: <20191016120621.304-1-hslester96@gmail.com>
- <20191017000703.GA4271@eaf>
- <CANhBUQ3vPBAstTMJ25Zt6sR4CcRKWkeR7VKhFXc9aiqQKmW=Ng@mail.gmail.com>
+        Thu, 17 Oct 2019 17:03:17 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HKx5bl109889;
+        Thu, 17 Oct 2019 21:03:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=sbk3uYASgfGn6mC7GO0Qtd9YHQRLQETkDSIDaMi8VX0=;
+ b=j0x+9iUBo58N51IG9fdmDVbpWwXs4wLqy/5vTJ1GZUnyTYdfEBo55UtlO0qENpI1qSpL
+ NzmKo5GzhsF9dOMgtH0yX3TQbgJ1vsRM3h44V7MokZ4e6VUQLk0chP9GJqU7bxYH72N+
+ zu2//JLhzCOhXwF/rIcb7ahthO7bcfHlgsCqxAkImiugk7vwD71kppA05xqxWULTFRkv
+ Pu6QvDzEbg7dLNBSakLYpGgzHoj5EkudepGwbOXjC1gSOo4XByddZ2nWYFrl4ysY3Ikh
+ Z49vJhnsHQ2KF4zTX49JNLmu6gzYHe4ydd7iWxcijZju1cIseRgBqvxWaLbxyoNIiHMQ sg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2vk68v10w8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 21:03:13 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HKwDgS048486;
+        Thu, 17 Oct 2019 21:01:13 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2vpvtmbh42-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 21:01:13 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9HL1COR017977;
+        Thu, 17 Oct 2019 21:01:12 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 17 Oct 2019 21:01:12 +0000
+Date:   Thu, 17 Oct 2019 14:01:11 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] iomap: enhance writeback error message
+Message-ID: <20191017210110.GP13108@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANhBUQ3vPBAstTMJ25Zt6sR4CcRKWkeR7VKhFXc9aiqQKmW=Ng@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910170187
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910170187
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 09:30:20AM +0800, Chuhong Yuan wrote:
-> On Thu, Oct 17, 2019 at 8:07 AM Ernesto A. Fernández
-> <ernesto.mnd.fernandez@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > On Wed, Oct 16, 2019 at 08:06:20PM +0800, Chuhong Yuan wrote:
-> > > hfs_brec_update_parent misses a check for hfs_bnode_find and may miss
-> > > the failure.
-> > > Add a check for it like what is done in again.
-> > >
-> > > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> > > ---
-> > >  fs/hfsplus/brec.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-> > > index 1918544a7871..22bada8288c4 100644
-> > > --- a/fs/hfsplus/brec.c
-> > > +++ b/fs/hfsplus/brec.c
-> > > @@ -434,6 +434,8 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
-> > >                       new_node->parent = tree->root;
-> > >               }
-> > >               fd->bnode = hfs_bnode_find(tree, new_node->parent);
-> > > +             if (IS_ERR(fd->bnode))
-> > > +                     return PTR_ERR(fd->bnode);
-> >
-> > You shouldn't just return here, you still hold a reference to new_node.
-> > The call to hfs_bnode_find() after the again label seems to be making a
-> > similar mistake.
-> >
-> > I don't think either one can actually fail though, because the parent
-> > nodes have all been read and hashed before, haven't they?
-> >
-> 
-> I find that after hfs_bnode_findhash in hfs_bnode_find, there is a test for
-> HFS_BNODE_ERROR and may return an error. I'm not sure whether it
-> can happen here.
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-That would require a race between hfs_bnode_find() and hfs_bnode_create(),
-but the node has already been created.
+If we encounter an IO error during writeback, log the inode, offset, and
+sector number of the failure, instead of forcing the user to do some
+sort of reverse mapping to figure out which file is affected.
 
-> 
-> > >               /* create index key and entry */
-> > >               hfs_bnode_read_key(new_node, fd->search_key, 14);
-> > >               cnid = cpu_to_be32(new_node->this);
-> > > --
-> > > 2.20.1
-> > >
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ fs/iomap/buffered-io.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 0fd58adcdeaa..55d7efa4fb8c 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1162,8 +1162,9 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+ 
+ 	if (unlikely(error && !quiet)) {
+ 		printk_ratelimited(KERN_ERR
+-			"%s: writeback error on sector %llu",
+-			inode->i_sb->s_id, start);
++"%s: writeback error on inode %lu, offset %lld, sector %llu",
++			inode->i_sb->s_id, inode->i_ino, ioend->io_offset,
++			start);
+ 	}
+ }
+ 
