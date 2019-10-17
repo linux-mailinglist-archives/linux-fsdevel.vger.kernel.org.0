@@ -2,165 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C43D6DB63B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 20:33:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E422CDB678
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 20:41:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392410AbfJQSdM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Oct 2019 14:33:12 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44551 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388728AbfJQSdM (ORCPT
+        id S2441273AbfJQSll (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Oct 2019 14:41:41 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:42006 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390183AbfJQSll (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:33:12 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w6so3000147oie.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2019 11:33:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SeNS1mszIYg47Gf6phLQe9gpL6k5/Daun7T9IBCmzZE=;
-        b=MWYc6PciC370wUG/bLJf6TqLQ5PqzHBkTVMqSRY+biAIl26gaCA3FSQBOa5a4E5Pzz
-         hg5eG0h3O89uEXNugIwgmO0I44gjmMbKSwjnlnBOH45xfzzvg50cAFdxMLOrYP7DG34I
-         04NwlZLj/jK2XTvyNRCw4SRNh3zDkKFyuQFJp8zgQu9EcMLnsDjSdyWUfnu2MqVSD7ue
-         08O2t6N3YFmoEG78mhAvvKK47AW4BCbAWSqLNLCNGWM2gsXgHn51ASSkdF/Ea8ls/KV8
-         sTQA20kgHpSKEbY+sFsyggvimw41r6SEblKtBYZOQJtFc4xQxikhK+iR23Gj1irfwSq0
-         6WkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SeNS1mszIYg47Gf6phLQe9gpL6k5/Daun7T9IBCmzZE=;
-        b=nrGol4zu228cT0b69XNmFeDin2xEX2otN79FZwQMIq3QrPIhos+0/sLs2nqXMuV07r
-         r5iOdaOG+DIyoJ3QYwrIfYLYvKB2KJpdBosvGUNPSWcO4ObpjBFUBy4oZykZ3YaSL4Ci
-         NQPC2phh61csfwr1vEZE2+2EkPGi8mCzb8lDWkh/aaTCJP4CKbJniYIL0s8qYL3/zTtr
-         qMNTxeL9wUgRm1DAcCLg7q3nkVF1SyndUtV97cKEIqywBbxqGklEwnoEHHrIzlOhPG4r
-         ATzgO7ZJbMRZzZo5Ynbn2Ds1yZStkVdE3BXKr/lc9xtxeYdLbS0xhObfJ8OnGQYlkSQw
-         BrLw==
-X-Gm-Message-State: APjAAAUFNe40ZFysCEoVrApNS86iinnMq4O+OlWevbVY3dfdqzbk55kj
-        uIi7mOl70VhIFpaFYsFnbLsyoUX17IC/jTUisQsX7Q==
-X-Google-Smtp-Source: APXvYqybNjA3gcf3SlQhlkGWIifNuAAwnhq/fO6+CZ6yApLMowZCl6h0aR3AQnhyjXPXh+8I6YvFq14hu/TCorbCje0=
-X-Received: by 2002:aca:f1a:: with SMTP id 26mr4519807oip.172.1571337189006;
- Thu, 17 Oct 2019 11:33:09 -0700 (PDT)
+        Thu, 17 Oct 2019 14:41:41 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIdUii173365;
+        Thu, 17 Oct 2019 18:41:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=ynIkxSCdwQKk9aa/KnzRuvgSRVE+FPNztS00eAkD9AQ=;
+ b=mPjZen38MEfU2u+YmLexAo/03+Uu92Ep0QWKcFeN0+tBJ5S43xI4/X7O2AoBSdgHwl+W
+ xZTccM7Fs57m7i8b2AkBqMW9eW/yEfmevsPpBJcrILfbUip6wLtOFDxI5uvzjHP4ltu3
+ xRbJTH7ipCBPwmhwOlBwH0vMovgPHtZ7W6HUDrZfUlrkdB7IE4Y2FMZfkgKglpYU0I37
+ f3qDVqId1krq0dFzksKL9mT7zIDuO2tAVK9DEbwyMiArY7D3nyHeSEGZebDsePu/U/ut
+ yYLrqSzdu9F7xciMRN4Bk34r2RtON+1+8FtUVXdIlCPOtFKmWyDpQgKyZ3PYhQxaP+PJ sA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2vk6sr0any-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 18:41:26 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIXHug050325;
+        Thu, 17 Oct 2019 18:39:25 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2vpvtm3d6x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 18:39:25 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9HIdImJ007701;
+        Thu, 17 Oct 2019 18:39:18 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 17 Oct 2019 18:39:18 +0000
+Date:   Thu, 17 Oct 2019 11:39:17 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH 01/14] iomap: iomap that extends beyond EOF should be
+ marked dirty
+Message-ID: <20191017183917.GL13108@magnolia>
+References: <20191017175624.30305-1-hch@lst.de>
+ <20191017175624.30305-2-hch@lst.de>
 MIME-Version: 1.0
-References: <000000000000328b2905951a7667@google.com> <CANpmjNPoBBJgMKLEAXs+bPhitF+WygseHgTkSJsuiK8WcsB==g@mail.gmail.com>
- <20191017181709.GA5312@avx2>
-In-Reply-To: <20191017181709.GA5312@avx2>
-From:   Marco Elver <elver@google.com>
-Date:   Thu, 17 Oct 2019 20:32:57 +0200
-Message-ID: <CANpmjNOkpOQsmQKYLAJ1iuj6UYJqyY6PRaYXSyWbF=omfnj6Uw@mail.gmail.com>
-Subject: Re: KCSAN: data-race in task_dump_owner / task_dump_owner
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     syzbot <syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        casey@schaufler-ca.com, christian@brauner.io,
-        Kees Cook <keescook@chromium.org>, kent.overstreet@gmail.com,
-        khlebnikov@yandex-team.ru, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, mhocko@suse.com,
-        Shakeel Butt <shakeelb@google.com>,
-        syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017175624.30305-2-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910170166
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910170167
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 17 Oct 2019 at 20:17, Alexey Dobriyan <adobriyan@gmail.com> wrote:
->
-> On Thu, Oct 17, 2019 at 02:56:47PM +0200, Marco Elver wrote:
-> > Hi,
-> >
-> > On Thu, 17 Oct 2019 at 14:36, syzbot
-> > <syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    d724f94f x86, kcsan: Enable KCSAN for x86
-> > > git tree:       https://github.com/google/ktsan.git kcsan
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=17884db3600000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c0906aa620713d80
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=e392f8008a294fdf8891
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > >
-> > > Unfortunately, I don't have any reproducer for this crash yet.
-> > >
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com
-> > >
-> > > ==================================================================
-> > > BUG: KCSAN: data-race in task_dump_owner / task_dump_owner
-> > >
-> > > write to 0xffff8881255bb7fc of 4 bytes by task 7804 on cpu 0:
-> > >   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
-> > >   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
-> > >   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
-> > >   d_revalidate fs/namei.c:765 [inline]
-> > >   d_revalidate fs/namei.c:762 [inline]
-> > >   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
-> > >   walk_component+0x6d/0xe80 fs/namei.c:1804
-> > >   link_path_walk.part.0+0x5d3/0xa90 fs/namei.c:2139
-> > >   link_path_walk fs/namei.c:2070 [inline]
-> > >   path_openat+0x14f/0x3530 fs/namei.c:3532
-> > >   do_filp_open+0x11e/0x1b0 fs/namei.c:3563
-> > >   do_sys_open+0x3b3/0x4f0 fs/open.c:1089
-> > >   __do_sys_open fs/open.c:1107 [inline]
-> > >   __se_sys_open fs/open.c:1102 [inline]
-> > >   __x64_sys_open+0x55/0x70 fs/open.c:1102
-> > >   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
-> > >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > >
-> > > write to 0xffff8881255bb7fc of 4 bytes by task 7813 on cpu 1:
-> > >   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
-> > >   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
-> > >   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
-> > >   d_revalidate fs/namei.c:765 [inline]
-> > >   d_revalidate fs/namei.c:762 [inline]
-> > >   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
-> > >   walk_component+0x6d/0xe80 fs/namei.c:1804
-> > >   lookup_last fs/namei.c:2271 [inline]
-> > >   path_lookupat.isra.0+0x13a/0x5a0 fs/namei.c:2316
-> > >   filename_lookup+0x145/0x2d0 fs/namei.c:2346
-> > >   user_path_at_empty+0x4c/0x70 fs/namei.c:2606
-> > >   user_path_at include/linux/namei.h:60 [inline]
-> > >   vfs_statx+0xd9/0x190 fs/stat.c:187
-> > >   vfs_stat include/linux/fs.h:3188 [inline]
-> > >   __do_sys_newstat+0x51/0xb0 fs/stat.c:341
-> > >   __se_sys_newstat fs/stat.c:337 [inline]
-> > >   __x64_sys_newstat+0x3a/0x50 fs/stat.c:337
-> > >   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
-> > >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > >
-> > > Reported by Kernel Concurrency Sanitizer on:
-> > > CPU: 1 PID: 7813 Comm: ps Not tainted 5.3.0+ #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > Google 01/01/2011
-> > > ==================================================================
-> >
-> > My understanding is, that for every access to /proc/<pid>,
-> > d_revalidate is called, and /proc-fs implementation simply says that
-> > pid_revalidate always revalidates by rewriting uid/gid because "owning
-> > task may have performed a setuid(), etc." presumably so every access
-> > to a /proc/<pid> entry always has the right uid/gid (in effect
-> > updating /proc/<pid> lazily via d_revalidate).
-> >
-> > Is it possible that one of the tasks above could be preempted after
-> > doing its writes to *ruid/*rgid, another thread writing some other
-> > values (after setuid / seteuid), and then the preempted thread seeing
-> > the other values? Assertion here should never fail:
-> > === TASK 1 ===
-> > | seteuid(1000);
-> > | seteuid(0);
-> > | stat("/proc/<pid-of-task-1>", &fstat);
-> > | assert(fstat.st_uid == 0);
-> > === TASK 2 ===
-> > | stat("/proc/<pid-of-task-1>", ...);
->
-> Is it the same as
-> pid_revalidate() snapshots (uid,gid) correctly
-> but writeback is done in any order?
+On Thu, Oct 17, 2019 at 07:56:11PM +0200, Christoph Hellwig wrote:
+> From: Dave Chinner <dchinner@redhat.com>
+> 
+> When doing a direct IO that spans the current EOF, and there are
+> written blocks beyond EOF that extend beyond the current write, the
+> only metadata update that needs to be done is a file size extension.
+> 
+> However, we don't mark such iomaps as IOMAP_F_DIRTY to indicate that
+> there is IO completion metadata updates required, and hence we may
+> fail to correctly sync file size extensions made in IO completion
+> when O_DSYNC writes are being used and the hardware supports FUA.
+> 
+> Hence when setting IOMAP_F_DIRTY, we need to also take into account
+> whether the iomap spans the current EOF. If it does, then we need to
+> mark it dirty so that IO completion will call generic_write_sync()
+> to flush the inode size update to stable storage correctly.
+> 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Yes, I think so. Snapshot is done in RCU reader critical section, but
-the writes can race with another thread. Is there logic that ensures
-this doesn't lead to the observable outcome above?
+Looks ok, but need fixes tag.  Also, might it be wise to split off the
+ext4 section into a separate patch so that it can be backported
+separately?
+
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> ---
+>  fs/ext4/inode.c       | 9 ++++++++-
+>  fs/xfs/xfs_iomap.c    | 7 +++++++
+>  include/linux/iomap.h | 2 ++
+>  3 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 516faa280ced..e9dc52537e5b 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3523,9 +3523,16 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  			return ret;
+>  	}
+>  
+> +	/*
+> +	 * Writes that span EOF might trigger an IO size update on completion,
+> +	 * so consider them to be dirty for the purposes of O_DSYNC even if
+> +	 * there is no other metadata changes being made or are pending here.
+> +	 */
+>  	iomap->flags = 0;
+> -	if (ext4_inode_datasync_dirty(inode))
+> +	if (ext4_inode_datasync_dirty(inode) ||
+> +	    offset + length > i_size_read(inode))
+>  		iomap->flags |= IOMAP_F_DIRTY;
+> +
+>  	iomap->bdev = inode->i_sb->s_bdev;
+>  	iomap->dax_dev = sbi->s_daxdev;
+>  	iomap->offset = (u64)first_block << blkbits;
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index f780e223b118..32993c2acbd9 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -1049,6 +1049,13 @@ xfs_file_iomap_begin(
+>  	trace_xfs_iomap_alloc(ip, offset, length, XFS_DATA_FORK, &imap);
+>  
+>  out_finish:
+> +	/*
+> +	 * Writes that span EOF might trigger an IO size update on completion,
+> +	 * so consider them to be dirty for the purposes of O_DSYNC even if
+> +	 * there is no other metadata changes pending or have been made here.
+> +	 */
+> +	if ((flags & IOMAP_WRITE) && offset + length > i_size_read(inode))
+> +		iomap->flags |= IOMAP_F_DIRTY;
+>  	return xfs_bmbt_to_iomap(ip, iomap, &imap, shared);
+>  
+>  out_found:
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 7aa5d6117936..24bd227d59f9 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -32,6 +32,8 @@ struct vm_fault;
+>   *
+>   * IOMAP_F_DIRTY indicates the inode has uncommitted metadata needed to access
+>   * written data and requires fdatasync to commit them to persistent storage.
+> + * This needs to take into account metadata changes that *may* be made at IO
+> + * completion, such as file size updates from direct IO.
+>   */
+>  #define IOMAP_F_NEW		0x01	/* blocks have been newly allocated */
+>  #define IOMAP_F_DIRTY		0x02	/* uncommitted metadata */
+> -- 
+> 2.20.1
+> 
