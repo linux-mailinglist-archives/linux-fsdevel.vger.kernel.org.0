@@ -2,126 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94855DA523
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 07:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF14ADA55C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 08:13:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392392AbfJQF1p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Oct 2019 01:27:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726018AbfJQF1p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Oct 2019 01:27:45 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E40CF2082C;
-        Thu, 17 Oct 2019 05:27:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571290064;
-        bh=cvii7IoLU8oou9av1ctfLhhGghmK/B6OwKzMBcYtoAM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GfQ9TFNNkpfkvNX1IN9qLrYD7DR6wKfVMhfQq0mTE9WBzviP4UR5pkUW+O0pmyrE0
-         gkGa5fwVa/V4KshdDYn9Y2wB7XWLOuXrc1R2BGAxIuWiiQDOQYR1bycmpTQPk4iGI2
-         uaV+yC+ZNCcW0mlxXLie3p5kDky24wfGTd6+bARc=
-Date:   Wed, 16 Oct 2019 22:27:42 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     syzbot <syzbot+f9545ab3e9f85cd43a3a@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: WARNING: bad unlock balance in rcu_lock_release
-Message-ID: <20191017052742.GI1552@sol.localdomain>
-Mail-Followup-To: Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+f9545ab3e9f85cd43a3a@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <000000000000fdd3f3058bfcf369@google.com>
- <0000000000004ecdb90594d16d77@google.com>
- <20191015075631.GB21550@quack2.suse.cz>
+        id S2390377AbfJQGNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Oct 2019 02:13:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37974 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731726AbfJQGNs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Oct 2019 02:13:48 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9H6DQ9C098616
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2019 02:13:47 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vng3v3ex5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2019 02:13:45 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
+        Thu, 17 Oct 2019 07:13:04 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Oct 2019 07:13:02 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9H6CUCb19333460
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Oct 2019 06:12:30 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1FBDA4054;
+        Thu, 17 Oct 2019 06:13:01 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B08D1A405F;
+        Thu, 17 Oct 2019 06:13:00 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.50.5])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 17 Oct 2019 06:13:00 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-ext4@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2] ext4: support encryption with blocksize != PAGE_SIZE
+Date:   Thu, 17 Oct 2019 11:44:58 +0530
+Organization: IBM
+In-Reply-To: <20191016221142.298754-1-ebiggers@kernel.org>
+References: <20191016221142.298754-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191015075631.GB21550@quack2.suse.cz>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 19101706-0020-0000-0000-00000379CCE3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19101706-0021-0000-0000-000021CFF40F
+Message-Id: <2830996.s4omRzobaj@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-17_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910170051
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 09:56:31AM +0200, Jan Kara wrote:
-> On Sun 13-10-19 14:28:06, syzbot wrote:
-> > syzbot has found a reproducer for the following crash on:
-> > 
-> > HEAD commit:    da940012 Merge tag 'char-misc-5.4-rc3' of git://git.kernel..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=12cfdf4f600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=2d2fd92a28d3e50
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=f9545ab3e9f85cd43a3a
-> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
-> > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148c9fc7600000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100d3f8b600000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+f9545ab3e9f85cd43a3a@syzkaller.appspotmail.com
-> > 
-> > =====================================
-> > WARNING: bad unlock balance detected!
-> > 5.4.0-rc2+ #0 Not tainted
-> > -------------------------------------
-> > syz-executor111/7877 is trying to release lock (rcu_callback) at:
-> > [<ffffffff81612bd4>] rcu_lock_release+0x4/0x20 include/linux/rcupdate.h:212
-> > but there are no more locks to release!
+On Thursday, October 17, 2019 3:41 AM Eric Biggers wrote: 
+> Hello,
 > 
-> Hum, this is really weird. Look:
+> This patchset makes ext4 support encryption on filesystems where the
+> filesystem block size is not equal to PAGE_SIZE.  This allows e.g.
+> PowerPC systems to use ext4 encryption.
 > 
-> > other info that might help us debug this:
-> > 1 lock held by syz-executor111/7877:
-> >  #0: ffff8880a3c600d8 (&type->s_umount_key#42/1){+.+.}, at:
-> > alloc_super+0x15f/0x790 fs/super.c:229
-> > 
-> > stack backtrace:
-> > CPU: 1 PID: 7877 Comm: syz-executor111 Not tainted 5.4.0-rc2+ #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >  <IRQ>
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
-> >  print_unlock_imbalance_bug+0x20b/0x240 kernel/locking/lockdep.c:4008
-> >  __lock_release kernel/locking/lockdep.c:4244 [inline]
-> >  lock_release+0x473/0x780 kernel/locking/lockdep.c:4506
-> >  rcu_lock_release+0x1c/0x20 include/linux/rcupdate.h:214
-> >  __rcu_reclaim kernel/rcu/rcu.h:223 [inline]
+> Most of the work for this was already done in prior kernel releases; now
+> the only part missing is decryption support in block_read_full_page().
+> Chandan Rajendra has proposed a patchset "Consolidate FS read I/O
+> callbacks code" [1] to address this and do various other things like
+> make ext4 use mpage_readpages() again, and make ext4 and f2fs share more
+> code.  But it doesn't seem to be going anywhere.
 > 
-> __rcu_reclaim_kernel() has:
+> Therefore, I propose we simply add decryption support to
+> block_read_full_page() for now.  This is a fairly small change, and it
+> gets ext4 encryption with subpage-sized blocks working.
 > 
->         rcu_lock_acquire(&rcu_callback_map);
->         if (__is_kfree_rcu_offset(offset)) {
->                 trace_rcu_invoke_kfree_callback(rn, head, offset);
->                 kfree((void *)head - offset);
->                 rcu_lock_release(&rcu_callback_map);
->                 return true;
->         } else {
->                 trace_rcu_invoke_callback(rn, head);
->                 f = head->func;
->                 WRITE_ONCE(head->func, (rcu_callback_t)0L);
->                 f(head);
->                 rcu_lock_release(&rcu_callback_map);
->                 return false;
->         }
+> Note: to keep things simple I'm just allocating the work object from the
+> bi_end_io function with GFP_ATOMIC.  But if people think it's necessary,
+> it could be changed to use preallocation like the page-based read path.
 > 
-> So RCU locking is clearly balanced there. The only possibility I can see
-> how this can happen is that RCU callback we have called actually released
-> rcu_callback_map but grepping the kernel doesn't show any other place where
-> that would get released? Confused.
+> Tested with 'gce-xfstests -c ext4/encrypt_1k -g auto', using the new
+> "encrypt_1k" config I created.  All tests pass except for those that
+> already fail or are excluded with the encrypt or 1k configs, and 2 tests
+> that try to create 1023-byte symlinks which fails since encrypted
+> symlinks are limited to blocksize-3 bytes.  Also ran the dedicated
+> encryption tests using 'kvm-xfstests -c ext4/1k -g encrypt'; all pass,
+> including the on-disk ciphertext verification tests.
 > 
-> But apparently there is even a reproducer for this so we could dig
-> further...
-> 
+> [1] https://lkml.kernel.org/linux-fsdevel/20190910155115.28550-1-chandan@linux.ibm.com/T/#u
+>
 
-It's probably the same cause as "WARNING: bad unlock balance in rcu_core", see
-the thread: https://lkml.kernel.org/linux-fsdevel/000000000000c0bffa0586795098@google.com/T/#u
-Looks related to the lockdep_off() in ntfs_fill_super().
+Hi Eric,
 
-- Eric
+Thanks a lot for doing this.
+
+The changes seem to be good. I have started test runs on my ppc64le guest and
+I will reply with the test results once they complete.
+
+-- 
+chandan
+
+
+
