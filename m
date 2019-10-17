@@ -2,56 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5FDDB8ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 23:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2B87DB953
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 23:53:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441516AbfJQVZD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Oct 2019 17:25:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729780AbfJQVZC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Oct 2019 17:25:02 -0400
-Subject: Re: [GIT PULL] xfs: fixes for 5.4-rc4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571347502;
-        bh=GR2F7fhR+5kzEwcnLOfJFwKMShr0YvJ4FxxLD3j4w6A=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=GJBbF5l12kMU3BH5r3HkkEgPZVPLT2UvQvAo13qxMuMauYuZzT2jlzcBq/X3jPKb/
-         q8xYOIWJAyIuRSqM7LYess+ItnEN2vAPhurqfn+QQlXXHedXyqXJpCm5yB0b49S8dU
-         HCNaokNRohw4Dhzww9fYl+5HpGOxxhshyKabzdf8=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191017211739.GQ13108@magnolia>
-References: <20191017211739.GQ13108@magnolia>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191017211739.GQ13108@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
- tags/xfs-5.4-fixes-4
-X-PR-Tracked-Commit-Id: 5e0cd1ef64744e41e029dfca7d0ae285c486f386
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6e8ba0098e241a5425f7aa6d950a5a00c44c9781
-Message-Id: <157134750215.3013.5704792166591005219.pr-tracker-bot@kernel.org>
-Date:   Thu, 17 Oct 2019 21:25:02 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
+        id S2406526AbfJQVxT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Oct 2019 17:53:19 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:56952 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391375AbfJQVxT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Oct 2019 17:53:19 -0400
+Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 499D643F0D4;
+        Fri, 18 Oct 2019 08:53:15 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iLDhr-00026K-2v; Fri, 18 Oct 2019 08:53:15 +1100
+Date:   Fri, 18 Oct 2019 08:53:15 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] iomap: enhance writeback error message
+Message-ID: <20191017215315.GM16973@dread.disaster.area>
+References: <20191017210110.GP13108@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017210110.GP13108@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=mGfhwXhhbaZWWKE9U5MA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Thu, 17 Oct 2019 14:17:39 -0700:
+On Thu, Oct 17, 2019 at 02:01:11PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> If we encounter an IO error during writeback, log the inode, offset, and
+> sector number of the failure, instead of forcing the user to do some
+> sort of reverse mapping to figure out which file is affected.
+> 
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.4-fixes-4
+Looks good to me.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6e8ba0098e241a5425f7aa6d950a5a00c44c9781
-
-Thank you!
-
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Dave Chinner
+david@fromorbit.com
