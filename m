@@ -2,234 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E438DA302
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 03:24:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E10DA32D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 03:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395211AbfJQBYo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Oct 2019 21:24:44 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:56762 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389094AbfJQBYo (ORCPT
+        id S2390358AbfJQBae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Oct 2019 21:30:34 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36746 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbfJQBae (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Oct 2019 21:24:44 -0400
-Received: from dread.disaster.area (pa49-181-198-88.pa.nsw.optusnet.com.au [49.181.198.88])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2F92243F10C;
-        Thu, 17 Oct 2019 12:24:39 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iKuWs-0002ny-EI; Thu, 17 Oct 2019 12:24:38 +1100
-Date:   Thu, 17 Oct 2019 12:24:38 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 25/26] xfs: rework unreferenced inode lookups
-Message-ID: <20191017012438.GK16973@dread.disaster.area>
-References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-26-david@fromorbit.com>
- <20191014130719.GE12380@bfoster>
+        Wed, 16 Oct 2019 21:30:34 -0400
+Received: by mail-ed1-f66.google.com with SMTP id h2so340267edn.3;
+        Wed, 16 Oct 2019 18:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GAfZW1RYy/75Aar0SXMizy6rKAqi9JFRLF5URSEqIpI=;
+        b=k7/ry6Ero0YzuURA/xA9xbMAA6yPYTUP6151cK7Zak8HoyeDYZ+4mRr0gyNVKSQKHq
+         9N9MWZXRSCSHn8gF5rr71WJSJ/sUe1UZSG13nuICR7JiXPtjTKs1nPKML1cDUvBdhatI
+         JguoeRloTBLp2gaV54RYhWkwK46IJbVT+D7/nyHMlWr4RBKebu1Y5n1KLcpboopRIQaW
+         T7tLEXEZvVuyE6QeWjt0MzcXonwml3ILn7DnbQPTZmIFymZUpz94KzGdAKeBH9yDzOvF
+         0toBYMlglp063jDZbF8DYWF3tEz5lQmpqghkkVOgd1E+htECxfwND2P/VTAnFTzaFrLH
+         23aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GAfZW1RYy/75Aar0SXMizy6rKAqi9JFRLF5URSEqIpI=;
+        b=dTuM5a3ufUAKudQPNCgROEOjKWU2CCu518HCcS3pvV1Ls0xgEzr4er9GbkJbxRBxej
+         kbSyJRCFRy9WTUgCaKhq/2i4/dzhc3mgWM+88f1HVt9k1AL13FQBRgFvKw9TyiGpkiuB
+         wtQ3gS0EcHNCsFnb+aMfZMHSHsUIsq4x7DKRcdUDwxEq5oc28vDjN2g8Fi7Xj7W2z5E9
+         BWBAq5Zvsm//vg/AyrO+U+mFT8F4nT0Qm5k+k+ddt76TEHzkuKU57ValUqFGQCsjvyXN
+         myrKcaWlJLHgoybPI5Scq/KW34gqcl1ENWvOwM6NbCYVPzMJ74Vr+7WQ5BuIscofnRRS
+         aP3w==
+X-Gm-Message-State: APjAAAVNRGt6BeA6mT/XbqtEZxLcASdDfGToA02KToJfNJ5VxaLEkfY1
+        14jefjojRo2v+0lxf0I1nWaWMtkKouc6aJYhIpk=
+X-Google-Smtp-Source: APXvYqw8j8qmNjAy4xzi1iXU+8YIXbZStik7ik4UWxIpJADNMM0tIebRvR38BXhsq4HZnpufVFdgIImbM8TZDwMmYZI=
+X-Received: by 2002:a17:906:76c9:: with SMTP id q9mr1180960ejn.53.1571275831840;
+ Wed, 16 Oct 2019 18:30:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014130719.GE12380@bfoster>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=ocld+OpnWJCUTqzFQA3oTA==:117 a=ocld+OpnWJCUTqzFQA3oTA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=EAVp18LdDQemWk_WkQQA:9
-        a=EmKiWjmp_L8mRC9U:21 a=UZRRpvRsP4kJHxoh:21 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20191016120621.304-1-hslester96@gmail.com> <20191017000703.GA4271@eaf>
+In-Reply-To: <20191017000703.GA4271@eaf>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Thu, 17 Oct 2019 09:30:20 +0800
+Message-ID: <CANhBUQ3vPBAstTMJ25Zt6sR4CcRKWkeR7VKhFXc9aiqQKmW=Ng@mail.gmail.com>
+Subject: Re: [PATCH 2/2] hfsplus: add a check for hfs_bnode_find
+To:     =?UTF-8?Q?Ernesto_A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 09:07:19AM -0400, Brian Foster wrote:
-> On Wed, Oct 09, 2019 at 02:21:23PM +1100, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > Looking up an unreferenced inode in the inode cache is a bit hairy.
-> > We do this for inode invalidation and writeback clustering purposes,
-> > which is all invisible to the VFS. Hence we can't take reference
-> > counts to the inode and so must be very careful how we do it.
-> > 
-> > There are several different places that all do the lookups and
-> > checks slightly differently. Fundamentally, though, they are all
-> > racy and inode reclaim has to block waiting for the inode lock if it
-> > loses the race. This is not very optimal given all the work we;ve
-> > already done to make reclaim non-blocking.
-> > 
-> > We can make the reclaim process nonblocking with a couple of simple
-> > changes. If we define the unreferenced lookup process in a way that
-> > will either always grab an inode in a way that reclaim will notice
-> > and skip, or will notice a reclaim has grabbed the inode so it can
-> > skip the inode, then there is no need for reclaim to need to cycle
-> > the inode ILOCK at all.
-> > 
-> > Selecting an inode for reclaim is already non-blocking, so if the
-> > ILOCK is held the inode will be skipped. If we ensure that reclaim
-> > holds the ILOCK until the inode is freed, then we can do the same
-> > thing in the unreferenced lookup to avoid inodes in reclaim. We can
-> > do this simply by holding the ILOCK until the RCU grace period
-> > expires and the inode freeing callback is run. As all unreferenced
-> > lookups have to hold the rcu_read_lock(), we are guaranteed that
-> > a reclaimed inode will be noticed as the trylock will fail.
-> > 
-> > 
-> > Additional research notes on final reclaim locking before free
-> > --------------------------------------------------------------
-> > 
-> > 2016: 1f2dcfe89eda ("xfs: xfs_inode_free() isn't RCU safe")
-> > 
-> > Fixes situation where the inode is found during RCU lookup within
-> > the freeing grace period, but critical structures have already been
-> > freed. lookup code that has this problem is stuff like
-> > xfs_iflush_cluster.
-> > 
-> > 
-> > 2008: 455486b9ccdd ("[XFS] avoid all reclaimable inodes in xfs_sync_inodes_ag")
-> > 
-> > Prior to this commit, the flushing of inodes required serialisation
-> > with xfs_ireclaim(), which did this lock/unlock thingy to ensure
-> > that it waited for flushing in xfs_sync_inodes_ag() to complete
-> > before freeing the inode:
-> > 
-> >                 /*
-> > -                * If we can't get a reference on the VFS_I, the inode must be
-> > -                * in reclaim. If we can get the inode lock without blocking,
-> > -                * it is safe to flush the inode because we hold the tree lock
-> > -                * and xfs_iextract will block right now. Hence if we lock the
-> > -                * inode while holding the tree lock, xfs_ireclaim() is
-> > -                * guaranteed to block on the inode lock we now hold and hence
-> > -                * it is safe to reference the inode until we drop the inode
-> > -                * locks completely.
-> > +                * If we can't get a reference on the inode, it must be
-> > +                * in reclaim. Leave it for the reclaim code to flush.
-> >                  */
-> > 
-> > This case is completely gone from the modern code.
-> > 
-> > lock/unlock exists at start of git era. Switching to archive tree.
-> > 
-> > This xfs_sync() functionality goes back to 1994 when inode
-> > writeback was first introduced by:
-> > 
-> > 47ac6d60 ("Add support to xfs_ireclaim() needed for xfs_sync().")
-> > 
-> > So it has been there forever -  lets see if we can get rid of it.
-> > State of existing codeL
-> > 
-> > - xfs_iflush_cluster() does not check for XFS_IRECLAIM inode flag
-> >   while holding rcu_read_lock()/i_flags_lock, so doesn't avoid
-> >   reclaimable or inodes that are in the process of being reclaimed.
-> >   Inodes at this point of reclaim are clean, so if xfs_iflush_cluster
-> >   wins the race to the ILOCK, then inode reclaim has to wait
-> >   for the lock to be dropped by xfs_iflush_cluster() once it detects
-> >   the inode is clean.
-> > 
-> 
-> Ok, so the iflush/ifree clustering functionality doesn't account for
-> inodes under reclaim, thus has the potential to contend with reclaim in
-> progress via ilock. The new isolate function trylocks the ilock and
-> iflock to check dirty state and whatnot before it sets XFS_IRECLAIM and
-> continues scanning, so we aren't blocking through that code. Both of
-> those locks are held until the dispose, where ->i_ino is zeroed and
-> ilock released.
+On Thu, Oct 17, 2019 at 8:07 AM Ernesto A. Fern=C3=A1ndez
+<ernesto.mnd.fernandez@gmail.com> wrote:
+>
+> Hi,
+>
+> On Wed, Oct 16, 2019 at 08:06:20PM +0800, Chuhong Yuan wrote:
+> > hfs_brec_update_parent misses a check for hfs_bnode_find and may miss
+> > the failure.
+> > Add a check for it like what is done in again.
+> >
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> > ---
+> >  fs/hfsplus/brec.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
+> > index 1918544a7871..22bada8288c4 100644
+> > --- a/fs/hfsplus/brec.c
+> > +++ b/fs/hfsplus/brec.c
+> > @@ -434,6 +434,8 @@ static int hfs_brec_update_parent(struct hfs_find_d=
+ata *fd)
+> >                       new_node->parent =3D tree->root;
+> >               }
+> >               fd->bnode =3D hfs_bnode_find(tree, new_node->parent);
+> > +             if (IS_ERR(fd->bnode))
+> > +                     return PTR_ERR(fd->bnode);
+>
+> You shouldn't just return here, you still hold a reference to new_node.
+> The call to hfs_bnode_find() after the again label seems to be making a
+> similar mistake.
+>
+> I don't think either one can actually fail though, because the parent
+> nodes have all been read and hashed before, haven't they?
+>
 
-Not quite. The XFS_IRECLAIM flag indicates the inode has been
-isolated but may not yet have been disposed. There can be a
-substantial delay between isolation and disposal, and the ip->i_ino
-is not cleared until disposal is run. IOWs, it handles this case:
+I find that after hfs_bnode_findhash in hfs_bnode_find, there is a test for
+HFS_BNODE_ERROR and may return an error. I'm not sure whether it
+can happen here.
 
-reclaim:				iflush/ifree
-
-isolate
-  spin_trylock(ip->i_flags_lock)
-  xfs_ilock_nowait(ip, ILOCK_EXCL)
-  xfs_iflock(ip)
-  ip->i_flags |= XFS_IRECLAIM
-  spin_unlock(ip->i_flags_lock);
-<loops isolating more inodes>
-					rcu_read_lock()
-					ip = radix_tree_lookup()
-					spin_lock(ip->i_flags_lock)
-					ip->i_ino still set
-					if XFS_IRECLAIM set
-					  <skip inode>
-
-So when the inode has been isolated, we see the XFS_IRECLAIM just
-fine because of the i_flags_lock.
-
-The reason why the ILOCK is taken under the i_flags_lock in
-iflush/ifree is that we can have this happen if we drop the spin
-lock first:
-
-					ip = radix_tree_lookup()
-					spin_lock(ip->i_flags_lock)
-					ip->i_ino still set
-					if XFS_IRECLAIM set
-					  skip inode
-					spin_unlock(ip->i_flags_lock)
-					rcu_read_unlock()
-					<preempted>
-isolate
-  spin_trylock(ip->i_flags_lock)
-  xfs_ilock_nowait(ip, ILOCK_EXCL)
-  xfs_iflock(ip)
-  ip->i_flags |= XFS_IRECLAIM
-  spin_unlock(ip->i_flags_lock);
-dispose inode
-  rcu_free
-<...>
-rcu_callbacks
-  xfs_iunlock(ip, ILOCK_EXCL)
-  kmem_cache_free(ip)
-					<scheduled again>
-					xfs_ilock_nowait(ip, ILOCK_EXCL)
-					accesses freed inode
-
-IOWs, it's the combination of using the same locking heirarchy in
-the isolation routine and the iflush/ifree that provide the
-serialisation. We have to serialise the taking of the ILOCK under
-the i_flags_lock, because it's the i_flags_lock that actually
-provides the RCU lookup object validity serialisation. Hence we have
-to ensure that the inode cannot be reclaimed via RCU callbacks while
-under the rcu_read_lock context. That means we have to:
-
-a) hold off RCU freeing of inodes (rcu_read_lock)
-b) hold the object spinlock to ensure the object is not yet 
-queued for RCU freeing (!ip->i_ino checks)
-c) Hold the object spin lock to ensure the object has not been
-locked for reclaim and is about to be disposed (XFS_IRECLAIM checks)
-d) Hold the object spinlock while we grab the lock(s) that will hold
-off reclaim once we drop the object spin lock until we are finished
-with the object (ILOCK -> iflock)
-
-So XFS_IRECLAIM plays a part in this dance, but it's only one step
-in the process...
-
-> I'd think at this point a racing iflush/ifree would see the ->i_ino
-> update. If I'm following this correctly, blocking in reclaim would
-> require a race where iflush gets ->i_flags_lock and sees a valid
-> ->i_ino, a reclaim in progress is waiting on ->i_flags_lock to reset
-> ->i_ino, iflush releases ->i_flags_lock in time for reclaim to acquire
-> it, reset ->i_ino and then release ilock before the iflush ilock_nowait
-> fails (since reclaim still has it) or reclaim itself reacquires it. At
-> that point, reclaim blocks on ilock and ends up waiting on iflush to
-> identify that ->i_ino is zero and drop the lock. Am I following that
-> correctly?
-> 
-> If so, then to avoid that race condition (this sounds more like a lock
-> contention inefficiency than a blocking problem),
-
-It's not a contention issue - there's real bugs if we don't order
-the locking correctly here.
-
-Cheers,
-
-Dave.
-
--- 
-Dave Chinner
-david@fromorbit.com
+> >               /* create index key and entry */
+> >               hfs_bnode_read_key(new_node, fd->search_key, 14);
+> >               cnid =3D cpu_to_be32(new_node->this);
+> > --
+> > 2.20.1
+> >
