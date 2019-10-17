@@ -2,61 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E422CDB678
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 20:41:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56601DB672
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 20:41:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441273AbfJQSll (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Oct 2019 14:41:41 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42006 "EHLO
+        id S2395477AbfJQSkx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Oct 2019 14:40:53 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41092 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390183AbfJQSll (ORCPT
+        with ESMTP id S2390183AbfJQSkw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:41:41 -0400
+        Thu, 17 Oct 2019 14:40:52 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIdUii173365;
-        Thu, 17 Oct 2019 18:41:26 GMT
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIeEhn173767;
+        Thu, 17 Oct 2019 18:40:34 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2019-08-05;
- bh=ynIkxSCdwQKk9aa/KnzRuvgSRVE+FPNztS00eAkD9AQ=;
- b=mPjZen38MEfU2u+YmLexAo/03+Uu92Ep0QWKcFeN0+tBJ5S43xI4/X7O2AoBSdgHwl+W
- xZTccM7Fs57m7i8b2AkBqMW9eW/yEfmevsPpBJcrILfbUip6wLtOFDxI5uvzjHP4ltu3
- xRbJTH7ipCBPwmhwOlBwH0vMovgPHtZ7W6HUDrZfUlrkdB7IE4Y2FMZfkgKglpYU0I37
- f3qDVqId1krq0dFzksKL9mT7zIDuO2tAVK9DEbwyMiArY7D3nyHeSEGZebDsePu/U/ut
- yYLrqSzdu9F7xciMRN4Bk34r2RtON+1+8FtUVXdIlCPOtFKmWyDpQgKyZ3PYhQxaP+PJ sA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2vk6sr0any-1
+ bh=r+FKO+kmS3nnfDRXobbClVjTN6e+SJeyN+DxsyZ7aR0=;
+ b=fXtMtlwKm/4z2698vAb0C8uiAC1DoWqGslvXFZSfYJ+KXCbN8L2rFd+0OVHNzBbrhKbu
+ 3cZJ4u5mfE876ykEVu50YAXlT80I2PQEZNJfJ8Grc0ulX2Nwtf2z2CE3Ic7Gi5Q4xoo4
+ 2FDhdeP4FWAHV9KMVYf1gvGvy16mwmQluUczxg1Qr2FoOVT1hm9It9AE/e3zKrYILiXe
+ ozUYq5MjcdFnpbTBXvKyPN7SudTdYQrtVIv4yNVsN1NXZQ4uoHbtjYK8Xv2TJkMoQoFb
+ Su+I8ifjXlhfLBzFtFs/4ckWlhPGJAhhyFjJ+MnFjOD2Zt9aOr9w7OfEzMKlhSY+sOAI TA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2vk6sr0ahe-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Oct 2019 18:41:26 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIXHug050325;
-        Thu, 17 Oct 2019 18:39:25 GMT
+        Thu, 17 Oct 2019 18:40:34 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIWqFL113129;
+        Thu, 17 Oct 2019 18:40:33 GMT
 Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2vpvtm3d6x-1
+        by userp3020.oracle.com with ESMTP id 2vpf14fk7j-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Oct 2019 18:39:25 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9HIdImJ007701;
-        Thu, 17 Oct 2019 18:39:18 GMT
+        Thu, 17 Oct 2019 18:40:33 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9HIeW6v008388;
+        Thu, 17 Oct 2019 18:40:32 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 17 Oct 2019 18:39:18 +0000
-Date:   Thu, 17 Oct 2019 11:39:17 -0700
+        with ESMTP ; Thu, 17 Oct 2019 18:40:31 +0000
+Date:   Thu, 17 Oct 2019 11:40:30 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH 01/14] iomap: iomap that extends beyond EOF should be
- marked dirty
-Message-ID: <20191017183917.GL13108@magnolia>
+Subject: Re: [PATCH 05/14] xfs: refactor the ioend merging code
+Message-ID: <20191017184030.GM13108@magnolia>
 References: <20191017175624.30305-1-hch@lst.de>
- <20191017175624.30305-2-hch@lst.de>
+ <20191017175624.30305-6-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191017175624.30305-2-hch@lst.de>
+In-Reply-To: <20191017175624.30305-6-hch@lst.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
@@ -74,93 +73,149 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 07:56:11PM +0200, Christoph Hellwig wrote:
-> From: Dave Chinner <dchinner@redhat.com>
+On Thu, Oct 17, 2019 at 07:56:15PM +0200, Christoph Hellwig wrote:
+> Introduce two nicely abstracted helper, which can be moved to the iomap
+> code later.  Also use list_first_entry_or_null to simplify the code a
+> bit.
 > 
-> When doing a direct IO that spans the current EOF, and there are
-> written blocks beyond EOF that extend beyond the current write, the
-> only metadata update that needs to be done is a file size extension.
-> 
-> However, we don't mark such iomaps as IOMAP_F_DIRTY to indicate that
-> there is IO completion metadata updates required, and hence we may
-> fail to correctly sync file size extensions made in IO completion
-> when O_DSYNC writes are being used and the hardware supports FUA.
-> 
-> Hence when setting IOMAP_F_DIRTY, we need to also take into account
-> whether the iomap spans the current EOF. If it does, then we need to
-> mark it dirty so that IO completion will call generic_write_sync()
-> to flush the inode size update to stable storage correctly.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
 
-Looks ok, but need fixes tag.  Also, might it be wise to split off the
-ext4 section into a separate patch so that it can be backported
-separately?
-
+Looks ok,
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
 --D
 
 > ---
->  fs/ext4/inode.c       | 9 ++++++++-
->  fs/xfs/xfs_iomap.c    | 7 +++++++
->  include/linux/iomap.h | 2 ++
->  3 files changed, 17 insertions(+), 1 deletion(-)
+>  fs/xfs/xfs_aops.c | 73 +++++++++++++++++++++++++++--------------------
+>  1 file changed, 42 insertions(+), 31 deletions(-)
 > 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 516faa280ced..e9dc52537e5b 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3523,9 +3523,16 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  			return ret;
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 91899de2be09..c29ef69d1e51 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -116,6 +116,22 @@ xfs_destroy_ioend(
 >  	}
+>  }
 >  
-> +	/*
-> +	 * Writes that span EOF might trigger an IO size update on completion,
-> +	 * so consider them to be dirty for the purposes of O_DSYNC even if
-> +	 * there is no other metadata changes being made or are pending here.
-> +	 */
->  	iomap->flags = 0;
-> -	if (ext4_inode_datasync_dirty(inode))
-> +	if (ext4_inode_datasync_dirty(inode) ||
-> +	    offset + length > i_size_read(inode))
->  		iomap->flags |= IOMAP_F_DIRTY;
+> +static void
+> +xfs_destroy_ioends(
+> +	struct xfs_ioend	*ioend,
+> +	int			error)
+> +{
+> +	struct list_head	tmp;
 > +
->  	iomap->bdev = inode->i_sb->s_bdev;
->  	iomap->dax_dev = sbi->s_daxdev;
->  	iomap->offset = (u64)first_block << blkbits;
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index f780e223b118..32993c2acbd9 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1049,6 +1049,13 @@ xfs_file_iomap_begin(
->  	trace_xfs_iomap_alloc(ip, offset, length, XFS_DATA_FORK, &imap);
->  
->  out_finish:
-> +	/*
-> +	 * Writes that span EOF might trigger an IO size update on completion,
-> +	 * so consider them to be dirty for the purposes of O_DSYNC even if
-> +	 * there is no other metadata changes pending or have been made here.
-> +	 */
-> +	if ((flags & IOMAP_WRITE) && offset + length > i_size_read(inode))
-> +		iomap->flags |= IOMAP_F_DIRTY;
->  	return xfs_bmbt_to_iomap(ip, iomap, &imap, shared);
->  
->  out_found:
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 7aa5d6117936..24bd227d59f9 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -32,6 +32,8 @@ struct vm_fault;
->   *
->   * IOMAP_F_DIRTY indicates the inode has uncommitted metadata needed to access
->   * written data and requires fdatasync to commit them to persistent storage.
-> + * This needs to take into account metadata changes that *may* be made at IO
-> + * completion, such as file size updates from direct IO.
+> +	list_replace_init(&ioend->io_list, &tmp);
+> +	xfs_destroy_ioend(ioend, error);
+> +	while ((ioend = list_first_entry_or_null(&tmp, struct xfs_ioend,
+> +			io_list))) {
+> +		list_del_init(&ioend->io_list);
+> +		xfs_destroy_ioend(ioend, error);
+> +	}
+> +}
+> +
+>  /*
+>   * Fast and loose check if this write could update the on-disk inode size.
 >   */
->  #define IOMAP_F_NEW		0x01	/* blocks have been newly allocated */
->  #define IOMAP_F_DIRTY		0x02	/* uncommitted metadata */
+> @@ -230,7 +246,6 @@ STATIC void
+>  xfs_end_ioend(
+>  	struct xfs_ioend	*ioend)
+>  {
+> -	struct list_head	ioend_list;
+>  	struct xfs_inode	*ip = XFS_I(ioend->io_inode);
+>  	xfs_off_t		offset = ioend->io_offset;
+>  	size_t			size = ioend->io_size;
+> @@ -275,16 +290,7 @@ xfs_end_ioend(
+>  done:
+>  	if (ioend->io_append_trans)
+>  		error = xfs_setfilesize_ioend(ioend, error);
+> -	list_replace_init(&ioend->io_list, &ioend_list);
+> -	xfs_destroy_ioend(ioend, error);
+> -
+> -	while (!list_empty(&ioend_list)) {
+> -		ioend = list_first_entry(&ioend_list, struct xfs_ioend,
+> -				io_list);
+> -		list_del_init(&ioend->io_list);
+> -		xfs_destroy_ioend(ioend, error);
+> -	}
+> -
+> +	xfs_destroy_ioends(ioend, error);
+>  	memalloc_nofs_restore(nofs_flag);
+>  }
+>  
+> @@ -333,17 +339,18 @@ xfs_ioend_try_merge(
+>  	struct xfs_ioend	*ioend,
+>  	struct list_head	*more_ioends)
+>  {
+> -	struct xfs_ioend	*next_ioend;
+> +	struct xfs_ioend	*next;
+> +
+> +	INIT_LIST_HEAD(&ioend->io_list);
+>  
+> -	while (!list_empty(more_ioends)) {
+> -		next_ioend = list_first_entry(more_ioends, struct xfs_ioend,
+> -				io_list);
+> -		if (!xfs_ioend_can_merge(ioend, next_ioend))
+> +	while ((next = list_first_entry_or_null(more_ioends, struct xfs_ioend,
+> +			io_list))) {
+> +		if (!xfs_ioend_can_merge(ioend, next))
+>  			break;
+> -		list_move_tail(&next_ioend->io_list, &ioend->io_list);
+> -		ioend->io_size += next_ioend->io_size;
+> -		if (next_ioend->io_append_trans)
+> -			xfs_ioend_merge_append_transactions(ioend, next_ioend);
+> +		list_move_tail(&next->io_list, &ioend->io_list);
+> +		ioend->io_size += next->io_size;
+> +		if (next->io_append_trans)
+> +			xfs_ioend_merge_append_transactions(ioend, next);
+>  	}
+>  }
+>  
+> @@ -366,29 +373,33 @@ xfs_ioend_compare(
+>  	return 0;
+>  }
+>  
+> +static void
+> +xfs_sort_ioends(
+> +	struct list_head	*ioend_list)
+> +{
+> +	list_sort(NULL, ioend_list, xfs_ioend_compare);
+> +}
+> +
+>  /* Finish all pending io completions. */
+>  void
+>  xfs_end_io(
+>  	struct work_struct	*work)
+>  {
+> -	struct xfs_inode	*ip;
+> +	struct xfs_inode	*ip =
+> +		container_of(work, struct xfs_inode, i_ioend_work);
+>  	struct xfs_ioend	*ioend;
+> -	struct list_head	completion_list;
+> +	struct list_head	tmp;
+>  	unsigned long		flags;
+>  
+> -	ip = container_of(work, struct xfs_inode, i_ioend_work);
+> -
+>  	spin_lock_irqsave(&ip->i_ioend_lock, flags);
+> -	list_replace_init(&ip->i_ioend_list, &completion_list);
+> +	list_replace_init(&ip->i_ioend_list, &tmp);
+>  	spin_unlock_irqrestore(&ip->i_ioend_lock, flags);
+>  
+> -	list_sort(NULL, &completion_list, xfs_ioend_compare);
+> -
+> -	while (!list_empty(&completion_list)) {
+> -		ioend = list_first_entry(&completion_list, struct xfs_ioend,
+> -				io_list);
+> +	xfs_sort_ioends(&tmp);
+> +	while ((ioend = list_first_entry_or_null(&tmp, struct xfs_ioend,
+> +			io_list))) {
+>  		list_del_init(&ioend->io_list);
+> -		xfs_ioend_try_merge(ioend, &completion_list);
+> +		xfs_ioend_try_merge(ioend, &tmp);
+>  		xfs_end_ioend(ioend);
+>  	}
+>  }
 > -- 
 > 2.20.1
 > 
