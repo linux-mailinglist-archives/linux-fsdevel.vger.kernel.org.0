@@ -2,155 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D0C8DAD95
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 14:57:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6F05DAEA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 15:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388795AbfJQM5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Oct 2019 08:57:00 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39785 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbfJQM5A (ORCPT
+        id S2436731AbfJQNmy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Oct 2019 09:42:54 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:57832 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727368AbfJQNmy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:57:00 -0400
-Received: by mail-ot1-f67.google.com with SMTP id s22so1774206otr.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Oct 2019 05:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FzwnaF5E0NhR1cM5i+huNW3oCidI8gC26kz9mt79iqs=;
-        b=XQ84OzwtgvCjV6ernd063jJjH6HQVu0l2UXHnIngxd21LQuDClgTAI9KizdYGwRlFu
-         1DIJH2ZnR902Bdo3nrESpCk/Fi3cGFTE7Ryv5HhnTkf4yv5uVUssa9gXx2LXGJiQVDp7
-         3k6f6PGysAbM33l+VVr/h48rNmG2HnNXRTQ19ehkpEeWs/+XuMvXk4FO5vaDQXi1YOhS
-         PA9w7XCDaNMYZYTSyowuBb34D0INawMpRAqnoareBKtcwXRnU1VdqErGESIa65sDES3O
-         FPo5KxCubyWFMmpTbz0MREzAG/AtHUDpmRjEaS2e8gHFV36MydIeQ9SUtPiJeHrz+hFc
-         Zh/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FzwnaF5E0NhR1cM5i+huNW3oCidI8gC26kz9mt79iqs=;
-        b=QbJUWLPHcjO4Hc9e+AdW2B/89+eLHiE0KE4KyGcqyMTd3EaJlUaJiuEfTU+zvWnPwp
-         MHrsc4tDIicWPrG2JFKWO0elYOcujo0QQheDSVJbRShtsJldGhNTeWl4ptZhHnzZF8LX
-         D4gY1pwNhowDlZaQUsAjcBTQyABOICV68pdvi3f14LiKBrkq49gQaoJ0cChdrpPbBkU1
-         3fNejAlSQfOcAfwUtzbI0RdC+oMsSQwwaMlTOp5jH8EvL+x/rVf6ZYpeBt3lQTNgCLS4
-         ogMg/74ij11kRvC/FpOKiI7GVnQFAjntD3mE9MjQ5YgjBOh04p/W0WI2le2ZAWlGNEGm
-         qXVA==
-X-Gm-Message-State: APjAAAXB57K2y3y4KfaYIyRPs4SYvRy5c+Xe1kUmmsnA2CXQdZcEBMLt
-        PWpOY7kOchASiyaiQ0jxVuYlGRBP/sbBrDgjUHeVKw==
-X-Google-Smtp-Source: APXvYqy+y9M3GDWZi6YJ5Hw8mnZtdigVitXfIq4Ig/3i+If7C1GzF5himW6c6YMs0i+K+qEJppO+poTuCiSXCcISXZI=
-X-Received: by 2002:a9d:6d89:: with SMTP id x9mr3019562otp.17.1571317019220;
- Thu, 17 Oct 2019 05:56:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000328b2905951a7667@google.com>
-In-Reply-To: <000000000000328b2905951a7667@google.com>
-From:   Marco Elver <elver@google.com>
-Date:   Thu, 17 Oct 2019 14:56:47 +0200
-Message-ID: <CANpmjNPoBBJgMKLEAXs+bPhitF+WygseHgTkSJsuiK8WcsB==g@mail.gmail.com>
-Subject: Re: KCSAN: data-race in task_dump_owner / task_dump_owner
-To:     syzbot <syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com>
-Cc:     adobriyan@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        casey@schaufler-ca.com, christian@brauner.io,
-        Kees Cook <keescook@chromium.org>, kent.overstreet@gmail.com,
-        khlebnikov@yandex-team.ru, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, mhocko@suse.com,
-        shakeelb@google.com, syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>
+        Thu, 17 Oct 2019 09:42:54 -0400
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iL63F-0007wo-MD; Thu, 17 Oct 2019 14:42:49 +0100
+Message-ID: <d1022cda6bd6ce73e9875644a5a2c65e4d554f37.camel@codethink.co.uk>
+Subject: Re: [Y2038] [PATCH v6 10/43] compat_ioctl: move rtc handling into
+ rtc-dev.c
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 17 Oct 2019 14:42:48 +0100
+In-Reply-To: <20191009191044.308087-10-arnd@arndb.de>
+References: <20191009190853.245077-1-arnd@arndb.de>
+         <20191009191044.308087-10-arnd@arndb.de>
+Organization: Codethink Ltd.
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, 2019-10-09 at 21:10 +0200, Arnd Bergmann wrote:
+> We no longer need the rtc compat handling to be in common code, now that
+> all drivers are either moved to the rtc-class framework, or (rarely)
+> exist in drivers/char for architectures without compat mode (m68k,
+> alpha and ia64, respectively).
+> 
+> I checked the list of ioctl commands in drivers, and the ones that are
+> not already handled are all compatible, again with the one exception of
+> m68k driver, which implements RTC_PLL_GET and RTC_PLL_SET, but has no
+> compat mode.
+>
+> Since the ioctl commands are either compatible or differ in both structure
+> and command code between 32-bit and 64-bit, we can merge the compat
+> handler into the native one and just implement the two common compat
+> commands (RTC_IRQP_READ, RTC_IRQP_SET) there.
+[...]
 
-On Thu, 17 Oct 2019 at 14:36, syzbot
-<syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    d724f94f x86, kcsan: Enable KCSAN for x86
-> git tree:       https://github.com/google/ktsan.git kcsan
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17884db3600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c0906aa620713d80
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e392f8008a294fdf8891
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KCSAN: data-race in task_dump_owner / task_dump_owner
->
-> write to 0xffff8881255bb7fc of 4 bytes by task 7804 on cpu 0:
->   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
->   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
->   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
->   d_revalidate fs/namei.c:765 [inline]
->   d_revalidate fs/namei.c:762 [inline]
->   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
->   walk_component+0x6d/0xe80 fs/namei.c:1804
->   link_path_walk.part.0+0x5d3/0xa90 fs/namei.c:2139
->   link_path_walk fs/namei.c:2070 [inline]
->   path_openat+0x14f/0x3530 fs/namei.c:3532
->   do_filp_open+0x11e/0x1b0 fs/namei.c:3563
->   do_sys_open+0x3b3/0x4f0 fs/open.c:1089
->   __do_sys_open fs/open.c:1107 [inline]
->   __se_sys_open fs/open.c:1102 [inline]
->   __x64_sys_open+0x55/0x70 fs/open.c:1102
->   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> write to 0xffff8881255bb7fc of 4 bytes by task 7813 on cpu 1:
->   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
->   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
->   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
->   d_revalidate fs/namei.c:765 [inline]
->   d_revalidate fs/namei.c:762 [inline]
->   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
->   walk_component+0x6d/0xe80 fs/namei.c:1804
->   lookup_last fs/namei.c:2271 [inline]
->   path_lookupat.isra.0+0x13a/0x5a0 fs/namei.c:2316
->   filename_lookup+0x145/0x2d0 fs/namei.c:2346
->   user_path_at_empty+0x4c/0x70 fs/namei.c:2606
->   user_path_at include/linux/namei.h:60 [inline]
->   vfs_statx+0xd9/0x190 fs/stat.c:187
->   vfs_stat include/linux/fs.h:3188 [inline]
->   __do_sys_newstat+0x51/0xb0 fs/stat.c:341
->   __se_sys_newstat fs/stat.c:337 [inline]
->   __x64_sys_newstat+0x3a/0x50 fs/stat.c:337
->   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 1 PID: 7813 Comm: ps Not tainted 5.3.0+ #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> ==================================================================
+I don't think this can work properly on s390, because some of them take
+integers and some take pointers.
 
-My understanding is, that for every access to /proc/<pid>,
-d_revalidate is called, and /proc-fs implementation simply says that
-pid_revalidate always revalidates by rewriting uid/gid because "owning
-task may have performed a setuid(), etc." presumably so every access
-to a /proc/<pid> entry always has the right uid/gid (in effect
-updating /proc/<pid> lazily via d_revalidate).
+Ben.
 
-Is it possible that one of the tasks above could be preempted after
-doing its writes to *ruid/*rgid, another thread writing some other
-values (after setuid / seteuid), and then the preempted thread seeing
-the other values? Assertion here should never fail:
-=== TASK 1 ===
-| seteuid(1000);
-| seteuid(0);
-| stat("/proc/<pid-of-task-1>", &fstat);
-| assert(fstat.st_uid == 0);
-=== TASK 2 ===
-| stat("/proc/<pid-of-task-1>", ...);
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
 
-
-Best Wishes,
--- Marco
