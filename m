@@ -2,164 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E23CBDB5AF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 20:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC9ADB5BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 20:19:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441218AbfJQSRQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Oct 2019 14:17:16 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36896 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438601AbfJQSRQ (ORCPT
+        id S2441265AbfJQSTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Oct 2019 14:19:32 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:38543 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438684AbfJQSTc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:17:16 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f22so3537102wmc.2;
-        Thu, 17 Oct 2019 11:17:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XgooItt3yunwxCJxadoUen7+696jxS3yzALjSNjUwlM=;
-        b=l1Hmfd7j/16bXUDYrMQfrgAM9KgZFGcfCEv2TrygM2pGHs/mVjXbKuN6kKcLeFCDvU
-         grU+Qze05EbFLX0Xt5bzgt4aDLP07IayYVowHfDo9j+7dbhGZhO309axcijHpFQ0yd05
-         Cb4wvYQds43buFxN55MXtIXFBoVqgwtFZLmOC7ab9R18dfAuTcqgg/kCzyV/4NXlVNu/
-         igWR16tVws9TbjyyiVro1JCAdnsg2Cl7mUJYQdoZ2QLy3wOZv7YLWRDNyvQQsj5cvQOF
-         0DP2sjOpN9fwIpaho7A3tppiGgX7NxOCLNc47fCTr7rk8P4gKS+lU6Z8s1azzNUIDiuQ
-         f2Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XgooItt3yunwxCJxadoUen7+696jxS3yzALjSNjUwlM=;
-        b=BjGokvomXxUJ3ZVMour77hYk4NolWVMojkSi7EAG8TMGCc39WNYbzJJZgRC4oXaipY
-         bzKdT3+hVxRk+usEfAJ0eSYYzBfTt3zm4/WOSkYxiViXPbf724ij4ftMgxR9q89MfrNm
-         mZcStf3Zw1utx9eMZCMrp81fO1H3JLsvjSt/rAEYTOLbZl03rartURoT2TYpcCCNLQsd
-         UQwUeVS2e6UOGHL3DnjLH9aiwpwKKdD1nszbl5pB5zv0PN2QYEWgb16WsCvVb4z+AUUl
-         9ZX2/LC2qJ6PMGsl2u2nlz6Xr7vE3c0ffnvzxQryB/H7hpulem7xuEc1GHTsxkT+tUw8
-         B6RQ==
-X-Gm-Message-State: APjAAAWL8GJ4HvJz92khCRxZLPDK9MZv0v1seLB1qbOomPTtNV6FD4vm
-        wc0jkk1hQWAghMR6JHA9BA==
-X-Google-Smtp-Source: APXvYqzh/xO8OFskYgrKCuP+R6Vt2W+4+5BbANuANKbP4dDWLu3Fjs2M4FolW21d9sW4iFNBbJ7Y8A==
-X-Received: by 2002:a7b:c1d2:: with SMTP id a18mr4064484wmj.7.1571336233230;
-        Thu, 17 Oct 2019 11:17:13 -0700 (PDT)
-Received: from avx2 ([46.53.250.235])
-        by smtp.gmail.com with ESMTPSA id a14sm2504313wmm.44.2019.10.17.11.17.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 11:17:12 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 21:17:09 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Marco Elver <elver@google.com>
-Cc:     syzbot <syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        casey@schaufler-ca.com, christian@brauner.io,
-        Kees Cook <keescook@chromium.org>, kent.overstreet@gmail.com,
-        khlebnikov@yandex-team.ru, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, mhocko@suse.com,
-        shakeelb@google.com, syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: KCSAN: data-race in task_dump_owner / task_dump_owner
-Message-ID: <20191017181709.GA5312@avx2>
-References: <000000000000328b2905951a7667@google.com>
- <CANpmjNPoBBJgMKLEAXs+bPhitF+WygseHgTkSJsuiK8WcsB==g@mail.gmail.com>
+        Thu, 17 Oct 2019 14:19:32 -0400
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iLAMw-0006vd-SL; Thu, 17 Oct 2019 19:19:27 +0100
+Message-ID: <52d2fdbd514d93cdd901c18afbb83be13145de6f.camel@codethink.co.uk>
+Subject: Re: [Y2038] [PATCH v6 10/43] compat_ioctl: move rtc handling into
+ rtc-dev.c
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Thu, 17 Oct 2019 19:19:26 +0100
+In-Reply-To: <CAK8P3a0BYkPTSnQUmde2k+HVcg7XNihzWTEzrCD4d8G8ecO9-w@mail.gmail.com>
+References: <20191009190853.245077-1-arnd@arndb.de>
+         <20191009191044.308087-10-arnd@arndb.de>
+         <d1022cda6bd6ce73e9875644a5a2c65e4d554f37.camel@codethink.co.uk>
+         <CAK8P3a0BYkPTSnQUmde2k+HVcg7XNihzWTEzrCD4d8G8ecO9-w@mail.gmail.com>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANpmjNPoBBJgMKLEAXs+bPhitF+WygseHgTkSJsuiK8WcsB==g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 02:56:47PM +0200, Marco Elver wrote:
-> Hi,
+On Thu, 2019-10-17 at 16:33 +0200, Arnd Bergmann wrote:
+> On Thu, Oct 17, 2019 at 3:42 PM Ben Hutchings
+> <ben.hutchings@codethink.co.uk> wrote:
+> > On Wed, 2019-10-09 at 21:10 +0200, Arnd Bergmann wrote:
+> > > We no longer need the rtc compat handling to be in common code, now that
+> > > all drivers are either moved to the rtc-class framework, or (rarely)
+> > > exist in drivers/char for architectures without compat mode (m68k,
+> > > alpha and ia64, respectively).
+> > > 
+> > > I checked the list of ioctl commands in drivers, and the ones that are
+> > > not already handled are all compatible, again with the one exception of
+> > > m68k driver, which implements RTC_PLL_GET and RTC_PLL_SET, but has no
+> > > compat mode.
+> > > 
+> > > Since the ioctl commands are either compatible or differ in both structure
+> > > and command code between 32-bit and 64-bit, we can merge the compat
+> > > handler into the native one and just implement the two common compat
+> > > commands (RTC_IRQP_READ, RTC_IRQP_SET) there.
+> > [...]
+> > 
+> > I don't think this can work properly on s390, because some of them take
+> > integers and some take pointers.
 > 
-> On Thu, 17 Oct 2019 at 14:36, syzbot
-> <syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    d724f94f x86, kcsan: Enable KCSAN for x86
-> > git tree:       https://github.com/google/ktsan.git kcsan
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=17884db3600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c0906aa620713d80
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=e392f8008a294fdf8891
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> >
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com
-> >
-> > ==================================================================
-> > BUG: KCSAN: data-race in task_dump_owner / task_dump_owner
-> >
-> > write to 0xffff8881255bb7fc of 4 bytes by task 7804 on cpu 0:
-> >   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
-> >   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
-> >   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
-> >   d_revalidate fs/namei.c:765 [inline]
-> >   d_revalidate fs/namei.c:762 [inline]
-> >   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
-> >   walk_component+0x6d/0xe80 fs/namei.c:1804
-> >   link_path_walk.part.0+0x5d3/0xa90 fs/namei.c:2139
-> >   link_path_walk fs/namei.c:2070 [inline]
-> >   path_openat+0x14f/0x3530 fs/namei.c:3532
-> >   do_filp_open+0x11e/0x1b0 fs/namei.c:3563
-> >   do_sys_open+0x3b3/0x4f0 fs/open.c:1089
-> >   __do_sys_open fs/open.c:1107 [inline]
-> >   __se_sys_open fs/open.c:1102 [inline]
-> >   __x64_sys_open+0x55/0x70 fs/open.c:1102
-> >   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
-> >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >
-> > write to 0xffff8881255bb7fc of 4 bytes by task 7813 on cpu 1:
-> >   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
-> >   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
-> >   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
-> >   d_revalidate fs/namei.c:765 [inline]
-> >   d_revalidate fs/namei.c:762 [inline]
-> >   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
-> >   walk_component+0x6d/0xe80 fs/namei.c:1804
-> >   lookup_last fs/namei.c:2271 [inline]
-> >   path_lookupat.isra.0+0x13a/0x5a0 fs/namei.c:2316
-> >   filename_lookup+0x145/0x2d0 fs/namei.c:2346
-> >   user_path_at_empty+0x4c/0x70 fs/namei.c:2606
-> >   user_path_at include/linux/namei.h:60 [inline]
-> >   vfs_statx+0xd9/0x190 fs/stat.c:187
-> >   vfs_stat include/linux/fs.h:3188 [inline]
-> >   __do_sys_newstat+0x51/0xb0 fs/stat.c:341
-> >   __se_sys_newstat fs/stat.c:337 [inline]
-> >   __x64_sys_newstat+0x3a/0x50 fs/stat.c:337
-> >   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
-> >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >
-> > Reported by Kernel Concurrency Sanitizer on:
-> > CPU: 1 PID: 7813 Comm: ps Not tainted 5.3.0+ #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > ==================================================================
+> Thanks a lot for taking a look at the patch and pointing this out!
 > 
-> My understanding is, that for every access to /proc/<pid>,
-> d_revalidate is called, and /proc-fs implementation simply says that
-> pid_revalidate always revalidates by rewriting uid/gid because "owning
-> task may have performed a setuid(), etc." presumably so every access
-> to a /proc/<pid> entry always has the right uid/gid (in effect
-> updating /proc/<pid> lazily via d_revalidate).
+> I don't remember how I got to this, either I missed the problem or I
+> decided that it was ok, since it will still do the right thing:
+> On s390 only the highest bit is cleared in a pointer value, and we
+> ensure that the RTC_IRQP_SET argument is between 1 and 8192.
 > 
-> Is it possible that one of the tasks above could be preempted after
-> doing its writes to *ruid/*rgid, another thread writing some other
-> values (after setuid / seteuid), and then the preempted thread seeing
-> the other values? Assertion here should never fail:
-> === TASK 1 ===
-> | seteuid(1000);
-> | seteuid(0);
-> | stat("/proc/<pid-of-task-1>", &fstat);
-> | assert(fstat.st_uid == 0);
-> === TASK 2 ===
-> | stat("/proc/<pid-of-task-1>", ...);
+> Passing a value of (0x80000000 + n) where n is in the valid range
+> would lead to the call succeeding unexpectedly on compat s390
+> (if it had an RTC, which it does not) which is clearly not good but
+> mostly harmless. I certainly had not considered this case.
+> 
+> However, looking at this again after your comment I found a rather
+> more serious bug in my new RTC_IRQP_SET handling: Any 64-bit
+> machine can now bypass the permission check for RTC_IRQP_SET by
+> calling RTC_IRQP_SET32 instead.
+> 
+> I'll fix it both issues by adding a rtc_compat_dev_ioctl() to handle
+> RTC_IRQP_SET32/RTC_IRQP_READ32:
 
-Is it the same as
-pid_revalidate() snapshots (uid,gid) correctly
-but writeback is done in any order?
+Reviewed-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+
+> diff --git a/drivers/rtc/dev.c b/drivers/rtc/dev.c
+> index 1dc5063f78c9..9e4fd5088ead 100644
+> --- a/drivers/rtc/dev.c
+> +++ b/drivers/rtc/dev.c
+> @@ -358,16 +358,6 @@ static long rtc_dev_ioctl(struct file *file,
+>                 mutex_unlock(&rtc->ops_lock);
+>                 return rtc_update_irq_enable(rtc, 0);
+> 
+> -#ifdef CONFIG_64BIT
+> -#define RTC_IRQP_SET32         _IOW('p', 0x0c, __u32)
+> -#define RTC_IRQP_READ32                _IOR('p', 0x0b, __u32)
+> -       case RTC_IRQP_SET32:
+> -               err = rtc_irq_set_freq(rtc, arg);
+> -               break;
+> -       case RTC_IRQP_READ32:
+> -               err = put_user(rtc->irq_freq, (unsigned int __user *)uarg);
+> -               break;
+> -#endif
+>         case RTC_IRQP_SET:
+>                 err = rtc_irq_set_freq(rtc, arg);
+>                 break;
+> @@ -409,6 +399,29 @@ static long rtc_dev_ioctl(struct file *file,
+>         return err;
+>  }
+> 
+> +#ifdef CONFIG_COMPAT
+> +#define RTC_IRQP_SET32         _IOW('p', 0x0c, __u32)
+> +#define RTC_IRQP_READ32                _IOR('p', 0x0b, __u32)
+> +
+> +static long rtc_dev_compat_ioctl(struct file *file,
+> +                                unsigned int cmd, unsigned long arg)
+> +{
+> +       struct rtc_device *rtc = file->private_data;
+> +       void __user *uarg = compat_ptr(arg);
+> +
+> +       switch (cmd) {
+> +       case RTC_IRQP_READ32:
+> +               return put_user(rtc->irq_freq, (__u32 __user *)uarg);
+> +
+> +       case RTC_IRQP_SET32:
+> +               /* arg is a plain integer, not pointer */
+> +               return rtc_dev_ioctl(file, RTC_IRQP_SET, arg);
+> +       }
+> +
+> +       return rtc_dev_ioctl(file, cmd, (unsigned long)uarg);
+> +}
+> +#endif
+> +
+>  static int rtc_dev_fasync(int fd, struct file *file, int on)
+>  {
+>         struct rtc_device *rtc = file->private_data;
+> @@ -444,7 +457,7 @@ static const struct file_operations rtc_dev_fops = {
+>         .read           = rtc_dev_read,
+>         .poll           = rtc_dev_poll,
+>         .unlocked_ioctl = rtc_dev_ioctl,
+> -       .compat_ioctl   = compat_ptr_ioctl,
+> +       .compat_ioctl   = rtc_dev_compat_ioctl,
+>         .open           = rtc_dev_open,
+>         .release        = rtc_dev_release,
+>         .fasync         = rtc_dev_fasync,
+> 
+> If you and Alexandre are both happy with this version, I'll fold it into
+> my original patch.
+> 
+>       Arnd
+> 
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
+
