@@ -2,131 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC0FCDB67B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 20:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8CA2DB688
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Oct 2019 20:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437936AbfJQSlz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Oct 2019 14:41:55 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:42330 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406702AbfJQSlz (ORCPT
+        id S2503265AbfJQSsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Oct 2019 14:48:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60472 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503241AbfJQSsc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:41:55 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIe1Oi191239;
-        Thu, 17 Oct 2019 18:41:35 GMT
+        Thu, 17 Oct 2019 14:48:32 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIiNfI180887;
+        Thu, 17 Oct 2019 18:48:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2019-08-05;
- bh=iYr+RkFrcZuWgQ1ne8vBmSzPST8gKEQ3JN/fp2+IPTQ=;
- b=OFxuw2iyzM9XEdd7/Iscl3SSNLY+m27O6ljqG1OE988Qgu7VkfH32zlfU4py66s4xmLI
- A4Rgo+25RBo5yC8Erjuzjy58ghS1vmQ0OfTEvP8v2n/qX9V/rhZdA9CTK4jOKJaNDm97
- vOFchT7abGSs0r5eKX4hD4EdjNVr61yyGaCzZy+UI+lPLinmu1opYhwJrQ7ezcVkFx3t
- vRY4UqcK1Lox559ZnPPV7/yUcJYDDzTzEunA5e1OC86GVgcKwSbOPIePR8QeYEfYfC/n
- t8bJEE6nBmkT6J4qsloQPhVd4d95NFQUxPlxPi3/ymZgjPwMf2B/PuUpKwwu7wKOUaM5 Eg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2vk68v0arg-1
+ bh=GBUBeWjq6gpCZXmY5jRCsCJbNs6+hlvvoe/egHiy1Zw=;
+ b=WhAF5/9j5CneTnTNd6HQ1M/m7C+qqDIzkPNDhjn0KkzYgaZMHg/PLzelJH/Vpk/bb77U
+ 02XmEPdngTeqFuekVHfyAx8hIwFVis/IQgnSZKnjpbJRV0KNuP3XjG9jSPxcz30mnBtc
+ IrOAMPT5yqXP+fu78ieiQUJWmffPUQszKliAy85jBTD4ad6JGbOWlYyCBwkUFs0CfXXQ
+ ZRAjy1fl//VKe1vevtAZnmg9nQv3YwHE3VALO38vu6ix5Lu/CAV1Nd12MiY/z9+mxs8F
+ OLECXbvv0OJJPPwkmIsmcbf/Uzq9aGbNI0tZp6eT/0lbyBm2rQgM6vm3AUERjU9VFcaG FQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2vk7frr5un-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Oct 2019 18:41:35 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIXI8q050397;
-        Thu, 17 Oct 2019 18:41:35 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2vpvtm3j3n-1
+        Thu, 17 Oct 2019 18:48:27 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9HIm61m095407;
+        Thu, 17 Oct 2019 18:48:26 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2vpcm3dvth-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Oct 2019 18:41:34 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9HIfXoC009140;
-        Thu, 17 Oct 2019 18:41:33 GMT
+        Thu, 17 Oct 2019 18:48:26 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9HImPNw026029;
+        Thu, 17 Oct 2019 18:48:25 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 17 Oct 2019 18:41:33 +0000
-Date:   Thu, 17 Oct 2019 11:41:28 -0700
+        with ESMTP ; Thu, 17 Oct 2019 18:48:25 +0000
+Date:   Thu, 17 Oct 2019 11:48:24 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/14] iomap: pass a struct page to
- iomap_finish_page_writeback
-Message-ID: <20191017184128.GN13108@magnolia>
+Subject: Re: [PATCH 10/14] iomap: lift the xfs writeback code to iomap
+Message-ID: <20191017184824.GA13090@magnolia>
 References: <20191017175624.30305-1-hch@lst.de>
- <20191017175624.30305-15-hch@lst.de>
+ <20191017175624.30305-11-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191017175624.30305-15-hch@lst.de>
+In-Reply-To: <20191017175624.30305-11-hch@lst.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910170166
+ engine=8.0.1-1908290000 definitions=main-1910170168
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9413 signatures=668684
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910170167
+ definitions=main-1910170168
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 07:56:24PM +0200, Christoph Hellwig wrote:
-> No need to pass the full bio_vec.
+On Thu, Oct 17, 2019 at 07:56:20PM +0200, Christoph Hellwig wrote:
+> Take the xfs writeback code and move it to fs/iomap.  A new structure
+> with three methods is added as the abstraction from the generic writeback
+> code to the file system.  These methods are used to map blocks, submit an
+> ioend, and cancel a page that encountered an error before it was added to
+> an ioend.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Looks ok,
+<snip>
+
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 24bd227d59f9..71fd12ee5616 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -4,6 +4,7 @@
+>  
+>  #include <linux/atomic.h>
+>  #include <linux/bitmap.h>
+> +#include <linux/blk_types.h>
+>  #include <linux/mm.h>
+>  #include <linux/types.h>
+>  #include <linux/mm_types.h>
+> @@ -12,6 +13,7 @@
+>  struct address_space;
+>  struct fiemap_extent_info;
+>  struct inode;
+> +struct iomap_writepage_ctx;
+>  struct iov_iter;
+>  struct kiocb;
+>  struct page;
+> @@ -185,6 +187,63 @@ loff_t iomap_seek_data(struct inode *inode, loff_t offset,
+>  sector_t iomap_bmap(struct address_space *mapping, sector_t bno,
+>  		const struct iomap_ops *ops);
+>  
+> +/*
+> + * Structure for writeback I/O completions.
+> + */
+> +struct iomap_ioend {
+> +	struct list_head	io_list;	/* next ioend in chain */
+> +	u16			io_type;
+> +	u16			io_flags;	/* IOMAP_F_* */
+> +	struct inode		*io_inode;	/* file being written to */
+> +	size_t			io_size;	/* size of the extent */
+> +	loff_t			io_offset;	/* offset in the file */
+> +	void			*io_private;	/* file system private data */
+> +	struct bio		*io_bio;	/* bio being built */
+> +	struct bio		io_inline_bio;	/* MUST BE LAST! */
+> +};
+> +
+> +struct iomap_writeback_ops {
+> +	/*
+> +	 * Required, maps the blocks so that writeback can be performed on
+> +	 * the range starting at offset.
+> +	 */
+> +	int (*map_blocks)(struct iomap_writepage_ctx *wpc, struct inode *inode,
+> +				loff_t offset);
+> +
+> +	/*
+> +	 * Optional, allows the file systems to perform actions just before
+> +	 * submitting the bio and/or override the bio end_io handler for complex
+> +	 * operations like copy on write extent manipulation or unwritten extent
+> +	 * conversions.
+> +	 */
+> +	int (*submit_ioend)(struct iomap_ioend *ioend, int status);
+> +
+
+Looks ok, but I reserve the right to rename this to ->prepare_ioend() or
+something. :)
+
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
 --D
 
-> ---
->  fs/iomap/buffered-io.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index bb96499c352f..755b75424a97 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1110,13 +1110,13 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
->  EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
->  
->  static void
-> -iomap_finish_page_writeback(struct inode *inode, struct bio_vec *bvec,
-> +iomap_finish_page_writeback(struct inode *inode, struct page *page,
->  		int error)
->  {
-> -	struct iomap_page *iop = to_iomap_page(bvec->bv_page);
-> +	struct iomap_page *iop = to_iomap_page(page);
->  
->  	if (error) {
-> -		SetPageError(bvec->bv_page);
-> +		SetPageError(page);
->  		mapping_set_error(inode->i_mapping, -EIO);
->  	}
->  
-> @@ -1124,7 +1124,7 @@ iomap_finish_page_writeback(struct inode *inode, struct bio_vec *bvec,
->  	WARN_ON_ONCE(iop && atomic_read(&iop->write_count) <= 0);
->  
->  	if (!iop || atomic_dec_and_test(&iop->write_count))
-> -		end_page_writeback(bvec->bv_page);
-> +		end_page_writeback(page);
->  }
->  
+> +	/*
+> +	 * Optional, allows the file system to discard state on a page where
+> +	 * we failed to submit any I/O.
+> +	 */
+> +	void (*discard_page)(struct page *page);
+> +};
+> +
+> +struct iomap_writepage_ctx {
+> +	struct iomap		iomap;
+> +	struct iomap_ioend	*ioend;
+> +	const struct iomap_writeback_ops *ops;
+> +};
+> +
+> +void iomap_finish_ioends(struct iomap_ioend *ioend, int error);
+> +void iomap_ioend_try_merge(struct iomap_ioend *ioend,
+> +		struct list_head *more_ioends,
+> +		void (*merge_private)(struct iomap_ioend *ioend,
+> +				struct iomap_ioend *next));
+> +void iomap_sort_ioends(struct list_head *ioend_list);
+> +int iomap_writepage(struct page *page, struct writeback_control *wbc,
+> +		struct iomap_writepage_ctx *wpc,
+> +		const struct iomap_writeback_ops *ops);
+> +int iomap_writepages(struct address_space *mapping,
+> +		struct writeback_control *wbc, struct iomap_writepage_ctx *wpc,
+> +		const struct iomap_writeback_ops *ops);
+> +
 >  /*
-> @@ -1156,7 +1156,7 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
->  
->  		/* walk each page on bio, ending page IO on them */
->  		bio_for_each_segment_all(bv, bio, iter_all)
-> -			iomap_finish_page_writeback(inode, bv, error);
-> +			iomap_finish_page_writeback(inode, bv->bv_page, error);
->  		bio_put(bio);
->  	}
->  
+>   * Flags for direct I/O ->end_io:
+>   */
 > -- 
 > 2.20.1
 > 
