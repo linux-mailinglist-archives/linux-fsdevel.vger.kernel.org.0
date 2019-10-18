@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DB31DD238
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 00:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF05DD26A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 00:13:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389098AbfJRWJj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Oct 2019 18:09:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42206 "EHLO mail.kernel.org"
+        id S2389902AbfJRWKR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Oct 2019 18:10:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389049AbfJRWJi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:09:38 -0400
+        id S2389866AbfJRWKQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:10:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BA3F22468;
-        Fri, 18 Oct 2019 22:09:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D6902246A;
+        Fri, 18 Oct 2019 22:10:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436577;
+        s=default; t=1571436615;
         bh=3fIb/XpE5v/FmqlNuybYCPwnbwJAl3gVKkv+KO2OZGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b+7r/xosIiGmb/zp1zW18pp99Cch0VBJQlJCXl8sl7AA6HiyLvXsFd54WetQhpfHF
-         gHsg9ufzVcU3IRsuU0PR+nG2nCkkBFgEDjalDoW0+ikh2MF3UUbNCRC+hlDNlGSp//
-         7TpXPQCz2vLHhSLWhj2BvdabqNtkIHSu0gM/d1AY=
+        b=KRkrv16kbZL+EriiPxzY/u7XqnkIEJnb21xVwW3o/EHgRP6qt59TztKfCshpV/gxr
+         qBHvtE6EzqNncSJMHR2ef3gA+NRsAOZ2VLW1vYzUZY5u9z4sQ7j1GojclXUZ0Taeab
+         TukBqzIuRXSJfbSThXEL7TRTiI2BbYTFrWjfmc5I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -34,12 +34,12 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Graham Christensen <graham@grahamc.com>,
         Michal Hocko <mhocko@suse.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 08/29] exec: load_script: Do not exec truncated interpreter path
-Date:   Fri, 18 Oct 2019 18:08:59 -0400
-Message-Id: <20191018220920.10545-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 05/21] exec: load_script: Do not exec truncated interpreter path
+Date:   Fri, 18 Oct 2019 18:09:51 -0400
+Message-Id: <20191018221007.10851-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191018220920.10545-1-sashal@kernel.org>
-References: <20191018220920.10545-1-sashal@kernel.org>
+In-Reply-To: <20191018221007.10851-1-sashal@kernel.org>
+References: <20191018221007.10851-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
