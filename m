@@ -2,121 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF4BDBF0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2019 09:55:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FC19DBF2D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2019 09:59:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392146AbfJRHzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Oct 2019 03:55:22 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33206 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391058AbfJRHzV (ORCPT
+        id S2394959AbfJRH7o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Oct 2019 03:59:44 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:47651 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726820AbfJRH7o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:55:21 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r17so8725850wme.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Oct 2019 00:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=I77rKJPCs2BmaC+W7WkYB32uyg139YK/7J+1ocFiBeU=;
-        b=NFnOnCssVKrpdruLY99Y0HTP27Dh9nZMRBEIoc260EAdSUJlkdQhrvqLWiHoOWGCfn
-         EDW11cne4VSAWJ5ZZfmkRjbgP06miX6HEc78GScSxvJMqievcMPr914ShvgqhqA/S4i5
-         iMEHTjBtEdQ/PHdl5VDvw3xRX72nSgGgeLz2w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=I77rKJPCs2BmaC+W7WkYB32uyg139YK/7J+1ocFiBeU=;
-        b=jDkPxAAggkd6kmAzb+tHJZAT/cKsDNhpvzpjCUdbjNb8qbI7CMuq+wRP6gYXuLhmeU
-         pPK0SUZC3YT72LiQVTlnq+UEq2wIe3IGyLQLZe1reZDUFhcVaPMdgXzMQ2/TLBHKFZUD
-         m6esPiS393+YZsnuepM+my3mPOCIXftRTLcKignTxsz5oDFbHCTXo5OT6Feb1L4LKdiE
-         t/3qP33QPc0zI4q9dHInY8+zZULVcmRPC28sdeJhCaB5p9CWjcOv/pjT0NvFyNy0sbDu
-         u5bWOCj+twqKimj7EroaMhgOcdRg+/uT7M4ZJuNQ2fahjmOG/fVVniupyW6zWBuPiMAW
-         euDA==
-X-Gm-Message-State: APjAAAU06nlQYpYHvMvozO1nZlXkdmaDBAnEWMLqILx2X8byb0/SlNes
-        nDKshJJhxQQSoREv7p+IBdjuxksx5rs=
-X-Google-Smtp-Source: APXvYqwEWXjktiX8T2DmtOUPiAjrE/qKQMg3I338FWYfk7AwYVhFcx+yWJvHi1+BMygr1Bzrgk0VWg==
-X-Received: by 2002:a7b:c449:: with SMTP id l9mr2646634wmi.43.1571385319385;
-        Fri, 18 Oct 2019 00:55:19 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (178-164-242-26.pool.digikabel.hu. [178.164.242.26])
-        by smtp.gmail.com with ESMTPSA id f83sm4704537wmf.43.2019.10.18.00.55.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2019 00:55:18 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 09:55:12 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] f*xattr: allow O_PATH descriptors
-Message-ID: <20191018075512.GA2075@miu.piliscsaba.redhat.com>
+        Fri, 18 Oct 2019 03:59:44 -0400
+Received: from dread.disaster.area (pa49-179-0-183.pa.nsw.optusnet.com.au [49.179.0.183])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 6E763363ED4;
+        Fri, 18 Oct 2019 18:59:39 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iLNAh-0005qf-8c; Fri, 18 Oct 2019 18:59:39 +1100
+Date:   Fri, 18 Oct 2019 18:59:39 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 08/26] mm: directed shrinker work deferral
+Message-ID: <20191018075939.GP16973@dread.disaster.area>
+References: <20191009032124.10541-1-david@fromorbit.com>
+ <20191009032124.10541-9-david@fromorbit.com>
+ <20191014084604.GA11758@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191014084604.GA11758@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
+        a=52fyy8O0dbGPTevbDZN8bg==:117 a=52fyy8O0dbGPTevbDZN8bg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=KK2cpZmtYymXl3zhzrcA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+On Mon, Oct 14, 2019 at 01:46:04AM -0700, Christoph Hellwig wrote:
+> On Wed, Oct 09, 2019 at 02:21:06PM +1100, Dave Chinner wrote:
+> > From: Dave Chinner <dchinner@redhat.com>
+> > 
+> > Introduce a mechanism for ->count_objects() to indicate to the
+> > shrinker infrastructure that the reclaim context will not allow
+> > scanning work to be done and so the work it decides is necessary
+> > needs to be deferred.
+> > 
+> > This simplifies the code by separating out the accounting of
+> > deferred work from the actual doing of the work, and allows better
+> > decisions to be made by the shrinekr control logic on what action it
+> > can take.
+> 
+> I hate all this boilerplate code in the scanners.  Can't we just add
+> a a required_gfp_mask field to struct shrinker and lift the pattern
+> to common code?
 
-This allows xattr ops on symlink/special files referenced by an O_PATH
-descriptor without having to play games with /proc/self/fd/NN (which
-doesn't work for symlinks anyway).
+Because the deferral isn't intended to support just deferring work
+from GFP_NOFS reclaim context.
 
-This capability is the same as would be given by introducing ...at()
-variants with an AT_EMPTY_PATH argument.  Looking at getattr/setattr type
-syscalls, this is allowed for fstatat() and fchownat(), but not for
-fchmodat() and utimensat().  What's the logic?
+e.g. i915_gem_shrinker_scan() stops the shrinker if it can't get a
+lock to avoid recursion deadlocks. There's several other shrinkers
+that have similar logic that punts work to avoid deadlocks, and so
+they could also use deferred work to punt it kswapd....
 
-While this carries a minute risk of someone relying on the property of
-xattr syscalls rejecting O_PATH descriptors, it saves the trouble of
-introducing another set of syscalls.
+i.e. while I currently use it for GFP_NOFS deferal, that's no the
+only reason for defering work...
 
-Only file->f_path and file->f_inode are accessed in these functions.
+Cheers,
 
-Current versions return EBADF, hence easy to detect the presense of this
-feature and fall back in case it's missing.
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/xattr.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -495,7 +495,7 @@ SYSCALL_DEFINE5(lsetxattr, const char __
- SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
- 		const void __user *,value, size_t, size, int, flags)
- {
--	struct fd f = fdget(fd);
-+	struct fd f = fdget_raw(fd);
- 	int error = -EBADF;
- 
- 	if (!f.file)
-@@ -587,7 +587,7 @@ SYSCALL_DEFINE4(lgetxattr, const char __
- SYSCALL_DEFINE4(fgetxattr, int, fd, const char __user *, name,
- 		void __user *, value, size_t, size)
- {
--	struct fd f = fdget(fd);
-+	struct fd f = fdget_raw(fd);
- 	ssize_t error = -EBADF;
- 
- 	if (!f.file)
-@@ -662,7 +662,7 @@ SYSCALL_DEFINE3(llistxattr, const char _
- 
- SYSCALL_DEFINE3(flistxattr, int, fd, char __user *, list, size_t, size)
- {
--	struct fd f = fdget(fd);
-+	struct fd f = fdget_raw(fd);
- 	ssize_t error = -EBADF;
- 
- 	if (!f.file)
-@@ -727,7 +727,7 @@ SYSCALL_DEFINE2(lremovexattr, const char
- 
- SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
- {
--	struct fd f = fdget(fd);
-+	struct fd f = fdget_raw(fd);
- 	int error = -EBADF;
- 
- 	if (!f.file)
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
