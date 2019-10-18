@@ -2,82 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADAA2DC722
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2019 16:19:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46EE8DD047
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2019 22:30:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410071AbfJROSh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Oct 2019 10:18:37 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40114 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732676AbfJROSh (ORCPT
+        id S2406535AbfJRU37 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Oct 2019 16:29:59 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:43686 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404558AbfJRU3q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Oct 2019 10:18:37 -0400
-Received: by mail-qt1-f196.google.com with SMTP id o49so1458647qta.7;
-        Fri, 18 Oct 2019 07:18:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OLiSW1jPhrfJpL7J2ChNokt+HsZ5l6CdeBUkdRu8tgI=;
-        b=TBveMF19LhielilHg0AoAg4+K+roqfboErkW3EZRgu4YI5/9zg+aqTStcVO+YypqV4
-         nRDZk/piIYfWGZ+fp2HGptc1NSfL8lar9AyiwWZ4qgXcAZjgnKcfSCHIApZARO+SBMar
-         h/fddCmvRkzcn2Qjkq8GnZcQcmW/2UqbxOf/ww8YvboTcsbRlv4gNt6QAjoFn5eClNK/
-         O5JFlEUDK9LzolIJb6SQduSJ19qMXx1ZdXbtdy/OjARddKQe4M7RkNV8mJ07LNVoRQHt
-         AJgTJGo1mvOJS2pxQP1uys+hjy4cKXBUwtWdAl5JOEG2qgb30nAo4JkdOkVXYKv7yWpB
-         ALrA==
-X-Gm-Message-State: APjAAAV0ml7r9IQ/wyAYDxZwpdSslmrMypp21l8j2jIC7OlAy2DuvWA1
-        B8ic178vNUjurZ3/yxH7rVhkSVeky2cNM5NV3thM7A==
-X-Google-Smtp-Source: APXvYqwUNC10IHjYhGYMZPP/MmDp7/JcJCuP9HHh1sJXpI/WPpXPbrgxj4jvMWTEkThythJ+jUYtkhVJ/IhuzQHABWY=
-X-Received: by 2002:ac8:38e3:: with SMTP id g32mr10144867qtc.304.1571408315568;
- Fri, 18 Oct 2019 07:18:35 -0700 (PDT)
+        Fri, 18 Oct 2019 16:29:46 -0400
+Received: from dread.disaster.area (pa49-179-0-183.pa.nsw.optusnet.com.au [49.179.0.183])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D87D93638E6;
+        Sat, 19 Oct 2019 07:29:28 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.2)
+        (envelope-from <david@fromorbit.com>)
+        id 1iLYsJ-0002Bf-R3; Sat, 19 Oct 2019 07:29:27 +1100
+Date:   Sat, 19 Oct 2019 07:29:27 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 25/26] xfs: rework unreferenced inode lookups
+Message-ID: <20191018202927.GQ16973@dread.disaster.area>
+References: <20191009032124.10541-1-david@fromorbit.com>
+ <20191009032124.10541-26-david@fromorbit.com>
+ <20191014130719.GE12380@bfoster>
+ <20191017012438.GK16973@dread.disaster.area>
+ <20191017075729.GA19442@bfoster>
 MIME-Version: 1.0
-References: <20191009190853.245077-1-arnd@arndb.de> <20191009191044.308087-16-arnd@arndb.de>
- <20ef0181f615a6dfe8698afb52597164d74f8637.camel@codethink.co.uk>
-In-Reply-To: <20ef0181f615a6dfe8698afb52597164d74f8637.camel@codethink.co.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 18 Oct 2019 16:18:19 +0200
-Message-ID: <CAK8P3a3xOo6ccFbSmZNZs+9Z42oREx+gAObxDiwTQPujndEBBw@mail.gmail.com>
-Subject: Re: [Y2038] [PATCH v6 16/43] compat_ioctl: move isdn/capi ioctl
- translation into driver
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Networking <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        isdn4linux@listserv.isdn4linux.de,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017075729.GA19442@bfoster>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=52fyy8O0dbGPTevbDZN8bg==:117 a=52fyy8O0dbGPTevbDZN8bg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=7-415B0cAAAA:8 a=2sWhKzXocK4_PVnBHZEA:9 a=hOR0AJh8QWLIpmh6:21
+        a=lVIhb6QhHtTIAenZ:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 8:25 PM Ben Hutchings
-<ben.hutchings@codethink.co.uk> wrote:
->
-> On Wed, 2019-10-09 at 21:10 +0200, Arnd Bergmann wrote:
-> [...]
-> > --- a/drivers/isdn/capi/capi.c
-> > +++ b/drivers/isdn/capi/capi.c
-> > @@ -950,6 +950,34 @@ capi_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> >       return ret;
-> >  }
-> >
-> > +#ifdef CONFIG_COMPAT
-> > +static long
-> > +capi_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> > +{
-> > +     int ret;
-> > +
-> > +     if (cmd == CAPI_MANUFACTURER_CMD) {
-> > +             struct {
-> > +                     unsigned long cmd;
->
-> Should be u32?
+On Thu, Oct 17, 2019 at 03:57:29AM -0400, Brian Foster wrote:
+> On Thu, Oct 17, 2019 at 12:24:38PM +1100, Dave Chinner wrote:
+> > It's not a contention issue - there's real bugs if we don't order
+> > the locking correctly here.
+> > 
+> 
+> Is this patch fixing real bugs in the existing code or reducing
+> contention/blocking in the reclaim codepath?  My understanding was the
+> latter, so thus I'm trying to make sure I follow how this blocking can
+> actually happen that this patch purports to address. The reasoning in my
+> comment above is basically how I followed the existing code as it
+> pertains to blocking in reclaim, and that is the scenario I was asking
+> about...
 
-Good catch, changed to compat_ulong_t now.
+Neither. It's a patch that simplifies and formalises the
+unreferenced inode lookup alogrithm. Previous patches change the way
+we isolate inodes for reclaim, opening up the opportunity to
+simplify the lookup/reclaim synchronisation and remove a race
+condition that that we've carried a workaround to avoid for 20+
+years.
 
-Thanks,
+Yes, it has the added bonus of removing a potential blocking point
+in reclaim, but hitting that blocking point it is pretty rare so
+it's not really a reduction in anything measurable.
 
-      Arnd
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
