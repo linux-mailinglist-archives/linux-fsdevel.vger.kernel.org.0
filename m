@@ -2,78 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46EE8DD047
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Oct 2019 22:30:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78DBADD215
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 00:08:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406535AbfJRU37 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Oct 2019 16:29:59 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:43686 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404558AbfJRU3q (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Oct 2019 16:29:46 -0400
-Received: from dread.disaster.area (pa49-179-0-183.pa.nsw.optusnet.com.au [49.179.0.183])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D87D93638E6;
-        Sat, 19 Oct 2019 07:29:28 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iLYsJ-0002Bf-R3; Sat, 19 Oct 2019 07:29:27 +1100
-Date:   Sat, 19 Oct 2019 07:29:27 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 25/26] xfs: rework unreferenced inode lookups
-Message-ID: <20191018202927.GQ16973@dread.disaster.area>
-References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-26-david@fromorbit.com>
- <20191014130719.GE12380@bfoster>
- <20191017012438.GK16973@dread.disaster.area>
- <20191017075729.GA19442@bfoster>
+        id S2387768AbfJRWI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Oct 2019 18:08:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387736AbfJRWIZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:08:25 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F005E22466;
+        Fri, 18 Oct 2019 22:08:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571436504;
+        bh=ne9QAjeb1S8nb93Ake9Lq8Wna3eB+iMjKjixdd5/Lj0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=O/RcqMe6VzR/JtbwbUEISh3Qo+0HznGAbyqAA4hBcve/0jqzWNnQ6UDaJgKbKTPv5
+         L4aEFqJoJzlGA1vhzpTNzyPMsxUZgcPqL3/PWTzucrftfVXZxlMV0LsUrNUi4lTzbl
+         oR1AF+94DPuQI39Z18s/atVoOPkXd+6Mi85uHJo8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Graham Christensen <graham@grahamc.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 16/56] exec: load_script: Do not exec truncated interpreter path
+Date:   Fri, 18 Oct 2019 18:07:13 -0400
+Message-Id: <20191018220753.10002-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191018220753.10002-1-sashal@kernel.org>
+References: <20191018220753.10002-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017075729.GA19442@bfoster>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=52fyy8O0dbGPTevbDZN8bg==:117 a=52fyy8O0dbGPTevbDZN8bg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=7-415B0cAAAA:8 a=2sWhKzXocK4_PVnBHZEA:9 a=hOR0AJh8QWLIpmh6:21
-        a=lVIhb6QhHtTIAenZ:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 03:57:29AM -0400, Brian Foster wrote:
-> On Thu, Oct 17, 2019 at 12:24:38PM +1100, Dave Chinner wrote:
-> > It's not a contention issue - there's real bugs if we don't order
-> > the locking correctly here.
-> > 
-> 
-> Is this patch fixing real bugs in the existing code or reducing
-> contention/blocking in the reclaim codepath?  My understanding was the
-> latter, so thus I'm trying to make sure I follow how this blocking can
-> actually happen that this patch purports to address. The reasoning in my
-> comment above is basically how I followed the existing code as it
-> pertains to blocking in reclaim, and that is the scenario I was asking
-> about...
+From: Kees Cook <keescook@chromium.org>
 
-Neither. It's a patch that simplifies and formalises the
-unreferenced inode lookup alogrithm. Previous patches change the way
-we isolate inodes for reclaim, opening up the opportunity to
-simplify the lookup/reclaim synchronisation and remove a race
-condition that that we've carried a workaround to avoid for 20+
-years.
+[ Upstream commit b5372fe5dc84235dbe04998efdede3c4daa866a9 ]
 
-Yes, it has the added bonus of removing a potential blocking point
-in reclaim, but hitting that blocking point it is pretty rare so
-it's not really a reduction in anything measurable.
+Commit 8099b047ecc4 ("exec: load_script: don't blindly truncate
+shebang string") was trying to protect against a confused exec of a
+truncated interpreter path. However, it was overeager and also refused
+to truncate arguments as well, which broke userspace, and it was
+reverted. This attempts the protection again, but allows arguments to
+remain truncated. In an effort to improve readability, helper functions
+and comments have been added.
 
-Cheers,
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Samuel Dionne-Riel <samuel@dionne-riel.com>
+Cc: Richard Weinberger <richard.weinberger@gmail.com>
+Cc: Graham Christensen <graham@grahamc.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/binfmt_script.c | 57 ++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 48 insertions(+), 9 deletions(-)
 
-Dave.
+diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+index 7cde3f46ad263..e996174cbfc02 100644
+--- a/fs/binfmt_script.c
++++ b/fs/binfmt_script.c
+@@ -14,13 +14,30 @@
+ #include <linux/err.h>
+ #include <linux/fs.h>
+ 
++static inline bool spacetab(char c) { return c == ' ' || c == '\t'; }
++static inline char *next_non_spacetab(char *first, const char *last)
++{
++	for (; first <= last; first++)
++		if (!spacetab(*first))
++			return first;
++	return NULL;
++}
++static inline char *next_terminator(char *first, const char *last)
++{
++	for (; first <= last; first++)
++		if (spacetab(*first) || !*first)
++			return first;
++	return NULL;
++}
++
+ static int load_script(struct linux_binprm *bprm)
+ {
+ 	const char *i_arg, *i_name;
+-	char *cp;
++	char *cp, *buf_end;
+ 	struct file *file;
+ 	int retval;
+ 
++	/* Not ours to exec if we don't start with "#!". */
+ 	if ((bprm->buf[0] != '#') || (bprm->buf[1] != '!'))
+ 		return -ENOEXEC;
+ 
+@@ -33,18 +50,40 @@ static int load_script(struct linux_binprm *bprm)
+ 	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
+ 		return -ENOENT;
+ 
+-	/*
+-	 * This section does the #! interpretation.
+-	 * Sorta complicated, but hopefully it will work.  -TYT
+-	 */
+-
++	/* Release since we are not mapping a binary into memory. */
+ 	allow_write_access(bprm->file);
+ 	fput(bprm->file);
+ 	bprm->file = NULL;
+ 
+-	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
+-	if ((cp = strchr(bprm->buf, '\n')) == NULL)
+-		cp = bprm->buf+BINPRM_BUF_SIZE-1;
++	/*
++	 * This section handles parsing the #! line into separate
++	 * interpreter path and argument strings. We must be careful
++	 * because bprm->buf is not yet guaranteed to be NUL-terminated
++	 * (though the buffer will have trailing NUL padding when the
++	 * file size was smaller than the buffer size).
++	 *
++	 * We do not want to exec a truncated interpreter path, so either
++	 * we find a newline (which indicates nothing is truncated), or
++	 * we find a space/tab/NUL after the interpreter path (which
++	 * itself may be preceded by spaces/tabs). Truncating the
++	 * arguments is fine: the interpreter can re-read the script to
++	 * parse them on its own.
++	 */
++	buf_end = bprm->buf + sizeof(bprm->buf) - 1;
++	cp = strnchr(bprm->buf, sizeof(bprm->buf), '\n');
++	if (!cp) {
++		cp = next_non_spacetab(bprm->buf + 2, buf_end);
++		if (!cp)
++			return -ENOEXEC; /* Entire buf is spaces/tabs */
++		/*
++		 * If there is no later space/tab/NUL we must assume the
++		 * interpreter path is truncated.
++		 */
++		if (!next_terminator(cp, buf_end))
++			return -ENOEXEC;
++		cp = buf_end;
++	}
++	/* NUL-terminate the buffer and any trailing spaces/tabs. */
+ 	*cp = '\0';
+ 	while (cp > bprm->buf) {
+ 		cp--;
 -- 
-Dave Chinner
-david@fromorbit.com
+2.20.1
+
