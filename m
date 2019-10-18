@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78DBADD215
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 00:08:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB31DD238
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 00:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387768AbfJRWI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Oct 2019 18:08:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40838 "EHLO mail.kernel.org"
+        id S2389098AbfJRWJj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Oct 2019 18:09:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387736AbfJRWIZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:08:25 -0400
+        id S2389049AbfJRWJi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:09:38 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F005E22466;
-        Fri, 18 Oct 2019 22:08:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BA3F22468;
+        Fri, 18 Oct 2019 22:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436504;
-        bh=ne9QAjeb1S8nb93Ake9Lq8Wna3eB+iMjKjixdd5/Lj0=;
+        s=default; t=1571436577;
+        bh=3fIb/XpE5v/FmqlNuybYCPwnbwJAl3gVKkv+KO2OZGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O/RcqMe6VzR/JtbwbUEISh3Qo+0HznGAbyqAA4hBcve/0jqzWNnQ6UDaJgKbKTPv5
-         L4aEFqJoJzlGA1vhzpTNzyPMsxUZgcPqL3/PWTzucrftfVXZxlMV0LsUrNUi4lTzbl
-         oR1AF+94DPuQI39Z18s/atVoOPkXd+6Mi85uHJo8=
+        b=b+7r/xosIiGmb/zp1zW18pp99Cch0VBJQlJCXl8sl7AA6HiyLvXsFd54WetQhpfHF
+         gHsg9ufzVcU3IRsuU0PR+nG2nCkkBFgEDjalDoW0+ikh2MF3UUbNCRC+hlDNlGSp//
+         7TpXPQCz2vLHhSLWhj2BvdabqNtkIHSu0gM/d1AY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -34,12 +34,12 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Graham Christensen <graham@grahamc.com>,
         Michal Hocko <mhocko@suse.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 16/56] exec: load_script: Do not exec truncated interpreter path
-Date:   Fri, 18 Oct 2019 18:07:13 -0400
-Message-Id: <20191018220753.10002-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 08/29] exec: load_script: Do not exec truncated interpreter path
+Date:   Fri, 18 Oct 2019 18:08:59 -0400
+Message-Id: <20191018220920.10545-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191018220753.10002-1-sashal@kernel.org>
-References: <20191018220753.10002-1-sashal@kernel.org>
+In-Reply-To: <20191018220920.10545-1-sashal@kernel.org>
+References: <20191018220920.10545-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -76,10 +76,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 48 insertions(+), 9 deletions(-)
 
 diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index 7cde3f46ad263..e996174cbfc02 100644
+index afdf4e3cafc2a..37c2093a24d3c 100644
 --- a/fs/binfmt_script.c
 +++ b/fs/binfmt_script.c
-@@ -14,13 +14,30 @@
+@@ -14,14 +14,31 @@
  #include <linux/err.h>
  #include <linux/fs.h>
  
@@ -105,13 +105,14 @@ index 7cde3f46ad263..e996174cbfc02 100644
 -	char *cp;
 +	char *cp, *buf_end;
  	struct file *file;
+ 	char interp[BINPRM_BUF_SIZE];
  	int retval;
  
 +	/* Not ours to exec if we don't start with "#!". */
  	if ((bprm->buf[0] != '#') || (bprm->buf[1] != '!'))
  		return -ENOEXEC;
  
-@@ -33,18 +50,40 @@ static int load_script(struct linux_binprm *bprm)
+@@ -34,18 +51,40 @@ static int load_script(struct linux_binprm *bprm)
  	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
  		return -ENOENT;
  
