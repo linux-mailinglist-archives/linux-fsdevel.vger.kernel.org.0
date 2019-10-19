@@ -2,168 +2,298 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 331DDDD5F1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 03:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD6ABDD604
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 03:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbfJSB1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Oct 2019 21:27:15 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46962 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfJSB1O (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Oct 2019 21:27:14 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9J1PLDv026137;
-        Sat, 19 Oct 2019 01:26:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=+eN2dHDKqzKzkek8Upk0U7xYgl91txQoJvCOcPqOmSQ=;
- b=THJsi6TwAS2Db0taHIc605mV/PwPgDinOuAQFDGrxwvd+qX1nu7j0sKSER2+DotlfM1x
- Q3W+ztw3Jq/nsSMiQW4VA6eOUqAiMxdEC46nXr5RZ1ZSuz13hEExJGpmyMGIWcy8viaD
- dmo9py6L3+WqibN2sLuFnTuqUuuML5NJmvMm2KvYepcWuv+Xc+LeW2F1JXIh09izxVtG
- dx8i+UR+kdt5mFpGEs5fJIEUNi6wOxpg0E97YQCGwL+h8M3vphAoVeuizjtbqttbt7fq
- O6DpmOCCehPwvuW1FqgX97XWC8laY9c1VpqnlzvVv/AzP+xkFHPutCUA+nya4m+JiblZ 9A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2vq0q46r75-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Oct 2019 01:26:50 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9J1MvfF107693;
-        Sat, 19 Oct 2019 01:26:49 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2vqqmgk9qj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Oct 2019 01:26:49 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9J1QbXl010915;
-        Sat, 19 Oct 2019 01:26:47 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 19 Oct 2019 01:26:37 +0000
-Date:   Fri, 18 Oct 2019 18:26:35 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Jan Kara <jack@suse.cz>, mbobrowski@mbobrowski.org,
-        riteshh@linux.ibm.com
-Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to b7b293bdaaf4
-Message-ID: <20191019012635.GC6719@magnolia>
+        id S1726472AbfJSBjc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Oct 2019 21:39:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55076 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726195AbfJSBjc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Oct 2019 21:39:32 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3B7FE18CB8E6;
+        Sat, 19 Oct 2019 01:39:27 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EFB0A19C7F;
+        Sat, 19 Oct 2019 01:39:06 +0000 (UTC)
+Date:   Fri, 18 Oct 2019 21:39:04 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
+Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
+        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
+        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, dwalsh@redhat.com, mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+Message-ID: <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
+References: <cover.1568834524.git.rgb@redhat.com>
+ <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9414 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910190009
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9414 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910190009
+In-Reply-To: <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Sat, 19 Oct 2019 01:39:31 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On 2019-09-18 21:22, Richard Guy Briggs wrote:
+> Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
+> process in a non-init user namespace the capability to set audit
+> container identifiers.
+> 
+> Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
+> AUDIT_SET_CAPCONTID 1028.  The message format includes the data
+> structure:
+> struct audit_capcontid_status {
+>         pid_t   pid;
+>         u32     enable;
+> };
 
-The iomap-for-next branch of the xfs-linux repository at:
+Paul, can I get a review of the general idea here to see if you're ok
+with this way of effectively extending CAP_AUDIT_CONTROL for the sake of
+setting contid from beyond the init user namespace where capable() can't
+reach and ns_capable() is meaningless for these purposes?
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+Last weekend was Canadian Thanksgiving where I took an extra day for an
+annual bike trip and I'm buried to my neck in a complete kitchen gut
+(down to 1920 structural double brick and knob/tube wiring), but I've
+got fixes or responses to almost everything else you've raised which
+I'll post shortly.
 
-has just been updated.
+Thanks!
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  include/linux/audit.h      | 14 +++++++
+>  include/uapi/linux/audit.h |  2 +
+>  kernel/audit.c             | 98 +++++++++++++++++++++++++++++++++++++++++++++-
+>  kernel/audit.h             |  5 +++
+>  4 files changed, 117 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 1ce27af686ea..dcc53e62e266 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -117,6 +117,7 @@ struct audit_task_info {
+>  	kuid_t			loginuid;
+>  	unsigned int		sessionid;
+>  	struct audit_cont	*cont;
+> +	u32			capcontid;
+>  #ifdef CONFIG_AUDITSYSCALL
+>  	struct audit_context	*ctx;
+>  #endif
+> @@ -224,6 +225,14 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+>  	return tsk->audit->sessionid;
+>  }
+>  
+> +static inline u32 audit_get_capcontid(struct task_struct *tsk)
+> +{
+> +	if (!tsk->audit)
+> +		return 0;
+> +	return tsk->audit->capcontid;
+> +}
+> +
+> +extern int audit_set_capcontid(struct task_struct *tsk, u32 enable);
+>  extern int audit_set_contid(struct task_struct *tsk, u64 contid);
+>  
+>  static inline u64 audit_get_contid(struct task_struct *tsk)
+> @@ -309,6 +318,11 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+>  	return AUDIT_SID_UNSET;
+>  }
+>  
+> +static inline u32 audit_get_capcontid(struct task_struct *tsk)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline u64 audit_get_contid(struct task_struct *tsk)
+>  {
+>  	return AUDIT_CID_UNSET;
+> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> index eef42c8eea77..011b0a8ee9b2 100644
+> --- a/include/uapi/linux/audit.h
+> +++ b/include/uapi/linux/audit.h
+> @@ -78,6 +78,8 @@
+>  #define AUDIT_GET_LOGINUID	1024	/* Get loginuid of a task */
+>  #define AUDIT_SET_LOGINUID	1025	/* Set loginuid of a task */
+>  #define AUDIT_GET_SESSIONID	1026	/* Set sessionid of a task */
+> +#define AUDIT_GET_CAPCONTID	1027	/* Get cap_contid of a task */
+> +#define AUDIT_SET_CAPCONTID	1028	/* Set cap_contid of a task */
+>  
+>  #define AUDIT_FIRST_USER_MSG	1100	/* Userspace messages mostly uninteresting to kernel */
+>  #define AUDIT_USER_AVC		1107	/* We filter this differently */
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index a70c9184e5d9..7160da464849 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -1192,6 +1192,14 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
+>  	case AUDIT_GET_SESSIONID:
+>  		return 0;
+>  		break;
+> +	case AUDIT_GET_CAPCONTID:
+> +	case AUDIT_SET_CAPCONTID:
+> +	case AUDIT_GET_CONTID:
+> +	case AUDIT_SET_CONTID:
+> +		if (!netlink_capable(skb, CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
+> +			return -EPERM;
+> +		return 0;
+> +		break;
+>  	default:  /* do more checks below */
+>  		break;
+>  	}
+> @@ -1227,8 +1235,6 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
+>  	case AUDIT_TTY_SET:
+>  	case AUDIT_TRIM:
+>  	case AUDIT_MAKE_EQUIV:
+> -	case AUDIT_GET_CONTID:
+> -	case AUDIT_SET_CONTID:
+>  	case AUDIT_SET_LOGINUID:
+>  		/* Only support auditd and auditctl in initial pid namespace
+>  		 * for now. */
+> @@ -1304,6 +1310,23 @@ static int audit_get_contid_status(struct sk_buff *skb)
+>  	return 0;
+>  }
+>  
+> +static int audit_get_capcontid_status(struct sk_buff *skb)
+> +{
+> +	struct nlmsghdr *nlh = nlmsg_hdr(skb);
+> +	u32 seq = nlh->nlmsg_seq;
+> +	void *data = nlmsg_data(nlh);
+> +	struct audit_capcontid_status cs;
+> +
+> +	cs.pid = ((struct audit_capcontid_status *)data)->pid;
+> +	if (!cs.pid)
+> +		cs.pid = task_tgid_nr(current);
+> +	rcu_read_lock();
+> +	cs.enable = audit_get_capcontid(find_task_by_vpid(cs.pid));
+> +	rcu_read_unlock();
+> +	audit_send_reply(skb, seq, AUDIT_GET_CAPCONTID, 0, 0, &cs, sizeof(cs));
+> +	return 0;
+> +}
+> +
+>  struct audit_loginuid_status { uid_t loginuid; };
+>  
+>  static int audit_get_loginuid_status(struct sk_buff *skb)
+> @@ -1779,6 +1802,27 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+>  		if (err)
+>  			return err;
+>  		break;
+> +	case AUDIT_SET_CAPCONTID: {
+> +		struct audit_capcontid_status *s = data;
+> +		struct task_struct *tsk;
+> +
+> +		/* check if new data is valid */
+> +		if (nlmsg_len(nlh) < sizeof(*s))
+> +			return -EINVAL;
+> +		tsk = find_get_task_by_vpid(s->pid);
+> +		if (!tsk)
+> +			return -EINVAL;
+> +
+> +		err = audit_set_capcontid(tsk, s->enable);
+> +		put_task_struct(tsk);
+> +		return err;
+> +		break;
+> +	}
+> +	case AUDIT_GET_CAPCONTID:
+> +		err = audit_get_capcontid_status(skb);
+> +		if (err)
+> +			return err;
+> +		break;
+>  	case AUDIT_SET_LOGINUID: {
+>  		uid_t *loginuid = data;
+>  		kuid_t kloginuid;
+> @@ -2711,6 +2755,56 @@ static struct task_struct *audit_cont_owner(struct task_struct *tsk)
+>  	return NULL;
+>  }
+>  
+> +int audit_set_capcontid(struct task_struct *task, u32 enable)
+> +{
+> +	u32 oldcapcontid;
+> +	int rc = 0;
+> +	struct audit_buffer *ab;
+> +	uid_t uid;
+> +	struct tty_struct *tty;
+> +	char comm[sizeof(current->comm)];
+> +
+> +	if (!task->audit)
+> +		return -ENOPROTOOPT;
+> +	oldcapcontid = audit_get_capcontid(task);
+> +	/* if task is not descendant, block */
+> +	if (task == current)
+> +		rc = -EBADSLT;
+> +	else if (!task_is_descendant(current, task))
+> +		rc = -EXDEV;
+> +	else if (current_user_ns() == &init_user_ns) {
+> +		if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
+> +			rc = -EPERM;
+> +	}
+> +	if (!rc)
+> +		task->audit->capcontid = enable;
+> +
+> +	if (!audit_enabled)
+> +		return rc;
+> +
+> +	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_SET_CAPCONTID);
+> +	if (!ab)
+> +		return rc;
+> +
+> +	uid = from_kuid(&init_user_ns, task_uid(current));
+> +	tty = audit_get_tty();
+> +	audit_log_format(ab,
+> +			 "opid=%d capcontid=%u old-capcontid=%u pid=%d uid=%u auid=%u tty=%s ses=%u",
+> +			 task_tgid_nr(task), enable, oldcapcontid,
+> +			 task_tgid_nr(current), uid,
+> +			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> +			 tty ? tty_name(tty) : "(none)",
+> +			 audit_get_sessionid(current));
+> +	audit_put_tty(tty);
+> +	audit_log_task_context(ab);
+> +	audit_log_format(ab, " comm=");
+> +	audit_log_untrustedstring(ab, get_task_comm(comm, current));
+> +	audit_log_d_path_exe(ab, current->mm);
+> +	audit_log_format(ab, " res=%d", !rc);
+> +	audit_log_end(ab);
+> +	return rc;
+> +}
+> +
+>  /*
+>   * audit_set_contid - set current task's audit contid
+>   * @task: target task
+> diff --git a/kernel/audit.h b/kernel/audit.h
+> index cb25341c1a0f..ac4694e88485 100644
+> --- a/kernel/audit.h
+> +++ b/kernel/audit.h
+> @@ -231,6 +231,11 @@ struct audit_contid_status {
+>  	u64	id;
+>  };
+>  
+> +struct audit_capcontid_status {
+> +	pid_t	pid;
+> +	u32	enable;
+> +};
+> +
+>  #define AUDIT_CONTID_DEPTH	5
+>  
+>  /* Indicates that audit should log the full pathname. */
+> -- 
+> 1.8.3.1
+> 
 
-The branch now contains three major API changes for 5.5: Jan's explicit
-synchronous iomap_dio_rw parameter; Christoph's porting of the xfs
-writeback implementation to iomap; and Goldwyn/Christoph's addition of
-srcmap support to iomap_begin for COW staging.  I think this is it for
-5.5, modulo any bug fixes anyone wants to submit.  If anyone sees
-anything bad enough to warrant a push -f, please scream quickly,
-otherwise I'll consider this branch a stable working branch on 22 Oct
-2019 at 00:00 UTC.  (Extra time because I'm sending this late on a
-Friday afternoon.)
+- RGB
 
-The new head of the iomap-for-next branch is commit:
-
-b7b293bdaaf4 iomap: use a srcmap for a read-modify-write I/O
-
-New Commits:
-
-Christoph Hellwig (20):
-      [5d816b81d09d] xfs: initialize iomap->flags in xfs_bmbt_to_iomap
-      [34c8fe914a5c] xfs: set IOMAP_F_NEW more carefully
-      [17950b4e5396] xfs: use a struct iomap in xfs_writepage_ctx
-      [207e86dd487d] xfs: refactor the ioend merging code
-      [be0bbd4c6859] xfs: turn io_append_trans into an io_private void pointer
-      [b931cda62c8c] xfs: remove the fork fields in the writepage_ctx and ioend
-      [786717533e97] iomap: zero newly allocated mapped blocks
-      [f9208606ee98] iomap: lift common tracing code from xfs to iomap
-      [21ae4d097bb2] iomap: lift the xfs writeback code to iomap
-      [f0c130fd34f2] iomap: warn on inline maps in iomap_writepage_map
-      [4e29ff8b6f00] iomap: move struct iomap_page out of iomap.h
-      [e09ffca48f47] iomap: cleanup iomap_ioend_compare
-      [1ccb2c4a5415] iomap: pass a struct page to iomap_finish_page_writeback
-      [b28d0615b4ec] iomap: better document the IOMAP_F_* flags
-      [f47fd1f1f5bd] iomap: remove the unused iomap argument to __iomap_write_end
-      [0d84ea778c24] iomap: always use AOP_FLAG_NOFS in iomap_write_begin
-      [213c6dfea828] iomap: ignore non-shared or non-data blocks in xfs_file_dirty
-      [1c979fce8c91] iomap: move the zeroing case out of iomap_read_page_sync
-      [c47007977d2e] iomap: use write_begin to read pages to unshare
-      [37370b729fbd] iomap: renumber IOMAP_HOLE to 0
-
-Darrick J. Wong (1):
-      [a936fb253791] iomap: enhance writeback error message
-
-Dave Chinner (1):
-      [8a23414ee345] iomap: iomap that extends beyond EOF should be marked dirty
-
-Goldwyn Rodrigues (1):
-      [b7b293bdaaf4] iomap: use a srcmap for a read-modify-write I/O
-
-Jan Kara (2):
-      [13ef954445df] iomap: Allow forcing of waiting for running DIO in iomap_dio_rw()
-      [906753befc4d] xfs: Use iomap_dio_rw to wait for unaligned direct IO
-
-
-Code Diffstat:
-
- fs/dax.c                 |  13 +-
- fs/ext2/inode.c          |   2 +-
- fs/ext4/inode.c          |   2 +-
- fs/gfs2/bmap.c           |   3 +-
- fs/gfs2/file.c           |   6 +-
- fs/iomap/Makefile        |  16 +-
- fs/iomap/apply.c         |  25 +-
- fs/iomap/buffered-io.c   | 749 ++++++++++++++++++++++++++++++++++++++++------
- fs/iomap/direct-io.c     |   9 +-
- fs/iomap/fiemap.c        |   4 +-
- fs/iomap/seek.c          |   4 +-
- fs/iomap/swapfile.c      |   3 +-
- fs/iomap/trace.c         |  12 +
- fs/iomap/trace.h         |  88 ++++++
- fs/xfs/libxfs/xfs_bmap.c |  14 +-
- fs/xfs/libxfs/xfs_bmap.h |   3 +-
- fs/xfs/xfs_aops.c        | 754 ++++++++---------------------------------------
- fs/xfs/xfs_aops.h        |  17 --
- fs/xfs/xfs_file.c        |  13 +-
- fs/xfs/xfs_iomap.c       |  51 +++-
- fs/xfs/xfs_iomap.h       |   2 +-
- fs/xfs/xfs_pnfs.c        |   2 +-
- fs/xfs/xfs_reflink.c     |   2 +-
- fs/xfs/xfs_super.c       |  11 +-
- fs/xfs/xfs_trace.h       |  65 ----
- include/linux/iomap.h    | 129 +++++---
- 26 files changed, 1085 insertions(+), 914 deletions(-)
- create mode 100644 fs/iomap/trace.c
- create mode 100644 fs/iomap/trace.h
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
