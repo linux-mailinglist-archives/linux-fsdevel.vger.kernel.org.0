@@ -2,347 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6311CDD6B7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 07:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDD78DD6BE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 07:24:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbfJSFCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Oct 2019 01:02:13 -0400
-Received: from mx2a.mailbox.org ([80.241.60.219]:36315 "EHLO mx2a.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726004AbfJSFCN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Oct 2019 01:02:13 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2a.mailbox.org (Postfix) with ESMTPS id 56D93A3442;
-        Sat, 19 Oct 2019 07:02:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id hkTttXOfoGiA; Sat, 19 Oct 2019 07:02:05 +0200 (CEST)
-Date:   Sat, 19 Oct 2019 16:01:55 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com, christian.brauner@ubuntu.com
-Subject: Re: [RFC PATCH v2 2/5] fs: add RWF_ENCODED for reading/writing
- compressed data
-Message-ID: <20191019050155.mts3dfmnf3i2553p@yavin.dot.cyphar.com>
-References: <cover.1571164762.git.osandov@fb.com>
- <7f98cf5409cf2b583cd5b3451fc739fd3428873b.1571164762.git.osandov@fb.com>
+        id S1727551AbfJSFXK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Oct 2019 01:23:10 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:48371 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727545AbfJSFXJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 19 Oct 2019 01:23:09 -0400
+Received: by mail-il1-f200.google.com with SMTP id d15so2856172iln.15
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Oct 2019 22:23:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=0KNjLuEPgiDLg6oET9WRUGpjddnu/sNONOWUjhZ/J7E=;
+        b=PoMsnqvJyXgqvWfHKSOyMG+mLtmDIspGeNNqXLOxhe54p/P6htb/UhlHhGCOqmgo5E
+         1YxfOnJD0rqPuCOWq/HwGXv8zGeKPFj6n6EPFzThpSghfcTEhTwjfV4X0zTio7H8U9Vw
+         gwAePUiVVOoxe0AIKdQkmZOxvPc8X+FZGFl5LgPqc/+TJGhPwi7uZMRbGTfwQuk4t6b2
+         dpRDlYXpQt7Vv9Rp8b6Ot5HQLVUn2np1iztqfQaGRdsdJHiKEga8DHSH9QaxbaB/g+2p
+         pwPja7UzsvsUw/oGt6cpw+yt5dhSxkW6FfoChwdWQ2bpeYdBu8iLLakrd6qBN2fWuU6h
+         Pr2A==
+X-Gm-Message-State: APjAAAViXooQwxmD4VCGo4JfXLpRItPgnd3AbGW2dZb78kYVp4nWy8wC
+        s1x3ftqSkch3F//oJuE/D1vCCDl3LqXf0P7MAtvmaQw3JzcD
+X-Google-Smtp-Source: APXvYqy9aGv6CB4zhJa7/C44XCiINnaznRSe2UdcpIcJFzhqLwvWmY8TeIzFTyYMYhiSHxSa8uC6kParUuf8rO0R/GPf887dgYNB
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oe3uj6spa3degh5m"
-Content-Disposition: inline
-In-Reply-To: <7f98cf5409cf2b583cd5b3451fc739fd3428873b.1571164762.git.osandov@fb.com>
+X-Received: by 2002:a5d:9856:: with SMTP id p22mr12053973ios.29.1571462588703;
+ Fri, 18 Oct 2019 22:23:08 -0700 (PDT)
+Date:   Fri, 18 Oct 2019 22:23:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000060ad7d05953ca54f@google.com>
+Subject: KASAN: use-after-free Read in fuse_request_end
+From:   syzbot <syzbot+ae0bb7aae3de6b4594e2@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
 
---oe3uj6spa3degh5m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot found the following crash on:
 
-On 2019-10-15, Omar Sandoval <osandov@osandov.com> wrote:
-> From: Omar Sandoval <osandov@fb.com>
->=20
-> Btrfs supports transparent compression: data written by the user can be
-> compressed when written to disk and decompressed when read back.
-> However, we'd like to add an interface to write pre-compressed data
-> directly to the filesystem, and the matching interface to read
-> compressed data without decompressing it. This adds support for
-> so-called "encoded I/O" via preadv2() and pwritev2().
->=20
-> A new RWF_ENCODED flags indicates that a read or write is "encoded". If
-> this flag is set, iov[0].iov_base points to a struct encoded_iov which
-> is used for metadata: namely, the compression algorithm, unencoded
-> (i.e., decompressed) length, and what subrange of the unencoded data
-> should be used (needed for truncated or hole-punched extents and when
-> reading in the middle of an extent). For reads, the filesystem returns
-> this information; for writes, the caller provides it to the filesystem.
-> iov[0].iov_len must be set to sizeof(struct encoded_iov), which can be
-> used to extend the interface in the future. The remaining iovecs contain
-> the encoded extent.
->=20
-> Filesystems must indicate that they support encoded writes by setting
-> FMODE_ENCODED_IO in ->file_open().
->=20
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
-> ---
->  include/linux/fs.h      | 14 +++++++
->  include/uapi/linux/fs.h | 26 ++++++++++++-
->  mm/filemap.c            | 82 ++++++++++++++++++++++++++++++++++-------
->  3 files changed, 108 insertions(+), 14 deletions(-)
->=20
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e0d909d35763..54681f21e05e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -175,6 +175,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t=
- offset,
->  /* File does not contribute to nr_files count */
->  #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
-> =20
-> +/* File supports encoded IO */
-> +#define FMODE_ENCODED_IO	((__force fmode_t)0x40000000)
-> +
->  /*
->   * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
->   * that indicates that they should check the contents of the iovec are
-> @@ -314,6 +317,7 @@ enum rw_hint {
->  #define IOCB_SYNC		(1 << 5)
->  #define IOCB_WRITE		(1 << 6)
->  #define IOCB_NOWAIT		(1 << 7)
-> +#define IOCB_ENCODED		(1 << 8)
-> =20
->  struct kiocb {
->  	struct file		*ki_filp;
-> @@ -3088,6 +3092,11 @@ extern int sb_min_blocksize(struct super_block *, =
-int);
->  extern int generic_file_mmap(struct file *, struct vm_area_struct *);
->  extern int generic_file_readonly_mmap(struct file *, struct vm_area_stru=
-ct *);
->  extern ssize_t generic_write_checks(struct kiocb *, struct iov_iter *);
-> +struct encoded_iov;
-> +extern int generic_encoded_write_checks(struct kiocb *, struct encoded_i=
-ov *);
-> +extern ssize_t check_encoded_read(struct kiocb *, struct iov_iter *);
-> +extern int import_encoded_write(struct kiocb *, struct encoded_iov *,
-> +				struct iov_iter *);
->  extern int generic_remap_checks(struct file *file_in, loff_t pos_in,
->  				struct file *file_out, loff_t pos_out,
->  				loff_t *count, unsigned int remap_flags);
-> @@ -3403,6 +3412,11 @@ static inline int kiocb_set_rw_flags(struct kiocb =
-*ki, rwf_t flags)
->  			return -EOPNOTSUPP;
->  		ki->ki_flags |=3D IOCB_NOWAIT;
->  	}
-> +	if (flags & RWF_ENCODED) {
-> +		if (!(ki->ki_filp->f_mode & FMODE_ENCODED_IO))
-> +			return -EOPNOTSUPP;
-> +		ki->ki_flags |=3D IOCB_ENCODED;
-> +	}
->  	if (flags & RWF_HIPRI)
->  		ki->ki_flags |=3D IOCB_HIPRI;
->  	if (flags & RWF_DSYNC)
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index 379a612f8f1d..ed92a8a257cb 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -284,6 +284,27 @@ struct fsxattr {
-> =20
->  typedef int __bitwise __kernel_rwf_t;
-> =20
-> +enum {
-> +	ENCODED_IOV_COMPRESSION_NONE,
-> +	ENCODED_IOV_COMPRESSION_ZLIB,
-> +	ENCODED_IOV_COMPRESSION_LZO,
-> +	ENCODED_IOV_COMPRESSION_ZSTD,
-> +	ENCODED_IOV_COMPRESSION_TYPES =3D ENCODED_IOV_COMPRESSION_ZSTD,
-> +};
-> +
-> +enum {
-> +	ENCODED_IOV_ENCRYPTION_NONE,
-> +	ENCODED_IOV_ENCRYPTION_TYPES =3D ENCODED_IOV_ENCRYPTION_NONE,
-> +};
-> +
-> +struct encoded_iov {
-> +	__u64 len;
-> +	__u64 unencoded_len;
-> +	__u64 unencoded_offset;
-> +	__u32 compression;
-> +	__u32 encryption;
-> +};
-> +
->  /* high priority request, poll if possible */
->  #define RWF_HIPRI	((__force __kernel_rwf_t)0x00000001)
-> =20
-> @@ -299,8 +320,11 @@ typedef int __bitwise __kernel_rwf_t;
->  /* per-IO O_APPEND */
->  #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
-> =20
-> +/* encoded (e.g., compressed or encrypted) IO */
-> +#define RWF_ENCODED	((__force __kernel_rwf_t)0x00000020)
-> +
->  /* mask of flags supported by the kernel */
->  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
-> -			 RWF_APPEND)
-> +			 RWF_APPEND | RWF_ENCODED)
-> =20
->  #endif /* _UAPI_LINUX_FS_H */
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 1146fcfa3215..d2e6d9caf353 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2948,24 +2948,15 @@ static int generic_write_check_limits(struct file=
- *file, loff_t pos,
->  	return 0;
->  }
-> =20
-> -/*
-> - * Performs necessary checks before doing a write
-> - *
-> - * Can adjust writing position or amount of bytes to write.
-> - * Returns appropriate error code that caller should return or
-> - * zero in case that write should be allowed.
-> - */
-> -inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter =
-*from)
-> +static int generic_write_checks_common(struct kiocb *iocb, loff_t *count)
->  {
->  	struct file *file =3D iocb->ki_filp;
->  	struct inode *inode =3D file->f_mapping->host;
-> -	loff_t count;
-> -	int ret;
-> =20
->  	if (IS_SWAPFILE(inode))
->  		return -ETXTBSY;
-> =20
-> -	if (!iov_iter_count(from))
-> +	if (!*count)
->  		return 0;
-> =20
->  	/* FIXME: this is for backwards compatibility with 2.4 */
-> @@ -2975,8 +2966,21 @@ inline ssize_t generic_write_checks(struct kiocb *=
-iocb, struct iov_iter *from)
->  	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
->  		return -EINVAL;
-> =20
-> -	count =3D iov_iter_count(from);
-> -	ret =3D generic_write_check_limits(file, iocb->ki_pos, &count);
-> +	return generic_write_check_limits(iocb->ki_filp, iocb->ki_pos, count);
-> +}
-> +
-> +/*
-> + * Performs necessary checks before doing a write
-> + *
-> + * Can adjust writing position or amount of bytes to write.
-> + * Returns a negative errno or the new number of bytes to write.
-> + */
-> +inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter =
-*from)
-> +{
-> +	loff_t count =3D iov_iter_count(from);
-> +	int ret;
-> +
-> +	ret =3D generic_write_checks_common(iocb, &count);
->  	if (ret)
->  		return ret;
-> =20
-> @@ -2985,6 +2989,58 @@ inline ssize_t generic_write_checks(struct kiocb *=
-iocb, struct iov_iter *from)
->  }
->  EXPORT_SYMBOL(generic_write_checks);
-> =20
-> +int generic_encoded_write_checks(struct kiocb *iocb,
-> +				 struct encoded_iov *encoded)
-> +{
-> +	loff_t count =3D encoded->unencoded_len;
-> +	int ret;
-> +
-> +	ret =3D generic_write_checks_common(iocb, &count);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (count !=3D encoded->unencoded_len) {
-> +		/*
-> +		 * The write got truncated by generic_write_checks_common(). We
-> +		 * can't do a partial encoded write.
-> +		 */
-> +		return -EFBIG;
-> +	}
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(generic_encoded_write_checks);
-> +
-> +ssize_t check_encoded_read(struct kiocb *iocb, struct iov_iter *iter)
-> +{
-> +	if (!(iocb->ki_filp->f_flags & O_ENCODED))
-> +		return -EPERM;
-> +	if (iov_iter_single_seg_count(iter) !=3D sizeof(struct encoded_iov))
-> +		return -EINVAL;
+HEAD commit:    283ea345 coccinelle: api/devm_platform_ioremap_resource: r..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13afce90e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e0ac4d9b35046343
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae0bb7aae3de6b4594e2
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14018fa0e00000
 
-I'm not sure what is precisely the right way of doing this within the
-iov_iter world (maybe we should write some new helpers for that
-usecase), but if you want to make forwards-compatibility much more
-smooth please take a look at the new copy_struct_from_user() semantics
-(it allows you to extend userspace-exposed structures without making it
-painful for new software on old kernels).
+The bug was bisected to:
 
-Basically the semantics boil down to the following (ksize is the
-kernel's struct size, and usize is the size that userspace used). All
-new features must have their zero-value mean "don't use the new
-feature".
+commit d49937749fef2597f6bcaf2a0ed67e88e347b7fb
+Author: Miklos Szeredi <mszeredi@redhat.com>
+Date:   Tue Sep 10 13:04:11 2019 +0000
 
-  1. If ksize =3D=3D usize, use it verbatim.
-  2. If ksize > usize (old userspace), zero-fill the rest of the kernel
-	 struct -- thus if userspace doesn't know about a new feature, it is
-	 disabled.
-  3. If ksize < usize (old kernel), check whether the trailing
-     (usize - ksize) bytes are zero. If they are, then just use the
-	 ksize prefix of the userspace struct. If they are non-zero then
-	 give -E2BIG. Thus if userspace is newer than the kernel but isn't
-	 using a new feature, it won't get an error.
+     fuse: stop copying args to fuse_req
 
-This is how clone3(2) works (and openat2(2) will work), as well as some
-older syscalls like perf_event_open(2) and sched_setattr(2). BPF also
-has some similar semantics.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16110927600000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=15110927600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11110927600000
 
-I really would like us to have a much more uniform way of defining
-extensible APIs in Linux. By returning -EINVAL for all differently-sized
-structs means that any new programs will give errors on older kernels
-(even if they aren't using any new features).
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+ae0bb7aae3de6b4594e2@syzkaller.appspotmail.com
+Fixes: d49937749fef ("fuse: stop copying args to fuse_req")
 
-> +	return iov_iter_count(iter) - sizeof(struct encoded_iov);
-> +}
-> +EXPORT_SYMBOL(check_encoded_read);
-> +
-> +int import_encoded_write(struct kiocb *iocb, struct encoded_iov *encoded,
-> +			 struct iov_iter *from)
-> +{
-> +	if (!(iocb->ki_filp->f_flags & O_ENCODED))
-> +		return -EPERM;
-> +	if (iov_iter_single_seg_count(from) !=3D sizeof(*encoded))
-> +		return -EINVAL;
-> +	if (copy_from_iter(encoded, sizeof(*encoded), from) !=3D sizeof(*encode=
-d))
-> +		return -EFAULT;
-> +	if (encoded->compression =3D=3D ENCODED_IOV_COMPRESSION_NONE &&
-> +	    encoded->encryption =3D=3D ENCODED_IOV_ENCRYPTION_NONE)
-> +		return -EINVAL;
-> +	if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
-> +	    encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
-> +		return -EINVAL;
-> +	if (encoded->unencoded_offset >=3D encoded->unencoded_len)
-> +		return -EINVAL;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(import_encoded_write);
-> +
->  /*
->   * Performs necessary checks before doing a clone.
->   *
+==================================================================
+BUG: KASAN: use-after-free in fuse_request_end+0x825/0x990 fs/fuse/dev.c:279
+Read of size 8 at addr ffff8880a15b8468 by task syz-executor.0/8726
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+CPU: 0 PID: 8726 Comm: syz-executor.0 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:634
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+  fuse_request_end+0x825/0x990 fs/fuse/dev.c:279
+  fuse_dev_do_read.isra.0+0x115b/0x1df0 fs/fuse/dev.c:1295
+  fuse_dev_read+0x165/0x200 fs/fuse/dev.c:1328
+  call_read_iter include/linux/fs.h:1889 [inline]
+  new_sync_read+0x4d7/0x800 fs/read_write.c:414
+  __vfs_read+0xe1/0x110 fs/read_write.c:427
+  vfs_read+0x1f0/0x440 fs/read_write.c:461
+  ksys_read+0x14f/0x290 fs/read_write.c:587
+  __do_sys_read fs/read_write.c:597 [inline]
+  __se_sys_read fs/read_write.c:595 [inline]
+  __x64_sys_read+0x73/0xb0 fs/read_write.c:595
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459a59
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f764c086c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459a59
+RDX: 00000000fffffed0 RSI: 00000000200030c0 RDI: 0000000000000003
+RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f764c0876d4
+R13: 00000000004c70e6 R14: 00000000004dca70 R15: 00000000ffffffff
 
---oe3uj6spa3degh5m
-Content-Type: application/pgp-signature; name="signature.asc"
+Allocated by task 8726:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:510 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
+  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3550
+  kmalloc include/linux/slab.h:556 [inline]
+  kzalloc include/linux/slab.h:690 [inline]
+  fuse_send_init+0x48/0x440 fs/fuse/inode.c:974
+  fuse_fill_super+0x2a6/0x3a0 fs/fuse/inode.c:1257
+  vfs_get_super+0x13e/0x2e0 fs/super.c:1189
+  get_tree_nodev+0x23/0x30 fs/super.c:1219
+  fuse_get_tree+0x12e/0x190 fs/fuse/inode.c:1282
+  vfs_get_tree+0x8e/0x300 fs/super.c:1545
+  do_new_mount fs/namespace.c:2823 [inline]
+  do_mount+0x143d/0x1d10 fs/namespace.c:3143
+  ksys_mount+0xdb/0x150 fs/namespace.c:3352
+  __do_sys_mount fs/namespace.c:3366 [inline]
+  __se_sys_mount fs/namespace.c:3363 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3363
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
------BEGIN PGP SIGNATURE-----
+Freed by task 8724:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  kasan_set_free_info mm/kasan/common.c:332 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
+  __cache_free mm/slab.c:3425 [inline]
+  kfree+0x10a/0x2c0 mm/slab.c:3756
+  process_init_reply+0xfb/0x1620 fs/fuse/inode.c:964
+  fuse_request_end+0x388/0x990 fs/fuse/dev.c:326
+  end_requests+0x16c/0x240 fs/fuse/dev.c:2049
+  fuse_abort_conn+0xa4d/0xdb0 fs/fuse/dev.c:2144
+  fuse_sb_destroy+0xa3/0x120 fs/fuse/inode.c:1325
+  fuse_kill_sb_anon+0x16/0x30 fs/fuse/inode.c:1336
+  deactivate_locked_super+0x95/0x100 fs/super.c:335
+  deactivate_super fs/super.c:366 [inline]
+  deactivate_super+0x1b2/0x1d0 fs/super.c:362
+  cleanup_mnt+0x351/0x4c0 fs/namespace.c:1102
+  __cleanup_mnt+0x16/0x20 fs/namespace.c:1109
+  task_work_run+0x145/0x1c0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+  do_syscall_64+0x65f/0x760 arch/x86/entry/common.c:300
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXaqYvgAKCRCdlLljIbnQ
-EkKXAP0dqxk8bVzOSbg/ToIoVEmHEOdrOcf3R3RDcQAnHIbzLwD/bn06sg9cZgD7
-zuN4CiE9K/tJhGVfuufqc/9y/f3iDQc=
-=3nsn
------END PGP SIGNATURE-----
+The buggy address belongs to the object at ffff8880a15b8400
+  which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 104 bytes inside of
+  192-byte region [ffff8880a15b8400, ffff8880a15b84c0)
+The buggy address belongs to the page:
+page:ffffea0002856e00 refcount:1 mapcount:0 mapping:ffff8880aa400000  
+index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea000286d508 ffffea000285ba48 ffff8880aa400000
+raw: 0000000000000000 ffff8880a15b8000 0000000100000010 0000000000000000
+page dumped because: kasan: bad access detected
 
---oe3uj6spa3degh5m--
+Memory state around the buggy address:
+  ffff8880a15b8300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8880a15b8380: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+> ffff8880a15b8400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                           ^
+  ffff8880a15b8480: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff8880a15b8500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
