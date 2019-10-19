@@ -2,85 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71318DDAAF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 21:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F421BDDB01
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Oct 2019 22:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbfJSTYS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Oct 2019 15:24:18 -0400
-Received: from pb-smtp20.pobox.com ([173.228.157.52]:52865 "EHLO
-        pb-smtp20.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbfJSTYS (ORCPT
+        id S1726528AbfJSUuE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Oct 2019 16:50:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38264 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbfJSUuE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Oct 2019 15:24:18 -0400
-Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 50D3190012;
-        Sat, 19 Oct 2019 15:24:17 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
-        :cc:subject:message-id:mime-version:content-type; s=sasl; bh=5TP
-        O2jKqb3wpotHzJJKK+nlqcL4=; b=oWVwFsMyHLVNEuUX2Y3KJHjMdRANUkwbcrE
-        aqHlY98//d3FEjw9Qzc2JsZIwY22JSzvUkds2ZAcdYuxdj9QXBDLVwwHcWB8DZx7
-        Ag6r4Cn1sMcEcMT2fJSUW0+uO9fo/xsUzvouT9I+wAqL1jMFJFirCc8a9xM7+30N
-        7nurOAtY=
-Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 49F5E90011;
-        Sat, 19 Oct 2019 15:24:17 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:message-id:mime-version:content-type;
- s=2016-12.pbsmtp; bh=+v9a3p3LSiJ/YkkkA16nj2GZCwZ/8pRCMjN0ysc2dHg=;
- b=tSHArGjzCnJc0iG1S/XLTviZDFwOzMJALJw5kiyNUneE57mhRSZ+TyWEDb4ULYLHhXmIVotdtv9wBYq0PE1dhnOLki8BfAKPZ/9StXIHtNpGOW3D/AGugFtJY5qTxGddO5hVc1brw51r10HItO4Hx8WNBC5MEp+Z530Lgu6rARM=
-Received: from yoda.home (unknown [24.203.50.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp20.pobox.com (Postfix) with ESMTPSA id 2559F90010;
-        Sat, 19 Oct 2019 15:24:13 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTPSA id 412A62DA0166;
-        Sat, 19 Oct 2019 15:24:11 -0400 (EDT)
-Date:   Sat, 19 Oct 2019 15:24:11 -0400 (EDT)
-From:   Nicolas Pitre <nico@fluxnic.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-cc:     Maxime Bizon <mbizon@freebox.fr>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] cramfs: fix usage on non-MTD device
-Message-ID: <nycvar.YSQ.7.76.1910191518180.1546@knanqh.ubzr>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Sat, 19 Oct 2019 16:50:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vbPmDbJYJWKyeK0k+G+8kKAF+nSpAsbuTcFnR8Fac1Q=; b=VBOM8ALHBxuQDtxSnr/K8IhOk
+        YS+OXjD7EM96EzTrltFEBRFvyu3vTQyScYFIgXlRrWU/SS00QDJsCAJjBa7VtZKv3e+vnUrC7QO4W
+        Wzdg/9xg1SzJYKmEREwmo4y9jKEQcOg9CErjABpBg1umbq9nSBgQ+fmurJelYsVegUwwI7QFVl+jd
+        Jhaz5NByjv1d8wIJrg7ISfs2lYSVYm4tyKUzqnRTYPFKOsFeJndEYCKko/t+leEfBB5dNIEXP11sU
+        2JUIokXixpXQuE5VjXPTujvDwqBvhC0OIbrBoCYHW/NnQZ4TnwpeZvoD2+B2p+qmmIMTlU4VDY0q9
+        650UY7YBw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iLvfn-0003xi-MD; Sat, 19 Oct 2019 20:50:03 +0000
+Date:   Sat, 19 Oct 2019 13:50:03 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-fsdevel@vger.kernel.org, Jeff Smits <jeff.smits@intel.com>,
+        Doug Nelson <doug.nelson@intel.com>, stable@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/dax: Fix pmd vs pte conflict detection
+Message-ID: <20191019205003.GN32665@bombadil.infradead.org>
+References: <157150237973.3940076.12626102230619807187.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID: 0871BEFC-F2A6-11E9-AD51-B0405B776F7B-78420484!pb-smtp20.pobox.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157150237973.3940076.12626102230619807187.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Maxime Bizon <mbizon@freebox.fr>
+On Sat, Oct 19, 2019 at 09:26:19AM -0700, Dan Williams wrote:
+> Check for NULL entries before checking the entry order, otherwise NULL
+> is misinterpreted as a present pte conflict. The 'order' check needs to
+> happen before the locked check as an unlocked entry at the wrong order
+> must fallback to lookup the correct order.
+> 
+> Reported-by: Jeff Smits <jeff.smits@intel.com>
+> Reported-by: Doug Nelson <doug.nelson@intel.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 23c84eb78375 ("dax: Fix missed wakeup with PMD faults")
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  fs/dax.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index a71881e77204..08160011d94c 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -221,10 +221,11 @@ static void *get_unlocked_entry(struct xa_state *xas, unsigned int order)
+>  
+>  	for (;;) {
+>  		entry = xas_find_conflict(xas);
+> +		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
+> +			return entry;
+>  		if (dax_entry_order(entry) < order)
+>  			return XA_RETRY_ENTRY;
+> -		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
+> -				!dax_is_locked(entry))
+> +		if (!dax_is_locked(entry))
+>  			return entry;
 
-When both CONFIG_CRAMFS_MTD and CONFIG_CRAMFS_BLOCKDEV are enabled, if
-we fail to mount on MTD, we don't try on block device.
+Yes, I think this works.  Should we also add:
 
-Fixes: 74f78fc5ef43 ("vfs: Convert cramfs to use the new mount API")
+ static unsigned int dax_entry_order(void *entry)
+ {
++	BUG_ON(!xa_is_value(entry));
+ 	if (xa_to_value(entry) & DAX_PMD)
+ 		return PMD_ORDER;
+ 	return 0;
+ }
 
-Signed-off-by: Maxime Bizon <mbizon@freebox.fr>
-Signed-off-by: Nicolas Pitre <nico@fluxnic.net>
----
- fs/cramfs/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-index d12ea28836a5..2f04024c3588 100644
---- a/fs/cramfs/inode.c
-+++ b/fs/cramfs/inode.c
-@@ -958,8 +958,8 @@ static int cramfs_get_tree(struct fs_context *fc)
- 
- 	if (IS_ENABLED(CONFIG_CRAMFS_MTD)) {
- 		ret = get_tree_mtd(fc, cramfs_mtd_fill_super);
--		if (ret < 0)
--			return ret;
-+		if (!ret)
-+			return 0;
- 	}
- 	if (IS_ENABLED(CONFIG_CRAMFS_BLOCKDEV))
- 		ret = get_tree_bdev(fc, cramfs_blkdev_fill_super);
+which would have caught this logic error before it caused a performance
+regression?
