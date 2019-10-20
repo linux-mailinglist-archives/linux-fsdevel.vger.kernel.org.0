@@ -2,131 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7351DE0DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 00:18:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03520DE0E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 00:25:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbfJTWRv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Oct 2019 18:17:51 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24307 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726583AbfJTWRv (ORCPT
+        id S1726592AbfJTWZl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Oct 2019 18:25:41 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:59696 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726537AbfJTWZl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Oct 2019 18:17:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571609870;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ToBhWAEeBjIvJkh62QqZLUlNNUmIw5rQlwF9iuvC60U=;
-        b=LGFNscPv9IiXdrQR7Pi2U8qdCa9227JmNw+Rn/pN+bSbj7OK6aivA8XXjhBAU1VxNkCKfE
-        dYIFPoBs6+DdDYJ6VhCi9o7q8pv+lgIXp39AfrpoUCWQ4OftSVojcwR9Fl1wH3pjC0WuMA
-        1g5lZ7eWuUzrKfeyK7CPuUdRIuv69G8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-96-OsNYrM9cMQuslhkGZX3JcA-1; Sun, 20 Oct 2019 18:17:48 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 444FE80183E;
-        Sun, 20 Oct 2019 22:17:47 +0000 (UTC)
-Received: from jsavitz.bos.com (ovpn-121-29.rdu2.redhat.com [10.10.121.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 466E760A35;
-        Sun, 20 Oct 2019 22:17:45 +0000 (UTC)
-From:   Joel Savitz <jsavitz@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Joel Savitz <jsavitz@redhat.com>,
-        Fabrizio D'Angelo <Fabrizio_Dangelo@student.uml.edu>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-fsdevel@vger.kernel.org, fedora-rpi@googlegroups.com
-Subject: [PATCH] fs: proc: Clarify warnings for invalid proc dir names
-Date:   Sun, 20 Oct 2019 18:17:42 -0400
-Message-Id: <20191020221742.5728-1-jsavitz@redhat.com>
+        Sun, 20 Oct 2019 18:25:41 -0400
+Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9KMPTNs021897
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 20 Oct 2019 18:25:30 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 43099420458; Sun, 20 Oct 2019 18:25:29 -0400 (EDT)
+Date:   Sun, 20 Oct 2019 18:25:29 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Wang Shilong <wangshilong1991@gmail.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Li Xi <lixi@ddn.com>, Wang Shilong <wshilong@ddn.com>
+Subject: Re: [Project Quota]file owner could change its project ID?
+Message-ID: <20191020222529.GA6799@mit.edu>
+References: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
+ <20191013164124.GR13108@magnolia>
+ <CAP9B-Q=SfhnA6iO7h1TWAoSOfZ+BvT7d8=OE4176FZ3GXiU-xw@mail.gmail.com>
+ <20191016213700.GH13108@magnolia>
+ <648712FB-0ECE-41F4-B6B8-98BD3168B2A4@dilger.ca>
+ <20191017121251.GB25548@mit.edu>
+ <6F46FB6C-D1E3-4BB8-B150-B229801EE13B@dilger.ca>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: OsNYrM9cMQuslhkGZX3JcA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6F46FB6C-D1E3-4BB8-B150-B229801EE13B@dilger.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When one attempts to create a directory in /proc with an invalid name,
-such as one in a subdirectory that doesn't exist, one with a name beyond
-256 characters, or a reserved name such as '.' or '..', the kernel
-throws a warning message that looks like this:
+On Sun, Oct 20, 2019 at 02:19:19PM -0600, Andreas Dilger wrote:
+> > We could also solve the problem by adding an LSM hook called when
+> > there is an attempt to set the project ID, and for people who really
+> > want this, they can create a stackable LSM which enforces whatever
+> > behavior they want.
+> 
+> So, rather than add a few-line change that decides whether the user
+> is allowed to change the projid for a file, we would instead add *more*
+> lines to add a hook, then have to write and load an LSM that is called
+> each time?  That seems backward to me.
 
-=09[ 7913.252558] name 'invalid_name'
+I'm just not sure we've necessarily gotten the semantics right.  For
+example, I could easily see someone else coming out of the woodwork
+saying that The Right Model (tm) is one where users belong to a number
+of projects (much like supplementary group ID's) and you should be
+able to set the project of any file that you own to a project.
 
-This warning message is nearly the same for all invalid cases, including
-the removal of a nonexistent directory. This patch clarifies the warning
-message and differentiates the invalid creation/removal cases so as to
-allow the user to more quickly understand their mistake.
+Or perhaps the policy is that you can only change the project ID if
+the project ID has a non-zero project quota.  etc.
 
-Signed-off-by: Fabrizio D'Angelo <Fabrizio_Dangelo@student.uml.edu>
-Signed-off-by: Joel Savitz <jsavitz@redhat.com>
----
- fs/proc/generic.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> > If we think this going to be an speciality request, this might be the
+> > better way to go.
+> 
+> I don't see how this is more "speciality" than regular quota enforcement?
+> Just like we impose limits on users and groups, it makes sense to impose
+> a limit on a project, instead of just tracking it and then having to add
+> extra machinery to impose the limit externally.
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 64e9ee1b129e..df04fd4f02af 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -173,7 +173,7 @@ static int __xlate_proc_name(const char *name, struct p=
-roc_dir_entry **ret,
- =09=09len =3D next - cp;
- =09=09de =3D pde_subdir_find(de, cp, len);
- =09=09if (!de) {
--=09=09=09WARN(1, "name '%s'\n", name);
-+=09=09=09WARN(1, "invalid proc dir name '%s'\n", name);
- =09=09=09return -ENOENT;
- =09=09}
- =09=09cp +=3D len + 1;
-@@ -386,15 +386,15 @@ static struct proc_dir_entry *__proc_create(struct pr=
-oc_dir_entry **parent,
- =09qstr.name =3D fn;
- =09qstr.len =3D strlen(fn);
- =09if (qstr.len =3D=3D 0 || qstr.len >=3D 256) {
--=09=09WARN(1, "name len %u\n", qstr.len);
-+=09=09WARN(1, "invalid proc dir name len %u\n", qstr.len);
- =09=09return NULL;
- =09}
- =09if (qstr.len =3D=3D 1 && fn[0] =3D=3D '.') {
--=09=09WARN(1, "name '.'\n");
-+=09=09WARN(1, "invalid proc dir name '.'\n");
- =09=09return NULL;
- =09}
- =09if (qstr.len =3D=3D 2 && fn[0] =3D=3D '.' && fn[1] =3D=3D '.') {
--=09=09WARN(1, "name '..'\n");
-+=09=09WARN(1, "invalid proc dir name '..'\n");
- =09=09return NULL;
- =09}
- =09if (*parent =3D=3D &proc_root && name_to_int(&qstr) !=3D ~0U) {
-@@ -402,7 +402,7 @@ static struct proc_dir_entry *__proc_create(struct proc=
-_dir_entry **parent,
- =09=09return NULL;
- =09}
- =09if (is_empty_pde(*parent)) {
--=09=09WARN(1, "attempt to add to permanently empty directory");
-+=09=09WARN(1, "attempt to add to permanently empty directory in proc");
- =09=09return NULL;
- =09}
-=20
-@@ -670,7 +670,7 @@ void remove_proc_entry(const char *name, struct proc_di=
-r_entry *parent)
- =09=09rb_erase(&de->subdir_node, &parent->subdir);
- =09write_unlock(&proc_subdir_lock);
- =09if (!de) {
--=09=09WARN(1, "name '%s'\n", name);
-+=09=09WARN(1, "unable to remove nonexistent proc dir '%s'\n", name);
- =09=09return;
- =09}
-=20
---=20
-2.23.0
+We *do* have regular quota enforcement.  The question here has nothing
+to do with how quota tracking or enforcement work.  The question is
+about what are the authorization checks and policy surrounding when
+the project ID can modified.
 
+Right now the policy is "the owner of the file can set the project ID
+to any integer if it is issued from the initial user namespace;
+otherwise, no changes to the project ID or the PROJINHERIT flag is
+allowed".
+
+Making it be "only root in the inital user namespace is allowed change
+project ID or PROJINHERIT flag" is certain an alternate policy.  Are
+we sure those are the only two possible policies that users might ask
+for?
+
+					- Ted
