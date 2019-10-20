@@ -2,92 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03520DE0E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 00:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DEAEDE0FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 01:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbfJTWZl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Oct 2019 18:25:41 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:59696 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726537AbfJTWZl (ORCPT
+        id S1726587AbfJTXFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Oct 2019 19:05:09 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:53512 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726520AbfJTXFI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Oct 2019 18:25:41 -0400
-Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9KMPTNs021897
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 20 Oct 2019 18:25:30 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 43099420458; Sun, 20 Oct 2019 18:25:29 -0400 (EDT)
-Date:   Sun, 20 Oct 2019 18:25:29 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Wang Shilong <wangshilong1991@gmail.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Li Xi <lixi@ddn.com>, Wang Shilong <wshilong@ddn.com>
-Subject: Re: [Project Quota]file owner could change its project ID?
-Message-ID: <20191020222529.GA6799@mit.edu>
-References: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
- <20191013164124.GR13108@magnolia>
- <CAP9B-Q=SfhnA6iO7h1TWAoSOfZ+BvT7d8=OE4176FZ3GXiU-xw@mail.gmail.com>
- <20191016213700.GH13108@magnolia>
- <648712FB-0ECE-41F4-B6B8-98BD3168B2A4@dilger.ca>
- <20191017121251.GB25548@mit.edu>
- <6F46FB6C-D1E3-4BB8-B150-B229801EE13B@dilger.ca>
+        Sun, 20 Oct 2019 19:05:08 -0400
+Received: from dread.disaster.area (pa49-180-40-48.pa.nsw.optusnet.com.au [49.180.40.48])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 077CE364250;
+        Mon, 21 Oct 2019 10:05:02 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iMKFx-0002H8-KI; Mon, 21 Oct 2019 10:05:01 +1100
+Date:   Mon, 21 Oct 2019 10:05:01 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [RFC PATCH v2 0/5] fs: interface for directly reading/writing
+ compressed data
+Message-ID: <20191020230501.GA8080@dread.disaster.area>
+References: <cover.1571164762.git.osandov@fb.com>
+ <c7e8f93596fee7bb818dc0edf29f484036be1abb.1571164851.git.osandov@fb.com>
+ <cover.1571164762.git.osandov@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6F46FB6C-D1E3-4BB8-B150-B229801EE13B@dilger.ca>
+In-Reply-To: <cover.1571164762.git.osandov@fb.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=y881pOMu+B+mZdf5UrsJdA==:117 a=y881pOMu+B+mZdf5UrsJdA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=FOH2dFAWAAAA:8 a=7-415B0cAAAA:8 a=wr0vbpaFJz5L4bqAxKYA:9
+        a=CjuIK1q_8ugA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Oct 20, 2019 at 02:19:19PM -0600, Andreas Dilger wrote:
-> > We could also solve the problem by adding an LSM hook called when
-> > there is an attempt to set the project ID, and for people who really
-> > want this, they can create a stackable LSM which enforces whatever
-> > behavior they want.
+On Tue, Oct 15, 2019 at 11:42:38AM -0700, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
 > 
-> So, rather than add a few-line change that decides whether the user
-> is allowed to change the projid for a file, we would instead add *more*
-> lines to add a hook, then have to write and load an LSM that is called
-> each time?  That seems backward to me.
-
-I'm just not sure we've necessarily gotten the semantics right.  For
-example, I could easily see someone else coming out of the woodwork
-saying that The Right Model (tm) is one where users belong to a number
-of projects (much like supplementary group ID's) and you should be
-able to set the project of any file that you own to a project.
-
-Or perhaps the policy is that you can only change the project ID if
-the project ID has a non-zero project quota.  etc.
-
-> > If we think this going to be an speciality request, this might be the
-> > better way to go.
+> Hello,
 > 
-> I don't see how this is more "speciality" than regular quota enforcement?
-> Just like we impose limits on users and groups, it makes sense to impose
-> a limit on a project, instead of just tracking it and then having to add
-> extra machinery to impose the limit externally.
+> This series adds an API for reading compressed data on a filesystem
+> without decompressing it as well as support for writing compressed data
+> directly to the filesystem. It is based on my previous series which
+> added a Btrfs-specific ioctl [1], but it is now an extension to
+> preadv2()/pwritev2() as suggested by Dave Chinner [2]. I've included a
+> man page patch describing the API in detail. Test cases and examples
+> programs are available [3].
+> 
+> The use case that I have in mind is Btrfs send/receive: currently, when
+> sending data from one compressed filesystem to another, the sending side
+> decompresses the data and the receiving side recompresses it before
+> writing it out. This is wasteful and can be avoided if we can just send
+> and write compressed extents. The send part will be implemented in a
+> separate series, as this API can stand alone.
+> 
+> Patches 1 and 2 add the VFS support. Patch 3 is a Btrfs prep patch.
+> Patch 4 implements encoded reads for Btrfs, and patch 5 implements
+> encoded writes.
+> 
+> Changes from v1 [4]:
+> 
+> - Encoded reads are now also implemented.
+> - The encoded_iov structure now includes metadata for referring to a
+>   subset of decoded data. This is required to handle certain cases where
+>   a compressed extent is truncated, hole punched, or otherwise sliced up
+>   and Btrfs chooses to reflect this in metadata instead of decompressing
+>   the whole extent and rewriting the pieces. We call these "bookend
+>   extents" in Btrfs, but any filesystem supporting transparent encoding
+>   is likely to have a similar concept.
 
-We *do* have regular quota enforcement.  The question here has nothing
-to do with how quota tracking or enforcement work.  The question is
-about what are the authorization checks and policy surrounding when
-the project ID can modified.
+Where's the in-kernel documentation for this API? You're encoding a
+specific set of behaviours into the user API, so this needs a whole
+heap of documentation in the generic code to describe how it works
+so that other filesystems implementing have a well defined guideline
+to what they need to support.
 
-Right now the policy is "the owner of the file can set the project ID
-to any integer if it is issued from the initial user namespace;
-otherwise, no changes to the project ID or the PROJINHERIT flag is
-allowed".
+Also, I don't see any test code for this - can you please add
+support for RWF_ENCODED to xfs_io and write a suite of unit tests
+for fstests that exercise the user API fully?  Given our history of
+screwing up new user APIs, this absolutely should not be merged
+until there is a full set of generic unit tests written and reviewed
+for it and support has been added to fsstress, fsx, and other test
+utilities to fuzz and stress the implementation as part of normal
+day-to-day filesystem development...
 
-Making it be "only root in the inital user namespace is allowed change
-project ID or PROJINHERIT flag" is certain an alternate policy.  Are
-we sure those are the only two possible policies that users might ask
-for?
+Cheers,
 
-					- Ted
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
