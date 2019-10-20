@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A05DDF53
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Oct 2019 18:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B77CDDF4E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Oct 2019 18:00:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfJTQAA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Oct 2019 12:00:00 -0400
-Received: from mga01.intel.com ([192.55.52.88]:46720 "EHLO mga01.intel.com"
+        id S1726708AbfJTQAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Oct 2019 12:00:02 -0400
+Received: from mga04.intel.com ([192.55.52.120]:32418 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbfJTP77 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Oct 2019 11:59:59 -0400
+        id S1726691AbfJTQAB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 20 Oct 2019 12:00:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 08:59:59 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 09:00:00 -0700
 X-IronPort-AV: E=Sophos;i="5.67,320,1566889200"; 
-   d="scan'208";a="227073625"
+   d="scan'208";a="209275529"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 08:59:59 -0700
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2019 09:00:00 -0700
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org
 Cc:     Ira Weiny <ira.weiny@intel.com>,
@@ -30,9 +30,9 @@ Cc:     Ira Weiny <ira.weiny@intel.com>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/5] fs/xfs: Clean up DAX support check
-Date:   Sun, 20 Oct 2019 08:59:34 -0700
-Message-Id: <20191020155935.12297-5-ira.weiny@intel.com>
+Subject: [PATCH 5/5] fs/xfs: Allow toggle of physical DAX flag
+Date:   Sun, 20 Oct 2019 08:59:35 -0700
+Message-Id: <20191020155935.12297-6-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191020155935.12297-1-ira.weiny@intel.com>
 References: <20191020155935.12297-1-ira.weiny@intel.com>
@@ -45,88 +45,56 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Rather than open coding xfs_inode_supports_dax() in
-xfs_ioctl_setattr_dax_invalidate() export xfs_inode_supports_dax() and
-call it in preparation for swapping dax flags.
+Switching between DAX and non-DAX on a file is racy with respect to data
+operations.  However, if no data is involved the flag is safe to switch.
 
-This also means updating xfs_inode_supports_dax() to return true for a
-directory.
+Allow toggling the physical flag if a file is empty.  The file length
+check is not racy with respect to other operations as it is performed
+under XFS_MMAPLOCK_EXCL and XFS_IOLOCK_EXCL locks.
 
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- fs/xfs/xfs_ioctl.c | 17 +++--------------
- fs/xfs/xfs_iops.c  |  8 ++++++--
- fs/xfs/xfs_iops.h  |  2 ++
- 3 files changed, 11 insertions(+), 16 deletions(-)
+ fs/xfs/xfs_ioctl.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 0ea326290cca..d3a7340d3209 100644
+index d3a7340d3209..3839684c249b 100644
 --- a/fs/xfs/xfs_ioctl.c
 +++ b/fs/xfs/xfs_ioctl.c
-@@ -1299,24 +1299,13 @@ xfs_ioctl_setattr_dax_invalidate(
- 	int			*join_flags)
- {
- 	struct inode		*inode = VFS_I(ip);
--	struct super_block	*sb = inode->i_sb;
- 	int			error;
+@@ -33,6 +33,7 @@
+ #include "xfs_sb.h"
+ #include "xfs_ag.h"
+ #include "xfs_health.h"
++#include "libxfs/xfs_dir2.h"
  
- 	*join_flags = 0;
- 
--	/*
--	 * It is only valid to set the DAX flag on regular files and
--	 * directories on filesystems where the block size is equal to the page
--	 * size. On directories it serves as an inherited hint so we don't
--	 * have to check the device for dax support or flush pagecache.
--	 */
--	if (fa->fsx_xflags & FS_XFLAG_DAX) {
--		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
--			return -EINVAL;
--		if (!bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
--				sb->s_blocksize))
--			return -EINVAL;
--	}
-+	if ((fa->fsx_xflags & FS_XFLAG_DAX) == FS_XFLAG_DAX &&
-+	    !xfs_inode_supports_dax(ip))
-+		return -EINVAL;
- 
- 	/* If the DAX state is not changing, we have nothing to do here. */
- 	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 9e5c79aa1b54..535b87ffc135 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1216,14 +1216,18 @@ xfs_inode_mount_is_dax(
+ #include <linux/mount.h>
+ #include <linux/namei.h>
+@@ -1232,12 +1233,10 @@ xfs_diflags_to_linux(
+ 		inode->i_flags |= S_NOATIME;
+ 	else
+ 		inode->i_flags &= ~S_NOATIME;
+-#if 0	/* disabled until the flag switching races are sorted out */
+ 	if (xflags & FS_XFLAG_DAX)
+ 		inode->i_flags |= S_DAX;
+ 	else
+ 		inode->i_flags &= ~S_DAX;
+-#endif
  }
  
- /* Figure out if this file actually supports DAX. */
--static bool
-+bool
- xfs_inode_supports_dax(
- 	struct xfs_inode	*ip)
- {
- 	struct xfs_mount	*mp = ip->i_mount;
+ static int
+@@ -1320,6 +1319,12 @@ xfs_ioctl_setattr_dax_invalidate(
  
- 	/* Only supported on non-reflinked files. */
--	if (!S_ISREG(VFS_I(ip)->i_mode) || xfs_is_reflink_inode(ip))
-+	if (xfs_is_reflink_inode(ip))
-+		return false;
+ 	/* lock, flush and invalidate mapping in preparation for flag change */
+ 	xfs_ilock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
 +
-+	/* Only supported on regular files and directories. */
-+	if (!(S_ISREG(VFS_I(ip)->i_mode) || S_ISDIR(VFS_I(ip)->i_mode)))
- 		return false;
- 
- 	/* Block size must match page size */
-diff --git a/fs/xfs/xfs_iops.h b/fs/xfs/xfs_iops.h
-index 4d24ff309f59..f24fec8de1d6 100644
---- a/fs/xfs/xfs_iops.h
-+++ b/fs/xfs/xfs_iops.h
-@@ -24,4 +24,6 @@ extern int xfs_setattr_nonsize(struct xfs_inode *ip, struct iattr *vap,
- extern int xfs_vn_setattr_nonsize(struct dentry *dentry, struct iattr *vap);
- extern int xfs_vn_setattr_size(struct dentry *dentry, struct iattr *vap);
- 
-+extern bool xfs_inode_supports_dax(struct xfs_inode *ip);
++	if (i_size_read(inode) != 0) {
++		error = -EOPNOTSUPP;
++		goto out_unlock;
++	}
 +
- #endif /* __XFS_IOPS_H__ */
+ 	error = filemap_write_and_wait(inode->i_mapping);
+ 	if (error)
+ 		goto out_unlock;
 -- 
 2.20.1
 
