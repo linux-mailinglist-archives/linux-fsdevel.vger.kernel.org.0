@@ -2,80 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25746DEB87
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 14:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC2C4DEB99
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 14:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbfJUMDK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 08:03:10 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:22145 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727962AbfJUMDK (ORCPT
+        id S1728244AbfJUMHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 08:07:46 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:35402 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728081AbfJUMHq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:03:10 -0400
+        Mon, 21 Oct 2019 08:07:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571659389;
+        s=mimecast20190719; t=1571659665;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kmgPAC7W/5410XjvqZWnihFBmhF2Kg+1698CXHy3Bl0=;
-        b=SzoCuxeRPztIGTJVYfDPlHDEZAiXK0ELCM+Nkhu8sxf6OoGVWx2dIrOYAIyCnSfyqSA2iU
-        R0KnDkxhCWBUNmp4IDas7CF8JTVBkytNcgdRpgxlMCibneghL8SuNYQkxiTJ45IqplQrwG
-        w6sjrxil5mRFlQIgAiiGRNAW3ogSgWI=
+        bh=jZW2w85TwEDR7o6SJHU50uEOcHT5Iw+gP89ZUiYLiLY=;
+        b=VPFLCqVKXG8ryyFxNxlnPORr0JlIJNViViCFzDv37GpQsfm6u2b14Mu74w+Mp3Yo3Tyxqd
+        IB6TIMXo0yvznjnIXbyY8XjtSwNZDNZcaLFD4o+YyYaEHNeoihvIoN0l1pqPXb4d029Gzt
+        Fw5YNRpffwxHOVQobhhADpkGi0K0QYA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-251-oxBS3Ss1NUKGY8SDNye1Wg-1; Mon, 21 Oct 2019 08:01:14 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-258-tqajfzzvNaaD0mZxWWnBcg-1; Mon, 21 Oct 2019 08:07:41 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 033BC100550E;
-        Mon, 21 Oct 2019 12:01:13 +0000 (UTC)
-Received: from [10.40.204.224] (ovpn-204-224.brq.redhat.com [10.40.204.224])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EDE7B167A3;
-        Mon, 21 Oct 2019 12:01:10 +0000 (UTC)
-Subject: Re: [PATCH] fs: exFAT read-only driver GPL implementation by Paragon
- Software.
-To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-References: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
- <20191021111136.adpxjxmmz4p2vud2@pali>
- <a4c42aa5-f9b7-4e74-2c11-220d45cb3669@redhat.com>
- <20191021114556.lk2zkha57xmav7xz@pali>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-From:   Maurizio Lombardi <mlombard@redhat.com>
-Message-ID: <bcc406b7-d8ed-475d-d5d7-16b97ec40022@redhat.com>
-Date:   Mon, 21 Oct 2019 14:01:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1C8EF800D41;
+        Mon, 21 Oct 2019 12:07:40 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0CAC25D9E2;
+        Mon, 21 Oct 2019 12:07:38 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-fsdevel@vger.kernel.org, Jeff Smits <jeff.smits@intel.com>,
+        Doug Nelson <doug.nelson@intel.com>, stable@vger.kernel.org,
+        Jan Kara <jack@suse.cz>,
+        "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/dax: Fix pmd vs pte conflict detection
+References: <157150237973.3940076.12626102230619807187.stgit@dwillia2-desk3.amr.corp.intel.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Mon, 21 Oct 2019 08:07:38 -0400
+In-Reply-To: <157150237973.3940076.12626102230619807187.stgit@dwillia2-desk3.amr.corp.intel.com>
+        (Dan Williams's message of "Sat, 19 Oct 2019 09:26:19 -0700")
+Message-ID: <x495zkii9o5.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20191021114556.lk2zkha57xmav7xz@pali>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: oxBS3Ss1NUKGY8SDNye1Wg-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: tqajfzzvNaaD0mZxWWnBcg-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Dan Williams <dan.j.williams@intel.com> writes:
 
+> Check for NULL entries before checking the entry order, otherwise NULL
+> is misinterpreted as a present pte conflict. The 'order' check needs to
+> happen before the locked check as an unlocked entry at the wrong order
+> must fallback to lookup the correct order.
 
-Dne 21.10.2019 v 13:45 Pali Roh=C3=A1r napsal(a):
-> They are represented by one member
-> in boot sector structure).
->=20
->> Btw, only Windows CE supported this.
->=20
-> Is this information based on some real tests? Or just from marketing or
-> Microsoft's information? (I would really like to know definite answer in
-> this area).
+Please include the user-visible effects of the problem in the changelog.
 
-I admit I have read it on Microsoft's exFAT documentation, unfortunately
-I don't have a WinCE device to test if it's really true.
+Thanks,
+Jeff
 
-
-Maurizio
+>
+> Reported-by: Jeff Smits <jeff.smits@intel.com>
+> Reported-by: Doug Nelson <doug.nelson@intel.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 23c84eb78375 ("dax: Fix missed wakeup with PMD faults")
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  fs/dax.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/dax.c b/fs/dax.c
+> index a71881e77204..08160011d94c 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -221,10 +221,11 @@ static void *get_unlocked_entry(struct xa_state *xa=
+s, unsigned int order)
+> =20
+>  =09for (;;) {
+>  =09=09entry =3D xas_find_conflict(xas);
+> +=09=09if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
+> +=09=09=09return entry;
+>  =09=09if (dax_entry_order(entry) < order)
+>  =09=09=09return XA_RETRY_ENTRY;
+> -=09=09if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
+> -=09=09=09=09!dax_is_locked(entry))
+> +=09=09if (!dax_is_locked(entry))
+>  =09=09=09return entry;
+> =20
+>  =09=09wq =3D dax_entry_waitqueue(xas, entry, &ewait.key);
 
