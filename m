@@ -2,127 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB1C3DEA17
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 12:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7AECDEA68
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 13:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfJUKyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 06:54:15 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40900 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfJUKyP (ORCPT
+        id S1728353AbfJULIQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 07:08:16 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:59565 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728348AbfJULIP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 06:54:15 -0400
-Received: by mail-wr1-f67.google.com with SMTP id o28so13393460wro.7;
-        Mon, 21 Oct 2019 03:54:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=9FLQHlZqrICMBNHhz4Iit7vCKLtonkvMi3q7kFDAN3I=;
-        b=UcBj5W9WfX7D7Ks0S2FbRtur+JEk2c3VJzrZFBwSvNHouo+QM5t3LNOcD7yOCUTvfY
-         5eSfA676M8FhZBwua3d038z9vfLyqDHyCD+b2anwQ/lzmX1Qev+RPhu9/Wgjj1NcJXaL
-         ljBMp4ix3vACqA3X/GnRFP2nIKVWRSOLafYasc9bAGIJl+9+OM6UQgneIMem3+1xhE2F
-         tmT4KLdDYnKrq2FmkQ9ZtW4tcTDvbbeOEK4W1/aE+O918xTe0s7RBI/4BTr9o5PTORdt
-         sm1CHyL1gpBpT8igLNAjY0LxD4o7Os44pi0wCNKCAlUs3zQaCi35M6qLHQoORNDnM7Yt
-         LBHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=9FLQHlZqrICMBNHhz4Iit7vCKLtonkvMi3q7kFDAN3I=;
-        b=g2NypHN7dP0qAsW13anEFPnBTk9bbE9s+GWlq229oQ6v0F1E1H+XTKRVCKS6/LsGFf
-         OsdFE8GtxXK7xp9L90h7k0CJtb4arih9D6cNTL3slKSfkI9JxX3dCGzeaZO7PkU4Eooz
-         2CIjulfUXSSTZXb7k0bysO/fr7HPHXw+61SymzfWgJyKDIFCencwZTi8Z2RYM+AjoKD6
-         WPNEsDSp8qCERDYiTUnqZqjO3SzWBOdEWJSGDCtpwkl3WPDgw58fH/EO4l59KWsMoSAG
-         QldXSly3RnP6BbB247s+tmh/lDS+ZbcCl7gpao6N2U1dTX6iffr17OssS9Z/UkEa0llD
-         Ahjw==
-X-Gm-Message-State: APjAAAWb7/oxAYY21xDQhl/atg35b07gN/ho3/csG5b8iVGfYM3ucwji
-        f5OaXaprAW3CrhvFliZMgJU=
-X-Google-Smtp-Source: APXvYqzM917VAbFxVYt9i9ZHbAgfsqtFE6PqBJdfuvVnBqd0xCczbbyqVY6BpiEscXK8T5Q6gBdGzA==
-X-Received: by 2002:adf:e7c9:: with SMTP id e9mr19074932wrn.261.1571655251486;
-        Mon, 21 Oct 2019 03:54:11 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id r27sm25949480wrc.55.2019.10.21.03.54.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Oct 2019 03:54:10 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 12:54:09 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Richard Weinberger <richard.weinberger@gmail.com>
+        Mon, 21 Oct 2019 07:08:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571656094;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/m6iR+lAGe4oWRdWBbbxaVLhAtZ0rF+yJWWCBo2VUQY=;
+        b=AR0Ji90MP+RQX7cImW5E3LCqQ5Bg8ureKOZxD0zlIzqnldlCw5c27JiXuwk9pOiv7m9UV9
+        Jy7VPk3MME1to/9um/o6kSVfbpHqKuiVNx18gsY87dQHzSnFok9ilh4Ow8ngjzDAhunRX6
+        QtZFlGIEWVSe4LItrpbHpGH1OQGcYC4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-235-66Y5VWh_OvypLh4oG7bHRg-1; Mon, 21 Oct 2019 07:08:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0C925107AD31;
+        Mon, 21 Oct 2019 11:08:10 +0000 (UTC)
+Received: from [10.40.204.224] (ovpn-204-224.brq.redhat.com [10.40.204.224])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 48E3E5D6A5;
+        Mon, 21 Oct 2019 11:08:08 +0000 (UTC)
+Subject: Re: [PATCH] fs: exFAT read-only driver GPL implementation by Paragon
+ Software.
+To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+References: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
+ <CAFLxGvyFBGiDab4wxWidjRyDgWkHVfigVsHiRDB4swpB3G+hvQ@mail.gmail.com>
+ <20191021105409.32okvzbslxmcjdze@pali>
 Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
         "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] fs: exFAT read-only driver GPL implementation by Paragon
- Software.
-Message-ID: <20191021105409.32okvzbslxmcjdze@pali>
-References: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
- <CAFLxGvyFBGiDab4wxWidjRyDgWkHVfigVsHiRDB4swpB3G+hvQ@mail.gmail.com>
+From:   Maurizio Lombardi <mlombard@redhat.com>
+Message-ID: <0877502e-8369-9cfd-36e8-5a4798260cd4@redhat.com>
+Date:   Mon, 21 Oct 2019 13:08:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFLxGvyFBGiDab4wxWidjRyDgWkHVfigVsHiRDB4swpB3G+hvQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191021105409.32okvzbslxmcjdze@pali>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: 66Y5VWh_OvypLh4oG7bHRg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sunday 20 October 2019 20:08:20 Richard Weinberger wrote:
-> On Sat, Oct 19, 2019 at 10:33 AM Konstantin Komarov
-> <almaz.alexandrovich@paragon-software.com> wrote:
-> >
-> > Recently exFAT filesystem specification has been made public by Microsoft (https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification).
-> > Having decades of expertise in commercial file systems development, we at Paragon Software GmbH are very excited by Microsoft's decision and now want to make our contribution to the Open Source Community by providing our implementation of exFAT Read-Only (yet!) fs implementation for the Linux Kernel.
-> > We are about to prepare the Read-Write support patch as well.
-> > 'fs/exfat' is implemented accordingly to standard Linux fs development approach with no use/addition of any custom API's.
-> > To divide our contribution from 'drivers/staging' submit of Aug'2019, our Kconfig key is "EXFAT_RO_FS"
-> 
-> How is this driver different from the driver in drivers/staging?
-> With the driver in staging and the upcoming driver from Samsung this
-> is driver number
-> three for exfat. ;-\
 
-Hi Richard!
 
-There is vfat+msdos driver for FAT12/16/32 in fs/fat/. Then there is
-modified Samsung exfat driver which was recently merged into staging
-area and supports FAT12/16/32 and exFAT. Plus there is new version of
-this out-of-tree Samsung's exfat driver called sdfat which can be found
-in some Android phones. Based on sdfat sources there is out-of-tree
-exfat-linux [1] driver which seems to have better performance as
-currently merged old modified Samsung's exfat driver into staging. This
-list of available exfat drivers is not complete. There is also fuse
-implementation widely used [2] and some commercial implementations from
-Tuxera [3], Paragon [4], Embedded Access [5] or HCC [6]. As Konstantin
-in his email wrote, implementation which he sent should be one used in
-their commercial Paragon product.
+Dne 21.10.2019 v 12:54 Pali Roh=C3=A1r napsal(a):
+> Plus there is new version of
+> this out-of-tree Samsung's exfat driver called sdfat which can be found
+> in some Android phones.=20
 
-So we have not 3, but at least 6 open source implementations. Plus more
-closed source, commercial.
+[...]
 
-About that one implementation from Samsung, which was recently merged
-into staging tree, more people wrote that code is in horrible state and
-probably it should not have been merged. That implementation has
-all-one-one driver FAT12, FAT16, FAT32 and exFAT which basically
-duplicate current kernel fs/fat code.
+>=20
+> About that one implementation from Samsung, which was recently merged
+> into staging tree, more people wrote that code is in horrible state and
+> probably it should not have been merged. That implementation has
+> all-one-one driver FAT12, FAT16, FAT32 and exFAT which basically
+> duplicate current kernel fs/fat code.
+>=20
+> Quick look at this Konstantin's patch, it looks like that code is not in
+> such bad state as staging one. It has only exFAT support (no FAT32) but
+> there is no write support (yet).
 
-Quick look at this Konstantin's patch, it looks like that code is not in
-such bad state as staging one. It has only exFAT support (no FAT32) but
-there is no write support (yet). For me it looks like that this
-Konstantin's implementation is more closer then one in staging to be
-"primary" exfat implementation for kernel (if write support would be
-provided).
+But, AFAIK, Samsung is preparing a patch that will replace the current
+staging driver with their newer sdfat driver that also has write support.
 
-[1] - https://github.com/cryptomilk/kernel-sdfat
-[2] - https://github.com/relan/exfat
-[3] - https://www.tuxera.com/products/tuxera-exfat-embedded/
-[4] - https://www.paragon-software.com/technologies/
-[5] - http://embedded-access.com/exfat-file-system/
-[6] - https://www.hcc-embedded.com/exfat/
+https://marc.info/?l=3Dlinux-fsdevel&m=3D156985252507812&w=3D2
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+Maurizio
+
