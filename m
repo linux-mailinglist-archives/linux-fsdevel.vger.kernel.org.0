@@ -2,68 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA81DF696
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 22:16:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CFBEDF6C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 22:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730123AbfJUUP5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 16:15:57 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53626 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbfJUUP5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 16:15:57 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iMe5m-0005FJ-Aw; Mon, 21 Oct 2019 20:15:50 +0000
-Date:   Mon, 21 Oct 2019 21:15:50 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Guillem Jover <guillem@hadrons.org>, linux-aio@kvack.org,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] aio: Fix io_pgetevents() struct __compat_aio_sigset
- layout
-Message-ID: <20191021201550.GW26530@ZenIV.linux.org.uk>
-References: <20190821033820.14155-1-guillem@hadrons.org>
- <20191017134800.GA27576@quack2.suse.cz>
+        id S2387405AbfJUU3D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 16:29:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729388AbfJUU3D (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Oct 2019 16:29:03 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 208302067B;
+        Mon, 21 Oct 2019 20:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571689742;
+        bh=CDmrDmHjELBAUrBY8WbscTUpVT2+8e+2NK3PWI6nzro=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S5qbRv4LpeWBtE1dFXuPvLGMU43VkUsF413qTJMikb0SUYiAKqsBz8H+B4RxsiHTy
+         K1ecBLlwg21XreJQkSZGAvy327GVxorLtA7PpSuihTbnVPMp+Ke40BFo+vIQtlH4Ir
+         VL3jCpymD+r32LxMYYDdh+LA+19mI3hv9+hkOtOU=
+Date:   Mon, 21 Oct 2019 13:29:00 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] docs: ioctl-number: document fscrypt ioctl numbers
+Message-ID: <20191021202859.GD122863@gmail.com>
+Mail-Followup-To: linux-fscrypt@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org
+References: <20191009234555.226282-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191017134800.GA27576@quack2.suse.cz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191009234555.226282-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 03:48:00PM +0200, Jan Kara wrote:
-> On Wed 21-08-19 05:38:20, Guillem Jover wrote:
-> > This type is used to pass the sigset_t from userland to the kernel,
-> > but it was using the kernel native pointer type for the member
-> > representing the compat userland pointer to the userland sigset_t.
-> > 
-> > This messes up the layout, and makes the kernel eat up both the
-> > userland pointer and the size members into the kernel pointer, and
-> > then reads garbage into the kernel sigsetsize. Which makes the sigset_t
-> > size consistency check fail, and consequently the syscall always
-> > returns -EINVAL.
-> > 
-> > This breaks both libaio and strace on 32-bit userland running on 64-bit
-> > kernels. And there are apparently no users in the wild of the current
-> > broken layout (at least according to codesearch.debian.org and a brief
-> > check over github.com search). So it looks safe to fix this directly
-> > in the kernel, instead of either letting userland deal with this
-> > permanently with the additional overhead or trying to make the syscall
-> > infer what layout userland used, even though this is also being worked
-> > around in libaio to temporarily cope with kernels that have not yet
-> > been fixed.
-> > 
-> > We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
-> > 
-> > Fixes: 7a074e96 ("aio: implement io_pgetevents")
-> > Signed-off-by: Guillem Jover <guillem@hadrons.org>
+On Wed, Oct 09, 2019 at 04:45:55PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> This patch seems to have fallen through the cracks. Al?
+> The 'f' ioctls with numbers 19-26 decimal are currently used for fscrypt
+> (a.k.a. ext4/f2fs/ubifs encryption), and up to 39 decimal is reserved
+> for future fscrypt use, as per the comment in fs/ext4/ext4.h.  So the
+> reserved range is 13-27 hex.
+> 
+> Document this in ioctl-number.rst.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  Documentation/ioctl/ioctl-number.rst | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/ioctl/ioctl-number.rst b/Documentation/ioctl/ioctl-number.rst
+> index bef79cd4c6b4d..4ef86433bd677 100644
+> --- a/Documentation/ioctl/ioctl-number.rst
+> +++ b/Documentation/ioctl/ioctl-number.rst
+> @@ -233,6 +233,7 @@ Code  Seq#    Include File                                           Comments
+>  'f'   00-0F  fs/ext4/ext4.h                                          conflict!
+>  'f'   00-0F  linux/fs.h                                              conflict!
+>  'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                     conflict!
+> +'f'   13-27  linux/fscrypt.h
+>  'f'   81-8F  linux/fsverity.h
+>  'g'   00-0F  linux/usb/gadgetfs.h
+>  'g'   20-2F  linux/usb/g_printer.h
+> -- 
 
-Looks like - back then I assumed that Jens would've picked it...
-Applied to #fixes...
+Applied to fscrypt.git for 5.5.
+
+- Eric
