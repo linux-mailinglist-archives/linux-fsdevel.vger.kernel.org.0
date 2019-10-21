@@ -2,95 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3976ADF653
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 21:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01F8FDF65E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 21:57:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbfJUTxe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 15:53:34 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43674 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbfJUTxd (ORCPT
+        id S1730065AbfJUT5g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 15:57:36 -0400
+Received: from mail-wm1-f45.google.com ([209.85.128.45]:53346 "EHLO
+        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728543AbfJUT5g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 15:53:33 -0400
-Received: by mail-lj1-f195.google.com with SMTP id n14so14645371ljj.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2019 12:53:32 -0700 (PDT)
+        Mon, 21 Oct 2019 15:57:36 -0400
+Received: by mail-wm1-f45.google.com with SMTP id i16so14707721wmd.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2019 12:57:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B3ZB5cTWc/+E0YKg8QEclL2Ljwj65q5hsf0zgj4Z+rY=;
-        b=1U3vsiCGcdSTOTzaQ4vA8rtgFMEgeQgVyd8UdGC3o/CdMtwBWN4F0gK1w2XsWWSBGH
-         YNQV5ahyV/O6yw4h2p7vwNKddLsSKZA8aEdokn0w75hdbMsvb43uRjbJi8H6JHxCG71w
-         Q4NjPgZg63RufqnWqJjnk2UAQF7YnLs+zbq9EPZiF4/9fTsCtv4l9nCyYbMUGLPTXat5
-         APjvja2QOXD7cHp9B0BCAW/vEBE/sR2BENyelP9rlWUJuII/ey98aimoJiTVDGxwlViu
-         HWB3hhBN5+9iFMdxD2Riji0ncS9ufRQXCLy1K0bA0PdNKWfK7SpaFe+eM4GU9HA2y+6W
-         mAKQ==
+        d=colorremedies-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=ln4etp2uH4ZzWM0cptVSLRxpJP6tM3kCrMXn8/hv0Z4=;
+        b=Bjn8aSty3QwgZxNP9K/iuAeRgF+kox2ljfl+PwiqkW+924scJxKgeqcm0q3fOi8zrV
+         nmOJsj9/fHEhP80E4Dpr52qUT33zt75gHIzL88YMhtWLELnmeEIO6K3dvtVnfDUmtQ/C
+         w9NJ3UXJOIzm62ZM9oDzY8iYrqodTTVVZgnAarKOnFi+xf9wOhp639fG3z5XkWHwGVSu
+         oZbdgVnXeTyzVo+7WgofDZHsZvHA7EMf4+GbCU1YP9FjwkaWnRB/KXSsEaq1sBeOrRaW
+         u5OHxLGgURQthk++jHZmacc8p9/ezM+TfH1lZxP7Byh9OxAWicelJ82veU4mdDlkZP5D
+         DFyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B3ZB5cTWc/+E0YKg8QEclL2Ljwj65q5hsf0zgj4Z+rY=;
-        b=qab5QLzGOIDjgP8PUfuU6lM1WdbOruJghMeVNSUIVZjTpzfegis8wOvlspzuaGL53C
-         u8jIarrDNKAVXx1qxts1IfafM6v5ofVEkik4T07a2Hfe9VGbeeWfFSW2IFulyF5c4OLY
-         NIXAS9mvqUMgJR14zM7r/q3c0RCruzu2tdHlzG4avWuvg7xGGo95tO7Ywt5BaKgcdTyh
-         Ttm2hqghhcMD3gnbP9dZekvgzuZYswKQFFaf9HlrVnNqL6NdABYSlFjX8WXYBFEUTW8F
-         N4J+Jf1rYVNYJ3bSSe8mQB+u7owiQ9dS0X6vx83AnRc4iwhHVyA8nbq0PLvSAq52tpZu
-         kAxg==
-X-Gm-Message-State: APjAAAXcf9ePMkJ/w/Ijx8fIAo+tGMxfFegYW83hY0y4n0jFzaMaezQ/
-        Jdca0ZvRQ43mlbHILIBtmWVHHY8vTc9SOA5EhDVl
-X-Google-Smtp-Source: APXvYqwGLlTHAz4uYJDRoYV7X3sKMFSAWJhdAvt0BgqLKoPKw91r1AdS6gVNJnxX99zDNcARmS/mrYca8VZXodUJ0TA=
-X-Received: by 2002:a2e:5b82:: with SMTP id m2mr394137lje.184.1571687611172;
- Mon, 21 Oct 2019 12:53:31 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=ln4etp2uH4ZzWM0cptVSLRxpJP6tM3kCrMXn8/hv0Z4=;
+        b=ETTKrKogFONVP/O/TEM4HKPtmAgBFQ2tXRFxNqpIAiMbGp/sfAIwNTJLrEkAabn+e1
+         qtzw8z5B1AnSMLUHe0nxhHS1QhpNzoEb9r9FO9i8cm5Q+wpeg4TOzR/xBTJ+Zr9CXT/O
+         l0O3AGrkvoDXRvZzFsQ5FUbw0fHx9DF+dc+Y+y0bjmOU33lov3PlGGR/vb2u0pfYOZAC
+         b1wVdq7Emcm6U58rOXi0ErcE1uxgCjk9OZGXyCpFqj9K1fcAbW1H1wN8hYIIWf7VL0ne
+         ETEzvhO7mQjk1AkakQzKMAefpTqaPYo52d4eHJhk1SR6DkUWO1AT7s3BwPZYEJPefT7J
+         Pw/w==
+X-Gm-Message-State: APjAAAUNhNiNy5s/AaQyAVN+0zH+lFx0Dm4y3FXgfSN2wk93h0I62sTZ
+        nXY+I87mfZ5pgL4fRnkdL4ECSuXExZi6M/oFjkI2iVd/VsuTpA==
+X-Google-Smtp-Source: APXvYqynjWB/oBeZMHrfturw7mL0Zf21lL/SAxjbH3lRcQ8Yz4QmNaD4RIs+kHVPRYJG2oCYUsOTN3ZBpHtOG3ewC6w=
+X-Received: by 2002:a1c:f401:: with SMTP id z1mr20067676wma.66.1571687852489;
+ Mon, 21 Oct 2019 12:57:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1568834524.git.rgb@redhat.com> <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
- <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
-In-Reply-To: <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 21 Oct 2019 15:53:20 -0400
-Message-ID: <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
- outside init_user_ns
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
+From:   Chris Murphy <lists@colorremedies.com>
+Date:   Mon, 21 Oct 2019 21:57:13 +0200
+Message-ID: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
+Subject: Is rename(2) atomic on FAT?
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-09-18 21:22, Richard Guy Briggs wrote:
-> > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
-> > process in a non-init user namespace the capability to set audit
-> > container identifiers.
-> >
-> > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
-> > AUDIT_SET_CAPCONTID 1028.  The message format includes the data
-> > structure:
-> > struct audit_capcontid_status {
-> >         pid_t   pid;
-> >         u32     enable;
-> > };
->
-> Paul, can I get a review of the general idea here to see if you're ok
-> with this way of effectively extending CAP_AUDIT_CONTROL for the sake of
-> setting contid from beyond the init user namespace where capable() can't
-> reach and ns_capable() is meaningless for these purposes?
+http://man7.org/linux/man-pages/man2/rename.2.html
 
-I think my previous comment about having both the procfs and netlink
-interfaces apply here.  I don't see why we need two different APIs at
-the start; explain to me why procfs isn't sufficient.  If the argument
-is simply the desire to avoid mounting procfs in the container, how
-many container orchestrators can function today without a valid /proc?
+Use case is atomically updating bootloader configuration on EFI System
+partitions. Some bootloader implementations have configuration files
+bigger than 512 bytes, which could possibly be torn on write. But I'm
+also not sure what write order FAT uses.
+
+1.
+FAT32 file system is mounted at /boot/efi
+
+2.
+# echo "hello" > /boot/efi/tmp/test.txt
+# mv /boot/efi/tmp/test.txt /boot/efi/EFI/fedora/
+
+3.
+When I strace the above mv command I get these lines:
+ioctl(0, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
+"/boot/efi/EFI/fedora/", RENAME_NOREPLACE) = -1 EEXIST (File exists)
+stat("/boot/efi/EFI/fedora/", {st_mode=S_IFDIR|0700, st_size=1024, ...}) = 0
+renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
+"/boot/efi/EFI/fedora/test.txt", RENAME_NOREPLACE) = 0
+lseek(0, 0, SEEK_CUR)                   = -1 ESPIPE (Illegal seek)
+close(0)
+
+I can't tell from documentation if renameat2() with flag
+RENAME_NOREPLACE is atomic, assuming the file doesn't exist at
+destination.
+
+4.
+Do it again exactly as before, small change
+# echo "hello" > /boot/efi/tmp/test.txt
+# mv /boot/efi/tmp/test.txt /boot/efi/EFI/fedora/
+
+5.
+The strace shows fallback to rename()
+
+ioctl(0, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
+"/boot/efi/EFI/fedora/", RENAME_NOREPLACE) = -1 EEXIST (File exists)
+stat("/boot/efi/EFI/fedora/", {st_mode=S_IFDIR|0700, st_size=1024, ...}) = 0
+renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
+"/boot/efi/EFI/fedora/test.txt", RENAME_NOREPLACE) = -1 EEXIST (File
+exists)
+lstat("/boot/efi/tmp/test.txt", {st_mode=S_IFREG|0700, st_size=7, ...}) = 0
+newfstatat(AT_FDCWD, "/boot/efi/EFI/fedora/test.txt",
+{st_mode=S_IFREG|0700, st_size=6, ...}, AT_SYMLINK_NOFOLLOW) = 0
+geteuid()                               = 0
+rename("/boot/efi/tmp/test.txt", "/boot/efi/EFI/fedora/test.txt") = 0
+lseek(0, 0, SEEK_CUR)                   = -1 ESPIPE (Illegal seek)
+close(0)                                = 0
+
+
+Per documentation that should be atomic. So the questions are, are
+both atomic, or neither atomice, and if not what should be used to
+ensure bootloader updates are atomic.
+
+There are plausibly three kinds:
+
+A. write a new file with file name that doesn't previously exist
+B. write a new file with a new file name, then do a rename stomping on
+the old one
+C. overwrite an existing file
+
+It seems C is risky. It probably isn't atomic and can't be made to be
+atomic on FAT.
+
 
 -- 
-paul moore
-www.paul-moore.com
+Chris Murphy
