@@ -2,73 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EB37DEE38
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 15:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1623FDEE47
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 15:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbfJUNpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 09:45:50 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57947 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728843AbfJUNpt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:45:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571665549;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=x4hyIpZYEVzfZMT5B+HxbYNt+qj8dKUgUsq44t28EZc=;
-        b=AvurzjOcuwS6Uxdqj01mhIh3YEFSRm57ULX2qTsf+70ypmIiMBrU3vgqogEy0m5Y0bEZKk
-        IuMEDldNXqlVlsp2i1C7iNXB7eJlU2rUhMQ5rtxLLYqrF90bIs3cNMls6a1CnO9B1KgZc4
-        llW/QzkjLT47d6IaZ4wpFcj12WtFuNU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-39-bsB9U3iJMryrNLCs9bwM-A-1; Mon, 21 Oct 2019 09:45:43 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D239380183E;
-        Mon, 21 Oct 2019 13:45:41 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9528D60606;
-        Mon, 21 Oct 2019 13:45:40 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <nycvar.YSQ.7.76.1910191518180.1546@knanqh.ubzr>
-References: <nycvar.YSQ.7.76.1910191518180.1546@knanqh.ubzr>
-To:     Nicolas Pitre <nico@fluxnic.net>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Maxime Bizon <mbizon@freebox.fr>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] cramfs: fix usage on non-MTD device
+        id S1728974AbfJUNsT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 09:48:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60466 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728083AbfJUNsT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:48:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D7FDDB469;
+        Mon, 21 Oct 2019 13:48:17 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 6CC681E4AA2; Mon, 21 Oct 2019 15:48:17 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 15:48:17 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
+Subject: Re: [PATCH v5 08/12] ext4: update direct I/O read to do trylock in
+ IOCB_NOWAIT cases
+Message-ID: <20191021134817.GG25184@quack2.suse.cz>
+References: <cover.1571647178.git.mbobrowski@mbobrowski.org>
+ <5ee370a435eb08fb14579c7c197b16e9fa0886f0.1571647179.git.mbobrowski@mbobrowski.org>
 MIME-Version: 1.0
-Content-ID: <18922.1571665539.1@warthog.procyon.org.uk>
-Date:   Mon, 21 Oct 2019 14:45:39 +0100
-Message-ID: <18923.1571665539@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: bsB9U3iJMryrNLCs9bwM-A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ee370a435eb08fb14579c7c197b16e9fa0886f0.1571647179.git.mbobrowski@mbobrowski.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Nicolas Pitre <nico@fluxnic.net> wrote:
+On Mon 21-10-19 20:18:46, Matthew Bobrowski wrote:
+> This patch updates the lock pattern in ext4_dio_read_iter() to only
+> perform the trylock in IOCB_NOWAIT cases.
 
-> From: Maxime Bizon <mbizon@freebox.fr>
->=20
-> When both CONFIG_CRAMFS_MTD and CONFIG_CRAMFS_BLOCKDEV are enabled, if
-> we fail to mount on MTD, we don't try on block device.
->=20
-> Fixes: 74f78fc5ef43 ("vfs: Convert cramfs to use the new mount API")
->=20
-> Signed-off-by: Maxime Bizon <mbizon@freebox.fr>
-> Signed-off-by: Nicolas Pitre <nico@fluxnic.net>
+The changelog is actually misleading. It should say something like "This
+patch updates the lock pattern in ext4_dio_read_iter() to not block on
+inode lock in case of IOCB_NOWAIT direct IO reads."
 
-Acked-by: David Howells <dhowells@redhat.com>
+Also to ease backporting of easy fixes, we try to put patches like this
+early in the series (fixing code in ext4_direct_IO_read(), and then the
+fixed code would just carry over to ext4_dio_read_iter()).
 
+The change itself looks good to me.
+
+								Honza
+
+> 
+> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> ---
+>  fs/ext4/file.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 6ea7e00e0204..8420686b90f5 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -52,7 +52,13 @@ static int ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  	ssize_t ret;
+>  	struct inode *inode = file_inode(iocb->ki_filp);
+>  
+> -	inode_lock_shared(inode);
+> +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> +		if (!inode_trylock_shared(inode))
+> +			return -EAGAIN;
+> +	} else {
+> +		inode_lock_shared(inode);
+> +	}
+> +
+>  	if (!ext4_dio_supported(inode)) {
+>  		inode_unlock_shared(inode);
+>  		/*
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
