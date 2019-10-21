@@ -2,145 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A729EDF794
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 23:44:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C2DBDF816
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 00:38:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730355AbfJUVok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 17:44:40 -0400
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:36343 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730304AbfJUVok (ORCPT
+        id S1730387AbfJUWi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 18:38:27 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:59088 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729620AbfJUWi1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 17:44:40 -0400
-Received: by mail-wm1-f47.google.com with SMTP id c22so5093492wmd.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2019 14:44:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o0Hy5iF+XJDCKnLCYMKOboWp7enx4N3UG6jRMPwizt0=;
-        b=JCqt+7Bx3zYSO7fJ9utCZP2SqyDDacZu5iOvq3vbAJn5kvz7KoAAkYArpCzLdQkUf8
-         gHEDSI8dF1O55BWSaTuMGnBGGCwiwS18+l2ErEBnuUh4AbjU092Hjp+JPTlIf92avlsZ
-         PtF196/WBLWB80HmBowBr0WsGG6JICXBB3TVlbtZuCPdEbe+Xxf9ebeC/pMJaLVWgHFL
-         UubZ8InIOgKKSlaLFogAvMXVWXfoCiruhjg+6vsZWkXrmLGcv0DvPLyILn+Xq9MwRE8O
-         VFcT2iUwvbD1CxlcnIQeAnoZmv3W4qdab7zs5nj075EOJcvwnpYkmHJcy9OrIL+0SwhV
-         VUfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o0Hy5iF+XJDCKnLCYMKOboWp7enx4N3UG6jRMPwizt0=;
-        b=VEptgHe1V6N5XnSomL5MbhdwNR3f0OdBGNpZGkWmM8do+2Vf6G1xD4ADpL7CyQu4Iu
-         pAdXFH/FQJYG7x2zLQ/diDyDtEBmD+8d+lYNKRWesVZWvaP+To8lv5R95J4TY06oN9xf
-         yFYD/E8aRBb6zjhFVi7+XldynY1aCH0N+kD+CqfA91iBuThmSSN7Uj2BurdOK9CmTCkl
-         gY+kECal+9SKO2h1AMagTleWmhzHUQN1IHc6i3rEq3DoL9JlwVAIJftP27cy2NNq+PD6
-         Ad9XPvx27t50/xP7bAIhjxEi4X+BaFfKTIiAaUKuLGcoZBNzC529eLZWjSb4VFvQrmqV
-         bk/A==
-X-Gm-Message-State: APjAAAWjY1RJ+lHlk5BM73OThp1T7qiDbeWvrupL56o/Omwy3Zeaw5ol
-        /gZBrt0SYub5Hv7PaCyl1JYrX2Hz0DnEiWxGX1Q=
-X-Google-Smtp-Source: APXvYqy37yE5x3qf2YC5S0VRJaXSA/fEYdenkerYUneeOWtkSSUrxV4NBFQ9wKwNAQ4FnHxg9GJ4Flj9pCenfGQ+i8w=
-X-Received: by 2002:a05:600c:1009:: with SMTP id c9mr55223wmc.109.1571694277950;
- Mon, 21 Oct 2019 14:44:37 -0700 (PDT)
+        Mon, 21 Oct 2019 18:38:27 -0400
+Received: from dread.disaster.area (pa49-180-40-48.pa.nsw.optusnet.com.au [49.180.40.48])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id EF732362540;
+        Tue, 22 Oct 2019 09:38:20 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iMgJf-00073z-CX; Tue, 22 Oct 2019 09:38:19 +1100
+Date:   Tue, 22 Oct 2019 09:38:19 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@infradead.org,
+        darrick.wong@oracle.com
+Subject: Re: [PATCH v5 00/12] ext4: port direct I/O to iomap infrastructure
+Message-ID: <20191021223819.GB2642@dread.disaster.area>
+References: <cover.1571647178.git.mbobrowski@mbobrowski.org>
+ <20191021133111.GA4675@mit.edu>
+ <20191021194330.GJ25184@quack2.suse.cz>
 MIME-Version: 1.0
-References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
-In-Reply-To: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Mon, 21 Oct 2019 23:44:25 +0200
-Message-ID: <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
-Subject: Re: Is rename(2) atomic on FAT?
-To:     Chris Murphy <lists@colorremedies.com>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021194330.GJ25184@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
+        a=y881pOMu+B+mZdf5UrsJdA==:117 a=y881pOMu+B+mZdf5UrsJdA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=7-415B0cAAAA:8 a=yd6ouk31S0WiYp9GCygA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Chris,
+On Mon, Oct 21, 2019 at 09:43:30PM +0200, Jan Kara wrote:
+> On Mon 21-10-19 09:31:12, Theodore Y. Ts'o wrote:
+> > Hi Matthew, thanks for your work on this patch series!
+> > 
+> > I applied it against 4c3, and ran a quick test run on it, and found
+> > the following locking problem.  To reproduce:
+> > 
+> > kvm-xfstests -c nojournal generic/113
+> > 
+> > generic/113		[09:27:19][    5.841937] run fstests generic/113 at 2019-10-21 09:27:19
+> > [    7.959477] 
+> > [    7.959798] ============================================
+> > [    7.960518] WARNING: possible recursive locking detected
+> > [    7.961225] 5.4.0-rc3-xfstests-00012-g7fe6ea084e48 #1238 Not tainted
+> > [    7.961991] --------------------------------------------
+> > [    7.962569] aio-stress/1516 is trying to acquire lock:
+> > [    7.963129] ffff9fd4791148c8 (&sb->s_type->i_mutex_key#12){++++}, at: __generic_file_fsync+0x3e/0xb0
+> > [    7.964109] 
+> > [    7.964109] but task is already holding lock:
+> > [    7.964740] ffff9fd4791148c8 (&sb->s_type->i_mutex_key#12){++++}, at: ext4_dio_write_iter+0x15b/0x430
+> 
+> This is going to be a tricky one. With iomap, the inode locking is handled
+> by the filesystem while calling generic_write_sync() is done by
+> iomap_dio_rw(). I would really prefer to avoid tweaking iomap_dio_rw() not
+> to call generic_write_sync().
 
-[CC'ing fsdevel and Pali]
+You can't remove it from there, because that will break O_DSYNC
+AIO+DIO. i.e. generic_write_sync() needs to be called before
+iocb->ki_complete() is called in the AIO completion path, and that
+means filesystems using iomap_dio_rw need to be be able to run
+generic_write_sync() without taking the inode_lock().
 
-On Mon, Oct 21, 2019 at 9:59 PM Chris Murphy <lists@colorremedies.com> wrote:
->
-> http://man7.org/linux/man-pages/man2/rename.2.html
->
-> Use case is atomically updating bootloader configuration on EFI System
-> partitions. Some bootloader implementations have configuration files
-> bigger than 512 bytes, which could possibly be torn on write. But I'm
-> also not sure what write order FAT uses.
->
-> 1.
-> FAT32 file system is mounted at /boot/efi
->
-> 2.
-> # echo "hello" > /boot/efi/tmp/test.txt
-> # mv /boot/efi/tmp/test.txt /boot/efi/EFI/fedora/
->
-> 3.
-> When I strace the above mv command I get these lines:
-> ioctl(0, TCGETS, {B38400 opost isig icanon echo ...}) = 0
-> renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
-> "/boot/efi/EFI/fedora/", RENAME_NOREPLACE) = -1 EEXIST (File exists)
-> stat("/boot/efi/EFI/fedora/", {st_mode=S_IFDIR|0700, st_size=1024, ...}) = 0
-> renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
-> "/boot/efi/EFI/fedora/test.txt", RENAME_NOREPLACE) = 0
-> lseek(0, 0, SEEK_CUR)                   = -1 ESPIPE (Illegal seek)
-> close(0)
->
-> I can't tell from documentation if renameat2() with flag
-> RENAME_NOREPLACE is atomic, assuming the file doesn't exist at
-> destination.
->
-> 4.
-> Do it again exactly as before, small change
-> # echo "hello" > /boot/efi/tmp/test.txt
-> # mv /boot/efi/tmp/test.txt /boot/efi/EFI/fedora/
->
-> 5.
-> The strace shows fallback to rename()
->
-> ioctl(0, TCGETS, {B38400 opost isig icanon echo ...}) = 0
-> renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
-> "/boot/efi/EFI/fedora/", RENAME_NOREPLACE) = -1 EEXIST (File exists)
-> stat("/boot/efi/EFI/fedora/", {st_mode=S_IFDIR|0700, st_size=1024, ...}) = 0
-> renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
-> "/boot/efi/EFI/fedora/test.txt", RENAME_NOREPLACE) = -1 EEXIST (File
-> exists)
-> lstat("/boot/efi/tmp/test.txt", {st_mode=S_IFREG|0700, st_size=7, ...}) = 0
-> newfstatat(AT_FDCWD, "/boot/efi/EFI/fedora/test.txt",
-> {st_mode=S_IFREG|0700, st_size=6, ...}, AT_SYMLINK_NOFOLLOW) = 0
-> geteuid()                               = 0
-> rename("/boot/efi/tmp/test.txt", "/boot/efi/EFI/fedora/test.txt") = 0
-> lseek(0, 0, SEEK_CUR)                   = -1 ESPIPE (Illegal seek)
-> close(0)                                = 0
->
->
-> Per documentation that should be atomic. So the questions are, are
-> both atomic, or neither atomice, and if not what should be used to
-> ensure bootloader updates are atomic.
+> So we need to remove inode_lock from
+> __generic_file_fsync() (used from ext4_sync_file()). This locking is mostly
+> for legacy purposes and we don't need this in ext4 AFAICT - but removing
+> the lock from __generic_file_fsync() would mean auditing all legacy
+> filesystems that use this to make sure flushing inode & its metadata buffer
+> list while it is possibly changing cannot result in something unexpected. I
+> don't want to clutter this series with it so we are left with
+> reimplementing __generic_file_fsync() inside ext4 without inode_lock. Not
+> too bad but not great either. Thoughts?
 
-According of my understanding of FAT rename() is not atomic at all.
-It can downgrade to a hardlink. i.e. rename("foo", "bar") can result in having
-both "foo" and "bar."
-...or worse.
+XFS has implemented it's own ->fsync operation pretty much forever
+without issues. It's basically:
 
-Pali has probably more input to share. :-)
+	1. flush dirty cached data w/ WB_SYNC_ALL
+	2. flush dirty cached metadata (i.e. journal force)
+	3. flush device caches if journal force didn't, keeping in
+	mind the requirements of data and journal being placed on
+	different devices.
 
-> There are plausibly three kinds:
->
-> A. write a new file with file name that doesn't previously exist
-> B. write a new file with a new file name, then do a rename stomping on
-> the old one
-> C. overwrite an existing file
->
-> It seems C is risky. It probably isn't atomic and can't be made to be
-> atomic on FAT.
->
->
-> --
-> Chris Murphy
+The ext4 variant shouldn't need to be any more complex than that...
 
+Cheers,
+
+Dave.
 -- 
-Thanks,
-//richard
+Dave Chinner
+david@fromorbit.com
