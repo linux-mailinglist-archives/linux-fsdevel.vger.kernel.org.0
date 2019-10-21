@@ -2,162 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEF37DE7F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 11:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9BCADE805
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 11:24:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbfJUJUp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 05:20:45 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33399 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726981AbfJUJUo (ORCPT
+        id S1726915AbfJUJYl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 05:24:41 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44970 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfJUJYk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 05:20:44 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d22so6336883pls.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2019 02:20:44 -0700 (PDT)
+        Mon, 21 Oct 2019 05:24:40 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 21so10344385otj.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2019 02:24:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=14Kemxr7lge9hljjqfibah/1nIDd0rrIrEFWCQLuEzY=;
-        b=1cviomBFXuaJ3UL4IfzswfJQCNXYohWbh+Bra0LiHQ8+rtey2VTsoBXr3aMYl0voUz
-         3YeJ1p1+f7m3Mvc5v29JKHhV+5h/otmPs5Q97H1+gtiz4lDQ0yU7JhoaWFeZxnrxoqyW
-         2g+sJ7cI4iklRw8oW2j/qgjAM+duC7UL0TVPCJxvIrQOaw6P2gLzbln4+/7UUlqppM+c
-         MaDk1XGOl3EbfQCUUmCtAt/SEi91kAHPLqcj5EcdSja5yxTqj9bYC1EhmqKYSb4Nru5e
-         OD7bu8xgRBERCMYOqbqEZmdtZWNfXGwRhW0YVAkiNTiGukuHFMe4gdyqs9tVa5eZogh+
-         M14w==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DELCu3OlSAGY6ULseg5/HJriVPHZSLSqlAmQPI5GeFw=;
+        b=Hxap7ljDfVD81M07heYfSLFD2HS9D/dLrnN25mV7jWYSebOfff61JKzGDM8Kdi6RSZ
+         NCWz8mpSzbUXPhRWgG5iphJ5VxhrqD53tLFlf1ZV/fJIMSv/wSuUEjDhZSMeytpGyJ/s
+         LcHGzAfhtsjzFexpxiqtJrbBIKU6B0exOK8QlLKiHB9DM86NGOOZghhCKwhIw+Hs4QGa
+         THkRqd/j+3QcGEmRTpvaUzZf8Vy7fk0/Kg+7G0dhhYUCR9tKordqCFG/22fEdf3lKn4x
+         Km5EonpBbBn0BdpHq9BFLtkOzPgnSwSJtRDLgHBxcshRXtrVfacb3PJqLsIT0N/aE4RU
+         sIwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=14Kemxr7lge9hljjqfibah/1nIDd0rrIrEFWCQLuEzY=;
-        b=evqS1R+bqaO2MJs4tHNmc/y+yDsWqQAhBToRpiISNFD2hA4MZvydpFRfBcKBuQD1G7
-         qcKrXhcPolG8dR2ASlhORYamDgp2NlgTADufcKnKJyhzUul6G+lYQVio+Wtd5+U1U8w1
-         cNUFEvp+m3P+DkmsESzQ2L9UVg28m/9Z1m/kz5zs1CiRVrl5nuI8muokAGfUxfSai3LX
-         m0Cr+82VPEbOQoHAOZ035bBJ05/MHHx6KrKsH8MZuUiPNTG3MuORCAFUZV2HiFmSOvsv
-         ZNRCWPlntEcRna6BH0eDDn50pUvP/2rlz3R/fEXSxzG5R1KRDtv2rq2Mxy6J30QKmBAK
-         a0TQ==
-X-Gm-Message-State: APjAAAUwAu7pHi7jMiKTRB4OY67q+grEDmNN3OxVDLEKEui9rD1SkdtY
-        CBKMrJSSYN56JrxJfSeTsecE
-X-Google-Smtp-Source: APXvYqyiZGODRLojxmjKwg9R0oc8UImPGSw1nQRe0oVh/ab4fFsCAiYaDEUiI908KbYRPN5FWTzz6Q==
-X-Received: by 2002:a17:902:9881:: with SMTP id s1mr24240292plp.18.1571649644096;
-        Mon, 21 Oct 2019 02:20:44 -0700 (PDT)
-Received: from athena.bobrowski.net (n1-41-199-60.bla2.nsw.optusnet.com.au. [1.41.199.60])
-        by smtp.gmail.com with ESMTPSA id q3sm15422277pgj.54.2019.10.21.02.20.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 02:20:43 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 20:20:37 +1100
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
-Subject: [PATCH v5 10/12] ext4: move inode extension check out from
- ext4_iomap_alloc()
-Message-ID: <a2bf8283b42f49e3549f92b9170d56d3a740c521.1571647180.git.mbobrowski@mbobrowski.org>
-References: <cover.1571647178.git.mbobrowski@mbobrowski.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DELCu3OlSAGY6ULseg5/HJriVPHZSLSqlAmQPI5GeFw=;
+        b=V5U021X74JrcZyLajjzwIv/yuXlHC6VsrKgf5aEVxxrpFX/TOCrX0wgMVAX90n9pBX
+         nx1lmHOW7zPDgJG6OtwefQ+BwYh16iiBx2jhqtgzqV7rN3seT7CGjiJorZaPBHWgkwM3
+         5k+pkC2rGz4XnGCSrqDD1/PqPhQCZ1GLS4Q4yzTW7JLZsPnVBIHg5nSRhT4wb5N+tCQR
+         P9OqHbJA2feZoD269L0Mo6VMoJAkDwHMFlduprEtYiDtB9IZcwOlA4r/oHW0sMWfG7SX
+         hW/UFPMH3QLTy96Bb6pR3HAXFk4nWGRs4KfPVRjNqQ9mTXZMLvFZII+r+EtPOqQFZ8w7
+         jbbA==
+X-Gm-Message-State: APjAAAUjxTmS2hNHBZDcG9Cy/seftuObftoY5G6B+Ts7ZadUzoWhkhDu
+        3MCGx8iYJY/6z4Q9LmnFUJd6+Qq7F19IvDBHXFXPSw==
+X-Google-Smtp-Source: APXvYqyNe6uu8LVMvmDZSgGvrWnt+hJcoNmoQaGw4YBSrU/2RhEEdK8PfPuRGqpe6mRLNzkgLhwlByZ7gQD0m5eBKGo=
+X-Received: by 2002:a9d:7590:: with SMTP id s16mr17338841otk.2.1571649878890;
+ Mon, 21 Oct 2019 02:24:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1571647178.git.mbobrowski@mbobrowski.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191020173010.GA14744@avx2>
+In-Reply-To: <20191020173010.GA14744@avx2>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 21 Oct 2019 11:24:27 +0200
+Message-ID: <CANpmjNPzkYQjQ1mtJ6-h+6-=igD=GSnN9Sr6B6jpXrH9UJEUxg@mail.gmail.com>
+Subject: Re: [PATCH] proc: fix inode uid/gid writeback race
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Lift the inode extension/orphan list handling code out from
-ext4_iomap_alloc() and apply it within the ext4_dax_write_iter()
-function.
+On Sun, 20 Oct 2019 at 19:30, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+>
+> (euid, egid) pair is snapshotted correctly from task under RCU,
+> but writeback to inode can be done in any order.
+>
+> Fix by doing writeback under inode->i_lock where necessary
+> (/proc/* , /proc/*/fd/* , /proc/*/map_files/* revalidate).
+>
+> Reported-by: syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> ---
 
-Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
- fs/ext4/file.c  | 21 ++++++++++++++++++++-
- fs/ext4/inode.c | 22 ----------------------
- 2 files changed, 20 insertions(+), 23 deletions(-)
+Thanks!
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 6ddf00265988..65e758ae02d0 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -304,6 +304,8 @@ ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t ret;
- 	size_t count;
- 	loff_t offset;
-+	handle_t *handle;
-+	bool extend = false;
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 
- 	if (!inode_trylock(inode)) {
-@@ -323,8 +325,25 @@ ext4_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 
- 	offset = iocb->ki_pos;
- 	count = iov_iter_count(from);
-+	if (offset + count > EXT4_I(inode)->i_disksize) {
-+		handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
-+		if (IS_ERR(handle)) {
-+			ret = PTR_ERR(handle);
-+			goto out;
-+		}
-+
-+		ret = ext4_orphan_add(handle, inode);
-+		if (ret) {
-+			ext4_journal_stop(handle);
-+			goto out;
-+		}
-+		extend = true;
-+		ext4_journal_stop(handle);
-+	}
-+
- 	ret = dax_iomap_rw(iocb, from, &ext4_iomap_ops);
--	ret = ext4_handle_inode_extension(inode, ret, offset, count);
-+	if (extend)
-+		ret = ext4_handle_inode_extension(inode, ret, offset, count);
- out:
- 	inode_unlock(inode);
- 	if (ret > 0)
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index f79d15e8d3c6..a37112efe3fb 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3443,7 +3443,6 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
- 			    unsigned int flags)
- {
- 	handle_t *handle;
--	u8 blkbits = inode->i_blkbits;
- 	int ret, dio_credits, retries = 0;
- 
- 	/*
-@@ -3466,28 +3465,7 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
- 		return PTR_ERR(handle);
- 
- 	ret = ext4_map_blocks(handle, inode, map, EXT4_GET_BLOCKS_CREATE_ZERO);
--	if (ret < 0)
--		goto journal_stop;
--
--	/*
--	 * If we have allocated blocks beyond EOF, we need to ensure that
--	 * they're truncated if we crash before updating the inode size
--	 * metadata within ext4_iomap_end(). For faults, we don't need to do
--	 * that (and cannot due to the orphan list operations needing an
--	 * inode_lock()). If we happen to instantiate blocks beyond EOF, it is
--	 * because we race with a truncate operation, which already has added
--	 * the inode onto the orphan list.
--	 */
--	if (!(flags & IOMAP_FAULT) && map->m_lblk + map->m_len >
--	    (i_size_read(inode) + (1 << blkbits) - 1) >> blkbits) {
--		int err;
--
--		err = ext4_orphan_add(handle, inode);
--		if (err < 0)
--			ret = err;
--	}
- 
--journal_stop:
- 	ext4_journal_stop(handle);
- 	if (ret == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
- 		goto retry;
--- 
-2.20.1
+This certainly fixes the problem of inconsistent uid/gid pair due to
+racing writebacks, as well as the data-race. If that is the only
+purpose of this patch, then from what I see this is fine:
 
---<M>--
+Acked-by: Marco Elver <elver@google.com>
+
+However, there is probably still a more fundamental problem as outlined below.
+
+>  fs/proc/base.c     |   25 +++++++++++++++++++++++--
+>  fs/proc/fd.c       |    2 +-
+>  fs/proc/internal.h |    2 ++
+>  3 files changed, 26 insertions(+), 3 deletions(-)
+>
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -1743,6 +1743,25 @@ void task_dump_owner(struct task_struct *task, umode_t mode,
+>         *rgid = gid;
+>  }
+>
+> +/* use if inode is live */
+> +void task_dump_owner_to_inode(struct task_struct *task, umode_t mode,
+> +                             struct inode *inode)
+> +{
+> +       kuid_t uid;
+> +       kgid_t gid;
+> +
+> +       task_dump_owner(task, mode, &uid, &gid);
+> +       /*
+> +        * There is no atomic "change all credentials at once" system call,
+> +        * guaranteeing more than _some_ snapshot from "struct cred" ends up
+> +        * in inode is not possible.
+> +        */
+> +       spin_lock(&inode->i_lock);
+> +       inode->i_uid = uid;
+> +       inode->i_gid = gid;
+> +       spin_unlock(&inode->i_lock);
+
+2 tasks can still race here, and the inconsistent scenario I outlined in
+https://lore.kernel.org/linux-fsdevel/000000000000328b2905951a7667@google.com/
+could still happen I think (although extremely unlikely). Mainly,
+causality may still be violated -- but I may be wrong as I don't know
+the rest of the code (so please be critical of my suggestion).
+
+The problem is that if 2 threads race here, one has snapshotted old
+uid/gid, and the other the new uid/gid. Then it is still possible for
+the old uid/gid to be written back after new uid/gid, which would
+result in this bad scenario:
+
+=== TASK 1 ===
+| seteuid(1000);
+| seteuid(0);
+| stat("/proc/<pid-of-task-1>", &fstat);
+| assert(fstat.st_uid == 0);  // fails
+=== TASK 2 ===
+| stat("/proc/<pid-of-task-1>", ...);
+
+AFAIK it's not something that can easily be fixed without some
+timestamp on the uid/gid pair (timestamp updated after setuid/seteuid
+etc) obtained in the RCU reader critical section. Then in this
+critical section, uid/gid should only be written if the current pair
+in inode is older according to snapshot timestamp.
+
+> +}
+> +
+>  struct inode *proc_pid_make_inode(struct super_block * sb,
+>                                   struct task_struct *task, umode_t mode)
+>  {
+> @@ -1769,6 +1788,7 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
+>         if (!ei->pid)
+>                 goto out_unlock;
+>
+> +       /* fresh inode -- no races */
+>         task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
+>         security_task_to_inode(task, inode);
+>
+> @@ -1802,6 +1822,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+>                          */
+>                         return -ENOENT;
+>                 }
+> +               /* "struct kstat" is thread local, atomic snapshot is enough */
+>                 task_dump_owner(task, inode->i_mode, &stat->uid, &stat->gid);
+>         }
+>         rcu_read_unlock();
+> @@ -1815,7 +1836,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+>   */
+>  void pid_update_inode(struct task_struct *task, struct inode *inode)
+>  {
+> -       task_dump_owner(task, inode->i_mode, &inode->i_uid, &inode->i_gid);
+> +       task_dump_owner_to_inode(task, inode->i_mode, inode);
+>
+>         inode->i_mode &= ~(S_ISUID | S_ISGID);
+>         security_task_to_inode(task, inode);
+> @@ -1990,7 +2011,7 @@ static int map_files_d_revalidate(struct dentry *dentry, unsigned int flags)
+>         mmput(mm);
+>
+>         if (exact_vma_exists) {
+> -               task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
+> +               task_dump_owner_to_inode(task, 0, inode);
+>
+>                 security_task_to_inode(task, inode);
+>                 status = 1;
+> --- a/fs/proc/fd.c
+> +++ b/fs/proc/fd.c
+> @@ -101,7 +101,7 @@ static bool tid_fd_mode(struct task_struct *task, unsigned fd, fmode_t *mode)
+>  static void tid_fd_update_inode(struct task_struct *task, struct inode *inode,
+>                                 fmode_t f_mode)
+>  {
+> -       task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
+> +       task_dump_owner_to_inode(task, 0, inode);
+>
+>         if (S_ISLNK(inode->i_mode)) {
+>                 unsigned i_mode = S_IFLNK;
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -123,6 +123,8 @@ static inline struct task_struct *get_proc_task(const struct inode *inode)
+>
+>  void task_dump_owner(struct task_struct *task, umode_t mode,
+>                      kuid_t *ruid, kgid_t *rgid);
+> +void task_dump_owner_to_inode(struct task_struct *task, umode_t mode,
+> +                             struct inode *inode);
+>
+>  unsigned name_to_int(const struct qstr *qstr);
+>  /*
