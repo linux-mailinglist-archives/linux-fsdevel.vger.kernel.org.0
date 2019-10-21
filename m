@@ -2,80 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 373B3DEAFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 13:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D90DEB0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 13:37:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbfJULcN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 07:32:13 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43736 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbfJULcN (ORCPT
+        id S1728187AbfJULhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 07:37:22 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:41102 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727832AbfJULhW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 07:32:13 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c2so8302568wrr.10;
-        Mon, 21 Oct 2019 04:32:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=dmRonkI3afpK0imoXn1gq5xR7xj6dy0LkZHT5B+WJK4=;
-        b=WAB+IVuKri7jyIS+XrkdoQjF/G1NPV05XAIxTDCvTQWJKxQzUkQgo2hySIbm2mQM0W
-         JExD82SpklgFPYFn/C0cyfEwjnkn3bTM/i9fzxcMFiCT9nYtCUXvRowCdR1KMFuYQE5n
-         Ee6XfNvGgmykJ3mdNEQ68xHCLwARAQCEeFkvqGxzO4Y4wzFS9DDuMBt/wOcb6odAeky5
-         KVJKGsryqDF6E0edd0XHPOvRfdZgotLjgd5yf9xDAGrgrUBbNZNmcwd/LqLPNignYlrr
-         YU2aSXwoqmNZ1Qs1UCcHASroQAQAuQ57sTmuWGbxZEbAa8ePKRJplh5UdrXmI1wzAc65
-         9SZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=dmRonkI3afpK0imoXn1gq5xR7xj6dy0LkZHT5B+WJK4=;
-        b=YZZdJICk/kWCqq1LqEnAkGS67R1S3KCu5EUtqqOxaXj4Ln+uiQRRmMKd1gYuOZeTHg
-         NFzPlmkR7+0vCtR9NtVlzvz1os0tZKZ3yeihkxDO+ar2lpSZb3AkmvXy0yuqJPcQwYSa
-         ojDkq4pThkKzDkQ+TOCSIqbDWBR8VYYDzha8lndp16+cU2a3guPDKLGco5mWgRp3pWrt
-         Tz3q6a5JT+FShxLtd3mOGvWvqTgHoUZAT/fRcgdXYhatEMM0VaHNcArjUMSuJiGjToWH
-         gtp78PI1cviIvFTrCI2IWKHJPvd2/oZvololysqwl3gWXoDJ9OX/ZrhAlvxYgp3R1/zr
-         3r5w==
-X-Gm-Message-State: APjAAAWABCLC9FD4JDSUsxkPWNMsLl99F0C7/nnyHT7Dvg+0YxhGYLA4
-        4gcq45G+8q6ZA/D6Pp6y6U1gOK6Sgx6Kuls6Z+s13jg2El4=
-X-Google-Smtp-Source: APXvYqz+ZPbQLozAQPGPER0WaspvJJddEsUd8jsTQ7g1P2xNiYmNSqmTPpYmSVUbh64hlbHHCu7ymudOIHJcBIQ34/g=
-X-Received: by 2002:a5d:5544:: with SMTP id g4mr892556wrw.72.1571657531203;
- Mon, 21 Oct 2019 04:32:11 -0700 (PDT)
-MIME-Version: 1.0
+        Mon, 21 Oct 2019 07:37:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571657841;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Vofe0VQns1D/DiFjEtpjmLVshKuMJelezuNzu5bHnE0=;
+        b=WnTjY92ErqFIr/sqcaFnPpe4V9InbgdELKqLcR4Hq9xImm2c7UFOIiphi+iOMAr/f9hc66
+        MoG4ne63mGDjiukCW6B0OLGRlry32BTsIprogAvnfxzQE+mLCInpjEbWWhrkwNvhM57+Ew
+        TLglelxvtimqhGsovNHG7AbUP6rY08E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-371-9eKivh9JPFea858DYC3R4g-1; Mon, 21 Oct 2019 07:37:17 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B3F2107AD31;
+        Mon, 21 Oct 2019 11:37:16 +0000 (UTC)
+Received: from [10.40.204.224] (ovpn-204-224.brq.redhat.com [10.40.204.224])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AB7D5D6A5;
+        Mon, 21 Oct 2019 11:37:14 +0000 (UTC)
+Subject: Re: [PATCH] fs: exFAT read-only driver GPL implementation by Paragon
+ Software.
+To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 References: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
- <CAFLxGvyFBGiDab4wxWidjRyDgWkHVfigVsHiRDB4swpB3G+hvQ@mail.gmail.com>
- <20191021105409.32okvzbslxmcjdze@pali> <0877502e-8369-9cfd-36e8-5a4798260cd4@redhat.com>
- <20191021111357.q2lg2g43y7hrddqi@pali>
-In-Reply-To: <20191021111357.q2lg2g43y7hrddqi@pali>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Mon, 21 Oct 2019 13:31:59 +0200
-Message-ID: <CAFLxGvyWtWUm81-qyQ-F20bt1pL7_C6rRsCzO84QSLs=gxMDAg@mail.gmail.com>
-Subject: Re: [PATCH] fs: exFAT read-only driver GPL implementation by Paragon Software.
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     Maurizio Lombardi <mlombard@redhat.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ <20191021111136.adpxjxmmz4p2vud2@pali>
+Cc:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From:   Maurizio Lombardi <mlombard@redhat.com>
+Message-ID: <a4c42aa5-f9b7-4e74-2c11-220d45cb3669@redhat.com>
+Date:   Mon, 21 Oct 2019 13:37:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
+MIME-Version: 1.0
+In-Reply-To: <20191021111136.adpxjxmmz4p2vud2@pali>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: 9eKivh9JPFea858DYC3R4g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 1:13 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> wrot=
-e:
-> On Monday 21 October 2019 13:08:07 Maurizio Lombardi wrote:
-> > Dne 21.10.2019 v 12:54 Pali Roh=C3=A1r napsal(a):
-> Maurizio, thank you for reference! I have not caught this Samsung
-> activity yet! So we now we have +1 for count of exFAT drivers.
 
-This is how I counted three exfat drivers.
-1. staging/exfat (old samsung driver)
-2. sdfat (new samsung dirver)
-3. paragon read-only
 
---=20
-Thanks,
-//richard
+Dne 21.10.2019 v 13:11 Pali Roh=C3=A1r napsal(a):
+> Are you going to add support also for TexFAT? Or at least for more two
+> FAT tables (like is used in FAT32)?
+>=20
+
+Just a small note here, differences between FAT and exFAT:
+
+1) Contiguous files get a special treatment by exFAT: they do not use the F=
+AT cluster chain.
+2) exFAT doesn't use the FAT to track free space, it uses a bitmap.
+
+So, 2 FAT tables are probably not sufficient for recovery, 2 bitmaps are ne=
+eded too.[1]
+Btw, only Windows CE supported this.
+
+[1] http://www.ntfs.com/exfat-allocation-bitmap.htm
+
+Maurizio
+
