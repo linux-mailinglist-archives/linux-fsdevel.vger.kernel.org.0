@@ -2,42 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DFDDDF86E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 01:11:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55B4EDF85B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 01:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730472AbfJUXLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 19:11:53 -0400
-Received: from 2.152.178.181.dyn.user.ono.com ([2.152.178.181]:48106 "EHLO
-        pulsar.hadrons.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730276AbfJUXLw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 19:11:52 -0400
-X-Greylist: delayed 1396 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 19:11:51 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hadrons.org
-        ; s=201908; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:From:Reply-To:Subject:Content-Type:
-        Content-ID:Content-Description:X-Debbugs-Cc;
-        bh=lJrBNxtsP/l0O89nUuZsM0aAJUk9os7E7K7eIqjUekg=; b=noX2JWaK1jgwRBsWoeesfU0sRK
-        BdXbFoOQ4z2cZROc7KK8D7S3MI/HbelZYLDuuBpLfRgBwZcD4D/nW6sMVKtnDn5CE8Y+N3Zpwzmin
-        ZypX7kSQEJ5ZUVn7CKW/AmYMwAJkVoZIDw+5uXR9pqhEt8EsqNQaQtYT+YAOeGuJKQkgH0J1gBuDD
-        IuskntQLIbqRbACY+i1X+B557/sfuNhacy9rdWWxUyUTZj/sHIHf7RzmU3sSbgB4UXsCiHNnC4tbg
-        j+HZaHB2wabZzZLOeLzPWt8Bh8ONDg+E5aOYmBjTX4nkE9SersfnY0kXG38dcwRMgTvbXMEvwnjE9
-        aNcm38tA==;
-Received: from guillem by pulsar.hadrons.org with local (Exim 4.92)
-        (envelope-from <guillem@hadrons.org>)
-        id 1iMgWH-0004gr-3E; Tue, 22 Oct 2019 00:51:21 +0200
-From:   Guillem Jover <guillem@hadrons.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jan Kara <jack@suse.cz>, linux-aio@kvack.org,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] aio: Fix io_pgetevents() struct __compat_aio_sigset layout
-Date:   Tue, 22 Oct 2019 00:51:00 +0200
-Message-Id: <20191021225100.17990-1-guillem@hadrons.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191021201550.GW26530@ZenIV.linux.org.uk>
-References: <20191021201550.GW26530@ZenIV.linux.org.uk>
+        id S1730439AbfJUXHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 19:07:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730069AbfJUXHX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Oct 2019 19:07:23 -0400
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C812F2086D;
+        Mon, 21 Oct 2019 23:07:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571699242;
+        bh=Pe7Lis/ulx8/IwkmeLuv53LKYhthEU3xhU7qcvrWXZ8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KFqCookuLvhUWmmwBtVb2etKPO0Oto0GcX9cwodQRQNs2/xlaPbje2qinGny1YdhG
+         34Z6+AuL/AuHZ/lDvAKibQh0ft7asFQOQiIoMfRwwMVndg90X1oJg9z7TTsgGx/cQ9
+         3FPe8cmn2ZRnZyEzQrXJ9OGqx45lrhuB5zRNyYLI=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 0/3] fscrypt: support for inline-encryption-optimized policies
+Date:   Mon, 21 Oct 2019 16:03:52 -0700
+Message-Id: <20191021230355.23136-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -45,83 +42,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This type is used to pass the sigset_t from userland to the kernel,
-but it was using the kernel native pointer type for the member
-representing the compat userland pointer to the userland sigset_t.
+Hello,
 
-This messes up the layout, and makes the kernel eat up both the
-userland pointer and the size into the kernel pointer, and then
-reads garbage into the kernel sigsetsize. Which makes the sigset_t
-size consistency check fail, and consequently the syscall always
-returns -EINVAL.
+In preparation for adding inline encryption support to fscrypt, this
+patchset adds a new fscrypt policy flag which modifies the encryption to
+be optimized for inline encryption hardware compliant with the UFS
+standard --- specifically, to use a smaller number of keys while still
+using at most 64 IV bits.  This required adding the inode number to the
+IVs.  For ext4, this precludes filesystem shrinking, so I've also added
+a compat feature which will prevent the filesystem from being shrunk.
 
-This breaks both libaio and strace on 32-bit userland running on 64-bit
-kernels. And there are apparently no users in the wild of the current
-broken layout (at least according to codesearch.debian.org and a brief
-check over github.com search). So it looks safe to fix this directly
-in the kernel, instead of either letting userland deal with this
-permanently with the additional overhead or trying to make the syscall
-infer what layout userland used, even though this is also being worked
-around in libaio to temporarily cope with kernels that have not yet
-been fixed.
+I've separated this from the full "Inline Encryption Support" patchset
+(https://lkml.kernel.org/linux-fsdevel/20190821075714.65140-1-satyat@google.com/)
+to avoid conflating an implementation (inline encryption) with a new
+on-disk format (INLINE_CRYPT_OPTIMIZED).  This patchset purely adds
+support for INLINE_CRYPT_OPTIMIZED policies to fscrypt, but implements
+them using the existing filesystem layer crypto.
 
-We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
+We're planning to make the *implementation* (filesystem layer or inline
+crypto) be controlled by a mount option '-o inlinecrypt'.
 
-Fixes: 7a074e96dee6 ("aio: implement io_pgetevents")
-Signed-off-by: Guillem Jover <guillem@hadrons.org>
----
- fs/aio.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+This patchset applies to fscrypt.git#master and can also be retrieved from
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-crypt-optimized-v1
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 01e0fb9ae45a..0d9a559d488c 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -2179,7 +2179,7 @@ SYSCALL_DEFINE5(io_getevents_time32, __u32, ctx_id,
- #ifdef CONFIG_COMPAT
- 
- struct __compat_aio_sigset {
--	compat_sigset_t __user	*sigmask;
-+	compat_uptr_t		sigmask;
- 	compat_size_t		sigsetsize;
- };
- 
-@@ -2193,7 +2193,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
- 		struct old_timespec32 __user *, timeout,
- 		const struct __compat_aio_sigset __user *, usig)
- {
--	struct __compat_aio_sigset ksig = { NULL, };
-+	struct __compat_aio_sigset ksig = { 0, };
- 	struct timespec64 t;
- 	bool interrupted;
- 	int ret;
-@@ -2204,7 +2204,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
- 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
- 		return -EFAULT;
- 
--	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
-+	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
- 	if (ret)
- 		return ret;
- 
-@@ -2228,7 +2228,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
- 		struct __kernel_timespec __user *, timeout,
- 		const struct __compat_aio_sigset __user *, usig)
- {
--	struct __compat_aio_sigset ksig = { NULL, };
-+	struct __compat_aio_sigset ksig = { 0, };
- 	struct timespec64 t;
- 	bool interrupted;
- 	int ret;
-@@ -2239,7 +2239,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
- 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
- 		return -EFAULT;
- 
--	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
-+	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
- 	if (ret)
- 		return ret;
- 
+A ciphertext verification test for INLINE_CRYPT_OPTIMIZED policies can
+be found at
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git/log/?h=inline-encryption
+
+Work-in-progress patches for the inline encryption implementation of
+both INLINE_CRYPT_OPTIMIZED and regular policies can be found at
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-encryption-wip
+
+Eric Biggers (3):
+  fscrypt: add support for inline-encryption-optimized policies
+  ext4: add support for INLINE_CRYPT_OPTIMIZED encryption policies
+  f2fs: add support for INLINE_CRYPT_OPTIMIZED encryption policies
+
+ Documentation/filesystems/fscrypt.rst | 53 +++++++++++++++++++--------
+ fs/crypto/crypto.c                    | 11 +++++-
+ fs/crypto/fscrypt_private.h           | 20 +++++++---
+ fs/crypto/keyring.c                   |  6 ++-
+ fs/crypto/keysetup.c                  | 47 +++++++++++++++++++-----
+ fs/crypto/policy.c                    | 42 ++++++++++++++++++++-
+ fs/ext4/ext4.h                        |  2 +
+ fs/ext4/super.c                       | 14 +++++++
+ fs/f2fs/super.c                       | 26 ++++++++++---
+ include/linux/fscrypt.h               |  3 ++
+ include/uapi/linux/fscrypt.h          | 15 ++++----
+ 11 files changed, 191 insertions(+), 48 deletions(-)
+
 -- 
-2.24.0.rc0.303.g954a862665
+2.23.0.866.gb869b98d4c-goog
 
