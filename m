@@ -2,210 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C0E9DF43E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 19:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69EF4DF470
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 19:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbfJUR3o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 13:29:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59064 "EHLO mail.kernel.org"
+        id S1729321AbfJURk2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 13:40:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:38681 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfJUR3n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 13:29:43 -0400
-Received: from localhost.localdomain (unknown [194.230.155.217])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53FB72077C;
-        Mon, 21 Oct 2019 17:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571678982;
-        bh=wzG2zl1ghSK1OwbPID3sQYVBbITXZvGHKVGtVFvr5hg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jJieV8BynVlayAwwVwqWEA5iVljadUKeK2shzuAnqbqrRZT4JpQyFWVvlhV7NseRG
-         /bsylD3O1cLiXEGZKhO+Qd+WO9LNfTO4OhSHEHmoIGY2JQI7De6i6BNeKa8A1tMuFC
-         93t7u6rzcuVnbvV1UPbppd2s+aRsuGYc0d4BiBJ4=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, kernel-janitors@vger.kernel.org,
+        id S1726289AbfJURk2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Oct 2019 13:40:28 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 10:40:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,324,1566889200"; 
+   d="scan'208";a="200508215"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga003.jf.intel.com with ESMTP; 21 Oct 2019 10:40:26 -0700
+Date:   Mon, 21 Oct 2019 10:40:26 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RESEND trivial] fs: Fix Kconfig indentation
-Date:   Mon, 21 Oct 2019 19:29:30 +0200
-Message-Id: <20191021172930.27175-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/5] fs/xfs: Isolate the physical DAX flag from effective
+Message-ID: <20191021174025.GA23024@iweiny-DESK2.sc.intel.com>
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <20191020155935.12297-3-ira.weiny@intel.com>
+ <20191021002621.GC8015@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021002621.GC8015@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-    $ sed -e 's/^        /\t/' -i */Kconfig
+On Mon, Oct 21, 2019 at 11:26:21AM +1100, Dave Chinner wrote:
+> On Sun, Oct 20, 2019 at 08:59:32AM -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > xfs_ioctl_setattr_dax_invalidate() currently checks if the DAX flag is
+> > changing as a quick check.
+> > 
+> > But the implementation mixes the physical (XFS_DIFLAG2_DAX) and
+> > effective (S_DAX) DAX flags.
+> 
+> More nuanced than that.
+> 
+> The idea was that if the mount option was set, clearing the
+> per-inode flag would override the mount option. i.e. the mount
+> option sets the S_DAX flag at inode instantiation, so using
+> FSSETXATTR to ensure the FS_XFLAG_DAX is not set would override the
+> mount option setting, giving applications a way of guranteeing they
+> aren't using DAX to access the data.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- fs/9p/Kconfig     | 20 ++++++++++----------
- fs/Kconfig        |  4 ++--
- fs/Kconfig.binfmt |  4 ++--
- fs/fuse/Kconfig   |  4 ++--
- fs/nfs/Kconfig    |  6 +++---
- fs/proc/Kconfig   |  8 ++++----
- fs/qnx6/Kconfig   |  2 +-
- fs/ufs/Kconfig    |  4 ++--
- 8 files changed, 26 insertions(+), 26 deletions(-)
+At LSF/MM we discussed keeping the mount option as a global "chicken bit" as
+described by Matt Wilcox[1].  This preserves the existing behavior of turning
+it on no matter what but offers an alternative with the per-file flag.
 
-diff --git a/fs/9p/Kconfig b/fs/9p/Kconfig
-index ac2ec4543fe1..09fd4a185fd2 100644
---- a/fs/9p/Kconfig
-+++ b/fs/9p/Kconfig
-@@ -32,13 +32,13 @@ endif
- 
- 
- config 9P_FS_SECURITY
--        bool "9P Security Labels"
--        depends on 9P_FS
--        help
--          Security labels support alternative access control models
--          implemented by security modules like SELinux.  This option
--          enables an extended attribute handler for file security
--          labels in the 9P filesystem.
--
--          If you are not using a security module that requires using
--          extended attributes for file security labels, say N.
-+	bool "9P Security Labels"
-+	depends on 9P_FS
-+	help
-+	  Security labels support alternative access control models
-+	  implemented by security modules like SELinux.  This option
-+	  enables an extended attribute handler for file security
-+	  labels in the 9P filesystem.
-+
-+	  If you are not using a security module that requires using
-+	  extended attributes for file security labels, say N.
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 2501e6f1f965..e65289487732 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -97,8 +97,8 @@ config FILE_LOCKING
- 	default y
- 	help
- 	  This option enables standard file locking support, required
--          for filesystems like NFS and for the flock() system
--          call. Disabling this option saves about 11k.
-+	  for filesystems like NFS and for the flock() system
-+	  call. Disabling this option saves about 11k.
- 
- config MANDATORY_FILE_LOCKING
- 	bool "Enable Mandatory file locking"
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index 62dc4f577ba1..8d0d16b90039 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -191,9 +191,9 @@ config BINFMT_MISC
- 	  <file:Documentation/admin-guide/binfmt-misc.rst> to learn how to use this
- 	  feature, <file:Documentation/admin-guide/java.rst> for information about how
- 	  to include Java support. and <file:Documentation/admin-guide/mono.rst> for
--          information about how to include Mono-based .NET support.
-+	  information about how to include Mono-based .NET support.
- 
--          To use binfmt_misc, you will need to mount it:
-+	  To use binfmt_misc, you will need to mount it:
- 		mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
- 
- 	  You may say M here for module support and later load the module when
-diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-index 0635cba19971..eb2a585572dc 100644
---- a/fs/fuse/Kconfig
-+++ b/fs/fuse/Kconfig
-@@ -34,7 +34,7 @@ config VIRTIO_FS
- 	select VIRTIO
- 	help
- 	  The Virtio Filesystem allows guests to mount file systems from the
--          host.
-+	  host.
- 
- 	  If you want to share files between guests or with the host, answer Y
--          or M.
-+	  or M.
-diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
-index 295a7a21b774..3edf122b8044 100644
---- a/fs/nfs/Kconfig
-+++ b/fs/nfs/Kconfig
-@@ -147,10 +147,10 @@ config NFS_V4_1_MIGRATION
- 	default n
- 	help
- 	  This option makes the NFS client advertise to NFSv4.1 servers that
--          it can support NFSv4 migration.
-+	  it can support NFSv4 migration.
- 
--          The NFSv4.1 pieces of the Linux NFSv4 migration implementation are
--          still experimental.  If you are not an NFSv4 developer, say N here.
-+	  The NFSv4.1 pieces of the Linux NFSv4 migration implementation are
-+	  still experimental.  If you are not an NFSv4 developer, say N here.
- 
- config NFS_V4_SECURITY_LABEL
- 	bool
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index cb5629bd5fff..af2c0af60269 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -42,8 +42,8 @@ config PROC_VMCORE
- 	bool "/proc/vmcore support"
- 	depends on PROC_FS && CRASH_DUMP
- 	default y
--        help
--        Exports the dump image of crashed kernel in ELF format.
-+	help
-+	Exports the dump image of crashed kernel in ELF format.
- 
- config PROC_VMCORE_DEVICE_DUMP
- 	bool "Device Hardware/Firmware Log Collection"
-@@ -72,7 +72,7 @@ config PROC_SYSCTL
- 	  a recompile of the kernel or reboot of the system.  The primary
- 	  interface is through /proc/sys.  If you say Y here a tree of
- 	  modifiable sysctl entries will be generated beneath the
--          /proc/sys directory. They are explained in the files
-+	  /proc/sys directory. They are explained in the files
- 	  in <file:Documentation/admin-guide/sysctl/>.  Note that enabling this
- 	  option will enlarge the kernel by at least 8 KB.
- 
-@@ -88,7 +88,7 @@ config PROC_PAGE_MONITOR
- 	  Various /proc files exist to monitor process memory utilization:
- 	  /proc/pid/smaps, /proc/pid/clear_refs, /proc/pid/pagemap,
- 	  /proc/kpagecount, and /proc/kpageflags. Disabling these
--          interfaces will reduce the size of the kernel by approximately 4kb.
-+	  interfaces will reduce the size of the kernel by approximately 4kb.
- 
- config PROC_CHILDREN
- 	bool "Include /proc/<pid>/task/<tid>/children file"
-diff --git a/fs/qnx6/Kconfig b/fs/qnx6/Kconfig
-index 6a9d6bce1586..5ef679e51ba1 100644
---- a/fs/qnx6/Kconfig
-+++ b/fs/qnx6/Kconfig
-@@ -7,7 +7,7 @@ config QNX6FS_FS
- 	  QNX 6 (also called QNX RTP).
- 	  Further information is available at <http://www.qnx.com/>.
- 	  Say Y if you intend to mount QNX hard disks or floppies formatted
--          with a mkqnx6fs.
-+	  with a mkqnx6fs.
- 	  However, keep in mind that this currently is a readonly driver!
- 
- 	  To compile this file system support as a module, choose M here: the
-diff --git a/fs/ufs/Kconfig b/fs/ufs/Kconfig
-index 6d30adb6b890..f1f725c5a28c 100644
---- a/fs/ufs/Kconfig
-+++ b/fs/ufs/Kconfig
-@@ -11,8 +11,8 @@ config UFS_FS
- 	  experimental "UFS file system write support", below. Please read the
- 	  file <file:Documentation/admin-guide/ufs.rst> for more information.
- 
--          The recently released UFS2 variant (used in FreeBSD 5.x) is
--          READ-ONLY supported.
-+	  The recently released UFS2 variant (used in FreeBSD 5.x) is
-+	  READ-ONLY supported.
- 
- 	  Note that this option is generally not needed for floppies, since a
- 	  good portable way to transport files and directories between unixes
--- 
-2.17.1
+To do what you describe above, it was suggested, by Ted I believe, that an
+admin can set DAX on the root directory which will enable DAX by default
+through inheritance but allow users to turn it off if they desire.
 
+I'm concerned that all users who currently use '-o dax' will expect their
+current file systems to be using DAX when those mounts occur.  Their physical
+inode flag is going to be 0 which, if we implement the 'turn off DAX' as you
+describe will mean they will not get the behavior they expect when booting on a
+new kernel.
+
+> 
+> So if the mount option is going to live on, I suspect that we want
+> to keep this code as it stands.
+
+I don't think we can get rid of it soon but I would be in favor of working
+toward deprecating it.  Regardless I think this keeps the semantics simple WRT
+the interaction of the mount and per-file flags.
+
+Ira
+
+[1] https://lwn.net/Articles/787973/
+
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
