@@ -2,76 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58CEDF633
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 21:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3976ADF653
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 21:53:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730191AbfJUTni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 15:43:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49012 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728543AbfJUTni (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 15:43:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 36404AD72;
-        Mon, 21 Oct 2019 19:43:32 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1A2AF1E4AA2; Mon, 21 Oct 2019 21:43:30 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 21:43:30 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>, jack@suse.cz,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        david@fromorbit.com, darrick.wong@oracle.com
-Subject: Re: [PATCH v5 00/12] ext4: port direct I/O to iomap infrastructure
-Message-ID: <20191021194330.GJ25184@quack2.suse.cz>
-References: <cover.1571647178.git.mbobrowski@mbobrowski.org>
- <20191021133111.GA4675@mit.edu>
+        id S1729718AbfJUTxe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 15:53:34 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43674 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfJUTxd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Oct 2019 15:53:33 -0400
+Received: by mail-lj1-f195.google.com with SMTP id n14so14645371ljj.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2019 12:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B3ZB5cTWc/+E0YKg8QEclL2Ljwj65q5hsf0zgj4Z+rY=;
+        b=1U3vsiCGcdSTOTzaQ4vA8rtgFMEgeQgVyd8UdGC3o/CdMtwBWN4F0gK1w2XsWWSBGH
+         YNQV5ahyV/O6yw4h2p7vwNKddLsSKZA8aEdokn0w75hdbMsvb43uRjbJi8H6JHxCG71w
+         Q4NjPgZg63RufqnWqJjnk2UAQF7YnLs+zbq9EPZiF4/9fTsCtv4l9nCyYbMUGLPTXat5
+         APjvja2QOXD7cHp9B0BCAW/vEBE/sR2BENyelP9rlWUJuII/ey98aimoJiTVDGxwlViu
+         HWB3hhBN5+9iFMdxD2Riji0ncS9ufRQXCLy1K0bA0PdNKWfK7SpaFe+eM4GU9HA2y+6W
+         mAKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B3ZB5cTWc/+E0YKg8QEclL2Ljwj65q5hsf0zgj4Z+rY=;
+        b=qab5QLzGOIDjgP8PUfuU6lM1WdbOruJghMeVNSUIVZjTpzfegis8wOvlspzuaGL53C
+         u8jIarrDNKAVXx1qxts1IfafM6v5ofVEkik4T07a2Hfe9VGbeeWfFSW2IFulyF5c4OLY
+         NIXAS9mvqUMgJR14zM7r/q3c0RCruzu2tdHlzG4avWuvg7xGGo95tO7Ywt5BaKgcdTyh
+         Ttm2hqghhcMD3gnbP9dZekvgzuZYswKQFFaf9HlrVnNqL6NdABYSlFjX8WXYBFEUTW8F
+         N4J+Jf1rYVNYJ3bSSe8mQB+u7owiQ9dS0X6vx83AnRc4iwhHVyA8nbq0PLvSAq52tpZu
+         kAxg==
+X-Gm-Message-State: APjAAAXcf9ePMkJ/w/Ijx8fIAo+tGMxfFegYW83hY0y4n0jFzaMaezQ/
+        Jdca0ZvRQ43mlbHILIBtmWVHHY8vTc9SOA5EhDVl
+X-Google-Smtp-Source: APXvYqwGLlTHAz4uYJDRoYV7X3sKMFSAWJhdAvt0BgqLKoPKw91r1AdS6gVNJnxX99zDNcARmS/mrYca8VZXodUJ0TA=
+X-Received: by 2002:a2e:5b82:: with SMTP id m2mr394137lje.184.1571687611172;
+ Mon, 21 Oct 2019 12:53:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021133111.GA4675@mit.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1568834524.git.rgb@redhat.com> <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+ <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
+In-Reply-To: <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 21 Oct 2019 15:53:20 -0400
+Message-ID: <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 21-10-19 09:31:12, Theodore Y. Ts'o wrote:
-> Hi Matthew, thanks for your work on this patch series!
-> 
-> I applied it against 4c3, and ran a quick test run on it, and found
-> the following locking problem.  To reproduce:
-> 
-> kvm-xfstests -c nojournal generic/113
-> 
-> generic/113		[09:27:19][    5.841937] run fstests generic/113 at 2019-10-21 09:27:19
-> [    7.959477] 
-> [    7.959798] ============================================
-> [    7.960518] WARNING: possible recursive locking detected
-> [    7.961225] 5.4.0-rc3-xfstests-00012-g7fe6ea084e48 #1238 Not tainted
-> [    7.961991] --------------------------------------------
-> [    7.962569] aio-stress/1516 is trying to acquire lock:
-> [    7.963129] ffff9fd4791148c8 (&sb->s_type->i_mutex_key#12){++++}, at: __generic_file_fsync+0x3e/0xb0
-> [    7.964109] 
-> [    7.964109] but task is already holding lock:
-> [    7.964740] ffff9fd4791148c8 (&sb->s_type->i_mutex_key#12){++++}, at: ext4_dio_write_iter+0x15b/0x430
+On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2019-09-18 21:22, Richard Guy Briggs wrote:
+> > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
+> > process in a non-init user namespace the capability to set audit
+> > container identifiers.
+> >
+> > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
+> > AUDIT_SET_CAPCONTID 1028.  The message format includes the data
+> > structure:
+> > struct audit_capcontid_status {
+> >         pid_t   pid;
+> >         u32     enable;
+> > };
+>
+> Paul, can I get a review of the general idea here to see if you're ok
+> with this way of effectively extending CAP_AUDIT_CONTROL for the sake of
+> setting contid from beyond the init user namespace where capable() can't
+> reach and ns_capable() is meaningless for these purposes?
 
-This is going to be a tricky one. With iomap, the inode locking is handled
-by the filesystem while calling generic_write_sync() is done by
-iomap_dio_rw(). I would really prefer to avoid tweaking iomap_dio_rw() not
-to call generic_write_sync(). So we need to remove inode_lock from
-__generic_file_fsync() (used from ext4_sync_file()). This locking is mostly
-for legacy purposes and we don't need this in ext4 AFAICT - but removing
-the lock from __generic_file_fsync() would mean auditing all legacy
-filesystems that use this to make sure flushing inode & its metadata buffer
-list while it is possibly changing cannot result in something unexpected. I
-don't want to clutter this series with it so we are left with
-reimplementing __generic_file_fsync() inside ext4 without inode_lock. Not
-too bad but not great either. Thoughts?
+I think my previous comment about having both the procfs and netlink
+interfaces apply here.  I don't see why we need two different APIs at
+the start; explain to me why procfs isn't sufficient.  If the argument
+is simply the desire to avoid mounting procfs in the container, how
+many container orchestrators can function today without a valid /proc?
 
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+paul moore
+www.paul-moore.com
