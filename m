@@ -2,124 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87E02DF835
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 00:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33965DF846
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 00:52:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730450AbfJUWtd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 18:49:33 -0400
-Received: from mga07.intel.com ([134.134.136.100]:59581 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730276AbfJUWtd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 18:49:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2019 15:49:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,325,1566889200"; 
-   d="scan'208";a="209483476"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga002.jf.intel.com with ESMTP; 21 Oct 2019 15:49:31 -0700
-Date:   Mon, 21 Oct 2019 15:49:31 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/5] fs/xfs: Allow toggle of physical DAX flag
-Message-ID: <20191021224931.GA25526@iweiny-DESK2.sc.intel.com>
-References: <20191020155935.12297-1-ira.weiny@intel.com>
- <20191020155935.12297-6-ira.weiny@intel.com>
- <20191021004536.GD8015@dread.disaster.area>
+        id S1730458AbfJUWwl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 18:52:41 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:56174 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730399AbfJUWwl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Oct 2019 18:52:41 -0400
+Received: from dread.disaster.area (pa49-180-40-48.pa.nsw.optusnet.com.au [49.180.40.48])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0202A363692;
+        Tue, 22 Oct 2019 09:52:35 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iMgXS-00074h-TR; Tue, 22 Oct 2019 09:52:34 +1100
+Date:   Tue, 22 Oct 2019 09:52:34 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Mike Christie <mchristi@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, martin@urbackup.org,
+        Damien.LeMoal@wdc.com
+Subject: Re: [PATCH] Add prctl support for controlling PF_MEMALLOC V2
+Message-ID: <20191021225234.GC2642@dread.disaster.area>
+References: <20191021214137.8172-1-mchristi@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191021004536.GD8015@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20191021214137.8172-1-mchristi@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
+        a=y881pOMu+B+mZdf5UrsJdA==:117 a=y881pOMu+B+mZdf5UrsJdA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=rSlL4X6sGr0P-yuullEA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 11:45:36AM +1100, Dave Chinner wrote:
-> On Sun, Oct 20, 2019 at 08:59:35AM -0700, ira.weiny@intel.com wrote:
-> > @@ -1232,12 +1233,10 @@ xfs_diflags_to_linux(
-> >  		inode->i_flags |= S_NOATIME;
-> >  	else
-> >  		inode->i_flags &= ~S_NOATIME;
-> > -#if 0	/* disabled until the flag switching races are sorted out */
-> >  	if (xflags & FS_XFLAG_DAX)
-> >  		inode->i_flags |= S_DAX;
-> >  	else
-> >  		inode->i_flags &= ~S_DAX;
-> > -#endif
+On Mon, Oct 21, 2019 at 04:41:37PM -0500, Mike Christie wrote:
+> There are several storage drivers like dm-multipath, iscsi, tcmu-runner,
+> amd nbd that have userspace components that can run in the IO path. For
+> example, iscsi and nbd's userspace deamons may need to recreate a socket
+> and/or send IO on it, and dm-multipath's daemon multipathd may need to
+> send IO to figure out the state of paths and re-set them up.
 > 
-> This code has bit-rotted. See xfs_setup_iops(), where we now have a
-> different inode->i_mapping->a_ops for DAX inodes.
+> In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the
+> memalloc_*_save/restore functions to control the allocation behavior,
+> but for userspace we would end up hitting a allocation that ended up
+> writing data back to the same device we are trying to allocate for.
 
-:-(
+I think this needs to describe the symptoms this results in. i.e.
+that this can result in deadlocking the IO path.
 
+> This patch allows the userspace deamon to set the PF_MEMALLOC* flags
+> with prctl during their initialization so later allocations cannot
+> calling back into them.
 > 
-> That, fundamentally, is the issue here - it's not setting/clearing
-> the DAX flag that is the issue, it's doing a swap of the
-> mapping->a_ops while there may be other code using that ops
-> structure.
-> 
-> IOWs, if there is any code anywhere in the kernel that
-> calls an address space op without holding one of the three locks we
-> hold here (i_rwsem, MMAPLOCK, ILOCK) then it can race with the swap
-> of the address space operations.
-> 
-> By limiting the address space swap to file sizes of zero, we rule
-> out the page fault path (mmap of a zero length file segv's with an
-> access beyond EOF on the first read/write page fault, right?).
+> Signed-off-by: Mike Christie <mchristi@redhat.com>
+> ---
 
-Yes I checked that and thought we were safe here...
+....
+> +	case PR_SET_MEMALLOC:
+> +		if (!capable(CAP_SYS_ADMIN))
+> +			return -EPERM;
 
-> However, other aops callers that might run unlocked and do the wrong
-> thing if the aops pointer is swapped between check of the aop method
-> existing and actually calling it even if the file size is zero?
-> 
-> A quick look shows that FIBMAP (ioctl_fibmap())) looks susceptible
-> to such a race condition with the current definitions of the XFS DAX
-> aops. I'm guessing there will be others, but I haven't looked
-> further than this...
+Wouldn't CAP_SYS_RAWIO (because it's required by kernel IO path
+drivers) or CAP_SYS_RESOURCE (controlling memory allocation
+behaviour) be more appropriate here?
 
-I'll check for others and think on what to do about this.  ext4 will have the
-same problem I think.  :-(
+Which-ever is selected, the use should be added to the list above
+the definition of the capability in include/linux/capability.h...
 
-I don't suppose using a single a_ops for both DAX and non-DAX is palatable?
+Otherwise looks fine to me.
 
-> 
-> >  	/* lock, flush and invalidate mapping in preparation for flag change */
-> >  	xfs_ilock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
-> > +
-> > +	if (i_size_read(inode) != 0) {
-> > +		error = -EOPNOTSUPP;
-> > +		goto out_unlock;
-> > +	}
-> 
-> Wrong error. Should be the same as whatever is returned when we try
-> to change the extent size hint and can't because the file is
-> non-zero in length (-EINVAL, I think). Also needs a comment
-> explainging why this check exists, and probably better written as
-> i_size_read() > 0 ....
+Cheers,
 
-Done, done, and done.
-
-Thank you,
-Ira
-
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
