@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B26B7DED3B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 15:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E729FDED75
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 15:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728903AbfJUNOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 09:14:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43086 "EHLO mx1.suse.de"
+        id S1728850AbfJUNXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 09:23:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48352 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726767AbfJUNOl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 09:14:41 -0400
+        id S1727256AbfJUNXt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Oct 2019 09:23:49 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7E462B6FA;
-        Mon, 21 Oct 2019 13:14:39 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 9AE90DA8C5; Mon, 21 Oct 2019 15:14:52 +0200 (CEST)
-Date:   Mon, 21 Oct 2019 15:14:52 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Nikolay Borisov <nborisov@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org
-Subject: Re: [RFC PATCH v2 5/5] btrfs: implement RWF_ENCODED writes
-Message-ID: <20191021131452.GH3001@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Omar Sandoval <osandov@osandov.com>,
-        Nikolay Borisov <nborisov@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
-        Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
-        linux-api@vger.kernel.org
-References: <cover.1571164762.git.osandov@fb.com>
- <904de93d9bbe630aff7f725fd587810c6eb48344.1571164762.git.osandov@fb.com>
- <0da91628-7f54-7d24-bf58-6807eb9535a5@suse.com>
- <20191018225513.GD59713@vader>
+        by mx1.suse.de (Postfix) with ESMTP id EC95BB47D;
+        Mon, 21 Oct 2019 13:23:47 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 0FDB51E4AA0; Mon, 21 Oct 2019 15:23:47 +0200 (CEST)
+Date:   Mon, 21 Oct 2019 15:23:47 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
+Subject: Re: [PATCH v5 01/12] ext4: move set iomap routines into separate
+ helper ext4_set_iomap()
+Message-ID: <20191021132347.GA25184@quack2.suse.cz>
+References: <cover.1571647178.git.mbobrowski@mbobrowski.org>
+ <7dd1a1a895fd7e55c659b10bba16976faab4cd85.1571647178.git.mbobrowski@mbobrowski.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191018225513.GD59713@vader>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <7dd1a1a895fd7e55c659b10bba16976faab4cd85.1571647178.git.mbobrowski@mbobrowski.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 03:55:13PM -0700, Omar Sandoval wrote:
-> > > +	nr_pages = (disk_num_bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> > 
-> > nit: nr_pages = DIV_ROUND_UP(disk_num_bytes, PAGE_SIZE)
+On Mon 21-10-19 20:17:31, Matthew Bobrowski wrote:
+> Separate the iomap field population chunk of code that is currently
+> within ext4_iomap_begin() into a new helper called
+> ext4_set_iomap(). The intent of this function is self explanatory,
+> however the rationale behind doing so is to also reduce the overall
+> clutter that we currently have within the ext4_iomap_begin() callback.
 > 
-> disk_num_bytes is a u64, so that would expand to a 64-bit division. The
-> compiler is probably smart enough to optimize it to a shift, but I
-> didn't want to rely on that, because that would cause build failures on
-> 32-bit.
+> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> ---
+>  fs/ext4/inode.c | 59 +++++++++++++++++++++++++++----------------------
+>  1 file changed, 33 insertions(+), 26 deletions(-)
 
-There are several DIV_ROUND_UP(u64, PAGE_SIZE) in btrfs code, no build
-brekages have been reported so far, you can use it.
+The patch looks good to me. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
