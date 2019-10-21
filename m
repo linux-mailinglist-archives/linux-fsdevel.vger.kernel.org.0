@@ -2,196 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32280DF8B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 01:36:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88FCBDF8BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 01:46:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730271AbfJUXfy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 19:35:54 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:45091 "EHLO
+        id S1730084AbfJUXqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 19:46:15 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:45110 "EHLO
         mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728375AbfJUXfy (ORCPT
+        by vger.kernel.org with ESMTP id S1727264AbfJUXqP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 19:35:54 -0400
+        Mon, 21 Oct 2019 19:46:15 -0400
 Received: from dread.disaster.area (pa49-180-40-48.pa.nsw.optusnet.com.au [49.180.40.48])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9FD5536257E;
-        Tue, 22 Oct 2019 10:35:48 +1100 (AEDT)
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id E32A73629FF;
+        Tue, 22 Oct 2019 10:46:04 +1100 (AEDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1iMhDH-0007Pw-Rb; Tue, 22 Oct 2019 10:35:47 +1100
-Date:   Tue, 22 Oct 2019 10:35:47 +1100
+        id 1iMhNE-0007QX-Aa; Tue, 22 Oct 2019 10:46:04 +1100
+Date:   Tue, 22 Oct 2019 10:46:04 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Wang Shilong <wangshilong1991@gmail.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Li Xi <lixi@ddn.com>, Wang Shilong <wshilong@ddn.com>
-Subject: Re: [Project Quota]file owner could change its project ID?
-Message-ID: <20191021233547.GA2681@dread.disaster.area>
-References: <CAP9B-QmQ-mbWgJwEWrVOMabsgnPwyJsxSQbMkWuFk81-M4dRPQ@mail.gmail.com>
- <20191013164124.GR13108@magnolia>
- <CAP9B-Q=SfhnA6iO7h1TWAoSOfZ+BvT7d8=OE4176FZ3GXiU-xw@mail.gmail.com>
- <20191016213700.GH13108@magnolia>
- <648712FB-0ECE-41F4-B6B8-98BD3168B2A4@dilger.ca>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/5] fs/xfs: Allow toggle of physical DAX flag
+Message-ID: <20191021234604.GB2681@dread.disaster.area>
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <20191020155935.12297-6-ira.weiny@intel.com>
+ <20191021004536.GD8015@dread.disaster.area>
+ <20191021224931.GA25526@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <648712FB-0ECE-41F4-B6B8-98BD3168B2A4@dilger.ca>
+In-Reply-To: <20191021224931.GA25526@iweiny-DESK2.sc.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Optus-CM-Score: 0
 X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
         a=y881pOMu+B+mZdf5UrsJdA==:117 a=y881pOMu+B+mZdf5UrsJdA==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=yPCof4ZbAAAA:8 a=7-415B0cAAAA:8 a=qv8hQ-V9GWQyh8rksBYA:9
-        a=TxVqjOB1mW4Srn6y:21 a=cwD_f9e2U_YEHh5S:21 a=CjuIK1q_8ugA:10
+        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=YPogiMHmU-6fRLEyw_MA:9
+        a=z-c3JQe-jSBONlfH:21 a=Z1gFN9eyTm15yBDe:21 a=CjuIK1q_8ugA:10
         a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 06:28:08PM -0600, Andreas Dilger wrote:
-> On Oct 16, 2019, at 3:37 PM, Darrick J. Wong <darrick.wong@oracle.com> wrote:
+On Mon, Oct 21, 2019 at 03:49:31PM -0700, Ira Weiny wrote:
+> On Mon, Oct 21, 2019 at 11:45:36AM +1100, Dave Chinner wrote:
+> > On Sun, Oct 20, 2019 at 08:59:35AM -0700, ira.weiny@intel.com wrote:
+> > > @@ -1232,12 +1233,10 @@ xfs_diflags_to_linux(
+> > >  		inode->i_flags |= S_NOATIME;
+> > >  	else
+> > >  		inode->i_flags &= ~S_NOATIME;
+> > > -#if 0	/* disabled until the flag switching races are sorted out */
+> > >  	if (xflags & FS_XFLAG_DAX)
+> > >  		inode->i_flags |= S_DAX;
+> > >  	else
+> > >  		inode->i_flags &= ~S_DAX;
+> > > -#endif
 > > 
-> > On Wed, Oct 16, 2019 at 07:51:15PM +0800, Wang Shilong wrote:
-> >> On Mon, Oct 14, 2019 at 12:41 AM Darrick J. Wong
-> >> <darrick.wong@oracle.com> wrote:
-> >>> 
-> >>> On Sat, Oct 12, 2019 at 02:33:36PM +0800, Wang Shilong wrote:
-> >>>> Steps to reproduce:
-> >>>> [wangsl@localhost tmp]$ mkdir project
-> >>>> [wangsl@localhost tmp]$ lsattr -p project -d
-> >>>>    0 ------------------ project
-> >>>> [wangsl@localhost tmp]$ chattr -p 1 project
-> >>>> [wangsl@localhost tmp]$ lsattr -p -d project
-> >>>>    1 ------------------ project
-> >>>> [wangsl@localhost tmp]$ chattr -p 2 project
-> >>>> [wangsl@localhost tmp]$ lsattr -p -d project
-> >>>>    2 ------------------ project
-> >>>> [wangsl@localhost tmp]$ df -Th .
-> >>>> Filesystem     Type  Size  Used Avail Use% Mounted on
-> >>>> /dev/sda3      xfs    36G  4.1G   32G  12% /
-> >>>> [wangsl@localhost tmp]$ uname -r
-> >>>> 5.4.0-rc2+
-> >>>> 
-> >>>> As above you could see file owner could change project ID of file its self.
-> >>>> As my understanding, we could set project ID and inherit attribute to account
-> >>>> Directory usage, and implement a similar 'Directory Quota' based on this.
-> >>> 
-> >>> So the problem here is that the admin sets up a project quota on a
-> >>> directory, then non-container users change the project id and thereby
-> >>> break quota enforcement?  Dave didn't sound at all enthusiastic, but I'm
-> >>> still wondering what exactly you're trying to prevent.
-> >> 
-> >> Yup, we are trying to prevent no-root users to change their project ID.
-> >> As we want to implement 'Directory Quota':
-> >> 
-> >> If non-root users could change their project ID, they could always try
-> >> to change its project ID to steal space when EDQUOT returns.
-> >> 
-> >> Yup, if mount option could be introduced to make this case work,
-> >> that will be nice.
-> > 
-> > Well then we had better discuss and write down the exact behaviors of
-> > this new directory quota feature and how it differs from ye olde project
-> > quota.  Here's the existing definition of project quotas in the
-> > xfs_quota manpage:
-> > 
-> >       10.    XFS  supports  the notion of project quota, which can be
-> >              used to implement a form of directory tree  quota  (i.e.
-> >              to  restrict  a directory tree to only being able to use
-> >              up a component of the filesystems  available  space;  or
-> >              simply  to  keep  track  of the amount of space used, or
-> >              number of inodes, within the tree).
-> > 
-> > First, we probably ought to add the following to that definition to
-> > reflect a few pieces of current reality:
-> > 
-> > "Processes running inside runtime environments using mapped user or
-> > group ids, such as container runtimes, are not allowed to change the
-> > project id and project id inheritance flag of inodes."
-> > 
-> > What do you all think of this starting definition for directory quotas:
-> > 
-> >       11.    XFS supports the similar notion of directory quota.  The
-> > 	      key difference between project and directory quotas is the
-> > 	      additional restriction that only a system administrator
-> > 	      running outside of a mapped user or group id runtime
-> > 	      environment (such as a container runtime) can change the
-> > 	      project id and project id inheritenace flag.  This means
-> > 	      that unprivileged users are never allowed to manage their
-> >              own directory quotas.
-> > 
-> > We'd probably enable this with a new 'dirquota' mount option that is
-> > mutually exclusive with the old 'prjquota' option.
+> > This code has bit-rotted. See xfs_setup_iops(), where we now have a
+> > different inode->i_mapping->a_ops for DAX inodes.
 > 
-> I don't think that this is really "directory quotas" in the end, since it
-> isn't changing the semantics that the same projid could exist in multiple
-> directory trees.
+> :-(
+> 
+> > 
+> > That, fundamentally, is the issue here - it's not setting/clearing
+> > the DAX flag that is the issue, it's doing a swap of the
+> > mapping->a_ops while there may be other code using that ops
+> > structure.
+> > 
+> > IOWs, if there is any code anywhere in the kernel that
+> > calls an address space op without holding one of the three locks we
+> > hold here (i_rwsem, MMAPLOCK, ILOCK) then it can race with the swap
+> > of the address space operations.
+> > 
+> > By limiting the address space swap to file sizes of zero, we rule
+> > out the page fault path (mmap of a zero length file segv's with an
+> > access beyond EOF on the first read/write page fault, right?).
+> 
+> Yes I checked that and thought we were safe here...
+> 
+> > However, other aops callers that might run unlocked and do the wrong
+> > thing if the aops pointer is swapped between check of the aop method
+> > existing and actually calling it even if the file size is zero?
+> > 
+> > A quick look shows that FIBMAP (ioctl_fibmap())) looks susceptible
+> > to such a race condition with the current definitions of the XFS DAX
+> > aops. I'm guessing there will be others, but I haven't looked
+> > further than this...
+> 
+> I'll check for others and think on what to do about this.  ext4 will have the
+> same problem I think.  :-(
+> 
+> I don't suppose using a single a_ops for both DAX and non-DAX is palatable?
 
+IMO, no. It means we have to check IS_DAX() in every aops,
+and replicate a bunch of callouts to generic code. i.e this sort of
+thing:
 
-The quota ID associated with a directory is an admin choice - admins
-are free to have multiple directories use the same quota ID if
-that's how they want to control usage across those directories.
+	if (aops->method)
+		return aops->method(...)
 
-i.e. "directory quota" does not mean "quota IDs must be unique for
-different directory heirarchies", it just means quota IDs are
-assigned to new directory entries based on the current directory
-quota ID.
+	/* do something else */
 
-> The real difference is the ability to enforce existing
-> project quota limits for regular users outside of a container.  Basically,
-> it is the same as regular users not being able to change the UID of their
-> files to dump quota to some other user.
+results in us having to replicate that logic as something like:
 
-No, no it isn't - project IDs are not user IDs. In fact, UIDs and
-permission bits are used to determine if the user has permission to
-change the project ID of the file. i.e. anyone who can write data to
-the file can change the project ID and "dump quota to some other
-user".
+	if (!IS_DAX)
+		return filesystem_aops_method()
 
-That's the way it's always worked, and there are many users out
-there that rely on users setting project quotas correctly for their
-data sets. i.e. the default project quota is set up as a directory
-quota and they are set low to force people creating large data sets
-account them to the project that the space is being used for.
+	/* do something else */
 
-IOWs, directory-based project quotas and project-based project quotas
-are often used in the same filesystem, and users are expected to
-manage them directly.
+Indeed, the calling code may well do the wrong thing if we have
+methods defined just to add IS_DAX() checks to avoid using that
+functionality because the caller now thinks that functionality is
+supported when in fact it isn't.
 
-What is being asked for here is a strict interpretation of directory
-quotas to remove the capability of mixing directory and project
-based quotas in the one filesystem. That's not the same thing as
-an "enforced project quota".
-
-> So rather than rename this "dirquota", it would be better to have a
-> an option like "projid_enforce" or "projid_restrict", or maybe some
-
-If only specific admins can change project quotas, then the only way
-that project quotas can be used is either:
-
-	1. inherit project ID from parent directory at create time;
-	or
-	2. admin manually walks newly created files classifying them
-	into the correct project after the fact.
-
-#2 is pretty much useless to anyone - who wants to look at thousands
-of files a day and classify them to this project or that one? I
-haven't seen that admin model in use anywhere in the real world.
-
-Which leaves #1 - default project IDs inherited from the parent
-directory, and users can't change them. And that is the very
-definition of a strict directory quota...
-
-Quite frankly, people are going to understand what "dirquota" means
-and how it behaves intuitively, as opposed to having to understand
-what a project quota is, how project IDs work and what the magical
-"projid_restrict" mount option does and when you'd want to use it.
-
-They do the same things - one API is easy to understand for users,
-the other is a horrible "designed by an engineer to meet a specific
-requirement" interface. I know which one I'd prefer as a user...
+So it seems to me like an even bigger can of worms to try to use a
+single aops structure for vastly different functionality....
 
 Cheers,
 
