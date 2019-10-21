@@ -2,105 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC2C4DEB99
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 14:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DA0DECF9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 15:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbfJUMHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 08:07:46 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:35402 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728081AbfJUMHq (ORCPT
+        id S1728686AbfJUNBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 09:01:54 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33458 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727962AbfJUNBy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:07:46 -0400
+        Mon, 21 Oct 2019 09:01:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571659665;
+        s=mimecast20190719; t=1571662913;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=jZW2w85TwEDR7o6SJHU50uEOcHT5Iw+gP89ZUiYLiLY=;
-        b=VPFLCqVKXG8ryyFxNxlnPORr0JlIJNViViCFzDv37GpQsfm6u2b14Mu74w+Mp3Yo3Tyxqd
-        IB6TIMXo0yvznjnIXbyY8XjtSwNZDNZcaLFD4o+YyYaEHNeoihvIoN0l1pqPXb4d029Gzt
-        Fw5YNRpffwxHOVQobhhADpkGi0K0QYA=
+        bh=0XtuYVi16cRua7MI95pvO9rKONEjZD3Ff+zCiPew+iM=;
+        b=HyPCRkHorxetOazsVRqT1PrE8QPlh5tOUtY3UK8PpgPEj1yA2QdZ10PFdjgkxb6++MqxBu
+        WrxyTMQzosiWi5K43XjTcEuu6D9CF5pkDVl61nE6uEejRN/Nk0adcJ+WABjPI89vrgAHdB
+        MoGaDE9Ct0GHqUjA/vipwwJONZlCGY8=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-258-tqajfzzvNaaD0mZxWWnBcg-1; Mon, 21 Oct 2019 08:07:41 -0400
+ us-mta-139-LdV4YUg_NRuCt4nf2SOzDQ-1; Mon, 21 Oct 2019 09:01:50 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1C8EF800D41;
-        Mon, 21 Oct 2019 12:07:40 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0CAC25D9E2;
-        Mon, 21 Oct 2019 12:07:38 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-fsdevel@vger.kernel.org, Jeff Smits <jeff.smits@intel.com>,
-        Doug Nelson <doug.nelson@intel.com>, stable@vger.kernel.org,
-        Jan Kara <jack@suse.cz>,
-        "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/dax: Fix pmd vs pte conflict detection
-References: <157150237973.3940076.12626102230619807187.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Mon, 21 Oct 2019 08:07:38 -0400
-In-Reply-To: <157150237973.3940076.12626102230619807187.stgit@dwillia2-desk3.amr.corp.intel.com>
-        (Dan Williams's message of "Sat, 19 Oct 2019 09:26:19 -0700")
-Message-ID: <x495zkii9o5.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E91B1100551E;
+        Mon, 21 Oct 2019 13:01:48 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F2DAD5DA8C;
+        Mon, 21 Oct 2019 13:01:43 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 8625D2202E5; Mon, 21 Oct 2019 09:01:43 -0400 (EDT)
+Date:   Mon, 21 Oct 2019 09:01:43 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        chirantan@chromium.org, virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 5/5] virtiofs: Retry request submission from worker
+ context
+Message-ID: <20191021130143.GB13573@redhat.com>
+References: <20191015174626.11593-1-vgoyal@redhat.com>
+ <20191015174626.11593-6-vgoyal@redhat.com>
+ <CAJfpegvg1ePA7=Fm3499bKsZBv_98j817KCDxOU18j=BdVfHyA@mail.gmail.com>
 MIME-Version: 1.0
+In-Reply-To: <CAJfpegvg1ePA7=Fm3499bKsZBv_98j817KCDxOU18j=BdVfHyA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: tqajfzzvNaaD0mZxWWnBcg-1
+X-MC-Unique: LdV4YUg_NRuCt4nf2SOzDQ-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
+On Mon, Oct 21, 2019 at 10:15:18AM +0200, Miklos Szeredi wrote:
+[..]
+> > @@ -268,13 +272,43 @@ static void virtio_fs_request_dispatch_work(struc=
+t work_struct *work)
+> >                                                list);
+> >                 if (!req) {
+> >                         spin_unlock(&fsvq->lock);
+> > -                       return;
+> > +                       break;
+> >                 }
+> >
+> >                 list_del_init(&req->list);
+> >                 spin_unlock(&fsvq->lock);
+> >                 fuse_request_end(fc, req);
+> >         }
+> > +
+> > +       /* Dispatch pending requests */
+> > +       while (1) {
+> > +               spin_lock(&fsvq->lock);
+> > +               req =3D list_first_entry_or_null(&fsvq->queued_reqs,
+> > +                                              struct fuse_req, list);
+> > +               if (!req) {
+> > +                       spin_unlock(&fsvq->lock);
+> > +                       return;
+> > +               }
+> > +               list_del_init(&req->list);
+> > +               spin_unlock(&fsvq->lock);
+> > +
+> > +               ret =3D virtio_fs_enqueue_req(fsvq, req, true);
+> > +               if (ret < 0) {
+> > +                       if (ret =3D=3D -ENOMEM || ret =3D=3D -ENOSPC) {
+> > +                               spin_lock(&fsvq->lock);
+> > +                               list_add_tail(&req->list, &fsvq->queued=
+_reqs);
+> > +                               schedule_delayed_work(&fsvq->dispatch_w=
+ork,
+> > +                                                     msecs_to_jiffies(=
+1));
+> > +                               spin_unlock(&fsvq->lock);
+> > +                               return;
+> > +                       }
+> > +                       req->out.h.error =3D ret;
+> > +                       dec_in_flight_req(fsvq);
+>=20
+> Missing locking.  Fixed.
 
-> Check for NULL entries before checking the entry order, otherwise NULL
-> is misinterpreted as a present pte conflict. The 'order' check needs to
-> happen before the locked check as an unlocked entry at the wrong order
-> must fallback to lookup the correct order.
+Good catch. Thanks.
 
-Please include the user-visible effects of the problem in the changelog.
-
-Thanks,
-Jeff
-
->
-> Reported-by: Jeff Smits <jeff.smits@intel.com>
-> Reported-by: Doug Nelson <doug.nelson@intel.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: 23c84eb78375 ("dax: Fix missed wakeup with PMD faults")
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  fs/dax.c |    5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/dax.c b/fs/dax.c
-> index a71881e77204..08160011d94c 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -221,10 +221,11 @@ static void *get_unlocked_entry(struct xa_state *xa=
-s, unsigned int order)
-> =20
->  =09for (;;) {
->  =09=09entry =3D xas_find_conflict(xas);
-> +=09=09if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
-> +=09=09=09return entry;
->  =09=09if (dax_entry_order(entry) < order)
->  =09=09=09return XA_RETRY_ENTRY;
-> -=09=09if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
-> -=09=09=09=09!dax_is_locked(entry))
-> +=09=09if (!dax_is_locked(entry))
->  =09=09=09return entry;
-> =20
->  =09=09wq =3D dax_entry_waitqueue(xas, entry, &ewait.key);
+Vivek
 
