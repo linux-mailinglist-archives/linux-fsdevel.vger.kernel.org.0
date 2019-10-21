@@ -2,122 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12717DF780
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 23:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9E0DF78A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Oct 2019 23:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730384AbfJUViy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 17:38:54 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42245 "EHLO
+        id S1730408AbfJUVls (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 17:41:48 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52937 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729869AbfJUViy (ORCPT
+        with ESMTP id S1728943AbfJUVlr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 17:38:54 -0400
+        Mon, 21 Oct 2019 17:41:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571693932;
+        s=mimecast20190719; t=1571694106;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0ydo/TL5LDscvwdIxWlFvz3d4kbBSbMTez/KsfHBMEM=;
-        b=aW5eOUlpsUnlhg9LVoJ/+KqAWiJqJJ0rVV6jwt2GiW1hCAwVWjUf/tB/VSbSteyLZKNeGv
-        XmVBldIXztH0/acGET+J7lY4Vmz+5k9KUtq/iStCaNNQUec493rWmVliWRgRZusCYnUZpV
-        0Y4sa4imLjm76BYj9AsSB4X4x1sWPNg=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=IWeM12SnjaxnROOhjKG0uzMoH/1pwew4flz84hu3l0k=;
+        b=EA8vKtU8iQd2X3J6MWu7z3azMx0YgPt7zpBAms3aKTuzXSvMutK5X7fjnJkQGkeivXxoj9
+        7qCVfB5vLcvURXKOdKaH0RyvV9DvFKYZQIoUh22j9vXdGdcyUtR+V3L9vIxRNJrJ8tFKpp
+        RCodsuiGw5rdWeFvmd0rOBGmhmR1UsE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-297-2lBc4Mw4NFGMJ83795y3WA-1; Mon, 21 Oct 2019 17:38:49 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-270-WEhns1CVOLONzpz_CDZEpg-1; Mon, 21 Oct 2019 17:41:41 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3658800D41;
-        Mon, 21 Oct 2019 21:38:45 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B2D4E1001B20;
-        Mon, 21 Oct 2019 21:38:27 +0000 (UTC)
-Date:   Mon, 21 Oct 2019 17:38:24 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
- outside init_user_ns
-Message-ID: <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca>
-References: <cover.1568834524.git.rgb@redhat.com>
- <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
- <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
- <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B3CF2B6;
+        Mon, 21 Oct 2019 21:41:40 +0000 (UTC)
+Received: from rh2.redhat.com (ovpn-123-171.rdu2.redhat.com [10.10.123.171])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D2A8560126;
+        Mon, 21 Oct 2019 21:41:38 +0000 (UTC)
+From:   Mike Christie <mchristi@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, martin@urbackup.org,
+        Damien.LeMoal@wdc.com
+Cc:     Mike Christie <mchristi@redhat.com>
+Subject: [PATCH] Add prctl support for controlling PF_MEMALLOC V2
+Date:   Mon, 21 Oct 2019 16:41:37 -0500
+Message-Id: <20191021214137.8172-1-mchristi@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: 2lBc4Mw4NFGMJ83795y3WA-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: WEhns1CVOLONzpz_CDZEpg-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-10-21 15:53, Paul Moore wrote:
-> On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.com> wrote=
-:
-> > On 2019-09-18 21:22, Richard Guy Briggs wrote:
-> > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
-> > > process in a non-init user namespace the capability to set audit
-> > > container identifiers.
-> > >
-> > > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
-> > > AUDIT_SET_CAPCONTID 1028.  The message format includes the data
-> > > structure:
-> > > struct audit_capcontid_status {
-> > >         pid_t   pid;
-> > >         u32     enable;
-> > > };
-> >
-> > Paul, can I get a review of the general idea here to see if you're ok
-> > with this way of effectively extending CAP_AUDIT_CONTROL for the sake o=
-f
-> > setting contid from beyond the init user namespace where capable() can'=
-t
-> > reach and ns_capable() is meaningless for these purposes?
->=20
-> I think my previous comment about having both the procfs and netlink
-> interfaces apply here.  I don't see why we need two different APIs at
-> the start; explain to me why procfs isn't sufficient.  If the argument
-> is simply the desire to avoid mounting procfs in the container, how
-> many container orchestrators can function today without a valid /proc?
+There are several storage drivers like dm-multipath, iscsi, tcmu-runner,
+amd nbd that have userspace components that can run in the IO path. For
+example, iscsi and nbd's userspace deamons may need to recreate a socket
+and/or send IO on it, and dm-multipath's daemon multipathd may need to
+send IO to figure out the state of paths and re-set them up.
 
-Ok, sorry, I meant to address that question from a previous patch
-comment at the same time.
+In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the
+memalloc_*_save/restore functions to control the allocation behavior,
+but for userspace we would end up hitting a allocation that ended up
+writing data back to the same device we are trying to allocate for.
 
-It was raised by Eric Biederman that the proc filesystem interface for
-audit had its limitations and he had suggested an audit netlink
-interface made more sense.
+This patch allows the userspace deamon to set the PF_MEMALLOC* flags
+with prctl during their initialization so later allocations cannot
+calling back into them.
 
-The intent was to switch to the audit netlink interface for contid,
-capcontid and to add the audit netlink interface for loginuid and
-sessionid while deprecating the proc interface for loginuid and
-sessionid.  This was alluded to in the cover letter, but not very clear,
-I'm afraid.  I have patches to remove the contid and loginuid/sessionid
-interfaces in another tree which is why I had forgotten to outline that
-plan more explicitly in the cover letter.
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+---
 
-> paul moore
+V2:
+- Use prctl instead of procfs.
+- Add support for NOFS for fuse.
+- Check permissions.
 
-- RGB
+ include/uapi/linux/prctl.h |  8 +++++++
+ kernel/sys.c               | 44 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 7da1b37b27aa..6f6b3af6633a 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -234,4 +234,12 @@ struct prctl_mm_map {
+ #define PR_GET_TAGGED_ADDR_CTRL=09=0956
+ # define PR_TAGGED_ADDR_ENABLE=09=09(1UL << 0)
+=20
++/* Control reclaim behavior when allocating memory */
++#define PR_SET_MEMALLOC=09=09=0957
++#define PR_GET_MEMALLOC=09=09=0958
++#define PR_MEMALLOC_SET_NOIO=09=09(1UL << 0)
++#define PR_MEMALLOC_CLEAR_NOIO=09=09(1UL << 1)
++#define PR_MEMALLOC_SET_NOFS=09=09(1UL << 2)
++#define PR_MEMALLOC_CLEAR_NOFS=09=09(1UL << 3)
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index a611d1d58c7d..34fedc9fc7e4 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2486,6 +2486,50 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, a=
+rg2, unsigned long, arg3,
+ =09=09=09return -EINVAL;
+ =09=09error =3D GET_TAGGED_ADDR_CTRL();
+ =09=09break;
++=09case PR_SET_MEMALLOC:
++=09=09if (!capable(CAP_SYS_ADMIN))
++=09=09=09return -EPERM;
++
++=09=09if (arg3 || arg4 || arg5)
++=09=09=09return -EINVAL;
++
++=09=09switch (arg2) {
++=09=09case PR_MEMALLOC_SET_NOIO:
++=09=09=09if (current->flags & PF_MEMALLOC_NOFS)
++=09=09=09=09return -EINVAL;
++
++=09=09=09current->flags |=3D PF_MEMALLOC_NOIO;
++=09=09=09break;
++=09=09case PR_MEMALLOC_CLEAR_NOIO:
++=09=09=09current->flags &=3D ~PF_MEMALLOC_NOIO;
++=09=09=09break;
++=09=09case PR_MEMALLOC_SET_NOFS:
++=09=09=09if (current->flags & PF_MEMALLOC_NOIO)
++=09=09=09=09return -EINVAL;
++
++=09=09=09current->flags |=3D PF_MEMALLOC_NOFS;
++=09=09=09break;
++=09=09case PR_MEMALLOC_CLEAR_NOFS:
++=09=09=09current->flags &=3D ~PF_MEMALLOC_NOFS;
++=09=09=09break;
++=09=09default:
++=09=09=09return -EINVAL;
++=09=09}
++=09=09break;
++=09case PR_GET_MEMALLOC:
++=09=09if (!capable(CAP_SYS_ADMIN))
++=09=09=09return -EPERM;
++
++=09=09if (arg2 || arg3 || arg4 || arg5)
++=09=09=09return -EINVAL;
++
++=09=09if (current->flags & PF_MEMALLOC_NOIO)
++=09=09=09error =3D PR_MEMALLOC_SET_NOIO;
++=09=09else if (current->flags & PF_MEMALLOC_NOFS)
++=09=09=09error =3D PR_MEMALLOC_SET_NOFS;
++=09=09else
++=09=09=09error =3D 0;
++=09=09break;
+ =09default:
+ =09=09error =3D -EINVAL;
+ =09=09break;
+--=20
+2.20.1
 
