@@ -2,377 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A741BDFA32
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 03:37:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37D2DDFA36
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 03:43:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729270AbfJVBhe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 21:37:34 -0400
-Received: from mx2a.mailbox.org ([80.241.60.219]:51563 "EHLO mx2a.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbfJVBhd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 21:37:33 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2a.mailbox.org (Postfix) with ESMTPS id 9A2FCA3414;
-        Tue, 22 Oct 2019 03:37:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id dyNrI7RqNmMC; Tue, 22 Oct 2019 03:37:27 +0200 (CEST)
-Date:   Tue, 22 Oct 2019 12:37:17 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Omar Sandoval <osandov@osandov.com>, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [RFC PATCH v2 2/5] fs: add RWF_ENCODED for reading/writing
- compressed data
-Message-ID: <20191022013717.enwdmox4b7la4i74@yavin.dot.cyphar.com>
-References: <cover.1571164762.git.osandov@fb.com>
- <7f98cf5409cf2b583cd5b3451fc739fd3428873b.1571164762.git.osandov@fb.com>
- <20191021182806.GA6706@magnolia>
- <20191021183831.mbe4q2beqo76fqxm@yavin.dot.cyphar.com>
- <20191021190010.GC6726@magnolia>
+        id S1728741AbfJVBnI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 21:43:08 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:47524 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfJVBnI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Oct 2019 21:43:08 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9M1eMPI007804;
+        Tue, 22 Oct 2019 01:42:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=G1YUSv6Q1umZUPIovQNcbknJ1wc7STM8ROfuSFsOPAM=;
+ b=CCF8rsALY3w4xRR1+Ms1i/k0LfOqoeJc8EbHPMYdZqDa3gPAH9hRo82+k27Cu3Yj8vPc
+ sm27lh9FnaSUQt4d7Jkazgh1/LyfB5Z/kdSnEIdwyMMDkoNOkEiGZnff45mHrNaMIXWZ
+ tCYl1kCuLcch7h33nrTukaZeVpw5WqGVxX6X6mLzzkQ32dRGN5qNSNtyzD0hK6IVliUY
+ GqddYBC8prFyb62kIj1ZcJFtktSDI0Isqgrko/b+8DWrbC8UEm3FUUuwaEU/YgBfQeNY
+ y5fU5MWh7NpJ9XlXkl6G4qC0ZHFs7rkwlmxvt7FfJIduTRFia3dY5UpRy5gkxMhsHwwf 8Q== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2vqtepkc6g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Oct 2019 01:42:38 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9M1dCBk051133;
+        Tue, 22 Oct 2019 01:42:37 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2vsakce28g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Oct 2019 01:42:37 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9M1gSpf007648;
+        Tue, 22 Oct 2019 01:42:29 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 21 Oct 2019 18:42:27 -0700
+Date:   Mon, 21 Oct 2019 18:42:26 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Jan Kara <jack@suse.cz>, mbobrowski@mbobrowski.org,
+        riteshh@linux.ibm.com
+Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to c039b9979272
+Message-ID: <20191022014226.GH913374@magnolia>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tel3pez3twjkfp2c"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191021190010.GC6726@magnolia>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9417 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910220014
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9417 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910220014
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi folks,
 
---tel3pez3twjkfp2c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The iomap-for-next branch of the xfs-linux repository at:
 
-On 2019-10-21, Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> On Tue, Oct 22, 2019 at 05:38:31AM +1100, Aleksa Sarai wrote:
-> > On 2019-10-21, Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> > > On Tue, Oct 15, 2019 at 11:42:40AM -0700, Omar Sandoval wrote:
-> > > > From: Omar Sandoval <osandov@fb.com>
-> > > >=20
-> > > > Btrfs supports transparent compression: data written by the user ca=
-n be
-> > > > compressed when written to disk and decompressed when read back.
-> > > > However, we'd like to add an interface to write pre-compressed data
-> > > > directly to the filesystem, and the matching interface to read
-> > > > compressed data without decompressing it. This adds support for
-> > > > so-called "encoded I/O" via preadv2() and pwritev2().
-> > > >=20
-> > > > A new RWF_ENCODED flags indicates that a read or write is "encoded"=
-=2E If
-> > > > this flag is set, iov[0].iov_base points to a struct encoded_iov wh=
-ich
-> > > > is used for metadata: namely, the compression algorithm, unencoded
-> > > > (i.e., decompressed) length, and what subrange of the unencoded data
-> > > > should be used (needed for truncated or hole-punched extents and wh=
-en
-> > > > reading in the middle of an extent). For reads, the filesystem retu=
-rns
-> > > > this information; for writes, the caller provides it to the filesys=
-tem.
-> > > > iov[0].iov_len must be set to sizeof(struct encoded_iov), which can=
- be
-> > > > used to extend the interface in the future. The remaining iovecs co=
-ntain
-> > > > the encoded extent.
-> > > >=20
-> > > > Filesystems must indicate that they support encoded writes by setti=
-ng
-> > > > FMODE_ENCODED_IO in ->file_open().
-> > > >=20
-> > > > Signed-off-by: Omar Sandoval <osandov@fb.com>
-> > > > ---
-> > > >  include/linux/fs.h      | 14 +++++++
-> > > >  include/uapi/linux/fs.h | 26 ++++++++++++-
-> > > >  mm/filemap.c            | 82 ++++++++++++++++++++++++++++++++++---=
-----
-> > > >  3 files changed, 108 insertions(+), 14 deletions(-)
-> > > >=20
-> > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > > index e0d909d35763..54681f21e05e 100644
-> > > > --- a/include/linux/fs.h
-> > > > +++ b/include/linux/fs.h
-> > > > @@ -175,6 +175,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, =
-loff_t offset,
-> > > >  /* File does not contribute to nr_files count */
-> > > >  #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
-> > > > =20
-> > > > +/* File supports encoded IO */
-> > > > +#define FMODE_ENCODED_IO	((__force fmode_t)0x40000000)
-> > > > +
-> > > >  /*
-> > > >   * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
-> > > >   * that indicates that they should check the contents of the iovec=
- are
-> > > > @@ -314,6 +317,7 @@ enum rw_hint {
-> > > >  #define IOCB_SYNC		(1 << 5)
-> > > >  #define IOCB_WRITE		(1 << 6)
-> > > >  #define IOCB_NOWAIT		(1 << 7)
-> > > > +#define IOCB_ENCODED		(1 << 8)
-> > > > =20
-> > > >  struct kiocb {
-> > > >  	struct file		*ki_filp;
-> > > > @@ -3088,6 +3092,11 @@ extern int sb_min_blocksize(struct super_blo=
-ck *, int);
-> > > >  extern int generic_file_mmap(struct file *, struct vm_area_struct =
-*);
-> > > >  extern int generic_file_readonly_mmap(struct file *, struct vm_are=
-a_struct *);
-> > > >  extern ssize_t generic_write_checks(struct kiocb *, struct iov_ite=
-r *);
-> > > > +struct encoded_iov;
-> > > > +extern int generic_encoded_write_checks(struct kiocb *, struct enc=
-oded_iov *);
-> > > > +extern ssize_t check_encoded_read(struct kiocb *, struct iov_iter =
-*);
-> > > > +extern int import_encoded_write(struct kiocb *, struct encoded_iov=
- *,
-> > > > +				struct iov_iter *);
-> > > >  extern int generic_remap_checks(struct file *file_in, loff_t pos_i=
-n,
-> > > >  				struct file *file_out, loff_t pos_out,
-> > > >  				loff_t *count, unsigned int remap_flags);
-> > > > @@ -3403,6 +3412,11 @@ static inline int kiocb_set_rw_flags(struct =
-kiocb *ki, rwf_t flags)
-> > > >  			return -EOPNOTSUPP;
-> > > >  		ki->ki_flags |=3D IOCB_NOWAIT;
-> > > >  	}
-> > > > +	if (flags & RWF_ENCODED) {
-> > > > +		if (!(ki->ki_filp->f_mode & FMODE_ENCODED_IO))
-> > > > +			return -EOPNOTSUPP;
-> > > > +		ki->ki_flags |=3D IOCB_ENCODED;
-> > > > +	}
-> > > >  	if (flags & RWF_HIPRI)
-> > > >  		ki->ki_flags |=3D IOCB_HIPRI;
-> > > >  	if (flags & RWF_DSYNC)
-> > > > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > > > index 379a612f8f1d..ed92a8a257cb 100644
-> > > > --- a/include/uapi/linux/fs.h
-> > > > +++ b/include/uapi/linux/fs.h
-> > > > @@ -284,6 +284,27 @@ struct fsxattr {
-> > > > =20
-> > > >  typedef int __bitwise __kernel_rwf_t;
-> > > > =20
-> > > > +enum {
-> > > > +	ENCODED_IOV_COMPRESSION_NONE,
-> > > > +	ENCODED_IOV_COMPRESSION_ZLIB,
-> > > > +	ENCODED_IOV_COMPRESSION_LZO,
-> > > > +	ENCODED_IOV_COMPRESSION_ZSTD,
-> > > > +	ENCODED_IOV_COMPRESSION_TYPES =3D ENCODED_IOV_COMPRESSION_ZSTD,
-> > > > +};
-> > > > +
-> > > > +enum {
-> > > > +	ENCODED_IOV_ENCRYPTION_NONE,
-> > > > +	ENCODED_IOV_ENCRYPTION_TYPES =3D ENCODED_IOV_ENCRYPTION_NONE,
-> > > > +};
-> > > > +
-> > > > +struct encoded_iov {
-> > > > +	__u64 len;
-> > > > +	__u64 unencoded_len;
-> > > > +	__u64 unencoded_offset;
-> > > > +	__u32 compression;
-> > > > +	__u32 encryption;
-> > >=20
-> > > Can we add some must-be-zero padding space at the end here for whomev=
-er
-> > > comes along next wanting to add more encoding info?
-> >=20
-> > I would suggest to copy the extension design of copy_struct_from_user().
-> > Adding must-be-zero padding is a less-ideal solution to the extension
-> > problem than length-based extension.
->=20
-> Come to think of it, you /do/ have to specify iov_len so... yeah, do
-> that instead; we can always extend the structure later.
->=20
-> > Also (I might be wrong) but shouldn't the __u64s be __aligned_u64 (as
-> > with syscall structure arguments)?
->=20
-> <shrug> No idea, that's the first I've heard of that type and it doesn't
-> seem to be used by the fs code.  Why would we care about alignment for
-> an incore structure?
+	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-When passing u64s from userspace, it's generally considered a good idea
-to use __aligned_u64 -- the main reason is that 32-bit userspace on a
-64-bit kernel will use different structure alignment for 64-bit fields.
+has just been updated.
 
-This means you'd need to implement a bunch of COMPAT_SYSCALL-like
-handling for that case. It's much simpler to use __aligned_u64 (and on
-the plus side I don't think you need to add any fields to ensure the
-padding is zero).
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.  I reworked one of the patches to fix a broken Fixes:
+tag, but code-wise this is the same as last Friday's branch.  Consider
+this a stable working branch for 5.5.
 
-> >=20
-> > > (And maybe a manpage and some basic testing, to reiterate Dave...)
-> > >=20
-> > > --D
-> > >=20
-> > > > +};
-> > > > +
-> > > >  /* high priority request, poll if possible */
-> > > >  #define RWF_HIPRI	((__force __kernel_rwf_t)0x00000001)
-> > > > =20
-> > > > @@ -299,8 +320,11 @@ typedef int __bitwise __kernel_rwf_t;
-> > > >  /* per-IO O_APPEND */
-> > > >  #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
-> > > > =20
-> > > > +/* encoded (e.g., compressed or encrypted) IO */
-> > > > +#define RWF_ENCODED	((__force __kernel_rwf_t)0x00000020)
-> > > > +
-> > > >  /* mask of flags supported by the kernel */
-> > > >  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWA=
-IT |\
-> > > > -			 RWF_APPEND)
-> > > > +			 RWF_APPEND | RWF_ENCODED)
-> > > > =20
-> > > >  #endif /* _UAPI_LINUX_FS_H */
-> > > > diff --git a/mm/filemap.c b/mm/filemap.c
-> > > > index 1146fcfa3215..d2e6d9caf353 100644
-> > > > --- a/mm/filemap.c
-> > > > +++ b/mm/filemap.c
-> > > > @@ -2948,24 +2948,15 @@ static int generic_write_check_limits(struc=
-t file *file, loff_t pos,
-> > > >  	return 0;
-> > > >  }
-> > > > =20
-> > > > -/*
-> > > > - * Performs necessary checks before doing a write
-> > > > - *
-> > > > - * Can adjust writing position or amount of bytes to write.
-> > > > - * Returns appropriate error code that caller should return or
-> > > > - * zero in case that write should be allowed.
-> > > > - */
-> > > > -inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov=
-_iter *from)
-> > > > +static int generic_write_checks_common(struct kiocb *iocb, loff_t =
-*count)
-> > > >  {
-> > > >  	struct file *file =3D iocb->ki_filp;
-> > > >  	struct inode *inode =3D file->f_mapping->host;
-> > > > -	loff_t count;
-> > > > -	int ret;
-> > > > =20
-> > > >  	if (IS_SWAPFILE(inode))
-> > > >  		return -ETXTBSY;
-> > > > =20
-> > > > -	if (!iov_iter_count(from))
-> > > > +	if (!*count)
-> > > >  		return 0;
-> > > > =20
-> > > >  	/* FIXME: this is for backwards compatibility with 2.4 */
-> > > > @@ -2975,8 +2966,21 @@ inline ssize_t generic_write_checks(struct k=
-iocb *iocb, struct iov_iter *from)
-> > > >  	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIR=
-ECT))
-> > > >  		return -EINVAL;
-> > > > =20
-> > > > -	count =3D iov_iter_count(from);
-> > > > -	ret =3D generic_write_check_limits(file, iocb->ki_pos, &count);
-> > > > +	return generic_write_check_limits(iocb->ki_filp, iocb->ki_pos, co=
-unt);
-> > > > +}
-> > > > +
-> > > > +/*
-> > > > + * Performs necessary checks before doing a write
-> > > > + *
-> > > > + * Can adjust writing position or amount of bytes to write.
-> > > > + * Returns a negative errno or the new number of bytes to write.
-> > > > + */
-> > > > +inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov=
-_iter *from)
-> > > > +{
-> > > > +	loff_t count =3D iov_iter_count(from);
-> > > > +	int ret;
-> > > > +
-> > > > +	ret =3D generic_write_checks_common(iocb, &count);
-> > > >  	if (ret)
-> > > >  		return ret;
-> > > > =20
-> > > > @@ -2985,6 +2989,58 @@ inline ssize_t generic_write_checks(struct k=
-iocb *iocb, struct iov_iter *from)
-> > > >  }
-> > > >  EXPORT_SYMBOL(generic_write_checks);
-> > > > =20
-> > > > +int generic_encoded_write_checks(struct kiocb *iocb,
-> > > > +				 struct encoded_iov *encoded)
-> > > > +{
-> > > > +	loff_t count =3D encoded->unencoded_len;
-> > > > +	int ret;
-> > > > +
-> > > > +	ret =3D generic_write_checks_common(iocb, &count);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	if (count !=3D encoded->unencoded_len) {
-> > > > +		/*
-> > > > +		 * The write got truncated by generic_write_checks_common(). We
-> > > > +		 * can't do a partial encoded write.
-> > > > +		 */
-> > > > +		return -EFBIG;
-> > > > +	}
-> > > > +	return 0;
-> > > > +}
-> > > > +EXPORT_SYMBOL(generic_encoded_write_checks);
-> > > > +
-> > > > +ssize_t check_encoded_read(struct kiocb *iocb, struct iov_iter *it=
-er)
-> > > > +{
-> > > > +	if (!(iocb->ki_filp->f_flags & O_ENCODED))
-> > > > +		return -EPERM;
-> > > > +	if (iov_iter_single_seg_count(iter) !=3D sizeof(struct encoded_io=
-v))
-> > > > +		return -EINVAL;
-> > > > +	return iov_iter_count(iter) - sizeof(struct encoded_iov);
-> > > > +}
-> > > > +EXPORT_SYMBOL(check_encoded_read);
-> > > > +
-> > > > +int import_encoded_write(struct kiocb *iocb, struct encoded_iov *e=
-ncoded,
-> > > > +			 struct iov_iter *from)
-> > > > +{
-> > > > +	if (!(iocb->ki_filp->f_flags & O_ENCODED))
-> > > > +		return -EPERM;
-> > > > +	if (iov_iter_single_seg_count(from) !=3D sizeof(*encoded))
-> > > > +		return -EINVAL;
-> > > > +	if (copy_from_iter(encoded, sizeof(*encoded), from) !=3D sizeof(*=
-encoded))
-> > > > +		return -EFAULT;
-> > > > +	if (encoded->compression =3D=3D ENCODED_IOV_COMPRESSION_NONE &&
-> > > > +	    encoded->encryption =3D=3D ENCODED_IOV_ENCRYPTION_NONE)
-> > > > +		return -EINVAL;
-> > > > +	if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
-> > > > +	    encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
-> > > > +		return -EINVAL;
-> > > > +	if (encoded->unencoded_offset >=3D encoded->unencoded_len)
-> > > > +		return -EINVAL;
-> > > > +	return 0;
-> > > > +}
-> > > > +EXPORT_SYMBOL(import_encoded_write);
-> > > > +
-> > > >  /*
-> > > >   * Performs necessary checks before doing a clone.
-> > > >   *
+The new head of the iomap-for-next branch is commit:
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+c039b9979272 iomap: use a srcmap for a read-modify-write I/O
 
---tel3pez3twjkfp2c
-Content-Type: application/pgp-signature; name="signature.asc"
+New Commits:
 
------BEGIN PGP SIGNATURE-----
+Christoph Hellwig (20):
+      [2492a606b3d2] xfs: initialize iomap->flags in xfs_bmbt_to_iomap
+      [05b30949f1aa] xfs: set IOMAP_F_NEW more carefully
+      [4e087a3b313c] xfs: use a struct iomap in xfs_writepage_ctx
+      [433dad94ec5d] xfs: refactor the ioend merging code
+      [5653017bc44e] xfs: turn io_append_trans into an io_private void pointer
+      [760fea8bfb7f] xfs: remove the fork fields in the writepage_ctx and ioend
+      [009d8d849d3f] iomap: zero newly allocated mapped blocks
+      [9e91c5728cab] iomap: lift common tracing code from xfs to iomap
+      [598ecfbaa742] iomap: lift the xfs writeback code to iomap
+      [3e19e6f3eeea] iomap: warn on inline maps in iomap_writepage_map
+      [ab08b01ec0a2] iomap: move struct iomap_page out of iomap.h
+      [b3d423ec898a] iomap: cleanup iomap_ioend_compare
+      [48d64cd18b33] iomap: pass a struct page to iomap_finish_page_writeback
+      [65a60e8687c1] iomap: better document the IOMAP_F_* flags
+      [c12d6fa88d09] iomap: remove the unused iomap argument to __iomap_write_end
+      [dcd6158d15c7] iomap: always use AOP_FLAG_NOFS in iomap_write_begin
+      [3590c4d8979b] iomap: ignore non-shared or non-data blocks in xfs_file_dirty
+      [d3b404396977] iomap: move the zeroing case out of iomap_read_page_sync
+      [32a38a499104] iomap: use write_begin to read pages to unshare
+      [eb81cf9d0e18] iomap: renumber IOMAP_HOLE to 0
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXa5dSQAKCRCdlLljIbnQ
-EmxRAPsGpqeyAWpLA0wtXYC//gRIdEqupPZnfJCvZPvY3+Bw6AEAo8W6ZMfu8/XN
-i9uZlXnDzE5uE0/SQfeliX1xRJWUbgM=
-=jjFU
------END PGP SIGNATURE-----
+Darrick J. Wong (1):
+      [9cd0ed63ca51] iomap: enhance writeback error message
 
---tel3pez3twjkfp2c--
+Dave Chinner (1):
+      [7684e2c4384d] iomap: iomap that extends beyond EOF should be marked dirty
+
+Goldwyn Rodrigues (1):
+      [c039b9979272] iomap: use a srcmap for a read-modify-write I/O
+
+Jan Kara (2):
+      [13ef954445df] iomap: Allow forcing of waiting for running DIO in iomap_dio_rw()
+      [906753befc4d] xfs: Use iomap_dio_rw to wait for unaligned direct IO
+
+
+Code Diffstat:
+
+ fs/dax.c                 |  13 +-
+ fs/ext2/inode.c          |   2 +-
+ fs/ext4/inode.c          |   2 +-
+ fs/gfs2/bmap.c           |   3 +-
+ fs/gfs2/file.c           |   6 +-
+ fs/iomap/Makefile        |  16 +-
+ fs/iomap/apply.c         |  25 +-
+ fs/iomap/buffered-io.c   | 749 ++++++++++++++++++++++++++++++++++++++++------
+ fs/iomap/direct-io.c     |   9 +-
+ fs/iomap/fiemap.c        |   4 +-
+ fs/iomap/seek.c          |   4 +-
+ fs/iomap/swapfile.c      |   3 +-
+ fs/iomap/trace.c         |  12 +
+ fs/iomap/trace.h         |  88 ++++++
+ fs/xfs/libxfs/xfs_bmap.c |  14 +-
+ fs/xfs/libxfs/xfs_bmap.h |   3 +-
+ fs/xfs/xfs_aops.c        | 754 ++++++++---------------------------------------
+ fs/xfs/xfs_aops.h        |  17 --
+ fs/xfs/xfs_file.c        |  13 +-
+ fs/xfs/xfs_iomap.c       |  51 +++-
+ fs/xfs/xfs_iomap.h       |   2 +-
+ fs/xfs/xfs_pnfs.c        |   2 +-
+ fs/xfs/xfs_reflink.c     |   2 +-
+ fs/xfs/xfs_super.c       |  11 +-
+ fs/xfs/xfs_trace.h       |  65 ----
+ include/linux/iomap.h    | 129 +++++---
+ 26 files changed, 1085 insertions(+), 914 deletions(-)
+ create mode 100644 fs/iomap/trace.c
+ create mode 100644 fs/iomap/trace.h
