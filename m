@@ -2,89 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B622DFDFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 09:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EBBFDFE3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 09:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387771AbfJVHJS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 03:09:18 -0400
-Received: from mx-out.tlen.pl ([193.222.135.175]:38664 "EHLO mx-out.tlen.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387739AbfJVHJS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 03:09:18 -0400
-Received: (wp-smtpd smtp.tlen.pl 17107 invoked from network); 22 Oct 2019 09:09:14 +0200
-Received: from unknown (HELO localhost.localdomain) (p.sarna@o2.pl@[31.179.144.84])
-          (envelope-sender <p.sarna@tlen.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <linux-fsdevel@vger.kernel.org>; 22 Oct 2019 09:09:14 +0200
-Subject: Re: [PATCH] hugetlbfs: add O_TMPFILE support
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
+        id S2387692AbfJVH1E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 03:27:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36226 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728346AbfJVH1E (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Oct 2019 03:27:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D482EB355;
+        Tue, 22 Oct 2019 07:27:01 +0000 (UTC)
+Subject: Re: [PATCH v2] fs/dax: Fix pmd vs pte conflict detection
+To:     Dan Williams <dan.j.williams@intel.com>,
         linux-fsdevel@vger.kernel.org
-References: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
- <20191015105055.GA24932@dhcp22.suse.cz>
- <766b4370-ba71-85a2-5a57-ca9ed7dc7870@oracle.com>
- <eb6206ee-eb2e-ffbc-3963-d80eec04119c@oracle.com>
-From:   Piotr Sarna <p.sarna@tlen.pl>
-Message-ID: <c0415816-2682-7bf5-2c82-43c3a8941a54@tlen.pl>
-Date:   Tue, 22 Oct 2019 09:09:08 +0200
+Cc:     Jeff Smits <jeff.smits@intel.com>,
+        Doug Nelson <doug.nelson@intel.com>, stable@vger.kernel.org,
+        Jan Kara <jack@suse.cz>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+References: <157167532455.3945484.11971474077040503994.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
+ xsFNBFTTwPEBEADOadCyru0ZmVLaBn620Lq6WhXUlVhtvZF5r1JrbYaBROp8ZpiaOc9YpkN3
+ rXTgBx+UoDGtnz9DZnIa9fwxkcby63igMPFJEYpwt9adN6bA1DiKKBqbaV5ZbDXR1tRrSvCl
+ 2V4IgvgVuO0ZJEt7gakOQlqjQaOvIzDnMIi/abKLSSzYAThsOUf6qBEn2G46r886Mk8MwkJN
+ hilcQ7F5UsKfcVVGrTBoim6j69Ve6EztSXOXjFgsoBw4pEhWuBQCkDWPzxkkQof1WfkLAVJ2
+ X9McVokrRXeuu3mmB+ltamYcZ/DtvBRy8K6ViAgGyNRWmLTNWdJj19Qgw9Ef+Q9O5rwfbPZy
+ SHS2PVE9dEaciS+EJkFQ3/TBRMP1bGeNbZUgrMwWOvt37yguvrCOglbHW+a8/G+L7vz0hasm
+ OpvD9+kyTOHjqkknVJL69BOJeCIVUtSjT9EXaAOkqw3EyNJzzhdaMXcOPwvTXNkd8rQZIHft
+ SPg47zMp2SJtVdYrA6YgLv7OMMhXhNkUsvhU0HZWUhcXZnj+F9NmDnuccarez9FmLijRUNgL
+ 6iU+oypB/jaBkO6XLLwo2tf7CYmBYMmvXpygyL8/wt+SIciNiM34Yc+WIx4xv5nDVzG1n09b
+ +iXDTYoWH82Dq1xBSVm0gxlNQRUGMmsX1dCbCS2wmWbEJJDEeQARAQABzSdKb2hhbm5lcyBU
+ aHVtc2hpcm4gPGp0aHVtc2hpcm5Ac3VzZS5kZT7CwYAEEwEIACoCGwMFCwkIBwIGFQgJCgsC
+ BBYCAwECHgECF4AFCQo9ta8FAlohZmoCGQEACgkQA5OWnS12CFATLQ//ajhNDVJLK9bjjiOH
+ 53B0+hCrRBj5jQiT8I60+4w+hssvRHWkgsujF+V51jcmX3NOXeSyLC1Gk43A9vCz5gXnqyqG
+ tOlYm26bihzG02eAoWr/glHBQyy7RYcd97SuRSv77WzuXT3mCnM15TKiqXYNzRCK7u5nx4eu
+ szAU+AoXAC/y1gtuDMvANBEuHWE4LNQLkTwJshU1vwoNcTSl+JuQWe89GB8eeeMnHuY92T6A
+ ActzHN14R1SRD/51N9sebAxGVZntXzSVKyMID6eGdNegWrz4q55H56ZrOMQ6IIaa7KSz3QSj
+ 3E8VIY4FawfjCSOuA2joemnXH1a1cJtuqbDPZrO2TUZlNGrO2TRi9e2nIzouShc5EdwmL6qt
+ WG5nbGajkm1wCNb6t4v9ueYMPkHsr6xJorFZHlu7PKqB6YY3hRC8dMcCDSLkOPWf+iZrqtpE
+ odFBlnYNfmAXp+1ynhUvaeH6eSOqCN3jvQbITUo8mMQsdVgVeJwRdeAOFhP7fsxNugii721U
+ acNVDPpEz4QyxfZtfu9QGI405j9MXF/CPrHlNLD5ZM5k9NxnmIdCM9i1ii4nmWvmz9JdVJ+8
+ 6LkxauROr2apgTXxMnJ3Desp+IRWaFvTVhbwfxmwC5F3Kr0ouhr5Kt8jkQeD/vuqYuxOAyDI
+ egjo3Y7OGqct+5nybmbOwU0EVNPA8QEQAN/79cFVNpC+8rmudnXGbob9sk0J99qnwM2tw33v
+ uvQjEGAJTVCOHrewDbHmqZ5V1X1LI9cMlLUNMR3W0+L04+MH8s/JxshFST+hOaijGc81AN2P
+ NrAQD7IKpA78Q2F3I6gpbMzyMy0DxmoKF73IAMQIknrhzn37DgM+x4jQgkvhFMqnnZ/xIQ9d
+ QEBKDtfxH78QPosDqCzsN9HRArC75TiKTKOxC12ZRNFZfEPnmqJ260oImtmoD/L8QiBsdA4m
+ Mdkmo6Pq6iAhbGQ5phmhUVuj+7O8rTpGRXySMLZ44BimM8yHWTaiLWxCehHgfUWRNLwFbrd+
+ nYJYHoqyFGueZFBNxY4bS2rIEDg+nSKiAwJv3DUJDDd/QJpikB5HIjg/5kcSm7laqfbr1pmC
+ ZbR2JCTp4FTABVLxt7pJP40SuLx5He63aA/VyxoInLcZPBNvVfq/3v3fkoILphi77ZfTvKrl
+ RkDdH6PkFOFpnrctdTWbIFAYfU96VvySFAOOg5fsCeLv9/zD4dQEGsvva/qKZXkH/l2LeVp3
+ xEXoFsUZtajPZgyRBxer0nVWRyeVwUQnLG8kjEOcZzX27GUpughi8w42p4oMD+96tr3BKTAr
+ guRHJnU1M1xwRPbw5UsNXEOgYsFc8cdto0X7hQ2Ugc07CRSDvyH50IKXf2++znOTXFDhABEB
+ AAHCwV8EGAECAAkFAlTTwPECGwwACgkQA5OWnS12CFAdRg//ZGV0voLRjjgX9ODzaz6LP+IP
+ /ebGLXe3I+QXz8DaTkG45evOu6B2J53IM8t1xEug0OnfnTo1z0AFg5vU53L24LAdpi12CarV
+ Da53WvHzG4BzCVGOGrAvJnMvUXf0/aEm0Sen2Mvf5kvOwsr9UTHJ8N/ucEKSXAXf+KZLYJbL
+ NL4LbOFP+ywxtjV+SgLpDgRotM43yCRbONUXEML64SJ2ST+uNzvilhEQT/mlDP7cY259QDk7
+ 1K6B+/ACE3Dn7X0/kp8a+ZoNjUJZkQQY4JyMOkITD6+CJ1YsxhX+/few9k5uVrwK/Cw+Vmae
+ A85gYfFn+OlLFO/6RGjMAKOsdtPFMltNOZoT+YjgAcW6Q9qGgtVYKcVOxusL8C3v8PAYf7Ul
+ Su7c+/Ayr3YV9Sp8PH4X4jK/zk3+DDY1/ASE94c95DW1lpOcyx3n1TwQbwp6TzPMRe1IkkYe
+ 0lYj9ZgKaZ8hEmzuhg6FKXk9Dah+H73LdV57M4OFN8Xwb7v+oEG23vdsb2KBVG5K6Tv7Hb2N
+ sfHWRdU3quYIistrNWWeGmfTlhVLgDhEmAsKZFH05QsAv3pQv7dH/JD+Tbn6sSnNAVrATff1
+ AD3dXmt+5d3qYuUxam1UFGufGzV7jqG5QNStp0yvLP0xroB8y0CnnX2FY6bAVCU+CqKu+n1B
+ LGlgwABHRtLCwe0EGAEIACAWIQTsOJyrwsTyXYYA0NADk5adLXYIUAUCWsTXAwIbAgCBCRAD
+ k5adLXYIUHYgBBkWCAAdFiEEx1U9vxg1xAeUwus20p7yIq+KHe4FAlrE1wMACgkQ0p7yIq+K
+ He6RfAEA+frSSvrHiuatNqvgYAJcraYhp1GQJrWSWMmi2eFcGskBAJyLp47etEn3xhJBLVVh
+ 2y2K4Nobb6ZgxA4Svfnkf7AAdicQALiaOKDwKD3tgf90ypEoummYzAxv8MxyPXZ7ylRnkheA
+ eQDxuoc/YwMA4qyxhzf6K4tD/aT12XJd95gk+YAL6flGkJD8rA3jsEucPmo5eko4Ms2rOEdG
+ jKsZetkdPKGBd2qVxxyZgzUkgRXduvyux04b9erEpJmoIXs/lE0IRbL9A9rJ6ASjFPGpXYrb
+ 73pb6Dtkdpvv+hoe4cKeae4dS0AnDc7LWSW3Ub0n61uk/rqpTmKuesmTZeB2GHzLN5GAXfNj
+ ELHAeSVfFLPRFrjF5jjKJkpiyq98+oUnvTtDIPMTg05wSN2JtwKnoQ0TAIHWhiF6coGeEfY8
+ ikdVLSZDEjW54Td5aIXWCRTBWa6Zqz/G6oESF+Lchu/lDv5+nuN04KZRAwCpXLS++/givJWo
+ M9FMnQSvt4N95dVQE3kDsasl960ct8OzxaxuevW0OV/jQEd9gH50RaFif412DTrsuaPsBz6O
+ l2t2TyTuHm7wVUY2J3gJYgG723/PUGW4LaoqNrYQUr/rqo6NXw6c+EglRpm1BdpkwPwAng63
+ W5VOQMdnozD2RsDM5GfA4aEFi5m00tE+8XPICCtkduyWw+Z+zIqYk2v+zraPLs9Gs0X2C7X0
+ yvqY9voUoJjG6skkOToGZbqtMX9K4GOv9JAxVs075QRXL3brHtHONDt6udYobzz+
+Message-ID: <4731d8f6-8a06-5c2d-5150-bc3606b8800b@suse.de>
+Date:   Tue, 22 Oct 2019 09:27:01 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <eb6206ee-eb2e-ffbc-3963-d80eec04119c@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <157167532455.3945484.11971474077040503994.stgit@dwillia2-desk3.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-WP-MailID: 8456cf0fa81a268f78de0931459eaf0a
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000000 [kZNs]                               
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/21/19 7:17 PM, Mike Kravetz wrote:
-> On 10/15/19 4:37 PM, Mike Kravetz wrote:
->> On 10/15/19 3:50 AM, Michal Hocko wrote:
->>> On Tue 15-10-19 11:01:12, Piotr Sarna wrote:
->>>> With hugetlbfs, a common pattern for mapping anonymous huge pages
->>>> is to create a temporary file first.
->>>
->>> Really? I though that this is normally done by shmget(SHM_HUGETLB) or
->>> mmap(MAP_HUGETLB). Or maybe I misunderstood your definition on anonymous
->>> huge pages.
->>>
->>>> Currently libraries like
->>>> libhugetlbfs and seastar create these with a standard mkstemp+unlink
->>>> trick,
->>
->> I would guess that much of libhugetlbfs was writen before MAP_HUGETLB
->> was implemented.  So, that is why it does not make (more) use of that
->> option.
->>
->> The implementation looks to be straight forward.  However, I really do
->> not want to add more functionality to hugetlbfs unless there is specific
->> use case that needs it.
-> 
-> It was not my intention to shut down discussion on this patch.  I was just
-> asking if there was a (new) use case for such a change.  I am checking with
-> our DB team as I seem to remember them using the create/unlink approach for
-> hugetlbfs in one of their upcoming models.
-> 
-> Is there a new use case you were thinking about?
-> 
+Looks good,
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 
-Oh, I indeed thought it was a shutdown. The use case I was thinking 
-about was in Seastar, where the create+unlink trick is used for creating 
-temporary files (in a generic way, not only for hugetlbfs). I simply 
-intended to migrate it to a newer approach - O_TMPFILE. However,
-for the specific case of hugetlbfs it indeed makes more sense to skip it 
-and use mmap's MAP_HUGETLB, so perhaps it's not worth it to patch a 
-perfectly good and stable file system just to provide a semi-useful flag 
-support. My implementation of tmpfile for hugetlbfs is straightforward 
-indeed, but the MAP_HUGETLB argument made me realize that it may not be 
-worth the trouble - especially that MAP_HUGETLB is here since 2.6 and 
-O_TMPFILE was introduced around v3.11, so the mmap way looks more portable.
-
-tldr: I'd be very happy to get my patch accepted, but the use case I had 
-in mind can be easily solved with MAP_HUGETLB, so I don't insist.
+-- 
+Johannes Thumshirn                            SUSE Labs Filesystems
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5
+90409 Nürnberg
+Germany
+(HRB 36809, AG Nürnberg)
+Geschäftsführer: Felix Imendörffer
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
