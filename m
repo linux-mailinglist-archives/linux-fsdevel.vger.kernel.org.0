@@ -2,105 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB176E0418
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 14:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE87E050D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 15:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388005AbfJVMp1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 08:45:27 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:52905 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387479AbfJVMp1 (ORCPT
+        id S1732058AbfJVNa2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 09:30:28 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:57480 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730981AbfJVNa2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 08:45:27 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MS3vJ-1iT6mV3syZ-00TWZZ; Tue, 22 Oct 2019 14:45:25 +0200
-Received: by mail-qk1-f180.google.com with SMTP id 4so16058417qki.6;
-        Tue, 22 Oct 2019 05:45:24 -0700 (PDT)
-X-Gm-Message-State: APjAAAVKVuXD/mdkUexILNImqeP3fGPG3tptMHWHdXkZMyDAT+s6zHJi
-        pVEP+iUo6BJn6KEc7oX66vG8mF1GzbkG1C17Mz4=
-X-Google-Smtp-Source: APXvYqyjciZdavu1JPPPe0N7rFEefMcrTxNfxfTRa9du3KMTgEVclLMbFRHL5tu6WR3npY9i8xQxY+iAtUJmsd/5bVk=
-X-Received: by 2002:a37:a755:: with SMTP id q82mr2720249qke.394.1571748323679;
- Tue, 22 Oct 2019 05:45:23 -0700 (PDT)
+        Tue, 22 Oct 2019 09:30:28 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9MDU3no022015
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 22 Oct 2019 09:30:04 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id E1AD6420456; Tue, 22 Oct 2019 09:30:01 -0400 (EDT)
+Date:   Tue, 22 Oct 2019 09:30:01 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Dave Chinner <david@fromorbit.com>, linux-fscrypt@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 1/3] fscrypt: add support for inline-encryption-optimized
+ policies
+Message-ID: <20191022133001.GA23268@mit.edu>
+References: <20191021230355.23136-1-ebiggers@kernel.org>
+ <20191021230355.23136-2-ebiggers@kernel.org>
+ <20191022052712.GA2083@dread.disaster.area>
+ <20191022060004.GA333751@sol.localdomain>
 MIME-Version: 1.0
-References: <20191021201550.GW26530@ZenIV.linux.org.uk> <20191021225100.17990-1-guillem@hadrons.org>
-In-Reply-To: <20191021225100.17990-1-guillem@hadrons.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 22 Oct 2019 14:45:07 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1OOz2fSgn1YMGxdL+_ZSb5Wc0sAcROfaX=xfJANKpxjQ@mail.gmail.com>
-Message-ID: <CAK8P3a1OOz2fSgn1YMGxdL+_ZSb5Wc0sAcROfaX=xfJANKpxjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] aio: Fix io_pgetevents() struct __compat_aio_sigset layout
-To:     Guillem Jover <guillem@hadrons.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-aio <linux-aio@kvack.org>, Christoph Hellwig <hch@lst.de>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:K4GvhTjBFSXesAG7lBbAkSm70PIPiqjrBqmyNFcH+7pB132R9ZE
- KwQOJyq0Cox+x9AFBDY2meNYRyv8ImM2SC9Ax/fmCk6bxluncYjPXRBInI1rrKDaldt01sW
- cHEH46DBelFKALEZMkoJVEyB6f/sCjI1gCR3QyxgbVeuJewr1bpUzfD9RGJk2mUUt7bjKrN
- fXER3Frmot4PWz9/zq2bw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:GoouX5b415s=:TVfiSSZCtk4Zy+TRdN/NQW
- XD8VhF+Uo5QOOsBvQp7r6eNF36qGFhEOXukCdzm2+SzFdBc/l2XJ+db/CNPoKgCCsrxI17G7B
- z7+cNib0LVI0CYX8ORwTsDl6oVKkN1RP9/2YdOcDNjNOA5Y6gGaRpE8XEXLljCfXLOsF3eOUS
- 0wcjmE25Zw1DzlV8ljBNDw3jixM+iVdqyYyTdTKUr1Irgv1jqMKb8RoD+qchghVOEiosaxkde
- ZFuTY4ckcCkrsfU/GWeTD79vX1Ar92kbmxm4NtSlxJ8I2nR/up4/UPiFaLcnQQ6Qh8Rl1X3Pz
- onUMgSMLRxl5Uhw56yPDrbBKNxwLvpoDdCZ3kYJz71zgF+IL2C/f1L4HkfdVYyxyBh43hnJ89
- MuS7RJvIj9cqdqXhGonUDLtb5M8jW4CZ141wVp/4vnMCGFak//Q5j3vuKnCQk+F76o7hzfPXR
- NUxsH4hXcV5D25ggrTXfZQWDfrnmtFR6KHFL052bVHlcwV5vr00wna9ICMpeRUmEeRQF9smbJ
- uaVfKsgKriSuS/abv51ifTXyXSn3Nb3fGlc+vZevgEq+4mJzistBwA6uSUBWysPPcuHrdg0y4
- 7HWi3aBviurzW4Wm8TycLJ0/X/AbI+MHroe/GDZ1yhGhBh5fYKRLYxi+lNdUcR32DZfM8wH19
- Lce6nSpXB7BTv9t+5Y/TWOyDSLm7Xcr9KFE/T98UTscxTa0VPjPU0oo9aMh0zgJIlIFpLNx9L
- dG+KwMZ7Xm0KCdap4pzqEzerlueC7Urc25MrnuL6pIR3WjD+obKnbV7XNeR8PRutqjU/ZzRgq
- +UJsI4kRfXBWoNySpMo9rD4kCHkVure9sGztl8XOJWhyuSSRKmfnY/Z8CIDmti8+U9bFclRi3
- IajZzHFaqY+mOBWFEpAA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191022060004.GA333751@sol.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 12:49 AM Guillem Jover <guillem@hadrons.org> wrote:
->
-> This type is used to pass the sigset_t from userland to the kernel,
-> but it was using the kernel native pointer type for the member
-> representing the compat userland pointer to the userland sigset_t.
->
-> This messes up the layout, and makes the kernel eat up both the
-> userland pointer and the size into the kernel pointer, and then
-> reads garbage into the kernel sigsetsize. Which makes the sigset_t
-> size consistency check fail, and consequently the syscall always
-> returns -EINVAL.
->
-> This breaks both libaio and strace on 32-bit userland running on 64-bit
-> kernels. And there are apparently no users in the wild of the current
-> broken layout (at least according to codesearch.debian.org and a brief
-> check over github.com search). So it looks safe to fix this directly
-> in the kernel, instead of either letting userland deal with this
-> permanently with the additional overhead or trying to make the syscall
-> infer what layout userland used, even though this is also being worked
-> around in libaio to temporarily cope with kernels that have not yet
-> been fixed.
->
-> We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
->
-> Fixes: 7a074e96dee6 ("aio: implement io_pgetevents")
-> Signed-off-by: Guillem Jover <guillem@hadrons.org>
+On Mon, Oct 21, 2019 at 11:00:04PM -0700, Eric Biggers wrote:
+> That won't work because we need consecutive file blocks to have consecutive IVs
+> as often as possible.  The crypto support in the UFS and EMMC standards takes
+> only a single 64-bit "data unit number" (DUN) per request, which the hardware
+> uses as the first 64 bits of the IV and automatically increments for each data
+> unit (i.e. for each filesystem block, in this case).
 
-When resending a patch that has already been reviewed, please
-add the tags you received so they get picked up into the final
-changeset as well:
+It seems very likely that for systems that are using UFS and eMMC
+(which are overwhelming lower-end devices --- e.g., embedded and
+mobile handsets) 32-bit inode and logical block numbers will be just
+fine.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+If and when we actually get inline crypto support for server-class
+systems, hopefully they will support 128-bit DUN's, and/or they will
+have sufficiently fast key load times such that we can use per-file
+keying.
 
-Let's make sure this also gets added to stable kernels
+> An alternative which would work nicely on ext4 and xfs (if xfs supported
+> fscrypt) would be to pass the physical block number as the DUN.  However, that
+> wouldn't work at all on f2fs because f2fs moves data blocks around.  And since
+> most people who want to use this are using f2fs, f2fs support is essential.
 
-Cc: <stable@vger.kernel.org> # v4.18+
+And that is something fscrypt supports already, so if people really
+did want to use 64-bit logical block numbers, they could do that, at
+the cost of giving up the ability to shrink the file system (which XFS
+doesn't support anyway....)
 
-Finally (if you like)
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-
-     Arnd
+							- Ted
