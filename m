@@ -2,137 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27352E0A3E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 19:13:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 740ADE0D03
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 22:06:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbfJVRNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 13:13:49 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:34624 "EHLO
-        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726702AbfJVRNt (ORCPT
+        id S1731767AbfJVUG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 16:06:57 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34578 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731436AbfJVUG5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 13:13:49 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 2C82781E18;
-        Tue, 22 Oct 2019 20:13:45 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1571764425;
-        bh=WBZrleQkgVo3x8bYOGbdnGwjOGIOJdJQHv+CY7ylyGA=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=u77pJJYTNTHQFCSQj+wcQf6BxygccQVvF+oxgckVAUMAiEVSRdzAHHxQYOiDZEoV3
-         kPburIpoqsaKIpWzCfzxTmQMlD3okZOSKwOVNVOe6t4b4yRNzzYK14v79hSRm2XfR+
-         sa6PAiOzUrDpVKxvlVtpQlJGI88gjnBYYzpFEZRM=
-Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1591.10; Tue, 22 Oct 2019 20:13:44 +0300
-Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
- by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1591.008; Tue, 22 Oct 2019 20:13:44 +0300
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     =?utf-8?B?UGFsaSBSb2jDoXI=?= <pali.rohar@gmail.com>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] exFAT read-only driver GPL implementation by Paragon
- Software.
-Thread-Topic: [PATCH] exFAT read-only driver GPL implementation by Paragon
- Software.
-Thread-Index: AQHViPwP0nd+67F90kCW3ZTBWy3iuA==
-Date:   Tue, 22 Oct 2019 17:13:44 +0000
-Message-ID: <9763488C-9431-49FF-9465-1B965F159120@paragon-software.com>
-References: <453A1153-9493-4A04-BF66-CE6A572DEBDB@paragon-software.com>
- <20191019233449.bgimi755vt32itnf@pali>
-In-Reply-To: <20191019233449.bgimi755vt32itnf@pali>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.30.8.4]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0B23641893AC2445AD6FAC37F072C715@paragon-software.com>
-Content-Transfer-Encoding: base64
+        Tue, 22 Oct 2019 16:06:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571774816;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/PiRJCNLGvnO+cq8W87jW4K+Id7+0dBbGrIRPQYjd1k=;
+        b=PRkaUd9bf2KGBvyLd9xTmfSo84E+y0gtiRXFtdfEKYUOZCCUJwOLVqExJxhpD6KwRt9t2D
+        copt1ZFDq8N7hUlUvGaNiUi8isIJRabceinBKenI8ncq4QHmU9P9odRiU9szSgn7TaL9Ij
+        YklyOX3QBAWdYGFUsLlFYP5oOEmFio8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-119-OCp1J3PgPBakYjcmJwxnXQ-1; Tue, 22 Oct 2019 16:06:52 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E357380183D;
+        Tue, 22 Oct 2019 20:06:49 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9DF6660856;
+        Tue, 22 Oct 2019 20:06:35 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 16:06:32 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Neil Horman <nhorman@tuxdriver.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+Message-ID: <20191022200632.al5ajlaahsvjeuma@madcap2.tricolour.ca>
+References: <cover.1568834524.git.rgb@redhat.com>
+ <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+ <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
+ <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+ <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca>
+ <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
+ <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca>
+ <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+ <20191022121302.GA9397@hmswarspite.think-freely.org>
 MIME-Version: 1.0
+In-Reply-To: <20191022121302.GA9397@hmswarspite.think-freely.org>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: OCp1J3PgPBakYjcmJwxnXQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGVsbG8hIA0KVGhhbmtzIGZvciB5b3VyIGZpbmRpbmdzLg0KDQo+IE9uIDIwIE9jdCAyMDE5LCBh
-dCAwMjozNCwgUGFsaSBSb2jDoXIgPHBhbGkucm9oYXJAZ21haWwuY29tPiB3cm90ZToNCj4gDQo+
-IEhlbGxvISBJIGhhdmUgbm90IHJlYWQgZGVlcGx5IHdob2xlIGltcGxlbWVudGF0aW9uLCBqdXN0
-IHNwb3R0ZWQNCj4gc3VzcGljaW91cyBvcHRpb25zLiBTZWUgYmVsb3cuDQo+IA0KPiBPbiBGcmlk
-YXkgMTggT2N0b2JlciAyMDE5IDE1OjE4OjM5IEtvbnN0YW50aW4gS29tYXJvdiB3cm90ZToNCj4+
-IGRpZmYgLS1naXQgYS9mcy9leGZhdC9leGZhdF9mcy5oIGIvZnMvZXhmYXQvZXhmYXRfZnMuaA0K
-Pj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uNWY4NzEzZmUx
-YjBjDQo+PiAtLS0gL2Rldi9udWxsDQo+PiArKysgYi9mcy9leGZhdC9leGZhdF9mcy5oDQo+PiBA
-QCAtMCwwICsxLDM4OCBAQA0KPj4gKy8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4w
-ICovDQo+PiArLyoNCj4+ICsgKiAgbGludXgvZnMvZXhmYXQvc3VwZXIuYw0KPj4gKyAqDQo+PiAr
-ICogQ29weXJpZ2h0IChjKSAyMDEwLTIwMTkgUGFyYWdvbiBTb2Z0d2FyZSBHbWJILCBBbGwgcmln
-aHRzIHJlc2VydmVkLg0KPj4gKyAqDQo+PiArICovDQo+PiArDQo+PiArI2luY2x1ZGUgPGxpbnV4
-L2J1ZmZlcl9oZWFkLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L2hhc2guaD4NCj4+ICsjaW5jbHVk
-ZSA8bGludXgvbmxzLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L3JhdGVsaW1pdC5oPg0KPj4gKw0K
-Pj4gK3N0cnVjdCBleGZhdF9tb3VudF9vcHRpb25zIHsNCj4+ICsJa3VpZF90IGZzX3VpZDsNCj4+
-ICsJa2dpZF90IGZzX2dpZDsNCj4+ICsJdTE2IGZzX2ZtYXNrOw0KPj4gKwl1MTYgZnNfZG1hc2s7
-DQo+PiArCXUxNiBjb2RlcGFnZTsgLyogQ29kZXBhZ2UgZm9yIHNob3J0bmFtZSBjb252ZXJzaW9u
-cyAqLw0KPiANCj4gQWNjb3JkaW5nIHRvIGV4RkFUIHNwZWNpZmljYXRpb24sIHNlY3Rpb24gNy43
-LjMgRmlsZU5hbWUgRmllbGQgdGhlcmUgaXMNCj4gbm8gOC4zIHNob3J0bmFtZSBzdXBwb3J0IHdp
-dGggRE9TL09FTSBjb2RlcGFnZS4NCj4gDQo+IGh0dHBzOi8vZG9jcy5taWNyb3NvZnQuY29tL2Vu
-LXVzL3dpbmRvd3Mvd2luMzIvZmlsZWlvL2V4ZmF0LXNwZWNpZmljYXRpb24jNzczLWZpbGVuYW1l
-LWZpZWxkDQo+IA0KPiBQbHVzIGl0IGxvb2tzIGxpa2UgdGhhdCB0aGlzIG1lbWJlciBjb2RlcGFn
-ZSBpcyBvbmx5IHNldCBhbmQgbmV2ZXINCj4gYWNjZXNzZWQgaW4gd2hvbGUgZHJpdmVyLg0KPiAN
-Cj4gU28gaXQgY2FuIGJlIGNsZWFuIGl0IHVwIGFuZCByZW1vdmVkPw0KWWVzLCB0aGlzIG9uZSBz
-aG91bGQgYmUgcmVtb3ZlZCBhcyBub3QgdXNlZCBhY3R1YWxseSB0aHJvdWdoIHRoZSBjb2RlLiBP
-bmUgdGhpbmcgdG8gZG8gYWJvdXQgdGhlIGltcGxlbWVudGF0aW9uLCBiZXNpZGVzIFJXIHN1cHBv
-cnQgYW5kIGEgbGl0dGxlIGNsZWFuLXVwIG9mIHN1Y2ggcGxhY2VzIGxpa2UgdGhpcyBvbmUsIGlz
-IG5scy9jb2RlcGFnZSBzdXBwb3J0LiBDdXJyZW50bHksIHV0Zi04IG9ubHkgaXMgc3VwcG9ydGVk
-Lg0KDQo+IA0KPj4gKwkvKiBtaW51dGVzIGJpYXM9IFVUQyAtIGxvY2FsIHRpbWUuIEVhc3Rlcm4g
-dGltZSB6b25lOiArMzAwLCAqLw0KPj4gKwkvKlBhcmlzLEJlcmxpbjogLTYwLCBNb3Njb3c6IC0x
-ODAqLw0KPj4gKwlpbnQgYmlhczsNCj4+ICsJdTE2IGFsbG93X3V0aW1lOyAvKiBwZXJtaXNzaW9u
-IGZvciBzZXR0aW5nIHRoZSBbYW1ddGltZSAqLw0KPj4gKwl1bnNpZ25lZCBxdWlldCA6IDEsIC8q
-IHNldCA9IGZha2Ugc3VjY2Vzc2Z1bCBjaG1vZHMgYW5kIGNob3ducyAqLw0KPj4gKwkJc2hvd2V4
-ZWMgOiAxLCAvKiBzZXQgPSBvbmx5IHNldCB4IGJpdCBmb3IgY29tL2V4ZS9iYXQgKi8NCj4+ICsJ
-CXN5c19pbW11dGFibGUgOiAxLCAvKiBzZXQgPSBzeXN0ZW0gZmlsZXMgYXJlIGltbXV0YWJsZSAq
-Lw0KPj4gKwkJdXRmOCA6IDEsIC8qIFVzZSBvZiBVVEYtOCBjaGFyYWN0ZXIgc2V0IChEZWZhdWx0
-KSAqLw0KPj4gKwkJLyogY3JlYXRlIGVzY2FwZSBzZXF1ZW5jZXMgZm9yIHVuaGFuZGxlZCBVbmlj
-b2RlICovDQo+PiArCQl1bmljb2RlX3hsYXRlIDogMSwgZmx1c2ggOiAxLCAvKiB3cml0ZSB0aGlu
-Z3MgcXVpY2tseSAqLw0KPj4gKwkJdHpfc2V0IDogMSwgLyogRmlsZXN5c3RlbSB0aW1lc3RhbXBz
-JyBvZmZzZXQgc2V0ICovDQo+PiArCQlkaXNjYXJkIDogMSAvKiBJc3N1ZSBkaXNjYXJkIHJlcXVl
-c3RzIG9uIGRlbGV0aW9ucyAqLw0KPj4gKwkJOw0KPj4gK307DQo+IA0KPiAuLi4NCj4gDQo+PiBk
-aWZmIC0tZ2l0IGEvZnMvZXhmYXQvc3VwZXIuYyBiL2ZzL2V4ZmF0L3N1cGVyLmMNCj4+IG5ldyBm
-aWxlIG1vZGUgMTAwNjQ0DQo+PiBpbmRleCAwMDAwMDAwMDAwMDAuLjA3MDVkYWIzYzNmYw0KPj4g
-LS0tIC9kZXYvbnVsbA0KPj4gKysrIGIvZnMvZXhmYXQvc3VwZXIuYw0KPiAuLi4NCj4+ICtlbnVt
-IHsNCj4+ICsJT3B0X3VpZCwgT3B0X2dpZCwgT3B0X3VtYXNrLCBPcHRfZG1hc2ssIE9wdF9mbWFz
-aywgT3B0X2FsbG93X3V0aW1lLA0KPj4gKwlPcHRfY29kZXBhZ2UsIE9wdF9xdWlldCwgT3B0X3No
-b3dleGVjLCBPcHRfZGVidWcsIE9wdF9pbW11dGFibGUsDQo+PiArCU9wdF91dGY4X25vLCBPcHRf
-dXRmOF95ZXMsIE9wdF91bmlfeGxfbm8sIE9wdF91bmlfeGxfeWVzLCBPcHRfZmx1c2gsDQo+PiAr
-CU9wdF90el91dGMsIE9wdF9kaXNjYXJkLCBPcHRfbmZzLCBPcHRfYmlhcywgT3B0X2VyciwNCj4+
-ICt9Ow0KPj4gKw0KPj4gK3N0YXRpYyBjb25zdCBtYXRjaF90YWJsZV90IGZhdF90b2tlbnMgPSB7
-DQo+PiArCXsgT3B0X3VpZCwgInVpZD0ldSIgfSwNCj4+ICsJeyBPcHRfZ2lkLCAiZ2lkPSV1IiB9
-LA0KPj4gKwl7IE9wdF91bWFzaywgInVtYXNrPSVvIiB9LA0KPj4gKwl7IE9wdF9kbWFzaywgImRt
-YXNrPSVvIiB9LA0KPj4gKwl7IE9wdF9mbWFzaywgImZtYXNrPSVvIiB9LA0KPj4gKwl7IE9wdF9h
-bGxvd191dGltZSwgImFsbG93X3V0aW1lPSVvIiB9LA0KPj4gKwl7IE9wdF9jb2RlcGFnZSwgImNv
-ZGVwYWdlPSV1IiB9LA0KPj4gKwl7IE9wdF9xdWlldCwgInF1aWV0IiB9LA0KPj4gKwl7IE9wdF9z
-aG93ZXhlYywgInNob3dleGVjIiB9LA0KPj4gKwl7IE9wdF9kZWJ1ZywgImRlYnVnIiB9LA0KPj4g
-Kwl7IE9wdF9pbW11dGFibGUsICJzeXNfaW1tdXRhYmxlIiB9LA0KPj4gKwl7IE9wdF9mbHVzaCwg
-ImZsdXNoIiB9LA0KPj4gKwl7IE9wdF90el91dGMsICJ0ej1VVEMiIH0sDQo+PiArCXsgT3B0X2Jp
-YXMsICJiaWFzPSVkIiB9LA0KPj4gKwl7IE9wdF9kaXNjYXJkLCAiZGlzY2FyZCIgfSwNCj4+ICsJ
-eyBPcHRfdXRmOF9ubywgInV0Zjg9MCIgfSwgLyogMCBvciBubyBvciBmYWxzZSAqLw0KPj4gKwl7
-IE9wdF91dGY4X25vLCAidXRmOD1ubyIgfSwNCj4+ICsJeyBPcHRfdXRmOF9ubywgInV0Zjg9ZmFs
-c2UiIH0sDQo+PiArCXsgT3B0X3V0ZjhfeWVzLCAidXRmOD0xIiB9LCAvKiBlbXB0eSBvciAxIG9y
-IHllcyBvciB0cnVlICovDQo+PiArCXsgT3B0X3V0ZjhfeWVzLCAidXRmOD15ZXMiIH0sDQo+PiAr
-CXsgT3B0X3V0ZjhfeWVzLCAidXRmOD10cnVlIiB9LA0KPj4gKwl7IE9wdF91dGY4X3llcywgInV0
-ZjgiIH0sDQo+IA0KPiBUaGVyZSBhcmUgbG90IG9mIHV0ZjggbW91bnQgb3B0aW9ucy4gQXJlIHRo
-ZXkgcmVhbGx5IG5lZWRlZD8NCj4gDQo+IFdvdWxkIG5vdCBpdCBiZSBiZXR0ZXIgdG8gdXNlIGp1
-c3Qgb25lICJpb2NoYXJzZXQiIG1vdW50IG9wdGlvbiBsaWtlDQo+IG90aGVyIFVuaWNvZGUgYmFz
-ZWQgZmlsZXN5c3RlbSBoYXZlIGl0IChlLmcuIHZmYXQsIGpmcywgaXNvOTY2MCwgdWRmIG9yDQo+
-IG50ZnMpPw0KDQpJdCBzZWVtcyByZWFzb25hYmxlIGFzIHdlbGwuICJpb2NoYXJzZXQiIG1heSBi
-ZSBtb3JlIGhhbmR5IHdheSB0byBoYW5kbGUgc3VjaCBtb3VudCBvcHRpb25zLg0KDQo+IA0KPj4g
-Kwl7IE9wdF91bmlfeGxfbm8sICJ1bmlfeGxhdGU9MCIgfSwgLyogMCBvciBubyBvciBmYWxzZSAq
-Lw0KPj4gKwl7IE9wdF91bmlfeGxfbm8sICJ1bmlfeGxhdGU9bm8iIH0sDQo+PiArCXsgT3B0X3Vu
-aV94bF9ubywgInVuaV94bGF0ZT1mYWxzZSIgfSwNCj4+ICsJeyBPcHRfdW5pX3hsX3llcywgInVu
-aV94bGF0ZT0xIiB9LCAvKiBlbXB0eSBvciAxIG9yIHllcyBvciB0cnVlICovDQo+PiArCXsgT3B0
-X3VuaV94bF95ZXMsICJ1bmlfeGxhdGU9eWVzIiB9LA0KPj4gKwl7IE9wdF91bmlfeGxfeWVzLCAi
-dW5pX3hsYXRlPXRydWUiIH0sDQo+PiArCXsgT3B0X3VuaV94bF95ZXMsICJ1bmlfeGxhdGUiIH0s
-DQo+PiArCXsgT3B0X2VyciwgTlVMTCB9DQo+PiArfTsNCj4gDQo+IC0tIA0KPiBQYWxpIFJvaMOh
-cg0KPiBwYWxpLnJvaGFyQGdtYWlsLmNvbQ0KDQo=
+On 2019-10-22 08:13, Neil Horman wrote:
+> On Mon, Oct 21, 2019 at 08:31:37PM -0400, Paul Moore wrote:
+> > On Mon, Oct 21, 2019 at 7:58 PM Richard Guy Briggs <rgb@redhat.com> wro=
+te:
+> > > On 2019-10-21 17:43, Paul Moore wrote:
+> > > > On Mon, Oct 21, 2019 at 5:38 PM Richard Guy Briggs <rgb@redhat.com>=
+ wrote:
+> > > > > On 2019-10-21 15:53, Paul Moore wrote:
+> > > > > > On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.=
+com> wrote:
+> > > > > > > On 2019-09-18 21:22, Richard Guy Briggs wrote:
+> > > > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explici=
+tly give a
+> > > > > > > > process in a non-init user namespace the capability to set =
+audit
+> > > > > > > > container identifiers.
+> > > > > > > >
+> > > > > > > > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 an=
+d
+> > > > > > > > AUDIT_SET_CAPCONTID 1028.  The message format includes the =
+data
+> > > > > > > > structure:
+> > > > > > > > struct audit_capcontid_status {
+> > > > > > > >         pid_t   pid;
+> > > > > > > >         u32     enable;
+> > > > > > > > };
+> > > > > > >
+> > > > > > > Paul, can I get a review of the general idea here to see if y=
+ou're ok
+> > > > > > > with this way of effectively extending CAP_AUDIT_CONTROL for =
+the sake of
+> > > > > > > setting contid from beyond the init user namespace where capa=
+ble() can't
+> > > > > > > reach and ns_capable() is meaningless for these purposes?
+> > > > > >
+> > > > > > I think my previous comment about having both the procfs and ne=
+tlink
+> > > > > > interfaces apply here.  I don't see why we need two different A=
+PIs at
+> > > > > > the start; explain to me why procfs isn't sufficient.  If the a=
+rgument
+> > > > > > is simply the desire to avoid mounting procfs in the container,=
+ how
+> > > > > > many container orchestrators can function today without a valid=
+ /proc?
+> > > > >
+> > > > > Ok, sorry, I meant to address that question from a previous patch
+> > > > > comment at the same time.
+> > > > >
+> > > > > It was raised by Eric Biederman that the proc filesystem interfac=
+e for
+> > > > > audit had its limitations and he had suggested an audit netlink
+> > > > > interface made more sense.
+> > > >
+> > > > I'm sure you've got it handy, so I'm going to be lazy and ask: arch=
+ive
+> > > > pointer to Eric's comments?  Just a heads-up, I'm really *not* a fa=
+n
+> > > > of using the netlink interface for this, so unless Eric presents a
+> > > > super compelling reason for why we shouldn't use procfs I'm incline=
+d
+> > > > to stick with /proc.
+> > >
+> > > It was actually a video call with Eric and Steve where that was
+> > > recommended, so I can't provide you with any first-hand communication
+> > > about it.  I'll get more details...
+> >=20
+> > Yeah, that sort of information really needs to be on the list.
+> >=20
+> > > So, with that out of the way, could you please comment on the general
+> > > idea of what was intended to be the central idea of this mechanism to=
+ be
+> > > able to nest containers beyond the initial user namespace (knowing th=
+at
+> > > a /proc interface is available and the audit netlink interface isn't
+> > > necessary for it to work and the latter can be easily removed)?
+> >=20
+> > I'm not entirely clear what you are asking about, are you asking why I
+> > care about nesting container orchestrators?  Simply put, it is not
+> > uncommon for the LXC/LXD folks to see nested container orchestrators,
+> > so I felt it was important to support that use case.  When we
+> > originally started this effort we probably should have done a better
+> > job reaching out to the LXC/LXD folks, we may have caught this
+> > earlier.  Regardless, we caught it, and it looks like we are on our
+> > way to supporting it (that's good).
+> >=20
+> > Are you asking why I prefer the procfs approach to setting/getting the
+> > audit container ID?  For one, it makes it easier for a LSM to enforce
+> > the audit container ID operations independent of the other audit
+> > control APIs.  It also provides a simpler interface for container
+> > orchestrators.  Both seem like desirable traits as far as I'm
+> > concerned.
+>=20
+> I agree that one api is probably the best approach here, but I actually
+> think that the netlink interface is the more flexible approach.  Its a
+> little more work for userspace (you have to marshal your data into a
+> netlink message before sending it, and wait for an async response), but
+> thats a well known pattern, and it provides significantly more
+> flexibility for the kernel.  LSM already has a hook to audit netlink
+> messages in sock_sendmsg, so thats not a problem, and if you use
+> netlink, you get the advantage of being able to broadcast messages
+> within your network namespaces, facilitating any needed orchestrator
+> co-ordination.  To do the same thing with a filesystem api, you need to
+> use the fanotify api, which IIRC doesn't work on proc.
+
+One api was the intent, deprecating proc for loginuid and sessionid if
+netlink was the chosen way to go.
+
+I don't think we had discussed the possibility or need to use netlink
+multicast for this purpose and see it as a liability to limiting access
+to only those processes that need it.
+
+> Neil
+>=20
+> > > > > The intent was to switch to the audit netlink interface for conti=
+d,
+> > > > > capcontid and to add the audit netlink interface for loginuid and
+> > > > > sessionid while deprecating the proc interface for loginuid and
+> > > > > sessionid.  This was alluded to in the cover letter, but not very=
+ clear,
+> > > > > I'm afraid.  I have patches to remove the contid and loginuid/ses=
+sionid
+> > > > > interfaces in another tree which is why I had forgotten to outlin=
+e that
+> > > > > plan more explicitly in the cover letter.
+> >=20
+> > paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
