@@ -2,150 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F0BEE03A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 14:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE75CE03AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 14:14:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389016AbfJVMNW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 08:13:22 -0400
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:59739 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388106AbfJVMNW (ORCPT
+        id S2389032AbfJVMOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 08:14:41 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:53117 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388552AbfJVMOk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 08:13:22 -0400
-Received: from cpe-2606-a000-111b-43ee-0-0-0-115f.dyn6.twc.com ([2606:a000:111b:43ee::115f] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1iMt2B-00038h-L6; Tue, 22 Oct 2019 08:13:10 -0400
-Date:   Tue, 22 Oct 2019 08:13:02 -0400
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
- outside init_user_ns
-Message-ID: <20191022121302.GA9397@hmswarspite.think-freely.org>
-References: <cover.1568834524.git.rgb@redhat.com>
- <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
- <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
- <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
- <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca>
- <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
- <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca>
- <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+        Tue, 22 Oct 2019 08:14:40 -0400
+Received: from mail-qt1-f173.google.com ([209.85.160.173]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N94FT-1hzG5w0ynf-0163wO; Tue, 22 Oct 2019 14:14:39 +0200
+Received: by mail-qt1-f173.google.com with SMTP id o49so18528472qta.7;
+        Tue, 22 Oct 2019 05:14:38 -0700 (PDT)
+X-Gm-Message-State: APjAAAWhI0hzM0vbW0n0IVJBI4DTREhNH2/9q8A2dMgEqBqBeaGNtqnR
+        N1cmFPhOpyMkJcM0a3KeJ8TaWPnj3xF+yvg9CbE=
+X-Google-Smtp-Source: APXvYqwo4iaXiWc9keweLjxIvSCa7w0jFkiDPZWKviou4a0Bxa+qtglo0QV3JQ+Kl6v/4gAkkG+1IujkTObOOFibW4w=
+X-Received: by 2002:a0c:d0e1:: with SMTP id b30mr2712706qvh.197.1571746477934;
+ Tue, 22 Oct 2019 05:14:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Spam-Score: -2.9 (--)
-X-Spam-Status: No
+References: <20191009190853.245077-1-arnd@arndb.de> <20191009191044.308087-10-arnd@arndb.de>
+ <d1022cda6bd6ce73e9875644a5a2c65e4d554f37.camel@codethink.co.uk>
+ <CAK8P3a0BYkPTSnQUmde2k+HVcg7XNihzWTEzrCD4d8G8ecO9-w@mail.gmail.com> <20191022043051.GA20354@ZenIV.linux.org.uk>
+In-Reply-To: <20191022043051.GA20354@ZenIV.linux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 22 Oct 2019 14:14:21 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3yutJU83AfxKXTFuCVQwsX50KYsDgbGbHeJJ0JoLbejg@mail.gmail.com>
+Message-ID: <CAK8P3a3yutJU83AfxKXTFuCVQwsX50KYsDgbGbHeJJ0JoLbejg@mail.gmail.com>
+Subject: Re: [Y2038] [PATCH v6 10/43] compat_ioctl: move rtc handling into rtc-dev.c
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:/sHdnSiMoAnuM2mO95KOE1bx19PpHaydUFH1K+CfceIAFsFpJAM
+ rHUGwT7BLz6Nf6J3HzeN0wmpzHtsk+andbk3mN6fst1uJoDtrgDM1iqpwO+4x8pOh4rx0Hz
+ J788tLZ8Jcb2nlqTm79+wmsBwrlIIn9BteVWN0KpNR8mVajx7S3ufQPSP4hXXe9xgEPBL6o
+ Tq2fW98R+vMFfw32z0X7Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hz09wcLX470=:PJGHc4BNLHrKEDiBlWzeo0
+ qg+wjdYtLVinPq6/kb5HqpC3WTomSRIIC/882A3Rp1pp1X6k3fDRrsLOYsqjtDg/2AngeC3Po
+ +gcXPBdvSDPRMPFO/SUIxwo9AsUlL86gt0lZ54FSqgdD+43WwLV99b8oESOlVo0fENg7UnlU3
+ dGqnisbDj3eBPoI41g5CdwxLrl0rEBGltmJrNQnRQHSqIEIj5YwF1v4xcCgfyVzjkeFne1fpP
+ +KF8QiXdeq42TfF8ZVQJTF6z4ynjV8gJ8ydk7w8R8NXlvTaozZpNqizW/606u+WliaomFJ+JS
+ bb6MbbcO2rcqerDAmYDeVIl7EIFeRygTPdvy+UoEADrP7MGr9FU/8Ss/qhh/c2VFU+WVc9oH+
+ hHlFo4SB6I1okQRf2niB9NpPBm25KnMnb+6K7cmWmhuBwzV9fo2lYqRMhHyWVmmU3EWH6fhX3
+ 4q4mkO47CZfKy1n07YbeFzl/Zrl+ZdUPsT83O7igTaAKTpi/zW/D/rS2i6zg0VaQK9QGBaO7W
+ 2N9irEMD7wIMFL8z3wytwyVV2E5tDRpvX4RrGb6HWfq3Q8Udsg0FWZXP5/dGDJvMaOlwlE2S1
+ heNOXCveXxZDCldYhvkPAjuBav3a3iwjDRMuaGve0E5VScKpunJPw0Im765axTG/bTsdCtx/3
+ ikvyoLKMuQ9TC8iEJa0U2e2rQuaqclRdzGiC0VcsdBMox5PwfBQ91pvHsEHyhlc4/1IOzNAXL
+ XCB5qkJZ7KFsSu6ioaYkUCDIJgNTCNxrj5vc658gUWhDmfvCOR3ewDEt5WTBtScnYzThr0oG8
+ pStovhV2K+CTjj9L6gj3PhDG5G6nRU7Emk+s2vS3wABdgokWGrLJnUa3yCXtGAv09IWJLJIjW
+ F9L+UFH0M00un80xvusA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 08:31:37PM -0400, Paul Moore wrote:
-> On Mon, Oct 21, 2019 at 7:58 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2019-10-21 17:43, Paul Moore wrote:
-> > > On Mon, Oct 21, 2019 at 5:38 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > On 2019-10-21 15:53, Paul Moore wrote:
-> > > > > On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > On 2019-09-18 21:22, Richard Guy Briggs wrote:
-> > > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
-> > > > > > > process in a non-init user namespace the capability to set audit
-> > > > > > > container identifiers.
-> > > > > > >
-> > > > > > > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
-> > > > > > > AUDIT_SET_CAPCONTID 1028.  The message format includes the data
-> > > > > > > structure:
-> > > > > > > struct audit_capcontid_status {
-> > > > > > >         pid_t   pid;
-> > > > > > >         u32     enable;
-> > > > > > > };
-> > > > > >
-> > > > > > Paul, can I get a review of the general idea here to see if you're ok
-> > > > > > with this way of effectively extending CAP_AUDIT_CONTROL for the sake of
-> > > > > > setting contid from beyond the init user namespace where capable() can't
-> > > > > > reach and ns_capable() is meaningless for these purposes?
-> > > > >
-> > > > > I think my previous comment about having both the procfs and netlink
-> > > > > interfaces apply here.  I don't see why we need two different APIs at
-> > > > > the start; explain to me why procfs isn't sufficient.  If the argument
-> > > > > is simply the desire to avoid mounting procfs in the container, how
-> > > > > many container orchestrators can function today without a valid /proc?
-> > > >
-> > > > Ok, sorry, I meant to address that question from a previous patch
-> > > > comment at the same time.
-> > > >
-> > > > It was raised by Eric Biederman that the proc filesystem interface for
-> > > > audit had its limitations and he had suggested an audit netlink
-> > > > interface made more sense.
-> > >
-> > > I'm sure you've got it handy, so I'm going to be lazy and ask: archive
-> > > pointer to Eric's comments?  Just a heads-up, I'm really *not* a fan
-> > > of using the netlink interface for this, so unless Eric presents a
-> > > super compelling reason for why we shouldn't use procfs I'm inclined
-> > > to stick with /proc.
-> >
-> > It was actually a video call with Eric and Steve where that was
-> > recommended, so I can't provide you with any first-hand communication
-> > about it.  I'll get more details...
-> 
-> Yeah, that sort of information really needs to be on the list.
-> 
-> > So, with that out of the way, could you please comment on the general
-> > idea of what was intended to be the central idea of this mechanism to be
-> > able to nest containers beyond the initial user namespace (knowing that
-> > a /proc interface is available and the audit netlink interface isn't
-> > necessary for it to work and the latter can be easily removed)?
-> 
-> I'm not entirely clear what you are asking about, are you asking why I
-> care about nesting container orchestrators?  Simply put, it is not
-> uncommon for the LXC/LXD folks to see nested container orchestrators,
-> so I felt it was important to support that use case.  When we
-> originally started this effort we probably should have done a better
-> job reaching out to the LXC/LXD folks, we may have caught this
-> earlier.  Regardless, we caught it, and it looks like we are on our
-> way to supporting it (that's good).
-> 
-> Are you asking why I prefer the procfs approach to setting/getting the
-> audit container ID?  For one, it makes it easier for a LSM to enforce
-> the audit container ID operations independent of the other audit
-> control APIs.  It also provides a simpler interface for container
-> orchestrators.  Both seem like desirable traits as far as I'm
-> concerned.
-> 
-I agree that one api is probably the best approach here, but I actually
-think that the netlink interface is the more flexible approach.  Its a
-little more work for userspace (you have to marshal your data into a
-netlink message before sending it, and wait for an async response), but
-thats a well known pattern, and it provides significantly more
-flexibility for the kernel.  LSM already has a hook to audit netlink
-messages in sock_sendmsg, so thats not a problem, and if you use
-netlink, you get the advantage of being able to broadcast messages
-within your network namespaces, facilitating any needed orchestrator
-co-ordination.  To do the same thing with a filesystem api, you need to
-use the fanotify api, which IIRC doesn't work on proc.
+On Tue, Oct 22, 2019 at 6:30 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Thu, Oct 17, 2019 at 04:33:09PM +0200, Arnd Bergmann wrote:
+>
+> > However, looking at this again after your comment I found a rather
+> > more serious bug in my new RTC_IRQP_SET handling: Any 64-bit
+> > machine can now bypass the permission check for RTC_IRQP_SET by
+> > calling RTC_IRQP_SET32 instead.
+>
+> You've lost the check on RTC_EPOCH_SET as well.
 
-Neil
+Right, originally my plan was to keep the epoch handling local to
+rtc-vr41xx.c as explained in the patch description. The driver is
+specific to a particular very obsolete MIPS machine that was
+apparently only ever used with 32-bit kernels.
 
-> > > > The intent was to switch to the audit netlink interface for contid,
-> > > > capcontid and to add the audit netlink interface for loginuid and
-> > > > sessionid while deprecating the proc interface for loginuid and
-> > > > sessionid.  This was alluded to in the cover letter, but not very clear,
-> > > > I'm afraid.  I have patches to remove the contid and loginuid/sessionid
-> > > > interfaces in another tree which is why I had forgotten to outline that
-> > > > plan more explicitly in the cover letter.
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
-> 
+I guess it can't hurt to treat it the same as RTC_IRQP_SET32
+if you prefer. Folding in this change now and adapting the
+changelog text:
+
+--- a/drivers/rtc/dev.c
++++ b/drivers/rtc/dev.c
+@@ -402,6 +402,7 @@ static long rtc_dev_ioctl(struct file *file,
+ #ifdef CONFIG_COMPAT
+ #define RTC_IRQP_SET32         _IOW('p', 0x0c, __u32)
+ #define RTC_IRQP_READ32                _IOR('p', 0x0b, __u32)
++#define RTC_EPOCH_SET32                _IOW('p', 0x0e, __u32)
+
+ static long rtc_dev_compat_ioctl(struct file *file,
+                                 unsigned int cmd, unsigned long arg)
+@@ -416,6 +417,10 @@ static long rtc_dev_compat_ioctl(struct file *file,
+        case RTC_IRQP_SET32:
+                /* arg is a plain integer, not pointer */
+                return rtc_dev_ioctl(file, RTC_IRQP_SET, arg);
++
++       case RTC_EPOCH_SET32:
++               /* arg is a plain integer, not pointer */
++               return rtc_dev_ioctl(file, RTC_EPOCH_SET, arg);
+        }
+
+        return rtc_dev_ioctl(file, cmd, (unsigned long)uarg);
+diff --git a/drivers/rtc/rtc-vr41xx.c b/drivers/rtc/rtc-vr41xx.c
+index 79f27de545af..c3671043ace7 100644
+--- a/drivers/rtc/rtc-vr41xx.c
++++ b/drivers/rtc/rtc-vr41xx.c
+@@ -69,7 +69,6 @@ static void __iomem *rtc2_base;
+
+ /* 32-bit compat for ioctls that nobody else uses */
+ #define RTC_EPOCH_READ32       _IOR('p', 0x0d, __u32)
+-#define RTC_EPOCH_SET32                _IOW('p', 0x0e, __u32)
+
+ static unsigned long epoch = 1970;     /* Jan 1 1970 00:00:00 */
+
+@@ -187,7 +186,6 @@ static int vr41xx_rtc_ioctl(struct device *dev,
+unsigned int cmd, unsigned long
+ #ifdef CONFIG_64BIT
+        case RTC_EPOCH_READ32:
+                return put_user(epoch, (unsigned int __user *)arg);
+-       case RTC_EPOCH_SET32:
+ #endif
+        case RTC_EPOCH_SET:
+                /* Doesn't support before 1900 */
+
+> Another potential issue is drivers/input/misc/hp_sdc_rtc.c,
+> provided that the hardware in question might possibly exist
+> on hppa64 boxen - CONFIG_GSC defaults to y and it's not
+> 32bit-only, so that thing is at least selectable on 64bit
+> kernels.
+
+I decided long ago not to care: that code has never compiled after
+it was originally merged into the kernel in 2005:
+
+static int hp_sdc_rtc_ioctl(struct inode *inode, struct file *file,
+                           unsigned int cmd, unsigned long arg)
+{
+#if 1
+       return -EINVAL;
+#else
+      ...
+    RTC_IRQP_SET, RTC_EPOCH_SET, ...
+      ...
+#endif
+}
+
+I don't see any chance that this code is revived. If anyone wanted to
+make it work, the right approach would be to use the rtc framework
+and rewrite the code first.
+
+I could send a patch to remove the dead code though if that helps.
+
+     Arnd
