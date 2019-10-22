@@ -2,170 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCB8E054B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 15:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38658E05EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 16:05:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388191AbfJVNj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 09:39:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:23680 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388172AbfJVNj6 (ORCPT
+        id S2389068AbfJVOE4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 10:04:56 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40378 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388786AbfJVOE4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 09:39:58 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9MDdpbn069558
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 09:39:57 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vt2hq116s-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 09:39:55 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Tue, 22 Oct 2019 14:39:01 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 22 Oct 2019 14:38:57 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9MDcvXt50069544
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Oct 2019 13:38:57 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 595AC5205F;
-        Tue, 22 Oct 2019 13:38:57 +0000 (GMT)
-Received: from [9.199.159.6] (unknown [9.199.159.6])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B1B4752050;
-        Tue, 22 Oct 2019 13:38:55 +0000 (GMT)
-Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
-To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, wugyuan@cn.ibm.com,
-        jlayton@kernel.org, hsiangkao@aol.com, Jan Kara <jack@suse.cz>
-References: <20190927044243.18856-1-riteshh@linux.ibm.com>
- <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Tue, 22 Oct 2019 19:08:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 22 Oct 2019 10:04:56 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 7so17355035ljw.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 07:04:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ipC7lKranNQEvA5XU+w8tItfggky3gdViyHT7vnw0C0=;
+        b=I8+QlSF0lxmX0g20D5f6hffb4H1b5cXETQLd3PtzlXXy4xyNf8DAEyiZWVoxMSqRLw
+         iDvRDyyYtDsiNAe1n8bxbcFJSrMrS6PEyXGSfFsB7r2+trykXDFMwNJnymuy83wBV/WZ
+         uHqXm7n3Q9KjDbpDacHFb2O7Pq1J0zzUCxa2B+VmmRHUZ28ejHg9QanR8/7UoJQIcDJ9
+         vT/L1vTegygSBWqnJqr3Uxx5bJGWdZFbxlTcP30/JBlyR+0XFi2LTNp1nzk1GWcOw8gv
+         2X9EhHOrB5a7GF+KRnOPMDHhEwngYEapQT6m2KRH5s2da89+D6MYXYSbcS+679cVI1CT
+         9wWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ipC7lKranNQEvA5XU+w8tItfggky3gdViyHT7vnw0C0=;
+        b=Q5p/1sahxa5AhoFgC3SVj+ybEJJoGouAukppCoRgUenqIEulNMF/YqsVWamuqab0k4
+         W31jb4q4BeZEiB/I0JUUTwVxVIOFS3K9EiKk+DNkSIq1gFOaaT2IrUBO5RZMJxPdjzSq
+         4gNI4NVQxq08stssspuk2XZV73t0EJZ+ln6iCv4G3ljoMkXNDPmd874ctsMg+64+vbSK
+         r10T2nbNPqtCLCI6mYnx5vE1ilT0kHRUpb+Ap5yTnI28MFYpQOGoZM3ZuOd2dkhTHQJP
+         UwXN9wtsnv6mKsHsndKtXehWbTXddmPdrFiUQlWA5m1L+NQShdkQc2eOd9/efgxuLkqh
+         XpqQ==
+X-Gm-Message-State: APjAAAUKlqM3ssMt22IClReWCgw3RHtb2SqBLnpO/OliJZIqq4gdFkof
+        dTBvF5u1bTMS9BOZZtZPpM9d6WABbTut508Zif2V
+X-Google-Smtp-Source: APXvYqwFBZDUQ0/QjLsJo0IeE0Yc9upPM94hvttzaBBAf7xgaQ3dTK8YpaN75qrFnlhAnGP25Lx4f2CFRdTTFtYlyHM=
+X-Received: by 2002:a2e:58d:: with SMTP id 135mr3093698ljf.57.1571753093369;
+ Tue, 22 Oct 2019 07:04:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19102213-4275-0000-0000-000003759081
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19102213-4276-0000-0000-00003888B47D
-Message-Id: <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910220127
+References: <cover.1568834524.git.rgb@redhat.com> <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+ <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca> <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+ <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca> <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
+ <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca> <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+ <20191022121302.GA9397@hmswarspite.think-freely.org>
+In-Reply-To: <20191022121302.GA9397@hmswarspite.think-freely.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 22 Oct 2019 10:04:42 -0400
+Message-ID: <CAHC9VhRs-1FOu_QpW5OCATjrPpCFwSzUr+Lk81t-C_wfRGWLBA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+To:     Neil Horman <nhorman@tuxdriver.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I think we have still not taken this patch. Al?
+On Tue, Oct 22, 2019 at 8:13 AM Neil Horman <nhorman@tuxdriver.com> wrote:
+> On Mon, Oct 21, 2019 at 08:31:37PM -0400, Paul Moore wrote:
+> > On Mon, Oct 21, 2019 at 7:58 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2019-10-21 17:43, Paul Moore wrote:
+> > > > On Mon, Oct 21, 2019 at 5:38 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > On 2019-10-21 15:53, Paul Moore wrote:
+> > > > > > On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > > On 2019-09-18 21:22, Richard Guy Briggs wrote:
+> > > > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
+> > > > > > > > process in a non-init user namespace the capability to set audit
+> > > > > > > > container identifiers.
+> > > > > > > >
+> > > > > > > > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
+> > > > > > > > AUDIT_SET_CAPCONTID 1028.  The message format includes the data
+> > > > > > > > structure:
+> > > > > > > > struct audit_capcontid_status {
+> > > > > > > >         pid_t   pid;
+> > > > > > > >         u32     enable;
+> > > > > > > > };
+> > > > > > >
+> > > > > > > Paul, can I get a review of the general idea here to see if you're ok
+> > > > > > > with this way of effectively extending CAP_AUDIT_CONTROL for the sake of
+> > > > > > > setting contid from beyond the init user namespace where capable() can't
+> > > > > > > reach and ns_capable() is meaningless for these purposes?
+> > > > > >
+> > > > > > I think my previous comment about having both the procfs and netlink
+> > > > > > interfaces apply here.  I don't see why we need two different APIs at
+> > > > > > the start; explain to me why procfs isn't sufficient.  If the argument
+> > > > > > is simply the desire to avoid mounting procfs in the container, how
+> > > > > > many container orchestrators can function today without a valid /proc?
+> > > > >
+> > > > > Ok, sorry, I meant to address that question from a previous patch
+> > > > > comment at the same time.
+> > > > >
+> > > > > It was raised by Eric Biederman that the proc filesystem interface for
+> > > > > audit had its limitations and he had suggested an audit netlink
+> > > > > interface made more sense.
+> > > >
+> > > > I'm sure you've got it handy, so I'm going to be lazy and ask: archive
+> > > > pointer to Eric's comments?  Just a heads-up, I'm really *not* a fan
+> > > > of using the netlink interface for this, so unless Eric presents a
+> > > > super compelling reason for why we shouldn't use procfs I'm inclined
+> > > > to stick with /proc.
+> > >
+> > > It was actually a video call with Eric and Steve where that was
+> > > recommended, so I can't provide you with any first-hand communication
+> > > about it.  I'll get more details...
+> >
+> > Yeah, that sort of information really needs to be on the list.
+> >
+> > > So, with that out of the way, could you please comment on the general
+> > > idea of what was intended to be the central idea of this mechanism to be
+> > > able to nest containers beyond the initial user namespace (knowing that
+> > > a /proc interface is available and the audit netlink interface isn't
+> > > necessary for it to work and the latter can be easily removed)?
+> >
+> > I'm not entirely clear what you are asking about, are you asking why I
+> > care about nesting container orchestrators?  Simply put, it is not
+> > uncommon for the LXC/LXD folks to see nested container orchestrators,
+> > so I felt it was important to support that use case.  When we
+> > originally started this effort we probably should have done a better
+> > job reaching out to the LXC/LXD folks, we may have caught this
+> > earlier.  Regardless, we caught it, and it looks like we are on our
+> > way to supporting it (that's good).
+> >
+> > Are you asking why I prefer the procfs approach to setting/getting the
+> > audit container ID?  For one, it makes it easier for a LSM to enforce
+> > the audit container ID operations independent of the other audit
+> > control APIs.  It also provides a simpler interface for container
+> > orchestrators.  Both seem like desirable traits as far as I'm
+> > concerned.
+> >
+> I agree that one api is probably the best approach here, but I actually
+> think that the netlink interface is the more flexible approach.  Its a
+> little more work for userspace (you have to marshal your data into a
+> netlink message before sending it, and wait for an async response), but
+> thats a well known pattern, and it provides significantly more
+> flexibility for the kernel.  LSM already has a hook to audit netlink
+> messages in sock_sendmsg, so thats not a problem ...
 
+Look closely at how the LSM controls for netlink work and you'll see a
+number of problems; basically command level granularity it hard.  On
+the other hand, per-file granularity it easy.
 
-On 10/15/19 9:37 AM, Ritesh Harjani wrote:
-> ping!!
-> 
-> On 9/27/19 10:12 AM, Ritesh Harjani wrote:
->> d_is_negative can race with d_instantiate_new()
->> -> __d_set_inode_and_type().
->> For e.g. in use cases where Thread-1 is creating
->> symlink (doing d_instantiate_new()) & Thread-2 is doing
->> cat of that symlink while doing lookup_fast (via REF-walk-
->> one such case is, when ->permission returns -ECHILD).
->>
->> During this race if __d_set_and_inode_type() does out-of-order
->> execution and set the dentry->d_flags before setting
->> dentry->inode, then it can result into following kernel panic.
->>
->> This change fixes the issue by directly checking for inode.
->>
->> E.g. kernel panic, since inode was NULL.
->> trailing_symlink() -> may_follow_link() -> inode->i_uid.
->> Issue signature:-
->>    [NIP  : trailing_symlink+80]
->>    [LR   : trailing_symlink+1092]
->>    #4 [c00000198069bb70] trailing_symlink at c0000000004bae60  
->> (unreliable)
->>    #5 [c00000198069bc00] path_openat at c0000000004bdd14
->>    #6 [c00000198069bc90] do_filp_open at c0000000004c0274
->>    #7 [c00000198069bdb0] do_sys_open at c00000000049b248
->>    #8 [c00000198069be30] system_call at c00000000000b388
->>
->> Sequence of events:-
->> Thread-2(Comm: ln)            Thread-1(Comm: cat)
->>
->>                     dentry = __d_lookup() //nonRCU
->>
->> __d_set_and_inode_type() (Out-of-order execution)
->>      flags = READ_ONCE(dentry->d_flags);
->>      flags &= ~(DCACHE_ENTRY_TYPE | DCACHE_FALLTHRU);
->>      flags |= type_flags;
->>      WRITE_ONCE(dentry->d_flags, flags);
->>
->>                     if (unlikely(d_is_negative()) // fails
->>                            {}
->>                     // since d_flags is already updated in
->>                     // Thread-2 in parallel but inode
->>                     // not yet set.
->>                     // d_is_negative returns false
->>
->>                     *inode = d_backing_inode(path->dentry);
->>                     // means inode is still NULL
->>
->>      dentry->d_inode = inode;
->>
->>                     trailing_symlink()
->>                         may_follow_link()
->>                             inode = nd->link_inode;
->>                             // nd->link_inode = NULL
->>                             //Then it crashes while
->>                             //doing inode->i_uid
->>
->> Reported-by: Guang Yuan Wu <wugyuan@cn.ibm.com>
->> Tested-by: Guang Yuan Wu <wugyuan@cn.ibm.com>
->> Acked-by: Jeff Layton <jlayton@kernel.org>
->> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
->> ---
->>   fs/namei.c | 16 +++++++++++++++-
->>   1 file changed, 15 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/namei.c b/fs/namei.c
->> index 671c3c1a3425..7c5337cddebd 100644
->> --- a/fs/namei.c
->> +++ b/fs/namei.c
->> @@ -1617,7 +1617,21 @@ static int lookup_fast(struct nameidata *nd,
->>           dput(dentry);
->>           return status;
->>       }
->> -    if (unlikely(d_is_negative(dentry))) {
->> +
->> +    /*
->> +     * Caution: d_is_negative() can race with
->> +     * __d_set_inode_and_type().
->> +     * For e.g. in use cases where Thread-1 is creating
->> +     * symlink (doing d_instantiate_new()) & Thread-2 is doing
->> +     * cat of that symlink and falling here (via Ref-walk) while
->> +     * doing lookup_fast (one such case is when ->permission
->> +     * returns -ECHILD).
->> +     * Now if __d_set_inode_and_type() does out-of-order execution
->> +     * i.e. it first sets the dentry->d_flags & then dentry->inode
->> +     * then it can result into inode being NULL, causing panic later.
->> +     * Hence directly check if inode is NULL here.
->> +     */
->> +    if (unlikely(d_really_is_negative(dentry))) {
->>           dput(dentry);
->>           return -ENOENT;
->>       }
->>
-> 
+> ... and if you use
+> netlink, you get the advantage of being able to broadcast messages
+> within your network namespaces, facilitating any needed orchestrator
+> co-ordination.
 
+Please don't read this comment as support of the netlink approach, but
+I don't think we want to use the multicast netlink; we would want it
+to be more of client/server model so that we could enforce access
+controls a bit easier.  Besides, is this even a use case?
+
+> To do the same thing with a filesystem api, you need to
+> use the fanotify api, which IIRC doesn't work on proc.
+
+Once again, I'm not sure this is a problem we are trying to solve
+(broadcasting audit container ID across multiple tasks), is it?
+Access to the audit container ID in userspace is something I've always
+thought needs to be tightly controlled to prevent abuse.
+
+-- 
+paul moore
+www.paul-moore.com
