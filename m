@@ -2,239 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F331DFD95
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 08:13:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE2CDFDBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 08:40:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387456AbfJVGNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 02:13:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36988 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730915AbfJVGNe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 02:13:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C7BDEB3B5;
-        Tue, 22 Oct 2019 06:13:31 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 08:13:29 +0200
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Yang Xu <xuyang2018.jy@cn.fujitsu.com>
-Cc:     ltp@lists.linux.it, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [LTP] [PATCH v2] syscalls/copy_file_range02: skip if cross-fs
- isn't supported
-Message-ID: <20191022061328.GA9267@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20190930093627.30159-1-pvorel@suse.cz>
- <f9121245-60e5-5dfe-4b17-47b38c0f5ff4@cn.fujitsu.com>
+        id S1730930AbfJVGkZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 02:40:25 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:40572 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727943AbfJVGkZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Oct 2019 02:40:25 -0400
+Received: by mail-yb1-f193.google.com with SMTP id s7so4812081ybq.7;
+        Mon, 21 Oct 2019 23:40:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N6DBniHEARPZeGwGYnc355+KIj9ZRD5tMQT/2Xpydu0=;
+        b=aHgaLAf71slYYTx/hYGwS/WXowCRmtq5KqrInt9pJprA729NHL7hdaMjj2upKbcqXD
+         2tmIp02JKNgzUef0f+65fMZvh8LkTNv1Lcqsc/tihzeFfPEJA7CyysFbz9IdS8Y5N3QE
+         jfaQGVdJ+t5lbLdDRWDppQ6kdRJFl2zKaNL56EDSVNKiuaL4QSbAnz/CH1FVjYYSktX3
+         whWxbRZMKtBBOCQE6Q+83QCZ7MJZvaLU0Ya7HRR6P1Y58ejxL1zkykuNrJpD1RxKrJMy
+         OMN+ajpeZn/4fJP38HNOieIHDAggXU6qotp4fBEOjLYKHQ2aLpGB8xVc5N05/lAFmM9c
+         MjVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N6DBniHEARPZeGwGYnc355+KIj9ZRD5tMQT/2Xpydu0=;
+        b=AbzfHTOfjpgszNMcydvGqEnGn+VU4XDCFzIz0yfiLkbhZMFDrI7X919CWF/9YVRh+q
+         X9jfK1eyQthLb2fWwme4lZtTD+Fq6nylM6bXEyHraxxD11BDWq2YAtFEUN/FrwAtNwCL
+         Dfhsrt7y3UZw0MMLodX74b00VVaMZ8Uwj/nSShE0zvt37UFfnLZ5dJg68iyHp/SUUDjS
+         xMYhJ4dz4xOTSO18Ngvi0nLh04+SUhh3a96lgcnD+7/Ljd6NQAPtExFcdwAldyTZ/Je6
+         tt7rjgah5Q5dae24h33NR2OmiJtocjbUZCFN1UZ+PTmJwY9HNbe3JRCJAQZXAj1xUmv3
+         dEFQ==
+X-Gm-Message-State: APjAAAWiXi0OT6pMQsQtDbEITaW4xTfYZlSIl6d8hlwQYJ9KSSYZOZmo
+        WuKHMx/edMrSOg5piX9wmwIfyVlWC7jAoMuDgHxcKd8q
+X-Google-Smtp-Source: APXvYqyxF3fk1aWupBySMytZi5EPMpogXQvn80/lZjXqy9f6uhfXXuxv9tRdVFN+om3FBVrvmluHcVP+PnotafsSNyk=
+X-Received: by 2002:a25:6607:: with SMTP id a7mr1313993ybc.144.1571726423693;
+ Mon, 21 Oct 2019 23:40:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f9121245-60e5-5dfe-4b17-47b38c0f5ff4@cn.fujitsu.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <cover.1571164762.git.osandov@fb.com> <c7e8f93596fee7bb818dc0edf29f484036be1abb.1571164851.git.osandov@fb.com>
+ <CAOQ4uxh_pZSiMmD=46Mc3o0GE+svXuoC155P_9FGJXdsE4cweg@mail.gmail.com> <20191021185356.GB81648@vader>
+In-Reply-To: <20191021185356.GB81648@vader>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 22 Oct 2019 09:40:12 +0300
+Message-ID: <CAOQ4uxgm6MWwCDO5stUwOKKSq7Ot4-Sc96F1Evc6ra5qBE+-wA@mail.gmail.com>
+Subject: Re: [PATCH man-pages] Document encoded I/O
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Linux API <linux-api@vger.kernel.org>, kernel-team@fb.com,
+        Theodore Tso <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Xu, others,
+On Mon, Oct 21, 2019 at 9:54 PM Omar Sandoval <osandov@osandov.com> wrote:
+>
+> On Mon, Oct 21, 2019 at 09:18:13AM +0300, Amir Goldstein wrote:
+> > CC: Ted
+> >
+> > What ever happened to read/write ext4 encrypted data API?
+> > https://marc.info/?l=linux-ext4&m=145030599010416&w=2
+> >
+> > Can we learn anything from the ext4 experience to improve
+> > the new proposed API?
+>
+> I wasn't aware of these patches, thanks for pointing them out. Ted, do
+> you have any thoughts about making this API work for fscrypt?
+>
+> > On Wed, Oct 16, 2019 at 12:29 AM Omar Sandoval <osandov@osandov.com> wrote:
+> > >
+> > > From: Omar Sandoval <osandov@fb.com>
+> > >
+> > > This adds a new page, rwf_encoded(7), providing an overview of encoded
+> > > I/O and updates fcntl(2), open(2), and preadv2(2)/pwritev2(2) to
+> > > reference it.
+> > >
+> > > Signed-off-by: Omar Sandoval <osandov@fb.com>
+> > > ---
+> > >  man2/fcntl.2       |  10 +-
+> > >  man2/open.2        |  13 ++
+> > >  man2/readv.2       |  46 +++++++
+> > >  man7/rwf_encoded.7 | 297 +++++++++++++++++++++++++++++++++++++++++++++
+> > >  4 files changed, 365 insertions(+), 1 deletion(-)
+> > >  create mode 100644 man7/rwf_encoded.7
+> > >
+> > > diff --git a/man2/fcntl.2 b/man2/fcntl.2
+> > > index fce4f4c2b..76fe9cc6f 100644
+> > > --- a/man2/fcntl.2
+> > > +++ b/man2/fcntl.2
+> > > @@ -222,8 +222,9 @@ On Linux, this command can change only the
+> > >  .BR O_ASYNC ,
+> > >  .BR O_DIRECT ,
+> > >  .BR O_NOATIME ,
+> > > +.BR O_NONBLOCK ,
+> > >  and
+> > > -.B O_NONBLOCK
+> > > +.B O_ENCODED
+> > >  flags.
+> > >  It is not possible to change the
+> > >  .BR O_DSYNC
+> > > @@ -1803,6 +1804,13 @@ Attempted to clear the
+> > >  flag on a file that has the append-only attribute set.
+> > >  .TP
+> > >  .B EPERM
+> > > +Attempted to set the
+> > > +.B O_ENCODED
+> > > +flag and the calling process did not have the
+> > > +.B CAP_SYS_ADMIN
+> > > +capability.
+> > > +.TP
+> > > +.B EPERM
+> > >  .I cmd
+> > >  was
+> > >  .BR F_ADD_SEALS ,
+> > > diff --git a/man2/open.2 b/man2/open.2
+> > > index b0f485b41..cdd3c549c 100644
+> > > --- a/man2/open.2
+> > > +++ b/man2/open.2
+> > > @@ -421,6 +421,14 @@ was followed by a call to
+> > >  .BR fdatasync (2)).
+> > >  .IR "See NOTES below" .
+> > >  .TP
+> > > +.B O_ENCODED
+> > > +Open the file with encoded I/O permissions;
+> >
+> > 1. I find the name of the flag confusing.
+> > Yes, most people don't read documentation so carefully (or at all)
+> > so they will assume O_ENCODED will affect read/write or that it
+> > relates to RWF_ENCODED in a similar way that O_SYNC relates
+> > to RWF_SYNC (i.e. logical OR and not logical AND).
+> >
+> > I am not good at naming and to prove it I will propose:
+> > O_PROMISCUOUS, O_MAINTENANCE, O_ALLOW_ENCODED
+>
+> Agreed, the name is misleading. I can't think of anything better than
+> O_ALLOW_ENCODED, so I'll go with that unless someone comes up with
+> something better :)
+>
+> > 2. While I see no harm in adding O_ flag to open(2) for this
+> > use case, I also don't see a major benefit in adding it.
+> > What if we only allowed setting the flag via fcntl(2) which returns
+> > an error on old kernels?
+> > Since unlike most O_ flags, O_ENCODED does NOT affect file
+> > i/o without additional opt-in flags, it is not standard anyway and
+> > therefore I find that setting it only via fcntl(2) is less error prone.
+>
+> If I make this fcntl-only, then it probably shouldn't be through
+> F_GETFL/F_SETFL (it'd be pretty awkward for an O_ flag to not be valid
+> for open(), and also awkward to mix some non-O_ flag with O_ flags for
+> F_GETFL/F_SETFL). So that leaves a couple of options:
+>
+> 1. Get/set it with F_GETFD/F_SETFD, which is currently only used for
+>    FD_CLOEXEC. That also silently ignores unknown flags, but as with the
+>    O_ flag option, I don't think that's a big deal for FD_ALLOW_ENCODED.
+> 2. Add a new fcntl command (F_GETFD2/F_SETFD2?). This seems like
+>    overkill to me.
+>
+> However, both of these options are annoying to implement. Ideally, we
+> wouldn't have to add another flags field to struct file. But, to reuse
+> f_flags, we'd need to make sure that FD_ALLOW_ENCODED doesn't collide
+> with other O_ flags, and we'd probably want to hide it from F_GETFL. At
+> that point, it might as well be an O_ flag.
+>
+> It seems to me that it's more trouble than it's worth to make this not
+> an O_ flag, but please let me know if you see a nice way to do so.
+>
 
-[ Cc Amir and linux-fsdevel ].
+No, I see why you choose to add the flag to open(2).
+I have no objection.
 
-> on 2019/09/30 17:36, Petr Vorel wrote:
+I once had a crazy thought how to add new open flags
+in a non racy manner without adding a new syscall,
+but as you wrote, this is not relevant for O_ALLOW_ENCODED.
 
-> > copy_file_range02 was written to verify copy_file_range() v5.3 changes.
-> > Detect it via cross-filesystem copy_file_range() functionality, so that we
-> > cover also backports to stable/enterprise distro kernels (if backported,
-> > it should be with all those API fixes).
+Something like:
 
-> > Missing these API fixes is detected by errno changes introduced by
-> > This fixes errors caused by commits from v5.3-rc1:
-> > 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
-> > 96e6e8f4a68d ("vfs: add missing checks to copy_file_range")
+/*
+ * Old kernels silently ignore unsupported open flags.
+ * New kernels that gets __O_CHECK_NEWFLAGS do
+ * the proper checking for unsupported flags AND set the
+ * flag __O_HAVE_NEWFLAGS.
+ */
+#define O_FLAG1 __O_CHECK_NEWFLAGS|__O_FLAG1
+#define O_HAVE_FLAG1 __O_HAVE_NEWFLAGS|__O_FLAG1
 
-> > This check requires to put back into copy_file_range02 .mount_device = 1
-> > and .mntpoint = MNTPOINT (but .all_filesystems = 1 is obviously not needed).
+fd = open(path, O_FLAG1);
+if (fd < 0)
+    return -errno;
+flags = fcntl(fd, F_GETFL, 0);
+if (flags < 0)
+    return flags;
+if ((flags & O_HAVE_FLAG1) != O_HAVE_FLAG1) {
+    close(fd);
+    return -EINVAL;
+}
 
-> Hi Petr
->    Why we must put back .mount_device and .mntpoint = MNTPOINT?
+Not pretty, but hidden inside libc, end-users won't need to
+be aware of this.
 
-> copy_file_range02 was not only written to verify copy_file_range() v5.3 changes
-> and it also tests other errors before v5.3.
-This fix was based on Amir's suggestion [1], he states the opposite:
-
-IIUC, copy_file_range02 was written after v5.3 changes to verify that
-copy_file_range
-stays unbroken.
-As such, I would suggest that you check if kernel supports cross-fs copy, like
-copy_file_range01 does and if it doesn't, skip the test entirely.
-If some one ever backports cross-fs copy to any distro stable kernel, then one
-would better also backkport all of those API fixes, otherwise test will fail.
-
-
-> I think cross-filesystem copy_file_range is a kernel action change and then I
-> put it into copy_file_range01.c. So copy_file_range02.c doesn't test EXDEV error .
-
-> Also since commit v5.3-rc1 two commit, immutable file(EPERM)，swap file(ETXTBSY)，
-> overlaping range(EINVAL), max length lenght(EOVERFLOW),max file size(EFBIG) these
-> check have been add. But other errors still existed before this two commits such as:
-> copy contents to file open as readonly *    -> EBADF
-
-> Now, before v5.3-rc1, copy_file_range02.c  is notrun that we don't do error check.
-> It is unreasonable.
-So, do you suggest to test EBADF for all versions? Or something else?
-
-> ps:
-> copy_file_range newest man-pages
-> https://github.com/mkerrisk/man-pages/commit/88e75e2c56a68eaf8fcf662a63b802fdf77a4017
-Yep, Amir planned to fix it :).
-
-> Thanks
-> Yang Xu
-
-[1] http://lists.linux.it/pipermail/ltp/2019-September/013697.html
-
-> > + Remove few unused imports.
-
-> > Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > ---
-> > Changes v1->v2:
-> > pass the source and destination as parameters to
-> > verify_cross_fs_copy_support(), remove bogus setup checks
-> > (Suggested by Cyril).
-
-> > Kind regards,
-> > Petr
-
-> >   .../copy_file_range/copy_file_range.h         | 23 ++++++++++++++++---
-> >   .../copy_file_range/copy_file_range01.c       | 22 ++----------------
-> >   .../copy_file_range/copy_file_range02.c       | 11 ++++++++-
-> >   3 files changed, 32 insertions(+), 24 deletions(-)
-
-> > diff --git a/testcases/kernel/syscalls/copy_file_range/copy_file_range.h b/testcases/kernel/syscalls/copy_file_range/copy_file_range.h
-> > index 40d05d653..1d80ab0f7 100644
-> > --- a/testcases/kernel/syscalls/copy_file_range/copy_file_range.h
-> > +++ b/testcases/kernel/syscalls/copy_file_range/copy_file_range.h
-> > @@ -7,9 +7,7 @@
-> >   #ifndef __COPY_FILE_RANGE_H__
-> >   #define __COPY_FILE_RANGE_H__
-> > -#include <stdbool.h>
-> > -#include <unistd.h>
-> > -#include <sys/sysmacros.h>
-> > +#include <stdio.h>
-> >   #include "lapi/syscalls.h"
-> >   #include "lapi/fs.h"
-> > @@ -62,4 +60,23 @@ static int sys_copy_file_range(int fd_in, loff_t *off_in,
-> >   	return -1;
-> >   }
-> > +static inline int verify_cross_fs_copy_support(const char *path_in, const char *path_out)
-> > +{
-> > +	int i, fd, fd_test;
-> > +
-> > +	fd = SAFE_OPEN(path_in, O_RDWR | O_CREAT, 0664);
-> > +	/* Writing page_size * 4 of data into test file */
-> > +	for (i = 0; i < (int)(getpagesize() * 4); i++)
-> > +		SAFE_WRITE(1, fd, CONTENT, CONTSIZE);
-> > +
-> > +	fd_test = SAFE_OPEN(path_out, O_RDWR | O_CREAT, 0664);
-> > +	TEST(sys_copy_file_range(fd, 0, fd_test, 0, CONTSIZE, 0));
-> > +
-> > +	SAFE_CLOSE(fd_test);
-> > +	remove(FILE_MNTED_PATH);
-> > +	SAFE_CLOSE(fd);
-> > +
-> > +	return TST_ERR == EXDEV ? 0 : 1;
-> > +}
-> > +
-> >   #endif /* __COPY_FILE_RANGE_H__ */
-> > diff --git a/testcases/kernel/syscalls/copy_file_range/copy_file_range01.c b/testcases/kernel/syscalls/copy_file_range/copy_file_range01.c
-> > index ec55e5da1..6097c85b3 100644
-> > --- a/testcases/kernel/syscalls/copy_file_range/copy_file_range01.c
-> > +++ b/testcases/kernel/syscalls/copy_file_range/copy_file_range01.c
-> > @@ -16,8 +16,6 @@
-> >   #define _GNU_SOURCE
-> > -#include <stdio.h>
-> > -#include <stdlib.h>
-> >   #include "tst_test.h"
-> >   #include "tst_safe_stdio.h"
-> >   #include "copy_file_range.h"
-> > @@ -179,7 +177,7 @@ static void copy_file_range_verify(unsigned int n)
-> >   	if (tc->flags && !cross_sup) {
-> >   		tst_res(TCONF,
-> > -			"copy_file_range doesn't support cross-device, skip it");
-> > +			"copy_file_range() doesn't support cross-device, skip it");
-> >   		return;
-> >   	}
-> > @@ -215,25 +213,9 @@ static void copy_file_range_verify(unsigned int n)
-> >   static void setup(void)
-> >   {
-> > -	int i, fd, fd_test;
-> > -
-> >   	syscall_info();
-> > -
-> >   	page_size = getpagesize();
-> > -	cross_sup = 1;
-> > -	fd = SAFE_OPEN(FILE_SRC_PATH, O_RDWR | O_CREAT, 0664);
-> > -	/* Writing page_size * 4 of data into test file */
-> > -	for (i = 0; i < (int)(page_size * 4); i++)
-> > -		SAFE_WRITE(1, fd, CONTENT, CONTSIZE);
-> > -
-> > -	fd_test = SAFE_OPEN(FILE_MNTED_PATH, O_RDWR | O_CREAT, 0664);
-> > -	TEST(sys_copy_file_range(fd, 0, fd_test, 0, CONTSIZE, 0));
-> > -	if (TST_ERR == EXDEV)
-> > -		cross_sup = 0;
-> > -
-> > -	SAFE_CLOSE(fd_test);
-> > -	remove(FILE_MNTED_PATH);
-> > -	SAFE_CLOSE(fd);
-> > +	cross_sup = verify_cross_fs_copy_support(FILE_SRC_PATH, FILE_MNTED_PATH);
-> >   }
-> >   static void cleanup(void)
-> > diff --git a/testcases/kernel/syscalls/copy_file_range/copy_file_range02.c b/testcases/kernel/syscalls/copy_file_range/copy_file_range02.c
-> > index d6e843ee4..6e385adbd 100644
-> > --- a/testcases/kernel/syscalls/copy_file_range/copy_file_range02.c
-> > +++ b/testcases/kernel/syscalls/copy_file_range/copy_file_range02.c
-> > @@ -49,6 +49,7 @@ static int fd_blkdev;
-> >   static int fd_chrdev;
-> >   static int fd_fifo;
-> >   static int fd_copy;
-> > +static int need_unlink;
-> >   static int chattr_i_nsup;
-> >   static int swap_nsup;
-> > @@ -160,7 +161,8 @@ static void cleanup(void)
-> >   		SAFE_CLOSE(fd_dup);
-> >   	if (fd_copy > 0)
-> >   		SAFE_CLOSE(fd_copy);
-> > -	SAFE_UNLINK(FILE_FIFO);
-> > +	if (need_unlink > 0)
-> > +		SAFE_UNLINK(FILE_FIFO);
-> >   }
-> >   static void setup(void)
-> > @@ -168,6 +170,10 @@ static void setup(void)
-> >   	syscall_info();
-> >   	char dev_path[1024];
-> > +	if (!verify_cross_fs_copy_support(FILE_SRC_PATH, FILE_MNTED_PATH))
-> > +		tst_brk(TCONF,
-> > +			"copy_file_range() doesn't support cross-device, skip it");
-> > +
-> >   	if (access(FILE_DIR_PATH, F_OK) == -1)
-> >   		SAFE_MKDIR(FILE_DIR_PATH, 0777);
-> >   	/*
-> > @@ -177,6 +183,7 @@ static void setup(void)
-> >   	loop_devn = tst_find_free_loopdev(dev_path, sizeof(dev_path));
-> >   	SAFE_MKNOD(FILE_FIFO, S_IFIFO | 0777, 0);
-> > +	need_unlink = 1;
-> >   	fd_src    = SAFE_OPEN(FILE_SRC_PATH, O_RDWR | O_CREAT, 0664);
-> >   	fd_dest   = SAFE_OPEN(FILE_DEST_PATH, O_RDWR | O_CREAT, 0664);
-> > @@ -223,6 +230,8 @@ static struct tst_test test = {
-> >   	.tcnt = ARRAY_SIZE(tcases),
-> >   	.setup = setup,
-> >   	.cleanup = cleanup,
-> > +	.mount_device = 1,
-> > +	.mntpoint = MNTPOINT,
-> >   	.needs_root = 1,
-> >   	.needs_tmpdir = 1,
-> >   	.test_variants = TEST_VARIANTS,
-
-
+Cheers,
+Amir.
