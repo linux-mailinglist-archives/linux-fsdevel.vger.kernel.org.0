@@ -2,85 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB749DFA47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 03:51:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62838DFA42
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 03:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729270AbfJVBvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Oct 2019 21:51:01 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50954 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfJVBvB (ORCPT
+        id S1730271AbfJVBt0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Oct 2019 21:49:26 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40425 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfJVBtZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Oct 2019 21:51:01 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9M1haqa004800;
-        Tue, 22 Oct 2019 01:45:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=e6n5ZFfi2T01b//f4W948xwScbtAlpoo4PfACf0vsQg=;
- b=dEyih4DapLS/MMDQFq9TDZ2LsH+I1W2z3NQKpgljU9MUNFKwR/k39baqFc0odFeRVT3c
- 1Z6S9VZ6GYLrTa3zc3602zXkJL+KPh4yR/hc1+tcvJ4iEWqHLmj86GKuBNoDEQvQWlvZ
- d/JylGDs9jLYd6Kjl0adc3WkMuGoYo/XxYC4PIURcXFa+a9SdRy8U6CzjaEEL2prmssO
- irZhrjcfdgazkt0FsUvNPoro/5EDjcyTW7HKdp4Tu/38Y4jtMbH22yFZbA6hwCRCZC3K
- VYDOROeuLhY6g0ngIOdfkz0wU8oy9U+l9+2QXM1igLSFf+hTe5ukbg4LNIeVc7Q9sUAR iw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2vqu4qk5t6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Oct 2019 01:45:12 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9M1cEoZ097530;
-        Tue, 22 Oct 2019 01:45:12 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2vrc00tfvm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Oct 2019 01:45:11 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9M1jBNP003098;
-        Tue, 22 Oct 2019 01:45:11 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 21 Oct 2019 18:45:10 -0700
-Date:   Mon, 21 Oct 2019 18:45:09 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: xfs COW cleanups v3
-Message-ID: <20191022014509.GJ913374@magnolia>
-References: <20191019144448.21483-1-hch@lst.de>
+        Mon, 21 Oct 2019 21:49:25 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 15so3583592pgt.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Oct 2019 18:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cYd8ROhMNq1Yx+vOsBONaKOy7KeVJVgFB+LYLRUxDgE=;
+        b=TFBptRq3ve/tPAMq3b0V8kT4Xd0iReoVP7HNznmMumSnWXMSWwlza3Uc6AyyQVElIx
+         hKLIAKeVXZ7CYXilmRzi+njAv2oVri01gkVEniuAoyefK2hxnP2PDVLv3DCBqjSF8499
+         U5AYYP7gRGFwu1rfFp4TcLNu6tSIcf99XvGLBg81/W8vU8XVWTGi+7L9Bz4EVPws2jPk
+         mT7fzvaj5ZrX70loZoXKYAbH2sMI3xAM100X52Xm7Knfdy3gBImXszpF+VQi6tSqWzGx
+         5ju+WnTH5bhnY2KHyAuyIi5wu8tCq0tzqjb1zcUpoBgMKMGVVAlcfYBfEXnVfUc+9pwE
+         9cGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cYd8ROhMNq1Yx+vOsBONaKOy7KeVJVgFB+LYLRUxDgE=;
+        b=itl3a29HLy9eVKHNaCl183jwNH4btBgI+t44Yb10fln+OQT6BXLkOatmjAcXDhpWhN
+         +SUF4/khgBOkvEKN9SXb8OeaJK7VyFPLMcepxj/9JdZWXOT+9VGMzZvF+rfMm8JUEVc3
+         NcYr5/ut5e+vwHQT5yZbjp9dIublmrvhyGvhKbEutL+ioBlYU9zzV578UPbTEGbrtZMg
+         djBFkSPWTEQGqmovWqEja0vLx+IR5vnhspP8/CfngdSHrThlFzhmSryshXGAvIo2/ECs
+         aRxfHWFuLKa1xuQHC2PmjxsQhY8XkbxuReXFsJeAVLKhD0bH+klbUzzHJNtF5Ztqk7GS
+         UQHw==
+X-Gm-Message-State: APjAAAULRj2Hu8tl4xi/Vpvai3GieT2/wtmjnJEbk4sUAkzYkhHOQKnu
+        ZMGooILOVlxxt/5gi40Vwn8mPHX26mH1
+X-Google-Smtp-Source: APXvYqwoqsLbPzmAZETxvHQWf9PUCzQB2+x1jzr+FtzeR4gk+LtQk8N9Y3WH/CXf4ZS7F1MR0XnHRQ==
+X-Received: by 2002:a63:c446:: with SMTP id m6mr976716pgg.136.1571708964617;
+        Mon, 21 Oct 2019 18:49:24 -0700 (PDT)
+Received: from athena.bobrowski.net (n1-41-199-60.bla2.nsw.optusnet.com.au. [1.41.199.60])
+        by smtp.gmail.com with ESMTPSA id y144sm17865523pfb.188.2019.10.21.18.49.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 18:49:23 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 12:49:17 +1100
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
+Subject: Re: [PATCH v5 02/12] ext4: iomap that extends beyond EOF should be
+ marked dirty
+Message-ID: <20191022014917.GB5092@athena.bobrowski.net>
+References: <cover.1571647178.git.mbobrowski@mbobrowski.org>
+ <995387be9841bde2151c85880555c18bec68a641.1571647179.git.mbobrowski@mbobrowski.org>
+ <20191021132818.GB25184@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191019144448.21483-1-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9417 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=806
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910220014
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9417 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=884 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910220015
+In-Reply-To: <20191021132818.GB25184@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 19, 2019 at 04:44:36PM +0200, Christoph Hellwig wrote:
-> Hi all,
+On Mon, Oct 21, 2019 at 03:28:18PM +0200, Jan Kara wrote:
+> On Mon 21-10-19 20:17:46, Matthew Bobrowski wrote:
+> > This patch is effectively addressed what Dave Chinner had found and
+> > fixed within this commit: 8a23414ee345. Justification for needing this
+> > modification has been provided below:
+> > 
+> > When doing a direct IO that spans the current EOF, and there are
+> > written blocks beyond EOF that extend beyond the current write, the
+> > only metadata update that needs to be done is a file size extension.
+> > 
+> > However, we don't mark such iomaps as IOMAP_F_DIRTY to indicate that
+> > there is IO completion metadata updates required, and hence we may
+> > fail to correctly sync file size extensions made in IO completion when
+> > O_DSYNC writes are being used and the hardware supports FUA.
+> > 
+> > Hence when setting IOMAP_F_DIRTY, we need to also take into account
+> > whether the iomap spans the current EOF. If it does, then we need to
+> > mark it dirty so that IO completion will call generic_write_sync() to
+> > flush the inode size update to stable storage correctly.
+> > 
+> > Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
 > 
-> Changes since v2:
->  - rebased on the latest iomap-for-next and dropped patches already
->    merged
+> Looks good to me. You could possibly also comment in the changelog that
+> currently, this change doesn't have user visible impact for ext4 as none of
+> current users of ext4_iomap_begin() that extend files depend of
+> IOMAP_F_DIRTY.
+
+Sure, I will add this.
+
+> Also this patch would make slightly more sense to be before 1/12 so that
+> you don't have there those two strange unused arguments. But these are just
+> small nits.
+
+You're right. I will rearrange it in v6 so that this patch comes
+first.
+
+> Feel free to add:
 > 
-> Changes since v1:
->  - renumber IOMAP_HOLE to 0 and avoid the reserved 0 value
->  - fix minor typos and update comments
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Merged, thanks.
+Thanks Jan!
 
---D
+--<M>--
