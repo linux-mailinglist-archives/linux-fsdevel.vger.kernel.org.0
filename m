@@ -2,175 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38658E05EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 16:05:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A089E0661
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 16:28:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389068AbfJVOE4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 10:04:56 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40378 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388786AbfJVOE4 (ORCPT
+        id S1730076AbfJVO1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 10:27:43 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:51659 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725887AbfJVO1n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 10:04:56 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 7so17355035ljw.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 07:04:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ipC7lKranNQEvA5XU+w8tItfggky3gdViyHT7vnw0C0=;
-        b=I8+QlSF0lxmX0g20D5f6hffb4H1b5cXETQLd3PtzlXXy4xyNf8DAEyiZWVoxMSqRLw
-         iDvRDyyYtDsiNAe1n8bxbcFJSrMrS6PEyXGSfFsB7r2+trykXDFMwNJnymuy83wBV/WZ
-         uHqXm7n3Q9KjDbpDacHFb2O7Pq1J0zzUCxa2B+VmmRHUZ28ejHg9QanR8/7UoJQIcDJ9
-         vT/L1vTegygSBWqnJqr3Uxx5bJGWdZFbxlTcP30/JBlyR+0XFi2LTNp1nzk1GWcOw8gv
-         2X9EhHOrB5a7GF+KRnOPMDHhEwngYEapQT6m2KRH5s2da89+D6MYXYSbcS+679cVI1CT
-         9wWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ipC7lKranNQEvA5XU+w8tItfggky3gdViyHT7vnw0C0=;
-        b=Q5p/1sahxa5AhoFgC3SVj+ybEJJoGouAukppCoRgUenqIEulNMF/YqsVWamuqab0k4
-         W31jb4q4BeZEiB/I0JUUTwVxVIOFS3K9EiKk+DNkSIq1gFOaaT2IrUBO5RZMJxPdjzSq
-         4gNI4NVQxq08stssspuk2XZV73t0EJZ+ln6iCv4G3ljoMkXNDPmd874ctsMg+64+vbSK
-         r10T2nbNPqtCLCI6mYnx5vE1ilT0kHRUpb+Ap5yTnI28MFYpQOGoZM3ZuOd2dkhTHQJP
-         UwXN9wtsnv6mKsHsndKtXehWbTXddmPdrFiUQlWA5m1L+NQShdkQc2eOd9/efgxuLkqh
-         XpqQ==
-X-Gm-Message-State: APjAAAUKlqM3ssMt22IClReWCgw3RHtb2SqBLnpO/OliJZIqq4gdFkof
-        dTBvF5u1bTMS9BOZZtZPpM9d6WABbTut508Zif2V
-X-Google-Smtp-Source: APXvYqwFBZDUQ0/QjLsJo0IeE0Yc9upPM94hvttzaBBAf7xgaQ3dTK8YpaN75qrFnlhAnGP25Lx4f2CFRdTTFtYlyHM=
-X-Received: by 2002:a2e:58d:: with SMTP id 135mr3093698ljf.57.1571753093369;
- Tue, 22 Oct 2019 07:04:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1568834524.git.rgb@redhat.com> <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
- <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca> <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
- <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca> <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
- <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca> <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
- <20191022121302.GA9397@hmswarspite.think-freely.org>
-In-Reply-To: <20191022121302.GA9397@hmswarspite.think-freely.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 22 Oct 2019 10:04:42 -0400
-Message-ID: <CAHC9VhRs-1FOu_QpW5OCATjrPpCFwSzUr+Lk81t-C_wfRGWLBA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
- outside init_user_ns
-To:     Neil Horman <nhorman@tuxdriver.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Tue, 22 Oct 2019 10:27:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571754462;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aFYbK6C3qp/0zkqHt/cgoxVzxlaRVYo3tKqlapYrcCU=;
+        b=QkY9+hIlXk0eAWYhH1QgkqNQGf9FMyGYoT/q7fEfjMadDIgyaUlxnLZ/pB9ZGaauEhDxSi
+        iE7qEWktcshGV/j5jBokail3pKFfwEeFSyUHl6I0S3HROZ2XiRTQjVYq7Wh91DPPUVXXNd
+        BwYGmDu+Ijo8jw7MNBKiOZ6pYnVr6W0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-182-VansDXcXP9-M9jCVigjTnA-1; Tue, 22 Oct 2019 10:27:38 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D263800D4E;
+        Tue, 22 Oct 2019 14:27:35 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C9DEE5DC18;
+        Tue, 22 Oct 2019 14:27:19 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 10:27:16 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
         Linux-Audit Mailing List <linux-audit@redhat.com>,
         linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
         sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
         simo@redhat.com, Eric Paris <eparis@parisplace.org>,
         Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+Message-ID: <20191022142716.sgxcmc27w4uaqh3u@madcap2.tricolour.ca>
+References: <cover.1568834524.git.rgb@redhat.com>
+ <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+ <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
+ <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+ <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca>
+ <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
+ <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca>
+ <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: VansDXcXP9-M9jCVigjTnA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 8:13 AM Neil Horman <nhorman@tuxdriver.com> wrote:
-> On Mon, Oct 21, 2019 at 08:31:37PM -0400, Paul Moore wrote:
-> > On Mon, Oct 21, 2019 at 7:58 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2019-10-21 17:43, Paul Moore wrote:
-> > > > On Mon, Oct 21, 2019 at 5:38 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > On 2019-10-21 15:53, Paul Moore wrote:
-> > > > > > On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > > On 2019-09-18 21:22, Richard Guy Briggs wrote:
-> > > > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
-> > > > > > > > process in a non-init user namespace the capability to set audit
-> > > > > > > > container identifiers.
-> > > > > > > >
-> > > > > > > > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
-> > > > > > > > AUDIT_SET_CAPCONTID 1028.  The message format includes the data
-> > > > > > > > structure:
-> > > > > > > > struct audit_capcontid_status {
-> > > > > > > >         pid_t   pid;
-> > > > > > > >         u32     enable;
-> > > > > > > > };
+On 2019-10-21 20:31, Paul Moore wrote:
+> On Mon, Oct 21, 2019 at 7:58 PM Richard Guy Briggs <rgb@redhat.com> wrote=
+:
+> > On 2019-10-21 17:43, Paul Moore wrote:
+> > > On Mon, Oct 21, 2019 at 5:38 PM Richard Guy Briggs <rgb@redhat.com> w=
+rote:
+> > > > On 2019-10-21 15:53, Paul Moore wrote:
+> > > > > On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.co=
+m> wrote:
+> > > > > > On 2019-09-18 21:22, Richard Guy Briggs wrote:
+> > > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitl=
+y give a
+> > > > > > > process in a non-init user namespace the capability to set au=
+dit
+> > > > > > > container identifiers.
 > > > > > > >
-> > > > > > > Paul, can I get a review of the general idea here to see if you're ok
-> > > > > > > with this way of effectively extending CAP_AUDIT_CONTROL for the sake of
-> > > > > > > setting contid from beyond the init user namespace where capable() can't
-> > > > > > > reach and ns_capable() is meaningless for these purposes?
+> > > > > > > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
+> > > > > > > AUDIT_SET_CAPCONTID 1028.  The message format includes the da=
+ta
+> > > > > > > structure:
+> > > > > > > struct audit_capcontid_status {
+> > > > > > >         pid_t   pid;
+> > > > > > >         u32     enable;
+> > > > > > > };
 > > > > > >
-> > > > > > I think my previous comment about having both the procfs and netlink
-> > > > > > interfaces apply here.  I don't see why we need two different APIs at
-> > > > > > the start; explain to me why procfs isn't sufficient.  If the argument
-> > > > > > is simply the desire to avoid mounting procfs in the container, how
-> > > > > > many container orchestrators can function today without a valid /proc?
+> > > > > > Paul, can I get a review of the general idea here to see if you=
+'re ok
+> > > > > > with this way of effectively extending CAP_AUDIT_CONTROL for th=
+e sake of
+> > > > > > setting contid from beyond the init user namespace where capabl=
+e() can't
+> > > > > > reach and ns_capable() is meaningless for these purposes?
 > > > > >
-> > > > > Ok, sorry, I meant to address that question from a previous patch
-> > > > > comment at the same time.
-> > > > >
-> > > > > It was raised by Eric Biederman that the proc filesystem interface for
-> > > > > audit had its limitations and he had suggested an audit netlink
-> > > > > interface made more sense.
+> > > > > I think my previous comment about having both the procfs and netl=
+ink
+> > > > > interfaces apply here.  I don't see why we need two different API=
+s at
+> > > > > the start; explain to me why procfs isn't sufficient.  If the arg=
+ument
+> > > > > is simply the desire to avoid mounting procfs in the container, h=
+ow
+> > > > > many container orchestrators can function today without a valid /=
+proc?
 > > > >
-> > > > I'm sure you've got it handy, so I'm going to be lazy and ask: archive
-> > > > pointer to Eric's comments?  Just a heads-up, I'm really *not* a fan
-> > > > of using the netlink interface for this, so unless Eric presents a
-> > > > super compelling reason for why we shouldn't use procfs I'm inclined
-> > > > to stick with /proc.
+> > > > Ok, sorry, I meant to address that question from a previous patch
+> > > > comment at the same time.
+> > > >
+> > > > It was raised by Eric Biederman that the proc filesystem interface =
+for
+> > > > audit had its limitations and he had suggested an audit netlink
+> > > > interface made more sense.
 > > >
-> > > It was actually a video call with Eric and Steve where that was
-> > > recommended, so I can't provide you with any first-hand communication
-> > > about it.  I'll get more details...
+> > > I'm sure you've got it handy, so I'm going to be lazy and ask: archiv=
+e
+> > > pointer to Eric's comments?  Just a heads-up, I'm really *not* a fan
+> > > of using the netlink interface for this, so unless Eric presents a
+> > > super compelling reason for why we shouldn't use procfs I'm inclined
+> > > to stick with /proc.
 > >
-> > Yeah, that sort of information really needs to be on the list.
-> >
-> > > So, with that out of the way, could you please comment on the general
-> > > idea of what was intended to be the central idea of this mechanism to be
-> > > able to nest containers beyond the initial user namespace (knowing that
-> > > a /proc interface is available and the audit netlink interface isn't
-> > > necessary for it to work and the latter can be easily removed)?
-> >
-> > I'm not entirely clear what you are asking about, are you asking why I
-> > care about nesting container orchestrators?  Simply put, it is not
-> > uncommon for the LXC/LXD folks to see nested container orchestrators,
-> > so I felt it was important to support that use case.  When we
-> > originally started this effort we probably should have done a better
-> > job reaching out to the LXC/LXD folks, we may have caught this
-> > earlier.  Regardless, we caught it, and it looks like we are on our
-> > way to supporting it (that's good).
-> >
-> > Are you asking why I prefer the procfs approach to setting/getting the
-> > audit container ID?  For one, it makes it easier for a LSM to enforce
-> > the audit container ID operations independent of the other audit
-> > control APIs.  It also provides a simpler interface for container
-> > orchestrators.  Both seem like desirable traits as far as I'm
-> > concerned.
-> >
-> I agree that one api is probably the best approach here, but I actually
-> think that the netlink interface is the more flexible approach.  Its a
-> little more work for userspace (you have to marshal your data into a
-> netlink message before sending it, and wait for an async response), but
-> thats a well known pattern, and it provides significantly more
-> flexibility for the kernel.  LSM already has a hook to audit netlink
-> messages in sock_sendmsg, so thats not a problem ...
+> > It was actually a video call with Eric and Steve where that was
+> > recommended, so I can't provide you with any first-hand communication
+> > about it.  I'll get more details...
+>=20
+> Yeah, that sort of information really needs to be on the list.
+>=20
+> > So, with that out of the way, could you please comment on the general
+> > idea of what was intended to be the central idea of this mechanism to b=
+e
+> > able to nest containers beyond the initial user namespace (knowing that
+> > a /proc interface is available and the audit netlink interface isn't
+> > necessary for it to work and the latter can be easily removed)?
+>=20
+> I'm not entirely clear what you are asking about, are you asking why I
+> care about nesting container orchestrators?  Simply put, it is not
+> uncommon for the LXC/LXD folks to see nested container orchestrators,
+> so I felt it was important to support that use case.  When we
+> originally started this effort we probably should have done a better
+> job reaching out to the LXC/LXD folks, we may have caught this
+> earlier.  Regardless, we caught it, and it looks like we are on our
+> way to supporting it (that's good).
 
-Look closely at how the LSM controls for netlink work and you'll see a
-number of problems; basically command level granularity it hard.  On
-the other hand, per-file granularity it easy.
+I'm not asking why you care about container orchestrators.
 
-> ... and if you use
-> netlink, you get the advantage of being able to broadcast messages
-> within your network namespaces, facilitating any needed orchestrator
-> co-ordination.
+> Are you asking why I prefer the procfs approach to setting/getting the
+> audit container ID?  For one, it makes it easier for a LSM to enforce
+> the audit container ID operations independent of the other audit
+> control APIs.  It also provides a simpler interface for container
+> orchestrators.  Both seem like desirable traits as far as I'm
+> concerned.
 
-Please don't read this comment as support of the netlink approach, but
-I don't think we want to use the multicast netlink; we would want it
-to be more of client/server model so that we could enforce access
-controls a bit easier.  Besides, is this even a use case?
+I'd like to leave the proc/netlink decision/debate out of this
+discussion, though it does need to happen and I was hoping that would
+happen on the loginuid/sessionid proc/netlink patch thread.
 
-> To do the same thing with a filesystem api, you need to
-> use the fanotify api, which IIRC doesn't work on proc.
+I'd like your perspective on how the capcontid feature was implemented
+(aside from the proc/netlink api issue which was intended to be
+consistent across loginuid/sessionid/contid/capcontid).  Do you see this
+feature as potentially solving the nested container issue in child user
+namespaces?
 
-Once again, I'm not sure this is a problem we are trying to solve
-(broadcasting audit container ID across multiple tasks), is it?
-Access to the audit container ID in userspace is something I've always
-thought needs to be tightly controlled to prevent abuse.
+> > > > The intent was to switch to the audit netlink interface for contid,
+> > > > capcontid and to add the audit netlink interface for loginuid and
+> > > > sessionid while deprecating the proc interface for loginuid and
+> > > > sessionid.  This was alluded to in the cover letter, but not very c=
+lear,
+> > > > I'm afraid.  I have patches to remove the contid and loginuid/sessi=
+onid
+> > > > interfaces in another tree which is why I had forgotten to outline =
+that
+> > > > plan more explicitly in the cover letter.
+>=20
+> paul moore
 
--- 
-paul moore
-www.paul-moore.com
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
