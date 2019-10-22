@@ -2,175 +2,275 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9CABE0D68
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 22:44:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27B64E0E54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 00:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732173AbfJVUny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 16:43:54 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:47925 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727582AbfJVUny (ORCPT
+        id S2389417AbfJVWoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 18:44:13 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:35096 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730847AbfJVWoN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 16:43:54 -0400
-Received: from dread.disaster.area (pa49-180-40-48.pa.nsw.optusnet.com.au [49.180.40.48])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id AA85A363351;
-        Wed, 23 Oct 2019 07:43:46 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iN10K-000666-K1; Wed, 23 Oct 2019 07:43:44 +1100
-Date:   Wed, 23 Oct 2019 07:43:44 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mike Christie <mchristi@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        martin@urbackup.org, Damien.LeMoal@wdc.com
-Subject: Re: [PATCH] Add prctl support for controlling PF_MEMALLOC V2
-Message-ID: <20191022204344.GB2044@dread.disaster.area>
-References: <20191021214137.8172-1-mchristi@redhat.com>
- <20191022112446.GA8213@dhcp22.suse.cz>
- <5DAF2AA0.5030500@redhat.com>
- <20191022163310.GS9379@dhcp22.suse.cz>
+        Tue, 22 Oct 2019 18:44:13 -0400
+Received: by mail-il1-f197.google.com with SMTP id o12so10864736ilf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 15:44:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=YbuAwrztLhYSbCeKjV8xzP5SlzpBV1Lkrumio9M9Mdc=;
+        b=uBQvmrU/rpRpyydoHH6XZ82JWrFzZiNVWgJ9odT8Fijquj/7QXqacXg+zC3hsdokcZ
+         tvDy9alkLTpxAErE2VJJe6AYgHFUHUt46Inx1sdTeceni3yl9LX1I5ZaXwp6LnwFUSwf
+         W1ifK9AZVJLP7TKsTYbUScwr4JDI43zj0AeCfuc1lL6yqWnpEiFRm7vjjxuMFeYJE5AN
+         adAIO98dGMMY7AJokgiSMa7KWBdziSxYrjimPetQj5Sn8rCzZQ2Q5/IqVe5DGy62BeS2
+         B8w9CaJ6NQ6tl2k29t/RJkI2r84TEGC4zhJ8biALCAv3cjmyIsIUjHYMF6At5nfQx0AN
+         8G/w==
+X-Gm-Message-State: APjAAAXMoBD+PxVm3IWYD64ikvHXCJTl+QoBwDpQ+zlwExZ1u5I1vqFr
+        8hK98NvrtugRLpFHLXZh0gvxHw+sNPRiJAduPn5H0rIDfT5F
+X-Google-Smtp-Source: APXvYqxT11LIh8xvooJbwTpLCUxuTOvrqrzUPK5L9Gw1QmPb9DndF0SUR/EFFEuIyZB66QXUQmIbaE2QdBz+2z32A7WJKg3qUtOU
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022163310.GS9379@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=y881pOMu+B+mZdf5UrsJdA==:117 a=y881pOMu+B+mZdf5UrsJdA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=7-415B0cAAAA:8 a=5awdTYTMrUjDONYjdkwA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Received: by 2002:a6b:7410:: with SMTP id s16mr151990iog.35.1571784251476;
+ Tue, 22 Oct 2019 15:44:11 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 15:44:11 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f924d50595878964@google.com>
+Subject: INFO: task hung in d_alloc_parallel (2)
+From:   syzbot <syzbot+55f124a35eac76b52fb7@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 06:33:10PM +0200, Michal Hocko wrote:
-> On Tue 22-10-19 11:13:20, Mike Christie wrote:
-> > On 10/22/2019 06:24 AM, Michal Hocko wrote:
-> > > On Mon 21-10-19 16:41:37, Mike Christie wrote:
-> > >> There are several storage drivers like dm-multipath, iscsi, tcmu-runner,
-> > >> amd nbd that have userspace components that can run in the IO path. For
-> > >> example, iscsi and nbd's userspace deamons may need to recreate a socket
-> > >> and/or send IO on it, and dm-multipath's daemon multipathd may need to
-> > >> send IO to figure out the state of paths and re-set them up.
-> > >>
-> > >> In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the
-> > >> memalloc_*_save/restore functions to control the allocation behavior,
-> > >> but for userspace we would end up hitting a allocation that ended up
-> > >> writing data back to the same device we are trying to allocate for.
-> > > 
-> > > Which code paths are we talking about here? Any ioctl or is this a
-> > > general syscall path? Can we mark the process in a more generic way?
-> > 
-> > It depends on the daemon. The common one for example are iscsi and nbd
-> > need network related calls like sendmsg, recvmsg, socket, etc.
-> > tcmu-runner could need the network ones and also read and write when it
-> > does IO to a FS or device. dm-multipath needs the sg io ioctls.
-> 
-> OK, so there is not a clear kernel entry point that could be explicitly
-> annotated. This would imply a per task context. This is an important
-> information. And I am wondering how those usecases ever worked in the
-> first place. This is not a minor detail.
+Hello,
 
-They don't work, and we've known it for many years. It's just that
-most of the time they are not run with really low memory. :)
+syzbot found the following crash on:
 
-e.g. loopback devices have long been known to deadlock like this
-buts it's only very recently we gave it PF_MEMALLOC_NOIO protection
-for it's kernel internal read() and write() calls.
+HEAD commit:    998d7551 Merge branch 'akpm' (patches from Andrew)
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=132747c8e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e0ac4d9b35046343
+dashboard link: https://syzkaller.appspot.com/bug?extid=55f124a35eac76b52fb7
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14eafd5f600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c13108e00000
 
-> > > E.g. we have PF_LESS_THROTTLE (used by nfsd). It doesn't affect the
-> > > reclaim recursion but it shows a pattern that doesn't really exhibit
-> > > too many internals. Maybe we need PF_IO_FLUSHER or similar?
-> > 
-> > I am not familiar with PF_IO_FLUSHER. If it prevents the recursion
-> > problem then please send me details and I will look into it for the next
-> > posting.
-> 
-> PF_IO_FLUSHER doesn't exist. I just wanted to point out that similarly
-> to PF_LESS_THROTTLE it should be a more high level per task flag rather
-> than something as low level as a direct control of gfp allocation
-> context. PF_LESS_THROTTLE simply tells that the task is a part of the
-> reclaim process and therefore it shouldn't be a subject of a normal
-> throttling - whatever that means.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+55f124a35eac76b52fb7@syzkaller.appspotmail.com
 
-PF_LESS_THROTTLE doesn't do that at all - it really only changes
-limits slightly and doesn't prevent reclaim recursion deadlocks in
-any way.
+INFO: task init:1 blocked for more than 143 seconds.
+       Not tainted 5.4.0-rc3+ #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+init            D22888     1      0 0x00000000
+Call Trace:
+  context_switch kernel/sched/core.c:3384 [inline]
+  __schedule+0x94f/0x1e70 kernel/sched/core.c:4069
+  schedule+0xd9/0x260 kernel/sched/core.c:4136
+  d_wait_lookup fs/dcache.c:2506 [inline]
+  d_alloc_parallel+0x12cd/0x1c30 fs/dcache.c:2588
+  __lookup_slow+0x1ab/0x500 fs/namei.c:1646
+  lookup_slow+0x58/0x80 fs/namei.c:1680
+  walk_component+0x747/0x2000 fs/namei.c:1800
+  link_path_walk.part.0+0x9a4/0x1340 fs/namei.c:2131
+  link_path_walk fs/namei.c:2259 [inline]
+  path_lookupat.isra.0+0xe3/0x8d0 fs/namei.c:2307
+  filename_lookup+0x1b0/0x3f0 fs/namei.c:2338
+  user_path_at_empty+0x43/0x50 fs/namei.c:2598
+  user_path_at include/linux/namei.h:49 [inline]
+  vfs_statx+0x129/0x200 fs/stat.c:187
+  vfs_stat include/linux/fs.h:3242 [inline]
+  __do_sys_newstat+0xa4/0x130 fs/stat.c:341
+  __se_sys_newstat fs/stat.c:337 [inline]
+  __x64_sys_newstat+0x54/0x80 fs/stat.c:337
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f5f11342c65
+Code: Bad RIP value.
+RSP: 002b:00007ffd17d8aeb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000004
+RAX: ffffffffffffffda RBX: 00007ffd17d8b0f0 RCX: 00007f5f11342c65
+RDX: 00007ffd17d8b0f0 RSI: 00007ffd17d8b0f0 RDI: 0000000000407545
+RBP: 0000000000000000 R08: 0000000000fe3b60 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00007ffd17d8b5f0 R14: 0000000000000000 R15: 0000000000000000
+INFO: task syz-executor030:9494 blocked for more than 143 seconds.
+       Not tainted 5.4.0-rc3+ #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor030 D27416  9494   9492 0x00000000
+Call Trace:
+  context_switch kernel/sched/core.c:3384 [inline]
+  __schedule+0x94f/0x1e70 kernel/sched/core.c:4069
+  schedule+0xd9/0x260 kernel/sched/core.c:4136
+  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4195
+  __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
+  __mutex_lock+0x7b0/0x13c0 kernel/locking/mutex.c:1103
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
+  fuse_lock_inode+0xba/0xf0 fs/fuse/inode.c:352
+  fuse_lookup+0x8e/0x310 fs/fuse/dir.c:382
+  __lookup_slow+0x279/0x500 fs/namei.c:1663
+  lookup_slow+0x58/0x80 fs/namei.c:1680
+  walk_component+0x747/0x2000 fs/namei.c:1800
+  link_path_walk.part.0+0x9a4/0x1340 fs/namei.c:2131
+  link_path_walk fs/namei.c:2062 [inline]
+  path_openat+0x202/0x46d0 fs/namei.c:3524
+  do_filp_open+0x1a1/0x280 fs/namei.c:3555
+  do_sys_open+0x3fe/0x5d0 fs/open.c:1097
+  __do_sys_open fs/open.c:1115 [inline]
+  __se_sys_open fs/open.c:1110 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1110
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x444c90
+Code: Bad RIP value.
+RSP: 002b:00007fffe5690030 EFLAGS: 00000206 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444c90
+RDX: 0000000000000000 RSI: 0000000000090800 RDI: 00000000004ae8f6
+RBP: 000000000000251a R08: 0000000000002516 R09: 00000000026a8880
+R10: 0000000000000000 R11: 0000000000000206 R12: 00007fffe5690260
+R13: 00000000004075c0 R14: 0000000000000000 R15: 0000000000000000
+INFO: task syz-executor030:9498 blocked for more than 144 seconds.
+       Not tainted 5.4.0-rc3+ #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor030 D28160  9498   9494 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:3384 [inline]
+  __schedule+0x94f/0x1e70 kernel/sched/core.c:4069
+  schedule+0xd9/0x260 kernel/sched/core.c:4136
+  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4195
+  __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
+  __mutex_lock+0x7b0/0x13c0 kernel/locking/mutex.c:1103
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
+  fuse_lock_inode+0xba/0xf0 fs/fuse/inode.c:352
+  fuse_lookup+0x8e/0x310 fs/fuse/dir.c:382
+  __lookup_slow+0x279/0x500 fs/namei.c:1663
+  lookup_slow+0x58/0x80 fs/namei.c:1680
+  walk_component+0x747/0x2000 fs/namei.c:1800
+  link_path_walk.part.0+0x9a4/0x1340 fs/namei.c:2131
+  link_path_walk fs/namei.c:2062 [inline]
+  path_openat+0x202/0x46d0 fs/namei.c:3524
+  do_filp_open+0x1a1/0x280 fs/namei.c:3555
+  do_sys_open+0x3fe/0x5d0 fs/open.c:1097
+  __do_sys_open fs/open.c:1115 [inline]
+  __se_sys_open fs/open.c:1110 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1110
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x405800
+Code: 4c 89 e0 eb 0d 0f 1f 44 00 00 48 8b 00 48 85 c0 74 18 48 39 58 08 75  
+f2 48 39 68 10 75 ec 5b 5d 41 5c c3 0f 1f 80 00 00 00 00 <bf> 18 00 00 00  
+e8 76 d3 ff ff 48 85 c0 74 e5 4d 85 e4 48 c7 00 00
+RSP: 002b:00007fffe568fd38 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007fffe568fd64 RCX: 0000000000405800
+RDX: 00007fffe568fd6a RSI: 0000000000080001 RDI: 00000000004ae914
+RBP: 00007fffe568fd60 R08: 0000000000000000 R09: 0000000000000004
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000407530
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
 
-What PF_LESS_THROTTLE was largely intended for is give the process a
-small amount of extra overhead on dirty page throttle limits so that
-if it's a stacked device it won't get throttled before the upper
-filesystem gets throttled.
+Showing all locks held in the system:
+1 lock held by init/1:
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+inode_lock_shared include/linux/fs.h:801 [inline]
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+lookup_slow+0x4a/0x80 fs/namei.c:1679
+1 lock held by khungtaskd/1070:
+  #0: ffffffff88fab000 (rcu_read_lock){....}, at:  
+debug_show_all_locks+0x5f/0x27e kernel/locking/lockdep.c:5337
+1 lock held by rsyslogd/9340:
+  #0: ffff88809d13e420 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110  
+fs/file.c:801
+2 locks held by cron/9387:
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+inode_lock_shared include/linux/fs.h:801 [inline]
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+lookup_slow+0x4a/0x80 fs/namei.c:1679
+  #1: ffff888092111ae0 (&fi->mutex){+.+.}, at: fuse_lock_inode+0xba/0xf0  
+fs/fuse/inode.c:352
+2 locks held by getty/9462:
+  #0: ffff8880a7204090 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+  #1: ffffc90005f852e0 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+2 locks held by getty/9463:
+  #0: ffff8880a3e30090 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+  #1: ffffc90005f812e0 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+2 locks held by getty/9464:
+  #0: ffff8880a3fad090 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+  #1: ffffc90005f892e0 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+2 locks held by getty/9465:
+  #0: ffff88809df54090 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+  #1: ffffc90005f912e0 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+2 locks held by getty/9466:
+  #0: ffff888098a67090 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+  #1: ffffc90005f8d2e0 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+2 locks held by getty/9467:
+  #0: ffff8880972d4090 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+  #1: ffffc90005f952e0 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+2 locks held by getty/9468:
+  #0: ffff888099a67090 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+  #1: ffffc90005f5d2e0 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
+2 locks held by udevd/9478:
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+inode_lock_shared include/linux/fs.h:801 [inline]
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+lookup_slow+0x4a/0x80 fs/namei.c:1679
+  #1: ffff888092111ae0 (&fi->mutex){+.+.}, at: fuse_lock_inode+0xba/0xf0  
+fs/fuse/inode.c:352
+2 locks held by syz-executor030/9494:
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+inode_lock_shared include/linux/fs.h:801 [inline]
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+lookup_slow+0x4a/0x80 fs/namei.c:1679
+  #1: ffff888092111ae0 (&fi->mutex){+.+.}, at: fuse_lock_inode+0xba/0xf0  
+fs/fuse/inode.c:352
+2 locks held by syz-executor030/9498:
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+inode_lock_shared include/linux/fs.h:801 [inline]
+  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
+lookup_slow+0x4a/0x80 fs/namei.c:1679
+  #1: ffff888092111ae0 (&fi->mutex){+.+.}, at: fuse_lock_inode+0xba/0xf0  
+fs/fuse/inode.c:352
 
-i.e. the idea is that it's got a -little- bit  more wiggle room
-before things like balance_dirty_pages() stops incoming writes,
-hence allowing writes to the upper filesystems to be throttled first
-before the underlying device that may be cleaning pages.
+=============================================
 
-NFS uses this in the case of a loopback mount - both the client and
-the server are on the same node, and so the data is double-cached.
-FOr the client to clean it's page, the server has to be able to
-write() the dirty data through balance_dirty_pages, and if we are at
-the dirty page limit then it will block and we effectively deadlock
-the writeback because we can't write the server side page that will
-clean the client side page. So the NFS server is given a higher
-dirty throttle limit by PF_LESS_THROTTLE so it can write when the
-client is throttled.
+NMI backtrace for cpu 1
+CPU: 1 PID: 1070 Comm: khungtaskd Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
+  watchdog+0x9d0/0xef0 kernel/hung_task.c:289
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0xe/0x10  
+arch/x86/include/asm/irqflags.h:60
 
-The same problem exists for the loopback block device, and it also
-sets PF_LESS_THROTTLE. But because it's a stacked block device
-(unlike the NFS setup) it has actual filesystem memory reclaim
-recursion problems (i.e. lower fs context allocation cleaning upper
-fs pages recursing into upper fs to reclaim pages) and so it also
-sets PF_MEMALLOC_NOIO to prevent these reclaim deadlocks.
 
-IOWs, the situation with these userspace processes is akin to the
-loopback device, not the "NFS client/NFS server on same host"
-situation. We have lots of evidence of reclaim recursion hangs, but
-very little evidence of balance_dirty_pages() throttling hangs....
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> PF_IO_FLUSHER would mean that the user
-> context is a part of the IO path and therefore there are certain reclaim
-> recursion restrictions.
-
-If PF_IO_FLUSHER just maps to PF_LESS_THROTTLE|PF_MEMALLOC_NOIO,
-then I'm not sure we need a new definition. Maybe that's the ptrace
-flag name, but in the kernel we don't need a PF_IO_FLUSHER process
-flag...
-
-> > >> This patch allows the userspace deamon to set the PF_MEMALLOC* flags
-> > >> with prctl during their initialization so later allocations cannot
-> > >> calling back into them.
-> > > 
-> > > TBH I am not really happy to export these to the userspace. They are
-> > > an internal implementation detail and the userspace shouldn't really
-> > 
-> > They care in these cases, because block/fs drivers must be able to make
-> > forward progress during writes. To meet this guarantee kernel block
-> > drivers use mempools and memalloc/GFP flags.
-> > 
-> > For these userspace components of the block/fs drivers they already do
-> > things normal daemons do not to meet that guarantee like mlock their
-> > memory, disable oom killer, and preallocate resources they have control
-> > over. They have no control over reclaim like the kernel drivers do so
-> > its easy for us to deadlock when memory gets low.
-> 
-> OK, fair enough. How much of a control do they really need though. Is a
-> single PF_IO_FLUSHER as explained above (essentially imply GPF_NOIO
-> context) sufficient?
-
-I think some of these usrspace processes work at the filesystem
-level and so really only need GFP_NOFS allocation (fuse), while
-others work at the block device level (iscsi, nbd) so need GFP_NOIO
-allocation. So there's definitely an argument for providing both...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
