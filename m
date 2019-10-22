@@ -2,105 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDE57E0967
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 18:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA355E0927
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 18:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732580AbfJVQnw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 12:43:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49180 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731373AbfJVQnv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:43:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1F66FB80B;
-        Tue, 22 Oct 2019 16:33:12 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 18:33:10 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Christie <mchristi@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, martin@urbackup.org,
-        Damien.LeMoal@wdc.com
-Subject: Re: [PATCH] Add prctl support for controlling PF_MEMALLOC V2
-Message-ID: <20191022163310.GS9379@dhcp22.suse.cz>
-References: <20191021214137.8172-1-mchristi@redhat.com>
- <20191022112446.GA8213@dhcp22.suse.cz>
- <5DAF2AA0.5030500@redhat.com>
+        id S1732697AbfJVQho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 12:37:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731727AbfJVQho (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Oct 2019 12:37:44 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 014C3205ED;
+        Tue, 22 Oct 2019 16:37:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571762263;
+        bh=rRDMmhyKltaJwbJcMHjqQIWtz5N0p4ykMspDlHgBfG4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ODNY+wMbg88YmanqkVZLBtuavnkLUkjsmJUtn8FO1Rjf7VFtwmPfwchNEZZKtdgDl
+         9oGjh8/B9bitqrWNu0dG8Z9Fk2UXRx0IpTecz6ujj+X7nx/pSMcU5KuqiGWG+WDyro
+         GJym/m6ptl9aVfv6fiJ8eucArGyNGtBt9c59ed6U=
+Date:   Tue, 22 Oct 2019 09:37:41 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/3] ext4: add support for INLINE_CRYPT_OPTIMIZED
+ encryption policies
+Message-ID: <20191022163740.GB229362@gmail.com>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20191021230355.23136-1-ebiggers@kernel.org>
+ <20191021230355.23136-3-ebiggers@kernel.org>
+ <20191022133716.GB23268@mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5DAF2AA0.5030500@redhat.com>
+In-Reply-To: <20191022133716.GB23268@mit.edu>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 22-10-19 11:13:20, Mike Christie wrote:
-> On 10/22/2019 06:24 AM, Michal Hocko wrote:
-> > On Mon 21-10-19 16:41:37, Mike Christie wrote:
-> >> There are several storage drivers like dm-multipath, iscsi, tcmu-runner,
-> >> amd nbd that have userspace components that can run in the IO path. For
-> >> example, iscsi and nbd's userspace deamons may need to recreate a socket
-> >> and/or send IO on it, and dm-multipath's daemon multipathd may need to
-> >> send IO to figure out the state of paths and re-set them up.
-> >>
-> >> In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the
-> >> memalloc_*_save/restore functions to control the allocation behavior,
-> >> but for userspace we would end up hitting a allocation that ended up
-> >> writing data back to the same device we are trying to allocate for.
+On Tue, Oct 22, 2019 at 09:37:16AM -0400, Theodore Y. Ts'o wrote:
+> On Mon, Oct 21, 2019 at 04:03:54PM -0700, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
 > > 
-> > Which code paths are we talking about here? Any ioctl or is this a
-> > general syscall path? Can we mark the process in a more generic way?
-> 
-> It depends on the daemon. The common one for example are iscsi and nbd
-> need network related calls like sendmsg, recvmsg, socket, etc.
-> tcmu-runner could need the network ones and also read and write when it
-> does IO to a FS or device. dm-multipath needs the sg io ioctls.
-
-OK, so there is not a clear kernel entry point that could be explicitly
-annotated. This would imply a per task context. This is an important
-information. And I am wondering how those usecases ever worked in the
-first place. This is not a minor detail.
- 
-> > E.g. we have PF_LESS_THROTTLE (used by nfsd). It doesn't affect the
-> > reclaim recursion but it shows a pattern that doesn't really exhibit
-> > too many internals. Maybe we need PF_IO_FLUSHER or similar?
-> 
-> I am not familiar with PF_IO_FLUSHER. If it prevents the recursion
-> problem then please send me details and I will look into it for the next
-> posting.
-
-PF_IO_FLUSHER doesn't exist. I just wanted to point out that similarly
-to PF_LESS_THROTTLE it should be a more high level per task flag rather
-than something as low level as a direct control of gfp allocation
-context. PF_LESS_THROTTLE simply tells that the task is a part of the
-reclaim process and therefore it shouldn't be a subject of a normal
-throttling - whatever that means. PF_IO_FLUSHER would mean that the user
-context is a part of the IO path and therefore there are certain reclaim
-recursion restrictions.
- 
-> >> This patch allows the userspace deamon to set the PF_MEMALLOC* flags
-> >> with prctl during their initialization so later allocations cannot
-> >> calling back into them.
+> > INLINE_CRYPT_OPTIMIZED encryption policies have special requirements
+> > from the filesystem:
 > > 
-> > TBH I am not really happy to export these to the userspace. They are
-> > an internal implementation detail and the userspace shouldn't really
+> > - Inode numbers must never change, even if the filesystem is resized
+> > - Inode numbers must be <= 32 bits
+> > - File logical block numbers must be <= 32 bits
 > 
-> They care in these cases, because block/fs drivers must be able to make
-> forward progress during writes. To meet this guarantee kernel block
-> drivers use mempools and memalloc/GFP flags.
+> You need to guarantee more than this; you also need to guarantee that
+> the logical block number may not change.  Fortunately, because the
+> original per-file key scheme used a logical block tweak, we've
+> prohibited this already, and we didn't relax this restriction for
+> files encrpyted using DIRECT_KEY.  So it's a requirement which we
+> already meet, but we should document this requirement explicitly ---
+> both here and also in Documentations/filesystems/fscrypt.rst.
 > 
-> For these userspace components of the block/fs drivers they already do
-> things normal daemons do not to meet that guarantee like mlock their
-> memory, disable oom killer, and preallocate resources they have control
-> over. They have no control over reclaim like the kernel drivers do so
-> its easy for us to deadlock when memory gets low.
+> Otherwise, looks good.  Feel free to add:
+> 
+> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+> 
 
-OK, fair enough. How much of a control do they really need though. Is a
-single PF_IO_FLUSHER as explained above (essentially imply GPF_NOIO
-context) sufficient?
--- 
-Michal Hocko
-SUSE Labs
+This is meant to list the requirements over the current policies.  If we wanted
+to list all requirements on filesystems to support any fscrypt policy at all,
+we'd also have to list a lot of other things like that the filesystem must
+implement all the fscrypt_operations, must call all the needed hooks, must
+support encrypted filenames and symlinks, etc...
+
+I'll change the beginning of this commit message to
+"INLINE_CRYPT_OPTIMIZED encryption policies have special requirements
+from the filesystem, in comparison to the current encryption policies:"
+
+... and in the previous patch I'll add a note in the "Contents encryption"
+section of Documentation/filesystems/fscrypt.rst that the use of the file
+logical block number means that filesystems must not allow operations that would
+change it.
+
+- Eric
