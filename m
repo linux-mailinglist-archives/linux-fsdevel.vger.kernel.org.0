@@ -2,143 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4639BE02C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 13:21:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08106E02CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 13:25:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388018AbfJVLVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 07:21:24 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34911 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387405AbfJVLVX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 07:21:23 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k2so1879924edx.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 04:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hkPjYtxu0G68TNOL7v3J1p13GtJ9bbjz9PgUJHvGUO4=;
-        b=NY/Vg+KYkfRz80jxUYpA7t8Pxm2pGBYJ+h3r9wYIIS9WTnYFDXAjUzhM7N78ek5F9C
-         r+L+12vJiHo+PxQ82cmaBgOJ/yw90xHGpO3E/d1R8cdSmLS6Yahs+PXzpAuGzRBVsxK0
-         vVyBefcjZfG2X6pLWNK7Nwn0zpyX2pIy/kqKQ30ad7Q13i7lmWZysLFyuUJr8CYGtBZZ
-         pD6hzp4Zj64Usi8SQFo0A0wCk2GQMYBUBurH4YTO2khbUC78TgpcrMLnyeIturUEx/bF
-         pMEbQwbm9AJOtx6+JoIjFQCQYvqOi5Xft8n5yxfj7F7VjRbYykLjhXNarDhLy1Zj//i/
-         MQzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hkPjYtxu0G68TNOL7v3J1p13GtJ9bbjz9PgUJHvGUO4=;
-        b=PDlFJqHEMtoii5Uh6Np6sq1zdfj/qPzjsqK8ky9inOHxhOOyQBwBGdFDMFiaqsoyaN
-         vjeIxitrgng4BNWpBkD2GetK+RT3H8UepQPvGmJ4ZqoJoGaNwGGOSLrqhCC7kF5ZmV5H
-         W0xWiiNRZ+LshokTvebJI4VehvGsDJc5hpzyYS2aOYlTzKxk8U116GN2fsz72fg/bHFx
-         u1fSI2zLit9ffSDMZTTI3BxRwZsMTd8eg/SJmHcxBV492DQ6Xoia964CSgep49eJkHe6
-         IkBoiw8UiMwg616JdNG6ef0knLC/Zf0lbRbV4GNfUfl/IWCGDO+W4jTiAmijtWpA/adR
-         4x4g==
-X-Gm-Message-State: APjAAAW5CosVGPCImZYB/p3dz+c9k0DWHr6qrm4wy4HS9Voq0CnFIUTe
-        xonp+n6OH1G4UZq15U3A5Lj6VjB88wE=
-X-Google-Smtp-Source: APXvYqySKn4thuU3f7K7aDJqekurENi/VR+yBa2dMuzwxWcadqexy5iRGP32nwx1Eh17ArpcLJiB9w==
-X-Received: by 2002:a17:906:bfcb:: with SMTP id us11mr26657460ejb.299.1571743279644;
-        Tue, 22 Oct 2019 04:21:19 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id gl4sm114537ejb.6.2019.10.22.04.21.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2019 04:21:18 -0700 (PDT)
-Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
-To:     ira.weiny@intel.com, linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20191020155935.12297-1-ira.weiny@intel.com>
-From:   Boaz Harrosh <boaz@plexistor.com>
-Message-ID: <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
-Date:   Tue, 22 Oct 2019 14:21:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S2388099AbfJVLYu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 07:24:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60080 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387645AbfJVLYu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Oct 2019 07:24:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 55868BA3D;
+        Tue, 22 Oct 2019 11:24:47 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 13:24:46 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Christie <mchristi@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, martin@urbackup.org,
+        Damien.LeMoal@wdc.com
+Subject: Re: [PATCH] Add prctl support for controlling PF_MEMALLOC V2
+Message-ID: <20191022112446.GA8213@dhcp22.suse.cz>
+References: <20191021214137.8172-1-mchristi@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191020155935.12297-1-ira.weiny@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021214137.8172-1-mchristi@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20/10/2019 18:59, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Mon 21-10-19 16:41:37, Mike Christie wrote:
+> There are several storage drivers like dm-multipath, iscsi, tcmu-runner,
+> amd nbd that have userspace components that can run in the IO path. For
+> example, iscsi and nbd's userspace deamons may need to recreate a socket
+> and/or send IO on it, and dm-multipath's daemon multipathd may need to
+> send IO to figure out the state of paths and re-set them up.
 > 
-> At LSF/MM'19 [1] [2] we discussed applications that overestimate memory
-> consumption due to their inability to detect whether the kernel will
-> instantiate page cache for a file, and cases where a global dax enable via a
-> mount option is too coarse.
+> In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the
+> memalloc_*_save/restore functions to control the allocation behavior,
+> but for userspace we would end up hitting a allocation that ended up
+> writing data back to the same device we are trying to allocate for.
+
+Which code paths are we talking about here? Any ioctl or is this a
+general syscall path? Can we mark the process in a more generic way?
+E.g. we have PF_LESS_THROTTLE (used by nfsd). It doesn't affect the
+reclaim recursion but it shows a pattern that doesn't really exhibit
+too many internals. Maybe we need PF_IO_FLUSHER or similar?
+
+> This patch allows the userspace deamon to set the PF_MEMALLOC* flags
+> with prctl during their initialization so later allocations cannot
+> calling back into them.
+
+TBH I am not really happy to export these to the userspace. They are
+an internal implementation detail and the userspace shouldn't really
+care. So if this is really necessary then we need a very good argumnets
+and documentation to make the usage clear.
+ 
+> Signed-off-by: Mike Christie <mchristi@redhat.com>
+> ---
 > 
-> The following patch series enables selecting the use of DAX on individual files
-> and/or directories on xfs, and lays some groundwork to do so in ext4.  In this
-> scheme the dax mount option can be omitted to allow the per-file property to
-> take effect.
+> V2:
+> - Use prctl instead of procfs.
+> - Add support for NOFS for fuse.
+> - Check permissions.
 > 
-> The insight at LSF/MM was to separate the per-mount or per-file "physical"
-> capability switch from an "effective" attribute for the file.
+>  include/uapi/linux/prctl.h |  8 +++++++
+>  kernel/sys.c               | 44 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 52 insertions(+)
 > 
-> At LSF/MM we discussed the difficulties of switching the mode of a file with
-> active mappings / page cache. Rather than solve those races the decision was to
-> just limit mode flips to 0-length files.
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> index 7da1b37b27aa..6f6b3af6633a 100644
+> --- a/include/uapi/linux/prctl.h
+> +++ b/include/uapi/linux/prctl.h
+> @@ -234,4 +234,12 @@ struct prctl_mm_map {
+>  #define PR_GET_TAGGED_ADDR_CTRL		56
+>  # define PR_TAGGED_ADDR_ENABLE		(1UL << 0)
+>  
+> +/* Control reclaim behavior when allocating memory */
+> +#define PR_SET_MEMALLOC			57
+> +#define PR_GET_MEMALLOC			58
+> +#define PR_MEMALLOC_SET_NOIO		(1UL << 0)
+> +#define PR_MEMALLOC_CLEAR_NOIO		(1UL << 1)
+> +#define PR_MEMALLOC_SET_NOFS		(1UL << 2)
+> +#define PR_MEMALLOC_CLEAR_NOFS		(1UL << 3)
+> +
+>  #endif /* _LINUX_PRCTL_H */
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index a611d1d58c7d..34fedc9fc7e4 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2486,6 +2486,50 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>  			return -EINVAL;
+>  		error = GET_TAGGED_ADDR_CTRL();
+>  		break;
+> +	case PR_SET_MEMALLOC:
+> +		if (!capable(CAP_SYS_ADMIN))
+> +			return -EPERM;
+> +
+> +		if (arg3 || arg4 || arg5)
+> +			return -EINVAL;
+> +
+> +		switch (arg2) {
+> +		case PR_MEMALLOC_SET_NOIO:
+> +			if (current->flags & PF_MEMALLOC_NOFS)
+> +				return -EINVAL;
+> +
+> +			current->flags |= PF_MEMALLOC_NOIO;
+> +			break;
+> +		case PR_MEMALLOC_CLEAR_NOIO:
+> +			current->flags &= ~PF_MEMALLOC_NOIO;
+> +			break;
+> +		case PR_MEMALLOC_SET_NOFS:
+> +			if (current->flags & PF_MEMALLOC_NOIO)
+> +				return -EINVAL;
+> +
+> +			current->flags |= PF_MEMALLOC_NOFS;
+> +			break;
+> +		case PR_MEMALLOC_CLEAR_NOFS:
+> +			current->flags &= ~PF_MEMALLOC_NOFS;
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +		break;
+> +	case PR_GET_MEMALLOC:
+> +		if (!capable(CAP_SYS_ADMIN))
+> +			return -EPERM;
+> +
+> +		if (arg2 || arg3 || arg4 || arg5)
+> +			return -EINVAL;
+> +
+> +		if (current->flags & PF_MEMALLOC_NOIO)
+> +			error = PR_MEMALLOC_SET_NOIO;
+> +		else if (current->flags & PF_MEMALLOC_NOFS)
+> +			error = PR_MEMALLOC_SET_NOFS;
+> +		else
+> +			error = 0;
+> +		break;
+>  	default:
+>  		error = -EINVAL;
+>  		break;
+> -- 
+> 2.20.1
 > 
 
-What I understand above is that only "writers" before writing any bytes may
-turn the flag on, which then persists. But as a very long time user of DAX, usually
-it is the writers that are least interesting. With lots of DAX technologies and
-emulations the write is slower and needs slow "flushing".
-
-The more interesting and performance gains comes from DAX READs actually.
-specially cross the VM guest. (IE. All VMs share host memory or pmem)
-
-This fixture as I understand it, that I need to know before I write if I will
-want DAX or not and then the write is DAX as well as reads after that, looks
-not very interesting for me as a user.
-
-Just my $0.17
-Boaz
-
-> Finally, the physical DAX flag inheritance is maintained from previous work on 
-> XFS but should be added for other file systems for consistence.
-> 
-> 
-> [1] https://lwn.net/Articles/787973/
-> [2] https://lwn.net/Articles/787233/
-> 
-> To: linux-kernel@vger.kernel.org
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-ext4@vger.kernel.org
-> Cc: linux-xfs@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> 
-> Ira Weiny (5):
->   fs/stat: Define DAX statx attribute
->   fs/xfs: Isolate the physical DAX flag from effective
->   fs/xfs: Separate functionality of xfs_inode_supports_dax()
->   fs/xfs: Clean up DAX support check
->   fs/xfs: Allow toggle of physical DAX flag
-> 
->  fs/stat.c                 |  3 +++
->  fs/xfs/xfs_ioctl.c        | 32 ++++++++++++++------------------
->  fs/xfs/xfs_iops.c         | 36 ++++++++++++++++++++++++++++++------
->  fs/xfs/xfs_iops.h         |  2 ++
->  include/uapi/linux/stat.h |  1 +
->  5 files changed, 50 insertions(+), 24 deletions(-)
-> 
-
+-- 
+Michal Hocko
+SUSE Labs
