@@ -2,96 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA355E0927
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 18:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50D1BE0960
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 18:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732697AbfJVQho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 12:37:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35428 "EHLO mail.kernel.org"
+        id S1731993AbfJVQnS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 12:43:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731727AbfJVQho (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:37:44 -0400
-Received: from gmail.com (unknown [104.132.1.77])
+        id S1731320AbfJVQnS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Oct 2019 12:43:18 -0400
+Received: from localhost (unknown [104.132.0.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 014C3205ED;
-        Tue, 22 Oct 2019 16:37:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B1F520679;
+        Tue, 22 Oct 2019 16:43:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571762263;
-        bh=rRDMmhyKltaJwbJcMHjqQIWtz5N0p4ykMspDlHgBfG4=;
+        s=default; t=1571762597;
+        bh=Zj5wr74CxqX0/V/io5KPMu9t2gOvJAzJbqNGWFeTg7M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ODNY+wMbg88YmanqkVZLBtuavnkLUkjsmJUtn8FO1Rjf7VFtwmPfwchNEZZKtdgDl
-         9oGjh8/B9bitqrWNu0dG8Z9Fk2UXRx0IpTecz6ujj+X7nx/pSMcU5KuqiGWG+WDyro
-         GJym/m6ptl9aVfv6fiJ8eucArGyNGtBt9c59ed6U=
-Date:   Tue, 22 Oct 2019 09:37:41 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+        b=l2aoOrGYyK6nfJbMVQHHmqrtySzqsH3ke+c8RolvKfiJSPa7PULq6dsJxo92f4318
+         auMhhPorvk0IKXhDoHIsC1u+C+T3ROdAwoxER+76dtjVXvihmcSlAsb8u+z4Esy6ms
+         N/r764ctPaMgZaUY6XvhBSqta5ccsS3Ry81QUyd8=
+Date:   Tue, 22 Oct 2019 09:43:16 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
         Paul Crowley <paulcrowley@google.com>,
         Paul Lawrence <paullawrence@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/3] ext4: add support for INLINE_CRYPT_OPTIMIZED
+        "Theodore Y . Ts'o" <tytso@mit.edu>
+Subject: Re: [PATCH 3/3] f2fs: add support for INLINE_CRYPT_OPTIMIZED
  encryption policies
-Message-ID: <20191022163740.GB229362@gmail.com>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
+Message-ID: <20191022164316.GA88771@jaegeuk-macbookpro.roam.corp.google.com>
 References: <20191021230355.23136-1-ebiggers@kernel.org>
- <20191021230355.23136-3-ebiggers@kernel.org>
- <20191022133716.GB23268@mit.edu>
+ <20191021230355.23136-4-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191022133716.GB23268@mit.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191021230355.23136-4-ebiggers@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 09:37:16AM -0400, Theodore Y. Ts'o wrote:
-> On Mon, Oct 21, 2019 at 04:03:54PM -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > INLINE_CRYPT_OPTIMIZED encryption policies have special requirements
-> > from the filesystem:
-> > 
-> > - Inode numbers must never change, even if the filesystem is resized
-> > - Inode numbers must be <= 32 bits
-> > - File logical block numbers must be <= 32 bits
+On 10/21, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> You need to guarantee more than this; you also need to guarantee that
-> the logical block number may not change.  Fortunately, because the
-> original per-file key scheme used a logical block tweak, we've
-> prohibited this already, and we didn't relax this restriction for
-> files encrpyted using DIRECT_KEY.  So it's a requirement which we
-> already meet, but we should document this requirement explicitly ---
-> both here and also in Documentations/filesystems/fscrypt.rst.
+> f2fs inode numbers are stable across filesystem resizing, and f2fs inode
+> and file logical block numbers are always 32-bit.  So f2fs can always
+> support INLINE_CRYPT_OPTIMIZED encryption policies.  Wire up the needed
+> fscrypt_operations to declare support.
 > 
-> Otherwise, looks good.  Feel free to add:
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+
+Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+> ---
+>  fs/f2fs/super.c | 26 ++++++++++++++++++++------
+>  1 file changed, 20 insertions(+), 6 deletions(-)
 > 
-> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-> 
-
-This is meant to list the requirements over the current policies.  If we wanted
-to list all requirements on filesystems to support any fscrypt policy at all,
-we'd also have to list a lot of other things like that the filesystem must
-implement all the fscrypt_operations, must call all the needed hooks, must
-support encrypted filenames and symlinks, etc...
-
-I'll change the beginning of this commit message to
-"INLINE_CRYPT_OPTIMIZED encryption policies have special requirements
-from the filesystem, in comparison to the current encryption policies:"
-
-... and in the previous patch I'll add a note in the "Contents encryption"
-section of Documentation/filesystems/fscrypt.rst that the use of the file
-logical block number means that filesystems must not allow operations that would
-change it.
-
-- Eric
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 1443cee158633..851ac95229263 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2308,13 +2308,27 @@ static bool f2fs_dummy_context(struct inode *inode)
+>  	return DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(inode));
+>  }
+>  
+> +static bool f2fs_has_stable_inodes(struct super_block *sb)
+> +{
+> +	return true;
+> +}
+> +
+> +static void f2fs_get_ino_and_lblk_bits(struct super_block *sb,
+> +				       int *ino_bits_ret, int *lblk_bits_ret)
+> +{
+> +	*ino_bits_ret = 8 * sizeof(nid_t);
+> +	*lblk_bits_ret = 8 * sizeof(block_t);
+> +}
+> +
+>  static const struct fscrypt_operations f2fs_cryptops = {
+> -	.key_prefix	= "f2fs:",
+> -	.get_context	= f2fs_get_context,
+> -	.set_context	= f2fs_set_context,
+> -	.dummy_context	= f2fs_dummy_context,
+> -	.empty_dir	= f2fs_empty_dir,
+> -	.max_namelen	= F2FS_NAME_LEN,
+> +	.key_prefix		= "f2fs:",
+> +	.get_context		= f2fs_get_context,
+> +	.set_context		= f2fs_set_context,
+> +	.dummy_context		= f2fs_dummy_context,
+> +	.empty_dir		= f2fs_empty_dir,
+> +	.max_namelen		= F2FS_NAME_LEN,
+> +	.has_stable_inodes	= f2fs_has_stable_inodes,
+> +	.get_ino_and_lblk_bits	= f2fs_get_ino_and_lblk_bits,
+>  };
+>  #endif
+>  
+> -- 
+> 2.23.0.866.gb869b98d4c-goog
