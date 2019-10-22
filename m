@@ -2,115 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BAD3DFD71
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 08:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F331DFD95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 08:13:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731180AbfJVGAI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 02:00:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727943AbfJVGAI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 02:00:08 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 578F92089E;
-        Tue, 22 Oct 2019 06:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571724006;
-        bh=IV+O29anGZ56O62huhHa4OXym9e0Xnv7gAZOs76+eK4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q3YwoQVs7bPCIFItl4itSXlw7LYeUrnwtcXhnDi1R1G97a4bw3wQtQO50DPxp8JPZ
-         Qe97F9ZDTVfkx0fPuafbZUD/ny2xzKwsOz5gLgjYbpAkOC15pCe8e5FI4Juuxj/XNf
-         QZiILELJNEMdNqBqi3bjjKdN+Bzgif+iVsCmzOwg=
-Date:   Mon, 21 Oct 2019 23:00:04 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/3] fscrypt: add support for inline-encryption-optimized
- policies
-Message-ID: <20191022060004.GA333751@sol.localdomain>
-Mail-Followup-To: Dave Chinner <david@fromorbit.com>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20191021230355.23136-1-ebiggers@kernel.org>
- <20191021230355.23136-2-ebiggers@kernel.org>
- <20191022052712.GA2083@dread.disaster.area>
+        id S2387456AbfJVGNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 02:13:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36988 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730915AbfJVGNe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Oct 2019 02:13:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C7BDEB3B5;
+        Tue, 22 Oct 2019 06:13:31 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 08:13:29 +0200
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Yang Xu <xuyang2018.jy@cn.fujitsu.com>
+Cc:     ltp@lists.linux.it, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [LTP] [PATCH v2] syscalls/copy_file_range02: skip if cross-fs
+ isn't supported
+Message-ID: <20191022061328.GA9267@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20190930093627.30159-1-pvorel@suse.cz>
+ <f9121245-60e5-5dfe-4b17-47b38c0f5ff4@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191022052712.GA2083@dread.disaster.area>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f9121245-60e5-5dfe-4b17-47b38c0f5ff4@cn.fujitsu.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 04:27:12PM +1100, Dave Chinner wrote:
-> On Mon, Oct 21, 2019 at 04:03:53PM -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > Some inline encryption hardware has only a small number of keyslots,
-> > which would make it inefficient to use the traditional fscrypt per-file
-> > keys.  The existing DIRECT_KEY encryption policy flag doesn't solve this
-> > because it assumes that file contents and names are encrypted by the
-> > same algorithm and that IVs are at least 24 bytes.
-> > 
-> > Therefore, add a new encryption policy flag INLINE_CRYPT_OPTIMIZED which
-> > causes the encryption to modified as follows:
-> > 
-> > - The key for file contents encryption is derived from the values
-> >   (master_key, mode_num, filesystem_uuid).  The per-file nonce is not
-> >   included, so many files may share the same contents encryption key.
-> > 
-> > - The IV for encrypting each block of file contents is built as
-> >   (inode_number << 32) | file_logical_block_num.
-> > 
-> > Including the inode number in the IVs ensures that data in different
-> > files is encrypted differently, despite per-file keys not being used.
-> > Limiting the inode and block numbers to 32 bits and putting the block
-> > number in the low bits is needed to be compatible with inline encryption
-> > hardware which only supports specifying a 64-bit data unit number which
-> > is auto-incremented; this is what the UFS and EMMC standards support.
-> 
-> These 32 bit size limits seem arbitrary and rules out implementing
-> this on larger filesystems. Why not just hash the 64 bit inode, file
-> offset and block numbers into a single 64 bit value? It is still
-> unique enough for the stated use (i.e. unique IV for each file
-> block) but it doesn't limit what filesystem configurations can
-> actually make use of this functionality....
-> 
+Hi Xu, others,
 
-That won't work because we need consecutive file blocks to have consecutive IVs
-as often as possible.  The crypto support in the UFS and EMMC standards takes
-only a single 64-bit "data unit number" (DUN) per request, which the hardware
-uses as the first 64 bits of the IV and automatically increments for each data
-unit (i.e. for each filesystem block, in this case).
+[ Cc Amir and linux-fsdevel ].
 
-If every block had some random DUN, we'd have to submit a separate bio for every
-single block.  And they wouldn't be mergable, so each one would cause a separate
-disk request.  That would be really terrible for performance.
+> on 2019/09/30 17:36, Petr Vorel wrote:
 
-Also, a 64 bit hash value isn't sufficiently safe against hash collisions.
+> > copy_file_range02 was written to verify copy_file_range() v5.3 changes.
+> > Detect it via cross-filesystem copy_file_range() functionality, so that we
+> > cover also backports to stable/enterprise distro kernels (if backported,
+> > it should be with all those API fixes).
 
-An alternative which would work nicely on ext4 and xfs (if xfs supported
-fscrypt) would be to pass the physical block number as the DUN.  However, that
-wouldn't work at all on f2fs because f2fs moves data blocks around.  And since
-most people who want to use this are using f2fs, f2fs support is essential.
+> > Missing these API fixes is detected by errno changes introduced by
+> > This fixes errors caused by commits from v5.3-rc1:
+> > 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
+> > 96e6e8f4a68d ("vfs: add missing checks to copy_file_range")
 
-Also keep in mind that the proposed format can still be used on a specific
-filesystem instance with fewer than 2^32 inodes and blocks, even if that type of
-filesystem can support more inodes and blocks in general.
+> > This check requires to put back into copy_file_range02 .mount_device = 1
+> > and .mntpoint = MNTPOINT (but .all_filesystems = 1 is obviously not needed).
 
-- Eric
+> Hi Petr
+>    Why we must put back .mount_device and .mntpoint = MNTPOINT?
+
+> copy_file_range02 was not only written to verify copy_file_range() v5.3 changes
+> and it also tests other errors before v5.3.
+This fix was based on Amir's suggestion [1], he states the opposite:
+
+IIUC, copy_file_range02 was written after v5.3 changes to verify that
+copy_file_range
+stays unbroken.
+As such, I would suggest that you check if kernel supports cross-fs copy, like
+copy_file_range01 does and if it doesn't, skip the test entirely.
+If some one ever backports cross-fs copy to any distro stable kernel, then one
+would better also backkport all of those API fixes, otherwise test will fail.
+
+
+> I think cross-filesystem copy_file_range is a kernel action change and then I
+> put it into copy_file_range01.c. So copy_file_range02.c doesn't test EXDEV error .
+
+> Also since commit v5.3-rc1 two commit, immutable file(EPERM)，swap file(ETXTBSY)，
+> overlaping range(EINVAL), max length lenght(EOVERFLOW),max file size(EFBIG) these
+> check have been add. But other errors still existed before this two commits such as:
+> copy contents to file open as readonly *    -> EBADF
+
+> Now, before v5.3-rc1, copy_file_range02.c  is notrun that we don't do error check.
+> It is unreasonable.
+So, do you suggest to test EBADF for all versions? Or something else?
+
+> ps:
+> copy_file_range newest man-pages
+> https://github.com/mkerrisk/man-pages/commit/88e75e2c56a68eaf8fcf662a63b802fdf77a4017
+Yep, Amir planned to fix it :).
+
+> Thanks
+> Yang Xu
+
+[1] http://lists.linux.it/pipermail/ltp/2019-September/013697.html
+
+> > + Remove few unused imports.
+
+> > Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> > ---
+> > Changes v1->v2:
+> > pass the source and destination as parameters to
+> > verify_cross_fs_copy_support(), remove bogus setup checks
+> > (Suggested by Cyril).
+
+> > Kind regards,
+> > Petr
+
+> >   .../copy_file_range/copy_file_range.h         | 23 ++++++++++++++++---
+> >   .../copy_file_range/copy_file_range01.c       | 22 ++----------------
+> >   .../copy_file_range/copy_file_range02.c       | 11 ++++++++-
+> >   3 files changed, 32 insertions(+), 24 deletions(-)
+
+> > diff --git a/testcases/kernel/syscalls/copy_file_range/copy_file_range.h b/testcases/kernel/syscalls/copy_file_range/copy_file_range.h
+> > index 40d05d653..1d80ab0f7 100644
+> > --- a/testcases/kernel/syscalls/copy_file_range/copy_file_range.h
+> > +++ b/testcases/kernel/syscalls/copy_file_range/copy_file_range.h
+> > @@ -7,9 +7,7 @@
+> >   #ifndef __COPY_FILE_RANGE_H__
+> >   #define __COPY_FILE_RANGE_H__
+> > -#include <stdbool.h>
+> > -#include <unistd.h>
+> > -#include <sys/sysmacros.h>
+> > +#include <stdio.h>
+> >   #include "lapi/syscalls.h"
+> >   #include "lapi/fs.h"
+> > @@ -62,4 +60,23 @@ static int sys_copy_file_range(int fd_in, loff_t *off_in,
+> >   	return -1;
+> >   }
+> > +static inline int verify_cross_fs_copy_support(const char *path_in, const char *path_out)
+> > +{
+> > +	int i, fd, fd_test;
+> > +
+> > +	fd = SAFE_OPEN(path_in, O_RDWR | O_CREAT, 0664);
+> > +	/* Writing page_size * 4 of data into test file */
+> > +	for (i = 0; i < (int)(getpagesize() * 4); i++)
+> > +		SAFE_WRITE(1, fd, CONTENT, CONTSIZE);
+> > +
+> > +	fd_test = SAFE_OPEN(path_out, O_RDWR | O_CREAT, 0664);
+> > +	TEST(sys_copy_file_range(fd, 0, fd_test, 0, CONTSIZE, 0));
+> > +
+> > +	SAFE_CLOSE(fd_test);
+> > +	remove(FILE_MNTED_PATH);
+> > +	SAFE_CLOSE(fd);
+> > +
+> > +	return TST_ERR == EXDEV ? 0 : 1;
+> > +}
+> > +
+> >   #endif /* __COPY_FILE_RANGE_H__ */
+> > diff --git a/testcases/kernel/syscalls/copy_file_range/copy_file_range01.c b/testcases/kernel/syscalls/copy_file_range/copy_file_range01.c
+> > index ec55e5da1..6097c85b3 100644
+> > --- a/testcases/kernel/syscalls/copy_file_range/copy_file_range01.c
+> > +++ b/testcases/kernel/syscalls/copy_file_range/copy_file_range01.c
+> > @@ -16,8 +16,6 @@
+> >   #define _GNU_SOURCE
+> > -#include <stdio.h>
+> > -#include <stdlib.h>
+> >   #include "tst_test.h"
+> >   #include "tst_safe_stdio.h"
+> >   #include "copy_file_range.h"
+> > @@ -179,7 +177,7 @@ static void copy_file_range_verify(unsigned int n)
+> >   	if (tc->flags && !cross_sup) {
+> >   		tst_res(TCONF,
+> > -			"copy_file_range doesn't support cross-device, skip it");
+> > +			"copy_file_range() doesn't support cross-device, skip it");
+> >   		return;
+> >   	}
+> > @@ -215,25 +213,9 @@ static void copy_file_range_verify(unsigned int n)
+> >   static void setup(void)
+> >   {
+> > -	int i, fd, fd_test;
+> > -
+> >   	syscall_info();
+> > -
+> >   	page_size = getpagesize();
+> > -	cross_sup = 1;
+> > -	fd = SAFE_OPEN(FILE_SRC_PATH, O_RDWR | O_CREAT, 0664);
+> > -	/* Writing page_size * 4 of data into test file */
+> > -	for (i = 0; i < (int)(page_size * 4); i++)
+> > -		SAFE_WRITE(1, fd, CONTENT, CONTSIZE);
+> > -
+> > -	fd_test = SAFE_OPEN(FILE_MNTED_PATH, O_RDWR | O_CREAT, 0664);
+> > -	TEST(sys_copy_file_range(fd, 0, fd_test, 0, CONTSIZE, 0));
+> > -	if (TST_ERR == EXDEV)
+> > -		cross_sup = 0;
+> > -
+> > -	SAFE_CLOSE(fd_test);
+> > -	remove(FILE_MNTED_PATH);
+> > -	SAFE_CLOSE(fd);
+> > +	cross_sup = verify_cross_fs_copy_support(FILE_SRC_PATH, FILE_MNTED_PATH);
+> >   }
+> >   static void cleanup(void)
+> > diff --git a/testcases/kernel/syscalls/copy_file_range/copy_file_range02.c b/testcases/kernel/syscalls/copy_file_range/copy_file_range02.c
+> > index d6e843ee4..6e385adbd 100644
+> > --- a/testcases/kernel/syscalls/copy_file_range/copy_file_range02.c
+> > +++ b/testcases/kernel/syscalls/copy_file_range/copy_file_range02.c
+> > @@ -49,6 +49,7 @@ static int fd_blkdev;
+> >   static int fd_chrdev;
+> >   static int fd_fifo;
+> >   static int fd_copy;
+> > +static int need_unlink;
+> >   static int chattr_i_nsup;
+> >   static int swap_nsup;
+> > @@ -160,7 +161,8 @@ static void cleanup(void)
+> >   		SAFE_CLOSE(fd_dup);
+> >   	if (fd_copy > 0)
+> >   		SAFE_CLOSE(fd_copy);
+> > -	SAFE_UNLINK(FILE_FIFO);
+> > +	if (need_unlink > 0)
+> > +		SAFE_UNLINK(FILE_FIFO);
+> >   }
+> >   static void setup(void)
+> > @@ -168,6 +170,10 @@ static void setup(void)
+> >   	syscall_info();
+> >   	char dev_path[1024];
+> > +	if (!verify_cross_fs_copy_support(FILE_SRC_PATH, FILE_MNTED_PATH))
+> > +		tst_brk(TCONF,
+> > +			"copy_file_range() doesn't support cross-device, skip it");
+> > +
+> >   	if (access(FILE_DIR_PATH, F_OK) == -1)
+> >   		SAFE_MKDIR(FILE_DIR_PATH, 0777);
+> >   	/*
+> > @@ -177,6 +183,7 @@ static void setup(void)
+> >   	loop_devn = tst_find_free_loopdev(dev_path, sizeof(dev_path));
+> >   	SAFE_MKNOD(FILE_FIFO, S_IFIFO | 0777, 0);
+> > +	need_unlink = 1;
+> >   	fd_src    = SAFE_OPEN(FILE_SRC_PATH, O_RDWR | O_CREAT, 0664);
+> >   	fd_dest   = SAFE_OPEN(FILE_DEST_PATH, O_RDWR | O_CREAT, 0664);
+> > @@ -223,6 +230,8 @@ static struct tst_test test = {
+> >   	.tcnt = ARRAY_SIZE(tcases),
+> >   	.setup = setup,
+> >   	.cleanup = cleanup,
+> > +	.mount_device = 1,
+> > +	.mntpoint = MNTPOINT,
+> >   	.needs_root = 1,
+> >   	.needs_tmpdir = 1,
+> >   	.test_variants = TEST_VARIANTS,
+
+
