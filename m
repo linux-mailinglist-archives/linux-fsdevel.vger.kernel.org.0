@@ -2,88 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81A59E0209
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 12:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CA4BE0263
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 12:54:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731818AbfJVK02 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 06:26:28 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:52463 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbfJVK02 (ORCPT
+        id S1730208AbfJVKyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 06:54:19 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52038 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729458AbfJVKyT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 06:26:28 -0400
-Received: from mail-qk1-f181.google.com ([209.85.222.181]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1N4yuK-1hvC7C2U20-010ufv; Tue, 22 Oct 2019 12:26:26 +0200
-Received: by mail-qk1-f181.google.com with SMTP id 4so15703093qki.6;
-        Tue, 22 Oct 2019 03:26:26 -0700 (PDT)
-X-Gm-Message-State: APjAAAVR6j32xQUPljneE53Igymhij+gEX0gIMHeId866gbHa50djBeN
-        aiZT8P0HZCYTYEh5nLECHtUQWghcPVZ6HhAxnAA=
-X-Google-Smtp-Source: APXvYqwSO1WMdUGQEJlTpMVP4JyNoKS32ISGEXZxl0XuWRKB/d7ZSQIo0HnbDgulrOldKwCE5M4KJ8mRxdWVTW/noF4=
-X-Received: by 2002:a37:a50f:: with SMTP id o15mr1148094qke.3.1571739985400;
- Tue, 22 Oct 2019 03:26:25 -0700 (PDT)
+        Tue, 22 Oct 2019 06:54:19 -0400
+Received: by mail-wm1-f66.google.com with SMTP id q70so9512936wme.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 03:54:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=W1aOYye0ojBwe8njCL8LfIlI8/AqUN+27yIRkfjj9xg=;
+        b=sGIQAwDh5BHY1SRzapG7NUU5apoE53adcntV7VfT2Z/5WBEno58LSwTiky5pOOhHbD
+         s3HbBrCHnKLaXqQotBhPMX77ohQTAYMEHqmOCBsLpgVjwudQvmvo7UgI8KHHC2c3dF20
+         VBR7xznoaK86WASVGhKnJ3lWo50jUUHw7ZoyIMplh4/CmjXoC2RlS3aj15/Xq6+1nWO2
+         +zgQQyPFEn4CNDkFyAOFup9BxtmTt9GhmIN3+Vgf6/FdB0AZT3SOLjzByJALt3Qyyawv
+         niO7Ea+1wI7fq6Djbquiros3dbX+mnUiE56anrDWRPkM4Me7eb4DgfCOwBccLw0TYFK2
+         qcvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=W1aOYye0ojBwe8njCL8LfIlI8/AqUN+27yIRkfjj9xg=;
+        b=UVkghoRVtbdSfM1Z77Bwonaf2d27ARTnJ2RboR0MJsH1S5JXWm26Xo/2QCdiIQsO+K
+         GOLPlEYD6Csv5i9kdS4n8ZM5RaC5bZ5IsEkEMweTr05TNU+KbS5/INIrtZ44T0kO+Iy4
+         cRPb4SY5zP9RXNMqr6EJkrauFvAYf6528ZDsJPzquVwMWgi/joKQzSov94ZkpgfYrCnR
+         Y0/o7WC277RlkOjoVnfDkn0EoSP7Pu79Ngf0hNN+7s6wDalv5Qmy3diiSZegLKxNK3nt
+         rp2HEx6+waVoiCTYoe4M5rdj8JF1CsW2ZvMS231ZzbGdOaJLcCnay17vbtChkWQe/3mv
+         /z4w==
+X-Gm-Message-State: APjAAAWhaq92AqF8IFHtxlCwklz46hy8hoYIHzVvs1IbCBcC6ZuyEywB
+        vA99HFdeVOTZSzqzGY9kuXA=
+X-Google-Smtp-Source: APXvYqzzmd7ooStIUJG2OdWIuzRJjZWPHG6sGclsdx6F8DbhqegJr8Gzkz/8E4wwvQDP3OF2EAIpQQ==
+X-Received: by 2002:a1c:9d07:: with SMTP id g7mr2449230wme.53.1571741656079;
+        Tue, 22 Oct 2019 03:54:16 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id n187sm14909953wmb.47.2019.10.22.03.54.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Oct 2019 03:54:14 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 12:54:13 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     Chris Murphy <lists@colorremedies.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Is rename(2) atomic on FAT?
+Message-ID: <20191022105413.pj6i3ydetnfgnkzh@pali>
+References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
+ <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
 MIME-Version: 1.0
-References: <20191009190853.245077-1-arnd@arndb.de> <20191009191044.308087-11-arnd@arndb.de>
- <20191022043451.GB20354@ZenIV.linux.org.uk>
-In-Reply-To: <20191022043451.GB20354@ZenIV.linux.org.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 22 Oct 2019 12:26:09 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
-Message-ID: <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
-Subject: Re: [PATCH v6 11/43] compat_ioctl: move drivers to compat_ptr_ioctl
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:9QYRekkZRmftZTpXqq5Ta7ySdGBrJGpk5Y3E2aNCXjVWZ9lbIgi
- H+hu3jkbbhmSa/1ogUFGNDHKjzlwZpfbs90MD+hX7EK9U1KbNwmQRfaw875JRI/qJ1Zs88X
- /+ny+r+I+eUKH7jiIyaFJmavCZy8dNCEFqWL3k8z+DcoGSPaGiJNMFtMQS5tfP70IvtQmFO
- ZztmTYLt2ZfrEXX3XbCcg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:iGCRB/uaydI=:M830Sz+8d9YgyULC754S0j
- oXZVneQZ3xqgBlGKCdhol75lDjRmRjQhCeT6uYMxzXwAVjW4CgUpd4AIAsi1qjBKFvdLnevmu
- 6G0P0um5Jxlvd9V8Xo9oeiwAS1GqA1Eh2ezMKBnXTA62Kx3i+qJ7d0QQIWG7b0AomDNm8nDyj
- O/FeM2pQ0qr0c91Jnh1q6GXZ54okkyn5MEsTfNXBYalDMjp9Y8ZbKElB4UrGS8+T0Tkn9FAw7
- teAFTpdfY9aUyUaE7MvswQ803sAmdXjABTsBIJOC6RK0O430isAsjYPvWlPVlAKU0bISc5cqi
- QlbgSp7QOE+lw9Vz8NZC+UjnoF68kEzBkB2QO6xtkndc0UJpZ6ejaQ+avUMl4KDDQy0s+VYXa
- H06hRj67wb1rER9+Pj3nG1p6vxg4XdSPc71QZHs7bfVDUMLBKoFZqHif7hDFmZRmjKVhr5bCG
- 7J78Mkl4zS9CcPuthzVP4y9ybv+6fewFK7rDgaRon/HG2nA8x2lYhW6T2heHpzNzybSqfaSGf
- kGX+WKI0gDFYCmDGVV9ed8s1IWM+x9qVAR6TYW2gRQPWoahepfOVmoQFl9L/lCf5utDFiE9lP
- 79Q2qziF+WjU6WNSdUFCjBg6OXMbEFDKay3jkJNB6t6zR7BmZrxwgB9Nn0Cibh2BLXz5NHmWX
- MGuBEfOJs20jrRHJhVR7F+yPiwuhyG8fVBQa1i/bz/ccB/4jF+L/V5EwSniXxx5exPSQhzt6u
- Dkpm/ZjFtRqBwTbFW002+hnBEL4jhlNO/ssut0GHsGsWVDD7TDI1s/cwV5X29ExTAfrPvhsMW
- rN88xeH36W4LLO3N6KWQTdqIXGhzXDKYT8l1ZASCIkia7coy+WEFLdXPl80Lm3RGXkUyJsDlv
- 9Au2gX55S7x/9bi+L+hw==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 6:34 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Oct 09, 2019 at 09:10:11PM +0200, Arnd Bergmann wrote:
-> > Each of these drivers has a copy of the same trivial helper function to
-> > convert the pointer argument and then call the native ioctl handler.
+Hi Chris!
+
+The first question is what do you mean by "atomic". Either if is
+"atomic" at process level, that any process which access filesystem see
+consistent data at any time, or if by atomic you mean consistency of
+filesystem on underlying block device itself, or you mean atomicity at
+disk storage level.
+
+On Monday 21 October 2019 23:44:25 Richard Weinberger wrote:
+> Chris,
+> 
+> [CC'ing fsdevel and Pali]
+> 
+> On Mon, Oct 21, 2019 at 9:59 PM Chris Murphy <lists@colorremedies.com> wrote:
 > >
-> > We now have a generic implementation of that, so use it.
->
-> I'd rather flipped your #7 (ceph_compat_ioctl() introduction) past
-> that one...
+> > http://man7.org/linux/man-pages/man2/rename.2.html
+> >
+> > Use case is atomically updating bootloader configuration on EFI System
+> > partitions. Some bootloader implementations have configuration files
+> > bigger than 512 bytes, which could possibly be torn on write. But I'm
+> > also not sure what write order FAT uses.
+> >
+> > 1.
+> > FAT32 file system is mounted at /boot/efi
+> >
+> > 2.
+> > # echo "hello" > /boot/efi/tmp/test.txt
+> > # mv /boot/efi/tmp/test.txt /boot/efi/EFI/fedora/
+> >
+> > 3.
+> > When I strace the above mv command I get these lines:
+> > ioctl(0, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+> > renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
+> > "/boot/efi/EFI/fedora/", RENAME_NOREPLACE) = -1 EEXIST (File exists)
+> > stat("/boot/efi/EFI/fedora/", {st_mode=S_IFDIR|0700, st_size=1024, ...}) = 0
+> > renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
+> > "/boot/efi/EFI/fedora/test.txt", RENAME_NOREPLACE) = 0
+> > lseek(0, 0, SEEK_CUR)                   = -1 ESPIPE (Illegal seek)
+> > close(0)
+> >
+> > I can't tell from documentation if renameat2() with flag
+> > RENAME_NOREPLACE is atomic, assuming the file doesn't exist at
+> > destination.
 
-The idea was to be able to backport the ceph patch as a bugfix
-to stable kernels without having to change it or backport
-compat_ptr_ioctl() as well.
+RENAME_NOREPLACE is atomic at VFS level, independently of used
+filesystem. There is no race condition when multiple processes access
+that directory at same time.
 
-If you still prefer it that way, I'd move to a simpler version of this
-patch and drop the Cc:stable.
+> > 4.
+> > Do it again exactly as before, small change
+> > # echo "hello" > /boot/efi/tmp/test.txt
+> > # mv /boot/efi/tmp/test.txt /boot/efi/EFI/fedora/
+> >
+> > 5.
+> > The strace shows fallback to rename()
+> >
+> > ioctl(0, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+> > renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
+> > "/boot/efi/EFI/fedora/", RENAME_NOREPLACE) = -1 EEXIST (File exists)
+> > stat("/boot/efi/EFI/fedora/", {st_mode=S_IFDIR|0700, st_size=1024, ...}) = 0
+> > renameat2(AT_FDCWD, "/boot/efi/tmp/test.txt", AT_FDCWD,
+> > "/boot/efi/EFI/fedora/test.txt", RENAME_NOREPLACE) = -1 EEXIST (File
+> > exists)
+> > lstat("/boot/efi/tmp/test.txt", {st_mode=S_IFREG|0700, st_size=7, ...}) = 0
+> > newfstatat(AT_FDCWD, "/boot/efi/EFI/fedora/test.txt",
+> > {st_mode=S_IFREG|0700, st_size=6, ...}, AT_SYMLINK_NOFOLLOW) = 0
+> > geteuid()                               = 0
+> > rename("/boot/efi/tmp/test.txt", "/boot/efi/EFI/fedora/test.txt") = 0
+> > lseek(0, 0, SEEK_CUR)                   = -1 ESPIPE (Illegal seek)
+> > close(0)                                = 0
+> >
+> >
+> > Per documentation that should be atomic. So the questions are, are
+> > both atomic, or neither atomice, and if not what should be used to
+> > ensure bootloader updates are atomic.
 
-      Arnd
+At VFS level both are atomic independently of filesystem.
+
+> According of my understanding of FAT rename() is not atomic at all.
+> It can downgrade to a hardlink. i.e. rename("foo", "bar") can result in having
+> both "foo" and "bar."
+> ...or worse.
+
+Generally rename() may really cause that at some period of time both
+"foo" and "bar" may points to same inode. (But is this a really problem
+for your scenario?)
+
+But looking at vfat source code (file namei_vfat.c), both rename and
+lookup operation are locked by mutex, so during rename operation there
+should not be access to read directory and therefore race condition
+should not be there (which would cause reading inconsistent directory
+during rename operation).
+
+If you want atomic rename of two files independently of filesystem, you
+can use RENAME_EXCHANGE flag. It exchanges that two specified files
+atomically, so there would not be that race condition like in rename()
+that in some period of time both "foo" and "bar" would point to same
+inode.
+
+
+But... if you are asking for consistency and atomicity at filesystem
+level (e.g. you turn off disk / power supply during rename operation)
+then this is not atomic and probably it cannot be implemented. When FAT
+filesystem is mounted (either by Windows or Linux kernel) it is marked
+by "dirty" flag and later when doing unmount, "dirty" flag is cleared.
+
+This is there to ensure that operations like rename were finished and
+were not stopped/killed in between. So future when you read from FAT
+filesystem you would know if it is in consistent state or not.
+
+> Pali has probably more input to share. :-)
+> 
+> > There are plausibly three kinds:
+> >
+> > A. write a new file with file name that doesn't previously exist
+> > B. write a new file with a new file name, then do a rename stomping on
+> > the old one
+> > C. overwrite an existing file
+> >
+> > It seems C is risky. It probably isn't atomic and can't be made to be
+> > atomic on FAT.
+
+Option C is really risky. Overwriting file means following operations:
+
+1. truncate file to zero size
+2. write first N blocks
+3. write second N blocks
+...
+4. write last M blocks
+
+
+Option B is a common practise. IIRC also config files in KDE are updated
+in this way.
+
+> >
+> > --
+> > Chris Murphy
+> 
+
+-- 
+Pali Rohár
+pali.rohar@gmail.com
