@@ -2,209 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 740ADE0D03
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 22:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24CC4E0D1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 22:11:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731767AbfJVUG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 16:06:57 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34578 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731436AbfJVUG5 (ORCPT
+        id S2389246AbfJVULf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 16:11:35 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:42716 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387645AbfJVULf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 16:06:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571774816;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/PiRJCNLGvnO+cq8W87jW4K+Id7+0dBbGrIRPQYjd1k=;
-        b=PRkaUd9bf2KGBvyLd9xTmfSo84E+y0gtiRXFtdfEKYUOZCCUJwOLVqExJxhpD6KwRt9t2D
-        copt1ZFDq8N7hUlUvGaNiUi8isIJRabceinBKenI8ncq4QHmU9P9odRiU9szSgn7TaL9Ij
-        YklyOX3QBAWdYGFUsLlFYP5oOEmFio8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-119-OCp1J3PgPBakYjcmJwxnXQ-1; Tue, 22 Oct 2019 16:06:52 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E357380183D;
-        Tue, 22 Oct 2019 20:06:49 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9DF6660856;
-        Tue, 22 Oct 2019 20:06:35 +0000 (UTC)
-Date:   Tue, 22 Oct 2019 16:06:32 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Neil Horman <nhorman@tuxdriver.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
- outside init_user_ns
-Message-ID: <20191022200632.al5ajlaahsvjeuma@madcap2.tricolour.ca>
-References: <cover.1568834524.git.rgb@redhat.com>
- <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
- <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
- <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
- <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca>
- <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
- <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca>
- <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
- <20191022121302.GA9397@hmswarspite.think-freely.org>
+        Tue, 22 Oct 2019 16:11:35 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iN0V9-0007Ux-9U; Tue, 22 Oct 2019 20:11:31 +0000
+Date:   Tue, 22 Oct 2019 21:11:31 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wugyuan@cn.ibm.com, jlayton@kernel.org, hsiangkao@aol.com,
+        Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
+Message-ID: <20191022201131.GZ26530@ZenIV.linux.org.uk>
+References: <20190927044243.18856-1-riteshh@linux.ibm.com>
+ <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
+ <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
+ <20191022143736.GX26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20191022121302.GA9397@hmswarspite.think-freely.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: OCp1J3PgPBakYjcmJwxnXQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20191022143736.GX26530@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-10-22 08:13, Neil Horman wrote:
-> On Mon, Oct 21, 2019 at 08:31:37PM -0400, Paul Moore wrote:
-> > On Mon, Oct 21, 2019 at 7:58 PM Richard Guy Briggs <rgb@redhat.com> wro=
-te:
-> > > On 2019-10-21 17:43, Paul Moore wrote:
-> > > > On Mon, Oct 21, 2019 at 5:38 PM Richard Guy Briggs <rgb@redhat.com>=
- wrote:
-> > > > > On 2019-10-21 15:53, Paul Moore wrote:
-> > > > > > On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.=
-com> wrote:
-> > > > > > > On 2019-09-18 21:22, Richard Guy Briggs wrote:
-> > > > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explici=
-tly give a
-> > > > > > > > process in a non-init user namespace the capability to set =
-audit
-> > > > > > > > container identifiers.
-> > > > > > > >
-> > > > > > > > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 an=
-d
-> > > > > > > > AUDIT_SET_CAPCONTID 1028.  The message format includes the =
-data
-> > > > > > > > structure:
-> > > > > > > > struct audit_capcontid_status {
-> > > > > > > >         pid_t   pid;
-> > > > > > > >         u32     enable;
-> > > > > > > > };
-> > > > > > >
-> > > > > > > Paul, can I get a review of the general idea here to see if y=
-ou're ok
-> > > > > > > with this way of effectively extending CAP_AUDIT_CONTROL for =
-the sake of
-> > > > > > > setting contid from beyond the init user namespace where capa=
-ble() can't
-> > > > > > > reach and ns_capable() is meaningless for these purposes?
-> > > > > >
-> > > > > > I think my previous comment about having both the procfs and ne=
-tlink
-> > > > > > interfaces apply here.  I don't see why we need two different A=
-PIs at
-> > > > > > the start; explain to me why procfs isn't sufficient.  If the a=
-rgument
-> > > > > > is simply the desire to avoid mounting procfs in the container,=
- how
-> > > > > > many container orchestrators can function today without a valid=
- /proc?
-> > > > >
-> > > > > Ok, sorry, I meant to address that question from a previous patch
-> > > > > comment at the same time.
-> > > > >
-> > > > > It was raised by Eric Biederman that the proc filesystem interfac=
-e for
-> > > > > audit had its limitations and he had suggested an audit netlink
-> > > > > interface made more sense.
-> > > >
-> > > > I'm sure you've got it handy, so I'm going to be lazy and ask: arch=
-ive
-> > > > pointer to Eric's comments?  Just a heads-up, I'm really *not* a fa=
-n
-> > > > of using the netlink interface for this, so unless Eric presents a
-> > > > super compelling reason for why we shouldn't use procfs I'm incline=
-d
-> > > > to stick with /proc.
-> > >
-> > > It was actually a video call with Eric and Steve where that was
-> > > recommended, so I can't provide you with any first-hand communication
-> > > about it.  I'll get more details...
-> >=20
-> > Yeah, that sort of information really needs to be on the list.
-> >=20
-> > > So, with that out of the way, could you please comment on the general
-> > > idea of what was intended to be the central idea of this mechanism to=
- be
-> > > able to nest containers beyond the initial user namespace (knowing th=
-at
-> > > a /proc interface is available and the audit netlink interface isn't
-> > > necessary for it to work and the latter can be easily removed)?
-> >=20
-> > I'm not entirely clear what you are asking about, are you asking why I
-> > care about nesting container orchestrators?  Simply put, it is not
-> > uncommon for the LXC/LXD folks to see nested container orchestrators,
-> > so I felt it was important to support that use case.  When we
-> > originally started this effort we probably should have done a better
-> > job reaching out to the LXC/LXD folks, we may have caught this
-> > earlier.  Regardless, we caught it, and it looks like we are on our
-> > way to supporting it (that's good).
-> >=20
-> > Are you asking why I prefer the procfs approach to setting/getting the
-> > audit container ID?  For one, it makes it easier for a LSM to enforce
-> > the audit container ID operations independent of the other audit
-> > control APIs.  It also provides a simpler interface for container
-> > orchestrators.  Both seem like desirable traits as far as I'm
-> > concerned.
->=20
-> I agree that one api is probably the best approach here, but I actually
-> think that the netlink interface is the more flexible approach.  Its a
-> little more work for userspace (you have to marshal your data into a
-> netlink message before sending it, and wait for an async response), but
-> thats a well known pattern, and it provides significantly more
-> flexibility for the kernel.  LSM already has a hook to audit netlink
-> messages in sock_sendmsg, so thats not a problem, and if you use
-> netlink, you get the advantage of being able to broadcast messages
-> within your network namespaces, facilitating any needed orchestrator
-> co-ordination.  To do the same thing with a filesystem api, you need to
-> use the fanotify api, which IIRC doesn't work on proc.
+On Tue, Oct 22, 2019 at 03:37:36PM +0100, Al Viro wrote:
+> On Tue, Oct 22, 2019 at 07:08:54PM +0530, Ritesh Harjani wrote:
+> > I think we have still not taken this patch. Al?
 
-One api was the intent, deprecating proc for loginuid and sessionid if
-netlink was the chosen way to go.
+> You've picked the easiest one to hit, but on e.g. KVM setups you can have the
+> host thread representing the CPU where __d_set_inode_and_type() runs get
+> preempted (by the host kernel), leaving others with much wider window.
+> 
+> Sure, we can do that to all callers of d_is_negative/d_is_positive, but...
+> the same goes for any places that assumes that d_is_dir() implies that
+> the sucker is positive, etc.
+> 
+> What we have guaranteed is
+> 	* ->d_lock serializes ->d_flags/->d_inode changes
+> 	* ->d_seq is bumped before/after such changes
+> 	* positive dentry never changes ->d_inode as long as you hold
+> a reference (negative dentry *can* become positive right under you)
+> 
+> So there are 3 classes of valid users: those holding ->d_lock, those
+> sampling and rechecking ->d_seq and those relying upon having observed
+> the sucker they've pinned to be positive.
+> 
+> What you've been hitting is "we have it pinned, ->d_flags says it's
+> positive but we still observe the value of ->d_inode from before the
+> store to ->d_flags that has made it look positive".
 
-I don't think we had discussed the possibility or need to use netlink
-multicast for this purpose and see it as a liability to limiting access
-to only those processes that need it.
+Actually, your patch opens another problem there.  Suppose you make
+it d_really_is_positive() and hit the same race sans reordering.
+Dentry is found by __d_lookup() and is negative.  Right after we
+return from __d_lookup() another thread makes it positive (a symlink)
+- ->d_inode is set, d_really_is_positive() becomes true.  OK, on we
+go, pick the inode and move on.  Right?  ->d_flags is still not set
+by the thread that made it positive.  We return from lookup_fast()
+and call step_into().  And get to
+        if (likely(!d_is_symlink(path->dentry)) ||
+Which checks ->d_flags and sees the value from before the sucker
+became positive.  IOW, d_is_symlink() is false here.  If that
+was the last path component and we'd been told to follow links,
+we will end up with positive dentry of a symlink coming out of
+pathname resolution.
 
-> Neil
->=20
-> > > > > The intent was to switch to the audit netlink interface for conti=
-d,
-> > > > > capcontid and to add the audit netlink interface for loginuid and
-> > > > > sessionid while deprecating the proc interface for loginuid and
-> > > > > sessionid.  This was alluded to in the cover letter, but not very=
- clear,
-> > > > > I'm afraid.  I have patches to remove the contid and loginuid/ses=
-sionid
-> > > > > interfaces in another tree which is why I had forgotten to outlin=
-e that
-> > > > > plan more explicitly in the cover letter.
-> >=20
-> > paul moore
+Similar fun happens if you have mkdir racing with lookup - ENOENT
+is what should've happened if lookup comes first, success - if
+mkdir does.  This way we can hit ENOTDIR, due to false negative
+from d_can_lookup().
 
-- RGB
+IOW, d_really_is_negative() in lookup_fast() will paper over
+one of oopsen, but it
+	* won't cover similar oopsen on other codepaths and
+	* will lead to bogus behaviour.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+I'm not sure that blanket conversion of d_is_... to smp_load_acquire()
+is the right solution; it might very well be that we need to do that
+only on a small subset of call sites, lookup_fast() being one of
+those.  But we do want at least to be certain that something we'd
+got from lookup_fast() in non-RCU mode already has ->d_flags visible.
 
+I'm going through the callers right now, will post a followup once
+the things get cleaner...
