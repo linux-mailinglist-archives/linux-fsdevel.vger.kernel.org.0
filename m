@@ -2,141 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C38C5E02F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 13:32:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F0BEE03A7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 14:13:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388676AbfJVLcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 07:32:09 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43480 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731177AbfJVLcJ (ORCPT
+        id S2389016AbfJVMNW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 08:13:22 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:59739 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388106AbfJVMNW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 07:32:09 -0400
-Received: by mail-ed1-f65.google.com with SMTP id q24so6600725edr.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 04:32:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IXdjAlYYb0/3BF9pQMCekdzHObGq7UqdMRAHLQJHvP0=;
-        b=nshfuIVHMv5W1kTsmAFRMGY2vgtWD69hiQb7EqRiIky+siiGzKA8rT9H/CfogSpRWH
-         ZzKKpiJII+11E/4bokPxJF9UeJdJJFXxET0FxY7Fny224N4pEngrgxbgQWpkSB/j7Pbn
-         yhlbR9Y6w0Wujfqk41ZsLKXwAKZ5+/c46nnZSXt9j0X4GaelObZTCP/32nzyoA0eGKvJ
-         EJrJ2D/qFHzNtezHZpQReKsjKU8Z2UcNRzQD+t2nObetnUDXlscLrsyXvG4/6VXG33QW
-         RkNeTXbG4vW3EOIhy/oixEhvw+WDoPM5OFP1aGoYuZk451UWI2GmpxEwbsd+n8WpfONN
-         5FnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IXdjAlYYb0/3BF9pQMCekdzHObGq7UqdMRAHLQJHvP0=;
-        b=S/H3zj59sA9DJl0UBZqKHq0grzZ6RCY0JYA6CliVsH0lJJ+MkzaBqfY8IKgSb7LvAV
-         xEvOXYUtrruJUF+nQysyxtcV6vBIxihrKUwC1qCegNYK3d7WAjPXdY2FyLsF8GZRbqEa
-         iS0rjm9YX+p7ki5OO7smS63UXaBWRQAWUU3oxNgCLq96Gy+ziWW7Xfa1nLAoIH/dESwF
-         XVCpyDRk8ayWVyj9zbmP+2KpuKbHA4b+L8C1IKuWwlMd+Ia9/mUrEjGq+7//bO6wJQ/f
-         17WTboErfqewS7yvkQlOhmp3K2upKplE5JvwooVeTTBr4mpI6ww45QdpMXubI6sELrYH
-         0qAg==
-X-Gm-Message-State: APjAAAVsGgTyBLVK67U5TsOafUV4KBCGBfht5VhZlhb3HAyuowT9fLrK
-        riZeYtZgTJjWUJrQO8C9vGUtzhR2dLs=
-X-Google-Smtp-Source: APXvYqxQ+E/WTqukoI30ERPrEHKNbOYeg/geWj0e2Fz5zYm6mmeaHbKU07xRP3K0z7lNB1LlNNnNCw==
-X-Received: by 2002:aa7:c595:: with SMTP id g21mr30006580edq.79.1571743927007;
-        Tue, 22 Oct 2019 04:32:07 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id g17sm97740ejx.75.2019.10.22.04.32.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2019 04:32:06 -0700 (PDT)
-Subject: Re: [PATCH 1/5] fs/stat: Define DAX statx attribute
-To:     ira.weiny@intel.com, linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20191020155935.12297-1-ira.weiny@intel.com>
- <20191020155935.12297-2-ira.weiny@intel.com>
-From:   Boaz Harrosh <boaz@plexistor.com>
-Message-ID: <119b57ed-2799-c499-00df-50da80d23612@plexistor.com>
-Date:   Tue, 22 Oct 2019 14:32:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Tue, 22 Oct 2019 08:13:22 -0400
+Received: from cpe-2606-a000-111b-43ee-0-0-0-115f.dyn6.twc.com ([2606:a000:111b:43ee::115f] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1iMt2B-00038h-L6; Tue, 22 Oct 2019 08:13:10 -0400
+Date:   Tue, 22 Oct 2019 08:13:02 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+Message-ID: <20191022121302.GA9397@hmswarspite.think-freely.org>
+References: <cover.1568834524.git.rgb@redhat.com>
+ <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+ <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
+ <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+ <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca>
+ <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
+ <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca>
+ <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191020155935.12297-2-ira.weiny@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Spam-Score: -2.9 (--)
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20/10/2019 18:59, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Mon, Oct 21, 2019 at 08:31:37PM -0400, Paul Moore wrote:
+> On Mon, Oct 21, 2019 at 7:58 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2019-10-21 17:43, Paul Moore wrote:
+> > > On Mon, Oct 21, 2019 at 5:38 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > On 2019-10-21 15:53, Paul Moore wrote:
+> > > > > On Fri, Oct 18, 2019 at 9:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > On 2019-09-18 21:22, Richard Guy Briggs wrote:
+> > > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
+> > > > > > > process in a non-init user namespace the capability to set audit
+> > > > > > > container identifiers.
+> > > > > > >
+> > > > > > > Use audit netlink message types AUDIT_GET_CAPCONTID 1027 and
+> > > > > > > AUDIT_SET_CAPCONTID 1028.  The message format includes the data
+> > > > > > > structure:
+> > > > > > > struct audit_capcontid_status {
+> > > > > > >         pid_t   pid;
+> > > > > > >         u32     enable;
+> > > > > > > };
+> > > > > >
+> > > > > > Paul, can I get a review of the general idea here to see if you're ok
+> > > > > > with this way of effectively extending CAP_AUDIT_CONTROL for the sake of
+> > > > > > setting contid from beyond the init user namespace where capable() can't
+> > > > > > reach and ns_capable() is meaningless for these purposes?
+> > > > >
+> > > > > I think my previous comment about having both the procfs and netlink
+> > > > > interfaces apply here.  I don't see why we need two different APIs at
+> > > > > the start; explain to me why procfs isn't sufficient.  If the argument
+> > > > > is simply the desire to avoid mounting procfs in the container, how
+> > > > > many container orchestrators can function today without a valid /proc?
+> > > >
+> > > > Ok, sorry, I meant to address that question from a previous patch
+> > > > comment at the same time.
+> > > >
+> > > > It was raised by Eric Biederman that the proc filesystem interface for
+> > > > audit had its limitations and he had suggested an audit netlink
+> > > > interface made more sense.
+> > >
+> > > I'm sure you've got it handy, so I'm going to be lazy and ask: archive
+> > > pointer to Eric's comments?  Just a heads-up, I'm really *not* a fan
+> > > of using the netlink interface for this, so unless Eric presents a
+> > > super compelling reason for why we shouldn't use procfs I'm inclined
+> > > to stick with /proc.
+> >
+> > It was actually a video call with Eric and Steve where that was
+> > recommended, so I can't provide you with any first-hand communication
+> > about it.  I'll get more details...
 > 
-> In order for users to determine if a file is currently operating in DAX
-> mode (effective DAX).  Define a statx attribute value and set that
-> attribute if the effective DAX flag is set.
+> Yeah, that sort of information really needs to be on the list.
 > 
-> To go along with this we propose the following addition to the statx man
-> page:
+> > So, with that out of the way, could you please comment on the general
+> > idea of what was intended to be the central idea of this mechanism to be
+> > able to nest containers beyond the initial user namespace (knowing that
+> > a /proc interface is available and the audit netlink interface isn't
+> > necessary for it to work and the latter can be easily removed)?
 > 
-> STATX_ATTR_DAX
+> I'm not entirely clear what you are asking about, are you asking why I
+> care about nesting container orchestrators?  Simply put, it is not
+> uncommon for the LXC/LXD folks to see nested container orchestrators,
+> so I felt it was important to support that use case.  When we
+> originally started this effort we probably should have done a better
+> job reaching out to the LXC/LXD folks, we may have caught this
+> earlier.  Regardless, we caught it, and it looks like we are on our
+> way to supporting it (that's good).
 > 
-> 	DAX (cpu direct access) is a file mode that attempts to minimize
-> 	software cache effects for both I/O and memory mappings of this
-> 	file.  It requires a capable device, a compatible filesystem
-> 	block size, and filesystem opt-in. It generally assumes all
-> 	accesses are via cpu load / store instructions which can
-> 	minimize overhead for small accesses, but adversely affect cpu
-> 	utilization for large transfers. File I/O is done directly
-> 	to/from user-space buffers. While the DAX property tends to
-> 	result in data being transferred synchronously it does not give
-> 	the guarantees of synchronous I/O that data and necessary
-> 	metadata are transferred. Memory mapped I/O may be performed
-> 	with direct mappings that bypass system memory buffering. Again
-> 	while memory-mapped I/O tends to result in data being
-> 	transferred synchronously it does not guarantee synchronous
-> 	metadata updates. A dax file may optionally support being mapped
-> 	with the MAP_SYNC flag which does allow cpu store operations to
-> 	be considered synchronous modulo cpu cache effects.
+> Are you asking why I prefer the procfs approach to setting/getting the
+> audit container ID?  For one, it makes it easier for a LSM to enforce
+> the audit container ID operations independent of the other audit
+> control APIs.  It also provides a simpler interface for container
+> orchestrators.  Both seem like desirable traits as far as I'm
+> concerned.
 > 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
->  fs/stat.c                 | 3 +++
->  include/uapi/linux/stat.h | 1 +
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/fs/stat.c b/fs/stat.c
-> index c38e4c2e1221..59ca360c1ffb 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -77,6 +77,9 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
->  	if (IS_AUTOMOUNT(inode))
->  		stat->attributes |= STATX_ATTR_AUTOMOUNT;
->  
-> +	if (inode->i_flags & S_DAX)
+I agree that one api is probably the best approach here, but I actually
+think that the netlink interface is the more flexible approach.  Its a
+little more work for userspace (you have to marshal your data into a
+netlink message before sending it, and wait for an async response), but
+thats a well known pattern, and it provides significantly more
+flexibility for the kernel.  LSM already has a hook to audit netlink
+messages in sock_sendmsg, so thats not a problem, and if you use
+netlink, you get the advantage of being able to broadcast messages
+within your network namespaces, facilitating any needed orchestrator
+co-ordination.  To do the same thing with a filesystem api, you need to
+use the fanotify api, which IIRC doesn't work on proc.
 
-Is there a reason not to use IS_DAX(inode) ?
+Neil
 
-> +		stat->attributes |= STATX_ATTR_DAX;
-> +
->  	if (inode->i_op->getattr)
->  		return inode->i_op->getattr(path, stat, request_mask,
->  					    query_flags);
-> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-> index 7b35e98d3c58..5b0962121ef7 100644
-> --- a/include/uapi/linux/stat.h
-> +++ b/include/uapi/linux/stat.h
-> @@ -169,6 +169,7 @@ struct statx {
->  #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
->  
->  #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
-> +#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
->  
->  
->  #endif /* _UAPI_LINUX_STAT_H */
+> > > > The intent was to switch to the audit netlink interface for contid,
+> > > > capcontid and to add the audit netlink interface for loginuid and
+> > > > sessionid while deprecating the proc interface for loginuid and
+> > > > sessionid.  This was alluded to in the cover letter, but not very clear,
+> > > > I'm afraid.  I have patches to remove the contid and loginuid/sessionid
+> > > > interfaces in another tree which is why I had forgotten to outline that
+> > > > plan more explicitly in the cover letter.
 > 
-
+> -- 
+> paul moore
+> www.paul-moore.com
+> 
