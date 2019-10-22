@@ -2,107 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5A1EDFFB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 10:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81A59E0209
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Oct 2019 12:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388469AbfJVIk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 04:40:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52332 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388366AbfJVIk0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 04:40:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C3643AB92;
-        Tue, 22 Oct 2019 08:40:23 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 277AC1E4AA7; Tue, 22 Oct 2019 10:01:42 +0200 (CEST)
-Date:   Tue, 22 Oct 2019 10:01:42 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        darrick.wong@oracle.com
-Subject: Re: [PATCH v5 00/12] ext4: port direct I/O to iomap infrastructure
-Message-ID: <20191022080142.GC2436@quack2.suse.cz>
-References: <cover.1571647178.git.mbobrowski@mbobrowski.org>
- <20191021133111.GA4675@mit.edu>
- <20191021194330.GJ25184@quack2.suse.cz>
- <20191021223819.GB2642@dread.disaster.area>
+        id S1731818AbfJVK02 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 06:26:28 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:52463 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727101AbfJVK02 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Oct 2019 06:26:28 -0400
+Received: from mail-qk1-f181.google.com ([209.85.222.181]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N4yuK-1hvC7C2U20-010ufv; Tue, 22 Oct 2019 12:26:26 +0200
+Received: by mail-qk1-f181.google.com with SMTP id 4so15703093qki.6;
+        Tue, 22 Oct 2019 03:26:26 -0700 (PDT)
+X-Gm-Message-State: APjAAAVR6j32xQUPljneE53Igymhij+gEX0gIMHeId866gbHa50djBeN
+        aiZT8P0HZCYTYEh5nLECHtUQWghcPVZ6HhAxnAA=
+X-Google-Smtp-Source: APXvYqwSO1WMdUGQEJlTpMVP4JyNoKS32ISGEXZxl0XuWRKB/d7ZSQIo0HnbDgulrOldKwCE5M4KJ8mRxdWVTW/noF4=
+X-Received: by 2002:a37:a50f:: with SMTP id o15mr1148094qke.3.1571739985400;
+ Tue, 22 Oct 2019 03:26:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021223819.GB2642@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191009190853.245077-1-arnd@arndb.de> <20191009191044.308087-11-arnd@arndb.de>
+ <20191022043451.GB20354@ZenIV.linux.org.uk>
+In-Reply-To: <20191022043451.GB20354@ZenIV.linux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 22 Oct 2019 12:26:09 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
+Message-ID: <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
+Subject: Re: [PATCH v6 11/43] compat_ioctl: move drivers to compat_ptr_ioctl
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:9QYRekkZRmftZTpXqq5Ta7ySdGBrJGpk5Y3E2aNCXjVWZ9lbIgi
+ H+hu3jkbbhmSa/1ogUFGNDHKjzlwZpfbs90MD+hX7EK9U1KbNwmQRfaw875JRI/qJ1Zs88X
+ /+ny+r+I+eUKH7jiIyaFJmavCZy8dNCEFqWL3k8z+DcoGSPaGiJNMFtMQS5tfP70IvtQmFO
+ ZztmTYLt2ZfrEXX3XbCcg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:iGCRB/uaydI=:M830Sz+8d9YgyULC754S0j
+ oXZVneQZ3xqgBlGKCdhol75lDjRmRjQhCeT6uYMxzXwAVjW4CgUpd4AIAsi1qjBKFvdLnevmu
+ 6G0P0um5Jxlvd9V8Xo9oeiwAS1GqA1Eh2ezMKBnXTA62Kx3i+qJ7d0QQIWG7b0AomDNm8nDyj
+ O/FeM2pQ0qr0c91Jnh1q6GXZ54okkyn5MEsTfNXBYalDMjp9Y8ZbKElB4UrGS8+T0Tkn9FAw7
+ teAFTpdfY9aUyUaE7MvswQ803sAmdXjABTsBIJOC6RK0O430isAsjYPvWlPVlAKU0bISc5cqi
+ QlbgSp7QOE+lw9Vz8NZC+UjnoF68kEzBkB2QO6xtkndc0UJpZ6ejaQ+avUMl4KDDQy0s+VYXa
+ H06hRj67wb1rER9+Pj3nG1p6vxg4XdSPc71QZHs7bfVDUMLBKoFZqHif7hDFmZRmjKVhr5bCG
+ 7J78Mkl4zS9CcPuthzVP4y9ybv+6fewFK7rDgaRon/HG2nA8x2lYhW6T2heHpzNzybSqfaSGf
+ kGX+WKI0gDFYCmDGVV9ed8s1IWM+x9qVAR6TYW2gRQPWoahepfOVmoQFl9L/lCf5utDFiE9lP
+ 79Q2qziF+WjU6WNSdUFCjBg6OXMbEFDKay3jkJNB6t6zR7BmZrxwgB9Nn0Cibh2BLXz5NHmWX
+ MGuBEfOJs20jrRHJhVR7F+yPiwuhyG8fVBQa1i/bz/ccB/4jF+L/V5EwSniXxx5exPSQhzt6u
+ Dkpm/ZjFtRqBwTbFW002+hnBEL4jhlNO/ssut0GHsGsWVDD7TDI1s/cwV5X29ExTAfrPvhsMW
+ rN88xeH36W4LLO3N6KWQTdqIXGhzXDKYT8l1ZASCIkia7coy+WEFLdXPl80Lm3RGXkUyJsDlv
+ 9Au2gX55S7x/9bi+L+hw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 22-10-19 09:38:19, Dave Chinner wrote:
-> On Mon, Oct 21, 2019 at 09:43:30PM +0200, Jan Kara wrote:
-> > On Mon 21-10-19 09:31:12, Theodore Y. Ts'o wrote:
-> > > Hi Matthew, thanks for your work on this patch series!
-> > > 
-> > > I applied it against 4c3, and ran a quick test run on it, and found
-> > > the following locking problem.  To reproduce:
-> > > 
-> > > kvm-xfstests -c nojournal generic/113
-> > > 
-> > > generic/113		[09:27:19][    5.841937] run fstests generic/113 at 2019-10-21 09:27:19
-> > > [    7.959477] 
-> > > [    7.959798] ============================================
-> > > [    7.960518] WARNING: possible recursive locking detected
-> > > [    7.961225] 5.4.0-rc3-xfstests-00012-g7fe6ea084e48 #1238 Not tainted
-> > > [    7.961991] --------------------------------------------
-> > > [    7.962569] aio-stress/1516 is trying to acquire lock:
-> > > [    7.963129] ffff9fd4791148c8 (&sb->s_type->i_mutex_key#12){++++}, at: __generic_file_fsync+0x3e/0xb0
-> > > [    7.964109] 
-> > > [    7.964109] but task is already holding lock:
-> > > [    7.964740] ffff9fd4791148c8 (&sb->s_type->i_mutex_key#12){++++}, at: ext4_dio_write_iter+0x15b/0x430
-> > 
-> > This is going to be a tricky one. With iomap, the inode locking is handled
-> > by the filesystem while calling generic_write_sync() is done by
-> > iomap_dio_rw(). I would really prefer to avoid tweaking iomap_dio_rw() not
-> > to call generic_write_sync().
-> 
-> You can't remove it from there, because that will break O_DSYNC
-> AIO+DIO. i.e. generic_write_sync() needs to be called before
-> iocb->ki_complete() is called in the AIO completion path, and that
-> means filesystems using iomap_dio_rw need to be be able to run
-> generic_write_sync() without taking the inode_lock().
-> 
-> > So we need to remove inode_lock from
-> > __generic_file_fsync() (used from ext4_sync_file()). This locking is mostly
-> > for legacy purposes and we don't need this in ext4 AFAICT - but removing
-> > the lock from __generic_file_fsync() would mean auditing all legacy
-> > filesystems that use this to make sure flushing inode & its metadata buffer
-> > list while it is possibly changing cannot result in something unexpected. I
-> > don't want to clutter this series with it so we are left with
-> > reimplementing __generic_file_fsync() inside ext4 without inode_lock. Not
-> > too bad but not great either. Thoughts?
-> 
-> XFS has implemented it's own ->fsync operation pretty much forever
-> without issues. It's basically:
-> 
-> 	1. flush dirty cached data w/ WB_SYNC_ALL
-> 	2. flush dirty cached metadata (i.e. journal force)
-> 	3. flush device caches if journal force didn't, keeping in
-> 	mind the requirements of data and journal being placed on
-> 	different devices.
-> 
-> The ext4 variant shouldn't need to be any more complex than that...
+On Tue, Oct 22, 2019 at 6:34 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Oct 09, 2019 at 09:10:11PM +0200, Arnd Bergmann wrote:
+> > Each of these drivers has a copy of the same trivial helper function to
+> > convert the pointer argument and then call the native ioctl handler.
+> >
+> > We now have a generic implementation of that, so use it.
+>
+> I'd rather flipped your #7 (ceph_compat_ioctl() introduction) past
+> that one...
 
-Yeah, that's what we do for the common case as well. But when the
-filesystem is created without a journal (i.e., ext2 compatibility mode) we
-currently use the old fsync implementation including
-__generic_file_fsync(). But as I wrote above, duplicating those ~5 lines
-out of __generic_file_fsync() we really care about is not a big deal.
+The idea was to be able to backport the ceph patch as a bugfix
+to stable kernels without having to change it or backport
+compat_ptr_ioctl() as well.
 
-								Honza
+If you still prefer it that way, I'd move to a simpler version of this
+patch and drop the Cc:stable.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+      Arnd
