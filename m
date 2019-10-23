@@ -2,124 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E949E25E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 23:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1E4AE263E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 00:14:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407638AbfJWV4f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 17:56:35 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36718 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407604AbfJWV4e (ORCPT
+        id S2436705AbfJWWNo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 18:13:44 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39940 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2436687AbfJWWNo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 17:56:34 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w18so23171550wrt.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 14:56:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorremedies-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2Z2J+OCsJ9J8GYRYP9VQk8i6HI7mT3NHckK0lvlxuI4=;
-        b=l6bwIwJ3biJkrPmNiuGo80Nm0jZey9kll9szDwNec9TDA59C2XDR1D84O8dbnkbDMP
-         u1Q8evbum0reaA/9R3fDw8lDb2N/SK5e3x0Gekj+qhlkLpmKTcNwZQ5Cn8J5o/+NCaQi
-         rVwk+A5DRDgXw1JMOxFoiliUG57vjl9u+jJGMiqYZzaU+Zzuz13A1G1XsMKlJKO647M2
-         IvHFnroigX1S9Yab9xb6LoeziUH/s4MV26h8MEDKcqaynEPWHRlrAYpibRLKm5qA7NjF
-         au8m5gOGHn2w25JzMJ27sGjXCyEmVJriyprvIHvYPAWVmKO3jY5TkvTlsK9kcL7bja2U
-         c1MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2Z2J+OCsJ9J8GYRYP9VQk8i6HI7mT3NHckK0lvlxuI4=;
-        b=jYeSEvWFM81DaM58CR/Enn6rhbNGOlpYzua+ewAbBy1ljL+fa/puG8eo7sZ9FQVds+
-         B50C9YNZCqhWEvnbAJ9v4KMBABk27ZUEoAza3sl6yMSqEktS693/rUq/cws0BmUwnvjj
-         OcQg4BgisLgB6+hdMY5hPOfuGFslk4j6a9GnO0uynKIfaj9zV1xMCoqPEcYbbo2AMsMb
-         4Fbd8UBU+V7HWhuv3At6VmgAgRlhbTYuSaTw/pmYohXzpNR0f+4wnMywZfegnqxdwkKB
-         Nyux2Uz6RAY07ZoNoa6kVtRCJhtJ7gzlYhaIndNiB8bPaDJvTc19kbNlLJjyfTDd/uTl
-         BTxw==
-X-Gm-Message-State: APjAAAWJ3EgIqeWdLJaNvCRZwKdgaNCMvzTRF3gT75T4sVInaNyS16ck
-        jBJ8zASI6Vr7G2gO85MDYMI2YJp3qm+86kMgSsI4pg==
-X-Google-Smtp-Source: APXvYqw+N6XxHFJDmHNhiFTSaQvHQjQ7L+pa4/p8ZF0PEanBE5Mz8rq8OKZTnCkJfGg3xZZ3BDAOBmNR7FLJ6toT+mU=
-X-Received: by 2002:a5d:6281:: with SMTP id k1mr769702wru.69.1571867792739;
- Wed, 23 Oct 2019 14:56:32 -0700 (PDT)
+        Wed, 23 Oct 2019 18:13:44 -0400
+Received: from dread.disaster.area (pa49-180-40-48.pa.nsw.optusnet.com.au [49.180.40.48])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 00C6E43EE24;
+        Thu, 24 Oct 2019 09:13:34 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iNOsm-0006fc-Rc; Thu, 24 Oct 2019 09:13:32 +1100
+Date:   Thu, 24 Oct 2019 09:13:32 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Boaz Harrosh <boaz@plexistor.com>
+Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
+Message-ID: <20191023221332.GE2044@dread.disaster.area>
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
+ <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
 MIME-Version: 1.0
-References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
- <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
- <20191022105413.pj6i3ydetnfgnkzh@pali> <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
- <20191023115001.vp4woh56k33b6hiq@pali> <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
- <20191023171611.qfcwfce2roe3k3qw@pali> <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com>
-In-Reply-To: <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com>
-From:   Chris Murphy <lists@colorremedies.com>
-Date:   Wed, 23 Oct 2019 23:56:12 +0200
-Message-ID: <CAJCQCtTEN50uNmuSz9jW5Kk51TLmB2jfbNGxceNqnjBVvMD9ZA@mail.gmail.com>
-Subject: Re: Is rename(2) atomic on FAT?
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Chris Murphy <lists@colorremedies.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=y881pOMu+B+mZdf5UrsJdA==:117 a=y881pOMu+B+mZdf5UrsJdA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=iEe7G1TxEPlCt2B0xWcA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 11:21 PM Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
->
-> On Wed, Oct 23, 2019 at 7:16 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> wr=
-ote:
-> > On Wednesday 23 October 2019 16:21:19 Chris Murphy wrote:
-> > > On Wed, Oct 23, 2019 at 1:50 PM Pali Roh=C3=A1r <pali.rohar@gmail.com=
-> wrote:
-> > > > I do not think that kernel guarantee for any filesystem that rename
-> > > > operation would be atomic on underlying disk storage.
-> > > >
-> > > > But somebody else should confirm it.
-> > >
-> > > I don't know either or how to confirm it.
-> >
-> > Somebody who is watching linuxfs-devel and has deep knowledge in this
-> > area... could provide more information.
->
-> This is filesystem specific.
-> For example on UBIFS we make sure that the rename operation is atomic.
-> Changing multiple directory entries is one journal commit, so either it h=
-appened
-> completely or not at all.
-> On JFFS2, on the other hand, rename can degrade to a hard link.
->
-> I'd go so far and claim that any modern Linux filesystem guarantees
-> that rename is atomic.
+On Wed, Oct 23, 2019 at 04:09:50PM +0300, Boaz Harrosh wrote:
+> On 22/10/2019 14:21, Boaz Harrosh wrote:
+> > On 20/10/2019 18:59, ira.weiny@intel.com wrote:
+> Please explain the use case behind your model?
 
-Any atomicity that depends on journal commits cannot be considered to
-have atomicity in a boot context, because bootloaders don't do journal
-replay. It's completely ignored.
+No application changes needed to control whether they use DAX or
+not. It allows the admin to control the application behaviour
+completely, so they can turn off DAX if necessary. Applications are
+unaware of constraints that may prevent DAX from being used, and so
+admins need a mechanism to prevent DAX aware application from
+actually using DAX if the capability is present.
 
-If a journal is present, is it appropriate to consider it a separate
-and optional part of the file system? I don't know for sure but I can
-pretty much guess any of the bootloader upstreams would say: we are
-not file system experts, if file system developers consider the
-journal inseparable from the file system, and that journal replay is
-non-optional when indicated that it should be performed, then we
-welcome patches from file system developers to add such support in
-bootladers X, Y, and Z.
+e.g. given how slow some PMEM devices are when it comes to writing
+data, especially under extremely high concurrency, DAX is not
+necessarily a performance win for every application. Admins need a
+guaranteed method of turning off DAX in these situations - apps may
+not provide such a knob, or even be aware of a thing called DAX...
 
-And having already asked about bootloaders doing journal replay on XFS
-list, and maybe a while ago on ext4 list (I forget) that was sorta
-taken as a bit of comedy. Like, how would that work? And it'd
-inevitably lead to a fork in journal replay code. Possibly more than
-one to account for the different bootloader limitations and memory
-handling differences, etc. So it's not very realistic. Probably. And
-more realistic if they aren't separable is, if you care about atomic
-guarantees for things related to bootloading, don't use journaled file
-systems. Proscribed.
+e.g. the data set being accessed by the application is mapped and
+modified by RDMA applications, so those files must not be accessed
+using DAX by any application because DAX+RDMA are currently
+incompatible. Hence you can have RDMA on pmem devices co-exist
+within the same filesystem as other applications using DAX to access
+the pmem...
 
-Which is why this thread exists to see what can be done about FAT
-since it's really the only file system we have to be able to boot
-from.
+Cheers,
 
----
-Chris Murphy
-
---=20
-Chris Murphy
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
