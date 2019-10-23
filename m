@@ -2,232 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B43CE2338
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 21:18:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EECC2E2432
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 22:17:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390002AbfJWTSs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 15:18:48 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50426 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732232AbfJWTSr (ORCPT
+        id S2405298AbfJWURV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 16:17:21 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:49408 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2391482AbfJWURT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 15:18:47 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q13so161124wmj.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 12:18:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorremedies-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=snIXD5c8KCf1cfKQ/WwlBDuuF54wgIOxLoQeyjusNg4=;
-        b=QcB2CjQkXdXGJaJRF8yoOOMkXeh5XR6xEeqB4Zg2EI+VtbTFPZrh/FW2zOHy43/qsC
-         0HM0OaaaiTeE2RdrOU8OMpzG9VfNuppeUZrXdv59BgqfIi0T8LiAQL84jyTJkR9DdUGY
-         tEHE6efJ1b7d89nf15a7cTlkckw3i7fO6tzjE4SXbk35L/vhaniJa8MdGjmtNHl7cBNc
-         nvdNPVacls5XFX1dks/1QZV7EcgdXsvtu+6+5w3B5AIJPQjVuestCeb5bH9+V9t46n3+
-         /qVgwtjxU2uLIREDG6mgquBvLI9IWYmbN+ZhBfA3gaMU/np0qWOQHRPUcREjLzOxYF37
-         fybA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=snIXD5c8KCf1cfKQ/WwlBDuuF54wgIOxLoQeyjusNg4=;
-        b=aZwfGtb+oIdqt5QwggQ7s4gX91gXdWSFss4zlhA+1Mv+HExwSSIRVUBfbjEWdmIWLF
-         G7ETZXBSGFC0HrANnvGPMOhFNq1yu0xuzoS8ZNiqcRIrieRIpOacDoMkZJeaxH8tfCNU
-         qNE4/f7NnuxW2sBcdYH5l7fxWlCwRH3Kk7IuvXowd+2LwmXHZiIDYqzzPdJcx+ISeUm3
-         wqDoCYSbaUcymeUroclLRsBMxW09eg/B3918sew+NEYP6BI74scoMEh+iPiW4B/ZB/x/
-         lib+PP3vbzCtNt1J6NbeE1rrNKmkPNAMMo80TopY3qvgPkk0sUsDGioXiEzX11f4sVYr
-         vgfg==
-X-Gm-Message-State: APjAAAUZIQsB7DpXo9aBcMsMrwRTJzfPPPuB/mbXWGbclHCDsz5/EiAv
-        Mz20y1dOf6F7H07FZJdOFt7jfZ7vyfLFozZIUvirNA==
-X-Google-Smtp-Source: APXvYqx7lIQSm1CcxeZQb1fTNcMLnJhhhv7jN30wlP+OORvAoj6hyL6Y+i21jx9OAD2AN+7FDCNqLhUEy1+ikj52JBc=
-X-Received: by 2002:a05:600c:34b:: with SMTP id u11mr1346962wmd.176.1571858325163;
- Wed, 23 Oct 2019 12:18:45 -0700 (PDT)
+        Wed, 23 Oct 2019 16:17:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571861837;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=oeW+VmP3QU4FevcRW4lhlaqjbMpXhUTeOjj1aJjNG14=;
+        b=hX4nfgmH3kGFD2yDsyE7PIQwJhzp9XGz2CeI8JM0IhcBvTkF2ehW2hjo9gfqY5pfYoNMXx
+        xQ47O8XW7g45yLMH1tyZoz7XUXTIXtc3xCZyhELHM06UvvBR0ZwnH/dN9UFCjiEUX5/NoY
+        2aAo02RxAEpIV1/KtdY4N8EaoFb2N/Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-193-7oQmPxgHOp-fA6EnANPl_g-1; Wed, 23 Oct 2019 16:17:13 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C970E5E4;
+        Wed, 23 Oct 2019 20:17:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8518C5D6D0;
+        Wed, 23 Oct 2019 20:17:05 +0000 (UTC)
+Subject: [RFC PATCH 00/10] pipe: Notification queue preparation [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 23 Oct 2019 21:17:04 +0100
+Message-ID: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
- <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
- <20191022105413.pj6i3ydetnfgnkzh@pali> <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
- <20191023115001.vp4woh56k33b6hiq@pali> <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
- <20191023171611.qfcwfce2roe3k3qw@pali>
-In-Reply-To: <20191023171611.qfcwfce2roe3k3qw@pali>
-From:   Chris Murphy <lists@colorremedies.com>
-Date:   Wed, 23 Oct 2019 21:18:25 +0200
-Message-ID: <CAJCQCtRehgz2ULj+qpfGaQ8Uq7huemd_RMG+4EiYggo=zoY64A@mail.gmail.com>
-Subject: Re: Is rename(2) atomic on FAT?
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     Chris Murphy <lists@colorremedies.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: 7oQmPxgHOp-fA6EnANPl_g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 7:16 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> wrot=
-e:
-> On Wednesday 23 October 2019 16:21:19 Chris Murphy wrote:
 
-> > I don't know either or how to confirm it.
->
-> Somebody who is watching linuxfs-devel and has deep knowledge in this
-> area... could provide more information.
+Here's a set of preparatory patches for building a general notification
+queue on top of pipes.  It makes a number of significant changes:
 
-Maybe dm-log-writes can do this? Just log all the writes, and
-hopefully it's straightforward to match the 'mv' rename command with
-the resulting writes.
+ (1) It removes the nr_exclusive argument from __wake_up_sync_key() as this
+     is always 1.  This prepares for step 2.
+
+ (2) Adds wake_up_interruptible_sync_poll_locked() so that poll can be
+     woken up from a function that's holding the poll waitqueue spinlock.
+
+ (3) Change the pipe buffer ring to be managed in terms of unbounded head
+     and tail indices rather than bounded index and length.  This means
+     that reading the pipe only needs to modify one index, not two.
+
+ (4) A selection of helper functions are provided to query the state of the
+     pipe buffer, plus a couple to apply updates to the pipe indices.
+
+ (5) The pipe ring is allowed to have kernel-reserved slots.  This allows
+     many notification messages to be spliced in by the kernel without
+     allowing userspace to pin too many pages if it writes to the same
+     pipe.
+
+ (6) Advance the head and tail indices inside the pipe waitqueue lock and
+     use step 2 to poke poll without having to take the lock twice.
+
+ (7) Rearrange pipe_write() to preallocate the buffer it is going to write
+     into and then drop the spinlock.  This allows kernel notifications to
+     then be added the ring whilst it is filling the buffer it allocated.
+     The read side is stalled because the pipe mutex is still held.
+
+ (8) Don't wake up readers on a pipe if there was already data in it when
+     we added more.
+
+ (9) Don't wake up writers on a pipe if the ring wasn't full before we
+     removed a buffer.
+
+The patches can be found here also:
+
+=09http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=
+=3Dpipe-experimental
+
+PATCHES=09BENCHMARK=09BEST=09=09TOTAL BYTES=09AVG BYTES=09STDDEV
+=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-=09pipe=09=09      307457969=09    36348556755=09      302904639=09       =
+10622403
+-=09splice=09=09      287117614=09    26933658717=09      224447155=09     =
+ 160777958
+-=09vmsplice=09      435180375=09    51302964090=09      427524700=09      =
+ 19083037
+
+rm-nrx=09pipe=09=09      311091179=09    37093181356=09      309109844=09  =
+      7221622
+rm-nrx=09splice=09=09      285628049=09    27916298942=09      232635824=09=
+      158296431
+rm-nrx=09vmsplice=09      417703153=09    47570362546=09      396419687=09 =
+      33960822
+
+wakesl=09pipe=09=09      310698731=09    36772541631=09      306437846=09  =
+      8249347
+wakesl=09splice=09=09      286193726=09    28600435451=09      238336962=09=
+      141169318
+wakesl=09vmsplice=09      436175803=09    50723895824=09      422699131=09 =
+      40724240
+
+ht=09pipe=09=09      305534565=09    36426079543=09      303550662=09      =
+  5673885
+ht=09splice=09=09      243632025=09    23319439010=09      194328658=09    =
+  150479853
+ht=09vmsplice=09      432825176=09    49101781001=09      409181508=09     =
+  44102509
+
+k-rsv=09pipe=09=09      308691523=09    36652267561=09      305435563=09   =
+    12972559
+k-rsv=09splice=09=09      244793528=09    23625172865=09      196876440=09 =
+     125319143
+k-rsv=09vmsplice=09      436119082=09    49460808579=09      412173404=09  =
+     55547525
+
+r-adv-t=09pipe=09=09      310094218=09    36860182219=09      307168185=09 =
+       8081101
+r-adv-t=09splice=09=09      285527382=09    27085052687=09      225708772=
+=09      206918887
+r-adv-t=09vmsplice=09      336885948=09    40128756927=09      334406307=09=
+        5895935
+
+r-cond=09pipe=09=09      308727804=09    36635828180=09      305298568=09  =
+      9976806
+r-cond=09splice=09=09      284467568=09    28445793054=09      237048275=09=
+      200284329
+r-cond=09vmsplice=09      449679489=09    51134833848=09      426123615=09 =
+      66790875
+
+w-preal=09pipe=09=09      307416578=09    36662086426=09      305517386=09 =
+       6216663
+w-preal=09splice=09=09      282655051=09    28455249109=09      237127075=
+=09      194154549
+w-preal=09vmsplice=09      437002601=09    47832160621=09      398601338=09=
+       96513019
+
+w-redun=09pipe=09=09      307279630=09    36329750422=09      302747920=09 =
+       8913567
+w-redun=09splice=09=09      284324488=09    27327152734=09      227726272=
+=09      219735663
+w-redun=09vmsplice=09      451141971=09    51485257719=09      429043814=09=
+       51388217
+
+w-ckful=09pipe=09=09      305055247=09    36374947350=09      303124561=09 =
+       5400728
+w-ckful=09splice=09=09      281575308=09    26841554544=09      223679621=
+=09      215942886
+w-ckful=09vmsplice=09      436653588=09    47564907110=09      396374225=09=
+       82255342
+
+The patches column indicates the point in the patchset at which the benchma=
+rks
+were taken:
+
+=090=09No patches
+=09rm-nrx=09"Remove the nr_exclusive argument from __wake_up_sync_key()"
+=09wakesl=09"Add wake_up_interruptible_sync_poll_locked()"
+=09ht=09"pipe: Use head and tail pointers for the ring, not cursor and leng=
+th"
+=09k-rsv=09"pipe: Allow pipes to have kernel-reserved slots"
+=09r-adv-t=09"pipe: Advance tail pointer inside of wait spinlock in pipe_re=
+ad()"
+=09r-cond=09"pipe: Conditionalise wakeup in pipe_read()"
+=09w-preal=09"pipe: Rearrange sequence in pipe_write() to preallocate slot"
+=09w-redun=09"pipe: Remove redundant wakeup from pipe_write()"
+=09w-ckful=09"pipe: Check for ring full inside of the spinlock in pipe_writ=
+e()"
+
+Changes:
+
+ ver #2:
+
+ (*) Split the notification patches out into a separate branch.
+
+ (*) Removed the nr_exclusive parameter from __wake_up_sync_key().
+
+ (*) Renamed the locked wakeup function.
+
+ (*) Add helpers for empty, full, occupancy.
+
+ (*) Split the addition of ->max_usage out into its own patch.
+
+ (*) Fixed some bits pointed out by Rasmus Villemoes.
+
+ ver #1:
+
+ (*) Build on top of standard pipes instead of having a driver.
+
+David
+---
+David Howells (10):
+      pipe: Reduce #inclusion of pipe_fs_i.h
+      Remove the nr_exclusive argument from __wake_up_sync_key()
+      Add wake_up_interruptible_sync_poll_locked()
+      pipe: Use head and tail pointers for the ring, not cursor and length
+      pipe: Allow pipes to have kernel-reserved slots
+      pipe: Advance tail pointer inside of wait spinlock in pipe_read()
+      pipe: Conditionalise wakeup in pipe_read()
+      pipe: Rearrange sequence in pipe_write() to preallocate slot
+      pipe: Remove redundant wakeup from pipe_write()
+      pipe: Check for ring full inside of the spinlock in pipe_write()
 
 
-> > Nice in theory, but in practice the user simply reboots, and screams
-> > WTF outloud if the system face plants. And people wonder why things
-> > are still broken 20 years later with all the same kinds of problems
-> > and prescriptions to boot off some rescue media instead of it being
-> > fail safe by design. It's definitely not fail safe to have a kernel
-> > update that could possibly result in an unbootable system. I can't
-> > think of any ordinary server, cloud, desktop, mobile user who wants to
-> > have to boot from rescue media to do a simple repair. Of course they
-> > all just want to reboot and have the right thing always happen no
-> > matter what, otherwise they get so nervous about doing updates that
-> > they postpone them longer than they should.
->
-> Still, in any time when you improperly unmount filesystem you should
-> check for error, if you do not want to loose your data.
+ fs/exec.c                  |    1=20
+ fs/fuse/dev.c              |   31 +++--
+ fs/ocfs2/aops.c            |    1=20
+ fs/pipe.c                  |  225 ++++++++++++++++++++++---------------
+ fs/splice.c                |  188 +++++++++++++++++++------------
+ include/linux/pipe_fs_i.h  |   90 ++++++++++++++-
+ include/linux/uio.h        |    4 -
+ include/linux/wait.h       |   11 +-
+ kernel/exit.c              |    2=20
+ kernel/sched/wait.c        |   37 ++++--
+ lib/iov_iter.c             |  266 +++++++++++++++++++++++++---------------=
+----
+ security/smack/smack_lsm.c |    1=20
+ 12 files changed, 541 insertions(+), 316 deletions(-)
 
-Perhaps, but it's archaic. The user usually has no idea what went
-wrong, and all kinds of factors strongly disincentivize doing an
-offline fsck, and incentivize just rebooting and seeing what happens.
-If they get past the bootloader, systemd/init is going to run an fsck
-on all volumes that need it or kernel code does log replay to make
-them up to date.
-
-> And critical area should have some "recovery" mechanism to repair broken
-> bootloader / kernel image.
->
-> Anyway, chance that kernel crashes at step when replacing old kernel
-> disk image by new one is low. So it should not be such big issue to need
-> to do external recovery.
-
-'strace -D -ff -o' on grub2-mkconfig causes over 1800 PID files to be
-generated. Filtering for lines containing grub.cfg...
-
-# grep grub.cfg *
-grub.12167:execve("/usr/sbin/grub2-mkconfig", ["grub2-mkconfig", "-o",
-"/boot/efi/EFI/fedora/grub.cfg"], 0x7ffc68054470 /* 24 vars */) =3D 0
-grub.12167:read(3, "/boot/efi/EFI/fedora/grub.cfg\n", 128) =3D 30
-grub.12167:openat(AT_FDCWD, "/boot/efi/EFI/fedora/grub.cfg.new",
-O_WRONLY|O_CREAT|O_TRUNC, 0666) =3D 3
-grub.12167:read(255, "\nif test \"x${grub_cfg}\" !=3D \"x\" ;"..., 8192) =
-=3D 567
-grub.12174:write(1, "/boot/efi/EFI/fedora/grub.cfg\n", 30) =3D 30
-grub.12349:execve("/usr/bin/rm", ["rm", "-f",
-"/boot/efi/EFI/fedora/grub.cfg.ne"...], 0x55c599fde980 /* 48 vars */)
-=3D 0
-grub.12349:newfstatat(AT_FDCWD, "/boot/efi/EFI/fedora/grub.cfg.new",
-0x556be17d9758, AT_SYMLINK_NOFOLLOW) =3D -1 ENOENT (No such file or
-directory)
-grub.12349:unlinkat(AT_FDCWD, "/boot/efi/EFI/fedora/grub.cfg.new", 0)
-=3D -1 ENOENT (No such file or directory)
-grub.14064:execve("/usr/bin/grub2-script-check",
-["/usr/bin/grub2-script-check",
-"/boot/efi/EFI/fedora/grub.cfg.ne"...], 0x55c599fde980 /* 48 vars */)
-=3D 0
-grub.14064:openat(AT_FDCWD, "/boot/efi/EFI/fedora/grub.cfg.new", O_RDONLY) =
-=3D 3
-grub.14065:openat(AT_FDCWD, "/boot/efi/EFI/fedora/grub.cfg",
-O_WRONLY|O_CREAT|O_TRUNC, 0666) =3D 3
-grub.14065:execve("/usr/bin/cat", ["cat",
-"/boot/efi/EFI/fedora/grub.cfg.ne"...], 0x55c599fde980 /* 48 vars */)
-=3D 0
-grub.14065:openat(AT_FDCWD, "/boot/efi/EFI/fedora/grub.cfg.new", O_RDONLY) =
-=3D 3
-grub.14066:execve("/usr/bin/rm", ["rm", "-f",
-"/boot/efi/EFI/fedora/grub.cfg.ne"...], 0x55c599fde980 /* 48 vars */)
-=3D 0
-grub.14066:newfstatat(AT_FDCWD, "/boot/efi/EFI/fedora/grub.cfg.new",
-{st_mode=3DS_IFREG|0700, st_size=3D6080, ...}, AT_SYMLINK_NOFOLLOW) =3D 0
-grub.14066:unlinkat(AT_FDCWD, "/boot/efi/EFI/fedora/grub.cfg.new", 0) =3D 0
-
-I'm not able to parse this. My best guess is it's writing out an all
-new file, grub.cfg.new, and then doesn't rename it. Instead it uses
-cat to copy the contents of the new file and overwrites the old one?
-Yeah, the inode stays the same, as does access time. Is this fragile?
-
-Android and ChromeOS and some others, have A and B kernel partitions
-which are just blobs. They use some other form of hint to indicate
-which partition is actually used at one time, meaning they can
-reliably ensure a failsafe update of the other partition, and sanity
-testing it, before committing the switch. Crude but effective.
-
-Apple goes so far as to get all of their product firmware the ability
-to natively read APFS, which contains the kernel and early boot files.
-
-I have no idea how Windows does kernel or bootloader updates, except
-they don't keep the EFI system partition persistently mounted all day
-long, like virtually all Linux distributions today, at /boot/efi -
-that does seem guaranteed to result in many dirty flag FAT file system
-cleanups. I know I've seen such fix ups in my journal files.
-
-
-
-
-> > > > I'm not sure how to test the following: write kernel and initramfs =
-to
-> > > > final locations. And bootloader configuration is written to a temp
-> > > > path. Then at the decision moment, rename it so that it goes from t=
-emp
-> > > > path to final path doing at most 1 sector change. 1 512 byte sector
-> > > > is a reasonable number to assume can be completely atomic for a
-> > > > system. I have no idea if FAT can do such a 'mv' event with only on=
-e
-> > > > sector change
-> > >
-> > > Theoretically it could be possible to implement it for FAT (with more
-> > > restrictions), but I doubt that general purpose implementation of any
-> > > filesystem in kernel can do such thing. So no practically.
-> >
-> > Now I'm wondering what the UEFI spec says about this, and whether this
-> > problem was anticipated, and how surprised I should be if it wasn't
-> > anticipated.
->
-> I know that UEFI spec has reference for FAT filesystems to MS
-> specification (fagen103.doc). I do not know if it says anything about
-> filesystem details, but I guess it specify requirements, that
-> implementations must be compatible with FAT12, FAT16 and FAT32 according
-> to specification.
-
-My understanding of the UEFI spec is the file system is called the
-'EFI file system' and was intended to be predicated on FAT12, FAT16,
-FAT32 at a specific moment in time, bugs and warts and all. By now
-probably around 20 years ago. And then not ever changed. In practice
-it seems there is no such separate thing as the EFI file system. No
-separate mkfs flag, or mount options, to make sure this is *the*
-canonical EFI file system, rather than just today's latest bug fixed
-and feature enhanced FAT file system as supported by Linux.
-
-So god only knows what bugs might arise from that discrepancy one day.
-
-> Also UEFI allows you to write our own UEFI filesystem drivers which
-> other UEFI programs and bootloaders can use.
-
-I'm not finding it this second but someone basically did this work
-already, but wrapping existing GRUB file system modules into EFI file
-system drivers.
-
-OK so plausibly on UEFI, it could be handed a better FAT driver very
-soon after POST to avoid firmware FAT bugs. Or for that matter, create
-"A" and "B" EFI system partitions, containing identical static boot
-data, that merely points to a purpose built $BOOT volume that can host
-early boot files and supports atomic updates. That'd be clever, but
-also not generic. It's UEFI specific.
-
-It'd be neat to have a superset implementation that can work anywhere.
-But then allow for optimizations. But the problem with the generic
-solution? Who will follow it? The Bootloaderspec pretty much fell on
-deaf ears. The GRUB folks don't care to upstream it, nor sysliux, nor
-uboot near as I can tell. Simple 1 page spec. Fedora's GRUB carries
-patches for it, and now uses them by default. Son hilariously Fedora
-is maybe the first distribution to actively support three
-substantially different bootloader update mechanisms: grub-mkconfig,
-grubby, and bootloaderspec.
-
---=20
-Chris Murphy
