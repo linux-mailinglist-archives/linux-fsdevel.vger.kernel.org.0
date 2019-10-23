@@ -2,99 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A47E2007
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 17:58:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7217E2078
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 18:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391034AbfJWP6u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 11:58:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59190 "EHLO mx1.suse.de"
+        id S2407221AbfJWQXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 12:23:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44266 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390259AbfJWP6u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 11:58:50 -0400
+        id S2407111AbfJWQXS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Oct 2019 12:23:18 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7363DB4D8;
-        Wed, 23 Oct 2019 15:58:48 +0000 (UTC)
-Date:   Wed, 23 Oct 2019 17:58:46 +0200
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Cyril Hrubis <chrubis@suse.cz>, Yong Sun <yosun@suse.com>
-Subject: "New" ext4 features tests in LTP
-Message-ID: <20191023155846.GA28604@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
+        by mx1.suse.de (Postfix) with ESMTP id A4BC9B4AA;
+        Wed, 23 Oct 2019 16:23:15 +0000 (UTC)
+Date:   Wed, 23 Oct 2019 18:23:13 +0200
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 7/8] scsi: sr: workaround VMware ESXi cdrom emulation
+ bug
+Message-ID: <20191023162313.GE938@kitsune.suse.cz>
+References: <cover.1571834862.git.msuchanek@suse.de>
+ <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
+ <08f1e291-0196-2402-1947-c0cdaaf534da@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <08f1e291-0196-2402-1947-c0cdaaf534da@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Oct 23, 2019 at 04:13:15PM +0200, Hannes Reinecke wrote:
+> On 10/23/19 2:52 PM, Michal Suchanek wrote:
+> > The WMware ESXi cdrom identifies itself as:
+> > sr 0:0:0:0: [sr0] scsi3-mmc drive: vendor: "NECVMWarVMware SATA CD001.00"
+> > model: "VMware SATA CD001.00"
+> > with the following get_capabilities print in sr.c:
+> >         sr_printk(KERN_INFO, cd,
+> >                   "scsi3-mmc drive: vendor: \"%s\" model: \"%s\"\n",
+> >                   cd->device->vendor, cd->device->model);
+> > 
+> > So the model looks like reliable identification while vendor does not.
+> > 
+> > The drive claims to have a tray and claims to be able to close it.
+> > However, the UI has no notion of a tray - when medium is ejected it is
+> > dropped in the floor and the user must select a medium again before the
+> > drive can be re-loaded.  On the kernel side the tray_move call to close
+> > the tray succeeds but the drive state does not change as a result of the
+> > call.
+> > 
+> > The drive does not in fact emulate the tray state. There are two ways to
+> > get the medium state. One is the SCSI status:
+> > 
+> > Physical drive:
+> > 
+> > Fixed format, current; Sense key: Not Ready
+> > Additional sense: Medium not present - tray open
+> > Raw sense data (in hex):
+> >         70 00 02 00 00 00 00 0a  00 00 00 00 3a 02 00 00
+> >         00 00
+> > 
+> > Fixed format, current; Sense key: Not Ready
+> > Additional sense: Medium not present - tray closed
+> >  Raw sense data (in hex):
+> >         70 00 02 00 00 00 00 0a  00 00 00 00 3a 01 00 00
+> >         00 00
+> > 
+> > VMware ESXi:
+> > 
+> > Fixed format, current; Sense key: Not Ready
+> > Additional sense: Medium not present
+> >   Info fld=0x0 [0]
+> >  Raw sense data (in hex):
+> >         f0 00 02 00 00 00 00 0a  00 00 00 00 3a 00 00 00
+> >         00 00
+> > 
+> > So the tray state is not reported here. Other is medium status which the
+> > kernel prefers if available. Adding a print here gives:
+> > 
+> > cdrom: get_media_event success: code = 0, door_open = 1, medium_present = 0
+> > 
+> > door_open is interpreted as open tray. This is fine so long as tray_move
+> > would close the tray when requested or report an error which never
+> > happens on VMware ESXi servers (5.5 and 6.5 tested).
+> > 
+> > This is a popular virtualization platform so a workaround is worthwhile.
+> > 
+> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > ---
+> >  drivers/scsi/sr.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+> > index 4664fdf75c0f..8090c5bdec09 100644
+> > --- a/drivers/scsi/sr.c
+> > +++ b/drivers/scsi/sr.c
+> > @@ -867,6 +867,7 @@ static void get_capabilities(struct scsi_cd *cd)
+> >  	unsigned int ms_len = 128;
+> >  	int rc, n;
+> >  
+> > +	static const char *model_vmware = "VMware";
+> >  	static const char *loadmech[] =
+> >  	{
+> >  		"caddy",
+> > @@ -922,6 +923,11 @@ static void get_capabilities(struct scsi_cd *cd)
+> >  		  buffer[n + 4] & 0x20 ? "xa/form2 " : "",	/* can read xa/from2 */
+> >  		  buffer[n + 5] & 0x01 ? "cdda " : "", /* can read audio data */
+> >  		  loadmech[buffer[n + 6] >> 5]);
+> > +	if (!strncmp(cd->device->model, model_vmware, strlen(model_vmware))) {
+> > +		buffer[n + 6] &= ~(0xff << 5);
+> > +		sr_printk(KERN_INFO, cd,
+> > +			  "VMware ESXi bug workaround: tray -> caddy\n");
+> > +	}
+> >  	if ((buffer[n + 6] >> 5) == 0)
+> >  		/* caddy drives can't close tray... */
+> >  		cd->cdi.mask |= CDC_CLOSE_TRAY;
+> > 
+> This looks something which should be handled via a blacklist flag, not
+> some inline hack which everyone forgets about it...
 
-we have in LTP some ext4 fs tests [1], which aimed to test at the time new ext4
-features [2]. All of them are using The Flexible Filesystem Benchmark (ffsb)
-- a filesystem performance measurement too [3]. Tests were contributed in 2009
-and needs at least some cleanup.
+AFAIK we used to have a blacklist but don't have anymore. So either it
+has to be resurrected for this one flag or an inline hack should be good
+enough.
 
-I wonder whether testing these features is still relevant. And if yes, whether
-they're covered in xfstests? After brief search in xfstests ext4 tests it
-doesn't look like, at least not directly. Does it make sense to you to keep them?
-(either to cleanup and keep them in LTP or rewrite and contribute to xfstests)
+Thanks
 
-List of these tests [3]:
-ext4-inode-version [4]
-------------------
-Directory containing the shell script which is used to test inode version field
-on disk of ext4.
-
-ext4-journal-checksum [5]
----------------------
-Directory containing the shell script which is used to test journal checksumming
-of ext4.
-
-ext4-nsec-timestamps [6]
---------------------
-Directory containing the shell script which is used to test nanosec timestamps
-of ext4.
-
-ext4-online-defrag [7]
-------------------
-Directory containing the shell script which is used to test online defrag
-feature of ext4.
-
-ext4-persist-prealloc [8]
----------------------
-Directory containing the shell script which is used to test persist prealloc
-feature of ext4.
-
-ext4-subdir-limit [9]
------------------
-Directory containing the shell script which is used to test subdirectory limit
-of ext4. According to the kernel documentation, we create more than 32000
-subdirectorys on the ext4 filesystem.
-
-ext4-uninit-groups [10]
-------------------
-Directory containing the shell script which is used to test uninitialized groups
-feature of ext4.
-
-Thanks for info.
-
-Kind regards,
-Petr
-
-[1] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/ext4-new-features/README
-[2] http://ext4.wiki.kernel.org/index.php/New_ext4_features
-[3] https://github.com/linux-test-project/ltp/blob/master/utils/ffsb-6.0-rc2/README
-[4] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/ext4-new-features/ext4-inode-version/ext4_inode_version_test.sh
-[5] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/ext4-new-features/ext4-journal-checksum/ext4_journal_checksum.sh
-[6] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/ext4-new-features/ext4-nsec-timestamps/ext4_nsec_timestamps_test.sh
-[7] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/ext4-new-features/ext4-online-defrag/ext4_online_defrag_test.sh
-[8] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/ext4-new-features/ext4-persist-prealloc/ext4_persist_prealloc_test.sh
-[9] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/ext4-new-features/ext4-subdir-limit/ext4_subdir_limit_test.sh
-[10] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/ext4-new-features/ext4-uninit-groups/ext4_uninit_groups_test.sh
+Michal
