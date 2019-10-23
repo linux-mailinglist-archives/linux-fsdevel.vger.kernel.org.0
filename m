@@ -2,111 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B68AFE100E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 04:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60042E1044
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 04:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388966AbfJWCf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 22:35:28 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38822 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733183AbfJWCf1 (ORCPT
+        id S2389323AbfJWC6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 22:58:14 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53666 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733043AbfJWC6O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 22:35:27 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c13so699078pfp.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 19:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Hn8L3oufJuO1A6sNs5ADzt9tjxwA8pxlkCKXiS57bAM=;
-        b=T9W+tN14oYrXYM4Wve7v7M4yAYnFKzjT6mNxo7aM+IsPxMNEYQMzoe0JwOvQqik5BL
-         GPGQOsJ9NuZXOC3x73WNHtr/9ubotCB4cjMbAYG6a2Uf0KRlsVrgOLux5bzWhil9tt3N
-         RdneeIbutQqNBIyBS9JWAF4zsRoLQwuSVSt1Btnti65jn0cX0s+N81+kqnnOKFas6h4b
-         7QDff7Rfy+MHffN+sZVjlRCM8ACrOKZTjai2VrsRv3FPzAwmDE710HsHaWa/yIZb4akY
-         AFEqbv/4ns3eZ34S/Q5UJE65tQOEBzqGWt/1M3b/uBXy0CjV+nP5y8HbLarSSBQkRM6g
-         9k2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Hn8L3oufJuO1A6sNs5ADzt9tjxwA8pxlkCKXiS57bAM=;
-        b=r+k0J2RjW3yBvoH7ThS9HLftme699SJt2kq8rmvDF0Ri7iVzkXZq5GdIbQrCUQMlSi
-         axjDWmO9bs/2/x/iqtmftzV7xZ9zQDB70mGYQo++dNycyOSWBecT1AW9Thnv4Xl8SuHo
-         znn6Afcx2FADR/n9k/AwSRa5P+1Jy7/sYmrfihEid3uMsmfnSGjfgwIVUDoBgLJMovfC
-         E0zEjceBRhPI3Vc9T2RNEQUu9L/vuqlzbolGP8earScNwUK9qNfIO+FXrtFfk2H6GNl5
-         Bc+zLkzBynafeMV8NEevWuT2Gb/qgG8FjUwzrbw2wglwtL88dT7+C5tmeWcAXFrZQE1M
-         OqKw==
-X-Gm-Message-State: APjAAAW7XUXeJo8P/BHDNLFRHNXL4T9gyKs7DYJ9UDN/bE3HybqiuTu2
-        Dv2LwG5dgXFy7kZsqFuaiumQ
-X-Google-Smtp-Source: APXvYqxP3lixxl949FFKhXtjPG6Mp4r8GAkhkrIx1SnKHRsGq4Eq9YXZ9Y1zUEwQQDyRpBDL1BHYfg==
-X-Received: by 2002:aa7:980c:: with SMTP id e12mr6404347pfl.165.1571798126573;
-        Tue, 22 Oct 2019 19:35:26 -0700 (PDT)
-Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id s90sm6037643pjc.2.2019.10.22.19.35.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 19:35:25 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 13:35:19 +1100
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
-Subject: Re: [PATCH v5 00/12] ext4: port direct I/O to iomap infrastructure
-Message-ID: <20191023023519.GA16505@bobrowski>
-References: <cover.1571647178.git.mbobrowski@mbobrowski.org>
- <20191021133111.GA4675@mit.edu>
- <20191021194330.GJ25184@quack2.suse.cz>
+        Tue, 22 Oct 2019 22:58:14 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9N2rSK7067277;
+        Wed, 23 Oct 2019 02:58:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=2Up8um5UIS0VhuMduC1NXXp0gaaP6t0HuUDLRAHsUvM=;
+ b=ajFwd5JQWrXwpeiJePU8s4LEpwEIM1ib800J6VbMzBTS2mh+BaD0zzoKpk9EmGwry5bM
+ O1gzfQUK9rJG3KFbRQKOU3dO0IgkwJDZBnLwfyE9SkKNL3fnN8W7UTyYEy9kaL+eX4ha
+ 6GdJS+EdHxVJoSxOHEd0Jleda79vhMci8con7D/e0vbIbWlyp7JSOn0fsz/MJSwcfm/Q
+ 0ktZJhLGkShucagqW05vM/fRTN3rQqi2dZcu3PlRbIQVkl1qTYpjs+/qXdVnaAXkSqEm
+ f7zbIuCJWfVy+HgJkaVFXgXC+jXbOSO0Wuu+mOprFZB4RRAz/VxsdJID9vaUk52IBcxO Ng== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2vqswtjh57-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 02:58:05 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9N2rDGj098504;
+        Wed, 23 Oct 2019 02:56:04 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2vsx242q9a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Oct 2019 02:56:04 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9N2tx9r002359;
+        Wed, 23 Oct 2019 02:56:02 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 22 Oct 2019 19:55:59 -0700
+Subject: Re: [PATCH] hugetlbfs: add O_TMPFILE support
+To:     Piotr Sarna <p.sarna@tlen.pl>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+References: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
+ <20191015105055.GA24932@dhcp22.suse.cz>
+ <766b4370-ba71-85a2-5a57-ca9ed7dc7870@oracle.com>
+ <eb6206ee-eb2e-ffbc-3963-d80eec04119c@oracle.com>
+ <c0415816-2682-7bf5-2c82-43c3a8941a54@tlen.pl>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <d29bc957-a074-22f6-51d7-e043719d5f98@oracle.com>
+Date:   Tue, 22 Oct 2019 19:55:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021194330.GJ25184@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c0415816-2682-7bf5-2c82-43c3a8941a54@tlen.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9418 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910230027
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9418 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910230028
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 09:43:30PM +0200, Jan Kara wrote:
-> On Mon 21-10-19 09:31:12, Theodore Y. Ts'o wrote:
-> > Hi Matthew, thanks for your work on this patch series!
-> > 
-> > I applied it against 4c3, and ran a quick test run on it, and found
-> > the following locking problem.  To reproduce:
-> > 
-> > kvm-xfstests -c nojournal generic/113
-> > 
-> > generic/113		[09:27:19][    5.841937] run fstests generic/113 at 2019-10-21 09:27:19
-> > [    7.959477] 
-> > [    7.959798] ============================================
-> > [    7.960518] WARNING: possible recursive locking detected
-> > [    7.961225] 5.4.0-rc3-xfstests-00012-g7fe6ea084e48 #1238 Not tainted
-> > [    7.961991] --------------------------------------------
-> > [    7.962569] aio-stress/1516 is trying to acquire lock:
-> > [    7.963129] ffff9fd4791148c8 (&sb->s_type->i_mutex_key#12){++++}, at: __generic_file_fsync+0x3e/0xb0
-> > [    7.964109] 
-> > [    7.964109] but task is already holding lock:
-> > [    7.964740] ffff9fd4791148c8 (&sb->s_type->i_mutex_key#12){++++}, at: ext4_dio_write_iter+0x15b/0x430
+On 10/22/19 12:09 AM, Piotr Sarna wrote:
+> On 10/21/19 7:17 PM, Mike Kravetz wrote:
+>> On 10/15/19 4:37 PM, Mike Kravetz wrote:
+>>> On 10/15/19 3:50 AM, Michal Hocko wrote:
+>>>> On Tue 15-10-19 11:01:12, Piotr Sarna wrote:
+>>>>> With hugetlbfs, a common pattern for mapping anonymous huge pages
+>>>>> is to create a temporary file first.
+>>>>
+>>>> Really? I though that this is normally done by shmget(SHM_HUGETLB) or
+>>>> mmap(MAP_HUGETLB). Or maybe I misunderstood your definition on anonymous
+>>>> huge pages.
+>>>>
+>>>>> Currently libraries like
+>>>>> libhugetlbfs and seastar create these with a standard mkstemp+unlink
+>>>>> trick,
+>>>
+>>> I would guess that much of libhugetlbfs was writen before MAP_HUGETLB
+>>> was implemented.  So, that is why it does not make (more) use of that
+>>> option.
+>>>
+>>> The implementation looks to be straight forward.  However, I really do
+>>> not want to add more functionality to hugetlbfs unless there is specific
+>>> use case that needs it.
+>>
+>> It was not my intention to shut down discussion on this patch.  I was just
+>> asking if there was a (new) use case for such a change.  I am checking with
+>> our DB team as I seem to remember them using the create/unlink approach for
+>> hugetlbfs in one of their upcoming models.
+>>
+>> Is there a new use case you were thinking about?
+>>
 > 
-> This is going to be a tricky one. With iomap, the inode locking is handled
-> by the filesystem while calling generic_write_sync() is done by
-> iomap_dio_rw(). I would really prefer to avoid tweaking iomap_dio_rw() not
-> to call generic_write_sync(). So we need to remove inode_lock from
-> __generic_file_fsync() (used from ext4_sync_file()). This locking is mostly
-> for legacy purposes and we don't need this in ext4 AFAICT - but removing
-> the lock from __generic_file_fsync() would mean auditing all legacy
-> filesystems that use this to make sure flushing inode & its metadata buffer
-> list while it is possibly changing cannot result in something unexpected. I
-> don't want to clutter this series with it so we are left with
-> reimplementing __generic_file_fsync() inside ext4 without inode_lock. Not
-> too bad but not great either. Thoughts?
+> Oh, I indeed thought it was a shutdown. The use case I was thinking about was in Seastar, where the create+unlink trick is used for creating temporary files (in a generic way, not only for hugetlbfs). I simply intended to migrate it to a newer approach - O_TMPFILE. However,
+> for the specific case of hugetlbfs it indeed makes more sense to skip it and use mmap's MAP_HUGETLB, so perhaps it's not worth it to patch a perfectly good and stable file system just to provide a semi-useful flag support. My implementation of tmpfile for hugetlbfs is straightforward indeed, but the MAP_HUGETLB argument made me realize that it may not be worth the trouble - especially that MAP_HUGETLB is here since 2.6 and O_TMPFILE was introduced around v3.11, so the mmap way looks more portable.
+> 
+> tldr: I'd be very happy to get my patch accepted, but the use case I had in mind can be easily solved with MAP_HUGETLB, so I don't insist.
 
-So, I just looked at this on my lunch break and I think the simplest approach
-would be to just transfer the necessary chunks of code from within
-__generic_file_fsync() into ext4_sync_file() for !journal cases, minus the
-inode lock, and minus calling into __generic_file_fsync(). I don't forsee this
-causing any issues, but feel free to correct me if I'm wrong.
+If you really are after something like 'anonymous memory' for Seastar,
+then MAP_HUGETLB would be the better approach.
 
-If this is deemed to be OK, then I will go ahead and include this as a
-separate patch in my series.
+I'm still checking with Oracle DB team as they may have a use for O_TMPFILE
+in an upcoming release.  In their use case, they want an open fd to work with.
+If it looks like they will proceed in this direction, we can work to get
+your patch moved forward.
 
---<M>--
+Thanks,
+-- 
+Mike Kravetz
