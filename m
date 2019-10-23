@@ -2,275 +2,284 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B64E0E54
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 00:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9E7AE0EE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 02:08:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389417AbfJVWoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 18:44:13 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:35096 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730847AbfJVWoN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 18:44:13 -0400
-Received: by mail-il1-f197.google.com with SMTP id o12so10864736ilf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 15:44:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=YbuAwrztLhYSbCeKjV8xzP5SlzpBV1Lkrumio9M9Mdc=;
-        b=uBQvmrU/rpRpyydoHH6XZ82JWrFzZiNVWgJ9odT8Fijquj/7QXqacXg+zC3hsdokcZ
-         tvDy9alkLTpxAErE2VJJe6AYgHFUHUt46Inx1sdTeceni3yl9LX1I5ZaXwp6LnwFUSwf
-         W1ifK9AZVJLP7TKsTYbUScwr4JDI43zj0AeCfuc1lL6yqWnpEiFRm7vjjxuMFeYJE5AN
-         adAIO98dGMMY7AJokgiSMa7KWBdziSxYrjimPetQj5Sn8rCzZQ2Q5/IqVe5DGy62BeS2
-         B8w9CaJ6NQ6tl2k29t/RJkI2r84TEGC4zhJ8biALCAv3cjmyIsIUjHYMF6At5nfQx0AN
-         8G/w==
-X-Gm-Message-State: APjAAAXMoBD+PxVm3IWYD64ikvHXCJTl+QoBwDpQ+zlwExZ1u5I1vqFr
-        8hK98NvrtugRLpFHLXZh0gvxHw+sNPRiJAduPn5H0rIDfT5F
-X-Google-Smtp-Source: APXvYqxT11LIh8xvooJbwTpLCUxuTOvrqrzUPK5L9Gw1QmPb9DndF0SUR/EFFEuIyZB66QXUQmIbaE2QdBz+2z32A7WJKg3qUtOU
-MIME-Version: 1.0
-X-Received: by 2002:a6b:7410:: with SMTP id s16mr151990iog.35.1571784251476;
- Tue, 22 Oct 2019 15:44:11 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 15:44:11 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f924d50595878964@google.com>
-Subject: INFO: task hung in d_alloc_parallel (2)
-From:   syzbot <syzbot+55f124a35eac76b52fb7@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        id S1728768AbfJWAH4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 20:07:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727140AbfJWAH4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Oct 2019 20:07:56 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF7D32084B;
+        Wed, 23 Oct 2019 00:07:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571789275;
+        bh=iWTiPNGy+UUhaAxufA2FQEzKoDPYx/bdR41aBLqfImo=;
+        h=Date:From:To:Subject:From;
+        b=zPVqh/RxADCB5UcG5acNZna1TJPQyOAt3cMimje8OtUYeHzhXyJ/hy84BrAw6c4WE
+         /yxj0JcHe2JFf+BDsIdw6gt2Zblge1DBFYGbcPbFGr+YSryov2FkDaf1DiiH91W5Px
+         joCiqXH35dx+MPAMzgpETZk9MWWDpbEo8EKhdmrE=
+Date:   Tue, 22 Oct 2019 17:07:54 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject:  mmotm 2019-10-22-17-07 uploaded
+Message-ID: <20191023000754.2M2KY%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+The mm-of-the-moment snapshot 2019-10-22-17-07 has been uploaded to
 
-syzbot found the following crash on:
+   http://www.ozlabs.org/~akpm/mmotm/
 
-HEAD commit:    998d7551 Merge branch 'akpm' (patches from Andrew)
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=132747c8e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e0ac4d9b35046343
-dashboard link: https://syzkaller.appspot.com/bug?extid=55f124a35eac76b52fb7
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14eafd5f600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c13108e00000
+mmotm-readme.txt says
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+55f124a35eac76b52fb7@syzkaller.appspotmail.com
+README for mm-of-the-moment:
 
-INFO: task init:1 blocked for more than 143 seconds.
-       Not tainted 5.4.0-rc3+ #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-init            D22888     1      0 0x00000000
-Call Trace:
-  context_switch kernel/sched/core.c:3384 [inline]
-  __schedule+0x94f/0x1e70 kernel/sched/core.c:4069
-  schedule+0xd9/0x260 kernel/sched/core.c:4136
-  d_wait_lookup fs/dcache.c:2506 [inline]
-  d_alloc_parallel+0x12cd/0x1c30 fs/dcache.c:2588
-  __lookup_slow+0x1ab/0x500 fs/namei.c:1646
-  lookup_slow+0x58/0x80 fs/namei.c:1680
-  walk_component+0x747/0x2000 fs/namei.c:1800
-  link_path_walk.part.0+0x9a4/0x1340 fs/namei.c:2131
-  link_path_walk fs/namei.c:2259 [inline]
-  path_lookupat.isra.0+0xe3/0x8d0 fs/namei.c:2307
-  filename_lookup+0x1b0/0x3f0 fs/namei.c:2338
-  user_path_at_empty+0x43/0x50 fs/namei.c:2598
-  user_path_at include/linux/namei.h:49 [inline]
-  vfs_statx+0x129/0x200 fs/stat.c:187
-  vfs_stat include/linux/fs.h:3242 [inline]
-  __do_sys_newstat+0xa4/0x130 fs/stat.c:341
-  __se_sys_newstat fs/stat.c:337 [inline]
-  __x64_sys_newstat+0x54/0x80 fs/stat.c:337
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f5f11342c65
-Code: Bad RIP value.
-RSP: 002b:00007ffd17d8aeb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000004
-RAX: ffffffffffffffda RBX: 00007ffd17d8b0f0 RCX: 00007f5f11342c65
-RDX: 00007ffd17d8b0f0 RSI: 00007ffd17d8b0f0 RDI: 0000000000407545
-RBP: 0000000000000000 R08: 0000000000fe3b60 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00007ffd17d8b5f0 R14: 0000000000000000 R15: 0000000000000000
-INFO: task syz-executor030:9494 blocked for more than 143 seconds.
-       Not tainted 5.4.0-rc3+ #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor030 D27416  9494   9492 0x00000000
-Call Trace:
-  context_switch kernel/sched/core.c:3384 [inline]
-  __schedule+0x94f/0x1e70 kernel/sched/core.c:4069
-  schedule+0xd9/0x260 kernel/sched/core.c:4136
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4195
-  __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
-  __mutex_lock+0x7b0/0x13c0 kernel/locking/mutex.c:1103
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-  fuse_lock_inode+0xba/0xf0 fs/fuse/inode.c:352
-  fuse_lookup+0x8e/0x310 fs/fuse/dir.c:382
-  __lookup_slow+0x279/0x500 fs/namei.c:1663
-  lookup_slow+0x58/0x80 fs/namei.c:1680
-  walk_component+0x747/0x2000 fs/namei.c:1800
-  link_path_walk.part.0+0x9a4/0x1340 fs/namei.c:2131
-  link_path_walk fs/namei.c:2062 [inline]
-  path_openat+0x202/0x46d0 fs/namei.c:3524
-  do_filp_open+0x1a1/0x280 fs/namei.c:3555
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-  __do_sys_open fs/open.c:1115 [inline]
-  __se_sys_open fs/open.c:1110 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1110
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444c90
-Code: Bad RIP value.
-RSP: 002b:00007fffe5690030 EFLAGS: 00000206 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444c90
-RDX: 0000000000000000 RSI: 0000000000090800 RDI: 00000000004ae8f6
-RBP: 000000000000251a R08: 0000000000002516 R09: 00000000026a8880
-R10: 0000000000000000 R11: 0000000000000206 R12: 00007fffe5690260
-R13: 00000000004075c0 R14: 0000000000000000 R15: 0000000000000000
-INFO: task syz-executor030:9498 blocked for more than 144 seconds.
-       Not tainted 5.4.0-rc3+ #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor030 D28160  9498   9494 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:3384 [inline]
-  __schedule+0x94f/0x1e70 kernel/sched/core.c:4069
-  schedule+0xd9/0x260 kernel/sched/core.c:4136
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4195
-  __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
-  __mutex_lock+0x7b0/0x13c0 kernel/locking/mutex.c:1103
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-  fuse_lock_inode+0xba/0xf0 fs/fuse/inode.c:352
-  fuse_lookup+0x8e/0x310 fs/fuse/dir.c:382
-  __lookup_slow+0x279/0x500 fs/namei.c:1663
-  lookup_slow+0x58/0x80 fs/namei.c:1680
-  walk_component+0x747/0x2000 fs/namei.c:1800
-  link_path_walk.part.0+0x9a4/0x1340 fs/namei.c:2131
-  link_path_walk fs/namei.c:2062 [inline]
-  path_openat+0x202/0x46d0 fs/namei.c:3524
-  do_filp_open+0x1a1/0x280 fs/namei.c:3555
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-  __do_sys_open fs/open.c:1115 [inline]
-  __se_sys_open fs/open.c:1110 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1110
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x405800
-Code: 4c 89 e0 eb 0d 0f 1f 44 00 00 48 8b 00 48 85 c0 74 18 48 39 58 08 75  
-f2 48 39 68 10 75 ec 5b 5d 41 5c c3 0f 1f 80 00 00 00 00 <bf> 18 00 00 00  
-e8 76 d3 ff ff 48 85 c0 74 e5 4d 85 e4 48 c7 00 00
-RSP: 002b:00007fffe568fd38 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fffe568fd64 RCX: 0000000000405800
-RDX: 00007fffe568fd6a RSI: 0000000000080001 RDI: 00000000004ae914
-RBP: 00007fffe568fd60 R08: 0000000000000000 R09: 0000000000000004
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000407530
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+http://www.ozlabs.org/~akpm/mmotm/
 
-Showing all locks held in the system:
-1 lock held by init/1:
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-inode_lock_shared include/linux/fs.h:801 [inline]
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-lookup_slow+0x4a/0x80 fs/namei.c:1679
-1 lock held by khungtaskd/1070:
-  #0: ffffffff88fab000 (rcu_read_lock){....}, at:  
-debug_show_all_locks+0x5f/0x27e kernel/locking/lockdep.c:5337
-1 lock held by rsyslogd/9340:
-  #0: ffff88809d13e420 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110  
-fs/file.c:801
-2 locks held by cron/9387:
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-inode_lock_shared include/linux/fs.h:801 [inline]
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-lookup_slow+0x4a/0x80 fs/namei.c:1679
-  #1: ffff888092111ae0 (&fi->mutex){+.+.}, at: fuse_lock_inode+0xba/0xf0  
-fs/fuse/inode.c:352
-2 locks held by getty/9462:
-  #0: ffff8880a7204090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc90005f852e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/9463:
-  #0: ffff8880a3e30090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc90005f812e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/9464:
-  #0: ffff8880a3fad090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc90005f892e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/9465:
-  #0: ffff88809df54090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc90005f912e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/9466:
-  #0: ffff888098a67090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc90005f8d2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/9467:
-  #0: ffff8880972d4090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc90005f952e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/9468:
-  #0: ffff888099a67090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc90005f5d2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by udevd/9478:
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-inode_lock_shared include/linux/fs.h:801 [inline]
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-lookup_slow+0x4a/0x80 fs/namei.c:1679
-  #1: ffff888092111ae0 (&fi->mutex){+.+.}, at: fuse_lock_inode+0xba/0xf0  
-fs/fuse/inode.c:352
-2 locks held by syz-executor030/9494:
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-inode_lock_shared include/linux/fs.h:801 [inline]
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-lookup_slow+0x4a/0x80 fs/namei.c:1679
-  #1: ffff888092111ae0 (&fi->mutex){+.+.}, at: fuse_lock_inode+0xba/0xf0  
-fs/fuse/inode.c:352
-2 locks held by syz-executor030/9498:
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-inode_lock_shared include/linux/fs.h:801 [inline]
-  #0: ffff888092111740 (&type->i_mutex_dir_key#6){++++}, at:  
-lookup_slow+0x4a/0x80 fs/namei.c:1679
-  #1: ffff888092111ae0 (&fi->mutex){+.+.}, at: fuse_lock_inode+0xba/0xf0  
-fs/fuse/inode.c:352
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-=============================================
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-NMI backtrace for cpu 1
-CPU: 1 PID: 1070 Comm: khungtaskd Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-  watchdog+0x9d0/0xef0 kernel/hung_task.c:289
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0xe/0x10  
-arch/x86/include/asm/irqflags.h:60
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+	https://github.com/hnaz/linux-mm
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is also available at
+
+	https://github.com/hnaz/linux-mm
+
+
+
+This mmotm tree contains the following patches against 5.4-rc4:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* mmthp-recheck-each-page-before-collapsing-file-thp.patch
+* mmthp-recheck-each-page-before-collapsing-file-thp-v4.patch
+* mm-memcontrol-fix-null-ptr-deref-in-percpu-stats-flush.patch
+* mm-gup_benchmark-fix-map_hugetlb-case.patch
+* mm-meminit-recalculate-pcpu-batch-and-high-limits-after-init-completes.patch
+* mm-thp-handle-page-cache-thp-correctly-in-pagetranscompoundmap.patch
+* ocfs2-protect-extent-tree-in-the-ocfs2_prepare_inode_for_write.patch
+* ocfs2-protect-extent-tree-in-the-ocfs2_prepare_inode_for_write-checkpatch-fixes.patch
+* ocfs2-remove-unused-function-ocfs2_prepare_inode_for_refcount.patch
+* ocfs2-fix-passing-zero-to-ptr_err-warning.patch
+* ramfs-support-o_tmpfile.patch
+  mm.patch
+* mm-slab-make-kmalloc_info-contain-all-types-of-names.patch
+* mm-slab-remove-unused-kmalloc_size.patch
+* mm-slab_common-use-enum-kmalloc_cache_type-to-iterate-over-kmalloc-caches.patch
+* mm-slub-print-the-offset-of-fault-addresses.patch
+* mm-update-comments-in-slubc.patch
+* mm-gup-allow-cma-migration-to-propagate-errors-back-to-caller.patch
+* mm-swap-disallow-swapon-on-zoned-block-devices.patch
+* mm-swap-disallow-swapon-on-zoned-block-devices-fix.patch
+* mm-trivial-mark_page_accessed-cleanup.patch
+* mm-memcg-clean-up-reclaim-iter-array.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-memcontrol-remove-dead-code-from-memory_max_write.patch
+* mm-memcontrol-try-harder-to-set-a-new-memoryhigh.patch
+* mm-fix-comments-based-on-per-node-memcg.patch
+* mm-drop-mmap_sem-before-calling-balance_dirty_pages-in-write-fault.patch
+* shmem-pin-the-file-in-shmem_fault-if-mmap_sem-is-dropped.patch
+* mm-emit-tracepoint-when-rss-changes.patch
+* mm-mmapc-remove-a-never-trigger-warning-in-__vma_adjust.patch
+* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
+* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region-checkpatch-fixes.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-swap-piggyback-lru_add_drain_all-calls.patch
+* mm-mmapc-prev-could-be-retrieved-from-vma-vm_prev.patch
+* mm-mmapc-__vma_unlink_prev-is-not-necessary-now.patch
+* mm-mmapc-extract-__vma_unlink_list-as-counter-part-for-__vma_link_list.patch
+* mm-mmapc-rb_parent-is-not-necessary-in-__vma_link_list.patch
+* mm-rmapc-dont-reuse-anon_vma-if-we-just-want-a-copy.patch
+* mm-rmapc-reuse-mergeable-anon_vma-as-parent-when-fork.patch
+* mm-mmapc-use-is_err_value-to-check-return-value-of-get_unmapped_area.patch
+* mm-mmapc-use-is_err_value-to-check-return-value-of-get_unmapped_area-fix.patch
+* arc-mm-remove-__arch_use_5level_hack.patch
+* asm-generic-tlb-stub-out-pud_free_tlb-if-nopud.patch
+* asm-generic-tlb-stub-out-p4d_free_tlb-if-nop4d.patch
+* asm-generic-tlb-stub-out-pmd_free_tlb-if-nopmd.patch
+* asm-generic-mm-stub-out-p4ud_clear_bad-if-__pagetable_p4ud_folded.patch
+* mm-fix-outdated-comment-in-page_get_anon_vma.patch
+* mm-memory-failurec-clean-up-around-tk-pre-allocation.patch
+* mm-soft-offline-convert-parameter-to-pfn.patch
+* mm-hotplug-reorder-memblock_-calls-in-try_remove_memory.patch
+* memory_hotplug-add-a-bounds-check-to-__add_pages.patch
+* mm-memory_hotplug-export-generic_online_page.patch
+* hv_balloon-use-generic_online_page.patch
+* mm-memory_hotplug-remove-__online_page_free-and-__online_page_increment_counters.patch
+* mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
+* mm-memory_hotplug-dont-access-uninitialized-memmaps-in-shrink_zone_span.patch
+* mm-memory_hotplug-shrink-zones-when-offlining-memory.patch
+* mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
+* mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
+* mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
+* mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
+* mm-memory_hotplug-cleanup-__remove_pages.patch
+* mm-page_allocc-dont-set-pages-pagereserved-when-offlining.patch
+* mm-page_isolationc-convert-skip_hwpoison-to-memory_offline.patch
+* mm-vmalloc-remove-unnecessary-highmem_mask-from-parameter-of-gfpflags_allow_blocking.patch
+* mm-vmalloc-remove-preempt_disable-enable-when-do-preloading.patch
+* mm-vmalloc-respect-passed-gfp_mask-when-do-preloading.patch
+* mm-vmalloc-add-more-comments-to-the-adjust_va_to_fit_type.patch
+* selftests-vm-add-fragment-config_test_vmalloc.patch
+* mm-vmalloc-rework-vmap_area_lock.patch
+* mm-page_alloc-add-alloc_contig_pages.patch
+* mm-pcp-share-common-code-between-memory-hotplug-and-percpu-sysctl-handler.patch
+* mm-pcpu-make-zone-pcp-updates-and-reset-internal-to-the-mm.patch
+* mm-vmscan-remove-unused-scan_control-parameter-from-pageout.patch
+* z3fold-add-inter-page-compaction.patch
+* z3fold-add-inter-page-compaction-fix.patch
+* mm-support-memblock-alloc-on-the-exact-node-for-sparse_buffer_init.patch
+* mm-oom-avoid-printk-iteration-under-rcu.patch
+* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
+* hugetlbfs-hugetlb_fault_mutex_hash-cleanup.patch
+* hugetlb-region_chg-provides-only-cache-entry.patch
+* hugetlb-remove-duplicated-code.patch
+* hugetlb-remove-duplicated-code-checkpatch-fixes.patch
+* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash.patch
+* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash-fix.patch
+* hugetlb-remove-unused-hstate-in-hugetlb_fault_mutex_hash-fix-fix.patch
+* mm-hugetlb-avoid-looping-to-the-same-hugepage-if-pages-and-vmas.patch
+* mm-thp-do-not-queue-fully-unmapped-pages-for-deferred-split.patch
+* mm-thp-make-set_huge_zero_page-return-void.patch
+* mm-cmac-switch-to-bitmap_zalloc-for-cma-bitmap-allocation.patch
+* mm-vmstat-add-helpers-to-get-vmstat-item-names-for-each-enum-type.patch
+* mm-vmstat-do-not-use-size-of-vmstat_text-as-count-of-proc-vmstat-items.patch
+* mm-memcontrol-use-vmstat-names-for-printing-statistics.patch
+* mm-vmstat-reduce-zone-lock-hold-time-when-reading-proc-pagetypeinfo.patch
+* userfaultfd-use-vma_pagesize-for-all-huge-page-size-calculation.patch
+* userfaultfd-remove-unnecessary-warn_on-in-__mcopy_atomic_hugetlb.patch
+* userfaultfd-wrap-the-common-dst_vma-check-into-an-inlined-function.patch
+* uffd-wp-clear-vm_uffd_missing-or-vm_uffd_wp-during-userfaultfd_register.patch
+* mm-shmemc-make-array-values-static-const-makes-object-smaller.patch
+* mm-fix-struct-member-name-in-function-comments.patch
+* mm-fix-typo-in-the-comment-when-calling-function-__setpageuptodate.patch
+* mm-memory_hotplugc-remove-__online_page_set_limits.patch
+* mm-annotate-refault-stalls-from-swap_readpage.patch
+* mm-annotate-refault-stalls-from-swap_readpage-fix.patch
+* mm-vmscan-remove-unused-lru_pages-argument.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* proc-change-nlink-under-proc_subdir_lock.patch
+* proc-delete-useless-len-variable.patch
+* proc-shuffle-struct-pde_opener.patch
+* proc-fix-confusing-macro-arg-name.patch
+* sysctl-inline-braces-for-ctl_table-and-ctl_table_header.patch
+* gitattributes-use-dts-diff-driver-for-dts-files.patch
+* linux-build_bugh-change-type-to-int.patch
+* kernel-notifierc-intercepting-duplicate-registrations-to-avoid-infinite-loops.patch
+* kernel-notifierc-remove-notifier_chain_cond_register.patch
+* kernel-notifierc-remove-blocking_notifier_chain_cond_register.patch
+* kernel-profile-use-cpumask_available-to-check-for-null-cpumask.patch
+* hung_task-allow-printing-warnings-every-check-interval.patch
+* get_maintainer-add-signatures-from-fixes-badcommit-lines-in-commit-message.patch
+* string-add-stracpy-and-stracpy_pad-mechanisms.patch
+* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
+* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
+* checkpatch-improve-ignoring-camelcase-si-style-variants-like-ma.patch
+* epoll-simplify-ep_poll_safewake-for-config_debug_lock_alloc.patch
+* fs-epoll-remove-unnecessary-wakeups-of-nested-epoll.patch
+* selftests-add-epoll-selftests.patch
+* elf-delete-unused-interp_map_addr-argument.patch
+* elf-extract-elf_read-function.patch
+* uaccess-disallow-int_max-copy-sizes.patch
+* aio-simplify-read_events.patch
+* lib-ubsan-dont-seralize-ubsan-report.patch
+* smp_mb__beforeafter_atomic-update-documentation.patch
+* ipc-mqueuec-remove-duplicated-code.patch
+* ipc-mqueuec-update-document-memory-barriers.patch
+* ipc-msgc-update-and-document-memory-barriers.patch
+* ipc-semc-document-and-update-memory-barriers.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+  linux-next.patch
+  diff-sucks.patch
+* drivers-block-null_blk_mainc-fix-layout.patch
+* drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* lib-list-test-add-a-test-for-the-list-doubly-linked-list.patch
+* lib-list-test-add-a-test-for-the-list-doubly-linked-list-v3.patch
+* lib-genallocc-export-symbol-addr_in_gen_pool.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
+* hacking-group-sysrq-kgdb-ubsan-into-generic-kernel-debugging-instruments.patch
+* hacking-create-submenu-for-arch-special-debugging-options.patch
+* hacking-group-kernel-data-structures-debugging-together.patch
+* hacking-move-kernel-testing-and-coverage-options-to-same-submenu.patch
+* hacking-move-oops-into-lockups-and-hangs.patch
+* hacking-move-sched_stack_end_check-after-debug_stack_usage.patch
+* hacking-create-a-submenu-for-scheduler-debugging-options.patch
+* hacking-move-debug_bugverbose-to-printk-and-dmesg-options.patch
+* hacking-move-debug_fs-to-generic-kernel-debugging-instruments.patch
+* bitops-introduce-the-for_each_set_clump8-macro.patch
+* bitops-introduce-the-for_each_set_clump8-macro-fix.patch
+* bitops-introduce-the-for_each_set_clump8-macro-fix-fix.patch
+* bitops-introduce-the-for_each_set_clump8-macro-fix-fix-fix.patch
+* lib-test_bitmapc-add-for_each_set_clump8-test-cases.patch
+* gpio-104-dio-48e-utilize-for_each_set_clump8-macro.patch
+* gpio-104-idi-48-utilize-for_each_set_clump8-macro.patch
+* gpio-gpio-mm-utilize-for_each_set_clump8-macro.patch
+* gpio-ws16c48-utilize-for_each_set_clump8-macro.patch
+* gpio-pci-idio-16-utilize-for_each_set_clump8-macro.patch
+* gpio-pcie-idio-24-utilize-for_each_set_clump8-macro.patch
+* gpio-uniphier-utilize-for_each_set_clump8-macro.patch
+* gpio-74x164-utilize-the-for_each_set_clump8-macro.patch
+* thermal-intel-intel_soc_dts_iosf-utilize-for_each_set_clump8-macro.patch
+* gpio-pisosr-utilize-the-for_each_set_clump8-macro.patch
+* gpio-max3191x-utilize-the-for_each_set_clump8-macro.patch
+* gpio-pca953x-utilize-the-for_each_set_clump8-macro.patch
+* lib-test_bitmap-force-argument-of-bitmap_parselist_user-to-proper-address-space.patch
+* lib-test_bitmap-undefine-macros-after-use.patch
+* lib-test_bitmap-name-exp_bytes-properly.patch
+* lib-test_bitmap-rename-exp-to-exp1-to-avoid-ambiguous-name.patch
+* lib-test_bitmap-move-exp1-and-exp2-upper-for-others-to-use.patch
+* lib-test_bitmap-fix-comment-about-this-file.patch
+* bitmap-introduce-bitmap_replace-helper.patch
+* gpio-pca953x-remove-redundant-variable-and-check-in-irq-handler.patch
+* gpio-pca953x-use-input-from-regs-structure-in-pca953x_irq_pending.patch
+* gpio-pca953x-convert-to-use-bitmap-api.patch
+* gpio-pca953x-tight-up-indentation.patch
+* cleanup-replace-prefered-with-preferred.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
