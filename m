@@ -2,141 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5DDFE1B52
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 14:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F02FE1B69
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 14:53:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391899AbfJWMxR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 08:53:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49374 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391880AbfJWMxQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:53:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CECD2B67E;
-        Wed, 23 Oct 2019 12:53:14 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     linux-scsi@vger.kernel.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 8/8] scsi: sr: wait for the medium to become ready
-Date:   Wed, 23 Oct 2019 14:52:47 +0200
-Message-Id: <94dc98dc67b1d183d04c338c7978efa0556db6ac.1571834862.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1571834862.git.msuchanek@suse.de>
-References: <cover.1571834862.git.msuchanek@suse.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2391961AbfJWMxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 08:53:44 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:40249 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390962AbfJWMxo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Oct 2019 08:53:44 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id C52EF20D84;
+        Wed, 23 Oct 2019 08:53:42 -0400 (EDT)
+Received: from imap37 ([10.202.2.87])
+  by compute3.internal (MEProxy); Wed, 23 Oct 2019 08:53:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=EY3TAf
+        ovGNEqGb0Fcc3g3/Pe2TDNMH3pMna4aigfHZE=; b=icYPPZTuPSobGVgBBfyo6P
+        RypAxdIjfiIzRkkbFH53hafZteUbD0iUyDs4BRXnfil6k9wIqq1WUYpNDL26i+Jc
+        q7rrwH2JfvWaNv9zR+k9r5Yzt012gspYRX/L2WTgzyfHxE0KOsHAAeVsfg0LFYyA
+        hwL870e3/WZFI77pf5TA0xcD6KlAYbmi2BDdZZBr5yPcV5qcbwulsYBEiJWOzrWN
+        vbU8TGglNIgTj3Akhkn33W488O3Vi/6outSs3U5VbzNnVPIX2Ge2SxjrBsTfoDtM
+        SWwAOVFsVq46N8HxfXkaCkXNNUjnnwf9e3oLfXb4BTMINbDa7L2neudt9E1DBWZw
+        ==
+X-ME-Sender: <xms:Vk2wXVtHuAK_AAAqWJI_mhGbA1DCXgejVD5ztHCprcPSkIgxy6FUFw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrkeelgdehjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedfveholhhi
+    nhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenucffoh
+    hmrghinhepghhithhhuhgsrdgtohhmnecurfgrrhgrmhepmhgrihhlfhhrohhmpeifrghl
+    thgvrhhssehvvghrsghumhdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:Vk2wXaSOpyeCBSKQibqy2QFgSwXZPff2Ztq_i7ZhhJnq11PWKkJUVQ>
+    <xmx:Vk2wXUJNAOxw2gETM8y7epT1mb1UJi9Wz_wypgBdkoy4XLpUajxkZw>
+    <xmx:Vk2wXVtuEGnj0KhUIbJPRAo_I-pybN_N_JAwEiADBWrIqtGszwa6ww>
+    <xmx:Vk2wXfF1QTNBK5HdyqgVYHJswb7Cd-TrqvIQFwUclZjaCiBlh16HPA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 6256D684005F; Wed, 23 Oct 2019 08:53:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-470-gedfae93-fmstable-20191021v4
+Mime-Version: 1.0
+Message-Id: <521a5d27-dae9-44a3-bb90-43793bbde7d5@www.fastmail.com>
+In-Reply-To: <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
+References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
+ <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
+ <20191022105413.pj6i3ydetnfgnkzh@pali>
+ <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
+Date:   Wed, 23 Oct 2019 08:53:22 -0400
+From:   "Colin Walters" <walters@verbum.org>
+To:     "Chris Murphy" <lists@colorremedies.com>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc:     "Richard Weinberger" <richard.weinberger@gmail.com>,
+        "Linux FS Devel" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Is rename(2) atomic on FAT?
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the autoclose IOCLT provided by cdrom driver to wait for drive to
-close in open_finish, and attempt to open once more after the door
-closes.
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- drivers/scsi/sr.c | 54 ++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 42 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 8090c5bdec09..34d9a818b9e0 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -521,29 +521,58 @@ static blk_status_t sr_init_command(struct scsi_cmnd *SCpnt)
- 	return ret;
- }
- 
--static int sr_block_open(struct block_device *bdev, fmode_t mode)
-+static int __sr_block_open(struct block_device *bdev, fmode_t mode)
- {
--	struct scsi_cd *cd;
--	struct scsi_device *sdev;
--	int ret = -ENXIO;
--
--	cd = scsi_cd_get(bdev->bd_disk);
--	if (!cd)
--		goto out;
-+	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
-+	int ret;
- 
--	sdev = cd->device;
--	scsi_autopm_get_device(sdev);
- 	check_disk_change(bdev);
- 
- 	mutex_lock(&sr_mutex);
- 	ret = cdrom_open(&cd->cdi, bdev, mode);
- 	mutex_unlock(&sr_mutex);
- 
-+	return ret;
-+}
-+
-+static int sr_block_open(struct block_device *bdev, fmode_t mode)
-+{
-+	struct scsi_cd *cd = scsi_cd_get(bdev->bd_disk);
-+	struct scsi_device *sdev;
-+	int ret;
-+
-+	if (!cd)
-+		return -ENXIO;
-+
-+	sdev = cd->device;
-+	scsi_autopm_get_device(sdev);
-+	ret = __sr_block_open(bdev, mode);
- 	scsi_autopm_put_device(sdev);
--	if (ret)
-+
-+	if (ret == -ERESTARTSYS)
- 		scsi_cd_put(cd);
- 
--out:
-+	return ret;
-+}
-+
-+static int sr_block_open_finish(struct block_device *bdev, fmode_t mode,
-+				int ret)
-+{
-+	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
-+
-+	/* wait for drive to get ready */
-+	if ((ret == -ENOMEDIUM) && !(mode & FMODE_NDELAY)) {
-+		struct scsi_device *sdev = cd->device;
-+		/*
-+		 * Cannot use sr_block_ioctl because it locks sr_mutex blocking
-+		 * out any processes trying to access the drive
-+		 */
-+		scsi_autopm_get_device(sdev);
-+		cdrom_ioctl(&cd->cdi, bdev, mode, CDROM_AUTOCLOSE, 0);
-+		ret = __sr_block_open(bdev, mode);
-+		scsi_autopm_put_device(sdev);
-+	}
-+
- 	return ret;
- }
- 
-@@ -639,6 +668,7 @@ static const struct block_device_operations sr_bdops =
- {
- 	.owner		= THIS_MODULE,
- 	.open		= sr_block_open,
-+	.open_finish	= sr_block_open_finish,
- 	.release	= sr_block_release,
- 	.ioctl		= sr_block_ioctl,
- 	.check_events	= sr_block_check_events,
--- 
-2.23.0
+On Tue, Oct 22, 2019, at 8:10 PM, Chris Murphy wrote:
+>
+> For multiple kernels,  it doesn't matter if a crash happens anywhere
+> from new kernel being written to FAT, through initramfs, because the
+> old bootloader configuration still points to old kernel + initramfs.
+> But in multiple kernel distros, the bootloader configuration needs
+> modification or a new drop in scriptlet to point to the new
+> kernel+initramfs pair. And that needs to be completely atomic: write
+> new files to a tmp location, that way a crash won't matter. The tricky
+> part is to write out the bootloader configuration change such that it
+> can be an atomic operation.
 
+Related: https://github.com/ostreedev/ostree/issues/1951
+There I'm proposing there to not try to fix this at the kernel/filesystem
+level (since we can't do much on FAT, and even on real filesystems we
+have the journaling-vs-bootloader issues), but instead create a protocol
+between things writing bootloader data and the bootloaders to help
+verify integrity.
