@@ -2,279 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67298E2166
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 19:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB525E2192
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 19:16:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfJWRG4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 13:06:56 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40104 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbfJWRG4 (ORCPT
+        id S1728070AbfJWRQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 13:16:17 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52365 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbfJWRQR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:06:56 -0400
-Received: by mail-qk1-f195.google.com with SMTP id y81so16552332qkb.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 10:06:55 -0700 (PDT)
+        Wed, 23 Oct 2019 13:16:17 -0400
+Received: by mail-wm1-f66.google.com with SMTP id r19so22150347wmh.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 10:16:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BmJlh4WyBNl5ujqJykwBJPqFEruvIfpYSLEoPjqEaF0=;
-        b=a9kbrGD0VSKrvdNU25RKScBnDnByLA4+uj/kwwXdk+N2049BF3bn/9X8wxg/ptPAMI
-         QrwmPUCoCr2vlIwbMjD0s94a5ZRtq3UnE85Ty+T7aavcI8LsBUT41tSH+WWsIq3UgEd9
-         3stFaNvJhzE3ykEPC/vWgsyEBZ2BKeKLnlI9tFn/8TyLFcC6n3qMFwmu/pPEtuOzY4ft
-         9PkZkf7Lfy0jsAx2AvV9MKrTU6R2S8hbY86LznBATQx6OVkQO6r5czyyjHCFiL/pKDeL
-         SicEgj+Bq+Kcf5GVp4U+jUi/zO5wIaG7p9Tr5ZJyKdxmp7HFKjaftYR7S0h767gjdxry
-         0z3g==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=07SMstHl+14rmM/XZWBVvBuxzelk0N79orxKwBrOQSo=;
+        b=qROdpzFkEI/Oe2zE5Da14ta0FTxtFoABo7oIL9eiv6xzu4a58/dv2Oiln5MKAsulYU
+         en2aS3/+IyRm1Xo/Ytv4Hw80uwBYYeoCsauPDjWXYrBNpN1XCbJwUpcD/lTvIpTgAk3/
+         7Z0JeL6Md9NrV4Ft521Q6VWGZ411e4bRc4s9lIUZ5SCBQPRcUmmppm4SdgWUMwYGnF7F
+         zQWYmXWSXpTzqJjbcIxCIkofWji6TulhtF/leL3sQNkLz4yJrP6exN/iEMFyThmRdVeG
+         98aeO1YdvsbD58hqUlL/T5yV/nuFd7K3z9g5UAsYanqKM8wwaL5cIU21wyuj4JvS88ce
+         p8wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BmJlh4WyBNl5ujqJykwBJPqFEruvIfpYSLEoPjqEaF0=;
-        b=KsiqVwe95aWE9zbAhozWF5PFU1NA3579+mA3QhZ6XNnt87WTCUsYlBNtTwFM6nE8qN
-         6cT+DaOcxzbYnrsxGKCK95v21NHCPUGpooFXWJt3qISjwtN7Rv7OLQZVJLlBaic2yWUi
-         +Gcy5XAGpjdZ6HBlvDxRMhBvi9oXN/RKoookRacgdon1ow4eqy7FL0Ghy+ZbJLq4qJLr
-         uVgmxRaPp/xf9wsObcxXL6uet+Nsz5BTYhuzNpdVCfeQBSm1i9ePp6WhiprHUg0UiS6y
-         9XTaVMosNeLS8AraZ3lnLIZTXsvlEjWSkXjSWtazs6LGsSz+BegQ6PHOZqECGSRbHY1A
-         brQg==
-X-Gm-Message-State: APjAAAV/ECLWmAVveA/36ix+3xxH4GtNd8B9h4cICV3IKa6ws66YmlY6
-        aqhgxOXSt/7QBp3fY1q5H/QOpc6BxAL7Iug29zlbdg==
-X-Google-Smtp-Source: APXvYqwsGOSD5flrnTSltEbjBX/WuFFbqInKkFlUr30Uh1BYrK/uT2f+/aOtrvvxfmcptN3z6ecpULr0sPMFQuf+GTE=
-X-Received: by 2002:a05:620a:16a6:: with SMTP id s6mr8708369qkj.407.1571850414641;
- Wed, 23 Oct 2019 10:06:54 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=07SMstHl+14rmM/XZWBVvBuxzelk0N79orxKwBrOQSo=;
+        b=aeHbtfVD9IpLSQ9HazjIFLiQtCRR6ukRmvM+fp8UhkOUyPHv0KQb3KWPaj+GoFGyuG
+         RglvLi8ixKp2/8zOBvki+oAW6V+ffnpKEspIY4/TTmjb5RmktArRIv2Qk9vKel4Xxw+f
+         pibumYZgTsWcJ4D+/V1qUTQEP14duh7tNfUB39PmamKFhPPdoowH9Vy9b0JlFJM4YLT0
+         O+jQEyDPHeFTALpTM9ecYxrGjOJUSHLHfec+EOb0lrQ6aZen/YrDX8fLHPeU8DgMmHzL
+         dDq/G4H0dv2oOEOpZuMvBVnaHUt+R6XsFfUQ8uY8pP5bxo5t9l4s3Y2gSAfEtwyVuMLb
+         p82Q==
+X-Gm-Message-State: APjAAAWRDbeZ1dVK0kQ3NwxTxi77EsWRPs8u7FaGwwn4VjZFEV8OohoL
+        t2zH8ovOXT+tx/RY5u1+Lcc=
+X-Google-Smtp-Source: APXvYqxg69J/6kmsUd028CYwVVxlrCo98x+iJZAcM7bzpINwPcIA/mfAIOzfd59sihc4Qvqif3O/ig==
+X-Received: by 2002:a1c:2cc4:: with SMTP id s187mr925795wms.166.1571850973110;
+        Wed, 23 Oct 2019 10:16:13 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id s10sm27067728wrr.5.2019.10.23.10.16.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Oct 2019 10:16:12 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 19:16:11 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Chris Murphy <lists@colorremedies.com>
+Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Is rename(2) atomic on FAT?
+Message-ID: <20191023171611.qfcwfce2roe3k3qw@pali>
+References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
+ <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
+ <20191022105413.pj6i3ydetnfgnkzh@pali>
+ <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
+ <20191023115001.vp4woh56k33b6hiq@pali>
+ <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
 MIME-Version: 1.0
-References: <000000000000328b2905951a7667@google.com> <CANpmjNPoBBJgMKLEAXs+bPhitF+WygseHgTkSJsuiK8WcsB==g@mail.gmail.com>
- <20191017181709.GA5312@avx2> <CANpmjNOkpOQsmQKYLAJ1iuj6UYJqyY6PRaYXSyWbF=omfnj6Uw@mail.gmail.com>
-In-Reply-To: <CANpmjNOkpOQsmQKYLAJ1iuj6UYJqyY6PRaYXSyWbF=omfnj6Uw@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 23 Oct 2019 19:06:43 +0200
-Message-ID: <CACT4Y+YE8BtDJvbPfgDQq-HVwiPkg-7CTD1x8xCzeQTPuNG65Q@mail.gmail.com>
-Subject: Re: KCSAN: data-race in task_dump_owner / task_dump_owner
-To:     Marco Elver <elver@google.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        syzbot <syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian@brauner.io>,
-        Kees Cook <keescook@chromium.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="omvdqztbq2yrrdxr"
+Content-Disposition: inline
+In-Reply-To: <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 8:33 PM 'Marco Elver' via syzkaller-bugs
-<syzkaller-bugs@googlegroups.com> wrote:
->
-> On Thu, 17 Oct 2019 at 20:17, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+
+--omvdqztbq2yrrdxr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wednesday 23 October 2019 16:21:19 Chris Murphy wrote:
+> On Wed, Oct 23, 2019 at 1:50 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> wr=
+ote:
 > >
-> > On Thu, Oct 17, 2019 at 02:56:47PM +0200, Marco Elver wrote:
-> > > Hi,
-> > >
-> > > On Thu, 17 Oct 2019 at 14:36, syzbot
-> > > <syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com> wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > > syzbot found the following crash on:
-> > > >
-> > > > HEAD commit:    d724f94f x86, kcsan: Enable KCSAN for x86
-> > > > git tree:       https://github.com/google/ktsan.git kcsan
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=17884db3600000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c0906aa620713d80
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=e392f8008a294fdf8891
-> > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > >
-> > > > Unfortunately, I don't have any reproducer for this crash yet.
-> > > >
-> > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > > Reported-by: syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com
-> > > >
-> > > > ==================================================================
-> > > > BUG: KCSAN: data-race in task_dump_owner / task_dump_owner
-> > > >
-> > > > write to 0xffff8881255bb7fc of 4 bytes by task 7804 on cpu 0:
-> > > >   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
-> > > >   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
-> > > >   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
-> > > >   d_revalidate fs/namei.c:765 [inline]
-> > > >   d_revalidate fs/namei.c:762 [inline]
-> > > >   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
-> > > >   walk_component+0x6d/0xe80 fs/namei.c:1804
-> > > >   link_path_walk.part.0+0x5d3/0xa90 fs/namei.c:2139
-> > > >   link_path_walk fs/namei.c:2070 [inline]
-> > > >   path_openat+0x14f/0x3530 fs/namei.c:3532
-> > > >   do_filp_open+0x11e/0x1b0 fs/namei.c:3563
-> > > >   do_sys_open+0x3b3/0x4f0 fs/open.c:1089
-> > > >   __do_sys_open fs/open.c:1107 [inline]
-> > > >   __se_sys_open fs/open.c:1102 [inline]
-> > > >   __x64_sys_open+0x55/0x70 fs/open.c:1102
-> > > >   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
-> > > >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > >
-> > > > write to 0xffff8881255bb7fc of 4 bytes by task 7813 on cpu 1:
-> > > >   task_dump_owner+0xd8/0x260 fs/proc/base.c:1742
-> > > >   pid_update_inode+0x3c/0x70 fs/proc/base.c:1818
-> > > >   pid_revalidate+0x91/0xd0 fs/proc/base.c:1841
-> > > >   d_revalidate fs/namei.c:765 [inline]
-> > > >   d_revalidate fs/namei.c:762 [inline]
-> > > >   lookup_fast+0x7cb/0x7e0 fs/namei.c:1613
-> > > >   walk_component+0x6d/0xe80 fs/namei.c:1804
-> > > >   lookup_last fs/namei.c:2271 [inline]
-> > > >   path_lookupat.isra.0+0x13a/0x5a0 fs/namei.c:2316
-> > > >   filename_lookup+0x145/0x2d0 fs/namei.c:2346
-> > > >   user_path_at_empty+0x4c/0x70 fs/namei.c:2606
-> > > >   user_path_at include/linux/namei.h:60 [inline]
-> > > >   vfs_statx+0xd9/0x190 fs/stat.c:187
-> > > >   vfs_stat include/linux/fs.h:3188 [inline]
-> > > >   __do_sys_newstat+0x51/0xb0 fs/stat.c:341
-> > > >   __se_sys_newstat fs/stat.c:337 [inline]
-> > > >   __x64_sys_newstat+0x3a/0x50 fs/stat.c:337
-> > > >   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
-> > > >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > >
-> > > > Reported by Kernel Concurrency Sanitizer on:
-> > > > CPU: 1 PID: 7813 Comm: ps Not tainted 5.3.0+ #0
-> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > > Google 01/01/2011
-> > > > ==================================================================
-> > >
-> > > My understanding is, that for every access to /proc/<pid>,
-> > > d_revalidate is called, and /proc-fs implementation simply says that
-> > > pid_revalidate always revalidates by rewriting uid/gid because "owning
-> > > task may have performed a setuid(), etc." presumably so every access
-> > > to a /proc/<pid> entry always has the right uid/gid (in effect
-> > > updating /proc/<pid> lazily via d_revalidate).
-> > >
-> > > Is it possible that one of the tasks above could be preempted after
-> > > doing its writes to *ruid/*rgid, another thread writing some other
-> > > values (after setuid / seteuid), and then the preempted thread seeing
-> > > the other values? Assertion here should never fail:
-> > > === TASK 1 ===
-> > > | seteuid(1000);
-> > > | seteuid(0);
-> > > | stat("/proc/<pid-of-task-1>", &fstat);
-> > > | assert(fstat.st_uid == 0);
-> > > === TASK 2 ===
-> > > | stat("/proc/<pid-of-task-1>", ...);
+> > Hi!
 > >
-> > Is it the same as
-> > pid_revalidate() snapshots (uid,gid) correctly
-> > but writeback is done in any order?
->
-> Yes, I think so. Snapshot is done in RCU reader critical section, but
-> the writes can race with another thread. Is there logic that ensures
-> this doesn't lead to the observable outcome above?
+> > On Wednesday 23 October 2019 02:10:50 Chris Murphy wrote:
+> > > a. write bootloader file to a temp location
+> > > b. fsync
+> > > c. mv temp final
+> > > d. fsync
+> > >
+> > > if the crash happens anywhere from before a. to just after c. the old
+> > > configuration file is still present and old kernel+initramfs are used.
+> > > No problem. If the crash happens well after c. probably the new one is
+> > > in place, for sure after d. it's in place, and the new kernel+
+> > > initramfs are used.
+> >
+> > I do not think that kernel guarantee for any filesystem that rename
+> > operation would be atomic on underlying disk storage.
+> >
+> > But somebody else should confirm it.
+>=20
+> I don't know either or how to confirm it.
 
+Somebody who is watching linuxfs-devel and has deep knowledge in this
+area... could provide more information.
 
-I found the case where this leads to an observable bug.
-common_perm_cond() in security/apparmor/lsm.c reads the inode uid and
-uses it for the security check:
+> But, being ignorant about a
+> great many things, my instinct is literal fsync (flush buffer to disk)
+> should go away at the application level, and fsync should only be used
+> to indicate write order and what is part of a "commit" that is to be
+> atomic (completely succeeds or fails). And of course that can only be
+> guaranteed as far as the kernel is concerned, it doesn't guarantee
+> anything about how the hardware block device actually behaves (warts
+> bugs and all).
+>=20
+> Anyway it made me think of this:
+> https://lwn.net/Articles/789600/
+>=20
+>=20
+> > So if kernel crashes in the middle of c or between c and d you need to
+> > repair filesystem externally prior trying to boot from such disk.
+>=20
+> Nice in theory, but in practice the user simply reboots, and screams
+> WTF outloud if the system face plants. And people wonder why things
+> are still broken 20 years later with all the same kinds of problems
+> and prescriptions to boot off some rescue media instead of it being
+> fail safe by design. It's definitely not fail safe to have a kernel
+> update that could possibly result in an unbootable system. I can't
+> think of any ordinary server, cloud, desktop, mobile user who wants to
+> have to boot from rescue media to do a simple repair. Of course they
+> all just want to reboot and have the right thing always happen no
+> matter what, otherwise they get so nervous about doing updates that
+> they postpone them longer than they should.
 
-static int common_perm_cond(const char *op, const struct path *path, u32 mask)
-{
-      struct path_cond cond = { d_backing_inode(path->dentry)->i_uid,
+Still, in any time when you improperly unmount filesystem you should
+check for error, if you do not want to loose your data.
 
-d_backing_inode(path->dentry)->i_mode
-      };
+And critical area should have some "recovery" mechanism to repair broken
+bootloader / kernel image.
 
-Now consider the following test program:
+Anyway, chance that kernel crashes at step when replacing old kernel
+disk image by new one is low. So it should not be such big issue to need
+to do external recovery.
 
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <pthread.h>
+> > > I'm not sure how to test the following: write kernel and initramfs to
+> > > final locations. And bootloader configuration is written to a temp
+> > > path. Then at the decision moment, rename it so that it goes from temp
+> > > path to final path doing at most 1 sector change. 1 512 byte sector
+> > > is a reasonable number to assume can be completely atomic for a
+> > > system. I have no idea if FAT can do such a 'mv' event with only one
+> > > sector change
+> >
+> > Theoretically it could be possible to implement it for FAT (with more
+> > restrictions), but I doubt that general purpose implementation of any
+> > filesystem in kernel can do such thing. So no practically.
+>=20
+> Now I'm wondering what the UEFI spec says about this, and whether this
+> problem was anticipated, and how surprised I should be if it wasn't
+> anticipated.
 
-void *thr(void *arg)
-{
-        for (;;) {
-                struct stat file_stat;
-                stat((char*)arg, &file_stat);
-        }
-        return 0;
-}
+I know that UEFI spec has reference for FAT filesystems to MS
+specification (fagen103.doc). I do not know if it says anything about
+filesystem details, but I guess it specify requirements, that
+implementations must be compatible with FAT12, FAT16 and FAT32 according
+to specification.
 
-int main(int argc, char *argv[])
-{
-        char proc[32];
-        sprintf(proc, "/proc/%d", getpid());
-        printf("%s\n", proc);
-        pthread_t th;
-        pthread_create(&th, 0, thr, proc);
-        for (;;) {
-                seteuid(1000);
-                usleep(1);
-                seteuid(0);
-                struct stat file_stat;
-                stat(proc, &file_stat);
-        }
-        return 0;
-}
+> > > GRUB has an option to blindly overwrite the 1024 byte contents of
+> > > grubenv (no file system modification), that's pretty close to atomic.
+> > > Most devices have physical sector bigger than 512 bytes. This write is
+> > > done in the pre-boot environment for saving state like boot counts.
+> >
+> > This depends on grub's FAT implementation. As said I would be very
+> > careful about such "atomic" writes. There are also some caches, include
+> > hardware on-disk, etc...
+>=20
+> GRUB doesn't use any file system driver for writes, ever. It uses a
+> file system driver only to find out what two LBAs the "grubenv"
+> occupies, and then blindly overwrites those two sectors to save state.
+> There is no file system metadata update at all.
 
-Whenever the main thread does stat, it must observe inode.uid == 0 in
-common_perm_cond().
+Yes, you are right. Looking at the code and grub's filesystem drivers
+are read-only. No write support.
 
-But since task_dump_owner() does writeback out of order, it can lead
-to non-linearizable executions and main thread observing inode.uid ==
-1000.
-This in turn can lead to both false negatives and false positives from
-AppArmour (false denying access and falsely permitting access).
+> >
+> > > And add to the mix that I guess some UEFI firmware allow writing to
+> > > FAT in the pre-boot environment?
+> >
+> > Yes, UEFI API allows you to write to disk devices. And UEFI fileystem
+> > implementation can also supports writing to FAT fs.
+> >
+> > > I don't know if that's universally true. How do firmware handle a dir=
+ty bit being set?
+> >
+> > Bad implementation would ignore it. This is something which you should
+> > expect.
+>=20
+> Maybe a project for someone is to bake xfstests into an EFI program so
+> we can start testing these firmware FAT drivers and see what we learn
+> about how bad they are?
 
-I don't know how to setup actual AppArmour profile to do this, but I
-see this guide mentions "owner @{PROC}/[0-9]*" in a policy, so I
-assume it's possible:
-https://gitlab.com/apparmor/apparmor/wikis/Profiling_by_hand
+That is possible.
 
-Instead, I added the following check to common_perm_cond() (it's
-dirty, but you get the idea):
+Also UEFI allows you to write our own UEFI filesystem drivers which
+other UEFI programs and bootloaders can use.
 
-@@ -218,6 +218,15 @@ static int common_perm_cond(const char *op, const
-struct path *path, u32 mask)
-                                  d_backing_inode(path->dentry)->i_mode
-        };
-+       if (op == OP_GETATTR && mask == AA_MAY_GETATTR && cond.uid.val != 0) {
-+               char buf1[64], buf2[64];
-+               char *str = d_path(path, buf1, sizeof(buf1));
-+               sprintf(buf2, "/proc/%d", current->pid);
-+               if (!strcmp(str, buf2))
-+                       pr_err("common_perm_cond: path=%s pid=%d uid=%d\n",
-+                               str, current->pid, cond.uid.val);
-+       }
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
-Now when I run the program, I see how it fires every few seconds:
+--omvdqztbq2yrrdxr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-# ./a.out
-/proc/1548
-[  123.233107] common_perm_cond: path=/proc/1548 pid=1548 uid=1000
-[  126.142869] common_perm_cond: path=/proc/1548 pid=1548 uid=1000
-[  127.048353] common_perm_cond: path=/proc/1548 pid=1548 uid=1000
-[  128.181873] common_perm_cond: path=/proc/1548 pid=1548 uid=1000
-[  128.557104] common_perm_cond: path=/proc/1548 pid=1548 uid=1000
-[  144.690774] common_perm_cond: path=/proc/1548 pid=1548 uid=1000
+-----BEGIN PGP SIGNATURE-----
 
-Which means AppArmour acts based on the wrong UID. Obviously can lead
-to falsely denying access, but also falsely permitting access.
-Consider the following scenario.
-A process sets owner UID on a file so that a child process won't be
-able to access it, after that it starts the child process.
-common_perm_cond() in the child process should observe the new owner
-UID. However, if there a random other process simply doing stat() or
-something similar on the file, now the common_perm_cond() in the child
-can suddenly observe the old UID, which will be permitted by
-AppArmour. Boom!
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXbCK2QAKCRCL8Mk9A+RD
+UgL4AJ9yMg9Zpv6PQGxm4Ia4FAN5McTg6gCeJPSbGHFnQybehTU9U4V2ACzDCcM=
+=I9xU
+-----END PGP SIGNATURE-----
 
-I've tried to apply "proc: fix inode uid/gid writeback race":
-https://lore.kernel.org/lkml/20191020173010.GA14744@avx2/
-but it does _not_ help because it does not really resolve the
-non-atomic snapshot and writeback of UID.
+--omvdqztbq2yrrdxr--
