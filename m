@@ -2,218 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB525E2192
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 19:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 427FBE21B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 19:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbfJWRQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 13:16:17 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52365 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbfJWRQR (ORCPT
+        id S1729349AbfJWR0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 13:26:30 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:49077 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727079AbfJWR0a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:16:17 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r19so22150347wmh.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 10:16:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=07SMstHl+14rmM/XZWBVvBuxzelk0N79orxKwBrOQSo=;
-        b=qROdpzFkEI/Oe2zE5Da14ta0FTxtFoABo7oIL9eiv6xzu4a58/dv2Oiln5MKAsulYU
-         en2aS3/+IyRm1Xo/Ytv4Hw80uwBYYeoCsauPDjWXYrBNpN1XCbJwUpcD/lTvIpTgAk3/
-         7Z0JeL6Md9NrV4Ft521Q6VWGZ411e4bRc4s9lIUZ5SCBQPRcUmmppm4SdgWUMwYGnF7F
-         zQWYmXWSXpTzqJjbcIxCIkofWji6TulhtF/leL3sQNkLz4yJrP6exN/iEMFyThmRdVeG
-         98aeO1YdvsbD58hqUlL/T5yV/nuFd7K3z9g5UAsYanqKM8wwaL5cIU21wyuj4JvS88ce
-         p8wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=07SMstHl+14rmM/XZWBVvBuxzelk0N79orxKwBrOQSo=;
-        b=aeHbtfVD9IpLSQ9HazjIFLiQtCRR6ukRmvM+fp8UhkOUyPHv0KQb3KWPaj+GoFGyuG
-         RglvLi8ixKp2/8zOBvki+oAW6V+ffnpKEspIY4/TTmjb5RmktArRIv2Qk9vKel4Xxw+f
-         pibumYZgTsWcJ4D+/V1qUTQEP14duh7tNfUB39PmamKFhPPdoowH9Vy9b0JlFJM4YLT0
-         O+jQEyDPHeFTALpTM9ecYxrGjOJUSHLHfec+EOb0lrQ6aZen/YrDX8fLHPeU8DgMmHzL
-         dDq/G4H0dv2oOEOpZuMvBVnaHUt+R6XsFfUQ8uY8pP5bxo5t9l4s3Y2gSAfEtwyVuMLb
-         p82Q==
-X-Gm-Message-State: APjAAAWRDbeZ1dVK0kQ3NwxTxi77EsWRPs8u7FaGwwn4VjZFEV8OohoL
-        t2zH8ovOXT+tx/RY5u1+Lcc=
-X-Google-Smtp-Source: APXvYqxg69J/6kmsUd028CYwVVxlrCo98x+iJZAcM7bzpINwPcIA/mfAIOzfd59sihc4Qvqif3O/ig==
-X-Received: by 2002:a1c:2cc4:: with SMTP id s187mr925795wms.166.1571850973110;
-        Wed, 23 Oct 2019 10:16:13 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id s10sm27067728wrr.5.2019.10.23.10.16.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Oct 2019 10:16:12 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 19:16:11 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Chris Murphy <lists@colorremedies.com>
-Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Is rename(2) atomic on FAT?
-Message-ID: <20191023171611.qfcwfce2roe3k3qw@pali>
+        Wed, 23 Oct 2019 13:26:30 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 57E5D21C1C;
+        Wed, 23 Oct 2019 13:26:29 -0400 (EDT)
+Received: from imap37 ([10.202.2.87])
+  by compute3.internal (MEProxy); Wed, 23 Oct 2019 13:26:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=0knanq
+        ekLPQV87ERHw4iVDTDeinA++F4mZdOV96+DgA=; b=CfP4EN3+CmRvJCkL30vqVs
+        4hMcXYkOQgYJ9PwfitBwhaDGNw38gZ98nchNKXWi/05gNL8HbCLnuYh/G8uSRQsW
+        y9EaM+evY7Zo7uUp1X6H2S1G3v60rky0v5/tUzd8R98vcpWkRX9adFLPBEB/iJFY
+        U6oBmU/MoUlIj2oQRTaaxuK9AyoEWcJxiqb4OkfgW9y+olIo3wnKX3h6nbBQyZql
+        /bxWzCRhVBrYxkeL52sorR4UONy+1CrhKJMWm/RLLwOgSgXm8xG8Fw8kpHK1Mpl3
+        9XLUeiD6VS6nER4AWIVrbdXhW8DcWprUBUfVu9fbMMSwfNVfCz7n8kX6abZV9q+g
+        ==
+X-ME-Sender: <xms:RI2wXYYHBDEq7C5dNqrH64npMfKRZMHrMlA0KKcPaFDbyEq2VuXRfQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrkeelgdduudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdevohhl
+    ihhnucghrghlthgvrhhsfdcuoeifrghlthgvrhhssehvvghrsghumhdrohhrgheqnecuff
+    homhgrihhnpehgihhthhhusgdrtghomhenucfrrghrrghmpehmrghilhhfrhhomhepfigr
+    lhhtvghrshesvhgvrhgsuhhmrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:RI2wXXqNJkK9ejtmO3C-jfKUlGUA7yGtvZk7TwZbVoDjffU7JRyCLg>
+    <xmx:RI2wXd_FqMd7Oa0S7h2iVqbmLUkpTgtiqjiGwon3gk4AdIFnSpwyLg>
+    <xmx:RI2wXW-jNX-kPswBV6AQDOUzgnoLsvDyGIGPPNgMLVl5SrF_kNh6-g>
+    <xmx:RY2wXWdD3SoIOOZj5ql3ZiiHQTxSo0X_6LXLlkuxB2xnPuQya1fkmA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 8EB11684005F; Wed, 23 Oct 2019 13:26:28 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-470-gedfae93-fmstable-20191021v4
+Mime-Version: 1.0
+Message-Id: <f5328c94-1a98-4502-ab15-0984dafcb2de@www.fastmail.com>
+In-Reply-To: <CAJCQCtSPkcrNfP89SNJzkaVuAL3FehUQLL9ZhU0ouhNdcOu+Yw@mail.gmail.com>
 References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
  <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
  <20191022105413.pj6i3ydetnfgnkzh@pali>
  <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
- <20191023115001.vp4woh56k33b6hiq@pali>
- <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="omvdqztbq2yrrdxr"
-Content-Disposition: inline
-In-Reply-To: <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+ <521a5d27-dae9-44a3-bb90-43793bbde7d5@www.fastmail.com>
+ <CAJCQCtSPkcrNfP89SNJzkaVuAL3FehUQLL9ZhU0ouhNdcOu+Yw@mail.gmail.com>
+Date:   Wed, 23 Oct 2019 13:26:08 -0400
+From:   "Colin Walters" <walters@verbum.org>
+To:     "Chris Murphy" <lists@colorremedies.com>
+Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        "Richard Weinberger" <richard.weinberger@gmail.com>,
+        "Linux FS Devel" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Is rename(2) atomic on FAT?
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---omvdqztbq2yrrdxr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wednesday 23 October 2019 16:21:19 Chris Murphy wrote:
-> On Wed, Oct 23, 2019 at 1:50 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> wr=
-ote:
+On Wed, Oct 23, 2019, at 10:24 AM, Chris Murphy wrote:
+> On Wed, Oct 23, 2019 at 2:53 PM Colin Walters <walters@verbum.org> wrote:
 > >
-> > Hi!
 > >
-> > On Wednesday 23 October 2019 02:10:50 Chris Murphy wrote:
-> > > a. write bootloader file to a temp location
-> > > b. fsync
-> > > c. mv temp final
-> > > d. fsync
+> >
+> > On Tue, Oct 22, 2019, at 8:10 PM, Chris Murphy wrote:
 > > >
-> > > if the crash happens anywhere from before a. to just after c. the old
-> > > configuration file is still present and old kernel+initramfs are used.
-> > > No problem. If the crash happens well after c. probably the new one is
-> > > in place, for sure after d. it's in place, and the new kernel+
-> > > initramfs are used.
+> > > For multiple kernels,  it doesn't matter if a crash happens anywhere
+> > > from new kernel being written to FAT, through initramfs, because the
+> > > old bootloader configuration still points to old kernel + initramfs.
+> > > But in multiple kernel distros, the bootloader configuration needs
+> > > modification or a new drop in scriptlet to point to the new
+> > > kernel+initramfs pair. And that needs to be completely atomic: write
+> > > new files to a tmp location, that way a crash won't matter. The tricky
+> > > part is to write out the bootloader configuration change such that it
+> > > can be an atomic operation.
 > >
-> > I do not think that kernel guarantee for any filesystem that rename
-> > operation would be atomic on underlying disk storage.
-> >
-> > But somebody else should confirm it.
->=20
-> I don't know either or how to confirm it.
+> > Related: https://github.com/ostreedev/ostree/issues/1951
+> > There I'm proposing there to not try to fix this at the kernel/filesystem
+> > level (since we can't do much on FAT, and even on real filesystems we
+> > have the journaling-vs-bootloader issues), but instead create a protocol
+> > between things writing bootloader data and the bootloaders to help
+> > verify integrity.
+> 
+> The symlink method now being used, you describe as an OSTree-specific
+> invention. How is the new method you're proposing more generic such
+> that it's not also an OSTree-specific invention?
 
-Somebody who is watching linuxfs-devel and has deep knowledge in this
-area... could provide more information.
-
-> But, being ignorant about a
-> great many things, my instinct is literal fsync (flush buffer to disk)
-> should go away at the application level, and fsync should only be used
-> to indicate write order and what is part of a "commit" that is to be
-> atomic (completely succeeds or fails). And of course that can only be
-> guaranteed as far as the kernel is concerned, it doesn't guarantee
-> anything about how the hardware block device actually behaves (warts
-> bugs and all).
->=20
-> Anyway it made me think of this:
-> https://lwn.net/Articles/789600/
->=20
->=20
-> > So if kernel crashes in the middle of c or between c and d you need to
-> > repair filesystem externally prior trying to boot from such disk.
->=20
-> Nice in theory, but in practice the user simply reboots, and screams
-> WTF outloud if the system face plants. And people wonder why things
-> are still broken 20 years later with all the same kinds of problems
-> and prescriptions to boot off some rescue media instead of it being
-> fail safe by design. It's definitely not fail safe to have a kernel
-> update that could possibly result in an unbootable system. I can't
-> think of any ordinary server, cloud, desktop, mobile user who wants to
-> have to boot from rescue media to do a simple repair. Of course they
-> all just want to reboot and have the right thing always happen no
-> matter what, otherwise they get so nervous about doing updates that
-> they postpone them longer than they should.
-
-Still, in any time when you improperly unmount filesystem you should
-check for error, if you do not want to loose your data.
-
-And critical area should have some "recovery" mechanism to repair broken
-bootloader / kernel image.
-
-Anyway, chance that kernel crashes at step when replacing old kernel
-disk image by new one is low. So it should not be such big issue to need
-to do external recovery.
-
-> > > I'm not sure how to test the following: write kernel and initramfs to
-> > > final locations. And bootloader configuration is written to a temp
-> > > path. Then at the decision moment, rename it so that it goes from temp
-> > > path to final path doing at most 1 sector change. 1 512 byte sector
-> > > is a reasonable number to assume can be completely atomic for a
-> > > system. I have no idea if FAT can do such a 'mv' event with only one
-> > > sector change
-> >
-> > Theoretically it could be possible to implement it for FAT (with more
-> > restrictions), but I doubt that general purpose implementation of any
-> > filesystem in kernel can do such thing. So no practically.
->=20
-> Now I'm wondering what the UEFI spec says about this, and whether this
-> problem was anticipated, and how surprised I should be if it wasn't
-> anticipated.
-
-I know that UEFI spec has reference for FAT filesystems to MS
-specification (fagen103.doc). I do not know if it says anything about
-filesystem details, but I guess it specify requirements, that
-implementations must be compatible with FAT12, FAT16 and FAT32 according
-to specification.
-
-> > > GRUB has an option to blindly overwrite the 1024 byte contents of
-> > > grubenv (no file system modification), that's pretty close to atomic.
-> > > Most devices have physical sector bigger than 512 bytes. This write is
-> > > done in the pre-boot environment for saving state like boot counts.
-> >
-> > This depends on grub's FAT implementation. As said I would be very
-> > careful about such "atomic" writes. There are also some caches, include
-> > hardware on-disk, etc...
->=20
-> GRUB doesn't use any file system driver for writes, ever. It uses a
-> file system driver only to find out what two LBAs the "grubenv"
-> occupies, and then blindly overwrites those two sectors to save state.
-> There is no file system metadata update at all.
-
-Yes, you are right. Looking at the code and grub's filesystem drivers
-are read-only. No write support.
-
-> >
-> > > And add to the mix that I guess some UEFI firmware allow writing to
-> > > FAT in the pre-boot environment?
-> >
-> > Yes, UEFI API allows you to write to disk devices. And UEFI fileystem
-> > implementation can also supports writing to FAT fs.
-> >
-> > > I don't know if that's universally true. How do firmware handle a dir=
-ty bit being set?
-> >
-> > Bad implementation would ignore it. This is something which you should
-> > expect.
->=20
-> Maybe a project for someone is to bake xfstests into an EFI program so
-> we can start testing these firmware FAT drivers and see what we learn
-> about how bad they are?
-
-That is possible.
-
-Also UEFI allows you to write our own UEFI filesystem drivers which
-other UEFI programs and bootloaders can use.
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---omvdqztbq2yrrdxr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXbCK2QAKCRCL8Mk9A+RD
-UgL4AJ9yMg9Zpv6PQGxm4Ia4FAN5McTg6gCeJPSbGHFnQybehTU9U4V2ACzDCcM=
-=I9xU
------END PGP SIGNATURE-----
-
---omvdqztbq2yrrdxr--
+It'd take a usual slow process of gathering consensus among the two groups of projects writing data in /boot, and bootloaders.
