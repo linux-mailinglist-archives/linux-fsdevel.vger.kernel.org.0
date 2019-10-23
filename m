@@ -2,82 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1E4AE263E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 00:14:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3154E2655
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 00:22:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436705AbfJWWNo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 18:13:44 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39940 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2436687AbfJWWNo (ORCPT
+        id S2407858AbfJWWWr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 18:22:47 -0400
+Received: from mail-wr1-f52.google.com ([209.85.221.52]:38061 "EHLO
+        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407855AbfJWWWq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 18:13:44 -0400
-Received: from dread.disaster.area (pa49-180-40-48.pa.nsw.optusnet.com.au [49.180.40.48])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 00C6E43EE24;
-        Thu, 24 Oct 2019 09:13:34 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iNOsm-0006fc-Rc; Thu, 24 Oct 2019 09:13:32 +1100
-Date:   Thu, 24 Oct 2019 09:13:32 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Boaz Harrosh <boaz@plexistor.com>
-Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
-Message-ID: <20191023221332.GE2044@dread.disaster.area>
-References: <20191020155935.12297-1-ira.weiny@intel.com>
- <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
- <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
+        Wed, 23 Oct 2019 18:22:46 -0400
+Received: by mail-wr1-f52.google.com with SMTP id v9so12490596wrq.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 15:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MbP7FAnNW4lzJOOJLlPcQu6DfBQwczijiTVcJlcur9w=;
+        b=GrFesmFtRQ9v1wS5yK9jx94AIhodbF3J3vXr/WDXcTI/KJUjWo7CifIoep2bl1Anr5
+         k7QT+/uo20J/npir7PFAimVwuqX0bCuza0GoDk5NvUW68emxyqwC3v16ot94e/UR/myD
+         9hhHmTk3SRfn7N0OQNM+HXoCYIHN0Ns7AIGJAmfks5mItzIkeHqQ+Gurj7Xeeq7ERu7f
+         AVbwIdTqy/esUTcXEf3q5CS4cJWbJ4APnzQh/rYGlBuoMRo2JXs1Pb7BONbyvMS7CW+a
+         AGg8uH4tArv6b64EcTrR8aJjLkcqr2J2nLXY0N0hXLBZg8g2e51dEHtTMCbqZGiCNzdl
+         aGjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MbP7FAnNW4lzJOOJLlPcQu6DfBQwczijiTVcJlcur9w=;
+        b=IeU7ElbI37EaHin90BTad6oV/npzvTlWghinaSXMhQUL2Mrm93JRlvjNsuYBVMIntp
+         pdaepbflnp2J4kK2/55LxZu77XQ6Y9TPOy/smITT9BcSUU+kvO/eaH4SHmP7Z6lpTYjq
+         OXkgAjjDJQjoOaBV+mhUmZP71j7R+JuxBApqDNDvKThECVR6+VYdePHdcC2hGqzhVzKp
+         Md8lsK0e6wptcx7Ty8Dj7bWs87VdNhvJh5Nd1RleM2K/eQu2m1S2mgl/CMlLVI9b7yDb
+         bCiIsNTgp49AzFEbCkvX3+hyZ9SJX+qPgq1OlUO8L6Hv9ujG/vIlK2pJ1JzOilDrnmii
+         yPtw==
+X-Gm-Message-State: APjAAAVL5HVbh8Gk6rFEunRRhaKMPB7Ypxaj8j0T9QuDZQM1xx/W4H/a
+        4Mw85/pwp5puj6nWZ7RKrDC/TdEJunuJChUK2aI=
+X-Google-Smtp-Source: APXvYqy2TMA5z6TfKEzNGPOiLAdvtUNcN6VRxxuOq54GPi1Q2qhwaNv486qyL9AdceBWHoNQN7BPcHhFbfam3nTTjtI=
+X-Received: by 2002:a5d:498a:: with SMTP id r10mr843849wrq.129.1571869364521;
+ Wed, 23 Oct 2019 15:22:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=y881pOMu+B+mZdf5UrsJdA==:117 a=y881pOMu+B+mZdf5UrsJdA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=iEe7G1TxEPlCt2B0xWcA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
+ <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
+ <20191022105413.pj6i3ydetnfgnkzh@pali> <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
+ <20191023115001.vp4woh56k33b6hiq@pali> <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
+ <20191023171611.qfcwfce2roe3k3qw@pali> <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com>
+ <CAJCQCtTEN50uNmuSz9jW5Kk51TLmB2jfbNGxceNqnjBVvMD9ZA@mail.gmail.com>
+In-Reply-To: <CAJCQCtTEN50uNmuSz9jW5Kk51TLmB2jfbNGxceNqnjBVvMD9ZA@mail.gmail.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Thu, 24 Oct 2019 00:22:32 +0200
+Message-ID: <CAFLxGvwDraUwZOeWyGfVAOh+MxHgOF--hMu6P4J=P6KRspGsAA@mail.gmail.com>
+Subject: Re: Is rename(2) atomic on FAT?
+To:     Chris Murphy <lists@colorremedies.com>
+Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 04:09:50PM +0300, Boaz Harrosh wrote:
-> On 22/10/2019 14:21, Boaz Harrosh wrote:
-> > On 20/10/2019 18:59, ira.weiny@intel.com wrote:
-> Please explain the use case behind your model?
+On Wed, Oct 23, 2019 at 11:56 PM Chris Murphy <lists@colorremedies.com> wrote:
+> Any atomicity that depends on journal commits cannot be considered to
+> have atomicity in a boot context, because bootloaders don't do journal
+> replay. It's completely ignored.
 
-No application changes needed to control whether they use DAX or
-not. It allows the admin to control the application behaviour
-completely, so they can turn off DAX if necessary. Applications are
-unaware of constraints that may prevent DAX from being used, and so
-admins need a mechanism to prevent DAX aware application from
-actually using DAX if the capability is present.
+It depends on the bootloader. If you care about atomicity you need to handle
+the journal.
+There are also filesystems which *require* the journal to be handled.
+In that case you can still replay to memory.
 
-e.g. given how slow some PMEM devices are when it comes to writing
-data, especially under extremely high concurrency, DAX is not
-necessarily a performance win for every application. Admins need a
-guaranteed method of turning off DAX in these situations - apps may
-not provide such a knob, or even be aware of a thing called DAX...
+And yes, filesystem implementations in many bootloaders are in beyond
+shameful state.
 
-e.g. the data set being accessed by the application is mapped and
-modified by RDMA applications, so those files must not be accessed
-using DAX by any application because DAX+RDMA are currently
-incompatible. Hence you can have RDMA on pmem devices co-exist
-within the same filesystem as other applications using DAX to access
-the pmem...
+> If a journal is present, is it appropriate to consider it a separate
+> and optional part of the file system?
 
-Cheers,
+No. This is filesystem specific.
 
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+//richard
