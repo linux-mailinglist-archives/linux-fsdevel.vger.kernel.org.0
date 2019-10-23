@@ -2,97 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 038F1E2478
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 22:18:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC1FCE2525
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 23:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407484AbfJWUSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 16:18:44 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57973 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2406050AbfJWUSo (ORCPT
+        id S2407358AbfJWVV6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 17:21:58 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37811 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406354AbfJWVV6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 16:18:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571861923;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Pfelg5hi6R03mZ1vLzjmM92WqqQzhNWSQkGO0kPCCJs=;
-        b=B0eUpqt2EP8NXF/ly/xVUVebv1FWnyl2Vy6lx0e3fcL/+dUTZfhaatQi0zvCxonmQI15d5
-        cc1uO+oipRATEB9dODS34rRJBC2CuxLvyVnhKKi3BF0J3c3IaePmj+OpvDRMSP0Vdeundk
-        +VKtlWglqCHQvUOyNdzOcpaQwTD3oYQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-15-jlueH4OLP0adVaz8-ap9CA-1; Wed, 23 Oct 2019 16:18:41 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04489100551A;
-        Wed, 23 Oct 2019 20:18:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F5615DC18;
-        Wed, 23 Oct 2019 20:18:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 10/10] pipe: Check for ring full inside of the spinlock
- in pipe_write() [ver #2]
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 23 Oct 2019 21:18:36 +0100
-Message-ID: <157186191654.3995.6474781916564747415.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Wed, 23 Oct 2019 17:21:58 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e11so14932150wrv.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 14:21:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=uWXqyVdZG3xij4IRJ1MV+cjGYgJRv84wocdAvFPyUGw=;
+        b=btkMdlhcqiLL4QXkhs5YlI6F1v2oSHe4zZEcCDgSr1zsOnF35f4loM98ynwo9iQHwA
+         j30kC7oazzysTW4ie+aqnZvwYagYItN/V24x/0SjmQmf8nmiyJmzXOlvw6INR3nnd/lA
+         42VFBHun7lAe1o8HPaqZQitdWU5EBlH8kf78hQTHhn/YLjsBbYPOgZDf9eTP6BIfdcTa
+         f4ONIzsrvqFlaRqWtniHSNSbL9vfdwcitBtfl1BRlTm79ipqTjALXMxh4f2Ji24d6e9m
+         6ZCsFOJL2wzty8pJ65ESJzFVuujXGEuODNRLKriYZNGgliA4BipvFq3A7S1CPYHLeQ5V
+         NJxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=uWXqyVdZG3xij4IRJ1MV+cjGYgJRv84wocdAvFPyUGw=;
+        b=s9W2M5gwP2SHGUZvXEUD2kJdq8R+FRZwqfCQC6q4cxWqC9nAT8qLJBh9yX/jAzidYN
+         T56aLTty8I2NF5cJEy6aogcBPty1D2HRh7uc5bTtfNH9sHio7UqkxTwdT5AzFrB4cl0K
+         ZBxZDrEGzBE8m0Puw+LiZVaBhLVFy/knsqx/9/AtMd4L/1FuS7Mn6g+s459cp0QS80m9
+         Kmr+RZDT7B0jaTzVZloTc47wig0j6QvvI6fBPgzhBs1LKDets4gEZI7pTnSMkDaZ8GVs
+         GOd+YTyTtH1ohHwi71p5XwSsys5KQR6sUsRbjwUWcSI9oFAUdY6Qy4CINVi9DB46I8dg
+         O1DQ==
+X-Gm-Message-State: APjAAAX6r76N/P0wYl01t16NAW7JhSOVl/GSS4AkM4/4V6vklkTurMoR
+        e5M7GsPF1SZwRQXjqvV4PW3MQZdFt12oB+QBczU=
+X-Google-Smtp-Source: APXvYqwU6pJOfcoBg13Lj1J6h3Lbj5xdKyqv4RTt/8QXaqFogbCJ0dK/BHQhFmzQSi6mG0lkfC41KzjRhYzHxUHUpSc=
+X-Received: by 2002:a5d:498a:: with SMTP id r10mr673495wrq.129.1571865716507;
+ Wed, 23 Oct 2019 14:21:56 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: jlueH4OLP0adVaz8-ap9CA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
+References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
+ <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
+ <20191022105413.pj6i3ydetnfgnkzh@pali> <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
+ <20191023115001.vp4woh56k33b6hiq@pali> <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
+ <20191023171611.qfcwfce2roe3k3qw@pali>
+In-Reply-To: <20191023171611.qfcwfce2roe3k3qw@pali>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Wed, 23 Oct 2019 23:21:44 +0200
+Message-ID: <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com>
+Subject: Re: Is rename(2) atomic on FAT?
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc:     Chris Murphy <lists@colorremedies.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make pipe_write() check to see if the ring has become full between it
-taking the pipe mutex, checking the ring status and then taking the
-spinlock.
+On Wed, Oct 23, 2019 at 7:16 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> wrot=
+e:
+> On Wednesday 23 October 2019 16:21:19 Chris Murphy wrote:
+> > On Wed, Oct 23, 2019 at 1:50 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> =
+wrote:
+> > > I do not think that kernel guarantee for any filesystem that rename
+> > > operation would be atomic on underlying disk storage.
+> > >
+> > > But somebody else should confirm it.
+> >
+> > I don't know either or how to confirm it.
+>
+> Somebody who is watching linuxfs-devel and has deep knowledge in this
+> area... could provide more information.
 
-This can happen if a notification is written into the pipe as that happens
-without the pipe mutex.
+This is filesystem specific.
+For example on UBIFS we make sure that the rename operation is atomic.
+Changing multiple directory entries is one journal commit, so either it hap=
+pened
+completely or not at all.
+On JFFS2, on the other hand, rename can degrade to a hard link.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+I'd go so far and claim that any modern Linux filesystem guarantees
+that rename is atomic.
+But bugs still happen, crashmonkey found some interesting issues in
+this area[0].
 
- fs/pipe.c |    5 +++++
- 1 file changed, 5 insertions(+)
+[0] http://www.cs.utexas.edu/~vijay/papers/osdi18-crashmonkey.pdf
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 3df93990dd9d..6a982a88f658 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -462,6 +462,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- =09=09=09spin_lock_irq(&pipe->wait.lock);
-=20
- =09=09=09head =3D pipe->head;
-+=09=09=09if (pipe_full(head, pipe->tail, max_usage)) {
-+=09=09=09=09spin_unlock_irq(&pipe->wait.lock);
-+=09=09=09=09continue;
-+=09=09=09}
-+
- =09=09=09pipe_commit_write(pipe, head + 1);
-=20
- =09=09=09/* Always wake up, even if the copy fails. Otherwise
-
+--=20
+Thanks,
+//richard
