@@ -2,59 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8504E1D1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 15:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0692AE1DD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 16:13:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406041AbfJWNpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 09:45:03 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36001 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406040AbfJWNpC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:45:02 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w18so21628756wrt.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 06:45:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=dVgB2gHwyu9BrwAHrTVrhxxTLMnU+GjkCtVmW3QXNgU=;
-        b=m4voGBtWRrHQOwgTEkgkrroBLxgbXKgo6rl1Hja+5vTXEYvBM1Rx+J6YpJdkbQG5Zq
-         gBXeNbj65DgBz35yfLxwyeVwQpDULz7qJyyTyo4HhSF9dP0iGJU7m8NB+iUEcnkY2F/9
-         G6QNmu0za9/cszle8uKspeD+yMQlSpwQ1hEeh6YE22HBWelrZUWQbmE2mmp6lH3WJEbR
-         HMQdrwO908gtCTH/IQEbXG5Ahm0jBa9I2ewcdR3xEinMuGlQGq+KmK+rK6zLFc6bD2Cj
-         k6lts9KQIKLrLemdI5Fxy3XAhbFH2+ZXEuTqRpcr4xKJD3N42j71Ymcn7l/cUhaEy2H+
-         r+mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=dVgB2gHwyu9BrwAHrTVrhxxTLMnU+GjkCtVmW3QXNgU=;
-        b=MLS/rw3qStR4Z9/obXO3N/8HzVdi3pyU0/HaWvhM2yJ98HUhErIod0SciO0HkADBzZ
-         INF0y6YqbQbdwpzo/+JT62Y5Frwy5OtpgQO4vuXX5c6skwShOa5JmlmS5zz0SACC6i4Q
-         fsL1auqBaS35VJeTTdpOZDfGoOy2EbvDxRVQwP3N2R4aEex7KJtQpqb8IPKc1UH7Q+1a
-         X5L27VlLoiKsGYGOExXYEkbUs878UBKPsa2Ei2ecVpWyR/fx+hqEPL+4qiQinKXumQng
-         s6BHfBnGOqLK0Q5H+xOk3mvfYP+XUaDO+7LxjIlwwIZh8S4GbjPaFKPqJXSr7cJOtJgw
-         +H2g==
-X-Gm-Message-State: APjAAAWXytC7s25xtPEmjjTxORTTePSAPbhv8wMugOIvLIO2RdYdTwxA
-        hLxgFW42gYfjGR1g1b393IciOyTCg4KYnIHWoFM=
-X-Google-Smtp-Source: APXvYqybclclLycMoKLsQkHi+knnVjSzEcLThxsg3SIRkTIGjb1xZHjmbOPu6tjOjwfuJPQXo9ODxJYJ77WfZ6QRMLg=
-X-Received: by 2002:adf:f4c1:: with SMTP id h1mr8632944wrp.31.1571838299815;
- Wed, 23 Oct 2019 06:44:59 -0700 (PDT)
+        id S2406328AbfJWONU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 10:13:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57846 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732393AbfJWONT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Oct 2019 10:13:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 629A1B2AA;
+        Wed, 23 Oct 2019 14:13:16 +0000 (UTC)
+Subject: Re: [PATCH v2 7/8] scsi: sr: workaround VMware ESXi cdrom emulation
+ bug
+To:     Michal Suchanek <msuchanek@suse.de>, linux-scsi@vger.kernel.org
+Cc:     Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <cover.1571834862.git.msuchanek@suse.de>
+ <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
+From:   Hannes Reinecke <hare@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+ azzYF4VRJsdl+d0MCaSy8mUh
+Message-ID: <08f1e291-0196-2402-1947-c0cdaaf534da@suse.de>
+Date:   Wed, 23 Oct 2019 16:13:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Received: by 2002:a5d:400a:0:0:0:0:0 with HTTP; Wed, 23 Oct 2019 06:44:59
- -0700 (PDT)
-Reply-To: mrs.lisarobinson746@gmail.com
-From:   "Mrs. Lisa" <helpdesk.eit.ac.nz@gmail.com>
-Date:   Wed, 23 Oct 2019 06:44:59 -0700
-Message-ID: <CAK7Er8YCy+XzC8MugRKJOm2ScM67SwnMAqV2AkBOmy8bPoR09A@mail.gmail.com>
-Subject: Mrs. Lisa Charity Donation
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 10/23/19 2:52 PM, Michal Suchanek wrote:
+> The WMware ESXi cdrom identifies itself as:
+> sr 0:0:0:0: [sr0] scsi3-mmc drive: vendor: "NECVMWarVMware SATA CD001.00"
+> model: "VMware SATA CD001.00"
+> with the following get_capabilities print in sr.c:
+>         sr_printk(KERN_INFO, cd,
+>                   "scsi3-mmc drive: vendor: \"%s\" model: \"%s\"\n",
+>                   cd->device->vendor, cd->device->model);
+> 
+> So the model looks like reliable identification while vendor does not.
+> 
+> The drive claims to have a tray and claims to be able to close it.
+> However, the UI has no notion of a tray - when medium is ejected it is
+> dropped in the floor and the user must select a medium again before the
+> drive can be re-loaded.  On the kernel side the tray_move call to close
+> the tray succeeds but the drive state does not change as a result of the
+> call.
+> 
+> The drive does not in fact emulate the tray state. There are two ways to
+> get the medium state. One is the SCSI status:
+> 
+> Physical drive:
+> 
+> Fixed format, current; Sense key: Not Ready
+> Additional sense: Medium not present - tray open
+> Raw sense data (in hex):
+>         70 00 02 00 00 00 00 0a  00 00 00 00 3a 02 00 00
+>         00 00
+> 
+> Fixed format, current; Sense key: Not Ready
+> Additional sense: Medium not present - tray closed
+>  Raw sense data (in hex):
+>         70 00 02 00 00 00 00 0a  00 00 00 00 3a 01 00 00
+>         00 00
+> 
+> VMware ESXi:
+> 
+> Fixed format, current; Sense key: Not Ready
+> Additional sense: Medium not present
+>   Info fld=0x0 [0]
+>  Raw sense data (in hex):
+>         f0 00 02 00 00 00 00 0a  00 00 00 00 3a 00 00 00
+>         00 00
+> 
+> So the tray state is not reported here. Other is medium status which the
+> kernel prefers if available. Adding a print here gives:
+> 
+> cdrom: get_media_event success: code = 0, door_open = 1, medium_present = 0
+> 
+> door_open is interpreted as open tray. This is fine so long as tray_move
+> would close the tray when requested or report an error which never
+> happens on VMware ESXi servers (5.5 and 6.5 tested).
+> 
+> This is a popular virtualization platform so a workaround is worthwhile.
+> 
+> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> ---
+>  drivers/scsi/sr.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+> index 4664fdf75c0f..8090c5bdec09 100644
+> --- a/drivers/scsi/sr.c
+> +++ b/drivers/scsi/sr.c
+> @@ -867,6 +867,7 @@ static void get_capabilities(struct scsi_cd *cd)
+>  	unsigned int ms_len = 128;
+>  	int rc, n;
+>  
+> +	static const char *model_vmware = "VMware";
+>  	static const char *loadmech[] =
+>  	{
+>  		"caddy",
+> @@ -922,6 +923,11 @@ static void get_capabilities(struct scsi_cd *cd)
+>  		  buffer[n + 4] & 0x20 ? "xa/form2 " : "",	/* can read xa/from2 */
+>  		  buffer[n + 5] & 0x01 ? "cdda " : "", /* can read audio data */
+>  		  loadmech[buffer[n + 6] >> 5]);
+> +	if (!strncmp(cd->device->model, model_vmware, strlen(model_vmware))) {
+> +		buffer[n + 6] &= ~(0xff << 5);
+> +		sr_printk(KERN_INFO, cd,
+> +			  "VMware ESXi bug workaround: tray -> caddy\n");
+> +	}
+>  	if ((buffer[n + 6] >> 5) == 0)
+>  		/* caddy drives can't close tray... */
+>  		cd->cdi.mask |= CDC_CLOSE_TRAY;
+> 
+This looks something which should be handled via a blacklist flag, not
+some inline hack which everyone forgets about it...
+
+Cheers,
+
+Hannes
 -- 
-I am Lisa Robinson, you have a donation of $1,200,000.00 USD. Contact
-me now for more information.
+Dr. Hannes Reinecke		      Teamlead Storage & Networking
+hare@suse.de			                  +49 911 74053 688
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 247165 (AG München), GF: Felix Imendörffer
