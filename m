@@ -2,85 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F02FE1B69
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 14:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F34DE1B7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 14:57:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391961AbfJWMxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 08:53:44 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:40249 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390962AbfJWMxo (ORCPT
+        id S2390347AbfJWM5d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 08:57:33 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54963 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2390108AbfJWM5d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:53:44 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id C52EF20D84;
-        Wed, 23 Oct 2019 08:53:42 -0400 (EDT)
-Received: from imap37 ([10.202.2.87])
-  by compute3.internal (MEProxy); Wed, 23 Oct 2019 08:53:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=EY3TAf
-        ovGNEqGb0Fcc3g3/Pe2TDNMH3pMna4aigfHZE=; b=icYPPZTuPSobGVgBBfyo6P
-        RypAxdIjfiIzRkkbFH53hafZteUbD0iUyDs4BRXnfil6k9wIqq1WUYpNDL26i+Jc
-        q7rrwH2JfvWaNv9zR+k9r5Yzt012gspYRX/L2WTgzyfHxE0KOsHAAeVsfg0LFYyA
-        hwL870e3/WZFI77pf5TA0xcD6KlAYbmi2BDdZZBr5yPcV5qcbwulsYBEiJWOzrWN
-        vbU8TGglNIgTj3Akhkn33W488O3Vi/6outSs3U5VbzNnVPIX2Ge2SxjrBsTfoDtM
-        SWwAOVFsVq46N8HxfXkaCkXNNUjnnwf9e3oLfXb4BTMINbDa7L2neudt9E1DBWZw
-        ==
-X-ME-Sender: <xms:Vk2wXVtHuAK_AAAqWJI_mhGbA1DCXgejVD5ztHCprcPSkIgxy6FUFw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrkeelgdehjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedfveholhhi
-    nhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenucffoh
-    hmrghinhepghhithhhuhgsrdgtohhmnecurfgrrhgrmhepmhgrihhlfhhrohhmpeifrghl
-    thgvrhhssehvvghrsghumhdrohhrghenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:Vk2wXaSOpyeCBSKQibqy2QFgSwXZPff2Ztq_i7ZhhJnq11PWKkJUVQ>
-    <xmx:Vk2wXUJNAOxw2gETM8y7epT1mb1UJi9Wz_wypgBdkoy4XLpUajxkZw>
-    <xmx:Vk2wXVtuEGnj0KhUIbJPRAo_I-pybN_N_JAwEiADBWrIqtGszwa6ww>
-    <xmx:Vk2wXfF1QTNBK5HdyqgVYHJswb7Cd-TrqvIQFwUclZjaCiBlh16HPA>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 6256D684005F; Wed, 23 Oct 2019 08:53:42 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-470-gedfae93-fmstable-20191021v4
-Mime-Version: 1.0
-Message-Id: <521a5d27-dae9-44a3-bb90-43793bbde7d5@www.fastmail.com>
-In-Reply-To: <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
-References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
- <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
- <20191022105413.pj6i3ydetnfgnkzh@pali>
- <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
-Date:   Wed, 23 Oct 2019 08:53:22 -0400
-From:   "Colin Walters" <walters@verbum.org>
-To:     "Chris Murphy" <lists@colorremedies.com>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     "Richard Weinberger" <richard.weinberger@gmail.com>,
-        "Linux FS Devel" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Is rename(2) atomic on FAT?
-Content-Type: text/plain
+        Wed, 23 Oct 2019 08:57:33 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9NCv1VA016128
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Oct 2019 08:57:02 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 3FF4B420456; Wed, 23 Oct 2019 08:57:01 -0400 (EDT)
+Date:   Wed, 23 Oct 2019 08:57:01 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-fscrypt@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 1/3] fscrypt: add support for inline-encryption-optimized
+ policies
+Message-ID: <20191023125701.GA2460@mit.edu>
+References: <20191021230355.23136-1-ebiggers@kernel.org>
+ <20191021230355.23136-2-ebiggers@kernel.org>
+ <20191022052712.GA2083@dread.disaster.area>
+ <20191022060004.GA333751@sol.localdomain>
+ <20191022133001.GA23268@mit.edu>
+ <20191023092718.GA23274@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191023092718.GA23274@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Oct 23, 2019 at 02:27:18AM -0700, Christoph Hellwig wrote:
+> On Tue, Oct 22, 2019 at 09:30:01AM -0400, Theodore Y. Ts'o wrote:
+> > If and when we actually get inline crypto support for server-class
+> > systems, hopefully they will support 128-bit DUN's, and/or they will
+> > have sufficiently fast key load times such that we can use per-file
+> > keying.
+> 
+> NVMe is working on a key per I/O feature.  So at very least the naming
+> of this option should be "crappy_underwhelming_embedded_inline_crypto"
 
+If and when the vaporware shows up in real hardware, and assuming that
+fscrypt is useful for this hardware, we can name it
+"super_duper_fancy_inline_crypto".  :-)
 
-On Tue, Oct 22, 2019, at 8:10 PM, Chris Murphy wrote:
->
-> For multiple kernels,  it doesn't matter if a crash happens anywhere
-> from new kernel being written to FAT, through initramfs, because the
-> old bootloader configuration still points to old kernel + initramfs.
-> But in multiple kernel distros, the bootloader configuration needs
-> modification or a new drop in scriptlet to point to the new
-> kernel+initramfs pair. And that needs to be completely atomic: write
-> new files to a tmp location, that way a crash won't matter. The tricky
-> part is to write out the bootloader configuration change such that it
-> can be an atomic operation.
+Remember that fscrypt only encrypts the data and the file name.  It
+doesn't encrypt the metadata.  It has very specific use cases for
+Android and ChromeOS where you have multiple users that need to use
+different keys, and in the case of ChromeOS, we want to be able to
+efficiently use the space so that while user A is logged in, we can
+delete files in user B's cache directory without user B's keys being
+present.  (This is why we can't use fixed per-user partitions with
+dm-crypt; that solution was considered and rejected before we started
+work on fscrypt.)
 
-Related: https://github.com/ostreedev/ostree/issues/1951
-There I'm proposing there to not try to fix this at the kernel/filesystem
-level (since we can't do much on FAT, and even on real filesystems we
-have the journaling-vs-bootloader issues), but instead create a protocol
-between things writing bootloader data and the bootloaders to help
-verify integrity.
+If you aren't working under tight space and cost constraints, it's
+actually better to encrypt the whole partition, so that all of the
+metadata can be protected.  fscrypt is deployed in millions and
+millions of devices, and is solving real world problems.  However, it
+never claimed to be the only way to address encryption in the storage
+stack --- and it's not at all clear fscrypt is the way that makes the
+most amount of sense for NVMe devices.  So let's cross that bridge
+when we get to it.
+
+Cheers,
+
+	       	   	      	       	      - Ted
