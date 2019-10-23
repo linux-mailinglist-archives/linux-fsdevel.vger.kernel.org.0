@@ -2,86 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E398E1E26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 16:29:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F08E1E36
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 16:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390007AbfJWO27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 10:28:59 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:38191 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389521AbfJWO27 (ORCPT
+        id S2392196AbfJWObT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 10:31:19 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:38919 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389521AbfJWObT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 10:28:59 -0400
-Received: from mail-qk1-f176.google.com ([209.85.222.176]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MxmBi-1i5ENr47vK-00zICK; Wed, 23 Oct 2019 16:28:58 +0200
-Received: by mail-qk1-f176.google.com with SMTP id u22so19897705qkk.11;
-        Wed, 23 Oct 2019 07:28:57 -0700 (PDT)
-X-Gm-Message-State: APjAAAUpebkaTULw/A7WTcaFgoAZ369yJFKgyFCJMXiAR8nznL2z2oj3
-        AkWoDtS1hSVU4qoBZnw+PQaVaSPL4diTKGaETb8=
-X-Google-Smtp-Source: APXvYqzP2LPP0EVOvQLFv73W1u8YOBkdDSztlR+gJoeDvIZmUcdwNseA92hgtQnhiy+B/pAU/u5EvOBy39PrXQdnbVo=
-X-Received: by 2002:a37:a50f:: with SMTP id o15mr7389101qke.3.1571840936788;
- Wed, 23 Oct 2019 07:28:56 -0700 (PDT)
+        Wed, 23 Oct 2019 10:31:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571841078;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NEpRmfIMlgMtQvCpBiyWHq35i58wkyDE9q0HwuYCkJw=;
+        b=DVIgRYPgETaky0cdhsOeRnas2Spp/oTSN75tt8aVa1bXJykpWFcY3qJkIlWhdkbe/s+27O
+        TJWN9MS0v2ojkX0dRR2kuercxzxRWLIRBnxU+JrQz2GEUaqrnwMNbuNW8p6hAv1jMddNr4
+        CTt37xMJowpI6/4FeqaoxJaDsxdF+wk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-289-9MNdKUhlPuOEt5UBzneH8A-1; Wed, 23 Oct 2019 10:31:15 -0400
+X-MC-Unique: 9MNdKUhlPuOEt5UBzneH8A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE8EC800D49;
+        Wed, 23 Oct 2019 14:31:13 +0000 (UTC)
+Received: from localhost (unknown [10.36.118.70])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 73E735DD61;
+        Wed, 23 Oct 2019 14:31:13 +0000 (UTC)
+Date:   Wed, 23 Oct 2019 15:31:12 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     vgoyal@redhat.com, miklos@szeredi.hu, mszeredi@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] virtiofs: remove unused variable 'fc'
+Message-ID: <20191023143112.GF9574@stefanha-x1.localdomain>
+References: <20191023062130.23068-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-References: <20191009190853.245077-1-arnd@arndb.de> <20191009191044.308087-10-arnd@arndb.de>
- <d1022cda6bd6ce73e9875644a5a2c65e4d554f37.camel@codethink.co.uk>
- <CAK8P3a0BYkPTSnQUmde2k+HVcg7XNihzWTEzrCD4d8G8ecO9-w@mail.gmail.com>
- <20191022043051.GA20354@ZenIV.linux.org.uk> <CAK8P3a3yutJU83AfxKXTFuCVQwsX50KYsDgbGbHeJJ0JoLbejg@mail.gmail.com>
- <20191023102937.GK3125@piout.net>
-In-Reply-To: <20191023102937.GK3125@piout.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Oct 2019 16:28:40 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2+wEH5mtq_vF6fTSkmCfBeKHOvNmjbvViiHFWxUAjV_g@mail.gmail.com>
-Message-ID: <CAK8P3a2+wEH5mtq_vF6fTSkmCfBeKHOvNmjbvViiHFWxUAjV_g@mail.gmail.com>
-Subject: Re: [Y2038] [PATCH v6 10/43] compat_ioctl: move rtc handling into rtc-dev.c
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:j3q3khfz/zd9/Zc1ZRm1iLAWqMfYAPWxVT1x0kkvwFdE5ei6Jfw
- aJaarYdEiqkKpe1TTRe3WHqtllQb2u/IXAeiqBEwzO+XBA5eEL3jOxpmfeH0Kws0yNCb/nj
- RMkCrNectmQR7z1T/y06NmYB4kVLFTZ7VcZlX3kZOI/zzieqlwv4K56qnW0VIxqllaNtChp
- pBdpaKA4mxA5S7la7CzIw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:PiV8fkotnMs=:Wfp8ZqLnz6P85zFhCBlG+x
- qHpx6LvC4+hC+v3wqoQg+oz1+iqg2+dQlEB/xh+gPv1kVd21UbwPxCiTc/PxG2K0lcCfJJp52
- 2xIGeZW/7PAnfj24Sf1WJ9zIuSMVckpWfiVvELHPi0NVkvRTU1LBVxhxmyU+azoJv85Xdzt29
- Tq6THYNdrmpkY9V9Bwsr6AOD7SblYjfR+BjLqNVNIieNMb0VowQcNKhfsGPkyjnMvl1gkOV08
- bacWjmCXH7KkzCSRea/Z/ANG7PRqup8oCipTC8A04YKOzpxVYxWYs0dHMxGTfh3KwgxQ7ZXlh
- Rv7lTvcrm5LPGOen8olDOLxUviSHMUt/wfecVy+0MFi7xvv0P0na3dpzt0+E1YmzKonL+hTRd
- oUUJIG3g2bRHKN34Lm2ggWYoeBUXpjuq4xvO6gqW81g02vMpY2l1TptxszXnasUKKE0VQORvK
- B99m0+iEZb9gCXwtWhQKAnuGSxAVJ0Y53SpNN9a9tOR50lEsYeMoy5ONDcpE+cCmF8KEg9qc7
- IrLYGY2GloyYgpR7u7ilwmTomAQpCxFd4GsvHcENdwgGNGdxJg/ZUUTMNhl+cHDiWEtPPRhz/
- PzdyIV/n3GCpurysTvwE1GCRENF1h6wJoLyb9oil5WjCQChurfyDE/5lNMzzcrNYzZz5l6zsM
- 9jQOHVI0udONF8/rDyz8vgmr89pdVd/LSdIQf0eyc39HVjbIOYnX5AuLSQo1lu82YNdckDM+6
- Gs1EhWwKiJBtgXL/+89+Yis5J/sEZcrgkFtOSR7nDT9+13zcGuD9+yawnyOLr3M/8M7EjdaOu
- 5wypEExuQJR9wQ/ymNmk0ehMIRb8T4KD9gtafFkoa6f1OW9xDUq+RvJJGPfKcObnp+nZb8T7+
- 0i04fbpzDneLGNvBheuw==
+In-Reply-To: <20191023062130.23068-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Mimecast-Spam-Score: 0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3oCie2+XPXTnK5a5"
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 12:29 PM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> On 22/10/2019 14:14:21+0200, Arnd Bergmann wrote:
-> > On Tue, Oct 22, 2019 at 6:30 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > I don't see any chance that this code is revived. If anyone wanted to
-> > make it work, the right approach would be to use the rtc framework
-> > and rewrite the code first.
-> >
-> > I could send a patch to remove the dead code though if that helps.
-> >
->
-> Please do.
+--3oCie2+XPXTnK5a5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, done. Speaking of removing rtc drivers, should we just kill off
-drivers/char/rtc.c and drivers/char/efirtc.c as well? I don't remember
-why we left them in the tree, but I'm fairly sure they are not actually
-needed.
+On Wed, Oct 23, 2019 at 02:21:30PM +0800, YueHaibing wrote:
+> fs/fuse/virtio_fs.c:983:20: warning:
+>  variable fc set but not used [-Wunused-but-set-variable]
+>=20
+> It is not used since commit 7ee1e2e631db ("virtiofs:
+> No need to check fpq->connected state")
+>=20
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  fs/fuse/virtio_fs.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-      Arnd
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--3oCie2+XPXTnK5a5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl2wZDAACgkQnKSrs4Gr
+c8ia7Af+MQeFLTLG0CFTE1qP7CUS9Bb7d/kyzFLEOhRKzGeQ/X5WF82X/8onbeeS
+vWxhG9VDk5YfFMxJs/kCUsOdHyqzSqfU1neF08K+wgu2RsL9LwSvppC+RM68SbUV
++2fh6BaNdKNNtfxRi8Dbw+2xqKLnqlLyhBVCqc7jIAshVMwTeV8GiDAv5WMNWEhQ
+8tXKiepCviHSBWHHE0hFQaczmLQQobtgxvJOE6Ooy0Cvd8daN5f3PiCIqpUfRPTx
+4ojBtmkZN3Cdc9qHM9cQmqZ/AwdtTuCeTuqd5E096I4Zqm0oq+ZiCBmlt/BSKK+t
+sPTRv0L6bdGD6UztBumMJcHOyGplaA==
+=Ygrg
+-----END PGP SIGNATURE-----
+
+--3oCie2+XPXTnK5a5--
+
