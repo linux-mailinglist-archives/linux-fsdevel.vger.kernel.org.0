@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67811E1B5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 14:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D99FE1B5B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 14:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391934AbfJWMxb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 08:53:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49414 "EHLO mx1.suse.de"
+        id S2391920AbfJWMx0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 08:53:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49442 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391863AbfJWMxP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:53:15 -0400
+        id S2391046AbfJWMxQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Oct 2019 08:53:16 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3ECD4B67C;
-        Wed, 23 Oct 2019 12:53:13 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 0BE11B67D;
+        Wed, 23 Oct 2019 12:53:14 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
 To:     linux-scsi@vger.kernel.org
 Cc:     Michal Suchanek <msuchanek@suse.de>,
@@ -32,9 +32,9 @@ Cc:     Michal Suchanek <msuchanek@suse.de>,
         Bart Van Assche <bvanassche@acm.org>,
         Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 6/8] bdev: add open_finish.
-Date:   Wed, 23 Oct 2019 14:52:45 +0200
-Message-Id: <ea2652294651cbc8549736728c650d16d2fe1808.1571834862.git.msuchanek@suse.de>
+Subject: [PATCH v2 7/8] scsi: sr: workaround VMware ESXi cdrom emulation bug
+Date:   Wed, 23 Oct 2019 14:52:46 +0200
+Message-Id: <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1571834862.git.msuchanek@suse.de>
 References: <cover.1571834862.git.msuchanek@suse.de>
@@ -45,132 +45,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Opening a block device may require a long operation such as waiting for
-the cdrom tray to close. Performing this operation with locks held locks
-out other attempts to open the device. These processes waiting to open
-the device are not killable.
+The WMware ESXi cdrom identifies itself as:
+sr 0:0:0:0: [sr0] scsi3-mmc drive: vendor: "NECVMWarVMware SATA CD001.00"
+model: "VMware SATA CD001.00"
+with the following get_capabilities print in sr.c:
+        sr_printk(KERN_INFO, cd,
+                  "scsi3-mmc drive: vendor: \"%s\" model: \"%s\"\n",
+                  cd->device->vendor, cd->device->model);
 
-To avoid this issue and still be able to perform time-consuming checks
-at open() time the block device driver can provide open_finish(). If it
-does opening the device proceeds even when an error is returned from
-open(), bd_mutex is released and open_finish() is called. If
-open_finish() succeeds the device is now open, if it fails release() is
-called.
+So the model looks like reliable identification while vendor does not.
 
-When -ERESTARTSYS is returned from open() blkdev_get may loop without
-calling open_finish(). On -ERESTARTSYS open_finish() is not called.
+The drive claims to have a tray and claims to be able to close it.
+However, the UI has no notion of a tray - when medium is ejected it is
+dropped in the floor and the user must select a medium again before the
+drive can be re-loaded.  On the kernel side the tray_move call to close
+the tray succeeds but the drive state does not change as a result of the
+call.
 
-Move a ret = 0 assignment up in the if/else branching to avoid returning
--ENXIO. Previously the return value was ignored on the unhandled branch.
+The drive does not in fact emulate the tray state. There are two ways to
+get the medium state. One is the SCSI status:
+
+Physical drive:
+
+Fixed format, current; Sense key: Not Ready
+Additional sense: Medium not present - tray open
+Raw sense data (in hex):
+        70 00 02 00 00 00 00 0a  00 00 00 00 3a 02 00 00
+        00 00
+
+Fixed format, current; Sense key: Not Ready
+Additional sense: Medium not present - tray closed
+ Raw sense data (in hex):
+        70 00 02 00 00 00 00 0a  00 00 00 00 3a 01 00 00
+        00 00
+
+VMware ESXi:
+
+Fixed format, current; Sense key: Not Ready
+Additional sense: Medium not present
+  Info fld=0x0 [0]
+ Raw sense data (in hex):
+        f0 00 02 00 00 00 00 0a  00 00 00 00 3a 00 00 00
+        00 00
+
+So the tray state is not reported here. Other is medium status which the
+kernel prefers if available. Adding a print here gives:
+
+cdrom: get_media_event success: code = 0, door_open = 1, medium_present = 0
+
+door_open is interpreted as open tray. This is fine so long as tray_move
+would close the tray when requested or report an error which never
+happens on VMware ESXi servers (5.5 and 6.5 tested).
+
+This is a popular virtualization platform so a workaround is worthwhile.
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- Documentation/filesystems/locking.rst |  2 ++
- fs/block_dev.c                        | 21 +++++++++++++++++----
- include/linux/blkdev.h                |  1 +
- 3 files changed, 20 insertions(+), 4 deletions(-)
+ drivers/scsi/sr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index fc3a0704553c..2471ced5a8cf 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -456,6 +456,7 @@ block_device_operations
- prototypes::
+diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+index 4664fdf75c0f..8090c5bdec09 100644
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -867,6 +867,7 @@ static void get_capabilities(struct scsi_cd *cd)
+ 	unsigned int ms_len = 128;
+ 	int rc, n;
  
- 	int (*open) (struct block_device *, fmode_t);
-+	int (*open_finish) (struct block_device *, fmode_t, int);
- 	int (*release) (struct gendisk *, fmode_t);
- 	int (*ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
- 	int (*compat_ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
-@@ -473,6 +474,7 @@ locking rules:
- ops			bd_mutex
- ======================= ===================
- open:			yes
-+open_finish:		no
- release:		yes
- ioctl:			no
- compat_ioctl:		no
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 9c073dbdc1b0..009b5dedb1f7 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1526,6 +1526,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	int partno;
- 	int perm = 0;
- 	bool first_open = false;
-+	bool need_finish = false;
- 
- 	if (mode & FMODE_READ)
- 		perm |= MAY_READ;
-@@ -1581,6 +1582,8 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 					put_disk_and_module(disk);
- 					goto restart;
- 				}
-+				if (bdev->bd_disk->fops->open_finish)
-+					need_finish = true;
- 			}
- 
- 			if (!ret) {
-@@ -1601,7 +1604,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 					invalidate_partitions(disk, bdev);
- 			}
- 
--			if (ret)
-+			if (ret && !need_finish)
- 				goto out_clear;
- 		} else {
- 			struct block_device *whole;
-@@ -1627,10 +1630,14 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 		if (bdev->bd_bdi == &noop_backing_dev_info)
- 			bdev->bd_bdi = bdi_get(disk->queue->backing_dev_info);
- 	} else {
-+		ret = 0;
- 		if (bdev->bd_contains == bdev) {
--			ret = 0;
--			if (bdev->bd_disk->fops->open)
-+			if (bdev->bd_disk->fops->open) {
- 				ret = bdev->bd_disk->fops->open(bdev, mode);
-+				if ((ret != -ERESTARTSYS) &&
-+				    bdev->bd_disk->fops->open_finish)
-+					need_finish = true;
-+			}
- 			/* the same as first opener case, read comment there */
- 			if (bdev->bd_invalidated) {
- 				if (!ret)
-@@ -1638,7 +1645,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 				else if (ret == -ENOMEDIUM)
- 					invalidate_partitions(bdev->bd_disk, bdev);
- 			}
--			if (ret)
-+			if (ret && !need_finish)
- 				goto out_unlock_bdev;
- 		}
- 	}
-@@ -1650,6 +1657,12 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	/* only one opener holds refs to the module and disk */
- 	if (!first_open)
- 		put_disk_and_module(disk);
-+	if (ret && need_finish)
-+		ret = bdev->bd_disk->fops->open_finish(bdev, mode, ret);
-+	if (ret) {
-+		__blkdev_put(bdev, mode, for_part);
-+		return ret;
++	static const char *model_vmware = "VMware";
+ 	static const char *loadmech[] =
+ 	{
+ 		"caddy",
+@@ -922,6 +923,11 @@ static void get_capabilities(struct scsi_cd *cd)
+ 		  buffer[n + 4] & 0x20 ? "xa/form2 " : "",	/* can read xa/from2 */
+ 		  buffer[n + 5] & 0x01 ? "cdda " : "", /* can read audio data */
+ 		  loadmech[buffer[n + 6] >> 5]);
++	if (!strncmp(cd->device->model, model_vmware, strlen(model_vmware))) {
++		buffer[n + 6] &= ~(0xff << 5);
++		sr_printk(KERN_INFO, cd,
++			  "VMware ESXi bug workaround: tray -> caddy\n");
 +	}
- 	return 0;
- 
-  out_clear:
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index f3ea78b0c91c..b67e93c6afb7 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1695,6 +1695,7 @@ static inline struct bio_vec *rq_integrity_vec(struct request *rq)
- 
- struct block_device_operations {
- 	int (*open) (struct block_device *, fmode_t);
-+	int (*open_finish)(struct block_device *bdev, fmode_t mode, int ret);
- 	void (*release) (struct gendisk *, fmode_t);
- 	int (*rw_page)(struct block_device *, sector_t, struct page *, unsigned int);
- 	int (*ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
+ 	if ((buffer[n + 6] >> 5) == 0)
+ 		/* caddy drives can't close tray... */
+ 		cd->cdi.mask |= CDC_CLOSE_TRAY;
 -- 
 2.23.0
 
