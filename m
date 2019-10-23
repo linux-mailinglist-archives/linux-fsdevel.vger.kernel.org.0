@@ -2,106 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47380E11A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 07:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6C57E11EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 08:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389573AbfJWF2u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 01:28:50 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:44880 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389547AbfJWF2t (ORCPT
+        id S1733273AbfJWGGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 02:06:37 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40983 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfJWGGh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 01:28:49 -0400
-Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x9N5Sljv020044
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 01:28:47 -0400
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x9N5SgYu018571
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 01:28:47 -0400
-Received: by mail-qk1-f199.google.com with SMTP id s14so19087856qkg.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Oct 2019 22:28:47 -0700 (PDT)
+        Wed, 23 Oct 2019 02:06:37 -0400
+Received: by mail-yw1-f67.google.com with SMTP id o195so2272218ywd.8;
+        Tue, 22 Oct 2019 23:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kv+6IoQR6bEB2iX/xqg9xXvx4UX3aidmtCoBvt739tg=;
+        b=LwkqCuhwjrZ+s2dT41pwHds7Laitwn8zRsM4BRLBieEW3LRdNfgO0pyGQhChE/9XZo
+         FFzsPqUrJX93YsVOu89BexM0esXwfeCBR1SpacmgZDQq6Ev1tw3TGGsHr/qpeP6u3eYW
+         vKUmaXm53lCNy4hshKSkjN6VrKUQVlR6jVd9OUc5i4kAQLycuVUnwPpR5kufnzEBDgOf
+         p/+VRrQ8KSo9t8yZBZbNsTnzzbwZZks3xLIi+NWVJqELZqZDJ3ymOB917eWMbygb/lAE
+         T86SHOTYC0+GePfAegXYIfHILkN/5jF1qNwM1FEdHkwW4DR/RQpF0YZF0Jx/WvVNUl06
+         GR2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=ISQDTJmGCoaQ4xeld4Mhg9Q600xoGHfVZT32mcJtg7w=;
-        b=Cs2HVsjwWLPfAFQaWkhydUr06jGbnxLG5xDmG14kdp9xcZhnn6ulzDFXb4Rpq6w4wd
-         d07rNPt/+WP7SzXy0MnbxHN5wpJUiRrYZDVxQKFKAVkM8C2mgKItv4cSDGGI56sab4z5
-         61ZXofuamuWF12O98iqMmJlDuLUIOXgQng7XdPJFQu2Jjj70UGx2uD0dv+9cFgLThzfD
-         Lcin0cdHzrh13cCXQ2v3yvcmyxI/94EW3BjiI1OSJ65YNnNUdmXFC97x3EJDPjmDETTM
-         VX0xFge+MsuP98L4xLFCKTUW+8Jx9NcvCRokbtlEpmLGEaFJWeKHq2FEvfhrBlTQ/zK7
-         gxaQ==
-X-Gm-Message-State: APjAAAXLhhGU4hfjoDOBhNxRFQFj1VACPlzaX7hmDE/WjMZLReNg1EEH
-        5OL7ZcP2cd20AIP670g0X87sy+DFazJYg2F2DkcBYTMlfpZXM4QJmpxpqbRQOLNgxdxMxtu4act
-        Tkrf7Ch5RJutnP7KoRGRs37BjY1+ChWn646q4
-X-Received: by 2002:ac8:4a03:: with SMTP id x3mr1713092qtq.117.1571808522466;
-        Tue, 22 Oct 2019 22:28:42 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqw5nRxuWdRuBTyicKO9kNgnNeEtVqZyh2Z4Ty5Wd3Rj/224bq/k+ZD4kmE2tsjBWrP+H4/Kvg==
-X-Received: by 2002:ac8:4a03:: with SMTP id x3mr1713074qtq.117.1571808522200;
-        Tue, 22 Oct 2019 22:28:42 -0700 (PDT)
-Received: from turing-police.lan ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id 14sm10397445qtb.54.2019.10.22.22.28.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 22:28:41 -0700 (PDT)
-From:   Valdis Kletnieks <valdis.kletnieks@vt.edu>
-X-Google-Original-From: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Valdis.Kletnieks@vt.edu
-Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] staging: exfat: Update TODO
-Date:   Wed, 23 Oct 2019 01:27:51 -0400
-Message-Id: <20191023052752.693689-9-Valdis.Kletnieks@vt.edu>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191023052752.693689-1-Valdis.Kletnieks@vt.edu>
-References: <20191023052752.693689-1-Valdis.Kletnieks@vt.edu>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kv+6IoQR6bEB2iX/xqg9xXvx4UX3aidmtCoBvt739tg=;
+        b=QysdAxntw5Fn0qaVOzEy8oM3y2BkyFyrvlD30j/aaYA2HofH7q23aX3ZsVgOJrTu7B
+         Rpj2Pck9RqVWy3Q6y1uoWtBheJdqz6CMm/oJI6PVqlwfB+kJ8gjc3prpams7HtxDsd/f
+         2G2jUlgVUeDUHPSvYr1gX9kCD/lVrkK363sw+bYUxSouUF6hPRl7v5jm+0a/Hnt59RxD
+         zFkMPCh2MMhl9fzhGT7BZIQ/LJZwg1tnBGB/lhmnic39TMAJARyuETqrr8WHKUZH5vEu
+         jtEkPW6myZuqLp/4IA2iI+MORwgNfsw5uQgrlpCfH+kC1FQpOsbumfIDIPGUEoJ6QpdD
+         Scpw==
+X-Gm-Message-State: APjAAAV+Z8wVz71QE8yjC3Mh0m++8oWyLm4i580VLH/LPRaM5DyoYAVz
+        soPPPecuvkp450bpFEWSi8OjWCKX1W5kvqtaR8w=
+X-Google-Smtp-Source: APXvYqyO/UpMuAPduTSsdjCSuogzNS7cxq3uHwOvGAm5Zm4mlxa1F5AFrdhhyVClN9rWcZjE2ekn4dtvmNntGOUnLP0=
+X-Received: by 2002:a81:4a02:: with SMTP id x2mr1537190ywa.31.1571810796157;
+ Tue, 22 Oct 2019 23:06:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1571164762.git.osandov@fb.com> <c7e8f93596fee7bb818dc0edf29f484036be1abb.1571164851.git.osandov@fb.com>
+ <CAOQ4uxh_pZSiMmD=46Mc3o0GE+svXuoC155P_9FGJXdsE4cweg@mail.gmail.com>
+ <20191021185356.GB81648@vader> <CAOQ4uxgm6MWwCDO5stUwOKKSq7Ot4-Sc96F1Evc6ra5qBE+-wA@mail.gmail.com>
+ <20191023044430.alow65tnodgnu5um@yavin.dot.cyphar.com>
+In-Reply-To: <20191023044430.alow65tnodgnu5um@yavin.dot.cyphar.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 23 Oct 2019 09:06:24 +0300
+Message-ID: <CAOQ4uxjyNZhyU9yEYkuMnD0o=sU1vJMOYJAzjV7FDjG45gaevg@mail.gmail.com>
+Subject: Re: [PATCH man-pages] Document encoded I/O
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Omar Sandoval <osandov@osandov.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Linux API <linux-api@vger.kernel.org>, kernel-team@fb.com,
+        Theodore Tso <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
----
- drivers/staging/exfat/TODO | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+> >
+> > No, I see why you choose to add the flag to open(2).
+> > I have no objection.
+> >
+> > I once had a crazy thought how to add new open flags
+> > in a non racy manner without adding a new syscall,
+> > but as you wrote, this is not relevant for O_ALLOW_ENCODED.
+> >
+> > Something like:
+> >
+> > /*
+> >  * Old kernels silently ignore unsupported open flags.
+> >  * New kernels that gets __O_CHECK_NEWFLAGS do
+> >  * the proper checking for unsupported flags AND set the
+> >  * flag __O_HAVE_NEWFLAGS.
+> >  */
+> > #define O_FLAG1 __O_CHECK_NEWFLAGS|__O_FLAG1
+> > #define O_HAVE_FLAG1 __O_HAVE_NEWFLAGS|__O_FLAG1
+> >
+> > fd = open(path, O_FLAG1);
+> > if (fd < 0)
+> >     return -errno;
+> > flags = fcntl(fd, F_GETFL, 0);
+> > if (flags < 0)
+> >     return flags;
+> > if ((flags & O_HAVE_FLAG1) != O_HAVE_FLAG1) {
+> >     close(fd);
+> >     return -EINVAL;
+> > }
+>
+> You don't need to add __O_HAVE_NEWFLAGS to do this -- this already works
+> today for userspace to check whether a flag works properly
+> (specifically, __O_FLAG1 will only be set if __O_FLAG1 is supported --
+> otherwise it gets cleared during build_open_flags).
 
-diff --git a/drivers/staging/exfat/TODO b/drivers/staging/exfat/TODO
-index b60e50b9cf4e..110c30834bd2 100644
---- a/drivers/staging/exfat/TODO
-+++ b/drivers/staging/exfat/TODO
-@@ -1,21 +1,17 @@
- exfat_core.c - ffsReadFile - the goto err_out seem to leak a brelse().
- same for ffsWriteFile.
- 
--exfat_core.c - fs_sync(sb,0) all over the place looks fishy as hell.
--There's only one place that calls it with a non-zero argument.
--Randomly removing fs_sync() calls is *not* the right answer, especially
--if the removal then leaves a call to fs_set_vol_flags(VOL_CLEAN), as that
--says the file system is clean and synced when we *know* it isn't.
--The proper fix here is to go through and actually analyze how DELAYED_SYNC
--should work, and any time we're setting VOL_CLEAN, ensure the file system
--has in fact been synced to disk.  In other words, changing the 'false' to
--'true' is probably more correct. Also, it's likely that the one current
--place where it actually does an bdev_sync isn't sufficient in the DELAYED_SYNC
--case.
--
- ffsTruncateFile -  if (old_size <= new_size) {
- That doesn't look right. How did it ever work? Are they relying on lazy
- block allocation when actual writes happen? If nothing else, it never
- does the 'fid->size = new_size' and do the inode update....
- 
- ffsSetAttr() is just dangling in the breeze, not wired up at all...
-+
-+exfat_core.c - The original code called fs_sync(sb,0) all over the place,
-+with only one place that calls it with a non-zero argument. That's now been
-+reversed, but a proper audit of sync and flush-to-disk is certainly needed.
-+
-+buf_sync(), sync_alloc_bitmap(), and FAT_sync() aren't actually used
-+anyplace.  This is probably related to the borked original implementatin
-+of fs_sync() that didn't actually do anything either.
--- 
-2.23.0
+That's a behavior of quite recent kernels since
+629e014bb834 fs: completely ignore unknown open flags
+and maybe some stable kernels. Real old kernels don't have that luxury.
 
+>
+> The problem with adding new flags is that an *old* program running on a
+> *new* kernel could pass a garbage flag (__O_CHECK_NEWFLAGS for instance)
+> that causes an error only on the new kernel.
+>
+
+That's a theoretic problem. Same as O_PATH|O_TMPFILE.
+Show me a real life program that passes garbage files to open.
+
+> The only real solution to this (and several other problems) is
+> openat2().
+
+No argue about that. Come on, let's get it merged ;-)
+
+> As for O_ALLOW_ENCODED -- the current semantics (-EPERM if it
+> is set without CAP_SYS_ADMIN) *will* cause backwards compatibility
+> issues for programs that have garbage flags set...
+>
+
+Again, that's theoretical.
+In practice, O_ALLOW_ENCODED can work with open()/openat().
+In fact, even if O_ALLOW_ENCODED gets merged after openat2(),
+I don't think it should be forbidden by open()/openat(), right?
+Do in that sense, O_ALLOW_ENCODED does not depend on openat2().
+
+Thanks,
+Amir.
