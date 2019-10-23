@@ -2,189 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32328E259F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 23:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E949E25E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 23:56:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407606AbfJWVpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 17:45:10 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:43873 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2392570AbfJWVpK (ORCPT
+        id S2407638AbfJWV4f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 17:56:35 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36718 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407604AbfJWV4e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 17:45:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571867109;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0D4EQ8thGQKRRU/Fz2c1O7VtA1gRTINZXqgRy6HfSuk=;
-        b=R0V7DxSapSFPev4UGzimkxUEIrMclUZodFMOePwyBjdC3PkoEX9IHO8CiV/9e3ccXmQ+JC
-        4A7d90Cfe7WgzZmiok371uhmCno8Tx+Mt6X3tW1OKYEj5fCZSYkXuFHlMG9NatkMTXLOVE
-        xRIUi6+z9xhMdPFbyJ284vd00qkuzMc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-240-m8GaqF_nOUal1pqA5AbW-g-1; Wed, 23 Oct 2019 17:45:05 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0FAFE100550E;
-        Wed, 23 Oct 2019 21:45:03 +0000 (UTC)
-Received: from emilne (unknown [10.18.25.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 401405DA8D;
-        Wed, 23 Oct 2019 21:44:55 +0000 (UTC)
-Message-ID: <6759dfc6c5c721b5060d75e6c5f5a0b1dbb9a80b.camel@redhat.com>
-Subject: Re: [PATCH v2 7/8] scsi: sr: workaround VMware ESXi cdrom emulation
- bug
-From:   "Ewan D. Milne" <emilne@redhat.com>
-To:     Michal =?ISO-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>,
-        Hannes Reinecke <hare@suse.de>
-Cc:     linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Wed, 23 Oct 2019 17:44:54 -0400
-In-Reply-To: <20191023162313.GE938@kitsune.suse.cz>
-References: <cover.1571834862.git.msuchanek@suse.de>
-         <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
-         <08f1e291-0196-2402-1947-c0cdaaf534da@suse.de>
-         <20191023162313.GE938@kitsune.suse.cz>
-Mime-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: m8GaqF_nOUal1pqA5AbW-g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
+        Wed, 23 Oct 2019 17:56:34 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w18so23171550wrt.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 14:56:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorremedies-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=2Z2J+OCsJ9J8GYRYP9VQk8i6HI7mT3NHckK0lvlxuI4=;
+        b=l6bwIwJ3biJkrPmNiuGo80Nm0jZey9kll9szDwNec9TDA59C2XDR1D84O8dbnkbDMP
+         u1Q8evbum0reaA/9R3fDw8lDb2N/SK5e3x0Gekj+qhlkLpmKTcNwZQ5Cn8J5o/+NCaQi
+         rVwk+A5DRDgXw1JMOxFoiliUG57vjl9u+jJGMiqYZzaU+Zzuz13A1G1XsMKlJKO647M2
+         IvHFnroigX1S9Yab9xb6LoeziUH/s4MV26h8MEDKcqaynEPWHRlrAYpibRLKm5qA7NjF
+         au8m5gOGHn2w25JzMJ27sGjXCyEmVJriyprvIHvYPAWVmKO3jY5TkvTlsK9kcL7bja2U
+         c1MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2Z2J+OCsJ9J8GYRYP9VQk8i6HI7mT3NHckK0lvlxuI4=;
+        b=jYeSEvWFM81DaM58CR/Enn6rhbNGOlpYzua+ewAbBy1ljL+fa/puG8eo7sZ9FQVds+
+         B50C9YNZCqhWEvnbAJ9v4KMBABk27ZUEoAza3sl6yMSqEktS693/rUq/cws0BmUwnvjj
+         OcQg4BgisLgB6+hdMY5hPOfuGFslk4j6a9GnO0uynKIfaj9zV1xMCoqPEcYbbo2AMsMb
+         4Fbd8UBU+V7HWhuv3At6VmgAgRlhbTYuSaTw/pmYohXzpNR0f+4wnMywZfegnqxdwkKB
+         Nyux2Uz6RAY07ZoNoa6kVtRCJhtJ7gzlYhaIndNiB8bPaDJvTc19kbNlLJjyfTDd/uTl
+         BTxw==
+X-Gm-Message-State: APjAAAWJ3EgIqeWdLJaNvCRZwKdgaNCMvzTRF3gT75T4sVInaNyS16ck
+        jBJ8zASI6Vr7G2gO85MDYMI2YJp3qm+86kMgSsI4pg==
+X-Google-Smtp-Source: APXvYqw+N6XxHFJDmHNhiFTSaQvHQjQ7L+pa4/p8ZF0PEanBE5Mz8rq8OKZTnCkJfGg3xZZ3BDAOBmNR7FLJ6toT+mU=
+X-Received: by 2002:a5d:6281:: with SMTP id k1mr769702wru.69.1571867792739;
+ Wed, 23 Oct 2019 14:56:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
+ <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
+ <20191022105413.pj6i3ydetnfgnkzh@pali> <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
+ <20191023115001.vp4woh56k33b6hiq@pali> <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
+ <20191023171611.qfcwfce2roe3k3qw@pali> <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com>
+In-Reply-To: <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com>
+From:   Chris Murphy <lists@colorremedies.com>
+Date:   Wed, 23 Oct 2019 23:56:12 +0200
+Message-ID: <CAJCQCtTEN50uNmuSz9jW5Kk51TLmB2jfbNGxceNqnjBVvMD9ZA@mail.gmail.com>
+Subject: Re: Is rename(2) atomic on FAT?
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Chris Murphy <lists@colorremedies.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2019-10-23 at 18:23 +0200, Michal Such=C3=A1nek wrote:
-> On Wed, Oct 23, 2019 at 04:13:15PM +0200, Hannes Reinecke wrote:
-> > On 10/23/19 2:52 PM, Michal Suchanek wrote:
-> > > The WMware ESXi cdrom identifies itself as:
-> > > sr 0:0:0:0: [sr0] scsi3-mmc drive: vendor: "NECVMWarVMware SATA CD001=
-.00"
-> > > model: "VMware SATA CD001.00"
-> > > with the following get_capabilities print in sr.c:
-> > >         sr_printk(KERN_INFO, cd,
-> > >                   "scsi3-mmc drive: vendor: \"%s\" model: \"%s\"\n",
-> > >                   cd->device->vendor, cd->device->model);
-> > >=20
-> > > So the model looks like reliable identification while vendor does not=
-.
-> > >=20
-> > > The drive claims to have a tray and claims to be able to close it.
-> > > However, the UI has no notion of a tray - when medium is ejected it i=
-s
-> > > dropped in the floor and the user must select a medium again before t=
-he
-> > > drive can be re-loaded.  On the kernel side the tray_move call to clo=
-se
-> > > the tray succeeds but the drive state does not change as a result of =
-the
-> > > call.
-> > >=20
-> > > The drive does not in fact emulate the tray state. There are two ways=
- to
-> > > get the medium state. One is the SCSI status:
-> > >=20
-> > > Physical drive:
-> > >=20
-> > > Fixed format, current; Sense key: Not Ready
-> > > Additional sense: Medium not present - tray open
-> > > Raw sense data (in hex):
-> > >         70 00 02 00 00 00 00 0a  00 00 00 00 3a 02 00 00
-> > >         00 00
-> > >=20
-> > > Fixed format, current; Sense key: Not Ready
-> > > Additional sense: Medium not present - tray closed
-> > >  Raw sense data (in hex):
-> > >         70 00 02 00 00 00 00 0a  00 00 00 00 3a 01 00 00
-> > >         00 00
-> > >=20
-> > > VMware ESXi:
-> > >=20
-> > > Fixed format, current; Sense key: Not Ready
-> > > Additional sense: Medium not present
-> > >   Info fld=3D0x0 [0]
-> > >  Raw sense data (in hex):
-> > >         f0 00 02 00 00 00 00 0a  00 00 00 00 3a 00 00 00
-> > >         00 00
-> > >=20
-> > > So the tray state is not reported here. Other is medium status which =
-the
-> > > kernel prefers if available. Adding a print here gives:
-> > >=20
-> > > cdrom: get_media_event success: code =3D 0, door_open =3D 1, medium_p=
-resent =3D 0
-> > >=20
-> > > door_open is interpreted as open tray. This is fine so long as tray_m=
-ove
-> > > would close the tray when requested or report an error which never
-> > > happens on VMware ESXi servers (5.5 and 6.5 tested).
-> > >=20
-> > > This is a popular virtualization platform so a workaround is worthwhi=
-le.
-> > >=20
-> > > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > > ---
-> > >  drivers/scsi/sr.c | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > >=20
-> > > diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-> > > index 4664fdf75c0f..8090c5bdec09 100644
-> > > --- a/drivers/scsi/sr.c
-> > > +++ b/drivers/scsi/sr.c
-> > > @@ -867,6 +867,7 @@ static void get_capabilities(struct scsi_cd *cd)
-> > >  =09unsigned int ms_len =3D 128;
-> > >  =09int rc, n;
-> > > =20
-> > > +=09static const char *model_vmware =3D "VMware";
-> > >  =09static const char *loadmech[] =3D
-> > >  =09{
-> > >  =09=09"caddy",
-> > > @@ -922,6 +923,11 @@ static void get_capabilities(struct scsi_cd *cd)
-> > >  =09=09  buffer[n + 4] & 0x20 ? "xa/form2 " : "",=09/* can read xa/fr=
-om2 */
-> > >  =09=09  buffer[n + 5] & 0x01 ? "cdda " : "", /* can read audio data =
-*/
-> > >  =09=09  loadmech[buffer[n + 6] >> 5]);
-> > > +=09if (!strncmp(cd->device->model, model_vmware, strlen(model_vmware=
-))) {
-> > > +=09=09buffer[n + 6] &=3D ~(0xff << 5);
-> > > +=09=09sr_printk(KERN_INFO, cd,
-> > > +=09=09=09  "VMware ESXi bug workaround: tray -> caddy\n");
-> > > +=09}
-> > >  =09if ((buffer[n + 6] >> 5) =3D=3D 0)
-> > >  =09=09/* caddy drives can't close tray... */
-> > >  =09=09cd->cdi.mask |=3D CDC_CLOSE_TRAY;
-> > >=20
-> >=20
-> > This looks something which should be handled via a blacklist flag, not
-> > some inline hack which everyone forgets about it...
->=20
-> AFAIK we used to have a blacklist but don't have anymore. So either it
-> has to be resurrected for this one flag or an inline hack should be good
-> enough.
->=20
+On Wed, Oct 23, 2019 at 11:21 PM Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
+>
+> On Wed, Oct 23, 2019 at 7:16 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> wr=
+ote:
+> > On Wednesday 23 October 2019 16:21:19 Chris Murphy wrote:
+> > > On Wed, Oct 23, 2019 at 1:50 PM Pali Roh=C3=A1r <pali.rohar@gmail.com=
+> wrote:
+> > > > I do not think that kernel guarantee for any filesystem that rename
+> > > > operation would be atomic on underlying disk storage.
+> > > >
+> > > > But somebody else should confirm it.
+> > >
+> > > I don't know either or how to confirm it.
+> >
+> > Somebody who is watching linuxfs-devel and has deep knowledge in this
+> > area... could provide more information.
+>
+> This is filesystem specific.
+> For example on UBIFS we make sure that the rename operation is atomic.
+> Changing multiple directory entries is one journal commit, so either it h=
+appened
+> completely or not at all.
+> On JFFS2, on the other hand, rename can degrade to a hard link.
+>
+> I'd go so far and claim that any modern Linux filesystem guarantees
+> that rename is atomic.
 
-I agree with Hannes.  We should have a blacklist flag for this.
-Putting inline code in the sr driver that special cases on a particular
-device model string is not clean.  The "VMware ESXi bug workaround" message
-is not particularly descriptive either.
+Any atomicity that depends on journal commits cannot be considered to
+have atomicity in a boot context, because bootloaders don't do journal
+replay. It's completely ignored.
 
--Ewan
+If a journal is present, is it appropriate to consider it a separate
+and optional part of the file system? I don't know for sure but I can
+pretty much guess any of the bootloader upstreams would say: we are
+not file system experts, if file system developers consider the
+journal inseparable from the file system, and that journal replay is
+non-optional when indicated that it should be performed, then we
+welcome patches from file system developers to add such support in
+bootladers X, Y, and Z.
 
+And having already asked about bootloaders doing journal replay on XFS
+list, and maybe a while ago on ext4 list (I forget) that was sorta
+taken as a bit of comedy. Like, how would that work? And it'd
+inevitably lead to a fork in journal replay code. Possibly more than
+one to account for the different bootloader limitations and memory
+handling differences, etc. So it's not very realistic. Probably. And
+more realistic if they aren't separable is, if you care about atomic
+guarantees for things related to bootloading, don't use journaled file
+systems. Proscribed.
+
+Which is why this thread exists to see what can be done about FAT
+since it's really the only file system we have to be able to boot
+from.
+
+---
+Chris Murphy
+
+--=20
+Chris Murphy
