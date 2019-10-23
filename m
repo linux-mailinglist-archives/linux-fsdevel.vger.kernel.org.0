@@ -2,94 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0048E12E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 09:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98ACEE12EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 09:14:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389765AbfJWHLv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 03:11:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51096 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389090AbfJWHLu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 03:11:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5C515B3F8;
-        Wed, 23 Oct 2019 07:11:48 +0000 (UTC)
-Date:   Wed, 23 Oct 2019 09:11:46 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Mike Christie <mchristi@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        martin@urbackup.org, Damien.LeMoal@wdc.com
-Subject: Re: [PATCH] Add prctl support for controlling PF_MEMALLOC V2
-Message-ID: <20191023071146.GE754@dhcp22.suse.cz>
-References: <20191021214137.8172-1-mchristi@redhat.com>
- <20191022112446.GA8213@dhcp22.suse.cz>
- <5DAF2AA0.5030500@redhat.com>
- <20191022163310.GS9379@dhcp22.suse.cz>
- <20191022204344.GB2044@dread.disaster.area>
+        id S2389459AbfJWHOp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 03:14:45 -0400
+Received: from mx-out.tlen.pl ([193.222.135.140]:28656 "EHLO mx-out.tlen.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388218AbfJWHOp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Oct 2019 03:14:45 -0400
+Received: (wp-smtpd smtp.tlen.pl 3618 invoked from network); 23 Oct 2019 09:14:36 +0200
+Received: from unknown (HELO localhost.localdomain) (p.sarna@o2.pl@[31.179.144.84])
+          (envelope-sender <p.sarna@tlen.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <linux-fsdevel@vger.kernel.org>; 23 Oct 2019 09:14:36 +0200
+Subject: Re: [PATCH] hugetlbfs: add O_TMPFILE support
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+References: <22c29acf9c51dae17802e1b05c9e5e4051448c5c.1571129593.git.p.sarna@tlen.pl>
+ <20191015105055.GA24932@dhcp22.suse.cz>
+ <766b4370-ba71-85a2-5a57-ca9ed7dc7870@oracle.com>
+ <eb6206ee-eb2e-ffbc-3963-d80eec04119c@oracle.com>
+ <c0415816-2682-7bf5-2c82-43c3a8941a54@tlen.pl>
+ <d29bc957-a074-22f6-51d7-e043719d5f98@oracle.com>
+From:   Piotr Sarna <p.sarna@tlen.pl>
+Message-ID: <36c17999-caf6-9f0a-d63a-cc6e4b5fabb8@tlen.pl>
+Date:   Wed, 23 Oct 2019 09:14:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022204344.GB2044@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d29bc957-a074-22f6-51d7-e043719d5f98@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-WP-MailID: 424e793a204962c7684229931db4e0c3
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 0000000 [IXNk]                               
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 23-10-19 07:43:44, Dave Chinner wrote:
-> On Tue, Oct 22, 2019 at 06:33:10PM +0200, Michal Hocko wrote:
-
-Thanks for more clarifiation regarding PF_LESS_THROTTLE.
-
-[...]
-> > PF_IO_FLUSHER would mean that the user
-> > context is a part of the IO path and therefore there are certain reclaim
-> > recursion restrictions.
+On 10/23/19 4:55 AM, Mike Kravetz wrote:
+> On 10/22/19 12:09 AM, Piotr Sarna wrote:
+>> On 10/21/19 7:17 PM, Mike Kravetz wrote:
+>>> On 10/15/19 4:37 PM, Mike Kravetz wrote:
+>>>> On 10/15/19 3:50 AM, Michal Hocko wrote:
+>>>>> On Tue 15-10-19 11:01:12, Piotr Sarna wrote:
+>>>>>> With hugetlbfs, a common pattern for mapping anonymous huge pages
+>>>>>> is to create a temporary file first.
+>>>>>
+>>>>> Really? I though that this is normally done by shmget(SHM_HUGETLB) or
+>>>>> mmap(MAP_HUGETLB). Or maybe I misunderstood your definition on anonymous
+>>>>> huge pages.
+>>>>>
+>>>>>> Currently libraries like
+>>>>>> libhugetlbfs and seastar create these with a standard mkstemp+unlink
+>>>>>> trick,
+>>>>
+>>>> I would guess that much of libhugetlbfs was writen before MAP_HUGETLB
+>>>> was implemented.  So, that is why it does not make (more) use of that
+>>>> option.
+>>>>
+>>>> The implementation looks to be straight forward.  However, I really do
+>>>> not want to add more functionality to hugetlbfs unless there is specific
+>>>> use case that needs it.
+>>>
+>>> It was not my intention to shut down discussion on this patch.  I was just
+>>> asking if there was a (new) use case for such a change.  I am checking with
+>>> our DB team as I seem to remember them using the create/unlink approach for
+>>> hugetlbfs in one of their upcoming models.
+>>>
+>>> Is there a new use case you were thinking about?
+>>>
+>>
+>> Oh, I indeed thought it was a shutdown. The use case I was thinking about was in Seastar, where the create+unlink trick is used for creating temporary files (in a generic way, not only for hugetlbfs). I simply intended to migrate it to a newer approach - O_TMPFILE. However,
+>> for the specific case of hugetlbfs it indeed makes more sense to skip it and use mmap's MAP_HUGETLB, so perhaps it's not worth it to patch a perfectly good and stable file system just to provide a semi-useful flag support. My implementation of tmpfile for hugetlbfs is straightforward indeed, but the MAP_HUGETLB argument made me realize that it may not be worth the trouble - especially that MAP_HUGETLB is here since 2.6 and O_TMPFILE was introduced around v3.11, so the mmap way looks more portable.
+>>
+>> tldr: I'd be very happy to get my patch accepted, but the use case I had in mind can be easily solved with MAP_HUGETLB, so I don't insist.
 > 
-> If PF_IO_FLUSHER just maps to PF_LESS_THROTTLE|PF_MEMALLOC_NOIO,
-> then I'm not sure we need a new definition. Maybe that's the ptrace
-> flag name, but in the kernel we don't need a PF_IO_FLUSHER process
-> flag...
+> If you really are after something like 'anonymous memory' for Seastar,
+> then MAP_HUGETLB would be the better approach.
 
-Yes, the internal implementation would do something like that. I was
-more interested in the user space visible API at this stage. Something
-generic enough because exporting MEMALLOC flags is just a bad idea IMHO
-(especially PF_MEMALLOC).
+Just to clarify - my original goal was to migrate Seastar's temporary 
+file implementation (which is fs-agnostic, based on descriptors) from 
+the current create+unlink to O_TMPFILE, for robustness. One of the 
+internal usages of this generic mechanism was to create a tmpfile on 
+hugetlbfs and that's why I sent this patch. However, this particular 
+internal usage can be easily switched to more portable MAP_HUGETLB, 
+which will also mean that the generic tmpfile implementation will not be 
+used internally for hugetlbfs anymore.
 
-> > > >> This patch allows the userspace deamon to set the PF_MEMALLOC* flags
-> > > >> with prctl during their initialization so later allocations cannot
-> > > >> calling back into them.
-> > > > 
-> > > > TBH I am not really happy to export these to the userspace. They are
-> > > > an internal implementation detail and the userspace shouldn't really
-> > > 
-> > > They care in these cases, because block/fs drivers must be able to make
-> > > forward progress during writes. To meet this guarantee kernel block
-> > > drivers use mempools and memalloc/GFP flags.
-> > > 
-> > > For these userspace components of the block/fs drivers they already do
-> > > things normal daemons do not to meet that guarantee like mlock their
-> > > memory, disable oom killer, and preallocate resources they have control
-> > > over. They have no control over reclaim like the kernel drivers do so
-> > > its easy for us to deadlock when memory gets low.
-> > 
-> > OK, fair enough. How much of a control do they really need though. Is a
-> > single PF_IO_FLUSHER as explained above (essentially imply GPF_NOIO
-> > context) sufficient?
+There *may* still be value in being able to support hugetlbfs once 
+Seastar's tmpfile implementation migrates to O_TMPFILE, since the 
+library offers creating temporary files in its public API, but there's 
+no immediate use case I can apply it to.
+
 > 
-> I think some of these usrspace processes work at the filesystem
-> level and so really only need GFP_NOFS allocation (fuse), while
-> others work at the block device level (iscsi, nbd) so need GFP_NOIO
-> allocation. So there's definitely an argument for providing both...
+> I'm still checking with Oracle DB team as they may have a use for O_TMPFILE
+> in an upcoming release.  In their use case, they want an open fd to work with.
+> If it looks like they will proceed in this direction, we can work to get
+> your patch moved forward.
+> 
+> Thanks,
 
-The main question is whether giving more APIs is really necessary. Is
-there any real problem to give them only PF_IO_FLUSHER and let both
-groups use this one? It will imply more reclaim restrictions for solely
-FS based ones but is this a practical problem? If yes we can always add
-PF_FS_$FOO later on.
--- 
-Michal Hocko
-SUSE Labs
+Great, if it turns out that my patch helps anyone with their O_TMPFILE 
+usage, I'd be very glad to see it merged.
+
