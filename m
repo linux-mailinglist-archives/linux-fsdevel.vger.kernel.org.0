@@ -2,190 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0692AE1DD2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 16:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94B4BE1E00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 16:21:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406328AbfJWONU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 10:13:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57846 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732393AbfJWONT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 10:13:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 629A1B2AA;
-        Wed, 23 Oct 2019 14:13:16 +0000 (UTC)
-Subject: Re: [PATCH v2 7/8] scsi: sr: workaround VMware ESXi cdrom emulation
- bug
-To:     Michal Suchanek <msuchanek@suse.de>, linux-scsi@vger.kernel.org
-Cc:     Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <cover.1571834862.git.msuchanek@suse.de>
- <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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
- azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <08f1e291-0196-2402-1947-c0cdaaf534da@suse.de>
-Date:   Wed, 23 Oct 2019 16:13:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2389394AbfJWOVm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 10:21:42 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34011 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfJWOVm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Oct 2019 10:21:42 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v3so6449278wmh.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 07:21:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorremedies-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ODpoyHBs/388aPBDSjJFh617nubfZ3doqOO+IrHrAs4=;
+        b=MqWFfUQbQh5fMEhG7UyxtoUY6hIzKvZMk0TlOpJMvy8cCDxiATzgq0feQrrztueFEr
+         p/RHBvzanXvHZxaSFE75DptUayx8unclNzx78SNW0YB65c+iMxaPs4TR4BMBGRXEfkJa
+         XDIr0O99F8UwylXm46GKK3dmuGVRT6UjJyhayaorLN5H/RZoQWBZmir9tNFSHxc6eWdc
+         Oq3wZK2koI2SHoqonCZ0dLOCk2yg+2G9HkB7ES5oWtbZDcvFDLgN4B2GTklZPrlW/UIO
+         xd6WtOCTDrILfGsuXRPTKoryRUh5RbrfYGudV7JaSNk6luQXH7pOp5jutJLOlywu+AxB
+         b2Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ODpoyHBs/388aPBDSjJFh617nubfZ3doqOO+IrHrAs4=;
+        b=NlfMk2L0Lz/TV5K8UO6vP63dSFgxYlII/WllTU+x66lxtdFZ91MAmNJ2wE+IFR3Obn
+         Zh33hlEQbTRHMncwEZqHmOolX65lkaJBd+xVE6/yIAj6CMu5mDeDnNaJIfWRpJ8u+5uY
+         YEWVB68kNH2lk72k570lhrIehHUL1zOePfV3VHgFXXT3MXS1dcgY7DYm6l7gXlBDCtVh
+         Z9spnmsRHZlYaQkZU73LlnL5u/VR8CCgD6w6bs0wftS4oxL8IdF7MTFPDAEOVyMd7lye
+         LuGip3DHhJ43p7RvWFg7+F+AUcopWAjx4MkVS/uOgH8vIBgOTqUpIuFJpTnD/n7qteJz
+         /+Og==
+X-Gm-Message-State: APjAAAVAbFEiO0nz8mCnI5X+S7caDt1miiyQYJyqys4jul8f4/cqciJQ
+        lmRPlQmSUf4bnwJ5cxiawFXIv2atNzo9ZzLWrVJNXg==
+X-Google-Smtp-Source: APXvYqx7RDEO9yzxX4F3hbLuBUZIFP8dvjuJQ1+arAHTI/NhCca4oZb8BSEVvJXM9hS6igkkGytAf09+aykdP9klbtc=
+X-Received: by 2002:a7b:cbc5:: with SMTP id n5mr135444wmi.65.1571840499083;
+ Wed, 23 Oct 2019 07:21:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
+ <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
+ <20191022105413.pj6i3ydetnfgnkzh@pali> <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
+ <20191023115001.vp4woh56k33b6hiq@pali>
+In-Reply-To: <20191023115001.vp4woh56k33b6hiq@pali>
+From:   Chris Murphy <lists@colorremedies.com>
+Date:   Wed, 23 Oct 2019 16:21:19 +0200
+Message-ID: <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
+Subject: Re: Is rename(2) atomic on FAT?
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc:     Chris Murphy <lists@colorremedies.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/23/19 2:52 PM, Michal Suchanek wrote:
-> The WMware ESXi cdrom identifies itself as:
-> sr 0:0:0:0: [sr0] scsi3-mmc drive: vendor: "NECVMWarVMware SATA CD001.00"
-> model: "VMware SATA CD001.00"
-> with the following get_capabilities print in sr.c:
->         sr_printk(KERN_INFO, cd,
->                   "scsi3-mmc drive: vendor: \"%s\" model: \"%s\"\n",
->                   cd->device->vendor, cd->device->model);
-> 
-> So the model looks like reliable identification while vendor does not.
-> 
-> The drive claims to have a tray and claims to be able to close it.
-> However, the UI has no notion of a tray - when medium is ejected it is
-> dropped in the floor and the user must select a medium again before the
-> drive can be re-loaded.  On the kernel side the tray_move call to close
-> the tray succeeds but the drive state does not change as a result of the
-> call.
-> 
-> The drive does not in fact emulate the tray state. There are two ways to
-> get the medium state. One is the SCSI status:
-> 
-> Physical drive:
-> 
-> Fixed format, current; Sense key: Not Ready
-> Additional sense: Medium not present - tray open
-> Raw sense data (in hex):
->         70 00 02 00 00 00 00 0a  00 00 00 00 3a 02 00 00
->         00 00
-> 
-> Fixed format, current; Sense key: Not Ready
-> Additional sense: Medium not present - tray closed
->  Raw sense data (in hex):
->         70 00 02 00 00 00 00 0a  00 00 00 00 3a 01 00 00
->         00 00
-> 
-> VMware ESXi:
-> 
-> Fixed format, current; Sense key: Not Ready
-> Additional sense: Medium not present
->   Info fld=0x0 [0]
->  Raw sense data (in hex):
->         f0 00 02 00 00 00 00 0a  00 00 00 00 3a 00 00 00
->         00 00
-> 
-> So the tray state is not reported here. Other is medium status which the
-> kernel prefers if available. Adding a print here gives:
-> 
-> cdrom: get_media_event success: code = 0, door_open = 1, medium_present = 0
-> 
-> door_open is interpreted as open tray. This is fine so long as tray_move
-> would close the tray when requested or report an error which never
-> happens on VMware ESXi servers (5.5 and 6.5 tested).
-> 
-> This is a popular virtualization platform so a workaround is worthwhile.
-> 
-> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> ---
->  drivers/scsi/sr.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-> index 4664fdf75c0f..8090c5bdec09 100644
-> --- a/drivers/scsi/sr.c
-> +++ b/drivers/scsi/sr.c
-> @@ -867,6 +867,7 @@ static void get_capabilities(struct scsi_cd *cd)
->  	unsigned int ms_len = 128;
->  	int rc, n;
->  
-> +	static const char *model_vmware = "VMware";
->  	static const char *loadmech[] =
->  	{
->  		"caddy",
-> @@ -922,6 +923,11 @@ static void get_capabilities(struct scsi_cd *cd)
->  		  buffer[n + 4] & 0x20 ? "xa/form2 " : "",	/* can read xa/from2 */
->  		  buffer[n + 5] & 0x01 ? "cdda " : "", /* can read audio data */
->  		  loadmech[buffer[n + 6] >> 5]);
-> +	if (!strncmp(cd->device->model, model_vmware, strlen(model_vmware))) {
-> +		buffer[n + 6] &= ~(0xff << 5);
-> +		sr_printk(KERN_INFO, cd,
-> +			  "VMware ESXi bug workaround: tray -> caddy\n");
-> +	}
->  	if ((buffer[n + 6] >> 5) == 0)
->  		/* caddy drives can't close tray... */
->  		cd->cdi.mask |= CDC_CLOSE_TRAY;
-> 
-This looks something which should be handled via a blacklist flag, not
-some inline hack which everyone forgets about it...
+On Wed, Oct 23, 2019 at 1:50 PM Pali Roh=C3=A1r <pali.rohar@gmail.com> wrot=
+e:
+>
+> Hi!
+>
+> On Wednesday 23 October 2019 02:10:50 Chris Murphy wrote:
+> > a. write bootloader file to a temp location
+> > b. fsync
+> > c. mv temp final
+> > d. fsync
+> >
+> > if the crash happens anywhere from before a. to just after c. the old
+> > configuration file is still present and old kernel+initramfs are used.
+> > No problem. If the crash happens well after c. probably the new one is
+> > in place, for sure after d. it's in place, and the new kernel+
+> > initramfs are used.
+>
+> I do not think that kernel guarantee for any filesystem that rename
+> operation would be atomic on underlying disk storage.
+>
+> But somebody else should confirm it.
 
-Cheers,
+I don't know either or how to confirm it. But, being ignorant about a
+great many things, my instinct is literal fsync (flush buffer to disk)
+should go away at the application level, and fsync should only be used
+to indicate write order and what is part of a "commit" that is to be
+atomic (completely succeeds or fails). And of course that can only be
+guaranteed as far as the kernel is concerned, it doesn't guarantee
+anything about how the hardware block device actually behaves (warts
+bugs and all).
 
-Hannes
--- 
-Dr. Hannes Reinecke		      Teamlead Storage & Networking
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 247165 (AG München), GF: Felix Imendörffer
+Anyway it made me think of this:
+https://lwn.net/Articles/789600/
+
+
+> So if kernel crashes in the middle of c or between c and d you need to
+> repair filesystem externally prior trying to boot from such disk.
+
+Nice in theory, but in practice the user simply reboots, and screams
+WTF outloud if the system face plants. And people wonder why things
+are still broken 20 years later with all the same kinds of problems
+and prescriptions to boot off some rescue media instead of it being
+fail safe by design. It's definitely not fail safe to have a kernel
+update that could possibly result in an unbootable system. I can't
+think of any ordinary server, cloud, desktop, mobile user who wants to
+have to boot from rescue media to do a simple repair. Of course they
+all just want to reboot and have the right thing always happen no
+matter what, otherwise they get so nervous about doing updates that
+they postpone them longer than they should.
+
+> > I'm not sure how to test the following: write kernel and initramfs to
+> > final locations. And bootloader configuration is written to a temp
+> > path. Then at the decision moment, rename it so that it goes from temp
+> > path to final path doing at most 1 sector change. 1 512 byte sector
+> > is a reasonable number to assume can be completely atomic for a
+> > system. I have no idea if FAT can do such a 'mv' event with only one
+> > sector change
+>
+> Theoretically it could be possible to implement it for FAT (with more
+> restrictions), but I doubt that general purpose implementation of any
+> filesystem in kernel can do such thing. So no practically.
+
+Now I'm wondering what the UEFI spec says about this, and whether this
+problem was anticipated, and how surprised I should be if it wasn't
+anticipated.
+
+
+>
+> > >
+> > >
+> > > But... if you are asking for consistency and atomicity at filesystem
+> > > level (e.g. you turn off disk / power supply during rename operation)
+> > > then this is not atomic and probably it cannot be implemented. When F=
+AT
+> > > filesystem is mounted (either by Windows or Linux kernel) it is marke=
+d
+> > > by "dirty" flag and later when doing unmount, "dirty" flag is cleared=
+.
+> >
+> > Right. And at least on UEFI and arm boards, it's not the linux kernel
+> > that needs to read it right after a crash. It's the firmware's FAT
+> > driver. I have no idea how they react to the dirty flag.
+>
+> Those bootloader firmwares which just load & run bootloader practically
+> do not write anything to that FAT filesystem. In most cases their
+> implementation of FAT is read-only and very stupid. I doubt that there
+> is check for dirty flag.
+>
+> I saw lot of commercial devices of different kind which can read & write
+> (backup) data to (FAT) SD card. And lot of time they were not able to
+> read FAT filesystem formatted by other tool, only by their (or by
+> in-device FAT formatted).
+>
+> So such firmwares can be full of bugs and it really is not a good idea
+> to try booting bootloader from inconsistent FAT filesystem.
+
+Right. I've had quite a bit of experience with this too, but lately I
+think my experience is actually chock full of noisy data and what I
+thought I was seeing, might not actually be what I was seeing.
+
+Since ancient times in digital photography and video, it's been
+considered widely that the camera firmware's FAT driver is crap, and
+often corrupts the flash media, in particular when doing things like
+individual image file deletes, or exchanging cards between unlike
+cameras (make or model). As it turns out, this narrative is mostly
+pushed by the flash media vendors.
+
+Fast forward to the advent of cheap ARM boards and even Intel NUC type
+computers, and people experiencing various kinds of corruption with
+consumer name brand SD cards. The more generic, the more likely the
+card goes suddenly read only forever. But even the name brand cards
+I've used in an Intel NUC have had this happen, being replaced without
+complaint by the manufacturer under warranty, yet it still keeps on
+happening. Then found HN threads about this and people saying, yeah
+you have to use industrial flash cards for this purpose, totally
+solves the problem. And voila, there's enough anecdotal data out there
+that really it's consumer flash being super sensitive to power cuts.
+
+It may in fact have never had a thing to do with crap file system drivers.
+
+
+> > GRUB has an option to blindly overwrite the 1024 byte contents of
+> > grubenv (no file system modification), that's pretty close to atomic.
+> > Most devices have physical sector bigger than 512 bytes. This write is
+> > done in the pre-boot environment for saving state like boot counts.
+>
+> This depends on grub's FAT implementation. As said I would be very
+> careful about such "atomic" writes. There are also some caches, include
+> hardware on-disk, etc...
+
+GRUB doesn't use any file system driver for writes, ever. It uses a
+file system driver only to find out what two LBAs the "grubenv"
+occupies, and then blindly overwrites those two sectors to save state.
+There is no file system metadata update at all.
+
+
+>
+> > And add to the mix that I guess some UEFI firmware allow writing to
+> > FAT in the pre-boot environment?
+>
+> Yes, UEFI API allows you to write to disk devices. And UEFI fileystem
+> implementation can also supports writing to FAT fs.
+>
+> > I don't know if that's universally true. How do firmware handle a dirty=
+ bit being set?
+>
+> Bad implementation would ignore it. This is something which you should
+> expect.
+
+Maybe a project for someone is to bake xfstests into an EFI program so
+we can start testing these firmware FAT drivers and see what we learn
+about how bad they are?
+
+--=20
+Chris Murphy
