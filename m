@@ -2,74 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B08E1073
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 05:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03753E1094
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 05:34:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731234AbfJWDRQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Oct 2019 23:17:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:47212 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbfJWDRQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Oct 2019 23:17:16 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iN795-0007Lx-Tp; Wed, 23 Oct 2019 03:17:12 +0000
-Date:   Wed, 23 Oct 2019 04:17:11 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: Re: [PATCH v6 11/43] compat_ioctl: move drivers to compat_ptr_ioctl
-Message-ID: <20191023031711.GA26530@ZenIV.linux.org.uk>
-References: <20191009190853.245077-1-arnd@arndb.de>
- <20191009191044.308087-11-arnd@arndb.de>
- <20191022043451.GB20354@ZenIV.linux.org.uk>
- <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
+        id S1731320AbfJWDeA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Oct 2019 23:34:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50624 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727194AbfJWDeA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Oct 2019 23:34:00 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2D772086D;
+        Wed, 23 Oct 2019 03:33:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571801639;
+        bh=y9FaMVUv4Jv0rf2VWZjSHgqxab4WZTGBH8pG0NEsKOQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=17HrWhJkFB7DQKPcqr4BIxgLh1dSa1kXZGdFwAXB8Mlg0Mc/uejCJt8ZL0BBpmC2u
+         EyZ/H/g36b0keJqoqxBvOv5BJrz3F60PA6I+LX94NBXGqNC+mboTd7Os8cmzvK4CEk
+         GZKXDsXB3GWcjLt6NbMxs9gnovfMT3TR4KoFfnmw=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-ext4@vger.kernel.org
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Chandan Rajendra <chandan@linux.ibm.com>
+Subject: [PATCH v2 0/2] ext4: support encryption with blocksize != PAGE_SIZE
+Date:   Tue, 22 Oct 2019 20:33:10 -0700
+Message-Id: <20191023033312.361355-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1C=skow522Ge7w=ya2hK8TPS8ncusdyX-Ne4GBWB1H4A@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 12:26:09PM +0200, Arnd Bergmann wrote:
-> On Tue, Oct 22, 2019 at 6:34 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Wed, Oct 09, 2019 at 09:10:11PM +0200, Arnd Bergmann wrote:
-> > > Each of these drivers has a copy of the same trivial helper function to
-> > > convert the pointer argument and then call the native ioctl handler.
-> > >
-> > > We now have a generic implementation of that, so use it.
-> >
-> > I'd rather flipped your #7 (ceph_compat_ioctl() introduction) past
-> > that one...
-> 
-> The idea was to be able to backport the ceph patch as a bugfix
-> to stable kernels without having to change it or backport
-> compat_ptr_ioctl() as well.
-> 
-> If you still prefer it that way, I'd move to a simpler version of this
-> patch and drop the Cc:stable.
+Hello,
 
-What I'm going to do is to put the introduction of compat_ptr_ioctl()
-into a never-rebased branch; having e.g. ceph patch done on top of
-it should suffice - it can go into -stable just fine.  Trivially
-backported all the way back, has no prereqs and is guaranteed to
-cause no conflicts, so if any -stable fodder ends up depending upon
-it, there will be no problem whatsoever.  IMO that commit should
-precede everything else in the queue...
+This patchset makes ext4 support encryption on filesystems where the
+filesystem block size is not equal to PAGE_SIZE.  This allows e.g.
+PowerPC systems to use ext4 encryption.
 
-Another thing is that I'd fold #8 into #6 - it clearly belongs
-in there.
+Most of the work for this was already done in prior kernel releases; now
+the only part missing is decryption support in block_read_full_page().
+Chandan Rajendra has proposed a patchset "Consolidate FS read I/O
+callbacks code" [1] to address this and do various other things like
+make ext4 use mpage_readpages() again, and make ext4 and f2fs share more
+code.  But it doesn't seem to be going anywhere.
+
+Therefore, I propose we simply add decryption support to
+block_read_full_page() for now.  This is a fairly small change, and it
+gets ext4 encryption with subpage-sized blocks working.
+
+Note: to keep things simple I'm just allocating the work object from the
+bi_end_io function with GFP_ATOMIC.  But if people think it's necessary,
+it could be changed to use preallocation like the page-based read path.
+
+Tested with 'gce-xfstests -c ext4/encrypt_1k -g auto', using the new
+"encrypt_1k" config I created.  All tests pass except for those that
+already fail or are excluded with the encrypt or 1k configs, and 2 tests
+that try to create 1023-byte symlinks which fails since encrypted
+symlinks are limited to blocksize-3 bytes.  Also ran the dedicated
+encryption tests using 'kvm-xfstests -c ext4/1k -g encrypt'; all pass,
+including the on-disk ciphertext verification tests.
+
+[1] https://lkml.kernel.org/linux-fsdevel/20190910155115.28550-1-chandan@linux.ibm.com/T/#u
+
+Changed v1 => v2:
+  - Added check for S_ISREG() which technically should be there, though
+    it happens not to matter currently.
+
+Chandan Rajendra (1):
+  ext4: Enable encryption for subpage-sized blocks
+
+Eric Biggers (1):
+  fs/buffer.c: support fscrypt in block_read_full_page()
+
+ Documentation/filesystems/fscrypt.rst |  4 +--
+ fs/buffer.c                           | 48 ++++++++++++++++++++++++---
+ fs/ext4/super.c                       |  7 ----
+ 3 files changed, 45 insertions(+), 14 deletions(-)
+
+-- 
+2.23.0
+
